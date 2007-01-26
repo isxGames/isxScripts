@@ -862,46 +862,6 @@ function Harvested(string Line, string action, int number, string result)
 		call CheckInventory "${result}" ${number}
 	}
 }
-
-function Collectible(string Line, string result)
-{
-	variable int tempvar
-		
-	tempvar:Set[${This.SearchItems[${result}]}]
-		
-	if ${tempvar}
-	{
-		if ${KeepCollectCurrent[${tempvar}]}<${KeepCollectCount[${tempvar}]}
-		{
-			HarvestStat[${NodeType}]:Inc
-			KeepCollectCurrent[${tempvar}]:Inc
-
-			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
-			{
-				HarvestNode[${NodeType}]:Set[FALSE]
-			}
-		}
-		else
-		{
-			call DestroyItem "${result}"
-		}
-	}
-	else
-	{
-		if !${DestroyNode[${NodeType}]}
-		{
-			call DestroyItem "${result}"
-		}
-		else
-		{
-			HarvestStat[${NodeType}]:Inc
-			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
-			{
-				HarvestNode[${NodeType}]:Set[FALSE]
-			}
-		}
-	}
-}
 	
 objectdef EQ2HarvestBot
 {
@@ -1138,6 +1098,46 @@ objectdef EQ2HarvestBot
 			RareStat:Inc
 		}
 	}
+	
+method Collectible(string Line, string result)
+{
+	variable int tempvar
+		
+	tempvar:Set[${This.SearchItems[${result}]}]
+		
+	if ${tempvar}
+	{
+		if ${KeepCollectCurrent[${tempvar}]}<${KeepCollectCount[${tempvar}]}
+		{
+			HarvestStat[${NodeType}]:Inc
+			KeepCollectCurrent[${tempvar}]:Inc
+
+			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
+			{
+				HarvestNode[${NodeType}]:Set[FALSE]
+			}
+		}
+		else
+		{
+			call DestroyItem "${result}"
+		}
+	}
+	else
+	{
+		if !${DestroyNode[${NodeType}]}
+		{
+			call DestroyItem "${result}"
+		}
+		else
+		{
+			HarvestStat[${NodeType}]:Inc
+			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
+			{
+				HarvestNode[${NodeType}]:Set[FALSE]
+			}
+		}
+	}
+}	
 
 	method SearchItems(string itemsearch)
 	{
