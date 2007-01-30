@@ -175,12 +175,10 @@ function Buff_Routine(int xAction)
 
 		case Self_Buff 
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 1
-			}
 			break 
 
 		case Group_Buff 
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 1
-			}
 			break 
 
 		case Tactics_Target 
