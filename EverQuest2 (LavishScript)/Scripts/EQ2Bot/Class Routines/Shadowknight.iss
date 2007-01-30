@@ -208,8 +208,7 @@ function Combat_Routine(int xAction)
 	call WeaponChange
 	
 	if ${DoHOs}
-	{
-		
+	{	
 		objHeroicOp:DoHO
 	}
 	
@@ -219,7 +218,8 @@ function Combat_Routine(int xAction)
 	}
 	
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
-
+	call UseCrystallizedSpirit 60
+	
 	if ${Me.ToActor.Health}<90
 	{
 		call CastSpellRange 7
