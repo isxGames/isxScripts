@@ -169,16 +169,18 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				call CastCARange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 1
 			}
 			break	
 
 		case Self_Buff 
-			call CastCARange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 1
+			}
 			break 
 
 		case Group_Buff 
-			call CastCARange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 1
+			}
 			break 
 
 		case Tactics_Target 
@@ -190,7 +192,7 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				call CastCARange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 1
 			}
 			break
 
@@ -213,14 +215,14 @@ function Combat_Routine(int xAction)
 	
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
-		call CastCARange 303
+		call CastSpellRange 303
 	}
 	
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
 
 	if ${Me.ToActor.Health}<90
 	{
-		call CastCARange 7
+		call CastSpellRange 7
 	}
 
 	;echo in combat
@@ -233,7 +235,7 @@ function Combat_Routine(int xAction)
 			case Taunt 
 				if ${TauntMode} 
 				{ 
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				} 
 				break
 				
@@ -241,7 +243,7 @@ function Combat_Routine(int xAction)
 			case AoE_Taunt
 				if ${TauntMode} 
 				{ 
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				break
 
@@ -254,7 +256,7 @@ function Combat_Routine(int xAction)
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 						if ${Return.Equal[OK]} 
 						{ 						
-							call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 
+							call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1
 						} 
 					}
 				}
@@ -273,7 +275,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 					if ${Return.Equal[OK]} 
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
 				break
@@ -283,7 +285,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 					if ${Return.Equal[OK]} 
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0
+						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0 ${KillTarget} 
 					}
 				}
 				break
@@ -293,7 +295,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 					if ${Return.Equal[OK]} 
 					{ 
-						call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0
+						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0 ${KillTarget} 0 0 1
 					}
 				}
 				break 
@@ -306,7 +308,7 @@ function Combat_Routine(int xAction)
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 						if ${Return.Equal[OK]} 
 						{ 
-							call CastCARange ${SpellRange[${xAction},1]} 0 1 0
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 						}
 					}
 				}
@@ -325,7 +327,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 					if ${Return.Equal[OK]} 
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},4]} 1 0
+						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},4]} 1 0 ${KillTarget}
 					}
 				}
 				break 
@@ -354,16 +356,16 @@ function Lost_Aggro(int mobid)
 		if ${TauntMode}
 		{
 			;intercept damage on the person now with agro
-			call CastSpellRange 7
-			call CastCARange 270
-			call CastCARange 160 
+			call CastSpellRange 7 0 1 0 ${mobid} 0 0 1
+			call CastSpellRange 270 0 1 0 ${mobid} 0 0 1
+			call CastSpellRange 160 0 1 0 ${mobid} 0 0 1
 			
 			
 			
 			;use rescue if new agro target is under 65 health
 			if ${Me.ToActor.Target.Target.Health}<65
 			{
-				call CastCARange 320 0 0 0 ${mobid}
+				call CastSpellRange 320 0 1 0 ${mobid} 0 0 1
 			}
 		}
 	}
@@ -411,154 +413,3 @@ function WeaponChange()
 
 }
 
-function CastCARange(int start, int finish, int xvar1, int xvar2, int targettobuff, int notall, int refreshtimer)
-{
-	variable bool fndspell
-	variable int tempvar=${start}
-	variable int originaltarget
-
-	if ${Me.ToActor.Power}<5
-	{
-		return -1
-	}
-
-	do
-	{
-		if ${SpellType[${tempvar}].Length}
-		{
-			
-			if ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
-			{
-				if ${targettobuff}
-				{
-					fndspell:Set[FALSE]
-					tempgrp:Set[1]
-					do
-					{
-						if ${Me.Maintained[${tempgrp}].Name.Equal[${SpellType[${tempvar}]}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${targettobuff} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
-						{
-							fndspell:Set[TRUE]
-							break
-						}
-					}
-					while ${tempgrp:Inc}<=${Me.CountMaintained}
-
-					if !${fndspell}
-					{
-						if !${Actor[${targettobuff}](exists)} || ${Actor[${targettobuff}].Distance}>35
-						{
-							return -1
-						}
-
-						if ${xvar1} || ${xvar2}
-						{
-							;need less anal checkposition to keep from running around like an epilepic monkey
-							call CheckPosition ${xvar1} ${xvar2}
-						}
-
-						if ${Target(exists)}
-						{
-							originaltarget:Set[${Target.ID}]
-						}
-
-						if ${targettobuff(exists)}
-						{
-							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]}) 
-							{
-								target ${targettobuff}
-								wait 10 ${Target.ID}==${targettobuff}
-							}
-						}
-
-						call CastCA "${SpellType[${tempvar}]}" ${tempvar}
-
-						if ${Actor[${originaltarget}](exists)}
-						{
-							target ${originaltarget}
-							wait 10 ${Target.ID}==${originaltarget}
-						}
-
-						if ${notall}==1
-						{
-							return -1
-						}
-					}
-				}
-				else
-				{
-					if !${Me.Maintained[${SpellType[${tempvar}]}](exists)} || (${Me.Maintained[${SpellType[${tempvar}]}].Duration}<${refreshtimer} && ${Me.Maintained[${SpellType[${tempvar}]}].Duration}!=-1)
-					{
-						if ${xvar1} || ${xvar2}
-						{
-							call CheckPosition ${xvar1} ${xvar2}
-						}
-
-						call CastCA "${SpellType[${tempvar}]}" ${tempvar}
-
-						if ${notall}==1
-						{
-							return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
-						}
-					}
-				}
-			}
-		}
-
-		if !${finish}
-		{
-			return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
-		}
-	}
-	while ${tempvar:Inc}<=${finish}
-
-	return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
-}
-
-function CastCA(string spell, int spellid)
-{
-		
-	Me.Ability[${spell}]:Use
-	
-	do
-	{
-		WaitFor "Fizzled!" "Interrupted!" "Too far away" "Can't see target" "Not during combat" "Would not take effect" "resisted" "No eligible target" "Not an enemy" "Target is not alive" 1
-
-	}
-	while ${WaitFor}==1 || ${WaitFor}==2
-
-	switch ${WaitFor}
-	{
-		
-		case 3
-			return TOOFARAWAY
-
-		case 4
-			return CANTSEETARGET
-
-		case 5
-			return NOTDURINGCOMBAT
-
-		case 6
-			return NOTTAKEEFFECT
-
-		case 7
-			return RESISTED
-
-		case 8
-			return NOELIGIBLETARGET
-
-		case 9
-			return NOTENEMY
-
-		case 10
-			return TARGETNOTALIVE
-	}
-	
-	do
-	{
-		waitframe
-	}
-	while ${Me.CastingSpell}
-	
-	return SUCCESS
-}
