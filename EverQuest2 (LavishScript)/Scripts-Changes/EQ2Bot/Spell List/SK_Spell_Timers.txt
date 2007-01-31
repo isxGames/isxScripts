@@ -1,0 +1,63 @@
+	Shadowknight Ability Timers
+	
+
+Melee:
+	Swing
+	Kick
+	Cleave
+	Vitae
+	Wrath
+	Smite
+	Fetid Strike
+	Harm Touch
+	Coil
+	Slam
+
+Taunt:
+	Taunt
+	Rescue
+	Decree
+
+Debuff:
+	Draw Strength
+	Mana Sieve
+	Despoiling Mist
+	
+Feign:
+	Embrace
+
+PBAoE:
+	Sickening Circle
+	Cruel Aura
+	Doom Judgement
+	Tap Veins
+	Petilience
+	
+Pet:
+	Sacrment
+
+Intercept:
+	Intervene
+
+OnMobDeath:
+	Death March
+
+Evac:
+	Shadowy Elusion
+	
+Self Buff:
+	Caress
+	Unholy Weapon
+	Deffence Stance
+	Offense Stance
+	
+Buff Group:
+	Unholy Hunger
+	Contract
+
+Buff Single Target:
+	Infernal Blessing
+	Offering of Armament
+	Evasive Tactics
+	
+	

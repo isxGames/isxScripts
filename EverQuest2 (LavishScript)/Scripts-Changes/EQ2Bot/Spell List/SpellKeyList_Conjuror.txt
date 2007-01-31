@@ -1,0 +1,13 @@
+ * Uniqiue Spells/Skills for the Conjuror *
+
+320 - Summon Pet 1 (Lowest Priority - 1)
+321 - Summon Pet 2 (Priority 2)
+322 - Summon Pet 3 (Priority 3)
+323 - Summon Pet 4 (Highest Priority - 4)
+324 - Sacrafice Pet for health and power to group.
+325 - Minion's Intervention (Heals Pet if they are about to die).
+326 - Convert Pet health to Power for Conjuror.
+327 - Heat DPS Proc Buff.
+328 - Summons Pet which lasts a short duration.
+329 - Combat Pet Buff 1 (Increase Defense).
+330 - Combat Pet Buff 2 (Damage Shield).
