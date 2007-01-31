@@ -1,4 +1,0 @@
- * Uniqiue Spells/Skills for the Ranger *
-
-320 - Flank attack that stealths the Ranger.
-321 - Damage + Root attack.
