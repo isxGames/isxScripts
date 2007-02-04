@@ -18,17 +18,14 @@ namespace ISXVGDotNet
         {
             InitializeComponent();
             Character Me = new Character();
-            //LavishScriptObject ability = Me.Ability(1,true);
-            //Ability tmp = new Ability(ability);
             Ability tmp = Me.Ability(1);
-            NameLabel.Text = "OUTPUT: " + tmp.Name;
-            InnerSpace.Echo(Me.Target.Name);
+            NameLabel.Text = "The first ability in your AbilitiesArray is: " + tmp.Name;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Character Me = new Character();
-            NameLabel.Text = "Name: " + Me.FName + Me.LName;
+            NameLabel.Text = "Your Name is: " + Me.FName + Me.LName;
             button1.Visible = false;
             button2.Visible = true;
         }
@@ -36,7 +33,7 @@ namespace ISXVGDotNet
         private void button2_Click(object sender, EventArgs e)
         {
             Character Me = new Character();
-            NameLabel.Text = "Level: " + Me.Level.ToString();
+            NameLabel.Text = "Your Level is: " + Me.Level.ToString();
             button2.Visible = false;
             button3.Visible = true;
         }
@@ -44,8 +41,17 @@ namespace ISXVGDotNet
         private void button3_Click(object sender, EventArgs e)
         {
             Character Me = new Character();
-            NameLabel.Text = "Health: " + Me.HealthStr;
+            NameLabel.Text = "Your Health is: " + Me.HealthStr;
             button3.Visible = false;
+            button4.Visible = true;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            VGLocationsForm LocationsForm = new VGLocationsForm();
+            LocationsForm.ShowDialog();
+
+            button4.Visible = false;
             button1.Visible = true;
         }
     }
