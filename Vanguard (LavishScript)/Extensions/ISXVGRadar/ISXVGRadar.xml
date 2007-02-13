@@ -307,7 +307,7 @@ Radar Testing
 		<ShowLabels>1</ShowLabels>
 		<Rotation>1</Rotation>
 		<ClipText>1</ClipText>
-		<RadarSize>40.0</RadarSize>
+		<RadarSize>3750.0</RadarSize>
 	</template>
 	<template Name='vgradar' Template='radar'>
 		<BlipTypes>
@@ -564,7 +564,7 @@ Radar Testing
 	<Window Name='RadarConfig' template='VG.Window'>
 		<OnLoad>
 			timedcommand 1 "rwUpdateFilters radar${rwActiveRadar}"
-			timedcommand 1 UIElement[ZoomSlider@Radar Window]:SetRange[300]
+			timedcommand 1 UIElement[ZoomSlider@Radar Window]:SetRange[50000]
 			timedcommand 1 UIElement[ZoomSlider@Radar Window]:SetValue[${Radar[radar1].Size}]
 			timedcommand 1 Radar[radar1]:SetSize[${UIElement[ZoomSlider@Radar Window].Value}]
 			timedcommand 1 Radar[radar2]:SetSize[${UIElement[ZoomSlider@Radar Window].Value}]
