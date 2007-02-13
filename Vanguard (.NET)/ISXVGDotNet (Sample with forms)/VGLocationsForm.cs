@@ -19,15 +19,16 @@ namespace ISXVGDotNet
             InitializeComponent();
             ISXVG isxvg = new ISXVG();
 
-            VGLocationsList.BeginUpdate();
             for (int i = 1; i < isxvg.VGLocsCount; i++)
             {
                 VGLocation Loc = new VGLocation(i);
-                VGLocationsList.Items.Add(Loc.Label);
+
+                if (Loc.Label.Length == 0) continue;
+
+                VGLocationsList.Items.Add(i.ToString() + ". " + Loc.Label);
             }
             VGLocationsList.Items.Add("---");
             VGLocationsList.Items.Add("Total Locations: " + isxvg.VGLocsCount.ToString());
-            VGLocationsList.EndUpdate();
         }
 
         private void VGLocationsList_DoubleClick(object sender, EventArgs e)
