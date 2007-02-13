@@ -1,6 +1,6 @@
 This is ISXVGRadar, the UI forISXVG's radar functionality under Vanguard
 
-It is ported from ISXEQ2Radar, originaly by someone, and edited by other
+It is ported from ISXEQ2Radar, originally by Valerian, and edited by other
 someones.  
 
 We do not yet have texture files for Vanguard, so I've used the EQ2
