@@ -2242,8 +2242,8 @@ function StartBot()
 
 	if ${CloseUI}
 	{
-		ui -unload ${LavishScript.HomeDirectory}/Interface/eq2skin.xml
-		ui -unload ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml
+		ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
+		ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
 	}
 	else
 	{
