@@ -122,7 +122,7 @@
 								}
 							</OnLeftClick>
 						</checkbox>
-						<Frame Name='MaintTank Frame'>
+						<Frame Name='MainTank Frame'>
 							<X>23%</X>
 							<Y>10</Y>
 							<Height>20</Height>
@@ -197,7 +197,7 @@
 							<Height>20</Height>
 							<Text>Main Assist</Text>
 							<OnLoad>
-								if ${Script[EQ2Bot].Variable[MainTank]}
+								if ${Script[EQ2Bot].Variable[MainAssistMe]}
 								{
 									UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 								}
@@ -206,13 +206,13 @@
 								if ${UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
-									Script[EQ2Bot].Variable[MainAssist]:Set[TRUE]
+									Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,TRUE]:Save
 								}
 								else
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Show
-									Script[EQ2Bot].Variable[MainAssist]:Set[FALSE]
+									Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
 								}
 							</OnLeftClick>
@@ -223,7 +223,7 @@
 							<Height>20</Height>
 							<Width>95%</Width>
 							<OnLoad>
-								if ${Script[EQ2Bot].Variable[MainAssist]}
+								if ${Script[EQ2Bot].Variable[MainAssistMe]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
 								}
