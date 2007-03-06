@@ -1,7 +1,18 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.52 Updated: 01/21/07 by karye
+; EQ2Bot.iss Version 2.5.3 Updated: 03/06/07 by Pygar
 ;
-;Fixed a bug causing spells to be interupted occasionally
+;Broke MT and MA apart
+;Fixed Pull Calls to pull nearest mob
+;Fixed Loot to not miss loot as much
+;Added decline loot if Accept loot is not checked
+;Fixed Loot Lore and No Trade toggle
+;Removed Legacy Code
+;Fixed Many Triggers
+;Allows for Overriding Stances from Class Files
+;General Range Tweaks
+;Tweaking in General
+;Var MainTankPC now available to class files to check heals on MT
+;
 ;	
 ;
 ; Description:
