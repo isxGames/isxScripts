@@ -444,13 +444,13 @@ function Combat_Routine(int xAction)
 						{
 							if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 							{
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 							elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 							{
 								Me.Inventory[${WeaponSword}]:Equip
 								EquipmentChangeTimer:Set[${Time.Timestamp}]
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 						}						
 					}
@@ -470,13 +470,13 @@ function Combat_Routine(int xAction)
 						{
 							if ${Me.Equipment[1].Name.Equal[${OneHandedHammer}]}
 							{
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 							elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 							{
 								Me.Inventory[${OneHandedHammer}]:Equip
 								EquipmentChangeTimer:Set[${Time.Timestamp}]
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 						}						
 					}
