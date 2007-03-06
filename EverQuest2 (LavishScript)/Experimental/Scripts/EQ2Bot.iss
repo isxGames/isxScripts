@@ -1,5 +1,8 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.52 Updated: 01/21/07 by karye
+; EQ2Bot.iss Version 2.5.3 Updated: 01/21/07 by karye
+;
+;
+; Lots of changes, documentation comming
 ;
 ;Fixed a bug causing spells to be interupted occasionally
 ;	
