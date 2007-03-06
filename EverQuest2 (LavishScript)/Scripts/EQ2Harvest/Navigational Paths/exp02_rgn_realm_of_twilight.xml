@@ -1,0 +1,467 @@
+<?xml version='1.0'?>
+<Navigation>
+	<World Name="exp02_rgn_realm_of_twilight">
+		<Point Name="exp02_rgn_realm_of_twilight_10">
+			<X>-167.110001</X>
+			<Y>-5.030000</Y>
+			<Z>34.119999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_9" />
+			<Connection To="exp02_rgn_realm_of_twilight_11" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_11">
+			<X>-178.809998</X>
+			<Y>-5.180000</Y>
+			<Z>17.639999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_10" />
+			<Connection To="exp02_rgn_realm_of_twilight_12" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_12">
+			<X>-194.119995</X>
+			<Y>-4.560000</Y>
+			<Z>4.020000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_11" />
+			<Connection To="exp02_rgn_realm_of_twilight_13" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_13">
+			<X>-214.429993</X>
+			<Y>-5.200000</Y>
+			<Z>8.550000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_12" />
+			<Connection To="exp02_rgn_realm_of_twilight_14" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_14">
+			<X>-218.850006</X>
+			<Y>-5.750000</Y>
+			<Z>28.379999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_13" />
+			<Connection To="exp02_rgn_realm_of_twilight_15" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_15">
+			<X>-207.630005</X>
+			<Y>-7.480000</Y>
+			<Z>45.410000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_14" />
+			<Connection To="exp02_rgn_realm_of_twilight_16" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_16">
+			<X>-196.690002</X>
+			<Y>-6.120000</Y>
+			<Z>62.209999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_15" />
+			<Connection To="exp02_rgn_realm_of_twilight_17" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_17">
+			<X>-179.179993</X>
+			<Y>-8.010000</Y>
+			<Z>73.089996</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_16" />
+			<Connection To="exp02_rgn_realm_of_twilight_18" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_18">
+			<X>-160.850006</X>
+			<Y>-8.420000</Y>
+			<Z>82.050003</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_17" />
+			<Connection To="exp02_rgn_realm_of_twilight_19" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_19">
+			<X>-148.320007</X>
+			<Y>-8.720000</Y>
+			<Z>98.139999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_18" />
+			<Connection To="exp02_rgn_realm_of_twilight_20" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_2">
+			<X>-58.009998</X>
+			<Y>22.540001</Y>
+			<Z>136.539993</Z>
+			<Connection To="start" />
+			<Connection To="exp02_rgn_realm_of_twilight_3" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_20">
+			<X>-131.199997</X>
+			<Y>-0.910000</Y>
+			<Z>110.360001</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_19" />
+			<Connection To="exp02_rgn_realm_of_twilight_21" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_21">
+			<X>-111.629997</X>
+			<Y>9.110000</Y>
+			<Z>118.199997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_20" />
+			<Connection To="exp02_rgn_realm_of_twilight_22" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_22">
+			<X>-92.389999</X>
+			<Y>17.990000</Y>
+			<Z>123.870003</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_21" />
+			<Connection To="exp02_rgn_realm_of_twilight_23" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_23">
+			<X>-73.250000</X>
+			<Y>23.700001</Y>
+			<Z>132.800003</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_22" />
+			<Connection To="exp02_rgn_realm_of_twilight_24" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_24">
+			<X>-52.860001</X>
+			<Y>20.799999</Y>
+			<Z>127.730003</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_23" />
+			<Connection To="exp02_rgn_realm_of_twilight_25" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_25">
+			<X>-37.669998</X>
+			<Y>21.820000</Y>
+			<Z>111.379997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_24" />
+			<Connection To="exp02_rgn_realm_of_twilight_26" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_26">
+			<X>-30.860001</X>
+			<Y>21.809999</Y>
+			<Z>90.900002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_25" />
+			<Connection To="exp02_rgn_realm_of_twilight_27" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_27">
+			<X>-24.600000</X>
+			<Y>21.459999</Y>
+			<Z>69.529999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_26" />
+			<Connection To="exp02_rgn_realm_of_twilight_28" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_28">
+			<X>-20.740000</X>
+			<Y>21.049999</Y>
+			<Z>48.669998</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_27" />
+			<Connection To="exp02_rgn_realm_of_twilight_29" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_29">
+			<X>-19.490000</X>
+			<Y>22.690001</Y>
+			<Z>26.500000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_28" />
+			<Connection To="exp02_rgn_realm_of_twilight_30" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_3">
+			<X>-78.529999</X>
+			<Y>23.290001</Y>
+			<Z>132.210007</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_2" />
+			<Connection To="exp02_rgn_realm_of_twilight_4" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_30">
+			<X>-18.330000</X>
+			<Y>29.030001</Y>
+			<Z>3.610000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_29" />
+			<Connection To="exp02_rgn_realm_of_twilight_31" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_31">
+			<X>-16.870001</X>
+			<Y>34.939999</Y>
+			<Z>-18.879999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_30" />
+			<Connection To="exp02_rgn_realm_of_twilight_32" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_32">
+			<X>-16.160000</X>
+			<Y>43.049999</Y>
+			<Z>-39.380001</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_31" />
+			<Connection To="exp02_rgn_realm_of_twilight_33" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_33">
+			<X>-19.230000</X>
+			<Y>46.480000</Y>
+			<Z>-59.340000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_32" />
+			<Connection To="exp02_rgn_realm_of_twilight_34" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_34">
+			<X>-21.790001</X>
+			<Y>47.500000</Y>
+			<Z>-81.330002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_33" />
+			<Connection To="exp02_rgn_realm_of_twilight_35" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_35">
+			<X>-33.060001</X>
+			<Y>47.380001</Y>
+			<Z>-98.389999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_34" />
+			<Connection To="exp02_rgn_realm_of_twilight_36" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_36">
+			<X>-49.169998</X>
+			<Y>46.680000</Y>
+			<Z>-111.250000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_35" />
+			<Connection To="exp02_rgn_realm_of_twilight_37" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_37">
+			<X>-68.190002</X>
+			<Y>46.950001</Y>
+			<Z>-117.510002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_36" />
+			<Connection To="exp02_rgn_realm_of_twilight_38" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_38">
+			<X>-87.889999</X>
+			<Y>56.459999</Y>
+			<Z>-124.419998</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_37" />
+			<Connection To="exp02_rgn_realm_of_twilight_39" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_39">
+			<X>-97.699997</X>
+			<Y>59.400002</Y>
+			<Z>-142.309998</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_38" />
+			<Connection To="exp02_rgn_realm_of_twilight_40" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_4">
+			<X>-96.989998</X>
+			<Y>15.980000</Y>
+			<Z>123.910004</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_3" />
+			<Connection To="exp02_rgn_realm_of_twilight_5" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_40">
+			<X>-118.400002</X>
+			<Y>60.560001</Y>
+			<Z>-141.740005</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_39" />
+			<Connection To="exp02_rgn_realm_of_twilight_41" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_41">
+			<X>-136.960007</X>
+			<Y>60.529999</Y>
+			<Z>-129.830002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_40" />
+			<Connection To="exp02_rgn_realm_of_twilight_42" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_42">
+			<X>-138.899994</X>
+			<Y>59.169998</Y>
+			<Z>-109.900002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_41" />
+			<Connection To="exp02_rgn_realm_of_twilight_43" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_43">
+			<X>-135.309998</X>
+			<Y>57.490002</Y>
+			<Z>-89.980003</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_42" />
+			<Connection To="exp02_rgn_realm_of_twilight_44" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_44">
+			<X>-116.650002</X>
+			<Y>57.110001</Y>
+			<Z>-80.379997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_43" />
+			<Connection To="exp02_rgn_realm_of_twilight_45" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_45">
+			<X>-101.830002</X>
+			<Y>56.459999</Y>
+			<Z>-94.269997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_44" />
+			<Connection To="exp02_rgn_realm_of_twilight_46" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_46">
+			<X>-80.559998</X>
+			<Y>56.459999</Y>
+			<Z>-94.059998</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_45" />
+			<Connection To="exp02_rgn_realm_of_twilight_47" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_47">
+			<X>-59.740002</X>
+			<Y>47.240002</Y>
+			<Z>-95.480003</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_46" />
+			<Connection To="exp02_rgn_realm_of_twilight_48" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_48">
+			<X>-40.090000</X>
+			<Y>47.389999</Y>
+			<Z>-100.500000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_47" />
+			<Connection To="exp02_rgn_realm_of_twilight_49" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_49">
+			<X>-19.450001</X>
+			<Y>44.509998</Y>
+			<Z>-94.540001</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_48" />
+			<Connection To="exp02_rgn_realm_of_twilight_50" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_5">
+			<X>-116.029999</X>
+			<Y>6.390000</Y>
+			<Z>115.349998</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_4" />
+			<Connection To="exp02_rgn_realm_of_twilight_6" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_50">
+			<X>-0.110000</X>
+			<Y>44.880001</Y>
+			<Z>-88.150002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_49" />
+			<Connection To="exp02_rgn_realm_of_twilight_51" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_51">
+			<X>18.530001</X>
+			<Y>46.549999</Y>
+			<Z>-98.989998</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_50" />
+			<Connection To="exp02_rgn_realm_of_twilight_52" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_52">
+			<X>30.879999</X>
+			<Y>47.189999</Y>
+			<Z>-115.510002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_51" />
+			<Connection To="exp02_rgn_realm_of_twilight_53" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_53">
+			<X>47.799999</X>
+			<Y>48.200001</Y>
+			<Z>-126.199997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_52" />
+			<Connection To="exp02_rgn_realm_of_twilight_54" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_54">
+			<X>68.269997</X>
+			<Y>54.630001</Y>
+			<Z>-129.949997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_53" />
+			<Connection To="exp02_rgn_realm_of_twilight_55" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_55">
+			<X>84.330002</X>
+			<Y>57.410000</Y>
+			<Z>-114.660004</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_54" />
+			<Connection To="exp02_rgn_realm_of_twilight_56" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_56">
+			<X>95.129997</X>
+			<Y>57.730000</Y>
+			<Z>-96.769997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_55" />
+			<Connection To="exp02_rgn_realm_of_twilight_57" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_57">
+			<X>99.620003</X>
+			<Y>58.810001</Y>
+			<Z>-75.180000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_56" />
+			<Connection To="exp02_rgn_realm_of_twilight_58" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_58">
+			<X>101.019997</X>
+			<Y>60.950001</Y>
+			<Z>-54.840000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_57" />
+			<Connection To="exp02_rgn_realm_of_twilight_59" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_59">
+			<X>104.559998</X>
+			<Y>57.720001</Y>
+			<Z>-33.389999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_58" />
+			<Connection To="exp02_rgn_realm_of_twilight_60" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_6">
+			<X>-135.029999</X>
+			<Y>-1.240000</Y>
+			<Z>107.459999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_5" />
+			<Connection To="exp02_rgn_realm_of_twilight_7" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_60">
+			<X>112.570000</X>
+			<Y>57.009998</Y>
+			<Z>-13.020000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_59" />
+			<Connection To="exp02_rgn_realm_of_twilight_61" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_61">
+			<X>119.529999</X>
+			<Y>57.540001</Y>
+			<Z>6.450000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_60" />
+			<Connection To="exp02_rgn_realm_of_twilight_62" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_62">
+			<X>121.180000</X>
+			<Y>51.570000</Y>
+			<Z>27.129999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_61" />
+			<Connection To="exp02_rgn_realm_of_twilight_63" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_63">
+			<X>123.150002</X>
+			<Y>33.439999</Y>
+			<Z>47.139999</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_62" />
+			<Connection To="exp02_rgn_realm_of_twilight_64" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_64">
+			<X>115.040001</X>
+			<Y>23.879999</Y>
+			<Z>65.669998</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_63" />
+			<Connection To="exp02_rgn_realm_of_twilight_65" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_65">
+			<X>100.489998</X>
+			<Y>23.950001</Y>
+			<Z>80.940002</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_64" />
+			<Connection To="Finish" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_7">
+			<X>-149.179993</X>
+			<Y>-8.410000</Y>
+			<Z>93.000000</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_6" />
+			<Connection To="exp02_rgn_realm_of_twilight_8" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_8">
+			<X>-155.190002</X>
+			<Y>-8.010000</Y>
+			<Z>73.040001</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_7" />
+			<Connection To="exp02_rgn_realm_of_twilight_9" />
+		</Point>
+		<Point Name="exp02_rgn_realm_of_twilight_9">
+			<X>-161.029999</X>
+			<Y>-5.180000</Y>
+			<Z>53.630001</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_8" />
+			<Connection To="exp02_rgn_realm_of_twilight_10" />
+		</Point>
+		<Point Name="Finish">
+			<X>96.089996</X>
+			<Y>23.790001</Y>
+			<Z>84.769997</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_65" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="start">
+			<X>-37.400002</X>
+			<Y>21.500000</Y>
+			<Z>136.570007</Z>
+			<Connection To="exp02_rgn_realm_of_twilight_2" />
+			<Note>keypoint</Note>
+		</Point>
+	</World>
+</Navigation>

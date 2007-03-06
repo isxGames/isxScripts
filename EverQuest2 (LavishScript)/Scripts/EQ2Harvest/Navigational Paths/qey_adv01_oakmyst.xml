@@ -1,0 +1,369 @@
+<?xml version='1.0'?>
+<Navigation>
+	<World Name="qey_adv01_oakmyst">
+		<Point Name="end">
+			<X>893.289978</X>
+			<Y>2.270000</Y>
+			<Z>-334.570007</Z>
+			<Connection To="qey_adv01_oakmyst_51" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="qey_adv01_oakmyst_10">
+			<X>905.369995</X>
+			<Y>3.160000</Y>
+			<Z>-216.669998</Z>
+			<Connection To="qey_adv01_oakmyst_9" />
+			<Connection To="qey_adv01_oakmyst_11" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_11">
+			<X>922.580017</X>
+			<Y>2.260000</Y>
+			<Z>-227.279999</Z>
+			<Connection To="qey_adv01_oakmyst_10" />
+			<Connection To="qey_adv01_oakmyst_12" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_12">
+			<X>942.609985</X>
+			<Y>2.820000</Y>
+			<Z>-226.440002</Z>
+			<Connection To="qey_adv01_oakmyst_11" />
+			<Connection To="qey_adv01_oakmyst_13" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_13">
+			<X>958.750000</X>
+			<Y>3.530000</Y>
+			<Z>-214.289993</Z>
+			<Connection To="qey_adv01_oakmyst_12" />
+			<Connection To="qey_adv01_oakmyst_14" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_14">
+			<X>975.030029</X>
+			<Y>3.080000</Y>
+			<Z>-202.410004</Z>
+			<Connection To="qey_adv01_oakmyst_13" />
+			<Connection To="qey_adv01_oakmyst_15" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_15">
+			<X>963.349976</X>
+			<Y>2.970000</Y>
+			<Z>-218.800003</Z>
+			<Connection To="qey_adv01_oakmyst_14" />
+			<Connection To="qey_adv01_oakmyst_16" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_16">
+			<X>947.039978</X>
+			<Y>2.590000</Y>
+			<Z>-230.720001</Z>
+			<Connection To="qey_adv01_oakmyst_15" />
+			<Connection To="qey_adv01_oakmyst_17" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_17">
+			<X>936.539978</X>
+			<Y>2.140000</Y>
+			<Z>-247.979996</Z>
+			<Connection To="qey_adv01_oakmyst_16" />
+			<Connection To="qey_adv01_oakmyst_18" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_18">
+			<X>928.799988</X>
+			<Y>0.790000</Y>
+			<Z>-266.549988</Z>
+			<Connection To="qey_adv01_oakmyst_17" />
+			<Connection To="qey_adv01_oakmyst_19" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_19">
+			<X>932.760010</X>
+			<Y>2.240000</Y>
+			<Z>-286.239990</Z>
+			<Connection To="qey_adv01_oakmyst_18" />
+			<Connection To="qey_adv01_oakmyst_20" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_2">
+			<X>778.250000</X>
+			<Y>8.100000</Y>
+			<Z>-201.410004</Z>
+			<Connection To="start" />
+			<Connection To="qey_adv01_oakmyst_3" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_20">
+			<X>947.859985</X>
+			<Y>5.520000</Y>
+			<Z>-299.390015</Z>
+			<Connection To="qey_adv01_oakmyst_19" />
+			<Connection To="qey_adv01_oakmyst_21" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_21">
+			<X>967.739990</X>
+			<Y>8.400000</Y>
+			<Z>-296.239990</Z>
+			<Connection To="qey_adv01_oakmyst_20" />
+			<Connection To="qey_adv01_oakmyst_22" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_22">
+			<X>983.710022</X>
+			<Y>13.290000</Y>
+			<Z>-283.910004</Z>
+			<Connection To="qey_adv01_oakmyst_21" />
+			<Connection To="qey_adv01_oakmyst_23" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_23">
+			<X>995.809998</X>
+			<Y>12.700000</Y>
+			<Z>-267.720001</Z>
+			<Connection To="qey_adv01_oakmyst_22" />
+			<Connection To="qey_adv01_oakmyst_24" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_24">
+			<X>1010.200012</X>
+			<Y>13.330000</Y>
+			<Z>-281.940002</Z>
+			<Connection To="qey_adv01_oakmyst_23" />
+			<Connection To="qey_adv01_oakmyst_25" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_25">
+			<X>999.580017</X>
+			<Y>12.860000</Y>
+			<Z>-298.940002</Z>
+			<Connection To="qey_adv01_oakmyst_24" />
+			<Connection To="qey_adv01_oakmyst_26" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_26">
+			<X>979.479980</X>
+			<Y>10.040000</Y>
+			<Z>-298.390015</Z>
+			<Connection To="qey_adv01_oakmyst_25" />
+			<Connection To="qey_adv01_oakmyst_27" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_27">
+			<X>959.580017</X>
+			<Y>7.180000</Y>
+			<Z>-301.130005</Z>
+			<Connection To="qey_adv01_oakmyst_26" />
+			<Connection To="qey_adv01_oakmyst_28" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_28">
+			<X>941.030029</X>
+			<Y>4.370000</Y>
+			<Z>-308.670013</Z>
+			<Connection To="qey_adv01_oakmyst_27" />
+			<Connection To="qey_adv01_oakmyst_29" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_29">
+			<X>923.900024</X>
+			<Y>2.430000</Y>
+			<Z>-319.260010</Z>
+			<Connection To="qey_adv01_oakmyst_28" />
+			<Connection To="qey_adv01_oakmyst_30" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_3">
+			<X>798.280029</X>
+			<Y>6.750000</Y>
+			<Z>-200.529999</Z>
+			<Connection To="qey_adv01_oakmyst_2" />
+			<Connection To="qey_adv01_oakmyst_4" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_30">
+			<X>905.280029</X>
+			<Y>2.260000</Y>
+			<Z>-326.750000</Z>
+			<Connection To="qey_adv01_oakmyst_29" />
+			<Connection To="qey_adv01_oakmyst_31" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_31">
+			<X>887.099976</X>
+			<Y>2.170000</Y>
+			<Z>-335.130005</Z>
+			<Connection To="qey_adv01_oakmyst_30" />
+			<Connection To="qey_adv01_oakmyst_32" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_32">
+			<X>897.099976</X>
+			<Y>2.170000</Y>
+			<Z>-317.720001</Z>
+			<Connection To="qey_adv01_oakmyst_31" />
+			<Connection To="qey_adv01_oakmyst_33" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_33">
+			<X>907.880005</X>
+			<Y>2.240000</Y>
+			<Z>-300.660004</Z>
+			<Connection To="qey_adv01_oakmyst_32" />
+			<Connection To="qey_adv01_oakmyst_34" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_34">
+			<X>905.679993</X>
+			<Y>2.160000</Y>
+			<Z>-280.649994</Z>
+			<Connection To="qey_adv01_oakmyst_33" />
+			<Connection To="qey_adv01_oakmyst_35" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_35">
+			<X>896.539978</X>
+			<Y>1.510000</Y>
+			<Z>-262.779999</Z>
+			<Connection To="qey_adv01_oakmyst_34" />
+			<Connection To="qey_adv01_oakmyst_36" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_36">
+			<X>881.099976</X>
+			<Y>0.260000</Y>
+			<Z>-249.990005</Z>
+			<Connection To="qey_adv01_oakmyst_35" />
+			<Connection To="qey_adv01_oakmyst_37" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_37">
+			<X>861.500000</X>
+			<Y>1.830000</Y>
+			<Z>-245.940002</Z>
+			<Connection To="qey_adv01_oakmyst_36" />
+			<Connection To="qey_adv01_oakmyst_38" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_38">
+			<X>843.719971</X>
+			<Y>3.110000</Y>
+			<Z>-255.419998</Z>
+			<Connection To="qey_adv01_oakmyst_37" />
+			<Connection To="qey_adv01_oakmyst_39" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_39">
+			<X>828.780029</X>
+			<Y>4.830000</Y>
+			<Z>-268.829987</Z>
+			<Connection To="qey_adv01_oakmyst_38" />
+			<Connection To="qey_adv01_oakmyst_40" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_4">
+			<X>818.400024</X>
+			<Y>5.570000</Y>
+			<Z>-202.330002</Z>
+			<Connection To="qey_adv01_oakmyst_3" />
+			<Connection To="qey_adv01_oakmyst_5" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_40">
+			<X>810.150024</X>
+			<Y>9.600000</Y>
+			<Z>-276.149994</Z>
+			<Connection To="qey_adv01_oakmyst_39" />
+			<Connection To="qey_adv01_oakmyst_41" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_41">
+			<X>794.840027</X>
+			<Y>12.820000</Y>
+			<Z>-262.730011</Z>
+			<Connection To="qey_adv01_oakmyst_40" />
+			<Connection To="qey_adv01_oakmyst_42" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_42">
+			<X>777.909973</X>
+			<Y>13.350000</Y>
+			<Z>-251.979996</Z>
+			<Connection To="qey_adv01_oakmyst_41" />
+			<Connection To="qey_adv01_oakmyst_43" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_43">
+			<X>762.840027</X>
+			<Y>13.350000</Y>
+			<Z>-238.619995</Z>
+			<Connection To="qey_adv01_oakmyst_42" />
+			<Connection To="qey_adv01_oakmyst_44" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_44">
+			<X>776.390015</X>
+			<Y>13.350000</Y>
+			<Z>-253.449997</Z>
+			<Connection To="qey_adv01_oakmyst_43" />
+			<Connection To="qey_adv01_oakmyst_45" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_45">
+			<X>793.869995</X>
+			<Y>12.890000</Y>
+			<Z>-263.459991</Z>
+			<Connection To="qey_adv01_oakmyst_44" />
+			<Connection To="qey_adv01_oakmyst_46" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_46">
+			<X>808.729980</X>
+			<Y>9.870000</Y>
+			<Z>-276.959991</Z>
+			<Connection To="qey_adv01_oakmyst_45" />
+			<Connection To="qey_adv01_oakmyst_47" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_47">
+			<X>824.010010</X>
+			<Y>7.330000</Y>
+			<Z>-290.040009</Z>
+			<Connection To="qey_adv01_oakmyst_46" />
+			<Connection To="qey_adv01_oakmyst_48" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_48">
+			<X>834.979980</X>
+			<Y>5.570000</Y>
+			<Z>-306.910004</Z>
+			<Connection To="qey_adv01_oakmyst_47" />
+			<Connection To="qey_adv01_oakmyst_49" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_49">
+			<X>848.929993</X>
+			<Y>4.100000</Y>
+			<Z>-321.299988</Z>
+			<Connection To="qey_adv01_oakmyst_48" />
+			<Connection To="qey_adv01_oakmyst_50" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_5">
+			<X>837.750000</X>
+			<Y>7.420000</Y>
+			<Z>-207.490005</Z>
+			<Connection To="qey_adv01_oakmyst_4" />
+			<Connection To="qey_adv01_oakmyst_6" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_50">
+			<X>864.729980</X>
+			<Y>1.760000</Y>
+			<Z>-333.609985</Z>
+			<Connection To="qey_adv01_oakmyst_49" />
+			<Connection To="qey_adv01_oakmyst_51" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_51">
+			<X>884.770020</X>
+			<Y>2.200000</Y>
+			<Z>-336.100006</Z>
+			<Connection To="qey_adv01_oakmyst_50" />
+			<Connection To="end" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_6">
+			<X>856.859985</X>
+			<Y>9.100000</Y>
+			<Z>-213.630005</Z>
+			<Connection To="qey_adv01_oakmyst_5" />
+			<Connection To="qey_adv01_oakmyst_7" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_7">
+			<X>854.719971</X>
+			<Y>3.340000</Y>
+			<Z>-193.720001</Z>
+			<Connection To="qey_adv01_oakmyst_6" />
+			<Connection To="qey_adv01_oakmyst_8" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_8">
+			<X>874.830017</X>
+			<Y>0.600000</Y>
+			<Z>-191.979996</Z>
+			<Connection To="qey_adv01_oakmyst_7" />
+			<Connection To="qey_adv01_oakmyst_9" />
+		</Point>
+		<Point Name="qey_adv01_oakmyst_9">
+			<X>892.820007</X>
+			<Y>2.910000</Y>
+			<Z>-200.910004</Z>
+			<Connection To="qey_adv01_oakmyst_8" />
+			<Connection To="qey_adv01_oakmyst_10" />
+		</Point>
+		<Point Name="start">
+			<X>758.070007</X>
+			<Y>10.220000</Y>
+			<Z>-200.429993</Z>
+			<Connection To="qey_adv01_oakmyst_2" />
+			<Note>keypoint</Note>
+		</Point>
+	</World>
+</Navigation>

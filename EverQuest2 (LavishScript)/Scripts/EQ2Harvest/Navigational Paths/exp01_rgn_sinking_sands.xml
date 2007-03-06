@@ -1,0 +1,971 @@
+<?xml version='1.0'?>
+<Navigation>
+	<World Name="exp01_rgn_sinking_sands">
+		<Point Name="exp01_rgn_sinking_sands_10">
+			<X>-1350.209961</X>
+			<Y>-222.869995</Y>
+			<Z>-52.450001</Z>
+			<Connection To="exp01_rgn_sinking_sands_9" />
+			<Connection To="exp01_rgn_sinking_sands_11" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_100">
+			<X>-737.460022</X>
+			<Y>-108.620003</Y>
+			<Z>-236.610001</Z>
+			<Connection To="exp01_rgn_sinking_sands_99" />
+			<Connection To="exp01_rgn_sinking_sands_101" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_101">
+			<X>-717.229980</X>
+			<Y>-108.570000</Y>
+			<Z>-237.050003</Z>
+			<Connection To="exp01_rgn_sinking_sands_100" />
+			<Connection To="exp01_rgn_sinking_sands_102" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_102">
+			<X>-699.440002</X>
+			<Y>-107.070000</Y>
+			<Z>-227.830002</Z>
+			<Connection To="exp01_rgn_sinking_sands_101" />
+			<Connection To="exp01_rgn_sinking_sands_103" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_103">
+			<X>-682.320007</X>
+			<Y>-107.080002</Y>
+			<Z>-216.850006</Z>
+			<Connection To="exp01_rgn_sinking_sands_102" />
+			<Connection To="exp01_rgn_sinking_sands_104" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_104">
+			<X>-672.710022</X>
+			<Y>-107.250000</Y>
+			<Z>-199.100006</Z>
+			<Connection To="exp01_rgn_sinking_sands_103" />
+			<Connection To="exp01_rgn_sinking_sands_105" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_105">
+			<X>-662.700012</X>
+			<Y>-108.639999</Y>
+			<Z>-181.460007</Z>
+			<Connection To="exp01_rgn_sinking_sands_104" />
+			<Connection To="exp01_rgn_sinking_sands_106" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_106">
+			<X>-645.679993</X>
+			<Y>-113.489998</Y>
+			<Z>-170.820007</Z>
+			<Connection To="exp01_rgn_sinking_sands_105" />
+			<Connection To="exp01_rgn_sinking_sands_107" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_107">
+			<X>-626.969971</X>
+			<Y>-108.419998</Y>
+			<Z>-163.520004</Z>
+			<Connection To="exp01_rgn_sinking_sands_106" />
+			<Connection To="exp01_rgn_sinking_sands_108" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_108">
+			<X>-607.169983</X>
+			<Y>-105.680000</Y>
+			<Z>-159.529999</Z>
+			<Connection To="exp01_rgn_sinking_sands_107" />
+			<Connection To="exp01_rgn_sinking_sands_109" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_109">
+			<X>-587.099976</X>
+			<Y>-103.709999</Y>
+			<Z>-157.289993</Z>
+			<Connection To="exp01_rgn_sinking_sands_108" />
+			<Connection To="exp01_rgn_sinking_sands_110" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_11">
+			<X>-1333.739990</X>
+			<Y>-222.520004</Y>
+			<Z>-64.510002</Z>
+			<Connection To="exp01_rgn_sinking_sands_10" />
+			<Connection To="exp01_rgn_sinking_sands_12" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_110">
+			<X>-567.010010</X>
+			<Y>-104.820000</Y>
+			<Z>-156.470001</Z>
+			<Connection To="exp01_rgn_sinking_sands_109" />
+			<Connection To="exp01_rgn_sinking_sands_111" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_111">
+			<X>-546.770020</X>
+			<Y>-104.250000</Y>
+			<Z>-156.529999</Z>
+			<Connection To="exp01_rgn_sinking_sands_110" />
+			<Connection To="exp01_rgn_sinking_sands_112" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_112">
+			<X>-526.599976</X>
+			<Y>-104.410004</Y>
+			<Z>-155.470001</Z>
+			<Connection To="exp01_rgn_sinking_sands_111" />
+			<Connection To="exp01_rgn_sinking_sands_113" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_113">
+			<X>-506.640015</X>
+			<Y>-104.599998</Y>
+			<Z>-153.369995</Z>
+			<Connection To="exp01_rgn_sinking_sands_112" />
+			<Connection To="exp01_rgn_sinking_sands_114" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_114">
+			<X>-486.489990</X>
+			<Y>-104.900002</Y>
+			<Z>-152.800003</Z>
+			<Connection To="exp01_rgn_sinking_sands_113" />
+			<Connection To="exp01_rgn_sinking_sands_115" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_115">
+			<X>-466.250000</X>
+			<Y>-104.379997</Y>
+			<Z>-152.240005</Z>
+			<Connection To="exp01_rgn_sinking_sands_114" />
+			<Connection To="exp01_rgn_sinking_sands_116" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_116">
+			<X>-446.299988</X>
+			<Y>-104.019997</Y>
+			<Z>-149.649994</Z>
+			<Connection To="exp01_rgn_sinking_sands_115" />
+			<Connection To="exp01_rgn_sinking_sands_117" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_117">
+			<X>-428.269989</X>
+			<Y>-104.559998</Y>
+			<Z>-140.710007</Z>
+			<Connection To="exp01_rgn_sinking_sands_116" />
+			<Connection To="exp01_rgn_sinking_sands_118" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_118">
+			<X>-410.250000</X>
+			<Y>-105.290001</Y>
+			<Z>-131.479996</Z>
+			<Connection To="exp01_rgn_sinking_sands_117" />
+			<Connection To="exp01_rgn_sinking_sands_119" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_119">
+			<X>-396.089996</X>
+			<Y>-109.839996</Y>
+			<Z>-145.710007</Z>
+			<Connection To="exp01_rgn_sinking_sands_118" />
+			<Connection To="exp01_rgn_sinking_sands_120" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_12">
+			<X>-1313.890015</X>
+			<Y>-218.389999</Y>
+			<Z>-69.139999</Z>
+			<Connection To="exp01_rgn_sinking_sands_11" />
+			<Connection To="exp01_rgn_sinking_sands_13" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_120">
+			<X>-377.839996</X>
+			<Y>-109.860001</Y>
+			<Z>-137.110001</Z>
+			<Connection To="exp01_rgn_sinking_sands_119" />
+			<Connection To="exp01_rgn_sinking_sands_121" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_121">
+			<X>-359.130005</X>
+			<Y>-109.849998</Y>
+			<Z>-129.710007</Z>
+			<Connection To="exp01_rgn_sinking_sands_120" />
+			<Connection To="exp01_rgn_sinking_sands_122" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_122">
+			<X>-354.470001</X>
+			<Y>-109.790001</Y>
+			<Z>-149.259995</Z>
+			<Connection To="exp01_rgn_sinking_sands_121" />
+			<Connection To="exp01_rgn_sinking_sands_123" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_123">
+			<X>-370.200012</X>
+			<Y>-108.040001</Y>
+			<Z>-162.199997</Z>
+			<Connection To="exp01_rgn_sinking_sands_122" />
+			<Connection To="exp01_rgn_sinking_sands_124" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_124">
+			<X>-376.660004</X>
+			<Y>-105.919998</Y>
+			<Z>-181.139999</Z>
+			<Connection To="exp01_rgn_sinking_sands_123" />
+			<Connection To="exp01_rgn_sinking_sands_125" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_125">
+			<X>-384.760010</X>
+			<Y>-104.000000</Y>
+			<Z>-199.750000</Z>
+			<Connection To="exp01_rgn_sinking_sands_124" />
+			<Connection To="exp01_rgn_sinking_sands_126" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_126">
+			<X>-395.429993</X>
+			<Y>-104.709999</Y>
+			<Z>-217.100006</Z>
+			<Connection To="exp01_rgn_sinking_sands_125" />
+			<Connection To="exp01_rgn_sinking_sands_127" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_127">
+			<X>-395.290009</X>
+			<Y>-104.410004</Y>
+			<Z>-237.169998</Z>
+			<Connection To="exp01_rgn_sinking_sands_126" />
+			<Connection To="exp01_rgn_sinking_sands_128" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_128">
+			<X>-384.959991</X>
+			<Y>-104.309998</Y>
+			<Z>-254.750000</Z>
+			<Connection To="exp01_rgn_sinking_sands_127" />
+			<Connection To="exp01_rgn_sinking_sands_129" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_129">
+			<X>-367.489990</X>
+			<Y>-105.209999</Y>
+			<Z>-264.730011</Z>
+			<Connection To="exp01_rgn_sinking_sands_128" />
+			<Connection To="exp01_rgn_sinking_sands_130" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_13">
+			<X>-1294.010010</X>
+			<Y>-214.649994</Y>
+			<Z>-72.339996</Z>
+			<Connection To="exp01_rgn_sinking_sands_12" />
+			<Connection To="exp01_rgn_sinking_sands_14" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_130">
+			<X>-345.619995</X>
+			<Y>-104.459999</Y>
+			<Z>-263.010010</Z>
+			<Connection To="exp01_rgn_sinking_sands_129" />
+			<Connection To="exp01_rgn_sinking_sands_131" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_131">
+			<X>-326.410004</X>
+			<Y>-104.919998</Y>
+			<Z>-256.059998</Z>
+			<Connection To="exp01_rgn_sinking_sands_130" />
+			<Connection To="exp01_rgn_sinking_sands_132" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_132">
+			<X>-306.980011</X>
+			<Y>-104.320000</Y>
+			<Z>-250.949997</Z>
+			<Connection To="exp01_rgn_sinking_sands_131" />
+			<Connection To="exp01_rgn_sinking_sands_133" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_133">
+			<X>-287.320007</X>
+			<Y>-104.430000</Y>
+			<Z>-245.929993</Z>
+			<Connection To="exp01_rgn_sinking_sands_132" />
+			<Connection To="exp01_rgn_sinking_sands_134" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_134">
+			<X>-267.630005</X>
+			<Y>-104.660004</Y>
+			<Z>-241.580002</Z>
+			<Connection To="exp01_rgn_sinking_sands_133" />
+			<Connection To="exp01_rgn_sinking_sands_135" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_135">
+			<X>-248.809998</X>
+			<Y>-104.910004</Y>
+			<Z>-234.690002</Z>
+			<Connection To="exp01_rgn_sinking_sands_134" />
+			<Connection To="exp01_rgn_sinking_sands_136" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_136">
+			<X>-230.169998</X>
+			<Y>-104.790001</Y>
+			<Z>-226.389999</Z>
+			<Connection To="exp01_rgn_sinking_sands_135" />
+			<Connection To="exp01_rgn_sinking_sands_137" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_137">
+			<X>-215.639999</X>
+			<Y>-104.360001</Y>
+			<Z>-212.330002</Z>
+			<Connection To="exp01_rgn_sinking_sands_136" />
+			<Connection To="highway2" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_14">
+			<X>-1274.900024</X>
+			<Y>-212.869995</Y>
+			<Z>-66.089996</Z>
+			<Connection To="exp01_rgn_sinking_sands_13" />
+			<Connection To="exp01_rgn_sinking_sands_15" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_15">
+			<X>-1256.000000</X>
+			<Y>-213.029999</Y>
+			<Z>-59.480000</Z>
+			<Connection To="exp01_rgn_sinking_sands_14" />
+			<Connection To="exp01_rgn_sinking_sands_16" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_16">
+			<X>-1236.500000</X>
+			<Y>-212.970001</Y>
+			<Z>-53.630001</Z>
+			<Connection To="exp01_rgn_sinking_sands_15" />
+			<Connection To="exp01_rgn_sinking_sands_17" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_17">
+			<X>-1216.969971</X>
+			<Y>-212.919998</Y>
+			<Z>-48.980000</Z>
+			<Connection To="exp01_rgn_sinking_sands_16" />
+			<Connection To="exp01_rgn_sinking_sands_18" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_18">
+			<X>-1200.109985</X>
+			<Y>-211.970001</Y>
+			<Z>-38.029999</Z>
+			<Connection To="exp01_rgn_sinking_sands_17" />
+			<Connection To="exp01_rgn_sinking_sands_19" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_19">
+			<X>-1185.339966</X>
+			<Y>-210.199997</Y>
+			<Z>-24.070000</Z>
+			<Connection To="exp01_rgn_sinking_sands_18" />
+			<Connection To="exp01_rgn_sinking_sands_20" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_2">
+			<X>-1463.160034</X>
+			<Y>-226.470001</Y>
+			<Z>63.880001</Z>
+			<Connection To="oasis1" />
+			<Connection To="exp01_rgn_sinking_sands_3" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_20">
+			<X>-1171.229980</X>
+			<Y>-208.820007</Y>
+			<Z>-9.750000</Z>
+			<Connection To="exp01_rgn_sinking_sands_19" />
+			<Connection To="exp01_rgn_sinking_sands_21" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_21">
+			<X>-1157.489990</X>
+			<Y>-207.860001</Y>
+			<Z>5.130000</Z>
+			<Connection To="exp01_rgn_sinking_sands_20" />
+			<Connection To="exp01_rgn_sinking_sands_22" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_22">
+			<X>-1145.089966</X>
+			<Y>-205.589996</Y>
+			<Z>20.930000</Z>
+			<Connection To="exp01_rgn_sinking_sands_21" />
+			<Connection To="exp01_rgn_sinking_sands_23" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_23">
+			<X>-1124.949951</X>
+			<Y>-205.220001</Y>
+			<Z>21.860001</Z>
+			<Connection To="exp01_rgn_sinking_sands_22" />
+			<Connection To="exp01_rgn_sinking_sands_24" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_24">
+			<X>-1106.800049</X>
+			<Y>-207.850006</Y>
+			<Z>13.020000</Z>
+			<Connection To="exp01_rgn_sinking_sands_23" />
+			<Connection To="exp01_rgn_sinking_sands_25" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_25">
+			<X>-1089.410034</X>
+			<Y>-202.429993</Y>
+			<Z>3.080000</Z>
+			<Connection To="exp01_rgn_sinking_sands_24" />
+			<Connection To="exp01_rgn_sinking_sands_26" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_26">
+			<X>-1081.319946</X>
+			<Y>-200.309998</Y>
+			<Z>-15.370000</Z>
+			<Connection To="exp01_rgn_sinking_sands_25" />
+			<Connection To="exp01_rgn_sinking_sands_27" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_27">
+			<X>-1085.979980</X>
+			<Y>-200.289993</Y>
+			<Z>-35.009998</Z>
+			<Connection To="exp01_rgn_sinking_sands_26" />
+			<Connection To="exp01_rgn_sinking_sands_28" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_28">
+			<X>-1094.170044</X>
+			<Y>-200.399994</Y>
+			<Z>-53.580002</Z>
+			<Connection To="exp01_rgn_sinking_sands_27" />
+			<Connection To="exp01_rgn_sinking_sands_29" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_29">
+			<X>-1106.160034</X>
+			<Y>-202.339996</Y>
+			<Z>-69.720001</Z>
+			<Connection To="exp01_rgn_sinking_sands_28" />
+			<Connection To="exp01_rgn_sinking_sands_30" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_3">
+			<X>-1449.560059</X>
+			<Y>-227.149994</Y>
+			<Z>48.570000</Z>
+			<Connection To="exp01_rgn_sinking_sands_2" />
+			<Connection To="exp01_rgn_sinking_sands_4" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_30">
+			<X>-1119.880005</X>
+			<Y>-205.440002</Y>
+			<Z>-84.959999</Z>
+			<Connection To="exp01_rgn_sinking_sands_29" />
+			<Connection To="exp01_rgn_sinking_sands_31" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_31">
+			<X>-1134.900024</X>
+			<Y>-208.389999</Y>
+			<Z>-98.919998</Z>
+			<Connection To="exp01_rgn_sinking_sands_30" />
+			<Connection To="exp01_rgn_sinking_sands_32" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_32">
+			<X>-1148.829956</X>
+			<Y>-210.289993</Y>
+			<Z>-114.080002</Z>
+			<Connection To="exp01_rgn_sinking_sands_31" />
+			<Connection To="exp01_rgn_sinking_sands_33" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_33">
+			<X>-1162.030029</X>
+			<Y>-212.669998</Y>
+			<Z>-129.750000</Z>
+			<Connection To="exp01_rgn_sinking_sands_32" />
+			<Connection To="exp01_rgn_sinking_sands_34" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_34">
+			<X>-1174.930054</X>
+			<Y>-215.779999</Y>
+			<Z>-145.059998</Z>
+			<Connection To="exp01_rgn_sinking_sands_33" />
+			<Connection To="exp01_rgn_sinking_sands_35" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_35">
+			<X>-1188.489990</X>
+			<Y>-217.929993</Y>
+			<Z>-160.160004</Z>
+			<Connection To="exp01_rgn_sinking_sands_34" />
+			<Connection To="exp01_rgn_sinking_sands_36" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_36">
+			<X>-1203.800049</X>
+			<Y>-220.610001</Y>
+			<Z>-173.529999</Z>
+			<Connection To="exp01_rgn_sinking_sands_35" />
+			<Connection To="exp01_rgn_sinking_sands_37" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_37">
+			<X>-1219.250000</X>
+			<Y>-223.169998</Y>
+			<Z>-186.570007</Z>
+			<Connection To="exp01_rgn_sinking_sands_36" />
+			<Connection To="exp01_rgn_sinking_sands_38" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_38">
+			<X>-1234.380005</X>
+			<Y>-225.059998</Y>
+			<Z>-199.800003</Z>
+			<Connection To="exp01_rgn_sinking_sands_37" />
+			<Connection To="exp01_rgn_sinking_sands_39" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_39">
+			<X>-1249.689941</X>
+			<Y>-225.300003</Y>
+			<Z>-213.169998</Z>
+			<Connection To="exp01_rgn_sinking_sands_38" />
+			<Connection To="exp01_rgn_sinking_sands_40" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_4">
+			<X>-1437.310059</X>
+			<Y>-227.000000</Y>
+			<Z>32.520000</Z>
+			<Connection To="exp01_rgn_sinking_sands_3" />
+			<Connection To="exp01_rgn_sinking_sands_5" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_40">
+			<X>-1264.989990</X>
+			<Y>-224.130005</Y>
+			<Z>-226.529999</Z>
+			<Connection To="exp01_rgn_sinking_sands_39" />
+			<Connection To="exp01_rgn_sinking_sands_41" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_41">
+			<X>-1278.869995</X>
+			<Y>-222.419998</Y>
+			<Z>-241.389999</Z>
+			<Connection To="exp01_rgn_sinking_sands_40" />
+			<Connection To="exp01_rgn_sinking_sands_42" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_42">
+			<X>-1271.319946</X>
+			<Y>-218.710007</Y>
+			<Z>-259.929993</Z>
+			<Connection To="exp01_rgn_sinking_sands_41" />
+			<Connection To="exp01_rgn_sinking_sands_43" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_43">
+			<X>-1252.369995</X>
+			<Y>-215.860001</Y>
+			<Z>-267.250000</Z>
+			<Connection To="exp01_rgn_sinking_sands_42" />
+			<Connection To="exp01_rgn_sinking_sands_44" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_44">
+			<X>-1232.089966</X>
+			<Y>-214.910004</Y>
+			<Z>-269.500000</Z>
+			<Connection To="exp01_rgn_sinking_sands_43" />
+			<Connection To="exp01_rgn_sinking_sands_45" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_45">
+			<X>-1212.290039</X>
+			<Y>-214.479996</Y>
+			<Z>-273.420013</Z>
+			<Connection To="exp01_rgn_sinking_sands_44" />
+			<Connection To="exp01_rgn_sinking_sands_46" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_46">
+			<X>-1215.520020</X>
+			<Y>-214.490005</Y>
+			<Z>-293.260010</Z>
+			<Connection To="exp01_rgn_sinking_sands_45" />
+			<Connection To="exp01_rgn_sinking_sands_47" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_47">
+			<X>-1219.630005</X>
+			<Y>-213.839996</Y>
+			<Z>-313.239990</Z>
+			<Connection To="exp01_rgn_sinking_sands_46" />
+			<Connection To="exp01_rgn_sinking_sands_48" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_48">
+			<X>-1224.189941</X>
+			<Y>-210.880005</Y>
+			<Z>-332.880005</Z>
+			<Connection To="exp01_rgn_sinking_sands_47" />
+			<Connection To="exp01_rgn_sinking_sands_49" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_49">
+			<X>-1229.969971</X>
+			<Y>-211.759995</Y>
+			<Z>-352.100006</Z>
+			<Connection To="exp01_rgn_sinking_sands_48" />
+			<Connection To="exp01_rgn_sinking_sands_50" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_5">
+			<X>-1422.280029</X>
+			<Y>-226.979996</Y>
+			<Z>18.860001</Z>
+			<Connection To="exp01_rgn_sinking_sands_4" />
+			<Connection To="exp01_rgn_sinking_sands_6" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_50">
+			<X>-1235.599976</X>
+			<Y>-215.119995</Y>
+			<Z>-371.380005</Z>
+			<Connection To="exp01_rgn_sinking_sands_49" />
+			<Connection To="exp01_rgn_sinking_sands_51" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_51">
+			<X>-1233.069946</X>
+			<Y>-217.910004</Y>
+			<Z>-391.250000</Z>
+			<Connection To="exp01_rgn_sinking_sands_50" />
+			<Connection To="exp01_rgn_sinking_sands_52" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_52">
+			<X>-1221.540039</X>
+			<Y>-217.119995</Y>
+			<Z>-407.899994</Z>
+			<Connection To="exp01_rgn_sinking_sands_51" />
+			<Connection To="exp01_rgn_sinking_sands_53" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_53">
+			<X>-1208.290039</X>
+			<Y>-214.360001</Y>
+			<Z>-423.119995</Z>
+			<Connection To="exp01_rgn_sinking_sands_52" />
+			<Connection To="exp01_rgn_sinking_sands_54" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_54">
+			<X>-1198.560059</X>
+			<Y>-215.809998</Y>
+			<Z>-441.079987</Z>
+			<Connection To="exp01_rgn_sinking_sands_53" />
+			<Connection To="exp01_rgn_sinking_sands_55" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_55">
+			<X>-1197.880005</X>
+			<Y>-216.649994</Y>
+			<Z>-461.350006</Z>
+			<Connection To="exp01_rgn_sinking_sands_54" />
+			<Connection To="exp01_rgn_sinking_sands_56" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_56">
+			<X>-1189.079956</X>
+			<Y>-218.699997</Y>
+			<Z>-480.320007</Z>
+			<Connection To="exp01_rgn_sinking_sands_55" />
+			<Connection To="exp01_rgn_sinking_sands_57" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_57">
+			<X>-1172.290039</X>
+			<Y>-215.899994</Y>
+			<Z>-492.040009</Z>
+			<Connection To="exp01_rgn_sinking_sands_56" />
+			<Connection To="exp01_rgn_sinking_sands_58" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_58">
+			<X>-1152.949951</X>
+			<Y>-214.139999</Y>
+			<Z>-497.529999</Z>
+			<Connection To="exp01_rgn_sinking_sands_57" />
+			<Connection To="exp01_rgn_sinking_sands_59" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_59">
+			<X>-1134.579956</X>
+			<Y>-213.350006</Y>
+			<Z>-506.040009</Z>
+			<Connection To="exp01_rgn_sinking_sands_58" />
+			<Connection To="exp01_rgn_sinking_sands_60" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_6">
+			<X>-1407.869995</X>
+			<Y>-226.860001</Y>
+			<Z>4.600000</Z>
+			<Connection To="exp01_rgn_sinking_sands_5" />
+			<Connection To="exp01_rgn_sinking_sands_7" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_60">
+			<X>-1125.050049</X>
+			<Y>-215.160004</Y>
+			<Z>-523.750000</Z>
+			<Connection To="exp01_rgn_sinking_sands_59" />
+			<Connection To="exp01_rgn_sinking_sands_61" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_61">
+			<X>-1139.170044</X>
+			<Y>-215.940002</Y>
+			<Z>-538.140015</Z>
+			<Connection To="exp01_rgn_sinking_sands_60" />
+			<Connection To="exp01_rgn_sinking_sands_62" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_62">
+			<X>-1159.099976</X>
+			<Y>-216.580002</Y>
+			<Z>-535.500000</Z>
+			<Connection To="exp01_rgn_sinking_sands_61" />
+			<Connection To="exp01_rgn_sinking_sands_63" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_63">
+			<X>-1176.859985</X>
+			<Y>-216.750000</Y>
+			<Z>-526.219971</Z>
+			<Connection To="exp01_rgn_sinking_sands_62" />
+			<Connection To="exp01_rgn_sinking_sands_64" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_64">
+			<X>-1193.979980</X>
+			<Y>-216.679993</Y>
+			<Z>-515.489990</Z>
+			<Connection To="exp01_rgn_sinking_sands_63" />
+			<Connection To="exp01_rgn_sinking_sands_65" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_65">
+			<X>-1211.619995</X>
+			<Y>-216.520004</Y>
+			<Z>-505.859985</Z>
+			<Connection To="exp01_rgn_sinking_sands_64" />
+			<Connection To="exp01_rgn_sinking_sands_66" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_66">
+			<X>-1230.969971</X>
+			<Y>-216.500000</Y>
+			<Z>-510.940002</Z>
+			<Connection To="exp01_rgn_sinking_sands_65" />
+			<Connection To="exp01_rgn_sinking_sands_67" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_67">
+			<X>-1245.060059</X>
+			<Y>-216.570007</Y>
+			<Z>-525.289978</Z>
+			<Connection To="exp01_rgn_sinking_sands_66" />
+			<Connection To="exp01_rgn_sinking_sands_68" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_68">
+			<X>-1249.189941</X>
+			<Y>-216.570007</Y>
+			<Z>-545.030029</Z>
+			<Connection To="exp01_rgn_sinking_sands_67" />
+			<Connection To="exp01_rgn_sinking_sands_69" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_69">
+			<X>-1236.760010</X>
+			<Y>-216.250000</Y>
+			<Z>-561.070007</Z>
+			<Connection To="exp01_rgn_sinking_sands_68" />
+			<Connection To="exp01_rgn_sinking_sands_70" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_7">
+			<X>-1393.410034</X>
+			<Y>-225.080002</Y>
+			<Z>-9.700000</Z>
+			<Connection To="exp01_rgn_sinking_sands_6" />
+			<Connection To="exp01_rgn_sinking_sands_8" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_70">
+			<X>-1222.900024</X>
+			<Y>-216.059998</Y>
+			<Z>-575.849976</Z>
+			<Connection To="exp01_rgn_sinking_sands_69" />
+			<Connection To="exp01_rgn_sinking_sands_71" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_71">
+			<X>-1207.819946</X>
+			<Y>-217.029999</Y>
+			<Z>-589.179993</Z>
+			<Connection To="exp01_rgn_sinking_sands_70" />
+			<Connection To="exp01_rgn_sinking_sands_72" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_72">
+			<X>-1192.430054</X>
+			<Y>-217.369995</Y>
+			<Z>-602.090027</Z>
+			<Connection To="exp01_rgn_sinking_sands_71" />
+			<Connection To="exp01_rgn_sinking_sands_73" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_73">
+			<X>-1182.329956</X>
+			<Y>-217.580002</Y>
+			<Z>-619.619995</Z>
+			<Connection To="exp01_rgn_sinking_sands_72" />
+			<Connection To="exp01_rgn_sinking_sands_74" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_74">
+			<X>-1190.430054</X>
+			<Y>-217.389999</Y>
+			<Z>-638.109985</Z>
+			<Connection To="exp01_rgn_sinking_sands_73" />
+			<Connection To="exp01_rgn_sinking_sands_75" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_75">
+			<X>-1204.140015</X>
+			<Y>-218.220001</Y>
+			<Z>-653.080017</Z>
+			<Connection To="exp01_rgn_sinking_sands_74" />
+			<Connection To="exp01_rgn_sinking_sands_76" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_76">
+			<X>-1218.839966</X>
+			<Y>-218.289993</Y>
+			<Z>-666.799988</Z>
+			<Connection To="exp01_rgn_sinking_sands_75" />
+			<Connection To="exp01_rgn_sinking_sands_77" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_77">
+			<X>-1233.609985</X>
+			<Y>-217.369995</Y>
+			<Z>-680.590027</Z>
+			<Connection To="exp01_rgn_sinking_sands_76" />
+			<Connection To="exp01_rgn_sinking_sands_78" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_78">
+			<X>-1245.410034</X>
+			<Y>-217.529999</Y>
+			<Z>-696.820007</Z>
+			<Connection To="exp01_rgn_sinking_sands_77" />
+			<Connection To="exp01_rgn_sinking_sands_79" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_79">
+			<X>-1249.520020</X>
+			<Y>-219.710007</Y>
+			<Z>-716.559998</Z>
+			<Connection To="exp01_rgn_sinking_sands_78" />
+			<Connection To="exp01_rgn_sinking_sands_80" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_8">
+			<X>-1379.119995</X>
+			<Y>-223.789993</Y>
+			<Z>-23.850000</Z>
+			<Connection To="exp01_rgn_sinking_sands_7" />
+			<Connection To="exp01_rgn_sinking_sands_9" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_80">
+			<X>-1247.520020</X>
+			<Y>-224.779999</Y>
+			<Z>-736.580017</Z>
+			<Connection To="exp01_rgn_sinking_sands_79" />
+			<Connection To="exp01_rgn_sinking_sands_81" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_81">
+			<X>-1248.300049</X>
+			<Y>-229.610001</Y>
+			<Z>-756.599976</Z>
+			<Connection To="exp01_rgn_sinking_sands_80" />
+			<Connection To="exp01_rgn_sinking_sands_82" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_82">
+			<X>-1247.880005</X>
+			<Y>-232.559998</Y>
+			<Z>-776.770020</Z>
+			<Connection To="exp01_rgn_sinking_sands_81" />
+			<Connection To="oasis2" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_85">
+			<X>-979.840027</X>
+			<Y>-126.250000</Y>
+			<Z>-302.339996</Z>
+			<Connection To="highway1" />
+			<Connection To="exp01_rgn_sinking_sands_86" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_86">
+			<X>-960.210022</X>
+			<Y>-126.410004</Y>
+			<Z>-298.320007</Z>
+			<Connection To="exp01_rgn_sinking_sands_85" />
+			<Connection To="exp01_rgn_sinking_sands_87" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_87">
+			<X>-940.729980</X>
+			<Y>-125.970001</Y>
+			<Z>-292.880005</Z>
+			<Connection To="exp01_rgn_sinking_sands_86" />
+			<Connection To="exp01_rgn_sinking_sands_88" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_88">
+			<X>-922.559998</X>
+			<Y>-126.269997</Y>
+			<Z>-284.459991</Z>
+			<Connection To="exp01_rgn_sinking_sands_87" />
+			<Connection To="exp01_rgn_sinking_sands_89" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_89">
+			<X>-904.830017</X>
+			<Y>-124.209999</Y>
+			<Z>-274.450012</Z>
+			<Connection To="exp01_rgn_sinking_sands_88" />
+			<Connection To="exp01_rgn_sinking_sands_90" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_9">
+			<X>-1364.810059</X>
+			<Y>-223.300003</Y>
+			<Z>-38.009998</Z>
+			<Connection To="exp01_rgn_sinking_sands_8" />
+			<Connection To="exp01_rgn_sinking_sands_10" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_90">
+			<X>-889.280029</X>
+			<Y>-122.930000</Y>
+			<Z>-261.480011</Z>
+			<Connection To="exp01_rgn_sinking_sands_89" />
+			<Connection To="exp01_rgn_sinking_sands_91" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_91">
+			<X>-878.159973</X>
+			<Y>-121.290001</Y>
+			<Z>-244.429993</Z>
+			<Connection To="exp01_rgn_sinking_sands_90" />
+			<Connection To="exp01_rgn_sinking_sands_92" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_92">
+			<X>-869.030029</X>
+			<Y>-117.120003</Y>
+			<Z>-226.360001</Z>
+			<Connection To="exp01_rgn_sinking_sands_91" />
+			<Connection To="exp01_rgn_sinking_sands_93" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_93">
+			<X>-864.539978</X>
+			<Y>-111.519997</Y>
+			<Z>-206.630005</Z>
+			<Connection To="exp01_rgn_sinking_sands_92" />
+			<Connection To="exp01_rgn_sinking_sands_94" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_94">
+			<X>-850.650024</X>
+			<Y>-105.800003</Y>
+			<Z>-192.050003</Z>
+			<Connection To="exp01_rgn_sinking_sands_93" />
+			<Connection To="exp01_rgn_sinking_sands_95" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_95">
+			<X>-831.650024</X>
+			<Y>-105.650002</Y>
+			<Z>-199.020004</Z>
+			<Connection To="exp01_rgn_sinking_sands_94" />
+			<Connection To="exp01_rgn_sinking_sands_96" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_96">
+			<X>-812.590027</X>
+			<Y>-108.339996</Y>
+			<Z>-206.350006</Z>
+			<Connection To="exp01_rgn_sinking_sands_95" />
+			<Connection To="exp01_rgn_sinking_sands_97" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_97">
+			<X>-793.820007</X>
+			<Y>-108.940002</Y>
+			<Z>-214.490005</Z>
+			<Connection To="exp01_rgn_sinking_sands_96" />
+			<Connection To="exp01_rgn_sinking_sands_98" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_98">
+			<X>-775.489990</X>
+			<Y>-108.599998</Y>
+			<Z>-223.270004</Z>
+			<Connection To="exp01_rgn_sinking_sands_97" />
+			<Connection To="exp01_rgn_sinking_sands_99" />
+		</Point>
+		<Point Name="exp01_rgn_sinking_sands_99">
+			<X>-757.150024</X>
+			<Y>-108.040001</Y>
+			<Z>-231.910004</Z>
+			<Connection To="exp01_rgn_sinking_sands_98" />
+			<Connection To="exp01_rgn_sinking_sands_100" />
+		</Point>
+		<Point Name="highway1">
+			<X>-999.429993</X>
+			<Y>-126.110001</Y>
+			<Z>-306.709991</Z>
+			<Connection To="exp01_rgn_sinking_sands_85" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="highway2">
+			<X>-214.759995</X>
+			<Y>-104.190002</Y>
+			<Z>-210.130005</Z>
+			<Connection To="exp01_rgn_sinking_sands_137" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="oasis1">
+			<X>-1480.510010</X>
+			<Y>-226.259995</Y>
+			<Z>75.180000</Z>
+			<Connection To="exp01_rgn_sinking_sands_2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="oasis2">
+			<X>-1247.469971</X>
+			<Y>-232.899994</Y>
+			<Z>-783.049988</Z>
+			<Connection To="exp01_rgn_sinking_sands_82" />
+			<Note>keypoint</Note>
+		</Point>
+	</World>
+</Navigation>

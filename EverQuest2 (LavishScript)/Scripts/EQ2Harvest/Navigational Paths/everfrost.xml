@@ -1,0 +1,1146 @@
+<?xml version='1.0'?>
+<Navigation>
+	<World Name="everfrost">
+		<Point Name="e1">
+			<X>-118.610001</X>
+			<Y>-22.520000</Y>
+			<Z>-242.139999</Z>
+			<Connection To="everfrost_96" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="e2">
+			<X>-631.359985</X>
+			<Y>-15.250000</Y>
+			<Z>-354.239990</Z>
+			<Connection To="everfrost_162" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="end">
+			<X>287.640015</X>
+			<Y>-17.389999</Y>
+			<Z>-41.689999</Z>
+			<Connection To="everfrost_93" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="everfrost_10">
+			<X>393.000000</X>
+			<Y>-5.380000</Y>
+			<Z>-89.959999</Z>
+			<Connection To="everfrost_9" />
+			<Connection To="everfrost_11" />
+		</Point>
+		<Point Name="everfrost_100">
+			<X>-187.229996</X>
+			<Y>-14.040000</Y>
+			<Z>-167.339996</Z>
+			<Connection To="everfrost_99" />
+			<Connection To="everfrost_101" />
+		</Point>
+		<Point Name="everfrost_101">
+			<X>-201.550003</X>
+			<Y>-13.320000</Y>
+			<Z>-152.929993</Z>
+			<Connection To="everfrost_100" />
+			<Connection To="everfrost_102" />
+		</Point>
+		<Point Name="everfrost_102">
+			<X>-218.259995</X>
+			<Y>-13.120000</Y>
+			<Z>-141.160004</Z>
+			<Connection To="everfrost_101" />
+			<Connection To="everfrost_103" />
+		</Point>
+		<Point Name="everfrost_103">
+			<X>-236.660004</X>
+			<Y>-13.300000</Y>
+			<Z>-132.740005</Z>
+			<Connection To="everfrost_102" />
+			<Connection To="everfrost_104" />
+		</Point>
+		<Point Name="everfrost_104">
+			<X>-256.170013</X>
+			<Y>-13.160000</Y>
+			<Z>-127.500000</Z>
+			<Connection To="everfrost_103" />
+			<Connection To="everfrost_105" />
+		</Point>
+		<Point Name="everfrost_105">
+			<X>-276.160004</X>
+			<Y>-13.080000</Y>
+			<Z>-123.430000</Z>
+			<Connection To="everfrost_104" />
+			<Connection To="everfrost_106" />
+		</Point>
+		<Point Name="everfrost_106">
+			<X>-296.760010</X>
+			<Y>-12.080000</Y>
+			<Z>-120.309998</Z>
+			<Connection To="everfrost_105" />
+			<Connection To="everfrost_107" />
+		</Point>
+		<Point Name="everfrost_107">
+			<X>-318.059998</X>
+			<Y>-10.200000</Y>
+			<Z>-118.739998</Z>
+			<Connection To="everfrost_106" />
+			<Connection To="everfrost_108" />
+		</Point>
+		<Point Name="everfrost_108">
+			<X>-337.829987</X>
+			<Y>-8.480000</Y>
+			<Z>-114.160004</Z>
+			<Connection To="everfrost_107" />
+			<Connection To="everfrost_109" />
+		</Point>
+		<Point Name="everfrost_109">
+			<X>-356.190002</X>
+			<Y>-8.160000</Y>
+			<Z>-105.360001</Z>
+			<Connection To="everfrost_108" />
+			<Connection To="everfrost_110" />
+		</Point>
+		<Point Name="everfrost_11">
+			<X>407.859985</X>
+			<Y>-4.360000</Y>
+			<Z>-103.589996</Z>
+			<Connection To="everfrost_10" />
+			<Connection To="everfrost_12" />
+		</Point>
+		<Point Name="everfrost_110">
+			<X>-369.589996</X>
+			<Y>-7.940000</Y>
+			<Z>-90.050003</Z>
+			<Connection To="everfrost_109" />
+			<Connection To="everfrost_111" />
+		</Point>
+		<Point Name="everfrost_111">
+			<X>-380.230011</X>
+			<Y>-7.820000</Y>
+			<Z>-72.989998</Z>
+			<Connection To="everfrost_110" />
+			<Connection To="everfrost_112" />
+		</Point>
+		<Point Name="everfrost_112">
+			<X>-396.489990</X>
+			<Y>-7.750000</Y>
+			<Z>-84.919998</Z>
+			<Connection To="everfrost_111" />
+			<Connection To="everfrost_113" />
+		</Point>
+		<Point Name="everfrost_113">
+			<X>-388.679993</X>
+			<Y>-8.110000</Y>
+			<Z>-103.410004</Z>
+			<Connection To="everfrost_112" />
+			<Connection To="everfrost_114" />
+		</Point>
+		<Point Name="everfrost_114">
+			<X>-372.140015</X>
+			<Y>-8.560000</Y>
+			<Z>-115.239998</Z>
+			<Connection To="everfrost_113" />
+			<Connection To="everfrost_115" />
+		</Point>
+		<Point Name="everfrost_115">
+			<X>-353.790009</X>
+			<Y>-8.560000</Y>
+			<Z>-123.940002</Z>
+			<Connection To="everfrost_114" />
+			<Connection To="everfrost_116" />
+		</Point>
+		<Point Name="everfrost_116">
+			<X>-335.170013</X>
+			<Y>-9.020000</Y>
+			<Z>-132.050003</Z>
+			<Connection To="everfrost_115" />
+			<Connection To="everfrost_117" />
+		</Point>
+		<Point Name="everfrost_117">
+			<X>-315.709991</X>
+			<Y>-10.650000</Y>
+			<Z>-136.899994</Z>
+			<Connection To="everfrost_116" />
+			<Connection To="everfrost_118" />
+		</Point>
+		<Point Name="everfrost_118">
+			<X>-295.640015</X>
+			<Y>-12.520000</Y>
+			<Z>-136.250000</Z>
+			<Connection To="everfrost_117" />
+			<Connection To="everfrost_119" />
+		</Point>
+		<Point Name="everfrost_119">
+			<X>-275.579987</X>
+			<Y>-13.400000</Y>
+			<Z>-135.610001</Z>
+			<Connection To="everfrost_118" />
+			<Connection To="everfrost_120" />
+		</Point>
+		<Point Name="everfrost_12">
+			<X>421.980011</X>
+			<Y>-2.550000</Y>
+			<Z>-117.889999</Z>
+			<Connection To="everfrost_11" />
+			<Connection To="everfrost_13" />
+		</Point>
+		<Point Name="everfrost_120">
+			<X>-255.949997</X>
+			<Y>-11.670000</Y>
+			<Z>-139.770004</Z>
+			<Connection To="everfrost_119" />
+			<Connection To="everfrost_121" />
+		</Point>
+		<Point Name="everfrost_121">
+			<X>-259.640015</X>
+			<Y>-10.340000</Y>
+			<Z>-159.500000</Z>
+			<Connection To="everfrost_120" />
+			<Connection To="everfrost_122" />
+		</Point>
+		<Point Name="everfrost_122">
+			<X>-257.950012</X>
+			<Y>-6.240000</Y>
+			<Z>-179.860001</Z>
+			<Connection To="everfrost_121" />
+			<Connection To="everfrost_123" />
+		</Point>
+		<Point Name="everfrost_123">
+			<X>-252.910004</X>
+			<Y>-2.140000</Y>
+			<Z>-199.539993</Z>
+			<Connection To="everfrost_122" />
+			<Connection To="everfrost_124" />
+		</Point>
+		<Point Name="everfrost_124">
+			<X>-259.850006</X>
+			<Y>2.300000</Y>
+			<Z>-218.600006</Z>
+			<Connection To="everfrost_123" />
+			<Connection To="everfrost_125" />
+		</Point>
+		<Point Name="everfrost_125">
+			<X>-257.119995</X>
+			<Y>5.380000</Y>
+			<Z>-238.529999</Z>
+			<Connection To="everfrost_124" />
+			<Connection To="everfrost_126" />
+		</Point>
+		<Point Name="everfrost_126">
+			<X>-254.309998</X>
+			<Y>5.310000</Y>
+			<Z>-258.500000</Z>
+			<Connection To="everfrost_125" />
+			<Connection To="everfrost_127" />
+		</Point>
+		<Point Name="everfrost_127">
+			<X>-247.880005</X>
+			<Y>2.420000</Y>
+			<Z>-277.980011</Z>
+			<Connection To="everfrost_126" />
+			<Connection To="everfrost_128" />
+		</Point>
+		<Point Name="everfrost_128">
+			<X>-241.029999</X>
+			<Y>-1.830000</Y>
+			<Z>-297.019989</Z>
+			<Connection To="everfrost_127" />
+			<Connection To="everfrost_129" />
+		</Point>
+		<Point Name="everfrost_129">
+			<X>-236.380005</X>
+			<Y>-3.790000</Y>
+			<Z>-316.600006</Z>
+			<Connection To="everfrost_128" />
+			<Connection To="everfrost_130" />
+		</Point>
+		<Point Name="everfrost_13">
+			<X>432.779999</X>
+			<Y>-1.770000</Y>
+			<Z>-134.770004</Z>
+			<Connection To="everfrost_12" />
+			<Connection To="everfrost_14" />
+		</Point>
+		<Point Name="everfrost_130">
+			<X>-244.529999</X>
+			<Y>-2.800000</Y>
+			<Z>-335.130005</Z>
+			<Connection To="everfrost_129" />
+			<Connection To="everfrost_131" />
+		</Point>
+		<Point Name="everfrost_131">
+			<X>-264.660004</X>
+			<Y>-5.480000</Y>
+			<Z>-336.809998</Z>
+			<Connection To="everfrost_130" />
+			<Connection To="everfrost_132" />
+		</Point>
+		<Point Name="everfrost_132">
+			<X>-284.429993</X>
+			<Y>-6.500000</Y>
+			<Z>-331.559998</Z>
+			<Connection To="everfrost_131" />
+			<Connection To="everfrost_133" />
+		</Point>
+		<Point Name="everfrost_133">
+			<X>-304.140015</X>
+			<Y>-6.790000</Y>
+			<Z>-326.329987</Z>
+			<Connection To="everfrost_132" />
+			<Connection To="everfrost_134" />
+		</Point>
+		<Point Name="everfrost_134">
+			<X>-323.959991</X>
+			<Y>-8.450000</Y>
+			<Z>-322.980011</Z>
+			<Connection To="everfrost_133" />
+			<Connection To="everfrost_135" />
+		</Point>
+		<Point Name="everfrost_135">
+			<X>-343.290009</X>
+			<Y>-7.170000</Y>
+			<Z>-328.149994</Z>
+			<Connection To="everfrost_134" />
+			<Connection To="everfrost_136" />
+		</Point>
+		<Point Name="everfrost_136">
+			<X>-347.690002</X>
+			<Y>-4.600000</Y>
+			<Z>-347.869995</Z>
+			<Connection To="everfrost_135" />
+			<Connection To="everfrost_137" />
+		</Point>
+		<Point Name="everfrost_137">
+			<X>-344.989990</X>
+			<Y>-5.380000</Y>
+			<Z>-368.100006</Z>
+			<Connection To="everfrost_136" />
+			<Connection To="everfrost_138" />
+		</Point>
+		<Point Name="everfrost_138">
+			<X>-348.670013</X>
+			<Y>-6.530000</Y>
+			<Z>-388.010010</Z>
+			<Connection To="everfrost_137" />
+			<Connection To="everfrost_139" />
+		</Point>
+		<Point Name="everfrost_139">
+			<X>-367.290009</X>
+			<Y>0.690000</Y>
+			<Z>-395.820007</Z>
+			<Connection To="everfrost_138" />
+			<Connection To="everfrost_140" />
+		</Point>
+		<Point Name="everfrost_14">
+			<X>443.529999</X>
+			<Y>-0.920000</Y>
+			<Z>-151.820007</Z>
+			<Connection To="everfrost_13" />
+			<Connection To="everfrost_15" />
+		</Point>
+		<Point Name="everfrost_140">
+			<X>-386.750000</X>
+			<Y>2.910000</Y>
+			<Z>-390.010010</Z>
+			<Connection To="everfrost_139" />
+			<Connection To="everfrost_141" />
+		</Point>
+		<Point Name="everfrost_141">
+			<X>-406.250000</X>
+			<Y>3.830000</Y>
+			<Z>-383.459991</Z>
+			<Connection To="everfrost_140" />
+			<Connection To="everfrost_142" />
+		</Point>
+		<Point Name="everfrost_142">
+			<X>-425.380005</X>
+			<Y>8.060000</Y>
+			<Z>-377.029999</Z>
+			<Connection To="everfrost_141" />
+			<Connection To="everfrost_143" />
+		</Point>
+		<Point Name="everfrost_143">
+			<X>-444.510010</X>
+			<Y>4.620000</Y>
+			<Z>-370.600006</Z>
+			<Connection To="everfrost_142" />
+			<Connection To="everfrost_144" />
+		</Point>
+		<Point Name="everfrost_144">
+			<X>-463.899994</X>
+			<Y>-0.030000</Y>
+			<Z>-364.269989</Z>
+			<Connection To="everfrost_143" />
+			<Connection To="everfrost_145" />
+		</Point>
+		<Point Name="everfrost_145">
+			<X>-483.040009</X>
+			<Y>-3.750000</Y>
+			<Z>-357.839996</Z>
+			<Connection To="everfrost_144" />
+			<Connection To="everfrost_146" />
+		</Point>
+		<Point Name="everfrost_146">
+			<X>-503.109985</X>
+			<Y>-6.700000</Y>
+			<Z>-354.690002</Z>
+			<Connection To="everfrost_145" />
+			<Connection To="everfrost_147" />
+		</Point>
+		<Point Name="everfrost_147">
+			<X>-522.979980</X>
+			<Y>-9.250000</Y>
+			<Z>-349.799988</Z>
+			<Connection To="everfrost_146" />
+			<Connection To="everfrost_148" />
+		</Point>
+		<Point Name="everfrost_148">
+			<X>-542.159973</X>
+			<Y>-12.940000</Y>
+			<Z>-343.510010</Z>
+			<Connection To="everfrost_147" />
+			<Connection To="everfrost_149" />
+		</Point>
+		<Point Name="everfrost_149">
+			<X>-561.049988</X>
+			<Y>-16.219999</Y>
+			<Z>-335.950012</Z>
+			<Connection To="everfrost_148" />
+			<Connection To="everfrost_150" />
+		</Point>
+		<Point Name="everfrost_15">
+			<X>454.269989</X>
+			<Y>-0.160000</Y>
+			<Z>-168.869995</Z>
+			<Connection To="everfrost_14" />
+			<Connection To="everfrost_16" />
+		</Point>
+		<Point Name="everfrost_150">
+			<X>-577.349976</X>
+			<Y>-18.559999</Y>
+			<Z>-324.100006</Z>
+			<Connection To="everfrost_149" />
+			<Connection To="everfrost_151" />
+		</Point>
+		<Point Name="everfrost_151">
+			<X>-593.250000</X>
+			<Y>-18.840000</Y>
+			<Z>-311.649994</Z>
+			<Connection To="everfrost_150" />
+			<Connection To="everfrost_152" />
+		</Point>
+		<Point Name="everfrost_152">
+			<X>-609.000000</X>
+			<Y>-16.959999</Y>
+			<Z>-298.890015</Z>
+			<Connection To="everfrost_151" />
+			<Connection To="everfrost_153" />
+		</Point>
+		<Point Name="everfrost_153">
+			<X>-623.979980</X>
+			<Y>-14.920000</Y>
+			<Z>-284.940002</Z>
+			<Connection To="everfrost_152" />
+			<Connection To="everfrost_154" />
+		</Point>
+		<Point Name="everfrost_154">
+			<X>-638.700012</X>
+			<Y>-15.400000</Y>
+			<Z>-271.230011</Z>
+			<Connection To="everfrost_153" />
+			<Connection To="everfrost_155" />
+		</Point>
+		<Point Name="everfrost_155">
+			<X>-654.070007</X>
+			<Y>-16.270000</Y>
+			<Z>-258.369995</Z>
+			<Connection To="everfrost_154" />
+			<Connection To="everfrost_156" />
+		</Point>
+		<Point Name="everfrost_156">
+			<X>-674.280029</X>
+			<Y>-17.430000</Y>
+			<Z>-260.179993</Z>
+			<Connection To="everfrost_155" />
+			<Connection To="everfrost_157" />
+		</Point>
+		<Point Name="everfrost_157">
+			<X>-686.799988</X>
+			<Y>-15.790000</Y>
+			<Z>-275.869995</Z>
+			<Connection To="everfrost_156" />
+			<Connection To="everfrost_158" />
+		</Point>
+		<Point Name="everfrost_158">
+			<X>-691.840027</X>
+			<Y>-11.230000</Y>
+			<Z>-295.369995</Z>
+			<Connection To="everfrost_157" />
+			<Connection To="everfrost_159" />
+		</Point>
+		<Point Name="everfrost_159">
+			<X>-684.750000</X>
+			<Y>-14.270000</Y>
+			<Z>-314.209991</Z>
+			<Connection To="everfrost_158" />
+			<Connection To="everfrost_160" />
+		</Point>
+		<Point Name="everfrost_16">
+			<X>454.350006</X>
+			<Y>-0.530000</Y>
+			<Z>-188.910004</Z>
+			<Connection To="everfrost_15" />
+			<Connection To="everfrost_17" />
+		</Point>
+		<Point Name="everfrost_160">
+			<X>-671.380005</X>
+			<Y>-17.309999</Y>
+			<Z>-329.660004</Z>
+			<Connection To="everfrost_159" />
+			<Connection To="everfrost_161" />
+		</Point>
+		<Point Name="everfrost_161">
+			<X>-654.919983</X>
+			<Y>-16.860001</Y>
+			<Z>-341.609985</Z>
+			<Connection To="everfrost_160" />
+			<Connection To="everfrost_162" />
+		</Point>
+		<Point Name="everfrost_162">
+			<X>-637.010010</X>
+			<Y>-15.280000</Y>
+			<Z>-350.559998</Z>
+			<Connection To="everfrost_161" />
+			<Connection To="e2" />
+		</Point>
+		<Point Name="everfrost_17">
+			<X>438.200012</X>
+			<Y>-0.850000</Y>
+			<Z>-200.899994</Z>
+			<Connection To="everfrost_16" />
+			<Connection To="everfrost_18" />
+		</Point>
+		<Point Name="everfrost_18">
+			<X>420.089996</X>
+			<Y>-0.200000</Y>
+			<Z>-209.500000</Z>
+			<Connection To="everfrost_17" />
+			<Connection To="everfrost_19" />
+		</Point>
+		<Point Name="everfrost_19">
+			<X>401.660004</X>
+			<Y>-0.310000</Y>
+			<Z>-217.949997</Z>
+			<Connection To="everfrost_18" />
+			<Connection To="everfrost_20" />
+		</Point>
+		<Point Name="everfrost_2">
+			<X>258.450012</X>
+			<Y>-19.170000</Y>
+			<Z>-15.330000</Z>
+			<Connection To="start" />
+			<Connection To="everfrost_3" />
+		</Point>
+		<Point Name="everfrost_20">
+			<X>385.140015</X>
+			<Y>0.050000</Y>
+			<Z>-229.550003</Z>
+			<Connection To="everfrost_19" />
+			<Connection To="everfrost_21" />
+		</Point>
+		<Point Name="everfrost_21">
+			<X>376.750000</X>
+			<Y>-0.530000</Y>
+			<Z>-247.869995</Z>
+			<Connection To="everfrost_20" />
+			<Connection To="everfrost_22" />
+		</Point>
+		<Point Name="everfrost_22">
+			<X>377.950012</X>
+			<Y>-0.210000</Y>
+			<Z>-268.010010</Z>
+			<Connection To="everfrost_21" />
+			<Connection To="everfrost_23" />
+		</Point>
+		<Point Name="everfrost_23">
+			<X>380.720001</X>
+			<Y>-0.990000</Y>
+			<Z>-287.970001</Z>
+			<Connection To="everfrost_22" />
+			<Connection To="everfrost_24" />
+		</Point>
+		<Point Name="everfrost_24">
+			<X>383.049988</X>
+			<Y>-0.970000</Y>
+			<Z>-308.079987</Z>
+			<Connection To="everfrost_23" />
+			<Connection To="everfrost_25" />
+		</Point>
+		<Point Name="everfrost_25">
+			<X>370.019989</X>
+			<Y>-1.190000</Y>
+			<Z>-323.339996</Z>
+			<Connection To="everfrost_24" />
+			<Connection To="everfrost_26" />
+		</Point>
+		<Point Name="everfrost_26">
+			<X>351.950012</X>
+			<Y>-0.500000</Y>
+			<Z>-331.959991</Z>
+			<Connection To="everfrost_25" />
+			<Connection To="everfrost_27" />
+		</Point>
+		<Point Name="everfrost_27">
+			<X>332.079987</X>
+			<Y>-0.920000</Y>
+			<Z>-335.649994</Z>
+			<Connection To="everfrost_26" />
+			<Connection To="everfrost_28" />
+		</Point>
+		<Point Name="everfrost_28">
+			<X>311.920013</X>
+			<Y>-0.970000</Y>
+			<Z>-334.390015</Z>
+			<Connection To="everfrost_27" />
+			<Connection To="everfrost_29" />
+		</Point>
+		<Point Name="everfrost_29">
+			<X>292.489990</X>
+			<Y>0.200000</Y>
+			<Z>-329.549988</Z>
+			<Connection To="everfrost_28" />
+			<Connection To="everfrost_30" />
+		</Point>
+		<Point Name="everfrost_3">
+			<X>273.359985</X>
+			<Y>-19.100000</Y>
+			<Z>-28.850000</Z>
+			<Connection To="everfrost_2" />
+			<Connection To="everfrost_4" />
+		</Point>
+		<Point Name="everfrost_30">
+			<X>273.010010</X>
+			<Y>2.490000</Y>
+			<Z>-324.369995</Z>
+			<Connection To="everfrost_29" />
+			<Connection To="everfrost_31" />
+		</Point>
+		<Point Name="everfrost_31">
+			<X>253.050003</X>
+			<Y>3.430000</Y>
+			<Z>-321.160004</Z>
+			<Connection To="everfrost_30" />
+			<Connection To="everfrost_32" />
+		</Point>
+		<Point Name="everfrost_32">
+			<X>233.339996</X>
+			<Y>4.570000</Y>
+			<Z>-325.559998</Z>
+			<Connection To="everfrost_31" />
+			<Connection To="everfrost_33" />
+		</Point>
+		<Point Name="everfrost_33">
+			<X>213.910004</X>
+			<Y>4.890000</Y>
+			<Z>-331.329987</Z>
+			<Connection To="everfrost_32" />
+			<Connection To="everfrost_34" />
+		</Point>
+		<Point Name="everfrost_34">
+			<X>195.619995</X>
+			<Y>6.050000</Y>
+			<Z>-339.769989</Z>
+			<Connection To="everfrost_33" />
+			<Connection To="everfrost_35" />
+		</Point>
+		<Point Name="everfrost_35">
+			<X>181.889999</X>
+			<Y>9.050000</Y>
+			<Z>-354.399994</Z>
+			<Connection To="everfrost_34" />
+			<Connection To="everfrost_36" />
+		</Point>
+		<Point Name="everfrost_36">
+			<X>171.380005</X>
+			<Y>8.490000</Y>
+			<Z>-371.429993</Z>
+			<Connection To="everfrost_35" />
+			<Connection To="everfrost_37" />
+		</Point>
+		<Point Name="everfrost_37">
+			<X>161.279999</X>
+			<Y>9.030000</Y>
+			<Z>-388.839996</Z>
+			<Connection To="everfrost_36" />
+			<Connection To="everfrost_38" />
+		</Point>
+		<Point Name="everfrost_38">
+			<X>150.190002</X>
+			<Y>12.160000</Y>
+			<Z>-405.609985</Z>
+			<Connection To="everfrost_37" />
+			<Connection To="everfrost_39" />
+		</Point>
+		<Point Name="everfrost_39">
+			<X>151.660004</X>
+			<Y>23.129999</Y>
+			<Z>-425.670013</Z>
+			<Connection To="everfrost_38" />
+			<Connection To="everfrost_40" />
+		</Point>
+		<Point Name="everfrost_4">
+			<X>292.700012</X>
+			<Y>-16.030001</Y>
+			<Z>-34.730000</Z>
+			<Connection To="everfrost_3" />
+			<Connection To="everfrost_5" />
+		</Point>
+		<Point Name="everfrost_40">
+			<X>164.720001</X>
+			<Y>24.969999</Y>
+			<Z>-441.040009</Z>
+			<Connection To="everfrost_39" />
+			<Connection To="everfrost_41" />
+		</Point>
+		<Point Name="everfrost_41">
+			<X>179.289993</X>
+			<Y>26.570000</Y>
+			<Z>-454.890015</Z>
+			<Connection To="everfrost_40" />
+			<Connection To="everfrost_42" />
+		</Point>
+		<Point Name="everfrost_42">
+			<X>195.529999</X>
+			<Y>27.469999</Y>
+			<Z>-466.670013</Z>
+			<Connection To="everfrost_41" />
+			<Connection To="everfrost_43" />
+		</Point>
+		<Point Name="everfrost_43">
+			<X>208.330002</X>
+			<Y>28.820000</Y>
+			<Z>-482.239990</Z>
+			<Connection To="everfrost_42" />
+			<Connection To="everfrost_44" />
+		</Point>
+		<Point Name="everfrost_44">
+			<X>204.979996</X>
+			<Y>23.570000</Y>
+			<Z>-502.220001</Z>
+			<Connection To="everfrost_43" />
+			<Connection To="everfrost_45" />
+		</Point>
+		<Point Name="everfrost_45">
+			<X>196.940002</X>
+			<Y>22.690001</Y>
+			<Z>-520.690002</Z>
+			<Connection To="everfrost_44" />
+			<Connection To="everfrost_46" />
+		</Point>
+		<Point Name="everfrost_46">
+			<X>183.710007</X>
+			<Y>21.740000</Y>
+			<Z>-535.859985</Z>
+			<Connection To="everfrost_45" />
+			<Connection To="everfrost_47" />
+		</Point>
+		<Point Name="everfrost_47">
+			<X>163.949997</X>
+			<Y>21.030001</Y>
+			<Z>-532.239990</Z>
+			<Connection To="everfrost_46" />
+			<Connection To="everfrost_48" />
+		</Point>
+		<Point Name="everfrost_48">
+			<X>146.460007</X>
+			<Y>22.020000</Y>
+			<Z>-522.510010</Z>
+			<Connection To="everfrost_47" />
+			<Connection To="everfrost_49" />
+		</Point>
+		<Point Name="everfrost_49">
+			<X>126.269997</X>
+			<Y>24.709999</Y>
+			<Z>-522.119995</Z>
+			<Connection To="everfrost_48" />
+			<Connection To="everfrost_50" />
+		</Point>
+		<Point Name="everfrost_5">
+			<X>312.339996</X>
+			<Y>-14.460000</Y>
+			<Z>-38.709999</Z>
+			<Connection To="everfrost_4" />
+			<Connection To="everfrost_6" />
+		</Point>
+		<Point Name="everfrost_50">
+			<X>106.480003</X>
+			<Y>25.879999</Y>
+			<Z>-525.729980</Z>
+			<Connection To="everfrost_49" />
+			<Connection To="everfrost_51" />
+		</Point>
+		<Point Name="everfrost_51">
+			<X>86.370003</X>
+			<Y>28.049999</Y>
+			<Z>-527.299988</Z>
+			<Connection To="everfrost_50" />
+			<Connection To="everfrost_52" />
+		</Point>
+		<Point Name="everfrost_52">
+			<X>67.690002</X>
+			<Y>29.320000</Y>
+			<Z>-519.590027</Z>
+			<Connection To="everfrost_51" />
+			<Connection To="everfrost_53" />
+		</Point>
+		<Point Name="everfrost_53">
+			<X>53.299999</X>
+			<Y>29.750000</Y>
+			<Z>-505.440002</Z>
+			<Connection To="everfrost_52" />
+			<Connection To="everfrost_54" />
+		</Point>
+		<Point Name="everfrost_54">
+			<X>36.590000</X>
+			<Y>29.690001</Y>
+			<Z>-494.369995</Z>
+			<Connection To="everfrost_53" />
+			<Connection To="everfrost_55" />
+		</Point>
+		<Point Name="everfrost_55">
+			<X>35.240002</X>
+			<Y>28.299999</Y>
+			<Z>-474.359985</Z>
+			<Connection To="everfrost_54" />
+			<Connection To="everfrost_56" />
+		</Point>
+		<Point Name="everfrost_56">
+			<X>44.279999</X>
+			<Y>26.910000</Y>
+			<Z>-456.420013</Z>
+			<Connection To="everfrost_55" />
+			<Connection To="everfrost_57" />
+		</Point>
+		<Point Name="everfrost_57">
+			<X>53.720001</X>
+			<Y>24.559999</Y>
+			<Z>-438.559998</Z>
+			<Connection To="everfrost_56" />
+			<Connection To="everfrost_58" />
+		</Point>
+		<Point Name="everfrost_58">
+			<X>68.510002</X>
+			<Y>23.670000</Y>
+			<Z>-424.869995</Z>
+			<Connection To="everfrost_57" />
+			<Connection To="everfrost_59" />
+		</Point>
+		<Point Name="everfrost_59">
+			<X>82.669998</X>
+			<Y>23.719999</Y>
+			<Z>-410.619995</Z>
+			<Connection To="everfrost_58" />
+			<Connection To="everfrost_60" />
+		</Point>
+		<Point Name="everfrost_6">
+			<X>331.989990</X>
+			<Y>-11.410000</Y>
+			<Z>-42.689999</Z>
+			<Connection To="everfrost_5" />
+			<Connection To="everfrost_7" />
+		</Point>
+		<Point Name="everfrost_60">
+			<X>101.400002</X>
+			<Y>26.530001</Y>
+			<Z>-403.399994</Z>
+			<Connection To="everfrost_59" />
+			<Connection To="everfrost_61" />
+		</Point>
+		<Point Name="everfrost_61">
+			<X>121.269997</X>
+			<Y>26.410000</Y>
+			<Z>-405.809998</Z>
+			<Connection To="everfrost_60" />
+			<Connection To="everfrost_62" />
+		</Point>
+		<Point Name="everfrost_62">
+			<X>141.339996</X>
+			<Y>20.750000</Y>
+			<Z>-406.000000</Z>
+			<Connection To="everfrost_61" />
+			<Connection To="everfrost_63" />
+		</Point>
+		<Point Name="everfrost_63">
+			<X>157.020004</X>
+			<Y>9.740000</Y>
+			<Z>-393.489990</Z>
+			<Connection To="everfrost_62" />
+			<Connection To="everfrost_64" />
+		</Point>
+		<Point Name="everfrost_64">
+			<X>168.059998</X>
+			<Y>8.570000</Y>
+			<Z>-376.690002</Z>
+			<Connection To="everfrost_63" />
+			<Connection To="everfrost_65" />
+		</Point>
+		<Point Name="everfrost_65">
+			<X>179.119995</X>
+			<Y>9.500000</Y>
+			<Z>-359.869995</Z>
+			<Connection To="everfrost_64" />
+			<Connection To="everfrost_66" />
+		</Point>
+		<Point Name="everfrost_66">
+			<X>194.539993</X>
+			<Y>6.920000</Y>
+			<Z>-346.899994</Z>
+			<Connection To="everfrost_65" />
+			<Connection To="everfrost_67" />
+		</Point>
+		<Point Name="everfrost_67">
+			<X>210.850006</X>
+			<Y>5.760000</Y>
+			<Z>-335.049988</Z>
+			<Connection To="everfrost_66" />
+			<Connection To="everfrost_68" />
+		</Point>
+		<Point Name="everfrost_68">
+			<X>227.889999</X>
+			<Y>4.210000</Y>
+			<Z>-324.320007</Z>
+			<Connection To="everfrost_67" />
+			<Connection To="everfrost_69" />
+		</Point>
+		<Point Name="everfrost_69">
+			<X>246.669998</X>
+			<Y>3.500000</Y>
+			<Z>-317.010010</Z>
+			<Connection To="everfrost_68" />
+			<Connection To="everfrost_70" />
+		</Point>
+		<Point Name="everfrost_7">
+			<X>351.739990</X>
+			<Y>-9.270000</Y>
+			<Z>-46.689999</Z>
+			<Connection To="everfrost_6" />
+			<Connection To="everfrost_8" />
+		</Point>
+		<Point Name="everfrost_70">
+			<X>266.809998</X>
+			<Y>2.170000</Y>
+			<Z>-318.220001</Z>
+			<Connection To="everfrost_69" />
+			<Connection To="everfrost_71" />
+		</Point>
+		<Point Name="everfrost_71">
+			<X>286.459991</X>
+			<Y>1.240000</Y>
+			<Z>-322.179993</Z>
+			<Connection To="everfrost_70" />
+			<Connection To="everfrost_72" />
+		</Point>
+		<Point Name="everfrost_72">
+			<X>306.100006</X>
+			<Y>0.110000</Y>
+			<Z>-326.140015</Z>
+			<Connection To="everfrost_71" />
+			<Connection To="everfrost_73" />
+		</Point>
+		<Point Name="everfrost_73">
+			<X>326.019989</X>
+			<Y>-0.590000</Y>
+			<Z>-328.510010</Z>
+			<Connection To="everfrost_72" />
+			<Connection To="everfrost_74" />
+		</Point>
+		<Point Name="everfrost_74">
+			<X>345.609985</X>
+			<Y>-0.460000</Y>
+			<Z>-323.790009</Z>
+			<Connection To="everfrost_73" />
+			<Connection To="everfrost_75" />
+		</Point>
+		<Point Name="everfrost_75">
+			<X>360.760010</X>
+			<Y>-0.340000</Y>
+			<Z>-310.630005</Z>
+			<Connection To="everfrost_74" />
+			<Connection To="everfrost_76" />
+		</Point>
+		<Point Name="everfrost_76">
+			<X>370.750000</X>
+			<Y>-0.880000</Y>
+			<Z>-293.079987</Z>
+			<Connection To="everfrost_75" />
+			<Connection To="everfrost_77" />
+		</Point>
+		<Point Name="everfrost_77">
+			<X>374.220001</X>
+			<Y>-0.200000</Y>
+			<Z>-273.279999</Z>
+			<Connection To="everfrost_76" />
+			<Connection To="everfrost_78" />
+		</Point>
+		<Point Name="everfrost_78">
+			<X>373.350006</X>
+			<Y>-0.610000</Y>
+			<Z>-253.289993</Z>
+			<Connection To="everfrost_77" />
+			<Connection To="everfrost_79" />
+		</Point>
+		<Point Name="everfrost_79">
+			<X>377.440002</X>
+			<Y>-0.820000</Y>
+			<Z>-233.100006</Z>
+			<Connection To="everfrost_78" />
+			<Connection To="everfrost_80" />
+		</Point>
+		<Point Name="everfrost_8">
+			<X>367.899994</X>
+			<Y>-7.710000</Y>
+			<Z>-58.849998</Z>
+			<Connection To="everfrost_7" />
+			<Connection To="everfrost_9" />
+		</Point>
+		<Point Name="everfrost_80">
+			<X>393.059998</X>
+			<Y>-0.360000</Y>
+			<Z>-220.139999</Z>
+			<Connection To="everfrost_79" />
+			<Connection To="everfrost_81" />
+		</Point>
+		<Point Name="everfrost_81">
+			<X>410.250000</X>
+			<Y>-0.230000</Y>
+			<Z>-209.619995</Z>
+			<Connection To="everfrost_80" />
+			<Connection To="everfrost_82" />
+		</Point>
+		<Point Name="everfrost_82">
+			<X>424.570007</X>
+			<Y>-0.430000</Y>
+			<Z>-195.649994</Z>
+			<Connection To="everfrost_81" />
+			<Connection To="everfrost_83" />
+		</Point>
+		<Point Name="everfrost_83">
+			<X>431.260010</X>
+			<Y>-0.140000</Y>
+			<Z>-176.610001</Z>
+			<Connection To="everfrost_82" />
+			<Connection To="everfrost_84" />
+		</Point>
+		<Point Name="everfrost_84">
+			<X>430.459991</X>
+			<Y>-0.480000</Y>
+			<Z>-156.500000</Z>
+			<Connection To="everfrost_83" />
+			<Connection To="everfrost_85" />
+		</Point>
+		<Point Name="everfrost_85">
+			<X>422.950012</X>
+			<Y>-1.950000</Y>
+			<Z>-137.750000</Z>
+			<Connection To="everfrost_84" />
+			<Connection To="everfrost_86" />
+		</Point>
+		<Point Name="everfrost_86">
+			<X>411.190002</X>
+			<Y>-2.230000</Y>
+			<Z>-121.440002</Z>
+			<Connection To="everfrost_85" />
+			<Connection To="everfrost_87" />
+		</Point>
+		<Point Name="everfrost_87">
+			<X>396.820007</X>
+			<Y>-4.010000</Y>
+			<Z>-107.239998</Z>
+			<Connection To="everfrost_86" />
+			<Connection To="everfrost_88" />
+		</Point>
+		<Point Name="everfrost_88">
+			<X>384.839996</X>
+			<Y>-5.650000</Y>
+			<Z>-90.949997</Z>
+			<Connection To="everfrost_87" />
+			<Connection To="everfrost_89" />
+		</Point>
+		<Point Name="everfrost_89">
+			<X>373.649994</X>
+			<Y>-6.800000</Y>
+			<Z>-74.209999</Z>
+			<Connection To="everfrost_88" />
+			<Connection To="everfrost_90" />
+		</Point>
+		<Point Name="everfrost_9">
+			<X>378.589996</X>
+			<Y>-6.600000</Y>
+			<Z>-75.790001</Z>
+			<Connection To="everfrost_8" />
+			<Connection To="everfrost_10" />
+		</Point>
+		<Point Name="everfrost_90">
+			<X>360.959991</X>
+			<Y>-6.190000</Y>
+			<Z>-58.480000</Z>
+			<Connection To="everfrost_89" />
+			<Connection To="everfrost_91" />
+		</Point>
+		<Point Name="everfrost_91">
+			<X>344.380005</X>
+			<Y>-9.670000</Y>
+			<Z>-46.990002</Z>
+			<Connection To="everfrost_90" />
+			<Connection To="everfrost_92" />
+		</Point>
+		<Point Name="everfrost_92">
+			<X>325.029999</X>
+			<Y>-12.660000</Y>
+			<Z>-40.830002</Z>
+			<Connection To="everfrost_91" />
+			<Connection To="everfrost_93" />
+		</Point>
+		<Point Name="everfrost_93">
+			<X>305.029999</X>
+			<Y>-15.560000</Y>
+			<Z>-41.980000</Z>
+			<Connection To="everfrost_92" />
+			<Connection To="end" />
+		</Point>
+		<Point Name="everfrost_96">
+			<X>-131.380005</X>
+			<Y>-22.360001</Y>
+			<Z>-226.199997</Z>
+			<Connection To="e1" />
+			<Connection To="everfrost_97" />
+		</Point>
+		<Point Name="everfrost_97">
+			<X>-144.509995</X>
+			<Y>-22.590000</Y>
+			<Z>-210.470001</Z>
+			<Connection To="everfrost_96" />
+			<Connection To="everfrost_98" />
+		</Point>
+		<Point Name="everfrost_98">
+			<X>-158.570007</X>
+			<Y>-17.080000</Y>
+			<Z>-195.619995</Z>
+			<Connection To="everfrost_97" />
+			<Connection To="everfrost_99" />
+		</Point>
+		<Point Name="everfrost_99">
+			<X>-171.750000</X>
+			<Y>-16.580000</Y>
+			<Z>-180.419998</Z>
+			<Connection To="everfrost_98" />
+			<Connection To="everfrost_100" />
+		</Point>
+		<Point Name="start">
+			<X>244.100006</X>
+			<Y>-19.209999</Y>
+			<Z>-1.220000</Z>
+			<Connection To="everfrost_2" />
+			<Note>keypoint</Note>
+		</Point>
+	</World>
+</Navigation>
