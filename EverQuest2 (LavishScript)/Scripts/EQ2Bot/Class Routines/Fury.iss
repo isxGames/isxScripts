@@ -1,15 +1,23 @@
 ;*************************************************************
-;Fury.iss 20070201a
+;Fury.iss 20070226a
 ;version 
 ;
+;20070226a
+; Full support for KoS and EoF AA lines
+; Toggle of incombat rez
+; Toggle of initiating HO
+; Added Missing Spells (Carnal Mask, Maddening Swarm, Barbarous Intimidation)
+; Fixed bug in Storms Usage
+; Fixed a bug in UI file 
+;
 ;20070201a
-;Intelligent Casting of Int Buffs
-;Crystalized Shard usage added to checkheals
-;Fixed Curing of uncurables
-;Added toggle for buffing Thorns on MA (raid stacking contention with other furies/wardens)
-;Optomized Storms/Ring of fire when selected
-;Added AA Lines
-;Optomized DPS
+; Intelligent Casting of Int Buffs
+; Crystalized Shard usage added to checkheals
+; Fixed Curing of uncurables
+; Added toggle for buffing Thorns on MA (raid stacking contention with other furies/wardens)
+; Optomized Storms/Ring of fire when selected
+; Added AA Lines
+; Optomized DPS
 ;
 ;20061130a
 ; Tweaked Rez, fixed some spell list errors.  Hacked buff canceling
@@ -107,10 +115,10 @@ function Buff_Init()
 	PreSpellRange[8,1]:Set[38]
 	
 	PreAction[9]:Set[AA_Rebirth]
-	PreSpellRange[9,1]:Set[410]
+	PreSpellRange[9,1]:Set[390]
 
 	PreAction[10]:Set[AA_Infusion]
-	PreSpellRange[10,1]:Set[411]
+	PreSpellRange[10,1]:Set[391]
 }
 
 function Combat_Init()
@@ -151,21 +159,21 @@ function Combat_Init()
 	MobHealth[6,2]:Set[100]
 	Power[6,1]:Set[40]
 	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[401]	
+	SpellRange[6,1]:Set[381]	
 
 	Action[7]:Set[AA_Primordial_Strike]
 	MobHealth[7,1]:Set[10]
 	MobHealth[7,2]:Set[100]
 	Power[7,1]:Set[40]
 	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[402]
+	SpellRange[7,1]:Set[382]
 	
 	Action[8]:Set[AA_Thunderspike]
 	MobHealth[8,1]:Set[10]
 	MobHealth[8,2]:Set[100]
 	Power[8,1]:Set[40]
 	Power[8,2]:Set[100]
-	SpellRange[8,1]:Set[403]	
+	SpellRange[8,1]:Set[383]	
 
 	Action[9]:Set[DoT]
 	MobHealth[9,1]:Set[1]
@@ -380,9 +388,9 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${Me.Ability[${SpellType[405]}].IsReady} && ${VortexMode}
+	if ${Me.Ability[${SpellType[385]}].IsReady} && ${VortexMode}
 	{
-		call CastSpellRange 405
+		call CastSpellRange 385
 	}
 
 
@@ -583,7 +591,8 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
 					}
 				}
 			}	

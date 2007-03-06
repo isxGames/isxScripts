@@ -42,6 +42,7 @@ variable string SpellType[400]
 variable int AssistHP
 variable string MainAssist
 variable string MainTankPC
+variable bool MainAssistMe=FALSE
 variable string OriginalMA
 variable string OriginalMT
 variable bool AutoSwitch
@@ -132,7 +133,7 @@ variable bool PullWithBow
 variable bool LootConfirm
 variable bool CheckPriestPower
 variable int LootWndCount
-variable bool NoEQ2BotStance 0
+variable bool NoEQ2BotStance=0
 ;===================================================
 
 ;===================================================
@@ -1377,12 +1378,19 @@ function Pull(string npcclass)
 				wait 10 ${CustomActor[${tcount}].ID}==${Target.ID}
 				wait 10 ${Me.TargetLOS}
 
-
+				;echo check if in range
 				if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange}
 				{
+					;echo Move to target Range!
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
 				}
-
+				
+				if ${Pathtype}==1 && ${Target.Distance}>${PullRange} $$ ${Target.Distance}<35
+				{
+					;echo Move to target Range!
+					call FastMove ${Target.X} ${Target.Z} ${PullRange}
+				}
+				
 				if ${Me.IsMoving}
 				{
 					press -release ${forward}
@@ -1497,9 +1505,9 @@ function Pull(string npcclass)
 						{
 							call FastMove ${Target.X} ${Target.Z} 1
 						}
-						else
+						elseif ${Target.Distance}>20
 						{
-							call FastMove ${Target.X} ${Target.Z} 5
+							call FastMove ${Target.X} ${Target.Z} 20
 						}
 
 						if ${Return.Equal[STUCK]}
