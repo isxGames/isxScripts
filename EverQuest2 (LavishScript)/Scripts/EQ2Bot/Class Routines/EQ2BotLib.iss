@@ -332,8 +332,8 @@ atom PetAttack()
 		EQ2Execute /pet attack
 		if ${PetGuard}
 		{
-			EQ2Execute pet preserve_self
-			EQ2Execute pet preserve_master
+			EQ2Execute /pet preserve_self
+			EQ2Execute /pet preserve_master
 		}
 	}
 
