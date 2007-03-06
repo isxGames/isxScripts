@@ -11,7 +11,7 @@
 		<Setting Name="5,304">Divine Providence</Setting>
 		<Setting Name="5,23">Natural Mask</Setting>
 		<Setting Name="6,210">Cure Noxious</Setting>
-		<Setting Name="6,395">Summon Food and Water</Setting>
+		<Setting Name="6,365">Summon Food and Water</Setting>
 		<Setting Name="7,4">Salve</Setting>
 		<Setting Name="7,50">Intimidation</Setting>
 		<Setting Name="8,303">Revive</Setting>
@@ -21,6 +21,12 @@
 		<Setting Name="10,40">Bristleskin</Setting>
 		<Setting Name="10,235">Snare</Setting>
 		<Setting Name="10,1">Elixir</Setting>
+		<Setting Name="10,381">Nature Blade</Setting>
+		<Setting Name="10,382">Primordial Strike</Setting>
+		<Setting Name="10,383">Thunderspike</Setting>
+		<Setting Name="10,390">Rebirth</Setting>
+		<Setting Name="10,391">Infusion</Setting>
+		<Setting Name="10,385">Energy Vortex</Setting>
 		<Setting Name="11,70">Twirl</Setting>
 		<Setting Name="11,313">Favor of the Phoenix</Setting>
 		<Setting Name="12,7">Regrowth</Setting>
@@ -95,7 +101,7 @@
 		<Setting Name="49,50">Beastly Intimidation</Setting>
 		<Setting Name="49,157">Fae Flames</Setting>
 		<Setting Name="50,300">Primeval Awakening</Setting>
-		<Setting Name="50,390">Porcupine</Setting>
+		<Setting Name="50,360">Porcupine</Setting>
 		<Setting Name="51,60">Bolt of Storms</Setting>
 		<Setting Name="52,40">Thornskin</Setting>
 		<Setting Name="52,2">Back Into the Fray</Setting>
@@ -117,9 +123,11 @@
 		<Setting Name="60,1">Nature's Elixir</Setting>
 		<Setting Name="60,90">Starnova</Setting>
 		<Setting Name="60,21">Primal Spirit</Setting>
-		<Setting Name="61,23">Benediction of the Wild</Setting>
+		<Setting Name="61,23">Carnal Mask</Setting>
+		<Setting Name="61,52">Maddening Swarm</Setting>
 		<Setting Name="62,25">Seasoned Predator</Setting>
 		<Setting Name="63,157">Fae Pyre</Setting>
+		<Setting Name="64,50">Barbarous Intimidation</Setting>
 		<Setting Name="65,96">Call of Storms</Setting>
 		<Setting Name="65,60">Thunderbolt</Setting>
 		<Setting Name="66,40">Spineskin</Setting>
@@ -131,6 +139,6 @@
 		<Setting Name="70,220">Abolishment</Setting>
 		<Setting Name="70,15">Owl's Reparation</Setting>
 		<Setting Name="70,10">Shriek of the Untamed</Setting>
-		<Setting Name="70,390">Urchin</Setting>		
+		<Setting Name="70,360">Urchin</Setting>		
 	</Set>
 </InnerSpaceSettings>
