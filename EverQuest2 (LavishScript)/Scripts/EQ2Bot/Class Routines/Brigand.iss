@@ -349,8 +349,8 @@ function Combat_Routine(int xAction)
 				call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 1
 				if ${AnnounceMode} && ${Me.Maintained[${SpellType[100]}](exists)}
 				{
-					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
+					EQ2Execute /g %t is Dispatched - All Resistances Severely lowered for 15s - Nuke Now
+					EQ2Execute /raidsay %t is Dispatched - All Resistances Severely lowered for 15s - Nuke Now
 				}
 				
 			}
