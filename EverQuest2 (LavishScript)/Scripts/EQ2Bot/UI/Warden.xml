@@ -81,6 +81,69 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Genesis]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>90</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Innitiate HO's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>200</X>
+		<Y>30</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Rez's in Combat</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Combat Rez",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Combat Rez",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Combat Rez]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffThorns' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>200</X>
+		<Y>70</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Thorns</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Thorns",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Thorns",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Thorns]}</Data>
+	</Commandcheckbox>	
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5%</X>
 		<Y>130</Y>
@@ -555,6 +618,78 @@
 			</OnLoad>
 			<OnSelect>
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffSporesGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+			<OnLeftClick>
+				declare tmpvar int
+	
+				This:ClearItems
+				tmpvar:Set[1]
+				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+				if ${Me.ToActor.Pet(exists)}
+				{
+					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
+				}
+				do
+				{
+					if ${Me.Grouped}
+					{
+						if ${Me.Group[${tmpvar}].ToActor(exists)}
+						{
+							This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+						}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						{
+							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+						}
+	
+					}
+	
+				}
+				while ${tmpvar:Inc}&lt;=5
+			</OnLeftClick>
+	</combobox>
+	<Commandcheckbox Name='UseCAs' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>200</X>
+		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Combat Art AA's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseCAs",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseCAs",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseCAs]}</Data>
+	</Commandcheckbox>
+	<Text Name='lblBuffVigorGroupMember' Template='EQ2.text'>
+			<X>375</X>
+			<Y>180</Y>
+			<Width>20%</Width>
+			<Height>20</Height>
+			<Alignment>Left</Alignment>
+			<Text>Buff Vigor:</Text>
+			<AutoTooltip></AutoTooltip>
+		</Text>
+		<combobox name='cbBuffVigorGroupMember' Template='EQ2.Combobox'>
+			<x>375</x>
+			<y>200</y>
+			<Width>100</width>
+			<Height>20</height>
+			<AutoTooltip>The Group Member to Vigor Buff</AutoTooltip>
+			<Items></items>
+			<OnLoad>
+				This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffVigorGroupMember]}]
+				This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffVigorGroupMember]}]:Select
+			</OnLoad>
+			<OnSelect>
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffVigorGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
 			<OnLeftClick>
 				declare tmpvar int
 	

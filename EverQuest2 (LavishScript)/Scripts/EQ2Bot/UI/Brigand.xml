@@ -100,9 +100,69 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Try to Tank]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblMainWeapon' Template='EQ2.text'>
+	<Commandcheckbox Name='AnnounceMode' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>110</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Announce Debuffs to Group/Raid</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Announce Debuffs",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Announce Debuffs",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Announce Debuffs]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffLunge' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>130</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Lunge Reversal</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Lunge Reversal]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='MaintainPoison' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
 		<Y>150</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Maintains Poisons (Caustic, Enfeebling, Bliss) Edit Class File to Select others...</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[MaintainPoison]}</Data>
+	</Commandcheckbox>	
+	<Text Name='lblMainWeapon' Template='EQ2.text'>
+		<X>5%</X>
+		<Y>170</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -111,8 +171,8 @@
 	</Text>
 	<combobox name='cbMainWeapon' Template='EQ2.Combobox'>
 		<x>100</x>
-		<y>150</y>
-		<width>30%</width>
+		<y>170</y>
+		<width>40%</width>
 		<height>20</height>
 		<OnLeftClick>
 			declare Counter int
@@ -146,9 +206,56 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[MainWeapon,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
+	<Text Name='lblOffHand' Template='EQ2.text'>
+		<X>10</X>
+		<Y>190</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Off Hand:</Text>
+		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
+	</Text>
+	<combobox name='cbOffHand' Template='EQ2.Combobox'>
+		<x>100</x>
+		<y>190</y>
+		<width>40%</width>
+		<height>20</height>
+		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
+		<OnLeftClick>
+			declare Counter int
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].Type.Equal[Shield]} || ${Me.CustomInventory[${Counter}].Type.Equal[Weapon]}
+				{
+					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+				}
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].Type.Equal[Shield]} || ${Me.Equipment[${Counter}].Type.Equal[Weapon]}
+				{
+					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+				}
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem["${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OffHand]}"]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OffHand]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[OffHand]:Set[${This.SelectedItem.Text}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OffHand,"${This.SelectedItem.Text}"]:Save
+		</OnSelect>
+	</combobox>
 	<Text Name='lblDagger' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>170</Y>
+		<Y>210</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -157,8 +264,8 @@
 	</Text>
 	<combobox name='cbDagger' Template='EQ2.Combobox'>
 		<x>100</x>
-		<y>170</y>
-		<width>30%</width>
+		<y>210</y>
+		<width>40%</width>
 		<height>20</height>
 		<OnLeftClick>
 			declare Counter int
@@ -194,7 +301,7 @@
 	</combobox>
 	<Text Name='lblSword' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>190</Y>
+		<Y>230</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -203,7 +310,7 @@
 	</Text>
 	<combobox name='cbSword' Template='EQ2.Combobox'>
 		<x>100</x>
-		<y>190</y>
+		<y>230</y>
 		<width>30%</width>
 		<height>20</height>
 		<OnLeftClick>
@@ -240,7 +347,7 @@
 	</combobox>
 	<Text Name='lblRapier' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>210</Y>
+		<Y>250</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -249,7 +356,7 @@
 	</Text>
 	<combobox name='cbRapier' Template='EQ2.Combobox'>
 		<x>100</x>
-		<y>210</y>
+		<y>250</y>
 		<width>30%</width>
 		<height>20</height>
 		<OnLeftClick>
@@ -284,4 +391,25 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Rapier,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
+	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>375</X>
+		<Y>100</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Innitiate HO's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
+	</Commandcheckbox>
 </ISUI>

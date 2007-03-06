@@ -480,98 +480,233 @@
 			<Alignment>Left</Alignment>
 			<Text>Buff Spirit of Bat:</Text>
 			<AutoTooltip></AutoTooltip>
-		</Text>
-		<combobox name='cbBuffBatGroupMember' Template='EQ2.Combobox'>
-			<x>375</x>
-			<y>30</y>
-			<Width>100</width>
-			<Height>20</height>
-			<AutoTooltip>The Group Member to Bat Buff</AutoTooltip>
-			<Items></items>
-			<OnLoad>
-				This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffBatGroupMember]}]
-				This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffBatGroupMember]}]:Select
-			</OnLoad>
-			<OnSelect>
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffBatGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
-			<OnLeftClick>
-				declare tmpvar int
-	
-				This:ClearItems
-				tmpvar:Set[1]
-				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
-				if ${Me.ToActor.Pet(exists)}
+	</Text>
+	<combobox name='cbBuffBatGroupMember' Template='EQ2.Combobox'>
+		<x>375</x>
+		<y>30</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Bat Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffBatGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffBatGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffBatGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+			if ${Me.ToActor.Pet(exists)}
+			{
+				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
+			}
+			do
+			{
+				if ${Me.Grouped}
 				{
-					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-				}
-				do
-				{
-					if ${Me.Grouped}
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
 					{
-						if ${Me.Group[${tmpvar}].ToActor(exists)}
-						{
-							This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						{
-							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-						}
-	
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
 					}
-	
-				}
-				while ${tmpvar:Inc}&lt;=5
-			</OnLeftClick>
-		</combobox>
-	<Text Name='lblBuffSavageryGroupMember' Template='EQ2.text'>
-			<X>375</X>
-			<Y>60</Y>
-			<Width>20%</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Buff Savagery Proc:</Text>
-			<AutoTooltip></AutoTooltip>
-		</Text>
-		<combobox name='cbBuffSavageryGroupMember' Template='EQ2.Combobox'>
-			<x>375</x>
-			<y>80</y>
-			<Width>100</width>
-			<Height>20</height>
-			<AutoTooltip>The Group Member to Savagery Proc Buff</AutoTooltip>
-			<Items></items>
-			<OnLoad>
-				This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSavageryGroupMember]}]
-				This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSavageryGroupMember]}]:Select
-			</OnLoad>
-			<OnSelect>
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffSavageryGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
-			<OnLeftClick>
-				declare tmpvar int
-	
-				This:ClearItems
-				tmpvar:Set[1]
-				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
-				if ${Me.ToActor.Pet(exists)}
-				{
-					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-				}
-				do
-				{
-					if ${Me.Grouped}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 					{
-						if ${Me.Group[${tmpvar}].ToActor(exists)}
-						{
-							This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						{
-							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-						}
-	
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 					}
-	
+
 				}
-				while ${tmpvar:Inc}&lt;=5
-			</OnLeftClick>
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
 	</combobox>
+	<Text Name='lblBuffSavageryGroupMember' Template='EQ2.text'>
+		<X>375</X>
+		<Y>60</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Savagery Proc:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffSavageryGroupMember' Template='EQ2.Combobox'>
+		<x>375</x>
+		<y>80</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Savagery Proc Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSavageryGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSavageryGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffSavageryGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+			if ${Me.ToActor.Pet(exists)}
+			{
+				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
+			}
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Text Name='lblBuffVerveGroupMember' Template='EQ2.text'>
+		<X>375</X>
+		<Y>100</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff INT on:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffVerveGroupMember' Template='EQ2.Combobox'>
+		<x>375</x>
+		<y>100</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to INT Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffVerveGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffVerveGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffVerveGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+			if ${Me.ToActor.Pet(exists)}
+			{
+				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
+			}
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Commandcheckbox Name='BuffThorns' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>375</X>
+		<Y>120</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Thorns on MA</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Thorns",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Thorns",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Thorns]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='VortexMode' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>375</X>
+		<Y>140</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Energe Vortex</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Vortex",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Vortex",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Vortex]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>375</X>
+		<Y>160</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Rez's in Combat</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Combat Rez",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Combat Rez",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Combat Rez]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>375</X>
+		<Y>180</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Innitiate HO's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
+	</Commandcheckbox>	
 </ISUI>

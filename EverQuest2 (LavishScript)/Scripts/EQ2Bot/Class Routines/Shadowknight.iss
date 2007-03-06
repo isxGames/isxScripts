@@ -1,7 +1,26 @@
 ;*************************************************************
 ;Shadowknight.iss
-;version 20061110b experimental
+;version 20070130a 
 ;by Pygar 
+;
+;20070130a
+;Fixed range checks on taunts
+;Improved lost agro function
+;Updated for eq2bot 2.5.2
+;Minor Fixes
+;Added Crystalized Spirit use.
+;
+;20061110b-exp
+;experimental build based upon feedback from Akku
+:
+;20061110a
+;Fixed Crash on Agro Loss
+;Fixed PBAoE Spells to fire properly now
+;Fixed Melee nukes / dots to work now (Coil, HT, and Fetid Strike were unreliable)
+;
+;20061103a
+;First Public Release
+;
 ; FIXED: PBAoE should work, No crash on agro loss, Will use Coil and HT now
 ;*************************************************************
 
@@ -16,7 +35,7 @@ function Class_Declaration()
 	declare DefensiveMode bool script TRUE
 	declare TauntMode bool Script TRUE
 	declare FullAutoMode bool Script FALSE
-
+	declare StartHO bool script 1
 	
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -38,7 +57,7 @@ function Class_Declaration()
 	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Taunt Spells,TRUE]}]
 	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
 	OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
-
+	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 
 	BuffArmamentMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArmamentMember,]}]
@@ -69,7 +88,7 @@ function Buff_Init()
    PreSpellRange[3,2]:Set[21]
 
    PreAction[4]:Set[Tactics_Target] 
-   PreSpellRange[5,1]:Set[31] 
+   PreSpellRange[4,1]:Set[31] 
 
 } 
 
@@ -81,59 +100,65 @@ function Combat_Init()
    Action[2]:Set[Taunt] 
    SpellRange[2,1]:Set[160] 
 
-   Action[3]:Set[Melee_Nuke] 
-   Power[3,1]:Set[5] 
-   Power[3,2]:Set[100]
-   SpellRange[3,1]:Set[60]
-   SpellRange[3,2]:Set[61]
-   SpellRange[3,3]:Set[62]
-   SpellRange[3,4]:Set[63]
-   
-   Action[4]:Set[Mist] 
-   MobHealth[4,1]:Set[50] 
-   MobHealth[4,2]:Set[100] 
-   Power[4,1]:Set[20] 
+   Action[3]:Set[AA_Swiftaxe]
+   MobHealth[3,1]:Set[1] 
+   MobHealth[3,2]:Set[100] 
+   SpellRange[3,1]:Set[381]
+
+   Action[4]:Set[Melee_Attack] 
+   Power[4,1]:Set[5] 
    Power[4,2]:Set[100] 
-   SpellRange[4,1]:Set[55]
+   SpellRange[4,1]:Set[150] 
+   SpellRange[4,2]:Set[151] 
+   SpellRange[4,3]:Set[152] 
+   SpellRange[4,4]:Set[153] 
+   SpellRange[4,5]:Set[154] 
    
-   Action[5]:Set[PBAoE] 
-   Power[5,1]:Set[20] 
-   Power[5,2]:Set[100] 
-   SpellRange[5,1]:Set[95]
-   SpellRange[5,2]:Set[96]
-   SpellRange[5,3]:Set[97]
-   SpellRange[5,4]:Set[98]
-   SpellRange[5,5]:Set[99]
+   Action[5]:Set[Melee_Nuke] 
+   Power[5,1]:Set[5] 
+   Power[5,2]:Set[100]
+   SpellRange[5,1]:Set[60]
+   SpellRange[5,2]:Set[61]
+   SpellRange[5,3]:Set[62]
+   SpellRange[5,4]:Set[63]
    
-   Action[6]:Set[Damage_Debuff] 
-   MobHealth[6,1]:Set[5] 
+   Action[6]:Set[Mist] 
+   MobHealth[6,1]:Set[50] 
    MobHealth[6,2]:Set[100] 
    Power[6,1]:Set[20] 
    Power[6,2]:Set[100] 
-   SpellRange[6,1]:Set[80] 
-   SpellRange[6,2]:Set[81]
-
-   Action[7]:Set[Melee_Attack] 
-   Power[7,1]:Set[5] 
+   SpellRange[6,1]:Set[55]
+   
+   Action[7]:Set[PBAoE] 
+   Power[7,1]:Set[20] 
    Power[7,2]:Set[100] 
-   SpellRange[7,1]:Set[150] 
-   SpellRange[7,2]:Set[151] 
-   SpellRange[7,3]:Set[152] 
-   SpellRange[7,4]:Set[153] 
-   SpellRange[7,5]:Set[154] 
-      
-   Action[8]:Set[Shield_Attack] 
-   Power[8,1]:Set[5] 
+   SpellRange[7,1]:Set[95]
+   SpellRange[7,2]:Set[96]
+   SpellRange[7,3]:Set[97]
+   SpellRange[7,4]:Set[98]
+   SpellRange[7,5]:Set[99]
+   
+   Action[8]:Set[Damage_Debuff] 
+   MobHealth[8,1]:Set[5] 
+   MobHealth[8,2]:Set[100] 
+   Power[8,1]:Set[20] 
    Power[8,2]:Set[100] 
-   SpellRange[8,1]:Set[240] 
+   SpellRange[8,1]:Set[80] 
+   SpellRange[8,2]:Set[81]
+      
+   Action[9]:Set[Shield_Attack] 
+   Power[9,1]:Set[5] 
+   Power[9,2]:Set[100] 
+   SpellRange[9,1]:Set[240] 
    
-   Action[9]:Set[Pet]
-   MobHealth[9,1]:Set[50] 
-   MobHealth[9,2]:Set[100] 
-   SpellRange[9,1]:Set[45]
+   Action[10]:Set[Pet]
+   MobHealth[10,1]:Set[50] 
+   MobHealth[10,2]:Set[100] 
+   SpellRange[10,1]:Set[45]
+   
+   Action[11]:Set[ThermalShocker]
 
-   
-   Action[10]:Set[ThermalShocker]
+
 
 } 
 
@@ -195,7 +220,7 @@ function Buff_Routine(int xAction)
 			break
 
 		Default 
-			xAction:Set[20] 
+			xAction:Set[40] 
 			break 
 	}
 
@@ -210,7 +235,7 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 	
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 	{
 		call CastSpellRange 303
 	}
@@ -329,9 +354,27 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break 
-							
+			case AA_Swiftaxe
+				if ${OffensiveMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+				{
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]} 
+					if ${Return.Equal[OK]}
+					{ 
+						if ${Me.Equipment[1].Name.Equal[${WeaponAxe}]}
+						{
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						}
+						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+						{
+							Me.Inventory[${WeaponAxe}]:Equip
+							EquipmentChangeTimer:Set[${Time.Timestamp}]
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						}
+					}
+				}
+				break							
 			case default 
-				xAction:Set[20] 
+				xAction:Set[40] 
 				break 
 		}
 	}
