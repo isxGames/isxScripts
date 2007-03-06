@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.5.3 Updated: 01/21/07 by karye
+; EQ2Bot.iss Version 2.5.3 Updated: 01/21/07 by pygar
 ;
 ;
 ; Lots of changes, documentation comming
