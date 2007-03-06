@@ -1,14 +1,15 @@
 ;*************************************************************
 ;Coercer.iss
-;version 20061013a
-;by pygar adapted heavily from kayre
+;version 20070201a
+;by pygar 
+;
+;20070201a
+;Added Support for KoS and EoF AA
+;Updated and Optomized for EQ2Bot 2.5.2
+;Added Toggle for Initiating HO's
+;
 ;Initial Release
 ;Limited AA support:  Currently only Mana Flow implemented
-;
-;20061222a
-;Added support for allies, additional mez, phase, spellshield, and shower line
-;General DPS and mez tweaks.
-;Small adjustment to onAgro.
 ;*************************************************************
 
 
@@ -27,6 +28,7 @@ function Class_Declaration()
 	declare BuffAspect bool script FALSE
 	declare BuffRune bool script FALSE
 	declare BuffFocus bool script FALSE
+	declare StartHO bool script 1
 	
 	;Custom Equipment
 	declare WeaponStaff string script 
@@ -45,6 +47,7 @@ function Class_Declaration()
 	BuffFocus:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffFocus,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Makepet:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Makepet,FALSE]}]
+	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
@@ -57,7 +60,7 @@ function Buff_Init()
 {
 	PreAction[1]:Set[Self_Buff]
 	PreSpellRange[1,1]:Set[25]
-
+	
 	PreAction[2]:Set[Aspect]
 	PreSpellRange[2,1]:Set[21]
 	
@@ -80,17 +83,38 @@ function Buff_Init()
 	PreAction[8]:Set[Clarity]
 	PreSpellRange[8,1]:Set[22]
 	
-	PreAction[7]:Set[Focus]
-	PreSpellRange[7,1]:Set[23]	
+	PreAction[9]:Set[Focus]
+	PreSpellRange[9,1]:Set[23]
+	
+	PreAction[10]:Set[AA_Empathic_Aura]
+	PreSpellRange[10,1]:Set[411]
+	
+	PreAction[11]:Set[AA_Perpetuality]
+	PreSpellRange[11,1]:Set[410]
+	
+	PreAction[12]:Set[AA_Empathic_Soothing]
+	PreSpellRange[12,1]:Set[412]
+	
+	PreAction[13]:Set[AA_Time_Compression]
+	PreSpellRange[13,1]:Set[413]
+	
+	;buffs on first haste target for now cause I'm lazy
+	PreAction[14]:Set[AA_Illusory_Arm]
+	PreSpellRange[14,1]:Set[414]
 }
 
 function Combat_Init()
 {
 
-	Action[2]:Set[Shower]
+	Action[1]:Set[Shower]
+	MobHealth[1,1]:Set[30] 
+	MobHealth[1,2]:Set[100] 
+	SpellRange[1,1]:Set[388]
+	
+	Action[2]:Set[AA_Illuminate]
 	MobHealth[2,1]:Set[30] 
 	MobHealth[2,2]:Set[100] 
-	SpellRange[2,1]:Set[388]
+	SpellRange[2,1]:Set[407]	
 
 	Action[3]:Set[SpellShield]
 	MobHealth[3,1]:Set[30] 
@@ -112,6 +136,10 @@ function Combat_Init()
 	MobHealth[7,2]:Set[100] 	
 	SpellRange[7,1]:Set[80]
 
+	Action[8]:Set[AA_Chronosiphoning]
+	MobHealth[8,1]:Set[1] 
+	MobHealth[8,2]:Set[100] 	
+	SpellRange[8,1]:Set[405]
 
 	Action[9]:Set[Discord]
 	MobHealth[9,1]:Set[40] 
@@ -187,7 +215,7 @@ function Buff_Routine(int xAction)
 	{
 			
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			break
 
 		case Clarity
@@ -283,6 +311,10 @@ function Buff_Routine(int xAction)
 				{				
 					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+					if ${counter}==1
+					{
+						call CastSpellRange 414 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -307,9 +339,16 @@ function Buff_Routine(int xAction)
 				while ${tempvar:Inc}<${Me.GroupCount}
 			}
 			break
-
+		case AA_Time_Compression
+		case AA_Perpetuality
+		case AA_Empathic_Aura
+		case AA_Empathic_Soothing
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+			}
 		default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 }
@@ -387,7 +426,20 @@ function Combat_Routine(int xAction)
 	switch ${Action[${xAction}]}
 	{
 		
-					
+		case AA_Illuminate
+		case AA_Chronosiphoning
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{			
+					if ${Mob.Count}>1
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					}
+				}
+			}
+			break		
 		case Gaze
 		case shower
 		case Ego
@@ -470,7 +522,7 @@ function Combat_Routine(int xAction)
 			break
 		
 		default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 
@@ -521,7 +573,11 @@ function Lost_Aggro()
 
 function MA_Lost_Aggro()
 {
-
+	if ${Me.Ability[${SpellType[406]}].IsReady}
+	{
+		call CastSpellRange 406 0 0 0 ${KillTarget}
+	}
+	
 }
 
 function MA_Dead()

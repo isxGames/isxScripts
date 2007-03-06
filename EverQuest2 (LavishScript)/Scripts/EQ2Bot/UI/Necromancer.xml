@@ -20,6 +20,26 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='CureMode' Template='EQ2.Commandcheckbox'>
+		<X>180</X>
+		<Y>10</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Cast Cures</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[CureMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Cures",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[CureMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Cures",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Cures]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
 		<Y>30</Y>
@@ -40,25 +60,25 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffDamageShield' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
 		<Y>50</Y>
 		<Width>30</Width>
 		<Height>20</Height>
-		<Text>Buff Damage Shield</Text>
+		<Text>Innitiate HO's</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[BuffDamageShield]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Damage Shield",TRUE]:Save
+				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[BuffDamageShield]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Damage Shield",FALSE]:Save
+				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Damage Shield]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='BuffSeeInvis' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
@@ -80,9 +100,49 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff See Invis]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblPetType' Template='EQ2.text'>
+	<Commandcheckbox Name='BuffMark' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
 		<Y>90</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Buff Mark</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffMark]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffMark",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffMark]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffMark",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffMark]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffFavor' Template='EQ2.Commandcheckbox'>
+		<X>10</X>
+		<Y>110</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Buff Favor</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffFavor]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffFavor",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffFavor]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffFavor",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffFavor]}</Data>
+	</Commandcheckbox>
+	<Text Name='lblPetType' Template='EQ2.text'>
+		<X>10</X>
+		<Y>130</Y>
 		<Width>20</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -90,13 +150,14 @@
 	</Text>
 	<combobox name='cbPetType' Template='EQ2.Combobox'>
 		<x>35</x>
-		<y>90</y>
-		<width>50</width>
+		<y>130</y>
+		<width>100</width>
 		<height>20</height>
 		<items>
 			<Item Value='1'>Scout</Item>
 			<Item Value='2'>Mage</Item>
 			<Item Value='3'>Fighter</Item>
+			<Item Value='4'>Ooze</Item>
 		</items>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PetType]:Set[${This.SelectedItem.ID}]
@@ -106,8 +167,8 @@
 		</OnLoad>
 	</combobox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>130</Y>
+		<X>5</X>
+		<Y>170</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -115,8 +176,8 @@
 		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
 	</Text>
 	<combobox name='cbMainWeapon' Template='EQ2.Combobox'>
-		<x>15%</x>
-		<y>130</y>
+		<x>100</x>
+		<y>170</y>
 		<width>30%</width>
 		<height>20</height>
 		<OnLeftClick>
@@ -152,8 +213,8 @@
 		</OnSelect>
 	</combobox>
 	<Text Name='lblDagger' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>150</Y>
+		<X>5</X>
+		<Y>190</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -161,8 +222,8 @@
 		<AutoTooltip>Weapon to use during Dagger required AA skills</AutoTooltip>
 	</Text>
 	<combobox name='cbDagger' Template='EQ2.Combobox'>
-		<x>15%</x>
-		<y>150</y>
+		<x>100</x>
+		<y>190</y>
 		<width>30%</width>
 		<height>20</height>
 		<OnLeftClick>
@@ -198,8 +259,8 @@
 		</OnSelect>
 	</combobox>
 	<Text Name='lblStaff' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>170</Y>
+		<X>5</X>
+		<Y>210</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -207,8 +268,8 @@
 		<AutoTooltip>Weapon to use during staff required AA skills</AutoTooltip>
 	</Text>
 	<combobox name='cbStaff' Template='EQ2.Combobox'>
-		<x>15%</x>
-		<y>170</y>
+		<x>100</x>
+		<y>210</y>
 		<width>30%</width>
 		<height>20</height>
 		<OnLeftClick>
@@ -243,4 +304,24 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Staff,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
+	<Commandcheckbox Name='LifeburnMode' Template='EQ2.Commandcheckbox'>
+		<X>110</X>
+		<Y>10</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Use Lifeburn</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[LifeburnMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Lifeburn",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[LifeburnMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Lifeburn",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Lifeburn]}</Data>
+	</Commandcheckbox>	
 </ISUI>
