@@ -1,0 +1,7 @@
+This folder contains 'work-in-progress', experimental changes to eq2bot and several class files.  There is absolutely no guarantee that any files in this tree will actually work.   Understand that 100% of my development is done in an environment that I don't have the luxury of loading the game to test with.  As such my experimental releases are often bug laiden, and full of syntax errors. 
+
+This tree is meant to serve as a central repository of my working files as I move between locations, and serves as a refference point to anyone assisting on the eq2bot project.
+
+You've been warned.
+
+-Pygar
