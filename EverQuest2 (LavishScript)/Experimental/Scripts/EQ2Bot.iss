@@ -31,7 +31,7 @@
 ;===================================================
 ;===		Keyboard Configuration	        ====
 ;===================================================
-variable string forward="num lock"
+variable string forward=w
 variable string backward=s
 variable string strafeleft=a
 variable string straferight=d
