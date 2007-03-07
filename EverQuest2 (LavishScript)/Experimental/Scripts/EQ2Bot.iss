@@ -19,6 +19,7 @@
 ;	in every combat 'pulse'.
 ;Tweaked pulling to attempt to not get stuck trying to pull a non-LoS mob.
 ;Adjusted loot code to new UI files
+;Fixed possible ignoring of adds when waiting for priestpower
 ;
 ;Fixed a bug causing spells to be interupted occasionally
 ;	
@@ -1523,11 +1524,19 @@ function Pull(string npcclass)
 						}
 					}
 
+					
+					do
+					{
+						waitframe
+					} 
+					while ${Target.Distance}>5 && ${Target.Target.ID}==${Me.ID} && ${Me.Target.ID}==${KillTarget}
+
+
 					if ${Target.Distance}>10 && !${pulling} && ${PathType}!=2
 					{
 						if ${AutoMelee}
 						{
-							call FastMove ${Target.X} ${Target.Z} 1
+							call FastMove ${Target.X} ${Target.Z} 5
 						}
 						elseif ${Target.Distance}>20
 						{
