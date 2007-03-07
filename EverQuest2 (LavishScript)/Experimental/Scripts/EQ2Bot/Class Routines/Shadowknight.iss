@@ -12,7 +12,7 @@
 ;
 ;20061110b-exp
 ;experimental build based upon feedback from Akku
-:
+;
 ;20061110a
 ;Fixed Crash on Agro Loss
 ;Fixed PBAoE Spells to fire properly now
