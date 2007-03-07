@@ -3,6 +3,22 @@
 ;
 ;
 ; Lots of changes, documentation comming
+;Seperated MainAssist and MainTank - New var MainTankPC exists with the name of the MainTank to use in your heal/buff routines
+;Added Stance Overriding - define NoEQ2BotStance as true in Buff_Init and Eq2bot will not try to set stances for you.
+;	you will need to add that logic to your ISS file now.
+;Fixed lore and no-trade looting
+;Added Decline all looting method.  If accept loot is not checked, the bot will decline any loot windows that pop up.
+;Fixed many bugs in Pull Script
+;Fixed several bugs in movement and positioning
+;Fixed many broken triggers
+;Removed Legacy functions
+;Fixed Loot function to no longer miss corpses and chests.  It will only ignore a chest now if there is an agronpc closer
+;	to you than the chest or corpse.
+;some general optomizations
+;when autoattack is enabled, it will only reposition when you are not on the mobs rear quadrant, rather than positioning
+;	in every combat 'pulse'.
+;Tweaked pulling to attempt to not get stuck trying to pull a non-LoS mob.
+;Adjusted loot code to new UI files
 ;
 ;Fixed a bug causing spells to be interupted occasionally
 ;	
@@ -517,18 +533,18 @@ function main()
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick 
 				wait 5 
 
-				if ${EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice1](exists)} 
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
 				{ 
 				     LootWndCount:Set[1] 
 				     do 
 				     { 
 					  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm} 
 					  { 
-					       EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice1]:LeftClick 
+					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 					  } 
 					  else 
 					  { 
-					       EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice2]:LeftClick 
+					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
 					  } 
 				     } 
 				     while ${LootCount:Inc} <= ${LootWindow.NumItems} 
@@ -536,7 +552,7 @@ function main()
 			} 
 			else
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Decline]:LeftClick 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
 			}
 		}
 	}
@@ -1947,9 +1963,9 @@ function IamDead(string Line)
 				Exit
 			}
 
-			if ${EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice1](exists)}
+			if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 			{
-				EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice1]:LeftClick
+				EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 			}
 		}
 		while ${Me.ToActor.Health}<1
@@ -1958,9 +1974,9 @@ function IamDead(string Line)
 
 function LoreItem(string Line)
 {
-	if ${EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice2](exists)} && ${LootAll}
+	if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} && ${LootAll}
 	{
-		EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice2]:LeftClick
+		EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 	}
 	press esc
 	press esc
@@ -2074,9 +2090,9 @@ function LootWdw(string Line)
 		wait 5
 		EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
 		wait 5
-		if ${EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice1](exists)}
+		if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 		{
-			EQ2UIPage[Choice,RoundedGrouper].Child[button,Choice.Choice1]:LeftClick
+			EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 		}
 	}
 }
