@@ -585,7 +585,7 @@ function Combat_Routine(int xAction)
 			case Mastery
 				if ${OffenseMode} || ${DebuffMode}
 				{		
-					if ${Me.Ability[Master's Strike].IsReady}
+					if ${Me.Ability[Master's Smite].IsReady}
 					{
 						Target ${KillTarget}
 						Me.Ability[Master's Smite]:Use
