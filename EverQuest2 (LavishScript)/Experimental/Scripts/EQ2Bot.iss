@@ -31,13 +31,17 @@
 ;===================================================
 ;===		Keyboard Configuration	        ====
 ;===================================================
-variable string forward=w
+variable string forward="num lock"
 variable string backward=s
 variable string strafeleft=a
 variable string straferight=d
 variable string endbot=f11
 ;===================================================
-
+;===		Custom Variables	        ====
+;===================================================
+variable int quickwait=1
+variable int shortwait=5
+variable int longwait=10
 ;===================================================
 ;===		Variable Declarations	        ====
 ;===================================================
@@ -433,6 +437,11 @@ function main()
 
 		if ${AutoPull}
 		{
+			if ${Mob.Detect}
+			{
+				
+			}
+			
 			EQ2Bot:PriestPower
 
 			if ${PathType}==2 && ${priesthaspower} && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck}
@@ -479,7 +488,7 @@ function main()
 				}
 				else
 				{
-					if ${priesthaspower}
+					if ${priesthaspower} || ${Mob.Detect}
 					{
 						call Pull any
 						if ${engagetarget}
@@ -520,7 +529,7 @@ function main()
 		}		
 
 		; Check that we are close to MainAssist if we are following and not in combat
-		if ${Following} && ${Actor[${MainAssist}].Distance}>10 && ${Script[follow].Variable[pausestate]}
+		if ${Following} && ${Actor[${MainAssist}].Distance}>10 && ${Script[follow].Variable[pausestate]} && !${Mob.Detect}
 		{
 			FollowTask:Set[1]
 			wait 20
@@ -584,10 +593,6 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 	variable int tempvar=${start}
 	variable int originaltarget
 
-	if ${Me.ToActor.Power}<5
-	{
-		return -1
-	}
 
 	if ${Me.IsMoving} && !${castwhilemoving}
 	{
