@@ -1,0 +1,1249 @@
+<?xml version='1.0'?>
+<Navigation>
+	<World Name="enchanted">
+		<Point Name="Chomper">
+			<X>-219.080002</X>
+			<Y>-2.210000</Y>
+			<Z>-622.210022</Z>
+		</Point>
+		<Connection From="Chomper" To="enchanted_73" />
+		<Connection From="Chomper" To="enchanted_75" />
+		<Point Name="enchanted_10">
+			<X>-179.190002</X>
+			<Y>0.960000</Y>
+			<Z>33.090000</Z>
+		</Point>
+		<Connection From="enchanted_10" To="enchanted_9" />
+		<Connection From="enchanted_10" To="enchanted_11" />
+		<Point Name="enchanted_100">
+			<X>-48.490002</X>
+			<Y>26.969999</Y>
+			<Z>-682.299988</Z>
+		</Point>
+		<Connection From="enchanted_100" To="enchanted_99" />
+		<Connection From="enchanted_100" To="enchanted_101" />
+		<Point Name="enchanted_101">
+			<X>-88.769997</X>
+			<Y>25.760000</Y>
+			<Z>-630.359985</Z>
+		</Point>
+		<Connection From="enchanted_101" To="enchanted_100" />
+		<Connection From="enchanted_101" To="enchanted_102" />
+		<Point Name="enchanted_102">
+			<X>-125.800003</X>
+			<Y>26.610001</Y>
+			<Z>-624.299988</Z>
+		</Point>
+		<Connection From="enchanted_102" To="enchanted_101" />
+		<Connection From="enchanted_102" To="enchanted_103" />
+		<Point Name="enchanted_103">
+			<X>-145.460007</X>
+			<Y>26.070000</Y>
+			<Z>-628.880005</Z>
+		</Point>
+		<Connection From="enchanted_103" To="enchanted_102" />
+		<Connection From="enchanted_103" To="enchanted_104" />
+		<Point Name="enchanted_104">
+			<X>-156.009995</X>
+			<Y>26.360001</Y>
+			<Z>-660.020020</Z>
+		</Point>
+		<Connection From="enchanted_104" To="enchanted_103" />
+		<Connection From="enchanted_104" To="enchanted_105" />
+		<Point Name="enchanted_105">
+			<X>-185.139999</X>
+			<Y>27.850000</Y>
+			<Z>-715.460022</Z>
+		</Point>
+		<Connection From="enchanted_105" To="enchanted_104" />
+		<Connection From="enchanted_105" To="enchanted_106" />
+		<Point Name="enchanted_106">
+			<X>-203.490005</X>
+			<Y>29.950001</Y>
+			<Z>-744.650024</Z>
+		</Point>
+		<Connection From="enchanted_106" To="enchanted_105" />
+		<Connection From="enchanted_106" To="enchanted_107" />
+		<Point Name="enchanted_107">
+			<X>-204.210007</X>
+			<Y>32.200001</Y>
+			<Z>-769.140015</Z>
+		</Point>
+		<Connection From="enchanted_107" To="enchanted_106" />
+		<Connection From="enchanted_107" To="enchanted_108" />
+		<Point Name="enchanted_108">
+			<X>-205.479996</X>
+			<Y>34.450001</Y>
+			<Z>-791.099976</Z>
+		</Point>
+		<Connection From="enchanted_108" To="enchanted_107" />
+		<Connection From="enchanted_108" To="enchanted_109" />
+		<Point Name="enchanted_109">
+			<X>-214.600006</X>
+			<Y>33.040001</Y>
+			<Z>-812.669983</Z>
+		</Point>
+		<Connection From="enchanted_109" To="enchanted_108" />
+		<Connection From="enchanted_109" To="enchanted_110" />
+		<Point Name="enchanted_11">
+			<X>-245.720001</X>
+			<Y>1.250000</Y>
+			<Z>55.580002</Z>
+		</Point>
+		<Connection From="enchanted_11" To="enchanted_10" />
+		<Connection From="enchanted_11" To="enchanted_12" />
+		<Point Name="enchanted_110">
+			<X>-205.380005</X>
+			<Y>39.990002</Y>
+			<Z>-831.859985</Z>
+		</Point>
+		<Connection From="enchanted_110" To="enchanted_109" />
+		<Connection From="enchanted_110" To="enchanted_111" />
+		<Point Name="enchanted_111">
+			<X>-203.470001</X>
+			<Y>41.880001</Y>
+			<Z>-856.130005</Z>
+		</Point>
+		<Connection From="enchanted_111" To="enchanted_110" />
+		<Connection From="enchanted_111" To="enchanted_112" />
+		<Point Name="enchanted_112">
+			<X>-211.289993</X>
+			<Y>17.639999</Y>
+			<Z>-889.679993</Z>
+		</Point>
+		<Connection From="enchanted_112" To="enchanted_111" />
+		<Connection From="enchanted_112" To="enchanted_113" />
+		<Point Name="enchanted_113">
+			<X>-218.029999</X>
+			<Y>8.310000</Y>
+			<Z>-909.169983</Z>
+		</Point>
+		<Connection From="enchanted_113" To="enchanted_112" />
+		<Connection From="enchanted_113" To="enchanted_114" />
+		<Point Name="enchanted_114">
+			<X>-224.199997</X>
+			<Y>11.040000</Y>
+			<Z>-929.500000</Z>
+		</Point>
+		<Connection From="enchanted_114" To="enchanted_113" />
+		<Connection From="enchanted_114" To="enchanted_115" />
+		<Point Name="enchanted_115">
+			<X>-250.729996</X>
+			<Y>24.030001</Y>
+			<Z>-950.380005</Z>
+		</Point>
+		<Connection From="enchanted_115" To="enchanted_114" />
+		<Connection From="enchanted_115" To="enchanted_116" />
+		<Point Name="enchanted_116">
+			<X>-283.200012</X>
+			<Y>26.129999</Y>
+			<Z>-957.400024</Z>
+		</Point>
+		<Connection From="enchanted_116" To="enchanted_115" />
+		<Connection From="enchanted_116" To="enchanted_117" />
+		<Point Name="enchanted_117">
+			<X>-333.609985</X>
+			<Y>25.260000</Y>
+			<Z>-946.559998</Z>
+		</Point>
+		<Connection From="enchanted_117" To="enchanted_116" />
+		<Connection From="enchanted_117" To="enchanted_118" />
+		<Point Name="enchanted_118">
+			<X>-397.720001</X>
+			<Y>10.770000</Y>
+			<Z>-944.039978</Z>
+		</Point>
+		<Connection From="enchanted_118" To="enchanted_117" />
+		<Connection From="enchanted_118" To="enchanted_119" />
+		<Point Name="enchanted_119">
+			<X>-415.470001</X>
+			<Y>14.780000</Y>
+			<Z>-933.039978</Z>
+		</Point>
+		<Connection From="enchanted_119" To="enchanted_118" />
+		<Connection From="enchanted_119" To="enchanted_120" />
+		<Point Name="enchanted_12">
+			<X>-265.029999</X>
+			<Y>0.770000</Y>
+			<Z>76.989998</Z>
+		</Point>
+		<Connection From="enchanted_12" To="enchanted_11" />
+		<Connection From="enchanted_12" To="enchanted_13" />
+		<Point Name="enchanted_120">
+			<X>-456.649994</X>
+			<Y>7.950000</Y>
+			<Z>-904.559998</Z>
+		</Point>
+		<Connection From="enchanted_120" To="enchanted_119" />
+		<Connection From="enchanted_120" To="enchanted_121" />
+		<Point Name="enchanted_121">
+			<X>-466.209991</X>
+			<Y>-0.890000</Y>
+			<Z>-853.679993</Z>
+		</Point>
+		<Connection From="enchanted_121" To="enchanted_120" />
+		<Connection From="enchanted_121" To="enchanted_122" />
+		<Point Name="enchanted_122">
+			<X>-461.420013</X>
+			<Y>15.760000</Y>
+			<Z>-824.640015</Z>
+		</Point>
+		<Connection From="enchanted_122" To="enchanted_121" />
+		<Connection From="enchanted_122" To="enchanted_123" />
+		<Point Name="enchanted_123">
+			<X>-473.839996</X>
+			<Y>20.910000</Y>
+			<Z>-798.710022</Z>
+		</Point>
+		<Connection From="enchanted_123" To="enchanted_122" />
+		<Connection From="enchanted_123" To="enchanted_124" />
+		<Point Name="enchanted_124">
+			<X>-529.640015</X>
+			<Y>14.700000</Y>
+			<Z>-768.729980</Z>
+		</Point>
+		<Connection From="enchanted_124" To="enchanted_123" />
+		<Connection From="enchanted_124" To="enchanted_125" />
+		<Point Name="enchanted_125">
+			<X>-547.190002</X>
+			<Y>15.690000</Y>
+			<Z>-790.530029</Z>
+		</Point>
+		<Connection From="enchanted_125" To="enchanted_124" />
+		<Connection From="enchanted_125" To="enchanted_126" />
+		<Point Name="enchanted_126">
+			<X>-608.929993</X>
+			<Y>16.320000</Y>
+			<Z>-803.919983</Z>
+		</Point>
+		<Connection From="enchanted_126" To="enchanted_125" />
+		<Connection From="enchanted_126" To="enchanted_127" />
+		<Point Name="enchanted_127">
+			<X>-628.190002</X>
+			<Y>16.059999</Y>
+			<Z>-786.929993</Z>
+		</Point>
+		<Connection From="enchanted_127" To="enchanted_126" />
+		<Connection From="enchanted_127" To="enchanted_128" />
+		<Point Name="enchanted_128">
+			<X>-622.690002</X>
+			<Y>15.510000</Y>
+			<Z>-763.669983</Z>
+		</Point>
+		<Connection From="enchanted_128" To="enchanted_127" />
+		<Connection From="enchanted_128" To="enchanted_129" />
+		<Point Name="enchanted_129">
+			<X>-626.140015</X>
+			<Y>15.430000</Y>
+			<Z>-719.409973</Z>
+		</Point>
+		<Connection From="enchanted_129" To="enchanted_128" />
+		<Connection From="enchanted_129" To="enchanted_130" />
+		<Point Name="enchanted_13">
+			<X>-298.600006</X>
+			<Y>1.210000</Y>
+			<Z>87.290001</Z>
+		</Point>
+		<Connection From="enchanted_13" To="enchanted_12" />
+		<Connection From="enchanted_13" To="enchanted_14" />
+		<Point Name="enchanted_130">
+			<X>-580.679993</X>
+			<Y>10.630000</Y>
+			<Z>-709.380005</Z>
+		</Point>
+		<Connection From="enchanted_130" To="enchanted_129" />
+		<Connection From="enchanted_130" To="enchanted_131" />
+		<Point Name="enchanted_131">
+			<X>-554.500000</X>
+			<Y>4.470000</Y>
+			<Z>-714.000000</Z>
+		</Point>
+		<Connection From="enchanted_131" To="enchanted_130" />
+		<Connection From="enchanted_131" To="enchanted_132" />
+		<Point Name="enchanted_132">
+			<X>-513.890015</X>
+			<Y>11.520000</Y>
+			<Z>-711.080017</Z>
+		</Point>
+		<Connection From="enchanted_132" To="enchanted_131" />
+		<Connection From="enchanted_132" To="enchanted_133" />
+		<Point Name="enchanted_133">
+			<X>-489.880005</X>
+			<Y>15.790000</Y>
+			<Z>-703.570007</Z>
+		</Point>
+		<Connection From="enchanted_133" To="enchanted_132" />
+		<Connection From="enchanted_133" To="enchanted_134" />
+		<Point Name="enchanted_134">
+			<X>-470.380005</X>
+			<Y>15.350000</Y>
+			<Z>-673.400024</Z>
+		</Point>
+		<Connection From="enchanted_134" To="enchanted_133" />
+		<Connection From="enchanted_134" To="enchanted_135" />
+		<Point Name="enchanted_135">
+			<X>-480.119995</X>
+			<Y>15.030000</Y>
+			<Z>-652.030029</Z>
+		</Point>
+		<Connection From="enchanted_135" To="enchanted_134" />
+		<Connection From="enchanted_135" To="enchanted_136" />
+		<Point Name="enchanted_136">
+			<X>-577.320007</X>
+			<Y>6.450000</Y>
+			<Z>-654.369995</Z>
+		</Point>
+		<Connection From="enchanted_136" To="enchanted_135" />
+		<Connection From="enchanted_136" To="enchanted_137" />
+		<Point Name="enchanted_137">
+			<X>-653.390015</X>
+			<Y>10.780000</Y>
+			<Z>-658.820007</Z>
+		</Point>
+		<Connection From="enchanted_137" To="enchanted_136" />
+		<Connection From="enchanted_137" To="enchanted_138" />
+		<Point Name="enchanted_138">
+			<X>-680.190002</X>
+			<Y>6.620000</Y>
+			<Z>-658.700012</Z>
+		</Point>
+		<Connection From="enchanted_138" To="enchanted_137" />
+		<Connection From="enchanted_138" To="Foomby" />
+		<Point Name="enchanted_14">
+			<X>-325.350006</X>
+			<Y>0.740000</Y>
+			<Z>90.930000</Z>
+		</Point>
+		<Connection From="enchanted_14" To="enchanted_13" />
+		<Connection From="enchanted_14" To="enchanted_15" />
+		<Point Name="enchanted_140">
+			<X>-701.090027</X>
+			<Y>10.690000</Y>
+			<Z>-684.359985</Z>
+		</Point>
+		<Connection From="enchanted_140" To="Foomby" />
+		<Connection From="enchanted_140" To="enchanted_141" />
+		<Point Name="enchanted_141">
+			<X>-714.039978</X>
+			<Y>9.210000</Y>
+			<Z>-700.229980</Z>
+		</Point>
+		<Connection From="enchanted_141" To="enchanted_140" />
+		<Connection From="enchanted_141" To="enchanted_142" />
+		<Point Name="enchanted_142">
+			<X>-738.950012</X>
+			<Y>3.110000</Y>
+			<Z>-706.440002</Z>
+		</Point>
+		<Connection From="enchanted_142" To="enchanted_141" />
+		<Connection From="enchanted_142" To="enchanted_143" />
+		<Point Name="enchanted_143">
+			<X>-792.369995</X>
+			<Y>-3.320000</Y>
+			<Z>-699.729980</Z>
+		</Point>
+		<Connection From="enchanted_143" To="enchanted_142" />
+		<Connection From="enchanted_143" To="enchanted_144" />
+		<Point Name="enchanted_144">
+			<X>-809.280029</X>
+			<Y>-1.810000</Y>
+			<Z>-688.989990</Z>
+		</Point>
+		<Connection From="enchanted_144" To="enchanted_143" />
+		<Connection From="enchanted_144" To="enchanted_145" />
+		<Point Name="enchanted_145">
+			<X>-832.690002</X>
+			<Y>2.650000</Y>
+			<Z>-688.450012</Z>
+		</Point>
+		<Connection From="enchanted_145" To="enchanted_144" />
+		<Connection From="enchanted_145" To="enchanted_146" />
+		<Point Name="enchanted_146">
+			<X>-841.700012</X>
+			<Y>4.830000</Y>
+			<Z>-664.969971</Z>
+		</Point>
+		<Connection From="enchanted_146" To="enchanted_145" />
+		<Connection From="enchanted_146" To="enchanted_147" />
+		<Point Name="enchanted_147">
+			<X>-834.229980</X>
+			<Y>0.980000</Y>
+			<Z>-643.080017</Z>
+		</Point>
+		<Connection From="enchanted_147" To="enchanted_146" />
+		<Connection From="enchanted_147" To="enchanted_148" />
+		<Point Name="enchanted_148">
+			<X>-854.330017</X>
+			<Y>-0.980000</Y>
+			<Z>-641.039978</Z>
+		</Point>
+		<Connection From="enchanted_148" To="enchanted_147" />
+		<Connection From="enchanted_148" To="enchanted_149" />
+		<Point Name="enchanted_149">
+			<X>-890.260010</X>
+			<Y>3.690000</Y>
+			<Z>-639.309998</Z>
+		</Point>
+		<Connection From="enchanted_149" To="enchanted_148" />
+		<Connection From="enchanted_149" To="enchanted_150" />
+		<Point Name="enchanted_15">
+			<X>-350.950012</X>
+			<Y>4.680000</Y>
+			<Z>102.190002</Z>
+		</Point>
+		<Connection From="enchanted_15" To="enchanted_14" />
+		<Connection From="enchanted_15" To="enchanted_16" />
+		<Point Name="enchanted_150">
+			<X>-898.859985</X>
+			<Y>0.170000</Y>
+			<Z>-675.719971</Z>
+		</Point>
+		<Connection From="enchanted_150" To="enchanted_149" />
+		<Connection From="enchanted_150" To="enchanted_151" />
+		<Point Name="enchanted_151">
+			<X>-900.200012</X>
+			<Y>-0.710000</Y>
+			<Z>-696.549988</Z>
+		</Point>
+		<Connection From="enchanted_151" To="enchanted_150" />
+		<Connection From="enchanted_151" To="enchanted_152" />
+		<Point Name="enchanted_152">
+			<X>-889.130005</X>
+			<Y>3.000000</Y>
+			<Z>-731.580017</Z>
+		</Point>
+		<Connection From="enchanted_152" To="enchanted_151" />
+		<Connection From="enchanted_152" To="enchanted_153" />
+		<Point Name="enchanted_153">
+			<X>-886.000000</X>
+			<Y>5.510000</Y>
+			<Z>-772.070007</Z>
+		</Point>
+		<Connection From="enchanted_153" To="enchanted_152" />
+		<Connection From="enchanted_153" To="enchanted_154" />
+		<Point Name="enchanted_154">
+			<X>-886.729980</X>
+			<Y>1.830000</Y>
+			<Z>-796.359985</Z>
+		</Point>
+		<Connection From="enchanted_154" To="enchanted_153" />
+		<Connection From="enchanted_154" To="enchanted_155" />
+		<Point Name="enchanted_155">
+			<X>-904.190002</X>
+			<Y>-0.400000</Y>
+			<Z>-817.659973</Z>
+		</Point>
+		<Connection From="enchanted_155" To="enchanted_154" />
+		<Connection From="enchanted_155" To="enchanted_156" />
+		<Point Name="enchanted_156">
+			<X>-922.330017</X>
+			<Y>1.210000</Y>
+			<Z>-834.159973</Z>
+		</Point>
+		<Connection From="enchanted_156" To="enchanted_155" />
+		<Connection From="enchanted_156" To="enchanted_157" />
+		<Point Name="enchanted_157">
+			<X>-915.200012</X>
+			<Y>1.900000</Y>
+			<Z>-852.900024</Z>
+		</Point>
+		<Connection From="enchanted_157" To="enchanted_156" />
+		<Connection From="enchanted_157" To="enchanted_158" />
+		<Point Name="enchanted_158">
+			<X>-879.780029</X>
+			<Y>10.440000</Y>
+			<Z>-859.739990</Z>
+		</Point>
+		<Connection From="enchanted_158" To="enchanted_157" />
+		<Connection From="enchanted_158" To="enchanted_159" />
+		<Point Name="enchanted_159">
+			<X>-856.309998</X>
+			<Y>11.050000</Y>
+			<Z>-856.229980</Z>
+		</Point>
+		<Connection From="enchanted_159" To="enchanted_158" />
+		<Connection From="enchanted_159" To="enchanted_160" />
+		<Point Name="enchanted_16">
+			<X>-363.829987</X>
+			<Y>2.950000</Y>
+			<Z>122.279999</Z>
+		</Point>
+		<Connection From="enchanted_16" To="enchanted_15" />
+		<Connection From="enchanted_16" To="enchanted_17" />
+		<Point Name="enchanted_160">
+			<X>-831.659973</X>
+			<Y>8.190000</Y>
+			<Z>-858.229980</Z>
+		</Point>
+		<Connection From="enchanted_160" To="enchanted_159" />
+		<Connection From="enchanted_160" To="enchanted_161" />
+		<Point Name="enchanted_161">
+			<X>-787.520020</X>
+			<Y>1.670000</Y>
+			<Z>-845.890015</Z>
+		</Point>
+		<Connection From="enchanted_161" To="enchanted_160" />
+		<Connection From="enchanted_161" To="enchanted_162" />
+		<Point Name="enchanted_162">
+			<X>-756.650024</X>
+			<Y>1.030000</Y>
+			<Z>-854.320007</Z>
+		</Point>
+		<Connection From="enchanted_162" To="enchanted_161" />
+		<Connection From="enchanted_162" To="enchanted_163" />
+		<Point Name="enchanted_163">
+			<X>-736.330017</X>
+			<Y>9.570000</Y>
+			<Z>-894.869995</Z>
+		</Point>
+		<Connection From="enchanted_163" To="enchanted_162" />
+		<Connection From="enchanted_163" To="enchanted_164" />
+		<Point Name="enchanted_164">
+			<X>-734.590027</X>
+			<Y>13.250000</Y>
+			<Z>-915.369995</Z>
+		</Point>
+		<Connection From="enchanted_164" To="enchanted_163" />
+		<Connection From="enchanted_164" To="enchanted_165" />
+		<Point Name="enchanted_165">
+			<X>-722.969971</X>
+			<Y>9.720000</Y>
+			<Z>-931.849976</Z>
+		</Point>
+		<Connection From="enchanted_165" To="enchanted_164" />
+		<Connection From="enchanted_165" To="enchanted_166" />
+		<Point Name="enchanted_166">
+			<X>-702.469971</X>
+			<Y>1.850000</Y>
+			<Z>-934.820007</Z>
+		</Point>
+		<Connection From="enchanted_166" To="enchanted_165" />
+		<Connection From="enchanted_166" To="enchanted_167" />
+		<Point Name="enchanted_167">
+			<X>-683.419983</X>
+			<Y>-0.800000</Y>
+			<Z>-946.650024</Z>
+		</Point>
+		<Connection From="enchanted_167" To="enchanted_166" />
+		<Connection From="enchanted_167" To="enchanted_168" />
+		<Point Name="enchanted_168">
+			<X>-687.239990</X>
+			<Y>-1.720000</Y>
+			<Z>-967.200012</Z>
+		</Point>
+		<Connection From="enchanted_168" To="enchanted_167" />
+		<Connection From="enchanted_168" To="enchanted_169" />
+		<Point Name="enchanted_169">
+			<X>-703.210022</X>
+			<Y>4.010000</Y>
+			<Z>-989.169983</Z>
+		</Point>
+		<Connection From="enchanted_169" To="enchanted_168" />
+		<Connection From="enchanted_169" To="enchanted_170" />
+		<Point Name="enchanted_17">
+			<X>-384.700012</X>
+			<Y>2.640000</Y>
+			<Z>128.199997</Z>
+		</Point>
+		<Connection From="enchanted_17" To="enchanted_16" />
+		<Connection From="enchanted_17" To="enchanted_18" />
+		<Point Name="enchanted_170">
+			<X>-722.739990</X>
+			<Y>2.760000</Y>
+			<Z>-1015.909973</Z>
+		</Point>
+		<Connection From="enchanted_170" To="enchanted_169" />
+		<Connection From="enchanted_170" To="enchanted_171" />
+		<Point Name="enchanted_171">
+			<X>-765.700012</X>
+			<Y>6.910000</Y>
+			<Z>-1023.580017</Z>
+		</Point>
+		<Connection From="enchanted_171" To="enchanted_170" />
+		<Connection From="enchanted_171" To="enchanted_172" />
+		<Point Name="enchanted_172">
+			<X>-801.159973</X>
+			<Y>-0.100000</Y>
+			<Z>-1014.650024</Z>
+		</Point>
+		<Connection From="enchanted_172" To="enchanted_171" />
+		<Connection From="enchanted_172" To="enchanted_173" />
+		<Point Name="enchanted_173">
+			<X>-822.830017</X>
+			<Y>4.750000</Y>
+			<Z>-993.070007</Z>
+		</Point>
+		<Connection From="enchanted_173" To="enchanted_172" />
+		<Connection From="enchanted_173" To="enchanted_174" />
+		<Point Name="enchanted_174">
+			<X>-843.330017</X>
+			<Y>6.920000</Y>
+			<Z>-969.799988</Z>
+		</Point>
+		<Connection From="enchanted_174" To="enchanted_173" />
+		<Connection From="enchanted_174" To="enchanted_175" />
+		<Point Name="enchanted_175">
+			<X>-857.119995</X>
+			<Y>3.490000</Y>
+			<Z>-954.969971</Z>
+		</Point>
+		<Connection From="enchanted_175" To="enchanted_174" />
+		<Connection From="enchanted_175" To="enchanted_176" />
+		<Point Name="enchanted_176">
+			<X>-888.840027</X>
+			<Y>0.100000</Y>
+			<Z>-920.880005</Z>
+		</Point>
+		<Connection From="enchanted_176" To="enchanted_175" />
+		<Connection From="enchanted_176" To="enchanted_177" />
+		<Point Name="enchanted_177">
+			<X>-905.719971</X>
+			<Y>2.410000</Y>
+			<Z>-909.599976</Z>
+		</Point>
+		<Connection From="enchanted_177" To="enchanted_176" />
+		<Connection From="enchanted_177" To="Finish" />
+		<Point Name="enchanted_18">
+			<X>-415.140015</X>
+			<Y>1.380000</Y>
+			<Z>123.959999</Z>
+		</Point>
+		<Connection From="enchanted_18" To="enchanted_17" />
+		<Connection From="enchanted_18" To="enchanted_19" />
+		<Point Name="enchanted_19">
+			<X>-432.420013</X>
+			<Y>1.050000</Y>
+			<Z>103.209999</Z>
+		</Point>
+		<Connection From="enchanted_19" To="enchanted_18" />
+		<Connection From="enchanted_19" To="enchanted_20" />
+		<Point Name="enchanted_2">
+			<X>-1.410000</X>
+			<Y>4.480000</Y>
+			<Z>53.299999</Z>
+		</Point>
+		<Connection From="enchanted_2" To="ZoneIn" />
+		<Connection From="enchanted_2" To="enchanted_3" />
+		<Point Name="enchanted_20">
+			<X>-449.589996</X>
+			<Y>2.520000</Y>
+			<Z>64.519997</Z>
+		</Point>
+		<Connection From="enchanted_20" To="enchanted_19" />
+		<Connection From="enchanted_20" To="enchanted_21" />
+		<Point Name="enchanted_21">
+			<X>-437.160004</X>
+			<Y>4.010000</Y>
+			<Z>43.840000</Z>
+		</Point>
+		<Connection From="enchanted_21" To="enchanted_20" />
+		<Connection From="enchanted_21" To="enchanted_22" />
+		<Point Name="enchanted_22">
+			<X>-416.720001</X>
+			<Y>6.470000</Y>
+			<Z>36.650002</Z>
+		</Point>
+		<Connection From="enchanted_22" To="enchanted_21" />
+		<Connection From="enchanted_22" To="enchanted_23" />
+		<Point Name="enchanted_23">
+			<X>-396.059998</X>
+			<Y>5.370000</Y>
+			<Z>38.099998</Z>
+		</Point>
+		<Connection From="enchanted_23" To="enchanted_22" />
+		<Connection From="enchanted_23" To="enchanted_24" />
+		<Point Name="enchanted_24">
+			<X>-364.549988</X>
+			<Y>0.920000</Y>
+			<Z>33.700001</Z>
+		</Point>
+		<Connection From="enchanted_24" To="enchanted_23" />
+		<Connection From="enchanted_24" To="enchanted_25" />
+		<Point Name="enchanted_25">
+			<X>-352.839996</X>
+			<Y>1.620000</Y>
+			<Z>14.970000</Z>
+		</Point>
+		<Connection From="enchanted_25" To="enchanted_24" />
+		<Connection From="enchanted_25" To="enchanted_26" />
+		<Point Name="enchanted_26">
+			<X>-355.190002</X>
+			<Y>0.480000</Y>
+			<Z>-5.240000</Z>
+		</Point>
+		<Connection From="enchanted_26" To="enchanted_25" />
+		<Connection From="enchanted_26" To="enchanted_27" />
+		<Point Name="enchanted_27">
+			<X>-330.779999</X>
+			<Y>1.620000</Y>
+			<Z>-18.520000</Z>
+		</Point>
+		<Connection From="enchanted_27" To="enchanted_26" />
+		<Connection From="enchanted_27" To="enchanted_28" />
+		<Point Name="enchanted_28">
+			<X>-299.079987</X>
+			<Y>3.140000</Y>
+			<Z>-20.150000</Z>
+		</Point>
+		<Connection From="enchanted_28" To="enchanted_27" />
+		<Connection From="enchanted_28" To="enchanted_29" />
+		<Point Name="enchanted_29">
+			<X>-279.000000</X>
+			<Y>9.010000</Y>
+			<Z>-17.040001</Z>
+		</Point>
+		<Connection From="enchanted_29" To="enchanted_28" />
+		<Connection From="enchanted_29" To="enchanted_30" />
+		<Point Name="enchanted_3">
+			<X>-1.630000</X>
+			<Y>3.950000</Y>
+			<Z>31.719999</Z>
+		</Point>
+		<Connection From="enchanted_3" To="enchanted_2" />
+		<Connection From="enchanted_3" To="enchanted_4" />
+		<Point Name="enchanted_30">
+			<X>-246.559998</X>
+			<Y>7.770000</Y>
+			<Z>-22.590000</Z>
+		</Point>
+		<Connection From="enchanted_30" To="enchanted_29" />
+		<Connection From="enchanted_30" To="enchanted_31" />
+		<Point Name="enchanted_31">
+			<X>-229.630005</X>
+			<Y>5.570000</Y>
+			<Z>-37.029999</Z>
+		</Point>
+		<Connection From="enchanted_31" To="enchanted_30" />
+		<Connection From="enchanted_31" To="enchanted_32" />
+		<Point Name="enchanted_32">
+			<X>-219.279999</X>
+			<Y>6.230000</Y>
+			<Z>-59.610001</Z>
+		</Point>
+		<Connection From="enchanted_32" To="enchanted_31" />
+		<Connection From="enchanted_32" To="enchanted_33" />
+		<Point Name="enchanted_33">
+			<X>-198.860001</X>
+			<Y>4.830000</Y>
+			<Z>-58.619999</Z>
+		</Point>
+		<Connection From="enchanted_33" To="enchanted_32" />
+		<Connection From="enchanted_33" To="enchanted_34" />
+		<Point Name="enchanted_34">
+			<X>-176.979996</X>
+			<Y>3.680000</Y>
+			<Z>-45.419998</Z>
+		</Point>
+		<Connection From="enchanted_34" To="enchanted_33" />
+		<Connection From="enchanted_34" To="enchanted_35" />
+		<Point Name="enchanted_35">
+			<X>-151.740005</X>
+			<Y>1.760000</Y>
+			<Z>-22.889999</Z>
+		</Point>
+		<Connection From="enchanted_35" To="enchanted_34" />
+		<Connection From="enchanted_35" To="enchanted_36" />
+		<Point Name="enchanted_36">
+			<X>-131.699997</X>
+			<Y>-0.410000</Y>
+			<Z>-25.340000</Z>
+		</Point>
+		<Connection From="enchanted_36" To="enchanted_35" />
+		<Connection From="enchanted_36" To="enchanted_37" />
+		<Point Name="enchanted_37">
+			<X>-112.480003</X>
+			<Y>-1.080000</Y>
+			<Z>-35.150002</Z>
+		</Point>
+		<Connection From="enchanted_37" To="enchanted_36" />
+		<Connection From="enchanted_37" To="enchanted_38" />
+		<Point Name="enchanted_38">
+			<X>-91.349998</X>
+			<Y>4.650000</Y>
+			<Z>-63.500000</Z>
+		</Point>
+		<Connection From="enchanted_38" To="enchanted_37" />
+		<Connection From="enchanted_38" To="enchanted_39" />
+		<Point Name="enchanted_39">
+			<X>-62.619999</X>
+			<Y>2.970000</Y>
+			<Z>-60.070000</Z>
+		</Point>
+		<Connection From="enchanted_39" To="enchanted_38" />
+		<Connection From="enchanted_39" To="enchanted_40" />
+		<Point Name="enchanted_4">
+			<X>-2.070000</X>
+			<Y>-2.060000</Y>
+			<Z>-5.790000</Z>
+		</Point>
+		<Connection From="enchanted_4" To="enchanted_3" />
+		<Connection From="enchanted_4" To="Start" />
+		<Point Name="enchanted_40">
+			<X>-13.840000</X>
+			<Y>-1.750000</Y>
+			<Z>-72.470001</Z>
+		</Point>
+		<Connection From="enchanted_40" To="enchanted_39" />
+		<Connection From="enchanted_40" To="enchanted_41" />
+		<Point Name="enchanted_41">
+			<X>19.360001</X>
+			<Y>0.570000</Y>
+			<Z>-57.419998</Z>
+		</Point>
+		<Connection From="enchanted_41" To="enchanted_40" />
+		<Connection From="enchanted_41" To="enchanted_42" />
+		<Point Name="enchanted_42">
+			<X>39.450001</X>
+			<Y>1.220000</Y>
+			<Z>-60.549999</Z>
+		</Point>
+		<Connection From="enchanted_42" To="enchanted_41" />
+		<Connection From="enchanted_42" To="enchanted_43" />
+		<Point Name="enchanted_43">
+			<X>57.720001</X>
+			<Y>-1.010000</Y>
+			<Z>-69.769997</Z>
+		</Point>
+		<Connection From="enchanted_43" To="enchanted_42" />
+		<Connection From="enchanted_43" To="enchanted_44" />
+		<Point Name="enchanted_44">
+			<X>76.089996</X>
+			<Y>-0.560000</Y>
+			<Z>-82.570000</Z>
+		</Point>
+		<Connection From="enchanted_44" To="enchanted_43" />
+		<Connection From="enchanted_44" To="enchanted_45" />
+		<Point Name="enchanted_45">
+			<X>97.489998</X>
+			<Y>-1.090000</Y>
+			<Z>-96.580002</Z>
+		</Point>
+		<Connection From="enchanted_45" To="enchanted_44" />
+		<Connection From="enchanted_45" To="enchanted_46" />
+		<Point Name="enchanted_46">
+			<X>118.019997</X>
+			<Y>-0.250000</Y>
+			<Z>-101.239998</Z>
+		</Point>
+		<Connection From="enchanted_46" To="enchanted_45" />
+		<Connection From="enchanted_46" To="enchanted_47" />
+		<Point Name="enchanted_47">
+			<X>135.380005</X>
+			<Y>-0.920000</Y>
+			<Z>-111.449997</Z>
+		</Point>
+		<Connection From="enchanted_47" To="enchanted_46" />
+		<Connection From="enchanted_47" To="enchanted_48" />
+		<Point Name="enchanted_48">
+			<X>151.869995</X>
+			<Y>-0.430000</Y>
+			<Z>-125.089996</Z>
+		</Point>
+		<Connection From="enchanted_48" To="enchanted_47" />
+		<Connection From="enchanted_48" To="enchanted_49" />
+		<Point Name="enchanted_49">
+			<X>158.429993</X>
+			<Y>4.230000</Y>
+			<Z>-144.630005</Z>
+		</Point>
+		<Connection From="enchanted_49" To="enchanted_48" />
+		<Connection From="enchanted_49" To="enchanted_50" />
+		<Point Name="enchanted_50">
+			<X>156.830002</X>
+			<Y>11.670000</Y>
+			<Z>-171.270004</Z>
+		</Point>
+		<Connection From="enchanted_50" To="enchanted_49" />
+		<Connection From="enchanted_50" To="enchanted_51" />
+		<Point Name="enchanted_51">
+			<X>148.369995</X>
+			<Y>2.010000</Y>
+			<Z>-216.050003</Z>
+		</Point>
+		<Connection From="enchanted_51" To="enchanted_50" />
+		<Connection From="enchanted_51" To="enchanted_52" />
+		<Point Name="enchanted_52">
+			<X>101.459999</X>
+			<Y>-1.150000</Y>
+			<Z>-220.639999</Z>
+		</Point>
+		<Connection From="enchanted_52" To="enchanted_51" />
+		<Connection From="enchanted_52" To="enchanted_53" />
+		<Point Name="enchanted_53">
+			<X>77.419998</X>
+			<Y>-2.670000</Y>
+			<Z>-205.639999</Z>
+		</Point>
+		<Connection From="enchanted_53" To="enchanted_52" />
+		<Connection From="enchanted_53" To="enchanted_54" />
+		<Point Name="enchanted_54">
+			<X>34.110001</X>
+			<Y>2.640000</Y>
+			<Z>-193.149994</Z>
+		</Point>
+		<Connection From="enchanted_54" To="enchanted_53" />
+		<Connection From="enchanted_54" To="enchanted_55" />
+		<Point Name="enchanted_55">
+			<X>-19.180000</X>
+			<Y>6.810000</Y>
+			<Z>-191.399994</Z>
+		</Point>
+		<Connection From="enchanted_55" To="enchanted_54" />
+		<Connection From="enchanted_55" To="enchanted_56" />
+		<Point Name="enchanted_56">
+			<X>-50.189999</X>
+			<Y>12.740000</Y>
+			<Z>-198.309998</Z>
+		</Point>
+		<Connection From="enchanted_56" To="enchanted_55" />
+		<Connection From="enchanted_56" To="enchanted_57" />
+		<Point Name="enchanted_57">
+			<X>-83.839996</X>
+			<Y>-1.690000</Y>
+			<Z>-206.149994</Z>
+		</Point>
+		<Connection From="enchanted_57" To="enchanted_56" />
+		<Connection From="enchanted_57" To="enchanted_58" />
+		<Point Name="enchanted_58">
+			<X>-104.019997</X>
+			<Y>-3.310000</Y>
+			<Z>-206.940002</Z>
+		</Point>
+		<Connection From="enchanted_58" To="enchanted_57" />
+		<Connection From="enchanted_58" To="enchanted_59" />
+		<Point Name="enchanted_59">
+			<X>-127.320000</X>
+			<Y>0.500000</Y>
+			<Z>-214.089996</Z>
+		</Point>
+		<Connection From="enchanted_59" To="enchanted_58" />
+		<Connection From="enchanted_59" To="enchanted_60" />
+		<Point Name="enchanted_6">
+			<X>-42.490002</X>
+			<Y>-0.650000</Y>
+			<Z>-16.209999</Z>
+		</Point>
+		<Connection From="enchanted_6" To="Start" />
+		<Connection From="enchanted_6" To="enchanted_7" />
+		<Point Name="enchanted_60">
+			<X>-155.419998</X>
+			<Y>0.310000</Y>
+			<Z>-236.149994</Z>
+		</Point>
+		<Connection From="enchanted_60" To="enchanted_59" />
+		<Connection From="enchanted_60" To="enchanted_61" />
+		<Point Name="enchanted_61">
+			<X>-186.830002</X>
+			<Y>1.300000</Y>
+			<Z>-290.649994</Z>
+		</Point>
+		<Connection From="enchanted_61" To="enchanted_60" />
+		<Connection From="enchanted_61" To="Rivervale" />
+		<Point Name="enchanted_63">
+			<X>-192.199997</X>
+			<Y>-0.680000</Y>
+			<Z>-328.230011</Z>
+		</Point>
+		<Connection From="enchanted_63" To="Rivervale" />
+		<Connection From="enchanted_63" To="enchanted_64" />
+		<Point Name="enchanted_64">
+			<X>-191.710007</X>
+			<Y>-2.130000</Y>
+			<Z>-348.890015</Z>
+		</Point>
+		<Connection From="enchanted_64" To="enchanted_63" />
+		<Connection From="enchanted_64" To="enchanted_65" />
+		<Point Name="enchanted_65">
+			<X>-191.539993</X>
+			<Y>3.440000</Y>
+			<Z>-379.269989</Z>
+		</Point>
+		<Connection From="enchanted_65" To="enchanted_64" />
+		<Connection From="enchanted_65" To="enchanted_66" />
+		<Point Name="enchanted_66">
+			<X>-192.360001</X>
+			<Y>0.360000</Y>
+			<Z>-407.589996</Z>
+		</Point>
+		<Connection From="enchanted_66" To="enchanted_65" />
+		<Connection From="enchanted_66" To="enchanted_67" />
+		<Point Name="enchanted_67">
+			<X>-205.860001</X>
+			<Y>1.690000</Y>
+			<Z>-431.170013</Z>
+		</Point>
+		<Connection From="enchanted_67" To="enchanted_66" />
+		<Connection From="enchanted_67" To="enchanted_68" />
+		<Point Name="enchanted_68">
+			<X>-173.899994</X>
+			<Y>0.070000</Y>
+			<Z>-448.869995</Z>
+		</Point>
+		<Connection From="enchanted_68" To="enchanted_67" />
+		<Connection From="enchanted_68" To="enchanted_69" />
+		<Point Name="enchanted_69">
+			<X>-161.759995</X>
+			<Y>11.110000</Y>
+			<Z>-480.950012</Z>
+		</Point>
+		<Connection From="enchanted_69" To="enchanted_68" />
+		<Connection From="enchanted_69" To="enchanted_70" />
+		<Point Name="enchanted_7">
+			<X>-88.879997</X>
+			<Y>-0.950000</Y>
+			<Z>-8.480000</Z>
+		</Point>
+		<Connection From="enchanted_7" To="enchanted_6" />
+		<Connection From="enchanted_7" To="enchanted_8" />
+		<Point Name="enchanted_70">
+			<X>-178.110001</X>
+			<Y>3.860000</Y>
+			<Z>-540.229980</Z>
+		</Point>
+		<Connection From="enchanted_70" To="enchanted_69" />
+		<Connection From="enchanted_70" To="enchanted_71" />
+		<Point Name="enchanted_71">
+			<X>-196.740005</X>
+			<Y>4.730000</Y>
+			<Z>-575.000000</Z>
+		</Point>
+		<Connection From="enchanted_71" To="enchanted_70" />
+		<Connection From="enchanted_71" To="enchanted_72" />
+		<Point Name="enchanted_72">
+			<X>-209.809998</X>
+			<Y>-0.220000</Y>
+			<Z>-600.520020</Z>
+		</Point>
+		<Connection From="enchanted_72" To="enchanted_71" />
+		<Connection From="enchanted_72" To="enchanted_73" />
+		<Point Name="enchanted_73">
+			<X>-219.080002</X>
+			<Y>-2.210000</Y>
+			<Z>-622.210022</Z>
+		</Point>
+		<Connection From="enchanted_73" To="enchanted_72" />
+		<Connection From="enchanted_73" To="Chomper" />
+		<Point Name="enchanted_75">
+			<X>-241.330002</X>
+			<Y>0.220000</Y>
+			<Z>-651.450012</Z>
+		</Point>
+		<Connection From="enchanted_75" To="Chomper" />
+		<Connection From="enchanted_75" To="enchanted_76" />
+		<Point Name="enchanted_76">
+			<X>-263.589996</X>
+			<Y>-3.630000</Y>
+			<Z>-674.460022</Z>
+		</Point>
+		<Connection From="enchanted_76" To="enchanted_75" />
+		<Connection From="enchanted_76" To="enchanted_77" />
+		<Point Name="enchanted_77">
+			<X>-288.269989</X>
+			<Y>5.880000</Y>
+			<Z>-748.159973</Z>
+		</Point>
+		<Connection From="enchanted_77" To="enchanted_76" />
+		<Connection From="enchanted_77" To="enchanted_78" />
+		<Point Name="enchanted_78">
+			<X>-319.429993</X>
+			<Y>1.830000</Y>
+			<Z>-787.609985</Z>
+		</Point>
+		<Connection From="enchanted_78" To="enchanted_77" />
+		<Connection From="enchanted_78" To="enchanted_79" />
+		<Point Name="enchanted_79">
+			<X>-292.839996</X>
+			<Y>0.110000</Y>
+			<Z>-828.929993</Z>
+		</Point>
+		<Connection From="enchanted_79" To="enchanted_78" />
+		<Connection From="enchanted_79" To="enchanted_80" />
+		<Point Name="enchanted_8">
+			<X>-132.440002</X>
+			<Y>-0.650000</Y>
+			<Z>7.080000</Z>
+		</Point>
+		<Connection From="enchanted_8" To="enchanted_7" />
+		<Connection From="enchanted_8" To="enchanted_9" />
+		<Point Name="enchanted_80">
+			<X>-290.959991</X>
+			<Y>5.490000</Y>
+			<Z>-850.719971</Z>
+		</Point>
+		<Connection From="enchanted_80" To="enchanted_79" />
+		<Connection From="enchanted_80" To="enchanted_81" />
+		<Point Name="enchanted_81">
+			<X>-296.570007</X>
+			<Y>22.690001</Y>
+			<Z>-902.010010</Z>
+		</Point>
+		<Connection From="enchanted_81" To="enchanted_80" />
+		<Connection From="enchanted_81" To="enchanted_82" />
+		<Point Name="enchanted_82">
+			<X>-318.239990</X>
+			<Y>18.629999</Y>
+			<Z>-899.349976</Z>
+		</Point>
+		<Connection From="enchanted_82" To="enchanted_81" />
+		<Connection From="enchanted_82" To="enchanted_83" />
+		<Point Name="enchanted_83">
+			<X>-334.730011</X>
+			<Y>-0.560000</Y>
+			<Z>-884.669983</Z>
+		</Point>
+		<Connection From="enchanted_83" To="enchanted_82" />
+		<Connection From="enchanted_83" To="enchanted_84" />
+		<Point Name="enchanted_84">
+			<X>-347.640015</X>
+			<Y>12.400000</Y>
+			<Z>-906.760010</Z>
+		</Point>
+		<Connection From="enchanted_84" To="enchanted_83" />
+		<Connection From="enchanted_84" To="enchanted_85" />
+		<Point Name="enchanted_85">
+			<X>-339.829987</X>
+			<Y>24.660000</Y>
+			<Z>-946.190002</Z>
+		</Point>
+		<Connection From="enchanted_85" To="enchanted_84" />
+		<Connection From="enchanted_85" To="enchanted_86" />
+		<Point Name="enchanted_86">
+			<X>-332.279999</X>
+			<Y>28.840000</Y>
+			<Z>-965.729980</Z>
+		</Point>
+		<Connection From="enchanted_86" To="enchanted_85" />
+		<Connection From="enchanted_86" To="enchanted_87" />
+		<Point Name="enchanted_87">
+			<X>-300.339996</X>
+			<Y>27.780001</Y>
+			<Z>-971.250000</Z>
+		</Point>
+		<Connection From="enchanted_87" To="enchanted_86" />
+		<Connection From="enchanted_87" To="enchanted_88" />
+		<Point Name="enchanted_88">
+			<X>-268.859985</X>
+			<Y>29.260000</Y>
+			<Z>-966.080017</Z>
+		</Point>
+		<Connection From="enchanted_88" To="enchanted_87" />
+		<Connection From="enchanted_88" To="enchanted_89" />
+		<Point Name="enchanted_89">
+			<X>-249.440002</X>
+			<Y>25.030001</Y>
+			<Z>-959.669983</Z>
+		</Point>
+		<Connection From="enchanted_89" To="enchanted_88" />
+		<Connection From="enchanted_89" To="enchanted_90" />
+		<Point Name="enchanted_9">
+			<X>-151.429993</X>
+			<Y>-0.390000</Y>
+			<Z>15.150000</Z>
+		</Point>
+		<Connection From="enchanted_9" To="enchanted_8" />
+		<Connection From="enchanted_9" To="enchanted_10" />
+		<Point Name="enchanted_90">
+			<X>-182.809998</X>
+			<Y>51.180000</Y>
+			<Z>-930.159973</Z>
+		</Point>
+		<Connection From="enchanted_90" To="enchanted_89" />
+		<Connection From="enchanted_90" To="enchanted_91" />
+		<Point Name="enchanted_91">
+			<X>-164.179993</X>
+			<Y>44.330002</Y>
+			<Z>-911.320007</Z>
+		</Point>
+		<Connection From="enchanted_91" To="enchanted_90" />
+		<Connection From="enchanted_91" To="enchanted_92" />
+		<Point Name="enchanted_92">
+			<X>-129.580002</X>
+			<Y>28.549999</Y>
+			<Z>-856.590027</Z>
+		</Point>
+		<Connection From="enchanted_92" To="enchanted_91" />
+		<Connection From="enchanted_92" To="enchanted_93" />
+		<Point Name="enchanted_93">
+			<X>-136.169998</X>
+			<Y>28.059999</Y>
+			<Z>-829.640015</Z>
+		</Point>
+		<Connection From="enchanted_93" To="enchanted_92" />
+		<Connection From="enchanted_93" To="enchanted_94" />
+		<Point Name="enchanted_94">
+			<X>-131.020004</X>
+			<Y>28.410000</Y>
+			<Z>-806.890015</Z>
+		</Point>
+		<Connection From="enchanted_94" To="enchanted_93" />
+		<Connection From="enchanted_94" To="enchanted_95" />
+		<Point Name="enchanted_95">
+			<X>-112.820000</X>
+			<Y>24.240000</Y>
+			<Z>-760.260010</Z>
+		</Point>
+		<Connection From="enchanted_95" To="enchanted_94" />
+		<Connection From="enchanted_95" To="enchanted_96" />
+		<Point Name="enchanted_96">
+			<X>-88.500000</X>
+			<Y>28.360001</Y>
+			<Z>-755.489990</Z>
+		</Point>
+		<Connection From="enchanted_96" To="enchanted_95" />
+		<Connection From="enchanted_96" To="enchanted_97" />
+		<Point Name="enchanted_97">
+			<X>-59.730000</X>
+			<Y>25.770000</Y>
+			<Z>-745.559998</Z>
+		</Point>
+		<Connection From="enchanted_97" To="enchanted_96" />
+		<Connection From="enchanted_97" To="enchanted_98" />
+		<Point Name="enchanted_98">
+			<X>-39.570000</X>
+			<Y>25.980000</Y>
+			<Z>-736.400024</Z>
+		</Point>
+		<Connection From="enchanted_98" To="enchanted_97" />
+		<Connection From="enchanted_98" To="enchanted_99" />
+		<Point Name="enchanted_99">
+			<X>-39.180000</X>
+			<Y>26.959999</Y>
+			<Z>-711.179993</Z>
+		</Point>
+		<Connection From="enchanted_99" To="enchanted_98" />
+		<Connection From="enchanted_99" To="enchanted_100" />
+		<Point Name="Finish">
+			<X>-905.719971</X>
+			<Y>2.410000</Y>
+			<Z>-909.599976</Z>
+		</Point>
+		<Connection From="Finish" To="enchanted_177" />
+		<Point Name="Foomby">
+			<X>-684.520020</X>
+			<Y>8.690000</Y>
+			<Z>-664.000000</Z>
+		</Point>
+		<Connection From="Foomby" To="enchanted_138" />
+		<Connection From="Foomby" To="enchanted_140" />
+		<Point Name="Rivervale">
+			<X>-192.460007</X>
+			<Y>8.070000</Y>
+			<Z>-307.470001</Z>
+		</Point>
+		<Connection From="Rivervale" To="enchanted_61" />
+		<Connection From="Rivervale" To="enchanted_63" />
+		<Point Name="Start">
+			<X>-2.070000</X>
+			<Y>-2.060000</Y>
+			<Z>-5.790000</Z>
+		</Point>
+		<Connection From="Start" To="enchanted_4" />
+		<Connection From="Start" To="enchanted_6" />
+		<Point Name="ZoneIn">
+			<X>-1.120000</X>
+			<Y>4.480000</Y>
+			<Z>81.349998</Z>
+		</Point>
+		<Connection From="ZoneIn" To="enchanted_2" />
+	</World>
+</Navigation>

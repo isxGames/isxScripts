@@ -102,7 +102,7 @@ variable string CurrentLabel
 
 
 
-function main()
+function main(string mode)
 {
 	variable bool firstpass=TRUE
 	variable int tempvar
@@ -136,6 +136,13 @@ function main()
 		}
 	}
 	while ${tempvar:Inc}<=${Navigation.World[${Zone.ShortName}].LastID}
+
+	if ${mode.Equal[start]}
+	{
+		StartHarvest:Set[TRUE]
+		PauseHarvest:Set[TRUE]
+		UIElement[Start Harvest@Main@EQ2Harvest Tabs@Harvest]:SetText[Pause Harvesting]
+	}
 	
 	do
 	{
@@ -601,6 +608,10 @@ function Harvest()
 		if ${HarvestTool[${NodeType}].Equal["Foresting"]}
 			{
 			Me.Inventory[Sandalwood Saw]:Equip 
+			}	
+		if ${HarvestTool[${NodeType}].Equal["Fishing"]}
+			{
+			Me.Inventory[Sandalwood Fishing Pole]:Equip 
 			}	
 			
 		EQ2Execute /useability ${HarvestTool[${NodeType}]}
