@@ -1,5 +1,7 @@
 Revision History
 ----------------
+v6.3 - Fixed doors in Qeynos Tradeskills
+
 v6.2 - You can now craft a Recipe from your 'Recipe Favourites' on the command line, which will avoid any prompting.
        Example: If you had previously saved a recipe called 'Cobalt full suit' under Advanced, then based on what settings you have currently set,
        you can just type in /craft "Cobalt full suit" and it will automatically craft whatever recipes you had listed under that favourite.
