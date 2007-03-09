@@ -33,7 +33,7 @@
 			<X>-0.550000</X>
 			<Y>-6.480000</Y>
 			<Z>9.130000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="Door 1" To="qey_tradeskill01_66" />
 		<Connection From="Door 1" To="qey_tradeskill01_68" />
@@ -41,7 +41,7 @@
 			<X>-7.950000</X>
 			<Y>-6.440000</Y>
 			<Z>17.200000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="Door 2" To="qey_tradeskill01_80" />
 		<Connection From="Door 2" To="qey_tradeskill01_82" />
@@ -49,7 +49,7 @@
 			<X>-14.800000</X>
 			<Y>-6.480000</Y>
 			<Z>1.530000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="Door 3" To="qey_tradeskill01_132" />
 		<Connection From="Door 3" To="qey_tradeskill01_134" />
@@ -57,7 +57,7 @@
 			<X>-22.550000</X>
 			<Y>-6.440000</Y>
 			<Z>9.700000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="Door 4" To="qey_tradeskill01_148" />
 		<Connection From="Door 4" To="qey_tradeskill01_150" />
@@ -65,7 +65,7 @@
 			<X>-5.200000</X>
 			<Y>-6.480000</Y>
 			<Z>-12.580000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="Door 5" To="qey_tradeskill01_181" />
 		<Connection From="Door 5" To="qey_tradeskill01_183" />
@@ -73,7 +73,7 @@
 			<X>-13.350000</X>
 			<Y>-6.440000</Y>
 			<Z>-20.700000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="Door 6" To="qey_tradeskill01_196" />
 		<Connection From="Door 6" To="qey_tradeskill01_198" />
@@ -376,7 +376,7 @@
 			<X>-9.880000</X>
 			<Y>-6.480000</Y>
 			<Z>1.170000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_129" To="qey_tradeskill01_128" />
 		<Connection From="qey_tradeskill01_129" To="qey_tradeskill01_130" />
@@ -433,7 +433,7 @@
 			<X>-17.740000</X>
 			<Y>-6.470000</Y>
 			<Z>1.380000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_137" To="qey_tradeskill01_136" />
 		<Connection From="qey_tradeskill01_137" To="qey_tradeskill01_138" />
@@ -497,7 +497,7 @@
 			<X>-23.180000</X>
 			<Y>-6.440000</Y>
 			<Z>4.640000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_145" To="qey_tradeskill01_144" />
 		<Connection From="qey_tradeskill01_145" To="qey_tradeskill01_146" />
@@ -554,7 +554,7 @@
 			<X>-22.790001</X>
 			<Y>-6.440000</Y>
 			<Z>13.250000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_153" To="qey_tradeskill01_152" />
 		<Connection From="qey_tradeskill01_153" To="Intersection 5" />
@@ -723,7 +723,7 @@
 			<X>-0.680000</X>
 			<Y>-6.480000</Y>
 			<Z>-13.010000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_178" To="qey_tradeskill01_177" />
 		<Connection From="qey_tradeskill01_178" To="qey_tradeskill01_179" />
@@ -780,7 +780,7 @@
 			<X>-8.480000</X>
 			<Y>-6.460000</Y>
 			<Z>-12.600000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_186" To="qey_tradeskill01_185" />
 		<Connection From="qey_tradeskill01_186" To="qey_tradeskill01_187" />
@@ -837,7 +837,7 @@
 			<X>-13.270000</X>
 			<Y>-6.470000</Y>
 			<Z>-15.370000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_193" To="qey_tradeskill01_192" />
 		<Connection From="qey_tradeskill01_193" To="qey_tradeskill01_194" />
@@ -901,7 +901,7 @@
 			<X>-13.110000</X>
 			<Y>-6.440000</Y>
 			<Z>-23.850000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_201" To="qey_tradeskill01_200" />
 		<Connection From="qey_tradeskill01_201" To="qey_tradeskill01_202" />
@@ -2497,7 +2497,7 @@
 			<X>3.780000</X>
 			<Y>-6.480000</Y>
 			<Z>9.200000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_63" To="qey_tradeskill01_62" />
 		<Connection From="qey_tradeskill01_63" To="qey_tradeskill01_64" />
@@ -2554,7 +2554,7 @@
 			<X>-4.820000</X>
 			<Y>-6.450000</Y>
 			<Z>9.120000</Z>
-			<Note>Open,270</Note>
+			<Note>Open,269</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_71" To="qey_tradeskill01_70" />
 		<Connection From="qey_tradeskill01_71" To="qey_tradeskill01_72" />
@@ -2597,7 +2597,7 @@
 			<X>-8.180000</X>
 			<Y>-6.460000</Y>
 			<Z>12.420000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_77" To="qey_tradeskill01_76" />
 		<Connection From="qey_tradeskill01_77" To="qey_tradeskill01_78" />
@@ -2654,7 +2654,7 @@
 			<X>-7.640000</X>
 			<Y>-6.540000</Y>
 			<Z>20.730000</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_85" To="qey_tradeskill01_84" />
 		<Connection From="qey_tradeskill01_85" To="Intersection 3" />
@@ -2662,7 +2662,7 @@
 			<X>-6.490000</X>
 			<Y>-6.600000</Y>
 			<Z>21.690001</Z>
-			<Note>Open,359.98</Note>
+			<Note>Open,359</Note>
 		</Point>
 		<Connection From="qey_tradeskill01_87" To="Intersection 3" />
 		<Connection From="qey_tradeskill01_87" To="qey_tradeskill01_88" />
