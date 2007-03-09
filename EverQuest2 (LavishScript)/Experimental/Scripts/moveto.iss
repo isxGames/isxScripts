@@ -1,10 +1,19 @@
 ;-----------------------------------------------------------------------------------------------
-; moveto.iss Version 2.0  Updated: 09/04/05 
+; moveto.iss Version 2.1  Updated: 03/06/06 
 ;
 ; Written by: Blazer
+; Updated by: Pygar
 ; 
 ; Revision History
 ; ----------------
+; v2.1 - * Defined Straffe and Turn Keys
+;	 * Added wait on first obstruction call so that it wouldn't always return the same position
+;	   when the next check stuck was fired. The 90 degree initial direction change should work
+;	   reliably now.  Adjust Strafe timmers if they do not.
+;	 * Added StopOnAggro arguement  Will return AGGRO and halt movement when true.
+;	 * Adjusted some timers to make movement more subtle
+;	 * Adjusted Strafe to use 'Strafe Arcs' on every other stuck check
+;	 
 ; v2.0 - * Some fixes to declaration of variables since the last IS update.
 ;
 ; v1.8 - * Will do a weight check in case your encumbered too much and will move accordingly.
@@ -38,15 +47,17 @@
 
 #define MOVEFORWARD "num lock"
 #define MOVEBACKWARD s
-#define STRAFELEFT a
-#define STRAFERIGHT d
-
+#define STRAFELEFT q
+#define STRAFERIGHT e
+#define TURNLEFT a
+#define TURNRIGHT d
+variable MobCheck MobAggro
 ;
 ; This function moves you to within Precision yards
 ; of the specified X Z loc
 ; with Z being the Y axis in EQ2
 ;
-function moveto(float X,float Z, float Precision, int keepmoving, int Attempts)
+function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, int StopOnAggro)
 {
 	declare SavX float local ${Me.X}
 	declare SavZ float local ${Me.Z}
@@ -54,7 +65,9 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts)
 	declare	failedattempts int local 0
 	declare checklag int local
 	declare maxattempts int local
-
+	
+	call CheckMovingAggro	
+	
 	if !${timerback(exists)}
 	{
 		declare timerback int script
@@ -76,10 +89,10 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts)
 	checklag:Set[4]
 
 	; How far do you want to move back for, if your stuck? (10 = 1 second)
-	timerback:Set[10]
+	timerback:Set[5]
 
 	; How far do you want to strafe for, after backing up? (10 = 1 second)
-	timerstrafe:Set[10]
+	timerstrafe:Set[5]
 
 	; How often do you want to loop through the routine before it checks face again?
 	facecount:Set[5]
@@ -116,8 +129,8 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts)
 		}
 		Do
 		{
+			call CheckMovingAggro
 			vartmp:Inc
-
 			
 			if ${facecount}<${vartmp}
 			{
@@ -181,13 +194,33 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts)
 	return "SUCCESS"
 }
 
+function CheckMovingAggro()
+{
+	;Stop Moving and pause if we have aggro
+	if ${Aggro.Detect} 
+	{
+		;Echo Aggro Detected Pausing
+		if ${Me.IsMoving}
+		{
+			press MOVEBACKWARD
+		}
+		do
+		{
+			wait 100
+		}
+		while ${Aggro.Detect} 
+	}	
+}
+
 ;
 ; Use strafing to get around an obstacle
 ;
 function Obstacle(int delay)
 {
 	declare newheading float local
-
+	
+	call CheckMovingAggro
+	
 	if ${delay}>0
 	{
 		;backup a little
@@ -195,21 +228,46 @@ function Obstacle(int delay)
 		press -hold MOVEBACKWARD
 		wait ${Math.Calc[${timerback}*${delay}]}
 		press -release MOVEBACKWARD
-
-		;randomly pick a direction
-		if "${Math.Rand[10]}>5"
+		
+		if ${delay}==1 || ${delay}==3 || ${delay}==5
 		{
-			press -hold STRAFELEFT
-			wait ${Math.Calc[${timerstrafe}*${delay}]}
-			press -release STRAFELEFT
-			wait 2
+			;randomly pick a direction
+			if "${Math.Rand[10]}>5"
+			{
+				press -hold STRAFELEFT
+				press MOVEFORWARD
+				wait ${Math.Calc[${timerstrafe}*${delay}]}
+				press -release STRAFELEFT
+				press MOVEFORWARD
+				wait 2
+			}
+			else
+			{
+				press -hold STRAFERIGHT
+				press MOVEFORWARD
+				wait ${Math.Calc[${timerstrafe}*${delay}]}
+				press -release STRAFERIGHT
+				press MOVEFORWARD
+				wait 2
+			}
 		}
 		else
 		{
-			press -hold STRAFERIGHT
-			wait ${Math.Calc[${timerstrafe}*${delay}]}
-			press -release STRAFERIGHT
-			wait 2
+			;randomly pick a direction
+			if "${Math.Rand[10]}>5"
+			{
+				press -hold STRAFELEFT
+				wait ${Math.Calc[${timerstrafe}*${delay}]}
+				press -release STRAFELEFT
+				wait 2
+			}
+			else
+			{
+				press -hold STRAFERIGHT
+				wait ${Math.Calc[${timerstrafe}*${delay}]}
+				press -release STRAFERIGHT
+				wait 2
+			}
 		}
 		;Start moving forward again
 		press MOVEFORWARD
@@ -235,5 +293,143 @@ function Obstacle(int delay)
 		}
 
 		face ${newheading}
+		wait ${Math.Calc[${timerstrafe}*${delay}]}
 	}
 }
+
+objectdef MobCheck
+{
+	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
+	member:bool AggroGroup(int actorid)
+	{
+		variable int tempvar
+
+		if ${Me.GroupCount}>1
+		{
+			; Check if mob is aggro on group or pet
+			tempvar:Set[1]
+			do
+			{
+				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].PetID}
+				{
+					return TRUE
+				}
+			}
+			while ${tempvar:Inc}<${Me.GroupCount}
+
+			; Check if mob is aggro on raid or pet
+			if ${Me.InRaid}
+			{
+				tempvar:Set[1]
+				do
+				{
+					if (${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].PetID}
+					{
+						return TRUE
+					}
+				}
+				while ${tempvar:Inc}<24
+			}
+		}
+
+		if ${Actor[MyPet](exists)} && ${Actor[${actorid}].Target.ID}==${Actor[MyPet].ID}
+		{
+			return TRUE
+		}
+		return FALSE
+	}
+
+	;returns count of mobs engaged in combat near you.  Includes mobs not engaged to other pcs/groups
+	member:int Count()
+	{
+		variable int tcount=2
+		variable int mobcount
+
+		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
+		{
+			return 0
+		}
+
+		EQ2:CreateCustomActorArray[byDist,15]
+		do
+		{
+			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
+			{
+				mobcount:Inc
+			}
+		}
+		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+
+		return ${mobcount}
+	}
+
+	;returns true if you, group, raidmember, or pets have agro from mob in range
+	member:bool Detect()
+	{
+		variable int tcount=2
+
+		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)}
+		{
+			return FALSE
+		}
+
+		EQ2:CreateCustomActorArray[byDist,15]
+		do
+		{
+			if ${CustomActor[${tcount}].InCombatMode}
+			{
+				if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
+				{
+					return TRUE
+				}
+
+				if ${This.AggroGroup[${CustomActor[${tcount}].ID}]}
+				{
+					return TRUE
+				}
+			}
+		}
+		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+
+		return FALSE
+	}
+
+	member:bool Target(int targetid)
+	{
+		if !${Actor[${targetid}].InCombatMode}
+		{
+			return FALSE
+		}
+
+		if ${This.AggroGroup[${targetid}]} || ${Actor[${targetid}].Target.ID}==${Me.ID}
+		{
+			return TRUE
+		}
+
+		return FALSE
+	}
+
+	method CheckMYAggro()
+	{
+		variable int tcount=2
+		haveaggro:Set[FALSE]
+
+		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
+		{
+			return
+		}
+
+		EQ2:CreateCustomActorArray[byDist,15]
+		do
+		{
+			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
+			{
+				haveaggro:Set[TRUE]
+				aggroid:Set[${CustomActor[${tcount}].ID}]
+				return
+			}
+		}
+		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+	}
+}
+
