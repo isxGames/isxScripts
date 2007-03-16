@@ -1,16 +1,10 @@
 ;*****************************************************
-;Assassin.iss 20070201a
+;Assassin.iss 20061229a
 ;by Pygar
 ; Initial attempt
 ; Need to add AA support
 ; 20061228a
 ; Initial Build
-;
-;20070201a
-;Added Poison Support
-;Tweeked Position checks to minimize movement
-;Added Option of Starting HO's
-;
 ;
 ; 20061229a
 ; Added Toggle for using range attacks
@@ -28,14 +22,6 @@
 ; 20061229d
 ; Removed a few calls that were causing an IS crash bug.  Lax looking into it
 ;
-; 20070124a
-; Updated to new CastSpellRange while moving calls
-; Fixed some spam of stealth attacks when not in stealth
-; Optomized DPS for heroic and epic content
-; General Optomizations
-; Added CyrstalizedSpirit heals
-; Fixed Vanish Bug
-;
 ;*****************************************************
 
 #ifndef _Eq2Botlib_
@@ -47,21 +33,8 @@ function Class_Declaration()
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
 	declare UseRangeMode bool script 0
-	declare CloakMode bool script 1
 	declare SurroundingAttacksMode bool Script FALSE
-	declare MaintainPoison bool script 1
-	declare DebuffPoisonShort string script
-	declare DammagePoisonShort string script
-	declare UtilityPoisonShort string script
-	declare StartHO bool script 1
 
-	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
-	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
-	;The SHORT name is the name of the poison buff icon
-	DammagePoisonShort:Set[caustic poison]
-	DebuffPoisonShort:Set[enfeebling poison]
-	UtilityPoisonShort:Set[ignorant bliss]
-	
 	;Custom Equipment
 	declare WeaponRapier string script 
 	declare WeaponSword string script
@@ -78,12 +51,9 @@ function Class_Declaration()
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	UseRangeMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Range Arts,FALSE]}]
-	CloakMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Stealth After Combat,FALSE]}]
 	BuffShadowsGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffShadowsGroupMember,]}]
 	BuffPoisonGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPoisonGroupMember,]}]
-	MaintainPoison:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MaintainPoison,FALSE]}]
 	SurroundingAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Surrounding Attacks,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
@@ -99,33 +69,38 @@ function Buff_Init()
 	PreAction[1]:Set[Villany]
 	PreSpellRange[1,1]:Set[25]
 
+	PreAction[2]:Set[Focus]
+	PreSpellRange[2,1]:Set[27]
+
 	PreAction[3]:Set[Pathfinding]
 	PreSpellRange[3,1]:Set[302]
 	
 	PreAction[4]:Set[Apply_Poison]
-	PreSpellRange[4,1]:Set[357]
+	PreSpellRange[4,1]:Set[387]
 
 	PreAction[5]:Set[Shadows]
-	PreSpellRange[5,1]:Set[356]
+	PreSpellRange[5,1]:Set[386]
 	
 	PreAction[6]:Set[AA_Neurotoxic_Coating]
-	PreSpellRange[6,1]:Set[389]
+	PreSpellRange[6,1]:Set[409]
 	
 	PreAction[7]:Set[AA_Surrounding_Attacks]
-	PreSpellRange[7,1]:Set[384]
-	
-	PreAction[8]:Set[Poisons]
+	PreSpellRange[7,1]:Set[404]
+
+
 }
 
 function Combat_Init()
 {
+
 	Action[1]:Set[Debuff]
-	MobHealth[1,1]:Set[80] 
+	MobHealth[1,1]:Set[20] 
 	MobHealth[1,2]:Set[100]
 	Power[1,1]:Set[20]
 	Power[1,2]:Set[100]	
-	SpellRange[1,1]:Set[51]
-	SpellRange[1,2]:Set[52]
+	SpellRange[1,1]:Set[50]
+	SpellRange[1,2]:Set[51]
+	SpellRange[1,3]:Set[52]
 	
 	Action[2]:Set[Melee_Attack]
 	SpellRange[2,1]:Set[150]
@@ -141,7 +116,7 @@ function Combat_Init()
 	Action[4]:Set[Concealment]
 	MobHealth[4,1]:Set[20] 
 	MobHealth[4,2]:Set[100] 	
-	SpellRange[4,1]:Set[359]
+	SpellRange[4,1]:Set[389]
 	SpellRange[4,2]:Set[130]
 	SpellRange[4,3]:Set[131]
 	SpellRange[4,4]:Set[132]
@@ -153,12 +128,12 @@ function Combat_Init()
 	Action[5]:Set[Mastery]
 	
 	Action[6]:Set[Finishing_Blow]
-	SpellRange[6,1]:Set[360]
+	SpellRange[6,1]:Set[390]
 	
 	Action[7]:Set[Vanish]
 	MobHealth[7,1]:Set[20] 
 	MobHealth[7,2]:Set[100] 	
-	SpellRange[7,1]:Set[358]
+	SpellRange[7,1]:Set[389]
 	SpellRange[7,2]:Set[130]
 	SpellRange[7,3]:Set[131]
 	SpellRange[7,4]:Set[132]
@@ -171,23 +146,19 @@ function Combat_Init()
 	SpellRange[8,1]:Set[186]	
 	
 	Action[9]:Set[Cripple]
-	MobHealth[9,1]:Set[80] 
-	MobHealth[9,2]:Set[100]
 	SpellRange[9,1]:Set[110]
 	
 	Action[10]:Set[Combat_Buff]
-	MobHealth[10,1]:Set[95] 
+	MobHealth[10,1]:Set[50] 
 	MobHealth[10,2]:Set[100] 
-	SpellRange[10,1]:Set[155]
-	SpellRange[10,2]:Set[391]
-	SpellRange[10,3]:Set[27]
+	SpellRange[10,1]:Set[155]	
 
 	Action[11]:Set[Stalk]
 	SpellRange[11,1]:Set[185]
 
 	Action[12]:Set[Makeshift]
 	SpellRange[12,1]:Set[250]
-	SpellRange[12,2]:Set[382]
+	SpellRange[12,2]:Set[402]
 	
 	Action[13]:Set[Range_Rear]
 	SpellRange[13,1]:Set[251]
@@ -198,33 +169,33 @@ function Combat_Init()
 	SpellRange[14,1]:Set[190]	
 
 	Action[15]:Set[Evade]
-	SpellRange[15,1]:Set[180]
+	SpellRange[15,1]:Set[185]
 	
 	Action[16]:Set[AA_Bounty]
-	SpellRange[16,1]:Set[380]
+	SpellRange[16,1]:Set[400]
 	
 	Action[17]:Set[AA_Bladed_Opening]
-	SpellRange[17,1]:Set[381]
+	SpellRange[17,1]:Set[401]
 	MobHealth[17,1]:Set[80] 
 	MobHealth[17,2]:Set[100] 
 	
 	Action[18]:Set[AA_Spinning_Spear]
-	SpellRange[18,1]:Set[383]
+	SpellRange[18,1]:Set[403]
 	
 	Action[19]:Set[AA_Frontload]
-	SpellRange[19,1]:Set[390]
+	SpellRange[19,1]:Set[410]
 	MobHealth[19,1]:Set[40] 
 	MobHealth[19,2]:Set[100] 
 	
 	Action[20]:Set[AA_Intoxication]
-	SpellRange[20,1]:Set[392]
+	SpellRange[20,1]:Set[412]
 }
 
 
 function PostCombat_Init()
 {
-	PostAction[1]:Set[Slip]
-	PostSpellRange[1,1]:Set[202]
+	PreAction[1]:Set[Slip]
+	PreSpellRange[1,1]:Set[202]
 }
 
 function Buff_Routine(int xAction)
@@ -246,6 +217,7 @@ function Buff_Routine(int xAction)
 	{
 		case AA_Neurotoxic_Coating
 		case Pathfinding
+		case Focus
 		case Villany
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -285,28 +257,9 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break				
-		case Poisons
-			if ${MaintainPoison}
-			{
-				Me:CreateCustomInventoryArray[nonbankonly]
-				if !${Me.Maintained[${DammagePoisonShort}](exists)} && ${Me.CustomInventory[${DammagePoisonShort}](exists)}
-				{				
-					Me.CustomInventory[${DammagePoisonShort}]:Use
-				}
-				
-				if !${Me.Maintained[${DebuffPoisonShort}](exists)} && ${Me.CustomInventory[${DebuffPoisonShort}](exists)}
-				{
-					Me.CustomInventory[${DebuffPoisonShort}]:Use
-				}
-				
-				if !${Me.Maintained[${UtilityPoisonShort}](exists)} && ${Me.CustomInventory[${UtilityPoisonShort}](exists)}
-				{
-					Me.CustomInventory[${UtilityPoisonShort}]:Use
-				}
-			}
-			break		
+			
 		Default
-			xAction:Set[40]
+			xAction:Set[20]
 			break
 	}
 
@@ -328,81 +281,28 @@ function Combat_Routine(int xAction)
 	}
 	
 	;smokebomb check
-	if ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.ToActor.IsStealthed} && ${AoEMode}
+	if ${Me.Ability[${SpellType[407]}].IsReady} && !${Me.ToActor.IsStealthed}
 	{
-		call CastSpellRange 387 0 1 0 ${KillTarget} 0 0 1
+		call CastSpellRange 407
 		call CastStealthAttack
 	}
 	
 	;Getaway check
-	if ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.ToActor.IsStealthed}
+	if ${Me.Ability[${SpellType[411]}].IsReady} && !${Me.ToActor.IsStealthed}
 	{
-		call CastSpellRange 391 0 1 0 ${KillTarget} 0 0 1
+		call CastSpellRange 411
 		call CastStealthAttack
 	}
 	
 	;Poison Combination Check disabled for now cause I can't seem to check if mob IsAfflicted by Noxious
-	;Fuck it, I'll spam it
-	if ${Me.Ability[${SpellType[388]}].IsReady}
-	{
-		call CastSpellRange 388 0 1 0 ${KillTarget} 0 0 1
-	}
+	;if 1=0 && ${Me.Ability[${SpellType[408]}].IsReady}
+	;{
+	;	call CastSpellRange 408
+	;}
 	
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
-		call CastSpellRange 303 0 0 0 ${KillTarget} 0 0 1
-	}
-	
-	;maintain exposing mark line
-	if ${Me.Ability[${SpellType[50]}].IsReady}
-	{
-		call CastSpellRange 50 0 1 0 ${KillTarget} 0 0 1
-	}
-	
-	;if epic, keep debuffs up
-	if ${Actor[${KillTarget}].IsEpic}
-	{
-		if ${Me.Ability[${SpellType[51]}].IsReady}
-		{
-			call CastSpellRange 51 0 1 0 ${KillTarget} 0 0 1
-		}
-		if ${Me.Ability[${SpellType[110]}].IsReady}
-		{
-			call CastSpellRange 110 0 1 0 ${KillTarget} 0 0 1
-		}
-		;because epic, use dps run
-		if ${Me.Ability[${SpellType[391]}].IsReady}
-		{
-			call CastSpellRange 391 0 1 0 ${KillTarget} 0 0 1
-		}
-		if ${Me.Ability[${SpellType[155]}].IsReady}
-		{
-			call CastSpellRange 155 0 1 0 ${KillTarget} 0 0 1
-		}
-		if ${Me.Ability[${SpellType[27]}].IsReady}
-		{
-			call CastSpellRange 27 0 1 0 ${KillTarget} 0 0 1
-		}
-		
-	}
-	
-	;if heroic and over 80% health, debuff it
-	if ${Actor[${KillTarget}].IsHeroic}
-	{
-		call CheckCondition MobHealth 40 100
-		if ${Return.Equal[OK]}
-		{
-			if ${Me.Ability[${SpellType[51]}].IsReady}
-			{ 
-				call CastSpellRange 51 0 1 0 ${KillTarget} 0 0 1
-			}
-			if ${Me.Ability[${SpellType[110]}].IsReady}
-			{
-				call CastSpellRange 110 0 1 0 ${KillTarget} 0 0 1
-			}
-		}	
-		
-		
+		call CastCARange 303
 	}
 	
 	if ${DoHOs}
@@ -418,6 +318,16 @@ function Combat_Routine(int xAction)
 	
 	Call ActionChecks
 	
+	if ${Target.Target.ID}!=${Me.ID}
+	{
+		call GetBehind
+	}
+	;else
+	;{
+		;removed for now, if I have agro, the mob will move to me, eventually...
+		;call CheckPosition 1 0
+	;}
+	
 	switch ${Action[${xAction}]}
 	{
 		
@@ -430,29 +340,24 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget} 0 0 1
+						call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
 					}
 				}			
 			}
 			break
 			
 		case Makeshift
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-			call CastSpellRange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget} 0 0 1
-			break	 
+			call CastCARange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			call CastCARange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget}
+			break	
 		case AA_Intoxication
 		case Evade
 		case Stun
+		case Cripple
 		case Melee_Attack
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			call CastCARange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 			
-		case Cripple
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 1 0 ${KillTarget} 0 0 1
-			}
 		case DoT
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
@@ -460,82 +365,87 @@ function Combat_Routine(int xAction)
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1
+					call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget}
 				}
 			}			
 			break
 			
 		case Vanish
 		case Concealment
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+			if ${Return.Equal[OK]}
 			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
+				if ${AoEMode} && ${Mob.Count}>=2
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-					if ${AoEMode} && ${Mob.Count}>=2
-					{
-						call CastSpellRange ${SpellRange[${xAction},7]} ${SpellRange[${xAction},8]} 1 0 ${KillTarget} 0 0 1
-					}
-					call CastSpellRange ${SpellRange[${xAction},2]} ${SpellRange[${xAction},6]} 1 0 ${KillTarget} 0 0 1
-				}			
-			}
+					call CastCARange ${SpellRange[${xAction},7]} ${SpellRange[${xAction},8]} 0 0 ${KillTarget}
+				}
+				call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},6]} 0 0 ${KillTarget}
+			}			
 			break
 		
 		case Stalk
 		case Shrouded_Attack
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
-				;check valid rear position
-				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-				}
-				;check right flank
-				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-				}
-				;check left flank
-				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-				}
-				elseif ${Target.Target.ID}!=${Me.ID}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget} 0 0 1
-				}				
-				if ${Me.ToActor.IsStealthed}
-				{
-					call CastStealthAttack
-				}
-			}
+			call CastCARange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			call CastStealthAttack
 			break
 			
 		case Combat_Buff
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastCARange ${SpellRange[${xAction},1]} 0 0 0 
 			}			
 			break			
 		
 		case Range_Rear
+			call CastCARange ${SpellRange[151]} 0 0 0 ${KillTarget}
 			if ${UseRangeMode}
 			{
-				call CastSpellRange ${SpellRange[151]} 0 3 0 ${KillTarget}
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 3 1 ${KillTarget}
+				if ${Actor[${KillTarget}].Distance}<5
+					{
+						press -hold ${backward}
+						wait 2
+						press -release ${backward}
+					}
+				if !${Actor[${KillTarget}].Distance}<5
+				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}	
 			}
 			break		
 		
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
 			{			
-				if ${Me.Ability[Orc Master's Sinister Strike].IsReady}  && ${Actor[${KillTarget}](exists)}
+				if (${Me.Ability[Orc Master's Sinister Strike].IsReady} || ${Me.Ability[Gnoll Master's Sinister Strike].IsReady}) && ${Actor[${KillTarget}](exists)}
 				{
 					Target ${KillTarget}
 					call CheckPosition 1 1
-					Me.Ability[Sinister Strike]:Use
+
+					;********* uncomment the sinister strikes you have *****************
+
+					;Me.Ability[Orc Master's Sinister Strike]:Use
+					Me.Ability[Gnoll Master's Sinister Strike]:Use
+					;Me.Ability[Ghost Master's Sinister Strike]:Use
+					;Me.Ability[Skeleton Master's Sinister Strike]:Use
+					Me.Ability[Zombie Master's Sinister Strike]:Use
+					;Me.Ability[Centaur Master's Sinister Strike]:Use
+					Me.Ability[Giant Master's Sinister Strike]:Use
+					;Me.Ability[Treant Master's Sinister Strike]:Use
+					;Me.Ability[Elemental Master's Sinister Strike]:Use
+					;Me.Ability[Fairy Master's Sinister Strike]:Use
+					Me.Ability[Goblin Master's Sinister Strike]:Use
+					Me.Ability[Golem Master's Sinister Strike]:Use
+					;Me.Ability[Bixie Master's Sinister Strike]:Use
+					Me.Ability[Cyclops Master's Sinister Strike]:Use
+					;Me.Ability[Djinn Master's Sinister Strike]:Use
+					;Me.Ability[Harpy Master's Sinister Strike]:Use
+					;Me.Ability[Naga Master's Sinister Strike]:Use
+					Me.Ability[Droag Master's Sinister Strike]:Use
+					;Me.Ability[Aviak Master's Sinister Strike]:Use
+					;Me.Ability[Beholder Master's Sinister Strike]:Use
+					;Me.Ability[Ravasect Master's Sinister Strike]:Use
+
+					;********* uncomment the sinister strikes you have *****************
 				}
 			}
 			break
@@ -543,7 +453,7 @@ function Combat_Routine(int xAction)
 		case Bounty
 			if ${Actor[${KillTarget}].ConColor} != 'Grey' && ${Actor[${KillTarget}].ConColor} != 'Green' && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} 
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastCARange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 		case AA_Bladed_Opening
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
@@ -553,30 +463,30 @@ function Combat_Routine(int xAction)
 				{ 
 					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
 						Me.Inventory[${WeaponSword}]:Equip
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
 			}
 			break		
 
-		case AA_Spinning_Spear                     
-			if ${AoEMode} && ${Mob.Count}>=2 && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+		case AA_Spinning_Spear
+			if ${AoEMode} && ${Mob.Count}>=2 && {Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 				if ${Me.Equipment[1].Name.Equal[${WeaponSpear}]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 				{
 					Me.Inventory[${WeaponSpear}]:Equip
 					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 			}
 			break				
@@ -586,12 +496,12 @@ function Combat_Routine(int xAction)
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 			}
 			break
 		default
-			xAction:Set[40]
+			xAction:Set[20]
 			break
 	}
 }
@@ -601,9 +511,9 @@ function Post_Combat_Routine()
 	switch ${Action[${xAction}]}
 	{
 		case Slip
-			if !${Me.ToActor.IsStealthed} && ${CloakMode}
+			if !${Me.ToActor.IsStealthed}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastCARange ${PreSpellRange[${xAction},1]}
 			}
 			break
 		default
@@ -618,8 +528,8 @@ function Have_Aggro()
 	echo I have agro from ${agroid}
 	
 	;agro dump
-	call CastSpellRange 180 0 1 0 ${agroid} 0 0 1
-	call CastSpellRange 185 0 1 0 ${agroid} 0 0 1
+	call CastCARange 180 0 1 0 ${agroid}
+	call CastCARange 185 0 1 0 ${agroid}
 }
 
 function Lost_Aggro()
@@ -650,44 +560,195 @@ function CastStealthAttack()
 {
 	if ${Me.Ability[${SpellType[96]}].IsReady} && ${AoEMode} && ${Mob.Count}>=2
 	{
-		call CastSpellRange 96 0 1 0 ${KillTarget} 0 0 1
+		call CastCARange 96 0 0 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[95]}].IsReady} && ${AoEMode} && ${Mob.Count}>=2
 	{
-		call CastSpellRange 95 0 1 0 ${KillTarget} 0 0 1
+		call CastCARange 95 0 0 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[131]}].IsReady}  
 	{
-		call CastSpellRange 131 0 1 0 ${KillTarget} 0 0 1
+		call CastCARange 131 0 0 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[132]}].IsReady}  
 	{
-		call CastSpellRange 132 0 1 0 ${KillTarget} 0 0 1
+		call CastCARange 132 0 0 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[130]}].IsReady}  
 	{
-		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 1
+		call CastCARange 130 0 0 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[133]}].IsReady}  
 	{
-		call CastSpellRange 133 0 1 0 ${KillTarget} 0 0 1
+		call CastCARange 133 0 0 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[135]}].IsReady}  
 	{
-		call CastSpellRange 135 0 1 1 ${KillTarget} 0 0 1
+		call CastCARange 135 0 0 0 ${KillTarget}
 	}
 
 }
 
 function ActionChecks()
 {
-	call UseCrystallizedSpirit 60
 	
 	if ${ShardMode}
 	{
 		call Shard
 	}
 	
+}
+
+function CastCARange(int start, int finish, int xvar1, int xvar2, int targettobuff, int notall, int refreshtimer)
+{
+	variable bool fndspell
+	variable int tempvar=${start}
+	variable int originaltarget
+
+	if ${Me.ToActor.Power}<5
+	{
+		return -1
+	}
+
+	do
+	{
+		if ${SpellType[${tempvar}].Length}
+		{
+			
+			if ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
+			{
+				if ${targettobuff}
+				{
+					fndspell:Set[FALSE]
+					tempgrp:Set[1]
+					do
+					{
+						if ${Me.Maintained[${tempgrp}].Name.Equal[${SpellType[${tempvar}]}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${targettobuff} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
+						{
+							fndspell:Set[TRUE]
+							break
+						}
+					}
+					while ${tempgrp:Inc}<=${Me.CountMaintained}
+
+					if !${fndspell}
+					{
+						if !${Actor[${targettobuff}](exists)} || ${Actor[${targettobuff}].Distance}>35
+						{
+							return -1
+						}
+
+						if ${xvar1} || ${xvar2}
+						{
+							;need less anal checkposition to keep from running around like an epilepic monkey
+							call CheckPosition ${xvar1} ${xvar2}
+						}
+
+						if ${Target(exists)}
+						{
+							originaltarget:Set[${Target.ID}]
+						}
+
+						if ${targettobuff(exists)}
+						{
+							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]}) 
+							{
+								target ${targettobuff}
+								wait 10 ${Target.ID}==${targettobuff}
+							}
+						}
+
+						call CastCA "${SpellType[${tempvar}]}" ${tempvar}
+
+						if ${Actor[${originaltarget}](exists)}
+						{
+							target ${originaltarget}
+							wait 10 ${Target.ID}==${originaltarget}
+						}
+
+						if ${notall}==1
+						{
+							return -1
+						}
+					}
+				}
+				else
+				{
+					if !${Me.Maintained[${SpellType[${tempvar}]}](exists)} || (${Me.Maintained[${SpellType[${tempvar}]}].Duration}<${refreshtimer} && ${Me.Maintained[${SpellType[${tempvar}]}].Duration}!=-1)
+					{
+						if ${xvar1} || ${xvar2}
+						{
+							call CheckPosition ${xvar1} ${xvar2}
+						}
+
+						call CastCA "${SpellType[${tempvar}]}" ${tempvar}
+
+						if ${notall}==1
+						{
+							return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+						}
+					}
+				}
+			}
+		}
+
+		if !${finish}
+		{
+			return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+		}
+	}
+	while ${tempvar:Inc}<=${finish}
+
+	return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+}
+
+function CastCA(string spell, int spellid)
+{
+		
+	Me.Ability[${spell}]:Use
+	
+	do
+	{
+		WaitFor "Fizzled!" "Interrupted!" "Too far away" "Can't see target" "Not during combat" "Would not take effect" "resisted" "No eligible target" "Not an enemy" "Target is not alive" 1
+
+	}
+	while ${WaitFor}==1 || ${WaitFor}==2
+
+	switch ${WaitFor}
+	{
+		
+		case 3
+			return TOOFARAWAY
+
+		case 4
+			return CANTSEETARGET
+
+		case 5
+			return NOTDURINGCOMBAT
+
+		case 6
+			return NOTTAKEEFFECT
+
+		case 7
+			return RESISTED
+
+		case 8
+			return NOELIGIBLETARGET
+
+		case 9
+			return NOTENEMY
+
+		case 10
+			return TARGETNOTALIVE
+	}
+	
+	do
+	{
+		waitframe
+	}
+	while ${Me.CastingSpell}
+	
+	return SUCCESS
 }
 
 function WeaponChange()

@@ -87,20 +87,20 @@ function Buff_Init()
 	PreSpellRange[9,1]:Set[23]
 	
 	PreAction[10]:Set[AA_Empathic_Aura]
-	PreSpellRange[10,1]:Set[391]
+	PreSpellRange[10,1]:Set[411]
 	
 	PreAction[11]:Set[AA_Perpetuality]
-	PreSpellRange[11,1]:Set[390]
+	PreSpellRange[11,1]:Set[410]
 	
 	PreAction[12]:Set[AA_Empathic_Soothing]
-	PreSpellRange[12,1]:Set[392]
+	PreSpellRange[12,1]:Set[412]
 	
 	PreAction[13]:Set[AA_Time_Compression]
-	PreSpellRange[13,1]:Set[393]
+	PreSpellRange[13,1]:Set[413]
 	
 	;buffs on first haste target for now cause I'm lazy
 	PreAction[14]:Set[AA_Illusory_Arm]
-	PreSpellRange[14,1]:Set[394]
+	PreSpellRange[14,1]:Set[414]
 }
 
 function Combat_Init()
@@ -114,12 +114,12 @@ function Combat_Init()
 	Action[2]:Set[AA_Illuminate]
 	MobHealth[2,1]:Set[30] 
 	MobHealth[2,2]:Set[100] 
-	SpellRange[2,1]:Set[387]	
+	SpellRange[2,1]:Set[407]	
 
 	Action[3]:Set[SpellShield]
 	MobHealth[3,1]:Set[30] 
 	MobHealth[3,2]:Set[100] 
-	SpellRange[3,1]:Set[361]
+	SpellRange[3,1]:Set[391]
 	
 	Action[4]:Set[Gaze]
 	MobHealth[4,1]:Set[1] 
@@ -139,7 +139,7 @@ function Combat_Init()
 	Action[8]:Set[AA_Chronosiphoning]
 	MobHealth[8,1]:Set[1] 
 	MobHealth[8,2]:Set[100] 	
-	SpellRange[8,1]:Set[385]
+	SpellRange[8,1]:Set[405]
 
 	Action[9]:Set[Discord]
 	MobHealth[9,1]:Set[40] 
@@ -557,11 +557,11 @@ function Have_Aggro()
 	}
 	
 	;Phase
-	call CastSpellRange 361
+	call CastSpellRange 391
 	
 	if ${Actor[${aggroid}].Distance}<5
 	{
-			call CastSpellRange 357
+			call CastSpellRange 387
 	}
 
 }
@@ -573,9 +573,9 @@ function Lost_Aggro()
 
 function MA_Lost_Aggro()
 {
-	if ${Me.Ability[${SpellType[386]}].IsReady}
+	if ${Me.Ability[${SpellType[406]}].IsReady}
 	{
-		call CastSpellRange 386 0 0 0 ${KillTarget}
+		call CastSpellRange 406 0 0 0 ${KillTarget}
 	}
 	
 }
@@ -639,7 +639,7 @@ function RefreshPower()
 
 	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 	{
-		call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power

@@ -119,6 +119,9 @@ function Buff_Init()
 
 	PreAction[10]:Set[AA_Infusion]
 	PreSpellRange[10,1]:Set[391]
+	
+	PreAction[11]:Set[AA_Shapeshift]
+	PreSpellRange[11,1]:Set[396]	
 }
 
 function Combat_Init()
@@ -128,8 +131,7 @@ function Combat_Init()
 	MobHealth[1,2]:Set[100]
 	Power[1,1]:Set[40]
 	Power[1,2]:Set[100]
-	SpellRange[1,1]:Set[70]
-	SpellRange[1,2]:Set[96]
+	SpellRange[1,1]:Set[96]
 
 	Action[2]:Set[PBAoE]
 	MobHealth[2,1]:Set[20]
@@ -138,21 +140,21 @@ function Combat_Init()
 	Power[2,2]:Set[100]
 	SpellRange[2,1]:Set[95]
 
-	Action[3]:Set[Nuke]
-	MobHealth[3,1]:Set[1]
+	Action[3]:Set[AoE]
+	MobHealth[3,1]:Set[5]
 	MobHealth[3,2]:Set[100]
 	Power[3,1]:Set[30]
 	Power[3,2]:Set[100]
-	SpellRange[3,1]:Set[60]
-
-	Action[4]:Set[Mastery]
-
-	Action[5]:Set[AoE]
-	MobHealth[5,1]:Set[10]
-	MobHealth[5,2]:Set[100]
-	Power[5,1]:Set[40]
-	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[90]
+
+	Action[4]:Set[Nuke]
+	MobHealth[4,1]:Set[1]
+	MobHealth[4,2]:Set[100]
+	Power[4,1]:Set[30]
+	Power[4,2]:Set[100]
+	SpellRange[4,1]:Set[60]
+
+	Action[5]:Set[Mastery]
 	
 	Action[6]:Set[AA_Nature_Blade]
 	MobHealth[6,1]:Set[10]
@@ -272,6 +274,7 @@ function Buff_Routine(int xAction)
 		case Self_Buff
 		case AA_Rebirth
 		case AA_Infusion
+		case AA_Shapeshift
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			
 		case BuffEel
@@ -372,7 +375,7 @@ function Combat_Routine(int xAction)
 	}
 	
 	;if named epic, maintain debuffs
-	if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>20
+	if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
 	{
 		if !${Me.Maintained[${SpellType[50]}](exists)}
 		{
@@ -412,8 +415,7 @@ function Combat_Routine(int xAction)
 
 			}
 			break				
-
-		case Snare
+			
 		case Nuke
 			if ${OffenseMode}
 			{
@@ -444,13 +446,13 @@ function Combat_Routine(int xAction)
 						{
 							if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 							{
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 							elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 							{
 								Me.Inventory[${WeaponSword}]:Equip
 								EquipmentChangeTimer:Set[${Time.Timestamp}]
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 						}						
 					}
@@ -470,13 +472,13 @@ function Combat_Routine(int xAction)
 						{
 							if ${Me.Equipment[1].Name.Equal[${OneHandedHammer}]}
 							{
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 							elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 							{
 								Me.Inventory[${OneHandedHammer}]:Equip
 								EquipmentChangeTimer:Set[${Time.Timestamp}]
-								call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 						}						
 					}
@@ -520,7 +522,6 @@ function Combat_Routine(int xAction)
 		case DoT
 			if ${OffenseMode}
 			{
-				echo DoT
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
@@ -538,7 +539,7 @@ function Combat_Routine(int xAction)
 
 		case PBAoE
 			;need to add disable to heal routine to prevent stun lock
-			if ${PBAoEMode}
+			if ${PBAoEMode} && ${OffenseMode}
 			{ 
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -551,6 +552,7 @@ function Combat_Routine(int xAction)
 				}
 			}	
 			break
+		case Snare	
 		case Feast
 			if ${DebuffMode}
 			{
@@ -628,22 +630,22 @@ function Post_Combat_Routine(int xAction)
 					if ${Me.Ability[${SpellType[300]}].IsReady}
 					{
 						call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 50
+						wait 100
 					}
 					elseif ${Me.Ability[${SpellType[301]}].IsReady}
 					{
 						call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 50
+						wait 100
 					}
 					elseif ${Me.Ability[${SpellType[302]}].IsReady}
 					{
 						call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 50
+						wait 100
 					}
 					else
 					{
 						call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 50
+						wait 100
 					}
 				}
 			}
@@ -682,7 +684,7 @@ function Have_Aggro()
 	
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
-		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
+		eq2execute /tell ${MainTankPC}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
 	
@@ -811,9 +813,9 @@ function CheckHeals()
 	}
 	
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		call EmergencyHeal ${Actor[${MainAssist}].ID}
+		call EmergencyHeal ${Actor[${MainTankPC}].ID}
 	}
 	
 	;ME HEALS
@@ -873,23 +875,23 @@ function CheckHeals()
 	;MAINTANK HEALS
 	;Will cast HoT's on MT outside of group.
 	;Need to come back here and configure raid healing.  If MainAssist in group, use groupHoT, if not in group use direct HoT
-	if ${Actor[${MainAssist}].Health} <90 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainAssist}].InCombatMode} && ${Actor[${MainAssist}].Health}>-99 && ${Actor[${MainAssist}].ID}!=${Me.ID}
+	if ${Actor[${MainTankPC}].Health}<90 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
-		call CastSpellRange 7 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 	
-	if ${Actor[${MainAssist}].Health} <80 && ${Actor[${MainAssist}].Health} >-99 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainAssist}].ID}!=${Me.ID}
+	if ${Actor[${MainAssist}].Health}<80 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
-		call CastSpellRange 1 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 	
-	if ${Actor[${MainAssist}].Health} <60 && ${Actor[${MainAssist}].Health} >-99 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainAssist}].ID}!=${Me.ID}
+	if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
-		call CastSpellRange 4 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
-	if ${Actor[${MainAssist}].Health} <50 && ${Actor[${MainAssist}].Health} >-99 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainAssist}].ID}!=${Me.ID}
+	if ${Actor[${MainAssist}].Health}<50 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
-		call CastSpellRange 2 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 2 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 	
 	;GROUP HEALS
@@ -915,7 +917,7 @@ function CheckHeals()
 	}
 
 	;Use back into the Frey if group member under 50
-	if ${Me.Group[${lowest}].ToActor.Health}<50 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} 
+	if ${Me.Group[${lowest}].ToActor.Health}<50 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.ID}!=${Me.ID}
 	{
 		call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 	}

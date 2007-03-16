@@ -1,10 +1,7 @@
 ;*****************************************************
-;Dirge.iss 20061202a
+;Dirge.iss 20061206a
 ;by Karye
-;Implemented EoF Mastery Strikes
-;Implemented EoF AA Magnetic Note
-;Implemented EoF AA Luck of the Dirge
-;Implemented EQ2botlib cyrstalize spirit
+;fixed a bug with hate buffing
 ;*****************************************************
 #includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
 
@@ -30,7 +27,8 @@ function Class_Declaration()
 	declare BuffMelee bool script FALSE
 	declare BuffHate bool script FALSE
 	declare BuffSelf bool script FALSE
-
+	declare BuffTarget string script
+	
 	;Custom Equipment
 	declare WeaponRapier string script 
 	declare WeaponSword string script

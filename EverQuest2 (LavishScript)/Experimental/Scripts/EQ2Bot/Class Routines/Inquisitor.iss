@@ -1,12 +1,13 @@
 ;*************************************************************
 ;Inquisitor.iss
-;version 20060829a
-
-;Added Configurable Aura and ShieldAlly buffing
-;Tweaked self healing slightly
-;will no longer cast reactive on a main assist outside of group
-;checks added to insure group members are healed before casting any HOs, Debuffs or offensive spells
-;will battle res group members now if in range
+;version 20061208a
+;Implemented EoF Mastery Spells
+;Implemented EoF AA Maldroit
+;Implemented EoF AA Battle Cleric Line
+;Implemented Vampire Spell Theft of Vitae
+;Implemented Symbol of Corruption
+;Implemented Crystalize Spirit Healing
+;Fixed a bug with curing uncurable afflictions
 ;by karye
 ;*************************************************************
 #includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
@@ -27,6 +28,7 @@ function Class_Declaration()
 	declare FanaticismMode bool script
 	declare KeepReactiveUp bool script
 	declare MezzMode bool script
+	declare BattleClericMode bool Script
 
 	declare BuffArcane bool script FALSE
 	declare BuffMitigation bool script FALSE
@@ -57,7 +59,8 @@ function Class_Declaration()
 	FanaticismMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Fanaticism Mode,FALSE]}]
 	KeepReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepReactiveUp,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
-
+	BattleClericMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BattleCleric Mode,FALSE]}]
+	
 	BuffArcane:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArcane,TRUE]}]
 	BuffMitigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMitigation,TRUE]}]
 	BuffProc:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProc,TRUE]}]
@@ -114,39 +117,36 @@ function Combat_Init()
 	Power[1,2]:Set[100]
 	SpellRange[1,1]:Set[55]
 
-	Action[2]:Set[Debase]
+	Action[2]:Set[Maladroit]
 	MobHealth[2,1]:Set[20]
 	MobHealth[2,2]:Set[100]
-	Power[2,1]:Set[30]
+	Power[2,1]:Set[35]
 	Power[2,2]:Set[100]
-	SpellRange[2,1]:Set[50]
-	SpellRange[2,2]:Set[51]
+	SpellRange[2,1]:Set[384]
 	
-	Action[3]:Set[Convict]
+	Action[3]:Set[Debase]
 	MobHealth[3,1]:Set[20]
 	MobHealth[3,2]:Set[100]
 	Power[3,1]:Set[30]
 	Power[3,2]:Set[100]
-	SpellRange[3,1]:Set[51]
+	SpellRange[3,1]:Set[50]
+	
+	Action[4]:Set[Convict]
+	MobHealth[4,1]:Set[20]
+	MobHealth[4,2]:Set[100]
+	Power[4,1]:Set[30]
+	Power[4,2]:Set[100]
+	SpellRange[4,1]:Set[51]
 
-	Action[4]:Set[Mastery]
-	SpellRange[4,1]:Set[360]
-	SpellRange[4,2]:Set[379]
+	Action[5]:Set[Mastery]
 
-	Action[5]:Set[Counterattack]
-	MobHealth[5,1]:Set[40]
-	MobHealth[5,2]:Set[100]
-	Power[5,1]:Set[40]
-	Power[5,2]:Set[100]
-	SpellRange[5,1]:Set[336]
-
-	Action[6]:Set[Proc]
-	MobHealth[6,1]:Set[40]
+	Action[6]:Set[TheftOfVitality]
+	MobHealth[6,1]:Set[1]
 	MobHealth[6,2]:Set[100]
-	Power[6,1]:Set[40]
+	Power[6,1]:Set[20]
 	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[337]
-
+	SpellRange[6,1]:Set[56]	
+	
 	Action[7]:Set[Absolving_Flames]
 	MobHealth[7,1]:Set[20]
 	MobHealth[7,2]:Set[100]
@@ -161,33 +161,62 @@ function Combat_Init()
 	Power[8,2]:Set[100]
 	SpellRange[8,1]:Set[71]
 	
-	Action[9]:Set[Stifle]
-	MobHealth[9,1]:Set[20]
+	Action[9]:Set[AoE]
+	MobHealth[9,1]:Set[1]
 	MobHealth[9,2]:Set[100]
 	Power[9,1]:Set[30]
 	Power[9,2]:Set[100]
-	SpellRange[9,1]:Set[260]
-
-	Action[10]:Set[PreKill]
-	MobHealth[10,1]:Set[5]
-	MobHealth[10,2]:Set[50]
-	Power[10,1]:Set[30]
+	SpellRange[9,1]:Set[90]	
+	
+	Action[10]:Set[Proc]
+	MobHealth[10,1]:Set[40]
+	MobHealth[10,2]:Set[100]
+	Power[10,1]:Set[40]
 	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[312]
-
-	Action[11]:Set[AoE]
-	MobHealth[11,1]:Set[25]
+	SpellRange[10,1]:Set[337]
+	
+	Action[11]:Set[SymbolOfCorruption]
+	MobHealth[11,1]:Set[10]
 	MobHealth[11,2]:Set[100]
 	Power[11,1]:Set[30]
 	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[90]
-	
-	Action[12]:Set[AA_DivineCastigation]
+	SpellRange[11,1]:Set[57]
+
+	Action[12]:Set[Stifle]
 	MobHealth[12,1]:Set[1]
 	MobHealth[12,2]:Set[100]
 	Power[12,1]:Set[30]
 	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[395]	
+	SpellRange[12,1]:Set[260]
+	
+	Action[13]:Set[Counterattack]
+	MobHealth[13,1]:Set[40]
+	MobHealth[13,2]:Set[100]
+	Power[13,1]:Set[40]
+	Power[13,2]:Set[100]
+	SpellRange[13,1]:Set[336]
+
+	Action[14]:Set[AA_DivineCastigation]
+	MobHealth[14,1]:Set[1]
+	MobHealth[14,2]:Set[100]
+	Power[14,1]:Set[30]
+	Power[14,2]:Set[100]
+	SpellRange[14,1]:Set[395]
+
+	Action[15]:Set[PreKill]
+	MobHealth[15,1]:Set[5]
+	MobHealth[15,2]:Set[15]
+	Power[15,1]:Set[30]
+	Power[15,2]:Set[100]
+	SpellRange[15,1]:Set[312]
+
+
+	
+
+	
+
+	
+
 }
 
 function PostCombat_Init()
@@ -202,6 +231,7 @@ function Buff_Routine(int xAction)
 	declare tempvar int local
 	declare Counter int local
 	declare BuffMember string local
+	declare BuffTarget string local
 	
 	variable int temp
 	
@@ -232,6 +262,7 @@ function Buff_Routine(int xAction)
 	{
 		case BuffDPS
 			Counter:Set[1]
+			tempvar:Set[1]
 
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
@@ -240,15 +271,17 @@ function Buff_Routine(int xAction)
 				;check if the maintained buff is of the spell type we are buffing
 				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
 				{
-					;iterate through the collection of members to buff
-					if ${BuffDPS.FirstKey(exists)}
+					;iterate through the members to buff
+					if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
 
+						tempvar:Set[1]
 						do
 						{				
 
-							;if our maintained spell has a target in the collection break and go to the next maintained buff
-							if ${Me.Maintained[${Counter}].Target.Name.Equal[${BuffDPS.CurrentValue}]}
+							BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 							{
 								BuffMember:Set[OK]
 								break
@@ -256,7 +289,7 @@ function Buff_Routine(int xAction)
 							
 							
 						}
-						while ${BuffDPS.NextKey(exists)}
+						while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
 						if !${BuffMember.Equal[OK]}
 						{
@@ -270,20 +303,24 @@ function Buff_Routine(int xAction)
 						Me.Maintained[${Counter}]:Cancel
 					}
 				}
+				
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained} 			
 			
-			;itterate through the to be buffed collection and buff them
-			if ${BuffDPS.FirstKey(exists)}
+
+			Counter:Set[1]
+			;iterate through the to be buffed Selected Items and buff them
+			if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
 
 				do
 				{				
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffDPS.CurrentValue}].ID}
+					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				}
-				while ${BuffDPS.NextKey(exists)}
+				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
-			break
+			break	
 
 		case Self_Buff
 			if ${ConvertMode}
@@ -352,7 +389,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 
-		Default
+		default
 			xAction:Set[20]
 			break
 	}
@@ -404,13 +441,14 @@ function Combat_Routine(int xAction)
 	{
 		call Shard
 	}
-
+echo BattleClericMode is ${BattleClericMode}
 	;Before we do our Action, check to make sure our group doesnt need healing
 	call CheckGroupHealth 75
 	if ${Return}
 	{
 		switch ${Action[${xAction}]}
 		{
+			case TheftOfVitality
 			case Forced_Obedience
 			case Debase
 			case Convict
@@ -450,7 +488,52 @@ function Combat_Routine(int xAction)
 				break
 
 			case Absolving_Flames
+				if ${OffenseMode} || ${DebuffMode}
+				{
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+						if ${Return.Equal[OK]}
+						{
+							;Check for Battle Cleric Strike of Flames
+							if ${Me.Ability[${SpellType[381]}](exists)} && ${BattleClericMode}
+							{
+								call CastSpellRange 381 0 1 0 ${KillTarget}
+							}
+							else
+							{
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+							}
+						}
+					}
+
+				}
+				break			
+			
 			case Affliction
+				if ${OffenseMode} || ${DebuffMode}
+				{
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+						if ${Return.Equal[OK]}
+						{
+							;Check for Battle Cleric Writhing Strike
+							if ${Me.Ability[${SpellType[382]}](exists)} && ${BattleClericMode}
+							{
+								call CastSpellRange 382 0 1 0 ${KillTarget}
+							}
+							else
+							{
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+							}
+						}
+					}
+
+				}
+				break				
 			case Stifle
 				if ${OffenseMode} || ${DebuffMode}
 				{
@@ -460,13 +543,66 @@ function Combat_Routine(int xAction)
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
 						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+							;Check for Battle Cleric Invocation Strike
+							if ${Me.Ability[${SpellType[383]}](exists)} && ${BattleClericMode}
+							{
+								call CastSpellRange 383 0 1 0 ${KillTarget}
+							}
+							else
+							{
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+							}
+						}
+					}
+
+				}
+				break
+			case SymbolOfCorruption
+				if ${OffenseMode} || ${DebuffMode}
+				{
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+						if ${Return.Equal[OK]}
+						{
+							;Check for Battle Cleric Strike of Corruption
+							if ${Me.Ability[${SpellType[379]}](exists)} && ${BattleClericMode}
+							{
+								call CastSpellRange 379 0 1 0 ${KillTarget}
+							}
+							else
+							{
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+							}
 						}
 					}
 
 				}
 				break
 			case AoE
+				if ${AoEMode}
+				{
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+						if ${Return.Equal[OK]}
+						{
+							;Check for Battle Cleric Litany Circle
+							if ${Me.Ability[${SpellType[380]}](exists)} && ${BattleClericMode}
+							{
+								call CastSpellRange 380 0 1 0 ${KillTarget}
+							}
+							else
+							{
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+							}
+						}
+					}
+
+				}
+				break				
 			case PreKill
 				if ${AoEMode}
 				{
@@ -538,10 +674,16 @@ function Combat_Routine(int xAction)
 						;Me.Ability[Aviak Master's Smite]:Use
 						;Me.Ability[Beholder Master's Smite]:Use
 						;Me.Ability[Ravasect Master's Smite]:Use
+						Me.Ability[Werewolf Master's Smite]:Use
+						;Me.Ability[Bugbear Master's Smite]:Use
+						;Me.Ability[Brownie Master's Smite]:Use
+						;Me.Ability[Clockwork Master's Smite]:Use
+						Me.Ability[Minotaur Master's Smite]:Use
+						;Me.Ability[Kobold Master's Smite]:Use							
 					}
 				}
 				break
-			Default
+			default
 				xAction:Set[20]
 				break
 		}
@@ -657,8 +799,6 @@ function CheckHeals()
 
 	do
 	{
-		if ${Me.Group[${temphl}].ZoneName.Equal["${Zone.Name}"]}
-		{
 
 			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor(exists)}
 			{
@@ -671,8 +811,26 @@ function CheckHeals()
 			if ${Me.Group[${temphl}].IsAfflicted}
 
 			{
-				tmpafflictions:Set[${Math.Calc[${Me.Group[${temphl}].Arcane}+${Me.Group[${temphl}].Trauma}+${Me.Group[${temphl}].Elemental}+${Me.Group[${temphl}].Noxious}]}]
+				if ${Me.Group[${temphl}].Arcane}>0
+				{
+					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
+				}
 
+				if ${Me.Group[${temphl}].Noxious}>0
+				{
+					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
+				}
+				
+				if ${Me.Group[${temphl}].Elemental}>0
+				{
+					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
+				}
+				
+				if ${Me.Group[${temphl}].Trauma}>0
+				{
+					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
+				}
+				
 				if ${tmpafflictions}>${mostafflictions}
 				{
 					mostafflictions:Set[${tmpafflictions}]
@@ -685,7 +843,7 @@ function CheckHeals()
 				grpheal:Inc
 			}
 
-			if ${Me.Group[${temphl}].Arcane} || ${Me.Group[${temphl}].Elemental}
+			if ${Me.Group[${temphl}].Arcane}>0 || ${Me.Group[${temphl}].Elemental}>0
 			{
 				grpcure:Inc
 			}
@@ -702,7 +860,6 @@ function CheckHeals()
 			{
 				MTinMyGroup:Set[TRUE]
 			}
-		}
 
 	}
 	while ${temphl:Inc}<${grpcnt}
@@ -712,7 +869,7 @@ function CheckHeals()
 		grpheal:Inc
 	}
 	
-	if ${Me.Arcane} || ${Me.Elemental}
+	if ${Me.Arcane}>0 || ${Me.Elemental}>0
 	{
 		grpcure:Inc
 	}
@@ -722,14 +879,16 @@ function CheckHeals()
 	{
 		call CastSpellRange 220
 	}
-	
+
 	if ${Me.IsAfflicted} && ${CureMode}
 	{
+
 		call CureMe
 	}
 
 	if ${mostafflicted} && ${CureMode}
 	{
+
 		call CureGroupMember ${mostafflicted}
 	}
 	
@@ -845,7 +1004,9 @@ function CheckHeals()
 			call CastSpellRange 300 301 0 0 ${Me.Group[${tempgrp}].ID} 1
 		}
 	}
-	while ${tempgrp:Inc}<${grpcnt}	
+	while ${tempgrp:Inc}<${grpcnt}
+	
+	call UseCrystallizedSpirit 60	
 
 }
 
@@ -927,35 +1088,32 @@ function CureGroupMember(int gMember)
 	declare tmpcure int local
 
 	tmpcure:Set[0]
-	if !${Me.Group[${gMember}].ZoneName.Equal["${Zone.Name}"]}
-	{
-		return
-	}
 	
 	do
 	{
-		if  ${Me.Group[${gMember}].Arcane} && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
+		if  ${Me.Group[${gMember}].Arcane}>0
 		{
 			call CastSpellRange 326
 			
-				if  ${Me.Group[${gMember}].Arcane} && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
+				if  ${Me.Group[${gMember}].Arcane}>0
 				{
 					call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 				}
 		}
 
-		if  ${Me.Group[${gMember}].Noxious}
+		if  ${Me.Group[${gMember}].Noxious}>0
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 
-		if  ${Me.Group[${gMember}].Elemental}
+		if  ${Me.Group[${gMember}].Elemental}>0
 		{
 			call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 
-		if  ${Me.Group[${gMember}].Trauma}
+		if  ${Me.Group[${gMember}].Trauma}>0
 		{
+
 			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 	}

@@ -1,7 +1,10 @@
 /********************************************************************************
 Mystic SubScript for Blazers EQ2Bot
-Version 1.25
+Version 1.26
 	By Mandrake 						
+
+REQUIRES:  "eq2botlib", and "Heroic Op Object"
+
 
 Todo:
 - Fix rezes?
@@ -9,6 +12,13 @@ Todo:
 - Improve method for casting feathers (on group change?)
 - implement Eidolic Savior (oh shit buff)
 - implement Prophetic Shield (poison/disease ward)
+
+v. 1.26
+-  Removed depenancy on bottools.iss, and just included in this file
+-  Spell list is up to date to 70
+-  Increased the use of the healing badger dude....
+-  Casts a group ward if MA looses agro
+
 
 
 v. 1.25
@@ -63,7 +73,6 @@ V. 1.1
 - Added Feathers (Sorta) 
 - Spell list to 41 
 ********************************************************************************/
-#include ${LavishScript.HomeDirectory}/Scripts/BotTools.iss
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
 #endif
@@ -121,7 +130,7 @@ function Buff_Init()
 	PreSpellRange[3,2]:Set[37]
 
 	;===============================;
-	;Tank Buffs			;
+	;Tank Buff (Needs Fixing)	;
 	;===============================;
 	PreAction[4]:Set[Tank_Buff]
 	PreSpellRange[4,1]:Set[40]
@@ -296,7 +305,10 @@ function Buff_Routine(int xAction)
 					}
 					else 
 					{
-					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 ${Actor[${MainAssist}].ID}
+						if ${Tools.InGroup[${Actor[${MainAssist}].ID}]}
+						{ 
+						call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 ${Actor[${MainAssist}].ID}
+						}
 					}
 				}
 				break
@@ -323,7 +335,7 @@ function Buff_Routine(int xAction)
 	
 						call CastSpellRange 400
 						;move pet buffs to another sequence
-						call CastSpellRange 397 399
+						call CastSpellRange 396 399
 					}
 				break
 			case SoW
@@ -373,7 +385,15 @@ function Combat_Routine(int xAction)
 	}
 	CurState:Set["Combat: ${Action[${xAction}]}"]
 	call CheckWards
-	call CheckHeals
+
+	/********************************
+	*Stay in Heal Routine if needed	*
+	********************************/
+	do
+	{
+		call CheckHeals
+	}
+	while ${return}==TRUE
 	if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Cure Spells]}
 	{
 		call CheckCures
@@ -527,7 +547,27 @@ declare tempgrp int
 		}
 	}
 	while ${tempgrp:Inc}<${grpcnt}
+	;===============================================;
+	;Now check yourself				;
+	;There should be a better way to do this	;
+	;===============================================;
 
+			if  ${Me.Arcane} && !${Me.ToActor.Effect[Revived Sickness](exists)}
+			{
+				call CastSpellRange 213 0 0 0 ${Me.ID}
+			}
+			if  ${Me.Noxious}
+			{
+				call CastSpellRange 210 0 0 0 ${Me.ID}
+			}
+			if  ${Me.Elemental}
+			{
+				call CastSpellRange 212 0 0 0 ${Me.ID}
+			}
+			if  ${Me.Trauma}
+			{
+				call CastSpellRange 211 0 0 0 ${Me.ID}
+			}
 }
 
 function CheckWards()
@@ -599,6 +639,7 @@ function CheckWards()
 function CheckHeals()
 {
 	declare tmpgrp int local 1
+	declare healreturn bool local FALSE
 /****************************************
 quick check on pet if autohunting
 ****************************************/
@@ -607,6 +648,7 @@ if ${PathType}==4
 	if ${Actor[MyPet].Health}<70&&${Actor[MyPet](exists)}
 	{
 		call CastSpellRange 4 0 0 0 ${Actor[MyPet].ID}
+		healreturn:Set[TRUE]
 	}
 }
 
@@ -617,16 +659,20 @@ if ${Tools.LowHealthCount[50]}>3&&${Me.Ability[${SpellType[16]}].IsReady}
 {
 	;Cast an emergency group ward
 	call CastSpellRange 16
+	healreturn:Set[TRUE]
 }
 elseif ${Tools.LowHealthCount[70]} > 3
 {
 	;Cast a normal Group Heal
 	call CastSpellRange 10
+	healreturn:Set[TRUE]
 }
-elseif ${Tools.LowHealthCount[90]} > 3
+
+if ${Tools.LowHealthCount[90]} > 3
 {
 	;Cast lil healer badger dude
 	call CastSpellRange 351
+	healreturn:Set[TRUE]
 }
 ;=======================================================;
 ;Now, Pick the appropriate Heal for the assesed damage	;
@@ -640,12 +686,14 @@ elseif ${Tools.LowHealthCount[90]} > 3
 	;=======================================================================;
 		if ${Me.Ability[Ritual].IsReady} && ${Me.Equipment[Secondary].Name.Find[Symbol]}
 		{
-		call CastSpellRange 356	
+		call CastSpellRange 356
+		healreturn:Set[TRUE]	
 		}
 
 		if ${Actor[${Tools.LowestHealth}].Health} <= 20
 		{
 			call CastSpellRange 312 0 0 0 ${Actor[${Tools.LowestHealth}].ID}
+			healreturn:Set[TRUE]
 		}
 		elseif ${Actor[${Tools.LowestHealth}].Health} <= 60
 		{
@@ -656,13 +704,15 @@ elseif ${Tools.LowHealthCount[90]} > 3
 			if ${Me.Ability[${SpellType[9]}].IsReady}
 			{
 				call CastSpellRange 9 0 0 0 ${Actor[${Tools.LowestHealth}].ID}
+				healreturn:Set[TRUE]
 			} 
 			elseif ${Me.Power} > ${Me.Ability[${SpellType[1]}].PowerCost} 
 			{
 				;target ${Actor[${lowest}].ID}
 				call CastSpellRange 1 0 0 0 ${Actor[${Tools.LowestHealth}].ID}
+				healreturn:Set[TRUE]
 			}
-			Return
+			return ${healreturn}
 		}
 		elseif ${Actor[${Tools.LowestHealth}].Health} < 80
 		{
@@ -674,8 +724,9 @@ elseif ${Tools.LowHealthCount[90]} > 3
 				;target ${Actor[${Tools.LowestHealth}].ID}
 				;CurState:Set["Healing: ${Actor[${Tools.LowestHealth}].Name} (Small)"]
 				call CastSpellRange 4 0 0 0 ${Actor[${Tools.LowestHealth}].ID}
+				healreturn:Set[TRUE]
 			}
-			Return
+			return ${healreturn}
 		}
 		else
 		{
@@ -735,7 +786,8 @@ function Have_Aggro()
  
 function MA_Lost_Aggro()
 {
- 
+ echo "MA Lost Agro, Casting a Group Ward"
+ call CastSpellRange 15 0 0 0 ${Actor[${MainAssist}].ID}
 }
  
 function MA_Dead()
@@ -743,4 +795,172 @@ function MA_Dead()
  
 }
 
+
+/*******************************************************************
+BotTools v.0.02
+	By Mandrake
+
+
+Example: 
+	#include ${LavishScript.HomeDirectory}/Scripts/BotTools.iss
+		function Class_Declaration()
+		{
+			Declare Tools BotTools script
+		}
+
+		function somewhereelse
+		{
+			if ${Actor[${Tools.LowestHealth}](exists)}
+			{
+			call CastSpellRange 1 0 0 0 ${Actor[${Tools.LowestHealth}].ID}
+			}
+		}
+
+
+
+Members:
+LowHealthCount(minhealth)
+	- Returns the number of group members with health below ${minhealth}
+LowestHealth
+	- Returns the actorID of the groupmember with lowest HP
+		- Later expand to include raid as a param
+LowestPower
+	- Same as above
+ArcheType
+	- Returns the archetype of the actor (broken in isxeq2)
+
+
+---- Following are temporarly removed
+*BuffTimer(ActorID, SpellName)
+	-Returns the time left on a timer set with SetBuffTimer
+		- For use on non-maintained buffs like Sow, Spirit Shards
+*SetBuffTimer
+	-Initiates a timer object
+*DelBuffTimer
+	-Destroys the timer object
+*GroupChanges
+	-Will return ActorID of new group members since last update
+*UpdateGroup
+	-Sets the groupchanges object
+********************************************************************/
+
+
+
+objectdef BotTools
+{
+	member:bool InGroup(int person)
+	{
+	variable int tmpgrp=1
+	variable int grpcnt=${Me.GroupCount}
+	if ${person}==${Me.ID}
+	{
+	 	return TRUE
+	}
+		do
+		{
+			if (${person} == ${Me.Group[${tmpgrp}].ID}) 
+			{
+			return TRUE
+			}
+		}
+		While ${tmpgrp:Inc}<${grpcnt}
+	return FALSE
+	}
+	member:int LowHealthCount(int minhealth)
+	{
+	variable int lowgrp=0
+	variable int tmpgrp=1
+	variable int grpcnt=${Me.GroupCount}
+		do
+		{
+		;===============================================;
+		;Loop through the group, pick the lowest one	;
+		;===============================================;
+			if ${Me.Group[${tmpgrp}].ToActor.Health}<=${minhealth} && ${Me.Group[${tmpgrp}].ToActor.Health}>0 && ${Me.Group[${tmpgrp}](exists)}
+			{
+			lowgrp:Inc
+			}
+		}
+		While ${tmpgrp:Inc}<${grpcnt}
+		if ${Me.ToActor.Health} <= ${minhealth}
+		{
+		lowgrp:Inc
+		}
+	return ${lowgrp}
+	}
+	member:int LowestHealth()
+	{
+	variable int lowest=${Me.ID}
+	variable int tmpgrp=1
+	variable int grpcnt=${Me.GroupCount}
+		do
+		{
+		;===============================================;
+		;Loop through the group, pick the lowest one	;
+		;===============================================;
+			if ${Me.Group[${tmpgrp}].ToActor.Health}<=${Actor[${lowest}].Health} && ${Me.Group[${tmpgrp}].ToActor.Health}<100 && ${Me.Group[${tmpgrp}].ToActor.Health}>0 && ${Me.Group[${tmpgrp}](exists)}
+			{
+			lowest:Set[${Me.Group[${tmpgrp}].ID}]
+			}
+		}
+		While ${tmpgrp:Inc}<${grpcnt}
+		Return ${lowest}
+	}
+	member:int LowestPower()
+	{
+	variable int lowest=${Me.ID}
+	variable int tmpgrp=1
+	variable int grpcnt=${Me.GroupCount}
+		do
+		{
+		;===============================================;
+		;Loop through the group, pick the lowest one	;
+		;===============================================;
+			if ${Me.Group[${tmpgrp}].ToActor.Power}<=${Actor[${lowest}].Power} && ${Me.Group[${tmpgrp}].ToActor.Power}<100 && ${Me.Group[${tmpgrp}].ToActor.Power}>0 && ${Me.Group[${tmpgrp}](exists)}
+			{
+			lowest:Set[${Me.Group[${tmpgrp}].ID}]
+			}
+		}
+		While ${tmpgrp:Inc}<${grpcnt}
+		Return ${lowest}
+	}
+
+	member:string ArcheType(int ActorID)
+	{
+		switch ${Actor[${ActorID}].Class}
+		{
+			case gaurdian
+			case berserker
+			case bruiser
+			case monk
+			case shadowknight
+			case paladin
+				return fighter
+			case fury
+			case templar
+			case mystic
+			case defiler
+			case warden
+			case inquisitor
+				return priest
+			case brigand
+			case swashbuckler
+			case ranger
+			case dirge
+			case troubador
+			case assassin
+				return scout
+			case coercer
+			case illusionist
+			case conjuror
+			case wizard
+			case necromancer
+			case warlock
+				return mage
+			case default
+				return unknown
+		}
+	}
+
+}
 

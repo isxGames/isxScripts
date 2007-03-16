@@ -22,8 +22,7 @@ function Class_Declaration()
 	declare BuffSeeInvis bool script TRUE
 	declare BuffRadianceProc collection:string script
 	declare BuffAmplify bool script FALSE
-	declare BuffSeal bool script FALSE
-	declare StartHO bool script 1
+	declare BuffSeal bool script FALSE	
 
 	
 	;Custom Equipment
@@ -43,7 +42,6 @@ function Class_Declaration()
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffAmplify:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAmplify,,FALSE]}]
 	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
@@ -159,6 +157,7 @@ function PostCombat_Init()
 	
 	PostAction[1]:Set[LoadDefaultEquipment]
 	call RefreshPower
+	avoidhate:Set[FALSE]
 	
 }
 
@@ -173,9 +172,16 @@ function Buff_Routine(int xAction)
 	{
 		Me.Inventory[${WeaponMain}]:Equip
 	}
+
+
+	if ${ShardMode}
+	{
+		call Shard
+	}
 	
 	call CheckHeals
 	call RefreshPower
+	
 	
 	ExecuteAtom CheckStuck
 	
@@ -320,7 +326,7 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 	
-	if ${DoHOs}
+	if ${DoHOs} && ${StartHO}
 	{
 		objHeroicOp:DoHO
 	}
@@ -392,33 +398,10 @@ function Combat_Routine(int xAction)
 			break
 
 		case Master_Strike
-			if ${Me.Ability[Gnoll Master's Strike].IsReady} || ${Me.Ability[Orc Master's Strike].IsReady}
+			if ${Me.Ability[Master's Smite].IsReady}
 			{
-				if ${Actor[${KillTarget}](exists)}
-				{
-					Target ${KillTarget}
-					Me.Ability[Droag Master's Strike]:Use
-					;Me.Ability[Orc Master's Strike]:Use
-					Me.Ability[Gnoll Master's Strike]:Use
-					;Me.Ability[Ghost Master's Strike]:Use
-					Me.Ability[Skeleton Master's Strike]:Use
-					;Me.Ability[Zombie Master's Strike]:Use
-					;Me.Ability[Centaur Master's Strike]:Use
-					Me.Ability[Giant Master's Strike]:Use
-					;Me.Ability[Treant Master's Strike]:Use
-					;Me.Ability[Fairy Master's Strike]:Use
-					Me.Ability[Lizardman Master's Strike]:Use
-					Me.Ability[Goblin Master's Strike]:Use
-					;Me.Ability[Golem Master's Strike]:Use
-					;Me.Ability[Bixie Master's Strike]:Use
-					;Me.Ability[Cyclops Master's Strike]:Use
-					Me.Ability[Djinn Master's Strike]:Use
-					;Me.Ability[Harpy Master's Strike]:Use
-					;Me.Ability[Naga Master's Strike]:Use
-					;Me.Ability[Aviak Master's Strike]:Use
-					;Me.Ability[Beholder Master's Strike]:Use
-					;Me.Ability[Ravasect Master's Strike]:Use
-				}
+				Target ${KillTarget}
+				Me.Ability[Master's Smite]:Use
 			}
 
 		case Dot1

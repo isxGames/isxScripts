@@ -499,14 +499,14 @@ function Lost_Aggro(int mobid)
 		if ${TauntMode}
 		{
 			;intercept damage on the person now with agro
-			call CastSpellRange 270 0 1 0 ${killtarget}
+			call CastSpellRange 270
 			;try and taunt the mob back
-			call CastSpellRange 160 161 1 0 ${killtarget}
+			call CastSpellRange 160 161
 		
 			;use rescue if new agro target is under 65 health
 			if ${Me.ToActor.Target.Target.Health}<65
 			{
-				call CastSpellRange 320 0 1 0 ${mobid}
+				call CastSpellRange 320 0 0 0 ${mobid}
 			}
 		}
 	}

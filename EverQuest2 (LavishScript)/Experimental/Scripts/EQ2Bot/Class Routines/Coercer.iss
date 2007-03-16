@@ -1,9 +1,14 @@
 ;*************************************************************
 ;Coercer.iss
-;version 20061011a
+;version 20061207a
 ;by karye
-;Fixed a bug with Buff settings not saving after zoning/restarting EQ2Bot
-;Fixed a bug with ManaFlow and Channel if group members are not in zone
+;Implemented AA Thought Snap
+;Implemented AA Manaward
+;Implemented AA Tashiana
+;Implemented AA Coercive Healing
+;Added EoF mastery strikes
+;Implemented Vampire Spell Sunbolt
+;Implemented Crystalize Spirit Healing
 ;*************************************************************
 
 #includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
@@ -24,7 +29,10 @@ function Class_Declaration()
 	declare BuffInstigation bool script FALSE
 	declare BuffSignet bool script FALSE
 	declare BuffHate bool script FALSE
+	declare BuffCoerciveHealing bool script FALSE
 	declare BuffHateGroupMember string script
+	declare BuffCoerciveHealingGroupMember string script
+	declare BuffManaward bool script
 	
 	declare CharmTarget int script
 	
@@ -46,6 +54,9 @@ function Class_Declaration()
 	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHate,FALSE]}]
 	BuffInstigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffInstigation,,FALSE]}]
 	BuffSignet:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSignet,FALSE]}]
+	BuffCoerciveHealing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealing,FALSE]}]
+	BuffCoerciveHealingGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealingGroupMember,]}]
+	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
 	
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
@@ -82,6 +93,12 @@ function Buff_Init()
 	
 	PreAction[8]:Set[Clarity]
 	PreSpellRange[8,1]:Set[22]
+	
+	PreAction[9]:Set[AAEmpathic_Aura]
+	PreSpellRange[9,1]:Set[384]
+	
+	PreAction[10]:Set[AACoerciveHealing]
+	PreSpellRange[10,1]:Set[379]	
 }
 
 function Combat_Init()
@@ -111,6 +128,8 @@ function Combat_Init()
 	MobHealth[7,2]:Set[100] 	
 	SpellRange[7,1]:Set[80]
 
+	Action[8]:Set[Sunbolt]
+	SpellRange[8,1]:Set[62]
 
 	Action[9]:Set[Mind]
 	MobHealth[9,1]:Set[40] 
@@ -153,6 +172,8 @@ function Combat_Init()
 	MobHealth[17,1]:Set[1] 
 	MobHealth[17,2]:Set[100] 
 	SpellRange[17,1]:Set[192]	
+
+
 	
 }
 
@@ -188,6 +209,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 
+		case AAEmpathic_Aura
 		case Clarity
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -232,6 +254,27 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
+		case AACoerciveHealing
+			
+			BuffTarget:Set[${UIElement[cbBuffCoersiveHealingGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}			
+			
+			if ${BuffCoersiveHealing}
+			{
+
+				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				{
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				}
+			}
+			else
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+			break			
 		case AntiHate
 			Counter:Set[1]
 			tempvar:Set[1]
@@ -422,12 +465,6 @@ function Combat_Routine(int xAction)
 	
 	call RefreshPower
 	
-	if !${Me.Maintained[${SpellType[]}](exists)}
-	{
-		
-		call CastSpellRange X 0 0 0 ${KillTarget}
-	}
-	
 	;chronsphioning AA. we should always try to keep this spell up
 	if ${Me.Ability[${SpellType[382]}](exists)} && ${Me.Ability[${SpellType[382]}].IsReady}
 	{
@@ -451,6 +488,9 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 382 0 0 0 ${KillTarget}		
 		}
 	}
+	
+	;Make sure kill target is AA Tahsina'd if available
+	call CastSpellRange 377 0 0 0 ${KillTarget}
 	
 	;make sure killtarget is always Arcane debuffed
 	call CastSpellRange 50 0 0 0 ${KillTarget}
@@ -530,9 +570,16 @@ function Combat_Routine(int xAction)
 					;Me.Ability[Aviak Master's Strike]:Use
 					;Me.Ability[Beholder Master's Strike]:Use
 					;Me.Ability[Ravasect Master's Strike]:Use
+					Me.Ability[Werewolf Master's Strike]:Use
+					;Me.Ability[Bugbear Master's Strike]:Use
+					;Me.Ability[Brownie Master's Strike]:Use
+					;Me.Ability[Clockwork Master's Strike]:Use
+					Me.Ability[Minotaur Master's Strike]:Use
+					;Me.Ability[Kobold Master's Strike]:Use}
 				}
 			}
-
+			break
+		case Sunbolt
 		case Nuke
 		case Stun
 		case Silence
@@ -677,9 +724,16 @@ function RefreshPower()
 
 function CheckHeals()
 {
-
+	
+	call UseCrystallizedSpirit 60
+	
+	if ${BuffManaward} && ${Me.InCombat}
+	{
+		call CastSpellRange 378
+	}
 
 }
+
 function Mezmerise_Targets()
 {
 	declare tcount int local 1
@@ -888,7 +942,7 @@ function DoAmnesia()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 			
-			if (${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}) || 
+			if (${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID})
 			{
 				continue
 			}
@@ -924,9 +978,34 @@ function DoAmnesia()
 
 			if ${aggrogrp}
 			{
-				call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
+				
+				;Try AA Thought Snap first
+				if ${Me.Ability[${SpellType[376]}].IsReady}
+				{
+					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
+					
+				}
+				;Try the AA Touch of Empathy second
+				elseif ${Me.Ability[${SpellType[384]}].IsReady}
+				{
+					if (${Me.Equipment[1].WieldStyle.Find[Dual Wield]} || ${Me.Equipment[1].WieldStyle.Find[One-Handed]}) && ${Me.Equipment[1].SubType.Equal[Staff]}
+					{
+						call CastSpellRange 382 0 0 0 ${KillTarget}
+					}
+					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+					{
+						Me.Inventory[${WeaponStaff}]:Equip
+						EquipmentChangeTimer:Set[${Time.Timestamp}]
+						call CastSpellRange 382 0 0 0${CustomActor[${tcount}].ID}	
+					}					
+				}
+				;Try Amensia if Touch of Empathy and Thought Snap isnt up or avialable
+				else
+				{
+					call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
+					
+				}
 				return
-
 			}
 
 		}
