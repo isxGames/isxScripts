@@ -1,6 +1,6 @@
 ;*************************************************************
 ;Warlock.iss
-;version 20061130a
+;version 20061012a
 ;by Pygar
 ; Initial Build
 ;*************************************************************
@@ -22,8 +22,7 @@ function Class_Declaration()
 	declare BuffSeeInvis bool script TRUE
 	declare BuffVenemousProc collection:string script
 	declare BuffBoon bool script FALSE
-	declare BuffPact bool script FALSE
-	declare StartHO bool script 1
+	declare BuffPact bool script FALSE	
 
 	
 	;Custom Equipment
@@ -44,7 +43,6 @@ function Class_Declaration()
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffBoon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBoon,,FALSE]}]
 	BuffPact:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPact,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
@@ -138,7 +136,7 @@ function PostCombat_Init()
 {
 	
 	PostAction[1]:Set[LoadDefaultEquipment]
-	
+	avoidhate:Set[FALSE]
 }
 
 function Buff_Routine(int xAction)
@@ -152,9 +150,15 @@ function Buff_Routine(int xAction)
 	{
 		Me.Inventory[${WeaponMain}]:Equip
 	}
+
+	if ${ShardMode}
+	{
+		call Shard
+	}
 	
 	call CheckHeals
 	call RefreshPower
+	
 	
 	ExecuteAtom CheckStuck
 	
@@ -292,7 +296,7 @@ function Buff_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[40]
+			xAction:Set[20]
 			break
 	}
 }
@@ -307,7 +311,7 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 	
-	if ${DoHOs}
+	if ${DoHOs} && ${StartHO}
 	{
 		objHeroicOp:DoHO
 	}
@@ -317,7 +321,7 @@ function Combat_Routine(int xAction)
 		Me.Inventory[${WeaponMain}]:Equip
 	}
 	
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
 	}
@@ -383,13 +387,10 @@ function Combat_Routine(int xAction)
 			break
 
 		case Master_Strike
-			if ${Me.Ability[Master's Strike].IsReady}
+			if ${Me.Ability[Master's Smite].IsReady}
 			{
-				if ${Actor[${KillTarget}](exists)}
-				{
-					Target ${KillTarget}
-					Me.Ability[Master's Strike]:Use
-				}
+				Target ${KillTarget}
+				Me.Ability[Master's Smite]:Use
 			}
 
 		case Dot

@@ -1320,6 +1320,31 @@
 								}
 							</OnLeftClick>
 						</checkbox>
+						<checkbox Name='WipeRevive' Template='EQ2.checkbox'>
+							<X>55%</X>
+							<Y>88%</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Text>Revive on Group Wipe</Text>
+							<OnLoad>
+								if ${Script[EQ2Bot].Variable[WipeRevive]}
+								{
+									UIElement[WipeRevive@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${UIElement[WipeRevive@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
+								{
+									Script[EQ2Bot].Variable[WipeRevive]:Set[TRUE]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Revive on Group Wipe?,TRUE]:Save
+								}
+								else
+								{
+									Script[EQ2Bot].Variable[WipeRevive]:Set[FALSE]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Revive on Group Wipe?,FALSE]:Save
+								}
+							</OnLeftClick>
+						</checkbox>						
 					</Tab>
 				</Tabs>
 			</Tabcontrol>

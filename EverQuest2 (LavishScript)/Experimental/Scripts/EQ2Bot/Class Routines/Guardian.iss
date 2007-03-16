@@ -1,17 +1,7 @@
 ;*************************************************************
 ;Guardian.iss
 ;version 20061101a
-;by Pygar 
-;
-;20070201a
-;Updated for new SpellCastRange functions
-;Added Crystalized Spirit usage
-;Tweaked Agro and Buffing to be more forgiving
-;Added Toggle for Initiating HO's
-;Updated for eq2bot 2.5.2
-;
-;20061101a
-;Initial Build
+;by Pygar - adapted from kayre's zerker
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -27,7 +17,6 @@ function Class_Declaration()
 	declare TauntMode bool Script TRUE
 	declare FullAutoMode bool Script FALSE
 	declare DragoonsCycloneMode bool Script FALSE
-	declare StartHO bool script 1
 	
 	declare BuffAvoidanceGroupMember string script
 	declare BuffSentinelGroupMember string script
@@ -50,7 +39,6 @@ function Class_Declaration()
 	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
 	OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
 	DragoonsCycloneMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Dragoons Cyclone,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
@@ -200,21 +188,21 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 1 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastCARange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break	
 
 		case Self_Buff 
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 
+			call CastCARange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 
 			break 
 
 		case Group_Buff 
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]} 
+			call CastCARange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]} 
 			break 
 		case AA_DragoonsCyclone
 			if ${DragoonsCycloneMode}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastCARange ${PreSpellRange[${xAction},1]}
 			}
 			else
 			{
@@ -230,7 +218,7 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 1 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastCARange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break
 		case Deagro_Target 
@@ -242,11 +230,11 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 1 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastCARange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break
 		Default 
-			xAction:Set[40] 
+			xAction:Set[20] 
 			break 
 	}
 
@@ -261,9 +249,9 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 	
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
-		call CastSpellRange 303
+		call CastCARange 303
 	}
 	
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
@@ -271,19 +259,19 @@ function Combat_Routine(int xAction)
 
 	if ${Me.ToActor.Health}<60
 	{
-		call CastSpellRange 156
+		call CastCARange 156
 	}
 
 	if ${Me.ToActor.Health}<40
 	{
-		call CastSpellRange 155
+		call CastCARange 155
 	}		
 
-	if ${Me.ToActor.Health}<30
+	if ${Me.ToActor.Health}<20
 	{
 		if ${Me.Equipment[2].Name.Equal[${TowerShield}]}
 		{
-			call CastSpellRange 322 0 1 0 ${KillTarget}
+			call CastCARange 322 0 1 0 ${KillTarget}
 		}
 		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 		{
@@ -303,21 +291,21 @@ function Combat_Routine(int xAction)
 			case Taunt1 
 				if ${TauntMode} 
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						call CastCARange ${SpellRange[${xAction},1]} 0 1 0
 					} 
 				break
 				
 			case Taunt2 
 				if ${TauntMode} && ${OffensiveMode}
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						call CastCARange ${SpellRange[${xAction},1]} 0 1 0
 					} 
 				break 
 
 			case AoE_Taunt
 				if ${TauntMode} && ${Mob.Count}>1
 				{ 
-					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1
+					call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0
 				}
 				break
 
@@ -330,7 +318,7 @@ function Combat_Routine(int xAction)
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 						if ${Return.Equal[OK]} 
 						{ 						
-							call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 1 0 ${KillTarget} 0 0 1
+							call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 1 0 
 						} 
 					}
 				}
@@ -344,13 +332,13 @@ function Combat_Routine(int xAction)
 					{ 
 						if ${Me.Equipment[1].Name.Equal[${WeaponSpear}]}
 						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 						{
 							Me.Inventory[${WeaponSpear}]:Equip
 							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 					}
 				}
@@ -361,7 +349,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 					if ${Return.Equal[OK]} 
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						call CastCARange ${SpellRange[${xAction},1]} 0 1 0
 					}
 				}
 				break
@@ -371,7 +359,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 					if ${Return.Equal[OK]} 
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+						call CastCARange ${SpellRange[${xAction},1]} 0 1 0
 					}
 				}
 				break
@@ -381,7 +369,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 					if ${Return.Equal[OK]} 
 					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0 ${KillTarget} 0 0 1
+						call CastCARange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0
 					}
 				}
 				break 
@@ -394,7 +382,7 @@ function Combat_Routine(int xAction)
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
 						if ${Return.Equal[OK]} 
 						{ 
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+							call CastCARange ${SpellRange[${xAction},1]} 0 1 0
 						}
 					}
 				}
@@ -408,14 +396,14 @@ function Combat_Routine(int xAction)
 					{ 
 						if ${Me.Equipment[1].Name.Equal[${WeaponHammer}]}
 						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 						{
 							Me.Inventory[${WeaponHammer}]:Equip
 							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange 240 0 1 0 ${KillTarget} 0 0 1
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+							call CastCARange 240 0 1 0 ${KillTarget}
+							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 					}
 				}
@@ -450,13 +438,13 @@ function Post_Combat_Routine(int xAction)
 			{
 				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]}
+					call CastCARange ${SpellRange[${xAction},1]}
 				}
 				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 				{
 					Me.Inventory[${WeaponSword}]:Equip
 					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]}
+					call CastCARange ${SpellRange[${xAction},1]}
 				}
 			}
 			break 
@@ -464,7 +452,7 @@ function Post_Combat_Routine(int xAction)
 		case AA_BindWound
 			if ${Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}].IsReady}
 			{
-				call CastSpellRange ${PostSpellRange[${xAction},1]}
+				call CastCARange ${PostSpellRange[${xAction},1]}
 			}
 			break
 
@@ -486,22 +474,22 @@ function Lost_Aggro(int mobid)
 		if ${TauntMode}
 		{
 			;intercept damage on the person now with agro
-			call CastSpellRange 270 0 1 0 ${mobid}
+			call CastCARange 270
 			;Use Reinforcement to get back to top of agro tree else use taunts
 			if ${Me.Ability[${SpellType[321]}].IsReady}
 			{
-				call CastSpellRange 321 0 1 0 ${mobid} 0 0 1
+				call CastCARange 321
 			}
 			else
 			{
-				call CastSpellRange 160 161 1 0 ${mobid} 0 0 1
+				call CastCARange 160 161
 			}
 			
 			
 			;use rescue if new agro target is under 65 health
 			if ${Me.ToActor.Target.Target.Health}<65
 			{
-				call CastSpellRange 320 0 1 0 ${mobid} 0 0 1
+				call CastCARange 320 0 0 0 ${mobid}
 			}
 		}
 	}
@@ -527,8 +515,6 @@ function Cancel_Root()
 
 function CheckHeals()
 {
-	call UseCrystallizedSpirit 60
-	
 	declare temphl int local
 	declare grpheal int local 0
 	declare lowest int local 0
@@ -573,8 +559,8 @@ function CheckHeals()
 	;MAINTANK EMERGENCY Mitigation
 	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		call CastSpellRange 317 
-		call CastSpellRange 155 156
+		call CastCARange 317
+		call CastCARange 155 156
 	}
 		
 	;GROUP HEALS
@@ -611,3 +597,154 @@ function WeaponChange()
 
 }
 
+function CastCARange(int start, int finish, int xvar1, int xvar2, int targettobuff, int notall, int refreshtimer)
+{
+	variable bool fndspell
+	variable int tempvar=${start}
+	variable int originaltarget
+
+	if ${Me.ToActor.Power}<5
+	{
+		return -1
+	}
+
+	do
+	{
+		if ${SpellType[${tempvar}].Length}
+		{
+			
+			if ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
+			{
+				if ${targettobuff}
+				{
+					fndspell:Set[FALSE]
+					tempgrp:Set[1]
+					do
+					{
+						if ${Me.Maintained[${tempgrp}].Name.Equal[${SpellType[${tempvar}]}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${targettobuff} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
+						{
+							fndspell:Set[TRUE]
+							break
+						}
+					}
+					while ${tempgrp:Inc}<=${Me.CountMaintained}
+
+					if !${fndspell}
+					{
+						if !${Actor[${targettobuff}](exists)} || ${Actor[${targettobuff}].Distance}>35
+						{
+							return -1
+						}
+
+						if ${xvar1} || ${xvar2}
+						{
+							;need less anal checkposition to keep from running around like an epilepic monkey
+							call CheckPosition ${xvar1} ${xvar2}
+						}
+
+						if ${Target(exists)}
+						{
+							originaltarget:Set[${Target.ID}]
+						}
+
+						if ${targettobuff(exists)}
+						{
+							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]}) 
+							{
+								target ${targettobuff}
+								wait 10 ${Target.ID}==${targettobuff}
+							}
+						}
+
+						call CastCA "${SpellType[${tempvar}]}" ${tempvar}
+
+						if ${Actor[${originaltarget}](exists)}
+						{
+							target ${originaltarget}
+							wait 10 ${Target.ID}==${originaltarget}
+						}
+
+						if ${notall}==1
+						{
+							return -1
+						}
+					}
+				}
+				else
+				{
+					if !${Me.Maintained[${SpellType[${tempvar}]}](exists)} || (${Me.Maintained[${SpellType[${tempvar}]}].Duration}<${refreshtimer} && ${Me.Maintained[${SpellType[${tempvar}]}].Duration}!=-1)
+					{
+						if ${xvar1} || ${xvar2}
+						{
+							call CheckPosition ${xvar1} ${xvar2}
+						}
+
+						call CastCA "${SpellType[${tempvar}]}" ${tempvar}
+
+						if ${notall}==1
+						{
+							return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+						}
+					}
+				}
+			}
+		}
+
+		if !${finish}
+		{
+			return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+		}
+	}
+	while ${tempvar:Inc}<=${finish}
+
+	return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+}
+
+function CastCA(string spell, int spellid)
+{
+		
+	Me.Ability[${spell}]:Use
+	
+	do
+	{
+		WaitFor "Fizzled!" "Interrupted!" "Too far away" "Can't see target" "Not during combat" "Would not take effect" "resisted" "No eligible target" "Not an enemy" "Target is not alive" 1
+
+	}
+	while ${WaitFor}==1 || ${WaitFor}==2
+
+	switch ${WaitFor}
+	{
+		
+		case 3
+			return TOOFARAWAY
+
+		case 4
+			return CANTSEETARGET
+
+		case 5
+			return NOTDURINGCOMBAT
+
+		case 6
+			return NOTTAKEEFFECT
+
+		case 7
+			return RESISTED
+
+		case 8
+			return NOELIGIBLETARGET
+
+		case 9
+			return NOTENEMY
+
+		case 10
+			return TARGETNOTALIVE
+	}
+	
+	do
+	{
+		waitframe
+	}
+	while ${Me.CastingSpell}
+	
+	return SUCCESS
+}

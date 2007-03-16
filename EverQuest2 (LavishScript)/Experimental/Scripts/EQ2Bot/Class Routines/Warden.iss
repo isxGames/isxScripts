@@ -1,29 +1,29 @@
 ;*************************************************************
 ;Warden.iss
-;version 20070226a
+;version 20070201a
 ; by Pygar
 ;
-;20070226a
-; Combat Rez is now a toggle
-; Initiating HO's is now a toggle
-; Added KoS and EoF AA line
-; Added support for combat CA line
-; Tweaked DPS
-; Upgraded for EQ2Bot 2.5.2
+;20070201a
+;Combat Rez is now a toggle
+;Initiating HO's is now a toggle
+;Added KoS and EoF AA line
+;Added support for combat CA line
+;Tweaked DPS
+;Upgraded for EQ2Bot 2.5.2
 ;
-;20071222a
-; Improved Cure Routine
-; Improvied Heal Routine
-; Added Genesis Support
-; Fixed Offensive mode toggles to preserver power for heals
-; Added SoW
-; Fixed Curing uncurable effects
 ;
 ;20061130a
 ; Fixed some spellKey and buffing bugs
 ; Also removed from debugging that was still active.
 ; Also fixed rezing loop
 ;
+; 20071222a
+; Improved Cure Routine
+; Improvied Heal Routine
+; Added Genesis Support
+; Fixed Offensive mode toggles to preserver power for heals
+; Added SoW
+; Fixed Curing uncurable effects
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -32,6 +32,7 @@
 
 function Class_Declaration()
 {
+
 	declare OffenseMode bool script
 	declare AoEMode bool script
 	declare CureMode bool script
@@ -42,6 +43,7 @@ function Class_Declaration()
 	declare BuffThorns bool script 1
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
+	
 	
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
@@ -86,6 +88,7 @@ function Class_Declaration()
 
 function Buff_Init()
 {
+
 	PreAction[1]:Set[BuffThorns]
 	PreSpellRange[1,1]:Set[40]
 	
@@ -116,10 +119,10 @@ function Buff_Init()
 	PreSpellRange[10,1]:Set[37]	
 	
 	PreAction[11]:Set[AA_Rebirth]
-	PreSpellRange[11,1]:Set[390]
+	PreSpellRange[11,1]:Set[380]
 	
 	PreAction[12]:Set[AA_Infusion]
-	PreSpellRange[12,1]:Set[391]
+	PreSpellRange[12,1]:Set[381]
 	
 	PreAction[13]:Set[AA_Force_of_Nature]
 	PreSpellRange[13,1]:Set[393]
@@ -156,21 +159,21 @@ function Combat_Init()
 	MobHealth[5,2]:Set[100]
 	Power[5,1]:Set[40]
 	Power[5,2]:Set[100]
-	SpellRange[5,1]:Set[381]	
+	SpellRange[5,1]:Set[401]	
 
 	Action[6]:Set[AA_Primordial_Strike]
 	MobHealth[6,1]:Set[1]
 	MobHealth[6,2]:Set[100]
 	Power[6,1]:Set[40]
 	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[382]
+	SpellRange[6,1]:Set[372]
 	
 	Action[7]:Set[AA_Thunderspike]
 	MobHealth[7,1]:Set[1]
 	MobHealth[7,2]:Set[100]
 	Power[7,1]:Set[40]
 	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[383]
+	SpellRange[7,1]:Set[373]
 
 	Action[8]:Set[Grove]
 	MobHealth[8,1]:Set[50]
@@ -200,6 +203,7 @@ function Combat_Init()
 	Power[11,1]:Set[30]
 	Power[11,2]:Set[100]
 	SpellRange[11,1]:Set[235]
+		
 }
 
 function PostCombat_Init()
@@ -346,6 +350,7 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	AutoFollowingMA:Set[FALSE]
+	
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
@@ -371,6 +376,26 @@ function Combat_Routine(int xAction)
 	if ${ShardMode}
 	{
 		call Shard
+	}
+	
+	if ${UseCAs}
+	{
+		;if ${Me.Ability[Fire Strike].IsReady}
+		;{
+		;	call CastSpell "Fire Strike"
+		;}
+		if ${Me.Ability[Cold Slice].IsReady}
+		{
+			call CastSpell "Cold Slice"
+		}
+		if ${Me.Ability[Cold Strike].IsReady}
+		{
+			call CastSpell "Cold Strike"
+		}
+		if ${Me.Ability[Whirl of Frost].IsReady}
+		{
+			call CastSpell "Whirl of Frost"
+		}		
 	}
 
 	;Before we do our Action, check to make sure our group doesnt need healing
@@ -420,7 +445,8 @@ function Combat_Routine(int xAction)
 						{
 							if ${UseCAs}
 							{
-								call CastSpellRange 385 387 1 0 ${KillTarget} 0 0 1
+								;echo 3 ca's now
+								call CastSpellRange 385 387 1 0 ${KillTarget}
 							}
 							else
 							{
@@ -442,7 +468,7 @@ function Combat_Routine(int xAction)
 						{
 							if ${UseCAs}
 							{
-								call CastSpellRange 389 0 1 0 ${KillTarget} 0 0 1
+								call CastSpellRange 388 0 1 0 ${KillTarget} 0 0 1
 							}
 							else
 							{
@@ -493,7 +519,7 @@ function Combat_Routine(int xAction)
 							{
 								if ${Me.Equipment[1].Name.Equal[${OneHandedHammer}]}
 								{
-									call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+									call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 								}
 								elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 								{
@@ -559,7 +585,7 @@ function Combat_Routine(int xAction)
 			case Mastery
 				if ${OffenseMode} || ${DebuffMode}
 				{		
-					if ${Me.Ability[Master's Strike].IsReady}
+					if ${Me.Ability[Master's Smite].IsReady}
 					{
 						Target ${KillTarget}
 						Me.Ability[Master's Smite]:Use

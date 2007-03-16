@@ -157,7 +157,12 @@ variable bool PullWithBow
 variable bool LootConfirm
 variable bool CheckPriestPower
 variable int LootWndCount
+variable int LootDecline
 variable bool NoEQ2BotStance=0
+variable int wipe
+variable int together
+variable int wipegroup
+variable bool WipeRevive
 ;===================================================
 
 ;===================================================
@@ -524,7 +529,7 @@ function main()
 			EQ2Bot:MainAssist_Dead
 		}
 
-		if (${Actor[${MaintTankPC}].Health}==-99 && !${MainTank}) || (${MaintTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].Health}==-99)
+		if (${Actor[${MainTankPC}].Health}==-99 && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].Health}==-99)
 		{
 			EQ2Bot:MainTank_Dead
 		}		
@@ -541,7 +546,7 @@ function main()
 			if ${LootAll} 
 			{
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick 
-				wait 5 
+				wait 10 
 
 				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
 				{ 
@@ -557,7 +562,7 @@ function main()
 					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
 					  } 
 				     } 
-				     while ${LootCount:Inc} <= ${LootWindow.NumItems} 
+				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
 				} 
 			} 
 			else
@@ -565,6 +570,33 @@ function main()
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
 			}
 		}
+		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label}>0
+		{
+			if ${LootAll} 
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick 
+				wait 5 
+		
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
+				{ 
+					LootWndCount:Set[1]
+					LootDecline:Set[0]
+				     	do 
+				     	{ 
+						if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm} 
+						{ 
+						       LootDecline:Inc
+						} 
+				     	} 
+				     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
+				} 
+			} 
+			else
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick 
+				wait 5
+			}		
+ 		}
 	}
 	while ${CurrentTask}
 }
@@ -743,6 +775,7 @@ function Combat()
 
 		}
 		
+		
 		; Main Tank needs to turn the mob away from the rest of the group
 		if ${PathType}==2 && ${MainTank}
 		{
@@ -816,7 +849,7 @@ function Combat()
 				if ${AutoMelee} && !${MainTank}
 				{
 					;check valid rear position
-					if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
+					if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-305
 					{
 						break
 					}
@@ -830,10 +863,18 @@ function Combat()
 					{
 						break
 					}
+					elseif ${Target.Distance}<5 && !${Target.IsEpic}
+					{
+						break
+					}
 					elseif ${Target.Target.ID}!=${Me.ID}
 					{
-						call CheckPosition 1 1
+						call CheckPosition 1 ${Target.IsEpic}
 					}
+				}
+				elseif ${Target.Distance>35 || ${Actor[${MainTankPC}].Distance>35
+				{
+					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 20
 				}
 				
 				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
@@ -940,6 +981,8 @@ function Combat()
 
 			if ${Me.ToActor.Health}>=90
 			{
+				call CheckLoot
+				wait 5
 				call CheckLoot
 				break
 			}
@@ -1410,7 +1453,7 @@ function Pull(string npcclass)
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
 				}
 				
-				if ${Pathtype}==1 && ${Target.Distance}>${PullRange} $$ ${Target.Distance}<35
+				if ${Pathtype}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<35
 				{
 					;echo Move to target Range!
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
@@ -1529,7 +1572,7 @@ function Pull(string npcclass)
 					{
 						waitframe
 					} 
-					while ${Target.Distance}>5 && ${Target.Target.ID}==${Me.ID} && ${Me.Target.ID}==${KillTarget}
+					while ${Target.Distance}>10 && ${Target.Target.ID}==${Me.ID} && ${Target.ID}==${KillTarget}
 
 
 					if ${Target.Distance}>10 && !${pulling} && ${PathType}!=2
@@ -1588,6 +1631,7 @@ function CheckLoot()
 				case brigand
 				case ranger
 				case assassin
+					Echo disarming trap on ${CustomActor[${tcount}].ID}
 					EQ2Execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
 					wait 20
 					break
@@ -1956,8 +2000,16 @@ function IamDead(string Line)
 {
 	variable int deathtimer=${Time.Timestamp}
 	KillTarget:Set[]
+	grpcnt:Set[${Me.GroupCount}]
+	tempgrp:Set[1]
+
+	together:Set[1]
+	
+	echo "You have been killed"
+
 	if ${Me.GroupCount}==1
 	{
+		echo no group, resetting
 		EQ2Execute "select_junction 0"
 		do
 		{
@@ -1965,8 +2017,90 @@ function IamDead(string Line)
 		}
 		while ${EQ2.Zoning}
 
-		wait 3000
-		Exit
+		wait 300
+	}
+	elseif ${WipeRevive}
+	{
+		do
+		{
+			if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
+			{
+				EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+			}
+			wipe:Set[1]
+			wipegroup:Set[1]
+			do
+			{
+				if ${Me.Group[${wipegroup}](exists)} && ${Me.Group[${wipegroup}].ToActor.Health}==-99
+				{
+					wipe:Inc
+					echo ${Me.Group[${wipegroup}]} has died.
+					echo "There are now" ${wipe} "dead group members. (" ${grpcnt} " Total)"
+				}
+				wait 10
+			}
+			while ${wipegroup:Inc}<${Me.GroupCount}
+ 			
+ 			if ${wipe}==${grpcnt}
+			{
+ 					echo "Everyone is dead, waiting 10 seconds to revive"
+ 					wait 100
+ 					EQ2Execute "select_junction 0"
+					do
+					{
+							waitframe
+					}
+					while ${EQ2.Zoning}
+
+					wait 100
+					echo "reloading config"
+					EQ2Bot:Init_Config
+					wait 50
+					if ${MainTank} && ( ${PathType}==3 || ${PathType}==2 )
+					{
+						echo "I am Main Tank, moving to START"
+						wait 500
+						call MovetoWP ${Navigation.World[${Zone.ShortName}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}
+						wait 50
+					}
+					else
+					{
+						EQ2Execute "/follow ${MainTankPC}"
+					}
+					
+					echo Waiting for group to reform
+					together:Set[1]
+					do
+					{
+							tempgrp:Set[1]
+							do
+							{
+								if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Distance}<25
+								{
+									echo ${Me.Group[${tempgrp}]} "has arrived"
+									together:Inc
+									echo "There are now " ${together} " ready group members (" ${grpcnt} " Total)"
+								}
+							}
+							while ${tempgrp:Inc}<${grpcnt}
+							wait 10
+					}
+					while ${together}<${grpcnt}
+					echo "Everyone is here"
+					if ${MainTank}
+					{
+						echo "I am Main Tank, waiting 60 seconds for group buffing"
+						wait 600
+					}
+					else
+					{
+						echo "Not Main Tank, restarting in 5 seconds"
+						wait 50
+					}
+			}
+		}
+		while ${Me.ToActor.Health}==-99
+		echo "Ready to continue fighting!"
 	}
 	else
 	{
@@ -1976,7 +2110,7 @@ function IamDead(string Line)
 			{
 				Exit
 			}
-
+			
 			if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 			{
 				EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
@@ -2099,16 +2233,65 @@ function ScanAdds()
 
 function LootWdw(string Line)
 {
-	if ${LootAll}
-	{
-		wait 5
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
-		wait 5
-		if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
-		{
-			EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+		if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60
+		{ 
+			if ${LootAll} 
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick 
+				wait 10 
+
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
+				{ 
+				     	LootWndCount:Set[1] 
+				     	do 
+				     	{ 
+						if ${LootConfirm} 
+						{ 
+							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+						} 
+						else 
+						{ 
+							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
+						} 
+					} 
+					while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
+				} 
+			} 
+			else
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
+			}
 		}
-	}
+		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label}>0
+		{
+			if ${LootAll} 
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick 
+				wait 5 
+		
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
+				{ 
+				     	LootWndCount:Set[1] 
+				     	do 
+				     	{ 
+						if ${LootConfirm} 
+						{ 
+							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+						} 
+						else 
+						{ 
+							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
+						} 
+					} 
+					while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
+				} 
+			} 
+			else
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick 
+				wait 5
+			}		
+ 		}
 }
 
 function CantSeeTarget(string Line)
@@ -2621,11 +2804,17 @@ objectdef EQ2BotObj
 				break
 		}
 
-		MainTank:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Tank?,TRUE]}]
+		MainTank:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Tank?,FALSE]}]
+		MainAssistMe:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Assist?,TRUE]}]
 
 		if ${MainTank}
 		{
 			SettingXML[${charfile}].Set[General Settings]:Set[Who is the Main Assist?,${Me.Name}]:Save
+		}
+
+		if ${MainAssistMe}
+		{
+			SettingXML[${charfile}].Set[General Settings]:Set[I am the Main Assist?,${Me.Name}]:Save
 		}
 
 		MainAssist:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who is the Main Assist?,${Me.Name}]}]
@@ -2662,6 +2851,7 @@ objectdef EQ2BotObj
 		MasterSession:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Master IS Session,Master.is1]}]
 		LootConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore or No Trade Items?,TRUE]}]
 		CheckPriestPower:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Check if Priest has Power in the Group?,TRUE]}]
+		WipeRevive:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Revive on Group Wipe?,FALSE]}]
 
 		if ${PullWithBow}
 		{
