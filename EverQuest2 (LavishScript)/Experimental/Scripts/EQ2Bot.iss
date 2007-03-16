@@ -872,7 +872,7 @@ function Combat()
 						call CheckPosition 1 ${Target.IsEpic}
 					}
 				}
-				elseif ${Target.Distance>35 || ${Actor[${MainTankPC}].Distance>35
+				elseif ${Target.Distance}>35 || ${Actor[${MainTankPC}].Distance}>35
 				{
 					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 20
 				}
@@ -2805,16 +2805,16 @@ objectdef EQ2BotObj
 		}
 
 		MainTank:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Tank?,FALSE]}]
-		MainAssistMe:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Assist?,TRUE]}]
+		MainAssistMe:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Assist?,FALSE]}]
 
 		if ${MainTank}
 		{
-			SettingXML[${charfile}].Set[General Settings]:Set[Who is the Main Assist?,${Me.Name}]:Save
+			SettingXML[${charfile}].Set[General Settings]:Set[Who is the Main Tank?,${Me.Name}]:Save
 		}
 
 		if ${MainAssistMe}
 		{
-			SettingXML[${charfile}].Set[General Settings]:Set[I am the Main Assist?,${Me.Name}]:Save
+			SettingXML[${charfile}].Set[General Settings]:Set[Who is the Main Assist?,${Me.Name}]:Save
 		}
 
 		MainAssist:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who is the Main Assist?,${Me.Name}]}]
