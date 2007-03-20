@@ -17,7 +17,9 @@ namespace ISXVGDotNet
         public VGLocationsForm()
         {
             InitializeComponent();
-            ISXVG isxvg = new ISXVG();
+            Extension Ext = new Extension();
+            LavishVMAPI.Frame.Lock();
+            ISXVG isxvg = Ext.ISXVG();
 
             for (int i = 1; i < isxvg.VGLocsCount; i++)
             {
@@ -29,6 +31,7 @@ namespace ISXVGDotNet
             }
             VGLocationsList.Items.Add("---");
             VGLocationsList.Items.Add("Total Locations: " + isxvg.VGLocsCount.ToString());
+            LavishVMAPI.Frame.Unlock();
         }
 
         private void VGLocationsList_DoubleClick(object sender, EventArgs e)
@@ -38,12 +41,18 @@ namespace ISXVGDotNet
 
         private void VGLocationsList_Click(object sender, EventArgs e)
         {
-            VGLocation Loc = new VGLocation(VGLocationsList.SelectedItem.ToString());
+            Extension Ext = new Extension();
+            LavishVMAPI.Frame.Lock();
+            string buf = VGLocationsList.SelectedItem.ToString();
+            int PeriodLoc = buf.IndexOf(".") + 2;
+            string Label = buf.Substring(PeriodLoc);
+            VGLocation Loc = Ext.VGLoc(Label);
             NameLabel.Text = "Name: " + Loc.Label;
             ChunkLabel.Text = "Chunk: " + Loc.MapDisplayName + "(" + Loc.ChunkX + " x " + Loc.ChunkY + ")";
             XYZLabel.Text = "Coordinates: " + Loc.X + ", " + Loc.Y + ", " + Loc.Z;
             SectorXYLabel.Text = "Sector: " + Loc.SectorX + " x " + Loc.SectorY;
             NotesLabel.Text = "Notes: " + Loc.Notes;
+            LavishVMAPI.Frame.Unlock();
         }
     }
 }
