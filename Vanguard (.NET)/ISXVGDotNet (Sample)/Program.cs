@@ -12,8 +12,13 @@ namespace ISXVGDotNet
     {
         static void Main()
         {
-            // Your code goes here!
+            LavishVMAPI.Frame.Lock();
 
+            Extension Ext = new Extension();
+            string MyNameIs = "My Name is " + Ext.Me.FName + " " + Ext.Me.LName;
+            InnerSpace.Echo(MyNameIs);
+
+            LavishVMAPI.Frame.Unlock();
             return;
         }
     }
