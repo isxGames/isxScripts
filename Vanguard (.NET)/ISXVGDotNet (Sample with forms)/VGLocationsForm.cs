@@ -14,12 +14,14 @@ namespace ISXVGDotNet
 {
     public partial class VGLocationsForm : System.Windows.Forms.Form
     {
+
         public VGLocationsForm()
         {
             InitializeComponent();
             Extension Ext = new Extension();
             LavishVMAPI.Frame.Lock();
             ISXVG isxvg = Ext.ISXVG();
+
 
             for (int i = 1; i < isxvg.VGLocsCount; i++)
             {

@@ -14,6 +14,8 @@ namespace ISXVGDotNet
 {
     public partial class Form1 : System.Windows.Forms.Form
     {
+        private VGEvents Events = new VGEvents();
+
         public Form1()
         {
             InitializeComponent();
