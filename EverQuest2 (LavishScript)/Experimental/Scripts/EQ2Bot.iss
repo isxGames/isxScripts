@@ -557,10 +557,12 @@ function main()
 					  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm} 
 					  { 
 					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+					       wait 10
 					  } 
 					  else 
 					  { 
-					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
+					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
+					       wait 10
 					  } 
 				     } 
 				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
@@ -576,7 +578,7 @@ function main()
 			if ${LootAll} 
 			{
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick 
-				wait 5 
+				wait 10 
 		
 				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
 				{ 
@@ -595,7 +597,7 @@ function main()
 			else
 			{
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick 
-				wait 5
+				wait 10
 			}		
  		}
 	}
@@ -1641,6 +1643,7 @@ function CheckLoot()
 					break
 			}
 			Actor[Chest]:DoubleClick
+			wait 10
 			shwlootwdw:Set[FALSE]
 			tmptimer:Set[${Time.Timestamp}]
 			do
@@ -1664,6 +1667,7 @@ function CheckLoot()
 				EQ2Echo Looting ${Actor[corpse].Name}
 				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
 				Actor[corpse]:DoubleClick
+				wait 10
 				shwlootwdw:Set[FALSE]
 				tmptimer:Set[${Time.Timestamp}]
 				do
@@ -2250,10 +2254,12 @@ function LootWdw(string Line)
 						if ${LootConfirm} 
 						{ 
 							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+							wait 10
 						} 
 						else 
 						{ 
 							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
+							wait 10
 						} 
 					} 
 					while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
@@ -2269,7 +2275,7 @@ function LootWdw(string Line)
 			if ${LootAll} 
 			{
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick 
-				wait 5 
+				wait 10 
 		
 				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
 				{ 
@@ -2279,10 +2285,12 @@ function LootWdw(string Line)
 						if ${LootConfirm} 
 						{ 
 							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+							wait 10
 						} 
 						else 
 						{ 
-							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
+							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
+							wait 10
 						} 
 					} 
 					while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
@@ -2291,7 +2299,7 @@ function LootWdw(string Line)
 			else
 			{
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick 
-				wait 5
+				wait 10
 			}		
  		}
 }
