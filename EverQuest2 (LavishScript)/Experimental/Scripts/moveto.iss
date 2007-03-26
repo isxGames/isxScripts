@@ -208,7 +208,8 @@ function CheckMovingAggro()
 		{
 			wait 100
 		}
-		while ${Aggro.Detect} || ${Me.ToActor.Health}<90
+		while ${Aggro.Detect} || ${Me.ToActor.Health}<100
+		press MOVEFORWARD
 	}	
 }
 

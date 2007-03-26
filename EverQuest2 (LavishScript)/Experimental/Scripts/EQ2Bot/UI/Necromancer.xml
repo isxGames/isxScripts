@@ -21,7 +21,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='CureMode' Template='EQ2.Commandcheckbox'>
-		<X>180</X>
+		<X>220</X>
 		<Y>10</Y>
 		<Width>30</Width>
 		<Height>20</Height>
@@ -143,7 +143,7 @@
 	<Text Name='lblPetType' Template='EQ2.text'>
 		<X>10</X>
 		<Y>130</Y>
-		<Width>20</Width>
+		<Width>30</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
 		<Text>Pet:</Text>
@@ -305,8 +305,8 @@
 		</OnSelect>
 	</combobox>
 	<Commandcheckbox Name='LifeburnMode' Template='EQ2.Commandcheckbox'>
-		<X>110</X>
-		<Y>10</Y>
+		<X>220</X>
+		<Y>30</Y>
 		<Width>30</Width>
 		<Height>20</Height>
 		<Text>Use Lifeburn</Text>

@@ -570,7 +570,7 @@ function main()
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
 			}
 		}
-		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label(exists)}
+		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
 		{
 			if ${LootAll} 
 			{
@@ -2262,7 +2262,7 @@ function LootWdw(string Line)
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
 			}
 		}
-		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label(exists)}
+		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
 		{
 			if ${LootAll} 
 			{
