@@ -364,13 +364,17 @@ function CheckAggro()
 		Echo Aggro Detected Pausing
 		if ${Me.IsMoving}
 		{
+			echo Halting Movement in harvest
 			press "${MOVEBACKWARD}"
 		}
 		do
 		{
+			echo waiting 1 second...
 			wait 100
 		}
-		while ${Aggro.Detect} || ${Me.ToActor.Health}<100
+		while ${Aggro.Detect} || ${Me.ToActor.Health}<90
+		
+		Echo Checking Loot in harvest
 		
 		EQ2:CreateCustomActorArray[byDist,15]
 		
@@ -379,6 +383,7 @@ function CheckAggro()
 			echo Loot Nearby, waiting 5 seconds...
 			wait 500
 		}
+		echo Resuming Movement in Harvest
 		press "${MOVEFORWARD}"
 	}	
 }
