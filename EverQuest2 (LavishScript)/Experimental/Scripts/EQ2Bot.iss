@@ -351,6 +351,7 @@ function main()
 			{
 				if ${Me.ToActor.Power}<${PowerCheck} || ${Me.ToActor.Health}<${HealthCheck}
 				{
+					call CheckLoot
 					call ScanAdds
 				}
 			}
@@ -989,6 +990,7 @@ function Combat()
 
 			if ${PathType}==4 && ${MainTank}
 			{
+				call CheckLoot
 				call ScanAdds
 			}
 
