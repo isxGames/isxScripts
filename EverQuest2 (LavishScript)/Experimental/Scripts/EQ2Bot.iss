@@ -34,8 +34,8 @@
 ;===================================================
 variable string forward=w
 variable string backward=s
-variable string strafeleft=a
-variable string straferight=d
+variable string strafeleft=q
+variable string straferight=e
 variable string endbot=f11
 ;===================================================
 ;===		Custom Variables	        ====
@@ -570,7 +570,7 @@ function main()
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
 			}
 		}
-		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label}>0
+		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label(exists)}
 		{
 			if ${LootAll} 
 			{
@@ -2262,7 +2262,7 @@ function LootWdw(string Line)
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
 			}
 		}
-		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label}>0
+		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.LootAll].Label(exists)}
 		{
 			if ${LootAll} 
 			{
