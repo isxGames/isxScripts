@@ -370,7 +370,16 @@ function CheckAggro()
 		{
 			wait 100
 		}
-		while ${Aggro.Detect} || ${Me.ToActor.Health}<90
+		while ${Aggro.Detect} || ${Me.ToActor.Health}<100
+		
+		EQ2:CreateCustomActorArray[byDist,15]
+		
+		if ${CustomActor[chest,radius,15]} || ${CustomActor[corpse,radius,15]}
+		{
+			echo Loot Nearby, waiting 5 seconds...
+			wait 500
+		}
+		press "${MOVEFORWARD}"
 	}	
 }
 
