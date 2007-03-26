@@ -356,7 +356,7 @@ objectdef HeroicOp
 			}
 
 		}		
-		elseif ${EQ2.HOWheelState}==5 && !${EQ2.HOName}
+		elseif ${EQ2.HOWheelState}==5 && ${EQ2.HOName(exists)}
 		;State 6 = Second wheel after HO intiation for 2 stage HO advancements
 		{
 			switch ${This.LastManipulatorArchetype}
