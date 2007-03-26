@@ -364,7 +364,7 @@ function CheckAggro()
 		Echo Aggro Detected Pausing
 		if ${Me.IsMoving}
 		{
-			press MOVEBACKWARD
+			press "${MOVEBACKWARD}"
 		}
 		do
 		{
