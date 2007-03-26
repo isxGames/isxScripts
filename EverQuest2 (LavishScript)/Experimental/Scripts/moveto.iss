@@ -197,18 +197,31 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 function CheckMovingAggro()
 {
 	;Stop Moving and pause if we have aggro
-	if ${Aggro.Detect} 
+	if ${MobAggro.Detect} 
 	{
 		;Echo Aggro Detected Pausing
 		if ${Me.IsMoving}
 		{
+			echo Halting Movement in moveto
 			press MOVEBACKWARD
 		}
 		do
 		{
+			echo waiting 1 second in moveto
 			wait 100
 		}
-		while ${Aggro.Detect} || ${Me.ToActor.Health}<100
+		while ${MobAggro.Detect} || ${Me.ToActor.Health}<90
+		
+		Echo Scanning Loot in moveto
+		EQ2:CreateCustomActorArray[byDist,15]
+		
+		if ${CustomActor[chest,radius,15]} || ${CustomActor[corpse,radius,15]}
+		{
+			echo Loot Nearby, waiting 5 seconds...
+			wait 500
+		}
+		
+		Resuming Movement in moveto
 		press MOVEFORWARD
 	}	
 }
