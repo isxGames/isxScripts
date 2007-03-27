@@ -1,7 +1,10 @@
 ;============================================
 ;
-;EQ2BotLib version 20061201a
+;EQ2BotLib version 20070337a
 ;by karye
+;updated by pygar
+;
+; Added a condition around creating uplink name to stop session rejected messages
 ;
 ;Added Defiler Cyrstalize Spirit Healing function
 ;Use call UseCrystallizedSpirit SomeHealth%
@@ -105,7 +108,10 @@ function EQ2BotLib_Init()
 	ExecuteAtom SaveEquipmentSet "Default"
 
 	#ifdef _EQ2HOLIB_
+		if ${Session.NotEqual[${Me.Name}]}
+		{
 		uplink name ${Me.Name}
+		}
 	#endif
 		
 }
