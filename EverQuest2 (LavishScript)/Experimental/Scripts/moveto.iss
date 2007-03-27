@@ -215,7 +215,7 @@ function CheckMovingAggro()
 		Echo Scanning Loot in moveto
 		EQ2:CreateCustomActorArray[byDist,15]
 		
-		if ${CustomActor[chest,radius,15]} || ${CustomActor[corpse,radius,15]}
+		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
 		{
 			echo Loot Nearby, waiting 5 seconds...
 			wait 500
