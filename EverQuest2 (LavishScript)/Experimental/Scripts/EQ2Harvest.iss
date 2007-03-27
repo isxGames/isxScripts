@@ -224,7 +224,7 @@ function PathingRoutine()
 	; If we have a valid path then begin harvesting.
 	if ${NavPath.Points}
 	{
-		press "${MOVEFORWARD}"
+		press MOVEFORWARD
 		wait 4
 		do
 		{
@@ -267,7 +267,7 @@ function PathingRoutine()
 						if !${Harvest.PCDetected}
 						{
 							call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 5 0 3 1
-							press "${MOVEFORWARD}"
+							press MOVEFORWARD
 							
 							while ${Me.IsMoving}
 							{
@@ -307,7 +307,7 @@ function PathingRoutine()
 									wait 10
 								}
 							}
-							press "${MOVEFORWARD}"
+							press MOVEFORWARD
 						}
 					}
 				}
@@ -345,7 +345,7 @@ function PathingRoutine()
 			}
 		}
 		while ${PathIndex:Inc}<=${NavPath.Points}
-		press "${MOVEFORWARD}"
+		press MOVEFORWARD
 	}
 	else
 	{
@@ -361,30 +361,32 @@ function CheckAggro()
 	;Stop Moving and pause if we have aggro
 	if ${Aggro.Detect} 
 	{
-		Echo Aggro Detected Pausing
+		CurrentAction:Set[Aggro Detected Pausing...]
 		if ${Me.IsMoving}
 		{
-			echo Halting Movement in harvest
-			press "${MOVEBACKWARD}"
+			CurrentAction:Set[Halting Movement...]
+			press MOVEBACKWARD
 		}
+		
+		CurrentAction:Set[Waiting till aggro gone, and over 90 health...]
 		do
 		{
-			echo waiting 1 second...
 			wait 100
 		}
 		while ${Aggro.Detect} || ${Me.ToActor.Health}<90
-		
-		Echo Checking Loot in harvest
+
+		CurrentAction:Set[Checking For Loot...]
+
 		
 		EQ2:CreateCustomActorArray[byDist,15]
 		
 		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
 		{
-			echo Loot Nearby, waiting 5 seconds...
+			CurrentAction:Set[Loot nearby waiting 5 seconds...]
 			wait 500
 		}
-		echo Resuming Movement in Harvest
-		press "${MOVEFORWARD}"
+		CurrentAction:Set[Resuming Harvest...]
+		press MOVEFORWARD
 	}	
 }
 
@@ -410,7 +412,7 @@ function StuckState()
 	WPZ:Set[${NavPath.Point[1].Z}]
 	if !${Me.IsMoving}
 	{
-		press "${MOVEFORWARD}"
+		press MOVEFORWARD
 	}
 	
 	call moveto ${WPX} ${WPZ} 5 0 3 1
@@ -432,7 +434,7 @@ function StuckState()
 	}
 	else
 	{
-		press "${MOVEFORWARD}"
+		press MOVEFORWARD
 		PathIndex:Set[1]
 	}
 	stillstuck:Set[FALSE]
@@ -458,7 +460,7 @@ function FastMove(float X, float Z, int range)
 		wait 4
 		if !${Me.IsMoving}
 		{
-			press "${MOVEFORWARD}"
+			press MOVEFORWARD
 		}
 	}
 
@@ -490,28 +492,28 @@ function FastMove(float X, float Z, int range)
 						return "STUCK"	
 					}
 					;backup a little
-					press "${MOVEFORWARD}"
-					press -hold "${MOVEBACKWARD}"
+					press MOVEFORWARD
+					press -hold MOVEBACKWARD
 					wait 5
-					press -release "${MOVEBACKWARD}"
+					press -release MOVEBACKWARD
 
 					;randomly pick a direction
 					if ${Math.Rand[10]}>5
 					{
-						press -hold "${STRAFELEFT}"
+						press -hold STRAFELEFT
 						wait 5
-						press -release "${STRAFELEFT}"
+						press -release STRAFELEFT
 						wait 2
 					}
 					else
 					{
-						press -hold "${STRAFERIGHT}"
+						press -hold STRAFERIGHT
 						wait 5
-						press -release "${STRAFERIGHT}"
+						press -release STRAFERIGHT
 						wait 2
 					}
 					;Start moving forward again
-					press "${MOVEFORWARD}"
+					press MOVEFORWARD
 					wait 10
 					call StuckState
 				}
@@ -1348,7 +1350,7 @@ objectdef EQ2Pather
 
 		if ${NavPath.Points}
 		{
-			press "${MOVEFORWARD}"
+			press MOVEFORWARD
 			do
 			{
 				WPX:Set[${NavPath.Point[${PathIndex}].X}]
@@ -1358,8 +1360,8 @@ objectdef EQ2Pather
 			}
 			while ${PathIndex:Inc}<=${NavPath.Points}
 
-			press "${MOVEFORWARD}"
-
+			press MOVEFORWARD
+			
 			LastX:Set[${Me.X}]
 			LastY:Set[${Me.Y}]
 			LastZ:Set[${Me.Z}]
@@ -1541,7 +1543,7 @@ atom atexit()
 	
 	if ${Me.IsMoving}
 	{
-		press "${MOVEFORWARD}"
+		press MOVEFORWARD
 	}
 }
 
