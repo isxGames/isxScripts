@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Harvest.iss Version 1.1 
+; EQ2Harvest.iss Version 1.2
 ;
 ; Written by: Blazer
 ; Updated: 08/21/06 by Syliac
@@ -33,7 +33,7 @@ variable filepath CharPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Cha
 variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Harvest Config/"
 variable string World
 variable string NavFile
-variable string ConfigFile
+variable string ConfigFilehttp://www.eq2innercircle.org/Forums.html
 variable string HarvestFile
 variable string HarvestName[9]
 variable string HarvestTool[9]

@@ -351,7 +351,10 @@ function main()
 			{
 				if ${Me.ToActor.Power}<${PowerCheck} || ${Me.ToActor.Health}<${HealthCheck}
 				{
-					call CheckLoot
+					if ${AutoLoot}
+					{
+						call CheckLoot
+					}	
 					call ScanAdds
 				}
 			}

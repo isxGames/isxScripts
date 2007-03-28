@@ -22,9 +22,9 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Auto Follow Mode]}</Data>
 	</Commandcheckbox>
 	<combobox name='AutoFollowee' Template='EQ2.Combobox'>
-		<x>150</x>
+		<x>155</x>
 		<y>10</y>
-		<Width>70</width>
+		<Width>150</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to auto follow</AutoTooltip>
 		<Items></items>
@@ -94,9 +94,9 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Shard Mode]}</Data>
 	</Commandcheckbox>
 	<combobox name='ShardGroupMember' Template='EQ2.Combobox'>
-		<x>150</x>
+		<x>155</x>
 		<y>50</y>
-		<Width>70</width>
+		<Width>150</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to request shards from</AutoTooltip>
 		<Items></items>
