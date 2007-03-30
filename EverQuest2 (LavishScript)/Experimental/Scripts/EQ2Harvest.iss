@@ -321,7 +321,7 @@ function PathingRoutine()
 				NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 				if ${PathDirection}
 				{
-					if ${NearestPoint.equal[${FinishPoint}]}
+					if ${NearestPoint.Equal[${FinishPoint}]}
 					{
 						NavPath "${World}" "${FinishPoint}" "${StartPoint}"
 					}
@@ -332,7 +332,7 @@ function PathingRoutine()
 				}
 				else
 				{
-					if ${NearestPoint.equal[${StartPoint}]}
+					if ${NearestPoint.Equal[${StartPoint}]}
 					{
 						NavPath "${World}" "${StartPoint}" "${FinishPoint}"
 					}
