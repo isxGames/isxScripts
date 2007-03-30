@@ -728,7 +728,7 @@ function CheckHeals()
 
 			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health}>-99
 			{
-				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
+				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${temphl}].ToActor.ID}!=${Me.ID} 
 				{
 					lowest:Set[${temphl}]
 				}
@@ -794,7 +794,7 @@ function CheckHeals()
 		{
 			if ${Me.Ability[${SpellType[60]}].IsReady} && ${Me.InCombat}
 			{
-				call CastSpellRange 4 0 0 0 ${Target.ID}
+				call CastSpellRange 60 0 0 0 ${Target.ID}
 			}
 			else
 			{
@@ -843,7 +843,7 @@ function CheckHeals()
 		}
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} 
+	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ID}!=${Me.ID}
 	{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 
@@ -888,7 +888,7 @@ function CheckHeals()
 		call CastSpellRange 1
 	}
 
-	if ${Me.ToActor.Pet.Health}<40 && ${Me.ToActor.Pet(exists)}
+	if ${Me.ToActor.Pet.Health}<40 && ${Me.ToActor.Pet(exists)} && ${Me.ToActor.Health}>40
 	{
 		call CastSpellRange 4 0 0 0 ${Me.Pet.ID}
 	}
