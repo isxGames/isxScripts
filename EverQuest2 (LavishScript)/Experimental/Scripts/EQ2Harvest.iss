@@ -33,7 +33,7 @@ variable filepath CharPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Cha
 variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Harvest Config/"
 variable string World
 variable string NavFile
-variable string ConfigFilehttp://www.eq2innercircle.org/Forums.html
+variable string ConfigFile
 variable string HarvestFile
 variable string HarvestName[9]
 variable string HarvestTool[9]
@@ -224,7 +224,10 @@ function PathingRoutine()
 	; If we have a valid path then begin harvesting.
 	if ${NavPath.Points}
 	{
-		press MOVEFORWARD
+		if !{Me.IsMoving}
+		{
+			press MOVEFORWARD
+		}
 		wait 4
 		do
 		{
@@ -345,7 +348,11 @@ function PathingRoutine()
 			}
 		}
 		while ${PathIndex:Inc}<=${NavPath.Points}
-		press MOVEFORWARD
+		
+		if !{Me.Ismoving}
+		{
+			press MOVEFORWARD
+		}
 	}
 	else
 	{
