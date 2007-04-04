@@ -717,6 +717,30 @@
 							<Alignment>Left</Alignment>
 							<Text>(Batch Count: ${Script[EQ2Harvest].VariableScope.BatchCount} / ${Script[EQ2Harvest].VariableScope.DestroyBatch})</Text>
 						</Text>
+						<checkbox Name='DestroyMeat' Template='EQ2.checkbox'>
+							<X>45%</X>
+							<Y>264</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>Destroy All Meat</Text>
+							<OnLoad>
+								if ${Script[EQ2Harvest].VariableScope.DestroyMeat}
+								{
+									UIElement[DestroyMeat@Main@EQ2Harvest Tabs@Harvest]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${UIElement[DestroyMeat@Main@EQ2Harvest Tabs@Harvest].Checked}
+								{
+									Script[EQ2Harvest].VariableScope.DestroyMeat:Set[TRUE]
+								}
+								else
+								{
+									Script[EQ2Harvest].VariableScope.DestroyMeat:Set[FALSE]
+								}
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Destroy All Meat?,${Script[EQ2Harvest].VariableScope.DestroyMeat}]:Save
+							</OnLeftClick>
+						</checkbox>
 						<Text Name='Imbue Text' Template='EQ2.text'>
 							<X>9%</X>
 							<Y>261</Y>
@@ -1291,46 +1315,6 @@
 							<SelectMultiple>1</SelectMultiple>
 							<Sort>Text</Sort>
 						</Listbox>
-					</Tab>
-					<Tab Name='Pather'>
-						<Text Name='Nav Points Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>10</Y>
-							<Width>90%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Navigational Points: ${Script[EQ2Harvest].VariableScope.PointCount}</text>
-						</Text>
-						<Commandbutton name='Add Point' Template='EQ2.Commandbutton'> 
-							<X>5%</X> 
-							<Y>30</Y> 
-							<Width>23%</Width> 
-							<Height>20</Height>
-							<Text>Add Point</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest]:ExecuteAtom[AddPoint]
-							</OnLeftClick>
-						</Commandbutton>
-						<Commandbutton name='Add Label' Template='EQ2.Commandbutton'> 
-							<X>5%</X> 
-							<Y>60</Y> 
-							<Width>23%</Width> 
-							<Height>20</Height>
-							<Text>Add Label</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest]:QueueCommand[call AddLabel]
-							</OnLeftClick>
-						</Commandbutton>
-						<Commandbutton name='Save Points' Template='EQ2.Commandbutton'> 
-							<X>5%</X> 
-							<Y>80</Y> 
-							<Width>23%</Width> 
-							<Height>20</Height>
-							<Text>Save ALL Points</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest]:QueueCommand[call SavePoints]
-							</OnLeftClick>
-						</Commandbutton>
 					</Tab>
 				</Tabs>
 			</Tabcontrol>

@@ -1,8 +1,13 @@
 ;*************************************************************
 ;Conjuror.iss
-;version 20070121a
+;version 20070404a
 ;various fixes
 ;by karye
+;updated by pygar
+;
+;20070404a
+;	updated for latest eq2bot
+;	updated master strike
 ;*************************************************************
 
 #includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
@@ -22,26 +27,26 @@ function Class_Declaration()
 	declare BuffSeeInvis bool script TRUE
 	declare BuffEmberSeed collection:string script
 	declare BuffSeal bool script FALSE
-	declare BuffEscutcheon bool script FALSE	
+	declare BuffEscutcheon bool script FALSE
 	declare BuffCabalistCover bool script TRUE
-	
+
 	declare ShardQueue queue:string script
 	declare ShardRequestTimer int script ${Time.Timestamp}
 	declare ShardType string script
-	
+
 	;Custom Equipment
-	declare WeaponStaff string script 
+	declare WeaponStaff string script
 	declare WeaponDagger string script
 	declare PoisonCureItem string script
 	declare WeaponMain string script
-	
+
 	declare EquipmentChangeTimer int script ${Time.Timestamp}
-	
+
 	call EQ2BotLib_Init
-	
+
 	AddTrigger QueueShardRequest "\\aPC @*@ @*@:@sender@\\/a tells@*@shard please@*@"
 	AddTrigger DequeueShardRequest "Target already has a conjurer essence item!"
-	
+
 
 	PetType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Pet Type,3]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
@@ -50,11 +55,11 @@ function Class_Declaration()
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffEscutcheon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEscutcheon,,FALSE]}]
 	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
-	
+
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]		
-	
+	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
+
 	switch ${SpellType[360]}
 	{
 
@@ -62,15 +67,15 @@ function Class_Declaration()
 		case Sliver of Essence
 			ShardType:Set["Sliver of Essence"]
 			break
-			
+
 		case Shard of Essence
 			ShardType:Set["Shard of Essence"]
 			break
-			
+
 		case Scintilla of Essence
 			ShardType:Set["Scintilla of Essence"]
 			break
-			
+
 	}
 }
 
@@ -91,7 +96,7 @@ function Buff_Init()
 
 	PreAction[5]:Set[Tank_Buff]
 	PreSpellRange[5,1]:Set[40]
-	
+
 	PreAction[6]:Set[Melee_Buff]
 	PreSpellRange[6,1]:Set[35]
 
@@ -104,93 +109,93 @@ function Buff_Init()
 	PreAction[9]:Set[AA_GeneralPetBuffs]
 	PreSpellRange[9,1]:Set[386]
 	PreSpellRange[9,2]:Set[388]
-	
+
 	PreAction[10]:Set[AA_FighterPetBuffs]
 	PreSpellRange[10,1]:Set[390]
 	PreSpellRange[10,2]:Set[391]
-	
+
 	PreAction[11]:Set[AA_MagePetBuffs]
 	PreSpellRange[11,1]:Set[392]
 	PreSpellRange[11,2]:Set[393]
-	
+
 	PreAction[12]:Set[AA_ScoutPetBuffs]
 	PreSpellRange[12,1]:Set[389]
-	
+
 	PreAction[13]:Set[AA_Minions_Warding]
-	PreSpellRange[13,1]:Set[385]	
-	
+	PreSpellRange[13,1]:Set[385]
+
 	PreAction[14]:Set[Seal]
 	PreSpellRange[14,1]:Set[20]
-	
+
 	PreAction[15]:Set[Escutcheon]
-	PreSpellRange[15,1]:Set[21]	
+	PreSpellRange[15,1]:Set[21]
 
 	PreAction[16]:Set[AA_Bubble]
-	PreSpellRange[16,1]:Set[377]		
+	PreSpellRange[16,1]:Set[377]
 
 	PreAction[17]:Set[AA_Unabate]
-	PreSpellRange[17,1]:Set[376]		
+	PreSpellRange[17,1]:Set[376]
 }
 
 function Combat_Init()
 {
 
-		
+
 	Action[1]:Set[Combat_Buff]
-	MobHealth[1,1]:Set[1] 
-	MobHealth[1,2]:Set[100] 
+	MobHealth[1,1]:Set[1]
+	MobHealth[1,2]:Set[100]
 	SpellRange[1,1]:Set[397]
 
 	Action[2]:Set[Dot1]
 	SpellRange[2,1]:Set[73]
-	
+
 	Action[3]:Set[Plane_Shift]
 	SpellRange[3,1]:Set[399]
 
 	Action[4]:Set[Special_Pet1]
-	MobHealth[4,1]:Set[30] 
-	MobHealth[4,2]:Set[100] 
+	MobHealth[4,1]:Set[30]
+	MobHealth[4,2]:Set[100]
 	SpellRange[4,1]:Set[329]
 
 	Action[5]:Set[AoE1]
 	SpellRange[5,1]:Set[90]
-	
+
 	Action[6]:Set[Special_Pet2]
-	MobHealth[6,1]:Set[30] 
-	MobHealth[6,2]:Set[100] 
+	MobHealth[6,1]:Set[30]
+	MobHealth[6,2]:Set[100]
 	SpellRange[6,1]:Set[330]
-	
+
 	Action[7]:Set[Nuke]
-	MobHealth[7,1]:Set[0] 
-	MobHealth[7,2]:Set[100] 
+	MobHealth[7,1]:Set[0]
+	MobHealth[7,2]:Set[100]
 	SpellRange[7,1]:Set[61]
-	
+
 	Action[8]:Set[AoE_PB]
 	SpellRange[8,1]:Set[95]
-	
+
 	Action[9]:Set[AoE2]
 	SpellRange[9,1]:Set[91]
-	
+
 	Action[10]:Set[Sunbolt]
 	SpellRange[10,1]:Set[62]
-	
+
 	Action[11]:Set[Master_Strike]
 
 	Action[12]:Set[Stun]
-	SpellRange[12,1]:Set[190]	
+	SpellRange[12,1]:Set[190]
 
 	Action[13]:Set[AA_Animated_Dagger]
-	MobHealth[13,1]:Set[30] 
-	MobHealth[13,2]:Set[100] 
+	MobHealth[13,1]:Set[30]
+	MobHealth[13,2]:Set[100]
 	SpellRange[13,1]:Set[380]
-	
+
 	Action[14]:Set[Dot2]
-	MobHealth[14,1]:Set[20] 
-	MobHealth[14,2]:Set[100] 
+	MobHealth[14,1]:Set[20]
+	MobHealth[14,2]:Set[100]
 	SpellRange[14,1]:Set[72]
 
 
-	
+
 }
 
 function PostCombat_Init()
@@ -199,7 +204,7 @@ function PostCombat_Init()
 	PostSpellRange[1,1]:Set[398]
 
 	PostAction[2]:Set[LoadDefaultEquipment]
-	
+
 }
 
 function Buff_Routine(int xAction)
@@ -208,26 +213,26 @@ function Buff_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
-	
+
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
 	{
 		Me.Inventory[${WeaponMain}]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
 	}
-	
+
 	;check if we have a pet or a hydromancy not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)}
 	{
 		call SummonPet
 		waitframe
 	}
-	
+
 	call CheckHeals
 	call RefreshPower
 	call AnswerShardRequest
-	
+
 	ExecuteAtom CheckStuck
-	
+
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
@@ -239,12 +244,12 @@ function Buff_Routine(int xAction)
 		case AA_Cabalists_Cover
 			if ${BuffCabalistCover} && !${Me.Maintained[${SpellType[379]}](exists)}
 			{
-				
+
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 				BuffCabalistCover:Set[FALSE]
 			}
 			break
-			
+
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -267,7 +272,7 @@ function Buff_Routine(int xAction)
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
-			break	
+			break
 		case Group_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
@@ -307,15 +312,15 @@ function Buff_Routine(int xAction)
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			}
-			break	
-			
+			break
+
 		case Tank_Buff
 			BuffTarget:Set[${UIElement[cbBuffDamageShieldGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}			
-			
+			}
+
 			if ${BuffDamageShield}
 			{
 
@@ -328,7 +333,7 @@ function Buff_Routine(int xAction)
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
-			break		
+			break
 		case Melee_Buff
 			Counter:Set[1]
 			tempvar:Set[1]
@@ -346,17 +351,17 @@ function Buff_Routine(int xAction)
 
 						tempvar:Set[1]
 						do
-						{				
+						{
 
 							BuffTarget:Set[${UIElement[lbBuffEmberSeed@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
-							
+
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 							{
 								BuffMember:Set[OK]
 								break
 							}
-							
-							
+
+
 						}
 						while ${tempvar:Inc}<=${UIElement[lbBuffEmberSeed@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
@@ -372,10 +377,10 @@ function Buff_Routine(int xAction)
 						Me.Maintained[${Counter}]:Cancel
 					}
 				}
-				
+
 			}
-			while ${Counter:Inc}<=${Me.CountMaintained} 			
-			
+			while ${Counter:Inc}<=${Me.CountMaintained}
+
 
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
@@ -383,7 +388,7 @@ function Buff_Routine(int xAction)
 			{
 
 				do
-				{				
+				{
 					BuffTarget:Set[${UIElement[lbBuffEmberSeed@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				}
@@ -396,7 +401,7 @@ function Buff_Routine(int xAction)
 			{
 				;buff myself first
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ToActor.ID}
-				
+
 				;buff the group
 				tempvar:Set[1]
 				do
@@ -427,75 +432,75 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	
+
 	variable int Counter
-	
+
 	AutoFollowingMA:Set[FALSE]
-	
+
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
 	}
-	
+
 	;check if we have a pet or a hydromancy not up
 	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)}
 	{
 		call SummonPet
 	}
-	
+
 	if ${Me.ToActor.Pet(exists)}
 	{
 		ExecuteAtom PetAttack
 	}
-	
+
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
 	}
-	
+
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
 	{
 		Me.Inventory[${WeaponMain}]:Equip
 	}
-	
+
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
 	}
-		
+
 	call CheckHeals
 	call RefreshPower
 	call AnswerShardRequest
-	
+
 	;keep blazing Avatar up at all times
 	if ${Me.ToActor.Pet(exists)}
 	{
 		call CastSpellRange 71
 	}
-	
+
 	;keep distracting strike up if we have a scout pet
 	if ${Me.Maintained[${SpellType[355]}](exists)}
 	{
 		call CastSpellRange 383
 	}
-	
+
 	;keep  Magic Leash up if we have a mage pet
 	if ${Me.Maintained[${SpellType[356]}](exists)}
 	{
 		call CastSpellRange 397
-	}	
-	
-	
+	}
+
+
 	switch ${Action[${xAction}]}
 	{
 
 
 		case AA_Animated_Dagger
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{		
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]} 
-				if ${Return.Equal[OK]} 
-				{ 
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
@@ -508,28 +513,28 @@ function Combat_Routine(int xAction)
 					}
 				}
 			}
-			break			
+			break
 
 		case Special_Pet2
 			if ${AoEMode}
 			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]} 
-				if ${Return.Equal[OK]} 
-				{ 				
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 
 				}
 			}
 			break
-			
+
 		case Special_Pet1
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]} 
-			if ${Return.Equal[OK]} 
-			{ 
+			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+			if ${Return.Equal[OK]}
+			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			} 
+			}
 			break
-		
+
 		case Plane_Shift
 			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} && ${Me.ToActor.Pet(exists)}
 			{
@@ -544,8 +549,8 @@ function Combat_Routine(int xAction)
 
 			}
 			break
-		
-		case Combat_Buff			
+
+		case Combat_Buff
 		case AoE1
 			if ${AoEMode} && ${Me.ToActor.Pet(exists)}
 			{
@@ -553,7 +558,7 @@ function Combat_Routine(int xAction)
 
 			}
 			break
-			
+
 		case AoE2
 			if ${AoEMode}
 			{
@@ -563,11 +568,11 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-			
+
 		case Dot1
 			call CastSpellRange ${SpellRange[${xAction},1]}
-			break		
-		
+			break
+
 		case Dot2
 		case Nuke
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
@@ -580,39 +585,11 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${PostSpellRange[${xAction},1]}
 			break
 		case Master_Strike
-			if ${Me.Ability[Gnoll Master's Strike].IsReady} || ${Me.Ability[Orc Master's Strike].IsReady}
+			if ${Me.Ability[Master Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 			{
-				if ${Actor[${KillTarget}](exists)}
-				{
-					Target ${KillTarget}
-					Me.Ability[Droag Master's Strike]:Use
-					;Me.Ability[Orc Master's Strike]:Use
-					Me.Ability[Gnoll Master's Strike]:Use
-					;Me.Ability[Ghost Master's Strike]:Use
-					Me.Ability[Skeleton Master's Strike]:Use
-					;Me.Ability[Zombie Master's Strike]:Use
-					;Me.Ability[Centaur Master's Strike]:Use
-					Me.Ability[Giant Master's Strike]:Use
-					;Me.Ability[Treant Master's Strike]:Use
-					;Me.Ability[Fairy Master's Strike]:Use
-					Me.Ability[Lizardman Master's Strike]:Use
-					Me.Ability[Goblin Master's Strike]:Use
-					;Me.Ability[Golem Master's Strike]:Use
-					;Me.Ability[Bixie Master's Strike]:Use
-					;Me.Ability[Cyclops Master's Strike]:Use
-					Me.Ability[Djinn Master's Strike]:Use
-					;Me.Ability[Harpy Master's Strike]:Use
-					;Me.Ability[Naga Master's Strike]:Use
-					;Me.Ability[Aviak Master's Strike]:Use
-					;Me.Ability[Beholder Master's Strike]:Use
-					;Me.Ability[Ravasect Master's Strike]:Use
-					Me.Ability[Werewolf Master's Strike]:Use
-					;Me.Ability[Bugbear Master's Strike]:Use
-					;Me.Ability[Brownie Master's Strike]:Use
-					;Me.Ability[Clockwork Master's Strike]:Use
-					Me.Ability[Minotaur Master's Strike]:Use
-					;Me.Ability[Kobold Master's Strike]:Use
-				}
+				Target ${KillTarget}
+				call CheckPosition 1 1
+				Me.Ability[Master Strike]:Use
 			}
 			break
 		case Sunbolt
@@ -630,7 +607,7 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
 
-	
+
 	TellTank:Set[FALSE]
 
 	switch ${PostAction[${xAction}]}
@@ -643,25 +620,25 @@ function Post_Combat_Routine(int xAction)
 			if ${Me.Race.Equal[Unknown]}
 			{
 				Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
-			}		
+			}
 			break
 		case default
 			xAction:Set[20]
 			break
 	}
-	
-	
+
+
 }
 
 function Have_Aggro()
 {
-		
+
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
-	
+
 	;Buff Stoneskin
 	call CastSpellRange 180
 }
@@ -688,40 +665,40 @@ function Cancel_Root()
 
 function RefreshPower()
 {
-	
+
 	;Blazing Vigor line out of Combat
-	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.Pet.IsAggro} 
+	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.Pet.IsAggro}
 	{
 			call CastSpellRange 309
 	}
-		
+
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45
 	{
 		call UseItem "Spiritise Censer"
 	}
-	
+
 	;Conjuror Shard
 	if ${Me.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 	}
-	
+
 	if ${Me.InCombat} && ${Me.ToActor.Power}<20
 	{
-		call UseItem "Dracomancer Gloves" 		
+		call UseItem "Dracomancer Gloves"
 	}
-	
+
 	;Blazing Vigor Line in Combat
-	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<20 
+	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<20
 	{
 			call CastSpellRange 309
-	}	
-	
+	}
+
 	if ${Me.InCombat} && ${Me.ToActor.Power}<15
 	{
 		call UseItem "Stein of the Everling Lord"
-	}	
-	
+	}
+
 }
 
 function CheckHeals()
@@ -729,12 +706,12 @@ function CheckHeals()
 
 	declare temphl int local 1
 	grpcnt:Set[${Me.GroupCount}]
-		
+
 	; Cure Arcane Me
 	if ${Me.Arcane}>=1
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
-		
+
 		if ${Actor[${KillTarget}](exists)}
 		{
 			Target ${KillTarget}
@@ -758,16 +735,16 @@ function CheckHeals()
 		}
 		;stoneskins AA
 		call CastSpellRange 378
-		
+
 		if ${Actor[${KillTarget}](exists)}
 		{
 			Target ${KillTarget}
-		}		
+		}
 	}
-	
+
 	do
 	{
-			; Cure Arcane 
+			; Cure Arcane
 			if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
 			{
 				call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
@@ -777,7 +754,7 @@ function CheckHeals()
 					Target ${KillTarget}
 				}
 			}
-			
+
 			;Check Group members
 			if ${Me.Group[${temphl}].ToActor.Health}<50 && ${Me.Group[${temphl}].ToActor.Health}>-99 && && ${Me.Group[${temphl}].ToActor(exists)}
 			{
@@ -792,12 +769,12 @@ function CheckHeals()
 					EquipmentChangeTimer:Set[${Time.Timestamp}]
 					call CastSpellRange 396 0 0 0 ${Me.Group[${temphl}].ToActor.ID}
 				}
-				
+
 				;Stoneskins AA
 				call CastSpellRange 378
-				
+
 				;EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
-								
+
 				if ${Actor[${KillTarget}](exists)}
 				{
 					Target ${KillTarget}
@@ -827,7 +804,7 @@ function CheckHeals()
 	;================================
 	;= Pet Heals                    =
 	;================================
-	
+
 	;Animist Bond AA check
 	if  ${Me.ToActor.Pet.Health}<50 && ${Me.ToActor.Pet.Power}>30 && ${Me.ToActor.Pet(exists)}
 	{
@@ -873,7 +850,7 @@ function AnswerShardRequest()
 				call CastSpellRange 360 0 0 0 ${Actor[${ShardQueue.Peek}].ID}
 				ShardRequestTimer:Set[${Time.Timestamp}]
 			}
-			
+
 			if ${Return}
 			{
 				ShardQueue:Dequeue
@@ -895,13 +872,13 @@ function SummonPet()
 {
 ;1=Scout,2=Mage,3=Fighter; 4=hydromancer
 	PetEngage:Set[FALSE]
-	
+
 	switch ${PetType}
 	{
 		case 1
 			call CastSpellRange 355
 			break
-		
+
 		case 2
 			call CastSpellRange 356
 			break
@@ -909,11 +886,11 @@ function SummonPet()
 		case 3
 			call CastSpellRange 357
 			break
-		
+
 		case 4
 			call CastSpellRange 379
 			break
-			
+
 		case default
 			call CastSpellRange 357
 			break
@@ -929,7 +906,7 @@ function WeaponChange()
 	{
 		Me.Inventory["${WeaponMain}"]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}	
+	}
 
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal["${OffHand}"]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
 	{
