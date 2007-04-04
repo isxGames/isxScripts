@@ -1,8 +1,13 @@
 ;*****************************************************
-;Brigand.iss 20070201a
+;Brigand.iss 20070404a
 ;by Pygar
-; Final Tuning / AA configuration
-; I believe this version represents the best a brigand can be botted
+;
+;
+; 20070404a
+;	Updated to latest eq2bot
+;	Fixed issue with have aggro
+;
+;
 ;*****************************************************
 
 #ifndef _Eq2Botlib_
@@ -14,10 +19,10 @@ function Class_Declaration()
 	declare OffenseMode bool script 1
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
-	declare SnareMode bool script 0     
-        declare TankMode bool script 0
-        declare AnnounceMode bool script 0
-        declare BuffLunge bool script 0
+	declare SnareMode bool script 0
+   	declare TankMode bool script 0
+    declare AnnounceMode bool script 0
+    declare BuffLunge bool script 0
 	declare MaintainPoison bool script 1
 	declare DebuffPoisonShort string script
 	declare DammagePoisonShort string script
@@ -30,20 +35,20 @@ function Class_Declaration()
 	DammagePoisonShort:Set[caustic poison]
 	DebuffPoisonShort:Set[enfeebling poison]
 	UtilityPoisonShort:Set[ignorant bliss]
-	
-	
+
+
 	;Custom Equipment
-	declare WeaponRapier string script 
+	declare WeaponRapier string script
 	declare WeaponSword string script
 	declare WeaponDagger string script
 	declare PoisonCureItem string script
 	declare OffHand string script
 	declare WeaponMain string script
-	
-	declare EquipmentChangeTimer int script	
-	
+
+	declare EquipmentChangeTimer int script
+
 	call EQ2BotLib_Init
-		
+
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
@@ -59,9 +64,9 @@ function Class_Declaration()
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
 	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
 	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]	
-	
-	
+	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
+
+
 }
 
 function Buff_Init()
@@ -75,18 +80,18 @@ function Buff_Init()
 
 	PreAction[3]:Set[Offensive_Stance]
 	PreSpellRange[3,1]:Set[291]
-	
+
 	PreAction[4]:Set[Confound]
 	PreSpellRange[4,1]:Set[27]
 
 	PreAction[5]:Set[Deffensive_Stance]
 	PreSpellRange[5,1]:Set[292]
-	
+
 	PreAction[6]:Set[Poisons]
-	
+
 	PreAction[7]:Set[AA_Lunge_Reversal]
 	PreSpellRange[7,1]:Set[415]
-	
+
 	PreAction[8]:Set[AA_Evasiveness]
 	PreSpellRange[8,1]:Set[417]
 }
@@ -99,19 +104,19 @@ function Combat_Init()
 
 	Action[2]:Set[AA_WalkthePlank]
 	SpellRange[2,1]:Set[405]
-	
+
 	Action[3]:Set[Rear_Attack1]
 	SpellRange[3,1]:Set[103]
-	
+
 	Action[4]:Set[Rear_Attack2]
 	SpellRange[4,1]:Set[102]
-	
+
 	Action[5]:Set[Rear_Attack3]
 	SpellRange[5,1]:Set[101]
-	
+
 	Action[6]:Set[Rear_Attack4]
 	SpellRange[6,1]:Set[100]
-	
+
 	Action[7]:Set[Mastery]
 
 	Action[8]:Set[DoubleUp]
@@ -119,20 +124,20 @@ function Combat_Init()
 
 	Action[9]:Set[Flank_Attack1]
 	SpellRange[9,1]:Set[110]
-	
+
 	Action[10]:Set[Flank_Attack2]
 	SpellRange[10,1]:Set[111]
-	
+
 	Action[11]:Set[BandofThugs]
-	MobHealth[11,1]:Set[50] 
-	MobHealth[11,2]:Set[100] 
+	MobHealth[11,1]:Set[50]
+	MobHealth[11,2]:Set[100]
 	SpellRange[11,1]:Set[386]
-	
+
 	Action[12]:Set[Taunt]
 	Power[12,1]:Set[20]
 	Power[12,2]:Set[100]
-	MobHealth[12,1]:Set[10] 
-	MobHealth[12,2]:Set[100] 
+	MobHealth[12,1]:Set[10]
+	MobHealth[12,2]:Set[100]
 	SpellRange[12,1]:Set[160]
 	SpellRange[12,2]:Set[410]
 
@@ -140,27 +145,27 @@ function Combat_Init()
 	Power[13,1]:Set[20]
 	Power[13,2]:Set[100]
 	SpellRange[13,1]:Set[150]
-		
+
 	Action[14]:Set[Melee_Attack2]
 	Power[14,1]:Set[20]
 	Power[14,2]:Set[100]
 	SpellRange[14,1]:Set[151]
-	
+
 	Action[15]:Set[Melee_Attack3]
 	Power[15,1]:Set[20]
 	Power[15,2]:Set[100]
 	SpellRange[15,1]:Set[152]
-	
+
 	Action[16]:Set[Melee_Attack4]
 	Power[16,1]:Set[20]
 	Power[16,2]:Set[100]
 	SpellRange[16,1]:Set[153]
-	
+
 	Action[17]:Set[Melee_Attack5]
 	Power[17,1]:Set[20]
 	Power[17,2]:Set[100]
 	SpellRange[6,1]:Set[154]
-	
+
 	Action[18]:Set[Snare]
 	Power[18,1]:Set[60]
 	Power[18,2]:Set[100]
@@ -169,7 +174,7 @@ function Combat_Init()
 
 	Action[19]:Set[AA_Torporous]
 	SpellRange[19,1]:Set[401]
-	
+
 	Action[20]:Set[AA_Traumatic]
 	SpellRange[20,1]:Set[402]
 
@@ -178,24 +183,24 @@ function Combat_Init()
 
 	Action[22]:Set[Front_Attack]
 	SpellRange[22,1]:Set[120]
-	
+
 	Action[23]:Set[Debuff]
 	Power[23,1]:Set[20]
 	Power[23,2]:Set[100]
-	SpellRange[23,1]:Set[50]	
-	
+	SpellRange[23,1]:Set[50]
+
 	Action[24]:Set[Lower_Agro]
 	Power[24,1]:Set[40]
 	Power[24,2]:Set[100]
 	SpellRange[24,1]:Set[185]
-	
+
 	Action[25]:Set[Trickery]
-	SpellRange[25,1]:Set[387]	
-	
+	SpellRange[25,1]:Set[387]
+
 	Action[26]:Set[Stun]
 	Power[26,1]:Set[20]
 	Power[26,2]:Set[100]
-	SpellRange[26,1]:Set[190]	
+	SpellRange[26,1]:Set[190]
 }
 
 
@@ -208,9 +213,9 @@ function Buff_Routine(int xAction)
 {
 	declare BuffTarget string local
 	Call ActionChecks
-	
+
 	ExecuteAtom CheckStuck
-	
+
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
@@ -261,15 +266,15 @@ function Buff_Routine(int xAction)
 			{
 				Me:CreateCustomInventoryArray[nonbankonly]
 				if !${Me.Maintained[${DammagePoisonShort}](exists)} && ${Me.CustomInventory[${DammagePoisonShort}](exists)}
-				{				
+				{
 					Me.CustomInventory[${DammagePoisonShort}]:Use
 				}
-				
+
 				if !${Me.Maintained[${DebuffPoisonShort}](exists)} && ${Me.CustomInventory[${DebuffPoisonShort}](exists)}
 				{
 					Me.CustomInventory[${DebuffPoisonShort}]:Use
 				}
-				
+
 				if !${Me.Maintained[${UtilityPoisonShort}](exists)} && ${Me.CustomInventory[${UtilityPoisonShort}](exists)}
 				{
 					Me.CustomInventory[${UtilityPoisonShort}]:Use
@@ -285,8 +290,8 @@ function Buff_Routine(int xAction)
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
-			break		
-			
+			break
+
 		Default
 			xAction:Set[40]
 			break
@@ -295,53 +300,53 @@ function Buff_Routine(int xAction)
 }
 
 function Combat_Routine(int xAction)
-{	
+{
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
 	}
-	
+
 	call WeaponChange
-	
+
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 	{
 		call CastSpellRange 303
 	}
-	
+
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
 	}
-	
+
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
 	{
 		Me.Inventory[${WeaponMain}]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
 	}
-	
+
 	Call ActionChecks
-	
-	
+
+
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 	{
 		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 1
 	}
-	
+
 	;use best debuffs on target if epic
 	if ${Actor[${KillTarget}].IsEpic}
 	{
-		if ${Me.Ability[${SpellType[155]}].IsReady} 
+		if ${Me.Ability[${SpellType[155]}].IsReady}
 		{
 			call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1
 		}
-		
-		if ${Me.Ability[${SpellType[156]}].IsReady} 
+
+		if ${Me.Ability[${SpellType[156]}].IsReady}
 		{
-			call CastSpellRange 156 0 0 0 ${KillTarget} 0 0 1		
+			call CastSpellRange 156 0 0 0 ${KillTarget} 0 0 1
 		}
-		
+
 		if ${Me.Ability[${SpellType[100]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
 		{
 			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
@@ -352,7 +357,7 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Dispatched - All Resistances Severely lowered for 15s - Nuke Now
 					EQ2Execute /raidsay %t is Dispatched - All Resistances Severely lowered for 15s - Nuke Now
 				}
-				
+
 			}
 			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 			{
@@ -364,9 +369,9 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 				}
-			}				
+			}
 		}
-		
+
 		if ${Me.Ability[${SpellType[101]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
 		{
 			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
@@ -377,7 +382,7 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 				}
-				
+
 			}
 			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 			{
@@ -389,10 +394,10 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 				}
-			}				
+			}
 		}
 	}
-	
+
 	;if heroic and over 80% health, use dps buffs
 	if ${Actor[${KillTarget}].IsHeroic}
 	{
@@ -400,23 +405,23 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{
 			if ${Me.Ability[${SpellType[155]}].IsReady}
-			{ 
+			{
 				call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1
 			}
 			if ${Me.Ability[${SpellType[156]}].IsReady}
 			{
 				call CastSpellRange 156 0 0 0 ${KillTarget} 0 0 1
 			}
-		}	
+		}
 	}
-	
+
 	if ${DebuffMode}
 	{
 		if ${Me.Ability[${SpellType[130]}].IsReady}
 		{
 			call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 1
 		}
-		
+
 		call CheckCondition MobHealth 80 100
 		if ${Me.Ability[${SpellType[100]}].IsReady} && ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[100]}](exists)} && ${Target.Target.ID}!=${Me.ID}
 		{
@@ -428,7 +433,7 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 				}
-				
+
 			}
 			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 			{
@@ -440,9 +445,9 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 				}
-			}			
+			}
 		}
-		
+
 		call CheckCondition MobHealth 80 100
 		if ${Me.Ability[${SpellType[101]}].IsReady} && ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[101]}](exists)}
 		{
@@ -454,7 +459,7 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 				}
-				
+
 			}
 			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 			{
@@ -466,11 +471,11 @@ function Combat_Routine(int xAction)
 					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
 				}
-			}	
+			}
 		}
-		
+
 	}
-	
+
 	if ${OffenseMode}
 	{
  		;This routine optomized for group dps role
@@ -486,15 +491,15 @@ function Combat_Routine(int xAction)
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
-				break	
+				break
 			case AoE1
-				if ${AoEMode} && ${Mob.Count}>=2 
+				if ${AoEMode} && ${Mob.Count}>=2
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				break
 			case Snare
-				if ${SnareMode} 
+				if ${SnareMode}
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -521,11 +526,11 @@ function Combat_Routine(int xAction)
 				elseif ${Target.Target.ID}!=${Me.ID}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-				}	
-				break				
+				}
+				break
 			case Mastery
 				if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
-				{			
+				{
 					if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 					{
 						Target ${KillTarget}
@@ -534,7 +539,7 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-			case AA_WalkthePlank	
+			case AA_WalkthePlank
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
@@ -547,7 +552,7 @@ function Combat_Routine(int xAction)
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
 						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
-					
+
 				}
 				break
 			case AA_Torporous
@@ -564,9 +569,9 @@ function Combat_Routine(int xAction)
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
 						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
-					
+
 				}
-				break				
+				break
 			case AA_BootDagger
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
@@ -580,13 +585,13 @@ function Combat_Routine(int xAction)
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
 						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
-					
+
 				}
-				break			
+				break
 			case DoubleUp
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				break
-			
+
 			case Flank_Attack1
 			case Flank_Attack2
 				;check valid rear position
@@ -633,18 +638,18 @@ function Combat_Routine(int xAction)
 				;check front
 				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
 				{
-				
+
 				}
 				elseif ${Target.Target.ID}!=${Me.ID}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
 				}
-				else 
+				else
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 2 ${KillTarget}
 				}
 				break
-				
+
 			case Stun
 				if !${Target.IsEpic}
 				{
@@ -685,7 +690,7 @@ function Combat_Routine(int xAction)
 		{
 			;stun the mob
 			Call CastSpellRange 190 0 1 0 ${KillTarget} 0 0 1
-	
+
 			if ${Me.Maintained[Cheap Shot](exists)}
 			{
 				;check valid rear position
@@ -709,7 +714,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 		}
-				
+
 		switch ${Action[${xAction}]}
 			{
 				case AA_Torporous
@@ -728,7 +733,7 @@ function Combat_Routine(int xAction)
 						}
 
 					}
-					break				
+					break
 				case AA_BootDagger
 					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 					{
@@ -744,7 +749,7 @@ function Combat_Routine(int xAction)
 						}
 
 					}
-					break					
+					break
 				case Melee_Attack1
 				case Melee_Attack2
 				case Melee_Attack3
@@ -754,16 +759,16 @@ function Combat_Routine(int xAction)
 				case DoubleUp
 				case Trickery
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-					break	
+					break
 				case AoE1
-					if ${AoEMode} && ${Mob.Count}>=2 
+					if ${AoEMode} && ${Mob.Count}>=2
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 					break
-	
+
 				case Snare
-					if ${SnareMode} 
+					if ${SnareMode}
 					{
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
@@ -779,8 +784,8 @@ function Combat_Routine(int xAction)
 						}
 					}
 					break
-	
-				case AA_WalkthePlank	
+
+				case AA_WalkthePlank
 				case Rear_Attack1
 				case Rear_Attack2
 				case Rear_Attack3
@@ -791,7 +796,7 @@ function Combat_Routine(int xAction)
 				case Debuff
 				case Stun
 				case Taunt
-					break				
+					break
 				case BandofThugs
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -818,8 +823,8 @@ function Combat_Routine(int xAction)
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget} 0 0 1
 					}
-				}			
-				break								
+				}
+				break
 			case AA_Torporous
 			case AA_Traumatic
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
@@ -834,9 +839,9 @@ function Combat_Routine(int xAction)
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
 						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
-					
+
 				}
-				break				
+				break
 			case AA_BootDagger
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
@@ -850,9 +855,9 @@ function Combat_Routine(int xAction)
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
 						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
-					
+
 				}
-				break	
+				break
 			case Melee_Attack1
 			case Melee_Attack2
 			case Melee_Attack3
@@ -861,15 +866,15 @@ function Combat_Routine(int xAction)
 			case Front_Attack
 			case DoubleUp
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-				break					 
+				break
 			case AoE1
-				if ${AoEMode} && ${Mob.Count}>=2 
+				if ${AoEMode} && ${Mob.Count}>=2
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				break
 			case Snare
-				if ${SnareMode} 
+				if ${SnareMode}
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -885,7 +890,7 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-			case Debuff	
+			case Debuff
 			case Rear_Attack1
 			case Rear_Attack2
 			case Rear_Attack3
@@ -915,11 +920,11 @@ function Combat_Routine(int xAction)
 							call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
 						}
 					}
-				}			
+				}
 			case Trickery
 				if ${Target.Target.ID}==${Me.ID}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1	
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				break
 			case BandofThugs
@@ -927,7 +932,7 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[OK]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-				}	
+				}
 			case Stun
 				if !${Target.IsEpic}
 				{
@@ -937,7 +942,7 @@ function Combat_Routine(int xAction)
 			default
 				xAction:Set[40]
 				break
-		}		
+		}
 	}
 }
 
@@ -951,30 +956,30 @@ function Post_Combat_Routine()
 
 function Have_Aggro()
 {
-	
-	echo I have agro from ${agroid}
-	if ${OffenseMode} && ${Me.Ability[${SpellType[387]}].IsReady} && ${agroid}>0
+
+	echo I have agro from ${aggroid}
+	if ${OffenseMode} && ${Me.Ability[${SpellType[387]}].IsReady} && ${aggroid}
 	{
 		;Trickery
-		call CastSpellRange 387 0 1 0 ${agroid} 0 0 1
+		call CastSpellRange 387 0 1 0 ${aggroid} 0 0 1
 	}
 	elseif ${agroid}>0
 	{
 		if ${Me.Ability[${SpellType[185]}].IsReady}
 		{
 			;agro dump
-			call CastSpellRange 185 0 1 0 ${agroid} 0 0 1	
+			call CastSpellRange 185 0 1 0 ${aggroid} 0 0 1
 		}
 		elseif ${Me.Ability[${SpellType[407]}].IsReady}
 		{
 			;feign
-			call CastSpellRange 407 0 1 0 ${agroid} 0 0 1	
+			call CastSpellRange 407 0 1 0 ${aggroid} 0 0 1
 		}
 		else
 		{
-			call CastSpellRange 181 0 1 0 ${agroid} 0 0 1	
+			call CastSpellRange 181 0 1 0 ${aggroid} 0 0 1
 		}
-		
+
 	}
 }
 
@@ -988,14 +993,14 @@ function Lost_Aggro()
 			call CastSpellRange 160 0 1 0 ${KillTarget} 0 0 1
 		}
 	}
-	
+
 }
 
 function MA_Lost_Aggro()
 {
-	
+
 	;if tank lost agro, and I don't have agro, save the warlocks ass
-	if ${KillTarget.Target.ID}!=${Me.ID} 
+	if ${KillTarget.Target.ID}!=${Me.ID}
 	{
 		call CastSpellRange 270 0 1 0 ${KillTarget} 0 0 1
 	}
@@ -1018,7 +1023,7 @@ function CheckHeals()
 function ActionChecks()
 {
 	call UseCrystallizedSpirit 60
-	
+
 	if ${ShardMode}
 	{
 		call Shard
@@ -1033,7 +1038,7 @@ function WeaponChange()
 	{
 		Me.Inventory[${WeaponMain}]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}	
+	}
 
 	;equip off hand
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}

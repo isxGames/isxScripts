@@ -1,19 +1,24 @@
 ;-----------------------------------------------------------------------------------------------
-; moveto.iss Version 2.1  Updated: 03/06/06 
+; moveto.iss Version 2.1.02  Updated: 04/04/07
 ;
 ; Written by: Blazer
 ; Updated by: Pygar
-; 
+;
 ; Revision History
 ; ----------------
-; v2.1 - * Defined Straffe and Turn Keys
+; v2.1.02
+;	*created a running state object to manage starting and stopping of movement
+;	*adjusted math in some delays
+;	*minor cleanup
+;	*we need to address swimming isses
+; v2.1.01 - * Defined Straffe and Turn Keys
 ;	 * Added wait on first obstruction call so that it wouldn't always return the same position
 ;	   when the next check stuck was fired. The 90 degree initial direction change should work
 ;	   reliably now.  Adjust Strafe timmers if they do not.
 ;	 * Added StopOnAggro arguement  Will return AGGRO and halt movement when true.
 ;	 * Adjusted some timers to make movement more subtle
 ;	 * Adjusted Strafe to use 'Strafe Arcs' on every other stuck check
-;	 
+;
 ; v2.0 - * Some fixes to declaration of variables since the last IS update.
 ;
 ; v1.8 - * Will do a weight check in case your encumbered too much and will move accordingly.
@@ -26,11 +31,11 @@
 ;	   the main script to control the movement instead.
 ;	 * Modified the way the function handles getting stuck. If you get stuck a 2nd or 3rd time,
 ;	   it will move back and strafe with a longer wait time.
-; v1.6 - * Modified the MOVEFORWARD key to use 'num lock' instead. You may need to change that 
+; v1.6 - * Modified the MOVEFORWARD key to use 'num lock' instead. You may need to change that
 ;	   to your auto run key.
 ;	   Unless you are strafing, or moving back (aka stuck) you will be able to type in chat
 ;	   while your char is moving.
-; v1.5 - * More tweaks. and 
+; v1.5 - * More tweaks. and
 ;	 * Added 'checklag' which you can adjust depending how fast your pc is.
 ;	   If you are getting stuck when you shouldnt be, you can increase this value.
 ;	 * Added 'timerback' and 'timerstrafe' which sets the timer on how long you want to move
@@ -52,6 +57,7 @@
 #define TURNLEFT a
 #define TURNRIGHT d
 variable MobCheck MobAggro
+variable RunState Running
 ;
 ; This function moves you to within Precision yards
 ; of the specified X Z loc
@@ -65,9 +71,9 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 	declare	failedattempts int local 0
 	declare checklag int local
 	declare maxattempts int local
-	
-	call CheckMovingAggro	
-	
+
+	call CheckMovingAggro
+
 	if !${timerback(exists)}
 	{
 		declare timerback int script
@@ -122,16 +128,17 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 	; Check that we are not already there!
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
 	{
-		; Press and hold the forward button 
-		if !${keepmoving}
-		{
-			press MOVEFORWARD
-		}
+		;Make sure we're moving
+		RunState:StartRunning
+
 		Do
 		{
 			call CheckMovingAggro
 			vartmp:Inc
-			
+
+			;Make sure we're moving
+			RunState:StartRunning
+
 			if ${facecount}<${vartmp}
 			{
 				face ${X} ${Z}
@@ -156,10 +163,6 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 				; We are probably stuck
 				if ${obstaclecount}>${Math.Calc[${checklag}+1]}
 				{
-					if ${maxattempts}>4
-					{
-						return "STUCK"
-					}
 					obstaclecount:Set[0]
 					call Obstacle ${failedattempts}
 					if "${failedattempts}==${maxattempts}"
@@ -167,7 +170,11 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 						; Main script will handle this situation
 						if !${keepmoving}
 						{
-							press MOVEFORWARD
+							RunState:StopRunning
+						}
+						else
+						{
+							RunState:StartRunning
 						}
 						return "STUCK"
 					}
@@ -184,12 +191,17 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 			SavZ:Set[${Me.Z}]
 		}
 		while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
-		
+
 		; Made it to our target loc
 		if !${keepmoving}
 		{
-			press MOVEFORWARD
+			RunState:StopRunning
 		}
+		else
+		{
+			RunState:StartRunning
+		}
+		return "STUCK"
 	}
 	return "SUCCESS"
 }
@@ -197,33 +209,30 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 function CheckMovingAggro()
 {
 	;Stop Moving and pause if we have aggro
-	if ${MobAggro.Detect} 
+	if ${MobAggro.Detect}
 	{
 		;Echo Aggro Detected Pausing
-		if ${Me.IsMoving}
-		{
-			echo Halting Movement in moveto
-			press MOVEBACKWARD
-		}
+		RunState:StopRunning
+
 		do
 		{
 			echo waiting 1 second in moveto
-			wait 100
+			wait 10
 		}
 		while ${MobAggro.Detect} || ${Me.ToActor.Health}<90
-		
+
 		Echo Scanning Loot in moveto
 		EQ2:CreateCustomActorArray[byDist,15]
-		
+
 		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
 		{
 			echo Loot Nearby, waiting 5 seconds...
-			wait 500
+			wait 50
 		}
-		
-		Resuming Movement in moveto
-		press MOVEFORWARD
-	}	
+
+		echo Resuming Movement in moveto
+		RunState:StartRunning
+	}
 }
 
 ;
@@ -232,36 +241,36 @@ function CheckMovingAggro()
 function Obstacle(int delay)
 {
 	declare newheading float local
-	
+
 	call CheckMovingAggro
-	
+
 	if ${delay}>0
 	{
 		;backup a little
-		press MOVEFORWARD
+		RunState:StopRunning
 		press -hold MOVEBACKWARD
 		wait ${Math.Calc[${timerback}*${delay}]}
 		press -release MOVEBACKWARD
-		
+
 		if ${delay}==1 || ${delay}==3 || ${delay}==5
 		{
 			;randomly pick a direction
 			if "${Math.Rand[10]}>5"
 			{
 				press -hold STRAFELEFT
-				press MOVEFORWARD
+				RunState:StartRunning
 				wait ${Math.Calc[${timerstrafe}*${delay}]}
 				press -release STRAFELEFT
-				press MOVEFORWARD
+				RunState:StopRunning
 				wait 2
 			}
 			else
 			{
 				press -hold STRAFERIGHT
-				press MOVEFORWARD
+				RunState:StartRunning
 				wait ${Math.Calc[${timerstrafe}*${delay}]}
 				press -release STRAFERIGHT
-				press MOVEFORWARD
+				RunState:StopRunning
 				wait 2
 			}
 		}
@@ -284,7 +293,7 @@ function Obstacle(int delay)
 			}
 		}
 		;Start moving forward again
-		press MOVEFORWARD
+		RunState:StartRunning
 		wait ${Math.Calc[${timerback}*${delay}+5]}
 	}
 	else
@@ -447,3 +456,74 @@ objectdef MobCheck
 	}
 }
 
+;Very Basic object to manage auto-run states
+objectdef Running
+{
+	method StopRunning()
+	{
+		if !${Me.IsMoving}
+		{
+			return TRUE
+		}
+		else
+		{
+			do
+			{
+				press MOVEFORWARD
+				wait 10
+				if ${Me.IsMoving}
+				{
+					press MOVEFORWARD
+				}
+				wait 10
+			}
+			while ${Me.IsMoving}
+			return TRUE
+		}
+		return ERROR
+	}
+
+	method StartRunning()
+	{
+		if ${Me.IsMoving}
+		{
+			return TRUE
+		}
+		else
+		{
+			do
+			{
+				press MOVEFORWARD
+				wait 10
+				if !${Me.IsMoving}
+				{
+					press MOVEFORWARD
+				}
+				wait 10
+			}
+			while !${Me.IsMoving}
+			return TRUE
+		}
+		return ERROR
+	}
+
+	member:bool AmIRunning()
+	{
+		if ${Me.IsMoving}
+		{
+			wait 10
+			if ${Me.IsMoving}
+			{
+				return TRUE
+			}
+			else
+			{
+				return FALSE
+			}
+		}
+		else
+		{
+			return FALSE
+		}
+	}
+}

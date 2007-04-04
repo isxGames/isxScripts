@@ -1,7 +1,14 @@
 ;*************************************************************
 ;Defiler.iss
-;version 20061201a
+;version 20070404a
 ;by karye
+;updated by pygar
+;
+;20070404a
+;Updated for latest eq2bot
+;
+;
+;20061201a
 ;Fixed Cyrstalize Spirit line
 ;implemented EoF Mastery attacks
 ;implemented Turgur's Spirit Sight
@@ -22,21 +29,21 @@
 function Class_Declaration()
 {
 	declare OffenseMode bool script 0
-	declare DebuffMode bool script 0 	
+	declare DebuffMode bool script 0
  	declare AoEMode bool script 0
  	declare CureMode bool script 0
  	declare MaelstromMode bool script 0
 	declare KeepWardUp bool script
-	
+
 	declare BuffNoxious bool script FALSE
 	declare BuffMitigation bool script FALSE
 	declare BuffStrength bool script FALSE
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffProcGroupMember string script
 	declare BuffHorrorGroupMember string script
-	
+
 	declare EquipmentChangeTimer int script
-	
+
 	declare MainWeapon string script
 	declare OffHand string script
 	declare OneHandedSpear string script
@@ -44,11 +51,11 @@ function Class_Declaration()
 	declare Symbols string script
 	declare Buckler string script
 	declare Staff string script
-	
-	
-	
+
+
+
 	call EQ2BotLib_Init
-	
+
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
@@ -62,19 +69,19 @@ function Class_Declaration()
 	BuffWaterBreathing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffWaterBreathing,FALSE]}]
 	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
 	BuffHorrorGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHorrorGroupMember,]}]
-	
+
 	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
 	OneHandedSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OneHandedSpear,]}]
 	TwoHandedSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedSpear,]}]
 	Symbols:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[WeaponSymbols,]}]
 	Buckler:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buckler,]}]
-	Staff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Staff,]}]	
+	Staff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Staff,]}]
 }
- 
+
 function Buff_Init()
 {
-	
+
 	PreAction[1]:Set[BuffPower]
 	PreSpellRange[1,1]:Set[35]
 
@@ -84,7 +91,7 @@ function Buff_Init()
 
 	PreAction[3]:Set[BuffProc]
 	PreSpellRange[3,1]:Set[41]
-	
+
 	PreAction[4]:Set[BuffNoxious]
 	PreSpellRange[4,1]:Set[23]
 
@@ -94,61 +101,61 @@ function Buff_Init()
 
 	PreAction[6]:Set[SpiritCompanion]
 	PreSpellRange[6,1]:Set[385]
-	
+
 	PreAction[7]:Set[AA_AuraOfHaste]
 	PreSpellRange[7,1]:Set[389]
-	
+
 	PreAction[8]:Set[AA_AuraOfWarding]
-	PreSpellRange[8,1]:Set[390]	
-	
+	PreSpellRange[8,1]:Set[390]
+
 	PreAction[9]:Set[SpecialVision]
 	PreSpellRange[9,1]:Set[314]
-	
+
 	PreAction[10]:Set[AA_SpiritualForesight]
 	PreSpellRange[10,1]:Set[391]
-	
+
 	PreAction[11]:Set[AA_Immunities]
-	PreSpellRange[11,1]:Set[383]	
+	PreSpellRange[11,1]:Set[383]
 
 	PreAction[12]:Set[AA_RitualisticAggression]
-	PreSpellRange[12,1]:Set[396]	
+	PreSpellRange[12,1]:Set[396]
 	PreSpellRange[12,2]:Set[397]
-	
+
 	PreAction[13]:Set[xxxxx]
-	PreSpellRange[13,1]:Set[999]	
-	
+	PreSpellRange[13,1]:Set[999]
+
 	PreAction[14]:Set[AA_InfectiveBites]
-	PreSpellRange[14,1]:Set[394]	
-	
+	PreSpellRange[14,1]:Set[394]
+
 	PreAction[15]:Set[AA_Coagulate]
 	PreSpellRange[15,1]:Set[395]
 
 	PreAction[16]:Set[AA_Virulence]
 	PreSpellRange[16,1]:Set[399]
-	
+
 	PreAction[17]:Set[BuffHorror]
 	PreSpellRange[17,1]:Set[40]
 
 	PreAction[18]:Set[BuffMitigation]
 	PreSpellRange[18,1]:Set[21]
-	
+
 	PreAction[19]:Set[BuffStrength]
 	PreSpellRange[19,1]:Set[20]
-	
+
 	PreAction[20]:Set[BuffWaterBreathing]
 	PreSpellRange[20,1]:Set[280]
-	
+
 }
- 
+
 function Combat_Init()
 {
 
 	Action[1]:Set[AoE1]
 	SpellRange[1,1]:Set[90]
-	
+
 	Action[2]:Set[AoE2]
-	SpellRange[2,1]:Set[91]	
-	
+	SpellRange[2,1]:Set[91]
+
 	Action[3]:Set[AARabies]
 	SpellRange[3,1]:Set[352]
 
@@ -158,14 +165,14 @@ function Combat_Init()
 	Power[4,1]:Set[1]
 	Power[4,2]:Set[100]
 	SpellRange[4,1]:Set[322]
-	
+
 	Action[5]:Set[Malaise]
 	MobHealth[5,1]:Set[1]
 	MobHealth[5,2]:Set[100]
 	Power[5,1]:Set[1]
 	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[71]
-	
+
 	Action[6]:Set[Imprecation]
 	MobHealth[6,1]:Set[1]
 	MobHealth[6,2]:Set[100]
@@ -179,14 +186,14 @@ function Combat_Init()
 	Power[7,1]:Set[20]
 	Power[7,2]:Set[100]
 	SpellRange[7,1]:Set[382]
-	
+
 	Action[8]:Set[TheftOfVitality]
 	MobHealth[8,1]:Set[1]
 	MobHealth[8,2]:Set[100]
 	Power[8,1]:Set[20]
 	Power[8,2]:Set[100]
 	SpellRange[8,1]:Set[55]
-	
+
 	Action[9]:Set[Mastery]
 	SpellRange[9,1]:Set[360]
 	SpellRange[9,2]:Set[379]
@@ -194,15 +201,15 @@ function Combat_Init()
 	Action[10]:Set[UmbralTrap]
 	MobHealth[10,1]:Set[1]
 	MobHealth[10,2]:Set[100]
-	SpellRange[10,1]:Set[54]	
-	
+	SpellRange[10,1]:Set[54]
+
 	Action[11]:Set[Fuliginous_Sphere]
 	MobHealth[11,1]:Set[1]
 	MobHealth[11,2]:Set[100]
 	Power[11,1]:Set[1]
 	Power[11,2]:Set[100]
 	SpellRange[11,1]:Set[51]
-	
+
 	Action[12]:Set[Curse]
 	MobHealth[12,1]:Set[1]
 	MobHealth[12,2]:Set[100]
@@ -215,7 +222,7 @@ function Combat_Init()
 	MobHealth[13,2]:Set[100]
 	Power[13,1]:Set[1]
 	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[53]	
+	SpellRange[13,1]:Set[53]
 
 	Action[14]:Set[Repulsion]
 	MobHealth[14,1]:Set[1]
@@ -223,60 +230,60 @@ function Combat_Init()
 	Power[14,1]:Set[1]
 	Power[14,2]:Set[100]
 	SpellRange[14,1]:Set[52]
-		
+
 	Action[15]:Set[ThermalShocker]
 
 	Action[16]:Set[AA_CripplingBash]
 	MobHealth[16,1]:Set[1]
 	MobHealth[16,2]:Set[100]
 	SpellRange[16,1]:Set[393]
-	
+
 	Action[17]:Set[UmbralTrap]
 	MobHealth[17,1]:Set[1]
 	MobHealth[17,2]:Set[100]
-	SpellRange[17,1]:Set[54]		
+	SpellRange[17,1]:Set[54]
 }
- 
+
 function PostCombat_Init()
 {
 	PostAction[1]:Set[Resurrection]
 	PostSpellRange[1,1]:Set[300]
 	PostSpellRange[1,2]:Set[301]
-	
-	PostAction[2]:Set[LoadDefaultEquipment]	
+
+	PostAction[2]:Set[LoadDefaultEquipment]
 }
- 
+
 function Buff_Routine(int xAction)
 {
 	declare tempvar int local
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
-	
+
 	variable int temp
 
 	call WeaponChange
-	
+
 	ExecuteAtom CheckStuck
 
 	if ${ShardMode}
 	{
 		call Shard
 	}
-	
+
 	call CheckHeals
 
 
-	
+
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
 	}
-	
+
 	if ${Me.ToActor.Power}>85 && ${KeepWardUp}
 	{
 		call CastSpellRange 15
-		call CastSpellRange 7 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
 
@@ -299,17 +306,17 @@ function Buff_Routine(int xAction)
 
 						tempvar:Set[1]
 						do
-						{				
+						{
 
 							BuffTarget:Set[${UIElement[lbBuffPower@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
-							
+
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 							{
 								BuffMember:Set[OK]
 								break
 							}
-							
-							
+
+
 						}
 						while ${tempvar:Inc}<=${UIElement[lbBuffPower@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
@@ -325,10 +332,10 @@ function Buff_Routine(int xAction)
 						Me.Maintained[${Counter}]:Cancel
 					}
 				}
-				
+
 			}
-			while ${Counter:Inc}<=${Me.CountMaintained} 			
-			
+			while ${Counter:Inc}<=${Me.CountMaintained}
+
 
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
@@ -336,29 +343,29 @@ function Buff_Routine(int xAction)
 			{
 
 				do
-				{				
+				{
 					BuffTarget:Set[${UIElement[lbBuffPower@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffPower@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
-			break	
+			break
 		case SpiritCompanion
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 
 		case AA_Coagulate
-			if ${Actor[${MainAssist}](exists)} 
-			{ 
+			if ${Actor[${MainTankPC}](exists)}
+			{
 				;If the MA changed during the fight cancel so we can rebuff original MA
-				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${MainAssist}].ID}
+				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${MainTankPC}].ID}
 				{
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainAssist}].ID}
-			} 
-			break 
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
+			}
+			break
 		case BuffNoxious
 			if ${BuffNoxious}
 			{
@@ -398,31 +405,31 @@ function Buff_Routine(int xAction)
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
-			break			
+			break
 		case BuffProc
 			BuffTarget:Set[${UIElement[cbBuffProcGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}			
+			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
-			break		
+			break
 		case BuffHorror
 			BuffTarget:Set[${UIElement[cbBuffHorrorGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}			
+			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
-			break	
+			break
 		case Group_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
@@ -437,7 +444,7 @@ function Buff_Routine(int xAction)
 			}
 			while ${temp:Inc}<${Me.GroupCount}
 			break
-		case AA_Immunities			
+		case AA_Immunities
 		case AA_AuraOfHaste
 			if !${Me.ToActor.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.ToActor.Pet(exists)}
 			{
@@ -466,7 +473,7 @@ function Buff_Routine(int xAction)
 			break
 	}
 }
- 
+
 function Combat_Routine(int xAction)
 {
 
@@ -475,7 +482,7 @@ function Combat_Routine(int xAction)
 	{
 		EQ2Execute /stopfollow
 	}
-	
+
 	call CheckGroupHealth 75
 	if ${DoHOs} && ${Return}
 	{
@@ -486,12 +493,12 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 303
 	}
-	
-	ExecuteAtom PetAttack	
-		
+
+	ExecuteAtom PetAttack
+
 	call CheckHeals
 	call RefreshPower
-	
+
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[385]}](exists)}
 	{
@@ -504,11 +511,11 @@ function Combat_Routine(int xAction)
 			Me.Inventory[${OneHandedSpear}]:Equip
 			EquipmentChangeTimer:Set[${Time.Timestamp}]
 			call CastSpellRange 388
-		}		
-	}	
-	
+		}
+	}
 
-	
+
+
 	if ${ShardMode}
 	{
 		call Shard
@@ -526,7 +533,7 @@ function Combat_Routine(int xAction)
 		{
 			Me.Maintained[${SpellType[317]}]:Cancel
 		}
-		
+
 	}
 	elseif ${Me.Maintained[${SpellType[317]}](exists)}
 	{
@@ -535,7 +542,7 @@ function Combat_Routine(int xAction)
 	;Before we do our Action, check to make sure our group doesnt need healing
 	call CheckGroupHealth 75
 	if ${Return}
-	{	
+	{
 		switch ${Action[${xAction}]}
 		{
 			case Repulsion
@@ -599,7 +606,7 @@ function Combat_Routine(int xAction)
 				break
 			case Forced_Cannibalize
 			case Malaise
-			case Imprecation			
+			case Imprecation
 			case Fuliginous_Sphere
 				if ${OffenseMode}
 					{
@@ -632,7 +639,7 @@ function Combat_Routine(int xAction)
 			case AoE1
 			case AoE2
 			case AARabies
-				if ${AoEMode}  
+				if ${AoEMode}
 				{
 					if ${Mob.Count}>2
 					{
@@ -641,41 +648,13 @@ function Combat_Routine(int xAction)
 				}
 				break
 			case Mastery
-				if ${OffenseMode} || ${DebuffMode}
-				{		
-					if ${Me.Ability[Orc Master's Sinister Strike].IsReady} || ${Me.Ability[Orc Master's Sinister Strike].IsReady}
-					{
-						Target ${KillTarget}
-						Me.Ability[Orc Master's Smite]:Use
-						;Me.Ability[Gnoll Master's Smite]:Use
-						Me.Ability[Ghost Master's Smite]:Use
-						Me.Ability[Elemental Master's Smite]:Use
-						;Me.Ability[Skeleton Master's Smite]:Use
-						;Me.Ability[Zombie Master's Smite]:Use
-						;Me.Ability[Centaur Master's Smite]:Use
-						Me.Ability[Giant Master's Smite]:Use
-						;Me.Ability[Treant Master's Smite]:Use
-						;Me.Ability[Fairy Master's Smite]:Use
-						Me.Ability[Goblin Master's Smite]:Use
-						;Me.Ability[Golem Master's Smite]:Use
-						;Me.Ability[Bixie Master's Smite]:Use
-						Me.Ability[Cyclops Master's Smite]:Use
-						;Me.Ability[Djinn Master's Smite]:Use
-						;Me.Ability[Harpy Master's Smite]:Use
-						;Me.Ability[Naga Master's Smite]:Use
-						Me.Ability[Droag Master's Smite]:Use
-						;Me.Ability[Aviak Master's Smite]:Use
-						;Me.Ability[Beholder Master's Smite]:Use
-						;Me.Ability[Ravasect Master's Smite]:Use
-						Me.Ability[Werewolf Master's Smite]:Use
-						;Me.Ability[Bugbear Master's Smite]:Use
-						;Me.Ability[Brownie Master's Smite]:Use
-						;Me.Ability[Clockwork Master's Smite]:Use
-						Me.Ability[Minotaur Master's Smite]:Use
-						;Me.Ability[Kobold Master's Smite]:Use							
-					}
-				}
-				break	
+			if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)}
+			{
+				Target ${KillTarget}
+				call CheckPosition 1 1
+				Me.Ability[Master's Smite]:Use
+			}
+			break
 			case ThermalShocker
 				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
 				{
@@ -688,24 +667,24 @@ function Combat_Routine(int xAction)
 		}
 	}
 }
- 
+
 function Post_Combat_Routine(int xAction)
 {
-	
+
 	;Turn off Maelstrom so we can move
 	if ${Me.Maintained[${SpellType[317]}](exists)}
 	{
 		Me.Maintained[${SpellType[317]}]:Cancel
 	}
-	
-	TellTank:Set[FALSE]	
-	
-	if ${Me.AutoAttackOn} 
+
+	TellTank:Set[FALSE]
+
+	if ${Me.AutoAttackOn}
 	{
 
 		EQ2Execute /toggleautoattack
 	}
-	
+
 	switch ${PostAction[${xAction}]}
 	{
 		case Resurrection
@@ -730,24 +709,24 @@ function Post_Combat_Routine(int xAction)
 
 function Have_Aggro()
 {
-	
+
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
-	
+
 	if !${MainTank}
 	{
 		;Try AE fear hate reduction first
 		call CastSpellRange 180
-		
+
 		;if something is still on me single fear it
 		if ${Actor[${aggroid}].Distance}<=5 && (${Actor[${aggroid}].Target.ID} == ${Me.ID})
 		{
 			call CastSpellRange 181 0 0 0 ${aggroid}
-		}		
-		
+		}
+
 	}
 
 
@@ -761,28 +740,28 @@ function RefreshPower()
 	{
 		call CastSpellRange 381
 	}
-	
+
 	;Forced Canabalize
 	if ${Me.ToActor.Power}<85 && ${Me.InCombat}
 	{
 		call CastSpellRange 72 0 0 0 ${KillTarget}
 	}
-	
+
 	if ${Me.InCombat} && ${Me.ToActor.Power}<65  && ${Me.ToActor.Health}>25
 	{
 		call UseItem "Tribal Spiritist's Hat"
 	}
-	
+
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45
 	{
 		call UseItem "Spiritise Censer"
 	}
-	
+
 	if ${Me.InCombat} && ${Me.ToActor.Power}<15
 	{
 		call UseItem "Stein of the Everling Lord"
-	}	
-	
+	}
+
 }
 
 function CheckHeals()
@@ -795,18 +774,18 @@ function CheckHeals()
 	declare mostafflictions int local 0
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
-	
+
 	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
 
 	temphl:Set[1]
 	grpcure:Set[0]
 	lowest:Set[1]
-	
+
 	;Res the MT if they are dead
-	if ${Actor[PC,${MainAssist}].Health}==-99 && ${Actor[PC,${MainAssist}](exists)}
+	if ${Actor[PC,${MainTankPC}].Health}==-99 && ${Actor[PC,${MainTankPC}](exists)}
 	{
-		call CastSpellRange 300 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
 	do
@@ -839,17 +818,17 @@ function CheckHeals()
 				{
 					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
 				}
-				
+
 				if ${Me.Group[${temphl}].Elemental}>0
 				{
 					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
 				}
-				
+
 				if ${Me.Group[${temphl}].Trauma}>0
 				{
 					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
 				}
-				
+
 				if ${tmpafflictions}>${mostafflictions}
 				{
 					mostafflictions:Set[${tmpafflictions}]
@@ -862,7 +841,7 @@ function CheckHeals()
 				grpheal:Inc
 			}
 
-			if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Trauma}>0 
+			if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Trauma}>0
 			{
 				grpcure:Inc
 			}
@@ -874,13 +853,13 @@ function CheckHeals()
 					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
 				}
 			}
-			
+
 			if ${Me.ToActor.Pet.Health}<60
 			{
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
 
-			}			
-			
+			}
+
 		}
 
 	}
@@ -890,18 +869,18 @@ function CheckHeals()
 	{
 		grpheal:Inc
 	}
-	
+
 	if ${Me.Noxious}>0 || ${Me.Trauma}>0
 	{
 		grpcure:Inc
 	}
-	
+
 	;CURES
 	if ${grpcure}>2 && ${CureMode}
 	{
 		call CastSpellRange 220
 	}
-	
+
 	if ${Me.IsAfflicted} && ${CureMode}
 	{
 		call CureMe
@@ -911,28 +890,28 @@ function CheckHeals()
 	{
 		call CureGroupMember ${mostafflicted}
 	}
-	
+
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		call EmergencyHeal ${Actor[${MainAssist}].ID}
+		call EmergencyHeal ${Actor[${MainTankPC}].ID}
 	}
-	
+
 	;ME HEALS
 	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		if ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
 		{
-			
+
 			; if i have summoned a defiler crystal use that to heal first
 			if ${Me.Inventory[Crystallized Spirit](exists)}
 			{
 				Me.Inventory[Crystallized Spirit]:Use
 			}
-			
+
 		}
-		
-		if ${Me.ToActor.Health}<85 
+
+		if ${Me.ToActor.Health}<85
 		{
 			if ${haveaggro} && ${Me.ToActor.InCombatMode}
 			{
@@ -944,7 +923,7 @@ function CheckHeals()
 				call CastSpellRange 4 0 0 0 ${Me.ID}
 			}
 		}
-	
+
 		if ${Me.ToActor.Health}<25
 		{
 			if ${haveaggro}
@@ -967,18 +946,18 @@ function CheckHeals()
 		}
 
 	}
-	
+
 	;MAINTANK HEALS
-	if ${Actor[${MainAssist}].Health} <90 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainAssist}].InCombatMode} && ${Actor[${MainAssist}].Health}>-99
+	if ${Actor[${MainTankPC}].Health} <90 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99
 	{
-		call CastSpellRange 7 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 		call CastSpellRange 15
 	}
-	
-	if ${Actor[${MainAssist}].Health} <90 && ${Actor[${MainAssist}].Health} >-99 && ${Actor[${MainAssist}](exists)}
+
+	if ${Actor[${MainTankPC}].Health} <90 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)}
 	{
 		call CastSpellRange 351
-		call CastSpellRange 1 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
 	;GROUP HEALS
@@ -986,8 +965,8 @@ function CheckHeals()
 	{
 		; Cast spiritual circle
 		call CastSpellRange 16
-	}	
-	
+	}
+
 	if ${grpheal}>2
 	{
 		if ${Me.Ability[${SpellType[10]}].IsReady}
@@ -1012,13 +991,13 @@ function CheckHeals()
 
 		hurt:Set[TRUE]
 	}
-	
+
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)}
 	{
 		if ${Actor[${PetToHeal}].InCombatMode}
 		{
-			call CastSpellRange 7 0 0 0 ${PetToHeal}	
+			call CastSpellRange 7 0 0 0 ${PetToHeal}
 		}
 		else
 		{
@@ -1026,7 +1005,7 @@ function CheckHeals()
 			call CastSpellRange 1 0 0 0 ${PetToHeal}
 		}
 	}
-	
+
 	;Res Fallen Groupmembers only if in range
 	grpcnt:Set[${Me.GroupCount}]
 	tempgrp:Set[1]
@@ -1038,7 +1017,7 @@ function CheckHeals()
 		}
 	}
 	while ${tempgrp:Inc}<${grpcnt}
-	
+
 	call UseCrystallizedSpirit 60
 
 }
@@ -1048,13 +1027,13 @@ function EmergencyHeal(int healtarget)
 
 	;Soul Ward
 	call CastSpellRange 380 0 0 0 ${healtarget}
-	
+
 	;if we cast soulward exit emergency heal
 	if ${Me.Maintained[${SpellType[380]}](exists)}
 	{
 		return
 	}
-	
+
 	;Avenger Death Save
 	call CastSpellRange 338 0 0 0 ${healtarget}
 
@@ -1079,7 +1058,7 @@ function CheckHealerMob()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
 		{
 			switch ${CustomActor[${tcount}].Class}
-			{			
+			{
 				case templar
 				case inquisitor
 				case fury
@@ -1094,23 +1073,23 @@ function CheckHealerMob()
 
 	return FALSE
 }
- 
+
 function Lost_Aggro()
 {
- 
+
 }
- 
+
 function MA_Lost_Aggro()
 {
- 
+
 }
- 
+
 function MA_Dead()
 {
-	if ${Actor[${MainAssist}].Health}==-99 && ${Actor[${MainAssist}](exists)}
+	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)}
 	{
-		call 300 301 0 0 ${Actor[${MainAssist}].ID} 1
-	} 
+		call 300 301 0 0 ${Actor[${MainTankPC}].ID} 1
+	}
 }
 
 function CureMe()
@@ -1118,14 +1097,14 @@ function CureMe()
 	if ${Me.Arcane}>0
 	{
 		call CastSpellRange 326
-		
+
 		if ${Me.Arcane}>0
 		{
 			call CastSpellRange 210 0 0 0 ${Me.ID}
 			return
 		}
 	}
-	
+
 	if  ${Me.Noxious}>0
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
@@ -1143,8 +1122,8 @@ function CureMe()
 		call CastSpellRange 212 0 0 0 ${Me.ID}
 		return
 	}
-	
-	
+
+
 }
 
 function CureGroupMember(int gMember)
@@ -1156,13 +1135,13 @@ function CureGroupMember(int gMember)
 	{
 		return
 	}
-	
+
 	do
 	{
 		if  ${Me.Group[${gMember}].Arcane}>0
 		{
 			call CastSpellRange 326
-			
+
 				if  ${Me.Group[${gMember}].Arcane}
 				{
 					call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
@@ -1195,7 +1174,7 @@ function WeaponChange()
 	{
 		Me.Inventory[${MainWeapon}]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}	
+	}
 
 	;equip off hand
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
