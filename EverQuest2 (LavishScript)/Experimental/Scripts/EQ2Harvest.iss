@@ -353,7 +353,7 @@ function CheckAggro()
 		if ${Me.IsMoving}
 		{
 			CurrentAction:Set[Halting Movement...]
-			RunState:StopRunning
+			call StopRunning
 		}
 
 		CurrentAction:Set[Waiting till aggro gone, and over 90 health...]
@@ -374,7 +374,7 @@ function CheckAggro()
 		}
 		CurrentAction:Set[Resuming Harvest...]
 		;Not sure we should resume movement here, but figure more movement is better
-		RunState:StartRunning
+		call StartRunning
 	}
 }
 
@@ -1333,7 +1333,7 @@ atom atexit()
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
 
-	RunState:StopRunning
+	call StopRunning
 }
 
 
