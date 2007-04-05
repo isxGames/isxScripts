@@ -168,7 +168,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 					if "${failedattempts}==${maxattempts}"
 					{
 						; Main script will handle this situation
-						if !${keepmoving}
+						if ${keepmoving}
 						{
 							call StartRunning
 						}
@@ -194,7 +194,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 		while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
 
 		; Made it to our target loc
-		if !${keepmoving}
+		if ${keepmoving}
 		{
 			call StartRunning
 			
@@ -204,7 +204,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 			echo 2
 			call StopRunning
 		}
-		return "STUCK"
+		
 	}
 	return "SUCCESS"
 }
@@ -212,7 +212,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 function CheckMovingAggro()
 {
 	;Stop Moving and pause if we have aggro
-	if ${MobAggro.Detect}
+	if ${MobAggro.Detect} && ${StopOnAggro}
 	{
 		;Echo Aggro Detected Pausing
 		echo 3
