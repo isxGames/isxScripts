@@ -21,7 +21,6 @@
 ; see moveto.iss
 
 variable EQ2HarvestBot Harvest
-variable AggroCheck Aggro
 variable filepath NavigationPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Navigational Paths/"
 variable filepath UIPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/UI/"
 variable filepath CharPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Character Config/"
@@ -232,7 +231,7 @@ function PathingRoutine()
 
 			CurrentAction:Set[Moving through Nav Points...]
 
-			call moveto ${WPX} ${WPZ} 5 0 3 1
+			call moveto ${WPX} ${WPZ} 5 1 3 1
 
 			; Check to see if we are stuck getting to the node
 			if ${Return.Equal[STUCK]}
@@ -347,21 +346,21 @@ function PathingRoutine()
 function CheckAggro()
 {
 	;Stop Moving and pause if we have aggro
-	if ${Aggro.Detect}
+	if ${MobAggro.Detect}
 	{
 		CurrentAction:Set[Aggro Detected Pausing...]
-		if ${Me.IsMoving}
-		{
-			CurrentAction:Set[Halting Movement...]
-			call StopRunning
-		}
+		;if ${Me.IsMoving}
+		;{
+		;	CurrentAction:Set[Halting Movement...]
+		;	call StopRunning
+		;}
 
 		CurrentAction:Set[Waiting till aggro gone, and over 90 health...]
 		do
 		{
 			wait 30
 		}
-		while ${Aggro.Detect} || ${Me.ToActor.Health}<90
+		while ${MobAggro.Detect} || ${Me.ToActor.Health}<90
 
 		CurrentAction:Set[Checking For Loot...]
 
@@ -370,7 +369,7 @@ function CheckAggro()
 		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
 		{
 			CurrentAction:Set[Loot nearby waiting 5 seconds...]
-			wait 500
+			wait 50
 		}
 		CurrentAction:Set[Resuming Harvest...]
 		;Not sure we should resume movement here, but figure more movement is better
@@ -398,7 +397,7 @@ function StuckState()
 
 	WPX:Set[${NavPath.Point[1].X}]
 	WPZ:Set[${NavPath.Point[1].Z}]
-	call moveto ${WPX} ${WPZ} 5 0 3 1
+	call moveto ${WPX} ${WPZ} 5 1 3 1
 
 	; Are we still Stuck?
 	if ${Return.Equal[STUCK]}
@@ -1189,141 +1188,6 @@ method Collectible(string Line, string result)
 	}
 }
 
-objectdef AggroCheck
-{
-	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
-	member:bool AggroGroup(int actorid)
-	{
-		variable int tempvar
-
-		if ${Me.GroupCount}>1
-		{
-			; Check if mob is aggro on group or pet
-			tempvar:Set[1]
-			do
-			{
-				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].PetID}
-				{
-					return TRUE
-				}
-			}
-			while ${tempvar:Inc}<${Me.GroupCount}
-
-			; Check if mob is aggro on raid or pet
-			if ${Me.InRaid}
-			{
-				tempvar:Set[1]
-				do
-				{
-					if (${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].PetID}
-					{
-						return TRUE
-					}
-				}
-				while ${tempvar:Inc}<24
-			}
-		}
-
-		if ${Actor[MyPet](exists)} && ${Actor[${actorid}].Target.ID}==${Actor[MyPet].ID}
-		{
-			return TRUE
-		}
-		return FALSE
-	}
-
-	;returns count of mobs engaged in combat near you.  Includes mobs not engaged to other pcs/groups
-	member:int Count()
-	{
-		variable int tcount=2
-		variable int mobcount
-
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
-		{
-			return 0
-		}
-
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
-		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
-			{
-				mobcount:Inc
-			}
-		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-
-		return ${mobcount}
-	}
-
-	;returns true if you, group, raidmember, or pets have agro from mob in range
-	member:bool Detect()
-	{
-		variable int tcount=2
-
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)}
-		{
-			return FALSE
-		}
-
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
-		{
-			if ${CustomActor[${tcount}].InCombatMode}
-			{
-				if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-				{
-					return TRUE
-				}
-
-				if ${This.AggroGroup[${CustomActor[${tcount}].ID}]}
-				{
-					return TRUE
-				}
-			}
-		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-
-		return FALSE
-	}
-
-	member:bool Target(int targetid)
-	{
-		if !${Actor[${targetid}].InCombatMode}
-		{
-			return FALSE
-		}
-
-		if ${This.AggroGroup[${targetid}]} || ${Actor[${targetid}].Target.ID}==${Me.ID}
-		{
-			return TRUE
-		}
-
-		return FALSE
-	}
-
-	method CheckMYAggro()
-	{
-		variable int tcount=2
-		haveaggro:Set[FALSE]
-
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
-		{
-			return
-		}
-
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
-		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
-			{
-				haveaggro:Set[TRUE]
-				aggroid:Set[${CustomActor[${tcount}].ID}]
-				return
-			}
-		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-	}
-}
 
 atom atexit()
 {
@@ -1333,7 +1197,9 @@ atom atexit()
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
 
-	call StopRunning
+	press -hold MOVEBACKWARD
+	wait 3
+	press -release MOVEBACKWARD
 }
 
 
