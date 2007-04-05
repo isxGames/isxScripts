@@ -57,7 +57,7 @@
 #define TURNLEFT a
 #define TURNRIGHT d
 variable MobCheck MobAggro
-variable RunState Running
+ 
 ;
 ; This function moves you to within Precision yards
 ; of the specified X Z loc
@@ -129,7 +129,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
 	{
 		;Make sure we're moving
-		RunState:StartRunning
+		call StartRunning
 
 		Do
 		{
@@ -137,7 +137,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 			vartmp:Inc
 
 			;Make sure we're moving
-			RunState:StartRunning
+			call StartRunning
 
 			if ${facecount}<${vartmp}
 			{
@@ -170,11 +170,12 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 						; Main script will handle this situation
 						if !${keepmoving}
 						{
-							RunState:StopRunning
+							call StartRunning
 						}
 						else
 						{
-							RunState:StartRunning
+							echo 1
+							call StopRunning
 						}
 						return "STUCK"
 					}
@@ -195,11 +196,13 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 		; Made it to our target loc
 		if !${keepmoving}
 		{
-			RunState:StopRunning
+			call StartRunning
+			
 		}
 		else
 		{
-			RunState:StartRunning
+			echo 2
+			call StopRunning
 		}
 		return "STUCK"
 	}
@@ -212,7 +215,8 @@ function CheckMovingAggro()
 	if ${MobAggro.Detect}
 	{
 		;Echo Aggro Detected Pausing
-		RunState:StopRunning
+		echo 3
+		call StopRunning
 
 		do
 		{
@@ -231,7 +235,7 @@ function CheckMovingAggro()
 		}
 
 		echo Resuming Movement in moveto
-		RunState:StartRunning
+		call StartRunning
 	}
 }
 
@@ -247,7 +251,8 @@ function Obstacle(int delay)
 	if ${delay}>0
 	{
 		;backup a little
-		RunState:StopRunning
+		echo 4
+		call StopRunning
 		press -hold MOVEBACKWARD
 		wait ${Math.Calc[${timerback}*${delay}]}
 		press -release MOVEBACKWARD
@@ -258,19 +263,21 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 				press -hold STRAFELEFT
-				RunState:StartRunning
+				call StartRunning
 				wait ${Math.Calc[${timerstrafe}*${delay}]}
 				press -release STRAFELEFT
-				RunState:StopRunning
+				echo 6
+				call StopRunning
 				wait 2
 			}
 			else
 			{
 				press -hold STRAFERIGHT
-				RunState:StartRunning
+				call StartRunning
 				wait ${Math.Calc[${timerstrafe}*${delay}]}
 				press -release STRAFERIGHT
-				RunState:StopRunning
+				echo 7
+				call StopRunning
 				wait 2
 			}
 		}
@@ -293,7 +300,7 @@ function Obstacle(int delay)
 			}
 		}
 		;Start moving forward again
-		RunState:StartRunning
+		call StartRunning
 		wait ${Math.Calc[${timerback}*${delay}+5]}
 	}
 	else
@@ -457,13 +464,12 @@ objectdef MobCheck
 }
 
 ;Very Basic object to manage auto-run states
-objectdef Running
-{
-	method StopRunning()
+function StopRunning()
 	{
+		echo stop moving
 		if !${Me.IsMoving}
 		{
-			return TRUE
+			return
 		}
 		else
 		{
@@ -478,16 +484,18 @@ objectdef Running
 				wait 10
 			}
 			while ${Me.IsMoving}
-			return TRUE
+			return 
 		}
-		return ERROR
+		return
 	}
 
-	method StartRunning()
+function StartRunning()
 	{
+		echo start moving
+	
 		if ${Me.IsMoving}
 		{
-			return TRUE
+			return 
 		}
 		else
 		{
@@ -502,12 +510,12 @@ objectdef Running
 				wait 10
 			}
 			while !${Me.IsMoving}
-			return TRUE
+			return
 		}
-		return ERROR
+		return
 	}
 
-	member:bool AmIRunning()
+function AmIRunning()
 	{
 		if ${Me.IsMoving}
 		{
@@ -526,4 +534,3 @@ objectdef Running
 			return FALSE
 		}
 	}
-}
