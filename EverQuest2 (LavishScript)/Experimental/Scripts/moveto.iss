@@ -103,9 +103,6 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 	; How often do you want to loop through the routine before it checks face again?
 	facecount:Set[5]
 
-	; Turn to face the desired location
-
-	face ${X} ${Z}
 
 	if !${Attempts}
 	{
@@ -128,6 +125,9 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 	; Check that we are not already there!
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
 	{
+		; Turn to face the desired location
+		face ${X} ${Z}
+	
 		;Make sure we're moving
 		call StartRunning
 
@@ -235,6 +235,8 @@ function CheckMovingAggro()
 		}
 
 		echo Resuming Movement in moveto
+		;Turn to face the desired location
+		face ${X} ${Z}
 		call StartRunning
 	}
 }
