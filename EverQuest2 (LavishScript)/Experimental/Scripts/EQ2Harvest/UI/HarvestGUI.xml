@@ -1095,9 +1095,9 @@
 							<MaxLength>5</MaxLength>
 							<OnLoad>This:SetText[${Script[EQ2Harvest].Variable[HarvestTime]}]</OnLoad>
 							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Nodes to Harvest before Destroying?,${This.Text}]:Save
-								This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Nodes to Harvest before Destroying?]}]
-								Script[EQ2Harvest].Variable[DestroyBatch]:Set[${This.Text}]
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Harvest Timer,${This.Text}]:Save
+								This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Harvest Timer]}]
+								Script[EQ2Harvest].Variable[HarvestTime]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 						<checkbox Name='Intruder Detect' Template='EQ2.checkbox'>
@@ -1321,3 +1321,4 @@
 		</Children>
 	</Window>
 </ISUI>
+

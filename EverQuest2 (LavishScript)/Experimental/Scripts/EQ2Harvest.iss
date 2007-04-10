@@ -372,9 +372,9 @@ function CheckAggro()
 			wait 50
 		}
 		CurrentAction:Set[Resuming Harvest...]
-		;Not sure we should resume movement here, but figure more movement is better
-		call StartRunning
+		Return "RESOLVED"
 	}
+	return SUCCESS
 }
 
 function StuckState()
