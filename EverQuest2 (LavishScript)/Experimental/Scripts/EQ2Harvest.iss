@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Harvest.iss Version 1.2.03
+; EQ2Harvest.iss Version 1.3
 ;
 ; Written by: Blazer
 ; Updated: 08/21/06 by Syliac
@@ -13,7 +13,10 @@
 ; The Navigational file needs to consist of at least a Starting and Ending point with the labels
 ; defined when you run the script.
 
-#include moveto.iss
+#ifndef _moveto_
+	#include "${LavishScript.HomeDirectory}/Scripts/moveto.iss"
+#endif
+
 
 ;=====================================
 ;====== Keyboard Configuration =======
@@ -64,6 +67,7 @@ variable int HarvestStat[9]
 variable int TotalStat
 variable int ImbueStat
 variable int RareStat
+variable bool UseSprint=FALSE
 variable bool StartHarvest=FALSE
 variable bool PauseHarvest=FALSE
 variable bool DestroyMeat=FALSE
@@ -222,6 +226,7 @@ function PathingRoutine()
 		do
 		{
 			call CheckAggro
+			call CheckTimer
 
 			harvested:Set[FALSE]
 
@@ -230,6 +235,11 @@ function PathingRoutine()
 			WPZ:Set[${NavPath.Point[${PathIndex}].Z}]
 
 			CurrentAction:Set[Moving through Nav Points...]
+
+			if ${UseSprint} && ${Me.ToActor.Power} > 80
+			{
+				EQ2Execute /useability Sprint
+			}
 
 			call moveto ${WPX} ${WPZ} 5 1 3 1
 
@@ -243,61 +253,66 @@ function PathingRoutine()
 			do
 			{
 				call CheckAggro
+				call CheckTimer
 
 				Harvesting:Set[FALSE]
 				NodeID:Set[${Harvest.Node}]
 
 				if ${NodeID}
 				{
+					call CheckAggro
 					CurrentAction:Set[Found Node ${Actor[${NodeID}].Name}]
 					Harvesting:Set[TRUE]
-					if ${IntruderAction} && ${IntruderStatus}==1 && ${IntruderDetect}
+
+					if !${Harvest.PCDetected}
 					{
-						call AvoidAction
-					}
-					else
-					{
-						if !${Harvest.PCDetected}
+						if ${UseSprint} && ${Me.ToActor.Power} > 80
 						{
-							call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 5 0 3 1
+							EQ2Execute /useability Sprint
+						}
+						call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 5 0 3 1
 
-							; Check to see if we are stuck getting to the node
-							if ${Return.Equal[STUCK]}
+						; Check to see if we are stuck getting to the node
+						if ${Return.Equal[STUCK]}
+						{
+							Harvest:SetBadNode[${NodeID}]
+							call StuckState
+							continue
+						}
+
+						while ${Me.IsMoving}
+						{
+							waitframe
+						}
+						; even with the above it still jumps the gun every so often...lag?
+						wait 1
+
+						if ${UseSprint}
+						{
+							Me.Maintained[Sprint]:Cancel
+						}
+
+						call Harvest
+						harvested:Set[TRUE]
+
+						if !${IntruderAction} && ${IntruderStatus}==1 && ${IntruderDetect}
+						{
+							isintruder:Set[TRUE]
+							do
 							{
-								Harvest:SetBadNode[${NodeID}]
-								call StuckState
-								continue
+								call CheckAggro
+								call CheckTimer
 							}
+							while ${isintruder}
 
-							while ${Me.IsMoving}
+							if ${Me.ToActor.IsAFK}
 							{
-								waitframe
-							}
-							; even with the above it still jumps the gun every so often...lag?
-							wait 1
-
-							call Harvest
-							harvested:Set[TRUE]
-
-							if !${IntruderAction} && ${IntruderStatus}==1 && ${IntruderDetect}
-							{
-								isintruder:Set[TRUE]
-								do
-								{
-									call CheckAggro
-									call AvoidAction
-									call checkkeys
-								}
-								while ${isintruder}
-
-								if ${Me.ToActor.IsAFK}
-								{
-									EQ2Execute /afk
-									wait 10
-								}
+								EQ2Execute /afk
+								wait 10
 							}
 						}
 					}
+
 				}
 			}
 			while ${Harvesting}
@@ -346,21 +361,21 @@ function PathingRoutine()
 function CheckAggro()
 {
 	;Stop Moving and pause if we have aggro
-	if ${MobAggro.Detect}
+	if ${MobCheck.Detect}
 	{
 		CurrentAction:Set[Aggro Detected Pausing...]
-		;if ${Me.IsMoving}
-		;{
-		;	CurrentAction:Set[Halting Movement...]
-		;	call StopRunning
-		;}
+		call StopRunning
+		if ${UseSprint}
+		{
+			Me.Maintained[Sprint]:Cancel
+		}
 
 		CurrentAction:Set[Waiting till aggro gone, and over 90 health...]
 		do
 		{
-			wait 30
+			wait 3
 		}
-		while ${MobAggro.Detect} || ${Me.ToActor.Health}<90
+		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
 
 		CurrentAction:Set[Checking For Loot...]
 
@@ -397,7 +412,7 @@ function StuckState()
 
 	WPX:Set[${NavPath.Point[1].X}]
 	WPZ:Set[${NavPath.Point[1].Z}]
-	call moveto ${WPX} ${WPZ} 5 1 3 1
+	call moveto ${WPX} ${WPZ} 5 0 3 1
 
 	; Are we still Stuck?
 	if ${Return.Equal[STUCK]}
@@ -422,30 +437,23 @@ function StuckState()
 }
 
 
-function checkkeys()
+function CheckTimer()
 {
-	if "${checkend(bool)}"
-	{
-		announce "Cleaning up Inventory before exiting..." 5 4
-		call checkinventory 10 "CleanUpOnExit"
-
-		Script:End
-	}
-
-	if "${Math.Calc[${Time.Timestamp}-${timer}]}>${Math.Calc[${timerval}*60]} && ${timerval}"
+	if ${TimerOn} && ${Math.Calc[${HarvestTime}-(${Time.Timestamp}-${StartTimer})/60]} < 0
 	{
 		wait 20
-		if ${howtoquit}
+		if ${HowtoQuit}
 		{
 			timed 100 EQ2Execute /camp desktop
 		}
 
-		announce "Cleaning up Inventory before exiting..." 5 4
+		announce "Timer expired. Cleaning up inventory before exiting..." 5 4
 		call checkinventory 10 "CleanUpOnExit"
 
 		Script:End
 	}
 }
+
 
 function InvalidNode(string Line)
 {
@@ -521,7 +529,7 @@ function Harvest()
 			}
 		if ${HarvestTool[${NodeType}].Equal["Mining"]}
 			{
-			Me.Inventory[Sandalwood Pick]:Equip
+			Me.Inventory[Calibrated Automated Pickaxe]:Equip
 			}
 		if ${HarvestTool[${NodeType}].Equal["Gathering"]}
 			{
@@ -531,18 +539,27 @@ function Harvest()
 			{
 			; Shears seem to stack with saw (but not shovel) but we have to have both slots free
 			; for auto-equip to work.
-			Me.Equipment[Sandalwood Pick]:UnEquip
+			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
 			Me.Equipment[Sandalwood Shovel]:UnEquip
 			Me.Equipment[Sandalwood Trap]:UnEquip
+			Me.Equipment[Calibrated Automated Watersafe Net]:UnEquip
+			waitframe
 			Me.Inventory[Sandalwood Saw]:Equip
-			Me.Inventory[Miscalibrated Automated Shears]:Equip
+			Me.Inventory[Calibrated Automated Shears]:Equip
 			}
 		if ${HarvestTool[${NodeType}].Equal["Fishing"]}
 			{
+			Me.Equipment[Calibrated Automated Shears]:UnEquip
+			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
+			Me.Equipment[Sandalwood Shovel]:UnEquip
+			Me.Equipment[Sandalwood Trap]:UnEquip
+			waitframe
 			Me.Inventory[Sandalwood Fishing Pole]:Equip
+			Me.Inventory[Calibrated Automated Watersafe Net]:Equip
 			}
 
 		EQ2Execute /useability ${HarvestTool[${NodeType}]}
+
 
 		WaitFor "Too far away" "Interrupted!" "Can't see target" "You cannot @*@" 30
 
@@ -578,7 +595,7 @@ function Harvest()
 			CurrentAction:Set[Waiting ${waittime} seconds for Random delay]
 			wait 5
 		}
-		while ${waittime}
+		while ${waittime} > 0
 	}
 }
 
@@ -881,6 +898,7 @@ objectdef EQ2HarvestBot
 		IntruderAction:Set[${SettingXML[${ConfigFile}].Set[General Settings].GetInt[If intruder detected - Stand there (0) or (1) keep moving till he goes?,1]}]
 		NodeDelay:Set[${SettingXML[${ConfigFile}].Set[General Settings].GetInt[Maximum Random Delay between Nodes?,0]}]
 		DestroyMeat:Set[${SettingXML[${ConfigFile}].Set[General Settings].GetString[Destroy All Meat?,FALSE]}]
+		UseSprint:Set[${SettingXML[${ConfigFile}].Set[General Settings].GetString[Sprint between nodes?,FALSE]}]
 		blacklistcount:Set[${SettingXML[${ConfigFile}].Set[Bot Police Detection - BLACK LIST].Keys}]
 
 		tempvar:Set[1]
@@ -1189,6 +1207,7 @@ method Collectible(string Line, string result)
 }
 
 
+
 atom atexit()
 {
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
@@ -1197,9 +1216,16 @@ atom atexit()
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
 
-	press -hold MOVEBACKWARD
-	wait 3
+	if ${Me.IsMoving}
+	{
+		press MOVEFORWARD
+	}
 	press -release MOVEBACKWARD
+	press -release STRAFELEFT
+	press -release STRAFERIGHT
+	press -release TURNLEFT
+	press -release TURNRIGHT
 }
+
 
 

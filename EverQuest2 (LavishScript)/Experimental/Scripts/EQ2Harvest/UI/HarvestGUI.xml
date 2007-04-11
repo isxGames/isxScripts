@@ -696,6 +696,9 @@
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>Total Harvests:</Text>
+							<AutoTooltip>
+								Total resources harvested by the bot
+							</AutoTooltip>
 						</Text>
 						<Text Name='Total Stat' Template='EQ2.text'>
 							<X>33%</X>
@@ -716,6 +719,10 @@
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
 							<Text>(Batch Count: ${Script[EQ2Harvest].VariableScope.BatchCount} / ${Script[EQ2Harvest].VariableScope.DestroyBatch})</Text>
+							<AutoTooltip>
+								This is how many items remain to be harvested
+								before extras are destroyed (see options)
+							</AutoTooltip>
 						</Text>
 						<checkbox Name='DestroyMeat' Template='EQ2.checkbox'>
 							<X>45%</X>
@@ -740,6 +747,10 @@
 								}
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Destroy All Meat?,${Script[EQ2Harvest].VariableScope.DestroyMeat}]:Save
 							</OnLeftClick>
+							<AutoTooltip>
+								When this box is checked, any harvested items containing "meat"
+								in the name will be destroyed regardless of the settings above
+							</AutoTooltip>
 						</checkbox>
 						<Text Name='Imbue Text' Template='EQ2.text'>
 							<X>9%</X>
@@ -747,6 +758,9 @@
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>Imbue Stones:</Text>
+							<AutoTooltip>
+								Total imbue stones harvested by the bot
+							</AutoTooltip>
 						</Text>
 						<Text Name='Imbue Stat' Template='EQ2.text'>
 							<X>33%</X>
@@ -766,6 +780,9 @@
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>Rares:</Text>
+							<AutoTooltip>
+								Total rare resources harvested by the bot
+							</AutoTooltip>
 						</Text>
 						<Text Name='Rare Stat' Template='EQ2.text'>
 							<X>33%</X>
@@ -781,15 +798,19 @@
 						</Text>
 						<Text Name='Time Elapsed Text' Template='EQ2.text'>
 							<X>30%</X>
-							<Y>310</Y>
+							<Y>300</Y>
 							<Width>60%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
 							<Text>Time Elapsed:         (minutes)</Text>
+							<AutoTooltip>
+								This indicates how long the bot has been running
+							</AutoTooltip>
+
 						</Text>
 						<Text Name='Time Elapsed' Template='EQ2.text'>
 							<X>50%</X>
-							<Y>312</Y>
+							<Y>302</Y>
 							<Height>20</Height>
 							<Width>20%</Width>
 							<Alignment>Left</Alignment>
@@ -799,19 +820,33 @@
 							</Font>
 							<Text>${If[${Script[EQ2Harvest].VariableScope.StartTimer},${Math.Calc[(${Time.Timestamp}-${Script[EQ2Harvest].VariableScope.StartTimer})/60].Int},0]}</Text>
 						</Text>
+						<Text Name='Time Remaining Text' Template='EQ2.text'>
+							<X>20%</X>
+							<Y>320</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Font>
+								<Color>FFFF00FF</Color>
+							</Font>
+							<Text>${If[${Script[EQ2Harvest].VariableScope.StartHarvest}&amp;&amp;${Script[EQ2Harvest].VariableScope.TimerOn},Harvesting will end in ${Math.Calc[1+${Script[EQ2Harvest].VariableScope.HarvestTime}-(${Time.Timestamp}-${Script[EQ2Harvest].VariableScope.StartTimer})/60].Int} minutes,]}</Text>
+						</Text>
 						<Commandbutton name='Quit Harvest' Template='EQ2.Commandbutton'> 
 							<X>27%</X> 
-							<Y>335</Y> 
+							<Y>345</Y> 
 							<Width>15%</Width> 
 							<Height>25</Height>
 							<Text>Quit</Text>
 							<OnLeftClick>
 								Script[EQ2Harvest]:End
 							</OnLeftClick>
+							<AutoTooltip>
+								Close this window and end the script
+							</AutoTooltip>
 						</Commandbutton>
 						<Commandbutton name='Start Harvest' Template='EQ2.Commandbutton'> 
 							<X>50%</X> 
-							<Y>335</Y> 
+							<Y>345</Y> 
 							<Width>25%</Width> 
 							<Height>25</Height>
 							<Text>Start Harvesting</Text>
@@ -829,6 +864,9 @@
 									Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
 								}
 							</OnLeftClick>
+							<AutoTooltip>
+								Start or pause the bot
+							</AutoTooltip>
 						</Commandbutton>
 					</Tab>
 					<Tab Name='Options'>
@@ -845,15 +883,19 @@
 						</Text>
 						<Text Name='Roaming Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>40</Y>
+							<Y>25</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
 							<Text>* Roaming Range:</Text>
+							<AutoTooltip>
+								How close a node must be to the harvesting path for the
+								bot to attempt to harvest it.
+							</AutoTooltip>
 						</Text>
 						<Textentry Name='Roaming Range' Template='EQ2.textentry'>
 							<X>30%</X>
-							<Y>40</Y>
+							<Y>25</Y>
 							<Width>8%</Width>
 							<Height>15</Height>
 							<MaxLength>4</MaxLength>
@@ -866,15 +908,20 @@
 						</Textentry>
 						<Text Name='Roam Out Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>60</Y>
+							<Y>45</Y>
 							<Width>80%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
 							<Text>* Distance outside the Max Roaming Range:</Text>
+							<AutoTooltip>
+								How close a node must be to the bot to override the above setting
+								(this lets you harvest nodes outside of your normal path "since
+								you're already there")
+							</AutoTooltip>
 						</Text>
 						<Textentry Name='External Roaming Value' Template='EQ2.textentry'>
 							<X>66%</X>
-							<Y>60</Y>
+							<Y>45</Y>
 							<Width>8%</Width>
 							<Height>15</Height>
 							<MaxLength>4</MaxLength>
@@ -885,17 +932,62 @@
 								Script[EQ2Harvest].Variable[HarvestClose]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<Text Name='Quit Text' Template='EQ2.text'>
+						<checkbox Name='Harvest Timer Check' Template='EQ2.checkbox'>
 							<X>5%</X>
 							<Y>80</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>Use Harvest Timer:              (minutes)</Text>
+							<OnLoad>
+								if ${Script[EQ2Harvest].Variable[TimerOn]}
+								{
+									UIElement[Harvest Timer Check@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${UIElement[Harvest Timer Check@Options@EQ2Harvest Tabs@Harvest].Checked}
+								{
+									Script[EQ2Harvest].VariableScope.TimerOn:Set[TRUE]
+								}
+								else
+								{
+									Script[EQ2Harvest].VariableScope.TimerOn:Set[FALSE]
+								}
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Is Harvest Timer On?,${Script[EQ2Harvest].VariableScope.TimerOn}]:Save
+							</OnLeftClick>
+							<AutoTooltip>
+								Enabling this option will cause the harvesting session to
+								end after the time specified has elapsed
+							</AutoTooltip>
+						</checkbox>
+						<Textentry Name='Harvest Timer' Template='EQ2.textentry'>
+							<X>37%</X>
+							<Y>82</Y>
+							<Width>10%</Width>
+							<Height>15</Height>
+							<MaxLength>5</MaxLength>
+							<OnLoad>This:SetText[${Script[EQ2Harvest].Variable[HarvestTime]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Harvest Timer,${This.Text}]:Save
+								This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Harvest Timer]}]
+								Script[EQ2Harvest].Variable[HarvestTime]:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						<Text Name='Quit Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>100</Y>
 							<Width>50%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
 							<Text>* At the end of a Harvest Session:</Text>
+							<AutoTooltip>
+								Decide whether you'd like to leave the game completely
+								or just end the script when the harvest timer elapses.
+							</AutoTooltip>
 						</Text>
 						<checkbox Name='End Script Option' Template='EQ2.checkbox'>
 							<X>51%</X>
-							<Y>78</Y>
+							<Y>98</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>End Script</Text>
@@ -914,7 +1006,7 @@
 						</checkbox>
 						<checkbox Name='Camp Desktop Option' Template='EQ2.checkbox'>
 							<X>71%</X>
-							<Y>78</Y>
+							<Y>98</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>Camp to Desktop</Text>
@@ -933,14 +1025,19 @@
 						</checkbox>
 						<Text Name='Destroy Batch Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>100</Y>
+							<Y>120</Y>
 							<Width>60%</Width>
 							<Height>20</Height>
-							<Text>* Nodes to Harvest before Destroying:</Text>
+							<Text>* Items to harvest before destroying:</Text>
+							<AutoTooltip>
+								This is how many total items must be harvested
+								before extras are destroyed.  (Which may take
+								several seconds with full bags)
+							</AutoTooltip>
 						</Text>
 						<Textentry Name='Destroy Batch' Template='EQ2.textentry'>
 							<X>58%</X>
-							<Y>100</Y>
+							<Y>120</Y>
 							<Width>10%</Width>
 							<Height>15</Height>
 							<MaxLength>5</MaxLength>
@@ -951,9 +1048,65 @@
 								Script[EQ2Harvest].Variable[DestroyBatch]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
+						<Commandbutton name='Run Pathing Script' Template='EQ2.Commandbutton'> 
+							<X>5%</X> 
+							<Y>156</Y> 
+							<Width>90%</Width> 
+							<Height>25</Height>
+							<Text>Launch EQ2HarvestPath</Text>
+							<OnLeftClick>
+								eq2echo Launching pather, please restart eq2harvest after setting up paths
+								run EQ2HarvestPath auto 5
+								Script[EQ2Harvest]:End
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name='Start Location Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>180</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Text>* Starting Location:</Text>
+						</Text>
+						<combobox name='Start Location' Template='EQ2.Combobox'>
+							<X>32%</X>
+							<Y>180</Y>
+							<Width>63%</Width>
+							<Height>20</Height>
+							<Items></items>
+							<Onload>
+								This:AddItem[${Script[EQ2Harvest].Variable[StartPoint]}]
+								This.Item[1]:Select
+							</OnLoad>
+							<OnSelect>
+								Script[EQ2Harvest].Variable[StartPoint]:Set[${This.SelectedItem.Text}]
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Starting Point,${This.SelectedItem.Text}]:Save
+							</OnSelect>
+						</combobox>
+						<Text Name='Finish Location Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>200</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Text>* Finish Location:</Text>
+						</Text>
+						<combobox name='Finish Location' Template='EQ2.Combobox'>
+							<X>32%</X>
+							<Y>200</Y>
+							<Width>63%</Width>
+							<Height>20</Height>
+							<Items></items>
+							<Onload>
+								This:AddItem[${Script[EQ2Harvest].Variable[FinishPoint]}]
+								This.Item[1]:Select
+							</OnLoad>
+							<OnSelect>
+								Script[EQ2Harvest].Variable[FinishPoint]:Set[${This.SelectedItem.Text}]
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Finishing Point,${This.SelectedItem.Text}]:Save
+							</OnSelect>
+						</combobox>
 						<Text Name='Path Route Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>120</Y>
+							<Y>220</Y>
 							<Width>25%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
@@ -961,7 +1114,7 @@
 						</Text>
 						<checkbox Name='Path Route 1' Template='EQ2.checkbox'>
 							<X>28%</X>
-							<Y>118</Y>
+							<Y>218</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>One way</Text>
@@ -981,7 +1134,7 @@
 						</checkbox>
 						<checkbox Name='Path Route 2' Template='EQ2.checkbox'>
 							<X>46%</X>
-							<Y>118</Y>
+							<Y>218</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>To and Back</Text>
@@ -1001,7 +1154,7 @@
 						</checkbox>
 						<checkbox Name='Path Route 3' Template='EQ2.checkbox'>
 							<X>69%</X>
-							<Y>118</Y>
+							<Y>218</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>Continous Loop</Text>
@@ -1019,90 +1172,9 @@
 								Script[EQ2Harvest].VariableScope.PathRoute:Set[3]
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Start Location Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>150</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Text>* Starting Location:</Text>
-						</Text>
-						<combobox name='Start Location' Template='EQ2.Combobox'>
-							<X>32%</X>
-							<Y>150</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Items></items>
-							<Onload>
-								This:AddItem[${Script[EQ2Harvest].Variable[StartPoint]}]
-								This.Item[1]:Select
-							</OnLoad>
-							<OnSelect>
-								Script[EQ2Harvest].Variable[StartPoint]:Set[${This.SelectedItem.Text}]
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Starting Point,${This.SelectedItem.Text}]:Save
-							</OnSelect>
-						</combobox>
-						<Text Name='Finish Location Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>180</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Text>* Finish Location:</Text>
-						</Text>
-						<combobox name='Finish Location' Template='EQ2.Combobox'>
-							<X>30%</X>
-							<Y>180</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Items></items>
-							<Onload>
-								This:AddItem[${Script[EQ2Harvest].Variable[FinishPoint]}]
-								This.Item[1]:Select
-							</OnLoad>
-							<OnSelect>
-								Script[EQ2Harvest].Variable[FinishPoint]:Set[${This.SelectedItem.Text}]
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Finishing Point,${This.SelectedItem.Text}]:Save
-							</OnSelect>
-						</combobox>
-						<checkbox Name='Harvest Timer Check' Template='EQ2.checkbox'>
-							<X>5%</X>
-							<Y>210</Y>
-							<Width>20%</Width>
-							<Height>20</Height>
-							<Text>Set Harvest Timer:              (minutes)</Text>
-							<OnLoad>
-								if ${Script[EQ2Harvest].Variable[TimerOn]}
-								{
-									UIElement[Harvest Timer Check@Options@EQ2Harvest Tabs@Harvest]:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								if ${UIElement[Harvest Timer Check@Options@EQ2Harvest Tabs@Harvest].Checked}
-								{
-									Script[EQ2Harvest].VariableScope.TimerOn:Set[TRUE]
-								}
-								else
-								{
-									Script[EQ2Harvest].VariableScope.TimerOn:Set[FALSE]
-								}
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Is Harvest Timer On?,${Script[EQ2Harvest].VariableScope.TimerOn}]:Save
-							</OnLeftClick>
-						</checkbox>
-						<Textentry Name='Harvest Timer' Template='EQ2.textentry'>
-							<X>37%</X>
-							<Y>212</Y>
-							<Width>10%</Width>
-							<Height>15</Height>
-							<MaxLength>5</MaxLength>
-							<OnLoad>This:SetText[${Script[EQ2Harvest].Variable[HarvestTime]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Harvest Timer,${This.Text}]:Save
-								This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Harvest Timer]}]
-								Script[EQ2Harvest].Variable[HarvestTime]:Set[${This.Text}]
-							</OnChange>
-						</Textentry>
 						<checkbox Name='Intruder Detect' Template='EQ2.checkbox'>
 							<X>5%</X>
-							<Y>240</Y>
+							<Y>260</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>Detect BOT Police following you</Text>
@@ -1126,14 +1198,14 @@
 						</checkbox>
 						<Text Name='Intruder Action Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>270</Y>
+							<Y>280</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>* If Intruder detected:</Text>
 						</Text>
 						<checkbox Name='Stand There' Template='EQ2.checkbox'>
 							<X>35%</X>
-							<Y>268</Y>
+							<Y>278</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>Stand there</Text>
@@ -1152,7 +1224,7 @@
 						</checkbox>
 						<checkbox Name='Keep Moving' Template='EQ2.checkbox'>
 							<X>58%</X>
-							<Y>268</Y>
+							<Y>278</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>keep moving till he goes</Text>
@@ -1171,15 +1243,20 @@
 						</checkbox>
 						<Text Name='Node Delay Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>290</Y>
+							<Y>320</Y>
 							<Width>90%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
 							<Text>* Maximum Random Delay between Nodes:              (seconds)</Text>
+							<AutoTooltip>
+								When set, the bot will wait for a random amount of time before
+								looking for the next node after harvesting.  (So that it looks
+								less "bot-like")
+							</AutoTooltip>
 						</Text>
 						<Textentry Name='Node Delay' Template='EQ2.textentry'>
 							<X>66%</X>
-							<Y>290</Y>
+							<Y>320</Y>
 							<Width>10%</Width>
 							<Height>15</Height>
 							<MaxLength>5</MaxLength>
@@ -1190,6 +1267,34 @@
 								Script[EQ2Harvest].Variable[NodeDelay]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
+						<checkbox Name='Sprint Between Nodes' Template='EQ2.checkbox'>
+							<X>5%</X>
+							<Y>340</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>Sprint from node to node</Text>
+							<OnLoad>
+								if ${Script[EQ2Harvest].VariableScope.UseSprint}
+								{
+									UIElement[Sprint Between Nodes@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${UIElement[Sprint Between Nodes@Options@EQ2Harvest Tabs@Harvest].Checked}
+								{
+									Script[EQ2Harvest].VariableScope.UseSprint:Set[TRUE]
+								}
+								else
+								{
+									Script[EQ2Harvest].VariableScope.UseSprint:Set[FALSE]
+								}
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Sprint between nodes?,${Script[EQ2Harvest].VariableScope.UseSprint}]:Save
+							</OnLeftClick>
+							<AutoTooltip>
+								When this box is checked, the bot will activate your sprint
+								ability while running from node to node if your power is over 80%
+							</AutoTooltip>
+						</checkbox>
 					</Tab>
 					<Tab Name='Other'>
 						<Commandbutton name='Add Collection' Template='EQ2.Commandbutton'> 
@@ -1321,4 +1426,3 @@
 		</Children>
 	</Window>
 </ISUI>
-
