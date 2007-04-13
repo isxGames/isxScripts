@@ -109,12 +109,12 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[AnnounceMode]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Announce Debuffs",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[AnnounceMode]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Announce Debuffs",FALSE]:Save
 			}
 		</OnLeftClick>
@@ -129,17 +129,17 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[BuffLunge]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[BuffLunge]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Lunge Reversal]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='MaintainPoison' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
 		<Y>150</Y>
@@ -149,17 +149,17 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[MaintainPoison]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5%</X>
 		<Y>170</Y>
@@ -401,12 +401,12 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
 			}
 		</OnLeftClick>
