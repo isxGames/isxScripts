@@ -22,7 +22,7 @@
 ;Fixed possible ignoring of adds when waiting for priestpower
 ;
 ;Fixed a bug causing spells to be interupted occasionally
-;	
+;
 ;
 ; Description:
 ; ------------
@@ -187,10 +187,10 @@ function main()
 	variable string tempnme
 
 	Turbo 1000
-	
+
 	;Script:Squelch
 	;Script:EnableProfiling
-	
+
 	EQ2Bot:Init_Config
 	EQ2Bot:Init_Triggers
 	EQ2Bot:Init_Character
@@ -309,7 +309,7 @@ function main()
 			if !${MainTank}
 			{
 				if (${Actor[${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssist}].Target.InCombatMode}
-				{	
+				{
 					KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
 				}
 
@@ -319,7 +319,7 @@ function main()
 					{
 						FollowTask:Set[2]
 						WaitFor ${Script[follow].Variable[pausestate]} 30
-						if ${AutoMelee} 
+						if ${AutoMelee}
 						{
 							call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
 						}
@@ -354,7 +354,7 @@ function main()
 					if ${AutoLoot}
 					{
 						call CheckLoot
-					}	
+					}
 					call ScanAdds
 				}
 			}
@@ -363,7 +363,7 @@ function main()
 			if !${Mob.Detect} || (${MainTank} && ${Me.GroupCount}!=1)
 			{
 				call Buff_Routine ${tempvar}
-				
+
 				;allow class file to set a var to override eq2bot stance / pet casting
 				if ${NoEQ2BotStance}
 				{
@@ -439,7 +439,7 @@ function main()
 							break
 					}
 				}
-				
+
 			}
 			call Buff_Routine ${tempvar}
 		}
@@ -449,9 +449,9 @@ function main()
 		{
 			if ${Mob.Detect}
 			{
-				
+
 			}
-			
+
 			EQ2Bot:PriestPower
 
 			if ${PathType}==2 && ${priesthaspower} && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck}
@@ -536,7 +536,7 @@ function main()
 		if (${Actor[${MainTankPC}].Health}==-99 && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].Health}==-99)
 		{
 			EQ2Bot:MainTank_Dead
-		}		
+		}
 
 		; Check that we are close to MainAssist if we are following and not in combat
 		if ${Following} && ${Actor[${MainAssist}].Distance}>10 && ${Script[follow].Variable[pausestate]} && !${Mob.Detect}
@@ -546,62 +546,62 @@ function main()
 		}
 
 		if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60
-		{ 
-			if ${LootAll} 
+		{
+			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick 
-				wait 10 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
+				wait 10
 
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
-				{ 
-				     LootWndCount:Set[1] 
-				     do 
-				     { 
-					  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm} 
-					  { 
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
+				{
+				     LootWndCount:Set[1]
+				     do
+				     {
+					  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					  {
 					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 					       wait 10
-					  } 
-					  else 
-					  { 
+					  }
+					  else
+					  {
 					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
 					       wait 10
-					  } 
-				     } 
-				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
-				} 
-			} 
+					  }
+				     }
+				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				}
+			}
 			else
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
 			}
 		}
 		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
 		{
-			if ${LootAll} 
+			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick 
-				wait 10 
-		
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
-				{ 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
+				wait 10
+
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
+				{
 					LootWndCount:Set[1]
 					LootDecline:Set[0]
-				     	do 
-				     	{ 
-						if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm} 
-						{ 
+				     	do
+				     	{
+						if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						{
 						       LootDecline:Inc
-						} 
-				     	} 
-				     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
-				} 
-			} 
+						}
+				     	}
+				     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				}
+			}
 			else
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
 				wait 10
-			}		
+			}
  		}
 	}
 	while ${CurrentTask}
@@ -642,7 +642,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 	{
 		if ${SpellType[${tempvar}].Length}
 		{
-			
+
 			if ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
 			{
 				if ${targettobuff}
@@ -678,7 +678,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 
 						if ${targettobuff(exists)}
 						{
-							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]}) 
+							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]})
 							{
 								target ${targettobuff}
 								wait 10 ${Target.ID}==${targettobuff}
@@ -736,19 +736,19 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	{
 		return
 	}
-		
+
 	Me.Ability[${spell}]:Use
-	
+
 	;if spells are being interupted do to movement
 	;increase the wait below slightly. Default=10
 	wait 10
-	
+
 	do
 	{
 		waitframe
 	}
 	while ${Me.CastingSpell}
-	
+
 	return SUCCESS
 }
 
@@ -780,8 +780,8 @@ function Combat()
 			face ${Target.X} ${Target.Z}
 
 		}
-		
-		
+
+
 		; Main Tank needs to turn the mob away from the rest of the group
 		if ${PathType}==2 && ${MainTank}
 		{
@@ -813,7 +813,7 @@ function Combat()
 
 				if ${MainTank}
 				{
-					if ${Target.Target.ID}==${Me.ID} 
+					if ${Target.Target.ID}==${Me.ID}
 					{
 						call CheckMTAggro
 					}
@@ -825,13 +825,13 @@ function Combat()
 				else
 				{
 					Mob:CheckMYAggro
-					
+
 					if ${Actor[${MainAssist}].Health}==-99
 					{
 						EQ2Bot:MainAssist_Dead
 						break
 					}
-					
+
 					if ${Actor[${MainTankPC}].Health}==-99
 					{
 						EQ2Bot:MainTank_Dead
@@ -845,13 +845,13 @@ function Combat()
 				}
 
 				call Combat_Routine ${tempvar}
-				
+
 				if !${Me.AutoAttackOn} && ${AutoMelee}
 				{
 					EQ2Execute /toggleautoattack
 				}
-				
-				
+
+
 				if ${AutoMelee} && !${MainTank}
 				{
 					;check valid rear position
@@ -882,7 +882,7 @@ function Combat()
 				{
 					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 20
 				}
-				
+
 				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
 				{
 					if ${Math.Calc[${Time.Timestamp}-${mstimer}]}>70
@@ -896,12 +896,12 @@ function Combat()
 				{
 					break
 				}
-				
+
 				if (${Target.Health}<1 && ${MainTank})
 				{
 					break
 				}
-				
+
 				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssist}].Target.InCombatMode}
 				{
 					KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
@@ -1184,7 +1184,7 @@ function CheckPosition(int rangetype, int position)
 			minrange:Set[5.5]
 			if ${Me.Equipment[Ranged].Type.Equal[Weapon]}
 			{
-				
+
 				maxrange:Set[${Me.Equipment[Ranged].Range}]
 			}
 			else
@@ -1237,7 +1237,7 @@ function CheckPosition(int rangetype, int position)
 		{
 			face ${Target.X} ${Target.Z}
 		}
-		
+
 		call FastMove ${Target.X} ${Target.Z} ${maxrange}
 
 	}
@@ -1272,7 +1272,7 @@ function CheckPosition(int rangetype, int position)
 		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
 		{
 			face ${Target.X} ${Target.Z}
-		}		
+		}
 	}
 
 	if ${position}
@@ -1291,7 +1291,7 @@ function CheckPosition(int rangetype, int position)
 				}
 				break
 			case 2
-				
+
 				; Frontal Arc is 120 degree arc. Using 110 to allow for error
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
 				{
@@ -1309,16 +1309,16 @@ function CheckPosition(int rangetype, int position)
 				{
 					return
 				}
-				
+
 				;check if we are at the right flank
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
 				{
 					return
 				}
-				
+
 				;note parameter for GetToflank is null for right, 1 for left
-				
-				;check if we are on the left side of the mob, if so move to the left flank 
+
+				;check if we are on the left side of the mob, if so move to the left flank
 				if ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-180 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<0
 				{
 					call GetToFlank 1
@@ -1328,7 +1328,7 @@ function CheckPosition(int rangetype, int position)
 					; we must be on the right side of the mob so move to the right flank
 					call GetToFlank
 				}
-				break				
+				break
 			case default
 				break
 		}
@@ -1413,7 +1413,7 @@ function Pull(string npcclass)
 			}
 
 			switch ${CustomActor[${tcount}].Class}
-			{			
+			{
 				case templar
 				case inquisitor
 				case fury
@@ -1459,13 +1459,13 @@ function Pull(string npcclass)
 					;echo Move to target Range!
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
 				}
-				
+
 				if ${Pathtype}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<35
 				{
 					;echo Move to target Range!
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
 				}
-				
+
 				if ${Me.IsMoving}
 				{
 					press -release ${forward}
@@ -1502,7 +1502,7 @@ function Pull(string npcclass)
 				{
 					EQ2Execute /target_none
 				}
-				else 
+				else
 				{
 					if ${Return.Equal[TOOFARAWAY]} && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<8 && ${PathType}==2
 					{
@@ -1574,11 +1574,11 @@ function Pull(string npcclass)
 						}
 					}
 
-					
+
 					do
 					{
 						waitframe
-					} 
+					}
 					while ${Target.Distance}>10 && ${Target.Target.ID}==${Me.ID} && ${Target.ID}==${KillTarget}
 
 
@@ -1650,7 +1650,7 @@ function CheckLoot()
 			shwlootwdw:Set[FALSE]
 			tmptimer:Set[${Time.Timestamp}]
 			do
-			{ 
+			{
 				call LootWdw
 				call ProcessTriggers
 				WaitFor ${shwlootwdw} 5
@@ -1779,7 +1779,7 @@ function MovetoWP(string destination)
 	pathindex:Set[1]
 	movingtowp:Set[TRUE]
 	stuckcnt:Set[0]
-	
+
 	NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 
 	if ${PathType}==3
@@ -1924,7 +1924,7 @@ function MovetoWP(string destination)
 					return
 				}
 			}
-		}		
+		}
 		while ${pathindex:Inc}<=${NavPath.Points}
 
 		if (${pulling} || ${PathType}==3) && ${Me.IsMoving}
@@ -1945,7 +1945,7 @@ function MovetoMaster()
 	pathindex:Set[1]
 	stuckcnt:Set[0]
 
-	tmpdev:Set[${Math.Rand[${Math.Calc[${Deviation}*2+1]}]:Dec[${Deviation}]}]	
+	tmpdev:Set[${Math.Rand[${Math.Calc[${Deviation}*2+1]}]:Dec[${Deviation}]}]
 	MasterPoint:Set[${Navigation.World[${World}].NearestPoint[${Actor[${MainAssist}].X},${Actor[${MainAssist}].Y},${Actor[${MainAssist}].Z}]}
 	NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 
@@ -1982,7 +1982,7 @@ function MovetoMaster()
 					press -hold ${forward}
 				}
 			}
-		}		
+		}
 		while ${pathindex:Inc}<=${NavPath.Points}
 
 		if ${Me.IsMoving}
@@ -1993,13 +1993,13 @@ function MovetoMaster()
 	}
 }
 
-function ProcessTriggers() 
+function ProcessTriggers()
 {
 	if "${QueuedCommands}"
 	{
-		do 
+		do
 		{
-			ExecuteQueued 
+			ExecuteQueued
 		}
 		while "${QueuedCommands}"
 	}
@@ -2013,7 +2013,7 @@ function IamDead(string Line)
 	tempgrp:Set[1]
 
 	together:Set[1]
-	
+
 	echo "You have been killed"
 
 	if ${Me.GroupCount}==1
@@ -2049,7 +2049,7 @@ function IamDead(string Line)
 				wait 10
 			}
 			while ${wipegroup:Inc}<${Me.GroupCount}
- 			
+
  			if ${wipe}==${grpcnt}
 			{
  					echo "Everyone is dead, waiting 10 seconds to revive"
@@ -2076,7 +2076,7 @@ function IamDead(string Line)
 					{
 						EQ2Execute "/follow ${MainTankPC}"
 					}
-					
+
 					echo Waiting for group to reform
 					together:Set[1]
 					do
@@ -2119,7 +2119,7 @@ function IamDead(string Line)
 			{
 				Exit
 			}
-			
+
 			if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 			{
 				EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
@@ -2187,7 +2187,7 @@ function CheckMTAggro()
 
 				if ${Target(exists)} && (${Me.ID}!=${Target.ID})
 				{
-					face ${Target.X} ${Target.Z} 
+					face ${Target.X} ${Target.Z}
 				}
 
 				call Lost_Aggro ${KillTarget}
@@ -2209,7 +2209,7 @@ function CheckMTAggro()
 		{
 			face ${Target.X} ${Target.Z}
 		}
-	}	
+	}
 }
 
 function ScanAdds()
@@ -2243,67 +2243,67 @@ function ScanAdds()
 function LootWdw(string Line)
 {
 		if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60
-		{ 
-			if ${LootAll} 
+		{
+			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick 
-				wait 10 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
+				wait 10
 
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
-				{ 
-				     	LootWndCount:Set[1] 
-				     	do 
-				     	{ 
-						if ${LootConfirm} 
-						{ 
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
+				{
+				     	LootWndCount:Set[1]
+				     	do
+				     	{
+						if ${LootConfirm}
+						{
 							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 							wait 10
-						} 
-						else 
-						{ 
-							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick 
+						}
+						else
+						{
+							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
 							wait 10
-						} 
-					} 
-					while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
-				} 
-			} 
+						}
+					}
+					while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				}
+			}
 			else
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
 			}
 		}
 		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
 		{
-			if ${LootAll} 
+			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick 
-				wait 10 
-		
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} 
-				{ 
-				     	LootWndCount:Set[1] 
-				     	do 
-				     	{ 
-						if ${LootConfirm} 
-						{ 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
+				wait 10
+
+				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
+				{
+				     	LootWndCount:Set[1]
+				     	do
+				     	{
+						if ${LootConfirm}
+						{
 							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 							wait 10
-						} 
-						else 
-						{ 
+						}
+						else
+						{
 							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
 							wait 10
-						} 
-					} 
-					while ${LootWndCount:Inc} <= ${LootWindow.NumItems} 
-				} 
-			} 
+						}
+					}
+					while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				}
+			}
 			else
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick 
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
 				wait 10
-			}		
+			}
  		}
 }
 
@@ -2359,32 +2359,32 @@ function BotFollow(string Line, string FollowTarget)
 		}
 	}
 }
- 
+
 function BotStop()
 {
 	FollowTask:Set[0]
 }
- 
+
 function BotAbort()
 {
 	Script:End
 }
- 
+
 function BotCommand(string line, string doCommand)
 {
 	EQ2Execute /${doCommand}
 }
- 
+
 function BotTell(string line, string tellSender, string tellMessage)
 {
 	uplink relay ${MasterSession} "EQ2Echo ${tellSender} tells ${Me.Name}, ${tellMessage}"
 }
- 
+
 function BotAutoMeleeOn()
 {
-	AutoMelee:Set[TRUE]	
+	AutoMelee:Set[TRUE]
 }
- 
+
 function BotAutoMeleeOff()
 {
 	AutoMelee:Set[FALSE]
@@ -2392,7 +2392,7 @@ function BotAutoMeleeOff()
 	if ${Me.AutoAttackOn}
 	{
 		EQ2Execute /toggleautoattack
-	}	
+	}
 }
 
 function BotCastTarget(string line, string Spell, string castTarget)
@@ -2497,7 +2497,7 @@ function StartBot()
 	; Need to move this so that its set when MainAssist changes.
 	OriginalMA:Set[${MainAssist}]
 	OriginalMT:Set[${MainTankPC}]
-	
+
 
 	if !${PathType} && ${Following}
 	{
@@ -2626,7 +2626,7 @@ objectdef ActorCheck
 			Default
 				return FALSE
 		}
-		
+
 		;checks if mob is too far above or below us
 		if ${Me.Y}+10<${Actor[${actorid}].Y} || ${Me.Y}-10>${Actor[${actorid}].Y}
 		{
@@ -2682,7 +2682,8 @@ objectdef ActorCheck
 				tempvar:Set[1]
 				do
 				{
-					if (${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].PetID}
+					;if (${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].PetID}
+					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[$tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
 					{
 						return TRUE
 					}
@@ -3012,7 +3013,7 @@ objectdef EQ2BotObj
 						}
 					}
 					while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-				}		
+				}
 				while ${pathindex:Inc}<=${NavPath.Points}
 			}
 		}
@@ -3059,7 +3060,7 @@ objectdef EQ2BotObj
 		}
 		MainAssist:Set[${MainTankPC}]
 	}
-	
+
 	method MainTank_Dead()
 	{
 		variable int highesthp
@@ -3115,9 +3116,9 @@ objectdef EQ2BotObj
 					case monk
 					case paladin
 					case shadowknight
-						if ${Me.Raid[${tempgrp}].MaxHitPoints}>${highesthp}
+						if ${Me.Raid[${tempgrp}].MaxHealth}>${highesthp}
 						{
-							highesthp:Set[${Me.Raid[${tempgrp}].MaxHitPoints}]
+							highesthp:Set[${Me.Raid[${tempgrp}].MaxHealth}]
 							MainTank:Set[FALSE]
 							MainAssist:Set[${Me.Raid[${tempgrp}].Name}]
 						}
@@ -3268,7 +3269,7 @@ objectdef EQ2BotObj
 					elseif ${Me.Group[${tempvar}].ToActor.Power}>80 && !${KeepReactive}
 					{
 						priesthaspower:Set[TRUE]
-	
+
 					}
 					return
 				case default
@@ -3288,7 +3289,7 @@ function atexit()
 	EQ2Echo Ending EQ2Bot!
 	CurrentTask:Set[FALSE]
 	SettingXML[${charfile}]:Unload
-	SettingXML[${spellfile}]:Unload	
+	SettingXML[${spellfile}]:Unload
 
 	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"

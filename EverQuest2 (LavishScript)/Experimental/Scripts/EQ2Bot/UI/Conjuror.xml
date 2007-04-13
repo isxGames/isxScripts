@@ -85,7 +85,7 @@
 				{
 					if ${Me.Raid[${tmpvar}](exists)}
 					{
-						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24

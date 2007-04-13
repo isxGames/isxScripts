@@ -85,7 +85,7 @@
 				{
 					if ${Me.Raid[${tmpvar}](exists)}
 					{
-						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24
@@ -218,7 +218,7 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast DoT Spells]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5</X>
 		<Y>170</Y>
@@ -542,5 +542,5 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 </ISUI>
