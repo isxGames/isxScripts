@@ -371,17 +371,40 @@
 										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who are we following?,${This.SelectedItem.Text}]:Save
 									</OnSelect>
 									<OnLeftClick>
+										declare tmpvar int
 										This:ClearItems
-										if ${Me.Group[1](exists)}
-											This:AddItem[${Me.Group[1].Name}]
-										if ${Me.Group[2](exists)}
-											This:AddItem[${Me.Group[2].Name}]
-										if ${Me.Group[3](exists)}
-											This:AddItem[${Me.Group[3].Name}]
-										if ${Me.Group[4](exists)}
-											This:AddItem[${Me.Group[4].Name}]
-										if ${Me.Group[5](exists)}
-											This:AddItem[${Me.Group[5].Name}]
+										tmpvar:Set[1]
+										if ${Me.InRaid}
+										{
+											do
+											{
+												if ${Me.Raid[${tmpvar}](exists)}
+												{
+													This:AddItem[${Me.Raid[${tmpvar}].Name}]
+												}
+											}
+											while ${tmpvar:Inc}&lt;=24
+										}
+										else
+										{
+											do
+											{
+												if ${Me.Group[${tmpvar}](exists)}
+												{
+													This:AddItem[${Me.Group[${tmpvar}].Name}]
+												}
+												if ${Me.Group[${tmpvar}].PetID(exists)}
+												{
+													This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
+												}
+											}
+											while ${tmpvar:Inc}&lt;=5
+										}
+
+										if ${Actor[MyPet](exists)}
+										{
+											This:AddItem[${Me.PetName}]
+										}
 									</OnLeftClick>
 								</combobox>
 								<Text Name='Deviation Text' Template='EQ2.text'>

@@ -21,8 +21,8 @@ function Class_Declaration()
 	declare AoEMode bool script 0
 	declare SnareMode bool script 0
    	declare TankMode bool script 0
-    declare AnnounceMode bool script 0
-    declare BuffLunge bool script 0
+	declare AnnounceMode bool script 0
+	declare BuffLunge bool script 0
 	declare MaintainPoison bool script 1
 	declare DebuffPoisonShort string script
 	declare DammagePoisonShort string script
@@ -105,33 +105,39 @@ function Combat_Init()
 	Action[2]:Set[AA_WalkthePlank]
 	SpellRange[2,1]:Set[405]
 
-	Action[3]:Set[Rear_Attack1]
-	SpellRange[3,1]:Set[103]
+	Action[3]:Set[Melee_Attack1]
+	Power[3,1]:Set[20]
+	Power[3,2]:Set[100]
+	SpellRange[13,1]:Set[150]
 
-	Action[4]:Set[Rear_Attack2]
-	SpellRange[4,1]:Set[102]
+	Action[4]:Set[Melee_Attack2]
+	Power[4,1]:Set[20]
+	Power[4,2]:Set[100]
+	SpellRange[4,1]:Set[151]
 
-	Action[5]:Set[Rear_Attack3]
-	SpellRange[5,1]:Set[101]
+	Action[5]:Set[Rear_Attack1]
+	SpellRange[5,1]:Set[100]
+	SpellRange[5,2]:Set[103]
 
-	Action[6]:Set[Rear_Attack4]
-	SpellRange[6,1]:Set[100]
+	Action[6]:Set[Mastery]
 
-	Action[7]:Set[Mastery]
+	Action[7]:Set[DoubleUp]
+	SpellRange[7,1]:Set[319]
 
-	Action[8]:Set[DoubleUp]
-	SpellRange[8,1]:Set[319]
+	Action[8]:Set[Flank_Attack1]
+	SpellRange[8,1]:Set[110]
 
-	Action[9]:Set[Flank_Attack1]
-	SpellRange[9,1]:Set[110]
+	Action[9]:Set[Flank_Attack2]
+	SpellRange[9,1]:Set[111]
 
-	Action[10]:Set[Flank_Attack2]
-	SpellRange[10,1]:Set[111]
+	Action[10]:Set[BandofThugs]
+	MobHealth[10,1]:Set[50]
+	MobHealth[10,2]:Set[100]
+	SpellRange[10,1]:Set[386]
 
-	Action[11]:Set[BandofThugs]
-	MobHealth[11,1]:Set[50]
-	MobHealth[11,2]:Set[100]
-	SpellRange[11,1]:Set[386]
+	Action[11]:Set[Rear_Attack2]
+	SpellRange[11,1]:Set[102]
+	SpellRange[11,2]:Set[103]
 
 	Action[12]:Set[Taunt]
 	Power[12,1]:Set[20]
@@ -141,30 +147,28 @@ function Combat_Init()
 	SpellRange[12,1]:Set[160]
 	SpellRange[12,2]:Set[410]
 
-	Action[13]:Set[Melee_Attack1]
-	Power[13,1]:Set[20]
-	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[150]
+	Action[13]:Set[Rear_Attack3]
+	SpellRange[13,1]:Set[101]
+	SpellRange[13,2]:Set[103]
 
-	Action[14]:Set[Melee_Attack2]
+	Action[14]:Set[Melee_Attack3]
 	Power[14,1]:Set[20]
 	Power[14,2]:Set[100]
-	SpellRange[14,1]:Set[151]
+	SpellRange[14,1]:Set[152]
 
-	Action[15]:Set[Melee_Attack3]
+	Action[15]:Set[Melee_Attack4]
 	Power[15,1]:Set[20]
 	Power[15,2]:Set[100]
-	SpellRange[15,1]:Set[152]
+	SpellRange[15,1]:Set[153]
 
-	Action[16]:Set[Melee_Attack4]
+	Action[16]:Set[Melee_Attack5]
 	Power[16,1]:Set[20]
 	Power[16,2]:Set[100]
-	SpellRange[16,1]:Set[153]
+	SpellRange[16,1]:Set[154]
 
-	Action[17]:Set[Melee_Attack5]
-	Power[17,1]:Set[20]
-	Power[17,2]:Set[100]
-	SpellRange[6,1]:Set[154]
+	Action[17]:Set[Rear_Attack4]
+	SpellRange[17,1]:Set[100]
+	SpellRange[17,2]:Set[103]
 
 	Action[18]:Set[Snare]
 	Power[18,1]:Set[60]
@@ -284,7 +288,7 @@ function Buff_Routine(int xAction)
 		case AA_Lunge_Reversal
 			if ${BuffLunge}
 			{
-				call CastCARange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
 			{
@@ -478,6 +482,7 @@ function Combat_Routine(int xAction)
 
 	if ${OffenseMode}
 	{
+ 		;echo offense mode
  		;This routine optomized for group dps role
 		switch ${Action[${xAction}]}
 		{
@@ -521,11 +526,15 @@ function Combat_Routine(int xAction)
 			case Rear_Attack4
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget} 0 0 1
 				}
-				elseif ${Target.Target.ID}!=${Me.ID}
+				elseif ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 1 ${KillTarget}
+				}
+				else
+				{
+					Echo direction check failed or its targeting me
 				}
 				break
 			case Mastery
@@ -544,13 +553,13 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
 						Me.Inventory[${WeaponRapier}]:Equip
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 
 				}
@@ -561,13 +570,13 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
 						Me.Inventory[${WeaponSword}]:Equip
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 
 				}
@@ -577,13 +586,13 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
 						Me.Inventory[${WeaponDagger}]:Equip
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 
 				}
@@ -609,7 +618,7 @@ function Combat_Routine(int xAction)
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 				}
-				elseif ${Target.Target.ID}!=${Me.ID}
+				elseif ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
 				}
@@ -640,7 +649,7 @@ function Combat_Routine(int xAction)
 				{
 
 				}
-				elseif ${Target.Target.ID}!=${Me.ID}
+				elseif ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
 				}
@@ -668,7 +677,7 @@ function Combat_Routine(int xAction)
 		{
 			if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
 			{
-				call CastCARange 405 0 1 0 ${KillTarget}
+				call CastSpellRange 405 0 1 0 ${KillTarget}
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 				{
 					call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
@@ -678,7 +687,7 @@ function Combat_Routine(int xAction)
 			{
 				Me.Inventory[${WeaponRapier}]:Equip
 				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastCARange 405 0 1 0 ${KillTarget}
+				call CastSpellRange 405 0 1 0 ${KillTarget}
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 				{
 					call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
@@ -723,13 +732,13 @@ function Combat_Routine(int xAction)
 					{
 						if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 						{
-							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 						{
 							Me.Inventory[${WeaponSword}]:Equip
 							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 
 					}
@@ -739,13 +748,13 @@ function Combat_Routine(int xAction)
 					{
 						if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
 						{
-							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 						{
 							Me.Inventory[${WeaponDagger}]:Equip
 							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 						}
 
 					}
@@ -831,13 +840,13 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
 						Me.Inventory[${WeaponSword}]:Equip
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 
 				}
@@ -847,13 +856,13 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
 						Me.Inventory[${WeaponDagger}]:Equip
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 
 				}
@@ -904,7 +913,7 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
 					{
-						call CastCARange 405 0 1 0 ${KillTarget}
+						call CastSpellRange 405 0 1 0 ${KillTarget}
 						if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 						{
 							call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
@@ -914,7 +923,7 @@ function Combat_Routine(int xAction)
 					{
 						Me.Inventory[${WeaponRapier}]:Equip
 						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastCARange 405 0 1 0 ${KillTarget}
+						call CastSpellRange 405 0 1 0 ${KillTarget}
 						if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 						{
 							call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
@@ -922,7 +931,7 @@ function Combat_Routine(int xAction)
 					}
 				}
 			case Trickery
-				if ${Target.Target.ID}==${Me.ID}
+				if ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}

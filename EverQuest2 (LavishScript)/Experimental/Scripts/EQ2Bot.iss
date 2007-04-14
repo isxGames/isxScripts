@@ -2662,10 +2662,10 @@ objectdef ActorCheck
 	member:bool AggroGroup(int actorid)
 	{
 		variable int tempvar
-
-		if ${Me.GroupCount}>1
+		
+		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
-			; Check if mob is aggro on group or pet
+			;Check if mob is aggro on group or pet
 			tempvar:Set[1]
 			do
 			{
@@ -2674,17 +2674,22 @@ objectdef ActorCheck
 					return TRUE
 				}
 			}
-			while ${tempvar:Inc}<${Me.GroupCount}
+			while ${tempvar:Inc}<=${Me.GroupCount}
 
 			; Check if mob is aggro on raid or pet
 			if ${Me.InRaid}
 			{
+				;echo checking aggro on raid
 				tempvar:Set[1]
 				do
 				{
-					;if (${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].PetID}
-					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[$tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
+					;if ${tempvar}==1 || ${tempvar}==7
+					;{
+					;	echo ${tempvar} ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)}
+					;}
+					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
 					{
+						;echo aggro detected on raid
 						return TRUE
 					}
 				}
