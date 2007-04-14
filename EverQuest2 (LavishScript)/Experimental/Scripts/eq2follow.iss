@@ -1,6 +1,7 @@
 ;EQ2Follow.iss
 ;use: Run EQ2Follow <character to follow> <distance>
 ;must put name of Character in and distance defaults to 6
+;Thanks to Cr4zyB4rd for the help
 
 
 #define MOVEFORWARD "num lock"
@@ -20,7 +21,7 @@ function main(string ftarget, int leash)
 	variable float RandomXValue =${Math.Rand[6]}
 	variable float RandomZValue =${Math.Rand[6]}
 	
-	;turbo 150
+	turbo 150
 	
 	if !${leash}
 	{
