@@ -49,6 +49,7 @@ variable int longwait=10
 variable EQ2BotObj EQ2Bot
 variable ActorCheck Mob
 variable(global) bool CurrentTask=TRUE
+variable(global) int FollowTask=TRUE
 variable bool IgnoreEpic
 variable bool IgnoreNamed
 variable bool IgnoreHeroic
@@ -2354,7 +2355,7 @@ function BotFollow(string Line, string FollowTarget)
 		}
 		if ${tempTarget.Length} && !${Script[follow](exists)}
 		{
-			run follow "${tempTarget}" 1
+			run eq2follow 1 "${tempTarget}"
 			Following:Set[TRUE]
 		}
 	}
@@ -2506,7 +2507,7 @@ function StartBot()
 			Script[follow]:End
 			wait 10
 		}
-		run follow "${Follow}" ${Deviation} ${Leash}
+		run eq2follow "${Follow}" ${Leash} ${Deviation}
 	}
 	else
 	{
