@@ -1,8 +1,12 @@
 ;*************************************************************
 ;Coercer.iss
-;version 20070404a
+;version 20070427a
 ;by karye
 ;updated by pygar
+;
+; 20070427a
+;	Fixed Mastery not to move to melee range
+;	Fixed Clarity casting loop
 ;
 ; 20070404a
 ;	Updated for newest eq2bot
@@ -219,7 +223,10 @@ function Buff_Routine(int xAction)
 
 		case AAEmpathic_Aura
 		case Clarity
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			break
 		case Signet
 			if ${BuffSignet}
@@ -433,7 +440,7 @@ function Buff_Routine(int xAction)
 			break
 
 		default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 }
@@ -513,7 +520,7 @@ function Combat_Routine(int xAction)
 	call CastSpellRange 71 0 0 0 ${KillTarget}
 
 	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
-	call CastSpellRange 42
+	call CastSpellRange 42 0 0 0
 
 	switch ${Action[${xAction}]}
 	{
@@ -561,7 +568,6 @@ function Combat_Routine(int xAction)
 				if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 				{
 					Target ${KillTarget}
-					call CheckPosition 1 1
 					Me.Ability[Master's Strike]:Use
 				}
 				break
@@ -581,7 +587,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 
