@@ -1,7 +1,13 @@
 ;*****************************************************
-;Swashbuckler.iss 20070426a
+;Swashbuckler.iss 20070427a
 ;by Pygar
-; First Pass
+;
+; 20070427a
+; Fixed Hurricane Buffing
+; Fixed some misplaced CastCaRange calls
+;	Fixed spelling on Hurricane
+; Cleanup on UI
+;	Can no longer attempt to hate transfer to self.
 ;*****************************************************
 
 #ifndef _Eq2Botlib_
@@ -47,7 +53,7 @@ function Class_Declaration()
 	SnareMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Snares,FALSE]}]
 	TankMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Try to Tank,FALSE]}]
 	BuffHateGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHateGroupMember,]}]
-	HuricaneMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Huricane,TRUE]}]
+	HurricaneMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Hurricane,TRUE]}]
 	BuffLunge:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Lunge Reversal,FALSE]}]
 	MaintainPoison:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MaintainPoison,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
@@ -88,7 +94,7 @@ function Buff_Init()
 	PreAction[8]:Set[AA_Evasiveness]
 	PreSpellRange[8,1]:Set[417]
 
-	PreAction[9]:Set[Huricane]
+	PreAction[9]:Set[Hurricane]
 	PreSpellRange[9,1]:Set[28]
 
 	PreAction[10]:Set[BuffHate]
@@ -214,7 +220,7 @@ function Buff_Routine(int xAction)
 			if ${OffenseMode} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-				wait 33
+				wait 30
 			}
 			if !${OffenseMode}
 			{
@@ -254,22 +260,24 @@ function Buff_Routine(int xAction)
 		case AA_Lunge_Reversal
 			if ${BuffLunge}
 			{
-				call CastCARange ${PreSpellRange[${xAction},1]}
-			}
-			else
-			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
-			break
-		case Huricane
-			if ${HuricaneMode}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
+			break
+		case Hurricane
+			if ${HurricaneMode} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				wait 30
+			}
+			elseif !${HurricaneMode}
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+			break
 		case BuffHate
 			BuffTarget:Set[${UIElement[cbBuffHateGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -453,13 +461,13 @@ function Combat_Routine(int xAction)
 			{
 				if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
 				{
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 				{
 					Me.Inventory[${WeaponRapier}]:Equip
 					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 
 			}
@@ -470,13 +478,13 @@ function Combat_Routine(int xAction)
 			{
 				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 				{
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 				{
 					Me.Inventory[${WeaponSword}]:Equip
 					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 
 			}
@@ -486,13 +494,13 @@ function Combat_Routine(int xAction)
 			{
 				if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
 				{
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 				{
 					Me.Inventory[${WeaponDagger}]:Equip
 					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 
 			}
