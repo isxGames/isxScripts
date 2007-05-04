@@ -1,8 +1,14 @@
 ;*************************************************************
 ;Defiler.iss
-;version 20070404a
+;version 20070503a
 ;by karye
 ;updated by pygar
+;
+;20070503a
+; Toggle Pet Use
+; Toggle Combat Rez
+;	Added health check to cure routine
+; Added Toggle for Innitiating HO
 ;
 ;20070404a
 ;Updated for latest eq2bot
@@ -34,6 +40,9 @@ function Class_Declaration()
  	declare CureMode bool script 0
  	declare MaelstromMode bool script 0
 	declare KeepWardUp bool script
+	declare PetMode bool script 1
+	declare CombatRez bool script 1
+	declare StartHO bool script 1
 
 	declare BuffNoxious bool script FALSE
 	declare BuffMitigation bool script FALSE
@@ -62,6 +71,9 @@ function Class_Declaration()
 	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cure Spells,FALSE]}]
 	MaelstromMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Maelstrom Mode,FALSE]}]
 	KeepWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepWardUp,FALSE]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,True]}]
+	CombatRez:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Combat Rez,FALSE]}]
+	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 
 	BuffNoxious:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffNoxious,TRUE]}]
 	BuffMitigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMitigation,TRUE]}]
@@ -351,6 +363,12 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case SpiritCompanion
+			if ${PetMode}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			}
+			break
+
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
@@ -469,7 +487,7 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 		Default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 }
@@ -483,13 +501,13 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	call CheckGroupHealth 75
+	call CheckGroupHealth 60
 	if ${DoHOs} && ${Return}
 	{
 		objHeroicOp:DoHO
 	}
 
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 	{
 		call CastSpellRange 303
 	}
@@ -662,7 +680,7 @@ function Combat_Routine(int xAction)
 				}
 
 			default
-				xAction:Set[20]
+				xAction:Set[40]
 				break
 		}
 	}
@@ -783,7 +801,7 @@ function CheckHeals()
 	lowest:Set[1]
 
 	;Res the MT if they are dead
-	if ${Actor[PC,${MainTankPC}].Health}==-99 && ${Actor[PC,${MainTankPC}](exists)}
+	if ${Actor[PC,${MainTankPC}].Health}==-99 && ${Actor[PC,${MainTankPC}](exists)} && ${CombatRez}
 	{
 		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
@@ -886,7 +904,8 @@ function CheckHeals()
 		call CureMe
 	}
 
-	if ${mostafflicted} && ${CureMode}
+	call CheckGroupHealth 30
+	if ${mostafflicted} && ${CureMode} && ${Return}
 	{
 		call CureGroupMember ${mostafflicted}
 	}
@@ -972,6 +991,10 @@ function CheckHeals()
 		if ${Me.Ability[${SpellType[10]}].IsReady}
 		{
 			call CastSpellRange 10
+		}
+		else
+		{
+			call CastSpellRange 15
 		}
 	}
 
@@ -1086,7 +1109,7 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
 	{
 		call 300 301 0 0 ${Actor[${MainTankPC}].ID} 1
 	}
