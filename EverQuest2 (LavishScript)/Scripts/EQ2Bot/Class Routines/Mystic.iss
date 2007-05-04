@@ -1,7 +1,7 @@
 /********************************************************************************
 Mystic SubScript for Blazers EQ2Bot
 Version 1.26
-	By Mandrake 						
+	By Mandrake
 
 REQUIRES:  "eq2botlib", and "Heroic Op Object"
 
@@ -61,17 +61,17 @@ v. 1.13
 *not tested in group yet.
 
 V. 1.12
-- More minor bug fixes		
+- More minor bug fixes
 
-V. 1.11 
-- Minor bug fix with combat rez 								
-								
-V. 1.1 
-- Update for eq2bot 2.2 (heal routines) 
-- Added Sow 
-- Added Combat Rez 
-- Added Feathers (Sorta) 
-- Spell list to 41 
+V. 1.11
+- Minor bug fix with combat rez
+
+V. 1.1
+- Update for eq2bot 2.2 (heal routines)
+- Added Sow
+- Added Combat Rez
+- Added Feathers (Sorta)
+- Spell list to 41
 ********************************************************************************/
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -106,7 +106,7 @@ function Buff_Init()
 	PreAction[1]:Set[Self_Buff]
 	PreSpellRange[1,1]:Set[25]
 	PreSpellRange[1,2]:Set[29]
-	
+
 	;===============================;
 	;Group Buffs W/O Concentration	;
 	; There are none poon!		;
@@ -135,21 +135,21 @@ function Buff_Init()
 	PreAction[4]:Set[Tank_Buff]
 	PreSpellRange[4,1]:Set[40]
 	PreSpellRange[4,2]:Set[42]
-	
+
 	;=======;
 	;Rez up	;
 	;=======;
 	PreAction[5]:Set[Resurrection]
 	PreSpellRange[5,1]:Set[300]
 
-	
+
 	;=======;
 	;Pet	;
 	;=======;
 	PreAction[6]:Set[Cast_Pet]
 	PreSpellRange[6,1]:Set[600]
 	;PreSpellRange[6,2]:Set[602]
-	
+
 
 
 	;=======================;
@@ -180,7 +180,7 @@ function Combat_Init()
 	Action[3]:Set[Debuff]
 	SpellRange[3,1]:Set[50]
 	SpellRange[3,2]:Set[54]
-	MobHealth[3,1]:Set[50] 
+	MobHealth[3,1]:Set[50]
 	MobHealth[3,2]:Set[90]
 	Power[3,1]:Set[60]
 	Power[3,2]:Set[100]
@@ -191,11 +191,11 @@ function Combat_Init()
 	Action[4]:Set[Dot]
 	SpellRange[4,1]:Set[70]
 	SpellRange[4,2]:Set[72]
-	MobHealth[4,1]:Set[30] 
+	MobHealth[4,1]:Set[30]
 	MobHealth[4,2]:Set[70]
 	Power[4,1]:Set[40]
 	Power[4,2]:Set[100]
-	
+
 	;===============;
 	;Nuke + Debuff	;
 	;===============;
@@ -255,11 +255,11 @@ function Buff_Routine(int xAction)
 			case Self_Buff
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 				break
-		
+
 			case Group_Buff
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 				break
-	
+
 			case Group_Conc_Buff
 				;===============================================;
 				;Check that we have concentration available	;
@@ -287,12 +287,12 @@ function Buff_Routine(int xAction)
 					}
 					else
 					{
-					target ${Actor[${MainAssist}].ID}
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainAssist}].ID}
+					target ${Actor[${MainTankPC}].ID}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
 					}
 				}
 				break
-			
+
 			case Tank_Buff
 				;===============================================;
 				;Check that we have concentration available	;
@@ -303,23 +303,23 @@ function Buff_Routine(int xAction)
 					{
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 ${Me.ID}
 					}
-					else 
+					else
 					{
-						if ${Tools.InGroup[${Actor[${MainAssist}].ID}]}
-						{ 
-						call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 ${Actor[${MainAssist}].ID}
+						if ${Tools.InGroup[${Actor[${MainTankPC}].ID}]}
+						{
+						call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 ${Actor[${MainTankPC}].ID}
 						}
 					}
 				}
 				break
-	
+
 			case Resurrection
 				grpcnt:Set[${Me.GroupCount}]
 				tempgrp:Set[1]
 				do
 				{
 					if ${Me.Group[${tempgrp}].ZoneName.Equal["${Zone.Name}"]}
-					{	
+					{
 
 						if ${Me.Group[${tempgrp}].ToActor.Health}<=0 && ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Distance} < 50
 						{
@@ -332,7 +332,7 @@ function Buff_Routine(int xAction)
 			case Cast_Pet
 					if "!(${Actor[MyPet](exists)})"
 					{
-	
+
 						call CastSpellRange 400
 						;move pet buffs to another sequence
 						call CastSpellRange 396 399
@@ -362,9 +362,9 @@ function Buff_Routine(int xAction)
 				}
 				while ${tempgrp:Inc}<${grpcnt}
 				break
-	
+
 			Default
-				xAction:Set[20]
+				xAction:Set[40]
 				break
 		}
 	}
@@ -373,7 +373,7 @@ function Buff_Routine(int xAction)
 		CurState:Set["INVIS! Not Buffing"]
 	}
 }
-	
+
 
 function Combat_Routine(int xAction)
 {
@@ -426,7 +426,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-	
+
 		case DoT
 			;=======================================;
 			;Check Mob Health before dotting	;
@@ -487,14 +487,14 @@ function Combat_Routine(int xAction)
 			}
 			break
 		case Bolster
-			if ${Actor[${MainAssist}].Health}>80
+			if ${Actor[${MainTankPC}].Health}>80
 			{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${Actor[${MainAssist}].ID} 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID} 1
 			}
 			break
-				
+
 		Default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 		}
 
@@ -528,19 +528,19 @@ declare tempgrp int
 	{
 		if ${Me.Group[${tempgrp}].ZoneName.Equal["${Zone.Name}"]}
 		{
-			if  ${Me.Group[${tempgrp}].Arcane} && !${Me.Group[${tempgrp}].ToActor.Effect[Revived Sickness](exists)}
+			if  ${Me.Group[${tempgrp}].Arcane}>0 && !${Me.Group[${tempgrp}].ToActor.Effect[Revived Sickness](exists)}
 			{
 				call CastSpellRange 213 0 0 0 ${Me.Group[${tempgrp}].ID}
 			}
-			if  ${Me.Group[${tempgrp}].Noxious}
+			if  ${Me.Group[${tempgrp}].Noxious}>0
 			{
 				call CastSpellRange 210 0 0 0 ${Me.Group[${tempgrp}].ID}
 			}
-			if  ${Me.Group[${tempgrp}].Elemental}
+			if  ${Me.Group[${tempgrp}].Elemental}>0
 			{
 				call CastSpellRange 212 0 0 0 ${Me.Group[${tempgrp}].ID}
 			}
-			if  ${Me.Group[${tempgrp}].Trauma}
+			if  ${Me.Group[${tempgrp}].Trauma}>0
 			{
 				call CastSpellRange 211 0 0 0 ${Me.Group[${tempgrp}].ID}
 			}
@@ -552,19 +552,19 @@ declare tempgrp int
 	;There should be a better way to do this	;
 	;===============================================;
 
-			if  ${Me.Arcane} && !${Me.ToActor.Effect[Revived Sickness](exists)}
+			if  ${Me.Arcane}>0 && !${Me.ToActor.Effect[Revived Sickness](exists)}
 			{
 				call CastSpellRange 213 0 0 0 ${Me.ID}
 			}
-			if  ${Me.Noxious}
+			if  ${Me.Noxious}>0
 			{
 				call CastSpellRange 210 0 0 0 ${Me.ID}
 			}
-			if  ${Me.Elemental}
+			if  ${Me.Elemental}>0
 			{
 				call CastSpellRange 212 0 0 0 ${Me.ID}
 			}
-			if  ${Me.Trauma}
+			if  ${Me.Trauma}>0
 			{
 				call CastSpellRange 211 0 0 0 ${Me.ID}
 			}
@@ -588,7 +588,7 @@ function CheckWards()
 	{
 		do
 		{
-			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]}&&${Me.Maintained[${tempvar}].Target.ID}==${Actor[${MainAssist}].ID}
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]}&&${Me.Maintained[${tempvar}].Target.ID}==${Actor[${MainTankPC}].ID}
 			{
 			;===============================================;
 			;Set the var Ward1 if ward is still present	;
@@ -610,7 +610,7 @@ function CheckWards()
 			if ${ward1}==0&&${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
 				CurState:Set["Heals: Setting Ward"]
-				call CastSpellRange 7 0 0 0 ${Actor[${MainAssist}].ID}	
+				call CastSpellRange 7 0 0 0 ${Actor[${MainAssist}].ID}
 				ward1:Set[1]
 			}
 		}
@@ -623,9 +623,9 @@ function CheckWards()
 			call CastSpellRange 15 0 0 0 ${Actor[${MainAssist}].ID}
 			}
 		}
-			
-	
-	
+
+
+
 		;=======================================================================;
 		;Next, See if ward2 needs to be used (Long recast, emergency ward)	;
 		;=======================================================================;
@@ -687,7 +687,7 @@ if ${Tools.LowHealthCount[90]} > 3
 		if ${Me.Ability[Ritual].IsReady} && ${Me.Equipment[Secondary].Name.Find[Symbol]}
 		{
 		call CastSpellRange 356
-		healreturn:Set[TRUE]	
+		healreturn:Set[TRUE]
 		}
 
 		if ${Actor[${Tools.LowestHealth}].Health} <= 20
@@ -705,8 +705,8 @@ if ${Tools.LowHealthCount[90]} > 3
 			{
 				call CastSpellRange 9 0 0 0 ${Actor[${Tools.LowestHealth}].ID}
 				healreturn:Set[TRUE]
-			} 
-			elseif ${Me.Power} > ${Me.Ability[${SpellType[1]}].PowerCost} 
+			}
+			elseif ${Me.Power} > ${Me.Ability[${SpellType[1]}].PowerCost}
 			{
 				;target ${Actor[${lowest}].ID}
 				call CastSpellRange 1 0 0 0 ${Actor[${Tools.LowestHealth}].ID}
@@ -719,7 +719,7 @@ if ${Tools.LowHealthCount[90]} > 3
 			;=======================;
 			;Use a Small heal	;
 			;=======================;
-			if ${Me.Power} > ${Me.Ability[${SpellType[4]}].PowerCost} 
+			if ${Me.Power} > ${Me.Ability[${SpellType[4]}].PowerCost}
 			{
 				;target ${Actor[${Tools.LowestHealth}].ID}
 				;CurState:Set["Healing: ${Actor[${Tools.LowestHealth}].Name} (Small)"]
@@ -738,7 +738,7 @@ if ${Tools.LowHealthCount[90]} > 3
 	}
 	else
 	{
-	if ${debugoutput} 
+	if ${debugoutput}
 		echo Actor does not exists
 	Return
 	}
@@ -777,22 +777,22 @@ PetEngage:Set[FALSE]
 
 function Lost_Aggro()
 {
- 
+
 }
 function Have_Aggro()
 {
  call CastSpellRange 180 0 0 0 ${Actor[${MainAssist}].ID}
 }
- 
+
 function MA_Lost_Aggro()
 {
  echo "MA Lost Agro, Casting a Group Ward"
  call CastSpellRange 15 0 0 0 ${Actor[${MainAssist}].ID}
 }
- 
+
 function MA_Dead()
 {
- 
+
 }
 
 
@@ -801,7 +801,7 @@ BotTools v.0.02
 	By Mandrake
 
 
-Example: 
+Example:
 	#include ${LavishScript.HomeDirectory}/Scripts/BotTools.iss
 		function Class_Declaration()
 		{
@@ -858,7 +858,7 @@ objectdef BotTools
 	}
 		do
 		{
-			if (${person} == ${Me.Group[${tmpgrp}].ID}) 
+			if (${person} == ${Me.Group[${tmpgrp}].ID})
 			{
 			return TRUE
 			}

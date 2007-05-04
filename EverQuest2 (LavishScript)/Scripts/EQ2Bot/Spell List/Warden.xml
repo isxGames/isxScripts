@@ -11,7 +11,7 @@
 		<Setting Name="5,305">Divine Providence</Setting>
 		<Setting Name="5,20">Protection of the Willow</Setting>
 		<Setting Name="6,210">Cure Noxious</Setting>
-		<Setting Name="6,313">Summon Food and Water</Setting>
+		<Setting Name="6,365">Summon Food and Water</Setting>
 		<Setting Name="7,4">Bloom</Setting>
 		<Setting Name="7,230">Root</Setting>
 		<Setting Name="8,303">Revive</Setting>
@@ -20,6 +20,17 @@
 		<Setting Name="9,60">Greater Fire</Setting>
 		<Setting Name="10,40">Nettlecoat</Setting>
 		<Setting Name="10,235">Snare</Setting>
+		<Setting Name="10,381">Nature Blade</Setting>
+		<Setting Name="10,382">Primordial Strike</Setting>
+		<Setting Name="10,383">Thunderspike</Setting>
+		<Setting Name="10,390">Rebirth</Setting>
+		<Setting Name="10,391">Infusion</Setting>
+		<Setting Name="10,392">Nature Walk</Setting>
+		<Setting Name="10,385">Fire Strike</Setting>
+		<Setting Name="10,386">Cold Slice</Setting>
+		<Setting Name="10,387">Cold Strike</Setting>
+		<Setting Name="10,389">Whrol of Frost</Setting>
+		<Setting Name="10,393">Force of Nature</Setting>
 		<Setting Name="11,61">Chill</Setting>
 		<Setting Name="11,313">Favor of the Phoenix</Setting>
 		<Setting Name="12,7">Regrowth</Setting>
@@ -130,6 +141,6 @@
 		<Setting Name="70,15">Fierce Chlorostorm</Setting>
 		<Setting Name="70,9">Hierophantic Advent</Setting>
 		<Setting Name="70,220">Verdant Gasp</Setting>
-		<Setting Name="70,10">Wave of Healing</Setting>	
+		<Setting Name="70,10">Wave of Healing</Setting>
 	</Set>
 </InnerSpaceSettings>

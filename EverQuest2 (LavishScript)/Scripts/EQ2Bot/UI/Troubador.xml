@@ -642,7 +642,7 @@
 				{
 					if ${Me.Raid[${tmpvar}](exists)}
 					{
-						UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+						UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24
@@ -731,7 +731,7 @@
 				{
 					if ${Me.Raid[${tmpvar}](exists)}
 					{
-						UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+						UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24

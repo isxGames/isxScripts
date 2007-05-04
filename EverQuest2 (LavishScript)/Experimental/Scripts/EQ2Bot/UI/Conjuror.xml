@@ -205,6 +205,27 @@
 		<OnLoad>This.Item[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Pet Type]}]:Select
 		</OnLoad>
 	</combobox>
+	<Commandcheckbox Name='UsePets' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>150</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Pets</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Pets",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Pets",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Pets]}</Data>
+	</Commandcheckbox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5</X>
 		<Y>170</Y>

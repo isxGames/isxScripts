@@ -12,8 +12,8 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
 #endif
 
-function Class_Declaration() 
-{ 
+function Class_Declaration()
+{
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
 	declare OffensiveMode bool script TRUE
@@ -21,24 +21,24 @@ function Class_Declaration()
 	declare TauntMode bool Script TRUE
 	declare FullAutoMode bool Script FALSE
 	declare DragoonsCycloneMode bool Script FALSE
-	
-	declare WeaponHammer string script 
+
+	declare WeaponHammer string script
 	declare WeaponSword string script
 	declare WeaponSpear string script
 	declare Buckler string script
 	declare WeaponAxe string script
-	declare WeaponMain string script	
+	declare WeaponMain string script
 	declare OffHand string script
-	declare EquipmentChangeTimer int script	
-	
+	declare EquipmentChangeTimer int script
+
 	call EQ2BotLib_Init
-	
+
 	FullAutoMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Full Auto Mode,FALSE]}]
 	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Taunt Spells,TRUE]}]
 	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
 	OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
 	DragoonsCycloneMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Dragoons Cyclone,FALSE]}]
-	
+
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 
@@ -48,161 +48,161 @@ function Class_Declaration()
 	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
 	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
 	Buckler:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buckler",""]}]
-	WeaponAxe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Axe",""]}]	
-} 
+	WeaponAxe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Axe",""]}]
+}
 
 
-function Buff_Init() 
-{ 
-   PreAction[1]:Set[Protect_Target] 
-   PreSpellRange[1,1]:Set[30] 
+function Buff_Init()
+{
+   PreAction[1]:Set[Protect_Target]
+   PreSpellRange[1,1]:Set[30]
 
-   PreAction[2]:Set[Self_Buff] 
-   PreSpellRange[2,1]:Set[25] 
-   PreSpellRange[2,2]:Set[28] 
+   PreAction[2]:Set[Self_Buff]
+   PreSpellRange[2,1]:Set[25]
+   PreSpellRange[2,2]:Set[28]
 
-   PreAction[3]:Set[Group_Buff] 
-   PreSpellRange[3,1]:Set[20] 
+   PreAction[3]:Set[Group_Buff]
+   PreSpellRange[3,1]:Set[20]
    PreSpellRange[3,2]:Set[22]
 
-   PreAction[4]:Set[AA_DragoonsCyclone] 
-   PreSpellRange[4,1]:Set[29] 
+   PreAction[4]:Set[AA_DragoonsCyclone]
+   PreSpellRange[4,1]:Set[29]
 
-} 
+}
 
-function Combat_Init() 
-{ 
-   Action[1]:Set[AoE_Taunt] 
-   SpellRange[1,1]:Set[170] 
+function Combat_Init()
+{
+   Action[1]:Set[AoE_Taunt]
+   SpellRange[1,1]:Set[170]
 
-   Action[2]:Set[Taunt1] 
-   SpellRange[2,1]:Set[160] 
-   
-   Action[3]:Set[Taunt2] 
-   SpellRange[3,1]:Set[161] 
+   Action[2]:Set[Taunt1]
+   SpellRange[2,1]:Set[160]
 
-   Action[4]:Set[Combat_Buff1] 
+   Action[3]:Set[Taunt2]
+   SpellRange[3,1]:Set[161]
+
+   Action[4]:Set[Combat_Buff1]
    SpellRange[4,1]:Set[155]
-   
-   Action[5]:Set[Combat_Buff2] 
+
+   Action[5]:Set[Combat_Buff2]
    SpellRange[5,1]:Set[156]
 
-   Action[6]:Set[AoE1] 
-   Power[6,1]:Set[20] 
-   Power[6,2]:Set[100] 
+   Action[6]:Set[AoE1]
+   Power[6,1]:Set[20]
+   Power[6,2]:Set[100]
    SpellRange[6,1]:Set[90]
-   
-   Action[7]:Set[AoE2] 
-   Power[7,1]:Set[20] 
-   Power[7,2]:Set[100] 
+
+   Action[7]:Set[AoE2]
+   Power[7,1]:Set[20]
+   Power[7,2]:Set[100]
    SpellRange[7,1]:Set[91]
-   
-   Action[8]:Set[AoE3] 
-   Power[8,1]:Set[20] 
-   Power[8,2]:Set[100] 
+
+   Action[8]:Set[AoE3]
+   Power[8,1]:Set[20]
+   Power[8,2]:Set[100]
    SpellRange[8,1]:Set[92]
-   
-   Action[9]:Set[PBAoE1] 
-   Power[9,1]:Set[20] 
-   Power[9,2]:Set[100] 
-   SpellRange[9,1]:Set[93] 
-   
-   Action[10]:Set[PBAoE2] 
-   Power[10,1]:Set[20] 
-   Power[10,2]:Set[100] 
-   SpellRange[10,1]:Set[94] 
-   
-   Action[11]:Set[PBAoE3] 
-   Power[11,1]:Set[20] 
-   Power[11,2]:Set[100] 
-   SpellRange[11,1]:Set[95] 
 
-   Action[12]:Set[Damage_Debuff1] 
-   MobHealth[12,1]:Set[5] 
-   MobHealth[12,2]:Set[100] 
-   Power[12,1]:Set[20] 
-   Power[12,2]:Set[100] 
-   SpellRange[12,1]:Set[80] 
-   
-   Action[13]:Set[Damage_Debuff2] 
-   MobHealth[13,1]:Set[5] 
-   MobHealth[13,2]:Set[100] 
-   Power[13,1]:Set[20] 
-   Power[13,2]:Set[100] 
-   SpellRange[13,1]:Set[81] 
-   
-   Action[14]:Set[Damage_Debuff3] 
-   MobHealth[14,1]:Set[5] 
-   MobHealth[14,2]:Set[100] 
-   Power[14,1]:Set[20] 
-   Power[14,2]:Set[100] 
-   SpellRange[14,1]:Set[82] 
+   Action[9]:Set[PBAoE1]
+   Power[9,1]:Set[20]
+   Power[9,2]:Set[100]
+   SpellRange[9,1]:Set[93]
 
-   Action[15]:Set[Melee_Attack1] 
-   Power[15,1]:Set[5] 
-   Power[15,2]:Set[100] 
-   SpellRange[15,1]:Set[150] 
-   
-   Action[16]:Set[Melee_Attack2] 
-   Power[16,1]:Set[5] 
-   Power[16,2]:Set[100] 
-   SpellRange[16,1]:Set[151] 
-      
-   Action[17]:Set[Shield_Attack] 
-   Power[17,1]:Set[5] 
-   Power[17,2]:Set[100] 
-   SpellRange[17,1]:Set[240] 
-   
-   Action[18]:Set[Belly_Smash] 
-   Power[18,1]:Set[5] 
+   Action[10]:Set[PBAoE2]
+   Power[10,1]:Set[20]
+   Power[10,2]:Set[100]
+   SpellRange[10,1]:Set[94]
+
+   Action[11]:Set[PBAoE3]
+   Power[11,1]:Set[20]
+   Power[11,2]:Set[100]
+   SpellRange[11,1]:Set[95]
+
+   Action[12]:Set[Damage_Debuff1]
+   MobHealth[12,1]:Set[5]
+   MobHealth[12,2]:Set[100]
+   Power[12,1]:Set[20]
+   Power[12,2]:Set[100]
+   SpellRange[12,1]:Set[80]
+
+   Action[13]:Set[Damage_Debuff2]
+   MobHealth[13,1]:Set[5]
+   MobHealth[13,2]:Set[100]
+   Power[13,1]:Set[20]
+   Power[13,2]:Set[100]
+   SpellRange[13,1]:Set[81]
+
+   Action[14]:Set[Damage_Debuff3]
+   MobHealth[14,1]:Set[5]
+   MobHealth[14,2]:Set[100]
+   Power[14,1]:Set[20]
+   Power[14,2]:Set[100]
+   SpellRange[14,1]:Set[82]
+
+   Action[15]:Set[Melee_Attack1]
+   Power[15,1]:Set[5]
+   Power[15,2]:Set[100]
+   SpellRange[15,1]:Set[150]
+
+   Action[16]:Set[Melee_Attack2]
+   Power[16,1]:Set[5]
+   Power[16,2]:Set[100]
+   SpellRange[16,1]:Set[151]
+
+   Action[17]:Set[Shield_Attack]
+   Power[17,1]:Set[5]
+   Power[17,2]:Set[100]
+   SpellRange[17,1]:Set[240]
+
+   Action[18]:Set[Belly_Smash]
+   Power[18,1]:Set[5]
    Power[18,2]:Set[100]
    SpellRange[18,1]:Set[400]
-   
-   Action[19]:Set[Melee_Attack3] 
-   Power[19,1]:Set[5] 
-   Power[19,2]:Set[100] 
-   SpellRange[19,1]:Set[152] 
-   
-   Action[20]:Set[Melee_Attack4] 
-   Power[20,1]:Set[5] 
-   Power[20,2]:Set[100] 
-   SpellRange[20,1]:Set[153]    
-	
 
-} 
+   Action[19]:Set[Melee_Attack3]
+   Power[19,1]:Set[5]
+   Power[19,2]:Set[100]
+   SpellRange[19,1]:Set[152]
 
-function PostCombat_Init() 
-{ 
-   PostAction[1]:Set[Cancel_Root] 
+   Action[20]:Set[Melee_Attack4]
+   Power[20,1]:Set[5]
+   Power[20,2]:Set[100]
+   SpellRange[20,1]:Set[153]
+
+
+}
+
+function PostCombat_Init()
+{
+   PostAction[1]:Set[Cancel_Root]
    PostSpellRange[1,1]:Set[324]
 
-   PostAction[2]:Set[AA_BindWound] 
-   PostSpellRange[2,1]:Set[398] 
+   PostAction[2]:Set[AA_BindWound]
+   PostSpellRange[2,1]:Set[398]
 
-   PostAction[3]:Set[AA_AccelterationStrike] 
-   PostSpellRange[3,1]:Set[399]    
+   PostAction[3]:Set[AA_AccelterationStrike]
+   PostSpellRange[3,1]:Set[399]
 
-} 
+}
 
-function Buff_Routine(int xAction) 
-{ 
+function Buff_Routine(int xAction)
+{
 	call WeaponChange
-	
+
 	ExecuteAtom CheckStuck
-	
+
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
 	}
-	
 
-	switch ${PreAction[${xAction}]} 
-	{ 
-		
-		
-		case Protect_Target 
-		
-			
+
+	switch ${PreAction[${xAction}]}
+	{
+
+
+		case Protect_Target
+
+
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				if ${EQ2Bot.ProtectHealer}
@@ -216,15 +216,15 @@ function Buff_Routine(int xAction)
 
 			}
 
-			break 
+			break
 
-		case Self_Buff 
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 
-			break 
+		case Self_Buff
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			break
 
-		case Group_Buff 
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 
-			break 
+		case Group_Buff
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			break
 		case AA_DragoonsCyclone
 			if ${DragoonsCycloneMode}
 			{
@@ -234,17 +234,17 @@ function Buff_Routine(int xAction)
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
-			break		
-		Default 
-			xAction:Set[20] 
-			break 
+			break
+		Default
+			xAction:Set[20]
+			break
 	}
-} 
+}
 
 function Combat_Routine(int xAction)
 {
 	AutoFollowingMA:Set[FALSE]
-	
+
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
@@ -254,22 +254,9 @@ function Combat_Routine(int xAction)
 
 	if ${DoHOs}
 	{
-	 ;echo +++++++++++++++++++++++++++++++++++++++++
-	 ;echo HOWindowActive=${EQ2.HOWindowActive}
-	 ;echo HOName=${EQ2.HOName}
-	 ;echo HODescription=${EQ2.HODescription}
-	 ;echo HOWheelID=${EQ2.HOWheelID}
-	 ;echo HOWindowState=${EQ2.HOWindowState}
-	 ;echo HOTimeLimit=${EQ2.HOTimeLimit}
-	 ;echo HOTimeElapsed=${EQ2.HOTimeElapsed}
-	 ;echo HOTimeRemaining=${EQ2.HOTimeRemaining}
-	 ;echo HOLastManipulator=${EQ2.HOLastManipulator}
-	 ;echo HOCurrentWheelSlot=${EQ2.HOCurrentWheelSlot}
-	 ;echo HOWheelState=${EQ2.HOWheelState}
-	 ;echo ==========================================		
 		objHeroicOp:DoHO
 	}
-	
+
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
@@ -279,16 +266,16 @@ function Combat_Routine(int xAction)
 	{
 		call Shard
 	}
-	
+
 	;always keep AA Berserk up
 	call CastSpellRange 393
-	
+
 	;echo in combat
 	if ${FullAutoMode}
 	{
-			
+
 		call UseCrystallizedSpirit 60
-		
+
 		;AA Gut Roar
 		if ${AoEMode}
 		{
@@ -299,35 +286,35 @@ function Combat_Routine(int xAction)
 		{
 			call CastSpellRange 324
 		}
-		
-		switch ${Action[${xAction}]} 
-		{ 
-		
+
+		switch ${Action[${xAction}]}
+		{
+
 			case Combat_Buff1
 			case Combat_Buff2
 				if ${DeffensiveMode}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]}
 				}
-				break 
-		
-			case Taunt1 
-				if ${TauntMode} 
-					{ 
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
-					} 
 				break
-				
-			case Taunt2 
-				if ${TauntMode} && ${OffensiveMode}
-					{ 
+
+			case Taunt1
+				if ${TauntMode}
+					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
-					} 
-				break 
+					}
+				break
+
+			case Taunt2
+				if ${TauntMode} && ${OffensiveMode}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
+					}
+				break
 
 			case AoE_Taunt
-				if ${TauntMode} 
-				{ 
+				if ${TauntMode}
+				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
 				}
 				break
@@ -338,26 +325,26 @@ function Combat_Routine(int xAction)
 			case Damage_Debuff3
 				if ${OffensiveMode}
 				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]} 
-					if ${Return.Equal[OK]} 
-					{ 
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
-						if ${Return.Equal[OK]} 
-						{ 
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 
-						} 
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+						if ${Return.Equal[OK]}
+						{
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
+						}
 					}
 				}
-				break       
+				break
 
 			case AoE1
 			case AoE2
 			case AoE3
 				if ${AoEMode} && ${Mob.Count}>2
 				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
-					if ${Return.Equal[OK]} 
-					{ 
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
 					}
 				}
@@ -366,9 +353,9 @@ function Combat_Routine(int xAction)
 			case PBAoE2
 				if ${PBAoEMode} && ${Mob.Count}>1
 				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
-					if ${Return.Equal[OK]} 
-					{ 
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
 					}
 				}
@@ -376,9 +363,9 @@ function Combat_Routine(int xAction)
 			case PBAoE3
 				if ${OffensiveMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${Mob.Count}>2
 				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
-					{ 
+					{
 						if ${Me.Equipment[1].Name.Equal[${WeaponSpear}]}
 						{
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
@@ -398,34 +385,34 @@ function Combat_Routine(int xAction)
 			case Melee_Attack4
 				if ${OffensiveMode}
 				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
-					if ${Return.Equal[OK]} 
-					{ 
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
 					}
 				}
-				break 
-			
+				break
+
 			case Shield_Attack
 				if ${OffensiveMode}
 				{
 					If ${Me.Equipment[Secondary].Type.Equal[Shield]}
 					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
-						if ${Return.Equal[OK]} 
-						{ 
+						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+						if ${Return.Equal[OK]}
+						{
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
 						}
 					}
 				}
 				break
-			
+
 			case Belly_Smash
 				if ${OffensiveMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]} 
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
-					{ 
+					{
 						if ${Me.Equipment[1].Name.Equal[${WeaponHammer}]}
 						{
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
@@ -439,23 +426,23 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-			case default 
-				;xAction:Set[20] 
-				break 
+			case default
+				;xAction:Set[20]
+				break
 		}
 	}
-} 
+}
 
-function Post_Combat_Routine(int xAction) 
+function Post_Combat_Routine(int xAction)
 {
-	switch ${PostAction[${xAction}]} 
-	{ 
+	switch ${PostAction[${xAction}]}
+	{
 
-		case Cancel_Root 
-			 if ${Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}](exists)} 
-			 { 
-			    Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel 
-			 } 
+		case Cancel_Root
+			 if ${Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}](exists)}
+			 {
+			    Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
+			 }
 			break
 
 		case AA_AccelterationStrike
@@ -472,8 +459,8 @@ function Post_Combat_Routine(int xAction)
 					call CastSpellRange ${SpellRange[${xAction},1]}
 				}
 			}
-			break 
-	
+			break
+
 		case AA_BindWound
 			if ${Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}].IsReady}
 			{
@@ -481,18 +468,18 @@ function Post_Combat_Routine(int xAction)
 			}
 			break
 
-		case default 
-			xAction:Set[20] 
-			break 
+		case default
+			xAction:Set[20]
+			break
 	}
-} 
+}
 
-function Have_Aggro() 
-{ 
+function Have_Aggro()
+{
 
-} 
+}
 
-function Lost_Aggro(int mobid) 
+function Lost_Aggro(int mobid)
 {
 	if ${FullAutoMode}
 	{
@@ -502,7 +489,7 @@ function Lost_Aggro(int mobid)
 			call CastSpellRange 270
 			;try and taunt the mob back
 			call CastSpellRange 160 161
-		
+
 			;use rescue if new agro target is under 65 health
 			if ${Me.ToActor.Target.Target.Health}<65
 			{
@@ -510,25 +497,25 @@ function Lost_Aggro(int mobid)
 			}
 		}
 	}
-} 
+}
 
-function MA_Lost_Aggro() 
-{ 
+function MA_Lost_Aggro()
+{
 
 
-} 
+}
 
-function MA_Dead() 
-{ 
-	MainTank:Set[TRUE] 
-	MainAssist:Set[${Me.Name}] 
+function MA_Dead()
+{
+	MainTank:Set[TRUE]
+	MainAssist:Set[${Me.Name}]
 	KillTarget:Set[]
-} 
+}
 
-function Cancel_Root() 
-{ 
+function Cancel_Root()
+{
 
-} 
+}
 
 function CheckHeals()
 {
@@ -543,7 +530,7 @@ function WeaponChange()
 	{
 		Me.Inventory[${WeaponMain}]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}	
+	}
 
 	;equip off hand
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}

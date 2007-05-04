@@ -85,7 +85,7 @@
 				{
 					if ${Me.Raid[${tmpvar}](exists)}
 					{
-						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24
@@ -153,7 +153,7 @@
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[BuffBoon]:Set[FALSE]
+				Script[EQ2Bot].Variable[BuffAmplify]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffAmplify",FALSE]:Save
 			}
 		</OnLeftClick>
@@ -173,7 +173,7 @@
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[BuffPact]:Set[FALSE]
+				Script[EQ2Bot].Variable[BuffSeal]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffSeal",FALSE]:Save
 			}
 		</OnLeftClick>
@@ -193,12 +193,12 @@
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[BuffPact]:Set[FALSE]
+				Script[EQ2Bot].Variable[DebuffMode]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast DoT Spells",FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast DoT Spells]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5</X>
 		<Y>170</Y>
@@ -354,7 +354,7 @@
 
 				do
 				{
-					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVenemousProc].GetString[${tmpvar}]}]
+					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRadianceProc].GetString[${tmpvar}]}]
 				}
 				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRadianceProc].Keys}
 
@@ -409,7 +409,7 @@
 		<Text>Buff Radiance Proc On:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff Radiance Proc on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffVenemousProc' Template='EQ2.Listbox'>
+	<listbox name='lbBuffRadianceProc' Template='EQ2.Listbox'>
 		<x>300</x>
 		<y>30</y>
 		<width>150</width>
@@ -512,15 +512,15 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 </ISUI>

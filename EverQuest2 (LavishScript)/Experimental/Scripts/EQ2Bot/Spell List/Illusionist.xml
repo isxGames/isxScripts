@@ -10,7 +10,7 @@
 		<Setting Name="4,25">Magi's Shielding</Setting>
 		<Setting Name="5,303">Arcane Augur</Setting>
 		<Setting Name="5,">Bind Sight</Setting>
-		<Setting Name="5,230">Binding Light</Setting>		
+		<Setting Name="5,230">Binding Light</Setting>
 		<Setting Name="6,210">Cure Arcane</Setting>
 		<Setting Name="6,60">Phantasmal Blast</Setting>
 		<Setting Name="7,21">Aspect of Thought</Setting>
@@ -68,7 +68,7 @@
 		<Setting Name="33,354">Mana Cloak</Setting>
 		<Setting Name="33,355">Personae Shift</Setting>
 		<Setting Name="33,22">Scintillating Aura</Setting>
-		<Setting Name="34,362">Celerity</Setting>
+		<Setting Name="34,35">Celerity</Setting>
 		<Setting Name="35,40">Intensity</Setting>
 		<Setting Name="35,21">Mental Bulwark</Setting>
 		<Setting Name="35,50">Misfortune</Setting>
@@ -93,7 +93,7 @@
 		<Setting Name="47,355">Personae Duplicate</Setting>
 		<Setting Name="47,230">Terrifying Vision</Setting>
 		<Setting Name="48,92">Devitalizing Stare</Setting>
-		<Setting Name="48,362">Legerity</Setting>
+		<Setting Name="48,35">Legerity</Setting>
 		<Setting Name="49,21">Aspect of Mind</Setting>
 		<Setting Name="49,40">Dynamism</Setting>
 		<Setting Name="50,388">Color Shower</Setting>
@@ -121,7 +121,7 @@
 		<Setting Name="61,22">Epiphany</Setting>
 		<Setting Name="61,230">Lockdown</Setting>
 		<Setting Name="62,92">Devitalizing Gazes</Setting>
-		<Setting Name="62,362">Rapidity</Setting>
+		<Setting Name="62,35">Rapidity</Setting>
 		<Setting Name="63,21">Aspect of Lucidity</Setting>
 		<Setting Name="63,40">Synergism</Setting>
 		<Setting Name="64,50">Tribulation</Setting>

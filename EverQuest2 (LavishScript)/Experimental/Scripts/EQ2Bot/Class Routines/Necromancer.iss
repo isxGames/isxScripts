@@ -1,8 +1,12 @@
 ;*************************************************************
 ;Necromancer.iss
-;version 20070226a
+;version 20070504a
 ;Initial Build
 ;by Pygar
+;
+;20070504a
+; Fixed ThermalShocker Use
+; Added toggle for pet use
 ;
 ; 20070226a
 ; Added Ruinous Heart to shard processing
@@ -48,6 +52,7 @@ function Class_Declaration()
 	declare BuffMark bool script FALSE
 	declare BuffCabalistCover bool script TRUE
 	declare LifeburnMode bool script TRUE
+	declare PetMode bool script 1
 
 	declare ShardQueue queue:string script
 	declare ShardRequestTimer int script ${Time.Timestamp}
@@ -77,6 +82,7 @@ function Class_Declaration()
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffMark:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMark,,FALSE]}]
 	BuffFavor:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffFavor,FALSE]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,True]}]
 
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
@@ -258,7 +264,7 @@ function Buff_Routine(int xAction)
 	}
 
 	;check if we have a pet or a hydromancy not up
-	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)}
+	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 		waitframe
@@ -368,13 +374,6 @@ function Buff_Routine(int xAction)
 			}
 			break
 
-		case ThermalShocker
-			if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
-			{
-				Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
-			}
-			break
-
 		Default
 			xAction:Set[40]
 			break
@@ -448,7 +447,7 @@ function Combat_Routine(int xAction)
 
 
 		case AA_Animated_Dagger
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${PetMode}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -468,7 +467,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case Stench_Pet
-			if ${AoEMode}
+			if ${AoEMode} && ${PetMode}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -482,14 +481,14 @@ function Combat_Routine(int xAction)
 		case Bat_Pet
 		case Rat_Pet
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
+			if ${Return.Equal[OK]} && ${PetMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
 		case UndeadTide
-			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} && ${Me.ToActor.Pet(exists)}
+			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} && ${Me.ToActor.Pet(exists)} && ${PetMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
@@ -562,6 +561,14 @@ function Combat_Routine(int xAction)
 				Me.Ability[Master's Strike]:Use
 			}
 			break
+
+		case ThermalShocker
+			if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
+			{
+				Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
+			}
+			break
+
 		Default
 			xAction:Set[40]
 			break
@@ -976,29 +983,32 @@ function SummonPet()
 ;1=Scout,2=Mage,3=Fighter; 4=hydromancer
 	PetEngage:Set[FALSE]
 
-	switch ${PetType}
+	if ${PetMode}
 	{
-		case 1
-			call CastSpellRange 355
-			break
+		switch ${PetType}
+		{
+			case 1
+				call CastSpellRange 355
+				break
 
-		case 2
-			call CastSpellRange 356
-			break
+			case 2
+				call CastSpellRange 356
+				break
 
-		case 3
-			call CastSpellRange 357
-			break
+			case 3
+				call CastSpellRange 357
+				break
 
-		case 4
-			call CastSpellRange 379
-			break
+			case 4
+				call CastSpellRange 379
+				break
 
-		case default
-			call CastSpellRange 395
-			break
+			case default
+				call CastSpellRange 395
+				break
+		}
+		BuffCabalistCover:Set[TRUE]
 	}
-	BuffCabalistCover:Set[TRUE]
 }
 
 function WeaponChange()

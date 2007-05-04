@@ -85,7 +85,7 @@
 				{
 					if ${Me.Raid[${tmpvar}](exists)}
 					{
-						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24
@@ -218,7 +218,7 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast DoT Spells]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5</X>
 		<Y>170</Y>
@@ -522,6 +522,27 @@
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>
+	<Commandcheckbox Name='UsePets' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>300</X>
+		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Pets</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Pets",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Pets",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Pets]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>300</X>
@@ -542,5 +563,5 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 </ISUI>

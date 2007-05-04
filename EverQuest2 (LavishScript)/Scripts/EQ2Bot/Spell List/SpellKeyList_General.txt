@@ -209,15 +209,11 @@
 357 - Summon Pet 3 (Priority 3)
 358 - Summon Pet 4 (Highest Priority - 4)
 359 - Special Ability for Conjuror - Sacrafice Pet for health and power to group.
+360 - Shards?
 361 - Special Ability for Defiler - Drains health and power over time from the target and nearby encounter members 
 362 - Special Ability for Defiler - Summons a spirit totem that continually attempts to ward group members in a radius 
 363 - Special Ability for Defiler - Single target Instant Ward
 364 - Special Ability for Defiler - Curse of Shielding (Proc Ward).
 370 - Special Ability for Bruiser - High Damage attack that decreases self HP.
 371 - Special Ability for Bruiser - Fear
-380 - Special Ability for Wizard - Convert HP to Power over time.
-381 - Special Ability for Wizard - Surge of Flames. (Adds additional heat damage)
-382 - Special Ability for Conjuror - Combat Pet Buff (Increase Defense).
-383 - Special Ability for Conjuror - Convert Pet health to Power for Conjuror.
-384 - Special Ability for Illusionist - Special Combat Buff
-385 - Special Ability for Illusionist - Additional Mesmerize but shorter casting time.
+380-400 - Reserved for Class Specific AA

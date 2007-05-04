@@ -1,7 +1,13 @@
 ;*************************************************************
 ;Illusionist.iss
-;version 20070404a
+;version 20070504a
 ;by pygar
+;
+;20070504a
+; Added Cure Arcane Routine
+; Allies used only on aggro now or solo
+; Intelligent use of Time Compression and Illusionary Arm
+; Manaflow on lowest member if under 60 power and illusionist over 30 health
 ;
 ;20070404a
 ;	Updated for latest eq2bot
@@ -54,6 +60,8 @@ function Class_Declaration()
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Makepet:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Makepet,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
+	BuffTime_Compression:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTime_Compression,]}]
+	BuffIllusory_Arm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffIllusory_Arm,]}]
 
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
@@ -104,7 +112,6 @@ function Buff_Init()
 	PreAction[13]:Set[AA_Time_Compression]
 	PreSpellRange[13,1]:Set[393]
 
-	;buffs on first haste target for now cause I'm lazy
 	PreAction[14]:Set[AA_Illusory_Arm]
 	PreSpellRange[14,1]:Set[394]
 }
@@ -209,7 +216,6 @@ function Buff_Routine(int xAction)
 
 	call CheckHeals
 	call RefreshPower
-;	call DestroyThoughtstones
 	ExecuteAtom CheckStuck
 
 	if ${AutoFollowMode}
@@ -317,10 +323,6 @@ function Buff_Routine(int xAction)
 				{
 					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-					if ${counter}==1
-					{
-						call CastSpellRange 414 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -346,6 +348,29 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case AA_Time_Compression
+			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			}
+			break
+		case AA_Illusory_Arm
+			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			}
+			break
 		case AA_Perpetuality
 		case AA_Empathic_Aura
 		case AA_Empathic_Soothing
@@ -500,6 +525,11 @@ function Combat_Routine(int xAction)
 			break
 
 		case IllusAllies
+			if !${Me.Grouped}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
 		case Nuke
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
@@ -543,6 +573,7 @@ function Have_Aggro()
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
+	call CastSpellRange 192 0 0 0 ${Actor[${aggroid}].ID}
 
 	;Phase
 	call CastSpellRange 361
@@ -625,13 +656,13 @@ function RefreshPower()
 	}
 	while ${tempvar:Inc}<${Me.GroupCount}
 
-	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>30 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 	{
 		call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power}<15 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+	if ${Actor[${MainTankPC}].Power}<20 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 	{
 		call CastSpellRange 354
 		call CastSpellRange 389
@@ -640,6 +671,35 @@ function RefreshPower()
 
 function CheckHeals()
 {
+	call UseCrystallizedSpirit 60
+
+	declare temphl int local 1
+	grpcnt:Set[${Me.GroupCount}]
+
+	; Cure Arcane Me
+	if ${Me.Arcane}>=1
+	{
+		call CastSpellRange 210 0 0 0 ${Me.ID}
+
+		if ${Actor[${KillTarget}](exists)}
+		{
+			Target ${KillTarget}
+		}
+	}
+	do
+	{
+		; Cure Arcane
+		if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
+		{
+			call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+
+			if ${Actor[${KillTarget}](exists)}
+			{
+				Target ${KillTarget}
+			}
+		}
+	}
+	while ${temphl:Inc}<${grpcnt}
 
 
 }

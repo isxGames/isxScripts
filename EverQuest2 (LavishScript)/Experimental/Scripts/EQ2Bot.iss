@@ -1,9 +1,9 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.5.3 Updated: 01/21/07 by pygar
+; EQ2Bot.iss Version 2.5.3 Updated: 05/04/07 by pygar
 ;
 ;
 ; Lots of changes, documentation comming
-;Seperated MainAssist and MainTank - New var MainTankPC exists with the name of the MainTank to use in your heal/buff routines
+;Seperated MainAssist and MainTank - New var MainTankPC exists with the name of the MainTank to use in yOur heal/buff routines
 ;Added Stance Overriding - define NoEQ2BotStance as true in Buff_Init and Eq2bot will not try to set stances for you.
 ;	you will need to add that logic to your ISS file now.
 ;Fixed lore and no-trade looting
@@ -550,24 +550,44 @@ function main()
 		{
 			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
-				wait 10
+				LootWndCount:Set[1]
+				LootDecline:Set[0]
+
+				do
+				{
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					{
+						LootDecline:Inc
+					}
+	     	}
+	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+
+				if ${LootDecline}
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
+					wait 5
+				}
+				else
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
+					wait 5
+				}
 
 				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 				{
 				     LootWndCount:Set[1]
 				     do
 				     {
-					  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
-					  {
-					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-					       wait 10
-					  }
-					  else
-					  {
-					       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
-					       wait 10
-					  }
+						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+						       wait 5
+						  }
+						  else
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
+						       wait 5
+						  }
 				     }
 				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 				}
@@ -575,33 +595,59 @@ function main()
 			else
 			{
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
+				wait 5
 			}
 		}
 		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
 		{
 			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
-				wait 10
+				LootWndCount:Set[1]
+				LootDecline:Set[0]
+
+				do
+				{
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					{
+						LootDecline:Inc
+					}
+	     	}
+	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+
+				if ${LootDecline}
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+					wait 5
+				}
+				else
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
+					wait 5
+				}
 
 				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 				{
-					LootWndCount:Set[1]
-					LootDecline:Set[0]
-				     	do
-				     	{
-						if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
-						{
-						       LootDecline:Inc
-						}
-				     	}
-				     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				     LootWndCount:Set[1]
+				     do
+				     {
+						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+						       wait 5
+						  }
+						  else
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
+						       wait 5
+						  }
+				     }
+				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 				}
 			}
 			else
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
-				wait 10
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
+				wait 5
 			}
  		}
 	}
@@ -879,9 +925,9 @@ function Combat()
 						call CheckPosition 1 ${Target.IsEpic}
 					}
 				}
-				elseif ${Target.Distance}>35 || ${Actor[${MainTankPC}].Distance}>35
+				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
 				{
-					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 20
+					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
 				}
 
 				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
@@ -1639,9 +1685,9 @@ function CheckLoot()
 				case brigand
 				case ranger
 				case assassin
-					Echo disarming trap on ${CustomActor[${tcount}].ID}
-					EQ2Execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
-					wait 20
+					EQ2Echo disarming trap on ${CustomActor[${tcount}].ID}
+					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
+					wait 10
 					break
 				case default
 					break
@@ -2140,6 +2186,16 @@ function LoreItem(string Line)
 	press esc
 }
 
+function InventoryFull(string Line)
+{
+	press esc
+	press esc
+	LootAll:Set[FALSE]
+	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Accept Loot Automatically?,FALSE]:Save
+
+}
+
+
 function CheckMTAggro()
 {
 	variable int tcount=2
@@ -2247,65 +2303,107 @@ function LootWdw(string Line)
 		{
 			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
-				wait 10
+				LootWndCount:Set[1]
+				LootDecline:Set[0]
+
+				do
+				{
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					{
+						LootDecline:Inc
+					}
+	     	}
+	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+
+				if ${LootDecline}
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
+					wait 5
+				}
+				else
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
+					wait 5
+				}
 
 				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 				{
-				     	LootWndCount:Set[1]
-				     	do
-				     	{
-						if ${LootConfirm}
-						{
-							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-							wait 10
-						}
-						else
-						{
-							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
-							wait 10
-						}
-					}
-					while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				     LootWndCount:Set[1]
+				     do
+				     {
+						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+						       wait 5
+						  }
+						  else
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
+						       wait 5
+						  }
+				     }
+				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 				}
 			}
 			else
 			{
 				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
+				wait 5
 			}
 		}
 		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
 		{
 			if ${LootAll}
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
-				wait 10
+				LootWndCount:Set[1]
+				LootDecline:Set[0]
+
+				do
+				{
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					{
+						LootDecline:Inc
+					}
+	     	}
+	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+
+				if ${LootDecline}
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+					wait 5
+				}
+				else
+				{
+					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
+					wait 5
+				}
 
 				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
 				{
-				     	LootWndCount:Set[1]
-				     	do
-				     	{
-						if ${LootConfirm}
-						{
-							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-							wait 10
-						}
-						else
-						{
-							EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
-							wait 10
-						}
-					}
-					while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				     LootWndCount:Set[1]
+				     do
+				     {
+						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
+						       wait 5
+						  }
+						  else
+						  {
+						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
+						       wait 5
+						  }
+				     }
+				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 				}
 			}
 			else
 			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
-				wait 10
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
+				wait 5
 			}
  		}
+
 }
 
 function CantSeeTarget(string Line)
@@ -2663,7 +2761,7 @@ objectdef ActorCheck
 	member:bool AggroGroup(int actorid)
 	{
 		variable int tempvar
-		
+
 		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
 			;Check if mob is aggro on group or pet
@@ -2931,7 +3029,8 @@ objectdef EQ2BotObj
 
 		; General Triggers
 		AddTrigger IamDead "@npc@ has killed you."
-		AddTrigger LoreItem "@*@You cannot have more than one of any given LORE item."
+		AddTrigger Loreitem "@*@You cannot have more than one of any given LORE item."
+		AddTrigger InventoryFull "@*@You cannot loot while your inventory is full"
 		AddTrigger LootWdw "LOOTWINDOW::LOOTWINDOW"
 		AddTrigger CantSeeTarget "@*@Can't see target@*@"
 

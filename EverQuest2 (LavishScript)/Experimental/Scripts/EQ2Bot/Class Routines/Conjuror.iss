@@ -1,9 +1,12 @@
 ;*************************************************************
 ;Conjuror.iss
-;version 20070404a
+;version 20070504a
 ;various fixes
 ;by karye
 ;updated by pygar
+;
+;20070504a
+; Toggle PetMode
 ;
 ;20070404a
 ;	updated for latest eq2bot
@@ -29,6 +32,7 @@ function Class_Declaration()
 	declare BuffSeal bool script FALSE
 	declare BuffEscutcheon bool script FALSE
 	declare BuffCabalistCover bool script TRUE
+	declare PetMode bool script 1
 
 	declare ShardQueue queue:string script
 	declare ShardRequestTimer int script ${Time.Timestamp}
@@ -55,6 +59,7 @@ function Class_Declaration()
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffEscutcheon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEscutcheon,,FALSE]}]
 	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,True]}]
 
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
@@ -221,7 +226,7 @@ function Buff_Routine(int xAction)
 	}
 
 	;check if we have a pet or a hydromancy not up
-	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)}
+	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 		waitframe
@@ -425,7 +430,7 @@ function Buff_Routine(int xAction)
 
 
 		Default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 }
@@ -443,12 +448,12 @@ function Combat_Routine(int xAction)
 	}
 
 	;check if we have a pet or a hydromancy not up
-	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)}
+	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 	}
 
-	if ${Me.ToActor.Pet(exists)}
+	if ${Me.ToActor.Pet(exists)} && ${PetMode}
 	{
 		ExecuteAtom PetAttack
 	}
@@ -496,7 +501,7 @@ function Combat_Routine(int xAction)
 
 
 		case AA_Animated_Dagger
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${PetMode}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -516,7 +521,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case Special_Pet2
-			if ${AoEMode}
+			if ${AoEMode} && ${PetMode}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -529,14 +534,14 @@ function Combat_Routine(int xAction)
 
 		case Special_Pet1
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
+			if ${Return.Equal[OK]} && ${PetMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
 		case Plane_Shift
-			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} && ${Me.ToActor.Pet(exists)}
+			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} && (${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)})
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
@@ -552,7 +557,7 @@ function Combat_Routine(int xAction)
 
 		case Combat_Buff
 		case AoE1
-			if ${AoEMode} && ${Me.ToActor.Pet(exists)}
+			if ${AoEMode} && (${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)})
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 
@@ -588,7 +593,6 @@ function Combat_Routine(int xAction)
 			if ${Me.Ability[Master Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 			{
 				Target ${KillTarget}
-				call CheckPosition 1 1
 				Me.Ability[Master Strike]:Use
 			}
 			break
@@ -598,7 +602,7 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		Default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 
@@ -787,7 +791,7 @@ function CheckHeals()
 			;================================
 			call IsHealer ${Me.Group[${temphl}].ID}
 
-			if (${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>0)  || (${Return} && ${Me.Group[${temphl}].ToActor.Power}<30 && ${Me.Group[${temphl}].ToActor.Power}>0) && ${Me.Group[${temphl}].ToActor.InCombatMode} && ${Me.Group[${temphl}].ToActor(exists)}
+			if (${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>0)  || (${Return} && ${Me.Group[${temphl}].ToActor.Power}<30 && ${Me.Group[${temphl}].ToActor.Power}>0) && ${Me.Group[${temphl}].ToActor.InCombatMode} && ${Me.Group[${temphl}].ToActor(exists)} && ${PetMode}
 			{
 				;TODO Add check for Intervention
 				;Cast AA Animist Bond so damage from expiation is to power not the pets health
@@ -873,29 +877,32 @@ function SummonPet()
 ;1=Scout,2=Mage,3=Fighter; 4=hydromancer
 	PetEngage:Set[FALSE]
 
-	switch ${PetType}
+	if ${PetMode}
 	{
-		case 1
-			call CastSpellRange 355
-			break
+		switch ${PetType}
+		{
+			case 1
+				call CastSpellRange 355
+				break
 
-		case 2
-			call CastSpellRange 356
-			break
+			case 2
+				call CastSpellRange 356
+				break
 
-		case 3
-			call CastSpellRange 357
-			break
+			case 3
+				call CastSpellRange 357
+				break
 
-		case 4
-			call CastSpellRange 379
-			break
+			case 4
+				call CastSpellRange 379
+				break
 
-		case default
-			call CastSpellRange 357
-			break
-	}
-	BuffCabalistCover:Set[TRUE]
+			case default
+				call CastSpellRange 357
+				break
+		}
+		BuffCabalistCover:Set[TRUE]
+		}
 }
 
 function WeaponChange()

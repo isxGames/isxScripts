@@ -1,3 +1,21 @@
+;*************************************************************
+;mystore.iss
+;version 20070502a
+;by Milamber
+;updated by Ronin
+;
+; 20070502a
+;	Fixed Item Loop to new ISXEQ2 commands
+;	and added container support.
+;	
+;	Usage: run mystore coffee 0 0 30 0 2
+;	Will set the price of all items in Consignment 
+;	Container #2 that matches Coffee to 30 silver.
+;
+;*************************************************************
+;
+;
+;
 ; mystore.iss version 0.12 by Milamber 2005-Sept-10
 ;
 ; v0.12 minor changes
@@ -24,23 +42,24 @@
 ; Feel free to comment on the forums :)
 ;
 
-function main(string iName,int pp, int gp, int sp, int cp)
+function main(string iName,int pp, int gp, int sp, int cp, int cnt=1)
 {
 if "${iName.Length} && ${Math.Calc[${pp}+${gp}+${sp}+${cp}]}"
 {
 call DeclareValues
 itemName:Set[${iName}]
-platina:Set[${pp}]
-gold:Set[${gp}]
+platina:Set[${Math.Calc[${pp}*10000]}]
+gold:Set[${Math.Calc[${gp}*100]}]
 silver:Set[${sp}]
-copper:Set[${cp}]
-itemsForSale:Set[${Store.NumItemsICanSell}]
+copper:Set[${Math.Calc[${cp}/100]}]
+price:Set[${Math.Calc[${platina}+${gold}+${silver}+${copper}]}]
+itemsForSale:Set[${Me.Vending[${cnt}].NumItems}]
 
 Do
 {
-  if ${Store[${counter}].Name.Find[${itemName}]} || ${itemName.Equal["All"]}
+  if ${Me.Vending[${cnt}].Consignment[${counter}].Name.Find[${itemName}]} || ${itemName.Equal["All"]}
   {
-    Store[${counter}]:SetPrice[${platina},${gold},${silver},${copper}]
+    Me.Vending[${cnt}].Consignment[${counter}]:SetPrice[${price}]
   }
 
   counter:Set[${counter}+1]
@@ -62,5 +81,6 @@ declare silver int script
 declare copper int script
 declare itemsForSale int script
 declare counter int script 1
+declare price int script
 }
 

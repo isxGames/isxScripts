@@ -983,7 +983,10 @@ function CheckHeals()
 	if ${grpheal}>=1
 	{
 		; Cast spiritual circle
-		call CastSpellRange 16
+		if ${PetMode}
+		{
+			call CastSpellRange 16
+		}
 	}
 
 	if ${grpheal}>2

@@ -259,7 +259,7 @@ function Buff_Routine(int xAction)
 	if ${Me.ToActor.Power}>85 && ${KeepReactiveUp}
 	{
 		call CastSpellRange 15
-		call CastSpellRange 7 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
 	switch ${PreAction[${xAction}]}
@@ -267,7 +267,7 @@ function Buff_Routine(int xAction)
 		case BuffThorns
 			if ${BuffThorns}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainAssist}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
 			}
 			else
 			{
@@ -695,7 +695,7 @@ function Have_Aggro()
 
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
-		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
+		eq2execute /tell ${MainTankPC}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
 
@@ -844,12 +844,12 @@ function CheckHeals()
 	{
 		if ${Me.Ability[${SpellType[316]}].IsReady}
 		{
-			call CastSpellRange 316 0 0 0 ${Actor[${MainAssist}].ID}
+			call CastSpellRange 316 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 
 		if ${Me.Ability[${SpellType[8]}].IsReady}
 		{
-			call CastSpellRange 8 0 0 0 ${Actor[${MainAssist}].ID}
+			call CastSpellRange 8 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
 
@@ -910,16 +910,16 @@ function CheckHeals()
 
 	;MAINTANK HEALS
 	;Will cast HoT's on MT outside of group.
-	;Need to come back here and configure raid healing.  If MainAssist in group, use groupHoT, if not in group use direct HoT
+	;Need to come back here and configure raid healing.  If MainTankPC in group, use groupHoT, if not in group use direct HoT
 	if ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
 		if ${MTinMyGroup} && ${Me.Ability[${SpellType[9]}].IsReady} && ${Me.Power}<10
 		{
-			call CastSpellRange 9 0 0 0 ${Actor[${MainAssist}].ID}
+			call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 		else
 		{
-			call CastSpellRange 1 0 0 0 ${Actor[${MainAssist}].ID}
+			call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
 
@@ -1089,7 +1089,7 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if ${Actor[${MainAssist}].Health}<=0 && ${Actor[${MainAssist}](exists)} && ${CombatRez}
+	if ${Actor[${MainTankPC}].Health}<=0 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
 	{
 		if ${Me.Ability[${SpellType[300]}].IsReady}
 		{
@@ -1190,7 +1190,7 @@ function CureGroupMember(int gMember)
 			}
 		}
 
-		if  ${Me.Group[${gMember}].Elemental}>
+		if  ${Me.Group[${gMember}].Elemental}>0
 		{
 			if ${Me.Ability[${SpellType[214]}].IsReady}
 			{
@@ -1202,7 +1202,7 @@ function CureGroupMember(int gMember)
 			}
 		}
 
-		if  ${Me.Group[${gMember}].Trauma}
+		if  ${Me.Group[${gMember}].Trauma}>0
 		{
 			if ${Me.Ability[${SpellType[214]}].IsReady}
 			{
