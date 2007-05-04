@@ -11,6 +11,17 @@
 ;State 1 = Wheel is being completed
 ;State 2 = expired or completed wheel
 ;state 0 = scout can change wheel? 
+;
+;
+;States changed these are the new assumptions
+;State 6 = Last advance wheel
+;State 5 = Second advance wheel for 3 stage ho advances
+;State 4 = Initial advance wheel
+;State 3 = scout cant change wheel?
+;State 1 = Wheel is being completed
+;State 2 = HO in countdown
+;state 0 = scout can change wheel? 
+;
 ;Note all HOs have 10seconds to complete
 ;All HO buffs last 6 mins
 ;TODO: Add check if we have enough time to complete HO before we cast?
@@ -167,8 +178,8 @@ objectdef HeroicOp
 		
 		
 		
-		if ${EQ2.HOWheelState}==4
-		;State 4 = First wheel after HO intiation
+		if ${EQ2.HOWheelState}==0 || ${EQ2.HOWheelState}==1 || ${EQ2.HOWheelState}==6
+		;State 0 = First wheel after HO intiation
 		{
 			switch ${This.LastManipulatorArchetype}
 			{
@@ -272,7 +283,7 @@ objectdef HeroicOp
 			}
 
 		}
-		elseif ${EQ2.HOWheelState}==5
+		elseif ${EQ2.HOWheelState}==3
 		;State 5 = Second wheel after HO intiation for 3 stage HO advancements
 		{
 			switch ${This.LastManipulatorArchetype}
@@ -345,7 +356,7 @@ objectdef HeroicOp
 			}
 
 		}		
-		elseif ${EQ2.HOWheelState}==6
+		elseif ${EQ2.HOWheelState}==5 && ${EQ2.HOName(exists)}
 		;State 6 = Second wheel after HO intiation for 2 stage HO advancements
 		{
 			switch ${This.LastManipulatorArchetype}
@@ -424,7 +435,7 @@ objectdef HeroicOp
 			}
 
 		}		
-		elseif ${EQ2.HOWheelState}==3 || ${EQ2.HOWheelState}==0  || ${EQ2.HOWheelState}==1
+		elseif ${EQ2.HOWheelState}==5 || ${EQ2.HOWheelState}==4 || ${EQ2.HOWheelState}==2
 
 		
 		{

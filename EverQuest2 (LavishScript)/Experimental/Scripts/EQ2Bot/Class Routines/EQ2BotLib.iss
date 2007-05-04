@@ -64,7 +64,7 @@ variable bool ForwardGuildChat
 
 function EQ2BotLib_Init()
 {
-	
+
 	;INI Settings
 	AutoFollowMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Auto Follow Mode,FALSE]}]
 	AutoFollowee:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[AutoFollowee,""]}]
@@ -73,8 +73,8 @@ function EQ2BotLib_Init()
 	ShardGroupMember:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Group Member,""]}]
 	DoHOs:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[DoHOs,FALSE]}]
 	RelaySession:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[RelaySession,""]}]
-	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]	
-	
+	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]
+
 	;Triggers
 	;AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
 	;AddTrigger StopAutoFollowing "\\aPC @*@ @*@:@sender@\\/a tells@*@Wait Here@*@"
@@ -85,26 +85,26 @@ function EQ2BotLib_Init()
 	{
 		AddTrigger RelayGuildMessage "\\aPC @*@ @*@:@Sender@\\/a says to the guild,@Message@"
 	}
-	
+
 	;HOs
 	if ${DoHOs}
 	{
 		objHeroicOp:Intialize
 		objHeroicOp:LoadUI
 	}
-	
+
 
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Class]
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Extras]
-	
-	
-	
+
+
+
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[7]:Move[4]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[8]:Move[5]
-	
+
 	ui -load -parent "Class@EQ2Bot Tabs@EQ2 Bot" "EQ2Bot/UI/${Me.SubClass}.xml"
 	ui -load -parent "Extras@EQ2Bot Tabs@EQ2 Bot" "EQ2Bot/UI/EQ2BotExtras.xml"
-	
+
 	ExecuteAtom SaveEquipmentSet "Default"
 
 	#ifdef _EQ2HOLIB_
@@ -113,20 +113,20 @@ function EQ2BotLib_Init()
 		uplink name ${Me.Name}
 		}
 	#endif
-		
+
 }
 
 atom AutoFollowTank()
 {
-	
-	
+
+
 	AutoFollowMode:Set[TRUE]
 	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-		
+
 	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
 
 	if ${Me.ToActor.WhoFollowingID}<0 && ${Actor[${AutoFollowee}].Distance}<45 && ${Actor[${AutoFollowee}](exists)} && !${AutoFollowingMA}
-	{	
+	{
 		squelch face ${AutoFollowee}
 		eq2execute /follow ${AutoFollowee}
 		AutoFollowingMA:Set[TRUE]
@@ -140,9 +140,9 @@ atom StopAutoFollowing()
 	AutoFollowMode:Set[FALSE]
 	AutoFollowingMA:Set[FALSE]
 	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetUnChecked
-	
+
 	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",FALSE]:Save
-	
+
 	EQ2Execute /stopfollow
 }
 
@@ -169,7 +169,7 @@ function Buff_Count(int SpellLine)
 
 function Swap()
 {
-	
+
 	if !${Swapping}
 	{
 		if ${Me.Inventory[ExactName,${ItemToBeEquiped}](exists)}  && ${Me.Equipment[ExactName,${OriginalItem}](exists)}
@@ -182,7 +182,7 @@ function Swap()
 		{
 			EQ2Echo I do not have a ${ItemToBeEquiped} or a  ${OriginalItem}
 		}
-	
+
 	}
 	else
 	{
@@ -195,15 +195,15 @@ function Swap()
 			OriginalItem:Set[]
 		}
 	}
-	
-	
+
+
 }
 
 function IsHealer(int ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
-		
+
 		case inquisitor
 		case templar
 		case fury
@@ -220,7 +220,7 @@ function IsFighter(int ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
-		
+
 		case guardian
 		case berserker
 		case shadowknight
@@ -236,8 +236,8 @@ function IsFighter(int ID)
 function Shard()
 {
 	declare ShardType string local "NOSHARD"
-	
-	
+
+
 	if ${Me.Inventory["Shard of Essence"](exists)}
 	{
 		ShardType:Set[Shard of Essence]
@@ -266,10 +266,10 @@ function Shard()
 	{
 		ShardType:Set[Ruinous Heart]
 	}
-	
+
 	if ${ShardType.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<65 && ${Me.Inventory[${ShardType}].IsReady} && ${ShardMode}
 	{
-	
+
 		Me.Inventory[${ShardType}]:Use
 		ShardRequested:Set[FALSE]
 	}
@@ -291,17 +291,17 @@ function ToClose()
 		eq2execute /togglerangedattack
 		eq2execute /toggleautoattack
 	}
-	
+
 }
 
 
 function CheckGroupHealth(int MinHealth)
 {
 	declare counter int local 1
-	
+
 	do
 	{
-		
+
 		;check groupmates health
 		if ${Me.Group[${counter}].ToActor.Health}<${MinHealth} && ${Me.Group[${counter}].ToActor.Health}>0
 		{
@@ -319,13 +319,13 @@ function CheckGroupHealth(int MinHealth)
 
 	}
 	while ${counter:Inc}<${Me.GroupCount}
-	
+
 	;check my health
 	if ${Me.ToActor.Health}<${MinHealth}
 	{
 		Return FALSE
 	}
-	
+
 	Return TRUE
 }
 
@@ -345,12 +345,12 @@ atom PetAttack()
 
 }
 
-function ReceivedTell(string line, string Sender, string Message) 
-{   
+function ReceivedTell(string line, string Sender, string Message)
+{
 	relay ${RelaySession} EQ2Echo ${Sender} tells ${Me.Name}, ${Message}
-} 
+}
 
-function RelayGuildMessage(string line, string Sender, string Message) 
+function RelayGuildMessage(string line, string Sender, string Message)
 {
 	relay ${RelaySession} EQ2Echo ${Sender} tells the guild, ${Message}
 }
@@ -360,11 +360,11 @@ atom CheckStuck()
 	if ${Actor[${Me.ToActor.WhoFollowing}].Distance}>25 && (${Math.Calc[${Time.Timestamp} - ${StuckWarningTime}]}>=10)  && ${Actor[${Me.ToActor.WhoFollowing}](exists)}
 	{
 		relay ${RelaySession} EQ2Echo ${Me.Name} IS STUCK
-		
+
 		StuckWarningTime:Set[${Time.Timestamp}]
 	}
-	
-	
+
+
 }
 
 atom SaveEquipmentSet(string EquipmentSetName)
@@ -374,16 +374,9 @@ atom SaveEquipmentSet(string EquipmentSetName)
 
 	Do
 	{
-		
-		;skip 13 as there is currently no ear2 slot
-		if ${tempvar}==13
-		{
-			continue
-		}
-			
 		SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}]:Set[${tempvar},${Me.Equipment[${tempvar}].Name}]
 	}
-	while ${tempvar:Inc} <=20
+	while ${tempvar:Inc} <=22
 	SettingXML[${charfile}]:Save
 
 
@@ -392,41 +385,35 @@ atom SaveEquipmentSet(string EquipmentSetName)
 atom GetNaked()
 {
 	variable int tempvar=1
-	
+
 	if !${Me.InCombat}
 	{
 		Do
 		{
 			Me.Equipment[${tempvar}]:UnEquip
 		}
-		while ${tempvar:Inc} <=20		
+		while ${tempvar:Inc} <=22
 	}
 }
 
 atom LoadEquipmentSet(string EquipmentSetName)
 {
-	variable int tempvar=1	
-	
+	variable int tempvar=1
+
 	if !${Me.InCombat}
 	{
-		
+
 		Do
 		{
-			;skip 13 as there is currently no ear2 slot
-			if ${tempvar}==13
-			{
-				continue
-			}
-
 			if ${Me.Equipment[${tempvar}].Name.NotEqual[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}].GetString[${tempvar}]}]} || !${Me.Equipment[${tempvar}](exists)}
 			{
 
 				Me.Inventory[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}].GetString[${tempvar}]}]:Equip
 			}
-			
+
 
 		}
-		while ${tempvar:Inc} <=20		
+		while ${tempvar:Inc} <=22
 	}
 }
 
@@ -441,21 +428,21 @@ function UseItem(string Item)
 		elseif ${Me.Inventory[ExactName,"${Item}"].IsReady} && ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 		{
 			Me.Inventory[ExactName,"${Item}"]:Equip
-			Me.Equipment["${Item}"]:Use		
-		}	
+			Me.Equipment["${Item}"]:Use
+		}
 }
 
 function UseCrystallizedSpirit(int Health)
 {
 	;Use a defiler crystalized spirit if we have 2 or more group members under ${Health}
-	
-	
+
+
 	declare temphl int local
 	declare grpheal int local 0
-	
+
 	grpcnt:Set[${Me.GroupCount}]
 	temphl:Set[1]
-	
+
 	if ${Me.Inventory[Crystallized Spirit].IsReady}
 	{
 		if ${Me.ToActor.Health}>0 && ${Me.Group[${temphl}].ToActor.Health}<${Health}
@@ -500,7 +487,7 @@ function GetActorID(string ActorName)
 {
 	variable int ActorID=0
 	variable int Counter=1
-	
+
 	EQ2:CreateCustomActorArray[byDist,50]
 	do
 	{

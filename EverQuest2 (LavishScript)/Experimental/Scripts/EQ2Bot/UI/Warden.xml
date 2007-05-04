@@ -515,7 +515,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Thorns]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseCAs' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UsePets' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>50</Y>

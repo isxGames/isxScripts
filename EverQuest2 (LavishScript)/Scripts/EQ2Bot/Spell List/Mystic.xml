@@ -7,7 +7,6 @@
 		<Setting Name="1,399">Aura of Haste</Setting>
 		<Setting Name="1,398">Aura of Warding</Setting>
 		<Setting Name="1,397">Spiritual Foresight</Setting>
-		<Setting Name="1,396">Ritualistic Aggression</Setting>
 		<!--Normal Abilities -->
 		<Setting Name="1,4">Minor Aid</Setting>
 		<Setting Name="1,80">Chilling Winds</Setting>
@@ -129,9 +128,9 @@
 		<Setting Name="68,52">Wail of the Ancients</Setting>
 		<Setting Name="69,0">Ghastly Savior</Setting>
 		<Setting Name="69,180">Sonorus Spirits</Setting>
-		<Setting Name="70,220">Ebbing Spirit</Setting>
+			<Setting Name="70,0">Ebbing Spirit</Setting>
 			<Setting Name="70,0">Oberon Barrier</Setting>
-		<Setting Name="70,10">Transcendence</Setting>
-		<Setting Name="70,15">Umbral Liturgy</Setting>
+			<Setting Name="70,0">Transcendence</Setting>
+			<Setting Name="70,0">Umbral Liturgy</Setting>
 	</Set>
 </InnerSpaceSettings>

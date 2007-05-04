@@ -1,11 +1,14 @@
 ;*************************************************************
-;Fury.iss 20070404a
+;Fury.iss 20070504a
 ;version
+;
+;20070504a
+; Tweaked Heal Code
+; Updated Group Cures to check target health and group health before casting cures
+;	Misc small fixes
 ;
 ;20070404a
 ;	Updated for latest eq2bot
-;
-;
 ;
 ;20070226a
 ; Full support for KoS and EoF AA lines
@@ -307,6 +310,7 @@ function Buff_Routine(int xAction)
 			if ${Me.ToActor.NumEffects}<15  && !${Me.Effect[Spirit of the Wolf](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+				wait 40
 				;buff the group
 				tempvar:Set[1]
 				do
@@ -314,6 +318,7 @@ function Buff_Routine(int xAction)
 					if ${Me.Group[${tempvar}].ToActor.Distance}<15
 					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
+						wait 40
 					}
 				}
 				while ${tempvar:Inc}<${Me.GroupCount}
@@ -357,7 +362,7 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	call CheckGroupHealth 75
+	call CheckGroupHealth 60
 	if ${DoHOs} && ${Return}
 	{
 		objHeroicOp:DoHO
@@ -599,7 +604,6 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[OK]}
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
 					}
 				}
 			}
@@ -716,7 +720,7 @@ function CheckHeals()
 	lowest:Set[1]
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
 	{
 		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
@@ -768,7 +772,7 @@ function CheckHeals()
 				grpheal:Inc
 			}
 
-			if ${Me.Group[${temphl}].Arcane}>0 || ${Me.Group[${temphl}].Elemental}>0
+			if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Elemental}>0
 			{
 				grpcure:Inc
 			}
@@ -781,7 +785,7 @@ function CheckHeals()
 				}
 			}
 
-			if ${Me.Group[${temphl}].Name.Equal[${MainAssist}]}
+			if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
 			{
 				MTinMyGroup:Set[TRUE]
 			}
@@ -795,7 +799,7 @@ function CheckHeals()
 		grpheal:Inc
 	}
 
-	if ${Me.Arcane} || ${Me.Elemental}
+	if ${Me.Noxious}>0 || ${Me.Elemental}>0
 	{
 		grpcure:Inc
 	}
@@ -813,6 +817,11 @@ function CheckHeals()
 
 	if ${mostafflicted} && ${CureMode}
 	{
+		call CheckGroupHealth 50
+		if ${Return}
+		{
+			call CastSpellRange 15
+		}
 		call CureGroupMember ${mostafflicted}
 	}
 
@@ -833,13 +842,13 @@ function CheckHeals()
 			}
 			else
 			{
-				if ${Me.Ability[${SpellType[1]}].IsReady}
+				if ${Me.Ability[${SpellType[4]}].IsReady}
 				{
-					call CastSpellRange 1 0 0 0 ${Me.ID}
+					call CastSpellRange 4 0 0 0 ${Me.ID}
 				}
 				else
 				{
-					call CastSpellRange 4 0 0 0 ${Me.ID}
+					call CastSpellRange 1 0 0 0 ${Me.ID}
 				}
 			}
 		}
@@ -881,19 +890,26 @@ function CheckHeals()
 	;Need to come back here and configure raid healing.  If MainAssist in group, use groupHoT, if not in group use direct HoT
 	if ${Actor[${MainTankPC}].Health}<90 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
-		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+		if ${MTinMyGroup}
+		{
+			call CastSpellRange 15 0 0 0 ${Actor[${MainTankPC}].ID}
+		}
+		else
+		{
+			call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+		}
 	}
 
-	if ${Actor[${MainAssist}].Health}<80 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+	if ${Actor[${MainTankPC}].Health}<75 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
 		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
-	if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+	if ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
 		call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
-	if ${Actor[${MainAssist}].Health}<50 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+	if ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
 		call CastSpellRange 2 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
@@ -901,9 +917,9 @@ function CheckHeals()
 	;GROUP HEALS
 	if ${grpheal}>2
 	{
-		if ${Me.Ability[${SpellType[10]}].IsReady}
+		if ${Me.Ability[${SpellType[15]}].IsReady}
 		{
-			call CastSpellRange 10
+			call CastSpellRange 15
 			if !${Me.Maintained[${SpellType[11]}](exists)}
 			{
 				call CastSpellRange 11
@@ -911,7 +927,7 @@ function CheckHeals()
 		}
 		else
 		{
-			call CastSpellRange 15
+			call CastSpellRange 10
 			;add check to not cast if maintained already
 			if !${Me.Maintained[${SpellType[11]}](exists)}
 			{
@@ -1062,8 +1078,6 @@ function CureMe()
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 		return
 	}
-
-
 }
 
 function CureGroupMember(int gMember)
@@ -1078,6 +1092,15 @@ function CureGroupMember(int gMember)
 
 	do
 	{
+		call CheckGroupHealth 50
+		if ${Return}
+		{
+			call CastSpellRange 15
+		}
+		if ${Me.Group[${gMember}].Health}<25
+		{
+			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
+		}
 		if  ${Me.Group[${gMember}].Arcane} && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
