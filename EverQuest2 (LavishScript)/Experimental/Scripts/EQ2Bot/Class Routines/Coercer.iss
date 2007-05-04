@@ -116,7 +116,6 @@ function Buff_Init()
 function Combat_Init()
 {
 
-
 	Action[2]:Set[AoE_PB]
 	SpellRange[2,1]:Set[95]
 
@@ -153,7 +152,6 @@ function Combat_Init()
 	MobHealth[10,2]:Set[100]
 	SpellRange[10,1]:Set[70]
 
-
 	Action[11]:Set[Thoughts]
 	MobHealth[11,1]:Set[40]
 	MobHealth[11,2]:Set[100]
@@ -184,8 +182,6 @@ function Combat_Init()
 	MobHealth[17,1]:Set[1]
 	MobHealth[17,2]:Set[100]
 	SpellRange[17,1]:Set[192]
-
-
 
 }
 
