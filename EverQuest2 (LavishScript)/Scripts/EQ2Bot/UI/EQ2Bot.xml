@@ -159,7 +159,7 @@
 										{
 											do
 											{
-												if ${Me.Raid[${tmpvar}](exists)} && !${Me.Raid[${tmpvar}].Name.Equal[NULL]}
+												if ${Me.Raid[${tmpvar}].Name(exists)}
 												{
 													This:AddItem[${Me.Raid[${tmpvar}].Name}]
 												}
