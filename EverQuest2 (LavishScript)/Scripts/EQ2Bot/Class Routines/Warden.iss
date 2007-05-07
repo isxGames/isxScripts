@@ -81,7 +81,7 @@ function Class_Declaration()
 	CombatRez:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Combat Rez,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	BuffThorns:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Thorns,FALSE]}]
-	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,True]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 
 	BuffBatGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBatGroupMember,]}]
 	BuffInstinctGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffInstinctGroupMember,]}]
@@ -400,7 +400,7 @@ function Combat_Routine(int xAction)
 
 	if ${UseCAs}
 	{
-		call checkposition 1 1
+		call CheckPosition 1 1
 		if ${Me.Ability[Fire Strike].IsReady}
 		{
 			call CastSpell "Fire Strike"
@@ -775,7 +775,7 @@ function CheckHeals()
 				grpheal:Inc
 			}
 
-			if ${Me.Group[${temphl}].Trauma} || ${Me.Group[${temphl}].Elemental}
+			if ${Me.Group[${temphl}].Trauma}>0 || ${Me.Group[${temphl}].Elemental}>0
 			{
 				grpcure:Inc
 			}
@@ -802,13 +802,13 @@ function CheckHeals()
 		grpheal:Inc
 	}
 
-	if ${Me.Trauma} || ${Me.Elemental}
+	if ${Me.Trauma}>0 || ${Me.Elemental}>0
 	{
 		grpcure:Inc
 	}
 
 	;CURES
-	if ${grpcure}>1 && ${CureMode}
+	if ${grpcure}>2 && ${CureMode}
 	{
 		call CastSpellRange 220
 		call CastSpellRange 363
@@ -840,7 +840,7 @@ function CheckHeals()
 	{
 		call EmergencyHeal ${Actor[${MainTankPC}].ID}
 	}
-	elseif !${MTinMyGroup} && ${Actor[${MainTankPC}].Health<30
+	elseif !${MTinMyGroup} && ${Actor[${MainTankPC}].Health}<30
 	{
 		if ${Me.Ability[${SpellType[316]}].IsReady}
 		{
@@ -1118,13 +1118,10 @@ function Cancel_Root()
 function CureMe()
 {
 
-	if  ${Me.Arcane}>0 && !${Me.ToActor.Effect[Revived Sickness](exists)}
+	if  ${Me.Arcane}>0
 	{
-		if ${Me.Arcane} && !${Me.ToActor.Effect[Revived Sickness](exists)}
-		{
-			call CastSpellRange 213 0 0 0 ${Me.ID}
-			return
-		}
+		call CastSpellRange 213 0 0 0 ${Me.ID}
+		return
 	}
 
 	if  ${Me.Noxious}>0

@@ -82,7 +82,7 @@ function Class_Declaration()
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffMark:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMark,,FALSE]}]
 	BuffFavor:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffFavor,FALSE]}]
-	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,True]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]

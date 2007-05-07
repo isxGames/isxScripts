@@ -159,7 +159,7 @@
 										{
 											do
 											{
-												if ${Me.Raid[${tmpvar}](exists)}
+												if ${Me.Raid[${tmpvar}](exists)} && !${Me.Raid[${tmpvar}].Name,Equal[NULL]}
 												{
 													This:AddItem[${Me.Raid[${tmpvar}].Name}]
 												}
@@ -216,7 +216,7 @@
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
 								}
 							</OnLeftClick>
-						</checkbox>						
+						</checkbox>
 						<Frame Name='MainAssist Frame'>
 							<X>23%</X>
 							<Y>30</Y>
@@ -1367,7 +1367,7 @@
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Revive on Group Wipe?,FALSE]:Save
 								}
 							</OnLeftClick>
-						</checkbox>						
+						</checkbox>
 					</Tab>
 				</Tabs>
 			</Tabcontrol>

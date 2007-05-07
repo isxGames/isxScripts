@@ -2531,8 +2531,8 @@ function StartBot()
 
 	if ${CloseUI}
 	{
-		ui -unload ${LavishScript.HomeDirectory}/Interface/eq2skin.xml
-		ui -unload ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml
+		ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
+		ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
 	}
 	else
 	{
@@ -3029,7 +3029,7 @@ objectdef EQ2BotObj
 
 		; General Triggers
 		AddTrigger IamDead "@npc@ has killed you."
-		AddTrigger Loreitem "@*@You cannot have more than one of any given LORE item."
+		AddTrigger LoreItem "@*@You cannot have more than one of any given LORE item."
 		AddTrigger InventoryFull "@*@You cannot loot while your inventory is full"
 		AddTrigger LootWdw "LOOTWINDOW::LOOTWINDOW"
 		AddTrigger CantSeeTarget "@*@Can't see target@*@"

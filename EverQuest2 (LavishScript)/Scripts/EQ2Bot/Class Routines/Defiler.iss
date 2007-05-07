@@ -71,7 +71,7 @@ function Class_Declaration()
 	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cure Spells,FALSE]}]
 	MaelstromMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Maelstrom Mode,FALSE]}]
 	KeepWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepWardUp,FALSE]}]
-	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,True]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	CombatRez:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Combat Rez,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 
@@ -938,7 +938,7 @@ function CheckHeals()
 			}
 			else
 			{
-				call CastSpellRange 351
+				call CastSpellRange 387
 				call CastSpellRange 4 0 0 0 ${Me.ID}
 			}
 		}
@@ -953,12 +953,12 @@ function CheckHeals()
 			{
 				if ${Me.Ability[${SpellType[1]}].IsReady}
 				{
-					call CastSpellRange 351
+					call CastSpellRange 387
 					call CastSpellRange 1 0 0 0 ${Me.ID}
 				}
 				else
 				{
-					call CastSpellRange 351
+					call CastSpellRange 387
 					call CastSpellRange 4 0 0 0 ${Me.ID}
 				}
 			}
@@ -975,7 +975,7 @@ function CheckHeals()
 
 	if ${Actor[${MainTankPC}].Health} <90 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)}
 	{
-		call CastSpellRange 351
+		call CastSpellRange 387
 		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
@@ -1005,13 +1005,13 @@ function CheckHeals()
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
 		{
-			call CastSpellRange 351
+			call CastSpellRange 387
 			call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 
 		}
 		else
 		{
-			call CastSpellRange 351
+			call CastSpellRange 387
 			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 		}
 
@@ -1027,7 +1027,7 @@ function CheckHeals()
 		}
 		else
 		{
-			call CastSpellRange 351
+			call CastSpellRange 387
 			call CastSpellRange 1 0 0 0 ${PetToHeal}
 		}
 	}
