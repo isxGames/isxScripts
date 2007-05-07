@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='HuricaneMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='HurricaneMode' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -121,7 +121,7 @@
 			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHateGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffProcGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffHateGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
 		<OnLeftClick>
 			declare tmpvar int
 
@@ -161,12 +161,12 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[BuffLunge]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[BuffLunge]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",FALSE]:Save
 			}
 		</OnLeftClick>
@@ -181,12 +181,12 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",FALSE]:Save
 			}
 		</OnLeftClick>
@@ -434,12 +434,12 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
 			}
 		</OnLeftClick>

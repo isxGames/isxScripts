@@ -264,7 +264,10 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case MakePet
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			if ${Makepet}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			break
 		case Melee_Buff
 			Counter:Set[1]

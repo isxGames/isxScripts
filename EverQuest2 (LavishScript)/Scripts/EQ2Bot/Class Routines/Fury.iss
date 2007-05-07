@@ -1052,28 +1052,26 @@ function Cancel_Root()
 function CureMe()
 {
 
-	if  ${Me.Arcane} && !${Me.ToActor.Effect[Revived Sickness](exists)}
+	if  ${Me.Arcane}>0
 	{
-		if ${Me.Arcane} && !${Me.ToActor.Effect[Revived Sickness](exists)}
-		{
-			call CastSpellRange 213 0 0 0 ${Me.ID}
-			return
-		}
+
+		call CastSpellRange 213 0 0 0 ${Me.ID}
+		return
 	}
 
-	if  ${Me.Noxious}
+	if  ${Me.Noxious}>0
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 		return
 	}
 
-	if  ${Me.Elemental}
+	if  ${Me.Elemental}>0
 	{
 			call CastSpellRange 212 0 0 0 ${Me.ID}
 			return
 	}
 
-	if  ${Me.Trauma}
+	if  ${Me.Trauma}>0
 	{
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 		return
@@ -1101,28 +1099,22 @@ function CureGroupMember(int gMember)
 		{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
 		}
-		if  ${Me.Group[${gMember}].Arcane} && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
+		if  ${Me.Group[${gMember}].Arcane}>0
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 
-		if  ${Me.Group[${gMember}].Noxious}
+		if  ${Me.Group[${gMember}].Noxious}>0
 		{
-			if ${Me.Group[${gMember}].Noxious}
-			{
 				call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
-			}
 		}
 
-		if  ${Me.Group[${gMember}].Elemental}
+		if  ${Me.Group[${gMember}].Elemental}>0
 		{
-			if ${Me.Group[${gMember}].Noxious}
-			{
 				call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
-			}
 		}
 
-		if  ${Me.Group[${gMember}].Trauma}
+		if  ${Me.Group[${gMember}].Trauma}>0
 		{
 			call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
 		}

@@ -27,6 +27,7 @@ function Class_Declaration()
 	declare DammagePoisonShort string script
 	declare UtilityPoisonShort string script
 	declare StartHO bool script 1
+	declare HurricaneMode bool script 1
 
 	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
@@ -89,10 +90,10 @@ function Buff_Init()
 	PreAction[6]:Set[Poisons]
 
 	PreAction[7]:Set[AA_Lunge_Reversal]
-	PreSpellRange[7,1]:Set[415]
+	PreSpellRange[7,1]:Set[395]
 
 	PreAction[8]:Set[AA_Evasiveness]
-	PreSpellRange[8,1]:Set[417]
+	PreSpellRange[8,1]:Set[397]
 
 	PreAction[9]:Set[Hurricane]
 	PreSpellRange[9,1]:Set[28]
@@ -177,7 +178,7 @@ function Combat_Init()
 	SpellRange[20,1]:Set[382]
 
 	Action[21]:Set[AA_BootDagger]
-	SpellRange[21,1]:Set[387]
+	SpellRange[21,1]:Set[386]
 
 }
 
@@ -329,7 +330,7 @@ function Combat_Routine(int xAction)
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 	{
-		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 1
+		call CastSpellRange 130 0 1 1 ${KillTarget} 0 0 1
 	}
 
 	;use best debuffs on target if epic
@@ -337,12 +338,12 @@ function Combat_Routine(int xAction)
 	{
 		if ${Me.Ability[${SpellType[150]}].IsReady}
 		{
-			call CastSpellRange 150 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange 150 0 0 1 ${KillTarget} 0 0 1
 		}
 
 		if ${Me.Ability[${SpellType[191]}].IsReady}
 		{
-			call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange 191 0 1 1 ${KillTarget} 0 0 1
 		}
 
 		if ${Me.Ability[${SpellType[381]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
@@ -379,32 +380,24 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	;if heroic and over 80% health, use dps buffs
-	if ${Actor[${KillTarget}].IsHeroic}
+	;if Named or Epic and over 60% health, use dps buffs
+	if ${Actor[${KillTarget}].IsNamed} || ${Actor[${KillTarget}].IsEpic}
 	{
-		call CheckCondition MobHealth 80 100
+		call CheckCondition MobHealth 60 100
 		if ${Return.Equal[OK]}
 		{
-			if ${Me.Ability[${SpellType[155]}].IsReady}
+			if ${Me.Ability[${SpellType[155]}].IsReady} || ${Me.Ability[${SpellType[157]}].IsReady}
 			{
-				call CastSpellRange 155 158 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange 155 158 1 0 ${KillTarget} 0 0 1
+				wait 30
+				call CastSpellRange 151 0 1 0 ${KillTarget} 0 0 1
+				wait 30
+				call CastSpellRange 153 0 1 0 ${KillTarget} 0 0 1
+				wait 40
 			}
 		}
 	}
 
-	;if heroic and under 80% health use dps run
-	if ${Actor[${KillTarget}].IsHeroic} &&  ${Actor[${KillTarget}].Health}<80
-	{
-		if ${Me.Ability[${SpellType[157]}].IsReady}
-		{
-			call CastSpellRange 155 158 1 0 ${KillTarget} 0 0 1
-			wait 30
-			call CastSpellRange 151 0 1 0 ${KillTarget} 0 0 1
-			wait 30
-			call CastSpellRange 153 0 1 0 ${KillTarget} 0 0 1
-			wait 40
-		}
-	}
 
 
 	switch ${Action[${xAction}]}
