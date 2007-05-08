@@ -1,6 +1,9 @@
 ;*****************************************************
-;Brigand.iss 20070504a
+;Brigand.iss 20070508a
 ;by Pygar
+;
+;20070508a
+; Fixed some old bugs brought back from consolidating versions.
 ;
 ;20070504a
 ; Source files diveraged, attempt to consolidate them back to single script
@@ -286,7 +289,7 @@ function Buff_Routine(int xAction)
 		case AA_Lunge_Reversal
 			if ${BuffLunge}
 			{
-				call CastCARange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
 			{
@@ -551,7 +554,7 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
@@ -568,7 +571,7 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
@@ -584,7 +587,7 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
@@ -839,7 +842,7 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
@@ -855,7 +858,7 @@ function Combat_Routine(int xAction)
 				{
 					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
 					{
-						call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 					{
