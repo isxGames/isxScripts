@@ -1677,7 +1677,7 @@ function CheckLoot()
 		{
 			EQ2Echo Looting ${CustomActor[${tcount}].Name}
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
-			switch ${Me.Class}
+			switch ${Me.SubClass}
 			{
 				case dirge
 				case troubador

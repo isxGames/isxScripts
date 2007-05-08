@@ -1,8 +1,11 @@
 ;*************************************************************
 ;Necromancer.iss
-;version 20070504a
+;version 20070508a
 ;Initial Build
 ;by Pygar
+;
+;20070508a
+;	Fixed undeclared var bug causing bot to lock up in stuck loop.
 ;
 ;20070504a
 ; Fixed ThermalShocker Use
@@ -52,7 +55,7 @@ function Class_Declaration()
 	declare BuffMark bool script FALSE
 	declare BuffCabalistCover bool script TRUE
 	declare LifeburnMode bool script TRUE
-	declare PetMode bool script 1
+	declare PetMode bool script TRUE
 
 	declare ShardQueue queue:string script
 	declare ShardRequestTimer int script ${Time.Timestamp}
@@ -80,7 +83,7 @@ function Class_Declaration()
 	LifeburnMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Lifeburn,FALSE]}]
 	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cures,FALSE]}]
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
-	BuffMark:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMark,,FALSE]}]
+	BuffMark:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMark,FALSE]}]
 	BuffFavor:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffFavor,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 
@@ -101,6 +104,8 @@ function Class_Declaration()
 			break
 		case Ruinous Heart
 			ShardType:Set["Ruinous Heart"]
+			break
+		case Default
 			break
 	}
 }
@@ -700,6 +705,7 @@ function CheckHeals()
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
 	declare MTinMyGroup bool local FALSE
+	declare tempraid int local 0
 
 	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
@@ -717,15 +723,15 @@ function CheckHeals()
 
 
 	;cancel FD when safe
-		if ${Me.ToActor.Health}>60 && ${Me.Effect[Deathly Pallor](exists)}
+	if ${Me.ToActor.Health}>60 && ${Me.Effect[Deathly Pallor](exists)}
 	{
 		Me.Effect[Deathly Pallor]:Cancel
 	}
 
 	;Res the MT if they are dead
-	if ${Actor[${MainAssist}].Health}==-99 && ${Actor[${MainAssist}](exists)}
+	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)}
 	{
-		call CastSpellRange 300 0 0 0 ${Actor[${MainAssist}].ID}
+		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
 	do
@@ -733,7 +739,7 @@ function CheckHeals()
 		if ${Me.Group[${temphl}].ToActor(exists)}
 		{
 
-			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health}>-99
+			if ${Me.Group[${temphl}].ToActor.Health}<100 && ${Me.Group[${temphl}].ToActor.Health}>-99
 			{
 				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${temphl}].ToActor.ID}!=${Me.ID}
 				{
@@ -795,7 +801,7 @@ function CheckHeals()
 
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ID}==${Actor[${MainAssist}].ID}
+	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ID}==${Actor[${MainTankPC}].ID}
 	{
 		if ${Me.ToActor.Health}<75
 		{
@@ -825,7 +831,7 @@ function CheckHeals()
 	}
 
 	;MAINTANK HEALS
-	if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainAssist}].Health}>-99 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainAssist}].ID}!=${Me.ID}
+	if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
 			call CastSpellRange 4 0 0 0 ${Actor[${MainAssist}].ID}
 	}
@@ -877,17 +883,20 @@ function CheckHeals()
 	}
 	while ${tempgrp:Inc}<${grpcnt}
 
-	;Res Fallen RAID members only if in range
-	grpcnt:Set[${Me.RaidCount}]
-	tempraid:Set[1]
-	do
+	if ${Me.InRaid}
 	{
-		if ${RaidMember[${tempraid}].Health}==-99
+		;Res Fallen RAID members only if in range
+		grpcnt:Set[${Me.RaidCount}]
+		tempraid:Set[1]
+		do
 		{
-			call CastSpellRange 300 0 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
+			if ${RaidMember[${tempraid}].Health}==-99
+			{
+				call CastSpellRange 300 0 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
+			}
 		}
+		while ${tempraid:Inc}<=24
 	}
-	while ${tempraid:Inc}<=24
 
 	;My Pet Heals
 	if ${Me.ToActor.Pet.Health}<70 && ${Me.ToActor.Pet(exists)}

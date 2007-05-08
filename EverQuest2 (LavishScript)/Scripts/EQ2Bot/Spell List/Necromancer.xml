@@ -3,7 +3,7 @@
 <InnerSpaceSettings>
   <Set Name="Necromancer">
     <Setting Name="1,70">Rot</Setting>
-    <setting Name="1,357">Summon Minion</Setting>
+    <Setting Name="1,357">Summon Minion</Setting>
     <Setting Name="2,1">Heal Minion</Setting>
     <Setting Name="3,71">Coil</Setting>
     <Setting Name="4,25">Magi's Shielding</Setting>
