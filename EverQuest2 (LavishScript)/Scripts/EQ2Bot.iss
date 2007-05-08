@@ -555,12 +555,12 @@ function main()
 
 				do
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+	     			}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -578,7 +578,7 @@ function main()
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
@@ -607,12 +607,12 @@ function main()
 
 				do
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+	     			}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -630,7 +630,7 @@ function main()
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
@@ -2308,12 +2308,12 @@ function LootWdw(string Line)
 
 				do
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+	     			}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -2331,7 +2331,7 @@ function LootWdw(string Line)
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
@@ -2364,8 +2364,8 @@ function LootWdw(string Line)
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -2383,7 +2383,7 @@ function LootWdw(string Line)
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
