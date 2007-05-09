@@ -284,7 +284,7 @@ function Buff_Routine(int xAction)
 		case AA_Infusion
 		case AA_Shapeshift
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
-
+			break
 		case BuffEel
 			if ${BuffEel}
 			{
