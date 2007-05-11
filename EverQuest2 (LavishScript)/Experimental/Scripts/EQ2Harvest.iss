@@ -5,7 +5,7 @@
 ; Updated: 08/21/06 by Syliac
 ; Updated: 03/06/06 by Pygar
 ; Updated: 04/02/07 by Cr4zyb4rd (mostly cleanup)
-;
+; Updated: 05/11/07 by Pygar (Fixed missing Diff)
 ;
 ; Description:
 ; ------------
@@ -373,7 +373,7 @@ function CheckAggro()
 		CurrentAction:Set[Waiting till aggro gone, and over 90 health...]
 		do
 		{
-			wait 3
+			wait 30
 		}
 		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
 

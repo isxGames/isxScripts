@@ -55,11 +55,11 @@
 ;-----------------------------------------------------------------------------------------------
 
 #define MOVEFORWARD "num lock"
-#define MOVEBACKWARD d
-#define STRAFELEFT w
-#define STRAFERIGHT r
-#define TURNLEFT s
-#define TURNRIGHT f
+#define MOVEBACKWARD s
+#define STRAFELEFT q
+#define STRAFERIGHT e
+#define TURNLEFT a
+#define TURNRIGHT d
 
 variable MobCheck MobAggro
 variable int BackupTime
@@ -176,7 +176,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 		{
 			call StopRunning
 		}
-		
+
 	}
 	return "SUCCESS"
 }

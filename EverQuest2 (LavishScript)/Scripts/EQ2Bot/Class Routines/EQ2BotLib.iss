@@ -62,6 +62,11 @@ variable HeroicOp objHeroicOp
 ;Forward Tells
 variable bool ForwardGuildChat
 
+;SoW Requests
+variable bool SoWMode=FALSE
+variable string SoWGroupMember
+variable bool SoWRequested=FALSE
+
 function EQ2BotLib_Init()
 {
 
@@ -71,6 +76,8 @@ function EQ2BotLib_Init()
 	WarnTankWhenAggro:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me,FALSE]}]
 	ShardMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Mode,FALSE]}]
 	ShardGroupMember:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Group Member,""]}]
+	SoWMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[SoW Mode,FALSE]}]
+	SoWGroupMember:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[SoW Group Member,""]}]
 	DoHOs:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[DoHOs,FALSE]}]
 	RelaySession:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[RelaySession,""]}]
 	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]
@@ -280,6 +287,11 @@ function Shard()
 		EQ2Execute /tell ${ShardGroupMember} shard please
 
 	}
+
+}
+
+function SoW()
+{
 
 }
 
