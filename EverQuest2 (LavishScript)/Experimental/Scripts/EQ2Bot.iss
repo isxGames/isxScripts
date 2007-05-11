@@ -555,12 +555,12 @@ function main()
 
 				do
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+	     			}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -578,7 +578,7 @@ function main()
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
@@ -607,12 +607,12 @@ function main()
 
 				do
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+	     			}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -630,7 +630,7 @@ function main()
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
@@ -1677,7 +1677,7 @@ function CheckLoot()
 		{
 			EQ2Echo Looting ${CustomActor[${tcount}].Name}
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
-			switch ${Me.Class}
+			switch ${Me.SubClass}
 			{
 				case dirge
 				case troubador
@@ -2308,12 +2308,12 @@ function LootWdw(string Line)
 
 				do
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+	     			}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -2331,7 +2331,7 @@ function LootWdw(string Line)
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
@@ -2364,8 +2364,8 @@ function LootWdw(string Line)
 					{
 						LootDecline:Inc
 					}
-	     	}
-	     	while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+				}
+	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
 
 				if ${LootDecline}
 				{
@@ -2383,7 +2383,7 @@ function LootWdw(string Line)
 				     LootWndCount:Set[1]
 				     do
 				     {
-						  if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
+						  if ${LootConfirm}
 						  {
 						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
 						       wait 5
@@ -2531,8 +2531,8 @@ function StartBot()
 
 	if ${CloseUI}
 	{
-		ui -unload ${LavishScript.HomeDirectory}/Interface/eq2skin.xml
-		ui -unload ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml
+		ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
+		ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
 	}
 	else
 	{
@@ -2773,7 +2773,7 @@ objectdef ActorCheck
 					return TRUE
 				}
 			}
-			while ${tempvar:Inc}<=${Me.GroupCount}
+			while ${tempvar:Inc}<${Me.GroupCount}
 
 			; Check if mob is aggro on raid or pet
 			if ${Me.InRaid}
@@ -3029,7 +3029,7 @@ objectdef EQ2BotObj
 
 		; General Triggers
 		AddTrigger IamDead "@npc@ has killed you."
-		AddTrigger Loreitem "@*@You cannot have more than one of any given LORE item."
+		AddTrigger LoreItem "@*@You cannot have more than one of any given LORE item."
 		AddTrigger InventoryFull "@*@You cannot loot while your inventory is full"
 		AddTrigger LootWdw "LOOTWINDOW::LOOTWINDOW"
 		AddTrigger CantSeeTarget "@*@Can't see target@*@"

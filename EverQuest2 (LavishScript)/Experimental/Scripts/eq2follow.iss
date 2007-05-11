@@ -15,7 +15,7 @@
 variable float Rise
 variable float Run
 
- 
+
 function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAULT_NOISE)
 {
 
@@ -26,9 +26,9 @@ function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAU
 	variable bool waittomove = FALSE
 
 	squelch bind quit "QUIT" "FollowTask:Set[0]"
-	
 
-        if !${ftarget.Length)
+
+        if !${ftarget.Length}
 
         {
 		eq2echo "Syntax: run eq2follow <character name> [distance] [noise]"
@@ -43,27 +43,27 @@ function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAU
 	do
 	{
 		call TaskStatus
-		
+
 		if ${Math.Distance[${Me.X},${Me.Z},${Actor[${ftarget}].X},${Actor[${ftarget}].Z}]}>${Math.Calc[${leash}+LEASH_FUDGE_FACTOR]}
 		{
-			
+
 			call TaskStatus
-			
+
 			ActorHeading:Set[${Actor[${ftarget}].Heading}]
-			
+
 			if ${ActorHeading} >= 360
 			{
 				ActorHeading:Set[${Math.Calc[${ActorHeading} - 360]}]
 			}
-				
+
 			call Angle_Math ${ActorHeading}
-				
+
 			NewPointX:Set[${Math.Calc[${Actor[${ftarget}].X} + ${Rise}]}]
 			NewPointZ:Set[${Math.Calc[${Actor[${ftarget}].Z} + ${Run}]}]
-				
+
 			face ${NewPointX} ${NewPointZ}
-			
-	
+
+
 			call Angle_Math ${Math.Rand[360]}
 
 			NewPointX:Set[${Math.Calc[${NewPointX} - ${Rise}]}]
@@ -76,11 +76,11 @@ function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAU
 			{
 				press MOVEFORWARD
 				wait 5
-		
+
 			}
-	
+
 			wait ${Math.Calc[MAIN_LOOP_TIMER + ${Math.Rand[${noise}]}]}
-		}	
+		}
 		else
 		{
 			if ${Me.IsMoving}
@@ -91,7 +91,7 @@ function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAU
 				wait 20 !${Me.IsMoving}
 
 			}
-	
+
 		}
 
 		FollowTask:Set[1]
@@ -106,7 +106,7 @@ function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAU
 				press MOVEFORWARD
 				wait 4
 			}
-			
+
 			do
 			{
 				waitframe
@@ -123,17 +123,17 @@ function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAU
 		}
 
 
-	
+
 	}
 	while ${FollowTask}
-		
+
 }
 function Angle_Math(float Angle)
 {
 
 	Run:Set[${Math.Calc[${Math.Sin[${Angle}]}*3]}]
 	Rise:Set[${Math.Calc[${Math.Cos[${Angle}]}*3]}]
-	
+
 
 }
 
@@ -173,7 +173,7 @@ function TaskStatus()
 
 function atexit()
 {
-		
+
 	if ${Me.IsMoving}
 	{
 		press MOVEFORWARD
