@@ -308,8 +308,6 @@ function Obstacle(int delay)
 	}
 }
 
-}
-
 ;Very Basic object to manage auto-run states
 function StopRunning()
 {

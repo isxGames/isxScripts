@@ -886,7 +886,7 @@ function Combat()
 					}
 				}
 
-				if ${haveaggro} && !${MainTank}
+				if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
 				{
 					call Have_Aggro
 				}
@@ -2888,9 +2888,12 @@ objectdef ActorCheck
 		{
 			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
 			{
-				haveaggro:Set[TRUE]
-				aggroid:Set[${CustomActor[${tcount}].ID}]
-				return
+				if ${CustomActor[${tcount}].ID}
+				{
+					haveaggro:Set[TRUE]
+					aggroid:Set[${CustomActor[${tcount}].ID}]
+					return
+				}
 			}
 		}
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
@@ -2996,7 +2999,7 @@ objectdef EQ2BotObj
 	method CheckSpells(string class)
 	{
 		variable int keycount
-		variable string templvl
+		variable int templvl=1
 		variable string tempnme
 		variable int tempvar=1
 		variable string spellname
