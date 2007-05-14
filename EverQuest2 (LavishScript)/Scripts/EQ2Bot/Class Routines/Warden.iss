@@ -1,7 +1,12 @@
 ;*************************************************************
 ;Warden.iss
-;version 20070503a
+;version 20070514a
 ; by Pygar
+;
+;20070514a
+; Fixed a rez loop issue
+; optomized me heals
+; will cancel Genesis and Duststorm after fight or when needed.
 ;
 ;20070503a
 ; Fized Combat Rez check to all rezes
@@ -320,7 +325,7 @@ function Buff_Routine(int xAction)
 			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
-				;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
@@ -332,7 +337,7 @@ function Buff_Routine(int xAction)
 			BuffTarget:Set[${UIElement[cbBuffInstinctGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
-				;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
@@ -344,7 +349,7 @@ function Buff_Routine(int xAction)
 			BuffTarget:Set[${UIElement[cbBuffSporesGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
-				;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
@@ -398,7 +403,7 @@ function Combat_Routine(int xAction)
 		call Shard
 	}
 
-	if ${UseCAs}
+	if ${UseCAs} && ${Me.Power}>10
 	{
 		call CheckPosition 1 1
 		if ${Me.Ability[Fire Strike].IsReady}
@@ -632,9 +637,21 @@ function Post_Combat_Routine(int xAction)
 	; turn off auto attack if we were casting while the last mob died
 	if ${Me.AutoAttackOn}
 	{
-
 		EQ2Execute /toggleautoattack
 	}
+
+	;cancel Genesis if up
+	if ${Me.Maintained[${SpellType[9]}](exists)}
+	{
+		Me.Maintained[${SpellType[9]}]:Cancel
+	}
+
+	;cancel Duststorm if up
+	if ${Me.Maintained[${SpellType[365]}](exists)}
+	{
+		Me.Maintained[${SpellType[365]}]:Cancel
+	}
+
 
 	switch ${PostAction[${xAction}]}
 	{
@@ -643,21 +660,24 @@ function Post_Combat_Routine(int xAction)
 			tempgrp:Set[1]
 			do
 			{
-				if ${Me.Ability[${SpellType[300]}].IsReady}
+				if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Health}==-99
 				{
-					call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-				}
-				elseif ${Me.Ability[${SpellType[301]}].IsReady}
-				{
-					call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-				}
-				elseif ${Me.Ability[${SpellType[302]}].IsReady}
-				{
-					call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-				}
-				else
-				{
-					call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+					if ${Me.Ability[${SpellType[300]}].IsReady}
+					{
+						call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+					}
+					elseif ${Me.Ability[${SpellType[301]}].IsReady}
+					{
+						call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+					}
+					elseif ${Me.Ability[${SpellType[302]}].IsReady}
+					{
+						call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+					}
+					else
+					{
+						call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+					}
 				}
 			}
 			while ${tempgrp:Inc}<${grpcnt}
@@ -721,6 +741,17 @@ function CheckHeals()
 	temphl:Set[1]
 	grpcure:Set[0]
 	lowest:Set[1]
+
+	;cancel Genesis if up and tank dieing
+	if ${Me.Maintained[${SpellType[9]}](exists)} && (${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}) || !${GenesisMode}
+	{
+		Me.Maintained[${SpellType[9]}]:Cancel
+	}
+	elseif ${Me.Maintained[${SpellType[9]}](exists)} && ${GenesisMode}
+	{
+		return
+	}
+
 
 	;Res the MT if they are dead
 	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
@@ -854,7 +885,7 @@ function CheckHeals()
 	}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ID}==${Actor[${MainTankPC}].ID}
+	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		if ${Me.ToActor.Health}<75
 		{

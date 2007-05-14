@@ -1,6 +1,9 @@
 ;*****************************************************
-;Swashbuckler.iss 20070427a
+;Swashbuckler.iss 20070514a
 ;by Pygar
+;
+;20070514a
+;DPS Tuning
 ;
 ; 20070427a
 ; Fixed Hurricane Buffing
@@ -29,7 +32,7 @@ function Class_Declaration()
 	declare StartHO bool script 1
 	declare HurricaneMode bool script 1
 
-	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
+	;POISON DECLERATIONS
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
 	;The SHORT name is the name of the poison buff icon
 	DammagePoisonShort:Set[caustic poison]
@@ -108,9 +111,6 @@ function Combat_Init()
 	Action[1]:Set[Melee_Attack1]
 	SpellRange[1,1]:Set[150]
 
-	Action[3]:Set[Rear_Attack1]
-	SpellRange[3,1]:Set[101]
-
 	Action[2]:Set[Debuff1]
 	Power[2,1]:Set[20]
 	Power[2,2]:Set[100]
@@ -125,60 +125,63 @@ function Combat_Init()
 	Action[5]:Set[AA_WalkthePlank]
 	SpellRange[5,1]:Set[405]
 
-	Action[6]:Set[Rear_Attack2]
-	SpellRange[6,1]:Set[100]
+	Action[6]:Set[Rear_Attack1]
+	SpellRange[6,1]:Set[101]
 
-	Action[7]:Set[Debuff2]
-	Power[7,1]:Set[20]
-	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[190]
+	Action[7]:Set[Rear_Attack2]
+	SpellRange[7,1]:Set[100]
 
-	Action[8]:Set[Mastery]
+	Action[8]:Set[Debuff2]
+	Power[8,1]:Set[20]
+	Power[8,2]:Set[100]
+	SpellRange[8,1]:Set[190]
 
-	Action[9]:Set[Flank_Attack1]
-	SpellRange[9,1]:Set[110]
+	Action[9]:Set[Mastery]
 
-	Action[10]:Set[Flank_Attack2]
-	SpellRange[10,1]:Set[111]
+	Action[10]:Set[Flank_Attack1]
+	SpellRange[10,1]:Set[110]
 
-	Action[11]:Set[Taunt]
-	Power[11,1]:Set[20]
-	Power[11,2]:Set[100]
-	MobHealth[11,1]:Set[10]
-	MobHealth[11,2]:Set[100]
-	SpellRange[11,1]:Set[160]
+	Action[11]:Set[Flank_Attack2]
+	SpellRange[11,1]:Set[111]
 
-	Action[12]:Set[Front_Attack]
-	SpellRange[12,1]:Set[120]
+	Action[12]:Set[Taunt]
+	Power[12,1]:Set[20]
+	Power[12,2]:Set[100]
+	MobHealth[12,1]:Set[10]
+	MobHealth[12,2]:Set[100]
+	SpellRange[12,1]:Set[160]
 
-	Action[13]:Set[Melee_Attack2]
-	SpellRange[13,1]:Set[151]
+	Action[13]:Set[Front_Attack]
+	SpellRange[13,1]:Set[120]
 
-	Action[14]:Set[Melee_Attack3]
-	SpellRange[14,1]:Set[152]
+	Action[14]:Set[Melee_Attack2]
+	SpellRange[14,1]:Set[151]
 
-	Action[15]:Set[Melee_Attack4]
-	SpellRange[15,1]:Set[153]
+	Action[15]:Set[Melee_Attack3]
+	SpellRange[15,1]:Set[152]
 
-	Action[16]:Set[Melee_Attack5]
-	SpellRange[16,1]:Set[154]
+	Action[16]:Set[Melee_Attack4]
+	SpellRange[16,1]:Set[153]
 
-	Action[17]:Set[Melee_Attack6]
-	SpellRange[17,1]:Set[149]
+	Action[17]:Set[Melee_Attack5]
+	SpellRange[17,1]:Set[154]
 
-	Action[18]:Set[Snare]
-	Power[18,1]:Set[60]
-	Power[18,2]:Set[100]
-	SpellRange[18,1]:Set[235]
+	Action[18]:Set[Melee_Attack6]
+	SpellRange[18,1]:Set[149]
 
-	Action[19]:Set[AA_Torporous]
-	SpellRange[19,1]:Set[381]
+	Action[19]:Set[Snare]
+	Power[19,1]:Set[60]
+	Power[19,2]:Set[100]
+	SpellRange[19,1]:Set[235]
 
-	Action[20]:Set[AA_Traumatic]
-	SpellRange[20,1]:Set[382]
+	Action[20]:Set[AA_Torporous]
+	SpellRange[20,1]:Set[381]
 
-	Action[21]:Set[AA_BootDagger]
-	SpellRange[21,1]:Set[386]
+	Action[21]:Set[AA_Traumatic]
+	SpellRange[21,1]:Set[382]
+
+	Action[22]:Set[AA_BootDagger]
+	SpellRange[22,1]:Set[386]
 
 }
 
@@ -306,6 +309,12 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
+	if !${Me.AutoAttackOn}
+	{
+		EQ2Execute /toggleautoattack
+	}
+
+
 	call WeaponChange
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
@@ -381,11 +390,12 @@ function Combat_Routine(int xAction)
 	}
 
 	;if Named or Epic and over 60% health, use dps buffs
-	if ${Actor[${KillTarget}].IsNamed} || ${Actor[${KillTarget}].IsEpic}
+	if ${Actor[${KillTarget}].IsEpic} || (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].IsNamed})
 	{
 		call CheckCondition MobHealth 60 100
 		if ${Return.Equal[OK]}
 		{
+			call CheckPosition 1 1
 			if ${Me.Ability[${SpellType[155]}].IsReady} || ${Me.Ability[${SpellType[157]}].IsReady}
 			{
 				call CastSpellRange 155 158 1 0 ${KillTarget} 0 0 1
@@ -431,7 +441,7 @@ function Combat_Routine(int xAction)
 		case Rear_Attack2
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			elseif ${Target.Target.ID}!=${Me.ID}
 			{
@@ -504,17 +514,17 @@ function Combat_Routine(int xAction)
 			;check valid rear position
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			;check right flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			;check left flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			elseif ${Target.Target.ID}!=${Me.ID}
 			{
@@ -531,17 +541,17 @@ function Combat_Routine(int xAction)
 			;check right flank
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			;check left flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			;check front
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
 			{
-
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			elseif ${Target.Target.ID}!=${Me.ID}
 			{
@@ -560,7 +570,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		default
-			xAction:Set[40]
+			Action:Set[40]
 			break
 	}
 }

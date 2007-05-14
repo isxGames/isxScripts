@@ -83,9 +83,9 @@
 			{
 				do
 				{
-					if ${Me.Raid[${tmpvar}](exists)} && (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})
+					if ${Me.Raid[${tmpvar}](exists)}
 					{
-							This:AddItem[${Actor[${Me.Raid[${tmpvar}].Name}].Name}:${Actor[${Me.Raid[${tmpvar}].Name}].Type}]
+						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24

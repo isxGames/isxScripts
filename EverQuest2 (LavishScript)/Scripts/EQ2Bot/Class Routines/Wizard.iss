@@ -1,7 +1,12 @@
 ;*************************************************************
 ;Wizard.iss
-;version 20061207a
+;version 20070514a
 ;by Pygar
+;
+;20070514a
+; Fixed a combat spell key error preventing use of Immoliation line
+;
+;20061207a
 ; Added Crystalized Spirit
 ; Fixed AoE Checks
 ;*************************************************************
@@ -120,7 +125,7 @@ function Combat_Init()
 	Action[11]:Set[Dot2]
 	MobHealth[11,1]:Set[20]
 	MobHealth[11,2]:Set[100]
-	SpellRange[12,1]:Set[71]
+	SpellRange[11,1]:Set[71]
 
 	Action[12]:Set[Dot3]
 	MobHealth[12,1]:Set[20]
