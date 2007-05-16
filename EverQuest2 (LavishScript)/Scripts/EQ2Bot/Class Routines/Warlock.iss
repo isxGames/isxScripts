@@ -297,7 +297,7 @@ function Buff_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 }
@@ -312,7 +312,7 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${DoHOs} && ${StartHO}
+	if ${DoHOs} 
 	{
 		objHeroicOp:DoHO
 	}
@@ -322,7 +322,7 @@ function Combat_Routine(int xAction)
 		Me.Inventory[${WeaponMain}]:Equip
 	}
 
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
 	}
@@ -534,7 +534,7 @@ function CheckHeals()
 	grpcnt:Set[${Me.GroupCount}]
 
 	; Cure Arcane Me
-	if ${Me.Arcane}
+	if ${Me.Arcane}>0
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
 
@@ -547,7 +547,7 @@ function CheckHeals()
 	do
 	{
 		; Cure Arcane
-		if ${Me.Group[${temphl}].Arcane} && ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].Arcane}>0 && ${Me.Group[${temphl}].ToActor(exists)}
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${temphl}].ID}
 

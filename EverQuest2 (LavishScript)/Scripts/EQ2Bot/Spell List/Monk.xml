@@ -12,7 +12,7 @@
 		<Setting Name="1,393">Crane Flock</Setting>
 		<Setting Name="1,392">Eagle Spin</Setting>
 		<Setting Name="1,391">Mongoose Stance</Setting>
-		<Setting Name="1,390">Master's Evasion</Setting>
+		<Setting Name="1,390">Master\'s Evasion</Setting>
 		<Setting Name="1,389">Combination</Setting>
 		<Setting Name="1,388">Evade</Setting>
 		<Setting Name="1,160">Taunt</Setting>
@@ -20,7 +20,7 @@
 		<Setting Name="2,140">Cold Fist</Setting>
 		<Setting Name="3,366">Focus</Setting>
 		<Setting Name="4,296">Stance: Dodging Monkey</Setting>
-		<Setting Name="4,291">Stance: Trainee's Blessing</Setting>
+		<Setting Name="4,291">Stance: Trainee\'s Blessing</Setting>
 		<Setting Name="5,303">Fighting Chance</Setting>
 		<Setting Name="5,151">Kick</Setting>
 		<Setting Name="6,270">Intervene</Setting>
@@ -64,7 +64,7 @@
 		<Setting Name="29,155">Jolting Hand</Setting>
 		<Setting Name="30,296">Stance: Sweeping Crane</Setting>
 		<Setting Name="30,371">Instill Doubt</Setting>					
-            	<Setting Name="30,190">Winter's Talon</Setting>
+            	<Setting Name="30,190">Winter\'s Talon</Setting>
 		<Setting Name="31,140">Stumbling Boar</Setting>
 		<Setting Name="31,160">Silent Threat</Setting>
 		<Setting Name="32,26">Everburning Flame</Setting>
