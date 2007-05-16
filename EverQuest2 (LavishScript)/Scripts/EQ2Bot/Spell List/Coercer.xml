@@ -7,7 +7,7 @@
 		<Setting Name="2,351">Befriend</Setting>
 		<Setting Name="2,190">Medusa Gaze</Setting>
 		<Setting Name="3,70">Cerebral Shock</Setting>
-		<Setting Name="4,25">Magi's Shielding</Setting>
+		<Setting Name="4,25">Magi\'s Shielding</Setting>
 		<Setting Name="5,303">Arcane Augur</Setting>
 		<Setting Name="5,230">Hesitate</Setting>
 		<Setting Name="6,210">Cure Arcane</Setting>
@@ -36,7 +36,7 @@
 		<Setting Name="20,377">Tashiana</Setting>
 		<Setting Name="20,378">Manaward</Setting>
 		<Setting Name="20,379">Coercive Healing</Setting>
-		<Setting Name="20,380">Spellblade's Counter</Setting>
+		<Setting Name="20,380">Spellblade\'s Counter</Setting>
 		<Setting Name="20,381">Counterblade</Setting>
 		<Setting Name="20,382">Chronosiphoning</Setting>
 		<Setting Name="20,383">Touch of Empathy</Setting>
@@ -100,7 +100,7 @@
 		<Setting Name="47,351">Dominate</Setting>
 		<Setting Name="47,22">Clarity</Setting>
 		<Setting Name="47,230">Fatal Hesitation</Setting>
-		<Setting Name="48,42">Mind's Eye</Setting>
+		<Setting Name="48,42">Mind\'s Eye</Setting>
 		<Setting Name="48,35">Velocity</Setting>
 		<Setting Name="49,20">Instigation</Setting>
 		<Setting Name="49,41">Synergetic Link</Setting>
@@ -128,7 +128,7 @@
 		<Setting Name="61,351">Domination</Setting>
 		<Setting Name="61,22">Ease</Setting>
 		<Setting Name="61,230">Ruinous Hesitation</Setting>
-		<Setting Name="62,42">Beholder's Eye</Setting>
+		<Setting Name="62,42">Beholder\'s Eye</Setting>
 		<Setting Name="62,35">Impetus</Setting>
 		<Setting Name="63,41">Harmonious Link</Setting>
 		<Setting Name="63,20">Incitement</Setting>

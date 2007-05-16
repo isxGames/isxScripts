@@ -43,14 +43,14 @@
 	 <Setting Name="18,295">Deft Defense</Setting>
 	 <Setting Name="19,186">Shrouded Strike</Setting>
 	 <Setting Name="19,96">Surprise</Setting>
-	 <Setting Name="20,50">Assassin's Mark</Setting>
+	 <Setting Name="20,50">Assassin\'s Mark</Setting>
 	 <Setting Name="20,132">Cut Throat</Setting>
 	 <Setting Name="20,">Trick of the Hunter</Setting>
 	 <Setting Name="21,130">Poisoners Blade</Setting>
 	 <Setting Name="22,202">Slip Away</Setting>
 	 <Setting Name="22,51">Vex</Setting>
 	 <Setting Name="23,52">Caltrops</Setting>
-	 <Setting Name="24,131">Assassin's Blade</Setting>
+	 <Setting Name="24,131">Assassin\'s Blade</Setting>
 	 <Setting Name="24,135">Ebon Blade</Setting>
 	 <Setting Name="25,304">Escape</Setting>
 	 <Setting Name="25,356">Friendly Shadows</Setting>
@@ -80,7 +80,7 @@
 	 <Setting Name="38,131">Condemning Blade</Setting>
 	 <Setting Name="39,356">Murderous Intent</Setting>
 	 <Setting Name="40,71">Seeping Wound</Setting>
-	 <Setting Name="40,257">Assassin's Shot</Setting>
+	 <Setting Name="40,257">Assassin\'s Shot</Setting>
 	 <Setting Name="40,27">Murderous Focus</Setting>
 	 <Setting Name="41,25">Merciless Villainy</Setting>
 	 <Setting Name="41,70">Infected Wound</Setting>
@@ -114,7 +114,7 @@
 	 <Setting Name="55,70">Insidious Wound</Setting>
 	 <Setting Name="55,359">Concealment</Setting>
 	 <Setting Name="56,185">Improved Surveil</Setting>
-	 <Setting Name="56,95">Murderer's Assault</Setting>
+	 <Setting Name="56,95">Murderer\'s Assault</Setting>
 	 <Setting Name="57,150">Scraping Blow</Setting>
 	 <Setting Name="57,256">Spitting Asp</Setting>
 	 <Setting Name="58,251">Assailing Blast</Setting>

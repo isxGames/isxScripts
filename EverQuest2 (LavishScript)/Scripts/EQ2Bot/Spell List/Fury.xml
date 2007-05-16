@@ -48,7 +48,7 @@
 		<Setting Name="19,23">Feral Mask</Setting>
 		<Setting Name="20,25">Peerless Predator</Setting>
 		<Setting Name="21,50">Feral Intimidation</Setting>
-		<Setting Name="22,4">Nature's Salve</Setting>
+		<Setting Name="22,4">Nature\'s Salve</Setting>
 		<Setting Name="22,302">Fierce Rousing</Setting>
 		<Setting Name="23,60">Strike of Thunder</Setting>
 		<Setting Name="23,280">Ferocity of the Eel</Setting>
@@ -59,7 +59,7 @@
 		<Setting Name="27,180">Confounding Brambles</Setting>
 		<Setting Name="28,213">Cure Arcane</Setting>
 		<Setting Name="28,10">Breath of the Untamed</Setting>
-		<Setting Name="28,15">Ram's Growth</Setting>
+		<Setting Name="28,15">Ram\'s Growth</Setting>
 		<Setting Name="29,4">Predatory Salve</Setting>
 		<Setting Name="29,312">Vicious Feast</Setting>
 		<Setting Name="30,20">Mark of the Hunt</Setting>
@@ -85,7 +85,7 @@
 		<Setting Name="42,220">Cure: Toxic Abolishment</Setting>
 		<Setting Name="42,316">Feral Tenacity</Setting>
 		<Setting Name="42,10">Howl of the Untamed</Setting>
-		<Setting Name="42,15">Owl's Restoration</Setting>
+		<Setting Name="42,15">Owl\'s Restoration</Setting>
 		<Setting Name="43,4">Feral Salve</Setting>
 		<Setting Name="43,312">Savage Feast</Setting>
 		<Setting Name="44,36">Vim</Setting>
@@ -113,7 +113,7 @@
 		<Setting Name="55,95">Ring of Fire</Setting>
 		<Setting Name="55,180">Seizing Thorns</Setting>
 		<Setting Name="56,220">Cure: Lethal Abolishment</Setting>
-		<Setting Name="56,15">Owl's Grace</Setting>
+		<Setting Name="56,15">Owl\'s Grace</Setting>
 		<Setting Name="56,10">Cry of the Untamed</Setting>
 		<Setting Name="57,312">Bestial Feast</Setting>
 		<Setting Name="57,4">Wild Salve</Setting>
@@ -121,7 +121,7 @@
 		<Setting Name="58,20">Spirit of the Hunt</Setting>
 		<Setting Name="58,11">Hibernation</Setting>
 		<Setting Name="59,51">Killing Swarm</Setting>
-		<Setting Name="60,1">Nature's Elixir</Setting>
+		<Setting Name="60,1">Nature\'s Elixir</Setting>
 		<Setting Name="60,90">Starnova</Setting>
 		<Setting Name="60,21">Primal Spirit</Setting>
 		<Setting Name="61,23">Carnal Mask</Setting>
@@ -138,7 +138,7 @@
 		<Setting Name="69,316">Feral Potence</Setting>
 		<Setting Name="69,180">Grasping Thorns</Setting>
 		<Setting Name="70,220">Abolishment</Setting>
-		<Setting Name="70,15">Owl's Reparation</Setting>
+		<Setting Name="70,15">Owl\'s Reparation</Setting>
 		<Setting Name="70,10">Shriek of the Untamed</Setting>
 		<Setting Name="70,360">Urchin</Setting>		
 	</Set>

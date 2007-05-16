@@ -35,12 +35,12 @@
 		<Setting Name="20,31">Sentinel</Setting>
 		<Setting Name="20,398">Bind Wound</Setting>
 		<Setting Name="20,96">Dragoon Spin</Setting>
-		<Setting Name="20,29">Dragoon's Cyclone</Setting>
+		<Setting Name="20,29">Dragoon\'s Cyclone</Setting>
 		<Setting Name="20,400">Belly Smash</Setting>
 		<Setting Name="20,399">Acceleration Strike</Setting>
-		<Setting Name="20,397">Executioner's Wrath</Setting>
-		<Setting Name="20,396">Executioner's Fury</Setting>
-		<Setting Name="20,395">Dragooon's Reflexes</Setting>
+		<Setting Name="20,397">Executioner\'s Wrath</Setting>
+		<Setting Name="20,396">Executioner\'s Fury</Setting>
+		<Setting Name="20,395">Dragooon\'s Reflexes</Setting>
 		<Setting Name="20,394">Buckler Reversal</Setting>
 		<Setting Name="21,32">Allay</Setting>
 		<Setting Name="21,95">Bury</Setting>

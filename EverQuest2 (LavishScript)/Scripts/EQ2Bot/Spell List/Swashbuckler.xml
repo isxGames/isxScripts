@@ -69,7 +69,7 @@
 		 		 <Setting Name="36,152">Hamstring</Setting>
 		 		 <Setting Name="36,191">Tricky Display</Setting>
 		 		 <Setting Name="37,235">Checkmate</Setting>
-		 		 <Setting Name="38,100">Cat's Paw</Setting>
+		 		 <Setting Name="38,100">Cat\'s Paw</Setting>
 		 		 <Setting Name="38,160">Reproach</Setting>
 		 		 <Setting Name="39,156">Artful Finesse</Setting>
 		 		 <Setting Name="40,345">Disarming Smirk</Setting>
@@ -96,7 +96,7 @@
 		 		 <Setting Name="50,152">Disable</Setting>
 		 		 <Setting Name="50,157">Inspired Daring</Setting>
 				 <Setting Name="50,29">Weapon Blur</Setting>
-		 		 <Setting Name="51,235">Hangman's Noose</Setting>
+		 		 <Setting Name="51,235">Hangman\'s Noose</Setting>
 		 		 <Setting Name="52,160">Admonish</Setting>
 		 		 <Setting Name="52,28">Hurricane</Setting>
 		 		 <Setting Name="52,100">Pillage</Setting>
