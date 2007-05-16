@@ -711,6 +711,7 @@ function CheckHeals()
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
 	declare MTinMyGroup bool local FALSE
+	declare tempgrp int local 0
 
 	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
@@ -981,7 +982,7 @@ function CheckHeals()
 	{
 		;Res Fallen Groupmembers only if in range
 		grpcnt:Set[${Me.GroupCount}]
-		tempgrp:Set[1]
+		tempgrp:Set[0]
 		do
 		{
 			if ${Me.Group[${tempgrp}].ToActor.Health}==-99

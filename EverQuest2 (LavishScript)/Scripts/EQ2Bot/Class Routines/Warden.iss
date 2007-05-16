@@ -734,6 +734,7 @@ function CheckHeals()
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
 	declare MTinMyGroup bool local FALSE
+	declare tempgrp int local 0
 
 	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
@@ -1059,7 +1060,7 @@ function CheckHeals()
 
 	;Res Fallen Groupmembers only if in range
 	grpcnt:Set[${Me.GroupCount}]
-	tempgrp:Set[1]
+	tempgrp:Set[0]
 	do
 	{
 		if ${Me.Group[${tempgrp}].ToActor.Health}==-99 && ${CombatRez}
@@ -1120,23 +1121,24 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
+
 	if ${Actor[${MainTankPC}].Health}<=0 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
 	{
 		if ${Me.Ability[${SpellType[300]}].IsReady}
 		{
-			call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+			call CastSpellRange 300 0 0 0 ${MainTankPC} 1
 		}
 		elseif ${Me.Ability[${SpellType[301]}].IsReady}
 		{
-			call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+			call CastSpellRange 301 0 0 0 ${MainTankPC} 1
 		}
 		elseif ${Me.Ability[${SpellType[302]}].IsReady}
 		{
-			call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+			call CastSpellRange 302 0 0 0 ${MainTankPC} 1
 		}
 		else
 		{
-			call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+			call CastSpellRange 303 0 0 0 ${MainTankPC} 1
 		}
 	}
 }
