@@ -1,30 +1,34 @@
 ;-----------------------------------------------------------------------------------------------
-; moveto.iss Version 2.1.02  Updated: 04/04/07
+; moveto.iss Version 2.1.05  Updated: 05/11/07
 ;
 ; Written by: Blazer
-; Updated by: Pygar
+; Updated by: Pygar & cr4zyb4rd
 ;
 ; Revision History
 ; ----------------
+; 2.1.05
+;		* Incorporated a missing diff.
+; v2.1.04 (Pygar)
+;		* Moved aggro check into its own include
 ; v2.1.03 (cr4zyb4rd)
 ;	* Code cleanup: Lots of "dead" code removed, variables renamed/redefined, loops tightened
 ;	* Removed "facecount", the existing code wasn't checking it correctly and it wasn't to
 ;	  blame for the "jerking" issues anyway.  We always want to face the goal unless we're
 ;	  navigating an obstacle.
-; v2.1.02
+; v2.1.02 (Pygar)
 ;	*created a running state object to manage starting and stopping of movement
 ;	*adjusted math in some delays
 ;	*minor cleanup
 ;	*we need to address swimming isses
-; v2.1.01 - * Defined Straffe and Turn Keys
-;	* Added wait on first obstruction call so that it wouldn't always return the same position
-;	  when the next check stuck was fired. The 90 degree initial direction change should work
-;	  reliably now.  Adjust Strafe timmers if they do not.
-;	* Added StopOnAggro arguement  Will return AGGRO and halt movement when true.
-;	* Adjusted some timers to make movement more subtle
-;	* Adjusted Strafe to use 'Strafe Arcs' on every other stuck check
+; v2.1.01 - * Defined Straffe and Turn Keys (Pygar)
+;	 * Added wait on first obstruction call so that it wouldn't always return the same position
+;	   when the next check stuck was fired. The 90 degree initial direction change should work
+;	   reliably now.  Adjust Strafe timmers if they do not.
+;	 * Added StopOnAggro arguement  Will return AGGRO and halt movement when true.
+;	 * Adjusted some timers to make movement more subtle
+;	 * Adjusted Strafe to use 'Strafe Arcs' on every other stuck check
 ;
-; v2.0 - * Some fixes to declaration of variables since the last IS update.
+; v2.0 - * Some fixes to declaration of variables since the last IS update. (Pygar)
 ;
 ; v1.8 - * Will do a weight check in case your encumbered too much and will move accordingly.
 ;	 * Added another paramater to moveto. This will allow you to specify the maximum number
@@ -54,14 +58,21 @@
 ; v1.0 - * Initial Release
 ;-----------------------------------------------------------------------------------------------
 
-#define MOVEFORWARD "num lock"
+
+
+#define _moveto_
+
+#ifndef _MobCheck_
+	#include "${LavishScript.HomeDirectory}/Scripts/MobCheck.iss"
+#endif
+
+#define AUTORUN "num lock"
 #define MOVEBACKWARD s
 #define STRAFELEFT q
 #define STRAFERIGHT e
 #define TURNLEFT a
 #define TURNRIGHT d
 
-variable MobCheck MobAggro
 variable int BackupTime
 variable int StrafeTime
 
@@ -184,7 +195,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 function CheckMovingAggro()
 {
 	;Stop Moving and pause if we have aggro
-	if ${MobAggro.Detect} && ${StopOnAggro}
+	if ${MobCheck.Detect} && ${StopOnAggro}
 	{
 		;Save our current heading in case it changes during aggro
 		variable float saveheading=${Me.Heading}
@@ -196,7 +207,7 @@ function CheckMovingAggro()
 			echo waiting 1 second in moveto
 			wait 10
 		}
-		while ${MobAggro.Detect} || ${Me.ToActor.Health}<90
+		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
 
 		Echo Scanning Loot in moveto
 		EQ2:CreateCustomActorArray[byDist,15]
@@ -294,142 +305,6 @@ function Obstacle(int delay)
 
 		face ${newheading}
 		wait ${Math.Calc[${StrafeTime}*${delay}]}
-	}
-}
-
-objectdef MobCheck
-{
-	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
-	member:bool AggroGroup(int actorid)
-	{
-		variable int tempvar
-
-		if ${Me.GroupCount}>1
-		{
-			; Check if mob is aggro on group or pet
-			tempvar:Set[1]
-			do
-			{
-				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].PetID}
-				{
-					return TRUE
-				}
-			}
-			while ${tempvar:Inc}<${Me.GroupCount}
-
-			; Check if mob is aggro on raid or pet
-			if ${Me.InRaid}
-			{
-				tempvar:Set[1]
-				do
-				{
-					if (${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].PetID}
-					{
-						return TRUE
-					}
-				}
-				while ${tempvar:Inc}<24
-			}
-		}
-
-		if ${Actor[MyPet](exists)} && ${Actor[${actorid}].Target.ID}==${Actor[MyPet].ID}
-		{
-			return TRUE
-		}
-		return FALSE
-	}
-
-	;returns count of mobs engaged in combat near you.  Includes mobs not engaged to other pcs/groups
-	member:int Count()
-	{
-		variable int tcount=2
-		variable int mobcount
-
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
-		{
-			return 0
-		}
-
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
-		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
-			{
-				mobcount:Inc
-			}
-		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-
-		return ${mobcount}
-	}
-
-	;returns true if you, group, raidmember, or pets have agro from mob in range
-	member:bool Detect()
-	{
-		variable int tcount=2
-
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)}
-		{
-			return FALSE
-		}
-
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
-		{
-			if ${CustomActor[${tcount}].InCombatMode}
-			{
-				if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-				{
-					return TRUE
-				}
-
-				if ${This.AggroGroup[${CustomActor[${tcount}].ID}]}
-				{
-					return TRUE
-				}
-			}
-		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-
-		return FALSE
-	}
-
-	member:bool Target(int targetid)
-	{
-		if !${Actor[${targetid}].InCombatMode}
-		{
-			return FALSE
-		}
-
-		if ${This.AggroGroup[${targetid}]} || ${Actor[${targetid}].Target.ID}==${Me.ID}
-		{
-			return TRUE
-		}
-
-		return FALSE
-	}
-
-	method CheckMYAggro()
-	{
-		variable int tcount=2
-		haveaggro:Set[FALSE]
-
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
-		{
-			return
-		}
-
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
-		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
-			{
-				haveaggro:Set[TRUE]
-				aggroid:Set[${CustomActor[${tcount}].ID}]
-				return
-			}
-		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 	}
 }
 
