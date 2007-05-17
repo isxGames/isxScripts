@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Harvest.iss Version 1.3
+; EQ2Harvest.iss Version 1.3.1
 ;
 ; Written by: Blazer
 ; Updated: 08/21/06 by Syliac
@@ -214,7 +214,7 @@ function main(string mode)
 	while ${PathRoute}<=3
 
 	announce "Cleaning up Inventory before exiting..." 5 4
-	call checkinventory 10 "CleanUpOnExit"
+	call CheckInventory 10 "CleanUpOnExit"
 
 	Script:End
 }
@@ -428,7 +428,7 @@ function StuckState()
 		}
 
 		announce "Cleaning up Inventory before exiting..." 5 4
-		;call checkinventory 10 "CleanUpOnExit"
+		;call CheckInventory 10 "CleanUpOnExit"
 
 		Script:End
 	}
@@ -451,7 +451,7 @@ function CheckTimer()
 		}
 
 		announce "Timer expired. Cleaning up inventory before exiting..." 5 4
-		call checkinventory 10 "CleanUpOnExit"
+		call CheckInventory 10 "CleanUpOnExit"
 
 		Script:End
 	}
@@ -475,7 +475,7 @@ function InventoryFull(string Line)
 	}
 
 	announce "Cleaning up Inventory before exiting..." 5 4
-	call checkinventory 10 "CleanUpOnExit"
+	call CheckInventory 10 "CleanUpOnExit"
 
 	Script:End
 }
