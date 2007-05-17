@@ -570,7 +570,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		default
-			Action:Set[40]
+			xAction:Set[40]
 			break
 	}
 }

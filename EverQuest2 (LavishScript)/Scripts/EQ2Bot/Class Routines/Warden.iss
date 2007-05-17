@@ -943,7 +943,19 @@ function CheckHeals()
 	;MAINTANK HEALS
 	;Will cast HoT's on MT outside of group.
 	;Need to come back here and configure raid healing.  If MainTankPC in group, use groupHoT, if not in group use direct HoT
-	if ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+	if ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+	{
+		if ${MTinMyGroup} && ${Me.Ability[${SpellType[9]}].IsReady} && ${Me.Power}<10
+		{
+			call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
+		}
+		else
+		{
+			call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
+		}
+	}
+
+	if ${Actor[${MainTankPC}].Health}<70 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
 		if ${MTinMyGroup} && ${Me.Ability[${SpellType[9]}].IsReady} && ${Me.Power}<10
 		{
@@ -952,18 +964,6 @@ function CheckHeals()
 		else
 		{
 			call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
-		}
-	}
-
-	if ${Actor[${MainTankPC}].Health}<80 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
-	{
-		if ${MTinMyGroup} && ${Me.Ability[${SpellType[9]}].IsReady} ${Me.Power}<10
-		{
-			call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
-		}
-		else
-		{
-			call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
 

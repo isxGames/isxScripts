@@ -19,7 +19,7 @@ function Class_Declaration()
 	declare MezzMode bool script 0
 	declare BowAttacksMode bool script 0
 	declare RangedAttackMode bool script 0
-	
+
 	declare BuffDefense bool script FALSE
 	declare BuffPower bool script FALSE
 	declare BuffArcane bool script FALSE
@@ -32,28 +32,28 @@ function Class_Declaration()
 	declare BuffCasting bool script FALSE
 	declare BuffHate bool script FALSE
 	declare BuffSelf bool script FALSE
-	
+
 	declare Charm bool script FALSE
 	;Initialized by UI
 	declare BuffJesterCapTimers collection:int script
 	declare BuffJesterCapIterator iterator script
 	declare BuffJesterCapMember int script 1
-	
+
 	declare mezTarget1 int script
 	declare mezTarget2 int script
 	declare CharmTarget int script
-	
+
 	;Custom Equipment
-	declare WeaponRapier string script 
+	declare WeaponRapier string script
 	declare WeaponSword string script
 	declare WeaponDagger string script
 	declare PoisonCureItem string script
 	declare WeaponMain string script
-	
-	declare EquipmentChangeTimer int script ${Time.Timestamp}	
+
+	declare EquipmentChangeTimer int script ${Time.Timestamp}
 
 	call EQ2BotLib_Init
-	
+
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
@@ -61,7 +61,7 @@ function Class_Declaration()
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
 	BowAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Bow Attack Spells,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
-	
+
 	BuffDefense:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Defense","FALSE"]}]
 	BuffPower:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Power","FALSE"]}]
 	BuffArcane:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Arcane","FALSE"]}]
@@ -74,12 +74,12 @@ function Class_Declaration()
 	BuffCasting:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Casting","FALSE"]}]
 	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Hate","FALSE"]}]
 	BuffSelf:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Self","FALSE"]}]
-	
+
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
 	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
 	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
-	
+
 	PosionCureItem:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Poison Cure Item","Antivenom Hypo Bracer"]}]
 
 	BuffJesterCap:GetIterator[BuffJesterCapIterator]
@@ -96,10 +96,10 @@ function Buff_Init()
 
 	PreAction[3]:Set[Buff_Arcane]
 	PreSpellRange[3,1]:Set[22]
-	
+
 	PreAction[4]:Set[Buff_Elemental]
 	PreSpellRange[4,1]:Set[23]
-	
+
 	PreAction[5]:Set[Buff_Haste]
 	PreSpellRange[5,1]:Set[24]
 
@@ -111,13 +111,13 @@ function Buff_Init()
 
 	PreAction[8]:Set[Buff_Aria]
 	PreSpellRange[8,1]:Set[27]
-	
+
 	PreAction[9]:Set[Buff_Stamina]
 	PreSpellRange[9,1]:Set[28]
-	
+
 	PreAction[10]:Set[Buff_Casting]
 	PreSpellRange[10,1]:Set[29]
-	
+
 	PreAction[11]:Set[Buff_Hate]
 	PreSpellRange[11,1]:Set[30]
 
@@ -129,31 +129,31 @@ function Buff_Init()
 
 	PreAction[14]:Set[Buff_AAAllegro]
 	PreSpellRange[14,1]:Set[390]
-	
+
 	PreAction[15]:Set[Buff_AADontKillTheMessenger]
 	PreSpellRange[15,1]:Set[395]
-	
+
 	PreAction[16]:Set[Buff_AAHarmonization]
-	PreSpellRange[16,1]:Set[383]	
-	
+	PreSpellRange[16,1]:Set[383]
+
 	PreAction[17]:Set[Buff_AAResonance]
-	PreSpellRange[17,1]:Set[382]	
+	PreSpellRange[17,1]:Set[382]
 
 }
 
 function Combat_Init()
 {
-	
+
 
 	Action[1]:Set[Bow_Attack]
 	SpellRange[1,1]:Set[250]
-	
+
 	Action[2]:Set[Combat_Buff]
 	SpellRange[2,1]:Set[155]
 
 	Action[3]:Set[Nuke2]
 	SpellRange[3,1]:Set[61]
-	
+
 	Action[4]:Set[AoE1]
 	SpellRange[4,1]:Set[90]
 
@@ -162,16 +162,16 @@ function Combat_Init()
 
 	Action[6]:Set[AoE3]
 	SpellRange[6,1]:Set[92]
-	
+
 	Action[7]:Set[Mastery]
 	SpellRange[7,1]:Set[360]
 	SpellRange[7,2]:Set[379]
-	
+
 	Action[8]:Set[Nuke1]
 	SpellRange[8,1]:Set[60]
-	
+
 	Action[9]:Set[Melee_Attack1]
-	SpellRange[9,1]:Set[151]	
+	SpellRange[9,1]:Set[151]
 
 	Action[10]:Set[Flank_Attack]
 	SpellRange[10,1]:Set[110]
@@ -179,25 +179,25 @@ function Combat_Init()
 	Action[11]:Set[Stealth_Attack]
 	SpellRange[11,1]:Set[391]
 	SpellRange[11,2]:Set[130]
-	
+
 	Action[12]:Set[Melee_Attack2]
-	SpellRange[12,1]:Set[152]	
+	SpellRange[12,1]:Set[152]
 
 	Action[13]:Set[Nuke2]
 	SpellRange[13,1]:Set[61]
-	
+
 	Action[14]:Set[AARhythm_Blade]
 	SpellRange[14,1]:Set[397]
-	
+
 	Action[15]:Set[Stun]
 	SpellRange[15,1]:Set[190]
 
 	Action[16]:Set[Debuff2]
 	SpellRange[16,1]:Set[50]
-	
+
 	Action[17]:Set[AAHarmonizing_Shot]
-	SpellRange[17,1]:Set[386]	
-	
+	SpellRange[17,1]:Set[386]
+
 }
 
 
@@ -210,15 +210,15 @@ function Buff_Routine(int xAction)
 {
 
 	call ActionChecks
-	
+
 	call CheckHeals
-	
+
 	ExecuteAtom CheckStuck
-	
+
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
-	}	
+	}
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -352,22 +352,11 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
-	
-		case Fishbone
-			if !${Swapping} && !${Me.ToActor.Effect[Water Breathing](exists)}
-			{
-				OriginalItem:Set[${Me.Equipment[Ear].Name}]
-				ItemToBeEquiped:Set["Fishbone Earring"]
-				call Swap
-				wait 5
-				Me.Equipment[Fishbone Earring]:Use
-			}
-			break
-			
+
 		case Buff_AAHarbingersSonnet
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
-			
+
 		case Buff_AAAllegro
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -375,7 +364,7 @@ function Buff_Routine(int xAction)
 		case Buff_AAResonance
 		case Buff_AADontKillTheMessenger
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
-			break			
+			break
 
 		Default
 			xAction:Set[20]
@@ -399,7 +388,7 @@ function Combat_Routine(int xAction)
 
 		objHeroicOp:DoHO
 	}
-	
+
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
 	{
 		Me.Inventory[${WeaponMain}]:Equip
@@ -409,24 +398,24 @@ function Combat_Routine(int xAction)
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
-	}	
-	
+	}
+
 	if ${MezzMode}
 	{
 		call Mezmerise_Targets
 	}
-	
+
 	if ${Charm}
 	{
 		call DoCharm
 	}
-		
+
 	ExecuteAtom PetAttack
-	
+
 	call DoJesterCap
-	
+
 	call CheckHeals
-	
+
 	if ${DebuffMode}
 	{
 		;always keep encounter debuffs refreshed in debuff mode
@@ -438,21 +427,21 @@ function Combat_Routine(int xAction)
 		;Always keep mob Mental Debuffed
 		call CastSpellRange 51 0 1 0 ${KillTarget}
 	}
-	
+
 	if ${Me.ToActor.Power}<40 || ${RangedAttackMode}
 	{
 		;pilfer essence
 		call CastSpellRange 62 0 0 0 ${KillTarget}
 	}
-	
+
 	call ActionChecks
-	
+
 	switch ${Action[${xAction}]}
 	{
 		case AATurnstrike
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 			{
-				
+
 				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
@@ -466,7 +455,7 @@ function Combat_Routine(int xAction)
 
 			}
 			break
-		
+
 		case AARhythm_Blade
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
@@ -482,7 +471,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-			
+
 		case Stealth_Attack
 			if ${OffenseMode} && !${MainTank} && !${RangedAttackMode}
 			{
@@ -500,7 +489,7 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 					}
 				}
-				
+
 				;if we didnt bardAA "Bump" into stealth use normal stealth
 				if ${Me.ToActor.Effect[Shroud](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},2]}]}].IsReady}
 				{
@@ -538,21 +527,21 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
-		
+
 		case Combat_Buff
 			if !${MezzMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
 			break
-		
+
 		case Flank_Attack
 			if ${OffenseMode} && !${MainTank} && !${RangedAttackMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 			}
 			break
-		
+
 		case Nuke1
 		case Nuke2
 			if ${OffenseMode}
@@ -560,7 +549,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
-			
+
 		case Melee_Attack1
 		case Melee_Attack2
 			if ${OffenseMode} && !${RangedAttackMode}
@@ -571,56 +560,26 @@ function Combat_Routine(int xAction)
 
 		case Stun
 			if !${RangedAttackMode} && !${Actor[${KillTarget}].IsEpic}
-			{		
+			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
-			
+
 		case Mastery
-			
-			if (${Me.Ability[Orc Master's Sinister Strike].IsReady} || ${Me.Ability[Orc Master's Sinister Strike].IsReady}) && !${RangedAttackMode} && !${MainTank}
+
+			if (${Me.Ability[Sinister Strike].IsReady}
 			{
 				Target ${KillTarget}
-				
 				call CheckPosition 1 1
-				
-				;*************Uncomment the sinister strikes you have **********
-				
-				Me.Ability[Orc Master's Sinister Strike]:Use
-				;Me.Ability[Gnoll Master's Sinister Strike]:Use
-				Me.Ability[Ghost Master's Sinister Strike]:Use
-				;Me.Ability[Skeleton Master's Sinister Strike]:Use
-				;Me.Ability[Zombie Master's Sinister Strike]:Use
-				;Me.Ability[Centaur Master's Sinister Strike]:Use
-				Me.Ability[Giant Master's Sinister Strike]:Use
-				;Me.Ability[Treant Master's Sinister Strike]:Use
-				Me.Ability[Elemental Master's Sinister Strike]:Use
-				;Me.Ability[Fairy Master's Sinister Strike]:Use
-				;Me.Ability[Goblin Master's Sinister Strike]:Use
-				Me.Ability[Golem Master's Sinister Strike]:Use
-				;Me.Ability[Bixie Master's Sinister Strike]:Use
-				;Me.Ability[Cyclops Master's Sinister Strike]:Use
-				Me.Ability[Djinn Master's Sinister Strike]:Use
-				;Me.Ability[Harpy Master's Sinister Strike]:Use
-				;Me.Ability[Naga Master's Sinister Strike]:Use
-				Me.Ability[Droag Master's Sinister Strike]:Use
-				;Me.Ability[Aviak Master's Sinister Strike]:Use
-				;Me.Ability[Beholder Master's Sinister Strike]:Use
-				;Me.Ability[Ravasect Master's Sinister Strike]:Use
-				;Me.Ability[Brownie Master's Sinister Strike]:Use
-				Me.Ability[Werewolf Master's Sinister Strike]:Use
-				;Me.Ability[Kobold Master's Sinister Strike]:Use
-				Me.Ability[Minotaur Master's Sinister Strike]:Use
-				;Me.Ability[Clockwork Master's Sinister Strike]:Use
-				;Me.Ability[Bugbear Master's Sinister Strike]:Use				
+				Me.Ability[Sinister Strike]:Use
 			}
 			break
 		Default
 			xAction:Set[20]
 			break
 	}
-	
-	
+
+
 
 }
 
@@ -630,32 +589,32 @@ function Post_Combat_Routine()
 	mezTarget1:Set[0]
 	mezTarget2:Set[0]
 	CharmTarget:Set[0]
-	
+
 	;turn off percisions of the maestro
 	if ${Me.Maintained[${SpellType[155]}](exists)}
 	{
 		Me.Maintained[${SpellType[155]}]:Cancel
 	}
-	
+
 	;cancel stealth
 	if ${Me.Maintained[Shroud](exists)}
 	{
 		Me.Maintained[Shroud]:Cancel
 	}
-	
-	
+
+
 }
 
 function Have_Aggro()
 {
-	
+
 	;if ${Me.AutoAttackOn}
 	;{
 	;	EQ2Execute /toggleautoattack
 	;}
-	
+
 	;Cast evade if we get agro from the MT
-	
+
 	if ${agroid}==${KillTarget}
 	{
 		;evade
@@ -666,7 +625,7 @@ function Have_Aggro()
 
 function Lost_Aggro()
 {
-	
+
 }
 
 function MA_Lost_Aggro()
@@ -694,18 +653,6 @@ function ActionChecks()
 	{
 		call Shard
 	}
-	
-	if ${Me.Noxious} && ${Me.Inventory[{PosionCureItem}].IsReady}
-	{
-		;call Cure
-	}
-	
-	;call Swap
-	
-	
-	
-	
-	
 }
 
 
@@ -718,15 +665,15 @@ function Mezmerise_Targets()
 	grpcnt:Set[${Me.GroupCount}]
 
 
-	
+
 	;shut off aria so encounter debuffs dont break mezz
 	if ${Me.Maintained[${SpellType[27]}](exists)}
 	{
 		Me.Maintained[${SpellType[27]}]:Cancel
 	}
-	
-	EQ2:CreateCustomActorArray[byDist,15]	
-	
+
+	EQ2:CreateCustomActorArray[byDist,15]
+
 	do
 	{
 		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}](exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
@@ -770,17 +717,17 @@ function Mezmerise_Targets()
 				call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 15
 
 				aggrogrp:Set[FALSE]
-				
-			
+
+
 			}
-			
+
 
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
-	
+
 	Target ${KillTarget}
-	wait 20 ${Me.ToActor.Target.ID}==${KillTarget}	
+	wait 20 ${Me.ToActor.Target.ID}==${KillTarget}
 }
 
 function DoCharm()
@@ -790,27 +737,27 @@ function DoCharm()
 	declare aggrogrp bool local FALSE
 
 	tempvar:Set[1]
-		
+
 	if ${Me.Maintained[${SpellType[351]}](exists)}
 	{
 
 		return
 	}
-	
+
 	grpcnt:Set[${Me.GroupCount}]
-	
+
 	EQ2:CreateCustomActorArray[byDist,15]
-	
+
 	do
 	{
-		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}](exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic} 
+		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}](exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
 		{
-			
+
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
 			{
 				continue
 			}
-			
+
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
 			do
@@ -833,27 +780,27 @@ function DoCharm()
 
 				CharmTarget:Set[${CustomActor[${tcount}].ID}]
 				break
-				
+
 			}
 
 
 		}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}	
-	
-	if ${Actor[${CharmTarget}](exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2}
+	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
+
+	if ${Actor[${CharmTarget}](exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actir[${MainAssist}].Target.ID}!=${CharmTarget}
 	{
 		call CastSpellRange 351 0 0 0 ${CharmTarget}
-		
+
 		Target ${KillTarget}
 		wait 20 ${Me.ToActor.Target.ID}==${KillTarget}
-		
+
 		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)}
 		{
 			eq2execute /Pet Attack
 		}
 	}
-				
+
 }
 
 
@@ -873,7 +820,7 @@ function Cure()
 function DoJesterCap()
 {
 	variable string JCActor=${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${BuffJesterCapMember}].Text}
-	if ${Me.Ability[${SpellType[156]}].IsReady}  
+	if ${Me.Ability[${SpellType[156]}].IsReady}
 	{
 
 			if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
@@ -908,7 +855,7 @@ function DoJesterCap()
 					BuffJesterCapMember:Set[1]
 				}
 			}
-		
+
 	}
 }
 

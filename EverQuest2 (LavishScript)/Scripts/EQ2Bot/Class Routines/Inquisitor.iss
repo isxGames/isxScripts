@@ -873,7 +873,7 @@ function CheckHeals()
 	}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.Health<75}
 	{
 		if ${Me.ToActor.Health}<75
 		{
@@ -918,9 +918,9 @@ function CheckHeals()
 
 	;MAINTANK HEALS
 	;Only use a reactive if the MainAssist is in my group to avoid overwrting other cleric reactives during a raid
-	if ${Actor[${MainTankPC}].Health} <90 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99
+	if ${Actor[${MainTankPC}].Health} <90 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
-		if ${MTinMyGroup}
+		if ${MTinMyGroup} && ${Me.InRaid}
 		{
 			call CastSpellRange 15 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
@@ -1019,9 +1019,9 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if ${Actor[${MainAssist}].Health}<=0 && ${Actor[${MainAssist}](exists)}
+	if ${Actor[${MainTankPC}].Health}<=0 && ${Actor[${MainTankPC}](exists)}
 	{
-		call 300 301 0 0 ${Actor[${MainAssist}].ID} 1
+		call 300 301 0 0 ${Actor[${MainTankPC}].ID} 1
 	}
 }
 
@@ -1033,29 +1033,29 @@ function Cancel_Root()
 function CureMe()
 {
 
-	if  ${Me.Arcane} && !${Me.ToActor.Effect[Revived Sickness](exists)}
+	if  ${Me.Arcane}>0
 	{
 		call CastSpellRange 326
-		if ${Me.Arcane} && !${Me.ToActor.Effect[Revived Sickness](exists)}
-		{
+		wait 3
+		if ${Me.Arcane}>0
 			call CastSpellRange 210 0 0 0 ${Me.ID}
 			return
 		}
 	}
 
-	if  ${Me.Noxious}
+	if  ${Me.Noxious}>0
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
 		return
 	}
 
-	if  ${Me.Elemental}
+	if  ${Me.Elemental}>0
 	{
 			call CastSpellRange 211 0 0 0 ${Me.ID}
 			return
 	}
 
-	if  ${Me.Trauma}
+	if  ${Me.Trauma}>0
 	{
 		call CastSpellRange 212 0 0 0 ${Me.ID}
 		return
@@ -1073,18 +1073,18 @@ function CureGroupMember(int gMember)
 	do
 	{
 		call CheckGroupHealth 30
-		if ${Return}
+		if !${Return}
 		{
 			call CastSpellRange 10
 		}
-		if ${Me.Group[${gMember}].Health}<30 && ${Me.Group[${gMember}].Health}>-99
+		if ${Me.Group[${gMember}].Health}<50 && ${Me.Group[${gMember}].Health}>-99
 		{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 		if  ${Me.Group[${gMember}].Arcane}>0
 		{
 			call CastSpellRange 326
-
+			wait 5
 				if  ${Me.Group[${gMember}].Arcane}>0
 				{
 					call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
@@ -1107,7 +1107,7 @@ function CureGroupMember(int gMember)
 			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 	}
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3
+	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].ToActor(exists)}
 }
 
 
