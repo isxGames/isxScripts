@@ -1038,6 +1038,7 @@ function CureMe()
 		call CastSpellRange 326
 		wait 3
 		if ${Me.Arcane}>0
+		{
 			call CastSpellRange 210 0 0 0 ${Me.ID}
 			return
 		}
