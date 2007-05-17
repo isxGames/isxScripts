@@ -788,7 +788,7 @@ function DoCharm()
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	if ${Actor[${CharmTarget}](exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actir[${MainAssist}].Target.ID}!=${CharmTarget}
+	if ${Actor[${CharmTarget}](exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actor[${MainAssist}].Target.ID}!=${CharmTarget}
 	{
 		call CastSpellRange 351 0 0 0 ${CharmTarget}
 
