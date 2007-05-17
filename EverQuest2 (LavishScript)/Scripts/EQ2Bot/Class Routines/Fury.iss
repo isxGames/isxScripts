@@ -891,7 +891,7 @@ function CheckHeals()
 	;Need to come back here and configure raid healing.  If MainAssist in group, use groupHoT, if not in group use direct HoT
 	if ${Actor[${MainTankPC}].Health}<90 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 	{
-		if ${MTinMyGroup}
+		if ${MTinMyGroup} && ${Me.InRaid}
 		{
 			call CastSpellRange 15 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
@@ -1092,7 +1092,7 @@ function CureGroupMember(int gMember)
 	do
 	{
 		call CheckGroupHealth 50
-		if ${Return}
+		if !${Return}
 		{
 			call CastSpellRange 15
 		}

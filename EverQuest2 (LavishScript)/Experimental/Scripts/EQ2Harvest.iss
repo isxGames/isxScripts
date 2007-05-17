@@ -17,6 +17,9 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/moveto.iss"
 #endif
 
+#ifndef _PATHERGUI_
+	#include "${LavishScript.HomeDirectory}/Scripts/PatherGUI.ISS"
+#endif
 
 ;=====================================
 ;====== Keyboard Configuration =======
@@ -49,6 +52,7 @@ variable int HowtoQuit
 variable int DestroyBatch
 variable int BatchCount
 variable int HarvestClose
+variable int FilterY
 variable bool IntruderDetect
 variable int IntruderAction
 variable int blacklistcount
@@ -151,7 +155,6 @@ function main(string mode)
 
 	do
 	{
-		call CheckAggro
 
 		NavPath:Clear
 		PathIndex:Set[1]
@@ -373,7 +376,7 @@ function CheckAggro()
 		CurrentAction:Set[Waiting till aggro gone, and over 90 health...]
 		do
 		{
-			wait 30
+			wait 5
 		}
 		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
 
@@ -919,6 +922,7 @@ objectdef EQ2HarvestBot
 
 		MaxRoaming:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[Roaming Value,80]}]
 		HarvestClose:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[Distance for the bot to move outside the max roaming range?,15]}]
+		FilterY:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[What distance along Y axis should the bot ignore nodes?,30]}]
 		StartPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Starting Point,Start]}]
 		FinishPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Finishing Point,Finish]}]
 
@@ -954,6 +958,7 @@ objectdef EQ2HarvestBot
 	{
 		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 		ui -reload "${UIPath}HarvestGUI.xml"
+		call InjectPatherTab "EQ2Harvest Tabs@Harvest" "${NavigationPath}"
 	}
 
 	member:int Node()
@@ -973,7 +978,7 @@ objectdef EQ2HarvestBot
 				if ${CustomActor[${tcount}].Name.Equal[${NodeName[${tempvar}]}]} && ${CustomActor[${tcount}].Type.Equal[resource]} && ${HarvestNode[${tempvar}]}
 				{
 					; Check Distance and Roaming Distance is within range.
-					if ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose}
+					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
 					{
 						; Check if its not a Bad Node
 						nodecnt:Set[0]

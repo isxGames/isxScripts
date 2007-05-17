@@ -32,6 +32,9 @@
 
 	<!-- Main LGUI -->
 	<Window Name='Harvest' template='My.window'>
+		<FadeDelay>0</FadeDelay>
+		<FadeDuration>200</FadeDuration>
+		<FadeAlpha>0</FadeAlpha>
 		<X>5%</X>
 		<Y>20%</Y>
 		<Width>430</Width>
@@ -894,7 +897,7 @@
 							</AutoTooltip>
 						</Text>
 						<Textentry Name='Roaming Range' Template='EQ2.textentry'>
-							<X>30%</X>
+							<X>66%</X>
 							<Y>25</Y>
 							<Width>8%</Width>
 							<Height>15</Height>
@@ -930,6 +933,31 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Distance for the bot to move outside the max roaming range?,${This.Text}]:Save
 								This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}].GetInt[Distance for the bot to move outside the max roaming range?]}]
 								Script[EQ2Harvest].Variable[HarvestClose]:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						<Text Name='Filter Y Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>65</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>* Distance to filter Y axis:</Text>
+							<AutoTooltip>
+								Nodes greater than this distance along the Y (vertical)
+								axis from the bot will not be harvested
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Filter Y Value' Template='EQ2.textentry'>
+							<X>66%</X>
+							<Y>65</Y>
+							<Width>8%</Width>
+							<Height>15</Height>
+							<MaxLength>4</MaxLength>
+							<OnLoad>This:SetText[${Script[EQ2Harvest].Variable[FilterY]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[What distance along Y axis should the bot ignore nodes?,${This.Text}]:Save
+								This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}].GetInt[What distance along Y axis should the bot ignore nodes?]}]
+								Script[EQ2Harvest].Variable[FilterY]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 						<checkbox Name='Harvest Timer Check' Template='EQ2.checkbox'>
@@ -1297,6 +1325,25 @@
 						</checkbox>
 					</Tab>
 					<Tab Name='Other'>
+						<Checkbox name='Fade' Template='EQ2.checkbox'>
+							<X>5%</X>
+							<Y>20</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>Autohide this window on mouse out</Text>
+							<OnLoad>
+								if ${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Fade Window?,FALSE]}
+								{
+									This:SetChecked
+									timedcommand 3 UIElement[Harvest]:SetFadeDelay[500]
+								}
+							</OnLoad>
+							<OnLeftClick>
+								UIElement[Harvest]:SetFadeDelay[${If[${This.Checked},500,0]}]
+								UIElement[Harvest]:ResetFade
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Fade Window?,${This.Checked}]:Save
+							</OnLeftClick>
+						</Checkbox>
 						<Commandbutton name='Add Collection' Template='EQ2.Commandbutton'> 
 							<X>20%</X> 
 							<Y>140</Y> 

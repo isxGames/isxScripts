@@ -319,7 +319,7 @@ function main()
 					if ${Mob.Target[${KillTarget}]}
 					{
 						FollowTask:Set[2]
-						WaitFor ${Script[follow].Variable[pausestate]} 30
+						WaitFor ${Script[EQ2Follow].Variable[pausestate]} 30
 						if ${AutoMelee}
 						{
 							call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
@@ -540,7 +540,7 @@ function main()
 		}
 
 		; Check that we are close to MainAssist if we are following and not in combat
-		if ${Following} && ${Actor[${MainAssist}].Distance}>10 && ${Script[follow].Variable[pausestate]} && !${Mob.Detect}
+		if ${Following} && ${Actor[${MainAssist}].Distance}>10 && ${Script[EQ2Follow].Variable[pausestate]} && !${Mob.Detect}
 		{
 			FollowTask:Set[1]
 			wait 20
@@ -2446,12 +2446,12 @@ function BotFollow(string Line, string FollowTarget)
 	}
 	else
 	{
-		if ${Script[follow](exists)}
+		if ${Script[EQ2Follow](exists)}
 		{
-			Script[Follow].Variable[ftarget]:Set[${tempTarget}]
-			Script[Follow]:QueueCommand[call ResetPoints]
+			Script[EQ2Follow].Variable[ftarget]:Set[${tempTarget}]
+			Script[EQ2Follow]:QueueCommand[call ResetPoints]
 		}
-		if ${tempTarget.Length} && !${Script[follow](exists)}
+		if ${tempTarget.Length} && !${Script[EQ2Follow](exists)}
 		{
 			run eq2follow 1 "${tempTarget}"
 			Following:Set[TRUE]
@@ -2600,9 +2600,9 @@ function StartBot()
 
 	if !${PathType} && ${Following}
 	{
-		if ${Script[follow](exists)}
+		if ${Script[EQ2Follow](exists)}
 		{
-			Script[follow]:End
+			Script[EQ2Follow]:End
 			wait 10
 		}
 		run eq2follow "${Follow}" ${Leash} ${Deviation}
@@ -2966,7 +2966,7 @@ objectdef EQ2BotObj
 		Following:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Are we following someone?,FALSE]}]
 		Follow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who are we following?,${MainAssist}]}]
 		Deviation:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What is our Deviation for following?,1]}]
-		Leash:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What is our Leash Range?,0]}]
+		Leash:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What is our Leash Range?,3]}]
 		PathType:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What Path Type (0-4)?,0]}]
 		CloseUI:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Close the UI after starting EQ2Bot?,FALSE]}]
 		MasterSession:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Master IS Session,Master.is1]}]
