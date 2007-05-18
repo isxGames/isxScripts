@@ -93,7 +93,7 @@ function Class_Declaration()
 
 	switch ${SpellType[360]}
 	{
-		case Splinterd Heart
+		case Splintered Heart
 			ShardType:Set["Splintered Heart"]
 			break
 		case Dark Heart

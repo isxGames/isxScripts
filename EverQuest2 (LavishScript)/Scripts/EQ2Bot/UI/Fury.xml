@@ -525,7 +525,7 @@
 	</combobox>
 	<Text Name='lblBuffSavageryGroupMember' Template='EQ2.text'>
 		<X>375</X>
-		<Y>60</Y>
+		<Y>50</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -534,7 +534,7 @@
 	</Text>
 	<combobox name='cbBuffSavageryGroupMember' Template='EQ2.Combobox'>
 		<x>375</x>
-		<y>90</y>
+		<y>70</y>
 		<Width>100</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to Savagery Proc Buff</AutoTooltip>
@@ -576,7 +576,7 @@
 	</combobox>
 	<Text Name='lblBuffVerveGroupMember' Template='EQ2.text'>
 		<X>375</X>
-		<Y>120</Y>
+		<Y>110</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -585,7 +585,7 @@
 	</Text>
 	<combobox name='cbBuffVerveGroupMember' Template='EQ2.Combobox'>
 		<x>375</x>
-		<y>120</y>
+		<y>130</y>
 		<Width>100</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to INT Buff</AutoTooltip>
