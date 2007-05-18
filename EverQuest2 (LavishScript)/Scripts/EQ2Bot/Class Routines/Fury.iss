@@ -819,7 +819,7 @@ function CheckHeals()
 	if ${mostafflicted} && ${CureMode}
 	{
 		call CheckGroupHealth 50
-		if ${Return}
+		if !${Return.Equal[TRUE]}
 		{
 			call CastSpellRange 15
 		}
@@ -1055,27 +1055,22 @@ function CureMe()
 
 	if  ${Me.Arcane}>0
 	{
-
 		call CastSpellRange 213 0 0 0 ${Me.ID}
-		return
 	}
 
 	if  ${Me.Noxious}>0
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
-		return
 	}
 
 	if  ${Me.Elemental}>0
 	{
-			call CastSpellRange 212 0 0 0 ${Me.ID}
-			return
+		call CastSpellRange 212 0 0 0 ${Me.ID}
 	}
 
 	if  ${Me.Trauma}>0
 	{
 		call CastSpellRange 211 0 0 0 ${Me.ID}
-		return
 	}
 }
 
@@ -1092,7 +1087,7 @@ function CureGroupMember(int gMember)
 	do
 	{
 		call CheckGroupHealth 50
-		if !${Return}
+		if !${Return.Equal[TRUE]}
 		{
 			call CastSpellRange 15
 		}
