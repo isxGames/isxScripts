@@ -307,22 +307,22 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]} 0 0
 			break
 		case SOW
-			if ${Me.ToActor.NumEffects}<15  && !${Me.Effect[Spirit of the Wolf](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-				wait 40
-				;buff the group
-				tempvar:Set[1]
-				do
-				{
-					if ${Me.Group[${tempvar}].ToActor.Distance}<15
-					{
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
-						wait 40
-					}
-				}
-				while ${tempvar:Inc}<${Me.GroupCount}
-			}
+			;if ${Me.ToActor.NumEffects}<15  && !${Me.Effect[Spirit of the Wolf](exists)}
+			;{
+			;	call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+			;	wait 40
+			;	;buff the group
+			;	tempvar:Set[1]
+			;	do
+			;	{
+			;		if ${Me.Group[${tempvar}].ToActor.Distance}<25
+			;		{
+			;			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
+			;			wait 40
+			;		}
+			;	}
+			;	while ${tempvar:Inc}<${Me.GroupCount}
+			;}
 			break
 		case BuffBat
 			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
