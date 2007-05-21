@@ -85,7 +85,7 @@
 				{
 					if ${Me.Raid[${tmpvar}](exists)}
 					{
-						This:AddItem[${Me.Raid[${tmpvar}].Name}]
+						This:AddItem[${Me.Raid[${tmpvar}].Name}:PC]
 					}
 				}
 				while ${tmpvar:Inc}&lt;=24
