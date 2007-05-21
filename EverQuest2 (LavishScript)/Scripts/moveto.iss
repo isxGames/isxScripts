@@ -66,7 +66,7 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/MobCheck.iss"
 #endif
 
-#define AUTORUN "num lock"
+#define MOVEFORWARD "num lock"
 #define MOVEBACKWARD s
 #define STRAFELEFT q
 #define STRAFERIGHT e

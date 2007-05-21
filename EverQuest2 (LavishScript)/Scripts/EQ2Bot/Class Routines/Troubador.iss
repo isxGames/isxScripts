@@ -367,7 +367,7 @@ function Buff_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[20]
+			return "Buff Complete"
 			break
 	}
 
@@ -567,7 +567,7 @@ function Combat_Routine(int xAction)
 
 		case Mastery
 
-			if (${Me.Ability[Sinister Strike].IsReady}
+			if ${Me.Ability[Sinister Strike].IsReady}
 			{
 				Target ${KillTarget}
 				call CheckPosition 1 1
@@ -575,7 +575,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[20]
+			return "Melee Complete"
 			break
 	}
 

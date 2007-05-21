@@ -851,7 +851,7 @@ function AnswerShardRequest()
 		{
 			if ${Time.Timestamp}-${ShardRequestTimer}>2
 			{
-				call CastSpellRange 360 0 0 0 ${Actor[${ShardQueue.Peek}].ID}
+				call CastSpellRange 360 0 0 0 ${Actor[pc,exactname,${ShardQueue.Peek}].ID}
 				ShardRequestTimer:Set[${Time.Timestamp}]
 			}
 

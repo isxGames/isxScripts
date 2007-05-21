@@ -364,7 +364,10 @@ function main()
 			if !${Mob.Detect} || (${MainTank} && ${Me.GroupCount}!=1)
 			{
 				call Buff_Routine ${tempvar}
-
+				if ${Return.Equal[Buff Complete]}
+				{
+					tempvar:Set[40]
+				}
 				;allow class file to set a var to override eq2bot stance / pet casting
 				if ${NoEQ2BotStance}
 				{
@@ -443,6 +446,11 @@ function main()
 
 			}
 			call Buff_Routine ${tempvar}
+
+			if ${Return.Equal[Buff Complete]}
+			{
+				tempvar:Set[40]
+			}
 		}
 		while ${tempvar:Inc}<=40
 
@@ -892,6 +900,11 @@ function Combat()
 				}
 
 				call Combat_Routine ${tempvar}
+
+				if ${Return.Equal[Melee Complete]}
+				{
+					tempvar:Set[40]
+				}
 
 				if !${Me.AutoAttackOn} && ${AutoMelee}
 				{
