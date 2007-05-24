@@ -398,6 +398,8 @@ function StuckState()
 	CurrentAction:Set[We are stuck...]
 	NavPath:Clear
 
+	call CheckAggro
+
 	; Re-create the nav path and move to the nearest navpoint
 	NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 
@@ -414,9 +416,18 @@ function StuckState()
 	WPZ:Set[${NavPath.Point[1].Z}]
 	call moveto ${WPX} ${WPZ} 5 0 3 1
 
+
 	; Are we still Stuck?
 	if ${Return.Equal[STUCK]}
 	{
+			call CheckAggro
+			if ${Return.Equal[RESOLVED]}
+			{
+				PathIndex:Set[1]
+				stillstuck:Set[FALSE]
+				return
+			}
+
 		; Looks like we are stuck again. end script...
 		EQ2Echo We are stuck! Ending script...
 		if ${HowtoQuit}
@@ -431,6 +442,7 @@ function StuckState()
 	}
 	else
 	{
+		call CheckAggro
 		PathIndex:Set[1]
 	}
 	stillstuck:Set[FALSE]

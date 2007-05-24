@@ -915,29 +915,31 @@ function Combat()
 				if ${AutoMelee} && !${MainTank}
 				{
 					;check valid rear position
-					if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-305
+					if ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-305)) && ${Target.Distance}<6
 					{
-						break
+						;we're behind and in range
 					}
 					;check right flank
-					elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
+					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)) && ${Target.Distance}<6
 					{
-						break
+						;we're right flank and in range
 					}
 					;check left flank
-					elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
+					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)) && ${Target.Distance}<6
 					{
-						break
+						;we're left flank and in range
 					}
-					elseif ${Target.Distance}<5 && !${Target.IsEpic}
+					elseif ${Target.Target.ID}==${Me.ID}
 					{
-						break
+						;we have aggro, move to the maintank
+						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
 					}
-					elseif ${Target.Target.ID}!=${Me.ID}
+					else
 					{
 						call CheckPosition 1 ${Target.IsEpic}
 					}
 				}
+
 				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
 				{
 					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25

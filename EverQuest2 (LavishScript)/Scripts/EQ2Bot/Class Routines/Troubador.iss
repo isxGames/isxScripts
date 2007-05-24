@@ -1,11 +1,18 @@
 ;*****************************************************
-;Troubador.iss 20061202a
+;Troubador.iss 20070524a
 ;by Karye
+;updated by Pygar
+;
+;20070524a (Pygar)
+;Charmtarget stickiness removed, wont charm / mez MA's current target anymore
+;OffenseMode is now defaulted true
+;Misc updates for maintanence.
+;
+;20061202a (kayre)
 ;Implemented EoF AAs
 ;Implemented EQ2Botlib cyrstalized spirit use
 ;Added EoF Mastery strikes
 ;*****************************************************
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -13,7 +20,7 @@
 
 function Class_Declaration()
 {
-	declare OffenseMode bool script 0
+	declare OffenseMode bool script 1
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
 	declare MezzMode bool script 0
@@ -54,7 +61,7 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
+	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
@@ -143,8 +150,6 @@ function Buff_Init()
 
 function Combat_Init()
 {
-
-
 	Action[1]:Set[Bow_Attack]
 	SpellRange[1,1]:Set[250]
 
