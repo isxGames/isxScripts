@@ -980,7 +980,7 @@ function Combat()
 				Script:End
 			}
 
-			if (${Actor[${KillTarget}].Health}<1 && !${MainTank}) || (${Target.Health}<1 && ${MainTank} && ${Actor[${KillTarget}].Type.Equal[NPC]} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
+			if (${Actor[${KillTarget}].Health}<1 && !${MainTank}) || (${Target.Health}<1 && ${MainTank} && (${Actor[${KillTarget}].Type.Equal[NPC]} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].Type.Equal[Corpse]}))
 			{
 				break
 			}
@@ -1690,7 +1690,7 @@ function CheckLoot()
 	{
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
-			EQ2Echo Looting ${CustomActor[${tcount}].Name}
+			Echo Looting ${CustomActor[${tcount}].Name}
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
 			switch ${Me.SubClass}
 			{
@@ -1700,7 +1700,7 @@ function CheckLoot()
 				case brigand
 				case ranger
 				case assassin
-					EQ2Echo disarming trap on ${CustomActor[${tcount}].ID}
+					Echo disarming trap on ${CustomActor[${tcount}].ID}
 					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
 					wait 10
 					break
@@ -1729,7 +1729,7 @@ function CheckLoot()
 		{
 			if ${CustomActor[${tcount}].Type.Equal[Corpse]}
 			{
-				EQ2Echo Looting ${Actor[corpse].Name}
+				Echo Looting ${Actor[corpse].Name}
 				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
 				Actor[corpse]:DoubleClick
 				wait 10
@@ -2457,7 +2457,7 @@ function BotFollow(string Line, string FollowTarget)
 
 	if !${Actor[${tempTarget},radius,30].ID}
 	{
-		EQ2Echo ${tempTarget} is out of range or does not exist.
+		Echo ${tempTarget} is out of range or does not exist.
 	}
 	else
 	{
@@ -3178,7 +3178,7 @@ objectdef EQ2BotObj
 			MainTank:Set[FALSE]
 			MainAssist:Set[${OriginalMA}]
 			KillTarget:Set[]
-			EQ2Echo Switching back to the original MainAssist ${MainAssist}
+			Echo Switching back to the original MainAssist ${MainAssist}
 			return
 		}
 		MainAssist:Set[${MainTankPC}]
@@ -3193,7 +3193,7 @@ objectdef EQ2BotObj
 			MainTank:Set[FALSE]
 			MainAssist:Set[${OriginalMT}]
 			KillTarget:Set[]
-			EQ2Echo Switching back to the original MainAssist ${MainAssist}
+			Echo Switching back to the original MainAssist ${MainAssist}
 			return
 		}
 
@@ -3252,7 +3252,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			EQ2Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainAssist to ${MainAssist}
 			return
 		}
 
@@ -3286,7 +3286,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			EQ2Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainAssist to ${MainAssist}
 			return
 		}
 
@@ -3320,7 +3320,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			EQ2Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainAssist to ${MainAssist}
 			return
 		}
 
@@ -3354,7 +3354,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			EQ2Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainAssist to ${MainAssist}
 			return
 		}
 	}
@@ -3409,7 +3409,7 @@ objectdef EQ2BotObj
 
 function atexit()
 {
-	EQ2Echo Ending EQ2Bot!
+	Echo Ending EQ2Bot!
 	CurrentTask:Set[FALSE]
 	SettingXML[${charfile}]:Unload
 	SettingXML[${spellfile}]:Unload

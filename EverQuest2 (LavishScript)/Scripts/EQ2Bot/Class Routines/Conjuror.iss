@@ -902,7 +902,7 @@ function SummonPet()
 				break
 		}
 		BuffCabalistCover:Set[TRUE]
-		}
+	}
 }
 
 function WeaponChange()
