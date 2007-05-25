@@ -554,7 +554,7 @@ function main()
 			wait 20
 		}
 
-		if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60
+		if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow.Item[1].Name(exists)}
 		{
 			if ${LootAll}
 			{
@@ -606,7 +606,7 @@ function main()
 				wait 5
 			}
 		}
-		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
+		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)} && ${LootWindow.Item[1].Name(exists)}
 		{
 			if ${LootAll}
 			{
