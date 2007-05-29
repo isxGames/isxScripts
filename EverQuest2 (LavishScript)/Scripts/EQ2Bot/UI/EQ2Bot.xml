@@ -347,11 +347,13 @@
 										if ${UIElement[Following@Following Frame@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
 										{
 											Script[EQ2Bot].Variable[Following]:Set[TRUE]
+											Script[EQ2Bot].Variable[FollowTask]:Set[1]
 											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Are we following someone?,TRUE]:Save
 										}
 										else
 										{
 											Script[EQ2Bot].Variable[Following]:Set[FALSE]
+											Script[EQ2Bot].Variable[FollowTask]:Set[0]
 											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Are we following someone?,FALSE]:Save
 										}
 									</OnLeftClick>
