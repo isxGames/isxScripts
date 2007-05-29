@@ -1522,7 +1522,7 @@ function Pull(string npcclass)
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
 				}
 
-				if ${Pathtype}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<35
+				if ${PathType}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<35
 				{
 					;echo Move to target Range!
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
