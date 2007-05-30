@@ -31,7 +31,7 @@
 		<Setting Name="Common Writing">3</Setting>
 		<Setting Name="Uncommon Writing">3</Setting>
 		<Setting Name="Outlandish Writing">3</Setting>
-		<Setting Name="Sage's Insight">3</Setting>
+		<Setting Name="Sage's Insight">1</Setting>
 		<Setting Name="Flawless Scribing">3</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
 	</Set>
@@ -49,7 +49,7 @@
 		<Setting Name="Impurity Bubble">3</Setting>
 		<Setting Name="Major Impurity Bubble">3</Setting>
 		<Setting Name="Craftsman's Insight">2</Setting>
-		<Setting Name="Flawless Jointing">2</Setting>
+		<Setting Name="Flawless Jointing">1</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
 	</Set>
 	<Set Name="Culinary">
@@ -66,7 +66,7 @@
 		<Setting Name="Billow of Steam">3</Setting>
 		<Setting Name="Gale of Steam">3</Setting>
 		<Setting Name="Provisioner's Insight">3</Setting>
-		<Setting Name="Flawless Seasoning">3</Setting>
+		<Setting Name="Flawless Seasoning">2</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
 	</Set>
 	<Set Name="Heavy Armoring">
@@ -91,7 +91,7 @@
 		<Setting Name="Loose Material">1</Setting>
 		<Setting Name="Substantial Loose Material">1</Setting>
 		<Setting Name="Tailor's Insight">1</Setting>
-		<Setting Name="Flawless Dexterity">1</Setting>
+		<Setting Name="Flawless Dexterity">2</Setting>
 		<Setting Name="Small Material Catch">2</Setting>
 		<Setting Name="Material Catch">2</Setting>
 		<Setting Name="Extensive Material Catch">2</Setting>
@@ -116,7 +116,7 @@
 		<Setting Name="Small Impurities">3</Setting>
 		<Setting Name="Impurities">3</Setting>
 		<Setting Name="Major Impurities">3</Setting>
-		<Setting Name="Jeweler's Insight">3</Setting>
+		<Setting Name="Jeweler's Insight">2</Setting>
 		<Setting Name="Flawless Faceting">3</Setting>
 	</Set>
 	<Set Name="Weaponry">
@@ -149,7 +149,7 @@
 		<Setting Name="Kickback">3</Setting>
 		<Setting Name="Major Kickback">3</Setting>
 		<Setting Name="Woodworker's Insight">2</Setting>
-		<Setting Name="Flawless Cuts">2</Setting>
+		<Setting Name="Flawless Cuts">1</Setting>
 		<Setting Name="Favor of Innovation">2</Setting>
 	</Set>
 </InnerSpaceSettings>
