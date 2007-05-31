@@ -906,7 +906,7 @@ function CheckHeals()
 
 	if ${Me.ToActor.Pet.Health}<40 && ${Me.ToActor.Pet(exists)} && ${Me.ToActor.Health}>40
 	{
-		call CastSpellRange 4 0 0 0 ${Me.Pet.ID}
+		call CastSpellRange 4 0 0 0 ${Me.ToActor.Pet.ID}
 	}
 }
 
