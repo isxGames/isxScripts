@@ -49,7 +49,7 @@ variable int longwait=10
 variable EQ2BotObj EQ2Bot
 variable ActorCheck Mob
 variable(global) bool CurrentTask=TRUE
-variable(global) int FollowTask=TRUE
+variable(global) int FollowTask
 variable bool IgnoreEpic
 variable bool IgnoreNamed
 variable bool IgnoreHeroic
@@ -348,15 +348,23 @@ function main()
 
 			}
 
+
 			if ${PathType}==4 && ${MainTank}
 			{
-				if ${Me.ToActor.Power}<${PowerCheck} || ${Me.ToActor.Health}<${HealthCheck}
+				if ${Me.InCombat} && ${Mob.Detect}
 				{
-					if ${AutoLoot}
+					call Pull any
+					if ${engagetarget}
 					{
-						call CheckLoot
+						call Combat
 					}
-					call ScanAdds
+				}
+				else
+				{
+					if ${Me.ToActor.Power}<${PowerCheck} || ${Me.ToActor.Health}<${HealthCheck}
+					{
+						call ScanAdds
+					}
 				}
 			}
 
@@ -445,14 +453,13 @@ function main()
 				}
 
 			}
-			call Buff_Routine ${tempvar}
-
-			if ${Return.Equal[Buff Complete]}
-			{
-				tempvar:Set[40]
-			}
 		}
 		while ${tempvar:Inc}<=40
+
+		if ${AutoLoot}
+		{
+			call CheckLoot
+		}
 
 		if ${AutoPull}
 		{
