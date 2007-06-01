@@ -1091,7 +1091,7 @@ function CureGroupMember(int gMember)
 		{
 			call CastSpellRange 15
 		}
-		if ${Me.Group[${gMember}].Health}<25
+		if ${Me.Group[${gMember}].ToActor.Health}<25
 		{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
 		}

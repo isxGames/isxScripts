@@ -374,7 +374,10 @@ atom SaveEquipmentSet(string EquipmentSetName)
 
 	Do
 	{
-		SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}]:Set[${tempvar},${Me.Equipment[${tempvar}].Name}]
+		if ${Me.Equipment[${tempvar}].Name}!='NULL'
+		{
+			SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}]:Set[${tempvar},${Me.Equipment[${tempvar}].Name}]
+		}
 	}
 	while ${tempvar:Inc} <=22
 	SettingXML[${charfile}]:Save
@@ -407,11 +410,8 @@ atom LoadEquipmentSet(string EquipmentSetName)
 		{
 			if ${Me.Equipment[${tempvar}].Name.NotEqual[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}].GetString[${tempvar}]}]} || !${Me.Equipment[${tempvar}](exists)}
 			{
-
 				Me.Inventory[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}].GetString[${tempvar}]}]:Equip
 			}
-
-
 		}
 		while ${tempvar:Inc} <=22
 	}

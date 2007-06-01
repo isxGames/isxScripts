@@ -369,15 +369,24 @@ function main()
 			}
 
 			; Do Pre-Combat Script if there is no mob nearby
-			if !${Mob.Detect} || (${MainTank} && ${Me.GroupCount}!=1)
+			if !${Mob.Detect} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
+				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && ${Actor[${KillTarget},radius,35](exists)}
+				{
+					if ${Mob.Target[${KillTarget}]}
+					{
+						tempvar:Set[40]
+					}
+				}
+
+
 				call Buff_Routine ${tempvar}
 				if ${Return.Equal[Buff Complete]}
 				{
 					tempvar:Set[40]
 				}
 				;allow class file to set a var to override eq2bot stance / pet casting
-				if ${NoEQ2BotStance}
+				if !${NoEQ2BotStance}
 				{
 					switch ${Me.Archetype}
 					{
