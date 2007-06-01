@@ -374,7 +374,7 @@ atom SaveEquipmentSet(string EquipmentSetName)
 
 	Do
 	{
-		if ${Me.Equipment[${tempvar}].Name}!='NULL'
+		if !${Me.Equipment[${tempvar}].Name.Equal[NULL]}
 		{
 			SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}]:Set[${tempvar},${Me.Equipment[${tempvar}].Name}]
 		}
