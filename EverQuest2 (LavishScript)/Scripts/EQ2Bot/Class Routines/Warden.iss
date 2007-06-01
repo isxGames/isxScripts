@@ -570,7 +570,7 @@ function Combat_Routine(int xAction)
 
 							if ${UseCAs}
 							{
-								call CastSpellRange 421 0 1 0 ${KillTarget} 0 0 1
+								call CastSpellRange 389 0 1 0 ${KillTarget} 0 0 1
 							}
 							else
 							{
