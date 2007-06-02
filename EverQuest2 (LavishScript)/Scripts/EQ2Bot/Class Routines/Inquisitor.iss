@@ -873,7 +873,7 @@ function CheckHeals()
 	}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.Health<75}
+	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ToActor.Health}<75
 	{
 		if ${Me.ToActor.Health}<75
 		{
