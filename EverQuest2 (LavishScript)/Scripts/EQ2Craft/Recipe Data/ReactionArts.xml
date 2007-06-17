@@ -70,6 +70,7 @@
 		<Setting Name="Favor of Innovation">3</Setting>
 	</Set>
 	<Set Name="Heavy Armoring">
+                <Setting Name="Flawless Strikes">1</Setting>
 		<Setting Name="Red Hot Metal">1</Setting>
 		<Setting Name="Orange Hot Metal">1</Setting>
 		<Setting Name="White Hot Metal">1</Setting>
@@ -126,9 +127,11 @@
 		<Setting Name="Minor Soft Metal">1</Setting>
 		<Setting Name="Soft Metal">1</Setting>
 		<Setting Name="Extensive Soft Metal">1</Setting>
+                <Setting Name="Flawless Hardening">1</Setting>
 		<Setting Name="Red Hot Material">2</Setting>
 		<Setting Name="Orange Hot Material">2</Setting>
 		<Setting Name="White Hot Material">2</Setting>
+                <Setting Name="Favor of Innovation">2</Setting>
 		<Setting Name="Minor Hardened Metal">3</Setting>
 		<Setting Name="Hardened Metal">3</Setting>
 		<Setting Name="Extensive Hardened Metal">3</Setting>
