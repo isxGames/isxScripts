@@ -506,3 +506,45 @@ function GetActorID(string ActorName)
 	;We either found no actor or a NPC so return that ID
 	Return ${ActorID}
 }
+
+
+function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
+{
+	declare counter int local 1
+
+	do
+	{
+
+		;check groupmates health
+		if ${Me.Group[${counter}].ToActor.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Health}>0
+		{
+			Return FALSE
+		}
+
+		;check health of summoner pets
+		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
+		{
+			if ${Me.Group[${counter}].ToActor.Pet.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Pet.Health}>0
+			{
+				Return FALSE
+			}
+		}
+
+	}
+	while ${counter:Inc}<${Me.GroupCount}
+
+	;check mt health
+	call GetActorID ${MainTankPC}
+	if ${Return} && ${Actor[${Return}].Health}<${MTHealth}
+	{
+		Return FALSE
+	}
+
+	;check my health
+	if ${Me.ToActor.Health}<${MyHealth}
+	{
+		Return FALSE
+	}
+
+	Return TRUE
+}

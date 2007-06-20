@@ -520,7 +520,6 @@ function Combat_Routine(int xAction)
 
 	switch ${Action[${xAction}]}
 	{
-
 		case Lash
 		case Gaze
 		case Ego
