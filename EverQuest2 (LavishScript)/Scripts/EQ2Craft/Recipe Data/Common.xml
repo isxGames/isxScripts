@@ -45,6 +45,11 @@
 		<Setting Name="Scintillating Extract">1</Setting>
 	</Set>
 	<Set Name="Quality Prefixes">
+		<Setting Name="pristine forged">4</Setting>
+		<Setting Name="pristine tailored">4</Setting>
+		<Setting Name="pristine fashioned">4</Setting>
+		<Setting Name="pristine conditioned">4</Setting>
+		<Setting Name="pristine vial of">4</Setting>
 		<Setting Name="crude">1</Setting>
 		<Setting Name="shaped">2</Setting>
 		<Setting Name="pristine">4</Setting>
@@ -57,7 +62,6 @@
 		<Setting Name="coarse">1</Setting>
 		<Setting Name="mediocre">2</Setting>
 		<Setting Name="unblemished">4</Setting>
-		<Setting Name="pristine vial of">4</Setting>
 		<Setting Name="low grade">1</Setting>
 		<Setting Name="medium grade">2</Setting>
 		<Setting Name="high grade">4</Setting>
@@ -66,10 +70,6 @@
 		<Setting Name="translucent">4</Setting>
 		<Setting Name="thinning">1</Setting>
 		<Setting Name="middling">2</Setting>
-		<Setting Name="pristine forged">4</Setting>
-		<Setting Name="pristine tailored">4</Setting>
-		<Setting Name="pristine fashioned">4</Setting>
-		<Setting Name="pristine conditioned">4</Setting>
 	</Set>
 	<Set Name="Tradeskill Type">
 		<Setting Name="alchemy">alchemist</Setting>
