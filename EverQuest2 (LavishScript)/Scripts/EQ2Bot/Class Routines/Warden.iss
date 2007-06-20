@@ -53,17 +53,20 @@ function Class_Declaration()
 	declare CureMode bool script
 	declare GenesisMode bool script
 	declare KeepReactiveUp bool script
-	declare BuffBoon bool script 1
 	declare UseCAs bool script 1
 	declare BuffThorns bool script 1
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
 	declare PetMode bool script 1
+	declare KeepMTHOTUp bool script 0
+	declare KeepGroupHOTUp bool script 0
+	declare RaidHealMode bool script 1
 
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
 	declare BuffSporesGroupMember string script
 	declare BuffVigorGroupMember string script
+	declare BuffBoon string script
 
 	declare EquipmentChangeTimer int script
 
@@ -87,11 +90,15 @@ function Class_Declaration()
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	BuffThorns:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Thorns,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
+	KeepMTHOTUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepMTHOTUp,FALSE]}]
+	KeepGroupHOTUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepGroupHOTUp,FALSE]}]
+	RaidHealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Raid Heals,TRUE]}]
 
 	BuffBatGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBatGroupMember,]}]
 	BuffInstinctGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffInstinctGroupMember,]}]
 	BuffSporesGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSporesGroupMember,]}]
 	BuffVigorGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffVigorGroupMember,]}]
+	BuffBoon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBoon,FALSE]}]
 
 	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
@@ -110,6 +117,7 @@ function Buff_Init()
 
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
+	PreSpellRange[2,2]:Set[394]
 
 	PreAction[3]:Set[BuffBoon]
 	PreSpellRange[3,1]:Set[280]
@@ -228,10 +236,6 @@ function Combat_Init()
 function PostCombat_Init()
 {
 	PostAction[1]:Set[Resurrection]
-	PostSpellRange[1,1]:Set[300]
-	PostSpellRange[1,2]:Set[302]
-	PostSpellRange[1,3]:Set[301]
-	PostSpellRange[1,4]:Set[303]
 }
 
 function Buff_Routine(int xAction)
@@ -242,7 +246,6 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-
 	call WeaponChange
 
 	ExecuteAtom CheckStuck
@@ -251,8 +254,6 @@ function Buff_Routine(int xAction)
 	{
 		call Shard
 	}
-
-	call UseCrystallizedSpirit 60
 
 	call CheckHeals
 
@@ -270,7 +271,7 @@ function Buff_Routine(int xAction)
 	switch ${PreAction[${xAction}]}
 	{
 		case BuffThorns
-			if ${BuffThorns}
+			if ${BuffThorns} && ${Me.Group[${Actor[id,${Actor[${MainTankPC}].ID}].Name}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
 			}
@@ -280,7 +281,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 		case BuffBoon
 			if ${BuffBoon}
@@ -294,7 +295,7 @@ function Buff_Routine(int xAction)
 			break
 		case BuffVigor
 			BuffTarget:Set[${UIElement[cbBuffVigorGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
@@ -340,7 +341,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
@@ -352,7 +353,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
@@ -374,15 +375,30 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare counter int local 1
+
 	AutoFollowingMA:Set[FALSE]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
+		wait 5
 	}
 
-	call CheckGroupHealth 60
-	if ${DoHOs} && ${Return}
+	;check heals on group, mt, and self and keep healing until they return safe (20 heal cap for safety)
+	do
+	{
+		call CheckHealthiness 70 60 50
+		if ${Return}  || ${Actor[${MainTankPC}].Distance}>25
+		{
+			break
+		}
+		call CheckHeals
+	}
+	while ${counter:Inc}<20
+
+
+	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
 	}
@@ -394,8 +410,6 @@ function Combat_Routine(int xAction)
 
 	call WeaponChange
 
-	call CheckHeals
-
 	call RefreshPower
 
 	if ${ShardMode}
@@ -403,24 +417,12 @@ function Combat_Routine(int xAction)
 		call Shard
 	}
 
-	if ${UseCAs} && ${Me.Power}>10
+	if ${UseCAs} && ${Target.Distance}>4
 	{
 		call CheckPosition 1 1
-		if ${Me.Ability[Fire Strike].IsReady}
+		if !${Me.AutoAttackOn}
 		{
-			call CastSpell "Fire Strike"
-		}
-		if ${Me.Ability[Cold Slice].IsReady}
-		{
-			call CastSpell "Cold Slice"
-		}
-		if ${Me.Ability[Cold Strike].IsReady}
-		{
-			call CastSpell "Cold Strike"
-		}
-		if ${Me.Ability[Whirl of Frost].IsReady}
-		{
-			call CastSpell "Whirl of Frost"
+			EQ2Execute /toggleautoattack
 		}
 	}
 
@@ -665,18 +667,22 @@ function Post_Combat_Routine(int xAction)
 					if ${Me.Ability[${SpellType[300]}].IsReady}
 					{
 						call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+						wait 100
 					}
 					elseif ${Me.Ability[${SpellType[301]}].IsReady}
 					{
 						call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+						wait 100
 					}
 					elseif ${Me.Ability[${SpellType[302]}].IsReady}
 					{
 						call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+						wait 100
 					}
 					else
 					{
 						call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+						wait 100
 					}
 				}
 			}
@@ -725,6 +731,7 @@ function Have_Aggro()
 
 function CheckHeals()
 {
+
 	declare temphl int local
 	declare grpheal int local 0
 	declare lowest int local 0
@@ -742,9 +749,16 @@ function CheckHeals()
 	temphl:Set[1]
 	grpcure:Set[0]
 	lowest:Set[1]
+	;Raid Stuff
+	declare HealUsed bool local FALSE
+	declare temph2 int local
+	declare raidlowest int local 0
+	temph2:Set[1]
+	raidlowest:Set[1]
+	HealUsed:Set[FALSE]
 
 	;cancel Genesis if up and tank dieing
-	if ${Me.Maintained[${SpellType[9]}](exists)} && (${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}) || !${GenesisMode}
+	if ${Me.Maintained[${SpellType[9]}](exists)} && (${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}) || (!${GenesisMode} && ${Me.ToActor.Power}>10)
 	{
 		Me.Maintained[${SpellType[9]}]:Cancel
 	}
@@ -753,9 +767,8 @@ function CheckHeals()
 		return
 	}
 
-
 	;Res the MT if they are dead
-	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
+	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && (${CombatRez} || !${Me.InCombat})
 	{
 		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
@@ -843,6 +856,8 @@ function CheckHeals()
 	if ${grpcure}>2 && ${CureMode}
 	{
 		call CastSpellRange 220
+
+		;cast elemental ward
 		call CastSpellRange 363
 	}
 
@@ -868,61 +883,33 @@ function CheckHeals()
 
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health} >-99
 	{
 		call EmergencyHeal ${Actor[${MainTankPC}].ID}
-	}
-	elseif !${MTinMyGroup} && ${Actor[${MainTankPC}].Health}<30
-	{
-		if ${Me.Ability[${SpellType[316]}].IsReady}
-		{
-			call CastSpellRange 316 0 0 0 ${Actor[${MainTankPC}].ID}
-		}
-
-		if ${Me.Ability[${SpellType[8]}].IsReady}
-		{
-			call CastSpellRange 8 0 0 0 ${Actor[${MainTankPC}].ID}
-		}
+		HealUsed:Set[TRUE]
 	}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ID}==${Actor[${MainTankPC}].ID}
 	{
-		if ${Me.ToActor.Health}<75
-		{
-			if ${haveaggro}
-			{
-				call CastSpellRange 7 0 0 0 ${Me.ID}
-			}
-			else
-			{
-				if ${Me.Ability[${SpellType[1]}].IsReady}
-				{
-					call CastSpellRange 1 0 0 0 ${Me.ID}
-				}
-				else
-				{
-					call CastSpellRange 4 0 0 0 ${Me.ID}
-				}
-			}
-
-		}
-
 		if ${Me.ToActor.Health}<25
 		{
 			if ${haveaggro}
 			{
 				call EmergencyHeal ${Me.ID}
+				HealUsed:Set[TRUE]
 			}
 			else
 			{
 				if ${Me.Ability[${SpellType[1]}].IsReady}
 				{
 					call CastSpellRange 1 0 0 0 ${Me.ID}
+					HealUsed:Set[TRUE]
 				}
 				else
 				{
 					call CastSpellRange 4 0 0 0 ${Me.ID}
+					HealUsed:Set[TRUE]
 				}
 			}
 		}
@@ -932,121 +919,178 @@ function CheckHeals()
 			if ${Me.Ability[${SpellType[1]}].IsReady}
 			{
 				call CastSpellRange 1 0 0 0 ${Me.ID}
+				HealUsed:Set[TRUE]
 			}
 			else
 			{
 				call CastSpellRange 4 0 0 0 ${Me.ID}
+				HealUsed:Set[TRUE]
+			}
+		}
+
+
+		if ${Me.ToActor.Health}<75
+		{
+			if ${haveaggro}
+			{
+				call CastSpellRange 7 0 0 0 ${Me.ID}
+				HealUsed:Set[TRUE]
+			}
+			else
+			{
+				if ${Me.Ability[${SpellType[1]}].IsReady}
+				{
+					call CastSpellRange 1 0 0 0 ${Me.ID}
+					HealUsed:Set[TRUE]
+				}
+				else
+				{
+					call CastSpellRange 4 0 0 0 ${Me.ID}
+					HealUsed:Set[TRUE]
+				}
 			}
 		}
 	}
 
 	;MAINTANK HEALS
-	;Will cast HoT's on MT outside of group.
-	;Need to come back here and configure raid healing.  If MainTankPC in group, use groupHoT, if not in group use direct HoT
-	if ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
-	{
-		if ${MTinMyGroup} && ${Me.Ability[${SpellType[9]}].IsReady} && ${Me.Power}<10
-		{
-			call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
-		}
-		else
-		{
-			call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
-		}
-	}
 
-	if ${Actor[${MainTankPC}].Health}<70 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+	;cast genesis if needed
+	if ${Me.Ability[${SpellType[9]}].IsReady} && ${Actor[${MainTankPC}](exists)} && ${MTinMyGroup} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<70 && ${Actor[${MainTankPC}].Health}>-99
 	{
-		if ${MTinMyGroup} && ${Me.Ability[${SpellType[9]}].IsReady} && ${Me.Power}<10
+		if ${Me.Power}<10
 		{
 			call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
-		else
+		elseif ${GenesisMode} && ${Actor[${MainTankPC}].Health}<60
 		{
-			call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
+				call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
 
 
-	if ${Actor[${MainTankPC}].Health}<90 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+
+	;MT < 50
+	if ${MTinMyGroup} && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health} >-99
 	{
-		if ${GenesisMode} && ${MTinMyGroup} && ${Me.Ability[${SpellType[9]}].IsReady}
-		{
-			call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
-		}
-		elseif !${MTinMyGroup}
+		call CastSpellRange 10
+		HealUsed:Set[TRUE]
+	}
+
+	;MT < 60
+	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health} >-99
+	{
+		call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
+		HealUsed:Set[TRUE]
+	}
+
+	;MT < 75
+	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<75 && ${Actor[${MainTankPC}].Health} >-99
+	{
+		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
+		HealUsed:Set[TRUE]
+	}
+
+
+	;MT < 90
+	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<90  && ${Actor[${MainTankPC}].Health}>-99
+	{
+		if !${KeepMTHOTUp} && !${Me.InRaid} && ${Me.Ability[${SpellType[7]}].IsReady}
 		{
 			call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+			HealUsed:Set[TRUE]
 		}
-		else
+		elseif !${KeepGroupHOTUp} && ${MTinMyGroup}
 		{
-			call CastSpellRange 10 0 0 0 ${Actor[${MainTankPC}].ID}
+			call CastSpellRange 15 0 0 0 ${Actor[${MainTankPC}].ID}
+			HealUsed:Set[TRUE]
 		}
 	}
 
+	;Maintain HoT Check
+	call CheckHOTs
 
 
 
 	;GROUP HEALS
 	if ${grpheal}>2
 	{
-		if ${Me.Ability[${SpellType[10]}].IsReady}
-		{
-			call CastSpellRange 10
-		}
-		else
-		{
-			call CastSpellRange 15
-		}
+		;use grove if pets ok
 		if ${PetMode}
 		{
 			call CastSpellRange 330
+			HealUsed:Set[TRUE]
 		}
-	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
-	{
-		if ${Me.Ability[${SpellType[4]}].IsReady}
+		;use group HoT or group direct
+		if ${Me.Ability[${SpellType[15]}].IsReady} && !${KeepGroupHOTUp}
 		{
-			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			call CastSpellRange 15
+			HealUsed:Set[TRUE]
 		}
 		else
 		{
-			call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			call CastSpellRange 10
+			HealUsed:Set[TRUE]
 		}
-
-	}
-
-
-	if ${Me.Group[${lowest}].ToActor.Health}<50 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
-	{
-		if ${Me.Ability[${SpellType[1]}].IsReady}
-		{
-			call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
-		}
-		else
-		{
-			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
-		}
-
 	}
 
 	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		if ${Me.Ability[${SpellType[7]}].IsReady}
+		if ${Me.Ability[${SpellType[4]}].IsReady}
 		{
-			call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			HealUsed:Set[TRUE]
 		}
 		else
 		{
-			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			HealUsed:Set[TRUE]
 		}
 
 	}
 
+	;RAID HEALS
+	if ${Me.InRaid} && ${RaidHealMode} && ${Me.ToActor.Health} > 40 && ${Actor[${MainTankPC}].Health}>70 && ${Me.ToActor.Power)>20 && !${HealUsed}
+	{
+		do
+		{
+			if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}](exists)}
+			{
+				if !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Name.Equal[${Me.Name}]} && !${Me.Group[${Actor[pc,exactname,${Me.Raid[${temph2}].Name}]}].ID(exists)}
+				{
+					if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < 100 && ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health}>-99 && ${Me.Raid[${temph2}](exists)}
+					{
+						if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health}
+						{
+							raidlowest:Set[${temph2}]
+						}
+					}
+				}
+			}
+		}
+		while ${temph2:Inc}<=24
+
+		if ${Me.InCombat} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && ${Actor[exactname,${Me.Raid[${temph2}].Name}].Health}>-99
+		{
+			;echo Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} health
+
+			if ${Me.Ability[${SpellType[4]}].IsReady}
+			{
+				call CastSpellRange 4 0 0 0 ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].ID}
+			}
+			elseif ${Me.Ability[${SpellType[1]}].IsReady}
+			{
+				call CastSpellRange 1 0 0 0 ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].ID}
+			}
+			elseif ${Me.Ability[${SpellType[7]}].IsReady} && !${KeepMTHOTUp} && ${Me.ToActor.Power}>50
+			{
+				call CastSpellRange 7 0 0 0 ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].ID}
+			}
+		}
+	}
 
 	;PET HEALS
-	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)}
+	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)} && !${Me.InRaid}
 	{
 		if ${Actor[${PetToHeal}].InCombatMode}
 		{
@@ -1058,53 +1102,107 @@ function CheckHeals()
 		}
 	}
 
-	;Res Fallen Groupmembers only if in range
-	grpcnt:Set[${Me.GroupCount}]
-	tempgrp:Set[0]
-	do
+
+	if ${CombatRez} || !${Me.InCombat}
 	{
-		if ${Me.Group[${tempgrp}].ToActor.Health}==-99 && ${CombatRez}
+		;Res Fallen Groupmembers only if in range
+		grpcnt:Set[${Me.GroupCount}]
+		tempgrp:Set[0]
+		do
 		{
-			if ${Me.Ability[${SpellType[300]}].IsReady}
+			if ${Me.Group[${tempgrp}].ToActor.Health}==-99
 			{
-				call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-			}
-			elseif ${Me.Ability[${SpellType[301]}].IsReady}
-			{
-				call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-			}
-			elseif ${Me.Ability[${SpellType[302]}].IsReady}
-			{
-				call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-			}
-			else
-			{
-				call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+				if ${Me.Ability[${SpellType[300]}].IsReady}
+				{
+					call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+				}
+				elseif ${Me.Ability[${SpellType[301]}].IsReady}
+				{
+					call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+				}
+				elseif ${Me.Ability[${SpellType[302]}].IsReady}
+				{
+					call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+				}
+				else
+				{
+					call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
+				}
 			}
 		}
+		while ${tempgrp:Inc}<${grpcnt}
 	}
-	while ${tempgrp:Inc}<${grpcnt}
 
 }
 
 function EmergencyHeal(int healtarget)
 {
 
-	if ${Me.Ability[${SpellType[316]}].IsReady}
+	;death prevention
+	if ${Me.Ability[${SpellType[316]}].IsReady} && (${Me.ID}==${healtarget} || ${Me.Group[${Actor[id,${healtarget}].Name}](exists)})
 	{
 		call CastSpellRange 316 0 0 0 ${healtarget}
 	}
-	else
+	elseif ${Me.Ability[${SpellType[317]}].IsReady} && (${Me.ID}==${healtarget} || ${Me.Group[${Actor[id,${healtarget}].Name}](exists)})
 	{
 		call CastSpellRange 317 0 0 0 ${healtarget}
 	}
+
+	;emergency heals
 	if ${Me.Ability[${SpellType[8]}].IsReady}
 	{
 		call CastSpellRange 8 0 0 0 ${healtarget}
 	}
-	if ${Me.Ability[${SpellType[16]}].IsReady}
+
+	if ${Me.Ability[${SpellType[16]}].IsReady} && (${Me.ID}==${healtarget} || ${Me.Group[${Actor[id,${healtarget}].Name}](exists)})
 	{
 		call CastSpellRange 16 0 0 0 ${healtarget}
+	}
+
+}
+
+function CheckHOTs()
+{
+
+	declare tempvar int local 1
+	declare hot1 int local 0
+	declare grphot int local 0
+	hot1:Set[0]
+	grphot:Set[0]
+	if ${Me.InCombat} || ${Actor[exactname,${MainTankPC}].InCombatMode}
+	{
+		do
+		{
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]}&&${Me.Maintained[${tempvar}].Target.ID}==${Actor[${MainTankPC}].ID}
+			{
+				;echo Single HoT is Present on MT
+				hot1:Set[1]
+				break
+			}
+			elseif ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
+			{
+				;echo Group HoT is Present
+				grphot:Set[1]
+			}
+		}
+		while ${tempvar:Inc}<=${Me.CountMaintained}
+
+		if ${KeepMTHOTUp}
+		{
+			if ${hot1}==0&&${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
+			{
+				call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+				hot1:Set[1]
+			}
+		}
+
+		if ${KeepGroupHOTUp}
+		{
+			if ${grphot}==0&&${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+			{
+				call CastSpellRange 15
+			}
+		}
 	}
 
 }
@@ -1154,27 +1252,22 @@ function CureMe()
 	if  ${Me.Arcane}>0
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
-		return
 	}
 
 	if  ${Me.Noxious}>0
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
-		return
 	}
 
 	if  ${Me.Elemental}>0
 	{
-			call CastSpellRange 212 0 0 0 ${Me.ID}
-			return
+		call CastSpellRange 212 0 0 0 ${Me.ID}
 	}
 
 	if  ${Me.Trauma}>0
 	{
 		call CastSpellRange 211 0 0 0 ${Me.ID}
-		return
 	}
-
 
 }
 
@@ -1183,20 +1276,24 @@ function CureGroupMember(int gMember)
 	declare tmpcure int local
 
 	tmpcure:Set[0]
-	if !${Me.Group[${gMember}].ZoneName.Equal["${Zone.Name}"]}
+	if !${Me.Group[${gMember}].ToActor(exists)}
 	{
 		return
 	}
 
 	do
 	{
-		call CheckGroupHealth 30
+		call CheckGroupHealth 50
 		if !${Return}
 		{
 			call CastSpellRange 10
 		}
+		if ${Me.Group[${gMember}].ToActor.Health}<25
+		{
+			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
+		}
 
-		if  ${Me.Group[${gMember}].Arcane}>0 && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
+		if  ${Me.Group[${gMember}].Arcane}>0
 		{
 			if ${Me.Ability[${SpellType[214]}].IsReady}
 			{

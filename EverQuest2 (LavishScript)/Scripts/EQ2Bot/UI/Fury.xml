@@ -122,9 +122,30 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Call of Storms]}</Data>
 	</Commandcheckbox>	
-	<Text Name='lblMainWeapon' Template='EQ2.text'>
+	<Commandcheckbox Name='VortexMode' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>130</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Energe Vortex</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[VortexMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Vortex",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[VortexMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Vortex",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Vortex]}</Data>
+	</Commandcheckbox>	
+	<Text Name='lblMainWeapon' Template='EQ2.text'>
+		<X>5%</X>
+		<Y>150</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -132,9 +153,9 @@
 		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
 	</Text>
 	<combobox name='cbMainWeapon' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>130</y>
-		<width>30%</width>
+		<x>130</x>
+		<y>150</y>
+		<width>35%</width>
 		<height>20</height>
 		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
 		<OnLeftClick>
@@ -171,7 +192,7 @@
 	</combobox>
 	<Text Name='lblOffHand' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>150</Y>
+		<Y>170</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -179,9 +200,9 @@
 		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
 	</Text>
 	<combobox name='cbOffHand' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>150</y>
-		<width>30%</width>
+		<x>130</x>
+		<y>170</y>
+		<width>35%</width>
 		<height>20</height>
 		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
 		<OnLeftClick>
@@ -218,7 +239,7 @@
 	</combobox>
 	<Text Name='lblTwoHandedStaff' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>170</Y>
+		<Y>190</Y>
 		<Width>130</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -226,9 +247,9 @@
 		<AutoTooltip>2H staff to use during AAs</AutoTooltip>
 	</Text>
 	<combobox name='cbTwoHandedStaff' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>170</y>
-		<width>30%</width>
+		<x>130</x>
+		<y>190</y>
+		<width>35%</width>
 		<height>20</height>
 		<AutoTooltip>Weapon to use while cleric is using a 2 handed staff AA </AutoTooltip>
 		<OnLeftClick>
@@ -265,7 +286,7 @@
 	</combobox>
 	<Text Name='lblOneHandedHammer' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>190</Y>
+		<Y>210</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -273,9 +294,9 @@
 		<AutoTooltip>Weapon to use during 1 Handed Hammer required AA skills</AutoTooltip>
 	</Text>
 	<combobox name='cbOneHandedHammer' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>190</y>
-		<width>30%</width>
+		<x>130</x>
+		<y>210</y>
+		<width>35%</width>
 		<height>20</height>
 		<AutoTooltip>Weapon to use during 1 Handed Hammer required AA skills</AutoTooltip>
 		<OnLeftClick>
@@ -312,7 +333,7 @@
 	</combobox>
 	<Text Name='lblTwoHandedHammer' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>210</Y>
+		<Y>230</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -320,9 +341,9 @@
 		<AutoTooltip>Weapon to use during 2 Handed Hammer required AA skills</AutoTooltip>
 	</Text>
 	<combobox name='cbTwoHandedHammer' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>210</y>
-		<width>30%</width>
+		<x>130</x>
+		<y>230</y>
+		<width>35%</width>
 		<height>20</height>
 		<AutoTooltip>Weapon to use during 2 Handed Hammer required AA skills</AutoTooltip>
 		<OnLeftClick>
@@ -359,7 +380,7 @@
 	</combobox>
 	<Text Name='lblSymbols' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>230</Y>
+		<Y>250</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -367,9 +388,9 @@
 		<AutoTooltip>Off hand Symbols to use during Symbols required AA skills</AutoTooltip>
 	</Text>
 	<combobox name='cbSymbols' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>230</y>
-		<width>30%</width>
+		<x>130</x>
+		<y>250</y>
+		<width>35%</width>
 		<height>20</height>
 		<AutoTooltip>Off hand Symbols to use during Symbols required AA skills</AutoTooltip>
 		<OnLeftClick>
@@ -406,7 +427,7 @@
 	</combobox>
 	<Text Name='lblBuckler' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>250</Y>
+		<Y>270</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -414,9 +435,9 @@
 		<AutoTooltip>Buckler to use during Buckler required AA skills</AutoTooltip>
 	</Text>
 	<combobox name='cbBuckler' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>250</y>
-		<width>30%</width>
+		<x>130</x>
+		<y>270</y>
+		<width>35%</width>
 		<height>20</height>
 		<AutoTooltip>Buckler to use during Buckler required AA skills</AutoTooltip>
 		<OnLeftClick>
@@ -451,39 +472,18 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Buckler,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
-	<Commandcheckbox Name='PreReactiveMode' Template='EQ2.Commandcheckbox'>
-		<X>200</X>
-		<Y>10</Y>
-		<Width>30%</Width>
-		<Height>20</Height>
-		<Text>Pre-HoT</Text>
-		<AutoTooltip>keep group and single reactives always up out of combat when power is greater than 85</AutoTooltip>
-		<OnLeftClick>
-			if ${This.Checked}
-			{
-				Script[EQ2Bot].Variable[KeepReactiveUp]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepReactiveUp",TRUE]:Save
-			}
-			else
-			{
-				Script[EQ2Bot].Variable[KeepReactiveUp]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepReactiveUp",FALSE]:Save
-			}
-		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepReactiveUp]}</Data>
-	</Commandcheckbox>
 	<Text Name='lblBuffBatGroupMember' Template='EQ2.text'>
-			<X>375</X>
-			<Y>10</Y>
-			<Width>20%</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Buff Spirit of Bat:</Text>
-			<AutoTooltip></AutoTooltip>
+		<X>335</X>
+		<Y>90</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Spirit of Bat:</Text>
+		<AutoTooltip></AutoTooltip>
 	</Text>
 	<combobox name='cbBuffBatGroupMember' Template='EQ2.Combobox'>
-		<x>375</x>
-		<y>30</y>
+		<X>335</X>
+		<y>105</y>
 		<Width>100</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to Bat Buff</AutoTooltip>
@@ -524,17 +524,17 @@
 		</OnLeftClick>
 	</combobox>
 	<Text Name='lblBuffSavageryGroupMember' Template='EQ2.text'>
-		<X>375</X>
-		<Y>50</Y>
-		<Width>20%</Width>
+		<X>335</X>
+		<Y>130</Y>
+		<Width>25%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
 		<Text>Buff Savagery Proc:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
 	<combobox name='cbBuffSavageryGroupMember' Template='EQ2.Combobox'>
-		<x>375</x>
-		<y>70</y>
+		<X>335</X>
+		<y>145</y>
 		<Width>100</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to Savagery Proc Buff</AutoTooltip>
@@ -574,64 +574,271 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Text Name='lblBuffVerveGroupMember' Template='EQ2.text'>
-		<X>375</X>
-		<Y>110</Y>
-		<Width>20%</Width>
+	<Commandbutton name='RefreshVim' Template='EQ2.Commandbutton'>
+		<X>320</X>
+		<Y>170</Y>
+		<Width>20</Width>
 		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>Buff INT on:</Text>
-		<AutoTooltip></AutoTooltip>
-	</Text>
-	<combobox name='cbBuffVerveGroupMember' Template='EQ2.Combobox'>
-		<x>375</x>
-		<y>130</y>
-		<Width>100</width>
-		<Height>20</height>
-		<AutoTooltip>The Group Member to INT Buff</AutoTooltip>
-		<Items></items>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffVerveGroupMember]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffVerveGroupMember]}]:Select
-		</OnLoad>
-		<OnSelect>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffVerveGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<Text></Text>
+		<AutoTooltip>Refresh</AutoTooltip>
 		<OnLeftClick>
 			declare tmpvar int
+			declare tmpCollection collection:string
 
-			This:ClearItems
+			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}&gt;0
+			{
+				tmpvar:Set[1]
+
+				do
+				{
+					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].GetString[${tmpvar}]}]
+				}
+				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}
+
+			}
+
 			tmpvar:Set[1]
-			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+
+			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
+
+
+			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
+
 			if ${Me.ToActor.Pet(exists)}
 			{
-				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
+				UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
 			}
-			do
+
+			if ${Me.Grouped}
 			{
-				if ${Me.Grouped}
+
+				tmpvar:Set[1]
+				do
 				{
-					if ${Me.Group[${tmpvar}].ToActor(exists)}
-					{
-						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-					}
-					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-					{
-						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-					}
+						if ${Me.Group[${tmpvar}].ToActor(exists)}
+						{
+							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+						}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						{
+							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						}
+				}
+				while ${tmpvar:Inc}&lt;=5
+			}
+
+
+			tmpvar:Set[1]
+
+			if ${tmpCollection.FirstKey(exists)}
+			{
+				do
+				{
+
+					UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
 
 				}
+				while ${tmpCollection.NextKey(exists)}
+			}
+		</OnLeftClick>
+	</Commandbutton>
+	<Text Name='lblBuffVim' Template='EQ2.text'>
+		<X>345</X>
+		<Y>172</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Vim (Int) On:</Text>
+		<AutoTooltip>Shift Left click to select group members to buff Int on</AutoTooltip>
+	</Text>
+	<listbox name='lbBuffVim' Template='EQ2.Listbox'>
+		<X>320</X>
+		<y>190</y>
+		<width>155</width>
+		<height>100</height>
+		<SelectMultiple>1</SelectMultiple>
+		<Items></items>
+		<OnLoad>
+			declare tmpvar int
+			declare tmpCollection collection:string
+
+			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}&gt;0
+			{
+				tmpvar:Set[1]
+
+				do
+				{
+					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].GetString[${tmpvar}]}]
+				}
+				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}
 
 			}
-			while ${tmpvar:Inc}&lt;=5
+
+			tmpvar:Set[1]
+
+			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
+
+			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
+
+			if ${Me.ToActor.Pet(exists)}
+			{
+				UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
+			}
+
+			if ${Me.Grouped}
+			{
+
+				tmpvar:Set[1]
+				do
+				{
+						if ${Me.Group[${tmpvar}].ToActor(exists)}
+						{
+							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+						}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						{
+							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						}
+				}
+				while ${tmpvar:Inc}&lt;=5
+			}
+
+			tmpvar:Set[1]
+
+			if ${tmpCollection.FirstKey(exists)}
+			{
+				do
+				{
+
+					UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
+
+				}
+				while ${tmpCollection.NextKey(exists)}
+			}
+		</OnLoad>
+		<OnSelect>
+			declare tmpvar int
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim]:Clear
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim]:Save
+
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+		</OnSelect>
+		<OnDeselect>
+			declare tmpvar int
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim]:Clear
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim]:Save
+
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+		</OnDeselect>
+		<OnLeftClick></OnLeftClick>
+	</listbox>
+	<Commandcheckbox Name='PreReactiveMode' Template='EQ2.Commandcheckbox'>
+		<X>335</X>
+		<Y>10</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Pre-HoT</Text>
+		<AutoTooltip>keep group and single reactives always up out of combat when power is greater than 85</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[KeepReactiveUp]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepReactiveUp",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[KeepReactiveUp]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepReactiveUp",FALSE]:Save
+			}
 		</OnLeftClick>
-	</combobox>
-	<Commandcheckbox Name='BuffThorns' Template='EQ2.Commandcheckbox'>
-		<Visible>1</Visible>
-		<X>200</X>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepReactiveUp]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='ChainHOTMT' Template='EQ2.Commandcheckbox'>
+		<X>335</X>
 		<Y>30</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Buff Thorns on MA</Text>
+		<Text>Chain HoT MT</Text>
+		<AutoTooltip>Keep single HoT on MT at all times while in combat</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[KeepMTHOTUp]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepMTHOTUp",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[KeepMTHOTUp]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepMTHOTUp",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepMTHOTUp]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='ChainHoTGroup' Template='EQ2.Commandcheckbox'>
+		<X>335</X>
+		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Chain HoT Group</Text>
+		<AutoTooltip>Keep group HoT up at all times while in combat</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[KeepGroupHOTUp]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepGroupHOTUp",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[KeepGroupHOTUp]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepGroupHOTUp",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepGroupHOTUp]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseRaidHeals' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>335</X>
+		<Y>70</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Raid Heals</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[RaidHealMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Raid Heals",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[RaidHealMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Raid Heals",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Raid Heals]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffThorns' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>180</X>
+		<Y>10</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Thorns on MT</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
@@ -646,31 +853,94 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Thorns]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='VortexMode' Template='EQ2.Commandcheckbox'>
-		<Visible>1</Visible>
-		<X>200</X>
-		<Y>50</Y>
+	<Commandcheckbox Name='BuffSpirit' Template='EQ2.Commandcheckbox'>
+		<X>180</X>
+		<Y>30</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Use Energe Vortex</Text>
+		<Text>Buff Spirit (Group)</Text>
+		<AutoTooltip>Buff Group Int and Wis</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[VortexMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Vortex",TRUE]:Save
+				Script[EQ2Bot].Variable[BuffSpirit]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffSpirit",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[VortexMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Vortex",FALSE]:Save
+				Script[EQ2Bot].Variable[BuffSpirit]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffSpirit",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Vortex]}</Data>
-	</Commandcheckbox>	
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSpirit]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffHunt' Template='EQ2.Commandcheckbox'>
+		<X>180</X>
+		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Hunt (Group)</Text>
+		<AutoTooltip>Buff Group Max Health and Cold/Heat</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffHunt]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffHunt",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffHunt]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffHunt",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHunt]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffMask' Template='EQ2.Commandcheckbox'>
+		<X>180</X>
+		<Y>70</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Mask (Group)</Text>
+		<AutoTooltip>Buff Group Mit and Health Regen</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffMask]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffMask",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffMask]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffMask",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffMask]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffEel' Template='EQ2.Commandcheckbox'>
+		<X>180</X>
+		<Y>90</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Eel (Group)</Text>
+		<AutoTooltip>Buff Group Water Breathing</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffEel]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffEel",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffEel]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffEel",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffEel]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
-		<X>200</X>
-		<Y>70</Y>
+		<X>180</X>
+		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Rez's in Combat</Text>
@@ -690,8 +960,8 @@
 	</Commandcheckbox>
 	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
-		<X>200</X>
-		<Y>90</Y>
+		<X>180</X>
+		<Y>130</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Innitiate HO's</Text>

@@ -681,6 +681,7 @@ function main()
 function CheckManaStone()
 {
 	variable int tempvar
+	Me.Equipment[Exactname,"Manastone"]:UnEquip
 
 	Me:CreateCustomInventoryArray[nonbankonly]
 
