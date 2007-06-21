@@ -1,5 +1,10 @@
 Revision History
 ----------------
+v6.5 - Fixed all Imbue Recipes.
+     - Minor fix to Writs with regards to the quest update trigger.
+
+v6.4 - Few minor bug fixes
+
 v6.3 - Fixed doors in Qeynos Tradeskills
 
 v6.2 - You can now craft a Recipe from your 'Recipe Favourites' on the command line, which will avoid any prompting.
