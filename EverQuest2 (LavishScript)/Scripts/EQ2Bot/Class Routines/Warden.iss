@@ -281,7 +281,8 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			call CastSpellRange ${PreSpellRange[${xAction},2]}
 			break
 		case BuffBoon
 			if ${BuffBoon}
@@ -1050,7 +1051,7 @@ function CheckHeals()
 	}
 
 	;RAID HEALS
-	if ${Me.InRaid} && ${RaidHealMode} && ${Me.ToActor.Health} > 40 && ${Actor[${MainTankPC}].Health}>70 && ${Me.ToActor.Power)>20 && !${HealUsed}
+	if ${Me.InRaid} && ${RaidHealMode} && ${Me.ToActor.Health} > 40 && ${Actor[${MainTankPC}].Health}>70 && ${Me.ToActor.Power}>20 && !${HealUsed}
 	{
 		do
 		{
