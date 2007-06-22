@@ -302,7 +302,7 @@
 									<OnChange>
 										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Assist and Engage in combat at what Health?,${This.Text}]:Save
 										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Assist and Engage in combat at what Health?]}]
-										Script[EQ2Bot].Variable[AssistHP]:Set[${This}]
+										Script[EQ2Bot].Variable[AssistHP]:Set[${This.Text}]
 									</OnChange>
 								</Textentry>
 								<Text Name='Health Text' Template='EQ2.text'>
@@ -672,7 +672,7 @@
 						</Frame>
 						<Commandbutton name='Start EQ2Bot' Template='EQ2.Commandbutton'>
 							<X>40%</X>
-							<Y>85%</Y>
+							<Y>88%</Y>
 							<Width>100</Width>
 							<Height>20</Height>
 							<Text>Start EQ2Bot</Text>
@@ -1370,6 +1370,221 @@
 								}
 							</OnLeftClick>
 						</checkbox>
+					</Tab>
+					<Tab name='Navigation'>
+						<Text Name='Zone Name' Template='EQ2.text'>
+							<X>0</X>
+							<Y>10</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>Current Zone: ${Zone.Name}</text>
+						</Text>
+						<checkbox Name='Camp' Template='EQ2.checkbox'>
+							<X>20%</X>
+							<Y>40</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>Camp Pathing</Text>
+							<OnLoad>
+								UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+							</OnLoad>
+							<OnLeftClick>
+								UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+								UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
+								Script[EQ2Bot].Variable[CampNav]:Set[TRUE]
+								UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+								UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Dungeon Crawl' Template='EQ2.checkbox'>
+							<X>50%</X>
+							<Y>40</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>Dungeon Crawl Pathing</Text>
+							<OnLoad>
+								UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
+							</OnLoad>
+							<OnLeftClick>
+								UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+								UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
+								Script[EQ2Bot].Variable[CampNav]:Set[FALSE]
+								Script[EQ2Bot]:ExecuteAtom[CheckFinish]
+							</OnLeftClick>
+						</checkbox>
+						<Text Name='Path Type' Template='EQ2.text'>
+							<X>0</X>
+							<Y>40</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text></text>
+						</Text>
+						<Text Name='Camp Count' Template='EQ2.text'>
+							<X>10%</X>
+							<Y>70</Y>
+							<Width>90%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Camp Locations Found: ${Script[EQ2Bot].VariableScope.CampCount}</text>
+						</Text>
+						<Text Name='Pull Count' Template='EQ2.text'>
+							<X>60%</X>
+							<Y>70</Y>
+							<Width>90%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Pull Locations Found: ${Script[EQ2Bot].VariableScope.PullCount}</text>
+						</Text>
+						<Text Name='Finish Text 1' Template='EQ2.text'>
+							<X>0</X>
+							<Y>70</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Alignment>Center</Alignment>
+							<Text>Finish Region has not been created!</text>
+						</Text>
+						<Commandbutton name='Move Camp' Template='EQ2.Commandbutton'> 
+							<X>20%</X> 
+							<Y>110</Y> 
+							<Width>24%</Width> 
+							<Height>20</Height>
+							<Text>Move to Camp</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call MoveToGroup Camp]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='Move Start' Template='EQ2.Commandbutton'> 
+							<X>20%</X> 
+							<Y>110</Y> 
+							<Width>24%</Width> 
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Move to Start</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call MoveToGroup Start]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='Clear Path' Template='EQ2.Commandbutton'> 
+							<X>55%</X> 
+							<Y>110</Y> 
+							<Width>24%</Width> 
+							<Height>20</Height>
+							<Text>Clear Navigation</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[ClearPath]
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name='Start Text' Template='EQ2.text'>
+							<X>0</X>
+							<Y>150</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text></text>
+						</Text>
+						<Text Name='Warning Text' Template='EQ2.text'>
+							<X>0</X>
+							<Y>220</Y>
+							<Visible>0</Visible>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>Warning: Clicking Start Pather will create a new Camp Location</text>
+						</Text>
+						<Commandbutton name='Add Pull Region' Template='EQ2.Commandbutton'> 
+							<X>35%</X> 
+							<Y>120</Y> 
+							<Width>25%</Width> 
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Add Pull Region</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call AddPullRegion]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='Finish' Template='EQ2.Commandbutton'> 
+							<X>37%</X> 
+							<Y>110</Y> 
+							<Width>24%</Width> 
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Create Finish</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[CreateFinish]
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name='Finish Text 2' Template='EQ2.text'>
+							<X>0</X>
+							<Y>110</Y>
+							<Visible>0</Visible>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>Finish Region has now been Created!!</text>
+						</Text>
+						<Commandbutton name='Save Path' Template='EQ2.Commandbutton'> 
+							<X>18%</X> 
+							<Y>180</Y> 
+							<Width>22%</Width> 
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Save Navigation</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[SavePath]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='End Path' Template='EQ2.Commandbutton'> 
+							<X>55%</X> 
+							<Y>180</Y> 
+							<Width>20%</Width> 
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>End Pather</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[EndPath]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='start Nav' Template='EQ2.Commandbutton'> 
+							<X>38%</X> 
+							<Y>180</Y> 
+							<Width>20%</Width> 
+							<Height>20</Height>
+							<Text>Start Pather</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[StartPather]
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name='Region Size Text' Template='EQ2.text'>
+							<X>10%</X>
+							<Y>250</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Text>Region Size: </text>
+						</Text>
+						<Textentry Name='Region Size' Template='EQ2.textentry'>
+							<X>26%</X>
+							<Y>250</Y>
+							<Width>5%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<MaxLength>3</MaxLength>
+							<OnLoad>This:SetText[${Script[EQ2Bot].Variable[BoxWidth]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Navigation: Size of Box?,${This.Text}]:Save
+								This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Navigation: Size of Box?]}]
+								Script[EQ2Bot].Variable[BoxWidth]:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						<Text Name='Region Count' Template='EQ2.text'>
+							<X>40%</X>
+							<Y>250</Y>
+							<Width>60%</Width>
+							<Height>20</Height>
+							<Text>Number of Regions Created: ${Script[EQ2Bot].VariableScope.RegionCount}</text>
+						</Text>
 					</Tab>
 				</Tabs>
 			</Tabcontrol>
