@@ -1,6 +1,7 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.5.3 Updated: 05/04/07 by pygar
+; EQ2Bot.iss Version 2.6.0 Updated: 06/10/07 by Blazer
 ;
+;Pathing is now done with LavishNav
 ;
 ; Lots of changes, documentation comming
 ;Seperated MainAssist and MainTank - New var MainTankPC exists with the name of the MainTank to use in yOur heal/buff routines
@@ -100,8 +101,7 @@ variable float HomeZ
 variable int obstaclecount
 variable int LootX
 variable int LootY
-variable int pathindex
-variable string World
+variable int PathIndex
 variable float WPX
 variable float WPY
 variable float WPZ
@@ -113,7 +113,6 @@ variable int ScanRange
 variable bool engagetarget=FALSE
 variable bool islooting=FALSE
 variable int CurrentPull
-variable int TotalPull
 variable bool pathdirection=0
 variable bool Following
 variable int Deviation
@@ -152,7 +151,6 @@ variable bool StartBot=FALSE
 variable bool CloseUI
 variable int PowerCheck
 variable int HealthCheck
-variable int PullPoint
 variable float PositionHeading
 variable bool PullWithBow
 variable bool LootConfirm
@@ -164,6 +162,26 @@ variable int wipe
 variable int together
 variable int wipegroup
 variable bool WipeRevive
+;===================================================
+
+;===================================================
+;===		Lavish Navigation	        ====
+;===================================================
+variable filepath ConfigPath = "${LavishScript.CurrentDirectory}/Scripts/EQ2Bot/Navigational Paths/"
+variable Navigation EQ2Nav
+variable lnavregionref Region
+variable string	CurrentRegion
+variable string LastRegion
+variable bool StartNav
+variable lnavpath CurrentPath
+variable dijkstrapathfinder PathFinder
+variable int BoxWidth
+variable int CampCount
+variable int PullCount
+variable lnavregionref PullPoint
+variable bool CampNav=TRUE
+variable int RegionCount
+variable bool IsFinish
 ;===================================================
 
 ;===================================================
@@ -186,6 +204,7 @@ function main()
 	variable int tempvar1
 	variable int tempvar2
 	variable string tempnme
+	variable index:lnavregionref CheckRegion
 
 	Turbo 1000
 
@@ -196,7 +215,7 @@ function main()
 	EQ2Bot:Init_Triggers
 	EQ2Bot:Init_Character
 	EQ2Bot:Init_UI
-
+	EQ2Nav:Initialise
 
 	call Class_Declaration
 
@@ -206,6 +225,12 @@ function main()
 	{
 		waitframe
 		call ProcessTriggers
+		EQ2Nav:UpdateNavGUI
+		if ${StartNav}
+		{
+			EQ2Nav:AutoBox
+			EQ2Nav:ConnectRegions
+		}
 	}
 	while !${StartBot}
 
@@ -485,14 +510,14 @@ function main()
 				if ${PullPoint}
 				{
 					pulling:Set[TRUE]
-					call MovetoWP "Pull ${PullPoint}"
+					call MovetoWP ${PullPoint}
 					EQ2Execute /target_none
 
 					; Make sure we are close to our home point before we begin combat
 					if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>5
 					{
 						pulling:Set[TRUE]
-						call MovetoWP "Start"
+						call MovetoWP ${LNavRegionGroup[Camp].NearestRegion[${Me.X},${Me.Z},${Me.Y}].ID}
 						pulling:Set[FALSE]
 					}
 				}
@@ -500,7 +525,17 @@ function main()
 			elseif ${PathType}==3 && ${priesthaspower} && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${AutoPull}
 			{
 				pulling:Set[TRUE]
-				call MovetoWP "${DCDirection}"
+
+				if ${LNavRegionGroup[Start].RegionsWithin[CheckRegion,${Math.Calc[${BoxWidth}*2]},${Me.X},${Me.Z},${Me.Y}]}
+				{
+					DCDirection:Set[Finish]
+				}
+				elseif ${LNavRegionGroup[Finish].RegionsWithin[CheckRegion,${Math.Calc[${BoxWidth}*2]},${Me.X},${Me.Z},${Me.Y}]}
+				{
+					DCDirection:Set[Start]
+				}
+
+				call MovetoWP ${LNavRegionGroup[${DCDirection}].NearestRegion[${Me.X},${Me.Z},${Me.Y}].ID}
 				EQ2Execute /target_none
 			}
 
@@ -1773,7 +1808,7 @@ function CheckLoot()
 			Script:End
 		}
 
-		if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat}
+		if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat} || !${AutoLoot}
 		{
 			return
 		}
@@ -1852,48 +1887,29 @@ function FastMove(float X, float Z, int range)
 	return "SUCCESS"
 }
 
-function MovetoWP(string destination)
+function MovetoWP(lnavregionref destination)
 {
-	NavPath:Clear
-	pathindex:Set[1]
+	PathIndex:Set[0]
 	movingtowp:Set[TRUE]
 	stuckcnt:Set[0]
 
-	NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
-
-	if ${PathType}==3
-	{
-		if ${NearestPoint.Equal[Finish]}
-		{
-			destination:Set[Start]
-			DCDirection:Set[Start]
-		}
-		elseif ${NearestPoint.Equal[Start]}
-		{
-			destination:Set[Finish]
-			DCDirection:Set[Finish]
-		}
-	}
-
-	NavPath "${World}" "${NearestPoint}" "${destination}"
-
-	if ${NavPath.Points}>0
+	if ${EQ2Nav.FindPath[${destination}]}
 	{
 		if (${pulling} || ${PathType}==3) && !${Me.IsMoving}
 		{
-			face ${NavPath.Point[1].X} ${NavPath.Point[1].Z}
+			face ${CurrentPath.Region[1].CenterPoint.X} ${CurrentPath.Region[1].CenterPoint.Y}
 			wait 5
 			press -hold ${forward}
 			PositionHeading:Set[${Me.Heading}]
 		}
 
-		do
+		while ${PathIndex:Inc}<=${CurrentPath.Hops}
 		{
 			; Move to next Waypoint
-			WPX:Set[${NavPath.Point[${pathindex}].X}]
-			WPZ:Set[${NavPath.Point[${pathindex}].Z}]
+			WPX:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.X}]
+			WPY:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.Y}]
 
-			call FastMove ${WPX} ${WPZ} 3
+			call FastMove ${WPX} ${WPY} 2
 
 			if ${Return.Equal[STUCK]}
 			{
@@ -1931,7 +1947,7 @@ function MovetoWP(string destination)
 					return
 				}
 			}
-			elseif ${pulling} && ${destination.NotEqual[Start]}
+			elseif ${pulling} && !${LNavRegionGroup[Camp].Contains[${destination}]}
 			{
 				call Pull any
 				if ${engagetarget}
@@ -1942,7 +1958,7 @@ function MovetoWP(string destination)
 					}
 					else
 					{
-						call MovetoWP "Start"
+						call MovetoWP ${LNavRegionGroup[Camp].NearestRegion[${Me.X},${Me.Z},${Me.Y}].ID}
 						if !${Mob.Detect}
 						{
 							engagetarget:Set[FALSE]
@@ -1959,52 +1975,21 @@ function MovetoWP(string destination)
 					return
 				}
 
-				if ${pathindex}==${NavPath.Points}
+				if ${PathIndex}==${CurrentPath.Hops}
 				{
-					if ${TotalPull}==1
-					{
-						call MovetoWP "Start"
-						wait 10
+					call MovetoWP ${LNavRegionGroup[Camp].NearestRegion[${Me.X},${Me.Z},${Me.Y}].ID}
+					wait 10
 
-						if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-						{
-							face ${Target.X} ${Target.Z}
-						}
-						pulling:Set[FALSE]
-						return
-					}
-
-					if !${pathdirection}
+					if ${Target(exists)} && (${Me.ID}!=${Target.ID})
 					{
-						if ${CurrentPull}>=${TotalPull}
-						{
-							pathdirection:Set[!${pathdirection}]
-							CurrentPull:Dec
-						}
-						else
-						{
-							CurrentPull:Inc
-						}
+						face ${Target.X} ${Target.Z}
 					}
-					else
-					{
-						if ${CurrentPull}==1
-						{
-							pathdirection:Set[!${pathdirection}]
-							CurrentPull:Inc
-						}
-						else
-						{
-							CurrentPull:Dec
-						}
-					}
-
-					call MovetoWP "Pull ${CurrentPull}"
+					pulling:Set[FALSE]
 					return
 				}
 			}
+
 		}
-		while ${pathindex:Inc}<=${NavPath.Points}
 
 		if (${pulling} || ${PathType}==3) && ${Me.IsMoving}
 		{
@@ -2012,6 +1997,7 @@ function MovetoWP(string destination)
 			wait 20 !${Me.IsMoving}
 		}
 	}
+
 	movingtowp:Set[FALSE]
 }
 
@@ -2019,9 +2005,10 @@ function MovetoMaster()
 {
 	variable string MasterPoint
 	variable int tmpdev
-
+; Need to convert this
+return
 	NavPath:Clear
-	pathindex:Set[1]
+	PathIndex:Set[1]
 	stuckcnt:Set[0]
 
 	tmpdev:Set[${Math.Rand[${Math.Calc[${Deviation}*2+1]}]:Dec[${Deviation}]}]
@@ -2040,8 +2027,8 @@ function MovetoMaster()
 		do
 		{
 			; Move to next Waypoint
-			WPX:Set[${Math.Calc[${tmpdev}*${Math.Cos[-${Me.Heading}]}+${NavPath.Point[${pathindex}].X}]
-			WPZ:Set[${Math.Calc[${tmpdev}*${Math.Sin[-${Me.Heading}]}+${NavPath.Point[${pathindex}].Z}]
+			WPX:Set[${Math.Calc[${tmpdev}*${Math.Cos[-${Me.Heading}]}+${NavPath.Point[${PathIndex}].X}]
+			WPZ:Set[${Math.Calc[${tmpdev}*${Math.Sin[-${Me.Heading}]}+${NavPath.Point[${PathIndex}].Z}]
 
 
 			call FastMove ${WPX} ${WPZ} 3
@@ -2062,7 +2049,7 @@ function MovetoMaster()
 				}
 			}
 		}
-		while ${pathindex:Inc}<=${NavPath.Points}
+		while ${PathIndex:Inc}<=${NavPath.Points}
 
 		if ${Me.IsMoving}
 		{
@@ -2074,13 +2061,9 @@ function MovetoMaster()
 
 function ProcessTriggers()
 {
-	if "${QueuedCommands}"
+	while ${QueuedCommands}
 	{
-		do
-		{
-			ExecuteQueued
-		}
-		while "${QueuedCommands}"
+		ExecuteQueued
 	}
 }
 
@@ -2223,8 +2206,9 @@ function InventoryFull(string Line)
 	press esc
 	press esc
 	LootAll:Set[FALSE]
+	AutoLoot:Set[FALSE]
 	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Accept Loot Automatically?,FALSE]:Save
-
+	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Loot Corpses and open Treasure Chests?,FALSE]:Save
 }
 
 
@@ -2586,36 +2570,11 @@ function StartBot()
 			break
 
 		case 2
-			CurrentPull:Set[1]
-			World:Set[${Zone.ShortName}]
-			Navigation -reset
-			Navigation -load "${mainpath}XML/EQ2Combat_${Zone.ShortName}.xml"
-
-			; Check how many pull spots there are
-			tempvar1:Set[1]
-
-			do
-			{
-				if ${Navigation.World[${Zone.ShortName}].Point[${tempvar1}].Name.Left[4].Equal[Pull]}
-				{
-					tempvar2:Set[${Navigation.World[${Zone.ShortName}].Point[${tempvar1}].Name.Token[2," "]}]
-					if ${TotalPull}<${tempvar2}
-					{
-						TotalPull:Set[${tempvar2}]
-					}
-				}
-			}
-			while ${tempvar1:Inc}<=${Navigation.World[${Zone.ShortName}].LastID}
-
-			call MovetoWP "Start"
 			HomeX:Set[${Me.X}]
 			HomeZ:Set[${Me.Z}]
 			break
 
 		case 3
-			World:Set[${Zone.ShortName}]
-			Navigation -reset
-			Navigation -load "${mainpath}XML/EQ2Combat_${Zone.ShortName}.xml"
 			break
 
 		case 4
@@ -3005,6 +2964,7 @@ objectdef EQ2BotObj
 		LootConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore or No Trade Items?,TRUE]}]
 		CheckPriestPower:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Check if Priest has Power in the Group?,TRUE]}]
 		WipeRevive:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Revive on Group Wipe?,FALSE]}]
+		BoxWidth:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Navigation: Size of Box?,4]}]
 
 		if ${PullWithBow}
 		{
@@ -3066,6 +3026,7 @@ objectdef EQ2BotObj
 		AddTrigger IamDead "@npc@ has killed you."
 		AddTrigger LoreItem "@*@You cannot have more than one of any given LORE item."
 		AddTrigger InventoryFull "@*@You cannot loot while your inventory is full"
+		AddTrigger InventoryFull "You do not have enough space to loot@*@"
 		AddTrigger LootWdw "LOOTWINDOW::LOOTWINDOW"
 		AddTrigger CantSeeTarget "@*@Can't see target@*@"
 
@@ -3081,7 +3042,6 @@ objectdef EQ2BotObj
 		AddTrigger BotAutoMeleeOff "EQ2Bot melee off"
 		AddTrigger PreReactiveOn "prereactive on"
 		AddTrigger PreReactiveOff "prereactive off"
-
 
 	}
 
@@ -3118,46 +3078,41 @@ objectdef EQ2BotObj
 		return ${angle}
 	}
 
-	member:int ScanWaypoints()
+	member:lnavregionref ScanWaypoints()
 	{
+		variable index:lnavregionref PullRegions
 		variable int tempvar
 		variable int tcount
 
+		PullCount:Set[${LNavRegionGroup[Pull].RegionsWithin[PullRegions,200,${Me.X},${Me.Z},${Me.Y}]}]
+
 		EQ2:CreateCustomActorArray[byDist]
 
-		tempvar:Set[1]
-		do
+		while ${tempvar:Inc}<=${PullCount}
 		{
-			NavPath:Clear
-			pathindex:Set[1]
-
-			NavPath "${World}" "Start" "Pull ${tempvar}"
-
-			if ${NavPath.Points}>0
+			if ${EQ2Nav.FindPath[${PullRegions.Get[${tempvar}].FQN}]}
 			{
-				do
+				PathIndex:Set[0]
+				while ${PathIndex:Inc}<=${CurrentPath.Hops}
 				{
-					WPX:Set[${NavPath.Point[${pathindex}].X}]
-					WPY:Set[${NavPath.Point[${pathindex}].Y}]
-					WPZ:Set[${NavPath.Point[${pathindex}].Z}]
+					WPX:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.X}]
+					WPY:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.Y}]
+					WPZ:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.Z}]
 
-					tcount:Set[2]
-					do
+					tcount:Set[1]
+					while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 					{
-						if ${Math.Distance[${WPX},${WPZ},${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z}]}<${ScanRange}
+						if ${Math.Distance[${WPX},${WPY},${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z}]}<${ScanRange}
 						{
 					 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
 							{
-								return ${tempvar}
+								return ${PullRegions.Get[${tempvar}].ID}
 							}
 						}
 					}
-					while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 				}
-				while ${pathindex:Inc}<=${NavPath.Points}
 			}
 		}
-		while ${tempvar:Inc}<=${TotalPull}
 
 		return 0
 	}
@@ -3422,6 +3377,409 @@ objectdef EQ2BotObj
 	}
 
 
+}
+
+objectdef Navigation
+{
+	method Initialise()
+	{
+		variable index:lnavregionref CheckRegion
+
+		LavishNav:Clear
+
+		if ${ConfigPath.FileExists[${Zone.ShortName}.xml]}
+		{
+			LavishNav.Tree:Import[${ConfigPath}${Zone.ShortName}.xml]
+			echo ${ConfigPath}${Zone.ShortName}.xml Loaded!
+		}
+		else
+		{
+			LavishNav.Tree:AddChild[universe,${Zone.Name},-unique]
+			echo New Zone Created!
+			UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+			UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		}
+
+		if ${LNavRegionGroup[Start].RegionsWithin[CheckRegion,99999,${Me.X},${Me.Z},${Me.Y}]}
+		{
+			CampNav:Set[FALSE]
+			UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
+			UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+			CheckFinish
+			UIElement[Move Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		}
+		else
+		{
+			CampNav:Set[TRUE]
+			UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
+			UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+		}
+	}
+
+	method UpdateNavGUI()
+	{
+		variable index:lnavregionref CampRegions
+		variable index:lnavregionref PullRegions
+		variable index:lnavregionref StartRegion
+
+		RegionCount:Set[${LNavRegion[${Zone.Name}].ChildCount}]
+
+		if ${CampNav}
+		{
+			UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+			UIElement[Camp Count@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+			UIElement[Pull Count@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+
+			CampCount:Set[${LNavRegionGroup[Camp].RegionsWithin[CampRegions,99999,${Me.X},${Me.Z},${Me.Y}]}]
+			PullCount:Set[${LNavRegionGroup[Pull].RegionsWithin[PullRegions,99999,${Me.X},${Me.Z},${Me.Y}]}]
+
+			if ${LNavRegionGroup[Camp].Contains[${This.CurrentRegion}]} || !${CampCount} || ${StartNav}
+			{
+				UIElement[Warning Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+				UIElement[Move Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+			}
+			else
+			{
+				UIElement[Warning Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+				UIElement[Move Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+			}
+
+			if ${CampCount}>0
+			{
+				UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Click Start Pather to continue creating Pull Regions]
+			}
+			else
+			{
+				UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Click Start Pather to create a new Camp and begin pathing]
+			}
+		}
+		else
+		{
+			UIElement[Warning Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+			UIElement[Camp Count@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+			UIElement[Pull Count@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+
+			if ${LNavRegionGroup[Start].RegionsWithin[StartRegion,99999,${Me.X},${Me.Z},${Me.Y}]}
+			{
+				if !${IsFinish}
+				{
+					UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Click Start Pather to continue creating Regions]
+				}
+
+				if !${StartNav} && !${LNavRegionGroup[Start].Contains[${This.CurrentRegion}]}
+				{
+					UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+				}
+				else
+				{
+					UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+				}
+			}
+			else
+			{
+				UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Click Start Pather to create a new Start location and begin pathing]
+				UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+			}
+		}
+
+		if !${StartNav} && ${RegionCount}>0
+		{
+			UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		}
+		else
+		{
+			UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		}
+	}
+
+	method AutoBox(string name)
+	{
+		Region:SetRegion[${LNavRegion[${Zone.Name}].BestContainer[${Me.X},${Me.Z},${Me.Y}].ID}]
+
+		if ${Region.Type.Equal[Universe]}
+		{
+			Region:AddChild[box,"auto",-unique,${Math.Calc[${Me.X}-${BoxWidth}]},${Math.Calc[${Me.X}+${BoxWidth}]},${Math.Calc[${Me.Z}-${BoxWidth}]},${Math.Calc[${Me.Z}+${BoxWidth}]},${Math.Calc[${Me.Y}-${BoxWidth}]},${Math.Calc[${Me.Y}+${BoxWidth}]}]
+
+			LNavRegion[${This.CurrentRegion}]:SetAllPointsValid[TRUE]
+		}
+
+		if ${name.Length}
+		{
+			LNavRegionGroup[${name}]:Add[${This.CurrentRegion}]
+		}
+	}
+
+        member:bool ShouldConnect(lnavregionref regionA, lnavregionref regionB)
+        {
+                if ${regionA.ID}==${regionB.ID}
+                {
+                        return FALSE
+                }
+
+                return TRUE
+        }
+
+	method ConnectRegions()
+        {
+                variable index:lnavregionref SurroundingRegions
+                variable int RegionsFound
+                variable int Index
+		variable float DistanceToCheck
+
+		Region:SetRegion[${This.CurrentRegion}]
+
+		switch ${Region.Type}
+		{
+			case Box
+				DistanceToCheck:Set[${BoxWidth}]
+				break
+
+			default
+				echo Unknown Object Type ${Region.Type}
+				return
+				break
+		}
+
+                RegionsFound:Set[${LNavRegion[${Zone.Name}].DescendantsWithin[SurroundingRegions,${DistanceToCheck},${Region.CenterPoint}]}]
+
+                if ${RegionsFound}>0
+                {
+                        while ${SurroundingRegions.Get[${Index:Inc}](exists)}
+                        {
+				if !${Region.GetConnection[${SurroundingRegions.Get[${Index}].FQN}](exists)}
+				{
+	                                if ${This.ShouldConnect[${Region.ID},${SurroundingRegions.Get[${Index}].ID}]}
+        	                        {
+						Region:Connect[${SurroundingRegions.Get[${Index}].ID}]
+						SurroundingRegions.Get[${Index}]:Connect[${Region.ID}]
+                                        }
+                                }
+                        }
+                }
+        }
+
+	member:lnavregionref CurrentRegion()
+	{
+		Region:SetRegion[${LNavRegion[${Zone.Name}].BestContainer[${Me.X},${Me.Z},${Me.Y}].ID}]
+
+		if ${Region.Type.Equal[Point]}
+		{
+			return ${Region.Parent.ID}
+		}
+
+		return ${Region.ID}
+	}
+
+	method AddPoint(string name)
+	{
+		LNavRegion[${This.CurrentRegion}]:AddChild[point,${name},${Me.X},${Me.Z},${Me.Y}].ID]
+
+		if !${LNavRegion[${name}].Parent.Type.Equal[Universe]}
+		{
+			LNavRegion[${LNavRegion[${name}].Parent.Name}]:Connect[${name}]
+		}
+		LNavRegionGroup[Pull]:Add[${This.CurrentRegion}]
+	}
+
+	member:bool FindPath(string destination)
+	{
+		variable lnavregionref closestpoint
+
+		closestpoint:SetRegion[${This.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}]}]
+		PathIndex:Set[1]
+		CurrentPath:Clear
+
+		PathFinder:SelectPath[${closestpoint.FQN},${LNavRegion[${Zone.Name}].FindRegion[${destination}].FQN},CurrentPath]
+
+		if ${CurrentPath.Hops}>0
+		{
+			return TRUE
+		}
+
+		return FALSE
+	}
+
+	member:lnavregionref FindClosestRegion(float x, float y, float z)
+	{
+		variable lnavregionref Container
+
+		Container:SetRegion[${This.CurrentRegion.BestContainer[${x},${y},${z}]}]
+
+		if !${Container.Type.Equal[Universe]}
+		{
+			return ${Container}
+		}
+
+		return ${Container.NearestChild[${x},${y},${z}]}
+	}
+}
+
+function AddPullRegion()
+{
+	LNavRegionGroup[Pull]:Add[${EQ2Nav.CurrentRegion}]
+	EQ2Nav:UpdateNavGUI
+	call MoveToGroup Camp
+}
+
+function MoveToGroup(string gname)
+{
+	if !${LNavRegionGroup[${gname}].Contains[${EQ2Nav.CurrentRegion}]} && ${LNavRegionGroup[${gname}].Contains[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}]}]}
+	{
+		movingtowp:Set[TRUE]
+		pulling:Set[TRUE]
+
+		press -hold ${forward}
+
+		WPX:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.X}]
+		WPY:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.Y}]
+
+		call FastMove ${WPX} ${WPY} 2
+
+		if ${Me.IsMoving}
+		{
+			press -release ${forward}
+		}
+
+		movetowp:Set[FALSE]
+	}
+
+	if ${EQ2Nav.FindPath[${LNavRegionGroup[${gname}].NearestRegion[${Me.X},${Me.Z},${Me.Y}].FQN}]}
+	{
+		movingtowp:Set[TRUE]
+		pulling:Set[TRUE]
+
+		press -hold ${forward}
+
+		while ${PathIndex:Inc}<=${CurrentPath.Hops}
+		{
+			WPX:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.X}]
+			WPY:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.Y}]
+
+			call FastMove ${WPX} ${WPY} 2
+		}
+
+		if ${Me.IsMoving}
+		{
+			press -release ${forward}
+		}
+
+		movetowp:Set[FALSE]
+	}
+}
+
+atom StartPather()
+{
+	variable index:lnavregionref StartRegion
+
+	UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Move Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Save Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	UIElement[End Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+
+	if ${CampNav}
+	{
+		CurrentRegion:Set[${EQ2Nav.CurrentRegion}]
+		LastRegion:Set[${CurrentRegion}]
+		EQ2Nav:AutoBox[Camp]
+		UIElement[Add Pull Region@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Navigation for Camp Mode]
+	}
+	else
+	{
+		CurrentRegion:Set[${EQ2Nav.CurrentRegion}]
+		LastRegion:Set[${CurrentRegion}]
+
+		if !${LNavRegionGroup[Start].RegionsWithin[StartRegion,99999,${Me.X},${Me.Z},${Me.Y}]}
+		{
+	
+		EQ2Nav:AutoBox[Start]
+		}
+
+		UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Navigation for Dungeon Crawl Mode]
+		UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	}
+
+	UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	StartNav:Set[TRUE]
+	EQ2Nav:UpdateNavGUI
+}
+
+atom ClearPath()
+{
+	LavishNav:Clear
+	LavishNav.Tree:AddChild[universe,${Zone.Name},-unique]
+	UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	EQ2Nav:UpdateNavGUI
+}
+
+atom SavePath()
+{
+	LNavRegion[${Zone.Name}]:Export[${ConfigPath}${Zone.ShortName}.xml]
+	EndPath
+}
+
+atom EndPath()
+{
+	StartNav:Set[FALSE]
+
+	UIElement[End Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Save Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Add Pull Region@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+
+	EQ2Nav:Initialise
+
+	if ${CampNav}
+	{
+		UIElement[Move Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	}
+	else
+	{
+		UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		CheckFinish
+	}
+}
+
+atom CheckFinish()
+{
+	variable index:lnavregionref FinishRegion
+
+	if ${LNavRegionGroup[Finish].RegionsWithin[FinishRegion,99999,${Me.X},${Me.Z},${Me.Y}]}
+	{
+		IsFinish:Set[TRUE]
+		UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Finish Region Already exists!!]
+		UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	}
+	else
+	{
+		IsFinish:Set[FALSE]
+		UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+	}
+
+	EQ2Nav:UpdateNavGUI
+}
+
+atom CreateFinish()
+{
+	EQ2Nav:AutoBox[Finish]
+	UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 }
 
 function atexit()
