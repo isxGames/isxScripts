@@ -1833,7 +1833,7 @@ function FastMove(float X, float Z, int range)
 		return "INVALIDLOC"
 	}
 
-	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>30 && !${Following} && ${PathType}!=4
+	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
 	{
 		return "INVALIDLOC"
 	}
