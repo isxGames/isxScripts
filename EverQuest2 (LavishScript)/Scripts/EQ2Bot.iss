@@ -506,7 +506,7 @@ function main()
 
 			if ${PathType}==2 && ${priesthaspower} && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck}
 			{
-				PullPoint:Set[${EQ2Bot.ScanWaypoints}]
+				PullPoint:SetRegion[${EQ2Bot.ScanWaypoints}]
 				if ${PullPoint}
 				{
 					pulling:Set[TRUE]
