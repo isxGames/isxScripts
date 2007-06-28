@@ -822,6 +822,9 @@ function UpdateKeep(int keep)
 
 function Harvested(string Line, string action, int number, string result)
 {
+  if (${number} == 0)
+    number:Set[1]
+
 	HarvestStat[${NodeType}]:Inc[${number}]
 
 	if ${NodeType}<=7
