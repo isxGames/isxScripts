@@ -822,6 +822,7 @@ function UpdateKeep(int keep)
 
 function Harvested(string Line, string action, int number, string result)
 {
+  ; clearly, "a" or "an" will == 0   :)
   if (${number} == 0)
     number:Set[1]
 
