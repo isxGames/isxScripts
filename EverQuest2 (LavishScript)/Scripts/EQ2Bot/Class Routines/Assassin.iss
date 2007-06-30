@@ -245,6 +245,7 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break
+
 		case Shadows
 			BuffTarget:Set[${UIElement[cbBuffShadowsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -293,13 +294,10 @@ function Buff_Routine(int xAction)
 			xAction:Set[20]
 			break
 	}
-
 }
 
 function Combat_Routine(int xAction)
 {
-;echo combat routine
-
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
@@ -357,7 +355,6 @@ function Combat_Routine(int xAction)
 
 	switch ${Action[${xAction}]}
 	{
-
 		case Debuff
 			if ${DebuffMode}
 			{
@@ -377,6 +374,7 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 			call CastSpellRange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget} 0 0 1
 			break
+
 		case AA_Intoxication
 		case Evade
 		case Stun
@@ -413,8 +411,10 @@ function Combat_Routine(int xAction)
 		case Stalk
 		case Shrouded_Attack
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-			call CastStealthAttack
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastStealthAttack
+			}
 			break
 
 		case Combat_Buff
@@ -430,34 +430,38 @@ function Combat_Routine(int xAction)
 			if ${UseRangeMode}
 			{
 				if ${Actor[${KillTarget}].Distance}<5
-					{
-						press -hold ${backward}
-						wait 2
-						press -release ${backward}
-					}
+				{
+					press -hold ${backward}
+					wait 2
+					press -release ${backward}
+				}
+
 				if !${Actor[${KillTarget}].Distance}<5
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
+				}
 			}
 			break
 
-			case Mastery
-				if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
+		case Mastery
+			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
+			{
+				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 				{
-					if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
-					{
-						Target ${KillTarget}
-						call CheckPosition 1 1
-						Me.Ability[Sinister Strike]:Use
-					}
+					Target ${KillTarget}
+					call CheckPosition 1 1
+					Me.Ability[Sinister Strike]:Use
 				}
+			}
 			break
 
 		case Bounty
-			if ${Actor[${KillTarget}].ConColor} != 'Grey' && ${Actor[${KillTarget}].ConColor} != 'Green' && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			if !${Actor[${KillTarget}].ConColor.Equal[Grey]} && !${Actor[${KillTarget}].ConColor.Equal[Green]} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 			}
 			break
+
 		case AA_Bladed_Opening
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
@@ -479,7 +483,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case AA_Spinning_Spear
-			if ${AoEMode} && ${Mob.Count}>=2 && {Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			if ${AoEMode} && ${Mob.Count}>=2 && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 				if ${Me.Equipment[1].Name.Equal[${WeaponSpear}]}
 				{
@@ -493,6 +497,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
+
 		case AA_Frontload
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
@@ -503,6 +508,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
+
 		default
 			xAction:Set[20]
 			break
@@ -554,6 +560,7 @@ function Cancel_Root()
 {
 
 }
+
 function CheckHeals()
 {
 
