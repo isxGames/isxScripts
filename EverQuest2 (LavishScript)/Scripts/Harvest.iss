@@ -791,7 +791,7 @@ function Harvested(string Line, string action, string result)
 	harvestcnt:Inc
 	tempval:Set[${SettingXML[${harvestfile}].Set["harvest list"].GetInt["${result.Right[-1]}"]}]
 
-	if "${Harvested.Find[Glowing]} || ${Harvested.Find[Sparkling]} || ${Harvested.Find[Glimmering]} || ${Harvested.Find[Luminous]} || ${Harvested.Find[Lambent]} || ${Harvested.Find[Scintilating]}"
+	if "${Harvested.Find[Glowing]} || ${Harvested.Find[Sparkling]} || ${Harvested.Find[Glimmering]} || ${Harvested.Find[Luminous]} || ${Harvested.Find[Lambent]} || ${Harvested.Find[Scintillating]}"
 	{
 		tempval:Set[19]
 	}
