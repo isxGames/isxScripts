@@ -169,7 +169,6 @@
 		<Setting Name="coriander">7</Setting>
 		<Setting Name="prickly pear">7</Setting>
 		<Setting Name="darjeeling tea leaf">7</Setting>
-		<Setting Name="tag_candy_cane">1</Setting>
 	</Set>
 	<Set Name="feerrott">
 		<Setting Name="1">alluvium ore</Setting>
@@ -277,57 +276,54 @@
 		<Setting Name="8">bedlam of fish</Setting>
 		<Setting Name="10">strange black ore</Setting>
 	</Set>
-	<Set Name="qey_adv01_oakmyst"> 
-		<Setting Name="1">compound ore</Setting> 
-		<Setting Name="2">moss encased stone</Setting> 
-		<Setting Name="3">grizzled arbor</Setting> 
-		<Setting Name="4">muddy roots</Setting> 
-		<Setting Name="5">creature den</Setting> 
-		<Setting Name="6">natural garden</Setting> 
-		<Setting Name="7">natural herb garden</Setting> 
-		<Setting Name="8">cluster of fish</Setting> 
-	</Set> 
-	<Set Name="steppes_epic01_cove"> 
-		<Setting Name="1">ferric ore</Setting> 
-		<Setting Name="2">mud stone</Setting> 
-		<Setting Name="3">marred arbor</Setting> 
-		<Setting Name="4">vestigial roots</Setting> 
-		<Setting Name="5">animal den</Setting> 
-		<Setting Name="6">flattened bed of thistle</Setting> 
-		<Setting Name="7">flattened natural herb garden</Setting> 
-		<Setting Name="8">fury of fish</Setting> 
+	<Set Name="qey_adv01_oakmyst">
+		<Setting Name="1">compound ore</Setting>
+		<Setting Name="2">moss encased stone</Setting>
+		<Setting Name="3">grizzled arbor</Setting>
+		<Setting Name="4">muddy roots</Setting>
+		<Setting Name="5">creature den</Setting>
+		<Setting Name="6">natural garden</Setting>
+		<Setting Name="7">natural herb garden</Setting>
+		<Setting Name="8">cluster of fish</Setting>
 	</Set>
-	<Set Name="exp01_rgn_sinking_sands"> 
-		<Setting Name="1">eroded ore</Setting> 
-		<Setting Name="2">sand scoured stone</Setting> 
-		<Setting Name="3">arid timber</Setting> 
-		<Setting Name="4">sun bleached roots</Setting> 
-		<Setting Name="5">beast den</Setting> 
+	<Set Name="steppes_epic01_cove">
+		<Setting Name="1">ferric ore</Setting>
+		<Setting Name="2">mud stone</Setting>
+		<Setting Name="3">marred arbor</Setting>
+		<Setting Name="4">vestigial roots</Setting>
+		<Setting Name="5">animal den</Setting>
+		<Setting Name="6">flattened bed of thistle</Setting>
+		<Setting Name="7">flattened natural herb garden</Setting>
+		<Setting Name="8">fury of fish</Setting>
+	</Set>
+	<Set Name="exp01_rgn_sinking_sands">
+		<Setting Name="1">eroded ore</Setting>
+		<Setting Name="2">sand scoured stone</Setting>
+		<Setting Name="3">arid timber</Setting>
+		<Setting Name="4">sun bleached roots</Setting>
+		<Setting Name="5">beast den</Setting>
 		<Setting Name="6">parched shrubbery</Setting>
 		<Setting Name="7">cave fungus</Setting>
-		<Setting Name="8">clutch of fish</Setting> 
+		<Setting Name="8">clutch of fish</Setting>
 	</Set>
 	<Set Name="exp01_rgn_pillars_of_flame">
-		<Setting Name="1">red rock</Setting> 
-		<Setting Name="2">luminous stone</Setting> 
-		<Setting Name="3">fallen branch</Setting> 
-		<Setting Name="4">shriveled roots</Setting> 
-		<Setting Name="5">beast den</Setting> 
+		<Setting Name="1">red rock</Setting>
+		<Setting Name="2">luminous stone</Setting>
+		<Setting Name="3">fallen branch</Setting>
+		<Setting Name="4">shriveled roots</Setting>
+		<Setting Name="5">beast den</Setting>
 		<Setting Name="6">withered shrubbery</Setting>
 		<Setting Name="7">cave fungus</Setting>
-		<Setting Name="8">cluster of fish</Setting> 
+		<Setting Name="8">cluster of fish</Setting>
 	</Set>
 	<Set Name="exp02_rgn_realm_of_twilight">
-		<Setting Name="1">red rock</Setting> 
-		<Setting Name="2">firmament stone</Setting> 
-		<Setting Name="3">fallen branch</Setting> 
-		<Setting Name="4">trip roots</Setting> 
-		<Setting Name="5">tangled nest</Setting> 
+		<Setting Name="1">red rock</Setting>
+		<Setting Name="2">firmament stone</Setting>
+		<Setting Name="3">fallen branch</Setting>
+		<Setting Name="4">trip roots</Setting>
+		<Setting Name="5">tangled nest</Setting>
 		<Setting Name="6">withered shrubbery</Setting>
 		<Setting Name="7">cave fungus</Setting>
-		<Setting Name="8">school of flying fish</Setting> 
-	</Set>
-	<Set Name="qey_north">
-		<Setting Name="1">tag_candy_cane</Setting>
+		<Setting Name="8">school of flying fish</Setting>
 	</Set>
 </InnerSpaceSettings>
