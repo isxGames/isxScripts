@@ -1,7 +1,7 @@
 ;-----------------------------------------------------------------------------------------------
-; Harvest.iss Version 3.4  Updated: 09/17/05 
+; Harvest.iss Version 3.4  Updated: 09/17/05
 ;
-; Written by: Blazer 
+; Written by: Blazer
 ;
 ; Description:
 ; ------------
@@ -27,7 +27,7 @@
 ;	   you harvested, then one of 2 things will happen.
 ;	   1) You will go afk, and then just wait till he is out of sight (50 Range) for at least 1 minute.
 ;						or
-;	   2) YOu will continue to follow your nav path only, ignoring all harvest nodes till he is out of 
+;	   2) YOu will continue to follow your nav path only, ignoring all harvest nodes till he is out of
 ;	      sight for at least 1 minute.
 ;	   Option 2) is set by default. The Black List and Friends list can be modified in the config file.
 ;
@@ -41,31 +41,31 @@
 ;
 ; v2.3 - * Fixed Huds to work with the last IS update.
 ;
-; v2.2 - * Movement of the bot is now a lot smoother. It will now only ever stop moving if it either 
-;	   reaches a node or it gets stuck and needs to back up. Make sure you get moveto.iss v1.7 
+; v2.2 - * Movement of the bot is now a lot smoother. It will now only ever stop moving if it either
+;	   reaches a node or it gets stuck and needs to back up. Make sure you get moveto.iss v1.7
 ;	   or higher.
 ; v2.1 - * The bot will now be able to more thoroughly harvest any nodes that are close to him.
 ;	   There is a new setting which will set how close a node can be to the bot, to harvest it,
 ;	   regardless if its outside the roaming range.
-;	 * Pressing your end key (F11) to end the script will now clean up the inventory as well from 
+;	 * Pressing your end key (F11) to end the script will now clean up the inventory as well from
 ;	   what you had just harvested, based on your configuration settings.
 ; v2.0 - * Configuration settings have now been moved to '.\Scripts\XML\HarvestConfig.xml'
 ;	   If the file does not exist, it will be created. If it doesnt contain a particular setting
-;	   then it will be added to the config file with a default setting. This will allow for 
+;	   then it will be added to the config file with a default setting. This will allow for
 ;	   future releases without modifying your custom settings.
-;	   You can generally set 0 for NO, or 1 for YES, similiar to how the settings were set before.	 
+;	   You can generally set 0 for NO, or 1 for YES, similiar to how the settings were set before.
 ;	 * Destroy functionality has now been added.
 ;	   - You can specify which nodes to destroy in the config file.
 ;	   This value will actually indicate how many of that resource type you want to keep. If there are
 ;	   more than 1 type of resource from the same node, then it will keep that many for each
 ;	   resource. If you put 0, then it wont keep any. This value is defaulted to 999.
-;	   - You can also include specific resources that you want to keep as well, which will override 
+;	   - You can also include specific resources that you want to keep as well, which will override
 ;	   the values set above.
-;	   - You can specify what you want to keep for collectibles, for example enchanted bones. 
-;	   It will do partial matching, so if you just specify 'bone', it will keep all collectibles that 
+;	   - You can specify what you want to keep for collectibles, for example enchanted bones.
+;	   It will do partial matching, so if you just specify 'bone', it will keep all collectibles that
 ;	   have the word 'bone' in it for how ever many you want.
 ;	   - You can have up to 50 items to keep in the config file for either the resource or collectible.
-;	   - You can specify how many resources you want to harvest, before it destroys that batch. 
+;	   - You can specify how many resources you want to harvest, before it destroys that batch.
 ;	   The default is set to 200. So after you have harvested 200 resources, it will clean up your
 ;	   inventory, keeping resources based on your settings. This avoids doing continous destroying,
 ;	   and instead, will do it in batches.
@@ -86,7 +86,7 @@
 ;	 * Made some tweaks, due to the fix for location updates.
 ;
 ; v1.4 - * Added '-list' to view a list of key points in the navigational file, which can be used
-;	   as starting or finish points. e.g run eq2pather -list. This will only work with 
+;	   as starting or finish points. e.g run eq2pather -list. This will only work with
 ;	   navigational files created with EQ2Pather v1.4 or higher.
 ;	 * Fixed the PC Detection to work better.
 ;
@@ -116,11 +116,11 @@
 ;	   Works with the following zones; Antonica, Commanlands, Thundering Steppes, Neriak, Zek,
 ;	   Enchanted Lands, Feerrott, Everfrost and Lavastorm.
 ;	 * You now only need to specify what node type to harvest.
-;	 * Roaming is now defined for each zone in Harvest.xml. If you need to harvest areas like 
-;	   Lavastorm, then you should set the roaming to say 40, but include more nav points. 
+;	 * Roaming is now defined for each zone in Harvest.xml. If you need to harvest areas like
+;	   Lavastorm, then you should set the roaming to say 40, but include more nav points.
 ;	   This will ensure more coverage, and less chances of getting stuck or falling in lava:)
-;	 * If you get stuck 3 times in the same spot, it will now attempt to locate the nearest 
-; 	   nav point and re-calculate the nav path. If you still get stuck, then it will end 
+;	 * If you get stuck 3 times in the same spot, it will now attempt to locate the nearest
+; 	   nav point and re-calculate the nav path. If you still get stuck, then it will end
 ;	   the script.
 ;
 ; v1.0 - * Initial Release.
@@ -194,11 +194,11 @@ function main(string start, string end)
 	declare timer int script 0
 	declare timerval int script 0
 	declare xmlpath string script "./XML/"
-	declare configfile string script 
+	declare configfile string script
 	declare harvestfile string script
 	declare dnnamecnt int script 0
 	declare oldnamecnt int script 0
-	declare dnnamearr[30] string script 
+	declare dnnamearr[30] string script
 	declare dncount[30] int script 0
 	declare dnfound bool script
 	declare howtoquit int script
@@ -248,7 +248,7 @@ function main(string start, string end)
 	configfile:Set[${xmlpath}HarvestConfig.xml]
 	harvestfile:Set[${xmlpath}Harvest.xml]
 
-	if !${start.Length} 
+	if !${start.Length}
 	{
 		echo "Syntax: run harvest -reset | -list | <start> <finish>"
 		echo "Where <start> and <finish> are the optional starting and ending point names used in the navigation file."
@@ -291,7 +291,7 @@ function main(string start, string end)
 			StartPoint:Set[${start}]
 		}
 	}
-	if !${end.Length} 
+	if !${end.Length}
 	{
 		echo Using "Finish" as the last point name
 		EndPoint:Set[Finish]
@@ -313,7 +313,7 @@ function main(string start, string end)
 	{
 		call InitHud
 	}
-	
+
 	World:Set[${Zone.ShortName}]
 
 	squelch Navigation -reset
@@ -330,7 +330,7 @@ function main(string start, string end)
 
 			if "${NearestPoint.Equal[${EndPoint}]}"
 			{
-				squelch NavPath "${World}" "${EndPoint}" "${StartPoint}" 
+				squelch NavPath "${World}" "${EndPoint}" "${StartPoint}"
 			}
 			else
 			{
@@ -350,7 +350,7 @@ function main(string start, string end)
 
 				if "${NearestPoint.Equal[${EndPoint}]}"
 				{
-					squelch NavPath "${World}" "${EndPoint}" "${StartPoint}" 
+					squelch NavPath "${World}" "${EndPoint}" "${StartPoint}"
 				}
 				else
 				{
@@ -501,7 +501,7 @@ function PathingRoutine()
 									call checkkeys
 								}
 								while ${isintruder}
-	
+
 								if ${Me.ToActor.IsAFK}
 								{
 									EQ2Execute /afk
@@ -526,11 +526,11 @@ function PathingRoutine()
 	}
 }
 
-function InvalidNode(string Line) 
-{ 
+function InvalidNode(string Line)
+{
 	; This node is not harvestable so label it bad
 	badnodedetected:Set[1]
-} 
+}
 
 function InventoryFull(string Line)
 {
@@ -552,13 +552,13 @@ function GMDetected(string Line)
 	Exit
 }
 
-function ProcessTriggers() 
+function ProcessTriggers()
 {
-	if "${QueuedCommands}" 
+	if "${QueuedCommands}"
 	{
-		do 
+		do
 		{
-			ExecuteQueued 
+			ExecuteQueued
 		}
 		while "${QueuedCommands}"
 	}
@@ -619,7 +619,7 @@ function Harvesting()
 			}
 		}
 		while ${Target.ID}
-	
+
 		if ${displaystats}
 		{
 			closestName:Set[]
@@ -716,7 +716,7 @@ function InitTriggers()
 	AddTrigger InvalidNode "@*@You cannot@*@"
 
 	; Add trigger for inventory full
-	AddTrigger InventoryFull "@*@inventory is currently full."	
+	AddTrigger InventoryFull "@*@inventory is currently full."
 
 	; Add GM/CS TELL triggers
 	AddTrigger GMDetected "@*@GM.@*@tells you@*@"
@@ -790,6 +790,12 @@ function Harvested(string Line, string action, string result)
 {
 	harvestcnt:Inc
 	tempval:Set[${SettingXML[${harvestfile}].Set["harvest list"].GetInt["${result.Right[-1]}"]}]
+
+	if "${Harvested.Find[Glowing]} || ${Harvested.Find[Sparkling]} || ${Harvested.Find[Glimmering]} || ${Harvested.Find[Luminous]} || ${Harvested.Find[Lambent]}"
+	{
+		tempval:Set[19]
+	}
+
 	if !${tempval}
 	{
 		EQ2Echo Unknown Harvest: ${result} in ${harvestfile}\n >> UnknownHarvest.txt
@@ -808,14 +814,7 @@ function Harvested(string Line, string action, string result)
 function Rare(string Line, string rare)
 {
 	harvestcnt:Inc
-	if "${rare.Find[Glowing]} || ${rare.Find[Sparkling]} || ${rare.Find[Glimmering]} || ${rare.Find[Luminous]} || ${rare.Find[Lambent]}"
-	{
-		harveststat[19]:Inc
-	}
-	else
-	{
-		harveststat[20]:Inc
-	}
+	harveststat[20]:Inc
 }
 
 function Collectible(string Line, string result)
@@ -1040,7 +1039,7 @@ function DestroyItem(string pitemsearch)
 	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 2
 	do
-	{	
+	{
 		if "${Me.CustomInventory[${tempvar}].Name.Equal[${pitemsearch}]}"
 		{
 			tempchk1:Set[${Me.CustomInventory[${tempvar}].Slot}]
@@ -1215,7 +1214,7 @@ function InitConfig()
 			keepcollcnt[${tempvar}]:Set[${SettingXML[${configfile}].Set[COLLECTIBLE name you want to keep and how many].GetInt[${keepcollnme[${tempvar}]}]}]
 		}
 		while "${tempvar:Inc}<=${itemcount}"
-	}	
+	}
 
 	; Pathroute is defined as follows
 	; 1 - Navigational path from the nearest point to the End Point.
