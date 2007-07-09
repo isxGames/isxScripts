@@ -178,17 +178,18 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 		}
 		while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
 
-		; Made it to our target loc
-		if ${keepmoving}
-		{
-			call StartRunning
-		}
-		else
-		{
-			call StopRunning
-		}
-
 	}
+
+	; Made it to our target loc
+	if ${keepmoving}
+	{
+		call StartRunning
+	}
+	else
+	{
+		call StopRunning
+	}
+
 	return "SUCCESS"
 }
 
@@ -316,7 +317,7 @@ function StopRunning()
 		do
 		{
 			press MOVEFORWARD
-			wait 1
+			wait 5
 		}
 		while ${Me.IsMoving}
 	}
@@ -329,7 +330,7 @@ function StartRunning()
 		do
 		{
 			press MOVEFORWARD
-			wait 1
+			wait 5
 		}
 		while !${Me.IsMoving}
 	}
