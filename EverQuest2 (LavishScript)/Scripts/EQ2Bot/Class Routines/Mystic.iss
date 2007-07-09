@@ -396,7 +396,7 @@ function Combat_Routine(int xAction)
 	while ${return}==TRUE
 	if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Cure Spells]}
 	{
-		call CheckCures
+		call CheckCure
 	}
 		switch ${Action[${xAction}]}
 		{
@@ -499,7 +499,7 @@ function Combat_Routine(int xAction)
 		}
 
 }
-function CheckCures()
+function CheckCure()
 {
 declare grpcnt int
 declare temp2 int
@@ -749,7 +749,7 @@ if ${Tools.LowHealthCount[90]} > 3
 function Post_Combat_Routine()
 {
 call CheckHeals
-call CheckCures
+call CheckCure
 PetEngage:Set[FALSE]
 	switch ${PostAction[${xAction}]}
 	{
