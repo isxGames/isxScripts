@@ -1683,22 +1683,6 @@ function CheckLoot()
 			Actor[Chest]:DoubleClick
 			wait 5
 			call ProcessTriggers
-			;commented, not needed now I think...
-			;shwlootwdw:Set[FALSE]
-			;tmptimer:Set[${Time.Timestamp}]
-			;do
-			;{
-			;	call LootWdw
-			;	call ProcessTriggers
-			;	WaitFor ${shwlootwdw} 5
-			;	if ${Math.Calc[${Time.Timestamp}-${tmptimer}]}>2
-			;	{
-			;		break
-			;	}
-			;}
-			;while !${shwlootwdw}
-			;wait 4
-			;press esc
 		}
 		else
 		{
@@ -1709,21 +1693,6 @@ function CheckLoot()
 				EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 				wait 5
 				call ProcessTriggers
-				;shwlootwdw:Set[FALSE]
-				;tmptimer:Set[${Time.Timestamp}]
-				;do
-				;{
-				;	call LootWdw
-				;	call ProcessTriggers
-				;	WaitFor ${shwlootwdw} 5
-				;	if ${Math.Calc[${Time.Timestamp}-${tmptimer}]}>2
-				;	{
-				;		break
-				;	}
-				;}
-				;while !${shwlootwdw}
-				;wait 4
-				;press esc
 			}
 		}
 
@@ -3657,6 +3626,21 @@ atom CreateFinish()
 	UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+}
+
+atom(script) EQ2_onChoiceWindowAppeared(string Page, string Choicetxt, string Choice1, string Choice2)
+{
+	if ${Choicetxt.Find[Lore]} || if ${Choicetxt.Find[No-Trade]}
+	{
+		if ${LootConfirm}
+		{
+			ChoiceWindow:DoChoice1
+		}
+		else
+		{
+			ChoiceWindow:DoChoice2
+		}
+	}
 }
 
 function atexit()
