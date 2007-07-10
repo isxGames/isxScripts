@@ -1,5 +1,7 @@
 Revision History
 ----------------
+v6.7 - Fixes.
+
 v6.6 - Writs should now work as intended for all classes without crashes.
 
 v6.5 - Fixed all Imbue Recipes.
