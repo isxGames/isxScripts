@@ -949,11 +949,11 @@
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>255</X> 
+									<X>242</X> 
 									<Y>94</Y> 
 									<Width>500</Width>
 									<Height>20</Height>
-									<Text>Tier:</Text> 
+									<Text>Choice:</Text> 
 								</Text>
 								<Textentry Name='Tier' Template='EQ2.Textentry'>
 									<X>285</X>
