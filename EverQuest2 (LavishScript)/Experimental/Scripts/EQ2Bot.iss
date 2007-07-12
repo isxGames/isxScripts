@@ -1518,7 +1518,7 @@ function Pull(string npcclass)
 					{
 						KillTarget:Set[${Target.ID}]
 						EQ2Execute /pet backoff
-						wait 50 ${CustomActor[${tcount}].Distance]<20
+						wait 50 ${CustomActor[${tcount}].Distance}<20
 						EQ2Execute /pet attack
 						if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
 						{
@@ -2222,12 +2222,12 @@ function LootWdw(string Line)
 					deccnt:Inc
 				}
 			}
-			while ${tmpcnt:inc}<=${LootWindow.NumItems}
+			while ${tmpcnt:Inc}<=${LootWindow.NumItems}
 		}
 	}
 	elseif ${LootMethod.Equal[Decline]}
 	{
-		deccnt:inc
+		deccnt:Inc
 	}
 
 	if ${LootWindow.IsLotto} && !${deccnt} && ${LootMethod.Equal[Accept]}
@@ -2248,7 +2248,7 @@ function LootWdw(string Line)
 					LootWindow:LootItem[${tmpcnt}]
 				}
 		}
-		while ${tmpcnt:inc}<=${LootWindow.NumItems}
+		while ${tmpcnt:Inc}<=${LootWindow.NumItems}
 	}
 	elseif ${LootWindow.IsLotto} && ${LootMethod.Equal[Decline]}
 	{
