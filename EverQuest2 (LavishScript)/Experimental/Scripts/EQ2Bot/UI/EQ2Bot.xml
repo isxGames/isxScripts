@@ -1173,7 +1173,7 @@
 							<X>5%</X>
 							<Y>190</Y>
 							<Height>20</Height>
-							<Width>80</Width>
+							<Width>95%</Width>
 							<OnLoad>
 								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Auto Pull]}
 								{
@@ -1182,6 +1182,9 @@
 								else
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Hide
+									UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide
+									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 								}
 							</OnLoad>
 							<Children>
