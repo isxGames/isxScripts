@@ -1,5 +1,9 @@
 Revision History
 ----------------
+v6.9 - There is now a custom writ file in Recipe Data folder called CustomWrits.xml
+       You can now set a recipe name that is extracted and set the value to what it should be. See the file for some examples.
+       So if there are any wierd names for writs, just use the customwrit file for the translation.
+
 v6.8 - Fixes.
 
 v6.7 - Fixes.
