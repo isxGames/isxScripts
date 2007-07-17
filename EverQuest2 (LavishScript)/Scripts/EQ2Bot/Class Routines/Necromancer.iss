@@ -158,7 +158,8 @@ function Buff_Init()
 function Combat_Init()
 {
 	Action[1]:Set[DrawingSouls]
-	SpellRange[1,1]:Set[375]
+	SpellRange[1,1]:Set[310]
+	SpellRange[1,2]:Set[318]
 
 	Action[2]:Set[AA_Magic_Leash]
 	MobHealth[2,1]:Set[1]
@@ -533,6 +534,9 @@ function Combat_Routine(int xAction)
 			break
 
 		case DrawingSouls
+			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+			break
+
 		case LifeTap
 		case Debuff1
 		case Debuff2
