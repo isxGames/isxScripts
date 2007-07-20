@@ -1142,35 +1142,37 @@
 								}
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name='LootAll' Template='EQ2.checkbox'>
-							<X>55%</X>
+						<Text name='lblLootMethod' Template='EQ2.text'>
+						  <x>55%</x>
+						  <y>170</y>
+						  <Height>20</Height>
+							<Width>80</Width>
+							<Alignment>Left</Alignment>
+							<Text>Loot Method:</Text>
+						</Text>
+						<combobox Name='LootMethod' Template='EQ2.Combobox'>
+							<X>75%</X>
 							<Y>170</Y>
-							<Width>30%</Width>
+							<Width>60</Width>
 							<Height>20</Height>
-							<Text>Accept Loot Automatically</Text>
+							<AutoTooltip>Select the Loot Method</AutoTooltip>
+							<Items>
+								<Item Value='1'>Accept</Item>
+								<Item Value='2'>Decline</Item>
+								<Item Value='3'>Idle</Item>
+							</items>
 							<OnLoad>
-								if ${Script[EQ2Bot].Variable[LootAll]}
-								{
-									UIElement[LootAll@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-								}
+								This.ItemByText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[LootMethod]}]:Select
 							</OnLoad>
-							<OnLeftClick>
-								if ${UIElement[LootAll@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
-								{
-									Script[EQ2Bot].Variable[LootAll]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Accept Loot Automatically?,TRUE]:Save
-								}
-								else
-								{
-									Script[EQ2Bot].Variable[LootAll]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Accept Loot Automatically?,FALSE]:Save
-								}
-							</OnLeftClick>
-						</checkbox>
+							<OnSelect>
+								Script[EQ2Bot].Variable[LootMethod]:Set[${This.SelectedItem.Text}]
+								SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[LootMethod,${This.SelectedItem.Text}]:Save</OnSelect>
+							<OnLeftClick></OnLeftClick>
+						</combobox>
 						<Frame Name='Pull Frame'>
 							<X>5%</X>
-							<Y>65%</Y>
-							<Height>40</Height>
+							<Y>190</Y>
+							<Height>20</Height>
 							<Width>95%</Width>
 							<OnLoad>
 								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Auto Pull]}
@@ -1180,73 +1182,78 @@
 								else
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Hide
+									UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide
+									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 								}
 							</OnLoad>
 							<Children>
-								<checkbox Name='Bow Pull' Template='EQ2.checkbox'>
-									<X>20%</X>
-									<Y>1</Y>
-									<Width>30%</Width>
-									<Height>20</Height>
-									<Text>Pull with Bow (Ranged Attack)</Text>
-									<OnLoad>
-										if ${Script[EQ2Bot].Variable[PullWithBow]}
-										{
-											UIElement[Bow Pull@Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										if ${UIElement[Bow Pull@Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
-										{
-											Script[EQ2Bot].Variable[PullWithBow]:Set[TRUE]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Pull with Bow (Ranged Attack)?,TRUE]:Save
-										}
-										else
-										{
-											Script[EQ2Bot].Variable[PullWithBow]:Set[FALSE]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Pull with Bow (Ranged Attack)?,FALSE]:Save
-										}
-									</OnLeftClick>
-								</checkbox>
-								<Text Name='PullSpell Text' Template='EQ2.text'>
-									<X>8%</X>
-									<Y>26</Y>
-									<Width>70</Width>
+								<Text Name='lblPullType' Template='EQ2.text'>
+									<x>1</x>
+									<y>1</y>
+									<Width>60</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
-									<Text>Pull Spell:</Text>
+									<Text>Pull Type:</Text>
 								</Text>
-								<Textentry Name='PullSpell' Template='EQ2.textentry'>
-									<X>20%</X>
-									<Y>26</Y>
-									<Width>120</Width>
-									<Height>15</Height>
-									<Color>FFDDBB00</Color>
-									<MaxLength>30</MaxLength>
-									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PullSpell]}]</OnLoad>
-								</Textentry>
-								<Commandbutton name='UpdatePullSpell' Template='EQ2.Commandbutton'>
-									<X>47%</X>
-									<Y>26</Y>
-									<Width>35</Width>
-									<Height>15</Height>
-									<Text>Set</Text>
-									<OnLeftClick>
-										if ${Me.Ability[${UIElement[PullSpell@Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}](exists)}
+								<combobox name='PullType' Template='EQ2.Combobox'>
+									<x>60</x>
+									<y>1</y>
+									<Width>80</width>
+									<Height>20</height>
+									<AutoTooltip>Select the Pull Type</AutoTooltip>
+									<Items>
+										<Item Value='PullWithBow'>Bow Pull</Item>
+										<Item Value='PullWithPet'>Pet Pull</Item>
+										<Item Value='PullWithSpell'>Spell or CA Pull</Item>
+									</items>
+									<OnLoad>
+										This.ItemByText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType]}]:Select
+									</OnLoad>
+									<OnSelect>
+										if ${This.SelectedItem.Text.Equal[Bow Pull]}
 										{
-											Script[EQ2Bot].Variable[PullSpell]:Set[${UIElement[PullSpell@Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What to use when PULLING?",${UIElement[PullSpell@Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}]:Save
-											UIElement[PullSpell@Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[What to use when PULLING?]}]
+											UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Show
+											UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+											UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 										}
-										else
+										elseif ${This.SelectedItem.Text.Equal[Pet Pull]}
 										{
-											UIElement[PullSpell@Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[What to use when PULLING?]}]
+											UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Show
+											UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide
+											UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 										}
-									</OnLeftClick>
-								</Commandbutton>
+										elseif ${This.SelectedItem.Text.Equal[Spell or CA Pull]}
+										{
+											UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Show
+											UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+											UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide
+										}
+										Script[EQ2Bot].Variable[PullType]:Set[${This.SelectedItem.Text}]
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[PullType,${This.SelectedItem.Text}]:Save</OnSelect>
+									<OnLeftClick></OnLeftClick>
+								</combobox>
+							</Children>
+						</frame>
+						<frame name='Bow Pull Frame'>
+							<x>5%</x>
+							<y>210</y>
+							<Height>40</Height>
+							<Width>95%</Width>
+							<OnLoad>
+								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType].Equal[Bow Pull]}
+								{
+									UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Show
+								}
+								else
+								{
+									UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide
+								}
+							</OnLoad>
+							<Children>
  								<Text Name='PullRange Text' Template='EQ2.text'>
 									<X>57%</X>
-									<Y>26</Y>
+									<Y>1</Y>
 									<Width>70</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
@@ -1254,7 +1261,7 @@
 								</Text>
 								<Textentry Name='PullRange' Template='EQ2.textentry'>
 									<X>71%</X>
-									<Y>26</Y>
+									<Y>1</Y>
 									<Width>30</Width>
 									<Height>15</Height>
 									<Color>FFDDBB00</Color>
@@ -1268,7 +1275,7 @@
 								</Textentry>
 								<Text Name='PowerCheck Text' Template='EQ2.text'>
 									<X>8%</X>
-									<Y>46</Y>
+									<Y>20</Y>
 									<Width>200</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
@@ -1276,7 +1283,7 @@
 								</Text>
 								<Textentry Name='PowerCheck' Template='EQ2.textentry'>
 									<X>42%</X>
-									<Y>46</Y>
+									<Y>20</Y>
 									<Width>30</Width>
 									<Height>15</Height>
 									<Color>FFDDBB00</Color>
@@ -1290,7 +1297,7 @@
 								</Textentry>
 								<Text Name='HealthCheck Text1' Template='EQ2.text'>
 									<X>49%</X>
-									<Y>46</Y>
+									<Y>20</Y>
 									<Width>200</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
@@ -1298,7 +1305,7 @@
 								</Text>
 								<Textentry Name='HealthCheck' Template='EQ2.textentry'>
 									<X>78%</X>
-									<Y>46</Y>
+									<Y>20</Y>
 									<Width>30</Width>
 									<Height>15</Height>
 									<Color>FFDDBB00</Color>
@@ -1312,14 +1319,234 @@
 								</Textentry>
 								<Text Name='HealthCheck Text2' Template='EQ2.text'>
 									<X>86%</X>
-									<Y>46</Y>
+									<Y>20</Y>
 									<Width>70</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
 									<Text>%</Text>
 								</Text>
 							</Children>
-						</Frame>
+						</frame>
+						<frame name='Pet Pull Frame'>
+							<x>5%</x>
+							<y>210</y>
+							<Height>40</Height>
+							<Width>95%</Width>
+							<OnLoad>
+								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType].Equal[Pet Pull]}
+								{
+									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Show
+								}
+								else
+								{
+									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+								}
+							</OnLoad>
+							<Children>
+ 								<Text Name='PullRange Text' Template='EQ2.text'>
+									<X>57%</X>
+									<Y>1</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Pull Range:</Text>
+								</Text>
+								<Textentry Name='PullRange' Template='EQ2.textentry'>
+									<X>71%</X>
+									<Y>1</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>4</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PullRange]}]</OnLoad>
+									<OnChange>
+										Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What RANGE to PULL from?",${This.Text}]:Save
+										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to PULL from?]}]
+									</OnChange>
+								</Textentry>
+								<Text Name='PowerCheck Text' Template='EQ2.text'>
+									<X>8%</X>
+									<Y>1</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Pull when power is at least</Text>
+								</Text>
+								<Textentry Name='PowerCheck' Template='EQ2.textentry'>
+									<X>42%</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>5</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PowerCheck]}]</OnLoad>
+									<OnChange>
+										Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Power the puller will pull at?,${This.Text}]:Save
+										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Power the puller will pull at?]}]
+									</OnChange>
+								</Textentry>
+								<Text Name='HealthCheck Text1' Template='EQ2.text'>
+									<X>49%</X>
+									<Y>20</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>% and Health is at least</Text>
+								</Text>
+								<Textentry Name='HealthCheck' Template='EQ2.textentry'>
+									<X>78%</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>5</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealthCheck]}]</OnLoad>
+									<OnChange>
+										Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Health the puller will pull at?,${This.Text}]:Save
+										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Health the puller will pull at?]}]
+									</OnChange>
+								</Textentry>
+								<Text Name='HealthCheck Text2' Template='EQ2.text'>
+									<X>86%</X>
+									<Y>20</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>%</Text>
+								</Text>
+							</Children>
+						</frame>
+						<frame name='Spell Pull Frame'>
+							<x>5%</x>
+							<y>210</y>
+							<Height>40</Height>
+							<Width>95%</Width>
+							<OnLoad>
+								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType].Equal[Spell or CA Pull]}
+								{
+									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Show
+								}
+								else
+								{
+									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
+								}
+							</OnLoad>
+							<Children>
+								<Text Name='PullSpell Text' Template='EQ2.text'>
+									<X>8%</X>
+									<Y>1</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Pull Spell:</Text>
+								</Text>
+								<Textentry Name='PullSpell' Template='EQ2.textentry'>
+									<X>20%</X>
+									<Y>1</Y>
+									<Width>120</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>30</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PullSpell]}]</OnLoad>
+								</Textentry>
+								<Commandbutton name='UpdatePullSpell' Template='EQ2.Commandbutton'>
+									<X>47%</X>
+									<Y>1</Y>
+									<Width>35</Width>
+									<Height>15</Height>
+									<Text>Set</Text>
+									<OnLeftClick>
+										if ${Me.Ability[${UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}](exists)}
+										{
+											Script[EQ2Bot].Variable[PullSpell]:Set[${UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}]
+											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What to use when PULLING?",${UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}]:Save
+											UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[What to use when PULLING?]}]
+										}
+										else
+										{
+											UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[What to use when PULLING?]}]
+										}
+									</OnLeftClick>
+								</Commandbutton>
+ 								<Text Name='PullRange Text' Template='EQ2.text'>
+									<X>57%</X>
+									<Y>1</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Pull Range:</Text>
+								</Text>
+								<Textentry Name='PullRange' Template='EQ2.textentry'>
+									<X>71%</X>
+									<Y>1</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>4</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PullRange]}]</OnLoad>
+									<OnChange>
+										Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What RANGE to PULL from?",${This.Text}]:Save
+										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to PULL from?]}]
+									</OnChange>
+								</Textentry>
+								<Text Name='PowerCheck Text' Template='EQ2.text'>
+									<X>8%</X>
+									<Y>20</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Pull when power is at least</Text>
+								</Text>
+								<Textentry Name='PowerCheck' Template='EQ2.textentry'>
+									<X>42%</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>5</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PowerCheck]}]</OnLoad>
+									<OnChange>
+										Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Power the puller will pull at?,${This.Text}]:Save
+										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Power the puller will pull at?]}]
+									</OnChange>
+								</Textentry>
+								<Text Name='HealthCheck Text1' Template='EQ2.text'>
+									<X>49%</X>
+									<Y>20</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>% and Health is at least</Text>
+								</Text>
+								<Textentry Name='HealthCheck' Template='EQ2.textentry'>
+									<X>78%</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>5</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealthCheck]}]</OnLoad>
+									<OnChange>
+										Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Health the puller will pull at?,${This.Text}]:Save
+										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Health the puller will pull at?]}]
+									</OnChange>
+								</Textentry>
+								<Text Name='HealthCheck Text2' Template='EQ2.text'>
+									<X>86%</X>
+									<Y>20</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>%</Text>
+								</Text>
+							</Children>
+						</frame>
 						<checkbox Name='Close UI' Template='EQ2.checkbox'>
 							<X>5%</X>
 							<Y>88%</Y>
@@ -1446,20 +1673,20 @@
 							<Alignment>Center</Alignment>
 							<Text>Finish Region has not been created!</text>
 						</Text>
-						<Commandbutton name='Move Camp' Template='EQ2.Commandbutton'> 
-							<X>20%</X> 
-							<Y>110</Y> 
-							<Width>24%</Width> 
+						<Commandbutton name='Move Camp' Template='EQ2.Commandbutton'>
+							<X>20%</X>
+							<Y>110</Y>
+							<Width>24%</Width>
 							<Height>20</Height>
 							<Text>Move to Camp</Text>
 							<OnLeftClick>
 								Script[EQ2Bot]:QueueCommand[call MoveToGroup Camp]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Move Start' Template='EQ2.Commandbutton'> 
-							<X>20%</X> 
-							<Y>110</Y> 
-							<Width>24%</Width> 
+						<Commandbutton name='Move Start' Template='EQ2.Commandbutton'>
+							<X>20%</X>
+							<Y>110</Y>
+							<Width>24%</Width>
 							<Height>20</Height>
 							<Visible>0</Visible>
 							<Text>Move to Start</Text>
@@ -1467,10 +1694,10 @@
 								Script[EQ2Bot]:QueueCommand[call MoveToGroup Start]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Clear Path' Template='EQ2.Commandbutton'> 
-							<X>55%</X> 
-							<Y>110</Y> 
-							<Width>24%</Width> 
+						<Commandbutton name='Clear Path' Template='EQ2.Commandbutton'>
+							<X>55%</X>
+							<Y>110</Y>
+							<Width>24%</Width>
 							<Height>20</Height>
 							<Text>Clear Navigation</Text>
 							<OnLeftClick>
@@ -1494,10 +1721,10 @@
 							<Alignment>Center</Alignment>
 							<Text>Warning: Clicking Start Pather will create a new Camp Location</text>
 						</Text>
-						<Commandbutton name='Add Pull Region' Template='EQ2.Commandbutton'> 
-							<X>35%</X> 
-							<Y>120</Y> 
-							<Width>25%</Width> 
+						<Commandbutton name='Add Pull Region' Template='EQ2.Commandbutton'>
+							<X>35%</X>
+							<Y>120</Y>
+							<Width>25%</Width>
 							<Height>20</Height>
 							<Visible>0</Visible>
 							<Text>Add Pull Region</Text>
@@ -1505,10 +1732,10 @@
 								Script[EQ2Bot]:QueueCommand[call AddPullRegion]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Finish' Template='EQ2.Commandbutton'> 
-							<X>37%</X> 
-							<Y>110</Y> 
-							<Width>24%</Width> 
+						<Commandbutton name='Finish' Template='EQ2.Commandbutton'>
+							<X>37%</X>
+							<Y>110</Y>
+							<Width>24%</Width>
 							<Height>20</Height>
 							<Visible>0</Visible>
 							<Text>Create Finish</Text>
@@ -1525,10 +1752,10 @@
 							<Alignment>Center</Alignment>
 							<Text>Finish Region has now been Created!!</text>
 						</Text>
-						<Commandbutton name='Save Path' Template='EQ2.Commandbutton'> 
-							<X>18%</X> 
-							<Y>180</Y> 
-							<Width>22%</Width> 
+						<Commandbutton name='Save Path' Template='EQ2.Commandbutton'>
+							<X>18%</X>
+							<Y>180</Y>
+							<Width>22%</Width>
 							<Height>20</Height>
 							<Visible>0</Visible>
 							<Text>Save Navigation</Text>
@@ -1536,10 +1763,10 @@
 								Script[EQ2Bot]:ExecuteAtom[SavePath]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='End Path' Template='EQ2.Commandbutton'> 
-							<X>55%</X> 
-							<Y>180</Y> 
-							<Width>20%</Width> 
+						<Commandbutton name='End Path' Template='EQ2.Commandbutton'>
+							<X>55%</X>
+							<Y>180</Y>
+							<Width>20%</Width>
 							<Height>20</Height>
 							<Visible>0</Visible>
 							<Text>End Pather</Text>
@@ -1547,10 +1774,10 @@
 								Script[EQ2Bot]:ExecuteAtom[EndPath]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='start Nav' Template='EQ2.Commandbutton'> 
-							<X>38%</X> 
-							<Y>180</Y> 
-							<Width>20%</Width> 
+						<Commandbutton name='start Nav' Template='EQ2.Commandbutton'>
+							<X>38%</X>
+							<Y>180</Y>
+							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>Start Pather</Text>
 							<OnLeftClick>

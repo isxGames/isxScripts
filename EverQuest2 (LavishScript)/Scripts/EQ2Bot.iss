@@ -1,9 +1,15 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.6.0 Updated: 06/10/07 by Blazer
+; EQ2Bot.iss Version 2.6.1 Updated: 07/20/07 by Pygar
 ;
+;2.6.1 (Pygar)
+; Using new Loot Events
+; New Pull code for Pet / Bow / Spell
+; Pull Tweaks
+;
+;2.6.0 (Blazer)
 ;Pathing is now done with LavishNav
 ;
-; Lots of changes, documentation comming
+;2.5.3
 ;Seperated MainAssist and MainTank - New var MainTankPC exists with the name of the MainTank to use in yOur heal/buff routines
 ;Added Stance Overriding - define NoEQ2BotStance as true in Buff_Init and Eq2bot will not try to set stances for you.
 ;	you will need to add that logic to your ISS file now.
@@ -162,6 +168,8 @@ variable int wipe
 variable int together
 variable int wipegroup
 variable bool WipeRevive
+variable string PullType
+variable string LootMethod
 ;===================================================
 
 ;===================================================
@@ -605,110 +613,10 @@ function main()
 			wait 20
 		}
 
-		if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow.Item[1].Name(exists)}
+		if ${LootWindow.Item[1].Name(exists)}
 		{
-			if ${LootAll}
-			{
-				LootWndCount:Set[1]
-				LootDecline:Set[0]
-
-				do
-				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
-					{
-						LootDecline:Inc
-					}
-	     			}
-	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
-
-				if ${LootDecline}
-				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
-					wait 5
-				}
-				else
-				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
-					wait 5
-				}
-
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
-				{
-				     LootWndCount:Set[1]
-				     do
-				     {
-						  if ${LootConfirm}
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-						       wait 5
-						  }
-						  else
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
-						       wait 5
-						  }
-				     }
-				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
-				}
-			}
-			else
-			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
-				wait 5
-			}
+			call LootWdw
 		}
-		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)} && ${LootWindow.Item[1].Name(exists)}
-		{
-			if ${LootAll}
-			{
-				LootWndCount:Set[1]
-				LootDecline:Set[0]
-
-				do
-				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
-					{
-						LootDecline:Inc
-					}
-	     			}
-	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
-
-				if ${LootDecline}
-				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
-					wait 5
-				}
-				else
-				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
-					wait 5
-				}
-
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
-				{
-				     LootWndCount:Set[1]
-				     do
-				     {
-						  if ${LootConfirm}
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-						       wait 5
-						  }
-						  else
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
-						       wait 5
-						  }
-				     }
-				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
-				}
-			}
-			else
-			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
-				wait 5
-			}
- 		}
 	}
 	while ${CurrentTask}
 }
@@ -1574,7 +1482,7 @@ function Pull(string npcclass)
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
 				}
 
-				if ${PathType}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<35
+				if ${PathType}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
 				{
 					;echo Move to target Range!
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}
@@ -1587,7 +1495,7 @@ function Pull(string npcclass)
 				}
 
 				; Use pull spell
-				if ${PullWithBow} && ${Target.Distance}>6
+				if ${PullType.Equal[Bow Pull]} && ${Target.Distance}>6
 				{
 					; Use Bow to pull
 					EQ2Execute /togglerangedattack
@@ -1604,6 +1512,25 @@ function Pull(string npcclass)
 					if ${Me.InCombat}
 					{
 						EQ2Execute /togglerangedattack
+					}
+					break
+				}
+				elseif ${PullType.Equal[Pet Pull]}
+				{
+					; Use Pet to pull
+					EQ2Execute /pet attack
+					wait 50 ${CustomActor[${tcount}].InCombatMode}
+					if ${CustomActor[${tcount}].InCombatMode}
+					{
+						KillTarget:Set[${Target.ID}]
+						EQ2Execute /pet backoff
+						wait 50 ${CustomActor[${tcount}].Distance}<20
+						EQ2Execute /pet attack
+						if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
+						{
+							face ${Target.X} ${Target.Z}
+						}
+						engagetarget:Set[TRUE]
 					}
 					break
 				}
@@ -1760,22 +1687,8 @@ function CheckLoot()
 					break
 			}
 			Actor[Chest]:DoubleClick
-			wait 10
-			shwlootwdw:Set[FALSE]
-			tmptimer:Set[${Time.Timestamp}]
-			do
-			{
-				call LootWdw
-				call ProcessTriggers
-				WaitFor ${shwlootwdw} 5
-				if ${Math.Calc[${Time.Timestamp}-${tmptimer}]}>2
-				{
-					break
-				}
-			}
-			while !${shwlootwdw}
-			wait 4
-			press esc
+			wait 5
+			call ProcessTriggers
 		}
 		else
 		{
@@ -1783,23 +1696,9 @@ function CheckLoot()
 			{
 				Echo Looting ${Actor[corpse].Name}
 				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
-				Actor[corpse]:DoubleClick
-				wait 10
-				shwlootwdw:Set[FALSE]
-				tmptimer:Set[${Time.Timestamp}]
-				do
-				{
-					call LootWdw
-					call ProcessTriggers
-					WaitFor ${shwlootwdw} 5
-					if ${Math.Calc[${Time.Timestamp}-${tmptimer}]}>2
-					{
-						break
-					}
-				}
-				while !${shwlootwdw}
-				wait 4
-				press esc
+				EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
+				wait 5
+				call ProcessTriggers
 			}
 		}
 
@@ -2315,111 +2214,63 @@ function ScanAdds()
 
 function LootWdw(string Line)
 {
-		if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60
+	variable int tmpcnt=0
+	variable int deccnt=0
+
+	if ${LootMethod.Equal[Accept]}
+	{
+		if !${LootConfirm}
 		{
-			if ${LootAll}
+			do
 			{
-				LootWndCount:Set[1]
-				LootDecline:Set[0]
-
-				do
+				if (${LootWindow.Item[${tmpcnt}].Lore} || ${LootWindow.Item[${tmpcnt}].NoTrade})
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && !${LootConfirm}
-					{
-						LootDecline:Inc
-					}
-	     			}
-	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
-
-				if ${LootDecline}
-				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
-					wait 5
-				}
-				else
-				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button RequestAll]:LeftClick
-					wait 5
-				}
-
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
-				{
-				     LootWndCount:Set[1]
-				     do
-				     {
-						  if ${LootConfirm}
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-						       wait 5
-						  }
-						  else
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
-						       wait 5
-						  }
-				     }
-				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
+					deccnt:Inc
 				}
 			}
-			else
-			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
-				wait 5
-			}
+			while ${tmpcnt:Inc}<=${LootWindow.NumItems}
 		}
-		elseif ${EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll].Label(exists)}
+	}
+	elseif ${LootMethod.Equal[Decline]}
+	{
+		deccnt:Inc
+	}
+
+	if ${LootWindow.IsLotto} && !${deccnt} && ${LootMethod.Equal[Accept]}
+	{
+		LootWindow:RequestAll
+	}
+	elseif !${LootWindow.IsLotto} && ${LootMethod.Equal[Accept]}
+	{
+		tmpcnt:Set[0]
+		do
 		{
-			if ${LootAll}
-			{
-				LootWndCount:Set[1]
-				LootDecline:Set[0]
-
-				do
+				if (${LootWindow.Item[${tmpcnt}].Lore} || ${LootWindow.Item[${tmpcnt}].NoTrade}) && !${LootConfirm}
 				{
-					if (${LootWindow.Item[LootWndCount].Lore} || ${LootWindow.Item[LootWndCount].NoTrade}) && ${LootConfirm}
-					{
-						LootDecline:Inc
-					}
-				}
-	     			while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
-
-				if ${LootDecline}
-				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
-					wait 5
+					;There is no decline item
 				}
 				else
 				{
-					EQ2UIPage[Inventory,Loot].Child[button,Loot.button LootAll]:LeftClick
-					wait 5
+					LootWindow:LootItem[${tmpcnt}]
 				}
+		}
+		while ${tmpcnt:Inc}<=${LootWindow.NumItems}
+	}
+	elseif ${LootWindow.IsLotto} && ${LootMethod.Equal[Decline]}
+	{
+		LootWindow:DeclineLotto
+	}
+	elseif ${LootMethod.Equal[Idle]}
+	{
+		Return
+	}
 
-				if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
-				{
-				     LootWndCount:Set[1]
-				     do
-				     {
-						  if ${LootConfirm}
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-						       wait 5
-						  }
-						  else
-						  {
-						       EQ2UIPage[Hud,Choice].Child[button,Choice.Choice2]:LeftClick
-						       wait 5
-						  }
-				     }
-				     while ${LootWndCount:Inc} <= ${LootWindow.NumItems}
-				}
-			}
-			else
-			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.button LottoDecline]:LeftClick
-				wait 5
-			}
- 		}
-
+	;if window is still open, close it
+	if ${LootWindow.Item[1].Name(exists)}
+	{
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+		wait 5
+	}
 }
 
 function CantSeeTarget(string Line)
@@ -2935,6 +2786,7 @@ objectdef EQ2BotObj
 		AutoLoot:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Loot Corpses and open Treasure Chests?,FALSE]}]
 		KeepReactive:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Cast or Wait for Reactive pre-combat?,FALSE]}]
 		LootAll:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Accept Loot Automatically?,TRUE]}]
+		LootMethod:Set[${SettingXML[${charfile}].Set[General Settings].GetString[LootMethod,Accept]}]
 		AutoPull:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Pull,FALSE]}]
 		PullSpell:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What to use when PULLING?,SPELL]}]
 		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What RANGE to PULL from?,15]}]
@@ -3696,7 +3548,7 @@ atom StartPather()
 
 		if !${LNavRegionGroup[Start].RegionsWithin[StartRegion,99999,${Me.X},${Me.Z},${Me.Y}]}
 		{
-	
+
 		EQ2Nav:AutoBox[Start]
 		}
 
@@ -3780,6 +3632,21 @@ atom CreateFinish()
 	UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+}
+
+atom(script) EQ2_onChoiceWindowAppeared(string Page, string Choicetxt, string Choice1, string Choice2)
+{
+	if ${Choicetxt.Find[Lore]} || if ${Choicetxt.Find[No-Trade]}
+	{
+		if ${LootConfirm}
+		{
+			ChoiceWindow:DoChoice1
+		}
+		else
+		{
+			ChoiceWindow:DoChoice2
+		}
+	}
 }
 
 function atexit()

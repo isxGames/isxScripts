@@ -120,57 +120,60 @@ function Buff_Init()
 function Combat_Init()
 {
 
-	Action[1]:Set[AoE1]
-	SpellRange[1,1]:Set[62]
+	Action[1]:Set[AARhythm_Blade]
+	SpellRange[1,1]:Set[397]
 
-	Action[2]:Set[Luda]
-	SpellRange[2,1]:Set[60]
+	Action[2]:Set[AoE1]
+	SpellRange[2,1]:Set[62]
 
-	Action[3]:Set[CacophonyOfBlades]
-	SpellRange[3,1]:Set[155]
+	Action[3]:Set[Luda]
+	SpellRange[3,1]:Set[60]
 
-	Action[4]:Set[InfectedBladed]
-	SpellRange[4,1]:Set[150]
+	Action[4]:Set[CacophonyOfBlades]
+	SpellRange[4,1]:Set[155]
 
-	Action[5]:Set[Mastery]
+	Action[5]:Set[InfectedBladed]
+	SpellRange[5,1]:Set[150]
 
-	Action[6]:Set[Flank_Attack]
-	SpellRange[6,1]:Set[110]
+	Action[6]:Set[Mastery]
 
-	Action[7]:Set[Grievance]
-	SpellRange[7,1]:Set[151]
+	Action[7]:Set[Flank_Attack]
+	SpellRange[7,1]:Set[110]
 
-	Action[8]:Set[ScreamOfDeath]
-	SpellRange[8,1]:Set[391]
-	SpellRange[8,2]:Set[135]
+	Action[8]:Set[Grievance]
+	SpellRange[8,1]:Set[151]
 
-	Action[9]:Set[Stealth_Attack]
+	Action[9]:Set[ScreamOfDeath]
 	SpellRange[9,1]:Set[391]
-	SpellRange[9,2]:Set[136]
+	SpellRange[9,2]:Set[135]
 
-	Action[10]:Set[WailOfTheDead]
-	SpellRange[10,1]:Set[152]
+	Action[10]:Set[Stealth_Attack]
+	SpellRange[10,1]:Set[391]
+	SpellRange[10,2]:Set[136]
 
-	Action[11]:Set[AATurnstrike]
-	SpellRange[11,1]:Set[387]
+	Action[11]:Set[WailOfTheDead]
+	SpellRange[11,1]:Set[152]
 
-	Action[12]:Set[Lanet]
-	SpellRange[12,1]:Set[52]
+	Action[12]:Set[AATurnstrike]
+	SpellRange[12,1]:Set[387]
 
-	Action[13]:Set[AoE2]
-	SpellRange[13,1]:Set[63]
+	Action[13]:Set[Lanet]
+	SpellRange[13,1]:Set[52]
 
-	Action[14]:Set[Tarven]
-	SpellRange[14,1]:Set[50]
+	Action[14]:Set[AoE2]
+	SpellRange[14,1]:Set[63]
 
-	Action[15]:Set[Jael]
-	SpellRange[15,1]:Set[250]
+	Action[15]:Set[Tarven]
+	SpellRange[15,1]:Set[50]
 
-	Action[16]:Set[AAHarmonizingShot]
-	SpellRange[16,1]:Set[386]
+	Action[16]:Set[Jael]
+	SpellRange[16,1]:Set[250]
 
-	Action[17]:Set[Stun]
-	SpellRange[17,1]:Set[190]
+	Action[17]:Set[AAHarmonizingShot]
+	SpellRange[17,1]:Set[386]
+
+	Action[18]:Set[Stun]
+	SpellRange[18,1]:Set[190]
 
 }
 
@@ -340,12 +343,6 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 303
 	}
 
-	;Use Divine Recovery on Epic and Named Encounters if its up
-	if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}
-	{
-		call CastSpellRange ${SpellRange[${xAction},1]}
-	}
-
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -395,16 +392,7 @@ function Combat_Routine(int xAction)
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 				}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
@@ -425,16 +413,7 @@ function Combat_Routine(int xAction)
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 				}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
@@ -460,37 +439,9 @@ function Combat_Routine(int xAction)
 		case AATurnstrike
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 			{
-
-				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponSword}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
-
-		case AARhythm_Blade
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponRapier}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-			}
-			break
-
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
 			{
@@ -509,6 +460,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
 			}
 			break
+		case AARhythm_Blade	
 		case Grievance
 		case InfectedBladed
 		case WailOfTheDead
