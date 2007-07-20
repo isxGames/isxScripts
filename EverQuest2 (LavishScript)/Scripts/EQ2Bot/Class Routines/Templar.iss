@@ -1,9 +1,10 @@
 ;*************************************************************
 ;Templar.iss
-;version 20060704a
+;version 20070719a
 ;variation on Inquisitor script for Templar by karye
+;Edited by Cybris,Pygar
 ;*************************************************************
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
+#include "${LavishScript.HomeDirectory}/Scripts/EQ2HOLib.iss"
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -13,7 +14,7 @@ function Class_Declaration()
 {
 
 	addtrigger IncomingMob "@${Actor[${MainAssist}].ID}@ says to the group,\"MOB Incoming...!!""
-
+	
 	declare OffenseMode bool script
 	declare DebuffMode bool script
 	declare AoEMode bool script
@@ -25,6 +26,9 @@ function Class_Declaration()
 	declare MezzMode bool script
 
 	declare EquipmentChangeTimer int script
+	declare HealMTPercent int script
+	declare HealGroupPercent int script
+	declare HealPetPercent int script
 
 	declare MainWeapon string script
 	declare OffHand string script
@@ -48,6 +52,10 @@ function Class_Declaration()
 	FanaticismMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Fanaticism Mode,FALSE]}]
 	KeepReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepReactiveUp,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
+
+	HealMTPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Main Tank Heal Percent,100]}]
+	HealGroupPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Group Heal Percent,100]}]
+	HealPetPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Pet Heal Percent,100]}]
 
 	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
@@ -118,33 +126,41 @@ function Combat_Init()
 	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[70]
 
-	Action[6]:Set[Stifle]
-	MobHealth[6,1]:Set[10]
+	Action[6]:Set[Smite]
+	MobHealth[6,1]:Set[1]
 	MobHealth[6,2]:Set[100]
-	Power[6,1]:Set[30]
+	Power[6,1]:Set[40]
 	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[190]
+	SpellRange[6,1]:Set[61]
+	SpellRange[6,2]:Set[62]
 
-	Action[7]:Set[PreKill]
-	MobHealth[7,1]:Set[5]
-	MobHealth[7,2]:Set[50]
+	Action[7]:Set[Stifle]
+	MobHealth[7,1]:Set[10]
+	MobHealth[7,2]:Set[100]
 	Power[7,1]:Set[30]
 	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[312]
+	SpellRange[7,1]:Set[190]
 
-	Action[8]:Set[AoE]
-	MobHealth[8,1]:Set[25]
-	MobHealth[8,2]:Set[100]
+	Action[8]:Set[PreKill]
+	MobHealth[8,1]:Set[5]
+	MobHealth[8,2]:Set[50]
 	Power[8,1]:Set[30]
 	Power[8,2]:Set[100]
-	SpellRange[8,1]:Set[90]
+	SpellRange[8,1]:Set[312]
 
-	Action[9]:Set[AA_DivineCastigation]
-	MobHealth[9,1]:Set[1]
+	Action[9]:Set[AoE]
+	MobHealth[9,1]:Set[25]
 	MobHealth[9,2]:Set[100]
 	Power[9,1]:Set[30]
 	Power[9,2]:Set[100]
-	SpellRange[9,1]:Set[395]
+	SpellRange[9,1]:Set[90]
+
+	Action[10]:Set[AA_DivineCastigation]
+	MobHealth[10,1]:Set[1]
+	MobHealth[10,2]:Set[100]
+	Power[10,1]:Set[30]
+	Power[10,2]:Set[100]
+	SpellRange[10,1]:Set[395]
 }
 
 function PostCombat_Init()
@@ -265,6 +281,11 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	objHeroicOp:DoHO
+	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	{
+		call CastSpellRange 303
+	}
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
@@ -368,6 +389,21 @@ function Combat_Routine(int xAction)
 
 			}
 			break
+		case Smite
+			if ${OffenseMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget}
+					}
+				}
+
+			}
+			break
 		call CheckHeals
 		case Stifle
 			if ${OffenseMode} || ${DebuffMode}
@@ -386,6 +422,20 @@ function Combat_Routine(int xAction)
 			break
 
 		case AoE
+			if ${AoEMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					}
+				}
+
+			}
+			break
 		case PreKill
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -537,7 +587,7 @@ function CheckHeals()
 				}
 			}
 
-			if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<80
+			if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<${HealGroupPercent}
 			{
 				grpheal:Inc
 			}
@@ -549,7 +599,7 @@ function CheckHeals()
 
 			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
 			{
-				if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+				if ${Me.Group[${temphl}].ToActor.Pet.Health}<${HealPetPercent} && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
 				{
 					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
 				}
@@ -604,18 +654,18 @@ function CheckHeals()
 				if ${haveaggro}
 				{
 					call CastSpellRange 7 0 0 0 ${Me.ID}
-				}
+[				}
 
 			}
 		}
 	}
 	;MAINTANK HEALS
-	if ${Actor[${MainTankPC}].Health} <90 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99
-	{
+	if ${Actor[${MainTankPC}].Health} < ${HealMTPercent} && ${Actor[${MainAssist}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99
+4	{
 		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
-	if ${Actor[${MainAssist}].Health} <90 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainAssist}].Health} < ${HealMTPercent} && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)}
 	{
 		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
@@ -633,7 +683,7 @@ function CheckHeals()
 		}
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<80 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}< ${HealGroupPercent} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 		{

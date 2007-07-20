@@ -562,4 +562,70 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Yaulp Mode]}</Data>
 	</Commandcheckbox>
+	<Text Name='Main Tank Heal Text' Template='EQ2.text'>
+		<X>305</X>
+		<Y>130</Y>
+		<Width>30%</Width>
+		<Height>15</Height>
+		<Alignment>Left</Alignment>
+	<Text>Main Tank Heal Percent</Text>
+	</Text>
+	<Text Name='Group Heal Text' Template='EQ2.text'>
+		<X>305</X>
+		<Y>150</Y>
+		<Width>30%</Width>
+		<Height>15</Height>
+		<Alignment>Left</Alignment>
+	<Text>Group Heal Percent</Text>
+	</Text>
+	<Text Name='Pet Heal Text' Template='EQ2.text'>
+		<X>305</X>
+		<Y>170</Y>
+		<Width>30%</Width>
+		<Height>15</Height>
+		<Alignment>Left</Alignment>
+	<Text>Pet Heal Percent</Text>
+	</Text>
+	<Textentry Name='HealMTPercent' Template='EQ2.textentry'>
+		<X>445</X>
+		<Y>130</Y>
+		<Width>30</Width>
+		<Height>15</Height>
+		<Color>FFDDBB00</Color>
+		<MaxLength>4</MaxLength>
+		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealMTPercent]}]</OnLoad>
+		<OnChange>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[$(Me.SubClass)]:Set[Main Tank Heal Percent,${This.Text}]:Save
+			This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[$(Me.SubClass)].GetInt[Main Tank Heal Percent]}]
+			Script[EQ2Bot].Variable[HealMTPercent]:Set[${This.Text}]
+		</OnChange>
+	</Textentry>
+	<Textentry Name='HealGroupPercent' Template='EQ2.textentry'>
+		<X>445</X>
+		<Y>150</Y>
+		<Width>30</Width>
+		<Height>15</Height>
+		<Color>FFDDBB00</Color>
+		<MaxLength>4</MaxLength>
+		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealGroupPercent]}]</OnLoad>
+		<OnChange>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[$(Me.SubClass)]:Set[Group Heal Percent,${This.Text}]:Save
+			This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[$(Me.SubClass)].GetInt[Group Heal Percent]}]
+			Script[EQ2Bot].Variable[HealGroupPercent]:Set[${This.Text}]
+		</OnChange>
+	</Textentry>
+	<Textentry Name='HealPetPercent' Template='EQ2.textentry'>
+		<X>445</X>
+		<Y>170</Y>
+		<Width>30</Width>
+		<Height>15</Height>
+		<Color>FFDDBB00</Color>
+		<MaxLength>4</MaxLength>
+		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealPetPercent]}]</OnLoad>
+		<OnChange>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[$(Me.SubClass)]:Set[Pet Heal Percent,${This.Text}]:Save
+			This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[$(Me.SubClass)].GetInt[Pet Heal Percent]}]
+			Script[EQ2Bot].Variable[HealPetPercent]:Set[${This.Text}]
+		</OnChange>
+	</Textentry>
 </ISUI>
