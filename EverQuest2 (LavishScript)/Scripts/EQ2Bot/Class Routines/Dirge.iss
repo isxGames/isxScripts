@@ -392,7 +392,16 @@ function Combat_Routine(int xAction)
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+					}
+					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+					{
+						Me.Inventory[${WeaponDagger}]:Equip
+						EquipmentChangeTimer:Set[${Time.Timestamp}]
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+					}
 				}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
@@ -413,7 +422,16 @@ function Combat_Routine(int xAction)
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+					}
+					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+					{
+						Me.Inventory[${WeaponDagger}]:Equip
+						EquipmentChangeTimer:Set[${Time.Timestamp}]
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+					}
 				}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
@@ -439,7 +457,18 @@ function Combat_Routine(int xAction)
 		case AATurnstrike
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+
+				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				}
+				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+				{
+					Me.Inventory[${WeaponSword}]:Equip
+					EquipmentChangeTimer:Set[${Time.Timestamp}]
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				}
+
 			}
 			break
 		case Mastery
@@ -460,7 +489,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
 			}
 			break
-		case AARhythm_Blade	
+		case AARhythm_Blade
 		case Grievance
 		case InfectedBladed
 		case WailOfTheDead
