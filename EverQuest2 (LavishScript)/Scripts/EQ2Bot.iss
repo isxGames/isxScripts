@@ -2838,6 +2838,7 @@ objectdef EQ2BotObj
 		bind EndBot ${endbot} "Script[EQ2Bot]:End"
 		spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.SubClass}.xml]
 		This:CheckSpells[${Me.SubClass}]
+		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	}
 
 	method CheckSpells(string class)
@@ -3636,7 +3637,7 @@ atom CreateFinish()
 
 atom(script) EQ2_onChoiceWindowAppeared(string Page, string Choicetxt, string Choice1, string Choice2)
 {
-	if ${Choicetxt.Find[Lore]} || if ${Choicetxt.Find[No-Trade]}
+	if ${Choicetxt.Find[Lore]} || ${Choicetxt.Find[No-Trade]}
 	{
 		if ${LootConfirm}
 		{
@@ -3667,6 +3668,8 @@ function atexit()
 	squelch bind -delete EndBot
 
 	DeleteVariable CurrentTask
+
+	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
 
 	press -release ${forward}
 	press -release ${backward}
