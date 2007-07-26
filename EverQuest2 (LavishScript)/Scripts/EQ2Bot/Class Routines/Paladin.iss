@@ -6,10 +6,11 @@
 ;
 ;
 ;*************************************************************
-#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
-;#ifndef _Eq2Botlib_
-;	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
-;#endif
+
+#ifndef _Eq2Botlib_
+	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
+#endif
+
 function Class_Declaration()
 {
 
@@ -21,15 +22,15 @@ function Class_Declaration()
 	declare Secondary_Assist string script
 
 	;Custom Equipment
-	declare WeaponMain string script	
+	declare WeaponMain string script
 	declare OffHand string script
 	declare OneHandedSword string script
 	declare TwoHandedSword string script
 	declare Shield string script
 	declare Axe string script
 
-	declare EquipmentChangeTimer int script	
-	
+	declare EquipmentChangeTimer int script
+
 
 	call EQ2BotLib_Init
 
@@ -41,7 +42,7 @@ function Class_Declaration()
 	Shield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Shield,]}]
 	Axe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Axe,]}]
 
-	
+
 	;XML Setup for clickbox options
 	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Taunt Mode,TRUE]}]
 	HealerMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[HealerMode,FALSE]}]
@@ -50,8 +51,8 @@ function Class_Declaration()
 
 	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
 	Secondary_Assist:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Secondary Assist,]}]
-	
-	
+
+
 }
 
 function Buff_Init()
@@ -66,31 +67,28 @@ function Buff_Init()
 		 PreAction[3]:Set[Group_Buff]
 		 PreSpellRange[3,1]:Set[20]
 		 PreSpellRange[3,2]:Set[21]
-		 
+
 		 PreAction[4]:Set[SA_Buff]
 		 PreSpellRange[4,1]:Set[386]
-		 
-
 }
 
 function Combat_Init()
 {
+		 Action[1]:Set[Taunt]
+		 SpellRange[1,1]:Set[160]
+		 SpellRange[1,2]:Set[161]
 
-		 ;Action[1]:Set[Shield_Bash]
-		 ;SpellRange[1,1]:Set[240]
-			
-		 Action[2]:Set[Combat_Buff]
-		 SpellRange[2,1]:Set[155]
-		 SpellRange[2,2]:Set[156]
+		 Action[2]:Set[AA_SwiftAxe]
+		 SpellRange[2,1]:Set[389]
 
-		 Action[3]:Set[Taunt]
-		 SpellRange[3,1]:Set[160]
-		 SpellRange[3,2]:Set[161]
+		 Action[3]:Set[Combat_Buff]
+		 SpellRange[3,1]:Set[155]
+		 SpellRange[3,2]:Set[156]
 
 		 Action[4]:Set[AoE_Taunt]
 		 SpellRange[4,1]:Set[170]
 		 SpellRange[4,2]:Set[171]
-		 
+
 		 Action[5]:Set[Melee_Attack]
 		 Power[5,1]:Set[25]
 		 Power[5,2]:Set[100]
@@ -108,7 +106,7 @@ function Combat_Init()
 		 Power[7,2]:Set[100]
 		 SpellRange[7,1]:Set[245]
 		 SpellRange[7,2]:Set[247]
-		 
+
 		 Action[8]:Set[Stun]
 		 SpellRange[8,1]:Set[190]
 		 SpellRange[8,2]:Set[192]
@@ -118,37 +116,36 @@ function Combat_Init()
 		 Power[9,2]:Set[100]
 		 SpellRange[9,1]:Set[70]
 		 SpellRange[9,2]:Set[72]
-		
+
 		 Action[10]:Set[AoE_All]
 		 Power[10,1]:Set[25]
 		 Power[10,2]:Set[100]
 		 SpellRange[10,1]:Set[90]
 		 SpellRange[10,2]:Set[96]
-	
+
 		 Action[11]:Set[Consencrate]
 		 Power[11,1]:Set[25]
 		 Power[11,2]:Set[100]
 		 SpellRange[11,1]:Set[387]
 
 		 Action[12]:Set[AA_SwiftAxe]
-	         SpellRange[12,1]:Set[389]
-
+		 SpellRange[12,1]:Set[389]
 }
 
 function PostCombat_Init()
 {
-		 
+
 }
 
 function Buff_Routine(int xAction)
-{	
+{
 	declare BuffMember string local
 	declare BuffTarget string local
 
 	call WeaponChange
 
 	if ${AutoFollowMode}
-    	{	    
+    	{
     		ExecuteAtom AutoFollowTank
     	}
 
@@ -156,64 +153,59 @@ function Buff_Routine(int xAction)
 	{
 		call Shard
 	}
-	
+
 	switch ${PreAction[${xAction}]}
 	{
 
 		case Protect_Target
 			BuffTarget:Set[${UIElement[cbBuffProcGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			
+
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}			
+			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
-			break 
+			break
 
 
 		case Self_Buff
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			break
 
-		call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-
-		break
-		
 		case Group_Buff
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			break
 
-		call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-
-		break
-		
 		case SA_Buff
-
-		if !${MainTank}
-		{
-            		BuffTarget:Set[${UIElement[cbSecondary_Assist@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if !${MainTank}
 			{
-				;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}			
+				BuffTarget:Set[${UIElement[cbSecondary_Assist@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				{
+					;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				}
+
+				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				{
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				}
+				break
 			}
-			break 
-		}
-		else
-		{
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			else
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				}
 			}
-		}	
 
-		break
-		 		 	
+			break
+
 		Default
 		xAction:Set[10]
 		break
@@ -231,10 +223,10 @@ function Combat_Routine(int xAction)
 
 	if ${DoHOs}
 	{
-		
+
 		objHeroicOp:DoHO
 	}
-	
+
 	echo ${Start_HO}
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${Start_HO}
 	{
@@ -248,153 +240,141 @@ function Combat_Routine(int xAction)
 
 	switch ${Action[${xAction}]}
 	{
-		
-		
-		
 		case Stun
-		
-		if ${Me.ToActor.Health}<60
-		{
-			if ${Me.Equipment[secondary].Type.Equal[Shield]}
-			{	
-				call CastSpellRange 191
-				call CastSpellRange 190
-				if ${HealerMode}
-		     		{
-		     			call CheckHeals
-		     		}
-		    		else
-		     		{
+			if ${Me.ToActor.Health}<60
+			{
+				if ${Me.Equipment[secondary].Type.Equal[Shield]}
+				{
+					call CastSpellRange 191
+					call CastSpellRange 190
+					if ${HealerMode}
+			     		{
+			     			call CheckHeals
+			     		}
+			    		else
+			     		{
 
-					call MeHeals
+						call MeHeals
 
-		     		}
+			     		}
+				}
+				else
+				{
+
+					call CastSpellRange 190
+					if ${HealerMode}
+			     		{
+			     			call CheckHeals
+			     		}
+			    		else
+			     		{
+
+						call MeHeals
+
+			     		}
+				}
+
 			}
 			else
 			{
-				
-				call CastSpellRange 190
-				if ${HealerMode}
-		     		{
-		     			call CheckHeals
-		     		}
-		    		else
-		     		{
+				if ${Me.Equipment[secondary].Type.Equal[Shield]}
+				{
+					call CastSpellRange 191
+					call CastSpellRange 190
 
-					call MeHeals
+				}
+				else
+				{
+					call CastSpellRange 190
 
-		     		}
+				}
 			}
-				
-		}
-		else
-		{
-			if ${Me.Equipment[secondary].Type.Equal[Shield]}
-			{
-				call CastSpellRange 191
-				call CastSpellRange 190
-				
-			}
-			else
-			{	
-				call CastSpellRange 190
-				
-			}
-		}
 
 		case Taunt
-		if ${MainTank} && ${TauntMode}
-		{
-			
-			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
-		}
-		break
+			if ${MainTank} && ${TauntMode}
+			{
+
+				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+			}
+			break
 
 		case Combat_Buff
-		if ${MainTank}
-		{
+			if ${MainTank}
+			{
 
-		   if ${Target(exists)} && ${Target.Health}>5
-	           {
-	             
-		     call CastSpellRange 155
-		     if ${HealerMode}
-		     {
-		     	call CheckHeals
-		     }
-		     else
-		     {
-			call MeHeals
+			   if ${Target(exists)} && ${Target.Health}>5
+		           {
 
-		     }
-		   }
-	        }
-		break
-		
+			     call CastSpellRange 155
+			     if ${HealerMode}
+			     {
+			     	call CheckHeals
+			     }
+			     else
+			     {
+				call MeHeals
+
+			     }
+			   }
+		        }
+			break
+
 		case AoE_Taunt
-
 		if ${MainTank} && ${TauntMode}
-		{
-			
-		    		if ${Mob.Count}>0
-		    		{
-					echo does this get called?
-					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
-		    		}
-		}
-		break
+			{
+
+			    		if ${Mob.Count}>1
+			    		{
+								call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+			    		}
+			}
+			break
 
 		case AA_SwiftAxe
-
-		call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-		break
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			break
 
 		case Melee_Attack
-		call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-		if ${Return.Equal[OK]}
-		{
-			
-			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
-
-		}
-
-		break
-		
-		case Two_Hand_Attack
-		if ${Me.Equipment[primary].WieldStyle.Equal[Two-Handed]}
-		{
 			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
-	          
-		    		call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+
+				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+
 			}
-		}
-		break
+			break
+
+		case Two_Hand_Attack
+			if ${Me.Equipment[primary].WieldStyle.Equal[Two-Handed]}
+			{
+				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+
+			    		call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+				}
+			}
+			break
 
 		case AoE_All
-		
-		if ${Mob.Count}>2
-		{
-		   call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-		   if ${Return.Equal[OK]}
-		   {
-			call CastSpellRange ${SpellRange[${xAction},1]}
-		   }
-		}
+			if ${Mob.Count}>2
+			{
+			   call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+			   if ${Return.Equal[OK]}
+			   {
+				call CastSpellRange ${SpellRange[${xAction},1]}
+			   }
+			}
+			break
 
-		break
-		
 		case Nuke_Attack
+			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+			if ${Return.Equal[OK]}
+			{
+			    call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+			}
+			break
 
-		call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-		if ${Return.Equal[OK]}
-		{	
-		    call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
-		}
-
-		break
-		
 		Default
 		xAction:Set[20]
 		break
@@ -477,7 +457,7 @@ function MA_Dead()
 
 function Cancel_Root()
 {
-	
+
 }
 
 function CheckHeals()
@@ -490,14 +470,14 @@ function CheckHeals()
 	declare mostafflictions int local 0
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
-	
+
 	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
 
 	temphl:Set[1]
 	grpcure:Set[0]
 	lowest:Set[1]
-	
+
 	do
 	{
 		if ${Me.Group[${temphl}].ZoneName.Equal[${Zone.Name}]}
@@ -532,13 +512,13 @@ function CheckHeals()
 	{
 		grpheal:Inc
 	}
-	
+
 	;MAINTANK EMERGENCY HEAL
 	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		call EmergencyHeal ${Actor[${MainAssist}].ID}
 	}
-	
+
 	;ME HEALS
 	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
@@ -561,7 +541,7 @@ function CheckHeals()
 			}
 			hurt:Set[TRUE]
 		}
-		
+
 	}
 	;MAINTANK HEALS
 	if ${Actor[${MainAssist}].Health} <90 && ${Actor[${MainAssist}].Health} >-99 && ${Actor[${MainAssist}](exists)}
@@ -576,10 +556,10 @@ function CheckHeals()
 		{
 			call CastSpellRange 10
 		}
-		
+
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<80 && ${Me.Group[${lowest}].ToActor(exists)} 
+	if ${Me.Group[${lowest}].ToActor.Health}<80 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 		{
@@ -593,28 +573,26 @@ function CheckHeals()
 
 		hurt:Set[TRUE]
 	}
-	
+
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)}
 	{
 		call CastSpellRange 4 0 0 0 ${PetToHeal}
 	}
-	
-	
+
+
 
 }
 
 function MeHeals()
 {
-
-	
 	if ${Me.ToActor.Health}<40 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		if ${Me.ToActor.Health}<25
 		{
 				eq2execute /group GET READY TO EVAC I AM ABOUT TO DIE
 				call EmergencyHeal ${Me.ID}
-		}	
+		}
 		else
 		{
 			if ${Me.Ability[${SpellType[1]}].IsReady}
@@ -628,13 +606,10 @@ function MeHeals()
 		}
 			hurt:Set[TRUE]
 	}
-		
-	
 }
 
 function EmergencyHeal(int healtarget)
 {
-	
 	if ${Me.Ability[${SpellType[387]}].IsReady}
 	{
 		call CastSpellRange 387 0 0 0 ${healtarget}
@@ -643,29 +618,23 @@ function EmergencyHeal(int healtarget)
 	{
 		call CastSpellRange 1 0 0 0 ${healtarget}
 	}
-
 }
 
 
 function WeaponChange()
 {
-
 	;equip main hand
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
 	{
-
 		Me.Inventory[${WeaponMain}]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
-
-	}	
+	}
 
 	;equip off hand
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
 	{
-
 		Me.Inventory[${OffHand}]:Equip
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
-
 	}
 
 }

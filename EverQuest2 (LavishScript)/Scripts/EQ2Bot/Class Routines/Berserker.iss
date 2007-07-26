@@ -1,13 +1,16 @@
 ;*************************************************************
 ;Berserker.iss
-;version 20061201a
+;version 20070725a
+;
+;20070725a (Pygar)
+; Update AA strikes for new weapon requirements
+;
+;20061201a
 ;Implemented AA Berserk
 ;Implemented AA Gut Roar
 ;Implemented EQ2botlib Crystalize Spirit
 ;by karye
 ;*************************************************************
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
-
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
 #endif
@@ -366,16 +369,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						if ${Me.Equipment[1].Name.Equal[${WeaponSpear}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${WeaponSpear}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
 				break
@@ -413,21 +407,12 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						if ${Me.Equipment[1].Name.Equal[${WeaponHammer}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${WeaponHammer}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
 				break
 			case default
-				;xAction:Set[20]
+				;xAction:Set[40]
 				break
 		}
 	}
@@ -448,16 +433,7 @@ function Post_Combat_Routine(int xAction)
 		case AA_AccelterationStrike
 			if ${Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}].IsReady}
 			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponSword}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]}
-				}
+				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
 			break
 

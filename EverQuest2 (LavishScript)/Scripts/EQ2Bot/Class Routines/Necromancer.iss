@@ -130,29 +130,11 @@ function Buff_Init()
 	PreAction[5]:Set[Buff_Shards]
 	PreSpellRange[5,1]:Set[360]
 
-	PreAction[6]:Set[AA_GeneralPetBuffs]
-	PreSpellRange[6,1]:Set[390]
-	PreSpellRange[6,2]:Set[391]
-	PreSpellRange[6,3]:Set[392]
+	PreAction[6]:Set[Favor]
+	PreSpellRange[6,1]:Set[20]
 
-	PreAction[7]:Set[AA_FighterPetBuffs]
-	PreSpellRange[7,1]:Set[381]
-	PreSpellRange[7,2]:Set[382]
-	PreSpellRange[7,3]:Set[383]
-
-	PreAction[8]:Set[AA_MagePetBuffs]
-	PreSpellRange[8,1]:Set[386]
-	PreSpellRange[8,2]:Set[387]
-	PreSpellRange[8,3]:Set[388]
-
-	PreAction[9]:Set[AA_ScoutPetBuffs]
-	PreSpellRange[9,1]:Set[376]
-
-	PreAction[10]:Set[Favor]
-	PreSpellRange[10,1]:Set[20]
-
-	PreAction[11]:Set[Mark]
-	PreSpellRange[11,1]:Set[21]
+	PreAction[7]:Set[Mark]
+	PreSpellRange[7,1]:Set[21]
 }
 
 function Combat_Init()
@@ -328,30 +310,6 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			}
 			break
-		case AA_FighterPetBuffs
-			if ${Me.Maintained[${SpellType[357]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]}
-			}
-			break
-		case AA_MagePetBuffs
-			if ${Me.Maintained[${SpellType[356]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]}
-			}
-			break
-		case AA_ScoutPetBuffs
-			if ${Me.Maintained[${SpellType[355]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
-			break
-		case AA_GeneralPetBuffs
-			if ${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]}
-			}
-			break
 
 		case SeeInvis
 			if ${BuffSeeInvis}
@@ -399,7 +357,7 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 
-	;check if we have a pet or a hydromancy not up
+	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
 	{
 		call SummonPet
@@ -446,8 +404,6 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 385
 	}
 
-	;Need some Logic for the soul uses here
-
 	switch ${Action[${xAction}]}
 	{
 
@@ -458,16 +414,7 @@ function Combat_Routine(int xAction)
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				}
 			}
 			break
@@ -1026,7 +973,6 @@ function SummonPet()
 
 function WeaponChange()
 {
-
 	;equip main hand
 	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal["${WeaponMain}"]}
 	{

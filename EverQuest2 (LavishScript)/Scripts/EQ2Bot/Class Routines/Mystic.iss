@@ -1,6 +1,11 @@
 ;*************************************************************
-;Mystic.iss
-;version 20070503a
+;Mystic.iss 20070725a
+;version
+;
+;20070725a
+; Minor AA weapon change tweaks
+;
+;20070503a (LostOne)
 ;Defiler Orginal by karye & updated by pygar
 ;ported to Mystic by LostOne
 
@@ -94,7 +99,7 @@ function Buff_Init()
 
 	PreAction[7]:Set[BuffWaterBreathing]
 	PreSpellRange[7,1]:Set[33]
-	
+
 	PreAction[8]:Set[SpiritCompanion]
 	PreSpellRange[8,1]:Set[360]
 
@@ -130,7 +135,7 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	
+
 	Action[1]:Set[Bolster]
 	SpellRange[1,1]:Set[21]
 
@@ -154,68 +159,61 @@ function Combat_Init()
 	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[80]
 
-	Action[6]:Set[xxxxxx]
+	Action[6]:Set[TheftOfVitality]
 	MobHealth[6,1]:Set[1]
 	MobHealth[6,2]:Set[100]
 	Power[6,1]:Set[20]
 	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[999]
+	SpellRange[6,1]:Set[55]
 
-	Action[7]:Set[TheftOfVitality]
-	MobHealth[7,1]:Set[1]
-	MobHealth[7,2]:Set[100]
-	Power[7,1]:Set[20]
-	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[55]
+	Action[7]:Set[Mastery]
 
-	Action[8]:Set[Mastery]
+	Action[8]:Set[UmbralTrap]
+	MobHealth[8,1]:Set[1]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[54]
 
-	Action[9]:Set[UmbralTrap]
+	Action[9]:Set[Cold_Flame]
 	MobHealth[9,1]:Set[1]
 	MobHealth[9,2]:Set[100]
-	SpellRange[9,1]:Set[54]
+	Power[9,1]:Set[1]
+	Power[9,2]:Set[100]
+	SpellRange[9,1]:Set[81]
 
-	Action[10]:Set[Cold_Flame]
+	Action[10]:Set[Haze]
 	MobHealth[10,1]:Set[1]
 	MobHealth[10,2]:Set[100]
 	Power[10,1]:Set[1]
 	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[81]
+	SpellRange[10,1]:Set[50]
 
-	Action[11]:Set[Haze]
+	Action[11]:Set[Enfeeble]
 	MobHealth[11,1]:Set[1]
 	MobHealth[11,2]:Set[100]
 	Power[11,1]:Set[1]
 	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[50]
+	SpellRange[11,1]:Set[52]
 
-	Action[12]:Set[Enfeeble]
+	Action[12]:Set[Mourning_Soul]
 	MobHealth[12,1]:Set[1]
 	MobHealth[12,2]:Set[100]
 	Power[12,1]:Set[1]
 	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[52]
+	SpellRange[12,1]:Set[53]
 
-	Action[13]:Set[Mourning_Soul]
-	MobHealth[13,1]:Set[1]
-	MobHealth[13,2]:Set[100]
-	Power[13,1]:Set[1]
-	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[53]
+	Action[13]:Set[ThermalShocker]
 
-	Action[14]:Set[ThermalShocker]
+	Action[14]:Set[AA_CripplingBash]
+	MobHealth[14,1]:Set[1]
+	MobHealth[14,2]:Set[100]
+	SpellRange[14,1]:Set[366]
 
-	Action[15]:Set[AA_CripplingBash]
+	Action[15]:Set[Slothful_Spirit]
 	MobHealth[15,1]:Set[1]
 	MobHealth[15,2]:Set[100]
-	SpellRange[15,1]:Set[366]
-	
-	Action[16]:Set[Slothful_Spirit]
-	MobHealth[16,1]:Set[1]
-	MobHealth[16,2]:Set[100]
-	Power[16,1]:Set[1]
-	Power[16,2]:Set[100]
-	SpellRange[16,1]:Set[83]
+	Power[15,1]:Set[1]
+	Power[15,2]:Set[100]
+	SpellRange[15,1]:Set[83]
 
 }
 
@@ -474,16 +472,7 @@ function Combat_Routine(int xAction)
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[360]}](exists)}
 	{
-		if ${Me.Equipment[1].Name.Equal[${OneHandedSpear}]}
-		{
-			call CastSpellRange 361
-		}
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-		{
-			Me.Inventory[${OneHandedSpear}]:Equip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 361
-		}
+		call CastSpellRange 361
 	}
 
 	if ${ShardMode}
@@ -505,9 +494,9 @@ function Combat_Routine(int xAction)
 	{
 		Me.Maintained[${SpellType[317]}]:Cancel
 	}
-	
+
 	;Before we do our Action, check to make sure our group doesnt need healing
-	call CheckGroupHealth 75
+	call CheckGroupHealth 60
 	if ${Return}
 	{
 		switch ${Action[${xAction}]}
@@ -707,13 +696,13 @@ function CheckHeals()
 	temphl:Set[1]
 	grpcure:Set[0]
 	lowest:Set[1]
-	
+
 	;Cancel Oberon if up and tank dieing
 	if ${Me.Maintained[${SpellType[317]}](exists)} && (${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}) && ${Me.ToActor.Power} >20 || !${OberonMode}
 	{
 		Me.Maintained[${SpellType[317]}]:Cancel
 	}
-	
+
 	;Res the MT if they are dead
 	if ${Actor[PC,${MainTankPC}].Health}==-99 && ${Actor[PC,${MainTankPC}](exists)} && ${CombatRez}
 	{
@@ -879,12 +868,12 @@ function CheckHeals()
 		{
 			call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
-		
+
 		if !${KeepGroupWardUp} && ${MTinMyGroup}
-		{ 
+		{
 			call CastSpellRange 15
 		}
-	
+
 		if ${OberonMode} && ${MTinMyGroup} && ${Me.Ability[${SpellType[317]}].IsReady} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Me.ToActor.Power}<40
 		{
 			call CastSpellRange 317 0 0 0 ${Actor[${MainTankPC}].ID}
@@ -895,12 +884,12 @@ function CheckHeals()
 	{
 		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
-	
+
 	if ${Actor[${MainTankPC}].Health} <60 && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${KillTarget}].IsEpic} && ${TorporMode}
 	{
 		call CastSpellRange 8 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
-	
+
 	;GROUP HEALS
 	if ${grpheal}>=2
 	{
@@ -912,7 +901,7 @@ function CheckHeals()
 		{
 			call CastSpellRange 15
 		}
-		
+
 		; Cast shadowy attendant
 		if ${PetMode}
 		{
@@ -933,7 +922,7 @@ function CheckHeals()
 		}
 		hurt:Set[TRUE]
 	}
-	
+
 	if ${Me.Group[${lowest}].ToActor.Health}<60 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${TorporMode}
 	{
 		call CastSpellRange 8 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
@@ -948,7 +937,7 @@ function CheckHeals()
 		}
 		else
 		{
-			
+
 			call CastSpellRange 1 0 0 0 ${PetToHeal}
 		}
 	}
@@ -1004,7 +993,7 @@ function CheckWards()
 		{
 			if ${ward1}==0&&${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
-				call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}	
+				call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 				ward1:Set[1]
 			}
 		}
@@ -1016,7 +1005,7 @@ function CheckWards()
 				call CastSpellRange 15
 			}
 		}
-	
+
 		;=======================================================================;
 		;  Next, See if ward2 needs to be used (Long recast, emergency ward     ;
 		;=======================================================================;
@@ -1140,7 +1129,7 @@ function CureGroupMember(int gMember)
 	{
 		;first use Ancient Balm if up (single target cure all)
 		call CastSpellRange 214 0 0 0 ${Me.Group[${gMember}].ID}
-		
+
 		if  ${Me.Group[${gMember}].Arcane}>0
 		{
 				call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}

@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Illusionist.iss
-;version 20070504a
+;version 20070725a
 ;by pygar
+;
+;20070725a
+; Minor changes to adjust for AA tweaks in game.
 ;
 ;20070504a
 ; Added Cure Arcane Routine
@@ -163,7 +166,6 @@ function Combat_Init()
 	MobHealth[10,1]:Set[1]
 	MobHealth[10,2]:Set[100]
 	SpellRange[10,1]:Set[70]
-
 
 	Action[11]:Set[Constructs]
 	MobHealth[11,1]:Set[40]
@@ -422,29 +424,10 @@ function Combat_Routine(int xAction)
 		call CastSpellRange X 0 0 0 ${KillTarget}
 	}
 
-	;leaving coercer AA logic for now until I have a illusionist to with aa to test with
 	;chronsphioning AA. we should always try to keep this spell up
 	if ${Me.Ability[${SpellType[382]}](exists)} && ${Me.Ability[${SpellType[382]}].IsReady}
 	{
-		;if we have a dual wield or a 1hander and nothing in our secondary we are good to go
-		if (${Me.Equipment[1].WieldStyle.Find[Dual Wield]} || ${Me.Equipment[1].WieldStyle.Find[One-Handed]}) && !${Me.Equipment[2](exists)}
-		{
-			call CastSpellRange 382 0 0 0 ${KillTarget}
-		}
-		;if we have a dual wield or a 1hander but have something in our secondary well remove it
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2 && (${Me.Equipment[1].WieldStyle.Find[Dual Wield]} || ${Me.Equipment[1].WieldStyle.Find[One-Handed]}) && ${Me.Equipment[2](exists)}
-		{
-			Me.Equipment[2]:UnEquip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 382 0 0 0 ${KillTarget}
-		}
-		;if we have nothing in our primary or a 2 hander we will swap in the AA dagger which we assume to be 1h or dual weild
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2 && !${Me.Equipment[2](exists)}
-		{
-			Me.Inventory[${WeaponDagger}]:Equip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 382 0 0 0 ${KillTarget}
-		}
+		call CastSpellRange 382 0 0 0 ${KillTarget}
 	}
 
 	;make sure killtarget is always Melee debuffed
@@ -452,10 +435,6 @@ function Combat_Routine(int xAction)
 
 	;make sure Psychic Asailant debuff / stun always on.
 	call CastSpellRange 61 0 0 0 ${KillTarget}
-
-	; I have not found an illusionist counter to this.
-	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
-	;call CastSpellRange 42
 
 	switch ${Action[${xAction}]}
 	{
@@ -551,11 +530,7 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
-
-
 	TellTank:Set[FALSE]
-
-
 
 	switch ${PostAction[${xAction}]}
 	{

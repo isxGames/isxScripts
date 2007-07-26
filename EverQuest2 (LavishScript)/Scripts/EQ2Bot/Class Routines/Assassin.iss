@@ -1,6 +1,13 @@
 ;*****************************************************
-;Assassin.iss  20070404a
+;Assassin.iss  20070725a
 ;by Pygar
+;
+;
+;20070725a
+;	Did an old version make it to svn?
+; Fixed LOTS - AA's work now, concealment and vanish work now
+;	Cleaned up weapon change for new AA requirements
+;	General fixes
 ;
 ; 20070404a
 ; Updated for latest eq2bot functionality
@@ -89,13 +96,13 @@ function Buff_Init()
 	PreSpellRange[4,1]:Set[387]
 
 	PreAction[5]:Set[Shadows]
-	PreSpellRange[5,1]:Set[386]
+	PreSpellRange[5,1]:Set[356]
 
 	PreAction[6]:Set[AA_Neurotoxic_Coating]
-	PreSpellRange[6,1]:Set[409]
+	PreSpellRange[6,1]:Set[389]
 
 	PreAction[7]:Set[AA_Surrounding_Attacks]
-	PreSpellRange[7,1]:Set[404]
+	PreSpellRange[7,1]:Set[384]
 
 	PreAction[8]:Set[Poisons]
 
@@ -113,93 +120,90 @@ function Combat_Init()
 	SpellRange[1,2]:Set[51]
 	SpellRange[1,3]:Set[52]
 
-	Action[2]:Set[Melee_Attack]
-	SpellRange[2,1]:Set[150]
+	Action[2]:Set[AA_Bladed_Opening]
+	SpellRange[2,1]:Set[381]
+	MobHealth[2,1]:Set[80]
+	MobHealth[2,2]:Set[100]
 
-	Action[3]:Set[DoT]
-	MobHealth[3,1]:Set[20]
-	MobHealth[3,2]:Set[100]
-	Power[3,1]:Set[20]
-	Power[3,2]:Set[100]
-	SpellRange[3,1]:Set[71]
-	SpellRange[3,2]:Set[70]
+	Action[3]:Set[Melee_Attack]
+	SpellRange[3,1]:Set[150]
 
-	Action[4]:Set[Concealment]
+	Action[4]:Set[DoT]
 	MobHealth[4,1]:Set[20]
 	MobHealth[4,2]:Set[100]
-	SpellRange[4,1]:Set[389]
-	SpellRange[4,2]:Set[130]
-	SpellRange[4,3]:Set[131]
-	SpellRange[4,4]:Set[132]
-	SpellRange[4,5]:Set[133]
-	SpellRange[4,6]:Set[135]
-	SpellRange[4,7]:Set[96]
-	SpellRange[4,8]:Set[95]
+	Power[4,1]:Set[20]
+	Power[4,2]:Set[100]
+	SpellRange[4,1]:Set[71]
+	SpellRange[4,2]:Set[70]
 
-	Action[5]:Set[Mastery]
+	Action[5]:Set[Concealment]
+	MobHealth[5,1]:Set[20]
+	MobHealth[5,2]:Set[100]
+	SpellRange[5,1]:Set[359]
+	SpellRange[5,2]:Set[130]
+	SpellRange[5,3]:Set[131]
+	SpellRange[5,4]:Set[132]
+	SpellRange[5,5]:Set[133]
+	SpellRange[5,6]:Set[135]
+	SpellRange[5,7]:Set[96]
+	SpellRange[5,8]:Set[95]
 
-	Action[6]:Set[Finishing_Blow]
-	SpellRange[6,1]:Set[390]
+	Action[6]:Set[Mastery]
 
-	Action[7]:Set[Vanish]
-	MobHealth[7,1]:Set[20]
-	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[389]
-	SpellRange[7,2]:Set[130]
-	SpellRange[7,3]:Set[131]
-	SpellRange[7,4]:Set[132]
-	SpellRange[7,5]:Set[133]
-	SpellRange[7,6]:Set[135]
-	SpellRange[7,7]:Set[96]
-	SpellRange[7,8]:Set[95]
+	Action[7]:Set[Finishing_Blow]
+	SpellRange[7,1]:Set[360]
 
-	Action[8]:Set[Shrouded_Attack]
-	SpellRange[8,1]:Set[186]
+	Action[8]:Set[Vanish]
+	MobHealth[8,1]:Set[20]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[358]
+	SpellRange[8,2]:Set[130]
+	SpellRange[8,3]:Set[131]
+	SpellRange[8,4]:Set[132]
+	SpellRange[8,5]:Set[133]
+	SpellRange[8,6]:Set[135]
+	SpellRange[8,7]:Set[96]
+	SpellRange[8,8]:Set[95]
 
-	Action[9]:Set[Cripple]
-	SpellRange[9,1]:Set[110]
+	Action[9]:Set[Shrouded_Attack]
+	SpellRange[9,1]:Set[186]
 
-	Action[10]:Set[Combat_Buff]
-	MobHealth[10,1]:Set[50]
-	MobHealth[10,2]:Set[100]
-	SpellRange[10,1]:Set[155]
+	Action[10]:Set[Cripple]
+	SpellRange[10,1]:Set[110]
 
-	Action[11]:Set[Stalk]
-	SpellRange[11,1]:Set[185]
+	Action[11]:Set[Combat_Buff]
+	MobHealth[11,1]:Set[50]
+	MobHealth[11,2]:Set[100]
+	SpellRange[11,1]:Set[155]
 
-	Action[12]:Set[Makeshift]
-	SpellRange[12,1]:Set[250]
-	SpellRange[12,2]:Set[402]
+	Action[12]:Set[Stalk]
+	SpellRange[12,1]:Set[185]
 
-	Action[13]:Set[Range_Rear]
-	SpellRange[13,1]:Set[251]
-	SpellRange[13,2]:Set[256]
-	SpellRange[13,3]:Set[257]
+	Action[13]:Set[Makeshift]
+	SpellRange[13,1]:Set[250]
+	SpellRange[13,2]:Set[382]
 
-	Action[14]:Set[Stun]
-	SpellRange[14,1]:Set[190]
+	Action[14]:Set[Range_Rear]
+	SpellRange[14,1]:Set[251]
+	SpellRange[15,2]:Set[256]
+	SpellRange[16,3]:Set[257]
 
-	Action[15]:Set[Evade]
-	SpellRange[15,1]:Set[185]
+	Action[17]:Set[Stun]
+	SpellRange[17,1]:Set[190]
 
-	Action[16]:Set[AA_Bounty]
-	SpellRange[16,1]:Set[400]
+	Action[18]:Set[Evade]
+	SpellRange[18,1]:Set[185]
 
-	Action[17]:Set[AA_Bladed_Opening]
-	SpellRange[17,1]:Set[401]
-	MobHealth[17,1]:Set[80]
-	MobHealth[17,2]:Set[100]
+	Action[19]:Set[AA_Spinning_Spear]
+	SpellRange[19,1]:Set[383]
 
-	Action[18]:Set[AA_Spinning_Spear]
-	SpellRange[18,1]:Set[403]
+	Action[20]:Set[AA_Frontload]
+	SpellRange[20,1]:Set[390]
+	MobHealth[20,1]:Set[40]
+	MobHealth[20,2]:Set[100]
 
-	Action[19]:Set[AA_Frontload]
-	SpellRange[19,1]:Set[410]
-	MobHealth[19,1]:Set[40]
-	MobHealth[19,2]:Set[100]
-
-	Action[20]:Set[AA_Intoxication]
-	SpellRange[20,1]:Set[412]
+	Action[21]:Set[AA_Intoxication]
+	SpellRange[21,1]:Set[392]
 }
 
 
@@ -222,7 +226,6 @@ function Buff_Routine(int xAction)
 		ExecuteAtom AutoFollowTank
 	}
 
-	call WeaponChange
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -310,24 +313,24 @@ function Combat_Routine(int xAction)
 	}
 
 	;smokebomb check
-	if ${Me.Ability[${SpellType[407]}].IsReady} && !${Me.ToActor.IsStealthed}
+	if ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.ToActor.IsStealthed}
 	{
-		call CastSpellRange 407
+		call CastSpellRange 387
 		call CastStealthAttack
 	}
 
 	;Getaway check
-	if ${Me.Ability[${SpellType[411]}].IsReady} && !${Me.ToActor.IsStealthed}
+	if ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.ToActor.IsStealthed}
 	{
-		call CastSpellRange 411
+		call CastSpellRange 391
 		call CastStealthAttack
 	}
 
 	;Poison Combination Check disabled for now cause I can't seem to check if mob IsAfflicted by Noxious
-	;if 1=0 && ${Me.Ability[${SpellType[408]}].IsReady}
-	;{
-	;	call CastSpellRange 408
-	;}
+	if ${Me.Ability[${SpellType[388]}].IsReady}
+	{
+		call CastSpellRange 388
+	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
@@ -339,19 +342,7 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
 	Call ActionChecks
-
-	if ${Target.Target.ID}!=${Me.ID} && ${Target.Distance}<10
-	{
-		call GetBehind
-	}
-
 
 	switch ${Action[${xAction}]}
 	{
@@ -400,11 +391,12 @@ function Combat_Routine(int xAction)
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 				if ${AoEMode} && ${Mob.Count}>=2
 				{
 					call CastSpellRange ${SpellRange[${xAction},7]} ${SpellRange[${xAction},8]} 0 0 ${KillTarget} 0 0 1
 				}
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},6]} 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},2]} ${SpellRange[${xAction},6]} 0 0 ${KillTarget} 0 0 1
 			}
 			break
 
@@ -455,29 +447,13 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Bounty
-			if !${Actor[${KillTarget}].ConColor.Equal[Grey]} && !${Actor[${KillTarget}].ConColor.Equal[Green]} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-			}
-			break
-
 		case AA_Bladed_Opening
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponSword}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 			}
 			break
@@ -485,16 +461,7 @@ function Combat_Routine(int xAction)
 		case AA_Spinning_Spear
 			if ${AoEMode} && ${Mob.Count}>=2 && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponSpear}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponSpear}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 
@@ -510,7 +477,7 @@ function Combat_Routine(int xAction)
 			break
 
 		default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 }
@@ -570,31 +537,31 @@ function CastStealthAttack()
 {
 	if ${Me.Ability[${SpellType[96]}].IsReady} && ${AoEMode} && ${Mob.Count}>=2
 	{
-		call CastSpellRange 96 0 0 0 ${KillTarget}
+		call CastSpellRange 96 0 1 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[95]}].IsReady} && ${AoEMode} && ${Mob.Count}>=2
 	{
-		call CastSpellRange 95 0 0 0 ${KillTarget}
+		call CastSpellRange 95 0 1 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[131]}].IsReady}
 	{
-		call CastSpellRange 131 0 0 0 ${KillTarget}
+		call CastSpellRange 131 0 1 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[132]}].IsReady}
 	{
-		call CastSpellRange 132 0 0 0 ${KillTarget}
+		call CastSpellRange 132 0 1 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[130]}].IsReady}
 	{
-		call CastSpellRange 130 0 0 0 ${KillTarget}
+		call CastSpellRange 130 0 1 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[133]}].IsReady}
 	{
-		call CastSpellRange 133 0 0 0 ${KillTarget}
+		call CastSpellRange 133 0 1 0 ${KillTarget}
 	}
 	elseif ${Me.Ability[${SpellType[135]}].IsReady}
 	{
-		call CastSpellRange 135 0 0 0 ${KillTarget}
+		call CastSpellRange 135 0 1 0 ${KillTarget}
 	}
 
 }

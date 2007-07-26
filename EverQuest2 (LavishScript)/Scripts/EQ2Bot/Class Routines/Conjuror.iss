@@ -1,9 +1,12 @@
 ;*************************************************************
 ;Conjuror.iss
-;version 20070504a
+;version 20070725a
 ;various fixes
 ;by karye
 ;updated by pygar
+;
+;20070725a
+; Updated for new AA changes
 ;
 ;20070504a
 ; Toggle PetMode
@@ -12,8 +15,6 @@
 ;	updated for latest eq2bot
 ;	updated master strike
 ;*************************************************************
-
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -92,10 +93,6 @@ function Buff_Init()
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
 
-	PreAction[3]:Set[NotUsed]
-	PreSpellRange[3,1]:Set[999]
-	PreSpellRange[3,2]:Set[999]
-
 	PreAction[4]:Set[Pet_Buff]
 	PreSpellRange[4,1]:Set[45]
 
@@ -111,35 +108,20 @@ function Buff_Init()
 	PreAction[8]:Set[Buff_Shards]
 	PreSpellRange[8,1]:Set[360]
 
-	PreAction[9]:Set[AA_GeneralPetBuffs]
-	PreSpellRange[9,1]:Set[386]
-	PreSpellRange[9,2]:Set[388]
+	PreAction[9]:Set[AA_Minions_Warding]
+	PreSpellRange[9,1]:Set[385]
 
-	PreAction[10]:Set[AA_FighterPetBuffs]
-	PreSpellRange[10,1]:Set[390]
-	PreSpellRange[10,2]:Set[391]
+	PreAction[10]:Set[Seal]
+	PreSpellRange[10,1]:Set[20]
 
-	PreAction[11]:Set[AA_MagePetBuffs]
-	PreSpellRange[11,1]:Set[392]
-	PreSpellRange[11,2]:Set[393]
+	PreAction[11]:Set[Escutcheon]
+	PreSpellRange[11,1]:Set[21]
 
-	PreAction[12]:Set[AA_ScoutPetBuffs]
-	PreSpellRange[12,1]:Set[389]
+	PreAction[12]:Set[AA_Bubble]
+	PreSpellRange[12,1]:Set[377]
 
-	PreAction[13]:Set[AA_Minions_Warding]
-	PreSpellRange[13,1]:Set[385]
-
-	PreAction[14]:Set[Seal]
-	PreSpellRange[14,1]:Set[20]
-
-	PreAction[15]:Set[Escutcheon]
-	PreSpellRange[15,1]:Set[21]
-
-	PreAction[16]:Set[AA_Bubble]
-	PreSpellRange[16,1]:Set[377]
-
-	PreAction[17]:Set[AA_Unabate]
-	PreSpellRange[17,1]:Set[376]
+	PreAction[13]:Set[AA_Unabate]
+	PreSpellRange[13,1]:Set[376]
 }
 
 function Combat_Init()
@@ -294,31 +276,6 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			}
 			break
-		case AA_FighterPetBuffs
-			if ${Me.Maintained[${SpellType[357]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-			}
-			break
-		case AA_MagePetBuffs
-			if ${Me.Maintained[${SpellType[356]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-			}
-			break
-		case AA_ScoutPetBuffs
-			if ${Me.Maintained[${SpellType[355]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
-			break
-		case AA_GeneralPetBuffs
-			if ${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-			}
-			break
-
 		case Tank_Buff
 			BuffTarget:Set[${UIElement[cbBuffDamageShieldGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -463,10 +420,6 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
@@ -506,17 +459,7 @@ function Combat_Routine(int xAction)
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
@@ -527,7 +470,6 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[OK]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-
 				}
 			}
 			break
@@ -541,7 +483,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case Plane_Shift
-			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} && (${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)})
+			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
@@ -727,16 +669,7 @@ function CheckHeals()
 	;Check ME first,
 	if ${Me.ToActor.Health}<60
 	{
-		if ${Me.Equipment[1].Name.Equal[${WeaponStaff}]}
-		{
-			call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
-		}
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2 && ${Me.Ability[${SpellType[396]}].IsReady}
-		{
-			Me.Inventory[${WeaponStaff}]:Equip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
-		}
+		call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
 		;stoneskins AA
 		call CastSpellRange 378
 
@@ -762,17 +695,7 @@ function CheckHeals()
 			;Check Group members
 			if ${Me.Group[${temphl}].ToActor.Health}<50 && ${Me.Group[${temphl}].ToActor.Health}>-99 && && ${Me.Group[${temphl}].ToActor(exists)}
 			{
-
-				if ${Me.Equipment[1].Name.Equal[${WeaponStaff}]}
-				{
-					call CastSpellRange 396 0 0 0 ${Me.Group[${temphl}].ToActor.ID}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2 && ${Me.Ability[${SpellType[396]}].IsReady}
-				{
-					Me.Inventory[${WeaponStaff}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange 396 0 0 0 ${Me.Group[${temphl}].ToActor.ID}
-				}
+				call CastSpellRange 396 0 0 0 ${Me.Group[${temphl}].ToActor.ID}
 
 				;Stoneskins AA
 				call CastSpellRange 378
@@ -801,7 +724,6 @@ function CheckHeals()
 				call SummonPet
 
 			}
-		;}
 	}
 	while ${temphl:Inc}<${grpcnt}
 

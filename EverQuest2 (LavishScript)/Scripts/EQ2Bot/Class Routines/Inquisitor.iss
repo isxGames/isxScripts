@@ -1,6 +1,9 @@
 ;*************************************************************
 ;Inquisitor.iss
-;version 20070504a (Pygar)
+;version 20070725a (Pygar)
+;
+;20070725a (Pygar)
+; Minor changes for AA adjustments in game
 ;
 ;20070504a (Pygar)
 ; Updated for latest eq2bot
@@ -19,7 +22,6 @@
 ;Fixed a bug with curing uncurable afflictions
 ;by karye
 ;*************************************************************
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -443,9 +445,9 @@ function Combat_Routine(int xAction)
 	{
 		call Shard
 	}
-echo BattleClericMode is ${BattleClericMode}
+	;echo BattleClericMode is ${BattleClericMode}
 	;Before we do our Action, check to make sure our group doesnt need healing
-	call CheckGroupHealth 75
+	call CheckGroupHealth 60
 	if ${Return}
 	{
 		switch ${Action[${xAction}]}
@@ -633,16 +635,7 @@ echo BattleClericMode is ${BattleClericMode}
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
 						{
-							if ${Me.Equipment[1].Name.Equal[${TwoHandedStaff}]}
-							{
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-							}
-							elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-							{
-								Me.Inventory[${TwoHandedStaff}]:Equip
-								EquipmentChangeTimer:Set[${Time.Timestamp}]
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-							}
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 						}
 					}
 
@@ -1144,7 +1137,7 @@ function CastVerdict()
 
 		case 2
 		case 3
-			if ${Actor[${KillTarget}].Health}<=10 && ${Actor[${KillTarget}](exists)}
+			if ${Actor[${KillTarget}].Health}<=5 && ${Actor[${KillTarget}](exists)}
 			{
 				call CastSpellRange 93 0 0 0 ${KillTarget}
 				return

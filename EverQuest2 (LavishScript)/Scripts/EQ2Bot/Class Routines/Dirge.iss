@@ -9,7 +9,6 @@
 ;
 ;fixed a bug with hate buffing
 ;*****************************************************
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -115,6 +114,9 @@ function Buff_Init()
 	PreAction[16]:Set[Buff_AALuckOfTheDirge]
 	PreSpellRange[16,1]:Set[382]
 
+	PreAction[16]:Set[Buff_AAHeroicStorytelling]
+	PreSpellRange[16,1]:Set[396]
+
 }
 
 function Combat_Init()
@@ -123,14 +125,14 @@ function Combat_Init()
 	Action[1]:Set[AARhythm_Blade]
 	SpellRange[1,1]:Set[397]
 
-	Action[2]:Set[AoE1]
-	SpellRange[2,1]:Set[62]
+	Action[2]:Set[CacophonyOfBlades]
+	SpellRange[2,1]:Set[155]
 
-	Action[3]:Set[Luda]
-	SpellRange[3,1]:Set[60]
+	Action[3]:Set[AoE1]
+	SpellRange[3,1]:Set[62]
 
-	Action[4]:Set[CacophonyOfBlades]
-	SpellRange[4,1]:Set[155]
+	Action[4]:Set[Luda]
+	SpellRange[4,1]:Set[60]
 
 	Action[5]:Set[InfectedBladed]
 	SpellRange[5,1]:Set[150]
@@ -306,20 +308,11 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
-
+		case Buff_AAHeroicStorytelling
 		case Buff_AAHarbingersSonnet
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
-			break
-
 		case Buff_AAAllegro
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
-			break
-
 		case Buff_AALuckOfTheDirge
 		case Buff_AADontKillTheMessenger
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
-			break
-
 
 		Default
 			xAction:Set[20]
@@ -392,16 +385,7 @@ function Combat_Routine(int xAction)
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 				}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
@@ -422,16 +406,7 @@ function Combat_Routine(int xAction)
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 				}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
@@ -457,18 +432,7 @@ function Combat_Routine(int xAction)
 		case AATurnstrike
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 			{
-
-				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponSword}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 		case Mastery
@@ -586,7 +550,7 @@ function CheckHeals()
 	{
 
 		;oration of sacrifice heal
-		if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && ${Me.Group[${temphl}].ToActor.Health}>1 && ${Me.ToActor.Health}>75 && !${haveaggro} && !${MainTank} && ${Me.Group[${temphl}].ToActor.Distance}<=20
+		if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && ${Me.Group[${temphl}].ToActor.Health}>1 && ${Me.ToActor.Health}>75 && !${haveaggro} && !${MainTank} && ${Me.Group[${temphl}].ToActor.Distance}<=20 && ${Me.Ability[${SpellType[1]}].IsReady}
 		{
 			EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
 			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID}

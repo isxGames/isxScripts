@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Warden.iss
-;version 20070514a
+;version 20070725a
 ; by Pygar
+;
+;20070725a
+; Updates for AA weapon requirement changes
 ;
 ;20070514a
 ; Fixed a rez loop issue
@@ -54,6 +57,7 @@ function Class_Declaration()
 	declare GenesisMode bool script
 	declare KeepReactiveUp bool script
 	declare UseCAs bool script 1
+	declare MeleeMode bool script 1
 	declare BuffThorns bool script 1
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
@@ -86,6 +90,7 @@ function Class_Declaration()
 	GenesisMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Genesis,FALSE]}]
 	KeepReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepReactiveUp,FALSE]}]
 	UseCAs:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseCAs,FALSE]}]
+	MeleeMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Melee,FALSE]}]
 	CombatRez:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Combat Rez,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	BuffThorns:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Thorns,FALSE]}]
@@ -342,7 +347,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Actor[exactname,${BuffTarget.Token[1,:]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
@@ -354,7 +359,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Actor[exactname,${BuffTarget.Token[1,:]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
@@ -386,18 +391,20 @@ function Combat_Routine(int xAction)
 		wait 5
 	}
 
-	;check heals on group, mt, and self and keep healing until they return safe (20 heal cap for safety)
-	do
+	if ${RaidHealMode}
 	{
-		call CheckHealthiness 70 60 50
-		if ${Return}  || ${Actor[${MainTankPC}].Distance}>25
+		;check heals on group, mt, and self and keep healing until they return safe (10 heal cap for safety)
+		do
 		{
-			break
+			call CheckHealthiness 70 60 50
+			if ${Return}  || ${Actor[${MainTankPC}].Distance}>25
+			{
+				break
+			}
+			call CheckHeals
 		}
-		call CheckHeals
+		while ${counter:Inc}<20 && ${Me.ToActor.Power}>10
 	}
-	while ${counter:Inc}<20 && ${Me.ToActor.Power}>20
-
 
 	if ${DoHOs}
 	{
@@ -507,9 +514,10 @@ function Combat_Routine(int xAction)
 
 				}
 				break
+			case AA_Thunderspike
 			case AA_Primordial_Strike
 			case AA_Nature_Blade
-				if ${OffenseMode}
+				if ${OffenseMode} && ${MeleeMode}
 				{
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -519,42 +527,7 @@ function Combat_Routine(int xAction)
 						{
 							if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 							{
-								if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-								{
-									call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-								}
-								elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-								{
-									Me.Inventory[${WeaponSword}]:Equip
-									EquipmentChangeTimer:Set[${Time.Timestamp}]
-									call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-								}
-							}
-						}
-					}
-				}
-				break
-			case AA_Thunderspike
-				if ${OffenseMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-							{
-								if ${Me.Equipment[1].Name.Equal[${OneHandedHammer}]}
-								{
-									call CastCARange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-								}
-								elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-								{
-									Me.Inventory[${OneHandedHammer}]:Equip
-									EquipmentChangeTimer:Set[${Time.Timestamp}]
-									call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-								}
+								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 							}
 						}
 					}
@@ -668,22 +641,22 @@ function Post_Combat_Routine(int xAction)
 					if ${Me.Ability[${SpellType[300]}].IsReady}
 					{
 						call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
+						wait 50
 					}
 					elseif ${Me.Ability[${SpellType[301]}].IsReady}
 					{
 						call CastSpellRange 301 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
+						wait 50
 					}
 					elseif ${Me.Ability[${SpellType[302]}].IsReady}
 					{
 						call CastSpellRange 302 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
+						wait 50
 					}
 					else
 					{
 						call CastSpellRange 303 0 0 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
+						wait 50
 					}
 				}
 			}
