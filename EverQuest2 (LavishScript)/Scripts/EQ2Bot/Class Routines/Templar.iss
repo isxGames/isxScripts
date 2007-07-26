@@ -24,6 +24,7 @@ function Class_Declaration()
 	declare FanaticismMode bool script
 	declare KeepReactiveUp bool script
 	declare MezzMode bool script
+	declare ReactiveOnlyMode bool script
 
 	declare EquipmentChangeTimer int script
 	declare HealMTPercent int script
@@ -52,6 +53,7 @@ function Class_Declaration()
 	FanaticismMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Fanaticism Mode,FALSE]}]
 	KeepReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepReactiveUp,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
+	ReactiveOnlyMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Reactive Only Mode,FALSE]}]
 
 	HealMTPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Main Tank Heal Percent,100]}]
 	HealGroupPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Group Heal Percent,100]}]
@@ -654,22 +656,28 @@ function CheckHeals()
 				if ${haveaggro}
 				{
 					call CastSpellRange 7 0 0 0 ${Me.ID}
-[				}
+				}
 
 			}
 		}
 	}
 	;MAINTANK HEALS
-	if ${Actor[${MainTankPC}].Health} < ${HealMTPercent} && ${Actor[${MainAssist}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99
-4	{
+	if ${Actor[${MainTankPC}].Health} < ${HealMTPercent} && ${ReactiveOnlyMode} == TRUE && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99
+	{
 		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
-
-	if ${Actor[${MainAssist}].Health} < ${HealMTPercent} && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)}
+	else
 	{
-		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
-	}
+		if ${Actor[${MainTankPC}].Health} < ${HealMTPercent} && ${Actor[${MainAssist}](exists)} && ${Actor[${MainTankPC}].InCombatMode} && ${Actor[${MainTankPC}].Health}>-99
+		{
+			call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+		}
 
+		if ${Actor[${MainAssist}].Health} < ${HealMTPercent} && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)}
+		{	
+			call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
+		}
+	}
 	;GROUP HEALS
 	if ${grpheal}>2
 	{
