@@ -1,6 +1,9 @@
 ;*****************************************************
-;Swashbuckler.iss 20070514a
+;Swashbuckler.iss 20070725a
 ;by Pygar
+;
+;20070725a
+; Updated for new AA changes
 ;
 ;20070514a
 ;DPS Tuning
@@ -35,7 +38,14 @@ function Class_Declaration()
 	;POISON DECLERATIONS
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
 	;The SHORT name is the name of the poison buff icon
-	DammagePoisonShort:Set[caustic poison]
+	if ${Me.InRaid}
+	{
+		DammagePoisonShort:Set[caustic poison]
+	}
+	else
+	{
+		DammagePoisonShort:Set[hemotoxin]
+	}
 	DebuffPoisonShort:Set[enfeebling poison]
 	UtilityPoisonShort:Set[ignorant bliss]
 
@@ -327,12 +337,6 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
 	Call ActionChecks
 
 
@@ -357,30 +361,12 @@ function Combat_Routine(int xAction)
 
 		if ${Me.Ability[${SpellType[381]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
 		{
-			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-			{
-				call CastSpellRange 381 0 1 1 ${KillTarget} 0 0 1
-			}
-			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-			{
-				Me.Inventory[${WeaponSword}]:Equip
-				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastSpellRange 381 0 1 1 ${KillTarget} 0 0 1
-			}
+			call CastSpellRange 381 0 1 1 ${KillTarget} 0 0 1
 		}
 
 		if ${Me.Ability[${SpellType[382]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
 		{
-			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-			{
-				call CastSpellRange 382 0 1 1 ${KillTarget} 0 0 1
-			}
-			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-			{
-				Me.Inventory[${WeaponSword}]:Equip
-				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastSpellRange 382 0 1 1 ${KillTarget} 0 0 1
-			}
+			call CastSpellRange 382 0 1 1 ${KillTarget} 0 0 1
 		}
 
 		if ${Me.Ability[${SpellType[101]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
@@ -462,50 +448,20 @@ function Combat_Routine(int xAction)
 		case AA_WalkthePlank
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponRapier}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 		case AA_Torporous
 		case AA_Traumatic
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponSword}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 		case AA_BootDagger
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponDagger}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 

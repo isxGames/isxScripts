@@ -1,7 +1,12 @@
 ;*************************************************************
-;Guardian.iss 20070404a
+;Guardian.iss 20070725a
 ;version
 ;by Pygar
+;
+;20070725a
+; Updated for AA changes
+; Added Executioner's Wrath
+; Fixed avoidance buff sorta?  Have to manually cancel to change
 ;
 ;20070404a
 ;	Updated for latest eq2bot
@@ -132,14 +137,19 @@ function Combat_Init()
    SpellRange[9,2]:Set[81]
    SpellRange[9,3]:Set[82]
 
-   Action[10]:Set[Melee_Attack]
+   Action[10]:Set[AA_Wrath]
    Power[10,1]:Set[5]
    Power[10,2]:Set[100]
-   SpellRange[10,1]:Set[150]
-   SpellRange[10,2]:Set[151]
-   SpellRange[10,3]:Set[152]
-   SpellRange[10,4]:Set[153]
-   SpellRange[10,5]:Set[154]
+   SpellRange[10,1]:Set[397]
+
+   Action[11]:Set[Melee_Attack]
+   Power[11,1]:Set[5]
+   Power[11,2]:Set[100]
+   SpellRange[11,1]:Set[150]
+   SpellRange[11,2]:Set[151]
+   SpellRange[11,3]:Set[152]
+   SpellRange[11,4]:Set[153]
+   SpellRange[11,5]:Set[154]
 
    Action[12]:Set[Shield_Attack]
    Power[12,1]:Set[5]
@@ -188,11 +198,6 @@ function Buff_Routine(int xAction)
 
 		case Avoidance_Target
 			BuffTarget:Set[${UIElement[cbBuffAvoidanceGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
-
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -337,16 +342,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						if ${Me.Equipment[1].Name.Equal[${WeaponSpear}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${WeaponSpear}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-						}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 				}
 				break
@@ -396,22 +392,13 @@ function Combat_Routine(int xAction)
 				break
 
 			case Belly_Smash
+			case AA_Wrath
 				if ${OffensiveMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						if ${Me.Equipment[1].Name.Equal[${WeaponHammer}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${WeaponHammer}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange 240 0 1 0 ${KillTarget}
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-						}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 				}
 				break
@@ -443,16 +430,7 @@ function Post_Combat_Routine(int xAction)
 		case AA_AccelterationStrike
 			if ${Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}].IsReady}
 			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponSword}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]}
-				}
+				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
 			break
 

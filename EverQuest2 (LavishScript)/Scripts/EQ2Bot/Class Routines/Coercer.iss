@@ -1,8 +1,12 @@
 ;*************************************************************
 ;Coercer.iss
-;version 20070427a
+;version 20070725a
 ;by karye
 ;updated by pygar
+;
+;20070725a (pygar)
+; Updated weapon swapping changes
+; Fixed clarity buff loop (cheesy fix, I know)
 ;
 ; 20070427a
 ;	Fixed Mastery not to move to melee range
@@ -22,8 +26,6 @@
 ;Implemented Vampire Spell Sunbolt
 ;Implemented Crystalize Spirit Healing
 ;*************************************************************
-
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -223,6 +225,7 @@ function Buff_Routine(int xAction)
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
+			wait 20
 			break
 		case Signet
 			if ${BuffSignet}
@@ -485,25 +488,7 @@ function Combat_Routine(int xAction)
 	;chronsphioning AA. we should always try to keep this spell up
 	if ${Me.Ability[${SpellType[382]}](exists)} && ${Me.Ability[${SpellType[382]}].IsReady}
 	{
-		;if we have a dual wield or a 1hander and nothing in our secondary we are good to go
-		if (${Me.Equipment[1].WieldStyle.Find[Dual Wield]} || ${Me.Equipment[1].WieldStyle.Find[One-Handed]}) && !${Me.Equipment[2](exists)}
-		{
-			call CastSpellRange 382 0 0 0 ${KillTarget}
-		}
-		;if we have a dual wield or a 1hander but have something in our secondary well remove it
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2 && (${Me.Equipment[1].WieldStyle.Find[Dual Wield]} || ${Me.Equipment[1].WieldStyle.Find[One-Handed]}) && ${Me.Equipment[2](exists)}
-		{
-			Me.Equipment[2]:UnEquip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 382 0 0 0 ${KillTarget}
-		}
-		;if we have nothing in our primary or a 2 hander we will swap in the AA dagger which we assume to be 1h or dual weild
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2 && !${Me.Equipment[2](exists)}
-		{
-			Me.Inventory[${WeaponDagger}]:Equip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 382 0 0 0 ${KillTarget}
-		}
+		call CastSpellRange 382 0 0 0 ${KillTarget}
 	}
 
 	;Make sure kill target is AA Tahsina'd if available

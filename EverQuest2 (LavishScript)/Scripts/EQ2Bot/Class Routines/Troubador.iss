@@ -1,7 +1,10 @@
 ;*****************************************************
-;Troubador.iss 20070524a
+;Troubador.iss 20070725a
 ;by Karye
 ;updated by Pygar
+;
+;20070725a
+; Updated for new AA weapon requirements
 ;
 ;20070524a (Pygar)
 ;Charmtarget stickiness removed, wont charm / mez MA's current target anymore
@@ -394,12 +397,6 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
@@ -446,34 +443,14 @@ function Combat_Routine(int xAction)
 		case AATurnstrike
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 			{
-
-				if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponSword}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 
 		case AARhythm_Blade
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-				elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-				{
-					Me.Inventory[${WeaponRapier}]:Equip
-					EquipmentChangeTimer:Set[${Time.Timestamp}]
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 
@@ -483,16 +460,7 @@ function Combat_Routine(int xAction)
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 				}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
@@ -514,7 +482,6 @@ function Combat_Routine(int xAction)
 			If ${AoEMode} && ${Mob.Count}>2
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-
 			}
 			break
 		case AAHarmonizing_Shot

@@ -1,3 +1,4 @@
+; this script is the suck, someone port monk please (pygar)
 function Class_Declaration()
 {
 
@@ -51,7 +52,7 @@ function Combat_Init()
 
 	Action[8]:Set[High_Attack]
 	SpellRange[8,1]:Set[321]
-	
+
 	Action[9]:Set[AoE_All]
 	SpellRange[9,1]:Set[95]
 	SpellRange[9,2]:Set[96]

@@ -1,6 +1,12 @@
 ;*****************************************************
-;Brigand.iss 20070508a
+;Brigand.iss 20070725a
 ;by Pygar
+;
+;20070725a
+; Fixed weapon swapping for new aa requirements,
+; Adjusted announcement code
+; Tweaked DPS Buff selections
+; General fixes
 ;
 ;20070508a
 ; Fixed some old bugs brought back from consolidating versions.
@@ -359,69 +365,30 @@ function Combat_Routine(int xAction)
 
 		if ${Me.Ability[${SpellType[100]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
 		{
-			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
+			call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 1
+			if ${AnnounceMode} && ${Me.Maintained[${SpellType[100]}](exists)}
 			{
-				call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[100]}](exists)}
-				{
-					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-				}
-
-			}
-			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-			{
-				Me.Inventory[${WeaponSword}]:Equip
-				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[100]}](exists)}
-				{
-					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-				}
+				EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
+				EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 			}
 		}
 
 		if ${Me.Ability[${SpellType[101]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
 		{
-			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-			{
-				call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[101]}](exists)}
-				{
-					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-				}
-
-			}
-			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-			{
-				Me.Inventory[${WeaponSword}]:Equip
-				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[101]}](exists)}
-				{
-					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-				}
-			}
+			call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
 		}
 	}
 
 	;if heroic and over 80% health, use dps buffs
-	if ${Actor[${KillTarget}].IsHeroic}
+	if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health}>80) || (${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}>20)
 	{
-		call CheckCondition MobHealth 40 100
-		if ${Return.Equal[OK]}
+		if ${Me.Ability[${SpellType[155]}].IsReady}
 		{
-			if ${Me.Ability[${SpellType[155]}].IsReady}
-			{
-				call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1
-			}
-			if ${Me.Ability[${SpellType[156]}].IsReady}
-			{
-				call CastSpellRange 156 0 0 0 ${KillTarget} 0 0 1
-			}
+			call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1
+		}
+		if ${Me.Ability[${SpellType[156]}].IsReady}
+		{
+			call CastSpellRange 156 0 0 0 ${KillTarget} 0 0 1
 		}
 	}
 
@@ -435,55 +402,19 @@ function Combat_Routine(int xAction)
 		call CheckCondition MobHealth 80 100
 		if ${Me.Ability[${SpellType[100]}].IsReady} && ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[100]}](exists)} && ${Target.Target.ID}!=${Me.ID}
 		{
-			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
+			call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 1
+			if ${AnnounceMode} && ${Me.Maintained[${SpellType[100]}](exists)}
 			{
-				call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[100]}](exists)}
-				{
-					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-				}
-
-			}
-			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-			{
-				Me.Inventory[${WeaponSword}]:Equip
-				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[100]}](exists)}
-				{
-					EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-					EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
-				}
+				EQ2Execute /g %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
+				EQ2Execute /raidsay %t is Dispastched - All Resistances Severely lowered for 15s - Nuke Now
 			}
 		}
 
 		call CheckCondition MobHealth 80 100
 		if ${Me.Ability[${SpellType[101]}].IsReady} && ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[101]}](exists)}
 		{
-			if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-			{
-				call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[101]}](exists)}
-				{
-					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-				}
-
-			}
-			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-			{
-				Me.Inventory[${WeaponSword}]:Equip
-				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[101]}](exists)}
-				{
-					EQ2Execute /g %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-					EQ2Execute /raidsay %t is Debilitated - Mitigation lowered for 15s - Use High Dammage Attacks Now
-				}
-			}
+			call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
 		}
-
 	}
 
 	if ${OffenseMode}
@@ -552,56 +483,25 @@ function Combat_Routine(int xAction)
 			case AA_WalkthePlank
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponRapier}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				break
 			case AA_Torporous
 			case AA_Traumatic
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponSword}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				break
 			case AA_BootDagger
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				break
 			case DoubleUp
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				break
-
 			case Flank_Attack1
 			case Flank_Attack2
 				;check valid rear position
@@ -648,7 +548,7 @@ function Combat_Routine(int xAction)
 				;check front
 				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
 				{
-
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 				}
 				elseif ${Target.Target.ID}!=${Me.ID}
 				{
@@ -676,24 +576,11 @@ function Combat_Routine(int xAction)
 	{
 		if ${Me.Ability[Walk the Plank].IsReady}
 		{
-			if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
-			{
 				call CastSpellRange 385 0 1 0 ${KillTarget}
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 				{
 					call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
 				}
-			}
-			elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-			{
-				Me.Inventory[${WeaponRapier}]:Equip
-				EquipmentChangeTimer:Set[${Time.Timestamp}]
-				call CastSpellRange 385 0 1 0 ${KillTarget}
-				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
-				{
-					call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
-				}
-			}
 		}
 
 		if ${Me.Ability[Cheap Shot].IsReady}
@@ -731,33 +618,13 @@ function Combat_Routine(int xAction)
 				case AA_Traumatic
 					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 					{
-						if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${WeaponSword}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
-
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					break
 				case AA_BootDagger
 					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 					{
-						if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${WeaponDagger}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-						}
-
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 					break
 				case Melee_Attack1
@@ -776,7 +643,6 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 					break
-
 				case Snare
 					if ${SnareMode}
 					{
@@ -794,7 +660,6 @@ function Combat_Routine(int xAction)
 						}
 					}
 					break
-
 				case AA_WalkthePlank
 				case Rear_Attack1
 				case Rear_Attack2
@@ -840,33 +705,13 @@ function Combat_Routine(int xAction)
 			case AA_Traumatic
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponSword}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponSword}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				break
 			case AA_BootDagger
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponDagger}]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponDagger}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				}
 				break
 			case Melee_Attack1
@@ -913,24 +758,11 @@ function Combat_Routine(int xAction)
 			case AA_WalkthePlank
 				if ${Me.Ability[Walk the Plank].IsReady}
 				{
-					if ${Me.Equipment[1].Name.Equal[${WeaponRapier}]}
-					{
 						call CastSpellRange 385 0 1 0 ${KillTarget}
 						if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 						{
 							call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
 						}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponRapier}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange 385 0 1 0 ${KillTarget}
-						if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
-						{
-							call CastSpellRange 100 101 0 0 ${KillTarget} 0 0 1
-						}
-					}
 				}
 			case Trickery
 				if ${Target.Target.ID}==${Me.ID}

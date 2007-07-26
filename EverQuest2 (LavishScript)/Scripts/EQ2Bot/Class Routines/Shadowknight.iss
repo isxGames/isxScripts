@@ -41,7 +41,6 @@ function Class_Declaration()
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
 
-
 	declare WeaponHammer string script
 	declare WeaponSword string script
 	declare WeaponSpear string script
@@ -160,8 +159,6 @@ function Combat_Init()
 
    Action[11]:Set[ThermalShocker]
 
-
-
 }
 
 function PostCombat_Init()
@@ -245,7 +242,7 @@ function Combat_Routine(int xAction)
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
 	call UseCrystallizedSpirit 60
 
-	if ${Me.ToActor.Health}<90
+	if ${Me.ToActor.Health}<70
 	{
 		call CastSpellRange 7
 	}
@@ -362,16 +359,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						if ${Me.Equipment[1].Name.Equal[${WeaponAxe}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${WeaponAxe}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-						}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 				}
 				break

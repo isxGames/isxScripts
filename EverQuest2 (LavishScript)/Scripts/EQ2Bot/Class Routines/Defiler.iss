@@ -26,7 +26,6 @@
 ;Fixed a bug with curing uncurable afflictions
 ;The defiler will now use spiritual circle more often
 ;*************************************************************
-#includeoptional "\\Athena\innerspace\Scripts\EQ2Bot\Class Routines\EQ2BotLib.iss"
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
@@ -520,19 +519,8 @@ function Combat_Routine(int xAction)
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[385]}](exists)}
 	{
-		if ${Me.Equipment[1].Name.Equal[${OneHandedSpear}]}
-		{
-			call CastSpellRange 388
-		}
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-		{
-			Me.Inventory[${OneHandedSpear}]:Equip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 388
-		}
+		call CastSpellRange 388
 	}
-
-
 
 	if ${ShardMode}
 	{
@@ -557,8 +545,9 @@ function Combat_Routine(int xAction)
 	{
 		Me.Maintained[${SpellType[317]}]:Cancel
 	}
+
 	;Before we do our Action, check to make sure our group doesnt need healing
-	call CheckGroupHealth 75
+	call CheckGroupHealth 50
 	if ${Return}
 	{
 		switch ${Action[${xAction}]}
@@ -593,17 +582,7 @@ function Combat_Routine(int xAction)
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
 						{
-							if ${Me.Equipment[1].Name.Equal[${Buckler}]}
-							{
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-							}
-							elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-							{
-								Me.Inventory[${Buckler}]:Equip
-								EquipmentChangeTimer:Set[${Time.Timestamp}]
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-							}
-
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 						}
 					}
 				}
@@ -618,7 +597,6 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[OK]}
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-
 					}
 				}
 				break
@@ -669,7 +647,6 @@ function Combat_Routine(int xAction)
 			if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)}
 			{
 				Target ${KillTarget}
-				call CheckPosition 1 1
 				Me.Ability[Master's Smite]:Use
 			}
 			break
