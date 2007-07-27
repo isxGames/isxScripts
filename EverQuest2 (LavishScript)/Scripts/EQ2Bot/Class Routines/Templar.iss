@@ -1,8 +1,25 @@
 ;*************************************************************
 ;Templar.iss
-;version 20070719a
+;version 20070725a
 ;variation on Inquisitor script for Templar by karye
 ;Edited by Cybris,Pygar
+;
+;20070725a (Pygar)
+; Defaulted Heal %'s to rational numbers
+; Removed duplicate HO Object Calls
+; Fixed group cures to work on trauma and arcane (not elemental)
+; Minor clean up in cure functions
+; Minor Update for AA weapon requirements
+;
+;20070719a (Cybris)
+; See release thread
+;
+;TODO List
+; Add StartHO UI element
+; Only cast after reactive if health continue's to decrease
+; Don't cast reactive if already up
+; Toggle using Group or Single Target reactive for Raid efficiency
+;
 ;*************************************************************
 #include "${LavishScript.HomeDirectory}/Scripts/EQ2HOLib.iss"
 
@@ -14,7 +31,7 @@ function Class_Declaration()
 {
 
 	addtrigger IncomingMob "@${Actor[${MainAssist}].ID}@ says to the group,\"MOB Incoming...!!""
-	
+
 	declare OffenseMode bool script
 	declare DebuffMode bool script
 	declare AoEMode bool script
@@ -55,9 +72,9 @@ function Class_Declaration()
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	ReactiveOnlyMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Reactive Only Mode,FALSE]}]
 
-	HealMTPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Main Tank Heal Percent,100]}]
-	HealGroupPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Group Heal Percent,100]}]
-	HealPetPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Pet Heal Percent,100]}]
+	HealMTPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Main Tank Heal Percent,90]}]
+	HealGroupPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Group Heal Percent,70]}]
+	HealPetPercent:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetInt[Pet Heal Percent,40]}]
 
 	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
@@ -283,17 +300,15 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	objHeroicOp:DoHO
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}
-	{
-		call CastSpellRange 303
-	}
+
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
 	}
+
 	call CheckHeals
+
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -458,16 +473,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						if ${Me.Equipment[1].Name.Equal[${TwoHandedStaff}]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-						{
-							Me.Inventory[${TwoHandedStaff}]:Equip
-							EquipmentChangeTimer:Set[${Time.Timestamp}]
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
 
@@ -493,7 +499,9 @@ function Post_Combat_Routine(int xAction)
 {
 
 	TellTank:Set[FALSE]
+
 	call CheckHeals
+
 	;turn off Yaulp
 	if ${Me.Maintained[${SpellType[385]}](exists)}
 	{
@@ -578,7 +586,6 @@ function CheckHeals()
 			}
 
 			if ${Me.Group[${temphl}].IsAfflicted}
-
 			{
 				tmpafflictions:Set[${Math.Calc[${Me.Group[${temphl}].Arcane}+${Me.Group[${temphl}].Trauma}+${Me.Group[${temphl}].Elemental}+${Me.Group[${temphl}].Noxious}]}]
 
@@ -594,7 +601,7 @@ function CheckHeals()
 				grpheal:Inc
 			}
 
-			if ${Me.Group[${temphl}].Arcane} || ${Me.Group[${temphl}].Elemental}
+			if ${Me.Group[${temphl}].Arcane} || ${Me.Group[${temphl}].Trauma}
 			{
 				grpcure:Inc
 			}
@@ -616,7 +623,7 @@ function CheckHeals()
 		grpheal:Inc
 	}
 
-	if ${Me.Arcane} || ${Me.Elemental}
+	if ${Me.Arcane} || ${Me.Trauma}
 	{
 		grpcure:Inc
 	}
@@ -674,7 +681,7 @@ function CheckHeals()
 		}
 
 		if ${Actor[${MainAssist}].Health} < ${HealMTPercent} && ${Actor[${MainTankPC}].Health} >-99 && ${Actor[${MainTankPC}](exists)}
-		{	
+		{
 			call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
@@ -823,14 +830,9 @@ function CureGroupMember(int gMember)
 
 	do
 	{
-		if  ${Me.Group[${gMember}].Arcane}>0 && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
+		if  ${Me.Group[${gMember}].Arcane}>0
 		{
-			;call CastSpellRange 326
-
-				if  ${Me.Group[${gMember}].Arcane}>0 && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
-				{
-					call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
-				}
+			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 
 		if  ${Me.Group[${gMember}].Noxious}>0
