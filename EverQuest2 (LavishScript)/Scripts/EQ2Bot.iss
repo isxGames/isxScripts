@@ -1,5 +1,12 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.6.1 Updated: 07/20/07 by Pygar
+; EQ2Bot.iss Version 2.7.0 Updated: 07/29/07 by Blazer
+;
+;2.7.0 (Blazer)
+; You can now set Points of Interest for Dungeon Crawl Mode (This will help with moving to designated points that you want your bots to pass through)
+; POI's can be re-arranged in priority order (top being first) by clicking and dragging the selection in the listbox.
+; POI's can be excluded as well.
+; Fixed MoveToMaster
+; Added a Main Assist Range. This will ensure your group members dont engage a target unless the Main Assist is within this set range.
 ;
 ;2.6.1 (Pygar)
 ; Using new Loot Events
@@ -125,7 +132,6 @@ variable int Deviation
 variable int Leash
 variable bool movingtowp
 variable bool pulling
-variable bool priesthaspower=FALSE
 variable int stuckcnt
 variable int grpcnt
 variable bool movinghome
@@ -149,7 +155,7 @@ variable int mstimer=${Time.Timestamp}
 variable int StartLevel=${Me.Level}
 variable bool PullNonAggro
 variable bool checkadds
-variable string DCDirection=Finish
+variable bool DCDirection=TRUE
 variable string reactivespell
 variable string Harvesting
 variable bool PauseBot=FALSE
@@ -170,6 +176,8 @@ variable int wipegroup
 variable bool WipeRevive
 variable string PullType
 variable string LootMethod
+variable int MARange
+variable string CurrentAction
 ;===================================================
 
 ;===================================================
@@ -190,6 +198,10 @@ variable lnavregionref PullPoint
 variable bool CampNav=TRUE
 variable int RegionCount
 variable bool IsFinish
+variable string POIList[50]
+variable bool POIInclude[50]
+variable int POICount
+variable int CurrentPOI=1
 ;===================================================
 
 ;===================================================
@@ -212,8 +224,7 @@ function main()
 	variable int tempvar1
 	variable int tempvar2
 	variable string tempnme
-	variable index:lnavregionref CheckRegion
-
+	
 	Turbo 1000
 
 	;Script:Squelch
@@ -371,16 +382,15 @@ function main()
 					}
 				}
 
-				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && ${Actor[${KillTarget},radius,35](exists)}
+				; Add additional check to see if Mob is in Camp (assume radius of 15) OR MainTank is within designated range
+				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && (${Mob.Detect} || ${Actor[${MainAssist}].Distance}<${MARange})
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
 						call Combat
 					}
 				}
-
 			}
-
 
 			if ${PathType}==4 && ${MainTank}
 			{
@@ -411,7 +421,6 @@ function main()
 						tempvar:Set[40]
 					}
 				}
-
 
 				call Buff_Routine ${tempvar}
 				if ${Return.Equal[Buff Complete]}
@@ -505,14 +514,7 @@ function main()
 
 		if ${AutoPull}
 		{
-			if ${Mob.Detect}
-			{
-
-			}
-
-			EQ2Bot:PriestPower
-
-			if ${PathType}==2 && ${priesthaspower} && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck}
+			if ${PathType}==2 && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
 			{
 				PullPoint:SetRegion[${EQ2Bot.ScanWaypoints}]
 				if ${PullPoint}
@@ -530,20 +532,22 @@ function main()
 					}
 				}
 			}
-			elseif ${PathType}==3 && ${priesthaspower} && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${AutoPull}
+			elseif ${PathType}==3 && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${AutoPull} && ${EQ2Bot.PriestPower}
 			{
 				pulling:Set[TRUE]
-
-				if ${LNavRegionGroup[Start].RegionsWithin[CheckRegion,${Math.Calc[${BoxWidth}*2]},${Me.X},${Me.Z},${Me.Y}]}
+				if ${CurrentPOI}==1
 				{
-					DCDirection:Set[Finish]
+					call MovetoWP ${LNavRegionGroup[Start].NearestRegion[${Me.X},${Me.Z},${Me.Y}].ID}
 				}
-				elseif ${LNavRegionGroup[Finish].RegionsWithin[CheckRegion,${Math.Calc[${BoxWidth}*2]},${Me.X},${Me.Z},${Me.Y}]}
+				elseif ${CurrentPOI}==${Math.Calc[${POICount}+2]}
 				{
-					DCDirection:Set[Start]
+					call MovetoWP ${LNavRegionGroup[Finish].NearestRegion[${Me.X},${Me.Z},${Me.Y}].ID}
 				}
-
-				call MovetoWP ${LNavRegionGroup[${DCDirection}].NearestRegion[${Me.X},${Me.Z},${Me.Y}].ID}
+				else
+				{
+					call MovetoWP ${LNavRegion[${POIList[${CurrentPOI}]}]}
+				}
+				
 				EQ2Execute /target_none
 			}
 
@@ -551,7 +555,7 @@ function main()
 			{
 				if ${PathType}==4 && !${Me.InCombat}
 				{
-					if ${priesthaspower}
+					if ${EQ2Bot.PriestPower}
 					{
 						call Pull any
 						if ${engagetarget}
@@ -566,7 +570,7 @@ function main()
 				}
 				else
 				{
-					if ${priesthaspower} || ${Mob.Detect}
+					if ${EQ2Bot.PriestPower} || ${Mob.Detect}
 					{
 						call Pull any
 						if ${engagetarget}
@@ -752,6 +756,7 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 		return
 	}
 
+	CurrentAction:Set[Casting ${spell}]
 	Me.Ability[${spell}]:Use
 
 	;if spells are being interupted do to movement
@@ -1788,15 +1793,33 @@ function FastMove(float X, float Z, int range)
 
 function MovetoWP(lnavregionref destination)
 {
+	variable index:lnavregionref CheckRegion
+		
 	PathIndex:Set[0]
 	movingtowp:Set[TRUE]
 	stuckcnt:Set[0]
+
+	if ${PathType}==3
+	{
+		if ${CurrentPOI}==1
+		{
+			CurrentAction:Set[Moving to Start]
+		}
+		elseif ${CurrentPOI}==${Math.Calc[${POICount}+2]}
+		{
+			CurrentAction:Set[Moving to Finish]
+		}
+		else
+		{
+			CurrentAction:Set[Moving to ${destination.Name}]
+		}
+	}
 
 	if ${EQ2Nav.FindPath[${destination}]}
 	{
 		if (${pulling} || ${PathType}==3) && !${Me.IsMoving}
 		{
-			face ${CurrentPath.Region[1].CenterPoint.X} ${CurrentPath.Region[1].CenterPoint.Y}
+			face ${CurrentPath.Region[2].CenterPoint.X} ${CurrentPath.Region[2].CenterPoint.Y}
 			wait 5
 			press -hold ${forward}
 			PositionHeading:Set[${Me.Heading}]
@@ -1814,6 +1837,9 @@ function MovetoWP(lnavregionref destination)
 			{
 				; can sort out later what to do with stuck problems
 				stuckcnt:Inc
+
+				; We might be stunned so lets wait 1 second
+				wait 10
 
 				if ${stuckcnt}>10 && ${Me.IsMoving}
 				{
@@ -1887,7 +1913,6 @@ function MovetoWP(lnavregionref destination)
 					return
 				}
 			}
-
 		}
 
 		if (${pulling} || ${PathType}==3) && ${Me.IsMoving}
@@ -1896,65 +1921,59 @@ function MovetoWP(lnavregionref destination)
 			wait 20 !${Me.IsMoving}
 		}
 	}
-
+	
+	if ${PathType}==3
+	{
+		if ${CurrentPOI}==1
+		{
+			DCDirection:Set[TRUE]
+		}
+		elseif ${CurrentPOI}==${Math.Calc[${POICount}+2]}
+		{
+			DCDirection:Set[FALSE]
+		}
+		
+		do
+		{
+			if ${DCDirection}
+			{
+				CurrentPOI:Inc
+			}
+			else
+			{
+				CurrentPOI:Dec
+			}
+		}
+		while !${POIInclude[${CurrentPOI}]}
+	}
+	
 	movingtowp:Set[FALSE]
 }
 
 function MovetoMaster()
 {
-	variable string MasterPoint
-	variable int tmpdev
-; Need to convert this
-return
-	NavPath:Clear
-	PathIndex:Set[1]
-	stuckcnt:Set[0]
-
-	tmpdev:Set[${Math.Rand[${Math.Calc[${Deviation}*2+1]}]:Dec[${Deviation}]}]
-	MasterPoint:Set[${Navigation.World[${World}].NearestPoint[${Actor[${MainAssist}].X},${Actor[${MainAssist}].Y},${Actor[${MainAssist}].Z}]}
-	NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
-
-	NavPath "${World}" "${NearestPoint}" "${MasterPoint}"
-
-	if ${NavPath.Points}>0
+	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[${MainAssist}].X},${Actor[${MainAssist}].Z},${Actor[${MainAssist}].Y}].FQN}]}
 	{
-		if !${Me.IsMoving}
+		CurrentAction:Set[Moving Closer to Main Aasist]
+		movingtowp:Set[TRUE]
+		pulling:Set[TRUE]
+
+		press -hold ${forward}
+
+		while ${PathIndex:Inc}<=${CurrentPath.Hops}
 		{
-			press -hold ${forward}
+			WPX:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.X}]
+			WPY:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.Y}]
+
+			call FastMove ${WPX} ${WPY} 2
 		}
-
-		do
-		{
-			; Move to next Waypoint
-			WPX:Set[${Math.Calc[${tmpdev}*${Math.Cos[-${Me.Heading}]}+${NavPath.Point[${PathIndex}].X}]
-			WPZ:Set[${Math.Calc[${tmpdev}*${Math.Sin[-${Me.Heading}]}+${NavPath.Point[${PathIndex}].Z}]
-
-
-			call FastMove ${WPX} ${WPZ} 3
-
-			if ${Return.Equal[STUCK]}
-			{
-				; can sort out later what to do with stuck problems
-				stuckcnt:Inc
-
-				if ${stuckcnt}>10 && ${Me.IsMoving}
-				{
-					return "STUCK"
-				}
-
-				if !${Me.IsMoving}
-				{
-					press -hold ${forward}
-				}
-			}
-		}
-		while ${PathIndex:Inc}<=${NavPath.Points}
 
 		if ${Me.IsMoving}
 		{
 			press -release ${forward}
-			wait 20 !${Me.IsMoving}
 		}
+
+		movetowp:Set[FALSE]
 	}
 }
 
@@ -2599,6 +2618,41 @@ objectdef ActorCheck
 		}
 	}
 
+	member:bool CheckActor(int actorid)
+	{
+		switch ${Actor[${actorid}].Type}
+		{
+			case NPC
+				break
+
+			case PC
+				return FALSE
+
+			Default
+				return FALSE
+		}
+
+		;checks if mob is too far above or below us
+		if ${Me.Y}+10<${Actor[${actorid}].Y} || ${Me.Y}-10>${Actor[${actorid}].Y}
+		{
+			return FALSE
+		}
+
+		if ${Actor[${actorid}].IsLocked}
+		{
+			return FALSE
+		}
+
+		if ${Actor[${actorid}](exists)}
+		{
+			return TRUE
+		}
+		else
+		{
+			return FALSE
+		}
+	}
+
 	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
 	member:bool AggroGroup(int actorid)
 	{
@@ -2682,7 +2736,7 @@ objectdef ActorCheck
 		EQ2:CreateCustomActorArray[byDist,15]
 		do
 		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
+			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
 			{
 				if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
 				{
@@ -2789,9 +2843,10 @@ objectdef EQ2BotObj
 		LootMethod:Set[${SettingXML[${charfile}].Set[General Settings].GetString[LootMethod,Accept]}]
 		AutoPull:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Pull,FALSE]}]
 		PullSpell:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What to use when PULLING?,SPELL]}]
-		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What RANGE to PULL from?,15]}]
+		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to PULL from?,15]}]
 		PullWithBow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Pull with Bow (Ranged Attack)?,FALSE]}]
-		ScanRange:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What RANGE to SCAN for Mobs?,20]}]
+		ScanRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to SCAN for Mobs?,20]}]
+		MARange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to Engage from Main Assist?,15]}]
 		PowerCheck:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Minimum Power the puller will pull at?,80]}]
 		HealthCheck:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Minimum Health the puller will pull at?,90]}]
 		IgnoreEpic:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Epic Encounters?,TRUE]}]
@@ -3184,18 +3239,15 @@ objectdef EQ2BotObj
 		}
 	}
 
-
-
-	method PriestPower()
+	member:bool PriestPower()
 	{
 		variable int tempvar=1
 
 		if !${CheckPriestPower}
 		{
-			priesthaspower:Set[TRUE]
+			return TRUE
 		}
 
-		priesthaspower:Set[FALSE]
 		do
 		{
 			switch ${Me.Group[${tempvar}].Class}
@@ -3212,24 +3264,23 @@ objectdef EQ2BotObj
 				case mystic
 					if ${Me.Group[${tempvar}].Level}>=12 && ${Actor[${Me.ID}].Effect[${reactivespell}](exists)} && ${KeepReactive} && ${Me.Group[${tempvar}].ToActor.Power}>80
 					{
-						priesthaspower:Set[TRUE]
+						return TRUE
 					}
 					elseif ${Me.Group[${tempvar}].ToActor.Power}>80 && !${KeepReactive}
 					{
-						priesthaspower:Set[TRUE]
+						return TRUE
 
 					}
-					return
+					return FALSE
+					
 				case default
 					break
 			}
 		}
 		while ${tempvar:Inc}<${Me.GroupCount}
 
-		priesthaspower:Set[TRUE]
+		return TRUE
 	}
-
-
 }
 
 objectdef Navigation
@@ -3237,8 +3288,17 @@ objectdef Navigation
 	method Initialise()
 	{
 		variable index:lnavregionref CheckRegion
+		variable index:lnavregionref CheckPOI
+		variable int Index
 
 		LavishNav:Clear
+		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:ClearItems
+		
+		while ${Index:Inc}<=50
+		{
+			POIList[${Index}]:Set[]
+			POIInclude[${Index}]:Set[0]
+		}
 
 		if ${ConfigPath.FileExists[${Zone.ShortName}.xml]}
 		{
@@ -3266,6 +3326,35 @@ objectdef Navigation
 			CampNav:Set[TRUE]
 			UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 			UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+		}
+		
+		POICount:Set[${LNavRegionGroup[POI].RegionsWithin[CheckPOI,99999,${Me.X},${Me.Z},${Me.Y}]}]
+		POIList[1]:Set[Start]
+		POIInclude[1]:Set[TRUE]
+		POIList[${Math.Calc[${POICount}+2]}]:Set[Finish]
+		POIInclude[${Math.Calc[${POICount}+2]}]:Set[TRUE]
+		
+		if ${POICount}
+		{
+			Index:Set[0]
+			while ${CheckPOI.Get[${Index:Inc}](exists)}
+			{
+				POIList[${Math.Calc[${CheckPOI.Get[${Index}].Custom[Priority]}+1]}]:Set[${CheckPOI.Get[${Index}].FQN}]
+				POIInclude[${Math.Calc[${CheckPOI.Get[${Index}].Custom[Priority]}+1]}]:Set[${CheckPOI.Get[${Index}].Custom[Inclusion]}]
+			}
+			
+			Index:Set[1]
+			while ${Index:Inc}<=${Math.Calc[${POICount}+1]}
+			{
+				if ${POIInclude[${Index}]}
+				{
+					UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetTextColor[FF22FF22]:AddItem[${POIList[${Index}]} (INCLUDED)]
+				}
+				else
+				{
+					UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetTextColor[FFFF0000]:AddItem[${POIList[${Index}]} (EXCLUDED)]
+				}
+			}
 		}
 	}
 
@@ -3362,21 +3451,21 @@ objectdef Navigation
 		}
 	}
 
-        member:bool ShouldConnect(lnavregionref regionA, lnavregionref regionB)
-        {
-                if ${regionA.ID}==${regionB.ID}
-                {
-                        return FALSE
-                }
+	member:bool ShouldConnect(lnavregionref regionA, lnavregionref regionB)
+	{
+  	if ${regionA.ID}==${regionB.ID}
+		{
+			return FALSE
+		}
 
-                return TRUE
-        }
+		return TRUE
+	}
 
 	method ConnectRegions()
-        {
-                variable index:lnavregionref SurroundingRegions
-                variable int RegionsFound
-                variable int Index
+	{
+		variable index:lnavregionref SurroundingRegions
+		variable int RegionsFound
+		variable int Index
 		variable float DistanceToCheck
 
 		Region:SetRegion[${This.CurrentRegion}]
@@ -3384,7 +3473,11 @@ objectdef Navigation
 		switch ${Region.Type}
 		{
 			case Box
-				DistanceToCheck:Set[${BoxWidth}]
+				DistanceToCheck:Set[${BoxWidth}*0.8]
+				break
+				
+			case point
+				; Ignore Points as they are already handled
 				break
 
 			default
@@ -3393,45 +3486,44 @@ objectdef Navigation
 				break
 		}
 
-                RegionsFound:Set[${LNavRegion[${Zone.Name}].DescendantsWithin[SurroundingRegions,${DistanceToCheck},${Region.CenterPoint}]}]
+		RegionsFound:Set[${LNavRegion[${Zone.Name}].DescendantsWithin[SurroundingRegions,${DistanceToCheck},${Region.CenterPoint}]}]
 
-                if ${RegionsFound}>0
-                {
-                        while ${SurroundingRegions.Get[${Index:Inc}](exists)}
-                        {
+		if ${RegionsFound}>0
+		{
+			while ${SurroundingRegions.Get[${Index:Inc}](exists)}
+			{
 				if !${Region.GetConnection[${SurroundingRegions.Get[${Index}].FQN}](exists)}
 				{
-	                                if ${This.ShouldConnect[${Region.ID},${SurroundingRegions.Get[${Index}].ID}]}
-        	                        {
+					if ${This.ShouldConnect[${Region.ID},${SurroundingRegions.Get[${Index}].ID}]}
+					{
 						Region:Connect[${SurroundingRegions.Get[${Index}].ID}]
 						SurroundingRegions.Get[${Index}]:Connect[${Region.ID}]
-                                        }
-                                }
-                        }
-                }
-        }
+					}
+				}
+			}
+		}
+	}
 
 	member:lnavregionref CurrentRegion()
 	{
 		Region:SetRegion[${LNavRegion[${Zone.Name}].BestContainer[${Me.X},${Me.Z},${Me.Y}].ID}]
-
-		if ${Region.Type.Equal[Point]}
-		{
-			return ${Region.Parent.ID}
-		}
-
 		return ${Region.ID}
 	}
 
 	method AddPoint(string name)
 	{
-		LNavRegion[${This.CurrentRegion}]:AddChild[point,${name},${Me.X},${Me.Z},${Me.Y}].ID]
-
+		LNavRegion[${This.CurrentRegion}]:AddChild[point,${name},-unique,${Me.X},${Me.Z},${Me.Y}].ID]
+		
 		if !${LNavRegion[${name}].Parent.Type.Equal[Universe]}
 		{
 			LNavRegion[${LNavRegion[${name}].Parent.Name}]:Connect[${name}]
 		}
-		LNavRegionGroup[Pull]:Add[${This.CurrentRegion}]
+		
+		POICount:Inc
+		LNavRegionGroup[POI]:Add[${This.CurrentRegion}]
+		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetTextColor[FF22FF22]:AddItem[${name} (INCLUDED)]
+		LNavRegion[${This.CurrentRegion}]:SetCustom[Priority,${POICount}]
+		LNavRegion[${This.CurrentRegion}]:SetCustom[Inclusion,TRUE]
 	}
 
 	member:bool FindPath(string destination)
@@ -3531,11 +3623,11 @@ atom StartPather()
 	UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Move Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
-	UIElement[Save Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
-	UIElement[End Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 
 	if ${CampNav}
 	{
+		UIElement[Save Path Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		UIElement[End Path Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 		CurrentRegion:Set[${EQ2Nav.CurrentRegion}]
 		LastRegion:Set[${CurrentRegion}]
 		EQ2Nav:AutoBox[Camp]
@@ -3544,18 +3636,32 @@ atom StartPather()
 	}
 	else
 	{
+		UIElement[Save Path DC@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		UIElement[End Path DC@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		UIElement[Add POI@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 		CurrentRegion:Set[${EQ2Nav.CurrentRegion}]
 		LastRegion:Set[${CurrentRegion}]
 
 		if !${LNavRegionGroup[Start].RegionsWithin[StartRegion,99999,${Me.X},${Me.Z},${Me.Y}]}
 		{
-
-		EQ2Nav:AutoBox[Start]
+			EQ2Nav:AutoBox[Start]
 		}
 
 		UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Navigation for Dungeon Crawl Mode]
-		UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
-		UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		
+		if ${IsFinish}
+		{
+			UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		}
+		else
+		{
+			UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+			UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		}
+		
+		UIElement[Include@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
+		UIElement[Exclude@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 	}
 
 	UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
@@ -3566,6 +3672,8 @@ atom StartPather()
 atom ClearPath()
 {
 	LavishNav:Clear
+	UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:ClearItems
+	IsFinish:Set[FALSE]
 	LavishNav.Tree:AddChild[universe,${Zone.Name},-unique]
 	UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 	EQ2Nav:UpdateNavGUI
@@ -3573,6 +3681,16 @@ atom ClearPath()
 
 atom SavePath()
 {
+	variable int tempvar
+	variable string selectpoi
+
+	while ${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].Item[${tempvar:Inc}](exists)}
+	{
+		selectpoi:Set[${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].OrderedItem[${tempvar}]}]
+		selectpoi:Set[${selectpoi.Token[1,(]}]
+		LNavRegion[${Zone.Name}].FindRegion[${selectpoi}]:SetCustom[Priority,${tempvar}]
+	}
+
 	LNavRegion[${Zone.Name}]:Export[${ConfigPath}${Zone.ShortName}.xml]
 	EndPath
 }
@@ -3581,11 +3699,11 @@ atom EndPath()
 {
 	StartNav:Set[FALSE]
 
-	UIElement[End Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
-	UIElement[Save Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Add Pull Region@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Include@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+	UIElement[Exclude@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 	UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
@@ -3594,17 +3712,23 @@ atom EndPath()
 	UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 	UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 
-	EQ2Nav:Initialise
-
 	if ${CampNav}
 	{
+		UIElement[End Path Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		UIElement[Save Path Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 		UIElement[Move Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 	}
 	else
 	{
+		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		UIElement[Add POI@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		UIElement[End Path DC@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
+		UIElement[Save Path DC@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 		UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 		CheckFinish
 	}
+
+	EQ2Nav:Initialise
 }
 
 atom CheckFinish()
@@ -3614,7 +3738,6 @@ atom CheckFinish()
 	if ${LNavRegionGroup[Finish].RegionsWithin[FinishRegion,99999,${Me.X},${Me.Z},${Me.Y}]}
 	{
 		IsFinish:Set[TRUE]
-		UIElement[Start Nav@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 		UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Finish Region Already exists!!]
 		UIElement[Start Text@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 	}
@@ -3635,6 +3758,32 @@ atom CreateFinish()
 	UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 }
 
+atom IncludePOI()
+{
+	variable string selectpoi
+	
+	if ${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+	{
+		selectpoi:Set[${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+		selectpoi:Set[${selectpoi.Token[1,(]}]
+		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItem:SetTextColor[FF22FF22]:SetText[${selectpoi} (INCLUDED)]
+		LNavRegion[${Zone.Name}].FindRegion[${selectpoi}]:SetCustom[Inclusion,TRUE]
+	}
+}
+
+atom ExcludePOI()
+{
+	variable string selectpoi
+	
+	if ${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+	{
+		selectpoi:Set[${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+		selectpoi:Set[${selectpoi.Token[1,(]}]
+		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItem:SetTextColor[FFFF0000]:SetText[${selectpoi} (EXCLUDED)]
+		LNavRegion[${Zone.Name}].FindRegion[${selectpoi}]:SetCustom[Inclusion,FALSE]
+	}
+}
+
 atom(script) EQ2_onChoiceWindowAppeared(string Page, string Choicetxt, string Choice1, string Choice2)
 {
 	if ${Choicetxt.Find[Lore]} || ${Choicetxt.Find[No-Trade]}
@@ -3647,6 +3796,15 @@ atom(script) EQ2_onChoiceWindowAppeared(string Page, string Choicetxt, string Ch
 		{
 			ChoiceWindow:DoChoice2
 		}
+	}
+}
+
+function AddPOI()
+{
+	InputBox "Name this Point of Interest!"
+	if ${UserInput.Length}
+	{
+		EQ2Nav:AddPoint[${UserInput}]
 	}
 }
 

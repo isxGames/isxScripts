@@ -462,7 +462,7 @@
 						<Frame Name='Pathing Frame'>
 							<X>1</X>
 							<Y>90</Y>
-							<Height>150</Height>
+							<Height>160</Height>
 							<Width>95%</Width>
 							<OnLoad>
 							</OnLoad>
@@ -622,14 +622,28 @@
 										Script[EQ2Bot].Variable[ScanRange]:Set[${This.Text}]
 									</OnChange>
 								</Textentry>
-								<Text Name='HomePoint Text' Template='EQ2.text'>
-									<X>18%</X>
-									<Y>150</Y>
+								<Text Name='MARange Text' Template='EQ2.text'>
+									<X>21%</X>
+									<Y>145</Y>
 									<Width>95%</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
-									<Text>Current Home Point - X:${Me.X} Y:${Me.Y} Z:${Me.Z}</Text>
+									<Text>Maximum Engage Range from Main Assist: </Text>
 								</Text>
+								<Textentry Name='MARange' Template='EQ2.textentry'>
+									<X>75%</X>
+									<Y>145</Y>
+									<Width>7%</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<MaxLength>4</MaxLength>
+									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[MARange]}]</OnLoad>
+									<OnChange>
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What RANGE to Engage from Main Assist?,${This.Text}]:Save
+										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to Engage from Main Assist?]}]
+										Script[EQ2Bot].Variable[MARange]:Set[${This.Text}]
+									</OnChange>
+								</Textentry>
 							</Children>
 						</Frame>
 						<Frame Name='Combat Frame'>
@@ -666,7 +680,7 @@
 									<Height>10</Height>
 									<Alignment>Center</Alignment>
 									<Wrap />
-									<Text>Action: ${Script[EQ2Bot].Variable[CurState]}</Text>
+									<Text>Action: ${Script[EQ2Bot].Variable[CurrentAction]}</Text>
 								</Text>
 							</Children>
 						</Frame>
@@ -1733,9 +1747,9 @@
 							</OnLeftClick>
 						</Commandbutton>
 						<Commandbutton name='Finish' Template='EQ2.Commandbutton'>
-							<X>37%</X>
-							<Y>110</Y>
-							<Width>24%</Width>
+							<X>47%</X>
+							<Y>100</Y>
+							<Width>20%</Width>
 							<Height>20</Height>
 							<Visible>0</Visible>
 							<Text>Create Finish</Text>
@@ -1745,14 +1759,38 @@
 						</Commandbutton>
 						<Text Name='Finish Text 2' Template='EQ2.text'>
 							<X>0</X>
-							<Y>110</Y>
+							<Y>70</Y>
 							<Visible>0</Visible>
 							<Width>100%</Width>
 							<Height>20</Height>
 							<Alignment>Center</Alignment>
-							<Text>Finish Region has now been Created!!</text>
+							<Text>Finish Region has been created!!</text>
 						</Text>
-						<Commandbutton name='Save Path' Template='EQ2.Commandbutton'>
+						<Commandbutton name='Include' Template='EQ2.Commandbutton'>
+							<X>78%</X>
+							<Y>150</Y>
+							<Width>12%</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Include</Text>
+							<AutoTooltip>Include the selected POI</AutoTooltip>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[IncludePOI]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='Exclude' Template='EQ2.Commandbutton'>
+							<X>78%</X>
+							<Y>180</Y>
+							<Width>12%</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Exclude</Text>
+							<AutoTooltip>Exclude the selected POI</AutoTooltip>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[ExcludePOI]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='Save Path Camp' Template='EQ2.Commandbutton'>
 							<X>18%</X>
 							<Y>180</Y>
 							<Width>22%</Width>
@@ -1763,7 +1801,7 @@
 								Script[EQ2Bot]:ExecuteAtom[SavePath]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='End Path' Template='EQ2.Commandbutton'>
+						<Commandbutton name='End Path Camp' Template='EQ2.Commandbutton'>
 							<X>55%</X>
 							<Y>180</Y>
 							<Width>20%</Width>
@@ -1774,7 +1812,7 @@
 								Script[EQ2Bot]:ExecuteAtom[EndPath]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='start Nav' Template='EQ2.Commandbutton'>
+						<Commandbutton name='Start Nav' Template='EQ2.Commandbutton'>
 							<X>38%</X>
 							<Y>180</Y>
 							<Width>20%</Width>
@@ -1784,16 +1822,66 @@
 								Script[EQ2Bot]:ExecuteAtom[StartPather]
 							</OnLeftClick>
 						</Commandbutton>
+						<Commandbutton name='Save Path DC' Template='EQ2.Commandbutton'>
+							<X>15%</X>
+							<Y>240</Y>
+							<Width>22%</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Save Navigation</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[SavePath]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='End Path DC' Template='EQ2.Commandbutton'>
+							<X>50%</X>
+							<Y>240</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>End Pather</Text>
+							<OnLeftClick>
+								Script[EQ2Bot]:ExecuteAtom[EndPath]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton name='Add POI' Template='EQ2.Commandbutton'>
+							<X>18%</X>
+							<Y>100</Y>
+							<Width>15%</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Add POI</Text>
+							<AutoTooltip>Add a Point of Interest</AutoTooltip>
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call AddPOI]
+							</OnLeftClick>
+						</Commandbutton>
+						<Listbox Name='POI List' Template='EQ2.Listbox'>
+							<X>10%</X>
+							<Y>125</Y>
+							<Width>65%</Width>
+							<Height>35%</Height>
+							<Visible>0</Visible>
+							<Font>
+								<Name>terminal</Name>
+								<Size>12</Size>
+							</Font>
+							<Texture />
+							<SelectMultiple>0</SelectMultiple>
+							<SelectionColor>FF002026</SelectionColor>
+							<Sort>User</Sort>
+							<AutoTooltip>Click and drag a POI to change its priority</AutoTooltip>
+						</Listbox>
 						<Text Name='Region Size Text' Template='EQ2.text'>
 							<X>10%</X>
-							<Y>250</Y>
+							<Y>270</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>Region Size: </text>
 						</Text>
 						<Textentry Name='Region Size' Template='EQ2.textentry'>
 							<X>26%</X>
-							<Y>250</Y>
+							<Y>270</Y>
 							<Width>5%</Width>
 							<Height>15</Height>
 							<Color>FFDDBB00</Color>
@@ -1807,7 +1895,7 @@
 						</Textentry>
 						<Text Name='Region Count' Template='EQ2.text'>
 							<X>40%</X>
-							<Y>250</Y>
+							<Y>270</Y>
 							<Width>60%</Width>
 							<Height>20</Height>
 							<Text>Number of Regions Created: ${Script[EQ2Bot].VariableScope.RegionCount}</text>
