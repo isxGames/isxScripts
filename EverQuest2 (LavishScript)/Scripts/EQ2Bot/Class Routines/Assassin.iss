@@ -315,21 +315,21 @@ function Combat_Routine(int xAction)
 	;smokebomb check
 	if ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.ToActor.IsStealthed}
 	{
-		call CastSpellRange 387
+		call CastSpellRange 387 0 1 1
 		call CastStealthAttack
 	}
 
 	;Getaway check
 	if ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.ToActor.IsStealthed}
 	{
-		call CastSpellRange 391
+		call CastSpellRange 391 0 1 1
 		call CastStealthAttack
 	}
 
 	;Poison Combination Check disabled for now cause I can't seem to check if mob IsAfflicted by Noxious
 	if ${Me.Ability[${SpellType[388]}].IsReady}
 	{
-		call CastSpellRange 388
+		call CastSpellRange 388 0 1 1
 	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
@@ -355,15 +355,15 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget} 0 0 1
+						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 1 0 ${KillTarget} 0 0 1
 					}
 				}
 			}
 			break
 
 		case Makeshift
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-			call CastSpellRange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget} 0 0 1
 			break
 
 		case AA_Intoxication
@@ -381,7 +381,7 @@ function Combat_Routine(int xAction)
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1
 				}
 			}
 			break
@@ -391,12 +391,12 @@ function Combat_Routine(int xAction)
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				if ${AoEMode} && ${Mob.Count}>=2
 				{
-					call CastSpellRange ${SpellRange[${xAction},7]} ${SpellRange[${xAction},8]} 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},7]} ${SpellRange[${xAction},8]} 1 1 ${KillTarget} 0 0 1
 				}
-				call CastSpellRange ${SpellRange[${xAction},2]} ${SpellRange[${xAction},6]} 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},2]} ${SpellRange[${xAction},6]} 1 1 ${KillTarget} 0 0 1
 			}
 			break
 
@@ -404,7 +404,7 @@ function Combat_Routine(int xAction)
 		case Shrouded_Attack
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1
 				call CastStealthAttack
 			}
 			break
@@ -418,7 +418,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case Range_Rear
-			call CastSpellRange ${SpellRange[151]} 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange ${SpellRange[151]} 0 1 1 ${KillTarget} 0 0 1
 			if ${UseRangeMode}
 			{
 				if ${Actor[${KillTarget}].Distance}<5
@@ -428,7 +428,7 @@ function Combat_Routine(int xAction)
 					press -release ${backward}
 				}
 
-				if !${Actor[${KillTarget}].Distance}<5
+				if !${Actor[${KillTarget}].Distance}>5
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
 				}
