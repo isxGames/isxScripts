@@ -224,7 +224,7 @@ function main()
 	variable int tempvar1
 	variable int tempvar2
 	variable string tempnme
-	
+
 	Turbo 1000
 
 	;Script:Squelch
@@ -547,7 +547,7 @@ function main()
 				{
 					call MovetoWP ${LNavRegion[${POIList[${CurrentPOI}]}]}
 				}
-				
+
 				EQ2Execute /target_none
 			}
 
@@ -1794,7 +1794,7 @@ function FastMove(float X, float Z, int range)
 function MovetoWP(lnavregionref destination)
 {
 	variable index:lnavregionref CheckRegion
-		
+
 	PathIndex:Set[0]
 	movingtowp:Set[TRUE]
 	stuckcnt:Set[0]
@@ -1921,7 +1921,7 @@ function MovetoWP(lnavregionref destination)
 			wait 20 !${Me.IsMoving}
 		}
 	}
-	
+
 	if ${PathType}==3
 	{
 		if ${CurrentPOI}==1
@@ -1932,7 +1932,7 @@ function MovetoWP(lnavregionref destination)
 		{
 			DCDirection:Set[FALSE]
 		}
-		
+
 		do
 		{
 			if ${DCDirection}
@@ -1946,7 +1946,7 @@ function MovetoWP(lnavregionref destination)
 		}
 		while !${POIInclude[${CurrentPOI}]}
 	}
-	
+
 	movingtowp:Set[FALSE]
 }
 
@@ -3272,7 +3272,7 @@ objectdef EQ2BotObj
 
 					}
 					return FALSE
-					
+
 				case default
 					break
 			}
@@ -3293,7 +3293,7 @@ objectdef Navigation
 
 		LavishNav:Clear
 		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-		
+
 		while ${Index:Inc}<=50
 		{
 			POIList[${Index}]:Set[]
@@ -3327,13 +3327,13 @@ objectdef Navigation
 			UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 			UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 		}
-		
+
 		POICount:Set[${LNavRegionGroup[POI].RegionsWithin[CheckPOI,99999,${Me.X},${Me.Z},${Me.Y}]}]
 		POIList[1]:Set[Start]
 		POIInclude[1]:Set[TRUE]
 		POIList[${Math.Calc[${POICount}+2]}]:Set[Finish]
 		POIInclude[${Math.Calc[${POICount}+2]}]:Set[TRUE]
-		
+
 		if ${POICount}
 		{
 			Index:Set[0]
@@ -3342,7 +3342,7 @@ objectdef Navigation
 				POIList[${Math.Calc[${CheckPOI.Get[${Index}].Custom[Priority]}+1]}]:Set[${CheckPOI.Get[${Index}].FQN}]
 				POIInclude[${Math.Calc[${CheckPOI.Get[${Index}].Custom[Priority]}+1]}]:Set[${CheckPOI.Get[${Index}].Custom[Inclusion]}]
 			}
-			
+
 			Index:Set[1]
 			while ${Index:Inc}<=${Math.Calc[${POICount}+1]}
 			{
@@ -3475,7 +3475,7 @@ objectdef Navigation
 			case Box
 				DistanceToCheck:Set[${BoxWidth}*0.8]
 				break
-				
+
 			case point
 				; Ignore Points as they are already handled
 				break
@@ -3513,12 +3513,12 @@ objectdef Navigation
 	method AddPoint(string name)
 	{
 		LNavRegion[${This.CurrentRegion}]:AddChild[point,${name},-unique,${Me.X},${Me.Z},${Me.Y}].ID]
-		
+
 		if !${LNavRegion[${name}].Parent.Type.Equal[Universe]}
 		{
 			LNavRegion[${LNavRegion[${name}].Parent.Name}]:Connect[${name}]
 		}
-		
+
 		POICount:Inc
 		LNavRegionGroup[POI]:Add[${This.CurrentRegion}]
 		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetTextColor[FF22FF22]:AddItem[${name} (INCLUDED)]
@@ -3649,7 +3649,7 @@ atom StartPather()
 		}
 
 		UIElement[Path Type@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetText[Navigation for Dungeon Crawl Mode]
-		
+
 		if ${IsFinish}
 		{
 			UIElement[Finish Text 2@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
@@ -3659,7 +3659,7 @@ atom StartPather()
 			UIElement[Finish@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 			UIElement[Finish Text 1@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 		}
-		
+
 		UIElement[Include@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 		UIElement[Exclude@Navigation@EQ2Bot Tabs@EQ2 Bot]:Show
 	}
@@ -3761,7 +3761,7 @@ atom CreateFinish()
 atom IncludePOI()
 {
 	variable string selectpoi
-	
+
 	if ${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 	{
 		selectpoi:Set[${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -3774,7 +3774,7 @@ atom IncludePOI()
 atom ExcludePOI()
 {
 	variable string selectpoi
-	
+
 	if ${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 	{
 		selectpoi:Set[${UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -3784,9 +3784,9 @@ atom ExcludePOI()
 	}
 }
 
-atom(script) EQ2_onChoiceWindowAppeared(string Page, string Choicetxt, string Choice1, string Choice2)
+atom(script) EQ2_onChoiceWindowAppeared()
 {
-	if ${Choicetxt.Find[Lore]} || ${Choicetxt.Find[No-Trade]}
+	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]}
 	{
 		if ${LootConfirm}
 		{
