@@ -236,12 +236,14 @@ function Buff_Routine(int xAction)
 								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
 								call CastSpellRange 315 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
 							}
+							break
 						case guardian
 							if ${Me.UsedConc}<5
 							{
 								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
 								call CastSpellRange 315 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
 							}
+							break
 						case bruiser
 						case monk
 						case paladin
