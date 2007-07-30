@@ -460,6 +460,7 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[OK]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
 			}
 			break
 
