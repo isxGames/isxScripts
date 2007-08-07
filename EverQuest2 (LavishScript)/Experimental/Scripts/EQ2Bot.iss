@@ -340,10 +340,10 @@ function main()
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
-				if ${Actor[${MainAssist}](exists)}
+				if ${Actor[ExactName,${MainAssist}](exists)}
 				{
-					target ${MainAssist}
-					wait 10 ${Target.ID}==${Actor[${MainAssist}].ID}
+					target ${Actor[ExactName,${MainAssist}
+					wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
 				}
 
 				; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
@@ -353,15 +353,15 @@ function main()
 				}
 				elseif ${Target.Distance}>10
 				{
-					call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
+					call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
 				}
 			}
 
 			if !${MainTank}
 			{
-				if (${Actor[${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssist}].Target.InCombatMode}
+				if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
-					KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
+					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 				}
 
 				if ${Following}
@@ -372,11 +372,11 @@ function main()
 						WaitFor ${Script[EQ2Follow].Variable[pausestate]} 30
 						if ${AutoMelee}
 						{
-							call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
+							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
 						}
 						else
 						{
-							call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} 10
+							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} 10
 						}
 
 						if ${Me.IsMoving}
@@ -389,7 +389,7 @@ function main()
 				}
 
 				; Add additional check to see if Mob is in Camp (assume radius of 15) OR MainTank is within designated range
-				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && (${Mob.Detect} || ${Actor[${MainAssist}].Distance}<${MARange})
+				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
@@ -606,7 +606,7 @@ function main()
 			StartLevel:Set[${Me.Level}]
 		}
 
-		if (${Actor[${MainAssist}].Health}==-99 && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[${OriginalMA}].Health}==-99)
+		if (${Actor[ExactName,${MainAssist}].Health}==-99 && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[${OriginalMA}].Health}==-99)
 		{
 			EQ2Bot:MainAssist_Dead
 		}
@@ -617,7 +617,7 @@ function main()
 		}
 
 		; Check that we are close to MainAssist if we are following and not in combat
-		if ${Following} && ${Actor[${MainAssist}].Distance}>10 && ${Script[EQ2Follow].Variable[pausestate]} && !${Mob.Detect}
+		if ${Following} && ${Actor[ExactName,${MainAssist}].Distance}>10 && ${Script[EQ2Follow].Variable[pausestate]} && !${Mob.Detect}
 		{
 			FollowTask:Set[1]
 			wait 20
@@ -849,7 +849,7 @@ function Combat()
 				{
 					Mob:CheckMYAggro
 
-					if ${Actor[${MainAssist}].Health}==-99
+					if ${Actor[ExactName,${MainAssist}].Health}==-99
 					{
 						EQ2Bot:MainAssist_Dead
 						break
@@ -932,9 +932,9 @@ function Combat()
 					break
 				}
 
-				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssist}].Target.InCombatMode}
+				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
-					KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
+					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 					target ${KillTarget}
 					call ProcessTriggers
 				}
@@ -964,12 +964,12 @@ function Combat()
 		{
 			if ${Mob.Detect}
 			{
-				wait 50 ${Actor[${MainAssist}].Target(exists)}
+				wait 50 ${Actor[ExactName,${MainAssist}].Target(exists)}
 			}
 
-			if ${Actor[${MainAssist}].Target(exists)}
+			if ${Actor[ExactName,${MainAssist}].Target(exists)}
 			{
-				KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
+				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 				continue
 			}
 			else
@@ -1029,7 +1029,7 @@ function Combat()
 				call ScanAdds
 			}
 
-			if (${Following} && ${Actor[${MainAssist}].Distance}>15) || ${Me.ToActor.Health}>90
+			if (${Following} && ${Actor[ExactName,${MainAssist}].Distance}>15) || ${Me.ToActor.Health}>90
 			{
 				break
 			}
@@ -1242,7 +1242,7 @@ function CheckPosition(int rangetype, int position)
 
 	if !${MainTank}
 	{
-		if ${Math.Distance[${Actor[${MainAssist}].X},${Actor[${MainAssist}].Z},${Target.X},${Target.Z}]}>8 && !${Following}
+		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>8 && !${Following}
 		{
 			return
 		}
@@ -1682,7 +1682,7 @@ function CheckLoot()
 		actorcnt:Set[0]
 		while ${actorcnt:Inc}<=50
 		{
-			if ${BadActor[${nodecnt}]} && ${CustomActor[${tcount}].ID}==${BadActor[${nodecnt}]}
+			if ${BadActor[${actorcnt}]} && ${CustomActor[${tcount}].ID}==${BadActor[${actorcnt}]}
 			{
 				skipcnt:Set[1]
 			}
@@ -1691,7 +1691,7 @@ function CheckLoot()
 		if ${CustomActor[${tcount}].Type.Equal[chest]} && !${skipcnt}
 		{
 			Echo Looting ${CustomActor[${tcount}].Name}
-			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
+			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
 			switch ${Me.SubClass}
 			{
 				case dirge
@@ -1708,7 +1708,10 @@ function CheckLoot()
 					break
 			}
 			Actor[Chest]:DoubleClick
-			EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
+			if !${Return.Equal[TOOFARWAY]}
+			{
+				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
+			}
 			wait 5
 			call ProcessTriggers
 		}
@@ -1717,7 +1720,7 @@ function CheckLoot()
 			if ${CustomActor[${tcount}].Type.Equal[Corpse]} && !${skipcnt}
 			{
 				Echo Looting ${Actor[corpse].Name}
-				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
+				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
 				EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
 				wait 5
@@ -1970,7 +1973,7 @@ function MovetoWP(lnavregionref destination)
 
 function MovetoMaster()
 {
-	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[${MainAssist}].X},${Actor[${MainAssist}].Z},${Actor[${MainAssist}].Y}].FQN}]}
+	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Actor[ExactName,${MainAssist}].Y}].FQN}]}
 	{
 		CurrentAction:Set[Moving Closer to Main Aasist]
 		movingtowp:Set[TRUE]
