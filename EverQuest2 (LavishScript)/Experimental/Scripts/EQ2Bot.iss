@@ -182,7 +182,7 @@ variable string PullType
 variable string LootMethod
 variable int MARange
 variable string CurrentAction
-variable int BadActor[20]
+variable int BadActor[50]
 ;===================================================
 
 ;===================================================
@@ -2261,7 +2261,6 @@ atom(script) LootWdw(string ID)
 	if ${ID.Equal[${LastWindow}]}
 	{
 		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
-		wait 5
 		return
 	}
 
@@ -2319,7 +2318,6 @@ atom(script) LootWdw(string ID)
 	if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow[${ID}].Item[1].Name(exists)}
 	{
 		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
-		wait 5
 	}
 }
 
