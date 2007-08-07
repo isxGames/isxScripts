@@ -182,7 +182,7 @@ variable string PullType
 variable string LootMethod
 variable int MARange
 variable string CurrentAction
-
+variable int BadActor[20]
 ;===================================================
 
 ;===================================================
@@ -1023,7 +1023,7 @@ function Combat()
 				break
 			}
 
-			if ${PathType}==4 && ${MainTank}
+			if ${PathType}==4 && ${MainTank} && ${Me.ToActor.Health}>=90
 			{
 				call CheckLoot
 				call ScanAdds
@@ -1668,6 +1668,8 @@ function CheckLoot()
 {
 	variable int tcount=2
 	variable int tmptimer
+	variable int actorcnt=0
+	variable int skipcnt=0
 
 	islooting:Set[TRUE]
 	wait 10
@@ -1675,7 +1677,18 @@ function CheckLoot()
 
 	do
 	{
-		if ${CustomActor[${tcount}].Type.Equal[chest]}
+		;Check if already looted
+		skipcnt:Set[0]
+		actorcnt:Set[0]
+		while ${actorcnt:Inc}<=50
+		{
+			if ${BadActor[${nodecnt}]} && ${CustomActor[${tcount}].ID}==${BadActor[${nodecnt}]}
+			{
+				skipcnt:Set[1]
+			}
+		}
+
+		if ${CustomActor[${tcount}].Type.Equal[chest]} && !${skipcnt}
 		{
 			Echo Looting ${CustomActor[${tcount}].Name}
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
@@ -1695,16 +1708,18 @@ function CheckLoot()
 					break
 			}
 			Actor[Chest]:DoubleClick
+			EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
 			wait 5
 			call ProcessTriggers
 		}
 		else
 		{
-			if ${CustomActor[${tcount}].Type.Equal[Corpse]}
+			if ${CustomActor[${tcount}].Type.Equal[Corpse]} && !${skipcnt}
 			{
 				Echo Looting ${Actor[corpse].Name}
 				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
 				EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
+				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
 				wait 5
 				call ProcessTriggers
 			}
@@ -2236,12 +2251,14 @@ function ScanAdds()
 
 atom(script) LootWdw(string ID)
 {
-	variable i int local
+	declare i int local
 	variable int tmpcnt=0
 	variable int deccnt=0
 
 	if ${ID.Equal[${LastWindow}]}
 	{
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+		wait 5
 		return
 	}
 
@@ -3292,6 +3309,32 @@ objectdef EQ2BotObj
 		while ${tempvar:Inc}<${Me.GroupCount}
 
 		return TRUE
+	}
+
+	method SetBadActor(string badactorid)
+	{
+		variable int tempvar
+
+		if !${BadActor[50]}
+		{
+			while ${tempvar:Inc}<=50
+			{
+				if !${BadActor[${tempvar}]}
+				{
+					BadActor[${tempvar}]:Set[${badactorid}]
+					return
+				}
+			}
+		}
+		else
+		{
+			while ${tempvar:Inc}<=50
+			{
+				BadActor[${tempvar}]:Set[0]
+			}
+		}
+
+		BadActor[1]:Set[${badactorid}]
 	}
 }
 
