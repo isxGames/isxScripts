@@ -1,5 +1,9 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.0 Updated: 07/29/07 by Blazer
+; EQ2Bot.iss Version 2.7.1 Updated: 08/07/07 by Pygar
+;
+;2.7.1 (Pygar)
+; Updated Lootwindow to fire on isxeq2 events rather than triggers
+;	Update LootWindow to process on current window ID, this should allow for processing more than one window at a time now.
 ;
 ;2.7.0 (Blazer)
 ; You can now set Points of Interest for Dungeon Crawl Mode (This will help with moving to designated points that you want your bots to pass through)
@@ -178,6 +182,7 @@ variable string PullType
 variable string LootMethod
 variable int MARange
 variable string CurrentAction
+variable int BadActor[50]
 ;===================================================
 
 ;===================================================
@@ -224,6 +229,7 @@ function main()
 	variable int tempvar1
 	variable int tempvar2
 	variable string tempnme
+	declar LastWindow string script
 
 	Turbo 1000
 
@@ -334,10 +340,10 @@ function main()
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
-				if ${Actor[${MainAssist}](exists)}
+				if ${Actor[ExactName,${MainAssist}](exists)}
 				{
-					target ${MainAssist}
-					wait 10 ${Target.ID}==${Actor[${MainAssist}].ID}
+					target ${Actor[ExactName,${MainAssist}
+					wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
 				}
 
 				; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
@@ -347,15 +353,15 @@ function main()
 				}
 				elseif ${Target.Distance}>10
 				{
-					call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
+					call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
 				}
 			}
 
 			if !${MainTank}
 			{
-				if (${Actor[${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssist}].Target.InCombatMode}
+				if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
-					KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
+					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 				}
 
 				if ${Following}
@@ -366,11 +372,11 @@ function main()
 						WaitFor ${Script[EQ2Follow].Variable[pausestate]} 30
 						if ${AutoMelee}
 						{
-							call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
+							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
 						}
 						else
 						{
-							call FastMove ${Actor[${MainAssist}].X} ${Actor[${MainAssist}].Z} 10
+							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} 10
 						}
 
 						if ${Me.IsMoving}
@@ -383,7 +389,7 @@ function main()
 				}
 
 				; Add additional check to see if Mob is in Camp (assume radius of 15) OR MainTank is within designated range
-				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && (${Mob.Detect} || ${Actor[${MainAssist}].Distance}<${MARange})
+				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
@@ -600,7 +606,7 @@ function main()
 			StartLevel:Set[${Me.Level}]
 		}
 
-		if (${Actor[${MainAssist}].Health}==-99 && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[${OriginalMA}].Health}==-99)
+		if (${Actor[ExactName,${MainAssist}].Health}==-99 && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[${OriginalMA}].Health}==-99)
 		{
 			EQ2Bot:MainAssist_Dead
 		}
@@ -611,16 +617,13 @@ function main()
 		}
 
 		; Check that we are close to MainAssist if we are following and not in combat
-		if ${Following} && ${Actor[${MainAssist}].Distance}>10 && ${Script[EQ2Follow].Variable[pausestate]} && !${Mob.Detect}
+		if ${Following} && ${Actor[ExactName,${MainAssist}].Distance}>10 && ${Script[EQ2Follow].Variable[pausestate]} && !${Mob.Detect}
 		{
 			FollowTask:Set[1]
 			wait 20
 		}
 
-		if ${LootWindow.Item[1].Name(exists)}
-		{
-			call LootWdw
-		}
+		call ProcessTriggers
 	}
 	while ${CurrentTask}
 }
@@ -846,7 +849,7 @@ function Combat()
 				{
 					Mob:CheckMYAggro
 
-					if ${Actor[${MainAssist}].Health}==-99
+					if ${Actor[ExactName,${MainAssist}].Health}==-99
 					{
 						EQ2Bot:MainAssist_Dead
 						break
@@ -929,9 +932,9 @@ function Combat()
 					break
 				}
 
-				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssist}].Target.InCombatMode}
+				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
-					KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
+					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 					target ${KillTarget}
 					call ProcessTriggers
 				}
@@ -961,12 +964,12 @@ function Combat()
 		{
 			if ${Mob.Detect}
 			{
-				wait 50 ${Actor[${MainAssist}].Target(exists)}
+				wait 50 ${Actor[ExactName,${MainAssist}].Target(exists)}
 			}
 
-			if ${Actor[${MainAssist}].Target(exists)}
+			if ${Actor[ExactName,${MainAssist}].Target(exists)}
 			{
-				KillTarget:Set[${Actor[${MainAssist}].Target.ID}]
+				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 				continue
 			}
 			else
@@ -1020,13 +1023,13 @@ function Combat()
 				break
 			}
 
-			if ${PathType}==4 && ${MainTank}
+			if ${PathType}==4 && ${MainTank} && ${Me.ToActor.Health}>=90
 			{
 				call CheckLoot
 				call ScanAdds
 			}
 
-			if (${Following} && ${Actor[${MainAssist}].Distance}>15) || ${Me.ToActor.Health}>90
+			if (${Following} && ${Actor[ExactName,${MainAssist}].Distance}>15) || ${Me.ToActor.Health}>90
 			{
 				break
 			}
@@ -1239,7 +1242,7 @@ function CheckPosition(int rangetype, int position)
 
 	if !${MainTank}
 	{
-		if ${Math.Distance[${Actor[${MainAssist}].X},${Actor[${MainAssist}].Z},${Target.X},${Target.Z}]}>8 && !${Following}
+		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>8 && !${Following}
 		{
 			return
 		}
@@ -1665,6 +1668,8 @@ function CheckLoot()
 {
 	variable int tcount=2
 	variable int tmptimer
+	variable int actorcnt=0
+	variable int skipcnt=0
 
 	islooting:Set[TRUE]
 	wait 10
@@ -1672,10 +1677,21 @@ function CheckLoot()
 
 	do
 	{
-		if ${CustomActor[${tcount}].Type.Equal[chest]}
+		;Check if already looted
+		skipcnt:Set[0]
+		actorcnt:Set[0]
+		while ${actorcnt:Inc}<=50
+		{
+			if ${BadActor[${actorcnt}]} && ${CustomActor[${tcount}].ID}==${BadActor[${actorcnt}]}
+			{
+				skipcnt:Set[1]
+			}
+		}
+
+		if ${CustomActor[${tcount}].Type.Equal[chest]} && !${skipcnt}
 		{
 			Echo Looting ${CustomActor[${tcount}].Name}
-			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
+			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
 			switch ${Me.SubClass}
 			{
 				case dirge
@@ -1692,16 +1708,21 @@ function CheckLoot()
 					break
 			}
 			Actor[Chest]:DoubleClick
+			if !${Return.Equal[TOOFARAWAY]}
+			{
+				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
+			}
 			wait 5
 			call ProcessTriggers
 		}
 		else
 		{
-			if ${CustomActor[${tcount}].Type.Equal[Corpse]}
+			if ${CustomActor[${tcount}].Type.Equal[Corpse]} && !${skipcnt}
 			{
 				Echo Looting ${Actor[corpse].Name}
-				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
+				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
 				EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
+				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
 				wait 5
 				call ProcessTriggers
 			}
@@ -1952,7 +1973,7 @@ function MovetoWP(lnavregionref destination)
 
 function MovetoMaster()
 {
-	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[${MainAssist}].X},${Actor[${MainAssist}].Z},${Actor[${MainAssist}].Y}].FQN}]}
+	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Actor[ExactName,${MainAssist}].Y}].FQN}]}
 	{
 		CurrentAction:Set[Moving Closer to Main Aasist]
 		movingtowp:Set[TRUE]
@@ -2111,12 +2132,12 @@ function IamDead(string Line)
 
 function LoreItem(string Line)
 {
-	if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]} && ${LootAll}
-	{
-		EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-	}
-	press esc
-	press esc
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+}
+
+function LootWindowBusy(string Line)
+{
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 }
 
 function InventoryFull(string Line)
@@ -2231,10 +2252,18 @@ function ScanAdds()
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 }
 
-function LootWdw(string Line)
+atom(script) LootWdw(string ID)
 {
+	declare i int local
 	variable int tmpcnt=0
 	variable int deccnt=0
+
+	if ${ID.Equal[${LastWindow}]}
+	{
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+		return
+	}
+
 
 	if ${LootMethod.Equal[Accept]}
 	{
@@ -2242,12 +2271,12 @@ function LootWdw(string Line)
 		{
 			do
 			{
-				if (${LootWindow.Item[${tmpcnt}].Lore} || ${LootWindow.Item[${tmpcnt}].NoTrade})
+				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} || ${LootWindow[${ID}].Item[${tmpcnt}].NoTrade})
 				{
 					deccnt:Inc
 				}
 			}
-			while ${tmpcnt:Inc}<=${LootWindow.NumItems}
+			while ${tmpcnt:Inc}<=${LootWindow[${ID}].NumItems}
 		}
 	}
 	elseif ${LootMethod.Equal[Decline]}
@@ -2255,40 +2284,40 @@ function LootWdw(string Line)
 		deccnt:Inc
 	}
 
-	if ${LootWindow.IsLotto} && !${deccnt} && ${LootMethod.Equal[Accept]}
+	if ${LootWindow[${ID}].IsLotto} && !${deccnt} && ${LootMethod.Equal[Accept]}
 	{
 		LootWindow:RequestAll
 	}
-	elseif !${LootWindow.IsLotto} && ${LootMethod.Equal[Accept]}
+	elseif !${LootWindow[${ID}].IsLotto} && ${LootMethod.Equal[Accept]}
 	{
 		tmpcnt:Set[0]
 		do
 		{
-				if (${LootWindow.Item[${tmpcnt}].Lore} || ${LootWindow.Item[${tmpcnt}].NoTrade}) && !${LootConfirm}
+				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} || ${LootWindow[${ID}].Item[${tmpcnt}].NoTrade}) && !${LootConfirm}
 				{
 					;There is no decline item
 				}
 				else
 				{
-					LootWindow:LootItem[${tmpcnt}]
+					LootWindow[${ID}]:LootItem[${tmpcnt}]
 				}
 		}
 		while ${tmpcnt:Inc}<=${LootWindow.NumItems}
 	}
-	elseif ${LootWindow.IsLotto} && ${LootMethod.Equal[Decline]}
+	elseif ${LootWindow[${ID}].IsLotto} && ${LootMethod.Equal[Decline]}
 	{
-		LootWindow:DeclineLotto
+		LootWindow[${ID}]:DeclineLotto
 	}
 	elseif ${LootMethod.Equal[Idle]}
 	{
 		Return
 	}
+	LastWindow:Set[${ID}]
 
 	;if window is still open, close it
-	if ${LootWindow.Item[1].Name(exists)}
+	if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow[${ID}].Item[1].Name(exists)}
 	{
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
-		wait 5
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 	}
 }
 
@@ -2894,6 +2923,7 @@ objectdef EQ2BotObj
 		spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.SubClass}.xml]
 		This:CheckSpells[${Me.SubClass}]
 		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
+		Event[EQ2_onLootWindowAppeared]:AttachAtom[LootWdw]
 	}
 
 	method CheckSpells(string class)
@@ -2933,9 +2963,9 @@ objectdef EQ2BotObj
 		; General Triggers
 		AddTrigger IamDead "@npc@ has killed you."
 		AddTrigger LoreItem "@*@You cannot have more than one of any given LORE item."
+		AddTrigger LootWindowBusy "@*@You are too busy to loot right now@*@"
 		AddTrigger InventoryFull "@*@You cannot loot while your inventory is full"
 		AddTrigger InventoryFull "You do not have enough space to loot@*@"
-		AddTrigger LootWdw "LOOTWINDOW::LOOTWINDOW"
 		AddTrigger CantSeeTarget "@*@Can't see target@*@"
 
 		; Bot Triggers
@@ -3280,6 +3310,34 @@ objectdef EQ2BotObj
 		while ${tempvar:Inc}<${Me.GroupCount}
 
 		return TRUE
+	}
+
+	method SetBadActor(string badactorid)
+	{
+		variable int tempvar=0
+
+		tempvar:Set[0]
+
+		if !${BadActor[50]}
+		{
+			while ${tempvar:Inc}<=50
+			{
+				if !${BadActor[${tempvar}]}
+				{
+					BadActor[${tempvar}]:Set[${badactorid}]
+					return
+				}
+			}
+		}
+		else
+		{
+			while ${tempvar:Inc}<=50
+			{
+				BadActor[${tempvar}]:Set[0]
+			}
+		}
+
+		BadActor[1]:Set[${badactorid}]
 	}
 }
 
@@ -3828,6 +3886,7 @@ function atexit()
 	DeleteVariable CurrentTask
 
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
+	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
 
 	press -release ${forward}
 	press -release ${backward}
