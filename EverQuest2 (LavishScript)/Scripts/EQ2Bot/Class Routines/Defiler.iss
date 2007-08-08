@@ -113,48 +113,36 @@ function Buff_Init()
 	PreAction[6]:Set[SpiritCompanion]
 	PreSpellRange[6,1]:Set[385]
 
-	PreAction[7]:Set[AA_AuraOfHaste]
-	PreSpellRange[7,1]:Set[389]
+	PreAction[7]:Set[SpecialVision]
+	PreSpellRange[7,1]:Set[314]
 
-	PreAction[8]:Set[AA_AuraOfWarding]
-	PreSpellRange[8,1]:Set[390]
+	PreAction[8]:Set[AA_Immunities]
+	PreSpellRange[8,1]:Set[383]
 
-	PreAction[9]:Set[SpecialVision]
-	PreSpellRange[9,1]:Set[314]
+	PreAction[9]:Set[AA_RitualisticAggression]
+	PreSpellRange[9,1]:Set[396]
+	PreSpellRange[9,2]:Set[397]
 
-	PreAction[10]:Set[AA_SpiritualForesight]
-	PreSpellRange[10,1]:Set[391]
+	PreAction[10]:Set[xxxxx]
+	PreSpellRange[10,1]:Set[999]
 
-	PreAction[11]:Set[AA_Immunities]
-	PreSpellRange[11,1]:Set[383]
+	PreAction[11]:Set[AA_InfectiveBites]
+	PreSpellRange[11,1]:Set[394]
 
-	PreAction[12]:Set[AA_RitualisticAggression]
-	PreSpellRange[12,1]:Set[396]
-	PreSpellRange[12,2]:Set[397]
+	PreAction[12]:Set[AA_Coagulate]
+	PreSpellRange[12,1]:Set[395]
 
-	PreAction[13]:Set[xxxxx]
-	PreSpellRange[13,1]:Set[999]
+	PreAction[13]:Set[BuffHorror]
+	PreSpellRange[13,1]:Set[40]
 
-	PreAction[14]:Set[AA_InfectiveBites]
-	PreSpellRange[14,1]:Set[394]
+	PreAction[14]:Set[BuffMitigation]
+	PreSpellRange[4,1]:Set[21]
 
-	PreAction[15]:Set[AA_Coagulate]
-	PreSpellRange[15,1]:Set[395]
+	PreAction[15]:Set[BuffStrength]
+	PreSpellRange[15,1]:Set[20]
 
-	PreAction[16]:Set[AA_Virulence]
-	PreSpellRange[16,1]:Set[399]
-
-	PreAction[17]:Set[BuffHorror]
-	PreSpellRange[17,1]:Set[40]
-
-	PreAction[18]:Set[BuffMitigation]
-	PreSpellRange[18,1]:Set[21]
-
-	PreAction[19]:Set[BuffStrength]
-	PreSpellRange[19,1]:Set[20]
-
-	PreAction[20]:Set[BuffWaterBreathing]
-	PreSpellRange[20,1]:Set[280]
+	PreAction[16]:Set[BuffWaterBreathing]
+	PreSpellRange[16,1]:Set[280]
 
 }
 
@@ -294,7 +282,7 @@ function Buff_Routine(int xAction)
 	if ${Me.ToActor.Power}>85 && ${KeepWardUp}
 	{
 		call CastSpellRange 15
-		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 7 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
 	}
 
 
@@ -372,17 +360,6 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 
-		case AA_Coagulate
-			if ${Actor[${MainTankPC}](exists)}
-			{
-				;If the MA changed during the fight cancel so we can rebuff original MA
-				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${MainTankPC}].ID}
-				{
-					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-				}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
-			}
-			break
 		case BuffNoxious
 			if ${BuffNoxious}
 			{
@@ -461,19 +438,18 @@ function Buff_Routine(int xAction)
 			}
 			while ${temp:Inc}<${Me.GroupCount}
 			break
+		case AA_Coagulate
+			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			break
 		case AA_Immunities
-		case AA_AuraOfHaste
 			if !${Me.ToActor.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.ToActor.Pet(exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
-		case AA_SpiritualForesight
 		case AA_RitualisticAggression
 		case AA_RitualOfAbsolution
 		case AA_InfectiveBites
-		case AA_Virulence
-		case AA_AuraOfWarding
 			if ${Me.ToActor.Pet(exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
@@ -778,9 +754,9 @@ function CheckHeals()
 	lowest:Set[1]
 
 	;Res the MT if they are dead
-	if ${Actor[PC,${MainTankPC}].Health}==-99 && ${Actor[PC,${MainTankPC}](exists)} && ${CombatRez}
+	if ${Actor[ExactName,PC,${MainTankPC}].Health}==-99 && ${Actor[ExactName,PC,${MainTankPC}](exists)} && ${CombatRez}
 	{
-		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 300 0 0 0 ${Actor[ExactName,PC,${MainTankPC}].ID}
 	}
 
 	do
@@ -888,9 +864,9 @@ function CheckHeals()
 	}
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[ExactName,PC,${MainTankPC}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		call EmergencyHeal ${Actor[${MainTankPC}].ID}
+		call EmergencyHeal ${Actor[ExactName,PC,${MainTankPC}].ID}
 	}
 
 	;ME HEALS
@@ -1089,9 +1065,9 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
+	if ${Actor[ExactName,PC,${MainTankPC}].Health}==-99 && ${Actor[ExactName,PC,${MainTankPC}](exists)} && ${CombatRez}
 	{
-		call 300 301 0 0 ${Actor[${MainTankPC}].ID} 1
+		call 300 301 0 0 ${Actor[ExactName,PC,${MainTankPC}].ID} 1
 	}
 }
 
