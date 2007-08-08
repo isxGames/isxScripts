@@ -501,15 +501,15 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}]}
+						if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 						{
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 						}
-						if !${Me.Maintained[${SpellType[${SpellRange[${xAction},2]}]}]}
+						if !${Me.Maintained[${SpellType[${SpellRange[${xAction},2]}]}](exists)}
 						{
 							call CastSpellRange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget}
 						}
-						if !${Me.Maintained[${SpellType[${SpellRange[${xAction},3]}]}]}
+						if !${Me.Maintained[${SpellType[${SpellRange[${xAction},3]}]}](exists)}
 						{
 							call CastSpellRange ${SpellRange[${xAction},3]} 0 0 0 ${KillTarget}
 						}
