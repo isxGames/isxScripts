@@ -920,13 +920,13 @@ function CheckHeals()
 	}
 
 	;MAINTANK HEALS
-	if ${Actor[ExactName,${MainTankPC}].Health} <90 && ${Actor[ExactName,${MainTankPC}](exists)} && ${Actor[ExactName,${MainTankPC}].InCombatMode} && ${Actor[ExactName,${MainTankPC}].Health}>-99
+	if ${Actor[ExactName,${MainTankPC}].Health}<90 && ${Actor[ExactName,${MainTankPC}](exists)} && ${Actor[ExactName,${MainTankPC}].InCombatMode} && ${Actor[ExactName,${MainTankPC}].Health}>-99
 	{
 		call CastSpellRange 7 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
 		call CastSpellRange 15
 	}
 
-	if ${Actor[ExactName,${MainTankPC}].Health} <90 && ${Actor[ExactName,${MainTankPC}].Health} >-99 && ${Actor[${ExactName,MainTankPC}](exists)}
+	if ${Actor[ExactName,${MainTankPC}].Health}<90 && ${Actor[ExactName,${MainTankPC}].Health}>-99 && ${Actor[ExactName,${MainTankPC}](exists)}
 	{
 		call CastSpellRange 387
 		call CastSpellRange 1 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
