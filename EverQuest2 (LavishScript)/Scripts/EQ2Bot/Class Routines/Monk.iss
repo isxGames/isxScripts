@@ -447,6 +447,18 @@ function CheckHeals()
 		call CastSpellRange 368 0 0 0 0 0 0 1
 	}
 
+	;Use Chi if low health
+	if ${Me.ToActor.Health}<35 && ${Me.InCombat} && ${Me.Ability[${SpellType[387]}].IsReady}
+	{
+		call CastSpellRange 387 0 0 0 0 0 0 1
+	}
+
+	;Cancel Feign if Health is better
+	if ${Me.Maintained[${SpellType[368]}](exists)} && ${Me.ToActor.Health}>60
+	{
+		Me.Maintained[${SpellType[368]}]:Cancel
+	}
+
 	;Tsunami
 	if ${Me.ToActor.Health}<25 && ${DefensiveMode}
 	{

@@ -531,7 +531,6 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
-
 			}
 			break
 		case AA_Thunderspike
@@ -563,7 +562,6 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
-
 			}
 			break
 		case Proc
@@ -581,7 +579,6 @@ function Combat_Routine(int xAction)
 						}
 					}
 				}
-
 			}
 			break
 
@@ -599,14 +596,25 @@ function Combat_Routine(int xAction)
 
 					}
 				}
-
 			}
 			break
 		case AA_Primordial_Strike
 		case AA_Nature_Blade
+			if ${OffenseMode} && ${MeleeMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					}
+				}
+			}
+			break
 		case PBAoE
-			;need to add disable to heal routine to prevent stun lock
-			if ${PBAoEMode} && ${OffenseMode} && && ${MeleeMode}
+			if ${PBAoEMode} && ${OffenseMode}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -1260,7 +1268,6 @@ function Cancel_Root()
 
 function CureMe()
 {
-
 	if  ${Me.Arcane}>0
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
@@ -1280,7 +1287,6 @@ function CureMe()
 	{
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 	}
-
 }
 
 function CureGroupMember(int gMember)
