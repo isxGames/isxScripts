@@ -32,7 +32,7 @@
 		<Setting Name="19,21">Vigor of Trust</Setting>
 		<Setting Name="20,387">Lay on Hands</Setting>
 		<Setting Name="20,270">Intercept</Setting>
-		<Setting Name="20,389">SwiftAxe</Setting>
+		<Setting Name="20,389">Swift Attack</Setting>
 		<Setting Name="21,91">Divine Wrath</Setting>
 		<Setting Name="21,35">Redemption</Setting>
 		<Setting Name="22,04">Blessed Aid</Setting>
@@ -133,5 +133,5 @@
 		<Setting Name="70,92">Brimstone</Setting>
 		<Setting Name="70,150">Devout Strike</Setting>
 		<Setting Name="70,90">Relentless Conviction</Setting>
-	</Set> 
+	</Set>
 </InnerSpaceSettings>
