@@ -405,6 +405,10 @@ function Combat_Routine(int xAction)
 		}
 		while ${counter:Inc}<20 && ${Me.ToActor.Power}>10
 	}
+	else
+	{
+		call CheckHeals
+	}
 
 	if ${DoHOs}
 	{
