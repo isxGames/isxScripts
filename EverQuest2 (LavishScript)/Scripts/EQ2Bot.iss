@@ -2001,7 +2001,7 @@ function IamDead(string Line)
 
 	echo "You have been killed"
 
-	if ${Me.GroupCount}==1
+	if ${Me.GroupCount}==1 && ${WipeRevive}
 	{
 		echo no group, resetting
 		EQ2Execute "select_junction 0"
