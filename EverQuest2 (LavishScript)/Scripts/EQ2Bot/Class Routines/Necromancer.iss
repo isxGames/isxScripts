@@ -144,9 +144,10 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[DrawingSouls]
-	SpellRange[1,1]:Set[310]
-	SpellRange[1,2]:Set[318]
+	Action[1]:Set[Dot3]
+	MobHealth[1,1]:Set[0]
+	MobHealth[1,2]:Set[100]
+	SpellRange[1,1]:Set[70]
 
 	Action[2]:Set[AA_Magic_Leash]
 	MobHealth[2,1]:Set[1]
@@ -193,10 +194,9 @@ function Combat_Init()
 	Action[12]:Set[Debuff2]
 	SpellRange[12,1]:Set[51]
 
-	Action[13]:Set[Dot3]
-	MobHealth[13,1]:Set[0]
-	MobHealth[13,2]:Set[100]
-	SpellRange[13,1]:Set[70]
+	Action[13]:Set[DrawingSouls]
+	SpellRange[13,1]:Set[310]
+	SpellRange[13,2]:Set[318]
 
 	Action[14]:Set[AA_Lifeburn]
 	SpellRange[14,1]:Set[375]
@@ -206,10 +206,7 @@ function Combat_Init()
 	MobHealth[15,2]:Set[100]
 	SpellRange[15,1]:Set[330]
 
-	Action[16]:Set[LifeTap]
-	MobHealth[16,1]:Set[0]
-	MobHealth[16,2]:Set[100]
-	SpellRange[16,1]:Set[60]
+	Action[16]:Set[ThermalShocker]
 
 	Action[17]:Set[UndeadTide]
 	MobHealth[17,1]:Set[0]
@@ -228,7 +225,7 @@ function Combat_Init()
 	MobHealth[20,2]:Set[100]
 	SpellRange[20,1]:Set[332]
 
-	Action[21]:Set[ThermalShocker]
+	Action[16]:Set[ThermalShocker]
 
 }
 
@@ -359,6 +356,10 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
+	if ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		call CastSpellRange 60 0 0 0 ${KillTarget}
+	}
 	call CheckHeals
 
 	;check if we have a pet or a ooze not up
@@ -492,9 +493,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case LifeTap
-			call CastSpellRange ${SpellRange[${xAction},1]}
-			break
 		case Debuff1
 		case Debuff2
 		case Debuff3
