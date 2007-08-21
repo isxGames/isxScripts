@@ -56,6 +56,8 @@ function Class_Declaration()
 	declare BuffCabalistCover bool script TRUE
 	declare LifeburnMode bool script TRUE
 	declare PetMode bool script TRUE
+	declare DebuffMode bool script TRUE
+	declare HealMode bool script TRUE
 
 	declare ShardQueue queue:string script
 	declare ShardRequestTimer int script ${Time.Timestamp}
@@ -66,6 +68,7 @@ function Class_Declaration()
 	declare WeaponDagger string script
 	declare PoisonCureItem string script
 	declare WeaponMain string script
+
 
 	declare EquipmentChangeTimer int script ${Time.Timestamp}
 
@@ -86,6 +89,8 @@ function Class_Declaration()
 	BuffMark:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMark,FALSE]}]
 	BuffFavor:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffFavor,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
+	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Debuffs,FALSE]}]
+	HealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Heal Others,FALSE]}]
 
 	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
 	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
@@ -480,14 +485,23 @@ function Combat_Routine(int xAction)
 			break
 
 		case DrawingSouls
-			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+			call CheckEssense
+			if ${Return.Equal[STACKFOUND]}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+			}
 			break
 
 		case LifeTap
+			call CastSpellRange ${SpellRange[${xAction},1]}
+			break
 		case Debuff1
 		case Debuff2
 		case Debuff3
-			call CastSpellRange ${SpellRange[${xAction},1]}
+			if ${DebuffMode}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]}
+			}
 			break
 
 		case Dot1
@@ -684,54 +698,57 @@ function CheckHeals()
 		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
-	do
+	if ${HealMode}
 	{
-		if ${Me.Group[${temphl}].ToActor(exists)}
+		do
 		{
-
-			if ${Me.Group[${temphl}].ToActor.Health}<100 && ${Me.Group[${temphl}].ToActor.Health}>-99
+			if ${Me.Group[${temphl}].ToActor(exists)}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${temphl}].ToActor.ID}!=${Me.ID}
+
+				if ${Me.Group[${temphl}].ToActor.Health}<100 && ${Me.Group[${temphl}].ToActor.Health}>-99
 				{
-					lowest:Set[${temphl}]
+					if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${temphl}].ToActor.ID}!=${Me.ID}
+					{
+						lowest:Set[${temphl}]
+					}
+				}
+
+				if ${Me.Group[${temphl}].IsAfflicted}
+				{
+					if ${Me.Group[${temphl}].Arcane}>0
+					{
+						tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
+					}
+
+					if ${tmpafflictions}>${mostafflictions}
+					{
+						mostafflictions:Set[${tmpafflictions}]
+						mostafflicted:Set[${temphl}]
+					}
+				}
+
+				if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<80
+				{
+					grpheal:Inc
+				}
+
+				if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
+				{
+					if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+					{
+						PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+					}
+				}
+
+				if ${Me.Group[${temphl}].Name.Equal[${MainAssist}]}
+				{
+					MTinMyGroup:Set[TRUE]
 				}
 			}
 
-			if ${Me.Group[${temphl}].IsAfflicted}
-			{
-				if ${Me.Group[${temphl}].Arcane}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
-				}
-
-				if ${tmpafflictions}>${mostafflictions}
-				{
-					mostafflictions:Set[${tmpafflictions}]
-					mostafflicted:Set[${temphl}]
-				}
-			}
-
-			if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<80
-			{
-				grpheal:Inc
-			}
-
-			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
-			{
-				if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-				{
-					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-				}
-			}
-
-			if ${Me.Group[${temphl}].Name.Equal[${MainAssist}]}
-			{
-				MTinMyGroup:Set[TRUE]
-			}
 		}
-
+		while ${temphl:Inc}<${grpcnt}
 	}
-	while ${temphl:Inc}<${grpcnt}
 
 	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
 	{
@@ -780,14 +797,17 @@ function CheckHeals()
 		}
 	}
 
-	;MAINTANK HEALS
-	if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+	if ${HealMode}
 	{
-			call CastSpellRange 4 0 0 0 ${Actor[${MainAssist}].ID}
+		;MAINTANK HEALS
+		if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+		{
+				call CastSpellRange 4 0 0 0 ${Actor[${MainAssist}].ID}
+		}
 	}
 
 	;GROUP HEALS
-	if ${grpheal}>2
+	if ${grpheal}>2 && ${HealMode}
 	{
 		call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
 
@@ -797,13 +817,13 @@ function CheckHeals()
 		}
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ID}!=${Me.ID}
+	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ID}!=${Me.ID} && ${HealMode}
 	{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 	}
 
 	;PET HEALS (other)
-	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)}
+	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)} && ${HealMode}
 	{
 		if ${Actor[${PetToHeal}].InCombatMode}
 		{
@@ -982,4 +1002,30 @@ function WeaponChange()
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
 	}
 
+}
+
+function CheckEssense()
+{
+	;keeps 1 stack of thoughtstones and destroys the next stack
+	variable int Counter=1
+	variable bool StackFound=FALSE
+	Me:CreateCustomInventoryArray[nonbankonly]
+	do
+	{
+		if ${Me.CustomInventory[${Counter}].Name.Equal[essense of anguish]}
+		{
+			if ${StackFound}
+			{
+				;we already have a stack so destroy this one and return
+				return STACKFOUND
+			}
+			else
+			{
+				StackFound:Set[TRUE]
+			}
+		}
+	}
+	while ${Counter:Inc}<=${Me.CustomInventoryArraySize}
+
+	return NOSTACK
 }
