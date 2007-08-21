@@ -258,7 +258,6 @@ function Buff_Routine(int xAction)
 		waitframe
 	}
 
-
 	call RefreshPower
 	call AnswerShardRequest
 
@@ -790,16 +789,7 @@ function CheckHeals()
 	;GROUP HEALS
 	if ${grpheal}>2
 	{
-		if ${Me.Equipment[1].Name.Equal[${WeaponStaff}]}
-		{
-			call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
-		}
-		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2 && ${Me.Ability[${SpellType[396]}].IsReady}
-		{
-			Me.Inventory[${WeaponStaff}]:Equip
-			EquipmentChangeTimer:Set[${Time.Timestamp}]
-			call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
-		}
+		call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
 
 		if ${Actor[${KillTarget}](exists)}
 		{
@@ -810,7 +800,6 @@ function CheckHeals()
 	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ID}!=${Me.ID}
 	{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
-
 	}
 
 	;PET HEALS (other)
@@ -885,7 +874,7 @@ function CureGroupMember(int gMember)
 
 	do
 	{
-		if  ${Me.Group[${gMember}].Arcane}>0 && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
+		if ${Me.Group[${gMember}].Arcane}>0 && !${Me.Group[${gMember}].ToActor.Effect[Revived Sickness](exists)}
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
 		}
@@ -927,7 +916,6 @@ function AnswerShardRequest()
 			}
 		}
 	}
-
 }
 
 function DequeueShardRequest(string line)
@@ -940,7 +928,7 @@ function DequeueShardRequest(string line)
 
 function SummonPet()
 {
-;1=Scout,2=Mage,3=Fighter; 4=hydromancer
+;1=Scout,2=Mage,3=Fighter; 4=ooze
 	PetEngage:Set[FALSE]
 
 	if ${PetMode}
@@ -968,6 +956,14 @@ function SummonPet()
 				break
 		}
 		BuffCabalistCover:Set[TRUE]
+
+		if ${PetGuard}
+		{
+			EQ2Execute /pet preserve_self
+			EQ2Execute /pet preserve_master
+		}else{
+			EQ2Execute /pet backoff
+		}
 	}
 }
 
