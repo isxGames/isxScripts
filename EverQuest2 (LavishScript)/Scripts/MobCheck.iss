@@ -26,6 +26,8 @@
 
 ;Instantiate the object
 variable MobCheck MobCheck
+variable int EncounterMatrix[20,20]
+variable int AggroMatrix[100]
 
 objectdef MobCheck
 {
@@ -160,5 +162,30 @@ objectdef MobCheck
 			}
 		}
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+	}
+
+	method ClearAggroMatrix()
+	{
+		variable int tempvar=0
+
+		while ${tempvar:Inc}<=100
+		{
+			AggroMatrix[${tempvar}]:Set[0]
+		}
+	}
+
+	method ClearEncounterMatrix()
+	{
+		variable int tempvar=0
+		variable int tempvar2=0
+
+		while ${tempvar:Inc}<=20
+		{
+			tempvar2:Set[0]
+			while ${tempvar2:Inc}<=20
+			{
+				EncounterMatrix[${tempvar},${tempvar2}]:Set[0]
+			}
+		}
 	}
 }
