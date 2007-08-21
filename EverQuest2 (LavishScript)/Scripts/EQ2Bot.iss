@@ -224,6 +224,12 @@ function main()
 	variable string tempnme
 	declare LastWindow string script
 
+	if !${ISXEQ2.IsReady}
+	{
+		echo ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!
+		Script:End
+	}
+
 	Turbo 50
 
 	;Script:Squelch
@@ -236,7 +242,6 @@ function main()
 	EQ2Nav:Initialise
 
 	call Class_Declaration
-
 	call CheckManaStone
 
 	do
@@ -781,10 +786,12 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 function Combat()
 {
 	variable int tempvar
+	variable int EngageDistance
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
 	FollowTask:Set[2]
+	EngageDistance:Set[20]
 
 	; Make sure we are still not moving when we enter combat
 	if ${Me.IsMoving}
@@ -805,13 +812,6 @@ function Combat()
 		{
 			face ${Target.X} ${Target.Z}
 
-		}
-
-
-		; Main Tank needs to turn the mob away from the rest of the group
-		if ${PathType}==2 && ${MainTank}
-		{
-			;removed to stop excess movement
 		}
 
 		do
@@ -869,6 +869,24 @@ function Combat()
 				{
 					call Have_Aggro
 				}
+
+				switch ${Me.Archetype}
+				{
+					case fighter
+					case scout
+						EngageDistance:Set[9]
+						break
+					case mage
+					case priest
+					case default
+						EngageDistance:Set[35]
+				}
+
+				do
+				{
+					waitframe
+				}
+				while ${MainTank} && ${Target.Target.ID}==${Me.ID} && ${Target.Distance}>${EngageDistance}
 
 				call Combat_Routine ${tempvar}
 
@@ -3831,6 +3849,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 	{
 		ChoiceWindow:DoChoice1
 	}
+	return
 
 	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]}
 	{
@@ -3838,13 +3857,11 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		{
 			ChoiceWindow:DoChoice1
 		}
-		else
+		elseif !${LootMethod.Equal[Idle]}
 		{
 			ChoiceWindow:DoChoice2
 		}
 	}
-
-
 }
 
 function AddPOI()

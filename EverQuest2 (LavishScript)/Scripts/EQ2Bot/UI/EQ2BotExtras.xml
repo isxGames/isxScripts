@@ -173,12 +173,13 @@
 			else
 			{
 				Script[EQ2Bot].Variable[PetGuard]:Set[FALSE]
+				EQ2Execute /pet backoff
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["PetGuard",FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[PetGuard]}</Data>
 	</Commandcheckbox>
-	
+
 		<Commandcheckbox name='Use Potions'>
 			<X>5</X>
 			<Y>110</Y>
@@ -395,5 +396,5 @@
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Trauma Potion Name,${This.SelectedItem.Text}]:Save
 			</OnSelect>
 		</combobox>
-	
+
 `</ISUI>
