@@ -1,6 +1,12 @@
 ;*****************************************************
-;Brigand.iss 20070725a
+;Brigand.iss 20070822a
 ;by Pygar
+;
+;20070822a
+; Fixed some typo's in spell list
+; Removed Weapon Swapping
+; Fixed feign on agro
+; Fixed some range checks, should increase dps when combat is initiated when out of range.
 ;
 ;20070725a
 ; Fixed weapon swapping for new aa requirements,
@@ -47,17 +53,6 @@ function Class_Declaration()
 	DebuffPoisonShort:Set[enfeebling poison]
 	UtilityPoisonShort:Set[ignorant bliss]
 
-
-	;Custom Equipment
-	declare WeaponRapier string script
-	declare WeaponSword string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare OffHand string script
-	declare WeaponMain string script
-
-	declare EquipmentChangeTimer int script
-
 	call EQ2BotLib_Init
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
@@ -71,18 +66,11 @@ function Class_Declaration()
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
-
-
 }
 
 function Buff_Init()
 {
-;echo buff init
+
 	PreAction[1]:Set[Street_Smarts]
 	PreSpellRange[1,1]:Set[25]
 
@@ -323,8 +311,6 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	call WeaponChange
-
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 	{
 		call CastSpellRange 303
@@ -335,19 +321,12 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
 	Call ActionChecks
-
 
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 	{
-		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 1
+		call CastSpellRange 130 0 1 0 ${KillTarget}
 	}
 
 	;use best debuffs on target if epic
@@ -355,12 +334,12 @@ function Combat_Routine(int xAction)
 	{
 		if ${Me.Ability[${SpellType[155]}].IsReady}
 		{
-			call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange 155 0 1 0 ${KillTarget} 0 0 1
 		}
 
 		if ${Me.Ability[${SpellType[156]}].IsReady}
 		{
-			call CastSpellRange 156 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange 156 0 1 0 ${KillTarget} 0 0 1
 		}
 
 		if ${Me.Ability[${SpellType[100]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
@@ -384,11 +363,11 @@ function Combat_Routine(int xAction)
 	{
 		if ${Me.Ability[${SpellType[155]}].IsReady}
 		{
-			call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange 155 0 1 0 ${KillTarget} 0 0 1
 		}
 		if ${Me.Ability[${SpellType[156]}].IsReady}
 		{
-			call CastSpellRange 156 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange 156 0 1 0 ${KillTarget} 0 0 1
 		}
 	}
 
@@ -396,7 +375,7 @@ function Combat_Routine(int xAction)
 	{
 		if ${Me.Ability[${SpellType[130]}].IsReady}
 		{
-			call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 1
+			call CastSpellRange 50 0 1 0 ${KillTarget} 0 0 1
 		}
 
 		call CheckCondition MobHealth 80 100
@@ -462,7 +441,7 @@ function Combat_Routine(int xAction)
 			case Rear_Attack4
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				elseif ${Target.Target.ID}!=${Me.ID}
 				{
@@ -507,17 +486,17 @@ function Combat_Routine(int xAction)
 				;check valid rear position
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				;check right flank
 				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				;check left flank
 				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				elseif ${Target.Target.ID}!=${Me.ID}
 				{
@@ -538,17 +517,17 @@ function Combat_Routine(int xAction)
 				;check right flank
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				;check left flank
 				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				;check front
 				elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				elseif ${Target.Target.ID}!=${Me.ID}
 				{
@@ -813,7 +792,7 @@ function Have_Aggro()
 			;agro dump
 			call CastSpellRange 185 0 1 0 ${agroid} 0 0 1
 		}
-		elseif ${Me.Ability[${SpellType[407]}].IsReady}
+		elseif ${Me.Ability[${SpellType[387]}].IsReady}
 		{
 			;feign
 			call CastSpellRange 387 0 1 0 ${agroid} 0 0 1
@@ -873,22 +852,4 @@ function ActionChecks()
 	}
 }
 
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-}
 

@@ -1,7 +1,10 @@
 ;*****************************************************
-;Dirge.iss 20070404a
+;Dirge.iss 20070822a
 ;by Karye
 ;updated by Pygar
+;
+;20070822a
+;Removed Weapon Swapping as no longer required
 ;
 ;20070404a
 ;updated for latest eq2bot
@@ -34,15 +37,6 @@ function Class_Declaration()
 	declare BuffSelf bool script FALSE
 	declare BuffTarget string script
 
-	;Custom Equipment
-	declare WeaponRapier string script
-	declare WeaponSword string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare WeaponMain string script
-
-	declare EquipmentChangeTimer int script
-
 	call EQ2BotLib_Init
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
@@ -61,11 +55,6 @@ function Class_Declaration()
 	BuffMelee:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Melee","FALSE"]}]
 	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Hate","FALSE"]}]
 	BuffSelf:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Self","FALSE"]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 
 }
 
@@ -114,8 +103,8 @@ function Buff_Init()
 	PreAction[16]:Set[Buff_AALuckOfTheDirge]
 	PreSpellRange[16,1]:Set[382]
 
-	PreAction[16]:Set[Buff_AAHeroicStorytelling]
-	PreSpellRange[16,1]:Set[396]
+	PreAction[17]:Set[Buff_AAHeroicStorytelling]
+	PreSpellRange[17,1]:Set[396]
 
 }
 
@@ -313,6 +302,7 @@ function Buff_Routine(int xAction)
 		case Buff_AAAllegro
 		case Buff_AALuckOfTheDirge
 		case Buff_AADontKillTheMessenger
+			call CastSpellRange ${PreSpellRange[${xAction},1]}
 
 		Default
 			xAction:Set[20]
@@ -339,12 +329,6 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
-	}
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
 	}
 
 	call ActionChecks
