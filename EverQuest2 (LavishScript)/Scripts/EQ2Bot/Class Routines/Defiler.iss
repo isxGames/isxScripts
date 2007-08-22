@@ -745,7 +745,9 @@ function CheckHeals()
 	declare mostafflictions int local 0
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
+	declare MainTankID int local 0
 
+	MainTankID:Set[${Actor[ExactName,${MainTankPC}]}]
 	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
 
@@ -754,9 +756,9 @@ function CheckHeals()
 	lowest:Set[1]
 
 	;Res the MT if they are dead
-	if ${Actor[ExactName,PC,${MainTankPC}].Health}==-99 && ${Actor[ExactName,PC,${MainTankPC}](exists)} && ${CombatRez}
+	if ${Actor[${MainTankID}].Health}==-99 && ${Actor[${MainTankID}](exists)} && ${CombatRez}
 	{
-		call CastSpellRange 300 0 0 0 ${Actor[ExactName,PC,${MainTankPC}].ID}
+		call CastSpellRange 300 0 0 0 ${MainTankID}
 	}
 
 	do
@@ -864,9 +866,9 @@ function CheckHeals()
 	}
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[ExactName,PC,${MainTankPC}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ID.Equal[${MainTankID}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		call EmergencyHeal ${Actor[ExactName,PC,${MainTankPC}].ID}
+		call EmergencyHeal ${MainTankID}
 	}
 
 	;ME HEALS
@@ -920,16 +922,16 @@ function CheckHeals()
 	}
 
 	;MAINTANK HEALS
-	if ${Actor[ExactName,${MainTankPC}].Health}<90 && ${Actor[ExactName,${MainTankPC}](exists)} && ${Actor[ExactName,${MainTankPC}].InCombatMode} && ${Actor[ExactName,${MainTankPC}].Health}>-99
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && ${Actor[${MainTankID}].Health}>-99
 	{
-		call CastSpellRange 7 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
+		call CastSpellRange 7 0 0 0 ${MainTankID}
 		call CastSpellRange 15
 	}
 
-	if ${Actor[ExactName,${MainTankPC}].Health}<90 && ${Actor[ExactName,${MainTankPC}].Health}>-99 && ${Actor[ExactName,${MainTankPC}](exists)}
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}].Health}>-99 && ${Actor[${MainTankID}](exists)}
 	{
 		call CastSpellRange 387
-		call CastSpellRange 1 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
+		call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
 
 	;GROUP HEALS

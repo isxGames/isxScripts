@@ -63,15 +63,6 @@ function Class_Declaration()
 	declare ShardRequestTimer int script ${Time.Timestamp}
 	declare ShardType string script
 
-	;Custom Equipment
-	declare WeaponStaff string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare WeaponMain string script
-
-
-	declare EquipmentChangeTimer int script ${Time.Timestamp}
-
 	call EQ2BotLib_Init
 
 	AddTrigger QueueHeartRequest "\\aPC @*@ @*@:@sender@\\/a tells@*@heart please@*@"
@@ -91,10 +82,6 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Debuffs,FALSE]}]
 	HealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Heal Others,FALSE]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 
 	switch ${SpellType[360]}
 	{
@@ -144,88 +131,86 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Dot3]
-	MobHealth[1,1]:Set[0]
+	Action[1]:Set[Stench_Pet]
+	MobHealth[1,1]:Set[30]
 	MobHealth[1,2]:Set[100]
-	SpellRange[1,1]:Set[70]
+	SpellRange[1,1]:Set[329]
 
-	Action[2]:Set[AA_Magic_Leash]
-	MobHealth[2,1]:Set[1]
+	Action[2]:Set[Rat_Pet]
+	MobHealth[2,1]:Set[30]
 	MobHealth[2,2]:Set[100]
-	SpellRange[2,1]:Set[385]
+	SpellRange[2,1]:Set[330]
 
-	Action[3]:Set[Shockwave]
-	MobHealth[3,1]:Set[1]
+	Action[3]:Set[Bat_Pet]
+	MobHealth[3,1]:Set[30]
 	MobHealth[3,2]:Set[100]
-	SpellRange[3,1]:Set[380]
+	SpellRange[3,1]:Set[331]
 
-	Action[4]:Set[AA_Animist_Bond]
-	MobHealth[4,1]:Set[50]
+	Action[4]:Set[AA_Animated_Dagger]
+	MobHealth[4,1]:Set[30]
 	MobHealth[4,2]:Set[100]
-	SpellRange[4,1]:Set[371]
+	SpellRange[4,1]:Set[332]
 
-	Action[5]:Set[AoE]
-	SpellRange[5,1]:Set[90]
+	Action[5]:Set[Dot3]
+	MobHealth[5,1]:Set[0]
+	MobHealth[5,2]:Set[100]
+	SpellRange[5,1]:Set[70]
 
-	Action[6]:Set[Cloud]
-	SpellRange[6,1]:Set[95]
+	Action[6]:Set[AA_Magic_Leash]
+	MobHealth[6,1]:Set[1]
+	MobHealth[6,2]:Set[100]
+	SpellRange[6,1]:Set[385]
 
-	Action[7]:Set[Stench_Pet]
-	MobHealth[7,1]:Set[30]
+	Action[7]:Set[Shockwave]
+	MobHealth[7,1]:Set[1]
 	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[329]
+	SpellRange[7,1]:Set[380]
 
-	Action[8]:Set[Debuff1]
-	SpellRange[8,1]:Set[50]
+	Action[8]:Set[AA_Animist_Bond]
+	MobHealth[8,1]:Set[50]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[371]
 
-	Action[9]:Set[Debuff3]
-	SpellRange[9,1]:Set[52]
+	Action[9]:Set[AoE]
+	SpellRange[9,1]:Set[90]
 
-	Action[10]:Set[Dot1]
-	MobHealth[10,1]:Set[5]
-	MobHealth[10,2]:Set[100]
-	SpellRange[10,1]:Set[72]
+	Action[10]:Set[Cloud]
+	SpellRange[10,1]:Set[95]
 
-	Action[11]:Set[Dot2]
-	MobHealth[11,1]:Set[5]
-	MobHealth[11,2]:Set[100]
+	Action[11]:Set[Debuff1]
+	SpellRange[11,1]:Set[50]
+
+	Action[12]:Set[Debuff3]
+	SpellRange[12,1]:Set[52]
+
+	Action[13]:Set[Dot1]
+	MobHealth[13,1]:Set[5]
+	MobHealth[13,2]:Set[100]
+	SpellRange[13,1]:Set[72]
+
+	Action[14]:Set[Dot2]
+	MobHealth[14,1]:Set[5]
+	MobHealth[14,2]:Set[100]
 	SpellRange[11,1]:Set[71]
 
-	Action[12]:Set[Debuff2]
-	SpellRange[12,1]:Set[51]
+	Action[15]:Set[Debuff2]
+	SpellRange[15,1]:Set[51]
 
-	Action[13]:Set[DrawingSouls]
-	SpellRange[13,1]:Set[310]
-	SpellRange[13,2]:Set[318]
+	Action[16]:Set[DrawingSouls]
+	SpellRange[16,1]:Set[310]
+	SpellRange[16,2]:Set[318]
 
-	Action[14]:Set[AA_Lifeburn]
-	SpellRange[14,1]:Set[375]
+	Action[17]:Set[AA_Lifeburn]
+	SpellRange[17,1]:Set[375]
 
-	Action[15]:Set[Rat_Pet]
-	MobHealth[15,1]:Set[30]
-	MobHealth[15,2]:Set[100]
-	SpellRange[15,1]:Set[330]
+	Action[18]:Set[ThermalShocker]
 
-	Action[16]:Set[ThermalShocker]
-
-	Action[17]:Set[UndeadTide]
-	MobHealth[17,1]:Set[0]
-	MobHealth[17,2]:Set[100]
-	SpellRange[17,1]:Set[60]
-
-	Action[18]:Set[Master_Strike]
-
-	Action[19]:Set[Bat_Pet]
-	MobHealth[19,1]:Set[30]
+	Action[19]:Set[UndeadTide]
+	MobHealth[19,1]:Set[0]
 	MobHealth[19,2]:Set[100]
-	SpellRange[19,1]:Set[331]
+	SpellRange[19,1]:Set[60]
 
-	Action[20]:Set[AA_Animated_Dagger]
-	MobHealth[20,1]:Set[30]
-	MobHealth[20,2]:Set[100]
-	SpellRange[20,1]:Set[332]
-
-	Action[16]:Set[ThermalShocker]
+	Action[20]:Set[Master_Strike]
 
 }
 
@@ -356,10 +341,27 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${Me.Ability[${SpellType[60]}].IsReady}
+	;maintain dots if target is heroic, or greater
+	if ${Actor[${KillTarget}].IsEpic} || (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].IsNamed})
 	{
-		call CastSpellRange 60 0 0 0 ${KillTarget}
+		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
+		{
+			call CastSpellRange 70 0 0 0 ${KillTarget}
+		}
+		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
+		{
+			call CastSpellRange 71 0 0 0 ${KillTarget}
+		}
+		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+		{
+			call CastSpellRange 72 0 0 0 ${KillTarget}
+		}
+		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${Mob.Count}>1
+		{
+			call CastSpellRange 90 0 0 0 ${KillTarget}
+		}
 	}
+
 	call CheckHeals
 
 	;check if we have a pet or a ooze not up
@@ -376,11 +378,6 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
-	}
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
 	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
@@ -446,7 +443,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case UndeadTide
-			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} && ${Me.ToActor.Pet(exists)} && ${PetMode}
+			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.ToActor.Pet(exists)} && ${PetMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			}

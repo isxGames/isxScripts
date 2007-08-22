@@ -1,7 +1,9 @@
 ;*****************************************************
-;Swashbuckler.iss 20070725a
+;Swashbuckler.iss 20070822a
 ;by Pygar
 ;
+;20070822a
+; Removed Weapon Swaps
 ;20070725a
 ; Updated for new AA changes
 ;
@@ -38,27 +40,17 @@ function Class_Declaration()
 	;POISON DECLERATIONS
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
 	;The SHORT name is the name of the poison buff icon
-	if ${Me.InRaid}
+	if !${Me.InRaid}
 	{
 		DammagePoisonShort:Set[caustic poison]
+		UtilityPoisonShort:Set[turgor]
 	}
 	else
 	{
 		DammagePoisonShort:Set[hemotoxin]
+		UtilityPoisonShort:Set[ignorant bliss]
 	}
 	DebuffPoisonShort:Set[enfeebling poison]
-	UtilityPoisonShort:Set[ignorant bliss]
-
-
-	;Custom Equipment
-	declare WeaponRapier string script
-	declare WeaponSword string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare OffHand string script
-	declare WeaponMain string script
-
-	declare EquipmentChangeTimer int script
 
 	call EQ2BotLib_Init
 
@@ -71,14 +63,6 @@ function Class_Declaration()
 	BuffLunge:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Lunge Reversal,FALSE]}]
 	MaintainPoison:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MaintainPoison,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
-
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
-
 
 }
 
@@ -603,24 +587,5 @@ function ActionChecks()
 	{
 		call Shard
 	}
-}
-
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
 }
 
