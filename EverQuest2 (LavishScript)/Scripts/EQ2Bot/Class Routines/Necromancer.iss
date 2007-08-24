@@ -1,8 +1,11 @@
 ;*************************************************************
 ;Necromancer.iss
-;version 20070508a
+;version 20070823a
 ;Initial Build
 ;by Pygar
+;
+;20070823a
+; Dps tweaks, and spell list fixes.
 ;
 ;20070508a
 ;	Fixed undeclared var bug causing bot to lock up in stuck loop.
@@ -535,7 +538,7 @@ function Combat_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[40]
+			Action:Set[40]
 			break
 	}
 

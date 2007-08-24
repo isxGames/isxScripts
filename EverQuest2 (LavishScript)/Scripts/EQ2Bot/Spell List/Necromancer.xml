@@ -120,7 +120,7 @@
     <Setting Name="51,330">Blighted Pack</Setting>
     <Setting Name="51,72">Dooming Darkness</Setting>
     <Setting Name="52,357">Diseased Servant</Setting>
-    <Setting Name="52,297">Fright</Setting>
+    <Setting Name="52,350">Fright</Setting>
     <Setting Name="52,310">Drawing of Souls</Setting>
     <Setting Name="52,311">Servile Soul</Setting>
     <Setting Name="52,312">Flayer\'s Soul</Setting>
@@ -155,6 +155,7 @@
     <Setting Name="64,90">Torrential Pestilence</Setting>
     <Setting Name="65,330">Blighted Horde</Setting>
     <Setting Name="65,353">Undead Tide</Setting>
+    <Setting Name="66,350">Dread</Setting>
     <Setting Name="66,357">Undying Dreadnought</Setting>
     <Setting Name="67,290">Howl of the Damned</Setting>
     <Setting Name="67,52">Loathsome Mark</Setting>
