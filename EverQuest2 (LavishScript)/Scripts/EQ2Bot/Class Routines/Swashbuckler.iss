@@ -309,8 +309,6 @@ function Combat_Routine(int xAction)
 	}
 
 
-	call WeaponChange
-
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 	{
 		call CastSpellRange 303
@@ -510,7 +508,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		default
-			xAction:Set[40]
+			return CombatComplete
 			break
 	}
 }

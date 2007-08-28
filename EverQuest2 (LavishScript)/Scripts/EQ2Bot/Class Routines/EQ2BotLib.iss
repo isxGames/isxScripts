@@ -330,7 +330,7 @@ function CheckGroupHealth(int MinHealth)
 
 atom PetAttack()
 {
-	if ${Me.ToActor.Pet.Target.ID}!=${KillTarget} && !${Actor[${KillTarget}].IsLocked}  && ${Mob.ValidActor[${KillTarget}]}
+	if ${Me.ToActor.Pet.Target.ID}!=${KillTarget}
 	{
 		EQ2Execute /pet backoff
 		target ${KillTarget}

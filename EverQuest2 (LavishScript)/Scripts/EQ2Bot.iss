@@ -890,7 +890,7 @@ function Combat()
 
 				call Combat_Routine ${tempvar}
 
-				if ${Return.Equal[Melee Complete]}
+				if ${Return.Equal[CombatComplete]}
 				{
 					tempvar:Set[40]
 				}
@@ -1523,6 +1523,11 @@ function Pull(string npcclass)
 						EQ2Execute /pet backoff
 						wait 50 ${CustomActor[${tcount}].Distance}<20
 						EQ2Execute /pet attack
+						if ${PetGuard}
+						{
+							EQ2Execute /pet preserve_self
+							EQ2Execute /pet preserve_master
+						}
 						if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
 						{
 							face ${Target.X} ${Target.Z}
