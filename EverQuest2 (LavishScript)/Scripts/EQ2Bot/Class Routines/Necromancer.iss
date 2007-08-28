@@ -235,13 +235,7 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;check if we have a pet or a hydromancy not up
+	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
@@ -344,6 +338,11 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
+	if ${Me.ToActor.Pet(exists)}
+	{
+		ExecuteAtom PetAttack
+	}
+
 	;maintain dots if target is heroic, or greater
 	if ${Actor[${KillTarget}].IsEpic} || (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].IsNamed})
 	{
@@ -365,18 +364,14 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	call CheckHeals
-
 	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
 	{
 		call SummonPet
 	}
 
-	if ${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
-	{
-		ExecuteAtom PetAttack
-	}
+	call CheckHeals
+
 
 	if ${DoHOs}
 	{
@@ -537,7 +532,7 @@ function Combat_Routine(int xAction)
 			break
 
 		Default
-			Action:Set[40]
+			return CombatComplete
 			break
 	}
 
@@ -980,7 +975,7 @@ function SummonPet()
 
 function CheckEssense()
 {
-	;keeps 1 stack of thoughtstones and destroys the next stack
+	;keeps 1 stack of anguish and destroys the next stack
 	variable int Counter=1
 	variable bool StackFound=FALSE
 	Me:CreateCustomInventoryArray[nonbankonly]
