@@ -1,8 +1,11 @@
 ;*************************************************************
 ;Necromancer.iss
-;version 20070508a
+;version 20070829a (ironape & Pygar)
 ;Initial Build
 ;by Pygar
+;
+;20070829a
+; Re-configured for proper DPS tuning.
 ;
 ;20070508a
 ;	Fixed undeclared var bug causing bot to lock up in stuck loop.
@@ -137,35 +140,36 @@ function Combat_Init()
 	MobHealth[1,2]:Set[100]
 	SpellRange[1,1]:Set[60
 
-	Action[2]:Set[Rat_Pet]
-	MobHealth[2,1]:Set[30]
+	Action[2]:Set[Dot2]
+	MobHealth[2,1]:Set[5]
 	MobHealth[2,2]:Set[100]
-	SpellRange[2,1]:Set[330]
+	SpellRange[2,1]:Set[71]
 
-	Action[3]:Set[Stench_Pet]
-	MobHealth[3,1]:Set[30]
+	Action[3]:Set[Rat_Pet]
+	MobHealth[3,1]:Set[5]
 	MobHealth[3,2]:Set[100]
-	SpellRange[3,1]:Set[329]
+	SpellRange[3,1]:Set[330]
 
-	Action[4]:Set[AoE]
-	SpellRange[4,1]:Set[90]
+	Action[4]:Set[Stench_Pet]
+	MobHealth[4,1]:Set[5]
+	MobHealth[4,2]:Set[100]
+	SpellRange[4,1]:Set[329]
 
-	Action[5]:Set[Cloud]
-	SpellRange[5,1]:Set[95]
+	Action[5]:Set[AoE]
+	SpellRange[5,1]:Set[90]
 
-	Action[6]:Set[Debuff3]
-	SpellRange[6,1]:Set[52]
+	Action[6]:Set[Cloud]
+	SpellRange[6,1]:Set[95]
 
-	Action[7]:Set[DrawingSouls]
-	SpellRange[7,1]:Set[310]
+	Action[7]:Set[Debuff3]
+	SpellRange[7,1]:Set[52]
 
-	Action[8]:Set[Dot2]
-	MobHealth[8,1]:Set[5]
-	MobHealth[8,2]:Set[100]
-	SpellRange[8,1]:Set[71]
+	Action[8]:Set[DrawingSouls]
+	SpellRange[8,1]:Set[310]
+	SpellRange[8,2]:Set[318]
 
 	Action[9]:Set[Bat_Pet]
-	MobHealth[9,1]:Set[30]
+	MobHealth[9,1]:Set[5]
 	MobHealth[9,2]:Set[100]
 	SpellRange[9,1]:Set[331]
 
@@ -212,7 +216,7 @@ function Buff_Routine(int xAction)
 		EquipmentChangeTimer:Set[${Time.Timestamp}]
 	}
 
-	;check if we have a pet or a hydromancy not up
+	;check if we have a pet or ooze pet not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
@@ -317,6 +321,24 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
+	;send pet/ooze to attack if it exist
+	if ${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
+	{
+		ExecuteAtom PetAttack
+	}
+
+	;Heroic Opertunity Execution
+	if ${DoHOs}
+	{
+		objHeroicOp:DoHO
+	}
+
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	{
+		call CastSpellRange 303
+	}
+
+	;Maintained spells
 	{
 		;keep AA dagger pet up
 		if ${Me.Ability[${SpellType[332]}].IsReady} && !${Me.Maintained[${SpellType[332]}](exists)}
@@ -357,25 +379,10 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 
-	;check if we have a pet or a ooze not up
-	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
-	{
-		call SummonPet
-	}
-
+	;Summon pet/ooze if not up
 	if ${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
 	{
-		ExecuteAtom PetAttack
-	}
-
-	if ${DoHOs}
-	{
-		objHeroicOp:DoHO
-	}
-
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
-		call CastSpellRange 303
+		call SummonPet
 	}
 
 	call RefreshPower
@@ -456,6 +463,7 @@ function Combat_Routine(int xAction)
 
 		case DrawingSouls
 			call CheckEssense
+			echo ${Return}
 			if ${Return.Equal[STACKFOUND]}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
@@ -507,7 +515,7 @@ function Combat_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[40]
+			return CombatComplete
 			break
 	}
 
@@ -591,7 +599,7 @@ function RefreshPower()
 		call CastSpellRange 326
 	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<45
+	if ${Me.InCombat} && ${Me.ToActor.Power}<65
 	{
 		call UseItem "Spiritise Censer"
 	}
@@ -612,7 +620,7 @@ function RefreshPower()
 		call UseItem "Dracomancer Gloves"
 	}
 
-	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<20
+	if ${Me.ToActor.Pet.Health}>40 && ${Me.ToActor.Power}<60
 	{
 		call CastSpellRange 326
 	}
