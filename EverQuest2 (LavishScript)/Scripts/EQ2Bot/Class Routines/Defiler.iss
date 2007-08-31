@@ -747,7 +747,7 @@ function CheckHeals()
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 
-	MainTankID:Set[${Actor[ExactName,${MainTankPC}]}]
+	MainTankID:Set[${Actor[ExactName,${MainTankPC}].ID}]
 	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
 
