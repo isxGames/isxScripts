@@ -105,13 +105,6 @@ function Class_Declaration()
 	BuffVigorGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffVigorGroupMember,]}]
 	BuffBoon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBoon,FALSE]}]
 
-	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	OneHandedHammer:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OneHandedHammer,]}]
-	TwoHandedHammer:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedHammer,]}]
-	Symbols:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[WeaponSymbols,]}]
-	Buckler:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buckler,]}]
-	TwoHandedStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedStaff,]}]
 }
 
 function Buff_Init()
@@ -1321,24 +1314,5 @@ function CureGroupMember(int gMember)
 		}
 	}
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].ToActor(exists)}
-}
-
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${MainWeapon}]}
-	{
-		Me.Inventory[${MainWeapon}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
 }
 
