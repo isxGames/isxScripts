@@ -17,6 +17,7 @@
 		<Setting Name="9,61">Dispel Magic</Setting>
 		<Setting Name="9,30">See Invisibility</Setting>
 		<Setting Name="10,70">Cerebral Spasm</Setting>
+		<Setting Name="10,333">Sprint</Setting>
 		<Setting Name="10,351">Charm</Setting>
 		<Setting Name="11,91">Ego Shock</Setting>
 		<Setting Name="12,352">Fascinate</Setting>
@@ -122,6 +123,7 @@
 		<Setting Name="56,72">Destructive Mind</Setting>
 		<Setting Name="57,60">Stroke</Setting>
 		<Setting Name="58,310">Channel</Setting>
+		<Setting Name="58,191">Confoundment</Setting>
 		<Setting Name="58,260">Harrowing Silence</Setting>
 		<Setting Name="59,70">Vicious Torment</Setting>
 		<Setting Name="60,51">Gorging Thoughts</Setting>

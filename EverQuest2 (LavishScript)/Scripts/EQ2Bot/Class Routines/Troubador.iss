@@ -1,7 +1,11 @@
 ;*****************************************************
-;Troubador.iss 20070725a
+;Troubador.iss 20070905a
 ;by Karye
 ;updated by Pygar
+;
+;20070905a
+; Removed Weaponswap as no longer required
+; Moved Aria Cancel in Mez routine.  Now only cancels when a mob is found to be mezed.  Will maintain Aria until mez is required.
 ;
 ;20070725a
 ; Updated for new AA weapon requirements
@@ -53,12 +57,7 @@ function Class_Declaration()
 	declare mezTarget2 int script
 	declare CharmTarget int script
 
-	;Custom Equipment
-	declare WeaponRapier string script
-	declare WeaponSword string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare WeaponMain string script
+
 
 	declare EquipmentChangeTimer int script ${Time.Timestamp}
 
@@ -84,11 +83,6 @@ function Class_Declaration()
 	BuffCasting:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Casting","FALSE"]}]
 	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Hate","FALSE"]}]
 	BuffSelf:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Self","FALSE"]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 
 	PosionCureItem:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Poison Cure Item","Antivenom Hypo Bracer"]}]
 
@@ -637,13 +631,6 @@ function Mezmerise_Targets()
 	grpcnt:Set[${Me.GroupCount}]
 
 
-
-	;shut off aria so encounter debuffs dont break mezz
-	if ${Me.Maintained[${SpellType[27]}](exists)}
-	{
-		Me.Maintained[${SpellType[27]}]:Cancel
-	}
-
 	EQ2:CreateCustomActorArray[byDist,15]
 
 	do
@@ -686,14 +673,17 @@ function Mezmerise_Targets()
 					eq2execute /togglerangedattack
 				}
 
+				;shut off aria so encounter debuffs dont break mezz
+				if ${Me.Maintained[${SpellType[27]}](exists)}
+				{
+					Me.Maintained[${SpellType[27]}]:Cancel
+				}
+
 				call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 15
 
 				aggrogrp:Set[FALSE]
 
-
 			}
-
-
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}

@@ -47,6 +47,8 @@ function Class_Declaration()
 	declare BuffHateGroupMember string script
 	declare BuffCoerciveHealingGroupMember string script
 	declare BuffManaward bool script
+	declare DPSMode bool script
+	declare StartHO bool script 1
 
 	declare CharmTarget int script
 
@@ -62,7 +64,7 @@ function Class_Declaration()
 
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
-
+	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffHateGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHateGroupMember,]}]
 	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHate,FALSE]}]
@@ -71,14 +73,10 @@ function Class_Declaration()
 	BuffCoerciveHealing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealing,FALSE]}]
 	BuffCoerciveHealingGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealingGroupMember,]}]
 	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
+	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffDPS,FALSE]}]
 
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 
 }
 
@@ -189,10 +187,7 @@ function Combat_Init()
 
 function PostCombat_Init()
 {
-	;PostAction[1]:Set[]
-	;PostSpellRange[1,1]:Set[]
 
-	PostAction[1]:Set[LoadDefaultEquipment]
 }
 
 function Buff_Routine(int xAction)
@@ -210,6 +205,15 @@ function Buff_Routine(int xAction)
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
+	}
+
+	if ${DPSMode} && ${Me.Power}>50
+	{
+		CastSpellRange 333
+	}
+	elseif ${Me.Maintained[${SpellType[333]}](exists)}
+	{
+		Me.Maintained[${SpellType[333]}]:Cancel
 	}
 
 	switch ${PreAction[${xAction}]}
@@ -269,8 +273,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case AACoerciveHealing
-
-			BuffTarget:Set[${UIElement[cbBuffCoersiveHealingGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			BuffTarget:Set[${UIElement[cbBuffHealGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -446,10 +449,22 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare spellsused int local
+	spellsused:Set[0]
+
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
+	}
+
+	if ${DPSMode} && ${Me.Power}>50
+	{
+		CastSpellRange 333
+	}
+	elseif ${Me.Maintained[${SpellType[333]}](exists)}
+	{
+		Me.Maintained[${SpellType[333]}]:Cancel
 	}
 
 	if ${DoHOs}
@@ -457,10 +472,10 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	;if !${EQ2.HOWindowActive} && ${Me.InCombat}
-	;{
-	;	call CastSpellRange 303
-	;}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	{
+		call CastSpellRange 303
+	}
 
 	if ${MezzMode}
 	{
@@ -495,82 +510,152 @@ function Combat_Routine(int xAction)
 	call CastSpellRange 377 0 0 0 ${KillTarget}
 
 	;make sure killtarget is always Arcane debuffed
-	call CastSpellRange 50 0 0 0 ${KillTarget}
+	if !${Me.Maintained[${SpellType[50]}](exists)}
+	{
+		call CastSpellRange 50
+	}
+
 
 	;make sure Convulsion procs are always on kill target for optimum dps
-	call CastSpellRange 71 0 0 0 ${KillTarget}
+	if !${Me.Maintained[${SpellType[71]}](exists)}
+	{
+		call CastSpellRange 71 0 0 0 ${KillTarget}
+	}
 
 	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
-	call CastSpellRange 42 0 0 0
-
-	switch ${Action[${xAction}]}
+	if !${Me.Maintained[${SpellType[42]}](exists)}
 	{
-		case Lash
-		case Gaze
-		case Ego
-		case AEStun
-			if ${AoEMode}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
+		call CastSpellRange 42
+	}
+
+	if ${DPSMode}
+	{
+
+		if ${Me.Ability[${SpellType[60]}].IsReady}
+		{
+			call CastSpellRange 60 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 70 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[72]}].IsReady} && ${spellsused}<4
+		{
+			call CastSpellRange 72 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 80 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[91]}].IsReady} && ${spellsused}<4
+		{
+			call CastSpellRange 91 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 92 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 90 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[95]}].IsReady} && ${PBAoEMode} && ${spellsused}<4
+		{
+			call CastSpellRange 95 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[51]}].IsReady} && ${spellsused}<3
+		{
+			call CastSpellRange 51 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+	}
+	else
+	{
+		switch ${Action[${xAction}]}
+		{
+			case Lash
+			case Gaze
+			case Ego
+			case AEStun
+				if ${AoEMode}
 				{
-					if ${Mob.Count}>1
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
 					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+						if ${Mob.Count}>1
+						{
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+						}
 					}
 				}
-			}
-			break
+				break
 
-		case Despair
-		case Mind
-		case Anguish
-		case Thoughts
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case ProcStun
-			if !${Actor[${KillTarget}].IsEpic}
-			{
+			case Despair
+			case Mind
+			case Anguish
+			case Thoughts
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				}
-			}
-			break
+				break
 
-			case Master_Strike
-				if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+			case ProcStun
+				if !${Actor[${KillTarget}].IsEpic}
 				{
-					Target ${KillTarget}
-					Me.Ability[Master's Strike]:Use
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					}
 				}
 				break
-		case Sunbolt
-		case Nuke
-		case Stun
-		case Silence
-		case Daze
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
 
-		case AoE_PB
-			if ${PBAoEMode} && ${Mob.Count}>1
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				case Master_Strike
+					if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+					{
+						Target ${KillTarget}
+						Me.Ability[Master's Strike]:Use
+					}
+					break
+			case Sunbolt
+			case Nuke
+			case Stun
+			case Silence
+			case Daze
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				break
 
-			}
-			break
-		default
-			xAction:Set[40]
-			break
+			case AoE_PB
+				if ${PBAoEMode} && ${Mob.Count}>1
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+
+				}
+				break
+			default
+				xAction:Set[40]
+				break
+		}
 	}
-
 }
 
 function Post_Combat_Routine(int xAction)
@@ -649,13 +734,13 @@ function RefreshPower()
 	}
 
 	;Transference line out of Combat
-	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.InCombat}
+	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50 && !${Me.InCombat}
 	{
 			call CastSpellRange 309
 	}
 
 	;Transference Line in Combat
-	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50
+	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<10
 	{
 			call CastSpellRange 309
 	}
@@ -682,13 +767,13 @@ function RefreshPower()
 	}
 
 	;Channel if group member is below 20 and we are in combat
-	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<20 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<20 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 	{
 		call CastSpellRange 310
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainAssist}].Power}<15 && ${Actor[${MainAssist}](exists)} && ${Actor[${MainAssist}].Distance}<50  && ${Actor[${MainAssist}].InCombatMode}
+	if ${Actor[${MainTankPC}].Power}<15 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 	{
 		call CastSpellRange 354
 	}
