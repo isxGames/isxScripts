@@ -335,7 +335,7 @@ function main()
 			}
 		}
 
-		; Process Pre-Combat Scripts
+		;Process Pre-Combat Scripts
 		tempvar:Set[1]
 		do
 		{
@@ -350,7 +350,7 @@ function main()
 			{
 				if ${Actor[ExactName,${MainAssist}](exists)}
 				{
-					target ${Actor[ExactName,${MainAssist}
+					target ${Actor[ExactName,${MainAssist}]}
 					wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
 				}
 
@@ -3853,10 +3853,11 @@ atom(script) EQ2_onChoiceWindowAppeared()
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{
 		ChoiceWindow:DoChoice1
+		return
 	}
-	return
 
-	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]}
+
+	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
 		if ${LootConfirm}
 		{
