@@ -170,7 +170,7 @@
 										{
 											do
 											{
-												if ${Me.Group[${tmpvar}](exists)} && ${Me.Group[${tmpvar}].Name}!= ${Me.Name}
+												if ${Me.Group[${tmpvar}](exists)} && ${Me.Group[${tmpvar}].Name}!=${Me.Name}
 												{
 													This:AddItem[${Me.Group[${tmpvar}].Name}]
 												}
