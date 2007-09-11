@@ -244,7 +244,6 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-	call WeaponChange
 
 	ExecuteAtom CheckStuck
 
@@ -414,7 +413,6 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 305
 	}
 
-	call WeaponChange
 
 	call RefreshPower
 
