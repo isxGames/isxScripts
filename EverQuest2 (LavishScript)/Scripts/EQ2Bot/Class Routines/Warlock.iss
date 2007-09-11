@@ -26,12 +26,7 @@ function Class_Declaration()
 	declare PetMode bool script 1
 
 	;Custom Equipment
-	declare WeaponStaff string script
-	declare WeaponDagger string script
 	declare PoisonCureItem string script
-	declare WeaponMain string script
-
-	declare EquipmentChangeTimer int script ${Time.Timestamp}
 
 	call EQ2BotLib_Init
 
@@ -44,10 +39,6 @@ function Class_Declaration()
 	BuffBoon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBoon,,FALSE]}]
 	BuffPact:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPact,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 
 }
 
@@ -152,11 +143,6 @@ function Buff_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-	}
 
 	if ${ShardMode}
 	{
@@ -323,10 +309,6 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-	}
 
 	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
@@ -503,8 +485,6 @@ function Cancel_Root()
 function RefreshPower()
 {
 
-
-
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45
 	{
 		call UseItem "Spiritise Censer"
@@ -569,23 +549,5 @@ function CheckHeals()
 	}
 	while ${temphl:Inc}<${grpcnt}
 
-
-}
-
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal["${WeaponMain}"]}
-	{
-		Me.Inventory["${WeaponMain}"]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal["${OffHand}"]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory["${OffHand}"]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
 
 }
