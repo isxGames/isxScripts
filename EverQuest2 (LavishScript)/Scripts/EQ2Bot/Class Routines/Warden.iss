@@ -884,7 +884,7 @@ function CheckHeals()
 			}
 		}
 
-		if ${Me.ToActor.Health}<50 && ${haveagro}
+		if ${Me.ToActor.Health}<50 && ${haveaggro}
 		{
 			if ${Me.Ability[${SpellType[1]}].IsReady}
 			{

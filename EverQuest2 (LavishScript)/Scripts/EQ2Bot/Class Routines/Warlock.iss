@@ -102,20 +102,23 @@ function Combat_Init()
 	MobHealth[5,2]:Set[100]
 	SpellRange[5,1]:Set[94]
 
-	Action[6]:Set[AoE_Nuke]
-	SpellRange[6,1]:Set[90]
-	SpellRange[6,2]:Set[91]
-	SpellRange[6,3]:Set[92]
+	Action[6]:Set[Concussive]
+	SpellRange[6,1]:Set[328]
 
-	Action[7]:Set[Dot]
-	MobHealth[7,1]:Set[20]
-	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[70]
-	SpellRange[7,2]:Set[71]
-	SpellRange[7,3]:Set[72]
+	Action[7]:Set[AoE_Nuke]
+	SpellRange[7,1]:Set[90]
+	SpellRange[7,2]:Set[91]
+	SpellRange[7,3]:Set[92]
 
-	Action[8]:Set[AoE_PB]
-	SpellRange[8,1]:Set[95]
+	Action[8]:Set[Dot]
+	MobHealth[8,1]:Set[20]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[70]
+	SpellRange[8,2]:Set[71]
+	SpellRange[8,3]:Set[72]
+
+	Action[9]:Set[AoE_PB]
+	SpellRange[9,1]:Set[95]
 
 	Action[9]:Set[AoE_Root]
 	SpellRange[9,1]:Set[231]
@@ -123,11 +126,14 @@ function Combat_Init()
 	Action[10]:Set[Root]
 	SpellRange[10,1]:Set[230]
 
-	Action[11]:Set[Nuke]
-	SpellRange[11,1]:Set[60]
-	SpellRange[11,2]:Set[61]
-	SpellRange[11,3]:Set[62]
-	SpellRange[11,4]:Set[63]
+	Action[11]:Set[Concussive]
+	SpellRange[11,1]:Set[328]
+
+	Action[12]:Set[Nuke]
+	SpellRange[12,1]:Set[60]
+	SpellRange[12,2]:Set[61]
+	SpellRange[12,3]:Set[62]
+	SpellRange[12,4]:Set[63]
 
 	Action[12]:Set[Master_Strike]
 
@@ -312,7 +318,7 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${DoHOs} 
+	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
 	}
@@ -405,6 +411,10 @@ function Combat_Routine(int xAction)
 		case Nuke
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},4]} 0 0 ${KillTarget}
 			break
+		case Concussive
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			break
+
 		case Root
 		case AoE_Root
 			break
