@@ -1,5 +1,8 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.1 Updated: 08/07/07 by Pygar
+; EQ2Bot.iss Version 2.7.1b Updated: 00/06/07 by Pygar
+;
+;2.7.1b
+; Minor tweaks to AcceptWindow code
 ;
 ;2.7.1 (Pygar)
 ; Updated Lootwindow to fire on isxeq2 events rather than triggers
@@ -19,27 +22,6 @@
 ;
 ;2.6.0 (Blazer)
 ;Pathing is now done with LavishNav
-;
-;2.5.3
-;Seperated MainAssist and MainTank - New var MainTankPC exists with the name of the MainTank to use in yOur heal/buff routines
-;Added Stance Overriding - define NoEQ2BotStance as true in Buff_Init and Eq2bot will not try to set stances for you.
-;	you will need to add that logic to your ISS file now.
-;Fixed lore and no-trade looting
-;Added Decline all looting method.  If accept loot is not checked, the bot will decline any loot windows that pop up.
-;Fixed many bugs in Pull Script
-;Fixed several bugs in movement and positioning
-;Fixed many broken triggers
-;Removed Legacy functions
-;Fixed Loot function to no longer miss corpses and chests.  It will only ignore a chest now if there is an agronpc closer
-;	to you than the chest or corpse.
-;some general optomizations
-;when autoattack is enabled, it will only reposition when you are not on the mobs rear quadrant, rather than positioning
-;	in every combat 'pulse'.
-;Tweaked pulling to attempt to not get stuck trying to pull a non-LoS mob.
-;Adjusted loot code to new UI files
-;Fixed possible ignoring of adds when waiting for priestpower
-;
-;Fixed a bug causing spells to be interupted occasionally
 ;
 ; Description:
 ; ------------
