@@ -159,7 +159,7 @@
 										{
 											do
 											{
-												if ${Me.Raid[${tmpvar}].Name(exists)} && !${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]}
+												if ${Me.Raid[${tmpvar}].Name(exists)}
 												{
 													This:AddItem[${Me.Raid[${tmpvar}].Name}]
 												}
@@ -170,7 +170,7 @@
 										{
 											do
 											{
-												if ${Me.Group[${tmpvar}](exists)} && !${Me.Group[${tmpvar}].Name.Equal[${Me.Name}]}
+												if ${Me.Group[${tmpvar}](exists)}
 												{
 													This:AddItem[${Me.Group[${tmpvar}].Name}]
 												}
