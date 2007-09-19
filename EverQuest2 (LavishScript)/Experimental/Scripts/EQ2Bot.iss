@@ -1,5 +1,8 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.1 Updated: 08/07/07 by Pygar
+; EQ2Bot.iss Version 2.7.1b Updated: 00/06/07 by Pygar
+;
+;2.7.1b
+; Minor tweaks to AcceptWindow code
 ;
 ;2.7.1 (Pygar)
 ; Updated Lootwindow to fire on isxeq2 events rather than triggers
@@ -19,28 +22,6 @@
 ;
 ;2.6.0 (Blazer)
 ;Pathing is now done with LavishNav
-;
-;2.5.3
-;Seperated MainAssist and MainTank - New var MainTankPC exists with the name of the MainTank to use in yOur heal/buff routines
-;Added Stance Overriding - define NoEQ2BotStance as true in Buff_Init and Eq2bot will not try to set stances for you.
-;	you will need to add that logic to your ISS file now.
-;Fixed lore and no-trade looting
-;Added Decline all looting method.  If accept loot is not checked, the bot will decline any loot windows that pop up.
-;Fixed many bugs in Pull Script
-;Fixed several bugs in movement and positioning
-;Fixed many broken triggers
-;Removed Legacy functions
-;Fixed Loot function to no longer miss corpses and chests.  It will only ignore a chest now if there is an agronpc closer
-;	to you than the chest or corpse.
-;some general optomizations
-;when autoattack is enabled, it will only reposition when you are not on the mobs rear quadrant, rather than positioning
-;	in every combat 'pulse'.
-;Tweaked pulling to attempt to not get stuck trying to pull a non-LoS mob.
-;Adjusted loot code to new UI files
-;Fixed possible ignoring of adds when waiting for priestpower
-;
-;Fixed a bug causing spells to be interupted occasionally
-;
 ;
 ; Description:
 ; ------------
@@ -102,7 +83,7 @@ variable int PreSpellRange[40,5]
 variable string Action[40]
 variable int MobHealth[40,2]
 variable int Power[40,2]
-variable int SpellRange[40,5]
+variable int SpellRange[40,10]
 variable string PostAction[20]
 variable int PostSpellRange[20,5]
 variable bool stealth=FALSE
@@ -184,8 +165,6 @@ variable int MARange
 variable string CurrentAction
 variable int BadActor[50]
 ;===================================================
-
-;===================================================
 ;===		Lavish Navigation	        ====
 ;===================================================
 variable filepath ConfigPath = "${LavishScript.CurrentDirectory}/Scripts/EQ2Bot/Navigational Paths/"
@@ -208,17 +187,13 @@ variable bool POIInclude[50]
 variable int POICount
 variable int CurrentPOI=1
 ;===================================================
-
-;===================================================
 ; Define the PathType
 ; 0 = Manual Movement
 ; 1 = Minimum Movement - Home Point Set
 ; 2 = Camp - Follow Small Nav Path with multiple Pull Points
 ; 3 = Dungeon Crawl - Follow Nav Path: Start to Finish
 ; 4 = Auto Hunting - Pull nearby Mobs within a Maximum Range
-
 variable int PathType
-;===================================================
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
 #include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
@@ -229,9 +204,15 @@ function main()
 	variable int tempvar1
 	variable int tempvar2
 	variable string tempnme
-	declar LastWindow string script
+	declare LastWindow string script
 
-	Turbo 1000
+	if !${ISXEQ2.IsReady}
+	{
+		echo ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!
+		Script:End
+	}
+
+	Turbo 50
 
 	;Script:Squelch
 	;Script:EnableProfiling
@@ -243,7 +224,6 @@ function main()
 	EQ2Nav:Initialise
 
 	call Class_Declaration
-
 	call CheckManaStone
 
 	do
@@ -318,6 +298,16 @@ function main()
 			wait 50
 		}
 
+		if !${StartBot}
+		{
+			KillTarget:Set[]
+			do
+			{
+				wait 50
+			}
+			while !${StartBot}
+		}
+
 		if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
 		{
 			if ${Math.Calc[${Time.Timestamp}-${mstimer}]}>70
@@ -327,7 +317,7 @@ function main()
 			}
 		}
 
-		; Process Pre-Combat Scripts
+		;Process Pre-Combat Scripts
 		tempvar:Set[1]
 		do
 		{
@@ -342,7 +332,7 @@ function main()
 			{
 				if ${Actor[ExactName,${MainAssist}](exists)}
 				{
-					target ${Actor[ExactName,${MainAssist}
+					target ${Actor[ExactName,${MainAssist}]}
 					wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
 				}
 
@@ -457,7 +447,7 @@ function main()
 								call CastSpellRange 290 0 0 0 0 0 0 1
 							}
 
-							if !${Me.Effect[Pathfinding](exists)} && !${Me.Effect[Selo's Accelerating Chorus](exists)}
+							if !${Me.Effect[Pathfinding](exists)}
 							{
 								call CastSpellRange 302 0 0 0 0 0 0 1
 							}
@@ -778,10 +768,12 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 function Combat()
 {
 	variable int tempvar
+	variable int EngageDistance
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
 	FollowTask:Set[2]
+	EngageDistance:Set[20]
 
 	; Make sure we are still not moving when we enter combat
 	if ${Me.IsMoving}
@@ -802,13 +794,6 @@ function Combat()
 		{
 			face ${Target.X} ${Target.Z}
 
-		}
-
-
-		; Main Tank needs to turn the mob away from the rest of the group
-		if ${PathType}==2 && ${MainTank}
-		{
-			;removed to stop excess movement
 		}
 
 		do
@@ -867,9 +852,27 @@ function Combat()
 					call Have_Aggro
 				}
 
+				switch ${Me.Archetype}
+				{
+					case fighter
+					case scout
+						EngageDistance:Set[9]
+						break
+					case mage
+					case priest
+					case default
+						EngageDistance:Set[35]
+				}
+
+				do
+				{
+					waitframe
+				}
+				while ${MainTank} && ${Target.Target.ID}==${Me.ID} && ${Target.Distance}>${EngageDistance}
+
 				call Combat_Routine ${tempvar}
 
-				if ${Return.Equal[Melee Complete]}
+				if ${Return.Equal[CombatComplete]}
 				{
 					tempvar:Set[40]
 				}
@@ -1442,39 +1445,7 @@ function Pull(string npcclass)
 				continue
 			}
 
-			switch ${CustomActor[${tcount}].Class}
-			{
-				case templar
-				case inquisitor
-				case fury
-				case warden
-				case defiler
-				case mystic
-					if ${npcclass.Equal[priest]} || ${npcclass.Equal[any]}
-					{
-						chktarget:Set[TRUE]
-					}
-					break
-
-				case coercer
-				case illusionist
-				case warlock
-				case wizard
-				case conjuror
-				case necromancer
-					if ${npcclass.Equal[mage]} || ${npcclass.Equal[any]}
-					{
-						chktarget:Set[TRUE]
-					}
-					break
-
-				Default
-					if ${npcclass.Equal[any]}
-					{
-						chktarget:Set[TRUE]
-					}
-					break
-			}
+			chktarget:Set[TRUE]
 
 			if ${chktarget}
 			{
@@ -1534,6 +1505,11 @@ function Pull(string npcclass)
 						EQ2Execute /pet backoff
 						wait 50 ${CustomActor[${tcount}].Distance}<20
 						EQ2Execute /pet attack
+						if ${PetGuard}
+						{
+							EQ2Execute /pet preserve_self
+							EQ2Execute /pet preserve_master
+						}
 						if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
 						{
 							face ${Target.X} ${Target.Z}
@@ -1549,6 +1525,19 @@ function Pull(string npcclass)
 
 				if (${Return.Equal[CANTSEETARGET]} || ${Return.Equal[TOOFARAWAY]}) && ${pulling} && !${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
 				{
+					;randomly pick a direction
+					if "${Math.Rand[10]}>5"
+					{
+						press -hold STRAFELEFT
+						wait ${Math.Rand[20]}
+						press -release STRAFELEFT
+					}
+					else
+					{
+						press -hold STRAFERIGHT
+						wait ${Math.Rand[20]}
+						press -release STRAFERIGHT
+					}
 					EQ2Execute /target_none
 				}
 				else
@@ -1708,7 +1697,7 @@ function CheckLoot()
 					break
 			}
 			Actor[Chest]:DoubleClick
-			if !${Return.Equal[TOOFARWAY]}
+			if !${Return.Equal[TOOFARAWAY]}
 			{
 				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
 			}
@@ -2017,7 +2006,7 @@ function IamDead(string Line)
 
 	echo "You have been killed"
 
-	if ${Me.GroupCount}==1
+	if ${Me.GroupCount}==1 && ${WipeRevive}
 	{
 		echo no group, resetting
 		EQ2Execute "select_junction 0"
@@ -2033,10 +2022,6 @@ function IamDead(string Line)
 	{
 		do
 		{
-			if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
-			{
-				EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-			}
 			wipe:Set[1]
 			wipegroup:Set[1]
 			do
@@ -2120,11 +2105,6 @@ function IamDead(string Line)
 			{
 				Exit
 			}
-
-			if !${EQ2UIPage[Hud,Choice].Child[text,Choice.Text].Label.Find[DEVL]}
-			{
-				EQ2UIPage[Hud,Choice].Child[button,Choice.Choice1]:LeftClick
-			}
 		}
 		while ${Me.ToActor.Health}<1
 	}
@@ -2132,21 +2112,21 @@ function IamDead(string Line)
 
 function LoreItem(string Line)
 {
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 }
 
 function LootWindowBusy(string Line)
 {
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 }
 
 function InventoryFull(string Line)
 {
-	press esc
-	press esc
-	LootAll:Set[FALSE]
-	AutoLoot:Set[FALSE]
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Accept Loot Automatically?,FALSE]:Save
+	EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+
+	LootMethod:Set[Decline]
+
+	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[LootMethod,Accept]:Save
 	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Loot Corpses and open Treasure Chests?,FALSE]:Save
 }
 
@@ -2260,7 +2240,7 @@ atom(script) LootWdw(string ID)
 
 	if ${ID.Equal[${LastWindow}]}
 	{
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 		return
 	}
 
@@ -2317,7 +2297,7 @@ atom(script) LootWdw(string ID)
 	;if window is still open, close it
 	if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow[${ID}].Item[1].Name(exists)}
 	{
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.button Close]:LeftClick
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 	}
 }
 
@@ -2377,6 +2357,14 @@ function BotFollow(string Line, string FollowTarget)
 function BotStop()
 {
 	FollowTask:Set[0]
+	StartBot:Set[FALSE]
+
+	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
+
 }
 
 function BotAbort()
@@ -3314,7 +3302,9 @@ objectdef EQ2BotObj
 
 	method SetBadActor(string badactorid)
 	{
-		variable int tempvar
+		variable int tempvar=0
+
+		tempvar:Set[0]
 
 		if !${BadActor[50]}
 		{
@@ -3842,13 +3832,20 @@ atom ExcludePOI()
 
 atom(script) EQ2_onChoiceWindowAppeared()
 {
-	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]}
+	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
+	{
+		ChoiceWindow:DoChoice1
+		return
+	}
+
+
+	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
 		if ${LootConfirm}
 		{
 			ChoiceWindow:DoChoice1
 		}
-		else
+		elseif !${LootMethod.Equal[Idle]}
 		{
 			ChoiceWindow:DoChoice2
 		}
