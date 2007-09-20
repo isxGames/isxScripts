@@ -52,12 +52,7 @@ function Class_Declaration()
 
 	declare MainWeapon string script
 	declare OffHand string script
-	declare OneHandedHammer string script
-	declare TwoHandedHammer string script
-	declare Symbols string script
-	declare Buckler string script
 	declare YaulpWeapon string script
-	declare TwoHandedStaff string script
 
 	call EQ2BotLib_Init
 
@@ -80,12 +75,7 @@ function Class_Declaration()
 
 	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	OneHandedHammer:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OneHandedHammer,]}]
-	TwoHandedHammer:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedHammer,]}]
-	Symbols:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[WeaponSymbols,]}]
-	Buckler:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buckler,]}]
 	YaulpWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[YaulpWeapon,]}]
-	TwoHandedStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedStaff,]}]
 }
 
 function Buff_Init()
@@ -1071,7 +1061,7 @@ function CureGroupMember(int gMember)
 		{
 			call CastSpellRange 10
 		}
-		if ${Me.Group[${gMember}].Health}<50 && ${Me.Group[${gMember}].Health}>-99
+		if ${Me.Group[${gMember}].ToActor.Health}<50 && ${Me.Group[${gMember}].ToActor.Health}>-99
 		{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
 		}
