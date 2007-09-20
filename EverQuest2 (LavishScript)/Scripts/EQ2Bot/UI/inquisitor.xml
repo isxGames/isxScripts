@@ -103,7 +103,7 @@
 	</Commandcheckbox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>130</Y>
+		<Y>230</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -112,8 +112,8 @@
 	</Text>
 	<combobox name='cbMainWeapon' Template='EQ2.Combobox'>
 		<x>150</x>
-		<y>130</y>
-		<width>30%</width>
+		<y>230</y>
+		<width>40%</width>
 		<height>20</height>
 		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
 		<OnLeftClick>
@@ -150,7 +150,7 @@
 	</combobox>
 	<Text Name='lblOffHand' Template='EQ2.text'>
 		<X>5%</X>
-		<Y>150</Y>
+		<Y>250</Y>
 		<Width>20%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -159,8 +159,8 @@
 	</Text>
 	<combobox name='cbOffHand' Template='EQ2.Combobox'>
 		<x>150</x>
-		<y>150</y>
-		<width>30%</width>
+		<y>250</y>
+		<width>40%</width>
 		<height>20</height>
 		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
 		<OnLeftClick>
@@ -195,241 +195,6 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OffHand,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
-	<Text Name='lblTwoHandedStaff' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>170</Y>
-		<Width>130</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA 2H Staff:</Text>
-		<AutoTooltip>2H staff to use during AAs</AutoTooltip>
-	</Text>
-	<combobox name='cbTwoHandedStaff' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>170</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use while cleric is using a 2 handed staff AA </AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Staff]} &amp;&amp; ${Me.CustomInventory[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Staff]} &amp;&amp; ${Me.Equipment[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedStaff]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedStaff]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[TwoHandedStaff]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[TwoHandedStaff,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblOneHandedHammer' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>190</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA 1H Hammer:</Text>
-		<AutoTooltip>Weapon to use during 1 Handed Hammer required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbOneHandedHammer' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>190</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use during 1 Handed Hammer required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if (${Me.CustomInventory[${Counter}].SubType.Equal[Great Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.CustomInventory[${Counter}].WieldStyle.Find[One-Handed]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if (${Me.Equipment[${Counter}].SubType.Equal[Great Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.Equipment[${Counter}].WieldStyle.Find[One-Handed]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OneHandedHammer]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OneHandedHammer]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[OneHandedHammer]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OneHandedHammer,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblTwoHandedHammer' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>210</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA 2H Hammer:</Text>
-		<AutoTooltip>Weapon to use during 2 Handed Hammer required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbTwoHandedHammer' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>210</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use during 2 Handed Hammer required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if (${Me.CustomInventory[${Counter}].SubType.Equal[Great Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.CustomInventory[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if (${Me.Equipment[${Counter}].SubType.Equal[Great Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.Equipment[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedHammer]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedHammer]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[TwoHandedHammer]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[TwoHandedHammer,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblSymbols' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>230</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Symbols:</Text>
-		<AutoTooltip>Off hand Symbols to use during Symbols required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbSymbols' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>230</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Off hand Symbols to use during Symbols required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Symbols]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Symbols]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Symbols]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Symbols]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[Symbols]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Symbols,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblBuckler' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>250</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Buckler:</Text>
-		<AutoTooltip>Buckler to use during Buckler required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbBuckler' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>250</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Buckler to use during Buckler required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Buckler]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Buckler]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buckler]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buckler]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[Buckler]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Buckler,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
 	<Text Name='lblYaulpWeapon' Template='EQ2.text'>
 		<X>5%</X>
 		<Y>270</Y>
@@ -442,7 +207,7 @@
 	<combobox name='cbYaulpWeapon' Template='EQ2.Combobox'>
 		<x>150</x>
 		<y>270</y>
-		<width>30%</width>
+		<width>40%</width>
 		<height>20</height>
 		<AutoTooltip>Weapon to use while cleric is using Yaulp</AutoTooltip>
 		<OnLeftClick>
