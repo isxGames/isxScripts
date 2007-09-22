@@ -27,9 +27,9 @@
 ; ------------
 ; Automated BOT for any class.
 ; Syntax: run eq2bot
-;
+;-----------------------------------------------------------------------------------------------
 ;===================================================
-;===		Keyboard Configuration	        ====
+;===        Keyboard Configuration              ====
 ;===================================================
 variable string forward=w
 variable string backward=s
@@ -37,13 +37,13 @@ variable string strafeleft=q
 variable string straferight=e
 variable string endbot=f11
 ;===================================================
-;===		Custom Variables	        ====
+;===           Custom Variables                 ====
 ;===================================================
 variable int quickwait=1
 variable int shortwait=5
 variable int longwait=10
 ;===================================================
-;===		Variable Declarations	        ====
+;===           Variable Declarations            ====
 ;===================================================
 variable EQ2BotObj EQ2Bot
 variable ActorCheck Mob
@@ -129,7 +129,6 @@ variable int oldhealth[5]
 variable int healthtimer[5]
 variable int chgcnt[5]
 variable int tempgrp
-variable bool KeepReactive
 variable int chktimer
 variable int starttimer=${Time.Timestamp}
 variable bool avoidhate
@@ -141,7 +140,6 @@ variable int StartLevel=${Me.Level}
 variable bool PullNonAggro
 variable bool checkadds
 variable bool DCDirection=TRUE
-variable string reactivespell
 variable string Harvesting
 variable bool PauseBot=FALSE
 variable bool StartBot=FALSE
@@ -165,7 +163,7 @@ variable int MARange
 variable string CurrentAction
 variable int BadActor[50]
 ;===================================================
-;===		Lavish Navigation	        ====
+;===          Lavish Navigation                 ====
 ;===================================================
 variable filepath ConfigPath = "${LavishScript.CurrentDirectory}/Scripts/EQ2Bot/Navigational Paths/"
 variable Navigation EQ2Nav
@@ -186,13 +184,14 @@ variable string POIList[50]
 variable bool POIInclude[50]
 variable int POICount
 variable int CurrentPOI=1
-;===================================================
+;===========================================================
 ; Define the PathType
 ; 0 = Manual Movement
 ; 1 = Minimum Movement - Home Point Set
 ; 2 = Camp - Follow Small Nav Path with multiple Pull Points
 ; 3 = Dungeon Crawl - Follow Nav Path: Start to Finish
 ; 4 = Auto Hunting - Pull nearby Mobs within a Maximum Range
+;===========================================================
 variable int PathType
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
@@ -238,47 +237,6 @@ function main()
 		}
 	}
 	while !${StartBot}
-
-	if ${KeepReactive}
-	{
-		grpcnt:Set[${Me.GroupCount}]
-		tempgrp:Set[1]
-		do
-		{
-			switch ${Me.Group[${tempgrp}].Class}
-			{
-				case priest
-				case cleric
-				case templar
-				case inquisitor
-				case druid
-				case fury
-				case warden
-				case shaman
-				case defiler
-				case mystic
-					tempvar:Set[1]
-					spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.Group[${tempgrp}].Class}.xml]
-					do
-					{
-						tempnme:Set["${SettingXML[${spellfile}].Set[${Me.Group[${tempgrp}].Class}].Key[${tempvar}]}"]
-
-						if ${Arg[1,${tempnme}]}>${Me.Group[${tempgrp}].Level}
-						{
-							break
-						}
-
-						if ${Arg[2,${tempnme}]}==7
-						{
-							reactivespell:Set[${SettingXML[${spellfile}].Set[${Me.Group[${tempgrp}].Class}].GetString["${tempnme}"]}]
-						}
-					}
-					while ${tempvar:Inc}<=${SettingXML[${spellfile}].Set[${Me.Group[${tempgrp}].Class}].Keys}
-					break
-			}
-		}
-		while ${tempgrp:Inc}<${grpcnt}
-	}
 
 	; The following 3 scripts are Initialized which are customizable
 	call Buff_Init
@@ -447,7 +405,7 @@ function main()
 								call CastSpellRange 290 0 0 0 0 0 0 1
 							}
 
-							if !${Me.Effect[Pathfinding](exists)} && !${Me.Effect[Selo's Accelerating Chorus](exists)}
+							if !${Me.Effect[Pathfinding](exists)}
 							{
 								call CastSpellRange 302 0 0 0 0 0 0 1
 							}
@@ -1526,18 +1484,19 @@ function Pull(string npcclass)
 				if (${Return.Equal[CANTSEETARGET]} || ${Return.Equal[TOOFARAWAY]}) && ${pulling} && !${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
 				{
 					;randomly pick a direction
-					if "${Math.Rand[10]}>5"
+					if ${Math.Rand[10]}>5
 					{
 						press -hold STRAFELEFT
-						wait ${Math.Rand[20]}
+						wait ${Math.Rand[40]}
 						press -release STRAFELEFT
 					}
 					else
 					{
 						press -hold STRAFERIGHT
-						wait ${Math.Rand[20]}
+						wait ${Math.Rand[40]}
 						press -release STRAFERIGHT
 					}
+					call FastMove ${Target.X} ${Target.Z} 15
 					EQ2Execute /target_none
 				}
 				else
@@ -2414,16 +2373,6 @@ function BotCastTarget(string line, string Spell, string castTarget)
 	call CastSpell "${Spell}"
 }
 
-function PreReactiveOn()
-{
-	KeepReactive:Set[1]
-}
-
-function PreReactiveOff()
-{
-	KeepReacitve:Set[0]
-}
-
 function StartBot()
 {
 	variable int tempvar1
@@ -2855,7 +2804,6 @@ objectdef EQ2BotObj
 		MainTankPC:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who is the Main Tank?,${Me.Name}]}]
 		AutoSwitch:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Switch Targets when Main Assist Switches?,TRUE]}]
 		AutoLoot:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Loot Corpses and open Treasure Chests?,FALSE]}]
-		KeepReactive:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Cast or Wait for Reactive pre-combat?,FALSE]}]
 		LootAll:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Accept Loot Automatically?,TRUE]}]
 		LootMethod:Set[${SettingXML[${charfile}].Set[General Settings].GetString[LootMethod,Accept]}]
 		AutoPull:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Pull,FALSE]}]
@@ -2966,8 +2914,6 @@ objectdef EQ2BotObj
 		AddTrigger BotCommand "EQ2Bot /@doCommand@"
 		AddTrigger BotAutoMeleeOn "EQ2Bot melee on"
 		AddTrigger BotAutoMeleeOff "EQ2Bot melee off"
-		AddTrigger PreReactiveOn "prereactive on"
-		AddTrigger PreReactiveOff "prereactive off"
 
 	}
 
@@ -3280,14 +3226,9 @@ objectdef EQ2BotObj
 				case shaman
 				case defiler
 				case mystic
-					if ${Me.Group[${tempvar}].Level}>=12 && ${Actor[${Me.ID}].Effect[${reactivespell}](exists)} && ${KeepReactive} && ${Me.Group[${tempvar}].ToActor.Power}>80
+					if ${Me.Group[${tempvar}].ToActor.Power}>80
 					{
 						return TRUE
-					}
-					elseif ${Me.Group[${tempvar}].ToActor.Power}>80 && !${KeepReactive}
-					{
-						return TRUE
-
 					}
 					return FALSE
 
