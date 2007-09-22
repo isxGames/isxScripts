@@ -734,7 +734,7 @@ function CheckHeals()
 					}
 				}
 
-				if ${Me.Group[${temphl}].Name.Equal[${MainAssist}]}
+				if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
 				{
 					MTinMyGroup:Set[TRUE]
 				}
@@ -785,9 +785,9 @@ function CheckHeals()
 	if ${HealMode}
 	{
 		;MAINTANK HEALS
-		if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+		if ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 		{
-				call CastSpellRange 4 0 0 0 ${Actor[${MainAssist}].ID}
+				call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
 

@@ -575,7 +575,7 @@ function Combat_Routine(int xAction)
 
 		if ${Me.Ability[${SpellType[95]}].IsReady} && ${PBAoEMode} && ${spellsused}<4
 		{
-			call CastSpellRange 95 0 0 0 ${KillTarget}
+			call CastSpellRange 95 0 1 0 ${KillTarget}
 			spellsused:Inc
 		}
 
