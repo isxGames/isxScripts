@@ -100,6 +100,46 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='AnnounceMode' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>90</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Announce Cacophony to Group</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[AnnounceMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Announce Cacophony",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[AnnounceMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Announce Cacophony",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Announce Cacophony]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='JoustMode' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>90</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Joust Mobs based on Raid/Tell:</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[JoustMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Listen to Joust Calls",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[JoustMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Listen to Joust Calls",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Listen to Joust Calls]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox Name='Buff Parry' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>55%</X>
