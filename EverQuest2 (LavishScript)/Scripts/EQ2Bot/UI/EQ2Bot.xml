@@ -159,7 +159,7 @@
 										{
 											do
 											{
-												if ${Me.Raid[${tmpvar}].Name(exists)}
+												if ${Me.Raid[${tmpvar}].Name(exists)} &amp;&amp; !${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]}
 												{
 													This:AddItem[${Me.Raid[${tmpvar}].Name}]
 												}
@@ -170,7 +170,7 @@
 										{
 											do
 											{
-												if ${Me.Group[${tmpvar}](exists)}
+												if ${Me.Group[${tmpvar}](exists)} &amp;&amp; !${Me.Group[${tmpvar}].Name.Equal[${Me.Name}]}
 												{
 													This:AddItem[${Me.Group[${tmpvar}].Name}]
 												}
@@ -187,6 +187,7 @@
 											This:AddItem[${Me.PetName}]
 										}
 									</OnLeftClick>
+									<AutoTooltip>Check the box to set yourself as MT</AutoTooltip>
 								</combobox>
 							</Children>
 						</Frame>
@@ -216,6 +217,7 @@
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
 								}
 							</OnLeftClick>
+							<AutoTooltip>Check the box to set yourself as MA</AutoTooltip>
 						</checkbox>
 						<Frame Name='MainAssist Frame'>
 							<X>23%</X>
