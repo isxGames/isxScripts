@@ -1,7 +1,14 @@
 ;*************************************************************
 ;Wizard.iss
-;version 20070514a
+;version 20070921a
 ;by Pygar
+;
+;20070921a
+; New casting Order for better dps
+;	Pet Use Toggle
+;	Cure Use Toggle
+; Removed Depricated Code
+; Fixed some Spell Key assignments
 ;
 ;20070514a
 ; Fixed a combat spell key error preventing use of Immoliation line
@@ -22,35 +29,24 @@ function Class_Declaration()
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
-	declare DoTMode bool script TRUE
 	declare BuffAccordShield bool script FALSE
 	declare BuffSeeInvis bool script TRUE
 	declare BuffRadianceProc collection:string script
 	declare BuffAmplify bool script FALSE
 	declare BuffSeal bool script FALSE
-
-
-	;Custom Equipment
-	declare WeaponStaff string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare WeaponMain string script
-
-	declare EquipmentChangeTimer int script ${Time.Timestamp}
+	declare CastCures bool script FALSE
+	declare PetMode bool script TRUE
 
 	call EQ2BotLib_Init
 
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
-	DoTMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast DoT Spells,TRUE]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
+	CastCures:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Cures,TRUE]}]
 	BuffAccordShield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Accord Shield,FALSE]}]
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffAmplify:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAmplify,,FALSE]}]
 	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 
 }
 
@@ -82,90 +78,91 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Combat_SelfBuff]
-	MobHealth[1,1]:Set[50]
-	MobHealth[1,2]:Set[100]
-	SpellRange[1,1]:Set[361]
 
-	Action[2]:Set[Combat_GroupBuff]
-	MobHealth[2,1]:Set[50]
-	MobHealth[2,2]:Set[100]
-	SpellRange[2,1]:Set[360]
+	Action[1]:Set[AoE_Nuke2]
+	SpellRange[1,1]:Set[91]
 
-	Action[3]:Set[Debuffs]
-	SpellRange[3,1]:Set[355]
+	Action[2]:Set[AoE_Nuke3]
+	SpellRange[2,1]:Set[92]
 
-	Action[4]:Set[Debuffs]
-	SpellRange[4,1]:Set[50]
+	Action[3]:Set[AoE_PB3]
+	SpellRange[3,1]:Set[96]
 
-	Action[5]:Set[Special_Pet]
-	MobHealth[5,1]:Set[50]
-	MobHealth[5,2]:Set[100]
-	SpellRange[5,1]:Set[324]
+	Action[4]:Set[AoE_PB1]
+	SpellRange[4,1]:Set[94]
+
+	Action[5]:Set[AoE_PB2]
+	SpellRange[5,1]:Set[95]
 
 	Action[6]:Set[Combat_DS]
 	MobHealth[6,1]:Set[30]
 	MobHealth[6,2]:Set[100]
 	SpellRange[6,1]:Set[355]
 
-	Action[7]:Set[AoE_Nuke1]
-	SpellRange[7,1]:Set[90]
+	Action[7]:Set[Dot1]
+	MobHealth[7,1]:Set[20]
+	MobHealth[7,2]:Set[100]
+	SpellRange[7,1]:Set[70]
 
-	Action[8]:Set[AoE_Nuke2]
-	SpellRange[8,1]:Set[91]
+	Action[8]:Set[Dot4]
+	MobHealth[8,1]:Set[20]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[73]
 
-	Action[9]:Set[AoE_Nuke3]
-	SpellRange[9,1]:Set[92]
+	Action[9]:Set[Nuke4]
+	SpellRange[9,1]:Set[63]
 
-	Action[10]:Set[Dot1]
+	Action[10]:Set[Dot3]
 	MobHealth[10,1]:Set[20]
 	MobHealth[10,2]:Set[100]
-	SpellRange[10,1]:Set[70]
+	SpellRange[10,1]:Set[72]
 
-	Action[11]:Set[Dot2]
-	MobHealth[11,1]:Set[20]
+	Action[11]:Set[Special_Pet]
+	MobHealth[11,1]:Set[50]
 	MobHealth[11,2]:Set[100]
-	SpellRange[11,1]:Set[71]
+	SpellRange[11,1]:Set[324]
 
-	Action[12]:Set[Dot3]
-	MobHealth[12,1]:Set[20]
-	MobHealth[12,2]:Set[100]
-	SpellRange[12,1]:Set[72]
+	Action[12]:Set[Nuke4]
+	SpellRange[12,1]:Set[63]
 
-	Action[13]:Set[Dot4]
-	MobHealth[13,1]:Set[20]
-	MobHealth[13,2]:Set[100]
-	SpellRange[13,1]:Set[73]
+	Action[13]:Set[Stun1]
+	SpellRange[13,1]:Set[181]
 
-	Action[14]:Set[AoE_PB1]
-	SpellRange[14,1]:Set[94]
+	Action[14]:Set[Nuke1]
+	SpellRange[14,3]:Set[60]
 
-	Action[15]:Set[AoE_PB2]
-	SpellRange[15,1]:Set[95]
+	Action[15]:Set[Master_Strike]
 
-	Action[16]:Set[AoE_PB3]
-	SpellRange[16,1]:Set[96]
+	Action[15]:Set[Nuke4]
+	SpellRange[15,1]:Set[63]
 
-	Action[17]:Set[Stun]
+	Action[16]:Set[Nuke3]
+	SpellRange[16,3]:Set[62]
+
+	Action[17]:Set[Stun2]
 	SpellRange[17,1]:Set[180]
-	SpellRange[17,2]:Set[181]
 
-	Action[18]:Set[Nuke]
-	SpellRange[18,1]:Set[60]
-	SpellRange[18,2]:Set[61]
-	SpellRange[18,3]:Set[62]
-	SpellRange[18,4]:Set[63]
+	Action[18]:Set[Nuke2]
+	SpellRange[18,3]:Set[61]
 
-	Action[19]:Set[Master_Strike]
+	Action[19]:Set[Dot2]
+	MobHealth[19,1]:Set[20]
+	MobHealth[19,2]:Set[100]
+	SpellRange[19,1]:Set[71]
+
+	Action[20]:Set[Nuke4]
+	SpellRange[20,1]:Set[63]
+
+	Action[21]:Set[AoE_Nuke1]
+	SpellRange[21,1]:Set[90]
+
+	Action[22]:Set[Debuff2]
+	SpellRange[22,1]:Set[50]
 
 }
 
 function PostCombat_Init()
 {
-
-	PostAction[1]:Set[LoadDefaultEquipment]
-	call RefreshPower
-	avoidhate:Set[FALSE]
 
 }
 
@@ -175,12 +172,6 @@ function Buff_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-	}
-
 
 	if ${ShardMode}
 	{
@@ -343,70 +334,54 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-	}
-
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}  && ${StartHO}
 	{
 		call CastSpellRange 303
 	}
 
-	;keep dammage Shield up
-	if ${Me.Ability[${SpellType[355]}].IsReady}
+	if ${CureMode}
 	{
-		call CastSpellRange 355 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CheckHeals
 	}
-
-
-	call CheckHeals
 	call RefreshPower
+	call UseCrystallizedSpirit 60
+
+	;maintain combat buffs
+	if ${Me.Ability[${SpellType[360]}].IsReady}
+	{
+		call CastSpellRange 360
+	}
+	if ${Me.Ability[${SpellType[361]}].IsReady}
+	{
+		call CastSpellRange 361
+	}
 
 	switch ${Action[${xAction}]}
 	{
 
 		case Special_Pet
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
+			if ${Return.Equal[OK]} && ${PetMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
-
 		case AoE_PB1
 		case AoE_PB2
 		case AoE_PB3
-			if ${PBAoEMode} && ${Mob.Count}>1
+			if ${PBAoEMode} && ${Mob.Count}>2
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 
 			}
 			break
-
-		case Combat_SelfBuff
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case Combat_GroupBuff
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && ${Mob.Count}>1
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case Debuffs
+		case Debuff1
+		case Debuff2
 			if ${DebuffMode} && ${PBAoEMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
-
 		case AoE_Nuke1
 		case AoE_Nuke2
 		case AoE_Nuke3
@@ -422,7 +397,6 @@ function Combat_Routine(int xAction)
 				Target ${KillTarget}
 				Me.Ability[Master's Smite]:Use
 			}
-
 		case Dot1
 		case Dot2
 		case Dot3
@@ -433,17 +407,22 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
 			}
 			break
-
-		case Nuke
+		case Combat_DS
+		case Nuke2
+		case Nuke4
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			break
+		case Nuke3
+		case Nuke1
 			if ${Me.Ability[${SpellType[385]}].IsReady}
 			{
 				call CastSpellRange 385
 			}
-			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},4]} 0 0 ${KillTarget}
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
-
-		case Stun
-			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget}
+		case Stun1
+		case Stun2
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		case Root
 			break
@@ -456,20 +435,7 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
-
-
 	TellTank:Set[FALSE]
-
-	switch ${PostAction[${xAction}]}
-	{
-		case LoadDefaultEquipment
-			ExecuteAtom LoadEquipmentSet "Default"
-		case default
-			xAction:Set[20]
-			break
-	}
-
-
 }
 
 function Have_Aggro()
@@ -490,12 +456,15 @@ function Have_Aggro()
 		call CastSpellRange 180
 	}
 
-	if ${Me.Ability[${SpellRange[230]}].IsReady} ${Actor[${aggroid}].Distance}<5
+	if ${Me.Ability[${SpellRange[230]}].IsReady} ${Actor[${aggroid}].Distance}<5 && !${avoidhate}
 	{
-		call CastSpellRange 230
+		call CastSpellRange 230 0 0 0 ${Actor[${aggroid}].ID}
 		press -hold ${backward}
 		wait 3
 		press -release ${backward}
+		avoidhate:Set[TRUE]
+		call CastSpellRange 50 0 0 0 ${Actor[${aggroid}].ID}
+		call CastSpellRange 90 0 0 0 ${Actor[${aggroid}].ID}
 	}
 
 	if !${avoidhate} && ${Actor[${aggroid}].Distance}<5
@@ -531,15 +500,13 @@ function Cancel_Root()
 function RefreshPower()
 {
 
-
-
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45
 	{
 		call UseItem "Spiritise Censer"
 	}
 
 	;Conjuror Shard
-	if ${Me.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 	}
@@ -554,12 +521,12 @@ function RefreshPower()
 		call UseItem "Stein of the Everling Lord"
 	}
 
-	if ${Me.ToActor.Power}<45
+	if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>20
 	{
 		call CastSpellRange 309
 	}
 
-	if ${Me.ToActor.Power}<35 && ${Me.ToActor.Health}>20
+	if ${Me.ToActor.Power}<5
 	{
 		call CastSpellRange 310
 	}
@@ -596,24 +563,5 @@ function CheckHeals()
 		}
 	}
 	while ${temphl:Inc}<${grpcnt}
-
-	call UseCrystallizedSpirit 60
-}
-
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal["${WeaponMain}"]}
-	{
-		Me.Inventory["${WeaponMain}"]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal["${OffHand}"]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory["${OffHand}"]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
 
 }

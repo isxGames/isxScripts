@@ -40,10 +40,8 @@ function Class_Declaration()
 	declare ShardType string script
 
 	;Custom Equipment
-	declare WeaponStaff string script
-	declare WeaponDagger string script
 	declare PoisonCureItem string script
-	declare WeaponMain string script
+
 
 	declare EquipmentChangeTimer int script ${Time.Timestamp}
 
@@ -61,10 +59,6 @@ function Class_Declaration()
 	BuffEscutcheon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEscutcheon,,FALSE]}]
 	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 
 	switch ${SpellType[360]}
 	{
@@ -200,12 +194,6 @@ function Buff_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
 
 	;check if we have a pet or a hydromancy not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
@@ -383,9 +371,20 @@ function Buff_Routine(int xAction)
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 			}
+
+			if ${Me.Inventory["Shard of Essence"](exists)}
+			{
+				ShardType:Set[Shard of Essence]
+			}
+			elseif ${Me.Inventory["Sliver of Essence"](exists)}
+			{
+				ShardType:Set[Sliver of Essence]
+			}
+			elseif  ${Me.Inventory["Scintilla of Essence"](exists)}
+			{
+				ShardType:Set[Scintilla of Essence]
+			}
 			break
-
-
 		Default
 			xAction:Set[40]
 			break
@@ -828,20 +827,3 @@ function SummonPet()
 	}
 }
 
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal["${WeaponMain}"]}
-	{
-		Me.Inventory["${WeaponMain}"]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal["${OffHand}"]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory["${OffHand}"]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-}

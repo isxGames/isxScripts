@@ -1,7 +1,21 @@
 ;*****************************************************
-;Dirge.iss 20070822a
-;by Karye
-;updated by Pygar
+;Dirge.iss 20070919a
+;by Pygar & Kayre
+;
+;20070919a
+;Added Joust Mode - Dirge will move to group or raid healer when it see's the out message in raid chat or
+; 									tells and use ranged dps till it see's the in message in raid chat or tells.  Added
+;										intelegent use of BladeDance and TurnSpike in joust mode, allowing the dirge to stay
+;										in on joust calls when these are available. Be sure and edit the dps in and dps out
+;										text in the Class_Declaration to the values you want to use
+;RangeMode Adjusted - No longer uses MasterStrike when in range mode.  No longer moves to range 6 to use
+;											Bow attacks providing the bow attack is already in range.  So you can position the
+;											dirge at safe distance prior to fight and it will remain there
+;AnnounceMode Added - Due to popular demand, added announcing Cacophony of Blades to group chat.
+;Changed Rhythm Blade and Cacophony of Blades to be used whenever they are up.
+;Fixed Selo's to be used all the time
+;Fixed Heroic Storytelling to be used all the time
+;Fixed Luck of the Dirge to be used all the time
 ;
 ;20070822a
 ;Removed Weapon Swapping as no longer required
@@ -24,6 +38,8 @@ function Class_Declaration()
 	declare AoEMode bool script 0
 	declare BowAttacksMode bool script 0
 	declare RangedAttackMode bool script 0
+	declare JoustMode bool script 0
+	declare AnnounceMode bool script 0
 
 	declare BuffParry bool script FALSE
 	declare BuffPower bool script FALSE
@@ -36,8 +52,11 @@ function Class_Declaration()
 	declare BuffHate bool script FALSE
 	declare BuffSelf bool script FALSE
 	declare BuffTarget string script
+	declare OutTrigger string script
+	declare InTrigger string script
 
 	call EQ2BotLib_Init
+	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
@@ -56,6 +75,11 @@ function Class_Declaration()
 	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Hate","FALSE"]}]
 	BuffSelf:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Self","FALSE"]}]
 
+	;********************************************
+	; Set these to whatever you want to use.... *
+	;********************************************
+	InTrigger:Set[dps in]
+	OutTrigger:Set[dps out]
 }
 
 function Buff_Init()
@@ -70,8 +94,14 @@ function Buff_Init()
 	PreAction[3]:Set[Buff_Noxious]
 	PreSpellRange[3,1]:Set[22]
 
+	PreAction[4]:Set[Selos]
+	PreSpellRange[4,1]:Set[381]
+
 	PreAction[5]:Set[Buff_DPS]
 	PreSpellRange[5,1]:Set[24]
+
+	PreAction[6]:Set[Buff_AAHeroicStorytelling]
+	PreSpellRange[6,1]:Set[396]
 
 	PreAction[7]:Set[Buff_StoneSkin]
 	PreSpellRange[7,1]:Set[26]
@@ -103,68 +133,59 @@ function Buff_Init()
 	PreAction[16]:Set[Buff_AALuckOfTheDirge]
 	PreSpellRange[16,1]:Set[382]
 
-	PreAction[17]:Set[Buff_AAHeroicStorytelling]
-	PreSpellRange[17,1]:Set[396]
-
 }
 
 function Combat_Init()
 {
 
-	Action[1]:Set[AARhythm_Blade]
-	SpellRange[1,1]:Set[397]
+	Action[1]:Set[AoE1]
+	SpellRange[1,1]:Set[62]
 
-	Action[2]:Set[CacophonyOfBlades]
-	SpellRange[2,1]:Set[155]
+	Action[2]:Set[Luda]
+	SpellRange[2,1]:Set[60]
 
-	Action[3]:Set[AoE1]
-	SpellRange[3,1]:Set[62]
+	Action[3]:Set[InfectedBladed]
+	SpellRange[3,1]:Set[150]
 
-	Action[4]:Set[Luda]
-	SpellRange[4,1]:Set[60]
+	Action[4]:Set[Mastery]
 
-	Action[5]:Set[InfectedBladed]
-	SpellRange[5,1]:Set[150]
+	Action[5]:Set[Flank_Attack]
+	SpellRange[5,1]:Set[110]
 
-	Action[6]:Set[Mastery]
+	Action[6]:Set[Grievance]
+	SpellRange[6,1]:Set[151]
 
-	Action[7]:Set[Flank_Attack]
-	SpellRange[7,1]:Set[110]
+	Action[7]:Set[ScreamOfDeath]
+	SpellRange[7,1]:Set[391]
+	SpellRange[7,2]:Set[135]
 
-	Action[8]:Set[Grievance]
-	SpellRange[8,1]:Set[151]
+	Action[8]:Set[Stealth_Attack]
+	SpellRange[8,1]:Set[391]
+	SpellRange[8,2]:Set[136]
 
-	Action[9]:Set[ScreamOfDeath]
-	SpellRange[9,1]:Set[391]
-	SpellRange[9,2]:Set[135]
+	Action[9]:Set[WailOfTheDead]
+	SpellRange[9,1]:Set[152]
 
-	Action[10]:Set[Stealth_Attack]
-	SpellRange[10,1]:Set[391]
-	SpellRange[10,2]:Set[136]
+	Action[10]:Set[AATurnstrike]
+	SpellRange[10,1]:Set[387]
 
-	Action[11]:Set[WailOfTheDead]
-	SpellRange[11,1]:Set[152]
+	Action[11]:Set[Lanet]
+	SpellRange[11,1]:Set[52]
 
-	Action[12]:Set[AATurnstrike]
-	SpellRange[12,1]:Set[387]
+	Action[12]:Set[AoE2]
+	SpellRange[12,1]:Set[63]
 
-	Action[13]:Set[Lanet]
-	SpellRange[13,1]:Set[52]
+	Action[13]:Set[Tarven]
+	SpellRange[13,1]:Set[50]
 
-	Action[14]:Set[AoE2]
-	SpellRange[14,1]:Set[63]
+	Action[14]:Set[Jael]
+	SpellRange[14,1]:Set[250]
 
-	Action[15]:Set[Tarven]
-	SpellRange[15,1]:Set[50]
+	Action[15]:Set[AAHarmonizingShot]
+	SpellRange[15,1]:Set[386]
 
-	Action[16]:Set[Jael]
-	SpellRange[16,1]:Set[250]
-
-	Action[17]:Set[AAHarmonizingShot]
-	SpellRange[17,1]:Set[386]
-
-	Action[18]:Set[Stun]
-	SpellRange[18,1]:Set[190]
+	Action[16]:Set[Stun]
+	SpellRange[16,1]:Set[190]
 
 }
 
@@ -302,8 +323,9 @@ function Buff_Routine(int xAction)
 		case Buff_AAAllegro
 		case Buff_AALuckOfTheDirge
 		case Buff_AADontKillTheMessenger
+		case Selos
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
-
+			break
 		Default
 			xAction:Set[20]
 			break
@@ -313,7 +335,6 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-;echo combat routine
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -345,6 +366,24 @@ function Combat_Routine(int xAction)
 	{
 		;Always keep mob disease Debuffed
 		call CastSpellRange 51 0 1 0 ${KillTarget}
+
+		;always use Rhythm Blade if available
+		if ${Me.Ability[${SpellType[397]}].IsReady}
+		{
+			call CastSpellRange 397 0 1 0 ${KillTarget}
+		}
+
+		;Always use Cacophony of Blades if available.
+		if ${Me.Ability[${SpellType[155]}].IsReady}
+		{
+			call CastSpellRange 155
+			wait 20
+			if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
+			{
+				EQ2EXECUTE /g Cacophony of Blades is up!
+			}
+		}
+
 	}
 
 	if ${RangedAttackMode}
@@ -355,7 +394,7 @@ function Combat_Routine(int xAction)
 			EQ2Execute /togglerangedattack
 		}
 
-		if  !${Me.CastingSpell}
+		if !${Me.CastingSpell} && ${Target.Distance}>25
 		{
 			Target ${KillTarget}
 			call CheckPosition 3 0
@@ -414,13 +453,13 @@ function Combat_Routine(int xAction)
 			break
 
 		case AATurnstrike
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
+			if !${JoustMode} && !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 		case Mastery
-			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
+			if !${MainTank} && ${Target.Target.ID}!=${Me.ID} && !${RangedAttackMode}
 			{
 				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 				{
@@ -434,7 +473,14 @@ function Combat_Routine(int xAction)
 		case Jael
 			if ${BowAttacksMode}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
+				if ${Target.Distance}>25
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
+				}
+				else
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
 			}
 			break
 		case AARhythm_Blade
@@ -485,6 +531,9 @@ function Post_Combat_Routine()
 	{
 		Me.Maintained[Shroud]:Cancel
 	}
+
+	;reset rangedattack in case it was modified by joust call.
+	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
 }
 
 function Have_Aggro()
@@ -631,4 +680,109 @@ function DoMagneticNote()
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
 
+}
+
+atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatTarget, string SpeakerIsNPC, string ChannelName)
+{
+	switch ${ChatType}
+	{
+		case 26
+    case 27
+		case 16
+     	if ${Message.Find[${OutTrigger]} && ${JoustMode} && ${Me.InCombat}
+			{
+       	if ${Me.Ability[${SpellType[388]}].IsReady}
+       	{
+       		CastSpellRange 388 0 0 0 ${killtarget}
+       	}
+       	elseif ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.Maintained[${SpellType[388]}](exists)}
+       	{
+       		CastSpellRange 387 0 0 0 ${killtarget}
+       	}
+       	else
+       	{
+       		call FindHealer
+       		RangedAttackMode:Set[TRUE]
+       		call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
+       	}
+      }
+      elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat} && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
+      {
+       	RangedAttackMode:Set[TRUE]
+       	call FastMove ${Actor[${killtarget}].X} ${Actor[${killtarget}].Z} 3
+      }
+    case default
+    	break
+  }
+}
+
+;returns the ID of your healer in group, if none found, returns your ID
+function FindHealer()
+{
+	declare tempgrp int local 0
+	declare	healer int local 0
+
+	if !${Me.Grouped}
+	{
+		return ${Me.ID}
+	}
+
+	healer:Set[${Me.ID}]
+
+	do
+	{
+		switch ${Me.GroupMember[${tempgrp}].Class}
+		{
+			case templar
+			case fury
+			case mystic
+			case defiler
+				healer:Set[${Me.GroupMember[${tempgrp}].ID}]
+				break
+			case warden
+			case inquisitor
+				;don't trust priests that have melee configs unless no other priest is available
+				if ${healer}==${Me.ID}
+				{
+					healer:Set[${Me.GroupMember[${tempgrp}].ID}]
+				}
+				break
+			Default
+				break
+		}
+
+	}
+	while ${tempgrp:Inc}<${Me.GroupCount}
+
+	if ${healer}==${Me.ID} && ${Me.InRaid}
+	{
+		tempgrp:Set[0]
+
+		do
+		{
+			switch ${Me.RaidMember[${tempgrp}].Class}
+			{
+				case templar
+				case inquisitor
+				case fury
+				case mystic
+				case defiler
+					healer:Set[${Me.RaidMember[${tempgrp}].ID}]
+					break
+				case warden
+				case inquisitor
+					if ${healer}==${Me.ID}
+					{
+						healer:Set[${Me.RaidMember[${tempgrp}].ID}]
+					}
+					nreak
+				Default
+					break
+			}
+
+		}
+		while ${tempgrp:Inc}=<${Me.RaidCount}
+	}
+
+	return ${healer}
 }

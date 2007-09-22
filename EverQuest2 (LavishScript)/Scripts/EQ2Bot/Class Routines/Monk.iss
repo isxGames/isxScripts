@@ -15,7 +15,6 @@ function Class_Declaration()
 {
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
-	;declare OffensiveMode bool script TRUE
 	declare DefensiveMode bool script TRUE
 	declare TauntMode bool Script TRUE
 	declare FullAutoMode bool Script FALSE
@@ -24,13 +23,6 @@ function Class_Declaration()
 	declare BuffProtectGroupMember string script
 	declare RangedAttackMode bool script TRUE
 	declare ThrownAttacksMode bool script TRUE
-
-	declare TwoHandedStaff string script
-	declare WeaponFists string script
-	declare WeaponStaff string script
-	declare WeaponMain string script
-	declare OffHand string script
-	declare EquipmentChangeTimer int script
 
 	;Alias DebugSpew "Redirect -append c:/Monk.txt"
 	;Script:EnableDebugLogging[c:/Monk.txt]
@@ -42,7 +34,6 @@ function Class_Declaration()
 	FullAutoMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Full Auto Mode,FALSE]}]
 	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Taunt Spells,TRUE]}]
 	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
-	;OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
 	CraneTwirlMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Crane Twirl,FALSE]}]
 	BuffProtectGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProtectGroupMember,]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
@@ -50,13 +41,6 @@ function Class_Declaration()
 
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Main",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	TwoHandedStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedStaff,]}]
-	WeaponFists:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Fists",""]}]
-	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-
 }
 
 function Buff_Init()
@@ -176,8 +160,6 @@ function Buff_Routine(int xAction)
 
 	call CheckHeals
 
-	call WeaponChange
-
 	call ApplyStance
 
 	ExecuteAtom CheckStuck
@@ -243,8 +225,6 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 
-	call WeaponChange
-
 	if ${DoHOs}
 	{
 
@@ -260,7 +240,7 @@ function Combat_Routine(int xAction)
 	call CastSpellRange 155 0 0 0 0 0 0 1
 
 	;Always try for the AA Combination
-	if !${RangedAttackMode}
+	if !${RangedAttackMode} && ${Me.Ability[${SpellType[389]}].IsReady}
 	{
 		call CastSpellRange 389 0 1 0 ${KillTarget} 0 0 1
 	}
@@ -535,21 +515,3 @@ function ApplyStance()
 	}
 }
 
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-}

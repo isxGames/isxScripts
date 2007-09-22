@@ -24,6 +24,7 @@ function Class_Declaration()
 	declare BuffBoon bool script FALSE
 	declare BuffPact bool script FALSE
 	declare PetMode bool script 1
+	declare CastCures bool script FALSE
 
 	;Custom Equipment
 	declare PoisonCureItem string script
@@ -39,6 +40,7 @@ function Class_Declaration()
 	BuffBoon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBoon,,FALSE]}]
 	BuffPact:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPact,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
+	CastCures:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Cures,TRUE]}]
 
 }
 
@@ -73,60 +75,51 @@ function Combat_Init()
 	MobHealth[1,2]:Set[100]
 	SpellRange[1,1]:Set[330]
 
-	Action[2]:Set[AoE_Debuffs]
-	SpellRange[2,1]:Set[55]
-	SpellRange[2,2]:Set[56]
-	SpellRange[2,3]:Set[57]
+	Action[2]:Set[Master_Strike]
 
-	Action[3]:Set[Debuffs]
-	SpellRange[3,1]:Set[50]
-	SpellRange[3,2]:Set[51]
-	SpellRange[3,3]:Set[52]
+	Action[3]:Set[AoE_Debuffs]
+	SpellRange[3,1]:Set[55]
+	SpellRange[3,2]:Set[56]
+	SpellRange[3,3]:Set[57]
 
-	Action[4]:Set[Special_Pet]
-	MobHealth[4,1]:Set[60]
-	MobHealth[4,2]:Set[100]
-	SpellRange[4,1]:Set[324]
+	Action[4]:Set[AoE_Nuke]
+	SpellRange[4,1]:Set[90]
+	SpellRange[4,2]:Set[91]
+	SpellRange[4,3]:Set[92]
 
 	Action[5]:Set[AoE_DoT]
 	MobHealth[5,1]:Set[30]
 	MobHealth[5,2]:Set[100]
 	SpellRange[5,1]:Set[94]
 
-	Action[6]:Set[Concussive]
-	SpellRange[6,1]:Set[328]
+	Action[6]:Set[AoE_PB]
+	SpellRange[6,1]:Set[95]
 
-	Action[7]:Set[AoE_Nuke]
-	SpellRange[7,1]:Set[90]
-	SpellRange[7,2]:Set[91]
-	SpellRange[7,3]:Set[92]
+	Action[7]:Set[Special_Pet]
+	MobHealth[7,1]:Set[60]
+	MobHealth[7,2]:Set[100]
+	SpellRange[7,1]:Set[324]
 
-	Action[8]:Set[Dot]
-	MobHealth[8,1]:Set[20]
-	MobHealth[8,2]:Set[100]
-	SpellRange[8,1]:Set[70]
-	SpellRange[8,2]:Set[71]
-	SpellRange[8,3]:Set[72]
+	Action[8]:Set[Debuffs]
+	SpellRange[8,1]:Set[50]
+	SpellRange[8,2]:Set[51]
+	SpellRange[8,3]:Set[52]
 
-	Action[9]:Set[AoE_PB]
-	SpellRange[9,1]:Set[95]
+	Action[9]:Set[Dot]
+	MobHealth[9,1]:Set[20]
+	MobHealth[9,2]:Set[100]
+	SpellRange[9,1]:Set[70]
+	SpellRange[9,2]:Set[71]
+	SpellRange[9,3]:Set[72]
 
-	Action[9]:Set[AoE_Root]
-	SpellRange[9,1]:Set[231]
-
-	Action[10]:Set[Root]
-	SpellRange[10,1]:Set[230]
+	Action[10]:Set[Nuke]
+	SpellRange[10,1]:Set[60]
+	SpellRange[10,2]:Set[61]
+	SpellRange[10,3]:Set[62]
+	SpellRange[10,4]:Set[63]
 
 	Action[11]:Set[Concussive]
 	SpellRange[11,1]:Set[328]
-
-	Action[12]:Set[Nuke]
-	SpellRange[12,1]:Set[60]
-	SpellRange[12,2]:Set[61]
-	SpellRange[12,3]:Set[62]
-	SpellRange[12,4]:Set[63]
-
-	Action[12]:Set[Master_Strike]
 
 }
 
@@ -315,7 +308,13 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 303
 	}
 
-	call CheckHeals
+
+	if ${CureMode}
+	{
+		call CheckHeals
+	}
+
+	call UseCrystallizedSpirit 60
 	call RefreshPower
 
 	switch ${Action[${xAction}]}
@@ -344,11 +343,11 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
+
 		case AoE_Debuffs
 			if ${AoEMode} && ${DebuffMode} && ${Mob.Count}>1
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
-
 			}
 			break
 
@@ -393,6 +392,7 @@ function Combat_Routine(int xAction)
 		case Nuke
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},4]} 0 0 ${KillTarget}
 			break
+
 		case Concussive
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
@@ -409,20 +409,7 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
-
-
 	TellTank:Set[FALSE]
-
-	switch ${PostAction[${xAction}]}
-	{
-		case LoadDefaultEquipment
-			ExecuteAtom LoadEquipmentSet "Default"
-		case default
-			xAction:Set[20]
-			break
-	}
-
-
 }
 
 function Have_Aggro()
@@ -434,22 +421,27 @@ function Have_Aggro()
 		TellTank:Set[TRUE]
 	}
 
+	if ${Me.Ability[${SpellRange[328]}].IsReady}
+	{
+		call CastSpellRange 328 0 0 0 ${Actor[${aggroid}].ID}
+	}
+
 	if ${Me.Ability[${SpellRange[181]}].IsReady}
 	{
-		call CastSpellRange 180
+		call CastSpellRange 180 0 0 0 ${Actor[${aggroid}].ID}
 	}
 	else
 	{
-		call CastSpellRange 181
+		call CastSpellRange 181 0 0 0 ${Actor[${aggroid}].ID}
 	}
 
 	if ${Me.Ability[${SpellRange[231]}].IsReady}
 	{
-		call CastSpellRange 231
+		call CastSpellRange 231 0 0 0 ${Actor[${aggroid}].ID}
 	}
 	else
 	{
-		call CastSpellRange 230
+		call CastSpellRange 230 0 0 0 ${Actor[${aggroid}].ID}
 	}
 
 	if !${avoidhate} && ${Actor[${aggroid}].Distance}<5
@@ -491,7 +483,7 @@ function RefreshPower()
 	}
 
 	;Conjuror Shard
-	if ${Me.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 	}
@@ -511,7 +503,7 @@ function RefreshPower()
 		call CastSpellRange 309
 	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<35
+	if ${Me.InCombat} && ${Me.ToActor.Power}<15
 	{
 		call CastSpellRange 333
 	}
