@@ -22,7 +22,7 @@
 		<Setting Name="12,60">Piercing Shriek</Setting>
 		<Setting Name="13,21">Bria\'s Stirring Ballad</Setting>
 		<Setting Name="13,31">Death\'s Door</Setting>
-		<Setting Name="13,">Selo\'s Accelerando</Setting>
+		<Setting Name="13,381">Selo\'s Accelerando</Setting>
 		<Setting Name="14,24">Relentless Tune</Setting>
 		<Setting Name="15,63">Dissonance</Setting>
 		<Setting Name="15,151">Singing Thrust</Setting>
@@ -61,6 +61,7 @@
 		<Setting Name="26,352">Garsin\'s Funeral March</Setting>
 		<Setting Name="27,31">Death\'s Scent</Setting>
 		<Setting Name="27,21">Bria\'s Thrilling Ballad</Setting>
+		<Setting Name="27,381">Selo\'s Rhythm of Speed</Setting>
 		<Setting Name="28,152">Cry of the Departed</Setting>
 		<Setting Name="28,24">Riana\'s Relentless Tune</Setting>
 		<Setting Name="29,63">Dissonant Rhythm</Setting>
@@ -86,7 +87,7 @@
 		<Setting Name="40,352">Garsin\'s Burial March</Setting>
 		<Setting Name="40,95">Wail of Woe</Setting>
 		<Setting Name="40,60">Luda\'s Fiendish Howl</Setting>
-		<Setting Name="41,302">Selo\'s Accelerating Chorus</Setting>
+		<Setting Name="41,381">Selo\'s Accelerating Chorus</Setting>
 		<Setting Name="41,31">Lithe Disbelief</Setting>
 		<Setting Name="41,21">Bria\'s Exalting Ballad</Setting>
 		<Setting Name="42,24">Riana\'s Spiteful Sustain</Setting>
@@ -119,6 +120,7 @@
 		<Setting Name="55,21">Bria\'s Glorifying Ballad</Setting>
 		<Setting Name="55,31">Supple Disdain</Setting>
 		<Setting Name="55,135">Scream of Death</Setting>
+		<Setting Name="55,381">Selo\'s Speed of Sound</Setting>
 		<Setting Name="56,24">Riana\'s Scornful Sustain</Setting>
 		<Setting Name="56,152">Howl of the Dead</Setting>
 		<Setting Name="57,151">Grievance</Setting>
