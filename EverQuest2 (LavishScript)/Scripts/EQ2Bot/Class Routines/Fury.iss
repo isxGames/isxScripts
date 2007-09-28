@@ -264,15 +264,15 @@ function Buff_Routine(int xAction)
 			call CastSpellRange 11
 		}
 		call CastSpellRange 15
-		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 	}
 
 	switch ${PreAction[${xAction}]}
 	{
 		case BuffThorns
-			if ${BuffThorns} && ${Me.Group[${Actor[id,${Actor[${MainTankPC}].ID}].Name}](exists)}
+			if ${BuffThorns} && ${Me.Group[${Actor[id,${Actor[exactname,${MainTankPC}].ID}].Name}](exists)}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 			}
 			else
 			{
@@ -794,9 +794,9 @@ function CheckHeals()
 	HealUsed:Set[FALSE]
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && (${CombatRez} || !${Me.InCombat})
+	if ${Actor[exactname,${MainTankPC}].Health}==-99 && ${Actor[exactname,${MainTankPC}](exists)} && (${CombatRez} || !${Me.InCombat})
 	{
-		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 300 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 	}
 
 	do
@@ -906,14 +906,14 @@ function CheckHeals()
 
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health} >-99
+	if ${Actor[exactname,${MainTankPC}](exists)} && ${Actor[exactname,${MainTankPC}].ID}!=${Me.ID} && ${Actor[exactname,${MainTankPC}].Health}<30 && ${Actor[exactname,${MainTankPC}].Health}>-99
 	{
-		call EmergencyHeal ${Actor[${MainTankPC}].ID}
+		call EmergencyHeal ${Actor[exactname,${MainTankPC}].ID}
 		HealUsed:Set[TRUE]
 	}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ID}==${Actor[${MainTankPC}].ID}
+	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ID}==${Actor[exactname,${MainTankPC}].ID}
 	{
 		if ${Me.ToActor.Health}<25
 		{
@@ -978,11 +978,11 @@ function CheckHeals()
 	;MAINTANK HEALS
 
 	;use back into the fray if < 50
-	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health} >-99
+	if ${Actor[exactname,${MainTankPC}](exists)} && ${Actor[exactname,${MainTankPC}].ID}!=${Me.ID} && ${Actor[exactname,${MainTankPC}].Health}<50 && ${Actor[exactname,${MainTankPC}].Health}>-99
 	{
 		if ${Me.Ability[${SpellType[2]}].IsReady}
 		{
-			call CastSpellRange 2 0 0 0 ${Actor[${MainTankPC}].ID}
+			call CastSpellRange 2 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 			HealUsed:Set[TRUE]
 		}
 	}
@@ -990,36 +990,36 @@ function CheckHeals()
 	call CheckHOTs
 
 	;MT < 90
-	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<90  && ${Actor[${MainTankPC}].Health}>-99
+	if ${Actor[exactname,${MainTankPC}](exists)} && ${Actor[exactname,${MainTankPC}].ID}!=${Me.ID} && ${Actor[exactname,${MainTankPC}].Health}<90  && ${Actor[exactname,${MainTankPC}].Health}>-99
 	{
 		if !${KeepMTHOTUp} && !${Me.InRaid} && ${Me.Ability[${SpellType[7]}].IsReady}
 		{
-			call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+			call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 			HealUsed:Set[TRUE]
 		}
 		elseif !${KeepGroupHOTUp} && ${MTinMyGroup}
 		{
-			call CastSpellRange 15 0 0 0 ${Actor[${MainTankPC}].ID}
+			call CastSpellRange 15 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 			HealUsed:Set[TRUE]
 		}
 	}
 
 	;MT < 75
-	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<75 && ${Actor[${MainTankPC}].Health} >-99
+	if ${Actor[exactname,${MainTankPC}](exists)} && ${Actor[exactname,${MainTankPC}].ID}!=${Me.ID} && ${Actor[exactname,${MainTankPC}].Health}<75 && ${Actor[exactname,${MainTankPC}].Health}>-99
 	{
-		call CastSpellRange 1 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 1 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 		HealUsed:Set[TRUE]
 	}
 
 	;MT < 60
-	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health} >-99
+	if ${Actor[exactname,${MainTankPC}](exists)} && ${Actor[exactname,${MainTankPC}].ID}!=${Me.ID} && ${Actor[exactname,${MainTankPC}].Health}<60 && ${Actor[exactname,${MainTankPC}].Health}>-99
 	{
-		call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 4 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 		HealUsed:Set[TRUE]
 	}
 
 	;MT < 50
-	if ${MTinMyGroup} && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health} >-99
+	if ${MTinMyGroup} && ${Actor[exactname,${MainTankPC}](exists)} && ${Actor[exactname,${MainTankPC}].ID}!=${Me.ID} && ${Actor[exactname,${MainTankPC}].Health}<50 && ${Actor[exactname,${MainTankPC}].Health}>-99
 	{
 		call CastSpellRange 10
 		HealUsed:Set[TRUE]
@@ -1070,7 +1070,7 @@ function CheckHeals()
 	}
 
 	;RAID HEALS
-	if ${Me.InRaid} && ${RaidHealMode} && ${Me.ToActor.Health} > 25 && ${Actor[${MainTankPC}].Health}>70 && !${HealUsed}
+	if ${Me.InRaid} && ${RaidHealMode} && ${Me.ToActor.Health} > 25 && ${Actor[exactname,${MainTankPC}].Health}>70 && !${HealUsed}
 	{
 		do
 		{
@@ -1193,7 +1193,7 @@ function CheckHOTs()
 	{
 		do
 		{
-			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]}&&${Me.Maintained[${tempvar}].Target.ID}==${Actor[${MainTankPC}].ID}
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]}&&${Me.Maintained[${tempvar}].Target.ID}==${Actor[exactname,${MainTankPC}].ID}
 			{
 				;echo Single HoT is Present on MT
 				hot1:Set[1]
@@ -1209,16 +1209,16 @@ function CheckHOTs()
 
 		if ${KeepMTHOTUp}
 		{
-			if ${hot1}==0&&${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
+			if ${hot1}==0 && ${Me.ToActor.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
-				call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
+				call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 				hot1:Set[1]
 			}
 		}
 
 		if ${KeepGroupHOTUp}
 		{
-			if ${grphot}==0&&${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+			if ${grphot}==0 && ${Me.ToActor.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 			{
 				call CastSpellRange 15
 			}
@@ -1240,7 +1240,7 @@ function MA_Lost_Aggro()
 function MA_Dead()
 {
 
-	if ${Actor[${MainTankPC}].Health}<=0 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
+	if ${Actor[exactname,${MainTankPC}].Health}<=0 && ${Actor[exactname,${MainTankPC}](exists)} && ${CombatRez}
 	{
 		if ${Me.Ability[${SpellType[300]}].IsReady}
 		{

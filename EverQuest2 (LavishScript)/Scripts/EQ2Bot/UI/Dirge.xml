@@ -102,7 +102,7 @@
 	</Commandcheckbox>
 	<Commandcheckbox Name='AnnounceMode' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
-		<Y>90</Y>
+		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Announce Cacophony to Group</Text>
@@ -122,7 +122,7 @@
 	</Commandcheckbox>
 	<Commandcheckbox Name='JoustMode' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
-		<Y>90</Y>
+		<Y>130</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Joust Mobs based on Raid/Tell:</Text>

@@ -47,7 +47,9 @@ function Class_Declaration()
 	declare BuffHateGroupMember string script
 	declare BuffCoerciveHealingGroupMember string script
 	declare BuffManaward bool script
-	declare DPSMode bool script
+	declare DPSMode bool script 1
+	declare SprintMode bool script 1
+	declare TSMode bool script 1
 	declare StartHO bool script 1
 
 	declare CharmTarget int script
@@ -61,7 +63,6 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
@@ -74,6 +75,8 @@ function Class_Declaration()
 	BuffCoerciveHealingGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealingGroupMember,]}]
 	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffDPS,FALSE]}]
+	SprintMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSprint,FALSE]}]
+	TSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTS,FALSE]}]
 
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
@@ -207,9 +210,9 @@ function Buff_Routine(int xAction)
 		ExecuteAtom AutoFollowTank
 	}
 
-	if ${DPSMode} && ${Me.Power}>50
+	if ${DPSMode} && ${Me.ToActor.Power}>50 && ${SprintMode}
 	{
-		CastSpellRange 333
+		call CastSpellRange 333
 	}
 	elseif ${Me.Maintained[${SpellType[333]}](exists)}
 	{
@@ -458,9 +461,9 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${DPSMode} && ${Me.Power}>50
+	if ${DPSMode} && ${Me.ToActor.Power}>50 && ${SprintMode}
 	{
-		CastSpellRange 333
+		call CastSpellRange 333
 	}
 	elseif ${Me.Maintained[${SpellType[333]}](exists)}
 	{
@@ -606,7 +609,6 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-
 			case Despair
 			case Mind
 			case Anguish
@@ -617,7 +619,6 @@ function Combat_Routine(int xAction)
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				}
 				break
-
 			case ProcStun
 				if !${Actor[${KillTarget}].IsEpic}
 				{
@@ -628,14 +629,13 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-
-				case Master_Strike
-					if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
-					{
-						Target ${KillTarget}
-						Me.Ability[Master's Strike]:Use
-					}
-					break
+			case Master_Strike
+				if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+				{
+					Target ${KillTarget}
+					Me.Ability[Master's Strike]:Use
+				}
+				break
 			case Sunbolt
 			case Nuke
 			case Stun
@@ -643,7 +643,6 @@ function Combat_Routine(int xAction)
 			case Daze
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				break
-
 			case AoE_PB
 				if ${PBAoEMode} && ${Mob.Count}>1
 				{
@@ -728,7 +727,7 @@ function RefreshPower()
 	}
 
 	;Conjuror Shard
-	if ${Me.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.ToActor.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 	}
@@ -761,7 +760,7 @@ function RefreshPower()
 	}
 	while ${tempvar:Inc}<${Me.GroupCount}
 
-	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30
 	{
 		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 	}
@@ -1009,10 +1008,10 @@ function DoAmnesia()
 			{
 				do
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
+					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me. Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
 					{
 						call IsFighter ${Me.Group[${tempvar}].ID}
-						if ${Return} || ${Me.Group[${tempvar}].Name.Equal[${MainAssist}]}
+						if ${Return} || ${Me.Group[${tempvar}].Name.Equal[${MainTankPC}]}
 						{
 							continue
 						}
@@ -1036,7 +1035,7 @@ function DoAmnesia()
 			{
 
 				;Try AA Thought Snap first
-				if ${Me.Ability[${SpellType[376]}].IsReady}
+				if ${Me.Ability[${SpellType[376]}].IsReady} && ${TSMode}
 				{
 					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
 
@@ -1044,16 +1043,7 @@ function DoAmnesia()
 				;Try the AA Touch of Empathy second
 				elseif ${Me.Ability[${SpellType[384]}].IsReady}
 				{
-					if (${Me.Equipment[1].WieldStyle.Find[Dual Wield]} || ${Me.Equipment[1].WieldStyle.Find[One-Handed]}) && ${Me.Equipment[1].SubType.Equal[Staff]}
-					{
-						call CastSpellRange 382 0 0 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponStaff}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange 382 0 0 0${CustomActor[${tcount}].ID}
-					}
+						call CastSpellRange 384 0 0 0 ${KillTarget}
 				}
 				;Try Amensia if Touch of Empathy and Thought Snap isnt up or avialable
 				else
@@ -1067,8 +1057,6 @@ function DoAmnesia()
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
-
-
 }
 
 function DestroyThoughtstones()
