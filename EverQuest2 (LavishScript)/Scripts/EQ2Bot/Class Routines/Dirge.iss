@@ -693,23 +693,24 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 			{
        	if ${Me.Ability[${SpellType[388]}].IsReady}
        	{
-       		CastSpellRange 388 0 0 0 ${killtarget}
+       		Me.Ability[${SpellType[388]}]:Use
        	}
        	elseif ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.Maintained[${SpellType[388]}](exists)}
        	{
-       		CastSpellRange 387 0 0 0 ${killtarget}
+       		target ${killtarget}
+       		Me.Ability[${SpellType[387]}]:Use
        	}
        	else
        	{
        		call FindHealer
        		RangedAttackMode:Set[TRUE]
-       		call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
+       		call QuickMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
        	}
       }
       elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat} && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
       {
        	RangedAttackMode:Set[TRUE]
-       	call FastMove ${Actor[${killtarget}].X} ${Actor[${killtarget}].Z} 3
+       	call QuickMove ${Actor[${killtarget}].X} ${Actor[${killtarget}].Z} 3
       }
     case default
     	break
@@ -763,7 +764,6 @@ function FindHealer()
 			switch ${Me.RaidMember[${tempgrp}].Class}
 			{
 				case templar
-				case inquisitor
 				case fury
 				case mystic
 				case defiler
@@ -785,4 +785,73 @@ function FindHealer()
 	}
 
 	return ${healer}
+}
+
+;identical to fastmove, but wait's removed so safe to call atomically.
+function QuickMove(float X, float Z, int range)
+{
+	variable float xDist
+	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
+	variable int xTimer
+
+	if !${Target(exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
+	{
+		return "TARGETDEAD"
+	}
+
+	if !${X} || !${Z}
+	{
+		return "INVALIDLOC"
+	}
+
+	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
+	{
+		return "INVALIDLOC"
+	}
+	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>50 && ${PathType}!=4
+	{
+		return "INVALIDLOC"
+	}
+
+	face ${X} ${Z}
+
+	if !${pulling}
+	{
+		press -hold ${forward}
+	}
+
+	xTimer:Set[${Script.RunningTime}]
+
+	do
+	{
+		xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
+
+		if ${Math.Calc[${SavDist}-${xDist}]}<0.8
+		{
+			if (${Script.RunningTime}-${xTimer})>500
+			{
+				isstuck:Set[TRUE]
+				if !${pulling}
+				{
+					press -release ${forward}
+				}
+				return "STUCK"
+			}
+		}
+		else
+		{
+			xTimer:Set[${Script.RunningTime}]
+			SavDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
+		}
+
+		face ${X} ${Z}
+	}
+	while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${range}
+
+	if !${pulling}
+	{
+		press -release ${forward}
+	}
+
+	return "SUCCESS"
 }
