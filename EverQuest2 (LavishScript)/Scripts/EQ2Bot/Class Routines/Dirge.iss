@@ -54,6 +54,9 @@ function Class_Declaration()
 	declare BuffTarget string script
 	declare OutTrigger string script
 	declare InTrigger string script
+	; 0 is in 1 is out
+	declare JoustStatus bool script 1
+
 
 	call EQ2BotLib_Init
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
@@ -347,6 +350,56 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 303
 	}
 
+	if ${JoustMode}
+	{
+		if ${JoustStatus}==0 && ${RangedAttackMode}==1
+		{
+			;We've changed to in from an out status.
+			RangedAttackMode:Set[0]
+			EQ2Execute /toggleautoattack
+
+			;if we're too far from killtarget, move in
+			if ${Actor[${KillTarget}].Distance}>4
+			{
+				call CheckPosition 1 1
+			}
+			wait 15
+		}
+		elseif ${JoustStatus}==1 && ${RangedAttackMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
+		{
+			;We've changed to out from an in status.
+
+			;if aoe avoidance is up, use it
+			if ${Me.Ability[${SpellType[388]}].IsReady}
+			{
+				call CastSpellRange 388
+				if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
+				{
+					EQ2EXECUTE /g BladeDance is up - 30 Seconds AoE Immunity for my group!
+				}
+			}
+			elseif ${Me.Ability[${SpellType[387]}].IsReady}
+			{
+				call CastSpellRange 388 0 1 0 ${KillTarget}
+			}
+			else
+			{
+				RangedAttackMode:Set[1]
+				EQ2Execute /togglerangedattack
+
+				;if we're not at our healer, lets move to him
+				call FindHealer
+
+				echo Healer - ${return}
+				if ${Actor[${Return}].Distance}>4
+				{
+					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
+				}
+				wait 15
+			}
+		}
+	}
+
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -362,6 +415,18 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 55 57
 	}
 
+	;Always use Cacophony of Blades if available.
+	if ${Me.Ability[${SpellType[155]}].IsReady}
+	{
+		call CastSpellRange 155
+		wait 20
+		if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
+		{
+			EQ2EXECUTE /g Cacophony of Blades is up!
+		}
+	}
+
+
 	if !${RangedAttackMode}
 	{
 		;Always keep mob disease Debuffed
@@ -372,18 +437,6 @@ function Combat_Routine(int xAction)
 		{
 			call CastSpellRange 397 0 1 0 ${KillTarget}
 		}
-
-		;Always use Cacophony of Blades if available.
-		if ${Me.Ability[${SpellType[155]}].IsReady}
-		{
-			call CastSpellRange 155
-			wait 20
-			if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
-			{
-				EQ2EXECUTE /g Cacophony of Blades is up!
-			}
-		}
-
 	}
 
 	if ${RangedAttackMode}
@@ -533,6 +586,7 @@ function Post_Combat_Routine()
 	}
 
 	;reset rangedattack in case it was modified by joust call.
+	JoustStatus:Set[1]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
 }
 
@@ -691,28 +745,13 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 		case 16
      	if ${Message.Find[${OutTrigger]} && ${JoustMode} && ${Me.InCombat}
 			{
-       	if ${Me.Ability[${SpellType[388]}].IsReady}
-       	{
-       		Me.Ability[${SpellType[388]}]:Use
-       	}
-       	elseif ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.Maintained[${SpellType[388]}](exists)}
-       	{
-       		target ${killtarget}
-       		Me.Ability[${SpellType[387]}]:Use
-       	}
-       	else
-       	{
-       		call FindHealer
-       		RangedAttackMode:Set[TRUE]
-       		call QuickMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
-       	}
+       		JoustStatus:Set[1]
       }
-      elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat} && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
+      elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
       {
-       	RangedAttackMode:Set[TRUE]
-       	call QuickMove ${Actor[${killtarget}].X} ${Actor[${killtarget}].Z} 3
+       	JoustStatus:Set[0]
       }
-    case default
+    default
     	break
   }
 }
@@ -785,73 +824,4 @@ function FindHealer()
 	}
 
 	return ${healer}
-}
-
-;identical to fastmove, but wait's removed so safe to call atomically.
-function QuickMove(float X, float Z, int range)
-{
-	variable float xDist
-	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
-	variable int xTimer
-
-	if !${Target(exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
-	{
-		return "TARGETDEAD"
-	}
-
-	if !${X} || !${Z}
-	{
-		return "INVALIDLOC"
-	}
-
-	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
-	{
-		return "INVALIDLOC"
-	}
-	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>50 && ${PathType}!=4
-	{
-		return "INVALIDLOC"
-	}
-
-	face ${X} ${Z}
-
-	if !${pulling}
-	{
-		press -hold ${forward}
-	}
-
-	xTimer:Set[${Script.RunningTime}]
-
-	do
-	{
-		xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
-
-		if ${Math.Calc[${SavDist}-${xDist}]}<0.8
-		{
-			if (${Script.RunningTime}-${xTimer})>500
-			{
-				isstuck:Set[TRUE]
-				if !${pulling}
-				{
-					press -release ${forward}
-				}
-				return "STUCK"
-			}
-		}
-		else
-		{
-			xTimer:Set[${Script.RunningTime}]
-			SavDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
-		}
-
-		face ${X} ${Z}
-	}
-	while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${range}
-
-	if !${pulling}
-	{
-		press -release ${forward}
-	}
-
-	return "SUCCESS"
 }

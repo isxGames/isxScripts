@@ -25,15 +25,6 @@ function Class_Declaration()
 	declare FullAutoMode bool Script FALSE
 	declare DragoonsCycloneMode bool Script FALSE
 
-	declare WeaponHammer string script
-	declare WeaponSword string script
-	declare WeaponSpear string script
-	declare Buckler string script
-	declare WeaponAxe string script
-	declare WeaponMain string script
-	declare OffHand string script
-	declare EquipmentChangeTimer int script
-
 	call EQ2BotLib_Init
 
 	FullAutoMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Full Auto Mode,FALSE]}]
@@ -45,13 +36,6 @@ function Class_Declaration()
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Main",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponHammer:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Hammer",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
-	Buckler:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buckler",""]}]
-	WeaponAxe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Axe",""]}]
 }
 
 
@@ -189,7 +173,6 @@ function PostCombat_Init()
 
 function Buff_Routine(int xAction)
 {
-	call WeaponChange
 
 	ExecuteAtom CheckStuck
 
@@ -252,8 +235,6 @@ function Combat_Routine(int xAction)
 	{
 		EQ2Execute /stopfollow
 	}
-
-	call WeaponChange
 
 	if ${DoHOs}
 	{
@@ -343,7 +324,7 @@ function Combat_Routine(int xAction)
 			case AoE1
 			case AoE2
 			case AoE3
-				if ${AoEMode} && ${Mob.Count}>2
+				if ${AoEMode} && ${Mob.Count}>1
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -354,22 +335,13 @@ function Combat_Routine(int xAction)
 				break
 			case PBAoE1
 			case PBAoE2
+			case PBAoE3
 				if ${PBAoEMode} && ${Mob.Count}>1
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0
-					}
-				}
-				break
-			case PBAoE3
-				if ${OffensiveMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${Mob.Count}>2
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
 				break
@@ -498,21 +470,3 @@ function CheckHeals()
 
 }
 
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-}
