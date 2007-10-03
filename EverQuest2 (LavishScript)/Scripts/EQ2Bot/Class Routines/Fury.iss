@@ -1209,7 +1209,7 @@ function CheckHOTs()
 
 		if ${KeepMTHOTUp}
 		{
-			if ${hot1}==0 && ${Me.ToActor.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
+			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
 				call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
 				hot1:Set[1]
@@ -1218,7 +1218,7 @@ function CheckHOTs()
 
 		if ${KeepGroupHOTUp}
 		{
-			if ${grphot}==0 && ${Me.ToActor.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 			{
 				call CastSpellRange 15
 			}
