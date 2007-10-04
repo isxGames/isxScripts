@@ -1,7 +1,15 @@
 ;*************************************************************
 ;Warlock.iss
-;version 20061012a
+;version 20071004a
 ;by Pygar
+;
+;20071004a
+; Weaponswap entirely removed
+; DebuffMode Added
+; DotMode Added
+; Significant dps tweeks
+;
+;20061012a
 ; Initial Build
 ;*************************************************************
 
@@ -25,6 +33,7 @@ function Class_Declaration()
 	declare BuffPact bool script FALSE
 	declare PetMode bool script 1
 	declare CastCures bool script FALSE
+	declare StartHO bool script FALSE
 
 	;Custom Equipment
 	declare PoisonCureItem string script
@@ -41,6 +50,7 @@ function Class_Declaration()
 	BuffPact:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPact,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	CastCures:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Cures,TRUE]}]
+	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 
 }
 
@@ -70,56 +80,63 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Combat_Buff]
-	MobHealth[1,1]:Set[50]
-	MobHealth[1,2]:Set[100]
-	SpellRange[1,1]:Set[330]
+	Action[1]:Set[AoE_Debuff1]
+	SpellRange[1,1]:Set[57]
 
-	Action[2]:Set[Master_Strike]
+	Action[2]:Set[Combat_Buff]
+	MobHealth[2,1]:Set[50]
+	MobHealth[2,2]:Set[100]
+	SpellRange[2,1]:Set[330]
 
-	Action[3]:Set[AoE_Debuffs]
-	SpellRange[3,1]:Set[55]
-	SpellRange[3,2]:Set[56]
-	SpellRange[3,3]:Set[57]
+	Action[3]:Set[AoE_Nuke1]
+	SpellRange[3,1]:Set[90]
 
-	Action[4]:Set[AoE_Nuke]
-	SpellRange[4,1]:Set[90]
-	SpellRange[4,2]:Set[91]
-	SpellRange[4,3]:Set[92]
+	Action[4]:Set[AoE_Debuff2]
+	SpellRange[4,1]:Set[56]
 
-	Action[5]:Set[AoE_DoT]
-	MobHealth[5,1]:Set[30]
-	MobHealth[5,2]:Set[100]
-	SpellRange[5,1]:Set[94]
+	Action[5]:Set[AoE_Nuke2]
+	SpellRange[5,1]:Set[91]
 
-	Action[6]:Set[AoE_PB]
-	SpellRange[6,1]:Set[95]
+	Action[6]:Set[AoE_Concussive]
+	SpellRange[6,1]:Set[328]
 
-	Action[7]:Set[Special_Pet]
-	MobHealth[7,1]:Set[60]
+	Action[7]:Set[AoE_DoT]
+	MobHealth[7,1]:Set[30]
 	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[324]
+	SpellRange[7,1]:Set[94]
 
-	Action[8]:Set[Debuffs]
-	SpellRange[8,1]:Set[50]
-	SpellRange[8,2]:Set[51]
-	SpellRange[8,3]:Set[52]
+	Action[8]:Set[AoE_Debuff3]
+	SpellRange[8,1]:Set[55]
 
-	Action[9]:Set[Dot]
-	MobHealth[9,1]:Set[20]
-	MobHealth[9,2]:Set[100]
-	SpellRange[9,1]:Set[70]
-	SpellRange[9,2]:Set[71]
-	SpellRange[9,3]:Set[72]
+	Action[9]:Set[AoE_Nuke3]
+	SpellRange[9,3]:Set[92]
 
-	Action[10]:Set[Nuke]
-	SpellRange[10,1]:Set[60]
-	SpellRange[10,2]:Set[61]
-	SpellRange[10,3]:Set[62]
-	SpellRange[10,4]:Set[63]
+	Action[10]:Set[AoE_PB]
+	SpellRange[10,1]:Set[95]
 
-	Action[11]:Set[Concussive]
-	SpellRange[11,1]:Set[328]
+	Action[11]:Set[Master_Strike]
+
+	Action[12]:Set[Nuke1]
+	SpellRange[12,1]:Set[61]
+
+	Action[13]:Set[Concussive]
+	SpellRange[13,1]:Set[328]
+
+	Action[14]:Set[Nuke2]
+	SpellRange[14,1]:Set[62]
+
+	Action[15]:Set[Nuke3]
+	SpellRange[15,1]:Set[63]
+
+	Action[16]:Set[Apoc]
+	MobHealth[16,1]:Set[30]
+	MobHealth[16,2]:Set[100]
+	SpellRange[16,1]:Set[94]
+
+	Action[17]:Set[Special_Pet]
+	MobHealth[17,1]:Set[60]
+	MobHealth[17,2]:Set[100]
+	SpellRange[17,1]:Set[324]
 
 }
 
@@ -289,6 +306,10 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare dotused int local
+	declare debuffused int local
+	dotused:Set[0]
+	debuffused:Set[0]
 
 	AutoFollowingMA:Set[FALSE]
 
@@ -309,7 +330,7 @@ function Combat_Routine(int xAction)
 	}
 
 
-	if ${CureMode}
+	if ${CastCures}
 	{
 		call CheckHeals
 	}
@@ -317,9 +338,61 @@ function Combat_Routine(int xAction)
 	call UseCrystallizedSpirit 60
 	call RefreshPower
 
+	if ${DebuffMode}
+	{
+		if ${Me.Ability[${SpellType[57]}].IsReady}
+		{
+			call CastSpellRange 57 0 0 0 ${KillTarget}
+			debuffused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[50]}].IsReady} && !${debuffused}
+		{
+			call CastSpellRange 50 0 0 0 ${KillTarget}
+			debuffused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[51]}].IsReady} && !${debuffused}
+		{
+			call CastSpellRange 51 0 0 0 ${KillTarget}
+			debuffused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[52]}].IsReady} && !${debuffused}
+		{
+			call CastSpellRange 52 0 0 0 ${KillTarget}
+			debuffused:Inc
+		}
+
+	}
+
+	if ${DotMode}
+	{
+
+		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
+		{
+			call CastSpellRange 70 0 0 0 ${KillTarget}
+			dotused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && !${dotused}
+		{
+			call CastSpellRange 71 0 0 0 ${KillTarget}
+			dotused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && !${dotused}
+		{
+			call CastSpellRange 72 0 0 0 ${KillTarget}
+			dotused:Inc
+		}
+
+	}
+
 	switch ${Action[${xAction}]}
 	{
 
+		case Combat_Buff
 		case Special_Pet
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} && ${PetMode}
@@ -328,49 +401,51 @@ function Combat_Routine(int xAction)
 			}
 			break
 
+		case Nuke1
+		case Nuke2
+		case Nuke3
 		case AoE_PB
 			if ${PBAoEMode} && ${Mob.Count}>1
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-
 			}
 			break
 
-		case Combat_Buff
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
+		case AoE_Debuff1
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			break
+
+		case AoE_Concussive
+		case AoE_Debuff2
+		case AoE_Debuff3
+			if ${AoEMode} && ${Mob.Count}>1 && ${Target.EncounterSize}>1
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
-		case AoE_Debuffs
-			if ${AoEMode} && ${DebuffMode} && ${Mob.Count}>1
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
-			}
-			break
-
-		case Debuffs
-			if ${DebuffMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
-			}
-			break
-
 		case AoE_DoT
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && ${Mob.Count}>1
+			if ${Return.Equal[OK]} && ${Mob.Count}>1 && ${Target.EncounterSize}>1
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 4
 			}
 			break
 
-		case AoE_Nuke
+		case Apoc
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && ${Mob.Count}>1
+			if ${Return.Equal[OK]}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 4
+			}
+			break
+
+		case AoE_Nuke1
+		case AoE_Nuke2
+		case AoE_Nuke3
+			if ${Mob.Count}>1 && ${Target.EncounterSize}>1
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
@@ -380,18 +455,6 @@ function Combat_Routine(int xAction)
 				Target ${KillTarget}
 				Me.Ability[Master's Smite]:Use
 			}
-
-		case Dot
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
-			}
-			break
-
-		case Nuke
-			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},4]} 0 0 ${KillTarget}
-			break
 
 		case Concussive
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
