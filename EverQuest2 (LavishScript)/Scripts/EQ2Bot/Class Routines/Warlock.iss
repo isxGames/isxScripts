@@ -401,9 +401,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Nuke1
-		case Nuke2
-		case Nuke3
 		case AoE_PB
 			if ${PBAoEMode} && ${Mob.Count}>1
 			{
@@ -411,6 +408,9 @@ function Combat_Routine(int xAction)
 			}
 			break
 
+		case Nuke1
+		case Nuke2
+		case Nuke3
 		case AoE_Debuff1
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
