@@ -340,25 +340,25 @@ function Combat_Routine(int xAction)
 
 	if ${DebuffMode}
 	{
-		if ${Me.Ability[${SpellType[57]}].IsReady}
+		if ${Me.Ability[${SpellType[57]}].IsReady} && !${Me.Maintained[${SpellType[57]}](exists)}
 		{
 			call CastSpellRange 57 0 0 0 ${KillTarget}
 			debuffused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[50]}].IsReady} && !${debuffused}
+		if ${Me.Ability[${SpellType[50]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[50]}](exists)}
 		{
 			call CastSpellRange 50 0 0 0 ${KillTarget}
 			debuffused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[51]}].IsReady} && !${debuffused}
+		if ${Me.Ability[${SpellType[51]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[51]}](exists)}
 		{
 			call CastSpellRange 51 0 0 0 ${KillTarget}
 			debuffused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[52]}].IsReady} && !${debuffused}
+		if ${Me.Ability[${SpellType[52]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[52]}](exists)}
 		{
 			call CastSpellRange 52 0 0 0 ${KillTarget}
 			debuffused:Inc
@@ -375,13 +375,13 @@ function Combat_Routine(int xAction)
 			dotused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && !${dotused}
+		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && !${dotused}
 		{
 			call CastSpellRange 71 0 0 0 ${KillTarget}
 			dotused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && !${dotused}
+		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && !${dotused}
 		{
 			call CastSpellRange 72 0 0 0 ${KillTarget}
 			dotused:Inc
@@ -443,7 +443,7 @@ function Combat_Routine(int xAction)
 		case AoE_Nuke1
 		case AoE_Nuke2
 		case AoE_Nuke3
-			if ${Mob.Count}>1 && ${Target.EncounterSize}>1
+			if ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
