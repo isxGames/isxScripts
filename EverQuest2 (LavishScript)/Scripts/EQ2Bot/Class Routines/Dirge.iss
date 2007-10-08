@@ -1,8 +1,8 @@
 ;*****************************************************
-;Dirge.iss 20070919a
+;Dirge.iss 20070919d
 ;by Pygar & Kayre
 ;
-;20070919a
+;20070919d
 ;Added Joust Mode - Dirge will move to group or raid healer when it see's the out message in raid chat or
 ; 									tells and use ranged dps till it see's the in message in raid chat or tells.  Added
 ;										intelegent use of BladeDance and TurnSpike in joust mode, allowing the dirge to stay
@@ -55,8 +55,7 @@ function Class_Declaration()
 	declare OutTrigger string script
 	declare InTrigger string script
 	; 0 is in 1 is out
-	declare JoustStatus bool script 1
-
+	declare JoustStatus bool script 0
 
 	call EQ2BotLib_Init
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
@@ -66,6 +65,7 @@ function Class_Declaration()
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	BowAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Bow Attack Spells,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
+	AnnounceMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Announce Cacophony,FALSE]}]
 
 	BuffParry:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Parry","FALSE"]}]
 	BuffPower:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Power","FALSE"]}]
@@ -87,7 +87,7 @@ function Class_Declaration()
 
 function Buff_Init()
 {
-;echo buff init
+	;echo buff init
 	PreAction[1]:Set[Buff_Parry]
 	PreSpellRange[1,1]:Set[20]
 
@@ -300,7 +300,6 @@ function Buff_Routine(int xAction)
 
 			if ${BuffHate}
 			{
-
 				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 				{
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -375,7 +374,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange 388
 				if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
 				{
-					EQ2EXECUTE /g BladeDance is up - 30 Seconds AoE Immunity for my group!
+					eq2execute /groupsay BladeDance is up - 30 Seconds AoE Immunity for my group!
 				}
 			}
 			elseif ${Me.Ability[${SpellType[387]}].IsReady}
@@ -419,10 +418,10 @@ function Combat_Routine(int xAction)
 	if ${Me.Ability[${SpellType[155]}].IsReady}
 	{
 		call CastSpellRange 155
-		wait 20
+		wait 30
 		if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
 		{
-			EQ2EXECUTE /g Cacophony of Blades is up!
+			eq2execute /groupsay Caco of Blades is up!
 		}
 	}
 
@@ -443,7 +442,6 @@ function Combat_Routine(int xAction)
 	{
 		if !${Me.RangedAutoAttackOn}
 		{
-
 			EQ2Execute /togglerangedattack
 		}
 
@@ -693,36 +691,9 @@ function DoMagneticNote()
 				continue
 			}
 
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-			if ${grpcnt}>1
-			{
-				do
-				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
-					{
-						call IsFighter ${Me.Group[${tempvar}].ID}
-						if ${Return} || ${Me.Group[${tempvar}].Name.Equal[${MainTankPC}]}
-						{
-							continue
-						}
-						else
-						{
-							aggrogrp:Set[TRUE]
-							break
-						}
+			Mob.Target[${CustomActor[${tcount}].ID}]
 
-					}
-				}
-				while ${tempvar:Inc}<=${grpcnt}
-			}
-
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}  && !${MainTank}
-			{
-				aggrogrp:Set[TRUE]
-			}
-
-			if ${aggrogrp}
+			if ${return}
 			{
 				call CastSpellRange 383 0 0 0 ${Actor[${MainTankPC}].ID}
 
@@ -741,19 +712,19 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 	switch ${ChatType}
 	{
 		case 26
-    case 27
+		case 27
 		case 16
-     	if ${Message.Find[${OutTrigger]} && ${JoustMode} && ${Me.InCombat}
+			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombat}
 			{
-       		JoustStatus:Set[1]
-      }
-      elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
-      {
-       	JoustStatus:Set[0]
-      }
-    default
-    	break
-  }
+				JoustStatus:Set[1]
+			}
+				elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			{
+				JoustStatus:Set[0]
+			}
+		default
+			break
+	}
 }
 
 ;returns the ID of your healer in group, if none found, returns your ID
@@ -814,7 +785,7 @@ function FindHealer()
 					{
 						healer:Set[${Me.RaidMember[${tempgrp}].ID}]
 					}
-					nreak
+					break
 				Default
 					break
 			}

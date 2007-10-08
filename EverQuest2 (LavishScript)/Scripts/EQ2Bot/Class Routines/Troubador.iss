@@ -143,6 +143,9 @@ function Buff_Init()
 	PreAction[17]:Set[Buff_AAResonance]
 	PreSpellRange[17,1]:Set[382]
 
+	PreAction[18]:Set[Selos]
+	PreSpellRange[18,1]:Set[381]
+
 }
 
 function Combat_Init()
@@ -637,30 +640,13 @@ function Mezmerise_Targets()
 	{
 		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}](exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
 		{
-			if ${CustomActor[${tcount}].ID}==${mezTarget1} || ${CustomActor[${tcount}].ID}==${mezTarget2} || ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
+			if ${CustomActor[${tcount}].ID}==${mezTarget1} || ${CustomActor[${tcount}].ID}==${mezTarget2} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
 			{
 				continue
 			}
 
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-			do
-			{
-				if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}
-				{
-					aggrogrp:Set[TRUE]
-					break
-				}
-			}
-			while ${tempvar:Inc}<${grpcnt}
-
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-			{
-				aggrogrp:Set[TRUE]
-			}
-
-
-			if ${aggrogrp}
+			Mob.Target[${CustomActor[${tcount}].ID}]
+			if ${return}
 			{
 
 				if ${Me.AutoAttackOn}
@@ -680,9 +666,6 @@ function Mezmerise_Targets()
 				}
 
 				call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 15
-
-				aggrogrp:Set[FALSE]
-
 			}
 		}
 	}
@@ -720,37 +703,17 @@ function DoCharm()
 				continue
 			}
 
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-			do
+			Mob.Target[${CustomActor[${tcount}].ID}]
+			if ${return}
 			{
-				if (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID}) || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID})
-				{
-					aggrogrp:Set[TRUE]
-					break
-				}
-			}
-			while ${tempvar:Inc}<${grpcnt}
-
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-			{
-				aggrogrp:Set[TRUE]
-			}
-
-			if ${aggrogrp}
-			{
-
 				CharmTarget:Set[${CustomActor[${tcount}].ID}]
 				break
-
 			}
-
-
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	if ${Actor[${CharmTarget}](exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actor[${MainAssist}].Target.ID}!=${CharmTarget}
+	if ${Actor[${CharmTarget}](exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actor[${MainAssist}].Target.ID}!=${CharmTarget} && ${aggrogrp}
 	{
 		call CastSpellRange 351 0 0 0 ${CharmTarget}
 

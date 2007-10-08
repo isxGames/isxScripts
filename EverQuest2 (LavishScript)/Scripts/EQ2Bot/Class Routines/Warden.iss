@@ -273,7 +273,7 @@ function Buff_Routine(int xAction)
 	switch ${PreAction[${xAction}]}
 	{
 		case BuffThorns
-			if ${BuffThorns} && ${Me.Group[${Actor[id,${Actor[${MainTankPC}].ID}].Name}](exists)}
+			if ${BuffThorns} && ${Actor[exactname,${MainTankPC}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
 			}
@@ -308,6 +308,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]} 0 0
 			break
 		case SOW
+			Me.Target:InitializeEffects
 			if ${Me.ToActor.NumEffects}<15  && !${Me.Effect[Spirit of the Wolf](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
@@ -322,7 +323,7 @@ function Buff_Routine(int xAction)
 						wait 40
 					}
 				}
-				while ${tempvar:Inc}<${Me.GroupCount}
+				while ${tempvar:Inc}<${Me.GroupCount} && !${Me.InCombat}
 			}
 			break
 		case BuffBat

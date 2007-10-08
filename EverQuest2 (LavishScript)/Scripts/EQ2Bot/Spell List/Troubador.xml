@@ -21,7 +21,7 @@
 		<Setting Name="12,60">Piercing Shrill</Setting>
 		<Setting Name="13,31">Performer\'s Talent</Setting>
 		<Setting Name="13,21">Bria\'s Stirring Ballad</Setting>
-		<Setting Name="13,302">Selo\'s Accelerando</Setting>
+		<Setting Name="13,381">Selo\'s Accelerando</Setting>
 		<Setting Name="14,24">Merciless Melody</Setting>
 		<Setting Name="15,152">Deafening Thrust</Setting>
 		<Setting Name="15,92">Alin\'s Keening Lamentation</Setting>
@@ -61,7 +61,7 @@
 		<Setting Name="26,61">Eli\'s Thunderous Hymn</Setting>
 		<Setting Name="27,31">Elise\'s Ditty</Setting>
 		<Setting Name="27,21">Bria\'s Thrilling Ballad</Setting>
-		<Setting Name="27,302">Selo\'s Rhythm of Speed</Setting>
+		<Setting Name="27,381">Selo\'s Rhythm of Speed</Setting>
 		<Setting Name="28,62">Swindle Essence</Setting>
 		<Setting Name="28,24">Gerard\'s Resonant Sonata</Setting>
 		<Setting Name="29,92">Alin\'s Melodic Refrain</Setting>
@@ -88,7 +88,7 @@
 		<Setting Name="40,60">Exquisite Shrill</Setting>
 		<Setting Name="41,31">Daelis\' Dance of Blades</Setting>
 		<Setting Name="41,21">Bria\'s Exalting Ballad</Setting>
-		<Setting Name="41,302">Selo\'s Accelerating Chorus</Setting>
+		<Setting Name="41,381">Selo\'s Accelerating Chorus</Setting>
 		<Setting Name="42,24">Invigorating Opus</Setting>
 		<Setting Name="42,62">Purloin Essence</Setting>
 		<Setting Name="43,92">Alin\'s Coruscating Concord</Setting>
@@ -118,6 +118,7 @@
 		<Setting Name="55,31">Daelis\' Jig of Blades</Setting>
 		<Setting Name="55,56">Demoralizing Processional</Setting>
 		<Setting Name="55,21">Bria\'s Glorifying Ballad</Setting>
+		<Setting Name="55,381">Selo\'s Speed of Sound</Setting>
 		<Setting Name="56,24">Exhilirating Opus</Setting>
 		<Setting Name="56,62">Pilfer Essence</Setting>
 		<Setting Name="57,152">Sandra\'s Bewildering Incursion</Setting>

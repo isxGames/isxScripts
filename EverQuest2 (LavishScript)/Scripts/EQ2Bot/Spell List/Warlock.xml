@@ -20,6 +20,7 @@
 		<Setting Name="10,71">Suffocation</Setting>
 		<Setting Name="10,385">Freehand Sorcery</Setting>
 		<Setting Name="10,386">Ward of Sages</Setting>
+		<Setting Name="10,387">Focused Casting</Setting>
 		<Setting Name="11,31">Venomous Grasp</Setting>
 		<Setting Name="12,63">Corrosive Bolt</Setting>
 		<Setting Name="12,20">Spellbinding Pact</Setting>
@@ -127,5 +128,6 @@
 		<Setting Name="69,57">Tumultuous Maelstrom</Setting>
 		<Setting Name="70,94">Apocalypse</Setting>
 		<Setting Name="70,51">Curse of the Void</Setting>
+		<Setting Name="70,95">Chaostorm</Setting>
 	</Set>
 </InnerSpaceSettings>
