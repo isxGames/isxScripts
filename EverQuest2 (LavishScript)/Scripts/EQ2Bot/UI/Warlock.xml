@@ -224,6 +224,27 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Cures]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='FocusMode' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>230</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Focused Casting AA</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[FocusMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Focused Casting",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[FocusMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Focused Casting",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Focused Casting]}</Data>
+	</Commandcheckbox>
 	<combobox name='cbBuffVielShieldGroupMember' Template='EQ2.Combobox'>
 		<x>150</x>
 		<y>50</y>

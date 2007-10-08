@@ -34,6 +34,7 @@ function Class_Declaration()
 	declare PetMode bool script 1
 	declare CastCures bool script FALSE
 	declare StartHO bool script FALSE
+	declare FocusMode bool script FALSE
 
 	;Custom Equipment
 	declare PoisonCureItem string script
@@ -51,6 +52,7 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	CastCures:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Cures,TRUE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
+	FocusMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Focused Casting,FALSE]}]
 
 }
 
@@ -389,6 +391,11 @@ function Combat_Routine(int xAction)
 
 	}
 
+	if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
+	{
+		call CastSpellRange 70 0 0 0 ${KillTarget}
+	}
+
 	switch ${Action[${xAction}]}
 	{
 
@@ -409,6 +416,12 @@ function Combat_Routine(int xAction)
 			break
 
 		case Nuke1
+			if ${Me.Ability[${SpellType[385]}].IsReady}
+			{
+				call CastSpellRange 385
+			}
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			break
 		case Nuke2
 		case Nuke3
 		case AoE_Debuff1
@@ -440,8 +453,18 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case AoE_Nuke1
 		case AoE_Nuke2
+			if ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
+			{
+				if ${Me.Ability[${SpellType[385]}].IsReady}
+				{
+					call CastSpellRange 385
+				}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
+
+		case AoE_Nuke1
 		case AoE_Nuke3
 			if ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
 			{
@@ -546,7 +569,7 @@ function RefreshPower()
 	}
 
 	;Conjuror Shard
-	if ${Me.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.ToActor.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 	}
