@@ -156,6 +156,11 @@ function Buff_Init()
 
 	PreAction[14]:Set[AA_Nature_Walk]
 	PreSpellRange[14,1]:Set[392]
+
+	PreAction[15]:Set[AA_Shapeshift]
+	PreSpellRange[15,1]:Set[396]
+	PreSpellRange[15,2]:Set[397]
+	PreSpellRange[15,3]:Set[398]
 }
 
 function Combat_Init()
@@ -286,6 +291,9 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			call CastSpellRange ${PreSpellRange[${xAction},2]}
 			break
+		case AA_Shapeshift
+			call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
+			break
 		case BuffBoon
 			if ${BuffBoon}
 			{
@@ -308,7 +316,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]} 0 0
 			break
 		case SOW
-			Me.Target:InitializeEffects
+			Me.ToActor:InitializeEffects
 			if ${Me.ToActor.NumEffects}<15  && !${Me.Effect[Spirit of the Wolf](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}

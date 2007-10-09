@@ -92,6 +92,7 @@ function Class_Declaration()
 	BuffHunt:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHunt,TRUE]}]
 	BuffMask:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMask,TRUE]}]
 	BuffEel:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEel,FALSE]}]
+	ShiftForm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[ShiftForm,]}]
 
 }
 
@@ -136,6 +137,8 @@ function Buff_Init()
 
 	PreAction[13]:Set[AA_Shapeshift]
 	PreSpellRange[13,1]:Set[396]
+	PreSpellRange[13,2]:Set[397]
+	PreSpellRange[13,3]:Set[398]
 }
 
 function Combat_Init()
@@ -282,8 +285,10 @@ function Buff_Routine(int xAction)
 		case Self_Buff
 		case AA_Rebirth
 		case AA_Infusion
-		case AA_Shapeshift
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			break
+		case AA_Shapeshift
+			call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
 			break
 		case BuffEel
 			if ${BuffEel}
@@ -389,7 +394,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case SOW
-			Me.Target:InitializeEffects
+			Me.ToActor:InitializeEffects
 			if ${Me.ToActor.NumEffects}<15  && !${Me.Effect[Spirit of the Wolf](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}

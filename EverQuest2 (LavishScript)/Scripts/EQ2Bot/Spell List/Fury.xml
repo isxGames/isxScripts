@@ -27,7 +27,9 @@
 		<Setting Name="10,390">Rebirth</Setting>
 		<Setting Name="10,391">Infusion</Setting>
 		<Setting Name="10,385">Energy Vortex</Setting>
-		<Setting Name="10,396">Shapeshift</Setting>
+		<Setting Name="10,396">Shapeshift: Winter Wolf</Setting>
+		<Setting Name="10,397">Shapeshift: Tiger</Setting>
+		<Setting Name="10,398">Shapeshift: Treant</Setting>
 		<Setting Name="11,70">Twirl</Setting>
 		<Setting Name="11,313">Favor of the Phoenix</Setting>
 		<Setting Name="12,7">Regrowth</Setting>
@@ -139,6 +141,6 @@
 		<Setting Name="70,220">Abolishment</Setting>
 		<Setting Name="70,15">Owl\'s Reparation</Setting>
 		<Setting Name="70,10">Shriek of the Untamed</Setting>
-		<Setting Name="70,360">Urchin</Setting>		
+		<Setting Name="70,360">Urchin</Setting>
 	</Set>
 </InnerSpaceSettings>
