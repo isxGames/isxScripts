@@ -123,6 +123,33 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Melee]}</Data>
 	</Commandcheckbox>
+	<Text name='lblShiftForm' Template='EQ2.text'>
+	  <x>5%</x>
+	  <y>130</y>
+	  <Height>20</Height>
+		<Width>80</Width>
+		<Alignment>Left</Alignment>
+		<Text>ShapeShift:</Text>
+	</Text>
+	<combobox Name='ShiftForm' Template='EQ2.Combobox'>
+		<X>25%</X>
+		<Y>130</Y>
+		<Width>60</Width>
+		<Height>20</Height>
+		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
+		<Items>
+			<Item Value='1'>Wolf Form</Item>
+			<Item Value='2'>Tiger</Item>
+			<Item Value='3'>Treant</Item>
+		</items>
+		<OnLoad>
+			This.ItemByText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[ShiftForm]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[ShiftForm]:Set[${This.SelectedItem.Text}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[ShiftForm,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick></OnLeftClick>
+	</combobox>
 	<Commandcheckbox Name='BuffThorns' Template='EQ2.Commandcheckbox'>
 		<X>190</X>
 		<Y>10</Y>
