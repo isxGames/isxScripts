@@ -278,7 +278,7 @@ function Buff_Routine(int xAction)
 	switch ${PreAction[${xAction}]}
 	{
 		case BuffThorns
-			if ${BuffThorns} && ${Actor[exactname,${MainTankPC}](exists)}
+			if ${MainTank} || (${BuffThorns} && ${Actor[exactname,${MainTankPC}](exists)})
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
 			}
@@ -317,7 +317,7 @@ function Buff_Routine(int xAction)
 			break
 		case SOW
 			Me.ToActor:InitializeEffects
-			if ${Me.ToActor.NumEffects}<15  && !${Me.Effect[Spirit of the Wolf](exists)}
+			if ${Me.ToActor.NumEffects}<15 && !${Me.Effect[Spirit of the Wolf](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 				wait 40
@@ -406,6 +406,7 @@ function Combat_Routine(int xAction)
 			call CheckHealthiness 70 60 50
 			if ${Return}  || ${Actor[${MainTankPC}].Distance}>25
 			{
+				call CheckHeals
 				break
 			}
 			call CheckHeals

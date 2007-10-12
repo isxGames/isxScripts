@@ -279,7 +279,7 @@ function Buff_Routine(int xAction)
 			BuffTarget:Set[${UIElement[cbBuffHealGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
 			if ${BuffCoersiveHealing}
@@ -292,7 +292,7 @@ function Buff_Routine(int xAction)
 			}
 			else
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
 		case AntiHate
@@ -488,11 +488,10 @@ function Combat_Routine(int xAction)
 	if ${Charm}
 	{
 		call DoCharm
+		ExecuteAtom PetAttack
 	}
 
 	call DoAmnesia
-
-	ExecuteAtom PetAttack
 
 	call CheckHeals
 
@@ -510,7 +509,10 @@ function Combat_Routine(int xAction)
 	}
 
 	;Make sure kill target is AA Tahsina'd if available
-	call CastSpellRange 377 0 0 0 ${KillTarget}
+	if ${Me.Ability[${SpellType[377]}](exists)} && ${Me.Ability[${SpellType[377]}].IsReady}
+	{
+		call CastSpellRange 377 0 0 0 ${KillTarget}
+	}
 
 	;make sure killtarget is always Arcane debuffed
 	if !${Me.Maintained[${SpellType[50]}](exists)}
@@ -882,7 +884,6 @@ function Mezmerise_Targets()
 				}
 
 				aggrogrp:Set[FALSE]
-
 
 			}
 

@@ -399,7 +399,6 @@ function Combat_Routine(int xAction)
 	switch ${Action[${xAction}]}
 	{
 
-		case Combat_Buff
 		case Special_Pet
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} && ${PetMode}
@@ -445,9 +444,10 @@ function Combat_Routine(int xAction)
 			}
 			break
 
+		case Combat_Buff
 		case Apoc
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
+			if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 4
 			}
