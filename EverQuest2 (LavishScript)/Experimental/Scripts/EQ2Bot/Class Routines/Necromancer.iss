@@ -1,11 +1,11 @@
 ;*************************************************************
 ;Necromancer.iss
-;version 20070829a (ironape & Pygar)
+;version 20070823a
 ;Initial Build
 ;by Pygar
 ;
-;20070829a
-; Re-configured for proper DPS tuning.
+;20070823a
+; Dps tweaks, and spell list fixes.
 ;
 ;20070508a
 ;	Fixed undeclared var bug causing bot to lock up in stuck loop.
@@ -47,7 +47,6 @@
 
 function Class_Declaration()
 {
-
 	declare PetType int script
 	declare AoEMode bool script FALSE
 	declare CureMode bool script FALSE
@@ -138,57 +137,83 @@ function Combat_Init()
 	Action[1]:Set[UndeadTide]
 	MobHealth[1,1]:Set[10]
 	MobHealth[1,2]:Set[100]
-	SpellRange[1,1]:Set[60
+	SpellRange[1,1]:Set[60]
 
-	Action[2]:Set[Dot2]
-	MobHealth[2,1]:Set[5]
+	Action[2]:Set[Stench_Pet]
+	MobHealth[2,1]:Set[30]
 	MobHealth[2,2]:Set[100]
-	SpellRange[2,1]:Set[71]
+	SpellRange[2,1]:Set[329]
 
 	Action[3]:Set[Rat_Pet]
-	MobHealth[3,1]:Set[5]
+	MobHealth[3,1]:Set[30]
 	MobHealth[3,2]:Set[100]
 	SpellRange[3,1]:Set[330]
 
-	Action[4]:Set[Stench_Pet]
-	MobHealth[4,1]:Set[5]
+	Action[4]:Set[Bat_Pet]
+	MobHealth[4,1]:Set[30]
 	MobHealth[4,2]:Set[100]
-	SpellRange[4,1]:Set[329]
+	SpellRange[4,1]:Set[331]
 
-	Action[5]:Set[AoE]
-	SpellRange[5,1]:Set[90]
+	Action[5]:Set[AA_Animated_Dagger]
+	MobHealth[5,1]:Set[30]
+	MobHealth[5,2]:Set[100]
+	SpellRange[5,1]:Set[332]
 
-	Action[6]:Set[Cloud]
-	SpellRange[6,1]:Set[95]
+	Action[6]:Set[Dot3]
+	MobHealth[6,1]:Set[0]
+	MobHealth[6,2]:Set[100]
+	SpellRange[6,1]:Set[70]
 
-	Action[7]:Set[Debuff3]
-	SpellRange[7,1]:Set[52]
+	Action[7]:Set[AA_Magic_Leash]
+	MobHealth[7,1]:Set[1]
+	MobHealth[7,2]:Set[100]
+	SpellRange[7,1]:Set[385]
 
-	Action[8]:Set[DrawingSouls]
-	SpellRange[8,1]:Set[310]
-	SpellRange[8,2]:Set[318]
+	Action[8]:Set[Shockwave]
+	MobHealth[8,1]:Set[1]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[380]
 
-	Action[9]:Set[Bat_Pet]
-	MobHealth[9,1]:Set[5]
+	Action[9]:Set[AA_Animist_Bond]
+	MobHealth[9,1]:Set[50]
 	MobHealth[9,2]:Set[100]
-	SpellRange[9,1]:Set[331]
+	SpellRange[9,1]:Set[371]
 
-	Action[10]:Set[AA_Lifeburn]
-	SpellRange[10,1]:Set[375]
+	Action[10]:Set[AoE]
+	SpellRange[10,1]:Set[90]
 
-	Action[11]:Set[ThermalShocker]
+	Action[11]:Set[Cloud]
+	SpellRange[11,1]:Set[95]
 
-	Action[12]:Set[Master_Strike]
+	Action[12]:Set[Debuff1]
+	SpellRange[12,1]:Set[50]
 
-	Action[13]:Set[Shockwave]
-	MobHealth[13,1]:Set[1]
-	MobHealth[13,2]:Set[100]
-	SpellRange[13,1]:Set[380]
+	Action[13]:Set[Debuff3]
+	SpellRange[13,1]:Set[52]
 
-	Action[14]:Set[AA_Animist_Bond]
-	MobHealth[14,1]:Set[50]
+	Action[14]:Set[Dot1]
+	MobHealth[14,1]:Set[5]
 	MobHealth[14,2]:Set[100]
-	SpellRange[14,1]:Set[371]
+	SpellRange[14,1]:Set[72]
+
+	Action[15]:Set[Dot2]
+	MobHealth[15,1]:Set[5]
+	MobHealth[15,2]:Set[100]
+	SpellRange[15,1]:Set[71]
+
+	Action[16]:Set[Debuff2]
+	SpellRange[16,1]:Set[51]
+
+	Action[17]:Set[DrawingSouls]
+	SpellRange[17,1]:Set[310]
+	SpellRange[17,2]:Set[318]
+
+	Action[18]:Set[AA_Lifeburn]
+	SpellRange[18,1]:Set[375]
+
+	Action[19]:Set[ThermalShocker]
+
+	Action[20]:Set[Master_Strike]
 
 }
 
@@ -210,13 +235,7 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;check if we have a pet or ooze pet not up
+	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
@@ -247,7 +266,6 @@ function Buff_Routine(int xAction)
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]}
 			break
-
 		case Favor
 			if ${BuffFavor}
 			{
@@ -258,7 +276,6 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
-
 		case Mark
 			if ${BuffMark}
 			{
@@ -321,13 +338,41 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	;send pet/ooze to attack if it exist
-	if ${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
+	if ${Me.ToActor.Pet(exists)}
 	{
 		ExecuteAtom PetAttack
 	}
 
-	;Heroic Opertunity Execution
+	;maintain dots if target is heroic, or greater
+	if ${Actor[${KillTarget}].IsEpic} || (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].IsNamed})
+	{
+		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
+		{
+			call CastSpellRange 70 0 0 0 ${KillTarget}
+		}
+		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
+		{
+			call CastSpellRange 71 0 0 0 ${KillTarget}
+		}
+		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+		{
+			call CastSpellRange 72 0 0 0 ${KillTarget}
+		}
+		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
+		{
+			call CastSpellRange 90 0 0 0 ${KillTarget}
+		}
+	}
+
+	;check if we have a pet or a ooze not up
+	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
+	{
+		call SummonPet
+	}
+
+	call CheckHeals
+
+
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -338,58 +383,30 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 303
 	}
 
-	;Maintained spells
-	{
-		;keep AA dagger pet up
-		if ${Me.Ability[${SpellType[332]}].IsReady} && !${Me.Maintained[${SpellType[332]}](exists)}
-		{
-			call CastSpellRange 332 0 0 0 ${KillTarget}
-		}
-
-		;keep Single LT up
-		if ${Me.Ability[${SpellType[60]}].IsReady} && !${Me.Maintained[${SpellType[60]}](exists)}
-		{
-			call CastSpellRange 60 0 0 0 ${KillTarget}
-		}
-
-		;keep Single Fast Dot up
-		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
-		{
-			call CastSpellRange 70 0 0 0 ${KillTarget}
-		}
-
-		;keep Consumption Up
-		if ${Me.ToActor.Pet(exists)}
-		{
-			call CastSpellRange 351
-		}
-
-		;keep distracting strike up if we have a scout pet
-		if ${Me.Maintained[${SpellType[355]}](exists)}
-		{
-			call CastSpellRange 375
-		}
-
-		;keep  Magic Leash up if we have a mage pet
-		if ${Me.Maintained[${SpellType[356]}](exists)}
-		{
-			call CastSpellRange 385
-		}
-	}
-
-	call CheckHeals
-
-	;Summon pet/ooze if not up
-	if ${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
-	{
-		call SummonPet
-	}
-
 	call RefreshPower
 	call AnswerShardRequest
 
+	;Keep Consumption Up
+	if ${Me.ToActor.Pet(exists)}
+	{
+		call CastSpellRange 351
+	}
+
+	;keep distracting strike up if we have a scout pet
+	if ${Me.Maintained[${SpellType[355]}](exists)}
+	{
+		call CastSpellRange 375
+	}
+
+	;keep  Magic Leash up if we have a mage pet
+	if ${Me.Maintained[${SpellType[356]}](exists)}
+	{
+		call CastSpellRange 385
+	}
+
 	switch ${Action[${xAction}]}
 	{
+
 
 		case AA_Animated_Dagger
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${PetMode}
@@ -409,10 +426,12 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[OK]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+
 				}
 			}
 			break
 
+		case Bat_Pet
 		case Rat_Pet
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} && ${PetMode}
@@ -463,7 +482,6 @@ function Combat_Routine(int xAction)
 
 		case DrawingSouls
 			call CheckEssense
-			echo ${Return}
 			if ${Return.Equal[STACKFOUND]}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
@@ -479,7 +497,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Bat_Pet
 		case Dot1
 		case Dot2
 		case Dot3
@@ -543,14 +560,14 @@ function Post_Combat_Routine(int xAction)
 			break
 	}
 
+
 }
 
 function Have_Aggro()
 {
 
-	if ${Me.InCombat} && ${Me.Ability[${SpellType[349]}].IsReady} && (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic} || ${Me.ToActor.Health}<40)
+	if ${Me.InCombat}
 	{
-		;Cast FD
 		call CastSpellRange 349
 		wait 50
 	}
@@ -565,8 +582,6 @@ function Have_Aggro()
 	{
 		;Cast Fear
 		call CastSpellRange 350 0 0 0 ${aggroid}
-		;Cast Root
-		call CastSpellRange 230 0 0 0 ${aggroid}
 	}
 
 }
@@ -599,7 +614,7 @@ function RefreshPower()
 		call CastSpellRange 326
 	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<65
+	if ${Me.InCombat} && ${Me.ToActor.Power}<45
 	{
 		call UseItem "Spiritise Censer"
 	}
@@ -620,7 +635,7 @@ function RefreshPower()
 		call UseItem "Dracomancer Gloves"
 	}
 
-	if ${Me.ToActor.Pet.Health}>40 && ${Me.ToActor.Power}<60
+	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<20
 	{
 		call CastSpellRange 326
 	}
@@ -666,13 +681,13 @@ function CheckHeals()
 
 
 	;cancel FD when safe
-	if ${Me.ToActor.Health}>90 && ${Me.Effect[Deathly Pallor](exists)}
+	if ${Me.ToActor.Health}>60 && ${Me.Effect[Deathly Pallor](exists)}
 	{
 		Me.Effect[Deathly Pallor]:Cancel
 	}
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankPC}].Health}==-50 && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)}
 	{
 		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
@@ -719,7 +734,7 @@ function CheckHeals()
 					}
 				}
 
-				if ${Me.Group[${temphl}].Name.Equal[${MainAssist}]}
+				if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
 				{
 					MTinMyGroup:Set[TRUE]
 				}
@@ -770,9 +785,9 @@ function CheckHeals()
 	if ${HealMode}
 	{
 		;MAINTANK HEALS
-		if ${Actor[${MainAssist}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+		if ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 		{
-				call CastSpellRange 4 0 0 0 ${Actor[${MainAssist}].ID}
+				call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
 
@@ -960,7 +975,7 @@ function SummonPet()
 
 function CheckEssense()
 {
-	;keeps 1 stack of thoughtstones and destroys the next stack
+	;keeps 1 stack of anguish and destroys the next stack
 	variable int Counter=1
 	variable bool StackFound=FALSE
 	Me:CreateCustomInventoryArray[nonbankonly]
