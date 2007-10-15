@@ -1057,7 +1057,7 @@ function CheckHeals()
 	;Use back into the Frey if group member under 50
 	if ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.ID}!=${Me.ID} && ${Me.Group[${lowest}].ToActor.Health}<50 && ${Me.Group[${lowest}].ToActor.Health}>-99
 	{
-.		call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+		call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 	}
 
 	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
