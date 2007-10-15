@@ -430,7 +430,7 @@ function main()
 								call CastSpellRange 290 0 0 0 0 0 0 1
 							}
 						case mage
-							if ${MainTank} && ${Actor[MyPet](exists)}
+							if (${MainTank} && ${Actor[MyPet](exists)}) || ${Actor[MyPet].ID}==${Actor[exactname,${Maintank}].ID}
 							{
 								if ${Me.Maintained[${SpellType[290]}](exists)}
 								{
@@ -468,7 +468,7 @@ function main()
 
 		if ${AutoPull}
 		{
-			if ${PathType}==2 && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
+			if ${PathType}==2 && (${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
 			{
 				PullPoint:SetRegion[${EQ2Bot.ScanWaypoints}]
 				if ${PullPoint}
@@ -486,7 +486,7 @@ function main()
 					}
 				}
 			}
-			elseif ${PathType}==3 && ${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${AutoPull} && ${EQ2Bot.PriestPower}
+			elseif ${PathType}==3 && (${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${AutoPull} && ${EQ2Bot.PriestPower}
 			{
 				pulling:Set[TRUE]
 				if ${CurrentPOI}==1
@@ -505,7 +505,7 @@ function main()
 				EQ2Execute /target_none
 			}
 
-			if ${Mob.Detect} || (${Me.Ability[${PullSpell}].IsReady} && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck})
+			if ${Mob.Detect} || ((${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck})
 			{
 				if ${PathType}==4 && !${Me.InCombat}
 				{
