@@ -691,9 +691,7 @@ function DoMagneticNote()
 				continue
 			}
 
-			Mob.Target[${CustomActor[${tcount}].ID}]
-
-			if ${return}
+			if ${Mob.Target[${CustomActor[${tcount}].ID}]}
 			{
 				call CastSpellRange 383 0 0 0 ${Actor[${MainTankPC}].ID}
 
