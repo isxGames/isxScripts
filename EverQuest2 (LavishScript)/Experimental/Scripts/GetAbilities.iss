@@ -39,24 +39,25 @@ function main()
 function GetAbilityData(int ID)
 {
 
+	echo Fetching Ability ${ID}
 	Me.Ability[${ID}]:Examine
 	wait 20
 
 	switch ${Me.Ability[${ID}].SpellBookType}
 	{
-		case 0 ;tradeskill
+		case 0
 			CurrentSet:Set[TradeSkill]
 			break
 
-		case 1 ;combat
+		case 1
 			CurrentSet:Set[Combat]
 			break
 
-		case 2 ;general
+		case 2
 			CurrentSet:Set[General]
 			break
 
-		case 3 ;spells
+		case 3
 			CurrentSet:Set[Spells]
 			break
 
@@ -65,6 +66,7 @@ function GetAbilityData(int ID)
 			break
 	}
 
+	echo Storing Ability ${ID}
 	AbObj:StoreAbilityData[${CurrentSet},${Me.Ability[${ID}].ID}]
 
 	press esc
