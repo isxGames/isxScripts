@@ -276,7 +276,7 @@ function Combat_Routine(int xAction)
 
 			case Combat_Buff1
 			case Combat_Buff2
-				if ${DeffensiveMode}
+				if ${DefensiveMode}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]}
 				}
