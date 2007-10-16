@@ -27,7 +27,7 @@ function main()
 	{
 		call GetAbilityData ${tempvar}
 	}
-	while ${tempvar:Inc}<${Me.NumAbilities}
+	while ${tempvar:Inc}<=${Me.NumAbilities}
 
 	echo Saving Results....
 	AbObj:Save
@@ -66,6 +66,8 @@ function GetAbilityData(int ID)
 	}
 
 	AbObj:StoreAbilityData[${CurrentSet},${Me.Ability[${ID}].ID}]
+
+	press esc
 
 }
 
@@ -115,7 +117,7 @@ objectdef abilityobj
 
 		LavishSettings[Abilities]:Clear
 		LavishSettings:AddSet[Abilities]
-		LavishSettings[Abilities]:AddSet[${Me.Subclass}]
+		LavishSettings[Abilities]:AddSet[${Me.SubClass}]
 		LavishSettings[${Me.SubClass}]:AddSet[Spells]
 		LavishSettings[${Me.SubClass}]:AddSet[General]
 		LavishSettings[${Me.SubClass}]:AddSet[Combat]
