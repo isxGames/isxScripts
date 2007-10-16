@@ -71,6 +71,7 @@ function Class_Declaration()
 	AddTrigger QueueShardRequest "\\aPC @*@ @*@:@sender@\\/a tells@*@shard please@*@"
 	AddTrigger DequeueShardRequest "Target already has a necromancer heart item!"
 
+	NoEQ2BotStance:Set[1]
 
 	PetType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Pet Type,3]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
@@ -128,6 +129,9 @@ function Buff_Init()
 	PreSpellRange[6,1]:Set[20]
 
 	PreAction[7]:Set[Mark]
+	PreSpellRange[7,1]:Set[21]
+
+	PreAction[7]:Set[Stance]
 	PreSpellRange[7,1]:Set[21]
 }
 
