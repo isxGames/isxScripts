@@ -34,6 +34,7 @@ function main()
 
 	echo Quiting
 	AbObj:Shutdown
+	Exit
 }
 
 function GetAbilityData(int ID)
@@ -73,44 +74,6 @@ function GetAbilityData(int ID)
 
 }
 
-function StoreAbilityData (int Set, int AbilityID)
-{
-	variable int tempvar=0
-
-	${Set}:AddSetting[ID,${Me.Ability[${AbilityID}].ID}]
-	${Set}:AddSetting[Name,${Me.Ability[${AbilityID}].Name}]
-	${Set}:AddSetting[Description,${Me.Ability[${AbilityID}].Description}]
-	${Set}:AddSetting[Tier,${Me.Ability[${AbilityID}].Tier}]
-	${Set}:AddSetting[HealthCost,${Me.Ability[${AbilityID}].HealthCost}]
-	${Set}:AddSetting[PowerCost,${Me.Ability[${AbilityID}].PowerCost}]
-	${Set}:AddSetting[ConcentrationCost,${Me.Ability[${AbilityID}].ConcentrationCost}]
-	${Set}:AddSetting[MainIconID,${Me.Ability[${AbilityID}].MainIconID}]
-	${Set}:AddSetting[HOIconID,${Me.Ability[${AbilityID}].HOIconID}]
-	${Set}:AddSetting[CastingTime,${Me.Ability[${AbilityID}].CastingTime}]
-	${Set}:AddSetting[RecoveryTime,${Me.Ability[${AbilityID}].RecoveryTime}]
-	${Set}:AddSetting[RecastTime,${Me.Ability[${AbilityID}].RecastTime}]
-	${Set}:AddSetting[MaxDuration,${Me.Ability[${AbilityID}].MaxDuration}]
-	${Set}:AddSetting[BackDropIconID,${Me.Ability[${AbilityID}].BackDropIconID}]
-	${Set}:AddSetting[HealthCostPerTick,${Me.Ability[${AbilityID}].HealthCostPerTick}]
-	${Set}:AddSetting[PowerCostPerTick,${Me.Ability[${AbilityID}].PowerCostPerTick}]
-	${Set}:AddSetting[MaxAOETargets,${Me.Ability[${AbilityID}].MaxAOETargets}]
-	${Set}:AddSetting[DoesNotExpire,${Me.Ability[${AbilityID}].DoesNotExpire}]
-	${Set}:AddSetting[GroupRestricted,${Me.Ability[${AbilityID}].GroupRestricted}]
-	${Set}:AddSetting[AllowRaid,${Me.Ability[${AbilityID}].AllowRaid}]
-	${Set}:AddSetting[EffectRadius,${Me.Ability[${AbilityID}].EffectRadius}]
-	${Set}:AddSetting[TargetType,${Me.Ability[${AbilityID}].TargetType}]
-	${Set}:AddSetting[SpellBookType,${Me.Ability[${AbilityID}].SpellBookType}]
-	${Set}:AddSetting[NumEffects,${Me.Ability[${AbilityID}].NumEffects}]
-	do
-	{
-		${Set}:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.PercentSuccess}]
-		${Set}:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Indentation}]
-		${Set}:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Desciption}]
-	}
-	while ${tempvar:Inc}<=${Me.Ability[${AbilityID}].NumEffects}
-
-}
-
 objectdef abilityobj
 {
 	method Init_Config()
@@ -133,47 +96,50 @@ objectdef abilityobj
 	method Shutdown()
 	{
 		This:Save[]
-		LabishSettings[Abilities]:Clear
+		LavishSettings[Abilities]:Clear
 	}
 
 	method Save()
 	{
-		LabishSettings[Abilities]:Export[${Ability_File}]
+		LavishSettings[Abilities]:Export[${Ability_File}]
 	}
 
-	method StoreAbilityData(int Set, int AbilityID)
+	method StoreAbilityData(string Set, int AbilityID)
 	{
-		variable int tempvar=0
+		variable settingsetref ThisSet
+		ThisSet:Set[${Abilities.FindSet[${Me.SubClass}].FindSet[${Set}]}]
 
-		${Set}:AddSetting[ID,${Me.Ability[${AbilityID}].ID}]
-		${Set}:AddSetting[Name,${Me.Ability[${AbilityID}].Name}]
-		${Set}:AddSetting[Description,${Me.Ability[${AbilityID}].Description}]
-		${Set}:AddSetting[Tier,${Me.Ability[${AbilityID}].Tier}]
-		${Set}:AddSetting[HealthCost,${Me.Ability[${AbilityID}].HealthCost}]
-		${Set}:AddSetting[PowerCost,${Me.Ability[${AbilityID}].PowerCost}]
-		${Set}:AddSetting[ConcentrationCost,${Me.Ability[${AbilityID}].ConcentrationCost}]
-		${Set}:AddSetting[MainIconID,${Me.Ability[${AbilityID}].MainIconID}]
-		${Set}:AddSetting[HOIconID,${Me.Ability[${AbilityID}].HOIconID}]
-		${Set}:AddSetting[CastingTime,${Me.Ability[${AbilityID}].CastingTime}]
-		${Set}:AddSetting[RecoveryTime,${Me.Ability[${AbilityID}].RecoveryTime}]
-		${Set}:AddSetting[RecastTime,${Me.Ability[${AbilityID}].RecastTime}]
-		${Set}:AddSetting[MaxDuration,${Me.Ability[${AbilityID}].MaxDuration}]
-		${Set}:AddSetting[BackDropIconID,${Me.Ability[${AbilityID}].BackDropIconID}]
-		${Set}:AddSetting[HealthCostPerTick,${Me.Ability[${AbilityID}].HealthCostPerTick}]
-		${Set}:AddSetting[PowerCostPerTick,${Me.Ability[${AbilityID}].PowerCostPerTick}]
-		${Set}:AddSetting[MaxAOETargets,${Me.Ability[${AbilityID}].MaxAOETargets}]
-		${Set}:AddSetting[DoesNotExpire,${Me.Ability[${AbilityID}].DoesNotExpire}]
-		${Set}:AddSetting[GroupRestricted,${Me.Ability[${AbilityID}].GroupRestricted}]
-		${Set}:AddSetting[AllowRaid,${Me.Ability[${AbilityID}].AllowRaid}]
-		${Set}:AddSetting[EffectRadius,${Me.Ability[${AbilityID}].EffectRadius}]
-		${Set}:AddSetting[TargetType,${Me.Ability[${AbilityID}].TargetType}]
-		${Set}:AddSetting[SpellBookType,${Me.Ability[${AbilityID}].SpellBookType}]
-		${Set}:AddSetting[NumEffects,${Me.Ability[${AbilityID}].NumEffects}]
+		variable int tempvar=1
+
+		ThisSet:AddSetting[ID,${Me.Ability[${AbilityID}].ID}]
+		ThisSet:AddSetting[Name,${Me.Ability[${AbilityID}].Name}]
+		ThisSet:AddSetting[Description,${Me.Ability[${AbilityID}].Description}]
+		ThisSet:AddSetting[Tier,${Me.Ability[${AbilityID}].Tier}]
+		ThisSet:AddSetting[HealthCost,${Me.Ability[${AbilityID}].HealthCost}]
+		ThisSet:AddSetting[PowerCost,${Me.Ability[${AbilityID}].PowerCost}]
+		ThisSet:AddSetting[ConcentrationCost,${Me.Ability[${AbilityID}].ConcentrationCost}]
+		ThisSet:AddSetting[MainIconID,${Me.Ability[${AbilityID}].MainIconID}]
+		ThisSet:AddSetting[HOIconID,${Me.Ability[${AbilityID}].HOIconID}]
+		ThisSet:AddSetting[CastingTime,${Me.Ability[${AbilityID}].CastingTime}]
+		ThisSet:AddSetting[RecoveryTime,${Me.Ability[${AbilityID}].RecoveryTime}]
+		ThisSet:AddSetting[RecastTime,${Me.Ability[${AbilityID}].RecastTime}]
+		ThisSet:AddSetting[MaxDuration,${Me.Ability[${AbilityID}].MaxDuration}]
+		ThisSet:AddSetting[BackDropIconID,${Me.Ability[${AbilityID}].BackDropIconID}]
+		ThisSet:AddSetting[HealthCostPerTick,${Me.Ability[${AbilityID}].HealthCostPerTick}]
+		ThisSet:AddSetting[PowerCostPerTick,${Me.Ability[${AbilityID}].PowerCostPerTick}]
+		ThisSet:AddSetting[MaxAOETargets,${Me.Ability[${AbilityID}].MaxAOETargets}]
+		ThisSet:AddSetting[DoesNotExpire,${Me.Ability[${AbilityID}].DoesNotExpire}]
+		ThisSet:AddSetting[GroupRestricted,${Me.Ability[${AbilityID}].GroupRestricted}]
+		ThisSet:AddSetting[AllowRaid,${Me.Ability[${AbilityID}].AllowRaid}]
+		ThisSet:AddSetting[EffectRadius,${Me.Ability[${AbilityID}].EffectRadius}]
+		ThisSet:AddSetting[TargetType,${Me.Ability[${AbilityID}].TargetType}]
+		ThisSet:AddSetting[SpellBookType,${Me.Ability[${AbilityID}].SpellBookType}]
+		ThisSet:AddSetting[NumEffects,${Me.Ability[${AbilityID}].NumEffects}]
 		do
 		{
-			${Set}:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.PercentSuccess}]
-			${Set}:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Indentation}]
-			${Set}:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Desciption}]
+			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.PercentSuccess}]
+			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Indentation}]
+			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Desciption}]
 		}
 		while ${tempvar:Inc}<=${Me.Ability[${AbilityID}].NumEffects}
 
