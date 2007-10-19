@@ -10,14 +10,14 @@
 ;*********************************************
 
 variable string Ability_File = "${LavishScript.HomeDirectory}/scripts/xml/Abilities.xml"
-variable settingsetref BaseRef
+variable settingsetref MyClass
 variable abilityobj AbObj
 variable string CurrentAction
 variable string CurrentSet
 
 function main()
 {
-	variable int tempvar=0
+	variable int tempvar=1
 
 	echo Initializing...
 	AbObj:Init_Config
@@ -34,17 +34,17 @@ function main()
 
 	echo Quiting
 	AbObj:Shutdown
-	Exit
+
 }
 
-function GetAbilityData(int ID)
+function GetAbilityData(int tempKey)
 {
 
-	echo Fetching Ability ${ID}
-	Me.Ability[${ID}]:Examine
+	echo Fetching Ability ${tempKey}
+	Me.Ability[${tempKey}]:Examine
 	wait 20
 
-	switch ${Me.Ability[${ID}].SpellBookType}
+	switch ${Me.Ability[${tempKey}].SpellBookType}
 	{
 		case 0
 			CurrentSet:Set[TradeSkill]
@@ -67,8 +67,8 @@ function GetAbilityData(int ID)
 			break
 	}
 
-	echo Storing Ability ${ID}
-	AbObj:StoreAbilityData[${CurrentSet},${Me.Ability[${ID}].ID}]
+	echo Storing Ability ${tempKey}
+	AbObj:StoreAbilityData[${CurrentSet},${Me.Ability[${tempKey}].ID}]
 
 	press esc
 
@@ -83,10 +83,12 @@ objectdef abilityobj
 		LavishSettings[Abilities]:Clear
 		LavishSettings:AddSet[Abilities]
 		LavishSettings[Abilities]:AddSet[${Me.SubClass}]
-		LavishSettings[${Me.SubClass}]:AddSet[Spells]
-		LavishSettings[${Me.SubClass}]:AddSet[General]
-		LavishSettings[${Me.SubClass}]:AddSet[Combat]
-		LavishSettings[${Me.SubClass}]:AddSet[TradeSkill]
+
+		MyClass:Set[${LavishSettings[Abilities].FindSet[${Me.SubClass}]}]
+		MyClass:AddSet[Spells]
+		MyClass:AddSet[General]
+		MyClass:AddSet[Combat]
+		MyClass:AddSet[TradeSkill]
 
 		LavishSettings[Abilities]:Import[${Ability_File}]
 
@@ -104,14 +106,15 @@ objectdef abilityobj
 		LavishSettings[Abilities]:Export[${Ability_File}]
 	}
 
-	method StoreAbilityData(string Set, int AbilityID)
+	method StoreAbilityData(string AbSet, int AbilityID)
 	{
 		variable settingsetref ThisSet
-		ThisSet:Set[${Abilities.FindSet[${Me.SubClass}].FindSet[${Set}]}]
+		MyClass.FindSet[${AbSet}]:AddSet[${Me.Ability[${AbilityID}].Name}]
+		ThisSet:Set[${MyClass.FindSet[${AbSet}].FindSet[${Me.Ability[${AbilityID}].Name}]}]
 
 		variable int tempvar=1
 
-		ThisSet:AddSetting[ID,${Me.Ability[${AbilityID}].ID}]
+		ThisSet:AddSetting[ID,${AbilityID}]]
 		ThisSet:AddSetting[Name,${Me.Ability[${AbilityID}].Name}]
 		ThisSet:AddSetting[Description,${Me.Ability[${AbilityID}].Description}]
 		ThisSet:AddSetting[Tier,${Me.Ability[${AbilityID}].Tier}]
