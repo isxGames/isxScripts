@@ -4,11 +4,11 @@ vairable string myname
 #macro ProcessTriggers()
 if "${QueuedCommands}"
 {
-  do
-  {
-     ExecuteQueued
-  }
-  while "${QueuedCommands}"
+	do
+	{
+		 ExecuteQueued
+	}
+	while "${QueuedCommands}"
 }
 #endmac
 
@@ -21,12 +21,12 @@ function main()
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 	call Init_Triggers
 
-  do
-  {
-      waitframe
-      ProcessTriggers()
-  }
-  while 1
+	do
+	{
+		waitframe
+		ProcessTriggers()
+	}
+	while 1
 }
 
 function RandomChuck(string chatTarget)
@@ -38,43 +38,47 @@ function RandomChuck(string chatTarget)
 	chatfile:Set[${LavishScript.HomeDirectory}/Scripts/XML/Chuckisms.xml]
 	keycount:Set[${SettingXML[${chatfile}].Set[Chuckisms].Keys}]
 
-	EQ2Execute /${chatTarget} "${SettingXML[${chatfile}].Set[Chuckisms].Key[${Math.Rand[${keycount}]}]}"]
+	EQ2Execute /${chatTarget} ${SettingXML[${chatfile}].Set[Chuckisms].Key[${Math.Rand[${keycount}]}]}
 
 }
 
 function GratsFunction(string WhoGrats)
 {
-    variable int gratsvar
-    gratsvar:Set[${Math.Rand[4]}]
+	variable int gratsvar
+	gratsvar:Set[${Math.Rand[4]}]
 
-    switch ${gratsvar}
-    {
-        case 0
-            wait ${Math.Rand[200]:Inc[10]}
-            EQ2Execute /gu Grats!!! ${WhoGrats}
-            break
-        case 1
-            wait ${Math.Rand[200]:Inc[10]}
-            EQ2Execute /gu congrats!
-            break
-        case 2
-            wait ${Math.Rand[200]:Inc[10]}
-            EQ2Execute /gu WTG
-            break
-        case 3
-            wait ${Math.Rand[200]:Inc[10]}
-            EQ2Execute /gu gratz
-            break
-        case default
-            break
-    }
+	if ${WhoGrats.NotEqual[${Me.Name}]}
+	{
+		switch ${gratsvar}
+		{
+
+			case 0
+				wait ${Math.Rand[200]:Inc[10]}
+				EQ2Execute /gu Grats!!! ${WhoGrats}
+				break
+			case 1
+				wait ${Math.Rand[200]:Inc[10]}
+				EQ2Execute /gu congrats!
+				break
+			case 2
+				wait ${Math.Rand[200]:Inc[10]}
+				EQ2Execute /gu WTG
+				break
+			case 3
+				wait ${Math.Rand[200]:Inc[10]}
+				EQ2Execute /gu gratz
+				break
+			case default
+				break
+		}
+	}
 }
 
 function Init_Triggers()
 {
-    AddTrigger TSLevel "@player@ gained a tradeskill level and is now a level @tslevel@ @tstype@."
-    AddTrigger PCLevel "@player@ gained an adventure level and is now a level @ALevel@ @AClass@."
-    AddTrigger PCAchive "@player@ gained an achievement point and now has @points@ points."
+	AddTrigger TSLevel "@player@ gained a tradeskill level and is now a level @tslevel@ @tstype@."
+	AddTrigger PCLevel "@player@ gained an adventure level and is now a level @ALevel@ @AClass@."
+	AddTrigger PCAchive "@player@ gained an achievement point and now has @points@ points."
 }
 
 function TSLevel(string line2,string player, string tslevel, string tstype)
