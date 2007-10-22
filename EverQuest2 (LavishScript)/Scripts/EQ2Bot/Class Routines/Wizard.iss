@@ -129,7 +129,7 @@ function Combat_Init()
 	SpellRange[13,1]:Set[181]
 
 	Action[14]:Set[Nuke1]
-	SpellRange[14,3]:Set[60]
+	SpellRange[14,1]:Set[60]
 
 	Action[15]:Set[Master_Strike]
 
