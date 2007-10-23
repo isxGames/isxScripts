@@ -38,7 +38,6 @@ function Class_Declaration()
 	declare AoEMode bool script 0
 	declare BowAttacksMode bool script 0
 	declare RangedAttackMode bool script 0
-	declare JoustMode bool script 0
 	declare AnnounceMode bool script 0
 
 	declare BuffParry bool script FALSE
@@ -52,6 +51,8 @@ function Class_Declaration()
 	declare BuffHate bool script FALSE
 	declare BuffSelf bool script FALSE
 	declare BuffTarget string script
+
+	declare JoustMode bool script 0
 	declare OutTrigger string script
 	declare InTrigger string script
 	; 0 is in 1 is out
@@ -66,6 +67,7 @@ function Class_Declaration()
 	BowAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Bow Attack Spells,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
 	AnnounceMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Announce Cacophony,FALSE]}]
+	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
 
 	BuffParry:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Parry","FALSE"]}]
 	BuffPower:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Power","FALSE"]}]
@@ -374,7 +376,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange 388
 				if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
 				{
-					eq2execute /groupsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+					eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
 				}
 			}
 			elseif ${Me.Ability[${SpellType[387]}].IsReady}
@@ -421,7 +423,7 @@ function Combat_Routine(int xAction)
 		wait 30
 		if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
 		{
-			eq2execute /groupsay Caco of Blades is up!
+			eq2execute /gsay Caco of Blades is up!
 		}
 	}
 
