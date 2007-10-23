@@ -34,7 +34,7 @@ function Class_Declaration()
 	declare PetMode bool script 1
 	declare CastCures bool script FALSE
 	declare StartHO bool script FALSE
-	declare FocusMode bool script FALSE
+	declare FocusMode bool script TRUE
 
 	;Custom Equipment
 	declare PoisonCureItem string script
@@ -52,7 +52,7 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	CastCures:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Cures,TRUE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
-	FocusMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Focused Casting,FALSE]}]
+	FocusMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Focused Casting,TRUE]}]
 
 }
 
@@ -393,7 +393,7 @@ function Combat_Routine(int xAction)
 
 	if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
 	{
-		call CastSpellRange 70 0 0 0 ${KillTarget}
+		call CastSpellRange 387 0 0 0 ${KillTarget}
 	}
 
 	switch ${Action[${xAction}]}
