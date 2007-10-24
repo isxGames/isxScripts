@@ -108,11 +108,13 @@ objectdef abilityobj
 
 	method StoreAbilityData(string AbSet, int AbilityID)
 	{
-		variable settingsetref ThisSet
-		MyClass.FindSet[${AbSet}]:AddSet[${Me.Ability[${AbilityID}].Name}]
-		ThisSet:Set[${MyClass.FindSet[${AbSet}].FindSet[${Me.Ability[${AbilityID}].Name}]}]
-
 		variable int tempvar=1
+		variable settingsetref ThisSet
+
+		LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}]:AddSet[${Me.Ability[${AbilityID}].Name}]
+		ThisSet:Set[${LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}].FindSet[${Me.Ability[${AbilityID}].Name}]}]
+
+
 
 		ThisSet:AddSetting[ID,${AbilityID}]]
 		ThisSet:AddSetting[Name,${Me.Ability[${AbilityID}].Name}]
