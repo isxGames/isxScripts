@@ -766,8 +766,8 @@ function DoCharm()
 				continue
 			}
 
-			Mob.Target[${CustomActor[${tcount}].ID}]
-			if ${return}
+
+			if ${Mob.Target[${CustomActor[${tcount}].ID}]}
 			{
 				CharmTarget:Set[${CustomActor[${tcount}].ID}]
 				break
