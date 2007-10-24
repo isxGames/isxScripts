@@ -426,9 +426,9 @@ function main()
 								{
 									Me.Maintained[${SpellType[295]}]:Cancel
 								}
-
 								call CastSpellRange 290 0 0 0 0 0 0 1
 							}
+							break
 						case mage
 							if (${MainTank} && ${Actor[MyPet](exists)}) || ${Actor[MyPet].ID}==${Actor[exactname,${Maintank}].ID}
 							{
@@ -447,8 +447,7 @@ function main()
 
 								call CastSpellRange 290
 							}
-
-						break
+							break
 
 						case priest
 							break
@@ -1413,7 +1412,7 @@ function Pull(string npcclass)
 				wait 10 ${Me.TargetLOS}
 
 				;echo check if in range
-				if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange}
+				if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
 				{
 					;echo Move to target Range!
 					call FastMove ${Target.X} ${Target.Z} ${PullRange}

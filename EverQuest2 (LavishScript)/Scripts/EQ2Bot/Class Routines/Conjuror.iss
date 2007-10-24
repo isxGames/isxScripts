@@ -14,6 +14,15 @@
 ;20070404a
 ;	updated for latest eq2bot
 ;	updated master strike
+;
+;
+;
+; NOTE:
+; The Snapping Mandibles line is NOT cast by this routine as it is
+; the ONLY conji spell to advance HO's with, and if the script were
+; to use it, you would never get an HO off.  To use this line, enable
+; HO's in the extra's tab, and chose the Snapping Mandiples line in the
+; lightning spell selection.
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
