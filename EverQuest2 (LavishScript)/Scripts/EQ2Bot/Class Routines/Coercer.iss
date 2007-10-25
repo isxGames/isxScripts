@@ -231,8 +231,8 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				wait 20
 			}
-			wait 20
 			break
 		case Signet
 			if ${BuffSignet}
@@ -762,7 +762,7 @@ function RefreshPower()
 	}
 	while ${tempvar:Inc}<${Me.GroupCount}
 
-	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30
+	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)
 	{
 		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 	}

@@ -316,7 +316,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]} 0 0
 			break
 		case SOW
-			;Me.ToActor:InitializeEffects
+			;Me:InitializeEffects
 			;if ${Me.ToActor.NumEffects}<15 && !${Me.Effect[Spirit of the Wolf](exists)}
 			;{
 			;	call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
