@@ -472,7 +472,7 @@ function Combat_Routine(int xAction)
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[360]}](exists)}
 	{
-		call CastSpellRange 361
+		call CastSpellRange 360
 	}
 
 	if ${ShardMode}
