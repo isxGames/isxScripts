@@ -1,4 +1,4 @@
-vairable string myname
+variable string myname
 
 
 #macro ProcessTriggers()
