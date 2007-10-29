@@ -52,16 +52,6 @@ function Class_Declaration()
 
 	declare EquipmentChangeTimer int script
 
-	declare MainWeapon string script
-	declare OffHand string script
-	declare OneHandedSpear string script
-	declare TwoHandedSpear string script
-	declare Symbols string script
-	declare Buckler string script
-	declare Staff string script
-
-
-
 	call EQ2BotLib_Init
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
@@ -81,13 +71,6 @@ function Class_Declaration()
 	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
 	BuffHorrorGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHorrorGroupMember,]}]
 
-	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	OneHandedSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OneHandedSpear,]}]
-	TwoHandedSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedSpear,]}]
-	Symbols:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[WeaponSymbols,]}]
-	Buckler:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buckler,]}]
-	Staff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Staff,]}]
 }
 
 function Buff_Init()
@@ -260,8 +243,6 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	variable int temp
-
-	call WeaponChange
 
 	ExecuteAtom CheckStuck
 
@@ -505,8 +486,8 @@ function Combat_Routine(int xAction)
 
 	if ${MaelstromMode}
 	{
-		call CheckGroupHealth 60
 
+		call CheckGroupHealth 60
 		if ${Return}
 		{
 			call CastSpellRange 317
@@ -766,7 +747,7 @@ function CheckHeals()
 		if ${Me.Group[${temphl}].ToActor(exists)}
 		{
 
-			if ${Me.Group[${temphl}].ToActor.Health}==-99 && !${Me.InCombat}
+			if ${Me.Group[${temphl}].ToActor.Health}==-99 && !${Me.InCombat} && {Me.Group[${temphl}].ToActor.Distance}<25
 			{
 				call CastSpellRange 300 301 1 0 ${Me.Group[${temphl}].ID} 1
 			}
@@ -1123,7 +1104,7 @@ function CureGroupMember(int gMember)
 		{
 			call CastSpellRange 326
 
-				if  ${Me.Group[${gMember}].Arcane}
+				if  ${Me.Group[${gMember}].Arcane}>0
 				{
 					call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 				}
@@ -1144,24 +1125,40 @@ function CureGroupMember(int gMember)
 			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 	}
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].ToActor(exists)}
-}
+	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)}
 
-function WeaponChange()
-{
+	gMember:Set[0]
 
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${MainWeapon}]}
+	do
 	{
-		Me.Inventory[${MainWeapon}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
+		if ${Me.Group[${gMember}]].IsAfflicted}
+		{
+			if  ${Me.Group[${gMember}].Arcane}>0
+			{
+				call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
+				tmpcure:Inc
+			}
 
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
+			if  ${Me.Group[${gMember}].Noxious}>0
+			{
+				call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
+				tmpcure:Inc
+			}
+
+			if  ${Me.Group[${gMember}].Elemental}>0
+			{
+				call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
+				tmpcure:Inc
+			}
+
+			if  ${Me.Group[${gMember}].Trauma}>0
+			{
+				call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
+				tmpcure:Inc
+			}
+		}
 	}
+	while ${gMember:Inc}<${${Me.GroupCount}} && ${tmpcure:Inc}<7
+
 
 }
