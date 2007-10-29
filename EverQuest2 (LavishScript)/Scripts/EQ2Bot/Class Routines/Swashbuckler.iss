@@ -468,7 +468,8 @@ function Combat_Routine(int xAction)
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
 			}
-		case Debuff
+		case Debuff1
+		case Debuff2
 		case Taunt
 			if ${TankMode}
 			{
