@@ -709,9 +709,12 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	CurrentAction:Set[Casting ${spell}]
 	Me.Ability[${spell}]:Use
 
-	;if spells are being interupted do to movement
-	;increase the wait below slightly. Default=10
-	wait 10
+	if !${castwhilemoving}
+	{
+		;if spells are being interupted do to movement
+		;increase the wait below slightly. Default=2
+		wait 5
+	}
 
 	do
 	{
@@ -975,23 +978,22 @@ function Combat()
 				break
 			}
 
-			if ${Me.ToActor.Health}>=90
+			if ${Me.ToActor.Health}>=(${HealthCheck}-10)
 			{
-				call CheckLoot
-				wait 5
 				call CheckLoot
 				break
 			}
 
-			if ${PathType}==4 && ${MainTank} && ${Me.ToActor.Health}>=90
+			if ${PathType}==4 && ${MainTank} && ${Me.ToActor.Health}>=(${HealthCheck}-10)
 			{
 				call CheckLoot
 				call ScanAdds
 			}
 
-			if (${Following} && ${Actor[ExactName,${MainAssist}].Distance}>15) || ${Me.ToActor.Health}>90
+			if (${Following} && ${Actor[ExactName,${MainAssist}].Distance}>15) || ${Me.ToActor.Health}>(${HealthCheck}-10)
 			{
 				break
+				eq2execute /follow ${Actor[ExactName,${MainAssist}].Name}
 			}
 
 			call ProcessTriggers
@@ -1004,7 +1006,7 @@ function Combat()
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>4
 		{
 			movinghome:Set[TRUE]
-			wait ${Math.Rand[50]}
+			wait ${Math.Rand[10]} ${Mob.Detect}
 			call FastMove ${HomeX} ${HomeZ} 4
 			face ${Math.Rand[45]:Inc[315]}
 		}
@@ -1030,7 +1032,7 @@ function Combat()
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>${ScanRange}
 		{
 			face ${HomeX} ${HomeZ}
-			wait 10
+			wait ${Math.Rand[10]} ${Mob.Detect}
 
 			tempvar:Set[${Math.Rand[30]:Dec[15]}]
 			WPX:Set[${Math.Calc[${tempvar}*${Math.Cos[${Me.Heading}]}-20*${Math.Sin[${Me.Heading}]}+${Me.X}]}]
@@ -1121,8 +1123,8 @@ function GetinFront()
 	{
 		face ${Target.X} ${Target.Z}
 	}
-
-	wait 4
+	;removing cause this seems stupid
+	;wait 4
 }
 
 
@@ -1460,7 +1462,7 @@ function Pull(string npcclass)
 					{
 						KillTarget:Set[${Target.ID}]
 						EQ2Execute /pet backoff
-						wait 50 ${CustomActor[${tcount}].Distance}<20
+						wait 100 ${CustomActor[${tcount}].Distance}<20
 						EQ2Execute /pet attack
 						if ${PetGuard}
 						{
@@ -1619,7 +1621,8 @@ function CheckLoot()
 	variable int skipcnt=0
 
 	islooting:Set[TRUE]
-	wait 10
+	;think this is legacy, removing
+	;wait 10
 	EQ2:CreateCustomActorArray[byDist,15]
 
 	do
@@ -1649,7 +1652,7 @@ function CheckLoot()
 				case assassin
 					Echo disarming trap on ${CustomActor[${tcount}].ID}
 					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
-					wait 10
+					waitframe
 					break
 				case default
 					break
@@ -1670,7 +1673,7 @@ function CheckLoot()
 				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
 				EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
-				wait 5
+				waitframe
 				call ProcessTriggers
 			}
 		}
