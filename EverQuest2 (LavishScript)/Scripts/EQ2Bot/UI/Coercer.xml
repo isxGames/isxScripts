@@ -291,7 +291,7 @@
 	<Commandcheckbox Name='SprintMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>190</Y>
+		<Y>210</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Sprint Mode</Text>
@@ -315,7 +315,7 @@
 	<Commandcheckbox Name='TSMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>210</Y>
+		<Y>230</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use ThoughtSnap</Text>

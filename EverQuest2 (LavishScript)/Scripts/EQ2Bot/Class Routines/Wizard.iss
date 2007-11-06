@@ -137,13 +137,13 @@ function Combat_Init()
 	SpellRange[15,1]:Set[63]
 
 	Action[16]:Set[Nuke3]
-	SpellRange[16,3]:Set[62]
+	SpellRange[16,1]:Set[62]
 
 	Action[17]:Set[Stun2]
 	SpellRange[17,1]:Set[180]
 
 	Action[18]:Set[Nuke2]
-	SpellRange[18,3]:Set[61]
+	SpellRange[18,1]:Set[61]
 
 	Action[19]:Set[Dot2]
 	MobHealth[19,1]:Set[20]
@@ -314,7 +314,7 @@ function Buff_Routine(int xAction)
 			}
 
 		Default
-			xAction:Set[20]
+			return Buff Complete
 			break
 	}
 }
@@ -346,6 +346,16 @@ function Combat_Routine(int xAction)
 	call RefreshPower
 	call UseCrystallizedSpirit 60
 
+	;Ice Nova if solo and over 50% or ^^^ and between 30 and 60.
+	if ((${Actor[${KillTarget}].Dificulty}<3 && ${Actor[${KillTarget}].Health}>50) || (${Actor[${KillTarget}].Dificulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<60)) && ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		if ${Me.Ability[${SpellType[385]}].IsReady}
+		{
+			call CastSpellRange 385
+		}
+		call CastSpellRange 60 0 0 0 ${KillTarget}
+	}
+
 	;maintain combat buffs
 	if ${Me.Ability[${SpellType[360]}].IsReady}
 	{
@@ -355,6 +365,7 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 361
 	}
+
 
 	switch ${Action[${xAction}]}
 	{
@@ -427,7 +438,7 @@ function Combat_Routine(int xAction)
 		case Root
 			break
 		Default
-			xAction:Set[40]
+			return Combat Complete
 			break
 	}
 
@@ -456,7 +467,7 @@ function Have_Aggro()
 		call CastSpellRange 180
 	}
 
-	if ${Me.Ability[${SpellRange[230]}].IsReady} ${Actor[${aggroid}].Distance}<5 && !${avoidhate}
+	if ${Me.Ability[${SpellRange[230]}].IsReady} && ${Actor[${aggroid}].Distance}<5 && !${avoidhate}
 	{
 		call CastSpellRange 230 0 0 0 ${Actor[${aggroid}].ID}
 		press -hold ${backward}
