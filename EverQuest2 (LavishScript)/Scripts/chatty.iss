@@ -116,23 +116,16 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 				}
 				break
 
-			case 31
-				;ooc
-			case 9
-				;shout
-			case 8
-				;say
+			case 31 ;ooc
+			case 9 	;shout
+			case 8	;say
 				break
 
 
-			case 15
-				;group
-			case 26
-				;tell
-			case 27
-				;tell
-			case 16
-				;raid
+			case 15	;group
+			case 26	;tell
+			case 27	;tell
+			case 16	;raid
 				if ${Message.Find[Chuck]}
 				{
 					chatDest:Set[say]
