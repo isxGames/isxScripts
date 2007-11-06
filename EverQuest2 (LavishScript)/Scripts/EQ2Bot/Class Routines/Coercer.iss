@@ -48,19 +48,13 @@ function Class_Declaration()
 	declare BuffCoerciveHealingGroupMember string script
 	declare BuffManaward bool script
 	declare DPSMode bool script 1
+	declare TSMode bool script 1
+	declare SprintMode bool script 1
 	declare StartHO bool script 1
 
 	declare CharmTarget int script
 
-	;Custom Equipment
-	declare WeaponStaff string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare WeaponMain string script
-	declare OffHand string script
-
 	call EQ2BotLib_Init
-
 
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
@@ -74,6 +68,8 @@ function Class_Declaration()
 	BuffCoerciveHealingGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealingGroupMember,]}]
 	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
+	TSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTS,FALSE]}]
+	SprintMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSprint,FALSE]}]
 
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
@@ -198,9 +194,14 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	CurrentAction:Set[Buffing ${xAction}]
-	
+
 	call CheckHeals
-	call RefreshPower
+
+	if !${DPSMode}
+	{
+		call RefreshPower
+	}
+
 	call DestroyThoughtstones
 	ExecuteAtom CheckStuck
 
@@ -209,11 +210,11 @@ function Buff_Routine(int xAction)
 		ExecuteAtom AutoFollowTank
 	}
 
-	if ${DPSMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
+	if ${SprintMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
 	{
 		call CastSpellRange 333
 	}
-	elseif ${Me.Maintained[${SpellType[333]}](exists)}
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<50
 	{
 		Me.Maintained[${SpellType[333]}]:Cancel
 	}
@@ -227,11 +228,11 @@ function Buff_Routine(int xAction)
 
 		case AAEmpathic_Aura
 		case Clarity
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} 
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 				wait 20
-			}			
+			}
 			break
 		case Signet
 			if ${BuffSignet}
@@ -462,11 +463,11 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${DPSMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
+	if ${SprintMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
 	{
 		call CastSpellRange 333
 	}
-	elseif ${Me.Maintained[${SpellType[333]}](exists)}
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<50
 	{
 		Me.Maintained[${SpellType[333]}]:Cancel
 	}
@@ -491,11 +492,17 @@ function Combat_Routine(int xAction)
 		call DoCharm
 	}
 
-	call DoAmnesia
+	if ${TSMode}
+	{
+		call DoAmnesia
+	}
 
 	ExecuteAtom PetAttack
 
-	call CheckHeals
+	if !${DPSMode}
+	{
+		call CheckHeals
+	}
 
 	if ${ShardMode}
 	{
@@ -510,24 +517,27 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 382 0 0 0 ${KillTarget}
 	}
 
-	;Make sure kill target is AA Tahsina'd if available
-	call CastSpellRange 377 0 0 0 ${KillTarget}
+	if ${Me.Ability[${SpellType[377]}].IsReady}
+	{
+		;Make sure kill target is AA Tahsina'd if available
+		call CastSpellRange 377 0 0 0 ${KillTarget}
+	}
 
 	;make sure killtarget is always Arcane debuffed
-	if !${Me.Maintained[${SpellType[50]}](exists)}
+	if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
 	{
 		call CastSpellRange 50
 	}
 
 
 	;make sure Convulsion procs are always on kill target for optimum dps
-	if !${Me.Maintained[${SpellType[71]}](exists)}
+	if !${Me.Maintained[${SpellType[71]}](exists)} && ${Me.Ability[${SpellType[71]}].IsReady}
 	{
 		call CastSpellRange 71 0 0 0 ${KillTarget}
 	}
 
 	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
-	if !${Me.Maintained[${SpellType[42]}](exists)}
+	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady}
 	{
 		call CastSpellRange 42
 	}
@@ -656,7 +666,7 @@ function Combat_Routine(int xAction)
 				}
 				break
 			default
-				xAction:Set[40]
+				return Combat Complete
 				break
 		}
 	}
@@ -670,15 +680,6 @@ function Post_Combat_Routine(int xAction)
 
 	CurrentAction:Set[Post Combat ${xAction}]
 
-	switch ${PostAction[${xAction}]}
-	{
-
-		case LoadDefaultEquipment
-			ExecuteAtom LoadEquipmentSet "Default"
-		case default
-			xAction:Set[20]
-			break
-	}
 }
 
 function Have_Aggro()
@@ -740,13 +741,13 @@ function RefreshPower()
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50 && !${Me.InCombat}
 	{
-			call CastSpellRange 309
+		call CastSpellRange 309
 	}
 
 	;Transference Line in Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<10
 	{
-			call CastSpellRange 309
+		call CastSpellRange 309
 	}
 
 	;Mana Flow the lowest group member
@@ -765,7 +766,7 @@ function RefreshPower()
 	}
 	while ${tempvar:Inc}<${Me.GroupCount}
 
-	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 	{
 		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 	}
@@ -1002,7 +1003,7 @@ function DoAmnesia()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 
-			if (${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID})
+			if (${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}) || (${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID})
 			{
 				continue
 			}
@@ -1038,40 +1039,26 @@ function DoAmnesia()
 
 			if ${aggrogrp}
 			{
-
 				;Try AA Thought Snap first
 				if ${Me.Ability[${SpellType[376]}].IsReady}
 				{
 					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
-
 				}
 				;Try the AA Touch of Empathy second
 				elseif ${Me.Ability[${SpellType[384]}].IsReady}
 				{
-					if (${Me.Equipment[1].WieldStyle.Find[Dual Wield]} || ${Me.Equipment[1].WieldStyle.Find[One-Handed]}) && ${Me.Equipment[1].SubType.Equal[Staff]}
-					{
-						call CastSpellRange 382 0 0 0 ${KillTarget}
-					}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${WeaponStaff}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange 382 0 0 0${CustomActor[${tcount}].ID}
-					}
+					call CastSpellRange 382 0 0 0 ${KillTarget}
 				}
 				;Try Amensia if Touch of Empathy and Thought Snap isnt up or avialable
 				else
 				{
 					call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
-
 				}
 				return
 			}
-
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
-
 
 }
 
