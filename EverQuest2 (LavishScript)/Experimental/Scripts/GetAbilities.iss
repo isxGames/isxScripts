@@ -42,7 +42,7 @@ function GetAbilityData(int tempKey)
 
 	echo Fetching Ability ${tempKey}
 	Me.Ability[${tempKey}]:Examine
-	wait 20
+	wait 5
 
 	switch ${Me.Ability[${tempKey}].SpellBookType}
 	{
@@ -110,10 +110,13 @@ objectdef abilityobj
 	{
 		variable int tempvar=1
 		variable settingsetref ThisSet
-		echo ${AbSet} , ${AbilityID}
+
+		;echo ${AbSet} , ${AbilityID}
+
 		LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}]:AddSet[${Me.Ability[${AbilityID}].Name}]
 		;echo LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}]:AddSet[${Me.Ability[${AbilityID}].Name}]
-		ThisSet:Set[${LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}].FindSet[#${Me.Ability[${AbilityID}].Name}]}]
+
+		ThisSet:Set[${LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}].FindSet[${Me.Ability[${AbilityID}].Name}]}]
 		;echo ${ThisSet.GUID}
 
 
@@ -141,14 +144,17 @@ objectdef abilityobj
 		ThisSet:AddSetting[TargetType,${Me.Ability[${AbilityID}].TargetType}]
 		ThisSet:AddSetting[SpellBookType,${Me.Ability[${AbilityID}].SpellBookType}]
 		ThisSet:AddSetting[NumEffects,${Me.Ability[${AbilityID}].NumEffects}]
-		do
-		{
-			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}].PercentSuccess}]
-			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}].Indentation}]
-			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}].Desciption}]
-		}
-		while ${tempvar:Inc}<=${Me.Ability[${AbilityID}].NumEffects}
 
+		if ${Me.Ability[${AbilityID}].NumEffects}
+		{
+			do
+			{
+				ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}].Effect[${tempvar}].PercentSuccess}]
+				ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}].Effect[${tempvar}].Indentation}]
+				ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}].Effect[${tempvar}].Description}]
+			}
+			while ${tempvar:Inc}<=${Me.Ability[${AbilityID}].NumEffects}
+		}
 	}
 
 }
