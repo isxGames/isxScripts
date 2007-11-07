@@ -67,8 +67,8 @@ function GetAbilityData(int tempKey)
 			break
 	}
 
-	echo Storing Ability ${tempKey}
-	AbObj:StoreAbilityData[${CurrentSet},${Me.Ability[${tempKey}].ID}]
+
+	AbObj:StoreAbilityData[${CurrentSet},${tempKey}]
 
 	press esc
 
@@ -110,10 +110,11 @@ objectdef abilityobj
 	{
 		variable int tempvar=1
 		variable settingsetref ThisSet
-
+		echo ${AbSet} , ${AbilityID}
 		LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}]:AddSet[${Me.Ability[${AbilityID}].Name}]
-		ThisSet:Set[${LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}].FindSet[${Me.Ability[${AbilityID}].Name}]}]
-
+		;echo LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}]:AddSet[${Me.Ability[${AbilityID}].Name}]
+		ThisSet:Set[${LavishSettings[Abilities].FindSet[${Me.SubClass}].FindSet[${AbSet}].FindSet[#${Me.Ability[${AbilityID}].Name}]}]
+		;echo ${ThisSet.GUID}
 
 
 		ThisSet:AddSetting[ID,${AbilityID}]]
@@ -142,12 +143,14 @@ objectdef abilityobj
 		ThisSet:AddSetting[NumEffects,${Me.Ability[${AbilityID}].NumEffects}]
 		do
 		{
-			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.PercentSuccess}]
-			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Indentation}]
-			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}.Desciption}]
+			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}].PercentSuccess}]
+			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}].Indentation}]
+			ThisSet:AddSetting[NumEffects${tempvar},${Me.Ability[${AbilityID}]Effect[${tempvar}].Desciption}]
 		}
 		while ${tempvar:Inc}<=${Me.Ability[${AbilityID}].NumEffects}
 
 	}
 
 }
+
+
