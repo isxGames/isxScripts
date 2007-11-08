@@ -1,4 +1,9 @@
 variable string myname
+declare InsultTimer int script
+variable string respondSpeaker
+variable string respondTimer
+variable string AssHat
+
 
 
 #macro ProcessTriggers()
@@ -17,6 +22,7 @@ function main()
 	ext -require isxeq2
 
 	myname:Set[]
+	Asshat:Set[Mandevo]
 
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 	call Init_Triggers
@@ -29,17 +35,23 @@ function main()
 	while 1
 }
 
-function RandomChuck(string chatTarget)
+function RandomMsg(string chatTarget, string randomKey, bit PrefixName, string Speaker)
 {
 	variable int keycount
 	variable int tempvar=1
 	variable string chatfile
 
 	chatfile:Set[${LavishScript.HomeDirectory}/Scripts/XML/Chuckisms.xml]
-	keycount:Set[${SettingXML[${chatfile}].Set[Chuckisms].Keys}]
+	keycount:Set[${SettingXML[${chatfile}].Set[${randomKey}].Keys}]
 
-	EQ2Execute /${chatTarget} ${SettingXML[${chatfile}].Set[Chuckisms].Key[${Math.Rand[${keycount}]}]}
-
+	if ${PrefixName}
+	{
+		EQ2Execute /${chatTarget} ${Speaker}, ${SettingXML[${chatfile}].Set[${randomKey}].Key[${Math.Rand[${keycount}]}]}
+	}
+	else
+	{
+		EQ2Execute /${chatTarget} ${SettingXML[${chatfile}].Set[${randomKey}].Key[${Math.Rand[${keycount}]}]}
+	}
 }
 
 function GratsFunction(string WhoGrats)
@@ -107,29 +119,58 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 				if ${Message.Find[${myname}?]}
 				{
 					EQ2Execute /gu "Yes ${Speaker}?"
+					respondSpeaker:Set[${Speaker}]
+					respondTimer:Set[${Time.Timestamp}]
 				}
-
-				if ${Message.Find[Chuck]}
+				elseif ${Speaker.Equal[${respondSpeaker}]} && ${Math.Calc[${Time.Timestamp}-${respondTimer}]}<60
+				{
+					EQ2Execute /gu "hmm, if you say so"
+					respondSpeaker:Set[]
+				}
+				elseif ${Message.Left[6].Eqaul[Insult]} && ${Message.Token[2, ](exists)} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
+				{
+					InsultTimer:Set[${Time.Timestamp}]
+					chatDest:Set[gu]
+					call RandomMsg Insults 1 ${Message.Token[2, ]}
+				}
+				elseif ${Message.Left[Private Insult]} && ${Message.Token[2, ](exists)} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
+				{
+					InsultTimer:Set[${Time.Timestamp}]
+					chatDest:Set[tell  ${Message.Token[2, ]}]
+					call RandomMsg Insults 0
+				}
+				elseif ${Message.Find[Chuck]}
 				{
 					chatDest:Set[gu]
-					call RandomChuck ${chatDest}
+					call RandomMsg ${chatDest} Chuckisms 0
 				}
 				break
-
-			case 31 ;ooc
+			case 32 ;ooc
 			case 9 	;shout
-			case 8	;say
 				break
-
-
+			case 8
+				;say
+				if ${Message.Find[Chuck]}
+				{
+					chatDest:Set[say]
+					call RandomMsg ${chatDest} Chuckisms 0
+				}
+				break
+			case 34
+				;chat
+				if ${ChannelName.Find[60-69]} && ${Speaker.Find[${AssHat}]} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
+				{
+					InsultTimer:Set[${Time.Timestamp}]
+					chatDest:Set[say]
+					call RandomMsg Insults 1 ${Speaker}
+				}
 			case 15	;group
-			case 26	;tell
-			case 27	;tell
+			case 28	;tell
 			case 16	;raid
 				if ${Message.Find[Chuck]}
 				{
 					chatDest:Set[say]
-					call RandomChuck
+					call RandomMsg ${chatDest} Chuckisms 0
 				}
 			default
 				break

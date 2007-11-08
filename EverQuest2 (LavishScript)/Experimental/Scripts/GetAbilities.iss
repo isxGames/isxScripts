@@ -42,12 +42,12 @@ function GetAbilityData(int tempKey)
 
 	echo Fetching Ability ${tempKey}
 	Me.Ability[${tempKey}]:Examine
-	wait 5
+	wait 10
 
 	switch ${Me.Ability[${tempKey}].SpellBookType}
 	{
 		case 0
-			CurrentSet:Set[TradeSkill]
+			CurrentSet:Set[Spells]
 			break
 
 		case 1
@@ -59,7 +59,11 @@ function GetAbilityData(int tempKey)
 			break
 
 		case 3
-			CurrentSet:Set[Spells]
+			CurrentSet:Set[TradeSkill]
+			break
+
+		case 4
+			CurrentSet:Set[Passive]
 			break
 
 		default
@@ -89,6 +93,8 @@ objectdef abilityobj
 		MyClass:AddSet[General]
 		MyClass:AddSet[Combat]
 		MyClass:AddSet[TradeSkill]
+		MyClass:AddSet[Passive]
+		MyClass:AddSet[WTF]
 
 		LavishSettings[Abilities]:Import[${Ability_File}]
 
