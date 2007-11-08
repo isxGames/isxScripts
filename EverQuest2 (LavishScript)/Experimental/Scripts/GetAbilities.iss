@@ -98,7 +98,7 @@ objectdef abilityobj
 	method Shutdown()
 	{
 		This:Save[]
-		LavishSettings[Abilities]:Clear
+		;LavishSettings[Abilities]:Clear
 	}
 
 	method Save()
