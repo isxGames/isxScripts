@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<template name='My.window.TitleBar'>
+    		<Border>1</Border>
+		<x>3</x>
+    		<BorderColor>FF000033</BorderColor>
+    		<Width>r6</Width>
+		<Height>26</Height>
+		<Texture Template='EQ2.window.TitleBar.Texture' />
+		<Children>
+			<Text Name='Title' template='EQ2.window.TitleBar.title' />
+			<Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
+			</Button>
+			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
+			</Button>
+			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
+				<Command>Script[myprices]:End</Command>
+			</commandbutton>
+		</Children>
+	</template>
+	<template name='My.window'>
+		<Border>1</Border>
+		<Resizable>1</Resizable>
+		<CloseButton />
+		<MinimizeButton />
+		<MaximizeButton />
+		<TitleBar template='My.window.TitleBar' />
+ 		<OffsetTitleBarHeight />
+		<Client template='EQ2.window.Client' />
+		<StorePosition>1</StorePosition>
+	</template>
+	<!-- Main Window -->
+	<Window Name='MyPrices' template='My.window'>
+	<X>5%</X>
+	<Y>20%</Y>
+	<Width>775</Width>
+	<Height>650</Height>
+	<Client Template='EQ2.Window.Client'>
+		<Y>20</Y>
+	</Client>
+	<StorePosition>1</StorePosition>
+	<Title>MyPrices Broker system</Title>
+	<TitleBar Template='EQ2.Window.TitleBar'>
+		<X>0</X>
+		<Y>0</Y>
+		<Width>100%</Width>
+		<Height>20</Height>
+		<Children>
+			<Text Name='Title' Template='EQ2.Window.TitleBar.Title' />
+			<Button Name='Minimize' Template='EQ2.Window.TitleBar.Minimize'>
+				<X>r35</X>
+				<Width>14</Width>
+				<Height>14</Height>
+			</Button>
+			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
+				<X>r17</X>
+				<Width>14</Width>
+				<Height>14</Height>
+				<Command>Script[myprices]:End</Command>
+			</commandbutton>
+		</Children>
+	</TitleBar>
+	<Children>
+		<Tabcontrol Name='GUITabs' Template='EQ2.Tabcontrol'>
+			<X>1%</X>
+			<Y>1%</Y>
+			<Height>98%</Height>
+			<Width>98%</Width>
+			<Tabs>
+				<Tab Name='Sell'>
+					<Text name='ConfigSell Text' Template='EQ2.text'>
+						<X>5%</X>
+						<Y>10</Y>
+						<Width>80%</Width>
+						<Height>20</Height>
+						<Alignment>Left</Alignment>
+						<Font>
+							<Color>FFFFFFE5</Color>
+						</Font>
+						<Text>MyPrices Options:</Text>
+					</Text>
+					<checkbox Name='MatchLowPrice' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>50</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Auto-Match Lower Prices</Text>
+						<AutoTooltip>
+							Automatically match any prices lower than your own.
+						</AutoTooltip>
+						<OnLoad>
+							if ${Script[myprices].VariableScope.MatchLowPrice}
+							{
+								UIElement[MatchLowPrice@Sell@GUITabs@MyPrices]:SetChecked
+							}
+							else
+							{
+								UIElement[MatchLowPrice@Sell@GUITabs@MyPrices]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[MatchLowPrice@Sell@GUITabs@MyPrices].Checked}
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[MatchLowPrice,TRUE]:Save
+								Script[myprices].VariableScope.MatchLowPrice:Set[TRUE]
+							}
+							else
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[MatchLowPrice,FALSE]:Save
+								Script[myprices].VariableScope.MatchLowPrice:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='MatchHighPrice' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>70</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Auto-Match Higher Prices</Text>
+						<AutoTooltip>
+							Automatically match your prices to the next Lowest Price if your prices are too low.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.IncreasePrice}
+						{
+							UIElement[MatchHighPrice@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[MatchHighPrice@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[MatchHighPrice@Sell@GUITabs@MyPrices].Checked}
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[IncreasePrice,TRUE]:Save
+								Script[myprices].VariableScope.IncreasePrice:Set[TRUE]
+							}
+							else
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[IncreasePrice,FALSE]:Save
+								Script[myprices].VariableScope.IncreasePrice:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='SetUnlistedPrices' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>90</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Set Prices for Unlisted items</Text>
+						<AutoTooltip>
+							Match prices of Unlisted items and mark them for sale.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.SetUnlistedPrices}
+						{
+							UIElement[SetUnlistedPrices@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[SetUnlistedPrices@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[SetUnlistedPrices@Sell@GUITabs@MyPrices].Checked}
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[SetUnlistedPrices,TRUE]:Save
+								Script[myprices].VariableScope.SetUnlistedPrices:Set[TRUE]
+							}
+							else
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[SetUnlistedPrices,FALSE]:Save
+								Script[myprices].VariableScope.SetUnlistedPrices:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='ScanSellNonStop' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>110</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Auto-Loop</Text>
+						<AutoTooltip>
+							Keep scanning your Sale items in a constant loop.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.ScanSellNonStop}
+						{
+							UIElement[ScanSellNonStop@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[ScanSellNonStop@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[ScanSellNonStop@Sell@GUITabs@MyPrices].Checked}
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[ScanSellNonStop,TRUE]:Save
+								Script[myprices].VariableScope.ScanSellNonStop:Set[TRUE]
+							}
+							else
+							{
+								SettingXML[Scripts/myprices.xml].Set[General]:Set[ScanSellNonStop,FALSE]:Save
+								Script[myprices].VariableScope.ScanSellNonStop:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+
+					<Text Name='Normal' Template='EQ2.Text'>
+						<X>200</X>
+						<Y>190</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>White : Not Changed</Text>
+					</Text>
+					<Text Name='Green' Template='EQ2.Text'>
+						<X>200</X>
+						<Y>210</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Green : Matched Price</Text>
+					</Text>
+					<Text Name='Yellow' Template='EQ2.Text'>
+						<X>200</X>
+						<Y>230</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Yellow : Lowest Price</Text>
+					</Text>
+					<Text Name='Red' Template='EQ2.Text'>
+						<X>200</X>
+						<Y>250</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Red : Unable to match</Text>
+					</Text>
+
+					<Text Name='Itemname' Template='EQ2.Text'>
+						<X>5%</X>
+						<Y>350</Y>
+						<Text>*</Text>
+						<Width>44%</Width> 
+						<Height>15</Height>
+						<Color>FFDDBB00</Color>
+					</Text>
+
+					<Text Name='Label1' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>383</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Current Price</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Textentry Name='PlatPrice' Template='EQ2.Textentry'>
+						<X>25</X>
+						<Y>400</Y>
+						<Width>50</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='PlatPriceText' Template='EQ2.Text'>
+						<X>80</X>
+						<Y>400</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>PP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Textentry Name='GoldPrice' Template='EQ2.Textentry'>
+						<X>105</X>
+						<Y>400</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='GoldPriceText' Template='EQ2.Text'>
+						<X>140</X>
+						<Y>400</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>GP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Textentry Name='SilverPrice' Template='EQ2.Textentry'>
+						<X>165</X>
+						<Y>400</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='SilverPriceText' Template='EQ2.Text'>
+						<X>200</X>
+						<Y>400</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>SP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Textentry Name='CopperPrice' Template='EQ2.Textentry'>
+						<X>225</X>
+						<Y>400</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='CopperPriceText' Template='EQ2.Text'>
+						<X>260</X>
+						<Y>400</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>CP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+
+					<Text Name='Label2' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>432</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Minimum Price</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+
+					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>
+						<X>25</X>
+						<Y>450</Y>
+						<Width>50</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='MinPlatPriceText' Template='EQ2.Text'>
+						<X>80</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>PP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Textentry Name='MinGoldPrice' Template='EQ2.Textentry'>
+						<X>105</X>
+						<Y>450</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='MinGoldPriceText' Template='EQ2.Text'>
+						<X>140</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>GP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Textentry Name='MinSilverPrice' Template='EQ2.Textentry'>
+						<X>165</X>
+						<Y>450</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='MinSilverPriceText' Template='EQ2.Text'>
+						<X>200</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>SP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Textentry Name='MinCopperPrice' Template='EQ2.Textentry'>
+						<X>225</X>
+						<Y>450</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+						<Color>FFDDBB00</Color>
+					</Textentry>
+					<Text Name='MinCopperPriceText' Template='EQ2.Text'>
+						<X>260</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>CP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Commandbutton name='Update Price' Template='EQ2.Commandbutton'> 
+						<X>300</X> 
+						<Y>450</Y> 
+						<Width>50</Width> 
+						<Height>15</Height>
+						<Text>Save</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call pricefromstring]
+							Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+						<AutoTooltip>
+							Update your Minimum Sale Price
+						</AutoTooltip>
+					</Commandbutton>
+
+					<listbox Name='ItemList' Template='EQ2.listbox'>
+						<X>50%</X>
+						<Y>2%</Y>
+						<Width>48%</Width>
+						<Height>85%</Height>
+						<SelectMultiple>0</SelectMultiple>
+						<Sort>None</Sort>
+						<OnSelect>
+							UIElement[Itemname@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemlist[${ID}]}]
+							UIElement[PlatPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},1]}]
+							UIElement[GoldPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},2]}]
+							UIElement[SilverPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},3]}]
+							UIElement[CopperPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},4]}]
+							UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},5]}]
+							UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},6]}]
+							UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},7]}]
+							UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},8]}]
+						</OnSelect>
+					</listbox>
+					<Commandbutton name='Rescan' Template='EQ2.Commandbutton'> 
+						<X>38%</X> 
+						<Y>5%</Y> 
+						<Width>80</Width> 
+						<Height>15</Height>
+						<Text>Rescan List</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+						<AutoTooltip>
+							Rescan your broker list
+						</AutoTooltip>
+					</Commandbutton>
+					<Commandbutton name='Start Scanning' Template='EQ2.Commandbutton'> 
+						<X>20%</X> 
+						<Y>92%</Y> 
+						<Width>25%</Width> 
+						<Height>25</Height>
+						<Text>Start Scanning</Text>
+						<OnLeftClick>
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Stop Scanning]
+								Script[myprices].VariableScope.Pausemyprices:Set[FALSE]
+							}
+							else
+							{
+								UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Start Scanning]
+								Script[myprices].VariableScope.Pausemyprices:Set[TRUE]
+
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Start or pause the myprices after the next scans is finshed
+						</AutoTooltip>
+					</Commandbutton>
+					<Commandbutton name='Exit MyPrices' Template='EQ2.Commandbutton'> 
+						<X>60%</X> 
+						<Y>92%</Y> 
+						<Width>25%</Width> 
+						<Height>25</Height>
+						<Text>Stop and Quit</Text>
+						<OnLeftClick>
+							if !${Script[myprices].VariableScope.Exitmyprices}
+							{
+								UIElement[Exit MyPrices@Sell@GUITabs@MyPrices]:SetText[Closing Down]
+								UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Closing Down]
+								Script[myprices].VariableScope.Exitmyprices:Set[TRUE]
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Stop scanning after next item and Quit
+						</AutoTooltip>
+					</Commandbutton>
+				</Tab>
+				<Tab Name='Buy'>
+				</Tab>
+			</Tabs>
+		</Tabcontrol>
+	</Children>
+	</Window>
+</ISUI>
