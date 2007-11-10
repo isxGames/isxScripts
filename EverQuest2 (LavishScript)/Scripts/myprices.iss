@@ -13,6 +13,7 @@ function main()
     echo ISXEQ2 could not be loaded.  Script aborting.
     Script:End	
   }
+	echo Running MyPrices version 0.08b - coded : 10 Nov 2007
 
 	; Declare Variables
 	;
@@ -53,8 +54,6 @@ function main()
 
 	MyPrices:loadsettings
 	MyPrices:LoadUI
-
-	echo Running MyPrices version 0.08
 
 	call LoadList
 
@@ -149,7 +148,7 @@ function main()
 											call StringFromPrice ${MinBasePrice}
 											MinBasePriceS:Set[${Return}]
 											call StringFromPrice ${MinSalePrice}
-											Echo ${Me.Vending[${i}].Consignment[${j}].Name} : Low Price Found !! Match Price is ${MinBasePriceS} My Lowest Price is ${Return}
+											Echo ${Me.Vending[${i}].Consignment[${j}].Name} : Match Price is ${MinBasePriceS} : My Lowest Price is ${Return}
 											; Set the text in the list box line to red
 											call SetColour "${Me.Vending[${i}].Consignment[${j}].Name}" FFFF0000
 										}
@@ -173,23 +172,39 @@ function main()
 										; if you have told the script to match higher prices or the item was unlisted
 										if ${IncreasePrice} || ${ItemUnlisted}
 										{
+											If !${ItemUnlisted}
+											{
 											call StringFromPrice ${MinBasePrice}
-											Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Your Price is lower that the next Lowest Price : Price to match is ${Return}"
+											Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Price < Lowest Price : Price to match is ${Return}"
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
 											; if the item was unlisted then update your sale price
-											If ${ItemUnlisted}
+											}
+											else
 											{
 												if ${MinBasePrice}<${MinSalePrice}
 												{
+												call StringFromPrice ${MinSalePrice}
+												Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}"
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]
 												Call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinSalePrice}
 												call SetColour "${Me.Vending[${i}].Consignment[${j}].Name}" FF00FF00
 												}
 												else
 												{
-												Call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinBasePrice}
+												call StringFromPrice ${MinBasePrice}
+												Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}"
+												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+												; if no previous minimum price was set then set the minimum sale price to the lowest current price
+												if ${MinSalePrice} == 0
+													{
+													Call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinBasePrice}
+													Call SetArrayValues "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinBasePrice} ${MinBasePrice}
+													}
+												else
+													{
+													Call SetArrayValues "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinBasePrice} ${MinSalePrice}
+													}
 												call SetColour "${Me.Vending[${i}].Consignment[${j}].Name}" FF00FF00
-												Call SetArrayValues "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinBasePrice}
 												}
 											}
 										}
@@ -361,7 +376,7 @@ function LoadList()
 					{
 						Echo Item Missing from Settings File,  Adding : ${labelname}
 						call Saveitem Sell "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice}
-						call SetArrayValues "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice}
+						call SetArrayValues "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice} "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice}
 					}
 					itemprice[${numitems},5]:Set[${Platina}]
 					itemprice[${numitems},6]:Set[${Gold}]
@@ -499,10 +514,10 @@ function SetColour(string text, string colour)
 		While ${LocalLoop:Inc} <= ${MaxElements} 
 	}
 
-function SetArrayValues(string text, float Money)
+function SetArrayValues(string text, float Money, float MMoney)
 	{
-		Declare LocalLoop int 1 local
 		Declare LBoxString string local
+		Declare LocalLoop int 1 local
 		Declare MaxElements int local
 		Declare Platina int local
 		Declare Gold int local
@@ -510,23 +525,33 @@ function SetArrayValues(string text, float Money)
 		Declare Copper float local
 
 		MaxElements:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Items}]
-		Platina:Set[${Math.Calc[${Money}/10000]}]
-		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
-		Gold:Set[${Math.Calc[${Money}/100]}]
-		Money:Set[${Math.Calc[${Money}-(${Gold}*100)]}]
-		Silver:Set[${Money}]
-		Money:Set[${Math.Calc[${Money}-${Silver}]}]
-		Copper:Set[${Math.Calc[${Money}* 100]}]
 
 		do
 		{
 			LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${LocalLoop}]}] 
 			if ${text.Equal["${LBoxString}"]}
 			{
+			; set current price in array
+			Platina:Set[${Math.Calc[${Money}/10000]}]
+			Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
+			Gold:Set[${Math.Calc[${Money}/100]}]
+			Money:Set[${Math.Calc[${Money}-(${Gold}*100)]}]
+			Silver:Set[${Money}]
+			Money:Set[${Math.Calc[${Money}-${Silver}]}]
+			Copper:Set[${Math.Calc[${Money}* 100]}]
 			itemprice[${LocalLoop},1]:Set[${Platina}]
 			itemprice[${LocalLoop},2]:Set[${Gold}]
 			itemprice[${LocalLoop},3]:Set[${Silver}]
 			itemprice[${LocalLoop},4]:Set[${Copper}]
+
+			; set minimum price in array
+			Platina:Set[${Math.Calc[${MMoney}/10000]}]
+			MMoney:Set[${Math.Calc[${MMoney}-(${Platina}*10000)]}]
+			Gold:Set[${Math.Calc[${MMoney}/100]}]
+			MMoney:Set[${Math.Calc[${MMoney}-(${Gold}*100)]}]
+			Silver:Set[${MMoney}]
+			MMoney:Set[${Math.Calc[${MMoney}-${Silver}]}]
+			Copper:Set[${Math.Calc[${MMoney}* 100]}]
 			itemprice[${LocalLoop},5]:Set[${Platina}]
 			itemprice[${LocalLoop},6]:Set[${Gold}]
 			itemprice[${LocalLoop},7]:Set[${Silver}]

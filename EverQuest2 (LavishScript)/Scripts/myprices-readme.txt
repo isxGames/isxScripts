@@ -155,6 +155,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Updates :
 
+
+Version : 0.08b
+---------------
+
+Small bugfix : Minimum prices of unlisted items were being set even though they already had a minimum price stored.
+
 Version : 0.08
 --------------
 
