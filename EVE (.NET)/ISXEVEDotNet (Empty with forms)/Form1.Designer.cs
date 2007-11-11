@@ -1,4 +1,4 @@
-namespace ISXVGDotNet
+namespace ISXEVEDotNet
 {
     partial class Form1
     {

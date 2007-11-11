@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Vanguard.ISXVG;
+using EVE.ISXEVE;
 using LavishVMAPI;
 using InnerSpaceAPI;
 using LavishScriptAPI;
 
-namespace ISXVGDotNet
+namespace ISXEVEDotNet
 {
     static class Program
     {

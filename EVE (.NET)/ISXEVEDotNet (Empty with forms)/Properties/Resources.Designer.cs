@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ISXVGDotNet.Properties
+namespace ISXEVEDotNet.Properties
 {
 
 
