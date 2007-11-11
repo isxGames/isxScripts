@@ -8,8 +8,8 @@
     <ProjectGuid>{8A670200-5670-4929-B848-5534FC90700B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ISXVGDotNet</RootNamespace>
-    <AssemblyName>ISXVGDotNet</AssemblyName>
+    <RootNamespace>ISXEVEDotNet</RootNamespace>
+    <AssemblyName>ISXEVEDotNet</AssemblyName>
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
@@ -43,9 +43,9 @@
     <PostBuildEvent>"$(TargetDir)PostBuild"</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ISXVGWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ISXEVEWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ISXVGWrapper.dll</HintPath>
+      <HintPath>.\ISXEVEWrapper.dll</HintPath>
     </Reference>
     <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
