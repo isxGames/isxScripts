@@ -101,12 +101,12 @@
 						<OnLeftClick>
 							if ${UIElement[MatchLowPrice@Sell@GUITabs@MyPrices].Checked}
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[MatchLowPrice,TRUE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting MatchLowPrice TRUE]
 								Script[myprices].VariableScope.MatchLowPrice:Set[TRUE]
 							}
 							else
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[MatchLowPrice,FALSE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting MatchLowPrice FALSE]
 								Script[myprices].VariableScope.MatchLowPrice:Set[FALSE]
 							}
 						</OnLeftClick>
@@ -133,12 +133,12 @@
 						<OnLeftClick>
 							if ${UIElement[MatchHighPrice@Sell@GUITabs@MyPrices].Checked}
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[IncreasePrice,TRUE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting IncreasePrice TRUE]
 								Script[myprices].VariableScope.IncreasePrice:Set[TRUE]
 							}
 							else
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[IncreasePrice,FALSE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting IncreasePrice FALSE]
 								Script[myprices].VariableScope.IncreasePrice:Set[FALSE]
 							}
 						</OnLeftClick>
@@ -165,12 +165,12 @@
 						<OnLeftClick>
 							if ${UIElement[SetUnlistedPrices@Sell@GUITabs@MyPrices].Checked}
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[SetUnlistedPrices,TRUE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting SetUnlistedPrices TRUE]
 								Script[myprices].VariableScope.SetUnlistedPrices:Set[TRUE]
 							}
 							else
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[SetUnlistedPrices,FALSE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting SetUnlistedPrices FALSE]
 								Script[myprices].VariableScope.SetUnlistedPrices:Set[FALSE]
 							}
 						</OnLeftClick>
@@ -197,12 +197,12 @@
 						<OnLeftClick>
 							if ${UIElement[ScanSellNonStop@Sell@GUITabs@MyPrices].Checked}
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[ScanSellNonStop,TRUE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting ScanSellNonStop TRUE]
 								Script[myprices].VariableScope.ScanSellNonStop:Set[TRUE]
 							}
 							else
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[ScanSellNonStop,FALSE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting ScanSellNonStop FALSE]
 								Script[myprices].VariableScope.ScanSellNonStop:Set[FALSE]
 							}
 						</OnLeftClick>
@@ -400,7 +400,6 @@
 						<Text>Save</Text>
 						<OnLeftClick>
 							Script[myprices]:QueueCommand[call pricefromstring]
-							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 						<AutoTooltip>
 							Update your Minimum Sale Price
@@ -415,30 +414,12 @@
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
-							UIElement[Itemname@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemlist[${ID}]}]
-							UIElement[PlatPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},1]}]
-							UIElement[GoldPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},2]}]
-							UIElement[SilverPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},3]}]
-							UIElement[CopperPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},4]}]
-							UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},5]}]
-							UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},6]}]
-							UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},7]}]
-							UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},8]}]
+							Script[myprices]:QueueCommand[call FillMinPrice ${ID}]
 						</OnSelect>
+						<OnDeSelect>
+							Script[myprices]:QueueCommand[call FillMinPrice ${ID}]
+						</OnDeSelect>
 					</listbox>
-					<Commandbutton name='Rescan' Template='EQ2.Commandbutton'> 
-						<X>38%</X> 
-						<Y>5%</Y> 
-						<Width>80</Width> 
-						<Height>15</Height>
-						<Text>Rescan List</Text>
-						<OnLeftClick>
-							Script[myprices]:QueueCommand[call LoadList]
-						</OnLeftClick>
-						<AutoTooltip>
-							Rescan your broker list
-						</AutoTooltip>
-					</Commandbutton>
 					<Commandbutton name='Start Scanning' Template='EQ2.Commandbutton'> 
 						<X>20%</X> 
 						<Y>92%</Y> 
@@ -450,6 +431,7 @@
 							{
 								UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Stop Scanning]
 								Script[myprices].VariableScope.Pausemyprices:Set[FALSE]
+								Script[myprices]:QueueCommand[call LoadList]
 							}
 							else
 							{
@@ -502,14 +484,14 @@
 						}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[ScanSellNonStop@Sell@GUITabs@MyPrices].Checked}
+							if ${UIElement[BuyItems@Buy@GUITabs@MyPrices].Checked}
 							{
+								Script[myprices]:QueueCommand[call SaveSetting BuyItems TRUE]
 								SettingXML[Scripts/myprices.xml].Set[General]:Set[BuyItems,TRUE]:Save
-								Script[myprices].VariableScope.BuyItems:Set[TRUE]
 							}
 							else
 							{
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[BuyItems,FALSE]:Save
+								Script[myprices]:QueueCommand[call SaveSetting BuyItems FALSE]
 								Script[myprices].VariableScope.BuyItems:Set[FALSE]
 							}
 						</OnLeftClick>
@@ -537,11 +519,6 @@
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
-;							UIElement[Itemname@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemlist[${ID}]}]
-;							UIElement[MinPlatPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},5]}]
-;							UIElement[MinGoldPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},6]}]
-;							UIElement[MinSilverPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},7]}]
-;							UIElement[MinCopperPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},8]}]
 						</OnSelect>
 					</listbox>
 					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>
@@ -647,8 +624,6 @@
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-;							Script[myprices]:QueueCommand[call pricefromstring]
-;							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 						<AutoTooltip>
 							Update/Add a new item
@@ -661,8 +636,6 @@
 						<Height>15</Height>
 						<Text>Delete</Text>
 						<OnLeftClick>
-;							Script[myprices]:QueueCommand[call pricefromstring]
-;							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 						<AutoTooltip>
 							Delete Selected Item

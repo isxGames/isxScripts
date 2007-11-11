@@ -1,4 +1,4 @@
-MyPrices - Version 0.08
+MyPrices - Version 0.08c
 
 For update details see the bottom of this file.
 
@@ -65,16 +65,13 @@ This causes the script to re-start at the beginning once it has scanned everythi
 
 There are 3 Buttons.
 
-Rescan List
------------
-Re-loads the list on the right hand side from your broker list.
-
 Start Scanning
 --------------
 Clicking this starts the script scanning your items on sale and checking the broker prices , the button changes to Stop scanning , the
 script scans all your broker items until it reaches the last one
 
 If you Press the button again during the scan it will wait for the current item scan to finish then stop.
+
 
 Stop and Quit
 -------------
@@ -135,9 +132,6 @@ The Future
 
 Plans for developing this script are the following:
 
-I'm not 100% happy how the color of each item changes , currently the item has to be removed then re-added with the new color,
-as soon as I know how it is possible to just change the color without moving the items name I will change this.
-
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
 by more efficient code once it's all working as I want it to.
 
@@ -155,6 +149,17 @@ The more feedback I get the better I know which direction to take this and the f
 
 Updates :
 
+
+Version : 0.08c (Large code Update)
+---------------
+Vastly simplified and improved the code to handle the item list color changes and GUI information updating.
+(No more scrolling list - the color just changes without the text being moved - Thanks for the pointer Lax)
+
+Updated a huge portion of the code to simplify the various methods/functions used.
+
+Updated the GUI to remove all XMLSetting references it now calls various routines that use Lavishsettings instead.
+
+Bugfix  : Adding a new item sometimes left the current price boxes for that item permanently empty.
 
 Version : 0.08b
 ---------------
