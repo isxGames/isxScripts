@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vanguard.ISXVG;
+using EVE.ISXEVE;
 using LavishVMAPI;
 using InnerSpaceAPI;
 using LavishScriptAPI;
 
-namespace ISXVGDotNet
+namespace ISXEVEDotNet
 {
+#if false
     // Simple example on how to utilize events that are sent by ISXVG (onIncomingText, in this instance) and how to send a custom event called "MyCustomEvent".
     //
     // You'll notice that this class is created as a part of the Form1 class.  Therefore, the event hooks that it utilizeswill be active when that form (or any class that 
@@ -74,4 +75,5 @@ namespace ISXVGDotNet
             // is in the constructor above.
         }
     }
+#endif
 }
