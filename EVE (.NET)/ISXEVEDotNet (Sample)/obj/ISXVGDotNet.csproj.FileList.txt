@@ -1,0 +1,6 @@
+bin\Release\ISXVGDotNet.exe
+bin\Release\ISXVGDotNet.pdb
+bin\Release\ISXVGWrapper.dll
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\ISXVGDotNet.exe
+obj\Release\ISXVGDotNet.pdb
