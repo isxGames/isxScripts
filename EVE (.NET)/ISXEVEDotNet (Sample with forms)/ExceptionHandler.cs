@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-namespace ISXVGDotNet
+namespace ISXEVEDotNet
 {
     // ExceptionHandler class by Karye
     public class ExceptionHandler
