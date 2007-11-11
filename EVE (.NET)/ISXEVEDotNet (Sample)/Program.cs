@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vanguard.ISXVG;
+using EVE.ISXEVE;
 using LavishVMAPI;
 using InnerSpaceAPI;
 using LavishScriptAPI;
 
-namespace ISXVGDotNet
+namespace ISXEVEDotNet
 {
     static class Program
     {
@@ -14,8 +14,8 @@ namespace ISXVGDotNet
         {
             LavishVMAPI.Frame.Lock();
 
-            Extension Ext = new Extension();
-            string MyNameIs = "My Name is " + Ext.Me.FName + " " + Ext.Me.LName;
+            Me me = new Me();
+            string MyNameIs = "My Name is " + me.Name;
             InnerSpace.Echo(MyNameIs);
 
             LavishVMAPI.Frame.Unlock();
