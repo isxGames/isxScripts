@@ -5,12 +5,12 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Vanguard.ISXVG;
+using EVE.ISXEVE;
 using LavishVMAPI;
 using InnerSpaceAPI;
 using LavishScriptAPI;
 
-namespace ISXVGDotNet
+namespace ISXEVEDotNet
 {
     public partial class VGLocationsForm : System.Windows.Forms.Form
     {
