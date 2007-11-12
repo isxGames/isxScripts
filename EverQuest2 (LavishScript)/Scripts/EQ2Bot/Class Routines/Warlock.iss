@@ -128,17 +128,20 @@ function Combat_Init()
 	SpellRange[14,1]:Set[62]
 
 	Action[15]:Set[Nuke3]
-	SpellRange[15,1]:Set[63]
+	SpellRange[15,1]:Set[64]
 
-	Action[16]:Set[Apoc]
-	MobHealth[16,1]:Set[30]
-	MobHealth[16,2]:Set[100]
-	SpellRange[16,1]:Set[94]
+	Action[16]:Set[Nuke4]
+	SpellRange[16,1]:Set[63]
 
-	Action[17]:Set[Special_Pet]
-	MobHealth[17,1]:Set[60]
+	Action[17]:Set[Apoc]
+	MobHealth[17,1]:Set[30]
 	MobHealth[17,2]:Set[100]
-	SpellRange[17,1]:Set[324]
+	SpellRange[17,1]:Set[94]
+
+	Action[18]:Set[Special_Pet]
+	MobHealth[18,1]:Set[60]
+	MobHealth[18,2]:Set[100]
+	SpellRange[18,1]:Set[324]
 
 }
 
@@ -423,6 +426,7 @@ function Combat_Routine(int xAction)
 			break
 		case Nuke2
 		case Nuke3
+		case Nuke4
 		case AoE_Debuff1
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break

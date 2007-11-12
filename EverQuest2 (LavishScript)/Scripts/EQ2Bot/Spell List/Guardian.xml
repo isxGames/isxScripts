@@ -146,5 +146,31 @@
 		<Setting Name="70,25">Fortified Conviction</Setting>
 		<Setting Name="70,81">Sever</Setting>
 		<Setting Name="70,271">Stone Sphere</Setting>
+		<Setting Name="71,26">Hold The Aggression</setting>
+		<Setting Name="71,150">Overmatch</setting>
+		<Setting Name="71,171">Slanderous Assault</setting>
+		<Setting Name="72,295">Stance: Armored Stance</setting>
+		<Setting Name="72,290">Stance: Forward Charge</setting>
+		<Setting Name="72,160">Impede</setting>
+		<Setting Name="73,152">Head Trauma</setting>
+		<Setting Name="73,172">Immobility</setting>
+		<Setting Name="73,20">Return to Combat</setting>
+		<Setting Name="74,151">Gut Kick</setting>
+		<Setting Name="75,95">Siege</setting>
+		<Setting Name="76,21">Call to Warfare</setting>
+		<Setting Name="76,170">Guard</setting>
+		<Setting Name="76,153">Mar</setting>
+		<Setting Name="77,22">Call of Shielding</setting>
+		<Setting Name="77,161">Infraction</setting>
+		<Setting Name="77,80">Trespass</setting>
+		<Setting Name="78,82">Decimate</setting>
+		<Setting Name="78,154">Exact Strike</setting>
+		<Setting Name="78,152">Retaliatory Strike</setting>
+		<Setting Name="79,156">Fortify</setting>
+		<Setting Name="79,240">Staggering Charge</setting>
+		<Setting Name="79,155">Wall of Armor</setting>
+		<Setting Name="80,25">Fortification</setting>
+		<Setting Name="80,999">Recapture</setting>
+		<Setting Name="80,81">Separate</setting>
 	</Set>
 </InnerSpaceSettings>
