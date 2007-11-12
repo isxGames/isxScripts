@@ -147,6 +147,31 @@
 		<Setting Name="69,309">Transfer Potential</Setting>
 		<Setting Name="70,80">Breakdown</Setting>
 		<Setting Name="70,72">Cataclysmic Mind</Setting>
-		<Setting Name="70,95">Sonic Boom</Setting>
+		<Setting Name="71,">Dysphoria</Setting>
+		<Setting Name="71,">Hemorrhage</Setting>
+		<Setting Name="71,">Mana Shroud</Setting>
+		<Setting Name="72,">Absolute Silence</Setting>
+		<Setting Name="72,">Brainshock</Setting>
+		<Setting Name="73,">Cannibalize Thoughts</Setting>
+		<Setting Name="73,">Cortical Hesitation</Setting>
+		<Setting Name="73,">Soothing Apprentice</Setting>
+		<Setting Name="74,">Anesthesia</Setting>
+		<Setting Name="74,">Dictate</setting>
+		<Setting Name="74,">Third Eye</setting>
+		<Setting Name="75,">Coruscation</setting>
+		<Setting Name="75,">Peaceful Link</setting>
+		<Setting Name="76,">Channeling</setting>
+		<Setting Name="76,">Dissecting Gaze</setting>
+		<Setting Name="76,">Obliterated Psyche</setting>
+		<Setting Name="77,">Hold Mind</setting>
+		<Setting Name="77,">Hostage</setting>
+		<Setting Name="78,">Ego Melt</setting>
+		<Setting Name="78,">Pure Awe</setting>
+		<Setting Name="78,">Spell Curse</setting>
+		<Setting Name="79,">Intrepid Focus</setting>
+		<Setting Name="79,">Shift Mana</setting>
+		<Setting Name="79,">Signet of Intellect</setting>
+		<Setting Name="80,">Asylum</setting>
+		<Setting Name="80,999">Puppetmaster</setting>
 	</Set>
 </InnerSpaceSettings>

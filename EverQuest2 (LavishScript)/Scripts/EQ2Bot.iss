@@ -544,7 +544,7 @@ function main()
 		}
 
 		; Check if we have leveled and reload spells
-		if ${Me.Level}>${StartLevel} && ${Me.Level}<70
+		if ${Me.Level}>${StartLevel} && ${Me.Level}<80
 		{
 			EQ2Bot:Init_Config
 			call Buff_Init
@@ -1457,12 +1457,12 @@ function Pull(string npcclass)
 				{
 					; Use Pet to pull
 					EQ2Execute /pet attack
-					wait 50 ${CustomActor[${tcount}].InCombatMode}
-					if ${CustomActor[${tcount}].InCombatMode}
+					wait 200 ${Me.ToActor.InCombatMode}
+					if ${Me.ToActor.InCombatMode}
 					{
 						KillTarget:Set[${Target.ID}]
 						EQ2Execute /pet backoff
-						wait 100 ${CustomActor[${tcount}].Distance}<20
+						wait 300 ${CustomActor[${tcount}].Distance}<10
 						EQ2Execute /pet attack
 						if ${PetGuard}
 						{

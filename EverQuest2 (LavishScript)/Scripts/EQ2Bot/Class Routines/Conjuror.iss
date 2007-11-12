@@ -139,52 +139,60 @@ function Combat_Init()
 	Action[2]:Set[Dot1]
 	SpellRange[2,1]:Set[73]
 
-	Action[3]:Set[Plane_Shift]
-	SpellRange[3,1]:Set[399]
+	Action[3]:Set[Converge]
+	MobHealth[3,1]:Set[30]
+	MobHealth[3,2]:Set[100]
+	SpellRange[3,1]:Set[375]
 
-	Action[4]:Set[Special_Pet1]
-	MobHealth[4,1]:Set[30]
-	MobHealth[4,2]:Set[100]
-	SpellRange[4,1]:Set[329]
+	Action[4]:Set[Plane_Shift]
+	SpellRange[4,1]:Set[399]
 
-	Action[5]:Set[AoE1]
-	SpellRange[5,1]:Set[90]
+	Action[5]:Set[Special_Pet1]
+	MobHealth[5,1]:Set[30]
+	MobHealth[5,2]:Set[100]
+	SpellRange[5,1]:Set[329]
 
-	Action[6]:Set[Special_Pet2]
-	MobHealth[6,1]:Set[30]
-	MobHealth[6,2]:Set[100]
-	SpellRange[6,1]:Set[330]
+	Action[6]:Set[AoE1]
+	SpellRange[6,1]:Set[90]
 
-	Action[7]:Set[Nuke]
-	MobHealth[7,1]:Set[0]
+	Action[7]:Set[Special_Pet2]
+	MobHealth[7,1]:Set[30]
 	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[61]
+	SpellRange[7,1]:Set[330]
 
-	Action[8]:Set[AoE_PB]
-	SpellRange[8,1]:Set[95]
+	Action[8]:Set[Nuke]
+	MobHealth[8,1]:Set[0]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[61]
 
-	Action[9]:Set[AoE2]
-	SpellRange[9,1]:Set[91]
+	Action[9]:Set[AoE_PB]
+	SpellRange[9,1]:Set[95]
 
-	Action[10]:Set[Sunbolt]
-	SpellRange[10,1]:Set[62]
+	Action[10]:Set[AoE2]
+	SpellRange[10,1]:Set[91]
 
-	Action[11]:Set[Master_Strike]
+	Action[11]:Set[Sunbolt]
+	SpellRange[11,1]:Set[62]
 
-	Action[12]:Set[Stun]
-	SpellRange[12,1]:Set[190]
+	Action[12]:Set[Master_Strike]
 
-	Action[13]:Set[AA_Animated_Dagger]
-	MobHealth[13,1]:Set[30]
-	MobHealth[13,2]:Set[100]
-	SpellRange[13,1]:Set[380]
+	Action[13]:Set[Stun]
+	SpellRange[13,1]:Set[190]
 
-	Action[14]:Set[Dot2]
-	MobHealth[14,1]:Set[20]
+	Action[14]:Set[AA_Animated_Dagger]
+	MobHealth[14,1]:Set[30]
 	MobHealth[14,2]:Set[100]
-	SpellRange[14,1]:Set[72]
+	SpellRange[14,1]:Set[380]
 
+	Action[15]:Set[Dot2]
+	MobHealth[15,1]:Set[20]
+	MobHealth[15,2]:Set[100]
+	SpellRange[15,1]:Set[72]
 
+	Action[16]:Set[Special_Pet3]
+	MobHealth[16,1]:Set[20]
+	MobHealth[16,2]:Set[100]
+	SpellRange[16,1]:Set[331]
 
 }
 
@@ -459,19 +467,6 @@ function Combat_Routine(int xAction)
 
 	switch ${Action[${xAction}]}
 	{
-
-
-		case AA_Animated_Dagger
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${PetMode}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
-			}
-			break
-
 		case Special_Pet2
 			if ${AoEMode} && ${PetMode}
 			{
@@ -483,9 +478,12 @@ function Combat_Routine(int xAction)
 			}
 			break
 
+		case converge
+		case Special_Pet3
 		case Special_Pet1
+		case AA_Animated_Dagger
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && ${PetMode}
+			if (${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}) && ${PetMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
@@ -525,10 +523,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Dot1
-			call CastSpellRange ${SpellRange[${xAction},1]}
-			break
-
 		case Dot2
 		case Nuke
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
@@ -548,12 +542,13 @@ function Combat_Routine(int xAction)
 			}
 			break
 		case Sunbolt
+		case Dot1
 		case Nuke_Attack
 		case Stun
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		Default
-			xAction:Set[40]
+			return Combat Complete
 			break
 	}
 

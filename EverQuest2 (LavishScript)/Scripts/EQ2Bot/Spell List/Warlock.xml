@@ -58,6 +58,7 @@
 		<Setting Name="34,91">Null Absolution</Setting>
 		<Setting Name="35,50">Aura of Darkness</Setting>
 		<Setting Name="35,21">Bolster Energy</Setting>
+		<Setting Name="35,64">Ice Flame</Setting>
 		<Setting Name="35,61">Poisonous Shroud</Setting>
 		<Setting Name="36,92">Grievous Blast</Setting>
 		<Setting Name="37,61">Nil Distortion</Setting>
@@ -94,6 +95,7 @@
 		<Setting Name="52,181">Vulian Intrusion</Setting>
 		<Setting Name="53,31">Virulent Grasp</Setting>
 		<Setting Name="53,52">Curse of Desolation</Setting>
+		<Setting Name="53,64">Glacialflame</Setting>
 		<Setting Name="54,20">Seal of Ebon Thought</Setting>
 		<Setting Name="54,231">Skeletal Grasp</Setting>
 		<Setting Name="55,57">Anarchic Maelstrom</Setting>
@@ -129,5 +131,32 @@
 		<Setting Name="70,94">Apocalypse</Setting>
 		<Setting Name="70,51">Curse of the Void</Setting>
 		<Setting Name="70,95">Chaostorm</Setting>
+		<Setting Name="71,63">Dissolve</Setting>
+		<Setting Name="71,64">Flames of Velious</Setting>
+		<Setting Name="71,72">Acid</Setting>
+		<Setting Name="72,70">Brood Infestation</Setting>
+		<Setting Name="72,62">Encase</Setting>
+		<Setting Name="73,330">Gift of Bertoxxulous</Setting>
+		<Setting Name="73,40">Boon of Solitude</Setting>
+		<Setting Name="73,230">Netherous Bind</Setting>
+		<Setting Name="74,333">Mana Trickle</Setting>
+		<Setting Name="74,324">Netherbeast</Setting>
+		<Setting Name="75,91">Absolution</Setting>
+		<Setting Name="75,21">Aspect of the Moon</Setting>
+		<Setting Name="75,50">Aura of Void</Setting>
+		<Setting Name="76,55">Netherealm</Setting>
+		<Setting Name="76,92">Radiation</Setting>
+		<Setting Name="77,61">Distortion</Setting>
+		<Setting Name="77,181">Nullify</Setting>
+		<Setting Name="78,56">Curse of Luclin</Setting>
+		<Setting Name="78,31">Grasp of Bertoxulous</Setting>
+		<Setting Name="78,231">Dead Grasp</Setting>
+		<Setting Name="78,90">Upheaval</Setting>
+		<Setting Name="79,20">Mages Pact</Setting>
+		<Setting Name="79,57">Vacuum Field</Setting>
+		<Setting Name="79,309">Void Contract</Setting>
+		<Setting Name="80,95">Acid Storm</Setting>
+		<Setting Name="80,94">Cataclysm</Setting>
+		<Setting Name="80,51">Curse of Humility</Setting>
 	</Set>
 </InnerSpaceSettings>

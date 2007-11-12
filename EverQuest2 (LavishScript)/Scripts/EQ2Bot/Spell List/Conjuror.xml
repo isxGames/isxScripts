@@ -85,7 +85,7 @@
 		<Setting Name="34,356">Igneous Adept</Setting>
 		<Setting Name="35,21">Embers</Setting>
 		<Setting Name="35,">Illusion: Air Elemental</Setting>
-		<Setting Name="35,">Swarm of Bats</Setting>
+		<Setting Name="35,331">Swarm of Bats</Setting>
 		<Setting Name="35,330">Roaring Flames</Setting>
 		<Setting Name="35,40">Scorchshield</Setting>
 		<Setting Name="35,62">Sunbolt</Setting>
@@ -123,6 +123,7 @@
 		<Setting Name="52,357">Tellurian Myrmidon</Setting>
 		<Setting Name="53,290">Minion\'s Stance: Aggravate</Setting>
 		<Setting Name="53,90">Shattered Land</Setting>
+		<Setting Name="53,331">Horde of Bats</Setting>
 		<Setting Name="54,20">Geotic Rune</Setting>
 		<Setting Name="54,4">Vehement Rock</Setting>
 		<Setting Name="55,309">Burning Vigor</Setting>
@@ -158,5 +159,36 @@
 		<Setting Name="70,45">Conjuror\'s Brand</Setting>
 		<Setting Name="70,71">Blazing Avatar</Setting>
 		<Setting Name="70,295">Minion\'s Stance: Temporal Haven</Setting>
+		<Setting Name="71,61">Crystal Blast</setting>
+		<Setting Name="71,95">Earthquake</setting>
+		<Setting Name="71,331">Vampire bats</setting>
+		<Setting Name="72,73">Effigy</setting>
+		<Setting Name="72,190">Solidify</setting>
+		<Setting Name="73,360">Scale of Essence</setting>
+		<Setting Name="73,999">Najena\'s Essence Summoning</setting>
+		<Setting Name="73,230">Sediment</setting>
+		<Setting Name="73,355">Wind Sensei</setting>
+		<Setting Name="74,361">Expire</setting>
+		<Setting Name="74,47">Masters Intervention</setting>
+		<Setting Name="74,72">Winds of Velious</setting>
+		<Setting Name="75,21">Elemental Aspect</setting>
+		<Setting Name="75,356">Inferno Drake</setting>
+		<Setting Name="75,330">Pyro</setting>
+		<Setting Name="76,397">Elemental Unity</setting>
+		<Setting Name="76,40">Infernoshield</setting>
+		<Setting Name="76,91">Torrent</setting>
+		<Setting Name="77,329">Aqueous Serpents</setting>
+		<Setting Name="77,357">Earthen Avatar</setting>
+		<Setting Name="77,35">Magma Seed</setting>
+		<Setting Name="78,290">Antagonize</setting>
+		<Setting Name="78,90">Shattered Tectonics</setting>
+		<Setting Name="78,4">Vehement Skin</setting>
+		<Setting Name="79,309">Capture Vigor</setting>
+		<Setting Name="79,20">Geoticism</setting>
+		<Setting Name="80,45">Conjuror\'s Pact</setting>
+		<Setting Name="80,295">Defensive Haven</setting>
+		<Setting Name="80,1">Reconstruct Servant</setting>
+		<Setting Name="80,71">Blazing Manifestation</setting>
+		<Setting Name="80,375">Converge</setting>
  	</Set>
 </InnerSpaceSettings>
