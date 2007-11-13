@@ -145,10 +145,11 @@ matches at the right price or lower , it will automatically buy them (Upto a use
 Contact the author
 ------------------
 
-If you do decide to try this script I'd be greatful for any bug reports or suggestions on the forum linked where you downloaded it from.
+If you do decide to try this script I'd be greatful for any bug reports or suggestions.
+
+Discussion thread for myprices can be found at : http://www.isxgames.com/forums/showthread.php?p=11994#post11994
 
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
-
 
 Updates :
 
@@ -161,7 +162,7 @@ will always be matched  regardless of it's cost.
 
 **** ALL ITEMS when you run this version for the FIRST time will be NOT flagged to check your minimum price ****
 
-**** Go through the list and tick the box against the item you want a minimum price checked and press the save button *****
+**** Go through the list and tick the box against all items you want a minimum price checked and press the save button on each *****
 
 Added additional lag checking code for when the script is setting and unsetting items for sale to try and stop items being left unlisted.
 
