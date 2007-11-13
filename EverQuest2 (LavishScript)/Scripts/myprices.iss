@@ -131,6 +131,7 @@ function main()
 								wait 10
 							}
 							while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+							call SetColour ${i} ${j} FF993300
 							; check to see if the items minimum price should be used or not
 							Call CheckMinPriceSet "${Me.Vending[${i}].Consignment[${j}]}"
 							MinPriceSet:Set[${Return}]
