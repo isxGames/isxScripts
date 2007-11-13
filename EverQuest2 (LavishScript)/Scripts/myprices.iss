@@ -17,7 +17,7 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
-	echo Running MyPrices version 0.08c - coded : 11 Nov 2007
+	echo Running MyPrices version 0.08d - coded : 12 Nov 2007
 
 	; Declare Variables
 	;
