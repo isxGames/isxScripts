@@ -1,4 +1,4 @@
-MyPrices - Version 0.08c
+MyPrices - Version 0.08d
 
 For update details see the bottom of this file.
 
@@ -8,14 +8,14 @@ Please read all of this before starting.
 What this Script will do
 ------------------------
 
-Checks the prices of the items that you sell against all the same items being sold on the broker.
+It checks the prices of the items that you sell against all the same items being sold on the broker.
 
-It flags up the item name if.
+It flags up the item if.
 
 1. Someone is selling the same item cheaper than you.
 2. Your item is less than the lowest price someone else is selling at.
 
-If you want the script to match those values automatically check the relevant boxes on the front GUI tab.
+If you want the script to either reduce or raise your prices accordingly check the relevant boxes on the front GUI tab.
 
 
 Installing
@@ -46,11 +46,11 @@ There are 4 tickboxes
 
 Auto-Match Lower Prices
 -----------------------
-ticking this will make myprices reduce your price to match a lower one as long as it is not below the minimum price you will allow.
+ticking this will reduce your prices to match a lower one as long as it is not below the minimum price if set.
 
 Auto-Match Higher Prices
 ------------------------
-ticking this will make myprices increase your price to match the lowest price above yours if your price is lower than anyone elses.
+ticking this will increase your prices to match the lowest price above yours if your price is lower than anyone elses.
 
 Set Prices for unlisted items
 -----------------------------
@@ -63,7 +63,7 @@ Auto-Loop
 This causes the script to re-start at the beginning once it has scanned everything.
 
 
-There are 3 Buttons.
+There are 2 Buttons.
 
 Start Scanning
 --------------
@@ -82,38 +82,41 @@ Setting a Minimum Price for Items to be sold at.
 -----------------------------------------------
 
 To stop people trying to fool the script by pricing something REALLY low then buying your goods when the price is changed (if you get
-it to change prices for you automatically), the script stores the name of each item and the minimum price you will accept for it 
+it to change prices for you automatically), the script can store the name of each item and the minimum price you will accept for it 
 (Minus Broker fee).
 
-The script will NOT lower your prices below that price.
+The script will then NOT lower your prices below that price.
 
-The first time a new item is added to that list (it's done automatically) the minimum price stored will match the current price you
-have set.
-
-To change the minimum sale price , click on it's name in the list , the current price and your current minimum price
+To set/change the minimum sale price for an item click on it's name in the list , the current price and your current minimum price
 will be shown on the left hand side.
 
-Change the values in the boxes under 'Minimum Price' to match what you want them to be and press 'Save' , the value will be updated
-and the list will re-load.
+Tick the Box marked Minimum Price if it's unticked , this makes the script check the minimum price when it scans that item.
 
+Change the values in the boxes under 'Minimum Price' to match what you want them to be and press 'Save' , the setting and value
+will be updated and the list will re-load.
+
+To stop using a minimum price just untick the box, the Minium price boxes will grey out and the script will ignore any minimum price
+set for that item when doing it's scan.
 
 Automatically adding new items
 ------------------------------
 
-If you toggle the 'set prices of unlisted items' option on and put new items in your broker box without listing for sale and setting
-a price the following will happen.
+If you toggle the 'set prices of unlisted items' option on and put new items in your broker box without listing them for sale and
+setting a price the following will happen.
 
-1. The script scans for the lowest price for that item currently on the broker.
-2. If that price is below a minimum price already set for that item previously then the price is set to your minimum price.
-3. If you have a stored minimum price and the lowest price is higher then your minimum price the lowest price is matched.
-4. If the item does not have a stored minimum price then the minimum price AND item price are matched with the lowest price on the broker.
-5. The item is Listed for sale.
+The script scans for the lowest price for an item currently on the broker.
+
+1. If a minimum price for that item was set previously and the lowest price is LOWER then your minimum price the minimum price is used.
+2. If a minimum price for that item was set previously and the lowest price is HIGHER then your minimum price the lowest price is matched.
+3. If the item does not have a minimum price set then the item price is matched with the lowest price on the broker.
+
+The item is then Listed for sale.
 
 It may sound complicated , but what it means is you can just dump items in your broker list and let myprices set the price for you
 and mark them as Listed.
 
 If there are no broker items to compare a new item to then nothing will happen , you can either leave the item there until someone else
-lists one or set a price using EQ2 broker system and myprices will store that as your minimum price.
+lists one or set a price using EQ2 broker system and myprices will store that as your price.
 
 
 During the Scan
@@ -149,6 +152,18 @@ The more feedback I get the better I know which direction to take this and the f
 
 Updates :
 
+Version : 0.08d
+---------------
+Additional option added :
+
+Each item for sale now can be flagged to check for a minimum price or not , if not flagged then the lowest price on the broker
+will always be matched  regardless of it's cost.
+
+**** ALL ITEMS when you run this version for the FIRST time will be NOT flagged to check your minimum price ****
+
+**** Go through the list and tick the box against the item you want a minimum price checked and press the save button *****
+
+Added additional lag checking code for when the script is setting and unsetting items for sale to try and stop items being left unlisted.
 
 Version : 0.08c (Large code Update)
 ---------------

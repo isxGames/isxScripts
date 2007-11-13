@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker script
 ;
-; Version 0.08c : Coded 11 Nov 2007
+; Version 0.08d : Coded 13 Nov 2007
 ;
 ; Main Script
 ;
@@ -30,13 +30,13 @@ function main()
 	Declare ItemUnlisted bool script
 	Declare ScanSellNonStop bool script
 	Declare BuyItems bool script
+	Declare MinPriceSet bool script
 	Exitmyprices:Set[FALSE]
 	Pausemyprices:Set[TRUE]
 
 	Declare labelname string script
 	Declare i int script
 	Declare j int script
-	Declare ItemsForSale float script
 	Declare MyBasePrice float script
 	Declare MyPriceS string script
 	Declare MinBasePriceS string script
@@ -54,6 +54,9 @@ function main()
 	; Array - stores current price (Container,Position in container)
  	Declare itemprice[600,2] int script
 	Declare numitems int script
+
+	Declare loopcount int 0 local
+
 	variable settingsetref flabel
 
 	ISXEQ2:ResetInternalVendingSystem
@@ -121,13 +124,20 @@ function main()
 							MyBasePrice:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
 							MyPrice:Set[${Math.Calc[((${MyBasePrice}/100)*${Math.Calc[100+${Commission}]})]}]
 							; Unlist the item to make sure it's not included in the check for lower/higher prices
-							Me.Vending[${i}].Consignment[${j}]:Unlist
-							wait 15
+							loopcount:Set[0]
+							do
+							{
+								Me.Vending[${i}].Consignment[${j}]:Unlist
+								wait 10
+							}
+							while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+							; check to see if the items minimum price should be used or not
+							Call CheckMinPriceSet "${Me.Vending[${i}].Consignment[${j}]}"
+							MinPriceSet:Set[${Return}]
 							; Call Search routine to find the lowest price
 							Call BrokerSearch "${Me.Vending[${i}].Consignment[${j}]}"
-							ItemsForSale:Set[${Return}]
 							; Broker search returns -1 if no items to compare were found
-							if ${ItemsForSale} != -1
+							if ${Return} != -1
 							{
 								; record the minimum broker price
 								MinPrice:Set[${Return}]
@@ -149,7 +159,7 @@ function main()
 									if ${MinPrice}<${MyPrice}
 									{
 										; **** if that price is Less than the price you are willing to sell for , don't do anything
-										if ${MinBasePrice}<${MinSalePrice}
+										if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 										{
 											call StringFromPrice ${MinBasePrice}
 											MinBasePriceS:Set[${Return}]
@@ -183,29 +193,31 @@ function main()
 												call StringFromPrice ${MinBasePrice}
 												Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Price < Lowest Price : Price to match is ${Return}"
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-												; if the item was unlisted then update your sale price
 											}
 											else
+											; if the item was unlisted then update your sale price
 											{
-												if ${MinBasePrice}<${MinSalePrice}
+												; if a minimum price was set previously for this item then use that value
+												if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 												{
 													call StringFromPrice ${MinSalePrice}
 													Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}"
 													Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]
 													Call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinSalePrice}
-													call SetColour ${i} ${j} FF00FF00
+													call SetColour ${i} ${j} FFFF0000
 												}
 												else
 												{
+													; otherwise use the lowest price on the vendor
 													call StringFromPrice ${MinBasePrice}
 													Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}"
 													Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-													; if no previous minimum price was set then set the minimum sale price to the lowest current price
+													; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 													if ${MinSalePrice} == 0
 													{
 														Call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinBasePrice}
 													}
-													call SetColour ${i} ${j} FF00FF00
+													call SetColour ${i} ${j} FF0000FF
 												}
 											}
 										}
@@ -225,8 +237,17 @@ function main()
 							; Re-List the item for sale if the item was already for sale
 							if !${ItemUnlisted}
 							{
-								Me.Vending[${i}].Consignment[${j}]:List
-								Wait 25
+								loopcount:Set[0]
+								do
+								{
+									Me.Vending[${i}].Consignment[${j}]:List
+									wait 10
+								}
+								while !${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+								if ${loopcount} == 10
+								{
+									echo *** ERROR - unable to mark ${Me.Vending[${i}].Consignment[${j}]} as listed for sale
+								}
 							}
 							; if the Quit Button on the UI has been pressed then exit
 							if ${Exitmyprices}
@@ -337,11 +358,13 @@ function LoadList()
 					Money:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
 					; store the item name
 					call SetArrayValues ${numitems} ${i} ${j} "${labelname}"
+					; check to see if it already has a minimum price set
 					call checkitem "${labelname}"
 					Money:Set[${Return}]
-					; If a value is returned then add the price to the settings file
+					; If no value is returned then add the price to the settings file
 					if ${Money} == -1
 					{
+						call SetColour ${i} ${j} FF0000FF
 						Echo Item Missing from Settings File,  Adding : ${labelname}
 						call Saveitem Sell "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice}
 					}
@@ -418,7 +441,7 @@ function pricefromstring()
 	Declare Money float local
 
 	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Itemname].Text}]
-	if ${itemname.Equal[*]}
+	if ${itemname.Length} == 0
 	{
 		Echo Try Selecting someting first!!
 	}
@@ -444,7 +467,7 @@ function pricefromstring()
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money)
+function Saveitem(string Saveset, string ItemName, float Money, int Number, float Buyprice)
 {
 	LavishSettings:AddSet[myprices]
 	LavishSettings[myprices]:AddSet[General]
@@ -458,6 +481,22 @@ function Saveitem(string Saveset, string ItemName, float Money)
 	Item:Set[${ItemList.FindSet[${ItemName}]}]
 
 	Item:AddSetting[${Saveset},${Money}]
+	if ${Saveset.Equal["Sell"]}
+	{
+		if ${UIElement[MinPrice@Sell@GUITabs@MyPrices].Checked}
+		{
+		Item:AddSetting[MinSalePrice,TRUE]
+		}
+		else
+		{
+		Item:AddSetting[MinSalePrice,FALSE]
+		}
+	}
+	elseif ${Saveset.Equal["Buy"]}
+	{
+		Item:AddSetting[BuyNumber,${Number}]
+		Item:AddSetting[BuyPrice,${Buyprice}]
+	}
 
 	LavishSettings[myprices]:Export["myprices.xml"]
 }
@@ -568,9 +607,38 @@ function FillMinPrice(int ItemID)
 		ItemList:AddSet[${ItemName}]
 
 		LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${ItemID}]}]
+
 		variable settingsetref Item
 		Item:Set[${ItemList.FindSet[${LBoxString}]}]
 		Money:Set[${Item.FindSetting[Sell]}]
+		if !${Item.FindSetting[MinSalePrice]}
+		{
+			UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[label2@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MinPrice@Sell@GUITabs@MyPrices]:UnsetChecked
+		}
+		else
+		{
+			UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[label2@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MinPrice@Sell@GUITabs@MyPrices]:SetChecked
+		}
 
 		Platina:Set[${Math.Calc[${Money}/10000]}]
 		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
@@ -595,6 +663,65 @@ function SetArrayValues(int ListID, int i, int j, string text)
 	itemprice[${ListID},1]:Set[${i}]
 	itemprice[${ListID},2]:Set[${j}]
 }
+
+function CheckMinPriceSet(string itemname)
+{
+		LavishSettings:AddSet[myprices]
+		LavishSettings[myprices]:AddSet[General]
+		LavishSettings[myprices]:AddSet[Item]
+
+		variable settingsetref ItemList
+		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+		ItemList:AddSet[${itemName}]
+
+		variable settingsetref Item
+		Item:Set[${ItemList.FindSet[${itemname}]}]
+		return ${Item.FindSetting[MinSalePrice]}
+}
+
+function savebuyinfo()
+{
+	Declare itemname string local
+	Declare itemnumber int local
+	Declare Platina int local
+	Declare Gold int local
+	Declare Silver int local
+	Declare Copper float local
+	Declare Money float local
+
+	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Buyname].Text}]
+	itemnumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyNumber].Text}]
+	Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinPlatPrice].Text}]
+	Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
+	Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinSilverPrice].Text}]
+	Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinCopperPrice].Text}]
+
+	; calclulate the value in silver
+	Platina:Set[${Math.Calc[${Platina}*10000]}]
+	Gold:Set[${Math.Calc[${Gold}*100]}]
+	Copper:Set[${Math.Calc[${Copper}/100]}]
+	Money:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+
+	if ${itemname.Length} == 0
+	{
+		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[No item name entered]
+	}
+	elseIf ${itemnumber} <= 0
+	{
+		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Try setting a valid ammount]
+	}
+	elseif ${Money} <= 0
+	{
+		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[You haven't set a price to buy from]
+	}
+	else
+	{
+		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Saving Information]
+		call Saveitem Buy "${itemname}" ${Money} {itemnumber}
+
+	}
+}
+
 
 ; when the script exits , save all the settings and do some cleaning up
 atom atexit()
