@@ -157,5 +157,32 @@
 		<Setting Name="70,10">Impious Accretion</Setting>
 		<Setting Name="70,317">Maelstrom</Setting>
 		<Setting Name="70,220">Mail of Phantoms</Setting>
+		<Setting Name="71,">Crystallize Essence</setting>
+		<Setting Name="71,">Dire Balm</setting>
+		<Setting Name="72,">Imprecate</setting>
+		<Setting Name="72,">Noxious Efflux</setting>
+		<Setting Name="72,">Precognition</setting>
+		<Setting Name="72,">Soul Cannibalize</setting>
+		<Setting Name="73,">Enormity</setting>
+		<Setting Name="73,">Invective</setting>
+		<Setting Name="73,">Sacrificial Restoration</setting>
+		<Setting Name="74,">Absolute Corruption</setting>
+		<Setting Name="74,">Shroud of Armor</setting>
+		<Setting Name="74,">Words of the Ancestors</setting>
+		<Setting Name="75,">Hideous Seal</setting>
+		<Setting Name="76,">Abomination</setting>
+		<Setting Name="76,">Countenance</setting>
+		<Setting Name="76,">Spiritual Shring</setting>
+		<Setting Name="77,">Fulginous Whip</setting>
+		<Setting Name="77,">Panic</setting>
+		<Setting Name="78,">Ancient Shroud</setting>
+		<Setting Name="78,">Emaciate</setting>
+		<Setting Name="78,">Malis</setting>
+		<Setting Name="79,">Bane of Warding</setting>
+		<Setting Name="79,">Carrion Warding</setting>
+		<Setting Name="79,">Terror Chant</setting>
+		<Setting Name="80,">Ancestral Avenger</setting>
+		<Setting Name="80,">Deathward</setting>
+		<Setting Name="80,">Wild Accretion</Setting>
 	</Set>
 </InnerSpaceSettings>

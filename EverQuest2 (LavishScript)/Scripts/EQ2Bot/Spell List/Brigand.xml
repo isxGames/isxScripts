@@ -136,5 +136,32 @@
 		 		 <Setting Name="70,101">Devitalize</Setting>
 		 		 <Setting Name="70,238">Entangle</Setting>
 		 		 <Setting Name="70,95">Underground Negotiation</Setting>
+		 		 <Setting Name="71,">Double Throw</setting>
+		 		 <Setting Name="71,">Jagged Blade</setting>
+		 		 <Setting Name="71,">Remiss</setting>
+		 		 <Setting Name="72,">Befuddle</setting>
+		 		 <Setting Name="72,">Compromising Thrust</setting>
+		 		 <Setting Name="72,">Stunning Blow</setting>
+		 		 <Setting Name="73,">Baffle</setting>
+		 		 <Setting Name="73,">Mercenary Stance</setting>
+		 		 <Setting Name="73,">Spew</setting>
+		 		 <Setting Name="74,">Blood Rake</setting>
+		 		 <Setting Name="74,">Dispatched</setting>
+		 		 <Setting Name="74,">Shenanigans</setting>
+		 		 <Setting Name="74,">Sidestab</setting>
+		 		 <Setting Name="75,">Clock</setting>
+		 		 <Setting Name="75,">Rob</setting>
+		 		 <Setting Name="75,">Roughen</setting>
+		 		 <Setting Name="76,">Holdup</setting>
+		 		 <Setting Name="77,">Entrail</setting>
+		 		 <Setting Name="77,">Snicker</setting>
+		 		 <Setting Name="78,">Battery and Assault</setting>
+		 		 <Setting Name="78,">Hood of Thugs</setting>
+		 		 <Setting Name="79,">Adventurous Advance</setting>
+		 		 <Setting Name="79,">Savy</setting>
+		 		 <Setting Name="80,">Barrom Negotiation</setting>
+		 		 <Setting Name="80,">Thieves Guild</setting>
+		 		 <Setting Name="80,">Enfeeblement</setting>
 		 </Set>
 </InnerSpaceSettings>
+

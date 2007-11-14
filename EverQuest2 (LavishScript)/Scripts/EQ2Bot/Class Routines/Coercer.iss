@@ -138,46 +138,51 @@ function Combat_Init()
 	Action[8]:Set[Sunbolt]
 	SpellRange[8,1]:Set[62]
 
-	Action[9]:Set[Mind]
+	Action[9]:Set[Puppets]
 	MobHealth[9,1]:Set[40]
 	MobHealth[9,2]:Set[100]
-	SpellRange[9,1]:Set[72]
+	SpellRange[9,1]:Set[391]
 
-	Action[10]:Set[Anguish]
-	MobHealth[10,1]:Set[1]
+	Action[10]:Set[Mind]
+	MobHealth[10,1]:Set[40]
 	MobHealth[10,2]:Set[100]
-	SpellRange[10,1]:Set[70]
+	SpellRange[10,1]:Set[72]
 
-	Action[11]:Set[Thoughts]
-	MobHealth[11,1]:Set[40]
+	Action[11]:Set[Anguish]
+	MobHealth[11,1]:Set[1]
 	MobHealth[11,2]:Set[100]
-	SpellRange[11,1]:Set[51]
+	SpellRange[11,1]:Set[70]
 
-	Action[12]:Set[Nuke]
-	SpellRange[12,1]:Set[60]
+	Action[12]:Set[Thoughts]
+	MobHealth[12,1]:Set[40]
+	MobHealth[12,2]:Set[100]
+	SpellRange[12,1]:Set[51]
 
-	Action[13]:Set[Stun]
-	SpellRange[13,1]:Set[190]
+	Action[13]:Set[Nuke]
+	SpellRange[13,1]:Set[60]
 
-	Action[14]:Set[Silence]
-	MobHealth[14,1]:Set[1]
-	MobHealth[14,2]:Set[100]
-	SpellRange[14,1]:Set[260]
+	Action[14]:Set[Stun]
+	SpellRange[14,1]:Set[190]
 
-	Action[15]:Set[AEStun]
+	Action[15]:Set[Silence]
 	MobHealth[15,1]:Set[1]
 	MobHealth[15,2]:Set[100]
-	SpellRange[15,1]:Set[191]
+	SpellRange[15,1]:Set[260]
 
-	Action[16]:Set[Daze]
+	Action[16]:Set[AEStun]
 	MobHealth[16,1]:Set[1]
 	MobHealth[16,2]:Set[100]
-	SpellRange[16,1]:Set[260]
+	SpellRange[16,1]:Set[191]
 
-	Action[17]:Set[ProcStun]
+	Action[17]:Set[Daze]
 	MobHealth[17,1]:Set[1]
 	MobHealth[17,2]:Set[100]
-	SpellRange[17,1]:Set[192]
+	SpellRange[17,1]:Set[260]
+
+	Action[18]:Set[ProcStun]
+	MobHealth[18,1]:Set[1]
+	MobHealth[18,2]:Set[100]
+	SpellRange[18,1]:Set[192]
 
 }
 
@@ -545,6 +550,12 @@ function Combat_Routine(int xAction)
 	if ${DPSMode}
 	{
 
+		if ${Me.Ability[${SpellType[391]}].IsReady}
+		{
+			call CastSpellRange 391 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
 		if ${Me.Ability[${SpellType[60]}].IsReady}
 		{
 			call CastSpellRange 60 0 0 0 ${KillTarget}
@@ -624,9 +635,10 @@ function Combat_Routine(int xAction)
 			case Despair
 			case Mind
 			case Anguish
+			case Puppets
 			case Thoughts
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
+				if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				}
@@ -643,13 +655,13 @@ function Combat_Routine(int xAction)
 				}
 				break
 
-				case Master_Strike
-					if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
-					{
-						Target ${KillTarget}
-						Me.Ability[Master's Strike]:Use
-					}
-					break
+			case Master_Strike
+				if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+				{
+					Target ${KillTarget}
+					Me.Ability[Master's Strike]:Use
+				}
+				break
 			case Sunbolt
 			case Nuke
 			case Stun
@@ -918,7 +930,6 @@ function DoCharm()
 
 	if ${Me.Maintained[${SpellType[351]}](exists)} || ${Me.UsedConc}>2
 	{
-
 		return
 	}
 

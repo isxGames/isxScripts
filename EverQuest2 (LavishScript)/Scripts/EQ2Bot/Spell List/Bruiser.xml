@@ -50,7 +50,7 @@
 		<Setting Name="29,152">Blitz</Setting>
 		<Setting Name="29,155">Jolting Fists</Setting>
 		<Setting Name="30,190">Haymaker</Setting>
-		<Setting Name="30,323">Instill Doubt</Setting>				
+		<Setting Name="30,323">Instill Doubt</Setting>
 		<Setting Name="30,295">Stance: Bouncer</Setting>
 		<Setting Name="31,321">Grapple</Setting>
 		<Setting Name="31,160">Slurred Insult</Setting>
@@ -98,7 +98,5 @@
 		<Setting Name="55,211">Resolute Will</Setting>
 		<Setting Name="55,325">Sonic Fists</Setting>
 		<Setting Name="57,155">Storming Fists</Setting>
-		<Setting Name=","></Setting>
-		<Setting Name=","></Setting>
 	</Set>
 </InnerSpaceSettings>

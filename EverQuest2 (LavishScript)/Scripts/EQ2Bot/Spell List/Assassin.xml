@@ -144,5 +144,33 @@
 	 <Setting Name="70,185">Surveillance</Setting>
 	 <Setting Name="70,95">Cloacked Assaut</Setting>
 	 <Setting Name="70,130">Decapitate</Setting>
+	 <Setting Name="71,">Deadly Blast</setting>
+	 <Setting Name="71,">Scarring Blow</setting>
+	 <Setting Name="71,">Spine Shot</setting>
+	 <Setting Name="72,">Apply Toxins</setting>
+	 <Setting Name="72,">Blade Stance</setting>
+	 <Setting Name="72,">Disfiguring Strike</setting>
+	 <Setting Name="72,">Resourceful Weapon</setting>
+	 <Setting Name="73,">Adroit Stance</setting>
+	 <Setting Name="73,">Slate</setting>
+	 <Setting Name="73,">Velium Strike</setting>
+	 <Setting Name="73,">Baffle</setting>
+	 <Setting Name="74,">Death Mark</setting>
+	 <Setting Name="74,">Jugular Slice</setting>
+	 <Setting Name="74,">Masked Strike</setting>
+	 <Setting Name="75,">Pinpoint Blade</setting>
+	 <Setting Name="75,">Squeeze</setting>
+	 <Setting Name="76,">Death Blow</setting>
+	 <Setting Name="76,">Mesh</setting>
+	 <Setting Name="77,">Moon Blade</setting>
+	 <Setting Name="77,">Mortal Blade</setting>
+	 <Setting Name="78,">Ear Shot</setting>
+	 <Setting Name="78,">Gushing Wound</setting>
+	 <Setting Name="79,">Deadly Impale</setting>
+	 <Setting Name="79,">Villain</setting>
+	 <Setting Name="80,">Spy</setting>
+	 <Setting Name="80,">Stealth Assault</setting>
+	 <Setting Name="80,">Fatal Followup</setting>
+	 <Setting Name="80,">Execute</Setting>
    </Set>
 </InnerSpaceSettings>
