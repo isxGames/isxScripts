@@ -132,6 +132,7 @@
     <Setting Name="52,318">Unstoppable Soul</Setting>
     <Setting Name="53,52">Abominable Mark</Setting>
     <Setting Name="53,290">Minion\'s Stance: Voice of the Departed</Setting>
+    <Setting Name="53,331">Horde of Bats</Setting>
     <Setting Name="54,46">Rending Fury</Setting>
     <Setting Name="54,21">Teachings of the Shadows</Setting>
     <Setting Name="55,351">Control Undeath</Setting>
@@ -166,5 +167,36 @@
     <Setting Name="70,1">Necrotic Reformation</Setting>
     <Setting Name="70,295">Minion\'s Stance: Grisly Bulwark</Setting>
     <Setting Name="70,27">Archlich</Setting>
+    <Setting Name="71,95">Bloodcloud</setting>
+    <Setting Name="71,70">Soulrot</setting>
+    <Setting Name="71,331">Vampire Bats</setting>
+    <Setting Name="72,71">Bloodcoil</setting>
+    <Setting Name="72,51">Plot</setting>
+    <Setting Name="72,310">Siphoning of Souls</setting>
+    <Setting Name="73,230">Chains of Eternity</setting>
+    <Setting Name="73,360">Darkness Heart</setting>
+    <Setting Name="73,361">Miragul's Dark Heart Summoning</setting>
+    <Setting Name="73,355">Shadowblade</setting>
+    <Setting Name="74,351">Control Undead</setting>
+    <Setting Name="74,4">Filter Life</setting>
+    <Setting Name="75,356">Demi-Lich</setting>
+    <Setting Name="75,329">Grave Disturbance</setting>
+    <Setting Name="75,20">Grave Favors</setting>
+    <Setting Name="76,60">Drain Life</setting>
+    <Setting Name="76,351">Gluttony</setting>
+    <Setting Name="76,90">Pandemic</setting>
+    <Setting Name="77,350">Horror</setting>
+    <Setting Name="77,330">Pack of Imps</setting>
+    <Setting Name="77,357">Undead Knight</setting>
+    <Setting Name="78,290">Howl from Beyond</setting>
+    <Setting Name="78,52">Mortality Mark</setting>
+    <Setting Name="78,46">Rending</setting>
+    <Setting Name="78,353">Undead Horde</setting>
+    <Setting Name="79,326">Devour Vigor</setting>
+    <Setting Name="79,21">Teachings of the Undead</setting>
+    <Setting Name="80,295">Minion\'s Stance: Grisly Protection</setting>
+    <Setting Name="80,45">Necromantic Pact</setting>
+    <Setting Name="80,1">Necrotic Reconstruction</setting>
+    <Setting Name="80,333">Vampirism</Setting>
 </Set>
 </InnerSpaceSettings>
