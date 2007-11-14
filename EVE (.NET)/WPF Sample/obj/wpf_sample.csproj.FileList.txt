@@ -1,0 +1,17 @@
+.\bin\Debug\PresentationDesignDeveloper.DLL
+.\bin\Debug\PresentationDesignFramework.dll
+.\bin\Debug\PresentationDesignCore.dll
+.\bin\Debug\Draft.PresentationDesignMarkup.dll
+obj\Debug\ResolveAssemblyReference.cache
+C:\data\projects\wpf_vs2005\obj\Debug\Window1.baml
+C:\data\projects\wpf_vs2005\obj\Debug\Window1.g.cs
+C:\data\projects\wpf_vs2005\obj\Debug\App.g.cs
+obj\Debug\wpf_sample.Properties.Resources.resources
+obj\Debug\wpf_sample.csproj.GenerateResource.Cache
+.\bin\Debug\wpf_sample.exe
+.\bin\Debug\wpf_sample.pdb
+C:\data\projects\wpf_vs2005\obj\Debug\wpf_sample_MarkupCompile.cache
+obj\Debug\wpf_sample.g.resources
+obj\Debug\wpf_sample.exe
+obj\Debug\wpf_sample.pdb
+.\bin\Debug\ISXEVEWrapper.dll
