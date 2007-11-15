@@ -36,6 +36,7 @@ function Class_Declaration()
 	declare BuffSeal bool script FALSE
 	declare CastCures bool script FALSE
 	declare PetMode bool script TRUE
+	declare StartHO bool script FALSE
 
 	call EQ2BotLib_Init
 
@@ -46,6 +47,7 @@ function Class_Declaration()
 	BuffAccordShield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Accord Shield,FALSE]}]
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
 	BuffAmplify:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAmplify,,FALSE]}]
+	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
 
 }
@@ -334,7 +336,7 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}  && ${StartHO}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 	{
 		call CastSpellRange 303
 	}
@@ -347,7 +349,7 @@ function Combat_Routine(int xAction)
 	call UseCrystallizedSpirit 60
 
 	;Ice Nova if solo and over 50% or ^^^ and between 30 and 60.
-	if ((${Actor[${KillTarget}].Dificulty}<3 && ${Actor[${KillTarget}].Health}>50) || (${Actor[${KillTarget}].Dificulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<60)) && ${Me.Ability[${SpellType[60]}].IsReady}
+	if ((${Actor[${KillTarget}].Difficulty}<3 && ${Actor[${KillTarget}].Health}>50) || (${Actor[${KillTarget}].Difficulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<60)) && ${Me.Ability[${SpellType[60]}].IsReady}
 	{
 		if ${Me.Ability[${SpellType[385]}].IsReady}
 		{

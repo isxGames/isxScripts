@@ -222,7 +222,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[20]
+			return Buff Complete
 			break
 	}
 }
@@ -241,7 +241,7 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${DoHOs}
 	{
 		call CastSpellRange 303
 	}
@@ -384,7 +384,7 @@ function Combat_Routine(int xAction)
 				}
 				break
 			case default
-				;xAction:Set[40]
+				return Combat Complete
 				break
 		}
 	}
