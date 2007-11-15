@@ -31,8 +31,7 @@ namespace ISXEVEDotNet
             {
                 Output += arg + ",";
             }
-            Output.Remove(Output.Length - 2);
-            Output += "]";
+            Output = Output.Substring(0,Output.Length - 1) + "]";
 
             // Uncomment this line if you wish to see it in action.
             InnerSpace.Echo(Output);
