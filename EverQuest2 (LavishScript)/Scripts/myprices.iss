@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker script
 ;
-; Version 0.08d : Coded 13 Nov 2007
+; Version 0.08e : Coded 17 Nov 2007
 ;
 ; Main Script
 ;
@@ -17,7 +17,7 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
-	echo Running MyPrices version 0.08d - coded : 12 Nov 2007
+	echo Running MyPrices version 0.08e - coded : 17 Nov 2007
 
 	; Declare Variables
 	;
@@ -31,6 +31,7 @@ function main()
 	Declare ScanSellNonStop bool script
 	Declare BuyItems bool script
 	Declare MinPriceSet bool script
+	Declare IgnoreCopper bool script
 	Exitmyprices:Set[FALSE]
 	Pausemyprices:Set[TRUE]
 
@@ -47,6 +48,7 @@ function main()
 	Declare MinSalePrice float script
 	Declare MinPrice float 0 script
 	Declare MinBasePrice float 0 script
+	Declare IntMinBasePrice int script
 	Declare ItemPrice float 0 script
 	Declare MyPrice float 0 script
 	; Array - stores name (Listbox ID)
@@ -63,8 +65,9 @@ function main()
 
 	MyPrices:loadsettings
 	MyPrices:LoadUI
-
 	call LoadList
+
+	call buy init
 
 	do
 	{
@@ -152,6 +155,13 @@ function main()
 								{
 									; Calculate the Baseprice + Commission to set the value to match the currently lowest price
 									MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
+
+									if ${IgnoreCopper} && ${MinBasePrice} > 100
+									{
+										IntMinBasePrice:Set[${MinBasePrice}]
+										MinBasePrice:Set[${IntMinBasePrice}]
+									}
+
 									; do conversion from silver value to pp gp sp cp format
 									call StringFromPrice ${MyPrice}
 									MyPriceS:Set[${Return}]
@@ -212,7 +222,7 @@ function main()
 													; otherwise use the lowest price on the vendor
 													call StringFromPrice ${MinBasePrice}
 													Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}"
-													Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+													Me.Vending[${i}].Consignment[${j}]:SetPrice[${IntMinBasePrice}]
 													; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 													if ${MinSalePrice} == 0
 													{
@@ -273,12 +283,90 @@ function main()
 	While ${Exitmyprices} == FALSE
 }
 
+
+
+function buy(string action)
+{
+	; Read data from myprices.xml
+	;
+
+	variable settingsetref BuyList
+	variable settingsetref BuyName
+
+	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
+
+	; make sure nothing from a previous run is in memory (DEVL)
+
+	BuyList:Clear
+
+	if ${action.Equal["init"]}
+		{
+		UIElement[BuyItemList@Buy@GUITabs@MyPrices]:ClearItems
+		}
+
+	LavishSettings[myprices]:Import["myprices.xml"]
+
+	variable iterator BuyIterator
+	variable iterator NameIterator
+	variable iterator BuyNameIterator
+
+	; Index each item under the Set [Item]
+
+	BuyList:GetSetIterator[BuyIterator]
+
+	; if there is anything in the index
+
+	if ${BuyIterator:First(exists)}
+	{
+
+		;start going through each Sub-Set under [Item]
+		do
+		{
+		         ; Get the Sub-Set Location
+			NameIterator.Value:GetSetIterator[BuyIterator]
+			do
+			{
+				; Get the reference for the Sub-Set
+				BuyName:Set[${BuyList.FindSet[${BuyIterator.Key}]}]
+				; Create an Index of all the data in that Sub-set
+				BuyName:GetSettingIterator[BuyNameIterator]
+				; run the various options (Scan / update price etc based on the paramater passed to the routine
+				;
+				; init = build up the list of items on the buy tab
+				; scan = check the broker list one by one - do buy and various workhorse routines
+
+				if ${action.Equal["init"]}
+				{
+					UIElement[BuyItemList@Buy@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
+				}
+				else
+				{
+					; read the Settings in the Sub-Set
+					if ${BuyNameIterator:First(exists)}
+					{
+						do
+						{
+							echo "${BuyNameIterator.Key}=${BuyNameIterator.Value}"
+						}
+						while ${BuyNameIterator:Next(exists)}
+					}
+				}
+			}
+
+			; Keep looping till you've read all the settings under that Sub-Set
+			while ${NameIterator:Next(exists)}
+		}
+		; Keep looping till you've read all the Sub-Sets
+		While ${BuyIterator:Next(exists)}
+	}
+}
+
 function BrokerSearch(string lookup)
 {
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
-	broker Name "${lookup}"
+	broker Name "${lookup}" Sort ByPriceAsc
 	Wait 15
 	; if broker has any listed to compare with your item
 	if "${Vendor.NumItemsForSale} >0"
@@ -293,18 +381,14 @@ function BrokerSearch(string lookup)
 				; check that the items name being looked at is an exact match and not just a partial match
 				if "${lookup.Equal["${Vendor.Broker[${CurrentItem}]}"]}"
 				{
-					; if the price of the item is less than the current lowest price then make that the new lowest price
-					if ${Vendor.Broker[${CurrentItem}].Price}<${TempMinPrice} || ${TempMinPrice} == -1
-					{
-						TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
-					}
+					TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+					break
 				}
 			}
 			while "${CurrentItem:Inc}<=${Vendor.NumItemsForSale}"
 			wait 10
 		}
-		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages}
-		wait 5
+		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${TempMinPrice} == -1
 	}
 	; Return the Lowest Price Found or -1 if nothing found.
 	return ${TempMinPrice}
@@ -316,7 +400,7 @@ function checkitem(string name)
 	LavishSettings:AddSet[myprices]
 	LavishSettings[myprices]:AddSet[General]
 	LavishSettings[myprices]:AddSet[Item]
-
+	LavishSettings[myprices]:AddSet[Buy]
 	; keep a reference directly to the Item set.
 
 	variable settingsetref ItemList
@@ -395,10 +479,13 @@ objectdef BrokerBot
 		LavishSettings:AddSet[myprices]
 		LavishSettings[myprices]:AddSet[General]
 		LavishSettings[myprices]:AddSet[Item]
+		LavishSettings[myprices]:AddSet[Buy]
 		variable settingsetref ItemList
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
 		; make sure nothing from a previous run is in memory (DEVL)
 		ItemList:Clear
+		BuyList:Clear
 		LavishSettings[myprices]:Import["myprices.xml"]
 		variable settingsetref GeneralSetting
 		GeneralSetting:Set[${LavishSettings[myprices].FindSet[General]}]
@@ -406,10 +493,12 @@ objectdef BrokerBot
 		IncreasePrice:Set[${GeneralSetting.FindSetting[IncreasePrice]}]
 		SetUnlistedPrices:Set[${GeneralSetting.FindSetting[SetUnlistedPrices]}]
 		ScanSellNonStop:Set[${GeneralSetting.FindSetting[ScanSellNonStop]}]
+		IgnoreCopper:Set[${GeneralSetting.FindSetting[IgnoreCopper]}]
 		BuyItems:Set[${GeneralSetting.FindSetting[BuyItems]}]
 	}
 
 }
+
 
 
 ; Convert a float price in silver to pp gp sp cp format
@@ -444,7 +533,7 @@ function pricefromstring()
 	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Itemname].Text}]
 	if ${itemname.Length} == 0
 	{
-		Echo Try Selecting someting first!!
+		Echo Try Selecting something first!!
 	}
 	else
 	{
@@ -468,22 +557,33 @@ function pricefromstring()
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, int Number, float Buyprice)
+function Saveitem(string Saveset, string ItemName, float Money, int Number)
 {
+
 	LavishSettings:AddSet[myprices]
 	LavishSettings[myprices]:AddSet[General]
 	LavishSettings[myprices]:AddSet[Item]
+	LavishSettings[myprices]:AddSet[Buy]
 
 	variable settingsetref ItemList
-	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+	if ${Saveset.Equal["Sell"]}
+	{
+		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+	}
+	Else
+	{
+		ItemList:Set[${LavishSettings[myprices].FindSet[Buy]}]
+	}
+
 	ItemList:AddSet[${ItemName}]
 
 	variable settingsetref Item
+
 	Item:Set[${ItemList.FindSet[${ItemName}]}]
 
-	Item:AddSetting[${Saveset},${Money}]
 	if ${Saveset.Equal["Sell"]}
 	{
+		Item:AddSetting[${Saveset},${Money}]
 		if ${UIElement[MinPrice@Sell@GUITabs@MyPrices].Checked}
 		{
 		Item:AddSetting[MinSalePrice,TRUE]
@@ -496,7 +596,7 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, floa
 	elseif ${Saveset.Equal["Buy"]}
 	{
 		Item:AddSetting[BuyNumber,${Number}]
-		Item:AddSetting[BuyPrice,${Buyprice}]
+		Item:AddSetting[BuyPrice,${Money}]
 	}
 
 	LavishSettings[myprices]:Export["myprices.xml"]
@@ -697,19 +797,20 @@ function savebuyinfo()
 	Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinSilverPrice].Text}]
 	Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinCopperPrice].Text}]
 
-	; calclulate the value in silver
-	Platina:Set[${Math.Calc[${Platina}*10000]}]
-	Gold:Set[${Math.Calc[${Gold}*100]}]
-	Copper:Set[${Math.Calc[${Copper}/100]}]
+	; calclulate the value in copper
+	Platina:Set[${Math.Calc[${Platina}*1000000]}]
+	Gold:Set[${Math.Calc[${Gold}*10000]}]
+	Silver:Set[${Math.Calc[${Silver}*100]}]
 	Money:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
 
+	; check information was entered in all boxes and save
 	if ${itemname.Length} == 0
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[No item name entered]
 	}
 	elseIf ${itemnumber} <= 0
 	{
-		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Try setting a valid ammount]
+		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Try setting a valid number of items]
 	}
 	elseif ${Money} <= 0
 	{
@@ -718,11 +819,79 @@ function savebuyinfo()
 	else
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Saving Information]
-		call Saveitem Buy "${itemname}" ${Money} {itemnumber}
-
+		call Saveitem Buy "${itemname}" ${Money} ${itemnumber}
+		call buy init
 	}
 }
 
+function deletebuyinfo(int ItemID)
+{
+	Declare itemname string local
+
+	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Buyname].Text}]
+
+	LavishSettings:AddSet[myprices]
+	LavishSettings[myprices]:AddSet[General]
+	LavishSettings[myprices]:AddSet[Item]
+	LavishSettings[myprices]:AddSet[Buy]
+
+	variable settingsetref BuyList
+	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
+	variable settingsetref BuyItem
+	BuyList.FindSet["${itemname}"]:Remove
+
+	LavishSettings[myprices]:Export["myprices.xml"]
+
+	UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Deleting ${itemname}]
+
+	call buy init
+}
+
+; Delete tyhe current item selected in the buybox
+
+function ShowBuyPrices(int ItemID)
+{
+	Declare Money int local
+	Declare number int local
+	Declare LBoxString string local
+	Declare Platina int local
+	Declare Gold int local
+	Declare Silver int local
+	Declare Copper int local
+
+	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyItemList].Item[${ItemID}]}]
+
+	LavishSettings:AddSet[myprices]
+	LavishSettings[myprices]:AddSet[General]
+	LavishSettings[myprices]:AddSet[Item]
+	LavishSettings[myprices]:AddSet[Buy]
+
+	variable settingsetref BuyList
+	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
+
+	variable settingsetref BuyItem
+	BuyItem:Set[${BuyList.FindSet["${LBoxString}"]}]
+
+	number:Set[${BuyItem.FindSetting[BuyNumber]}]
+	Money:Set[${BuyItem.FindSetting[BuyPrice]}]
+
+	Platina:Set[${Math.Calc[${Money}/1000000]}]
+
+	Money:Set[${Math.Calc[${Money}-(${Platina}*1000000)]}]
+	Gold:Set[${Math.Calc[${Money}/10000]}]
+	Money:Set[${Math.Calc[${Money}-(${Gold}*10000)]}]
+	Silver:Set[${Money}/100]
+	Money:Set[${Math.Calc[${Money}-(${Silver}*100)]}]
+	Copper:Set[${Money}]
+
+	UIElement[MinPlatPrice@Buy@GUITabs@MyPrices]:SetText[${Platina}]
+	UIElement[MinGoldPrice@Buy@GUITabs@MyPrices]:SetText[${Gold}]
+	UIElement[MinSilverPrice@Buy@GUITabs@MyPrices]:SetText[${Silver}]
+	UIElement[MinCopperPrice@Buy@GUITabs@MyPrices]:SetText[${Copper}]
+	UIElement[BuyNumber@Buy@GUITabs@MyPrices]:SetText[${number}]
+	UIElement[BuyName@Buy@GUITabs@MyPrices]:SetText[${LBoxString}]
+
+}
 
 ; when the script exits , save all the settings and do some cleaning up
 atom atexit()

@@ -3,7 +3,7 @@
 	<template name='My.window.TitleBar'>
     		<Border>1</Border>
 		<x>3</x>
-    		<BorderColor>FF000033</BorderColor>
+    		<BorderColor>FF3300FF</BorderColor>
     		<Width>r6</Width>
 		<Height>26</Height>
 		<Texture Template='EQ2.window.TitleBar.Texture' />
@@ -20,7 +20,7 @@
 	</template>
 	<template name='My.window'>
 		<Border>1</Border>
-		<Resizable>1</Resizable>
+		<Resizable>0</Resizable>
 		<CloseButton />
 		<MinimizeButton />
 		<MaximizeButton />
@@ -32,9 +32,9 @@
 	<!-- Main Window -->
 	<Window Name='MyPrices' template='My.window'>
 	<X>5%</X>
-	<Y>20%</Y>
-	<Width>775</Width>
-	<Height>650</Height>
+	<Y>10%</Y>
+	<Width>475</Width>
+	<Height>600</Height>
 	<Client Template='EQ2.Window.Client'>
 		<Y>20</Y>
 	</Client>
@@ -175,9 +175,41 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='ScanSellNonStop' Template='EQ2.checkbox'>
+					<checkbox Name='IgnoreCopper' Template='EQ2.checkbox'>
 						<X>5%</X>
 						<Y>110</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Ignore Copper</Text>
+						<AutoTooltip>
+							If your price is > 1 gold then ignore copper
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.IgnoreCopper}
+						{
+							UIElement[IgnoreCopper@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[IgnoreCopper@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[IgnoreCopper@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting IgnoreCopper TRUE]
+								Script[myprices].VariableScope.IgnoreCopper:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting IgnoreCopper FALSE]
+								Script[myprices].VariableScope.IgnoreCopper:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='ScanSellNonStop' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>130</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Auto-Loop</Text>
@@ -209,35 +241,35 @@
 					</checkbox>
 
 					<Text Name='Normal' Template='EQ2.Text'>
-						<X>200</X>
+						<X>5%</X>
 						<Y>190</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
-						<Text>White : Not Changed</Text>
+						<Text>Brown : Not Changed</Text>
 					</Text>
 					<Text Name='Green' Template='EQ2.Text'>
-						<X>200</X>
+						<X>5%</X>
 						<Y>210</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Green : Matched Price</Text>
 					</Text>
 					<Text Name='Yellow' Template='EQ2.Text'>
-						<X>200</X>
+						<X>5%</X>
 						<Y>230</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Yellow : Lowest Price</Text>
 					</Text>
 					<Text Name='Red' Template='EQ2.Text'>
-						<X>200</X>
+						<X>5%</X>
 						<Y>250</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Red : Unable to match</Text>
 					</Text>
 					<Text Name='Blue' Template='EQ2.Text'>
-						<X>200</X>
+						<X>5%</X>
 						<Y>270</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
@@ -248,157 +280,138 @@
 						<Y>325</Y>
 						<Width>44%</Width> 
 						<Height>15</Height>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Text Name='Label1' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>383</Y>
-						<Width>30%</Width> 
+						<Y>460</Y>
+						<Width>80</Width> 
 						<Height>15</Height>
 						<Text>Current Price</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='PlatPrice' Template='EQ2.Textentry'>
-						<X>25</X>
-						<Y>400</Y>
+						<X>125</X>
+						<Y>460</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='PlatPriceText' Template='EQ2.Text'>
-						<X>80</X>
-						<Y>400</Y>
+						<X>180</X>
+						<Y>460</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='GoldPrice' Template='EQ2.Textentry'>
-						<X>105</X>
-						<Y>400</Y>
+						<X>205</X>
+						<Y>460</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='GoldPriceText' Template='EQ2.Text'>
-						<X>140</X>
-						<Y>400</Y>
+						<X>240</X>
+						<Y>460</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='SilverPrice' Template='EQ2.Textentry'>
-						<X>165</X>
-						<Y>400</Y>
+						<X>265</X>
+						<Y>460</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='SilverPriceText' Template='EQ2.Text'>
-						<X>200</X>
-						<Y>400</Y>
+						<X>300</X>
+						<Y>460</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='CopperPrice' Template='EQ2.Textentry'>
-						<X>225</X>
-						<Y>400</Y>
+						<X>325</X>
+						<Y>460</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='CopperPriceText' Template='EQ2.Text'>
-						<X>260</X>
-						<Y>400</Y>
+						<X>360</X>
+						<Y>460</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 
 					<Text Name='Label2' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>432</Y>
+						<Y>480</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Minimum Price</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 
 					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>
-						<X>25</X>
-						<Y>450</Y>
+						<X>125</X>
+						<Y>480</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinPlatPriceText' Template='EQ2.Text'>
-						<X>80</X>
-						<Y>450</Y>
+						<X>180</X>
+						<Y>480</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='MinGoldPrice' Template='EQ2.Textentry'>
-						<X>105</X>
-						<Y>450</Y>
+						<X>205</X>
+						<Y>480</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinGoldPriceText' Template='EQ2.Text'>
-						<X>140</X>
-						<Y>450</Y>
+						<X>240</X>
+						<Y>480</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='MinSilverPrice' Template='EQ2.Textentry'>
-						<X>165</X>
-						<Y>450</Y>
+						<X>265</X>
+						<Y>480</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinSilverPriceText' Template='EQ2.Text'>
-						<X>200</X>
-						<Y>450</Y>
+						<X>300</X>
+						<Y>480</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='MinCopperPrice' Template='EQ2.Textentry'>
-						<X>225</X>
-						<Y>450</Y>
+						<X>325</X>
+						<Y>480</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinCopperPriceText' Template='EQ2.Text'>
-						<X>260</X>
-						<Y>450</Y>
+						<X>360</X>
+						<Y>480</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Commandbutton name='UpdatePrice' Template='EQ2.Commandbutton'> 
-						<X>300</X> 
-						<Y>450</Y> 
+						<X>400</X> 
+						<Y>480</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>
@@ -412,7 +425,7 @@
 
 					<checkbox Name='MinPrice' Template='EQ2.checkbox'>
 						<X>25</X>
-						<Y>350</Y>
+						<Y>430</Y>
 						<Width>10%</Width>
 						<Height>20</Height>
 						<Text>Minimum price</Text>
@@ -458,10 +471,10 @@
 						</OnLeftClick>
 					</checkbox>
 					<listbox Name='ItemList' Template='EQ2.listbox'>
-						<X>50%</X>
+						<X>45%</X>
 						<Y>2%</Y>
-						<Width>48%</Width>
-						<Height>85%</Height>
+						<Width>52%</Width>
+						<Height>75%</Height>
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
@@ -550,152 +563,126 @@
 					<listbox Name='BuyItemList' Template='EQ2.listbox'>
 						<X>5%</X>
 						<Y>40</Y>
-						<Width>78%</Width>
+						<Width>90%</Width>
 						<Height>70%</Height>
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
-;							UIElement[Itemname@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemlist[${ID}]}]
-;							UIElement[MinPlatPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},5]}]
-;							UIElement[MinGoldPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},6]}]
-;							UIElement[MinSilverPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},7]}]
-;							UIElement[MinCopperPrice@Buy@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.itemprice[${ID},8]}]
-						</OnSelect>
-					</listbox>
-					<listbox Name='BuyItemAmount' Template='EQ2.listbox'>
-						<X>80%</X>
-						<Y>40</Y>
-						<Width>15%</Width>
-						<Height>70%</Height>
-						<SelectMultiple>0</SelectMultiple>
-						<Sort>None</Sort>
-						<OnSelect>
+							Script[myprices]:QueueCommand[call ShowBuyPrices ${ID}]
 						</OnSelect>
 					</listbox>
 					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>
 						<X>35</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinPlatPriceText' Template='EQ2.Text'>
 						<X>90</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='MinGoldPrice' Template='EQ2.Textentry'>
 						<X>115</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinGoldPriceText' Template='EQ2.Text'>
 						<X>150</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='MinSilverPrice' Template='EQ2.Textentry'>
 						<X>175</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinSilverPriceText' Template='EQ2.Text'>
 						<X>210</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='MinCopperPrice' Template='EQ2.Textentry'>
 						<X>235</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='MinCopperPriceText' Template='EQ2.Text'>
 						<X>270</X>
-						<Y>520</Y>
+						<Y>500</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
 						<Color>FFDDBB00</Color>
 					</Text>
 					<Text Name='BuyNameText' Template='EQ2.Text'>
-						<X>35</X>
-						<Y>480</Y>
+						<X>25</X>
+						<Y>460</Y>
 						<Width>80</Width> 
 						<Height>15</Height>
 						<Text>Name</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Text Name='ErrorText' Template='EQ2.Text'>
-						<X>150</X>
-						<Y>480</Y>
-						<Width>300</Width> 
+						<X>24%</X>
+						<Y>445</Y>
+						<Width>350</Width> 
 						<Height>15</Height>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='BuyName' Template='EQ2.Textentry'>
-						<X>35</X>
-						<Y>500</Y>
-						<Width>500</Width> 
+						<X>25</X>
+						<Y>480</Y>
+						<Width>350</Width> 
 						<Height>15</Height>
 						<MaxLength>70</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Text Name='BuyNumberText' Template='EQ2.Text'>
-						<X>560</X>
-						<Y>480</Y>
+						<X>390</X>
+						<Y>460</Y>
 						<Width>80</Width> 
 						<Height>15</Height>
 						<Text>Number</Text>
-						<Color>FFDDBB00</Color>
 					</Text>
 					<Textentry Name='BuyNumber' Template='EQ2.Textentry'>
-						<X>560</X>
-						<Y>500</Y>
+						<X>390</X>
+						<Y>480</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
-						<Color>FFDDBB00</Color>
 					</Textentry>
 					<Commandbutton name='SaveBuy' Template='EQ2.Commandbutton'> 
-						<X>630</X> 
-						<Y>500</Y> 
+						<X>325</X> 
+						<Y>510</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-						; save the information - locked out for this release
-						; Script[myprices]:QueueCommand[call savebuyinfo]
+						Script[myprices]:QueueCommand[call savebuyinfo]
 						</OnLeftClick>
 						<AutoTooltip>
 							Update/Add a new item
 						</AutoTooltip>
 					</Commandbutton>
 					<Commandbutton name='DeleteBuy' Template='EQ2.Commandbutton'> 
-						<X>685</X> 
-						<Y>500</Y> 
+						<X>385</X> 
+						<Y>510</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Delete</Text>
 						<OnLeftClick>
+						Script[myprices]:QueueCommand[call deletebuyinfo]
 						</OnLeftClick>
 						<AutoTooltip>
 							Delete Selected Item

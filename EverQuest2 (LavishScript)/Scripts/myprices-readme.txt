@@ -1,4 +1,4 @@
-MyPrices - Version 0.08d
+MyPrices - Version 0.08e
 
 For update details see the bottom of this file.
 
@@ -42,7 +42,7 @@ or
 The script will then open the GUI , scan your broker system and list whats in them.
 
 
-There are 4 tickboxes 
+There are 5 tickboxes 
 
 Auto-Match Lower Prices
 -----------------------
@@ -57,6 +57,13 @@ Set Prices for unlisted items
 This will make myprices match the price of any unlisted items on your broker list to the lowest price available and set them as for sale.
 
 Leaving this unticked will make the script skip unlisted items.
+
+Ignore Copper
+-------------
+This makes the script ignore any copper if a matching price is over one gold and includes copper
+
+e.g if a matching price is 1g 59s 45c then the script sets the price to 1g 59s
+
 
 Auto-Loop
 ---------
@@ -152,6 +159,21 @@ Discussion thread for myprices can be found at : http://www.isxgames.com/forums/
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
 
 Updates :
+
+
+Version 0.8e
+------------
+
+1) Scanning now faster if more than one page of items is on the broker.
+2) GUI has been reduced in size by about 50% in width and 10% in height.
+3) New option [b]Ignore Copper[/b] , if the matching price is over 1 gold then any Copper is ignored when setting the new price.
+
+(Doesn't work if you set a minimum price over 1 gold that includes coppers)
+
+You can make a Buy Item list now , The function code to actually buy the items in the list has been snipped
+out till I'm 100% sure it's working fully.
+
+Feel free to test adding and deleting items in the list though.
 
 Version : 0.08d
 ---------------
