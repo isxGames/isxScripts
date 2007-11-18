@@ -155,9 +155,10 @@ function main()
 								{
 									; Calculate the Baseprice + Commission to set the value to match the currently lowest price
 									MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
-
+									; if the flag to ignore copper is set and the price is > 1 gold
 									if ${IgnoreCopper} && ${MinBasePrice} > 100
 									{
+										; round the value to remove the coppers
 										IntMinBasePrice:Set[${MinBasePrice}]
 										MinBasePrice:Set[${IntMinBasePrice}]
 									}
@@ -222,7 +223,7 @@ function main()
 													; otherwise use the lowest price on the vendor
 													call StringFromPrice ${MinBasePrice}
 													Echo "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}"
-													Me.Vending[${i}].Consignment[${j}]:SetPrice[${IntMinBasePrice}]
+													Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
 													; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 													if ${MinSalePrice} == 0
 													{
