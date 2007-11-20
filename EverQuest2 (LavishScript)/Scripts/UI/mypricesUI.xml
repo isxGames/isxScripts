@@ -583,7 +583,7 @@
 							if ${UIElement[BuyItems@Buy@GUITabs@MyPrices].Checked}
 							{
 								Script[myprices]:QueueCommand[call SaveSetting BuyItems TRUE]
-								SettingXML[Scripts/myprices.xml].Set[General]:Set[BuyItems,TRUE]:Save
+								Script[myprices].VariableScope.BuyItems:Set[TRUE]
 							}
 							else
 							{
