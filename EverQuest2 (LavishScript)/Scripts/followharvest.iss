@@ -23,7 +23,7 @@
 
 ;Set some script wide vars / declares
 ;Max roam distance for getting a node
-variable int Maxrange=15
+variable int MaxRange=15
 declare triggerCheckTimer int script 5
 
 function main()
@@ -61,10 +61,12 @@ function main()
 					hcount:Set[0]
 					do
 					{
-
-						call DoHarvest ${CustomActor[${tcount}].ID}
+						if ${Target.ID}==${CustomActor[${tcount}].ID}
+						{
+							call DoHarvest ${CustomActor[${tcount}].ID}
+						}
 					}
-					while ${CustomActor[${tcount}].ID(exists)} ${hcount}<6
+					while (${CustomActor[${tcount}].ID(exists)} && ${CustomActor[${tcount}].Distance}<6) || ${hcount:Inc}<6
 
 				}
 				else

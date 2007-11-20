@@ -747,7 +747,7 @@ function CheckHeals()
 		if ${Me.Group[${temphl}].ToActor(exists)}
 		{
 
-			if ${Me.Group[${temphl}].ToActor.Health}==-99 && !${Me.InCombat} && {Me.Group[${temphl}].ToActor.Distance}<25
+			if ${Me.Group[${temphl}].ToActor.Health}==-99 && !${Me.InCombat} && ${Me.Group[${temphl}].ToActor.Distance}<25
 			{
 				call CastSpellRange 300 301 1 0 ${Me.Group[${temphl}].ID} 1
 			}
