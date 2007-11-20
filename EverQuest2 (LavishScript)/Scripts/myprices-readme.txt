@@ -25,6 +25,8 @@ Buying
 It will scan the broker list for items that you want to buy , if they are for sale at or under a set value then 
 it buys them until the number items you set have been bought or you run out of money.
 
+(it will buy the cheapest items first)
+
 If you can't buy a complete stack of items (someone is selling 500 and you only have enough cash for 476) then
 it will buy 476 of them.
 
