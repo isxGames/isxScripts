@@ -240,6 +240,38 @@
 						</OnLeftClick>
 					</checkbox>
 
+					<checkbox Name='SellItems' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>150</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Scan Sales</Text>
+						<AutoTooltip>
+							Check the prices of your items for sale.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.SellItems}
+						{
+							UIElement[SellItems@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[SellItems@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[SellItems@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting SellItems TRUE]
+								Script[myprices].VariableScope.SellItems:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting SellItems FALSE]
+								Script[myprices].VariableScope.SellItems:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
 					<Text Name='Normal' Template='EQ2.Text'>
 						<X>5%</X>
 						<Y>190</Y>
@@ -569,6 +601,8 @@
 						<Sort>None</Sort>
 						<OnSelect>
 							Script[myprices]:QueueCommand[call ShowBuyPrices ${ID}]
+							Script[myprices]:QueueCommand[call ClickBrokerSearch ${ID}]
+
 						</OnSelect>
 					</listbox>
 					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>

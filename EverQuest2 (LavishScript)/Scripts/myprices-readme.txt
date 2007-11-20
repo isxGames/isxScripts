@@ -1,4 +1,4 @@
-MyPrices - Version 0.08e
+MyPrices - Version 0.09a
 
 For update details see the bottom of this file.
 
@@ -8,6 +8,8 @@ Please read all of this before starting.
 What this Script will do
 ------------------------
 
+Selling
+=======
 It checks the prices of the items that you sell against all the same items being sold on the broker.
 
 It flags up the item if.
@@ -16,6 +18,15 @@ It flags up the item if.
 2. Your item is less than the lowest price someone else is selling at.
 
 If you want the script to either reduce or raise your prices accordingly check the relevant boxes on the front GUI tab.
+
+Buying
+======
+
+It will scan the broker list for items that you want to buy , if they are for sale at or under a set value then 
+it buys them until the number items you set have been bought or you run out of money.
+
+If you can't buy a complete stack of items (someone is selling 500 and you only have enough cash for 476) then
+it will buy 476 of them.
 
 
 Installing
@@ -42,7 +53,10 @@ or
 The script will then open the GUI , scan your broker system and list whats in them.
 
 
-There are 5 tickboxes 
+The Sell TAB
+============
+
+There are 6 tickboxes 
 
 Auto-Match Lower Prices
 -----------------------
@@ -64,10 +78,15 @@ This makes the script ignore any copper if a matching price is over one gold and
 
 e.g if a matching price is 1g 59s 45c then the script sets the price to 1g 59s
 
-
 Auto-Loop
 ---------
 This causes the script to re-start at the beginning once it has scanned everything.
+
+Scan Sales
+----------
+
+With this ticked the script will scan/compare the items you have up for sale
+
 
 
 There are 2 Buttons.
@@ -83,6 +102,27 @@ If you Press the button again during the scan it will wait for the current item 
 Stop and Quit
 -------------
 This waits till the current item scan has finished and then exits the script totally.
+
+
+The Buy TAB
+===========
+
+Check the Buy Items checkbox to make the script look for items you wish to buy.
+
+Type the name of the item in the name box (case doesn't matter , spelling does)
+
+Enter the number you want the script to buy
+
+Enter the PP , Gold , Silver and Copper you are willing to pay for EACH item into the relevant boxes.
+
+Press Save to add the item to the list.
+
+Selecting an item in the listbox and pressing delete removes it from the list.
+
+If you select an item in the list box the script will do a broker search using that name
+ (helps to make sure you have the correct spelling)
+
+
 
 
 Setting a Minimum Price for Items to be sold at.
@@ -105,6 +145,8 @@ will be updated and the list will re-load.
 To stop using a minimum price just untick the box, the Minium price boxes will grey out and the script will ignore any minimum price
 set for that item when doing it's scan.
 
+
+
 Automatically adding new items
 ------------------------------
 
@@ -123,7 +165,7 @@ It may sound complicated , but what it means is you can just dump items in your 
 and mark them as Listed.
 
 If there are no broker items to compare a new item to then nothing will happen , you can either leave the item there until someone else
-lists one or set a price using EQ2 broker system and myprices will store that as your price.
+lists one or set a price using EQ2 broker system.
 
 
 During the Scan
@@ -131,11 +173,11 @@ During the Scan
 
 As the items are checked the color of the item changes in the GUI list.
 
-White  - The item was unable to be changed , there was nothing on the broker to compare it to.
+Brown  - The item was unable to be changed , there was nothing on the broker to compare it to.
 Green  - The item price matches the current lowest price on the broker.
 Yellow - Your item is the lowest price on the broker.
 Red    - Your item is priced higher than the lowest price on the broker , but that price is below your minimum allowed price. 
-
+Blue   - New unlisted Item added to the broker list
 
 The Future
 ----------
@@ -145,8 +187,9 @@ Plans for developing this script are the following:
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
 by more efficient code once it's all working as I want it to.
 
-Code additional script routines to scan for Items to BUY with a max price set, the system will scan the broker list and if it finds anything that
-matches at the right price or lower , it will automatically buy them (Upto a user set number).
+
+Working more checks into the buy routine (Set max amount to spend in total each session , empty bag slots etc)
+
 
 
 Contact the author
@@ -159,6 +202,27 @@ Discussion thread for myprices can be found at : http://www.isxgames.com/forums/
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
 
 Updates :
+
+
+Version 0.9a
+------------
+
+Buy Routine added:
+
+The script can now buy items at or below a defined price upto a set number of items.
+
+1) It does not stop until either you a) run out of money with more to buy or b) it has bought all the items you asked it to.
+2) It currently doesn't check for empty bag slots , extra items bought SHOULD go into your overflow.
+
+The buy script was fairly well tested with it constantly scanning for the last 2 days.
+
+(It cost me the tune of 5pp - when a bug reared it's ugly head earlier on in it's coding)
+which is why it's been soak tested for the last 2 days before being released.
+
+But I still recommend you test it with something really cheap (2c) before you decide to trust it with a more expensive item.
+
+
+New button : You can now toggle the scan sales option on and off if you wish to just scan for items to buy.
 
 
 Version 0.8e
