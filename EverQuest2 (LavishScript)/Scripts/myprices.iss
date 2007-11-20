@@ -506,7 +506,7 @@ function ClickBrokerSearch(int ItemID)
 	Declare LBoxString string local
 	; scan the broker for the item clicked on in the list
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyItemList].Item[${ItemID}]}]
-	broker Name "${LBoxString}" Sort ByPriceAsc
+	broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
 
 }
 
@@ -518,7 +518,7 @@ function BrokerSearch(string lookup)
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
-	broker Name "${lookup}" Sort ByPriceAsc
+	broker Name "${lookup}" Sort ByPriceAsc MaxLevel 999
 	Wait 15
 	; if broker has any listed to compare with your item
 	if "${Vendor.NumItemsForSale} >0"
