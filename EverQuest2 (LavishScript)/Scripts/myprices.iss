@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.09a : Started 18 Nov 2007 : released 20 Nov 2007
+; Version 0.09b : Started 18 Nov 2007 : released 21 Nov 2007
 ;
 ; Main Script
 ;
@@ -488,6 +488,11 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 function checkcash(float Buyprice, int Buynumber, float MyCash)
 {
 	Declare NewBuyNumber int 0
+	; if trying to buy over 200 then limit to 200 (SoE limit)
+	if ${Buynumber} > 200
+	{
+		Buynumber:Set[200]
+	}
 	if ${Math.Calc[(${Buyprice}*${Buynumber})]} > ${MyCash}
 	{
 		NewBuyNumber:Set[${Math.Calc[${MyCash}/${Buyprice}]}]
