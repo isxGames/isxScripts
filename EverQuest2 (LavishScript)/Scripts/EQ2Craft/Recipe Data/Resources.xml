@@ -4,7 +4,7 @@
 	<Set Name="Harvest List">
 		<Setting Name="A Pristine Piece of Granite">A Pristine Piece of Granite</Setting>
 		<Setting Name="Aerated Mineral Water">Aerated Mineral Water</Setting>
-		<Setting Name="Alkali Loam">Alkali Loam</Setting>
+		<Setting Name="Alkali Loam">Alkali L	oam</Setting>
 		<Setting Name="Alkaline Loam">Alkaline Loam</Setting>
 		<Setting Name="Aviak Meat">Aviak Meat</Setting>
 		<Setting Name="boiled leather pelt">boiled leather pelt</Setting>
@@ -214,5 +214,28 @@
 		<Setting Name="Sullied Low Quality Pelt">Sullied Low Quality Pelt</Setting>
 		<Setting Name="Supple Loam">Supple Loam</Setting>
 		<Setting Name="The Blood Ruby">The Blood Ruby</Setting>
+    <Setting Name="Lichenclover Root">Lichenclover Root</Setting>
+		<Setting Name="Incanadine Cluster">Incanadine Cluster</Setting>
+		<Setting Name="Smoldering Material">Smoldering Material</Setting>
+		<Setting Name="Rough Fire Emerald">Rough Fire Emerald</Setting>
+		<Setting Name="Mantrap Root">Mantrap Root</Setting>
+		<Setting Name="Mahogany Lumber">Mahogany Lumber</Setting>
+		<Setting Name="Hidebound Leather">Hidebound Pelt</Setting>
+		<Setting Name="Deklium Cluster">Deklium Cluster</Setting>
+		<Setting Name="Silicate Loam">Silicate Loam</Setting>
+		<Setting Name="Tynnonium Cluster">Tynnonium Cluster</Setting>
+		<Setting Name="Kunzite">Rough Kunzite</Setting>
+		<Setting Name="Raw Lichenclover Root">Lichenclover Root</Setting>
+		<Setting Name="Rough Kunzite">Rough Kunzite</Setting>
+		<Setting Name="Ferrite Cluster">Ferrite Cluster</Setting>
+		<Setting Name="Mineral Salt Loam">Mineral Salt Loam</Setting>
+		<Setting Name="King Prawn">King Prawn</Setting>
+		<Setting Name="Succulent Petal">Raw Succulent Petal</Setting>
+		<Setting Name="Torsis Tea Leaf">Torsis Tea Leaf</Setting>
+		<Setting Name="Cabilis Cocoa Bean">Cabilis Cocoa Bean</Setting>
+		<Setting Name="Redwood Lumber">Redwood Lumber</Setting>
+		<Setting Name="Raw Cranberry">Raw Cranberry</Setting>
+		<Setting Name="Barracuda Meat">Barracuda</Setting>
+		<Setting Name="Bristled Leather">Bristled Pelt</Setting>		
 	</Set>
 </InnerSpaceSettings>
