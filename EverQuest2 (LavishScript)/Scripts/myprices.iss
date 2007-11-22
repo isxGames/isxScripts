@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.09b : Started 18 Nov 2007 : released 21 Nov 2007
+; Version 0.09c : Started 18 Nov 2007 : released 22 Nov 2007
 ;
 ; Main Script
 ;
@@ -17,7 +17,7 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
-	echo Running MyPrices version 0.09a - released : 20 Nov 2007
+	echo Running MyPrices version 0.09c - released : 22 Nov 2007
 
 	; Declare Variables
 	;
@@ -398,8 +398,11 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 	Declare FinishBuy bool local
 	Declare BrokerNumber int local
 	Declare BrokerPrice float local
+	Declare TryBuy int local
 	Declare StopSearch bool FALSE local
 	Declare MyCash float local
+	Declare OldCash float local
+	Declare BoughtNumber int local
 
 	Call BrokerSearch "${BuyName}"
 
@@ -428,38 +431,37 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 				; if there are items available (sometimes broker number shows 0 available when someone beats you to it)
 				if ${BrokerNumber} >0
 				{
-					; if the broker entry being looked at shows more items than we want then buy what we want and exit
-					if ${BrokerNumber} > ${BuyNumber}
+					do
 					{
-						; check you can afford to buy the items
-						call checkcash ${BrokerPrice} ${BuyNumber} ${MyCash}
-						; buy what you can afford
-						if ${Return} > 0
+						BrokerNumber:Set[${Vendor.Broker[${CurrentItem}].Quantity}]
+
+						; if the broker entry being looked at shows more items than we want then buy what we want
+						if ${BrokerNumber} > ${BuyNumber}
 						{
-							Echo Buying (${Return}) ${BuyName} at ${Vendor.Broker[${CurrentItem}].Price}
-							Vendor.Broker[${CurrentItem}]:Buy[${Return}]
-							wait 10
-							BuyNumber:Set[0]
+							TryBuy:Set[${BuyNumber}]
 						}
 						else
 						{
-						; if you can't afford any then stop scanning
-						StopSearch:Set[TRUE]
-						break
+							; otherwise buy whats there
+
+							TryBuy:Set[${BrokerNumber}]
 						}
-					}
-					; otherwise buy whats there, reduce the number wanted by the number bought and carry on
-					else
-					{
 						; check you can afford to buy the items
-						call checkcash ${BrokerPrice} ${BrokerNumber} ${MyCash}
+						call checkcash ${BrokerPrice} ${TryBuy} ${MyCash}
 						; buy what you can afford
 						if ${Return} > 0
 						{
-							Echo Buying (${Return}) ${BuyName} at ${Vendor.Broker[${CurrentItem}].Price}
+							OldCash:Set[${MyCash}]
 							Vendor.Broker[${CurrentItem}]:Buy[${Return}]
-							wait 10
-							BuyNumber:Set[${Math.Calc[${BuyNumber}-${Return}]}]
+							wait 15
+							MyCash:Set[${Math.Calc[(${Me.Platinum}*10000)+(${Me.Gold}*100)+(${Me.Silver})+(${Me.Copper}/100)]}]
+							; check you have actually bought an item
+							call checkbought ${BrokerPrice} ${OldCash} ${MyCash}
+							BoughtNumber:Set[${Return}]
+							; reduce the number left to buy
+							BuyNumber:Set[${Math.Calc[${BuyNumber}-${BoughtNumber}]}]
+							Call StringFromPrice ${BrokerPrice}
+							Echo Bought (${BoughtNumber}) ${BuyName} at ${Return}
 						}
 						else
 						{
@@ -468,6 +470,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 							break
 						}
 					}
+					While ${BrokerNumber} > 0 && ${BuyNumber} > 0
 				}
 			}
 			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
@@ -477,7 +480,39 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 		; keep going till all items listed have been scanned and bought or you have reached your limit
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 		; now we've bought all that are available , save the number we've still got left to buy
-		call Saveitem Buy "${BuyName}" ${BuyPrice} ${BuyNumber}
+		 call Saveitem Buy "${BuyName}" ${BuyPrice} ${BuyNumber}
+	}
+
+}
+
+; function to check you actually bought an item (stops false positives if someone beats you to it or someone removes an item before you can buy it)
+
+function checkbought(float BrokerPrice, float OldCash, float NewCash)
+{
+	Declare Diff float local
+	Declare DiffInt int local
+
+	; find out how much was spent
+	Diff:Set[${Math.Calc[${OldCash}-${NewCash}]}]
+
+	; Find out how many were bought
+	Diff:Set[${Math.Calc[${Diff}/${BrokerPrice}]}]
+
+
+	; Check for partial amounts due to rounding errors in math calculations
+
+	If ${Diff} > 1
+	{
+		DiffInt:Set[${Diff}]
+		If ${Math.Calc[${Diff}-${DiffInt}]} > 0.5
+		{
+			DiffInt:Inc
+		}
+		return ${DiffInt}
+	}
+	else
+	{
+		Return 1
 	}
 
 }
@@ -488,10 +523,10 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 function checkcash(float Buyprice, int Buynumber, float MyCash)
 {
 	Declare NewBuyNumber int 0
-	; if trying to buy over 200 then limit to 200 (SoE limit)
-	if ${Buynumber} > 200
+	; if trying to buy over 100 then limit to 100 (SoE limit for non harvests)
+	if ${Buynumber} > 100
 	{
-		Buynumber:Set[200]
+		Buynumber:Set[100]
 	}
 	if ${Math.Calc[(${Buyprice}*${Buynumber})]} > ${MyCash}
 	{
@@ -594,7 +629,7 @@ function LoadList()
 			{
 				do
 				{
-					numitems:Set[${Math.Calc[${numitems}+1]}]
+					numitems:Inc
 					labelname:Set[${Me.Vending[${i}].Consignment[${j}]}]
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem[${labelname}]
 					Money:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
@@ -995,14 +1030,17 @@ function deletebuyinfo(int ItemID)
 	LavishSettings[myprices]:AddSet[Buy]
 
 	variable settingsetref BuyList
+
+	; find the item Sub-Set and remove it
 	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
-	variable settingsetref BuyItem
 	BuyList.FindSet["${itemname}"]:Remove
 
+	; save the new information
 	LavishSettings[myprices]:Export["myprices.xml"]
 
 	UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Deleting ${itemname}]
 
+	; re-scan and display the new buy list
 	call buy init
 }
 
