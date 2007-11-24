@@ -1,9 +1,28 @@
-MyPrices - Version 0.09a
+MyPrices - Version 0.09e
 
 For update details see the bottom of this file.
 
 
-Please read all of this before starting.
+Please Note:
+------------
+To fully use the selling part of this script , you MUST group all items of the same name listed in
+the same container together on your broker list...
+
+If you have 2 items listed in the same container (Ebon Cluster for example) and you list them seperately
+
+Ebon Cluster
+Ebon Cluster
+
+instead of 
+
+Ebon Cluster (2)
+
+Then the script will fail to set one or both back up for sale.
+
+This is a limitation of SoE's broker system and I cannot work around it.
+
+Listing the same item seperately in 2 or more DIFFERENT containers will not cause this problem.
+
 
 What this Script will do
 ------------------------
@@ -27,7 +46,7 @@ it buys them until the number items you set have been bought or you run out of m
 
 (it will buy the cheapest items first)
 
-If you can't buy a complete stack of items (someone is selling 500 and you only have enough cash for 476) then
+If you can't afford to buy all the items you set (someone is selling 500 and you only have enough cash for 476) then
 it will buy 476 of them.
 
 
@@ -70,7 +89,8 @@ ticking this will increase your prices to match the lowest price above yours if 
 
 Set Prices for unlisted items
 -----------------------------
-This will make myprices match the price of any unlisted items on your broker list to the lowest price available and set them as for sale.
+This will make myprices match the price of any unlisted items on your broker list to the lowest price available , if the item
+has had a minimum price set previously and the lowest price is too low , your minimum price will be used instead,
 
 Leaving this unticked will make the script skip unlisted items.
 
@@ -87,7 +107,7 @@ This causes the script to re-start at the beginning once it has scanned everythi
 Scan Sales
 ----------
 
-With this ticked the script will scan/compare the items you have up for sale
+With this ticked the script will scan/compare the items you have up for sale.
 
 
 
@@ -144,8 +164,8 @@ Tick the Box marked Minimum Price if it's unticked , this makes the script check
 Change the values in the boxes under 'Minimum Price' to match what you want them to be and press 'Save' , the setting and value
 will be updated and the list will re-load.
 
-To stop using a minimum price just untick the box, the Minium price boxes will grey out and the script will ignore any minimum price
-set for that item when doing it's scan.
+To stop using a minimum price just untick the box, the minimum price boxes will grey out and the script will not check for
+a minimum price for that item when doing it's scan.
 
 
 
@@ -175,11 +195,12 @@ During the Scan
 
 As the items are checked the color of the item changes in the GUI list.
 
-Brown  - The item was unable to be changed , there was nothing on the broker to compare it to.
+Black  - The item was unable to be changed , there was nothing on the broker to compare it to.
 Green  - The item price matches the current lowest price on the broker.
 Yellow - Your item is the lowest price on the broker.
 Red    - Your item is priced higher than the lowest price on the broker , but that price is below your minimum allowed price. 
 Blue   - New unlisted Item added to the broker list
+Orange - The item was not inside your broker containers when it was reached in the list , sold or removed.
 
 The Future
 ----------
@@ -204,6 +225,17 @@ Discussion thread for myprices can be found at : http://www.isxgames.com/forums/
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
 
 Updates :
+
+
+Version 0.9b-0.9e
+-----------------
+
+Major code revision:
+
+The script no longer cares where the item being looked at is in your broker list , it will work fine now however you
+sort your list , by name , price , listed , it should find and list/change/unlist them without any problems.
+
+Added : All changes are now logged in the Log Tab instead of the Lavish Console Window , press 'clear' to clear the entries.
 
 
 Version 0.9a
