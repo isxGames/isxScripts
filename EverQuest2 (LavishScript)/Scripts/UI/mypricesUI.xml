@@ -277,7 +277,7 @@
 						<Y>190</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
-						<Text>Brown : Not Changed</Text>
+						<Text>Black : Not Changed</Text>
 					</Text>
 					<Text Name='Green' Template='EQ2.Text'>
 						<X>5%</X>
@@ -307,9 +307,16 @@
 						<Height>15</Height>
 						<Text>Blue : New Item Listed</Text>
 					</Text>
+					<Text Name='Orange' Template='EQ2.Text'>
+						<X>5%</X>
+						<Y>290</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Orange : Item Sold</Text>
+					</Text>
 					<Text Name='Itemname' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>325</Y>
+						<Y>435</Y>
 						<Width>44%</Width> 
 						<Height>15</Height>
 					</Text>
@@ -456,8 +463,8 @@
 					</Commandbutton>
 
 					<checkbox Name='MinPrice' Template='EQ2.checkbox'>
-						<X>25</X>
-						<Y>430</Y>
+						<X>325</X>
+						<Y>435</Y>
 						<Width>10%</Width>
 						<Height>20</Height>
 						<Text>Minimum price</Text>
@@ -511,10 +518,8 @@
 						<Sort>None</Sort>
 						<OnSelect>
 							Script[myprices]:QueueCommand[call FillMinPrice ${ID}]
+							Script[myprices]:QueueCommand[call ClickBrokerSearch Sell ${ID}]
 						</OnSelect>
-						<OnDeSelect>
-							Script[myprices]:QueueCommand[call FillMinPrice ${ID}]
-						</OnDeSelect>
 					</listbox>
 					<Commandbutton name='Start Scanning' Template='EQ2.Commandbutton'> 
 						<X>20%</X> 
@@ -592,7 +597,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<listbox Name='BuyItemList' Template='EQ2.listbox'>
+					<listbox Name='ItemList' Template='EQ2.listbox'>
 						<X>5%</X>
 						<Y>40</Y>
 						<Width>90%</Width>
@@ -601,7 +606,7 @@
 						<Sort>None</Sort>
 						<OnSelect>
 							Script[myprices]:QueueCommand[call ShowBuyPrices ${ID}]
-							Script[myprices]:QueueCommand[call ClickBrokerSearch ${ID}]
+							Script[myprices]:QueueCommand[call ClickBrokerSearch Buy ${ID}]
 
 						</OnSelect>
 					</listbox>
@@ -720,6 +725,33 @@
 						</OnLeftClick>
 						<AutoTooltip>
 							Delete Selected Item
+						</AutoTooltip>
+					</Commandbutton>
+				</Tab>
+				<Tab Name='Log'>
+					<listbox Name='ItemList' Template='EQ2.listbox'>
+						<X>5%</X>
+						<Y>2%</Y>
+						<Width>90%</Width>
+						<Height>90%</Height>
+						<Font>
+							<Name>Times New Roman</Name>
+							<Size>14</Size>
+						</Font>
+						<SelectMultiple>0</SelectMultiple>
+						<Sort>None</Sort>
+					</listbox>
+					<Commandbutton name='Clearlog' Template='EQ2.Commandbutton'> 
+						<X>75%</X> 
+						<Y>95%</Y> 
+						<Width>100</Width> 
+						<Height>15</Height>
+						<Text>Clear Log</Text>
+						<OnLeftClick>
+							UIElement[ItemList@Log@GUITabs@MyPrices]:ClearItems
+						</OnLeftClick>
+						<AutoTooltip>
+							Clear Log
 						</AutoTooltip>
 					</Commandbutton>
 				</Tab>
