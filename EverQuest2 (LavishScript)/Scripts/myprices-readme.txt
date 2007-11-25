@@ -203,15 +203,14 @@ Blue   - New unlisted Item added to the broker list
 Orange - The item was not inside your broker containers when it was reached in the list , sold or removed.
 
 The Future
-----------
+==========
 
 Plans for developing this script are the following:
 
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
 by more efficient code once it's all working as I want it to.
 
-
-Working more checks into the buy routine (Set max amount to spend in total each session , empty bag slots etc)
+Working more checks into the buy routine (Set max amount to spend in total each session , check for empty bag slots etc)
 
 
 
@@ -225,6 +224,18 @@ Discussion thread for myprices can be found at : http://www.isxgames.com/forums/
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
 
 Updates :
+
+
+Version 0.9f
+------------
+
+Ok , the script now REALLY doesn't care how the items are sorted on your container list...I mean it this time...
+sorting your items by Listed caused some wierd problems , now fixed.
+
+Small update to other parts of the script also to simplify it somewhat.
+
+Script will collect any money on your broker from sales automatically from each selling container as it scans them , 
+you can now afford those extra items you wanted to be automatically bought :p 
 
 
 Version 0.9b-0.9e

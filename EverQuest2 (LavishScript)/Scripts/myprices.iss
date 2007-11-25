@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.09e : Started 18 Nov 2007 : released 25 Nov 2007
+; Version 0.09f : Started 18 Nov 2007 : released 25 Nov 2007
 ;
 ; Main Script
 ;
@@ -109,6 +109,11 @@ function main()
 				SellLoc:Set[${Me.Vending[${i}].Market}]
 				SellCon:Set[${Me.Vending[${i}]}]
 
+				if ${Me.Vending[${i}].CurrentCoin} > 0
+				{
+					Me.Vending[${i}]:TakeCoin
+				}
+
 				if ${SellLoc.Equal["Haven"]}
 				{
 					Commission:Set[40]
@@ -150,19 +155,20 @@ function main()
 						{
 							Me.Vending[${i}].Consignment[${j}]:Unlist
 							wait 10
+
+							; check the item hasn't moved in the list because it was unlisted
+							call FindItem ${i} "${currentitem}"
+							j:Set[${Return}]
+
 						}
 						while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 
-						; check the item hasn't moved in the list because it was unlisted
-						call FindItem ${i} "${currentitem}"
-						j:Set[${Return}]
-
 						call SetColour ${currentpos} FF0B0301
 						; check to see if the items minimum price should be used or not
-						Call CheckMinPriceSet "${Me.Vending[${i}].Consignment[${j}]}"
+						Call CheckMinPriceSet "${currentitem}"
 						MinPriceSet:Set[${Return}]
 						; Call Search routine to find the lowest price
-						Call BrokerSearch "${Me.Vending[${i}].Consignment[${j}]}"
+						Call BrokerSearch "${currentitem}"
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
 						{
@@ -170,7 +176,7 @@ function main()
 							MinPrice:Set[${Return}]
 
 							; check if the item is in the myprices settings file
-							call checkitem "${Me.Vending[${i}].Consignment[${j}]}"
+							call checkitem "${currentitem}"
 							MinSalePrice:Set[${Return}]
 
 							; if a stored Minimum Sale price was found then carry on
@@ -199,7 +205,7 @@ function main()
 										call StringFromPrice ${MinBasePrice}
 										MinBasePriceS:Set[${Return}]
 										call StringFromPrice ${MinSalePrice}
-										call AddLog "${Me.Vending[${i}].Consignment[${j}].Name} : ${MinBasePriceS} : My Lowest : ${Return}" FFFF0000
+										call AddLog "${currentitem} : ${MinBasePriceS} : My Lowest : ${Return}" FFFF0000
 										; Set the text in the list box line to red
 										call SetColour ${currentpos} FFFF0000
 									}
@@ -207,7 +213,7 @@ function main()
 									{
 										; otherwise inform/change value to match
 										call StringFromPrice ${MinBasePrice}
-										call AddLog "${Me.Vending[${i}].Consignment[${j}].Name} :  Price to match is ${Return}" FF00FF00
+										call AddLog "${currentitem} :  Price to match is ${Return}" FF00FF00
 										If ${MatchLowPrice}
 										{
 											call SetColour ${currentpos} FF00FF00
@@ -226,7 +232,7 @@ function main()
 										If !${ItemUnlisted}
 										{
 											call StringFromPrice ${MinBasePrice}
-											call AddLog "${Me.Vending[${i}].Consignment[${j}].Name} : Price to match is ${Return} :" FF00FF00
+											call AddLog "${currentitem} : Price to match is ${Return} :" FF00FF00
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
 										}
 										else
@@ -236,21 +242,21 @@ function main()
 											if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 											{
 												call StringFromPrice ${MinSalePrice}
-												call AddLog "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}" FFFF0000
+												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FFFF0000
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]
-												Call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinSalePrice}
+												Call Saveitem Sell "${currentitem}" ${MinSalePrice}
 												call SetColour ${currentpos} FFFF0000
 											}
 											else
 											{
 												; otherwise use the lowest price on the vendor
 												call StringFromPrice ${MinBasePrice}
-												call AddLog "${Me.Vending[${i}].Consignment[${j}].Name} : Unlisted : Setting to ${Return}" FF00FF00
+												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FF00FF00
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
 												; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 												if ${MinSalePrice} == 0
 												{
-													Call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}].Name}" ${MinBasePrice}
+													Call Saveitem Sell "${currentitem}" ${MinBasePrice}
 												}
 												call SetColour ${currentpos} FF0000FF
 											}
@@ -264,8 +270,8 @@ function main()
 							}
 							else
 							{
-								call AddLog "Adding ${Me.Vending[${i}].Consignment[${j}]} at ${MyBasePrice}" FF00CCFF
-								call Saveitem Sell "${Me.Vending[${i}].Consignment[${j}]}" ${MyBasePrice}
+								call AddLog "Adding ${currentitem} at ${MyBasePrice}" FF00CCFF
+								call Saveitem Sell "${currentitem}" ${MyBasePrice}
 							}
 							; make sure the item is re-listed for sale
 							call ReListItem ${i} "${currentitem}"
@@ -336,22 +342,26 @@ function FindItem(int i, string itemname)
 function ReListItem(int i, string itemname)
 {
 	Declare loopcount int local
+	Declare j int local
 
 	Call FindItem ${i} "${itemname}"
-
-	if ${Return} != -1
+	j:Set[${Return}]
+	if ${j} != -1
 	{
 		; Re-List the item for sale
 		loopcount:Set[0]
 		do
 		{
-			Me.Vending[${i}].Consignment[${Return}]:List
-			wait 10
+			Me.Vending[${i}].Consignment[${j}]:List
+			wait 15
+			Call FindItem ${i} "${itemname}"
+			j:Set[${Return}]
+
 		}
-		while !${Me.Vending[${i}].Consignment[${Return}].IsListed} && ${loopcount:Inc} < 10
+		while !${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 		if ${loopcount} == 10
 		{
-			call AddLog "*** ERROR - unable to mark ${Me.Vending[${i}].Consignment[${j}]} as listed for sale" FFFF0000
+			call AddLog "*** ERROR - unable to mark ${itemname} as listed for sale" FFFF0000
 		}
 	}
 }
@@ -461,7 +471,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 	Declare MyCash float local
 	Declare OldCash float local
 	Declare BoughtNumber int local
-
+	Declare MaxBuy int local
 	Call BrokerSearch "${BuyName}"
 
 
@@ -480,6 +490,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 				BrokerNumber:Set[${Vendor.Broker[${CurrentItem}].Quantity}]
 				; How much each single item costs
 				BrokerPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+
 				; if it's more than I want to pay then stop
 				if ${BrokerPrice} > ${BuyPrice}
 				{
@@ -616,10 +627,12 @@ function BrokerSearch(string lookup)
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
+	Declare stopsearch bool FALSE local
+
 	broker Name "${lookup}" Sort ByPriceAsc MaxLevel 999
 	Wait 15
-	; if broker has any listed to compare with your item
-	if "${Vendor.NumItemsForSale} >0"
+	; check if broker has any listed to compare with your item
+	if ${Vendor.NumItemsForSale} >0
 	{
 		; Work through the brokers list page by page
 		do
@@ -632,13 +645,14 @@ function BrokerSearch(string lookup)
 				if "${lookup.Equal["${Vendor.Broker[${CurrentItem}]}"]}"
 				{
 					TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+					stopsearch:Set[TRUE]
 					break
 				}
 			}
-			while "${CurrentItem:Inc}<=${Vendor.NumItemsForSale}"
+			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && !${stopsearch}
 			wait 10
 		}
-		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${TempMinPrice} == -1
+		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${TempMinPrice} == -1 && !${stopsearch}
 	}
 	; Return the Lowest Price Found or -1 if nothing found.
 	return ${TempMinPrice}
