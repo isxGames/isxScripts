@@ -496,7 +496,7 @@
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffAvoidanceGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
 			<OnLeftClick>
 				declare tmpvar int
-	
+
 				This:ClearItems
 				tmpvar:Set[1]
 				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
@@ -516,9 +516,9 @@
 						{
 							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 						}
-	
+
 					}
-	
+
 				}
 				while ${tmpvar:Inc}&lt;=5
 			</OnLeftClick>
@@ -547,7 +547,7 @@
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffSentinelGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
 			<OnLeftClick>
 				declare tmpvar int
-	
+
 				This:ClearItems
 				tmpvar:Set[1]
 				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
@@ -567,9 +567,9 @@
 						{
 							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 						}
-	
+
 					}
-	
+
 				}
 				while ${tmpvar:Inc}&lt;=5
 			</OnLeftClick>
@@ -598,7 +598,7 @@
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffDeagroGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
 			<OnLeftClick>
 				declare tmpvar int
-	
+
 				This:ClearItems
 				tmpvar:Set[1]
 				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
@@ -618,9 +618,9 @@
 						{
 							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 						}
-	
+
 					}
-	
+
 				}
 				while ${tmpvar:Inc}&lt;=5
 			</OnLeftClick>
@@ -635,15 +635,15 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 </ISUI>
