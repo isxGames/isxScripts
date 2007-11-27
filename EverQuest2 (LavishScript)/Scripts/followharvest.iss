@@ -99,6 +99,7 @@ function DoHarvest(int NodeID)
 		EQ2Execute /useability Gathering
 		EQ2Execute /useability Foresting
 		EQ2Execute /useability Fishing
+		EQ2Execute /useability Collecting
 	}
 
 	wait 2
