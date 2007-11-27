@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.09f : Started 18 Nov 2007 : released 25 Nov 2007
+; Version 0.09g : Started 18 Nov 2007 : released 27 Nov 2007
 ;
 ; Main Script
 ;
@@ -48,14 +48,16 @@ function main()
 	Declare BuyNumber int script
 	Declare BuyPrice float script
 	Declare currentitem string script
+	Declare PauseTimer int script
 	Declare loopcount int 0 local
-
+	Declare StopWaiting int script
 	variable settingsetref flabel
 
 	ISXEQ2:ResetInternalVendingSystem
 
 	MyPrices:loadsettings
 	MyPrices:LoadUI
+
 
 
 #define WAITEXTPERIOD 120
@@ -73,6 +75,11 @@ function main()
 
 	call buy init
 
+	if ${ScanSellNonStop}
+	{
+		call AddLog "Pausing ${PauseTimer} minutes between scans" FF0000FF
+	}
+
 	do
 	{
 		; wait for the UI Start Scanning button to be pressed
@@ -87,7 +94,8 @@ function main()
 			}
 		}
 		While ${Pausemyprices}
-
+		PauseTimer:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[PauseTimer].Text}]
+		call SaveSetting PauseTimer ${PauseTimer}
 		; Start scanning the broker
 
 		if ${SellItems}
@@ -312,7 +320,12 @@ function main()
 		{
 			call buy scan
 		}
-
+		if ${ScanSellNonStop} && ${PauseTimer} > 0
+		{
+			call AddLog "Pausing for ${PauseTimer} minutes " FF0033EE
+			wait ${Math.Calc[600*${PauseTimer}]} ${StopWaiting}
+			StopWaiting:Set[0]
+		}
 	}
 	While ${Exitmyprices} == FALSE
 }
@@ -697,6 +710,12 @@ function LoadList()
 	{
 		if (${Me.Vending[${i}](exists)})
 		{
+			if ${Me.Vending[${i}].CurrentCoin} > 0
+			{
+				Me.Vending[${i}]:TakeCoin
+				wait 10
+			}
+
 			if ${Me.Vending[${i}].NumItems}>0
 			{
 				do
@@ -760,6 +779,7 @@ objectdef BrokerBot
 		IgnoreCopper:Set[${GeneralSetting.FindSetting[IgnoreCopper]}]
 		BuyItems:Set[${GeneralSetting.FindSetting[BuyItems]}]
 		SellItems:Set[${GeneralSetting.FindSetting[SellItems]}]
+		PauseTimer:Set[${GeneralSetting.FindSetting[PauseTimer]}]
 	}
 
 }
@@ -901,25 +921,25 @@ function FillMinPrice(int ItemID)
 	Declare Silver int local
 	Declare Copper int local
 	Declare ItemName string local
+	Declare j int local
 
 	; Put the values in the right boxes.
 
 	; Display the current price
+	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${ItemID}]}]
 
-	ItemName:Set[${Me.Vending[${itemprice[${ItemID},1]}].Consignment[${itemprice[${ItemID},2]}].Name}]
+	call FindItem ${itemprice[${ItemID}]} "${LBoxString}"
+	j:Set[${Return}]
 
-	if !${ItemName.Equal["${itemlist[${ItemID}]}"]}
+	if ${j} != -1
 	{
-		; Item List name doesn't match your consignment items name , re-scan the list
-		call LoadList
-	}
-	else
-	{
-		UIElement[Itemname@Sell@GUITabs@MyPrices]:SetText[${itemlist[${ItemID}]}]
+		ItemName:Set[${Me.Vending[${itemprice[${ItemID}]}].Consignment[${j}].Name}]
+
+		UIElement[Itemname@Sell@GUITabs@MyPrices]:SetText[${LBoxString}]
 
 		; Display your current Price for that Item
 
-		Money:Set[${Me.Vending[${itemprice[${ItemID},1]}].Consignment[${itemprice[${ItemID},2]}].BasePrice}]
+		Money:Set[${Me.Vending[${itemprice[${ItemID}]}].Consignment[${j}].BasePrice}]
 
 		Platina:Set[${Math.Calc[${Money}/10000]}]
 		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
@@ -934,7 +954,6 @@ function FillMinPrice(int ItemID)
 		UIElement[SilverPrice@Sell@GUITabs@MyPrices]:SetText[${Silver}]
 		UIElement[CopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
 
-
 		; Display your minimum price for the item
 
 		LavishSettings:AddSet[myprices]
@@ -945,11 +964,10 @@ function FillMinPrice(int ItemID)
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 		ItemList:AddSet[${ItemName}]
 
-		LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${ItemID}]}]
-
 		variable settingsetref Item
 		Item:Set[${ItemList.FindSet[${LBoxString}]}]
 		Money:Set[${Item.FindSetting[Sell]}]
+
 		if !${Item.FindSetting[MinSalePrice]}
 		{
 			UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
@@ -992,15 +1010,6 @@ function FillMinPrice(int ItemID)
 		UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetText[${Silver}]
 		UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
 	}
-}
-
-
-; change the values in the arrays holding item name and placement in your broker system
-function SetArrayValues(int ListID, int i, int j, string text)
-{
-	itemlist[${ListID}]:Set["${text}"]
-	itemprice[${ListID},1]:Set[${i}]
-	itemprice[${ListID},2]:Set[${j}]
 }
 
 function CheckMinPriceSet(string itemname)

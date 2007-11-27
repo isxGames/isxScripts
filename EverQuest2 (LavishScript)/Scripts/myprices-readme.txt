@@ -1,4 +1,4 @@
-MyPrices - Version 0.09e
+MyPrices - Version 0.09g
 
 For update details see the bottom of this file.
 
@@ -108,6 +108,12 @@ Scan Sales
 ----------
 
 With this ticked the script will scan/compare the items you have up for sale.
+
+
+Delay in Minutes
+----------------
+
+Enter a value here to make the script pause this number of minutes between scans if Auto-Loop is toggled on.
 
 
 
@@ -224,6 +230,15 @@ Discussion thread for myprices can be found at : http://www.isxgames.com/forums/
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
 
 Updates :
+
+
+
+Version 0.9g
+------------
+
+Added an option to Pause the script between scans if Auto-Loop is toggled on
+
+Fixed a problem with setting the minimum price of an item.
 
 
 Version 0.9f
