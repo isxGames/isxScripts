@@ -1,4 +1,4 @@
-MyPrices - Version 0.09g
+MyPrices - Version 0.10a
 
 For update details see the bottom of this file.
 
@@ -48,6 +48,13 @@ it buys them until the number items you set have been bought or you run out of m
 
 If you can't afford to buy all the items you set (someone is selling 500 and you only have enough cash for 476) then
 it will buy 476 of them.
+
+
+Craft
+=====
+
+It is currently being coded to automatically produce a recipe list for the Craft Script , currently it can list what items you 
+need to produce and how many.
 
 
 Installing
@@ -117,7 +124,7 @@ Enter a value here to make the script pause this number of minutes between scans
 
 
 
-There are 2 Buttons.
+There are 3 Buttons.
 
 Start Scanning
 --------------
@@ -131,6 +138,14 @@ Stop and Quit
 -------------
 This waits till the current item scan has finished and then exits the script totally.
 
+
+Craft
+-----
+
+Clicking on this will make myprices scan your broker list , compare whats there with the values you set under the craft tab
+and report how many of what items you need to make to replenish your broker stocks.
+
+(Automatic creation of a recipe list which can be loaded into craft directly is under development)
 
 The Buy TAB
 ===========
@@ -151,6 +166,30 @@ If you select an item in the list box the script will do a broker search using t
  (helps to make sure you have the correct spelling)
 
 
+The Craft TAB
+=============
+
+This lists the items that you marked as 'craft' on the Sell Tab.
+
+Press Re-Scan to bring up the complete list of items marked as a craft item.
+
+Click on each entry in the list and you have 2 boxes..
+
+Craft Stack:  This should be the number of items you make every time you get a pristine result...
+(e.g. a woodworker on a totem you would put 3, arrows you would put 100 in this box)
+
+Stock Limit : Put how many (single) items you want as a minimum number in your broker list..
+(if you wanted to keep 60 Chameleon Totems on your broker then enter 60 , 4000 arrows you'd enter 4000)
+
+
+Press the Save button.
+
+
+
+Setting an item to be marked as a craftable item 
+------------------------------------------------
+
+Click on it's entry on the Sell List , check the 'craft' checkbox and press save.
 
 
 Setting a Minimum Price for Items to be sold at.
@@ -231,6 +270,15 @@ The more feedback I get the better I know which direction to take this and the f
 
 Updates :
 
+
+
+Version 10.0a
+-------------
+
+Started work on the script to produce a craft recipe file ready for loading , currently only echos whats needed onto the
+lavish console (work in progress , try it and let me know what you think)
+
+Fixed the text on the Sell Tab to be in the right places...
 
 
 Version 0.9g

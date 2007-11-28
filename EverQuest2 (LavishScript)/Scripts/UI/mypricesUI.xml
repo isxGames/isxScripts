@@ -239,10 +239,9 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-
 					<checkbox Name='SellItems' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>150</Y>
+						<Y>170</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Scan Sales</Text>
@@ -272,16 +271,17 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					
 					<Text Name='Normal' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>190</Y>
+						<Y>210</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Black : Not Changed</Text>
 					</Text>
 					<Text Name='Green' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>220</Y>
+						<Y>230</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Green : Matched Price</Text>
@@ -295,21 +295,21 @@
 					</Text>
 					<Text Name='Red' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>250</Y>
+						<Y>270</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Red : Unable to match</Text>
 					</Text>
 					<Text Name='Blue' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>270</Y>
+						<Y>290</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Blue : New Item Listed</Text>
 					</Text>
 					<Text Name='Orange' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>290</Y>
+						<Y>310</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Orange : Item Sold</Text>
@@ -317,7 +317,7 @@
 
 					<Text Name='PauseTimerText' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>330</Y>
+						<Y>350</Y>
 						<Width>150</Width> 
 						<Height>15</Height>
 						<Text>Delay in Minutes :</Text>
@@ -325,7 +325,7 @@
 
 					<Textentry Name='PauseTimer' Template='EQ2.Textentry'>
 						<X>140</X>
-						<Y>330</Y>
+						<Y>350</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
@@ -333,6 +333,20 @@
 							UIElement[PauseTimer@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.PauseTimer}]
 						</OnLoad>
 					</Textentry>
+					<Commandbutton name='Craft' Template='EQ2.Commandbutton'>
+						<X>5%</X>
+						<Y>370</Y>
+						<Width>100</Width>
+						<Height>20</Height>
+						<Text>Craft List</Text>
+						<AutoTooltip>
+							Create recipe list for Craft.
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call buy Craft scan]
+						</OnLeftClick>
+					</Commandbutton>
 
 					<Text Name='Itemname' Template='EQ2.Text'>
 						<X>25</X>
@@ -483,6 +497,17 @@
 						</AutoTooltip>
 					</Commandbutton>
 
+					<checkbox Name='CraftItem' Template='EQ2.checkbox'>
+						<X>325</X>
+						<Y>415</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Crafted Item</Text>
+						<AutoTooltip>
+							Mark this item as a crafted item.
+						</AutoTooltip>
+					</checkbox>
+
 					<checkbox Name='MinPrice' Template='EQ2.checkbox'>
 						<X>325</X>
 						<Y>435</Y>
@@ -534,7 +559,7 @@
 						<X>45%</X>
 						<Y>2%</Y>
 						<Width>52%</Width>
-						<Height>75%</Height>
+						<Height>72%</Height>
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
@@ -553,7 +578,6 @@
 							{
 								UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Stop Scanning]
 								Script[myprices].VariableScope.Pausemyprices:Set[FALSE]
-								Script[myprices]:QueueCommand[call LoadList]
 								Script[myprices].VariableScope.StopWaiting:Set[0]
 							}
 							else
@@ -561,7 +585,6 @@
 								UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Start Scanning]
 								Script[myprices].VariableScope.Pausemyprices:Set[TRUE]
 								Script[myprices].VariableScope.StopWaiting:Set[1]
-
 							}
 						</OnLeftClick>
 						<AutoTooltip>
@@ -628,6 +651,9 @@
 						<Height>70%</Height>
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
+						<OnLoad>
+							Script[myprices]:QueueCommand[call buy Buy Init]
+						</OnLoad>
 						<OnSelect>
 							Script[myprices]:QueueCommand[call ShowBuyPrices ${ID}]
 							Script[myprices]:QueueCommand[call ClickBrokerSearch Buy ${ID}]
@@ -691,13 +717,6 @@
 						<Text>CP</Text>
 						<Color>FFDDBB00</Color>
 					</Text>
-					<Text Name='BuyNameText' Template='EQ2.Text'>
-						<X>25</X>
-						<Y>460</Y>
-						<Width>80</Width> 
-						<Height>15</Height>
-						<Text>Name</Text>
-					</Text>
 					<Text Name='ErrorText' Template='EQ2.Text'>
 						<X>24%</X>
 						<Y>445</Y>
@@ -706,23 +725,30 @@
 					</Text>
 					<Textentry Name='BuyName' Template='EQ2.Textentry'>
 						<X>25</X>
-						<Y>480</Y>
+						<Y>475</Y>
 						<Width>350</Width> 
-						<Height>15</Height>
+						<Height>20</Height>
 						<MaxLength>70</MaxLength>
 					</Textentry>
+					<Text Name='BuyNameText' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>455</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Name</Text>
+					</Text>
 					<Text Name='BuyNumberText' Template='EQ2.Text'>
 						<X>390</X>
-						<Y>460</Y>
+						<Y>455</Y>
 						<Width>80</Width> 
-						<Height>15</Height>
+						<Height>20</Height>
 						<Text>Number</Text>
 					</Text>
 					<Textentry Name='BuyNumber' Template='EQ2.Textentry'>
 						<X>390</X>
-						<Y>480</Y>
+						<Y>475</Y>
 						<Width>50</Width> 
-						<Height>15</Height>
+						<Height>20</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Commandbutton name='SaveBuy' Template='EQ2.Commandbutton'> 
@@ -749,6 +775,91 @@
 						</OnLeftClick>
 						<AutoTooltip>
 							Delete Selected Item
+						</AutoTooltip>
+					</Commandbutton>
+				</Tab>
+				<Tab Name='Craft'>
+					<listbox Name='ItemList' Template='EQ2.listbox'>
+						<X>5%</X>
+						<Y>40</Y>
+						<Width>90%</Width>
+						<Height>70%</Height>
+						<SelectMultiple>0</SelectMultiple>
+						<Sort>None</Sort>
+						<OnLoad>
+							Script[myprices]:QueueCommand[call buy Craft Init]
+						</OnLoad>
+						<OnSelect>
+							Script[myprices]:QueueCommand[call ShowCraftInfo ${ID}]
+							Script[myprices]:QueueCommand[call ClickBrokerSearch Craft ${ID}]
+						</OnSelect>
+					</listbox>
+					<Commandbutton name='Rescan' Template='EQ2.Commandbutton'> 
+						<X>80%</X> 
+						<Y>15</Y> 
+						<Width>50</Width> 
+						<Height>15</Height>
+						<Text>Rescan</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call buy Craft init]
+						</OnLeftClick>
+						<AutoTooltip>
+							Update/Add a new item
+						</AutoTooltip>
+					</Commandbutton>
+					<Text Name='ErrorText' Template='EQ2.Text'>
+						<X>24%</X>
+						<Y>435</Y>
+						<Width>350</Width> 
+						<Height>15</Height>
+					</Text>
+					<Text Name='CraftName' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>455</Y>
+						<Width>350</Width> 
+						<Height>20</Height>
+						<MaxLength>70</MaxLength>
+					</Text>
+					<Text Name='CraftStackText' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>485</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Craft Stack</Text>
+					</Text>
+					<Textentry Name='CraftStack' Template='EQ2.Textentry'>
+						<X>110</X>
+						<Y>485</Y>
+						<Width>50</Width> 
+						<Height>20</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Text Name='CraftNumberText' Template='EQ2.Text'>
+						<X>190</X>
+						<Y>485</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Stock Limit</Text>
+					</Text>
+					<Textentry Name='CraftNumber' Template='EQ2.Textentry'>
+						<X>260</X>
+						<Y>485</Y>
+						<Width>50</Width> 
+						<Height>20</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Commandbutton name='SaveCraft' Template='EQ2.Commandbutton'> 
+						<X>340</X> 
+						<Y>485</Y> 
+						<Width>50</Width> 
+						<Height>15</Height>
+						<Text>Save</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call savecraftinfo]
+							Script[myprices]:QueueCommand[call buy Craft Init]
+						</OnLeftClick>
+						<AutoTooltip>
+							Update an item
 						</AutoTooltip>
 					</Commandbutton>
 				</Tab>

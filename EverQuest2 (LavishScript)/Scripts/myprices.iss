@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.09g : Started 18 Nov 2007 : released 27 Nov 2007
+; Version 0.10a : Started 27 Nov 2007 : released 28 Nov 2007
 ;
 ; Main Script
 ;
@@ -22,6 +22,7 @@ function main()
 	Declare MinPriceSet bool script
 	Declare IgnoreCopper bool script
 	Declare SellItems bool script
+	Declare Craft bool script
 	Exitmyprices:Set[FALSE]
 	Pausemyprices:Set[TRUE]
 
@@ -69,15 +70,13 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
-	call AddLog "Running MyPrices version 0.09e - released : 25 Nov 2007" FF11FFCC
+	call AddLog "Running MyPrices version 0.10a - released : 28 Nov 2007" FF11FFCC
 
 	call LoadList
 
-	call buy init
-
 	if ${ScanSellNonStop}
 	{
-		call AddLog "Pausing ${PauseTimer} minutes between scans" FF0000FF
+		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
 	}
 
 	do
@@ -85,8 +84,8 @@ function main()
 		; wait for the UI Start Scanning button to be pressed
 		do
 		{
-			Waitframe
 			ExecuteQueued
+			Waitframe
 			; exit if the Stop and Quit Button is Pressed
 			if ${Exitmyprices} == TRUE
 			{
@@ -94,12 +93,16 @@ function main()
 			}
 		}
 		While ${Pausemyprices}
+
+		call LoadList
+
 		PauseTimer:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[PauseTimer].Text}]
 		call SaveSetting PauseTimer ${PauseTimer}
 		; Start scanning the broker
 
 		if ${SellItems}
 		{
+			; reset all the main script counters to 1
 			currentpos:Set[1]
 			i:Set[1]
 			j:Set[1]
@@ -112,7 +115,7 @@ function main()
 				i:Set[${itemprice[${currentpos}]}]
 
 
-				; check where the container is being sold from to get the commission
+				; check where the container is being sold from to get the commission %
 
 				SellLoc:Set[${Me.Vending[${i}].Market}]
 				SellCon:Set[${Me.Vending[${i}]}]
@@ -143,7 +146,6 @@ function main()
 				if ${j} != -1
 				{
 					; is the item listed for sale ?
-
 					if ${Me.Vending[${i}].Consignment[${j}].IsListed}
 					{
 						ItemUnlisted:Set[FALSE]
@@ -157,17 +159,16 @@ function main()
 						; Calclulate the price someone would pay with commission
 						MyBasePrice:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
 						MyPrice:Set[${Math.Calc[((${MyBasePrice}/100)*${Math.Calc[100+${Commission}]})]}]
+
 						; Unlist the item to make sure it's not included in the check for lower/higher prices
 						loopcount:Set[0]
 						do
 						{
 							Me.Vending[${i}].Consignment[${j}]:Unlist
 							wait 10
-
 							; check the item hasn't moved in the list because it was unlisted
 							call FindItem ${i} "${currentitem}"
 							j:Set[${Return}]
-
 						}
 						while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 
@@ -281,8 +282,9 @@ function main()
 								call AddLog "Adding ${currentitem} at ${MyBasePrice}" FF00CCFF
 								call Saveitem Sell "${currentitem}" ${MyBasePrice}
 							}
-							; make sure the item is re-listed for sale
-							call ReListItem ${i} "${currentitem}"
+
+							; Re-List item for sale
+								call ReListItem ${i} "${currentitem}"
 
 						}
 						else
@@ -318,7 +320,7 @@ function main()
 		; Script starts to scan for items to buy if flagged.
 		if ${BuyItems}
 		{
-			call buy scan
+			call buy Buy scan
 		}
 		if ${ScanSellNonStop} && ${PauseTimer} > 0
 		{
@@ -328,6 +330,30 @@ function main()
 		}
 	}
 	While ${Exitmyprices} == FALSE
+}
+
+function addtotals(string itemname, int itemnumber)
+{
+	LavishSettings:AddSet[craft]
+	LavishSettings[craft]:AddSet[CraftItem]
+	Declare Totals int local
+
+	variable settingsetref CraftList
+
+	CraftList:Set[${LavishSettings[craft].FindSet[CraftItem]}]
+
+
+	if ${CraftList.FindSetting[${itemname}](exists)}
+	{
+		Totals:Set[${CraftList.FindSetting[${itemname}]}]
+		CraftList:AddSetting[${itemname},${Math.Calc[${Totals}+${itemnumber}]}]
+	}
+	else
+	{
+		CraftList:AddSetting[${itemname},${itemnumber}]
+		LavishSettings[craft]:Export["mycraft.xml"]
+	}
+	;	Data can be read using ${CraftList.FindSetting[${itemname}]}
 }
 
 function FindItem(int i, string itemname)
@@ -380,23 +406,32 @@ function ReListItem(int i, string itemname)
 }
 
 
-function buy(string action)
+function buy(string tabname, string action)
 {
 	; Read data from myprices.xml
 	;
+	Declare CraftItem bool local
+	Declare CraftStack int local
+	Declare CraftMinTotal inc local
 
 	variable settingsetref BuyList
 	variable settingsetref BuyName
 
-	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
-
+	if ${tabname.Equal["Buy"]}
+	{
+		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
+	}
+	else
+	{
+		BuyList:Set[${LavishSettings[myprices].FindSet[Item]}]
+	}
 	; make sure nothing from a previous run is in memory (DEVL)
 
 	BuyList:Clear
 
 	if ${action.Equal["init"]}
 	{
-		UIElement[ItemList@Buy@GUITabs@MyPrices]:ClearItems
+		UIElement[ItemList@${tabname}@GUITabs@MyPrices]:ClearItems
 	}
 
 	LavishSettings[myprices]:Import["myprices.xml"]
@@ -430,7 +465,7 @@ function buy(string action)
 				; init = build up the list of items on the buy tab
 				; scan = check the broker list one by one - do buy and various workhorse routines
 
-				if ${action.Equal["init"]}
+				if ${action.Equal["init"]} && ${tabname.Equal["Buy"]}
 				{
 					UIElement[ItemList@Buy@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
 				}
@@ -440,6 +475,7 @@ function buy(string action)
 					if ${BuyNameIterator:First(exists)}
 					{
 						; Scan the subset to get all the settings
+						CraftItem:Set[FALSE]
 						do
 						{
 							if ${BuyNameIterator.Key.Equal["BuyNumber"]}
@@ -450,19 +486,47 @@ function buy(string action)
 							{
 								BuyPrice:Set[${BuyNameIterator.Value}]
 							}
+							elseif ${BuyNameIterator.Key.Equal["CraftItem"]}
+							{
+								CraftItem:Set[${BuyNameIterator.Value}]
+							}
+							elseif ${BuyNameIterator.Key.Equal["Stack"]}
+							{
+								CraftStack:Set[${BuyNameIterator.Value}]
+							}
+							elseif ${BuyNameIterator.Key.Equal["Stock"]}
+							{
+								CraftMinTotal:Set[${BuyNameIterator.Value}]
+							}
 
 						}
 						while ${BuyNameIterator:Next(exists)}
 						; run the routine to scan and buy items if we still need more bought
-						if ${BuyNumber} > 0
+						if ${BuyNumber} > 0 && ${tabname.Equal["Buy"]}
 						{
 							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber}
+						}
+						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
+						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
+						{
+							if ${CraftItem}
+							{
+								UIElement[ItemList@Craft@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
+							}
+						}
+						elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
+						{
+							; if the item is marked as a craft one then check if the Minimum broker total has been reached
+							if ${CraftItem}
+							{
+								call checktotals "${BuyIterator.Key}" ${CraftStack} ${CraftMinTotal}
+							}
 						}
 					}
 				}
 			}
 
-			; Keep looping till you've read all the Items listed under the Buy Sub-Set
+			; Keep looping till you've read all the Items listed under the ${tabname} Sub-Set
 			while ${NameIterator:Next(exists)}
 		}
 		; Keep looping till you've read all the items in the Top level sets
@@ -470,6 +534,28 @@ function buy(string action)
 	}
 }
 
+; check to see if we need to make more craftable items to refil our broker stocks
+function checktotals(string itemname, int stacksize, int minlimit)
+{
+	LavishSettings:AddSet[craft]
+	LavishSettings[craft]:AddSet[CraftItem]
+	Declare Totals int 0 local
+	Declare Makemore int 0 local
+
+	variable settingsetref CraftList
+
+	CraftList:Set[${LavishSettings[craft].FindSet[CraftItem]}]
+
+	if ${CraftList.FindSetting[${itemname}](exists)}
+	{
+		Totals:Set[${CraftList.FindSetting[${itemname}]}]
+	}
+	if ${Totals} < ${minlimit}
+	{
+		Makemore:Set[${Math.Calc[(${minlimit}-${Totals})/${stacksize}]}]
+		Echo you need to make ${Makemore} more stacks of ${itemname}
+	}
+}
 
 function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 {
@@ -698,8 +784,24 @@ function checkitem(string name)
 
 function LoadList()
 {
+	LavishSettings:AddSet[myprices]
+	LavishSettings[myprices]:AddSet[General]
+	LavishSettings[myprices]:AddSet[Item]
+	LavishSettings[myprices]:AddSet[Buy]
+
+	; keep a reference directly to the Item set.
+
+	; clear all totals held in the craft set
+	LavishSettings[craft]:Clear
+
+	variable settingsetref ItemList
+	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+	variable settingsetref Item
+
+
 	Declare labelname string local
 	Declare Money float local
+
 
 	UIElement[ItemList@Sell@GUITabs@MyPrices]:ClearItems
 
@@ -722,6 +824,15 @@ function LoadList()
 				{
 					numitems:Inc
 					labelname:Set[${Me.Vending[${i}].Consignment[${j}]}]
+
+					Item:Set[${ItemList.FindSet[${labelname}]}]
+
+					; if the item is flagged as a craft item then add the total on the broker
+					if ${Item.FindSetting[CraftItem]}
+					{
+						call addtotals "${labelname}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
+					}
+
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem[${labelname}]
 					Money:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
 					; store the item name
@@ -780,6 +891,10 @@ objectdef BrokerBot
 		BuyItems:Set[${GeneralSetting.FindSetting[BuyItems]}]
 		SellItems:Set[${GeneralSetting.FindSetting[SellItems]}]
 		PauseTimer:Set[${GeneralSetting.FindSetting[PauseTimer]}]
+		Craft:Set[${GeneralSetting.FindSetting[Craft]}]
+		; Non saved set for item totals
+		LavishSettings:AddSet[craft]
+		LavishSettings[craft]:Clear
 	}
 
 }
@@ -851,7 +966,8 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number)
 	LavishSettings[myprices]:AddSet[Buy]
 
 	variable settingsetref ItemList
-	if ${Saveset.Equal["Sell"]}
+
+	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
 	{
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 	}
@@ -877,11 +993,24 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number)
 		{
 			Item:AddSetting[MinSalePrice,FALSE]
 		}
+		if ${UIElement[CraftItem@Sell@GUITabs@MyPrices].Checked}
+		{
+			Item:AddSetting[CraftItem,TRUE]
+		}
+		else
+		{
+			Item:AddSetting[CraftItem,FALSE]
+		}
 	}
 	elseif ${Saveset.Equal["Buy"]}
 	{
 		Item:AddSetting[BuyNumber,${Number}]
 		Item:AddSetting[BuyPrice,${Money}]
+	}
+	elseif ${Saveset.Equal["Craft"]}
+	{
+		Item:AddSetting[Stack,${Money}]
+		Item:AddSetting[Stock,${Number}]
 	}
 
 	LavishSettings[myprices]:Export["myprices.xml"]
@@ -922,6 +1051,7 @@ function FillMinPrice(int ItemID)
 	Declare Copper int local
 	Declare ItemName string local
 	Declare j int local
+	Declare CraftItem bool local
 
 	; Put the values in the right boxes.
 
@@ -954,6 +1084,7 @@ function FillMinPrice(int ItemID)
 		UIElement[SilverPrice@Sell@GUITabs@MyPrices]:SetText[${Silver}]
 		UIElement[CopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
 
+
 		; Display your minimum price for the item
 
 		LavishSettings:AddSet[myprices]
@@ -967,6 +1098,17 @@ function FillMinPrice(int ItemID)
 		variable settingsetref Item
 		Item:Set[${ItemList.FindSet[${LBoxString}]}]
 		Money:Set[${Item.FindSetting[Sell]}]
+
+		CraftItem:Set[${Item.FindSetting[CraftItem]}]
+
+		if ${CraftItem}
+		{
+			UIElement[CraftItem@Sell@GUITabs@MyPrices]:SetChecked
+		}
+		else
+		{
+			UIElement[CraftItem@Sell@GUITabs@MyPrices]:UnsetChecked
+		}
 
 		if !${Item.FindSetting[MinSalePrice]}
 		{
@@ -1068,9 +1210,41 @@ function savebuyinfo()
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Saving Information]
 		call Saveitem Buy "${itemname}" ${Money} ${itemnumber}
-		call buy init
+		call buy Buy init
 	}
 }
+
+function savecraftinfo()
+{
+	Declare CraftName string local
+	Declare CraftStack int local
+	Declare CraftNumber int local
+
+	CraftName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftName].Text}]
+	CraftStack:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftStack].Text}]
+	CraftNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftNumber].Text}]
+
+	; check information was entered in all boxes and save
+
+	if ${CraftName.Length} == 0
+	{
+		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[No item selected]
+	}
+	elseif ${CraftStack} <= 0
+	{
+		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Try setting a valid Craft Stack size]
+	}
+	elseif ${CraftNumber} <= 0
+	{
+		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Try setting a valid Stock Limit]
+	}
+	else
+	{
+		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
+		call Saveitem Craft "${CraftName}" ${CraftStack} ${CraftNumber}
+	}
+}
+
 
 function deletebuyinfo(int ItemID)
 {
@@ -1095,7 +1269,7 @@ function deletebuyinfo(int ItemID)
 	UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Deleting ${itemname}]
 
 	; re-scan and display the new buy list
-	call buy init
+	call buy Buy init
 }
 
 ; Delete tyhe current item selected in the buybox
@@ -1109,6 +1283,7 @@ function ShowBuyPrices(int ItemID)
 	Declare Gold int local
 	Declare Silver int local
 	Declare Copper int local
+	Declare CraftItem bool local
 
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[ItemList].Item[${ItemID}]}]
 
@@ -1140,6 +1315,34 @@ function ShowBuyPrices(int ItemID)
 	UIElement[MinCopperPrice@Buy@GUITabs@MyPrices]:SetText[${Copper}]
 	UIElement[BuyNumber@Buy@GUITabs@MyPrices]:SetText[${number}]
 	UIElement[BuyName@Buy@GUITabs@MyPrices]:SetText[${LBoxString}]
+
+}
+
+function ShowCraftInfo(int ItemID)
+{
+	Declare LBoxString string local
+	Declare Stack int local
+	Declare Stock int local
+
+	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[ItemList].Item[${ItemID}]}]
+
+	LavishSettings:AddSet[myprices]
+	LavishSettings[myprices]:AddSet[General]
+	LavishSettings[myprices]:AddSet[Item]
+	LavishSettings[myprices]:AddSet[Buy]
+
+	variable settingsetref CraftList
+	CraftList:Set[${LavishSettings[myprices].FindSet[Item]}]
+
+	variable settingsetref CraftItem
+	CraftItem:Set[${CraftList.FindSet["${LBoxString}"]}]
+
+	Stack:Set[${CraftItem.FindSetting[Stack]}]
+	Stock:Set[${CraftItem.FindSetting[Stock]}]
+
+	UIElement[CraftName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
+	UIElement[CraftStack@Craft@GUITabs@MyPrices]:SetText[${Stack}]
+	UIElement[CraftNumber@Craft@GUITabs@MyPrices]:SetText[${Stock}]
 
 }
 
