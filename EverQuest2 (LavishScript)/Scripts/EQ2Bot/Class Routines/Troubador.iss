@@ -399,11 +399,12 @@ function Combat_Routine(int xAction)
 			EQ2Execute /toggleautoattack
 
 			;if we're too far from killtarget, move in
-			if ${Actor[${KillTarget}].Distance}>4
+			if ${Actor[${KillTarget}].Distance}>2
 			{
 				call CheckPosition 1 1
+				wait 15
 			}
-			wait 15
+
 		}
 		elseif ${JoustStatus}==1 && ${RangedAttackMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
 		{
@@ -420,7 +421,7 @@ function Combat_Routine(int xAction)
 			}
 			elseif ${Me.Ability[${SpellType[387]}].IsReady}
 			{
-				call CastSpellRange 388 0 1 0 ${KillTarget}
+				call CastSpellRange 387 0 1 0 ${KillTarget}
 			}
 			else
 			{
@@ -431,11 +432,12 @@ function Combat_Routine(int xAction)
 				call FindHealer
 
 				echo Healer - ${return}
-				if ${Actor[${Return}].Distance}>4
+				if ${Actor[${Return}].Distance}>2
 				{
 					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
+					wait 15
 				}
-				wait 15
+
 			}
 		}
 	}
@@ -538,7 +540,7 @@ function Combat_Routine(int xAction)
 		case Bow_Attack
 			if ${BowAttacksMode}
 			{
-				if ${Target.Distance}>25
+				if ${Target.Distance}>35
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
 				}
@@ -604,7 +606,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		Default
-			return "Melee Complete"
+			return Combat Complete
 			break
 	}
 

@@ -106,26 +106,23 @@ function Buff_Init()
 	PreSpellRange[9,1]:Set[396]
 	PreSpellRange[9,2]:Set[397]
 
-	PreAction[10]:Set[xxxxx]
-	PreSpellRange[10,1]:Set[999]
+	PreAction[10]:Set[AA_InfectiveBites]
+	PreSpellRange[10,1]:Set[394]
 
-	PreAction[11]:Set[AA_InfectiveBites]
-	PreSpellRange[11,1]:Set[394]
+	PreAction[11]:Set[AA_Coagulate]
+	PreSpellRange[11,1]:Set[395]
 
-	PreAction[12]:Set[AA_Coagulate]
-	PreSpellRange[12,1]:Set[395]
+	PreAction[12]:Set[BuffHorror]
+	PreSpellRange[12,1]:Set[40]
 
-	PreAction[13]:Set[BuffHorror]
-	PreSpellRange[13,1]:Set[40]
+	PreAction[13]:Set[BuffMitigation]
+	PreSpellRange[13,1]:Set[21]
 
-	PreAction[14]:Set[BuffMitigation]
-	PreSpellRange[4,1]:Set[21]
+	PreAction[14]:Set[BuffStrength]
+	PreSpellRange[14,1]:Set[20]
 
-	PreAction[15]:Set[BuffStrength]
-	PreSpellRange[15,1]:Set[20]
-
-	PreAction[16]:Set[BuffWaterBreathing]
-	PreSpellRange[16,1]:Set[280]
+	PreAction[15]:Set[BuffWaterBreathing]
+	PreSpellRange[15,1]:Set[280]
 
 }
 
@@ -408,17 +405,7 @@ function Buff_Routine(int xAction)
 		case Group_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
-		case Resurrection
-			temp:Set[1]
-			do
-			{
-				if ${Me.Group[${temp}].ToActor.Health}==-99 && ${Me.Group[${temp}].ToActor(exists)}
-				{
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 1 0 ${Me.Group[${temp}].ID} 1
-				}
-			}
-			while ${temp:Inc}<${Me.GroupCount}
-			break
+
 		case AA_Coagulate
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -442,8 +429,9 @@ function Buff_Routine(int xAction)
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
+			break
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 }
@@ -849,7 +837,26 @@ function CheckHeals()
 	;MAINTANK EMERGENCY HEAL
 	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ID.Equal[${MainTankID}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
+		call CastSpellRange 8 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
 		call EmergencyHeal ${MainTankID}
+	}
+
+	;MAINTANK HEALS
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && ${Actor[${MainTankID}].Health}>-99
+	{
+		call CastSpellRange 7 0 0 0 ${MainTankID}
+		call CastSpellRange 15
+	}
+
+	if ${Actor[${MainTankID}].Health}<50 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && ${Actor[${MainTankID}].Health}>-99
+	{
+		call CastSpellRange 8 0 0 0 ${MainTankID}
+	}
+
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}].Health}>-99 && ${Actor[${MainTankID}](exists)}
+	{
+		call CastSpellRange 387
+		call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
 
 	;ME HEALS
@@ -900,19 +907,6 @@ function CheckHeals()
 			}
 		}
 
-	}
-
-	;MAINTANK HEALS
-	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && ${Actor[${MainTankID}].Health}>-99
-	{
-		call CastSpellRange 7 0 0 0 ${MainTankID}
-		call CastSpellRange 15
-	}
-
-	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}].Health}>-99 && ${Actor[${MainTankID}](exists)}
-	{
-		call CastSpellRange 387
-		call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
 
 	;GROUP HEALS
