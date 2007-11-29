@@ -1,4 +1,4 @@
-MyPrices - Version 0.10a
+MyPrices - Version 0.10b
 
 For update details see the bottom of this file.
 
@@ -143,9 +143,10 @@ Craft
 -----
 
 Clicking on this will make myprices scan your broker list , compare whats there with the values you set under the craft tab
-and report how many of what items you need to make to replenish your broker stocks.
+and add how many of what items you need to make to replenish your broker stocks to your craft script favourites list.
 
-(Automatic creation of a recipe list which can be loaded into craft directly is under development)
+Next time you run craft you can choose 'myprices' from the list under the Advanced Tab , Press Load and then the Submit Queue button
+and you can then start crafting what you need.
 
 The Buy TAB
 ===========
@@ -270,6 +271,17 @@ The more feedback I get the better I know which direction to take this and the f
 
 Updates :
 
+
+Version 10.0b
+-------------
+
+Pressing the craft button will now crate a favourite in the craft script file containing details and numbers of
+the stock your broker list is short, you can choose to load this list and craft will re-create the stock you are 
+missing from your broker.
+
+**Warning** : this is still work in progress , the list will be created correctly but the script doesn't actually
+check you have run the craft script , the file/directory may not be there if you don't use the craft script or
+don't download all of the SVN - checks for missing files will be added soon.
 
 
 Version 10.0a

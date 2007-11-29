@@ -1,15 +1,27 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.10a : Started 27 Nov 2007 : released 28 Nov 2007
+; Version 0.10b : Started 27 Nov 2007 : released 29 Nov 2007
 ;
 ; Main Script
 ;
 function main()
 {
 
+	; set used to integrate craft
+	LavishSettings:AddSet[newcraft]
+	LavishSettings[newcraft]:Clear
+	LavishSettings[newcraft]:AddSet[General Options]
+	LavishSettings[newcraft]:AddSet[Recipe Favourites]
+
+	variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
+	LavishSettings[newcraft]:Import[${CraftPath}${Me.Name}.xml]
+
+
 	; Declare Variables
 	;
+
+
 	variable BrokerBot MyPrices
 	Declare MatchLowPrice bool script
 	Declare IncreasePrice bool script
@@ -70,7 +82,7 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
-	call AddLog "Running MyPrices version 0.10a - released : 28 Nov 2007" FF11FFCC
+	call AddLog "Running MyPrices version 0.10b - released : 29 Nov 2007" FF11FFCC
 
 	call LoadList
 
@@ -537,8 +549,10 @@ function buy(string tabname, string action)
 ; check to see if we need to make more craftable items to refil our broker stocks
 function checktotals(string itemname, int stacksize, int minlimit)
 {
+	; totals set (unsaved)
 	LavishSettings:AddSet[craft]
 	LavishSettings[craft]:AddSet[CraftItem]
+
 	Declare Totals int 0 local
 	Declare Makemore int 0 local
 
@@ -553,8 +567,36 @@ function checktotals(string itemname, int stacksize, int minlimit)
 	if ${Totals} < ${minlimit}
 	{
 		Makemore:Set[${Math.Calc[(${minlimit}-${Totals})/${stacksize}]}]
-		Echo you need to make ${Makemore} more stacks of ${itemname}
+		call AddLog "you need to make ${Makemore} more stacks of ${itemname}" FFCCFFCC
+		call addtocraft "${itemname}" ${Makemore}
 	}
+
+}
+
+; update the user file from craft to include a favourite called myprices
+; this set will contain all the items that have a totals shortfall
+function addtocraft(string itemname, int Makemore)
+{
+	LavishSettings:AddSet[newcraft]
+	LavishSettings[newcraft]:AddSet[General Options]
+	LavishSettings[newcraft]:AddSet[Recipe Favourites]
+
+	variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
+
+;	LavishSettings[newcraft]:Import[${CraftPath}${Me.Name}.xml]
+
+	variable settingsetref CraftItemList
+
+	CraftItemList:Set[${LavishSettings[newcraft].FindSet[Recipe Favourites]}]
+
+	CraftItemList:AddSet[myprices]
+
+	variable settingsetref CraftList
+
+	CraftList:Set[${CraftItemList.FindSet[myprices]}]
+
+	CraftList:AddSetting[${itemname},${Makemore}]
+	LavishSettings[newcraft]:Export[${CraftPath}${Me.Name}.xml]
 }
 
 function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
@@ -1272,7 +1314,7 @@ function deletebuyinfo(int ItemID)
 	call buy Buy init
 }
 
-; Delete tyhe current item selected in the buybox
+; Delete the current item selected in the buybox
 
 function ShowBuyPrices(int ItemID)
 {
