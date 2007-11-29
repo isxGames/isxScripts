@@ -344,7 +344,7 @@
 						</AutoTooltip>
 						<OnLeftClick>
 							Script[myprices]:QueueCommand[call LoadList]
-							Script[myprices]:QueueCommand[call buy Craft scan]
+							Script[myprices]:QueueCommand[call checkstock]
 						</OnLeftClick>
 					</Commandbutton>
 

@@ -8,16 +8,6 @@
 function main()
 {
 
-	; set used to integrate craft
-	LavishSettings:AddSet[newcraft]
-	LavishSettings[newcraft]:Clear
-	LavishSettings[newcraft]:AddSet[General Options]
-	LavishSettings[newcraft]:AddSet[Recipe Favourites]
-
-	variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
-	LavishSettings[newcraft]:Import[${CraftPath}${Me.Name}.xml]
-
-
 	; Declare Variables
 	;
 
@@ -417,6 +407,32 @@ function ReListItem(int i, string itemname)
 	}
 }
 
+function checkstock()
+{
+	; set used to integrate craft
+	LavishSettings:AddSet[newcraft]
+	LavishSettings[newcraft]:Clear
+	LavishSettings[newcraft]:AddSet[General Options]
+	LavishSettings[newcraft]:AddSet[Recipe Favourites]
+
+	variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
+	LavishSettings[newcraft]:Import[${CraftPath}${Me.Name}.xml]
+
+	variable settingsetref CraftItemList
+
+	CraftItemList:Set[${LavishSettings[newcraft].FindSet[Recipe Favourites]}]
+
+	CraftItemList:AddSet[myprices]
+
+	variable settingsetref CraftList
+
+	CraftList:Set[${CraftItemList.FindSet[myprices]}]
+
+	; Clear all entries
+	CraftItemList[myprices]:Clear
+
+	call buy Craft scan
+}
 
 function buy(string tabname, string action)
 {
@@ -586,8 +602,6 @@ function addtocraft(string itemname, int Makemore)
 
 	variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
 
-;	LavishSettings[newcraft]:Import[${CraftPath}${Me.Name}.xml]
-
 	variable settingsetref CraftItemList
 
 	CraftItemList:Set[${LavishSettings[newcraft].FindSet[Recipe Favourites]}]
@@ -599,6 +613,7 @@ function addtocraft(string itemname, int Makemore)
 	CraftList:Set[${CraftItemList.FindSet[myprices]}]
 
 	CraftList:AddSetting[${itemname},${Makemore}]
+
 	LavishSettings[newcraft]:Export[${CraftPath}${Me.Name}.xml]
 }
 
