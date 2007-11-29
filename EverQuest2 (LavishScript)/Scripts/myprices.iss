@@ -567,8 +567,11 @@ function checktotals(string itemname, int stacksize, int minlimit)
 	if ${Totals} < ${minlimit}
 	{
 		Makemore:Set[${Math.Calc[(${minlimit}-${Totals})/${stacksize}]}]
+		if ${Makemore}>0
+		{
 		call AddLog "you need to make ${Makemore} more stacks of ${itemname}" FFCCFFCC
 		call addtocraft "${itemname}" ${Makemore}
+		}
 	}
 
 }
