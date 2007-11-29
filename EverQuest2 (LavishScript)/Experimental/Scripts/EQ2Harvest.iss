@@ -1,11 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Harvest.iss Version 1.3.1
+; EQ2Harvest.iss Version 1.3
 ;
 ; Written by: Blazer
 ; Updated: 08/21/06 by Syliac
 ; Updated: 03/06/06 by Pygar
 ; Updated: 04/02/07 by Cr4zyb4rd (mostly cleanup)
-; Updated: 05/11/07 by Pygar (Fixed missing Diff)
+;
 ;
 ; Description:
 ; ------------
@@ -17,9 +17,6 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/moveto.iss"
 #endif
 
-#ifndef _PATHERGUI_
-	#include "${LavishScript.HomeDirectory}/Scripts/PatherGUI.ISS"
-#endif
 
 ;=====================================
 ;====== Keyboard Configuration =======
@@ -52,7 +49,6 @@ variable int HowtoQuit
 variable int DestroyBatch
 variable int BatchCount
 variable int HarvestClose
-variable int FilterY
 variable bool IntruderDetect
 variable int IntruderAction
 variable int blacklistcount
@@ -77,6 +73,7 @@ variable bool PauseHarvest=FALSE
 variable bool DestroyMeat=FALSE
 variable string StartPoint
 variable string FinishPoint
+variable string DestinationPoint
 variable string CurrentAction="Waiting to Start..."
 variable float WPX
 variable float WPZ
@@ -155,6 +152,7 @@ function main(string mode)
 
 	do
 	{
+		call CheckAggro
 
 		NavPath:Clear
 		PathIndex:Set[1]
@@ -166,19 +164,21 @@ function main(string mode)
 			if ${NearestPoint.Equal[${FinishPoint}]}
 			{
 				NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+				DestinationPoint:Set[${StartPoint}]
 			}
 			else
 			{
 				NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
 				PathDirection:Set[TRUE]
+				DestinationPoint:Set[${FinishPoint}]
 			}
-
 			call PathingRoutine
 			PathRoute:Set[4]
 			continue
 		}
 		else
 		{
+			NavPath:Clear
 			if ${firstpass}
 			{
 				NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
@@ -186,21 +186,32 @@ function main(string mode)
 				if ${NearestPoint.Equal[${FinishPoint}]}
 				{
 					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					DestinationPoint:Set[${StartPoint}]
+					PathDirection:Set[FALSE]
 				}
 				else
 				{
 					NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
-					PathDirection:Set[!${PathDirection}]
+					DestinationPoint:Set[${FinishPoint}]
+					PathDirection:Set[TRUE]
 				}
 				call PathingRoutine
 				firstpass:Set[FALSE]
 			}
 			else
 			{
-				NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
-				NavPath "${World}" "${FinishPoint}" "${StartPoint}"
-				PathDirection:Set[!${PathDirection}]
-
+				if ${PathDirection}
+				{
+					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					PathDirection:Set[FALSE]
+					DestinationPoint:Set[${StartPoint}]
+				}
+				else
+				{
+					NavPath "${World}" "${StartPoint}" "${FinishPoint}"
+					PathDirection:Set[TRUE]
+					DestinationPoint:Set[${FinishPoint}]
+				}
 				call PathingRoutine
 				firstpass:Set[FALSE]
 
@@ -327,9 +338,9 @@ function PathingRoutine()
 				NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 				if ${PathDirection}
 				{
-					if ${NearestPoint.Equal[${FinishPoint}]}
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
 					{
-						NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+						return
 					}
 					else
 					{
@@ -338,9 +349,9 @@ function PathingRoutine()
 				}
 				else
 				{
-					if ${NearestPoint.Equal[${StartPoint}]}
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
 					{
-						NavPath "${World}" "${StartPoint}" "${FinishPoint}"
+						return
 					}
 					else
 					{
@@ -376,7 +387,7 @@ function CheckAggro()
 		CurrentAction:Set[Waiting till aggro gone, and over 90 health...]
 		do
 		{
-			wait 5
+			wait 3
 		}
 		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
 
@@ -401,6 +412,8 @@ function StuckState()
 	CurrentAction:Set[We are stuck...]
 	NavPath:Clear
 
+	call CheckAggro
+
 	; Re-create the nav path and move to the nearest navpoint
 	NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 
@@ -417,9 +430,18 @@ function StuckState()
 	WPZ:Set[${NavPath.Point[1].Z}]
 	call moveto ${WPX} ${WPZ} 5 0 3 1
 
+
 	; Are we still Stuck?
 	if ${Return.Equal[STUCK]}
 	{
+			call CheckAggro
+			if ${Return.Equal[RESOLVED]}
+			{
+				PathIndex:Set[1]
+				stillstuck:Set[FALSE]
+				return
+			}
+
 		; Looks like we are stuck again. end script...
 		EQ2Echo We are stuck! Ending script...
 		if ${HowtoQuit}
@@ -434,6 +456,7 @@ function StuckState()
 	}
 	else
 	{
+		call CheckAggro
 		PathIndex:Set[1]
 	}
 	stillstuck:Set[FALSE]
@@ -525,41 +548,6 @@ function Harvest()
 	{
 		call CheckAggro
 		CurrentAction:Set[Harvesting ${Actor[${NodeID}].Name}]
-
-		if ${HarvestTool[${NodeType}].Equal["Trapping"]}
-			{
-			Me.Inventory[Sandalwood Trap]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Mining"]}
-			{
-			Me.Inventory[Calibrated Automated Pickaxe]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Gathering"]}
-			{
-			Me.Inventory[Sandalwood Shovel]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Foresting"]}
-			{
-			; Shears seem to stack with saw (but not shovel) but we have to have both slots free
-			; for auto-equip to work.
-			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-			Me.Equipment[Sandalwood Shovel]:UnEquip
-			Me.Equipment[Sandalwood Trap]:UnEquip
-			Me.Equipment[Calibrated Automated Watersafe Net]:UnEquip
-			waitframe
-			Me.Inventory[Sandalwood Saw]:Equip
-			Me.Inventory[Calibrated Automated Shears]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Fishing"]}
-			{
-			Me.Equipment[Calibrated Automated Shears]:UnEquip
-			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-			Me.Equipment[Sandalwood Shovel]:UnEquip
-			Me.Equipment[Sandalwood Trap]:UnEquip
-			waitframe
-			Me.Inventory[Sandalwood Fishing Pole]:Equip
-			Me.Inventory[Calibrated Automated Watersafe Net]:Equip
-			}
 
 		EQ2Execute /useability ${HarvestTool[${NodeType}]}
 
@@ -744,48 +732,6 @@ function DestroyItem(string destroyname)
 	while ${tempvar:Inc}<=${Me.CustomInventoryArraySize}
 }
 
-function InitHarvestEnhancer()
-{
-	variable int TempEnhance1=0
-	variable int TempEnhance2=1
-	variable int TempEnhance3
-	Me:CreateCustomInventoryArray[nonbankonly]
-	OriginalCharm:Set[${Me.Equipment[19].ID}]
-
-	if ${Me.Level} == 70
-		TempEnhance3:Set[69]
-	else
-		TempEnhance3:Set[${Me.Level}]
-
-	Do
-	{
-		Do
-		{
-			If ${Me.CustomInventory[${SettingXML[${harvestfile}].Set[Harvest Enhancer].GetString["${TempEnhance1},${TempEnhance2}"]}](exists)}
-				HarvestEnhancer[${TempEnhance2}]:Set[${SettingXML[${harvestfile}].Set[Harvest Enhancer].GetString["${TempEnhance1},${TempEnhance2}"]}]
-			elseif !${HarvestEnhancer[${TempEnhance2}].Length}
-				HarvestEnhancer[${TempEnhance2}]:Set[NULL]
-		}
-		while ${TempEnhance2:Inc} <= 5
-
-		TempEnhance2:Set[1]
-
-	}
-	while ${TempEnhance1:Inc} <= ${Math.Calc[${TempEnhance3}/10].Int}
-
-	TempEnhance2:Set[1]
-	do
-	{
-		if ${HarvestEnhancer[${TempEnhance2}](exists)}
-		{
-			UsedEnhancer:Set[TRUE]
-			echo ${HarvestEnhancer[${TempEnhance2}]}
-		}
-	}
-	while ${TempEnhance2:Inc} <= 5
-
-}
-
 function UpdateKeep(int keep)
 {
 	if ${DestroyNode[${keep}]}
@@ -813,6 +759,10 @@ function UpdateKeep(int keep)
 
 function Harvested(string Line, string action, int number, string result)
 {
+  ; clearly, "a" or "an" will == 0   :)
+  if (${number} == 0)
+    number:Set[1]
+
 	HarvestStat[${NodeType}]:Inc[${number}]
 
 	if ${NodeType}<=7
@@ -922,9 +872,9 @@ objectdef EQ2HarvestBot
 
 		MaxRoaming:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[Roaming Value,80]}]
 		HarvestClose:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[Distance for the bot to move outside the max roaming range?,15]}]
-		FilterY:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[What distance along Y axis should the bot ignore nodes?,30]}]
 		StartPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Starting Point,Start]}]
 		FinishPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Finishing Point,Finish]}]
+		DestinationPoint:Set[${FinishPoint}]
 
 		SettingXML[${ConfigFile}]:Save
 
@@ -958,7 +908,6 @@ objectdef EQ2HarvestBot
 	{
 		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 		ui -reload "${UIPath}HarvestGUI.xml"
-		call InjectPatherTab "EQ2Harvest Tabs@Harvest" "${NavigationPath}"
 	}
 
 	member:int Node()
@@ -978,7 +927,7 @@ objectdef EQ2HarvestBot
 				if ${CustomActor[${tcount}].Name.Equal[${NodeName[${tempvar}]}]} && ${CustomActor[${tcount}].Type.Equal[resource]} && ${HarvestNode[${tempvar}]}
 				{
 					; Check Distance and Roaming Distance is within range.
-					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
+					if ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose}
 					{
 						; Check if its not a Bad Node
 						nodecnt:Set[0]
