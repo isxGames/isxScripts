@@ -599,7 +599,7 @@ function addtocraft(string itemname, int Makemore)
 
 	CraftList:AddSetting[${itemname},${Makemore}]
 
-	LavishSettings[newcraft]:Export[${CraftPath}${Me.Name}_MyPrices.xml]
+	LavishSettings[newcraft]:Export[${CraftPath}${Me.Name}.xml]
 }
 
 function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
