@@ -143,20 +143,20 @@ function Combat_Init()
    MobHealth[7,2]:Set[100]
    SpellRange[7,1]:Set[82]
 
-   Action[8]:Set[LayWaste]
-   MobHealth[8,1]:Set[10]
+   Action[8]:Set[Melee_Attack2]
+   MobHealth[8,1]:Set[5]
    MobHealth[8,2]:Set[100]
-   SpellRange[8,1]:Set[393]
+   SpellRange[8,1]:Set[153]
 
-   Action[9]:Set[Melee_Attack1]
-   MobHealth[9,1]:Set[5]
+   Action[9]:Set[LayWaste]
+   MobHealth[9,1]:Set[10]
    MobHealth[9,2]:Set[100]
-   SpellRange[9,1]:Set[157]
+   SpellRange[9,1]:Set[393]
 
-   Action[10]:Set[Melee_Attack2]
+   Action[10]:Set[Melee_Attack1]
    MobHealth[10,1]:Set[5]
    MobHealth[10,2]:Set[100]
-   SpellRange[10,1]:Set[153]
+   SpellRange[10,1]:Set[157]
 
    Action[11]:Set[Melee_Attack3]
    MobHealth[11,1]:Set[5]
@@ -395,7 +395,7 @@ echo ${xAction} - ${SpellType[${SpellRange[${xAction},1]}]} - ${Me.Ability[${Spe
 			case Melee_Attack1
 			case Melee_Attack2
 			case Melee_Attack3
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
