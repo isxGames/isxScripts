@@ -143,54 +143,54 @@ function Combat_Init()
    MobHealth[7,2]:Set[100]
    SpellRange[7,1]:Set[82]
 
-   Action[6]:Set[LayWaste]
-   MobHealth[6,1]:Set[10]
-   MobHealth[6,2]:Set[100]
-   SpellRange[6,1]:Set[393]
-
-   Action[8]:Set[Melee_Attack1]
-   MobHealth[8,1]:Set[5]
+   Action[8]:Set[LayWaste]
+   MobHealth[8,1]:Set[10]
    MobHealth[8,2]:Set[100]
-   SpellRange[8,1]:Set[157]
+   SpellRange[8,1]:Set[393]
 
-   Action[9]:Set[Melee_Attack2]
+   Action[9]:Set[Melee_Attack1]
    MobHealth[9,1]:Set[5]
    MobHealth[9,2]:Set[100]
-   SpellRange[9,1]:Set[153]
+   SpellRange[9,1]:Set[157]
 
-   Action[10]:Set[Melee_Attack3]
+   Action[10]:Set[Melee_Attack2]
    MobHealth[10,1]:Set[5]
    MobHealth[10,2]:Set[100]
-   SpellRange[10,1]:Set[154]
+   SpellRange[10,1]:Set[153]
 
-   Action[11]:Set[Charge]
-   SpellRange[11,1]:Set[80]
+   Action[11]:Set[Melee_Attack3]
+   MobHealth[11,1]:Set[5]
+   MobHealth[11,2]:Set[100]
+   SpellRange[11,1]:Set[154]
 
-   Action[12]:Set[Taunt2]
-   SpellRange[12,1]:Set[161]
+   Action[12]:Set[Charge]
+   SpellRange[12,1]:Set[80]
 
-	 Action[13]:Set[AoE_Taunt2]
-	 SpellRange[13,1]:Set[171]
+   Action[13]:Set[Taunt2]
+   SpellRange[13,1]:Set[161]
 
-   Action[14]:Set[Melee_Attack4]
-   SpellRange[14,1]:Set[152]
+	Action[14]:Set[AoE_Taunt2]
+	SpellRange[14,1]:Set[171]
 
-   Action[15]:Set[Melee_Attack5]
-   SpellRange[15,1]:Set[81]
+   Action[15]:Set[Melee_Attack4]
+   SpellRange[15,1]:Set[152]
 
    Action[16]:Set[Melee_Attack5]
-   SpellRange[16,1]:Set[150]
+   SpellRange[16,1]:Set[81]
 
-   Action[17]:Set[Melee_Attack6]
-   SpellRange[17,2]:Set[151]
+   Action[17]:Set[Melee_Attack5]
+   SpellRange[17,1]:Set[150]
 
-   Action[18]:Set[Shield_Attack]
-   Power[18,1]:Set[5]
-   Power[18,2]:Set[100]
-   SpellRange[18,1]:Set[240]
-	 SpellRange[18,2]:Set[400]
+   Action[18]:Set[Melee_Attack6]
+   SpellRange[18,1]:Set[151]
 
-   Action[19]:Set[ThermalShocker]
+   Action[19]:Set[Shield_Attack]
+   Power[19,1]:Set[5]
+   Power[19,2]:Set[100]
+   SpellRange[19,1]:Set[240]
+	 SpellRange[19,2]:Set[400]
+
+   Action[20]:Set[ThermalShocker]
 
 }
 
@@ -224,9 +224,10 @@ function Buff_Routine(int xAction)
 
 		case Avoidance_Target
 			BuffTarget:Set[${UIElement[cbBuffAvoidanceGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[1,:]}].ID}
+				wait 5
 			}
 			break
 
@@ -245,7 +246,7 @@ function Buff_Routine(int xAction)
 			break
 
 		case AA_Buckler
-			if if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -347,7 +348,7 @@ function Combat_Routine(int xAction)
 	;echo in combat
 	if ${FullAutoMode}
 	{
-
+echo ${xAction} - ${SpellType[${SpellRange[${xAction},1]}]} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].Name} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 		switch ${Action[${xAction}]}
 		{
 			case LayWaste
