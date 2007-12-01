@@ -286,35 +286,34 @@
 						<Height>15</Height>
 						<Text>Green : Matched Price</Text>
 					</Text>
-					<Text Name='Yellow' Template='EQ2.Text'>
-						<X>5%</X>
-						<Y>250</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Yellow : Lowest Price</Text>
-					</Text>
 					<Text Name='Red' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>270</Y>
+						<Y>250</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Red : Unable to match</Text>
 					</Text>
 					<Text Name='Blue' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>290</Y>
+						<Y>270</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Blue : New Item Listed</Text>
 					</Text>
 					<Text Name='Orange' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>310</Y>
+						<Y>290</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Orange : Item Sold</Text>
 					</Text>
-
+					<Text Name='Yellow' Template='EQ2.Text'>
+						<X>5%</X>
+						<Y>310</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Yellow : Craft Flagged</Text>
+					</Text>
 					<Text Name='PauseTimerText' Template='EQ2.Text'>
 						<X>25</X>
 						<Y>350</Y>

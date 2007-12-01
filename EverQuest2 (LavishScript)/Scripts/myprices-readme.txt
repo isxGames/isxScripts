@@ -53,18 +53,12 @@ it will buy 476 of them.
 Craft
 =====
 
-It is currently being coded to automatically produce a recipe list for the Craft Script , currently it can list what items you 
-need to produce and how many.
+You can set it to automatically create a recipe list favourite for the Craft Script based on how many crafted items
+you have left for sale on the broker.
 
 
-Installing
-----------
-
-Copy/extract the contents of this archive into your scripts folder inside your C:\Program Files\InnerSpace\ folder.
-
-
-Running
--------
+Running This Script
+-------------------
 
 Select a Broker , open up a broker window
 either
@@ -78,7 +72,7 @@ or
 2. type /run myprices in your EQ2 chat window.
 
 
-The script will then open the GUI , scan your broker system and list whats in them.
+The script will then open the GUI , scan your broker system and list whats on it.
 
 
 The Sell TAB
@@ -138,7 +132,6 @@ Stop and Quit
 -------------
 This waits till the current item scan has finished and then exits the script totally.
 
-
 Craft
 -----
 
@@ -147,6 +140,56 @@ and add how many of what items you need to make to replenish your broker stocks 
 
 Next time you run craft you can choose 'myprices' from the list under the Advanced Tab , Press Load and then the Submit Queue button
 and you can then start crafting what you need.
+
+
+The Sell TAB
+============
+
+Setting a Minimum Price for Items to be sold at.
+-----------------------------------------------
+
+To stop people trying to fool the script by pricing something REALLY low then buying your goods when the price is changed (if you get
+it to change prices for you automatically), the script can store the name of each item and the minimum price you will accept for it 
+(Minus Broker fee).
+
+The script will then NOT lower your prices below that price.
+
+To set/change the minimum sale price for an item click on it's name in the list , the current price and your current minimum price
+will be shown on the left hand side.
+
+Tick the Box marked Minimum Price if it's unticked , this makes the script check the minimum price when it scans that item.
+
+Change the values in the boxes under 'Minimum Price' to match what you want them to be and press 'Save' , the setting and value
+will be updated and the list will re-load.
+
+To stop using a minimum price just untick the box, the minimum price boxes will grey out and the script will not check for
+a minimum price for that item when doing it's scan.
+
+
+Setting an item to be marked as a craftable item 
+------------------------------------------------
+
+Click on it's entry on the Sell List , check the 'craft' checkbox and press save.
+
+
+Automatically adding new items
+------------------------------
+
+If you toggle the 'set prices of unlisted items' option on and put new items in your broker box without listing them for sale and
+the following will happen.
+
+The script scans for the lowest price for an item currently on the broker.
+
+1. If a minimum price for that item was set previously and the lowest price is LOWER then your minimum price the minimum price is used.
+2. If a minimum price for that item was set previously and the lowest price is HIGHER then your minimum price the lowest price is matched.
+3. If the item does not have a minimum price set then the item price is matched with the lowest price on the broker.
+
+It may sound complicated , but what it means is you can just dump items in your broker list and let myprices set the price for you
+and mark them as Listed.
+
+If there are no broker items to compare a new item to then nothing will happen , you can either leave the item there until someone else
+lists one or set a price using EQ2 broker system.
+
 
 The Buy TAB
 ===========
@@ -163,7 +206,7 @@ Press Save to add the item to the list.
 
 Selecting an item in the listbox and pressing delete removes it from the list.
 
-If you select an item in the list box the script will do a broker search using that name
+When you select an item in the list box the script will do a broker search using that name
  (helps to make sure you have the correct spelling)
 
 
@@ -187,54 +230,6 @@ Press the Save button.
 
 
 
-Setting an item to be marked as a craftable item 
-------------------------------------------------
-
-Click on it's entry on the Sell List , check the 'craft' checkbox and press save.
-
-
-Setting a Minimum Price for Items to be sold at.
------------------------------------------------
-
-To stop people trying to fool the script by pricing something REALLY low then buying your goods when the price is changed (if you get
-it to change prices for you automatically), the script can store the name of each item and the minimum price you will accept for it 
-(Minus Broker fee).
-
-The script will then NOT lower your prices below that price.
-
-To set/change the minimum sale price for an item click on it's name in the list , the current price and your current minimum price
-will be shown on the left hand side.
-
-Tick the Box marked Minimum Price if it's unticked , this makes the script check the minimum price when it scans that item.
-
-Change the values in the boxes under 'Minimum Price' to match what you want them to be and press 'Save' , the setting and value
-will be updated and the list will re-load.
-
-To stop using a minimum price just untick the box, the minimum price boxes will grey out and the script will not check for
-a minimum price for that item when doing it's scan.
-
-
-
-Automatically adding new items
-------------------------------
-
-If you toggle the 'set prices of unlisted items' option on and put new items in your broker box without listing them for sale and
-setting a price the following will happen.
-
-The script scans for the lowest price for an item currently on the broker.
-
-1. If a minimum price for that item was set previously and the lowest price is LOWER then your minimum price the minimum price is used.
-2. If a minimum price for that item was set previously and the lowest price is HIGHER then your minimum price the lowest price is matched.
-3. If the item does not have a minimum price set then the item price is matched with the lowest price on the broker.
-
-The item is then Listed for sale.
-
-It may sound complicated , but what it means is you can just dump items in your broker list and let myprices set the price for you
-and mark them as Listed.
-
-If there are no broker items to compare a new item to then nothing will happen , you can either leave the item there until someone else
-lists one or set a price using EQ2 broker system.
-
 
 During the Scan
 ---------------
@@ -243,10 +238,10 @@ As the items are checked the color of the item changes in the GUI list.
 
 Black  - The item was unable to be changed , there was nothing on the broker to compare it to.
 Green  - The item price matches the current lowest price on the broker.
-Yellow - Your item is the lowest price on the broker.
 Red    - Your item is priced higher than the lowest price on the broker , but that price is below your minimum allowed price. 
 Blue   - New unlisted Item added to the broker list
 Orange - The item was not inside your broker containers when it was reached in the list , sold or removed.
+
 
 The Future
 ==========
@@ -258,6 +253,7 @@ by more efficient code once it's all working as I want it to.
 
 Working more checks into the buy routine (Set max amount to spend in total each session , check for empty bag slots etc)
 
+Add the buying of items using 'fuzzy logic' e.g. 25 adept I's between level 30 and 39 priced lower than 5 silver (requested)
 
 
 Contact the author
@@ -271,8 +267,31 @@ The more feedback I get the better I know which direction to take this and the f
 
 Updates :
 
+Version 0.11a
+-------------
 
-Version 10.0b
+1. I Changed the way the script stores datafiles , each character that uses the script now has their own datafile.
+
+(If you run the script on more than one character then each item marked as a craftable item will now be specific
+ to that character.)
+
+If you want to use your existing (version 10) datafile for one or more of your characters do the following
+
+Copy/Move the file MyPrices.xml file into the XML folder inside your script folder
+
+Rename the MyPrices.xml file charactername_myprices.xml
+
+So if the character is called Mycroft
+
+\scripts\myprices.xml becomes \scripts\XML\Mycroft_MyPrices.xml
+
+2. I Updated the script to remove a lot of duplicate indexing - it's much more efficent and a fair bit smaller now.
+
+3. The script will no longer unlist broker items unless the 'Auto-match Higher Prices' option is checked 
+   or Re-List items if they are already listed for sale , this speeds up scans by a large amount.
+
+
+Version 0.10b
 -------------
 
 Pressing the craft button will now crate a favourite in the craft script file containing details and numbers of
@@ -284,7 +303,7 @@ check you have run the craft script , the file/directory may not be there if you
 don't download all of the SVN - checks for missing files will be added soon.
 
 
-Version 10.0a
+Version 0.10a
 -------------
 
 Started work on the script to produce a craft recipe file ready for loading , currently only echos whats needed onto the
