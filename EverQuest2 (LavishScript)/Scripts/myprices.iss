@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.11 : Started 27 Nov 2007 : released 29 Nov 2007
+; Version 0.11b : Started 27 Nov 2007 : released 02 Dec 2007
 ;
 ; Declare Variables
 ;
@@ -57,7 +57,8 @@ variable settingsetref Item
 variable settingsetref General
 
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
-variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/XML/"
+variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/XML/"
+variable filepath MyPricesUIPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/UI/"
 
 ; Main Script
 ;
@@ -82,7 +83,7 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
-	call AddLog "Running MyPrices version 0.11a - released : 1 Dec 2007" FF11FFCC
+	call AddLog "Running MyPrices version 0.11b - released : 2 Dec 2007" FF11FFCC
 
 	call LoadList
 
@@ -364,7 +365,7 @@ function addtotals(string itemname, int itemnumber)
 	else
 	{
 		CraftList:AddSetting[${itemname},${itemnumber}]
-		LavishSettings[craft]:Export["mycraft.xml"]
+	;	LavishSettings[craft]:Export["mycraft.xml"]
 	}
 	;	Data can be read using ${CraftList.FindSetting[${itemname}]}
 }
@@ -890,58 +891,6 @@ function LoadList()
 	while ${i:Inc} <= 6
 }
 
-objectdef BrokerBot
-{
-	method LoadUI()
-	{
-		; Load the UI Parts
-		;
-		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
-		ui -reload "${LavishScript.HomeDirectory}/Scripts/UI/mypricesUI.xml"
-	}
-
-	method loadsettings()
-	{
-		; Read settings from The (character name).XML  setting file inside the XML sub-folder
-		;
-		LavishSettings:AddSet[myprices]
-		LavishSettings[myprices]:AddSet[General]
-		LavishSettings[myprices]:AddSet[Item]
-		LavishSettings[myprices]:AddSet[Buy]
-
-		; set used to integrate craft
-		LavishSettings:AddSet[newcraft]
-		LavishSettings[newcraft]:AddSet[General Options]
-		LavishSettings[newcraft]:AddSet[Recipe Favourites]
-
-		; Non saved set for item totals
-		LavishSettings:AddSet[craft]
-
-		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-
-		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
-
-		; make sure nothing from a previous run is in memory (DEVL)
-		myprices[ItemList]:Clear
-		myprices[BuyList]:Clear
-		LavishSettings[craft]:Clear
-
-		LavishSettings[myprices]:Import[${XMLPath}${Me.Name}_MyPrices.XML]
-		General:Set[${LavishSettings[myprices].FindSet[General]}]
-		MatchLowPrice:Set[${General.FindSetting[MatchLowPrice]}]
-		IncreasePrice:Set[${General.FindSetting[IncreasePrice]}]
-		SetUnlistedPrices:Set[${General.FindSetting[SetUnlistedPrices]}]
-		ScanSellNonStop:Set[${General.FindSetting[ScanSellNonStop]}]
-		IgnoreCopper:Set[${General.FindSetting[IgnoreCopper]}]
-		BuyItems:Set[${General.FindSetting[BuyItems]}]
-		SellItems:Set[${General.FindSetting[SellItems]}]
-		PauseTimer:Set[${General.FindSetting[PauseTimer]}]
-		Craft:Set[${General.FindSetting[Craft]}]
-	}
-
-}
-
-
 ; Convert a float price in silver to pp gp sp cp format
 function:string StringFromPrice(float Money)
 {
@@ -1351,12 +1300,69 @@ function AddLog(string textline, string colour)
 	UIElement[ItemList@Log@GUITabs@MyPrices]:AddItem[${textline},1,${colour}]
 }
 
+objectdef BrokerBot
+{
+	method LoadUI()
+	{
+		; Load the UI Parts
+		;
+		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
+		ui -reload "${MyPricesUIPath}mypricesUI.xml"
+	}
+
+	method loadsettings()
+	{
+		; Read settings from The (character name).XML  setting file inside the XML sub-folder
+		;
+		LavishSettings:AddSet[myprices]
+		LavishSettings[myprices]:AddSet[General]
+		LavishSettings[myprices]:AddSet[Item]
+		LavishSettings[myprices]:AddSet[Buy]
+
+		; set used to integrate craft
+		LavishSettings:AddSet[newcraft]
+		LavishSettings[newcraft]:AddSet[General Options]
+		LavishSettings[newcraft]:AddSet[Recipe Favourites]
+
+		; Non saved set for item totals
+		LavishSettings:AddSet[craft]
+
+		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+
+		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
+
+		; make sure nothing from a previous run is in memory (DEVL)
+		myprices[ItemList]:Clear
+		myprices[BuyList]:Clear
+		LavishSettings[craft]:Clear
+
+		;Load settings from that characters file
+		LavishSettings[myprices]:Import[${XMLPath}${Me.Name}_MyPrices.XML]
+
+		General:Set[${LavishSettings[myprices].FindSet[General]}]
+		MatchLowPrice:Set[${General.FindSetting[MatchLowPrice]}]
+		IncreasePrice:Set[${General.FindSetting[IncreasePrice]}]
+		SetUnlistedPrices:Set[${General.FindSetting[SetUnlistedPrices]}]
+		ScanSellNonStop:Set[${General.FindSetting[ScanSellNonStop]}]
+		IgnoreCopper:Set[${General.FindSetting[IgnoreCopper]}]
+		BuyItems:Set[${General.FindSetting[BuyItems]}]
+		SellItems:Set[${General.FindSetting[SellItems]}]
+		PauseTimer:Set[${General.FindSetting[PauseTimer]}]
+		Craft:Set[${General.FindSetting[Craft]}]
+	}
+
+}
+
 ; when the script exits , save all the settings and do some cleaning up
 atom atexit()
 {
+	if !${ISXEQ2.IsReady}
+	{
+		return
+	}
 	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
-	ui -unload "${LavishScript.HomeDirectory}/scripts/UI/mypricesUI.xml"
+	ui -unload "${MyPricesUIPath}mypricesUI.xml"
 }
 
 
