@@ -1,4 +1,4 @@
-MyPrices - Version 0.11b
+MyPrices - Version 0.11c
 
 For update details see the bottom of this file.
 
@@ -109,6 +109,20 @@ Scan Sales
 ----------
 
 With this ticked the script will scan/compare the items you have up for sale.
+
+Logging
+-------
+
+Only use this if you are having problems with running the script , it creates a myprices.log file in the EQ2MyPrices folder , this
+can get large FAST.
+
+This contains details of what functions are being called with what parameters and what values are being returned.
+
+You can PM me on the forums with the file and with details of the problem and it should hopefully give me an idea where to fix the problem
+you are having.
+
+To Toggle it on , run the script , toggle it ON then exit and re-run the script , run the scans etc that you usually do and then toggle
+it off , this way I get to see what your options are set to on the Sell tab also, otherwise I won't see them.
 
 
 Delay in Minutes
@@ -264,6 +278,34 @@ If you do decide to try this script I'd be greatful for any bug reports or sugge
 Discussion thread for myprices can be found at : http://www.isxgames.com/forums/showthread.php?p=11994#post11994
 
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
+
+Version 0.11c
+-------------
+
+New option on the Buy Tab , harvest checkbox , clicking this when editing the item you want to buy will tell the script that
+the max stack size that can be bought for this item is 200 not 100.
+
+Logging :  some people are having problems with the script not working properly  (I can't duplicate the problems here yet)
+
+There is a new logging checkbox , run the script , check this box , exit the script and re-run the script..run the scan as normal and when
+it's finished uncheck the textbox..
+
+The log file can be found inside the EQ2MyPrices folder , PM me this file and I can see what functions are being called and 
+what information is being passed/returned.
+
+Hopefully this will give me some insight to whats going wrong and where.
+
+If need be I'll add more logging inside each function using smaller updates till we narrow it down...
+
+
+Version 0.11b
+-------------
+
+Moved all the data files into EQ2MyPrices folder.
+
+move your myprices_character.xml files from \scripts\XML\ to \EQ2MyPrices\XML\
+
+This will be the last file move I promise.
 
 Version 0.11a
 -------------

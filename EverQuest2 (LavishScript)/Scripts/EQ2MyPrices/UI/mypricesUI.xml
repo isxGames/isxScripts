@@ -241,7 +241,7 @@
 					</checkbox>
 					<checkbox Name='SellItems' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>170</Y>
+						<Y>160</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Scan Sales</Text>
@@ -268,6 +268,39 @@
 							{
 								Script[myprices]:QueueCommand[call SaveSetting SellItems FALSE]
 								Script[myprices].VariableScope.SellItems:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+
+					<checkbox Name='Logging' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>185</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Logging</Text>
+						<AutoTooltip>
+							Turn on Logging
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.Logging}
+						{
+							UIElement[Logging@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[Logging@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[Logging@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting Logging TRUE]
+								Script[myprices].VariableScope.Logging:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting Logging FALSE]
+								Script[myprices].VariableScope.Logging:Set[FALSE]
 							}
 						</OnLeftClick>
 					</checkbox>
@@ -495,7 +528,6 @@
 							Update your Minimum Sale Price
 						</AutoTooltip>
 					</Commandbutton>
-
 					<checkbox Name='CraftItem' Template='EQ2.checkbox'>
 						<X>325</X>
 						<Y>415</Y>
@@ -722,6 +754,16 @@
 						<Width>350</Width> 
 						<Height>15</Height>
 					</Text>
+					<checkbox Name='Harvest' Template='EQ2.checkbox'>
+						<X>310</X>
+						<Y>455</Y>
+						<Width>100</Width>
+						<Height>20</Height>
+						<Text>Harvest</Text>
+						<AutoTooltip>
+							Item is a harvest item (200 per stack)
+						</AutoTooltip>
+					</checkbox>
 					<Textentry Name='BuyName' Template='EQ2.Textentry'>
 						<X>25</X>
 						<Y>475</Y>
