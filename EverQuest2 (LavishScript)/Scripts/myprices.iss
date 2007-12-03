@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.11b : Started 27 Nov 2007 : released 02 Dec 2007
+; Version 0.11b : Started 27 Nov 2007 : released 03 Dec 2007
 ;
 ; Declare Variables
 ;
@@ -18,6 +18,7 @@ variable bool MinPriceSet
 variable bool IgnoreCopper
 variable bool SellItems
 variable bool Craft
+variable bool Logging
 
 variable string labelname
 variable string currentitem
@@ -59,6 +60,8 @@ variable settingsetref General
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
 variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/XML/"
 variable filepath MyPricesUIPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/UI/"
+variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
+
 
 ; Main Script
 ;
@@ -73,7 +76,6 @@ function main()
 	MyPrices:LoadUI
 
 
-
 #define WAITEXTPERIOD 120
 
 	call AddLog "Verifying ISXEQ2 is loaded and ready" FF11CCFF
@@ -83,8 +85,7 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
-	call AddLog "Running MyPrices version 0.11b - released : 2 Dec 2007" FF11FFCC
-
+	call AddLog "Running MyPrices version 0.11b - released : 3 Dec 2007" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -106,7 +107,8 @@ function main()
 			}
 		}
 		While ${Pausemyprices}
-
+		call echolog "Start Scanning"
+		call echolog "**************"
 		call LoadList
 
 		PauseTimer:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[PauseTimer].Text}]
@@ -326,16 +328,16 @@ function main()
 				}
 			}
 			while ${currentpos:Inc} <= ${numitems} && ${Pausemyprices} == FALSE
-			if !${ScanSellNonStop}
-			{
-				UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Start Scanning]
-				Pausemyprices:Set[TRUE]
-			}
 		}
 		; Script starts to scan for items to buy if flagged.
 		if ${BuyItems}
 		{
 			call buy Buy scan
+		}
+		if !${ScanSellNonStop}
+		{
+			UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Start Scanning]
+			Pausemyprices:Set[TRUE]
 		}
 		if ${ScanSellNonStop} && ${PauseTimer} > 0
 		{
@@ -349,6 +351,7 @@ function main()
 
 function addtotals(string itemname, int itemnumber)
 {
+	call echolog "->  addtotals ${itemname} ${itemnumber}"
 	LavishSettings:AddSet[craft]
 	LavishSettings[craft]:AddSet[CraftItem]
 
@@ -365,13 +368,14 @@ function addtotals(string itemname, int itemnumber)
 	else
 	{
 		CraftList:AddSetting[${itemname},${itemnumber}]
-	;	LavishSettings[craft]:Export["mycraft.xml"]
 	}
 	;	Data can be read using ${CraftList.FindSetting[${itemname}]}
+	call echolog "<end> : addtotals"
 }
 
 function FindItem(int i, string itemname)
 {
+	call echolog "-> FindItem ${i} ${itemname}"
 	Declare j int local
 	Declare Position int -1 local
 	Declare ConName string local
@@ -387,12 +391,14 @@ function FindItem(int i, string itemname)
 		}
 	}
 	while ${j:Inc} <= ${Me.Vending[${i}].NumItems}
+	call echolog "<- FindItem ${Position}"
 	Return ${Position}
 }
 
 
 function ReListItem(int i, string itemname)
 {
+	call echolog "-> ReListItem ${i} ${itemname}"
 	Declare loopcount int local
 	Declare j int local
 
@@ -423,10 +429,13 @@ function ReListItem(int i, string itemname)
 		; item was moved or sold
 		call SetColour ${currentpos} FFC43012
 	}
+	call echolog "<end> : ReListItem"
 }
 
 function checkstock()
 {
+	call echolog "<start> : checkstock"
+
 	LavishSettings[newcraft]:Clear
 
 	LavishSettings[newcraft]:Import[${CraftPath}${Me.Name}.xml]
@@ -438,15 +447,19 @@ function checkstock()
 	CraftList:Set[${CraftItemList.FindSet[myprices]}]
 
 	call buy Craft scan
+
+	call echolog "<end> : checkstock"
 }
 
 function buy(string tabname, string action)
 {
+	call echolog "-> buy ${tabname} ${action}"
 	; Read data from the Item Set
 	;
 	Declare CraftItem bool local
 	Declare CraftStack int local
-	Declare CraftMinTotal inc local
+	Declare CraftMinTotal int local
+	Declare Harvest bool local
 
 	if ${tabname.Equal["Buy"]}
 	{
@@ -502,35 +515,36 @@ function buy(string tabname, string action)
 					{
 						; Scan the subset to get all the settings
 						CraftItem:Set[FALSE]
+						Harvest:Set[FALSE]
 						do
 						{
-							if ${BuyNameIterator.Key.Equal["BuyNumber"]}
+							Switch "${BuyNameIterator.Key}"
 							{
-								BuyNumber:Set[${BuyNameIterator.Value}]
+								Case BuyNumber
+									BuyNumber:Set[${BuyNameIterator.Value}]
+									break
+								Case BuyPrice
+									BuyPrice:Set[${BuyNameIterator.Value}]
+									break
+								Case Harvest
+									Harvest:Set[${BuyNameIterator.Value}]
+									break
+								Case CraftItem
+									CraftItem:Set[${BuyNameIterator.Value}]
+									break
+								Case Stack
+									CraftStack:Set[${BuyNameIterator.Value}]
+									break
+								Case Stock
+									CraftMinTotal:Set[${BuyNameIterator.Value}]
+									break
 							}
-							elseif ${BuyNameIterator.Key.Equal["BuyPrice"]}
-							{
-								BuyPrice:Set[${BuyNameIterator.Value}]
-							}
-							elseif ${BuyNameIterator.Key.Equal["CraftItem"]}
-							{
-								CraftItem:Set[${BuyNameIterator.Value}]
-							}
-							elseif ${BuyNameIterator.Key.Equal["Stack"]}
-							{
-								CraftStack:Set[${BuyNameIterator.Value}]
-							}
-							elseif ${BuyNameIterator.Key.Equal["Stock"]}
-							{
-								CraftMinTotal:Set[${BuyNameIterator.Value}]
-							}
-
 						}
 						while ${BuyNameIterator:Next(exists)}
 						; run the routine to scan and buy items if we still need more bought
 						if ${BuyNumber} > 0 && ${tabname.Equal["Buy"]}
 						{
-							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber}
+							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest}
 						}
 						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
 						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
@@ -558,11 +572,13 @@ function buy(string tabname, string action)
 		; Keep looping till you've read all the items in the Top level sets
 		While ${BuyIterator:Next(exists)}
 	}
+	call echolog "<end> : buy"
 }
 
 ; check to see if we need to make more craftable items to refil our broker stocks
 function checktotals(string itemname, int stacksize, int minlimit)
 {
+	call echolog "-> checktotals ${itemname} ${stacksize} ${minlimit}"
 	; totals set (unsaved)
 	LavishSettings:AddSet[craft]
 	LavishSettings[craft]:AddSet[CraftItem]
@@ -586,12 +602,15 @@ function checktotals(string itemname, int stacksize, int minlimit)
 		}
 	}
 
+	call echolog "<end> : checktotals "
 }
 
 ; update the user file from craft to include a favourite called myprices
 ; this set will contain all the items that have a totals shortfall
 function addtocraft(string itemname, int Makemore)
 {
+	call echolog "-> addtocraft ${itemname} ${Makemore}"
+
 	CraftItemList:Set[${LavishSettings[newcraft].FindSet[Recipe Favourites]}]
 
 	CraftItemList:AddSet[myprices]
@@ -601,11 +620,12 @@ function addtocraft(string itemname, int Makemore)
 	CraftList:AddSetting[${itemname},${Makemore}]
 
 	LavishSettings[newcraft]:Export[${CraftPath}${Me.Name}.xml]
+	call echolog "<end> : addtocraft"
 }
 
-function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
+function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 {
-
+	call echolog "-> BuyItems ${BuyName} ${BuyPrice} ${BuyNumber} ${Harvest}"
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare FinishBuy bool local
@@ -617,6 +637,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 	Declare OldCash float local
 	Declare BoughtNumber int local
 	Declare MaxBuy int local
+
 	Call BrokerSearch "${BuyName}"
 
 
@@ -661,13 +682,13 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 							TryBuy:Set[${BrokerNumber}]
 						}
 						; check you can afford to buy the items
-						call checkcash ${BrokerPrice} ${TryBuy} ${MyCash}
+						call checkcash ${BrokerPrice} ${TryBuy} ${MyCash} ${Harvest}
 						; buy what you can afford
 						if ${Return} > 0
 						{
 							OldCash:Set[${MyCash}]
 							Vendor.Broker[${CurrentItem}]:Buy[${Return}]
-							wait 15
+							wait 25
 							MyCash:Set[${Math.Calc[(${Me.Platinum}*10000)+(${Me.Gold}*100)+(${Me.Silver})+(${Me.Copper}/100)]}]
 							; check you have actually bought an item
 							call checkbought ${BrokerPrice} ${OldCash} ${MyCash}
@@ -696,13 +717,14 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber)
 		; now we've bought all that are available , save the number we've still got left to buy
 		call Saveitem Buy "${BuyName}" ${BuyPrice} ${BuyNumber}
 	}
-
+	call echolog "<end> : BuyItems"
 }
 
 ; function to check you actually bought an item (stops false positives if someone beats you to it or someone removes an item before you can buy it)
 
 function checkbought(float BrokerPrice, float OldCash, float NewCash)
 {
+	call echolog "-> checkbought ${BrokerPrice} ${OldCash} ${NewCash}"
 	Declare Diff float local
 	Declare DiffInt int local
 
@@ -722,10 +744,12 @@ function checkbought(float BrokerPrice, float OldCash, float NewCash)
 		{
 			DiffInt:Inc
 		}
+		call echolog "<- checkbought ${DiffInt}"
 		return ${DiffInt}
 	}
 	else
 	{
+		call echolog "<- checkbought 1"
 		Return 1
 	}
 
@@ -734,21 +758,33 @@ function checkbought(float BrokerPrice, float OldCash, float NewCash)
 ; check to see if you have enough coin on your character to buy the number you want to,
 ; if not then calculate how many you CAN buy with the coin you have.
 
-function checkcash(float Buyprice, int Buynumber, float MyCash)
+function checkcash(float Buyprice, int Buynumber, float MyCash, bool Harvest)
 {
-	Declare NewBuyNumber int 0
-	; if trying to buy over 100 then limit to 100 (SoE limit for non harvests)
-	if ${Buynumber} > 100
+	call echolog "-> checkcash ${Buyprice} ${Buynumber} ${Mycash} ${Harvest}"
+	Declare NewBuyNumber int 0 local
+	Declare MaxNumber int 100 local
+	; if set limit based on harvest or non-harvest
+
+	if ${Harvest}
 	{
-		Buynumber:Set[100]
+		MaxNumber:Set[200]
 	}
+
+	if ${Buynumber} > ${MaxNumber}
+	{
+		Buynumber:Set[{MaxNumber}
+	}
+
+
 	if ${Math.Calc[(${Buyprice}*${Buynumber})]} > ${MyCash}
 	{
 		NewBuyNumber:Set[${Math.Calc[${MyCash}/${Buyprice}]}]
+		call echolog "<- checkcash ${NewBuyNumber}"
 		return ${NewBuyNumber}
 	}
 	else
 	{
+		call echolog "<- checkcash ${Buynumber}"
 		return ${Buynumber}
 	}
 }
@@ -757,10 +793,12 @@ function checkcash(float Buyprice, int Buynumber, float MyCash)
 
 function ClickBrokerSearch(string tabtype, int ItemID)
 {
+	call echolog "-> ClickBrokerSearch ${tabtype} ${ItemID}"
 	Declare LBoxString string local
 	; scan the broker for the item clicked on in the list
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${tabtype}].FindChild[ItemList].Item[${ItemID}]}]
 	broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
+	call echolog "<end> : ClickBrokerSearch"
 
 }
 
@@ -769,6 +807,7 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 
 function BrokerSearch(string lookup)
 {
+	call echolog "-> BrokerSearch ${lookup}"
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
@@ -800,30 +839,33 @@ function BrokerSearch(string lookup)
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${TempMinPrice} == -1 && !${stopsearch}
 	}
 	; Return the Lowest Price Found or -1 if nothing found.
+	call echolog "<- BrokerSearch ${TempMinPrice}"
 	return ${TempMinPrice}
 }
 
 
 function checkitem(string name)
 {
-
+	call echolog "-> checkitem : ${name}"
 	; keep a reference directly to the Item set.
 	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 	Item:Set[${ItemList.FindSet[${name}]}]
 
 	if ${Item.FindSetting[Sell](exists)}
 	{
+		call echolog "<- checkitem : ${Item.FindSetting[Sell]}"
 		return ${Item.FindSetting[Sell]}
 	}
 	else
 	{
+		call echolog "<- checkitem : -1"
 		return -1
 	}
 }
 
 function LoadList()
 {
-
+	call echolog "<start> : Loadlist"
 	; clear all totals held in the craft set
 	LavishSettings[craft]:Clear
 
@@ -889,11 +931,13 @@ function LoadList()
 		}
 	}
 	while ${i:Inc} <= 6
+	call echolog "<end> : Loadlist"
 }
 
 ; Convert a float price in silver to pp gp sp cp format
 function:string StringFromPrice(float Money)
 {
+	call echolog "-> StringFromPrice ${Money}"
 	Declare Platina int local
 	Declare Gold int local
 	Declare Silver int local
@@ -905,6 +949,7 @@ function:string StringFromPrice(float Money)
 	Silver:Set[${Money}]
 	Money:Set[${Math.Calc[${Money}-${Silver}]}]
 	Copper:Set[${Math.Calc[${Money}* 100]}]
+	call echolog "<- StringFromPrice ${Platina}pp ${Gold}gp ${Silver}sp ${Copper}cp"
 	return ${Platina}pp ${Gold}gp ${Silver}sp ${Copper}cp
 }
 
@@ -912,12 +957,14 @@ function:string StringFromPrice(float Money)
 
 function pricefromstring()
 {
+	call echolog "<start> pricefromstring"
 	Declare itemname string local
 	Declare Platina int local
 	Declare Gold int local
 	Declare Silver int local
 	Declare Copper float local
 	Declare Money float local
+	Declare Flagged bool local
 
 	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Itemname].Text}]
 	if ${itemname.Length} == 0
@@ -937,18 +984,18 @@ function pricefromstring()
 		Gold:Set[${Math.Calc[${Gold}*100]}]
 		Copper:Set[${Math.Calc[${Copper}/100]}]
 		Money:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
-
 		; Save the new value in your settings file
-		call Saveitem Sell "${itemname}" ${Money}
+		call Saveitem Sell "${itemname}" ${Money} 0 ${UIElement[CraftItem@Sell@GUITabs@MyPrices].Checked}
 	}
+	call echolog "<end> : pricefromstring"
 }
 
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, int Number)
+function Saveitem(string Saveset, string ItemName, float Money, int Number, bool flagged)
 {
-
+	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged}"
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
 	{
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
@@ -973,7 +1020,7 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number)
 		{
 			Item:AddSetting[MinSalePrice,FALSE]
 		}
-		if ${UIElement[CraftItem@Sell@GUITabs@MyPrices].Checked}
+		if ${flagged}
 		{
 			Item:AddSetting[CraftItem,TRUE]
 		}
@@ -986,6 +1033,15 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number)
 	{
 		Item:AddSetting[BuyNumber,${Number}]
 		Item:AddSetting[BuyPrice,${Money}]
+		if ${flagged}
+		{
+			Item:AddSetting[Harvest,TRUE]
+		}
+		else
+		{
+			Item:AddSetting[Harvest,FALSE]
+		}
+
 	}
 	elseif ${Saveset.Equal["Craft"]}
 	{
@@ -994,6 +1050,7 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number)
 	}
 
 	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
+	call echolog "<end> : Saveitem"
 }
 
 
@@ -1001,8 +1058,10 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number)
 
 function SaveSetting(string Settingname, string Value)
 {
+	call echolog "-> SaveSetting ${Settingname} ${Value}"
 	General:Set[${LavishSettings[myprices].FindSet[General]}]
 	General:AddSetting[${Settingname},${Value}]
+	call echolog "<end> : SaveSetting"
 }
 
 ; changes the color of the items in the listbox
@@ -1017,6 +1076,7 @@ function SetColour(int position, string colour)
 
 function FillMinPrice(int ItemID)
 {
+	call echolog "-> FillMinPrice ${ItemID}"
 	Declare LBoxString string local
 	Declare Money float local
 	Declare Platina int local
@@ -1124,10 +1184,12 @@ function FillMinPrice(int ItemID)
 		UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetText[${Silver}]
 		UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
 	}
+	call echolog "<end> : FillMinPrice"
 }
 
 function CheckMinPriceSet(string itemname)
 {
+	call echolog "-> CheckMinPriceSet ${itemname}"
 	LavishSettings:AddSet[myprices]
 	LavishSettings[myprices]:AddSet[General]
 	LavishSettings[myprices]:AddSet[Item]
@@ -1136,11 +1198,13 @@ function CheckMinPriceSet(string itemname)
 	ItemList:AddSet[${itemName}]
 
 	Item:Set[${ItemList.FindSet[${itemname}]}]
+	call echolog "<- CheckMinPriceSet ${Item.FindSetting[MinSalePrice]}"
 	return ${Item.FindSetting[MinSalePrice]}
 }
 
 function savebuyinfo()
 {
+	call echolog "<start> : savebuyinfo"
 	Declare itemname string local
 	Declare itemnumber int local
 	Declare Platina int local
@@ -1179,13 +1243,15 @@ function savebuyinfo()
 	else
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Saving Information]
-		call Saveitem Buy "${itemname}" ${Money} ${itemnumber}
+		call Saveitem Buy "${itemname}" ${Money} ${itemnumber} ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked}
 		call buy Buy init
 	}
+	call echolog "<end> : savebuyinfo"
 }
 
 function savecraftinfo()
 {
+	call echolog "<start> : savecraftinfo"
 	Declare CraftName string local
 	Declare CraftStack int local
 	Declare CraftNumber int local
@@ -1213,11 +1279,13 @@ function savecraftinfo()
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
 		call Saveitem Craft "${CraftName}" ${CraftStack} ${CraftNumber}
 	}
+	call echolog "<end> : savecraftinfo"
 }
 
 
 function deletebuyinfo(int ItemID)
 {
+	call echolog "-> deletebuyinfo ${ItemID}"
 	Declare itemname string local
 
 	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Buyname].Text}]
@@ -1233,12 +1301,14 @@ function deletebuyinfo(int ItemID)
 
 	; re-scan and display the new buy list
 	call buy Buy init
+	call echolog "<end> : deletebuyinfo"
 }
 
 ; Delete the current item selected in the buybox
 
 function ShowBuyPrices(int ItemID)
 {
+	call echolog "-> ShowBuyPrices ${ItemID}"
 	Declare Money float local
 	Declare number int local
 	Declare LBoxString string local
@@ -1247,6 +1317,7 @@ function ShowBuyPrices(int ItemID)
 	Declare Silver int local
 	Declare Copper int local
 	Declare CraftItem bool local
+	Declare Harvest bool local
 
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[ItemList].Item[${ItemID}]}]
 
@@ -1272,10 +1343,21 @@ function ShowBuyPrices(int ItemID)
 	UIElement[BuyNumber@Buy@GUITabs@MyPrices]:SetText[${number}]
 	UIElement[BuyName@Buy@GUITabs@MyPrices]:SetText[${LBoxString}]
 
+	Harvest:Set[${BuyItem.FindSetting[Harvest]}]
+	if ${Harvest}
+	{
+	UIElement[Harvest@Buy@GUITabs@MyPrices]:SetChecked
+	}
+	else
+	{
+	UIElement[Harvest@Buy@GUITabs@MyPrices]:UnsetChecked
+	}
+	call echolog "<end> : ShowBuyPrices"
 }
 
 function ShowCraftInfo(int ItemID)
 {
+	call echolog "-> ShowCraftInfo ${ItemID}"
 	Declare LBoxString string local
 	Declare Stack int local
 	Declare Stock int local
@@ -1292,6 +1374,7 @@ function ShowCraftInfo(int ItemID)
 	UIElement[CraftName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
 	UIElement[CraftStack@Craft@GUITabs@MyPrices]:SetText[${Stack}]
 	UIElement[CraftNumber@Craft@GUITabs@MyPrices]:SetText[${Stock}]
+	call echolog " <end> : ShowCraftInfo"
 }
 
 
@@ -1304,10 +1387,12 @@ objectdef BrokerBot
 {
 	method LoadUI()
 	{
+		call echolog "<start> : LoadUI"
 		; Load the UI Parts
 		;
 		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 		ui -reload "${MyPricesUIPath}mypricesUI.xml"
+		call echolog "<end> : LoadUI"
 	}
 
 	method loadsettings()
@@ -1340,6 +1425,7 @@ objectdef BrokerBot
 		LavishSettings[myprices]:Import[${XMLPath}${Me.Name}_MyPrices.XML]
 
 		General:Set[${LavishSettings[myprices].FindSet[General]}]
+		Logging:Set[${General.FindSetting[Logging]}]
 		MatchLowPrice:Set[${General.FindSetting[MatchLowPrice]}]
 		IncreasePrice:Set[${General.FindSetting[IncreasePrice]}]
 		SetUnlistedPrices:Set[${General.FindSetting[SetUnlistedPrices]}]
@@ -1349,8 +1435,28 @@ objectdef BrokerBot
 		SellItems:Set[${General.FindSetting[SellItems]}]
 		PauseTimer:Set[${General.FindSetting[PauseTimer]}]
 		Craft:Set[${General.FindSetting[Craft]}]
+		call echolog "Settings being used"
+		call echolog "-------------------"
+		call echolog "MatchLowPrice is ${MatchLowPrice}"
+		call echolog "IncreasePrice is ${IncreasePrice}"
+		call echolog "SetUnlistedPrices is ${SetUnlistedPrices}"
+		call echolog "ScanSellNonStop is ${ScanSellNonStop}"
+		call echolog "IgnoreCopper is ${IgnoreCopper}"
+		call echolog "BuyItems is ${BuyItems}"
+		call echolog "SellItems is  ${SellItems}"
+		call echolog "PauseTimer is ${PauseTimer}"
+		call echolog "Craft is ${Craft}"
+
 	}
 
+}
+
+function echolog(string logline)
+{
+	if ${Logging}
+	{
+		Redirect -append "${LogPath}myprices.log" Echo "${logline}"
+	}
 }
 
 ; when the script exits , save all the settings and do some cleaning up
