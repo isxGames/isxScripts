@@ -239,7 +239,7 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
-	variable int temp
+	declare temp int local
 
 	ExecuteAtom CheckStuck
 
@@ -835,7 +835,7 @@ function CheckHeals()
 	}
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ID.Equal[${MainTankID}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ID}==${MainTankID} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		call CastSpellRange 8 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
 		call EmergencyHeal ${MainTankID}
@@ -962,18 +962,20 @@ function CheckHeals()
 		}
 	}
 
-	;Res Fallen Groupmembers only if in range
-	grpcnt:Set[${Me.GroupCount}]
-	tempgrp:Set[1]
-	do
+	if ${CombatRez} || !${Me.InCombat}
 	{
-		if ${Me.Group[${tempgrp}].ToActor.Health}==-99 && ${Me.Group[${tempgrp}].ToActor(exists)}
+		;Res Fallen Groupmembers only if in range
+		grpcnt:Set[${Me.GroupCount}]
+		tempgrp:Set[1]
+		do
 		{
-			call CastSpellRange 300 301 0 0 ${Me.Group[${tempgrp}].ID} 1
+			if ${Me.Group[${tempgrp}].ToActor.Health}==-99 && ${Me.Group[${tempgrp}].ToActor(exists)}
+			{
+				call CastSpellRange 300 301 0 0 ${Me.Group[${tempgrp}].ID} 1
+			}
 		}
+		while ${tempgrp:Inc}<${grpcnt}
 	}
-	while ${tempgrp:Inc}<${grpcnt}
-
 	call UseCrystallizedSpirit 60
 
 }
