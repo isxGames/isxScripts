@@ -762,19 +762,21 @@ function checkcash(float Buyprice, int Buynumber, float MyCash, bool Harvest)
 {
 	call echolog "-> checkcash ${Buyprice} ${Buynumber} ${Mycash} ${Harvest}"
 	Declare NewBuyNumber int 0 local
-	Declare MaxNumber int 100 local
 	; if set limit based on harvest or non-harvest
 
 	if ${Harvest}
 	{
 		MaxNumber:Set[200]
 	}
+	else
+	{
+		MaxNumber:Set[100]
+	}
 
 	if ${Buynumber} > ${MaxNumber}
 	{
-		Buynumber:Set[{MaxNumber}
+		Buynumber:Set[${MaxNumber}]
 	}
-
 
 	if ${Math.Calc[(${Buyprice}*${Buynumber})]} > ${MyCash}
 	{
