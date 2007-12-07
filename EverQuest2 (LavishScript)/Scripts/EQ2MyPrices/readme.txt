@@ -42,7 +42,7 @@ Buying
 ======
 
 It will scan the broker list for items that you want to buy , if they are for sale at or under a set value then 
-it buys them until the number items you set have been bought or you run out of money.
+it buys them until the number of items you set have been bought or you run out of money.
 
 (it will buy the cheapest items first)
 
@@ -60,8 +60,11 @@ you have left for sale on the broker.
 Running This Script
 -------------------
 
-Select a Broker , open up a broker window
-either
+If you are running it from your own broker board then open the broker system and F1 to target yourself.
+
+Or Select a Broker and open up a broker window
+
+then either
 
 1.
 Open the Innerspace command line Window (`)
@@ -73,6 +76,9 @@ or
 
 
 The script will then open the GUI , scan your broker system and list whats on it.
+
+** please note *** Using your broker board in your room is a bit hit and miss right now , sometimes the prices are changed
+other times they won't be - there doesn't seem to be any pattern for this I can see - best stick to using a city broker.
 
 
 The Sell TAB
@@ -90,8 +96,8 @@ ticking this will increase your prices to match the lowest price above yours if 
 
 Set Prices for unlisted items
 -----------------------------
-This will make myprices match the price of any unlisted items on your broker list to the lowest price available , if the item
-has had a minimum price set previously and the lowest price is too low , your minimum price will be used instead,
+This will make myprices match the price of any unlisted items on your broker list to the lowest price available.
+if the item has had a minimum price set previously and the lowest price is too low , your minimum price will be used instead,
 
 Leaving this unticked will make the script skip unlisted items.
 
@@ -108,7 +114,8 @@ This causes the script to re-start at the beginning once it has scanned everythi
 Scan Sales
 ----------
 
-With this ticked the script will scan/compare the items you have up for sale.
+With this ticked the script will scan/compare the items you have up for sale, without this ticked it will not scan your
+sales items , useful if all you want to do is scan for items to buy.
 
 Logging
 -------
@@ -131,13 +138,15 @@ Delay in Minutes
 Enter a value here to make the script pause this number of minutes between scans if Auto-Loop is toggled on.
 
 
-
 There are 3 Buttons.
+
 
 Start Scanning
 --------------
 Clicking this starts the script scanning your items on sale and checking the broker prices , the button changes to Stop scanning , the
 script scans all your broker items until it reaches the last one
+
+If the Scan Sales tickbox is unticked then your script will jump straight to the buy routine.
 
 If you Press the button again during the scan it will wait for the current item scan to finish then stop.
 
@@ -155,6 +164,8 @@ and add how many of what items you need to make to replenish your broker stocks 
 Next time you run craft you can choose 'myprices' from the list under the Advanced Tab , Press Load and then the Submit Queue button
 and you can then start crafting what you need.
 
+typing /craft myprices  will also start craft and auto-load the myprices list then start crafting automatically. 
+
 
 The Sell TAB
 ============
@@ -169,7 +180,7 @@ it to change prices for you automatically), the script can store the name of eac
 The script will then NOT lower your prices below that price.
 
 To set/change the minimum sale price for an item click on it's name in the list , the current price and your current minimum price
-will be shown on the left hand side.
+will be shown at the bottom.
 
 Tick the Box marked Minimum Price if it's unticked , this makes the script check the minimum price when it scans that item.
 
@@ -192,17 +203,35 @@ Automatically adding new items
 If you toggle the 'set prices of unlisted items' option on and put new items in your broker box without listing them for sale and
 the following will happen.
 
-The script scans for the lowest price for an item currently on the broker.
+The script scans for the lowest price for each item currently on the broker.
 
 1. If a minimum price for that item was set previously and the lowest price is LOWER then your minimum price the minimum price is used.
 2. If a minimum price for that item was set previously and the lowest price is HIGHER then your minimum price the lowest price is matched.
 3. If the item does not have a minimum price set then the item price is matched with the lowest price on the broker.
 
-It may sound complicated , but what it means is you can just dump items in your broker list and let myprices set the price for you
-and mark them as Listed.
+What this means is you can just dump items in your broker list and let myprices set the price for you and mark them as Listed.
 
-If there are no broker items to compare a new item to then nothing will happen , you can either leave the item there until someone else
-lists one or set a price using EQ2 broker system.
+If there are no broker items to compare a new item to then nothing will happen.
+
+You can either leave the item there until someone else lists one or set a price using EQ2 broker system.
+
+
+When the List is Populated
+--------------------------
+Yellow - The item was marked a craft item (links with the Craft script).
+
+
+During the Scan
+---------------
+
+As the items are checked the color of the item changes in the GUI list.
+
+Black  - The item price was unchanged , there was nothing on the broker to compare it to or your price is the lowest
+         and you haven't set the script to increase prices to match.
+Green  - The item price matches the current lowest price on the broker.
+Red    - Your item is priced higher than the lowest price on the broker , but that price is below your minimum allowed price. 
+Blue   - New unlisted Item added to the broker list
+Orange - The item was not inside your broker containers when it was reached in the list , sold or removed.
 
 
 The Buy TAB
@@ -212,7 +241,7 @@ Check the Buy Items checkbox to make the script look for items you wish to buy.
 
 Type the name of the item in the name box (case doesn't matter , spelling does)
 
-Enter the number you want the script to buy
+Enter the number of that item you want the script to buy
 
 Enter the PP , Gold , Silver and Copper you are willing to pay for EACH item into the relevant boxes.
 
@@ -243,20 +272,6 @@ Stock Limit : Put how many (single) items you want as a minimum number in your b
 Press the Save button.
 
 
-
-
-During the Scan
----------------
-
-As the items are checked the color of the item changes in the GUI list.
-
-Black  - The item was unable to be changed , there was nothing on the broker to compare it to.
-Green  - The item price matches the current lowest price on the broker.
-Red    - Your item is priced higher than the lowest price on the broker , but that price is below your minimum allowed price. 
-Blue   - New unlisted Item added to the broker list
-Orange - The item was not inside your broker containers when it was reached in the list , sold or removed.
-
-
 The Future
 ==========
 
@@ -267,8 +282,6 @@ by more efficient code once it's all working as I want it to.
 
 Working more checks into the buy routine (Set max amount to spend in total each session , check for empty bag slots etc)
 
-Add the buying of items using 'fuzzy logic' e.g. 25 adept I's between level 30 and 39 priced lower than 5 silver (requested)
-
 
 Contact the author
 ------------------
@@ -278,6 +291,9 @@ If you do decide to try this script I'd be greatful for any bug reports or sugge
 Discussion thread for myprices can be found at : http://www.isxgames.com/forums/showthread.php?p=11994#post11994
 
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
+
+Revisions
+=========
 
 Version 0.11c
 -------------
