@@ -128,6 +128,14 @@
 		<Setting Name="Ferrite">ferrite Cluster</Setting>
 		<Setting Name="Redwood">Redwood Lumber</Setting>
 		<Setting Name="Bristled pelt">Bristled Leather</Setting>
-		<Setting Name="Ferrite Cluster">ferrite Cluster</Setting>		
+		<Setting Name="Ferrite Cluster">ferrite Cluster</Setting>
+		<Setting Name="Incarnadine Cluster">incarnadine</Setting>
+		<Setting Name="Silicate Loam">silicate</Setting>
+		<Setting Name="Tynnonium Cluster">Tynnonium</Setting>
+		<Setting Name="Rough Fire Emerald">fire emerald</Setting>
+		<Setting Name="Mantrap Root">mantrap</Setting>
+		<Setting Name="Mahogany Lumber">mahogany</Setting>
+		<Setting Name="hidebound pelt">Hidebound Leather</Setting>
+		<Setting Name="Mantrap">mantrap</Setting>
 	</Set>
 </InnerSpaceSettings>

@@ -1228,7 +1228,8 @@
 									<Size>10</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
-								<Text>* Standard Quality 3:       %   * Rare Quality 3:       %</Text>
+							<!--	<Text>* Standard Quality 3:       %   * Rare Quality 3:       %</text> -->
+								<Text>  * Standard Power 3:       %     * Rare Power 3:       %</Text>
 							</Text>
 							<Textentry Name='Standard Quality3' Template='EQ2.Textentry'>
 								<X>153</X>
@@ -1246,7 +1247,7 @@
 								<MaxLength>4</MaxLength>
 								<Color>FFDDBB00</Color>
 							</Textentry>
-							<Text Name='Quality 4 Text'>
+					<!--		<Text Name='Quality 4 Text'>
 								<X>5%</X>
 								<Y>160</Y>
 								<Width>100%</Width>
@@ -1257,23 +1258,23 @@
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>* Standard Quality 4:       %   * Rare Quality 4:       %</Text>
-							</Text>
-							<Textentry Name='Standard Quality4' Template='EQ2.Textentry'>
+							</Text> -->
+						<!--	<Textentry Name='Standard Quality4' Template='EQ2.Textentry'>
 								<X>153</X>
 								<Y>155</Y>
 								<Width>35</Width> 
 								<Height>20</Height>
 								<MaxLength>4</MaxLength>
 								<Color>FFDDBB00</Color>
-							</Textentry>
-							<Textentry Name='Rare Quality4' Template='EQ2.Textentry'>
+							</Textentry> -->
+						<!--	<Textentry Name='Rare Quality4' Template='EQ2.Textentry'>
 								<X>320</X>
 								<Y>155</Y>
 								<Width>35</Width> 
 								<Height>20</Height>
 								<MaxLength>4</MaxLength>
 								<Color>FFDDBB00</Color>
-							</Textentry>
+							</Textentry> -->
 							<Commandbutton Name='Save Threshold' Template='EQ2.Commandbutton'>
 								<X>80</X> 
 								<Y>185</Y> 

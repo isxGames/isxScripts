@@ -127,7 +127,7 @@
 		<Setting Name="Minor Soft Metal">1</Setting>
 		<Setting Name="Soft Metal">1</Setting>
 		<Setting Name="Extensive Soft Metal">1</Setting>
-                <Setting Name="Flawless Hardening">1</Setting>
+    <setting Name="Flawless Hardening">1</Setting>
 		<Setting Name="Red Hot Material">2</Setting>
 		<Setting Name="Orange Hot Material">2</Setting>
 		<Setting Name="White Hot Material">2</Setting>
@@ -136,7 +136,7 @@
 		<Setting Name="Extensive Hardened Metal">3</Setting>
 		<Setting Name="Weaponsmith's Insight">3</Setting>
 		<Setting Name="Flawless Hardening">1</Setting>
-                <Setting Name="Favor of Innovation">2</Setting>
+    <Setting Name="Favor of Innovation">2</Setting>
 	</Set>
 	<Set Name="Woodworking">
 		<Setting Name="Minor Knot">1</Setting>
@@ -154,5 +154,16 @@
 		<Setting Name="Woodworker's Insight">2</Setting>
 		<Setting Name="Flawless Cuts">1</Setting>
 		<Setting Name="Favor of Innovation">2</Setting>
+	</Set>
+	<Set Name="Geocraft">
+		<Setting Name="Dense Material">1</Setting>
+		<Setting Name="Major Dense Material">1</Setting>
+		<Setting Name="Minor Dense Material">1</Setting>
+		<Setting Name="Rough Edges">2</Setting>
+		<Setting Name="Minor Rough Edges">2</Setting>
+		<Setting Name="Major Rough Edges">2</Setting>
+		<Setting Name="Dull Luster">3</Setting>
+		<Setting Name="Minor Dull Luster">3</Setting>
+		<Setting Name="Major Dull Luster">3</Setting>
 	</Set>
 </InnerSpaceSettings>
