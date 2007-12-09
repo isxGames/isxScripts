@@ -1,5 +1,25 @@
 Revision History
 ----------------
+v7.0 - IMPORTANT On the options tab, you MUST reset and save thresholds.
+        *Craft files have been updated to work with T8 (some things may still be
+        missing).
+        * Buff selection - Craft will spam progress buffs every round until
+        QualityTier4 is under 40% (Standard Quality 1 Threshold). Then it will
+        use the Highest power durability with the 2 lowest power progress buffs.
+            - If QuailtyTier4 is under 20% (Standard Quality 2 Threshold), it will use
+            all durability buffs.
+            - If power drops below 70% (Standard Power 3 Threshold), it will stop
+            using the highest power progress buff unless it is needed for a counter.
+        *Counter Selection - Craft will always counter with progress buff as a
+        successful counter is always a successful round. You can NOT get a
+        failure or critical failure with a success full counter. If quailtytier4
+        is under 20% (Standard Quality 2 Threshold) it will counter with
+        durability, as even a success can lower durability slightly.
+        *Tinkering and Transmuting has been updated to work like other craft
+        recipes.
+        *Writs have been updated to work with T8.
+        *Fixed a bug when loading recipes lists via command line.
+
 v6.9 - There is now a custom writ file in Recipe Data folder called CustomWrits.xml
        You can now set a recipe name that is extracted and set the value to what it should be. See the file for some examples.
        So if there are any wierd names for writs, just use the customwrit file for the translation.
