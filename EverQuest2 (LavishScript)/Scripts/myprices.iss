@@ -68,14 +68,6 @@ variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
 function main()
 {
 
-	variable int loopcount=0
-
-	ISXEQ2:ResetInternalVendingSystem
-
-	MyPrices:loadsettings
-	MyPrices:LoadUI
-
-
 #define WAITEXTPERIOD 120
 
 	call AddLog "Verifying ISXEQ2 is loaded and ready" FF11CCFF
@@ -85,6 +77,15 @@ function main()
 		echo ISXEQ2 could not be loaded. Script aborting.
 		Script:End
 	}
+
+	variable int loopcount=0
+
+	ISXEQ2:ResetInternalVendingSystem
+
+	MyPrices:loadsettings
+	MyPrices:LoadUI
+
+
 	call AddLog "Running MyPrices version 0.11b - released : 3 Dec 2007" FF11FFCC
 	call LoadList
 
@@ -591,17 +592,22 @@ function checktotals(string itemname, int stacksize, int minlimit)
 	if ${CraftList.FindSetting[${itemname}](exists)}
 	{
 		Totals:Set[${CraftList.FindSetting[${itemname}]}]
+
 	}
-	if ${Totals} < ${minlimit}
+	else
 	{
-		Makemore:Set[${Math.Calc[(${minlimit}-${Totals})/${stacksize}]}]
-		if ${Makemore}>0
+		Totals:Set[0]
+	}
+	
+	if ${Totals} < ${minlimit}
+		{
+			Makemore:Set[${Math.Calc[(${minlimit}-${Totals})/${stacksize}]}]
+		}
+	if ${Makemore}>0
 		{
 		call AddLog "you need to make ${Makemore} more stacks of ${itemname}" FFCCFFCC
 		call addtocraft "${itemname}" ${Makemore}
 		}
-	}
-
 	call echolog "<end> : checktotals "
 }
 
