@@ -90,8 +90,8 @@ function Class_Declaration()
 		case Splintered Heart
 			ShardType:Set["Splintered Heart"]
 			break
-		case Dark Heart
-			ShardType:Set["Dark Heart"]
+		case Darkness Heart
+			ShardType:Set["Darkness Heart"]
 			break
 		case Sacrificial Heart
 			ShardType:Set["Sacrificial Heart"]
@@ -354,10 +354,6 @@ function Combat_Routine(int xAction)
 		{
 			call CastSpellRange 71 0 0 0 ${KillTarget}
 		}
-		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
-		{
-			call CastSpellRange 72 0 0 0 ${KillTarget}
-		}
 		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
 		{
 			call CastSpellRange 90 0 0 0 ${KillTarget}
@@ -497,8 +493,15 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Dot1
 		case Dot2
+			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+			if ${Return.Equal[OK]} && !${Actor[${KillTarget}].IsEpic}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
+
+		case Dot1
 		case Dot3
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
@@ -911,7 +914,14 @@ function AnswerShardRequest()
 		{
 			if ${Time.Timestamp}-${ShardRequestTimer}>2
 			{
-				call CastSpellRange 360 0 0 0 ${Actor[pc,exactname,${ShardQueue.Peek}].ID}
+				if !${Me.InCombat} && ${Me.ToActor.Power}>80 && ${Me.Ability[${SpellType[361]}].IsReady}
+				{
+					call CastSpellRange 361 0 0 0 ${Actor[pc,exactname,${ShardQueue.Peek}].ID}
+				}
+				else
+				{
+					call CastSpellRange 360 0 0 0 ${Actor[pc,exactname,${ShardQueue.Peek}].ID}
+				}
 				ShardRequestTimer:Set[${Time.Timestamp}]
 			}
 
