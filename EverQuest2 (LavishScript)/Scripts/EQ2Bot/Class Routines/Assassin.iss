@@ -504,8 +504,8 @@ function Have_Aggro()
 	echo I have agro from ${aggroid}
 
 	;agro dump
-	call CastSpellRange 180 0 1 0 ${aggroid}
-	call CastSpellRange 185 0 1 0 ${aggroid}
+	call CastSpellRange 180 0 0 0 ${aggroid}
+	call CastSpellRange 185 0 0 0 ${aggroid}
 }
 
 function Lost_Aggro()

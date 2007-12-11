@@ -85,6 +85,11 @@ function Class_Declaration()
 			ShardType:Set["Scintilla of Essence"]
 			break
 
+		case Scale of Essence
+			ShardType:Set["Scale of Essence"]
+			break
+
+
 	}
 }
 

@@ -250,13 +250,17 @@ function Shard()
 	{
 		ShardType:Set[Scintilla of Essence]
 	}
+	elseif  ${Me.Inventory["Scale of Essence"](exists)}
+	{
+		ShardType:Set[Scale of Essence]
+	}
 	elseif  ${Me.Inventory["Splintered Heart"](exists)}
 	{
 		ShardType:Set[Splintered Heart]
 	}
-	elseif  ${Me.Inventory["Dark Heart"](exists)}
+	elseif  ${Me.Inventory["Darkness Heart"](exists)}
 	{
-		ShardType:Set[Dark Heart]
+		ShardType:Set[Darkness Heart]
 	}
 	elseif  ${Me.Inventory["Sacrificial Heart"](exists)}
 	{
