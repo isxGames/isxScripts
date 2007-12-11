@@ -67,10 +67,10 @@
 		<Setting Name="Gale of Steam">3</Setting>
 		<Setting Name="Provisioner's Insight">3</Setting>
 		<Setting Name="Flawless Seasoning">2</Setting>
-		<Setting Name="Favor of Innovation">3</Setting>
+		<Setting Name="Favor of Innovation">1</Setting>
 	</Set>
 	<Set Name="Heavy Armoring">
-                <Setting Name="Flawless Strikes">1</Setting>
+		<Setting Name="Flawless Strikes">1</Setting>
 		<Setting Name="Red Hot Metal">1</Setting>
 		<Setting Name="Orange Hot Metal">1</Setting>
 		<Setting Name="White Hot Metal">1</Setting>
