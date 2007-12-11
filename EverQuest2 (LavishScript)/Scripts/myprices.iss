@@ -447,6 +447,8 @@ function checkstock()
 
 	CraftList:Set[${CraftItemList.FindSet[myprices]}]
 
+	CraftItemList[myprices]:Clear
+
 	call buy Craft scan
 
 	call echolog "<end> : checkstock"
