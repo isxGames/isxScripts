@@ -495,7 +495,7 @@ function Combat_Routine(int xAction)
 
 		case Dot2
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && !${Actor[${KillTarget}].IsEpic}
+			if ${Return.Equal[OK]} && !${Actor[${KillTarget}].IsEpic} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
@@ -504,7 +504,7 @@ function Combat_Routine(int xAction)
 		case Dot1
 		case Dot3
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
+			if ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
