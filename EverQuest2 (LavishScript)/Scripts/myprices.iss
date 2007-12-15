@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.11b : Started 27 Nov 2007 : released 03 Dec 2007
+; Version 0.11c : Started 27 Nov 2007 : released 15 Dec 2007
 ;
 ; Declare Variables
 ;
@@ -678,6 +678,12 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 					{
 						BrokerNumber:Set[${Vendor.Broker[${CurrentItem}].Quantity}]
 
+						if ${BrokerNumber} == 0
+						{
+							break
+						}
+						
+
 						; if the broker entry being looked at shows more items than we want then buy what we want
 						if ${BrokerNumber} > ${BuyNumber}
 						{
@@ -690,7 +696,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 							TryBuy:Set[${BrokerNumber}]
 						}
 						; check you can afford to buy the items
-						call checkcash ${BrokerPrice} ${TryBuy} ${MyCash} ${Harvest}
+						call checkcash ${BrokerPrice} ${TryBuy} ${Harvest}
 						; buy what you can afford
 						if ${Return} > 0
 						{
@@ -723,7 +729,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 		; keep going till all items listed have been scanned and bought or you have reached your limit
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 		; now we've bought all that are available , save the number we've still got left to buy
-		call Saveitem Buy "${BuyName}" ${BuyPrice} ${BuyNumber}
+		call Saveitem Buy "${BuyName}" ${BuyPrice} ${BuyNumber} ${Harvest}
 	}
 	call echolog "<end> : BuyItems"
 }
@@ -732,7 +738,8 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 
 function checkbought(float BrokerPrice, float OldCash, float NewCash)
 {
-	call echolog "-> checkbought ${BrokerPrice} ${OldCash} ${NewCash}"
+	call echolog "-> checkbought Broker Price : ${BrokerPrice} My Old Cash : ${OldCash} My Current cash : ${NewCash}"
+	
 	Declare Diff float local
 	Declare DiffInt int local
 
@@ -741,7 +748,6 @@ function checkbought(float BrokerPrice, float OldCash, float NewCash)
 
 	; Find out how many were bought
 	Diff:Set[${Math.Calc[${Diff}/${BrokerPrice}]}]
-
 
 	; Check for partial amounts due to rounding errors in math calculations
 
@@ -766,10 +772,17 @@ function checkbought(float BrokerPrice, float OldCash, float NewCash)
 ; check to see if you have enough coin on your character to buy the number you want to,
 ; if not then calculate how many you CAN buy with the coin you have.
 
-function checkcash(float Buyprice, int Buynumber, float MyCash, bool Harvest)
+function checkcash(float Buyprice, int Buynumber, bool Harvest)
 {
-	call echolog "-> checkcash ${Buyprice} ${Buynumber} ${Mycash} ${Harvest}"
+	call echolog  "-> checkcash: BuyPrice : ${Buyprice} Buy Number : ${Buynumber} Harvest : ${Harvest}"
+
 	Declare NewBuyNumber int 0 local
+	Declare MyCash float local
+	Declare MaxNumber int 100 local
+
+	; calculate how much coin this character has on it
+	MyCash:Set[${Math.Calc[(${Me.Platinum}*10000)+(${Me.Gold}*100)+(${Me.Silver})+(${Me.Copper}/100)]}]
+
 	; if set limit based on harvest or non-harvest
 
 	if ${Harvest}
