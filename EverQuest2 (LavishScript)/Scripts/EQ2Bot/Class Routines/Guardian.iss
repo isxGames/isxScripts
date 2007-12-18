@@ -232,14 +232,14 @@ function Buff_Routine(int xAction)
 			break
 
 		case Offensive_Stance
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && ${OffensiveMode}
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && ${OffensiveMode} && !${Me.Maintained[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
 
 		case Deffensive_Stance
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && ${DefensiveMode}
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && ${DefensiveMode} && !${Me.Maintained[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
