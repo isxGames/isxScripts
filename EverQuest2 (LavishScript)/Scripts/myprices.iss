@@ -721,6 +721,10 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 					}
 					While ${BrokerNumber} > 0 && ${BuyNumber} > 0
 				}
+				if ${StopSearch}
+				{
+					break
+				}
 			}
 			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 			wait 10
