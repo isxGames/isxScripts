@@ -145,6 +145,19 @@
 		<Setting Name="70,15">Fierce Chlorostorm</Setting>
 		<Setting Name="70,9">Hierophantic Advent</Setting>
 		<Setting Name="70,220">Verdant Gasp</Setting>
-		<Setting Name="70,10">Wave of Healing</Setting>
+		<Setting Name="71,35">Aspect of the Bat</Setting>
+		<Setting Name="71,4">Sylvan Bloom</Setting>
+		<Setting Name="71,363">Ward of the Untamed</Setting>
+		<Setting Name="72,36">Aspect of the Forest</Setting>
+		<Setting Name="72,60">Dawnstrike</Setting>
+		<Setting Name="72,23">Essence of the Polar Bear</Setting>
+		<Setting Name="73,365">Gale</Setting>
+		<Setting Name="73,1">Grand Florescence</Setting>
+		<Setting Name="73,21">Master of the Wild</Setting>
+		<Setting Name="74,20">Armor of Seasons</Setting>
+		<Setting Name="74,329">Nature's Pack</Setting>
+		<Setting Name="74,90">Winds of Permafrost</Setting>
+		<Setting Name="75,37">Regenerating Spores</Setting>
+		<Setting Name="75,233">Underbrush</Setting>		
 	</Set>
 </InnerSpaceSettings>
