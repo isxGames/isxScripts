@@ -15,7 +15,8 @@ namespace ISXVGDotNet
             LavishVMAPI.Frame.Lock();
 
             Extension Ext = new Extension();
-            string MyNameIs = "My Name is " + Ext.Me.FName + " " + Ext.Me.LName;
+       
+            string MyNameIs = "My Name is " + Ext.Me().FName + " " + Ext.Me().LName;
             InnerSpace.Echo(MyNameIs);
 
             LavishVMAPI.Frame.Unlock();

@@ -57,8 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ExceptionHandler.cs" />
-    <Compile Include="Events.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
