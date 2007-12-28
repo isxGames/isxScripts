@@ -24,7 +24,7 @@ namespace ISXVGDotNet
             {
                 // You can get a complete list of events by right clicking on "VGEvent" 8 lines above and choosing "Go to Definition".  Then, you would go to the ISXVG
                 // wiki or the ISXVGChanges.txt file to determine the type and amount of arguments that are sent with the event.
-                vgevent.IncomingText += new VGEvent.LavishScriptEventHandler(vgevent_IncomingText);
+                vgevent.IncomingText += new EventHandler<LSEventArgs>(vgevent_IncomingText);
 
                 // for another script or extension to accept this event, it will need to "register" it using the same name that you used in the line below.
                 MyCustomEvent = LavishScript.Events.RegisterEvent("MyCustomEvent");
@@ -35,14 +35,14 @@ namespace ISXVGDotNet
             }
         }
 
-        public void vgevent_IncomingText(object sender, LavishScriptEventArgs e)
+        public void vgevent_IncomingText(object sender, LSEventArgs e)
         {
-            string Text = InnerSpace.GetArg<string>(0, e.ArgV);
-            int ChannelNumber = InnerSpace.GetArg<int>(1, e.ArgV);
-            string ChannelName = InnerSpace.GetArg<string>(2, e.ArgV);
+            string Text = e.Args[0];
+            string ChannelNumber = e.Args[1];
+            string ChannelName = e.Args[2];
 
             // Uncomment these two lines if you wish to see it in action.
-            string Output = "Incoming Text -> [" + Text + "]  {Channel: " + ChannelName + " (" + ChannelNumber.ToString() + ")}";
+            string Output = "Incoming Text -> [" + Text + "]  {Channel: " + ChannelName + " (" + ChannelNumber + ")}";
             InnerSpace.Echo(Output);
 
             return;
@@ -63,11 +63,11 @@ namespace ISXVGDotNet
                 SomeNumber.ToString()
             };
 
-            LavishScript.Events.ExecuteEvent(MyCustomEvent,4,Args);     // Note that the second parameter here is the number of arguments you're sending with the event.
+            LavishScript.Events.ExecuteEvent(MyCustomEvent, Args);
 
             //
             // Also note, if you were going to send an event with no arguments at all, it would be something like:
-            // LavishScript.Events.ExecuteEvent(EventID,0,null);
+            // LavishScript.Events.ExecuteEvent(MyCustomEvent,null);
 
             //
             // Finally, you can call the "ExecuteEvent" anywhere in your code you wish as long as you have the proper ID# for the event (which must be 'registered') as it 
