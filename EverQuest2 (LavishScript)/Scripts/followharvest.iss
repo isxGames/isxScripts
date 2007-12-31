@@ -1,6 +1,6 @@
 ;***************************************************************
 ;Followharvest by Pygar
-; v 0.1
+; v 0.2
 ;
 ;Purpose:
 ;This is a harvest script designed to be run on a bot that is on autofollow.  This script will
@@ -13,20 +13,15 @@
 ;***************************************************************
 
 
-
-
-
 ;includes moveto if its not already included
 #ifndef _moveto_
 	#include "${LavishScript.HomeDirectory}/Scripts/moveto.iss"
 #endif
 
 ;Set some script wide vars / declares
-;Max roam distance for getting a node
-variable int MaxRange=15
 declare triggerCheckTimer int script 5
 
-function main()
+function main(string FollowMember, int MaxRange)
 {
 
 	variable int tcount=0
@@ -40,14 +35,13 @@ function main()
 			EQ2:CreateCustomActorArray[byDist,${MaxRange}]
 			echo scanning actors
 
-			while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+			while ${tcount:Inc}<=${EQ2.CustomActorArraySize} && ${Actor[PC,${FollowMember}].Distance}<20
 			{
+				echo nearest actor is ${CustomActor[${tcount}].Name}
 				;if the nearest actor is a resource, harvest it
-				if ${CustomActor[${tcount}].Type.Equal[resource]} || ${CustomActor[${tcount}].Type.Equal[PC]} || ${CustomActor[${tcount}].Type.Equal[Pet]}
+				if ${CustomActor[${tcount}].Type.Equal[resource]}
 				{
-					echo nearest actor is ${CustomActor[${tcount}].Name}
-
-					if ${CustomActor[${tcount}].Type.Equal[PC]} || ${CustomActor[${tcount}].Type.Equal[Pet]}
+					if
 					{
 						echo ${CustomActor[${tcount}].Name} is a pc or pet and nearer than a resource, ending harvest
 						continue
@@ -55,6 +49,12 @@ function main()
 
 					CustomActor[${tcount}]:DoFace
 					call moveto ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 5 0 3 1
+
+					if ${return.equal[stuck]}
+					{
+						continue
+					}
+
 					CustomActor[${tcount}]:DoTarget
 					echo found a resource - harvesting ${CustomActor[${tcount}].Name}
 
@@ -69,20 +69,28 @@ function main()
 					while (${CustomActor[${tcount}].ID(exists)} && ${CustomActor[${tcount}].Distance}<6) || ${hcount:Inc}<6
 
 				}
+				elseif ${CustomActor[${tcount}].Target.ID}=${Actor[${FollowMember}].ID}
+				{
+					echo ${CustomActor[${tcount}].Name} is agro on follower, ignore it.
+				}
+				elseif ${CustomActor[${tcount}].ID}=${Actor[${FollowMember}].ID} || ${CustomActor[${tcount}].ID}=${Me.ToActor.ID}
+				{
+					echo ${CustomActor[${tcount}].Name} is me or follower
+				}
+				elseif ${CustomActor[${tcount}].Type.Equal[PC]} || ${CustomActor[${tcount}].Type.Equal[Pet]}
+				{
+					echo ${CustomActor[${tcount}].Name} is not a resource ignoring
+				}
 				else
 				{
 					echo nearest actor is not a resource, pc, or pet it is ${CustomActor[${tcount}].Name}
-					if ${Me.ToActor.WhoFollowingID}<1 && ${Me.GroupCount}
-					{
-						Me.Group[1].ToActor:DoFace
-						echo /follow ${Me.Group[1].ToActor.Name}
-						EQ2Execute /follow ${Me.Group[1].ToActor.Name}
-					}
+					call ResumeFollow
 					tcount:Set[${EQ2.CustomActorArraySize}]
 				}
 			}
 		}
 		waitframe
+		call ResumeFollow
 	}
 	;THIS MAKES THE FUNCTION  LOOP ENDLESSLY
 	while 0 < 1
@@ -105,6 +113,16 @@ function DoHarvest(int NodeID)
 	wait 2
 	wait 50 !${Me.CastingSpell}
 
+}
+
+function ResumeFollow()
+{
+	if ${Me.ToActor.WhoFollowingID}<1 && ${Me.GroupCount}
+	{
+		Actor[PC,${FollowMember}]:DoFace
+		echo /follow ${Actor[PC,${FollowMember}].Name}
+		EQ2Execute /follow ${Actor[PC,${FollowMember}].Name}
+	}
 }
 
 
