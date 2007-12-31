@@ -340,15 +340,7 @@ function Buff_Routine(int xAction)
 			break
 
 		case AA_Coagulate
-			if ${Actor[${MainTankPC}](exists)}
-			{
-				;If the MA changed during the fight cancel so we can rebuff original MA
-				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${MainTankPC}].ID}
-				{
-					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-				}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID}
-			}
+			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case BuffNoxious
 			if ${BuffNoxious}
