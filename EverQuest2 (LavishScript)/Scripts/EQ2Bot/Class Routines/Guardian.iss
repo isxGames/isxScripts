@@ -246,7 +246,7 @@ function Buff_Routine(int xAction)
 			break
 
 		case AA_Buckler
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}

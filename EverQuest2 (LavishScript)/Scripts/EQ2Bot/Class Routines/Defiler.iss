@@ -70,7 +70,7 @@ function Class_Declaration()
 	BuffWaterBreathing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffWaterBreathing,FALSE]}]
 	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
 	BuffHorrorGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHorrorGroupMember,]}]
-
+	BuffAlacrityGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAlacrityGroupMember,]}]
 }
 
 function Buff_Init()
@@ -438,6 +438,10 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare tempvar int local
+	declare Counter int local
+	declare BuffMember string local
+	declare BuffTarget string local
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -489,6 +493,17 @@ function Combat_Routine(int xAction)
 	elseif ${Me.Maintained[${SpellType[317]}](exists)}
 	{
 		Me.Maintained[${SpellType[317]}]:Cancel
+	}
+
+	;Cast Alacrity if available
+	if ${Me.Ability[${SpellType[398]}].IsReady}
+	{
+		BuffTarget:Set[${UIElement[cbBuffProcGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+
+		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+		{
+			call CastSpellRange 398 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+		}
 	}
 
 	;Before we do our Action, check to make sure our group doesnt need healing
@@ -678,6 +693,7 @@ function RefreshPower()
 	;AA Cannibalize
 	if ${Me.ToActor.Power}<35  && ${Me.ToActor.Health}>50
 	{
+		call CastSpellRange 387
 		call CastSpellRange 381
 	}
 
