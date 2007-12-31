@@ -10,6 +10,13 @@
 ;
 ;Note:
 ;This is totally alpha and needs testing...
+;
+; SYNTAX:
+; run followharvest <FollowTarget> <maxroam>
+;
+; EXAMPLE
+; run followharvest Amadeus 20
+;
 ;***************************************************************
 
 
