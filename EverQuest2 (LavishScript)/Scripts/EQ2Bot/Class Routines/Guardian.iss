@@ -232,14 +232,14 @@ function Buff_Routine(int xAction)
 			break
 
 		case Offensive_Stance
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && ${OffensiveMode} && !${Me.Maintained[${PreSpellRange[${xAction},1]}]}](exists)}
+			if ${OffensiveMode} && ${PreSpellRange[${xAction},1]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
 
 		case Deffensive_Stance
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && ${DefensiveMode} && !${Me.Maintained[${PreSpellRange[${xAction},1]}]}](exists)}
+			if ${DefensiveMode} && ${PreSpellRange[${xAction},1]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -348,7 +348,7 @@ function Combat_Routine(int xAction)
 	;echo in combat
 	if ${FullAutoMode}
 	{
-echo ${xAction} - ${SpellType[${SpellRange[${xAction},1]}]} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].Name} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+		;echo ${xAction} - ${SpellType[${SpellRange[${xAction},1]}]} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].Name} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 		switch ${Action[${xAction}]}
 		{
 			case LayWaste
