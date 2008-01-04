@@ -1,5 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.1b Updated: 00/06/07 by Pygar
+; EQ2Bot.iss Version 2.7.1c Updated: 01/04/08 by Pygar
+;
+;2.7.1c
+; Adjusted for new IsDead member of Actor.  This will fix false positives on death checks due to coagulate and other unconcious health buffs.
+;	Adjusted MA_Dead and MT_Dead functions
+; Adjusted LostAggro - Now fires with the ID of the mob that is lost, it no longer switched the MT's killtarget to the add.  This should allow
+;	for mezing to be more effective, and allow for more control of how to react to aggro loss in the Lost_aggro() function in individual class files.
 ;
 ;2.7.1b
 ; Minor tweaks to AcceptWindow code
@@ -337,7 +343,7 @@ function main()
 				}
 
 				; Add additional check to see if Mob is in Camp (assume radius of 15) OR MainTank is within designated range
-				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
+				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
@@ -368,7 +374,7 @@ function main()
 			; Do Pre-Combat Script if there is no mob nearby
 			if !${Mob.Detect} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
-				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && ${Actor[${KillTarget}].Health}>1 && ${Actor[${KillTarget},radius,35](exists)}
+				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
@@ -553,12 +559,12 @@ function main()
 			StartLevel:Set[${Me.Level}]
 		}
 
-		if (${Actor[ExactName,${MainAssist}].Health}==-99 && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[${OriginalMA}].Health}==-99)
+		if (${Actor[ExactName,${MainAssist}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[${OriginalMA}].IsDead})
 		{
 			EQ2Bot:MainAssist_Dead
 		}
 
-		if (${Actor[${MainTankPC}].Health}==-99 && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].Health}==-99)
+		if (${Actor[${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].IsDead})
 		{
 			EQ2Bot:MainTank_Dead
 		}
@@ -794,13 +800,13 @@ function Combat()
 				{
 					Mob:CheckMYAggro
 
-					if ${Actor[ExactName,${MainAssist}].Health}==-99
+					if ${Actor[ExactName,${MainAssist}].IsDead}
 					{
 						EQ2Bot:MainAssist_Dead
 						break
 					}
 
-					if ${Actor[${MainTankPC}].Health}==-99
+					if ${Actor[${MainTankPC}].IsDead}
 					{
 						EQ2Bot:MainTank_Dead
 						break
@@ -885,12 +891,12 @@ function Combat()
 					}
 				}
 
-				if (${Actor[${KillTarget}].Health}<1) && !${MainTank}
+				if ${Actor[${KillTarget}].IsDead} && !${MainTank}
 				{
 					break
 				}
 
-				if (${Target.Health}<1 && ${MainTank})
+				if ${Target.IsDead} && ${MainTank}
 				{
 					break
 				}
@@ -911,14 +917,14 @@ function Combat()
 				Script:End
 			}
 
-			if (${Actor[${KillTarget}].Health}<1 && !${MainTank}) || (${Target.Health}<1 && ${MainTank} && (${Actor[${KillTarget}].Type.Equal[NPC]} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].Type.Equal[Corpse]}))
+			if (${Actor[${KillTarget}].IsDead} && !${MainTank}) || (${Target.IsDead} && ${MainTank} && (${Actor[${KillTarget}].Type.Equal[NPC]} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].Type.Equal[Corpse]}))
 			{
 				break
 			}
 
 			call ProcessTriggers
 		}
-		while (${Actor[${KillTarget}](exists)} && !${MainTank}) || (${Target(exists)} && ${MainTank})
+		while ((${Actor[${KillTarget}](exists)} && !${MainTank}) || (${Target(exists)} && ${MainTank})) && !${Actor[${KillTarget}].IsDead}
 
 		disablebehind:Set[FALSE]
 		disablefront:Set[FALSE]
@@ -1987,7 +1993,7 @@ function IamDead(string Line)
 			wipegroup:Set[1]
 			do
 			{
-				if ${Me.Group[${wipegroup}](exists)} && ${Me.Group[${wipegroup}].ToActor.Health}==-99
+				if ${Me.Group[${wipegroup}](exists)} && ${Me.Group[${wipegroup}].ToActor.IsDead}
 				{
 					wipe:Inc
 					echo ${Me.Group[${wipegroup}]} has died.
@@ -2055,7 +2061,7 @@ function IamDead(string Line)
 					}
 			}
 		}
-		while ${Me.ToActor.Health}==-99
+		while ${Me.ToActor.IsDead}
 		echo "Ready to continue fighting!"
 	}
 	else
@@ -2134,16 +2140,17 @@ function CheckMTAggro()
 					continue
 				}
 
-				KillTarget:Set[${CustomActor[${tcount}].ID}]
-				target ${KillTarget}
-				wait 10 ${Target.ID}==${KillTarget}
+				;this seems wrong, trying a change
+				;KillTarget:Set[${CustomActor[${tcount}].ID}]
+				;target ${KillTarget}
+				;wait 10 ${Target.ID}==${KillTarget}
+				;
+				;if ${Target(exists)} && (${Me.ID}!=${Target.ID})
+				;{
+				;	face ${Target.X} ${Target.Z}
+				;}
 
-				if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-				{
-					face ${Target.X} ${Target.Z}
-				}
-
-				call Lost_Aggro ${KillTarget}
+				call Lost_Aggro ${CustomActor[${tcount}].ID}
 				lostaggro:Set[TRUE]
 				return
 			}
@@ -2151,18 +2158,19 @@ function CheckMTAggro()
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
-	if ${Actor[${newtarget}](exists)}
-	{
-		KillTarget:Set[${newtarget}]
-		target ${KillTarget}
-
-		wait 10 ${Target.ID}==${KillTarget}
-
-		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-		{
-			face ${Target.X} ${Target.Z}
-		}
-	}
+	;again this seems wrong
+	;if ${Actor[${newtarget}](exists)}
+	;{
+	;	KillTarget:Set[${newtarget}]
+	;	target ${KillTarget}
+	;
+	;	wait 10 ${Target.ID}==${KillTarget}
+	;
+	;	if ${Target(exists)} && (${Me.ID}!=${Target.ID})
+	;	{
+	;		face ${Target.X} ${Target.Z}
+	;	}
+	;}
 }
 
 function ScanAdds()
@@ -3019,27 +3027,29 @@ objectdef EQ2BotObj
 
 	method MainAssist_Dead()
 	{
-		if ${Actor[${OriginalMA}].Health}>0 && ${Actor[${OriginalMA}](exists)}
+		if !${Actor[${OriginalMA}].IsDead} && ${Actor[${OriginalMA}](exists)}
 		{
-			MainTank:Set[FALSE]
 			MainAssist:Set[${OriginalMA}]
 			KillTarget:Set[]
 			Echo Switching back to the original MainAssist ${MainAssist}
 			return
 		}
-		MainAssist:Set[${MainTankPC}]
+		else
+		{
+			MainAssist:Set[${MainTankPC}]
+		}
 	}
 
 	method MainTank_Dead()
 	{
 		variable int highesthp
 
-		if ${Actor[${OriginalMT}].Health}>0 && ${Actor[${OriginalMT}](exists)}
+		if !${Actor[${OriginalMT}].IsDead} && ${Actor[${OriginalMT}](exists)}
 		{
 			MainTank:Set[FALSE]
-			MainAssist:Set[${OriginalMT}]
+			MainTankPC:Set[${OriginalMT}]
 			KillTarget:Set[]
-			Echo Switching back to the original MainAssist ${MainAssist}
+			Echo Switching back to the original MainTank ${MainTankPC}
 			return
 		}
 
@@ -3047,7 +3057,7 @@ objectdef EQ2BotObj
 		{
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
-			MainAssist:Set[${Me.Name}]
+			MainTankPC:Set[${Me.Name}]
 		}
 
 		grpcnt:Set[${Me.GroupCount}]
@@ -3066,7 +3076,7 @@ objectdef EQ2BotObj
 					{
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
-						MainAssist:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
 					}
 			}
 		}
@@ -3089,7 +3099,7 @@ objectdef EQ2BotObj
 						{
 							highesthp:Set[${Me.Raid[${tempgrp}].MaxHealth}]
 							MainTank:Set[FALSE]
-							MainAssist:Set[${Me.Raid[${tempgrp}].Name}]
+							MainTankPC:Set[${Me.Raid[${tempgrp}].Name}]
 						}
 				}
 			}
@@ -3098,7 +3108,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainTank to ${MainTankPC}
 			return
 		}
 
@@ -3106,7 +3116,7 @@ objectdef EQ2BotObj
 		{
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
-			MainAssist:Set[${Me.Name}]
+			MainTankPC:Set[${Me.Name}]
 		}
 
 		tempgrp:Set[1]
@@ -3124,7 +3134,7 @@ objectdef EQ2BotObj
 					{
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
-						MainAssist:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
 					}
 			}
 		}
@@ -3132,7 +3142,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainTank to ${MainTankPC}
 			return
 		}
 
@@ -3140,7 +3150,7 @@ objectdef EQ2BotObj
 		{
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
-			MainAssist:Set[${Me.Name}]
+			MainTankPC:Set[${Me.Name}]
 		}
 
 		tempgrp:Set[1]
@@ -3158,7 +3168,7 @@ objectdef EQ2BotObj
 					{
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
-						MainAssist:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
 					}
 			}
 		}
@@ -3166,7 +3176,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainTank to ${MainTankPC}
 			return
 		}
 
@@ -3174,7 +3184,7 @@ objectdef EQ2BotObj
 		{
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
-			MainAssist:Set[${Me.Name}]
+			MainTankPC:Set[${Me.Name}]
 		}
 
 		tempgrp:Set[1]
@@ -3192,7 +3202,7 @@ objectdef EQ2BotObj
 					{
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
-						MainAssist:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
 					}
 			}
 		}
@@ -3200,7 +3210,7 @@ objectdef EQ2BotObj
 
 		if ${highesthp}
 		{
-			Echo Setting MainAssist to ${MainAssist}
+			Echo Setting MainTank to ${MainTankPC}
 			return
 		}
 	}

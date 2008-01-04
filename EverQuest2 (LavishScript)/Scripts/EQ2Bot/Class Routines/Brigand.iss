@@ -311,11 +311,6 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
-		call CastSpellRange 303
-	}
-
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -327,6 +322,11 @@ function Combat_Routine(int xAction)
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 	{
 		call CastSpellRange 130 0 1 0 ${KillTarget}
+	}
+
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	{
+		call CastSpellRange 303
 	}
 
 	;use best debuffs on target if epic
@@ -805,14 +805,14 @@ function Have_Aggro()
 	}
 }
 
-function Lost_Aggro()
+function Lost_Aggro(int aggroid)
 {
 	if ${Target.Target.ID}!=${Me.ID}
 	{
 		if ${MainTank}
 		{
-			call CastSpellRange 103 100 1 1 ${KillTarget} 0 0 1
-			call CastSpellRange 160 0 1 0 ${KillTarget} 0 0 1
+			call CastSpellRange 100 103 1 1 ${aggroid} 0 0 1
+			call CastSpellRange 160 0 1 0 ${aggroid} 0 0 1
 		}
 	}
 
