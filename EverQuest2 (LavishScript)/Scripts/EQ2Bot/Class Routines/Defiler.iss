@@ -741,9 +741,9 @@ function CheckHeals()
 	lowest:Set[1]
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankID}].Health}==-99 && ${Actor[${MainTankID}](exists)} && ${CombatRez}
+	if ${Actor[${MainTankID}].ToActor.IsDead} && ${Actor[${MainTankID}](exists)} && ${CombatRez}
 	{
-		call CastSpellRange 300 0 0 0 ${MainTankID}
+		call CastSpellRange 300 0 1 1 ${MainTankID}
 	}
 
 	do
@@ -980,14 +980,13 @@ function CheckHeals()
 
 	if ${CombatRez} || !${Me.InCombat}
 	{
-		;Res Fallen Groupmembers only if in range
 		grpcnt:Set[${Me.GroupCount}]
 		tempgrp:Set[1]
 		do
 		{
-			if ${Me.Group[${tempgrp}].ToActor.Health}==-99 && ${Me.Group[${tempgrp}].ToActor(exists)}
+			if ${Me.Group[${tempgrp}].ToActor(exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead}
 			{
-				call CastSpellRange 300 301 0 0 ${Me.Group[${tempgrp}].ID} 1
+				call CastSpellRange 300 301 1 1 ${Me.Group[${tempgrp}].ToActor.ID} 1
 			}
 		}
 		while ${tempgrp:Inc}<${grpcnt}
