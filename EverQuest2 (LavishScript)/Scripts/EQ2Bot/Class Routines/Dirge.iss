@@ -1,6 +1,10 @@
 ;*****************************************************
-;Dirge.iss 20070919d
+;Dirge.iss 20080104a
 ;by Pygar & Kayre
+;
+;20080104a
+; Added support for IsDead member
+; Added a BD trigger /tell mydirge BD Now!
 ;
 ;20070919d
 ;Added Joust Mode - Dirge will move to group or raid healer when it see's the out message in raid chat or
@@ -57,6 +61,7 @@ function Class_Declaration()
 	declare InTrigger string script
 	; 0 is in 1 is out
 	declare JoustStatus bool script 0
+	declare BDStatus bool script 0
 
 	call EQ2BotLib_Init
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
@@ -85,6 +90,7 @@ function Class_Declaration()
 	;********************************************
 	InTrigger:Set[dps in]
 	OutTrigger:Set[dps out]
+	BDTrigger:Set[BD Now!]
 }
 
 function Buff_Init()
@@ -210,6 +216,16 @@ function Buff_Routine(int xAction)
 	{
 		ExecuteAtom AutoFollowTank
 	}
+
+	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
+	{
+		call CastSpellRange 388
+		if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
+		{
+			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+		}
+	}
+
 	switch ${PreAction[${xAction}]}
 	{
 		case Buff_Parry
@@ -349,6 +365,15 @@ function Combat_Routine(int xAction)
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
+	}
+
+	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
+	{
+		call CastSpellRange 388
+		if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
+		{
+			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+		}
 	}
 
 	if ${JoustMode}
@@ -639,7 +664,7 @@ function CheckHeals()
 	{
 
 		;oration of sacrifice heal
-		if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && ${Me.Group[${temphl}].ToActor.Health}>1 && ${Me.ToActor.Health}>75 && !${haveaggro} && !${MainTank} && ${Me.Group[${temphl}].ToActor.Distance}<=20 && ${Me.Ability[${SpellType[1]}].IsReady}
+		if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && !${haveaggro} && !${MainTank} && ${Me.Group[${temphl}].ToActor.Distance}<=20 && ${Me.Ability[${SpellType[1]}].IsReady}
 		{
 			EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
 			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID}
@@ -648,9 +673,9 @@ function CheckHeals()
 		}
 
 		;Res
-		if ${Me.Group[${temphl}].ToActor.Health}==-99 && ${Me.Group[${temphl}].ToActor.Distance}<10 && ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<30 && ${Me.Ability[${SpellType[300]}].IsReady}
 		{
-			call CastSpellRange 300 0 0 0 ${Me.Group[${temphl}].ID}
+			call CastSpellRange 300 0 1 1 ${Me.Group[${temphl}].ID}
 			Target ${KillTarget}
 		}
 
@@ -720,9 +745,13 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 			{
 				JoustStatus:Set[1]
 			}
-				elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
 			{
 				JoustStatus:Set[0]
+			}
+			elseif ${Message.Find[${BDTrigger}]} && ${Me.InCombat}
+			{
+				BDStatus:Set[1]
 			}
 		default
 			break

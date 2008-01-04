@@ -1109,31 +1109,40 @@ function CureGroupMember(int gMember)
 		if  ${Me.Group[${gMember}].Arcane}>0
 		{
 			call CastSpellRange 326
+			tmpcure:Inc
 
 				if  ${Me.Group[${gMember}].Arcane}>0
 				{
 					call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
+					tmpcure:Inc
 				}
+			wait 2
 		}
 
 		if  ${Me.Group[${gMember}].Noxious}>0
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
+			tmpcure:Inc
+			wait 2
 		}
 
 		if  ${Me.Group[${gMember}].Elemental}>0
 		{
 			call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
+			tmpcure:Inc
+			wait 2
 		}
 
 		if  ${Me.Group[${gMember}].Trauma}>0
 		{
 			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
+			tmpcure:Inc
+			wait 2
 		}
 	}
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)}
 
-	gMember:Set[0]
+	gMember:Set[1]
 
 	do
 	{

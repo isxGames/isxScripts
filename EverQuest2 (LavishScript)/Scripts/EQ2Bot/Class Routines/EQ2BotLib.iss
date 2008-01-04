@@ -458,7 +458,7 @@ function UseCrystallizedSpirit(int Health)
 			if ${Me.Group[${temphl}].ToActor(exists)}
 			{
 
-				if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<${Health}
+				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<${Health}
 				{
 					grpheal:Inc
 				}

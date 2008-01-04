@@ -538,7 +538,7 @@ function CheckHeals()
 			if ${Me.Group[${temphl}].ZoneName.Equal["${Zone.Name}"]}
 			{
 
-				if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor(exists)}
+				if ${Me.Group[${temphl}].ToActor.Health} < 100 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor(exists)}
 				{
 					if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
 					{
@@ -546,7 +546,7 @@ function CheckHeals()
 					}
 				}
 
-				if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<60
+				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<60
 				{
 					grpheal:Inc
 				}
@@ -561,7 +561,7 @@ function CheckHeals()
 		while ${temphl:Inc}<${grpcnt}
 	}
 	;MAINTANK EMERGENCY Mitigation
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<30 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		call CastSpellRange 317
 		call CastSpellRange 155 156
