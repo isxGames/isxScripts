@@ -647,7 +647,7 @@ function Post_Combat_Routine(int xAction)
 			tempgrp:Set[1]
 			do
 			{
-				if ${Me.Group[${tempgrp}].ToActor.Health}==-99
+				if ${Me.Group[${tempgrp}].ToActor.IsDead}
 				{
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 1 0 ${Me.Group[${tempgrp}].ID} 1
 				}
@@ -751,12 +751,7 @@ function CheckHeals()
 		if ${Me.Group[${temphl}].ToActor(exists)}
 		{
 
-			if ${Me.Group[${temphl}].ToActor.Health}==-99 && !${Me.InCombat} && ${Me.Group[${temphl}].ToActor.Distance}<25
-			{
-				call CastSpellRange 300 301 1 0 ${Me.Group[${temphl}].ID} 1
-			}
-
-			if ${Me.Group[${temphl}].ToActor.Health}<100 && ${Me.Group[${temphl}].ToActor.Health}>-99
+			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
 				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health}
 				{
@@ -794,7 +789,7 @@ function CheckHeals()
 				}
 			}
 
-			if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<80
+			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
 			{
 				grpheal:Inc
 			}
@@ -823,7 +818,7 @@ function CheckHeals()
 	}
 	while ${temphl:Inc}<${grpcnt}
 
-	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
+	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 	{
 		grpheal:Inc
 	}
@@ -851,25 +846,25 @@ function CheckHeals()
 	}
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ID}==${MainTankID} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].ID}==${MainTankID} && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		call CastSpellRange 8 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
 		call EmergencyHeal ${MainTankID}
 	}
 
 	;MAINTANK HEALS
-	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && ${Actor[${MainTankID}].Health}>-99
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && !${Actor[${MainTankID}].IsDead}
 	{
 		call CastSpellRange 7 0 0 0 ${MainTankID}
 		call CastSpellRange 15
 	}
 
-	if ${Actor[${MainTankID}].Health}<50 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && ${Actor[${MainTankID}].Health}>-99
+	if ${Actor[${MainTankID}].Health}<50 && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].InCombatMode} && !${Actor[${MainTankID}].IsDead}
 	{
 		call CastSpellRange 8 0 0 0 ${MainTankID}
 	}
 
-	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}].Health}>-99 && ${Actor[${MainTankID}](exists)}
+	if ${Actor[${MainTankID}].Health}<90 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 	{
 		call CastSpellRange 387
 		call CastSpellRange 1 0 0 0 ${MainTankID}
@@ -947,7 +942,7 @@ function CheckHeals()
 		}
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<80 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].ToActor.Health}<80 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
 		{
@@ -1059,7 +1054,7 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if ${Actor[ExactName,PC,${MainTankPC}].Health}==-99 && ${Actor[ExactName,PC,${MainTankPC}](exists)} && ${CombatRez}
+	if ${Actor[ExactName,PC,${MainTankPC}].IsDead} && ${Actor[ExactName,PC,${MainTankPC}](exists)} && ${CombatRez}
 	{
 		call 300 301 0 0 ${Actor[ExactName,PC,${MainTankPC}].ID} 1
 	}
