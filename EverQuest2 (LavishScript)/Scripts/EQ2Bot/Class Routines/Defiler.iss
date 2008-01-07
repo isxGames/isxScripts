@@ -49,6 +49,7 @@ function Class_Declaration()
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffProcGroupMember string script
 	declare BuffHorrorGroupMember string script
+	declare BuffAlacrityGroupMember string script
 
 	declare EquipmentChangeTimer int script
 
@@ -981,7 +982,11 @@ function CheckHeals()
 		{
 			if ${Me.Group[${tempgrp}].ToActor(exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead}
 			{
+<<<<<<< .mine
+				call CastSpellRange 300 301 0 0 ${Me.Group[${tempgrp}].ID}
+=======
 				call CastSpellRange 300 301 1 1 ${Me.Group[${tempgrp}].ToActor.ID} 1
+>>>>>>> .r352
 			}
 		}
 		while ${tempgrp:Inc}<${grpcnt}
