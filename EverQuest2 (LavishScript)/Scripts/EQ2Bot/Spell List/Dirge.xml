@@ -114,6 +114,7 @@
 		<Setting Name="52,26">Percussion of Stone</Setting>
 		<Setting Name="52,28">Harl\'s Rousing Strain</Setting>
 		<Setting Name="53,150">Void Blade</Setting>
+		<Setting Name="53,">Magic Rebuff</Setting>
 		<Setting Name="54,95">Hymn of Horror</Setting>
 		<Setting Name="54,352">Garsin\'s Burial Chant</Setting>
 		<Setting Name="54,60">Luda\'s Heinous Cry</Setting>
@@ -153,5 +154,35 @@
 		<Setting Name="70,62">Banshee</Setting>
 		<Setting Name="70,152">Wail of the Dead</Setting>
 		<Setting Name="70,24">Riana\'s Maligning Sustain</Setting>
+    <Setting Name="71,250">Deprivating Shot</Setting>
+    <Setting Name="71,63">Dissonant Requiem</Setting>
+    <Setting Name="71,151">Siphon Blade</Setting>
+    <Setting Name="71,">Spell Rebuff</Setting>
+    <Setting Name="72,55">Emotional Dirge</Setting>
+    <Setting Name="72,29">Weapon Boon</Setting>
+    <Setting Name="73,180">Baffle</Setting>
+    <Setting Name="73,57">Devigorating Discante</Setting>
+    <Setting Name="73,20">Weapon Elusion</Setting>
+    <Setting Name="74,52">Lanet\'s Scream</Setting>
+    <Setting Name="74,22">Noxious Tempo</Setting>
+    <Setting Name="74,135">Scream of Blood</Setting>
+    <Setting Name="74,110">Shriek Blade</Setting>
+    <Setting Name="75,27">Dead Calm</Setting>
+    <Setting Name="75,136">Grim Strike</Setting>
+    <Setting Name="75,50">Rhyming Curse</Setting>
+    <Setting Name="76,155">Chime of Blades</Setting>
+    <Setting Name="76,51">Keen Tactics</Setting>
+    <Setting Name="76,150">Vile Blade</Setting>
+    <Setting Name="77,28">Athletic Strain</Setting>
+    <Setting Name="77,56">Clara\'s Cacophony</Setting>
+    <Setting Name="78,352">Fearful March</Setting>
+    <Setting Name="78,60">Penetrating Shriek</Setting>
+    <Setting Name="78,1">Speech of Sacrifice</Setting>
+    <Setting Name="79,31">Death\'s Edge</Setting>
+    <Setting Name="79,21">Power Ballad</Setting>
+    <Setting Name="80,62">Cry of the Banshee</Setting>
+    <Setting Name="80,">Gravitas</Setting>
+    <Setting Name="80,152">Howl of Death</Setting>
+    <Setting Name="80,24">Riana's Indignant Sustain</Setting>
 	</Set>
 </InnerSpaceSettings>
