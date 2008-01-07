@@ -90,7 +90,7 @@
 								<Color>FFAAFF65</Color>
 								<Bold/>
 							</Font>
-							<Text>${Script[EQ2Harvest].VariableScope.FinishPoint}</Text>
+							<Text>${Script[EQ2Harvest].VariableScope.DestinationPoint}</Text>
 						</Text>
 						<Text name='Target Text' Template='EQ2.text'>
 							<X>5%</X>

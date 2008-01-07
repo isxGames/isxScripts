@@ -166,37 +166,40 @@ function Combat_Init()
 	Action[6]:Set[Grievance]
 	SpellRange[6,1]:Set[151]
 
-	Action[7]:Set[ScreamOfDeath]
-	SpellRange[7,1]:Set[391]
-	SpellRange[7,2]:Set[135]
+	Action[7]:Set[Rebuff]
+	SpellRange[7,1]:Set[54]
 
-	Action[8]:Set[Stealth_Attack]
+	Action[8]:Set[ScreamOfDeath]
 	SpellRange[8,1]:Set[391]
-	SpellRange[8,2]:Set[136]
+	SpellRange[8,2]:Set[135]
 
-	Action[9]:Set[WailOfTheDead]
-	SpellRange[9,1]:Set[152]
+	Action[9]:Set[Stealth_Attack]
+	SpellRange[9,1]:Set[391]
+	SpellRange[9,2]:Set[136]
 
-	Action[10]:Set[AATurnstrike]
-	SpellRange[10,1]:Set[387]
+	Action[10]:Set[WailOfTheDead]
+	SpellRange[10,1]:Set[152]
 
-	Action[11]:Set[Lanet]
-	SpellRange[11,1]:Set[52]
+	Action[11]:Set[AATurnstrike]
+	SpellRange[11,1]:Set[387]
 
-	Action[12]:Set[AoE2]
-	SpellRange[12,1]:Set[63]
+	Action[12]:Set[Lanet]
+	SpellRange[12,1]:Set[52]
 
-	Action[13]:Set[Tarven]
-	SpellRange[13,1]:Set[50]
+	Action[13]:Set[AoE2]
+	SpellRange[13,1]:Set[63]
 
-	Action[14]:Set[Jael]
-	SpellRange[14,1]:Set[250]
+	Action[14]:Set[Tarven]
+	SpellRange[14,1]:Set[50]
 
-	Action[15]:Set[AAHarmonizingShot]
-	SpellRange[15,1]:Set[386]
+	Action[15]:Set[Jael]
+	SpellRange[15,1]:Set[250]
 
-	Action[16]:Set[Stun]
-	SpellRange[16,1]:Set[190]
+	Action[16]:Set[AAHarmonizingShot]
+	SpellRange[16,1]:Set[386]
+
+	Action[17]:Set[Stun]
+	SpellRange[17,1]:Set[190]
 
 }
 
@@ -220,10 +223,12 @@ function Buff_Routine(int xAction)
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
 		call CastSpellRange 388
-		if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
+		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
 			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+			BDStatus:Set[0]
 		}
+
 	}
 
 	switch ${PreAction[${xAction}]}
@@ -370,9 +375,10 @@ function Combat_Routine(int xAction)
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
 		call CastSpellRange 388
-		if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
+		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
 			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+			BDStatus:Set[0]
 		}
 	}
 
@@ -584,7 +590,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 			}
 			break
-
+		case Rebuff
 		case Luda
 		case Lanet
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
@@ -749,7 +755,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 			{
 				JoustStatus:Set[0]
 			}
-			elseif ${Message.Find[${BDTrigger}]} && ${Me.InCombat}
+			elseif ${Message.Find[${BDTrigger}]}
 			{
 				BDStatus:Set[1]
 			}

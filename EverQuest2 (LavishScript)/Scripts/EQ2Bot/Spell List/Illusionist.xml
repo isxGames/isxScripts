@@ -17,6 +17,7 @@
 		<Setting Name="8,91">Storm of Colors</Setting>
 		<Setting Name="9,">Dispel Magic</Setting>
 		<Setting Name="9,30">See Invisibility</Setting>
+		<Setting Name="10,333">Sprint</Setting>
 		<Setting Name="10,70">Greater Migraine</Setting>
 		<Setting Name="10,355">Personae Twin</Setting>
 		<Setting Name="10,385">Chronosiphoning</Setting>
@@ -132,11 +133,38 @@
 		<Setting Name="67,23">Momentary Sentiment</Setting>
 		<Setting Name="67,61">Tumor</Setting>
 		<Setting Name="68,92">Lustrous Regalia</Setting>
-		<Setting Name="68,20">Seal of Ascention</Setting>
+		<Setting Name="68,20">Seal of Ascension</Setting>
 		<Setting Name="69,309">Extract Essence</Setting>
 		<Setting Name="69,190">Forsake Will</Setting>
 		<Setting Name="70,80">Abolish Hope</Setting>
 		<Setting Name="70,72">Prismatic Chaos</Setting>
 		<Setting Name="70,388">Solar Shower</Setting>
+		<Setting Name="71,191">Bedazzlement</Setting>
+		<Setting Name="71,354">Mana Shroud</Setting>
+		<Setting Name="71,60">Ultraviolet Beam</Setting>
+		<Setting Name="72,70">Brainclot</Setting>
+		<Setting Name="72,260">Drain Consciousness</Setting>
+		<Setting Name="73,50">Construct of Rationality</Setting>
+		<Setting Name="73,230">Inhibition</Setting>
+		<Setting Name="73,22">Percolate</Setting>
+		<Setting Name="74,192">Illusory Group</Setting>
+		<Setting Name="74,92">Manatap</Setting>
+		<Setting Name="74,355">Personae Reflection</Setting>
+		<Setting Name="75,21">Aspect of Genius</Setting>
+		<Setting Name="75,40">Tandem</Setting>
+		<Setting Name="76,50">Daunted</Setting>
+		<Setting Name="76,91">Gamma Storm</Setting>
+		<Setting Name="77,352">Mindless</Setting>
+		<Setting Name="77,353">Phantasmal Awe</Setting>
+		<Setting Name="78,23">Flash of Brilliance</Setting>
+		<Setting Name="78,61">Lesion</Setting>
+		<Setting Name="78,92">Regalia</Setting>
+		<Setting Name="79,309">Extract Mana</Setting>
+		<Setting Name="79,20">Seal of Invention</Setting>
+		<Setting Name="79,190">Withdrawal</Setting>
+		<Setting Name="80,80">Pessimism</Setting>
+		<Setting Name="80,72">Prismatic Adornment</Setting>
+		<Setting Name="80,388">Chromatic Shower</Setting>
+		<Setting Name="80,377">Doppleganger</Setting>
 	</Set>
 </InnerSpaceSettings>
