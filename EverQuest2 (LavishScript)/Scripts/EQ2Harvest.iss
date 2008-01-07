@@ -73,6 +73,7 @@ variable bool PauseHarvest=FALSE
 variable bool DestroyMeat=FALSE
 variable string StartPoint
 variable string FinishPoint
+variable string DestinationPoint
 variable string CurrentAction="Waiting to Start..."
 variable float WPX
 variable float WPZ
@@ -163,19 +164,21 @@ function main(string mode)
 			if ${NearestPoint.Equal[${FinishPoint}]}
 			{
 				NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+				DestinationPoint:Set[${StartPoint}]
 			}
 			else
 			{
 				NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
 				PathDirection:Set[TRUE]
+				DestinationPoint:Set[${FinishPoint}]
 			}
-
 			call PathingRoutine
 			PathRoute:Set[4]
 			continue
 		}
 		else
 		{
+			NavPath:Clear
 			if ${firstpass}
 			{
 				NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
@@ -183,21 +186,32 @@ function main(string mode)
 				if ${NearestPoint.Equal[${FinishPoint}]}
 				{
 					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					DestinationPoint:Set[${StartPoint}]
+					PathDirection:Set[FALSE]
 				}
 				else
 				{
 					NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
-					PathDirection:Set[!${PathDirection}]
+					DestinationPoint:Set[${FinishPoint}]
+					PathDirection:Set[TRUE]
 				}
 				call PathingRoutine
 				firstpass:Set[FALSE]
 			}
 			else
 			{
-				NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
-				NavPath "${World}" "${FinishPoint}" "${StartPoint}"
-				PathDirection:Set[!${PathDirection}]
-
+				if ${PathDirection}
+				{
+					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					PathDirection:Set[FALSE]
+					DestinationPoint:Set[${StartPoint}]
+				}
+				else
+				{
+					NavPath "${World}" "${StartPoint}" "${FinishPoint}"
+					PathDirection:Set[TRUE]
+					DestinationPoint:Set[${FinishPoint}]
+				}
 				call PathingRoutine
 				firstpass:Set[FALSE]
 
@@ -324,9 +338,9 @@ function PathingRoutine()
 				NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 				if ${PathDirection}
 				{
-					if ${NearestPoint.Equal[${FinishPoint}]}
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
 					{
-						NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+						return
 					}
 					else
 					{
@@ -335,9 +349,9 @@ function PathingRoutine()
 				}
 				else
 				{
-					if ${NearestPoint.Equal[${StartPoint}]}
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
 					{
-						NavPath "${World}" "${StartPoint}" "${FinishPoint}"
+						return
 					}
 					else
 					{
@@ -535,41 +549,6 @@ function Harvest()
 		call CheckAggro
 		CurrentAction:Set[Harvesting ${Actor[${NodeID}].Name}]
 
-		if ${HarvestTool[${NodeType}].Equal["Trapping"]}
-			{
-			Me.Inventory[Sandalwood Trap]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Mining"]}
-			{
-			Me.Inventory[Calibrated Automated Pickaxe]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Gathering"]}
-			{
-			Me.Inventory[Sandalwood Shovel]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Foresting"]}
-			{
-			; Shears seem to stack with saw (but not shovel) but we have to have both slots free
-			; for auto-equip to work.
-			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-			Me.Equipment[Sandalwood Shovel]:UnEquip
-			Me.Equipment[Sandalwood Trap]:UnEquip
-			Me.Equipment[Calibrated Automated Watersafe Net]:UnEquip
-			waitframe
-			Me.Inventory[Sandalwood Saw]:Equip
-			Me.Inventory[Calibrated Automated Shears]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Fishing"]}
-			{
-			Me.Equipment[Calibrated Automated Shears]:UnEquip
-			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-			Me.Equipment[Sandalwood Shovel]:UnEquip
-			Me.Equipment[Sandalwood Trap]:UnEquip
-			waitframe
-			Me.Inventory[Sandalwood Fishing Pole]:Equip
-			Me.Inventory[Calibrated Automated Watersafe Net]:Equip
-			}
-
 		EQ2Execute /useability ${HarvestTool[${NodeType}]}
 
 
@@ -753,48 +732,6 @@ function DestroyItem(string destroyname)
 	while ${tempvar:Inc}<=${Me.CustomInventoryArraySize}
 }
 
-function InitHarvestEnhancer()
-{
-	variable int TempEnhance1=0
-	variable int TempEnhance2=1
-	variable int TempEnhance3
-	Me:CreateCustomInventoryArray[nonbankonly]
-	OriginalCharm:Set[${Me.Equipment[19].ID}]
-
-	if ${Me.Level} == 70
-		TempEnhance3:Set[69]
-	else
-		TempEnhance3:Set[${Me.Level}]
-
-	Do
-	{
-		Do
-		{
-			If ${Me.CustomInventory[${SettingXML[${harvestfile}].Set[Harvest Enhancer].GetString["${TempEnhance1},${TempEnhance2}"]}](exists)}
-				HarvestEnhancer[${TempEnhance2}]:Set[${SettingXML[${harvestfile}].Set[Harvest Enhancer].GetString["${TempEnhance1},${TempEnhance2}"]}]
-			elseif !${HarvestEnhancer[${TempEnhance2}].Length}
-				HarvestEnhancer[${TempEnhance2}]:Set[NULL]
-		}
-		while ${TempEnhance2:Inc} <= 5
-
-		TempEnhance2:Set[1]
-
-	}
-	while ${TempEnhance1:Inc} <= ${Math.Calc[${TempEnhance3}/10].Int}
-
-	TempEnhance2:Set[1]
-	do
-	{
-		if ${HarvestEnhancer[${TempEnhance2}](exists)}
-		{
-			UsedEnhancer:Set[TRUE]
-			echo ${HarvestEnhancer[${TempEnhance2}]}
-		}
-	}
-	while ${TempEnhance2:Inc} <= 5
-
-}
-
 function UpdateKeep(int keep)
 {
 	if ${DestroyNode[${keep}]}
@@ -937,6 +874,7 @@ objectdef EQ2HarvestBot
 		HarvestClose:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[Distance for the bot to move outside the max roaming range?,15]}]
 		StartPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Starting Point,Start]}]
 		FinishPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Finishing Point,Finish]}]
+		DestinationPoint:Set[${FinishPoint}]
 
 		SettingXML[${ConfigFile}]:Save
 

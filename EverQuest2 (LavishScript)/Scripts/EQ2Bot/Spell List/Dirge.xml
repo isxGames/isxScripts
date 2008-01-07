@@ -77,7 +77,7 @@
 		<Setting Name="34,22">Noxious Symphony</Setting>
 		<Setting Name="34,52">Lanet\'s Agonizing Scream</Setting>
 		<Setting Name="35,136">Delusory Trill</Setting>
-		<Setting Name="35,">Zander\'s Choral Rebuff</Setting>
+		<Setting Name="35,54">Zander\'s Choral Rebuff</Setting>
 		<Setting Name="36,50">Tarven\'s Bedeviled Undersong</Setting>
 		<Setting Name="36,27">Grave\'s Peace</Setting>
 		<Setting Name="37,51">Verlien\'s Keen of Woe</Setting>
@@ -114,7 +114,7 @@
 		<Setting Name="52,26">Percussion of Stone</Setting>
 		<Setting Name="52,28">Harl\'s Rousing Strain</Setting>
 		<Setting Name="53,150">Void Blade</Setting>
-		<Setting Name="53,">Magic Rebuff</Setting>
+		<Setting Name="53,54">Magic Rebuff</Setting>
 		<Setting Name="54,95">Hymn of Horror</Setting>
 		<Setting Name="54,352">Garsin\'s Burial Chant</Setting>
 		<Setting Name="54,60">Luda\'s Heinous Cry</Setting>
@@ -157,7 +157,7 @@
     <Setting Name="71,250">Deprivating Shot</Setting>
     <Setting Name="71,63">Dissonant Requiem</Setting>
     <Setting Name="71,151">Siphon Blade</Setting>
-    <Setting Name="71,">Spell Rebuff</Setting>
+    <Setting Name="71,54">Spell Rebuff</Setting>
     <Setting Name="72,55">Emotional Dirge</Setting>
     <Setting Name="72,29">Weapon Boon</Setting>
     <Setting Name="73,180">Baffle</Setting>
