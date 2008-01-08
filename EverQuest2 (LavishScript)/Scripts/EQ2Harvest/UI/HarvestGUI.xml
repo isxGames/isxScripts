@@ -32,6 +32,9 @@
 
 	<!-- Main LGUI -->
 	<Window Name='Harvest' template='My.window'>
+		<FadeDelay>0</FadeDelay>
+		<FadeDuration>200</FadeDuration>
+		<FadeAlpha>0</FadeAlpha>
 		<X>5%</X>
 		<Y>20%</Y>
 		<Width>430</Width>
@@ -90,7 +93,7 @@
 								<Color>FFAAFF65</Color>
 								<Bold/>
 							</Font>
-							<Text>${Script[EQ2Harvest].VariableScope.DestinationPoint}</Text>
+							<Text>${Script[EQ2Harvest].VariableScope.FinishPoint}</Text>
 						</Text>
 						<Text name='Target Text' Template='EQ2.text'>
 							<X>5%</X>
@@ -881,9 +884,121 @@
 							</Font>
 							<Text>Current Zone: ${Zone.Name}</Text>
 						</Text>
-						<Text Name='Roaming Text' Template='EQ2.text'>
+						<Text Name='Start Location Text' Template='EQ2.text'>
 							<X>5%</X>
 							<Y>25</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Text>* Starting Location:</Text>
+						</Text>
+						<combobox name='Start Location' Template='EQ2.Combobox'>
+							<X>32%</X>
+							<Y>25</Y>
+							<Width>63%</Width>
+							<Height>20</Height>
+							<Items></items>
+							<Onload>
+								This:AddItem[${Script[EQ2Harvest].Variable[StartPoint]}]
+								This.Item[1]:Select
+							</OnLoad>
+							<OnSelect>
+								Script[EQ2Harvest].Variable[StartPoint]:Set[${This.SelectedItem.Text}]
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Starting Point,${This.SelectedItem.Text}]:Save
+							</OnSelect>
+						</combobox>
+						<Text Name='Finish Location Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>45</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Text>* Finish Location:</Text>
+						</Text>
+						<combobox name='Finish Location' Template='EQ2.Combobox'>
+							<X>32%</X>
+							<Y>45</Y>
+							<Width>63%</Width>
+							<Height>20</Height>
+							<Items></items>
+							<Onload>
+								This:AddItem[${Script[EQ2Harvest].Variable[FinishPoint]}]
+								This.Item[1]:Select
+							</OnLoad>
+							<OnSelect>
+								Script[EQ2Harvest].Variable[FinishPoint]:Set[${This.SelectedItem.Text}]
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Finishing Point,${This.SelectedItem.Text}]:Save
+							</OnSelect>
+						</combobox>
+						<Text Name='Path Route Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>65</Y>
+							<Width>25%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>* Pathing Route:</Text>
+						</Text>
+						<checkbox Name='Path Route 1' Template='EQ2.checkbox'>
+							<X>28%</X>
+							<Y>63</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>One way</Text>
+							<OnLoad>
+								if ${Script[EQ2Harvest].Variable[PathRoute]}==1
+								{
+									UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
+								UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set["Pathing Route (1=1 way, 2=To and Back, 3=Continous loop",1]:Save
+								Script[EQ2Harvest].VariableScope.PathRoute:Set[1]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Path Route 2' Template='EQ2.checkbox'>
+							<X>46%</X>
+							<Y>63</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>To and Back</Text>
+							<OnLoad>
+								if ${Script[EQ2Harvest].Variable[PathRoute]}==2
+								{
+									UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
+								UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set["Pathing Route (1=1 way, 2=To and Back, 3=Continous loop",2]:Save
+								Script[EQ2Harvest].VariableScope.PathRoute:Set[2]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Path Route 3' Template='EQ2.checkbox'>
+							<X>69%</X>
+							<Y>63</Y>
+							<Width>20%</Width>
+							<Height>20</Height>
+							<Text>Continous Loop</Text>
+							<OnLoad>
+								if ${Script[EQ2Harvest].Variable[PathRoute]}==3
+								{
+									UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
+								UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
+								UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set["Pathing Route (1=1 way, 2=To and Back, 3=Continous loop",3]:Save
+								Script[EQ2Harvest].VariableScope.PathRoute:Set[3]
+							</OnLeftClick>
+						</checkbox>
+						<Text Name='Roaming Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>85</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
@@ -894,8 +1009,8 @@
 							</AutoTooltip>
 						</Text>
 						<Textentry Name='Roaming Range' Template='EQ2.textentry'>
-							<X>30%</X>
-							<Y>25</Y>
+							<X>66%</X>
+							<Y>85</Y>
 							<Width>8%</Width>
 							<Height>15</Height>
 							<MaxLength>4</MaxLength>
@@ -908,7 +1023,7 @@
 						</Textentry>
 						<Text Name='Roam Out Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>45</Y>
+							<Y>105</Y>
 							<Width>80%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
@@ -921,7 +1036,7 @@
 						</Text>
 						<Textentry Name='External Roaming Value' Template='EQ2.textentry'>
 							<X>66%</X>
-							<Y>45</Y>
+							<Y>105</Y>
 							<Width>8%</Width>
 							<Height>15</Height>
 							<MaxLength>4</MaxLength>
@@ -932,9 +1047,34 @@
 								Script[EQ2Harvest].Variable[HarvestClose]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
+						<Text Name='Filter Y Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>125</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>* Distance to filter Y axis:</Text>
+							<AutoTooltip>
+								Nodes greater than this distance along the Y (vertical)
+								axis from the bot will not be harvested
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Filter Y Value' Template='EQ2.textentry'>
+							<X>66%</X>
+							<Y>125</Y>
+							<Width>8%</Width>
+							<Height>15</Height>
+							<MaxLength>4</MaxLength>
+							<OnLoad>This:SetText[${Script[EQ2Harvest].Variable[FilterY]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[What distance along Y axis should the bot ignore nodes?,${This.Text}]:Save
+								This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}].GetInt[What distance along Y axis should the bot ignore nodes?]}]
+								Script[EQ2Harvest].Variable[FilterY]:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
 						<checkbox Name='Harvest Timer Check' Template='EQ2.checkbox'>
 							<X>5%</X>
-							<Y>80</Y>
+							<Y>150</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>Use Harvest Timer:              (minutes)</Text>
@@ -962,7 +1102,7 @@
 						</checkbox>
 						<Textentry Name='Harvest Timer' Template='EQ2.textentry'>
 							<X>37%</X>
-							<Y>82</Y>
+							<Y>152</Y>
 							<Width>10%</Width>
 							<Height>15</Height>
 							<MaxLength>5</MaxLength>
@@ -975,11 +1115,11 @@
 						</Textentry>
 						<Text Name='Quit Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>100</Y>
+							<Y>170</Y>
 							<Width>50%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
-							<Text>* At the end of a Harvest Session:</Text>
+							<Text>* When timer expires:</Text>
 							<AutoTooltip>
 								Decide whether you'd like to leave the game completely
 								or just end the script when the harvest timer elapses.
@@ -987,7 +1127,7 @@
 						</Text>
 						<checkbox Name='End Script Option' Template='EQ2.checkbox'>
 							<X>51%</X>
-							<Y>98</Y>
+							<Y>168</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>End Script</Text>
@@ -1006,7 +1146,7 @@
 						</checkbox>
 						<checkbox Name='Camp Desktop Option' Template='EQ2.checkbox'>
 							<X>71%</X>
-							<Y>98</Y>
+							<Y>168</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
 							<Text>Camp to Desktop</Text>
@@ -1025,10 +1165,10 @@
 						</checkbox>
 						<Text Name='Destroy Batch Text' Template='EQ2.text'>
 							<X>5%</X>
-							<Y>120</Y>
-							<Width>60%</Width>
+							<Y>200</Y>
+							<Width>68%</Width>
 							<Height>20</Height>
-							<Text>* Items to harvest before destroying:</Text>
+							<Text>* Items to harvest between inventory cleanups:</Text>
 							<AutoTooltip>
 								This is how many total items must be harvested
 								before extras are destroyed.  (Which may take
@@ -1036,8 +1176,8 @@
 							</AutoTooltip>
 						</Text>
 						<Textentry Name='Destroy Batch' Template='EQ2.textentry'>
-							<X>58%</X>
-							<Y>120</Y>
+							<X>75%</X>
+							<Y>199</Y>
 							<Width>10%</Width>
 							<Height>15</Height>
 							<MaxLength>5</MaxLength>
@@ -1048,130 +1188,25 @@
 								Script[EQ2Harvest].Variable[DestroyBatch]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<Commandbutton name='Run Pathing Script' Template='EQ2.Commandbutton'> 
-							<X>5%</X> 
-							<Y>156</Y> 
-							<Width>90%</Width> 
-							<Height>25</Height>
-							<Text>Launch EQ2HarvestPath</Text>
-							<OnLeftClick>
-								eq2echo Launching pather, please restart eq2harvest after setting up paths
-								run EQ2HarvestPath auto 5
-								Script[EQ2Harvest]:End
-							</OnLeftClick>
-						</Commandbutton>
-						<Text Name='Start Location Text' Template='EQ2.text'>
+						<Checkbox name='Fade' Template='EQ2.checkbox'>
 							<X>5%</X>
-							<Y>180</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Text>* Starting Location:</Text>
-						</Text>
-						<combobox name='Start Location' Template='EQ2.Combobox'>
-							<X>32%</X>
-							<Y>180</Y>
-							<Width>63%</Width>
-							<Height>20</Height>
-							<Items></items>
-							<Onload>
-								This:AddItem[${Script[EQ2Harvest].Variable[StartPoint]}]
-								This.Item[1]:Select
-							</OnLoad>
-							<OnSelect>
-								Script[EQ2Harvest].Variable[StartPoint]:Set[${This.SelectedItem.Text}]
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Starting Point,${This.SelectedItem.Text}]:Save
-							</OnSelect>
-						</combobox>
-						<Text Name='Finish Location Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>200</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Text>* Finish Location:</Text>
-						</Text>
-						<combobox name='Finish Location' Template='EQ2.Combobox'>
-							<X>32%</X>
-							<Y>200</Y>
-							<Width>63%</Width>
-							<Height>20</Height>
-							<Items></items>
-							<Onload>
-								This:AddItem[${Script[EQ2Harvest].Variable[FinishPoint]}]
-								This.Item[1]:Select
-							</OnLoad>
-							<OnSelect>
-								Script[EQ2Harvest].Variable[FinishPoint]:Set[${This.SelectedItem.Text}]
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Finishing Point,${This.SelectedItem.Text}]:Save
-							</OnSelect>
-						</combobox>
-						<Text Name='Path Route Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>220</Y>
-							<Width>25%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>* Pathing Route:</Text>
-						</Text>
-						<checkbox Name='Path Route 1' Template='EQ2.checkbox'>
-							<X>28%</X>
-							<Y>218</Y>
+							<Y>230</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
-							<Text>One way</Text>
+							<Text>Autohide this window on mouse out</Text>
 							<OnLoad>
-								if ${Script[EQ2Harvest].Variable[PathRoute]}==1
+								if ${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Fade Window?,FALSE]}
 								{
-									UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:SetChecked
+									This:SetChecked
+									timedcommand 3 UIElement[Harvest]:SetFadeDelay[500]
 								}
 							</OnLoad>
 							<OnLeftClick>
-								UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:SetChecked
-								UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
-								UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set["Pathing Route (1=1 way, 2=To and Back, 3=Continous loop",1]:Save
-								Script[EQ2Harvest].VariableScope.PathRoute:Set[1]
+								UIElement[Harvest]:SetFadeDelay[${If[${This.Checked},500,0]}]
+								UIElement[Harvest]:ResetFade
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Fade Window?,${This.Checked}]:Save
 							</OnLeftClick>
-						</checkbox>
-						<checkbox Name='Path Route 2' Template='EQ2.checkbox'>
-							<X>46%</X>
-							<Y>218</Y>
-							<Width>20%</Width>
-							<Height>20</Height>
-							<Text>To and Back</Text>
-							<OnLoad>
-								if ${Script[EQ2Harvest].Variable[PathRoute]}==2
-								{
-									UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
-								UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:SetChecked
-								UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set["Pathing Route (1=1 way, 2=To and Back, 3=Continous loop",2]:Save
-								Script[EQ2Harvest].VariableScope.PathRoute:Set[2]
-							</OnLeftClick>
-						</checkbox>
-						<checkbox Name='Path Route 3' Template='EQ2.checkbox'>
-							<X>69%</X>
-							<Y>218</Y>
-							<Width>20%</Width>
-							<Height>20</Height>
-							<Text>Continous Loop</Text>
-							<OnLoad>
-								if ${Script[EQ2Harvest].Variable[PathRoute]}==3
-								{
-									UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								UIElement[Path Route 1@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
-								UIElement[Path Route 2@Options@EQ2Harvest Tabs@Harvest]:UnsetChecked
-								UIElement[Path Route 3@Options@EQ2Harvest Tabs@Harvest]:SetChecked
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set["Pathing Route (1=1 way, 2=To and Back, 3=Continous loop",3]:Save
-								Script[EQ2Harvest].VariableScope.PathRoute:Set[3]
-							</OnLeftClick>
-						</checkbox>
+						</Checkbox>
 						<checkbox Name='Intruder Detect' Template='EQ2.checkbox'>
 							<X>5%</X>
 							<Y>260</Y>
@@ -1296,133 +1331,192 @@
 							</AutoTooltip>
 						</checkbox>
 					</Tab>
-					<Tab Name='Other'>
-						<Commandbutton name='Add Collection' Template='EQ2.Commandbutton'> 
-							<X>20%</X> 
-							<Y>140</Y> 
-							<Width>26%</Width> 
+					<Tab Name='Tools'>
+							<checkbox Name='Toolswap Checkbox' Template='EQ2.checkbox'>
+							<X>5%</X>
+							<Y>20</Y>
+							<Width>20%</Width>
 							<Height>20</Height>
-							<Text>Add Collection</Text>
+							<Text>Enable Tool Swapping</Text>
+							<OnLoad>
+								if ${Script[EQ2Harvest].VariableScope.ToolSwap}
+								{
+									UIElement[Toolswap Checkbox@Tools@EQ2Harvest Tabs@Harvest]:SetChecked
+								}
+							</OnLoad>
 							<OnLeftClick>
-								Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
+								if ${UIElement[Toolswap Checkbox@Tools@EQ2Harvest Tabs@Harvest].Checked}
+								{
+									Script[EQ2Harvest].VariableScope.ToolSwap:Set[TRUE]
+								}
+								else
+								{
+									Script[EQ2Harvest].VariableScope.ToolSwap:Set[FALSE]
+								}
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Swap Tools?,${Script[EQ2Harvest].VariableScope.ToolSwap}]:Save
 							</OnLeftClick>
-						</Commandbutton>
-						<Commandbutton name='Remove Collection' Template='EQ2.Commandbutton'> 
-							<X>50%</X> 
-							<Y>140</Y> 
-							<Width>26%</Width> 
+							<AutoTooltip>
+								Automatically swap in the tool(s) defined for the current node as we harvest
+							</AutoTooltip>
+						</checkbox>
+						<Text Name='Trapping Tool Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>40</Y>
+							<Width>30%</Width>
 							<Height>20</Height>
-							<Text>Remove selected</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
-							</OnLeftClick>
-						</Commandbutton>
-						<Button Name='Collection Title' Template='EQ2.Button'>
-							<X>9%</X>
+							<Alignment>Left</Alignment>
+							<Text>Trapping:</Text>
+							<AutoTooltip>
+								Tool to use for trapping
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Trapping Tool' Template='EQ2.textentry'>
+							<X>35%</X>
+							<Y>40</Y>
+							<Width>60%</Width>
+							<Height>15</Height>
+							<MaxLength>40</MaxLength>
+							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Trapping,"Sandalwood Trap"]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Trapping,"${This.Text}"]:Save
+							</OnChange>
+						</Textentry>
+						<Text Name='Mining Tool Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>60</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Mining:</Text>
+							<AutoTooltip>
+								Tool to use for mining
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Mining Tool' Template='EQ2.textentry'>
+							<X>35%</X>
+							<Y>60</Y>
+							<Width>60%</Width>
+							<Height>15</Height>
+							<MaxLength>40</MaxLength>
+							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Mining,"Calibrated Automated Pickaxe"]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Mining,"${This.Text}"]:Save
+							</OnChange>
+						</Textentry>
+						<Text Name='Gathering Tool Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>80</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Gathering:</Text>
+							<AutoTooltip>
+								Tool to use for Gathering
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Gathering Tool' Template='EQ2.textentry'>
+							<X>35%</X>
+							<Y>80</Y>
+							<Width>60%</Width>
+							<Height>15</Height>
+							<MaxLength>40</MaxLength>
+							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Gathering,"Sandalwood Shovel"]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Gathering,"${This.Text}"]:Save
+							</OnChange>
+						</Textentry>
+						<Text Name='Foresting Tool Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>100</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Foresting:</Text>
+							<AutoTooltip>
+								Tool to use for Foresting
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Foresting Tool' Template='EQ2.textentry'>
+							<X>35%</X>
+							<Y>100</Y>
+							<Width>60%</Width>
+							<Height>15</Height>
+							<MaxLength>40</MaxLength>
+							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Foresting,"Sandalwood Saw"]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Foresting,"${This.Text}"]:Save
+							</OnChange>
+						</Textentry>
+						<Text Name='Foresting2 Tool Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>120</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Foresting (alt):</Text>
+							<AutoTooltip>
+								Additional tool to use for Foresting
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Foresting2 Tool' Template='EQ2.textentry'>
+							<X>35%</X>
+							<Y>120</Y>
+							<Width>60%</Width>
+							<Height>15</Height>
+							<MaxLength>40</MaxLength>
+							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Foresting2,"Calibrated Automated Shears"]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Foresting2,"${This.Text}"]:Save
+							</OnChange>
+						</Textentry>
+						<Text Name='Fishing Tool Text' Template='EQ2.text'>
+							<X>5%</X>
+							<Y>140</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Fishing:</Text>
+							<AutoTooltip>
+								Tool to use for Fishing
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Fishing Tool' Template='EQ2.textentry'>
+							<X>35%</X>
+							<Y>140</Y>
+							<Width>60%</Width>
+							<Height>15</Height>
+							<MaxLength>40</MaxLength>
+							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Fishing,"Sandalwood Fishing Pole"]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Fishing,"${This.Text}"]:Save
+							</OnChange>
+						</Textentry>
+						<Text Name='Fishing2 Tool Text' Template='EQ2.text'>
+							<X>5%</X>
 							<Y>160</Y>
-							<Width>83%</Width> 
-							<Height>5%</Height> 
-							<TextColor>FFEECC00</TextColor>
-							<Text>List of  * COLLECTIONS *  to Keep</Text>
-						</Button>
-						<Listbox Name='Collection List' Template='EQ2.Listbox'>
-							<X>9%</X>
-							<Y>178</Y>
-							<Width>83%</Width>
-							<Height>62</Height>
-							<Font>
-								<Name>terminal</Name>
-								<Size>10</Size>
-							</Font>
-							<Texture />
-							<SelectMultiple>1</SelectMultiple>
-							<Sort>Text</Sort>
-						</Listbox>
-						<Commandbutton name='Add Police' Template='EQ2.Commandbutton'> 
-							<X>4%</X> 
-							<Y>250</Y> 
-							<Width>20%</Width> 
+							<Width>30%</Width>
 							<Height>20</Height>
-							<Text>Add Player</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
-							</OnLeftClick>
-						</Commandbutton>
-						<Commandbutton name='Remove Police' Template='EQ2.Commandbutton'> 
-							<X>26%</X> 
-							<Y>250</Y> 
-							<Width>23%</Width> 
-							<Height>20</Height>
-							<Text>Remove Selected</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
-							</OnLeftClick>
-						</Commandbutton>
-						<Button Name='Police Title' Template='EQ2.Button'>
-							<X>4%</X>
-							<Y>270</Y>
-							<Width>45%</Width> 
-							<Height>5%</Height> 
-							<TextColor>FFEECC00</TextColor>
-							<Text>***  Black List  ***</Text>
-						</Button>
-						<Listbox Name='Black List' Template='EQ2.Listbox'>
-							<X>4%</X>
-							<Y>288</Y>
-							<Width>45%</Width>
-							<Height>80</Height>
-							<Font>
-								<Name>terminal</Name>
-								<Size>10</Size>
-							</Font>
-							<Texture />
-							<SelectMultiple>1</SelectMultiple>
-							<Sort>Text</Sort>
-						</Listbox>
-						<Commandbutton name='Add Friend' Template='EQ2.Commandbutton'> 
-							<X>52%</X> 
-							<Y>250</Y> 
-							<Width>20%</Width> 
-							<Height>20</Height>
-							<Text>Add Player</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
-							</OnLeftClick>
-						</Commandbutton>
-						<Commandbutton name='Remove Friend' Template='EQ2.Commandbutton'> 
-							<X>74%</X> 
-							<Y>250</Y> 
-							<Width>23%</Width> 
-							<Height>20</Height>
-							<Text>Remove Selected</Text>
-							<OnLeftClick>
-								Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
-							</OnLeftClick>
-						</Commandbutton>
-						<Button Name='Friends Title' Template='EQ2.Button'>
-							<X>52%</X>
-							<Y>270</Y>
-							<Width>45%</Width> 
-							<Height>5%</Height> 
-							<TextColor>FFEECC00</TextColor>
-							<Text>***  Friends List  ***</Text>
-						</Button>
-						<Listbox Name='Friends List' Template='EQ2.Listbox'>
-							<X>52%</X>
-							<Y>288</Y>
-							<Width>45%</Width>
-							<Height>80</Height>
-							<Font>
-								<Name>terminal</Name>
-								<Size>10</Size>
-							</Font>
-							<Texture />
-							<SelectMultiple>1</SelectMultiple>
-							<Sort>Text</Sort>
-						</Listbox>
+							<Alignment>Left</Alignment>
+							<Text>Fishing (alt):</Text>
+							<AutoTooltip>
+								Additional tool to use for Fishing
+							</AutoTooltip>
+						</Text>
+						<Textentry Name='Fishing2 Tool' Template='EQ2.textentry'>
+							<X>35%</X>
+							<Y>160</Y>
+							<Width>60%</Width>
+							<Height>15</Height>
+							<MaxLength>40</MaxLength>
+							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Fishing2,"Calibrated Automated Watersafe Net"]}]</OnLoad>
+							<OnChange>
+								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Fishing2,"${This.Text}"]:Save
+							</OnChange>
+						</Textentry>
 					</Tab>
 				</Tabs>
 			</Tabcontrol>
 		</Children>
 	</Window>
 </ISUI>
+
