@@ -1,4 +1,4 @@
-MyPrices - Version 0.11c
+MyPrices - Version 0.11f
 
 For update details see the bottom of this file.
 
@@ -313,6 +313,7 @@ Hopefully this will give me some insight to whats going wrong and where.
 
 If need be I'll add more logging inside each function using smaller updates till we narrow it down...
 
+Several bugs squashed to do with buying.
 
 Version 0.11b
 -------------
