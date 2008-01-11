@@ -2201,7 +2201,7 @@ function ScanAdds()
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 }
 
-atom(script) LootWdw(string ID)
+atom(script) LootWDw(string ID)
 {
 	declare i int local
 	variable int tmpcnt=0
@@ -3791,6 +3791,11 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
+	if ${ChoiceWindow.Text.Find[thoughtstone]}
+	{
+		ChoiceWindow:DoChoice1
+		return
+	}
 
 	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
