@@ -720,7 +720,6 @@ function RefreshPower()
 
 function Have_Aggro()
 {
-
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
@@ -728,7 +727,6 @@ function Have_Aggro()
 	}
 
 	call CastSpellRange 180 182 0 0 ${aggroid}
-
 }
 
 function CheckHeals()
@@ -758,68 +756,65 @@ function CheckHeals()
 
 	do
 	{
-
-			if ${Me.Group[${temphl}].ToActor.Health} < 100 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor(exists)}
+		{
+			if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
-				{
-					lowest:Set[${temphl}]
-				}
+				lowest:Set[${temphl}]
+			}
+		}
+
+		if ${Me.Group[${temphl}].IsAfflicted}
+		{
+			if ${Me.Group[${temphl}].Arcane}>0
+			{
+				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
 			}
 
-			if ${Me.Group[${temphl}].IsAfflicted}
-
+			if ${Me.Group[${temphl}].Noxious}>0
 			{
-				if ${Me.Group[${temphl}].Arcane}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
-				}
-
-				if ${Me.Group[${temphl}].Noxious}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
-				}
-
-				if ${Me.Group[${temphl}].Elemental}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
-				}
-
-				if ${Me.Group[${temphl}].Trauma}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
-				}
-
-				if ${tmpafflictions}>${mostafflictions}
-				{
-					mostafflictions:Set[${tmpafflictions}]
-					mostafflicted:Set[${temphl}]
-				}
+				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
 			}
 
-			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
+			if ${Me.Group[${temphl}].Elemental}>0
 			{
-				grpheal:Inc
+				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
 			}
 
-			if ${Me.Group[${temphl}].Arcane}>0 || ${Me.Group[${temphl}].Elemental}>0
+			if ${Me.Group[${temphl}].Trauma}>0
 			{
-				grpcure:Inc
+				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
 			}
 
-			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
+			if ${tmpafflictions}>${mostafflictions}
 			{
-				if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-				{
-					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-				}
+				mostafflictions:Set[${tmpafflictions}]
+				mostafflicted:Set[${temphl}]
 			}
+		}
 
-			if ${Me.Group[${temphl}].Name.Equal[${MainAssist}]}
+		if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
+		{
+			grpheal:Inc
+		}
+
+		if ${Me.Group[${temphl}].Arcane}>0 || ${Me.Group[${temphl}].Elemental}>0
+		{
+			grpcure:Inc
+		}
+
+		if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
+		{
+			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
 			{
-				MTinMyGroup:Set[TRUE]
+				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
 			}
+		}
 
+		if ${Me.Group[${temphl}].Name.Equal[${MainAssist}]}
+		{
+			MTinMyGroup:Set[TRUE]
+		}
 	}
 	while ${temphl:Inc}<${grpcnt}
 
@@ -1070,7 +1065,7 @@ function CureGroupMember(int gMember)
 		{
 			call CastSpellRange 326
 			wait 5
-			if ${Me.Group[${gMember}].Arcane}>0 ${Me.Ability[${SpellType[210]}].IsReady}
+			if ${Me.Group[${gMember}].Arcane}>0 && ${Me.Ability[${SpellType[210]}].IsReady}
 			{
 				call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 			}
@@ -1078,19 +1073,19 @@ function CureGroupMember(int gMember)
 			wait 2
 		}
 
-		if  ${Me.Group[${gMember}].Noxious}>0 ${Me.Ability[${SpellType[213]}].IsReady}
+		if ${Me.Group[${gMember}].Noxious}>0 && ${Me.Ability[${SpellType[213]}].IsReady}
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
 			tmpcure:Inc
 		}
 
-		if  ${Me.Group[${gMember}].Elemental}>0 ${Me.Ability[${SpellType[211]}].IsReady}
+		if ${Me.Group[${gMember}].Elemental}>0 && ${Me.Ability[${SpellType[211]}].IsReady}
 		{
 			call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
 			tmpcure:Inc
 		}
 
-		if  ${Me.Group[${gMember}].Trauma}>0 ${Me.Ability[${SpellType[212]}].IsReady}
+		if ${Me.Group[${gMember}].Trauma}>0 && ${Me.Ability[${SpellType[212]}].IsReady}
 		{
 			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
 			tmpcure:Inc
@@ -1181,7 +1176,6 @@ function Mezmerise_Targets()
 
 			if ${aggrogrp}
 			{
-
 				if ${Me.AutoAttackOn}
 				{
 					eq2execute /toggleautoattack
@@ -1209,10 +1203,7 @@ function Mezmerise_Targets()
 				}
 				aggrogrp:Set[FALSE]
 				break
-
 			}
-
-
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
