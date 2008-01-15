@@ -941,7 +941,7 @@ function DoCharm()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && !${CustomActor[${tcount}].IsEpic} && ${CustomActor[${tcount}].Target(exists)}
 		{
 
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
+			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} && ${grpcnt}>1
 			{
 				continue
 			}
@@ -966,7 +966,7 @@ function DoCharm()
 				aggrogrp:Set[TRUE]
 			}
 
-			if ${aggrogrp} && (${CustomActor[${tcount}].Difficulty}>=1) && (${CustomActor[${tcount}].Difficulty}<=3)
+			if ${aggrogrp} && (${CustomActor[${tcount}].Difficulty}>=0) && (${CustomActor[${tcount}].Difficulty}<=3)
 			{
 
 				CharmTarget:Set[${CustomActor[${tcount}].ID}]
