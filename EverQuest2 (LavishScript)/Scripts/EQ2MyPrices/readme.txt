@@ -84,11 +84,15 @@ other times they won't be - there doesn't seem to be any pattern for this I can 
 The Sell TAB
 ============
 
-There are 6 tickboxes 
+There are 7 tickboxes 
 
 Auto-Match Lower Prices
 -----------------------
 ticking this will reduce your prices to match a lower one as long as it is not below the minimum price if set.
+
+Merchant Match
+-----------------------
+ticking this will ensure that your sale prices are not set lower than prices you could get by selling that item to an NPC.
 
 Auto-Match Higher Prices
 ------------------------
@@ -294,6 +298,21 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0,11f
+-------------
+
+Added new option 'Merchant Match' clicking this won't lower your prices below what you can get from selling to an NPC.
+
+Added options to click on the buy list to do 'fuzzy' searches , you can set partial names 'master i)' Item start and end levels , 
+price , and tier. This will only work by clicking on each entry in the buy tab , problems with people putting items up for sale
+such as high level fabled conjuror shards at 60g stopped me adding it to the usual automatic buy search routine.
+
+This change means you will NEED to goto your buy list , on items where you will just search for a particular name , click on
+each entry, click on the 'name only' tickbox and press 'save'
+
+Due to how ISXEQ2 currently handles the MaxPrice paramater (it doesn't search for actual cost price but the sellers set price) means
+your search will return items minus the cost of commission in the list. 
 
 Version 0.11c
 -------------
