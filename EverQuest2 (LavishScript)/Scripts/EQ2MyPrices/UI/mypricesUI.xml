@@ -111,9 +111,41 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='MatchHighPrice' Template='EQ2.checkbox'>
+					<checkbox Name='MerchantMatch' Template='EQ2.checkbox'>
 						<X>5%</X>
 						<Y>70</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Merchant Match</Text>
+						<AutoTooltip>
+							Don't set prices below what a merchant will buy an item for.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.MerchantMatch}
+						{
+							UIElement[MerchantMatch@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[MerchantMatch@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[MerchantMatch@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting MerchantMatch TRUE]
+								Script[myprices].VariableScope.MerchantMatch:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting MerchantMatch FALSE]
+								Script[myprices].VariableScope.MerchantMatch:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='MatchHighPrice' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>90</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Auto-Match Higher Prices</Text>
@@ -145,7 +177,7 @@
 					</checkbox>
 					<checkbox Name='SetUnlistedPrices' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>90</Y>
+						<Y>110</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Set Prices for Unlisted items</Text>
@@ -177,7 +209,7 @@
 					</checkbox>
 					<checkbox Name='IgnoreCopper' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>110</Y>
+						<Y>130</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Ignore Copper</Text>
@@ -209,7 +241,7 @@
 					</checkbox>
 					<checkbox Name='ScanSellNonStop' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>130</Y>
+						<Y>150</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Auto-Loop</Text>
@@ -241,7 +273,7 @@
 					</checkbox>
 					<checkbox Name='SellItems' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>160</Y>
+						<Y>180</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Scan Sales</Text>
@@ -274,7 +306,7 @@
 
 					<checkbox Name='Logging' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>185</Y>
+						<Y>205</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Logging</Text>
@@ -307,49 +339,49 @@
 					
 					<Text Name='Normal' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>210</Y>
+						<Y>230</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Black : Not Changed</Text>
 					</Text>
 					<Text Name='Green' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>230</Y>
+						<Y>250</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Green : Matched Price</Text>
 					</Text>
 					<Text Name='Red' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>250</Y>
+						<Y>270</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Red : Unable to match</Text>
 					</Text>
 					<Text Name='Blue' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>270</Y>
+						<Y>290</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Blue : New Item Listed</Text>
 					</Text>
 					<Text Name='Orange' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>290</Y>
+						<Y>310</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Orange : Item Sold</Text>
 					</Text>
 					<Text Name='Yellow' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>310</Y>
+						<Y>330</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Yellow : Craft Flagged</Text>
 					</Text>
 					<Text Name='PauseTimerText' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>350</Y>
+						<Y>370</Y>
 						<Width>150</Width> 
 						<Height>15</Height>
 						<Text>Delay in Minutes :</Text>
@@ -357,7 +389,7 @@
 
 					<Textentry Name='PauseTimer' Template='EQ2.Textentry'>
 						<X>140</X>
-						<Y>350</Y>
+						<Y>370</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
@@ -367,7 +399,7 @@
 					</Textentry>
 					<Commandbutton name='Craft' Template='EQ2.Commandbutton'>
 						<X>5%</X>
-						<Y>370</Y>
+						<Y>390</Y>
 						<Width>100</Width>
 						<Height>20</Height>
 						<Text>Craft List</Text>
@@ -679,7 +711,7 @@
 						<X>5%</X>
 						<Y>40</Y>
 						<Width>90%</Width>
-						<Height>70%</Height>
+						<Height>50%</Height>
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnLoad>
@@ -691,72 +723,16 @@
 
 						</OnSelect>
 					</listbox>
-					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>
-						<X>35</X>
-						<Y>500</Y>
-						<Width>50</Width> 
-						<Height>15</Height>
-						<MaxLength>5</MaxLength>
-					</Textentry>
-					<Text Name='MinPlatPriceText' Template='EQ2.Text'>
-						<X>90</X>
-						<Y>500</Y>
-						<Width>20</Width> 
-						<Height>15</Height>
-						<Text>PP</Text>
-					</Text>
-					<Textentry Name='MinGoldPrice' Template='EQ2.Textentry'>
-						<X>115</X>
-						<Y>500</Y>
-						<Width>30</Width> 
-						<Height>15</Height>
-						<MaxLength>3</MaxLength>
-					</Textentry>
-					<Text Name='MinGoldPriceText' Template='EQ2.Text'>
-						<X>150</X>
-						<Y>500</Y>
-						<Width>20</Width> 
-						<Height>15</Height>
-						<Text>GP</Text>
-					</Text>
-					<Textentry Name='MinSilverPrice' Template='EQ2.Textentry'>
-						<X>175</X>
-						<Y>500</Y>
-						<Width>30</Width> 
-						<Height>15</Height>
-						<MaxLength>3</MaxLength>
-					</Textentry>
-					<Text Name='MinSilverPriceText' Template='EQ2.Text'>
-						<X>210</X>
-						<Y>500</Y>
-						<Width>20</Width> 
-						<Height>15</Height>
-						<Text>SP</Text>
-					</Text>
-					<Textentry Name='MinCopperPrice' Template='EQ2.Textentry'>
-						<X>235</X>
-						<Y>500</Y>
-						<Width>30</Width> 
-						<Height>15</Height>
-						<MaxLength>3</MaxLength>
-					</Textentry>
-					<Text Name='MinCopperPriceText' Template='EQ2.Text'>
-						<X>270</X>
-						<Y>500</Y>
-						<Width>20</Width> 
-						<Height>15</Height>
-						<Text>CP</Text>
-						<Color>FFDDBB00</Color>
-					</Text>
-					<Text Name='ErrorText' Template='EQ2.Text'>
-						<X>24%</X>
-						<Y>445</Y>
-						<Width>350</Width> 
-						<Height>15</Height>
+					<Text Name='BuyNameText' Template='EQ2.Text'>
+						<X>30</X>
+						<Y>340</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Name</Text>
 					</Text>
 					<checkbox Name='Harvest' Template='EQ2.checkbox'>
-						<X>310</X>
-						<Y>455</Y>
+						<X>160</X>
+						<Y>325</Y>
 						<Width>100</Width>
 						<Height>20</Height>
 						<Text>Harvest</Text>
@@ -764,37 +740,167 @@
 							Item is a harvest item (200 per stack)
 						</AutoTooltip>
 					</checkbox>
-					<Textentry Name='BuyName' Template='EQ2.Textentry'>
-						<X>25</X>
-						<Y>475</Y>
-						<Width>350</Width> 
-						<Height>20</Height>
-						<MaxLength>70</MaxLength>
-					</Textentry>
-					<Text Name='BuyNameText' Template='EQ2.Text'>
-						<X>25</X>
-						<Y>455</Y>
-						<Width>80</Width> 
-						<Height>20</Height>
-						<Text>Name</Text>
-					</Text>
 					<Text Name='BuyNumberText' Template='EQ2.Text'>
-						<X>390</X>
-						<Y>455</Y>
+						<X>393</X>
+						<Y>340</Y>
 						<Width>80</Width> 
 						<Height>20</Height>
 						<Text>Number</Text>
 					</Text>
-					<Textentry Name='BuyNumber' Template='EQ2.Textentry'>
-						<X>390</X>
-						<Y>475</Y>
+					<checkbox Name='BuyNameOnly' Template='EQ2.checkbox'>
+						<X>280</X>
+						<Y>325</Y>
+						<Width>100</Width>
+						<Height>20</Height>
+						<Text>Name Only</Text>
+						<OnLeftClick>
+							if ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked}
+							{
+								UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Hide
+								UIElement[StartLevel@Buy@GUITabs@MyPrices]:Hide
+								UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Hide
+								UIElement[EndLevel@Buy@GUITabs@MyPrices]:Hide
+								UIElement[Tier@Buy@GUITabs@MyPrices]:Hide
+							}
+							else
+							{
+								UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Show
+								UIElement[StartLevel@Buy@GUITabs@MyPrices]:Show
+								UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Show
+								UIElement[EndLevel@Buy@GUITabs@MyPrices]:Show
+								UIElement[Tier@Buy@GUITabs@MyPrices]:Show
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Match name Only (exact match)
+						</AutoTooltip>
+					</checkbox>
+					<Textentry Name='BuyName' Template='EQ2.Textentry'>
+						<X>25</X>
+						<Y>355</Y>
+						<Width>350</Width> 
+						<Height>20</Height>
+						<MaxLength>70</MaxLength>
+					</Textentry>
+					<Text name='StartLevelText' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>385</Y>
+						<Width>90</Width> 
+						<Height>20</Height>
+						<Text>Start Level</Text>
+					</Text>
+					<Textentry name='StartLevel' Template='EQ2.Textentry'>
+						<X>95</X>
+						<Y>385</Y>
 						<Width>50</Width> 
 						<Height>20</Height>
+						<MaxLength>4</MaxLength>
+					</Textentry>
+					<Text name='EndLevelText' Template='EQ2.Text'>
+						<X>155</X>
+						<Y>385</Y>
+						<Width>90</Width> 
+						<Height>20</Height>
+						<Text>End Level</Text>
+					</Text>
+					<Textentry name='EndLevel' Template='EQ2.Textentry'>
+						<X>225</X>
+						<Y>385</Y>
+						<Width>50</Width> 
+						<Height>20</Height>
+						<MaxLength>4</MaxLength>
+					</Textentry>
+					<Textentry Name='BuyNumber' Template='EQ2.Textentry'>
+						<X>390</X>
+						<Y>355</Y>
+						<Width>50</Width> 
+						<Height>20</Height>
+						<MaxLength>6</MaxLength>
+					</Textentry>
+					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>
+						<X>35</X>
+						<Y>450</Y>
+						<Width>50</Width> 
+						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
+					<Text Name='MinPlatPriceText' Template='EQ2.Text'>
+						<X>90</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>PP</Text>
+					</Text>
+					<Textentry Name='MinGoldPrice' Template='EQ2.Textentry'>
+						<X>115</X>
+						<Y>450</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MinGoldPriceText' Template='EQ2.Text'>
+						<X>150</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>GP</Text>
+					</Text>
+					<Textentry Name='MinSilverPrice' Template='EQ2.Textentry'>
+						<X>175</X>
+						<Y>450</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MinSilverPriceText' Template='EQ2.Text'>
+						<X>210</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>SP</Text>
+					</Text>
+					<Textentry Name='MinCopperPrice' Template='EQ2.Textentry'>
+						<X>235</X>
+						<Y>450</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MinCopperPriceText' Template='EQ2.Text'>
+						<X>270</X>
+						<Y>450</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>CP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
+					<Text Name='ErrorText' Template='EQ2.Text'>
+						<X>24%</X>
+						<Y>500</Y>
+						<Width>350</Width> 
+						<Height>15</Height>
+					</Text>
+					<combobox name='Tier' Template='EQ2.Combobox'>
+						<X>100</X>
+						<Y>420</Y>
+						<Width>150</Width> 
+						<Height>20</Height> 
+				               <FullHeight>120</FullHeight>
+				               <ButtonWidth>20</ButtonWidth>
+						<Items>
+						<Item Value='1' Default='1'>All</Item>
+						<Item Value='2' Default='1'>Common</Item>
+						<Item Value='3'>Handcrafted</Item>
+						<Item Value='4'>Treasured</Item>
+						<Item Value='5'>Mastercrafted</Item>
+						<Item Value='6'>Legendary</Item>
+						<Item Value='7'>Fabled</Item>
+						<Item Value='8'>Mythical</Item>
+						</Items>
+					</combobox>
 					<Commandbutton name='SaveBuy' Template='EQ2.Commandbutton'> 
 						<X>325</X> 
-						<Y>510</Y> 
+						<Y>450</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>
@@ -807,7 +913,7 @@
 					</Commandbutton>
 					<Commandbutton name='DeleteBuy' Template='EQ2.Commandbutton'> 
 						<X>385</X> 
-						<Y>510</Y> 
+						<Y>450</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Delete</Text>

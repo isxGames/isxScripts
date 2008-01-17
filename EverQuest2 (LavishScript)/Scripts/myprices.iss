@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.11c : Started 27 Nov 2007 : released 15 Dec 2007
+; Version 0.11f : Started 27 Nov 2007 : released 17 Jan 2008
 ;
 ; Declare Variables
 ;
@@ -10,6 +10,7 @@ variable bool MatchLowPrice
 variable bool IncreasePrice
 variable bool Exitmyprices=FALSE
 variable bool Pausemyprices=TRUE
+variable bool MerchantMatch
 variable bool SetUnlistedPrices
 variable bool ItemUnlisted
 variable bool ScanSellNonStop
@@ -40,6 +41,7 @@ variable int PauseTimer
 variable int StopWaiting
 
 variable float MyBasePrice
+variable float MerchPrice
 variable float PriceInSilver
 variable float MinSalePrice
 variable float MinPrice=0
@@ -86,7 +88,7 @@ function main()
 	MyPrices:LoadUI
 
 
-	call AddLog "Running MyPrices version 0.11b - released : 3 Dec 2007" FF11FFCC
+	call AddLog "Running MyPrices version 0.11f - released : 17 Jan 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -174,6 +176,7 @@ function main()
 					{
 						; Calclulate the price someone would pay with commission
 						MyBasePrice:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
+						MerchPrice:Set[${Me.Vending[${i}].Consignment[${j}].Value}]
 						MyPrice:Set[${Math.Calc[((${MyBasePrice}/100)*${Math.Calc[100+${Commission}]})]}]
 						; If increase price is flag set
 						if ${IncreasePrice}
@@ -223,9 +226,24 @@ function main()
 								call StringFromPrice ${MyPrice}
 								MyPriceS:Set[${Return}]
 
+								; ***** If your price is less than what a merchant would buy for ****
+								if ${MerchantMatch} && ${MyPrice} < ${MerchPrice}
+									{
+										Me.Vending[${i}].Consignment[${j}]:SetPrice[${MerchPrice}]
+										MinBasePrice:Set[${MerchPrice}]
+										call StringFromPrice ${MerchPrice}
+										call AddLog "${currentitem} : Merchant Would buy for : ${Return}" FFFF0000
+									}
+
 								; ***** If your price is more than the lowest price on sale ****
 								if ${MinPrice}<${MyPrice}
 								{
+									if ${MerchantMatch} && ${MinBasePrice} < ${MerchPrice}
+									{
+										MinBasePrice:Set[${MerchPrice}]
+										call StringFromPrice ${MerchPrice}
+										call AddLog "${currentitem} : Merchant Would buy for  more : ${Return}" FFFF0000
+									}
 									; **** if that price is Less than the price you are willing to sell for , don't do anything
 									if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 									{
@@ -821,10 +839,98 @@ function checkcash(float Buyprice, int Buynumber, bool Harvest)
 function ClickBrokerSearch(string tabtype, int ItemID)
 {
 	call echolog "-> ClickBrokerSearch ${tabtype} ${ItemID}"
+
 	Declare LBoxString string local
+	Declare namesearch string local
+	Declare startsearch string local
+	Declare endsearch string local
+	Declare tiersearch string local
+	Declare costsearch string local
+	Declare startlevel int local
+	Declare endlevel int local
+	Declare tier int local
+	Declare cost int local
+	Declare pp int local
+	Declare gp int local
+	Declare sp int local
+	Declare cp int local
+	
 	; scan the broker for the item clicked on in the list
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${tabtype}].FindChild[ItemList].Item[${ItemID}]}]
-	broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
+
+	If ${tabtype.Equal["Buy"]}
+	{
+		if ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked}
+		{
+			broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
+		}
+		else
+		{
+			startlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[StartLevel].Text}]
+			endlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[EndLevel].Text}]
+			tier:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Tier].Selection}]
+			pp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinPlatPrice].Text}]
+			gp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
+			sp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinSilverPrice].Text}]
+			cp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinCopperPrice].Text}]
+			cost:Set[${Math.Calc[${pp}*1000000]}]
+			cost:Set[${Math.Calc[${cost}+(${gp}*10000)]}]
+			cost:Set[${Math.Calc[${cost}+(${sp}*100)]}]
+			cost:Set[${Math.Calc[${cost}+${cp}]}]
+			costsearch:Set["MaxPrice ${cost}"]
+			if !${LBoxString.Left[6].Equal[NoName]}
+			{
+				namesearch:Set[Name "${LBoxString}"]
+			}
+			if ${startlevel}>0
+			{
+				startsearch:Set["MinLevel ${startlevel}"]
+			}
+			if ${endlevel}>0
+			{
+				endsearch:Set["MaxLevel ${endlevel}"]
+			}
+			if ${tier}>1
+			{
+				Switch "${tier}"
+				{
+					Case 2
+						tiersearch:Set["MinTier Common MaxTier Common"]
+						break
+					Case 3
+						tiersearch:Set["MinTier Handcrafted MaxTier Handcrafted"]
+						break
+					Case 4
+						tiersearch:Set["MinTier Treasured MaxTier Treasured"]
+						break
+					Case 5
+						tiersearch:Set["MinTier Mastercrafted MaxTier Mastercrafted"]
+						break
+					Case 6
+						tiersearch:Set["MinTier Legendary MaxTier Legendary"]
+						break
+					Case 7
+						tiersearch:Set["MinTier Fabled MaxTier Fabled"]
+						break
+					Case 8
+						tiersearch:Set["MinTier Mythical MaxTier Mythical"]
+						break
+				}
+			}
+			if ${namesearch.Length}>0
+			{
+				broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch}
+			}
+			else
+			{
+				broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch}
+			}
+		}
+	}
+	else
+	{
+		broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
+	}
 	call echolog "<end> : ClickBrokerSearch"
 
 }
@@ -1020,7 +1126,7 @@ function pricefromstring()
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, int Number, bool flagged)
+function Saveitem(string Saveset, string ItemName, float Money, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier)
 {
 	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged}"
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
@@ -1036,6 +1142,11 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 
 	Item:Set[${ItemList.FindSet[${ItemName}]}]
 
+
+	; Clear all previous information
+	
+	ItemList[${ItemName}]:Clear
+	
 	if ${Saveset.Equal["Sell"]}
 	{
 		Item:AddSetting[${Saveset},${Money}]
@@ -1068,6 +1179,18 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 		{
 			Item:AddSetting[Harvest,FALSE]
 		}
+		if ${nameonly}
+		{
+			Item:AddSetting[Buynameonly,TRUE]
+		}
+		else
+		{
+			Item:AddSetting[BuyNameOnly,FALSE]
+			Item:AddSetting[StartLevel,${startlevel}]
+			Item:AddSetting[EndLevel,${endlevel}]
+			Item:AddSetting[Tier,${tier}]
+		}
+		
 
 	}
 	elseif ${Saveset.Equal["Craft"]}
@@ -1239,6 +1362,9 @@ function savebuyinfo()
 	Declare Silver int local
 	Declare Copper float local
 	Declare Money float local
+	Declare tier int local
+	Declare startlevel int local
+	Declare endlevel int local
 
 	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Buyname].Text}]
 	itemnumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyNumber].Text}]
@@ -1246,7 +1372,14 @@ function savebuyinfo()
 	Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
 	Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinSilverPrice].Text}]
 	Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinCopperPrice].Text}]
-
+	startlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[startlevel].Text}]
+	endlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[endlevel].Text}]
+	tier:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[tier].Selection}]
+	
+	if ${itemname.Length} == 0 && !${UIElement[BuyNameOnly@Sell@GUITabs@MyPrices].Checked}
+	{
+		itemname:Set["NoName S: ${startlevel} E: ${endlevel} T : ${tier}"]
+	}
 
 	; calclulate the value in silver
 	Platina:Set[${Math.Calc[${Platina}*10000]}]
@@ -1259,7 +1392,7 @@ function savebuyinfo()
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[No item name entered]
 	}
-	elseIf ${itemnumber} <= 0
+	elseif ${itemnumber} < 0
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Try setting a valid number of items]
 	}
@@ -1270,7 +1403,7 @@ function savebuyinfo()
 	else
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Saving Information]
-		call Saveitem Buy "${itemname}" ${Money} ${itemnumber} ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked}
+		call Saveitem Buy "${itemname}" ${Money} ${itemnumber} ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked} ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked} ${startlevel} ${endlevel} ${tier}
 		call buy Buy init
 	}
 	call echolog "<end> : savebuyinfo"
@@ -1345,7 +1478,11 @@ function ShowBuyPrices(int ItemID)
 	Declare Copper int local
 	Declare CraftItem bool local
 	Declare Harvest bool local
-
+	Declare startlevel int local
+	Declare endlevel int local
+	Declare tier int local
+	Declare nameonly bool local
+	
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[ItemList].Item[${ItemID}]}]
 
 	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
@@ -1354,6 +1491,10 @@ function ShowBuyPrices(int ItemID)
 
 	number:Set[${BuyItem.FindSetting[BuyNumber]}]
 	Money:Set[${BuyItem.FindSetting[BuyPrice]}]
+
+	startlevel:Set[${BuyItem.FindSetting[StartLevel]}]
+	endlevel:Set[${BuyItem.FindSetting[EndLevel]}]
+	tier:Set[${BuyItem.FindSetting[Tier]}]
 
 	Platina:Set[${Math.Calc[${Money}/10000]}]
 	Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
@@ -1371,13 +1512,36 @@ function ShowBuyPrices(int ItemID)
 	UIElement[BuyName@Buy@GUITabs@MyPrices]:SetText[${LBoxString}]
 
 	Harvest:Set[${BuyItem.FindSetting[Harvest]}]
+	nameonly:Set[${BuyItem.FindSetting[BuyNameOnly]}]
+
 	if ${Harvest}
 	{
-	UIElement[Harvest@Buy@GUITabs@MyPrices]:SetChecked
+		UIElement[Harvest@Buy@GUITabs@MyPrices]:SetChecked
 	}
 	else
 	{
-	UIElement[Harvest@Buy@GUITabs@MyPrices]:UnsetChecked
+		UIElement[Harvest@Buy@GUITabs@MyPrices]:UnsetChecked
+	}
+	if ${nameonly}
+	{
+		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:SetChecked
+		UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Hide
+		UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Hide
+		UIElement[StartLevel@Buy@GUITabs@MyPrices]:Hide
+		UIElement[EndLevel@Buy@GUITabs@MyPrices]:Hide
+		UIElement[Tier@Buy@GUITabs@MyPrices]:Hide
+	}
+	else
+	{
+		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:UnsetChecked
+		UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Show
+		UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Show
+		UIElement[StartLevel@Buy@GUITabs@MyPrices]:Show
+		UIElement[EndLevel@Buy@GUITabs@MyPrices]:Show
+		UIElement[Tier@Buy@GUITabs@MyPrices]:Show
+		UIElement[StartLevel@Buy@GUITabs@MyPrices]:SetText[${startlevel}]
+		UIElement[EndLevel@Buy@GUITabs@MyPrices]:SetText[${endlevel}]
+		UIElement[Tier@Buy@GUITabs@MyPrices]:SetSelection[${tier}]
 	}
 	call echolog "<end> : ShowBuyPrices"
 }
@@ -1454,6 +1618,7 @@ objectdef BrokerBot
 		General:Set[${LavishSettings[myprices].FindSet[General]}]
 		Logging:Set[${General.FindSetting[Logging]}]
 		MatchLowPrice:Set[${General.FindSetting[MatchLowPrice]}]
+		MerchantMatch:Set[${General.FindSetting[MerchantMatch]}]
 		IncreasePrice:Set[${General.FindSetting[IncreasePrice]}]
 		SetUnlistedPrices:Set[${General.FindSetting[SetUnlistedPrices]}]
 		ScanSellNonStop:Set[${General.FindSetting[ScanSellNonStop]}]
