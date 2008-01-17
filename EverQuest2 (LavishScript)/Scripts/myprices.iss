@@ -1128,7 +1128,7 @@ function pricefromstring()
 
 function Saveitem(string Saveset, string ItemName, float Money, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier)
 {
-	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged}"
+	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${startlevel} ${endlevel} ${tier}"
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
 	{
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
@@ -1141,14 +1141,12 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 	ItemList:AddSet[${ItemName}]
 
 	Item:Set[${ItemList.FindSet[${ItemName}]}]
-
-
-	; Clear all previous information
-	
-	ItemList[${ItemName}]:Clear
 	
 	if ${Saveset.Equal["Sell"]}
 	{
+		; Clear all previous information
+		ItemList[${ItemName}]:Clear
+
 		Item:AddSetting[${Saveset},${Money}]
 		if ${UIElement[MinPrice@Sell@GUITabs@MyPrices].Checked}
 		{
@@ -1169,6 +1167,9 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 	}
 	elseif ${Saveset.Equal["Buy"]}
 	{
+		; Clear all previous information
+		ItemList[${ItemName}]:Clear
+
 		Item:AddSetting[BuyNumber,${Number}]
 		Item:AddSetting[BuyPrice,${Money}]
 		if ${flagged}
