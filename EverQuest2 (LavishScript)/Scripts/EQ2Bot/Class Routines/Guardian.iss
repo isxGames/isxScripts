@@ -25,13 +25,13 @@
 
 function Class_Declaration()
 {
-	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
 	declare OffensiveMode bool script TRUE
 	declare DefensiveMode bool script TRUE
 	declare TauntMode bool Script TRUE
 	declare FullAutoMode bool Script FALSE
 	declare DragoonsCycloneMode bool Script FALSE
+	declare MezMode bool Script FALSE
 
 	declare BuffAvoidanceGroupMember string script
 	declare BuffSentinelGroupMember string script
@@ -56,8 +56,8 @@ function Class_Declaration()
 	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
 	OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
 	DragoonsCycloneMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Dragoons Cyclone,FALSE]}]
+	MezMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use MezMode,FALSE]}]
 
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 
@@ -382,7 +382,7 @@ function Combat_Routine(int xAction)
 
 			case AoE1
 			case AoE2
-				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${Mob.Count}>1
+				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${Mob.Count}>1 && ${PBAoEMode}
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -477,23 +477,34 @@ function Lost_Aggro(int mobid)
 	{
 		if ${TauntMode}
 		{
-			;intercept damage on the person now with agro
-			call CastSpellRange 270
+			if !${MezMode} && ${mobid}!=${Actor[${KillTarget}].Target.ID}
+			{
+				KillTarget:Set[${mobid}]
+				target ${mobid}
+			}
+
+			if ${Actor[${KillTarget}].Target.ID}!=${Me.ID} && ${Me.Ability[${SpellType[270]}].IsReady}
+			{
+				call CastSpellRange 270 0 1 0 ${Actor[${KillTarget}].ID}
+			}
+
 			;Use Reinforcement to get back to top of agro tree else use taunts
-			if ${Me.Ability[${SpellType[321]}].IsReady}
+			if ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange 321
-			}
-			else
-			{
-				call CastSpellRange 160 161
-			}
+				if ${Me.Ability[${SpellType[321]}].IsReady}
+				{
+					call CastSpellRange 321 0 1 0 ${Actor[${KillTarget}].ID}
+				}
+				else
+				{
+					call CastSpellRange 160 161 1 0 ${Actor[${KillTarget}].ID}
+				}
 
-
-			;use rescue if new agro target is under 65 health
-			if ${Me.ToActor.Target.Target.Health}<65
-			{
-				call CastSpellRange 320 0 0 0 ${mobid}
+				;use rescue if new agro target is under 65 health
+				if ${Me.ToActor.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
+				{
+					call CastSpellRange 320 0 1 0 ${mobid}
+				}
 			}
 		}
 	}
