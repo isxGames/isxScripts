@@ -205,6 +205,8 @@ variable int PathType
 
 function main()
 {
+	ext -require isxeq2
+
 	variable int tempvar
 	variable int tempvar1
 	variable int tempvar2
@@ -613,6 +615,11 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 		return -1
 	}
 
+	if !${Actor[${targettobuff}](exists)}
+	{
+		return -1
+	}
+
 	do
 	{
 		if ${SpellType[${tempvar}].Length}
@@ -891,12 +898,7 @@ function Combat()
 					}
 				}
 
-				if ${Actor[${KillTarget}].IsDead} && !${MainTank}
-				{
-					break
-				}
-
-				if ${Target.IsDead} && ${MainTank}
+				if !${Actor[${KillTarget}](exists) || ${Actor[${KillTarget}].IsDead}
 				{
 					break
 				}
@@ -2159,18 +2161,18 @@ function CheckMTAggro()
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 	;again this seems wrong
-	;if ${Actor[${newtarget}](exists)}
-	;{
-	;	KillTarget:Set[${newtarget}]
-	;	target ${KillTarget}
-	;
-	;	wait 10 ${Target.ID}==${KillTarget}
-	;
-	;	if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-	;	{
-	;		face ${Target.X} ${Target.Z}
-	;	}
-	;}
+	if ${Actor[${newtarget}](exists)}
+	{
+		KillTarget:Set[${newtarget}]
+		target ${KillTarget}
+
+		wait 10 ${Target.ID}==${KillTarget}
+
+		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
+		{
+			face ${Target.X} ${Target.Z}
+		}
+	}
 }
 
 function ScanAdds()
