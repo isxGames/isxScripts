@@ -373,7 +373,7 @@ function Combat_Routine(int xAction)
 
 	if ${DebuffMode}
 	{
-		if ${Me.Ability[${SpellType[130]}].IsReady}
+		if ${Me.Ability[${SpellType[50]}].IsReady}
 		{
 			call CastSpellRange 50 0 1 0 ${KillTarget} 0 0 1
 		}
@@ -553,7 +553,7 @@ function Combat_Routine(int xAction)
 	;Designed for solo play.  Attempt stun + backstab, flip mob, etc.
 	elseif !${OffenseMode} && !${TankMode}
 	{
-		if ${Me.Ability[Walk the Plank].IsReady}
+		if ${Me.Ability[Walk the Plank].IsReady} && ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
 		{
 				call CastSpellRange 385 0 1 0 ${KillTarget}
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
@@ -562,12 +562,12 @@ function Combat_Routine(int xAction)
 				}
 		}
 
-		if ${Me.Ability[Cheap Shot].IsReady}
+		if ${Me.Ability[Cheap Shot].IsReady} && ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
 		{
 			;stun the mob
 			Call CastSpellRange 190 0 1 0 ${KillTarget} 0 0 1
 
-			if ${Me.Maintained[Cheap Shot](exists)}
+			if ${Me.Maintained[Cheap Shot](exists)} && ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
 			{
 				;check valid rear position
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
@@ -657,6 +657,7 @@ function Combat_Routine(int xAction)
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 					}
+					break
 				default
 					xAction:Set[40]
 					break
