@@ -87,7 +87,11 @@ function main()
 	MyPrices:loadsettings
 	MyPrices:LoadUI
 
-
+	Actor[nokillnpc]:DoTarget
+	wait 1
+	Target:DoubleClick
+	wait 10
+	
 	call AddLog "Running MyPrices version 0.11f - released : 17 Jan 2008" FF11FFCC
 	call LoadList
 
@@ -227,7 +231,7 @@ function main()
 								MyPriceS:Set[${Return}]
 
 								; ***** If your price is less than what a merchant would buy for ****
-								if ${MerchantMatch} && ${MyPrice} < ${MerchPrice}
+								if ${MerchantMatch} && ${MyPrice} < ${MerchPrice} && !${ItemUnlisted}
 									{
 										Me.Vending[${i}].Consignment[${j}]:SetPrice[${MerchPrice}]
 										MinBasePrice:Set[${MerchPrice}]
@@ -474,6 +478,7 @@ function checkstock()
 
 function buy(string tabname, string action)
 {
+	
 	call echolog "-> buy ${tabname} ${action}"
 	; Read data from the Item Set
 	;
@@ -574,6 +579,13 @@ function buy(string tabname, string action)
 							{
 								UIElement[ItemList@Craft@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
 							}
+						}
+						elseif ${action.Equal["place"]}
+						{
+							 if ${CraftItem}
+							 {
+								 call placeitem "${BuyIterator.Key}"
+							 }
 						}
 						elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
 						{
@@ -1043,8 +1055,6 @@ function LoadList()
 						call SetColour ${numitems} FFFFFF00
 						call addtotals "${labelname}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
 					}
-
-					; Money:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
 					; store the item name
 					itemprice[${numitems}]:Set[${i}]
 					; check to see if it already has a minimum price set
@@ -1644,6 +1654,64 @@ objectdef BrokerBot
 
 }
 
+;search your current broker boxes for existing stacks of items and see if theres room for more
+function placeitem(string itemname)
+{
+	Declare i int local
+	Declare space int local
+	Declare numitems int local
+	Declare storebox int local
+	
+	storebox:Set[0]
+		
+	Me:CreateCustomInventoryArray[nonbankonly]
+
+	if ${Me.CustomInventory[ExactName,${itemname}].Quantity} > 0
+	{
+		numitems:Set[${Me.CustomInventory[ExactName,${itemname}].Quantity}]
+		i:Set[1]
+		do
+		{
+			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+			call FindItem ${i} "${itemname}"
+			if ${Return} != -1
+			{
+				Echo there are ${Return} ${itemname} already in box ${i} with ${space} spaces free
+				if ${Return} > ${numitems}
+				{
+					echo store all ${itemname} in box ${i}
+					storebox:Set[${i}]
+					break
+				}
+			}
+		}
+		while ${i:Inc} <= 6
+		if ${storebox} !=0
+		{
+			echo put all items in the box number ${storebox}
+		}
+		else
+		{
+			i:Set[1]
+			do
+			{
+				space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}] 
+				if ${space} > ${numitems}
+				{
+					echo store all ${itemname} in box ${i}
+					storebox:Set[${i}]
+					break
+				}
+			}
+			while ${i:Inc} <= 6
+		}
+		if ${storebox} !=0
+		{
+			echo put all items in the box number ${storebox}
+		}
+	}
+}
+
 function echolog(string logline)
 {
 	if ${Logging}
@@ -1651,6 +1719,7 @@ function echolog(string logline)
 		Redirect -append "${LogPath}myprices.log" Echo "${logline}"
 	}
 }
+
 
 ; when the script exits , save all the settings and do some cleaning up
 atom atexit()
