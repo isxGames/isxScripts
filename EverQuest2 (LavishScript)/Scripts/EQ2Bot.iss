@@ -898,7 +898,7 @@ function Combat()
 					}
 				}
 
-				if !${Actor[${KillTarget}](exists) || ${Actor[${KillTarget}].IsDead}
+				if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead}
 				{
 					break
 				}
