@@ -615,7 +615,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 		return -1
 	}
 
-	if !${Actor[${targettobuff}](exists)}
+	if ${targettobuff}>0 && !${Actor[${targettobuff}](exists)}
 	{
 		return -1
 	}
