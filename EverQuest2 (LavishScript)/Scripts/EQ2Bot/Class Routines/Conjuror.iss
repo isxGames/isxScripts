@@ -449,7 +449,7 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call RefreshPower
-	call AnswerShardRequest
+	;call AnswerShardRequest
 
 	;keep blazing Avatar up at all times
 	if ${Me.ToActor.Pet(exists)}
@@ -467,6 +467,11 @@ function Combat_Routine(int xAction)
 	if ${Me.Maintained[${SpellType[356]}](exists)}
 	{
 		call CastSpellRange 397
+	}
+
+	if ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		call CastSpellRange 60 0 0 0 ${KillTarget}
 	}
 
 
