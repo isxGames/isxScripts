@@ -619,7 +619,7 @@ function Post_Combat_Routine()
 	}
 
 	;reset rangedattack in case it was modified by joust call.
-	JoustStatus:Set[1]
+	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
 }
 
@@ -785,14 +785,14 @@ function FindHealer()
 			case fury
 			case mystic
 			case defiler
-				healer:Set[${Me.GroupMember[${tempgrp}].ID}]
+				healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
 				break
 			case warden
 			case inquisitor
 				;don't trust priests that have melee configs unless no other priest is available
 				if ${healer}==${Me.ID}
 				{
-					healer:Set[${Me.GroupMember[${tempgrp}].ID}]
+					healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
 				}
 				break
 			Default
@@ -814,13 +814,13 @@ function FindHealer()
 				case fury
 				case mystic
 				case defiler
-					healer:Set[${Me.RaidMember[${tempgrp}].ID}]
+					healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
 					break
 				case warden
 				case inquisitor
 					if ${healer}==${Me.ID}
 					{
-						healer:Set[${Me.RaidMember[${tempgrp}].ID}]
+						healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
 					}
 					break
 				Default

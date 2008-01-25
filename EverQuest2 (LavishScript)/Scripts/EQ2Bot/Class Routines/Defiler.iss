@@ -742,7 +742,7 @@ function CheckHeals()
 	lowest:Set[1]
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankID}].ToActor.IsDead} && ${Actor[${MainTankID}](exists)} && ${CombatRez}
+	if ${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${CombatRez}
 	{
 		call CastSpellRange 300 0 1 1 ${MainTankID}
 	}

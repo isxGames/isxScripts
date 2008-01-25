@@ -26,7 +26,7 @@
 #endif
 
 ;Set some script wide vars / declares
-declare triggerCheckTimer int script 5
+variable int triggerCheckTimer=5
 
 function main(string FollowMember, int MaxRange)
 {
@@ -76,11 +76,11 @@ function main(string FollowMember, int MaxRange)
 					while (${CustomActor[${tcount}].ID(exists)} && ${CustomActor[${tcount}].Distance}<6) || ${hcount:Inc}<6
 
 				}
-				elseif ${CustomActor[${tcount}].Target.ID}=${Actor[${FollowMember}].ID}
+				elseif ${CustomActor[${tcount}].Target.ID}==${Actor[${FollowMember}].ID}
 				{
 					echo ${CustomActor[${tcount}].Name} is agro on follower, ignore it.
 				}
-				elseif ${CustomActor[${tcount}].ID}=${Actor[${FollowMember}].ID} || ${CustomActor[${tcount}].ID}=${Me.ToActor.ID}
+				elseif ${CustomActor[${tcount}].ID}==${Actor[${FollowMember}].ID} || ${CustomActor[${tcount}].ID}==${Me.ToActor.ID}
 				{
 					echo ${CustomActor[${tcount}].Name} is me or follower
 				}
@@ -91,13 +91,13 @@ function main(string FollowMember, int MaxRange)
 				else
 				{
 					echo nearest actor is not a resource, pc, or pet it is ${CustomActor[${tcount}].Name}
-					call ResumeFollow
+					call ResumeFollow ${FollowMember}
 					tcount:Set[${EQ2.CustomActorArraySize}]
 				}
 			}
 		}
 		waitframe
-		call ResumeFollow
+		call ResumeFollow ${FollowMember}
 	}
 	;THIS MAKES THE FUNCTION  LOOP ENDLESSLY
 	while 0 < 1
@@ -122,7 +122,7 @@ function DoHarvest(int NodeID)
 
 }
 
-function ResumeFollow()
+function ResumeFollow(string FollowMember)
 {
 	if ${Me.ToActor.WhoFollowingID}<1 && ${Me.GroupCount}
 	{
