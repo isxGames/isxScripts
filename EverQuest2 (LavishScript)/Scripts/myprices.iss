@@ -1708,6 +1708,8 @@ function placeitem(string itemname)
 		if ${storebox} !=0
 		{
 			echo put all items in the box number ${storebox}
+			Me.Inventory[${itemname}]:AddToConsignment[1]
+			wait 10
 		}
 	}
 }
@@ -1731,6 +1733,9 @@ atom atexit()
 	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
+	LavishSettings[newcraft]:Clear
+	LavishSettings[myprices]:Clear
+	LavishSettings[craft]:Clear
 }
 
 
