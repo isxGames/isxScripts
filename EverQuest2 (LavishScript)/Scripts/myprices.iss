@@ -1476,7 +1476,6 @@ function deletebuyinfo(int ItemID)
 }
 
 ; Delete the current item selected in the buybox
-
 function ShowBuyPrices(int ItemID)
 {
 	call echolog "-> ShowBuyPrices ${ItemID}"
@@ -1557,6 +1556,7 @@ function ShowBuyPrices(int ItemID)
 	call echolog "<end> : ShowBuyPrices"
 }
 
+; Display the details of an item marked as crafted
 function ShowCraftInfo(int ItemID)
 {
 	call echolog "-> ShowCraftInfo ${ItemID}"
@@ -1577,6 +1577,35 @@ function ShowCraftInfo(int ItemID)
 	UIElement[CraftStack@Craft@GUITabs@MyPrices]:SetText[${Stack}]
 	UIElement[CraftNumber@Craft@GUITabs@MyPrices]:SetText[${Stock}]
 	call echolog " <end> : ShowCraftInfo"
+}
+
+; Toggle an item as 'Non Craftable'
+function Unselectcraft(int ItemID)
+{
+	call echolog "-> Unselectcraft ${ItemID}"
+
+	Declare LBoxString string local
+
+	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftName].Text}]
+	
+	; check information was entered in all boxes and save
+
+	if ${LBoxString.Length} == 0
+	{
+		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[No item selected]
+	}
+	else
+	{
+		CraftList:Set[${LavishSettings[myprices].FindSet[Item]}]
+	
+		CraftItemList:Set[${CraftList.FindSet["${LBoxString}"]}]
+	
+		CraftItemList:AddSetting[CraftItem,FALSE]
+		
+		; save the new information
+		LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
+	}
+	call echolog " <end> : Unselectcraft"
 }
 
 
@@ -1657,6 +1686,8 @@ objectdef BrokerBot
 ;search your current broker boxes for existing stacks of items and see if theres room for more
 function placeitem(string itemname)
 {
+	Echo Sorry...work in progress...not currently active...
+	/*
 	Declare i int local
 	Declare space int local
 	Declare numitems int local
@@ -1712,6 +1743,7 @@ function placeitem(string itemname)
 			wait 10
 		}
 	}
+*/
 }
 
 function echolog(string logline)
