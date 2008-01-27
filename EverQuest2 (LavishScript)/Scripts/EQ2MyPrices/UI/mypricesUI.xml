@@ -411,7 +411,19 @@
 							Script[myprices]:QueueCommand[call checkstock]
 						</OnLeftClick>
 					</Commandbutton>
-
+					<Commandbutton name='Place' Template='EQ2.Commandbutton'>
+						<X>5%</X>
+						<Y>415</Y>
+						<Width>100</Width>
+						<Height>20</Height>
+						<Text>Place Items</Text>
+						<AutoTooltip>
+							Put your crafted items on the broker.
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call buy item place]
+						</OnLeftClick>
+					</Commandbutton>
 					<Text Name='Itemname' Template='EQ2.Text'>
 						<X>25</X>
 						<Y>435</Y>
@@ -995,9 +1007,23 @@
 						<Height>20</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
-					<Commandbutton name='SaveCraft' Template='EQ2.Commandbutton'> 
+					<Commandbutton name='NoCraft' Template='EQ2.Commandbutton'> 
 						<X>340</X> 
 						<Y>485</Y> 
+						<Width>50</Width> 
+						<Height>15</Height>
+						<Text>Unset</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call Unselectcraft ${ID}]
+							Script[myprices]:QueueCommand[call buy Craft Init]
+						</OnLeftClick>
+						<AutoTooltip>
+							Unselect as a Craftable Item
+						</AutoTooltip>
+					</Commandbutton>
+					<Commandbutton name='SaveCraft' Template='EQ2.Commandbutton'> 
+						<X>340</X> 
+						<Y>505</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>
