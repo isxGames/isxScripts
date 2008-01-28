@@ -1,7 +1,7 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Pather.iss Version 1.8  Updated: 09/24/05 
+; EQ2Pather.iss Version 1.8  Updated: 09/24/05
 ;
-; Written by: Blazer 
+; Written by: Blazer
 ;
 ; Revision History
 ; ----------------
@@ -15,7 +15,7 @@
 ; v1.5 - * Several code changes.
 ;	 * You Can now move to a point if in Auto mode. This allows for more complex navigational points
 ;	 to be created. As an example, you can plot points till you get to some intersection.
-;	 Label that point to say 'Intersection 1' then continue plotting your points till you get to some 
+;	 Label that point to say 'Intersection 1' then continue plotting your points till you get to some
 ;	 other specific location. Press F4, and type in 'Intersection 1'. This will move you back there
 ;	 without plotting additional points. You can then continue plotting points on another route.
 ;
@@ -24,7 +24,7 @@
 ;
 ; v1.3 - * Added an automatic navigational plotter.
 ;	 example; type 'run eq2pather auto 30' will automatically plot a point if you have moved
-;	 more than 30 yards from the last plotted point. 
+;	 more than 30 yards from the last plotted point.
 ;	 If you dont specify a distance, then it defaults to 20.
 ;	 You can at any time plot additional points or a point with a name.
 ;	 You can also change the current distance to something else while the script is running.
@@ -74,7 +74,7 @@ function main(string mode, int parm2)
 
 	plotdist:Set[${parm2}]
 
-	if !${mode.Length} 
+	if !${mode.Length}
 	{
 		echo "Syntax: run eq2pather <auto|combat> <distance>"
 		echo "Where <auto> specifies EQ2Pather to automatically plot co-ordiantes when you exceed 20 yards from the last point."
@@ -131,6 +131,8 @@ function main(string mode, int parm2)
 	bind pull "PULL" "CurrentTask:Set[8]"
 	bind quit "QUIT" "CurrentTask:Set[9]"
 
+	HUD -add Warning1 "DO NOT USE THIS SCRIPT FOR HARVEST PATHS!!!!"
+
 	if ${modetype}
 	{
 		HUD -add NavMode ${HudX},${HudY} "Navigation Mode: Auto (Distance: \${plotdist})"
@@ -145,7 +147,7 @@ function main(string mode, int parm2)
 	HUD -add FunctionKey4 ${HudX},${HudY:Inc[15]} "LASTPOINT - Moves you to a specified Navigational Point."
 	HUD -add FunctionKey5 ${HudX},${HudY:Inc[15]} "CLEARNAVFILE - Clears the Navigational file."
 	if ${modetype}
-	{	
+	{
 		HUD -add FunctionKey6 ${HudX},${HudY:Inc[15]} "CHANGEDIST - Specify a new distance value to use between plotted points."
 		LastX:Set[${Me.X}]
 		LastY:Set[${Me.Y}]
@@ -157,7 +159,7 @@ function main(string mode, int parm2)
 		HUD -add FunctionKey8 ${HudX},${HudY:Inc[15]} "PULL - Labels the current point as Pull \${Math.Calc[${CurrentPull}+1].Int}"
 	}
 	HUD -add FunctionKey11 ${HudX},${HudY:Inc[15]} "QUIT - Exit EQ2Pather"
-	HUD -add NavPointStatus ${HudX},${HudY:Inc[30]} "Last Nav Point Added: \${CurrentPL} [\${LastX}(x) \${LastY}(y) \${LastZ}(z)]" 
+	HUD -add NavPointStatus ${HudX},${HudY:Inc[30]} "Last Nav Point Added: \${CurrentPL} [\${LastX}(x) \${LastY}(y) \${LastZ}(z)]"
 	HUD -add NavConnectStatus ${HudX},${HudY:Inc[15]} "Last Connection: \${displayLP} to \${CurrentPL}"
 	HUD -add NavCountStatus ${HudX},${HudY:Inc[15]} "Total Number of Points Used: \${pointcount}"
 	HUDSet NavPointStatus -c FFFF00
@@ -176,8 +178,8 @@ function main(string mode, int parm2)
 			call AutoPlotPoint
 		}
 
-		switch ${CurrentTask} 
-		{ 
+		switch ${CurrentTask}
+		{
 			case 1
 				CurrentTask:Set[0]
 				pointcount:Inc
@@ -320,9 +322,9 @@ function atexit()
 {
 	Navigation -reset
 
-	bind -delete addpoint 
+	bind -delete addpoint
 	bind -delete addnamepoint
-	bind -delete savepoints 
+	bind -delete savepoints
 	bind -delete clearnavfile
 	bind -delete quit
 	bind -delete changedist

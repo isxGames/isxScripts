@@ -693,53 +693,53 @@ function CheckHeals()
 		}
 	}
 
-	do
-	{
-			; Cure Arcane
-			if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
-			{
-				call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
-
-				if ${Actor[${KillTarget}](exists)}
-				{
-					Target ${KillTarget}
-				}
-			}
-
-			;Check Group members
-			if ${Me.Group[${temphl}].ToActor.Health}<50 && ${Me.Group[${temphl}].ToActor.Health}>-99 && && ${Me.Group[${temphl}].ToActor(exists)}
-			{
-				call CastSpellRange 396 0 0 0 ${Me.Group[${temphl}].ToActor.ID}
-
-				;Stoneskins AA
-				call CastSpellRange 378
-
-				;EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
-
-				if ${Actor[${KillTarget}](exists)}
-				{
-					Target ${KillTarget}
-				}
-
-			}
-
-			;================================
-			;= Expiation Check
-			;================================
-			call IsHealer ${Me.Group[${temphl}].ID}
-
-			if (${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>0)  || (${Return} && ${Me.Group[${temphl}].ToActor.Power}<30 && ${Me.Group[${temphl}].ToActor.Power}>0) && ${Me.Group[${temphl}].ToActor.InCombatMode} && ${Me.Group[${temphl}].ToActor(exists)} && ${PetMode}
-			{
-				;TODO Add check for Intervention
-				;Cast AA Animist Bond so damage from expiation is to power not the pets health
-				call CastSpellRange 382
-				;Cast Expiation
-				call CastSpellRange 361
-				call SummonPet
-
-			}
-	}
-	while ${temphl:Inc}<${grpcnt}
+;	do
+;	{
+;			; Cure Arcane
+;			if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
+;			{
+;				call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+;
+;				if ${Actor[${KillTarget}](exists)}
+;				{
+;					Target ${KillTarget}
+;				}
+;			}
+;
+;			;Check Group members
+;			;if ${Me.Group[${temphl}].ToActor.Health}<50 && ${Me.Group[${temphl}].ToActor.Health}>-99 && && ${Me.Group[${temphl}].ToActor(exists)}
+;			{
+;				call CastSpellRange 396 0 0 0 ${Me.Group[${temphl}].ToActor.ID}
+;
+;				;Stoneskins AA
+;				call CastSpellRange 378
+;
+;				EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
+;
+;				if ${Actor[${KillTarget}](exists)}
+;				{
+;					Target ${KillTarget}
+;				}
+;
+;			}
+;
+;			;================================
+;			;= Expiation Check
+;			;================================
+;			call IsHealer ${Me.Group[${temphl}].ID}
+;
+;			if (${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>0)  || (${Return} && ${Me.Group[${temphl}].ToActor.Power}<30 && ${Me.Group[${temphl}].ToActor.Power}>0) && ${Me.Group[${temphl}].ToActor.InCombatMode} && ${Me.Group[${temphl}].ToActor(exists)} && ${PetMode}
+;			{
+;				;TODO Add check for Intervention
+;				;Cast AA Animist Bond so damage from expiation is to power not the pets health
+;				call CastSpellRange 382
+;				;Cast Expiation
+;				call CastSpellRange 361
+;				call SummonPet
+;
+;			}
+;	}
+;	while ${temphl:Inc}<${grpcnt}
 
 	;================================
 	;= Pet Heals                    =
