@@ -806,13 +806,38 @@ function Have_Aggro()
 	}
 }
 
-function Lost_Aggro(int aggroid)
+function Lost_Aggro(int mobid)
 {
-	if ${Target.Target.ID}!=${Me.ID}
+	if ${Actor${mobid}].Target.ID}!=${Me.ID}
 	{
+
+		call CastSpellRange 270 0 1 0 ${Actor[${mobid}].ID}
+
 		if ${MainTank}
 		{
-			call CastSpellRange 100 103 1 1 ${aggroid} 0 0 1
+			KillTarget:Set[${mobid}]
+			target ${mobid}
+
+			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			{
+				call CastSpellRange 100 0 1 1 ${aggroid} 0 0 1
+			}
+
+			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			{
+				call CastSpellRange 101 0 1 1 ${aggroid} 0 0 1
+			}
+
+			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			{
+				call CastSpellRange 102 0 1 1 ${aggroid} 0 0 1
+			}
+
+			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			{
+				call CastSpellRange 103 0 1 1 ${aggroid} 0 0 1
+			}
+
 			call CastSpellRange 160 0 1 0 ${aggroid} 0 0 1
 		}
 	}
@@ -823,7 +848,7 @@ function MA_Lost_Aggro()
 {
 
 	;if tank lost agro, and I don't have agro, save the warlocks ass
-	if ${KillTarget.Target.ID}!=${Me.ID}
+	if ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 	{
 		call CastSpellRange 270 0 1 0 ${KillTarget} 0 0 1
 	}

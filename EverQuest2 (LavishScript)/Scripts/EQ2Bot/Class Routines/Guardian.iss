@@ -477,7 +477,7 @@ function Lost_Aggro(int mobid)
 	{
 		if ${TauntMode}
 		{
-			if !${MezMode} && ${mobid}!=${Actor[${KillTarget}].Target.ID}
+			if !${MezMode} && ${Actor${mobid}].Target.ID}!=${Me.ID}
 			{
 				KillTarget:Set[${mobid}]
 				target ${mobid}

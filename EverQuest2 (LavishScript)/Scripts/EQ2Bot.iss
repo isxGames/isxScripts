@@ -1156,7 +1156,7 @@ function CheckPosition(int rangetype, int position)
 			if ${AutoMelee}
 			{
 				minrange:Set[0]
-				maxrange:Set[4]
+				maxrange:Set[3]
 			}
 			else
 			{
@@ -1166,13 +1166,13 @@ function CheckPosition(int rangetype, int position)
 			break
 		case 1
 			minrange:Set[1]
-			maxrange:Set[4.5]
+			maxrange:Set[3]
 			break
 		case 2
 			if ${AutoMelee}
 			{
 				minrange:Set[0]
-				maxrange:Set[4]
+				maxrange:Set[3]
 			}
 			else
 			{
