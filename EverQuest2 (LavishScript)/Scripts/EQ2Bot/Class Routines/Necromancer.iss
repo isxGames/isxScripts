@@ -137,7 +137,7 @@ function Combat_Init()
 	Action[1]:Set[UndeadTide]
 	MobHealth[1,1]:Set[10]
 	MobHealth[1,2]:Set[100]
-	SpellRange[1,1]:Set[60]
+	SpellRange[1,1]:Set[353]
 
 	Action[2]:Set[Stench_Pet]
 	MobHealth[2,1]:Set[30]
@@ -257,7 +257,6 @@ function Buff_Routine(int xAction)
 		case AA_Cabalists_Cover
 			if ${BuffCabalistCover} && !${Me.Maintained[${SpellType[395]}](exists)}
 			{
-
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 				BuffCabalistCover:Set[FALSE]
 			}
@@ -293,7 +292,6 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			}
 			break
-
 		case SeeInvis
 			if ${BuffSeeInvis}
 			{
@@ -313,14 +311,12 @@ function Buff_Routine(int xAction)
 				while ${tempvar:Inc}<${Me.GroupCount}
 			}
 			break
-
 		case Buff_Shards
 			if !${Me.Inventory[${ShardType}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 			}
 			break
-
 		Default
 			xAction:Set[40]
 			break
@@ -330,6 +326,8 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	variable int Counter
+	declare spellsused int local
+	spellsused:Set[0]
 
 	AutoFollowingMA:Set[FALSE]
 
@@ -349,16 +347,45 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
 		{
 			call CastSpellRange 70 0 0 0 ${KillTarget}
+			spellsused:Inc
 		}
-		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
+		if ${Me.Ability[${SpellType[60]}].IsReady}
 		{
-			call CastSpellRange 71 0 0 0 ${KillTarget}
+			call CastSpellRange 60 0 0 0 ${KillTarget}
+			spellsused:Inc
 		}
-		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
+		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode} && ${spellsused}<3
 		{
 			call CastSpellRange 90 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && ${spellsused}<3
+		{
+			call CastSpellRange 71 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${Me.Ability[${SpellType[329]}].IsReady} && !${Me.Maintained[${SpellType[329]}](exists)} && ${spellsused}<3
+		{
+			call CastSpellRange 329 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${Me.Ability[${SpellType[330]}].IsReady} && !${Me.Maintained[${SpellType[330]}](exists)} && ${spellsused}<3
+		{
+			call CastSpellRange 330 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${Me.Ability[${SpellType[331]}].IsReady} && !${Me.Maintained[${SpellType[331]}](exists)} && ${spellsused}<3
+		{
+			call CastSpellRange 331 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${Me.Ability[${SpellType[332]}].IsReady} && !${Me.Maintained[${SpellType[332]}](exists)} && ${spellsused}<3
+		{
+			call CastSpellRange 332 0 0 0 ${KillTarget}
+			spellsused:Inc
 		}
 	}
+	;pets
 
 	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
@@ -367,7 +394,6 @@ function Combat_Routine(int xAction)
 	}
 
 	call CheckHeals
-
 
 	if ${DoHOs}
 	{
@@ -402,7 +428,6 @@ function Combat_Routine(int xAction)
 
 	switch ${Action[${xAction}]}
 	{
-
 
 		case AA_Animated_Dagger
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${PetMode}
@@ -454,7 +479,6 @@ function Combat_Routine(int xAction)
 			if ${PBAoEMode} && ${Mob.Count}>1
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-
 			}
 			break
 
@@ -462,7 +486,6 @@ function Combat_Routine(int xAction)
 			if ${AoEMode} && ${Me.ToActor.Pet(exists)}  && ${Me.Maintained[${SpellType[357]}](exists)}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-
 			}
 			break
 
@@ -551,6 +574,7 @@ function Post_Combat_Routine(int xAction)
 
 		case LoadDefaultEquipment
 			ExecuteAtom LoadEquipmentSet "Default"
+			break
 		case AA_Possessed_Minion
 			;check if we are possessed minion and cancel
 			if ${Me.Race.Equal[Unknown]}

@@ -373,6 +373,23 @@ function main()
 				}
 			}
 
+			;this should force the tank to react to any aggro, regardless
+			if ${Mob.Detect} && ${MainTank}
+			{
+				if ${Mob.Target[${Target.ID}]}
+				{
+					call Combat
+				}
+				else
+				{
+					if ${Mob.NearestAggro}
+					{
+						target NearestAggro
+						call Combat
+					}
+				}
+			}
+
 			; Do Pre-Combat Script if there is no mob nearby
 			if !${Mob.Detect} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
@@ -389,6 +406,13 @@ function main()
 				{
 					tempvar:Set[40]
 				}
+
+				;disable autoattack if not in combat
+				if ${tempvar}<40 && ${Me.AutoAttackOn}
+				{
+					EQ2Execute /toggleautoattack
+				}
+
 				;allow class file to set a var to override eq2bot stance / pet casting
 				if !${NoEQ2BotStance}
 				{
@@ -771,10 +795,11 @@ function Combat()
 
 		do
 		{
-			if !${Mob.ValidActor[${Target.ID}]} || !${Actor[${Target.ID}].InCombatMode}
-			{
-				break
-			}
+			;these checks should be done before calling combat, once called, combat should insue, regardless.
+			;if !${Mob.ValidActor[${Target.ID}]} || !${Actor[${Target.ID}].InCombatMode}
+			;{
+			;	break
+			;}
 
 			if ${Target.ID}!=${Me.ID} && ${Target(exists)}
 			{
@@ -2175,7 +2200,7 @@ function CheckMTAggro()
 	}
 }
 
-function ScanAdds()
+Function Scanadds()
 {
 	variable int tcount=2
 	variable float X
@@ -2674,6 +2699,12 @@ objectdef ActorCheck
 		{
 			return TRUE
 		}
+
+		if ${Actor[${actorid}].Target.ID}==${Me.ID} && ${Actor[${actorid}].InCombatMode}
+		{
+			return TRUE
+		}
+
 		return FALSE
 	}
 
@@ -2746,6 +2777,32 @@ objectdef ActorCheck
 
 		return FALSE
 	}
+
+	member:int NearestAggro()
+	{
+		variable int tcount=2
+
+		if !${Actor[NPC,range,20](exists)} && !${Actor[NamedNPC,range,20](exists)}
+		{
+			return 0
+		}
+
+		EQ2:CreateCustomActorArray[byDist,20]
+		do
+		{
+			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode}
+			{
+				if ${CustomActor[${tcount}].ID}
+				{
+					return ${CustomActor[${tcount}].ID}
+				}
+			}
+		}
+		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+
+		return 0
+	}
+
 
 	method CheckMYAggro()
 	{
