@@ -57,14 +57,9 @@ function Class_Declaration()
 	declare BuffTarget string script
 
 	declare JoustMode bool script 0
-	declare OutTrigger string script
-	declare InTrigger string script
-	; 0 is in 1 is out
-	declare JoustStatus bool script 0
-	declare BDStatus bool script 0
+
 
 	call EQ2BotLib_Init
-	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
@@ -85,12 +80,6 @@ function Class_Declaration()
 	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Hate","FALSE"]}]
 	BuffSelf:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Self","FALSE"]}]
 
-	;********************************************
-	; Set these to whatever you want to use.... *
-	;********************************************
-	InTrigger:Set[dps in]
-	OutTrigger:Set[dps out]
-	BDTrigger:Set[BD Now!]
 }
 
 function Buff_Init()
@@ -223,6 +212,7 @@ function Buff_Routine(int xAction)
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
 		call CastSpellRange 388
+		wait 5
 		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
 			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
@@ -352,7 +342,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		Default
-			xAction:Set[20]
+			return Buff Complete
 			break
 	}
 
@@ -375,6 +365,7 @@ function Combat_Routine(int xAction)
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
 		call CastSpellRange 388
+		wait 5
 		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
 			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
@@ -405,11 +396,10 @@ function Combat_Routine(int xAction)
 			;if aoe avoidance is up, use it
 			if ${Me.Ability[${SpellType[388]}].IsReady}
 			{
-				call CastSpellRange 388
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
-				{
+				if ${AnnounceMode} 				{
 					eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
 				}
+				call CastSpellRange 388
 			}
 			elseif ${Me.Ability[${SpellType[387]}].IsReady}
 			{
@@ -606,7 +596,7 @@ function Combat_Routine(int xAction)
 			break
 
 		default
-			xAction:Set[20]
+			return CombatComplete
 			break
 	}
 }
@@ -637,7 +627,6 @@ function Have_Aggro()
 		call CastSpellRange 352 0 0 0 ${agroid}
 	}
 
-
 }
 
 function Lost_Aggro()
@@ -663,12 +652,13 @@ function CheckHeals()
 {
 
 	declare temphl int local 1
+	declare tempgrp int local 1
+	declare tempraid int local 1
 	grpcnt:Set[${Me.GroupCount}]
 
 	;oration of sacrifice heal
 	do
 	{
-
 		;oration of sacrifice heal
 		if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && !${haveaggro} && !${MainTank} && ${Me.Group[${temphl}].ToActor.Distance}<=20 && ${Me.Ability[${SpellType[1]}].IsReady}
 		{
@@ -677,16 +667,32 @@ function CheckHeals()
 			Target ${KillTarget}
 
 		}
-
-		;Res
-		if ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<30 && ${Me.Ability[${SpellType[300]}].IsReady}
-		{
-			call CastSpellRange 300 0 1 1 ${Me.Group[${temphl}].ID}
-			Target ${KillTarget}
-		}
-
 	}
 	while ${temphl:Inc}<${grpcnt}
+
+	;Res Fallen Groupmembers only if in range
+	do
+	{
+		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
+		{
+			call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+		}
+	}
+	while ${tempgrp:Inc}<${grpcnt}
+
+	if ${Me.InRaid} && ${Me.Ability[${SpellType[300]}].IsReady}
+	{
+		;Res Fallen RAID members only if in range
+		grpcnt:Set[${Me.RaidCount}]
+		do
+		{
+			if ${RaidMember[${tempraid}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
+			{
+				call CastSpellRange 300 0 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
+			}
+		}
+		while ${tempraid:Inc}<=24 && ${Me.Ability[${SpellType[300]}].IsReady}
+	}
 
 	call UseCrystallizedSpirit 60
 }
@@ -737,99 +743,4 @@ function DoMagneticNote()
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-
-}
-
-atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatTarget, string SpeakerIsNPC, string ChannelName)
-{
-	switch ${ChatType}
-	{
-		case 26
-		case 27
-		case 16
-			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombat}
-			{
-				JoustStatus:Set[1]
-			}
-			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
-			{
-				JoustStatus:Set[0]
-			}
-			elseif ${Message.Find[${BDTrigger}]}
-			{
-				BDStatus:Set[1]
-			}
-		default
-			break
-	}
-}
-
-;returns the ID of your healer in group, if none found, returns your ID
-function FindHealer()
-{
-	declare tempgrp int local 0
-	declare	healer int local 0
-
-	if !${Me.Grouped}
-	{
-		return ${Me.ID}
-	}
-
-	healer:Set[${Me.ID}]
-
-	do
-	{
-		switch ${Me.GroupMember[${tempgrp}].Class}
-		{
-			case templar
-			case fury
-			case mystic
-			case defiler
-				healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
-				break
-			case warden
-			case inquisitor
-				;don't trust priests that have melee configs unless no other priest is available
-				if ${healer}==${Me.ID}
-				{
-					healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
-				}
-				break
-			Default
-				break
-		}
-
-	}
-	while ${tempgrp:Inc}<${Me.GroupCount}
-
-	if ${healer}==${Me.ID} && ${Me.InRaid}
-	{
-		tempgrp:Set[0]
-
-		do
-		{
-			switch ${Me.RaidMember[${tempgrp}].Class}
-			{
-				case templar
-				case fury
-				case mystic
-				case defiler
-					healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
-					break
-				case warden
-				case inquisitor
-					if ${healer}==${Me.ID}
-					{
-						healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
-					}
-					break
-				Default
-					break
-			}
-
-		}
-		while ${tempgrp:Inc}=<${Me.RaidCount}
-	}
-
-	return ${healer}
 }

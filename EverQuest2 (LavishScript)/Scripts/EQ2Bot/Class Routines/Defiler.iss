@@ -55,19 +55,19 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
-	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
+	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
+	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cure Spells,FALSE]}]
-	MaelstromMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Maelstrom Mode,FALSE]}]
-	KeepWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepWardUp,FALSE]}]
-	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	CombatRez:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Combat Rez,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
+	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
+	KeepWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepWardUp,FALSE]}]
+	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
+	MaelstromMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Maelstrom Mode,FALSE]}]
 
 	BuffNoxious:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffNoxious,TRUE]}]
-	BuffMitigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMitigation,TRUE]}]
 	BuffStrength:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffStrength,TRUE]}]
+	BuffMitigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMitigation,TRUE]}]
 	BuffWaterBreathing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffWaterBreathing,FALSE]}]
 	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
 	BuffHorrorGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHorrorGroupMember,]}]
@@ -329,7 +329,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case SpiritCompanion
-			if ${PetMode}
+			if ${PetMode} && !${Me.InCombat}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			}
@@ -443,8 +443,11 @@ function Combat_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
+	declare spellsused int local
 
+	spellsused:Set[0]
 	AutoFollowingMA:Set[FALSE]
+
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
@@ -465,6 +468,39 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call RefreshPower
+
+	if ${DebuffMode} && ${Actor[${KillTarget}].IsEpic}
+	{
+		if ${Me.Ability[${SpellType[54]}].IsReady} && !${Me.Maintained[${SpellType[54]}](exists)}
+		{
+			call CastSpellRange 54 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)}
+		{
+			call CastSpellRange 51 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 52 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[53]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 53 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[322]}].IsReady} && !${Me.Maintained[${SpellType[322]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 322 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}
 
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[385]}](exists)}
@@ -522,7 +558,7 @@ function Combat_Routine(int xAction)
 				if ${DebuffMode}
 				{
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
+					if ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 					{
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
@@ -552,7 +588,7 @@ function Combat_Routine(int xAction)
 			case Proc_Ward
 				if (${Actor[${KillTarget}].Difficulty} == 3)  || ${MainTank} || ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]}
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
+				if ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -565,7 +601,7 @@ function Combat_Routine(int xAction)
 			case Malaise
 			case Imprecation
 			case Fuliginous_Sphere
-				if ${OffenseMode}
+				if ${OffenseMode} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 					{
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -618,7 +654,7 @@ function Combat_Routine(int xAction)
 				}
 
 			default
-				xAction:Set[40]
+				return CombatComplete
 				break
 		}
 	}
@@ -699,12 +735,12 @@ function RefreshPower()
 	}
 
 	;Forced Canabalize
-	if ${Me.ToActor.Power}<85 && ${Me.InCombat}
+	if ${Me.ToActor.Power}<85 && ${Me.InCombat}  && (!${PetMode} && !${OffenseMode})
 	{
 		call CastSpellRange 72 0 0 0 ${KillTarget}
 	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<65  && ${Me.ToActor.Health}>25
+	if ${Me.InCombat} && ${Me.ToActor.Power}<65  && ${Me.ToActor.Health}>25 && ${Me.Equipment[ExactName,"Tribal Spiritist's Hat"].IsReady}
 	{
 		call UseItem "Tribal Spiritist's Hat"
 	}
@@ -813,9 +849,7 @@ function CheckHeals()
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
 
 			}
-
 		}
-
 	}
 	while ${temphl:Inc}<${grpcnt}
 
