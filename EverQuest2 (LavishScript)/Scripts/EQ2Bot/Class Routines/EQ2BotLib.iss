@@ -62,6 +62,19 @@ variable HeroicOp objHeroicOp
 ;Forward Tells
 variable bool ForwardGuildChat
 
+;chat event vars
+variable string OutTrigger
+variable string InTrigger
+;0 is in 1 is out
+variable bool JoustStatus=FALSE
+variable bool BDStatus=FALSE
+;********************************************
+; Set these to whatever you want to use.... *
+;********************************************
+InTrigger:Set[dps in]
+OutTrigger:Set[dps out]
+BDTrigger:Set[BD Now!]
+
 function EQ2BotLib_Init()
 {
 
@@ -76,8 +89,8 @@ function EQ2BotLib_Init()
 	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]
 
 	;Triggers
-	;AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
-	;AddTrigger StopAutoFollowing "\\aPC @*@ @*@:@sender@\\/a tells@*@Wait Here@*@"
+	AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
+	AddTrigger StopAutoFollowing "\\aPC @*@ @*@:@sender@\\/a tells@*@Wait Here@*@"
 	AddTrigger ToClose "@*@Your Target is too close! Move away!"
 	AddTrigger ReceivedTell "\\aPC @*@ @*@:@Sender@\\/a tells you,@Message@"
 
@@ -85,6 +98,8 @@ function EQ2BotLib_Init()
 	{
 		AddTrigger RelayGuildMessage "\\aPC @*@ @*@:@Sender@\\/a says to the guild,@Message@"
 	}
+
+	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 
 	;HOs
 	if ${DoHOs}
@@ -96,9 +111,6 @@ function EQ2BotLib_Init()
 
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Class]
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Extras]
-
-
-
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[7]:Move[4]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[8]:Move[5]
 
@@ -118,8 +130,6 @@ function EQ2BotLib_Init()
 
 atom AutoFollowTank()
 {
-
-
 	AutoFollowMode:Set[TRUE]
 	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 
@@ -131,8 +141,6 @@ atom AutoFollowTank()
 		eq2execute /follow ${AutoFollowee}
 		AutoFollowingMA:Set[TRUE]
 	}
-
-
 }
 
 atom StopAutoFollowing()
@@ -246,34 +254,33 @@ function Shard()
 	{
 		ShardType:Set[Sliver of Essence]
 	}
-	elseif  ${Me.Inventory["Scintilla of Essence"](exists)}
+	elseif ${Me.Inventory["Scintilla of Essence"](exists)}
 	{
 		ShardType:Set[Scintilla of Essence]
 	}
-	elseif  ${Me.Inventory["Scale of Essence"](exists)}
+	elseif ${Me.Inventory["Scale of Essence"](exists)}
 	{
 		ShardType:Set[Scale of Essence]
 	}
-	elseif  ${Me.Inventory["Splintered Heart"](exists)}
+	elseif ${Me.Inventory["Splintered Heart"](exists)}
 	{
 		ShardType:Set[Splintered Heart]
 	}
-	elseif  ${Me.Inventory["Darkness Heart"](exists)}
+	elseif ${Me.Inventory["Darkness Heart"](exists)}
 	{
 		ShardType:Set[Darkness Heart]
 	}
-	elseif  ${Me.Inventory["Sacrificial Heart"](exists)}
+	elseif ${Me.Inventory["Sacrificial Heart"](exists)}
 	{
 		ShardType:Set[Sacrificial Heart]
 	}
-	elseif  ${Me.Inventory["Ruinous Heart"](exists)}
+	elseif ${Me.Inventory["Ruinous Heart"](exists)}
 	{
 		ShardType:Set[Ruinous Heart]
 	}
 
 	if ${ShardType.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<65 && ${Me.Inventory[${ShardType}].IsReady} && ${ShardMode}
 	{
-
 		Me.Inventory[${ShardType}]:Use
 		ShardRequested:Set[FALSE]
 	}
@@ -550,4 +557,106 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 	}
 
 	Return TRUE
+}
+
+atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatTarget, string SpeakerIsNPC, string ChannelName)
+{
+	switch ${ChatType}
+	{
+
+		case 26
+		case 27
+		case 15
+		case 16
+			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			{
+				JoustStatus:Set[1]
+			}
+			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			{
+				JoustStatus:Set[0]
+			}
+			elseif ${Message.Find[${BDTrigger}]}
+			{
+				BDStatus:Set[1]
+			}
+		case 8
+			if (${Message.Upper.Find[SHARD]} || ${Message.Upper.Find[HEART]}) && ${Me.SubClass.Equal[summoner]}
+			{
+				call QueueShardRequest 1 ${Speaker}
+			}
+			break
+		default
+			break
+	}
+}
+
+;returns the ID of your healer in group, if none found, returns your ID
+function FindHealer()
+{
+	declare tempgrp int local 0
+	declare	healer int local 0
+
+	if !${Me.Grouped}
+	{
+		return ${Me.ID}
+	}
+
+	healer:Set[${Me.ID}]
+
+	do
+	{
+		switch ${Me.GroupMember[${tempgrp}].Class}
+		{
+			case templar
+			case fury
+			case mystic
+			case defiler
+				healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
+				break
+			case warden
+			case inquisitor
+				;don't trust priests that have melee configs unless no other priest is available
+				if ${healer}==${Me.ID}
+				{
+					healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
+				}
+				break
+			Default
+				break
+		}
+
+	}
+	while ${tempgrp:Inc}<${Me.GroupCount}
+
+	if ${healer}==${Me.ID} && ${Me.InRaid}
+	{
+		tempgrp:Set[0]
+
+		do
+		{
+			switch ${Me.RaidMember[${tempgrp}].Class}
+			{
+				case templar
+				case fury
+				case mystic
+				case defiler
+					healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
+					break
+				case warden
+				case inquisitor
+					if ${healer}==${Me.ID}
+					{
+						healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
+					}
+					break
+				Default
+					break
+			}
+
+		}
+		while ${tempgrp:Inc}=<${Me.RaidCount}
+	}
+
+	return ${healer}
 }

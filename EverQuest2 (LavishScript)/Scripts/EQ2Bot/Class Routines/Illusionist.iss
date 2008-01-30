@@ -44,16 +44,10 @@ function Class_Declaration()
 	declare BuffRune bool script FALSE
 	declare BuffFocus bool script FALSE
 	declare StartHO bool script 1
-
-	;Custom Equipment
-	declare WeaponStaff string script
-	declare WeaponDagger string script
-	declare PoisonCureItem string script
-	declare WeaponMain string script
-	declare OffHand string script
+	declare DPSMode bool script 1
+	declare SprintMode bool script 1
 
 	call EQ2BotLib_Init
-
 
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
@@ -65,11 +59,8 @@ function Class_Declaration()
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	BuffTime_Compression:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTime_Compression,]}]
 	BuffIllusory_Arm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffIllusory_Arm,]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponStaff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Staff",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
+	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
+	SprintMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSprint,FALSE]}]
 
 }
 
@@ -217,12 +208,26 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	call CheckHeals
-	call RefreshPower
+
+	if !${DPSMode}
+	{
+		call RefreshPower
+	}
+
 	ExecuteAtom CheckStuck
 
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
+	}
+
+	if ${SprintMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
+	{
+		call CastSpellRange 333
+	}
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<50
+	{
+		Me.Maintained[${SpellType[333]}]:Cancel
 	}
 
 	switch ${PreAction[${xAction}]}
@@ -266,7 +271,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case MakePet
-			if ${Makepet}
+			if ${Makepet} && ${Me.UsedConc}<3
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -379,10 +384,8 @@ function Buff_Routine(int xAction)
 		case AA_Perpetuality
 		case AA_Empathic_Aura
 		case AA_Empathic_Soothing
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-			}
+			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+			break
 		default
 			xAction:Set[40]
 			break
@@ -391,15 +394,34 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare spellsused int local
+	spellsused:Set[0]
+
+	CurrentAction:Set[Combat ${xAction}]
+
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
 	}
 
+	if ${SprintMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
+	{
+		call CastSpellRange 333
+	}
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<50
+	{
+		Me.Maintained[${SpellType[333]}]:Cancel
+	}
+
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
+	}
+
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	{
+		call CastSpellRange 303
 	}
 
 	if ${MezzMode}
@@ -418,11 +440,6 @@ function Combat_Routine(int xAction)
 
 	call RefreshPower
 
-	if !${Me.Maintained[${SpellType[]}](exists)}
-	{
-
-		call CastSpellRange X 0 0 0 ${KillTarget}
-	}
 
 	;chronsphioning AA. we should always try to keep this spell up
 	if ${Me.Ability[${SpellType[382]}](exists)} && ${Me.Ability[${SpellType[382]}].IsReady}
@@ -436,96 +453,163 @@ function Combat_Routine(int xAction)
 	;make sure Psychic Asailant debuff / stun always on.
 	call CastSpellRange 61 0 0 0 ${KillTarget}
 
-	switch ${Action[${xAction}]}
+
+	if ${DPSMode}
 	{
 
-		case AA_Illuminate
-		case AA_Chronosiphoning
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					if ${Mob.Count}>1
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-			}
-			break
-		case Gaze
-		case shower
-		case Ego
-		case AEStun
-			if ${AoEMode}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					if ${Mob.Count}>1
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-			}
-			break
-		case SpellShield
-		case Despair
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
+		if ${Me.Ability[${SpellType[387]}].IsReady}
+		{
+			call CastSpellRange 387 0 0 0 ${KillTarget}
+		}
 
-		case Discord
-		case MindDoT
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
+		if ${Me.Ability[${SpellType[60]}].IsReady}
+		{
+			call CastSpellRange 60 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
 
-		case Constructs
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
+		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 70 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
 
-		case Master_Strike
-			if ${OffenseMode} || ${DebuffMode}
-			{
-				if ${Me.Ability[Master's Strike].IsReady}
-				{
-					Target ${KillTarget}
-					Me.Ability[Master's Strike]:Use
-				}
-			}
-			break
+		if ${Me.Ability[${SpellType[72]}].IsReady} && ${spellsused}<4
+		{
+			call CastSpellRange 72 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
 
-		case IllusAllies
-			if !${Me.Grouped}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-		case Nuke
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-		case Stun
-		case Silence
-		case Daze
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
+		if ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 80 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
 
-		default
-			xAction:Set[40]
-			break
+		if ${Me.Ability[${SpellType[91]}].IsReady} && ${spellsused}<4
+		{
+			call CastSpellRange 91 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 92 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${spellsused}<4
+		{
+			call CastSpellRange 90 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[95]}].IsReady} && ${PBAoEMode} && ${spellsused}<4
+		{
+			call CastSpellRange 95 0 1 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[51]}].IsReady} && ${spellsused}<3
+		{
+			call CastSpellRange 51 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
 	}
+	else
+	{
 
+		switch ${Action[${xAction}]}
+		{
+
+			case AA_Illuminate
+			case AA_Chronosiphoning
+				if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+				{
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						if ${Mob.Count}>1
+						{
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+						}
+					}
+				}
+				break
+			case Gaze
+			case shower
+			case Ego
+			case AEStun
+				if ${AoEMode}
+				{
+					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						if ${Mob.Count}>1
+						{
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+						}
+					}
+				}
+				break
+			case SpellShield
+			case Despair
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+				break
+
+			case Discord
+			case MindDoT
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+				break
+
+			case Constructs
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+				break
+
+			case Master_Strike
+				if ${OffenseMode} || ${DebuffMode}
+				{
+					if ${Me.Ability[Master's Strike].IsReady}
+					{
+						Target ${KillTarget}
+						Me.Ability[Master's Strike]:Use
+					}
+				}
+				break
+
+			case IllusAllies
+				if !${Me.Grouped}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+				break
+			case Nuke
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				break
+			case Stun
+			case Silence
+			case Daze
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				break
+
+			default
+				return Combat Complete
+				break
+		}
+	}
 }
 
 function Post_Combat_Routine(int xAction)

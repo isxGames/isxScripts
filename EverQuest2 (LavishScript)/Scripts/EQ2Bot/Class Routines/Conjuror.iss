@@ -56,7 +56,6 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	AddTrigger QueueShardRequest "\\aPC @*@ @*@:@sender@\\/a tells@*@shard please@*@"
 	AddTrigger DequeueShardRequest "Target already has a conjurer essence item!"
 
 

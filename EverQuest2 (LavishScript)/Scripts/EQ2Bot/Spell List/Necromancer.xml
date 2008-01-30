@@ -177,7 +177,7 @@
     <Setting Name="73,360">Darkness Heart</setting>
     <Setting Name="73,361">Miragul's Dark Heart Summoning</setting>
     <Setting Name="73,355">Shadowblade</setting>
-    <Setting Name="74,351">Control Undead</setting>
+    <Setting Name="74,352">Control Undead</setting>
     <Setting Name="74,4">Filter Life</setting>
     <Setting Name="75,356">Grim Sorceror</setting>
     <Setting Name="75,329">Grave Disturbance</setting>
@@ -195,6 +195,7 @@
     <Setting Name="79,326">Devour Vigor</setting>
     <Setting Name="79,21">Teachings of the Undead</setting>
     <Setting Name="80,295">Minion\'s Stance: Grisly Protection</setting>
+    <Setting Name="80,27">Demilich</setting>
     <Setting Name="80,45">Necromantic Pact</setting>
     <Setting Name="80,1">Necrotic Reconstruction</setting>
     <Setting Name="80,333">Vampirism</Setting>

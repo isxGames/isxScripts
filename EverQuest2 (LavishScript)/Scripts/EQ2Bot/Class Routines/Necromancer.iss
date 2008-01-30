@@ -67,8 +67,6 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	AddTrigger QueueHeartRequest "\\aPC @*@ @*@:@sender@\\/a tells@*@heart please@*@"
-	AddTrigger QueueShardRequest "\\aPC @*@ @*@:@sender@\\/a tells@*@shard please@*@"
 	AddTrigger DequeueShardRequest "Target already has a necromancer heart item!"
 
 
@@ -714,9 +712,9 @@ function CheckHeals()
 	}
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}](exists)}
 	{
-		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 300 0 1 0 ${Actor[${MainTankPC}].ID}
 	}
 
 	if ${HealMode}
@@ -726,7 +724,7 @@ function CheckHeals()
 			if ${Me.Group[${temphl}].ToActor(exists)}
 			{
 
-				if ${Me.Group[${temphl}].ToActor.Health}<100 && ${Me.Group[${temphl}].ToActor.Health}>-99
+				if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 				{
 					if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${temphl}].ToActor.ID}!=${Me.ID}
 					{
@@ -748,7 +746,7 @@ function CheckHeals()
 					}
 				}
 
-				if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<80
+				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
 				{
 					grpheal:Inc
 				}
@@ -771,7 +769,7 @@ function CheckHeals()
 		while ${temphl:Inc}<${grpcnt}
 	}
 
-	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
+	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 	{
 		grpheal:Inc
 	}
@@ -812,7 +810,7 @@ function CheckHeals()
 	if ${HealMode}
 	{
 		;MAINTANK HEALS
-		if ${Actor[${MainTankPC}].Health}<60 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+		if ${Actor[${MainTankPC}].Health}<60 && !${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 		{
 				call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
@@ -829,7 +827,7 @@ function CheckHeals()
 		}
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<70 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ID}!=${Me.ID} && ${HealMode}
+	if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ID}!=${Me.ID} && ${HealMode}
 	{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 	}
@@ -848,26 +846,26 @@ function CheckHeals()
 	tempgrp:Set[1]
 	do
 	{
-		if ${Me.Group[${tempgrp}].ToActor.Health}==-99
+		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
 		{
 			call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
 		}
 	}
-	while ${tempgrp:Inc}<${grpcnt}
+	while ${tempgrp:Inc}<${grpcnt} && ${Me.Ability[${SpellType[300]}].IsReady}
 
-	if ${Me.InRaid}
+	if ${Me.InRaid} && ${Me.Ability[${SpellType[300]}].IsReady}
 	{
 		;Res Fallen RAID members only if in range
 		grpcnt:Set[${Me.RaidCount}]
 		tempraid:Set[1]
 		do
 		{
-			if ${RaidMember[${tempraid}].Health}==-99
+			if ${RaidMember[${tempraid}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
 			{
 				call CastSpellRange 300 0 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
 			}
 		}
-		while ${tempraid:Inc}<=24
+		while ${tempraid:Inc}<=24 && ${Me.Ability[${SpellType[300]}].IsReady}
 	}
 
 	;My Pet Heals

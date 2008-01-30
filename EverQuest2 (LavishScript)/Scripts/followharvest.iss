@@ -15,7 +15,7 @@
 ; run followharvest <FollowTarget> <maxroam>
 ;
 ; EXAMPLE
-; run followharvest Amadeus 20
+; run followharvest Amadeus 10
 ;
 ;***************************************************************
 
@@ -38,11 +38,11 @@ function main(string FollowMember, int MaxRange)
 
 		if !${Me.InCombat} && !${Me.IsMoving}
 		{
-			tcount:Set[0]
+			tcount:Set[1]
 			EQ2:CreateCustomActorArray[byDist,${MaxRange}]
 			echo scanning actors
 
-			while ${tcount:Inc}<=${EQ2.CustomActorArraySize} && ${Actor[PC,${FollowMember}].Distance}<20
+			while ${tcount:Inc}<${EQ2.CustomActorArraySize} && ${Actor[pc,${FollowMember}].Distance}<${MaxRange}
 			{
 				echo nearest actor is ${CustomActor[${tcount}].Name}
 				;if the nearest actor is a resource, harvest it
@@ -107,7 +107,7 @@ function main(string FollowMember, int MaxRange)
 ;A generic harvest spam macro, non-bots use this as an easy harvest all hotkey
 function DoHarvest(int NodeID)
 {
-	if ${Target.Type.Equal[resource]} && !${Me.InCombat}
+	if ${Target.Type.Equal[resource]}
 	{
 		EQ2Execute /useability Mining
 		EQ2Execute /useability Trapping
@@ -122,13 +122,13 @@ function DoHarvest(int NodeID)
 
 }
 
-function ResumeFollow(string FollowMember)
+function ResumeFollow(string fMember)
 {
 	if ${Me.ToActor.WhoFollowingID}<1 && ${Me.GroupCount}
 	{
-		Actor[PC,${FollowMember}]:DoFace
-		echo /follow ${Actor[PC,${FollowMember}].Name}
-		EQ2Execute /follow ${Actor[PC,${FollowMember}].Name}
+		Actor[pc,${fMember}]:DoFace
+		echo /follow ${Actor[pc,${fMember}].Name}
+		EQ2Execute /follow ${Actor[pc,${fMember}].Name}
 	}
 }
 

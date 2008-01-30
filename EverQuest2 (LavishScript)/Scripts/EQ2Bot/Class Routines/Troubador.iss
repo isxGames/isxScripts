@@ -57,14 +57,7 @@ function Class_Declaration()
 	declare mezTarget2 int script
 	declare CharmTarget int script
 
-	declare OutTrigger string script
-	declare InTrigger string script
-	; 0 is in 1 is out
-	declare JoustStatus bool script 0
-
-
 	call EQ2BotLib_Init
-	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
@@ -92,11 +85,6 @@ function Class_Declaration()
 
 	BuffJesterCap:GetIterator[BuffJesterCapIterator]
 
-	;********************************************
-	; Set these to whatever you want to use.... *
-	;********************************************
-	InTrigger:Set[dps in]
-	OutTrigger:Set[dps out]
 }
 
 function Buff_Init()
@@ -229,6 +217,18 @@ function Buff_Routine(int xAction)
 	if ${AutoFollowMode}
 	{
 		ExecuteAtom AutoFollowTank
+	}
+
+	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
+	{
+		call CastSpellRange 388
+		wait 5
+		if ${Me.Maintained[${SpellType[388]}](exists)}
+		{
+			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+			BDStatus:Set[0]
+		}
+
 	}
 
 	switch ${PreAction[${xAction}]}
@@ -374,7 +374,7 @@ function Buff_Routine(int xAction)
 			break
 
 		Default
-			return "Buff Complete"
+			return Buff Complete
 			break
 	}
 
@@ -442,6 +442,16 @@ function Combat_Routine(int xAction)
 		}
 	}
 
+	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
+	{
+		call CastSpellRange 388
+		wait 5
+		if ${Me.Maintained[${SpellType[388]}](exists)}
+		{
+			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+			BDStatus:Set[0]
+		}
+	}
 
 	if ${DoHOs}
 	{
@@ -606,7 +616,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		Default
-			return Combat Complete
+			return CombatComplete
 			break
 	}
 
@@ -790,7 +800,6 @@ function DoCharm()
 			eq2execute /Pet Attack
 		}
 	}
-
 }
 
 
@@ -813,129 +822,41 @@ function DoJesterCap()
 	if ${Me.Ability[${SpellType[156]}].IsReady}
 	{
 
-			if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+		if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+		{
+			if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<25
 			{
-				if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<25
+				;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
+				if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
 				{
-					;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
-					if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
+					call CastSpellRange 156 0 0 0 ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].ID}
+					if ${Return} != -1
 					{
-						call CastSpellRange 156 0 0 0 ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].ID}
-						if ${Return} != -1
-						{
-							;if we successfully cast Jester Cap, Add/Update the collection with the current timestamp
-							BuffJesterCapTimers:Set[${JCActor}, ${Time.Timestamp}]
-							BuffJesterCapMember:Inc
-						}
-					}
-					else
-					{
-						;they still have immunity so advance to next
+						;if we successfully cast Jester Cap, Add/Update the collection with the current timestamp
+						BuffJesterCapTimers:Set[${JCActor}, ${Time.Timestamp}]
 						BuffJesterCapMember:Inc
 					}
 				}
 				else
 				{
-					;they are further than jester cap range so advance to next
+					;they still have immunity so advance to next
 					BuffJesterCapMember:Inc
 				}
-				;we have gone through everyone in the list so start back at the begining
-				if ${BuffJesterCapMember}>${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
-				{
-					BuffJesterCapMember:Set[1]
-				}
 			}
-
-	}
-}
-
-atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatTarget, string SpeakerIsNPC, string ChannelName)
-{
-	switch ${ChatType}
-	{
-		case 26
-		case 27
-		case 16
-			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			else
 			{
-				JoustStatus:Set[1]
+				;they are further than jester cap range so advance to next
+				BuffJesterCapMember:Inc
 			}
-				elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			;we have gone through everyone in the list so start back at the begining
+			if ${BuffJesterCapMember}>${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			{
-				JoustStatus:Set[0]
+				BuffJesterCapMember:Set[1]
 			}
-		default
-			break
-	}
-}
-
-;returns the ID of your healer in group, if none found, returns your ID
-function FindHealer()
-{
-	declare tempgrp int local 0
-	declare	healer int local 0
-
-	if !${Me.Grouped}
-	{
-		return ${Me.ID}
-	}
-
-	healer:Set[${Me.ID}]
-
-	do
-	{
-		switch ${Me.GroupMember[${tempgrp}].Class}
-		{
-			case templar
-			case fury
-			case mystic
-			case defiler
-				healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
-				break
-			case warden
-			case inquisitor
-				;don't trust priests that have melee configs unless no other priest is available
-				if ${healer}==${Me.ID}
-				{
-					healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
-				}
-				break
-			Default
-				break
 		}
 
 	}
-	while ${tempgrp:Inc}<${Me.GroupCount}
-
-	if ${healer}==${Me.ID} && ${Me.InRaid}
-	{
-		tempgrp:Set[0]
-
-		do
-		{
-			switch ${Me.RaidMember[${tempgrp}].Class}
-			{
-				case templar
-				case fury
-				case mystic
-				case defiler
-					healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
-					break
-				case warden
-				case inquisitor
-					if ${healer}==${Me.ID}
-					{
-						healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
-					}
-					break
-				Default
-					break
-			}
-
-		}
-		while ${tempgrp:Inc}=<${Me.RaidCount}
-	}
-
-	return ${healer}
 }
+
+
 
