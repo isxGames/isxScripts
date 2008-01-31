@@ -68,12 +68,6 @@ variable string InTrigger
 ;0 is in 1 is out
 variable bool JoustStatus=FALSE
 variable bool BDStatus=FALSE
-;********************************************
-; Set these to whatever you want to use.... *
-;********************************************
-InTrigger:Set[dps in]
-OutTrigger:Set[dps out]
-BDTrigger:Set[BD Now!]
 
 function EQ2BotLib_Init()
 {
@@ -107,6 +101,13 @@ function EQ2BotLib_Init()
 		objHeroicOp:Intialize
 		objHeroicOp:LoadUI
 	}
+
+	;********************************************
+	; Set these to whatever you want to use.... *
+	;********************************************
+	InTrigger:Set[dps in]
+	OutTrigger:Set[dps out]
+	BDTrigger:Set[BD Now!]
 
 
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Class]
