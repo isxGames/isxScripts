@@ -2200,7 +2200,7 @@ function CheckMTAggro()
 	}
 }
 
-Function Scanadds()
+Function ScanAdds()
 {
 	variable int tcount=2
 	variable float X
