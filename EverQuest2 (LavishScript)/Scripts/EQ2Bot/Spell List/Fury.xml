@@ -143,5 +143,34 @@
 		<Setting Name="70,15">Owl\'s Reparation</Setting>
 		<Setting Name="70,10">Shriek of the Untamed</Setting>
 		<Setting Name="70,360">Urchin</Setting>
+		<Setting Name="71,312">Feast</Setting>
+		<Setting Name="71,35">Aspect of the Bat</Setting>
+		<Setting Name="71,4">Dire Salve</Setting>
+		<Setting Name="72,36">Lucidity</Setting>
+		<Setting Name="72,51">Death Swarm</Setting>
+		<Setting Name="72,20">Master of the Hunt</Setting>
+		<Setting Name="72,2">Return to the Pack</Setting>
+		<Setting Name="73,21">Forest Spirit</Setting>
+		<Setting Name="73,1">Grand Elixir</Setting>
+		<Setting Name="74,23">Armor of Nature</Setting>
+		<Setting Name="74,90">Starshower</Setting>
+		<Setting Name="74,95">Sunrise</Setting>
+		<Setting Name="75,52">Distracting Swarm</Setting>
+		<Setting Name="75,157">Fae Immolation</Setting>
+		<Setting Name="76,25">Veteran Predator</Setting>
+		<Setting Name="76,11">Hibernate</Setting>
+		<Setting Name="76,50">Inferiority</Setting>
+		<Setting Name="77,60">Lightning Bolt</Setting>
+		<Setting Name="77,40">Quillskin</Setting>
+		<Setting Name="78,70">Typhoon</Setting>
+		<Setting Name="78,96">Call of Karana</Setting>
+		<Setting Name="78,7">Dire Bloodflow</Setting>
+		<Setting Name="79,180">Incapacitating Thorns</Setting>
+		<Setting Name="79,38">Feral</Setting>
+		<Setting Name="79,15">Autumn\'s Kiss</Setting>
+		<Setting Name="80,97">Ball of Lightning</Setting>
+		<Setting Name="80,360">Hedgehog</Setting>
+		<Setting Name="80,316">Feral Courage</Setting>
+		<Setting Name="80,10">Untamed Regeneration</Setting>
 	</Set>
 </InnerSpaceSettings>

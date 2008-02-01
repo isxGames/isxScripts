@@ -143,33 +143,35 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Storms]
+
+	Action[1]:Set[PBAoE]
 	MobHealth[1,1]:Set[20]
 	MobHealth[1,2]:Set[100]
 	Power[1,1]:Set[40]
 	Power[1,2]:Set[100]
-	SpellRange[1,1]:Set[96]
-
-	Action[2]:Set[PBAoE]
-	MobHealth[2,1]:Set[20]
+	SpellRange[1,1]:Set[95]
+	SpellRange[1,2]:Set[97]
+	
+	Action[2]:Set[AoE]
+	MobHealth[2,1]:Set[5]
 	MobHealth[2,2]:Set[100]
-	Power[2,1]:Set[40]
+	Power[2,1]:Set[30]
 	Power[2,2]:Set[100]
-	SpellRange[2,1]:Set[95]
+	SpellRange[2,1]:Set[90]
 
-	Action[3]:Set[AoE]
-	MobHealth[3,1]:Set[5]
+	Action[3]:Set[Nuke]
+	MobHealth[3,1]:Set[1]
 	MobHealth[3,2]:Set[100]
 	Power[3,1]:Set[30]
 	Power[3,2]:Set[100]
-	SpellRange[3,1]:Set[90]
+	SpellRange[3,1]:Set[60]
 
-	Action[4]:Set[Nuke]
-	MobHealth[4,1]:Set[1]
+	Action[4]:Set[Storms]
+	MobHealth[4,1]:Set[20]
 	MobHealth[4,2]:Set[100]
-	Power[4,1]:Set[30]
+	Power[4,1]:Set[40]
 	Power[4,2]:Set[100]
-	SpellRange[4,1]:Set[60]
+	SpellRange[4,1]:Set[96]
 
 	Action[5]:Set[Mastery]
 
@@ -629,6 +631,7 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[OK]}
 					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
 					}
 				}
 			}
