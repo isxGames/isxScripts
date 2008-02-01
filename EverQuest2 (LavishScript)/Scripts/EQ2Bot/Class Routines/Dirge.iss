@@ -396,7 +396,8 @@ function Combat_Routine(int xAction)
 			;if aoe avoidance is up, use it
 			if ${Me.Ability[${SpellType[388]}].IsReady}
 			{
-				if ${AnnounceMode} 				{
+				if ${AnnounceMode} 				
+				{
 					eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
 				}
 				call CastSpellRange 388

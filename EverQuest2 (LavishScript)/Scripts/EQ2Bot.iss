@@ -374,7 +374,7 @@ function main()
 			}
 
 			;this should force the tank to react to any aggro, regardless
-			if ${Mob.Detect} && ${MainTank}
+			if ${Mob.Detect} && ${MainTank} && !${Me.IsMoving}
 			{
 				if ${Mob.Target[${Target.ID}]}
 				{
