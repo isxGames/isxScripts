@@ -197,6 +197,15 @@
 		<Setting Name="6">natural garden</Setting>
 		<Setting Name="7">assortment of fish</Setting>
 	</set>
+	<Set Name="exp04_rgn_jarsath_wastes">
+		<Setting Name="1">bedded ore</Setting>
+		<Setting Name="2">exposed limestone</Setting>
+		<Setting Name="3">sundrenched cordwood</Setting>
+		<Setting Name="4">prairie roots</Setting>
+		<Setting Name="5">varmint burrow</Setting>
+		<Setting Name="6">wastelands shrub</setting>
+		<Setting Name="7">a briny catch</Setting>
+	</Set>	
 	<Set Name="Harvest Enhancer">
 		<Setting Name="0,1">Elm Pick</Setting>
 		<Setting Name="0,2">Elm Trap</Setting>
