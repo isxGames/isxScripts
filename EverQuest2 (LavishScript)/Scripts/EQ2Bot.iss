@@ -384,7 +384,7 @@ function main()
 				{
 					if ${Mob.NearestAggro}
 					{
-						target NearestAggro
+						target ${Mob.NearestAggro}
 						call Combat
 					}
 				}

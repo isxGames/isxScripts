@@ -8,13 +8,13 @@
 ;
 ;20070919d
 ;Added Joust Mode - Dirge will move to group or raid healer when it see's the out message in raid chat or
-; 									tells and use ranged dps till it see's the in message in raid chat or tells.  Added
-;										intelegent use of BladeDance and TurnSpike in joust mode, allowing the dirge to stay
-;										in on joust calls when these are available. Be sure and edit the dps in and dps out
-;										text in the Class_Declaration to the values you want to use
+;	tells and use ranged dps till it see's the in message in raid chat or tells.  Added
+;	intelegent use of BladeDance and TurnSpike in joust mode, allowing the dirge to stay
+;	in on joust calls when these are available. Be sure and edit the dps in and dps out
+;	text in the Class_Declaration to the values you want to use
 ;RangeMode Adjusted - No longer uses MasterStrike when in range mode.  No longer moves to range 6 to use
-;											Bow attacks providing the bow attack is already in range.  So you can position the
-;											dirge at safe distance prior to fight and it will remain there
+;	Bow attacks providing the bow attack is already in range.  So you can position the
+;	dirge at safe distance prior to fight and it will remain there
 ;AnnounceMode Added - Due to popular demand, added announcing Cacophony of Blades to group chat.
 ;Changed Rhythm Blade and Cacophony of Blades to be used whenever they are up.
 ;Fixed Selo's to be used all the time
@@ -415,12 +415,11 @@ function Combat_Routine(int xAction)
 				call FindHealer
 
 				echo Healer - ${return}
-				if ${Actor[${Return}].Distance}>2
+				if ${Actor[${return}].Distance}>2
 				{
 					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
 					wait 15
 				}
-
 			}
 		}
 	}
