@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Debuff NPCs' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Debuff Epics' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -80,410 +80,55 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Cure Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Convert' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='FocusedMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>90</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Buff Convert:</Text>
+		<Text>Use Focused Healing:</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Convert Mode",TRUE]:Save
+				Script[EQ2Bot].Variable[FocusedMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Focused Mode",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Convert Mode",FALSE]:Save
+				Script[EQ2Bot].Variable[FocusedMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Focused Mode",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Convert Mode]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Focused Mode]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblMainWeapon' Template='EQ2.text'>
+	<Commandcheckbox Name='PreHealMode' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
-		<Y>130</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>Main Hand:</Text>
-		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
-	</Text>
-	<combobox name='cbMainWeapon' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>130</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].Type.Equal[Weapon]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].Type.Equal[Weapon]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[MainWeapon]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[MainWeapon]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[MainWeapon]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[MainWeapon,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblOffHand' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>150</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>Off Hand:</Text>
-		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
-	</Text>
-	<combobox name='cbOffHand' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>150</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].Type.Equal[Shield]} || ${Me.CustomInventory[${Counter}].Type.Equal[Symbol]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].Type.Equal[Shield]} || ${Me.Equipment[${Counter}].Type.Equal[Symbol]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OffHand]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OffHand]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[OffHand]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OffHand,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblTwoHandedStaff' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>170</Y>
-		<Width>130</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA 2H Staff:</Text>
-		<AutoTooltip>2H staff to use during AAs</AutoTooltip>
-	</Text>
-	<combobox name='cbTwoHandedStaff' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>170</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use while cleric is using Yaulp</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Staff]} &amp;&amp; ${Me.CustomInventory[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Staff]} &amp;&amp; ${Me.Equipment[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedStaff]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedStaff]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[TwoHandedStaff]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[TwoHandedStaff,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblOneHandedHammer' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>190</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA 1H Hammer:</Text>
-		<AutoTooltip>Weapon to use during 1 Handed Hammer required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbOneHandedHammer' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>190</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use during 1 Handed Hammer required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if (${Me.CustomInventory[${Counter}].SubType.Equal[Great Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.CustomInventory[${Counter}].WieldStyle.Find[One-Handed]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if (${Me.Equipment[${Counter}].SubType.Equal[Great Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.Equipment[${Counter}].WieldStyle.Find[One-Handed]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OneHandedHammer]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[OneHandedHammer]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[OneHandedHammer]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OneHandedHammer,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblTwoHandedHammer' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>210</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA 2H Hammer:</Text>
-		<AutoTooltip>Weapon to use during 2 Handed Hammer required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbTwoHandedHammer' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>210</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use during 2 Handed Hammer required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if (${Me.CustomInventory[${Counter}].SubType.Equal[Great Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.CustomInventory[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if (${Me.Equipment[${Counter}].SubType.Equal[Great Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Mace]}) &amp;&amp; ${Me.Equipment[${Counter}].WieldStyle.Find[Two-Handed]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedHammer]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[TwoHandedHammer]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[TwoHandedHammer]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[TwoHandedHammer,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblSymbols' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>230</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Symbols:</Text>
-		<AutoTooltip>Off hand Symbols to use during Symbols required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbSymbols' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>230</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Off hand Symbols to use during Symbols required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Symbols]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Symbols]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Symbols]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Symbols]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[Symbols]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Symbols,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblBuckler' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>250</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Buckler:</Text>
-		<AutoTooltip>Buckler to use during Buckler required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbBuckler' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>250</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Buckler to use during Buckler required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Buckler]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Buckler]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buckler]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buckler]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[Buckler]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Buckler,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblYaulpWeapon' Template='EQ2.text'>
-		<X>5%</X>
-		<Y>270</Y>
-		<Width>130</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Yaulp Weapon:</Text>
-		<AutoTooltip>Weapon to use while cleric is using Yaulp</AutoTooltip>
-	</Text>
-	<combobox name='cbYaulpWeapon' Template='EQ2.Combobox'>
-		<x>150</x>
-		<y>270</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use while cleric is using Yaulp</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].Type.Equal[Weapon]}
-				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].Type.Equal[Weapon]}
-				{
-					This:AddItem[${Me.Equipment[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[YaulpWeapon]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[YaulpWeapon]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[YaulpWeapon]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[YaulpWeapon,${This.SelectedItem.Text}]:Save
-		</OnSelect>
-	</combobox>
-	<Commandcheckbox Name='PreReactiveMode' Template='EQ2.Commandcheckbox'>
-		<X>200</X>
-		<Y>10</Y>
+		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Keep Reactives Up</Text>
-		<AutoTooltip>keep group and single reactives always up out of combat when power is greater than 85</AutoTooltip>
+		<Text>Cast PreHeal </Text>
+		<AutoTooltip>Casts reactives out of combat</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PreHealMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["PreHeal Mode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PreHealMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["PreHeal Mode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[PreHeal Mode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='KeepReactiveUp' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>130</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Keep Single Reactives on MT</Text>
+		<AutoTooltip>keep single reactives always up on MT</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
@@ -498,155 +143,681 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepReactiveUp]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Mezz' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='KeepGroupReactiveUp' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>150</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Keep Group Reactives Up</Text>
+		<AutoTooltip>keep group reactives always up</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[KeepGroupReactiveUp]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepGroupReactiveUp",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[KeepGroupReactiveUp]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["KeepGroupReactiveUp",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepGroupReactiveUp]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='PetMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>170</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Pet</Text>
+		<AutoTooltip>Use Pets</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Pets",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Pets",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Pets]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>190</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Rez in Combat</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[CombatRez]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Combat Rez",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[CombatRez]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Combat Rez",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Combat Rez]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>210</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Start HOs</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='MeleeMode' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>230</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Melee AA's and Combat</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[MeleeMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MeleeMode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[MeleeMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MeleeMode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[MeleeMode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffCourage' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>250</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Group Courage</Text>
+		<AutoTooltip>Buff the group Courage Spell line</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffCourage]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffCourage",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffCourage]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffCourage",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffCourage]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='BuffSymbol' Template='EQ2.Commandcheckbox'>
+		<X>5%</X>
+		<Y>270</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Group Symbol</Text>
+		<AutoTooltip>Buff the group Courage Spell line</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffSymbol]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffSymbol",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffSymbol]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffSymbol",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSymbol]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox name='RaidHealMode' Template='EQ2.Commandcheckbox'>
+		<X>200</X>
+		<Y>10</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Raid Heal Enabled</Text>
+		<AutoTooltip>Use Aggresive Raid Heal Strat</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[RaidHealMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["RaidHealMode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[RaidHealMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["RaidHealMode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[RaidHealMode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='YaulpMode' Template='EQ2.Commandcheckbox'>
 		<X>200</X>
 		<Y>30</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Mezz an Add</Text>
-		<AutoTooltip>Attempts to mezz 1 add by using the Wonderous Buckling AA</AutoTooltip>
-		<OnLeftClick>
-			if ${This.Checked}
-			{
-				Script[EQ2Bot].Variable[MezzMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Mezz Mode",TRUE]:Save
-			}
-			else
-			{
-				Script[EQ2Bot].Variable[MezzMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Mezz Mode",FALSE]:Save
-			}
-		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Mezz Mode]}</Data>
-	</Commandcheckbox>
-	<Commandcheckbox Name='Fanaticism' Template='EQ2.Commandcheckbox'>
-		<Visible>1</Visible>
-		<X>200</X>
-		<Y>50</Y>
-		<Width>30%</Width>
-		<Height>20</Height>
-		<Text>Use Fanaticism</Text>
-		<OnLeftClick>
-			if ${This.Checked}
-			{
-				Script[EQ2Bot].Variable[FanaticismMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Fanaticism Mode",TRUE]:Save
-			}
-			else
-			{
-				Script[EQ2Bot].Variable[FanaticismMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Fanaticism Mode",FALSE]:Save
-			}
-		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Fanaticism Mode]}</Data>
-	</Commandcheckbox>
-	<Commandcheckbox Name='Yaulp' Template='EQ2.Commandcheckbox'>
-		<Visible>1</Visible>
-		<X>200</X>
-		<Y>70</Y>
-		<Width>30%</Width>
-		<Height>20</Height>
-		<Text>Use Yaulp</Text>
+		<Text>Use Yaulp in Melee</Text>
+		<AutoTooltip>Use Yaulp in Melee</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[YaulpMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Yaulp Mode",TRUE]:Save
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["YaulpMode",TRUE]:Save
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[YaulpMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Yaulp Mode",FALSE]:Save
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["YaulpMode",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Yaulp Mode]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[YaulpMode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Reactives Only' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='ccbShieldAllyMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>200</X>
-		<Y>90</Y>
-		<Width>30%</Width>
+		<Y>50</Y>
+		<Width>80</Width>
 		<Height>20</Height>
-		<Text>Use Reactives Only</Text>
+		<Text>Buff Shield Ally:</Text>
+		<AutoTooltip>Group Member for Avoidance Buff</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[ReactiveOnlyMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Reactive Only Mode",TRUE]:Save
+				Script[EQ2Bot].Variable[ShieldAllyMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["ShieldAllyMode",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[ReactiveOnlyMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Reactive Only Mode",FALSE]:Save
+				Script[EQ2Bot].Variable[ShieldAllyMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["ShieldAllyMode",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Reactive Only Mode]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ShieldAllyMode]}</Data>
 	</Commandcheckbox>
-	<Text Name='Main Tank Heal Text' Template='EQ2.text'>
-		<X>305</X>
+	<combobox name='cbBuffShieldAllyGroupMember' Template='EQ2.Combobox'>
+		<x>350</x>
+		<y>50</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Avoidance Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffShieldAllyGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffShieldAllyGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffShieldAllyGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Commandcheckbox Name='ccbHolyShieldMode' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>200</X>
+		<Y>70</Y>
+		<Width>80</Width>
+		<Height>20</Height>
+		<Text>Buff Holy Shield Ally:</Text>
+		<AutoTooltip>Group Member for AoE Avoidance</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[HolyShieldMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["HolyShieldMode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[HolyShieldMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["HolyShieldMode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[HolyShieldMode]}</Data>
+	</Commandcheckbox>
+	<combobox name='cbHolyShieldGroupMember' Template='EQ2.Combobox'>
+		<x>350</x>
+		<y>70</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to AoE Avoid Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[HolyShieldGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[HolyShieldGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[HolyShieldGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Commandcheckbox Name='ccbManaCureMode' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>200</X>
+		<Y>90</Y>
+		<Width>80</Width>
+		<Height>20</Height>
+		<Text>Buff Mana Cure Ally:</Text>
+		<AutoTooltip>Group Member for Mana Cure AA</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ManaCureMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["ManaCureMode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ManaCureMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["ManaCureMode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ManaCureMode]}</Data>
+	</Commandcheckbox>
+	<combobox name='cbManaCureGroupMember' Template='EQ2.Combobox'>
+		<x>350</x>
+		<y>90</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member for Mana Cure AA</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ManaCureGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ManaCureGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[ManaCureGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Text Name='lblBuffGloryGroupMember' Template='EQ2.text'>
+		<X>240</X>
+		<Y>110</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Glory Proc:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffGloryGroupMember' Template='EQ2.Combobox'>
+		<x>375</x>
+		<y>110</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Glory Proc Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffGloryGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffGloryGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffGloryGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Text Name='lblBuffBennedictionGroupMember' Template='EQ2.text'>
+		<X>240</X>
 		<Y>130</Y>
-		<Width>30%</Width>
-		<Height>15</Height>
+		<Width>20%</Width>
+		<Height>20</Height>
 		<Alignment>Left</Alignment>
-	<Text>Main Tank Heal Percent</Text>
+		<Text>Buff Bennediction on:</Text>
+		<AutoTooltip></AutoTooltip>
 	</Text>
-	<Text Name='Group Heal Text' Template='EQ2.text'>
-		<X>305</X>
+	<combobox name='cbBuffBennedictionGroupMember' Template='EQ2.Combobox'>
+		<x>375</x>
+		<y>130</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Bennediction Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffBennedictionGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffBennedictionGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffBennedictionGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Text Name='lblBuffPraetorateGroupMember' Template='EQ2.text'>
+		<X>240</X>
 		<Y>150</Y>
-		<Width>30%</Width>
-		<Height>15</Height>
+		<Width>20%</Width>
+		<Height>20</Height>
 		<Alignment>Left</Alignment>
-	<Text>Group Heal Percent</Text>
+		<Text>Buff Praetorate on:</Text>
+		<AutoTooltip></AutoTooltip>
 	</Text>
-	<Text Name='Pet Heal Text' Template='EQ2.text'>
-		<X>305</X>
+	<combobox name='cbBuffPraetorateGroupMember' Template='EQ2.Combobox'>
+		<x>375</x>
+		<y>150</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Praetorate Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffPraetorateGroupMember]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffPraetorateGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffPraetorateGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+			do
+			{
+				if ${Me.Grouped}
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+
+				}
+
+			}
+			while ${tmpvar:Inc}&lt;=5
+		</OnLeftClick>
+	</combobox>
+	<Commandbutton name='RefreshBuffRedoubt' Template='EQ2.Commandbutton'>
+		<X>300</X>
 		<Y>170</Y>
-		<Width>30%</Width>
-		<Height>15</Height>
+		<Width>20</Width>
+		<Height>20</Height>
+		<Text></Text>
+		<AutoTooltip>Refresh</AutoTooltip>
+		<OnLeftClick>
+			declare tmpvar int
+			declare tmpCollection collection:string
+
+			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt].Keys}&gt;0
+			{
+				tmpvar:Set[1]
+
+				do
+				{
+					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt].GetString[${tmpvar}]}]
+				}
+				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt].Keys}
+
+			}
+
+			tmpvar:Set[1]
+
+			UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
+
+
+			UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
+
+			if ${Me.Grouped}
+			{
+
+				tmpvar:Set[1]
+				do
+				{
+						if ${Me.Group[${tmpvar}].ToActor(exists)}
+						{
+							UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+						}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						{
+							UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						}
+				}
+				while ${tmpvar:Inc}&lt;=5
+			}
+
+
+			tmpvar:Set[1]
+
+			if ${tmpCollection.FirstKey(exists)}
+			{
+				do
+				{
+
+					UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
+
+				}
+				while ${tmpCollection.NextKey(exists)}
+			}
+		</OnLeftClick>
+	</Commandbutton>
+	<Text Name='lblBuffRedoubt' Template='EQ2.text'>
+		<X>325</X>
+		<Y>170</Y>
+		<Width>150</Width>
+		<Height>20</Height>
 		<Alignment>Left</Alignment>
-	<Text>Pet Heal Percent</Text>
+		<Text>Buff Redoubt On:</Text>
+		<AutoTooltip>Shift Left click to select group members to buff Redoubt on</AutoTooltip>
 	</Text>
-	<Textentry Name='HealMTPercent' Template='EQ2.textentry'>
-		<X>445</X>
-		<Y>130</Y>
-		<Width>30</Width>
-		<Height>15</Height>
-		<Color>FFDDBB00</Color>
-		<MaxLength>4</MaxLength>
-		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealMTPercent]}]</OnLoad>
-		<OnChange>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Main Tank Heal Percent",${This.Text}]:Save
-			This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetInt[Main Tank Heal Percent]}]
-			Script[EQ2Bot].Variable[HealMTPercent]:Set[${This.Text}]
-		</OnChange>
-	</Textentry>
-	<Textentry Name='HealGroupPercent' Template='EQ2.textentry'>
-		<X>445</X>
-		<Y>150</Y>
-		<Width>30</Width>
-		<Height>15</Height>
-		<Color>FFDDBB00</Color>
-		<MaxLength>4</MaxLength>
-		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealGroupPercent]}]</OnLoad>
-		<OnChange>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Group Heal Percent",${This.Text}]:Save
-			This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetInt[Group Heal Percent]}]
-			Script[EQ2Bot].Variable[HealGroupPercent]:Set[${This.Text}]
-		</OnChange>
-	</Textentry>
-	<Textentry Name='HealPetPercent' Template='EQ2.textentry'>
-		<X>445</X>
-		<Y>170</Y>
-		<Width>30</Width>
-		<Height>15</Height>
-		<Color>FFDDBB00</Color>
-		<MaxLength>4</MaxLength>
-		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealPetPercent]}]</OnLoad>
-		<OnChange>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Pet Heal Percent",${This.Text}]:Save
-			This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetInt[Pet Heal Percent]}]
-			Script[EQ2Bot].Variable[HealPetPercent]:Set[${This.Text}]
-		</OnChange>
-	</Textentry>
+	<listbox name='lbBuffRedoubt' Template='EQ2.Listbox'>
+		<x>325</x>
+		<y>190</y>
+		<width>150</width>
+		<height>90</height>
+		<SelectMultiple>1</SelectMultiple>
+		<Items></items>
+		<OnLoad>
+			declare tmpvar int
+			declare tmpCollection collection:string
+
+			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt].Keys}&gt;0
+			{
+				tmpvar:Set[1]
+
+				do
+				{
+					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt].GetString[${tmpvar}]}]
+				}
+				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt].Keys}
+
+			}
+
+			tmpvar:Set[1]
+
+			UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
+
+			UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
+
+			if ${Me.ToActor.Pet(exists)}
+			{
+				UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
+			}
+
+			if ${Me.Grouped}
+			{
+
+				tmpvar:Set[1]
+				do
+				{
+						if ${Me.Group[${tmpvar}].ToActor(exists)}
+						{
+							UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+						}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						{
+							UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						}
+				}
+				while ${tmpvar:Inc}&lt;=5
+			}
+
+			tmpvar:Set[1]
+
+			if ${tmpCollection.FirstKey(exists)}
+			{
+				do
+				{
+
+					UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
+
+				}
+				while ${tmpCollection.NextKey(exists)}
+			}
+		</OnLoad>
+		<OnSelect>
+			declare tmpvar int
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt]:Clear
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt]:Save
+
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffPower]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+		</OnSelect>
+		<OnDeselect>
+			declare tmpvar int
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt]:Clear
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt]:Save
+
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+		</OnDeselect>
+		<OnLeftClick></OnLeftClick>
+	</listbox>
 </ISUI>
