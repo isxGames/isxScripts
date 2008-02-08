@@ -60,7 +60,7 @@
 		<Setting Name="2">metamorphic stone</Setting>
 		<Setting Name="3">decrepit arbor</Setting>
 		<Setting Name="4">paltry roots</Setting>
-		<Setting Name="5">unknown</Setting>
+		<Setting Name="5">blackened animal den</Setting>
 		<Setting Name="6">blackened shrubbery</Setting>
 		<Setting Name="7">brood of fish</Setting>
 	</Set>
@@ -137,17 +137,17 @@
 		<Setting Name="7">cluster of fish</Setting>
 	</Set>
 	<Set Name="exp02_rgn_realm_of_twilight">
-		<Setting Name="1">dustworn ore</Setting>
-		<Setting Name="2">weathered geode</Setting>
-		<Setting Name="3">osseous lumber</Setting>
-		<Setting Name="4">dusk roots</Setting>
-		<Setting Name="5">burrow</Setting>
+		<Setting Name="1">firmament stone</Setting>
+		<Setting Name="2">twilight gem</Setting>
+		<Setting Name="3">twisted wood</Setting>
+		<Setting Name="4">trip roots</Setting>
+		<Setting Name="5">tangled nest</Setting>
 		<Setting Name="6">withered shrubbery</Setting>
 		<Setting Name="7">school of flying fish</Setting>
 	</Set>
 	<Set Name="exp02_rgn_realm_of_night">
-		<Setting Name="1">weathered geode</Setting>
-		<Setting Name="2">dustworn ore</Setting>
+		<Setting Name="1">dustworn ore</Setting>
+		<Setting Name="2">weathered geode</Setting>
 		<Setting Name="3">osseous lumber</Setting>
 		<Setting Name="4">dusk roots</Setting>
 		<Setting Name="5">burrow</Setting>
@@ -197,15 +197,60 @@
 		<Setting Name="6">natural garden</Setting>
 		<Setting Name="7">assortment of fish</Setting>
 	</set>
+	<Set Name="fprt_adv04_ruins">
+		<Setting Name="1">rugged ore</Setting>
+		<Setting Name="2">rustic stone</Setting>
+		<Setting Name="3">gangly arbor</Setting>
+		<Setting Name="4">pale roots</Setting>
+		<Setting Name="5">creature den</Setting>
+		<Setting Name="6">ravaged natural garden</Setting>
+		<Setting Name="7">array of fish</Setting>
+	</set>
+	<Set Name="exp04_rgn_kylong_plains">
+		<Setting Name="1">ryjesium node</Setting>
+		<Setting Name="2">ornamental geode</Setting>
+		<Setting Name="3">calcified timber</Setting>
+		<Setting Name="4">germinating roots</Setting>
+		<Setting Name="5">varmint burrow</Setting>
+		<Setting Name="6">kylong briar</Setting>
+		<Setting Name="7">southshore school</Setting>
+	</set>
+	<Set Name="exp04_rgn_fens_of_nathsar">
+		<Setting Name="1">Cabilisian lode</Setting>
+		<Setting Name="2">Frontier geode</Setting>
+		<Setting Name="3">Warslik timber</Setting>
+		<Setting Name="4">Nathsarian roots</Setting>
+		<Setting Name="5">field burrow</Setting>
+		<Setting Name="6">Nathsarian shrubbery</Setting>
+		<Setting Name="7">Omenfish school</Setting>
+	</set>
 	<Set Name="exp04_rgn_jarsath_wastes">
 		<Setting Name="1">bedded ore</Setting>
 		<Setting Name="2">exposed limestone</Setting>
 		<Setting Name="3">sundrenched cordwood</Setting>
 		<Setting Name="4">prairie roots</Setting>
-		<Setting Name="5">varmint burrow</Setting>
-		<Setting Name="6">wastelands shrub</setting>
-		<Setting Name="7">a briny catch</Setting>
-	</Set>	
+		<Setting Name="5">badlands den</Setting>
+		<Setting Name="6">wastelands shrub</Setting>
+		<Setting Name="7">a briney catch</Setting>
+	</set>
+	<Set Name="exp04_rgn_kunzar_jungle">
+		<Setting Name="1">Cabilisian lode</Setting>
+		<Setting Name="2">Frontier geode</Setting>
+		<Setting Name="3">felled lumber</Setting>
+		<Setting Name="4">aerating root cord</Setting>
+		<Setting Name="5">jungle beast den</Setting>
+		<Setting Name="6">kunzar berrybush</Setting>
+		<Setting Name="7">venom flow catch</Setting>
+	</set>
+	<Set Name="exp04_rgn_timorous_deep">
+		<Setting Name="1">uncovered stone</Setting>
+		<Setting Name="2">dense rock</Setting>
+		<Setting Name="3">fallen palm</Setting>
+		<Setting Name="4">tangled roots</Setting>
+		<Setting Name="5">unkempt nest</Setting>
+		<Setting Name="6">flowering shrubbery</Setting>
+		<Setting Name="7">school of tiger barbs</Setting>
+	</set>
 	<Set Name="Harvest Enhancer">
 		<Setting Name="0,1">Elm Pick</Setting>
 		<Setting Name="0,2">Elm Trap</Setting>
