@@ -633,6 +633,7 @@ function Cancel_Root()
 
 function RefreshPower()
 {
+	call Shard
 
 	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.Pet.IsAggro}
 	{
@@ -669,7 +670,6 @@ function RefreshPower()
 	{
 		call CastSpellRange 325
 	}
-
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<15
 	{

@@ -685,9 +685,9 @@ function RefreshPower()
 	}
 
 	;Conjuror Shard
-	if ${Me.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.Power}<40
 	{
-		Me.Inventory[${ShardType}]:Use
+		call Shard
 	}
 
 	;Transference line out of Combat
@@ -859,20 +859,13 @@ function Mezmerise_Targets()
 				{
 					call CastSpellRange 92 0 0 0 ${CustomActor[${tcount}].ID} 0 10
 				}
-
-
-
 				aggrogrp:Set[FALSE]
-
-
 			}
-
-
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	if ${Actor[${KillTarget}](exists)}  && ${Actor[${KillTarget}].Health}>1
+	if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health}>1
 	{
 		Target ${KillTarget}
 		wait 20 ${Me.ToActor.Target.ID}==${KillTarget}

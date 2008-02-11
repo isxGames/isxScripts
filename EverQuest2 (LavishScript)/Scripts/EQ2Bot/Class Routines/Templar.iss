@@ -790,7 +790,7 @@ function CheckHeals()
 	if ${mostafflicted} && ${CureMode} && ${Return} && ${Actor[${MainTankID}].Health}>50
 	{
 		;If MT is aflicted with uncurable arcane, try sanctuary.
-		if ${Me.Group[${mostafflicted}].Name.Equal[${MainTankPC}]} && ${Me.Group[${mostafflicted].IsAfflicted} && ${Me.Group[${mostafflicted].Arcane}<0 && ${Me.Ability[${SpellType[222]}].IsReady}
+		if ${Me.Group[${mostafflicted}].Name.Equal[${MainTankPC}]} && ${Me.Group[${mostafflicted}].IsAfflicted} && ${Me.Group[${mostafflicted}].Arcane}<0 && ${Me.Ability[${SpellType[222]}].IsReady}
 		{
 			call CastSpellRange 222
 		}
