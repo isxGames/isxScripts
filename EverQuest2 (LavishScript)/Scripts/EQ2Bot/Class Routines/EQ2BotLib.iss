@@ -244,49 +244,49 @@ function IsFighter(int ID)
 
 function Shard()
 {
-	declare ShardType string local "NOSHARD"
+	declare ShardTypeL string local "NOSHARD"
 
 
 	if ${Me.Inventory["Shard of Essence"](exists)}
 	{
-		ShardType:Set[Shard of Essence]
+		ShardTypeL:Set[Shard of Essence]
 	}
 	elseif ${Me.Inventory["Sliver of Essence"](exists)}
 	{
-		ShardType:Set[Sliver of Essence]
+		ShardTypeL:Set[Sliver of Essence]
 	}
 	elseif ${Me.Inventory["Scintilla of Essence"](exists)}
 	{
-		ShardType:Set[Scintilla of Essence]
+		ShardTypeL:Set[Scintilla of Essence]
 	}
 	elseif ${Me.Inventory["Scale of Essence"](exists)}
 	{
-		ShardType:Set[Scale of Essence]
+		ShardTypeL:Set[Scale of Essence]
 	}
 	elseif ${Me.Inventory["Splintered Heart"](exists)}
 	{
-		ShardType:Set[Splintered Heart]
+		ShardTypeL:Set[Splintered Heart]
 	}
 	elseif ${Me.Inventory["Darkness Heart"](exists)}
 	{
-		ShardType:Set[Darkness Heart]
+		ShardTypeL:Set[Darkness Heart]
 	}
 	elseif ${Me.Inventory["Sacrificial Heart"](exists)}
 	{
-		ShardType:Set[Sacrificial Heart]
+		ShardTypeL:Set[Sacrificial Heart]
 	}
 	elseif ${Me.Inventory["Ruinous Heart"](exists)}
 	{
-		ShardType:Set[Ruinous Heart]
+		ShardTypeL:Set[Ruinous Heart]
 	}
 
-	if ${ShardType.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<65 && ${Me.Inventory[${ShardType}].IsReady} && ${ShardMode}
+	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<65 && ${Me.Inventory[${ShardTypeL}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 		ShardRequested:Set[FALSE]
 	}
 
-	if !${Me.Inventory[${ShardType}](exists)} && !${ShardRequested}
+	if !${Me.Inventory[${ShardType}](exists)} && !${ShardRequested} && ${ShardMode}
 	{
 		ShardRequested:Set[TRUE]
 		EQ2Execute /tell ${ShardGroupMember} shard please
