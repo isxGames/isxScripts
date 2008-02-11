@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.11f : Started 27 Nov 2007 : released 17 Jan 2008
+; Version 0.11f(4) : Started 27 Nov 2007 : released 10 Feb 2008
 ;
 ; Declare Variables
 ;
@@ -20,6 +20,8 @@ variable bool IgnoreCopper
 variable bool SellItems
 variable bool Craft
 variable bool Logging
+; Array stores bool - to scan box or not
+variable bool box[6]
 
 variable string labelname
 variable string currentitem
@@ -90,9 +92,20 @@ function main()
 	Actor[nokillnpc]:DoTarget
 	wait 1
 	Target:DoubleClick
-	wait 10
+	wait 20
+
+	i:Set[1]
+	do
+	{
+		if !(${Me.Vending[${i}](exists)})
+		{
+			UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
+
+		}
+	}
+	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices version 0.11f - released : 17 Jan 2008" FF11FFCC
+	call AddLog "Running MyPrices version 0.11f(4) - released : 10 Feb 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -1028,14 +1041,13 @@ function LoadList()
 	numitems:Set[0]
 	do
 	{
-		if (${Me.Vending[${i}](exists)})
+		if (${Me.Vending[${i}](exists)})  && ${box[${i}]}
 		{
 			if ${Me.Vending[${i}].CurrentCoin} > 0
 			{
 				Me.Vending[${i}]:TakeCoin
 				wait 10
 			}
-
 			if ${Me.Vending[${i}].NumItems}>0
 			{
 				do
@@ -1667,6 +1679,12 @@ objectdef BrokerBot
 		SellItems:Set[${General.FindSetting[SellItems]}]
 		PauseTimer:Set[${General.FindSetting[PauseTimer]}]
 		Craft:Set[${General.FindSetting[Craft]}]
+		box[1]:Set[${General.FindSetting[box1]}]
+		box[2]:Set[${General.FindSetting[box2]}]
+		box[3]:Set[${General.FindSetting[box3]}]
+		box[4]:Set[${General.FindSetting[box4]}]
+		box[5]:Set[${General.FindSetting[box5]}]
+		box[6]:Set[${General.FindSetting[box6]}]
 		call echolog "Settings being used"
 		call echolog "-------------------"
 		call echolog "MatchLowPrice is ${MatchLowPrice}"
@@ -1686,8 +1704,9 @@ objectdef BrokerBot
 ;search your current broker boxes for existing stacks of items and see if theres room for more
 function placeitem(string itemname)
 {
-	Echo Sorry...work in progress...not currently active...
+	echo sorry , this function still being worked on
 	/*
+	variable int xvar
 	Declare i int local
 	Declare space int local
 	Declare numitems int local
@@ -1710,7 +1729,6 @@ function placeitem(string itemname)
 				Echo there are ${Return} ${itemname} already in box ${i} with ${space} spaces free
 				if ${Return} > ${numitems}
 				{
-					echo store all ${itemname} in box ${i}
 					storebox:Set[${i}]
 					break
 				}
@@ -1729,7 +1747,6 @@ function placeitem(string itemname)
 				space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}] 
 				if ${space} > ${numitems}
 				{
-					echo store all ${itemname} in box ${i}
 					storebox:Set[${i}]
 					break
 				}
@@ -1738,9 +1755,20 @@ function placeitem(string itemname)
 		}
 		if ${storebox} !=0
 		{
-			echo put all items in the box number ${storebox}
-			Me.Inventory[${itemname}]:AddToConsignment[1]
-			wait 10
+			call FindItem ${storebox} "${itemname}"
+
+			xvar:Set[1]
+			do
+			{
+				if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
+				{
+					echo Placing ${Me.CustomInventory[${xvar}].Quantity} ${itemname} in box ${storebox}
+					Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity}]
+					wait 50
+
+				}
+			}
+			while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 		}
 	}
 */

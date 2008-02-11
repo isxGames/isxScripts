@@ -634,7 +634,7 @@
 						<X>45%</X>
 						<Y>2%</Y>
 						<Width>52%</Width>
-						<Height>72%</Height>
+						<Height>62%</Height>
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
@@ -642,6 +642,204 @@
 							Script[myprices]:QueueCommand[call ClickBrokerSearch Sell ${ID}]
 						</OnSelect>
 					</listbox>
+					<checkbox Name='1' Template='EQ2.checkbox'>
+						<X>45%</X>
+						<Y>65%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 1</Text>
+						<AutoTooltip>
+							Scan Box 1
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[1]}
+						{
+							UIElement[1@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[1@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[1@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box1 TRUE]
+								Script[myprices].VariableScope.box[1]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box1 FALSE]
+								Script[myprices].VariableScope.box[1]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='2' Template='EQ2.checkbox'>
+						<X>60%</X>
+						<Y>65%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 2</Text>
+						<AutoTooltip>
+							Scan Box 2
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[2]}
+						{
+							UIElement[2@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[2@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[2@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box2 TRUE]
+								Script[myprices].VariableScope.box[2]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box2 FALSE]
+								Script[myprices].VariableScope.box[2]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='3' Template='EQ2.checkbox'>
+						<X>75%</X>
+						<Y>65%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 3</Text>
+						<AutoTooltip>
+							Scan Box 3
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[3]}
+						{
+							UIElement[3@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[3@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[3@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box3 TRUE]
+								Script[myprices].VariableScope.box[3]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box3 FALSE]
+								Script[myprices].VariableScope.box[3]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='4' Template='EQ2.checkbox'>
+						<X>45%</X>
+						<Y>70%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 4</Text>
+						<AutoTooltip>
+							Scan Box 4
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[4]}
+						{
+							UIElement[4@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[4@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[4@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box4 TRUE]
+								Script[myprices].VariableScope.box[4]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box4 FALSE]
+								Script[myprices].VariableScope.box[4]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='5' Template='EQ2.checkbox'>
+						<X>60%</X>
+						<Y>70%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 5</Text>
+						<AutoTooltip>
+							Scan Box 5
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[5]}
+						{
+							UIElement[5@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[5@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[5@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box5 TRUE]
+								Script[myprices].VariableScope.box[5]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box5 FALSE]
+								Script[myprices].VariableScope.box[5]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='6' Template='EQ2.checkbox'>
+						<X>75%</X>
+						<Y>70%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 6</Text>
+						<AutoTooltip>
+							Scan Box 6
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[6]}
+						{
+							UIElement[6@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[6@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[6@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box6 TRUE]
+								Script[myprices].VariableScope.box[6]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box6 FALSE]
+								Script[myprices].VariableScope.box[6]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
 					<Commandbutton name='Start Scanning' Template='EQ2.Commandbutton'> 
 						<X>20%</X> 
 						<Y>92%</Y> 
