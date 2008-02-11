@@ -299,6 +299,12 @@ The more feedback I get the better I know which direction to take this and the f
 Revisions
 =========
 
+Version 0.11f Rev 4
+-------------------
+
+Added checkboxes 1-6 , select the boxes you want myprices to scan , it will totally ignore any broker boxes that aren't ticked.
+
+
 Version 0.11f Rev 3
 -------------------
 
@@ -307,7 +313,7 @@ unmarked as a craft item and the list will refresh.
 
 Fixed a bug where items marked as craft items on one character were also being saved as craft items on another.
 
-Several Minor bigfixes.
+Several Minor bugfixes.
 
 Version 0,11f
 -------------
