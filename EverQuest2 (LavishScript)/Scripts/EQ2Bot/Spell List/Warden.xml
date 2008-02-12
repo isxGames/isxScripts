@@ -6,7 +6,7 @@
 		<Setting Name="1,60">Fire</Setting>
 		<Setting Name="2,40">Barbs</Setting>
 		<Setting Name="3,61">Cold</Setting>
-		<Setting Name="3,1">Minor Florescense</Setting>
+		<Setting Name="3,1">Minor Florescence</Setting>
 		<Setting Name="4,36">Minor Vigor</Setting>
 		<Setting Name="5,305">Divine Providence</Setting>
 		<Setting Name="5,20">Protection of the Willow</Setting>
@@ -134,6 +134,7 @@
 		<Setting Name="61,233">Bracken</Setting>
 		<Setting Name="62,25">Patron of the Forest</Setting>
 		<Setting Name="63,37">Regenerative Spores</Setting>
+		<Setting Name="64,230">Trapping Vines</Setting>
 		<Setting Name="65,70">Glacial Cold</Setting>
 		<Setting Name="65,214">Tranquility</Setting>
 		<Setting Name="66,40">Spikecoat</Setting>
@@ -144,6 +145,7 @@
 		<Setting Name="69,316">Nature\'s Regrowth</Setting>
 		<Setting Name="70,15">Fierce Chlorostorm</Setting>
 		<Setting Name="70,9">Hierophantic Advent</Setting>
+		<Setting Name="70,10">Wave of Healing</Setting>
 		<Setting Name="70,220">Verdant Gasp</Setting>
 		<Setting Name="71,35">Aspect of the Bat</Setting>
 		<Setting Name="71,4">Sylvan Bloom</Setting>
@@ -158,6 +160,20 @@
 		<Setting Name="74,329">Nature's Pack</Setting>
 		<Setting Name="74,90">Winds of Permafrost</Setting>
 		<Setting Name="75,37">Regenerating Spores</Setting>
-		<Setting Name="75,233">Underbrush</Setting>		
+		<Setting Name="76,25">Defender of the Forest</Setting>
+		<Setting Name="76,330">Healing Grove</Setting>
+		<Setting Name="76,230">Holding Vines</Setting>
+		<Setting Name="77,40">Razorcoat</Setting>
+		<Setting Name="77,70">Velium Frost</Setting>
+		<Setting Name="78,61">Icefall</Setting>
+		<Setting Name="78,7">Photosynthesis</Setting>
+		<Setting Name="78,214">Purity</Setting>
+		<Setting Name="79,15">Healstorm</Setting>
+		<Setting Name="79,38">Instinct</Setting>
+		<Setting Name="79,180">Willow Wisp</Setting>
+		<Setting Name="80,331">Faerie Ally</Setting>
+		<Setting Name="80,9">Hierophantic Provenance</Setting>
+		<Setting Name="80,316">Nature\'s Renewal</Setting>
+		<Setting Name="80,10">Tide of Healing</Setting>
 	</Set>
 </InnerSpaceSettings>

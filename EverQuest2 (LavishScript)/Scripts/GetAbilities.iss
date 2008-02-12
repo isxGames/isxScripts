@@ -126,7 +126,7 @@ objectdef abilityobj
 		;echo ${ThisSet.GUID}
 
 
-		ThisSet:AddSetting[ID,${AbilityID}]]
+		ThisSet:AddSetting[ID,${AbilityID}]
 		ThisSet:AddSetting[Name,${Me.Ability[${AbilityID}].Name}]
 		ThisSet:AddSetting[Description,${Me.Ability[${AbilityID}].Description}]
 		ThisSet:AddSetting[Tier,${Me.Ability[${AbilityID}].Tier}]

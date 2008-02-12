@@ -224,20 +224,20 @@ function Combat_Init()
 	Power[9,2]:Set[100]
 	SpellRange[9,1]:Set[329]
 
-	Action[10]:Set[Root]
-	MobHealth[10,1]:Set[20]
-	MobHealth[10,2]:Set[100]
-	Power[10,1]:Set[30]
-	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[230]
-	SpellRange[10,2]:Set[233]
-
-	Action[11]:Set[Snare]
-	MobHealth[11,1]:Set[20]
-	MobHealth[11,2]:Set[100]
-	Power[11,1]:Set[30]
-	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[235]
+;	Action[10]:Set[Root]
+;	MobHealth[10,1]:Set[20]
+;	MobHealth[10,2]:Set[100]
+;	Power[10,1]:Set[30]
+;	Power[10,2]:Set[100]
+;	SpellRange[10,1]:Set[230]
+;	SpellRange[10,2]:Set[233]
+;
+;	Action[11]:Set[Snare]
+;	MobHealth[11,1]:Set[20]
+;	MobHealth[11,2]:Set[100]
+;	Power[11,1]:Set[30]
+;	Power[11,2]:Set[100]
+;	SpellRange[11,1]:Set[235]
 
 }
 
@@ -395,6 +395,12 @@ function Combat_Routine(int xAction)
 	{
 		EQ2Execute /stopfollow
 		wait 5
+	}
+
+	;use fairy if up
+	if ${Me.Ability[${SpellType[331]}].IsReady}
+	{
+		call CastSpellRange 331
 	}
 
 	if ${RaidHealMode}
