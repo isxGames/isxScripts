@@ -885,7 +885,7 @@ function CheckHeals()
 	{
 		if ${Me.ToActor.Health}<25
 		{
-			if ${haveaggro}
+			if ${Actor[${KillTarget}].Target.ID}==${Me.ID} || ${haveaggro}
 			{
 				call EmergencyHeal ${Me.ID}
 				HealUsed:Set[TRUE]
@@ -905,7 +905,7 @@ function CheckHeals()
 			}
 		}
 
-		if ${Me.ToActor.Health}<50 && ${haveaggro}
+		if ${Me.ToActor.Health}<50
 		{
 			if ${Me.Ability[${SpellType[1]}].IsReady}
 			{
@@ -922,7 +922,7 @@ function CheckHeals()
 
 		if ${Me.ToActor.Health}<75
 		{
-			if ${haveaggro}
+			if ${Actor[${KillTarget}].Target.ID}==${Me.ID} || ${haveaggro}
 			{
 				call CastSpellRange 7 0 0 0 ${Me.ID}
 				HealUsed:Set[TRUE]
