@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.11f(4) : Started 27 Nov 2007 : released 10 Feb 2008
+; Version 0.11f(5) : Started 27 Nov 2007 : released 15 Feb 2008
 ;
 ; Declare Variables
 ;
@@ -20,6 +20,9 @@ variable bool IgnoreCopper
 variable bool SellItems
 variable bool Craft
 variable bool Logging
+variable bool Natural
+; Array stores bool - Item scanned
+variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
 variable bool box[6]
 
@@ -38,8 +41,10 @@ variable int IntMinBasePrice
 variable int itemprice[1000]
 variable int numitems
 variable int currentpos
+variable int currentcount
 variable int BuyNumber
 variable int PauseTimer
+variable int WaitTimer
 variable int StopWaiting
 
 variable float MyBasePrice
@@ -139,6 +144,8 @@ function main()
 		{
 			; reset all the main script counters to 1
 			currentpos:Set[1]
+			currentcount:Set[1]
+			call resetscanned
 			i:Set[1]
 			j:Set[1]
 
@@ -362,8 +369,21 @@ function main()
 					; Item not found in the container (sold or removed mid-scan)
 					call SetColour ${currentpos} FFC43012
 				}
+				; Mark position in list as scanned
+				Scanned[${currentpos}]:Set[TRUE]
+				; Choose the next item in the list to be looked at
+				if ${Natural}
+				{
+					call ChooseNextItem ${numitems}
+					currentpos:Set[${Return}]
+					wait ${Math.Rand[50]}
+				}
+				else
+				{
+					currentpos:Inc
+				}
 			}
-			while ${currentpos:Inc} <= ${numitems} && ${Pausemyprices} == FALSE
+			while ${currentcount:Inc} < ${numitems} && ${Pausemyprices} == FALSE
 		}
 		; Script starts to scan for items to buy if flagged.
 		if ${BuyItems}
@@ -377,8 +397,23 @@ function main()
 		}
 		if ${ScanSellNonStop} && ${PauseTimer} > 0
 		{
-			call AddLog "Pausing for ${PauseTimer} minutes " FF0033EE
-			wait ${Math.Calc[600*${PauseTimer}]} ${StopWaiting}
+			if ${Natural}
+			{
+				WaitTimer:Set[${Math.Calc[600*${PauseTimer}]}]
+				; get 1% of the pause time
+				WaitTimer:Set[${Math.Calc[${WaitTimer}/100]}]
+				; multiply it with between -20 and +20 to get a +/- 20% varience
+				WaitTimer:Set[${Math.Calc[(${Math.Rand[40]}-20)*${WaitTimer}]}]
+				; Reduce / Increase time by the random %
+				WaitTimer:Set[${Math.Calc[(${PauseTimer}*600)+${WaitTimer}]}]
+				call AddLog "Pausing for ${Math.Calc[${WaitTimer}/600]} minutes " FF0033EE
+			}
+			else
+			{
+				call AddLog "Pausing for ${PauseTimer} minutes " FF0033EE
+				WaitTimer:Set[${Math.Calc[600*${PauseTimer}]}]
+			}
+			wait ${WaitTimer} ${StopWaiting}
 			StopWaiting:Set[0]
 		}
 	}
@@ -1685,6 +1720,7 @@ objectdef BrokerBot
 		box[4]:Set[${General.FindSetting[box4]}]
 		box[5]:Set[${General.FindSetting[box5]}]
 		box[6]:Set[${General.FindSetting[box6]}]
+		Natural:Set[${General.FindSetting[Natural]}]
 		call echolog "Settings being used"
 		call echolog "-------------------"
 		call echolog "MatchLowPrice is ${MatchLowPrice}"
@@ -1696,7 +1732,13 @@ objectdef BrokerBot
 		call echolog "SellItems is  ${SellItems}"
 		call echolog "PauseTimer is ${PauseTimer}"
 		call echolog "Craft is ${Craft}"
-
+		call echolog "box[1] is ${box[1]}"
+		call echolog "box[2] is ${box[2]}"
+		call echolog "box[3] is ${box[3]}"
+		call echolog "box[4] is ${box[4]}"
+		call echolog "box[5] is ${box[5]}"
+		call echolog "box[6] is ${box[6]}"
+		call echolog "Natural is ${Natural}"
 	}
 
 }
@@ -1772,6 +1814,27 @@ function placeitem(string itemname)
 		}
 	}
 */
+}
+
+function resetscanned()
+{
+	Declare lcount int local 1
+	do
+	{
+		Scanned[${lcount}]:Set[FALSE]
+	}
+	While ${lcount:Inc} <= 1000
+}
+
+function ChooseNextItem(int numitems)
+{
+	Declare rnumber int local
+	do
+	{
+		rnumber:Set[${Math.Calc[${Math.Rand[${numitems}]}+1]}]
+	}
+	While ${Scanned[${rnumber}]}
+	return ${rnumber}
 }
 
 function echolog(string logline)

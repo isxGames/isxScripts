@@ -135,6 +135,12 @@ you are having.
 To Toggle it on , run the script , toggle it ON then exit and re-run the script , run the scans etc that you usually do and then toggle
 it off , this way I get to see what your options are set to on the Sell tab also, otherwise I won't see them.
 
+Natural Scan
+------------
+
+This makes the script act in a more natural way , items aren't scanned in a particular order , pauses between broker checks for each
+item in your list , the pause between automatic scans is randomised somewhat.
+
 
 Delay in Minutes
 ----------------
@@ -298,6 +304,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+
+Version 0.11f Rev 5
+-------------------
+
+Added Natural Scan option , makes it look less like a script is doing the broker scans , slows down the list scan a little.
 
 Version 0.11f Rev 4
 -------------------
