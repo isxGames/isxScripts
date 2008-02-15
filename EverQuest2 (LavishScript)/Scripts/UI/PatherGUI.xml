@@ -123,8 +123,8 @@
 				<Width>100%</Width>
 				<Height>95%</Height>
 				<Font>
-					<Name>terminal</Name>
-					<Size>10</Size>
+					<Name>Times New Roman</Name>
+					<Size>15</Size>
 				</Font>
 				<Texture />
 				<SelectMultiple>1</SelectMultiple>

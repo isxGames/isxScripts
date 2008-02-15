@@ -2,6 +2,18 @@
 ;Assassin.iss  20070725a
 ;by Pygar
 ;
+; - changes made by CyberTF
+; - corrected spell numbers for evade, shadows and AA apply poison
+; - added declares for MaintainPoison and CloakMode
+; - added Set statements to get that info from XML file
+; - fixed PostCombat_Init (PostAction instead of PreAction, same for SpellRange)
+; -  fixed Post_Combat_Routine (same changes as above) and added check for ${CloakMode} so stealth after combat now works properly
+; - moved AA_Intoxication to buff routine (long cast affecting DPS)
+; - modified code for what to do after stun - now attempts to move behind and moves into Shrouded Attack Set
+; - added AA_bounty into Combat_Routine (checks for ConColor)
+; - added Zek_Pet to buff routine (if u are not worshipping Zek as an assassin, let me know and i'll work in other pets)
+; - added missing code for finishing Blow and added mob health check to it
+; - fixed UI  XML file to properly set the MaintainPoison variable (was setting TankMode ??)
 ;
 ;20070725a
 ;	Did an old version make it to svn?
@@ -44,9 +56,15 @@ function Class_Declaration()
 	declare AoEMode bool script 0
 	declare UseRangeMode bool script 0
 	declare SurroundingAttacksMode bool Script FALSE
+	declare MaintainPoison bool Script FALSE
+	declare CloakMode bool Script FALSE
 
 	;Custom Equipment
+	declare WeaponRapier string script
+	declare WeaponSword string script
+	declare WeaponDagger string script
 	declare PoisonCureItem string script
+	declare WeaponMain string script
 	declare BuffShadowsGroupMember string script
 	declare BuffPoisonGroupMember string script
 
@@ -60,6 +78,15 @@ function Class_Declaration()
 	BuffShadowsGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffShadowsGroupMember,]}]
 	BuffPoisonGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPoisonGroupMember,]}]
 	SurroundingAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Surrounding Attacks,FALSE]}]
+	MaintainPoison:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MaintainPoison,FALSE]}]
+	CloakMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Stealth After Combat,FALSE]}]
+
+	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
+	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
+	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
+	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
+	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
+	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
 
 	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
@@ -75,25 +102,31 @@ function Buff_Init()
 	PreAction[1]:Set[Villany]
 	PreSpellRange[1,1]:Set[25]
 
-	PreAction[2]:Set[Focus]
-	PreSpellRange[2,1]:Set[27]
+	PreAction[2]:Set[Pathfinding]
+	PreSpellRange[2,1]:Set[302]
 
-	PreAction[3]:Set[Pathfinding]
-	PreSpellRange[3,1]:Set[302]
+	PreAction[3]:Set[Apply_Poison]
+	PreSpellRange[3,1]:Set[357]
 
-	PreAction[4]:Set[Apply_Poison]
-	PreSpellRange[4,1]:Set[387]
+	PreAction[4]:Set[Shadows]
+	PreSpellRange[4,1]:Set[386]
 
-	PreAction[5]:Set[Shadows]
-	PreSpellRange[5,1]:Set[356]
+	PreAction[5]:Set[AA_Neurotoxic_Coating]
+	PreSpellRange[5,1]:Set[389]
 
-	PreAction[6]:Set[AA_Neurotoxic_Coating]
-	PreSpellRange[6,1]:Set[389]
+	PreAction[6]:Set[AA_Surrounding_Attacks]
+	PreSpellRange[6,1]:Set[384]
 
-	PreAction[7]:Set[AA_Surrounding_Attacks]
-	PreSpellRange[7,1]:Set[384]
+	PreAction[7]:Set[Zek_Pet]
+	PreSpellRange[7,1]:Set[394]
 
 	PreAction[8]:Set[Poisons]
+
+	PreAction[9]:Set[AA_Intoxication]
+	PreSpellRange[9,1]:Set[392]
+
+	PreAction[10]:Set[Focus]
+	PreSpellRange[10,1]:Set[27]
 
 }
 
@@ -141,6 +174,8 @@ function Combat_Init()
 
 	Action[7]:Set[Finishing_Blow]
 	SpellRange[7,1]:Set[360]
+	MobHealth[7,1]:Set[1]
+	MobHealth[7,2]:Set[20]
 
 	Action[8]:Set[Vanish]
 	MobHealth[8,1]:Set[20]
@@ -181,7 +216,7 @@ function Combat_Init()
 	SpellRange[17,1]:Set[190]
 
 	Action[18]:Set[Evade]
-	SpellRange[18,1]:Set[185]
+	SpellRange[18,1]:Set[180]
 
 	Action[19]:Set[AA_Spinning_Spear]
 	SpellRange[19,1]:Set[383]
@@ -191,15 +226,15 @@ function Combat_Init()
 	MobHealth[20,1]:Set[40]
 	MobHealth[20,2]:Set[100]
 
-	Action[21]:Set[AA_Intoxication]
-	SpellRange[21,1]:Set[392]
+	Action[21]:Set[AA_Bounty]
+	SpellRange[21,1]:Set[380]
 }
 
 
 function PostCombat_Init()
 {
-	PreAction[1]:Set[Slip]
-	PreSpellRange[1,1]:Set[202]
+	PostAction[1]:Set[Slip]
+	PostSpellRange[1,1]:Set[202]
 }
 
 function Buff_Routine(int xAction)
@@ -218,6 +253,7 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
+		case AA_Intoxication
 		case AA_Neurotoxic_Coating
 		case Pathfinding
 		case Focus
@@ -259,6 +295,13 @@ function Buff_Routine(int xAction)
 			else
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+			break
+
+		Case Zek_Pet
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
 
@@ -355,12 +398,21 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget} 0 0 1
 			break
 
-		case AA_Intoxication
+
 		case Evade
-		case Stun
+
 		case Cripple
 		case Melee_Attack
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+			break
+
+		case Stun
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${Me.CastingSpell}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call GetBehind
+				xAction:Set[9]
+			}
 			break
 
 		case DoT
@@ -465,6 +517,24 @@ function Combat_Routine(int xAction)
 			}
 			break
 
+		case AA_Bounty
+			if !${Actor[${KillTarget}].ConColor.Equal[Grey]} && !${Actor[${KillTarget}].ConColor.Equal[Green]} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+			}
+			break
+
+		case Finishing_Blow
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				}
+			}
+			break
+
 		default
 			xAction:Set[40]
 			break
@@ -473,12 +543,15 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine()
 {
-	switch ${Action[${xAction}]}
+	switch ${PostAction[${xAction}]}
 	{
 		case Slip
-			if !${Me.ToActor.IsStealthed}
+			if ${CloakMode}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				if !${Me.ToActor.IsStealthed}
+				{
+					call CastSpellRange ${PostSpellRange[${xAction},1]}
+				}
 			}
 			break
 		default
@@ -493,8 +566,8 @@ function Have_Aggro()
 	echo I have agro from ${aggroid}
 
 	;agro dump
-	call CastSpellRange 180 0 0 0 ${aggroid}
-	call CastSpellRange 185 0 0 0 ${aggroid}
+	call CastSpellRange 180 0 1 0 ${aggroid}
+	call CastSpellRange 185 0 1 0 ${aggroid}
 }
 
 function Lost_Aggro()
@@ -565,4 +638,22 @@ function ActionChecks()
 
 }
 
+function WeaponChange()
+{
+
+	;equip main hand
+	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
+	{
+		Me.Inventory[${WeaponMain}]:Equip
+		EquipmentChangeTimer:Set[${Time.Timestamp}]
+	}
+
+	;equip off hand
+	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
+	{
+		Me.Inventory[${OffHand}]:Equip
+		EquipmentChangeTimer:Set[${Time.Timestamp}]
+	}
+
+}
 

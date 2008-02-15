@@ -8,7 +8,7 @@
 		<setting Name="1,397">Spinning Spear</Setting>
 		<setting Name="1,396">Surrounding Attacks</Setting>
 		<setting Name="1,395">Impenetrable</Setting>
-		<setting Name="1,394">Placting Strike</Setting>
+		<setting Name="1,394">Placating Strike</Setting>
 		<setting Name="1,393">Smoke Bomb</Setting>
 		<setting Name="1,392">Poison Combination</Setting>
 		<setting Name="1,391">Neurotoxic Coating</Setting>
@@ -125,7 +125,7 @@
 		<Setting Name="58,153">Arrow Rip</Setting>
 		<Setting Name="58,250">Precise Shot"></Setting>
 		<Setting Name="58,259">Snaring Shot</Setting>
-		<Setting Name="58,">Sniper\'s Shot</Setting>
+		<Setting Name="58,0">Sniper Shot</Setting>
 		<Setting Name="59,290">Stance: Archer\'s Frenzy</Setting>
 		<Setting Name="60,254">Amazing Shot</Setting>
 		<Setting Name="60,295">Stance: Dance of Trees</Setting>
@@ -149,5 +149,35 @@
 		<Setting Name="70,90">Rain of Arrows</Setting>
 		<Setting Name="70,185">Surveillance</Setting>
 		<Setting Name="70,251">Triple Volley</Setting>
+		<Setting Name="71,255">Rear Shot</Setting>
+		<Setting Name="71,157">Jolting Strike</Setting>
+		<Setting Name="71,250">Searing Shot"></Setting>
+		<Setting Name="72,153">Arrow Tear</Setting>
+		<Setting Name="72,259">Roped Shot</Setting>
+		<Setting Name="72,290">Stance: Archer\'s Fury</Setting>
+		<Setting Name="72,91">Spiked Trap"></Setting>
+		<Setting Name="73,254">Amazing Arrow</Setting>
+		<Setting Name="73,180">Baffle</Setting>
+		<Setting Name="73,95">Fittest Survival</Setting>
+		<Setting Name="73,295">Stance: Dance of the Forest</Setting>
+		<Setting Name="74,320">Longstab</Setting>
+		<Setting Name="74,346">Repeating Arrows</Setting>
+		<Setting Name="74,310">Used Arrows</Setting>
+		<Setting Name="74,252">Vulnerable Arrow</Setting>
+		<Setting Name="75,130">Combustion Strike</Setting>
+		<Setting Name="75,50">Vulnerability</Setting>
+		<Setting Name="76,235">Rope</Setting>
+		<Setting Name="76,0">Sniper Arrow</Setting>
+		<Setting Name="77,253">Blame Arrow</Setting>
+		<Setting Name="77,135">Kunark Blade</Setting>
+		<Setting Name="78,70">Bloody Reminder</Setting>
+		<Setting Name="78,329">Hawk Attack</Setting>
+		<Setting Name="78,260">Stealth Fire</Setting>
+		<Setting Name="79,122">Immobilizing Lunge</Setting>
+		<Setting Name="79,26">Shroud of Kunark</Setting>
+		<Setting Name="80,90">Shower of Arrows</Setting>
+		<Setting Name="80,185">Spy</Setting>
+		<Setting Name="80,251">Triple Burst</Setting>
+		<Setting Name="80,0">Coverage</Setting>
 	</Set>
 </InnerSpaceSettings>

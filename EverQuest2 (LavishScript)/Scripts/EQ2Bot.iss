@@ -184,6 +184,7 @@ variable int CampCount
 variable int PullCount
 variable lnavregionref PullPoint
 variable bool CampNav=TRUE
+variable bool NoMovement=FALSE
 variable int RegionCount
 variable bool IsFinish
 variable string POIList[50]
@@ -555,8 +556,35 @@ function main()
 				}
 				else
 				{
+					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.IsAggro} && ${Target.InCombatMode}
+					{
+						call Combat
+					}
+					else
+					{
+						if ${Mob.NearestAggro}
+						{
+							target ${Mob.NearestAggro}
+							call Combat
+						}
+						else
+						{
+							if ${EQ2Bot.PriestPower}
+							{
+								EQ2Execute /target_none
+								call Pull any
+								if ${engagetarget}
+								{
+									call Combat
+								}
+							}
+						}
+					}
+
+
 					if ${EQ2Bot.PriestPower} || ${Mob.Detect}
 					{
+						EQ2Execute /target_none
 						call Pull any
 						if ${engagetarget}
 						{
@@ -1169,7 +1197,7 @@ function CheckPosition(int rangetype, int position)
 	variable float minrange
 	variable float maxrange
 
-	if !${Target(exists)}
+	if !${Target(exists)} || ${NoMovement}
 	{
 		return
 	}
@@ -1734,6 +1762,11 @@ function FastMove(float X, float Z, int range)
 	if !${Target(exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
 	{
 		return "TARGETDEAD"
+	}
+
+	if ${NoMovement}
+	{
+		return "NOMOVEMENT"
 	}
 
 	if !${X} || !${Z}

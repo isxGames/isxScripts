@@ -112,12 +112,12 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[TRUE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",FALSE]:Save
 			}
 		</OnLeftClick>
