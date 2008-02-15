@@ -273,7 +273,7 @@
 					</checkbox>
 					<checkbox Name='SellItems' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>180</Y>
+						<Y>170</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Scan Sales</Text>
@@ -303,10 +303,9 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-
 					<checkbox Name='Logging' Template='EQ2.checkbox'>
 						<X>5%</X>
-						<Y>205</Y>
+						<Y>190</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Logging</Text>
@@ -333,6 +332,38 @@
 							{
 								Script[myprices]:QueueCommand[call SaveSetting Logging FALSE]
 								Script[myprices].VariableScope.Logging:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='Natural' Template='EQ2.checkbox'>
+						<X>5%</X>
+						<Y>210</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Natural Scan</Text>
+						<AutoTooltip>
+							Perform more natural scans
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.Natural}
+						{
+							UIElement[Natural@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[Natural@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[Natural@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting Natural TRUE]
+								Script[myprices].VariableScope.Natural:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting Natural FALSE]
+								Script[myprices].VariableScope.Natural:Set[FALSE]
 							}
 						</OnLeftClick>
 					</checkbox>
