@@ -70,6 +70,7 @@ function Class_Declaration()
   declare NoxiousMit bool script 0
   declare ElementMit bool script 0
   declare ArcaneMit bool script 0
+  declare ShiftForm int script 1
 
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
@@ -103,6 +104,7 @@ function Class_Declaration()
 	KeepMTHOTUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepMTHOTUp,FALSE]}]
 	KeepGroupHOTUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepGroupHOTUp,FALSE]}]
 	RaidHealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Raid Heals,TRUE]}]
+	ShiftForm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[ShiftForm,]}]
 
 	BuffBatGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBatGroupMember,]}]
 	BuffInstinctGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffInstinctGroupMember,]}]
@@ -424,7 +426,7 @@ function Combat_Routine(int xAction)
 		call CheckHeals
 	}
 
-	if ${DoHOs}
+	if ${DoHOs} && ${OffenseMode}
 	{
 		objHeroicOp:DoHO
 	}

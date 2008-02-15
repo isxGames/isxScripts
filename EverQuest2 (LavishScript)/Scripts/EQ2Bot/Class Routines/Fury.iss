@@ -58,7 +58,7 @@ function Class_Declaration()
 	declare KeepMTHOTUp bool script 0
 	declare KeepGroupHOTUp bool script 0
 	declare RaidHealMode bool script 1
-
+	declare ShiftForm int script 1
 
 	declare BuffBatGroupMember string script
 	declare BuffSavageryGroupMember string script
@@ -151,7 +151,7 @@ function Combat_Init()
 	Power[1,2]:Set[100]
 	SpellRange[1,1]:Set[95]
 	SpellRange[1,2]:Set[97]
-	
+
 	Action[2]:Set[AoE]
 	MobHealth[2,1]:Set[5]
 	MobHealth[2,2]:Set[100]

@@ -65,6 +65,9 @@ function Class_Declaration()
 	declare ShardRequestTimer int script ${Time.Timestamp}
 	declare ShardType string script
 
+        variable(script) bool Undead_Army = TRUE
+        variable(script) bool Auto_Res = TRUE
+
 	call EQ2BotLib_Init
 
 	AddTrigger DequeueShardRequest "Target already has a necromancer heart item!"
@@ -82,6 +85,8 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Debuffs,FALSE]}]
 	HealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Heal Others,FALSE]}]
+        Undead_Army:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Undead_Army, TRUE]}
+        Auto_Res:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Auto Res, TRUE]}
 
 	switch ${SpellType[360]}
 	{
@@ -460,7 +465,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case UndeadTide
-			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.ToActor.Pet(exists)} && ${PetMode}
+			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.ToActor.Pet(exists)} && ${PetMode} && ${Undead_Army}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
@@ -846,14 +851,14 @@ function CheckHeals()
 	tempgrp:Set[1]
 	do
 	{
-		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
+		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Auto_Res}
 		{
 			call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
 		}
 	}
-	while ${tempgrp:Inc}<${grpcnt} && ${Me.Ability[${SpellType[300]}].IsReady}
+	while ${tempgrp:Inc}<${grpcnt} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Auto_Res}
 
-	if ${Me.InRaid} && ${Me.Ability[${SpellType[300]}].IsReady}
+	if ${Me.InRaid} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Auto_Res}
 	{
 		;Res Fallen RAID members only if in range
 		grpcnt:Set[${Me.RaidCount}]

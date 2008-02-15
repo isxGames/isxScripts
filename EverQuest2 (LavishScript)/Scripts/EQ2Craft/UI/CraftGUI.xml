@@ -137,7 +137,7 @@
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
 								<!--	<Font>
-										<Name>terminal</Name>
+										<Name>Times New Roman</Name>
 										<Size>18</Size>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
@@ -177,16 +177,16 @@
 									<Width>150</Width> 
 									<Height>20</Height>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<Text>Sort Order:</Text> 
 								</Text>
 								<Checkbox Name='Sort Name' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>110</X>
@@ -206,8 +206,8 @@
 								</Checkbox>
 								<Checkbox Name='Sort Level' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>200</X>
@@ -235,8 +235,8 @@
 								</Textentry>
 								<Text Name='Dash Label'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>340</X> 
@@ -263,8 +263,8 @@
 								</Textentry>
 								<Text Name='Quantity Label'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>18</X> 
@@ -298,8 +298,8 @@
 								<Text Name='Resume Label'>
 									<Visible>0</Visible>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FF22FF22</Color>
 									</Font>
 									<X>25</X> 
@@ -311,8 +311,8 @@
 								<Commandcheckbox Name='Save List' Template='EQ2.Commandcheckbox'>
 									<Visible>0</Visible>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>180</X>
@@ -326,8 +326,8 @@
 								</Commandcheckbox>
 								<Text Name='Filter Label'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>5%</X> 
@@ -338,8 +338,8 @@
 								</Text>
 								<Checkbox Name='Standard Filter' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>17%</X>
@@ -374,8 +374,8 @@
 								</checkbox>
 								<Checkbox Name='Imbued Filter' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>37%</X>
@@ -410,8 +410,8 @@
 								</checkbox>
 								<Checkbox Name='Rare Filter' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>57%</X>
@@ -447,8 +447,8 @@
 								<Checkbox Name='Secondary Tradeskill' Template='EQ2.Commandcheckbox'>
 									<Visible>0</Visible>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>77%</X>
@@ -483,8 +483,8 @@
 								<Text Name='Gauge Label'>
 									<Visible>0</Visible>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>30%</X> 
@@ -512,7 +512,7 @@
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
 								<!--	<Font>
-										<Name>terminal</Name>
+										<Name>Times New Roman</Name>
 										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
@@ -533,8 +533,8 @@
 									<Width>350</Width> 
 									<Height>20</Height>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<Text>Remove selected Recipes from the queue</Text> 
@@ -555,11 +555,11 @@
 									<Width>350</Width> 
 									<Height>20</Height>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>Add ALL Level      Recipes X Qty:</Text> 
+									<Text>Add ALL Level                 Recipes X Qty:</Text> 
 								</Text>
 								<Textentry Name='Qty Level Value' Template='EQ2.Textentry'>
 									<X>300</X>
@@ -633,8 +633,8 @@
 								<Text Name='Gauge List Label'>
 									<Visible>0</Visible>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>30%</X> 
@@ -656,8 +656,8 @@
 							<Tab Name='Options'>
 								<Text Name='Quality Level'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>8%</X> 
@@ -669,8 +669,8 @@
 								</Text>
 								<Commandcheckbox Name='Quality 1' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>35%</X>
@@ -684,8 +684,8 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='Quality 2' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>50%</X>
@@ -699,8 +699,8 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='Quality 3' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>65%</X>
@@ -714,8 +714,8 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='Quality 4' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>80%</X>
@@ -729,15 +729,15 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='Power Check' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
 									<Y>20</Y>
 									<Width>100</Width>
 									<Height>20</Height>
-									<Text>Wait for Power to Regenerate to:       % before crafting Recipe</Text>
+									<Text>Wait for Power to Regenerate to:         %                before crafting Recipe</Text>
 									<Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WaitforPower]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WaitforPower]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WaitforPower]}</Data>
@@ -752,8 +752,8 @@
 								</Textentry>
 								<Commandcheckbox Name='Current Table' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -767,8 +767,8 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='Move to Vendor' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -782,8 +782,8 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='Camp Out' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -805,8 +805,8 @@
 								</Textentry>
 								<Commandcheckbox Name='Show All Lists' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -820,8 +820,8 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='Prompt Resume' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -837,8 +837,8 @@
 							<Tab Name='Special'>
 								<Commandcheckbox Name='BuyCommon' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -852,8 +852,8 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='BuyFuel' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -867,15 +867,15 @@
 								</Commandcheckbox>
 								<Commandcheckbox Name='BuyHarvest' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
 									<Y>50</Y>
 									<Width>150</Width>
 									<Height>20</Height>
-									<Text>Buy ALL Harvests from Broker to a MAX PRICE:         (Silver)</Text>
+									<Text>Buy ALL Harvests from Broker to a MAX PRICE:                               (Silver) </Text>
 									<Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]}</Data>
@@ -890,8 +890,8 @@
 								</Textentry>
 								<Commandcheckbox name='Auto Transmute' Template='EQ2.Commandcheckbox'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -905,8 +905,8 @@
 								</Commandcheckbox>
 								<Text Name='Writ Count Label'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>15</X> 
@@ -925,8 +925,8 @@
 								</Textentry>
 								<Text Name='Writ Qty Label'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>135</X> 
@@ -945,8 +945,8 @@
 								</Textentry>
 								<Text Name='Tier Label'>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>242</X> 
@@ -992,8 +992,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
+										<Name>Times New Roman</Name>
+										<Size>15</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<Text>Automatic Crafting Bot v${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]}</Text>
@@ -1005,8 +1005,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
+										<Name>Times New Roman</Name>
+										<Size>15</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<Text>by Blazer</Text>
@@ -1018,8 +1018,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
+										<Name>Times New Roman</Name>
+										<Size>15</Size>
 										<Color>FFFFFF00</Color>
 									</Font>
 									<Text>ISXEQ2 was created by Amadeus</Text>
@@ -1031,8 +1031,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
+										<Name>Times New Roman</Name>
+										<Size>15</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<Text>For more Information Please see</Text>
@@ -1044,8 +1044,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>15</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<Text>http://www.ismods.com/wiki/index.php/ISXEQ2</Text>
@@ -1057,8 +1057,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
+										<Name>Times New Roman</Name>
+										<Size>15</Size>
 										<Color>FFFFFF00</Color>
 									</Font>
 									<Text>An enormous amount of work went into this project</Text>
@@ -1070,8 +1070,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+										<Name>Times New Roman</Name>
+										<Size>14</Size>
 										<Color>FFFFFF00</Color>
 									</Font>
 									<Text>PayPal donations can be made to:</Text>
@@ -1083,8 +1083,8 @@
 									<Height>15</Height>
 									<Alignment>Center</Alignment>
 									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
+										<Name>Times New Roman</Name>
+										<Size>15</Size>
 										<Color>FFFFFF00</Color>
 									</Font>
 									<Text>blazertoo@hotmail.com</Text>
@@ -1113,8 +1113,8 @@
 								<Width>410</Width>
 								<Height>340</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>12</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 								</Font>
 								<Texture />
 								<SelectMultiple>1</SelectMultiple>
@@ -1135,11 +1135,11 @@
 								<Width>100%</Width>
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
-								<Text>Time to wait between combines:       seconds</Text>
+								<Text>Time to wait between combines:                             seconds</Text>
 							</Text>
 							<Textentry Name='Craft Delay' Template='EQ2.Textentry'>
 								<X>205</X>
@@ -1156,8 +1156,8 @@
 								<Height>20</Height>
 								<Alignment>Center</Alignment>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>-= Durability Threshold for Standard and Rare Recipes =-</Text>
@@ -1168,11 +1168,11 @@
 								<Width>100%</Width>
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
-								<Text>* Standard Quality 1:       %   * Rare Quality 1:       %</Text>
+								<Text>* Standard Quality 1:       %              * Rare Quality 1:       %</Text>
 							</Text>
 							<Textentry Name='Standard Quality1' Template='EQ2.Textentry'>
 								<X>153</X>
@@ -1196,11 +1196,11 @@
 								<Width>100%</Width>
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
-								<Text>* Standard Quality 2:       %   * Rare Quality 2:       %</Text>
+								<Text>* Standard Quality 2:       %              * Rare Quality 2:       %</Text>
 							</Text>
 							<Textentry Name='Standard Quality2' Template='EQ2.Textentry'>
 								<X>153</X>
@@ -1224,12 +1224,12 @@
 								<Width>100%</Width>
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 							<!--	<Text>* Standard Quality 3:       %   * Rare Quality 3:       %</text> -->
-								<Text>  * Standard Power 3:       %     * Rare Power 3:       %</Text>
+								<Text>  * Standard Power 3:       %              * Rare Power 3:       %</Text>
 							</Text>
 							<Textentry Name='Standard Quality3' Template='EQ2.Textentry'>
 								<X>153</X>
@@ -1253,8 +1253,8 @@
 								<Width>100%</Width>
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>* Standard Quality 4:       %   * Rare Quality 4:       %</Text>
@@ -1318,8 +1318,8 @@
 								<Width>83%</Width>
 								<Height>62</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 								</Font>
 								<Texture />
 								<SelectMultiple>1</SelectMultiple>
@@ -1339,8 +1339,8 @@
 								<Width>83%</Width>
 								<Height>60</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 								</Font>
 								<SelectMultiple>1</SelectMultiple>
 								<Texture />
@@ -1360,8 +1360,8 @@
 								<Width>83%</Width>
 								<Height>60</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 								</Font>
 								<SelectMultiple>1</SelectMultiple>
 								<Texture />
@@ -1381,8 +1381,8 @@
 								<Width>83%</Width>
 								<Height>115</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+									<Name>Times New Roman</Name>
+									<Size>14</Size>
 								</Font>
 								<SelectMultiple>1</SelectMultiple>
 								<Texture />
@@ -1403,8 +1403,8 @@
 								<Width>100%</Width> 
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
+									<Name>Times New Roman</Name>
+									<Size>15</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>Select a Recipe from the drop down list.</Text> 
@@ -1415,8 +1415,8 @@
 								<Width>100%</Width> 
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
+									<Name>Times New Roman</Name>
+									<Size>15</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>You may sort the list by Name or Level.</Text> 
@@ -1427,8 +1427,8 @@
 								<Width>100%</Width> 
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
+									<Name>Times New Roman</Name>
+									<Size>15</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>Select the Quantity for the Recipe.</Text>
@@ -1439,8 +1439,8 @@
 								<Width>100%</Width> 
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
+									<Name>Times New Roman</Name>
+									<Size>15</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>Click Add Recipe to add it to the craft list.</Text>
@@ -1451,8 +1451,8 @@
 								<Width>100%</Width> 
 								<Height>20</Height>
 								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
+									<Name>Times New Roman</Name>
+									<Size>18</Size>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>** You can select multiple recipes also **</Text>
@@ -1482,7 +1482,7 @@
 						<Width>386</Width>
 						<Height>420</Height>
 						<Font>
-							<Name>terminal</Name>
+							<Name>Times New Roman</Name>
 							<Size>11</Size>
 						</Font>
 						<SelectMultiple>1</SelectMultiple>
@@ -1527,8 +1527,8 @@
 			<checkbox Name='Camp Now' Template='EQ2.Commandcheckbox'>
 				<visible>0</visible>
 				<Font>
-					<Name>terminal</Name>
-					<Size>10</Size>
+					<Name>Times New Roman</Name>
+					<Size>14</Size>
 					<Color>FFEBDEAA</Color>
 				</Font>
 				<X>85</X>
