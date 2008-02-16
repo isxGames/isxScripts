@@ -184,11 +184,11 @@
 			<Item Value='3'>Treant</Item>
 		</items>
 		<OnLoad>
-			This.ItemByText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[ShiftForm]}]:Select
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[ShiftForm]}]:Select
 		</OnLoad>
 		<OnSelect>
-			Script[EQ2Bot].Variable[ShiftForm]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[ShiftForm,${This.SelectedItem.Text}]:Save</OnSelect>
+			Script[EQ2Bot].Variable[ShiftForm]:Set[${This.SelectedItem.Value}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[ShiftForm,${This.SelectedItem.Value}]:Save</OnSelect>
 		<OnLeftClick></OnLeftClick>
 	</combobox>
 	<Text Name='lblBuffBatGroupMember' Template='EQ2.text'>
