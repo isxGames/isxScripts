@@ -34,6 +34,7 @@
 ; Automated BOT for any class.
 ; Syntax: run eq2bot
 ;-----------------------------------------------------------------------------------------------
+ext -require isxeq2
 ;===================================================
 ;===        Keyboard Configuration              ====
 ;===================================================
@@ -204,10 +205,9 @@ variable int PathType
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
 #include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
 
+
 function main()
 {
-	ext -require isxeq2
-
 	variable int tempvar
 	variable int tempvar1
 	variable int tempvar2
@@ -409,7 +409,7 @@ function main()
 				}
 
 				;disable autoattack if not in combat
-				if ${tempvar}<40 && ${Me.AutoAttackOn}
+				if ${tempvar}<40 && ${Me.AutoAttackOn} && !${Mob.Detect}
 				{
 					EQ2Execute /toggleautoattack
 				}
@@ -556,7 +556,7 @@ function main()
 				}
 				else
 				{
-					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.IsAggro} && ${Target.InCombatMode}
+					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.IsAggro} && ${Target.InCombatMode} && ${Target.Distance}<8
 					{
 						call Combat
 					}
@@ -2696,11 +2696,11 @@ objectdef ActorCheck
 
 		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
-			;Check if mob is aggro on group or pet
+			;echo Check if mob is aggro on group or pet
 			tempvar:Set[1]
 			do
 			{
-				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].PetID}
+				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].PetID} && ${Me.Group[${tempvar}].PetID(exists)})
 				{
 					return TRUE
 				}
@@ -2714,11 +2714,7 @@ objectdef ActorCheck
 				tempvar:Set[1]
 				do
 				{
-					;if ${tempvar}==1 || ${tempvar}==7
-					;{
-					;	echo ${tempvar} ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)}
-					;}
-					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
+					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)})
 					{
 						;echo aggro detected on raid
 						return TRUE

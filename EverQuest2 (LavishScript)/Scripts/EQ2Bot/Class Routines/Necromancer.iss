@@ -38,6 +38,17 @@
 ; Uses ThermalShocker if exists
 ; Uses FD and Cancels as needed
 ;*************************************************************
+;Groups: In groups, I am usually up against Yodo or another wizard.. So I throw out my Torrential Pestilence and if safe
+; Infernal Cloud first, then spam Abate Life, Death Rot, and Deathly Coil, by the time Coil is done casting the others are
+; back up, repeat if you can.  In groups the mobs drop fast.  So you have to move fast.  This heavy AoE casting lineup gets
+; a DoT on the group while I nuke with whats left.
+
+;Raids:  Raiding is a whole lot diff than grouping, as you all well know.  I start out as SOON as the tank pulls with
+; Loathsome Mark and Dooming Darkness (debuffs), by the time they are done casting the Assist call has been made.  I'll toss
+; out Abate Life, Death Rot, Coil, THEN Torr Pest and if SAFE Infernal Cloud.  Play with your order, time it so that you are
+; hitting Abate and Rot as often as they come up with Torr Pest then Coil
+
+
 
 
 #ifndef _Eq2Botlib_
@@ -65,8 +76,8 @@ function Class_Declaration()
 	declare ShardRequestTimer int script ${Time.Timestamp}
 	declare ShardType string script
 
-        variable(script) bool Undead_Army = TRUE
-        variable(script) bool Auto_Res = TRUE
+  declare Undead_Army bool script TRUE
+  declare Auto_Res bool script TRUE
 
 	call EQ2BotLib_Init
 
@@ -85,8 +96,8 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Debuffs,FALSE]}]
 	HealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Heal Others,FALSE]}]
-        Undead_Army:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Undead_Army, TRUE]}
-        Auto_Res:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Auto Res, TRUE]}
+	Undead_Army:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Undead_Army, TRUE]}
+	Auto_Res:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Auto Res, TRUE]}
 
 	switch ${SpellType[360]}
 	{
@@ -593,13 +604,13 @@ function Post_Combat_Routine(int xAction)
 
 }
 
-function Have_Aggro()
+function Have_Aggro(int aggroid)
 {
 
 	if ${Me.InCombat}
 	{
 		call CastSpellRange 349
-		wait 50
+		wait 10
 	}
 
 	if !${TellTank} && ${WarnTankWhenAggro}
@@ -915,14 +926,6 @@ function CureGroupMember(int gMember)
 		}
 	}
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].ToActor(exists)}
-}
-
-function QueueHeartRequest(string line, string sender)
-{
-	if ${Actor[${sender}](exists)}
-	{
-		ShardQueue:Queue[${sender}]
-	}
 }
 
 function QueueShardRequest(string line, string sender)
