@@ -584,7 +584,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 		case 8
 			if (${Message.Upper.Find[SHARD]} || ${Message.Upper.Find[HEART]}) && ${Me.SubClass.Equal[summoner]}
 			{
-				call QueueShardRequest 1 ${Speaker}
+				call QueueShardRequest ${Speaker} ${Speaker}
 			}
 			break
 		default

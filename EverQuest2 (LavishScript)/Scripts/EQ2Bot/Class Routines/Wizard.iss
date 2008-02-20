@@ -534,7 +534,7 @@ function RefreshPower()
 		call UseItem "Stein of the Everling Lord"
 	}
 
-	if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>20
+	if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>20 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 	{
 		call CastSpellRange 309
 	}

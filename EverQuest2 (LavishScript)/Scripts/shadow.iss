@@ -17,6 +17,7 @@
 ;===================================================
 variable string forward=w
 variable int FollowTask
+#define QUIT f7
 
 function main(string ShadowTarget, float srange)
 {
@@ -49,7 +50,7 @@ function FastMove(float X, float Z, float range)
 		return "INVALIDLOC"
 	}
 
-	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>25
+	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>35
 	{
 		return "INVALIDLOC"
 	}
