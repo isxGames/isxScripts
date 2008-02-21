@@ -34,7 +34,6 @@
 ; Automated BOT for any class.
 ; Syntax: run eq2bot
 ;-----------------------------------------------------------------------------------------------
-ext -require isxeq2
 ;===================================================
 ;===        Keyboard Configuration              ====
 ;===================================================
@@ -208,6 +207,7 @@ variable int PathType
 
 function main()
 {
+	ext -require isxeq2
 	variable int tempvar
 	variable int tempvar1
 	variable int tempvar2
