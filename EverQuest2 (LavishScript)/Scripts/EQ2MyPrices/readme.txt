@@ -84,7 +84,8 @@ other times they won't be - there doesn't seem to be any pattern for this I can 
 The Sell TAB
 ============
 
-There are 7 tickboxes 
+tickboxes 
+=========
 
 Auto-Match Lower Prices
 -----------------------
@@ -138,7 +139,7 @@ it off , this way I get to see what your options are set to on the Sell tab also
 Natural Scan
 ------------
 
-This makes the script act in a more natural way , items aren't scanned in a particular order , pauses between broker checks for each
+This makes the script act in a more natural way , items aren't scanned in a particular order , there are pauses between broker checks for each
 item in your list , the pause between automatic scans is randomised somewhat.
 
 
@@ -148,8 +149,8 @@ Delay in Minutes
 Enter a value here to make the script pause this number of minutes between scans if Auto-Loop is toggled on.
 
 
-There are 3 Buttons.
-
+Buttons
+=======
 
 Start Scanning
 --------------
@@ -175,6 +176,9 @@ Next time you run craft you can choose 'myprices' from the list under the Advanc
 and you can then start crafting what you need.
 
 typing /craft myprices  will also start craft and auto-load the myprices list then start crafting automatically. 
+
+
+
 
 
 The Sell TAB
