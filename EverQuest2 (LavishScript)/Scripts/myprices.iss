@@ -267,6 +267,7 @@ function main()
 										MinBasePrice:Set[${MerchPrice}]
 										call StringFromPrice ${MerchPrice}
 										call AddLog "${currentitem} : Merchant Would buy for  more : ${Return}" FFFF0000
+										call SetColour ${currentpos} FFFF0000
 									}
 									; **** if that price is Less than the price you are willing to sell for , don't do anything
 									if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
@@ -293,8 +294,8 @@ function main()
 								; **** if you are selling an item lower than the next lowest price
 								elseif ${MyPrice}<${MinPrice}
 								{
-									; Set the colour of the listbox line to yellow
-									call SetColour ${currentpos} FFFCD116
+									; Set the colour of the listbox line to green initially
+									call SetColour ${currentpos} FF00FF00
 									; if you have told the script to match higher prices or the item was unlisted
 									if ${IncreasePrice} || ${ItemUnlisted}
 									{
@@ -303,6 +304,7 @@ function main()
 											call StringFromPrice ${MinBasePrice}
 											call AddLog "${currentitem} : Price to match is ${Return} :" FF00FF00
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+											
 										}
 										else
 										; if the item was unlisted then update your sale price
@@ -372,18 +374,18 @@ function main()
 				; Mark position in list as scanned
 				Scanned[${currentpos}]:Set[TRUE]
 				; Choose the next item in the list to be looked at
-				if ${Natural}
+				if ${Natural} && ${currentcount} < ${numitems}
 				{
 					call ChooseNextItem ${numitems}
 					currentpos:Set[${Return}]
-					wait ${Math.Rand[50]}
+					wait ${Math.Rand[60]}
 				}
 				else
 				{
 					currentpos:Inc
 				}
 			}
-			while ${currentcount:Inc} < ${numitems} && ${Pausemyprices} == FALSE
+			while ${currentcount:Inc} <= ${numitems} && ${Pausemyprices} == FALSE
 		}
 		; Script starts to scan for items to buy if flagged.
 		if ${BuyItems}
@@ -1424,7 +1426,7 @@ function savebuyinfo()
 	Declare startlevel int local
 	Declare endlevel int local
 
-	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Buyname].Text}]
+	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyName].Text}]
 	itemnumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyNumber].Text}]
 	Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinPlatPrice].Text}]
 	Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
@@ -1746,47 +1748,59 @@ objectdef BrokerBot
 ;search your current broker boxes for existing stacks of items and see if theres room for more
 function placeitem(string itemname)
 {
-	echo sorry , this function still being worked on
-	/*
-	variable int xvar
+	echo sorry , this function still being worked on 95% complete
+/*	variable int xvar
 	Declare i int local
 	Declare space int local
 	Declare numitems int local
 	Declare storebox int local
-	
+	Declare maxspaces int local -1
+	Declare currenttotal int local
 	storebox:Set[0]
 		
 	Me:CreateCustomInventoryArray[nonbankonly]
 
-	if ${Me.CustomInventory[ExactName,${itemname}].Quantity} > 0
+	call numinventoryitems "${itemname}"
+	numitems:Set[${Return}]
+
+	; if there are items to be placed
+	if ${numitems} > 0
 	{
-		numitems:Set[${Me.CustomInventory[ExactName,${itemname}].Quantity}]
+		echo We have ${numitems} ${itemname} to place
 		i:Set[1]
 		do
 		{
-			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
 			call FindItem ${i} "${itemname}"
 			if ${Return} != -1
 			{
-				Echo there are ${Return} ${itemname} already in box ${i} with ${space} spaces free
-				if ${Return} > ${numitems}
+				space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+				Echo there are ${itemname} already in box ${i} with ${space} spaces free
+				if ${space} > ${numitems}
 				{
 					storebox:Set[${i}]
 					break
 				}
+				else
+				{
+					Echo there is not enough room for the rest of the items - checking for another box with enough free space
+				}
 			}
 		}
 		while ${i:Inc} <= 6
+		
 		if ${storebox} !=0
 		{
-			echo put all items in the box number ${storebox}
+			Echo Place ${itemname} in Storebox ${storebox}
+			call placeitems "${itemname}" ${storebox} ${numitems}
 		}
 		else
 		{
+			; check for a box with enough space to fit them all
+			Echo There are no ${itemname} on your broker list
 			i:Set[1]
 			do
 			{
-				space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}] 
+				space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
 				if ${space} > ${numitems}
 				{
 					storebox:Set[${i}]
@@ -1794,26 +1808,101 @@ function placeitem(string itemname)
 				}
 			}
 			while ${i:Inc} <= 6
-		}
-		if ${storebox} !=0
-		{
-			call FindItem ${storebox} "${itemname}"
-
-			xvar:Set[1]
-			do
+			; there is a box with space to fit all the items
+			if ${storebox} != 0
 			{
-				if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
-				{
-					echo Placing ${Me.CustomInventory[${xvar}].Quantity} ${itemname} in box ${storebox}
-					Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity}]
-					wait 50
-
-				}
+				call placeitems "${itemname}" ${storebox} ${numitems}
 			}
-			while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
+			else
+			{
+				; no box has enough room for all items so place items where there are spaces
+				currenttotal:Set[${numitems}]
+				do
+				{
+					call boxwithmostspace
+					storebox:Set[${Return}]
+					if ${Return} == -1
+					{
+						Echo sorry you're out of space
+						break
+					}
+					else
+					{
+						space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+						call placeitems "${itemname}" ${storebox} ${space}
+					}
+				}
+				while ${currenttotal} > 0
+			}
 		}
 	}
 */
+}
+
+function placeitems(string itemname, int box, int numitems)
+{
+	; attempts to place the items in the defined box
+	Declare xvar int local 1
+	Declare lasttotal int local
+	Declare errorcount int local 0
+	call echolog "placing ${numitems} ${itemname} in box ${box}"
+	do
+	{
+		if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
+		{
+			lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+			Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box}]
+			; make the script wait till the box total has changed (item was added)
+			; skips to the next item if nothing changes within 100 frames (one of the items was unplaceable)
+			errorcount:Set[0]
+			do
+			{
+				waitframe
+				errorcount:Inc
+			}
+			while ${Me.Vending[${box}].UsedCapacity} == ${lasttotal} && ${errorcount} < 100
+			numitems:Dec
+		}
+	}
+	while ${xvar:Inc}<=${Me.CustomInventoryArraySize} && ${numitems} > 0
+}
+
+function numinventoryitems(string itemname)
+{
+	; returns the number of stacks of items in your inventory
+	Declare xvar int local 1
+	Declare numitems int local 0
+	
+	Echo Scanning inventory for ${itemname}
+
+	do
+	{
+		if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
+		{
+			numitems:Inc
+		}
+	}
+	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
+	return ${numitems}
+}
+
+function boxwithmostspace()
+{
+	; returns the number of the vendor box with the most free space
+	Declare i int local 1
+	Declare space int local 1
+	Declare max int local -1
+	do
+	{
+		space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+		if ${space} > ${max} && ${space} > 0
+		{
+			max:Set[${i}]
+			break
+		}
+	}
+	while ${i:Inc} <= 6
+	return ${max}
 }
 
 function resetscanned()
