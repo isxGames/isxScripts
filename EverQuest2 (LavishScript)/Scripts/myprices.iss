@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.11f(5) : Started 27 Nov 2007 : released 15 Feb 2008
+; Version 0.11f(7) : Started 27 Nov 2007 : released 24 Feb 2008
 ;
 ; Declare Variables
 ;
@@ -535,6 +535,7 @@ function buy(string tabname, string action)
 	Declare CraftItem bool local
 	Declare CraftStack int local
 	Declare CraftMinTotal int local
+	Declare CraftRecipe string local
 	Declare Harvest bool local
 
 	if ${tabname.Equal["Buy"]}
@@ -614,6 +615,9 @@ function buy(string tabname, string action)
 								Case Stock
 									CraftMinTotal:Set[${BuyNameIterator.Value}]
 									break
+								Case Recipe
+									CraftRecipe:Set[${BuyNameIterator.Value}]
+									break
 							}
 						}
 						while ${BuyNameIterator:Next(exists)}
@@ -642,7 +646,7 @@ function buy(string tabname, string action)
 							; if the item is marked as a craft one then check if the Minimum broker total has been reached
 							if ${CraftItem}
 							{
-								call checktotals "${BuyIterator.Key}" ${CraftStack} ${CraftMinTotal}
+								call checktotals "${BuyIterator.Key}" ${CraftStack} ${CraftMinTotal} "${CraftRecipe}"
 							}
 						}
 					}
@@ -659,9 +663,9 @@ function buy(string tabname, string action)
 }
 
 ; check to see if we need to make more craftable items to refil our broker stocks
-function checktotals(string itemname, int stacksize, int minlimit)
+function checktotals(string itemname, int stacksize, int minlimit, string Recipe)
 {
-	call echolog "-> checktotals ${itemname} ${stacksize} ${minlimit}"
+	call echolog "-> checktotals ${itemname} ${stacksize} ${minlimit} ${Recipe}"
 	; totals set (unsaved)
 	LavishSettings:AddSet[craft]
 	LavishSettings[craft]:AddSet[CraftItem]
@@ -687,8 +691,16 @@ function checktotals(string itemname, int stacksize, int minlimit)
 		}
 	if ${Makemore}>0
 		{
-		call AddLog "you need to make ${Makemore} more stacks of ${itemname}" FFCCFFCC
-		call addtocraft "${itemname}" ${Makemore}
+			call AddLog "you need to make ${Makemore} more stacks of ${itemname}" FFCCFFCC
+			; if an alternative recipe name is there then use that otherwise use the item name
+			if ${Recipe.Equal[NULL]}
+			{
+				call addtocraft "${itemname}" ${Makemore}
+			}
+			else
+			{
+				call addtocraft "${Recipe}" ${Makemore}
+			}
 		}
 	call echolog "<end> : checktotals "
 }
@@ -1185,9 +1197,9 @@ function pricefromstring()
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier)
+function Saveitem(string Saveset, string ItemName, float Money, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier, string Recipe)
 {
-	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${startlevel} ${endlevel} ${tier}"
+	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${startlevel} ${endlevel} ${tier} ${Recipe}"
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
 	{
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
@@ -1257,6 +1269,14 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 	{
 		Item:AddSetting[Stack,${Money}]
 		Item:AddSetting[Stock,${Number}]
+		if ${Recipe.Length} == 0
+		{
+		Item:AddSetting[Recipe,${ItemName}]
+		}
+		else
+		{
+		Item:AddSetting[Recipe,${Recipe}]
+		}
 	}
 
 	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
@@ -1473,10 +1493,12 @@ function savecraftinfo()
 {
 	call echolog "<start> : savecraftinfo"
 	Declare CraftName string local
+	Declare RecipeName string local
 	Declare CraftStack int local
 	Declare CraftNumber int local
 
 	CraftName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftName].Text}]
+	RecipeName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[RecipeName].Text}]
 	CraftStack:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftStack].Text}]
 	CraftNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftNumber].Text}]
 
@@ -1497,7 +1519,7 @@ function savecraftinfo()
 	else
 	{
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
-		call Saveitem Craft "${CraftName}" ${CraftStack} ${CraftNumber}
+		call Saveitem Craft "${CraftName}" ${CraftStack} ${CraftNumber} TRUE TRUE 0 0 0 "${RecipeName}"
 	}
 	call echolog "<end> : savecraftinfo"
 }
@@ -1610,6 +1632,7 @@ function ShowCraftInfo(int ItemID)
 {
 	call echolog "-> ShowCraftInfo ${ItemID}"
 	Declare LBoxString string local
+	Declare Recipe string local
 	Declare Stack int local
 	Declare Stock int local
 
@@ -1619,10 +1642,20 @@ function ShowCraftInfo(int ItemID)
 
 	CraftItemList:Set[${CraftList.FindSet["${LBoxString}"]}]
 
+	Recipe:Set[${CraftItemList.FindSetting[Recipe]}]
 	Stack:Set[${CraftItemList.FindSetting[Stack]}]
 	Stock:Set[${CraftItemList.FindSetting[Stock]}]
 
 	UIElement[CraftName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
+	if !${Recipe.Equal[NULL]}
+	{
+		UIElement[RecipeName@Craft@GUITabs@MyPrices]:SetText[${Recipe}]
+	}
+	else
+	{
+		UIElement[RecipeName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
+
+	}
 	UIElement[CraftStack@Craft@GUITabs@MyPrices]:SetText[${Stack}]
 	UIElement[CraftNumber@Craft@GUITabs@MyPrices]:SetText[${Stock}]
 	call echolog " <end> : ShowCraftInfo"

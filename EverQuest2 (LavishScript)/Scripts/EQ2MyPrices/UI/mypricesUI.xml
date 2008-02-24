@@ -1192,7 +1192,7 @@
 							Script[myprices]:QueueCommand[call buy Craft init]
 						</OnLeftClick>
 						<AutoTooltip>
-							Update/Add a new item
+							Rescan the list
 						</AutoTooltip>
 					</Commandbutton>
 					<Text Name='ErrorText' Template='EQ2.Text'>
@@ -1208,37 +1208,50 @@
 						<Height>20</Height>
 						<MaxLength>70</MaxLength>
 					</Text>
+					<Text Name='RecipeNameText' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>475</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Recipe Name</Text>
+					</Text>
+					<Textentry Name='RecipeName' Template='EQ2.Textentry'>
+						<X>105</X>
+						<Y>475</Y>
+						<Width>310</Width> 
+						<Height>20</Height>
+					</Textentry>
 					<Text Name='CraftStackText' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>485</Y>
+						<Y>505</Y>
 						<Width>80</Width> 
 						<Height>20</Height>
 						<Text>Craft Stack</Text>
 					</Text>
 					<Textentry Name='CraftStack' Template='EQ2.Textentry'>
 						<X>110</X>
-						<Y>485</Y>
+						<Y>505</Y>
 						<Width>50</Width> 
 						<Height>20</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Text Name='CraftNumberText' Template='EQ2.Text'>
 						<X>190</X>
-						<Y>485</Y>
+						<Y>505</Y>
 						<Width>80</Width> 
 						<Height>20</Height>
 						<Text>Stock Limit</Text>
 					</Text>
 					<Textentry Name='CraftNumber' Template='EQ2.Textentry'>
 						<X>260</X>
-						<Y>485</Y>
+						<Y>505</Y>
 						<Width>50</Width> 
 						<Height>20</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Commandbutton name='NoCraft' Template='EQ2.Commandbutton'> 
 						<X>340</X> 
-						<Y>485</Y> 
+						<Y>505</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Unset</Text>
@@ -1252,7 +1265,7 @@
 					</Commandbutton>
 					<Commandbutton name='SaveCraft' Template='EQ2.Commandbutton'> 
 						<X>340</X> 
-						<Y>505</Y> 
+						<Y>525</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>

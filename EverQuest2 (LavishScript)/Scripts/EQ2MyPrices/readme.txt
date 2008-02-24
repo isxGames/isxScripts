@@ -294,8 +294,6 @@ Plans for developing this script are the following:
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
 by more efficient code once it's all working as I want it to.
 
-Working more checks into the buy routine (Set max amount to spend in total each session , check for empty bag slots etc)
-
 
 Contact the author
 ------------------
@@ -309,6 +307,16 @@ The more feedback I get the better I know which direction to take this and the f
 Revisions
 =========
 
+Version 0.11f Rev 7
+-------------------
+
+Added an extra option under the craft tab , you can now enter an alternative name for a craft item if the name of the item
+and the craft recipe name are different , the alternative text is used to create the craft list instead of the item name.
+
+Version 0.11f Rev 6
+-------------------
+
+Various small bugfixes
 
 Version 0.11f Rev 5
 -------------------
