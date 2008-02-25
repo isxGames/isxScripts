@@ -693,7 +693,7 @@ function checktotals(string itemname, int stacksize, int minlimit, string Recipe
 		{
 			call AddLog "you need to make ${Makemore} more stacks of ${itemname}" FFCCFFCC
 			; if an alternative recipe name is there then use that otherwise use the item name
-			if ${Recipe.Equal[NULL]}
+			if ${Recipe.Equal[NULL]} || ${Recipe.Length} == 0
 			{
 				call addtocraft "${itemname}" ${Makemore}
 			}
