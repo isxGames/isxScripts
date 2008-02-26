@@ -537,6 +537,7 @@ function buy(string tabname, string action)
 	Declare CraftMinTotal int local
 	Declare CraftRecipe string local
 	Declare Harvest bool local
+	Declare Recipe string local
 
 	if ${tabname.Equal["Buy"]}
 	{
@@ -593,6 +594,7 @@ function buy(string tabname, string action)
 						; Scan the subset to get all the settings
 						CraftItem:Set[FALSE]
 						Harvest:Set[FALSE]
+						CraftRecipe:Set[NULL]
 						do
 						{
 							Switch "${BuyNameIterator.Key}"
