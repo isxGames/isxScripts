@@ -69,6 +69,19 @@ variable string InTrigger
 variable bool JoustStatus=FALSE
 variable bool BDStatus=FALSE
 
+;Potion vars
+variable bool UsePotions
+variable bool AWarn=TRUE
+variable bool EWarn=TRUE
+variable bool NWarn=TRUE
+variable bool TWarn=TRUE
+variable bool StartCure=FALSE
+variable string ArcanePotion
+variable string ElementalPotion
+variable string NoxiousPotion
+variable string TraumaPotion
+
+
 function EQ2BotLib_Init()
 {
 
@@ -81,6 +94,12 @@ function EQ2BotLib_Init()
 	DoHOs:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[DoHOs,FALSE]}]
 	RelaySession:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[RelaySession,""]}]
 	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]
+
+	UsePotions:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Use potions for cures?,FALSE]}]
+	ArcanePotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Arcane Potion Name,NULL]}]
+	ElementalPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Elemental Potion Name,NULL]}]
+	NoxiousPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Noxious Potion Name,NULL]}]
+	TraumaPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Trauma Potion Name,NULL]}]
 
 	;Triggers
 	AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
@@ -282,11 +301,11 @@ function Shard()
 
 	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<65 && ${Me.Inventory[${ShardTypeL}].IsReady}
 	{
-		Me.Inventory[${ShardType}]:Use
+		Me.Inventory[${ShardTypeL}]:Use
 		ShardRequested:Set[FALSE]
 	}
 
-	if !${Me.Inventory[${ShardType}](exists)} && !${ShardRequested} && ${ShardMode}
+	if !${Me.Inventory[${ShardTypeL}](exists)} && !${ShardRequested} && ${ShardMode}
 	{
 		ShardRequested:Set[TRUE]
 		EQ2Execute /tell ${ShardGroupMember} shard please
@@ -660,4 +679,111 @@ function FindHealer()
 	}
 
 	return ${healer}
+}
+
+function CheckCures()
+{
+    ; Create our custom inventory array so that we are up to date with quantities
+    ; Possible furture feature - use counts to determine if we should fallback to a lesser potion
+	Me:CreateCustomInventoryArray[nonbankonly]
+
+    ; incurable afflictions have a value of -1
+    ; so we test >=1 to insure we are not wasting potions
+	if ${Me.Arcane}>=1
+	{
+	    ; check to see if we have more of our selected potion
+		if ${Me.CustomInventory[${ArcanePotion}](exists)}
+		{
+			; Debug: echo casting arcane potion
+			call CastPotion "${ArcanePotion}"
+		}
+		else
+		{
+		    ; Display a messagebox to let us know if we have run out of potions
+		    ; Squelch causes error text to be hidden from console if we try to open
+		    ; more than one messagebox
+		    ; Possible future feature - move this to it's own function and give it audio feedback
+			if ${AWarn}
+			{
+				Squelch MessageBox -ok "You have run out of \${ArcanePotion}" 3 2
+				AWarn:Set[FALSE]
+			}
+		}
+	}
+
+	if ${Me.Elemental}>=1
+	{
+		if ${Me.CustomInventory[${ElementalPotion}](exists)}
+		{
+			; Debug: echo casting elemental potion
+			call CastPotion "${ElementalPotion}"
+		}
+		else
+		{
+			if ${EWarn}
+			{
+				Squelch MessageBox -ok "You have run out of \${ElementalPotion}" 3 2
+				EWarn:Set[FALSE]
+			}
+		}
+	}
+
+	if ${Me.Noxious}>=1
+	{
+		if ${Me.CustomInventory[${NoxiousPotion}](exists)}
+		{
+			; Debug: echo casting noxious potion
+			call CastPotion "${NoxiousPotion}"
+		}
+		else
+		{
+			if ${NWarn}
+			{
+				Squelch MessageBox -ok "You have run out of \${NoxiousPotion}" 3 2
+				NWarn:Set[FALSE]
+			}
+		}
+	}
+
+	if ${Me.Trauma}>=1
+	{
+		if ${Me.CustomInventory[${TraumaPotion}](exists)}
+		{
+			; Debug: echo casting trauma potion
+			call CastPotion "${TraumaPotion}"
+		}
+		else
+		{
+			if ${TWarn}
+			{
+				Squelch MessageBox -ok "You have run out of \${TraumaPotion}"
+				TWarn:Set[FALSE]
+			}
+		}
+	}
+}
+
+function CastPotion(string Item)
+{
+    ; Do not cast if we are moving or if the potion is not ready
+	if ${Me.IsMoving} || !${Me.Inventory[ExactName,"${Item}"].IsReady}
+	{
+		return
+	}
+
+    ; Use the potion
+	Me.Inventory[ExactName,"${Item}"]:Use
+
+	;if spells are being interupted do to movement
+	;increase the wait below slightly. Default=10
+	wait 10
+
+    ; wait until we have finished casting
+	do
+	{
+		waitframe
+	}
+	while ${Me.CastingSpell}
+
+	return SUCCESS
 }

@@ -746,8 +746,16 @@ function Mezmerise_Targets()
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	Target ${KillTarget}
-	wait 20 ${Me.ToActor.Target.ID}==${KillTarget}
+	if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
+	{
+		Target ${KillTarget}
+		wait 20 ${Me.ToActor.Target.ID}==${KillTarget}
+	}
+	else
+	{
+		EQ2Execute /target_none
+		KillTarget:Set[]
+	}
 }
 
 function DoCharm()
@@ -760,7 +768,6 @@ function DoCharm()
 
 	if ${Me.Maintained[${SpellType[351]}](exists)}
 	{
-
 		return
 	}
 
@@ -792,12 +799,13 @@ function DoCharm()
 	{
 		call CastSpellRange 351 0 0 0 ${CharmTarget}
 
-		Target ${KillTarget}
-		wait 20 ${Me.ToActor.Target.ID}==${KillTarget}
-
-		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)}
+		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
 		{
-			eq2execute /Pet Attack
+			ExecuteAtom PetAttack
+		}
+		else
+		{
+			EQ2Execute /target_none
 		}
 	}
 }
