@@ -250,7 +250,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	;check if we have a pet or a ooze not up
-	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
+	if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 		waitframe
@@ -332,7 +332,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[40]
+			return BuffComplete
 			break
 	}
 }
@@ -350,9 +350,14 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${Me.ToActor.Pet(exists)}
+	if ${Me.Pet(exists)}
 	{
 		ExecuteAtom PetAttack
+	}
+
+	if ${UsePotions}
+	{
+		call CheckCures
 	}
 
 	;maintain dots if target is heroic, or greater
@@ -649,7 +654,6 @@ function Cancel_Root()
 
 function RefreshPower()
 {
-	call Shard
 
 	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.Pet.IsAggro}
 	{
@@ -667,7 +671,7 @@ function RefreshPower()
 	}
 
 	;Necro Heart
-	if ${Me.Power}<80 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.ToActor.Power}<80 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 	}
@@ -692,6 +696,7 @@ function RefreshPower()
 		call UseItem "Stein of the Everling Lord"
 	}
 
+	call Shard
 }
 
 function CheckHeals()
@@ -728,9 +733,9 @@ function CheckHeals()
 	}
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<25
 	{
-		call CastSpellRange 300 0 1 0 ${Actor[${MainTankPC}].ID}
+		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
 	if ${HealMode}
@@ -862,7 +867,7 @@ function CheckHeals()
 	tempgrp:Set[1]
 	do
 	{
-		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Auto_Res}
+		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Auto_Res} && ${Me.Group[${tempgrp}].ToActor.Distance}<25
 		{
 			call CastSpellRange 300 0 0 0 ${Me.Group[${tempgrp}].ID} 1
 		}
@@ -876,9 +881,9 @@ function CheckHeals()
 		tempraid:Set[1]
 		do
 		{
-			if ${RaidMember[${tempraid}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
+			if  ${Actor[pc,exactname,${RaidMember[${tempraid}].Name}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Actor[pc,exactname,${RaidMember[${tempraid}].Name}].Distance}<25
 			{
-				call CastSpellRange 300 0 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
+				call CastSpellRange 300 0 0 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
 			}
 		}
 		while ${tempraid:Inc}<=24 && ${Me.Ability[${SpellType[300]}].IsReady}
@@ -993,11 +998,11 @@ function SummonPet()
 				break
 
 			case 4
-				call CastSpellRange 379
+				call CastSpellRange 395
 				break
 
 			case default
-				call CastSpellRange 395
+				call CastSpellRange 356
 				break
 		}
 		BuffCabalistCover:Set[TRUE]
@@ -1021,7 +1026,7 @@ function CheckEssense()
 	Me:CreateCustomInventoryArray[nonbankonly]
 	do
 	{
-		if ${Me.CustomInventory[${Counter}].Name.Equal[essense of anguish]}
+		if ${Me.CustomInventory[${Counter}].Name.Equal[essence of anguish]}
 		{
 			if ${StackFound}
 			{
