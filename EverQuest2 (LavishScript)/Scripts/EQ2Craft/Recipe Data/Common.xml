@@ -100,7 +100,7 @@
 		<Setting Name="rough jasper">jasper</Setting>
 		<Setting Name="palladium cluster">palladium</Setting>
 		<Setting Name="dandelion fiber">dandelion</Setting>
-		<Setting Name="severed fir">fir</Setting>
+		<Setting Name="severed fir">&quot;fir &quot;</Setting>
 		<Setting Name="feysteel cluster">feysteel</Setting>
 		<Setting Name="rough opal">opal</Setting>
 		<Setting Name="ruthenium cluster">ruthenium</Setting>
