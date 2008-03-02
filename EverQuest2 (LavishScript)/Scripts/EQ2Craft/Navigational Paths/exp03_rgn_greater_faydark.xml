@@ -1,0 +1,313 @@
+<?xml version='1.0'?>
+<Navigation>
+	<World Name="exp03_rgn_greater_faydark">
+		<Point Name="Broker">
+			<X>457.219116</X>
+			<Y>91.286407</Y>
+			<Z>357.729767</Z>
+			<Connection To="Intersection 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Chemistry Table 1">
+			<X>464.872467</X>
+			<Y>91.272339</Y>
+			<Z>361.889893</Z>
+			<Connection To="Intersection 3" />
+			<Connection To="Chemistry Table 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Chemistry Table 2">
+			<X>464.872467</X>
+			<Y>91.272339</Y>
+			<Z>361.889893</Z>
+			<Connection To="Chemistry Table 1" />
+			<Connection To="Chemistry Table 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Chemistry Table 3">
+			<X>464.872467</X>
+			<Y>91.272339</Y>
+			<Z>361.889893</Z>
+			<Connection To="Chemistry Table 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Engraved Desk 1">
+			<X>455.715363</X>
+			<Y>91.286407</Y>
+			<Z>354.144226</Z>
+			<Connection To="Wholesaler" />
+			<Connection To="Engraved Desk 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Engraved Desk 2">
+			<X>455.715363</X>
+			<Y>91.286407</Y>
+			<Z>354.144226</Z>
+			<Connection To="Engraved Desk 1" />
+			<Connection To="Engraved Desk 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Engraved Desk 3">
+			<X>455.715363</X>
+			<Y>91.286407</Y>
+			<Z>354.144226</Z>
+			<Connection To="Engraved Desk 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_10">
+			<X>455.810577</X>
+			<Y>95.039665</Y>
+			<Z>330.664246</Z>
+			<Connection To="exp03_rgn_greater_faydark_9" />
+			<Connection To="exp03_rgn_greater_faydark_11" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_11">
+			<X>460.940765</X>
+			<Y>97.300438</Y>
+			<Z>331.670685</Z>
+			<Connection To="exp03_rgn_greater_faydark_10" />
+			<Connection To="Stove &amp; Keg 1" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_20">
+			<X>458.599976</X>
+			<Y>91.219078</Y>
+			<Z>345.471710</Z>
+			<Connection To="Intersection 1" />
+			<Connection To="exp03_rgn_greater_faydark_21" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_21">
+			<X>459.297729</X>
+			<Y>91.216576</Y>
+			<Z>350.192200</Z>
+			<Connection To="exp03_rgn_greater_faydark_20" />
+			<Connection To="Intersection 3" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_31">
+			<X>461.047455</X>
+			<Y>91.213684</Y>
+			<Z>364.914124</Z>
+			<Connection To="Intersection 3" />
+			<Connection To="exp03_rgn_greater_faydark_32" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_32">
+			<X>456.012665</X>
+			<Y>92.101051</Y>
+			<Z>365.567780</Z>
+			<Connection To="exp03_rgn_greater_faydark_31" />
+			<Connection To="exp03_rgn_greater_faydark_33" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_33">
+			<X>451.794373</X>
+			<Y>94.677689</Y>
+			<Z>360.815460</Z>
+			<Connection To="exp03_rgn_greater_faydark_32" />
+			<Connection To="exp03_rgn_greater_faydark_35" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_35">
+			<X>454.753021</X>
+			<Y>97.435165</Y>
+			<Z>353.565155</Z>
+			<Connection To="exp03_rgn_greater_faydark_33" />
+			<Connection To="Intersection 4" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_8">
+			<X>451.991913</X>
+			<Y>91.215843</Y>
+			<Z>339.954956</Z>
+			<Connection To="Intersection 1" />
+			<Connection To="exp03_rgn_greater_faydark_9" />
+		</Point>
+		<Point Name="exp03_rgn_greater_faydark_9">
+			<X>450.595337</X>
+			<Y>92.171455</Y>
+			<Z>335.086151</Z>
+			<Connection To="exp03_rgn_greater_faydark_8" />
+			<Connection To="exp03_rgn_greater_faydark_10" />
+		</Point>
+		<Point Name="Forge 1">
+			<X>461.488922</X>
+			<Y>97.557533</Y>
+			<Z>342.877411</Z>
+			<Connection To="Intersection 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Forge 2">
+			<X>452.332764</X>
+			<Y>97.558601</Y>
+			<Z>339.691895</Z>
+			<Connection To="Intersection 2" />
+			<Connection To="Forge 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Forge 3">
+			<X>452.332764</X>
+			<Y>97.558601</Y>
+			<Z>339.691895</Z>
+			<Connection To="Forge 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Intersection 1">
+			<X>457.246857</X>
+			<Y>91.288544</Y>
+			<Z>340.051239</Z>
+			<Connection To="WorkOrder" />
+			<Connection To="Work Bench 1" />
+			<Connection To="exp03_rgn_greater_faydark_8" />
+			<Connection To="exp03_rgn_greater_faydark_20" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Intersection 2">
+			<X>459.412384</X>
+			<Y>97.499840</Y>
+			<Z>338.687286</Z>
+			<Connection To="Stove &amp; Keg 1" />
+			<Connection To="Forge 1" />
+			<Connection To="Sewing Table &amp; Mannequin 1" />
+			<Connection To="Forge 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Intersection 3">
+			<X>459.618500</X>
+			<Y>91.213684</Y>
+			<Z>356.179382</Z>
+			<Connection To="exp03_rgn_greater_faydark_21" />
+			<Connection To="Wholesaler" />
+			<Connection To="Broker" />
+			<Connection To="Chemistry Table 1" />
+			<Connection To="exp03_rgn_greater_faydark_31" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Intersection 4">
+			<X>459.920166</X>
+			<Y>97.459610</Y>
+			<Z>356.249695</Z>
+			<Connection To="exp03_rgn_greater_faydark_35" />
+			<Connection To="Woodworking Table 1" />
+			<Connection To="Woodworking Table 2" />
+			<Connection To="Sewing Table &amp; Mannequin 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="RushOrder">
+			<X>458.753143</X>
+			<Y>91.215790</Y>
+			<Z>335.839844</Z>
+			<Connection To="WorkOrder" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Sewing Table &amp; Mannequin 1">
+			<X>457.001160</X>
+			<Y>97.558701</Y>
+			<Z>342.658905</Z>
+			<Connection To="Intersection 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Sewing Table &amp; Mannequin 2">
+			<X>459.226624</X>
+			<Y>97.518173</Y>
+			<Z>363.628876</Z>
+			<Connection To="Intersection 4" />
+			<Connection To="Sewing Table &amp; Mannequin 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Sewing Table &amp; Mannequin 3">
+			<X>459.226624</X>
+			<Y>97.518173</Y>
+			<Z>363.628876</Z>
+			<Connection To="Sewing Table &amp; Mannequin 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Stove &amp; Keg 1">
+			<X>463.344299</X>
+			<Y>97.481857</Y>
+			<Z>335.057892</Z>
+			<Connection To="exp03_rgn_greater_faydark_11" />
+			<Connection To="Stove &amp; Keg 2" />
+			<Connection To="Intersection 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Stove &amp; Keg 2">
+			<X>463.344299</X>
+			<Y>97.481857</Y>
+			<Z>335.057892</Z>
+			<Connection To="Stove &amp; Keg 1" />
+			<Connection To="Stove &amp; Keg 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Stove &amp; Keg 3">
+			<X>463.344299</X>
+			<Y>97.481857</Y>
+			<Z>335.057892</Z>
+			<Connection To="Stove &amp; Keg 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Wholesaler">
+			<X>455.715363</X>
+			<Y>91.286407</Y>
+			<Z>354.144226</Z>
+			<Connection To="Intersection 3" />
+			<Connection To="Engraved Desk 1" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Woodworking Table 1">
+			<X>464.073853</X>
+			<Y>97.475578</Y>
+			<Z>355.123657</Z>
+			<Connection To="Intersection 4" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Woodworking Table 2">
+			<X>464.128571</X>
+			<Y>97.477554</Y>
+			<Z>359.672333</Z>
+			<Connection To="Intersection 4" />
+			<Connection To="Woodworking Table 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Woodworking Table 3">
+			<X>464.128571</X>
+			<Y>97.477554</Y>
+			<Z>359.672333</Z>
+			<Connection To="Woodworking Table 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Work Bench 1">
+			<X>460.989166</X>
+			<Y>91.263565</Y>
+			<Z>344.368164</Z>
+			<Connection To="Intersection 1" />
+			<Connection To="Work Bench 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Work Bench 2">
+			<X>460.989166</X>
+			<Y>91.263565</Y>
+			<Z>344.368164</Z>
+			<Connection To="Work Bench 1" />
+			<Connection To="Work Bench 3" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Work Bench 3">
+			<X>460.989166</X>
+			<Y>91.263565</Y>
+			<Z>344.368164</Z>
+			<Connection To="Work Bench 2" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="WorkOrder">
+			<X>458.753143</X>
+			<Y>91.215790</Y>
+			<Z>335.839844</Z>
+			<Connection To="Zone In" />
+			<Connection To="RushOrder" />
+			<Connection To="Intersection 1" />
+			<Note>keypoint</Note>
+		</Point>
+		<Point Name="Zone In">
+			<X>462.995758</X>
+			<Y>91.323524</Y>
+			<Z>338.600311</Z>
+			<Connection To="WorkOrder" />
+			<Note>keypoint</Note>
+		</Point>
+	</World>
+</Navigation>
