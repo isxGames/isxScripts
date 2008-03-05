@@ -735,7 +735,7 @@ function RefreshPower()
 	}
 
 	;Forced Canabalize
-	if ${Me.ToActor.Power}<85 && ${Me.InCombat}  && (!${PetMode} && !${OffenseMode})
+	if ${Me.ToActor.Power}<85 && ${Me.InCombat}  && !${Actor[${KillTarget}].Name.Upper.Find[DRUSELLA]}
 	{
 		call CastSpellRange 72 0 0 0 ${KillTarget}
 	}

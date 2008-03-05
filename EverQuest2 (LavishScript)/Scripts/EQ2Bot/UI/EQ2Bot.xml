@@ -660,15 +660,33 @@
 								<Text Name='Current Target' Template='EQ2.text'>
 									<X>5%</X>
 									<Y>10</Y>
-									<Width>90%</Width>
+									<Width>40%</Width>
 									<Height>25</Height>
-									<Alignment>Center</Alignment>
+									<Alignment>Left</Alignment>
 									<Wrap />
 									<Text>Current Target: ${If[${Script[EQ2Bot].Variable[MainTank]},${If[${Target(exists)},${Target.Name},No Target]},${If[${Actor[${Script[EQ2Bot].Variable[KillTarget]}](exists)},${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name},No Target]}]}</Text>
 								</Text>
+								<Text Name='Target Aggro' Template='EQ2.text'>
+									<X>50%</X>
+									<Y>10</Y>
+									<Width>25%</Width>
+									<Height>25</Height>
+									<Alignment>Left</Alignment>
+									<Wrap />
+									<Text>Aggro Status: ${Actor[${Target.ID}].IsAggro}</Text>
+								</Text>
+								<Text Name='Target Combat' Template='EQ2.text'>
+									<X>75%</X>
+									<Y>10</Y>
+									<Width>25%</Width>
+									<Height>25</Height>
+									<Alignment>Left</Alignment>
+									<Wrap />
+									<Text>InCombat: ${Actor[${Target.ID}].InCombatMode}</Text>
+								</Text>
 								<Text Name='Gained XP' Template='EQ2.text'>
 									<X>5%</X>
-									<Y>40</Y>
+									<Y>30</Y>
 									<Width>90%</Width>
 									<Height>10</Height>
 									<Alignment>Center</Alignment>
@@ -677,7 +695,7 @@
 								</Text>
 								<Text Name='status 3' Template='EQ2.text'>
 									<X>5%</X>
-									<Y>70</Y>
+									<Y>50</Y>
 									<Width>90%</Width>
 									<Height>10</Height>
 									<Alignment>Center</Alignment>

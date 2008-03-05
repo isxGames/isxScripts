@@ -207,7 +207,7 @@ variable int PathType
 
 function main()
 {
-	ext -require isxeq2
+	;ext -require isxeq2
 	variable int tempvar
 	variable int tempvar1
 	variable int tempvar2
@@ -377,7 +377,7 @@ function main()
 			;this should force the tank to react to any aggro, regardless
 			if ${Mob.Detect} && ${MainTank} && !${Me.IsMoving}
 			{
-				if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.IsAggro} && ${Target.InCombatMode}
+				if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
 				{
 					call Combat
 				}
@@ -556,7 +556,7 @@ function main()
 				}
 				else
 				{
-					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.IsAggro} && ${Target.InCombatMode} && ${Target.Distance}<8
+					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.InCombatMode} && ${Target.Distance}<8
 					{
 						call Combat
 					}
@@ -824,10 +824,10 @@ function Combat()
 		do
 		{
 			;these checks should be done before calling combat, once called, combat should insue, regardless.
-			;if !${Mob.ValidActor[${Target.ID}]} || !${Actor[${Target.ID}].InCombatMode}
-			;{
-			;	break
-			;}
+			if !${Actor[${Target.ID}].InCombatMode}
+			{
+				break
+			}
 
 			if ${Target.ID}!=${Me.ID} && ${Target(exists)}
 			{
@@ -951,8 +951,9 @@ function Combat()
 					}
 				}
 
-				if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead}
+				if ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0)
 				{
+					EQ2execute "/apply_verb ${Actor[${KillTarget}].ID} loot"
 					break
 				}
 
@@ -2042,7 +2043,7 @@ function IamDead(string Line)
 			waitframe
 		}
 		while ${EQ2.Zoning}
-
+		KillTarget:Set[]
 		wait 300
 	}
 	elseif ${WipeRevive}
@@ -2073,7 +2074,7 @@ function IamDead(string Line)
 							waitframe
 					}
 					while ${EQ2.Zoning}
-
+					KillTarget:Set[]
 					wait 100
 					echo "reloading config"
 					EQ2Bot:Init_Config
@@ -3876,6 +3877,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{
 		ChoiceWindow:DoChoice1
+		KillTarget:Set[]
 		return
 	}
 

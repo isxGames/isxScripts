@@ -180,7 +180,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[PetGuard]}</Data>
 	</Commandcheckbox>
 
-		<Commandcheckbox name='Use Potions'>
+		<Commandcheckbox name='Use Potions' Template='EQ2.Commandcheckbox'>
 			<X>5</X>
 			<Y>110</Y>
 			<Width>100</Width>
