@@ -440,6 +440,11 @@ function Combat_Routine(int xAction)
 	call CheckGroupHealth 60
 	if ${Return}
 	{
+		if ${BattleClericMode}
+		{
+			call CheckPosition 1 0
+		}
+
 		switch ${Action[${xAction}]}
 		{
 			case TheftOfVitality

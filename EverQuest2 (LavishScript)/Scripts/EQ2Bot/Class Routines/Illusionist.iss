@@ -225,7 +225,7 @@ function Buff_Routine(int xAction)
 	{
 		call CastSpellRange 333
 	}
-	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<50
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<55
 	{
 		Me.Maintained[${SpellType[333]}]:Cancel
 	}
@@ -384,10 +384,14 @@ function Buff_Routine(int xAction)
 		case AA_Perpetuality
 		case AA_Empathic_Aura
 		case AA_Empathic_Soothing
-			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+				wait 5
+			}
 			break
 		default
-			xAction:Set[40]
+			return BuffComplete
 			break
 	}
 }
@@ -409,7 +413,7 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 333
 	}
-	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<50
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<55
 	{
 		Me.Maintained[${SpellType[333]}]:Cancel
 	}
@@ -492,9 +496,9 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)} && ${spellsused}<4
+		if ${Me.Ability[${SpellType[388]}].IsReady} && !${Me.Maintained[${SpellType[388]}](exists)} && ${spellsused}<4
 		{
-			call CastSpellRange 92 0 0 0 ${KillTarget}
+			call CastSpellRange 388 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
