@@ -1017,33 +1017,29 @@ function Cancel_Root()
 function CureMe()
 {
 
-	if ${Me.Arcane}>0
+	if ${Me.Arcane}<0
 	{
 		call CastSpellRange 326
-		wait 3
-		if ${Me.Arcane}>0
-		{
-			call CastSpellRange 210 0 0 0 ${Me.ID}
-			return
-		}
 	}
 
-	if ${Me.Noxious}>0 ${Me.Ability[${SpellType[213]}].IsReady}
+	if ${Me.Arcane}>0 && ${Me.Ability[${SpellType[210]}].IsReady}
+	{
+		call CastSpellRange 210 0 0 0 ${Me.ID}
+	}
+
+	if ${Me.Noxious}>0 && ${Me.Ability[${SpellType[213]}].IsReady}
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
-		return
 	}
 
-	if ${Me.Elemental}>0 ${Me.Ability[${SpellType[211]}].IsReady}
+	if ${Me.Elemental}>0 && ${Me.Ability[${SpellType[211]}].IsReady}
 	{
-			call CastSpellRange 211 0 0 0 ${Me.ID}
-			return
+		call CastSpellRange 211 0 0 0 ${Me.ID}
 	}
 
-	if ${Me.Trauma}>0 ${Me.Ability[${SpellType[212]}].IsReady}
+	if ${Me.Trauma}>0 && ${Me.Ability[${SpellType[212]}].IsReady}
 	{
 		call CastSpellRange 212 0 0 0 ${Me.ID}
-		return
 	}
 
 
