@@ -798,7 +798,7 @@
 			{
 				do
 				{
-					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffPower]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
+					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffRedoubt]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
 				}
 				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
 			}

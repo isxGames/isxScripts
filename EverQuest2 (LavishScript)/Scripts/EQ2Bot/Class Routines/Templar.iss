@@ -507,11 +507,21 @@ function Combat_Routine(int xAction)
 			case Divine_Castigation
 			case Turn_Undead
 			case Stun
-			case Hammer
 			case Dot1
 			case Dot2
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${OffenseMode}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					}
+				}
+				break
+			case Hammer
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${OffenseMode} && ${PetMode}
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
@@ -536,7 +546,7 @@ function Combat_Routine(int xAction)
 			case Reverence
 				if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${Actor[pc,${MainTankPC}].ID}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				}
 				break
 			case Involuntary
@@ -555,7 +565,6 @@ function Combat_Routine(int xAction)
 			case Mastery
 				if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)} && ${OffenseMode}
 				{
-					Target ${KillTarget}
 					Me.Ability[Master's Smite]:Use
 				}
 				break
@@ -1036,7 +1045,7 @@ function CureMe()
 	{
 		if ${Me.Arcane}>0
 		{
-			if !${Me.Ability[${SpellType[210]}].IsReady}
+			if !${Me.Ability[${SpellType[381]}].IsReady}
 			{
 				call CastSpellRange 381 0 0 0 ${Me.ID}
 			}
