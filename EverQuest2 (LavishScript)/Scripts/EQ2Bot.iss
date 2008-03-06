@@ -951,7 +951,7 @@ function Combat()
 					}
 				}
 
-				if ${Actor[${KillTarget}](exists)} && ${MainTank} && (${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0)
+				if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 				{
 					EQ2execute "/apply_verb ${Actor[${KillTarget}].ID} loot"
 					break
@@ -2043,7 +2043,7 @@ function IamDead(string Line)
 			waitframe
 		}
 		while ${EQ2.Zoning}
-		KillTarget:Set[]
+		;KillTarget:Set[]
 		wait 300
 	}
 	elseif ${WipeRevive}
@@ -2074,7 +2074,7 @@ function IamDead(string Line)
 							waitframe
 					}
 					while ${EQ2.Zoning}
-					KillTarget:Set[]
+					;KillTarget:Set[]
 					wait 100
 					echo "reloading config"
 					EQ2Bot:Init_Config
@@ -3877,7 +3877,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{
 		ChoiceWindow:DoChoice1
-		KillTarget:Set[]
+		;KillTarget:Set[]
 		return
 	}
 
