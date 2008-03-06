@@ -2294,35 +2294,55 @@ atom(script) LootWDw(string ID)
 		deccnt:Inc
 	}
 
-	if ${LootWindow[${ID}].IsLotto} && !${deccnt} && ${LootMethod.Equal[Accept]}
-	{
-		LootWindow:RequestAll
-	}
-	elseif !${LootWindow[${ID}].IsLotto} && ${LootMethod.Equal[Accept]}
-	{
-		tmpcnt:Set[0]
-		do
-		{
-				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} || ${LootWindow[${ID}].Item[${tmpcnt}].NoTrade}) && !${LootConfirm}
-				{
-					;There is no decline item
-				}
-				else
-				{
-					LootWindow[${ID}]:LootItem[${tmpcnt}]
-				}
-		}
-		while ${tmpcnt:Inc}<=${LootWindow.NumItems}
-	}
-	elseif ${LootWindow[${ID}].IsLotto} && ${LootMethod.Equal[Decline]}
-	{
-		LootWindow[${ID}]:DeclineLotto
-	}
-	elseif ${LootMethod.Equal[Idle]}
-	{
-		Return
-	}
 	LastWindow:Set[${ID}]
+
+	if ${LootMethod.Equal[Idle]}
+	{
+		return
+	}
+
+	if (${deccnt} && !${LootMethod.Equal[Idle]}) || ${LootMethod.Equal[Decline]}
+	{
+		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+		return
+	}
+
+	switch ${LootWindow[${ID}].Type}
+	{
+		case Lottery
+			if ${deccnt}
+			{
+				LootWindow[${ID}]:DeclineLotto
+			}
+			else
+			{
+				LootWindow[${ID}]:RequestAll
+			}
+			break
+		case Free For All
+			if ${deccnt}
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+			}
+			else
+			{
+				LootWindow[${ID}]:LootAll
+			}
+			break
+		case Need Before Greed
+			if ${deccnt}
+			{
+				EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+			}
+			else
+			{
+				LootWindow[${ID}]:SelectGreed
+			}
+			break
+		case Unknown
+		Default
+			EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+	}
 
 	;if window is still open, close it
 	if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow[${ID}].Item[1].Name(exists)}
