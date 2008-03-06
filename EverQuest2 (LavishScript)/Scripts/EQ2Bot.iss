@@ -951,7 +951,7 @@ function Combat()
 					}
 				}
 
-				if ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0)
+				if ${Actor[${KillTarget}](exists)} && ${MainTank} && (${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0)
 				{
 					EQ2execute "/apply_verb ${Actor[${KillTarget}].ID} loot"
 					break

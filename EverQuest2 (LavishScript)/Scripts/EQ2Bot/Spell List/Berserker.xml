@@ -150,7 +150,7 @@
 		<Setting Name="71,152">Trespass</Setting>
 		<Setting Name="72,998">Insolence</Setting>
 		<Setting Name="72,160">Mock</Setting>
-		<Setting Name="72,295">Unflinching Stance</Setting>
+		<Setting Name="72,295">Stance: Determined Will</Setting>
 		<Setting Name="72,155">Weapon Counter</Setting>
 		<Setting Name="73,82">Head Crush</Setting>
 		<Setting Name="73,21">Relentless Rage</Setting>
@@ -160,7 +160,7 @@
 		<Setting Name="75,25">Blood Regeneration</Setting>
 		<Setting Name="75,94">Bloodshower</Setting>
 		<Setting Name="76,170">Bellow</Setting>
-		<Setting Name="76,290">Fury Stance</Setting>
+		<Setting Name="76,290">Stance: Abandoned Fury</Setting>
 		<Setting Name="76,20">Rouse</Setting>
 		<Setting Name="77,81">Invasion</Setting>
 		<Setting Name="77,22">War Fury</Setting>
@@ -173,5 +173,6 @@
 		<Setting Name="80,999">Adrenaline</Setting>
 		<Setting Name="80,80">Dismember</Setting>
 		<Setting Name="80,93">Intrusion</Setting>
+		<Setting Name="80,91">Turmoil</Setting>
 	</Set>
 </InnerSpaceSettings>
