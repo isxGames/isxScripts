@@ -1,5 +1,10 @@
 Revision History
 ----------------
+v7.04 - Fixed lvl 50 Alchemist writ quantities.
+      - Fixed reset issue after finishing the requested number of writs. Craft should now
+        create the correct number of writs again after running through a writ cycle.
+      - Crash when turning in a writ has been fixed by Amadeus (no credit for me on this.)
+      
 v7.03 - Valerian takes over as primary maintainer of craft.
       - Fixed double hailing of writ giver.
       - Bot should now automatically create exactly enough items to complete the writ,
@@ -7,7 +12,7 @@ v7.03 - Valerian takes over as primary maintainer of craft.
         *TODO* Fix quantity textbox to "add" extra quantity, for those that want a
                safety net when doing writs.
       - Support files updates:
-	    * Added path for Kelethin's crafting area! You should be within the building before
+        * Added path for Kelethin's crafting area! You should be within the building before
           starting anything requiring pathing.
         * Fixed bug where any recipe containing the word "fir" was mistakenly marked as rare.
         
