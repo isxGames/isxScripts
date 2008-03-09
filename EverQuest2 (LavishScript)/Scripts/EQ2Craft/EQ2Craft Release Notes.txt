@@ -1,5 +1,12 @@
 Revision History
 ----------------
+v7.05 - Changed output to default ALL output to the console. You may use /craft -verbose
+        for the old behavior of output in the EQ2 chat window.
+      - Fixed imbue material counting.
+      - Removed code that checks for a completed writ step. It was buggy and broken anyway.
+        This should fix those writs that were completing early.
+      - Fixed writ quantities for level 24 armorer.
+        
 v7.04 - Fixed lvl 50 Alchemist writ quantities.
       - Fixed reset issue after finishing the requested number of writs. Craft should now
         create the correct number of writs again after running through a writ cycle.
