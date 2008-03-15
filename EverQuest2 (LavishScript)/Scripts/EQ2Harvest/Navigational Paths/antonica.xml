@@ -705,7 +705,7 @@
 			<Y>-16.690001</Y>
 			<Z>-503.160004</Z>
 			<Connection To="antonica_188" />
-			<Connection To="end" />
+			<Connection To="finish" />
 		</Point>
 		<Point Name="antonica_19">
 			<X>-775.049988</X>
@@ -3458,7 +3458,7 @@
 			<Connection To="antonica_98" />
 			<Connection To="antonica_100" />
 		</Point>
-		<Point Name="end">
+		<Point Name="finish">
 			<X>-618.659973</X>
 			<Y>-16.680000</Y>
 			<Z>-503.260010</Z>
