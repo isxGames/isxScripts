@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <Navigation>
 	<World Name="qey_adv01_oakmyst">
-		<Point Name="end">
+		<Point Name="finish">
 			<X>893.289978</X>
 			<Y>2.270000</Y>
 			<Z>-334.570007</Z>
@@ -328,7 +328,7 @@
 			<Y>2.200000</Y>
 			<Z>-336.100006</Z>
 			<Connection To="qey_adv01_oakmyst_50" />
-			<Connection To="end" />
+			<Connection To="finish" />
 		</Point>
 		<Point Name="qey_adv01_oakmyst_6">
 			<X>856.859985</X>
