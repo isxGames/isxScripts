@@ -111,7 +111,7 @@ function main(string mode)
 	;Script:Squelch
 
 	Harvest:Initialise
-	Harvest:InitTriggers
+	Harvest:InitTriggersAndEvents
 
 	World:Set[${Zone.ShortName}]
 	Navigation -reset
@@ -951,7 +951,7 @@ objectdef EQ2HarvestBot
 		}
 	}
 
-	method InitTriggers()
+	method InitTriggersAndEvents()
 	{
 		; Add our trigger for nodes that are too far away or cannot harvest from.
 		AddTrigger InvalidNode "@*@You cannot@*@"
@@ -968,6 +968,8 @@ objectdef EQ2HarvestBot
 		AddTrigger Harvested "Announcement::You have @action@:\n@number@ @result@"
 		AddTrigger Harvest:Rare "Announcement::Rare item found!\n@rare@"
 		AddTrigger Harvest:Collectible "Announcement::Collectible found!\n@result@"
+		
+		Event[EQ2_onLootWindowAppeared]:AttachAtom[EQ2_onLootWindowAppeared]
 	}
 
 	method LoadUI()
@@ -1246,4 +1248,25 @@ atom atexit()
 	press -release STRAFERIGHT
 	press -release TURNLEFT
 	press -release TURNRIGHT
+	
+	Event[EQ2_onLootWindowAppeared]:DetachAtom[EQ2_onLootWindowAppeared]
+}
+
+atom(script) EQ2_onLootWindowAppeared(int ID)
+{
+    if ${LootWindow.Type.Equal[Lottery]}
+    {
+        LootWindow:RequestAll
+        return
+    }
+    elseif ${LootWindow.Type.Equal[Need Before Greed]}
+    {
+        LootWindow:SelectGreed
+        return
+    }
+    else
+    {
+        LootWindow:LootItem[1]
+        return
+    }
 }
