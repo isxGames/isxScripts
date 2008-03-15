@@ -232,6 +232,13 @@ function Combat_Init()
 	Power[13,1]:Set[30]
 	Power[13,2]:Set[100]
 	SpellRange[13,1]:Set[235]
+	
+	Action[14]:Set[DoT2]
+	MobHealth[14,1]:Set[1]
+	MobHealth[14,2]:Set[100]
+	Power[14,1]:Set[30]
+	Power[14,2]:Set[100]
+	SpellRange[14,1]:Set[51]	
 
 }
 
@@ -589,7 +596,6 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-
 		case DoT
 			if ${OffenseMode}
 			{
@@ -606,6 +612,22 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
+		case DoT2
+			if ${OffenseMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+
+					}
+				}
+			}
+			break			
 		case AA_Primordial_Strike
 		case AA_Nature_Blade
 			if ${OffenseMode} && ${MeleeMode}
