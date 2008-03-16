@@ -4,7 +4,7 @@
 	<Set Name="List of Vendor bought Components">
 		<Setting Name="Aerated Mineral Water">200</Setting>
 		<Setting Name="Distilled Water">50</Setting>
-		<Setting Name="Liquid">50</Setting>
+		<Setting Name="Liquid">200</Setting>
 		<Setting Name="Cream">50</Setting>
 		<Setting Name="Cream Cheese">200</Setting>
 		<Setting Name="Cocoa">200</Setting>
