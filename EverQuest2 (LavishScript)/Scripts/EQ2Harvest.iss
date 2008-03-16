@@ -77,6 +77,7 @@ variable bool PauseHarvest=FALSE
 variable bool DestroyMeat=FALSE
 variable string StartPoint
 variable string FinishPoint
+variable string DestinationPoint
 variable string CurrentAction="Waiting to Start..."
 variable float WPX
 variable float WPZ
@@ -167,11 +168,13 @@ function main(string mode)
 			if ${NearestPoint.Equal[${FinishPoint}]}
 			{
 				NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+				DestinationPoint:Set[${StartPoint}]
 			}
 			else
 			{
 				NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
 				PathDirection:Set[TRUE]
+				DestinationPoint:Set[${FinishPoint}]
 			}
 
 			call PathingRoutine
@@ -180,6 +183,7 @@ function main(string mode)
 		}
 		else
 		{
+			NavPath:Clear
 			if ${firstpass}
 			{
 				NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
@@ -187,21 +191,32 @@ function main(string mode)
 				if ${NearestPoint.Equal[${FinishPoint}]}
 				{
 					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					DestinationPoint:Set[${StartPoint}]
+					PathDirection:Set[FALSE]
 				}
 				else
 				{
 					NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
-					PathDirection:Set[!${PathDirection}]
+					DestinationPoint:Set[${FinishPoint}]
+					PathDirection:Set[TRUE]
 				}
 				call PathingRoutine
 				firstpass:Set[FALSE]
 			}
 			else
 			{
-				NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
-				NavPath "${World}" "${FinishPoint}" "${StartPoint}"
-				PathDirection:Set[!${PathDirection}]
-
+				if ${PathDirection}
+				{
+					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					PathDirection:Set[FALSE]
+					DestinationPoint:Set[${StartPoint}]
+				}
+				else
+				{
+					NavPath "${World}" "${StartPoint}" "${FinishPoint}"
+					PathDirection:Set[TRUE]
+					DestinationPoint:Set[${StartPoint}]
+				}
 				call PathingRoutine
 				firstpass:Set[FALSE]
 
@@ -327,9 +342,9 @@ function PathingRoutine()
 				NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
 				if ${PathDirection}
 				{
-					if ${NearestPoint.Equal[${FinishPoint}]}
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
 					{
-						NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+						return
 					}
 					else
 					{
@@ -338,9 +353,9 @@ function PathingRoutine()
 				}
 				else
 				{
-					if ${NearestPoint.Equal[${StartPoint}]}
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
 					{
-						NavPath "${World}" "${StartPoint}" "${FinishPoint}"
+						return
 					}
 					else
 					{
@@ -540,37 +555,37 @@ function Harvest()
 
 		if ${HarvestTool[${NodeType}].Equal["Trapping"]}
 			{
-			Me.Inventory[Sandalwood Trap]:Equip
+;			Me.Inventory[Sandalwood Trap]:Equip
 			}
 		if ${HarvestTool[${NodeType}].Equal["Mining"]}
 			{
-			Me.Inventory[Calibrated Automated Pickaxe]:Equip
+;			Me.Inventory[Calibrated Automated Pickaxe]:Equip
 			}
 		if ${HarvestTool[${NodeType}].Equal["Gathering"]}
 			{
-			Me.Inventory[Sandalwood Shovel]:Equip
+;			Me.Inventory[Sandalwood Shovel]:Equip
 			}
 		if ${HarvestTool[${NodeType}].Equal["Foresting"]}
 			{
 			; Shears seem to stack with saw (but not shovel) but we have to have both slots free
 			; for auto-equip to work.
-			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-			Me.Equipment[Sandalwood Shovel]:UnEquip
-			Me.Equipment[Sandalwood Trap]:UnEquip
-			Me.Equipment[Calibrated Automated Watersafe Net]:UnEquip
+;			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
+;			Me.Equipment[Sandalwood Shovel]:UnEquip
+;			Me.Equipment[Sandalwood Trap]:UnEquip
+;			Me.Equipment[Calibrated Automated Watersafe Net]:UnEquip
 			waitframe
-			Me.Inventory[Sandalwood Saw]:Equip
-			Me.Inventory[Calibrated Automated Shears]:Equip
+;			Me.Inventory[Sandalwood Saw]:Equip
+;			Me.Inventory[Calibrated Automated Shears]:Equip
 			}
 		if ${HarvestTool[${NodeType}].Equal["Fishing"]}
 			{
-			Me.Equipment[Calibrated Automated Shears]:UnEquip
-			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-			Me.Equipment[Sandalwood Shovel]:UnEquip
-			Me.Equipment[Sandalwood Trap]:UnEquip
+;			Me.Equipment[Calibrated Automated Shears]:UnEquip
+;			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
+;			Me.Equipment[Sandalwood Shovel]:UnEquip
+;			Me.Equipment[Sandalwood Trap]:UnEquip
 			waitframe
-			Me.Inventory[Sandalwood Fishing Pole]:Equip
-			Me.Inventory[Calibrated Automated Watersafe Net]:Equip
+;			Me.Inventory[Sandalwood Fishing Pole]:Equip
+;			Me.Inventory[Calibrated Automated Watersafe Net]:Equip
 			}
 
 		EQ2Execute /useability ${HarvestTool[${NodeType}]}
@@ -829,6 +844,12 @@ function Harvested(string Line, string action, int number, string result)
   if (${number} == 0)
     number:Set[1]
 
+ 	if ${result.Find[Glowing]} || ${result.Find[Sparkling]} || ${result.Find[Glimmering]} || ${result.Find[Luminous]} || ${result.Find[Lambent]} || ${result.Find[Scintillating]} || ${result.Find[Smoldering]}
+ 	{
+ 		executeatom Harvest:Rare "${Line}" "${result}"
+	 	return
+ 	}
+
 	HarvestStat[${NodeType}]:Inc[${number}]
 
 	if ${NodeType}<=7
@@ -941,6 +962,7 @@ objectdef EQ2HarvestBot
 		FilterY:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[What distance along Y axis should the bot ignore nodes?,30]}]
 		StartPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Starting Point,Start]}]
 		FinishPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Finishing Point,Finish]}]
+		DestinationPoint:Set[${FinishPoint}]
 
 		SettingXML[${ConfigFile}]:Save
 
@@ -1070,7 +1092,7 @@ objectdef EQ2HarvestBot
 
 	method Rare(string Line, string rare)
 	{
-		if ${rare.Find[Glowing]} || ${rare.Find[Sparkling]} || ${rare.Find[Glimmering]} || ${rare.Find[Luminous]} || ${rare.Find[Lambent]} || ${rare.Find[Scintillating]}
+		if ${rare.Find[Glowing]} || ${rare.Find[Sparkling]} || ${rare.Find[Glimmering]} || ${rare.Find[Luminous]} || ${rare.Find[Lambent]} || ${rare.Find[Scintillating]} || ${rare.Find[Smoldering]}
 		{
 			ImbueStat:Inc
 		}
