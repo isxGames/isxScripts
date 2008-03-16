@@ -215,7 +215,7 @@ function main(string mode)
 	while ${PathRoute}<=3
 
 	announce "Cleaning up Inventory before exiting..." 5 4
-	call checkinventory 10 "CleanUpOnExit"
+	call CheckInventory 10 "CleanUpOnExit"
 
 	Script:End
 }
@@ -439,7 +439,7 @@ function StuckState()
 		}
 
 		announce "Cleaning up Inventory before exiting..." 5 4
-		;call checkinventory 10 "CleanUpOnExit"
+		;call CheckInventory 10 "CleanUpOnExit"
 
 		Script:End
 	}
@@ -463,7 +463,7 @@ function CheckTimer()
 		}
 
 		announce "Timer expired. Cleaning up inventory before exiting..." 5 4
-		call checkinventory 10 "CleanUpOnExit"
+		call CheckInventory 10 "CleanUpOnExit"
 
 		Script:End
 	}
@@ -487,7 +487,7 @@ function InventoryFull(string Line)
 	}
 
 	announce "Cleaning up Inventory before exiting..." 5 4
-	call checkinventory 10 "CleanUpOnExit"
+	call CheckInventory 10 "CleanUpOnExit"
 
 	Script:End
 }
