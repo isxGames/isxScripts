@@ -2345,10 +2345,10 @@ atom(script) LootWDw(string ID)
 	}
 
 	;if window is still open, close it
-	if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow[${ID}].Item[1].Name(exists)}
-	{
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-	}
+	;if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow[${ID}].Item[1].Name(exists)}
+	;{
+	;	EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+	;}
 }
 
 function CantSeeTarget(string Line)
