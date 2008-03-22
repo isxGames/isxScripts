@@ -1,5 +1,10 @@
 Revision History
 ----------------
+v7.06 - Moved all writ quantities to a new file, WritCounts.xml.
+      - Removed another section of code that could cause a writ to finish early.
+      - Committed a Custom Writ file to the SVN. -- You may wish to back up your own 
+        customwrits.xml file before updating! This file has a broader assortment of recipes.
+      
 v7.05 - Changed output to default ALL output to the console. You may use /craft -verbose
         for the old behavior of output in the EQ2 chat window.
       - Fixed imbue material counting.
