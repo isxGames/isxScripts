@@ -133,6 +133,9 @@ function Buff_Init()
 	PreAction[16]:Set[Buff_AALuckOfTheDirge]
 	PreSpellRange[16,1]:Set[382]
 
+	PreAction[16]:Set[Buff_AAFortissimo]
+	PreSpellRange[17,1]:Set[398]
+
 }
 
 function Combat_Init()
@@ -343,6 +346,7 @@ function Buff_Routine(int xAction)
 		case Buff_AAAllegro
 		case Buff_AALuckOfTheDirge
 		case Buff_AADontKillTheMessenger
+		case Buff_AAFortissimo
 		case Selos
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -589,7 +593,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case case Banshee
+		case Banshee
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 
