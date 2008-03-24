@@ -75,6 +75,11 @@ variable string ElementalPotion
 variable string NoxiousPotion
 variable string TraumaPotion
 
+;AutoFollow Variables
+variable bool AutoFollowMode=FALSE
+variable bool AutoFollowingMA=FALSE
+variable string AutoFollowee
+
 
 function EQ2BotLib_Init()
 {
