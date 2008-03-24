@@ -91,13 +91,13 @@ function Combat_Init()
 	SpellRange[2,1]:Set[330]
 
 	Action[3]:Set[AoE_Nuke1]
-	SpellRange[3,1]:Set[90]
+	SpellRange[3,1]:Set[91]
 
 	Action[4]:Set[AoE_Debuff2]
 	SpellRange[4,1]:Set[56]
 
-	Action[5]:Set[AoE_Nuke2]
-	SpellRange[5,1]:Set[91]
+	Action[5]:Set[AoE_PB]
+	SpellRange[5,1]:Set[95]
 
 	Action[6]:Set[AoE_Concussive]
 	SpellRange[6,1]:Set[328]
@@ -110,11 +110,11 @@ function Combat_Init()
 	Action[8]:Set[AoE_Debuff3]
 	SpellRange[8,1]:Set[55]
 
-	Action[9]:Set[AoE_Nuke3]
+	Action[9]:Set[AoE_Nuke2]
 	SpellRange[9,3]:Set[92]
 
-	Action[10]:Set[AoE_PB]
-	SpellRange[10,1]:Set[95]
+	Action[10]:Set[AoE_PB2]
+	SpellRange[10,1]:Set[96]
 
 	Action[11]:Set[Master_Strike]
 
@@ -411,6 +411,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case AoE_PB
+		case AoE_PB2
 			if ${PBAoEMode} && ${Mob.Count}>1
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
@@ -457,7 +458,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case AoE_Nuke2
+		case AoE_Nuke1
 			if ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
 			{
 				if ${Me.Ability[${SpellType[385]}].IsReady}
@@ -468,8 +469,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case AoE_Nuke1
-		case AoE_Nuke3
+		case AoE_Nuke2
 			if ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}

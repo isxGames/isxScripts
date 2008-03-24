@@ -40,7 +40,7 @@ function main(string FollowMember, int MaxRange)
 		{
 			tcount:Set[1]
 			EQ2:CreateCustomActorArray[byDist,${MaxRange}]
-			echo scanning actors
+			;echo scanning actors
 
 			while ${tcount:Inc}<${EQ2.CustomActorArraySize} && ${Actor[pc,${FollowMember}].Distance}<${MaxRange}
 			{
@@ -78,19 +78,19 @@ function main(string FollowMember, int MaxRange)
 				}
 				elseif ${CustomActor[${tcount}].Target.ID}==${Actor[${FollowMember}].ID}
 				{
-					echo ${CustomActor[${tcount}].Name} is agro on follower, ignore it.
+					;echo ${CustomActor[${tcount}].Name} is agro on follower, ignore it.
 				}
 				elseif ${CustomActor[${tcount}].ID}==${Actor[${FollowMember}].ID} || ${CustomActor[${tcount}].ID}==${Me.ToActor.ID}
 				{
-					echo ${CustomActor[${tcount}].Name} is me or follower
+					;echo ${CustomActor[${tcount}].Name} is me or follower
 				}
 				elseif ${CustomActor[${tcount}].Type.Equal[PC]} || ${CustomActor[${tcount}].Type.Equal[Pet]}
 				{
-					echo ${CustomActor[${tcount}].Name} is not a resource ignoring
+					;echo ${CustomActor[${tcount}].Name} is not a resource ignoring
 				}
 				else
 				{
-					echo nearest actor is not a resource, pc, or pet it is ${CustomActor[${tcount}].Name}
+					;echo nearest actor is not a resource, pc, or pet it is ${CustomActor[${tcount}].Name}
 					call ResumeFollow ${FollowMember}
 					tcount:Set[${EQ2.CustomActorArraySize}]
 				}
