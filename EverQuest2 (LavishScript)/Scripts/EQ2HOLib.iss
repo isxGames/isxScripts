@@ -10,7 +10,7 @@
 ;State 3 = scout cant change wheel?
 ;State 1 = Wheel is being completed
 ;State 2 = expired or completed wheel
-;state 0 = scout can change wheel? 
+;state 0 = scout can change wheel?
 ;
 ;
 ;States changed these are the new assumptions
@@ -20,7 +20,7 @@
 ;State 3 = scout cant change wheel?
 ;State 1 = Wheel is being completed
 ;State 2 = HO in countdown
-;state 0 = scout can change wheel? 
+;state 0 = scout can change wheel?
 ;
 ;Note all HOs have 10seconds to complete
 ;All HO buffs last 6 mins
@@ -42,7 +42,7 @@ objectdef HeroicOp
 	variable string ScoutMask2
 	variable string ScoutBow1
 	variable string ScoutBow2
-	
+
 	variable string MageStar1
 	variable string MageStar2
 	variable string MageLightning1
@@ -52,8 +52,8 @@ objectdef HeroicOp
 	variable string MageStaff1
 	variable string MageStaff2
 	variable string MageWand1
-	variable string MageWand2	
-	
+	variable string MageWand2
+
 	variable string FighterHorn1
 	variable string FighterHorn2
 	variable string FighterBoot1
@@ -64,7 +64,7 @@ objectdef HeroicOp
 	variable string FighterFist2
 	variable string FighterSword1
 	variable string FighterSword2
-	
+
 	variable string PriestHammer1
 	variable string PriestHammer2
 	variable string PriestChalice1
@@ -77,10 +77,10 @@ objectdef HeroicOp
 	variable string PriestEye2
 
 	variable string charfile="${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.xml"
-	
+
 	method Initialize()
 	{
-		
+
 		switch ${Me.Archetype}
 		{
 			case fighter
@@ -104,9 +104,9 @@ objectdef HeroicOp
 				ScoutCloak1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak1,""]}]
 				ScoutCloak2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak2,""]}]
 				ScoutMask1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask1,""]}]
-				ScoutMask2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask2,""]}]		
+				ScoutMask2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask2,""]}]
 				ScoutBow1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow1,""]}]
-				ScoutBow2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow2,""]}]					
+				ScoutBow2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow2,""]}]
 				break
 
 			case mage
@@ -132,7 +132,7 @@ objectdef HeroicOp
 				PriestEye1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestEye1,""]}]
 				PriestEye2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestEye2,""]}]
 				PriestHolySymbol1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestHolySymbol1,""]}]
-				PriestHolySymbol2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestHolySymbol2,""]}]				
+				PriestHolySymbol2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestHolySymbol2,""]}]
 				break
 
 			case default
@@ -145,21 +145,21 @@ objectdef HeroicOp
 	{
 		CurentTask:Set[Shutdown]
 	}
-	
+
 	member ToText()
 	{
 		return ${Me.Name}
 	}
-	
+
 	method LoadUI()
 	{
 		UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[HOs]
-			
+
 		UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[6]:Move[3]
-			
+
 		ui -load -parent "HOs@EQ2Bot Tabs@EQ2 Bot" "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/${Me.Archetype}HOs.xml"
 	}
-	
+
 	method DoHO()
 	{
 		;echo State: ${EQ2.HOWheelState}
@@ -167,17 +167,17 @@ objectdef HeroicOp
 		;echo Advanced by:${This.LastManipulatorArchetype}
 		;echo HO Name ${EQ2.HOName}
 		;Make sure we have a target to cast on,
-		
+
 		Target ${Script[EQ2Bot].Variable[KillTarget]}
-		
+
 		;Beneficial spells will cast on the KillTarget's current target
 		;Detrimentals will cast on the KillTarget
 		;This is atomic so we dont need a wait check for the target
 		;though the target could be dead by the time the HO advancement
 		;or completion spell is cast
-		
-		
-		
+
+
+
 		if ${EQ2.HOWheelState}==0 || ${EQ2.HOWheelState}==1 || ${EQ2.HOWheelState}==6
 		;State 0 = First wheel after HO intiation
 		{
@@ -279,7 +279,7 @@ objectdef HeroicOp
 					}
 				case default
 					break
-					
+
 			}
 
 		}
@@ -352,10 +352,10 @@ objectdef HeroicOp
 					}
 				case default
 					break
-					
+
 			}
 
-		}		
+		}
 		elseif ${EQ2.HOWheelState}==5 && ${EQ2.HOName(exists)}
 		;State 6 = Second wheel after HO intiation for 2 stage HO advancements
 		{
@@ -431,13 +431,13 @@ objectdef HeroicOp
 					}
 				case default
 					break
-					
+
 			}
 
-		}		
+		}
 		elseif ${EQ2.HOWheelState}==5 || ${EQ2.HOWheelState}==4 || ${EQ2.HOWheelState}==2
 
-		
+
 		{
 			switch ${EQ2.HOName}
 			{
@@ -455,7 +455,7 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastHorn
-					}			
+					}
 					break
 				case Divine Blade
 				;Single Target Divine DD
@@ -474,7 +474,7 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastHorn
-					}				
+					}
 
 					if ${Me.Archetype.Equal[priest]}
 					{
@@ -495,27 +495,27 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastHammer
-					}				
+					}
 
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastSword
 					}
-					break				
+					break
 				case Archaic Ruin
 				;Single Target Mental DD
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastEye
-					}			
+					}
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastArm
-					}				
+					}
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastFlame
-					}				
+					}
 					break
 				case Thunder Slash
 				;Single Target Divine, Magic, & Slashing DD (3 different hits)
@@ -523,15 +523,15 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastHammer
-					}			
+					}
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastLightning
-					}				
+					}
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastSword
-					}				
+					}
 					break
 				case Ancient Wrath
 				; Encounter AoE Long Duration Stun and DD
@@ -539,15 +539,15 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastFlame
-					}			
+					}
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastFist
-					}				
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastHammer
-					}				
+					}
 					break
 				case Luck's Bite
 				;Single Target Piercing DD
@@ -560,7 +560,7 @@ objectdef HeroicOp
 					{
 						This:CastBoot
 					}
-					break				
+					break
 				case Swindler's Gift
 				;Group Attack Technique Buff (slashing, piercing, etc.)
 
@@ -596,7 +596,7 @@ objectdef HeroicOp
 					{
 						This:CastMask
 					}
-					break			
+					break
 				case Scholar's Insight
 				; Self Attack Speed Buff
 
@@ -608,7 +608,7 @@ objectdef HeroicOp
 					{
 						This:CastLightning
 					}
-					break	
+					break
 				case Storm of Ancients
 				;Encounter AoE Magic DD
 
@@ -620,7 +620,7 @@ objectdef HeroicOp
 					{
 						This:CastLightning
 					}
-					break					
+					break
 				case  Soldier's Instinct
 				;Self Evocations and Disruptions Buff
 
@@ -638,16 +638,16 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastStar
-					}			
+					}
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastArm
-					}				
+					}
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastChalice
-					}				
-					break				
+					}
+					break
 				;*****************************************************************
 				;	Scout Intiated HOs
 				;*****************************************************************
@@ -667,215 +667,215 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastLightning
-					}				
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastEye
-					}				
+					}
 					break
 				case Archaic Shackles
 				;Encounter AoE Attack Speed Debuff
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastLightning
-					}			
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastHammer
-					}				
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastDagger
-					}				
-					break			
+					}
+					break
 				case Crucible of Life
 				;Full Power and Health Replenishment & Healing Proc Buff
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastLightning
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastCoin
-					}				
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastChalice
-					}				
-					break	
+					}
+					break
 
 				case Verdant Trinity
 				;Group Instant Heal
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastChalice
-					}				
+					}
 					break
-				case Nature's Growth;
+				case Nature's Growth
 				;Group Regeneration
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastMask
-					}			
+					}
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastSword
-					}				
+					}
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastHammer
-					}				
+					}
 					break
 				case Capricious Strike
 				;Single Target DD
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastHammer
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastDagger
-					}				
+					}
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastSword
-					}				
+					}
 					break
 				case Shield of Ancients
 				;Group Armor Buff
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastLightning
-					}			
+					}
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastHorn
-					}				
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastMoon
-					}				
+					}
 					break
 				case Trinity Divide
 				;Encounter AoE Piercing DD
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastStar
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastMask
-					}				
+					}
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastHorn
-					}				
+					}
 					break
 				case Soldier's Gambit
 				;Single Target Magic DD
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastDagger
-					}			
+					}
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastSword
-					}				
+					}
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastLightning
-					}				
+					}
 					break
 				case Grand Proclamation
 				;Group Increase Power Pool Buff
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastLightning
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastMask
-					}				
+					}
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastArm
-					}				
-					break			
+					}
+					break
 				case Ancient's Embrace
 				;Group Slashing Damage Shield Buff
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastLightning
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastCloak
-					}				
+					}
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastArm
-					}				
+					}
 					break
 				case Strength in Unity
 				;Group STR, AGI, INT, WIS Buff (+10)
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastArm
-					}			
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastChalice
-					}				
+					}
 					break
 				case Ancient Demise
 				;Encounter AoE Crushing DD
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastBoot
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastCoin
-					}				
+					}
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastLightning
-					}				
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==3
 					{
 						This:CastHammer
-					}			
+					}
 					break
 				case Tears of Luclin
 				;Powerful Magic DD
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastBoot
-					}			
-					if ${Me.Archetype.Equal[scout]} 
+					}
+					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastDagger
-					}				
+					}
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastLightning
-					}				
+					}
 					break
 				case Past's Awakening
 				;Massive DD & Full Group Health and Power Restoration
 					if ${Me.Archetype.Equal[fighter]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastFist
-					}			
+					}
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastStar
-					}				
+					}
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastCloak
-					}				
-					break			
+					}
+					break
 
 				;*****************************************************************
 				;	Mage Intiated HOs
@@ -887,7 +887,7 @@ objectdef HeroicOp
 					{
 						This:CastLightning
 					}
-					break			
+					break
 				case Arcane Storm
 				;Encounter Magic AoE DD
 					if ${Me.Archetype.Equal[mage]}
@@ -907,116 +907,116 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastFlame
-					}			
+					}
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastChalice
-					}				
+					}
 					break
 				case Arcane Aegis
 				;Power Restoration
 					if ${Me.Archetype.Equal[fighter]}
 					{
 						This:CastFist
-					}			
+					}
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastStar
-					}				
-					break					
+					}
+					break
 				case Suffocating Wrath
 				;Encounter AoE Magic DD
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastHammer
-					}			
+					}
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastLightning
-					}				
+					}
 					break
 				case Ancient Crucible
 				;Instant Health and Power Replenishment & Health and Power Regeneration
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastMoon
-					}				
+					}
 					break
 				case Arcane Trickery
 				;Single Target Magic DD & Magic and Piercing Mitigation Debuff
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastFlame
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastDagger
-					}				
+					}
 					break
 				case Trickster's Grasp
 				;Single Target Magic DoT
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastFlame
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastDagger
-					}				
+					}
 					break
 				case Shower of Daggers
 				;Magic DD Proc Buff
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastLightning
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastDagger
-					}				
+					}
 					break
 				case Resonating Cascade
 				;Power Regeneration Buff
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastMask
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastDagger
-					}				
+					}
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastLightning
-					}				
+					}
 					break
 				case Celestial Bloom
 					if ${Me.Archetype.Equal[mage]}
 					{
 						This:CastLightning
-					}			
+					}
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastChalice
-					}	
+					}
 					break
 				case Luminary Fate
-				;Grants power regeneration over time. 
+				;Grants power regeneration over time.
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastDagger
-					}			
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastEye
-					}				
+					}
 					if ${Me.Archetype.Equal[mage]} && ${EQ2.HOCurrentWheelSlot}==2
 					{
 						This:CastFlame
-					}						
+					}
 				;*****************************************************************
 				;	Priest Intiated HOs
-				;*****************************************************************			
+				;*****************************************************************
 
 				case Divine Judgement
 				;Single Target Divine DD
@@ -1039,58 +1039,58 @@ objectdef HeroicOp
 					if ${Me.Archetype.Equal[priest]}
 					{
 						This:CastMoon
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]}
 					{
 						This:CastCloak
-					}				
+					}
 					break
 				case Divine Trickery
 				;Single Target Divine DD & Divine and Piercing Mitigation Debuff
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastHammer
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastCloak
-					}				
+					}
 					break
 				case Faith's Bulwark
-				;Group Armor Buff			
+				;Group Armor Buff
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastChalice
-					}			
+					}
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastCoin
-					}				
+					}
 					break
 				case Fervent Quickening
 				;Increases defense by 10 and periodically grants power to the player that completes the Heroic Opportunity
 					if ${Me.Archetype.Equal[scout]} && ${EQ2.HOCurrentWheelSlot}==0
 					{
 						This:CastDagger
-					}			
+					}
 					if ${Me.Archetype.Equal[priest]} && ${EQ2.HOCurrentWheelSlot}==1
 					{
 						This:CastChalice
-					}				
-					break					
+					}
+					break
 				case default
 					echo ******UNKNOWN HO ${EQ2.HOName}*******
 					break
 			}
 		}
 	}
-	;End Method HO	
-	
-	
+	;End Method HO
+
+
 	;*****************************************************************
 	;	Fighter Methods
 	;*****************************************************************
-	
+
 	method CastSword()
 	{
 		if ${Me.Ability[${FighterSword1}].IsReady}
@@ -1112,7 +1112,7 @@ objectdef HeroicOp
 		{
 			Me.Ability[${FighterHorn2}]:Use
 		}
-	}	
+	}
 	method CastBoot()
 	{
 		if ${Me.Ability[${FighterBoot1}].IsReady}
@@ -1146,11 +1146,11 @@ objectdef HeroicOp
 			Me.Ability[${FighterArm2}]:Use
 		}
 	}
-	
+
 	;*****************************************************************
 	;	Scout Methods
 	;*****************************************************************
-	
+
 	method CastCoin()
 	{
 		if ${Me.Ability[${ScoutCoin1}].IsReady}
@@ -1161,7 +1161,7 @@ objectdef HeroicOp
 		{
 			Me.Ability[${ScoutCoin2}]:Use
 		}
-	}	
+	}
 	method CastDagger()
 	{
 		if ${Me.Ability[${ScoutDagger1}].IsReady}
@@ -1206,11 +1206,11 @@ objectdef HeroicOp
 			Me.Ability[${ScoutMask2}]:Use
 		}
 	}
-	
+
 	;*****************************************************************
 	;	Mage Methods
 	;*****************************************************************
-	
+
 	method CastStar()
 	{
 		if ${Me.Ability[${MageStar1}].IsReady}
@@ -1221,7 +1221,7 @@ objectdef HeroicOp
 		{
 			Me.Ability[${MageStar2}]:Use
 		}
-		
+
 	}
 	method CastLightning()
 	{
@@ -1267,11 +1267,11 @@ objectdef HeroicOp
 			Me.Ability[${MageWand2}]:Use
 		}
 	}
-	
+
 	;*****************************************************************
 	;	Priest Methods
 	;*****************************************************************
-	
+
 	method CastChalice()
 	{
 		if ${Me.Ability[${PriestChalice1}].IsReady}
@@ -1327,7 +1327,7 @@ objectdef HeroicOp
 			Me.Ability[${PriestMoon2}]:Use
 		}
 	}
-	
+
 	member LastManipulatorArchetype()
 	{
 
@@ -1368,6 +1368,6 @@ objectdef HeroicOp
 			case default
 				break
 		}
-		
+
 	}
 }

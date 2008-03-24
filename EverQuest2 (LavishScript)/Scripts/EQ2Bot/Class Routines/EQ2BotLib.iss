@@ -27,12 +27,6 @@
 variable int TotalSlots=20
 variable string CurrentEquipmentSet
 
-
-;AutoFollow Variables
-variable bool AutoFollowMode=FALSE
-variable bool AutoFollowingMA=FALSE
-variable string AutoFollowee
-
 ;Swap variables
 variable int SwapStartTime
 variable string ItemToBeEquiped

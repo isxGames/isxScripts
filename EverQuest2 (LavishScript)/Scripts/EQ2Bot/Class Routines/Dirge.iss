@@ -138,58 +138,64 @@ function Buff_Init()
 function Combat_Init()
 {
 
-	Action[1]:Set[AoE1]
+	Action[1]:Set[Banshee]
 	SpellRange[1,1]:Set[62]
 
-	Action[2]:Set[Luda]
-	SpellRange[2,1]:Set[60]
+	Action[2]:Set[ScreamOfDeath]
+	SpellRange[2,1]:Set[391]
+	SpellRange[2,2]:Set[135]
 
-	Action[3]:Set[InfectedBladed]
-	SpellRange[3,1]:Set[150]
+	Action[3]:Set[TacticsHO]
+	SpellRange[3,1]:Set[303]
+	SpellRange[3,2]:Set[51]
+	SpellRange[3,3]:Set[150]
 
-	Action[4]:Set[Mastery]
+	Action[4]:Set[Luda]
+	SpellRange[4,1]:Set[60]
 
 	Action[5]:Set[Flank_Attack]
 	SpellRange[5,1]:Set[110]
 
+	Action[6]:Set[Mastery]
+
 	Action[6]:Set[Grievance]
 	SpellRange[6,1]:Set[151]
 
-	Action[7]:Set[Rebuff]
-	SpellRange[7,1]:Set[54]
+	Action[7]:Set[WailOfTheDead]
+	SpellRange[7,1]:Set[152]
 
-	Action[8]:Set[ScreamOfDeath]
-	SpellRange[8,1]:Set[391]
-	SpellRange[8,2]:Set[135]
+	Action[8]:Set[AARhythm_Blade]
+	SpellRange[8,1]:Set[397]
 
-	Action[9]:Set[Stealth_Attack]
-	SpellRange[9,1]:Set[391]
-	SpellRange[9,2]:Set[136]
+	Action[9]:Set[Lanet]
+	SpellRange[9,1]:Set[52]
 
-	Action[10]:Set[WailOfTheDead]
-	SpellRange[10,1]:Set[152]
+	Action[10]:Set[AAHarmonizingShot]
+	SpellRange[10,1]:Set[386]
 
-	Action[11]:Set[AATurnstrike]
-	SpellRange[11,1]:Set[387]
+	Action[11]:Set[RhymingHO]
+	SpellRange[11,1]:Set[303]
+	SpellRange[11,2]:Set[50]
+	SpellRange[11,3]:Set[110]
 
-	Action[12]:Set[Lanet]
-	SpellRange[12,1]:Set[52]
+	Action[12]:Set[AATurnstrike]
+	SpellRange[12,1]:Set[387]
 
-	Action[13]:Set[AoE2]
-	SpellRange[13,1]:Set[63]
+	Action[13]:Set[Rebuff]
+	SpellRange[13,1]:Set[54]
 
-	Action[14]:Set[Tarven]
-	SpellRange[14,1]:Set[50]
+	Action[14]:Set[AoE2]
+	SpellRange[14,1]:Set[63]
 
-	Action[15]:Set[Jael]
-	SpellRange[15,1]:Set[250]
+	Action[15]:Set[Stealth_Attack]
+	SpellRange[15,1]:Set[391]
+	SpellRange[15,2]:Set[136]
 
-	Action[16]:Set[AAHarmonizingShot]
-	SpellRange[16,1]:Set[386]
+	Action[16]:Set[Jael]
+	SpellRange[16,1]:Set[250]
 
 	Action[17]:Set[Stun]
 	SpellRange[17,1]:Set[190]
-
 }
 
 
@@ -218,7 +224,6 @@ function Buff_Routine(int xAction)
 			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
 			BDStatus:Set[0]
 		}
-
 	}
 
 	switch ${PreAction[${xAction}]}
@@ -350,16 +355,12 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare DebuffCnt int  0
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
-	}
-
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}
-	{
-		call CastSpellRange 303
 	}
 
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
@@ -396,7 +397,7 @@ function Combat_Routine(int xAction)
 			;if aoe avoidance is up, use it
 			if ${Me.Ability[${SpellType[388]}].IsReady}
 			{
-				if ${AnnounceMode} 				
+				if ${AnnounceMode}
 				{
 					eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
 				}
@@ -435,31 +436,31 @@ function Combat_Routine(int xAction)
 
 	if ${DebuffMode}
 	{
-		;always keep encounter debuffs refreshed
-		call CastSpellRange 55 57
+		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady}
+		{
+			call CastSpellRange 55
+			DebuffCnt:inc
+		}
+		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 56
+			DebuffCnt:inc
+		}
+		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 57
+			DebuffCnt:inc
+		}
 	}
 
 	;Always use Cacophony of Blades if available.
 	if ${Me.Ability[${SpellType[155]}].IsReady}
 	{
 		call CastSpellRange 155
-		wait 30
+		wait 3
 		if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
 		{
 			eq2execute /gsay Caco of Blades is up!
-		}
-	}
-
-
-	if !${RangedAttackMode}
-	{
-		;Always keep mob disease Debuffed
-		call CastSpellRange 51 0 1 0 ${KillTarget}
-
-		;always use Rhythm Blade if available
-		if ${Me.Ability[${SpellType[397]}].IsReady}
-		{
-			call CastSpellRange 397 0 1 0 ${KillTarget}
 		}
 	}
 
@@ -478,8 +479,28 @@ function Combat_Routine(int xAction)
 	}
 	switch ${Action[${xAction}]}
 	{
+		case TacticsHO
+		case RhymingHO
+			if !${RangedAttackMode}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
+				if !${EQ2.HOName.Equal[Bravo's Dance]}
+				{
+					if ${Me.Ability[${SpellType[180]}].IsReady}
+					{
+						call CastSpellRange 180 0 1 1 ${KillTarget}
+					}
+					elseif ${Me.Ability[${SpellType[55]}].IsReady}
+					{
+						call CastSpellRange 55 0 1 1 ${KillTarget}
+					}
+				}
+				call CastSpellRange ${SpellRange[${xAction},3]} 0 1 1 ${KillTarget}
+			}
+			break
 		case ScreamOfDeath
-			if !${RangedAttackMode} && ${Me.Ability[Shroud].IsReady} && ${Me.Ability[Scream of Death].IsReady} && !${MainTank}  && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
+			if !${RangedAttackMode} && ${Me.Ability[Shroud].IsReady} && ${Me.Ability[Scream of Death].IsReady} && !${MainTank}
 			{
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
@@ -521,7 +542,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 		case AoE2
-		case AoE1
 			if ${AoEMode} && ${Mob.Count}>=2
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget}
@@ -561,7 +581,6 @@ function Combat_Routine(int xAction)
 			break
 		case AARhythm_Blade
 		case Grievance
-		case InfectedBladed
 		case WailOfTheDead
 		case Tarven
 			if !${RangedAttackMode}
@@ -570,8 +589,8 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case CacophonyOfBlades
-			call CastSpellRange ${SpellRange[${xAction},1]}
+		case case Banshee
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 
 		case Flank_Attack
@@ -586,12 +605,9 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		case Stun
-			if !${RangedAttackMode}
+			if !${RangedAttackMode} && !${Target.IsEpic}
 			{
-				if !${Target.IsEpic}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
 
@@ -742,5 +758,12 @@ function DoMagneticNote()
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
+}
 
+function StartHo()
+{
+	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	{
+		call CastSpellRange 303
+	}
 }
