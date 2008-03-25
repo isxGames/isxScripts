@@ -4,6 +4,15 @@
 ;by karye
 ;updated by pygar
 ;
+;
+; 20080323a (Amadeus)
+; * Added a collection called "MezSpells" which is intended to contain all spells that qualify as 'mez' type spells.  It is populated during initialization.
+; * Added function CheckForMez().  Checks first if a mob is rooted and cannot turn, if so, it then checks the effects on the mob to see if any of the effects
+;   are 'mez spells' as defined in the "MezSpells" collection
+; * Added function CheckForStun(). If the mob is rooted and cannot turn, and it is NOT mezzed, then it must be stunned.
+; * Added function ReacquireTargetFromMA()
+;
+; 20070337a
 ; Added a condition around creating uplink name to stop session rejected messages
 ;
 ;Added Defiler Cyrstalize Spirit Healing function
@@ -75,11 +84,13 @@ variable string ElementalPotion
 variable string NoxiousPotion
 variable string TraumaPotion
 
+; Mez Spells
+variable(script) collection:int MezSpells
+
 ;AutoFollow Variables
 variable bool AutoFollowMode=FALSE
 variable bool AutoFollowingMA=FALSE
 variable string AutoFollowee
-
 
 function EQ2BotLib_Init()
 {
@@ -144,7 +155,169 @@ function EQ2BotLib_Init()
 		uplink name ${Me.Name}
 		}
 	#endif
+	
+	call PopulateMezSpells
+	
+	return OK
+}
 
+function PopulateMezSpells()
+{
+	variable int keycount
+	variable int iLevel=1
+	variable int iType = 0	
+	variable string tempnme
+	variable int tempvar=1
+	variable string SpellName
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Illusionist Mez Spells
+	;;;;;
+	spellfile:Set[${mainpath}EQ2Bot/Spell List/Illusionist.xml]
+	keycount:Set[${SettingXML[${spellfile}].Set[Illusionist].Keys}]
+	do
+	{
+		tempnme:Set["${SettingXML[${spellfile}].Set[Illusionist].Key[${tempvar}]}"]
+
+		iLevel:Set[${Arg[1,${tempnme}]}]
+		iType:Set[${Arg[2,${tempnme}]}]
+		SpellName:Set[${SettingXML[${spellfile}].Set[Illusionist].GetString["${tempnme}"]}]
+
+		;echo "Debug: Processing Illusionist Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+		
+        switch ${iType}
+        {
+            case 92
+            case 352
+            case 353
+            case 356
+                ;echo "DEBUG: Illusionist Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
+                MezSpells:Set[${SpellName},${iLevel}]
+                break
+                
+            Default
+                break
+        }   		
+		
+		
+	}
+	while ${tempvar:Inc} <= ${keycount}        
+    ;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Coercer Mez Spells
+	;;;;;
+	tempvar:Set[1]
+	spellfile:Set[${mainpath}EQ2Bot/Spell List/Coercer.xml]
+	keycount:Set[${SettingXML[${spellfile}].Set[Coercer].Keys}]
+	do
+	{
+		tempnme:Set["${SettingXML[${spellfile}].Set[Coercer].Key[${tempvar}]}"]
+
+		iLevel:Set[${Arg[1,${tempnme}]}]
+		iType:Set[${Arg[2,${tempnme}]}]
+		SpellName:Set[${SettingXML[${spellfile}].Set[Coercer].GetString["${tempnme}"]}]
+
+		;echo "Debug: Processing Coercer Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+		
+        switch ${iType}
+        {
+            case 351
+            case 352
+            case 353
+                ;echo "DEBUG: Coercer Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
+                MezSpells:Set[${SpellName},${iLevel}]
+                break
+                
+            Default
+                break
+        }   		
+		
+		
+	}
+	while ${tempvar:Inc} <= ${keycount}        
+    ;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
+    
+    echo "DEBUG: ${MezSpells.Used} spells were added to the MezSpells collection."
+    
+    return ${MezSpells.Used}
+}
+
+function CheckForMez(string param1)
+{
+    if !${Target.IsRooted}
+        return FALSE
+    if ${Target.CanTurn}
+        return FALSE
+        
+    variable int i = 1    
+      
+    Target:InitializeEffects  
+    wait 5
+    if (${Target.NumEffects} > 0)
+    {
+        do
+        {
+            ;echo "DEBUG: Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"
+            if (${MezSpells.Element[${Target.Effect[${i}].Name}](exists)})
+            {
+                ;echo "DEBUG: ${Target} is Mezzed!  (Called By: ${param1})"
+                return TRUE
+            }
+        }
+        while ${i:Inc} < ${Target.NumEffects}
+    }
+    
+    return FALSE 
+}
+
+function CheckForStun()
+{
+    if !${Target.IsRooted}
+        return FALSE
+    if ${Target.CanTurn}
+        return FALSE
+        
+    variable int i = 1    
+      
+    Target:InitializeEffects  
+    wait 5
+    if (${Target.NumEffects} > 0)
+    {
+        do
+        {
+            ;echo "DEBUG: Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"
+            if (${MezSpells.Element[${Target.Effect[${i}].Name}](exists)})
+                return FALSE
+        }
+        while ${i:Inc} < ${Target.NumEffects}
+    }
+    
+    return TRUE 
+}
+
+function ReacquireTargetFromMA()
+{
+    ;echo "DEBUG (ReacquireTargetFromMA): Old Target: ${Target}"
+    if (${Actor[Exactname,${MainAssist}](exists)})
+    {
+        target ${MainAssist}
+        wait 2
+        if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+	    {
+			KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+			target ${KillTarget}
+			;echo "DEBUG (ReacquireTargetFromMA): New Target Acquired: ${Target}"
+			return TRUE
+		}        
+    }
+    
+    target ${MainAssist}
+    echo "DEBUG: (ReacquireTargetFromMA): MA has no target right now..."  
+    return FALSE
 }
 
 atom AutoFollowTank()
@@ -154,7 +327,7 @@ atom AutoFollowTank()
 
 	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
 
-	if ${Me.ToActor.WhoFollowingID}<0 && ${Actor[${AutoFollowee}].Distance}<45 && ${Actor[${AutoFollowee}](exists)} && !${AutoFollowingMA}
+	if ${Me.ToActor.WhoFollowingID} <= 0 && ${Actor[${AutoFollowee}].Distance} < 45 && ${Actor[${AutoFollowee}](exists)} && !${AutoFollowingMA}
 	{
 		squelch face ${AutoFollowee}
 		eq2execute /follow ${AutoFollowee}
