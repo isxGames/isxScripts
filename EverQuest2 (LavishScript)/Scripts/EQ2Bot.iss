@@ -1,5 +1,14 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.1c Updated: 01/04/08 by Pygar
+; EQ2Bot.iss Version 2.7.1d Updated: 03/22/08 by Amadeus
+; 
+;2.7.1d
+; * Added a 'Health' case to the CheckCondition function (see Fury.iss (Combat_Init() and Combat_Routines()) for examples)
+; * Removed some scripting that was causing crashes in the onLootWindowAppeared atom
+; * Added a 'GroupWiped' variable (bool) that is set to TRUE whenever "Revive on Group Wipes" is checked and your entire 
+;   group wipes.  This variable can be checked in the class file at any point and should be reset to FALSE after any desired
+;   action has been taken.  See Fury.iss (Buff_Routine()) for example.
+; * Added a 'InitialBuffsDone' scriptwide variable (bool) that is set initially set to FALSE.  This is to allow for specific class
+;   files to cast buffs (or any other spells) when the script is first run (ie, to give out rez feathers.)  See Fury.iss (Buff_Routine()) for example.
 ; 
 ;2.7.1c
 ; Adjusted for new IsDead member of Actor.  This will fix false positives on death checks due to coagulate and other unconcious health buffs.
@@ -89,6 +98,7 @@ variable int PreSpellRange[40,5]
 variable string Action[40]
 variable int MobHealth[40,2]
 variable int Power[40,2]
+variable int Health[40,2]
 variable int SpellRange[40,10]
 variable string PostAction[20]
 variable int PostSpellRange[20,5]
@@ -168,6 +178,8 @@ variable string LootMethod
 variable int MARange
 variable string CurrentAction
 variable int BadActor[50]
+variable bool GroupWiped
+variable bool InitialBuffsDone
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -1414,6 +1426,18 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 				return "FAIL"
 			}
 			break
+			
+		case Health
+			if ${Me.ToActor.Health}>=${xvar1} && ${Me.ToActor.Health}<=${xvar2}
+			{
+				return "OK"
+			}
+			else
+			{
+			    echo "DEBUG: Not Casting Spell due to my health being too low!"
+				return "FAIL"
+			}
+			break		
 	}
 }
 
@@ -2067,6 +2091,7 @@ function IamDead(string Line)
  			if ${wipe}==${grpcnt}
 			{
  					echo "Everyone is dead, waiting 10 seconds to revive"
+ 					GroupWiped:Set[TRUE]
  					wait 100
  					EQ2Execute "select_junction 0"
 					do
