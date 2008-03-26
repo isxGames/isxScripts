@@ -1434,7 +1434,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 			}
 			else
 			{
-			    echo "DEBUG: Not Casting Spell due to my health being too low!"
+			    ;echo "DEBUG: Not Casting Spell due to my health being too low!"
 				return "FAIL"
 			}
 			break		
