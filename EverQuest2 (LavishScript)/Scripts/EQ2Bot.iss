@@ -1,15 +1,15 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1d Updated: 03/22/08 by Amadeus
-; 
+;
 ;2.7.1d
 ; * Added a 'Health' case to the CheckCondition function (see Fury.iss (Combat_Init() and Combat_Routines()) for examples)
 ; * Removed some scripting that was causing crashes in the onLootWindowAppeared atom
-; * Added a 'GroupWiped' variable (bool) that is set to TRUE whenever "Revive on Group Wipes" is checked and your entire 
+; * Added a 'GroupWiped' variable (bool) that is set to TRUE whenever "Revive on Group Wipes" is checked and your entire
 ;   group wipes.  This variable can be checked in the class file at any point and should be reset to FALSE after any desired
 ;   action has been taken.  See Fury.iss (Buff_Routine()) for example.
 ; * Added a 'InitialBuffsDone' scriptwide variable (bool) that is set initially set to FALSE.  This is to allow for specific class
 ;   files to cast buffs (or any other spells) when the script is first run (ie, to give out rez feathers.)  See Fury.iss (Buff_Routine()) for example.
-; 
+;
 ;2.7.1c
 ; Adjusted for new IsDead member of Actor.  This will fix false positives on death checks due to coagulate and other unconcious health buffs.
 ;	Adjusted MA_Dead and MT_Dead functions
@@ -212,6 +212,10 @@ variable int CurrentPOI=1
 ; 4 = Auto Hunting - Pull nearby Mobs within a Maximum Range
 ;===========================================================
 variable int PathType
+;AutoFollow Variables
+;variable bool AutoFollowMode=FALSE
+;variable bool AutoFollowingMA=FALSE
+;variable string AutoFollowee
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
 #include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
@@ -275,6 +279,8 @@ function main()
 			}
 			while ${EQ2.Zoning}
 			wait 50
+			;need to move this var to script scope
+			;AutoFollowingMA:Set[FALSE]
 		}
 
 		if !${StartBot}
@@ -1426,7 +1432,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 				return "FAIL"
 			}
 			break
-			
+
 		case Health
 			if ${Me.ToActor.Health}>=${xvar1} && ${Me.ToActor.Health}<=${xvar2}
 			{
@@ -1437,7 +1443,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 			    ;echo "DEBUG: Not Casting Spell due to my health being too low!"
 				return "FAIL"
 			}
-			break		
+			break
 	}
 }
 
@@ -2705,6 +2711,13 @@ objectdef ActorCheck
 		switch ${Actor[${actorid}].Type}
 		{
 			case NPC
+				break
+
+			case NamedNPC
+				if ${IgnoreNamed}
+				{
+					return FALSE
+				}
 				break
 
 			case PC
