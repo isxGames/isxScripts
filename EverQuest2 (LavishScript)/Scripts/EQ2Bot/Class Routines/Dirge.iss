@@ -135,12 +135,10 @@ function Buff_Init()
 
 	PreAction[16]:Set[Buff_AAFortissimo]
 	PreSpellRange[17,1]:Set[398]
-
 }
 
 function Combat_Init()
 {
-
 	Action[1]:Set[Banshee]
 	SpellRange[1,1]:Set[62]
 
@@ -443,17 +441,17 @@ function Combat_Routine(int xAction)
 		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady}
 		{
 			call CastSpellRange 55
-			DebuffCnt:inc
+			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
 		{
 			call CastSpellRange 56
-			DebuffCnt:inc
+			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
 		{
 			call CastSpellRange 57
-			DebuffCnt:inc
+			DebuffCnt:Inc
 		}
 	}
 
