@@ -1,7 +1,11 @@
 ;*************************************************************
 ;Illusionist.iss
-;version 20070725a
+;version 20080323a
 ;by pygar
+;
+;20080323a (Amadeus)
+; * Moved "Focus" buff to the combat routines.  It is a short duration buff and should only be used during combat when the
+;   target is over 80% health.
 ;
 ;20070725a
 ; Minor changes to adjust for AA tweaks in game.
@@ -90,9 +94,6 @@ function Buff_Init()
 
 	PreAction[8]:Set[Clarity]
 	PreSpellRange[8,1]:Set[22]
-
-	PreAction[9]:Set[Focus]
-	PreSpellRange[9,1]:Set[23]
 
 	PreAction[10]:Set[AA_Empathic_Aura]
 	PreSpellRange[10,1]:Set[391]
@@ -189,6 +190,11 @@ function Combat_Init()
 	MobHealth[17,1]:Set[60]
 	MobHealth[17,2]:Set[100]
 	SpellRange[17,1]:Set[192]
+	
+	Action[18]:Set[Focus]
+	MobHealth[18,1]:Set[80]
+	MobHealth[18,2]:Set[100]	
+	SpellRange[18,1]:Set[23]
 
 }
 
@@ -252,16 +258,6 @@ function Buff_Routine(int xAction)
 			break
 		case Aspect
 			if ${BuffAspect}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
-			else
-			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
-			break
-		case Focus
-			if ${BuffFocus}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -451,7 +447,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 382 0 0 0 ${KillTarget}
 	}
 
-	;make sure killtarget is always Melee debuffed
+	;make sure killtarget is always Melee debuffed (unless I am the tank
 	call CastSpellRange 50 0 0 0 ${KillTarget}
 
 	;make sure Psychic Asailant debuff / stun always on.
@@ -541,6 +537,16 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
+    		case Focus
+    			if ${BuffFocus}
+    			{
+    				call CastSpellRange ${PreSpellRange[${xAction},1]}
+    			}
+    			else
+    			{
+    				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+    			}
+    			break
 			case Gaze
 			case shower
 			case Ego
@@ -708,7 +714,7 @@ function RefreshPower()
 
 	;Mana Flow the lowest group member
 	tempvar:Set[1]
-	MemberLowestPower:Set[0]
+	MemberLowestPower:Set[1]
 	do
 	{
 		if ${Me.Group[${tempvar}].ToActor.Power}<60 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
@@ -728,7 +734,7 @@ function RefreshPower()
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power}<20 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+	if ${Actor[${MainTankPC}].Power} < 20 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 	{
 		call CastSpellRange 354
 		call CastSpellRange 389
