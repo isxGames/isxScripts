@@ -210,9 +210,10 @@ function Buff_Routine(int xAction)
 	call DestroyThoughtstones
 	ExecuteAtom CheckStuck
 
-	if ${AutoFollowMode}
+	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-		ExecuteAtom AutoFollowTank
+	    ExecuteAtom AutoFollowTank
+		wait 5
 	}
 
 	if ${SprintMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}

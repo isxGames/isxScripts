@@ -4,6 +4,9 @@
 ;by karye
 ;updated by pygar
 ;
+; 20080331a (Amadeus)
+; * Added events for Zoning.  EQ2Bot should now autofollow the "AutoFollowee" after zoning.
+; * Updated the 'AutoFollowTank()' function.
 ;
 ; 20080323a (Amadeus)
 ; * Added a collection called "MezSpells" which is intended to contain all spells that qualify as 'mez' type spells.  It is populated during initialization.
@@ -123,6 +126,8 @@ function EQ2BotLib_Init()
 	}
 
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
+	Event[EQ2_StartedZoning]:AttachAtom[EQ2_StartedZoning]
+	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]    
 
 	;HOs
 	if ${DoHOs}
@@ -321,18 +326,28 @@ function ReacquireTargetFromMA()
 }
 
 atom AutoFollowTank()
-{
-	AutoFollowMode:Set[TRUE]
-	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
-
-	if ${Me.ToActor.WhoFollowingID} <= 0 && ${Actor[${AutoFollowee}].Distance} < 45 && ${Actor[${AutoFollowee}](exists)} && !${AutoFollowingMA}
-	{
-		squelch face ${AutoFollowee}
-		eq2execute /follow ${AutoFollowee}
-		AutoFollowingMA:Set[TRUE]
-	}
+{	
+    if !${Me.InCombat}
+    {
+        UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+    
+    	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
+    
+        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
+        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
+        ;echo "DEBUG -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
+    
+    	; if ${Me.ToActor.WhoFollowingID} <= 0 && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${AutoFollowingMA}
+    	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)}
+    	{
+    		squelch face ${AutoFollowee}
+    		eq2execute /follow ${AutoFollowee}
+    		AutoFollowingMA:Set[TRUE]
+    		AutoFollowMode:Set[TRUE]
+    	}
+    	else
+    	    AutoFollowingMA:Set[FALSE]
+    }
 }
 
 atom StopAutoFollowing()
@@ -349,6 +364,27 @@ atom StopAutoFollowing()
 atom StartEQ2Bot()
 {
 	call StartBot
+}
+
+atom EQ2_StartedZoning()
+{
+}
+
+atom EQ2_FinishedZoning(string TimeInSeconds)
+{  
+    if ${AutoFollowMode}
+    {
+        if (${Actor[pc,${AutoFollowee}](exists)})
+        {
+            if (!${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+            {
+        		squelch face ${AutoFollowee}
+        		eq2execute /follow ${AutoFollowee}
+        		AutoFollowingMA:Set[TRUE]
+        		AutoFollowMode:Set[TRUE]     
+    	    }       
+        }
+    }
 }
 
 function Buff_Count(int SpellLine)

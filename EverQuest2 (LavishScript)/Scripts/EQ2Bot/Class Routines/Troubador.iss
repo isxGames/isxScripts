@@ -214,9 +214,10 @@ function Buff_Routine(int xAction)
 
 	ExecuteAtom CheckStuck
 
-	if ${AutoFollowMode}
+	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-		ExecuteAtom AutoFollowTank
+	    ExecuteAtom AutoFollowTank
+		wait 5
 	}
 
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
