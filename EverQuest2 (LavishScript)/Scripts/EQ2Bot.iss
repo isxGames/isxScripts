@@ -926,7 +926,6 @@ function Combat()
 					EQ2Execute /toggleautoattack
 				}
 
-
 				if ${AutoMelee} && !${MainTank}
 				{
 					;check valid rear position
@@ -954,7 +953,6 @@ function Combat()
 						call CheckPosition 1 ${Target.IsEpic}
 					}
 				}
-
 				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
 				{
 					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
@@ -969,7 +967,7 @@ function Combat()
 					}
 				}
 
-				if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 				{
 					EQ2execute "/apply_verb ${Actor[${KillTarget}].ID} loot"
 					break
@@ -977,12 +975,13 @@ function Combat()
 
 				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
-					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
-					target ${KillTarget}
-					call ProcessTriggers
+					if ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
+					{
+						KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+						target ${KillTarget}
+						call ProcessTriggers
+					}
 				}
-
-
 			}
 			while ${tempvar:Inc}<=40
 
@@ -998,7 +997,7 @@ function Combat()
 
 			call ProcessTriggers
 		}
-		while ((${Actor[${KillTarget}](exists)} && !${MainTank}) || (${Target(exists)} && ${MainTank})) && !${Actor[${KillTarget}].IsDead}
+		while ((${Actor[${KillTarget}](exists)} && !${MainTank}) || (${Target(exists)} && ${MainTank})) && !${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]}
 
 		disablebehind:Set[FALSE]
 		disablefront:Set[FALSE]
@@ -1010,7 +1009,7 @@ function Combat()
 				wait 50 ${Actor[ExactName,${MainAssist}].Target(exists)}
 			}
 
-			if ${Actor[ExactName,${MainAssist}].Target(exists)}
+			if ${Actor[ExactName,${MainAssist}].Target(exists)} && ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
 			{
 				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 				continue
@@ -2696,6 +2695,12 @@ objectdef ActorCheck
 			return FALSE
 		}
 
+		if ${This.FriendlyPet[${actorid}]}
+		{
+			;actor is a charmed pet, ignore it
+			return FALSE
+		}
+
 		if ${Actor[${actorid}](exists)}
 		{
 			return TRUE
@@ -2738,6 +2743,12 @@ objectdef ActorCheck
 			return FALSE
 		}
 
+		if ${This.FriendlyPet[${actorid}]}
+		{
+			;actor is a charmed pet, ignore it
+			return FALSE
+		}
+
 		if ${Actor[${actorid}](exists)}
 		{
 			return TRUE
@@ -2752,6 +2763,12 @@ objectdef ActorCheck
 	member:bool AggroGroup(int actorid)
 	{
 		variable int tempvar
+
+		if ${This.FriendlyPet[${actorid}]}
+		{
+			;actor is a charmed pet, ignore it
+			return FALSE
+		}
 
 		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
@@ -2891,6 +2908,47 @@ objectdef ActorCheck
 		return 0
 	}
 
+	member:bool FriendlyPet(int actorid)
+	{
+		variable int tempvar
+
+		if ${Me.GroupCount}>1 || ${Me.InRaid}
+		{
+			;echo Check if mob is a pet of my group
+			tempvar:Set[1]
+			do
+			{
+				if ${Me.Group[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Me.Group[${tempvar}].Pet.ID}
+				{
+					return TRUE
+				}
+			}
+			while ${tempvar:Inc}<${Me.GroupCount}
+
+			;echo Check if mob is a pet of my raid
+			if ${Me.InRaid}
+			{
+				;echo checking aggro on raid
+				tempvar:Set[1]
+				do
+				{
+					if (${Me.Raid[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
+					{
+						;echo actor is pet of raid
+						return TRUE
+					}
+				}
+				while ${tempvar:Inc}<24
+			}
+		}
+
+		if ${Actor[${actorid}](exists)} && ${Actor[${actorid}]..ID}==${Me.ToActor.Pet.ID}
+		{
+			return TRUE
+		}
+
+		return false
+	}
 
 	method CheckMYAggro()
 	{
