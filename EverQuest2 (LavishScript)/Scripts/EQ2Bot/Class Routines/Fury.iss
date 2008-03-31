@@ -170,7 +170,7 @@ function Combat_Init()
 	Power[2,1]:Set[30]
 	Power[2,2]:Set[100]
 	Health[2,1]:Set[51]
-	Health[2,2]:Set[100]	
+	Health[2,2]:Set[100]
 	SpellRange[2,1]:Set[90]
 
 	Action[3]:Set[Nuke]
@@ -179,7 +179,7 @@ function Combat_Init()
 	Power[3,1]:Set[30]
 	Power[3,2]:Set[100]
 	Health[3,1]:Set[51]
-	Health[3,2]:Set[100]	
+	Health[3,2]:Set[100]
 	SpellRange[3,1]:Set[60]
 
 	Action[4]:Set[Storms]
@@ -195,7 +195,7 @@ function Combat_Init()
 	MobHealth[6,1]:Set[10]
 	MobHealth[6,2]:Set[100]
 	Power[6,1]:Set[40]
-	Power[6,2]:Set[100]	
+	Power[6,2]:Set[100]
 	SpellRange[6,1]:Set[381]
 
 	Action[7]:Set[AA_Primordial_Strike]
@@ -218,7 +218,7 @@ function Combat_Init()
 	Power[9,1]:Set[30]
 	Power[9,2]:Set[100]
 	Health[9,1]:Set[51]
-	Health[9,2]:Set[100]	
+	Health[9,2]:Set[100]
 	SpellRange[9,1]:Set[70]
 
 	Action[10]:Set[Proc]
@@ -250,15 +250,15 @@ function Combat_Init()
 	Power[13,1]:Set[30]
 	Power[13,2]:Set[100]
 	SpellRange[13,1]:Set[235]
-	
+
 	Action[14]:Set[DoT2]
 	MobHealth[14,1]:Set[1]
 	MobHealth[14,2]:Set[100]
 	Power[14,1]:Set[30]
 	Power[14,2]:Set[100]
 	Health[14,1]:Set[51]
-	Health[14,2]:Set[100]	
-	SpellRange[14,1]:Set[51]	
+	Health[14,2]:Set[100]
+	SpellRange[14,1]:Set[51]
 
 }
 
@@ -277,27 +277,27 @@ function Buff_Routine(int xAction)
 	variable int temp
 
 	ExecuteAtom CheckStuck
-	
+
 	if ${GroupWiped}
 	{
 	    call HandleGroupWiped
 	    GroupWiped:Set[FALSE]
 	}
-	
+
 	; Pass out feathers on initial script startup
 	if !${InitialBuffsDone}
 	{
 	    if (${Me.GroupCount} > 1)
 	    {
-            Me.Ability[Favor of the Phoenix]:Use  
+          Me.Ability[Favor of the Phoenix]:Use
         	do
         	{
         	    waitframe
         	}
         	while ${Me.CastingSpell}
-        	wait 1  	
-        }    
-	    InitialBuffsDone:Set[TRUE]   
+        	wait 1
+        }
+	    InitialBuffsDone:Set[TRUE]
 	}
 
 	if ${ShardMode}
@@ -309,7 +309,7 @@ function Buff_Routine(int xAction)
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-	    ExecuteAtom AutoFollowTank
+		ExecuteAtom AutoFollowTank
 		wait 5
 	}
 
@@ -325,7 +325,7 @@ function Buff_Routine(int xAction)
     		call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
     	}
     }
-    
+
 	switch ${PreAction[${xAction}]}
 	{
 		case BuffThorns
@@ -493,13 +493,15 @@ function Buff_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 }
 
 function Combat_Routine(int xAction)
 {
+	declare DebuffCnt int  0
+
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
@@ -508,22 +510,15 @@ function Combat_Routine(int xAction)
 	}
 
 	call CheckHeals
-	call CheckGroupHealth 60
-	if ${DoHOs} && ${Return}
-	{
-		objHeroicOp:DoHO
-	}
-
-    call CheckHeals
 	call RefreshPower
-	
+
 	if (${StartHO})
 	{
-    	if (!${EQ2.HOWindowActive} && ${Me.InCombat})
-    	{
-    		call CastSpellRange 304
-    	}
-    }
+   	if (!${EQ2.HOWindowActive} && ${Me.InCombat})
+   	{
+  		call CastSpellRange 304
+   	}
+	}
 
 	if ${ShardMode}
 	{
@@ -533,30 +528,39 @@ function Combat_Routine(int xAction)
 	;if named epic, maintain debuffs
 	if (${DebuffMode})
 	{
-    	if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power} > 30
-    	{
-    		if !${Me.Maintained[${SpellType[50]}](exists)}
-    		{
-    			call CastSpellRange 50 0 0 0 ${KillTarget}
-    		}
-    		if !${Me.Maintained[${SpellType[51]}](exists)}
-    		{
-    			call CastSpellRange 51 0 0 0 ${KillTarget}
-    		}
-    		if !${Me.Maintained[${SpellType[52]}](exists)}
-    		{
-    			call CastSpellRange 52 0 0 0 ${KillTarget}
-    		}
-    	}
-    }
-
-    if (${VortexMode})
+    if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
     {
-    	if ${Me.Ability[${SpellType[385]}].IsReady}
+    	if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
     	{
-    		call CastSpellRange 385
+    		call CastSpellRange 50 0 0 0 ${KillTarget}
+    		DebuffCnt:Inc
+    	}
+    	if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && ${DebuffCnt}<1
+    	{
+    		call CastSpellRange 51 0 0 0 ${KillTarget}
+    		DebuffCnt:Inc
+    	}
+    	if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+    	{
+    		call CastSpellRange 52 0 0 0 ${KillTarget}
+    		DebuffCnt:Inc
     	}
     }
+	}
+
+	;if we cast a debuff, check heals again before continue
+	if ${DebuffCnt}
+	{
+		call CheckHeals
+	}
+
+	if (${VortexMode})
+  {
+  	if ${Me.Ability[${SpellType[385]}].IsReady}
+    {
+    	call CastSpellRange 385
+    }
+	}
 
 	switch ${Action[${xAction}]}
 	{
@@ -634,7 +638,7 @@ function Combat_Routine(int xAction)
 				{
 				    call CheckCondition Health ${Health[${xAction},1]} ${Health[${xAction},2]}
 				    if ${Return.Equal[OK]}
-				    {				    
+				    {
     					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
     					if ${Return.Equal[OK]}
     					{
@@ -642,7 +646,7 @@ function Combat_Routine(int xAction)
     						if ${Return.Equal[FALSE]}
         						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
         				    else
-        				        call ReacquireTargetFromMA 					    
+        				        call ReacquireTargetFromMA
     					}
     				}
 				}
@@ -698,7 +702,7 @@ function Combat_Routine(int xAction)
 				{
 				    call CheckCondition Health ${Health[${xAction},1]} ${Health[${xAction},2]}
 				    if ${Return.Equal[OK]}
-				    {				    
+				    {
     					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
     					if ${Return.Equal[OK]}
     					{
@@ -706,12 +710,12 @@ function Combat_Routine(int xAction)
     						if ${Return.Equal[FALSE]}
         						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
         				    else
-        				        call ReacquireTargetFromMA  
+        				        call ReacquireTargetFromMA
     					}
     				}
 				}
 			}
-			break			
+			break
 		case AA_Primordial_Strike
 		case AA_Nature_Blade
 			if ${OffenseMode} && ${MeleeMode}
@@ -735,7 +739,7 @@ function Combat_Routine(int xAction)
 				{
 				    call CheckCondition Health ${Health[${xAction},1]} ${Health[${xAction},2]}
 				    if ${Return.Equal[OK]}
-				    {				    
+				    {
     					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
     					if ${Return.Equal[OK]}
     					{
@@ -746,7 +750,7 @@ function Combat_Routine(int xAction)
     						    call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
     					    }
         				    else
-        				        call ReacquireTargetFromMA   					    
+        				        call ReacquireTargetFromMA
     					}
     				}
 				}
@@ -809,15 +813,21 @@ function Combat_Routine(int xAction)
 						if ${Return.Equal[FALSE]}
     						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
     				    else
-    				        call ReacquireTargetFromMA					    
+    				        call ReacquireTargetFromMA
 					}
 				}
 			}
 			break
 
 		Default
-			xAction:Set[40]
+			return CombatComplete
 			break
+	}
+
+	call CheckGroupHealth 60
+	if ${DoHOs} && ${Return}
+	{
+		objHeroicOp:DoHO
 	}
 }
 
@@ -1059,7 +1069,7 @@ function CheckHeals()
 	}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)} || ${Me.ID}==${Actor[exactname,${MainTankPC}].ID}
+	if (${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}) || ${Me.ID}==${Actor[exactname,${MainTankPC}].ID}
 	{
 		if ${Me.ToActor.Health}<25
 		{
@@ -1083,7 +1093,7 @@ function CheckHeals()
 			}
 		}
 
-		if ${Me.ToActor.Health}<50 && ${haveagro}
+		if ${Me.ToActor.Health}<50
 		{
 			if ${Me.Ability[${SpellType[1]}].IsReady}
 			{
@@ -1482,19 +1492,19 @@ function CureGroupMember(int gMember)
 
 function HandleGroupWiped()
 {
-    ;;; There was a full group wipe and now we are rebuffing 
-    
+    ;;; There was a full group wipe and now we are rebuffing
+
     ;assume that someone used a feather
     if (${Me.GroupCount} > 1)
-    {    
-        Me.Ability[Favor of the Phoenix]:Use  
+    {
+        Me.Ability[Favor of the Phoenix]:Use
     	do
     	{
     	    waitframe
     	}
     	while ${Me.CastingSpell}
-    	wait 1    
+    	wait 1
     }
-   
+
     return OK
 }

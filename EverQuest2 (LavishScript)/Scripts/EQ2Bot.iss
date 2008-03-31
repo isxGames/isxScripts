@@ -2942,7 +2942,7 @@ objectdef ActorCheck
 			}
 		}
 
-		if ${Actor[${actorid}](exists)} && ${Actor[${actorid}]..ID}==${Me.ToActor.Pet.ID}
+		if ${Actor[${actorid}](exists)} && ${Actor[${actorid}].ID}==${Me.ToActor.Pet.ID}
 		{
 			return TRUE
 		}
