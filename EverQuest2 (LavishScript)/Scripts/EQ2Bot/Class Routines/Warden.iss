@@ -266,9 +266,10 @@ function Buff_Routine(int xAction)
 
 	call CheckHeals
 
-	if ${AutoFollowMode}
+	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-		ExecuteAtom AutoFollowTank
+	    ExecuteAtom AutoFollowTank
+		wait 5
 	}
 
 	if ${Me.ToActor.Power}>85 && ${KeepReactiveUp}

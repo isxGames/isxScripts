@@ -71,6 +71,13 @@ function PostCombat_Init()
 
 function Buff_Routine(int xAction)
 {
+    
+	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+	{
+	    ExecuteAtom AutoFollowTank
+		wait 5
+	}    
+    
 	switch ${PreAction[${xAction}]}
 	{
 		case Self_Buff

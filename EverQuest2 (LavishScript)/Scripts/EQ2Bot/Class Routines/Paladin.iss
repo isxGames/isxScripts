@@ -144,10 +144,11 @@ function Buff_Routine(int xAction)
 
 	call WeaponChange
 
-	if ${AutoFollowMode}
-    	{
-    		ExecuteAtom AutoFollowTank
-    	}
+	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+	{
+	    ExecuteAtom AutoFollowTank
+		wait 5
+	}
 
 	if ${ShardMode}
 	{
