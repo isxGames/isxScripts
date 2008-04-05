@@ -336,9 +336,9 @@ atom AutoFollowTank()
         ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
         ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
         ;echo "DEBUG -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
-    
-    	; if ${Me.ToActor.WhoFollowingID} <= 0 && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${AutoFollowingMA}
-    	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)}
+
+	; if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)}    
+    	if ${Me.ToActor.WhoFollowingID}<=0 && ${Actor[pc,${AutoFollowee}].Distance}<45 && ${Actor[pc,${AutoFollowee}](exists)} && !${AutoFollowingMA}
     	{
     		squelch face ${AutoFollowee}
     		eq2execute /follow ${AutoFollowee}
