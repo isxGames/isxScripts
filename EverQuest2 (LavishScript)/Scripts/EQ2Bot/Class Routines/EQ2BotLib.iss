@@ -4,6 +4,10 @@
 ;by karye
 ;updated by pygar
 ;
+; 20080406a (Amadeus)
+; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
+; * The 'autofollow' routine will now only auto follow a tank every 5 seconds at most.  
+;
 ; 20080331a (Amadeus)
 ; * Added events for Zoning.  EQ2Bot should now autofollow the "AutoFollowee" after zoning.
 ; * Updated the 'AutoFollowTank()' function.
@@ -94,6 +98,7 @@ variable(script) collection:int MezSpells
 variable bool AutoFollowMode=FALSE
 variable bool AutoFollowingMA=FALSE
 variable string AutoFollowee
+variable int AutoFollowLastSetTime
 
 function EQ2BotLib_Init()
 {
@@ -162,6 +167,8 @@ function EQ2BotLib_Init()
 	#endif
 	
 	call PopulateMezSpells
+	
+	AutoFollowLastSetTime:Set[0]
 	
 	return OK
 }
@@ -333,20 +340,20 @@ atom AutoFollowTank()
     
     	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
     
-        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
-        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
-        ;echo "DEBUG -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
-
-	; if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)}    
-    	if ${Me.ToActor.WhoFollowingID}<=0 && ${Actor[pc,${AutoFollowee}].Distance}<45 && ${Actor[pc,${AutoFollowee}](exists)} && !${AutoFollowingMA}
-    	{
-    		squelch face ${AutoFollowee}
-    		eq2execute /follow ${AutoFollowee}
-    		AutoFollowingMA:Set[TRUE]
-    		AutoFollowMode:Set[TRUE]
+        if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
+        {
+            ;echo "DEBUG: Following...."
+        	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon}
+        	{
+        		squelch face ${AutoFollowee}
+        		eq2execute /follow ${AutoFollowee}
+        		AutoFollowLastSetTime:Set[${Time.Timestamp}]
+        		AutoFollowingMA:Set[TRUE]
+        		AutoFollowMode:Set[TRUE]
+        	}
+        	else
+        	    AutoFollowingMA:Set[FALSE]
     	}
-    	else
-    	    AutoFollowingMA:Set[FALSE]
     }
 }
 
@@ -422,7 +429,7 @@ function Swap()
 	}
 	else
 	{
-		if ${Math.Calc[${Time.Timestamp} - ${SwapStartTime}]}>=2
+		if ${Math.Calc64[${Time.Timestamp} - ${SwapStartTime}]}>=2
 		{
 			Me.Inventory[${OriginalItem}]:Equip
 			Swapping:Set[FALSE]
@@ -535,31 +542,29 @@ function ToClose()
 
 function CheckGroupHealth(int MinHealth)
 {
-	declare counter int local 1
+	declare counter int local 0
 
 	do
 	{
-
 		;check groupmates health
-		if ${Me.Group[${counter}].ToActor.Health}<${MinHealth} && ${Me.Group[${counter}].ToActor.Health}>0
+		if ${Me.Group[${counter}].ToActor.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Health} > 0
 		{
 			Return FALSE
 		}
 
 		;check health of summoner pets
-		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
+		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer] || ${Me.Group[${counter}].Class.Equal[illusionist]}
 		{
-			if ${Me.Group[${counter}].ToActor.Pet.Health}<${MinHealth} && ${Me.Group[${counter}].ToActor.Pet.Health}>0
+			if ${Me.Group[${counter}].ToActor.Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Pet.Health} > 0
 			{
 				Return FALSE
 			}
 		}
 
 	}
-	while ${counter:Inc}<${Me.GroupCount}
+	while ${counter:Inc} < ${Me.GroupCount}
 
-	;check my health
-	if ${Me.ToActor.Health}<${MinHealth}
+	if ${Me.ToActor.Health} < ${MinHealth}
 	{
 		Return FALSE
 	}
@@ -595,7 +600,7 @@ function RelayGuildMessage(string line, string Sender, string Message)
 
 atom CheckStuck()
 {
-	if ${Actor[${Me.ToActor.WhoFollowing}].Distance}>25 && (${Math.Calc[${Time.Timestamp} - ${StuckWarningTime}]}>=10)  && ${Actor[${Me.ToActor.WhoFollowing}](exists)}
+	if ${Actor[${Me.ToActor.WhoFollowing}].Distance}>25 && (${Math.Calc64[${Time.Timestamp} - ${StuckWarningTime}]}>=10)  && ${Actor[${Me.ToActor.WhoFollowing}](exists)}
 	{
 		relay ${RelaySession} EQ2Echo ${Me.Name} IS STUCK
 
@@ -663,7 +668,7 @@ function UseItem(string Item)
 			Me.Equipment[ExactName,"${Item}"]:Use
 		}
 		;else lets check if its in our inventory and swap it in to use if ready and were not swaping any other items.
-		elseif ${Me.Inventory[ExactName,"${Item}"].IsReady} && ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+		elseif ${Me.Inventory[ExactName,"${Item}"].IsReady} && ${Math.Calc64[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 		{
 			Me.Inventory[ExactName,"${Item}"]:Equip
 			Me.Equipment["${Item}"]:Use
