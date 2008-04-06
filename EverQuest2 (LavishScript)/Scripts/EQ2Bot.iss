@@ -2779,7 +2779,7 @@ objectdef ActorCheck
 			tempvar:Set[1]
 			do
 			{
-				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ToActor.PetID} && ${Me.Group[${tempvar}].ToActor.PetID(exists)})
+				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet.ID(exists)})
 				{
 					return TRUE
 				}
