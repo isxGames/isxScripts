@@ -799,6 +799,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 
 		case 26
 		case 27
+		case 28
 		case 15
 		case 16
 			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombat}
@@ -814,7 +815,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 				BDStatus:Set[1]
 			}
 		case 8
-			if (${Message.Upper.Find[SHARD]} || ${Message.Upper.Find[HEART]}) && ${Me.SubClass.Equal[summoner]}
+			if (${Message.Upper.Find[SHARD]} || ${Message.Upper.Find[HEART]}) && ${Me.Class.Equal[summoner]}
 			{
 				call QueueShardRequest ${Speaker} ${Speaker}
 			}
