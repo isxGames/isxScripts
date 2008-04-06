@@ -340,6 +340,13 @@ atom AutoFollowTank()
     
     	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
     
+        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
+        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
+        ;echo "DEBUG -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
+    
+    	;echo "DEBUG: AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
+    	;echo "DEBUG: Time Now: ${Time.Timestamp}"
+    	;echo "DEBUG: TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
         if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
         {
             ;echo "DEBUG: Following...."
@@ -553,7 +560,7 @@ function CheckGroupHealth(int MinHealth)
 		}
 
 		;check health of summoner pets
-		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer] || ${Me.Group[${counter}].Class.Equal[illusionist]}
+		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]}
 		{
 			if ${Me.Group[${counter}].ToActor.Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Pet.Health} > 0
 			{
