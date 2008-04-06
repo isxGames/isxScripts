@@ -1,6 +1,9 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1d Updated: 03/22/08 by Amadeus
 ;
+;2.7.1e
+; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
+;
 ;2.7.1d
 ; * Added a 'Health' case to the CheckCondition function (see Fury.iss (Combat_Init() and Combat_Routines()) for examples)
 ; * Removed some scripting that was causing crashes in the onLootWindowAppeared atom
@@ -295,7 +298,7 @@ function main()
 
 		if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
 		{
-			if ${Math.Calc[${Time.Timestamp}-${mstimer}]}>70
+			if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
 			{
 				Me.Inventory[ExactName,ManaStone]:Use
 				mstimer:Set[${Time.Timestamp}]
@@ -960,7 +963,7 @@ function Combat()
 
 				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
 				{
-					if ${Math.Calc[${Time.Timestamp}-${mstimer}]}>70
+					if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
 					{
 						Me.Inventory[ExactName,ManaStone]:Use
 						mstimer:Set[${Time.Timestamp}]
@@ -1324,7 +1327,7 @@ function CheckPosition(int rangetype, int position)
 				face ${Target.X} ${Target.Z}
 			}
 
-			if ${Math.Calc[${Time.Timestamp}-${movetimer}]}>2
+			if ${Math.Calc64[${Time.Timestamp}-${movetimer}]}>2
 			{
 				isstuck:Set[TRUE]
 				break
@@ -2159,7 +2162,7 @@ function IamDead(string Line)
 	{
 		do
 		{
-			if ${Math.Calc[${Time.Timestamp}-${deathtimer}]}>5000
+			if ${Math.Calc64[${Time.Timestamp}-${deathtimer}]}>5000
 			{
 				Exit
 			}
@@ -4046,6 +4049,9 @@ function atexit()
 
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
+	Event[EQ2_onIncomingChatText]:DetachAtom[ChatText]
+	Event[EQ2_StartedZoning]:DetachAtom[EQ2_StartedZoning]
+	Event[EQ2_FinishedZoning]:DetachAtom[EQ2_FinishedZoning]    
 
 	press -release ${forward}
 	press -release ${backward}
