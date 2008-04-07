@@ -167,7 +167,8 @@ variable int PowerCheck
 variable int HealthCheck
 variable float PositionHeading
 variable bool PullWithBow
-variable bool LootConfirm
+variable bool LoreConfirm
+variable bool NoTradeConfirm
 variable bool CheckPriestPower
 variable int LootWndCount
 variable int LootDecline
@@ -2310,11 +2311,15 @@ atom(script) LootWDw(string ID)
 
 	if ${LootMethod.Equal[Accept]}
 	{
-		if !${LootConfirm}
+		if ${LoreConfirm} || ${NoTradeConfirm}
 		{
 			do
 			{
-				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} || ${LootWindow[${ID}].Item[${tmpcnt}].NoTrade})
+				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} && ${LoreConfirm})
+				{
+					deccnt:Inc
+				}
+				if (${LootWindow[${ID}].Item[${tmpcnt}].NoTrade} && ${NoTradeConfirm})
 				{
 					deccnt:Inc
 				}
@@ -3051,7 +3056,8 @@ objectdef EQ2BotObj
 		PathType:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What Path Type (0-4)?,0]}]
 		CloseUI:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Close the UI after starting EQ2Bot?,FALSE]}]
 		MasterSession:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Master IS Session,Master.is1]}]
-		LootConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore or No Trade Items?,TRUE]}]
+		LoreConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore Items?,TRUE]}]
+		NoTradeConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot No Trade Items?,TRUE]}]
 		CheckPriestPower:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Check if Priest has Power in the Group?,TRUE]}]
 		WipeRevive:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Revive on Group Wipe?,FALSE]}]
 		BoxWidth:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Navigation: Size of Box?,4]}]
@@ -4006,6 +4012,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 	{
 		ChoiceWindow:DoChoice1
 		;KillTarget:Set[]
+		InitialBuffsDone:Set[0]
 		return
 	}
 
@@ -4015,16 +4022,21 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-	if ${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
+	if ${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1 && ${LoreConfirm} && ${NoTradeConfirm}
 	{
-		if ${LootConfirm}
-		{
-			ChoiceWindow:DoChoice1
-		}
-		elseif !${LootMethod.Equal[Idle]}
-		{
-			ChoiceWindow:DoChoice2
-		}
+		ChoiceWindow:DoChoice1
+	}
+	elseif ${ChoiceWindow.Text.Find[Lore]} && !${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1 && ${LoreConfirm}
+	{
+		ChoiceWindow:DoChoice1
+	}
+	elseif !${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1 && ${NoTradeConfirm}
+	{
+		ChoiceWindow:DoChoice1
+	}
+	elseif !${LootMethod.Equal[Idle]}
+	{
+		ChoiceWindow:DoChoice2
 	}
 }
 

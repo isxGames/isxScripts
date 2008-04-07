@@ -55,6 +55,7 @@ function Class_Declaration()
 	declare AoEMode bool script
 	declare CureMode bool script
 	declare GenesisMode bool script
+	declare InfusionMode bool script
 	declare KeepReactiveUp bool script
 	declare UseCAs bool script 1
 	declare MeleeMode bool script 1
@@ -94,6 +95,7 @@ function Class_Declaration()
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cure Spells,FALSE]}]
 	GenesisMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Genesis,FALSE]}]
+	InfusionMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[InfusionMode,FALSE]}]
 	KeepReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepReactiveUp,FALSE]}]
 	UseCAs:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseCAs,FALSE]}]
 	MeleeMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Melee,FALSE]}]
@@ -373,15 +375,21 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break
+		case AA_Infusion
+			if !${InfusionMode}
+			{
+				break
+			}
 		case AA_Nature_Walk
 		case AA_Force_of_Nature
 		case AA_Rebirth
-		case AA_Infusion
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
+
+
 		Default
 			xAction:Set[40]
 			break

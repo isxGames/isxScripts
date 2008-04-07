@@ -665,7 +665,7 @@
 									<Alignment>Left</Alignment>
 									<Wrap />
 									<Text>Action: ${Script[EQ2Bot].Variable[CurrentAction]}</Text>
-								</Text>							
+								</Text>
 								<Text Name='Current Target' Template='EQ2.text'>
 									<X>5%</X>
 									<Y>40</Y>
@@ -710,7 +710,7 @@
 									<Alignment>Left</Alignment>
 									<Wrap />
 									<Text>Runtime: ${Math.Calc[(${Time.Timestamp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/60].Precision[2]} min.</Text>
-								</Text>								
+								</Text>
 							</Children>
 						</Frame>
 						<Commandbutton name='Start EQ2Bot' Template='EQ2.Commandbutton'>
@@ -1133,28 +1133,53 @@
 								}
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name='Loot Confirmation' Template='EQ2.checkbox'>
+						<checkbox Name='Lore Confirmation' Template='EQ2.checkbox'>
 							<X>55%</X>
 							<Y>150</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
-							<Text>Loot Lore and No Trade Items</Text>
+							<Text>Loot Lore</Text>
 							<OnLoad>
-								if ${Script[EQ2Bot].Variable[LootConfirm]}
+								if ${Script[EQ2Bot].Variable[LoreConfirm]}
 								{
-									UIElement[Loot Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+									UIElement[Lore Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								if ${UIElement[Loot Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
+								if ${UIElement[Lore Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
-									Script[EQ2Bot].Variable[LootConfirm]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot Lore or No Trade Items?,TRUE]:Save
+									Script[EQ2Bot].Variable[LoreConfirm]:Set[TRUE]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot Lore Items?,TRUE]:Save
 								}
 								else
 								{
-									Script[EQ2Bot].Variable[LootConfirm]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot Lore or No Trade Items?,FALSE]:Save
+									Script[EQ2Bot].Variable[LoreConfirm]:Set[FALSE]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot Lore Items?,FALSE]:Save
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='NoTrade Confirmation' Template='EQ2.checkbox'>
+							<X>75%</X>
+							<Y>150</Y>
+							<Width>30%</Width>
+							<Height>20</Height>
+							<Text>Loot NoTrade Items</Text>
+							<OnLoad>
+								if ${Script[EQ2Bot].Variable[NoTradeConfirm]}
+								{
+									UIElement[NoTrade Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${UIElement[NoTrade Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
+								{
+									Script[EQ2Bot].Variable[NoTradeConfirm]:Set[TRUE]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot NoTrade Items?,TRUE]:Save
+								}
+								else
+								{
+									Script[EQ2Bot].Variable[NoTradeConfirm]:Set[FALSE]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot NoTrade Items?,FALSE]:Save
 								}
 							</OnLeftClick>
 						</checkbox>

@@ -238,7 +238,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	;check if we have a pet or a ooze not up
-	if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
+	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 		waitframe
@@ -339,7 +339,7 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${Me.Pet(exists)}
+	if ${Me.ToActor.Pet(exists)}
 	{
 		ExecuteAtom PetAttack
 	}

@@ -58,6 +58,9 @@ function Class_Declaration()
 	declare SurroundingAttacksMode bool Script FALSE
 	declare MaintainPoison bool Script FALSE
 	declare CloakMode bool Script FALSE
+	declare DebuffPoisonShort string script
+	declare DammagePoisonShort string script
+	declare UtilityPoisonShort string script
 
 	;Custom Equipment
 	declare WeaponRapier string script

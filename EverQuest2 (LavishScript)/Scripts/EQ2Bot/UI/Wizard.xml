@@ -224,7 +224,7 @@
 	<Commandcheckbox Name='PetMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>150</Y>
+		<Y>170</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Pets</Text>
