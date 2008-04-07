@@ -64,7 +64,7 @@ function Class_Declaration()
 	BuffTime_Compression:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTime_Compression,]}]
 	BuffIllusory_Arm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffIllusory_Arm,]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
-	SprintMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSprint,FALSE]}]
+	SprintMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[SprintMode,FALSE]}]
 
 }
 
@@ -190,10 +190,10 @@ function Combat_Init()
 	MobHealth[17,1]:Set[60]
 	MobHealth[17,2]:Set[100]
 	SpellRange[17,1]:Set[192]
-	
+
 	Action[18]:Set[Focus]
 	MobHealth[18,1]:Set[80]
-	MobHealth[18,2]:Set[100]	
+	MobHealth[18,2]:Set[100]
 	SpellRange[18,1]:Set[23]
 
 }
@@ -228,11 +228,11 @@ function Buff_Routine(int xAction)
 		wait 5
 	}
 
-	if ${SprintMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
+	if ${SprintMode} && ${Me.ToActor.Power}>30 && !${Me.Maintained[${SpellType[333]}](exists)}
 	{
 		call CastSpellRange 333
 	}
-	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<55
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<35
 	{
 		Me.Maintained[${SpellType[333]}]:Cancel
 	}
@@ -406,11 +406,11 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	if ${SprintMode} && ${Me.ToActor.Power}>50 && !${Me.Maintained[${SpellType[333]}](exists)}
+	if ${SprintMode} && ${Me.ToActor.Power}>30 && !${Me.Maintained[${SpellType[333]}](exists)}
 	{
 		call CastSpellRange 333
 	}
-	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<55
+	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<35
 	{
 		Me.Maintained[${SpellType[333]}]:Cancel
 	}
