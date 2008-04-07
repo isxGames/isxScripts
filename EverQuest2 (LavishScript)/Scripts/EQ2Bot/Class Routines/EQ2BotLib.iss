@@ -132,7 +132,7 @@ function EQ2BotLib_Init()
 
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 	Event[EQ2_StartedZoning]:AttachAtom[EQ2_StartedZoning]
-	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]    
+	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]
 
 	;HOs
 	if ${DoHOs}
@@ -165,9 +165,9 @@ function EQ2BotLib_Init()
 		uplink name ${Me.Name}
 		}
 	#endif
-	
+
 	call PopulateMezSpells
-	
+
 	AutoFollowLastSetTime:Set[0]
 	
 	return OK
@@ -177,7 +177,7 @@ function PopulateMezSpells()
 {
 	variable int keycount
 	variable int iLevel=1
-	variable int iType = 0	
+	variable int iType = 0
 	variable string tempnme
 	variable int tempvar=1
 	variable string SpellName
@@ -196,7 +196,7 @@ function PopulateMezSpells()
 		SpellName:Set[${SettingXML[${spellfile}].Set[Illusionist].GetString["${tempnme}"]}]
 
 		;echo "Debug: Processing Illusionist Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
-		
+
         switch ${iType}
         {
             case 92
@@ -206,18 +206,18 @@ function PopulateMezSpells()
                 ;echo "DEBUG: Illusionist Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
                 MezSpells:Set[${SpellName},${iLevel}]
                 break
-                
+
             Default
                 break
-        }   		
-		
-		
+        }
+
+
 	}
-	while ${tempvar:Inc} <= ${keycount}        
+	while ${tempvar:Inc} <= ${keycount}
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    
-    
+
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Coercer Mez Spells
 	;;;;;
@@ -233,7 +233,7 @@ function PopulateMezSpells()
 		SpellName:Set[${SettingXML[${spellfile}].Set[Coercer].GetString["${tempnme}"]}]
 
 		;echo "Debug: Processing Coercer Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
-		
+
         switch ${iType}
         {
             case 351
@@ -242,19 +242,19 @@ function PopulateMezSpells()
                 ;echo "DEBUG: Coercer Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
                 MezSpells:Set[${SpellName},${iLevel}]
                 break
-                
+
             Default
                 break
-        }   		
-		
-		
+        }
+
+
 	}
-	while ${tempvar:Inc} <= ${keycount}        
+	while ${tempvar:Inc} <= ${keycount}
     ;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
-    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
     echo "DEBUG: ${MezSpells.Used} spells were added to the MezSpells collection."
-    
+
     return ${MezSpells.Used}
 }
 
@@ -264,10 +264,10 @@ function CheckForMez(string param1)
         return FALSE
     if ${Target.CanTurn}
         return FALSE
-        
-    variable int i = 1    
-      
-    Target:InitializeEffects  
+
+    variable int i = 1
+
+    Target:InitializeEffects
     wait 5
     if (${Target.NumEffects} > 0)
     {
@@ -282,8 +282,8 @@ function CheckForMez(string param1)
         }
         while ${i:Inc} < ${Target.NumEffects}
     }
-    
-    return FALSE 
+
+    return FALSE
 }
 
 function CheckForStun()
@@ -292,10 +292,10 @@ function CheckForStun()
         return FALSE
     if ${Target.CanTurn}
         return FALSE
-        
-    variable int i = 1    
-      
-    Target:InitializeEffects  
+
+    variable int i = 1
+
+    Target:InitializeEffects
     wait 5
     if (${Target.NumEffects} > 0)
     {
@@ -307,8 +307,8 @@ function CheckForStun()
         }
         while ${i:Inc} < ${Target.NumEffects}
     }
-    
-    return TRUE 
+
+    return TRUE
 }
 
 function ReacquireTargetFromMA()
@@ -324,26 +324,26 @@ function ReacquireTargetFromMA()
 			target ${KillTarget}
 			;echo "DEBUG (ReacquireTargetFromMA): New Target Acquired: ${Target}"
 			return TRUE
-		}        
+		}
     }
-    
+
     target ${MainAssist}
-    echo "DEBUG: (ReacquireTargetFromMA): MA has no target right now..."  
+    echo "DEBUG: (ReacquireTargetFromMA): MA has no target right now..."
     return FALSE
 }
 
 atom AutoFollowTank()
-{	
+{
     if !${Me.InCombat}
     {
         UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-    
+
     	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
-    
+
         ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
         ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
         ;echo "DEBUG -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
-    
+
     	;echo "DEBUG: AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
     	;echo "DEBUG: Time Now: ${Time.Timestamp}"
     	;echo "DEBUG: TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
@@ -385,7 +385,7 @@ atom EQ2_StartedZoning()
 }
 
 atom EQ2_FinishedZoning(string TimeInSeconds)
-{  
+{
     if ${AutoFollowMode}
     {
         if (${Actor[pc,${AutoFollowee}](exists)})
@@ -395,8 +395,8 @@ atom EQ2_FinishedZoning(string TimeInSeconds)
         		squelch face ${AutoFollowee}
         		eq2execute /follow ${AutoFollowee}
         		AutoFollowingMA:Set[TRUE]
-        		AutoFollowMode:Set[TRUE]     
-    	    }       
+        		AutoFollowMode:Set[TRUE]
+    	    }
         }
     }
 }
@@ -804,7 +804,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 	switch ${ChatType}
 	{
 
-		case 26
+		case 28
 		case 27
 		case 28
 		case 15
@@ -821,6 +821,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 			{
 				BDStatus:Set[1]
 			}
+		case 18
 		case 8
 			if (${Message.Upper.Find[SHARD]} || ${Message.Upper.Find[HEART]}) && ${Me.Class.Equal[summoner]}
 			{
