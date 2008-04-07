@@ -11,7 +11,7 @@
 		<Setting Name="1,394">Crane Twirl</Setting>
 		<Setting Name="1,393">Crane Flock</Setting>
 		<Setting Name="1,392">Eagle Spin</Setting>
-		<Setting Name="1,391">Mongoose Stance</Setting>
+		<Setting Name="1,391">Alternate: Mongoose Stance</Setting>
 		<Setting Name="1,390">Master\'s Evasion</Setting>
 		<Setting Name="1,389">Combination</Setting>
 		<Setting Name="1,388">Evade</Setting>
@@ -63,7 +63,7 @@
 		<Setting Name="29,150">Pouncing Tiger</Setting>
 		<Setting Name="29,155">Jolting Hand</Setting>
 		<Setting Name="30,296">Stance: Sweeping Crane</Setting>
-		<Setting Name="30,371">Instill Doubt</Setting>					
+		<Setting Name="30,371">Instill Doubt</Setting>
             	<Setting Name="30,190">Winter\'s Talon</Setting>
 		<Setting Name="31,140">Stumbling Boar</Setting>
 		<Setting Name="31,160">Silent Threat</Setting>
@@ -171,6 +171,6 @@
 		<Setting Name="79,367">Will of the Wise</Setting>
 		<Setting Name="80,29">Dragon Rage</Setting>
 		<Setting Name="80,350">Peel</Setting>
-		<Setting Name="80,260">Stifling Palm</Setting>		
+		<Setting Name="80,260">Stifling Palm</Setting>
 	</Set>
 </InnerSpaceSettings>

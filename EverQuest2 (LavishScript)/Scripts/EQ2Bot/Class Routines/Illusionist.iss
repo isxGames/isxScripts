@@ -224,7 +224,7 @@ function Buff_Routine(int xAction)
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-	    ExecuteAtom AutoFollowTank
+			ExecuteAtom AutoFollowTank
 		wait 5
 	}
 
@@ -520,7 +520,6 @@ function Combat_Routine(int xAction)
 	}
 	else
 	{
-
 		switch ${Action[${xAction}]}
 		{
 
@@ -538,16 +537,12 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-    		case Focus
-    			if ${BuffFocus}
-    			{
-    				call CastSpellRange ${PreSpellRange[${xAction},1]}
-    			}
-    			else
-    			{
-    				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-    			}
-    			break
+			case Focus
+					if ${BuffFocus}
+					{
+						call CastSpellRange ${PreSpellRange[${xAction},1]}
+					}
+					break
 			case Gaze
 			case shower
 			case Ego
