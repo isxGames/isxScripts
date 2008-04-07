@@ -205,7 +205,7 @@
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["SprintMode",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseSprint]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[SprintMode]}</Data>
 	</Commandcheckbox>
 	<Commandbutton name='RefreshDPS' Template='EQ2.Commandbutton'>
 		<X>275</X>

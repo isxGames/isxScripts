@@ -986,7 +986,7 @@ function Combat()
 					}
 				}
 			}
-			while ${tempvar:Inc}<=40
+			while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
 
 			if !${CurrentTask}
 			{
