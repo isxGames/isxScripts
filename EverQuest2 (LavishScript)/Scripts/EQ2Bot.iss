@@ -2921,7 +2921,7 @@ objectdef ActorCheck
 			tempvar:Set[1]
 			do
 			{
-				if ${Me.Group[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Me.Group[${tempvar}].ToActor.Pet.ID}
+				if (${Me.Group[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Me.Group[${tempvar}].ToActor.Pet.ID}) || ${Actor[${actorid}].Type.Equal[Pet]}
 				{
 					return TRUE
 				}
@@ -2935,7 +2935,7 @@ objectdef ActorCheck
 				tempvar:Set[1]
 				do
 				{
-					if (${Me.Raid[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
+					if (${Me.Raid[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}) || ${Actor[${actorid}].Type.Equal[Pet]}
 					{
 						;echo actor is pet of raid
 						return TRUE
@@ -3103,10 +3103,19 @@ objectdef EQ2BotObj
 			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
 			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 			{
-				echo Are you missing spell: ${spellname}
+				if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
+				{
+					echo Are you missing spell: ${spellname}
+				}
+				else
+				{
+					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+				}
 			}
-
-			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+			else
+			{
+				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+			}
 		}
 		while ${tempvar:Inc}<=${keycount}
 	}
@@ -4051,7 +4060,7 @@ function atexit()
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
 	Event[EQ2_onIncomingChatText]:DetachAtom[ChatText]
 	Event[EQ2_StartedZoning]:DetachAtom[EQ2_StartedZoning]
-	Event[EQ2_FinishedZoning]:DetachAtom[EQ2_FinishedZoning]    
+	Event[EQ2_FinishedZoning]:DetachAtom[EQ2_FinishedZoning]
 
 	press -release ${forward}
 	press -release ${backward}

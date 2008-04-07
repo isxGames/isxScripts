@@ -133,7 +133,7 @@ function Buff_Init()
 	PreAction[16]:Set[Buff_AALuckOfTheDirge]
 	PreSpellRange[16,1]:Set[382]
 
-	PreAction[16]:Set[Buff_AAFortissimo]
+	PreAction[17]:Set[Buff_AAFortissimo]
 	PreSpellRange[17,1]:Set[398]
 }
 
@@ -428,11 +428,6 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${DoHOs}
-	{
-		objHeroicOp:DoHO
-	}
-
 	call ActionChecks
 
 	call DoMagneticNote
@@ -618,6 +613,13 @@ function Combat_Routine(int xAction)
 			return CombatComplete
 			break
 	}
+
+	if ${DoHOs}
+	{
+		objHeroicOp:DoHO
+	}
+
+
 }
 
 function Post_Combat_Routine()
