@@ -43,10 +43,10 @@
       <Setting Name="79">2,2,2</Setting>
     </Set>
     <Set Name="carpenter">
-      <Setting Name="20"></Setting>
+      <Setting Name="20">3,3</Setting>
       <Setting Name="24">1,1,1,1,2</Setting>
-      <Setting Name="29"></Setting>
-      <Setting Name="30"></Setting>
+      <Setting Name="29">1,1,1,1,1,1</Setting>
+      <Setting Name="30">6</Setting>
       <Setting Name="34"></Setting>
       <Setting Name="39"></Setting>
       <Setting Name="40"></Setting>
@@ -136,8 +136,8 @@
       <Setting Name="54">1,1,1,3</Setting>
       <Setting Name="59">1,1,1,1,1,1</Setting>
       <Setting Name="60">3,3</Setting>
-      <Setting Name="64">1,1,3</Setting>
-      <Setting Name="69"></Setting>
+      <Setting Name="64">1,1,1,3</Setting>
+      <Setting Name="69">1,1,1,1,1,1</Setting>
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
@@ -147,7 +147,7 @@
       <Setting Name="24"></Setting>
       <Setting Name="29">2,2,2</Setting>
       <Setting Name="30">3,3</Setting>
-      <Setting Name="34"></Setting>
+      <Setting Name="34">2,2,2</Setting>
       <Setting Name="39"></Setting>
       <Setting Name="40"></Setting>
       <Setting Name="44"></Setting>
