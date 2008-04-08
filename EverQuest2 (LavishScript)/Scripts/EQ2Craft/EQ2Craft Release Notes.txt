@@ -1,5 +1,9 @@
 Revision History
 ----------------
+v7.07 - Minor change to inventory search -- allows for resources etc with space to underscore
+        conversion; e.g. flying fish -> flying_fish_
+        Note: This is an all-or-nothing conversion, either all spaces are underscores, or none.
+        
 v7.06 - Moved all writ quantities to a new file, WritCounts.xml.
       - Removed another section of code that could cause a writ to finish early.
       - Committed a Custom Writ file to the SVN. -- You may wish to back up your own 
