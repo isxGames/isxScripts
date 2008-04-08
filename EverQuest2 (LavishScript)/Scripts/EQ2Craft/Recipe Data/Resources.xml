@@ -303,5 +303,40 @@
 		<Setting Name="raw vanilla">raw vanilla</Setting>
 		<Setting Name="quality spice cake mix (TM)">quality spice cake mix (TM)</Setting>
 		<Setting Name="raw fowl">raw fowl</Setting>		
+
+		<Setting Name="Smoldering Dust">Smoldering Dust</Setting>
+
+		<Setting Name="Crystallized Mana">Crystallized Mana</Setting>
+		<Setting Name="Infusion of Reality">Infusion of Reality</Setting>
+		<Setting Name="Sacred Powder">Sacred Powder</Setting>
+		<Setting Name="Emerald Fragment">Emerald Fragment</Setting>
+		<Setting Name="Hardened Mana">Hardened Mana</Setting>
+		<Setting Name="Infusion of Illusion">Infusion of Illusion</Setting>
+		<Setting Name="Illusionary Powder">Illusionary Powder</Setting>
+		<Setting Name="Lunar Fragment">Lunar Fragment</Setting>
+		<Setting Name="Coalesced Mana">Coalesced Mana</Setting>
+		<Setting Name="Infusion of Daydreams">Infusion of Daydreams</Setting>
+		<Setting Name="Vision Powder">Vision Powder</Setting>
+		<Setting Name="Pearl Fragment">Pearl Fragment</Setting>
+		<Setting Name="Natural Mana">Natural Mana</Setting>
+		<Setting Name="Infusion of Nightmares">Infusion of Nightmares</Setting>
+		<Setting Name="Spectral Powder">Spectral Powder</Setting>
+		<Setting Name="Ruby Fragment">Ruby Fragment</Setting>
+		<Setting Name="Purified Mana">Purified Mana</Setting>
+		<Setting Name="Infusion of Water">Infusion of Water</Setting>
+		<Setting Name="Ethereal Powder">Ethereal Powder</Setting>
+		<Setting Name="Opal Fragment">Opal Fragment</Setting>
+		<Setting Name="Clarified Mana">Clarified Mana</Setting>
+		<Setting Name="Infusion of Fire">Infusion of Fire</Setting>
+		<Setting Name="Phantom Powder">Phantom Powder</Setting>
+		<Setting Name="Jasper Fragment">Jasper Fragment</Setting>
+		<Setting Name="Processed Mana">Processed Mana</Setting>
+		<Setting Name="Infusion of Air">Infusion of Air</Setting>
+		<Setting Name="Aether Powder">Aether Powder</Setting>
+		<Setting Name="Coral Fragment">Coral Fragment</Setting>
+		<Setting Name="Refined Mana">Refined Mana</Setting>
+		<Setting Name="Infusion of Earth">Infusion of Earth</Setting>
+		<Setting Name="Ulteran Powder">Ulteran Powder</Setting>
+		<Setting Name="Lapiz Lazuli Fragment">Lapiz Lazuli Fragment</Setting>
 	</Set>
 </InnerSpaceSettings>
