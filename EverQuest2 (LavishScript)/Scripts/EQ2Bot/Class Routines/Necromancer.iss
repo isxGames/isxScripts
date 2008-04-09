@@ -71,7 +71,6 @@ function Class_Declaration()
 
 	AddTrigger DequeueShardRequest "Target already has a necromancer heart item!"
 
-
 	PetType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Pet Type,3]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
@@ -979,7 +978,14 @@ function SummonPet()
 				break
 
 			case 2
-				call CastSpellRange 356
+				if ${Me.Equipment[ExactName,"Vazaelle, the Mad"].IsReady}
+				{
+					call UseItem "Vazaelle, the Mad"
+				}
+				else
+				{
+					call CastSpellRange 356
+				}
 				break
 
 			case 3

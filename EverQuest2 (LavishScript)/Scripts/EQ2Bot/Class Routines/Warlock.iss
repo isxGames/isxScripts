@@ -85,63 +85,116 @@ function Combat_Init()
 	Action[1]:Set[AoE_Debuff1]
 	SpellRange[1,1]:Set[57]
 
-	Action[2]:Set[Combat_Buff]
-	MobHealth[2,1]:Set[50]
+	Action[2]:Set[Special_Pet]
+	MobHealth[2,1]:Set[60]
 	MobHealth[2,2]:Set[100]
-	SpellRange[2,1]:Set[330]
+	SpellRange[2,1]:Set[324]
 
-	Action[3]:Set[AoE_Nuke1]
-	SpellRange[3,1]:Set[91]
+	Action[3]:Set[Void]
+	SpellRange[3,1]:Set[50]
 
-	Action[4]:Set[AoE_Debuff2]
-	SpellRange[4,1]:Set[56]
+	Action[4]:Set[AoE_Debuff3]
+	SpellRange[4,1]:Set[55]
 
-	Action[5]:Set[AoE_PB]
-	SpellRange[5,1]:Set[95]
+	Action[5]:Set[Combat_Buff]
+	MobHealth[5,1]:Set[50]
+	MobHealth[5,2]:Set[100]
+	SpellRange[5,1]:Set[330]
 
-	Action[6]:Set[AoE_Concussive]
-	SpellRange[6,1]:Set[328]
+	Action[6]:Set[DoT1]
+	SpellRange[6,1]:Set[70]
 
 	Action[7]:Set[AoE_DoT]
 	MobHealth[7,1]:Set[30]
 	MobHealth[7,2]:Set[100]
 	SpellRange[7,1]:Set[94]
 
-	Action[8]:Set[AoE_Debuff3]
-	SpellRange[8,1]:Set[55]
+	;AOE ONLY
+	Action[8]:Set[AoE_Nuke1]
+	SpellRange[8,1]:Set[91]
 
-	Action[9]:Set[AoE_Nuke2]
-	SpellRange[9,3]:Set[92]
+	;AOE ONLY
+	Action[9]:Set[AoE_PB]
+	SpellRange[9,1]:Set[95]
 
-	Action[10]:Set[AoE_PB2]
-	SpellRange[10,1]:Set[96]
+	;AOE ONLY
+	Action[10]:Set[Nullify]
+	SpellRange[10,1]:Set[181]
 
-	Action[11]:Set[Master_Strike]
+	;AOE ONLY
+	Action[11]:Set[Caress]
+	SpellRange[11,1]:Set[180]
 
-	Action[12]:Set[Nuke1]
-	SpellRange[12,1]:Set[61]
+	;AOE ONLY
+	Action[12]:Set[AoE_PB2]
+	SpellRange[12,1]:Set[96]
 
-	Action[13]:Set[Concussive]
-	SpellRange[13,1]:Set[328]
+	;AOE ONLY
+	Action[13]:Set[AoE_PB]
+	SpellRange[13,1]:Set[95]
 
-	Action[14]:Set[Nuke2]
-	SpellRange[14,1]:Set[62]
+	;AOE ONLY
+	Action[14]:Set[AoE_Concussive]
+	SpellRange[14,1]:Set[328]
 
-	Action[15]:Set[Nuke3]
-	SpellRange[15,1]:Set[64]
+	;AOE ONLY
+	Action[15]:Set[Void]
+	SpellRange[15,1]:Set[50]
 
-	Action[16]:Set[Nuke4]
-	SpellRange[16,1]:Set[63]
+	;AOE ONLY and more than 2
+	Action[16]:Set[AoE_Nuke2]
+	SpellRange[16,3]:Set[92]
 
-	Action[17]:Set[Apoc]
-	MobHealth[17,1]:Set[30]
-	MobHealth[17,2]:Set[100]
-	SpellRange[17,1]:Set[94]
+	;AOE ONLY
+	Action[17]:Set[AoE_PB]
+	SpellRange[17,1]:Set[95]
 
-	Action[18]:Set[Special_Pet]
-	MobHealth[18,1]:Set[60]
-	MobHealth[18,2]:Set[100]
-	SpellRange[18,1]:Set[324]
+	Action[18]:Set[Master_Strike]
+
+	Action[19]:Set[Nuke1]
+	SpellRange[19,1]:Set[61]
+
+	Action[20]:Set[DoT2]
+	SpellRange[20,1]:Set[71]
+
+	Action[21]:Set[DoT2]
+	SpellRange[21,1]:Set[72]
+
+	Action[22]:Set[Nuke2]
+	SpellRange[22,1]:Set[62]
+
+	Action[23]:Set[Nuke3]
+	SpellRange[23,1]:Set[64]
+
+	Action[24]:Set[Nuke4]
+	SpellRange[24,1]:Set[63]
+
+	Action[25]:Set[Nuke2]
+	SpellRange[25,1]:Set[62]
+
+	Action[26]:Set[Nuke3]
+	SpellRange[26,1]:Set[64]
+
+	Action[27]:Set[Nuke4]
+	SpellRange[27,1]:Set[63]
+
+	Action[28]:Set[Nuke2]
+	SpellRange[28,1]:Set[62]
+
+	Action[29]:Set[Nuke3]
+	SpellRange[29,1]:Set[64]
+
+	Action[30]:Set[Nuke4]
+	SpellRange[30,1]:Set[63]
+
+	Action[31]:Set[Nuke2]
+	SpellRange[31,1]:Set[62]
+
+	Action[32]:Set[Nuke3]
+	SpellRange[32,1]:Set[64]
+
+	Action[33]:Set[Nuke4]
+	SpellRange[33,1]:Set[63]
 
 }
 
@@ -369,12 +422,10 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 52 0 0 0 ${KillTarget}
 			debuffused:Inc
 		}
-
 	}
 
 	if ${DotMode}
 	{
-
 		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
 		{
 			call CastSpellRange 70 0 0 0 ${KillTarget}
@@ -392,7 +443,6 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 72 0 0 0 ${KillTarget}
 			dotused:Inc
 		}
-
 	}
 
 	if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}

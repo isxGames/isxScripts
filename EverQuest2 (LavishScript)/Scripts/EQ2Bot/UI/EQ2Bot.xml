@@ -1159,7 +1159,7 @@
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='NoTrade Confirmation' Template='EQ2.checkbox'>
-							<X>75%</X>
+							<X>70%</X>
 							<Y>150</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
