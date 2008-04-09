@@ -9,7 +9,7 @@
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/EQ2Craft Release Notes.txt</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/EQ2Craft%20Release%20Notes.txt</url>
-		<version>20080313.0033</version>
+		<version>20080408.0008</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
@@ -51,7 +51,7 @@
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Recipe Data/Resources.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/Resources.xml</url>
-		<version>20080313.0033</version>
+		<version>20080408.0008</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
@@ -69,7 +69,7 @@
   <FileInfo>
         <filename>Scripts/EQ2Craft/Recipe Data/WritCounts.xml</filename>
         <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/WritCounts.xml</url>
-        <version>20080313.0072</version>
+        <version>20080408.0008</version>
         <PerformBackup>0</PerformBackup>
   </FileInfo>
   <FileInfo>
