@@ -2,9 +2,9 @@
 <Navigation>
 	<World Name="exp03_rgn_greater_faydark">
 		<Point Name="Broker">
-			<X>457.219116</X>
-			<Y>91.286407</Y>
-			<Z>357.729767</Z>
+			<X>456.87</X>
+			<Y>91.21</Y>
+			<Z>359.55</Z>
 			<Connection To="Intersection 3" />
 			<Note>keypoint</Note>
 		</Point>
