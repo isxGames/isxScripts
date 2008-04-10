@@ -9,19 +9,19 @@
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/EQ2Craft Release Notes.txt</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/EQ2Craft%20Release%20Notes.txt</url>
-		<version>20080408.0013</version>
+		<version>20080408.0024</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Navigational Paths/fprt_tradeskill01.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Navigational%20Paths/fprt_tradeskill01.xml</url>
-		<version>20070607.0018</version>
+		<version>20080408.0024</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Navigational Paths/qey_tradeskill01.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Navigational%20Paths/qey_tradeskill01.xml</url>
-		<version>20070607.0018</version>
+		<version>20080408.0024</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
@@ -33,7 +33,7 @@
     <FileInfo>
         <filename>Scripts/EQ2Craft/Navigational Paths/exp03_rgn_greater_faydark.xml</filename>
         <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Navigational%20Paths/exp03_rgn_greater_faydark.xml</url>
-        <version>20080225.0092</version>
+        <version>20080408.0024</version>
         <PerformBackup>0</PerformBackup>
         </FileInfo>
     <FileInfo>
