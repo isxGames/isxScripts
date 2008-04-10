@@ -21,6 +21,17 @@
 		<Setting Name="10,385">Freehand Sorcery</Setting>
 		<Setting Name="10,386">Ward of Sages</Setting>
 		<Setting Name="10,387">Focused Casting</Setting>
+		<Setting Name="10,388">Aftershock</Setting>
+		<Setting Name="10,389">Volatility</Setting>
+		<Setting Name="10,390">Vacuous</Setting>
+		<Setting Name="10,391">Propagation</Setting>
+		<Setting Name="10,392">Confounding Staff</Setting>
+		<Setting Name="10,393">Concussive Blasts</Setting>
+		<Setting Name="10,394">Static Shield</Setting>
+		<Setting Name="10,395">Mana Shield</Setting>
+		<Setting Name="10,396">Ambidexterous Casting</Setting>
+		<Setting Name="10,397">Static Discharge</Setting>
+		<Setting Name="10,398">Catalyst</Setting>
 		<Setting Name="11,31">Venomous Grasp</Setting>
 		<Setting Name="12,63">Corrosive Bolt</Setting>
 		<Setting Name="12,20">Spellbinding Pact</Setting>
@@ -128,7 +139,6 @@
 		<Setting Name="68,231">Spectral Grasp</Setting>
 		<Setting Name="69,309">Terrible Deeds</Setting>
 		<Setting Name="69,57">Tumultuous Maelstrom</Setting>
-<!-- fixed from bottom to here -->
 		<Setting Name="70,94">Apocalypse</Setting>
 		<Setting Name="70,95">Chaostorm</Setting>
 		<Setting Name="70,51">Curse of Void</Setting>
@@ -159,7 +169,7 @@
 		<Setting Name="79,20">Mage\'s Pact</Setting>
 		<Setting Name="79,57">Vacuum Field</Setting>
 		<Setting Name="79,309">Void Contract</Setting>
-		<Setting Name="80,">Acid Storm</Setting>
+		<Setting Name="80,97">Acid Storm</Setting>
 		<Setting Name="80,94">Armageddon</Setting>
 		<Setting Name="80,95">Cataclysm</Setting>
 		<Setting Name="80,51">Curse of Humility</Setting>

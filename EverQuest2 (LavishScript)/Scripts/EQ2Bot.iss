@@ -4022,21 +4022,24 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-	if ${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1 && ${LoreConfirm} && ${NoTradeConfirm}
+	if (${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]})
 	{
-		ChoiceWindow:DoChoice1
-	}
-	elseif ${ChoiceWindow.Text.Find[Lore]} && !${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1 && ${LoreConfirm}
-	{
-		ChoiceWindow:DoChoice1
-	}
-	elseif !${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1 && ${NoTradeConfirm}
-	{
-		ChoiceWindow:DoChoice1
-	}
-	elseif !${LootMethod.Equal[Idle]}
-	{
-		ChoiceWindow:DoChoice2
+		if ${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${LoreConfirm} && ${NoTradeConfirm}
+		{
+			ChoiceWindow:DoChoice1
+		}
+		elseif ${ChoiceWindow.Text.Find[Lore]} && !${ChoiceWindow.Text.Find[No-Trade]} && ${LoreConfirm}
+		{
+			ChoiceWindow:DoChoice1
+		}
+		elseif !${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${NoTradeConfirm}
+		{
+			ChoiceWindow:DoChoice1
+		}
+		elseif !${LootMethod.Equal[Idle]}
+		{
+			ChoiceWindow:DoChoice2
+		}
 	}
 }
 
