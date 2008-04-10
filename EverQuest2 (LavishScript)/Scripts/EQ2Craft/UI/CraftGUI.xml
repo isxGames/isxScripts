@@ -1149,7 +1149,27 @@
 								<MaxLength>4</MaxLength>
 								<Color>FFDDBB00</Color>
 							</Textentry>
-							<Text Name='Threshold Text'>
+              <Text Name='Path Precision Text'>
+                <X>20</X>
+                <Y>27</Y>
+                <Width>100%</Width>
+                <Height>20</Height>
+                <Font>
+                  <Name>terminal</Name>
+                  <Size>10</Size>
+                  <Color>FFEBDEAA</Color>
+                </Font>
+                <Text>Precision for running path:</Text>
+              </Text>
+              <Textentry Name='Path Precision' Template='EQ2.Textentry'>
+                <X>190</X>
+                <Y>22</Y>
+                <Width>35</Width>
+                <Height>20</Height>
+                <MaxLength>4</MaxLength>
+                <Color>FFDDBB00</Color>
+              </Textentry>
+              <Text Name='Threshold Text'>
 								<X>0</X>
 								<Y>45</Y>
 								<Width>80%</Width>
