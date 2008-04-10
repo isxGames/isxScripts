@@ -1,5 +1,10 @@
 Revision History
 ----------------
+v7.09 - Added option to GUI for fine-tuning the path precision on a per-character basis. This
+        option can be found on the Options tab. If you are bouncing back and forth while running
+        the path, you will want to increase this number. If you are not bouncing, but are not 
+        getting close enough to your work tables, you will want to decrease this number.
+
 v7.08 - Tweaks to pathing code -- should now open doors in qeynos properly again and not get
         stuck as often.
       - New path files for Qeynos and Freeport instances is on the SVN! Also updated Kelethin.
