@@ -9,7 +9,7 @@
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/EQ2Craft Release Notes.txt</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/EQ2Craft%20Release%20Notes.txt</url>
-		<version>20080408.0024</version>
+		<version>20080408.0036</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
@@ -75,7 +75,7 @@
     <FileInfo>
 	    <filename>Scripts/EQ2Craft/UI/CraftGUI.xml</filename>
 	    <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/UI/CraftGUI.xml</url>
-	    <version>20080225.0092</version>
+	    <version>20080408.0036</version>
 	    <PerformBackup>0</PerformBackup>
 	    </FileInfo>	
 </Manifest>
