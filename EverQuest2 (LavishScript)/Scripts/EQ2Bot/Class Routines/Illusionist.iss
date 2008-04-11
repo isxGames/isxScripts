@@ -443,9 +443,10 @@ function Combat_Routine(int xAction)
 
 
 	;chronsphioning AA. we should always try to keep this spell up
-	if ${Me.Ability[${SpellType[382]}](exists)} && ${Me.Ability[${SpellType[382]}].IsReady}
+	if ${Me.Ability[${SpellType[385]}](exists)}
 	{
-		call CastSpellRange 382 0 0 0 ${KillTarget}
+	    if (${Me.Ability[${SpellType[385]}].IsReady})
+		    call CastSpellRange 385 0 0 0 ${KillTarget}
 	}
 
 	;make sure killtarget is always Melee debuffed (unless I am the tank
@@ -475,11 +476,14 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[72]}].IsReady} && ${spellsused}<4
-		{
-			call CastSpellRange 72 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
+        if ${Target.Type.Equal[PC]}
+        {
+    		if ${Me.Ability[${SpellType[72]}].IsReady} && ${spellsused}<4
+    		{
+    			call CastSpellRange 72 0 0 0 ${KillTarget}
+    			spellsused:Inc
+    		}
+	    }
 
 		if ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)} && ${spellsused}<4
 		{
@@ -524,7 +528,6 @@ function Combat_Routine(int xAction)
 		{
 
 			case AA_Illuminate
-			case AA_Chronosiphoning
 				if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 				{
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
@@ -537,12 +540,30 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-			case Focus
-					if ${BuffFocus}
-					{
-						call CastSpellRange ${PreSpellRange[${xAction},1]}
-					}
-					break
+            case AA_Chronosiphoning
+			    ; This is now being called earlier in the combat routine to make sure that it's always up.
+				;if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+				;{
+				;	call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				;	if ${Return.Equal[OK]}
+				;	{
+				;		if ${Mob.Count}>1
+				;		{
+				;			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				;		}
+				;	}
+				;}
+				break
+    		case Focus
+    			if ${BuffFocus}
+    			{
+    				call CastSpellRange ${PreSpellRange[${xAction},1]}
+    			}
+    			else
+    			{
+    				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+    			}
+    			break
 			case Gaze
 			case shower
 			case Ego
@@ -568,7 +589,18 @@ function Combat_Routine(int xAction)
 				}
 				break
 
-			case Discord
+			case Discord        
+			;; TO DO
+			    if (${Target.Type.Equal[PC]})
+			    {
+    				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+    				if ${Return.Equal[OK]}
+    				{
+    					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+    				}
+			    }
+				break			
+			
 			case MindDoT
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
