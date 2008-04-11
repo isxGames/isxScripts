@@ -9,73 +9,73 @@
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/EQ2Craft Release Notes.txt</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/EQ2Craft%20Release%20Notes.txt</url>
-		<version>20080408.0036</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Navigational Paths/fprt_tradeskill01.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Navigational%20Paths/fprt_tradeskill01.xml</url>
-		<version>20080408.0024</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Navigational Paths/qey_tradeskill01.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Navigational%20Paths/qey_tradeskill01.xml</url>
-		<version>20080408.0024</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Navigational Paths/neriak.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Navigational%20Paths/neriak.xml</url>
-		<version>20071010.0004</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
     <FileInfo>
         <filename>Scripts/EQ2Craft/Navigational Paths/exp03_rgn_greater_faydark.xml</filename>
         <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Navigational%20Paths/exp03_rgn_greater_faydark.xml</url>
-        <version>20080408.0024</version>
+        <version>20080408.0041</version>
         <PerformBackup>0</PerformBackup>
         </FileInfo>
     <FileInfo>
 		<filename>Scripts/EQ2Craft/Recipe Data/Common.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/Common.xml</url>
-		<version>20080313.0033</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Recipe Data/ReactionArts.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/ReactionArts.xml</url>
-		<version>20080225.0092</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Recipe Data/Resources.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/Resources.xml</url>
-		<version>20080408.0013</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
 	<FileInfo>
 		<filename>Scripts/EQ2Craft/Recipe Data/Skills.xml</filename>
 		<url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/Skills.xml</url>
-		<version>20080304.0047</version>
+		<version>20080408.0041</version>
 		<PerformBackup>0</PerformBackup>
 	</FileInfo>
     <FileInfo>
         <filename>Scripts/EQ2Craft/Recipe Data/CustomWrits.xml</filename>
         <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/CustomWrits.xml</url>
-        <version>20080313.0033</version>
+        <version>20080408.0041</version>
         <PerformBackup>1</PerformBackup>
     </FileInfo>
     <FileInfo>
         <filename>Scripts/EQ2Craft/Recipe Data/WritCounts.xml</filename>
         <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/Recipe%20Data/WritCounts.xml</url>
-        <version>20080408.0013</version>
+        <version>20080408.0041</version>
         <PerformBackup>0</PerformBackup>
     </FileInfo>
     <FileInfo>
 	    <filename>Scripts/EQ2Craft/UI/CraftGUI.xml</filename>
 	    <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2Craft/UI/CraftGUI.xml</url>
-	    <version>20080408.0036</version>
+	    <version>20080408.0041</version>
 	    <PerformBackup>0</PerformBackup>
 	    </FileInfo>	
 </Manifest>
