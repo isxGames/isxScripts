@@ -1,6 +1,10 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1d Updated: 03/22/08 by Amadeus
 ;
+;2.7.1f
+; * There is now two options on the UI in regards to looting lore items and looting no trade items.
+; * If a loot item is a collectible, and you've already collected it AND there is more than just yourself in your group, you will decline.
+;
 ;2.7.1e
 ; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
 ;
@@ -2311,39 +2315,44 @@ atom(script) LootWDw(string ID)
 
 	if ${LootMethod.Equal[Accept]}
 	{
-		if ${LoreConfirm} || ${NoTradeConfirm}
+		do
 		{
-			do
-			{
-				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} && ${LoreConfirm})
-				{
-					deccnt:Inc
-				}
-				if (${LootWindow[${ID}].Item[${tmpcnt}].NoTrade} && ${NoTradeConfirm})
-				{
-					deccnt:Inc
-				}
-			}
-			while ${tmpcnt:Inc}<=${LootWindow[${ID}].NumItems}
+		    if (${LootWindow[${ID}].Item[${tmpcnt}].Lore})
+		    {
+		        if !${LoreConfirm}
+		        {
+		            deccnt:Inc
+		            continue
+		        }
+		    }
+		    if (${LootWindow[${ID}].Item[${tmpcnt}].NoTrade})
+		    {
+		        if !${NoTradeConfirm}
+		            deccnt:Inc   
+		    }
+		    if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
+		    {
+		        if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
+		        {
+		            echo "DEBUG: Item marked as collectible and I've already collected it -- declining!"
+		            deccnt:Inc
+		        }
+		    }
 		}
+		while ${tmpcnt:Inc}<=${LootWindow[${ID}].NumItems}
 	}
 	elseif ${LootMethod.Equal[Decline]}
 	{
-		deccnt:Inc
+		deccnt:Inc[${LootWindow[${ID}].NumItems}]
 	}
-
+	elseif ${LootMethod.Equal[Idle]}
+	{
+	    LastWindow:Set[${ID}]
+		return
+	}
+	
 	LastWindow:Set[${ID}]
 
-	if ${LootMethod.Equal[Idle]}
-	{
-		return
-	}
-
-	if (${deccnt} && !${LootMethod.Equal[Idle]}) || ${LootMethod.Equal[Decline]}
-	{
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-		return
-	}
 
 	switch ${LootWindow[${ID}].Type}
 	{
@@ -3056,11 +3065,11 @@ objectdef EQ2BotObj
 		PathType:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What Path Type (0-4)?,0]}]
 		CloseUI:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Close the UI after starting EQ2Bot?,FALSE]}]
 		MasterSession:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Master IS Session,Master.is1]}]
-		LoreConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore Items?,TRUE]}]
-		NoTradeConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot No Trade Items?,TRUE]}]
 		CheckPriestPower:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Check if Priest has Power in the Group?,TRUE]}]
 		WipeRevive:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Revive on Group Wipe?,FALSE]}]
 		BoxWidth:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Navigation: Size of Box?,4]}]
+		LoreConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore Items?,TRUE]}]
+		NoTradeConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot NoTrade Items?,FALSE]}]
 
 		if ${PullWithBow}
 		{
@@ -4022,25 +4031,26 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-	if (${ChoiceWindow.Text.Find[Lore]} || ${ChoiceWindow.Text.Find[No-Trade]})
+    if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
+    {
+		if ${LoreConfirm}
+			ChoiceWindow:DoChoice1
+		else
+			ChoiceWindow:DoChoice2      
+	    return   
+    }
+
+	if ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
-		if ${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${LoreConfirm} && ${NoTradeConfirm}
-		{
+		if ${NoTradeConfirm}
 			ChoiceWindow:DoChoice1
-		}
-		elseif ${ChoiceWindow.Text.Find[Lore]} && !${ChoiceWindow.Text.Find[No-Trade]} && ${LoreConfirm}
-		{
-			ChoiceWindow:DoChoice1
-		}
-		elseif !${ChoiceWindow.Text.Find[Lore]} && ${ChoiceWindow.Text.Find[No-Trade]} && ${NoTradeConfirm}
-		{
-			ChoiceWindow:DoChoice1
-		}
-		elseif !${LootMethod.Equal[Idle]}
-		{
-			ChoiceWindow:DoChoice2
-		}
+		else
+		    ChoiceWindow:DoChoice2    
+		return
 	}
+	
+	;ChoiceWindow:DoChoice2
+	return
 }
 
 function AddPOI()
@@ -4075,7 +4085,6 @@ function atexit()
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
 	Event[EQ2_onIncomingChatText]:DetachAtom[ChatText]
 	Event[EQ2_StartedZoning]:DetachAtom[EQ2_StartedZoning]
-	Event[EQ2_FinishedZoning]:DetachAtom[EQ2_FinishedZoning]
 
 	press -release ${forward}
 	press -release ${backward}
