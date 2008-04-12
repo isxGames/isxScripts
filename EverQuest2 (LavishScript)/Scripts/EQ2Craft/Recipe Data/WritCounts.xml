@@ -47,7 +47,7 @@
       <Setting Name="24">1,1,1,1,2</Setting>
       <Setting Name="29">1,1,1,1,1,1</Setting>
       <Setting Name="30">6</Setting>
-      <Setting Name="34"></Setting>
+      <Setting Name="34">1,1,2,2</Setting>
       <Setting Name="39"></Setting>
       <Setting Name="40"></Setting>
       <Setting Name="44"></Setting>
@@ -111,7 +111,7 @@
       <Setting Name="39">1,1,1,1,1,1</Setting>
       <Setting Name="40">1,1,1,3</Setting>
       <Setting Name="44">1,1,1,1,1,1</Setting>
-      <Setting Name="49"></Setting>
+      <Setting Name="49">1,1,1,1,1,1</Setting>
       <Setting Name="50">1,1,1,3</Setting>
       <Setting Name="54">1,1,1,1,1,1</Setting>
       <Setting Name="59"></Setting>
@@ -143,7 +143,7 @@
       <Setting Name="79">2,2,2</Setting>
     </Set>
     <Set Name="weaponsmith">
-      <Setting Name="20"></Setting>
+      <Setting Name="20">3,3</Setting>
       <Setting Name="24"></Setting>
       <Setting Name="29">2,2,2</Setting>
       <Setting Name="30">3,3</Setting>
@@ -166,8 +166,8 @@
       <Setting Name="20"></Setting>
       <Setting Name="24"></Setting>
       <Setting Name="29"></Setting>
-      <Setting Name="30"></Setting>
-      <Setting Name="34"></Setting>
+      <Setting Name="30">6</Setting>
+      <Setting Name="34">3,3</Setting>
       <Setting Name="39"></Setting>
       <Setting Name="40"></Setting>
       <Setting Name="44"></Setting>
