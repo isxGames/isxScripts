@@ -1239,7 +1239,7 @@
 						</combobox>
 						<Frame Name='Pull Frame'>
 							<X>5%</X>
-							<Y>210</Y>
+							<Y>190</Y>
 							<Height>20</Height>
 							<Width>95%</Width>
 							<OnLoad>
