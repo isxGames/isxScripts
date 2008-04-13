@@ -2775,7 +2775,7 @@ objectdef ActorCheck
 			            return TRUE
 			    }
 			}
-			while ${tempvar:Inc}<${Me.GroupCount}
+			while ${tempvar:Inc}<=${Me.GroupCount}
 
 			; Check if mob is aggro on raid or pet
 			if ${Me.InRaid}
