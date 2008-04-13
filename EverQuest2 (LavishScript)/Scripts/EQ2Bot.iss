@@ -3487,7 +3487,7 @@ function CheckAbilities(string class)
 		if ${MissingAbilitiesCount} > 6
 		    echo "It appears that are missing more than 6 abilities for this character. If this is not an error, please ignore this message (and buy your skills!) -- otherwise, please restart EQ2Bot."
 		else
-		    echo "Abilities Set."  	
+		    echo "Much better -- abilities Set."  	
 		echo "------------"	   
 	}
 }
