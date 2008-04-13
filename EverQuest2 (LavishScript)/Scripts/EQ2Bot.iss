@@ -209,6 +209,7 @@ variable int EngageDistance
 variable(script) collection:string ActorsLooted
 variable(script) collection:string DoNotPullList
 variable(script) collection:string InvalidMasteryTargets
+variable(script) bool IsMoving
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -945,7 +946,6 @@ function Combat()
 				while ${MainTank} && ${Target.Target.ID}==${Me.ID} && ${Target.Distance}>${EngageDistance}
 
 				call Combat_Routine ${tempvar}
-
 				if ${Return.Equal[CombatComplete]}
 				{
 					tempvar:Set[40]
@@ -1001,7 +1001,10 @@ function Combat()
                 {
     				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
     				{
-    					EQ2execute "/apply_verb ${Actor[${KillTarget}].ID} loot"
+    				    ;if (${ActorsLooted.Element[${Actor[${KillTarget}].ID}](exists)})
+		                ;    break
+    					;EQ2execute "/apply_verb ${Actor[${KillTarget}].ID} loot"
+    					EQ2Execute /target_none
     					break
     				}
                 }
@@ -1677,12 +1680,20 @@ function CheckLoot()
 	{
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
+		{
+		    echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
 		    continue
+		}
 		
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
 			;Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest)"
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
+			do
+			{
+			    waitframe
+			}
+			while ${IsMoving}
 			switch ${Me.SubClass}
 			{
 				case dirge
@@ -1707,6 +1718,11 @@ function CheckLoot()
 		{
 			;Echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse)"
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
+			do
+			{
+			    waitframe
+			}
+			while ${IsMoving}			
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 2
@@ -1728,28 +1744,35 @@ function FastMove(float X, float Z, int range)
 	variable float xDist
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
+	
+	IsMoving:Set[TRUE]
 
 	if !${Target(exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
 	{
+	    IsMoving:Set[FALSE]
 		return "TARGETDEAD"
 	}
 
 	if ${NoMovement}
 	{
+	    IsMoving:Set[FALSE]
 		return "NOMOVEMENT"
 	}
 
 	if !${X} || !${Z}
 	{
+	    IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
 	{
+	    IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>50 && ${PathType}!=4
 	{
+	    IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 
@@ -1776,6 +1799,7 @@ function FastMove(float X, float Z, int range)
 					press -release ${forward}
 					wait 20 !${Me.IsMoving}
 				}
+				IsMoving:Set[FALSE]
 				return "STUCK"
 			}
 		}
@@ -1795,6 +1819,7 @@ function FastMove(float X, float Z, int range)
 		wait 20 !${Me.IsMoving}
 	}
 
+    IsMoving:Set[FALSE]
 	return "SUCCESS"
 }
 
@@ -2303,7 +2328,7 @@ atom(script) LootWDw(string ID)
 		    {
 		        if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
 		        {
-		            echo "DEBUG: Item marked as collectible and I've already collected it -- declining!"
+		            echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
 		            deccnt:Inc
 		        }
 		    }
@@ -2808,7 +2833,10 @@ objectdef ActorCheck
 		variable int tcount=2
 
 		if !${Actor[NPC,range,${EngageDistance}](exists)} && !(${Actor[NamedNPC,range,${EngageDistance}](exists)} && !${IgnoreNamed})
+		{
+		    echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
 			return FALSE
+		}
 
 		EQ2:CreateCustomActorArray[byDist,${EngageDistance}]
 		do
@@ -2824,6 +2852,8 @@ objectdef ActorCheck
 		}
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
+
+        echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
 		return FALSE
 	}
 
