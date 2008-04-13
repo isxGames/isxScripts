@@ -285,6 +285,7 @@ function Buff_Routine(int xAction)
 
 	ExecuteAtom CheckStuck
 
+
 	if ${GroupWiped}
 	{
 	    call HandleGroupWiped
@@ -569,8 +570,8 @@ function Combat_Routine(int xAction)
         }
 	}
 
-    echo "DEBUG: Combat_Routine() -- Action: ${Action[${xAction}]} (xAction: ${xAction})"
-    echo "DEBUG: Combat_Routine() -- MainAssist: ${MainAssist}"	
+    ;echo "DEBUG: Combat_Routine() -- Action: ${Action[${xAction}]} (xAction: ${xAction})"
+    ;echo "DEBUG: Combat_Routine() -- MainAssist: ${MainAssist}"	
 
 	switch ${Action[${xAction}]}
 	{
@@ -789,6 +790,12 @@ function Combat_Routine(int xAction)
 		case Mastery
 			if ${OffenseMode} || ${DebuffMode}
 			{
+			    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+			    ;;;;;;;;;;
+			    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
+			        break
+			    ;;;;;;;;;;;
+			    
 			    call CheckForMez "Fury Mastery"
 			    if ${Return.Equal[FALSE]}
 			    {
@@ -1111,7 +1118,7 @@ function CheckHeals()
 
 		if ${Me.ToActor.Health} < 25
 		{
-		    echo "DEBUG: Healing Me (Me.ToActor.Health: ${Me.ToActor.Health} < LowestGroupMemberHealth: ${LowestGroupMemberHealth})"
+		    ;echo "DEBUG: Healing Me (Me.ToActor.Health: ${Me.ToActor.Health} < LowestGroupMemberHealth: ${LowestGroupMemberHealth})"
 			if ${haveaggro}
 			{
 				call EmergencyHeal ${Me.ID}
@@ -1133,7 +1140,7 @@ function CheckHeals()
 		}
 		elseif ${Me.ToActor.Health} < 50
 		{
-		    echo "DEBUG: Healing Me (Me.ToActor.Health: ${Me.ToActor.Health} < LowestGroupMemberHealth: ${LowestGroupMemberHealth})"
+		    ;echo "DEBUG: Healing Me (Me.ToActor.Health: ${Me.ToActor.Health} < LowestGroupMemberHealth: ${LowestGroupMemberHealth})"
 			if ${Me.Ability[${SpellType[1]}].IsReady}
 			{
 				call CastSpellRange 1 0 0 0 ${Me.ID}
@@ -1147,7 +1154,7 @@ function CheckHeals()
 		}
 		elseif ${Me.ToActor.Health} < 80
 		{
-		    echo "DEBUG: Healing Me (Me.ToActor.Health: ${Me.ToActor.Health} < LowestGroupMemberHealth: ${LowestGroupMemberHealth})"
+		    ;echo "DEBUG: Healing Me (Me.ToActor.Health: ${Me.ToActor.Health} < LowestGroupMemberHealth: ${LowestGroupMemberHealth})"
 			if ${haveaggro}
 			{
 				call CastSpellRange 7 0 0 0 ${Me.ID}
@@ -1179,7 +1186,7 @@ function CheckHeals()
 	    
 	    if (${MainTankHealth} <= 50)
 	    {   
-	        echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
+	        ;echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
 	        
             if ${Me.Ability[${SpellType[2]}].IsReady}
     		{
@@ -1194,19 +1201,19 @@ function CheckHeals()
 	    }
 	    elseif (${MainTankHealth} <= 60)
 	    {
-	        echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
+	        ;echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
 	        call CastSpellRange 4 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
         	HealUsed:Set[TRUE]	            
 	    }
 	    elseif (${MainTankHealth} <= 75)
 	    {
-	        echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
+	        ;echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
     		call CastSpellRange 1 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
     		HealUsed:Set[TRUE]           
 	    }	    
 	    elseif (${MainTankHealth} <= 90)
 	    {
-	        echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
+	        ;echo "DEBUG: Healing Main Tank() (MainTankHealth: ${MainTankHealth})"
     		if !${KeepMTHOTUp} && !${Me.InRaid} && ${Me.Ability[${SpellType[7]}].IsReady}
     		{
     			call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
@@ -1225,7 +1232,7 @@ function CheckHeals()
 	;GROUP HEALS
 	if ${grpheal} > 2
 	{
-	    echo "DEBUG: Healing Group: (grpheal: ${grpheal})"
+	    ;echo "DEBUG: Healing Group: (grpheal: ${grpheal})"
 	    
 		;use hibernation if not already up
 		if !${Me.Maintained[${SpellType[11]}](exists)}
@@ -1255,7 +1262,7 @@ function CheckHeals()
         
         if (${GroupMemberHealth} <= 55)
         {
-            echo "DEBUG: Healing Group Lowest: (GroupMemberHealth: ${GroupMemberHealth}) :: ${Me.Group[${lowest}]}"
+            ;echo "DEBUG: Healing Group Lowest: (GroupMemberHealth: ${GroupMemberHealth}) :: ${Me.Group[${lowest}]}"
             if ${Me.Ability[${SpellType[2]}].IsReady}
             {
                 call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
@@ -1277,7 +1284,7 @@ function CheckHeals()
         }    
         elseif (${GroupMemberHealth} <= 75)
         {
-            echo "DEBUG: Healing Group Lowest: (GroupMemberHealth: ${GroupMemberHealth}) :: ${Me.Group[${lowest}]}"
+            ;echo "DEBUG: Healing Group Lowest: (GroupMemberHealth: ${GroupMemberHealth}) :: ${Me.Group[${lowest}]}"
     		if ${Me.Ability[${SpellType[4]}].IsReady}
     		{
     			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
@@ -1342,9 +1349,9 @@ function CheckHeals()
 	;PET HEALS
 	if (!${Me.InRaid})
 	{
-	    if (${PetToHeal}
+	    if (${PetToHeal})
 	    {
-	        echo "DEBUG: Healing Pet (PetToHeal: ${PetToHeal})"
+	        ;echo "DEBUG: Healing Pet (PetToHeal): ${PetToHeal})"
 	        
 	        if (${Actor[${PetToHeal}](exists)})
 	        {
