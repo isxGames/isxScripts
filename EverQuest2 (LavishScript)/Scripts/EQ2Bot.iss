@@ -2834,7 +2834,7 @@ objectdef ActorCheck
 
 		if !${Actor[NPC,range,${EngageDistance}](exists)} && !(${Actor[NamedNPC,range,${EngageDistance}](exists)} && !${IgnoreNamed})
 		{
-		    echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
+		    ;echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
 			return FALSE
 		}
 
@@ -2853,7 +2853,7 @@ objectdef ActorCheck
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 
-        echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
+        ;echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
 		return FALSE
 	}
 
