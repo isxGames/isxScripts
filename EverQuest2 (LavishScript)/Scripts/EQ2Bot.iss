@@ -1681,7 +1681,7 @@ function CheckLoot()
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
 		{
-		    echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
+		    ;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
 		    continue
 		}
 		
@@ -2766,12 +2766,12 @@ objectdef ActorCheck
 			{
 			    if (${Me.Group[${tempvar}](exists)})
 			    {
-			        if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID}
+			        if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID})
 			            return TRUE
 			    }
 			    if (${Me.Group[${tempvar}].ToActor.Pet.ID(exists)})
 			    {
-			        if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID})
+			        if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
 			            return TRUE
 			    }
 			}
