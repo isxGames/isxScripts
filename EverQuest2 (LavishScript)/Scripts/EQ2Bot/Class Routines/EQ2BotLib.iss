@@ -253,7 +253,7 @@ function PopulateMezSpells()
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    echo "DEBUG: ${MezSpells.Used} spells were added to the MezSpells collection."
+    ;echo "DEBUG: ${MezSpells.Used} spells were added to the MezSpells collection."
 
     return ${MezSpells.Used}
 }
