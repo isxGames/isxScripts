@@ -122,6 +122,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 	; Check that we are not already there!
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
 	{
+	    call CheckMovingAggro
 		;Make sure we're moving
 		call StartRunning
 		Do
@@ -151,8 +152,9 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 				{
 					obstaclecount:Set[0]
 					call Obstacle ${failedattempts}
-					if "${failedattempts}==${maxattempts}"
+					if (${failedattempts}==${maxattempts})
 					{
+					    call CheckMovingAggro
 						; Main script will handle this situation
 						if ${keepmoving}
 						{
@@ -246,6 +248,7 @@ function Obstacle(int delay)
 			;randomly pick a direction
 			if "${Math.Rand[10]}>5"
 			{
+			    call CheckMovingAggro
 				press -hold STRAFELEFT
 				call StartRunning
 				wait ${Math.Calc[${StrafeTime}*${delay}]}
@@ -255,6 +258,7 @@ function Obstacle(int delay)
 			}
 			else
 			{
+			    call CheckMovingAggro
 				press -hold STRAFERIGHT
 				call StartRunning
 				wait ${Math.Calc[${StrafeTime}*${delay}]}
@@ -268,6 +272,7 @@ function Obstacle(int delay)
 			;randomly pick a direction
 			if "${Math.Rand[10]}>5"
 			{
+			    call CheckMovingAggro
 				press -hold STRAFELEFT
 				wait ${Math.Calc[${StrafeTime}*${delay}]}
 				press -release STRAFELEFT
@@ -275,6 +280,7 @@ function Obstacle(int delay)
 			}
 			else
 			{
+			    call CheckMovingAggro
 				press -hold STRAFERIGHT
 				wait ${Math.Calc[${StrafeTime}*${delay}]}
 				press -release STRAFERIGHT
@@ -287,6 +293,7 @@ function Obstacle(int delay)
 	}
 	else
 	{
+	    call CheckMovingAggro
 		if ${Math.Rand[10]}>5
 		{
 			newheading:Set[${Math.Calc[${Me.Heading}+90]}]
