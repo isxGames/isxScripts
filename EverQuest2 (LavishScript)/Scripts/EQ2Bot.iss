@@ -2710,9 +2710,7 @@ objectdef ActorCheck
 
 			case NamedNPC
 				if ${IgnoreNamed}
-				{
 					return FALSE
-				}
 				break
 
 			case PC
@@ -2763,13 +2761,19 @@ objectdef ActorCheck
 		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
 			;echo Check if mob is aggro on group or pet
-			tempvar:Set[1]
+			tempvar:Set[0]
 			do
 			{
-				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet.ID(exists)})
-				{
-					return TRUE
-				}
+			    if (${Me.Group[${tempvar}](exists)})
+			    {
+			        if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID}
+			            return TRUE
+			    }
+			    if (${Me.Group[${tempvar}].ToActor.Pet.ID(exists)})
+			    {
+			        if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID})
+			            return TRUE
+			    }
 			}
 			while ${tempvar:Inc}<${Me.GroupCount}
 
@@ -2791,14 +2795,10 @@ objectdef ActorCheck
 		}
 
 		if ${Actor[MyPet](exists)} && ${Actor[${actorid}].Target.ID}==${Actor[MyPet].ID}
-		{
 			return TRUE
-		}
 
 		if ${Actor[${actorid}].Target.ID}==${Me.ID} && ${Actor[${actorid}].InCombatMode}
-		{
 			return TRUE
-		}
 
 		return FALSE
 	}
