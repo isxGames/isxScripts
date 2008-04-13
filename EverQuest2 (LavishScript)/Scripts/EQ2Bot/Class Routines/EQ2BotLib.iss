@@ -871,34 +871,34 @@ function FindHealer()
 	}
 	while ${tempgrp:Inc}<${Me.GroupCount}
 
-	if ${healer}==${Me.ID} && ${Me.InRaid}
-	{
-		tempgrp:Set[0]
-
-		do
-		{
-			switch ${Me.RaidMember[${tempgrp}].Class}
-			{
-				case templar
-				case fury
-				case mystic
-				case defiler
-					healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
-					break
-				case warden
-				case inquisitor
-					if ${healer}==${Me.ID}
-					{
-						healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
-					}
-					break
-				Default
-					break
-			}
-
-		}
-		while ${tempgrp:Inc}=<${Me.RaidCount}
-	}
+    if (${Me.InRaid})
+    {
+    	if (${healer} == ${Me.ID})
+    	{
+    		tempgrp:Set[0]
+    
+    		do
+    		{
+    			switch ${Me.RaidMember[${tempgrp}].Class}
+    			{
+    				case templar
+    				case fury
+    				case mystic
+    				case defiler
+    					healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
+    					break
+    				case warden
+    				case inquisitor
+    					if ${healer}==${Me.ID}
+    						healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
+    					break
+    				Default
+    					break
+    			}
+    		}
+    		while (${tempgrp:Inc} <= ${Me.RaidCount})
+    	}
+    }
 
 	return ${healer}
 }
