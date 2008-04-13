@@ -3,9 +3,9 @@
 ;
 ;2.7.2h
 ; * Renamed the method "CheckSpells" to "CheckAbilities" and moved it to its own function 
-; * If you are missing more than 6 abilities, EQ2Bot will assume that it is an error.  It will then open your knowledge book,
-;   wait a half second, and then try again.  This should fix the issue where eq2bot does not initialize properly when you first
-;   start up EverQuest2.  (The console spew during initialization should tell you everything you need to know.)
+; * If you are missing more than 6 abilities that are within 20 levels below your current level, EQ2Bot will assume that it is an error.  
+;   It will then open your knowledge book, wait a half second, and then try again.  This should fix the issue where eq2bot does not 
+;   initialize properly when you first start up EverQuest2.  (The console spew during initialization should tell you everything you need to know.)
 ; * Fixed a bug in EQ2BotLib.iss that was causing the "Invalid operator in calculation (single equal)" error message on startup. (This
 ;   was probably causing a bug with raid healing by the way.)
 ; * Various updates/optimizations (ie, the CheckLoot() function should make a lot more sense now)
