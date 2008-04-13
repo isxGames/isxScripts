@@ -285,7 +285,6 @@ function Buff_Routine(int xAction)
 
 	ExecuteAtom CheckStuck
 
-
 	if ${GroupWiped}
 	{
 	    call HandleGroupWiped
@@ -564,9 +563,39 @@ function Combat_Routine(int xAction)
 
 	if (${VortexMode})
     {
-  	    if ${Me.Ability[${SpellType[385]}].IsReady}
+        ;echo "DEBUG: Checking Energy Vortex..."
+        if (!${Target.IsSolo})
         {
-    	    call CastSpellRange 385
+            ;echo "DEBUG: SpellType[385]: ${SpellType[385]}"
+            ;echo "DEBUG: Energy Vortex -- Target is not solo...check"
+            if ${Me.Ability[${SpellType[385]}].IsReady}
+            {
+                ;echo "DEBUG: Energy Vortex -- Ability (${Me.Ability[${SpellType[385]}]})' is ready...check"
+                if (${Target.EncounterSize} > 2 || ${Target.Difficulty} >= 2)
+                {
+                    if (${Target.Health} > 50)
+                    {
+                        switch ${Target.ConColor}
+                        {
+                            case Red
+                            case Orange
+                            case Yellow
+                            case White
+                            case Blue
+                                Me.Ability[${SpellType[385]}]:Use
+                                wait 2
+                                break
+                            default
+                                if (${Target.IsEpic} || ${Target.IsNamed})
+                                {
+                                    Me.Ability[${SpellType[385]}]:Use
+                                    wait 2
+                                }
+                                break
+                        }
+                    }
+                }
+            }
         }
 	}
 
