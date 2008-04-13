@@ -1,7 +1,13 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1d Updated: 03/22/08 by Amadeus
 ;
-;2.7.2f
+;2.7.2h
+; * Renamed the method "CheckSpells" to "CheckAbilities" and moved it to its own function 
+; * If you are missing more than 6 abilities, EQ2Bot will assume that it is an error.  It will then open your knowledge book,
+;   wait a half second, and then try again.  This should fix the issue where eq2bot does not initialize properly when you first
+;   start up EverQuest2.  (The console spew during initialization should tell you everything you need to know.)
+;
+;2.7.2g
 ; * EQ2Bot now maintains a "DoNotPullList" collection.  Initially, this list is only populated with actors for which the message
 ;   'you may not order your pet to attack the selected or implied target' is sent to the client.  
 ; * EQ2Bot now maintains a "InvalidMasteryTargets" collection.  Each class routine file will have to be updated to utilize this 
@@ -194,10 +200,10 @@ variable string PullType
 variable string LootMethod
 variable int MARange
 variable string CurrentAction
-variable int BadActor[50]
 variable bool GroupWiped
 variable bool InitialBuffsDone
 variable int EngageDistance
+variable(script) collection:string ActorsLooted
 variable(script) collection:string DoNotPullList
 variable(script) collection:string InvalidMasteryTargets
 ;===================================================
@@ -261,15 +267,23 @@ function main()
 	;Script:Squelch
 	;Script:EnableProfiling
 
+    echo "---------"
+    echo "* Initializing EQ2Bot..."
+
 	EQ2Bot:Init_Config
 	EQ2Bot:Init_Events
 	EQ2Bot:Init_Triggers
 	EQ2Bot:Init_Character
 	EQ2Bot:Init_UI
 	EQ2Nav:Initialise
+	call CheckAbilities ${Me.SubClass}
 
 	call Class_Declaration
 	call CheckManaStone
+	
+	echo "...Initialization Complete."
+	echo "* EQ2Bot Ready!"
+	echo "---------"
 
 	do
 	{
@@ -1232,9 +1246,7 @@ function CheckPosition(int rangetype, int position)
 	variable float maxrange
 
 	if !${Target(exists)} || ${NoMovement}
-	{
 		return
-	}
 
 	switch ${rangetype}
 	{
@@ -1270,14 +1282,9 @@ function CheckPosition(int rangetype, int position)
 		case 3
 			minrange:Set[5.5]
 			if ${Me.Equipment[Ranged].Type.Equal[Weapon]}
-			{
-
 				maxrange:Set[${Me.Equipment[Ranged].Range}]
-			}
 			else
-			{
 				maxrange:Set[35]
-			}
 			break
 	}
 
@@ -1288,28 +1295,20 @@ function CheckPosition(int rangetype, int position)
 	}
 
 	if ${haveaggro}
-	{
 		position:Set[2]
-	}
 
 	if ${disablebehind} && (${position}==1 || ${position}==3)
-	{
 		position:Set[0]
-	}
 
 	if !${MainTank}
 	{
 		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>8 && !${Following}
-		{
 			return
-		}
 	}
 	elseif ${PathType}==2
 	{
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<8 && ${Me.InCombat} && !${lostaggro} && ${Target.Distance}>10
-		{
 			return
-		}
 
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>5 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<10 && ${Me.InCombat} && !${lostaggro}
 		{
@@ -1321,9 +1320,7 @@ function CheckPosition(int rangetype, int position)
 	if ${Target.Distance}>${maxrange} && ${Target.Distance}<35 && ${PathType}!=2 && !${isstuck}
 	{
 		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-		{
 			face ${Target.X} ${Target.Z}
-		}
 
 		call FastMove ${Target.X} ${Target.Z} ${maxrange}
 
@@ -1336,9 +1333,7 @@ function CheckPosition(int rangetype, int position)
 		do
 		{
 			if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-			{
 				face ${Target.X} ${Target.Z}
-			}
 
 			if ${Math.Calc64[${Time.Timestamp}-${movetimer}]}>2
 			{
@@ -1357,9 +1352,7 @@ function CheckPosition(int rangetype, int position)
 		call FastMove ${Target.X} ${Target.Z} 3
 
 		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-		{
 			face ${Target.X} ${Target.Z}
-		}
 	}
 
 	if ${position}
@@ -1369,47 +1362,33 @@ function CheckPosition(int rangetype, int position)
 			case 1
 				; Behind arc is 60 degree arc. Using 50 degree arc to allow for error
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
-				{
 					return
-				}
 				else
-				{
 					call GetBehind
-				}
 				break
 			case 2
 
 				; Frontal Arc is 120 degree arc. Using 110 to allow for error
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
-				{
 					return
-				}
 				else
-				{
 					call GetinFront
-				}
 				break
 			case 3
 				; Using 80 degree flank arc between front and rear arcs with 5 degree error on front and back of the arc
 				;check if we are on the left flank
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
-				{
 					return
-				}
 
 				;check if we are at the right flank
 				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
-				{
 					return
-				}
 
 				;note parameter for GetToflank is null for right, 1 for left
 
 				;check if we are on the left side of the mob, if so move to the left flank
 				if ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-180 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<0
-				{
 					call GetToFlank 1
-				}
 				else
 				{
 					; we must be on the right side of the mob so move to the right flank
@@ -1428,31 +1407,21 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 	{
 		case MobHealth
 			if ${Target.Health}>=${xvar1} && ${Target.Health}<=${xvar2}
-			{
 				return "OK"
-			}
 			else
-			{
 				return "FAIL"
-			}
 			break
 
 		case Power
 			if ${Me.ToActor.Power}>=${xvar1} && ${Me.ToActor.Power}<=${xvar2}
-			{
 				return "OK"
-			}
 			else
-			{
 				return "FAIL"
-			}
 			break
 
 		case Health
 			if ${Me.ToActor.Health}>=${xvar1} && ${Me.ToActor.Health}<=${xvar2}
-			{
 				return "OK"
-			}
 			else
 			{
 			    ;echo "DEBUG: Not Casting Spell due to my health being too low!"
@@ -1472,9 +1441,7 @@ function Pull(string npcclass)
 	engagetarget:Set[FALSE]
 
 	if !${Actor[NPC,range,${ScanRange}](exists)} && !(${Actor[NamedNPC,range,${ScanRange}](exists)} && !${IgnoreNamed})
-	{
 		return
-	}
 
 	EQ2:CreateCustomActorArray[byDist,${ScanRange}]
 	do
@@ -1490,25 +1457,17 @@ function Pull(string npcclass)
 			{
 
 				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && !${Me.InCombat} && (${Me.ToActor.Power}<75 || ${Me.ToActor.Health}<90) && !${CustomActor[${tcount}].InCombatMode}
-				{
 					continue
-				}
 
 				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && ${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
-				{
 					continue
-				}
 
 				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && !${PullNonAggro}
-				{
 					continue
-				}
 			}
 
 			if ${checkadds} && !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID}
-			{
 				continue
-			}
 
 			chktarget:Set[TRUE]
 
@@ -1548,15 +1507,11 @@ function Pull(string npcclass)
 					{
 						KillTarget:Set[${Target.ID}]
 						if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
-						{
 							face ${Target.X} ${Target.Z}
-						}
 						engagetarget:Set[TRUE]
 					}
 					if ${Me.InCombat}
-					{
 						EQ2Execute /togglerangedattack
-					}
 					break
 				}
 				elseif ${PullType.Equal[Pet Pull]}
@@ -1587,9 +1542,7 @@ function Pull(string npcclass)
 					break
 				}
 				else
-				{
 					call CastSpell "${PullSpell}"
-				}
 
 				if (${Return.Equal[CANTSEETARGET]} || ${Return.Equal[TOOFARAWAY]}) && ${pulling} && !${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
 				{
@@ -1612,9 +1565,7 @@ function Pull(string npcclass)
 				else
 				{
 					if ${Return.Equal[TOOFARAWAY]} && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<8 && ${PathType}==2
-					{
 						call FastMove ${Target.X} ${Target.Z} 3
-					}
 					elseif ${Return.Equal[CANTSEETARGET]} || ${Return.Equal[TOOFARAWAY]}
 					{
 						aggrogrp:Set[FALSE]
@@ -1643,13 +1594,9 @@ function Pull(string npcclass)
 								}
 
 								if ${AutoMelee}
-								{
 									call FastMove ${Target.X} ${Target.Z} 10
-								}
 								else
-								{
 									call FastMove ${Target.X} ${Target.Z} 20
-								}
 
 								if ${Return.Equal[STUCK]}
 								{
@@ -1658,21 +1605,15 @@ function Pull(string npcclass)
 								}
 							}
 							else
-							{
 								continue
-							}
 						}
 
 						if ${PathType}==4 && ${Target.Distance}>15
 						{
 							if ${AutoMelee}
-							{
 								call FastMove ${Target.X} ${Target.Z} 4
-							}
 							else
-							{
 								call FastMove ${Target.X} ${Target.Z} 10
-							}
 							if ${Return.Equal[STUCK]}
 							{
 								EQ2Execute /target_none
@@ -1692,13 +1633,9 @@ function Pull(string npcclass)
 					if ${Target.Distance}>10 && !${pulling} && ${PathType}!=2
 					{
 						if ${AutoMelee}
-						{
 							call FastMove ${Target.X} ${Target.Z} 5
-						}
 						elseif ${Target.Distance}>20
-						{
 							call FastMove ${Target.X} ${Target.Z} 20
-						}
 
 						if ${Return.Equal[STUCK]}
 						{
@@ -1709,9 +1646,7 @@ function Pull(string npcclass)
 
 					KillTarget:Set[${Target.ID}]
 					if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
-					{
 						face ${Target.X} ${Target.Z}
-					}
 					engagetarget:Set[TRUE]
 					break
 				}
@@ -1726,8 +1661,6 @@ function CheckLoot()
 {
 	variable int tcount=2
 	variable int tmptimer
-	variable int actorcnt=0
-	variable int skipcnt=0
 	
 	if (!${AutoLoot})
 	    return
@@ -1740,17 +1673,10 @@ function CheckLoot()
 	do
 	{
 		;Check if already looted
-		skipcnt:Set[0]
-		actorcnt:Set[0]
-		while ${actorcnt:Inc}<=50
-		{
-			if ${BadActor[${actorcnt}]} && ${CustomActor[${tcount}].ID}==${BadActor[${actorcnt}]}
-			{
-				skipcnt:Set[1]
-			}
-		}
-
-		if ${CustomActor[${tcount}].Type.Equal[chest]} && !${skipcnt}
+		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
+		    continue
+		
+		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
 			;Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest)"
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
@@ -1762,40 +1688,33 @@ function CheckLoot()
 				case brigand
 				case ranger
 				case assassin
-					Echo disarming trap on ${CustomActor[${tcount}].ID}
+					;Echo "DEBUG: disarming trap on ${CustomActor[${tcount}].ID}"
 					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
-					waitframe
+					wait 2
 					break
 				case default
 					break
 			}
 			Actor[Chest]:DoubleClick
-			if !${Return.Equal[TOOFARAWAY]}
-			{
-				EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
-			}
-			wait 5
+			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
+			wait 2
 			call ProcessTriggers
 		}
-		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]} && !${skipcnt}
+		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
 			;Echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse)"
 			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 1
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
-			EQ2Bot:SetBadActor[${CustomActor[${tcount}].ID}]
-			waitframe
+			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
+			wait 2
 			call ProcessTriggers
 		}
 
 		if !${CurrentTask}
-		{
 			Script:End
-		}
 
 		if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat} || !${AutoLoot}
-		{
 			return
-		}
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 	islooting:Set[FALSE]
@@ -3113,51 +3032,10 @@ objectdef EQ2BotObj
 
 	method Init_Config()
 	{
-		bind EndBot ${endbot} "Script[EQ2Bot]:End"
+		squelch bind EndBot ${endbot} "Script[EQ2Bot]:End"
 		spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.SubClass}.xml]
-		This:CheckSpells[${Me.SubClass}]
 	}
 
-	method CheckSpells(string class)
-	{
-		variable int keycount
-		variable int templvl=1
-		variable string tempnme
-		variable int tempvar=1
-		variable string spellname
-
-		keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
-		do
-		{
-			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
-
-			templvl:Set[${Arg[1,${tempnme}]}]
-
-			if ${templvl}>${Me.Level}
-			{
-				return
-			}
-
-			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
-			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
-			{
-				if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
-				{
-					echo Are you missing spell: ${spellname}
-				}
-				else
-				{
-					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
-				}
-			}
-			else
-			{
-				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
-			}
-		}
-		while ${tempvar:Inc}<=${keycount}
-	}
-	
 	method Init_Events()
 	{
 		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
@@ -3515,32 +3393,99 @@ objectdef EQ2BotObj
 		return TRUE
 	}
 
-	method SetBadActor(string badactorid)
+	method SetActorLooted(int ActorID, string ActorName)
 	{
-		variable int tempvar=0
+	    if (${ActorsLooted.Used} > 50)
+	        ActorsLooted:Clear
+	        
+	    ActorsLooted:Set[${ActorID},${ActorName}]
+	}
+}
 
-		tempvar:Set[0]
+function CheckAbilities(string class)
+{
+    variable int keycount
+	variable int templvl=1
+	variable string tempnme
+	variable int tempvar=1
+	variable string spellname
+	variable int MissingAbilitiesCount
 
-		if !${BadActor[50]}
+	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
+	do
+	{
+		tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
+
+		templvl:Set[${Arg[1,${tempnme}]}]
+		
+		if ${templvl} > ${Me.Level}
+			continue
+
+		spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
+		if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 		{
-			while ${tempvar:Inc}<=50
+			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 			{
-				if !${BadActor[${tempvar}]}
-				{
-					BadActor[${tempvar}]:Set[${badactorid}]
-					return
+			    ; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+			    if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
+			    {
+				    echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+				    MissingAbilitiesCount:Inc
 				}
 			}
+			else
+				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 		}
 		else
+			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+	}
+	while ${tempvar:Inc}<=${keycount}
+	
+	
+	if ${MissingAbilitiesCount} > 6
+	{
+	    echo "------------"
+	    echo "You appear to be missing a significant number of abilities.  Checking knowledge book and searching again..."
+    	EQ2Execute /toggleknowledge
+    	wait 5
+    	EQ2Execute /toggleknowledge		    
+	    MissingAbilitiesCount:Set[0]
+	    tempvar:Set[1]
+	    
+		do
 		{
-			while ${tempvar:Inc}<=50
-			{
-				BadActor[${tempvar}]:Set[0]
-			}
-		}
+			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
 
-		BadActor[1]:Set[${badactorid}]
+			templvl:Set[${Arg[1,${tempnme}]}]
+			
+			if ${templvl} > ${Me.Level}
+				continue
+
+			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
+			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
+			{
+				if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
+				{
+				    ; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+				    if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
+				    {
+					    echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+					    MissingAbilitiesCount:Inc
+					}
+				}
+				else
+					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+			}
+			else
+				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+		}
+		while ${tempvar:Inc}<=${keycount}		 
+		
+		if ${MissingAbilitiesCount} > 6
+		    echo "It appears that are missing more than 6 abilities for this character. If this is not an error, please ignore this message (and buy your skills!) -- otherwise, please restart EQ2Bot."
+		else
+		    echo "Abilities Set."  	
+		echo "------------"	   
 	}
 }
 
@@ -3569,7 +3514,7 @@ objectdef Navigation
 		else
 		{
 			LavishNav.Tree:AddChild[universe,${Zone.Name},-unique]
-			echo New Zone Created!
+			;echo "DEBUG(Navigation): New Zone Created!"
 			UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 			UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 		}
