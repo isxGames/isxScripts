@@ -864,8 +864,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-
-		Default
+		default
 			return CombatComplete
 			break
 	}
@@ -929,8 +928,8 @@ function Post_Combat_Routine(int xAction)
         		ExecuteAtom AutoFollowTank
         	}
         	break
-		Default
-			xAction:Set[20]
+		default
+			return PostCombatRoutineComplete
 			break
 	}
 }
