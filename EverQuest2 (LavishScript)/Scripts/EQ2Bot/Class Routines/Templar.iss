@@ -1078,6 +1078,13 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local
 
+	if (${gMember} == 0)
+	{
+	    call CureMe
+	    return
+	}
+
+
 	tmpcure:Set[0]
 	if !${Me.Group[${gMember}].ToActor(exists)}
 	{
