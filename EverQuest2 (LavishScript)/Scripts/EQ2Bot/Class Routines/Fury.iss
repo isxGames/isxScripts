@@ -970,9 +970,13 @@ function Have_Aggro()
 
 function CheckHeals()
 {
-    declare temphl int local
+	declare temphl int local
 	declare grpheal int local 0
 	declare lowest int local 0
+	declare grpcure int local 0
+	declare mostafflicted int local 0
+	declare mostafflictions int local 0
+	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
 	declare MTinMyGroup bool local FALSE
 	declare tempgrp int local 0
@@ -981,6 +985,7 @@ function CheckHeals()
 	hurt:Set[FALSE]
 
 	temphl:Set[0]
+	grpcure:Set[0]
 	lowest:Set[0]
 	;Raid Stuff
 	declare HealUsed bool local FALSE
@@ -989,6 +994,7 @@ function CheckHeals()
 	temph2:Set[1]
 	raidlowest:Set[1]
 	HealUsed:Set[FALSE]
+
 	
     ;;;; Rez MainTank if he/she is dead
 	if ${Actor[exactname,${MainTankPC}].IsDead} && ${Actor[exactname,${MainTankPC}](exists)} && (${CombatRez} || !${Me.InCombat})
