@@ -1,17 +1,20 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.1d Updated: 03/22/08 by Amadeus
+; EQ2Bot.iss Version 2.7.1j Updated: 03/22/08 by Pygar
 ;
+;2.7.1j
+; * Updated InvalidMasteryTargets collection to only add targets if they exist, and to work off KillTarget instead of
+;		target in case healer has targeted another mob by time trigger fires.
 ;2.7.2i
 ; * All Post_Combat_Routine functions (in all of the class files) should have this as their default case:
 ;		Default
 ;			return PostCombatRoutineComplete
-;			break   
+;			break
 ; * The "Stop EQ2Bot" and "Pause EQ2Bot" buttons should now work properly
 ;
 ;2.7.2h
-; * Renamed the method "CheckSpells" to "CheckAbilities" and moved it to its own function 
-; * If you are missing more than 6 abilities that are within 20 levels below your current level, EQ2Bot will assume that it is an error.  
-;   It will then open your knowledge book, wait a half second, and then try again.  This should fix the issue where eq2bot does not 
+; * Renamed the method "CheckSpells" to "CheckAbilities" and moved it to its own function
+; * If you are missing more than 6 abilities that are within 20 levels below your current level, EQ2Bot will assume that it is an error.
+;   It will then open your knowledge book, wait a half second, and then try again.  This should fix the issue where eq2bot does not
 ;   initialize properly when you first start up EverQuest2.  (The console spew during initialization should tell you everything you need to know.)
 ; * Fixed a bug in EQ2BotLib.iss that was causing the "Invalid operator in calculation (single equal)" error message on startup. (This
 ;   was probably causing a bug with raid healing by the way.)
@@ -19,8 +22,8 @@
 ;
 ;2.7.2g
 ; * EQ2Bot now maintains a "DoNotPullList" collection.  Initially, this list is only populated with actors for which the message
-;   'you may not order your pet to attack the selected or implied target' is sent to the client.  
-; * EQ2Bot now maintains a "InvalidMasteryTargets" collection.  Each class routine file will have to be updated to utilize this 
+;   'you may not order your pet to attack the selected or implied target' is sent to the client.
+; * EQ2Bot now maintains a "InvalidMasteryTargets" collection.  Each class routine file will have to be updated to utilize this
 ;   feature (see Fury.iss for example)
 ; * EQ2Bot will no longer loot corpses during battle if you have "Loot Corpses and Chests" unchecked
 ; * The Detect() method now uses the ${EngageDistance} variable to determine how closely it should check for mobs (which is set based
@@ -278,8 +281,8 @@ function main()
 	;Script:Squelch
 	;Script:EnableProfiling
 
-    echo "---------"
-    echo "* Initializing EQ2Bot..."
+		echo "---------"
+		echo "* Initializing EQ2Bot..."
 
 	EQ2Bot:Init_Config
 	EQ2Bot:Init_Events
@@ -291,7 +294,7 @@ function main()
 
 	call Class_Declaration
 	call CheckManaStone
-	
+
 	echo "...Initialization Complete."
 	echo "* EQ2Bot Ready!"
 	echo "---------"
@@ -394,7 +397,7 @@ function main()
 							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
 							do
 							{
-							    waitframe
+									waitframe
 							}
 							while ${IsMoving}
 						}
@@ -403,7 +406,7 @@ function main()
 							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} 10
 							do
 							{
-							    waitframe
+									waitframe
 							}
 							while ${IsMoving}
 						}
@@ -420,17 +423,17 @@ function main()
 				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
 				if ${KillTarget}
 				{
-    				if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
-    				{
-    				    if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
-    				    {
-        					if ${Mob.Target[${KillTarget}]}
-        						call Combat
-        				}
-    				}
-    				;else
-    				;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
-    			}
+						if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+						{
+								if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
+								{
+									if ${Mob.Target[${KillTarget}]}
+										call Combat
+								}
+						}
+						;else
+						;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
+					}
 			}
 
 			if ${PathType}==4 && ${MainTank}
@@ -481,7 +484,7 @@ function main()
 				call Buff_Routine ${tempvar}
 				if ${Return.Equal[Buff Complete]}
 				{
-				    ; end after this round
+						; end after this round
 					tempvar:Set[40]
 				}
 
@@ -571,7 +574,7 @@ function main()
 		while ${tempvar:Inc}<=40
 
 		if ${AutoLoot}
-		    call CheckLoot
+				call CheckLoot
 
 		if ${AutoPull}
 		{
@@ -942,7 +945,7 @@ function Combat()
 				call Combat_Routine ${tempvar}
 				if ${Return.Equal[CombatComplete]}
 				{
-				    ; end loop after this round
+						; end loop after this round
 					tempvar:Set[40]
 				}
 
@@ -972,7 +975,7 @@ function Combat()
 						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
 						do
 						{
-						    waitframe
+								waitframe
 						}
 						while ${IsMoving}
 					}
@@ -984,7 +987,7 @@ function Combat()
 					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
 					do
 					{
-					    waitframe
+							waitframe
 					}
 					while ${IsMoving}
 				}
@@ -998,11 +1001,11 @@ function Combat()
 					}
 				}
 
-                if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-                {
-                    EQ2Execute /target_none
-                    break
-                }
+								if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+								{
+										EQ2Execute /target_none
+										break
+								}
 
 				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
@@ -1061,8 +1064,8 @@ function Combat()
 	do
 	{
 		call Post_Combat_Routine ${tempvar}
-    	if ${Return.Equal[PostCombatRoutineComplete]}
-    		tempvar:Set[20]
+			if ${Return.Equal[PostCombatRoutineComplete]}
+				tempvar:Set[20]
 	}
 	while ${tempvar:Inc}<=20
 
@@ -1070,8 +1073,8 @@ function Combat()
 		EQ2Execute /toggleautoattack
 
 
-    if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
-        call CheckLootNoMove
+		if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
+				call CheckLootNoMove
 
 	if ${PathType}==1
 	{
@@ -1082,7 +1085,7 @@ function Combat()
 			call FastMove ${HomeX} ${HomeZ} 4
 			do
 			{
-			    waitframe
+					waitframe
 			}
 			while ${IsMoving}
 			face ${Math.Rand[45]:Inc[315]}
@@ -1097,7 +1100,7 @@ function Combat()
 
 	if ${MainTankPC.NotEqual[${OriginalMT}]} && !${MainTank}
 		EQ2Bot:MainTank_Dead
-		
+
 	if ${PathType}==4
 	{
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>${ScanRange}
@@ -1112,7 +1115,7 @@ function Combat()
 			call FastMove ${WPX} ${WPZ} 4
 			do
 			{
-			    waitframe
+					waitframe
 			}
 			while ${IsMoving}
 		}
@@ -1391,7 +1394,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 				return "OK"
 			else
 			{
-			    ;echo "DEBUG: Not Casting Spell due to my health being too low!"
+					;echo "DEBUG: Not Casting Spell due to my health being too low!"
 				return "FAIL"
 			}
 			break
@@ -1414,7 +1417,7 @@ function Pull(string npcclass)
 	do
 	{
 		chktarget:Set[FALSE]
-		
+
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
 		{
 			if ${Mob.AggroGroup[${CustomActor[${tcount}].ID}]}
@@ -1628,10 +1631,10 @@ function CheckLootNoMove()
 {
 	variable int tcount=2
 	variable int tmptimer
-	
+
 	if (!${AutoLoot})
-	    return
-	    
+			return
+
 	EQ2:CreateCustomActorArray[byDist,5]
 
 	do
@@ -1639,10 +1642,10 @@ function CheckLootNoMove()
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
 		{
-		    ;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
-		    continue
+				;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
+				continue
 		}
-		
+
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
 			;Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest)"
@@ -1676,17 +1679,17 @@ function CheckLootNoMove()
 		}
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-	
-	islooting:Set[FALSE]    
+
+	islooting:Set[FALSE]
 }
 
 function CheckLoot()
 {
 	variable int tcount=2
 	variable int tmptimer
-	
+
 	if (!${AutoLoot})
-	    return
+			return
 
 	islooting:Set[TRUE]
 	;think this is legacy, removing
@@ -1698,25 +1701,25 @@ function CheckLoot()
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
 		{
-		    ;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
-		    continue
+				;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
+				continue
 		}
-		
+
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
-    		if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat}
-    			return		    
-		    
+				if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat}
+					return
+
 			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest)"
 			if (${CustomActor[${tcount}].Distance} > 5)
-			{			
-    			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 4
-    			do
-    			{
-    			    waitframe
-    			}
-    			while ${IsMoving}
-    		}
+			{
+					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 4
+					do
+					{
+							waitframe
+					}
+					while ${IsMoving}
+				}
 			switch ${Me.SubClass}
 			{
 				case dirge
@@ -1742,13 +1745,13 @@ function CheckLoot()
 			Echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse)"
 			if (${CustomActor[${tcount}].Distance} > 5)
 			{
-    			call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 4
-    			do
-    			{
-    			    waitframe
-    			}
-    			while ${IsMoving}		
-    		}	
+					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 4
+					do
+					{
+							waitframe
+					}
+					while ${IsMoving}
+				}
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 2
@@ -1759,7 +1762,7 @@ function CheckLoot()
 			Script:End
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-	
+
 	islooting:Set[FALSE]
 }
 
@@ -1768,35 +1771,35 @@ function FastMove(float X, float Z, int range)
 	variable float xDist
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
-	
+
 	IsMoving:Set[TRUE]
 
 	if !${Target(exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
 	{
-	    IsMoving:Set[FALSE]
+			IsMoving:Set[FALSE]
 		return "TARGETDEAD"
 	}
 
 	if ${NoMovement}
 	{
-	    IsMoving:Set[FALSE]
+			IsMoving:Set[FALSE]
 		return "NOMOVEMENT"
 	}
 
 	if !${X} || !${Z}
 	{
-	    IsMoving:Set[FALSE]
+			IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
 	{
-	    IsMoving:Set[FALSE]
+			IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>50 && ${PathType}!=4
 	{
-	    IsMoving:Set[FALSE]
+			IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 
@@ -1843,7 +1846,7 @@ function FastMove(float X, float Z, int range)
 		wait 20 !${Me.IsMoving}
 	}
 
-    IsMoving:Set[FALSE]
+		IsMoving:Set[FALSE]
 	return "SUCCESS"
 }
 
@@ -2082,12 +2085,12 @@ function IamDead(string Line)
 			}
 			while ${wipegroup:Inc}<${Me.GroupCount}
 
- 			if ${wipe}==${grpcnt}
+			if ${wipe}==${grpcnt}
 			{
- 					echo "Everyone is dead, waiting 10 seconds to revive"
- 					GroupWiped:Set[TRUE]
- 					wait 100
- 					EQ2Execute "select_junction 0"
+					echo "Everyone is dead, waiting 10 seconds to revive"
+					GroupWiped:Set[TRUE]
+					wait 100
+					EQ2Execute "select_junction 0"
 					do
 					{
 							waitframe
@@ -2272,7 +2275,7 @@ function ScanAdds()
 				call FastMove ${X} ${Z}  2
 				do
 				{
-				    waitframe
+						waitframe
 				}
 				while ${IsMoving}
 				if ${Return.Equal[STUCK]}
@@ -2292,35 +2295,37 @@ function ScanAdds()
 
 atom(script) EQ2_onIncomingText(string Text)
 {
-    if (${Text.Find[You may not order your pet to attack]} > 0)   
-    {
-        ;; Make sure the list does not get too big
-        if (${DoNotPullList.Used} > 100)
-        {
-            echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
-            DoNotPullList:Clear
-        }
-        
-        echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"
-        DoNotPullList:Set[${Target.ID},${Target.Name}]
+		if (${Text.Find[You may not order your pet to attack]} > 0)
+		{
+				;; Make sure the list does not get too big
+				if (${DoNotPullList.Used} > 100)
+				{
+						echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
+						DoNotPullList:Clear
+				}
 
-        echo "DEBUG: DoNotPullList now has ${DoNotPullList.Used} actors in it."
-    } 
-    elseif (${Text.Find[This attack cannot be used on this type of creature]} > 0)   
-    {
-        ;; Make sure the list does not get too big
-        if (${InvalidMasteryTargets.Used} > 100)
-        {
-            echo "DEBUG: InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."
-            InvalidMasteryTargets:Clear
-        }        
-        
-        echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the InvalidMasteryTargets list"
-        InvalidMasteryTargets:Set[${Target.ID},${Target.Name}]
+				echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"
+				DoNotPullList:Set[${Target.ID},${Target.Name}]
 
-        echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
-    }
-    
+				echo "DEBUG: DoNotPullList now has ${DoNotPullList.Used} actors in it."
+		}
+		elseif (${Text.Find[This attack cannot be used on this type of creature]} > 0)
+		{
+				;; Make sure the list does not get too big
+				if (${InvalidMasteryTargets.Used} > 100)
+				{
+					echo "DEBUG: InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."
+					InvalidMasteryTargets:Clear
+				}
+
+				if ${Actor[${KillTarget}](exists)}
+				{
+					echo "DEBUG: Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"
+					InvalidMasteryTargets:Set[${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}]
+
+					echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
+				}
+		}
 }
 
 atom(script) LootWDw(string ID)
@@ -2340,27 +2345,27 @@ atom(script) LootWDw(string ID)
 	{
 		do
 		{
-		    if (${LootWindow[${ID}].Item[${tmpcnt}].Lore})
-		    {
-		        if !${LoreConfirm}
-		        {
-		            deccnt:Inc
-		            continue
-		        }
-		    }
-		    if (${LootWindow[${ID}].Item[${tmpcnt}].NoTrade})
-		    {
-		        if !${NoTradeConfirm}
-		            deccnt:Inc   
-		    }
-		    if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
-		    {
-		        if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
-		        {
-		            echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
-		            deccnt:Inc
-		        }
-		    }
+				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore})
+				{
+						if !${LoreConfirm}
+						{
+								deccnt:Inc
+								continue
+						}
+				}
+				if (${LootWindow[${ID}].Item[${tmpcnt}].NoTrade})
+				{
+						if !${NoTradeConfirm}
+								deccnt:Inc
+				}
+				if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
+				{
+						if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
+						{
+								echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
+								deccnt:Inc
+						}
+				}
 		}
 		while ${tmpcnt:Inc}<=${LootWindow[${ID}].NumItems}
 	}
@@ -2370,10 +2375,10 @@ atom(script) LootWDw(string ID)
 	}
 	elseif ${LootMethod.Equal[Idle]}
 	{
-	    LastWindow:Set[${ID}]
+			LastWindow:Set[${ID}]
 		return
 	}
-	
+
 	LastWindow:Set[${ID}]
 
 
@@ -2446,8 +2451,8 @@ function BotFollow(string Line, string FollowTarget)
 {
 	variable string tempTarget
 
-    if (${PauseBot} || !${StartBot})
-        return
+		if (${PauseBot} || !${StartBot})
+				return
 
 
 	if ${FollowTarget.Equal[me]}
@@ -2491,10 +2496,10 @@ function BotAbort()
 }
 
 function BotCommand(string line, string doCommand)
-{  
-    if (${PauseBot} || !${StartBot})
-        return
-        
+{
+		if (${PauseBot} || !${StartBot})
+				return
+
 	EQ2Execute /${doCommand}
 }
 
@@ -2505,17 +2510,17 @@ function BotTell(string line, string tellSender, string tellMessage)
 
 function BotAutoMeleeOn()
 {
-    if (${PauseBot} || !${StartBot})
-        return
-            
+		if (${PauseBot} || !${StartBot})
+				return
+
 	AutoMelee:Set[TRUE]
 }
 
 function BotAutoMeleeOff()
 {
-    if (${PauseBot} || !${StartBot})
-        return    
-    
+		if (${PauseBot} || !${StartBot})
+				return
+
 	AutoMelee:Set[FALSE]
 
 	if ${Me.AutoAttackOn}
@@ -2527,15 +2532,15 @@ function BotAutoMeleeOff()
 function BotCastTarget(string line, string Spell, string castTarget)
 {
 	variable string tempTarget
-	
-    if (${PauseBot} || !${StartBot})
-        return	
+
+		if (${PauseBot} || !${StartBot})
+				return
 
 	if ${castTarget.Equal[me]}
 		tempTarget:Set[${MainAssist}]
 	else
 		tempTarget:Set[${castTarget}]
-		
+
 	target ${tempTarget}
 	wait 2
 	call CastSpell "${Spell}"
@@ -2639,7 +2644,7 @@ function StopBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Show
-	
+
 	StartBot:Set[FALSE]
 }
 
@@ -2661,9 +2666,9 @@ objectdef ActorCheck
 
 			case PC
 				return FALSE
-				
+
 			case NoKill NPC
-			    return FALSE
+					return FALSE
 
 			Default
 				return FALSE
@@ -2723,15 +2728,15 @@ objectdef ActorCheck
 		if ${Actor[${actorid}].IsEpic} && ${IgnoreEpic}
 			return FALSE
 
-        ;actor is a charmed pet, ignore it
-		if ${This.FriendlyPet[${actorid}]}	
+				;actor is a charmed pet, ignore it
+		if ${This.FriendlyPet[${actorid}]}
 			return FALSE
-		
-        if (${DoNotPullList.Element[${actorid}](exists)})		
-        {
-            echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
-            return FALSE
-        }
+
+				if (${DoNotPullList.Element[${actorid}](exists)})
+				{
+						echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
+						return FALSE
+				}
 
 		if ${Actor[${actorid}](exists)}
 			return TRUE
@@ -2802,16 +2807,16 @@ objectdef ActorCheck
 			tempvar:Set[0]
 			do
 			{
-			    if (${Me.Group[${tempvar}](exists)})
-			    {
-			        if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID})
-			            return TRUE
-			    }
-			    if (${Me.Group[${tempvar}].ToActor.Pet.ID(exists)})
-			    {
-			        if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
-			            return TRUE
-			    }
+					if (${Me.Group[${tempvar}](exists)})
+					{
+							if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID})
+									return TRUE
+					}
+					if (${Me.Group[${tempvar}].ToActor.Pet.ID(exists)})
+					{
+							if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
+									return TRUE
+					}
 			}
 			while ${tempvar:Inc}<=${Me.GroupCount}
 
@@ -2872,7 +2877,7 @@ objectdef ActorCheck
 
 		if !${Actor[NPC,range,${EngageDistance}](exists)} && !(${Actor[NamedNPC,range,${EngageDistance}](exists)} && !${IgnoreNamed})
 		{
-		    ;echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
+				;echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
 			return FALSE
 		}
 
@@ -2891,7 +2896,7 @@ objectdef ActorCheck
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 
-        ;echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
+				;echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
 		return FALSE
 	}
 
@@ -3197,7 +3202,7 @@ objectdef EQ2BotObj
 					{
 						if ${Math.Distance[${WPX},${WPY},${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z}]}<${ScanRange}
 						{
-					 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
+							if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
 							{
 								return ${PullRegions.Get[${tempvar}].ID}
 							}
@@ -3466,16 +3471,16 @@ objectdef EQ2BotObj
 
 	method SetActorLooted(int ActorID, string ActorName)
 	{
-	    if (${ActorsLooted.Used} > 50)
-	        ActorsLooted:Clear
-	        
-	    ActorsLooted:Set[${ActorID},${ActorName}]
+			if (${ActorsLooted.Used} > 50)
+					ActorsLooted:Clear
+
+			ActorsLooted:Set[${ActorID},${ActorName}]
 	}
 }
 
 function CheckAbilities(string class)
 {
-    variable int keycount
+		variable int keycount
 	variable int templvl=1
 	variable string tempnme
 	variable int tempvar=1
@@ -3488,7 +3493,7 @@ function CheckAbilities(string class)
 		tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
 
 		templvl:Set[${Arg[1,${tempnme}]}]
-		
+
 		if ${templvl} > ${Me.Level}
 			continue
 
@@ -3497,44 +3502,44 @@ function CheckAbilities(string class)
 		{
 			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 			{
-			    ; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-			    if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
-			    {
-				    echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-				    MissingAbilitiesCount:Inc
+					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
+					{
+						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+						MissingAbilitiesCount:Inc
 				}
 			}
 			else
 			{
-			    ;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+					;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 			}
 		}
 		else
 		{
-		    ;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 		}
 	}
 	while ${tempvar:Inc}<=${keycount}
-	
-	
+
+
 	if ${MissingAbilitiesCount} > 6
 	{
-	    echo "------------"
-	    echo "You appear to be missing a significant number of abilities.  Checking knowledge book and searching again..."
-    	EQ2Execute /toggleknowledge
-    	wait 5
-    	EQ2Execute /toggleknowledge		    
-	    MissingAbilitiesCount:Set[0]
-	    tempvar:Set[1]
-	    
+			echo "------------"
+			echo "You appear to be missing a significant number of abilities.  Checking knowledge book and searching again..."
+			EQ2Execute /toggleknowledge
+			wait 5
+			EQ2Execute /toggleknowledge
+			MissingAbilitiesCount:Set[0]
+			tempvar:Set[1]
+
 		do
 		{
 			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
 
 			templvl:Set[${Arg[1,${tempnme}]}]
-			
+
 			if ${templvl} > ${Me.Level}
 				continue
 
@@ -3543,11 +3548,11 @@ function CheckAbilities(string class)
 			{
 				if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 				{
-				    ; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-				    if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
-				    {
-					    echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-					    MissingAbilitiesCount:Inc
+						; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+						if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
+						{
+							echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+							MissingAbilitiesCount:Inc
 					}
 				}
 				else
@@ -3556,13 +3561,13 @@ function CheckAbilities(string class)
 			else
 				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 		}
-		while ${tempvar:Inc}<=${keycount}		 
-		
+		while ${tempvar:Inc}<=${keycount}
+
 		if ${MissingAbilitiesCount} > 6
-		    echo "It appears that are missing more than 6 abilities for this character. If this is not an error, please ignore this message (and buy your skills!) -- otherwise, please restart EQ2Bot."
+				echo "It appears that are missing more than 6 abilities for this character. If this is not an error, please ignore this message (and buy your skills!) -- otherwise, please restart EQ2Bot."
 		else
-		    echo "Much better -- abilities Set."  	
-		echo "------------"	   
+				echo "Much better -- abilities Set."
+		echo "------------"
 	}
 }
 
@@ -3736,7 +3741,7 @@ objectdef Navigation
 
 	member:bool ShouldConnect(lnavregionref regionA, lnavregionref regionB)
 	{
-  	if ${regionA.ID}==${regionB.ID}
+		if ${regionA.ID}==${regionB.ID}
 		{
 			return FALSE
 		}
@@ -4083,24 +4088,24 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-    if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
-    {
+		if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
+		{
 		if ${LoreConfirm}
 			ChoiceWindow:DoChoice1
 		else
-			ChoiceWindow:DoChoice2      
-	    return   
-    }
+			ChoiceWindow:DoChoice2
+			return
+		}
 
 	if ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
 		if ${NoTradeConfirm}
 			ChoiceWindow:DoChoice1
 		else
-		    ChoiceWindow:DoChoice2    
+				ChoiceWindow:DoChoice2
 		return
 	}
-	
+
 	;ChoiceWindow:DoChoice2
 	return
 }
