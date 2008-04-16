@@ -547,11 +547,11 @@ function Combat_Routine(int xAction)
 			break
 
 		case Master_Strike
-	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-	    ;;;;;;;;;;
-	    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
-	        break
-	    ;;;;;;;;;;;
+    	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+    	    ;;;;;;;;;;
+    	    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
+    	        break
+    	    ;;;;;;;;;;;
 			if ${Me.Ability[Master's Smite].IsReady}
 			{
 				Me.Ability[Master's Smite]:Use
@@ -578,12 +578,12 @@ function Post_Combat_Routine(int xAction)
 
 	switch ${PostAction[${xAction}]}
 	{
-    case AutoFollowTank
-     	if ${AutoFollowMode}
-     	{
-     		ExecuteAtom AutoFollowTank
-     	}
-     	break
+        case AutoFollowTank
+         	if ${AutoFollowMode}
+         	{
+         		ExecuteAtom AutoFollowTank
+         	}
+         	break
 		default
 			return PostCombatRoutineComplete
 			break
