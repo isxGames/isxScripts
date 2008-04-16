@@ -395,7 +395,7 @@ function Combat_Routine(int xAction)
 	;pets
 
 	;check if we have a pet or a ooze not up
-	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[395]}](exists)}
+	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 	}
