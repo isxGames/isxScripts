@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Warlock.iss
-;version 20071004a
+;version 20080415a
 ;by Pygar
+;
+;20080415a
+; DPS Tweaks
 ;
 ;20071004a
 ; Weaponswap entirely removed
@@ -157,7 +160,7 @@ function Combat_Init()
 	Action[20]:Set[DoT2]
 	SpellRange[20,1]:Set[71]
 
-	Action[21]:Set[DoT2]
+	Action[21]:Set[DoT3]
 	SpellRange[21,1]:Set[72]
 
 	Action[22]:Set[Nuke2]
@@ -201,7 +204,7 @@ function Combat_Init()
 function PostCombat_Init()
 {
 
-	PostAction[1]:Set[LoadDefaultEquipment]
+	PostAction[1]:Set[AutoFollowTank]
 	avoidhate:Set[FALSE]
 }
 
@@ -220,12 +223,11 @@ function Buff_Routine(int xAction)
 	call CheckHeals
 	call RefreshPower
 
-
 	ExecuteAtom CheckStuck
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-	    ExecuteAtom AutoFollowTank
+		ExecuteAtom AutoFollowTank
 		wait 5
 	}
 
@@ -358,7 +360,7 @@ function Buff_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 }
@@ -372,6 +374,15 @@ function Combat_Routine(int xAction)
 
 	AutoFollowingMA:Set[FALSE]
 
+	if ${xAction}>7 && ${Mob.Count}=1 && ${Target.EncounterSize}=1
+	{
+		if ${xAction}>18
+		{
+			return Combat Complete
+		}
+		xAction:Inc[10]
+	}
+
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
@@ -382,12 +393,10 @@ function Combat_Routine(int xAction)
 		objHeroicOp:DoHO
 	}
 
-
 	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
 	}
-
 
 	if ${CastCures}
 	{
@@ -424,7 +433,7 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${DotMode}
+	if ${DotMode} && ${xAction}>17
 	{
 		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
 		{
@@ -476,16 +485,26 @@ function Combat_Routine(int xAction)
 			}
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
+		case DoT1
+		case DoT2
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
+		case Void
 		case Nuke2
 		case Nuke3
 		case Nuke4
 		case AoE_Debuff1
+		case AoE_Debuff3
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 
+		case Nullify
+		case Caress
 		case AoE_Concussive
 		case AoE_Debuff2
-		case AoE_Debuff3
 			if ${AoEMode} && ${Mob.Count}>1 && ${Target.EncounterSize}>1
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
@@ -494,7 +513,7 @@ function Combat_Routine(int xAction)
 
 		case AoE_DoT
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && ${Mob.Count}>1 && ${Target.EncounterSize}>1
+			if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 4
 			}
@@ -528,11 +547,16 @@ function Combat_Routine(int xAction)
 			break
 
 		case Master_Strike
+	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+	    ;;;;;;;;;;
+	    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
+	        break
+	    ;;;;;;;;;;;
 			if ${Me.Ability[Master's Smite].IsReady}
 			{
-				Target ${KillTarget}
 				Me.Ability[Master's Smite]:Use
 			}
+			break
 
 		case Concussive
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
@@ -542,7 +566,7 @@ function Combat_Routine(int xAction)
 		case AoE_Root
 			break
 		Default
-			xAction:Set[20]
+			return CombatComplete
 			break
 	}
 
@@ -551,12 +575,19 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
 	TellTank:Set[FALSE]
+
 	switch ${PostAction[${xAction}]}
 	{
+    case AutoFollowTank
+     	if ${AutoFollowMode}
+     	{
+     		ExecuteAtom AutoFollowTank
+     	}
+     	break
 		default
 			return PostCombatRoutineComplete
 			break
-	}	
+	}
 }
 
 function Have_Aggro()
@@ -687,6 +718,5 @@ function CheckHeals()
 		}
 	}
 	while ${temphl:Inc}<${grpcnt}
-
 
 }
