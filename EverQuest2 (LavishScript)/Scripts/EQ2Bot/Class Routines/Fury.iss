@@ -1450,17 +1450,13 @@ function Cancel_Root()
 function CheckCures()
 {
 	declare temphl int local
-	declare grpheal int local 0
 	declare lowest int local 0
 	declare grpcure int local 0
 	declare mostafflicted int local 0
 	declare mostafflictions int local 0
 	declare tmpafflictions int local 0
-	declare PetToHeal int local 0
-	declare MTinMyGroup bool local FALSE
 
 	grpcnt:Set[${Me.GroupCount}]
-	hurt:Set[FALSE]
 
 	temphl:Set[0]
 	grpcure:Set[0]
@@ -1552,24 +1548,6 @@ function CheckCures()
             			grpcure:Inc
             		}        			
         		}
-
-    			if ${Me.Group[${temphl}].ToActor.Health} > -99 && ${Me.Group[${temphl}].ToActor.Health} < 80
-    			{
-    				grpheal:Inc
-    			}
-        
-    			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[illusionist]}
-    			{
-    				if ${Me.Group[${temphl}].ToActor.Pet.Health} < 60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-    				{
-    					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-    				}
-    			}
-    
-    			if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
-    			{
-    				MTinMyGroup:Set[TRUE]
-    			}
     		}
     	}
     	while ${temphl:Inc} < ${grpcnt}
