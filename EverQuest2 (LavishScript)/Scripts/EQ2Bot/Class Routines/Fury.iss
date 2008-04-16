@@ -283,7 +283,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-	ExecuteAtom CheckStuck		
+	ExecuteAtom CheckStuck				
 	
 	if ${GroupWiped}
 	{
@@ -1526,7 +1526,6 @@ function Cancel_Root()
 function Check_Cures()
 {
 	declare temphl int local
-	declare lowest int local 0
 	declare grpcure int local 0
 	declare mostafflicted int local 0
 	declare mostafflictions int local 0
@@ -1536,7 +1535,6 @@ function Check_Cures()
 
 	temphl:Set[0]
 	grpcure:Set[0]
-	lowest:Set[0]
 	    
     if (${grpcnt} > 1)
     {
@@ -1544,15 +1542,6 @@ function Check_Cures()
     	{
     		if ${Me.Group[${temphl}].ToActor(exists)}
     		{
-    
-    			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health} > -99
-    			{
-    				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
-    				{
-    					lowest:Set[${temphl}]
-    				}
-    			}
-    			
     			if (${temph1} == 0)
     			{
         			if ${Me.IsAfflicted}
