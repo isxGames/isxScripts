@@ -283,7 +283,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-	ExecuteAtom CheckStuck
+	ExecuteAtom CheckStuck	
 	
 	if ${GroupWiped}
 	{
@@ -997,7 +997,7 @@ function CheckHeals()
 	}
 
     if ${CureMode}
-        call CheckCures
+        call Check_Cures
         
         
     if (${grpcnt} > 1)
@@ -1447,7 +1447,7 @@ function Cancel_Root()
 
 }
 
-function CheckCures()
+function Check_Cures()
 {
 	declare temphl int local
 	declare lowest int local 0
