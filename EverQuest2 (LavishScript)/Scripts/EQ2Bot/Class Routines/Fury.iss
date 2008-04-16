@@ -284,7 +284,7 @@ function Buff_Routine(int xAction)
 	variable int temp
 
 	ExecuteAtom CheckStuck
-
+	
 	if ${GroupWiped}
 	{
 	    call HandleGroupWiped
@@ -970,14 +970,9 @@ function Have_Aggro()
 
 function CheckHeals()
 {
-
-	declare temphl int local
+    declare temphl int local
 	declare grpheal int local 0
 	declare lowest int local 0
-	declare grpcure int local 0
-	declare mostafflicted int local 0
-	declare mostafflictions int local 0
-	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
 	declare MTinMyGroup bool local FALSE
 	declare tempgrp int local 0
@@ -986,7 +981,6 @@ function CheckHeals()
 	hurt:Set[FALSE]
 
 	temphl:Set[0]
-	grpcure:Set[0]
 	lowest:Set[0]
 	;Raid Stuff
 	declare HealUsed bool local FALSE
@@ -995,13 +989,17 @@ function CheckHeals()
 	temph2:Set[1]
 	raidlowest:Set[1]
 	HealUsed:Set[FALSE]
-
+	
     ;;;; Rez MainTank if he/she is dead
 	if ${Actor[exactname,${MainTankPC}].IsDead} && ${Actor[exactname,${MainTankPC}](exists)} && (${CombatRez} || !${Me.InCombat})
 	{
 		call CastSpellRange 300 0 1 0 ${Actor[exactname,${MainTankPC}].ID}
 	}
 
+    if ${CureMode}
+        call CheckCures
+        
+        
     if (${grpcnt} > 1)
     {
     	do
@@ -1016,52 +1014,12 @@ function CheckHeals()
     					lowest:Set[${temphl}]
     				}
     			}
-    
-                if (${CureMode})
-                {
-        			if ${Me.Group[${temphl}].IsAfflicted}
-        			{
-        				if ${Me.Group[${temphl}].Arcane}>0
-        				{
-        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
-        				}
-        
-        				if ${Me.Group[${temphl}].Noxious}>0
-        				{
-        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
-        				}
-        
-        				if ${Me.Group[${temphl}].Elemental}>0
-        				{
-        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
-        				}
-        
-        				if ${Me.Group[${temphl}].Trauma}>0
-        				{
-        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
-        				}
-        
-        				if ${tmpafflictions}>${mostafflictions}
-        				{
-        					mostafflictions:Set[${tmpafflictions}]
-        					mostafflicted:Set[${temphl}]
-        				}
-        			}
-    		    }
-    
+    		
     			if ${Me.Group[${temphl}].ToActor.Health} > -99 && ${Me.Group[${temphl}].ToActor.Health} < 80
     			{
     				grpheal:Inc
     			}
-    
-                if (${CureMode})
-                {
-        			if ${Me.Group[${temphl}].Noxious} > 0 || ${Me.Group[${temphl}].Elemental} > 0
-        			{
-        				grpcure:Inc
-        			}
-        		}
-    
+        
     			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[illusionist]}
     			{
     				if ${Me.Group[${temphl}].ToActor.Pet.Health} < 60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
@@ -1077,54 +1035,8 @@ function CheckHeals()
     		}
     	}
     	while ${temphl:Inc} < ${grpcnt}
-    }
-	
-    if (${grpcnt} < 2)
-    {
-    	if ${Me.ToActor.Health} < 80 && ${Me.ToActor.Health} > -99
-    	{
-    		grpheal:Inc
-    	}
-    	
-    	if (${CureMode})
-    	{
-        	if ${Me.Noxious}>0 || ${Me.Elemental}>0
-        	{
-        		grpcure:Inc
-        	}
-        }    	
-    }
-    
-
-
-	;CURES
-	if (${CureMode})
-	{
-    	if ${grpcure}>2
-    	{
-    		call CastSpellRange 220
-    	}
-    
-    	if ${Me.IsAfflicted}
-    	{
-    		call CureMe
-    	}
-    
-    
-    	if ${mostafflicted}
-    	{
-    		call CheckGroupHealth 30
-    		if ${Return}
-    		{
-    			call CureGroupMember ${mostafflicted}
-    		}
-    		else
-    		{
-    			call CastSpellRange 10
-    			call CureGroupMember ${mostafflicted}
-    		}
-    	}
-    }
+    }	        
+        
 
 	;MAINTANK EMERGENCY HEAL
 	;if (${grpcnt} > 1)
@@ -1533,6 +1445,158 @@ function MA_Dead()
 function Cancel_Root()
 {
 
+}
+
+function CheckCures()
+{
+	declare temphl int local
+	declare grpheal int local 0
+	declare lowest int local 0
+	declare grpcure int local 0
+	declare mostafflicted int local 0
+	declare mostafflictions int local 0
+	declare tmpafflictions int local 0
+	declare PetToHeal int local 0
+	declare MTinMyGroup bool local FALSE
+
+	grpcnt:Set[${Me.GroupCount}]
+	hurt:Set[FALSE]
+
+	temphl:Set[0]
+	grpcure:Set[0]
+	lowest:Set[0]
+	    
+    if (${grpcnt} > 1)
+    {
+    	do
+    	{
+    		if ${Me.Group[${temphl}].ToActor(exists)}
+    		{
+    
+    			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health} > -99
+    			{
+    				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
+    				{
+    					lowest:Set[${temphl}]
+    				}
+    			}
+    			
+    			if (${temph1} == 0)
+    			{
+        			if ${Me.IsAfflicted}
+        		    {
+        				if ${Me.Arcane}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Arcane}]}]
+        				}
+        
+        				if ${Me.Noxious}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Noxious}]}]
+        				}
+        
+        				if ${Me.Elemental}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Elemental}]}]
+        				}
+        
+        				if ${Me.Trauma}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Trauma}]}]
+        				}
+        
+        				if ${tmpafflictions} > ${mostafflictions}
+        				{
+        					mostafflictions:Set[${tmpafflictions}]
+        					mostafflicted:Set[${temphl}]
+        				}   
+        				
+                        if ${Me.Noxious} > 0 || ${Me.Elemental} > 0
+                		{
+                			grpcure:Inc
+                		}         				 			          
+    			    }
+    			}
+    			else
+    			{
+    			    if ${Me.Group[${temphl}].IsAfflicted}
+        			{
+        				if ${Me.Group[${temphl}].Arcane}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
+        				}
+        
+        				if ${Me.Group[${temphl}].Noxious}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
+        				}
+        
+        				if ${Me.Group[${temphl}].Elemental}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
+        				}
+        
+        				if ${Me.Group[${temphl}].Trauma}>0
+        				{
+        					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
+        				}
+        
+        				if ${tmpafflictions}>${mostafflictions}
+        				{
+        					mostafflictions:Set[${tmpafflictions}]
+        					mostafflicted:Set[${temphl}]
+        				}
+        			}
+                    if ${Me.Group[${temphl}].Noxious} > 0 || ${Me.Group[${temphl}].Elemental} > 0
+            		{
+            			grpcure:Inc
+            		}        			
+        		}
+
+    			if ${Me.Group[${temphl}].ToActor.Health} > -99 && ${Me.Group[${temphl}].ToActor.Health} < 80
+    			{
+    				grpheal:Inc
+    			}
+        
+    			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[illusionist]}
+    			{
+    				if ${Me.Group[${temphl}].ToActor.Pet.Health} < 60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+    				{
+    					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+    				}
+    			}
+    
+    			if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
+    			{
+    				MTinMyGroup:Set[TRUE]
+    			}
+    		}
+    	}
+    	while ${temphl:Inc} < ${grpcnt}
+    }
+	
+	;;;;;;;;;;;;;;;;;;;;;;;
+	;;Do The Cure(s)
+	if (${grpcure} > 2)
+		call CastSpellRange 220
+
+	if ${Me.IsAfflicted}
+		call CureMe
+
+
+	if ${mostafflicted}
+	{
+		call CheckGroupHealth 30
+		if ${Return}
+		{
+			call CureGroupMember ${mostafflicted}
+		}
+		else
+		{
+			call CastSpellRange 10
+			call CureGroupMember ${mostafflicted}
+		}
+	} 
 }
 
 function CureMe()
