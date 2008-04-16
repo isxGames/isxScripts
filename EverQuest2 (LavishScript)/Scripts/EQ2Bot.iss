@@ -1,17 +1,21 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.1j Updated: 03/22/08 by Pygar
+; EQ2Bot.iss Version 2.7.1h Updated: 03/22/08 by Pygar
 ;
-;2.7.1j
+;2.7.1h (Pygar)
+; * Added a knowledgebook toggle to the begining of CheckAbilities.  Several higher level users reporting sporadic AA ability
+;		usage due to ability not being loaded.  We may need to actually attempt examine methods on a missing ability, more testing to
+;		follow.
+;2.7.1j (Pygar)
 ; * Updated InvalidMasteryTargets collection to only add targets if they exist, and to work off KillTarget instead of
 ;		target in case healer has targeted another mob by time trigger fires.
-;2.7.2i
+;2.7.2i (Amadeus)
 ; * All Post_Combat_Routine functions (in all of the class files) should have this as their default case:
 ;		Default
 ;			return PostCombatRoutineComplete
 ;			break
 ; * The "Stop EQ2Bot" and "Pause EQ2Bot" buttons should now work properly
 ;
-;2.7.2h
+;2.7.2h (Amadeus)
 ; * Renamed the method "CheckSpells" to "CheckAbilities" and moved it to its own function
 ; * If you are missing more than 6 abilities that are within 20 levels below your current level, EQ2Bot will assume that it is an error.
 ;   It will then open your knowledge book, wait a half second, and then try again.  This should fix the issue where eq2bot does not
@@ -20,7 +24,7 @@
 ;   was probably causing a bug with raid healing by the way.)
 ; * Various updates/optimizations (ie, the CheckLoot() function should make a lot more sense now)
 ;
-;2.7.2g
+;2.7.2g (Amadeus)
 ; * EQ2Bot now maintains a "DoNotPullList" collection.  Initially, this list is only populated with actors for which the message
 ;   'you may not order your pet to attack the selected or implied target' is sent to the client.
 ; * EQ2Bot now maintains a "InvalidMasteryTargets" collection.  Each class routine file will have to be updated to utilize this
@@ -29,14 +33,14 @@
 ; * The Detect() method now uses the ${EngageDistance} variable to determine how closely it should check for mobs (which is set based
 ;   upon character archetype during Init_Character()
 ;
-;2.7.1f
+;2.7.1f (Amadeus)
 ; * There is now two options on the UI in regards to looting lore items and looting no trade items.
 ; * If a loot item is a collectible, and you've already collected it AND there is more than just yourself in your group, you will decline.
 ;
-;2.7.1e
+;2.7.1e (Amadeus)
 ; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
 ;
-;2.7.1d
+;2.7.1d (Amadeus)
 ; * Added a 'Health' case to the CheckCondition function (see Fury.iss (Combat_Init() and Combat_Routines()) for examples)
 ; * Removed some scripting that was causing crashes in the onLootWindowAppeared atom
 ; * Added a 'GroupWiped' variable (bool) that is set to TRUE whenever "Revive on Group Wipes" is checked and your entire
@@ -45,13 +49,13 @@
 ; * Added a 'InitialBuffsDone' scriptwide variable (bool) that is set initially set to FALSE.  This is to allow for specific class
 ;   files to cast buffs (or any other spells) when the script is first run (ie, to give out rez feathers.)  See Fury.iss (Buff_Routine()) for example.
 ;
-;2.7.1c
+;2.7.1c (Pygar)
 ; Adjusted for new IsDead member of Actor.  This will fix false positives on death checks due to coagulate and other unconcious health buffs.
 ;	Adjusted MA_Dead and MT_Dead functions
 ; Adjusted LostAggro - Now fires with the ID of the mob that is lost, it no longer switched the MT's killtarget to the add.  This should allow
 ;	for mezing to be more effective, and allow for more control of how to react to aggro loss in the Lost_aggro() function in individual class files.
 ;
-;2.7.1b
+;2.7.1b (Pygar)
 ; Minor tweaks to AcceptWindow code
 ;
 ;2.7.1 (Pygar)
@@ -3480,12 +3484,23 @@ objectdef EQ2BotObj
 
 function CheckAbilities(string class)
 {
-		variable int keycount
+	variable int keycount
 	variable int templvl=1
 	variable string tempnme
 	variable int tempvar=1
 	variable string spellname
 	variable int MissingAbilitiesCount
+
+	;Getting reports of people not using aa's due to missing in ability tree at start.  Attempting this change to test.
+	;We may need to actually try to fire :Examine on missing abilities then re-evaluate
+	if ${Me.Level}>30
+	{
+		echo "------------"
+		echo "Opening Knowledge book to refresh abilities"
+		EQ2Execute /toggleknowledge
+		wait 5
+		EQ2Execute /toggleknowledge
+	}
 
 	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
 	do
@@ -3517,7 +3532,7 @@ function CheckAbilities(string class)
 		}
 		else
 		{
-				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+			;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 		}
 	}
