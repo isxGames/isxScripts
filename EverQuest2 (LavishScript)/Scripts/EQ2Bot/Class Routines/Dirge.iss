@@ -622,7 +622,7 @@ function Combat_Routine(int xAction)
 
 }
 
-function Post_Combat_Routine()
+function Post_Combat_Routine(int xAction)
 {
 	if ${Me.Maintained[Shroud](exists)}
 	{
@@ -632,6 +632,13 @@ function Post_Combat_Routine()
 	;reset rangedattack in case it was modified by joust call.
 	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
+	
+	switch ${PostAction[${xAction}]}
+	{
+		default
+			return PostCombatRoutineComplete
+			break
+	}	
 }
 
 function Have_Aggro()

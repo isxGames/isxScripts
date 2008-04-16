@@ -575,6 +575,7 @@ function Post_Combat_Routine(int xAction)
 
 		case LoadDefaultEquipment
 			ExecuteAtom LoadEquipmentSet "Default"
+			break
 		case AA_Possessed_Minion
 			;check if we are possessed minion and cancel
 			if ${Me.Race.Equal[Unknown]}
@@ -582,8 +583,8 @@ function Post_Combat_Routine(int xAction)
 				Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
-		case default
-			xAction:Set[20]
+		default
+			return PostCombatRoutineComplete
 			break
 	}
 

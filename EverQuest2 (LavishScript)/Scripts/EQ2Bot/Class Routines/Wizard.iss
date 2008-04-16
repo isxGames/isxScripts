@@ -185,9 +185,10 @@ function Buff_Routine(int xAction)
 
 	ExecuteAtom CheckStuck
 
-	if ${AutoFollowMode}
+	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-		ExecuteAtom AutoFollowTank
+	    ExecuteAtom AutoFollowTank
+		wait 5
 	}
 
 	switch ${PreAction[${xAction}]}
@@ -449,6 +450,12 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
 	TellTank:Set[FALSE]
+	switch ${PostAction[${xAction}]}
+	{
+		default
+			return PostCombatRoutineComplete
+			break
+	}	
 }
 
 function Have_Aggro()

@@ -395,30 +395,26 @@ function Post_Combat_Routine(int xAction)
 {
 	switch ${PostAction[${xAction}]}
 	{
-
 		case Cancel_Root
 			 if ${Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}](exists)}
 			 {
 			    Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
 			 }
 			break
-
 		case AA_AccelterationStrike
 			if ${Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			}
 			break
-
 		case AA_BindWound
 			if ${Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CastSpellRange ${PostSpellRange[${xAction},1]}
 			}
 			break
-
-		case default
-			xAction:Set[20]
+		default
+			return PostCombatRoutineComplete
 			break
 	}
 }

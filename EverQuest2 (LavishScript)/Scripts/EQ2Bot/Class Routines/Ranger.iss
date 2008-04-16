@@ -421,8 +421,9 @@ function Post_Combat_Routine(int xAction)
 			{
 				Me.Inventory[Master's Caustic Poison]:Use
 			}
-		Default
-			xAction:Set[20]
+			break
+		default
+			return PostCombatRoutineComplete
 			break
 	}
 

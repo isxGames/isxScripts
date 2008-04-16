@@ -360,8 +360,8 @@ function Post_Combat_Routine(int xAction)
 			    Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
 			 }
 			break
-		case default
-			xAction:Set[20]
+		default
+			return PostCombatRoutineComplete
 			break
 	}
 }

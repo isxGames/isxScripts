@@ -694,8 +694,9 @@ function Post_Combat_Routine(int xAction)
 			break
 		case LoadDefaultEquipment
 			ExecuteAtom LoadEquipmentSet "Default"
+			break
 		default
-			xAction:Set[20]
+			return PostCombatRoutineComplete
 			break
 	}
 }
