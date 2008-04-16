@@ -614,7 +614,7 @@ function Post_Combat_Routine(int xAction)
 			while ${tempgrp:Inc}<${grpcnt}
 			break
 		default
-			xAction:Set[20]
+			return PostCombatRoutineComplete
 			break
 	}
 }

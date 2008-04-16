@@ -551,6 +551,12 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
 	TellTank:Set[FALSE]
+	switch ${PostAction[${xAction}]}
+	{
+		default
+			return PostCombatRoutineComplete
+			break
+	}	
 }
 
 function Have_Aggro()

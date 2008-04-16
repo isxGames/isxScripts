@@ -516,12 +516,19 @@ function Combat_Routine(int xAction)
 	}
 }
 
-function Post_Combat_Routine()
+function Post_Combat_Routine(int xAction)
 {
 	if ${Me.Maintained[Stealth](exists)}
 	{
 		Me.Maintained[Stealth]:Cancel
 	}
+	
+	switch ${PostAction[${xAction}]}
+	{
+		default
+			return PostCombatRoutineComplete
+			break
+	}	
 }
 
 function Have_Aggro()

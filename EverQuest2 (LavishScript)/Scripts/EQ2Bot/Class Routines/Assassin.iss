@@ -544,7 +544,7 @@ function Combat_Routine(int xAction)
 	}
 }
 
-function Post_Combat_Routine()
+function Post_Combat_Routine(int xAction)
 {
 	switch ${PostAction[${xAction}]}
 	{
@@ -558,7 +558,7 @@ function Post_Combat_Routine()
 			}
 			break
 		default
-			xAction:Set[20]
+			return PostCombatRoutineComplete
 			break
 	}
 }

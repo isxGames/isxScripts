@@ -386,9 +386,9 @@ function Post_Combat_Routine(int xAction)
 {
 	switch ${PostAction[${xAction}]}
 	{
-	    Default
-	    xAction:Set[20]
-	    break
+		default
+			return PostCombatRoutineComplete
+			break
 	}
 }
 
