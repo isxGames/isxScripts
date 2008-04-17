@@ -374,14 +374,19 @@ function Combat_Routine(int xAction)
 
 	AutoFollowingMA:Set[FALSE]
 
+	;Actions 8-17 are for encounters only, we want to skip them if solo mobs.
 	if ${xAction}>7 && ${Mob.Count}==1 && ${Target.EncounterSize}==1
+	{
+		xAction:Inc[10]
+	}
+	else
 	{
 		if ${xAction}>18
 		{
 			return Combat Complete
 		}
-		xAction:Inc[10]
 	}
+
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
