@@ -172,7 +172,7 @@
 		<Setting Name="74,47">Masters Intervention</setting>
 		<Setting Name="74,72">Winds of Velious</setting>
 		<Setting Name="75,21">Elemental Aspect</setting>
-		<Setting Name="75,356">Inferno Drake</setting>
+		<Setting Name="75,356">Inferno Golem</setting>
 		<Setting Name="75,330">Pyro</setting>
 		<Setting Name="76,397">Elemental Unity</setting>
 		<Setting Name="76,40">Infernoshield</setting>
@@ -188,7 +188,7 @@
 		<Setting Name="80,45">Conjuror\'s Pact</setting>
 		<Setting Name="80,295">Defensive Haven</setting>
 		<Setting Name="80,1">Reconstruct Servant</setting>
-		<Setting Name="80,71">Blazing Manifestation</setting>
-		<Setting Name="80,375">Converge</setting>
+		<Setting Name="80,71">Blazing Manifestion</setting>
+		<Setting Name="80,375">Communion</setting>
  	</Set>
 </InnerSpaceSettings>
