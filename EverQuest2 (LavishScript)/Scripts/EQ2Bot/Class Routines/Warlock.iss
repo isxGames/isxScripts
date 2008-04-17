@@ -374,7 +374,7 @@ function Combat_Routine(int xAction)
 
 	AutoFollowingMA:Set[FALSE]
 
-	if ${xAction}>7 && ${Mob.Count}=1 && ${Target.EncounterSize}=1
+	if ${xAction}>7 && ${Mob.Count}==1 && ${Target.EncounterSize}==1
 	{
 		if ${xAction}>18
 		{
