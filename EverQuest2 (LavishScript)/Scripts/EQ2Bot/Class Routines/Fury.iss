@@ -22,7 +22,7 @@
 ;
 ;20070725a
 ; Fixed running into combat range un-necesarily
-;	Added a toggle for Combat Range AA's to enable or disable thier use.
+;	Added a toggle for Combat Range AAs to enable or disable thier use.
 ;
 ;20070504a
 ; Tweaked Heal Code
@@ -1099,7 +1099,7 @@ function CheckHeals()
     				MTinMyGroup:Set[TRUE]
     		}
     	}
-    	while ${temphl:Inc} < ${grpcnt}
+    	while ${temphl:Inc} <= ${grpcnt}
     }
       
 	;CURES
@@ -1507,6 +1507,8 @@ function Check_Cures()
 
 	temphl:Set[0]
 	grpcure:Set[0]
+	
+	;echo "DEBUG: Check_Cures() -- grpcnt ${grpcnt}"
 	    
     if (${grpcnt} > 1)
     {
@@ -1514,6 +1516,7 @@ function Check_Cures()
     	{
     		if ${Me.Group[${temphl}].ToActor(exists)}
     		{
+    		    ;echo "DEBUG: Check_Cures(${temphl}) -- Group Member Exists [${Me.Group[${temphl}].ToActor}]"
     			if (${temph1} == 0)
     			{
         			if ${Me.IsAfflicted}
@@ -1547,6 +1550,11 @@ function Check_Cures()
     			{
     			    if ${Me.Group[${temphl}].IsAfflicted}
         			{
+        			    ;echo "DEBUG: Check_Cures(): ${Me.Group[${temphl}]} IS afflicted..."
+        			    ;echo "DEBUG: Check_Cures(): group member #${temphl} Arcane: ${Me.Group[${temphl}].Arcane}"
+        			    ;echo "DEBUG: Check_Cures(): group member #${temphl} Noxious: ${Me.Group[${temphl}].Noxious}"
+        			    ;echo "DEBUG: Check_Cures(): group member #${temphl} Elemental: ${Me.Group[${temphl}].Elemental}"
+        			    ;echo "DEBUG: Check_Cures(): group member #${temphl} Trauma: ${Me.Group[${temphl}].Trauma}"
         				if ${Me.Group[${temphl}].Arcane}>0
         					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
         
@@ -1564,8 +1572,11 @@ function Check_Cures()
         
         				if ${Me.Group[${temphl}].Trauma}>0
         					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
+        					
+        				;echo "DEBUG: Check_Cures(): tmpafflicions: ${tmpafflictions}"
+        				;echo "DEBUG: Check_Cures() -- grpcure: ${grpcure} :: mostafflicted: ${mostafflicted}"
         
-        				if ${tmpafflictions}>${mostafflictions}
+        				if ${tmpafflictions} > ${mostafflictions}
         				{
         					mostafflictions:Set[${tmpafflictions}]
         					mostafflicted:Set[${temphl}]
@@ -1574,12 +1585,14 @@ function Check_Cures()
         		}
     		}
     	}
-    	while ${temphl:Inc} < ${grpcnt}
+    	while ${temphl:Inc} <= ${grpcnt}
     }
+
+	;echo "DEBUG: Check_Cures(END) -- grpcure: ${grpcure} :: mostafflicted: ${mostafflicted}"
 	
 	;;;;;;;;;;;;;;;;;;;;;;;
 	;;Do The Cure(s)
-	if (${grpcure} > 2)
+	if (${grpcure} > 1)
 		call CastSpellRange 220
 
 	if ${Me.IsAfflicted}
@@ -1590,9 +1603,7 @@ function Check_Cures()
 	{
 		call CheckGroupHealth 30
 		if ${Return}
-		{
 			call CureGroupMember ${mostafflicted}
-		}
 		else
 		{
 			call CastSpellRange 10
@@ -1631,36 +1642,33 @@ function CureGroupMember(int gMember)
 	if !${Me.Group[${gMember}].ToActor(exists)}
 		return
 
-    if (${CureMode})
-    {
-    	do
-    	{
-    		call CheckGroupHealth 50
-    		if !${Return}
-    		{
-    			call CastSpellRange 10
-    		}
-    		
-    		if (!${Me.Group[${gMember}].ToActor(exists)})
-    		    return 
-    		    
-    		if ${Me.Group[${gMember}].ToActor.Health}<25
-    			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
-    
-    		if  ${Me.Group[${gMember}].Arcane}>0
-    			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
-    
-    		if  ${Me.Group[${gMember}].Noxious}>0
-    			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
-    
-    		if  ${Me.Group[${gMember}].Elemental}>0
-    			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
-    
-    		if  ${Me.Group[${gMember}].Trauma}>0
-    			call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
-    	}
-    	while ${Me.Group[${gMember}].IsAfflicted} && ${tmpcure:Inc} < 3
-    }
+    do
+	{
+		call CheckGroupHealth 50
+		if !${Return}
+		{
+			call CastSpellRange 10
+		}
+		
+		if (!${Me.Group[${gMember}].ToActor(exists)})
+		    return 
+		    
+		if ${Me.Group[${gMember}].ToActor.Health}<25
+			call CastSpellRange 4 0 0 0 ${Me.Group[${gMember}].ID}
+
+		if  ${Me.Group[${gMember}].Arcane}>0
+			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
+
+		if  ${Me.Group[${gMember}].Noxious}>0
+			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
+
+		if  ${Me.Group[${gMember}].Elemental}>0
+			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
+
+		if  ${Me.Group[${gMember}].Trauma}>0
+			call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
+	}
+	while ${Me.Group[${gMember}].IsAfflicted} && ${tmpcure:Inc} < 3
 }
 
 function HandleGroupWiped()
