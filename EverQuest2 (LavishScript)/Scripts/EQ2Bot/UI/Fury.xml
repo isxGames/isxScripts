@@ -164,9 +164,30 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Melee]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='SummonImpOfRo' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>170</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Summon Imp of Ro</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString["Summon Imp of Ro"]}</Data>
+	</Commandcheckbox>	
 	<Text name='lblShiftForm' Template='EQ2.text'>
 	  <x>5%</x>
-	  <y>170</y>
+	  <y>190</y>
 	  <Height>20</Height>
 		<Width>80</Width>
 		<Alignment>Left</Alignment>
@@ -174,7 +195,7 @@
 	</Text>
 	<combobox Name='ShiftForm' Template='EQ2.Combobox'>
 		<X>25%</X>
-		<Y>170</Y>
+		<Y>190</Y>
 		<Width>60</Width>
 		<Height>20</Height>
 		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
