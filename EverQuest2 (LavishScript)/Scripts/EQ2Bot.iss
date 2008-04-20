@@ -1,9 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1h Updated: 03/22/08 by Pygar
 ;
-;2.7.1l
+;2.7.1l (Amadeus)
 ; * Added a function to EQ2BotLib.iss called "AmIInvis".  CastSpell() and CastSpellRange() now check this before they
 ;   will cast any spells outside of combat.
+; * Tweaked CheckAbilities().  It should work for all players at all times now if AA abilities are properly listed in 
+;   spell lists as level 10 for all classes.
 ;
 ;2.7.1k (Pygar)
 ; * Added a knowledgebook toggle to the begining of CheckAbilities.  Several higher level users reporting sporadic AA ability
