@@ -1,7 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1h Updated: 03/22/08 by Pygar
 ;
-;2.7.1h (Pygar)
+;2.7.1l
+; * Added a function to EQ2BotLib.iss called "AmIInvis".  CastSpell() and CastSpellRange() now check this before they
+;   will cast any spells outside of combat.
+;
+;2.7.1k (Pygar)
 ; * Added a knowledgebook toggle to the begining of CheckAbilities.  Several higher level users reporting sporadic AA ability
 ;		usage due to ability not being loaded.  We may need to actually attempt examine methods on a missing ability, more testing to
 ;		follow.
@@ -490,7 +494,7 @@ function main()
 				call Buff_Routine ${tempvar}
 				if ${Return.Equal[Buff Complete]}
 				{
-						; end after this round
+					; end after this round
 					tempvar:Set[40]
 				}
 
@@ -563,7 +567,6 @@ function main()
 								{
 									Me.Maintained[${SpellType[295]}]:Cancel
 								}
-
 								call CastSpellRange 290
 							}
 							break
@@ -741,16 +744,21 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 	variable int tempvar=${start}
 	variable int originaltarget
 
+    ;echo "DEBUG: CastSpellRange(${tempvar}::${SpellType[${tempvar}]})"
+
+    if !${Me.InCombat}
+    {
+        call AmIInvis "CastSpellRange()"
+        if ${Return.Equal[TRUE]}
+            return -1
+    }
+
 
 	if ${Me.IsMoving} && !${castwhilemoving}
-	{
 		return -1
-	}
 
 	if ${targettobuff}>0 && !${Actor[${targettobuff}](exists)}
-	{
 		return -1
-	}
 
 	do
 	{
@@ -845,11 +853,15 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 
 function CastSpell(string spell, int spellid, bool castwhilemoving)
 {
+    if !${Me.InCombat}
+    {
+        call AmIInvis "CastSpell()"
+        if ${Return.Equal[TRUE]}
+            return
+    }
 
 	if ${Me.IsMoving} && !${castwhilemoving}
-	{
 		return
-	}
 
 	CurrentAction:Set[Casting ${spell}]
 	Me.Ability[${spell}]:Use
@@ -3485,10 +3497,10 @@ objectdef EQ2BotObj
 
 	method SetActorLooted(int ActorID, string ActorName)
 	{
-			if (${ActorsLooted.Used} > 50)
-					ActorsLooted:Clear
+		if (${ActorsLooted.Used} > 50)
+				ActorsLooted:Clear
 
-			ActorsLooted:Set[${ActorID},${ActorName}]
+		ActorsLooted:Set[${ActorID},${ActorName}]
 	}
 }
 
@@ -3501,16 +3513,8 @@ function CheckAbilities(string class)
 	variable string spellname
 	variable int MissingAbilitiesCount
 
-	;Getting reports of people not using aa's due to missing in ability tree at start.  Attempting this change to test.
-	;We may need to actually try to fire :Examine on missing abilities then re-evaluate
-	if ${Me.Level}>30
-	{
-		echo "------------"
-		echo "Opening Knowledge book to refresh abilities"
-		EQ2Execute /toggleknowledge
-		wait 5
-		EQ2Execute /toggleknowledge
-	}
+	; Might as well just open the bloody knowledge book every time.  We still need to do it after the initial round of 'checking'.
+	; I will set it so that it will toggle the knowledge book if the character is above level 10 and missing ANY spells/abilities
 
 	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
 	do
@@ -3527,8 +3531,8 @@ function CheckAbilities(string class)
 		{
 			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 			{
-				; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-				if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
+				; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
+				if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
 				{
 					echo "Missing Ability: '${spellname}' (Level: ${templvl})"
 					MissingAbilitiesCount:Inc
@@ -3549,15 +3553,15 @@ function CheckAbilities(string class)
 	while ${tempvar:Inc}<=${keycount}
 
 
-	if ${MissingAbilitiesCount} > 6
+	if (${MissingAbilitiesCount} > 0 && ${Me.Level} >= 10)
 	{
-			echo "------------"
-			echo "You appear to be missing a significant number of abilities.  Checking knowledge book and searching again..."
-			EQ2Execute /toggleknowledge
-			wait 5
-			EQ2Execute /toggleknowledge
-			MissingAbilitiesCount:Set[0]
-			tempvar:Set[1]
+		echo "------------"
+		echo "You appear to be missing abilities.  Checking knowledge book and searching again..."
+		EQ2Execute /toggleknowledge
+		wait 5
+		EQ2Execute /toggleknowledge
+		MissingAbilitiesCount:Set[0]
+		tempvar:Set[1]
 
 		do
 		{
@@ -3573,12 +3577,13 @@ function CheckAbilities(string class)
 			{
 				if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 				{
-						; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-						if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
-						{
-							echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-							MissingAbilitiesCount:Inc
-					}
+					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+					; By this point the list should be accurate
+					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
+					{
+						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+						MissingAbilitiesCount:Inc
+				    }
 				}
 				else
 					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
