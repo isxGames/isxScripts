@@ -859,12 +859,14 @@
 									Script[EQ2Harvest].VariableScope.PauseHarvest:Set[FALSE]
 									UIElement[Start Harvest@Main@EQ2Harvest Tabs@Harvest]:SetText[Resume Harvesting]
 									Script[EQ2Harvest].VariableScope.StartHarvest:Set[FALSE]
+									Script[EQ2Harvest].VariableScope.CurrentAction:Set[Waiting to Resume...]
 								}
 								else
 								{
 									Script[EQ2Harvest].VariableScope.PauseHarvest:Set[TRUE]
 									UIElement[Start Harvest@Main@EQ2Harvest Tabs@Harvest]:SetText[Pause Harvesting]
 									Script[EQ2Harvest].VariableScope.StartHarvest:Set[TRUE]
+									Script[EQ2Harvest].VariableScope.CurrentAction:Set[Resuming...]
 								}
 							</OnLeftClick>
 							<AutoTooltip>
@@ -1330,189 +1332,6 @@
 								ability while running from node to node if your power is over 80%
 							</AutoTooltip>
 						</checkbox>
-					</Tab>
-					<Tab Name='Tools'>
-							<checkbox Name='Toolswap Checkbox' Template='EQ2.checkbox'>
-							<X>5%</X>
-							<Y>20</Y>
-							<Width>20%</Width>
-							<Height>20</Height>
-							<Text>Enable Tool Swapping</Text>
-							<OnLoad>
-								if ${Script[EQ2Harvest].VariableScope.ToolSwap}
-								{
-									UIElement[Toolswap Checkbox@Tools@EQ2Harvest Tabs@Harvest]:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								if ${UIElement[Toolswap Checkbox@Tools@EQ2Harvest Tabs@Harvest].Checked}
-								{
-									Script[EQ2Harvest].VariableScope.ToolSwap:Set[TRUE]
-								}
-								else
-								{
-									Script[EQ2Harvest].VariableScope.ToolSwap:Set[FALSE]
-								}
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Swap Tools?,${Script[EQ2Harvest].VariableScope.ToolSwap}]:Save
-							</OnLeftClick>
-							<AutoTooltip>
-								Automatically swap in the tool(s) defined for the current node as we harvest
-							</AutoTooltip>
-						</checkbox>
-						<Text Name='Trapping Tool Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>40</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Trapping:</Text>
-							<AutoTooltip>
-								Tool to use for trapping
-							</AutoTooltip>
-						</Text>
-						<Textentry Name='Trapping Tool' Template='EQ2.textentry'>
-							<X>35%</X>
-							<Y>40</Y>
-							<Width>60%</Width>
-							<Height>15</Height>
-							<MaxLength>40</MaxLength>
-							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Trapping,"Sandalwood Trap"]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Trapping,"${This.Text}"]:Save
-							</OnChange>
-						</Textentry>
-						<Text Name='Mining Tool Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>60</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Mining:</Text>
-							<AutoTooltip>
-								Tool to use for mining
-							</AutoTooltip>
-						</Text>
-						<Textentry Name='Mining Tool' Template='EQ2.textentry'>
-							<X>35%</X>
-							<Y>60</Y>
-							<Width>60%</Width>
-							<Height>15</Height>
-							<MaxLength>40</MaxLength>
-							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Mining,"Calibrated Automated Pickaxe"]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Mining,"${This.Text}"]:Save
-							</OnChange>
-						</Textentry>
-						<Text Name='Gathering Tool Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>80</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Gathering:</Text>
-							<AutoTooltip>
-								Tool to use for Gathering
-							</AutoTooltip>
-						</Text>
-						<Textentry Name='Gathering Tool' Template='EQ2.textentry'>
-							<X>35%</X>
-							<Y>80</Y>
-							<Width>60%</Width>
-							<Height>15</Height>
-							<MaxLength>40</MaxLength>
-							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Gathering,"Sandalwood Shovel"]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Gathering,"${This.Text}"]:Save
-							</OnChange>
-						</Textentry>
-						<Text Name='Foresting Tool Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>100</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Foresting:</Text>
-							<AutoTooltip>
-								Tool to use for Foresting
-							</AutoTooltip>
-						</Text>
-						<Textentry Name='Foresting Tool' Template='EQ2.textentry'>
-							<X>35%</X>
-							<Y>100</Y>
-							<Width>60%</Width>
-							<Height>15</Height>
-							<MaxLength>40</MaxLength>
-							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Foresting,"Sandalwood Saw"]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Foresting,"${This.Text}"]:Save
-							</OnChange>
-						</Textentry>
-						<Text Name='Foresting2 Tool Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>120</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Foresting (alt):</Text>
-							<AutoTooltip>
-								Additional tool to use for Foresting
-							</AutoTooltip>
-						</Text>
-						<Textentry Name='Foresting2 Tool' Template='EQ2.textentry'>
-							<X>35%</X>
-							<Y>120</Y>
-							<Width>60%</Width>
-							<Height>15</Height>
-							<MaxLength>40</MaxLength>
-							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Foresting2,"Calibrated Automated Shears"]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Foresting2,"${This.Text}"]:Save
-							</OnChange>
-						</Textentry>
-						<Text Name='Fishing Tool Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>140</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Fishing:</Text>
-							<AutoTooltip>
-								Tool to use for Fishing
-							</AutoTooltip>
-						</Text>
-						<Textentry Name='Fishing Tool' Template='EQ2.textentry'>
-							<X>35%</X>
-							<Y>140</Y>
-							<Width>60%</Width>
-							<Height>15</Height>
-							<MaxLength>40</MaxLength>
-							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Fishing,"Sandalwood Fishing Pole"]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Fishing,"${This.Text}"]:Save
-							</OnChange>
-						</Textentry>
-						<Text Name='Fishing2 Tool Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>160</Y>
-							<Width>30%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Fishing (alt):</Text>
-							<AutoTooltip>
-								Additional tool to use for Fishing
-							</AutoTooltip>
-						</Text>
-						<Textentry Name='Fishing2 Tool' Template='EQ2.textentry'>
-							<X>35%</X>
-							<Y>160</Y>
-							<Width>60%</Width>
-							<Height>15</Height>
-							<MaxLength>40</MaxLength>
-							<OnLoad>This:SetText[${SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools].GetString[Fishing2,"Calibrated Automated Watersafe Net"]}]</OnLoad>
-							<OnChange>
-								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[Tools]:Set[Fishing2,"${This.Text}"]:Save
-							</OnChange>
-						</Textentry>
 					</Tab>
 				</Tabs>
 			</Tabcontrol>
