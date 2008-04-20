@@ -94,6 +94,9 @@ variable string TraumaPotion
 ; Mez Spells
 variable(script) collection:int MezSpells
 
+; Invis Spells
+variable(script) collection:int InvisSpells
+
 ;AutoFollow Variables
 variable bool AutoFollowMode=FALSE
 variable bool AutoFollowingMA=FALSE
@@ -167,10 +170,27 @@ function EQ2BotLib_Init()
 	#endif
 
 	call PopulateMezSpells
+	call PopulateInvisSpells
 
 	AutoFollowLastSetTime:Set[0]
 	
 	return OK
+}
+
+function PopulateInvisSpells()
+{
+    ;; Syntax:  InvisSpells:Set["Spell Name",Level]
+    InvisSpells:Set["Veil of the Unseen",15]
+    InvisSpells:Set["Illusory Mask",24]
+    InvisSpells:Set["Invisibility",15]
+    InvisSpells:Set["Untamed Shroud",45]
+    InvisSpells:Set["Smuggle",11]
+    InvisSpells:Set["Wind Walk",24]
+    InvisSpells:Set["Totem of the Chameleon",15]
+
+    ;echo "DEBUG: ${InvisSpells.Used} spells were added to the InvisSpells collection."
+
+    return ${InvisSpells.Used}
 }
 
 function PopulateMezSpells()
@@ -256,6 +276,24 @@ function PopulateMezSpells()
     ;echo "DEBUG: ${MezSpells.Used} spells were added to the MezSpells collection."
 
     return ${MezSpells.Used}
+}
+
+function AmIInvis(string param1)
+{
+    variable int i = 1
+    
+    do
+    {
+        if (${InvisSpells.Element[${Me.Maintained[${i}].Name}](exists)})
+        {
+            echo "DEBUG: I am invisible (therefore I will not cast spells.)  (Called By: ${param1})"
+            return TRUE
+        }
+        
+    }
+    while ${i:Inc} <= ${Me.CountMaintained} 
+    
+    return FALSE
 }
 
 function CheckForMez(string param1)
