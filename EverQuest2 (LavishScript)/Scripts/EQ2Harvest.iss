@@ -36,7 +36,6 @@ variable string NavFile
 variable string ConfigFile
 variable string HarvestFile
 variable string HarvestName[9]
-variable string HarvestTool[9]
 variable bool HarvestNode[9]
 variable string NodeName[9]
 variable int DestroyNode[9]
@@ -66,7 +65,7 @@ variable bool PathDirection
 variable int NodeID
 variable int NodeType
 variable bool Harvesting
-variable int BadNode[50]
+variable collection:string BadNodes
 variable int HarvestStat[9]
 variable int TotalStat
 variable int ImbueStat
@@ -80,6 +79,7 @@ variable string FinishPoint
 variable string DestinationPoint
 variable string CurrentAction="Waiting to Start..."
 variable float WPX
+variable float WPY
 variable float WPZ
 variable int KeepResource
 variable string ResourceName[40]
@@ -100,7 +100,9 @@ variable float LastX
 variable float LastY
 variable float LastZ
 variable string CurrentLabel
-
+variable bool OnBadNode
+variable string gNodeName
+variable collection:string CollectiblesFound
 
 
 function main(string mode)
@@ -137,13 +139,6 @@ function main(string mode)
 		}
 	}
 	while ${tempvar:Inc}<=${Navigation.World[${Zone.ShortName}].LastID}
-
-	if ${mode.Equal[start]}
-	{
-		StartHarvest:Set[TRUE]
-		PauseHarvest:Set[TRUE]
-		UIElement[Start Harvest@Main@EQ2Harvest Tabs@Harvest]:SetText[Pause Harvesting]
-	}
 
 	do
 	{
@@ -248,9 +243,9 @@ function PathingRoutine()
 			call CheckTimer
 
 			harvested:Set[FALSE]
-
 			; Move to next Waypoint
 			WPX:Set[${NavPath.Point[${PathIndex}].X}]
+			WPY:Set[${NavPath.Point[${PathIndex}].Y}]
 			WPZ:Set[${NavPath.Point[${PathIndex}].Z}]
 
 			CurrentAction:Set[Moving through Nav Points...]
@@ -261,27 +256,25 @@ function PathingRoutine()
 			}
 
 			call moveto ${WPX} ${WPZ} 5 1 3 1
-
 			; Check to see if we are stuck getting to the node
 			if ${Return.Equal[STUCK]}
 			{
 				call StuckState
 				continue
-			}
+			}		    
+		    
 
-			do
-			{
-				call CheckAggro
-				call CheckTimer
-
-				Harvesting:Set[FALSE]
-				NodeID:Set[${Harvest.Node}]
-
-				if ${NodeID}
-				{
-					call CheckAggro
-					CurrentAction:Set[Found Node ${Actor[${NodeID}].Name}]
-					Harvesting:Set[TRUE]
+            NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
+            if (${NodeID} > 0)
+            {
+                Harvesting:Set[TRUE]
+    			do
+    			{
+    				call CheckAggro
+    				call CheckTimer
+    
+    				call CheckAggro
+					CurrentAction:Set[Found Node: ${Actor[${NodeID}].Name}]
 
 					if !${Harvest.PCDetected}
 					{
@@ -289,11 +282,16 @@ function PathingRoutine()
 						{
 							EQ2Execute /useability Sprint
 						}
-						call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 5 0 3 1
+						
+						if (${Actor[${NodeID}].Name.Equal[?]} || ${Actor[${NodeID}].Name.Equal[!]})
+						    call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 3 0 3 1
+						else
+    						call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 5 0 3 1
 
 						; Check to see if we are stuck getting to the node
 						if ${Return.Equal[STUCK]}
 						{
+						    echo "DEBUG: We were stuck moving to resource...adding destination to BadNodes"
 							Harvest:SetBadNode[${NodeID}]
 							call StuckState
 							continue
@@ -330,11 +328,17 @@ function PathingRoutine()
 								wait 10
 							}
 						}
-					}
-				}
-			}
-			while ${Harvesting}
-
+    				}
+    				NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
+    				if (${NodeID} == 0)
+    				{
+    				    break
+    				    Harvesting:Set[FALSE]
+    				}
+    			}
+    			while ${Harvesting}
+		    }
+		    
 			if ${harvested}
 			{
 				echo moving to closest waypoint
@@ -469,7 +473,7 @@ function StuckState()
 
 function CheckTimer()
 {
-	if ${TimerOn} && ${Math.Calc[${HarvestTime}-(${Time.Timestamp}-${StartTimer})/60]} < 0
+	if ${TimerOn} && ${Math.Calc64[${HarvestTime}-(${Time.Timestamp}-${StartTimer})/60]} < 0
 	{
 		wait 20
 		if ${HowtoQuit}
@@ -482,13 +486,6 @@ function CheckTimer()
 
 		Script:End
 	}
-}
-
-
-function InvalidNode(string Line)
-{
-	; This node is not harvestable so label it bad
-	badnodedetected:Set[1]
 }
 
 function InventoryFull(string Line)
@@ -517,6 +514,9 @@ function GMDetected(string Line)
 
 function ProcessTriggers()
 {
+    variable string PreviousAction
+    PreviousAction:Set[${CurrentAction}]
+    
 	if !${StartHarvest}
 	{
 		CurrentAction:Set[Waiting to Resume...]
@@ -524,7 +524,9 @@ function ProcessTriggers()
 		{
 			waitframe
 		}
+		CurrentAction:Set[${PreviousAction}]
 	}
+	
 	if ${QueuedCommands}
 	{
 		do
@@ -546,62 +548,28 @@ function Harvest()
 	target ${NodeID}
 	wait 5 ${Target.ID}==${NodeID}
 
-	;call SwapEnhancer "${HarvestTool[${closestCount}]}"
-
 	do
 	{
 		call CheckAggro
-		CurrentAction:Set[Harvesting ${Actor[${NodeID}].Name}]
+		CurrentAction:Set[Harvesting: ${Actor[${NodeID}].Name}]
 
-		if ${HarvestTool[${NodeType}].Equal["Trapping"]}
-			{
-;			Me.Inventory[Sandalwood Trap]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Mining"]}
-			{
-;			Me.Inventory[Calibrated Automated Pickaxe]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Gathering"]}
-			{
-;			Me.Inventory[Sandalwood Shovel]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Foresting"]}
-			{
-			; Shears seem to stack with saw (but not shovel) but we have to have both slots free
-			; for auto-equip to work.
-;			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-;			Me.Equipment[Sandalwood Shovel]:UnEquip
-;			Me.Equipment[Sandalwood Trap]:UnEquip
-;			Me.Equipment[Calibrated Automated Watersafe Net]:UnEquip
-			waitframe
-;			Me.Inventory[Sandalwood Saw]:Equip
-;			Me.Inventory[Calibrated Automated Shears]:Equip
-			}
-		if ${HarvestTool[${NodeType}].Equal["Fishing"]}
-			{
-;			Me.Equipment[Calibrated Automated Shears]:UnEquip
-;			Me.Equipment[Calibrated Automated Pickaxe]:UnEquip
-;			Me.Equipment[Sandalwood Shovel]:UnEquip
-;			Me.Equipment[Sandalwood Trap]:UnEquip
-			waitframe
-;			Me.Inventory[Sandalwood Fishing Pole]:Equip
-;			Me.Inventory[Calibrated Automated Watersafe Net]:Equip
-			}
-
-		EQ2Execute /useability ${HarvestTool[${NodeType}]}
-
-
-		WaitFor "Too far away" "Interrupted!" "Can't see target" "You cannot @*@" 30
-
-		if ${WaitFor}
-		{
-			Harvest:SetBadNode[${NodeID}]
-			return
-		}
-
+        if (${Target.ID} != ${NodeID})
+            target ${NodeID}
+        Actor[${NodeID}]:DoubleClick
+        gNodeName:Set[${Actor[id,${NodeID}].Name}]
+        wait 20
+        if (${OnBadNode})
+        {
+            return PROBLEM
+            OnBadNode:Set[FALSE]
+        }
 		call ProcessTriggers
 
-		wait 50 !${Me.CastingSpell}
+		do
+		{
+		    waitframe
+		}
+		while (${Me.CastingSpell})
 		wait 5
 
 		if !${intrcheck} && ${intrdetect}
@@ -612,7 +580,7 @@ function Harvest()
 
 		call ProcessTriggers
 	}
-	while ${Target.ID}==${NodeID}
+	while ${Actor[id,${NodeID}](exists)}
 
 	if ${NodeDelay}
 	{
@@ -621,12 +589,14 @@ function Harvest()
 		do
 		{
 			call CheckAggro
-			waittime:Set[${Math.Calc[(${delay}+${savetime})-${Time.Timestamp}]}]
+			waittime:Set[${Math.Calc64[(${delay}+${savetime})-${Time.Timestamp}]}]
 			CurrentAction:Set[Waiting ${waittime} seconds for Random delay]
 			wait 5
 		}
 		while ${waittime} > 0
 	}
+	
+	return OK
 }
 
 function CheckInventory(string destroyname, int number)
@@ -771,48 +741,6 @@ function DestroyItem(string destroyname)
 	while ${tempvar:Inc}<=${Me.CustomInventoryArraySize}
 }
 
-function InitHarvestEnhancer()
-{
-	variable int TempEnhance1=0
-	variable int TempEnhance2=1
-	variable int TempEnhance3
-	Me:CreateCustomInventoryArray[nonbankonly]
-	OriginalCharm:Set[${Me.Equipment[19].ID}]
-
-	if ${Me.Level} == 70
-		TempEnhance3:Set[69]
-	else
-		TempEnhance3:Set[${Me.Level}]
-
-	Do
-	{
-		Do
-		{
-			If ${Me.CustomInventory[${SettingXML[${harvestfile}].Set[Harvest Enhancer].GetString["${TempEnhance1},${TempEnhance2}"]}](exists)}
-				HarvestEnhancer[${TempEnhance2}]:Set[${SettingXML[${harvestfile}].Set[Harvest Enhancer].GetString["${TempEnhance1},${TempEnhance2}"]}]
-			elseif !${HarvestEnhancer[${TempEnhance2}].Length}
-				HarvestEnhancer[${TempEnhance2}]:Set[NULL]
-		}
-		while ${TempEnhance2:Inc} <= 5
-
-		TempEnhance2:Set[1]
-
-	}
-	while ${TempEnhance1:Inc} <= ${Math.Calc[${TempEnhance3}/10].Int}
-
-	TempEnhance2:Set[1]
-	do
-	{
-		if ${HarvestEnhancer[${TempEnhance2}](exists)}
-		{
-			UsedEnhancer:Set[TRUE]
-			echo ${HarvestEnhancer[${TempEnhance2}]}
-		}
-	}
-	while ${TempEnhance2:Inc} <= 5
-
-}
-
 function UpdateKeep(int keep)
 {
 	if ${DestroyNode[${keep}]}
@@ -841,8 +769,8 @@ function UpdateKeep(int keep)
 function Harvested(string Line, string action, int number, string result)
 {
 	; clearly, "a" or "an" will == 0   :)
-  if (${number} == 0)
-    number:Set[1]
+    if (${number} == 0)
+        number:Set[1]
 
  	if ${result.Find[Glowing]} || ${result.Find[Sparkling]} || ${result.Find[Glimmering]} || ${result.Find[Luminous]} || ${result.Find[Lambent]} || ${result.Find[Scintillating]} || ${result.Find[Smoldering]}
  	{
@@ -879,16 +807,6 @@ objectdef EQ2HarvestBot
 		HarvestName[7]:Set[Fish]
 		HarvestName[8]:Set[Collectibles(?)]
 		HarvestName[9]:Set[Collectibles(!)]
-
-		HarvestTool[1]:Set[Mining]
-		HarvestTool[2]:Set[Mining]
-		HarvestTool[3]:Set[Foresting]
-		HarvestTool[4]:Set[Gathering]
-		HarvestTool[5]:Set[Trapping]
-		HarvestTool[6]:Set[Gathering]
-		HarvestTool[7]:Set[Fishing]
-		HarvestTool[8]:Set[Collecting]
-		HarvestTool[9]:Set[Collecting]
 
 		tempvar:Set[1]
 		do
@@ -975,9 +893,6 @@ objectdef EQ2HarvestBot
 
 	method InitTriggersAndEvents()
 	{
-		; Add our trigger for nodes that are too far away or cannot harvest from.
-		AddTrigger InvalidNode "@*@You cannot@*@"
-
 		; Add trigger for inventory full
 		AddTrigger InventoryFull "@*@inventory is currently full."
 
@@ -989,9 +904,10 @@ objectdef EQ2HarvestBot
 		; Add Harvest triggers
 		AddTrigger Harvested "Announcement::You have @action@:\n@number@ @result@"
 		AddTrigger Harvest:Rare "Announcement::Rare item found!\n@rare@"
-		AddTrigger Harvest:Collectible "Announcement::Collectible found!\n@result@"
 		
 		Event[EQ2_onLootWindowAppeared]:AttachAtom[EQ2_onLootWindowAppeared]
+		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
+		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 	}
 
 	method LoadUI()
@@ -1001,41 +917,38 @@ objectdef EQ2HarvestBot
 		call InjectPatherTab "EQ2Harvest Tabs@Harvest" "${NavigationPath}"
 	}
 
-	member:int Node()
+	member:int Node(float lastWP_X, float lastWP_Y, float lastWP_Z)
 	{
 		variable int tempvar
 		variable int tcount=1
-		variable int nodecnt
 
 		tempvar:Set[1]
 		EQ2:CreateCustomActorArray[byDist]
 
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+		while ${tcount:Inc} <= ${EQ2.CustomActorArraySize}
 		{
 			tempvar:Set[0]
-			while ${tempvar:Inc}<=9
+			while ${tempvar:Inc} <= 9
 			{
 				if ${CustomActor[${tcount}].Name.Equal[${NodeName[${tempvar}]}]} && ${CustomActor[${tcount}].Type.Equal[resource]} && ${HarvestNode[${tempvar}]}
 				{
 					; Check Distance and Roaming Distance is within range.
 					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
 					{
-						; Check if its not a Bad Node
-						nodecnt:Set[0]
-						while ${nodecnt:Inc}<=50
+						; Check to make sure it is not a bad node
+						if (${BadNodes.Element[${CustomActor[${tcount}].ID}](exists)})
+						    break		
+						; make sure that it is close enough to the last waypoint we used
+						if ${Math.Distance[${CustomActor[${tcount}].Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
 						{
-							if !${BadNode[${nodecnt}]}
-							{
-								NodeType:Set[${tempvar}]
-								return ${CustomActor[${tcount}].ID}
-							}
-
-							if ${CustomActor[${tcount}].ID}==${BadNode[${nodecnt}]}
-							{
-								break
-							}
+    						NodeType:Set[${tempvar}]
+    						return ${CustomActor[${tcount}].ID}						    						    
 						}
-
+						else
+						{
+						    echo "DEBUG: '${CustomActor[${tcount}].Name}' was too far away from the last waypoint connection...we'll come back to it I'm sure"
+						    break
+						}
 					}
 				}
 			}
@@ -1055,6 +968,7 @@ objectdef EQ2HarvestBot
 			{
 				if ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Actor[${NodeID}].X},${Actor[${NodeID}].Z}]}<20
 				{
+				    echo "DEBUG: A player (${CustomActor[${tcount}].Name}) was detected within 20 meters...adding destination to BadNodes"
 					This:SetBadNode[${NodeID}]
 					return TRUE
 				}
@@ -1066,81 +980,61 @@ objectdef EQ2HarvestBot
 
 	method SetBadNode(string badnodeid)
 	{
-		variable int tempvar
+	    echo "DEBUG: Adding (${badnodeid},${Actor[id,${badnodeid}].Name}) to the BadNodes list"
+		BadNodes:Set[${badnodeid},${Actor[id,${badnodeid}].Name}]
 
-		if !${BadNode[50]}
-		{
-			while ${tempvar:Inc}<=50
-			{
-				if !${BadNode[${tempvar}]}
-				{
-					BadNode[${tempvar}]:Set[${badnodeid}]
-					return
-				}
-			}
-		}
-		else
-		{
-			while ${tempvar:Inc}<=50
-			{
-				BadNode[${tempvar}]:Set[0]
-			}
-		}
-
-		BadNode[1]:Set[${badnodeid}]
+		echo "DEBUG: BadNodes now has ${BadNodes.Used} nodes in it."	    
 	}
 
 	method Rare(string Line, string rare)
 	{
 		if ${rare.Find[Glowing]} || ${rare.Find[Sparkling]} || ${rare.Find[Glimmering]} || ${rare.Find[Luminous]} || ${rare.Find[Lambent]} || ${rare.Find[Scintillating]} || ${rare.Find[Smoldering]}
-		{
 			ImbueStat:Inc
-		}
 		else
-		{
 			RareStat:Inc
-		}
 	}
 
-method Collectible(string Line, string result)
-{
-	variable int tempvar
-
-	tempvar:Set[${This.SearchItems[${result}]}]
-
-	if ${tempvar}
-	{
-		if ${KeepCollectCurrent[${tempvar}]}<${KeepCollectCount[${tempvar}]}
-		{
-			HarvestStat[${NodeType}]:Inc
-			KeepCollectCurrent[${tempvar}]:Inc
-
-			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
-			{
-				HarvestNode[${NodeType}]:Set[FALSE]
-			}
-		}
-		else
-		{
-			call DestroyItem "${result}"
-		}
-	}
-	else
-	{
-		if !${DestroyNode[${NodeType}]}
-		{
-			call DestroyItem "${result}"
-		}
-		else
-		{
-			HarvestStat[${NodeType}]:Inc
-			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
-			{
-				HarvestNode[${NodeType}]:Set[FALSE]
-			}
-		}
-	}
-}
+    method CollectibleFound(string sName)
+    {
+        echo "DEBUG: CollectibleFound('${sName}')"
+        
+    	variable int tempvar
+    
+    	tempvar:Set[${This.SearchItems[${sName}]}]
+    
+    	if ${tempvar}
+    	{
+    		if ${KeepCollectCurrent[${tempvar}]}<${KeepCollectCount[${tempvar}]}
+    		{
+    			HarvestStat[${NodeType}]:Inc
+    			KeepCollectCurrent[${tempvar}]:Inc
+    
+    			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
+    			{
+    				HarvestNode[${NodeType}]:Set[FALSE]
+    			}
+    		}
+    		else
+    		{
+    			call DestroyItem "${sName}"
+    		}
+    	}
+    	else
+    	{
+    		if !${DestroyNode[${NodeType}]}
+    		{
+    			call DestroyItem "${sName}"
+    		}
+    		else
+    		{
+    			HarvestStat[${NodeType}]:Inc
+    			if ${HarvestStat[${NodeType}]}>=${DestroyNode[${NodeType}]} && ${DestroyNode[${NodeType}]}
+    			{
+    				HarvestNode[${NodeType}]:Set[FALSE]
+    			}
+    		}
+    	}
+    }
 
 	method SearchItems(string itemsearch)
 	{
@@ -1255,6 +1149,9 @@ method Collectible(string Line, string result)
 
 atom atexit()
 {
+	announce "Cleaning up Inventory before exiting..." 5 4
+	call CheckInventory 10 "CleanUpOnExit"    
+    
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${UIPath}HarvestGUI.xml"
 
@@ -1272,10 +1169,63 @@ atom atexit()
 	press -release TURNRIGHT
 	
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[EQ2_onLootWindowAppeared]
+	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
+	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
+}
+
+
+atom(script) EQ2_onIncomingText(string Text)
+{
+	if (${Text.Find["too far away"]} > 0)
+	{
+	    echo "DEBUG: Node is 'too far away'...adding to BadNodes"
+	    Harvest:SetBadNode[${NodeID}]
+	    OnBadNode:Set[TRUE]
+	}
+	elseif (${Text.Find["Interrupted!"]} > 0)
+	{
+	    echo "DEBUG: We were 'Interupted!'...adding to BadNodes"
+	    Harvest:SetBadNode[${NodeID}]
+	    OnBadNode:Set[TRUE]
+	}	
+	elseif (${Text.Find["Can't see target"]} > 0)
+	{
+	    echo "DEBUG: Received 'Cant see target' message...adding to BadNodes"
+	    Harvest:SetBadNode[${NodeID}]
+	    OnBadNode:Set[TRUE]
+	}
+	elseif (${Text.Find["You cannot "]} > 0)
+	{
+        echo "DEBUG: Received 'You cannot ...' message...adding to BadNodes"
+	    Harvest:SetBadNode[${NodeID}]   
+	    OnBadNode:Set[TRUE]
+	}					
+}
+
+atom(script) EQ2_onChoiceWindowAppeared()
+{
+    ;; if EQ2Bot is running, let IT handle this...
+    if (${Script[EQ2Bot](exists)})
+        return    
+    
+	if ${ChoiceWindow.Text.Find[No-Trade]}
+        ChoiceWindow:DoChoice1
+
+	return
 }
 
 atom(script) EQ2_onLootWindowAppeared(int ID)
-{
+{    
+    ; deal with collectibles
+    if (${gNodeName.Equal[?]} || ${gNodeName.Equal[!]})
+        Harvest:CollectibleFound[${LootWindow[${ID}].Item[1].Name}] 
+    
+    ;; if EQ2Bot is running, let IT handle actual looting
+    if (${Script[EQ2Bot](exists)})
+        return
+    
+    
+    ;; Now do the actual looting
     if ${LootWindow.Type.Equal[Lottery]}
     {
         LootWindow:RequestAll
@@ -1291,4 +1241,7 @@ atom(script) EQ2_onLootWindowAppeared(int ID)
         LootWindow:LootItem[1]
         return
     }
+    
+    
+    return    
 }
