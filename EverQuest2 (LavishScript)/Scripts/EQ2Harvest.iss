@@ -1,10 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Harvest.iss Version 1.3.1
+; EQ2Harvest.iss Version 1.5
 ;
 ; Written by: Blazer
 ; Updated: 08/21/06 by Syliac
 ; Updated: 03/06/06 by Pygar
 ; Updated: 04/16/07 by Cr4zyb4rd
+; Updated  04/20/08 by Amadeus
 ;
 ;
 ; Description:
