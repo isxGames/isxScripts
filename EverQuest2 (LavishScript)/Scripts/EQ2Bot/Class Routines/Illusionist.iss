@@ -65,6 +65,8 @@ function Class_Declaration()
 	BuffIllusory_Arm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffIllusory_Arm,]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
 	SprintMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[SprintMode,FALSE]}]
+	
+	NoEQ2BotStance:Set[TRUE]
 
 }
 
@@ -98,17 +100,14 @@ function Buff_Init()
 	PreAction[10]:Set[AA_Empathic_Aura]
 	PreSpellRange[10,1]:Set[391]
 
-	PreAction[11]:Set[AA_Perpetuality]
-	PreSpellRange[11,1]:Set[390]
+	PreAction[11]:Set[AA_Empathic_Soothing]
+	PreSpellRange[11,1]:Set[392]
 
-	PreAction[12]:Set[AA_Empathic_Soothing]
-	PreSpellRange[12,1]:Set[392]
+	PreAction[12]:Set[AA_Time_Compression]
+	PreSpellRange[12,1]:Set[393]
 
-	PreAction[13]:Set[AA_Time_Compression]
-	PreSpellRange[13,1]:Set[393]
-
-	PreAction[14]:Set[AA_Illusory_Arm]
-	PreSpellRange[14,1]:Set[394]
+	PreAction[13]:Set[AA_Illusory_Arm]
+	PreSpellRange[13,1]:Set[394]
 }
 
 function Combat_Init()
@@ -213,64 +212,60 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
+    ;echo "Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"
 	call CheckHeals
 
 	if !${DPSMode}
-	{
 		call RefreshPower
-	}
 
 	ExecuteAtom CheckStuck
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-			ExecuteAtom AutoFollowTank
+		ExecuteAtom AutoFollowTank
 		wait 5
 	}
 
 	if ${SprintMode} && ${Me.ToActor.Power}>30 && !${Me.Maintained[${SpellType[333]}](exists)}
-	{
 		call CastSpellRange 333
-	}
 	elseif ${Me.Maintained[${SpellType[333]}](exists)} && ${Me.ToActor.Power}<35
-	{
 		Me.Maintained[${SpellType[333]}]:Cancel
-	}
 
 	switch ${PreAction[${xAction}]}
 	{
 
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
 			break
 
 		case Clarity
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}		
 			break
 		case Rune
 			if ${BuffRune}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    				call CastSpellRange ${PreSpellRange[${xAction},1]}				    
 			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Aspect
 			if ${BuffAspect}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    				call CastSpellRange ${PreSpellRange[${xAction},1]}		
 			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case MakePet
 			if ${Makepet} && ${Me.UsedConc}<3
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    				call CastSpellRange ${PreSpellRange[${xAction},1]}		
 			}
 			break
 		case Melee_Buff
@@ -357,35 +352,29 @@ function Buff_Routine(int xAction)
 		case AA_Time_Compression
 			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			}
 			break
 		case AA_Illusory_Arm
 			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			}
 			break
-		case AA_Perpetuality
 		case AA_Empathic_Aura
 		case AA_Empathic_Soothing
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-				wait 5
-			}
+		    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+		    {
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    			{
+    				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+    				wait 5
+    			}
+    		}
 			break
 		default
 			return BuffComplete
@@ -556,13 +545,9 @@ function Combat_Routine(int xAction)
 				break
     		case Focus
     			if ${BuffFocus}
-    			{
     				call CastSpellRange ${PreSpellRange[${xAction},1]}
-    			}
     			else
-    			{
     				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-    			}
     			break
 			case Gaze
 			case shower
@@ -732,13 +717,13 @@ function RefreshPower()
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.InCombat}
 	{
-			call CastSpellRange 309
+		call CastSpellRange 309
 	}
 
 	;Transference Line in Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50
 	{
-			call CastSpellRange 309
+		call CastSpellRange 309
 	}
 
 	;Mana Flow the lowest group member
