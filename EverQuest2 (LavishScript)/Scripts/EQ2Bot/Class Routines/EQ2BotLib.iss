@@ -179,7 +179,9 @@ function EQ2BotLib_Init()
 
 function PopulateInvisSpells()
 {
+    ;;;;
     ;; Syntax:  InvisSpells:Set["Spell Name",Level]
+    ;;;;
     InvisSpells:Set["Veil of the Unseen",15]
     InvisSpells:Set["Illusory Mask",24]
     InvisSpells:Set["Invisibility",15]
