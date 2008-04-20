@@ -5,9 +5,11 @@
 ; * Added a knowledgebook toggle to the begining of CheckAbilities.  Several higher level users reporting sporadic AA ability
 ;		usage due to ability not being loaded.  We may need to actually attempt examine methods on a missing ability, more testing to
 ;		follow.
+;
 ;2.7.1j (Pygar)
 ; * Updated InvalidMasteryTargets collection to only add targets if they exist, and to work off KillTarget instead of
 ;		target in case healer has targeted another mob by time trigger fires.
+;
 ;2.7.2i (Amadeus)
 ; * All Post_Combat_Routine functions (in all of the class files) should have this as their default case:
 ;		Default
@@ -2349,27 +2351,35 @@ atom(script) LootWDw(string ID)
 	{
 		do
 		{
-				if (${LootWindow[${ID}].Item[${tmpcnt}].Lore})
+			if (${LootWindow[${ID}].Item[${tmpcnt}].Lore})
+			{
+				if !${LoreConfirm}
 				{
-						if !${LoreConfirm}
-						{
-								deccnt:Inc
-								continue
-						}
+					deccnt:Inc
+					continue
 				}
-				if (${LootWindow[${ID}].Item[${tmpcnt}].NoTrade})
+			}
+			if (${LootWindow[${ID}].Item[${tmpcnt}].NoTrade})
+			{
+			    ; If we are running EQ2Harvest, then we will collect everything.
+			    if !${Script[EQ2harvest](exists)}
+			    {
+    				if !${NoTradeConfirm}
+    						deccnt:Inc
+			    }			    
+			}
+			if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
+			{
+				if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
 				{
-						if !${NoTradeConfirm}
-								deccnt:Inc
+				    ; If we are running EQ2Harvest, then we will collect everything.
+				    if !${Script[EQ2harvest](exists)}
+				    {
+    					echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
+    					deccnt:Inc
+				    }
 				}
-				if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
-				{
-						if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
-						{
-								echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
-								deccnt:Inc
-						}
-				}
+			}
 		}
 		while ${tmpcnt:Inc}<=${LootWindow[${ID}].NumItems}
 	}
@@ -2379,7 +2389,7 @@ atom(script) LootWDw(string ID)
 	}
 	elseif ${LootMethod.Equal[Idle]}
 	{
-			LastWindow:Set[${ID}]
+	    LastWindow:Set[${ID}]
 		return
 	}
 
@@ -3517,16 +3527,16 @@ function CheckAbilities(string class)
 		{
 			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
 			{
-					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
-					{
-						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-						MissingAbilitiesCount:Inc
-				}
+				; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+				if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
+				{
+					echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+					MissingAbilitiesCount:Inc
+			    }
 			}
 			else
 			{
-					;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 			}
 		}
