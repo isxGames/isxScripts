@@ -1,4 +1,4 @@
-MyPrices - Version 0.11f
+MyPrices - Version 0.12
 
 For update details see the bottom of this file.
 
@@ -166,8 +166,8 @@ Stop and Quit
 -------------
 This waits till the current item scan has finished and then exits the script totally.
 
-Craft
------
+Craft List
+----------
 
 Clicking on this will make myprices scan your broker list , compare whats there with the values you set under the craft tab
 and add how many of what items you need to make to replenish your broker stocks to your craft script favourites list.
@@ -177,8 +177,18 @@ and you can then start crafting what you need.
 
 typing /craft myprices  will also start craft and auto-load the myprices list then start crafting automatically. 
 
+Place Items
+-----------
 
+This will make the script scan your bags for items marked in your craft list , if any are found it will place them in the broker system for
+you automatically.
 
+1. It goes through your craft flagged items one by one.
+2. The script searches for items of the same type , if found the items are placed in that box until they are all added or that box is full.
+3. If there is no (more) space in a box with the same type of item or no matching items in your broker slots, then it places the items in
+   the box with the enough space to fit ALL those items in your inventory.
+4. If no box has enough space to fit all of those items it distributes them between the boxes (filling boxes with the most space first).
+5. it stops when you have no more space left anywhere.
 
 
 The Sell TAB
@@ -306,6 +316,22 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.12
+------------
+
+New button , Place Items
+
+This will make the script scan your bags for items marked in your craft list , if any are found it will place them in the broker system for
+you automatically , grouping items together if the same name.
+
+1. It goes through your craft flagged items one by one.
+2. The script searches for items of the same type , if found the items are placed in that box until they are all added or that box is full.
+3. If there is no (more) space in a box with the same type of item or no matching items in your broker slots, then it places the items in
+   the box with the enough space to fit ALL those items in your inventory.
+4. If no box has enough space to fit all of those items it distributes them between the boxes (filling boxes with the most space first).
+5. it stops when you have no more space left anywhere.
+
 
 Version 0.11f Rev 7
 -------------------
