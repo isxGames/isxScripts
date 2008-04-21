@@ -632,13 +632,13 @@ function Post_Combat_Routine(int xAction)
 	;reset rangedattack in case it was modified by joust call.
 	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
-	
+
 	switch ${PostAction[${xAction}]}
 	{
 		default
 			return PostCombatRoutineComplete
 			break
-	}	
+	}
 }
 
 function Have_Aggro()
@@ -703,23 +703,23 @@ function CheckHeals()
 	{
 		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
 		{
-			call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1
 		}
 	}
 	while ${tempgrp:Inc}<${grpcnt}
 
-	if ${Me.InRaid} && ${Me.Ability[${SpellType[300]}].IsReady}
+	if ${Me.InRaid} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	{
 		;Res Fallen RAID members only if in range
 		grpcnt:Set[${Me.RaidCount}]
 		do
 		{
-			if ${RaidMember[${tempraid}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
+			if ${Actor[exactname,${RaidMember[${tempraid}].Name}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Actor[pc,exactname,${RaidMember[${tempraid}].Name}].Distance}<35
 			{
-				call CastSpellRange 300 0 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
+				call CastSpellRange 300 301 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
 			}
 		}
-		while ${tempraid:Inc}<=24 && ${Me.Ability[${SpellType[300]}].IsReady}
+		while ${tempraid:Inc}<=24 && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	}
 
 	call UseCrystallizedSpirit 60
