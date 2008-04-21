@@ -774,114 +774,110 @@ function CheckHeals()
 		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
-	do
-	{
-		if ${Me.Group[${temphl}].ToActor(exists)}
-		{
+  if (${grpcnt} > 1)
+  {
+   	do
+   	{
+   		if ${Me.Group[${temphl}].ToActor(exists)}
+   		{
 
-			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health}>-99
-			{
-				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
+   			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health} > -99
+   			{
+   				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
+   					lowest:Set[${temphl}]
+   			}
+
+				if (${CureMode})
 				{
-					lowest:Set[${temphl}]
-				}
-			}
+       		if (${temph1} == 0)
+       		{
+         		if ${Me.IsAfflicted}
+       		  {
+         			;we'll always cure ourselves first, we need mostafficted to be the next cure target if any
+         			;Me checks trimmed to only check for grpcure counters
+         			if ${Me.Trauma}>0
+         				grpcure:Inc
 
-			if ${Me.Group[${temphl}].IsAfflicted}
-			{
-				if ${Me.Group[${temphl}].Arcane}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
-				}
+         			if ${Me.Elemental}>0
+         				grpcure:Inc
+     			  }
+       		}
+					else
+          {
+           	if ${Me.Group[${temphl}].IsAfflicted}
+           	{
+           		if ${Me.Group[${temphl}].Arcane}>0
+           			tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
 
-				if ${Me.Group[${temphl}].Noxious}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
-				}
+           		if ${Me.Group[${temphl}].Noxious}>0
+           			tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
 
-				if ${Me.Group[${temphl}].Elemental}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
-				}
+           		if ${Me.Group[${temphl}].Elemental}>0
+           		{
+           	    grpcure:Inc
+           			tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
+           		}
 
-				if ${Me.Group[${temphl}].Trauma}>0
-				{
-					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
-				}
+           		if ${Me.Group[${temphl}].Trauma}>0
+           		{
+           			grpcure:Inc
+           			tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
+							}
 
-				if ${tmpafflictions}>${mostafflictions}
-				{
-					mostafflictions:Set[${tmpafflictions}]
-					mostafflicted:Set[${temphl}]
-				}
-			}
+           		if ${tmpafflictions}>${mostafflictions}
+           		{
+           			mostafflictions:Set[${tmpafflictions}]
+           			mostafflicted:Set[${temphl}]
+           		}
+           	}
+          }
+   		  }
 
-			if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<80
-			{
-				grpheal:Inc
-			}
+   			if ${Me.Group[${temphl}].ToActor.Health} > -99 && ${Me.Group[${temphl}].ToActor.Health} < 80
+   				grpheal:Inc
 
-			if ${Me.Group[${temphl}].Trauma}>0 || ${Me.Group[${temphl}].Elemental}>0
-			{
-				grpcure:Inc
-			}
+   			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[illusionist]}
+   			{
+   				if ${Me.Group[${temphl}].ToActor.Pet.Health} < 60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+   					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+   			}
 
-			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
-			{
-				if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-				{
-					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-				}
-			}
-
-			if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
-			{
-				MTinMyGroup:Set[TRUE]
-			}
-		}
-
-	}
-	while ${temphl:Inc}<${grpcnt}
-
-	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
-	{
-		grpheal:Inc
-	}
-
-	if ${Me.Trauma}>0 || ${Me.Elemental}>0
-	{
-		grpcure:Inc
-	}
+   			if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
+   				MTinMyGroup:Set[TRUE]
+   		}
+   	}
+    while ${temphl:Inc} <= ${grpcnt}
+  }
 
 	;CURES
-	if ${grpcure}>2 && ${CureMode}
+	if (${CureMode})
 	{
-		call CastSpellRange 220
+		;group cure first if needed
+	  if ${grpcure}>2
+    {
+     	call CastSpellRange 220
 
-		;cast elemental ward
-		call CastSpellRange 363
-	}
-
-	if ${Me.IsAfflicted} && ${CureMode}
-	{
-		call CureMe
-	}
-
-
-	if ${mostafflicted} && ${CureMode}
-	{
-		call CheckGroupHealth 30
-		if ${Return}
-		{
-			call CureGroupMember ${mostafflicted}
+			;cast elemental ward
+			call CastSpellRange 363
 		}
-		else
-		{
-			call CastSpellRange 10
-			call CureGroupMember ${mostafflicted}
-		}
-	}
 
+	  ;Always cure self first, else we may not live to cure others
+	  if ${Me.IsAfflicted}
+	  	call CureMe
+
+	  ;Cure most afflicted
+	  if ${mostafflicted}
+    {
+     	call CheckGroupHealth 30
+     	if ${Return}
+    	 	call CureGroupMember ${mostafflicted} ${mostafflictions}
+      else
+      {
+       	call CastSpellRange 10
+       	call CureGroupMember ${mostafflicted} ${mostafflictions}
+      }
+    }
+  }
 
 	;MAINTANK EMERGENCY HEAL
 	if ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health} >-99
@@ -1225,19 +1221,19 @@ function MA_Dead()
 	{
 		if ${Me.Ability[${SpellType[300]}].IsReady}
 		{
-			call CastSpellRange 300 0 0 0 ${MainTankPC} 1
+			call CastSpellRange 300 0 1 0 ${MainTankPC} 1
 		}
 		elseif ${Me.Ability[${SpellType[301]}].IsReady}
 		{
-			call CastSpellRange 301 0 0 0 ${MainTankPC} 1
+			call CastSpellRange 301 0 1 0 ${MainTankPC} 1
 		}
 		elseif ${Me.Ability[${SpellType[302]}].IsReady}
 		{
-			call CastSpellRange 302 0 0 0 ${MainTankPC} 1
+			call CastSpellRange 302 0 1 0 ${MainTankPC} 1
 		}
 		else
 		{
-			call CastSpellRange 303 0 0 0 ${MainTankPC} 1
+			call CastSpellRange 303 0 1 0 ${MainTankPC} 1
 		}
 	}
 }
@@ -1249,30 +1245,20 @@ function Cancel_Root()
 
 function CureMe()
 {
-
 	if  ${Me.Arcane}>0
-	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
-	}
 
 	if  ${Me.Noxious}>0
-	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
-	}
 
 	if  ${Me.Elemental}>0
-	{
 		call CastSpellRange 212 0 0 0 ${Me.ID}
-	}
 
 	if  ${Me.Trauma}>0
-	{
 		call CastSpellRange 211 0 0 0 ${Me.ID}
-	}
-
 }
 
-function CureGroupMember(int gMember)
+function CureGroupMember(int gMember int aCount)
 {
 	declare tmpcure int local
 
@@ -1282,12 +1268,9 @@ function CureGroupMember(int gMember)
 	    return
 	}
 
-
 	tmpcure:Set[0]
 	if !${Me.Group[${gMember}].ToActor(exists)}
-	{
 		return
-	}
 
 	do
 	{
@@ -1303,7 +1286,7 @@ function CureGroupMember(int gMember)
 
 		if  ${Me.Group[${gMember}].Arcane}>0
 		{
-			if ${Me.Ability[${SpellType[214]}].IsReady}
+			if ${Me.Ability[${SpellType[214]}].IsReady} && ${aCount}>2
 			{
 				call CastSpellRange 214 0 0 0 ${Me.Group[${gMember}].ID}
 			}
@@ -1315,7 +1298,7 @@ function CureGroupMember(int gMember)
 
 		if  ${Me.Group[${gMember}].Noxious}>0
 		{
-			if ${Me.Ability[${SpellType[214]}].IsReady}
+			if ${Me.Ability[${SpellType[214]}].IsReady} && ${aCount}>2
 			{
 				call CastSpellRange 214 0 0 0 ${Me.Group[${gMember}].ID}
 			}
@@ -1327,7 +1310,7 @@ function CureGroupMember(int gMember)
 
 		if  ${Me.Group[${gMember}].Elemental}>0
 		{
-			if ${Me.Ability[${SpellType[214]}].IsReady}
+			if ${Me.Ability[${SpellType[214]}].IsReady} && ${aCount}>2
 			{
 				call CastSpellRange 214 0 0 0 ${Me.Group[${gMember}].ID}
 			}
@@ -1339,7 +1322,7 @@ function CureGroupMember(int gMember)
 
 		if  ${Me.Group[${gMember}].Trauma}>0
 		{
-			if ${Me.Ability[${SpellType[214]}].IsReady}
+			if ${Me.Ability[${SpellType[214]}].IsReady} && ${aCount}>2
 			{
 				call CastSpellRange 214 0 0 0 ${Me.Group[${gMember}].ID}
 			}
