@@ -370,7 +370,7 @@
 					
 					<Text Name='Normal' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>230</Y>
+						<Y>235</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Black : Not Changed</Text>
@@ -384,35 +384,35 @@
 					</Text>
 					<Text Name='Red' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>270</Y>
+						<Y>265</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Red : Unable to match</Text>
 					</Text>
 					<Text Name='Blue' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>290</Y>
+						<Y>280</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Blue : New Item Listed</Text>
 					</Text>
 					<Text Name='Orange' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>310</Y>
+						<Y>295</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Orange : Item Sold</Text>
 					</Text>
 					<Text Name='Yellow' Template='EQ2.Text'>
 						<X>5%</X>
-						<Y>330</Y>
+						<Y>310</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Yellow : Craft Flagged</Text>
 					</Text>
 					<Text Name='PauseTimerText' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>370</Y>
+						<Y>330</Y>
 						<Width>150</Width> 
 						<Height>15</Height>
 						<Text>Delay in Minutes :</Text>
@@ -420,7 +420,7 @@
 
 					<Textentry Name='PauseTimer' Template='EQ2.Textentry'>
 						<X>140</X>
-						<Y>370</Y>
+						<Y>330</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
@@ -430,7 +430,7 @@
 					</Textentry>
 					<Commandbutton name='Craft' Template='EQ2.Commandbutton'>
 						<X>5%</X>
-						<Y>390</Y>
+						<Y>350</Y>
 						<Width>100</Width>
 						<Height>20</Height>
 						<Text>Craft List</Text>
@@ -444,7 +444,7 @@
 					</Commandbutton>
 					<Commandbutton name='Place' Template='EQ2.Commandbutton'>
 						<X>5%</X>
-						<Y>415</Y>
+						<Y>375</Y>
 						<Width>100</Width>
 						<Height>20</Height>
 						<Text>Place Items</Text>
@@ -457,69 +457,69 @@
 					</Commandbutton>
 					<Text Name='Itemname' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>435</Y>
+						<Y>415</Y>
 						<Width>44%</Width> 
 						<Height>15</Height>
 					</Text>
 					<Text Name='Label1' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>80</Width> 
 						<Height>15</Height>
 						<Text>Current Price</Text>
 					</Text>
 					<Textentry Name='PlatPrice' Template='EQ2.Textentry'>
 						<X>125</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Text Name='PlatPriceText' Template='EQ2.Text'>
 						<X>180</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
 					</Text>
 					<Textentry Name='GoldPrice' Template='EQ2.Textentry'>
 						<X>205</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='GoldPriceText' Template='EQ2.Text'>
 						<X>240</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
 					</Text>
 					<Textentry Name='SilverPrice' Template='EQ2.Textentry'>
 						<X>265</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='SilverPriceText' Template='EQ2.Text'>
 						<X>300</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
 					</Text>
 					<Textentry Name='CopperPrice' Template='EQ2.Textentry'>
 						<X>325</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='CopperPriceText' Template='EQ2.Text'>
 						<X>360</X>
-						<Y>460</Y>
+						<Y>430</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
@@ -527,7 +527,7 @@
 
 					<Text Name='Label2' Template='EQ2.Text'>
 						<X>25</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Minimum Price</Text>
@@ -535,56 +535,56 @@
 
 					<Textentry Name='MinPlatPrice' Template='EQ2.Textentry'>
 						<X>125</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Text Name='MinPlatPriceText' Template='EQ2.Text'>
 						<X>180</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
 					</Text>
 					<Textentry Name='MinGoldPrice' Template='EQ2.Textentry'>
 						<X>205</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MinGoldPriceText' Template='EQ2.Text'>
 						<X>240</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
 					</Text>
 					<Textentry Name='MinSilverPrice' Template='EQ2.Textentry'>
 						<X>265</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MinSilverPriceText' Template='EQ2.Text'>
 						<X>300</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
 					</Text>
 					<Textentry Name='MinCopperPrice' Template='EQ2.Textentry'>
 						<X>325</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MinCopperPriceText' Template='EQ2.Text'>
 						<X>360</X>
-						<Y>480</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
@@ -592,7 +592,7 @@
 
 					<Commandbutton name='UpdatePrice' Template='EQ2.Commandbutton'> 
 						<X>400</X> 
-						<Y>480</Y> 
+						<Y>450</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>
@@ -604,8 +604,8 @@
 						</AutoTooltip>
 					</Commandbutton>
 					<checkbox Name='CraftItem' Template='EQ2.checkbox'>
-						<X>325</X>
-						<Y>415</Y>
+						<X>220</X>
+						<Y>395</Y>
 						<Width>20</Width>
 						<Height>20</Height>
 						<Text>Crafted Item</Text>
@@ -616,7 +616,7 @@
 
 					<checkbox Name='MinPrice' Template='EQ2.checkbox'>
 						<X>325</X>
-						<Y>435</Y>
+						<Y>395</Y>
 						<Width>10%</Width>
 						<Height>20</Height>
 						<Text>Minimum price</Text>
@@ -774,7 +774,7 @@
 					</checkbox>
 					<checkbox Name='4' Template='EQ2.checkbox'>
 						<X>45%</X>
-						<Y>70%</Y>
+						<Y>68%</Y>
 						<Width>20</Width>
 						<Height>20</Height>
 						<Text>Box 4</Text>
@@ -807,7 +807,7 @@
 					</checkbox>
 					<checkbox Name='5' Template='EQ2.checkbox'>
 						<X>60%</X>
-						<Y>70%</Y>
+						<Y>68%</Y>
 						<Width>20</Width>
 						<Height>20</Height>
 						<Text>Box 5</Text>
@@ -840,7 +840,7 @@
 					</checkbox>
 					<checkbox Name='6' Template='EQ2.checkbox'>
 						<X>75%</X>
-						<Y>70%</Y>
+						<Y>68%</Y>
 						<Width>20</Width>
 						<Height>20</Height>
 						<Text>Box 6</Text>
