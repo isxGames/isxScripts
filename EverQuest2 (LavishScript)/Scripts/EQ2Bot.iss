@@ -1084,8 +1084,8 @@ function Combat()
 	do
 	{
 		call Post_Combat_Routine ${tempvar}
-			if ${Return.Equal[PostCombatRoutineComplete]}
-				tempvar:Set[20]
+		if ${Return.Equal[PostCombatRoutineComplete]}
+			tempvar:Set[20]
 	}
 	while ${tempvar:Inc}<=20
 
@@ -1093,8 +1093,11 @@ function Combat()
 		EQ2Execute /toggleautoattack
 
 
-		if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
-				call CheckLootNoMove
+	if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
+	{
+        ;echo "DEBUG: Calling CheckLootNoMove()"
+		call CheckLootNoMove
+	}
 
 	if ${PathType}==1
 	{
@@ -1655,15 +1658,15 @@ function CheckLootNoMove()
 	if (!${AutoLoot})
 			return
 
-	EQ2:CreateCustomActorArray[byDist,5]
+	EQ2:CreateCustomActorArray[byDist,10]
 
 	do
 	{
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
 		{
-				;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
-				continue
+			;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
+			continue
 		}
 
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
@@ -1727,7 +1730,7 @@ function CheckLoot()
 
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
-				if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat}
+			if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat}
 					return
 
 			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest)"
@@ -2315,43 +2318,43 @@ function ScanAdds()
 
 atom(script) EQ2_onIncomingText(string Text)
 {
-		if (${Text.Find[You may not order your pet to attack]} > 0)
+	if (${Text.Find[You may not order your pet to attack]} > 0)
+	{
+		;; Make sure the list does not get too big
+		if (${DoNotPullList.Used} > 100)
 		{
-				;; Make sure the list does not get too big
-				if (${DoNotPullList.Used} > 100)
-				{
-						echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
-						DoNotPullList:Clear
-				}
-
-				echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"
-				DoNotPullList:Set[${Target.ID},${Target.Name}]
-
-				echo "DEBUG: DoNotPullList now has ${DoNotPullList.Used} actors in it."
+				echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
+				DoNotPullList:Clear
 		}
-		elseif (${Text.Find[This attack cannot be used on this type of creature]} > 0)
+
+		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"
+		DoNotPullList:Set[${Target.ID},${Target.Name}]
+
+		echo "DEBUG: DoNotPullList now has ${DoNotPullList.Used} actors in it."
+	}
+	elseif (${Text.Find[This attack cannot be used on this type of creature]} > 0)
+	{
+		;; Make sure the list does not get too big
+		if (${InvalidMasteryTargets.Used} > 100)
 		{
-				;; Make sure the list does not get too big
-				if (${InvalidMasteryTargets.Used} > 100)
-				{
-					echo "DEBUG: InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."
-					InvalidMasteryTargets:Clear
-				}
-
-				if ${Actor[${KillTarget}](exists)}
-				{
-					echo "DEBUG: Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"
-					InvalidMasteryTargets:Set[${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}]
-
-					echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
-				}
+			echo "DEBUG: InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."
+			InvalidMasteryTargets:Clear
 		}
+
+		if ${Actor[${KillTarget}](exists)}
+		{
+			echo "DEBUG: Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"
+			InvalidMasteryTargets:Set[${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}]
+
+			echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
+		}
+	}
 }
 
 atom(script) LootWDw(string ID)
 {
 	declare i int local
-	variable int tmpcnt=0
+	variable int tmpcnt=1
 	variable int deccnt=0
 
 	if ${ID.Equal[${LastWindow}]}
@@ -2446,12 +2449,6 @@ atom(script) LootWDw(string ID)
 		Default
 			EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 	}
-
-	;if window is still open, close it
-	;if ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}>0 && ${EQ2UIPage[Inventory,Loot].Child[text,Loot.LottoTimerDisplay].Label}<60 && ${LootWindow[${ID}].Item[1].Name(exists)}
-	;{
-	;	EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-	;}
 }
 
 function CantSeeTarget(string Line)
