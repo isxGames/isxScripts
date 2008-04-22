@@ -280,6 +280,7 @@ function main()
 	variable int tempvar1
 	variable int tempvar2
 	variable string tempnme
+	variable bool MobDetected
 	declare LastWindow string script
 
 	if !${ISXEQ2.IsReady}
@@ -435,17 +436,17 @@ function main()
 				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
 				if ${KillTarget}
 				{
-						if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+					{
+						if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
 						{
-								if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
-								{
-									if ${Mob.Target[${KillTarget}]}
-										call Combat
-								}
+							if ${Mob.Target[${KillTarget}]}
+								call Combat
 						}
-						;else
-						;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
 					}
+					;else
+					;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
+				}
 			}
 
 			if ${PathType}==4 && ${MainTank}
@@ -464,9 +465,12 @@ function main()
 						call ScanAdds
 				}
 			}
-
+			            
+            MobDetected:Set[${Mob.Detect}]
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            ;;
 			;this should force the tank to react to any aggro, regardless
-			if ${Mob.Detect} && ${MainTank} && !${Me.IsMoving}
+			if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
 			{
 				if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
 				{
@@ -480,16 +484,20 @@ function main()
 						call Combat
 					}
 				}
+				MobDetected:Set[${Mob.Detect}]
 			}
+            ;;
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 			; Do Pre-Combat Script if there is no mob nearby
-			if !${Mob.Detect} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
+			if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
 				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
 						tempvar:Set[40]
+						break
 					}
 				}
 
@@ -498,13 +506,12 @@ function main()
 				{
 					; end after this round
 					tempvar:Set[40]
+					break
 				}
 
 				;disable autoattack if not in combat
-				if ${tempvar}<40 && ${Me.AutoAttackOn} && !${Mob.Detect}
-				{
+				if (${Me.AutoAttackOn} && !${Mob.Detect})
 					EQ2Execute /toggleautoattack
-				}
 
 				;allow class file to set a var to override eq2bot stance / pet casting
 				if !${NoEQ2BotStance}
@@ -585,7 +592,7 @@ function main()
 		while ${tempvar:Inc}<=40
 
 		if ${AutoLoot}
-				call CheckLoot
+			call CheckLoot
 
 		if ${AutoPull}
 		{
@@ -965,7 +972,7 @@ function Combat()
 				call Combat_Routine ${tempvar}
 				if ${Return.Equal[CombatComplete]}
 				{
-						; end loop after this round
+					; end loop after this round
 					tempvar:Set[40]
 				}
 
@@ -2693,7 +2700,13 @@ objectdef ActorCheck
 				return FALSE
 
 			case NoKill NPC
-					return FALSE
+				return FALSE
+					
+		    case Pet
+		        return FALSE
+		        
+		    case MyPet
+		        return FALSE
 
 			Default
 				return FALSE
@@ -2753,15 +2766,15 @@ objectdef ActorCheck
 		if ${Actor[${actorid}].IsEpic} && ${IgnoreEpic}
 			return FALSE
 
-				;actor is a charmed pet, ignore it
+		;actor is a charmed pet, ignore it
 		if ${This.FriendlyPet[${actorid}]}
 			return FALSE
 
-				if (${DoNotPullList.Element[${actorid}](exists)})
-				{
-						echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
-						return FALSE
-				}
+		if (${DoNotPullList.Element[${actorid}](exists)})
+		{
+				echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
+				return FALSE
+		}
 
 		if ${Actor[${actorid}](exists)}
 			return TRUE
@@ -2770,7 +2783,7 @@ objectdef ActorCheck
 	}
 
 	member:bool CheckActor(int actorid)
-	{
+	{    
 		switch ${Actor[${actorid}].Type}
 		{
 			case NPC
@@ -2783,6 +2796,12 @@ objectdef ActorCheck
 
 			case PC
 				return FALSE
+				
+			case Pet
+			    return FALSE
+			    
+			case MyPet
+			    return FALSE
 
 			Default
 				return FALSE
@@ -2798,12 +2817,12 @@ objectdef ActorCheck
 		{
 			return FALSE
 		}
-
-		if ${This.FriendlyPet[${actorid}]}
-		{
-			;actor is a charmed pet, ignore it
-			return FALSE
-		}
+        
+        if ${This.FriendlyPet[${actorid}]}
+    	{
+    		;actor is a charmed pet, ignore it
+    		return FALSE
+    	}
 
 		if ${Actor[${actorid}](exists)}
 		{
@@ -2902,11 +2921,12 @@ objectdef ActorCheck
 
 		if !${Actor[NPC,range,${EngageDistance}](exists)} && !(${Actor[NamedNPC,range,${EngageDistance}](exists)} && !${IgnoreNamed})
 		{
-				;echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
+			;echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
 			return FALSE
 		}
 
 		EQ2:CreateCustomActorArray[byDist,${EngageDistance}]
+		;echo "DEBUG: Detect() -- ${EQ2.CustomActorArraySize} mobs within ${EngageDistance} meters."
 		do
 		{
 			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
@@ -2921,7 +2941,7 @@ objectdef ActorCheck
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 
-				;echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
+		;echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
 		return FALSE
 	}
 
@@ -2968,41 +2988,34 @@ objectdef ActorCheck
 	member:bool FriendlyPet(int actorid)
 	{
 		variable int tempvar
-
-		if ${Me.GroupCount}>1 || ${Me.InRaid}
+		
+		if (${Me.GroupCount} > 1)
 		{
 			;echo Check if mob is a pet of my group
 			tempvar:Set[1]
 			do
 			{
-				if (${Me.Group[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Me.Group[${tempvar}].ToActor.Pet.ID}) || ${Actor[${actorid}].Type.Equal[Pet]}
-				{
-					return TRUE
-				}
+				if (${Me.Group[${tempvar}](exists)} && ${actorid} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
+            		return TRUE
 			}
-			while ${tempvar:Inc}<${Me.GroupCount}
-
-			;echo Check if mob is a pet of my raid
-			if ${Me.InRaid}
-			{
-				;echo checking aggro on raid
-				tempvar:Set[1]
-				do
-				{
-					if (${Me.Raid[${tempvar}](exists)} && ${Actor[${actorid}].ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}) || ${Actor[${actorid}].Type.Equal[Pet]}
-					{
-						;echo actor is pet of raid
-						return TRUE
-					}
-				}
-				while ${tempvar:Inc}<24
-			}
+			while ${tempvar:Inc}<=${Me.GroupCount}
 		}
 
-		if ${Actor[${actorid}](exists)} && ${Actor[${actorid}].ID}==${Me.ToActor.Pet.ID}
+		;echo Check if mob is a pet of my raid
+		if (${Me.InRaid})
 		{
-			return TRUE
+			;echo checking aggro on raid
+			tempvar:Set[1]
+			do
+			{
+				if (${Me.Raid[${tempvar}](exists)} && ${actorid} == ${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
+				    return TRUE
+			}
+			while ${tempvar:Inc}<=24
 		}
+
+		if ${Actor[${actorid}](exists)} && ${actorid}==${Me.Pet.ID}
+		    return TRUE
 
 		return false
 	}
