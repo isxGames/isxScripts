@@ -338,7 +338,7 @@
 									<Y>10</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
-									<Text>Auto Follow:</Text>
+									<Text>Auto Follow (Depricated):</Text>
 									<OnLoad>
 										if ${Script[EQ2Bot].Variable[Following]}
 										{
@@ -1159,7 +1159,7 @@
 								Script[EQ2Bot].Variable[LootMethod]:Set[${This.SelectedItem.Text}]
 								SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[LootMethod,${This.SelectedItem.Text}]:Save</OnSelect>
 							<OnLeftClick></OnLeftClick>
-						</combobox>						
+						</combobox>
 						<checkbox Name='Lore Confirmation' Template='EQ2.checkbox'>
 							<X>60%</X>
 							<Y>170</Y>

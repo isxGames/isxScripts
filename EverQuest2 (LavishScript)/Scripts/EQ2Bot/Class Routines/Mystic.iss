@@ -567,7 +567,7 @@ function Combat_Routine(int xAction)
 				}
 				break
 			case Mastery
-			if ${OffenseMode} || ${DebuffMode}
+			if ${OffenseMode} && ${DebuffMode}
 			{
 				if ${Me.Ability[Master's Smite].IsReady}
 				{
@@ -577,7 +577,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 			case ThermalShocker
-				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
+				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady} && ${OffenseMode}
 				{
 					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
 				}
