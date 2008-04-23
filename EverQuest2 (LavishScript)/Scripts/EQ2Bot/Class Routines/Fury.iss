@@ -1083,6 +1083,7 @@ function CheckHeals()
     while ${temphl:Inc} <= ${grpcnt}
   }
 
+	echo Cure Check complete - Mostafflicted - ${mostafflicted} :: Afflictions - ${mostafflictions}
 	;CURES
 	if (${CureMode})
 	{
