@@ -412,7 +412,7 @@ function main()
 							{
 									waitframe
 							}
-							while ${IsMoving}
+							while (${IsMoving} || ${Me.IsMoving})
 						}
 						else
 						{
@@ -421,7 +421,7 @@ function main()
 							{
 									waitframe
 							}
-							while ${IsMoving}
+							while (${IsMoving} || ${Me.IsMoving})
 						}
 
 						if ${Me.IsMoving}
@@ -1004,7 +1004,7 @@ function Combat()
 						{
 								waitframe
 						}
-						while ${IsMoving}
+						while (${IsMoving} || ${Me.IsMoving})
 					}
 					else
 						call CheckPosition 1 ${Target.IsEpic}
@@ -1016,7 +1016,7 @@ function Combat()
 					{
 							waitframe
 					}
-					while ${IsMoving}
+					while (${IsMoving} || ${Me.IsMoving})
 				}
 
 				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
@@ -1028,11 +1028,11 @@ function Combat()
 					}
 				}
 
-								if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-								{
-										EQ2Execute /target_none
-										break
-								}
+				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+				{
+						EQ2Execute /target_none
+						break
+				}
 
 				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
@@ -1117,7 +1117,7 @@ function Combat()
 			{
 					waitframe
 			}
-			while ${IsMoving}
+			while (${IsMoving} || ${Me.IsMoving})
 			face ${Math.Rand[45]:Inc[315]}
 		}
 	}
@@ -1147,7 +1147,7 @@ function Combat()
 			{
 					waitframe
 			}
-			while ${IsMoving}
+			while (${IsMoving} || ${Me.IsMoving})
 		}
 	}
 }
@@ -1665,7 +1665,7 @@ function CheckLootNoMove()
 	if (!${AutoLoot})
 			return
 
-	EQ2:CreateCustomActorArray[byDist,10]
+	EQ2:CreateCustomActorArray[byDist,9]
 
 	do
 	{
@@ -1676,32 +1676,9 @@ function CheckLootNoMove()
 			continue
 		}
 
-		if ${CustomActor[${tcount}].Type.Equal[chest]}
+		if ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
-			;Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest)"
-			switch ${Me.SubClass}
-			{
-				case dirge
-				case troubador
-				case swashbuckler
-				case brigand
-				case ranger
-				case assassin
-					;Echo "DEBUG: disarming trap on ${CustomActor[${tcount}].ID}"
-					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
-					wait 1
-					break
-				case default
-					break
-			}
-			Actor[Chest]:DoubleClick
-			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
-			wait 2
-			call ProcessTriggers
-		}
-		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
-		{
-			;Echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse)"
+			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 1
@@ -1719,7 +1696,7 @@ function CheckLoot()
 	variable int tmptimer
 
 	if (!${AutoLoot})
-			return
+		return
 
 	islooting:Set[TRUE]
 	;think this is legacy, removing
@@ -1731,25 +1708,31 @@ function CheckLoot()
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
 		{
-				;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
-				continue
+			;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
+			continue
 		}
 
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
-			if ${CustomActor[${tcount}].IsAggro} || ${Me.InCombat}
-					return
-
-			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest)"
-			if (${CustomActor[${tcount}].Distance} > 5)
+			;Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLoot()] -- Distance: ${CustomActor[${tcount}].Distance}"
+			if (${CustomActor[${tcount}].Distance} > 4)
 			{
-					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 4
+                	if (${AutoFollowMode})
+                	{
+                	    ;echo "DEBUG: Stopping Autofollow..."
+                    	EQ2Execute /stopfollow
+                    	wait 2
+                	}	
+                	;echo "DEBUG: Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"
+					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
+					wait 4
 					do
 					{
-							waitframe
+						waitframe
 					}
-					while ${IsMoving}
-				}
+					while (${IsMoving} || ${Me.IsMoving})
+					;echo "DEBUG: Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"
+			}
 			switch ${Me.SubClass}
 			{
 				case dirge
@@ -1767,25 +1750,41 @@ function CheckLoot()
 			}
 			Actor[Chest]:DoubleClick
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
-			wait 2
+			wait 3
+			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+			{
+        		ExecuteAtom AutoFollowTank
+        		wait 1				       
+			}
 			call ProcessTriggers
 		}
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
-			Echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse)"
-			if (${CustomActor[${tcount}].Distance} > 5)
+			;echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"
+			if (${CustomActor[${tcount}].Distance} > 10)
 			{
-					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 4
+                	if (${AutoFollowMode})
+                	{
+                	    ;echo "DEBUG: Stopping Autofollow..."
+                    	EQ2Execute /stopfollow
+                    	wait 2
+                	}				    
+					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 8
 					do
 					{
-							waitframe
+						waitframe
 					}
-					while ${IsMoving}
+					while (${IsMoving} || ${Me.IsMoving})
 				}
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 2
 			call ProcessTriggers
+			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+			{
+        		ExecuteAtom AutoFollowTank
+        		wait 1				       
+			}
 		}
 
 		if !${CurrentTask}
@@ -1798,6 +1797,24 @@ function CheckLoot()
 
 function FastMove(float X, float Z, int range)
 {
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;; NOTE -- If you are calling this you will need to ensure that the character is not using AutoFollowMode (and/or turn it off appropriately)
+    ;;;         otherwise this function will move you and then you will just richocet back
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;; to Turn off autofollow:
+	;;  if (${AutoFollowMode})
+	;;  {
+	;;      echo "DEBUG: Stopping Autofollow..."
+    ;;	    EQ2Execute /stopfollow
+    ;;	    wait 2
+	;;  }	
+	;;; To turn AutoFollow back on
+	;;  if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+	;;  {
+	;;	    ExecuteAtom AutoFollowTank
+	;;	    wait 2				       
+	;;  }
+    
 	variable float xDist
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
@@ -1806,33 +1823,33 @@ function FastMove(float X, float Z, int range)
 
 	if !${Target(exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
 	{
-			IsMoving:Set[FALSE]
+		IsMoving:Set[FALSE]
 		return "TARGETDEAD"
 	}
 
 	if ${NoMovement}
 	{
-			IsMoving:Set[FALSE]
+		IsMoving:Set[FALSE]
 		return "NOMOVEMENT"
 	}
 
 	if !${X} || !${Z}
 	{
-			IsMoving:Set[FALSE]
+		IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
 	{
-			IsMoving:Set[FALSE]
+		IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
 	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>50 && ${PathType}!=4
 	{
-			IsMoving:Set[FALSE]
+		IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
-
+	
 	face ${X} ${Z}
 
 	if !${pulling}
@@ -1876,7 +1893,7 @@ function FastMove(float X, float Z, int range)
 		wait 20 !${Me.IsMoving}
 	}
 
-		IsMoving:Set[FALSE]
+	IsMoving:Set[FALSE]
 	return "SUCCESS"
 }
 
@@ -2307,7 +2324,7 @@ function ScanAdds()
 				{
 						waitframe
 				}
-				while ${IsMoving}
+				while (${IsMoving} || ${Me.IsMoving})
 				if ${Return.Equal[STUCK]}
 				{
 					; Need to do something here? decide later
