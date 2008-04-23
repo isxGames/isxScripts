@@ -1258,7 +1258,7 @@ function CureMe()
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 }
 
-function CureGroupMember(int gMember int aCount)
+function CureGroupMember(int gMember, int aCount)
 {
 	declare tmpcure int local
 
