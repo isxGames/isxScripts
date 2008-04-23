@@ -1021,10 +1021,11 @@ function CheckHeals()
      				lowest:Set[${temphl}]
      		}
 
-    		if (${CureMode})
+    		if ${CureMode}
     		{
          	if (${temph1} == 0)
          	{
+           	echo checking self
            	if ${Me.IsAfflicted}
          		{
            		;we'll always cure ourselves first, we need mostafficted to be the next cure target if any
@@ -1038,28 +1039,39 @@ function CheckHeals()
          	}
     			else
           {
+           	echo checking groupmember ${temphl}
            	if ${Me.Group[${temphl}].IsAfflicted}
             {
+             	echo GroupMember ${temphl} is Afflicted
              	if ${Me.Group[${temphl}].Arcane}>0
+              {
                	tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
-
+								echo groupmember ${temphl} has ${Me.Group[${temphl}].Arcane} Arcane Afflictions
+							}
               if ${Me.Group[${temphl}].Noxious}>0
               {
                	grpcure:Inc
                 tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
+                echo groupmember ${temphl} has ${Me.Group[${temphl}].Noxious} Noxious Afflictions
               }
 
               if ${Me.Group[${temphl}].Elemental}>0
               {
                	grpcure:Inc
                 tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Elemental}]}]
+                echo groupmember ${temphl} has ${Me.Group[${temphl}].Elemental} Elemental Afflictions
               }
 
            		if ${Me.Group[${temphl}].Trauma}>0
+           		{
            			tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
+								echo groupmember ${temphl} has ${Me.Group[${temphl}].Trauma} Trauma Afflictions
+							}
 
+           		echo Groupmember ${temphl} Afflictions - ${tmpafflictions} :: MostAfflictions ${mostafflictions}
            		if ${tmpafflictions}>${mostafflictions}
            		{
+           			echo setting mostafflictions - ${tmpafflictions} :: mostafflicted - ${temphl}
            			mostafflictions:Set[${tmpafflictions}]
            			mostafflicted:Set[${temphl}]
            		}
@@ -1098,12 +1110,16 @@ function CheckHeals()
 	  ;Cure most afflicted
 	  if ${mostafflicted}
     {
+      echo GroupMember ${mostafflicted} Needs Cure
       call CheckGroupHealth 30
      	if ${Return}
+    		echo Calling CureGroupMember on ${mostafflicted}
     		call CureGroupMember ${mostafflicted}
       else
       {
+      	echo GroupHealth Low, casting heal before cure
       	call CastSpellRange 10
+      	echo Calling CureGroupMember on ${mostafflicted}
        	call CureGroupMember ${mostafflicted}
       }
     }
