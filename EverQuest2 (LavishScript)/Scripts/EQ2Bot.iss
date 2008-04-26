@@ -5,7 +5,7 @@
 ; * If your 'forward' key is mapped to one supported by the new "EQ2Press" command, you will now move to loot chests and corpses even if
 ;   the bot is not in focus (ie, if another window is opened on top of the one in which the bot is running.)
 ;   (Dev. Note:  This change was applied to FastMove(), so any call to it should now work in the same fashion.  Also, see FastMove() on how
-;                to properly impliment the new "EQ2Press" command.
+;                to properly impliment the new "EQ2Press" command.)
 ;
 ;2.7.1m (Amadeus)
 ; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
