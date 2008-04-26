@@ -579,7 +579,7 @@ function Combat_Routine(int xAction)
 		}
 		
 		; Long Cast Nuke - Good for setting off proc gear - Mainstay of your damage
-		if ${Me.Ability[${SpellType[61]}].IsReady}
+		if ${Me.Ability[${SpellType[61]}].IsReady} && ${Actor[id, ${KillTarget}].Distance}<=${Me.Ability[${SpellType[61]}].Range}
 		{
 			call CastSpellRange 61 0 2 0 ${KillTarget} 0 0 1
 			return
