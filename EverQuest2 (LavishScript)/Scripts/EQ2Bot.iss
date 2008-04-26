@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.1h Updated: 03/22/08 by Pygar
+; EQ2Bot.iss Version 2.7.2 Updated: 04/25/08 by Amadeus
 ;
 ;2.7.2 (Amadeus)
 ; * If your 'forward' key is mapped to one supported by the new "EQ2Press" command, you will now move to loot chests and corpses even if
