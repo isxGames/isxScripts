@@ -789,7 +789,7 @@ function CheckHeals()
 
 				if (${CureMode})
 				{
-       		if (${temph1} == 0)
+       		if (${temphl} == 0)
        		{
          		if ${Me.IsAfflicted}
        		  {
