@@ -3,7 +3,7 @@
 ;
 ;2.7.1m (Amadeus)
 ; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
-; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow is on a 
+; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a 
 ;   griffon-like transport or if they (or the bot) are currently climbing a wall.
 ;
 ;2.7.1l (Amadeus)
