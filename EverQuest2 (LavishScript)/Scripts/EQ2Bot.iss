@@ -1,6 +1,12 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1h Updated: 03/22/08 by Pygar
 ;
+;2.7.2 (Amadeus)
+; * If your 'forward' key is mapped to one supported by the new "EQ2Press" command, you will now move to loot chests and corpses even if
+;   the bot is not in focus (ie, if another window is opened on top of the one in which the bot is running.)
+;   (Dev. Note:  This change was applied to FastMove(), so any call to it should now work in the same fashion.  Also, see FastMove() on how
+;                to properly impliment the new "EQ2Press" command.
+;
 ;2.7.1m (Amadeus)
 ; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
 ; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a 
@@ -1750,20 +1756,20 @@ function CheckLoot()
 			{
                 	if (${AutoFollowMode})
                 	{
-                	    echo "DEBUG: Stopping Autofollow..."
+                	    ;echo "DEBUG: Stopping Autofollow..."
                     	EQ2Execute /stopfollow
-                    	wait 5
+                    	wait 2
                 	}	
-                	echo "DEBUG: Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"
+                	;echo "DEBUG: Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"
 					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
-					ECHO "DEBUG: FastMove() returned '${Return}'"
-					wait 5
+					;ECHO "DEBUG: FastMove() returned '${Return}'"
+					wait 2
 					do
 					{
 						waitframe
 					}
 					while (${IsMoving} || ${Me.IsMoving})
-					echo "DEBUG: Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"
+					;echo "DEBUG: Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"
 			}
 			switch ${Me.SubClass}
 			{
@@ -1797,7 +1803,7 @@ function CheckLoot()
 			{
                 	if (${AutoFollowMode})
                 	{
-                	    echo "DEBUG: Stopping Autofollow..."
+                	    ;echo "DEBUG: Stopping Autofollow..."
                     	EQ2Execute /stopfollow
                     	wait 2
                 	}				    
@@ -1886,23 +1892,41 @@ function FastMove(float X, float Z, int range)
 
 	if !${pulling}
 	{
-		press -hold ${forward}
+	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+	    {
+	        eq2press -release ${forward}
+	        wait 1
+	        eq2press -hold ${forward}
+	    }
+	    else
+	    {
+    	    press -release ${forward}
+    	    wait 1
+    	    press -hold ${forward}
+    	}
+	    ;echo "DEBUG: Moving....  (WhoFollowing: ${Me.ToActor.WhoFollowing})"
 	}
 
 	xTimer:Set[${Script.RunningTime}]
+	;echo "DEBUG: xTimer set to ${xTimer}"
 
 	do
 	{
 		xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
 
-		if ${Math.Calc[${SavDist}-${xDist}]}<0.8
+		if ${Math.Calc[${SavDist}-${xDist}]} < 0.8
 		{
-			if (${Script.RunningTime}-${xTimer})>500
+			if (${Script.RunningTime}-${xTimer}) > 500
 			{
+			    ;echo "DEBUG: Script.RunningTime (${Script.RunningTime}) - xTimer (${xTimer}) is greater than 500 -- returning STUCK  (WhoFollowing: ${Me.ToActor.WhoFollowing})"
+			    ;echo "DEBUG: Using Math.Calc64 value is ${Math.Calc64[${Script.RunningTime}-${xTimer}]}"
 				isstuck:Set[TRUE]
 				if !${pulling}
 				{
-					press -release ${forward}
+				    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+				        eq2press -release ${forward}
+				    else
+    					press -release ${forward}
 					wait 20 !${Me.IsMoving}
 				}
 				IsMoving:Set[FALSE]
@@ -1921,7 +1945,10 @@ function FastMove(float X, float Z, int range)
 
 	if !${pulling}
 	{
-		press -release ${forward}
+	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+	        eq2press -release ${forward}
+	    else
+			press -release ${forward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -2379,7 +2406,7 @@ atom(script) EQ2_onIncomingText(string Text)
 		;; Make sure the list does not get too big
 		if (${DoNotPullList.Used} > 100)
 		{
-				echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
+				;echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
 				DoNotPullList:Clear
 		}
 
@@ -2393,16 +2420,16 @@ atom(script) EQ2_onIncomingText(string Text)
 		;; Make sure the list does not get too big
 		if (${InvalidMasteryTargets.Used} > 100)
 		{
-			echo "DEBUG: InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."
+			;echo "DEBUG: InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."
 			InvalidMasteryTargets:Clear
 		}
 
 		if ${Actor[${KillTarget}](exists)}
 		{
-			echo "DEBUG: Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"
+			;echo "DEBUG: Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"
 			InvalidMasteryTargets:Set[${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}]
 
-			echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
+			;echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
 		}
 	}
 }
