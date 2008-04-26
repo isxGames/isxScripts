@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12 : Started 12 Feb 2008 : released 21 April 2008
+; Version 0.12b : Started 12 Feb 2008 : released 26 April 2008
 ;
 ; Declare Variables
 ;
@@ -76,9 +76,8 @@ variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
 ;
 function main()
 {
-
 #define WAITEXTPERIOD 120
-
+	Declare tempstring string local
 	call AddLog "Verifying ISXEQ2 is loaded and ready" FF11CCFF
 	wait WAITEXTPERIOD ${ISXEQ2.IsReady}
 	if !${ISXEQ2.IsReady}
@@ -93,11 +92,20 @@ function main()
 
 	MyPrices:loadsettings
 	MyPrices:LoadUI
-
-	Actor[nokillnpc]:DoTarget
-	wait 1
-	Target:DoubleClick
-	wait 20
+	tempstring:Set[${Actor[name,a market bulletin board]}]
+	if ${tempstring.Length} >4
+	{
+		Actor[name,a market bulletin board]:DoubleClick
+		wait 20
+		Actor[${Me}]:DoTarget
+	}
+	else
+	{
+		Actor[nokillnpc]:DoTarget
+		wait 1
+		Target:DoubleClick
+		wait 20
+	}
 
 	i:Set[1]
 	do
@@ -110,7 +118,7 @@ function main()
 	}
 	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices Version 0.12 : released 21 April 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.12b : released 26 April 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}

@@ -1,10 +1,11 @@
-MyPrices - Version 0.12
+MyPrices - Version 0.12b
 
 For update details see the bottom of this file.
 
 
-Please Note:
-------------
+Known Problems:
+---------------
+
 To fully use the selling part of this script , you MUST group all items of the same name listed in
 the same container together on your broker list...
 
@@ -22,6 +23,10 @@ Then the script will fail to set one or both back up for sale.
 This is a limitation of SoE's broker system and I cannot work around it.
 
 Listing the same item seperately in 2 or more DIFFERENT containers will not cause this problem.
+
+
+Items with Commas in the name have problems in the buying and selling parts of the script due to the fact Innerspace
+currently reads the name in the UI box upto the comma then assumes the next part of the text is another item.
 
 
 What this Script will do
@@ -60,12 +65,6 @@ you have left for sale on the broker.
 Running This Script
 -------------------
 
-If you are running it from your own broker board then open the broker system and F1 to target yourself.
-
-Or Select a Broker and open up a broker window
-
-then either
-
 1.
 Open the Innerspace command line Window (`)
 Type run myprices
@@ -75,10 +74,8 @@ or
 2. type /run myprices in your EQ2 chat window.
 
 
-The script will then open the GUI , scan your broker system and list whats on it.
-
-** please note *** Using your broker board in your room is a bit hit and miss right now , sometimes the prices are changed
-other times they won't be - there doesn't seem to be any pattern for this I can see - best stick to using a city broker.
+The script will then open the GUI , either doubleclick your market board or the closest non-agro NPC (should be the broker)
+scan your broker system and list whats on it.
 
 
 The Sell TAB
@@ -316,6 +313,13 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.12b
+-------------
+
+With Ama's recent fix to the commission system when run with the market bulletin boards the script will now auto-click your board then target
+your character when run so you no longer need to open the broker system at all before running the script , just ensure you are within range
+of a broker or your room board.
 
 Version 0.12
 ------------
