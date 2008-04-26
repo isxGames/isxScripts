@@ -4,6 +4,10 @@
 ;by karye
 ;updated by pygar
 ;
+; 20080425a (Amadeus)
+; AutoFollowTank() should no longer attempt to autofollow if the person to whom the bot is trying to follow is on a 
+; griffon-like transport or if they (or the bot) are currently climbing a wall.
+;
 ; 20080406a (Amadeus)
 ; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
 ; * The 'autofollow' routine will now only auto follow a tank every 5 seconds at most.  
@@ -390,16 +394,32 @@ atom AutoFollowTank()
         if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
         {
             ;echo "DEBUG: Following...."
-        	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon}
-        	{
-        		squelch face ${AutoFollowee}
-        		eq2execute /follow ${AutoFollowee}
-        		AutoFollowLastSetTime:Set[${Time.Timestamp}]
-        		AutoFollowingMA:Set[TRUE]
-        		AutoFollowMode:Set[TRUE]
-        	}
-        	else
-        	    AutoFollowingMA:Set[FALSE]
+            if (${Actor[pc,${AutoFollowee}](exists)})
+            {
+            	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45
+            	{
+            	    ; When an actor is on a griffon-like transport, their speed is always "1"
+            	    if (${Actor[pc,${AutoFollowee}].Speed} != 1)
+            	    {
+                	    if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
+                	    {
+                    		squelch face ${AutoFollowee}
+                    		eq2execute /follow ${AutoFollowee}
+                    		AutoFollowLastSetTime:Set[${Time.Timestamp}]
+                    		AutoFollowingMA:Set[TRUE]
+                    		AutoFollowMode:Set[TRUE]
+                    	}
+                    	else
+                    	    AutoFollowingMA:Set[FALSE]
+                    }
+                    else
+                        AutoFollowingMA:Set[FALSE]
+            	}
+            	else
+            	    AutoFollowingMA:Set[FALSE]
+            }
+            else
+                AutoFollowingMA:Set[FALSE]
     	}
     }
 }
