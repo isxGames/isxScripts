@@ -1,6 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.1h Updated: 03/22/08 by Pygar
 ;
+;2.7.1m (Amadeus)
+; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
+; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow is on a 
+;   griffon-like transport or if they (or the bot) are currently climbing a wall.
+;
 ;2.7.1l (Amadeus)
 ; * Added a function to EQ2BotLib.iss called "AmIInvis".  CastSpell() and CastSpellRange() now check this before they
 ;   will cast any spells outside of combat.
@@ -1676,7 +1681,33 @@ function CheckLootNoMove()
 			continue
 		}
 
-		if ${CustomActor[${tcount}].Type.Equal[Corpse]}
+		if ${CustomActor[${tcount}].Type.Equal[chest]}
+		{
+			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLootNoMove()] -- Distance: ${CustomActor[${tcount}].Distance}"
+			if (${CustomActor[${tcount}].Distance} > 4)
+			    continue
+			    
+			switch ${Me.SubClass}
+			{
+				case dirge
+				case troubador
+				case swashbuckler
+				case brigand
+				case ranger
+				case assassin
+					;Echo "DEBUG: disarming trap on ${CustomActor[${tcount}].ID}"
+					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
+					wait 2
+					break
+				case default
+					break
+			}
+			Actor[Chest]:DoubleClick
+			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
+			wait 1
+			call ProcessTriggers
+		}
+		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
 			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
@@ -1714,24 +1745,25 @@ function CheckLoot()
 
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
-			;Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLoot()] -- Distance: ${CustomActor[${tcount}].Distance}"
+			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLoot()] -- Distance: ${CustomActor[${tcount}].Distance}"
 			if (${CustomActor[${tcount}].Distance} > 4)
 			{
                 	if (${AutoFollowMode})
                 	{
-                	    ;echo "DEBUG: Stopping Autofollow..."
+                	    echo "DEBUG: Stopping Autofollow..."
                     	EQ2Execute /stopfollow
-                    	wait 2
+                    	wait 5
                 	}	
-                	;echo "DEBUG: Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"
+                	echo "DEBUG: Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"
 					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
-					wait 4
+					ECHO "DEBUG: FastMove() returned '${Return}'"
+					wait 5
 					do
 					{
 						waitframe
 					}
 					while (${IsMoving} || ${Me.IsMoving})
-					;echo "DEBUG: Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"
+					echo "DEBUG: Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"
 			}
 			switch ${Me.SubClass}
 			{
@@ -1760,12 +1792,12 @@ function CheckLoot()
 		}
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
-			;echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"
+			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"
 			if (${CustomActor[${tcount}].Distance} > 10)
 			{
                 	if (${AutoFollowMode})
                 	{
-                	    ;echo "DEBUG: Stopping Autofollow..."
+                	    echo "DEBUG: Stopping Autofollow..."
                     	EQ2Execute /stopfollow
                     	wait 2
                 	}				    
