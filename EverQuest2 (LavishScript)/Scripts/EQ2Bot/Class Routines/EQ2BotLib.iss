@@ -5,7 +5,7 @@
 ;updated by pygar
 ;
 ; 20080425a (Amadeus)
-; AutoFollowTank() should no longer attempt to autofollow if the person to whom the bot is trying to follow is on a 
+; AutoFollowTank() should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a 
 ; griffon-like transport or if they (or the bot) are currently climbing a wall.
 ;
 ; 20080406a (Amadeus)
@@ -399,7 +399,7 @@ atom AutoFollowTank()
             	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45
             	{
             	    ; When an actor is on a griffon-like transport, their speed is always "1"
-            	    if (${Actor[pc,${AutoFollowee}].Speed} != 1)
+            	    if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
             	    {
                 	    if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
                 	    {
