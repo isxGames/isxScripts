@@ -3,6 +3,16 @@
 ;by Karye
 ;updated by Pygar
 ;
+;20080426a (Zeek)
+; Reworked combat code to improve overall DPS
+; Added DebuffMitMode.  Seperated debuffs into 2 categories, Mitigation debuffs (which are good to use
+;  on all mobs) and Mob Offense buffs (which are good to use on epics and named etc).
+; Added FullDebuffNamed.  This will use both Mitigation Debuffs and Offensive Debuffs on named mobs no matter
+;  the state of DebuffMitMode or DebuffMode.
+; Removed the Aria Cancel.
+; Will not try to use JCap if on the move.
+; Added Jcap Notification
+;
 ;20070905a
 ; Removed Weaponswap as no longer required
 ; Moved Aria Cancel in Mez routine.  Now only cancels when a mob is found to be mezed.  Will maintain Aria until mez is required.
@@ -29,6 +39,8 @@ function Class_Declaration()
 {
 	declare OffenseMode bool script 1
 	declare DebuffMode bool script 0
+	declare DebuffMitMode bool script 1
+	declare FullDebuffNamed bool script 1
 	declare AoEMode bool script 0
 	declare MezzMode bool script 0
 	declare BowAttacksMode bool script 0
@@ -61,6 +73,8 @@ function Class_Declaration()
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
+	DebuffMitMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Mit Debuff Spells,TRUE]}]
+	FullDebuffNamedMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Named Debuff Spells,TRUE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
@@ -139,6 +153,9 @@ function Buff_Init()
 
 	PreAction[17]:Set[Selos]
 	PreSpellRange[17,1]:Set[381]
+
+	PreAction[18]:Set[Buff_AAFortissimo]
+	PreSpellRange[18,1]:Set[398]
 
 }
 
@@ -368,7 +385,9 @@ function Buff_Routine(int xAction)
 		case Buff_AAAllegro
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
+		case Selos
 		case Buff_AAHarmonization
+		case Buff_AAFortissimo
 		case Buff_AAResonance
 		case Buff_AADontKillTheMessenger
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
@@ -384,6 +403,7 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	declare tempvar int local
+	declare DebuffCnt int  0
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -454,13 +474,7 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${DoHOs}
-	{
-
-		objHeroicOp:DoHO
-	}
-
-	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${DoHOs}
 	{
 		call CastSpellRange 303
 	}
@@ -477,30 +491,144 @@ function Combat_Routine(int xAction)
 
 	ExecuteAtom PetAttack
 
-	call DoJesterCap
+	if !${Me.IsMoving}
+		call DoJesterCap
 
 	call CheckHeals
+	
+	if ${Actor[ID,${KillTarget}].Distance}>5 && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA,Z, Target.X, Target.Z]}<=8
+		call CheckPosition 1 1
 
-	if ${DebuffMode}
+	if ${DebuffMitMode} || ${FullDebuffNamed}
 	{
-		;always keep encounter debuffs refreshed in debuff mode
-		call CastSpellRange 55 58
+		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 57 0 2 0 ${KillTarget} 0 0 1
+			DebuffCnt:Inc
+		}
+		if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && !${RangedAttackMode} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 51 0 1 0 ${KillTarget} 0 0 1
+			DebuffCnt:Inc
+		}		
 	}
-
-	if !${RangedAttackMode}
+	
+	if (${DebuffMode} || ${FullDebuffNamed}) && ${DebuffCnt}<1
 	{
-		;Always keep mob Mental Debuffed
-		call CastSpellRange 51 0 1 0 ${KillTarget}
-	}
-
-	if ${Me.ToActor.Power}<40 || ${RangedAttackMode}
-	{
-		;pilfer essence
-		call CastSpellRange 62 0 0 0 ${KillTarget}
+		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 55 0 2 0 ${KillTarget} 0 0 1
+			DebuffCnt:Inc
+		}
+		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 56 0 2 0 ${KillTarget} 0 0 1
+			DebuffCnt:Inc
+		}
+		if !${Me.Maintained[${SpellType[58]}](exists)} && ${Me.Ability[${SpellType[58]}].IsReady} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 56 0 2 0 ${KillTarget} 0 0 0
+			DebuffCnt:Inc
+		}
 	}
 
 	call ActionChecks
+	
+	; PoTM
+	if !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
+	{
+		call CastSpellRange 155 0 2 0 ${KillTarget} 0 0 0
+		return
+	}
+	
+	if ${OffenseMode}
+	{
+		; AoE+Dot
+		if !${Me.Maintained[${SpellType[91]}](exists)} && ${Me.Ability[${SpellType[91]}].IsReady}
+		{
+			call CastSpellRange 91 0 2 0 ${KillTarget} 0 0 1
+			return
+		}
+		
+		; Master Strike
+		if ${Me.Ability[Sinister Strike].IsReady} && !${RangedAttackMode} && !${InvalidMasteryTargets.Element[${Target.ID}](exists)}
+		{
+			Target ${KillTarget}
+			call CheckPosition 1 1
+			Me.Ability[Sinister Strike]:Use
+			do
+			{
+				waitframe
+			}
+			while ${Me.CastingSpell}
+			wait 1
+		}
+		
+		; Flank debuff
+		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode}
+		{
+			call CastSpellRange 110 0 1 1 ${KillTarget} 0 0 1
+			;return
+		}
+		
+		; Long casting AoE - Good for setting off proc gear
+		if ${Me.Ability[${SpellType[92]}].IsReady}
+		{
+			call CastSpellRange 92 0 2 0 ${KillTarget} 0 0 1
+			return
+		}
+		
+		; Long Cast Nuke - Good for setting off proc gear - Mainstay of your damage
+		if ${Me.Ability[${SpellType[61]}].IsReady}
+		{
+			call CastSpellRange 61 0 2 0 ${KillTarget} 0 0 1
+			return
+		}
+		
+		; Stealth Attack Combo
+		; Check if we have the bump AA and use it to stealth us, if we do not, skip it entirely
+		if ${Me.Ability[${SpellType[391]}](exists)} && ${Me.Ability[${SpellType[391]}].IsReady} && !${RangedAttackMode}
+		{
+			call CastSpellRange 391 0 1 1 ${KillTarget}
+			wait 3
+			call CastSpellRange 130 0 1 1 ${KillTarget}
+			return
+		}
+		
+		; Fast Cast Nuke
+		if ${Me.Ability[${SpellType[60]}].IsReady}
+		{
+			call CastSpellRange 60 0 2 0 ${KillTarget} 0 0 1
+			return
+		}
+		
+		; De-agro if not MainTank
+		if ${Me.Ability[${SpellType[180]}].IsReady} && !${MainTank}
+		{
+			call CastSpellRange 180 0 2 0 ${KillTarget} 0 0 0
+			return
+		}
+			
+		; Low Damage Power Tap
+		if ${Me.Ability[${SpellType[62]}].IsReady}
+		{
+			call CastSpellRange 62 0 2 0 ${KillTarget} 0 0 0
+			return
+		}
+		
+		; Moderate Melee Attack
+		if ${Me.Ability[${SpellType[151]}].IsReady} && !${RangedAttackMode}
+		{
+			call CastSpellRange 151 0 2 0 ${KillTarget} 0 0 1
+			return
+		}
+	}
 
+	if ${DoHOs}
+	{
+		objHeroicOp:DoHO
+	}
+	
 	switch ${Action[${xAction}]}
 	{
 		case AATurnstrike
@@ -517,36 +645,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Stealth_Attack
-			if ${OffenseMode} && !${MainTank} && !${RangedAttackMode}
-			{
-				;check if we have the bump AA and use it to stealth us
-				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-				}
-
-				;if we didnt bardAA "Bump" into stealth use normal stealth
-				if ${Me.ToActor.Effect[Shroud](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},2]}]}].IsReady}
-				{
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
-				}
-				else
-				{
-					call CastSpellRange 200
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
-				}
-			}
-			break
-
-		case AoE1
-		case AoE2
-		case AoE3
-			If ${AoEMode} && ${Mob.Count}>2
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
-			break
 		case AAHarmonizing_Shot
 		case Bow_Attack
 			if ${BowAttacksMode}
@@ -562,44 +660,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Debuff1
-		case Debuff2
-			if ${DebuffMode} && !${RangedAttackMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-
-		case Combat_Buff
-			if !${MezzMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
-			break
-
-		case Flank_Attack
-			if ${OffenseMode} && !${MainTank} && !${RangedAttackMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-			}
-			break
-
-		case Nuke1
-		case Nuke2
-			if ${OffenseMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case Melee_Attack1
-		case Melee_Attack2
-			if ${OffenseMode} && !${RangedAttackMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-
 		case Stun
 			if !${RangedAttackMode} && !${Actor[${KillTarget}].IsEpic}
 			{
@@ -607,15 +667,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Mastery
-
-			if ${Me.Ability[Sinister Strike].IsReady} && !${RangedAttackMode}
-			{
-				Target ${KillTarget}
-				call CheckPosition 1 1
-				Me.Ability[Sinister Strike]:Use
-			}
-			break
 		Default
 			return CombatComplete
 			break
@@ -638,7 +689,7 @@ function Post_Combat_Routine(int xAction)
 	}
 
 	;cancel stealth
-	if ${Me.Maintained[Shroud](exists)}
+	if ${Me.ToActor.Effect[Shroud](exists)} || ${Me.Maintained[Shroud](exists)}
 	{
 		Me.Maintained[Shroud]:Cancel
 	}
@@ -742,10 +793,10 @@ function Mezmerise_Targets()
 				}
 
 				;shut off aria so encounter debuffs dont break mezz
-				if ${Me.Maintained[${SpellType[27]}](exists)}
-				{
-					Me.Maintained[${SpellType[27]}]:Cancel
-				}
+				;if ${Me.Maintained[${SpellType[27]}](exists)}
+				;{
+				;	Me.Maintained[${SpellType[27]}]:Cancel
+				;}
 
 				call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 15
 			}
@@ -847,7 +898,7 @@ function DoJesterCap()
 					call CastSpellRange 156 0 0 0 ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].ID}
 					if ${Return} != -1
 					{
-						eq2execute /tell ${JCActor.Token[1,:]} You've been J-Capped!
+						eq2execute /tell ${JCActor.Token[1,:]} "You've been J-Capped!"
 						;if we successfully cast Jester Cap, Add/Update the collection with the current timestamp
 						BuffJesterCapTimers:Set[${JCActor}, ${Time.Timestamp}]
 						BuffJesterCapMember:Inc
