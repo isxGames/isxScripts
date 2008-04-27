@@ -3,9 +3,9 @@
 <InnerSpaceSettings>
   <Set Name="Writ Counts">
     <Set Name="alchemist">
-      <Setting Name="20"></Setting>
-      <Setting Name="24"></Setting>
-      <Setting Name="29"></Setting>
+      <Setting Name="20">3,3</Setting>
+      <Setting Name="24">1,1,1,1,1,1</Setting>
+      <Setting Name="29">1,1,1,1,1,1</Setting>
       <Setting Name="30">2,2,2</Setting>
       <Setting Name="34">1,1,1,1,1,1</Setting>
       <Setting Name="39">1,1,1,1,1,1</Setting>
@@ -170,8 +170,8 @@
       <Setting Name="34">3,3</Setting>
       <Setting Name="39"></Setting>
       <Setting Name="40"></Setting>
-      <Setting Name="44"></Setting>
-      <Setting Name="49"></Setting>
+      <Setting Name="44">3,3</Setting>
+      <Setting Name="49">3,3</Setting>
       <Setting Name="50">6</Setting>
       <Setting Name="54"></Setting>
       <Setting Name="59"></Setting>
