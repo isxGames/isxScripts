@@ -997,7 +997,7 @@ objectdef EQ2HarvestBot
 
     method CollectibleFound(string sName)
     {
-        echo "DEBUG: CollectibleFound('${sName}')"
+        ;echo "DEBUG: Collectible Found('${sName}')"
         
     	variable int tempvar
     
@@ -1159,15 +1159,31 @@ atom atexit()
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
 
-	if ${Me.IsMoving}
-	{
-		press MOVEFORWARD
-	}
-	press -release MOVEBACKWARD
-	press -release STRAFELEFT
-	press -release STRAFERIGHT
-	press -release TURNLEFT
-	press -release TURNRIGHT
+    if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
+        eq2press -release MOVEFORWARD
+    else
+        press -release MOVEFORWARD
+    if ${ISXEQ2.IsValidEQ2PressKey[MOVEBACKWARD]}
+        eq2press -release MOVEBACKWARD
+    else
+        press -release MOVEBACKWARD
+    if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
+        eq2press -release STRAFELEFT
+    else
+        press -release STRAFELEFT
+    if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
+        eq2press -release STRAFERIGHT
+    else
+        press -release STRAFERIGHT
+    if ${ISXEQ2.IsValidEQ2PressKey[TURNLEFT]}
+        eq2press -release TURNLEFT
+    else
+        press -release TURNLEFT
+    if ${ISXEQ2.IsValidEQ2PressKey[TURNRIGHT]}
+        eq2press -release TURNRIGHT
+    else
+        press -release TURNRIGHT                        	
+	
 	
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[EQ2_onLootWindowAppeared]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
