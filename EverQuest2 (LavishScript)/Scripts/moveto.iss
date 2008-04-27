@@ -66,7 +66,8 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/MobCheck.iss"
 #endif
 
-#define MOVEFORWARD "num lock"
+#define AUTORUN "num lock"
+#define MOVEFORWARD w
 #define MOVEBACKWARD s
 #define STRAFELEFT q
 #define STRAFERIGHT e
@@ -148,7 +149,7 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 				}
 
 				; We are probably stuck
-				if ${obstaclecount}>${Math.Calc[${checklag}+1]}
+				if ${obstaclecount}>${Math.Calc64[${checklag}+1]}
 				{
 					obstaclecount:Set[0]
 					call Obstacle ${failedattempts}
@@ -239,9 +240,20 @@ function Obstacle(int delay)
 	if ${delay}>0
 	{
 		;backup a little
-		press -hold MOVEBACKWARD
-		wait ${Math.Calc[${BackupTime}*${delay}]}
-		press -release MOVEBACKWARD
+        if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
+            eq2press -release MOVEFORWARD
+        else
+            press -release MOVEFORWARD		
+        wait 1
+		if ${ISXEQ2.IsValidEQ2PressKey[MOVEBACKWARD]}
+            eq2press -hold MOVEBACKWARD
+        else
+            press -hold MOVEBACKWARD		
+		wait ${Math.Calc64[${BackupTime}*${delay}]}
+        if ${ISXEQ2.IsValidEQ2PressKey[MOVEBACKWARD]}
+            eq2press -release MOVEBACKWARD
+        else
+            press -release MOVEBACKWARD
 
 		if ${delay}==1 || ${delay}==3 || ${delay}==5
 		{
@@ -249,20 +261,32 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-				press -hold STRAFELEFT
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
+                    eq2press -hold STRAFELEFT
+                else
+                    press -hold STRAFELEFT			    
 				call StartRunning
-				wait ${Math.Calc[${StrafeTime}*${delay}]}
-				press -release STRAFELEFT
+				wait ${Math.Calc64[${StrafeTime}*${delay}]}
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
+                    eq2press -release STRAFELEFT
+                else
+                    press -release STRAFELEFT	
 				call StopRunning
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-				press -hold STRAFERIGHT
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
+                    eq2press -hold STRAFERIGHT
+                else
+                    press -hold STRAFERIGHT	
 				call StartRunning
-				wait ${Math.Calc[${StrafeTime}*${delay}]}
-				press -release STRAFERIGHT
+				wait ${Math.Calc64[${StrafeTime}*${delay}]}
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
+                    eq2press -release STRAFERIGHT
+                else
+                    press -release STRAFERIGHT	
 				call StopRunning
 				wait 2
 			}
@@ -273,23 +297,35 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-				press -hold STRAFELEFT
-				wait ${Math.Calc[${StrafeTime}*${delay}]}
-				press -release STRAFELEFT
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
+                    eq2press -hold STRAFELEFT
+                else
+                    press -hold STRAFELEFT	
+				wait ${Math.Calc64[${StrafeTime}*${delay}]}
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
+                    eq2press -release STRAFELEFT
+                else
+                    press -release STRAFELEFT	
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-				press -hold STRAFERIGHT
-				wait ${Math.Calc[${StrafeTime}*${delay}]}
-				press -release STRAFERIGHT
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
+                    eq2press -hold STRAFERIGHT
+                else
+                    press -hold STRAFERIGHT	
+				wait ${Math.Calc64[${StrafeTime}*${delay}]}
+                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
+                    eq2press -release STRAFERIGHT
+                else
+                    press -release STRAFERIGHT	
 				wait 2
 			}
 		}
 		;Start moving forward again
 		call StartRunning
-		wait ${Math.Calc[${BackupTime}*${delay}+5]}
+		wait ${Math.Calc64[${BackupTime}*${delay}+5]}
 	}
 	else
 	{
@@ -312,7 +348,7 @@ function Obstacle(int delay)
 		}
 
 		face ${newheading}
-		wait ${Math.Calc[${StrafeTime}*${delay}]}
+		wait ${Math.Calc64[${StrafeTime}*${delay}]}
 	}
 }
 
@@ -323,7 +359,10 @@ function StopRunning()
 	{
 		do
 		{
-			press MOVEFORWARD
+    	    if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
+    	        eq2press -release MOVEFORWARD
+    	    else
+    	        press AUTORUN
 			wait 5
 		}
 		while ${Me.IsMoving}
@@ -336,7 +375,10 @@ function StartRunning()
 	{
 		do
 		{
-			press MOVEFORWARD
+    	    if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
+    	        eq2press -hold MOVEFORWARD
+    	    else
+    	        press AUTORUN
 			wait 5
 		}
 		while !${Me.IsMoving}
