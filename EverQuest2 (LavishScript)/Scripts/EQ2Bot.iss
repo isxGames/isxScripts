@@ -437,7 +437,10 @@ function main()
 
 						if ${Me.IsMoving}
 						{
-							press -release ${forward}
+                    	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                    	        eq2press -release ${forward}
+                    	    else
+                    	        press -release ${forward}						    
 							wait 20 !${Me.IsMoving}
 						}
 						FollowTask:Set[1]
@@ -913,8 +916,14 @@ function Combat()
 	; Make sure we are still not moving when we enter combat
 	if ${Me.IsMoving}
 	{
-		press -release ${forward}
-		press -release ${backward}
+        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+            eq2press -release ${forward}
+        else
+            press -release ${forward}	
+        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
+            eq2press -release ${backward}
+        else
+            press -release ${backward}	
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -1340,7 +1349,15 @@ function CheckPosition(int rangetype, int position)
 	if ${Target.Distance}<${minrange} && ${Target(exists)} && (${Me.ID}!=${Target.ID}) && (${rangetype}==1 || ${rangetype}==3)
 	{
 		movetimer:Set[${Time.Timestamp}]
-		press -hold ${backward}
+        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+            eq2press -release ${forward}
+        else
+            press -release ${forward}		
+        wait 1		
+        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
+            eq2press -hold ${backward}
+        else
+            press -hold ${backward}			
 		do
 		{
 			if ${Target(exists)} && (${Me.ID}!=${Target.ID})
@@ -1354,7 +1371,10 @@ function CheckPosition(int rangetype, int position)
 		}
 		while ${Target.Distance}<${minrange} && ${Target(exists)}
 
-		press -release ${backward}
+        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
+            eq2press -release ${backward}
+        else
+            press -release ${backward}	
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -1504,7 +1524,10 @@ function Pull(string npcclass)
 
 				if ${Me.IsMoving}
 				{
-					press -release ${forward}
+                    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                        eq2press -release ${forward}
+                    else
+                        press -release ${forward}					    
 					wait 20 !${Me.IsMoving}
 				}
 
@@ -1560,15 +1583,27 @@ function Pull(string npcclass)
 					;randomly pick a direction
 					if ${Math.Rand[10]}>5
 					{
-						press -hold STRAFELEFT
+                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
+                            eq2press -hold STRAFELEFT
+                        else
+                            press -hold STRAFELEFT					    
 						wait ${Math.Rand[40]}
-						press -release STRAFELEFT
+                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
+                            eq2press -release STRAFELEFT
+                        else
+                            press -release STRAFELEFT	
 					}
 					else
 					{
-						press -hold STRAFERIGHT
+                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
+                            eq2press -hold STRAFERIGHT
+                        else
+                            press -hold STRAFERIGHT	
 						wait ${Math.Rand[40]}
-						press -release STRAFERIGHT
+                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
+                            eq2press -release STRAFERIGHT
+                        else
+                            press -release STRAFERIGHT	
 					}
 					call FastMove ${Target.X} ${Target.Z} 15
 					EQ2Execute /target_none
@@ -1986,7 +2021,10 @@ function MovetoWP(lnavregionref destination)
 		{
 			face ${CurrentPath.Region[2].CenterPoint.X} ${CurrentPath.Region[2].CenterPoint.Y}
 			wait 5
-			press -hold ${forward}
+            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                eq2press -hold ${forward}
+            else
+                press -hold ${forward}				
 			PositionHeading:Set[${Me.Heading}]
 		}
 
@@ -2013,7 +2051,10 @@ function MovetoWP(lnavregionref destination)
 
 				if (${pulling} || ${PathType}==3) && !${Me.IsMoving}
 				{
-					press -hold ${forward}
+                    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                        eq2press -hold ${forward}
+                    else
+                        press -hold ${forward}		
 				}
 			}
 
@@ -2082,7 +2123,10 @@ function MovetoWP(lnavregionref destination)
 
 		if (${pulling} || ${PathType}==3) && ${Me.IsMoving}
 		{
-			press -release ${forward}
+            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                eq2press -release ${forward}
+            else
+                press -release ${forward}		
 			wait 20 !${Me.IsMoving}
 		}
 	}
@@ -2123,7 +2167,10 @@ function MovetoMaster()
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-		press -hold ${forward}
+        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+            eq2press -hold ${forward}
+        else
+            press -hold ${forward}		
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
 		{
@@ -2135,7 +2182,10 @@ function MovetoMaster()
 
 		if ${Me.IsMoving}
 		{
-			press -release ${forward}
+            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                eq2press -release ${forward}
+            else
+                press -release ${forward}		
 		}
 
 		movetowp:Set[FALSE]
@@ -2545,9 +2595,20 @@ function CantSeeTarget(string Line)
 				face ${Target.X} ${Target.Z}
 			}
 
-			press -hold ${backward}
+            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                eq2press -release ${forward}
+            else
+                press -release ${forward}		
+            wait 1	
+            if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
+                eq2press -hold ${backward}
+            else
+                press -hold ${backward}		
 			wait 5
-			press -release ${backward}
+            if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
+                eq2press -release ${backward}
+            else
+                press -release ${backward}	
 			wait 20 !${Me.IsMoving}
 			return
 		}
@@ -3979,7 +4040,10 @@ function MoveToGroup(string gname)
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-		press -hold ${forward}
+        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+            eq2press -hold ${forward}
+        else
+            press -hold ${forward}	
 
 		WPX:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.X}]
 		WPY:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.Y}]
@@ -3988,7 +4052,10 @@ function MoveToGroup(string gname)
 
 		if ${Me.IsMoving}
 		{
-			press -release ${forward}
+            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                eq2press -release ${forward}
+            else
+                press -release ${forward}	
 		}
 
 		movetowp:Set[FALSE]
@@ -3999,7 +4066,11 @@ function MoveToGroup(string gname)
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-		press -hold ${forward}
+        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+            eq2press -hold ${forward}
+        else
+            press -hold ${forward}	
+
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
 		{
@@ -4011,7 +4082,10 @@ function MoveToGroup(string gname)
 
 		if ${Me.IsMoving}
 		{
-			press -release ${forward}
+            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+                eq2press -release ${forward}
+            else
+                press -release ${forward}	
 		}
 
 		movetowp:Set[FALSE]
@@ -4261,8 +4335,21 @@ function atexit()
 	;Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 
-	press -release ${forward}
-	press -release ${backward}
-	press -release ${strafeleft}
-	press -release ${straferight}
+
+    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
+        eq2press -release ${forward}
+    else
+        press -release ${forward}	
+    if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
+        eq2press -release ${backward}
+    else
+        press -release ${backward}	
+    if ${ISXEQ2.IsValidEQ2PressKey[${strafeleft}]}
+        eq2press -release ${strafeleft}
+    else
+        press -release ${strafeleft}	        
+    if ${ISXEQ2.IsValidEQ2PressKey[${straferight}]}
+        eq2press -release ${straferight}
+    else
+        press -release ${straferight}	        
 }
