@@ -83,7 +83,7 @@
       <Setting Name="79">2,2,2</Setting>
     </Set>
     <Set Name="provisioner">
-      <Setting Name="20"></Setting>
+      <Setting Name="20">3,3</Setting>
       <Setting Name="24">1,1,1,1,2</Setting>
       <Setting Name="29">1,1,1,3</Setting>
       <Setting Name="30">3,3</Setting>
