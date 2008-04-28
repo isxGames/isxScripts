@@ -37,12 +37,7 @@ function Class_Declaration()
 	declare BuffSentinelGroupMember string script
 	declare BuffDeagroGroupMember string script
 
-	declare WeaponHammer string script
-	declare WeaponSword string script
-	declare WeaponSpear string script
 	declare TowerShield string script
-	declare WeaponAxe string script
-	declare WeaponMain string script
 	declare OffHand string script
 	declare EquipmentChangeTimer int script
 	declare StartHO bool script
@@ -65,14 +60,8 @@ function Class_Declaration()
 	BuffSentinelGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSentinelGroupMember,]}]
 	BuffDeagroGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffDeagroMember,]}]
 
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Main",""]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponHammer:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Hammer",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
 	TowerShield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["TowerShield",""]}]
-	WeaponAxe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Axe",""]}]
-
 }
 
 
@@ -211,22 +200,19 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-	call WeaponChange
-
 	if ${ShardMode}
 	{
 		call Shard
 	}
-	
+
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-	    ExecuteAtom AutoFollowTank
+	  ExecuteAtom AutoFollowTank
 		wait 5
-	}	
+	}
 
 	switch ${PreAction[${xAction}]}
 	{
-
 		case Avoidance_Target
 			BuffTarget:Set[${UIElement[cbBuffAvoidanceGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
@@ -442,6 +428,9 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
+	if ${Me.Equipment[2].Name.Equal[${TowerShield}]} && !${Offhand}
+		Me.Inventory[${Offhand}]:Equip
+
 	switch ${PostAction[${xAction}]}
 	{
 
@@ -596,21 +585,4 @@ function CheckHeals()
 
 }
 
-function WeaponChange()
-{
 
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-}
