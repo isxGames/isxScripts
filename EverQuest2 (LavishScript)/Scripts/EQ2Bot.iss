@@ -1,5 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.2 Updated: 04/25/08 by Amadeus
+; EQ2Bot.iss Version 2.7.2a Updated: 04/25/08 by Pygar
+;
+;2.7.2a (Pygar)
+; * Added a check to verify target exists before adding to donotpull collection.  This was just to set peoples mind at ease
+; * Removed a range verifaction from CheckPosition causing it not to fire when MA was more than 8 meters from target.  This
+;		setting no longer holds much water with RoK ranged mob AI's.  Use the max range on main tab to set how far to set safe
+; 	distances to move.
 ;
 ;2.7.2 (Amadeus)
 ; * If your 'forward' key is mapped to one supported by the new "EQ2Press" command, you will now move to loot chests and corpses even if
@@ -9,13 +15,13 @@
 ;
 ;2.7.1m (Amadeus)
 ; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
-; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a 
+; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a
 ;   griffon-like transport or if they (or the bot) are currently climbing a wall.
 ;
 ;2.7.1l (Amadeus)
 ; * Added a function to EQ2BotLib.iss called "AmIInvis".  CastSpell() and CastSpellRange() now check this before they
 ;   will cast any spells outside of combat.
-; * Tweaked CheckAbilities().  It should work for all players at all times now if AA abilities are properly listed in 
+; * Tweaked CheckAbilities().  It should work for all players at all times now if AA abilities are properly listed in
 ;   spell lists as level 10 for all classes.
 ;
 ;2.7.1k (Pygar)
@@ -352,8 +358,9 @@ function main()
 			}
 			while ${EQ2.Zoning}
 			wait 20
-			;need to move this var to script scope
-			;AutoFollowingMA:Set[FALSE]
+			if ${AutoFollowingMA(exists)}
+				AutoFollowingMA:Set[FALSE]
+
 		}
 
 		if !${StartBot}
@@ -440,7 +447,7 @@ function main()
                     	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                     	        eq2press -release ${forward}
                     	    else
-                    	        press -release ${forward}						    
+                    	        press -release ${forward}
 							wait 20 !${Me.IsMoving}
 						}
 						FollowTask:Set[1]
@@ -479,7 +486,7 @@ function main()
 						call ScanAdds
 				}
 			}
-			            
+
             MobDetected:Set[${Mob.Detect}]
             ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
             ;;
@@ -919,11 +926,11 @@ function Combat()
         if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
             eq2press -release ${forward}
         else
-            press -release ${forward}	
+            press -release ${forward}
         if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
             eq2press -release ${backward}
         else
-            press -release ${backward}	
+            press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -1322,7 +1329,9 @@ function CheckPosition(int rangetype, int position)
 
 	if !${MainTank}
 	{
-		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>8 && !${Following}
+		;I don't think this is a good idea.  We're ignoring position checks when people get knocked back... Changing from 8 to MARange
+		;it is also not good with new mob AI's that 'range' fight.
+		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>${MARange} && !${Following}
 			return
 	}
 	elseif ${PathType}==2
@@ -1337,7 +1346,7 @@ function CheckPosition(int rangetype, int position)
 		}
 	}
 
-	if ${Target.Distance}>${maxrange} && ${Target.Distance}<35 && ${PathType}!=2 && !${isstuck}
+	if ${Target.Distance}>${maxrange} && ${Target.Distance}<45 && ${PathType}!=2 && !${isstuck}
 	{
 		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
 			face ${Target.X} ${Target.Z}
@@ -1352,12 +1361,12 @@ function CheckPosition(int rangetype, int position)
         if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
             eq2press -release ${forward}
         else
-            press -release ${forward}		
-        wait 1		
+            press -release ${forward}
+        wait 1
         if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
             eq2press -hold ${backward}
         else
-            press -hold ${backward}			
+            press -hold ${backward}
 		do
 		{
 			if ${Target(exists)} && (${Me.ID}!=${Target.ID})
@@ -1374,7 +1383,7 @@ function CheckPosition(int rangetype, int position)
         if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
             eq2press -release ${backward}
         else
-            press -release ${backward}	
+            press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -1527,7 +1536,7 @@ function Pull(string npcclass)
                     if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                         eq2press -release ${forward}
                     else
-                        press -release ${forward}					    
+                        press -release ${forward}
 					wait 20 !${Me.IsMoving}
 				}
 
@@ -1586,24 +1595,24 @@ function Pull(string npcclass)
                         if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
                             eq2press -hold STRAFELEFT
                         else
-                            press -hold STRAFELEFT					    
+                            press -hold STRAFELEFT
 						wait ${Math.Rand[40]}
                         if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
                             eq2press -release STRAFELEFT
                         else
-                            press -release STRAFELEFT	
+                            press -release STRAFELEFT
 					}
 					else
 					{
                         if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
                             eq2press -hold STRAFERIGHT
                         else
-                            press -hold STRAFERIGHT	
+                            press -hold STRAFERIGHT
 						wait ${Math.Rand[40]}
                         if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
                             eq2press -release STRAFERIGHT
                         else
-                            press -release STRAFERIGHT	
+                            press -release STRAFERIGHT
 					}
 					call FastMove ${Target.X} ${Target.Z} 15
 					EQ2Execute /target_none
@@ -1727,7 +1736,7 @@ function CheckLootNoMove()
 			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLootNoMove()] -- Distance: ${CustomActor[${tcount}].Distance}"
 			if (${CustomActor[${tcount}].Distance} > 4)
 			    continue
-			    
+
 			switch ${Me.SubClass}
 			{
 				case dirge
@@ -1794,7 +1803,7 @@ function CheckLoot()
                 	    ;echo "DEBUG: Stopping Autofollow..."
                     	EQ2Execute /stopfollow
                     	wait 2
-                	}	
+                	}
                 	;echo "DEBUG: Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"
 					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
 					;ECHO "DEBUG: FastMove() returned '${Return}'"
@@ -1827,7 +1836,7 @@ function CheckLoot()
 			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 			{
         		ExecuteAtom AutoFollowTank
-        		wait 1				       
+        		wait 1
 			}
 			call ProcessTriggers
 		}
@@ -1841,7 +1850,7 @@ function CheckLoot()
                 	    ;echo "DEBUG: Stopping Autofollow..."
                     	EQ2Execute /stopfollow
                     	wait 2
-                	}				    
+                	}
 					call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 8
 					do
 					{
@@ -1856,7 +1865,7 @@ function CheckLoot()
 			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 			{
         		ExecuteAtom AutoFollowTank
-        		wait 1				       
+        		wait 1
 			}
 		}
 
@@ -1880,14 +1889,14 @@ function FastMove(float X, float Z, int range)
 	;;      echo "DEBUG: Stopping Autofollow..."
     ;;	    EQ2Execute /stopfollow
     ;;	    wait 2
-	;;  }	
+	;;  }
 	;;; To turn AutoFollow back on
 	;;  if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	;;  {
 	;;	    ExecuteAtom AutoFollowTank
-	;;	    wait 2				       
+	;;	    wait 2
 	;;  }
-    
+
 	variable float xDist
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
@@ -1922,7 +1931,7 @@ function FastMove(float X, float Z, int range)
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC"
 	}
-	
+
 	face ${X} ${Z}
 
 	if !${pulling}
@@ -2024,7 +2033,7 @@ function MovetoWP(lnavregionref destination)
             if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                 eq2press -hold ${forward}
             else
-                press -hold ${forward}				
+                press -hold ${forward}
 			PositionHeading:Set[${Me.Heading}]
 		}
 
@@ -2054,7 +2063,7 @@ function MovetoWP(lnavregionref destination)
                     if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                         eq2press -hold ${forward}
                     else
-                        press -hold ${forward}		
+                        press -hold ${forward}
 				}
 			}
 
@@ -2126,7 +2135,7 @@ function MovetoWP(lnavregionref destination)
             if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                 eq2press -release ${forward}
             else
-                press -release ${forward}		
+                press -release ${forward}
 			wait 20 !${Me.IsMoving}
 		}
 	}
@@ -2170,7 +2179,7 @@ function MovetoMaster()
         if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
             eq2press -hold ${forward}
         else
-            press -hold ${forward}		
+            press -hold ${forward}
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
 		{
@@ -2185,7 +2194,7 @@ function MovetoMaster()
             if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                 eq2press -release ${forward}
             else
-                press -release ${forward}		
+                press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -2459,11 +2468,13 @@ atom(script) EQ2_onIncomingText(string Text)
 				;echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
 				DoNotPullList:Clear
 		}
+		if ${Target.ID}
+		{
+			echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"
+			DoNotPullList:Set[${Target.ID},${Target.Name}]
 
-		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"
-		DoNotPullList:Set[${Target.ID},${Target.Name}]
-
-		echo "DEBUG: DoNotPullList now has ${DoNotPullList.Used} actors in it."
+			echo "DEBUG: DoNotPullList now has ${DoNotPullList.Used} actors in it."
+		}
 	}
 	elseif (${Text.Find[This attack cannot be used on this type of creature]} > 0)
 	{
@@ -2516,7 +2527,7 @@ atom(script) LootWDw(string ID)
 			    {
     				if !${NoTradeConfirm}
     						deccnt:Inc
-			    }			    
+			    }
 			}
 			if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
 			{
@@ -2598,17 +2609,17 @@ function CantSeeTarget(string Line)
             if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                 eq2press -release ${forward}
             else
-                press -release ${forward}		
-            wait 1	
+                press -release ${forward}
+            wait 1
             if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
                 eq2press -hold ${backward}
             else
-                press -hold ${backward}		
+                press -hold ${backward}
 			wait 5
             if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
                 eq2press -release ${backward}
             else
-                press -release ${backward}	
+                press -release ${backward}
 			wait 20 !${Me.IsMoving}
 			return
 		}
@@ -2838,10 +2849,10 @@ objectdef ActorCheck
 
 			case NoKill NPC
 				return FALSE
-					
+
 		    case Pet
 		        return FALSE
-		        
+
 		    case MyPet
 		        return FALSE
 
@@ -2920,7 +2931,7 @@ objectdef ActorCheck
 	}
 
 	member:bool CheckActor(int actorid)
-	{    
+	{
 		switch ${Actor[${actorid}].Type}
 		{
 			case NPC
@@ -2933,10 +2944,10 @@ objectdef ActorCheck
 
 			case PC
 				return FALSE
-				
+
 			case Pet
 			    return FALSE
-			    
+
 			case MyPet
 			    return FALSE
 
@@ -2954,7 +2965,7 @@ objectdef ActorCheck
 		{
 			return FALSE
 		}
-        
+
         if ${This.FriendlyPet[${actorid}]}
     	{
     		;actor is a charmed pet, ignore it
@@ -3125,7 +3136,7 @@ objectdef ActorCheck
 	member:bool FriendlyPet(int actorid)
 	{
 		variable int tempvar
-		
+
 		if (${Me.GroupCount} > 1)
 		{
 			;echo Check if mob is a pet of my group
@@ -3662,9 +3673,6 @@ function CheckAbilities(string class)
 	variable string spellname
 	variable int MissingAbilitiesCount
 
-	; Might as well just open the bloody knowledge book every time.  We still need to do it after the initial round of 'checking'.
-	; I will set it so that it will toggle the knowledge book if the character is above level 10 and missing ANY spells/abilities
-
 	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
 	do
 	{
@@ -4043,7 +4051,7 @@ function MoveToGroup(string gname)
         if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
             eq2press -hold ${forward}
         else
-            press -hold ${forward}	
+            press -hold ${forward}
 
 		WPX:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.X}]
 		WPY:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.Y}]
@@ -4055,7 +4063,7 @@ function MoveToGroup(string gname)
             if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                 eq2press -release ${forward}
             else
-                press -release ${forward}	
+                press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -4069,7 +4077,7 @@ function MoveToGroup(string gname)
         if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
             eq2press -hold ${forward}
         else
-            press -hold ${forward}	
+            press -hold ${forward}
 
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
@@ -4085,7 +4093,7 @@ function MoveToGroup(string gname)
             if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
                 eq2press -release ${forward}
             else
-                press -release ${forward}	
+                press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -4339,17 +4347,17 @@ function atexit()
     if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
         eq2press -release ${forward}
     else
-        press -release ${forward}	
+        press -release ${forward}
     if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
         eq2press -release ${backward}
     else
-        press -release ${backward}	
+        press -release ${backward}
     if ${ISXEQ2.IsValidEQ2PressKey[${strafeleft}]}
         eq2press -release ${strafeleft}
     else
-        press -release ${strafeleft}	        
+        press -release ${strafeleft}
     if ${ISXEQ2.IsValidEQ2PressKey[${straferight}]}
         eq2press -release ${straferight}
     else
-        press -release ${straferight}	        
+        press -release ${straferight}
 }
