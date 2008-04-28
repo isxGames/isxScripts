@@ -15,14 +15,6 @@
 ;	updated for latest eq2bot
 ;	updated master strike
 ;
-;
-;
-; NOTE:
-; The Snapping Mandibles line is NOT cast by this routine as it is
-; the ONLY conji spell to advance HO's with, and if the script were
-; to use it, you would never get an HO off.  To use this line, enable
-; HO's in the extra's tab, and chose the Snapping Mandiples line in the
-; lightning spell selection.
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -48,12 +40,6 @@ function Class_Declaration()
 	declare ShardRequestTimer int script ${Time.Timestamp}
 	declare ShardType string script
 
-	;Custom Equipment
-	declare PoisonCureItem string script
-
-
-	declare EquipmentChangeTimer int script ${Time.Timestamp}
-
 	call EQ2BotLib_Init
 
 	AddTrigger DequeueShardRequest "Target already has a conjurer essence item!"
@@ -70,7 +56,6 @@ function Class_Declaration()
 
 	switch ${SpellType[360]}
 	{
-
 		case Splinter of Essence
 		case Sliver of Essence
 			ShardType:Set["Sliver of Essence"]
@@ -87,8 +72,6 @@ function Class_Declaration()
 		case Scale of Essence
 			ShardType:Set["Scale of Essence"]
 			break
-
-
 	}
 }
 
@@ -133,8 +116,6 @@ function Buff_Init()
 
 function Combat_Init()
 {
-
-
 	Action[1]:Set[Combat_Buff]
 	MobHealth[1,1]:Set[1]
 	MobHealth[1,2]:Set[100]
@@ -204,8 +185,6 @@ function PostCombat_Init()
 {
 	PostAction[1]:Set[AA_Possessed_Minion]
 	PostSpellRange[1,1]:Set[398]
-
-	PostAction[2]:Set[LoadDefaultEquipment]
 
 }
 
@@ -566,16 +545,11 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
-
-
 	TellTank:Set[FALSE]
 
 	switch ${PostAction[${xAction}]}
 	{
 
-		case LoadDefaultEquipment
-			ExecuteAtom LoadEquipmentSet "Default"
-			break
 		case AA_Possessed_Minion
 			;check if we are possessed minion and cancel
 			if ${Me.Race.Equal[Unknown]}
