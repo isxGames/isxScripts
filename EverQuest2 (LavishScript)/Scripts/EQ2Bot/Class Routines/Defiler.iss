@@ -809,6 +809,7 @@ function CheckHeals()
 				if ${Me.Group[${temphl}].Noxious}>0
 				{
 					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Noxious}]}]
+					grpcure:Inc
 				}
 
 				if ${Me.Group[${temphl}].Elemental}>0
@@ -819,6 +820,7 @@ function CheckHeals()
 				if ${Me.Group[${temphl}].Trauma}>0
 				{
 					tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Trauma}]}]
+					grpcure:Inc
 				}
 
 				if ${tmpafflictions}>${mostafflictions}
