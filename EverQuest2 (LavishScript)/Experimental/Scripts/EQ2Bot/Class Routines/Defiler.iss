@@ -898,6 +898,7 @@ function HealMe()
 function CheckHeals()
 {
 	declare tempgrp int local 1
+	declare temphl int local 1
 	declare grpheal int local 0
 	declare lowest int local 0
 	declare PetToHeal int local 0
