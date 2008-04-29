@@ -951,7 +951,7 @@ function FindHealer()
 	return ${healer}
 }
 
-function CheckCures()
+function CheckPoTCures()
 {
     ; Create our custom inventory array so that we are up to date with quantities
     ; Possible furture feature - use counts to determine if we should fallback to a lesser potion
