@@ -367,10 +367,10 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	declare dotused int local
-	declare debuffused int local
-	dotused:Set[0]
-	debuffused:Set[0]
+	declare dotused int local 0
+	declare debuffused int local 0
+	declare pricast int local 0
+
 
 	AutoFollowingMA:Set[FALSE]
 
@@ -386,7 +386,6 @@ function Combat_Routine(int xAction)
 			return Combat Complete
 		}
 	}
-
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
@@ -406,6 +405,61 @@ function Combat_Routine(int xAction)
 	if ${CastCures}
 	{
 		call CheckHeals
+	}
+
+	if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
+	{
+		call CastSpellRange 387 0 0 0 ${KillTarget}
+	}
+
+	;Ice if solo  or ^^^ and between 30 and 80.
+	if ((${Actor[${KillTarget}].Difficulty}<3) || (${Actor[${KillTarget}].Difficulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<80))
+	{
+		;Encounter Priority
+		if ${Actor[${KillTarget}].EncounterSize}>1 && ${Mob.Count}>1
+		{
+			if ${Me.Ability[${SpellType[97]}].IsReady}
+			{
+				call CastSpellRange 97 0 0 0 ${KillTarget}
+				pricast:Inc
+			}
+			if ${Me.Ability[${SpellType[330]}].IsReady}
+			{
+				call CastSpellRange 330 0 0 0 ${KillTarget}
+				pricast:Inc
+			}
+			if ${Me.Ability[${SpellType[91]}].IsReady} && ${pricast}<2
+			{
+				call CastSpellRange 385
+				call CastSpellRange 91 0 0 0 ${KillTarget}
+				pricast:Inc
+			}
+			if ${Me.Ability[${SpellType[92]}].IsReady} && ${pricast}<2
+			{
+				call CastSpellRange 385
+				call CastSpellRange 92 0 0 0 ${KillTarget}
+				pricast:Inc
+			}
+		}
+		else
+		{
+			if ${Me.Ability[${SpellType[61]}].IsReady}
+			{
+				call CastSpellRange 61 0 0 0 ${KillTarget}
+				pricast:Inc
+			}
+			if ${Me.Ability[${SpellType[63]}].IsReady}
+			{
+				call CastSpellRange 385
+				call CastSpellRange 63 0 0 0 ${KillTarget}
+				pricast:Inc
+			}
+			if ${Me.Ability[${SpellType[62]}].IsReady} && ${pricast}<2
+			{
+				call CastSpellRange 62 0 0 0 ${KillTarget}
+				pricast:Inc
+			}
+		}
 	}
 
 	call UseCrystallizedSpirit 60
@@ -457,11 +511,6 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 72 0 0 0 ${KillTarget}
 			dotused:Inc
 		}
-	}
-
-	if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
-	{
-		call CastSpellRange 387 0 0 0 ${KillTarget}
 	}
 
 	switch ${Action[${xAction}]}
@@ -552,11 +601,11 @@ function Combat_Routine(int xAction)
 			break
 
 		case Master_Strike
-    	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-    	    ;;;;;;;;;;
-    	    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
-    	        break
-    	    ;;;;;;;;;;;
+	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+	    ;;;;;;;;;;
+	    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
+	        break
+	    ;;;;;;;;;;;
 			if ${Me.Ability[Master's Smite].IsReady}
 			{
 				Me.Ability[Master's Smite]:Use
@@ -595,7 +644,7 @@ function Post_Combat_Routine(int xAction)
 	}
 }
 
-function Have_Aggro()
+function Have_Aggro(int aggroid)
 {
 
 	if !${TellTank} && ${WarnTankWhenAggro}
@@ -681,15 +730,16 @@ function RefreshPower()
 		call UseItem "Stein of the Everling Lord"
 	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<45
+	if ${Me.InCombat} && ${Me.ToActor.Power}<15
 	{
 		call CastSpellRange 309
 	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-	{
-		call CastSpellRange 333
-	}
+	;This should be cast on ally?
+	;if ${Me.InCombat} && ${Me.ToActor.Power}<15
+	;{
+	;	call CastSpellRange 333
+	;}
 }
 
 function CheckHeals()

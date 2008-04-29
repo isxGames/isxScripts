@@ -349,8 +349,8 @@ function Combat_Routine(int xAction)
 	call RefreshPower
 	call UseCrystallizedSpirit 60
 
-	;Ice Nova if solo and over 50% or ^^^ and between 30 and 60.
-	if ((${Actor[${KillTarget}].Difficulty}<3 && ${Actor[${KillTarget}].Health}>50) || (${Actor[${KillTarget}].Difficulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<60)) && ${Me.Ability[${SpellType[60]}].IsReady}
+	;Ice Nova if solo and over 50% or ^^^ and between 30 and 80.
+	if ((${Actor[${KillTarget}].Difficulty}<3 && ${Actor[${KillTarget}].Health}>50) || (${Actor[${KillTarget}].Difficulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<80)) && ${Me.Ability[${SpellType[60]}].IsReady}
 	{
 		if ${Me.Ability[${SpellType[385]}].IsReady}
 		{
@@ -455,7 +455,7 @@ function Post_Combat_Routine(int xAction)
 		default
 			return PostCombatRoutineComplete
 			break
-	}	
+	}
 }
 
 function Have_Aggro()
