@@ -934,7 +934,7 @@ function CheckHeals()
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
 		}
 	}
-	while ${temphl:Inc}=<${grpcnt}
+	while ${temphl:Inc}<=${grpcnt}
 
 	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 		grpheal:Inc
