@@ -833,7 +833,7 @@ function CureMe()
 	declare AffCnt int 0
 
 	;check if we are not in control, and use control cure if needed
-	if !${Me.ToActor.CanTurn} || !${Me.ToActor.Mezzed}
+	if !${Me.ToActor.CanTurn} || !${Me.ToActor.IsRooted}
 		call CastSpellRange 326
 
 	if ${Me.Arcane}>0
