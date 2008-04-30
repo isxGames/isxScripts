@@ -8,7 +8,7 @@
 ;;    http://www.lavishsoft.com/wiki/index.php/LavishNav:Object_Types
 ;;
 
-
+#include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavMapper_Lib.iss
 
 objectdef EQ2NavPath
 {
@@ -34,10 +34,10 @@ objectdef EQ2Nav
     variable string TURNRIGHT = "d"
     
     variable EQ2Mapper Mapper
-	variable index:EQ2NavPath NavPath
+	variable index:EQ2NavPath NavigationPath
 	variable point3f NavDestination
 	variable int StuckTime = ${LavishScript.RunningTime}
-	variable int PRECISION = 4
+	variable int PRECISION = 5
 	variable int TotalStuck = 0
 	variable int SKIPNAV = 0
 	variable string vCurrentDestination = ""
@@ -59,12 +59,24 @@ objectdef EQ2Nav
 	variable int BackupTime
     variable int StrafeTime
 
+    variable bool MovingTo = FALSE
+    variable int MovingTo_Timer
+    variable float MovingTo_X
+    variable float MovingTo_Y
+    variable float MovingTo_Z
+    variable float MovingTo_Precision
+    variable float MovingTo_keepmoving
+    variable float MovingTo_Attempts
+    variable float MovingTo_StopOnAggro
+
 	member CurrentDestination = ${vCurrentDestination}
 
 	method Initialize()
 	{
 		This.NavDestination:Set[0,0,0]
 		degrees:Set[15]
+		Mapper:Initialize
+        Mapper:LoadMapper	
 	}
 
 	method Shutdown()
@@ -94,8 +106,8 @@ objectdef EQ2Nav
 	method ClearPath()
 	{
 		This.NavDestination:Set[0,0,0]
-		NavPath:Clear
-		NavPath:Collapse
+		NavigationPath:Clear
+		NavigationPath:Collapse
 		This.POIStr:Set[""]
 	}
 
@@ -177,107 +189,73 @@ objectdef EQ2Nav
 	
 	method StartRunning()
 	{
-	    
-	    
+	    This:Debug["StartRunning() Called"]
+    	if !${Me.IsMoving}
+    		press "${This.AUTORUN}"
 	}
 	
 	method StopRunning()
 	{
-	    
-	    
+	    This:Debug["StopRunning() Called"]
+        if ${Me.IsMoving}
+            press "${This.AUTORUN}"  
 	}
-
-	method MoveTo(float X,float Z, float Precision, int keepmoving, int Attempts, int StopOnAggro)
+	
+	method MoveTo(float X, float Y, float Z, float Precision, int keepmoving, int Attempts, int StopOnAggro)
 	{
-	    ;;; This moves you directly to a point, without using lavishnav at all
-	    
-    	variable float SavX=${Me.X}
-    	variable float SavZ=${Me.Z}
+	    ;;; This moves you directly to a point, without using lavishnav at all ... MoveToLoc() will be much better if you have a path file for the zone...
     	variable int obstaclecount=0
     	variable int failedattempts=0
     	variable int checklag
     	variable int maxattempts=${If[${Attempts},${Attempts},3]}
-    
+    	
+    	
+    	;;;; Keep track of things for the Pulse()
+    	;;
+    	This.MovingTo_X:Set[${X}]
+    	This.MovingTo_Y:Set[${Y}]
+    	This.MovingTo_Z:Set[${Z}]
+    	This.MovingTo_Precision:Set[${Precision}]
+    	This.MovingTo_keepmoving:Set[${keepmoving}]
+    	This.MovingTo_Attempts:Set[${Attempts}]
+    	This.MovingTo_StopOnAggro:Set[${StopOnAggro}]
+        ;;
+        ;;;;
+        
     	This:CheckAggro
-    
-    	; Set the number of iterations before it determines its stuck
-    	checklag:Set[4]
-    
-    	; How far do you want to move back for, if your stuck? (10 = 1 second)
-    	This.BackupTime:Set[5]
-    
-    	; How far do you want to strafe for, after backing up? (10 = 1 second)
-    	This.StrafeTime:Set[5]
-    
-    	if !${Attempts}
-    		maxattempts:Set[3]
-    	else
-    		maxattempts:Set[${Attempts}]
-    
-    	; Check Weight in case we are moving to slow
-    	if ${Math.Calc[${Me.Weight}/${Me.MaxWeight}*100]}>150
+    	
+    	;; We are currently running a navigational path
+    	if ${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} > 0
     	{
-    		checklag:Set[10]
-    		This.BackupTime:Set[2]
-    		This.StrafeTime:Set[2]
-    		Precision:Set[2]
+    	    face ${X} ${Z}
+    	    This.MovingTo:Set[TRUE]   
+    	    
+    	    if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${Precision}
+    	        This:StartRunning
+    	        
+    	    return
     	}
+    	
     
-    	; Check that we are not already there!
+    
+        ;This:Debug["Math.Distance[${Me.X},${Me.Z},${X},${Z}]: ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} (Precision: ${Precision})"]
     	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${Precision}
     	{
     	    This:CheckAggro
-    		;Make sure we're moving
+    		face ${X} ${Z}
     		This:StartRunning
-    		Do
-    		{
-    			This:CheckAggro
-    			face ${X} ${Z}
-    			wait 4
-    
-    			if ${Math.Distance[${Me.X},${Me.Z},${SavX},${SavZ}]}<2
-    			{
-    				obstaclecount:Inc
-    
-    				; This might be caused by lag or not updating our co-ordinates
-    				if ${obstaclecount}==${checklag}
-    					wait 1
-    
-    				; We are probably stuck
-    				if ${obstaclecount}>${Math.Calc64[${checklag}+1]}
-    				{
-    					obstaclecount:Set[0]
-    					This:HandleObstacle[${failedattempts}]
-    					if (${failedattempts} == ${maxattempts})
-    					{
-    					    This:CheckAggro
-    						; Main script will handle this situation
-    						if ${keepmoving}
-    							This:StartRunning
-    						else
-    							This:StopRunning
-    						return "STUCK"
-    					}
-    					failedattempts:Inc
-    				}
-    			}
-    			else
-    				obstaclecount:Set[0] 
-    
-    			; Store our current location for future checking
-    			SavX:Set[${Me.X}]
-    			SavZ:Set[${Me.Z}]
-    		}
-    		while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${Precision}
-    	}
-    
-    	; Made it to our target loc
-    	if ${keepmoving}
-    		This:StartRunning
+    		
+    		This.MovingTo:Set[TRUE]   		
+	    }
     	else
-    		This:StopRunning
-    
-    	return "SUCCESS"
+    	{
+		    if ${keepmoving}
+        		This:StartRunning
+        	else
+        		This:StopRunning
+    	    This.MovingTo:Set[FALSE]
+    	    This.MovingTo_Timer:Set[0]
+    	}
 	}
 
 	method MoveToLocQ(float X, float Y, float Z,string DestName = "")
@@ -293,9 +271,9 @@ objectdef EQ2Nav
 		variable int count = 0
 		if ${This.Moving}
 		{
-			if ${This.OpenNavPath.Get[1](exists)}
+			if ${This.NavigationPath.Get[1](exists)}
 			{
-				if ${This.OpenNavPath.Get[${OpenNavPath.Used}].Location.X}==${X} && ${This.OpenNavPath.Get[${OpenNavPath.Used}].Location.Y}==${Y} && ${This.OpenNavPath.Get[${OpenNavPath.Used}].Location.Z}==${Z}
+				if ${This.NavigationPath.Get[${NavigationPath.Used}].Location.X}==${X} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Y}==${Y} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Z}==${Z}
 				{
 					return TRUE
 				}
@@ -324,7 +302,7 @@ objectdef EQ2Nav
 
 		; If we are already PRECISION from it why bother moving?
 		; Changed... Default PRECISION is slightly greater then USE distance
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.GetPRECISION} && ${POI.Type.Equal[HOTSPOT]}
+		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.GetPRECISION}
 		{
 			This:Output["Already here, not moving."]
 			This:ClearPath
@@ -342,9 +320,9 @@ objectdef EQ2Nav
 		}
 
 		;If we already have a Path make sure it is a new one
-		if ${This.OpenNavPath.Get[1](exists)}
+		if ${This.NavigationPath.Get[1](exists)}
 		{
-			if ${This.OpenNavPath.Get[${OpenNavPath.Used}].Location.X}==${X} && ${This.OpenNavPath.Get[${OpenNavPath.Used}].Location.Y}==${Y} && ${This.OpenNavPath.Get[${OpenNavPath.Used}].Location.Z}==${Z}
+			if ${This.NavigationPath.Get[${NavigationPath.Used}].Location.X}==${X} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Y}==${Y} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Z}==${Z}
 			{
 				This:Output["Error: Calling again to same destination. Aborting!"]
 				return
@@ -357,15 +335,15 @@ objectdef EQ2Nav
 		This.StuckTime:Set[${LavishScript.RunningTime}]
 
 		if ${OVERRIDE}!=0
-		{
 			This:Output["Nav Overrriding: Using path!"]
-		}
 
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 40 && ${OVERIDE}==0 && !${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]}
+		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 10 && ${OVERIDE}==0 && !${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]}
 		{
 			This:Debug["Moving to ${X},${Y},${Z} directly."]
-			This.OpenNavPath:Insert[${X},${Y},${Z},0]
-			This.NavDestination:Set[${X},${Y},${Z}]
+			;This.NavigationPath:Insert[${X},${Y},${Z},0]
+			;This.NavDestination:Set[${X},${Y},${Z}]
+			This:MoveTo[${X},${Y},${Z},3]
+			return
 		}
 		else
 		{
@@ -374,17 +352,19 @@ objectdef EQ2Nav
 			DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}].FQN}]
 			CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.ToActor.Loc}].ID}]
 			DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${X},${Math.Calc[${Y}+1]},${Z}].ID}]
+			This:Debug["DestinationRegion: ${DestinationRegion}"]
 			PathFinder:SelectPath[${CurrentRegion.FQN},${DestinationRegion.FQN},Path]
 
 			if ${Path.Hops}
 			{
 				do
 				{
-					This.OpenNavPath:Insert[${Path.Region[${Index}].CenterPoint},0]
+					This.NavigationPath:Insert[${Path.Region[${Index}].CenterPoint},0]
 				}
 				while ${Index:Inc} <= ${Path.Hops}
 
 				This.NavDestination:Set[${X},${Y},${Z}]
+				This:Debug["Path found: ${NavigationPath.Used} hops."] 
 			}
 			else
 			{
@@ -493,38 +473,62 @@ objectdef EQ2Nav
 		{
 			This.MeMoving:Set[TRUE]
 		}
-		This.MeLastLocation:Set[${Me.Location}]
+		This.MeLastLocation:Set[${Me.ToActor.Loc}]
 		
-		if ${OpenNavPath.Get[1](exists)}
+		;;;;;;;;;;;;;;;;;;;;;;
+		;; Deal with MoveTo()
+		if ${This.MovingTo}
 		{
-			This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.OpenNavPath.Get[1].Location}]}]
+		    if ${LavishScript.RunningTime}-${This.MovingTo_Timer}>1000
+		    {
+		        ;; Only pertinant if there is no current NavigationPath
+		        if !${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} == 0
+		        {
+    		        This:MoveTo[${This.MovingTo_X},${This.MovingTo_Z},${This.MovingTo_Precision},${This.MovingTo_keepmoving},${This.MovingTo_Attempts},${This.MovingTo_StopOnAggro}]
+    		        This.MovingTo_Timer:Set[${LavishScript.RunningTime}]
+    		    }
+		    }
+		}
+		;;
+		;;;;;;;;;;;;;;;;;;;;;;
 
-			if ${This.NextHopDistance} < ${This.GetPRECISION}
+		
+		if ${NavigationPath.Get[1](exists)}
+		{
+			This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
+
+            This:Debug["This.NextHopDistance: ${This.NextHopDistance}"]
+			if ${This.NextHopDistance} <= ${This.GetPRECISION}
 			{
-				OpenNavPath:Remove[1]
-				OpenNavPath:Collapse
+				NavigationPath:Remove[1]
+				NavigationPath:Collapse
 
-				if !${OpenNavPath.Get[1](exists)}
+				if (!${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} <= 0)
 				{
-					if ${This.Moving}
-						This:MoveStop
-					return
-				}
-
-				;If we have 2 hops and next hop is < 10 and we can get to the 2nd hop just go there
-				if ${This.OpenNavPath.Get[2](exists)} && ${Math.Distance[${Me.ToActor.Loc},${This.OpenNavPath.Get[1].Location}]} < 20
-				{
-					if !${Me.IsPathObstructed[${This.OpenNavPath.Get[2].Location}]}
+					if ${This.Moving} || ${This.MovingTo}
 					{
-						OpenNavPath:Remove[1]
-						OpenNavPath:Collapse
+					    This.MovingTo:Set[FALSE]
+						This:MoveStop	
+					    return
 					}
 				}
-				This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.OpenNavPath.Get[1].Location}]}]
+
+				This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
+				This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
 			}
 			else
 			{
-				This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
+			    if (${NavigationPath.Get[1](exists)} && ${NavigationPath.Used} > 0)
+			    {
+    				This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
+    				This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
+    			}
+    			else
+    			{
+    			    This.MovingTo:Set[FALSE]
+    			    This:MoveStop
+    			    return
+    			}
 			}
 
 			This.NextHopOldTime:Set[${LavishScript.RunningTime}]
@@ -538,14 +542,17 @@ objectdef EQ2Nav
 			{
 				if ${LavishScript.RunningTime}-${This.StuckTime}>1000
 				{
-					This:HandleObstacle
+					;This:HandleObstacle
 					This.StuckTime:Set[${LavishScript.RunningTime}]
 				}
 			}
 
 			This.TotalStuck:Set[0]
-			This:MoveToLoc[${This.OpenNavPath.Get[1].Location}]
-			Bot:Update_Status["Running"]
+		}
+		elseif ${This.MovingTo}
+		{
+		    This.MovingTo:Set[FALSE]
+		    This:MoveStop
 		}
 	}
 
@@ -588,14 +595,7 @@ objectdef EQ2Nav
 	method MoveStop()
 	{
         if ${Me.IsMoving} || ${This.Moving}
-        {
-        	do
-        	{
-        	    press ${This.AUTORUN}
-        		wait 5
-        	}
-        	while ${Me.IsMoving}
-        }
+            press "${This.AUTORUN}"
 	}
 
 	member Moving()
