@@ -8,6 +8,7 @@
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2Nav_Lib.iss
 
+#define ADDPOINT f1
 #define ADDNAMEPOINT f2
 #define SAVEPOINTS f3
 #define QUIT f11
@@ -18,6 +19,10 @@ function main()
 	declarevariable CurrentTask int global
     declarevariable HudX int script
     declarevariable HudY int script
+    
+    ;; Variables that should be user definable (EQ2Mapper also has variables that should be assigned per user);;;
+    declarevariable MapFileRegionsType string script
+    MapFileRegionsType:Set["Box"]
     
 	Script:Squelch
 
@@ -32,11 +37,13 @@ function main()
 	echo "EQ2NavCreator:: Initialization complete."
     echo "---------------------------"
 
-	bind addnamepoint "ADDNAMEPOINT" "CurrentTask:Set[1]"
-	bind savepoints "SAVEPOINTS" "CurrentTask:Set[2]"
-	bind quit "QUIT" "CurrentTask:Set[3]"
+    bind addpoint "ADDPOINT" "CurrentTask:Set[1]"
+	bind addnamepoint "ADDNAMEPOINT" "CurrentTask:Set[2]"
+	bind savepoints "SAVEPOINTS" "CurrentTask:Set[3]"
+	bind quit "QUIT" "CurrentTask:Set[4]"
 
-	HUD -add FunctionKey2 ${HudX},${HudY:Inc[15]} "ADDNAMEPOINT - Adds a Navigational Point with a Label you specify."
+    HUD -add FunctionKey1 ${HudX},${HudY:Inc[15]} "ADDPOINT - Add a Navigational Point at your current location"
+	HUD -add FunctionKey2 ${HudX},${HudY:Inc[15]} "ADDNAMEPOINT - Adds a Navigational Point with a Name you specify."
 	HUD -add FunctionKey3 ${HudX},${HudY:Inc[15]} "SAVEPOINTS - Saves ALL Navigational Points."
 	HUD -add FunctionKey11 ${HudX},${HudY:Inc[15]} "QUIT - Exit EQ2NavCreator (and save all navigation points)"
 	
@@ -56,21 +63,36 @@ function main()
 	{
 		switch ${CurrentTask}
 		{
-			case 1
+		    case 1
+		        CurrentTask:Set[0]
+		        Mapper:MapLocationBox[${Me.ToActor.Loc},"Auto"]
+		        announce "\\#FF6E6ENavigational Point Added" 1 2
+		        break
+		    
+			case 2
 				CurrentTask:Set[0]
 				InputBox "What name do you want to give this NavPoint?"
 				if ${UserInput.Length}
 				{
-					Mapper:MapLocation[${Me.X},${Me.Y},${Me.Z},${UserInput}]
-					announce "\\#FF6E6ENavigational Point Added" 1 2
+				    echo "MapFileRegionsType: ${MapFileRegionsType}"
+				    if (${MapFileRegionsType.Equal[Box]})
+				    {
+				        Mapper:MapLocationBox[${Me.X},${Me.Y},${Me.Z},${UserInput}]
+        		        announce "\\#FF6E6ENavigational Point Added" 1 2
+        		    }
+				    elseif (${MapFileRegionsType.Equal[Box]})
+				    {
+				        ;Mapper:MapLocationPoint[${Me.X},${Me.Y},${Me.Z},${UserInput}]
+        		        announce "\\#FF6E6ENavigational Point Added" 1 2
+        		    }
 				}
 				break
-			case 2
+			case 3
 				CurrentTask:Set[0]
 				Mapper:Save
 				announce "Navigational Points have been Saved" 1 3
 				break
-			case 3
+			case 4
 				CurrentTask:Set[99]
 				break
 		}
@@ -78,7 +100,7 @@ function main()
 		Mapper:Pulse
 		waitframe
 	}
-	while ${CurrentTask}<4
+	while ${CurrentTask}<5
 
 	Script:End
 }
@@ -91,6 +113,7 @@ function atexit()
 	bind -delete savepoints
 	bind -delete quit
 
+    HUD -remove FunctionKey1
 	HUD -remove FunctionKey2
 	HUD -remove FunctionKey3
 	HUD -remove FunctionKey11
