@@ -983,7 +983,7 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead}
-				call CastSpellRange 300 301 0 0 ${Me.Group[${tempgrp}].ID} 1
+				call CastSpellRange 300 301 0 0 ${Me.Group[${temphl}].ID} 1
 		}
 		while ${temphl:Inc}<${grpcnt}
 	}
