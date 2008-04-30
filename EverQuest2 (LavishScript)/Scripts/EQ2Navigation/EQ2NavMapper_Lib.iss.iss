@@ -8,12 +8,12 @@
 ;;    http://www.lavishsoft.com/wiki/index.php/LavishNav:Object_Types
 ;;
 
-#include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavMapper_Lib.iss
-
 objectdef EQ2Mapper
 {
-    ;; Move these to settings/UI so users can adjust
+    ;; Should be setable...
     variable bool UseLSO = FALSE
+    ;; For zones like tradeskill instances this should be very low...for outdoor zones, it can be higher (make setable)
+    variable int MaxDistanceForIntersectingRegions = 2
     
     variable filepath ZonesDir = "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/zones/"
 	variable filepath ConfigDir = "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/config/"
@@ -33,6 +33,8 @@ objectdef EQ2Mapper
 	variable bool MapPathwayReverse = FALSE
 
 	variable bool MapPathwayOld = FALSE
+	
+
 
 	method Initialize()
 	{
@@ -161,26 +163,11 @@ objectdef EQ2Mapper
 		{
 			This:MapLocation[${Me.ToActor.Loc},"${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
 		}
-
-
-		if ${CurrentRegion.FQN.NotEqual[${PreviousRegion.FQN}]}
-		{
-			if ${This.MapPathway}
-			{
-				This:Output["Marking preferred path from ${CurrentRegion.FQN} to ${PreviousRegion.FQN}."]
-				PreviousRegion.GetConnection[${CurrentRegion.FQN}]:SetDistance[1]
-			}
-			if ${This.PathwayReverse}
-			{
-				This:Output["Marking preferred path (reverse) from ${PreviousRegion.FQN} to ${CurrentRegion.FQN}."]
-				CurrentRegion.GetConnection[${PreviousRegion.FQN}]:SetDistance[1]
-			}
-		}
 	}
 
 	member IsMapped(float X, float Y, float Z)
 	{
-		if (${This.CurrentZone.ID} == ${This.CurrentRegion.ID})
+	    if (${This.CurrentZone.ID} == ${This.CurrentRegion.ID})
 		{
 			return FALSE
 		}
@@ -196,14 +183,15 @@ objectdef EQ2Mapper
 		variable float Z1
 		variable float Z2
 
-		X1:Set[${X}-3]
-		X2:Set[${X}+3]
+		X1:Set[${X}-2.5]
+		X2:Set[${X}+2.5]
 		Y1:Set[${Y}-3]
 		Y2:Set[${Y}+3]
-		Z1:Set[${Z}-3]
-		Z2:Set[${Z}+3]
+		Z1:Set[${Z}-2.5]
+		Z2:Set[${Z}+2.5]
 
 		CurrentZone:AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]
+		;CurrentZone:AddChild[point,${RegionName},-unique,${X},${Y},${Z}]
 		This:Output["Area not found, mapping!  Added (${RegionName} ${X}, ${Y}, ${Z})."]
 		LastRegionAdded_Name:Set[${RegionName}]
 		LastRegionAdded_X:Set[${X}]
@@ -229,35 +217,35 @@ objectdef EQ2Mapper
     		This.PreviousRegion:SetRegion[${This.CurrentRegion}]
     	
 
-		if ${This.ShouldConnect[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
-		{
+		;if ${This.ShouldConnect[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
+		;{
 			This:Debug["Connecting ${CurrentRegion.FQN} to ${PreviousRegion.FQN}."]
 			CurrentRegion:Connect[${PreviousRegion.FQN}]
-		}
-		if ${This.ShouldConnect[${PreviousRegion.FQN},${CurrentRegion.FQN}]}
-		{
+		;}
+		;if ${This.ShouldConnect[${PreviousRegion.FQN},${CurrentRegion.FQN}]}
+		;{
 			This:Debug["Connecting ${PreviousRegion.FQN} to ${CurrentRegion.FQN}."]
 			PreviousRegion:Connect[${CurrentRegion.FQN}]
-		}
+		;}
 
 		; Need to add in Connect to Previous spot to current spot and current spot to previous spot if no collisions
 		; Scan all descendants within 5 feet of this area
-		RegionsFound:Set[${CurrentZone.ChildrenWithin[SurroundingRegions,10,${CurrentRegion.CenterPoint}]}]
-		if ${RegionsFound} > 0
-		{
-			do
-			{
-				if ${This.ShouldConnect[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]} && ${This.ShouldConnect[${SurroundingRegions.Get[${Index}].FQN},${CurrentRegion.FQN}]}
-				{
-					Connected_To:Inc
-					Connected_From:Inc
-					CurrentRegion:Connect[${SurroundingRegions.Get[${Index}].FQN}]
-					SurroundingRegions.Get[${Index}]:Connect[${CurrentRegion.FQN}]
-				}
-			}
-			while ${SurroundingRegions.Get[${Index:Inc}](exists)}
-			This:Output["Connections To: ${Connected_To} and From: ${Connected_From}"]
-		}
+		;RegionsFound:Set[${CurrentZone.ChildrenWithin[SurroundingRegions,10,${CurrentRegion.CenterPoint}]}]
+		;if ${RegionsFound} > 0
+		;{
+		;	do
+		;	{
+		;		if ${This.ShouldConnect[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]} && ${This.ShouldConnect[${SurroundingRegions.Get[${Index}].FQN},${CurrentRegion.FQN}]}
+		;		{
+		;			Connected_To:Inc
+		;			Connected_From:Inc
+		;			CurrentRegion:Connect[${SurroundingRegions.Get[${Index}].FQN}]
+		;			SurroundingRegions.Get[${Index}]:Connect[${CurrentRegion.FQN}]
+		;		}
+		;	}
+		;	while ${SurroundingRegions.Get[${Index:Inc}](exists)}
+		;	This:Output["Connections To: ${Connected_To} and From: ${Connected_From}"]
+		;}
 	}
 
 	member ShouldConnect(string RegionA, string RegionB)
@@ -283,26 +271,11 @@ objectdef EQ2Mapper
 		{
 			return FALSE
 		}
-
-		if ${This.MapPathway}
-		{
-			if (${RegionRefA.CenterPoint.X} - ${RegionRefB.CenterPoint.X} == 0) && (${RegionRefA.CenterPoint.Y} - ${RegionRefB.CenterPoint.Y} == 0)
-			{
-				This:Output["Pathway, moving vertically -- Map it!"]
-				return TRUE
-			}
-			if !${This.CollisionTest[${RegionRefA.CenterPoint.}, ${RegionRefB.CenterPoint}]}
-			{
-				This:Output["Pathway (smooth way) -- Map it!"]
-				return TRUE
-			}
-			if !${This.CollisionTest[${RegionRefA.CenterPoint.X}, ${RegionRefA.CenterPoint.Y}, ${Math.Calc[${RegionRefA.CenterPoint.Z}+1.6]}, ${RegionRefB.CenterPoint.X}, ${RegionRefB.CenterPoint.Y}, ${Math.Calc[${RegionRefA.CenterPoint.Z}+1.6]}]}
-			{
-				This:Output["Pathway (rough way) -- Map it!"]
-				return TRUE
-			}
-		}
-
+		
+		if ${RegionA.CenterPoint.Y} > ${RegionB.CenterPoint.Y} + 2
+		    return FALSE
+		elseif ${RegionA.CenterPoint.Y} < ${RegionB.CenterPoint.Y} - 2
+		    return FALSE
 
 		if ${Topography.IsSteep[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
 		{
@@ -325,8 +298,7 @@ objectdef EQ2Mapper
 			return FALSE
 		}
 
-		; Check Distance between if > 10 then it shouldnt connect
-		if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Y}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Y}]}>10
+		if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} > ${MaxDistanceForIntersectingRegions}
 		{
 			return FALSE
 		}
