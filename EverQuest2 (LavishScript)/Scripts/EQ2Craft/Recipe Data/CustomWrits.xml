@@ -698,7 +698,8 @@
     <Setting Name="Forward Charge Apprentice IV">Stance: Forward Charge Apprentice IV</Setting>
     <Setting Name="Bodyguard Apprentice IV">Stance: Bodyguard Apprentice IV</Setting>
     <Setting Name="White Peach Cookie">White Peach Cookies</Setting>
-    
+    <Setting Name="Wild Apple Muffins">Wild Apple Muffin</Setting>
+    <Setting Name="Skull Post">a Skull Post</Setting>
   </Set>
 
 </InnerSpaceSettings>
