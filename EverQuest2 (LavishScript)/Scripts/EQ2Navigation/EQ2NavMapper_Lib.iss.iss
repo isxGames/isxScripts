@@ -10,10 +10,17 @@
 
 objectdef EQ2Mapper
 {
-    ;; Should be setable...
+    ;;;; Variables to make user definable ;;;;;;
     variable bool UseLSO = FALSE
-    ;; For zones like tradeskill instances this should be very low...for outdoor zones, it can be higher (make setable)
-    variable int MaxDistanceForIntersectingRegions = 2
+    
+    ;; Can be Box or Point
+    variable string MapFileRegionsType = "Box"
+    
+    ;; Variables used in creating "Box" type map files (Note: MaxBoxIntersectionDistance must be at least a couple of meters more than BoxRadius.)
+    variable float BoxRadius = 3
+    variable int MinBoxIntersectionDistance = 5
+    variable int MaxBoxIntersectionDistance = 8
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     variable filepath ZonesDir = "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/zones/"
 	variable filepath ConfigDir = "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/config/"
@@ -78,14 +85,6 @@ objectdef EQ2Mapper
 		}
 		PreviousZone:Set[${CurrentZone}]
 		CurrentZone:SetRegion[${LNavRegion[${This.ZoneText}].FQN}]
-	}
-
-    ;; This is unused at the moment....
-	method Save1()
-	{
-		This:Debug["Saving map file ${ConfigDir}${ConfigFile}."]
-		LNavRegion[EQ2]:Export[-lso,"${ConfigDir}new${ConfigFile}"]
-		This:Debug["Saved."]
 	}
 
 	method BackupZone()
@@ -158,23 +157,29 @@ objectdef EQ2Mapper
 			This:ZoneChanged
 		}
 
-		; Do we have this mapped? If not map it
-		if !${This.IsMapped[${Me.ToActor.Loc}]}
+		switch ${This.MapFileRegionsType}
 		{
-			This:MapLocation[${Me.ToActor.Loc},"${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
+		    case Box
+		    if (!${This.IsBoxMapped[${Me.ToActor.Loc}]})
+		    {
+			    This:MapLocationBox[${Me.ToActor.Loc},"${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
+		    
+		    }
+		    break
+		    
+		    case Point
+		    break
 		}
 	}
 
-	member IsMapped(float X, float Y, float Z)
+	member IsBoxMapped(float X, float Y, float Z)
 	{
 	    if (${This.CurrentZone.ID} == ${This.CurrentRegion.ID})
-		{
 			return FALSE
-		}
 		return TRUE
 	}
 
-	method MapLocation(float X, float Y, float Z, string RegionName)
+	method MapLocationBox(float X, float Y, float Z, string RegionName)
 	{
 		variable float X1
 		variable float X2
@@ -183,26 +188,29 @@ objectdef EQ2Mapper
 		variable float Z1
 		variable float Z2
 
-		X1:Set[${X}-2.5]
-		X2:Set[${X}+2.5]
+		X1:Set[${X}-${This.BoxRadius}]
+		X2:Set[${X}+${This.BoxRadius}]
 		Y1:Set[${Y}-3]
 		Y2:Set[${Y}+3]
-		Z1:Set[${Z}-2.5]
-		Z2:Set[${Z}+2.5]
+		Z1:Set[${Z}-${This.BoxRadius}]
+		Z2:Set[${Z}+${This.BoxRadius}]
+		
+		if (${RegionName.Equal["Auto"]})
+		    RegionName:Set["${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
+		    
 
-		CurrentZone:AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]
-		;CurrentZone:AddChild[point,${RegionName},-unique,${X},${Y},${Z}]
-		This:Output["Area not found, mapping!  Added (${RegionName} ${X}, ${Y}, ${Z})."]
+        CurrentZone:AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]
+		This:Output["Adding Region to Map (${RegionName} ${X}, ${Y}, ${Z})"]
 		LastRegionAdded_Name:Set[${RegionName}]
 		LastRegionAdded_X:Set[${X}]
 		LastRegionAdded_Y:Set[${Y}]
 		LastRegionAdded_Z:Set[${Z}]
 		
 		;Connect To Previous and Current
-		This:ConnectNeighbours[${RegionName}]
+		This:ConnectBoxNeighbours[${RegionName}]
 	}
 
-	method ConnectNeighbours(string RegionName)
+	method ConnectBoxNeighbours(string RegionName)
 	{
 		variable index:lnavregionref SurroundingRegions
 		variable int RegionsFound
@@ -217,38 +225,44 @@ objectdef EQ2Mapper
     		This.PreviousRegion:SetRegion[${This.CurrentRegion}]
     	
 
-		;if ${This.ShouldConnect[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
-		;{
-			This:Debug["Connecting ${CurrentRegion.FQN} to ${PreviousRegion.FQN}."]
+		if ${This.ShouldConnectBox[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
+		{
+			This:Debug["Connecting ${CurrentRegion.FQN} -> ${PreviousRegion.FQN}."]
 			CurrentRegion:Connect[${PreviousRegion.FQN}]
-		;}
-		;if ${This.ShouldConnect[${PreviousRegion.FQN},${CurrentRegion.FQN}]}
-		;{
-			This:Debug["Connecting ${PreviousRegion.FQN} to ${CurrentRegion.FQN}."]
+			Connected_To:Inc
+		}
+		if ${This.ShouldConnectBox[${PreviousRegion.FQN},${CurrentRegion.FQN}]}
+		{
+			This:Debug["Connecting ${PreviousRegion.FQN} -> ${CurrentRegion.FQN}."]
 			PreviousRegion:Connect[${CurrentRegion.FQN}]
-		;}
+			Connected_From:Inc
+		}
 
 		; Need to add in Connect to Previous spot to current spot and current spot to previous spot if no collisions
 		; Scan all descendants within 5 feet of this area
-		;RegionsFound:Set[${CurrentZone.ChildrenWithin[SurroundingRegions,10,${CurrentRegion.CenterPoint}]}]
-		;if ${RegionsFound} > 0
-		;{
-		;	do
-		;	{
-		;		if ${This.ShouldConnect[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]} && ${This.ShouldConnect[${SurroundingRegions.Get[${Index}].FQN},${CurrentRegion.FQN}]}
-		;		{
-		;			Connected_To:Inc
-		;			Connected_From:Inc
-		;			CurrentRegion:Connect[${SurroundingRegions.Get[${Index}].FQN}]
-		;			SurroundingRegions.Get[${Index}]:Connect[${CurrentRegion.FQN}]
-		;		}
-		;	}
-		;	while ${SurroundingRegions.Get[${Index:Inc}](exists)}
-		;	This:Output["Connections To: ${Connected_To} and From: ${Connected_From}"]
-		;}
+		RegionsFound:Set[${CurrentZone.ChildrenWithin[SurroundingRegions,10,${CurrentRegion.CenterPoint}]}]
+		if ${RegionsFound} > 0
+		{
+			do
+			{
+			    if (${SurroundingRegions.Get[${Index}].FQN.Equal[${CurrentRegion.FQN}]} || ${SurroundingRegions.Get[${Index}].FQN.Equal[${PreviousRegion.FQN}]})
+			        continue
+			        
+				if ${This.ShouldConnectBox[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]} && ${This.ShouldConnectBox[${SurroundingRegions.Get[${Index}].FQN},${CurrentRegion.FQN}]}
+				{
+					Connected_To:Inc
+					Connected_From:Inc
+					CurrentRegion:Connect[${SurroundingRegions.Get[${Index}].FQN}]
+					SurroundingRegions.Get[${Index}]:Connect[${CurrentRegion.FQN}]
+					This:Debug["Connecting ${SurroundingRegions.Get[${Index}].FQN} <-> ${CurrentRegion.FQN}."]
+				}
+			}
+			while ${SurroundingRegions.Get[${Index:Inc}](exists)}
+			This:Output["Connections To: ${Connected_To} and From: ${Connected_From}"]
+		}
 	}
 
-	member ShouldConnect(string RegionA, string RegionB)
+	member ShouldConnectBox(string RegionA, string RegionB)
 	{
 		variable lnavregionref RegionRefA
 		variable lnavregionref RegionRefB
@@ -267,16 +281,20 @@ objectdef EQ2Mapper
 		RegionRefA:SetRegion[${RegionA}]
 		RegionRefB:SetRegion[${RegionB}]
 
-		if !${This.RegionsIntersect[${RegionA},${RegionB}]}
+		if !${This.BoxRegionsIntersect[${RegionA},${RegionB}]}
 		{
 			return FALSE
 		}
 		
-		if ${RegionA.CenterPoint.Y} > ${RegionB.CenterPoint.Y} + 2
+		if ${RegionRefA.CenterPoint.Y} > ${RegionRefB.CenterPoint.Y} + 3
 		    return FALSE
-		elseif ${RegionA.CenterPoint.Y} < ${RegionB.CenterPoint.Y} - 2
+		elseif ${RegionRefA.CenterPoint.Y} < ${RegionRefB.CenterPoint.Y} - 3
 		    return FALSE
-
+		elseif ${RegionRefB.CenterPoint.Y} > ${RegionRefA.CenterPoint.Y} + 3
+		    return FALSE
+		elseif ${RegionRefB.CenterPoint.Y} < ${RegionRefA.CenterPoint.Y} - 3
+		    return FALSE
+		    
 		if ${Topography.IsSteep[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
 		{
 			This:Output["Point too steep! -- Not Connected"]
@@ -285,7 +303,7 @@ objectdef EQ2Mapper
 		return TRUE
 	}
 
-	member RegionsIntersect(string RegionA, string RegionB)
+	member BoxRegionsIntersect(string RegionA, string RegionB)
 	{
 		variable lnavregionref RA
 		variable lnavregionref RB
@@ -298,10 +316,14 @@ objectdef EQ2Mapper
 			return FALSE
 		}
 
-		if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} > ${MaxDistanceForIntersectingRegions}
+        if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} >= ${This.MaxBoxIntersectionDistance}
 		{
 			return FALSE
 		}
+        if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} <= ${This.MinBoxIntersectionDistance}
+		{
+			return FALSE
+		}		
 		return TRUE
 	}
 
