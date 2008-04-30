@@ -1,5 +1,13 @@
 Revision History
 ----------------
+v7.10 - EQ2Craft should be less likely to be stuck "Processing Recipes".
+      - When you gain a tradeskill level (after level 20) EQ2Craft will scribe any 'essentials'
+        or 'advanced' recipe books that you have in your inventory for the level gained before
+        acquiring the next writ.
+      - Movement issues have been addressed somewhat.  In the near future we will be transitioning
+        to LavishNav, so if there are bugs remaining, they will probably remain until that transition
+        is complete.
+
 v7.09 - Added option to GUI for fine-tuning the path precision on a per-character basis. This
         option can be found on the Options tab. If you are bouncing back and forth while running
         the path, you will want to increase this number. If you are not bouncing, but are not 
