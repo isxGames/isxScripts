@@ -13,18 +13,46 @@
 #define SAVEPOINTS f3
 #define QUIT f11
 
-function main()
+function main(... Args)
 {
+    if !${ISXEQ2(exists)}
+    {
+        echo "- ISXEQ2 must be loaded to use this script."
+        return
+    }
+    do
+    {
+        waitframe
+    }
+    while !${ISXEQ2.IsReady}
+
     declarevariable Mapper EQ2Mapper global
 	declarevariable CurrentTask int global
     declarevariable HudX int script
     declarevariable HudY int script
-    
+    declarevariable AutoPlot bool script
+        
     ;; Variables that should be user definable (EQ2Mapper also has variables that should be assigned per user);;;
     declarevariable MapFileRegionsType string script
     MapFileRegionsType:Set["Box"]
     
 	Script:Squelch
+	
+	
+	if ${Args.Size} > 0
+	{
+	    variable int Iterator = 1
+		do
+		{
+			if (${Args[${Iterator}].Equal[-autoplot]} || ${Args[${Iterator}].Equal[-AUTOPLOT]} || ${Args[${Iterator}].Find[-auto]} > 0)
+				AutoPlot:Set[TRUE]
+			else
+				echo "EQ2NavCreator:: '${Args[${Iterator}]}' is not a valid command line argument:  Ignoring..."
+		}
+		while ${Iterator:Inc} <= ${Args.Size}
+	}	
+	
+	
 
 	; Set the default location of the HUD
 	HudX:Set[230]
@@ -54,10 +82,8 @@ function main()
 	HUDSet NavCountStatus -c FFFF00	
 	
 	
-	if ${Mapper.CurrentZone.ChildCount}==0
-	{
+	if (${Mapper.CurrentZone.ChildCount} == 0 && ${AutoPlot})
 		CurrentTask:Set[1]
-	}
 
 	Do
 	{
@@ -97,7 +123,8 @@ function main()
 				break
 		}
 		
-		Mapper:Pulse
+		if (${AutoPlot})
+    		Mapper:Pulse
 		waitframe
 	}
 	while ${CurrentTask}<5
