@@ -240,20 +240,11 @@ function Obstacle(int delay)
 	if ${delay}>0
 	{
 		;backup a little
-        if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
-            eq2press -release MOVEFORWARD
-        else
-            press -release MOVEFORWARD		
+        press -release MOVEFORWARD		
         wait 1
-		if ${ISXEQ2.IsValidEQ2PressKey[MOVEBACKWARD]}
-            eq2press -hold MOVEBACKWARD
-        else
-            press -hold MOVEBACKWARD		
+		press -hold MOVEBACKWARD		
 		wait ${Math.Calc64[${BackupTime}*${delay}]}
-        if ${ISXEQ2.IsValidEQ2PressKey[MOVEBACKWARD]}
-            eq2press -release MOVEBACKWARD
-        else
-            press -release MOVEBACKWARD
+        press -release MOVEBACKWARD
 
 		if ${delay}==1 || ${delay}==3 || ${delay}==5
 		{
@@ -261,32 +252,20 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                    eq2press -hold STRAFELEFT
-                else
-                    press -hold STRAFELEFT			    
+                press -hold STRAFELEFT			    
 				call StartRunning
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                    eq2press -release STRAFELEFT
-                else
-                    press -release STRAFELEFT	
+                press -release STRAFELEFT	
 				call StopRunning
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                    eq2press -hold STRAFERIGHT
-                else
-                    press -hold STRAFERIGHT	
+                press -hold STRAFERIGHT	
 				call StartRunning
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                    eq2press -release STRAFERIGHT
-                else
-                    press -release STRAFERIGHT	
+                press -release STRAFERIGHT	
 				call StopRunning
 				wait 2
 			}
@@ -297,29 +276,17 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                    eq2press -hold STRAFELEFT
-                else
-                    press -hold STRAFELEFT	
+                press -hold STRAFELEFT	
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                    eq2press -release STRAFELEFT
-                else
-                    press -release STRAFELEFT	
+                press -release STRAFELEFT	
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                    eq2press -hold STRAFERIGHT
-                else
-                    press -hold STRAFERIGHT	
+                press -hold STRAFERIGHT	
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                    eq2press -release STRAFERIGHT
-                else
-                    press -release STRAFERIGHT	
+                press -release STRAFERIGHT	
 				wait 2
 			}
 		}
@@ -359,10 +326,7 @@ function StopRunning()
 	{
 		do
 		{
-    	    if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
-    	        eq2press -release MOVEFORWARD
-    	    else
-    	        press AUTORUN
+    	    press AUTORUN
 			wait 5
 		}
 		while ${Me.IsMoving}
@@ -375,10 +339,7 @@ function StartRunning()
 	{
 		do
 		{
-    	    if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
-    	        eq2press -hold MOVEFORWARD
-    	    else
-    	        press AUTORUN
+    	    press AUTORUN
 			wait 5
 		}
 		while !${Me.IsMoving}
