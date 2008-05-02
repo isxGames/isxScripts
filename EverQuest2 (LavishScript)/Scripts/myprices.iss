@@ -98,6 +98,7 @@ function main()
 		Actor[name,a market bulletin board]:DoubleClick
 		wait 20
 		Actor[${Me}]:DoTarget
+		call echolog " * Scanning using Room Board *"
 	}
 	else
 	{
@@ -105,6 +106,7 @@ function main()
 		wait 1
 		Target:DoubleClick
 		wait 20
+		call echolog " * Scanning using Broker *"
 	}
 
 	i:Set[1]
@@ -1028,7 +1030,6 @@ function BrokerSearch(string lookup)
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
 	Declare stopsearch bool FALSE local
-
 	broker Name "${lookup}" Sort ByPriceAsc MaxLevel 999
 	Wait 15
 	; check if broker has any listed to compare with your item
@@ -1702,6 +1703,7 @@ function Unselectcraft(int ItemID)
 
 function AddLog(string textline, string colour)
 {
+	call echolog "** ${textline} **"
 	UIElement[ItemList@Log@GUITabs@MyPrices]:AddItem[${textline},1,${colour}]
 }
 
