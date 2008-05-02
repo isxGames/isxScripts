@@ -44,7 +44,7 @@ objectdef EQ2Nav
     ;;         know what to expect.  
     ;;
     variable float gPrecision = 2
-    variable float DestinationPrecision = 4.5
+    variable float DestinationPrecision = 5
     variable int SkipNavTime = 50
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
