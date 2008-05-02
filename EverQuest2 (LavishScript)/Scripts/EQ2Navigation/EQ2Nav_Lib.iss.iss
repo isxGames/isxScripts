@@ -214,20 +214,7 @@ objectdef EQ2Nav
     	variable int failedattempts=0
     	variable int checklag
     	variable int maxattempts=${If[${Attempts},${Attempts},3]}
-    	
-    	
-    	;;;; Keep track of things for the Pulse()
-    	;;
-    	This.MovingTo_X:Set[${X}]
-    	This.MovingTo_Y:Set[${Y}]
-    	This.MovingTo_Z:Set[${Z}]
-    	This.MovingTo_Precision:Set[${fPrecision}]
-    	This.MovingTo_keepmoving:Set[${keepmoving}]
-    	This.MovingTo_Attempts:Set[${Attempts}]
-    	This.MovingTo_StopOnAggro:Set[${StopOnAggro}]
-        ;;
-        ;;;;
-        
+
     	This:CheckAggro
     	
     	;; If we're moving to a specific point, or if this is the final destination -- then accept a much higher precision value
@@ -261,9 +248,10 @@ objectdef EQ2Nav
     	if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > ${fPrecision} || ${Mapper.IsSteep[${X},${Y},${Z},${Me.ToActor.Loc}]} || ${Me.CheckCollision[${X},${Y},${Z}]}
     	{
     	    This:CheckAggro
-    		face ${X} ${Z}
-    		This:StartRunning
-    		
+    	    
+        	face ${X} ${Z}
+        	This:StartRunning
+   
     		This.MovingTo:Set[TRUE]   		
 	    }
     	else
@@ -286,6 +274,18 @@ objectdef EQ2Nav
         	    }
         	}
     	}
+    	
+    	;;;; Keep track of things for the Pulse()
+    	;;
+    	This.MovingTo_X:Set[${X}]
+    	This.MovingTo_Y:Set[${Y}]
+    	This.MovingTo_Z:Set[${Z}]
+    	This.MovingTo_Precision:Set[${fPrecision}]
+    	This.MovingTo_keepmoving:Set[${keepmoving}]
+    	This.MovingTo_Attempts:Set[${Attempts}]
+    	This.MovingTo_StopOnAggro:Set[${StopOnAggro}]
+        ;;
+        ;;;;
 	}
 
 	method MoveToLocQ(float X, float Y, float Z,string DestName = "")
