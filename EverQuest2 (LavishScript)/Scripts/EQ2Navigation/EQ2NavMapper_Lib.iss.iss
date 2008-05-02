@@ -65,14 +65,14 @@ objectdef EQ2Mapper
 	/* moved map loading out of intialize to allow LSO setting to load */
 	method LoadMapper()
 	{
-		This:Output["Starting mapping system."]
+		;This:Output["Starting mapping system."]
 		call This.Load
 		This:ZoneChanged
 	}
 
 	method Shutdown()
 	{
-		This:Output["Shutting down."]
+		;This:Output["Shutting down."]
 		This:Save
 		LavishNav:Clear
 	}
@@ -139,7 +139,7 @@ objectdef EQ2Mapper
 
 	method InitializeRegions()
 	{
-		This:Output["Initializing regions."]
+		;This:Output["Initializing regions."]
 		LavishNav.Tree:AddChild[universe,EQ2,-unique]
 			
 		LNavRegion[EQ2]:AddChild[universe,${This.Continent},-unique,-coordinatesystem]		
