@@ -201,6 +201,7 @@ objectdef EQ2Mapper
 		    
 
         CurrentZone:AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]
+        ;CurrentZone.FindRegion[${RegionName}]:SetCustom[Note,"Open,269"]
 		This:Output["Adding Region to Map (${RegionName} ${X}, ${Y}, ${Z})"]
 		LastRegionAdded_Name:Set[${RegionName}]
 		LastRegionAdded_X:Set[${X}]
