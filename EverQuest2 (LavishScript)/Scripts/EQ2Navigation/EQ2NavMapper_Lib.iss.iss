@@ -17,7 +17,7 @@ objectdef EQ2Mapper
     variable string MapFileRegionsType = "Box"
     
     ;; Variables used in creating "Box" type map files
-    variable float BoxRadius = 2.5
+    variable float BoxRadius = 2
     ;;;; 5 & 8 also seem to work fairly well
     variable int MinBoxIntersectionDistance = 3
     variable int MaxBoxIntersectionDistance = 7
@@ -66,7 +66,7 @@ objectdef EQ2Mapper
 	method LoadMapper()
 	{
 		This:Output["Starting mapping system."]
-		This:Load
+		call This.Load
 		This:ZoneChanged
 	}
 
@@ -92,11 +92,11 @@ objectdef EQ2Mapper
 	{
 		if ${UseLSO}
 		{
-			LNavRegion[${This.ZoneText}]:Export[-lso,"${ZonesDir}/bak/${This.ZoneText}.lso"]
+			LNavRegion[${This.ZoneText}]:Export[-lso,"${ZonesDir}bak/${This.ZoneText}"]
 		}
 		else
 		{
-			LNavRegion[${This.ZoneText}]:Export["${ZonesDir}/bak/${This.ZoneText}.xml"]
+			LNavRegion[${This.ZoneText}]:Export["${ZonesDir}bak/${This.ZoneText}.xml"]
 		}
 	}
 
@@ -104,7 +104,7 @@ objectdef EQ2Mapper
 	{
 		if ${UseLSO}
 		{
-			LNavRegion[${This.ZoneText}]:Export[-lso,"${ZonesDir}${This.ZoneText}.lso"]
+			LNavRegion[${This.ZoneText}]:Export[-lso,"${ZonesDir}${This.ZoneText}"]
 		}
 		else
 		{
@@ -112,7 +112,7 @@ objectdef EQ2Mapper
 		}
 	}
 
-	method Load()
+	function Load()
 	{
 		variable lnavregionref LoadZoneRegion
 		variable lnavregionref LoadedZoneRegion
@@ -129,7 +129,7 @@ objectdef EQ2Mapper
 
 		if ${UseLSO}
 		{
-			LoadedZoneRegion:Import[-lso,"${ZonesDir}${This.ZoneText}.lso"]
+			LoadedZoneRegion:Import[-lso,"${ZonesDir}${This.ZoneText}"]
 		}
 		else
 		{
@@ -395,7 +395,7 @@ objectdef EQ2Topography
 		{
 			return FALSE
 		}
-		slope:Set[${Math.Atan[${vertical}/${horizontal}]}]
+		slope:Set[${Math.Cos[${vertical}/${horizontal}]}]
 		if ${slope} > 45
 		{
 			return TRUE
