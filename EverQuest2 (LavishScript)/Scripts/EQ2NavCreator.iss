@@ -17,7 +17,7 @@ function main(... Args)
 {
     if !${ISXEQ2(exists)}
     {
-        echo "- ISXEQ2 must be loaded to use this script."
+        echo "EQ2NavCreator:: ISXEQ2 must be loaded to use this script."
         return
     }
     do
@@ -92,7 +92,6 @@ function main(... Args)
 		    case 1
 		        CurrentTask:Set[0]
 		        Mapper:MapLocationBox[${Me.ToActor.Loc},"Auto"]
-		        announce "\\#FF6E6ENavigational Point Added" 1 2
 		        break
 		    
 			case 2
