@@ -260,12 +260,12 @@
 				<Connection To="RushOrder" />
 			</Box>
 			<Box Name="RushOrder" Unique='1'>
-				<X1>0.723355</X1>
-				<X2>4.723355</X2>
+				<X1>0.522324</X1>
+				<X2>4.522324</X2>
 				<Y1>-3.476184</Y1>
 				<Y2>2.523816</Y2>
-				<Z1>-10.515792</Z1>
-				<Z2>-6.515792</Z2>
+				<Z1>-10.068657</Z1>
+				<Z2>-6.068657</Z2>
 				<Connection To="Broker" />
 				<Connection To="qey_tradeskill01-1209684506-0" />
 				<Connection To="qey_tradeskill01-1209684514-2" />

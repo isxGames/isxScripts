@@ -43,7 +43,7 @@ objectdef EQ2Nav
     ;;   NOTE: DO NOT EDIT THESE VALUES HERE!  Have your script set them!  These default values MUST remain constant so that scripters
     ;;         know what to expect.  
     ;;
-    variable float PRECISION = 2
+    variable float gPrecision = 2
     variable float DestinationPrecision = 4.5
     variable int SkipNavTime = 50
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -92,9 +92,6 @@ objectdef EQ2Nav
     variable float MovingTo_Y
     variable float MovingTo_Z
     variable float MovingTo_Precision
-    variable float MovingTo_keepmoving
-    variable float MovingTo_Attempts
-    variable float MovingTo_StopOnAggro
     
     variable collection:string DoorsOpenedThisTrip
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -223,14 +220,8 @@ objectdef EQ2Nav
             press "${This.AUTORUN}"  
 	}
 	
-	method MoveTo(float X, float Y, float Z, float fPrecision, int keepmoving, int Attempts, int StopOnAggro)
+	method MoveTo(float X, float Y, float Z, float fPrecision)
 	{
-	    ;;; This moves you directly to a point, without using lavishnav at all ... MoveToLoc() will be much better if you have a path file for the zone...
-    	variable int obstaclecount=0
-    	variable int failedattempts=0
-    	variable int checklag
-    	variable int maxattempts=${If[${Attempts},${Attempts},3]}
-
     	This:CheckAggro
     	
     	;; If we're moving to a specific point, or if this is the final destination -- then accept a much higher precision value
@@ -242,22 +233,33 @@ objectdef EQ2Nav
         	    if (!${Me.CheckCollision[${X},${Y},${Z}]})
         	    {
             	    This:Debug["MoveTo()-] Within ${DestinationPrecision}m of final destination -- ending movement."]
-        		    if ${keepmoving}
-                		This:StartRunning
-                	else
-                		This:StopRunning
+        		    This:StopRunning
             	    This.MovingTo:Set[FALSE]
             	    This.MovingTo:Set[FALSE]
             	    This.MovingTo_Timer:Set[0]
             	    face ${X} ${Y} ${Z}
-            	    if ${This.NavigationPath.Get[1](exists)} || ${This.NavigationPath.Used} > 0
-            	    {
-            	        This.NavigationPath:Clear
-            	    }
             	    This.MeMoving:Set[FALSE]
             	    This.DoorsOpenedThisTrip:Clear
             	    return
             	}	    
+            	else
+            	{
+            	    ;;; TO DO  ...handle obstruction
+            	    
+            	    
+            	}
+    	    }
+    	    ;; this value needs to be less than the one used with "within 15m of the destination and no obstruction found"
+    	    if (${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > 12)
+    	    {
+    	        ;; if Distance is greater than 10m and the zone contains a "path" to XYZ, use it!   
+    	        if (${This.PointsConnect[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]})
+    	        {
+        	        This:Debug["Destination is greater than 10m from your current location and a path exists -- using it."]
+
+        	        This:MoveToLoc[${X},${Y},${Z},${This.gPrecision}]
+        	        return
+                } 	        
     	    }
     	}
     	
@@ -278,10 +280,7 @@ objectdef EQ2Nav
     	    if (!${Me.CheckCollision[${X},${Y},${Z}]})
     	    {
         	    This:Debug["MoveTo()-] Within ${fPrecision.Precision[1]}m of destination -- ending movement."]
-    		    if ${keepmoving}
-            		This:StartRunning
-            	else
-            		This:StopRunning
+    		    This:StopRunning
         	    This.MovingTo:Set[FALSE]
         	    This.MovingTo_Timer:Set[0]
         	    This.MeMoving:Set[FALSE]
@@ -300,9 +299,6 @@ objectdef EQ2Nav
     	This.MovingTo_Y:Set[${Y}]
     	This.MovingTo_Z:Set[${Z}]
     	This.MovingTo_Precision:Set[${fPrecision}]
-    	This.MovingTo_keepmoving:Set[${keepmoving}]
-    	This.MovingTo_Attempts:Set[${Attempts}]
-    	This.MovingTo_StopOnAggro:Set[${StopOnAggro}]
         ;;
         ;;;;
 	}
@@ -356,7 +352,7 @@ objectdef EQ2Nav
 		}
 
 		; If we are already PRECISION from it why bother moving?
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.GetPRECISION}
+		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.PRECISION}
 		{
 			This:Output["Already here, not moving."]
 			This:ClearPath
@@ -391,7 +387,7 @@ objectdef EQ2Nav
 		    This:Debug["Moving to ${X},${Y},${Z} directly."]
     		;This.NavigationPath:Insert[${X},${Y},${Z},0]
     		;This.NavDestination:Set[${X},${Y},${Z}]
-    		This:MoveTo[${X},${Y},${Z},${This.GetPRECISION}]
+    		This:MoveTo[${X},${Y},${Z},${This.gPrecision}]
     		This.MeMoving:Set[TRUE]
     		return
 		}
@@ -541,8 +537,8 @@ objectdef EQ2Nav
 		        ;; Only pertinant if there is no current NavigationPath
 		        if !${This.NavigationPath.Get[1](exists)} || ${This.NavigationPath.Used} == 0
 		        {
-		            ;This:Debug["Calling MoveTo(${This.MovingTo_X},${This.MovingTo_Z},${This.MovingTo_Precision},${This.MovingTo_keepmoving},${This.MovingTo_Attempts},${This.MovingTo_StopOnAggro})"]
-    		        This:MoveTo[${This.MovingTo_X},${This.MovingTo_Y},${This.MovingTo_Z},${This.MovingTo_Precision},${This.MovingTo_keepmoving},${This.MovingTo_Attempts},${This.MovingTo_StopOnAggro}]
+		            ;This:Debug["Calling MoveTo(${This.MovingTo_X},${This.MovingTo_Z},${This.MovingTo_Precision})"]
+    		        This:MoveTo[${This.MovingTo_X},${This.MovingTo_Y},${This.MovingTo_Z},${This.MovingTo_Precision}]
     		        This.MovingTo_Timer:Set[${LavishScript.RunningTime}]
     		        This.MovingTo:Set[TRUE]
     		        This.MeMoving:Set[TRUE]
@@ -562,11 +558,11 @@ objectdef EQ2Nav
             This:Debug["Distance to ${This.NavigationPath.Get[1].FQN}: ${This.NextHopDistance} (Distance to Destination: ${This.DestinationDistance})"]
             
             
-            if (${This.DestinationDistance} <= ${This.GetPRECISION})
+            if (${This.DestinationDistance} <= ${This.gPrecision})
             {
                 if (!${Me.CheckCollision[${This.NavDestination}]})
                 {
-                    This:Debug["Within ${This.GetPRECISION} meters of destination -- ending movement."]
+                    This:Debug["Within ${This.gPrecision} meters of destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN})-- ending movement."]
     				if ${This.Moving} || ${This.MovingTo}
     					This:MoveStop	   
     				This.MovingTo:Set[FALSE]
@@ -580,14 +576,14 @@ objectdef EQ2Nav
             }
             
             ;; TODO -- make this value an option
-            if (${This.DestinationDistance} <= 15 && !${Me.CheckCollision[${This.NavDestination}]})
+            if (${This.DestinationDistance} <= 10 && !${Me.CheckCollision[${This.NavDestination}]})
             {
-                This:Debug["Within 15m of the destination and no obstructions found -- moving directly (outside of navigation system)"]
+                This:Debug["Within 10m of the destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN}) and no obstructions found -- moving directly (outside of navigation system)"]
                 face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
                 Dest:Set[${This.NavDestination}]
                 This.NavigationPath:Clear
                 ;This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
-				This:MoveTo[${Dest},${This.GetPRECISION}]         
+				This:MoveTo[${Dest},${This.gPrecision}]         
 				This.MeMoving:Set[TRUE]
 				This.MovingTo:Set[TRUE]
 				return
@@ -605,16 +601,16 @@ objectdef EQ2Nav
                 return           
             }
             
-			if ${This.NextHopDistance} <= ${This.GetPRECISION}
+			if ${This.NextHopDistance} <= ${This.gPrecision}
 			{
 			    if (${Me.CheckCollision[${This.NavigationPath.Get[1].Location}]})
 			    {
-			        This:Debug["The next hop is within ${This.GetPRECISION}m; however, there is an obstruction to the next hop."]
+			        This:Debug["The next hop is within ${This.gPrecision}m; however, there is an obstruction to the next hop."]
 			        return   
 			    }
 			    
 			    
-			    ;This:Debug["The next hop is within ${This.GetPRECISION}m -- removing ${This.NavigationPath.Get[1].FQN} from path."]
+			    ;This:Debug["The next hop is within ${This.gPrecision}m -- removing ${This.NavigationPath.Get[1].FQN} from path."]
 				This.NavigationPath:Remove[1]
 				This.NavigationPath:Collapse
 				
@@ -653,12 +649,12 @@ objectdef EQ2Nav
 				This:Debug["NavigationPath[1] is now ${This.NavigationPath.Get[1].FQN}"
 				This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
 				
-				if (${This.NextHopDistance} < ${This.GetPRECISION})
+				if (${This.NextHopDistance} < ${This.gPrecision})
 				{
 				    This.DestinationDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]}]
-				    if (${This.DestinationDistance} < ${This.GetPRECISION})
+				    if (${This.DestinationDistance} < ${This.gPrecision})
 				    {
-                        This:Debug["Within ${This.GetPRECISION} meters of destination -- ending movement."]
+                        This:Debug["Within ${This.gPrecision} meters of destination -- ending movement."]
                         face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
                         This.NavigationPath:Clear
         				if ${This.Moving} || ${This.MovingTo}
@@ -681,7 +677,7 @@ objectdef EQ2Nav
                 else
                 {
     				;This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
-    				This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
+    				This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]
     				This.MeMoving:Set[TRUE]
 			    }
 			}
@@ -694,7 +690,7 @@ objectdef EQ2Nav
 			        This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
 				    This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
 				    This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
-				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
+				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]
 				    This.MeMoving:Set[TRUE]
     	        }
     	        else
@@ -702,7 +698,7 @@ objectdef EQ2Nav
 			        This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
 				    This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
 				    ;This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
-				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]        
+				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]        
 				    This.MeMoving:Set[TRUE]
     	        }
 			}
