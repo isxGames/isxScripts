@@ -16,10 +16,11 @@ objectdef EQ2Mapper
     ;; Can be Box or Point
     variable string MapFileRegionsType = "Box"
     
-    ;; Variables used in creating "Box" type map files (Note: MaxBoxIntersectionDistance must be at least a couple of meters more than BoxRadius.)
-    variable float BoxRadius = 3
-    variable int MinBoxIntersectionDistance = 5
-    variable int MaxBoxIntersectionDistance = 8
+    ;; Variables used in creating "Box" type map files
+    variable float BoxRadius = 2.5
+    ;;;; 5 & 8 also seem to work fairly well
+    variable int MinBoxIntersectionDistance = 3
+    variable int MaxBoxIntersectionDistance = 7
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     variable filepath ZonesDir = "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/zones/"
@@ -209,6 +210,11 @@ objectdef EQ2Mapper
 		;Connect To Previous and Current
 		This:ConnectBoxNeighbours[${RegionName}]
 	}
+	
+	member CollisionTest(float FromX, float FromY, float FromZ, float ToX, float ToY, float ToZ)
+	{
+		return ${EQ2.CheckCollision[${FromX},${FromY},${FromZ},${ToX},${ToY},${ToZ}]}
+	}	
 
 	method ConnectBoxNeighbours(string RegionName)
 	{
@@ -295,9 +301,11 @@ objectdef EQ2Mapper
 		elseif ${RegionRefB.CenterPoint.Y} < ${RegionRefA.CenterPoint.Y} - 3
 		    return FALSE
 		    
-		if ${Topography.IsSteep[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
+		    
+		    
+		if ${This.CollisionTest[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
 		{
-			This:Output["Point too steep! -- Not Connected"]
+			This:Output["Obstruction found between ${RegionRefA.FQN} <-> ${RegionRefB.FQN} -- not connecting."]
 			return FALSE
 		}
 		return TRUE
@@ -388,10 +396,22 @@ objectdef EQ2Topography
 			return FALSE
 		}
 		slope:Set[${Math.Atan[${vertical}/${horizontal}]}]
-		if ${slope} > 50
+		if ${slope} > 45
 		{
 			return TRUE
 		}
+		
+		
+		;; more checks
+		if ${FromY} > ${ToY} + 3
+		    return TRUE
+		elseif ${FromY} < ${ToY} - 3
+		    return TRUE
+		elseif ${ToY} > ${FromY} + 3
+		    return TRUE
+		elseif ${ToY} < ${FromY} - 3
+		    return TRUE		
+		
 		return FALSE
 	}
 }

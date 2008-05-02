@@ -229,22 +229,8 @@ objectdef EQ2Nav
         
     	This:CheckAggro
     	
-    	;; We are currently running a navigational path
-    	if ${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} > 0
-    	{
-    	    face ${X} ${Z}
-    	    This.MovingTo:Set[TRUE]   
-    	    
-    	    if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${fPrecision}
-    	        This:StartRunning
-    	        
-    	    return
-    	}
-    	
-    
-    
         ;This:Debug["MoveTo()-] Math.Distance[${Me.X},${Me.Z},${X},${Z}]: ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} (Precision: ${fPrecision})"]
-    	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${fPrecision}
+    	if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > ${fPrecision} || ${Mapper.IsSteep[${X},${Y},${Z},${Me.ToActor.Loc}]}
     	{
     	    This:CheckAggro
     		face ${X} ${Z}
@@ -261,6 +247,11 @@ objectdef EQ2Nav
         		This:StopRunning
     	    This.MovingTo:Set[FALSE]
     	    This.MovingTo_Timer:Set[0]
+    	    face ${X} ${Y} ${Z}
+    	    if ${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} > 0
+    	    {
+    	        NavigationPath:Clear
+    	    }
     	}
 	}
 
@@ -279,7 +270,7 @@ objectdef EQ2Nav
 		{
 			if ${This.NavigationPath.Get[1](exists)}
 			{
-				if ${This.NavigationPath.Get[${NavigationPath.Used}].Location.X}==${X} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Y}==${Y} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Z}==${Z}
+				if ${This.NavDestination.X}==${X} && ${This.NavDestination.Y}==${Y} && ${This.NavDestination.Z}==${Z}
 				{
 					return TRUE
 				}
@@ -315,20 +306,11 @@ objectdef EQ2Nav
 			This:MoveStop
 			return
 		}
-		; Added. Check for POIs that we are probably wanting to use
-		; This is to help eliminate issues between client, server information disconnects. such as using an NPC
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}< 2
-		{
-			This:Output["Already here, not moving"]
-			This:ClearPath
-			This:MoveStop
-			return
-		}
-
+		
 		;If we already have a Path make sure it is a new one
 		if ${This.NavigationPath.Get[1](exists)}
 		{
-			if ${This.NavigationPath.Get[${NavigationPath.Used}].Location.X}==${X} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Y}==${Y} && ${This.NavigationPath.Get[${NavigationPath.Used}].Location.Z}==${Z}
+			if ${This.NavDestination.X}==${X} && ${This.NavDestination.Y}==${Y} && ${This.NavDestination.Z}==${Z}
 			{
 				This:Output["Error: Calling again to same destination. Aborting!"]
 				return
@@ -343,13 +325,22 @@ objectdef EQ2Nav
 		if ${OVERRIDE}!=0
 			This:Output["Nav Overrriding: Using path!"]
 
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 10 && ${OVERIDE}==0 && !${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]}
+		if (${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 10 && ${OVERIDE}==0)
 		{
-			This:Debug["Moving to ${X},${Y},${Z} directly."]
-			;This.NavigationPath:Insert[${X},${Y},${Z},0]
-			;This.NavDestination:Set[${X},${Y},${Z}]
-			This:MoveTo[${X},${Y},${Z},${This.GetPRECISION}]
-			return
+		    if (!${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]})
+		    {
+    		    This:Debug["Moving to ${X},${Y},${Z} directly."]
+    			echo "TEST"
+    			;This.NavigationPath:Insert[${X},${Y},${Z},0]
+    			;This.NavDestination:Set[${X},${Y},${Z}]
+    			This:MoveTo[${X},${Y},${Z},${This.GetPRECISION}]
+    			return
+    		}
+    		else
+    		{
+    		    This:Debug["Destination seems to be too far above or below you to move towards directly, and there is not enough mapping data to use the navigation system."]
+    		    return
+    		}
 		}
 		else
 		{
@@ -466,8 +457,8 @@ objectdef EQ2Nav
 	{	    
 	    variable point3f Dest
 		
-		;Only do every nth frame (CPU Saver)
-		if ${SKIPNAV} < 1
+		;Only do every 2 frames (CPU Saver)
+		if ${SKIPNAV} < 0
 		{
 			SKIPNAV:Inc
 			return
@@ -505,43 +496,54 @@ objectdef EQ2Nav
 		
 		if ${NavigationPath.Get[1](exists)}
 		{
-		    This:Debug["DESTINATION: ${This.NavigationPath.Get[${NavigationPath.Used}].FQN}"]
-		    This:Debug["NavigationPath[1] exists (${This.NavigationPath.Get[1].FQN})..."]
+		    ;This:Debug["DESTINATION: ${This.NavigationPath.Get[${NavigationPath.Used}].FQN}"]
+		    ;This:Debug["NavigationPath[1] exists (${This.NavigationPath.Get[1].FQN})..."]
 			This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
-			This.DestinationDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[${NavigationPath.Used}].Location}]}]
-            This:Debug["Distance to ${This.NavigationPath.Get[1].FQN}: ${This.NextHopDistance}"]
+			This.DestinationDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]}]
+            This:Debug["Distance to ${This.NavigationPath.Get[1].FQN}: ${This.NextHopDistance} (Distance to Destination: ${This.DestinationDistance})"]
             
             
-            if ${This.DestinationDistance} <= ${This.GetPRECISION}
+            if (${This.DestinationDistance} <= ${This.GetPRECISION})
             {
                 This:Debug["Within ${This.GetPRECISION} meters of destination -- ending movement."]
-                NavigationPath:Clear
 				if ${This.Moving} || ${This.MovingTo}
-				{
-				    This.MovingTo:Set[FALSE]
-					This:MoveStop	
-				    return
-				}                
+					This:MoveStop	   
+				This.MovingTo:Set[FALSE]
+				face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
+				NavigationPath:Clear
+				return          
             }
             
-            ;; TODO -- make this value an option
-            if ${This.DestinationDistance} <= 7
+
+            if (${This.DestinationDistance} <= 15 && !${Me.CheckCollision[${This.NavDestination}]})
             {
-                This:Debug["Within 7 meters of the destination -- moving directly (outside of navigation system)"]
-                Dest:Set[${This.NavigationPath.Get[${NavigationPath.Used}].Location}]
+                This:Debug["Within 15m of the destination and no obstructions found -- moving directly (outside of navigation system)"]
+                face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
+                Dest:Set[${This.NavDestination}]
                 NavigationPath:Clear
                 This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
 				This:MoveTo[${Dest},${This.GetPRECISION}]         
 				return
-            }            
-            
+            }  
             ;; TODO -- make this value an option
+            if ${This.DestinationDistance} <= 7
+            {
+                This:Debug["Within 7 meters of the destination -- moving directly (outside of navigation system)"]
+                Dest:Set[${This.NavDestination}]
+                NavigationPath:Clear
+                This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
+                face ${Dest.X} ${Dest.Y} ${Dest.Z}
+				This:MoveTo[${Dest},${This.GetPRECISION}]         
+				return
+            }                      
+            
+            ;; TODO -- make this value an option`
             if ${This.NextHopDistance} > 10
             {
                 This:Debug["Bypassed next Hop in path -- resetting path"]
-                Dest:Set[${This.NavigationPath.Get[${NavigationPath.Used}].Location}]
+                Dest:Set[${This.NavDestination}]
                 NavigationPath:Clear
-                This:MoveToLoc[${Dest},${This.GetPRECISION}]
+                This:MoveToLoc[${Dest}]
                 return           
             }
             
@@ -555,17 +557,42 @@ objectdef EQ2Nav
 				if (!${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} <= 0)
 				{
 				    This:Debug["NavigationPath now empty -- ending movement."]
-					if ${This.Moving} || ${This.MovingTo}
-					{
-					    This.MovingTo:Set[FALSE]
-						This:MoveStop	
-					    return
-					}
+                    if ${This.Moving} || ${This.MovingTo}
+    					This:MoveStop	   
+    				This.MovingTo:Set[FALSE]
+    				return     
 				}
+				
 				This:Debug["NavigationPath[1] is now ${This.NavigationPath.Get[1].FQN}"
 				This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
-				This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
-				This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
+				
+				if (${This.NextHopDistance} < ${This.GetPRECISION})
+				{
+				    This.DestinationDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]}]
+				    if (${This.DestinationDistance} < ${This.GetPRECISION})
+				    {
+                        This:Debug["Within ${This.GetPRECISION} meters of destination -- ending movement."]
+                        face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
+                        NavigationPath:Clear
+        				if ${This.Moving} || ${This.MovingTo}
+        					This:MoveStop	   
+        				This.MovingTo:Set[FALSE]
+        				return     
+				    }
+				    else
+				    {
+    				    This:Debug["Next hop was within precision range as well - resetting path."]
+    				    Dest:Set[${This.NavDestination}]
+                        NavigationPath:Clear
+                        This:MoveToLoc[${Dest}]
+                        return      
+                    }
+                }
+                else
+                {
+    				This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
+    				This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
+			    }
 			}
 			else
 			{
