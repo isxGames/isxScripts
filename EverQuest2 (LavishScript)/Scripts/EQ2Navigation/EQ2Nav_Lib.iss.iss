@@ -35,8 +35,9 @@ objectdef EQ2Nav
     variable string TURNLEFT = "a"
     variable string TURNRIGHT = "d"
     
-    ;; Export to user definable
-    variable float PRECISION = 4.6
+    ;; Export to user definable (3.5 seems a good value)
+    variable float PRECISION = 2
+    variable float DestinationPrecision = 4
     
     variable EQ2Mapper Mapper
 	variable index:EQ2NavPath NavigationPath
@@ -194,14 +195,14 @@ objectdef EQ2Nav
 	
 	method StartRunning()
 	{
-	    This:Debug["StartRunning() Called"]
+	    ;This:Debug["StartRunning() Called"]
     	if !${Me.IsMoving}
     		press "${This.AUTORUN}"
 	}
 	
 	method StopRunning()
 	{
-	    This:Debug["StopRunning() Called"]
+	    ;This:Debug["StopRunning() Called"]
         if ${Me.IsMoving}
             press "${This.AUTORUN}"  
 	}
@@ -229,8 +230,35 @@ objectdef EQ2Nav
         
     	This:CheckAggro
     	
+    	;; If we're moving to a specific point, or if this is the final destination -- then accept a much higher precision value
+    	if !${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} == 0
+    	{
+    	    if (${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} < ${DestinationPrecision})   
+    	    {         
+        	    ;This:Debug["Me.CheckCollision[${X},${Y},${Z}] = ${Me.CheckCollision[${X},${Y},${Z}]}"]
+        	    if (!${Me.CheckCollision[${X},${Y},${Z}]})
+        	    {
+            	    This:Debug["MoveTo()-] Within ${DestinationPrecision}m of final destination -- ending movement."]
+        		    if ${keepmoving}
+                		This:StartRunning
+                	else
+                		This:StopRunning
+            	    This.MovingTo:Set[FALSE]
+            	    This.MovingTo:Set[FALSE]
+            	    This.MovingTo_Timer:Set[0]
+            	    face ${X} ${Y} ${Z}
+            	    if ${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} > 0
+            	    {
+            	        NavigationPath:Clear
+            	    }
+            	    This.MeMoving:Set[FALSE]
+            	    return
+            	}	    
+    	    }
+    	}
+    	
         ;This:Debug["MoveTo()-] Math.Distance[${Me.X},${Me.Z},${X},${Z}]: ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} (Precision: ${fPrecision})"]
-    	if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > ${fPrecision} || ${Mapper.IsSteep[${X},${Y},${Z},${Me.ToActor.Loc}]}
+    	if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > ${fPrecision} || ${Mapper.IsSteep[${X},${Y},${Z},${Me.ToActor.Loc}]} || ${Me.CheckCollision[${X},${Y},${Z}]}
     	{
     	    This:CheckAggro
     		face ${X} ${Z}
@@ -240,18 +268,23 @@ objectdef EQ2Nav
 	    }
     	else
     	{
-    	    This:Debug["MoveTo()-] Within ${fPrecision.Precision[1]}m of destination -- ending movement."]
-		    if ${keepmoving}
-        		This:StartRunning
-        	else
-        		This:StopRunning
-    	    This.MovingTo:Set[FALSE]
-    	    This.MovingTo_Timer:Set[0]
-    	    face ${X} ${Y} ${Z}
-    	    if ${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} > 0
+    	    ;This:Debug["Me.CheckCollision[${X},${Y},${Z}] = ${Me.CheckCollision[${X},${Y},${Z}]}"]
+    	    if (!${Me.CheckCollision[${X},${Y},${Z}]})
     	    {
-    	        NavigationPath:Clear
-    	    }
+        	    This:Debug["MoveTo()-] Within ${fPrecision.Precision[1]}m of destination -- ending movement."]
+    		    if ${keepmoving}
+            		This:StartRunning
+            	else
+            		This:StopRunning
+        	    This.MovingTo:Set[FALSE]
+        	    This.MovingTo_Timer:Set[0]
+        	    This.MeMoving:Set[FALSE]
+        	    face ${X} ${Y} ${Z}
+        	    if ${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} > 0
+        	    {
+        	        NavigationPath:Clear
+        	    }
+        	}
     	}
 	}
 
@@ -278,6 +311,19 @@ objectdef EQ2Nav
 		}
 		return FALSE
 	}
+	
+	method MoveToRegion(string RegionName)
+	{
+		variable lnavregionref ZoneRegion
+		variable lnavregionref DestZoneRegion
+		variable lnavregionref DestinationRegion	    
+	    
+		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}].FQN}]
+		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}].FQN}]
+		DestinationRegion:SetRegion[${RegionName}]
+		This:Debug["MoveToRegion:: Moving to ${DestinationRegion.FQN}"]
+		This:MoveToLoc[${DestinationRegion.CenterPoint}]
+	}
 
 	method MoveToLoc(float X, float Y, float Z, int OVERRIDE=0)
 	{
@@ -303,6 +349,8 @@ objectdef EQ2Nav
 			This:Output["Already here, not moving."]
 			This:ClearPath
 			This:MoveStop
+			This.MeMoving:Set[FALSE]
+			This.MovingTo:Set[FALSE]
 			return
 		}
 		
@@ -312,6 +360,8 @@ objectdef EQ2Nav
 			if ${This.NavDestination.X}==${X} && ${This.NavDestination.Y}==${Y} && ${This.NavDestination.Z}==${Z}
 			{
 				This:Output["Error: Calling again to same destination. Aborting!"]
+				This.MeMoving:Set[FALSE]
+				This.MovingTo:Set[FALSE]
 				return
 			}
 		}
@@ -332,6 +382,7 @@ objectdef EQ2Nav
     			;This.NavigationPath:Insert[${X},${Y},${Z},0]
     			;This.NavDestination:Set[${X},${Y},${Z}]
     			This:MoveTo[${X},${Y},${Z},${This.GetPRECISION}]
+    			This.MeMoving:Set[TRUE]
     			return
     		}
 		}
@@ -356,12 +407,14 @@ objectdef EQ2Nav
 
 				This.NavDestination:Set[${X},${Y},${Z}]
 				This:Debug["Path found: ${NavigationPath.Used} hops."] 
+				This.MeMoving:Set[TRUE]
 			}
 			else
 			{
 				; We didnt get a path run to the next closest point and try from there
 				This:Output["Error: Can't find connection. Not enough mapping data! ${X},${Y},${Z}"]
 				This:Debug["From: ${CurrentRegion.FQN} to ${DestinationRegion.FQN}."]
+				This.MeMoving:Set[FALSE]
 			}
 		}
 	}
@@ -451,7 +504,7 @@ objectdef EQ2Nav
 	    variable point3f Dest
 		
 		;Only do every 2 frames (CPU Saver)
-		if ${SKIPNAV} < 0
+		if ${SKIPNAV} < 50
 		{
 			SKIPNAV:Inc
 			return
@@ -480,6 +533,7 @@ objectdef EQ2Nav
 		            ;This:Debug["Calling MoveTo(${This.MovingTo_X},${This.MovingTo_Z},${This.MovingTo_Precision},${This.MovingTo_keepmoving},${This.MovingTo_Attempts},${This.MovingTo_StopOnAggro})"]
     		        This:MoveTo[${This.MovingTo_X},${This.MovingTo_Y},${This.MovingTo_Z},${This.MovingTo_Precision},${This.MovingTo_keepmoving},${This.MovingTo_Attempts},${This.MovingTo_StopOnAggro}]
     		        This.MovingTo_Timer:Set[${LavishScript.RunningTime}]
+    		        This.MeMoving:Set[TRUE]
     		    }
 		    }
 		}
@@ -498,62 +552,69 @@ objectdef EQ2Nav
             
             if (${This.DestinationDistance} <= ${This.GetPRECISION})
             {
-                This:Debug["Within ${This.GetPRECISION} meters of destination -- ending movement."]
-				if ${This.Moving} || ${This.MovingTo}
-					This:MoveStop	   
-				This.MovingTo:Set[FALSE]
-				face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
-				NavigationPath:Clear
-				return          
+                if (!${Me.CheckCollision[${This.NavDestination}]})
+                {
+                    This:Debug["Within ${This.GetPRECISION} meters of destination -- ending movement."]
+    				if ${This.Moving} || ${This.MovingTo}
+    					This:MoveStop	   
+    				This.MovingTo:Set[FALSE]
+    				This.MeMoving:Set[FALSE]
+    				face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
+    				NavigationPath:Clear
+    				return      
+    			}    
             }
             
-
+            ;; TODO -- make this value an option
             if (${This.DestinationDistance} <= 15 && !${Me.CheckCollision[${This.NavDestination}]})
             {
                 This:Debug["Within 15m of the destination and no obstructions found -- moving directly (outside of navigation system)"]
                 face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
                 Dest:Set[${This.NavDestination}]
                 NavigationPath:Clear
-                This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
+                ;This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
 				This:MoveTo[${Dest},${This.GetPRECISION}]         
+				This.MeMoving:Set[TRUE]
 				return
             }  
-            ;; TODO -- make this value an option
-            if ${This.DestinationDistance} <= 7
-            {
-                This:Debug["Within 7 meters of the destination -- moving directly (outside of navigation system)"]
-                Dest:Set[${This.NavDestination}]
-                NavigationPath:Clear
-                This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
-                face ${Dest.X} ${Dest.Y} ${Dest.Z}
-				This:MoveTo[${Dest},${This.GetPRECISION}]         
-				return
-            }                      
+                              
             
             ;; TODO -- make this value an option`
-            if ${This.NextHopDistance} > 10
+            if ${This.NextHopDistance} > 20
             {
                 This:Debug["Bypassed next Hop in path -- resetting path"]
                 Dest:Set[${This.NavDestination}]
                 NavigationPath:Clear
                 This:MoveToLoc[${Dest}]
+                This.MeMoving:Set[TRUE]
                 return           
             }
             
 			if ${This.NextHopDistance} <= ${This.GetPRECISION}
 			{
-			    This:Debug["Within Precision Range...removing ${This.NavigationPath.Get[1].FQN} from path."]
+			    if (${Me.CheckCollision[${This.NavigationPath.Get[1].Location}]})
+			    {
+			        This:Debug["The next hop is within ${This.GetPRECISION}m; however, there is an obstruction to the next hop."]
+			        return   
+			    }
+			    
+			    
+			    ;This:Debug["The next hop is within ${This.GetPRECISION}m -- removing ${This.NavigationPath.Get[1].FQN} from path."]
 				NavigationPath:Remove[1]
 				NavigationPath:Collapse
 				
 
 				if (!${NavigationPath.Get[1](exists)} || ${NavigationPath.Used} <= 0)
 				{
-				    This:Debug["NavigationPath now empty -- ending movement."]
-                    if ${This.Moving} || ${This.MovingTo}
-    					This:MoveStop	   
-    				This.MovingTo:Set[FALSE]
-    				return     
+				    if (!${Me.CheckCollision[${This.NavDestination}]})
+				    {
+    				    This:Debug["NavigationPath now empty -- ending movement."]
+                        if ${This.Moving} || ${This.MovingTo}
+        					This:MoveStop	
+        			    This.MeMoving:Set[FALSE]   
+        				This.MovingTo:Set[FALSE]
+        				return     
+        			}
 				}
 				
 				This:Debug["NavigationPath[1] is now ${This.NavigationPath.Get[1].FQN}"
@@ -570,6 +631,7 @@ objectdef EQ2Nav
         				if ${This.Moving} || ${This.MovingTo}
         					This:MoveStop	   
         				This.MovingTo:Set[FALSE]
+        				This.MeMoving:Set[FALSE]
         				return     
 				    }
 				    else
@@ -578,18 +640,20 @@ objectdef EQ2Nav
     				    Dest:Set[${This.NavDestination}]
                         NavigationPath:Clear
                         This:MoveToLoc[${Dest}]
+                        This.MeMoving:Set[TRUE]
                         return      
                     }
                 }
                 else
                 {
-    				This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
+    				;This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
     				This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
+    				This.MeMoving:Set[TRUE]
 			    }
 			}
 			else
 			{
-			    This:Debug["${This.NavigationPath.Get[1].FQN} still out of precision range."]
+			    ;This:Debug["${This.NavigationPath.Get[1].FQN} still out of precision range."]
 			    if !${Me.IsMoving} || !${This.MovingTo}
 			    {
 			        This:Debug["NavigationPath exists, but not moving -- issuing movement"]
@@ -597,13 +661,15 @@ objectdef EQ2Nav
 				    This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
 				    This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
 				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]
+				    This.MeMoving:Set[TRUE]
     	        }
     	        else
     	        {
 			        This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
 				    This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
-				    This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
+				    ;This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
 				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.GetPRECISION}]        
+				    This.MeMoving:Set[TRUE]
     	        }
 			}
 
@@ -671,9 +737,6 @@ objectdef EQ2Nav
 
 	member Moving()
 	{
-	    if ${Me.IsMoving}
-	        return TRUE
-	        
-		return ${This.MeMoving}
+	    return ${This.MeMoving}
 	}
 }
