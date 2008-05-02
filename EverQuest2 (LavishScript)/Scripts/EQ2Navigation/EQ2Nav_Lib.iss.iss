@@ -298,7 +298,6 @@ objectdef EQ2Nav
 		}
 
 		; If we are already PRECISION from it why bother moving?
-		; Changed... Default PRECISION is slightly greater then USE distance
 		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.GetPRECISION}
 		{
 			This:Output["Already here, not moving."]
@@ -330,16 +329,10 @@ objectdef EQ2Nav
 		    if (!${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]})
 		    {
     		    This:Debug["Moving to ${X},${Y},${Z} directly."]
-    			echo "TEST"
     			;This.NavigationPath:Insert[${X},${Y},${Z},0]
     			;This.NavDestination:Set[${X},${Y},${Z}]
     			This:MoveTo[${X},${Y},${Z},${This.GetPRECISION}]
     			return
-    		}
-    		else
-    		{
-    		    This:Debug["Destination seems to be too far above or below you to move towards directly, and there is not enough mapping data to use the navigation system."]
-    		    return
     		}
 		}
 		else
