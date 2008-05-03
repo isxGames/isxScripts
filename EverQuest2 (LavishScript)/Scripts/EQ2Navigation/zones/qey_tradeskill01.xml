@@ -54,6 +54,8 @@
 				<Connection To="qey_tradeskill01-1209684506-0" />
 				<Connection To="qey_tradeskill01-1209684514-2" />
 				<Connection To="qey_tradeskill01-1209684520-6" />
+				<Connection To="qey_tradeskill01-1209777972-159" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
 				<Connection To="Zone In" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209684520-5" Unique='1'>
@@ -66,6 +68,8 @@
 				<Connection To="qey_tradeskill01-1209684514-2" />
 				<Connection To="qey_tradeskill01-1209684515-3" />
 				<Connection To="qey_tradeskill01-1209684521-8" />
+				<Connection To="qey_tradeskill01-1209777972-159" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
 				<Connection To="RushOrder" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209684520-6" Unique='1'>
@@ -78,6 +82,9 @@
 				<Connection To="qey_tradeskill01-1209684520-4" />
 				<Connection To="qey_tradeskill01-1209684521-7" />
 				<Connection To="qey_tradeskill01-1209684521-8" />
+				<Connection To="qey_tradeskill01-1209777972-159" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
+				<Connection To="qey_tradeskill01-1209777991-161" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209684521-7" Unique='1'>
 				<X1>-2.619269</X1>
@@ -88,6 +95,9 @@
 				<Z2>2.756205</Z2>
 				<Connection To="qey_tradeskill01-1209684520-6" />
 				<Connection To="qey_tradeskill01-1209684524-9" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
+				<Connection To="qey_tradeskill01-1209777991-161" />
+				<Connection To="qey_tradeskill01-1209777992-162" />
 				<Connection To="WorkOrder" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209684521-8" Unique='1'>
@@ -100,6 +110,8 @@
 				<Connection To="qey_tradeskill01-1209684520-5" />
 				<Connection To="qey_tradeskill01-1209684520-6" />
 				<Connection To="qey_tradeskill01-1209684525-10" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
+				<Connection To="qey_tradeskill01-1209777992-162" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209684524-9" Unique='1'>
 				<X1>-4.802012</X1>
@@ -110,6 +122,8 @@
 				<Z2>7.821666</Z2>
 				<Connection To="qey_tradeskill01-1209684521-7" />
 				<Connection To="qey_tradeskill01-1209684526-13" />
+				<Connection To="qey_tradeskill01-1209777991-161" />
+				<Connection To="qey_tradeskill01-1209777992-162" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209684525-10" Unique='1'>
 				<X1>-4.783988</X1>
@@ -257,6 +271,7 @@
 				<Connection To="qey_tradeskill01-1209684506-0" />
 				<Connection To="qey_tradeskill01-1209684515-3" />
 				<Connection To="qey_tradeskill01-1209684520-4" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
 				<Connection To="RushOrder" />
 			</Box>
 			<Box Name="RushOrder" Unique='1'>
@@ -270,6 +285,7 @@
 				<Connection To="qey_tradeskill01-1209684506-0" />
 				<Connection To="qey_tradeskill01-1209684514-2" />
 				<Connection To="qey_tradeskill01-1209684520-5" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
 				<Connection To="WorkOrder" />
 				<Connection To="Zone In" />
 			</Box>
@@ -283,6 +299,8 @@
 				<Connection To="qey_tradeskill01-1209684514-2" />
 				<Connection To="qey_tradeskill01-1209684515-3" />
 				<Connection To="qey_tradeskill01-1209684521-7" />
+				<Connection To="qey_tradeskill01-1209777972-159" />
+				<Connection To="qey_tradeskill01-1209777987-160" />
 				<Connection To="RushOrder" />
 			</Box>
 			<Box Name="Zone In" Unique='1'>
@@ -736,6 +754,7 @@
 				<Y2>-3.478512</Y2>
 				<Z1>-3.502800</Z1>
 				<Z2>0.497200</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702766-66" />
 				<Connection To="qey_tradeskill01-1209702767-67" />
 				<Connection To="qey_tradeskill01-1209702776-69" />
@@ -847,7 +866,6 @@
 				<Connection To="qey_tradeskill01-1209702752-65" />
 				<Connection To="qey_tradeskill01-1209702776-68" />
 				<Connection To="qey_tradeskill01-1209703679-81" />
-				<Connection To="qey_tradeskill01-1209703682-82" />
 				<Connection To="qey_tradeskill01-1209755331-147" />
 				<Connection To="qey_tradeskill01-1209755338-149" />
 				<Connection To="qey_tradeskill01-1209755350-151" />
@@ -863,6 +881,7 @@
 				<Y2>-3.477844</Y2>
 				<Z1>-0.713152</Z1>
 				<Z2>3.286848</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702767-67" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
 				<Connection To="qey_tradeskill01-1209702787-78" />
@@ -878,6 +897,7 @@
 				<Y2>-3.477677</Y2>
 				<Z1>-0.648818</Z1>
 				<Z2>3.351182</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702779-71" />
 				<Connection To="qey_tradeskill01-1209702783-73" />
 				<Connection To="qey_tradeskill01-1209702787-78" />
@@ -916,6 +936,7 @@
 				<Y2>-3.476187</Y2>
 				<Z1>2.019250</Z1>
 				<Z2>6.019250</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702776-69" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
 				<Connection To="qey_tradeskill01-1209702787-78" />
@@ -930,6 +951,7 @@
 				<Y2>-3.476187</Y2>
 				<Z1>4.039019</Z1>
 				<Z2>8.039019</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
 				<Connection To="Woodworking Table 1" />
 			</Box>
@@ -940,6 +962,7 @@
 				<Y2>-3.477220</Y2>
 				<Z1>-5.697991</Z1>
 				<Z2>-1.697991</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702776-69" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
 				<Connection To="qey_tradeskill01-1209702784-75" />
@@ -954,6 +977,7 @@
 				<Y2>-3.477239</Y2>
 				<Z1>-7.777583</Z1>
 				<Z2>-3.777583</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702784-76" />
 				<Connection To="qey_tradeskill01-1209702784-77" />
 				<Connection To="qey_tradeskill01-1209702787-78" />
@@ -1006,13 +1030,11 @@
 				<Y2>-3.477709</Y2>
 				<Z1>-3.695797</Z1>
 				<Z2>0.304203</Z2>
-				<Connection To="qey_tradeskill01-1209702776-68" />
 				<Connection To="qey_tradeskill01-1209702776-69" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
 				<Connection To="qey_tradeskill01-1209702779-71" />
 				<Connection To="qey_tradeskill01-1209702783-74" />
 				<Connection To="qey_tradeskill01-1209702784-75" />
-				<Connection To="qey_tradeskill01-1209703682-82" />
 				<Connection To="qey_tradeskill01-1209755331-147" />
 				<Connection To="Woodworking Table 1" />
 			</Box>
@@ -1023,6 +1045,7 @@
 				<Y2>-3.476187</Y2>
 				<Z1>4.152793</Z1>
 				<Z2>8.152793</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
 				<Connection To="qey_tradeskill01-1209702779-71" />
 				<Connection To="Woodworking Table 1" />
@@ -1065,7 +1088,6 @@
 				<Connection To="qey_tradeskill01-1209702767-67" />
 				<Connection To="qey_tradeskill01-1209702776-69" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
-				<Connection To="qey_tradeskill01-1209702787-78" />
 				<Connection To="qey_tradeskill01-1209703679-81" />
 				<Connection To="qey_tradeskill01-1209755331-147" />
 				<Connection To="qey_tradeskill01-1209755336-148" />
@@ -1481,6 +1503,7 @@
 				<Connection To="Forge 3" />
 				<Connection To="Intersection 3" />
 				<Connection To="qey_tradeskill01-1209704670-122" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209704633-108" Unique='1'>
 				<X1>0.271071</X1>
@@ -1578,6 +1601,10 @@
 				<Z1>-29.521118</Z1>
 				<Z2>-25.521118</Z2>
 				<Connection To="qey_tradeskill01-1209704669-118" />
+				<Connection To="qey_tradeskill01-1209775918-152" />
+				<Connection To="qey_tradeskill01-1209775922-153" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
+				<Connection To="qey_tradeskill01-1209775931-156" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209704669-117" Unique='1'>
 				<X1>-15.147793</X1>
@@ -1587,6 +1614,10 @@
 				<Z1>-31.575550</Z1>
 				<Z2>-27.575550</Z2>
 				<Connection To="qey_tradeskill01-1209704669-120" />
+				<Connection To="qey_tradeskill01-1209775918-152" />
+				<Connection To="qey_tradeskill01-1209775922-153" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
+				<Connection To="qey_tradeskill01-1209775931-156" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209704669-118" Unique='1'>
 				<X1>-15.208452</X1>
@@ -1598,6 +1629,9 @@
 				<Connection To="Forge 1" />
 				<Connection To="Forge 3" />
 				<Connection To="qey_tradeskill01-1209704668-116" />
+				<Connection To="qey_tradeskill01-1209775918-152" />
+				<Connection To="qey_tradeskill01-1209775922-153" />
+				<Connection To="qey_tradeskill01-1209777948-157" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209704669-119" Unique='1'>
 				<X1>-15.269538</X1>
@@ -1606,6 +1640,9 @@
 				<Y2>-3.483538</Y2>
 				<Z1>-35.661186</Z1>
 				<Z2>-31.661186</Z2>
+				<Connection To="qey_tradeskill01-1209775918-152" />
+				<Connection To="qey_tradeskill01-1209775922-153" />
+				<Connection To="qey_tradeskill01-1209777948-157" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209704669-120" Unique='1'>
 				<X1>-15.329507</X1>
@@ -1617,6 +1654,9 @@
 				<Connection To="Forge 2" />
 				<Connection To="qey_tradeskill01-1209704669-117" />
 				<Connection To="qey_tradeskill01-1209704670-122" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
+				<Connection To="qey_tradeskill01-1209775928-155" />
+				<Connection To="qey_tradeskill01-1209775931-156" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209704670-121" Unique='1'>
 				<X1>-15.389255</X1>
@@ -1635,6 +1675,7 @@
 				<Z2>-37.725967</Z2>
 				<Connection To="Inner Room 3" />
 				<Connection To="qey_tradeskill01-1209704669-120" />
+				<Connection To="qey_tradeskill01-1209777948-157" />
 			</Box>
 			<Box Name="Forge 1" Unique='1'>
 				<X1>-17.641876</X1>
@@ -1645,6 +1686,7 @@
 				<Z2>-31.784103</Z2>
 				<Connection To="Inner Room 3" />
 				<Connection To="qey_tradeskill01-1209704669-118" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
 			</Box>
 			<Box Name="Forge 2" Unique='1'>
 				<X1>-12.121826</X1>
@@ -1667,6 +1709,7 @@
 				<Z2>-31.784103</Z2>
 				<Connection To="Inner Room 3" />
 				<Connection To="qey_tradeskill01-1209704669-118" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
 			</Box>
 			<Box Name="WholeSaler (Close)" Unique='1'>
 				<X1>-0.127073</X1>
@@ -1996,6 +2039,7 @@
 				<Y2>-3.477275</Y2>
 				<Z1>1.733095</Z1>
 				<Z2>5.733095</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702767-67" />
 				<Connection To="qey_tradeskill01-1209702777-70" />
 				<Connection To="qey_tradeskill01-1209702787-78" />
@@ -2039,21 +2083,17 @@
 				<Connection To="Sewing Table &amp; Mannequin 3" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209755346-150" Unique='1'>
-				<X1>-0.869333</X1>
-				<X2>3.130667</X2>
-				<Y1>-9.478093</Y1>
-				<Y2>-3.478093</Y2>
-				<Z1>-2.686575</Z1>
-				<Z2>1.313425</Z2>
+				<X1>-0.309195</X1>
+				<X2>3.690805</X2>
+				<Y1>-9.477706</Y1>
+				<Y2>-3.477706</Y2>
+				<Z1>-0.992929</Z1>
+				<Z2>3.007071</Z2>
+				<Connection To="Outer Room Top" />
 				<Connection To="qey_tradeskill01-1209702779-71" />
-				<Connection To="qey_tradeskill01-1209702783-73" />
-				<Connection To="qey_tradeskill01-1209702783-74" />
 				<Connection To="qey_tradeskill01-1209703679-81" />
-				<Connection To="qey_tradeskill01-1209703682-82" />
 				<Connection To="qey_tradeskill01-1209755331-147" />
 				<Connection To="qey_tradeskill01-1209755350-151" />
-				<Connection To="Sewing Table &amp; Mannequin 1" />
-				<Connection To="Sewing Table &amp; Mannequin 2" />
 				<Connection To="Woodworking Table 1" />
 				<Connection To="Woodworking Table 2" />
 			</Box>
@@ -2072,6 +2112,157 @@
 				<Connection To="qey_tradeskill01-1209755336-148" />
 				<Connection To="qey_tradeskill01-1209755346-150" />
 				<Connection To="Sewing Table &amp; Mannequin 2" />
+				<Connection To="Woodworking Table 2" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209775918-152" Unique='1'>
+				<X1>-20.324516</X1>
+				<X2>-16.324516</X2>
+				<Y1>-9.399084</Y1>
+				<Y2>-3.399084</Y2>
+				<Z1>-32.734722</Z1>
+				<Z2>-28.734724</Z2>
+				<Connection To="qey_tradeskill01-1209704668-116" />
+				<Connection To="qey_tradeskill01-1209704669-117" />
+				<Connection To="qey_tradeskill01-1209704669-118" />
+				<Connection To="qey_tradeskill01-1209704669-119" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209775922-153" Unique='1'>
+				<X1>-18.302588</X1>
+				<X2>-14.302588</X2>
+				<Y1>-9.512300</Y1>
+				<Y2>-3.512300</Y2>
+				<Z1>-32.423470</Z1>
+				<Z2>-28.423468</Z2>
+				<Connection To="qey_tradeskill01-1209704668-116" />
+				<Connection To="qey_tradeskill01-1209704669-117" />
+				<Connection To="qey_tradeskill01-1209704669-118" />
+				<Connection To="qey_tradeskill01-1209704669-119" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
+				<Connection To="qey_tradeskill01-1209775931-156" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209775927-154" Unique='1'>
+				<X1>-13.148280</X1>
+				<X2>-9.148280</X2>
+				<Y1>-9.373318</Y1>
+				<Y2>-3.373318</Y2>
+				<Z1>-34.134300</Z1>
+				<Z2>-30.134300</Z2>
+				<Connection To="Forge 1" />
+				<Connection To="Forge 3" />
+				<Connection To="Inner Room 3" />
+				<Connection To="qey_tradeskill01-1209704668-116" />
+				<Connection To="qey_tradeskill01-1209704669-117" />
+				<Connection To="qey_tradeskill01-1209704669-120" />
+				<Connection To="qey_tradeskill01-1209775922-153" />
+				<Connection To="qey_tradeskill01-1209777948-157" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209775928-155" Unique='1'>
+				<X1>-10.041944</X1>
+				<X2>-6.041944</X2>
+				<Y1>-9.519179</Y1>
+				<Y2>-3.519179</Y2>
+				<Z1>-35.748375</Z1>
+				<Z2>-31.748375</Z2>
+				<Connection To="qey_tradeskill01-1209704669-120" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209775931-156" Unique='1'>
+				<X1>-11.616666</X1>
+				<X2>-7.616666</X2>
+				<Y1>-9.494657</Y1>
+				<Y2>-3.494657</Y2>
+				<Z1>-32.131172</Z1>
+				<Z2>-28.131172</Z2>
+				<Connection To="qey_tradeskill01-1209704668-116" />
+				<Connection To="qey_tradeskill01-1209704669-117" />
+				<Connection To="qey_tradeskill01-1209704669-120" />
+				<Connection To="qey_tradeskill01-1209775922-153" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209777948-157" Unique='1'>
+				<X1>-19.668703</X1>
+				<X2>-15.668703</X2>
+				<Y1>-9.438958</Y1>
+				<Y2>-3.438958</Y2>
+				<Z1>-36.184082</Z1>
+				<Z2>-32.184082</Z2>
+				<Connection To="qey_tradeskill01-1209704669-118" />
+				<Connection To="qey_tradeskill01-1209704669-119" />
+				<Connection To="qey_tradeskill01-1209704670-122" />
+				<Connection To="qey_tradeskill01-1209775927-154" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209777962-158" Unique='1'>
+				<X1>-9.609403</X1>
+				<X2>-5.609403</X2>
+				<Y1>-9.441645</Y1>
+				<Y2>-3.441645</Y2>
+				<Z1>-31.847952</Z1>
+				<Z2>-27.847952</Z2>
+			</Box>
+			<Box Name="qey_tradeskill01-1209777972-159" Unique='1'>
+				<X1>-4.062576</X1>
+				<X2>-0.062576</X2>
+				<Y1>-3.476185</Y1>
+				<Y2>2.523815</Y2>
+				<Z1>-8.855036</Z1>
+				<Z2>-4.855036</Z2>
+				<Connection To="qey_tradeskill01-1209684520-4" />
+				<Connection To="qey_tradeskill01-1209684520-5" />
+				<Connection To="qey_tradeskill01-1209684520-6" />
+				<Connection To="WorkOrder" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209777987-160" Unique='1'>
+				<X1>-3.906875</X1>
+				<X2>0.093125</X2>
+				<Y1>-3.476185</Y1>
+				<Y2>2.523815</Y2>
+				<Z1>-6.122128</Z1>
+				<Z2>-2.122128</Z2>
+				<Connection To="Broker" />
+				<Connection To="qey_tradeskill01-1209684520-4" />
+				<Connection To="qey_tradeskill01-1209684520-5" />
+				<Connection To="qey_tradeskill01-1209684520-6" />
+				<Connection To="qey_tradeskill01-1209684521-7" />
+				<Connection To="qey_tradeskill01-1209684521-8" />
+				<Connection To="RushOrder" />
+				<Connection To="WorkOrder" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209777991-161" Unique='1'>
+				<X1>-0.161125</X1>
+				<X2>3.838875</X2>
+				<Y1>-3.476184</Y1>
+				<Y2>2.523816</Y2>
+				<Z1>0.766329</Z1>
+				<Z2>4.766329</Z2>
+				<Connection To="qey_tradeskill01-1209684520-6" />
+				<Connection To="qey_tradeskill01-1209684521-7" />
+				<Connection To="qey_tradeskill01-1209684524-9" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209777992-162" Unique='1'>
+				<X1>0.313332</X1>
+				<X2>4.313332</X2>
+				<Y1>-3.476184</Y1>
+				<Y2>2.523816</Y2>
+				<Z1>2.804106</Z1>
+				<Z2>6.804106</Z2>
+				<Connection To="qey_tradeskill01-1209684521-7" />
+				<Connection To="qey_tradeskill01-1209684521-8" />
+				<Connection To="qey_tradeskill01-1209684524-9" />
+			</Box>
+			<Box Name="Outer Room Top" Unique='1'>
+				<X1>2.231318</X1>
+				<X2>6.231318</X2>
+				<Y1>-9.477026</Y1>
+				<Y2>-3.477026</Y2>
+				<Z1>-1.545632</Z1>
+				<Z2>2.454368</Z2>
+				<Connection To="qey_tradeskill01-1209702776-68" />
+				<Connection To="qey_tradeskill01-1209702776-69" />
+				<Connection To="qey_tradeskill01-1209702779-71" />
+				<Connection To="qey_tradeskill01-1209702779-72" />
+				<Connection To="qey_tradeskill01-1209702783-73" />
+				<Connection To="qey_tradeskill01-1209702783-74" />
+				<Connection To="qey_tradeskill01-1209703034-79" />
+				<Connection To="qey_tradeskill01-1209755331-147" />
+				<Connection To="qey_tradeskill01-1209755346-150" />
 				<Connection To="Woodworking Table 2" />
 			</Box>
 		</Children>
