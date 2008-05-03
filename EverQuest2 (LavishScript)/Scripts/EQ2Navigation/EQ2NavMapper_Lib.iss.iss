@@ -10,19 +10,31 @@
 
 objectdef EQ2Mapper
 {
-    ;;;; Variables to make user definable ;;;;;;
+    ;;;; If FALSE, then 'xml' file is the output.  Scripts can modify this if desired.
     variable bool UseLSO = FALSE
     
-    ;; Can be Box or Point
+    ;; Can be Box or Point [TODO -- only 'box' is supported currently]
     variable string MapFileRegionsType = "Box"
     
-    ;; Variables used in creating "Box" type map files
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Values that should be set via GUI interfaces in your scripts (or config files):    
+    ;; ~ BoxRadius:  When creating a mapfile using box type regions, this is the X/Z radius of the regions
+    ;;   created.  The default is 2, and should be good for almost everything.
+    ;; ~ Min/MaxBoxIntersectionDistance:  These values should be tweaked only with the greatest care.  If too
+    ;;   high, then you may not get interesections between regions and thereby not have enough mapping data.
+    ;;   If too low, then the paths could be innefficient and the navigator may run past regions faster than the
+    ;;   pulse can keep up.  The default of 3/7 seems to be appropriate for most things.  (5/8 might be another
+    ;;   workable option)
+    ;; ~ NoCollisionDetection:  If set to TRUE, then the script will not make any collision checks at all when
+    ;;   determining if regions should connect.
+    ;;
     variable float BoxRadius = 2
-    ;;;; 5 & 8 also seem to work fairly well
     variable int MinBoxIntersectionDistance = 3
-    variable int MaxBoxIntersectionDistance = 7
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    
+    variable int MaxBoxIntersectionDistance = 7    
+    variable bool NoCollisionDetection = false
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
     variable filepath ZonesDir = "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/zones/"
 	variable filepath ConfigDir = "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/config/"
 	variable string ConfigFile = "config.xml"
@@ -214,7 +226,10 @@ objectdef EQ2Mapper
 	
 	member CollisionTest(float FromX, float FromY, float FromZ, float ToX, float ToY, float ToZ)
 	{
-		return ${EQ2.CheckCollision[${FromX},${FromY},${FromZ},${ToX},${ToY},${ToZ}]}
+	    if (!${NoCollisionDetection})
+	        return FALSE
+	            
+	    return ${EQ2.CheckCollision[${FromX},${FromY},${FromZ},${ToX},${ToY},${ToZ}]}
 	}	
 
 	method ConnectBoxNeighbours(string RegionName)
