@@ -795,6 +795,7 @@
 				<Connection To="qey_tradeskill01-1209702767-67" />
 				<Connection To="qey_tradeskill01-1209703893-85" />
 				<Connection To="qey_tradeskill01-1209718974-144" />
+				<Connection To="qey_tradeskill01-1209781680-164" />
 				<Connection To="Sewing Table &amp; Mannequin 3" />
 			</Box>
 			<Box Name="Sewing Table &amp; Mannequin 3" Unique='1'>
@@ -823,6 +824,7 @@
 				<Connection To="qey_tradeskill01-1209718974-144" />
 				<Connection To="qey_tradeskill01-1209755336-148" />
 				<Connection To="qey_tradeskill01-1209755338-149" />
+				<Connection To="qey_tradeskill01-1209781680-164" />
 				<Connection To="Woodworking Table 1" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209702752-65" Unique='1'>
@@ -835,6 +837,7 @@
 				<Connection To="qey_tradeskill01-1209702767-67" />
 				<Connection To="qey_tradeskill01-1209718974-144" />
 				<Connection To="qey_tradeskill01-1209755336-148" />
+				<Connection To="qey_tradeskill01-1209781680-164" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209702766-66" Unique='1'>
 				<X1>-10.177113</X1>
@@ -2080,6 +2083,7 @@
 				<Connection To="qey_tradeskill01-1209702743-64" />
 				<Connection To="qey_tradeskill01-1209702767-67" />
 				<Connection To="qey_tradeskill01-1209703682-82" />
+				<Connection To="qey_tradeskill01-1209781680-164" />
 				<Connection To="Sewing Table &amp; Mannequin 3" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209755346-150" Unique='1'>
@@ -2264,6 +2268,18 @@
 				<Connection To="qey_tradeskill01-1209755331-147" />
 				<Connection To="qey_tradeskill01-1209755346-150" />
 				<Connection To="Woodworking Table 2" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209781680-164" Unique='1'>
+				<X1>-15.484131</X1>
+				<X2>-11.484131</X2>
+				<Y1>-9.479046</Y1>
+				<Y2>-3.479046</Y2>
+				<Z1>3.901700</Z1>
+				<Z2>7.901700</Z2>
+				<Connection To="qey_tradeskill01-1209702743-64" />
+				<Connection To="qey_tradeskill01-1209702752-65" />
+				<Connection To="qey_tradeskill01-1209755338-149" />
+				<Connection To="Woodworking Table 3" />
 			</Box>
 		</Children>
 	</Universe>
