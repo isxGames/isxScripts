@@ -13,7 +13,19 @@
 #define ADDNAMEPOINT f2
 #define ADDNAMEDPOINTNOCOLLISION ALT+F2
 #define SAVEPOINTS f3
+#define TOGGLELSO ALT+F3
 #define QUIT f11
+
+variable(global) string SaveMode 
+variable(global) bool SaveAsLSO
+variable(global) EQ2Mapper Mapper
+variable(global) int CurrentTask
+variable(script) int HudX
+variable(script) int HudY
+variable(script) bool AutoPlot
+variable(script) bool NoCollision
+
+variable(script) string MapFileRegionsType
 
 function main(... Args)
 {
@@ -28,17 +40,11 @@ function main(... Args)
     }
     while !${ISXEQ2.IsReady}
 
-    declarevariable Mapper EQ2Mapper global
-	declarevariable CurrentTask int global
-    declarevariable HudX int script
-    declarevariable HudY int script
-    declarevariable AutoPlot bool script
-    declarevariable NoCollision bool script
-        
-    ;; Variables that should be user definable (EQ2Mapper also has variables that should be assigned per user);;;
-    declarevariable MapFileRegionsType string script
     ; EQ2Mapper only supports "box" region types so far...
     MapFileRegionsType:Set["Box"]
+    
+    ;; defaults (Save to config file?)
+    SaveAsLSO:Set[FALSE]
     
 	Script:Squelch
 	
@@ -70,29 +76,56 @@ function main(... Args)
     Mapper:LoadMapper	
     if (${NoCollision})
         Mapper.NoCollisionDetection:Set[TRUE]
+    if (${SaveAsLSO})
+    {
+        SaveMode:Set["LSO"]
+        Mapper.UseLSO:Set[TRUE]
+    }
+    else
+    {
+        SaveMode:Set["XML"]
+        Mapper.UseLSO:Set[FALSE]
+    }
+    echo "SaveMode: ${SaveMode}"
 	echo "EQ2NavCreator:: Initialization complete."
     echo "---------------------------"
 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; BINDS
     bind addpoint "ADDPOINT" "CurrentTask:Set[1]"
     bind addpointnocollision "ADDPOINTNOCOLLISION" "CurrentTask:Set[2]"
 	bind addnamepoint "ADDNAMEPOINT" "CurrentTask:Set[3]"
 	bind addnamepointnocollision "ADDNAMEDPOINTNOCOLLISION" "CurrentTask:Set[4]"
 	bind savepoints "SAVEPOINTS" "CurrentTask:Set[5]"
 	bind quit "QUIT" "CurrentTask:Set[6]"
-
-    HUD -add FunctionKey1  ${HudX},${HudY:Inc[15]} "F1     - Add a Navigational Point at your current location"
-    HUD -add FunctionKey1b ${HudX},${HudY:Inc[15]} "ALT+F1 - Add a Navigational Point at your current location (and connect with no collision tests)"
-	HUD -add FunctionKey2  ${HudX},${HudY:Inc[15]} "F2     - Add a Navigational Point with a region name (FQN) you specify."
-	HUD -add FunctionKey2b ${HudX},${HudY:Inc[15]} "ALT+F2 - Add a Navigational Point with a region name (FQN) you specify (and connect with no collision tests)"
+	bind togglelso "TOGGLELSO" "CurrentTask:Set[7]"
+    ;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; HUD
+    HUD -add FunctionKey1  ${HudX},${HudY:Inc[15]} "F1     - Add a Region at your current location"
+    HUD -add FunctionKey1b ${HudX},${HudY:Inc[15]} "ALT+F1 - Add a Region at your current location (and connect with no collision tests)"
+	HUD -add FunctionKey2  ${HudX},${HudY:Inc[15]} "F2     - Add a Region with a name (FQN) you specify."
+	HUD -add FunctionKey2b ${HudX},${HudY:Inc[15]} "ALT+F2 - Add a Region with a name (FQN) you specify (and connect with no collision tests)"
 	
-	HUD -add FunctionKey3  ${HudX},${HudY:Inc[25]} "F3     - Save ALL Navigational Points."
-	HUD -add FunctionKey11 ${HudX},${HudY:Inc[15]} "F11    - Exit EQ2NavCreator (and save all navigation points)"
+	HUD -add FunctionKey3  ${HudX},${HudY:Inc[25]} "F3     - Save all Regions."
+	HUD -add FunctionKey3b ${HudX},${HudY:Inc[15]} "ALT+F3 - Toggle Save Mode"
 	
-	HUD -add NavPointStatus ${HudX},${HudY:Inc[30]} "Last Nav Point Added: \${Mapper.LastRegionAdded_Name} [\${Mapper.LastRegionAdded_X.Precision[2]}(x) \${Mapper.LastRegionAdded_Y.Precision[2]}(y) \${Mapper.LastRegionAdded_Z.Precision[2]}(z)]"
+	HUD -add FunctionKey11 ${HudX},${HudY:Inc[25]} "F11    - Exit EQ2NavCreator (and save all regions)"
+	
+	
+	HUD -add SaveModeStatus ${HudX},${HudY:Inc[50]} "Save Mode: \${SaveMode}"
+	
+	HUD -add NavPointStatus ${HudX},${HudY:Inc[25]} "Last Nav Point Added: \${Mapper.LastRegionAdded_Name} [\${Mapper.LastRegionAdded_X.Precision[2]}(x) \${Mapper.LastRegionAdded_Y.Precision[2]}(y) \${Mapper.LastRegionAdded_Z.Precision[2]}(z)]"
 	HUD -add NavCountStatus ${HudX},${HudY:Inc[15]} "Total Number of Points Used: \${Mapper.CurrentZone.ChildCount}"
 	
 	HUDSet NavPointStatus -c FFFF00
 	HUDSet NavCountStatus -c FFFF00	
+	HUDSet SaveModeStatus -c FFFF00
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
 	
 	if (${Mapper.CurrentZone.ChildCount} == 0 && ${AutoPlot})
@@ -163,13 +196,29 @@ function main(... Args)
 			case 6
 				CurrentTask:Set[99]
 				break
+				
+			case 7
+			    CurrentTask:Set[0]
+			    if (${SaveAsLSO})
+			    {
+			        SaveAsLSO:Set[FALSE]
+			        SaveMode:Set["XML"]
+			        Mapper.UseLSO:Set[FALSE]
+			    }
+			    else
+			    {
+			        SaveAsLSO:Set[TRUE]
+			        SaveMode:Set["LSO"]
+			        Mapper.UseLSO:Set[TRUE]
+			    }
+			    break
 		}
 		
 		if (${AutoPlot})
     		Mapper:Pulse
 		waitframe
 	}
-	while ${CurrentTask}<6
+	while ${CurrentTask}<10
 
 	Script:End
 }
@@ -184,13 +233,16 @@ function atexit()
 	bind -delete addnamepointnocollision
 	bind -delete savepoints
 	bind -delete quit
+	bind -delete togglelso
 
     HUD -remove FunctionKey1
     HUD -remove FunctionKey1b
 	HUD -remove FunctionKey2
 	HUD -remove FunctionKey2b
 	HUD -remove FunctionKey3
+	HUD -remove FunctionKey3b
 	HUD -remove FunctionKey11
 	HUD -remove NavPointStatus
 	HUD -remove NavCountStatus
+	HUD -remove SaveModeStatus
 }

@@ -94,6 +94,8 @@ objectdef EQ2Nav
     variable float MovingTo_Precision
     
     variable collection:string DoorsOpenedThisTrip
+    
+    variable bool UsingLSO = false
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;
@@ -105,9 +107,31 @@ objectdef EQ2Nav
 	{
 		This.NavDestination:Set[0,0,0]
 		degrees:Set[15]
-		Mapper:Initialize
-        Mapper:LoadMapper	
 	}
+	
+	method UseLSO(bool UseIt)
+	{
+	    if (${UseIt})
+	    {
+	        This.UsingLSO:Set[TRUE]
+	        Mapper.UseLSO:Set[TRUE]
+	        This:Output["Utilizing LSO File"]
+	    }
+	    else
+	    {
+	        This.UsingLSO:Set[FALSE]
+	        Mapper.UseLSO:Set[FALSE]
+	        This:Output["Utilizing XML Files"]	        
+	    }
+	}
+	
+	method LoadMap()
+	{
+	    Mapper.UseLSO:Set[${UsingLSO}]
+	    Mapper:LoadMap
+	    This:Output["Navigation Map Loaded"]
+	}
+
 
 	method Shutdown()
 	{
