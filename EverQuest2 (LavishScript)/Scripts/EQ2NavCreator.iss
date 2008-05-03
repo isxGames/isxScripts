@@ -54,16 +54,15 @@ function main(... Args)
 	    variable int Iterator = 1
 		do
 		{
-			if (${Args[${Iterator}].Equal[-autoplot]} || ${Args[${Iterator}].Find[-auto]} > 0)
+			if (${Args[${Iterator}].Equal[-auto]} || ${Args[${Iterator}].Find[-auto]} > 0)
 				AutoPlot:Set[TRUE]
-		    if (${Args[${Iterator}].Equal[-nocollision]} || ${Args[${Iterator}].Find[-nocollision]} > 0)
+		    elseif (${Args[${Iterator}].Equal[-nocollision]} || ${Args[${Iterator}].Find[-nocollision]} > 0)
 		        NoCollision:Set[TRUE]
 			else
 				echo "EQ2NavCreator:: '${Args[${Iterator}]}' is not a valid command line argument:  Ignoring..."
 		}
 		while ${Iterator:Inc} <= ${Args.Size}
 	}	
-	
 	
 
 	; Set the default location of the HUD
@@ -72,8 +71,7 @@ function main(... Args)
 
 	echo "---------------------------"
 	echo "EQ2NavCreator:: Initializing."
-    Mapper:Initialize
-    Mapper:LoadMapper	
+    Mapper:LoadMap	
     if (${NoCollision})
         Mapper.NoCollisionDetection:Set[TRUE]
     if (${SaveAsLSO})
