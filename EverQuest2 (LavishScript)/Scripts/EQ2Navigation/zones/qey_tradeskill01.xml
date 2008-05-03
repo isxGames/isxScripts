@@ -1134,6 +1134,7 @@
 				<Connection To="qey_tradeskill01-1209718168-142" />
 				<Connection To="qey_tradeskill01-1209721954-145" />
 				<Connection To="qey_tradeskill01-1209753558-146" />
+				<Connection To="qey_tradeskill01-1209845597-165" />
 				<Connection To="Stove &amp; Keg 1" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209703893-85" Unique='1'>
@@ -1144,9 +1145,7 @@
 				<Z1>-0.786841</Z1>
 				<Z2>3.213159</Z2>
 				<Connection To="Intersection 2" />
-				<Connection To="qey_tradeskill01-1209702743-64" />
 				<Connection To="qey_tradeskill01-1209703895-88" />
-				<Connection To="Woodworking Table 3" />
 			</Box>
 			<Box Name="qey_tradeskill01-1209703893-86" Unique='1'>
 				<X1>-21.384281</X1>
@@ -1410,6 +1409,7 @@
 				<Connection To="qey_tradeskill01-1209703897-90" />
 				<Connection To="qey_tradeskill01-1209703897-91" />
 				<Connection To="qey_tradeskill01-1209718166-141" />
+				<Connection To="qey_tradeskill01-1209845597-165" />
 			</Box>
 			<Box Name="Engraved Desk 2" Unique='1'>
 				<X1>-20.177271</X1>
@@ -2280,6 +2280,16 @@
 				<Connection To="qey_tradeskill01-1209702752-65" />
 				<Connection To="qey_tradeskill01-1209755338-149" />
 				<Connection To="Woodworking Table 3" />
+			</Box>
+			<Box Name="qey_tradeskill01-1209845597-165" Unique='1'>
+				<X1>-19.958231</X1>
+				<X2>-15.958231</X2>
+				<Y1>-9.444537</Y1>
+				<Y2>-3.444537</Y2>
+				<Z1>8.831929</Z1>
+				<Z2>12.831929</Z2>
+				<Connection To="Engraved Desk 1" />
+				<Connection To="Inner Room 2" />
 			</Box>
 		</Children>
 	</Universe>
