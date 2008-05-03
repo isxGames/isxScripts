@@ -75,7 +75,7 @@ objectdef EQ2Mapper
 	}	
 
 	/* moved map loading out of intialize to allow LSO setting to load */
-	method LoadMapper()
+	method LoadMap()
 	{
 		;This:Output["Starting mapping system."]
 		call This.Load
