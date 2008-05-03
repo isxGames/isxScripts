@@ -4,9 +4,6 @@
 ;;; licensed under a Attribution-Noncommercial-No Derivative Works 3.0 United States License 
 ;;; (http://creativecommons.org/licenses/by-nc-nd/3.0/us/)
 ;;;;;;;;;;;;;;;;;;;;;;;;
-;; Additional References:
-;;    http://www.lavishsoft.com/wiki/index.php/LavishNav:Object_Types
-;;
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavMapper_Lib.iss
 
@@ -26,9 +23,7 @@ objectdef EQ2NavPath
 
 objectdef EQ2Nav
 {
-    ;;; These need to be added to a UI option or xml options file
 
-    
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Values that should be set via GUI interfaces in your scripts (or config files):
     ;; ~ Precision is the value to which the navigator will move you to each region centerpoint before moving on. 
@@ -64,29 +59,29 @@ objectdef EQ2Nav
     variable EQ2Mapper Mapper
 	variable index:EQ2NavPath NavigationPath
 	variable point3f NavDestination
-	variable int StuckTime = ${LavishScript.RunningTime}
-	variable int TotalStuck = 0
-	variable int SKIPNAV = 0
+	variable int StuckTime =
+	variable int TotalStuck
+	variable int SKIPNAV
 	variable int degrees
 	variable point3f BestPoint
 	variable float BestPointDistance
 
-	variable int NAV_Wait_Until = 0
-	variable int NAV_Wait_Until_Timeout = 10
+	variable int NAV_Wait_Until
+	variable int NAV_Wait_Until_Timeout
 
 	variable float NextHopOldDistance
 	variable float NextHopDistance
-	variable int NextHopOldTime=${LavishScript.RunningTime}
+	variable int NextHopOldTime=
 	variable float NextHopSpeed
 	variable float DestinationDistance
 
-	variable string MeLastLocation=${Me.ToActor.Loc}
+	variable string MeLastLocation
 	variable bool MeMoving=FALSE
 	
 	variable int BackupTime
     variable int StrafeTime
 
-    variable bool MovingTo = FALSE
+    variable bool MovingTo
     variable int MovingTo_Timer
     variable float MovingTo_X
     variable float MovingTo_Y
@@ -95,7 +90,7 @@ objectdef EQ2Nav
     
     variable collection:string DoorsOpenedThisTrip
     
-    variable bool UsingLSO = false
+    variable bool UsingLSO
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;
@@ -106,7 +101,16 @@ objectdef EQ2Nav
 	method Initialize()
 	{
 		This.NavDestination:Set[0,0,0]
-		degrees:Set[15]
+		This.degrees:Set[15]
+		This.UsingLSO:Set[FALSE]
+		This.MovingTo:Set[FALSE]
+		This.MeLastLocation:Set[${Me.ToActor.Loc}]
+		This.NextHopOldTime:Set[${LavishScript.RunningTime}]
+        This.StuckTime:Set[${LavishScript.RunningTime}]
+		This.TotalStuck:Set[0]
+		This.SKIPNAV:Set[0]
+		This.NAV_Wait_Until:Set[0]
+		This.NAV_Wait_Until_Timeout:Set[10]
 	}
 	
 	method UseLSO(bool UseIt)

@@ -4,9 +4,6 @@
 ;;; licensed under a Attribution-Noncommercial-No Derivative Works 3.0 United States License 
 ;;; (http://creativecommons.org/licenses/by-nc-nd/3.0/us/)
 ;;;;;;;;;;;;;;;;;;;;;;;;
-;; Additional References:
-;;    http://www.lavishsoft.com/wiki/index.php/LavishNav:Object_Types
-;;
 
 objectdef EQ2Mapper
 {
