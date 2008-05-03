@@ -2327,17 +2327,50 @@ function IamDead(string Line)
 
 function LoreItem(string Line)
 {
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+	if ${ID.Equal[${LastWindow}]}
+	{
+    	switch ${LootWindow.Type}
+    	{
+    	    case Free For All
+    		case Lottery
+    			LootWindow:DeclineLotto
+                return
+    		case Need Before Greed
+    			LootWindow:DeclineNBG
+    			return
+    		case Unknown
+    		Default
+    			echo "EQ2Bot(LoreItem):: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+    			return
+    	}
+	}
 }
 
 function LootWindowBusy(string Line)
 {
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+	if ${ID.Equal[${LastWindow}]}
+	{
+    	switch ${LootWindow.Type}
+    	{
+    	    case Free For All
+    		case Lottery
+    			LootWindow:DeclineLotto
+                return
+    		case Need Before Greed
+    			LootWindow:DeclineNBG
+    			return
+    		case Unknown
+    		Default
+    			echo "EQ2Bot(LootWindowBusy):: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+    			return
+    	}
+	}
 }
 
 function InventoryFull(string Line)
 {
-	EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+    ;; Is this necessary? ..if so, should use "EQ2Execute /togglebags" instead I think.
+	;EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 
 	LootMethod:Set[Decline]
 
@@ -2503,8 +2536,20 @@ atom(script) LootWDw(string ID)
 
 	if ${ID.Equal[${LastWindow}]}
 	{
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-		return
+    	switch ${LootWindow[${ID}].Type}
+    	{
+    	    case Free For All
+    		case Lottery
+    			LootWindow[${ID}]:DeclineLotto
+                return
+    		case Need Before Greed
+    			LootWindow[${ID}]:DeclineNBG
+    			return
+    		case Unknown
+    		Default
+    			echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+    			return
+    	}
 	}
 
 
@@ -2561,37 +2606,26 @@ atom(script) LootWDw(string ID)
 	{
 		case Lottery
 			if ${deccnt}
-			{
 				LootWindow[${ID}]:DeclineLotto
-			}
 			else
-			{
 				LootWindow[${ID}]:RequestAll
-			}
 			break
 		case Free For All
 			if ${deccnt}
-			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-			}
+				LootWindow[${ID}]:DeclineLotto
 			else
-			{
 				LootWindow[${ID}]:LootAll
-			}
 			break
 		case Need Before Greed
 			if ${deccnt}
-			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-			}
+				LootWindow:${ID}]:DeclineNBG
 			else
-			{
 				LootWindow[${ID}]:SelectGreed
-			}
 			break
 		case Unknown
 		Default
-			EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+			echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+			break
 	}
 }
 
@@ -4288,21 +4322,21 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-		if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
-		{
+	if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
+	{
 		if ${LoreConfirm}
 			ChoiceWindow:DoChoice1
 		else
 			ChoiceWindow:DoChoice2
-			return
-		}
+		return
+	}
 
 	if ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
 		if ${NoTradeConfirm}
 			ChoiceWindow:DoChoice1
 		else
-				ChoiceWindow:DoChoice2
+			ChoiceWindow:DoChoice2
 		return
 	}
 
