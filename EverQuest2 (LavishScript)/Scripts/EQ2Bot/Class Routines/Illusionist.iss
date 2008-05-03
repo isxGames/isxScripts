@@ -357,7 +357,7 @@ function Buff_Routine(int xAction)
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
-		case AA_Illusory_Arm
+		case AA_Illusory_Arm		
 			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -438,8 +438,10 @@ function Combat_Routine(int xAction)
 		    call CastSpellRange 385 0 0 0 ${KillTarget}
 	}
 
-	;make sure killtarget is always Melee debuffed (unless I am the tank
-	call CastSpellRange 50 0 0 0 ${KillTarget}
+	;make sure killtarget is always Melee debuffed (unless I am the tank)
+	;; TO DO ..redo this!
+	if ${Target.IsEpic}
+    	call CastSpellRange 50 0 0 0 ${KillTarget}
 
 	;make sure Psychic Asailant debuff / stun always on.
 	call CastSpellRange 61 0 0 0 ${KillTarget}
