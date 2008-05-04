@@ -535,15 +535,20 @@ objectdef EQ2Nav
 
 	method Pulse()
 	{	    
+	    ;;;;;;;;;;;
+        ;; NOTES:
+        ;; 1. 
+        ;;;;;;;;;;;
+
 	    variable point3f Dest
 		
 		;Only do every 2 frames (CPU Saver)
-		if ${SKIPNAV} < 50
+		if ${This.SKIPNAV} < 50
 		{
-			SKIPNAV:Inc
+			This.SKIPNAV:Inc
 			return
 		}
-		SKIPNAV:Set[0]
+		This.SKIPNAV:Set[0]
 		
 		if ${This.MeLastLocation.Equal[${Me.ToActor.Loc}]}
 		{
