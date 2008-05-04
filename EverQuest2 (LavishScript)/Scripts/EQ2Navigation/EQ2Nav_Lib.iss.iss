@@ -158,6 +158,11 @@ objectdef EQ2Nav
 		This.POIStr:Set[""]
 	}
 
+	member:lnavregionref NearestRegion(float X, float Y, float Z)
+	{
+		return Mapper.BestorNearestContainer[${X},${Y},${Z}]
+	}	
+
 	member AvailablePath(float X,float Y,float Z)
 	{
 		variable dijkstrapathfinder PathFinder
@@ -445,94 +450,36 @@ objectdef EQ2Nav
 			else
 			{
 				; We didnt get a path run to the next closest point and try from there
-				This:Output["Error: Can't find connection. Not enough mapping data! ${X},${Y},${Z}"]
-				This:Debug["From: ${CurrentRegion.FQN} to ${DestinationRegion.FQN}."]
-				This.MeMoving:Set[FALSE]
-				This.DoorsOpenedThisTrip:Clear
+				This:Output["Your current location has not been mapped.  Moving to nearest mapped point..."]
+			    This:MoveToNearestRegion[${X},${Y},${Z}]
 			}
 		}
 	}
 	
-	method HandleObstacle(int delay)
-	{   
-    	variable float newheading
-    
-    	This:CheckAggro
-    
-    	if ${delay}>0
-    	{
-    		;backup a little
-            press -release ${This.MOVEFORWARD}		
-            wait 1
-    		press -hold ${This.MOVEBACKWARD}		
-    		wait ${Math.Calc64[${This.BackupTime}*${delay}]}
-            press -release ${This.MOVEBACKWARD}
-    
-    		if ${delay}==1 || ${delay}==3 || ${delay}==5
-    		{
-    			;randomly pick a direction
-    			if "${Math.Rand[10]}>5"
-    			{
-    			    This:CheckAggro
-                    press -hold ${This.STRAFELEFT}			    
-    				This:StartRunning
-    				wait ${Math.Calc64[${This.StrafeTime}*${delay}]}
-                    press -release ${This.STRAFELEFT}	
-    				This:StopRunning
-    				wait 2
-    			}
-    			else
-    			{
-    			    This:CheckAggro
-                    press -hold ${This.STRAFERIGHT}	
-    				This:StartRunning
-    				wait ${Math.Calc64[${This.StrafeTime}*${delay}]}
-                    press -release ${This.STRAFERIGHT}	
-    				This:StopRunning
-    				wait 2
-    			}
-    		}
-    		else
-    		{
-    			;randomly pick a direction
-    			if (${Math.Rand[10]}>5)
-    			{
-    			    This:CheckAggro
-                    press -hold ${This.STRAFELEFT}	
-    				wait ${Math.Calc64[${This.StrafeTime}*${delay}]}
-                    press -release ${This.STRAFELEFT}	
-    				wait 2
-    			}
-    			else
-    			{
-    			    This:CheckAggro
-                    press -hold ${This.STRAFERIGHT}	
-    				wait ${Math.Calc64[${This.StrafeTime}*${delay}]}
-                    press -release ${This.STRAFERIGHT}	
-    				wait 2
-    			}
-    		}
-    		;Start moving forward again
-    		This:StartRunning
-    		wait ${Math.Calc64[${This.BackupTime}*${delay}+5]}
-    	}
-    	else
-    	{
-    	    This:CheckAggro
-    		if ${Math.Rand[10]}>5
-    			newheading:Set[${Math.Calc[${Me.Heading}+90]}]
-    		else
-    			newheading:Set[${Math.Calc[${Me.Heading}-90]}]
-    		if ${newheading}>360
-    			newheading:Dec[360]
-    		if ${newheading}<1
-    			newheading:Inc[360]
-    
-    		face ${newheading}
-    		wait ${Math.Calc64[${This.StrafeTime}*${delay}]}
-    	}
-    }    
 
+	; If you're currently in an unmapped region, call this to move to the nearest mapped region.
+	method MoveToNearestRegion(float X, float Y, float Z)
+	{
+		declarevariable destregion lnavregionref local ${This.NearestRegion[${X}, ${Y}, ${Z}]}
+		variable float DestRegionDistance
+		
+		DestRegionDistance:Set[${Math.Distance[${Me.ToActor.Loc},${destregion.CenterPoint}]}]
+		
+		if ${DestRegionDistance} > 20
+		{
+		    This:Output["The nearest mapped point is ${DestRegionDistance} away.  More mapping data is required before continuing"]
+		    return
+		}
+		
+		if ${Me.CheckCollision[${destregion.CenterPoint}]}
+		{
+		    This:Output["The nearest mapped point is only ${DestRegionDistance} away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]
+		    return
+		}
+		
+		This:MoveTo[${destregion.CenterPoint},${This.gPrecision}]
+	}	
+	
 	method Pulse()
 	{	    
 	    ;;;;;;;;;;;

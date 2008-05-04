@@ -3,6 +3,8 @@
 ;;; That source is available at http://www.ob-dev.com/svn/openbot/ in its original form and, except where noted, is
 ;;; licensed under a Attribution-Noncommercial-No Derivative Works 3.0 United States License 
 ;;; (http://creativecommons.org/licenses/by-nc-nd/3.0/us/)
+;;;
+;;; All "Dynamic" region creation and concepts are originally from CyberTech (cybertech@gmail.com)
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 objectdef EQ2Mapper
@@ -10,8 +12,8 @@ objectdef EQ2Mapper
     ;;;; If FALSE, then 'xml' file is the output.  Scripts can modify this if desired.
     variable bool UseLSO = FALSE
     
-    ;; Can be Box or Point [TODO -- only 'box' is supported currently]
-    variable string MapFileRegionsType = "Box"
+    ;; Can be 'Box', 'Point', or 'Sphere'
+    variable string MapFileRegionsType = "Sphere"
     
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Values that should be set via GUI interfaces in your scripts (or config files):    
@@ -26,8 +28,8 @@ objectdef EQ2Mapper
     ;;   determining if regions should connect.
     ;;
     variable float BoxRadius = 2
-    variable int MinBoxIntersectionDistance = 3
-    variable int MaxBoxIntersectionDistance = 7    
+    variable int MinBoxIntersectionDistance = 2
+    variable int MaxBoxIntersectionDistance = 10    
     variable bool NoCollisionDetection = false
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -41,10 +43,13 @@ objectdef EQ2Mapper
 	variable lnavregionref PreviousRegion
 	variable int LastMapRend = ${LavishScript.RunningTime}
 	variable EQ2Topography Topography
+	variable lnavregionref LastCreatedRegion
 	variable string LastRegionAdded_Name
 	variable float LastRegionAdded_X
 	variable float LastRegionAdded_Y
 	variable float LastRegionAdded_Z
+	variable float Max_Distance_Between_Checks = 10
+	variable float Max_Region_Size = 20
 	
 	variable bool MapPathway = FALSE
 	variable bool MapPathwayReverse = FALSE
@@ -54,10 +59,6 @@ objectdef EQ2Mapper
 
 
 	method Initialize()
-	{
-	}
-
-	method OnGUIChange()
 	{
 	}
 
@@ -166,30 +167,127 @@ objectdef EQ2Mapper
 			This:Output["Zone changed, updating!"]
 			This:ZoneChanged
 		}
+		
 
-		switch ${This.MapFileRegionsType}
-		{
-		    case Box
-		    if (!${This.IsBoxMapped[${Me.ToActor.Loc}]})
-		    {
-			    This:MapLocationBox[${Me.ToActor.Loc},"${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
-		    
-		    }
-		    break
-		    
-		    case Point
-		    break
-		}
+        if (!${This.IsMapped[${Me.ToActor.Loc}]})
+        {
+    		switch ${This.MapFileRegionsType}
+    		{
+    		    case Box
+    		    This:PlotBoxFromPoint[${Me.ToActor.Loc}]
+    		    break
+    		    
+    		    case Point
+    		    This:PlotPoint[${Me.ToActor.Loc}]  		    
+    		    break
+    		    
+    		    case Sphere
+    		    This:PlotSphereFromPoint[${Me.ToActor.Loc}]  		    
+    		    break   
+    		    
+    		    Default 
+    		    This:PlotSphereFromPoint[${Me.ToActor.Loc}]
+    		    break	    
+    		}
+    	}
 	}
 
-	member IsBoxMapped(float X, float Y, float Z)
+	member IsMapped(float X, float Y, float Z)
 	{
 	    if (${This.CurrentZone.ID} == ${This.CurrentRegion.ID})
 			return FALSE
-		return TRUE
+			
+		variable lnavregionref Container
+		
+		Container:SetRegion[${This.CurrentZone.BestContainer[${X},${Y},${Z}].ID}]
+		
+		if ${Container.ID(exists)} && (${Container.Type.Equal[Universe]} || !${Container.ID})
+		{
+			This:Output["IsMapped: Should never happen with mapped space: Container.Type.Equal[Universe] ${Container.ID} ${Container.FQN} ${Container.Type}  ${X},${Y},${Z}"]
+			This:Output["\${This.CurrentZone} = ${This.CurrentZone}"]
+			return FALSE
+		}
+
+		return TRUE		
+			
+	}
+	
+	member:lnavregionref BestorNearestContainer(float X, float Y, float Z)
+	{	
+		if ${This.IsMapped[${X},${Y},${Z}]}
+		{
+			return ${This.BestContainer[${X},${Y},${Z}]}
+		}
+		else
+		{
+			return ${This.NearestChild[${X},${Y},${Z}]}
+		}
+	}
+	member:lnavregionref BestContainer(float X, float Y, float Z)
+	{
+		variable lnavregionref Container
+		
+		Container:SetRegion[${This.CurrentZone.BestContainer[${X},${Y},${Z}].ID}]
+		if ${Container.Type.Equal[Universe]}
+		{
+			return 0	
+		}
+		return ${Container}
 	}
 
-	method MapLocationBox(float X, float Y, float Z, string RegionName)
+	member:lnavregionref NearestChild(float X, float Y, float Z)
+	{
+		variable lnavregionref Container
+
+		Container:SetRegion[${This.CurrentZone.NearestChild[${X},${Y},${Z}].ID}]
+		if ${Container.Type.Equal[Universe]}
+		{
+			return 0
+		}
+		return ${Container}
+	}	
+
+	method PlotPoint(float X, float Y, float Z, string RegionName)
+	{
+		variable point3f Location
+		Location:Set[${X},${Y},${Z}]
+
+		if (${RegionName.Equal["Auto"]})
+		    RegionName:Set["${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
+
+		LastCreatedRegion:SetRegion[${CurrentZone.AddChild[point,${PointName}, ${Location}]}]
+		This:Output["Adding Region to map as 'Point' - (${RegionName} ${X}, ${Y}, ${Z})"]
+		
+		LastRegionAdded_Name:Set[${RegionName}]
+		LastRegionAdded_X:Set[${X}]
+		LastRegionAdded_Y:Set[${Y}]
+		LastRegionAdded_Z:Set[${Z}]
+		
+		This:ConnectNeighbours[${LastCreatedRegion}]		
+	}
+		
+	method PlotSphereFromPoint(float X, float Y, float Z, float Radius=3, string RegionName="auto")
+	{
+		variable point3f Location
+		Location:Set[${X},${Y},${Z}]
+
+		if (${RegionName.Equal["Auto"]})
+		    RegionName:Set["${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
+
+		LastCreatedRegion:SetRegion[${CurrentZone.AddChild[sphere,${RegionName},-unique,${Radius},${Location}]}]
+
+		This:Output["Adding Region to map as 'sphere' (from point) - (${RegionName} ${X}, ${Y}, ${Z}, Radius: ${Radius})"]
+		This.Max_Distance_Between_Checks:Set[${Radius}]
+		
+		LastRegionAdded_Name:Set[${RegionName}]
+		LastRegionAdded_X:Set[${X}]
+		LastRegionAdded_Y:Set[${Y}]
+		LastRegionAdded_Z:Set[${Z}]	
+		
+		This:ConnectNeighbours[${LastCreatedRegion}]	
+	}	
+
+	method PlotBoxFromPoint(float X, float Y, float Z, string RegionName="auto")
 	{
 		variable float X1
 		variable float X2
@@ -208,17 +306,16 @@ objectdef EQ2Mapper
 		if (${RegionName.Equal["Auto"]})
 		    RegionName:Set["${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
 		    
-
-        CurrentZone:AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]
-        ;CurrentZone.FindRegion[${RegionName}]:SetCustom[Note,"Open,269"]
-		This:Output["Adding Region to Map (${RegionName} ${X}, ${Y}, ${Z})"]
+        LastCreatedRegion:SetRegion[${CurrentZone.AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]}]
+        ;LastCreatedRegion:SetCustom[Note,"example"]
+		
+		This:Output["Adding Region to map as 'box' - (${RegionName} ${X}, ${Y}, ${Z})"]
 		LastRegionAdded_Name:Set[${RegionName}]
 		LastRegionAdded_X:Set[${X}]
 		LastRegionAdded_Y:Set[${Y}]
 		LastRegionAdded_Z:Set[${Z}]
 		
-		;Connect To Previous and Current
-		This:ConnectBoxNeighbours[${RegionName}]
+		This:ConnectNeighbours[${LastCreatedRegion}]		
 	}
 	
 	member CollisionTest(float FromX, float FromY, float FromZ, float ToX, float ToY, float ToZ)
@@ -229,7 +326,7 @@ objectdef EQ2Mapper
 	    return ${EQ2.CheckCollision[${FromX},${FromY},${FromZ},${ToX},${ToY},${ToZ}]}
 	}	
 
-	method ConnectBoxNeighbours(string RegionName)
+	method ConnectNeighbours(lnavregionref Region)
 	{
 		variable index:lnavregionref SurroundingRegions
 		variable int RegionsFound
@@ -238,19 +335,44 @@ objectdef EQ2Mapper
 		variable int Connected_To = 0
 		variable int Connected_From = 0
 
-		CurrentRegion:SetRegion[${RegionName}]
+		CurrentRegion:SetRegion[${Region}]
+		if !${CurrentRegion.ID(exists)}
+		{
+		    This:Debug[":ConnectNeighbours - CurrentRegion.ID does not exist!"]
+			return
+		}
 		
 		if !${PreviousRegion.FQN(exists)}
     		This.PreviousRegion:SetRegion[${This.CurrentRegion}]
+    		
+    		
+		variable float DistanceToCheck
+		switch ${Region.Type}
+		{
+			case Box
+				DistanceToCheck:Set[${Math.Distance[${Region.X1},${Region.Y1},${Region.X2},${Region.Y2}]} * 1.5]
+				break
+			case Radius
+			case Sphere
+				DistanceToCheck:Set[${Region.Radius} * 3.0]
+				break
+			case Point
+				return
+				break
+			default
+				This:Debug[":ConnectNeighbours - Unknown Object Type ${Region.Type}"]
+				return
+				break
+		}    		
     	
 
-		if ${This.ShouldConnectBox[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
+		if ${This.ShouldConnect[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
 		{
 			This:Debug["Connecting ${CurrentRegion.FQN} -> ${PreviousRegion.FQN}."]
 			CurrentRegion:Connect[${PreviousRegion.FQN}]
 			Connected_To:Inc
 		}
-		if ${This.ShouldConnectBox[${PreviousRegion.FQN},${CurrentRegion.FQN}]}
+		if ${This.ShouldConnect[${PreviousRegion.FQN},${CurrentRegion.FQN}]}
 		{
 			This:Debug["Connecting ${PreviousRegion.FQN} -> ${CurrentRegion.FQN}."]
 			PreviousRegion:Connect[${CurrentRegion.FQN}]
@@ -259,7 +381,7 @@ objectdef EQ2Mapper
 
 		; Need to add in Connect to Previous spot to current spot and current spot to previous spot if no collisions
 		; Scan all descendants within 5 feet of this area
-		RegionsFound:Set[${CurrentZone.ChildrenWithin[SurroundingRegions,10,${CurrentRegion.CenterPoint}]}]
+		RegionsFound:Set[${CurrentZone.ChildrenWithin[SurroundingRegions,${DistanceToCheck},${CurrentRegion.CenterPoint}]}]
 		if ${RegionsFound} > 0
 		{
 			do
@@ -267,7 +389,7 @@ objectdef EQ2Mapper
 			    if (${SurroundingRegions.Get[${Index}].FQN.Equal[${CurrentRegion.FQN}]} || ${SurroundingRegions.Get[${Index}].FQN.Equal[${PreviousRegion.FQN}]})
 			        continue
 			        
-				if ${This.ShouldConnectBox[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]} && ${This.ShouldConnectBox[${SurroundingRegions.Get[${Index}].FQN},${CurrentRegion.FQN}]}
+				if ${This.ShouldConnect[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]} && ${This.ShouldConnectBox[${SurroundingRegions.Get[${Index}].FQN},${CurrentRegion.FQN}]}
 				{
 					Connected_To:Inc
 					Connected_From:Inc
@@ -281,7 +403,7 @@ objectdef EQ2Mapper
 		}
 	}
 
-	member ShouldConnectBox(string RegionA, string RegionB)
+	member ShouldConnect(string RegionA, string RegionB)
 	{
 		variable lnavregionref RegionRefA
 		variable lnavregionref RegionRefB
@@ -300,31 +422,39 @@ objectdef EQ2Mapper
 		RegionRefA:SetRegion[${RegionA}]
 		RegionRefB:SetRegion[${RegionB}]
 
-		if !${This.BoxRegionsIntersect[${RegionA},${RegionB}]}
+		if !${This.RegionsIntersect[${RegionA},${RegionB}]}
 		{
+    		This:Debug["Regions do not intersect"]
 			return FALSE
 		}
 		
-		if ${RegionRefA.CenterPoint.Y} > ${RegionRefB.CenterPoint.Y} + 3
-		    return FALSE
-		elseif ${RegionRefA.CenterPoint.Y} < ${RegionRefB.CenterPoint.Y} - 3
-		    return FALSE
-		elseif ${RegionRefB.CenterPoint.Y} > ${RegionRefA.CenterPoint.Y} + 3
-		    return FALSE
-		elseif ${RegionRefB.CenterPoint.Y} < ${RegionRefA.CenterPoint.Y} - 3
-		    return FALSE
-		    
-		    
-		    
-		if ${This.CollisionTest[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
+		if ${RegionsIntersect[${RegionRefA},${RegionRefB}]}
 		{
-			This:Output["Obstruction found between ${RegionRefA.FQN} <-> ${RegionRefB.FQN} -- not connecting."]
-			return FALSE
+			return TRUE
 		}
+		
+		if ${RegionRefA.CenterPoint.Y} > ${RegionRefB.CenterPoint.Y} + 5
+		    return FALSE
+		elseif ${RegionRefA.CenterPoint.Y} < ${RegionRefB.CenterPoint.Y} - 5
+		    return FALSE
+		elseif ${RegionRefB.CenterPoint.Y} > ${RegionRefA.CenterPoint.Y} + 5
+		    return FALSE
+		elseif ${RegionRefB.CenterPoint.Y} < ${RegionRefA.CenterPoint.Y} - 5
+		    return FALSE
+		    
+		    
+	    if (!${NoCollisionDetection})
+	    {
+    		if ${This.CollisionTest[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
+    		{
+    			This:Output["Obstruction found between ${RegionRefA.FQN} <-> ${RegionRefB.FQN} -- not connecting."]
+    			return FALSE
+    		}
+    	}
 		return TRUE
 	}
 
-	member BoxRegionsIntersect(string RegionA, string RegionB)
+	member RegionsIntersect(string RegionA, string RegionB)
 	{
 		variable lnavregionref RA
 		variable lnavregionref RB
@@ -332,19 +462,44 @@ objectdef EQ2Mapper
 		RA:SetRegion[${RegionA}]
 		RB:SetRegion[${RegionB}]
 
-		if ${RA.Type.NotEqual["Box"]} || ${RB.Type.NotEqual["Box"]}
+		if ${RA.Type.Equal[${RB.Type}]}
 		{
-			return FALSE
+			switch ${RA.Type}
+			{
+				case Box
+            		if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} >= ${This.MaxBoxIntersectionDistance}
+            			return FALSE
+                    if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} <= ${This.MinBoxIntersectionDistance}
+            			return FALSE	
+            		break
+				
+				case Radius
+				case Sphere
+            		declarevariable distance float local ${Math.Calc[${Math.Distance[${RA.CenterPoint}, ${RB.CenterPoint}]} * 2]}
+            		declarevariable radii float local ${Math.Calc[${RA.Radius} + ${RB.Radius}]}
+            
+              		; The spheres overlap if their combined radius is larger than the distance of their centers
+            		if (${distance} < (${radii} * ${radii}))
+            			return TRUE
+            	    else
+            	        return FALSE
+					
+				default
+            		if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} >= ${This.MaxBoxIntersectionDistance}
+            			return FALSE
+                    if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} <= ${This.MinBoxIntersectionDistance}
+            			return FALSE
+			}
 		}
+		else
+		{
+		    ;; Treat them as two boxes I guess
+    		if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} >= ${This.MaxBoxIntersectionDistance}
+    			return FALSE
+            if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} <= ${This.MinBoxIntersectionDistance}
+    			return FALSE	
+    	}	    
 
-        if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} >= ${This.MaxBoxIntersectionDistance}
-		{
-			return FALSE
-		}
-        if ${Math.Distance[${RA.CenterPoint.X}, ${RA.CenterPoint.Z}, ${RB.CenterPoint.X}, ${RB.CenterPoint.Z}]} <= ${This.MinBoxIntersectionDistance}
-		{
-			return FALSE
-		}		
 		return TRUE
 	}
 

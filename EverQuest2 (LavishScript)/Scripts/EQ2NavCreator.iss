@@ -14,10 +14,12 @@
 #define ADDNAMEDPOINTNOCOLLISION ALT+F2
 #define SAVEPOINTS f3
 #define TOGGLELSO ALT+F3
+#define TOGGLEREGIONTYPE CTRL+F3
 #define QUIT f11
 
 variable(global) string SaveMode 
 variable(global) bool SaveAsLSO
+variable(global) string RegionCreationType
 variable(global) EQ2Mapper Mapper
 variable(global) int CurrentTask
 variable(script) int HudX
@@ -25,7 +27,6 @@ variable(script) int HudY
 variable(script) bool AutoPlot
 variable(script) bool NoCollision
 
-variable(script) string MapFileRegionsType
 
 function main(... Args)
 {
@@ -45,6 +46,7 @@ function main(... Args)
     
     ;; defaults (Save to config file?)
     SaveAsLSO:Set[FALSE]
+    RegionCreationType:Set["Sphere"]
     
 	Script:Squelch
 	
@@ -84,6 +86,7 @@ function main(... Args)
         SaveMode:Set["XML"]
         Mapper.UseLSO:Set[FALSE]
     }
+    Mapper.MapFileRegionsType:Set[${RegionCreationType}]
     echo "SaveMode: ${SaveMode}"
 	echo "EQ2NavCreator:: Initialization complete."
     echo "---------------------------"
@@ -97,6 +100,7 @@ function main(... Args)
 	bind savepoints "SAVEPOINTS" "CurrentTask:Set[5]"
 	bind quit "QUIT" "CurrentTask:Set[6]"
 	bind togglelso "TOGGLELSO" "CurrentTask:Set[7]"
+	bind togglergt "TOGGLEREGIONTYPE" "CurrentTask:Set[8]"
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
@@ -110,18 +114,21 @@ function main(... Args)
 	
 	HUD -add FunctionKey3  ${HudX},${HudY:Inc[25]} "F3     - Save all Regions."
 	HUD -add FunctionKey3b ${HudX},${HudY:Inc[15]} "ALT+F3 - Toggle Save Mode"
+	HUD -add FunctionKey3c ${HudX},${HudY:Inc[15]} "CTL+F3 - Toggle Region Creation Type"
 	
 	HUD -add FunctionKey11 ${HudX},${HudY:Inc[25]} "F11    - Exit EQ2NavCreator (and save all regions)"
 	
 	
-	HUD -add SaveModeStatus ${HudX},${HudY:Inc[50]} "Save Mode: \${SaveMode}"
+	HUD -add RegionCreation ${HudX},${HudY:Inc[50]} "Region Creation Type:        \${RegionCreationType}"
+	HUD -add SaveModeStatus ${HudX},${HudY:Inc[15]} "Save Mode:                   \${SaveMode}"
 	
-	HUD -add NavPointStatus ${HudX},${HudY:Inc[25]} "Last Nav Point Added: \${Mapper.LastRegionAdded_Name} [\${Mapper.LastRegionAdded_X.Precision[2]}(x) \${Mapper.LastRegionAdded_Y.Precision[2]}(y) \${Mapper.LastRegionAdded_Z.Precision[2]}(z)]"
+	HUD -add NavPointStatus ${HudX},${HudY:Inc[50]} "Last Nav Point Added:        \${Mapper.LastRegionAdded_Name} [\${Mapper.LastRegionAdded_X.Precision[2]}(x) \${Mapper.LastRegionAdded_Y.Precision[2]}(y) \${Mapper.LastRegionAdded_Z.Precision[2]}(z)]"
 	HUD -add NavCountStatus ${HudX},${HudY:Inc[15]} "Total Number of Points Used: \${Mapper.CurrentZone.ChildCount}"
 	
 	HUDSet NavPointStatus -c FFFF00
 	HUDSet NavCountStatus -c FFFF00	
 	HUDSet SaveModeStatus -c FFFF00
+	HUDSet RegionCreation -c FFFF00
 	;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
@@ -135,13 +142,23 @@ function main(... Args)
 		{
 		    case 1
 		        CurrentTask:Set[0]
-		        Mapper:MapLocationBox[${Me.ToActor.Loc},"Auto"]
+		        if (${RegionCreationType.Equal[Box]})
+    		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc}]
+    		    elseif (${RegionCreationType.Equal[Point]})
+    		        Mapper:PlotPoint[${Me.ToActor.Loc}]
+    		    else
+    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc}]
 		        break
 		        
 		    case 2
 		        CurrentTask:Set[0]
 		        Mapper.NoCollisionDetection:Set[TRUE]
-		        Mapper:MapLocationBox[${Me.ToActor.Loc},"Auto"]
+		        if (${RegionCreationType.Equal[Box]})
+    		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc}]
+    		    elseif (${RegionCreationType.Equal[Point]})
+    		        Mapper:PlotPoint[${Me.ToActor.Loc}]
+    		    else
+    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc}]
 		        Mapper.NoCollisionDetection:Set[FALSE]
 		        break
 		    
@@ -150,17 +167,12 @@ function main(... Args)
 				InputBox "What name do you want to give this NavPoint?"
 				if ${UserInput.Length}
 				{
-				    echo "MapFileRegionsType: ${MapFileRegionsType}"
-				    if (${MapFileRegionsType.Equal[Box]})
-				    {
-				        Mapper:MapLocationBox[${Me.X},${Me.Y},${Me.Z},${UserInput}]
-        		        announce "\\#FF6E6ENavigational Point Added" 1 2
-        		    }
-				    elseif (${MapFileRegionsType.Equal[Box]})
-				    {
-				        ;Mapper:MapLocationPoint[${Me.X},${Me.Y},${Me.Z},${UserInput}]
-        		        announce "\\#FF6E6ENavigational Point Added" 1 2
-        		    }
+    		        if (${RegionCreationType.Equal[Box]})
+        		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc},${UserInput}]
+        		    elseif (${RegionCreationType.Equal[Point]})
+        		        Mapper:PlotPoint[${Me.ToActor.Loc},${UserInput}]
+        		    else
+        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},3,${UserInput}]				        
 				}
 				break
 				
@@ -171,16 +183,12 @@ function main(... Args)
 				{
 				    Mapper.NoCollisionDetection:Set[TRUE]
 				    echo "MapFileRegionsType: ${MapFileRegionsType}"
-				    if (${MapFileRegionsType.Equal[Box]})
-				    {
-				        Mapper:MapLocationBox[${Me.X},${Me.Y},${Me.Z},${UserInput}]
-        		        announce "\\#FF6E6ENavigational Point Added" 1 2
-        		    }
-				    elseif (${MapFileRegionsType.Equal[Box]})
-				    {
-				        ;Mapper:MapLocationPoint[${Me.X},${Me.Y},${Me.Z},${UserInput}]
-        		        announce "\\#FF6E6ENavigational Point Added" 1 2
-        		    }
+    		        if (${RegionCreationType.Equal[Box]})
+        		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc},${UserInput}]
+        		    elseif (${RegionCreationType.Equal[Point]})
+        		        Mapper:PlotPoint[${Me.ToActor.Loc},${UserInput}]
+        		    else
+        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},3,${UserInput}]	
         		    Mapper.NoCollisionDetection:Set[FALSE]
 				}
 				break
@@ -210,6 +218,30 @@ function main(... Args)
 			        Mapper.UseLSO:Set[TRUE]
 			    }
 			    break
+			    
+			case 8
+			    CurrentTask:Set[0]
+			    if ${RegionCreationType.Equal[Sphere]}
+			    {
+			        RegionCreationType:Set[Box]
+			        Mapper.MapFileRegionsType:Set[Box]
+			        break
+			    }
+			    elseif ${RegionCreationType.Equal[Box]}
+			    {
+			        RegionCreationType:Set[Point]
+			        Mapper.MapFileRegionsType:Set[Point]
+			        break
+			    }
+			    elseif ${RegionCreationType.Equal[Point]}
+			    {
+			        RegionCreationType:Set[Sphere]
+			        Mapper.MapFileRegionsType:Set[Sphere]
+			        break
+			    }	
+			    else
+			        break
+			        		    
 		}
 		
 		if (${AutoPlot})
@@ -232,6 +264,7 @@ function atexit()
 	bind -delete savepoints
 	bind -delete quit
 	bind -delete togglelso
+	bind -delete togglergt
 
     HUD -remove FunctionKey1
     HUD -remove FunctionKey1b
@@ -239,8 +272,10 @@ function atexit()
 	HUD -remove FunctionKey2b
 	HUD -remove FunctionKey3
 	HUD -remove FunctionKey3b
+	HUD -remove FunctionKey3c
 	HUD -remove FunctionKey11
 	HUD -remove NavPointStatus
 	HUD -remove NavCountStatus
 	HUD -remove SaveModeStatus
+	HUD -remove RegionCreation
 }
