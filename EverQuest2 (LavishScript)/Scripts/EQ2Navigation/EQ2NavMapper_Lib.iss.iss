@@ -203,8 +203,8 @@ objectdef EQ2Mapper
 		
 		if ${Container.ID(exists)} && (${Container.Type.Equal[Universe]} || !${Container.ID})
 		{
-			This:Output["IsMapped: Should never happen with mapped space: Container.Type.Equal[Universe] ${Container.ID} ${Container.FQN} ${Container.Type}  ${X},${Y},${Z}"]
-			This:Output["\${This.CurrentZone} = ${This.CurrentZone}"]
+			;This:Output["IsMapped: Should never happen with mapped space: Container.Type.Equal[Universe] ${Container.ID} ${Container.FQN} ${Container.Type}  ${X},${Y},${Z}"]
+			;This:Output["\${This.CurrentZone} = ${This.CurrentZone}"]
 			return FALSE
 		}
 
