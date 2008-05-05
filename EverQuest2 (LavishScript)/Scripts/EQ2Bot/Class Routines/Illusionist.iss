@@ -618,7 +618,11 @@ function Combat_Routine(int xAction)
 			case IllusAllies
 				if !${Me.Grouped}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				    if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				    {
+				        if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+        					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+        			}
 				}
 				break
 			case Nuke
@@ -631,7 +635,7 @@ function Combat_Routine(int xAction)
 				break
 
 			default
-				return Combat Complete
+				return CombatComplete
 				break
 		}
 	}
@@ -655,20 +659,33 @@ function Post_Combat_Routine(int xAction)
 
 function Have_Aggro()
 {
+    ;;;;
+    ;; The logic here needs to be reviewed ..do we really want to do these things?
+    ;;;;
 
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
-	call CastSpellRange 192 0 0 0 ${Actor[${aggroid}].ID}
+
+    ; Illusory Allies	
+    if (!${Me.Grouped})
+    {
+        if ${Me.Ability["Illusory Allies"](exists)}
+        {
+            if ${Me.Ability["Illusory Allies"].IsReady}
+    			call CastSpellRange 192 0 0 0 ${Actor[${aggroid}].ID}
+    	}
+    }
 
 	;Phase
-	call CastSpellRange 361
+	if (!${Me.Grouped})
+    	call CastSpellRange 361
 
-	if ${Actor[${aggroid}].Distance}<5
+	if ${Actor[${aggroid}].Distance} < 5
 	{
-			call CastSpellRange 357
+		call CastSpellRange 357
 	}
 
 }
