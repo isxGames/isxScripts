@@ -42,6 +42,7 @@ function Class_Declaration()
   declare BuffShieldAllyGroupMember string script
 	declare HolyShieldGroupMember string script
 	declare ManaCureGroupMember string script
+	declare tempMH string script
 
 	call EQ2BotLib_Init
 
@@ -253,53 +254,75 @@ function Buff_Routine(int xAction)
 			Counter:Set[1]
 			tempvar:Set[1]
 
-			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
-			do
+			if !${Me.Equipment[The Impact of the Sacrosanct](exists)} && !${Me.Inventory[The Impact of the Sacrosanct](exists)}
 			{
-				BuffMember:Set[]
-				;check if the maintained buff is of the spell type we are buffing
-				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
+				;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
+				do
 				{
-					;iterate through the members to buff
-					if ${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+					BuffMember:Set[]
+					;check if the maintained buff is of the spell type we are buffing
+					if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
 					{
-						tempvar:Set[1]
-						do
+						;iterate through the members to buff
+						if ${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 						{
-							BuffTarget:Set[${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
-							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+							tempvar:Set[1]
+							do
 							{
-								BuffMember:Set[OK]
-								break
+								BuffTarget:Set[${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+								if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+								{
+									BuffMember:Set[OK]
+									break
+								}
+							}
+							while ${tempvar:Inc}<=${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+							;we went through the buff collection and had no match for this maintaned target so cancel it
+							if !${BuffMember.Equal[OK]}
+							{
+								;we went through the buff collection and had no match for this maintaned target so cancel it
+								Me.Maintained[${Counter}]:Cancel
 							}
 						}
-						while ${tempvar:Inc}<=${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
-						;we went through the buff collection and had no match for this maintaned target so cancel it
-						if !${BuffMember.Equal[OK]}
+						else
 						{
-							;we went through the buff collection and had no match for this maintaned target so cancel it
+							;our buff member collection is empty so this maintained target isnt in it
 							Me.Maintained[${Counter}]:Cancel
 						}
 					}
-					else
+				}
+				while ${Counter:Inc}<=${Me.CountMaintained}
+
+				Counter:Set[1]
+				;iterate through the to be buffed Selected Items and buff them
+				if ${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+				{
+					do
 					{
-						;our buff member collection is empty so this maintained target isnt in it
-						Me.Maintained[${Counter}]:Cancel
+						BuffTarget:Set[${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 					}
+					while ${Counter:Inc}<=${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 				}
 			}
-			while ${Counter:Inc}<=${Me.CountMaintained}
-
-			Counter:Set[1]
-			;iterate through the to be buffed Selected Items and buff them
-			if ${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			else
 			{
-				do
+				; we have the templar mythical so using different logic for this buff
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				{
-					BuffTarget:Set[${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-				}
-				while ${Counter:Inc}<=${UIElement[lbBuffRedoubt@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+					if !${Me.Equipment[The Impact of the Sacrosanct](exists)}
+					{
+						tempMH:Set[${Me.Equipment[Primary].Name}]
+						waitframe
+						Me.Inventory[The Impact of the Sacrosanct]:Equip
+						waitframe
+						call CastSpellRange ${PreSpellRange[${xAction},1]}
+						waitframe
+						Me.Inventory[${tempMH}]:Equip
+					}
+					else
+						call CastSpellRange ${PreSpellRange[${xAction},1]}
+				}					
 			}
 			break
 
