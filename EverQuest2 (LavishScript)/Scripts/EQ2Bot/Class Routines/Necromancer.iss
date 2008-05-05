@@ -340,7 +340,7 @@ function Combat_Routine(int xAction)
 
 	if ${Me.ToActor.Pet(exists)}
 	{
-		ExecuteAtom PetAttack
+		call PetAttack
 	}
 
 	if ${UsePotions}

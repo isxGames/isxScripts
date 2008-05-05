@@ -489,7 +489,7 @@ function Combat_Routine(int xAction)
 		call DoCharm
 	}
 
-	ExecuteAtom PetAttack
+	call PetAttack
 
 	if !${Me.IsMoving}
 		call DoJesterCap
@@ -859,7 +859,7 @@ function DoCharm()
 
 		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
 		{
-			ExecuteAtom PetAttack
+			call PetAttack
 		}
 		else
 		{

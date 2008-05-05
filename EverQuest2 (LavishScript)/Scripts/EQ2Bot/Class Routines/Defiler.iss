@@ -465,7 +465,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 303
 	}
 
-	ExecuteAtom PetAttack
+	call PetAttack
 
 	call CheckHeals
 	call RefreshPower

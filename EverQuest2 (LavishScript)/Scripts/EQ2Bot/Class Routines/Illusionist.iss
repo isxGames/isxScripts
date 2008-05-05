@@ -419,7 +419,7 @@ function Combat_Routine(int xAction)
 		call Mezmerise_Targets
 	}
 
-	ExecuteAtom PetAttack
+	call PetAttack
 
 	call CheckHeals
 
@@ -552,7 +552,7 @@ function Combat_Routine(int xAction)
     				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
     			break
 			case Gaze
-			case shower
+			case Shower
 			case Ego
 			case AEStun
 				if ${AoEMode}

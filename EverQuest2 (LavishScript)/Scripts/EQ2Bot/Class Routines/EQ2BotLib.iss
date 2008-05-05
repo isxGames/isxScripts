@@ -384,19 +384,19 @@ atom AutoFollowTank()
 
     	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
 
-        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
-        ;echo "DEBUG -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
-        ;echo "DEBUG -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
+        ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
+        ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
+        ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
 
-    	;echo "DEBUG: AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
-    	;echo "DEBUG: Time Now: ${Time.Timestamp}"
-    	;echo "DEBUG: TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
+    	;echo "DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
+    	;echo "DEBUG-AutoFollowTank(): Time Now: ${Time.Timestamp}"
+    	;echo "DEBUG-AutoFollowTank(): TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
         if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
         {
-            ;echo "DEBUG: Following...."
-            if (${Actor[pc,${AutoFollowee}](exists)})
+            ;echo "DEBUG-AutoFollowTank(): Following...."
+            if (${Actor[pc,${AutoFollowee}](exists)} && ${Actor[pc,${AutoFollowee}].Distance} < 45)
             {
-            	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45
+            	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} 
             	{
             	    ; When an actor is on a griffon-like transport, their speed is always "1"
             	    if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
@@ -410,16 +410,28 @@ atom AutoFollowTank()
                     		AutoFollowMode:Set[TRUE]
                     	}
                     	else
+                    	{
                     	    AutoFollowingMA:Set[FALSE]
+                    	    echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
+                    	}
                     }
                     else
+                    {
+                        echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
                         AutoFollowingMA:Set[FALSE]
+                    }
             	}
             	else
+            	{
             	    AutoFollowingMA:Set[FALSE]
+            	    echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
+            	}
             }
             else
+            {
                 AutoFollowingMA:Set[FALSE]
+                ;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
+            }
     	}
     }
 }
@@ -639,13 +651,19 @@ function CheckGroupHealth(int MinHealth)
 	Return TRUE
 }
 
-atom PetAttack()
+function PetAttack()
 {
-	if ${Me.ToActor.Pet.Target.ID}!=${KillTarget}
+    ;echo "Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"
+    
+    if !${Actor[id,${KillTarget}](exists)}
+        return
+    
+	if ${Me.Pet.Target.ID} != ${KillTarget}
 	{
 		EQ2Execute /pet backoff
 		target ${KillTarget}
 		EQ2Execute /pet attack
+		wait 4 (${Me.Pet.Target.ID} != ${KillTarget})
 		if ${PetGuard}
 		{
 			EQ2Execute /pet preserve_self
