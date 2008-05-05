@@ -503,7 +503,7 @@ function Combat_Routine(int xAction)
 		call DoAmnesia
 	}
 
-	ExecuteAtom PetAttack
+	call PetAttack
 
 	if !${DPSMode}
 	{
@@ -990,7 +990,7 @@ function DoCharm()
 
 		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
 		{
-			ExecuteAtom PetAttack
+			call PetAttack
 		}
 		else
 		{

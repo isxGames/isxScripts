@@ -412,7 +412,7 @@ function Combat_Routine(int xAction)
 
 	if ${Me.ToActor.Pet(exists)} && ${PetMode}
 	{
-		ExecuteAtom PetAttack
+		call PetAttack
 	}
 
 	if ${DoHOs}
