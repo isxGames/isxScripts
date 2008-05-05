@@ -701,6 +701,18 @@
     <Setting Name="Wild Apple Muffins">Wild Apple Muffin</Setting>
     <Setting Name="Skull Post">a Skull Post</Setting>
     <Setting Name="Wild Apple Cookie">Wild Apple Cookies</Setting>
+    
+    <Setting Name="Pristine Forged Carbonite Long Sword">Forged Carbonite Long Sword</Setting>
+    <Setting Name="Pristine Forged Carbonite Falchion">Forged Carbonite Falchion</Setting>
+    <Setting Name="Pristine Forged Carbonite Short Sword">Forged Carbonite Short Sword</Setting>
+    <Setting Name="Pristine Forged Carbonite CrescentAxe">Forged Carbonite CrescentAxe</Setting>
+    <Setting Name="Pristine Forged Carbonite Greatsword">Forged Carbonite Greatsword</Setting>
+    <Setting Name="Pristine Forged Carbonite Dirk">Forged Carbonite Dirk</Setting>
+    <Setting Name="Pristine Forged Carbonite Double Headed Axe">Forged Carbonite Double Headed Axe</Setting>
+    <Setting Name="Pristine Forged Carbonite Executioner's Axe">Forged Carbonite Executioner's Axe</Setting>
+    <Setting Name="Pristine Forged Carbonite Battle Axe">Forged Carbonite Battle Axe</Setting>
+    <Setting Name="Pristine Forged Carbonite Knuckles">Forged Carbonite Knuckles</Setting>
+    
   </Set>
 
 </InnerSpaceSettings>
