@@ -7,12 +7,6 @@
 ;		setting no longer holds much water with RoK ranged mob AI's.  Use the max range on main tab to set how far to set safe
 ; 	distances to move.
 ;
-;2.7.2 (Amadeus)
-; * If your 'forward' key is mapped to one supported by the new "EQ2Press" command, you will now move to loot chests and corpses even if
-;   the bot is not in focus (ie, if another window is opened on top of the one in which the bot is running.)
-;   (Dev. Note:  This change was applied to FastMove(), so any call to it should now work in the same fashion.  Also, see FastMove() on how
-;                to properly impliment the new "EQ2Press" command.)
-;
 ;2.7.1m (Amadeus)
 ; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
 ; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a
@@ -444,10 +438,7 @@ function main()
 
 						if ${Me.IsMoving}
 						{
-                    	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                    	        eq2press -release ${forward}
-                    	    else
-                    	        press -release ${forward}
+                    	    press -release ${forward}
 							wait 20 !${Me.IsMoving}
 						}
 						FollowTask:Set[1]
@@ -883,6 +874,9 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 
 function CastSpell(string spell, int spellid, bool castwhilemoving)
 {
+
+    
+    
     if !${Me.InCombat}
     {
         call AmIInvis "CastSpell()"
@@ -894,7 +888,13 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 		return
 
 	CurrentAction:Set[Casting ${spell}]
-	Me.Ability[${spell}]:Use
+	
+    ;; Disallow some abilities that are named the same as crafting abilities. 
+    ;; 1. Agitate (CraftingID: 601887089 -- Fury Spell ID: 1287322154)
+    if (${Me.Ability[${spell}].ID} == 601887089)	
+	    Me.Ability[id,1287322154]:Use
+	else
+    	Me.Ability[${spell}]:Use
 
 	if !${castwhilemoving}
 	{
@@ -923,14 +923,8 @@ function Combat()
 	; Make sure we are still not moving when we enter combat
 	if ${Me.IsMoving}
 	{
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -release ${forward}
-        else
-            press -release ${forward}
-        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-            eq2press -release ${backward}
-        else
-            press -release ${backward}
+        press -release ${forward}
+        press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -1358,15 +1352,9 @@ function CheckPosition(int rangetype, int position)
 	if ${Target.Distance}<${minrange} && ${Target(exists)} && (${Me.ID}!=${Target.ID}) && (${rangetype}==1 || ${rangetype}==3)
 	{
 		movetimer:Set[${Time.Timestamp}]
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -release ${forward}
-        else
-            press -release ${forward}
+        press -release ${forward}
         wait 1
-        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-            eq2press -hold ${backward}
-        else
-            press -hold ${backward}
+        press -hold ${backward}
 		do
 		{
 			if ${Target(exists)} && (${Me.ID}!=${Target.ID})
@@ -1380,10 +1368,7 @@ function CheckPosition(int rangetype, int position)
 		}
 		while ${Target.Distance}<${minrange} && ${Target(exists)}
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-            eq2press -release ${backward}
-        else
-            press -release ${backward}
+        press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -1533,10 +1518,7 @@ function Pull(string npcclass)
 
 				if ${Me.IsMoving}
 				{
-                    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                        eq2press -release ${forward}
-                    else
-                        press -release ${forward}
+                    press -release ${forward}
 					wait 20 !${Me.IsMoving}
 				}
 
@@ -1592,27 +1574,15 @@ function Pull(string npcclass)
 					;randomly pick a direction
 					if ${Math.Rand[10]}>5
 					{
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                            eq2press -hold STRAFELEFT
-                        else
-                            press -hold STRAFELEFT
+                        press -hold STRAFELEFT
 						wait ${Math.Rand[40]}
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                            eq2press -release STRAFELEFT
-                        else
-                            press -release STRAFELEFT
+                        press -release STRAFELEFT
 					}
 					else
 					{
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                            eq2press -hold STRAFERIGHT
-                        else
-                            press -hold STRAFERIGHT
+                        press -hold STRAFERIGHT
 						wait ${Math.Rand[40]}
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                            eq2press -release STRAFERIGHT
-                        else
-                            press -release STRAFERIGHT
+                        press -release STRAFERIGHT
 					}
 					call FastMove ${Target.X} ${Target.Z} 15
 					EQ2Execute /target_none
@@ -1936,18 +1906,10 @@ function FastMove(float X, float Z, int range)
 
 	if !${pulling}
 	{
-	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-	    {
-	        eq2press -release ${forward}
-	        wait 1
-	        eq2press -hold ${forward}
-	    }
-	    else
-	    {
-    	    press -release ${forward}
-    	    wait 1
-    	    press -hold ${forward}
-    	}
+	    press -release ${forward}
+    	wait 1
+    	press -hold ${forward}
+
 	    ;echo "DEBUG: Moving....  (WhoFollowing: ${Me.ToActor.WhoFollowing})"
 	}
 
@@ -1967,10 +1929,7 @@ function FastMove(float X, float Z, int range)
 				isstuck:Set[TRUE]
 				if !${pulling}
 				{
-				    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-				        eq2press -release ${forward}
-				    else
-    					press -release ${forward}
+				    press -release ${forward}
 					wait 20 !${Me.IsMoving}
 				}
 				IsMoving:Set[FALSE]
@@ -1989,10 +1948,7 @@ function FastMove(float X, float Z, int range)
 
 	if !${pulling}
 	{
-	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-	        eq2press -release ${forward}
-	    else
-			press -release ${forward}
+	    press -release ${forward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -2030,10 +1986,7 @@ function MovetoWP(lnavregionref destination)
 		{
 			face ${CurrentPath.Region[2].CenterPoint.X} ${CurrentPath.Region[2].CenterPoint.Y}
 			wait 5
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -hold ${forward}
-            else
-                press -hold ${forward}
+            press -hold ${forward}
 			PositionHeading:Set[${Me.Heading}]
 		}
 
@@ -2060,10 +2013,7 @@ function MovetoWP(lnavregionref destination)
 
 				if (${pulling} || ${PathType}==3) && !${Me.IsMoving}
 				{
-                    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                        eq2press -hold ${forward}
-                    else
-                        press -hold ${forward}
+                    press -hold ${forward}
 				}
 			}
 
@@ -2132,10 +2082,7 @@ function MovetoWP(lnavregionref destination)
 
 		if (${pulling} || ${PathType}==3) && ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 			wait 20 !${Me.IsMoving}
 		}
 	}
@@ -2176,10 +2123,7 @@ function MovetoMaster()
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -hold ${forward}
-        else
-            press -hold ${forward}
+        press -hold ${forward}
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
 		{
@@ -2191,10 +2135,7 @@ function MovetoMaster()
 
 		if ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -2640,20 +2581,11 @@ function CantSeeTarget(string Line)
 				face ${Target.X} ${Target.Z}
 			}
 
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
             wait 1
-            if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-                eq2press -hold ${backward}
-            else
-                press -hold ${backward}
+            press -hold ${backward}
 			wait 5
-            if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-                eq2press -release ${backward}
-            else
-                press -release ${backward}
+            press -release ${backward}
 			wait 20 !${Me.IsMoving}
 			return
 		}
@@ -4082,10 +4014,7 @@ function MoveToGroup(string gname)
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -hold ${forward}
-        else
-            press -hold ${forward}
+        press -hold ${forward}
 
 		WPX:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.X}]
 		WPY:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.Y}]
@@ -4094,10 +4023,7 @@ function MoveToGroup(string gname)
 
 		if ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -4108,10 +4034,7 @@ function MoveToGroup(string gname)
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -hold ${forward}
-        else
-            press -hold ${forward}
+        press -hold ${forward}
 
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
@@ -4124,10 +4047,7 @@ function MoveToGroup(string gname)
 
 		if ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -4378,20 +4298,8 @@ function atexit()
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 
 
-    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-        eq2press -release ${forward}
-    else
-        press -release ${forward}
-    if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-        eq2press -release ${backward}
-    else
-        press -release ${backward}
-    if ${ISXEQ2.IsValidEQ2PressKey[${strafeleft}]}
-        eq2press -release ${strafeleft}
-    else
-        press -release ${strafeleft}
-    if ${ISXEQ2.IsValidEQ2PressKey[${straferight}]}
-        eq2press -release ${straferight}
-    else
-        press -release ${straferight}
+    press -release ${forward}
+    press -release ${backward}
+    press -release ${strafeleft}
+    press -release ${straferight}
 }
