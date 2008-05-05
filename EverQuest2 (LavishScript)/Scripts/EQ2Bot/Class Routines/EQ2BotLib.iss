@@ -412,19 +412,19 @@ atom AutoFollowTank()
                     	else
                     	{
                     	    AutoFollowingMA:Set[FALSE]
-                    	    echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
+                    	    ;echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
                     	}
                     }
                     else
                     {
-                        echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
+                        ;echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
                         AutoFollowingMA:Set[FALSE]
                     }
             	}
             	else
             	{
             	    AutoFollowingMA:Set[FALSE]
-            	    echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
+            	    ;echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
             	}
             }
             else
