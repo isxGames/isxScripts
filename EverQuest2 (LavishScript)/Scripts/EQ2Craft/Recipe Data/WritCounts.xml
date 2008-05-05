@@ -144,7 +144,7 @@
     </Set>
     <Set Name="weaponsmith">
       <Setting Name="20">3,3</Setting>
-      <Setting Name="24"></Setting>
+      <Setting Name="24">3,3</Setting>
       <Setting Name="29">2,2,2</Setting>
       <Setting Name="30">3,3</Setting>
       <Setting Name="34">2,2,2</Setting>
