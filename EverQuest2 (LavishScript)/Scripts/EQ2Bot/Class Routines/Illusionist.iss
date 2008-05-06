@@ -97,17 +97,17 @@ function Buff_Init()
 	PreAction[8]:Set[Clarity]
 	PreSpellRange[8,1]:Set[22]
 
-	PreAction[10]:Set[AA_Empathic_Aura]
-	PreSpellRange[10,1]:Set[391]
+	PreAction[9]:Set[AA_Empathic_Aura]
+	PreSpellRange[9,1]:Set[391]
 
-	PreAction[11]:Set[AA_Empathic_Soothing]
-	PreSpellRange[11,1]:Set[392]
+	PreAction[10]:Set[AA_Empathic_Soothing]
+	PreSpellRange[10,1]:Set[392]
 
-	PreAction[12]:Set[AA_Time_Compression]
-	PreSpellRange[12,1]:Set[393]
+	PreAction[11]:Set[AA_Time_Compression]
+	PreSpellRange[11,1]:Set[393]
 
-	PreAction[13]:Set[AA_Illusory_Arm]
-	PreSpellRange[13,1]:Set[394]
+	PreAction[12]:Set[AA_Illusory_Arm]
+	PreSpellRange[12,1]:Set[394]
 }
 
 function Combat_Init()
@@ -233,7 +233,9 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
-
+        case DamageProc
+            ;;; TO DO!  (Is this Dynamism?)
+            break
 		case Self_Buff
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
@@ -453,6 +455,7 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[387]}].IsReady}
 		{
 			call CastSpellRange 387 0 0 0 ${KillTarget}
+			spellsused:Inc
 		}
 
 		if ${Me.Ability[${SpellType[60]}].IsReady}
@@ -511,7 +514,23 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 51 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
-
+		
+	    if (!${InvalidMasteryTargets.Element[${Target.ID}](exists)})
+	    {    	    
+    		if ${Me.Ability["Master's Strike"].IsReady}
+    		{
+    			Target ${KillTarget}
+    			spellsused:Inc
+    			Me.Ability["Master's Strike"]:Use
+    			do
+    			{
+    			    waitframe
+    			}
+    			while ${Me.CastingSpell}
+    			wait 1						
+    		}
+	    }
+	    return CombatComplete
 	}
 	else
 	{
@@ -607,10 +626,22 @@ function Combat_Routine(int xAction)
 			case Master_Strike
 				if ${OffenseMode} || ${DebuffMode}
 				{
-					if ${Me.Ability[Master's Strike].IsReady}
+    			    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+    			    ;;;;;;;;;;
+    			    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
+    			        break
+    			    ;;;;;;;;;;;				    
+				    
+					if ${Me.Ability["Master's Strike"].IsReady}
 					{
 						Target ${KillTarget}
-						Me.Ability[Master's Strike]:Use
+						Me.Ability["Master's Strike"]:Use
+    					do
+    					{
+    					    waitframe
+    					}
+    					while ${Me.CastingSpell}
+    					wait 1						
 					}
 				}
 				break
