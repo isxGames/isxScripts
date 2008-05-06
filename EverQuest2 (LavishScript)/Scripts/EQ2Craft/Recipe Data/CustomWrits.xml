@@ -701,6 +701,7 @@
     <Setting Name="Wild Apple Muffins">Wild Apple Muffin</Setting>
     <Setting Name="Skull Post">a Skull Post</Setting>
     <Setting Name="Wild Apple Cookie">Wild Apple Cookies</Setting>
+    <Setting Name="jarkian signal fire">Rujarkian Signal Fire</Setting>
     
     <Setting Name="Pristine Forged Carbonite Long Sword">Forged Carbonite Long Sword</Setting>
     <Setting Name="Pristine Forged Carbonite Falchion">Forged Carbonite Falchion</Setting>
@@ -727,7 +728,6 @@
     <Setting Name="Pristine Forged Carbonite Scimitar">Forged Carbonite Scimitar</Setting>
     <Setting Name="Pristine Forged Carbonite Battle Hammer">Forged Carbonite Battle Hammer</Setting>
     <Setting Name="Pristine Forged Carbonite Spear">Forged Carbonite Spear</Setting>
-    
   </Set>
 
 </InnerSpaceSettings>
