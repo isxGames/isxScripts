@@ -104,7 +104,7 @@ variable string CurrentLabel
 variable bool OnBadNode
 variable string gNodeName
 variable collection:string CollectiblesFound
-
+variable bool CheckingAggro
 
 function main(string mode)
 {
@@ -383,6 +383,7 @@ function PathingRoutine()
 
 function CheckAggro()
 {
+    CheckingAggro:Set[TRUE]
 	;Stop Moving and pause if we have aggro
 	if ${MobCheck.Detect}
 	{
@@ -410,8 +411,10 @@ function CheckAggro()
 			wait 50
 		}
 		CurrentAction:Set[Resuming Harvest...]
+		CheckingAggro:Set[FALSE]
 		Return "RESOLVED"
 	}
+	CheckingAggro:Set[FALSE]
 	return SUCCESS
 }
 
@@ -969,9 +972,12 @@ objectdef EQ2HarvestBot
 			{
 				if ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Actor[${NodeID}].X},${Actor[${NodeID}].Z}]}<20
 				{
-				    echo "DEBUG: A player (${CustomActor[${tcount}].Name}) was detected within 20 meters...adding destination to BadNodes"
-					This:SetBadNode[${NodeID}]
-					return TRUE
+				    if (!${Me.Group[${CustomActor[${tcount}].Name}](exists)})
+				    {
+    				    echo "DEBUG: A player (${CustomActor[${tcount}].Name}) was detected within 20 meters...adding destination to BadNodes"
+    					This:SetBadNode[${NodeID}]
+    					return TRUE
+    				}
 				}
 			}
 		}
@@ -997,7 +1003,7 @@ objectdef EQ2HarvestBot
 
     method CollectibleFound(string sName)
     {
-        ;echo "DEBUG: Collectible Found('${sName}')"
+        echo "DEBUG: Collectible Found('${sName}')"
         
     	variable int tempvar
     
@@ -1159,30 +1165,12 @@ atom atexit()
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
 
-    if ${ISXEQ2.IsValidEQ2PressKey[MOVEFORWARD]}
-        eq2press -release MOVEFORWARD
-    else
-        press -release MOVEFORWARD
-    if ${ISXEQ2.IsValidEQ2PressKey[MOVEBACKWARD]}
-        eq2press -release MOVEBACKWARD
-    else
-        press -release MOVEBACKWARD
-    if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-        eq2press -release STRAFELEFT
-    else
-        press -release STRAFELEFT
-    if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-        eq2press -release STRAFERIGHT
-    else
-        press -release STRAFERIGHT
-    if ${ISXEQ2.IsValidEQ2PressKey[TURNLEFT]}
-        eq2press -release TURNLEFT
-    else
-        press -release TURNLEFT
-    if ${ISXEQ2.IsValidEQ2PressKey[TURNRIGHT]}
-        eq2press -release TURNRIGHT
-    else
-        press -release TURNRIGHT                        	
+    press -release MOVEFORWARD
+    press -release MOVEBACKWARD
+    press -release STRAFELEFT
+    press -release STRAFERIGHT
+    press -release TURNLEFT
+    press -release TURNRIGHT                        	
 	
 	
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[EQ2_onLootWindowAppeared]
@@ -1195,27 +1183,40 @@ atom(script) EQ2_onIncomingText(string Text)
 {
 	if (${Text.Find["too far away"]} > 0)
 	{
-	    echo "DEBUG: Node is 'too far away'...adding to BadNodes"
-	    Harvest:SetBadNode[${NodeID}]
-	    OnBadNode:Set[TRUE]
+	    if (${Actor[id,${NodeID}].Type.Equal[Resource]} && !${Me.InCombat})
+	    {
+	        echo "DEBUG: Node is 'too far away'...adding to BadNodes"
+    	    Harvest:SetBadNode[${NodeID}]
+    	    OnBadNode:Set[TRUE]
+    	}
 	}
-	elseif (${Text.Find["Interrupted!"]} > 0)
-	{
-	    echo "DEBUG: We were 'Interupted!'...adding to BadNodes"
-	    Harvest:SetBadNode[${NodeID}]
-	    OnBadNode:Set[TRUE]
-	}	
+	;elseif (${Text.Find["Interrupted!"]} > 0)
+	;{
+	    ;if (${Actor[id,${NodeID}].Type.Equal[Resource]} && !${Me.InCombat})
+	    ;{	  
+	        ;;; This shouldn't happen anyway, and it's causing problems with running eq2harvest with eq2bot
+    	    ;echo "DEBUG: We were 'Interupted!'...adding to BadNodes"
+    	    ;Harvest:SetBadNode[${NodeID}]
+    	    ;OnBadNode:Set[TRUE]
+    	;}
+	;}	
 	elseif (${Text.Find["Can't see target"]} > 0)
 	{
-	    echo "DEBUG: Received 'Cant see target' message...adding to BadNodes"
-	    Harvest:SetBadNode[${NodeID}]
-	    OnBadNode:Set[TRUE]
+	    if (${Actor[id,${NodeID}].Type.Equal[Resource]} && !${Me.InCombat})
+	    {	    
+    	    echo "DEBUG: Received 'Cant see target' message...adding to BadNodes"
+    	    Harvest:SetBadNode[${NodeID}]
+    	    OnBadNode:Set[TRUE]
+    	}
 	}
 	elseif (${Text.Find["You cannot "]} > 0)
 	{
-        echo "DEBUG: Received 'You cannot ...' message...adding to BadNodes"
-	    Harvest:SetBadNode[${NodeID}]   
-	    OnBadNode:Set[TRUE]
+	    if (${Actor[id,${NodeID}].Type.Equal[Resource]} && !${Me.InCombat})
+	    {
+            echo "DEBUG: Received 'You cannot ...' message...adding to BadNodes"
+    	    Harvest:SetBadNode[${NodeID}]   
+    	    OnBadNode:Set[TRUE]
+    	}
 	}					
 }
 
