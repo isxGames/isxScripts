@@ -35,7 +35,7 @@
 		<X>20%</X>
 		<Y>10%</Y>
 		<Width>433</Width>
-		<Height>590</Height>
+		<Height>720</Height>
 		<Client Template='EQ2.Window.Client'>
 			<Y>20</Y>
 		</Client>
@@ -83,7 +83,7 @@
 			<Frame Name='Main Frame'>
 				<X>10</X>
 				<Y>28</Y>
-				<Height>600</Height>
+				<Height>720</Height>
 				<Width>96%</Width>
 				<Visible>1</Visible>
 				<Children>
@@ -96,19 +96,17 @@
 						</Font>
 						<TabHeight>27</TabHeight>
 						<TabBorder>3</TabBorder>
-						<Height>170</Height>
+						<Height>300</Height>
 						<Width>100%</Width>
 						<OnLeftClick>
 							if ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Advanced]}
 							{
-								UIElement[Craft Selection].FindUsableChild[Help Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Show
 							}
 							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Options]}
 							{
-								UIElement[Craft Selection].FindUsableChild[Help Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Show
@@ -121,10 +119,6 @@
 								{
 									UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Show
 								}
-								else
-								{
-									UIElement[Craft Selection].FindUsableChild[Help Frame,frame]:Show
-								}
 							}
 						</OnLeftClick>
 						<Tabs>
@@ -133,7 +127,7 @@
 									<X>5</X> 
 									<Y>6</Y> 
 									<Width>97.8%</Width> 
-									<Height>15%</Height> 
+									<Height>8%</Height> 
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
 								<!--	<Font>
@@ -508,7 +502,7 @@
 									<X>100</X> 
 									<Y>10</Y> 
 									<Width>65%</Width> 
-									<Height>12%</Height> 
+									<Height>8%</Height> 
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
 								<!--	<Font>
@@ -1139,7 +1133,7 @@
 					</TabControl>
 					<Frame Name='Crafting List Frame'>
 						<X>0</X>
-						<Y>170</Y>
+						<Y>300</Y>
 						<Height>500</Height>
 						<Width>500</Width>
 						<Visible>0</Visible>
@@ -1378,7 +1372,7 @@
 					</Frame>
 					<Frame Name='Harvest Frame'>
 						<X>0</X>
-						<Y>170</Y>
+						<Y>300</Y>
 						<Height>500</Height>
 						<Width>500</Width>
 						<Visible>0</Visible>
@@ -1469,81 +1463,12 @@
 							</Listbox>
 						</Children>
 					</Frame>
-					<Frame Name='Help Frame'>
-						<X>25</X>
-						<Y>195</Y>
-						<Height>300</Height>
-						<Width>380</Width>
-						<Visible>1</Visible>
-						<Children>
-							<Text Name='Help 1'>
-								<X>10</X> 
-								<Y>50</Y> 
-								<Width>100%</Width> 
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>Select a Recipe from the drop down list.</Text> 
-							</Text>
-							<Text Name='Help 2'>
-								<X>10</X> 
-								<Y>70</Y> 
-								<Width>100%</Width> 
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>You may sort the list by Name or Level.</Text> 
-							</Text>
-							<Text Name='Help 3'>
-								<X>10</X> 
-								<Y>90</Y> 
-								<Width>100%</Width> 
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>Select the Quantity for the Recipe.</Text>
-							</Text>
-							<Text Name='Help 4'>
-								<X>10</X> 
-								<Y>110</Y> 
-								<Width>100%</Width> 
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>Click Add Recipe to add it to the craft list.</Text>
-							</Text>
-							<Text Name='Help 5'>
-								<X>10</X> 
-								<Y>130</Y> 
-								<Width>100%</Width> 
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>11</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>** You can select multiple recipes also **</Text>
-							</Text>
-						</Children>
-					</Frame>
 				</Children>
 			</Frame>
 			<Frame Name='Crafting Frame'>
 				<X>0</X>
 				<Y>0</Y>
-				<Height>500</Height>
+				<Height>720</Height>
 				<Width>500</Width>
 				<Visible>0</Visible>
 				<Children>
