@@ -136,35 +136,6 @@
 										<Color>FFEBDEAA</Color>
 									</Font> -->
 								</Combobox>
-								<Commandbutton name='Add Recipe' Template='EQ2.Commandbutton'> 
-									<X>175</X> 
-									<Y>57</Y> 
-									<Width>100</Width> 
-									<Height>20</Height>
-									<Text>Add Recipe</Text>
-									<OnLeftClick>
-										if !${thisbuttondisabled}
-										{
-											thisbuttondisabled:Set[1]
-											UIElement[Craft Selection].FindUsableChild[Add Recipe,commandbutton]:Hide
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:AddRecipe]
-										}
-									</OnLeftClick>
-								</Commandbutton>
-								<Commandbutton name='Refresh List' Template='EQ2.Commandbutton'> 
-									<X>295</X> 
-									<Y>57</Y> 
-									<Width>100</Width> 
-									<Height>20</Height>
-									<Text>Refresh List</Text>
-									<OnLeftClick>
-										if !${thisbuttonrefresh}
-										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
-										}
-									</OnLeftClick>
-								</Commandbutton> 
 								<Text name='Sort Order'> 
 									<X>18</X> 
 									<Y>35</Y> 
@@ -267,6 +238,191 @@
 									<Height>20</Height>
 									<Text>Quantity:</Text> 
 								</Text>
+								<Commandbutton name='Add Recipe' Template='EQ2.Commandbutton'> 
+									<X>175</X> 
+									<Y>57</Y> 
+									<Width>100</Width> 
+									<Height>20</Height>
+									<Text>Add Recipe</Text>
+									<OnLeftClick>
+										if !${thisbuttondisabled}
+										{
+											thisbuttondisabled:Set[1]
+											UIElement[Craft Selection].FindUsableChild[Add Recipe,commandbutton]:Hide
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:AddRecipe]
+										}
+									</OnLeftClick>
+								</Commandbutton>
+								<Commandbutton name='Refresh List' Template='EQ2.Commandbutton'> 
+									<X>295</X> 
+									<Y>57</Y> 
+									<Width>100</Width> 
+									<Height>20</Height>
+									<Text>Refresh List</Text>
+									<OnLeftClick>
+										if !${thisbuttonrefresh}
+										{
+											thisbuttonrefresh:Set[1]
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
+										}
+									</OnLeftClick>
+								</Commandbutton> 
+								<Text Name='Filter Label'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>5%</X> 
+									<Y>85</Y> 
+									<Width>95%</Width>
+									<Height>20</Height>
+									<Text>Filters:</Text> 
+								</Text>
+								<Checkbox Name='Standard Filter' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>20%</X>
+									<Y>80</Y>
+									<Width>20%</Width>
+									<Height>20</Height>
+									<Text>Standard</Text>
+									<OnLoad>
+										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StandardFilter]}
+										{
+											UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										if ${UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StandardFilter]:Set[TRUE]
+										}
+										else
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StandardFilter]:Set[FALSE]
+										}
+
+										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
+										
+										if !${thisbuttonrefresh}
+										{
+											thisbuttonrefresh:Set[1]
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
+										}
+									</OnLeftClick>
+								</checkbox>
+								<Checkbox Name='Imbued Filter' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>42%</X>
+									<Y>80</Y>
+									<Width>20%</Width>
+									<Height>20</Height>
+									<Text>Imbued</Text>
+									<OnLoad>
+										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ImbuedFilter]}
+										{
+											UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										if ${UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ImbuedFilter]:Set[TRUE]
+										}
+										else
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ImbuedFilter]:Set[FALSE]
+										}
+
+										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
+										
+										if !${thisbuttonrefresh}
+										{
+											thisbuttonrefresh:Set[1]
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
+										}
+									</OnLeftClick>
+								</checkbox>
+								<Checkbox Name='Rare Filter' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>60%</X>
+									<Y>80</Y>
+									<Width>20%</Width>
+									<Height>20</Height>
+									<Text>Rare</Text>
+									<OnLoad>
+										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[RareFilter]}
+										{
+											UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										if ${UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[RareFilter]:Set[TRUE]
+										}
+										else
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[RareFilter]:Set[FALSE]
+										}
+
+										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
+										
+										if !${thisbuttonrefresh}
+										{
+											thisbuttonrefresh:Set[1]
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
+										}
+									</OnLeftClick>
+								</checkbox>
+								<Checkbox Name='Secondary Tradeskill' Template='EQ2.Commandcheckbox'>
+									<Visible>0</Visible>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>75%</X>
+									<Y>80</Y>
+									<Width>20%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SecondaryTS]}
+										{
+											UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										if ${UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SecondaryTS]:Set[TRUE]
+										}
+										else
+										{
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SecondaryTS]:Set[FALSE]
+										}
+
+										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
+										
+										if !${thisbuttonrefresh}
+										{
+											thisbuttonrefresh:Set[1]
+											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
+										}
+									</OnLeftClick>
+								</checkbox>
 								<Commandbutton Name='Start Crafting' Template='EQ2.Commandbutton'>
 									<Visible>0</Visible>
 									<X>38</X> 
@@ -318,162 +474,6 @@
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SaveList]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SaveList]}</Data>
 								</Commandcheckbox>
-								<Text Name='Filter Label'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>5%</X> 
-									<Y>85</Y> 
-									<Width>95%</Width>
-									<Height>20</Height>
-									<Text>Filters:</Text> 
-								</Text>
-								<Checkbox Name='Standard Filter' Template='EQ2.Commandcheckbox'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>17%</X>
-									<Y>80</Y>
-									<Width>20%</Width>
-									<Height>20</Height>
-									<Text>Standard</Text>
-									<OnLoad>
-										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StandardFilter]}
-										{
-											UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										if ${UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StandardFilter]:Set[TRUE]
-										}
-										else
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StandardFilter]:Set[FALSE]
-										}
-
-										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
-										
-										if !${thisbuttonrefresh}
-										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
-										}
-									</OnLeftClick>
-								</checkbox>
-								<Checkbox Name='Imbued Filter' Template='EQ2.Commandcheckbox'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>37%</X>
-									<Y>80</Y>
-									<Width>20%</Width>
-									<Height>20</Height>
-									<Text>Imbued</Text>
-									<OnLoad>
-										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ImbuedFilter]}
-										{
-											UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										if ${UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ImbuedFilter]:Set[TRUE]
-										}
-										else
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ImbuedFilter]:Set[FALSE]
-										}
-
-										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
-										
-										if !${thisbuttonrefresh}
-										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
-										}
-									</OnLeftClick>
-								</checkbox>
-								<Checkbox Name='Rare Filter' Template='EQ2.Commandcheckbox'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>57%</X>
-									<Y>80</Y>
-									<Width>20%</Width>
-									<Height>20</Height>
-									<Text>Rare</Text>
-									<OnLoad>
-										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[RareFilter]}
-										{
-											UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										if ${UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[RareFilter]:Set[TRUE]
-										}
-										else
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[RareFilter]:Set[FALSE]
-										}
-
-										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
-										
-										if !${thisbuttonrefresh}
-										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
-										}
-									</OnLeftClick>
-								</checkbox>
-								<Checkbox Name='Secondary Tradeskill' Template='EQ2.Commandcheckbox'>
-									<Visible>0</Visible>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>77%</X>
-									<Y>80</Y>
-									<Width>20%</Width>
-									<Height>20</Height>
-									<OnLoad>
-										if ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SecondaryTS]}
-										{
-											UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										if ${UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SecondaryTS]:Set[TRUE]
-										}
-										else
-										{
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SecondaryTS]:Set[FALSE]
-										}
-
-										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]
-										
-										if !${thisbuttonrefresh}
-										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:QueueCommand[Craft:RefreshList]
-										}
-									</OnLeftClick>
-								</checkbox>
 								<Text Name='Gauge Label'>
 									<Visible>0</Visible>
 									<Font>
@@ -833,8 +833,6 @@
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[PromptResume]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[PromptResume]}</Data>
 								</Commandcheckbox>
-							</Tab>
-							<Tab Name='Special'>
 								<Commandcheckbox Name='BuyCommon' Template='EQ2.Commandcheckbox'>
 									<Font>
 										<Name>terminal</Name>
@@ -842,7 +840,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
-									<Y>10</Y>
+									<Y>140</Y>
 									<Width>150</Width>
 									<Height>20</Height>
 									<Text>Buy ALL Vendor bought COMMON components automatically.</Text>
@@ -857,7 +855,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
-									<Y>30</Y>
+									<Y>160</Y>
 									<Width>150</Width>
 									<Height>20</Height>
 									<Text>Buy ALL FUEL components automatically.</Text>
@@ -872,7 +870,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
-									<Y>50</Y>
+									<Y>180</Y>
 									<Width>150</Width>
 									<Height>20</Height>
 									<Text>Buy ALL Harvests from Broker to a MAX PRICE:         (Silver)</Text>
@@ -882,7 +880,7 @@
 								</Commandcheckbox>
 								<Textentry Name='Max Buy Price' Template='EQ2.Textentry'>
 									<X>298</X>
-									<Y>47</Y>
+									<Y>177</Y>
 									<Width>45</Width> 
 									<Height>20</Height>
 									<MaxLength>5</MaxLength>
@@ -901,7 +899,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
-									<Y>70</Y>
+									<Y>200</Y>
 									<Width>150</Width>
 									<Height>20</Height>
 									<Text>Automatically Transmute Master Crafted Items after Creation</Text>
@@ -916,29 +914,31 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
-									<Y>90</Y>
+									<Y>220</Y>
 									<Width>150</Width>
 									<Height>20</Height>
 									<Text>Stop crafting when secondary tradeskill achieves maximum level</Text>
 									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]:Set[TRUE]}</Command>
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]:Set[FALSE]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]}</Data>
-								</Commandcheckbox>								
+								</Commandcheckbox>			
+							</Tab>
+							<Tab Name='Writs'>					
 								<Text Name='Writ Count Label'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>15</X> 
-									<Y>120</Y> 
+									<X>10</X> 
+									<Y>20</Y> 
 									<Width>500</Width>
 									<Height>20</Height>
 									<Text>Writ Count:</Text> 
 								</Text>
 								<Textentry Name='Writ Count' Template='EQ2.Textentry'>
 									<X>80</X>
-									<Y>110</Y>
+									<Y>10</Y>
 									<Width>35</Width> 
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
@@ -957,14 +957,14 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>135</X> 
-									<Y>120</Y> 
+									<Y>20</Y> 
 									<Width>500</Width>
 									<Height>20</Height>
 									<Text>Quantity:</Text> 
 								</Text>
 								<Textentry Name='Writ Qty' Template='EQ2.Textentry'>
 									<X>190</X>
-									<Y>110</Y>
+									<Y>10</Y>
 									<Width>35</Width> 
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
@@ -983,14 +983,14 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>242</X> 
-									<Y>120</Y> 
+									<Y>20</Y> 
 									<Width>500</Width>
 									<Height>20</Height>
 									<Text>Choice:</Text> 
 								</Text>
 								<Textentry Name='Tier' Template='EQ2.Textentry'>
 									<X>285</X>
-									<Y>110</Y>
+									<Y>10</Y>
 									<Width>35</Width> 
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
@@ -1004,7 +1004,7 @@
 								</Textentry>
 								<Commandbutton Name='Create Work Order' Template='EQ2.Commandbutton'>
 									<X>60</X> 
-									<Y>140</Y> 
+									<Y>40</Y> 
 									<Width>120</Width> 
 									<Height>20</Height>
 									<Text>Create Work Orders</Text>
@@ -1014,7 +1014,7 @@
 								</Commandbutton>
 								<Commandbutton Name='Create Rush Order' Template='EQ2.Commandbutton'>
 									<X>240</X> 
-									<Y>140</Y> 
+									<Y>40</Y> 
 									<Width>120</Width> 
 									<Height>20</Height>
 									<Text>Create Rush Orders</Text>
@@ -1048,7 +1048,7 @@
 										<Size>11</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>by Blazer</Text>
+									<Text>Originally by Blazer</Text>
 								</Text>
 								<Text Name='About 1'>
 									<X>0</X>
@@ -1087,46 +1087,7 @@
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>http://www.ismods.com/wiki/index.php/ISXEQ2</Text>
-								</Text>
-								<Text Name='About 4'>
-									<X>0</X>
-									<Y>95</Y>
-									<Width>100%</Width>
-									<Height>15</Height>
-									<Alignment>Center</Alignment>
-									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
-										<Color>FFFFFF00</Color>
-									</Font>
-									<Text>An enormous amount of work went into this project</Text>
-								</Text>
-								<Text Name='About 5'>
-									<X>0</X>
-									<Y>110</Y>
-									<Width>100%</Width>
-									<Height>15</Height>
-									<Alignment>Center</Alignment>
-									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
-										<Color>FFFFFF00</Color>
-									</Font>
-									<Text>PayPal donations can be made to:</Text>
-								</Text>
-								<Text Name='About 6'>
-									<X>0</X>
-									<Y>125</Y>
-									<Width>100%</Width>
-									<Height>15</Height>
-									<Alignment>Center</Alignment>
-									<Font>
-										<Name>terminal</Name>
-										<Size>11</Size>
-										<Color>FFFFFF00</Color>
-									</Font>
-									<Text>blazertoo@hotmail.com</Text>
+									<Text>http://www.isxGames.com/forums</Text>
 								</Text>
 							</Tab>
 						</Tabs>
@@ -1163,7 +1124,7 @@
 					</Frame>
 					<Frame Name='Additional Options Frame'>
 						<X>0</X>
-						<Y>170</Y>
+						<Y>350</Y>
 						<Height>500</Height>
 						<Width>500</Width>
 						<Visible>0</Visible>
