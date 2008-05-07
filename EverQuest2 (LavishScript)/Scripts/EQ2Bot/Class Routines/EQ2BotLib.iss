@@ -162,12 +162,10 @@ function EQ2BotLib_Init()
 
 	ExecuteAtom SaveEquipmentSet "Default"
 
-	#ifdef _EQ2HOLIB_
 	if ${Session.NotEqual[${Me.Name}]}
 	{
 		uplink name ${Me.Name}
 	}
-	#endif
 
 	call PopulateMezSpells
 	call PopulateInvisSpells
