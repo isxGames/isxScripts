@@ -111,6 +111,18 @@
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Show
 							}
+							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Writs]}
+							{
+								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
+								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
+								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Hide
+							}	
+							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[About]}
+							{
+								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
+								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
+								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Hide
+							}														
 							else
 							{
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
