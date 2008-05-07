@@ -5,6 +5,10 @@
 ; this script is the suck, someone port monk please (pygar)
 function Class_Declaration()
 {
+    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+    declare ClassFileVersion int script 20080408
+    ;;;;    
+    
     call EQ2BotLib_Init
 }
 
