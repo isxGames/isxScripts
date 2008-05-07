@@ -250,9 +250,15 @@ objectdef EQ2Nav
 	
 	method StopRunning()
 	{
-	    ;This:Debug["StopRunning() Called"]
-        if ${Me.IsMoving}
-            press "${This.AUTORUN}"  
+	    ;;;
+	    ;; Sigh... press does not hold down the button long enough to register with EQ2 ..and we cannot "hold" the key with atomic functions...sooo
+	    ;;;
+	    This:Debug["StopRunning()"]
+        press "${This.MOVEBACKWARD}"
+        press "${This.MOVEBACKWARD}"
+        press "${This.MOVEBACKWARD}"
+        press "${This.MOVEBACKWARD}"
+        press "${This.MOVEBACKWARD}"
 	}
 	
 	method MoveTo(float X, float Y, float Z, float fPrecision)
@@ -500,7 +506,6 @@ objectdef EQ2Nav
 		{
 			This:Output["Already here, not moving."]
 			This:ClearPath
-			This:MoveStop
 			This.MeMoving:Set[FALSE]
 			This.DoorsOpenedThisTrip:Clear
 			return
@@ -710,8 +715,7 @@ objectdef EQ2Nav
                 if (!${Me.CheckCollision[${This.NavDestination}]})
                 {
                     This:Debug["Within ${This.gPrecision} meters of destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN})-- ending movement."]
-    				if ${This.MeMoving} || ${Me.IsMoving}
-    					This:MoveStop	   
+    				This:StopRunning
     				This.MovingTo:Set[FALSE]
     				This.MeMoving:Set[FALSE]
     				This.MovingTo_Timer:Set[0]
@@ -725,8 +729,7 @@ objectdef EQ2Nav
     			    ;; TO DO -- handle collisions!
     			    This:Debug["Within ${This.DestinationPrecision} meters of destination  (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN}); however, there is collision between you and the destination....."]
                     This:Debug["Within ${This.gPrecision} meters of destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN})-- ending movement."]
-    				if ${This.MeMoving} || ${Me.IsMoving}
-    					This:MoveStop	   
+    				This:StopRunning
     				This.MovingTo:Set[FALSE]
     				This.MeMoving:Set[FALSE]
     				This.MovingTo_Timer:Set[0]
@@ -779,9 +782,8 @@ objectdef EQ2Nav
 				{
 				    if (!${Me.CheckCollision[${This.NavDestination}]})
 				    {
-    				    This:Debug["NavigationPath now empty -- ending movement."]
-                        if ${This.MeMoving} || ${Me.IsMoving}
-        					This:MoveStop	
+    				    This:Debug["NavigationPath now empty -- ending movement."]	
+                        This:StopRunning
         			    This.MeMoving:Set[FALSE]   
         				This.DoorsOpenedThisTrip:Clear
         				return     
@@ -790,8 +792,7 @@ objectdef EQ2Nav
         			{
         			    ;; TO DO -- handle obstructions in this context
     				    This:Debug["NavigationPath now empty -- ending movement. (obstruction present)"]
-                        if ${This.MeMoving} || ${Me.IsMoving}
-        					This:MoveStop	
+                        This:StopRunning
         			    This.MeMoving:Set[FALSE]   
         				This.DoorsOpenedThisTrip:Clear
         				return   	    
@@ -808,9 +809,8 @@ objectdef EQ2Nav
 				    {
                         This:Debug["Within ${This.gPrecision} meters of destination -- ending movement."]
                         face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
-                        This:ClearPath
-        				if ${This.MeMoving} || ${Me.IsMoving}
-        					This:MoveStop	   
+                        This:ClearPath 
+        				This:StopRunning  
         				This.MeMoving:Set[FALSE]
         				This.DoorsOpenedThisTrip:Clear
         				return     
@@ -911,13 +911,7 @@ objectdef EQ2Nav
 			face ${hd}
 		}
 	}
-
-	method MoveStop()
-	{
-        if ${Me.IsMoving} || ${This.Moving}
-            press "${This.AUTORUN}"
-	}
-
+	
 	member Moving()
 	{
 	    return ${This.MeMoving}
