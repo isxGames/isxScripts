@@ -2328,6 +2328,15 @@
 				<Z2>-32.918823</Z2>
 				<Connection To="qey_tradeskill01-1209777948-157" />
 			</Box>
+			<Box Name="qey_tradeskill01-1210198652-170" Unique='1'>
+				<X1>-28.208080</X1>
+				<X2>-24.208080</X2>
+				<Y1>-9.444537</Y1>
+				<Y2>-3.444537</Y2>
+				<Z1>30.192455</Z1>
+				<Z2>34.192455</Z2>
+				<Connection To="Inner Room 2" />
+			</Box>
 		</Children>
 	</Universe>
 </LavishNav>
