@@ -320,7 +320,7 @@ objectdef EQ2Mapper
 	
 	member CollisionTest(float FromX, float FromY, float FromZ, float ToX, float ToY, float ToZ)
 	{
-	    if (!${NoCollisionDetection})
+	    if (${This.NoCollisionDetection})
 	        return FALSE
 	            
 	    return ${EQ2.CheckCollision[${FromX},${FromY},${FromZ},${ToX},${ToY},${ToZ}]}
@@ -365,42 +365,44 @@ objectdef EQ2Mapper
 				break
 		}    		
     	
-
+        ;This:Debug["Checking if ${CurrentRegion.FQN} and ${PreviousRegion.FQN} ShouldConnect()"]
 		if ${This.ShouldConnect[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
 		{
-			This:Debug["Connecting ${CurrentRegion.FQN} -> ${PreviousRegion.FQN}."]
+			This:Debug["Connecting ${CurrentRegion.FQN} <-> ${PreviousRegion.FQN}."]
 			CurrentRegion:Connect[${PreviousRegion.FQN}]
-			Connected_To:Inc
-		}
-		if ${This.ShouldConnect[${PreviousRegion.FQN},${CurrentRegion.FQN}]}
-		{
-			This:Debug["Connecting ${PreviousRegion.FQN} -> ${CurrentRegion.FQN}."]
 			PreviousRegion:Connect[${CurrentRegion.FQN}]
-			Connected_From:Inc
+			Connected_To:Inc
+			Connected_From:Inc			
 		}
 
 		; Need to add in Connect to Previous spot to current spot and current spot to previous spot if no collisions
 		; Scan all descendants within 5 feet of this area
 		RegionsFound:Set[${CurrentZone.ChildrenWithin[SurroundingRegions,${DistanceToCheck},${CurrentRegion.CenterPoint}]}]
+		;This:Debug["${RegionsFound} regions found within ${DistanceToCheck} meters -- determing if they should connect."]
 		if ${RegionsFound} > 0
 		{
 			do
 			{
 			    if (${SurroundingRegions.Get[${Index}].FQN.Equal[${CurrentRegion.FQN}]} || ${SurroundingRegions.Get[${Index}].FQN.Equal[${PreviousRegion.FQN}]})
 			        continue
-			        
-				if ${This.ShouldConnect[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]} && ${This.ShouldConnectBox[${SurroundingRegions.Get[${Index}].FQN},${CurrentRegion.FQN}]}
+			    
+			    ;This:Debug["Checking if ${CurrentRegion.FQN} and ${SurroundingRegions.Get[${Index}].FQN} ShouldConnect()"]
+				if ${This.ShouldConnect[${CurrentRegion.FQN},${SurroundingRegions.Get[${Index}].FQN}]}
 				{
 					Connected_To:Inc
 					Connected_From:Inc
 					CurrentRegion:Connect[${SurroundingRegions.Get[${Index}].FQN}]
 					SurroundingRegions.Get[${Index}]:Connect[${CurrentRegion.FQN}]
 					This:Debug["Connecting ${SurroundingRegions.Get[${Index}].FQN} <-> ${CurrentRegion.FQN}."]
+					if ${Connected_To} >= 8 || ${Connected_From} >= 8
+					    break
 				}
 			}
 			while ${SurroundingRegions.Get[${Index:Inc}](exists)}
 			This:Output["Connections To: ${Connected_To} and From: ${Connected_From}"]
 		}
+		
+		This.PreviousRegion:SetRegion[${This.CurrentRegion}]
 	}
 
 	member ShouldConnect(string RegionA, string RegionB)
@@ -428,11 +430,15 @@ objectdef EQ2Mapper
 			return FALSE
 		}
 		
-		if ${RegionsIntersect[${RegionRefA},${RegionRefB}]}
-		{
-			return TRUE
-		}
-		
+	    if (!${This.NoCollisionDetection})
+	    {
+    		if ${This.CollisionTest[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
+    		{
+    			This:Output["Obstruction found between ${RegionRefA.FQN} <-> ${RegionRefB.FQN} -- not connecting."]
+    			return FALSE
+    		}
+    	}		
+        
 		if ${RegionRefA.CenterPoint.Y} > ${RegionRefB.CenterPoint.Y} + 5
 		    return FALSE
 		elseif ${RegionRefA.CenterPoint.Y} < ${RegionRefB.CenterPoint.Y} - 5
@@ -443,14 +449,7 @@ objectdef EQ2Mapper
 		    return FALSE
 		    
 		    
-	    if (!${NoCollisionDetection})
-	    {
-    		if ${This.CollisionTest[${RegionRefA.CenterPoint}, ${RegionRefB.CenterPoint}]}
-    		{
-    			This:Output["Obstruction found between ${RegionRefA.FQN} <-> ${RegionRefB.FQN} -- not connecting."]
-    			return FALSE
-    		}
-    	}
+        ;This:Debug["ShouldConnect() -- Returning True"]
 		return TRUE
 	}
 
