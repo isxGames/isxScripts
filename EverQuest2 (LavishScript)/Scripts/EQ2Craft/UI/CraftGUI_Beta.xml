@@ -1466,7 +1466,7 @@
 						<X>20</X>
 						<Y>78</Y>
 						<Width>386</Width>
-						<Height>420</Height>
+						<Height>550</Height>
 						<Font>
 							<Name>terminal</Name>
 							<Size>11</Size>
@@ -1480,7 +1480,7 @@
 			<Commandbutton Name='Quit Button' Template='EQ2.Commandbutton'>
 				<visible>0</visible>
 				<X>65</X> 
-				<Y>515</Y> 
+				<Y>640</Y> 
 				<Width>130</Width> 
 				<Height>30</Height>
 				<Text>Quit</Text>
@@ -1493,7 +1493,7 @@
 			<Commandbutton Name='Pause Button' Template='EQ2.Commandbutton'>
 				<visible>0</visible>
 				<X>235</X> 
-				<Y>515</Y> 
+				<Y>640</Y> 
 				<Width>130</Width> 
 				<Height>30</Height>
 				<Text>Pause</Text>
