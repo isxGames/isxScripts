@@ -1,110 +1,38 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.2a Updated: 04/25/08 by Pygar
 ;
-;2.7.2b (Amadeus
-; * Major update to "Auto Hunting" mode, especially for those that use a bow or a spell/combat art.  It utilizes line of sight, collision
-;   detection, and maintains a temporary nopull list.  It also does things a lot more sanely than before.
-;
-;2.7.2a (Pygar)
-; * Added a check to verify target exists before adding to donotpull collection.  This was just to set peoples mind at ease
-; * Removed a range verifaction from CheckPosition causing it not to fire when MA was more than 8 meters from target.  This
-;		setting no longer holds much water with RoK ranged mob AI's.  Use the max range on main tab to set how far to set safe
-; 	distances to move.
-;
-;2.7.1m (Amadeus)
-; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
-; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a
-;   griffon-like transport or if they (or the bot) are currently climbing a wall.
-;
-;2.7.1l (Amadeus)
-; * Added a function to EQ2BotLib.iss called "AmIInvis".  CastSpell() and CastSpellRange() now check this before they
-;   will cast any spells outside of combat.
-; * Tweaked CheckAbilities().  It should work for all players at all times now if AA abilities are properly listed in
-;   spell lists as level 10 for all classes.
-;
-;2.7.1k (Pygar)
-; * Added a knowledgebook toggle to the begining of CheckAbilities.  Several higher level users reporting sporadic AA ability
-;		usage due to ability not being loaded.  We may need to actually attempt examine methods on a missing ability, more testing to
-;		follow.
-;
-;2.7.1j (Pygar)
-; * Updated InvalidMasteryTargets collection to only add targets if they exist, and to work off KillTarget instead of
-;		target in case healer has targeted another mob by time trigger fires.
-;
-;2.7.2i (Amadeus)
-; * All Post_Combat_Routine functions (in all of the class files) should have this as their default case:
-;		Default
-;			return PostCombatRoutineComplete
-;			break
-; * The "Stop EQ2Bot" and "Pause EQ2Bot" buttons should now work properly
-;
-;2.7.2h (Amadeus)
-; * Renamed the method "CheckSpells" to "CheckAbilities" and moved it to its own function
-; * If you are missing more than 6 abilities that are within 20 levels below your current level, EQ2Bot will assume that it is an error.
-;   It will then open your knowledge book, wait a half second, and then try again.  This should fix the issue where eq2bot does not
-;   initialize properly when you first start up EverQuest2.  (The console spew during initialization should tell you everything you need to know.)
-; * Fixed a bug in EQ2BotLib.iss that was causing the "Invalid operator in calculation (single equal)" error message on startup. (This
-;   was probably causing a bug with raid healing by the way.)
-; * Various updates/optimizations (ie, the CheckLoot() function should make a lot more sense now)
-;
-;2.7.2g (Amadeus)
-; * EQ2Bot now maintains a "DoNotPullList" collection.  Initially, this list is only populated with actors for which the message
-;   'you may not order your pet to attack the selected or implied target' is sent to the client.
-; * EQ2Bot now maintains a "InvalidMasteryTargets" collection.  Each class routine file will have to be updated to utilize this
-;   feature (see Fury.iss for example)
-; * EQ2Bot will no longer loot corpses during battle if you have "Loot Corpses and Chests" unchecked
-; * The Detect() method now uses the ${EngageDistance} variable to determine how closely it should check for mobs (which is set based
-;   upon character archetype during Init_Character()
-;
-;2.7.1f (Amadeus)
-; * There is now two options on the UI in regards to looting lore items and looting no trade items.
-; * If a loot item is a collectible, and you've already collected it AND there is more than just yourself in your group, you will decline.
-;
-;2.7.1e (Amadeus)
-; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
-;
-;2.7.1d (Amadeus)
-; * Added a 'Health' case to the CheckCondition function (see Fury.iss (Combat_Init() and Combat_Routines()) for examples)
-; * Removed some scripting that was causing crashes in the onLootWindowAppeared atom
-; * Added a 'GroupWiped' variable (bool) that is set to TRUE whenever "Revive on Group Wipes" is checked and your entire
-;   group wipes.  This variable can be checked in the class file at any point and should be reset to FALSE after any desired
-;   action has been taken.  See Fury.iss (Buff_Routine()) for example.
-; * Added a 'InitialBuffsDone' scriptwide variable (bool) that is set initially set to FALSE.  This is to allow for specific class
-;   files to cast buffs (or any other spells) when the script is first run (ie, to give out rez feathers.)  See Fury.iss (Buff_Routine()) for example.
-;
-;2.7.1c (Pygar)
-; Adjusted for new IsDead member of Actor.  This will fix false positives on death checks due to coagulate and other unconcious health buffs.
-;	Adjusted MA_Dead and MT_Dead functions
-; Adjusted LostAggro - Now fires with the ID of the mob that is lost, it no longer switched the MT's killtarget to the add.  This should allow
-;	for mezing to be more effective, and allow for more control of how to react to aggro loss in the Lost_aggro() function in individual class files.
-;
-;2.7.1b (Pygar)
-; Minor tweaks to AcceptWindow code
-;
-;2.7.1 (Pygar)
-; Updated Lootwindow to fire on isxeq2 events rather than triggers
-;	Update LootWindow to process on current window ID, this should allow for processing more than one window at a time now.
-;
-;2.7.0 (Blazer)
-; You can now set Points of Interest for Dungeon Crawl Mode (This will help with moving to designated points that you want your bots to pass through)
-; POI's can be re-arranged in priority order (top being first) by clicking and dragging the selection in the listbox.
-; POI's can be excluded as well.
-; Fixed MoveToMaster
-; Added a Main Assist Range. This will ensure your group members dont engage a target unless the Main Assist is within this set range.
-;
-;2.6.1 (Pygar)
-; Using new Loot Events
-; New Pull code for Pet / Bow / Spell
-; Pull Tweaks
-;
-;2.6.0 (Blazer)
-;Pathing is now done with LavishNav
-;
-; Description:
-; ------------
-; Automated BOT for any class.
-; Syntax: run eq2bot
+; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
+;===================================================
+;===        Version Checking             ====
+;===================================================
+;;; /EQ2Bot/Class Routines ONLY here
+;;; The spell list and GUI files for each class should be handled within the initialization of each class file.
+;;; The main script, EQ2BotLib, and the primary GUI files are included in the isxeq2 patcher.
+variable int Latest_AssassinVersion = 0
+variable int Latest_BerserkerVersion = 0
+variable int Latest_BrigandVersion = 0
+variable int Latest_BruiserVersion = 0
+variable int Latest_CoercerVersion = 0
+variable int Latest_ConjurerVersion = 0
+variable int Latest_DefilerVersion = 0
+variable int Latest_DirgeVersion = 0
+variable int Latest_FuryVersion = 0
+variable int Latest_GuardianVersion = 0
+variable int Latest_IllusionistVersion = 0
+variable int Latest_InquisitorVersion = 0
+variable int Latest_MonkVersion = 0
+variable int Latest_MysticVersion = 0
+variable int Latest_NecromancerVersion = 0
+variable int Latest_PaladinVersion = 0
+variable int Latest_RangerVersion = 0
+variable int Latest_ShadownightVersion = 0
+variable int Latest_SwashbucklerVersion = 0
+variable int Latest_TemplarVersion = 0
+variable int Latest_TroubadorVersion = 0
+variable int Latest_WardenVersion = 0
+variable int Latest_WarlockVersion = 0
+variable int Latest_WizardVersion = 0
 ;===================================================
 ;===        Keyboard Configuration              ====
 ;===================================================
@@ -471,6 +399,7 @@ function main()
 				}
 			}
 
+            ;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
 			if ${PathType}==4 && ${MainTank}
 			{
 				if ${Me.InCombat} && ${Mob.Detect}
@@ -609,8 +538,9 @@ function main()
     							wait 10
     							if ${Mob.Target[${Target.ID}]}
     							{
-    							    ;echo "Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
+    							    echo "DEBUG:: Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
     								call Combat
+    								echo "DEBUG:: Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
     							}
     						}
     					}
@@ -659,9 +589,10 @@ function main()
     				}
     			}
     		}
+    	;echo "END AutoPull Loop: Test-${Time.Timestamp}"
 		}
 		call ProcessTriggers
-		;echo "END AutoPull Loop: Test-${Time.Timestamp}"
+		
 		
 		
         MobDetected:Set[${Mob.Detect}]
@@ -902,6 +833,7 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 function Combat()
 {
 	variable int tempvar
+	variable bool ContinueCombat
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
@@ -917,6 +849,8 @@ function Combat()
 
 	do
 	{
+	    ContinueCombat:Set[FALSE]
+	    
 		if !${MainTank}
 		{
 		    if !${Actor[id,${KillTarget}](exists)}
@@ -925,9 +859,7 @@ function Combat()
 		}
 
 		if ${Target.ID}!=${Me.ID} && ${Target(exists)}
-		{
 			face ${Target.X} ${Target.Z}
-		}
 
 		do
 		{
@@ -1042,8 +974,8 @@ function Combat()
 
 				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 				{
-						EQ2Execute /target_none
-						break
+					EQ2Execute /target_none
+					break
 				}
 
 				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
@@ -1057,6 +989,7 @@ function Combat()
 				}
 			}
 			while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+			;;;; END Combat_Routine Loop ;;;;;
 
 			if !${CurrentTask}
 				Script:End
@@ -1067,11 +1000,15 @@ function Combat()
 			call ProcessTriggers
 		}
 		while ((${Actor[${KillTarget}](exists)} && !${MainTank}) || (${Target(exists)} && ${MainTank})) && !${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]}
+        ;;; END LOOP DEALING WITH CURRENT TARGET ;;;;;;
 
 		disablebehind:Set[FALSE]
 		disablefront:Set[FALSE]
 
-		if !${MainTank}
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;; Target New Mob (if applicable)
+        ;;
+		if !${MainTank} && ${Actor[ExactName,${MainAssist}](exists)}
 		{
 			if ${Mob.Detect}
 				wait 50 ${Actor[ExactName,${MainAssist}].Target(exists)}
@@ -1079,22 +1016,29 @@ function Combat()
 			if ${Actor[ExactName,${MainAssist}].Target(exists)} && ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
 			{
 				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+				ContinueCombat:Set[TRUE]
 				continue
 			}
 			else
 				break
 		}
-
-		;if ${AutoPull} || ${MainTank}
-		;{
-		;	checkadds:Set[TRUE]
-        ;
-		;	call Pull any
-		;	if ${engagetarget}
-		;		continue
-		;}
+		elseif ${MainTank} && !${Me.IsMoving}
+		{
+		    if ${Mob.Detect}
+		    {
+				if ${Mob.NearestAggro}
+				{
+				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
+				    KillTarget:Set[${Mob.NearestAggro}]
+					target ${Mob.NearestAggro}
+					ContinueCombat:Set[TRUE]
+				}
+			}
+		}
+        ;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	}
-	while ${Me.InCombat}
+	while ${Me.InCombat} || ${ContinueCombat}
 
 	avoidhate:Set[FALSE]
 	checkadds:Set[FALSE]
@@ -1440,7 +1384,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 				return "OK"
 			else
 			{
-					;echo "DEBUG: Not Casting Spell due to my health being too low!"
+				;echo "DEBUG: Not Casting Spell due to my health being too low!"
 				return "FAIL"
 			}
 			break
@@ -1505,9 +1449,9 @@ function Pull(string npcclass)
 			if ${checkadds} && !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID}
 				continue
 				
-		    if ${CustomActor[${tcount}].Y} < ${Math.Calc64[${Me.Y}-5]}
+		    if ${CustomActor[${tcount}].Y} < ${Math.Calc64[${Me.Y}-10]}
 		        continue
-		    if ${CustomActor[${tcount}].Y} > ${Math.Calc64[${Me.Y}+5]}
+		    if ${CustomActor[${tcount}].Y} > ${Math.Calc64[${Me.Y}+10]}
 		        continue
 
 
@@ -1585,6 +1529,7 @@ function Pull(string npcclass)
                         	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
                         
                         		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+                        		continue
                             }
     				    }
     				}
@@ -1686,6 +1631,9 @@ function Pull(string npcclass)
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 	FlushQueued CantSeeTarget
+	
+	engagetarget:Set[FALSE]
+	return 0
 }
 
 function CheckLootNoMove()
