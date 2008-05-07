@@ -274,7 +274,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>5%</X> 
-									<Y>85</Y> 
+									<Y>95</Y> 
 									<Width>95%</Width>
 									<Height>20</Height>
 									<Text>Filters:</Text> 
@@ -286,7 +286,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>20%</X>
-									<Y>80</Y>
+									<Y>90</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
 									<Text>Standard</Text>
@@ -322,7 +322,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>42%</X>
-									<Y>80</Y>
+									<Y>90</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
 									<Text>Imbued</Text>
@@ -358,7 +358,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>60%</X>
-									<Y>80</Y>
+									<Y>90</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
 									<Text>Rare</Text>
@@ -395,7 +395,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>75%</X>
-									<Y>80</Y>
+									<Y>90</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
 									<OnLoad>
@@ -423,10 +423,114 @@
 										}
 									</OnLeftClick>
 								</checkbox>
+								
+								
+								<Text Name='Quality Level'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>5%</X> 
+									<Y>120</Y> 
+									<Width>150</Width> 
+									<Height>20</Height>
+									<Color>FFDDBB00</Color>
+									<Text>Quality Level:</Text> 
+								</Text>
+								<Commandcheckbox Name='Quality 1' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>35%</X>
+									<Y>115</Y>
+									<Width>50</Width>
+									<Height>20</Height>
+									<Text>1</Text>
+									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[FALSE]}</Command>
+									<CommandChecked />
+									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]}</Data>
+								</Commandcheckbox>
+								<Commandcheckbox Name='Quality 2' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>50%</X>
+									<Y>115</Y>
+									<Width>50</Width>
+									<Height>20</Height>
+									<Text>2</Text>
+									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[FALSE]}</Command>
+									<CommandChecked />
+									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]}</Data>
+								</Commandcheckbox>
+								<Commandcheckbox Name='Quality 3' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>65%</X>
+									<Y>115</Y>
+									<Width>50</Width>
+									<Height>20</Height>
+									<Text>3</Text>
+									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[FALSE]}</Command>
+									<CommandChecked />
+									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]}</Data>
+								</Commandcheckbox>
+								<Commandcheckbox Name='Quality 4' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>80%</X>
+									<Y>115</Y>
+									<Width>50</Width>
+									<Height>20</Height>
+									<Text>4</Text>
+									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[TRUE]}</Command>
+									<CommandChecked />
+									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]}</Data>
+								</Commandcheckbox>						
+								
+								
+								
+								
+								
+								
+								
+								<Text Name='Gauge Label'>
+									<Visible>0</Visible>
+									<Font>
+										<Name>terminal</Name>
+										<Size>12</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>30%</X> 
+									<Y>140</Y> 
+									<Width>500</Width>
+									<Height>20</Height>
+									<Text>Currently Processing Recipe..</Text> 
+								</Text>
+								<VariableGauge Name='Process Recipe' Template='EQ2.VariableGauge'>
+									<Visible>0</Visible>
+									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[gaugelevel]}</Data>
+									<X>106</X>
+									<Y>152</Y>
+									<Border>3</Border>
+									<Width>200</Width>
+									<Height>15</Height>
+								</VariableGauge>
 								<Commandbutton Name='Start Crafting' Template='EQ2.Commandbutton'>
 									<Visible>0</Visible>
 									<X>38</X> 
-									<Y>105</Y>
+									<Y>145</Y>
 									<Width>120</Width> 
 									<Height>20</Height>
 									<Text>Begin Crafting</Text>
@@ -437,7 +541,7 @@
 								<Commandbutton Name='Resume Crafting' Template='EQ2.Commandbutton'>
 									<Visible>0</Visible>
 									<X>38</X> 
-									<Y>105</Y> 
+									<Y>145</Y> 
 									<Width>120</Width> 
 									<Height>20</Height>
 									<Text>Resume Crafting</Text>
@@ -445,19 +549,6 @@
 										Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[resumecraft]:Set[TRUE]
 									</OnLeftClick>
 								</Commandbutton>
-								<Text Name='Resume Label'>
-									<Visible>0</Visible>
-									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
-										<Color>FF22FF22</Color>
-									</Font>
-									<X>25</X> 
-									<Y>130</Y> 
-									<Width>95%</Width>
-									<Height>20</Height>
-									<Text>Not all HARVESTS have been bought. Click Resume Crafting.</Text> 
-								</Text>
 								<Commandcheckbox Name='Save List' Template='EQ2.Commandcheckbox'>
 									<Visible>0</Visible>
 									<Font>
@@ -466,7 +557,7 @@
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>180</X>
-									<Y>105</Y>
+									<Y>145</Y>
 									<Width>100</Width>
 									<Height>20</Height>
 									<Text>Save Recipe List</Text>
@@ -474,28 +565,19 @@
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SaveList]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[SaveList]}</Data>
 								</Commandcheckbox>
-								<Text Name='Gauge Label'>
+								<Text Name='Resume Label'>
 									<Visible>0</Visible>
 									<Font>
 										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
+										<Size>10</Size>
+										<Color>FF22FF22</Color>
 									</Font>
-									<X>30%</X> 
-									<Y>100</Y> 
-									<Width>500</Width>
+									<X>25</X> 
+									<Y>170</Y> 
+									<Width>95%</Width>
 									<Height>20</Height>
-									<Text>Currently Processing Recipe..</Text> 
+									<Text>Not all HARVESTS have been bought. Click Resume Crafting.</Text> 
 								</Text>
-								<VariableGauge Name='Process Recipe' Template='EQ2.VariableGauge'>
-									<Visible>0</Visible>
-									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[gaugelevel]}</Data>
-									<X>106</X>
-									<Y>112</Y>
-									<Border>3</Border>
-									<Width>200</Width>
-									<Height>15</Height>
-								</VariableGauge>
 							</Tab>
 							<Tab Name='Advanced'>
 								<Combobox Name='Favourites List' Template='EQ2.Combobox'>
@@ -648,79 +730,6 @@
 								</VariableGauge>
 							</Tab>
 							<Tab Name='Options'>
-								<Text Name='Quality Level'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>8%</X> 
-									<Y>6</Y> 
-									<Width>150</Width> 
-									<Height>20</Height>
-									<Color>FFDDBB00</Color>
-									<Text>Quality Level:</Text> 
-								</Text>
-								<Commandcheckbox Name='Quality 1' Template='EQ2.Commandcheckbox'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>35%</X>
-									<Y>2</Y>
-									<Width>50</Width>
-									<Height>20</Height>
-									<Text>1</Text>
-									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[FALSE]}</Command>
-									<CommandChecked />
-									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]}</Data>
-								</Commandcheckbox>
-								<Commandcheckbox Name='Quality 2' Template='EQ2.Commandcheckbox'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>50%</X>
-									<Y>2</Y>
-									<Width>50</Width>
-									<Height>20</Height>
-									<Text>2</Text>
-									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[FALSE]}</Command>
-									<CommandChecked />
-									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]}</Data>
-								</Commandcheckbox>
-								<Commandcheckbox Name='Quality 3' Template='EQ2.Commandcheckbox'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>65%</X>
-									<Y>2</Y>
-									<Width>50</Width>
-									<Height>20</Height>
-									<Text>3</Text>
-									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[FALSE]}</Command>
-									<CommandChecked />
-									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]}</Data>
-								</Commandcheckbox>
-								<Commandcheckbox Name='Quality 4' Template='EQ2.Commandcheckbox'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>12</Size>
-										<Color>FFEBDEAA</Color>
-									</Font>
-									<X>80%</X>
-									<Y>2</Y>
-									<Width>50</Width>
-									<Height>20</Height>
-									<Text>4</Text>
-									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality1]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality2]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality3]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]:Set[TRUE]}</Command>
-									<CommandChecked />
-									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[Quality4]}</Data>
-								</Commandcheckbox>
 								<Commandcheckbox Name='Power Check' Template='EQ2.Commandcheckbox'>
 									<Font>
 										<Name>terminal</Name>
