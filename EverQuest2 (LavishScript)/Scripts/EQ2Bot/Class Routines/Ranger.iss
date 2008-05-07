@@ -6,7 +6,10 @@
 ;TODO Hawk Dive
 ;TODO Thorny Trap
 
-#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
+#ifndef _Eq2Botlib_
+	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
+#endif
+
 
 function Class_Declaration()
 {
