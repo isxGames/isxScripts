@@ -14,7 +14,7 @@
 			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
 			</Button>
 			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-				<Command>Script[EQ2Bot]:End</Command>
+				<Command>Script[Buffer:Craft]:End</Command>
 			</commandbutton>
 		</Children>
 	</template>
