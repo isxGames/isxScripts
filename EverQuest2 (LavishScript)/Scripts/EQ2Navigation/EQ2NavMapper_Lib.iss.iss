@@ -256,6 +256,7 @@ objectdef EQ2Mapper
 		    RegionName:Set["${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
 
 		LastCreatedRegion:SetRegion[${CurrentZone.AddChild[point,${PointName}, ${Location}]}]
+		This:Output["-----"]
 		This:Output["Adding Region to map as 'Point' - (${RegionName} ${X}, ${Y}, ${Z})"]
 		
 		LastRegionAdded_Name:Set[${RegionName}]
@@ -276,6 +277,7 @@ objectdef EQ2Mapper
 
 		LastCreatedRegion:SetRegion[${CurrentZone.AddChild[sphere,${RegionName},-unique,${Radius},${Location}]}]
 
+        This:Output["-----"]
 		This:Output["Adding Region to map as 'sphere' (from point) - (${RegionName} ${X}, ${Y}, ${Z}, Radius: ${Radius})"]
 		This.Max_Distance_Between_Checks:Set[${Radius}]
 		
@@ -309,6 +311,7 @@ objectdef EQ2Mapper
         LastCreatedRegion:SetRegion[${CurrentZone.AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]}]
         ;LastCreatedRegion:SetCustom[Note,"example"]
 		
+		This:Output["-----"]
 		This:Output["Adding Region to map as 'box' - (${RegionName} ${X}, ${Y}, ${Z})"]
 		LastRegionAdded_Name:Set[${RegionName}]
 		LastRegionAdded_X:Set[${X}]
