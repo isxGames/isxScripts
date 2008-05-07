@@ -13,7 +13,10 @@
 
 function Class_Declaration()
 {
-
+    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+    declare ClassFileVersion int script 20080408
+    ;;;;
+    
 	declare TauntMode bool script TRUE
 	declare HealerMode bool script FALSE
 	declare Start_HO bool script FALSE

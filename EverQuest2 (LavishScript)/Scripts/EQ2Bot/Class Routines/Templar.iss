@@ -14,6 +14,10 @@
 
 function Class_Declaration()
 {
+    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+    declare ClassFileVersion int script 20080408
+    ;;;;
+        
 	declare OffenseMode bool script 0
 	declare DebuffMode bool script 0
  	declare AoEMode bool script 0
@@ -38,8 +42,8 @@ function Class_Declaration()
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffGloryGroupMember string script
 	declare BuffBennedictionGroupMember string script
-  declare BuffPraetorateGroupMember string script
-  declare BuffShieldAllyGroupMember string script
+    declare BuffPraetorateGroupMember string script
+    declare BuffShieldAllyGroupMember string script
 	declare HolyShieldGroupMember string script
 	declare ManaCureGroupMember string script
 	declare tempMH string script

@@ -50,7 +50,10 @@
 
 function Class_Declaration()
 {
-
+    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+    declare ClassFileVersion int script 20080408
+    ;;;;
+    
 	declare OffenseMode bool script
 	declare AoEMode bool script
 	declare CureMode bool script
@@ -66,12 +69,12 @@ function Class_Declaration()
 	declare KeepMTHOTUp bool script 0
 	declare KeepGroupHOTUp bool script 0
 	declare RaidHealMode bool script 1
-  declare TraumaSpam bool script 0
-  declare	TraumaMit bool script 0
-  declare NoxiousMit bool script 0
-  declare ElementMit bool script 0
-  declare ArcaneMit bool script 0
-  declare ShiftForm int script 1
+    declare TraumaSpam bool script 0
+    declare	TraumaMit bool script 0
+    declare NoxiousMit bool script 0
+    declare ElementMit bool script 0
+    declare ArcaneMit bool script 0
+    declare ShiftForm int script 1
 
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script

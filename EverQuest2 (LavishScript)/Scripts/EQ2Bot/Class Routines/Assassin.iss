@@ -52,6 +52,10 @@
 
 function Class_Declaration()
 {
+    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+    declare ClassFileVersion int script 20080408
+    ;;;;
+    
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
 	declare UseRangeMode bool script 0
