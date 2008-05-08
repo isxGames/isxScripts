@@ -50,11 +50,7 @@ objectdef EQ2Mapper
 	variable float LastRegionAdded_Z
 	variable float Max_Distance_Between_Checks = 10
 	variable float Max_Region_Size = 20
-	
-	variable bool MapPathway = FALSE
-	variable bool MapPathwayReverse = FALSE
-
-	variable bool MapPathwayOld = FALSE
+    variable bool PointToPointMode = FALSE
 	
 
 
@@ -368,15 +364,26 @@ objectdef EQ2Mapper
 				break
 		}    		
     	
-        ;This:Debug["Checking if ${CurrentRegion.FQN} and ${PreviousRegion.FQN} ShouldConnect()"]
-		if ${This.ShouldConnect[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
-		{
+    	if (${PointToPointMode})
+    	{
 			This:Debug["Connecting ${CurrentRegion.FQN} <-> ${PreviousRegion.FQN}."]
 			CurrentRegion:Connect[${PreviousRegion.FQN}]
 			PreviousRegion:Connect[${CurrentRegion.FQN}]
 			Connected_To:Inc
-			Connected_From:Inc			
-		}
+			Connected_From:Inc		  
+    	}
+    	else
+    	{
+            ;This:Debug["Checking if ${CurrentRegion.FQN} and ${PreviousRegion.FQN} ShouldConnect()"]
+    		if ${This.ShouldConnect[${CurrentRegion.FQN},${PreviousRegion.FQN}]}
+    		{
+    			This:Debug["Connecting ${CurrentRegion.FQN} <-> ${PreviousRegion.FQN}."]
+    			CurrentRegion:Connect[${PreviousRegion.FQN}]
+    			PreviousRegion:Connect[${CurrentRegion.FQN}]
+    			Connected_To:Inc
+    			Connected_From:Inc			
+    		}
+    	}
 
 		; Need to add in Connect to Previous spot to current spot and current spot to previous spot if no collisions
 		; Scan all descendants within 5 feet of this area
