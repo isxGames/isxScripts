@@ -696,6 +696,18 @@ function Have_Aggro()
     ;;;;
     ;; The logic here needs to be reviewed ..do we really want to do these things?
     ;;;;
+    
+    if (!${MainTank} && ${Me.Group} > 1)
+    {
+        if ${Me.Inventory[Behavioral Modificatinator Stereopticon](exists)}
+        {
+            if (${Me.Inventory[Behavioral Modificatinator Stereopticon].IsReady})
+            {
+                Me.Inventory[Behavioral Modificatinator Stereopticon]:Use
+                return
+            }
+        }
+    }
 
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
