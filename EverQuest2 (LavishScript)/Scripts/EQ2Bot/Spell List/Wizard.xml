@@ -20,6 +20,15 @@
 		<Setting Name="10,180">Tongue Twist</Setting>
 		<Setting Name="10,385">Freehand Sorcery</Setting>
 		<Setting Name="10,386">Ward of Sages</Setting>
+		<Setting Name="10,387">Fireshape</Setting>
+		<Setting Name="10,388">Iceshape</Setting>
+		<Setting Name="10,389">Catalyst</Setting>
+		<Setting Name="10,390">Static Discharge</Setting>
+		<Setting Name="10,391">Ambidexterous Casting</Setting>
+		<Setting Name="10,392">Confounding Staff</Setting>
+		<Setting Name="10,393">Concussive Blasts</Setting>
+		<Setting Name="10,394">Manaburn</Setting>
+		<Setting Name="10,395">Spell Reach</Setting>
 		<Setting Name="11,31">Burning Radiance</Setting>
 		<Setting Name="12,63">Plasma Burst</Setting>
 		<Setting Name="12,20">Vivid Seal</Setting>
@@ -143,8 +152,8 @@
 		<Setting Name="75,21">Consolidation</setting>
 		<Setting Name="75,91">Solar Wind</setting>
 		<Setting Name="75,360">Velium gift</setting>
-		<Setting Name="76,92">Electorn Storm</setting>
-		<Setting Name="76,355">Glacial Shield</setting>
+		<Setting Name="76,92">Electron Storm</setting>
+		<Setting Name="76,355">Glacialshield</setting>
 		<Setting Name="76,70">Storming Tempest</setting>
 		<Setting Name="77,62">Ball of Magma</setting>
 		<Setting Name="77,180">Blip</setting>
