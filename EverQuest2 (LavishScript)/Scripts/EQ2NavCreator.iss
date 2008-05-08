@@ -26,6 +26,7 @@ variable(script) int HudX
 variable(script) int HudY
 variable(script) bool AutoPlot
 variable(script) bool NoCollision
+variable(script) bool PointToPoint
 
 
 function main(... Args)
@@ -60,12 +61,23 @@ function main(... Args)
 				AutoPlot:Set[TRUE]
 		    elseif (${Args[${Iterator}].Equal[-nocollision]} || ${Args[${Iterator}].Find[-nocollision]} > 0)
 		        NoCollision:Set[TRUE]
+		    elseif (${Args[${Iterator}].Equal[-PtoP]} || ${Args[${Iterator}].Find[-PtoP] > 0)
+		        PointToPoint:Set[TRUE]
+		    elseif (${Args[${Iterator}].Equal[-?]})
+		    {
+        	    echo "Syntax:> run EQ2NavCreator [flags]"
+        	    echo "Flags:  -auto        (Points are added automatically as you move through space)"
+        	    echo "        -PtoP        (Point-to-Point Mode:  The Mapper assumes that every point you create is connectable with the last point created.
+        	    echo "                                            Collision checks, etc. are then done for all other connections."
+        	    echo "        -nocollision (No collision checks at all are made when connecting points."	
+        	    return  
+		    }	        
 			else
 				echo "EQ2NavCreator:: '${Args[${Iterator}]}' is not a valid command line argument:  Ignoring..."
 		}
 		while ${Iterator:Inc} <= ${Args.Size}
-	}	
-	
+	}
+
 
 	; Set the default location of the HUD
 	HudX:Set[230]
@@ -74,8 +86,18 @@ function main(... Args)
 	echo "---------------------------"
 	echo "EQ2NavCreator:: Initializing."
     Mapper:LoadMap	
+    if (${AutoPlot})
+        echo "EQ2NavCreator:: Auto Plot mode ACTIVE."
+    if (${PointToPoint})
+    {
+        echo "EQ2NavCreator:: Point-to-Point map creation ACTIVE."
+        Mapper.PointToPointMode:Set[TRUE]
+    }
     if (${NoCollision})
+    {
+        echo "EQ2NavCreator:: No Collision mode ACTIVE."
         Mapper.NoCollisionDetection:Set[TRUE]
+    }
     if (${SaveAsLSO})
     {
         SaveMode:Set["LSO"]
