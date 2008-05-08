@@ -120,7 +120,7 @@ function main()
 	}
 	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices Version 0.12b : released 26 April 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.12c : released06 May 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -232,7 +232,9 @@ function main()
 						Call CheckMinPriceSet "${currentitem}"
 						MinPriceSet:Set[${Return}]
 						; Call Search routine to find the lowest price
+						Call echolog "Call BrokerSearch ${currentitem}"
 						Call BrokerSearch "${currentitem}"
+						Wait 15
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
 						{
@@ -297,7 +299,9 @@ function main()
 										If ${MatchLowPrice}
 										{
 											call SetColour ${currentpos} FF00FF00
+											Call echolog "<Main> (Match Price change) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+											Wait 15
 										}
 									}
 								}
@@ -313,7 +317,9 @@ function main()
 										{
 											call StringFromPrice ${MinBasePrice}
 											call AddLog "${currentitem} : Price to match is ${Return} :" FF00FF00
+											Call echolog "<Main> (Increase Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+											Wait 15
 											
 										}
 										else
@@ -324,7 +330,9 @@ function main()
 											{
 												call StringFromPrice ${MinSalePrice}
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FFFF0000
+												Call echolog "<Main> (Unlisted Item - Min Sale price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]"
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]
+												Wait 15
 												Call Saveitem Sell "${currentitem}" ${MinSalePrice}
 												call SetColour ${currentpos} FFFF0000
 											}
@@ -333,7 +341,9 @@ function main()
 												; otherwise use the lowest price on the vendor
 												call StringFromPrice ${MinBasePrice}
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FF00FF00
+												Call echolog "<Main> (Unlisted Item - Lowest Broker Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+												Wait 15
 												; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 												if ${MinSalePrice} == 0
 												{
@@ -490,19 +500,40 @@ function ReListItem(int i, string itemname)
 	{
 		if !${Me.Vending[${i}].Consignment[${j}].IsListed}
 		{
-			; Re-List the item for sale
-			loopcount:Set[0]
-			do
+			if ${Me.Vending[${i}].Consignment[${j}].BasePrice} >0
 			{
-				Me.Vending[${i}].Consignment[${j}]:List
-				wait 15
-				Call FindItem ${i} "${itemname}"
-				j:Set[${Return}]
+				; Re-List the item for sale
+				loopcount:Set[0]
+				do
+				{
+					Me.Vending[${i}].Consignment[${j}]:List
+					wait 15
+					Call FindItem ${i} "${itemname}"
+					j:Set[${Return}]
+				}
+				while !${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+				if ${loopcount} == 10
+				{
+					call AddLog "*** ERROR - unable to mark ${itemname} as listed for sale" FFFF0000
+				}
 			}
-			while !${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
-			if ${loopcount} == 10
+			else
 			{
-				call AddLog "*** ERROR - unable to mark ${itemname} as listed for sale" FFFF0000
+				call AddLog "*** ERROR - Item was marked as ZERO value - unlisting from sale" FFFF0000
+				loopcount:Set[0]
+				do
+				{
+					Me.Vending[${i}].Consignment[${j}]:Unlist
+					wait 15
+					; check the item hasn't moved in the list because it was unlisted
+					call FindItem ${i} "${currentitem}"
+					j:Set[${Return}]
+				}
+				while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+				if ${loopcount} == 10
+				{
+					call AddLog "*** ERROR - unable to mark ${itemname} as Unlisted" FFFF0000
+				}
 			}
 		}
 	}
@@ -749,8 +780,9 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 	Declare BoughtNumber int local
 	Declare MaxBuy int local
 
+	Call echolog "<BuyItems> Call BrokerSearch ${BuyName}"
 	Call BrokerSearch "${BuyName}"
-
+	Wait 15
 
 	; if items listed on the broker
 	if ${Return} != -1
