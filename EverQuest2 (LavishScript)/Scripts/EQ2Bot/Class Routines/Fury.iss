@@ -975,6 +975,18 @@ function Have_Aggro()
 		eq2execute /tell ${MainTankPC}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
+	
+    if (!${MainTank} && ${Me.Group} > 1)
+    {
+        if ${Me.Inventory[Behavioral Modificatinator Stereopticon](exists)}
+        {
+            if (${Me.Inventory[Behavioral Modificatinator Stereopticon].IsReady})
+            {
+                Me.Inventory[Behavioral Modificatinator Stereopticon]:Use
+                return
+            }
+        }
+    }	
 
 	call CastSpellRange 180 0 0 0 ${aggroid}
 
