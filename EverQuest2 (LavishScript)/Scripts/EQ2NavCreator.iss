@@ -20,6 +20,7 @@
 variable(global) string SaveMode 
 variable(global) bool SaveAsLSO
 variable(global) string RegionCreationType
+variable(global) string CreationMode
 variable(global) EQ2Mapper Mapper
 variable(global) int CurrentTask
 variable(script) int HudX
@@ -86,18 +87,31 @@ function main(... Args)
 	echo "---------------------------"
 	echo "EQ2NavCreator:: Initializing."
     Mapper:LoadMap	
+    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Deal with command-line options and set "CreationMode"
     if (${AutoPlot})
+    {
         echo "EQ2NavCreator:: Auto Plot mode ACTIVE."
+        CreationMode:Set["AutoPlot"]
+    }
+    else
+        CreationMode:Set["ManualPlot"]
     if (${PointToPoint})
     {
         echo "EQ2NavCreator:: Point-to-Point map creation ACTIVE."
         Mapper.PointToPointMode:Set[TRUE]
+        CreationMode:Set[", Point-To-Point"]
     }
     if (${NoCollision})
     {
         echo "EQ2NavCreator:: No Collision mode ACTIVE."
         Mapper.NoCollisionDetection:Set[TRUE]
+        CreationMode:Set[", No Collision"]
     }
+    ;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
     if (${SaveAsLSO})
     {
         SaveMode:Set["LSO"]
@@ -142,6 +156,7 @@ function main(... Args)
 	
 	
 	HUD -add RegionCreation ${HudX},${HudY:Inc[50]} "Region Creation Type:        \${RegionCreationType}"
+	HUD -add hCreationMode  ${HudX},${HudY:Inc[15]} "Creation Mode:               \${CreationMode}"
 	HUD -add SaveModeStatus ${HudX},${HudY:Inc[15]} "Save Mode:                   \${SaveMode}"
 	
 	HUD -add NavPointStatus ${HudX},${HudY:Inc[50]} "Last Nav Point Added:        \${Mapper.LastRegionAdded_Name} [\${Mapper.LastRegionAdded_X.Precision[2]}(x) \${Mapper.LastRegionAdded_Y.Precision[2]}(y) \${Mapper.LastRegionAdded_Z.Precision[2]}(z)]"
@@ -151,6 +166,7 @@ function main(... Args)
 	HUDSet NavCountStatus -c FFFF00	
 	HUDSet SaveModeStatus -c FFFF00
 	HUDSet RegionCreation -c FFFF00
+	HUDSet hCreationMode -c FFFF00
 	;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
@@ -300,4 +316,5 @@ function atexit()
 	HUD -remove NavCountStatus
 	HUD -remove SaveModeStatus
 	HUD -remove RegionCreation
+	HUD -remove hCreationMode
 }
