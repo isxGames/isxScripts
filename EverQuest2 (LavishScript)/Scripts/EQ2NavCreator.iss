@@ -21,6 +21,7 @@ variable(global) string SaveMode
 variable(global) bool SaveAsLSO
 variable(global) string RegionCreationType
 variable(global) string CreationMode
+variable(global) string SaveToFile
 variable(global) EQ2Mapper Mapper
 variable(global) int CurrentTask
 variable(script) int HudX
@@ -43,9 +44,6 @@ function main(... Args)
     }
     while !${ISXEQ2.IsReady}
 
-    ; EQ2Mapper only supports "box" region types so far...
-    MapFileRegionsType:Set["Box"]
-    
     ;; defaults (Save to config file?)
     SaveAsLSO:Set[FALSE]
     RegionCreationType:Set["Sphere"]
@@ -64,6 +62,8 @@ function main(... Args)
 		        NoCollision:Set[TRUE]
 		    elseif (${Args[${Iterator}].Equal[-PtoP]} || ${Args[${Iterator}].Find[-PtoP] > 0)
 		        PointToPoint:Set[TRUE]
+		    elseif (${Args[${Iterator}].Equal[-lso]} || ${Args[${Iterator}].Find[-lso] > 0)
+		        SaveAsLSO:Set[TRUE]
 		    elseif (${Args[${Iterator}].Equal[-?]})
 		    {
         	    echo "Syntax:> run EQ2NavCreator [flags]"
@@ -71,6 +71,8 @@ function main(... Args)
         	    echo "        -PtoP        (Point-to-Point Mode:  The Mapper assumes that every point you create is connectable with the last point created.
         	    echo "                                            Collision checks, etc. are then done for all other connections."
         	    echo "        -nocollision (No collision checks at all are made when connecting points."	
+        	    echo "        -lso         (Indicates to the script that it should load the current list from an LSO file.  By default, it will use an"
+        	    echo "                      xml file if one exists.  This flag will also set the script to save as LSO (which can be toggled.)"
         	    return  
 		    }	        
 			else
@@ -86,8 +88,7 @@ function main(... Args)
 
 	echo "---------------------------"
 	echo "EQ2NavCreator:: Initializing."
-    Mapper:LoadMap	
-    
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Deal with command-line options and set "CreationMode"
     if (${AutoPlot})
@@ -114,16 +115,22 @@ function main(... Args)
     
     if (${SaveAsLSO})
     {
+        echo "EQ2NavCreator:: Using file: '${Zone.ShortName}' (LSO File Format)"
         SaveMode:Set["LSO"]
         Mapper.UseLSO:Set[TRUE]
+        SaveToFile:Set["${Zone.ShortName}"]
     }
     else
     {
+        echo "EQ2NavCreator:: Using file: '${Zone.ShortName}.xml'"
         SaveMode:Set["XML"]
         Mapper.UseLSO:Set[FALSE]
+        SaveToFile:Set["${Zone.ShortName}.xml"]
     }
+    
+    
     Mapper.MapFileRegionsType:Set[${RegionCreationType}]
-    echo "SaveMode: ${SaveMode}"
+    Mapper:LoadMap	
 	echo "EQ2NavCreator:: Initialization complete."
     echo "---------------------------"
 
@@ -157,7 +164,7 @@ function main(... Args)
 	
 	HUD -add RegionCreation ${HudX},${HudY:Inc[50]} "Region Creation Type:        \${RegionCreationType}"
 	HUD -add hCreationMode  ${HudX},${HudY:Inc[15]} "Creation Mode:               \${CreationMode}"
-	HUD -add SaveModeStatus ${HudX},${HudY:Inc[15]} "Save Mode:                   \${SaveMode}"
+	HUD -add SaveModeStatus ${HudX},${HudY:Inc[15]} "Save Mode:                   \${SaveMode} (\${SaveToFile})"
 	
 	HUD -add NavPointStatus ${HudX},${HudY:Inc[50]} "Last Nav Point Added:        \${Mapper.LastRegionAdded_Name} [\${Mapper.LastRegionAdded_X.Precision[2]}(x) \${Mapper.LastRegionAdded_Y.Precision[2]}(y) \${Mapper.LastRegionAdded_Z.Precision[2]}(z)]"
 	HUD -add NavCountStatus ${HudX},${HudY:Inc[15]} "Total Number of Points Used: \${Mapper.CurrentZone.ChildCount}"
@@ -220,7 +227,6 @@ function main(... Args)
 				if ${UserInput.Length}
 				{
 				    Mapper.NoCollisionDetection:Set[TRUE]
-				    echo "MapFileRegionsType: ${MapFileRegionsType}"
     		        if (${RegionCreationType.Equal[Box]})
         		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc},${UserInput}]
         		    elseif (${RegionCreationType.Equal[Point]})
@@ -245,15 +251,19 @@ function main(... Args)
 			    CurrentTask:Set[0]
 			    if (${SaveAsLSO})
 			    {
+			        echo "EQ2NavCreator:: Now saving to file: '${Zone.ShortName}.xml'"
 			        SaveAsLSO:Set[FALSE]
 			        SaveMode:Set["XML"]
 			        Mapper.UseLSO:Set[FALSE]
+			        SaveToFile:Set["${Zone.ShortName}.xml"]
 			    }
 			    else
 			    {
+			        echo "EQ2NavCreator:: Now saving to file: '${Zone.ShortName}' (LSO File Format)"
 			        SaveAsLSO:Set[TRUE]
 			        SaveMode:Set["LSO"]
 			        Mapper.UseLSO:Set[TRUE]
+			        SaveToFile:Set["${Zone.ShortName}"]
 			    }
 			    break
 			    
