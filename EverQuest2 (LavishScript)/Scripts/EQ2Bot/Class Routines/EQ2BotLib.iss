@@ -37,7 +37,6 @@
 ;
 
 #define _Eq2Botlib_
-#includeoptional "\\Athena\ISScripts\release\EQ2HOLib.iss"
 
 ;EquipmentChanger
 variable int TotalSlots=20
