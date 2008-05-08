@@ -480,7 +480,6 @@ function main()
 		;;; END Pre-Combat Routines Loop (ie, Buff Routine, etc.)
 		;;;;;;;;;;;;;;
 		
-		
 		if ${AutoLoot}
 			call CheckLoot
 
@@ -538,9 +537,9 @@ function main()
     							wait 10
     							if ${Mob.Target[${Target.ID}]}
     							{
-    							    echo "DEBUG:: Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
+    							    ;echo "DEBUG:: Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
     								call Combat
-    								echo "DEBUG:: Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
+    								;echo "DEBUG:: Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
     							}
     						}
     					}
@@ -942,6 +941,7 @@ function Combat()
 					}
 					elseif ${Target.Target.ID}==${Me.ID}
 					{
+					    echo "TEST2"
 						;we have aggro, move to the maintank
 						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
 						do
@@ -951,10 +951,14 @@ function Combat()
 						while (${IsMoving} || ${Me.IsMoving})
 					}
 					else
+					{
+					    echo "TEST3"
 						call CheckPosition 1 ${Target.IsEpic}
+					}
 				}
 				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
 				{
+				    echo "TEST"
 					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
 					do
 					{
@@ -1058,10 +1062,10 @@ function Combat()
 
 	if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
 	{
-        ;echo "DEBUG: Calling CheckLootNoMove()"
+	    ;echo "DEBUG: Calling CheckLootNoMove()"
 		call CheckLootNoMove
-	}
-
+    }
+    
 	if ${PathType}==1
 	{
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>4
@@ -1706,7 +1710,7 @@ function CheckLoot()
 	islooting:Set[TRUE]
 	;think this is legacy, removing
 	;wait 10
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:CreateCustomActorArray[byDist,25]
 
 	do
 	{
@@ -2712,7 +2716,13 @@ function StartBot()
 	{
 		Following:Set[FALSE]
 	}
-
+	
+	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
 	StartBot:Set[TRUE]
 }
 
@@ -2721,13 +2731,15 @@ function PauseBot()
 	PauseBot:Set[TRUE]
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
-
+    StartBot:Set[FALSE]
 	do
 	{
 		waitframe
 		call ProcessTriggers
 	}
 	while ${PauseBot}
+	StartBot:Set[TRUE]
+	PauseBot:Set[FALSE]
 }
 
 function ResumeBot()
@@ -2735,6 +2747,7 @@ function ResumeBot()
 	PauseBot:Set[FALSE]
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	StartBot:Set[TRUE]
 }
 
 function StopBot()
