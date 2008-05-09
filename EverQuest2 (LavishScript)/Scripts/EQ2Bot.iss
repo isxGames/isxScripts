@@ -270,11 +270,14 @@ function main()
 	}
 	while !${StartBot}
 
-	; The following 3 scripts are Initialized which are customizable
+	; These are called from within the individual class file used
 	call Buff_Init
 	call Combat_Init
 	call PostCombat_Init
 
+    
+    UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+    UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	do
 	{
 	    ;echo "Main Loop: Test-${Time.Timestamp}"
