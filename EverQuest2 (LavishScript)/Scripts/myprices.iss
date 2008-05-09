@@ -120,7 +120,7 @@ function main()
 	}
 	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices Version 0.12c : released06 May 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.12d : released 09 May 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -265,7 +265,9 @@ function main()
 								; ***** If your price is less than what a merchant would buy for ****
 								if ${MerchantMatch} && ${MyPrice} < ${MerchPrice} && !${ItemUnlisted}
 									{
+										Call echolog "<Main> (Match Mechant Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MerchPrice}]"
 										Me.Vending[${i}].Consignment[${j}]:SetPrice[${MerchPrice}]
+										Call echolog "<Main> (after Match Mechant Price) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
 										MinBasePrice:Set[${MerchPrice}]
 										call StringFromPrice ${MerchPrice}
 										call AddLog "${currentitem} : Merchant Would buy for : ${Return}" FFFF0000
@@ -301,7 +303,8 @@ function main()
 											call SetColour ${currentpos} FF00FF00
 											Call echolog "<Main> (Match Price change) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-											Wait 15
+											Call echolog "<Main> (After Price change) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+											
 										}
 									}
 								}
@@ -319,7 +322,7 @@ function main()
 											call AddLog "${currentitem} : Price to match is ${Return} :" FF00FF00
 											Call echolog "<Main> (Increase Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-											Wait 15
+											Call echolog "<Main> (After Increase Price) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
 											
 										}
 										else
@@ -332,7 +335,7 @@ function main()
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FFFF0000
 												Call echolog "<Main> (Unlisted Item - Min Sale price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]"
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]
-												Wait 15
+												Call echolog "<Main> (After Unlisted Item - Min Sale price) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
 												Call Saveitem Sell "${currentitem}" ${MinSalePrice}
 												call SetColour ${currentpos} FFFF0000
 											}
@@ -343,7 +346,7 @@ function main()
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FF00FF00
 												Call echolog "<Main> (Unlisted Item - Lowest Broker Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
 												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-												Wait 15
+												Call echolog "<Main> (After Unlisted Item - Lowest Broker Price)  Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
 												; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 												if ${MinSalePrice} == 0
 												{
@@ -500,6 +503,9 @@ function ReListItem(int i, string itemname)
 	{
 		if !${Me.Vending[${i}].Consignment[${j}].IsListed}
 		{
+			call echolog "${itemname} (${i}, ${j}) is not listed for sale : ${Me.Vending[${i}].Consignment[${j}].IsListed}"
+			call echolog "Me.Vending[${i}].Consignment[${j}].BasePrice Returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+
 			if ${Me.Vending[${i}].Consignment[${j}].BasePrice} >0
 			{
 				; Re-List the item for sale
