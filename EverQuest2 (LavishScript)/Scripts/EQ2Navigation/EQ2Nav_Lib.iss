@@ -189,8 +189,8 @@ objectdef EQ2Nav
 			}
 		}
 		Path:Clear
-		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}].FQN}]
-		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}].FQN}]
+		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
+		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
 		CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.ToActor.Loc}].ID}]
 		DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${X},${Math.Calc[${Y}+1]},${Z}].ID}]
 		PathFinder:SelectPath[${CurrentRegion.FQN},${DestinationRegion.FQN},Path]
@@ -219,8 +219,8 @@ objectdef EQ2Nav
 		}
 
 		Path:Clear
-		ZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}].FQN}]
-		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}].FQN}]
+		ZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
+		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
 		ToRegion:SetRegion[${DestZoneRegion.BestContainer[${toX},${Math.Calc[${toY}+1]},${toZ}].ID}]
 		DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${fromX},${Math.Calc[${fromY}+1]},${fromZ}].ID}]
 		PathFinder:SelectPath[${ToRegion.FQN},${DestinationRegion.FQN},Path]
@@ -449,8 +449,8 @@ objectdef EQ2Nav
 		variable lnavregionref DestZoneRegion
 		variable lnavregionref DestinationRegion	    
 	        
-		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}].FQN}]
-		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}].FQN}]
+		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
+		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
 		CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.ToActor.Loc}].ID}]
 		DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${X},${Math.Calc[${Y}+1]},${Z}].ID}]
 		PathFinder:SelectPath[${CurrentRegion.FQN},${DestinationRegion.FQN},This.Path]	    
@@ -483,8 +483,8 @@ objectdef EQ2Nav
 		variable lnavregionref DestZoneRegion
 		variable lnavregionref DestinationRegion	    
 	    
-		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}].FQN}]
-		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}].FQN}]
+		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
+		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
 		DestinationRegion:SetRegion[${RegionName}]
 		This:Debug["MoveToRegion:: Moving to ${DestinationRegion.FQN}"]
 		This:MoveToLoc[${DestinationRegion.CenterPoint}]
@@ -567,10 +567,11 @@ objectdef EQ2Nav
 		variable lnavregionref ZoneRegion
 		variable lnavregionref NextRegion
 		variable float NearestRegionDistance
-		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}].FQN}]
+		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
 		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
 		NearestRegionDistance:Set[${Math.Distance[${Me.ToActor.Loc},${NextRegion.CenterPoint}]}]
 		
+		/*  This function is not working exactly right -- reported to Lax
 		echo "Me.ToActor.Loc: ${Me.ToActor.Loc}"
 	    echo "NearestChild: ${ZoneRegion.NearestChild[${Me.ToActor.Loc}].FQN} (Distance: ${NearestRegionDistance})"
 	    variable index:lnavregionref NearestChildren
@@ -582,9 +583,7 @@ objectdef EQ2Nav
 		variable index:lnavregionref ChildrenWithin
 		echo "ChildrenWithin: ${ZoneRegion.ChildrenWithin[ChildrenWithin,20,${Me.ToActor.Loc}]}"
 		echo "ChildrenWithin[1]: ${ChildrenWithin.Get[1].FQN}"
-		
-		
-				
+		*/
 		
 		
 		if ${NearestRegionDistance} > 20
