@@ -780,7 +780,7 @@
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[CurrentStation]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[CurrentStation]}</Data>
 								</Commandcheckbox>
-								<Commandcheckbox Name='Move to Vendor' Template='EQ2.Commandcheckbox'>
+								<Commandcheckbox Name='Move to Broker' Template='EQ2.Commandcheckbox'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
@@ -790,10 +790,10 @@
 									<Y>60</Y>
 									<Width>100</Width>
 									<Height>20</Height>
-									<Text>Move to Vendor at the end of the Craft Session</Text>
-									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ToVendor]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ToVendor]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ToVendor]}</Data>
+									<Text>Move to Broker at the end of the Craft Session</Text>
+									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ToBroker]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ToBroker]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[ToBroker]}</Data>
 								</Commandcheckbox>
 								<Commandcheckbox Name='Camp Out' Template='EQ2.Commandcheckbox'>
 									<Font>
