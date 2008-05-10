@@ -6,7 +6,10 @@ Revision History
     "Manual Movement" mode and want to hunt from a static location.  However, the improvement affects all movement modes and should
     be a noticeable positive change.
   * Unclicking a Movement Mode checkbox (in the UI) will now properly reset you to "manual movement" mode.
-
+  * NOTE:  If you are getting "There is no entity in this area with an ID of ######" -- it is because you have more than one bot 
+           looting.  Either ignore the message (which is fine) or select only one bot to do that actual looting of chests/corpses.
+  * There is now an option for looting previously collected shineys.
+  * The "AutoPull" area of the UI should update/work MUCH better now.
 
 -----------------------------------------------------------------
 ;2.7.2b (Amadeus)
