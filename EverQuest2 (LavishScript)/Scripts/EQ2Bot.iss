@@ -413,11 +413,6 @@ function main()
 						call Combat
 					}
 				}
-				else
-				{
-					if ${Me.ToActor.Power}<${PowerCheck} || ${Me.ToActor.Health}<${HealthCheck}
-						call ScanAdds
-				}
 			}
 
             MobDetected:Set[${Mob.Detect}]
@@ -1407,6 +1402,8 @@ function Pull(string npcclass)
     ;; This variable must be set before anything is done in this function
 	engagetarget:Set[FALSE]
 	
+	if !${AutoPull}
+	    return 0
 	
 	;; If we are already in combat...why are we pulling?
 	if (${Me.InCombat})
@@ -1414,6 +1411,13 @@ function Pull(string npcclass)
 
 	if !${Actor[NPC,range,${ScanRange}](exists)} && !(${Actor[NamedNPC,range,${ScanRange}](exists)} && !${IgnoreNamed})
 		return 0
+		
+		
+	if ${PullType.Equal[Pet Pull]}
+	{
+	    if !${Me.Pet(exists)}
+	        return 0
+	}	
 		
     ;; Clear the TempDoNotPullList every 5 minutes
     if (${TempDoNotPullListTimer} < ${Math.Calc64[${Time.Timestamp}-300]})
@@ -1466,6 +1470,8 @@ function Pull(string npcclass)
 
 			wait 20 ${CustomActor[${tcount}].ID}==${Target.ID}
 			
+			wait 20 ${Target(exists)}
+			
 			if (${CustomActor[${tcount}].ID}!=${Target.ID})
 			    continue
 			    
@@ -1493,7 +1499,7 @@ function Pull(string npcclass)
 		    }
 			if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
 			{
-				;echo "DEBUG: Moving within Range..."
+			    ;echo "DEBUG: Moving within Range..."
 				call FastMove ${Target.X} ${Target.Z} ${PullRange}
 			}
 			elseif ${PathType}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
@@ -1505,43 +1511,46 @@ function Pull(string npcclass)
 			
 			;echo "DEUBG: Checking LOS/Collision"
 			wait 2
-			if ${Target.CheckCollision}
-			{
-    		    if ( !${Me.TargetLOS})
-    		    {
-    		        ;; try strafing a bit to see if can get no collision/LOS
-    		        press -hold MOVEBACKWARD
-    		        wait 4
-    		        press -release MOVEBACKWARD
-    		        waitframe
-    				press -hold STRAFELEFT
-    				wait 10
-    				press -release STRAFELEFT
-    				waitframe
-    				if !${Me.TargetLOS} && ${Target.CheckCollision}
-    				{
-    				    press -hold STRAFERIGHT
-    				    wait 20
-    				    press -release STRAFERIGHT
-    				    waitframe
-    				    if !${Me.TargetLOS} && ${Target.CheckCollision}
-    				    {
-    				        press -hold STRAFELEFT
-    				        wait 10
-    				        press -release STRAFELEFT
-    				        waitframe
-    				        if !${Me.TargetLOS} && ${Target.CheckCollision}
-                            {
-                        		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"
-                        	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
-                        
-                        		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
-                        		continue
-                            }
-    				    }
-    				}
+		    if ${PathType} > 0
+		    {
+    			if ${Target.CheckCollision}
+    			{
+        		    if (!${Me.TargetLOS})
+        		    {
+        		        ;; try strafing a bit to see if can get no collision/LOS
+        		        press -hold MOVEBACKWARD
+        		        wait 4
+        		        press -release MOVEBACKWARD
+        		        waitframe
+        				press -hold STRAFELEFT
+        				wait 10
+        				press -release STRAFELEFT
+        				waitframe
+        				if !${Me.TargetLOS} && ${Target.CheckCollision}
+        				{
+        				    press -hold STRAFERIGHT
+        				    wait 20
+        				    press -release STRAFERIGHT
+        				    waitframe
+        				    if !${Me.TargetLOS} && ${Target.CheckCollision}
+        				    {
+        				        press -hold STRAFELEFT
+        				        wait 10
+        				        press -release STRAFELEFT
+        				        waitframe
+        				        if !${Me.TargetLOS} && ${Target.CheckCollision}
+                                {
+                            		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"
+                            	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
+                            
+                            		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+                            		continue
+                                }
+        				    }
+        				}
+        			}
     			}
-			}
+    		}
 			
 			if ${Me.IsMoving}
 			{
@@ -1577,36 +1586,114 @@ function Pull(string npcclass)
 				continue
 			}
 			elseif ${PullType.Equal[Pet Pull]}
-			{
-				; Use Pet to pull
-				EQ2Execute /pet attack
-				wait 200 ${Me.ToActor.InCombatMode}
-				if ${Me.ToActor.InCombatMode}
+			{    
+			    ;; This should not happen...but just in case
+			    if !${Target(exists)}
+			        continue
+			    
+			    EQ2Execute /pet attack
+			    WaitFor "You may not order your pet to attack the selected or implied target." 30
+			    
+				if "${WaitFor}==1"
 				{
-					EQ2Execute /pet backoff
-					wait 300 ${CustomActor[${tcount}].Distance}<10
-					EQ2Execute /pet attack
-					if ${PetGuard}
+					echo "EQ2Bot-Pull():: Not allowed to use pet to attack this target"
+					wait 1
+            		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"
+            	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
+            
+            		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."		
+            		eq2execute target_none			
+					continue
+				}
+				else 
+				{
+					echo "EQ2Bot-Pull():: Sending Pet in for attack..."
+					do
 					{
-						EQ2Execute /pet preserve_self
-						wait 1
-						EQ2Execute /pet preserve_master
-						wait 1
+						Wait 5
+						echo "EQ2Bot-Pull():: Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"
+						
+
+						if !(${Target(exists)})
+						{
+							eq2execute /pet backoff
+							press ESC
+							break
+						}
+						
+					    if !${Me.Pet(exists)}
+					        break
+						
+		  			    
+		  			    ;; if the pet's target is in combat mode and it's target is the pet
+		  			    if ${Me.Pet.Target.InCombatMode}
+		  			    {
+		  			        if ${Me.Pet.Target.Target.Name.Equal[${Me.Pet.Name}]}
+    		  			        break							
+    		  			}
 					}
-					if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
+					while !(${Target.Target(exists)})
+					
+					if !${Target(exists)}
+					    continue
+					if !${Me.Pet(exists)}
 					{
-						face ${Target.X} ${Target.Z}
-						wait 1
+    				    echo "EQ2Bot-Pull():: Pet has died -- mob should be in camp soon (starting combat)"
+    				    KillTarget:Set[${Target.ID}]
+	    				engagetarget:Set[TRUE]
+	    				wait 5
+    					return ${Target.ID}
+    				}
+					    
+					wait 1
+					eq2execute /pet backoff
+					wait 25 !${Me.Pet.InCombatMode}
+					if ${Me.Pet.InCombatMode}
+					    eq2execute /pet backoff
+
+					do
+					{
+						wait 5
+						echo "EQ2Bot-Pull():: Waiting for Mob (${Target.Distance.Precision[1]}m)"	
+						
+                		if ${MainTank}
+                		{
+                		    if ${Mob.Detect}
+                		    {
+                		        variable int AggroMob
+                		        AggroMob:Set[${Mob.NearestAggro}]
+                				if ${AggroMob} > 0
+                				{
+                				    echo "EQ2Bot-Pull(MainTank):: Mob in camp -- starting combat."
+                				    KillTarget:Set[${AggroMob}]
+                					target ${AggroMob}
+                		            wait 1
+                					face 
+                					wait 1
+                					eq2execute /pet attack	
+                                    return ${AggroMob}
+                				}
+                			}
+                		}
 					}
+					while (${Target.Distance} > 15)&&(${Target.Target(exists)})
+			    
+					face
+					wait 1
+					eq2execute /pet attack	
+			    
+			        
     				if ${Target(exists)}
     				{
+    				    echo "EQ2Bot-Pull():: Mob in camp -- starting combat."
     				    KillTarget:Set[${Target.ID}]
 	    				engagetarget:Set[TRUE]
     					return ${Target.ID}
     				}
     				else
     				    continue
-				}
+			    
+			    }
 			}			
 			;;;; Otherwise, Using "PullSpell" ;;;;;;;;;;;;;
 			
@@ -2358,7 +2445,7 @@ function CheckMTAggro()
 }
 
 function ScanAdds()
-{
+{ 
 	variable int tcount=2
 	variable float X
 	variable float Z
@@ -3057,6 +3144,9 @@ objectdef ActorCheck
 		EQ2:CreateCustomActorArray[byDist,20]
 		do
 		{
+		    if (${CustomActor[${tcount}].Type.Equal[PC]})
+		        continue
+		    
 			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode}
 			{
 				if ${CustomActor[${tcount}].ID}
