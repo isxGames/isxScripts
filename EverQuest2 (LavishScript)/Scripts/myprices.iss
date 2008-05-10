@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12b : Started 12 Feb 2008 : released 26 April 2008
+; Version 0.12e :  released 10 May 2008
 ;
 ; Declare Variables
 ;
@@ -120,7 +120,7 @@ function main()
 	}
 	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices Version 0.12d : released 09 May 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.12e : released 10 May 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -161,6 +161,16 @@ function main()
 
 			do
 			{
+				if !${EQ2UIPage[Inventory,Market].IsVisible}
+				{
+					UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Paused**"]
+					do
+					{
+						waitframe
+					}
+					while !${EQ2UIPage[Inventory,Market].IsVisible}
+					UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" "]
+				}
 				currentitem:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}]
 
 				; container number
@@ -411,7 +421,7 @@ function main()
 			while ${currentcount:Inc} <= ${numitems} && ${Pausemyprices} == FALSE
 		}
 		; Script starts to scan for items to buy if flagged.
-		if ${BuyItems}
+		if ${BuyItems} && ${Pausemyprices} == FALSE
 		{
 			call buy Buy scan
 		}

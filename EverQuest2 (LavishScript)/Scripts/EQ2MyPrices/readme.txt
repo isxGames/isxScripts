@@ -1,4 +1,4 @@
-MyPrices - Version 0.12b
+MyPrices - Version 0.12e
 
 For update details see the bottom of this file.
 
@@ -313,6 +313,14 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.12c-0.12e
+-------------------
+Now has more logging (if toggled on)
+
+Script will now Pause if your mouse moves off the Broker window for any reason as this causes problems with changing values on the broker 
+the script will resume when the Broker window has the mouse on it again.
+
 
 Version 0.12b
 -------------

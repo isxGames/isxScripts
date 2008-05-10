@@ -79,6 +79,16 @@
 						</Font>
 						<Text>MyPrices Options:</Text>
 					</Text>
+					<Text name='Errortext' Template='EQ2.text'>
+						<X>5%</X>
+						<Y>30</Y>
+						<Width>80%</Width>
+						<Height>20</Height>
+						<Alignment>Left</Alignment>
+						<Font>
+							<Color>FFFFFFE5</Color>
+						</Font>
+					</Text>
 					<checkbox Name='MatchLowPrice' Template='EQ2.checkbox'>
 						<X>5%</X>
 						<Y>50</Y>
