@@ -156,6 +156,7 @@ variable float PositionHeading
 variable bool PullWithBow
 variable bool LoreConfirm
 variable bool NoTradeConfirm
+variable bool LootPrevCollectedShineys
 variable bool CheckPriestPower
 variable int LootWndCount
 variable int LootDecline
@@ -435,12 +436,17 @@ function main()
     				}
     				else
     				{
-    					if ${Mob.NearestAggro}
+    				    variable int AggroMob
+    				    AggroMob:Set[${Mob.NearestAggro}]
+    					if ${AggroMob} > 0
     					{
-    					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-    					    KillTarget:Set[${Mob.NearestAggro}]
-    						target ${Mob.NearestAggro}
-    						call Combat
+    					    if ${Mob.ValidActor[${AggroMob}]}
+    					    {
+        					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+        					    KillTarget:Set[${AggroMob}]
+        						target ${AggroMob}
+        						call Combat
+        					}
     					}
     				}
     				MobDetected:Set[${Mob.Detect}]
@@ -556,11 +562,16 @@ function main()
     					}
     					else
     					{
-    						if ${Mob.NearestAggro}
+    					    variable int AggroNPC
+    					    AggroNPC:Set[${Mob.NearestAggro}]
+    						if ${AggroNPC} > 0
     						{
-    							target ${Mob.NearestAggro}
-    							;echo "Calling Combat(3) within AutoPull Loop: Test-${Time.Timestamp}"
-    							call Combat
+    						    if ${Mob.ValidActor[${AggroNPC}]}
+    						    {
+        							target ${AggroNPC}
+        							;echo "Calling Combat(3) within AutoPull Loop: Test-${Time.Timestamp}"
+        							call Combat
+        						}
     						}
     						else
     						{
@@ -612,12 +623,17 @@ function main()
 				}
 				else
 				{
-					if ${Mob.NearestAggro}
+				    variable int AgressiveNPC
+				    AgressiveNPC:Set[${Mob.NearestAggro}]
+					if ${AgressiveNPC} > 0
 					{
-					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-					    KillTarget:Set[${Mob.NearestAggro}]
-						target ${Mob.NearestAggro}
-						call Combat
+					    if ${Mob.ValidActor[${AgressiveNPC}]}
+					    {
+    					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+    					    KillTarget:Set[${AgressiveNPC}]
+    						target ${AgressiveNPC}
+    						call Combat
+    					}
 					}
 				}
 				MobDetected:Set[${Mob.Detect}]
@@ -701,7 +717,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 	if ${Me.IsMoving} && !${castwhilemoving}
 		return -1
 
-	if ${targettobuff}>0 && !${Actor[${targettobuff}](exists)}
+	if ${targettobuff}>0 && !${Actor[id,${targettobuff}](exists)}
 		return -1
 
 	do
@@ -742,12 +758,15 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 							originaltarget:Set[${Target.ID}]
 						}
 
-						if ${targettobuff(exists)}
+						if ${targettobuff} > 0
 						{
 							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]})
 							{
-								target ${targettobuff}
-								wait 10 ${Target.ID}==${targettobuff}
+							    if ${Actor[id,${targettobuff}](exists)}
+							    {
+    								target ${targettobuff}
+    								wait 10 ${Target.ID}==${targettobuff}
+    							}
 							}
 						}
 
@@ -857,7 +876,8 @@ function Combat()
 		{
 		    if !${Actor[id,${KillTarget}](exists)}
 		        echo "EQ2Bot:: KillTarget did not exist in Combat() routine ... how did that happen?"
-			target ${KillTarget}
+		    else
+    			target ${KillTarget}
 		}
 
 		if ${Target.ID}!=${Me.ID} && ${Target(exists)}
@@ -944,7 +964,6 @@ function Combat()
 					}
 					elseif ${Target.Target.ID}==${Me.ID}
 					{
-					    echo "TEST2"
 						;we have aggro, move to the maintank
 						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
 						do
@@ -955,13 +974,11 @@ function Combat()
 					}
 					else
 					{
-					    echo "TEST3"
 						call CheckPosition 1 ${Target.IsEpic}
 					}
 				}
 				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
 				{
-				    echo "TEST"
 					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
 					do
 					{
@@ -987,9 +1004,11 @@ function Combat()
 
 				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 				{
-					if ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
+				    variable int ActorID
+				    ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+					if ${Mob.ValidActor[${ActorID}]}
 					{
-						KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+						KillTarget:Set[${ActorID}]
 						target ${KillTarget}
 						call ProcessTriggers
 					}
@@ -1033,12 +1052,18 @@ function Combat()
 		{
 		    if ${Mob.Detect}
 		    {
-				if ${Mob.NearestAggro}
+		        variable int AggroMob
+		        AggroMob:Set[${Mob.NearestAggro}]
+		        
+				if ${AggroMob} > 0
 				{
-				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
-				    KillTarget:Set[${Mob.NearestAggro}]
-					target ${Mob.NearestAggro}
-					ContinueCombat:Set[TRUE]
+				    if ${Mob.ValidActor[${AggroMob}]}
+				    {
+    				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
+    				    KillTarget:Set[${AggroMob}]
+    					target ${AggroMob}
+    					ContinueCombat:Set[TRUE]
+    				}
 				}
 			}
 		}
@@ -1403,6 +1428,8 @@ function Pull(string npcclass)
 	variable int tcount=2
 	variable int tempvar
 	variable bool aggrogrp=FALSE
+	variable int ThisActorID
+	variable int ThisActorTargetID
 
     ;; This variable must be set before anything is done in this function
 	engagetarget:Set[FALSE]
@@ -1438,31 +1465,34 @@ function Pull(string npcclass)
 	EQ2:CreateCustomActorArray[byDist,${ScanRange}]
 	do
 	{
-		if (${TempDoNotPullList.Element[${CustomActor[${tcount}].ID}](exists)})
+	    ThisActorID:Set[${CustomActor[${tcount}].ID}]
+	    ThisActorTargetID:Set[${CustomActor[${tcount}].Target.ID}]
+	    
+		if (${TempDoNotPullList.Element[${ThisActorID}](exists)})
 		{
 		    ;echo "DEBUG: Actor (ID: ${actorid}) is in the TempDoNotPullList -- skipping..."
 			continue
 		}		    
 
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
+		if ${Mob.ValidActor[${ThisActorID}]}
 		{
-			if ${Mob.AggroGroup[${CustomActor[${tcount}].ID}]}
+			if ${Mob.AggroGroup[${ThisActorID}]}
 				aggrogrp:Set[TRUE]
 
 			if !${CustomActor[${tcount}].IsAggro}
 			{
 
-				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && !${Me.InCombat} && (${Me.ToActor.Power}<75 || ${Me.ToActor.Health}<90) && !${CustomActor[${tcount}].InCombatMode}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && !${Me.InCombat} && (${Me.ToActor.Power}<75 || ${Me.ToActor.Health}<90) && !${CustomActor[${tcount}].InCombatMode}
 					continue
 
-				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && ${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && ${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
 					continue
 
-				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && !${PullNonAggro}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && !${PullNonAggro}
 					continue
 			}
 
-			if ${checkadds} && !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID}
+			if ${checkadds} && !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID}
 				continue
 				
 		    if ${CustomActor[${tcount}].Y} < ${Math.Calc64[${Me.Y}-10]}
@@ -1471,13 +1501,13 @@ function Pull(string npcclass)
 		        continue
 
 
-			target ${CustomActor[${tcount}].ID}
+			target ${ThisActorID}
 
-			wait 20 ${CustomActor[${tcount}].ID}==${Target.ID}
+			wait 20 ${ThisActorID}==${Target.ID}
 			
 			wait 20 ${Target(exists)}
 			
-			if (${CustomActor[${tcount}].ID}!=${Target.ID})
+			if (${ThisActorID}!=${Target.ID})
 			    continue
 			    
 			    
@@ -1669,14 +1699,17 @@ function Pull(string npcclass)
                 		        AggroMob:Set[${Mob.NearestAggro}]
                 				if ${AggroMob} > 0
                 				{
-                				    echo "EQ2Bot-Pull(MainTank):: Mob in camp -- starting combat."
-                				    KillTarget:Set[${AggroMob}]
-                					target ${AggroMob}
-                		            wait 1
-                					face 
-                					wait 1
-                					eq2execute /pet attack	
-                                    return ${AggroMob}
+                				    if ${Mob.ValidActor[${AggroMob}]}
+                				    {
+                    				    echo "EQ2Bot-Pull(MainTank):: Mob in camp -- starting combat."
+                    				    KillTarget:Set[${AggroMob}]
+                    					target ${AggroMob}
+                    		            wait 1
+                    					face 
+                    					wait 1
+                    					eq2execute /pet attack	
+                                        return ${AggroMob}
+                                    }
                 				}
                 			}
                 		}
@@ -2439,7 +2472,7 @@ function CheckMTAggro()
 
 		KillTarget:Set[${newtarget}]
 		target ${KillTarget}
-
+        
 		wait 10 ${Target.ID}==${KillTarget}
 
 		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
@@ -2451,7 +2484,7 @@ function CheckMTAggro()
 
 function ScanAdds()
 { 
-	variable int tcount=2
+    variable int tcount=2
 	variable float X
 	variable float Z
 
@@ -2569,18 +2602,21 @@ atom(script) LootWDw(string ID)
     						deccnt:Inc
 			    }
 			}
-			if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
+			if (!${LootPrevCollectedShineys})
 			{
-				if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
-				{
-				    ; If we are running EQ2Harvest, then we will collect everything.
-				    if !${Script[EQ2harvest](exists)}
-				    {
-    					echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
-    					deccnt:Inc
-				    }
-				}
-			}
+    			if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
+    			{
+    				if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
+    				{
+    				    ; If we are running EQ2Harvest, then we will collect everything.
+    				    if !${Script[EQ2harvest](exists)}
+    				    {
+        					echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
+        					deccnt:Inc
+    				    }
+    				}
+    			}
+    		}
 		}
 		while ${tmpcnt:Inc}<=${LootWindow[${ID}].NumItems}
 	}
@@ -2863,6 +2899,12 @@ objectdef ActorCheck
 	;returns true for valid targets
 	member:bool ValidActor(int actorid)
 	{
+	    if !${Actor[id,${actorid}](exists)}
+	        return FALSE
+	        
+	    if ${Actor[id,${actorid}].IsDead}
+	        return FALSE
+	    
 		switch ${Actor[${actorid}].Type}
 		{
 			case NPC
@@ -2949,14 +2991,11 @@ objectdef ActorCheck
 
 		if (${DoNotPullList.Element[${actorid}](exists)})
 		{
-				;echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
-				return FALSE
+			;echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
+			return FALSE
 		}
 		
-		if ${Actor[${actorid}](exists)}
-			return TRUE
-		else
-			return FALSE
+		return TRUE
 	}
 
 	member:bool CheckActor(int actorid)
@@ -3200,6 +3239,7 @@ objectdef ActorCheck
 	{
 		variable int tcount=2
 		haveaggro:Set[FALSE]
+		variable int ActorID
 
 		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
 		{
@@ -3209,12 +3249,14 @@ objectdef ActorCheck
 		EQ2:CreateCustomActorArray[byDist,15]
 		do
 		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
+		    ActorID:Set[${CustomActor[${tcount}].ID}]
+		    
+			if ${This.ValidActor[${ActorID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
 			{
-				if ${CustomActor[${tcount}].ID}
+				if ${ActorID}
 				{
 					haveaggro:Set[TRUE]
-					aggroid:Set[${CustomActor[${tcount}].ID}]
+					aggroid:Set[${ActorID}]
 					return
 				}
 			}
@@ -3304,7 +3346,8 @@ objectdef EQ2BotObj
 		BoxWidth:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Navigation: Size of Box?,4]}]
 		LoreConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore Items?,TRUE]}]
 		NoTradeConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot NoTrade Items?,FALSE]}]
-
+		LootPrevCollectedShineys:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to loot previously collected shineys?,FALSE]}]
+		
 		if ${PullWithBow}
 		{
 			if !${Me.Equipment[ammo](exists)} || !${Me.Equipment[ranged](exists)}
