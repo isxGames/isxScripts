@@ -389,16 +389,21 @@ function main()
 				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
 				if ${KillTarget}
 				{
-					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
-					{
-						if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
-						{
-							if ${Mob.Target[${KillTarget}]}
-								call Combat
-						}
-					}
-					;else
-					;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
+				    if ${Actor[id,${KillTarget}](exists)}
+				    {
+    					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+    					{
+    						if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
+    						{
+    							if ${Mob.Target[${KillTarget}]}
+    								call Combat
+    						}
+    					}
+    					;else
+    					;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
+    				}
+    				else
+    				    KillTarget:Set[0]
 				}
 			}
 
@@ -3120,14 +3125,10 @@ objectdef ActorCheck
 	member:bool Target(int targetid)
 	{
 		if !${Actor[${targetid}].InCombatMode}
-		{
 			return FALSE
-		}
-
+			
 		if ${This.AggroGroup[${targetid}]} || ${Actor[${targetid}].Target.ID}==${Me.ID}
-		{
 			return TRUE
-		}
 
 		return FALSE
 	}
