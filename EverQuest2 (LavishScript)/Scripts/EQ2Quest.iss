@@ -32,6 +32,9 @@ variable int shareTimer
 variable int timerDiff
 variable bool readyToShare
 variable int questMode
+variable bool questwindowAppeared
+
+
 
 #macro ProcessTriggers()  
 if "${QueuedCommands}"  
@@ -77,13 +80,14 @@ allowSharing:Set[TRUE]
 }
 }
 
-	if ${qinfo.Mid[1,2].Equal["ID"]} && ${allowSharing}
+	if ${qinfo.Mid[1,2].Equal["ID"]} && ${allowSharing} && ${questwindowAppeared}
 	{
 		parseLength:Set[${qinfo.Length}-4]
 		parseID:Set[${qinfo.Mid[4,${parseLength}]}]
 		acceptedQuestID:Set[${parseID}]
 		readyToShare:Set[TRUE]
 		shareTimer:Set[${Time.Timestamp}]
+		questwindowAppeared:Set[FALSE]
 	}
 
 		
@@ -133,6 +137,8 @@ questAcceptedByShare:Set[FALSE]
 shareTimer:Set[0]
 timerDiff:Set[0]
 
+questwindowAppeared:Set[TRUE]
+
 if ${questMode} < 2
 {
 	; Accept the quest in view....
@@ -148,6 +154,7 @@ if ${readyToShare}
 
 if ${questAcceptedByShare}
 {
+questwindowAppeared:Set[FALSE]
 readyToShare:Set[FALSE]
 questAcceptedByShare:Set[FALSE]
 shareTimer:Set[0]
@@ -163,6 +170,7 @@ timerDiff:Set[${Time.Timestamp} - ${shareTimer}]
 if ${timerDiff} >= 2 && ${shareTimer} > 0
 {
 ; The timer has expired. Share the quest
+questwindowAppeared:Set[FALSE]
 readyToShare:Set[FALSE]
 questAcceptedByShare:Set[FALSE]
 shareTimer:Set[0]
