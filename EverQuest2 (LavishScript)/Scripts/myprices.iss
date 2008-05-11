@@ -161,16 +161,7 @@ function main()
 
 			do
 			{
-				if !${EQ2UIPage[Inventory,Market].IsVisible}
-				{
-					UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Paused**"]
-					do
-					{
-						waitframe
-					}
-					while !${EQ2UIPage[Inventory,Market].IsVisible}
-					UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" "]
-				}
+				Call CheckFocus
 				currentitem:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}]
 
 				; container number
@@ -229,6 +220,7 @@ function main()
 							loopcount:Set[0]
 							do
 							{
+								Call CheckFocus
 								Me.Vending[${i}].Consignment[${j}]:Unlist
 								wait 10
 								; check the item hasn't moved in the list because it was unlisted
@@ -275,9 +267,8 @@ function main()
 								; ***** If your price is less than what a merchant would buy for ****
 								if ${MerchantMatch} && ${MyPrice} < ${MerchPrice} && !${ItemUnlisted}
 									{
-										Call echolog "<Main> (Match Mechant Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MerchPrice}]"
-										Me.Vending[${i}].Consignment[${j}]:SetPrice[${MerchPrice}]
-										Call echolog "<Main> (after Match Mechant Price) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+										Call echolog "<Main> (Match Mechant Price)"
+										call SetItemPrice ${i} ${j} ${MerchPrice}
 										MinBasePrice:Set[${MerchPrice}]
 										call StringFromPrice ${MerchPrice}
 										call AddLog "${currentitem} : Merchant Would buy for : ${Return}" FFFF0000
@@ -311,10 +302,9 @@ function main()
 										If ${MatchLowPrice}
 										{
 											call SetColour ${currentpos} FF00FF00
-											Call echolog "<Main> (Match Price change) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
+											Call echolog "<Main> (Match Price change)"
+											call SetItemPrice ${i} ${j} ${MinBasePrice}
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-											Call echolog "<Main> (After Price change) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
-											
 										}
 									}
 								}
@@ -330,10 +320,8 @@ function main()
 										{
 											call StringFromPrice ${MinBasePrice}
 											call AddLog "${currentitem} : Price to match is ${Return} :" FF00FF00
-											Call echolog "<Main> (Increase Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
-											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-											Call echolog "<Main> (After Increase Price) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
-											
+											Call echolog "<Main> (Increase Price)"
+											call SetItemPrice ${i} ${j} ${MinBasePrice}
 										}
 										else
 										; if the item was unlisted then update your sale price
@@ -343,9 +331,8 @@ function main()
 											{
 												call StringFromPrice ${MinSalePrice}
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FFFF0000
-												Call echolog "<Main> (Unlisted Item - Min Sale price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]"
-												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinSalePrice}]
-												Call echolog "<Main> (After Unlisted Item - Min Sale price) Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+												Call echolog "<Main> (Unlisted Item - Min Sale price)"
+												call SetItemPrice ${i} ${j} ${MinSalePrice}
 												Call Saveitem Sell "${currentitem}" ${MinSalePrice}
 												call SetColour ${currentpos} FFFF0000
 											}
@@ -354,9 +341,8 @@ function main()
 												; otherwise use the lowest price on the vendor
 												call StringFromPrice ${MinBasePrice}
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FF00FF00
-												Call echolog "<Main> (Unlisted Item - Lowest Broker Price) Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]"
-												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
-												Call echolog "<Main> (After Unlisted Item - Lowest Broker Price)  Me.Vending[${i}].Consignment[${j}] returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+												Call echolog "<Main> (Unlisted Item - Lowest Broker Price)"
+												call SetItemPrice ${i} ${j} ${MinBasePrice}
 												; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 												if ${MinSalePrice} == 0
 												{
@@ -481,6 +467,7 @@ function addtotals(string itemname, int itemnumber)
 function FindItem(int i, string itemname)
 {
 	call echolog "-> FindItem ${i} ${itemname}"
+	Call CheckFocus
 	Declare j int local
 	Declare Position int -1 local
 	Declare ConName string local
@@ -504,6 +491,7 @@ function FindItem(int i, string itemname)
 function ReListItem(int i, string itemname)
 {
 	call echolog "-> ReListItem ${i} ${itemname}"
+	Call CheckFocus
 	Declare loopcount int local
 	Declare j int local
 
@@ -682,6 +670,7 @@ function buy(string tabname, string action)
 						; run the routine to scan and buy items if we still need more bought
 						if ${BuyNumber} > 0 && ${tabname.Equal["Buy"]}
 						{
+							Call CheckFocus
 							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest}
 						}
 						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
@@ -696,7 +685,8 @@ function buy(string tabname, string action)
 						{
 							 if ${CraftItem}
 							 {
-								 call placeitem "${BuyIterator.Key}"
+								Call CheckFocus
+								call placeitem "${BuyIterator.Key}"
 							 }
 						}
 						elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
@@ -1755,6 +1745,38 @@ function AddLog(string textline, string colour)
 	UIElement[ItemList@Log@GUITabs@MyPrices]:AddItem[${textline},1,${colour}]
 }
 
+function CheckFocus()
+{
+	if !${EQ2UIPage[Inventory,Market].IsVisible}
+	{
+		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Paused**"]
+		do
+		{
+			waitframe
+		}
+		while !${EQ2UIPage[Inventory,Market].IsVisible}
+		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" "]
+	}
+	return
+}
+
+
+function SetItemPrice(int i, int j, float price)
+{
+	Call CheckFocus
+	call echolog "--------- Set Item Price for ${Me.Vending[${i}].Consignment[${j}]} using Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]"
+	Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]
+	waitframe
+	if ${Logging}
+	{
+		; check if the item was moved
+		call FindItem ${i} "${currentitem}"
+		j:Set[${Return}]
+		call echolog	"--------- Me.Vending[${i}].Consignment[${j}].BasePrice (${Me.Vending[${i}].Consignment[${j}]}) returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+	}
+	return
+}
+
 objectdef BrokerBot
 {
 	method LoadUI()
@@ -1765,6 +1787,7 @@ objectdef BrokerBot
 		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 		ui -reload "${MyPricesUIPath}mypricesUI.xml"
 		call echolog "<end> : LoadUI"
+		return
 	}
 
 	method loadsettings()
@@ -1833,8 +1856,8 @@ objectdef BrokerBot
 		call echolog "box[5] is ${box[5]}"
 		call echolog "box[6] is ${box[6]}"
 		call echolog "Natural is ${Natural}"
+		return
 	}
-
 }
 
 ;search your current broker boxes for existing stacks of items and see if theres room for more
