@@ -263,7 +263,7 @@ objectdef EQ2Mapper
 		This:ConnectNeighbours[${LastCreatedRegion}]		
 	}
 		
-	method PlotSphereFromPoint(float X, float Y, float Z, float Radius=3, string RegionName="auto")
+	method PlotSphereFromPoint(float X, float Y, float Z, float Radius=3, string RegionName="auto",bool AsUnique=FALSE)
 	{
 		variable point3f Location
 		Location:Set[${X},${Y},${Z}]
@@ -271,8 +271,11 @@ objectdef EQ2Mapper
 		if (${RegionName.Equal["Auto"]})
 		    RegionName:Set["${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
 
-		LastCreatedRegion:SetRegion[${CurrentZone.AddChild[sphere,${RegionName},-unique,${Radius},${Location}]}]
-
+        if (${AsUnique})
+    		LastCreatedRegion:SetRegion[${CurrentZone.AddChild[sphere,${RegionName},-unique,${Radius},${Location}]}]
+        else
+            LastCreatedRegion:SetRegion[${CurrentZone.AddChild[sphere,${RegionName},${Radius},${Location}]}]
+            
         This:Output["-----"]
 		This:Output["Adding Region to map as 'sphere' (from point) - (${RegionName} ${X}, ${Y}, ${Z}, Radius: ${Radius})"]
 		This.Max_Distance_Between_Checks:Set[${Radius}]
@@ -285,7 +288,7 @@ objectdef EQ2Mapper
 		This:ConnectNeighbours[${LastCreatedRegion}]	
 	}	
 
-	method PlotBoxFromPoint(float X, float Y, float Z, string RegionName="auto")
+	method PlotBoxFromPoint(float X, float Y, float Z, string RegionName="auto",bool AsUnique=FALSE)
 	{
 		variable float X1
 		variable float X2
@@ -304,7 +307,10 @@ objectdef EQ2Mapper
 		if (${RegionName.Equal["Auto"]})
 		    RegionName:Set["${CurrentZone.FQN}-${Time.Timestamp}-${CurrentZone.ChildCount}"]
 		    
-        LastCreatedRegion:SetRegion[${CurrentZone.AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]}]
+		if (${AsUnique})
+            LastCreatedRegion:SetRegion[${CurrentZone.AddChild[box,${RegionName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]}]
+        else
+            LastCreatedRegion:SetRegion[${CurrentZone.AddChild[box,${RegionName},${X1},${X2},${Y1},${Y2},${Z1},${Z2}]}]
         ;LastCreatedRegion:SetCustom[Note,"example"]
 		
 		This:Output["-----"]
@@ -366,11 +372,14 @@ objectdef EQ2Mapper
     	
     	if (${PointToPointMode})
     	{
-			This:Debug["Connecting ${CurrentRegion.FQN} <-> ${PreviousRegion.FQN}."]
-			CurrentRegion:Connect[${PreviousRegion.FQN}]
-			PreviousRegion:Connect[${CurrentRegion.FQN}]
-			Connected_To:Inc
-			Connected_From:Inc		  
+    	    if (!${PreviousRegion.FQN.Equal[${CurrentRegion.FQN}]})
+    	    {
+    			This:Debug["Connecting ${CurrentRegion.FQN} <-> ${PreviousRegion.FQN}."]
+    			CurrentRegion:Connect[${PreviousRegion.FQN}]
+    			PreviousRegion:Connect[${CurrentRegion.FQN}]
+    			Connected_To:Inc
+    			Connected_From:Inc		  
+    		}
     	}
     	else
     	{

@@ -34,6 +34,8 @@ objectdef EQ2Nav
     ;; ~ SkipNavTime is the number of pulses that the Navigator skill skip past doing nothing before acting again.  The goal is 
     ;;   to run this at 50 with your do/wait loops using "wait 0.5"; however, if you want to use "waitframe" in your loop and/or
     ;;   a larger wait time, then you should reduce this or set to zero entirely.
+    ;; ~ SmartDestinationDetection:  If set to TRUE, then the script will check, when it is within 10 meters of 
+    ;;   the destination, if there are any collisions.  If there are none, it will move there directly.    
     ;;
     ;;   NOTE: DO NOT EDIT THESE VALUES HERE!  Have your script set them!  These default values MUST remain constant so that scripters
     ;;         know what to expect.  
@@ -41,6 +43,7 @@ objectdef EQ2Nav
     variable float gPrecision = 2
     variable float DestinationPrecision = 5
     variable int SkipNavTime = 50
+    variable bool SmartDestinationDetection = true
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -713,7 +716,7 @@ objectdef EQ2Nav
             {
                 if (!${Me.CheckCollision[${This.NavDestination}]})
                 {
-                    This:Debug["Within ${This.gPrecision} meters of destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN})-- ending movement."]
+                    This:Debug["Within ${This.DestinationPrecision} meters of destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN})-- ending movement."]
     				This:StopRunning
     				This.MovingTo:Set[FALSE]
     				This.MeMoving:Set[FALSE]
@@ -727,7 +730,7 @@ objectdef EQ2Nav
     			{
     			    ;; TO DO -- handle collisions!
     			    This:Debug["Within ${This.DestinationPrecision} meters of destination  (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN}); however, there is collision between you and the destination....."]
-                    This:Debug["Within ${This.gPrecision} meters of destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN})-- ending movement."]
+                    This:Debug["Within ${This.DestinationPrecision} meters of destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN})-- ending movement."]
     				This:StopRunning
     				This.MovingTo:Set[FALSE]
     				This.MeMoving:Set[FALSE]
@@ -740,18 +743,20 @@ objectdef EQ2Nav
             }
             
             ;; TODO -- make this value an option
-            if (${This.DestinationDistance} <= 10 && !${Me.CheckCollision[${This.NavDestination}]})
+            if (${SmartDestinationDetection})
             {
-                This:Debug["Within 10m of the destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN}) and no obstructions found -- moving directly (outside of navigation system)"]
-                face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
-                Dest:Set[${This.NavDestination}]
-                This:ClearPath
-                ;This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
-                This.MeMoving:Set[TRUE]
-				This:MoveTo[${Dest},${This.gPrecision}]
-				return
+                if (${This.DestinationDistance} <= 10 && !${Me.CheckCollision[${This.NavDestination}]})
+                {
+                    This:Debug["Within 10m of the destination (${This.NavigationPath.Get[${This.NavigationPath.Used}].FQN}) and no obstructions found -- moving directly (outside of navigation system)"]
+                    face ${This.NavDestination.X} ${This.NavDestination.Y} ${This.NavDestination.Z}
+                    Dest:Set[${This.NavDestination}]
+                    This:ClearPath
+                    ;This:Debug["Calling MoveTo(${Dest}) -- Distance: ${This.DestinationDistance}"]
+                    This.MeMoving:Set[TRUE]
+    				This:MoveTo[${Dest},${This.gPrecision}]
+    				return
+                }  
             }  
-                              
             
             ;; TODO -- make this value an option`
             if ${This.NextHopDistance} > 20
