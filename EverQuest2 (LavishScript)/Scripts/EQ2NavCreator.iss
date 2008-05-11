@@ -60,19 +60,19 @@ function main(... Args)
 				AutoPlot:Set[TRUE]
 		    elseif (${Args[${Iterator}].Equal[-nocollision]} || ${Args[${Iterator}].Find[-nocollision]} > 0)
 		        NoCollision:Set[TRUE]
-		    elseif (${Args[${Iterator}].Equal[-PtoP]} || ${Args[${Iterator}].Find[-PtoP] > 0)
+		    elseif (${Args[${Iterator}].Equal[-PtoP]} || ${Args[${Iterator}].Find[-PtoP]} > 0)
 		        PointToPoint:Set[TRUE]
-		    elseif (${Args[${Iterator}].Equal[-lso]} || ${Args[${Iterator}].Find[-lso] > 0)
+		    elseif (${Args[${Iterator}].Equal[-lso]} || ${Args[${Iterator}].Find[-lso]} > 0)
 		        SaveAsLSO:Set[TRUE]
 		    elseif (${Args[${Iterator}].Equal[-?]})
 		    {
         	    echo "Syntax:> run EQ2NavCreator [flags]"
-        	    echo "Flags:  -auto        (Points are added automatically as you move through space)"
-        	    echo "        -PtoP        (Point-to-Point Mode:  The Mapper assumes that every point you create is connectable with the last point created.
+        	    echo "Flags:  -auto         Points are added automatically as you move through space"
+        	    echo "        -PtoP         Point-to-Point Mode:  The Mapper assumes that every point you create is connectable with the last point created.
         	    echo "                                            Collision checks, etc. are then done for all other connections."
-        	    echo "        -nocollision (No collision checks at all are made when connecting points."	
-        	    echo "        -lso         (Indicates to the script that it should load the current list from an LSO file.  By default, it will use an"
-        	    echo "                      xml file if one exists.  This flag will also set the script to save as LSO (which can be toggled.)"
+        	    echo "        -nocollision  No collision checks at all are made when connecting points.)"	
+        	    echo "        -lso          Indicates to the script that it should load the current list from an LSO file.  By default, it will use an"
+        	    echo "                      xml file if one exists.  This flag will also set the script to save as LSO (which can be toggled."
         	    return  
 		    }	        
 			else
@@ -102,13 +102,13 @@ function main(... Args)
     {
         echo "EQ2NavCreator:: Point-to-Point map creation ACTIVE."
         Mapper.PointToPointMode:Set[TRUE]
-        CreationMode:Set[", Point-To-Point"]
+        CreationMode:Concat[", Point-To-Point"]
     }
     if (${NoCollision})
     {
         echo "EQ2NavCreator:: No Collision mode ACTIVE."
         Mapper.NoCollisionDetection:Set[TRUE]
-        CreationMode:Set[", No Collision"]
+        CreationMode:Concat[", No Collision"]
     }
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;
