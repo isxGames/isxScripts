@@ -94,10 +94,10 @@ function main(... Args)
     if (${AutoPlot})
     {
         echo "EQ2NavCreator:: Auto Plot mode ACTIVE."
-        CreationMode:Set["AutoPlot"]
+        CreationMode:Set["Automatic Plotting"]
     }
     else
-        CreationMode:Set["ManualPlot"]
+        CreationMode:Set["Manual Plotting"]
     if (${PointToPoint})
     {
         echo "EQ2NavCreator:: Point-to-Point map creation ACTIVE."
