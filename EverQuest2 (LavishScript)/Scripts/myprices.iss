@@ -103,7 +103,7 @@ function main()
 	else
 	{
 		Actor[nokillnpc]:DoTarget
-		wait 1
+		wait 5
 		Target:DoubleClick
 		wait 20
 		call echolog " * Scanning using Broker *"
@@ -236,7 +236,6 @@ function main()
 						; Call Search routine to find the lowest price
 						Call echolog "Call BrokerSearch ${currentitem}"
 						Call BrokerSearch "${currentitem}"
-						Wait 15
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
 						{
@@ -788,7 +787,6 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 
 	Call echolog "<BuyItems> Call BrokerSearch ${BuyName}"
 	Call BrokerSearch "${BuyName}"
-	Wait 15
 
 	; if items listed on the broker
 	if ${Return} != -1
@@ -868,7 +866,6 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 				}
 			}
 			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
-			wait 10
 			CurrentItem:Set[1]
 		}
 		; keep going till all items listed have been scanned and bought or you have reached your limit
@@ -1089,7 +1086,6 @@ function BrokerSearch(string lookup)
 				}
 			}
 			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && !${stopsearch}
-			wait 10
 		}
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${TempMinPrice} == -1 && !${stopsearch}
 	}
@@ -1152,13 +1148,6 @@ function LoadList()
 
 					numitems:Inc
 					labelname:Set[${Me.Vending[${i}].Consignment[${j}]}]
-					if ${Me.Vending[${i}].Consignment[${j}].BasePrice} <= 0
-					{
-						call SetItemPrice ${i} ${j} ${Me.Vending[${i}].Consignment[${j}].Value} TRUE
-					}
-					
-					Item:Set[${ItemList.FindSet[${labelname}]}]
-
 					; add the item name onto the sell tab list
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem[${labelname}]
 
@@ -1772,7 +1761,6 @@ function SetItemPrice(int i, int j, float price, bool UL)
 	currentitem:Set[${Me.Vending[${i}].Consignment[${j}]}]
 	call echolog "--------- Set Item Price for ${Me.Vending[${i}].Consignment[${j}]} using Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]"
 	Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]
-	waitframe
 	if ${UL}
 	{
 		call FindItem ${i} "${currentitem}"
@@ -1782,6 +1770,7 @@ function SetItemPrice(int i, int j, float price, bool UL)
 			Me.Vending[${i}].Consignment[${j}]:Unlist
 		}
 	}
+	wait 10
 	if ${Logging}
 	{
 		; check if the item was moved
