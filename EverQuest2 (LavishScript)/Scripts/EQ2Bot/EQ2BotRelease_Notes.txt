@@ -1,5 +1,12 @@
 Revision History
 ----------------
+20080512 (Amadeus)
+  * EQ2Bot now supports custom routines per character.  Basically, you can create an MYNAME.iss file that goes in 
+    /Scripts/EQ2Bot/Character Config/ that has custom versions of each of the functions included in the class files.
+    These custom functions are called after the main class functions.  See "Amadeus.iss" (in SVN) for an annotated example,
+    and this link for a working example: 
+    ~ Please note that if you include a custom iss for your character, you MUST include all of the functions listed in 
+      the example, even if they're all empty but the one thing you're using (see working example link above.)
 
 20080509 (Amadeus)
   * The "Pet Pull" routine got a revamp.  It should be MUCH improved now.  It will be highly more effective for those that choose
