@@ -71,8 +71,8 @@ function main(... Args)
         	    echo "        -PtoP         Point-to-Point Mode:  The Mapper assumes that every point you create is connectable with the last point created.
         	    echo "                                            Collision checks, etc. are then done for all other connections."
         	    echo "        -nocollision  No collision checks at all are made when connecting points.)"	
-        	    echo "        -lso          Indicates to the script that it should load the current list from an LSO file.  By default, it will use an"
-        	    echo "                      xml file if one exists.  This flag will also set the script to save as LSO (which can be toggled."
+        	    echo "        -lso          Indicates to the script that it should attempt to load a zone file in LSO format first.  If none exists, it will"
+        	    echo "                      look for an XML file before giving up.  (The default setting is to search for XML and then LSO before giving up.)"
         	    return  
 		    }	        
 			else

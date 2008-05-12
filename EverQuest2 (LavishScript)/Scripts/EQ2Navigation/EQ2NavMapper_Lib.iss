@@ -132,14 +132,27 @@ objectdef EQ2Mapper
 
 		LoadZoneRegion:SetRegion[${LavishNav.FindRegion[${This.ZoneText}].FQN}]
 		LoadedZoneRegion:SetRegion[${LoadZoneRegion.Parent}]
-
+		
+        declare FP filepath ${ZonesDir}
 		if ${UseLSO}
 		{
-			LoadedZoneRegion:Import[-lso,"${ZonesDir}${This.ZoneText}"]
+		    ;; Atempt LSO first, if no LSO file, then try and load XML before giving up.
+		    if ${FP.FileExists[${This.ZoneText}]}
+		        LoadedZoneRegion:Import[-lso,"${ZonesDir}${This.ZoneText}"]
+		    elseif ${FP.FileExists[${This.ZoneText}.xml]}
+		        LoadedZoneRegion:Import["${ZonesDir}${This.ZoneText}.xml"]
+		    else
+		        This:Output["No file exists for zone: ${This.ZoneText}"
 		}
 		else
 		{
-			LoadedZoneRegion:Import["${ZonesDir}${This.ZoneText}.xml"]
+		    ;; Atempt XML first, if no XML file, then try and load LSO before giving up.
+		    if ${FP.FileExists[${This.ZoneText}.xml]}
+		        LoadedZoneRegion:Import["${ZonesDir}${This.ZoneText}.xml"]
+		    elseif ${FP.FileExists[${This.ZoneText}]}
+		        LoadedZoneRegion:Import[-lso,"${ZonesDir}${This.ZoneText}"]
+		    else
+		        This:Output["No file exists for zone: ${This.ZoneText}"   
 		}
 	}
 
