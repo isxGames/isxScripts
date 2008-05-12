@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12e :  released 10 May 2008
+; Version 0.12f :  released 12 May 2008
 ;
 ; Declare Variables
 ;
@@ -120,7 +120,7 @@ function main()
 	}
 	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices Version 0.12e : released 10 May 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.12f : released 12 May 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -1152,7 +1152,11 @@ function LoadList()
 
 					numitems:Inc
 					labelname:Set[${Me.Vending[${i}].Consignment[${j}]}]
-
+					if ${Me.Vending[${i}].Consignment[${j}].BasePrice} <= 0
+					{
+						call SetItemPrice ${i} ${j} ${Me.Vending[${i}].Consignment[${j}].Value} TRUE
+					}
+					
 					Item:Set[${ItemList.FindSet[${labelname}]}]
 
 					; add the item name onto the sell tab list
@@ -1761,12 +1765,16 @@ function CheckFocus()
 }
 
 
-function SetItemPrice(int i, int j, float price)
+function SetItemPrice(int i, int j, float price, bool UL)
 {
 	Call CheckFocus
 	call echolog "--------- Set Item Price for ${Me.Vending[${i}].Consignment[${j}]} using Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]"
 	Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]
 	waitframe
+	if ${UL}
+	{
+		Me.Vending[${i}].Consignment[${j}]:Unlist
+	}
 	if ${Logging}
 	{
 		; check if the item was moved
