@@ -1278,6 +1278,20 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 			Item:AddSetting[CraftItem,FALSE]
 		}
 	}
+	elseif ${Saveset.Equal["Craft"]}
+	{
+		Item:AddSetting[Stack,${Money}]
+		Item:AddSetting[Stock,${Number}]
+		if ${Recipe.Length} == 0
+		{
+			Item:AddSetting[Recipe,${ItemName}]
+		}
+		else
+		{
+			Item:AddSetting[Recipe,${Recipe}]
+		}
+		Item:AddSetting[CraftItem,TRUE]
+	}
 	elseif ${Saveset.Equal["Buy"]}
 	{
 		; Clear all previous information
@@ -1303,21 +1317,6 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 			Item:AddSetting[StartLevel,${startlevel}]
 			Item:AddSetting[EndLevel,${endlevel}]
 			Item:AddSetting[Tier,${tier}]
-		}
-		
-
-	}
-	elseif ${Saveset.Equal["Craft"]}
-	{
-		Item:AddSetting[Stack,${Money}]
-		Item:AddSetting[Stock,${Number}]
-		if ${Recipe.Length} == 0
-		{
-		Item:AddSetting[Recipe,${ItemName}]
-		}
-		else
-		{
-		Item:AddSetting[Recipe,${Recipe}]
 		}
 	}
 
@@ -1561,6 +1560,7 @@ function savecraftinfo()
 	else
 	{
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
+	; Parameters : Craft , Itemname , Stackszie , Number , <Bool> Craftitem, <Bool> nameonly,startlevel,endlevel,tier, Recipe Name
 		call Saveitem Craft "${CraftName}" ${CraftStack} ${CraftNumber} TRUE TRUE 0 0 0 "${RecipeName}"
 	}
 	call echolog "<end> : savecraftinfo"
