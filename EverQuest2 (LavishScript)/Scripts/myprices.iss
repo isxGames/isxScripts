@@ -1152,7 +1152,8 @@ function LoadList()
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem[${labelname}]
 
 					; if the item is flagged as a craft item then add the total number on the broker
-					if ${Item.FindSetting[CraftItem]}
+
+					if ${ItemList.FindSet[${labelname}].FindSetting[CraftItem]}
 					{
 						call SetColour ${numitems} FFFFFF00
 						call addtotals "${labelname}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
