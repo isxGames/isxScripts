@@ -1767,13 +1767,20 @@ function CheckFocus()
 
 function SetItemPrice(int i, int j, float price, bool UL)
 {
+	declare currentitem  string  local
 	Call CheckFocus
+	currentitem:Set[${Me.Vending[${i}].Consignment[${j}]}]
 	call echolog "--------- Set Item Price for ${Me.Vending[${i}].Consignment[${j}]} using Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]"
 	Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]
 	waitframe
 	if ${UL}
 	{
-		Me.Vending[${i}].Consignment[${j}]:Unlist
+		call FindItem ${i} "${currentitem}"
+		j:Set[${Return}]
+		if ${j} != -1
+		{
+			Me.Vending[${i}].Consignment[${j}]:Unlist
+		}
 	}
 	if ${Logging}
 	{
