@@ -92,6 +92,16 @@ variable int Health[40,2]
 variable int SpellRange[40,10]
 variable string PostAction[20]
 variable int PostSpellRange[20,5]
+variable string _PreAction[40]
+variable int _PreMobHealth[40,2]
+variable int _PrePower[40,2]
+variable int _PreSpellRange[40,5]
+variable string _Action[40]
+variable int _MobHealth[40,2]
+variable int _Power[40,2]
+variable int _Health[40,2]
+variable int _SpellRange[40,10]
+variable string _PostAction[20]
 variable bool stealth=FALSE
 variable bool direction=TRUE
 variable float targetheading
@@ -178,6 +188,7 @@ variable(script) collection:string TempDoNotPullList
 variable(script) int TempDoNotPullListTimer
 variable(script) collection:string InvalidMasteryTargets
 variable(script) bool IsMoving
+variable bool UseCustomRoutines=FALSE
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -217,7 +228,7 @@ variable int PathType
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
 #include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
-
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.iss
 
 function main()
 {
@@ -240,8 +251,8 @@ function main()
 	;Script:Squelch
 	;Script:EnableProfiling
 
-		echo "---------"
-		echo "* Initializing EQ2Bot..."
+	echo "---------"
+	echo "* Initializing EQ2Bot..."
 
 	EQ2Bot:Init_Config
 	EQ2Bot:Init_Events
@@ -253,6 +264,12 @@ function main()
 
 	call Class_Declaration
 	call CheckManaStone
+	
+	#ifdef __USING_CUSTOM_ROUTINES__
+	echo "* Utilizing Custom Routines via ${Me.Name}.iss"
+	call Custom__Initialization
+	UseCustomRoutines:Set[TRUE]
+	#endif
 
 	echo "...Initialization Complete."
 	echo "* EQ2Bot Ready!"
@@ -275,6 +292,14 @@ function main()
 	call Buff_Init
 	call Combat_Init
 	call PostCombat_Init
+	
+	;; If using CustomRoutines...
+	if ${UseCustomRoutines}
+	{
+	    call Custom__Buff_Init
+	    call Custom__Combat_Init
+	    call Custom__PostCombat_Init
+	}
 
     
     UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
@@ -485,9 +510,37 @@ function main()
 			}
 		}
 		while ${tempvar:Inc}<=40
-		;;;;;;;;;;;;;;
+
+        if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
+        {
+    		if (${UseCustomRoutines})
+    		{
+    		    tempvar:Set[1]
+    		    do
+    		    {
+    				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
+    				{
+    					if ${Mob.Target[${KillTarget}]}
+    					{
+    						tempvar:Set[40]
+    						break
+    					}
+    				}
+    						        
+    				call Custom__Buff_Routine ${tempvar}
+    				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+    				{
+    					tempvar:Set[40]
+    					break
+    				}  
+    		    }
+    		    while ${tempvar:Inc} <= 40
+    		}
+    	}
+	    ;;;;;;;;;;;;;;
 		;;; END Pre-Combat Routines Loop (ie, Buff Routine, etc.)
 		;;;;;;;;;;;;;;
+		
 		
 		if ${AutoLoot}
 			call CheckLoot
@@ -894,128 +947,217 @@ function Combat()
 				face ${Target.X} ${Target.Z}
 			}
 
-			tempvar:Set[1]
-			do
-			{
-				call ProcessTriggers
-
-				if ${PathType}==4 && ${MainTank}
-					call ScanAdds
-
-				if ${MainTank}
-				{
-					if ${Target.Target.ID}==${Me.ID}
-						call CheckMTAggro
-					else
-						call Lost_Aggro ${Target.ID}
-				}
-				else
-				{
-					Mob:CheckMYAggro
-
-					if ${Actor[ExactName,${MainAssist}].IsDead}
-					{
-						EQ2Bot:MainAssist_Dead
-						break
-					}
-
-					if ${Actor[${MainTankPC}].IsDead}
-					{
-						EQ2Bot:MainTank_Dead
-						break
-					}
-				}
-
-				if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
-					call Have_Aggro
-
-				do
-				{
-					waitframe
-				}
-				while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
-
-				call Combat_Routine ${tempvar}
-				if ${Return.Equal[CombatComplete]}
-				{
-					; end loop after this round
-					tempvar:Set[40]
-				}
-
-				if !${Me.AutoAttackOn} && ${AutoMelee}
-					EQ2Execute /toggleautoattack
-
-				if ${AutoMelee} && !${MainTank}
-				{
-					;check valid rear position
-					if ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-305)) && ${Target.Distance}<6
-					{
-						;we're behind and in range
-					}
-					;check right flank
-					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)) && ${Target.Distance}<6
-					{
-						;we're right flank and in range
-					}
-					;check left flank
-					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)) && ${Target.Distance}<6
-					{
-						;we're left flank and in range
-					}
-					elseif ${Target.Target.ID}==${Me.ID}
-					{
-						;we have aggro, move to the maintank
-						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
-						do
-						{
-								waitframe
-						}
-						while (${IsMoving} || ${Me.IsMoving})
-					}
-					else
-					{
-						call CheckPosition 1 ${Target.IsEpic}
-					}
-				}
-				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
-				{
-					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
-					do
-					{
-							waitframe
-					}
-					while (${IsMoving} || ${Me.IsMoving})
-				}
-
-				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
-				{
-					if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
-					{
-						Me.Inventory[ExactName,ManaStone]:Use
-						mstimer:Set[${Time.Timestamp}]
-					}
-				}
-
-				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-				{
-					EQ2Execute /target_none
-					break
-				}
-
-				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
-				{
-				    variable int ActorID
-				    ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
-					if ${Mob.ValidActor[${ActorID}]}
-					{
-						KillTarget:Set[${ActorID}]
-						target ${KillTarget}
-						call ProcessTriggers
-					}
-				}
-			}
-			while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+            if (${Mob.ValidActor[${KillTarget}]})
+            {
+    			tempvar:Set[1]
+    			do
+    			{
+    				call ProcessTriggers
+    
+    				if ${PathType}==4 && ${MainTank}
+    					call ScanAdds
+    
+    				if ${MainTank}
+    				{
+    					if ${Target.Target.ID}==${Me.ID}
+    						call CheckMTAggro
+    					else
+    					{
+    						call Lost_Aggro ${Target.ID}
+    						if ${UseCustomRoutines}
+    						    call Custom__Lost_Aggro ${Target.ID}
+    					}
+    				}
+    				else
+    				{
+    					Mob:CheckMYAggro
+    
+    					if ${Actor[ExactName,${MainAssist}].IsDead}
+    					{
+    						EQ2Bot:MainAssist_Dead
+    						break
+    					}
+    
+    					if ${Actor[${MainTankPC}].IsDead}
+    					{
+    						EQ2Bot:MainTank_Dead
+    						break
+    					}
+    				}
+    
+    				if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+    				{
+    					call Have_Aggro
+    					if ${UseCustomRoutines}
+    					    call Custom__Have_Aggro
+    	    		}
+    
+    				do
+    				{
+    					waitframe
+    				}
+    				while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
+    
+    				call Combat_Routine ${tempvar}
+    				if ${Return.Equal[CombatComplete]}
+    				{
+    					; end loop after this round
+    					tempvar:Set[40]
+    				}
+    
+    				if !${Me.AutoAttackOn} && ${AutoMelee}
+    					EQ2Execute /toggleautoattack
+    
+    				if ${AutoMelee} && !${MainTank}
+    				{
+    					;check valid rear position
+    					if ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-305)) && ${Target.Distance}<6
+    					{
+    						;we're behind and in range
+    					}
+    					;check right flank
+    					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)) && ${Target.Distance}<6
+    					{
+    						;we're right flank and in range
+    					}
+    					;check left flank
+    					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)) && ${Target.Distance}<6
+    					{
+    						;we're left flank and in range
+    					}
+    					elseif ${Target.Target.ID}==${Me.ID}
+    					{
+    						;we have aggro, move to the maintank
+    						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
+    						do
+    						{
+    								waitframe
+    						}
+    						while (${IsMoving} || ${Me.IsMoving})
+    					}
+    					else
+    					{
+    						call CheckPosition 1 ${Target.IsEpic}
+    					}
+    				}
+    				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
+    				{
+    					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
+    					do
+    					{
+    							waitframe
+    					}
+    					while (${IsMoving} || ${Me.IsMoving})
+    				}
+    
+    				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
+    				{
+    					if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+    					{
+    						Me.Inventory[ExactName,ManaStone]:Use
+    						mstimer:Set[${Time.Timestamp}]
+    					}
+    				}
+    
+    				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+    				{
+    					EQ2Execute /target_none
+    					break
+    				}
+    
+    				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+    				{
+    				    variable int ActorID
+    				    ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+    					if ${Mob.ValidActor[${ActorID}]}
+    					{
+    						KillTarget:Set[${ActorID}]
+    						target ${KillTarget}
+    						call ProcessTriggers
+    					}
+    				}
+    			}
+    			while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+    		}
+			
+			;;;;
+			;;;; Custom Combat Routines (per character)
+			;;;;
+			if (${UseCustomRoutines} && ${Mob.ValidActor[${KillTarget}]})
+		    {
+    		    tempvar:Set[1]
+    		    do
+    		    {
+    				call ProcessTriggers
+    
+    				if ${PathType}==4 && ${MainTank}
+    					call ScanAdds
+    
+    				if ${MainTank}
+    				{
+    					if ${Target.Target.ID}==${Me.ID}
+    						call CheckMTAggro
+    					else
+    					{
+    						call Lost_Aggro ${Target.ID}
+    						if ${UseCustomRoutines}
+    						    call Custom__Lost_Aggro ${Target.ID}
+    					}    						
+    				}
+    				else
+    				{
+    					Mob:CheckMYAggro
+    
+    					if ${Actor[ExactName,${MainAssist}].IsDead}
+    					{
+    						EQ2Bot:MainAssist_Dead
+    						break
+    					}
+    
+    					if ${Actor[${MainTankPC}].IsDead}
+    					{
+    						EQ2Bot:MainTank_Dead
+    						break
+    					}
+    				}
+    		        
+    				call Custom__Combat_Routine ${tempvar}
+    				if ${Return.Equal[CombatComplete]}
+    				{
+    					; end loop after this round
+    					tempvar:Set[40]
+    				}
+    				
+    				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
+    				{
+    					if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+    					{
+    						Me.Inventory[ExactName,ManaStone]:Use
+    						mstimer:Set[${Time.Timestamp}]
+    					}
+    				}
+    
+    				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+    				{
+    					EQ2Execute /target_none
+    					break
+    				}
+    
+    				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+    				{
+    				    ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+    					if ${Mob.ValidActor[${ActorID}]}
+    					{
+    						KillTarget:Set[${ActorID}]
+    						target ${KillTarget}
+    						call ProcessTriggers
+    					}
+    				}    				
+    		    }
+		        while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+		    }
 			;;;; END Combat_Routine Loop ;;;;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 			if !${CurrentTask}
 				Script:End
@@ -1083,6 +1225,18 @@ function Combat()
 			tempvar:Set[20]
 	}
 	while ${tempvar:Inc}<=20
+	
+	if ${UseCustomRoutines}
+	{
+    	tempvar:Set[1]
+    	do
+    	{
+    		call Custom__Post_Combat_Routine ${tempvar}
+    		if ${Return.Equal[PostCombatRoutineComplete]}
+    			tempvar:Set[20]
+    	}
+    	while ${tempvar:Inc}<=20	
+    }
 
 	if ${Me.AutoAttackOn}
 		EQ2Execute /toggleautoattack
@@ -2459,6 +2613,8 @@ function CheckMTAggro()
 				;}
 
 				call Lost_Aggro ${CustomActor[${tcount}].ID}
+				if ${UseCustomRoutines}
+    		        call Custom__Lost_Aggro ${CustomActor[${tcount}].ID}
 				lostaggro:Set[TRUE]
 				return
 			}
