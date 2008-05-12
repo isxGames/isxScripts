@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<template name='My.window.TitleBar'>
+    		<Border>1</Border>
+		<x>3</x>
+    		<BorderColor>FF000033</BorderColor>
+    		<Width>r6</Width>
+		<Height>26</Height>
+		<Texture Template='EQ2.window.TitleBar.Texture' />
+		<Children>
+			<Text Name='Title' template='EQ2.window.TitleBar.title' />
+			<Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
+			</Button>
+			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
+			</Button>
+			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
+				<Command>Script[EQ2Track]:End</Command>
+			</commandbutton>
+		</Children>
+	</template>
+	<template name='My.window'>
+		<Border>1</Border>
+		<Resizable>1</Resizable>
+		<CloseButton />
+		<MinimizeButton />
+		<TitleBar template='My.window.TitleBar' />
+		<OffsetTitleBarHeight />
+		<Client template='EQ2.window.Client' />
+		<StorePosition>1</StorePosition>
+	</template>
+	<Window name='EQ2 Track' Template='My.Window'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>322</Width>
+		<Height>250</Height>
+		<StorePosition>1</StorePosition>
+		<Title>${Me.Name} Track</Title>
+		<OnLoad>
+		</OnLoad>
+		<OnUnload>
+		</OnUnload>
+		<OnLeftClick>
+			This:SetFocus
+		</OnLeftClick>
+		<Children>
+
+<checkbox Name='TrackAggro' Template='EQ2.checkbox'>
+	<X>5%</X>
+	<Y>20</Y>
+	<Width>20%</Width>
+	<Height>20</Height>
+	<Text>Aggro</Text>
+	<OnLoad>
+	if ${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Aggro]}
+	{
+		UIElement[TrackAggro@EQ2 Track]:SetChecked
+	}
+	</OnLoad>
+	<OnLeftClick>
+		if ${UIElement[TrackAggro@EQ2 Track].Checked}
+		{
+			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Hide
+			Script[EQ2Bot].Variable[TrackAggro]:Set[TRUE]
+			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,TRUE]:Save
+			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+		}
+		else
+		{
+			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Show
+			Script[EQ2Bot].Variable[TrackAggro]:Set[FALSE]
+			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,FALSE]:Save
+			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+		}
+	</OnLeftClick>
+</checkbox>
+
+
+	<textentry name='TrackFilter'>
+		<X>77</X>
+		<Y>23</Y>
+		<Width>100</Width>
+		<Height>15</Height>
+		<OnLoad>
+		variable string TrackFilterText
+		TrackFilterText:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Filter]}]
+		if ${TrackFilterText.Equal[NULL]}
+		{
+			TrackFilterText:Set[PC]
+		}
+		UIElement[TrackFilter@EQ2 Track]:SetText[${TrackFilterText}]
+		</OnLoad>
+		<OnKeyUp>
+			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Filter,${UIElement[TrackFilter@EQ2 Track].Text}]:Save
+			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+		</OnKeyUp>
+	</textentry>
+
+
+
+	<textentry name='TrackMinLevel'>
+		<X>180</X>
+		<Y>23</Y>
+		<Width>25</Width>
+		<Height>15</Height>
+		<OnLoad>
+		variable string TrackMinLevelText
+		TrackMinLevelText:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[TrackMinLevel]}]
+		if ${TrackMinLevelText.Equal[NULL]}
+		{
+			TrackMinLevelText:Set[1]
+		}
+		UIElement[TrackMinLevel@EQ2 Track]:SetText[${TrackMinLevelText}]
+		</OnLoad>
+		<OnKeyUp>
+			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackMinLevel,${UIElement[TrackMinLevel@EQ2 Track].Text}]:Save
+			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+		</OnKeyUp>
+	</textentry>
+
+
+	<textentry name='TrackMaxLevel'>
+		<X>210</X>
+		<Y>23</Y>
+		<Width>25</Width>
+		<Height>15</Height>
+		<OnLoad>
+		variable string TrackMaxLevelText
+		TrackMaxLevelText:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[TrackMaxLevel]}]
+		if ${TrackMaxLevelText.Equal[NULL]}
+		{
+			TrackMaxLevelText:Set[80]
+		}
+		UIElement[TrackMaxLevel@EQ2 Track]:SetText[${TrackMaxLevelText}]
+		</OnLoad>
+		<OnKeyUp>
+			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackMaxLevel,${UIElement[TrackMaxLevel@EQ2 Track].Text}]:Save
+			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+		</OnKeyUp>
+	</textentry>
+
+
+	<listbox name='TrackItems'>
+		<X>5%</X>
+		<Y>55</Y>
+		<Width>285</Width>
+		<Height>160</Height>
+		<SelectMultiple>1</SelectMultiple>
+		<Texture filename='Listbox.png'/>
+		<Items>
+			<Item Value='1'>Tracking</Item>
+			<Item Value='2'>Please Wait</Item>
+		</Items>
+	</listbox>
+
+		</Children>
+	</Window>
+</ISUI>
