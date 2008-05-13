@@ -17,7 +17,7 @@ function Class_Declaration()
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
     ;;;;
-        
+
 	declare OffenseMode bool script 0
 	declare DebuffMode bool script 0
  	declare AoEMode bool script 0
@@ -326,7 +326,7 @@ function Buff_Routine(int xAction)
 					}
 					else
 						call CastSpellRange ${PreSpellRange[${xAction},1]}
-				}					
+				}
 			}
 			break
 
@@ -430,7 +430,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		Default
-			;return Buff Complete
+			return Buff Complete
 			break
 	}
 }
@@ -467,7 +467,7 @@ function Combat_Routine(int xAction)
 	call CheckHeals
 	call RefreshPower
 
-	if ${DebuffMode} && ${Actor[${KillTarget}].IsEpic}
+	if ${DebuffMode} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsHeroic})
 	{
 		;Divine Recovery first if up
 		if ${Me.Ability[${SpellType[390]}].IsReady} && !${Me.Maintained[${SpellType[390]}](exists)}

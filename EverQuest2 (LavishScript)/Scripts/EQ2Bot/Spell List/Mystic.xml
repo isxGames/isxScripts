@@ -12,7 +12,7 @@
 		<Setting Name="5,30">Runic Mark</Setting>
 		<Setting Name="5,303">Divine Providence</Setting>
 		<Setting Name="6,0">Summon Food and Water</Setting>
-		<Setting Name="6,213">Cure Noxious</Setting>
+		<Setting Name="6,210">Cure</Setting>
 		<Setting Name="7,51">Enfeeble</Setting>
 		<Setting Name="7,4">Aid</Setting>
 		<Setting Name="8,300">Revive</Setting>
@@ -47,7 +47,6 @@
 		<Setting Name="12,7">Spectral Ward</Setting>
 		<Setting Name="13,180">Phantasmal Spirits</Setting>
 		<Setting Name="13,302">Spirit of the Wolf</Setting>
-		<Setting Name="13,212">Cure Trauma</Setting>
 		<Setting Name="14,15">Wards of Spirit</Setting>
 		<Setting Name="14,10">Breath of Spirits</Setting>
 		<Setting Name="15,4">Totemic Aid</Setting>
@@ -58,7 +57,6 @@
 		<Setting Name="18,32">Spirit of the Bull</Setting>
 		<Setting Name="18,1">Healing Ritual</Setting>
 		<Setting Name="19,30">Runic Symbol</Setting>
-		<Setting Name="19,211">Cure Elemental</Setting>
 		<Setting Name="19,7">Ghostly Ward</Setting>
 		<Setting Name="20,25">Ursine Elder</Setting>
 		<Setting Name="21,51">Delusion</Setting>
@@ -73,7 +71,6 @@
 		<Setting Name="27,180">Quelling Spirits</Setting>
 		<Setting Name="28,15">Wards of Shadow</Setting>
 		<Setting Name="28,10">Spiritist's Salve</Setting>
-		<Setting Name="28,210">Cure Arcane</Setting>
 		<Setting Name="29,17">Prophetic Guard</Setting>
 		<Setting Name="29,4">Spiritual Replenishment</Setting>
 		<Setting Name="30,31">Umbral Fortitude</Setting>

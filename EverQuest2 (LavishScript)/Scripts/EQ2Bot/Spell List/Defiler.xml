@@ -11,7 +11,8 @@
 		<Setting Name="4,35">Minor Fortune</Setting>
 		<Setting Name="5,303">Divine Providence</Setting>
 		<Setting Name="5,21">Greater Shroud</Setting>
-		<Setting Name="6,213">Cure Noxious</Setting>
+		<Setting Name="6,210">Cure</Setting>
+		<Setting Name="6,211">Cure Curse</Setting>
 		<Setting Name="7,4">Balm</Setting>
 		<Setting Name="7,52">Repulsion</Setting>
 		<Setting Name="8,300">Revive</Setting>
@@ -22,7 +23,6 @@
 		<Setting Name="11,71">Infection</Setting>
 		<Setting Name="11,313">Spirit Guide</Setting>
 		<Setting Name="12,7">Spectral Ward</Setting>
-		<Setting Name="13,212">Cure Trauma</Setting>
 		<Setting Name="13,180">Fearful Chant</Setting>
 		<Setting Name="13,302">Spirit of the Wolf</Setting>
 		<Setting Name="14,10">Accretion</Setting>
@@ -34,7 +34,6 @@
 		<Setting Name="17,80">Sickening Imprecation</Setting>
 		<Setting Name="18,1">Greater Sacrificial Heal</Setting>
 		<Setting Name="18,20">Vehement</Setting>
-		<Setting Name="19,211">Cure Elemental</Setting>
 		<Setting Name="19,7">Ghostly Ward</Setting>
 		<Setting Name="19,21">Greater Shroud</Setting>
 		<Setting Name="20,380">Soul Ward</Setting>
@@ -68,7 +67,6 @@
  		<Setting Name="26,322">Curse of Shielding</Setting>
  		<Setting Name="26,7">Spectral Guard</Setting>
  		<Setting Name="27,180">Devigorating Chant</Setting>
- 		<Setting Name="28,210">Cure Arcane</Setting>
  		<Setting Name="28,10">Profane Accretion</Setting>
  		<Setting Name="28,15">Seeping Eschar</Setting>
  		<Setting Name="29,283">Distill Soul</Setting>

@@ -1,16 +1,20 @@
 ;============================================
 ;
-;EQ2BotLib version 20070337a
+;EQ2BotLib version 20080513a
 ;by karye
 ;updated by pygar
 ;
+; 20080513a (Pygar)
+; * Made Persistent Following an Option.  Click it to resume follow every 5 seconds.  Leave it blank to only resume follow
+;		post combat or zone
+;
 ; 20080425a (Amadeus)
-; AutoFollowTank() should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a 
+; AutoFollowTank() should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a
 ; griffon-like transport or if they (or the bot) are currently climbing a wall.
 ;
 ; 20080406a (Amadeus)
 ; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
-; * The 'autofollow' routine will now only auto follow a tank every 5 seconds at most.  
+; * The 'autofollow' routine will now only auto follow a tank every 5 seconds at most.
 ;
 ; 20080331a (Amadeus)
 ; * Added events for Zoning.  EQ2Bot should now autofollow the "AutoFollowee" after zoning.
@@ -99,14 +103,20 @@ variable(script) collection:int InvisSpells
 ;AutoFollow Variables
 variable bool AutoFollowMode=FALSE
 variable bool AutoFollowingMA=FALSE
+variable bool CombatFollow=FALSE
 variable string AutoFollowee
 variable int AutoFollowLastSetTime
+
+;misc
+variable bool EpicMode=FALSE
 
 function EQ2BotLib_Init()
 {
 
 	;INI Settings
 	AutoFollowMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Auto Follow Mode,FALSE]}]
+	CombatFollow:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[CombatFollow,FALSE]}]
+	EpicMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[EpicMode,FALSE]}]
 	AutoFollowee:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[AutoFollowee,""]}]
 	WarnTankWhenAggro:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me,FALSE]}]
 	ShardMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Mode,FALSE]}]
@@ -170,7 +180,7 @@ function EQ2BotLib_Init()
 	call PopulateInvisSpells
 
 	AutoFollowLastSetTime:Set[0]
-	
+
 	return OK
 }
 
@@ -280,7 +290,7 @@ function PopulateMezSpells()
 function AmIInvis(string param1)
 {
     variable int i = 1
-    
+
     do
     {
         if (${InvisSpells.Element[${Me.Maintained[${i}].Name}](exists)})
@@ -288,10 +298,10 @@ function AmIInvis(string param1)
             echo "DEBUG: I am invisible (therefore I will not cast spells.)  (Called By: ${param1})"
             return TRUE
         }
-        
+
     }
-    while ${i:Inc} <= ${Me.CountMaintained} 
-    
+    while ${i:Inc} <= ${Me.CountMaintained}
+
     return FALSE
 }
 
@@ -371,62 +381,61 @@ function ReacquireTargetFromMA()
 
 atom AutoFollowTank()
 {
-    if !${Me.InCombat}
+	if !${Me.InCombat}
+  {
+  	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+
+    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
+
+    ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
+    ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
+    ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
+
+    ;echo "DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
+    ;echo "DEBUG-AutoFollowTank(): Time Now: ${Time.Timestamp}"
+    ;echo "DEBUG-AutoFollowTank(): TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
+    if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
     {
-        UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-
-    	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
-
-        ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
-        ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
-        ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
-
-    	;echo "DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
-    	;echo "DEBUG-AutoFollowTank(): Time Now: ${Time.Timestamp}"
-    	;echo "DEBUG-AutoFollowTank(): TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
-        if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
+    	;echo "DEBUG-AutoFollowTank(): Following...."
+      if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})            {
+      	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
         {
-            ;echo "DEBUG-AutoFollowTank(): Following...."
-            if (${Actor[pc,${AutoFollowee}](exists)} && ${Actor[pc,${AutoFollowee}].Distance} < 45)
+        	;When an actor is on a griffon-like transport, their speed is always "1"
+          if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
+          {
+            if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
             {
-            	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} 
-            	{
-            	    ; When an actor is on a griffon-like transport, their speed is always "1"
-            	    if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
-            	    {
-                	    if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
-                	    {
-                    		squelch face ${AutoFollowee}
-                    		eq2execute /follow ${AutoFollowee}
-                    		AutoFollowLastSetTime:Set[${Time.Timestamp}]
-                    		AutoFollowingMA:Set[TRUE]
-                    		AutoFollowMode:Set[TRUE]
-                    	}
-                    	else
-                    	{
-                    	    AutoFollowingMA:Set[FALSE]
-                    	    ;echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
-                    	}
-                    }
-                    else
-                    {
-                        ;echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
-                        AutoFollowingMA:Set[FALSE]
-                    }
-            	}
-            	else
-            	{
-            	    AutoFollowingMA:Set[FALSE]
-            	    ;echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
-            	}
-            }
-            else
-            {
-                AutoFollowingMA:Set[FALSE]
-                ;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
-            }
-    	}
+           		squelch face ${AutoFollowee}
+           		eq2execute /follow ${AutoFollowee}
+           		AutoFollowLastSetTime:Set[${Time.Timestamp}]
+           		AutoFollowingMA:Set[TRUE]
+           		AutoFollowMode:Set[TRUE]
+           	}
+           	else
+           	{
+              AutoFollowingMA:Set[FALSE]
+              ;echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
+           	}
+          }
+          else
+          {
+          	;echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
+            AutoFollowingMA:Set[FALSE]
+          }
+        }
+        else
+        {
+        	AutoFollowingMA:Set[FALSE]
+          ;echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
+        }
+      }
+      else
+      {
+      	AutoFollowingMA:Set[FALSE]
+        ;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
+      }
     }
+  }
 }
 
 atom StopAutoFollowing()
@@ -647,10 +656,10 @@ function CheckGroupHealth(int MinHealth)
 function PetAttack()
 {
     ;echo "Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"
-    
+
     if !${Actor[id,${KillTarget}](exists)}
         return
-    
+
 	if ${Me.Pet.Target.ID} != ${KillTarget}
 	{
 		EQ2Execute /pet backoff
@@ -947,7 +956,7 @@ function FindHealer()
     	if (${healer} == ${Me.ID})
     	{
     		tempgrp:Set[0]
-    
+
     		do
     		{
     			switch ${Me.RaidMember[${tempgrp}].Class}
@@ -974,17 +983,15 @@ function FindHealer()
 	return ${healer}
 }
 
-function CheckCures()
+function CheckPotCures()
 {
-    ; Create our custom inventory array so that we are up to date with quantities
-    ; Possible furture feature - use counts to determine if we should fallback to a lesser potion
+  ; Create our custom inventory array so that we are up to date with quantities
+  ; Possible furture feature - use counts to determine if we should fallback to a lesser potion
 	Me:CreateCustomInventoryArray[nonbankonly]
 
-    ; incurable afflictions have a value of -1
-    ; so we test >=1 to insure we are not wasting potions
-	if ${Me.Arcane}>=1
+	if ${Me.Arcane}>0
 	{
-	    ; check to see if we have more of our selected potion
+	  ; check to see if we have more of our selected potion
 		if ${Me.CustomInventory[${ArcanePotion}](exists)}
 		{
 			; Debug: echo casting arcane potion
@@ -992,10 +999,10 @@ function CheckCures()
 		}
 		else
 		{
-		    ; Display a messagebox to let us know if we have run out of potions
-		    ; Squelch causes error text to be hidden from console if we try to open
-		    ; more than one messagebox
-		    ; Possible future feature - move this to it's own function and give it audio feedback
+		  ; Display a messagebox to let us know if we have run out of potions
+		  ; Squelch causes error text to be hidden from console if we try to open
+		  ; more than one messagebox
+		  ; Possible future feature - move this to it's own function and give it audio feedback
 			if ${AWarn}
 			{
 				Squelch MessageBox -ok "You have run out of \${ArcanePotion}" 3 2
@@ -1004,7 +1011,7 @@ function CheckCures()
 		}
 	}
 
-	if ${Me.Elemental}>=1
+	if ${Me.Elemental}>0
 	{
 		if ${Me.CustomInventory[${ElementalPotion}](exists)}
 		{
@@ -1021,7 +1028,7 @@ function CheckCures()
 		}
 	}
 
-	if ${Me.Noxious}>=1
+	if ${Me.Noxious}>0
 	{
 		if ${Me.CustomInventory[${NoxiousPotion}](exists)}
 		{
@@ -1038,7 +1045,7 @@ function CheckCures()
 		}
 	}
 
-	if ${Me.Trauma}>=1
+	if ${Me.Trauma}>0
 	{
 		if ${Me.CustomInventory[${TraumaPotion}](exists)}
 		{
@@ -1058,20 +1065,20 @@ function CheckCures()
 
 function CastPotion(string Item)
 {
-    ; Do not cast if we are moving or if the potion is not ready
+  ; Do not cast if we are moving or if the potion is not ready
 	if ${Me.IsMoving} || !${Me.Inventory[ExactName,"${Item}"].IsReady}
 	{
 		return
 	}
 
-    ; Use the potion
+  ; Use the potion
 	Me.Inventory[ExactName,"${Item}"]:Use
 
 	;if spells are being interupted do to movement
-	;increase the wait below slightly. Default=10
-	wait 10
+	;increase the wait below slightly. Default=2
+	wait 2
 
-    ; wait until we have finished casting
+  ; wait until we have finished casting
 	do
 	{
 		waitframe

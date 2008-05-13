@@ -15,16 +15,16 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;    
-    
+		;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+		declare ClassFileVersion int script 20080408
+		;;;;
+
 	declare OffenseMode bool script 0
 	declare DebuffMode bool script 0
- 	declare AoEMode bool script 0
- 	declare CureMode bool script 0
- 	declare OberonMode bool script 0
- 	declare TorporMode bool script 0
+	declare AoEMode bool script 0
+	declare CureMode bool script 0
+	declare OberonMode bool script 0
+	declare TorporMode bool script 0
 	declare KeepWardUp bool script 0
 	declare KeepMTWardUp bool script 0
 	declare KeepGroupWardUp bool script 0
@@ -38,16 +38,6 @@ function Class_Declaration()
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffProcGroupMember string script
 	declare BuffAvatarGroupMember string script
-
-	declare EquipmentChangeTimer int script
-
-	declare MainWeapon string script
-	declare OffHand string script
-	declare OneHandedSpear string script
-	declare TwoHandedSpear string script
-	declare Symbols string script
-	declare Buckler string script
-	declare Staff string script
 
 	call EQ2BotLib_Init
 
@@ -71,13 +61,6 @@ function Class_Declaration()
 	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
 	BuffAvatarGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAvatarGroupMember,]}]
 
-	MainWeapon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MainWeapon,]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	OneHandedSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OneHandedSpear,]}]
-	TwoHandedSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedSpear,]}]
-	Symbols:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[WeaponSymbols,]}]
-	Buckler:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buckler,]}]
-	Staff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Staff,]}]
 }
 
 function Buff_Init()
@@ -239,8 +222,6 @@ function Buff_Routine(int xAction)
 
 	variable int temp
 
-	call WeaponChange
-
 	ExecuteAtom CheckStuck
 
 	if ${ShardMode}
@@ -253,7 +234,7 @@ function Buff_Routine(int xAction)
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-	    ExecuteAtom AutoFollowTank
+		ExecuteAtom AutoFollowTank
 		wait 5
 	}
 
@@ -528,19 +509,7 @@ function Combat_Routine(int xAction)
 					{
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
-						{
-							if ${Me.Equipment[1].Name.Equal[${Buckler}]}
-							{
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-							}
-							elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-							{
-								Me.Inventory[${Buckler}]:Equip
-								EquipmentChangeTimer:Set[${Time.Timestamp}]
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-							}
-
-						}
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
 				break
@@ -554,9 +523,7 @@ function Combat_Routine(int xAction)
 					{
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
-						{
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
 					}
 				}
 				break
@@ -630,7 +597,6 @@ function Post_Combat_Routine(int xAction)
 			while ${tempgrp:Inc}<${grpcnt}
 			break
 		case LoadDefaultEquipment
-			ExecuteAtom LoadEquipmentSet "Default"
 			break
 		default
 			return PostCombatRoutineComplete
@@ -1023,7 +989,7 @@ function EmergencyHeal(int healtarget)
 		call CastSpellRange 338 0 0 0 ${healtarget}
 	}
 
-  ;Use Eidolic Ward if ready else use Wards of the Eidolon
+	;Use Eidolic Ward if ready else use Wards of the Eidolon
 	if ${Me.Ability[${SpellType[335]}].IsReady}
 	{
 		call CastSpellRange 335 0 0 0 ${healtarget}
@@ -1092,25 +1058,11 @@ function CureMe()
 		}
 	}
 
-	if  ${Me.Noxious}>0
+	if  ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
 	{
-		call CastSpellRange 213 0 0 0 ${Me.ID}
+		call CastSpellRange 210 0 0 0 ${Me.ID}
 		return
 	}
-
-	if  ${Me.Elemental}>0
-	{
-		call CastSpellRange 211 0 0 0 ${Me.ID}
-		return
-	}
-
-	if  ${Me.Trauma}>0
-	{
-		call CastSpellRange 212 0 0 0 ${Me.ID}
-		return
-	}
-
-
 }
 
 function CureGroupMember(int gMember)
@@ -1119,8 +1071,8 @@ function CureGroupMember(int gMember)
 
 	if (${gMember} == 0)
 	{
-	    call CureMe
-	    return
+			call CureMe
+			return
 	}
 
 
@@ -1135,44 +1087,11 @@ function CureGroupMember(int gMember)
 		;first use Ancient Balm if up (single target cure all)
 		call CastSpellRange 214 0 0 0 ${Me.Group[${gMember}].ID}
 
-		if  ${Me.Group[${gMember}].Arcane}>0
+		if  ${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0
 		{
 				call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
-		}
-
-		if  ${Me.Group[${gMember}].Noxious}>0
-		{
-			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
-		}
-
-		if  ${Me.Group[${gMember}].Elemental}>0
-		{
-			call CastSpellRange 211 0 0 0 ${Me.Group[${gMember}].ID}
-		}
-
-		if  ${Me.Group[${gMember}].Trauma}>0
-		{
-			call CastSpellRange 212 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 	}
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].ToActor(exists)}
 }
 
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${MainWeapon}]}
-	{
-		Me.Inventory[${MainWeapon}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-}
