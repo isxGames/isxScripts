@@ -29,7 +29,7 @@ function Class_Declaration()
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
     ;;;;
-    
+
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
 	declare BuffAccordShield bool script FALSE
@@ -529,7 +529,7 @@ function RefreshPower()
 	}
 
 	;Conjuror Shard
-	if ${Me.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.ToActor.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 	{
 		Me.Inventory[${ShardType}]:Use
 	}

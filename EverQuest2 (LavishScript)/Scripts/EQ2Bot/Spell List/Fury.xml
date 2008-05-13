@@ -10,7 +10,7 @@
 		<Setting Name="4,36">Minor Lucid</Setting>
 		<Setting Name="5,304">Divine Providence</Setting>
 		<Setting Name="5,23">Natural Mask</Setting>
-		<Setting Name="6,210">Cure Noxious</Setting>
+		<Setting Name="6,210">Cure</Setting>
 		<Setting Name="6,365">Summon Food and Water</Setting>
 		<Setting Name="7,4">Salve</Setting>
 		<Setting Name="7,50">Intimidation</Setting>
@@ -33,7 +33,6 @@
 		<Setting Name="11,70">Twirl</Setting>
 		<Setting Name="11,313">Favor of the Phoenix</Setting>
 		<Setting Name="12,7">Regrowth</Setting>
-		<Setting Name="13,211">Cure Trauma</Setting>
 		<Setting Name="13,30">Spirit of the Wolf</Setting>
 		<Setting Name="13,180">Brambles</Setting>
 		<Setting Name="14,10">Recovery of the Untamed</Setting>
@@ -45,7 +44,6 @@
 		<Setting Name="17,51">Provoking Swarm</Setting>
 		<Setting Name="18,1">Greater Elixir</Setting>
 		<Setting Name="18,21">Wild Spirit</Setting>
-		<Setting Name="19,212">Cure Elemental</Setting>
 		<Setting Name="19,7">Greater Regrowth</Setting>
 		<Setting Name="19,23">Feral Mask</Setting>
 		<Setting Name="20,25">Peerless Predator</Setting>
@@ -59,7 +57,6 @@
 		<Setting Name="26,7">Fleshweave</Setting>
 		<Setting Name="26,38">Savagery</Setting>
 		<Setting Name="27,180">Confounding Brambles</Setting>
-		<Setting Name="28,213">Cure Arcane</Setting>
 		<Setting Name="28,10">Breath of the Untamed</Setting>
 		<Setting Name="28,15">Ram\'s Growth</Setting>
 		<Setting Name="29,4">Predatory Salve</Setting>
@@ -171,6 +168,7 @@
 		<Setting Name="80,97">Ball Lightning</Setting>
 		<Setting Name="80,360">Hedgehog</Setting>
 		<Setting Name="80,316">Feral Courage</Setting>
+		<Setting Name="80,211">Cure Curse</Setting>
 		<Setting Name="80,10">Untamed Regeneration</Setting>
 	</Set>
 </InnerSpaceSettings>

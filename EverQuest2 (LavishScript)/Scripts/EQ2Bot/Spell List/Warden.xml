@@ -10,7 +10,7 @@
 		<Setting Name="4,36">Minor Vigor</Setting>
 		<Setting Name="5,305">Divine Providence</Setting>
 		<Setting Name="5,20">Protection of the Willow</Setting>
-		<Setting Name="6,210">Cure Noxious</Setting>
+		<Setting Name="6,210">Cure</Setting>
 		<Setting Name="6,365">Summon Food and Water</Setting>
 		<Setting Name="7,4">Bloom</Setting>
 		<Setting Name="7,230">Root</Setting>
@@ -37,7 +37,6 @@
 		<Setting Name="11,61">Chill</Setting>
 		<Setting Name="11,313">Favor of the Phoenix</Setting>
 		<Setting Name="12,7">Regrowth</Setting>
-		<Setting Name="13,211">Cure Trauma</Setting>
 		<Setting Name="13,31">Spirit of the Wolf</Setting>
 		<Setting Name="13,180">Willow</Setting>
 		<Setting Name="14,10">Sylvan Wind</Setting>
@@ -49,7 +48,6 @@
 		<Setting Name="17,60">Flame</Setting>
 		<Setting Name="18,1">Effloresce</Setting>
 		<Setting Name="18,21">Favor of the Wild</Setting>
-		<Setting Name="19,212">Cure Elemental</Setting>
 		<Setting Name="19,7">Greater Regrowth</Setting>
 		<Setting Name="19,20">Willowskin</Setting>
 		<Setting Name="20,25">Protector of the Forest</Setting>
@@ -63,7 +61,6 @@
 		<Setting Name="26,7">Blessing of the Grove</Setting>
 		<Setting Name="26,38">Primeval Instinct</Setting>
 		<Setting Name="27,180">Wisp</Setting>
-		<Setting Name="28,213">Cure Arcane</Setting>
 		<Setting Name="28,15">Blessing of Earth</Setting>
 		<Setting Name="28,10">Healing Breeze</Setting>
 		<Setting Name="29,4">Nature\'s Caress</Setting>
@@ -173,6 +170,7 @@
 		<Setting Name="79,180">Willow Wisp</Setting>
 		<Setting Name="80,331">Faerie Ally</Setting>
 		<Setting Name="80,9">Hierophantic Provenance</Setting>
+		<Setting Name="80,211">Cure Curse</Setting>
 		<Setting Name="80,316">Nature\'s Renewal</Setting>
 		<Setting Name="80,10">Tide of Healing</Setting>
 	</Set>
