@@ -759,7 +759,7 @@ objectdef EQ2Nav
             }  
             
             ;; TODO -- make this value an option`
-            if ${This.NextHopDistance} > 20
+            if ${This.NextHopDistance} > 30
             {
                 This:Debug["Bypassed next Hop in path -- resetting path"]
                 Dest:Set[${This.NavDestination}]
