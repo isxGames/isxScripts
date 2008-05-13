@@ -382,60 +382,61 @@ function ReacquireTargetFromMA()
 atom AutoFollowTank()
 {
 	if !${Me.InCombat}
-  {
-  	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+	{
+	  	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 
-    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
+		SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
 
-    ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
-    ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
-    ;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
+		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
+		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
+		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
 
-    ;echo "DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
-    ;echo "DEBUG-AutoFollowTank(): Time Now: ${Time.Timestamp}"
-    ;echo "DEBUG-AutoFollowTank(): TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
-    if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
-    {
-    	;echo "DEBUG-AutoFollowTank(): Following...."
-      if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})            {
-      	if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
-        {
-        	;When an actor is on a griffon-like transport, their speed is always "1"
-          if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
-          {
-            if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
-            {
-           		squelch face ${AutoFollowee}
-           		eq2execute /follow ${AutoFollowee}
-           		AutoFollowLastSetTime:Set[${Time.Timestamp}]
-           		AutoFollowingMA:Set[TRUE]
-           		AutoFollowMode:Set[TRUE]
-           	}
-           	else
-           	{
-              AutoFollowingMA:Set[FALSE]
-              ;echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
-           	}
-          }
-          else
-          {
-          	;echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
-            AutoFollowingMA:Set[FALSE]
-          }
-        }
-        else
-        {
-        	AutoFollowingMA:Set[FALSE]
-          ;echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
-        }
-      }
-      else
-      {
-      	AutoFollowingMA:Set[FALSE]
-        ;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
-      }
-    }
-  }
+		;echo "DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
+		;echo "DEBUG-AutoFollowTank(): Time Now: ${Time.Timestamp}"
+		;echo "DEBUG-AutoFollowTank(): TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
+		if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
+		{
+			;echo "DEBUG-AutoFollowTank(): Following...."
+			if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})            {
+			{
+				if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
+				{
+					;When an actor is on a griffon-like transport, their speed is always "1"
+					if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
+					{
+						 if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
+						 {
+							squelch face ${AutoFollowee}
+							eq2execute /follow ${AutoFollowee}
+							AutoFollowLastSetTime:Set[${Time.Timestamp}]
+							AutoFollowingMA:Set[TRUE]
+							AutoFollowMode:Set[TRUE]
+						}
+						else
+						{
+							AutoFollowingMA:Set[FALSE]
+							;echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
+						}
+					}
+					else
+					{
+						;echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
+						AutoFollowingMA:Set[FALSE]
+					}
+				}
+				else
+				{
+					AutoFollowingMA:Set[FALSE]
+					;echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
+				}
+			}
+			else
+			{
+			AutoFollowingMA:Set[FALSE]
+			;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
+			}
+    		}
+	}
 }
 
 atom StopAutoFollowing()
