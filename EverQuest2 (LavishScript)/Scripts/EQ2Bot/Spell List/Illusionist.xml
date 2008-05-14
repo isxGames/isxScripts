@@ -28,6 +28,8 @@
 		<Setting Name="10,387">Illuminate</Setting>
 		<Setting Name="10,393">Time Compression</Setting>
 		<Setting Name="10,394">Illusory Arm</Setting>
+		<Setting Name="10,396">Nullifying Staff</Setting>
+		<Setting Name="10,397">Shrink Servant</Setting>
 		<Setting Name="11,61">Headache</Setting>
 		<Setting Name="12,60">Phantasmal Jolt</Setting>
 		<Setting Name="12,20">Rune of Thought</Setting>
@@ -37,6 +39,7 @@
 		<Setting Name="14,80">Sadness</Setting>
 		<Setting Name="15,357">Blink</Setting>
 		<Setting Name="15,395">Veil of the Unseen</Setting>
+		<Setting Name="15,398">Call Servant</Setting>
 		<Setting Name="16,191">Bewilderment</Setting>
 		<Setting Name="16,260">Overwhelming Silence</Setting>
 		<Setting Name="17,70">Lobotomy</Setting>
