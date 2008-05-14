@@ -889,7 +889,7 @@ function Post_Combat_Routine(int xAction)
 			break
 		case CheckForCures
 			;echo "DEBUG: Checking if Cures are needed post combat..."
-			call Check_Cures
+			call CheckCures
 			break
 		case AutoFollowTank
 			if ${AutoFollowMode}
@@ -1082,7 +1082,7 @@ function CheckHeals()
 	}
 }
 
-function HealME()
+function HealMe()
 {
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
