@@ -663,10 +663,15 @@ function PetAttack()
 
 	if ${Me.Pet.Target.ID} != ${KillTarget}
 	{
-		EQ2Execute /pet backoff
+	    if ${Me.Pet.Target(exists)}
+	    {
+    		EQ2Execute /pet backoff
+    		wait 2
+    	}
 		target ${KillTarget}
+		wait 1
 		EQ2Execute /pet attack
-		wait 4 (${Me.Pet.Target.ID} != ${KillTarget})
+		wait 30 (${Me.Pet.Target.ID} != ${KillTarget})
 		if ${PetGuard}
 		{
 			EQ2Execute /pet preserve_self
