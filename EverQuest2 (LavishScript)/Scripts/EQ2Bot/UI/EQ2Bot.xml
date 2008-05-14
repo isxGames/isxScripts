@@ -684,7 +684,7 @@
 									<Height>10</Height>
 									<Alignment>Left</Alignment>
 									<Wrap />
-									<Text>Action: ${Script[EQ2Bot].Variable[CurrentAction]}</Text>
+									<Text>Current Action:   ${Script[EQ2Bot].Variable[CurrentAction]}</Text>
 								</Text>
 								<Text Name='Current Target' Template='EQ2.text'>
 									<X>5%</X>
@@ -693,7 +693,7 @@
 									<Height>25</Height>
 									<Alignment>Left</Alignment>
 									<Wrap />
-									<Text>Current Target: ${If[${Script[EQ2Bot].Variable[MainTank]},${If[${Target(exists)},${Target.Name},No Target]},${If[${Actor[${Script[EQ2Bot].Variable[KillTarget]}](exists)},${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name},No Target]}]}</Text>
+									<Text>Current Target:   ${If[${Script[EQ2Bot].Variable[MainTank]},${If[${Target(exists)},${Target.Name},No Target]},${If[${Actor[${Script[EQ2Bot].Variable[KillTarget]}](exists)},${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name},No Target]}]}</Text>
 								</Text>
 								<!--
 								<Text Name='Target Aggro' Template='EQ2.text'>
