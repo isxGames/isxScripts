@@ -116,22 +116,22 @@ function Combat_Init()
     ;; Stifle over time, and NUKE
 	Action[1]:Set[Silence]
 	SpellRange[1,1]:Set[260]
+	
+    ;; Slow casting NUKE and DAZE
+	Action[2]:Set[NukeDaze]
+	SpellRange[2,1]:Set[61]
  
     ;; Mental DOT and arcane resistance debuff (fast casting)
-	Action[2]:Set[Despair]
-	SpellRange[2,1]:Set[80]
+	Action[3]:Set[Despair]
+	SpellRange[3,1]:Set[80]
 
     ;; Mental DOT 
-	Action[3]:Set[MindDoT]
-	SpellRange[3,1]:Set[70]
+	Action[4]:Set[MindDoT]
+	SpellRange[4,1]:Set[70]
 
     ;; Fast casting NUKE
-	Action[4]:Set[Nuke]
-	SpellRange[4,1]:Set[60]
-
-    ;; Slow casting NUKE and DAZE
-	Action[5]:Set[NukeDaze]
-	SpellRange[5,1]:Set[61]
+	Action[5]:Set[Nuke]
+	SpellRange[5,1]:Set[60]
 
     ;; Slow recast, Encounter DOT
 	Action[6]:Set[Shower]
@@ -530,30 +530,40 @@ function Combat_Routine(int xAction)
         case Silence
         case Nuke
         case NukeDaze      
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 			
         ;; Single Target DoTs
         case Despair
         case MindDoT
+            ;echo "DEBUG::  ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 5
+            {
+                ;echo "DEBUG:: Health of Target: ${Actor[id,${KillTarget}].Health}
                 break
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+            }
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-			    if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			    ;echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) ready..."
+			    if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+			    {
+			        ;echo "DEBUG:: Casting ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]})"
 			        call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			    }
 			}
+			;else
+			   ;echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."
 			break
         
         ;; Group Encounter DoTs
         case Shower
         case Ego
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 30
-                break
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+                break   
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-			    if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			    if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 			        call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
@@ -583,18 +593,23 @@ function Combat_Routine(int xAction)
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 30
             {
                 ;; if we are in DPS Mode, then skip past Stuns
-                ;if ${DPSMode}
-                ;    return 15
+                if ${DPSMode}
+                {
+                    gRtnCtr:Set[15]
+                    return
+                }
                 break
             }
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 
-
             ;; if we are in DPS Mode, then skip past Stuns
-            ;if ${DPSMode}
-            ;    return 15
-            break			
+            if ${DPSMode}
+            {
+                gRtnCtr:Set[15]
+                return			
+            }
+            break
 
         case AEStun
         case Stun
@@ -602,7 +617,7 @@ function Combat_Routine(int xAction)
                 break
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
                 break
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
@@ -624,7 +639,7 @@ function Combat_Routine(int xAction)
                 return CombatComplete
             elseif ${Actor[id,${KillTarget}].IsEpic} && ${Actor[id,${KillTarget}].Health} < 15
                 return CombatComplete                
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			    call CastSpellRange ${SpellRange[${xAction},1]}
 			break
             
