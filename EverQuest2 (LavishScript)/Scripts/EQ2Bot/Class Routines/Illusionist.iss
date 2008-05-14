@@ -448,12 +448,18 @@ function Combat_Routine(int xAction)
 {
 	declare spellsused int local
 	spellsused:Set[0]
+	
+	if !${Actor[id,${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+	    return CombatComplete
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 
-	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
+	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
