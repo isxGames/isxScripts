@@ -1282,7 +1282,7 @@ function CheckCures()
 		if ${Actor[pc,ExactName,${MainTankPC}].Health}<50
 		{
 			if ${Actor[pc,ExactName,${MainTankPC}].ID}==${Me.ID}
-				call HealME
+				call HealMe
 			else
 				call HealMT
 		}
