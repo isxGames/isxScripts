@@ -914,7 +914,7 @@ function CureMe()
 {
 	declare CureCnt int local 0
 
-	if !${Me.Afflicted}
+	if !${Me.IsAfflicted}
 		return
 
 	if ${Me.Cursed}
