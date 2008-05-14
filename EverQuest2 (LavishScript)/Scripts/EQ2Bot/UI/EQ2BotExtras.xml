@@ -24,7 +24,7 @@
 	<combobox name='AutoFollowee' Template='EQ2.Combobox'>
 		<x>155</x>
 		<y>10</y>
-		<Width>150</width>
+		<Width>20%</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to auto follow</AutoTooltip>
 		<Items></items>
@@ -50,27 +50,6 @@
 				while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='EpicMode' Template='EQ2.Commandcheckbox'>
-		<X>375</X>
-		<Y>10</Y>
-		<Width>40</Width>
-		<Height>20</Height>
-		<Text>Enable Epic Encounter Logic</Text>
-		<AutoTooltip>Select to designate to scripts to use Epic battle routines</AutoTooltip>
-		<OnLeftClick>
-			if ${This.Checked}
-			{
-				Script[EQ2Bot].Variable[EpicMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["EpicMode",TRUE]:Save
-			}
-			else
-			{
-				Script[EQ2Bot].Variable[EpicMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["EpicMode",FALSE]:Save
-			}
-		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[EpicMode]}</Data>
-	</Commandcheckbox>
 	<Commandcheckbox Name='CombatFollow' Template='EQ2.Commandcheckbox'>
 		<X>5</X>
 		<Y>30</Y>
@@ -92,7 +71,6 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[CombatFollow]}</Data>
 	</Commandcheckbox>
-
 	<Commandcheckbox Name='WarnTank' Template='EQ2.Commandcheckbox'>
 		<X>5</X>
 		<Y>50</Y>
@@ -139,7 +117,7 @@
 	<combobox name='ShardGroupMember' Template='EQ2.Combobox'>
 		<x>155</x>
 		<y>70</y>
-		<Width>150</width>
+		<Width>20%</width>
 		<Height>20</height>
 		<AutoTooltip>The Group Member to request shards from</AutoTooltip>
 		<Items></items>
@@ -222,222 +200,237 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[PetGuard]}</Data>
 	</Commandcheckbox>
-
-		<Commandcheckbox name='Use Potions' Template='EQ2.Commandcheckbox'>
-			<X>5</X>
-			<Y>130</Y>
-			<Width>100</Width>
-			<Height>20</height>
-			<Text>Use Potions for cures</Text>
-			<OnLeftClick>
-				if ${This.Checked}
+	<Commandcheckbox Name='EpicMode' Template='EQ2.Commandcheckbox'>
+		<X>5</X>
+		<Y>130</Y>
+		<Width>40</Width>
+		<Height>20</Height>
+		<Text>Enable Epic Encounter Logic</Text>
+		<AutoTooltip>Select to designate to scripts to use Epic battle routines</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[EpicMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["EpicMode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[EpicMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["EpicMode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[EpicMode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox name='Use Potions' Template='EQ2.Commandcheckbox'>
+		<X>10</X>
+		<Y>180</Y>
+		<Width>100</Width>
+		<Height>20</height>
+		<Text>Use Potions for cures</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseCurePotions]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use potions for cures?",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseCurePotions]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use potions for cures?",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Use potions for cures?]}</Data>
+	</Commandcheckbox>
+	<Text Name='lblArcane' Template='EQ2.text'>
+		<X>10</X>
+		<Y>215</Y>
+		<Width>50</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Arcane</Text>
+		<AutoTooltip>Potion to use for Arcane</AutoTooltip>
+	</Text>
+	<combobox name='cbArcane' Template='EQ2.Combobox'>
+		<x>75</x>
+		<y>210</y>
+		<width>40%</width>
+		<height>20</height>
+		<AutoTooltip>Potion to use for Arcane</AutoTooltip>
+		<OnLeftClick>
+			declare Counter int
+			declare ArcaneShort string "Arcane Remedy"
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].Name.Right[13].Equal[${ArcaneShort}]}
 				{
-					Script[EQ2Bot].Variable[UseCurePotions]:Set[TRUE]
-					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use potions for cures?",TRUE]:Save
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
 				}
-				else
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${ArcaneShort}]}
 				{
-					Script[EQ2Bot].Variable[UseCurePotions]:Set[FALSE]
-					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use potions for cures?",FALSE]:Save
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
-			</OnLeftClick>
-			<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Use potions for cures?]}</Data>
-		</Commandcheckbox>
-
-		<Text Name='lblArcane' Template='EQ2.text'>
-			<X>5</X>
-			<Y>150</Y>
-			<Width>50</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Arcane</Text>
-			<AutoTooltip>Potion to use for Arcane</AutoTooltip>
-		</Text>
-		<combobox name='cbArcane' Template='EQ2.Combobox'>
-			<x>75</x>
-			<y>150</y>
-			<width>250</width>
-			<height>20</height>
-			<AutoTooltip>Potion to use for Arcane</AutoTooltip>
-			<OnLeftClick>
-				declare Counter int
-				declare ArcaneShort string "Arcane Remedy"
-				Counter:Set[1]
-				This:ClearItems
-				Me:CreateCustomInventoryArray[nonbankonly]
-				do
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Arcane Potion Name]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Arcane Potion Name]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[ArcanePotion]:Set[${This.SelectedItem.Text}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Arcane Potion Name,${This.SelectedItem.Text}]:Save
+		</OnSelect>
+	</combobox>
+	<Text Name='lblElemental' Template='EQ2.text'>
+		<X>10</X>
+		<Y>235</Y>
+		<Width>50</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Elemental</Text>
+		<AutoTooltip>Potion to use for Elemental</AutoTooltip>
+	</Text>
+	<combobox name='cbElemental' Template='EQ2.Combobox'>
+		<x>75</x>
+		<y>230</y>
+		<width>40%</width>
+		<height>20</height>
+		<AutoTooltip>Potion to use for Elemental</AutoTooltip>
+		<OnLeftClick>
+			declare Counter int
+			declare ElementalShort string "Elemental Remedy"
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].Name.Right[16].Equal[${ElementalShort}]}
 				{
-					if ${Me.CustomInventory[${Counter}].Name.Right[13].Equal[${ArcaneShort}]}
-					{
-						This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-					}
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
 				}
-				while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-				Counter:Set[1]
-				do
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].Name.Right[16].Equal[${ElementalShort}]}
 				{
-					if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${ArcaneShort}]}
-					{
-						This:AddItem[${Me.Equipment[${Counter}].Name}]
-					}
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
-				while ${Counter:Inc}&lt;=22
-			</OnLeftClick>
-			<OnLoad>
-				This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Arcane Potion Name]}]
-				This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Arcane Potion Name]}]:Select
-			</OnLoad>
-			<OnSelect>
-				Script[EQ2Bot].Variable[ArcanePotion]:Set[${This.SelectedItem.Text}]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Arcane Potion Name,${This.SelectedItem.Text}]:Save
-			</OnSelect>
-		</combobox>
-
-		<Text Name='lblElemental' Template='EQ2.text'>
-			<X>10</X>
-			<Y>170</Y>
-			<Width>50</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Elemental</Text>
-			<AutoTooltip>Potion to use for Elemental</AutoTooltip>
-		</Text>
-		<combobox name='cbElemental' Template='EQ2.Combobox'>
-			<x>75</x>
-			<y>170</y>
-			<width>250</width>
-			<height>20</height>
-			<AutoTooltip>Potion to use for Elemental</AutoTooltip>
-			<OnLeftClick>
-				declare Counter int
-				declare ElementalShort string "Elemental Remedy"
-				Counter:Set[1]
-				This:ClearItems
-				Me:CreateCustomInventoryArray[nonbankonly]
-				do
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Elemental Potion Name]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Elemental Potion Name]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[ElementalPotion]:Set[${This.SelectedItem.Text}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Elemental Potion Name,${This.SelectedItem.Text}]:Save
+		</OnSelect>
+	</combobox>
+	<Text Name='lblNoxious' Template='EQ2.text'>
+		<X>10</X>
+		<Y>255</Y>
+		<Width>50</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Noxious</Text>
+		<AutoTooltip>Potion to use for Noxious</AutoTooltip>
+	</Text>
+	<combobox name='cbNoxious' Template='EQ2.Combobox'>
+		<x>75</x>
+		<y>250</y>
+		<width>40%</width>
+		<height>20</height>
+		<AutoTooltip>Potion to use for Noxious</AutoTooltip>
+		<OnLeftClick>
+			declare Counter int
+			declare NoxiousShort string "Noxious Remedy"
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].Name.Right[14].Equal[${NoxiousShort}]}
 				{
-					if ${Me.CustomInventory[${Counter}].Name.Right[16].Equal[${ElementalShort}]}
-					{
-						This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-					}
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
 				}
-				while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-				Counter:Set[1]
-				do
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].Name.Right[14].Equal[${NoxiousShort}]}
 				{
-					if ${Me.Equipment[${Counter}].Name.Right[16].Equal[${ElementalShort}]}
-					{
-						This:AddItem[${Me.Equipment[${Counter}].Name}]
-					}
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
-				while ${Counter:Inc}&lt;=22
-			</OnLeftClick>
-			<OnLoad>
-				This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Elemental Potion Name]}]
-				This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Elemental Potion Name]}]:Select
-			</OnLoad>
-			<OnSelect>
-				Script[EQ2Bot].Variable[ElementalPotion]:Set[${This.SelectedItem.Text}]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Elemental Potion Name,${This.SelectedItem.Text}]:Save
-			</OnSelect>
-		</combobox>
-
-		<Text Name='lblNoxious' Template='EQ2.text'>
-			<X>10</X>
-			<Y>190</Y>
-			<Width>50</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Noxious</Text>
-			<AutoTooltip>Potion to use for Noxious</AutoTooltip>
-		</Text>
-		<combobox name='cbNoxious' Template='EQ2.Combobox'>
-			<x>75</x>
-			<y>190</y>
-			<width>250</width>
-			<height>20</height>
-			<AutoTooltip>Potion to use for Noxious</AutoTooltip>
-			<OnLeftClick>
-				declare Counter int
-				declare NoxiousShort string "Noxious Remedy"
-				Counter:Set[1]
-				This:ClearItems
-				Me:CreateCustomInventoryArray[nonbankonly]
-				do
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Noxious Potion Name]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Noxious Potion Name]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[NoxiousPotion]:Set[${This.SelectedItem.Text}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Noxious Potion Name,${This.SelectedItem.Text}]:Save
+		</OnSelect>
+	</combobox>
+	<Text Name='lblTrauma' Template='EQ2.text'>
+		<X>10</X>
+		<Y>275</Y>
+		<Width>50</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Trauma</Text>
+		<AutoTooltip>Potion to use for Trauma</AutoTooltip>
+	</Text>
+	<combobox name='cbTrauma' Template='EQ2.Combobox'>
+		<x>75</x>
+		<y>270</y>
+		<width>40%</width>
+		<height>20</height>
+		<AutoTooltip>Potion to use for Trauma</AutoTooltip>
+		<OnLeftClick>
+			declare Counter int
+			declare TraumaShort string "Trauma Remedy"
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].Name.Right[13].Equal[${TraumaShort}]}
 				{
-					if ${Me.CustomInventory[${Counter}].Name.Right[14].Equal[${NoxiousShort}]}
-					{
-						This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-					}
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
 				}
-				while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-				Counter:Set[1]
-				do
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${TraumaShort}]}
 				{
-					if ${Me.Equipment[${Counter}].Name.Right[14].Equal[${NoxiousShort}]}
-					{
-						This:AddItem[${Me.Equipment[${Counter}].Name}]
-					}
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
-				while ${Counter:Inc}&lt;=22
-			</OnLeftClick>
-			<OnLoad>
-				This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Noxious Potion Name]}]
-				This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Noxious Potion Name]}]:Select
-			</OnLoad>
-			<OnSelect>
-				Script[EQ2Bot].Variable[NoxiousPotion]:Set[${This.SelectedItem.Text}]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Noxious Potion Name,${This.SelectedItem.Text}]:Save
-			</OnSelect>
-		</combobox>
-
-		<Text Name='lblTrauma' Template='EQ2.text'>
-			<X>10</X>
-			<Y>210</Y>
-			<Width>50</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Trauma</Text>
-			<AutoTooltip>Potion to use for Trauma</AutoTooltip>
-		</Text>
-		<combobox name='cbTrauma' Template='EQ2.Combobox'>
-			<x>75</x>
-			<y>210</y>
-			<width>250</width>
-			<height>20</height>
-			<AutoTooltip>Potion to use for Trauma</AutoTooltip>
-			<OnLeftClick>
-				declare Counter int
-				declare TraumaShort string "Trauma Remedy"
-				Counter:Set[1]
-				This:ClearItems
-				Me:CreateCustomInventoryArray[nonbankonly]
-				do
-				{
-					if ${Me.CustomInventory[${Counter}].Name.Right[13].Equal[${TraumaShort}]}
-					{
-						This:AddItem[${Me.CustomInventory[${Counter}].Name}]
-					}
-				}
-				while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-				Counter:Set[1]
-				do
-				{
-					if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${TraumaShort}]}
-					{
-						This:AddItem[${Me.Equipment[${Counter}].Name}]
-					}
-				}
-				while ${Counter:Inc}&lt;=22
-			</OnLeftClick>
-			<OnLoad>
-				This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Trauma Potion Name]}]
-				This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Trauma Potion Name]}]:Select
-			</OnLoad>
-			<OnSelect>
-				Script[EQ2Bot].Variable[TraumaPotion]:Set[${This.SelectedItem.Text}]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Trauma Potion Name,${This.SelectedItem.Text}]:Save
-			</OnSelect>
-		</combobox>
-
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Trauma Potion Name]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Trauma Potion Name]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[TraumaPotion]:Set[${This.SelectedItem.Text}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Trauma Potion Name,${This.SelectedItem.Text}]:Save
+		</OnSelect>
+	</combobox>
 `</ISUI>
