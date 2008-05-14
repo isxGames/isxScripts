@@ -143,52 +143,52 @@ function Combat_Init()
 
     ;; Encounter DOT   (RENAME)
 	Action[8]:Set[Ego]
-	SpellRange[8,2]:Set[91]
+	SpellRange[8,1]:Set[91]
 
     ;; Master Strike
-    Action[11]:Set[Master_Strike]
+    Action[9]:Set[Master_Strike]
 
     ;; Construct
-	Action[12]:Set[Constructs]
-	SpellRange[12,1]:Set[51]
+	Action[10]:Set[Constructs]
+	SpellRange[10,1]:Set[51]
 
 
     ;;;;;;;;;;;;;;;;; STUNS ;;;;;;;;;;;;;;;;;
 
     ;; Group Encounter fast casting Stun
-	Action[13]:Set[AEStun]
-	MobHealth[13,1]:Set[1]
-	MobHealth[13,2]:Set[100]
-	SpellRange[13,1]:Set[191]
+	Action[11]:Set[AEStun]
+	MobHealth[11,1]:Set[1]
+	MobHealth[11,2]:Set[100]
+	SpellRange[11,1]:Set[191]
 
     ;; Single Target Stun (longer duration)
-	Action[14]:Set[Stun]
-	MobHealth[14,1]:Set[1]
-	MobHealth[14,2]:Set[100]	
-	SpellRange[14,1]:Set[190]
+	Action[12]:Set[Stun]
+	MobHealth[12,1]:Set[1]
+	MobHealth[12,2]:Set[100]	
+	SpellRange[12,1]:Set[190]
 
     ;;;;;;;;;;;;;;;;; UTILITY ;;;;;;;;;;;;;;;;;
 
     ;; Short Duration Buff .. adds INT, Focus, Disruption, etc.
-	Action[15]:Set[Focus]
-	MobHealth[15,1]:Set[20]
-	MobHealth[15,2]:Set[100]
-	SpellRange[15,1]:Set[23]
+	Action[13]:Set[Focus]
+	MobHealth[13,1]:Set[20]
+	MobHealth[13,2]:Set[100]
+	SpellRange[13,1]:Set[23]
 
     ;; Savante
-	Action[16]:Set[Savante]
-	MobHealth[16,1]:Set[20]
-	MobHealth[16,2]:Set[100]
-	SpellRange[16,1]:Set[389]
+	Action[14]:Set[Savante]
+	MobHealth[14,1]:Set[20]
+	MobHealth[14,2]:Set[100]
+	SpellRange[14,1]:Set[389]
 
     ;; Mana Shroud
 	;;; NOTE: This is handled in RefreshPower()
 
     ;; Power Drain -> Group
-	Action[17]:Set[Gaze]
-	MobHealth[17,1]:Set[1]
-	MobHealth[17,2]:Set[40]
-	SpellRange[17,1]:Set[90]
+	Action[15]:Set[Gaze]
+	MobHealth[15,1]:Set[1]
+	MobHealth[15,2]:Set[40]
+	SpellRange[15,1]:Set[90]
 
 }
 
@@ -595,7 +595,7 @@ function Combat_Routine(int xAction)
                 ;; if we are in DPS Mode, then skip past Stuns
                 if ${DPSMode}
                 {
-                    gRtnCtr:Set[15]
+                    gRtnCtr:Set[13]
                     return
                 }
                 break
@@ -606,7 +606,7 @@ function Combat_Routine(int xAction)
             ;; if we are in DPS Mode, then skip past Stuns
             if ${DPSMode}
             {
-                gRtnCtr:Set[15]
+                gRtnCtr:Set[13]
                 return			
             }
             break
