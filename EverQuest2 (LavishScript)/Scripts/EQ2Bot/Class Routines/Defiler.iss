@@ -845,7 +845,7 @@ function CureMe()
 	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
 		call CastSpellRange 326
 
-	if !${Me.Afflicted}
+	if !${Me.IsAfflicted}
 		return
 
 	if ${Me.Cursed}
