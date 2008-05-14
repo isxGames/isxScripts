@@ -189,6 +189,7 @@ variable(script) int TempDoNotPullListTimer
 variable(script) collection:string InvalidMasteryTargets
 variable(script) bool IsMoving
 variable bool UseCustomRoutines=FALSE
+variable int gRtnCtr=1
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -342,10 +343,10 @@ function main()
 		;;;;;;;;;;;;;;
 		;;; Pre-Combat Routines Loop (ie, Buff Routine, etc.)
 		;;;;;;;;;;;;;;
-		tempvar:Set[1]
+		gRtnCtr:Set[1]
 		do
 		{
-		    ;echo "Pre-Combat Routines Loop: Test - ${tempvar}"
+		    ;echo "Pre-Combat Routines Loop: Test - ${gRtnCtr}"
 			do
 			{
 				waitframe
@@ -487,7 +488,7 @@ function main()
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
-						tempvar:Set[40]
+						gRtnCtr:Set[40]
 						CurrentAction:Set["Idle..."]
 						break
 					}
@@ -496,11 +497,11 @@ function main()
                 ;;;;;;;;;
                 ;;;;; Call the buff routine from the class file
                 ;;;;;;;;;
-				call Buff_Routine ${tempvar}
+				call Buff_Routine ${gRtnCtr}
 				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 				{
 					; end after this round
-					tempvar:Set[40]
+					gRtnCtr:Set[40]
 					CurrentAction:Set["Idle..."]
 					break
 				}
@@ -510,34 +511,34 @@ function main()
 					EQ2Execute /toggleautoattack
 			}
 		}
-		while ${tempvar:Inc}<=40
+		while ${gRtnCtr:Inc}<=40
 
         if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
         {
     		if (${UseCustomRoutines})
     		{
-    		    tempvar:Set[1]
+    		    gRtnCtr:Set[1]
     		    do
     		    {
     				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
     				{
     					if ${Mob.Target[${KillTarget}]}
     					{
-    						tempvar:Set[40]
+    						gRtnCtr:Set[40]
     						CurrentAction:Set["Idle..."]
     						break
     					}
     				}
 
-    				call Custom__Buff_Routine ${tempvar}
+    				call Custom__Buff_Routine ${gRtnCtr}
     				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
     				{
-    					tempvar:Set[40]
+    					gRtnCtr:Set[40]
     					CurrentAction:Set["Idle..."]
     					break
     				}
     		    }
-    		    while ${tempvar:Inc} <= 40
+    		    while ${gRtnCtr:Inc} <= 40
     		}
     	}
 	    ;;;;;;;;;;;;;;
@@ -952,7 +953,7 @@ function Combat()
 
             if (${Mob.ValidActor[${KillTarget}]})
             {
-    			tempvar:Set[1]
+    			gRtnCtr:Set[1]
     			do
     			{
     				call ProcessTriggers
@@ -1001,15 +1002,13 @@ function Combat()
     				}
     				while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
 
-    				call Combat_Routine ${tempvar}
+    				call Combat_Routine ${gRtnCtr}
     				if ${Return.Equal[CombatComplete]}
     				{
     				    CurrentAction:Set["Idle..."]
-    					tempvar:Set[40]
+    					gRtnCtr:Set[40]
     				}
-    			    ;elseif (${Return} > 0)
-    			    ;    tempvar:Set[${Return}]
-
+    				
     				if !${Me.AutoAttackOn} && ${AutoMelee}
     					EQ2Execute /toggleautoattack
 
@@ -1082,7 +1081,7 @@ function Combat()
     					}
     				}
     			}
-    			while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+    			while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
     		}
 
 			;;;;
@@ -1090,7 +1089,7 @@ function Combat()
 			;;;;
 			if (${UseCustomRoutines} && ${Mob.ValidActor[${KillTarget}]})
 		    {
-    		    tempvar:Set[1]
+    		    gRtnCtr:Set[1]
     		    do
     		    {
     				call ProcessTriggers
@@ -1126,14 +1125,12 @@ function Combat()
     					}
     				}
 
-    				call Custom__Combat_Routine ${tempvar}
+    				call Custom__Combat_Routine ${gRtnCtr}
     				if ${Return.Equal[CombatComplete]}
     				{
     				    CurrentAction:Set["Idle..."]
-    				    tempvar:Set[40]
+    				    gRtnCtr:Set[40]
     				}
-    			    ;elseif (${Return} > 0)
-    			    ;    tempvar:Set[${Return}]
 
     				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
     				{
@@ -1161,7 +1158,7 @@ function Combat()
     					}
     				}
     		    }
-		        while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+		        while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
 		    }
 			;;;; END Combat_Routine Loop ;;;;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1224,31 +1221,31 @@ function Combat()
 	avoidhate:Set[FALSE]
 	checkadds:Set[FALSE]
 
-	tempvar:Set[1]
+	gRtnCtr:Set[1]
 	do
 	{
-		call Post_Combat_Routine ${tempvar}
+		call Post_Combat_Routine ${gRtnCtr}
 		if ${Return.Equal[PostCombatRoutineComplete]}
 		{
 		    CurrentAction:Set["Idle..."]
-			tempvar:Set[20]
+			gRtnCtr:Set[20]
 		}
 	}
-	while ${tempvar:Inc}<=20
+	while ${gRtnCtr:Inc}<=20
 
 	if ${UseCustomRoutines}
 	{
-    	tempvar:Set[1]
+    	gRtnCtr:Set[1]
     	do
     	{
-    		call Custom__Post_Combat_Routine ${tempvar}
+    		call Custom__Post_Combat_Routine ${gRtnCtr}
     		if ${Return.Equal[PostCombatRoutineComplete]}
     		{
     		    CurrentAction:Set["Idle..."]
-    			tempvar:Set[20]
+    			gRtnCtr:Set[20]
     		}
     	}
-    	while ${tempvar:Inc}<=20
+    	while ${gRtnCtr:Inc}<=20	
     }
 
 	if ${Me.AutoAttackOn}
@@ -1711,10 +1708,10 @@ function Pull(string npcclass)
 			}
 
 
-			;echo "DEUBG: Checking LOS/Collision"
 			wait 2
-		    if ${PathType} > 0
+		    if (${PathType} > 0 && !${PullType.Equal[Pet Pull]})
 		    {
+		        ;echo "DEUBG: Checking LOS/Collision"
     			if ${Target.CheckCollision}
     			{
         		    if (!${Me.TargetLOS})
@@ -2431,7 +2428,7 @@ function IamDead(string Line)
 		do
 		{
 			wipe:Set[1]
-			wipegroup:Set[1]
+			wipegroup:Set[0]
 			do
 			{
 				if ${Me.Group[${wipegroup}](exists)} && ${Me.Group[${wipegroup}].ToActor.IsDead}
@@ -3250,7 +3247,7 @@ objectdef ActorCheck
 							return TRUE
 					}
 			}
-			while ${tempvar:Inc}<=${Me.GroupCount}
+			while ${tempvar:Inc}<${Me.GroupCount}
 
 			; Check if mob is aggro on raid or pet
 			if ${Me.InRaid}
@@ -3379,13 +3376,13 @@ objectdef ActorCheck
 		if (${Me.GroupCount} > 1)
 		{
 			;echo Check if mob is a pet of my group
-			tempvar:Set[1]
+			tempvar:Set[0]
 			do
 			{
 				if (${Me.Group[${tempvar}](exists)} && ${actorid} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
             		return TRUE
 			}
-			while ${tempvar:Inc}<=${Me.GroupCount}
+			while ${tempvar:Inc}<${Me.GroupCount}
 		}
 
 		;echo Check if mob is a pet of my raid
@@ -3646,7 +3643,7 @@ objectdef EQ2BotObj
 
 	member:int ProtectHealer()
 	{
-		variable int tempvar=1
+		variable int tempvar=0
 
 		do
 		{
@@ -3706,7 +3703,7 @@ objectdef EQ2BotObj
 		}
 
 		grpcnt:Set[${Me.GroupCount}]
-		tempgrp:Set[1]
+		tempgrp:Set[0]
 		do
 		{
 			switch ${Me.Group[${tempgrp}].Class}
@@ -3862,12 +3859,10 @@ objectdef EQ2BotObj
 
 	member:bool PriestPower()
 	{
-		variable int tempvar=1
+		variable int tempvar=0
 
 		if !${CheckPriestPower}
-		{
 			return TRUE
-		}
 
 		do
 		{
@@ -3940,12 +3935,14 @@ function CheckAbilities(string class)
 			}
 			else
 			{
+			    ;echo "DEBUG: tempnme: ${tempnme}"
 				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 			}
 		}
 		else
 		{
+		    ;echo "DEBUG: tempnme: ${tempnme}"
 			;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 		}
