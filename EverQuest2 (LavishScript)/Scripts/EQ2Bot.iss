@@ -232,7 +232,6 @@ variable int PathType
 
 function main()
 {
-	;ext -require isxeq2
 	variable int tempvar
 	variable int tempvar1
 	variable int tempvar2
@@ -489,6 +488,7 @@ function main()
 					if ${Mob.Target[${KillTarget}]}
 					{
 						tempvar:Set[40]
+						CurrentAction:Set["Idle..."]
 						break
 					}
 				}
@@ -501,6 +501,7 @@ function main()
 				{
 					; end after this round
 					tempvar:Set[40]
+					CurrentAction:Set["Idle..."]
 					break
 				}
 
@@ -523,6 +524,7 @@ function main()
     					if ${Mob.Target[${KillTarget}]}
     					{
     						tempvar:Set[40]
+    						CurrentAction:Set["Idle..."]
     						break
     					}
     				}
@@ -531,6 +533,7 @@ function main()
     				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
     				{
     					tempvar:Set[40]
+    					CurrentAction:Set["Idle..."]
     					break
     				}  
     		    }
@@ -879,7 +882,7 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	if ${Me.IsMoving} && !${castwhilemoving}
 		return
 
-	CurrentAction:Set[Casting ${spell}]
+	CurrentAction:Set[Casting '${spell}']
 	
     ;; Disallow some abilities that are named the same as crafting abilities. 
     ;; 1. Agitate (CraftingID: 601887089 -- Fury Spell ID: 1287322154)
@@ -1001,9 +1004,11 @@ function Combat()
     				call Combat_Routine ${tempvar}
     				if ${Return.Equal[CombatComplete]}
     				{
-    					; end loop after this round
+    				    CurrentAction:Set["Idle..."]
     					tempvar:Set[40]
     				}
+    			    elseif (${Return} > 0)
+    			        tempvar:Set[${Return}]
     
     				if !${Me.AutoAttackOn} && ${AutoMelee}
     					EQ2Execute /toggleautoattack
@@ -1124,9 +1129,11 @@ function Combat()
     				call Custom__Combat_Routine ${tempvar}
     				if ${Return.Equal[CombatComplete]}
     				{
-    					; end loop after this round
-    					tempvar:Set[40]
+    				    CurrentAction:Set["Idle..."]
+    				    tempvar:Set[40]
     				}
+    			    elseif (${Return} > 0)
+    			        tempvar:Set[${Return}]
     				
     				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
     				{
@@ -1222,7 +1229,10 @@ function Combat()
 	{
 		call Post_Combat_Routine ${tempvar}
 		if ${Return.Equal[PostCombatRoutineComplete]}
+		{
+		    CurrentAction:Set["Idle..."]
 			tempvar:Set[20]
+		}
 	}
 	while ${tempvar:Inc}<=20
 	
@@ -1233,7 +1243,10 @@ function Combat()
     	{
     		call Custom__Post_Combat_Routine ${tempvar}
     		if ${Return.Equal[PostCombatRoutineComplete]}
+    		{
+    		    CurrentAction:Set["Idle..."]
     			tempvar:Set[20]
+    		}
     	}
     	while ${tempvar:Inc}<=20	
     }
@@ -2640,7 +2653,10 @@ function CheckMTAggro()
 
 function ScanAdds()
 { 
-    variable int tcount=2
+    ;;; I want to remove this (Amadeus)
+    return
+    
+	variable int tcount=2
 	variable float X
 	variable float Z
 
