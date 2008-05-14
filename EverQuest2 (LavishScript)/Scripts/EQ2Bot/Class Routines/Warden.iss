@@ -434,7 +434,7 @@ function Combat_Routine(int xAction)
 						if ${Return.Equal[OK]}
 						{
 							if ${UseCAs}
-								call CastSpellRange 385 387 1 0 ${KillTarget}
+								call CastSpellRange 385 386 1 0 ${KillTarget}
 							else
 								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 						}
@@ -451,7 +451,7 @@ function Combat_Routine(int xAction)
 						if ${Return.Equal[OK]}
 						{
 							if ${UseCAs}
-								call CastSpellRange 388 0 1 0 ${KillTarget} 0 0 1
+								call CastSpellRange 389 0 1 0 ${KillTarget} 0 0 1
 							else
 								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 						}
@@ -491,7 +491,7 @@ function Combat_Routine(int xAction)
 						if ${Return.Equal[OK]}
 						{
 							if ${UseCAs}
-								call CastSpellRange 389 0 1 0 ${KillTarget} 0 0 1
+								call CastSpellRange 387 0 1 0 ${KillTarget} 0 0 1
 							else
 								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 						}
