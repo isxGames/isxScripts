@@ -1015,6 +1015,12 @@ function Combat()
     				if !${Me.AutoAttackOn} && ${AutoMelee}
     					EQ2Execute /toggleautoattack
 
+    				if ${Actor[id,${KillTarget}].IsDead} || ${Actor[id,${KillTarget}].Health}<0
+    				{
+    					EQ2Execute /target_none
+    					break
+    				}
+
     				if ${AutoMelee} && !${MainTank}
     				{
     					;check valid rear position
@@ -1064,12 +1070,6 @@ function Combat()
     						Me.Inventory[ExactName,ManaStone]:Use
     						mstimer:Set[${Time.Timestamp}]
     					}
-    				}
-
-    				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-    				{
-    					EQ2Execute /target_none
-    					break
     				}
 
     				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
@@ -1210,14 +1210,11 @@ function Combat()
 				    {
 				        if ${KillTarget} != ${AggroMob}
 				        {
-				            if ${KillTarget} != ${AggroMob}
-    				        {
-            				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
-            				    KillTarget:Set[${AggroMob}]
-            	            }
-        					target ${AggroMob}
-        					ContinueCombat:Set[TRUE]
-        				}
+        				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
+        				    KillTarget:Set[${AggroMob}]
+        	            }
+    					target ${AggroMob}
+    					ContinueCombat:Set[TRUE]
     				}
 				}
 			}
