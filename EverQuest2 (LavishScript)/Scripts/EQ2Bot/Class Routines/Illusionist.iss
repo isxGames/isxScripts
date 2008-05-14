@@ -449,7 +449,7 @@ function Combat_Routine(int xAction)
 	declare spellsused int local
 	spellsused:Set[0]
 
-	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction}]
+	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -465,7 +465,7 @@ function Combat_Routine(int xAction)
 	if ${MezzMode}
 		call Mezmerise_Targets
 
-    if ${Me.Pet(exists)} && !${Me.PetInCombatMode}
+    if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
     	call PetAttack
 
 	call CheckHeals
@@ -498,7 +498,7 @@ function Combat_Routine(int xAction)
 	}
 	
     ;; Melee Debuff -- only for Epic mobs for now
-	if ${Target.IsEpic}
+	if ${Actor[id,${KillTarget}].IsEpic}
 	{
     	if ${Me.Ability[${SpellType[50]}](exists)}
     	{
@@ -508,7 +508,7 @@ function Combat_Routine(int xAction)
     }
 
     ;; If Target is Epic, be sure that the Daze Debuff is being used as often as possible.  (This is the slow casting Nuke.)
-	if ${Target.IsEpic}
+	if ${Actor[id,${KillTarget}].IsEpic}
 	{
     	if ${Me.Ability[${SpellType[61]}](exists)}
     	{
@@ -537,27 +537,33 @@ function Combat_Routine(int xAction)
         ;; Single Target DoTs
         case Despair
         case MindDoT
-            if ${Target.IsSolo} && ${Target.Health} < 30
+            if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 5
                 break
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			{
+			    if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			        call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
 			break
         
         ;; Group Encounter DoTs
         case Shower
         case Ego
-            if ${Target.IsSolo} && ${Target.Health} < 40
+            if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 30
                 break
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			{
+			    if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			        call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
 			break
         
 		case Master_Strike
-            if ${Target.IsSolo} && ${Target.Health} < 10
+            if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 10
                 break		
 		    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
 		    ;;;;;;;;;;
-		    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
+		    if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
 		        break
 		    ;;;;;;;;;;;				    
 			if ${Me.Ability["Master's Strike"].IsReady}
@@ -574,7 +580,7 @@ function Combat_Routine(int xAction)
 			break        
         
         case Constructs
-            if ${Target.IsSolo} && ${Target.Health} < 40
+            if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 30
             {
                 ;; if we are in DPS Mode, then skip past Stuns
                 ;if ${DPSMode}
@@ -592,7 +598,9 @@ function Combat_Routine(int xAction)
 
         case AEStun
         case Stun
-            if ${Target.IsSolo} && ${Target.Health} < 40 && ${Me.ToActor.Health} > 50
+            if ${DPSMode}
+                break
+            if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
                 break
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 			{
@@ -606,15 +614,15 @@ function Combat_Routine(int xAction)
         case Focus
         case Savante   
         case Gaze
-            if ${DPSMode} && ${Target.IsSolo}
+            if ${DPSMode} && ${Actor[id,${KillTarget}].IsSolo}
                 return CombatComplete
-            if ${Target.IsSolo} && ${Me.Group} > 1
+            if ${Actor[id,${KillTarget}].IsSolo} && ${Me.Group} > 1
                 return CombatComplete
-            elseif ${Target.IsSolo} && ${Target.Health} < 70
+            elseif ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 70
                 return CombatComplete
-            elseif ${Target.IsHeroic} && ${Target.Health} < 50
+            elseif ${Actor[id,${KillTarget}].IsHeroic} && ${Actor[id,${KillTarget}].Health} < 50
                 return CombatComplete
-            elseif ${Target.IsEpic} && ${Target.Health} < 15
+            elseif ${Actor[id,${KillTarget}].IsEpic} && ${Actor[id,${KillTarget}].Health} < 15
                 return CombatComplete                
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 			    call CastSpellRange ${SpellRange[${xAction},1]}
