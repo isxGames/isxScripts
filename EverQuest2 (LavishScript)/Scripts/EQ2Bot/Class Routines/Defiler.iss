@@ -842,7 +842,7 @@ function CureMe()
 	declare AffCnt int 0
 
 	;check if we are not in control, and use control cure if needed
-	if !${Me.ToActor.CanTurn} || !${Me.ToActor.IsRooted}
+	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
 		call CastSpellRange 326
 
 	if ${Me.Cursed}
@@ -1001,7 +1001,7 @@ function CheckHeals()
 	}
 
 	;Persist wards if selected.
-	if ${KeepWardUp} && ${Me.InCombatMode}
+	if ${KeepWardUp} && ${Me.ToActor.InCombatMode}
 	{
 		if ${MainTankInGroup}
 			call CastSpellRange 15
