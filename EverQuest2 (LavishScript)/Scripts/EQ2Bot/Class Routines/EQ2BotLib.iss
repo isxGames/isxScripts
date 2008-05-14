@@ -630,26 +630,20 @@ function CheckGroupHealth(int MinHealth)
 	{
 		;check groupmates health
 		if ${Me.Group[${counter}].ToActor.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Health} > 0
-		{
 			Return FALSE
-		}
 
 		;check health of summoner pets
 		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]}
 		{
 			if ${Me.Group[${counter}].ToActor.Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Pet.Health} > 0
-			{
 				Return FALSE
-			}
 		}
 
 	}
 	while ${counter:Inc} < ${Me.GroupCount}
 
 	if ${Me.ToActor.Health} < ${MinHealth}
-	{
 		Return FALSE
-	}
 
 	Return TRUE
 }
@@ -777,7 +771,7 @@ function UseCrystallizedSpirit(int Health)
 	declare grpheal int local 0
 
 	grpcnt:Set[${Me.GroupCount}]
-	temphl:Set[1]
+	temphl:Set[0]
 
 	if ${Me.Inventory[Crystallized Spirit].IsReady}
 	{
