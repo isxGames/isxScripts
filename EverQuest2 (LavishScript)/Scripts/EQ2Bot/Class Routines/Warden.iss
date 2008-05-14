@@ -914,6 +914,9 @@ function CureMe()
 {
 	declare CureCnt int local 0
 
+	if !${Me.Afflicted}
+		return
+
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 

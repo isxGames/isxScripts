@@ -1203,6 +1203,9 @@ function CureMe()
 {
 	declare CureCnt int local 0
 
+	if !${Me.Afflicted}
+		return
+
 	;check if we are not in control, and use control cure if needed
 	if !${Me.ToActor.CanTurn} || !${Me.ToActor.IsRooted}
 		call CastSpellRange 289
