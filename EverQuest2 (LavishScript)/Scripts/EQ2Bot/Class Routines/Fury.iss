@@ -205,7 +205,7 @@ function Combat_Init()
 	MobHealth[4,1]:Set[5]
 	MobHealth[4,2]:Set[100]
 	Power[4,1]:Set[30]
-	Power4,2]:Set[100]
+	Power[4,2]:Set[100]
 	Health[4,1]:Set[51]
 	Health[4,2]:Set[100]
 	SpellRange[4,1]:Set[90]
