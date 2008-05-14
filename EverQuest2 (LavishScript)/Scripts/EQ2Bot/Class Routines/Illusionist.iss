@@ -491,7 +491,7 @@ function Combat_Routine(int xAction)
     	    if (${Me.Ability[${SpellType[396]}].IsReady})
     	    {
     		    call CastSpellRange 396 0 0 0 ${KillTarget}
-				if ${Me.AutoAttackOn} && !${AutoMelee}
+				if ${Me.AutoAttackOn} && ${MezzMode}
 					EQ2Execute /toggleautoattack	
     		}
     	}
