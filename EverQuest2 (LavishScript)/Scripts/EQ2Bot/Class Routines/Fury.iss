@@ -505,6 +505,13 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
+	
+	
+	if !${Actor[id,${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+	    return CombatComplete    
+    
+	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]    
+    
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
