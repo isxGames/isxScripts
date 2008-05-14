@@ -1007,8 +1007,8 @@ function Combat()
     				    CurrentAction:Set["Idle..."]
     					tempvar:Set[40]
     				}
-    			    elseif (${Return} > 0)
-    			        tempvar:Set[${Return}]
+    			    ;elseif (${Return} > 0)
+    			    ;    tempvar:Set[${Return}]
     
     				if !${Me.AutoAttackOn} && ${AutoMelee}
     					EQ2Execute /toggleautoattack
@@ -1132,8 +1132,8 @@ function Combat()
     				    CurrentAction:Set["Idle..."]
     				    tempvar:Set[40]
     				}
-    			    elseif (${Return} > 0)
-    			        tempvar:Set[${Return}]
+    			    ;elseif (${Return} > 0)
+    			    ;    tempvar:Set[${Return}]
     				
     				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
     				{
