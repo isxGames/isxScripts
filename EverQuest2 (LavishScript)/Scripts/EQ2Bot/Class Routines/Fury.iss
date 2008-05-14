@@ -285,10 +285,10 @@ function Buff_Routine(int xAction)
 	ExecuteAtom CheckStuck
 
 
-	if ${GroupWiped}
+	if ${Groupwiped}
 	{
-		call HandleGroupWiped
-		GroupWiped:Set[FALSE]
+		Call HandleGroupWiped
+		Groupwiped:Set[False]
 	}
 
 	; Pass out feathers on initial script startup
@@ -1134,20 +1134,20 @@ function HealMT(int MainTankID, int MTInMyGroup)
 	; Use regens first, then Patch Heals
 	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
 	{
-		if ${Me.Ability[${SpellType[15]}].IsReady} && ${MTInMyGroup}
+		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup} && ${EpicMode}
 		{
 			call CastSpellRange 15
 			if ${EpicMode}
 				call CheckCures
 		}
-		else
+		elseif ${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Maintained[${SpellType[7]}].Target.ID}==${Actor[${MainTankPC}].ID}
 			call CastSpellRange 7 0 0 0 ${MainTankID}
 
 		if ${Me.Ability[${SpellType[7]}].IsReady} && ${EpicMode}
 			call CastSpellRange 7 0 0 0 ${MainTankID}
 	}
 
-	if ${Actor[${MainTankID}].Health}<70 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+	if ${Actor[${MainTankID}].Health}<60 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 	{
 		call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
@@ -1201,7 +1201,7 @@ function CureGroupMember(int gMember)
 
 function CureMe()
 {
-	declare CureCnt int 0
+	declare CureCnt int local 0
 
 	;check if we are not in control, and use control cure if needed
 	if !${Me.ToActor.CanTurn} || !${Me.ToActor.IsRooted}
@@ -1213,12 +1213,12 @@ function CureMe()
 	do
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
-		CureCnt:Inc
+
 
 		if ${Me.ToActor.Health}<30 && ${EpicMode}
 			call HealMe
 	}
-	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt}<5
+	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<5
 }
 
 function CheckCures()

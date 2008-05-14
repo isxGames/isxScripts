@@ -785,7 +785,7 @@ function CheckCures()
 		if ${Actor[pc,ExactName,${MainTankPC}].Health}<50
 		{
 			if ${Actor[pc,ExactName,${MainTankPC}].ID}==${Me.ID}
-				call HealME
+				call HealMe
 			else
 				call HealMT
 		}
@@ -1001,7 +1001,7 @@ function CheckHeals()
 	}
 
 	;Persist wards if selected.
-	if ${KeepWardUp} && ${Me.ToActor.InCombatMode}
+	if ${KeepWardUp} && ${Me.InCombatMode}
 	{
 		if ${MainTankInGroup}
 			call CastSpellRange 15
@@ -1030,7 +1030,7 @@ function CheckHeals()
 	}
 }
 
-function HealME()
+function HealMe()
 {
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}

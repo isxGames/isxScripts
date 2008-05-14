@@ -1,5 +1,11 @@
 Revision History
 ----------------
+20080514 (Pygar)
+  * Adjusted Pull routine to use MARange value from UI rather than hard coded distance checks.  This allows the user
+    to chose to wait for the mob to get to 5 distance or 25 distance before starting combat routine. A benefit for
+    classes that charge to the mob when combat starts.  Hard coded 20 value caused some issues for melee types. 
+    Adjust this range in your UI accordingly.  Also, we should make these sliders...
+
 20080512 (Amadeus)
   * EQ2Bot now supports custom routines per character.  Basically, you can create an MYNAME.iss file that goes in 
     /Scripts/EQ2Bot/Character Config/ that has custom versions of each of the functions included in the class files.
