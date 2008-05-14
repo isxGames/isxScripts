@@ -397,7 +397,7 @@ atom AutoFollowTank()
 		if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
 		{
 			;echo "DEBUG-AutoFollowTank(): Following...."
-			if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})            {
+			if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})
 			{
 				if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
 				{
