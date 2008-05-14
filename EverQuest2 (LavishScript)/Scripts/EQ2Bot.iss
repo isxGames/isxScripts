@@ -467,8 +467,11 @@ function main()
     					{
     					    if ${Mob.ValidActor[${AggroMob}]}
     					    {
-        					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-        					    KillTarget:Set[${AggroMob}]
+    					        if ${KillTarget} != ${AggroMob}
+    					        {
+            					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+            					    KillTarget:Set[${AggroMob}]
+            					}
         						target ${AggroMob}
         						call Combat
         					}
@@ -1205,10 +1208,16 @@ function Combat()
 				{
 				    if ${Mob.ValidActor[${AggroMob}]}
 				    {
-    				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
-    				    KillTarget:Set[${AggroMob}]
-    					target ${AggroMob}
-    					ContinueCombat:Set[TRUE]
+				        if ${KillTarget} != ${AggroMob}
+				        {
+				            if ${KillTarget} != ${AggroMob}
+    				        {
+            				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
+            				    KillTarget:Set[${AggroMob}]
+            	            }
+        					target ${AggroMob}
+        					ContinueCombat:Set[TRUE]
+        				}
     				}
 				}
 			}
