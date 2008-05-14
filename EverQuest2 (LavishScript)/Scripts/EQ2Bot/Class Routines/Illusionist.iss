@@ -115,20 +115,14 @@ function Combat_Init()
     
     ;; Stifle over time, and NUKE
 	Action[1]:Set[Silence]
-	MobHealth[1,1]:Set[1]
-	MobHealth[1,2]:Set[100]
 	SpellRange[1,1]:Set[260]
  
     ;; Mental DOT and arcane resistance debuff (fast casting)
 	Action[2]:Set[Despair]
-	MobHealth[2,1]:Set[1]
-	MobHealth[2,2]:Set[100]
 	SpellRange[2,1]:Set[80]
 
     ;; Mental DOT 
 	Action[3]:Set[MindDoT]
-	MobHealth[3,1]:Set[1]
-	MobHealth[3,2]:Set[100]
 	SpellRange[3,1]:Set[70]
 
     ;; Fast casting NUKE
@@ -141,8 +135,6 @@ function Combat_Init()
 
     ;; Slow recast, Encounter DOT
 	Action[6]:Set[Shower]
-	MobHealth[6,1]:Set[30]
-	MobHealth[6,2]:Set[100]
 	SpellRange[6,1]:Set[388]
 
     ;; Fast casting NUKE (2nd time)
@@ -151,8 +143,6 @@ function Combat_Init()
 
     ;; Encounter DOT   (RENAME)
 	Action[8]:Set[Ego]
-	MobHealth[8,1]:Set[30]
-	MobHealth[8,2]:Set[100]	
 	SpellRange[8,2]:Set[91]
 
     ;; Master Strike
@@ -160,8 +150,6 @@ function Combat_Init()
 
     ;; Construct
 	Action[12]:Set[Constructs]
-	MobHealth[12,1]:Set[30]
-	MobHealth[12,2]:Set[100]
 	SpellRange[12,1]:Set[51]
 
 
@@ -461,7 +449,7 @@ function Combat_Routine(int xAction)
 	declare spellsused int local
 	spellsused:Set[0]
 
-	CurrentAction:Set[Combat ${xAction}]
+	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction}]
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -477,7 +465,8 @@ function Combat_Routine(int xAction)
 	if ${MezzMode}
 		call Mezmerise_Targets
 
-	call PetAttack
+    if ${Me.Pet(exists)} && !${Me.PetInCombatMode}
+    	call PetAttack
 
 	call CheckHeals
 
@@ -542,11 +531,7 @@ function Combat_Routine(int xAction)
         case Nuke
         case NukeDaze      
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
+			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 			
         ;; Single Target DoTs
@@ -555,11 +540,7 @@ function Combat_Routine(int xAction)
             if ${Target.IsSolo} && ${Target.Health} < 30
                 break
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
+			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
         
         ;; Group Encounter DoTs
@@ -568,11 +549,7 @@ function Combat_Routine(int xAction)
             if ${Target.IsSolo} && ${Target.Health} < 40
                 break
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
+			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
         
 		case Master_Strike
@@ -600,19 +577,17 @@ function Combat_Routine(int xAction)
             if ${Target.IsSolo} && ${Target.Health} < 40
             {
                 ;; if we are in DPS Mode, then skip past Stuns
-                if ${DPSMode}
-                    return 15
+                ;if ${DPSMode}
+                ;    return 15
                 break
             }
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
+			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+
+
             ;; if we are in DPS Mode, then skip past Stuns
-            if ${DPSMode}
-                return 15
+            ;if ${DPSMode}
+            ;    return 15
             break			
 
         case AEStun
