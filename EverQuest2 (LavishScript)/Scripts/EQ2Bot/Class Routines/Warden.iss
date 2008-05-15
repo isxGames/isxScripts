@@ -752,7 +752,8 @@ function HealMe()
 	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
 		Me.Inventory[Crystallized Spirit]:Use
 
-	call CastSpellRange 331
+	if ${Me.ToActor.Health}<75
+		call CastSpellRange 331
 
 	if ${Me.ToActor.Health}<25
 	{
@@ -839,7 +840,6 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
 
-	call CastSpellRange 331
 }
 
 function GroupHeal()
@@ -852,6 +852,7 @@ function GroupHeal()
 	else
 		call CastSpellRange 15
 
+	call CastSpellRange 331
 	call CastSpellRange 330
 }
 
@@ -902,7 +903,7 @@ function CureMe()
 	do
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
-
+		wait 2
 
 		if ${Me.ToActor.Health}<30 && ${EpicMode}
 			call HealMe
