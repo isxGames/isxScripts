@@ -1826,6 +1826,7 @@ function Pull(string npcclass)
 				}
 				else
 				{
+				    face
 				    CurrentAction:Set[Sending Pet in for attack...]    
 					;echo "EQ2Bot-Pull():: Sending Pet in for attack..."
 					variable int StartTime = ${Script.RunningTime}
@@ -1920,17 +1921,17 @@ function Pull(string npcclass)
                     StartTime:Set[${Script.RunningTime}]
 					do
 					{
-					    if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 60000)
+					    if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 120000)
 					    {
-					        CurrentAction:Set["Pet did not finish a pull within 60 seconds....moving on."] 
-					        echo "EQ2Bot-Pull():: Pet did not finish a pull within 60 seconds....moving on."
+					        CurrentAction:Set["Pet did not finish a pull within 2 minutes....moving on."] 
+					        echo "EQ2Bot-Pull():: Pet did not finish a pull within 2 minutes....moving on."
 					        eq2execute /pet backoff
 					        eq2execute target_none
 					        break 
 					    }					    
 						wait 5
-						CurrentAction:Set["Waiting for Mob (${Target.Distance.Precision[1]}m)"] 
-						;echo "EQ2Bot-Pull():: Waiting for Mob (${Target.Distance.Precision[1]}m)"
+						CurrentAction:Set["Waiting for ${Target} (${Target.Distance.Precision[1]}m)"] 
+						;echo "EQ2Bot-Pull():: Waiting for ${Target} (${Target.Distance.Precision[1]}m)"
 
                 		if ${MainTank}
                 		{
@@ -1962,8 +1963,8 @@ function Pull(string npcclass)
     					face
     				    wait 1
     					eq2execute /pet attack
-    				    CurrentAction:Set["Mob in camp -- starting combat."] 
-    				    echo "EQ2Bot-Pull():: Mob in camp -- starting combat."
+    				    CurrentAction:Set["${Target} in camp -- starting combat."] 
+    				    echo "EQ2Bot-Pull():: ${Target} in camp -- starting combat."
     				    KillTarget:Set[${Target.ID}]
 	    				engagetarget:Set[TRUE]
     					return ${Target.ID}
@@ -2733,7 +2734,7 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-	variable int tcount=2
+    variable int tcount=2
 	variable float X
 	variable float Z
 
