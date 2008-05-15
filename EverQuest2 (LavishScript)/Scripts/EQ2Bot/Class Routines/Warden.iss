@@ -916,6 +916,8 @@ function CheckCures()
 	declare temphl int local 1
 	declare grpcure int local 0
 
+	grpcnt:Set[${Me.GroupCount}]
+
 	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>3
 	{
