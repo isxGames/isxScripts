@@ -251,6 +251,7 @@ function main()
 	;Script:Squelch
 	;Script:EnableProfiling
 
+    CurrentAction:Set["* Initializing EQ2Bot..."]
 	echo "---------"
 	echo "* Initializing EQ2Bot..."
 
@@ -274,7 +275,8 @@ function main()
 	echo "...Initialization Complete."
 	echo "* EQ2Bot Ready!"
 	echo "---------"
-
+    CurrentAction:Set["Idle..."]
+    
 	do
 	{
 		waitframe
@@ -469,6 +471,7 @@ function main()
     					    {
     					        if ${KillTarget} != ${AggroMob}
     					        {
+    					            CurrentAction:Set["Targetting Nearest Aggro Mob"]
             					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
             					    KillTarget:Set[${AggroMob}]
             					}
@@ -689,6 +692,7 @@ function main()
 					{
 					    if ${Mob.ValidActor[${AgressiveNPC}]}
 					    {
+					        CurrentAction:Set["Targetting Nearest Aggro Mob"] 
     					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
     					    KillTarget:Set[${AgressiveNPC}]
     						target ${AgressiveNPC}
@@ -1210,6 +1214,7 @@ function Combat()
 				    {
 				        if ${KillTarget} != ${AggroMob}
 				        {
+				            CurrentAction:Set["Targetting Nearest Aggro Mob and continuing combat"] 
         				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
         				    KillTarget:Set[${AggroMob}]
         	            }
@@ -1600,6 +1605,7 @@ function Pull(string npcclass)
 	variable bool aggrogrp=FALSE
 	variable int ThisActorID
 	variable int ThisActorTargetID
+	variable bool bContinue=FALSE
 
     ;; This variable must be set before anything is done in this function
 	engagetarget:Set[FALSE]
@@ -1620,6 +1626,8 @@ function Pull(string npcclass)
 	    if !${Me.Pet(exists)}
 	        return 0
 	}
+
+    CurrentAction:Set["Beginning pull routine..."]
 
     ;; Clear the TempDoNotPullList every 5 minutes
     if (${TempDoNotPullListTimer} < ${Math.Calc64[${Time.Timestamp}-300]})
@@ -1717,6 +1725,7 @@ function Pull(string npcclass)
 			wait 2
 		    if (${PathType} > 0 && !${PullType.Equal[Pet Pull]})
 		    {
+		        CurrentAction:Set["Checking LOS/Collision..."]
 		        ;echo "DEUBG: Checking LOS/Collision"
     			if ${Target.CheckCollision}
     			{
@@ -1766,6 +1775,7 @@ function Pull(string npcclass)
             ;echo "DEUBG: Pulling! (PullType: ${PullType})"
 			if ${PullType.Equal[Bow Pull]} && ${Target.Distance}>6
 			{
+			    CurrentAction:Set[Pulling ${Target} (with bow)]    
 				; Use Bow to pull
 				EQ2Execute /togglerangedattack
 				wait 50 ${CustomActor[${tcount}].InCombatMode}
@@ -1792,6 +1802,9 @@ function Pull(string npcclass)
 			}
 			elseif ${PullType.Equal[Pet Pull]}
 			{
+			    CurrentAction:Set[Pulling ${Target} (with pet)]    
+			    variable int AggroMob
+			    
 			    ;; This should not happen...but just in case
 			    if !${Target(exists)}
 			        continue
@@ -1807,23 +1820,47 @@ function Pull(string npcclass)
             	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
 
             		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+            		eq2execute /pet backoff
             		eq2execute target_none
 					continue
 				}
 				else
 				{
-					echo "EQ2Bot-Pull():: Sending Pet in for attack..."
+				    CurrentAction:Set[Sending Pet in for attack...]    
+					;echo "EQ2Bot-Pull():: Sending Pet in for attack..."
+					variable int StartTime = ${Script.RunningTime}
 					do
 					{
+					    if ${bContinue}
+					    {
+					        bContinue:Set[FALSE]
+					        continue
+					    }
+					        
+					    if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 20000)
+					    {
+					        echo "EQ2Bot-Pull():: Pet did not finish a pull within 20 seconds....moving on."
+					        eq2execute /pet backoff
+        					wait 1
+                    		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (Timeout while pulling)"
+                    	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
+        
+                    		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+                    		eq2execute target_none
+                    		bContinue:Set[TRUE]					        
+					        continue 
+					    }
 						Wait 5
-						echo "EQ2Bot-Pull():: Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"
+						CurrentAction:Set["Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"] 
+						;echo "EQ2Bot-Pull():: Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"
 
 
 						if !(${Target(exists)})
 						{
 							eq2execute /pet backoff
-							press ESC
-							break
+                    		eq2execute target_none
+                    		bContinue:Set[TRUE]					        
+					        continue 
 						}
 
 					    if !${Me.Pet(exists)}
@@ -1836,41 +1873,17 @@ function Pull(string npcclass)
 		  			        if ${Me.Pet.Target.Target.Name.Equal[${Me.Pet.Name}]}
     		  			        break
     		  			}
-					}
-					while !(${Target.Target(exists)})
-
-					if !${Target(exists)}
-					    continue
-					if !${Me.Pet(exists)}
-					{
-    				    echo "EQ2Bot-Pull():: Pet has died -- mob should be in camp soon (starting combat)"
-    				    KillTarget:Set[${Target.ID}]
-	    				engagetarget:Set[TRUE]
-	    				wait 5
-    					return ${Target.ID}
-    				}
-
-					wait 1
-					eq2execute /pet backoff
-					wait 25 !${Me.Pet.InCombatMode}
-					if ${Me.Pet.InCombatMode}
-					    eq2execute /pet backoff
-
-					do
-					{
-						wait 5
-						echo "EQ2Bot-Pull():: Waiting for Mob (${Target.Distance.Precision[1]}m)"
-
+    		  			
                 		if ${MainTank}
                 		{
                 		    if ${Mob.Detect}
                 		    {
-                		        variable int AggroMob
                 		        AggroMob:Set[${Mob.NearestAggro}]
                 				if ${AggroMob} > 0
                 				{
                 				    if ${Mob.ValidActor[${AggroMob}]}
                 				    {
+                				        CurrentAction:Set["Mob in camp -- starting combat."] 
                     				    echo "EQ2Bot-Pull(MainTank):: Mob in camp -- starting combat."
                     				    KillTarget:Set[${AggroMob}]
                     					target ${AggroMob}
@@ -1884,15 +1897,72 @@ function Pull(string npcclass)
                 			}
                 		}
 					}
-					while (${Target.Distance} > ${MARange})&&(${Target.Target(exists)})
+					while !(${Target.Target(exists)})
 
-					face
+					if !${Target(exists)}
+					    continue
+					if !${Me.Pet(exists)}
+					{
+					    CurrentAction:Set["Pet has died -- mob should be in camp soon (starting combat)"] 
+    				    echo "EQ2Bot-Pull():: Pet has died -- mob should be in camp soon (starting combat)"
+    				    KillTarget:Set[${Target.ID}]
+	    				engagetarget:Set[TRUE]
+	    				wait 5
+    					return ${Target.ID}
+    				}
+
 					wait 1
-					eq2execute /pet attack
+					eq2execute /pet backoff
+					wait 25 !${Me.Pet.InCombatMode}
+					if ${Me.Pet.InCombatMode}
+					    eq2execute /pet backoff
 
+                    StartTime:Set[${Script.RunningTime}]
+					do
+					{
+					    if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 60000)
+					    {
+					        CurrentAction:Set["Pet did not finish a pull within 60 seconds....moving on."] 
+					        echo "EQ2Bot-Pull():: Pet did not finish a pull within 60 seconds....moving on."
+					        eq2execute /pet backoff
+					        eq2execute target_none
+					        break 
+					    }					    
+						wait 5
+						CurrentAction:Set["Waiting for Mob (${Target.Distance.Precision[1]}m)"] 
+						;echo "EQ2Bot-Pull():: Waiting for Mob (${Target.Distance.Precision[1]}m)"
+
+                		if ${MainTank}
+                		{
+                		    if ${Mob.Detect}
+                		    {
+                		        AggroMob:Set[${Mob.NearestAggro}]
+                				if ${AggroMob} > 0
+                				{
+                				    if ${Mob.ValidActor[${AggroMob}]}
+                				    {
+                				        CurrentAction:Set["Mob in camp -- starting combat."] 
+                    				    echo "EQ2Bot-Pull(MainTank):: Mob in camp -- starting combat."
+                    				    KillTarget:Set[${AggroMob}]
+                    					target ${AggroMob}
+                    		            wait 1
+                    					face
+                    					wait 1
+                    					eq2execute /pet attack
+                                        return ${AggroMob}
+                                    }
+                				}
+                			}
+                		}
+					}
+    				while (((${Target.Distance} > ${MARange}) && (${Target.Target(exists)})) || !${Me.TargetLOS})
 
     				if ${Target(exists)}
     				{
+    					face
+    				    wait 1
+    					eq2execute /pet attack
+    				    CurrentAction:Set["Mob in camp -- starting combat."] 
     				    echo "EQ2Bot-Pull():: Mob in camp -- starting combat."
     				    KillTarget:Set[${Target.ID}]
 	    				engagetarget:Set[TRUE]
@@ -1906,6 +1976,7 @@ function Pull(string npcclass)
 			;;;; Otherwise, Using "PullSpell" ;;;;;;;;;;;;;
 
 			call CastSpell "${PullSpell}"
+			CurrentAction:Set["${Target} pulled using ${PullSpell}"] 
             ;echo "DEBUG: Pulled...waiting for mob to come within range"
 			do
 			{
@@ -1985,6 +2056,7 @@ function CheckLootNoMove()
 		}
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
+		    CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"] 
 			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
@@ -2021,6 +2093,7 @@ function CheckLoot()
 
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
+		    CurrentAction:Set[Looting ${CustomActor[${tcount}].Name} (Chest) -- Distance: ${CustomActor[${tcount}].Distance}]
 			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLoot()] -- Distance: ${CustomActor[${tcount}].Distance}"
 			if (${CustomActor[${tcount}].Distance} > 4)
 			{
@@ -2068,6 +2141,7 @@ function CheckLoot()
 		}
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
+		    CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
 			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"
 			if (${CustomActor[${tcount}].Distance} > 10)
 			{
@@ -2415,6 +2489,7 @@ function IamDead(string Line)
 
 	together:Set[1]
 
+    CurrentAction:Set["You have been killed"]
 	echo "You have been killed"
 
 	if ${Me.GroupCount}==1 && ${WipeRevive}
@@ -2449,6 +2524,7 @@ function IamDead(string Line)
 
 			if ${wipe}==${grpcnt}
 			{
+			        CurrentAction:Set["Everyone is dead, waiting 10 seconds to revive"]
 					echo "Everyone is dead, waiting 10 seconds to revive"
 					GroupWiped:Set[TRUE]
 					wait 100
@@ -2496,6 +2572,7 @@ function IamDead(string Line)
 					echo "Everyone is here"
 					if ${MainTank}
 					{
+					    CurrentAction:Set["I am Main Tank, waiting 60 seconds for group buffing"]
 						echo "I am Main Tank, waiting 60 seconds for group buffing"
 						wait 600
 					}
@@ -2656,8 +2733,6 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-
-
 	variable int tcount=2
 	variable float X
 	variable float Z
@@ -3168,6 +3243,21 @@ objectdef ActorCheck
 			;echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
 			return FALSE
 		}
+		
+		if ${Target.ID} == ${actorid}
+		{
+    		if !${Me.TargetLOS}
+    		{
+    		    ;echo "EQ2Bot-ValidActor():: No line of sight to ${Target}."
+    		    return FALSE
+    		}
+    		    
+    		if ${Target.Distance} > ${MARange}
+    		{
+    		    ;echo "EQ2Bot-ValidActor():: ${Target} is not within MARange (${MARange})"
+    		    return FALSE
+    		}
+    	}
 
 		return TRUE
 	}
