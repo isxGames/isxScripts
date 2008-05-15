@@ -1832,12 +1832,6 @@ function Pull(string npcclass)
 					variable int StartTime = ${Script.RunningTime}
 					do
 					{
-					    if ${bContinue}
-					    {
-					        bContinue:Set[FALSE]
-					        continue
-					    }
-					        
 					    if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 20000)
 					    {
 					        echo "EQ2Bot-Pull():: Pet did not finish a pull within 20 seconds....moving on."
@@ -1848,8 +1842,9 @@ function Pull(string npcclass)
         
                     		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
                     		eq2execute target_none
-                    		bContinue:Set[TRUE]					        
-					        continue 
+                    		bContinue:Set[TRUE]	
+                    		CurrentAction:Set["Timeout while pulling -- moving on..."]
+                    		break 
 					    }
 						Wait 5
 						CurrentAction:Set["Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"] 
@@ -1861,7 +1856,7 @@ function Pull(string npcclass)
 							eq2execute /pet backoff
                     		eq2execute target_none
                     		bContinue:Set[TRUE]					        
-					        continue 
+					        break 
 						}
 
 					    if !${Me.Pet(exists)}
@@ -1899,6 +1894,13 @@ function Pull(string npcclass)
                 		}
 					}
 					while !(${Target.Target(exists)})
+
+				    if ${bContinue}
+				    {
+				        bContinue:Set[FALSE]
+				        continue
+				    }
+
 
 					if !${Target(exists)}
 					    continue
