@@ -2656,8 +2656,7 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-    ;;; I want to remove this (Amadeus)
-    return
+
 
 	variable int tcount=2
 	variable float X
