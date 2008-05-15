@@ -499,12 +499,12 @@ function Combat_Routine(int xAction)
 	{
 		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
 		;;;;;;;;;;
-		if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-			break
-		;;;;;;;;;;;
-		Target ${KillTarget}
-		Me.Ability[Master's Strike]:Use
-		spellsused:Inc
+		if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
+		{
+			Target ${KillTarget}
+			Me.Ability[Master's Strike]:Use
+			spellsused:Inc
+		}
 	}
 	;;;; Stun
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[190]}].IsReady} && !${Me.Maintained[${SpellType[190]}](exists)}
@@ -532,7 +532,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 303
 
 	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
-	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady} && ${xAction}>10
+	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady}
 		call CastSpellRange 42
 
 	if ${ShardMode}
