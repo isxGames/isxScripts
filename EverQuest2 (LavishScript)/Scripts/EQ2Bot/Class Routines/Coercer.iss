@@ -1,9 +1,10 @@
 ;*************************************************************
 ;Coercer.iss
-;version 20070725a
-;by karye
-;updated by pygar
+;version 20080515a
+;by Pygar
 ;
+;20080515a Pygar
+; * Complete retuning for class revamp.
 ;20070725a (pygar)
 ; Updated weapon swapping changes
 ; Fixed clarity buff loop (cheesy fix, I know)
@@ -34,10 +35,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
-
+  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+  declare ClassFileVersion int script 20080515
+  ;;;;
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -53,7 +53,6 @@ function Class_Declaration()
 	declare BuffManaward bool script
 	declare DPSMode bool script 1
 	declare TSMode bool script 1
-	declare SprintMode bool script 1
 	declare StartHO bool script 1
 
 	declare CharmTarget int script
@@ -73,11 +72,9 @@ function Class_Declaration()
 	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
 	TSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTS,FALSE]}]
-	SprintMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSprint,FALSE]}]
 
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
-
 }
 
 function Buff_Init()
@@ -363,7 +360,6 @@ function Buff_Routine(int xAction)
 					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
 					}
-
 				}
 				while ${tempvar:Inc}<${Me.GroupCount}
 			}
@@ -377,13 +373,157 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	declare spellsused int local
+	declare spellthreshold int local
+
 	spellsused:Set[0]
+	spellthreshold:Set[3]
 
-	CurrentAction:Set[Combat ${xAction}]
-
-	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
+	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+	}
+
+	if ${MezzMode}
+	{
+		CurrentAction:Set[Combat Checking Mezzes]
+		call Mezmerise_Targets
+		spellthreshold:Set[1]
+	}
+
+	if ${Charm}
+	{
+		CurrentAction:Set[Combat Checking Charms]
+		call DoCharm
+	}
+
+	if ${TSMode}
+	{
+		CurrentAction:Set[Combat Checking ThoughtSnap]
+		call DoAmnesia
+	}
+
+	if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
+		call PetAttack
+
+	if !${DPSMode}
+	{
+		CurrentAction:Set[Combat Checking Cures]
+		call CheckHeals
+		spellthreshold:Set[5]
+	}
+
+	;;; AoE Checks
+	if ${Mob.Count}>1
+	{
+		if ${PBAoEMode}
+		{
+			call CastSpellRange 95 0 1 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${spellsused}<=${spellthreshold} && ${AoEMode}
+		{
+			call CastSpellRange 90 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${spellsused}<=${spellthreshold} && ${AoEMode}
+		{
+			call CastSpellRange 91 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}
+
+	;;; Screw spell loops, priority casting
+	;;;; Chronosiphon
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady}
+	{
+		call CastSpellRange 382 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Tashani
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[377]}].IsReady}
+	{
+		call CastSpellRange 377 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Mental Debuff
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}
+	{
+		call CastSpellRange 50 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Hostage
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
+	{
+		call CastSpellRange 71 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Lash
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
+	{
+		call CastSpellRange 92 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; PuppetMaster
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
+	{
+		call CastSpellRange 391 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Daze
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)}
+	{
+		call CastSpellRange 260 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Despair
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)}
+	{
+		call CastSpellRange 80 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Anguish
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
+	{
+		call CastSpellRange 70 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Nuke
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		call CastSpellRange 60 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Master Strike
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady}
+	{
+		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+		;;;;;;;;;;
+		if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
+			break
+		;;;;;;;;;;;
+		Target ${KillTarget}
+		Me.Ability[Master's Strike]:Use
+		spellsused:Inc
+	}
+	;;;; Stun
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[190]}].IsReady} && !${Me.Maintained[${SpellType[190]}](exists)}
+	{
+		call CastSpellRange 190 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Sunbolt
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}
+	{
+		call CastSpellRange 62 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Mind
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+	{
+		call CastSpellRange 72 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
@@ -391,85 +531,17 @@ function Combat_Routine(int xAction)
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 		call CastSpellRange 303
 
-	if ${MezzMode}
-		call Mezmerise_Targets
-
-	if ${Charm}
-		call DoCharm
-
-	if ${TSMode}
-		call DoAmnesia
-
-	call PetAttack
-
-	if !${DPSMode}
-		call CheckHeals
-
-	if ${ShardMode}
-		call Shard
-
-	call RefreshPower
-
-	;chronsphioning AA. we should always try to keep this spell up
-	if ${Me.Ability[${SpellType[382]}].IsReady}
-		call CastSpellRange 382 0 0 0 ${KillTarget}
-
-	;Make sure kill target is AA Tahsina'd if available
-	if ${Me.Ability[${SpellType[377]}].IsReady}
-		call CastSpellRange 377 0 0 0 ${KillTarget}
-
 	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
 	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady} && ${xAction}>10
 		call CastSpellRange 42
 
-	switch ${Action[${xAction}]}
-	{
-		case Lash
-		case Hostage
-		case Mind
-		case Puppets
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
+	if ${ShardMode}
+		call Shard
 
-		case Master_Strike
-			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
-			{
-				;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-				;;;;;;;;;;
-				if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-						break
-				;;;;;;;;;;;
+	CurrentAction:Set[Combat Checking Power]
+	call RefreshPower
 
-				Target ${KillTarget}
-				Me.Ability[Master's Strike]:Use
-			}
-			break
-		case Despair
-		case Anguish
-		case Sunbolt
-		case Nuke
-		case Stun
-		case Daze
-		case Debuff
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-
-		case ShockWave
-			if ${Mob.Count}>1
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
-				call CastSpellRange ${SpellRange[${xAction},3]} 0 1 0 ${KillTarget}
-			}
-			break
-		default
-			return Combat Complete
-			break
-	}
+	return Combat Complete
 }
 
 function Post_Combat_Routine(int xAction)
