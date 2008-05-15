@@ -52,11 +52,10 @@
 		<Setting Name="20,50">Damaged Psyche</Setting>
 		<Setting Name="20,60">Mind Splice</Setting>
 		<Setting Name="20,35">Recklessness</Setting>
-		<Setting Name="20,">Word of Force</Setting>
 		<Setting Name="21,20">Power of Suggestion</Setting>
 		<Setting Name="22,90">Simple Minds</Setting>
 		<Setting Name="23,71">Sibyllant</Setting>
-		<Setting Name="23,">Unveil</Setting>
+		<Setting Name="23,999">Unveil</Setting>
 		<Setting Name="24,352">Mesmerize</Setting>
 		<Setting Name="24,40">Smirking Demeanor</Setting>
 		<Setting Name="25,91">Ego Strike</Setting>
@@ -137,7 +136,7 @@
 		<Setting Name="63,20">Incitement</Setting>
 		<Setting Name="64,50">Marred Psyche</Setting>
 		<Setting Name="64,90">Perilous Gaze</Setting>
-		<Setting Name="65,">Possession</Setting>
+		<Setting Name="65,392">Possess Essence</Setting>
 		<Setting Name="65,71">Auspex</Setting>
 		<Setting Name="66,352">Enrapture</Setting>
 		<Setting Name="67,353">Astonishing Awe</Setting>
