@@ -142,27 +142,18 @@ function Combat_Init()
 	SpellRange[6,1]:Set[260]
 
 	Action[7]:Set[Despair]
-	MobHealth[7,1]:Set[1]
-	MobHealth[7,2]:Set[100]
 	SpellRange[7,1]:Set[80]
 
 	Action[8]:Set[Anguish]
-	MobHealth[8,1]:Set[1]
-	MobHealth[8,2]:Set[100]
 	SpellRange[8,1]:Set[70]
 
 	Action[9]:Set[Nuke]
 	SpellRange[9,1]:Set[60]
 
 	Action[10]:Set[Master_Strike]
-	
+
 	Action[11]:Set[Stun]
 	SpellRange[11,1]:Set[190]
-
-	Action[12]:Set[ProcStun]
-	MobHealth[12,1]:Set[1]
-	MobHealth[12,2]:Set[100]
-	SpellRange[12,1]:Set[192]
 
 	Action[13]:Set[Sunbolt]
 	SpellRange[13,1]:Set[62]
@@ -215,64 +206,35 @@ function Buff_Routine(int xAction)
 			break
 		case Signet
 			if ${BuffSignet}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Instigation
 			if ${BuffInstigation}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Hate
-
 			BuffTarget:Set[${UIElement[cbBuffHateGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
-			if ${BuffHate}
-			{
-
-				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.UsedConc}<5
-				{
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-				}
-			}
+			if ${BuffHate} && ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.UsedConc}<5
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case AACoerciveHealing
 			BuffTarget:Set[${UIElement[cbBuffHealGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
-			if ${BuffCoerciveHealing}
-			{
-
-				if ${Actor[${BuffTarget.Token[1,:]}](exists)}
-				{
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[1,:]}].ID}
-				}
-			}
+			if ${BuffCoerciveHealing} && ${Actor[${BuffTarget.Token[1,:]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[1,:]}].ID}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case AntiHate
 			Counter:Set[1]
@@ -288,11 +250,9 @@ function Buff_Routine(int xAction)
 					;iterate through the members to buff
 					if ${UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
-
 						tempvar:Set[1]
 						do
 						{
-
 							BuffTarget:Set[${UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -300,8 +260,6 @@ function Buff_Routine(int xAction)
 								BuffMember:Set[OK]
 								break
 							}
-
-
 						}
 						while ${tempvar:Inc}<=${UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
@@ -317,7 +275,6 @@ function Buff_Routine(int xAction)
 						Me.Maintained[${Counter}]:Cancel
 					}
 				}
-
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
 
@@ -326,14 +283,11 @@ function Buff_Routine(int xAction)
 			;iterate through the to be buffed Selected Items and buff them
 			if ${UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
-
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					if ${Me.UsedConc}<5
-					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -352,11 +306,9 @@ function Buff_Routine(int xAction)
 					;iterate through the members to buff
 					if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
-
 						tempvar:Set[1]
 						do
 						{
-
 							BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -364,8 +316,6 @@ function Buff_Routine(int xAction)
 								BuffMember:Set[OK]
 								break
 							}
-
-
 						}
 						while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
@@ -381,16 +331,13 @@ function Buff_Routine(int xAction)
 						Me.Maintained[${Counter}]:Cancel
 					}
 				}
-
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
-
 
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
 			if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
-
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
@@ -402,7 +349,6 @@ function Buff_Routine(int xAction)
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
 			break
-
 		case SeeInvis
 			if ${BuffSeeInvis}
 			{
@@ -422,7 +368,6 @@ function Buff_Routine(int xAction)
 				while ${tempvar:Inc}<${Me.GroupCount}
 			}
 			break
-
 		default
 			return Buff Complete
 			break
@@ -438,94 +383,51 @@ function Combat_Routine(int xAction)
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
-	{
 		EQ2Execute /stopfollow
-	}
-
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
 		call CastSpellRange 303
-	}
 
 	if ${MezzMode}
-	{
 		call Mezmerise_Targets
-	}
 
 	if ${Charm}
-	{
 		call DoCharm
-	}
 
 	if ${TSMode}
-	{
 		call DoAmnesia
-	}
 
 	call PetAttack
 
 	if !${DPSMode}
-	{
 		call CheckHeals
-	}
 
 	if ${ShardMode}
-	{
 		call Shard
-	}
 
 	call RefreshPower
 
 	;chronsphioning AA. we should always try to keep this spell up
-	if ${Me.Ability[${SpellType[382]}](exists)} && ${Me.Ability[${SpellType[382]}].IsReady}
-	{
+	if ${Me.Ability[${SpellType[382]}].IsReady}
 		call CastSpellRange 382 0 0 0 ${KillTarget}
-	}
 
+	;Make sure kill target is AA Tahsina'd if available
 	if ${Me.Ability[${SpellType[377]}].IsReady}
-	{
-		;Make sure kill target is AA Tahsina'd if available
 		call CastSpellRange 377 0 0 0 ${KillTarget}
-	}
 
 	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
 	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady} && ${xAction}>10
-	{
 		call CastSpellRange 42
-	}
 
 	switch ${Action[${xAction}]}
 	{
 		case Lash
-		case Gaze
-		case Ego
-		case AEStun
-			if ${AoEMode}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					if ${Mob.Count}>1
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-			}
-			break
-
-		case Despair
-		case Lash
 		case Hostage
 		case Mind
-		case Anguish
 		case Puppets
-		case Thoughts
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
 			{
@@ -533,28 +435,24 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case ProcStun
-			if !${Actor[${KillTarget}].IsEpic}
-			{
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
-			}
-			break
-
 		case Master_Strike
 			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 			{
+				;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+				;;;;;;;;;;
+				if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
+						break
+				;;;;;;;;;;;
+
 				Target ${KillTarget}
 				Me.Ability[Master's Strike]:Use
 			}
 			break
+		case Despair
+		case Anguish
 		case Sunbolt
 		case Nuke
 		case Stun
-		case Silence
 		case Daze
 		case Debuff
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
