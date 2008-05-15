@@ -49,7 +49,7 @@
     	<Y>20</Y>
     	<Width>20%</Width>
     	<Height>20</Height>
-    	<Text>Track Aggro?</Text>
+    	<Text>Track aggro mobs only</Text>
     	<OnLoad>
     	if ${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Aggro]}
     	{
