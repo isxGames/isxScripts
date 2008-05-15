@@ -372,6 +372,7 @@ function Combat_Routine(int xAction)
 
 	if ${RaidHealMode}
 	{
+		call CheckCures
 		call CheckHOTs
 		;check heals on group, mt, and self and keep healing until they return safe (10 heal cap for safety)
 		do
@@ -388,6 +389,8 @@ function Combat_Routine(int xAction)
 	}
 	else
 	{
+		if ${CureMode}
+			call CheckCures
 		call CheckHeals
 	}
 
