@@ -1035,45 +1035,6 @@ function CheckHeals()
 	}
 }
 
-function HealMe()
-{
-	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
-
-	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
-		Me.Inventory[Crystallized Spirit]:Use
-
-	if ${Me.ToActor.Health}<25
-	{
-		if ${haveaggro}
-			call EmergencyHeal ${Me.ID}
-		else
-		{
-			if ${Me.Ability[${SpellType[1]}].IsReady}
-			{
-				call CastSpellRange 387
-				call CastSpellRange 1 0 0 0 ${Me.ID}
-			}
-			else
-			{
-				call CastSpellRange 387
-				call CastSpellRange 4 0 0 0 ${Me.ID}
-			}
-		}
-	}
-
-	if ${Me.ToActor.Health}<85
-	{
-		if ${haveaggro} && ${Me.ToActor.InCombatMode}
-			call CastSpellRange 7 0 0 0 ${Me.ID}
-		else
-		{
-			call CastSpellRange 387
-			call CastSpellRange 4 0 0 0 ${Me.ID}
-		}
-	}
-}
-
 function HealMT(int MainTankID, int MTInMyGroup)
 {
 	if ${Me.Cursed}
