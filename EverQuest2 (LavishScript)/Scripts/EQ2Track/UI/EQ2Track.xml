@@ -31,8 +31,8 @@
 	<Window name='EQ2 Track' Template='My.Window'>
 		<X>10</X>
 		<Y>10</Y>
-		<Width>322</Width>
-		<Height>250</Height>
+		<Width>500</Width>
+		<Height>750</Height>
 		<StorePosition>1</StorePosition>
 		<Title>${Me.Name} Track</Title>
 		<OnLoad>
@@ -44,40 +44,46 @@
 		</OnLeftClick>
 		<Children>
 
-<checkbox Name='TrackAggro' Template='EQ2.checkbox'>
-	<X>5%</X>
-	<Y>20</Y>
-	<Width>20%</Width>
-	<Height>20</Height>
-	<Text>Aggro</Text>
-	<OnLoad>
-	if ${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Aggro]}
-	{
-		UIElement[TrackAggro@EQ2 Track]:SetChecked
-	}
-	</OnLoad>
-	<OnLeftClick>
-		if ${UIElement[TrackAggro@EQ2 Track].Checked}
-		{
-			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Hide
-			Script[EQ2Bot].Variable[TrackAggro]:Set[TRUE]
-			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,TRUE]:Save
-			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
-		}
-		else
-		{
-			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Show
-			Script[EQ2Bot].Variable[TrackAggro]:Set[FALSE]
-			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,FALSE]:Save
-			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
-		}
-	</OnLeftClick>
-</checkbox>
-
-
+    <checkbox Name='TrackAggro' Template='EQ2.checkbox'>
+    	<X>5%</X>
+    	<Y>20</Y>
+    	<Width>20%</Width>
+    	<Height>20</Height>
+    	<Text>Track Aggro?</Text>
+    	<OnLoad>
+    	if ${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Aggro]}
+    	{
+    		UIElement[TrackAggro@EQ2 Track]:SetChecked
+    	}
+    	</OnLoad>
+    	<OnLeftClick>
+    		if ${UIElement[TrackAggro@EQ2 Track].Checked}
+    		{
+    			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Hide
+    			Script[EQ2Bot].Variable[TrackAggro]:Set[TRUE]
+    			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,TRUE]:Save
+    			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+    		}
+    		else
+    		{
+    			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Show
+    			Script[EQ2Bot].Variable[TrackAggro]:Set[FALSE]
+    			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,FALSE]:Save
+    			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+    		}
+    	</OnLeftClick>
+    </checkbox>
+	<Text Name='lblTrackFilter' Template='EQ2.text'>
+		<X>5%</X>
+		<Y>50</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Reverse Filter:</Text>
+	</Text>    
 	<textentry name='TrackFilter'>
-		<X>77</X>
-		<Y>23</Y>
+		<X>25%</X>
+		<Y>50</Y>
 		<Width>100</Width>
 		<Height>15</Height>
 		<OnLoad>
@@ -94,12 +100,19 @@
 			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
 		</OnKeyUp>
 	</textentry>
-
-
-
+	
+	
+	<Text Name='lblLvlRangeFilter' Template='EQ2.text'>
+		<X>5%</X>
+		<Y>80</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Level Range:</Text>
+	</Text>	
 	<textentry name='TrackMinLevel'>
-		<X>180</X>
-		<Y>23</Y>
+		<X>25%</X>
+		<Y>80</Y>
 		<Width>25</Width>
 		<Height>15</Height>
 		<OnLoad>
@@ -116,11 +129,17 @@
 			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
 		</OnKeyUp>
 	</textentry>
-
-
+	<Text Name='lblLvlRangeFilter2' Template='EQ2.text'>
+		<X>32%</X>
+		<Y>80</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>-</Text>
+	</Text>		
 	<textentry name='TrackMaxLevel'>
-		<X>210</X>
-		<Y>23</Y>
+		<X>35%</X>
+		<Y>80</Y>
 		<Width>25</Width>
 		<Height>15</Height>
 		<OnLoad>
@@ -137,13 +156,14 @@
 			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
 		</OnKeyUp>
 	</textentry>
-
-
+	
+	
+	
 	<listbox name='TrackItems'>
 		<X>5%</X>
-		<Y>55</Y>
-		<Width>285</Width>
-		<Height>160</Height>
+		<Y>110</Y>
+		<Width>90%</Width>
+		<Height>82%</Height>
 		<SelectMultiple>1</SelectMultiple>
 		<Texture filename='Listbox.png'/>
 		<Items>
