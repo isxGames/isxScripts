@@ -364,35 +364,11 @@ function Combat_Routine(int xAction)
 		wait 5
 	}
 
-	;use fairy if up
-	if ${Me.Ability[${SpellType[331]}].IsReady}
-	{
-		call CastSpellRange 331
-	}
 
-	if ${RaidHealMode}
-	{
+	if ${CureMode}
 		call CheckCures
-		call CheckHOTs
-		;check heals on group, mt, and self and keep healing until they return safe (10 heal cap for safety)
-		do
-		{
-			call CheckHealthiness 70 60 50
-			if ${Return}  || ${Actor[${MainTankPC}].Distance}>25
-			{
-				call CheckHeals
-				break
-			}
-			call CheckHeals
-		}
-		while ${counter:Inc}<9 && ${Me.ToActor.Power}>10
-	}
-	else
-	{
-		if ${CureMode}
-			call CheckCures
-		call CheckHeals
-	}
+	call CheckHeals
+
 
 	if ${DoHOs} && ${OffenseMode}
 	{
