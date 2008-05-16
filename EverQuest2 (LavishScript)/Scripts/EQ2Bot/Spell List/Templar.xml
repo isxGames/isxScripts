@@ -10,7 +10,7 @@
 		<Setting Name="4,35">Minor Redoubt</Setting>
 		<Setting Name="5,20">Courage</Setting>
 		<Setting Name="5,333">Divine Providence</Setting>
-		<Setting Name="6,213">Cure Noxious</Setting>
+		<Setting Name="6,210">Cure</Setting>
 		<Setting Name="6,365">Summon Food and Water</Setting>
 		<Setting Name="7,4">Healing</Setting>
 		<Setting Name="7,55">Sign of Pacification</Setting>
@@ -20,12 +20,26 @@
 		<Setting Name="10,1">Arch Healing</Setting>
 		<Setting Name="10,313">Soothe</Setting>
 		<Setting Name="10,50">Scorn</Setting>
+		<Setting Name="10,380">Skull Crack</Setting>
+		<Setting Name="10,381">Steadfast</Setting>
+		<Setting Name="10,382">Wonderous Buckling</Setting>
+		<Setting Name="10,383">Shield Ally</Setting>
+		<Setting Name="10,384">Holy Shield</Setting>
+		<Setting Name="10,385">Yaulp</Setting>
+		<Setting Name="10,386">Hammer Smite</Setting>
+		<Setting Name="10,387">Divine Aura</Setting>
+		<Setting Name="10,388">Turn Undead</Setting>
+		<Setting Name="10,389">Protection from Undead</Setting>
+		<Setting Name="10,390">Divine Castigation</Setting>
+		<Setting Name="10,391">Divine Recovery</Setting>
+		<Setting Name="10,392">Blessings</Setting>
+		<Setting Name="10,393">Overconfidence</Setting>
+		<Setting Name="10,394">Mana Cure</Setting>
 		<Setting Name="11,310">Divine Awakening</Setting>
 		<Setting Name="11,61">Radiant Strike</Setting>
 		<Setting Name="12,7">Bestowal of Vitae</Setting>
 		<Setting Name="13,180">Complacent</Setting>
 		<Setting Name="13,360">Odyssey</Setting>
-		<Setting Name="13,212">Cure Trauma</Setting>
 		<Setting Name="14,10">Healing Word</Setting>
 		<Setting Name="14,15">Soothing Sermon</Setting>
 		<Setting Name="15,4">Greater Healing</Setting>
@@ -37,7 +51,6 @@
 		<Setting Name="18,51">Mark of Pawns</Setting>
 		<Setting Name="19,7">Bestowal of Vitality</Setting>
 		<Setting Name="19,20">Daring</Setting>
-		<Setting Name="19,211">Cure Elemental</Setting>
 		<Setting Name="20,312">Amending Fate</Setting>
 		<Setting Name="21,55">Sign of Weakness</Setting>
 		<Setting Name="22,4">Ameliorate</Setting>
@@ -49,7 +62,6 @@
 		<Setting Name="26,36">Protectorate</Setting>
 		<Setting Name="26,7">Supplicant's Prayer</Setting>
 		<Setting Name="27,180">Placate</Setting>
-		<Setting Name="28,210">Cure Arcane</Setting>
 		<Setting Name="28,10">Healing Touch</Setting>
 		<Setting Name="28,15">Intercession</Setting>
 		<Setting Name="29,221">Protective Faith</Setting>
@@ -163,6 +175,7 @@
 		<Setting Name="80,9">Focused Intervention</setting>
 		<Setting Name="80,316">Holy Salvation</setting>
 		<Setting Name="80,2">Repent</setting>
+		<Setting Name="80,211">Cure Curse</setting>
 		<Setting Name="80,10">Word of Redemption</setting>
 	</Set>
 </InnerSpaceSettings>

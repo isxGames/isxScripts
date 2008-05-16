@@ -505,13 +505,13 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
-	
-	
+
+
 	if !${Actor[id,${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-	    return CombatComplete    
-    
-	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]    
-    
+	    return CombatComplete
+
+	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
+
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
@@ -949,8 +949,10 @@ function CheckHeals()
 {
 	declare tempgrp int local 1
 	declare temphl int local 1
+	declare temph2 int local 1
 	declare grpheal int local 0
 	declare lowest int local 0
+	declare raidlowest int local 0
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
@@ -975,7 +977,7 @@ function CheckHeals()
 
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
+				if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
 				{
 					lowest:Set[${temphl}]
 				}
@@ -987,7 +989,7 @@ function CheckHeals()
 			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
 				grpheal:Inc
 
-			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
 				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
 
 			if ${Me.ToActor.Pet.Health}<60
@@ -1010,9 +1012,6 @@ function CheckHeals()
 			call HealMT ${MainTankID} ${MainTankInGroup}
 	}
 
-	if ${EpicMode}
-		call CheckCures
-
 	;Check My health after MT
 	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<90
 		call HealMe
@@ -1022,20 +1021,17 @@ function CheckHeals()
 	{
 		call UseCrystallizedSpirit 60
 
-		if ${EpicMode}
-			call CheckCures
-
 		if ${Me.Group[${lowest}].ToActor.Health}<50 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
-			call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
 
 		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
 		{
 			if ${Me.Ability[${SpellType[7]}].IsReady}
-				call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+				call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ID}
 			elseif ${Me.Ability[${SpellType[1]}].IsReady}
-				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
 			else
-				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
 		}
 	}
 
@@ -1072,6 +1068,9 @@ function CheckHeals()
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode} && !${Me.InRaid}
 		call CastSpellRange 4 0 0 0 ${PetToHeal}
 
+	if ${EpicMode}
+		call CheckCures
+
 	;Check Rezes
 	if ${CombatRez} || !${Me.InCombat}
 	{
@@ -1079,9 +1078,6 @@ function CheckHeals()
 		temphl:Set[1]
 		do
 		{
-			if ${EpicMode}
-				call CheckCures
-
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead}
 				call CastSpellRange 300 303 0 0 ${Me.Group[${temphl}].ID} 1
 		}
@@ -1110,9 +1106,9 @@ function HealMe()
 		}
 	}
 
-	if ${Me.ToActor.Health}<60
+	if ${Me.ToActor.Health}<75
 	{
-		if ${haveaggro} && ${Me.ToActor.InCombatMode}
+		if !${EpicMode} || (${haveaggro} && ${Me.ToActor.InCombatMode})
 			call CastSpellRange 7 0 0 0 ${Me.ID}
 		else
 			call CastSpellRange 1 0 0 0 ${Me.ID}
@@ -1285,10 +1281,9 @@ function CheckCures()
 		else
 			break
 
-		;break if we need heals
-		call CheckGroupHealth 30
-		if !${Return}
-			call CheckHeals
+		;epicmode is not set in eq2botextras, we will cure only one person per call unless in epic mode.
+		if !${EpicMode}
+			break
 
 		;Check MT health and heal him if needed
 		if ${Actor[pc,ExactName,${MainTankPC}].Health}<50
@@ -1299,8 +1294,9 @@ function CheckCures()
 				call HealMT
 		}
 
-		;epicmode is set in eq2botextras, we will cure only one person per call unless in epic mode.
-		if !${EpicMode}
+		;check if we need heals
+		call CheckGroupHealth 50
+		if !${Return}
 			break
 
 	}

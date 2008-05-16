@@ -256,11 +256,8 @@ function Buff_Routine(int xAction)
 		wait 5
 	}
 
-	if ${Me.ToActor.Power}>85 && ${KeepReactiveUp} && !${Me.Maintained[${SpellType[15]}](exists)}
-	{
-		call CastSpellRange 15
-		call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
-	}
+	if ${Me.ToActor.Power}>85
+		call CheckHOTs
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -379,7 +376,6 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 305
 	}
-
 
 	call RefreshPower
 
@@ -633,7 +629,7 @@ function CheckHeals()
 
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
+				if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
 				{
 					lowest:Set[${temphl}]
 				}
@@ -645,7 +641,7 @@ function CheckHeals()
 			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
 				grpheal:Inc
 
-			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
 				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
 
 			if ${Me.ToActor.Pet.Health}<60
@@ -668,20 +664,15 @@ function CheckHeals()
 			call HealMT ${MainTankID} ${MainTankInGroup}
 	}
 
-	if ${EpicMode}
-		call CheckCures
 
 	;Check My health after MT
-	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<90
+	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<80
 		call HealMe
 
 	;now lets heal individual groupmembers if needed
 	if ${lowest}
 	{
 		call UseCrystallizedSpirit 60
-
-		if ${EpicMode}
-			call CheckCures
 
 		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
 		{
@@ -693,6 +684,9 @@ function CheckHeals()
 				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 		}
 	}
+
+	if ${EpicMode}
+		call CheckCures
 
 	;RAID HEALS - Only check if in raid, raid heal mode on, maintank is green, I'm above 50, and a direct heal is available.  Otherwise don't waste time.
 	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ${Actor[${MainTankID}].Health}>70 && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
@@ -734,9 +728,6 @@ function CheckHeals()
 		temphl:Set[1]
 		do
 		{
-			if ${EpicMode}
-				call CheckCures
-
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead}
 				call CastSpellRange 300 303 0 0 ${Me.Group[${temphl}].ID} 1
 		}
@@ -777,7 +768,7 @@ function HealMe()
 	}
 
 	if ${Me.ToActor.Health}<40
-		call CastSpellRange 1 0 0 0 ${Me.ID}
+		call CastSpellRange 4 0 0 0 ${Me.ID}
 }
 
 function HealMT(int MainTankID, int MTInMyGroup)
@@ -824,8 +815,6 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup} && ${EpicMode}
 		{
 			call CastSpellRange 15
-			if ${EpicMode}
-				call CheckCures
 		}
 		elseif ${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Maintained[${SpellType[7]}].Target.ID}==${Actor[${MainTankPC}].ID}
 			call CastSpellRange 7 0 0 0 ${MainTankID}
@@ -906,7 +895,7 @@ function CureMe()
 		wait 2
 
 		if ${Me.ToActor.Health}<30 && ${EpicMode}
-			call HealMe
+			call CastSpellRange 7 0 0 0 ${Me.ID}
 	}
 	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<5
 }
@@ -978,7 +967,7 @@ function CheckCures()
 		;break if we need heals
 		call CheckGroupHealth 30
 		if !${Return}
-			call CheckHeals
+			break
 
 		;Check MT health and heal him if needed
 		if ${Actor[pc,ExactName,${MainTankPC}].Health}<50
