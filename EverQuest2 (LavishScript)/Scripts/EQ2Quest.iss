@@ -175,7 +175,7 @@ readyToShare:Set[FALSE]
 questAcceptedByShare:Set[FALSE]
 shareTimer:Set[0]
 timerDiff:Set[0]
-eq2execute /share ${acceptedQuestID}
+eq2execute /share_quest ${acceptedQuestID}
 
 acceptedQuestID:Set[0]
 
