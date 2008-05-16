@@ -425,6 +425,7 @@ function Combat_Routine(int xAction)
 	if ${CureMode}
 		call CheckCures
 
+	call CastSpellRange 15
 	call CheckHeals
 	call RefreshPower
 
@@ -933,6 +934,14 @@ function CheckHeals()
 	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 		call CastSpellRange 300 0 1 1 ${MainTankID}
 
+	;Persist wards if selected.
+	if ${KeepWardUp}
+	{
+		call CastSpellRange 15
+
+		call CastSpellRange 7 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
+	}
+
 	do
 	{
 		if ${Me.Group[${temphl}].ToActor(exists)}
@@ -978,9 +987,6 @@ function CheckHeals()
 			call HealMT ${MainTankID} ${MainTankInGroup}
 	}
 
-	if ${EpicMode}
-		call CheckCures
-
 	;Check My health after MT
 	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<90
 		call HealMe
@@ -1005,14 +1011,7 @@ function CheckHeals()
 		}
 	}
 
-	;Persist wards if selected.
-	if ${KeepWardUp} && ${Me.InCombatMode}
-	{
-		if ${MainTankInGroup}
-			call CastSpellRange 15
 
-		call CastSpellRange 7 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
-	}
 
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode}
