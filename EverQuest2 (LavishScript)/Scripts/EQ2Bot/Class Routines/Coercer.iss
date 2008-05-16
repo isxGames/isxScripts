@@ -416,17 +416,17 @@ function Combat_Routine(int xAction)
 	;;; AoE Checks
 	if ${Mob.Count}>1
 	{
-		if ${PBAoEMode}
+		if ${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady}
 		{
 			call CastSpellRange 95 0 1 0 ${KillTarget}
 			spellsused:Inc
 		}
-		if ${spellsused}<=${spellthreshold} && ${AoEMode}
+		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[90]}].IsReady}
 		{
 			call CastSpellRange 90 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
-		if ${spellsused}<=${spellthreshold} && ${AoEMode}
+		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[91]}].IsReady}
 		{
 			call CastSpellRange 91 0 0 0 ${KillTarget}
 			spellsused:Inc
@@ -764,8 +764,6 @@ function Mezmerise_Targets()
 				}
 
 				aggrogrp:Set[FALSE]
-
-
 			}
 		}
 	}
