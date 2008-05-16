@@ -261,10 +261,7 @@ function Buff_Routine(int xAction)
 	}
 
 	if ${Me.ToActor.Power}>85 && ${KeepWardUp}
-	{
-		call CastSpellRange 15
-		call CastSpellRange 7 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
-	}
+		call CheckWards
 
 
 	switch ${PreAction[${xAction}]}
@@ -413,23 +410,19 @@ function Combat_Routine(int xAction)
 	if ${Me.ToActor.WhoFollowing(exists)}
 		EQ2Execute /stopfollow
 
-	call CheckGroupHealth 60
-	if ${DoHOs} && ${Return}
-		objHeroicOp:DoHO
-
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-		call CastSpellRange 303
-
 	call PetAttack
 
 	if ${CureMode}
 		call CheckCures
 
-	call CastSpellRange 15
+	;Persist wards if selected.
+	call CheckWards
+
 	call CheckHeals
 	call RefreshPower
 
-	if ${DebuffMode} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsHeroic})
+	call CheckGroupHealth 60
+	if ${Return} && ${DebuffMode} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsHeroic})
 	{
 		if ${Me.Ability[${SpellType[54]}].IsReady} && !${Me.Maintained[${SpellType[54]}](exists)}
 		{
@@ -437,25 +430,25 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)}
+		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<1
 		{
 			call CastSpellRange 51 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${spellsused}<2
+		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${spellsused}<1
 		{
 			call CastSpellRange 52 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[53]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<2
+		if ${Me.Ability[${SpellType[53]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<1
 		{
 			call CastSpellRange 53 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[322]}].IsReady} && !${Me.Maintained[${SpellType[322]}](exists)} && ${spellsused}<2
+		if ${Me.Ability[${SpellType[322]}].IsReady} && !${Me.Maintained[${SpellType[322]}](exists)} && ${spellsused}<1
 		{
 			call CastSpellRange 322 0 0 0 ${KillTarget}
 			spellsused:Inc
@@ -496,7 +489,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;Before we do our Action, check to make sure our group doesnt need healing
-	call CheckGroupHealth 50
+	call CheckGroupHealth 70
 	if ${Return}
 	{
 		switch ${Action[${xAction}]}
@@ -595,6 +588,15 @@ function Combat_Routine(int xAction)
 				break
 		}
 	}
+	else
+		call CheckHeals
+
+	call CheckGroupHealth 60
+	if ${DoHOs} && ${Return}
+		objHeroicOp:DoHO
+
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+		call CastSpellRange 303
 }
 
 function Post_Combat_Routine(int xAction)
@@ -776,13 +778,14 @@ function CheckCures()
 		else
 			break
 
+		;epicmode is set in eq2botextras, we will cure only one person per call unless in epic mode.
+		if !${EpicMode}
+			break
+
 		;break if we need heals
 		call CheckGroupHealth 30
 		if !${Return}
-		{
-			call CheckHeals
 			break
-		}
 
 		;Check MT health and heal him if needed
 		if ${Actor[pc,ExactName,${MainTankPC}].Health}<50
@@ -792,11 +795,6 @@ function CheckCures()
 			else
 				call HealMT
 		}
-
-		;epicmode is set in eq2botextras, we will cure only one person per call unless in epic mode.
-		if !${EpicMode}
-			break
-
 	}
 	while ${Me.ToActor.Health}>30 && (${Me.Arcane}<1 && ${Me.Noxious}<1 && ${Me.Elemental}<1 && ${Me.Trauma}<1)
 }
@@ -865,9 +863,10 @@ function CureMe()
 			if ${Me.Arcane}==${AffCnt}
 				call CastSpellRange 326
 		}
-
+		wait 2
 		if  ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
 			call CastSpellRange 210 0 0 0 ${Me.ID}
+
 	}
 	while ${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
 }
@@ -935,21 +934,15 @@ function CheckHeals()
 		call CastSpellRange 300 0 1 1 ${MainTankID}
 
 	;Persist wards if selected.
-	if ${KeepWardUp}
-	{
-		call CastSpellRange 15
-
-		call CastSpellRange 7 0 0 0 ${Actor[ExactName,${MainTankPC}].ID}
-	}
+	call CheckWards
 
 	do
 	{
 		if ${Me.Group[${temphl}].ToActor(exists)}
 		{
-
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
+				if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
 				{
 					lowest:Set[${temphl}]
 				}
@@ -961,10 +954,10 @@ function CheckHeals()
 			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
 				grpheal:Inc
 
-			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0 && !${EpicMode}
 				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
 
-			if ${Me.ToActor.Pet.Health}<60
+			if ${Me.ToActor.Pet.Health}<60 && !${EpicMode}
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
 		}
 	}
@@ -973,7 +966,7 @@ function CheckHeals()
 	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 		grpheal:Inc
 
-	if ${PetMode} && ${grpheal}>2 && ${Me.Ability[${SpellType[220]}].IsReady}
+	if ${PetMode} && ${grpheal}>2 && ${Me.Ability[${SpellType[16]}].IsReady}
 		call CastSpellRange 16
 
 	if ${grpheal}>2
@@ -988,7 +981,7 @@ function CheckHeals()
 	}
 
 	;Check My health after MT
-	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<90
+	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
 		call HealMe
 
 	;now lets heal individual groupmembers if needed
@@ -996,26 +989,24 @@ function CheckHeals()
 	{
 		call UseCrystallizedSpirit 60
 
-		if ${EpicMode}
-			call CheckCures
-
 		if ${Me.Group[${lowest}].ToActor.Health}<50 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
 			call CastSpellRange 387
 
 		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
 		{
 			if ${Me.Ability[${SpellType[1]}].IsReady}
-				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
 			else
-				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
 		}
 	}
-
-
 
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode}
 		call CastSpellRange 4 0 0 0 ${PetToHeal}
+
+	if ${EpicMode}
+		call CheckCures
 
 	;Check Rezes
 	if ${CombatRez} || !${Me.InCombat}
@@ -1024,9 +1015,6 @@ function CheckHeals()
 		temphl:Set[1]
 		do
 		{
-			if ${EpicMode}
-				call CheckCures
-
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead}
 				call CastSpellRange 300 301 0 0 ${Me.Group[${temphl}].ID} 1
 		}
@@ -1054,12 +1042,10 @@ function HealMT(int MainTankID, int MTInMyGroup)
 	; Use Wards first, then Patch Heals
 	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
 	{
-		if ${Me.Ability[${SpellType[15]}].IsReady} && ${MTInMyGroup}
+		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup}
 		{
 			call CastSpellRange 387
 			call CastSpellRange 15
-			if ${EpicMode}
-				call CheckCures
 		}
 		else
 			call CastSpellRange 7 0 0 0 ${MainTankID}
@@ -1068,7 +1054,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 			call CastSpellRange 7 0 0 0 ${MainTankID}
 	}
 
-	if ${Actor[${MainTankID}].Health}<80 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+	if ${Actor[${MainTankID}].Health}<70 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 	{
 		call CastSpellRange 387
 		call CastSpellRange 1 0 0 0 ${MainTankID}
@@ -1127,3 +1113,40 @@ function CureGroupMember(int gMember)
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)} && !${Me.Group[${gMember}].ToActor.IsDead}
 }
 
+function CheckWards()
+{
+
+	declare tempvar int local 1
+	declare hot1 int local 0
+	declare grphot int local 0
+	hot1:Set[0]
+	grphot:Set[0]
+
+	if ${KeepWardUp}
+	{
+		do
+		{
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID}==${Actor[exactname,${MainTankPC}].ID}
+			{
+				;echo Single ward is Present on MT
+				hot1:Set[1]
+				break
+			}
+			elseif ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
+			{
+				;echo Group ward is Present
+				grphot:Set[1]
+			}
+		}
+		while ${tempvar:Inc}<=${Me.CountMaintained}
+
+		if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
+		{
+			call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
+			hot1:Set[1]
+		}
+
+		if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+			call CastSpellRange 15
+	}
+}
