@@ -364,6 +364,7 @@ function Combat_Routine(int xAction)
 
 	if ${CureMode}
 		call CheckCures
+	
 	call CheckHeals
 
 
@@ -603,8 +604,10 @@ function CheckHeals()
 {
 	declare tempgrp int local 1
 	declare temphl int local 1
+	declare temph2 int local 1
 	declare grpheal int local 0
 	declare lowest int local 0
+	declare raidlowest int local 0
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
@@ -685,8 +688,7 @@ function CheckHeals()
 		}
 	}
 
-	if ${EpicMode}
-		call CheckCures
+
 
 	;RAID HEALS - Only check if in raid, raid heal mode on, maintank is green, I'm above 50, and a direct heal is available.  Otherwise don't waste time.
 	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ${Actor[${MainTankID}].Health}>70 && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
@@ -720,6 +722,9 @@ function CheckHeals()
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode} && !${Me.InRaid}
 		call CastSpellRange 4 0 0 0 ${PetToHeal}
+
+	if ${EpicMode}
+		call CheckCures
 
 	;Check Rezes
 	if ${CombatRez} || !${Me.InCombat}
@@ -799,7 +804,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		}
 		elseif ${GenesisMode} && ${Actor[${MainTankPC}].Health}<60
 		{
-				call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
+			call CastSpellRange 9 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
 	}
 
