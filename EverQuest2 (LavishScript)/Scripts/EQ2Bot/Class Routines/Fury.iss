@@ -829,9 +829,9 @@ function Combat_Routine(int xAction)
 					{
 						call CheckForMez "Fury Storms"
 						if ${Return.Equal[FALSE]}
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-								else
-										call ReacquireTargetFromMA
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						else
+							call ReacquireTargetFromMA
 					}
 				}
 			}
@@ -989,10 +989,19 @@ function CheckHeals()
 			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
 				grpheal:Inc
 
-			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[coercer]})
+			{
+    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+			}
+			
+			if (${Me.Group[${temphl}].Class.Equal[illusionist]} && !${Me.InCombat})
+			{
+    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+			}			
 
-			if ${Me.ToActor.Pet.Health}<60
+			if ${Me.Pet.Health}<60
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
 		}
 	}
@@ -1106,7 +1115,7 @@ function HealMe()
 		}
 	}
 
-	if ${Me.ToActor.Health}<75
+	if ${Me.ToActor.Health}<65
 	{
 		if !${EpicMode} || (${haveaggro} && ${Me.ToActor.InCombatMode})
 			call CastSpellRange 7 0 0 0 ${Me.ID}
