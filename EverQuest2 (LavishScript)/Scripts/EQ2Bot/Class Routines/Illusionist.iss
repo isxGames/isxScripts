@@ -43,26 +43,28 @@ function Class_Declaration()
     declare ClassFileVersion int script 20080408
     ;;;;
     
-	declare AoEMode bool script FALSE
 	declare MezzMode bool script FALSE
 	declare Makepet bool script FALSE
 	declare BuffAspect bool script FALSE
 	declare BuffRune bool script FALSE
+	declare BuffPowerRegen bool script TRUE
 	declare StartHO bool script 1
 	declare DPSMode bool script 1
+	declare UltraDPSMode bool script 0
 	declare SummonImpOfRo bool script 0
 	
 	call EQ2BotLib_Init
 
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	BuffAspect:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAspect,FALSE]}]
 	BuffRune:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffRune,FALSE]}]
+	BuffPowerRegen:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPowerRegen,TRUE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Makepet:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Makepet,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	BuffTime_Compression:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTime_Compression,]}]
 	BuffIllusory_Arm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffIllusory_Arm,]}]
-	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
+	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,TRUE]}]
+	UltraDPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UltraDPSMode,FALSE]}]
 	SummonImpOfRo:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Summon Imp of Ro,]}]
 	    
 	NoEQ2BotStance:Set[TRUE]
@@ -209,7 +211,7 @@ function Buff_Routine(int xAction)
 
     ;echo "Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"
     ;CurrentAction:Set[Buff Routine :: ${PreAction[${xAction}]} (${xAction})]
-    if !${DPSMode}
+    if !${DPSMode} && !${UltraDPSMode}
     {
     	call CheckHeals
     	call RefreshPower
@@ -231,8 +233,11 @@ function Buff_Routine(int xAction)
 			break
 
 		case Clarity
-			;if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-			;	call CastSpellRange ${PreSpellRange[${xAction},1]}		
+		    if ${BuffPowerRegen}
+		    {
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+	    			call CastSpellRange ${PreSpellRange[${xAction},1]}		
+	    	}
 			break
 		case Rune
 		    if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
@@ -476,14 +481,14 @@ function Combat_Routine(int xAction)
     if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
     	call PetAttack
 
-    if !${DPSMode}
+    if !${DPSMode} && !${UltraDPSMode}
     	call CheckHeals
 
 	if ${ShardMode}
 		call Shard
 
-    ;; If !UltraDPS Mode (TO DO)
-	call RefreshPower
+    if !${UltraDPSMode}
+    	call RefreshPower
 
 
 	;; Chronosiphoning (Always cast this when it is ready!
@@ -602,6 +607,9 @@ function Combat_Routine(int xAction)
         case Constructs
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 30
             {
+                ;; if we are in UltraDPS mode, then reset to beginning of combat routine
+                if ${UltraDPSMode}
+                    return CombatComplete
                 ;; if we are in DPS Mode, then skip past Stuns
                 if ${DPSMode}
                 {
@@ -613,6 +621,9 @@ function Combat_Routine(int xAction)
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 
+            ;; if we are in UltraDPS mode, then reset to beginning of combat routine
+            if ${UltraDPSMode}
+                return CombatComplete
             ;; if we are in DPS Mode, then skip past Stuns
             if ${DPSMode}
             {
