@@ -208,10 +208,12 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
     ;echo "Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"
-	call CheckHeals
-
-	if !${DPSMode}
-		call RefreshPower
+    ;CurrentAction:Set[Buff Routine :: ${PreAction[${xAction}]} (${xAction})]
+    if !${DPSMode}
+    {
+    	call CheckHeals
+    	call RefreshPower
+    }
 
 	ExecuteAtom CheckStuck
 
@@ -229,8 +231,8 @@ function Buff_Routine(int xAction)
 			break
 
 		case Clarity
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}		
+			;if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			;	call CastSpellRange ${PreSpellRange[${xAction},1]}		
 			break
 		case Rune
 		    if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
@@ -411,7 +413,7 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
 		case AA_Illusory_Arm	
-			if ${BuffTarget.Equal["No one"]}
+		    if ${BuffTarget.Equal["No one"]}
 			    break			
 			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -474,11 +476,13 @@ function Combat_Routine(int xAction)
     if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
     	call PetAttack
 
-	call CheckHeals
+    if !${DPSMode}
+    	call CheckHeals
 
 	if ${ShardMode}
 		call Shard
 
+    ;; If !UltraDPS Mode (TO DO)
 	call RefreshPower
 
 
@@ -497,7 +501,7 @@ function Combat_Routine(int xAction)
     	    if (${Me.Ability[${SpellType[396]}].IsReady})
     	    {
     		    call CastSpellRange 396 0 0 0 ${KillTarget}
-				if ${Me.AutoAttackOn} && ${MezzMode}
+				if ${Me.AutoAttackOn}
 					EQ2Execute /toggleautoattack	
     		}
     	}
