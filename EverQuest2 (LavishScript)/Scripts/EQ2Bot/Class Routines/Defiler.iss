@@ -751,7 +751,7 @@ function CheckCures()
 					grpcure:Inc
 			}
 		}
-		while ${temphl:Inc}<${grpcnt}
+		while ${temphl:Inc}<=${grpcnt}
 
 		;Use group cure if more than 3 afflictions will be removed
 		if ${grpcure}>3
