@@ -340,9 +340,9 @@
 		<Setting Name="Plodding Tortoise (Apprentice)">Essence of Plodding Tortoise (Apprentice)</Setting>
 		<Setting Name="Pouncing Leopard (Apprentice)">Essence of Pouncing Leopard (Apprentice)</Setting>
 		<Setting Name="Pouncing Tiger (Apprentice)">Essence of Pouncing Tiger (Apprentice)</Setting>
+		<Setting Name="Power">Essence of Power</Setting>
 		<Setting Name="Power Cleave (Apprentice)">Essence of Power Cleave (Apprentice)</Setting>
 		<Setting Name="Power Strike (Apprentice)">Essence of Power Strike (Apprentice)</Setting>
-		<Setting Name="Power">Essence of Power</Setting>
 		<Setting Name="Prayer of Conviction (Apprentice)">Essence of Prayer of Conviction (Apprentice)</Setting>
 		<Setting Name="Prayer of Devotion (Apprentice)">Essence of Prayer of Devotion (Apprentice)</Setting>
 		<Setting Name="Prayer of Healing (Apprentice)">Essence of Prayer of Healing (Apprentice)</Setting>
@@ -502,7 +502,7 @@
 		<Setting Name="Pristine Forged Indium Crescent Axe">Forged Indium Crescent Axe</Setting>
 		<Setting Name="Pristine Forged Indium Dagger">Forged Indium Dagger</Setting>
 		<Setting Name="Pristine Forged Indium Dirk">Forged Indium Dirk</Setting>
-		<Setting Name="Pristine Forged Indium Double Headed Axe">Forged Indium Double Headed Axe</Setting?>
+		<Setting Name="Pristine Forged Indium Double Headed Axe">Forged Indium Double Headed Axe</Setting>
 		<Setting Name="Pristine Forged Indium Executioners Axe">Forged Indium Executioners Axe</Setting>
 		<Setting Name="Pristine Forged Indium Falchion">Forged Indium Falchion</Setting>
 		<Setting Name="Pristine Forged Indium Greatsword">Forged Indium Greatsword</Setting>
@@ -514,7 +514,6 @@
 		<Setting Name="Pristine Forged Indium Short Sword">Forged Indium Short Sword</Setting>
 		<Setting Name="Pristine Forged Indium Stiletto">Forged Indium Stiletto</Setting>
 		<Setting Name="Pristine Forged Indium Tomahawk">Forged Indium Tomahawk</Setting>
-		<Setting Name="Pristine Forged Indium War Axe">Forged Indium War Axe</Setting>
 		<Setting Name="Pristine Forged Indium War Axe">Forged Indium War Axe</Setting>
 		<Setting Name="pristine Freeport coffee table">Freeport coffee table</Setting>
 		<Setting Name="Pristine Lab Flask">Lab Flask</Setting>
