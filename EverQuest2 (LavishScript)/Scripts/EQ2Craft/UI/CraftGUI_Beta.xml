@@ -942,7 +942,127 @@
 									<Command>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]:Set[TRUE]}</Command>
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]:Set[FALSE]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:CraftBeta](exists)},Buffer:CraftBeta,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]}</Data>
-								</Commandcheckbox>			
+								</Commandcheckbox>
+								<Text Name='MovementKeysLabel'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>10</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>10</X> 
+									<Y>260</Y> 
+									<Width>25%</Width>
+									<Height>20</Height>
+									<Text>Movement Keys:</Text> 
+								</Text>									
+								<Text Name='AutoRunKeyLabel'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>10</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>20</X> 
+									<Y>280</Y> 
+									<Width>20%</Width>
+									<Height>20</Height>
+									<Text>AutoRun:</Text> 
+								</Text>	
+								<Textentry Name='TEAutoRunKey' Template='EQ2.Textentry'>
+									<X>25%</X>
+									<Y>270</Y>
+									<Width>20%</Width> 
+									<Height>20</Height>
+									<MaxLength>20</MaxLength>
+									<Color>FFDDBB00</Color>
+                                    <OnLoad>This:SetText[${Script[Buffer:CraftBeta].Variable[AutoRunKey]}]</OnLoad>
+                                    <OnChange>
+                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[AutoRun Key]:Set[${This.Text}]
+                                        Script[Buffer:CraftBeta].Variable[AutoRunKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:CraftBeta].Variable[configfile]}]
+                                        Script[Buffer:CraftBeta]:QueueCommand[Craft:UpdateNavKeys]
+    								</OnChange>							
+								</Textentry>
+								<Text Name='BackupKeyLabel'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>10</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>20</X> 
+									<Y>300</Y> 
+									<Width>20%</Width>
+									<Height>20</Height>
+									<Text>Backward:</Text> 
+								</Text>	
+								<Textentry Name='TEBackwardKey' Template='EQ2.Textentry'>
+									<X>25%</X>
+									<Y>290</Y>
+									<Width>20%</Width> 
+									<Height>20</Height>
+									<MaxLength>20</MaxLength>
+									<Color>FFDDBB00</Color>
+                                    <OnLoad>This:SetText[${Script[Buffer:CraftBeta].Variable[BackwardKey]}]</OnLoad>
+                                    <OnChange>
+                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Backwards Key]:Set[${This.Text}]
+                                        Script[Buffer:CraftBeta].Variable[BackwardKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:CraftBeta].Variable[configfile]}]
+                                        Script[Buffer:CraftBeta]:QueueCommand[Craft:UpdateNavKeys]
+    								</OnChange>							
+								</Textentry>											
+								<Text Name='StrafeRightKeyLabel'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>10</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>20</X> 
+									<Y>320</Y> 
+									<Width>20%</Width>
+									<Height>20</Height>
+									<Text>Strafe Right:</Text> 
+								</Text>	
+								<Textentry Name='TEStrafeRightKey' Template='EQ2.Textentry'>
+									<X>25%</X>
+									<Y>310</Y>
+									<Width>20%</Width> 
+									<Height>20</Height>
+									<MaxLength>20</MaxLength>
+									<Color>FFDDBB00</Color>
+                                    <OnLoad>This:SetText[${Script[Buffer:CraftBeta].Variable[StrafeRightKey]}]</OnLoad>
+                                    <OnChange>
+                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeRight Key]:Set[${This.Text}]
+                                        Script[Buffer:CraftBeta].Variable[StrafeRightKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:CraftBeta].Variable[configfile]}]
+                                        Script[Buffer:CraftBeta]:QueueCommand[Craft:UpdateNavKeys]
+    								</OnChange>							
+								</Textentry>	
+								<Text Name='StrafeLeftKeyLabel'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>10</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>20</X> 
+									<Y>340</Y> 
+									<Width>20%</Width>
+									<Height>20</Height>
+									<Text>Strafe Left:</Text> 
+								</Text>	
+								<Textentry Name='TEStrafeLeftKey' Template='EQ2.Textentry'>
+									<X>25%</X>
+									<Y>330</Y>
+									<Width>20%</Width> 
+									<Height>20</Height>
+									<MaxLength>20</MaxLength>
+									<Color>FFDDBB00</Color>
+                                    <OnLoad>This:SetText[${Script[Buffer:CraftBeta].Variable[StrafeLeftKey]}]</OnLoad>
+                                    <OnChange>
+                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeLeft Key]:Set[${This.Text}]
+                                        Script[Buffer:CraftBeta].Variable[StrafeLeftKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:CraftBeta].Variable[configfile]}]
+                                        Script[Buffer:CraftBeta]:QueueCommand[Craft:UpdateNavKeys]
+    								</OnChange>							
+								</Textentry>	
 							</Tab>
 							<Tab Name='Writs'>					
 								<Text Name='Writ Count Label'>
@@ -1145,7 +1265,7 @@
 					</Frame>
 					<Frame Name='Additional Options Frame'>
 						<X>0</X>
-						<Y>350</Y>
+						<Y>450</Y>
 						<Height>500</Height>
 						<Width>500</Width>
 						<Visible>0</Visible>
