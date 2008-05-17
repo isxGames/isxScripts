@@ -40,7 +40,7 @@
 function Class_Declaration()
 {
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
+    declare ClassFileVersion int script 20080517
     ;;;;
     
 	declare MezzMode bool script FALSE
