@@ -609,8 +609,8 @@ function CheckHeals()
 	declare lowest int local 0
 	declare raidlowest int local 0
 	declare PetToHeal int local 0
-	declare MainTankID int local 0
-	declare MainTankInGroup bool local 0
+	declare MainTankID int script 0
+	declare MainTankInGroup bool script 0
 
 	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 	grpcnt:Set[${Me.GroupCount}]
@@ -980,7 +980,7 @@ function CheckCures()
 			if ${Actor[pc,ExactName,${MainTankPC}].ID}==${Me.ID}
 				call HealMe
 			else
-				call HealMT
+				call HealMT ${MainTankID} ${MainTankInGroup}
 		}
 
 		;epicmode is set in eq2botextras, we will cure only one person per call unless in epic mode.
