@@ -610,7 +610,7 @@ function CheckHeals()
 	declare raidlowest int local 0
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
-	declare MainTankInGroup bool script 0
+	declare MainTankInGroup bool local 0
 
 	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 	grpcnt:Set[${Me.GroupCount}]
