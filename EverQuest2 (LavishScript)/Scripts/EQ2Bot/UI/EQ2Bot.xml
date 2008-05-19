@@ -100,7 +100,7 @@
 							<Y>10</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
-							<Text>Main Tank</Text>
+							<Text>Main Tank:</Text>
 							<OnLoad>
 								if ${Script[EQ2Bot].Variable[MainTank]}
 								{
@@ -123,7 +123,7 @@
 							</OnLeftClick>
 						</checkbox>
 						<Frame Name='MainTank Frame'>
-							<X>23%</X>
+							<X>26%</X>
 							<Y>10</Y>
 							<Height>20</Height>
 							<Width>95%</Width>
@@ -196,7 +196,7 @@
 							<Y>30</Y>
 							<Width>20%</Width>
 							<Height>20</Height>
-							<Text>Main Assist</Text>
+							<Text>Main Assist:</Text>
 							<OnLoad>
 								if ${Script[EQ2Bot].Variable[MainAssistMe]}
 								{
@@ -220,7 +220,7 @@
 							<AutoTooltip>Check the box to set yourself as MA</AutoTooltip>
 						</checkbox>
 						<Frame Name='MainAssist Frame'>
-							<X>23%</X>
+							<X>26%</X>
 							<Y>30</Y>
 							<Height>20</Height>
 							<Width>95%</Width>
@@ -319,7 +319,7 @@
 						</Frame>
 						<Frame Name='Following Frame'>
 							<X>1</X>
-							<Y>50</Y>
+							<Y>40</Y>
 							<Height>40</Height>
 							<Width>95%</Width>
 							<OnLoad>
@@ -333,133 +333,57 @@
 								}
 							</OnLoad>
 							<Children>
-								<checkbox Name='Following' Template='EQ2.checkbox'>
-									<X>5%</X>
-									<Y>10</Y>
-									<Width>20%</Width>
-									<Height>20</Height>
-									<Text>Auto Follow (Depricated):</Text>
-									<OnLoad>
-										if ${Script[EQ2Bot].Variable[Following]}
-										{
-											UIElement[Following@Following Frame@Main@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										if ${UIElement[Following@Following Frame@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
-										{
-											Script[EQ2Bot].Variable[Following]:Set[TRUE]
-											Script[EQ2Bot].Variable[FollowTask]:Set[1]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Are we following someone?,TRUE]:Save
-										}
-										else
-										{
-											Script[EQ2Bot].Variable[Following]:Set[FALSE]
-											Script[EQ2Bot].Variable[FollowTask]:Set[0]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Are we following someone?,FALSE]:Save
-										}
-									</OnLeftClick>
-								</checkbox>
-								<combobox name='FollowList' Template='EQ2.Combobox'>
-									<x>26%</x>
-									<y>10</y>
-									<Width>20%</width>
-									<Height>20</height>
-									<Items></items>
-									<OnLoad>
-										This:AddItem[${Script[EQ2Bot].Variable[Follow]}]
-										This.ItemByValue[${Script[EQ2Bot].Variable[Follow]}]:Select
-									</OnLoad>
-									<OnSelect>
-										Script[EQ2Bot].Variable[Follow]:Set[${This.SelectedItem.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who are we following?,${This.SelectedItem.Text}]:Save
-									</OnSelect>
-									<OnLeftClick>
-										declare tmpvar int
-										This:ClearItems
-										tmpvar:Set[1]
-										if ${Me.InRaid}
-										{
-											do
-											{
-												if ${Me.Raid[${tmpvar}](exists)}
-												{
-													This:AddItem[${Me.Raid[${tmpvar}].Name}]
-												}
-											}
-											while ${tmpvar:Inc}&lt;=24
-										}
-										else
-										{
-											do
-											{
-												if ${Me.Group[${tmpvar}](exists)}
-												{
-													This:AddItem[${Me.Group[${tmpvar}].Name}]
-												}
-												if ${Me.Group[${tmpvar}].PetID(exists)}
-												{
-													This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
-												}
-											}
-											while ${tmpvar:Inc}&lt;=5
-										}
-
-										if ${Actor[MyPet](exists)}
-										{
-											This:AddItem[${Me.PetName}]
-										}
-									</OnLeftClick>
-								</combobox>
-								<Text Name='Deviation Text' Template='EQ2.text'>
-									<X>49%</X>
-									<Y>12</Y>
-									<Width>20%</Width>
-									<Height>20</Height>
-									<Alignment>Left</Alignment>
-									<Text>Deviation:</Text>
-								</Text>
-								<Textentry Name='Deviation' Template='EQ2.textentry'>
-									<X>62%</X>
-									<Y>12</Y>
-									<Width>5%</Width>
-									<Height>15</Height>
-									<Color>FFDDBB00</Color>
-									<MaxLength>3</MaxLength>
-									<OnLoad>
-										This:SetText[${Script[EQ2Bot].Variable[Deviation]}]
-									</OnLoad>
-									<OnChange>
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What is our Deviation for following?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What is our Deviation for following?]}]
-										Script[EQ2Bot].Variable[Deviation]:Set[${This.Text}]
-									</OnChange>
-								</Textentry>
-								<Text Name='Leash Text' Template='EQ2.text'>
-									<X>70%</X>
-									<Y>12</Y>
-									<Width>20%</Width>
-									<Height>20</Height>
-									<Alignment>Left</Alignment>
-									<Text>Leash Range:</Text>
-								</Text>
-								<Textentry Name='Leash' Template='EQ2.textentry'>
-									<X>87%</X>
-									<Y>12</Y>
-									<Width>5%</Width>
-									<Height>15</Height>
-									<Color>FFDDBB00</Color>
-									<MaxLength>3</MaxLength>
-									<OnLoad>
-										This:SetText[${Script[EQ2Bot].Variable[Leash]}]
-									</OnLoad>
-									<OnChange>
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What is our Leash Range?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What is our Leash Range?]}]
-										Script[EQ2Bot].Variable[Leash]:Set[${This.Text}]
-									</OnChange>
-								</Textentry>
-							</Children>
+                            	<Commandcheckbox Name='AutoFollow' Template='EQ2.Commandcheckbox'>
+                            		<X>5%</X>
+                            		<Y>13</Y>
+                            		<Width>40</Width>
+                            		<Height>20</Height>
+                            		<Text>Auto Follow:</Text>
+                            		<AutoTooltip>Select to use EQ2 AutoFollow on the Main Assist instead of EQ2bot Follow</AutoTooltip>
+                            		<OnLeftClick>
+                            			if ${This.Checked}
+                            			{
+                            				Script[EQ2Bot].Variable[AutoFollowMode]:Set[TRUE]
+                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
+                            			}
+                            			else
+                            			{
+                            				Script[EQ2Bot].Variable[AutoFollowMode]:Set[FALSE]
+                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",FALSE]:Save
+                            			}
+                            		</OnLeftClick>
+                            		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Auto Follow Mode]}</Data>
+                            	</Commandcheckbox>
+                            	<combobox name='AutoFollowee' Template='EQ2.Combobox'>
+                            		<x>28%</x>
+                            		<y>10</y>
+                            		<Width>20%</width>
+                            		<Height>20</height>
+                            		<AutoTooltip>The Group Member to auto follow</AutoTooltip>
+                            		<Items></items>
+                            		<OnLoad>
+                            			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]
+                            			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]:Select
+                            		</OnLoad>
+                            		<OnSelect>
+                            			Script[EQ2Bot].Variable[AutoFollowee]:Set[${This.SelectedItem.Text}]
+                            			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[AutoFollowee,${This.SelectedItem.Text}]:Save</OnSelect>
+                            		<OnLeftClick>
+                            			declare tmpvar int
+                            
+                            			This:ClearItems
+                            			tmpvar:Set[1]
+                            				do
+                            				{
+                            					if ${Me.Group[${tmpvar}](exists)}
+                            					{
+                            						This:AddItem[${Me.Group[${tmpvar}].Name}]
+                            					}
+                            				}
+                            				while ${tmpvar:Inc}&lt;=5
+                            		</OnLeftClick>
+                            	</combobox>							
+						    </Children>
 						</Frame>
 						<Frame Name='Pathing Frame'>
 							<X>1</X>

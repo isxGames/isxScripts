@@ -175,52 +175,54 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[PBAoE]
-	MobHealth[1,1]:Set[20]
+	Action[1]:Set[Nuke]
+	MobHealth[1,1]:Set[1]
 	MobHealth[1,2]:Set[100]
-	Power[1,1]:Set[40]
+	Power[1,1]:Set[30]
 	Power[1,2]:Set[100]
 	Health[1,1]:Set[51]
 	Health[1,2]:Set[100]
-	SpellRange[1,1]:Set[95]
-	SpellRange[1,2]:Set[97]
-
-	Action[2]:Set[Proc]
-	MobHealth[2,1]:Set[30]
+	SpellRange[1,1]:Set[60]    
+     
+	Action[2]:Set[PBAoE]
+	MobHealth[2,1]:Set[20]
 	MobHealth[2,2]:Set[100]
 	Power[2,1]:Set[40]
 	Power[2,2]:Set[100]
-	SpellRange[2,1]:Set[157]
+	Health[2,1]:Set[51]
+	Health[2,2]:Set[100]
+	SpellRange[2,1]:Set[95]
+	SpellRange[2,2]:Set[97]
 
-	Action[3]:Set[DoT2]
-	MobHealth[3,1]:Set[1]
+	Action[3]:Set[AoE]
+	MobHealth[3,1]:Set[5]
 	MobHealth[3,2]:Set[100]
 	Power[3,1]:Set[30]
 	Power[3,2]:Set[100]
 	Health[3,1]:Set[51]
 	Health[3,2]:Set[100]
-	SpellRange[3,1]:Set[51]
+	SpellRange[3,1]:Set[90]
 
-	Action[4]:Set[AoE]
-	MobHealth[4,1]:Set[5]
+	Action[4]:Set[DoT2]
+	MobHealth[4,1]:Set[1]
 	MobHealth[4,2]:Set[100]
 	Power[4,1]:Set[30]
 	Power[4,2]:Set[100]
 	Health[4,1]:Set[51]
 	Health[4,2]:Set[100]
-	SpellRange[4,1]:Set[90]
+	SpellRange[4,1]:Set[51]
 
-	Action[5]:Set[Nuke]
-	MobHealth[5,1]:Set[1]
+	Action[5]:Set[Proc]
+	MobHealth[5,1]:Set[30]
 	MobHealth[5,2]:Set[100]
-	Power[5,1]:Set[30]
+	Power[5,1]:Set[40]
 	Power[5,2]:Set[100]
-	Health[5,1]:Set[51]
-	Health[5,2]:Set[100]
-	SpellRange[5,1]:Set[60]
+	SpellRange[5,1]:Set[157]
 
 	Action[6]:Set[Mastery]
-
+	MobHealth[6,1]:Set[20]
+	MobHealth[6,2]:Set[100]
+	
 	Action[7]:Set[DoT]
 	MobHealth[7,1]:Set[1]
 	MobHealth[7,2]:Set[100]
@@ -797,23 +799,27 @@ function Combat_Routine(int xAction)
 						break
 				;;;;;;;;;;;
 
-				call CheckForMez "Fury Mastery"
-				if ${Return.Equal[FALSE]}
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					if ${Me.Ability[Master's Smite].IsReady}
-					{
-						Target ${KillTarget}
-						Me.Ability[Master's Smite]:Use
-						do
-						{
-							waitframe
-						}
-						while ${Me.CastingSpell}
-						wait 1
-					}
-				}
-				else
-					call ReacquireTargetFromMA
+    				call CheckForMez "Fury Mastery"
+    				if ${Return.Equal[FALSE]}
+    				{
+    					if ${Me.Ability[Master's Smite].IsReady}
+    					{
+    						Target ${KillTarget}
+    						Me.Ability[Master's Smite]:Use
+    						do
+    						{
+    							waitframe
+    						}
+    						while ${Me.CastingSpell}
+    						wait 1
+    					}
+    				}
+    				else
+    					call ReacquireTargetFromMA
+    			}
 			}
 			break
 
