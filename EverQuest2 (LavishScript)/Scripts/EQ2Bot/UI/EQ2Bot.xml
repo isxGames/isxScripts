@@ -669,7 +669,7 @@
 							</OnLeftClick>
 						</Commandbutton>
 						<Commandbutton name='Stop EQ2Bot' Template='EQ2.Commandbutton'>
-							<X>20%</X>
+							<X>15%</X>
 							<Y>80%</Y>
 							<Width>100</Width>
 							<Height>20</Height>
@@ -678,9 +678,21 @@
 							<OnLeftClick>
 								Script[EQ2Bot]:QueueCommand[call StopBot]
 							</OnLeftClick>
-						</Commandbutton>
+						</Commandbutton>	
+						<Commandbutton name='Check Buffs' Template='EQ2.Commandbutton'>
+							<X>40%</X>
+							<Y>80%</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Check Buffs</Text>
+							<AutoTooltip>'Check Buffs' routine ONCE (Combat)</AutoTooltip>
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call CheckBuffsOnce]
+							</OnLeftClick>
+						</Commandbutton>						
 						<Commandbutton name='Pause EQ2Bot' Template='EQ2.Commandbutton'>
-							<X>60%</X>
+							<X>65%</X>
 							<Y>80%</Y>
 							<Width>100</Width>
 							<Height>20</Height>
@@ -691,7 +703,7 @@
 							</OnLeftClick>
 						</Commandbutton>
 						<Commandbutton name='Resume EQ2Bot' Template='EQ2.Commandbutton'>
-							<X>60%</X>
+							<X>65%</X>
 							<Y>80%</Y>
 							<Width>100</Width>
 							<Height>20</Height>
@@ -701,6 +713,10 @@
 								Script[EQ2Bot]:QueueCommand[call ResumeBot]
 							</OnLeftClick>
 						</Commandbutton>
+						
+
+						
+						
 					</Tab>
 					<Tab Name='EQ2Bot Options'>
 						<checkbox Name='AutoSwitch' Template='EQ2.checkbox'>

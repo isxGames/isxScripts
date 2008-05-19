@@ -52,6 +52,7 @@ function Class_Declaration()
 	declare DPSMode bool script 1
 	declare UltraDPSMode bool script 0
 	declare SummonImpOfRo bool script 0
+	declare UseTouchOfEmpathy bool script 0
 	
 	call EQ2BotLib_Init
 
@@ -65,7 +66,8 @@ function Class_Declaration()
 	BuffIllusory_Arm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffIllusory_Arm,]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,TRUE]}]
 	UltraDPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UltraDPSMode,FALSE]}]
-	SummonImpOfRo:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Summon Imp of Ro,]}]
+	SummonImpOfRo:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Summon Imp of Ro,FALSE]}]
+	UseTouchOfEmpathy:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTouchOfEmpathy,FALSE]}]
 	    
 	NoEQ2BotStance:Set[TRUE]
 
@@ -490,6 +492,40 @@ function Combat_Routine(int xAction)
     if !${UltraDPSMode}
     	call RefreshPower
 
+
+    ;; Check Group members to see if anyone needs 'Touch of Empathy'
+    if ${UseTouchOfEmpathy} && ${Me.Group} > 1
+    {
+        if ${Me.Ability["Touch of Empathy"].IsReady}
+        {
+            variable string TargetsTarget = ${Actor[id,${KillTarget}].Target.Name}
+            variable string TargetsTargetClass = ${Actor[PC,exactname,${TargetsTarget}].Class}
+            if (!${TargetsTarget.Equal[${MainTankPC}]} && ${Actor[pc,exactname,${TargetsTarget}](exists)})
+            {
+                switch ${TargetsTargetClass}
+                {
+                    case Paladin
+                    case Shadowknight
+                    case Brawler
+                    case Bruiser
+                    case Guardian
+                    case Berzerker
+                        break
+                        
+                    default
+                        echo "EQ2Bot-DEBUG: Casting 'Touch of Empathy' on ${TargetsTarget}"
+                        eq2execute /useabilityonplaye ${TargetsTarget} "Touch of Empathy"
+                        wait 1
+                        do
+                        {
+                            waitframe
+                        }
+                        while ${Me.CastingSpell}
+                        break
+                }
+            }
+        }
+    }
 
 	;; Chronosiphoning (Always cast this when it is ready!
 	if ${Me.Ability[${SpellType[385]}](exists)}
