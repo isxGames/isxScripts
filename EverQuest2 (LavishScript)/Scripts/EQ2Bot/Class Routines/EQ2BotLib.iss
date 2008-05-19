@@ -148,6 +148,7 @@ function EQ2BotLib_Init()
 	}
 
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
+	Event[EQ2_onIncomingText]:AttachAtom[MiscText]
 	Event[EQ2_StartedZoning]:AttachAtom[EQ2_StartedZoning]
 	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]
 
@@ -911,6 +912,12 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 		default
 			break
 	}
+}
+
+atom(script) MiscText(string Message)
+{
+	if ${Message.Upper.Find[TARGET ALREADY HAS A CONJUROR ESSENCE]} || ${Message.Upper.Find[TARGET ALREADY HAS A NECROMANCER HEART]}
+		ShardQueue:Dequeue
 }
 
 ;returns the ID of your healer in group, if none found, returns your ID

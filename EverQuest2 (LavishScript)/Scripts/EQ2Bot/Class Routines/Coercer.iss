@@ -541,7 +541,7 @@ function Combat_Routine(int xAction)
 	CurrentAction:Set[Combat Checking Power]
 	call RefreshPower
 
-	return Combat Complete
+	return CombatComplete
 }
 
 function Post_Combat_Routine(int xAction)
