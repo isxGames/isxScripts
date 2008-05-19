@@ -19,7 +19,7 @@ variable int Latest_DefilerVersion = 0
 variable int Latest_DirgeVersion = 0
 variable int Latest_FuryVersion = 0
 variable int Latest_GuardianVersion = 0
-variable int Latest_IllusionistVersion = 0
+variable int Latest_IllusionistVersion = 20080517
 variable int Latest_InquisitorVersion = 0
 variable int Latest_MonkVersion = 0
 variable int Latest_MysticVersion = 0
@@ -128,9 +128,6 @@ variable bool engagetarget=FALSE
 variable bool islooting=FALSE
 variable int CurrentPull
 variable bool pathdirection=0
-variable bool Following
-variable int Deviation
-variable int Leash
 variable bool movingtowp
 variable bool pulling
 variable int stuckcnt
@@ -349,12 +346,7 @@ function main()
 		do
 		{
 		    ;echo "Pre-Combat Routines Loop: Test - ${gRtnCtr}"
-			do
-			{
-				waitframe
-			}
-			while ${Following} && ${FollowTask}==3
-
+		    
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
@@ -380,55 +372,25 @@ function main()
 				if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 
-				if ${Following}
-				{
-					if ${Mob.Target[${KillTarget}]}
-					{
-						FollowTask:Set[2]
-						WaitFor ${Script[EQ2Follow].Variable[pausestate]} 30
-						if ${AutoMelee}
-						{
-							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
-							do
-							{
-								waitframe
-							}
-							while (${IsMoving} || ${Me.IsMoving})
-						}
-						else
-						{
-							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} 10
-							do
-							{
-								waitframe
-							}
-							while (${IsMoving} || ${Me.IsMoving})
-						}
-
-						if ${Me.IsMoving}
-						{
-                    	    press -release ${forward}
-							wait 20 !${Me.IsMoving}
-						}
-						FollowTask:Set[1]
-					}
-				}
-
 				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
 				if ${KillTarget}
 				{
-				    if ${Actor[id,${KillTarget}](exists)}
+				    if ${Actor[id,${KillTarget}](exists)} && !${Actor[id,${KillTarget}].IsDead}
 				    {
-    					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+    					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[id,${KillTarget}].IsDead})
     					{
     						if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
     						{
-    							if ${Mob.Target[${KillTarget}]}
-    								call Combat
+    						    if ${Mob.Target[${KillTarget}]}
+    							{
+    							    call Combat
+    							}
     						}
+    						;else
+    						    ;echo "DEBUG: if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"
     					}
     					;else
-    					;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
+    					    ;echo "DEBUG: if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"
     				}
     				else
     				    KillTarget:Set[0]
@@ -730,13 +692,6 @@ function main()
 		if (${Actor[${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].IsDead})
 			EQ2Bot:MainTank_Dead
 
-		; Check that we are close to MainAssist if we are following and not in combat
-		if ${Following} && ${Actor[ExactName,${MainAssist}].Distance}>10 && ${Script[EQ2Follow].Variable[pausestate]} && !${Mob.Detect}
-		{
-			FollowTask:Set[1]
-			wait 20
-		}
-
 		call ProcessTriggers
 	}
 	while ${CurrentTask}
@@ -922,8 +877,11 @@ function Combat()
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
-	FollowTask:Set[2]
+	
+	if !${Actor[id,${KillTarget}](exists)}
+	    return
 
+	FollowTask:Set[2]
 	; Make sure we are still not moving when we enter combat
 	if ${Me.IsMoving}
 	{
@@ -931,11 +889,20 @@ function Combat()
         press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
+	
+	if !${Target(exists)}
+	{
+	    target ${KillTarget}
+        wait 2
+        if !${Target(exists)}
+            return
+    }
 
+	if ${Target.ID}!=${Me.ID} && ${Target(exists)}
+		face ${Target.X} ${Target.Z}
+		
 	do
 	{
-	    ContinueCombat:Set[FALSE]
-
 		if !${MainTank}
 		{
 		    if !${Actor[id,${KillTarget}](exists)}
@@ -944,19 +911,24 @@ function Combat()
     			target ${KillTarget}
 		}
 
-		if ${Target.ID}!=${Me.ID} && ${Target(exists)}
-			face ${Target.X} ${Target.Z}
+	    if ${ContinueCombat}
+	    {
+    	    ContinueCombat:Set[FALSE]
+    	    if !${Target(exists)}
+    	    {
+    	        target ${KillTarget}
+    	        wait 1
+    	        face ${Target.X} ${Target.Z}
+    	    }
+        	elseif ${Target.ID}!=${Me.ID}
+        		face ${Target.X} ${Target.Z}
+        }
 
 		do
 		{
 			;these checks should be done before calling combat, once called, combat should insue, regardless.
 			if !${Actor[${Target.ID}].InCombatMode}
-				break
-
-			if ${Target.ID} != ${Me.ID} && ${Target(exists)}
-			{
-				face ${Target.X} ${Target.Z}
-			}
+			    break
 
             if (${Mob.ValidActor[${KillTarget}]})
             {
@@ -1090,6 +1062,8 @@ function Combat()
     			}
     			while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
     		}
+    		else
+    		    break
 
 			;;;;
 			;;;; Custom Combat Routines (per character)
@@ -1285,9 +1259,6 @@ function Combat()
 		}
 	}
 
-	if ${Following}
-		FollowTask:Set[1]
-
 	if ${MainAssist.NotEqual[${OriginalMA}]} && !${MainTank}
 		EQ2Bot:MainAssist_Dead
 
@@ -1331,9 +1302,7 @@ function GetBehind()
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-	{
 		face ${Target.X} ${Target.Z}
-	}
 
 }
 
@@ -1371,9 +1340,7 @@ function GetToFlank(int extended)
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-	{
 		face ${Target.X} ${Target.Z}
-	}
 }
 
 function GetinFront()
@@ -1392,9 +1359,8 @@ function GetinFront()
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-	{
 		face ${Target.X} ${Target.Z}
-	}
+		
 	;removing cause this seems stupid
 	;wait 4
 }
@@ -1467,7 +1433,7 @@ function CheckPosition(int rangetype, int position)
 	{
 		;I don't think this is a good idea.  We're ignoring position checks when people get knocked back... Changing from 8 to MARange
 		;it is also not good with new mob AI's that 'range' fight.
-		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>${MARange} && !${Following}
+		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>${MARange}
 			return
 	}
 	elseif ${PathType}==2
@@ -2224,7 +2190,7 @@ function FastMove(float X, float Z, int range)
 		return "INVALIDLOC"
 	}
 
-	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
+	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && ${PathType}!=4
 	{
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC"
@@ -2719,19 +2685,19 @@ function CheckMTAggro()
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 	;again this seems wrong
-	if ${Actor[id,${newtarget}](exists)}
-	{
-
-		KillTarget:Set[${newtarget}]
-		target ${KillTarget}
-
-		wait 10 ${Target.ID}==${KillTarget}
-
-		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-		{
-			face ${Target.X} ${Target.Z}
-		}
-	}
+	;if ${Actor[id,${newtarget}](exists)}
+	;{
+    ;
+	;	KillTarget:Set[${newtarget}]
+	;	target ${KillTarget}
+    ;
+	;	wait 10 ${Target.ID}==${KillTarget}
+    ;
+	;	if ${Target(exists)} && (${Me.ID}!=${Target.ID})
+	;	{
+	;		face ${Target.X} ${Target.Z}
+	;	}
+	;}
 }
 
 function ScanAdds()
@@ -2934,37 +2900,6 @@ function CantSeeTarget(string Line)
 	}
 }
 
-
-function BotFollow(string Line, string FollowTarget)
-{
-	variable string tempTarget
-
-		if (${PauseBot} || !${StartBot})
-				return
-
-
-	if ${FollowTarget.Equal[me]}
-		tempTarget:Set[${MainAssist}]
-	else
-		tempTarget:Set[${FollowTarget}]
-
-	if !${Actor[${tempTarget},radius,30].ID}
-		Echo ${tempTarget} is out of range or does not exist.
-	else
-	{
-		if ${Script[EQ2Follow](exists)}
-		{
-			Script[EQ2Follow].Variable[ftarget]:Set[${tempTarget}]
-			Script[EQ2Follow]:QueueCommand[call ResetPoints]
-		}
-		if ${tempTarget.Length} && !${Script[EQ2Follow](exists)}
-		{
-			run eq2follow 1 "${tempTarget}"
-			Following:Set[TRUE]
-		}
-	}
-}
-
 function BotStop()
 {
 	FollowTask:Set[0]
@@ -3084,21 +3019,6 @@ function StartBot()
 	; Need to move this so that its set when MainAssist changes.
 	OriginalMA:Set[${MainAssist}]
 	OriginalMT:Set[${MainTankPC}]
-
-
-	if !${PathType} && ${Following}
-	{
-		if ${Script[EQ2Follow](exists)}
-		{
-			Script[EQ2Follow]:End
-			wait 10
-		}
-		run eq2follow "${Follow}" ${Leash} ${Deviation}
-	}
-	else
-	{
-		Following:Set[FALSE]
-	}
 
 	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
@@ -3226,7 +3146,10 @@ objectdef ActorCheck
 
 		;checks if mob is too far above or below us
 		if ${Me.Y}+10<${Actor[${actorid}].Y} || ${Me.Y}-10>${Actor[${actorid}].Y}
+		{
+		    ;echo "DEBUG: Actor (ID: ${actorid} is too far above or below me"
 			return FALSE
+		}
 
 		if ${Actor[${actorid}].IsLocked}
 			return FALSE
@@ -3239,7 +3162,10 @@ objectdef ActorCheck
 
 		;actor is a charmed pet, ignore it
 		if ${This.FriendlyPet[${actorid}]}
+		{
+		    ;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
 			return FALSE
+		}
 
 		if (${DoNotPullList.Element[${actorid}](exists)})
 		{
@@ -3602,9 +3528,6 @@ objectdef EQ2BotObj
 		PullNonAggro:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Pull Non Aggro Mobs?,TRUE]}]
 		AssistHP:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Assist and Engage in combat at what Health?,96]}]
 		Following:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Are we following someone?,FALSE]}]
-		Follow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who are we following?,${MainAssist}]}]
-		Deviation:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What is our Deviation for following?,1]}]
-		Leash:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What is our Leash Range?,3]}]
 		PathType:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What Path Type (0-4)?,0]}]
 		CloseUI:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Close the UI after starting EQ2Bot?,FALSE]}]
 		MasterSession:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Master IS Session,Master.is1]}]
@@ -4654,11 +4577,6 @@ function atexit()
 
 	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
-
-	if ${Following}
-	{
-		FollowTask:Set[0]
-	}
 
 	squelch bind -delete EndBot
 
