@@ -286,8 +286,8 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-	ExecuteAtom CheckStuck
-
+    if !${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+    	ExecuteAtom CheckStuck
 
 	if ${Groupwiped}
 	{
@@ -306,7 +306,7 @@ function Buff_Routine(int xAction)
 	if ${ShardMode}
 		call Shard
 
-	if ${xAction}==1
+    if ${xAction}==1
 		call CheckHeals
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
