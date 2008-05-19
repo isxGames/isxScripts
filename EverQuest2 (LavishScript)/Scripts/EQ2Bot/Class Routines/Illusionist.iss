@@ -122,14 +122,14 @@ function Combat_Init()
     ;; Slow casting NUKE and DAZE
 	Action[2]:Set[NukeDaze]
 	SpellRange[2,1]:Set[61]
+	
+    ;; Mental DOT 
+	Action[3]:Set[MindDoT]
+	SpellRange[3,1]:Set[70]	
  
     ;; Mental DOT and arcane resistance debuff (fast casting)
-	Action[3]:Set[Despair]
-	SpellRange[3,1]:Set[80]
-
-    ;; Mental DOT 
-	Action[4]:Set[MindDoT]
-	SpellRange[4,1]:Set[70]
+	Action[4]:Set[Despair]
+	SpellRange[4,1]:Set[80]
 
     ;; Fast casting NUKE
 	Action[5]:Set[Nuke]
@@ -148,6 +148,8 @@ function Combat_Init()
 	SpellRange[8,1]:Set[91]
 
     ;; Master Strike
+	MobHealth[9,1]:Set[20]
+	MobHealth[9,2]:Set[100]    
     Action[9]:Set[Master_Strike]
 
     ;; Construct
@@ -211,11 +213,9 @@ function Buff_Routine(int xAction)
 
     ;echo "Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"
     ;CurrentAction:Set[Buff Routine :: ${PreAction[${xAction}]} (${xAction})]
-    if !${DPSMode} && !${UltraDPSMode}
-    {
-    	call CheckHeals
-    	call RefreshPower
-    }
+   
+    call CheckHeals
+    call RefreshPower
 
 	ExecuteAtom CheckStuck
 
@@ -501,7 +501,7 @@ function Combat_Routine(int xAction)
 	;; If we have the skill 'Nullifying Staff' and the mob is within range
 	if ${Me.Ability[${SpellType[396]}](exists)}
 	{
-	    if (${Actor[id,${KillTarget}].Distance} <= 5)
+	    if (${Actor[id,${KillTarget}].Distance} <= 7)
 	    {
     	    if (${Me.Ability[${SpellType[396]}].IsReady})
     	    {
@@ -535,8 +535,11 @@ function Combat_Routine(int xAction)
     ;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
     if !${MainTank} && ${Me.Group} > 1
     {
-    	if ${Me.Ability[${SpellType[72]}].IsReady}
-    	    call CastSpellRange 72 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
+        if ${Actor[id,${KillTarget}].Health} > 20
+        {
+        	if ${Me.Ability[${SpellType[72]}].IsReady}
+        	    call CastSpellRange 72 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
+    	}
     }
      
 	switch ${Action[${xAction}]}
@@ -550,8 +553,8 @@ function Combat_Routine(int xAction)
 			break
 			
         ;; Single Target DoTs
+        case MindDoT        
         case Despair
-        case MindDoT
             ;echo "DEBUG::  ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 5
             {
@@ -590,18 +593,23 @@ function Combat_Routine(int xAction)
 		    ;;;;;;;;;;
 		    if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
 		        break
-		    ;;;;;;;;;;;				    
-			if ${Me.Ability["Master's Strike"].IsReady}
-			{
-				Target ${KillTarget}
-				Me.Ability["Master's Strike"]:Use
-				do
-				{
-				    waitframe
-				}
-				while ${Me.CastingSpell}
-				wait 1						
-			}
+		    ;;;;;;;;;;;		
+		    
+		    call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+			if ${Return.Equal[OK]}
+			{		    
+    			if ${Me.Ability["Master's Strike"].IsReady}
+    			{
+    				Target ${KillTarget}
+    				Me.Ability["Master's Strike"]:Use
+    				do
+    				{
+    				    waitframe
+    				}
+    				while ${Me.CastingSpell}
+    				wait 1						
+    			}
+    		}
 			break        
         
         case Constructs
@@ -759,6 +767,7 @@ function RefreshPower()
 {
 	declare tempvar int local
 	declare MemberLowestPower int local
+		
 	;Spiritise Censer
 	if !${Swapping} && ${Me.Inventory[Spirtise Censer](exists)}
 	{
@@ -768,47 +777,49 @@ function RefreshPower()
 		Me.Equipment[Spirtise Censer]:Use
 	}
 
-	;Conjuror Shard
-	if ${Me.Power} < 40
-	{
-		call Shard
-	}
-
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<80 && !${Me.InCombat}
 		call CastSpellRange 309
-
-	;Transference Line in Combat
-	if ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<50
+	elseif ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<50
 		call CastSpellRange 309
 
     if ${Me.Group} > 1
     {
-    	;Mana Flow the lowest group member
-    	tempvar:Set[1]
-    	MemberLowestPower:Set[1]
-    	do
-    	{
-    		if ${Me.Group[${tempvar}].ToActor.Power}<60 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
-    		{
-    			if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
-    			{
-    				MemberLowestPower:Set[${tempvar}]
-    			}
-    		}
-    	}
-    	while ${tempvar:Inc}<${Me.GroupCount}
-    
-    	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>30 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
-    		call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+    	;Conjuror Shard
+    	if ${Me.Power} < 40
+    		call Shard        
+        
+        if ${Me.ToActor.Power} > 45
+        {
+        	;Mana Flow the lowest group member
+        	tempvar:Set[1]
+        	MemberLowestPower:Set[1]
+        	do
+        	{
+        		if ${Me.Group[${tempvar}].ToActor.Power}<60 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+        		{
+        			if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
+        			{
+        				MemberLowestPower:Set[${tempvar}]
+        			}
+        		}
+        	}
+        	while ${tempvar:Inc}<${Me.GroupCount}
+        
+        	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>30 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+        		call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+        }
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power} < 20 && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+	if ${Me.InCombat}
 	{
-		call CastSpellRange 354
-        ;; Savant is now called in the main routine
-	}
+    	if ${Actor[${MainTankPC}].Power} < 20 && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+    	{
+    		call CastSpellRange 354
+            ;; Savant is now called in the main routine
+    	}
+    }
 }
 
 function CheckHeals()
@@ -828,22 +839,24 @@ function CheckHeals()
 			Target ${KillTarget}
 		}
 	}
-	do
+	
+	if ${grpcnt} > 1
 	{
-		; Cure Arcane
-		if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
-		{
-			call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
-
-			if ${Actor[${KillTarget}](exists)}
-			{
-				Target ${KillTarget}
-			}
-		}
-	}
-	while ${temphl:Inc}<${grpcnt}
-
-
+    	do
+    	{
+    		; Cure Arcane
+    		if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
+    		{
+    			call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+    
+    			if ${Actor[${KillTarget}](exists)}
+    			{
+    				Target ${KillTarget}
+    			}
+    		}
+    	}
+    	while ${temphl:Inc}<${grpcnt}
+    }
 }
 function Mezmerise_Targets()
 {
