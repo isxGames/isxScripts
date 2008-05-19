@@ -72,6 +72,7 @@ function Class_Declaration()
 	declare PBAoEMode bool script
 	declare CureMode bool script
 	declare StormsMode bool script
+	declare InfusionMode bool script
 	declare KeepReactiveUp bool script
 	declare BuffEel bool script 1
 	declare MeleeMode bool script 1
@@ -101,6 +102,7 @@ function Class_Declaration()
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cure Spells,FALSE]}]
+	InfusionMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[InfusionMode,FALSE]}]
 	StormsMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Call of Storms,FALSE]}]
 	MeleeMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Melee,FALSE]}]
 	BuffThorns:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Thorns,FALSE]}]
@@ -1376,7 +1378,7 @@ function CheckHOTs()
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
 
-		if ${KeepMTHOTUp}
+		if (${Me.InCombat} && ${KeepMTHOTUp}) || ${KeepReactiveUp}
 		{
 			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
@@ -1385,7 +1387,7 @@ function CheckHOTs()
 			}
 		}
 
-		if ${KeepGroupHOTUp}
+		if (${Me.InCombat} && ${KeepGroupHOTUp}) || ${KeepReactiveUp}
 		{
 			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 				call CastSpellRange 15

@@ -626,7 +626,7 @@ function CheckHeals()
 
 	call CheckHOTs
 
-	if ${EpicMode}
+	if ${EpicMode} && ${Me.InCombat} && ${PetMode}
 		call CastSpellRange 330 331 0 0 ${KillTarget}
 
 
@@ -634,13 +634,10 @@ function CheckHeals()
 	{
 		if ${Me.Group[${temphl}].ToActor(exists)}
 		{
-
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
 				if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
-				{
 					lowest:Set[${temphl}]
-				}
 			}
 
 			if ${Me.Group[${temphl}].ID}==${MainTankID}
@@ -1062,7 +1059,7 @@ function CheckHOTs()
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
 
-		if ${KeepMTHOTUp}
+		if (${Me.InCombat} && ${KeepMTHOTUp}) || ${KeepReactiveUp}
 		{
 			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
@@ -1071,7 +1068,7 @@ function CheckHOTs()
 			}
 		}
 
-		if ${KeepGroupHOTUp}
+		if (${Me.InCombat} && ${KeepGroupHOTUp}) || ${KeepReactiveUp}
 		{
 			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 				call CastSpellRange 15

@@ -46,10 +46,10 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;    
-    
+  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+  declare ClassFileVersion int script 20080408
+  ;;;;
+
 	declare PetType int script
 	declare AoEMode bool script FALSE
 	declare CureMode bool script FALSE
@@ -72,8 +72,6 @@ function Class_Declaration()
   declare Auto_Res bool script TRUE
 
 	call EQ2BotLib_Init
-
-	AddTrigger DequeueShardRequest "Target already has a necromancer heart item!"
 
 	PetType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Pet Type,3]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]

@@ -27,7 +27,7 @@ function Class_Declaration()
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
     ;;;;
-    
+
 	declare PetType int script
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -44,9 +44,6 @@ function Class_Declaration()
 	declare ShardType string script
 
 	call EQ2BotLib_Init
-
-	AddTrigger DequeueShardRequest "Target already has a conjurer essence item!"
-
 
 	PetType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Pet Type,3]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
