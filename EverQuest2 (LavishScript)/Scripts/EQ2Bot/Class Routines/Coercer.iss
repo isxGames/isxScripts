@@ -37,7 +37,6 @@ function Class_Declaration()
 {
   ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
   declare ClassFileVersion int script 20080515
-  ;;;;
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -470,6 +469,12 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 391 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
+	;;;; Cataclysmic Mind
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+	{
+		call CastSpellRange 72 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
 	;;;; Daze
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)}
 	{
@@ -518,12 +523,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 62 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
-	;;;; Mind
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
-	{
-		call CastSpellRange 72 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
+
 
 	if ${DoHOs}
 		objHeroicOp:DoHO

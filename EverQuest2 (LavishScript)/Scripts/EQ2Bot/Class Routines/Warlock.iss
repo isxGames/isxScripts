@@ -27,7 +27,7 @@ function Class_Declaration()
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
     ;;;;
-    
+
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
 	declare DebuffMode bool script FALSE
@@ -217,11 +217,6 @@ function Buff_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
-
-	if ${ShardMode}
-	{
-		call Shard
-	}
 
 	call CheckHeals
 	call RefreshPower
@@ -711,16 +706,12 @@ function Cancel_Root()
 
 function RefreshPower()
 {
+	if ${ShardMode}
+		call Shard
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45
 	{
 		call UseItem "Spiritise Censer"
-	}
-
-	;Conjuror Shard
-	if ${Me.ToActor.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
-	{
-		Me.Inventory[${ShardType}]:Use
 	}
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<20
