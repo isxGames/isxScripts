@@ -187,25 +187,27 @@
 	</Commandcheckbox>	
 	<Text name='lblShiftForm' Template='EQ2.text'>
 	  <x>5%</x>
-	  <y>190</y>
+	  <y>200</y>
 	  <Height>20</Height>
 		<Width>80</Width>
 		<Alignment>Left</Alignment>
 		<Text>ShapeShift:</Text>
 	</Text>
 	<combobox Name='ShiftForm' Template='EQ2.Combobox'>
-		<X>25%</X>
-		<Y>190</Y>
-		<Width>60</Width>
+		<X>20%</X>
+		<Y>195</Y>
+		<Width>80</Width>
 		<Height>20</Height>
 		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
 		<Items>
-			<Item Value='1'>Wolf Form</Item>
+		    <Item Value='0'>None</Item>
+			<Item Value='1'>Wolf</Item>
 			<Item Value='2'>Tiger</Item>
 			<Item Value='3'>Treant</Item>
 		</items>
 		<OnLoad>
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[ShiftForm]}]:Select
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ShiftForm]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ShiftForm]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ShiftForm]:Set[${This.SelectedItem.Value}]
