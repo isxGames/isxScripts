@@ -329,9 +329,15 @@ function Buff_Routine(int xAction)
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
+
+		case AA_Infusion
+			if !${InfusionMode}
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				break
+			}
 		case Self_Buff
 		case AA_Rebirth
-		case AA_Infusion
 			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
