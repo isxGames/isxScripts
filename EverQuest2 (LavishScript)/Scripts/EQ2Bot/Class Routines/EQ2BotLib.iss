@@ -60,8 +60,11 @@ variable int StuckWarningTime
 
 ;Conj/Necro Shard&Heart request
 variable bool ShardMode=FALSE
+variable bool HeartMode=FALSE
 variable string ShardGroupMember
+variable string HeartGroupMember
 variable bool ShardRequested=FALSE
+variable bool HeartRequested=FALSE
 
 ;Pet Attack Variables
 variable int PetTarget
@@ -121,6 +124,8 @@ function EQ2BotLib_Init()
 	WarnTankWhenAggro:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me,FALSE]}]
 	ShardMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Mode,FALSE]}]
 	ShardGroupMember:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Group Member,""]}]
+	HeartMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Heart Mode,FALSE]}]
+	HeartGroupMember:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Heart Group Member,""]}]
 	DoHOs:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[DoHOs,FALSE]}]
 	RelaySession:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[RelaySession,""]}]
 	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]
@@ -558,45 +563,33 @@ function IsFighter(int ID)
 	}
 }
 
-function Shard()
+function Shard(int sPower)
 {
-	declare ShardTypeL string local "NOSHARD"
+	if !${sPower}
+		sPower:Set[65]
 
+	declare ShardTypeL string local "NOSHARD"
+	declare HeartTypeL string local "NOHEART"
 
 	if ${Me.Inventory["Shard of Essence"](exists)}
-	{
 		ShardTypeL:Set[Shard of Essence]
-	}
 	elseif ${Me.Inventory["Sliver of Essence"](exists)}
-	{
 		ShardTypeL:Set[Sliver of Essence]
-	}
 	elseif ${Me.Inventory["Scintilla of Essence"](exists)}
-	{
 		ShardTypeL:Set[Scintilla of Essence]
-	}
 	elseif ${Me.Inventory["Scale of Essence"](exists)}
-	{
 		ShardTypeL:Set[Scale of Essence]
-	}
-	elseif ${Me.Inventory["Splintered Heart"](exists)}
-	{
-		ShardTypeL:Set[Splintered Heart]
-	}
-	elseif ${Me.Inventory["Darkness Heart"](exists)}
-	{
-		ShardTypeL:Set[Darkness Heart]
-	}
-	elseif ${Me.Inventory["Sacrificial Heart"](exists)}
-	{
-		ShardTypeL:Set[Sacrificial Heart]
-	}
-	elseif ${Me.Inventory["Ruinous Heart"](exists)}
-	{
-		ShardTypeL:Set[Ruinous Heart]
-	}
 
-	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<65 && ${Me.Inventory[${ShardTypeL}].IsReady}
+	if ${Me.Inventory["Splintered Heart"](exists)}
+		HeartTypeL:Set[Splintered Heart]
+	elseif ${Me.Inventory["Darkness Heart"](exists)}
+		HeartTypeL:Set[Darkness Heart]
+	elseif ${Me.Inventory["Sacrificial Heart"](exists)}
+		HeartTypeL:Set[Sacrificial Heart]
+	elseif ${Me.Inventory["Ruinous Heart"](exists)}
+		HeartTypeL:Set[Ruinous Heart]
+
+	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${ShardTypeL}].IsReady} && ${Me.InCombat}
 	{
 		Me.Inventory[${ShardTypeL}]:Use
 		ShardRequested:Set[FALSE]
@@ -606,6 +599,18 @@ function Shard()
 	{
 		ShardRequested:Set[TRUE]
 		EQ2Execute /tell ${ShardGroupMember} shard please
+	}
+
+	if ${HeartTypeL.NotEqual[NOHEART]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${HeartTypeL}].IsReady} && ${Me.InCombat}
+	{
+		Me.Inventory[${HeartTypeL}]:Use
+		HeartRequested:Set[FALSE]
+	}
+
+	if !${Me.Inventory[${HeartTypeL}](exists)} && !${HeartRequested} && ${ShardMode}
+	{
+		HeartRequested:Set[TRUE]
+		EQ2Execute /tell ${HeartGroupMember} shard please
 	}
 
 }
@@ -620,7 +625,6 @@ function ToClose()
 	}
 
 }
-
 
 function CheckGroupHealth(int MinHealth)
 {
@@ -690,11 +694,8 @@ atom CheckStuck()
 	if ${Actor[${Me.ToActor.WhoFollowing}].Distance}>25 && (${Math.Calc64[${Time.Timestamp} - ${StuckWarningTime}]}>=10)  && ${Actor[${Me.ToActor.WhoFollowing}](exists)}
 	{
 		relay ${RelaySession} EQ2Echo ${Me.Name} IS STUCK
-
 		StuckWarningTime:Set[${Time.Timestamp}]
 	}
-
-
 }
 
 atom SaveEquipmentSet(string EquipmentSetName)
@@ -735,7 +736,6 @@ atom LoadEquipmentSet(string EquipmentSetName)
 
 	if !${Me.InCombat}
 	{
-
 		Do
 		{
 			if ${Me.Equipment[${tempvar}].Name.NotEqual[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}].GetString[${tempvar}]}]} || !${Me.Equipment[${tempvar}](exists)}

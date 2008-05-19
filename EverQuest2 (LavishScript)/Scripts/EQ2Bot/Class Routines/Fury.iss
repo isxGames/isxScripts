@@ -182,8 +182,8 @@ function Combat_Init()
 	Power[1,2]:Set[100]
 	Health[1,1]:Set[51]
 	Health[1,2]:Set[100]
-	SpellRange[1,1]:Set[60]    
-     
+	SpellRange[1,1]:Set[60]
+
 	Action[2]:Set[PBAoE]
 	MobHealth[2,1]:Set[20]
 	MobHealth[2,2]:Set[100]
@@ -222,7 +222,7 @@ function Combat_Init()
 	Action[6]:Set[Mastery]
 	MobHealth[6,1]:Set[20]
 	MobHealth[6,2]:Set[100]
-	
+
 	Action[7]:Set[DoT]
 	MobHealth[7,1]:Set[1]
 	MobHealth[7,2]:Set[100]
@@ -304,7 +304,8 @@ function Buff_Routine(int xAction)
 	if ${ShardMode}
 		call Shard
 
-	call CheckHeals
+	if ${xAction}==1
+		call CheckHeals
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
@@ -312,17 +313,8 @@ function Buff_Routine(int xAction)
 		wait 2
 	}
 
-		if (${KeepReactiveUp})
-		{
-			if (${Me.ToActor.Power} > 85)
-			{
-				if !${Me.Maintained[${SpellType[11]}](exists)}
-					call CastSpellRange 11
-
-				call CastSpellRange 15
-				call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
-			}
-		}
+	if ${Me.ToActor.Power}>85
+		call CheckHOTs
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -958,7 +950,7 @@ function CheckHeals()
 	declare temph2 int local 1
 	declare grpheal int local 0
 	declare lowest int local 0
-	declare raidlowest int local 0
+	declare raidlowest int local 1
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
@@ -1000,12 +992,12 @@ function CheckHeals()
     			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
     				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
 			}
-			
+
 			if (${Me.Group[${temphl}].Class.Equal[illusionist]} && !${Me.InCombat})
 			{
     			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
     				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-			}			
+			}
 
 			if ${Me.Pet.Health}<60
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
@@ -1366,7 +1358,7 @@ function CheckHOTs()
 	hot1:Set[0]
 	grphot:Set[0]
 
-	if ${Me.InCombat} || ${Actor[exactname,${MainTankPC}].InCombatMode} && (${KeepMTHOTUp} || ${KeepGroupHOTUp})
+	if ((${Me.InCombat} || ${Actor[exactname,${MainTankPC}].InCombatMode}) && (${KeepMTHOTUp} || ${KeepGroupHOTUp})) || (${KeepReactiveUp} && ${Me.ToActor.Power}>85)
 	{
 		do
 		{
@@ -1399,6 +1391,9 @@ function CheckHOTs()
 				call CastSpellRange 15
 		}
 	}
+
+	if ${KeepReactiveUp} && !${Me.Maintained[${SpellType[11]}](exists)}
+		call CastSpellRange 11
 
 }
 

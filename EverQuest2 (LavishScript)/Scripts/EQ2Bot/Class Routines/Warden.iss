@@ -248,7 +248,8 @@ function Buff_Routine(int xAction)
 	if ${ShardMode}
 		call Shard
 
-	call CheckHeals
+	if ${xAction}==1
+		call CheckHeals
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
@@ -364,7 +365,7 @@ function Combat_Routine(int xAction)
 
 	if ${CureMode}
 		call CheckCures
-	
+
 	call CheckHeals
 
 
@@ -520,7 +521,7 @@ function Combat_Routine(int xAction)
 				break
 		}
 	}
-
+	call CheckHOTs
 }
 
 function Post_Combat_Routine(int xAction)
@@ -607,7 +608,7 @@ function CheckHeals()
 	declare temph2 int local 1
 	declare grpheal int local 0
 	declare lowest int local 0
-	declare raidlowest int local 0
+	declare raidlowest int local 1
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
@@ -624,6 +625,10 @@ function CheckHeals()
 		call CastSpellRange 300 0 1 1 ${MainTankID}
 
 	call CheckHOTs
+
+	if ${EpicMode}
+		call CastSpellRange 330 331 0 0 ${KillTarget}
+
 
 	do
 	{
@@ -1039,7 +1044,7 @@ function CheckHOTs()
 	hot1:Set[0]
 	grphot:Set[0]
 
-	if ${Me.InCombat} || ${Actor[exactname,${MainTankPC}].InCombatMode} && (${KeepMTHOTUp} || ${KeepGroupHOTUp})
+	if ((${Me.InCombat} || ${Actor[exactname,${MainTankPC}].InCombatMode}) && (${KeepMTHOTUp} || ${KeepGroupHOTUp})) || (${KeepReactiveUp} && ${Me.ToActor.Power}>85)
 	{
 		do
 		{

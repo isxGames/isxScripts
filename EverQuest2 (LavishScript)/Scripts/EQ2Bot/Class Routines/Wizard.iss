@@ -178,11 +178,6 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
-	if ${ShardMode}
-	{
-		call Shard
-	}
-
 	call CheckHeals
 	call RefreshPower
 
@@ -522,6 +517,8 @@ function Cancel_Root()
 
 function RefreshPower()
 {
+	if ${ShardMode}
+		call Shard
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45
 	{
