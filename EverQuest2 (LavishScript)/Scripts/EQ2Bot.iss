@@ -77,6 +77,7 @@ variable string OriginalMT
 variable bool AutoSwitch
 variable bool AutoMelee
 variable bool AutoPull
+variable bool PullOnlySoloMobs
 variable bool AutoLoot
 variable bool LootAll
 variable int KillTarget
@@ -1641,6 +1642,9 @@ function Pull(string npcclass)
 		    ;echo "DEBUG: Actor (ID: ${actorid}) is in the TempDoNotPullList -- skipping..."
 			continue
 		}
+		
+		if (${PullOnlySoloMobs} && !${CustomActor[${tcount}].IsSolo})
+		    continue
 
 		if ${Mob.ValidActor[${ThisActorID}]}
 		{
@@ -1685,11 +1689,17 @@ function Pull(string npcclass)
 			{
 			    if (${PullType.Equal[Spell or CA Pull]})
 			    {
+    			    if ${Target.Distance} > ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
+    			    {
+    			        ;echo "DEBUG: Moving within range for your pull spell or combat art..."
+    			        call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
+    			    }
+    			    ;; Check again....stupid moving mobs...
     			    if ${Target.Distance} > ${Me.Ability[${PullSpell}].Range}
     			    {
     			        ;echo "DEBUG: Moving within range for your pull spell or combat art..."
-    			        call FastMove ${Target.X} ${Target.Z} ${Me.Ability[${PullSpell}].Range}
-    			    }
+    			        call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-2]}
+    			    }    			    
     			}
 			    elseif (${PullType.Equal[Bow Pull]})
 			    {
@@ -3130,8 +3140,10 @@ function CheckBuffsOnce()
 	    }
 	    while ${i:Inc} <= 40
 	}
-    		
-    if ${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+	
+	if ${MainTank}
+    	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	    
+    elseif ${Actor[pc,exactname,${MainTankPC}].InCombatMode}
         UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
     CurrentAction:Set["Waiting..."]
     return
@@ -3580,6 +3592,7 @@ objectdef EQ2BotObj
 		LootAll:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Accept Loot Automatically?,TRUE]}]
 		LootMethod:Set[${SettingXML[${charfile}].Set[General Settings].GetString[LootMethod,Accept]}]
 		AutoPull:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Pull,FALSE]}]
+		PullOnlySoloMobs:Set[${SettingXML[${charfile}].Set[General Settings].GetString[PullOnlySoloMobs,TRUE]}]
 		PullSpell:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What to use when PULLING?,SPELL]}]
 		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to PULL from?,15]}]
 		PullWithBow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Pull with Bow (Ranged Attack)?,FALSE]}]
