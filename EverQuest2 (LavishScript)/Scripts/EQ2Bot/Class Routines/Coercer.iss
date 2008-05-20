@@ -111,53 +111,6 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[ShockWave]
-	SpellRange[1,1]:Set[95]
-	SpellRange[1,2]:Set[91]
-	SpellRange[1,3]:Set[90]
-
-	Action[2]:Set[Debuff]
-	SpellRange[2,1]:Set[50]
-
-	Action[3]:Set[Lash]
-	MobHealth[3,1]:Set[60]
-	MobHealth[3,2]:Set[100]
-	SpellRange[3,1]:Set[92]
-
-	Action[4]:Set[Hostage]
-	MobHealth[4,1]:Set[20]
-	MobHealth[4,2]:Set[100]
-	SpellRange[4,1]:Set[71]
-
-	Action[5]:Set[Puppets]
-	MobHealth[5,1]:Set[30]
-	MobHealth[5,2]:Set[100]
-	SpellRange[5,1]:Set[391]
-
-	Action[6]:Set[Daze]
-	SpellRange[6,1]:Set[260]
-
-	Action[7]:Set[Despair]
-	SpellRange[7,1]:Set[80]
-
-	Action[8]:Set[Anguish]
-	SpellRange[8,1]:Set[70]
-
-	Action[9]:Set[Nuke]
-	SpellRange[9,1]:Set[60]
-
-	Action[10]:Set[Master_Strike]
-
-	Action[11]:Set[Stun]
-	SpellRange[11,1]:Set[190]
-
-	Action[13]:Set[Sunbolt]
-	SpellRange[13,1]:Set[62]
-
-	Action[14]:Set[Mind]
-	MobHealth[14,1]:Set[40]
-	MobHealth[14,2]:Set[100]
-	SpellRange[14,1]:Set[72]
 
 }
 
@@ -338,9 +291,7 @@ function Buff_Routine(int xAction)
 				{
 					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					if ${Me.UsedConc}<5
-					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -356,9 +307,7 @@ function Buff_Routine(int xAction)
 				do
 				{
 					if ${Me.Group[${tempvar}].ToActor.Distance}<15
-					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
-					}
 				}
 				while ${tempvar:Inc}<${Me.GroupCount}
 			}
@@ -679,8 +628,7 @@ function Mezmerise_Targets()
 	declare aggrogrp bool local FALSE
 
 	grpcnt:Set[${Me.GroupCount}]
-
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:CreateCustomActorArray[byDist,20]
 
 	do
 	{
@@ -688,9 +636,7 @@ function Mezmerise_Targets()
 		{
 			;if its the kill target skip it
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
-			{
 				continue
-			}
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
@@ -700,7 +646,6 @@ function Mezmerise_Targets()
 			{
 				do
 				{
-
 					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
 					{
 						aggrogrp:Set[TRUE]
@@ -724,44 +669,24 @@ function Mezmerise_Targets()
 				while ${tempvar:Inc}<=24
 			}
 			;check if its agro on me
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-			{
+			if ${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${CustomActor[${tcount}].Target.IsMyPet}
 				aggrogrp:Set[TRUE]
-			}
-
-			;if i have a mob charmed check if its agro on my charmed pet
-			if ${Me.Maintained[${SpellType[351]}](exists)}
-			{
-				if ${CustomActor[${tcount}].Target.IsMyPet}
-				{
-					aggrogrp:Set[TRUE]
-				}
-			}
 
 			if ${aggrogrp}
 			{
-
 				if ${Me.AutoAttackOn}
-				{
 					eq2execute /toggleautoattack
-				}
 
 				if ${Me.RangedAutoAttackOn}
-				{
 					eq2execute /togglerangedattack
-				}
 
 				;try to AE mezz first and check if its not single target mezzed
 				if !${CustomActor[${tcount}].Effect[${SpellType[352]}](exists)}
-				{
 					call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
-				}
 
 				;if the actor is not AE Mezzed then single target Mezz
 				if !${CustomActor[${tcount}].Effect[${SpellType}[353]](exists)}
-				{
 					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 10
-				}
 
 				aggrogrp:Set[FALSE]
 			}
@@ -790,9 +715,7 @@ function DoCharm()
 	tempvar:Set[1]
 
 	if ${Me.Maintained[${SpellType[351]}](exists)} || ${Me.UsedConc}>2
-	{
 		return
-	}
 
 	grpcnt:Set[${Me.GroupCount}]
 
@@ -802,11 +725,8 @@ function DoCharm()
 	{
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && !${CustomActor[${tcount}].IsEpic} && ${CustomActor[${tcount}].Target(exists)}
 		{
-
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} && ${grpcnt}>1
-			{
 				continue
-			}
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
@@ -824,19 +744,13 @@ function DoCharm()
 			}
 
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-			{
 				aggrogrp:Set[TRUE]
-			}
 
 			if ${aggrogrp} && (${CustomActor[${tcount}].Difficulty}>=0) && (${CustomActor[${tcount}].Difficulty}<=3)
 			{
-
 				CharmTarget:Set[${CustomActor[${tcount}].ID}]
 				break
-
 			}
-
-
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
@@ -846,16 +760,10 @@ function DoCharm()
 		call CastSpellRange 351 0 0 0 ${CharmTarget}
 
 		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
-		{
 			call PetAttack
-		}
 		else
-		{
 			EQ2Execute /target_none
-		}
-
 	}
-
 }
 
 function DoAmnesia()
@@ -874,11 +782,8 @@ function DoAmnesia()
 	{
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
-
 			if (${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}) || (${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID})
-			{
 				continue
-			}
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
@@ -890,48 +795,34 @@ function DoAmnesia()
 					{
 						call IsFighter ${Me.Group[${tempvar}].ID}
 						if ${Return} || ${Me.Group[${tempvar}].Name.Equal[${MainAssist}]}
-						{
 							continue
-						}
 						else
 						{
 							aggrogrp:Set[TRUE]
 							break
 						}
-
 					}
 				}
 				while ${tempvar:Inc}<=${grpcnt}
 			}
 
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}  && !${MainTank}
-			{
 				aggrogrp:Set[TRUE]
-			}
 
 			if ${aggrogrp}
 			{
 				;Try AA Thought Snap first
 				if ${Me.Ability[${SpellType[376]}].IsReady}
-				{
 					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
-				}
-				;Try the AA Touch of Empathy second
 				elseif ${Me.Ability[${SpellType[384]}].IsReady}
-				{
 					call CastSpellRange 382 0 0 0 ${KillTarget}
-				}
-				;Try Amensia if Touch of Empathy and Thought Snap isnt up or avialable
 				else
-				{
 					call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
-				}
 				return
 			}
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
-
 }
 
 function DestroyThoughtstones()
@@ -951,9 +842,7 @@ function DestroyThoughtstones()
 				return
 			}
 			else
-			{
 				StackFound:Set[TRUE]
-			}
 		}
 	}
 	while ${Counter:Inc}<=${Me.CustomInventoryArraySize}
