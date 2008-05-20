@@ -279,7 +279,7 @@ function main()
 	{
 		EQ2Nav:AutoBox
 		EQ2Nav:ConnectRegions
-	}    
+	}
 	
 	do
 	{
@@ -312,8 +312,7 @@ function main()
 			KillTarget:Set[]
 			do
 			{
-				wait 5
-				call ProcessTriggers
+				wait 10
 			}
 			while ${EQ2.Zoning}
 			wait 20
@@ -327,8 +326,7 @@ function main()
 			KillTarget:Set[]
 			do
 			{
-				wait 3
-				call ProcessTriggers
+				wait 10
 			}
 			while !${StartBot}
 		}
@@ -446,7 +444,6 @@ function main()
     					}
     				}
     				MobDetected:Set[${Mob.Detect}]
-    				call ProcessTriggers
     			}
     			while ${MobDetected}
 			}
@@ -482,7 +479,6 @@ function main()
 				if (${Me.AutoAttackOn} && !${Mob.Detect})
 					EQ2Execute /toggleautoattack
 			}
-			call ProcessTriggers
 		}
 		while ${gRtnCtr:Inc}<=40
 
@@ -510,7 +506,6 @@ function main()
     					CurrentAction:Set["Idle..."]
     					break
     				}
-    				call ProcessTriggers
     		    }
     		    while ${gRtnCtr:Inc} <= 40
     		}
@@ -669,7 +664,6 @@ function main()
 					}
 				}
 				MobDetected:Set[${Mob.Detect}]
-				call ProcessTriggers
 			}
 			while ${MobDetected}
 		}
@@ -834,7 +828,6 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 		{
 			return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
 		}
-		call ProcessTriggers
 	}
 	while ${tempvar:Inc}<=${finish}
 
@@ -909,7 +902,7 @@ function Combat()
 	if ${Target.ID}!=${Me.ID} && ${Target(exists)}
 		face ${Target.X} ${Target.Z}
 		
-	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	
+	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show		
 	do
 	{
 		if !${MainTank}
@@ -935,13 +928,12 @@ function Combat()
         
         if !${Target(exists)} || !${Actor[id,${KillTarget}](exists)}
             break
-
+            
 		do
 		{
 			;these checks should be done before calling combat, once called, combat should insue, regardless.
 			if !${Actor[${Target.ID}].InCombatMode}
 			    break
-			    
 			    
     		if ${Target.Distance} > ${MARange}
     		{
@@ -959,7 +951,7 @@ function Combat()
                     
                 face ${Target.X} ${Target.Y} ${Target.Z}
     		}
-
+    		
             if (${Mob.ValidActor[${KillTarget}]})
             {
     			gRtnCtr:Set[1]
@@ -1007,8 +999,7 @@ function Combat()
 
     				do
     				{
-    					wait 3
-    					call ProcessTriggers
+    					waitframe
     				}
     				while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
 
@@ -1065,8 +1056,7 @@ function Combat()
     					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
     					do
     					{
-    						waitframe
-    						call ProcessTriggers
+    							waitframe
     					}
     					while (${IsMoving} || ${Me.IsMoving})
     				}
@@ -1091,7 +1081,6 @@ function Combat()
     						call ProcessTriggers
     					}
     				}
-    				call ProcessTriggers
     			}
     			while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
     		}
@@ -1171,7 +1160,6 @@ function Combat()
     						call ProcessTriggers
     					}
     				}
-    				call ProcessTriggers
     		    }
 		        while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
 		    }
@@ -1234,11 +1222,10 @@ function Combat()
 		}
         ;;
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        call ProcessTriggers
 	}
 	while ${Me.InCombat} || ${ContinueCombat}
-	
-	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
+
+    UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 
 	avoidhate:Set[FALSE]
 	checkadds:Set[FALSE]
@@ -1317,7 +1304,6 @@ function Combat()
 			do
 			{
 				waitframe
-				call ProcessTriggers
 			}
 			while (${IsMoving} || ${Me.IsMoving})
 		}
@@ -1511,7 +1497,6 @@ function CheckPosition(int rangetype, int position)
 				isstuck:Set[TRUE]
 				break
 			}
-			call ProcessTriggers
 		}
 		while ${Target.Distance}<${minrange} && ${Target(exists)}
 
@@ -1897,7 +1882,6 @@ function Pull(string npcclass)
                 				}
                 			}
                 		}
-                		call ProcessTriggers
 					}
 					while !(${Target.Target(exists)})
 
@@ -1963,7 +1947,6 @@ function Pull(string npcclass)
                 				}
                 			}
                 		}
-                		call ProcessTriggers
 					}
     				while (((${Target.Distance} > ${MARange}) && (${Target.Target(exists)})) || !${Me.TargetLOS})
 
@@ -1991,7 +1974,6 @@ function Pull(string npcclass)
 			do
 			{
 				waitframe
-				call ProcessTriggers
 			}
 			while ${Target.Distance}>${MARange} && ${Target.Target.ID}==${Me.ID}
 
@@ -2012,7 +1994,6 @@ function Pull(string npcclass)
 			    return ${Target.ID}
 			}
 		}
-		call ProcessTriggers
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 	FlushQueued CantSeeTarget
@@ -2075,7 +2056,6 @@ function CheckLootNoMove()
 			wait 1
 			call ProcessTriggers
 		}
-		call ProcessTriggers
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
@@ -2511,8 +2491,7 @@ function IamDead(string Line)
 		EQ2Execute "select_junction 0"
 		do
 		{
-		    call ProcessTriggers
-			wait 3
+			waitframe
 		}
 		while ${EQ2.Zoning}
 		;KillTarget:Set[]
@@ -2533,7 +2512,6 @@ function IamDead(string Line)
 					echo "There are now" ${wipe} "dead group members. (" ${grpcnt} " Total)"
 				}
 				wait 10
-				call ProcessTriggers
 			}
 			while ${wipegroup:Inc}<${Me.GroupCount}
 
@@ -2546,8 +2524,7 @@ function IamDead(string Line)
 					EQ2Execute "select_junction 0"
 					do
 					{
-						wait 3
-						call ProcessTriggers
+							waitframe
 					}
 					while ${EQ2.Zoning}
 					;KillTarget:Set[]
@@ -2571,19 +2548,18 @@ function IamDead(string Line)
 					together:Set[1]
 					do
 					{
-						tempgrp:Set[1]
-						do
-						{
-							if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Distance}<25
+							tempgrp:Set[1]
+							do
 							{
-								echo ${Me.Group[${tempgrp}]} "has arrived"
-								together:Inc
-								echo "There are now " ${together} " ready group members (" ${grpcnt} " Total)"
+								if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Distance}<25
+								{
+									echo ${Me.Group[${tempgrp}]} "has arrived"
+									together:Inc
+									echo "There are now " ${together} " ready group members (" ${grpcnt} " Total)"
+								}
 							}
-						}
-						while ${tempgrp:Inc}<${grpcnt}
-						wait 10
-						call ProcessTriggers
+							while ${tempgrp:Inc}<${grpcnt}
+							wait 10
 					}
 					while ${together}<${grpcnt}
 					echo "Everyone is here"
@@ -2599,7 +2575,6 @@ function IamDead(string Line)
 						wait 50
 					}
 			}
-			call ProcessTriggers
 		}
 		while ${Me.ToActor.IsDead}
 		echo "Ready to continue fighting!"
@@ -2612,7 +2587,6 @@ function IamDead(string Line)
 			{
 				Exit
 			}
-			call ProcessTriggers
 		}
 		while ${Me.ToActor.Health}<1
 	}
@@ -2769,7 +2743,7 @@ function ScanAdds()
 				call FastMove ${X} ${Z}  2
 				do
 				{
-					waitframe
+						waitframe
 				}
 				while (${IsMoving} || ${Me.IsMoving})
 				if ${Return.Equal[STUCK]}
@@ -3076,9 +3050,9 @@ function StartBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
+    if ${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+        UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	
 	StartBot:Set[TRUE]
-    if ${Me.InCombat}
-        UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show		
 }
 
 function PauseBot()
