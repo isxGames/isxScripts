@@ -377,9 +377,9 @@ function main()
 				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
 				if ${KillTarget}
 				{
-				    if ${Actor[id,${KillTarget}](exists)} && !${Actor[id,${KillTarget}].IsDead}
+				    if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
 				    {
-    					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[id,${KillTarget}].IsDead})
+    					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
     					{
     						if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
     						{
@@ -880,7 +880,7 @@ function Combat()
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
 	
-	if !${Actor[id,${KillTarget}](exists)}
+	if !${Actor[${KillTarget}](exists)}
 	    return
 
 	FollowTask:Set[2]
@@ -908,7 +908,7 @@ function Combat()
 	{
 		if !${MainTank}
 		{
-		    if !${Actor[id,${KillTarget}](exists)}
+		    if !${Actor[${KillTarget}](exists)}
 		        echo "EQ2Bot:: KillTarget did not exist in Combat() routine ... how did that happen?"
 		    else
     			target ${KillTarget}
@@ -927,7 +927,7 @@ function Combat()
         		face ${Target.X} ${Target.Z}
         }
         
-        if !${Target(exists)} || !${Actor[id,${KillTarget}](exists)}
+        if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
             break
             
 		do
@@ -941,13 +941,13 @@ function Combat()
     		    do 
     		    {
     		        wait 5
-    		        if !${Target(exists)} || !${Actor[id,${KillTarget}](exists)}
+    		        if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
     		            break
     		        call ProcessTriggers
     		    }
     		    while ${Target.Distance} > ${MARange}
     		    
-                if !${Target(exists)} || !${Actor[id,${KillTarget}](exists)}
+                if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
                     break    		     
                     
                 face ${Target.X} ${Target.Y} ${Target.Z}
@@ -1014,7 +1014,7 @@ function Combat()
     				if !${Me.AutoAttackOn} && ${AutoMelee}
     					EQ2Execute /toggleautoattack
 
-    				if ${Actor[id,${KillTarget}].IsDead} || ${Actor[id,${KillTarget}].Health}<0
+    				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
     				{
     					EQ2Execute /target_none
     					break
