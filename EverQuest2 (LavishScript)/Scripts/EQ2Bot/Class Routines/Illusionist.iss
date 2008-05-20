@@ -494,7 +494,7 @@ function Combat_Routine(int xAction)
     if !${UltraDPSMode}
     	call RefreshPower
 
-	if (${UseDoppleganger} && ${Me.Group} > 1)
+	if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
 	{
 		;echo "DEBUG: Checking Doppleganger..."
 		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
@@ -508,23 +508,27 @@ function Combat_Routine(int xAction)
 					case Yellow
 						if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
 						{
-							Me.Ability[Doppleganger]:Use
-							do
-							{
-							    waitframe
-							}
-							while ${Me.CastingSpell}
+                            echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
+                            eq2execute /useabilityonplaye ${MainTankPC} "Doppleganger"
+                            wait 1
+                            do
+                            {
+                                waitframe
+                            }
+                            while ${Me.CastingSpell}
 						}
 						break
 					default
 						if (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed})
 						{
-							Me.Ability[Doppleganger]:Use
-							do
-							{
-							    waitframe
-							}
-							while ${Me.CastingSpell}
+                            echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
+                            eq2execute /useabilityonplaye ${MainTankPC} "Doppleganger"
+                            wait 1
+                            do
+                            {
+                                waitframe
+                            }
+                            while ${Me.CastingSpell}
 						}
 						break
 				}
