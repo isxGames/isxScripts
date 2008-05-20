@@ -48,11 +48,12 @@ function Class_Declaration()
 	declare BuffAspect bool script FALSE
 	declare BuffRune bool script FALSE
 	declare BuffPowerRegen bool script TRUE
-	declare StartHO bool script 1
-	declare DPSMode bool script 1
-	declare UltraDPSMode bool script 0
-	declare SummonImpOfRo bool script 0
-	declare UseTouchOfEmpathy bool script 0
+	declare StartHO bool script TRUE
+	declare DPSMode bool script TRUE
+	declare UltraDPSMode bool script FALSE
+	declare SummonImpOfRo bool script FALSE
+	declare UseTouchOfEmpathy bool script FALSE
+	declare UseDoppleganger bool script FALSE
 	
 	call EQ2BotLib_Init
 
@@ -68,6 +69,7 @@ function Class_Declaration()
 	UltraDPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UltraDPSMode,FALSE]}]
 	SummonImpOfRo:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Summon Imp of Ro,FALSE]}]
 	UseTouchOfEmpathy:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTouchOfEmpathy,FALSE]}]
+	UseDoppleganger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDoppleganger,FALSE]}]
 	    
 	NoEQ2BotStance:Set[TRUE]
 
@@ -492,6 +494,43 @@ function Combat_Routine(int xAction)
     if !${UltraDPSMode}
     	call RefreshPower
 
+	if (${UseDoppleganger} && ${Me.Group} > 1)
+	{
+		;echo "DEBUG: Checking Doppleganger..."
+		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
+		{
+			if ${Me.Ability[Doppleganger].IsReady}
+			{
+				switch ${Target.ConColor}
+				{
+					case Red
+					case Orange
+					case Yellow
+						if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
+						{
+							Me.Ability[Doppleganger]:Use
+							do
+							{
+							    waitframe
+							}
+							while ${Me.CastingSpell}
+						}
+						break
+					default
+						if (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed})
+						{
+							Me.Ability[Doppleganger]:Use
+							do
+							{
+							    waitframe
+							}
+							while ${Me.CastingSpell}
+						}
+						break
+				}
+			}
+		}
+	}
 
     ;; Check Group members to see if anyone needs 'Touch of Empathy'
     if ${UseTouchOfEmpathy} && ${Me.Group} > 1
