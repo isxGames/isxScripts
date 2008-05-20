@@ -509,7 +509,7 @@ function Combat_Routine(int xAction)
 	declare DebuffCnt int  0
 
 
-	if !${Actor[id,${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 	    return CombatComplete
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
@@ -574,33 +574,33 @@ function Combat_Routine(int xAction)
 	if (${VortexMode})
 	{
 		;echo "DEBUG: Checking Energy Vortex..."
-		if (!${Target.IsSolo} && ${Target.Health} > 50)
+		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
 		{
 			;echo "DEBUG: SpellType[385]: ${SpellType[385]}"
 			;echo "DEBUG: Energy Vortex -- Target is not solo...check"
 			if ${Me.Ability[${SpellType[385]}].IsReady}
 			{
 				;echo "DEBUG: Energy Vortex -- Ability (${Me.Ability[${SpellType[385]}]})' is ready...check"
-				if (${Target.EncounterSize} > 2 || ${Target.Difficulty} >= 2)
+				switch ${Target.ConColor}
 				{
-					switch ${Target.ConColor}
-					{
-						case Red
-						case Orange
-						case Yellow
-						case White
-						case Blue
+					case Red
+					case Orange
+					case Yellow
+					case White
+					case Blue
+						if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
+						{
 							Me.Ability[${SpellType[385]}]:Use
 							wait 2
 							break
-						default
-							if (${Target.IsEpic} || ${Target.IsNamed})
-							{
-								Me.Ability[${SpellType[385]}]:Use
-								wait 2
-							}
-							break
-					}
+						}
+					default
+						if (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed})
+						{
+							Me.Ability[${SpellType[385]}]:Use
+							wait 2
+						}
+						break
 				}
 			}
 		}

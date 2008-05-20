@@ -657,7 +657,7 @@ function PetAttack()
 {
     ;echo "Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"
 
-    if !${Actor[id,${KillTarget}](exists)}
+    if !${Actor[${KillTarget}](exists)}
         return
 
 	if ${Me.Pet.Target.ID} != ${KillTarget}
