@@ -243,6 +243,14 @@ function Buff_Routine(int xAction)
 		Groupwiped:Set[False]
 	}
 
+	; Pass out feathers on initial script startup
+	if !${InitialBuffsDone}
+	{
+		if (${Me.GroupCount} > 1)
+			call CastSpell "Favor of the Phoenix"
+		InitialBuffsDone:Set[TRUE]
+	}
+
 	ExecuteAtom CheckStuck
 
 	if ${ShardMode}
