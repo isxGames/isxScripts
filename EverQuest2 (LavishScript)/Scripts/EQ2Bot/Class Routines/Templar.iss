@@ -834,7 +834,8 @@ function CheckHeals()
 	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
 		call CastSpellRange 4 0 0 0 ${MainTankID}
 
-	call CheckReactives
+	if ${Me.InCombat} || ${PreHealMode}
+		call CheckReactives
 
 	do
 	{
@@ -1028,7 +1029,7 @@ function CheckReactives()
 	hot1:Set[0]
 	grphot:Set[0]
 
-	if ${KeepReactiveUp} || ${KeepGroupReactiveUp}
+	if ${KeepReactiveUp} || ${KeepGroupReactiveUp} || ${PreHealMode}
 	{
 		do
 		{
@@ -1046,7 +1047,7 @@ function CheckReactives()
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
 
-		if ${KeepReactiveUp}
+		if ${KeepReactiveUp} || ${PreHealMode}
 		{
 			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
@@ -1055,7 +1056,7 @@ function CheckReactives()
 			}
 		}
 
-		if ${KeepGroupReactiveUp}
+		if ${KeepGroupReactiveUp} || ${PreHealMode}
 		{
 			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 				call CastSpellRange 15

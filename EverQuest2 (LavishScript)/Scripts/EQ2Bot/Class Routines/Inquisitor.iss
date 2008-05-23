@@ -43,6 +43,7 @@ function Class_Declaration()
 	declare KeepGroupReactiveUp bool script
 	declare MezzMode bool script
 	declare BattleClericMode bool Script
+	declare InquisitionMode bool script
 
 	declare BuffArcane bool script FALSE
 	declare BuffMitigation bool script FALSE
@@ -66,6 +67,7 @@ function Class_Declaration()
 	KeepGroupReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepGroupReactiveUp,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	BattleClericMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BattleCleric Mode,FALSE]}]
+	InquisitionMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Inquisition Mode,FALSE]}]
 
 	BuffArcane:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArcane,TRUE]}]
 	BuffMitigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMitigation,TRUE]}]
@@ -818,6 +820,9 @@ function CheckHeals()
 		call CastSpellRange 4 0 0 0 ${MainTankID}
 
 	call CheckReactives
+
+	if ${InquisitionMode} && ${Me.InCombat} && ${Me.Ability[${SpellType[11].IsReady} && !${Me.Maintained[${SpellType[11]}](exists)}
+		call CastSpellRange 11 0 0 0 ${KillTarget}
 
 	do
 	{
