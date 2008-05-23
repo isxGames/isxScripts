@@ -83,6 +83,8 @@ variable collection:string LootWindowsProcessed
 variable bool CheckingAggro
 variable lnavregionref rStart
 variable lnavregionref rFinish
+variable lnavregionref NearestRegion
+variable lnavregionref ZoneRegion
 
 function main(string mode)
 {
@@ -216,6 +218,8 @@ function PathingRoutine(string Dest)
         echo "EQ2Harvest-Debug:: Main Loop -> Moving to ${Dest}"
         Nav:MoveToRegion["${Dest}"]
         
+        ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
+    	NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
         NodeID:Set[${Harvest.Node[${Me.ToActor.Loc}]}]
         if (${NodeID} > 0)
         {
@@ -295,6 +299,8 @@ function PathingRoutine(string Dest)
 					}
 				}
 				
+                ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
+    		    NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]				
 				NodeID:Set[${Harvest.Node[${Me.ToActor.Loc}]}]
 				if (${NodeID} == 0)
 				{
@@ -316,14 +322,12 @@ function PathingRoutine(string Dest)
                 return
             }
             
-            variable lnavregionref ZoneRegion
-    		variable lnavregionref NextRegion
     		ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
-    		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
-    		if ${Me.CheckCollision[${NextRegion.CenterPoint}]}
+    		NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
+    		if ${Me.CheckCollision[${NearestRegion.CenterPoint}]}
     		{
     		    Nav:StopRunning   
-    		    echo "EQ2Harvest:: The nearest mapped point (${NextRegion.CenterPoint}) is only ${Nav.NearestRegionDistance[${rDestination.CenterPoint}]}m away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]
+    		    echo "EQ2Harvest:: The nearest mapped point (${NearestRegion.CenterPoint}) is only ${Nav.NearestRegionDistance[${rDestination.CenterPoint}]}m away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]
                 Script:End
                 return
     		}
@@ -848,20 +852,21 @@ objectdef EQ2HarvestBot
 				if ${CustomActor[${tcount}].Name.Equal[${NodeName[${tempvar}]}]} && ${CustomActor[${tcount}].Type.Equal[resource]} && ${HarvestNode[${tempvar}]}
 				{
 					; Check Distance and Roaming Distance is within range.
-					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Nav.MovingTo_X},${Nav.MovingTo_Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
+					;echo "EQ2Harvest-Debug:: Distance to nearest mapped area: ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}"
+					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
 					{
 						; Check to make sure it is not a bad node
 						if (${BadNodes.Element[${CustomActor[${tcount}].ID}](exists)})
 						    break		
-						; make sure that it is close enough to the last waypoint we used
-						if ${Math.Distance[${CustomActor[${tcount}].Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Nav.MovingTo_X},${Nav.MovingTo_Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
+						; make sure that it is close enough to our mapped zone
+						if ${Math.Distance[${CustomActor[${tcount}].Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
 						{
     						NodeType:Set[${tempvar}]
     						return ${CustomActor[${tcount}].ID}						    						    
 						}
 						else
 						{
-						    echo "DEBUG: '${CustomActor[${tcount}].Name}' was too far away from the last waypoint connection...we'll come back to it I'm sure"
+						    echo "DEBUG: '${CustomActor[${tcount}].Name}' was too far away from the mapped zone...we'll come back to it I'm sure"
 						    break
 						}
 					}
