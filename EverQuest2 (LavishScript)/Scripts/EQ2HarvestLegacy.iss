@@ -1,12 +1,11 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Harvest.iss Version 2.0
+; EQ2Harvest.iss Version 1.5
 ;
 ; Written by: Blazer
 ; Updated: 08/21/06 by Syliac
 ; Updated: 03/06/06 by Pygar
 ; Updated: 04/16/07 by Cr4zyb4rd
 ; Updated  04/20/08 by Amadeus
-; Updated  05/25/08 by Amadeus (v. 2.0)
 ;
 ;
 ; Description:
@@ -15,14 +14,26 @@
 ; The Navigational file needs to consist of at least a Starting and Ending point with the labels
 ; defined when you run the script.
 
-#include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2Nav_Lib.iss
+#ifndef _moveto_
+	#include "${LavishScript.HomeDirectory}/Scripts/moveto.iss"
+#endif
 
-variable EQ2Nav Nav
+#ifndef _PATHERGUI_
+	#include "${LavishScript.HomeDirectory}/Scripts/PatherGUI.ISS"
+#endif
+
+;=====================================
+;====== Keyboard Configuration =======
+;=====================================
+; see moveto.iss
+
 variable EQ2HarvestBot Harvest
+variable filepath NavigationPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Navigational Paths/"
 variable filepath UIPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/UI/"
 variable filepath CharPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Character Config/"
 variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Harvest Config/"
 variable string World
+variable string NavFile
 variable string ConfigFile
 variable string HarvestFile
 variable string HarvestName[9]
@@ -48,7 +59,10 @@ variable int blacklistcount
 variable string BlackList[50]
 variable int friendslistcount
 variable string FriendsList[50]
+variable int PathIndex
 variable int PathRoute
+variable string NearestPoint
+variable bool PathDirection
 variable int NodeID
 variable int NodeType
 variable bool Harvesting
@@ -63,7 +77,11 @@ variable bool PauseHarvest=FALSE
 variable bool DestroyMeat=FALSE
 variable string StartPoint
 variable string FinishPoint
+variable string DestinationPoint
 variable string CurrentAction="Waiting to Start..."
+variable float WPX
+variable float WPY
+variable float WPZ
 variable int KeepResource
 variable string ResourceName[40]
 variable int ResourceCount[40]
@@ -76,34 +94,52 @@ variable int lowestcnt
 variable int lowestid
 variable int checklag=2000
 variable int NodeDelay
+variable bool stillstuck
+variable int PointCount
+variable int PlotDistance=10
+variable float LastX
+variable float LastY
+variable float LastZ
+variable string CurrentLabel
 variable bool OnBadNode
 variable string gNodeName
 variable collection:string CollectiblesFound
-variable collection:string LootWindowsProcessed
 variable bool CheckingAggro
-variable lnavregionref rStart
-variable lnavregionref rFinish
 
 function main(string mode)
 {
-	variable bool MovingToFinish
+	variable bool firstpass=TRUE
+	variable int tempvar
+	variable string labelname
 
 	;Script:Squelch
 
 	Harvest:Initialise
 	Harvest:InitTriggersAndEvents
 
-    ;;;;;;;;;;;;
-	;; Load Navigation System and initialize variables
-    Nav:LoadMap
-    Nav.DirectMovingToTimer:Set[200]
-    Nav.gPrecision:Set[3]
-    
-    rStart:SetRegion[${StartPoint}]
-    rFinish:SetRegion[${FinishPoint}]
-	;;;;;;;;;;;;
+	World:Set[${Zone.ShortName}]
+	Navigation -reset
+	Navigation -load "${NavFile}"
 
 	Harvest:LoadUI
+
+	do
+	{
+		if ${Navigation.World[${Zone.ShortName}].Point[${tempvar}].Note.Equal[keypoint]}
+		{
+			labelname:Set[${Navigation.World[${Zone.ShortName}].Point[${tempvar}].Name}]
+			if ${labelname.NotEqual[${StartPoint}]}
+			{
+				UIElement[Start Location@Options@EQ2Harvest Tabs@Harvest]:AddItem[${labelname}]
+			}
+
+			if ${labelname.NotEqual[${FinishPoint}]}
+			{
+				UIElement[Finish Location@Options@EQ2Harvest Tabs@Harvest]:AddItem[${labelname}]
+			}
+		}
+	}
+	while ${tempvar:Inc}<=${Navigation.World[${Zone.ShortName}].LastID}
 
 	do
 	{
@@ -118,68 +154,76 @@ function main(string mode)
 	{
 		call CheckAggro
 
-        variable float DistToStart
-        variable float DistToFinish
-        DistToStart:Set[${Math.Distance[${Me.ToActor.Loc},${rStart.CenterPoint}]}]
-        DistToFinish:Set[${Math.Distance[${Me.ToActor.Loc},${rFinish.CenterPoint}]}]
-        echo "EQ2Harvest-DEBUG: DistToStart: ${DistToStart} -- DistToFinish: ${DistToFinish}"
-        
+		NavPath:Clear
+		PathIndex:Set[1]
+
 		if ${PathRoute}==1
 		{
-		    if ${DistToStart} > ${DistToFinish}
-		        call PathingRoutine ${StartPoint}
-		    else
-		        call PathingRoutine ${rFinish}
-		    
-		    break
+			NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
+
+			if ${NearestPoint.Equal[${FinishPoint}]}
+			{
+				NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+				DestinationPoint:Set[${StartPoint}]
+			}
+			else
+			{
+				NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
+				PathDirection:Set[TRUE]
+				DestinationPoint:Set[${FinishPoint}]
+			}
+
+			call PathingRoutine
+			PathRoute:Set[4]
+			continue
 		}
-		elseif ${PathRoute} == 2
+		else
 		{
-		    if ${DistToStart} > ${DistToFinish}
-		        call PathingRoutine ${StartPoint}
-		    else
-		        call PathingRoutine ${FinishPoint}
-		        
-		    PathRoute:Set[1]
-		    continue
+			NavPath:Clear
+			if ${firstpass}
+			{
+				NearestPoint:Set[${Navigation.World[${World}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
+
+				if ${NearestPoint.Equal[${FinishPoint}]}
+				{
+					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					DestinationPoint:Set[${StartPoint}]
+					PathDirection:Set[FALSE]
+				}
+				else
+				{
+					NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
+					DestinationPoint:Set[${FinishPoint}]
+					PathDirection:Set[TRUE]
+				}
+				call PathingRoutine
+				firstpass:Set[FALSE]
+			}
+			else
+			{
+				if ${PathDirection}
+				{
+					NavPath "${World}" "${FinishPoint}" "${StartPoint}"
+					PathDirection:Set[FALSE]
+					DestinationPoint:Set[${StartPoint}]
+				}
+				else
+				{
+					NavPath "${World}" "${StartPoint}" "${FinishPoint}"
+					PathDirection:Set[TRUE]
+					DestinationPoint:Set[${StartPoint}]
+				}
+				call PathingRoutine
+				firstpass:Set[FALSE]
+
+				if ${PathRoute}==2
+				{
+					break
+				}
+			}
 		}
-		elseif ${PathRoute} == 3
-		{
-		    if ${DistToStart} > ${DistToFinish}
-		    {
-		        MovingToFinish:Set[FALSE]
-		        call PathingRoutine ${StartPoint}
-		    }
-		    else
-		    {
-		        MovingToFinish:Set[TRUE]
-		        call PathingRoutine ${FinishPoint}
-		    }
-		    
-		    do
-		    {
-		        if ${MovingToFinish}
-		        {
-    		        MovingToFinish:Set[FALSE]
-    		        call PathingRoutine ${StartPoint}
-    		        call ProcessTriggers
-    		        continue
-		        } 
-		        else
-		        {
-    		        MovingToFinish:Set[TRUE]
-    		        call PathingRoutine ${FinishPoint}   
-    		        call ProcessTriggers
-		            continue
-		        }
-		    }
-		    while ${ISXEQ2(exists)}
-		    
-            break
-		}
-		call ProcessTriggers
 	}
-	while ${PathRoute}<=3 && ${ISXEQ2(exists)}
+	while ${PathRoute}<=3
 
 	announce "Cleaning up Inventory before exiting..." 5 4
 	call CheckInventory 10 "CleanUpOnExit"
@@ -187,168 +231,154 @@ function main(string mode)
 	Script:End
 }
 
-
-function PathingRoutine(string Dest)
+function PathingRoutine()
 {
-    variable bool harvested
-    variable lnavregionref rDestination
-    rDestination:SetRegion[${Dest}]
-    
-    if !${rDestination(exists)}
-    {
-		echo "EQ2Harvest:: There was no valid path found!"
-		echo "EQ2Harvest:: Check '${Nav.Mapper.ZonesDir}${Nav.Mapper.ZoneText}' or '${Nav.Mapper.ZonesDir}${Nav.Mapper.ZoneText}.xml' that it includes a Start and Finish point."
+	variable bool harvested
 
-		Script:End
-	}        
-    
-    do
-    {
-    	call CheckAggro
-    	call CheckTimer
-    
-    	harvested:Set[FALSE]
-		if ${UseSprint} && ${Me.ToActor.Power} > 80
+	; If we have a valid path then begin harvesting.
+	if ${NavPath.Points}
+	{
+		do
 		{
-			EQ2Execute /useability Sprint
-		}
-   
-        echo "EQ2Harvest-Debug:: Main Loop -> Moving to ${Dest}"
-        Nav:MoveToRegion["${Dest}"]
-        
-        NodeID:Set[${Harvest.Node[${Me.ToActor.Loc}]}]
-        if (${NodeID} > 0)
-        {
-            echo "EQ2Harvest-Debug:: Node Found! (${Actor[${NodeID}]})"
-            Harvesting:Set[TRUE]
-			do
+			call CheckAggro
+			call CheckTimer
+
+			harvested:Set[FALSE]
+			; Move to next Waypoint
+			WPX:Set[${NavPath.Point[${PathIndex}].X}]
+			WPY:Set[${NavPath.Point[${PathIndex}].Y}]
+			WPZ:Set[${NavPath.Point[${PathIndex}].Z}]
+
+			CurrentAction:Set[Moving through Nav Points...]
+
+			if ${UseSprint} && ${Me.ToActor.Power} > 80
 			{
-				call CheckAggro
-				call CheckTimer
+				EQ2Execute /useability Sprint
+			}
 
-				CurrentAction:Set[Found Node: ${Actor[${NodeID}].Name}]
+			call moveto ${WPX} ${WPZ} 5 1 3 1
+			; Check to see if we are stuck getting to the node
+			if ${Return.Equal[STUCK]}
+			{
+				call StuckState
+				continue
+			}		    
+		    
 
-				if !${Harvest.PCDetected}
+            NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
+            if (${NodeID} > 0)
+            {
+                Harvesting:Set[TRUE]
+    			do
+    			{
+    				call CheckAggro
+    				call CheckTimer
+    
+    				call CheckAggro
+					CurrentAction:Set[Found Node: ${Actor[${NodeID}].Name}]
+
+					if !${Harvest.PCDetected}
+					{
+						if ${UseSprint} && ${Me.ToActor.Power} > 80
+						{
+							EQ2Execute /useability Sprint
+						}
+						
+						if (${Actor[${NodeID}].Name.Equal[?]} || ${Actor[${NodeID}].Name.Equal[!]})
+						    call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 3 0 3 1
+						else
+    						call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} 5 0 3 1
+
+						; Check to see if we are stuck getting to the node
+						if ${Return.Equal[STUCK]}
+						{
+						    echo "DEBUG: We were stuck moving to resource...adding destination to BadNodes"
+							Harvest:SetBadNode[${NodeID}]
+							call StuckState
+							continue
+						}
+
+						while ${Me.IsMoving}
+						{
+							waitframe
+						}
+						; even with the above it still jumps the gun every so often...lag?
+						wait 1
+
+						if ${UseSprint}
+						{
+							Me.Maintained[Sprint]:Cancel
+						}
+
+						call Harvest
+						harvested:Set[TRUE]
+
+						if !${IntruderAction} && ${IntruderStatus}==1 && ${IntruderDetect}
+						{
+							isintruder:Set[TRUE]
+							do
+							{
+								call CheckAggro
+								call CheckTimer
+							}
+							while ${isintruder}
+
+							if ${Me.ToActor.IsAFK}
+							{
+								EQ2Execute /afk
+								wait 10
+							}
+						}
+    				}
+    				NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
+    				if (${NodeID} == 0)
+    				{
+    				    break
+    				    Harvesting:Set[FALSE]
+    				}
+    			}
+    			while ${Harvesting}
+		    }
+		    
+			if ${harvested}
+			{
+				echo moving to closest waypoint
+				NavPath:Clear
+				NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
+				if ${PathDirection}
 				{
-					if ${UseSprint} && ${Me.ToActor.Power} > 80
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
 					{
-						EQ2Execute /useability Sprint
-					}
-					
-					if (${Actor[${NodeID}].Name.Equal[?]} || ${Actor[${NodeID}].Name.Equal[!]})
-					{
-					    Nav.DestinationPrecision:Set[3]
-					    Nav:MoveToLocNoMapping[${Actor[${NodeID}].Loc}]
-					    echo "EQ2Harvest-Debug:: Moving to within ${Nav.DestinationPrecision}m of ${Actor[${NodeID}]}"
-					    do
-					    {
-					        Nav:Pulse
-					        wait 0.5
-					        call ProcessTriggers
-					    }
-					    while ${ISXEQ2(exists)} && ${Nav.Moving} 
-					    Nav.DestinationPrecision:Set[5]
-					    echo "EQ2Harvest-Debug:: Move complete..."
+						return
 					}
 					else
 					{
-					    echo "EQ2Harvest-Debug:: Moving to within ${Nav.DestinationPrecision}m of ${Actor[${NodeID}]}"
-					    Nav:MoveToLocNoMapping[${Actor[${NodeID}].Loc}]
-					    do
-					    {
-					        Nav:Pulse
-					        wait 0.5
-					        call ProcessTriggers
-					    }
-					    while ${ISXEQ2(exists)} && ${Nav.Moving} 
-					    echo "EQ2Harvest-Debug:: Move complete..."
-					}
-
-
-					; even with the above it still jumps the gun every so often...lag?
-					wait 1
-
-					if ${UseSprint}
-					{
-						Me.Maintained[Sprint]:Cancel
-					}
-
-                    echo "EQ2Harvest-Debug:: Harvesting..."
-					call Harvest
-					harvested:Set[TRUE]
-
-					if !${IntruderAction} && ${IntruderStatus}==1 && ${IntruderDetect}
-					{
-						isintruder:Set[TRUE]
-						do
-						{
-							call CheckAggro
-							call CheckTimer
-						}
-						while ${isintruder}
-
-						if ${Me.ToActor.IsAFK}
-						{
-							EQ2Execute /afk
-							wait 10
-						}
+						NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
 					}
 				}
-				
-				NodeID:Set[${Harvest.Node[${Me.ToActor.Loc}]}]
-				if (${NodeID} == 0)
+				else
 				{
-				    Harvesting:Set[FALSE]
-				    break
+					if ${NearestPoint.Equal[${NavPath.PointName[${NavPath.Points}]}]}
+					{
+						return
+					}
+					else
+					{
+						NavPath "${World}" "${NearestPoint}" "${StartPoint}"
+					}
 				}
+				PathIndex:Set[0]
 			}
-			while ${Harvesting}
-			echo "EQ2Harvest-Debug:: Harvesting complete..."
-	    }
-        
-        if ${harvested}
-        {
-            if ${Nav.NearestRegionDistance[${rDestination.CenterPoint}]} > 50
-            {
-                echo "EQ2Harvest-Debug:: The nearest mapped point from your current location is ${Nav.NearestRegionDistance[${rDestination.CenterPoint}]}m away.  More mapping data is needed for this zone."
-                Nav:StopRunning
-                Script:End
-                return
-            }
-            
-            variable lnavregionref ZoneRegion
-    		variable lnavregionref NextRegion
-    		ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
-    		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
-    		if ${Me.CheckCollision[${NextRegion.CenterPoint}]}
-    		{
-    		    Nav:StopRunning   
-    		    echo "EQ2Harvest:: The nearest mapped point (${NextRegion.CenterPoint}) is only ${Nav.NearestRegionDistance[${rDestination.CenterPoint}]}m away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]
-                Script:End
-                return
-    		}
-		
-            echo "EQ2Harvest-Debug:: Moving to nearest mapped point."
-            Nav:MoveToNearestRegion[${rDestination.CenterPoint}]
-            do
-            {
-                Nav:Pulse
-                wait 0.5 
-                call ProcessTriggers
-            }
-            while ${ISXEQ2(exists)} && ${Nav.Moving} 
-            echo "EQ2Harvest-Debug:: Move complete..."
-            continue
-        }
-        else
-        {
-            Nav:Pulse
-            wait 0.5
-            call ProcessTriggers         
-        }
-    }
-    while ${Math.Distance[${Me.ToActor.Loc},${rDestination.CenterPoint}]} <= 5  
-    echo "EQ2Harvest-Debug:: Reached Destination (${Dest})"
+		}
+		while ${PathIndex:Inc}<=${NavPath.Points}
+	}
+	else
+	{
+		EQ2Echo There was no valid path found!
+		EQ2Echo Check ${NavFile} that it includes a Start and Finish point.
+
+		Script:End
+	}
 }
 
 function CheckAggro()
@@ -358,7 +388,7 @@ function CheckAggro()
 	if ${MobCheck.Detect}
 	{
 		CurrentAction:Set[Aggro Detected Pausing...]
-		Nav:StopRunning
+		call StopRunning
 		if ${UseSprint}
 		{
 			Me.Maintained[Sprint]:Cancel
@@ -388,6 +418,62 @@ function CheckAggro()
 	return SUCCESS
 }
 
+function StuckState()
+{
+	call CheckAggro
+
+	stillstuck:Set[TRUE]
+	CurrentAction:Set[We are stuck...]
+	NavPath:Clear
+
+	; Re-create the nav path and move to the nearest navpoint
+	NearestPoint:Set[${Navigation.World["${World}"].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}]
+
+	if ${PathDirection}
+	{
+		NavPath "${World}" "${NearestPoint}" "${FinishPoint}"
+	}
+	else
+	{
+		NavPath "${World}" "${NearestPoint}" "${StartPoint}"
+	}
+
+	WPX:Set[${NavPath.Point[1].X}]
+	WPZ:Set[${NavPath.Point[1].Z}]
+	call moveto ${WPX} ${WPZ} 5 0 3 1
+
+	; Are we still Stuck?
+	if ${Return.Equal[STUCK]}
+	{
+			call CheckAggro
+			if ${Return.Equal[RESOLVED]}
+			{
+				PathIndex:Set[1]
+				stillstuck:Set[FALSE]
+				return
+			}
+
+
+		; Looks like we are stuck again. end script...
+		EQ2Echo We are stuck! Ending script...
+		if ${HowtoQuit}
+		{
+			timed 100 EQ2Execute /camp desktop
+		}
+
+		announce "Cleaning up Inventory before exiting..." 5 4
+		;call CheckInventory 10 "CleanUpOnExit"
+
+		Script:End
+	}
+	else
+	{
+		call CheckAggro
+		PathIndex:Set[1]
+	}
+	stillstuck:Set[FALSE]
+}
+
 
 function CheckTimer()
 {
@@ -409,7 +495,7 @@ function CheckTimer()
 function InventoryFull(string Line)
 {
 	; End the script since we have no more room to harvest
-	echo Ending script because our Inventory is FULL!!
+	EQ2Echo Ending script because our Inventory is FULL!!
 	wait 20
 	if ${HowtoQuit}
 	{
@@ -425,7 +511,7 @@ function InventoryFull(string Line)
 function GMDetected(string Line)
 {
 	; Close the InnerSpace session completely!
-	echo ${Line} > GMDetected.txt
+	EQ2Echo ${Line} > GMDetected.txt
 	wait 50
 	Exit
 }
@@ -575,7 +661,7 @@ function CheckInventory(string destroyname, int number)
 							if ${brkcnt:Inc}>20
 							{
 								brkcnt:Set[0]
-								echo Unable to move a Resource: ${Me.CustomInventory[${tempvar}].Name}\n >> HarvestError.txt
+								EQ2Echo Unable to move a Resource: ${Me.CustomInventory[${tempvar}].Name}\n >> HarvestError.txt
 								break
 							}
 						}
@@ -638,7 +724,7 @@ function DestroyItem(string destroyname)
 				if ${brkcnt:Inc}>20
 				{
 					brkcnt:Set[0]
-					echo Unable to move a Collect: ${Me.CustomInventory[${tempvar}].Name}\n >> HarvestError.txt
+					EQ2Echo Unable to move a Collect: ${Me.CustomInventory[${tempvar}].Name}\n >> HarvestError.txt
 					return
 				}
 			}
@@ -712,6 +798,7 @@ objectdef EQ2HarvestBot
 	{
 		variable int tempvar
 
+		NavFile:Set[${NavigationPath}${Zone.ShortName}.xml]
 		ConfigFile:Set[${CharPath}${Me.Name}.xml]
 		HarvestFile:Set[${ConfigPath}Harvest.xml]
 
@@ -797,6 +884,7 @@ objectdef EQ2HarvestBot
 		FilterY:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetInt[What distance along Y axis should the bot ignore nodes?,30]}]
 		StartPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Starting Point,Start]}]
 		FinishPoint:Set[${SettingXML[${ConfigFile}].Set[${Zone.ShortName}].GetString[Finishing Point,Finish]}]
+		DestinationPoint:Set[${FinishPoint}]
 
 		SettingXML[${ConfigFile}]:Save
 
@@ -830,6 +918,7 @@ objectdef EQ2HarvestBot
 	{
 		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 		ui -reload "${UIPath}HarvestGUI.xml"
+		call InjectPatherTab "EQ2Harvest Tabs@Harvest" "${NavigationPath}"
 	}
 
 	member:int Node(float lastWP_X, float lastWP_Y, float lastWP_Z)
@@ -848,13 +937,13 @@ objectdef EQ2HarvestBot
 				if ${CustomActor[${tcount}].Name.Equal[${NodeName[${tempvar}]}]} && ${CustomActor[${tcount}].Type.Equal[resource]} && ${HarvestNode[${tempvar}]}
 				{
 					; Check Distance and Roaming Distance is within range.
-					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Nav.MovingTo_X},${Nav.MovingTo_Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
+					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
 					{
 						; Check to make sure it is not a bad node
 						if (${BadNodes.Element[${CustomActor[${tcount}].ID}](exists)})
 						    break		
 						; make sure that it is close enough to the last waypoint we used
-						if ${Math.Distance[${CustomActor[${tcount}].Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Nav.MovingTo_X},${Nav.MovingTo_Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
+						if ${Math.Distance[${CustomActor[${tcount}].Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${WPX},${WPZ}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
 						{
     						NodeType:Set[${tempvar}]
     						return ${CustomActor[${tcount}].ID}						    						    
@@ -1076,8 +1165,14 @@ atom atexit()
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
 
-    Nav:StopRunning    	
-
+    press -release MOVEFORWARD
+    press -release MOVEBACKWARD
+    press -release STRAFELEFT
+    press -release STRAFERIGHT
+    press -release TURNLEFT
+    press -release TURNRIGHT                        	
+	
+	
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[EQ2_onLootWindowAppeared]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
@@ -1139,41 +1234,32 @@ atom(script) EQ2_onChoiceWindowAppeared()
 
 atom(script) EQ2_onLootWindowAppeared(int ID)
 {    
-    if (${LootWindowsProcessed.Element[${ID}](exists)})    
-        return
-    
-    
     ; deal with collectibles
     if (${gNodeName.Equal[?]} || ${gNodeName.Equal[!]})
-    {
-        ;echo "EQ2Harvest-Debug:: LootWindow ${ID} contains a collectible!"
         Harvest:CollectibleFound[${LootWindow[${ID}].Item[1].Name}] 
-    }
     
     ;; if EQ2Bot is running, let IT handle actual looting
     if (${Script[EQ2Bot](exists)})
-    {
-        LootWindowsProcessed:Set[${ID},${gNodeName}]
         return
-    }    
+    
     
     ;; Now do the actual looting
     if ${LootWindow.Type.Equal[Lottery]}
     {
-        LootWindowsProcessed:Set[${ID},${gNodeName}]
         LootWindow:RequestAll
         return
     }
     elseif ${LootWindow.Type.Equal[Need Before Greed]}
     {
-        LootWindowsProcessed:Set[${ID},${gNodeName}]
         LootWindow:SelectGreed
         return
     }
     else
     {
-        LootWindowsProcessed:Set[${ID},${gNodeName}]
         LootWindow:LootItem[1]
         return
     }
+    
+    
+    return    
 }

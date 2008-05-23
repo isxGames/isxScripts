@@ -307,7 +307,7 @@ function Buff_Routine(int xAction)
 
 							BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
-							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 							{
 								BuffMember:Set[OK]
 								break
@@ -342,7 +342,7 @@ function Buff_Routine(int xAction)
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -369,7 +369,7 @@ function Buff_Routine(int xAction)
 
 							BuffTarget:Set[${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
-							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 							{
 								BuffMember:Set[OK]
 								break
@@ -404,7 +404,7 @@ function Buff_Routine(int xAction)
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -415,21 +415,21 @@ function Buff_Routine(int xAction)
 			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${BuffTarget.Equal["No one"]}
 			    break
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 			break
 		case AA_Illusory_Arm	
 		    if ${BuffTarget.Equal["No one"]}
 			    break			
 			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 			break
 		case AA_Empathic_Aura
 		case AA_Empathic_Soothing
@@ -494,6 +494,13 @@ function Combat_Routine(int xAction)
     if !${UltraDPSMode}
     	call RefreshPower
 
+	;; Chronosiphoning (Always cast this when it is ready!
+	if ${Me.Ability[${SpellType[385]}](exists)}
+	{
+	    if (${Me.Ability[${SpellType[385]}].IsReady})
+		    call CastSpellRange 385 0 0 0 ${KillTarget}
+	}
+
 	if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
 	{
 		;echo "DEBUG: Checking Doppleganger..."
@@ -522,7 +529,7 @@ function Combat_Routine(int xAction)
 						if (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed})
 						{
                             echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
-                            eq2execute /useabilityonplaye ${MainTankPC} "Doppleganger"
+                            eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
                             wait 1
                             do
                             {
@@ -542,8 +549,8 @@ function Combat_Routine(int xAction)
         if ${Me.Ability["Touch of Empathy"].IsReady}
         {
             variable string TargetsTarget = ${Actor[id,${KillTarget}].Target.Name}
-            variable string TargetsTargetClass = ${Actor[PC,exactname,${TargetsTarget}].Class}
-            if (!${TargetsTarget.Equal[${MainTankPC}]} && ${Actor[pc,exactname,${TargetsTarget}](exists)})
+            variable string TargetsTargetClass = ${Actor[PC,${TargetsTarget},exactname].Class}
+            if (!${TargetsTarget.Equal[${MainTankPC}]} && ${Actor[pc,${TargetsTarget},exactname](exists)} && ${Me.Group[${TargetsTarget}](exists)})
             {
                 switch ${TargetsTargetClass}
                 {
@@ -557,8 +564,8 @@ function Combat_Routine(int xAction)
                         
                     default
                         echo "EQ2Bot-DEBUG: Casting 'Touch of Empathy' on ${TargetsTarget}"
-                        eq2execute /useabilityonplaye ${TargetsTarget} "Touch of Empathy"
-                        wait 1
+                        eq2execute /useabilityonplayer ${TargetsTarget} "Touch of Empathy"
+                        wait 3
                         do
                         {
                             waitframe
@@ -569,14 +576,7 @@ function Combat_Routine(int xAction)
             }
         }
     }
-
-	;; Chronosiphoning (Always cast this when it is ready!
-	if ${Me.Ability[${SpellType[385]}](exists)}
-	{
-	    if (${Me.Ability[${SpellType[385]}].IsReady})
-		    call CastSpellRange 385 0 0 0 ${KillTarget}
-	}
-	
+    
 	;; If we have the skill 'Nullifying Staff' and the mob is within range
 	if ${Me.Ability[${SpellType[396]}](exists)}
 	{
@@ -617,7 +617,7 @@ function Combat_Routine(int xAction)
         if ${Actor[id,${KillTarget}].Health} > 20
         {
         	if ${Me.Ability[${SpellType[72]}].IsReady}
-        	    call CastSpellRange 72 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
+        	    call CastSpellRange 72 0 0 0 ${Actor[pc,${MainTankPC},exactname].ID}
     	}
     }
      
@@ -692,11 +692,13 @@ function Combat_Routine(int xAction)
 			break        
         
         case Constructs
+            if ${UltraDPSMode}
+            {
+                gRtnCtr:Set[13]
+                return
+            }
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 30
             {
-                ;; if we are in UltraDPS mode, then reset to beginning of combat routine
-                if ${UltraDPSMode}
-                    return CombatComplete
                 ;; if we are in DPS Mode, then skip past Stuns
                 if ${DPSMode}
                 {
@@ -708,9 +710,6 @@ function Combat_Routine(int xAction)
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 
-            ;; if we are in UltraDPS mode, then reset to beginning of combat routine
-            if ${UltraDPSMode}
-                return CombatComplete
             ;; if we are in DPS Mode, then skip past Stuns
             if ${DPSMode}
             {
@@ -721,8 +720,6 @@ function Combat_Routine(int xAction)
 
         case AEStun
         case Stun
-            if ${DPSMode}
-                break
             if ${Actor[id,${KillTarget}].IsSolo} && ${Actor[id,${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
                 break
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
@@ -735,8 +732,17 @@ function Combat_Routine(int xAction)
 
 
         case Focus
-        case Savante   
+        case Savante 
+            if ${Actor[id,${KillTarget}].IsEpic} && ${Actor[id,${KillTarget}].IsNamed}
+            {
+    			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+	    		    call CastSpellRange ${SpellRange[${xAction},1]}
+	    	}
+			break
+			
         case Gaze
+            if ${UltraDPSMode}
+                return CombatComplete
             if ${DPSMode} && ${Actor[id,${KillTarget}].IsSolo}
                 return CombatComplete
             if ${Actor[id,${KillTarget}].IsSolo} && ${Me.Group} > 1
@@ -893,7 +899,7 @@ function RefreshPower()
 	;Mana Cloak the group if the Main Tank is low on power
 	if ${Me.InCombat}
 	{
-    	if ${Actor[${MainTankPC}].Power} < 20 && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+    	if ${Actor[pc,${MainTankPC},exactname].Power} < 20 && ${Actor[pc,${MainTankPC},exactname].Distance}<50  && ${Actor[pc,${MainTankPC},exactname].InCombatMode}
     	{
     		call CastSpellRange 354
             ;; Savant is now called in the main routine
@@ -952,7 +958,7 @@ function Mezmerise_Targets()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 			;if its the kill target skip it
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
+			if ${Actor[exactname,${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
 			{
 				continue
 			}
