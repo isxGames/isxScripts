@@ -101,6 +101,27 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Convert Mode]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='InquisitionMode' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>110</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Inquisition</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[InquisitionMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Inquisition Mode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[InquisitionMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Inquisition Mode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Inquisition Mode]}</Data>
+	</Commandcheckbox>
 	<Text Name='lblMainWeapon' Template='EQ2.text'>
 		<X>5%</X>
 		<Y>230</Y>
