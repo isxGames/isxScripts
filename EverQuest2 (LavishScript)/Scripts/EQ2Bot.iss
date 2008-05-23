@@ -151,6 +151,7 @@ variable int aggroid
 variable bool usemanastone
 variable int mstimer=${Time.Timestamp}
 variable int StartLevel=${Me.Level}
+variable int StartAP=${Me.TotalEarnedAPs}
 variable bool PullNonAggro
 variable bool checkadds
 variable bool DCDirection=TRUE
@@ -188,6 +189,7 @@ variable(script) collection:string InvalidMasteryTargets
 variable(script) bool IsMoving
 variable bool UseCustomRoutines=FALSE
 variable int gRtnCtr=1
+variable string GainedXPString
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -253,6 +255,16 @@ function main()
 	echo "---------"
 	echo "* Initializing EQ2Bot..."
 
+    ;;;;;;;;;;;;;;;;;
+    ;;;; Set strings used in UI
+    ;;;
+    if (${Me.Level} < 80)
+		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+	else
+	    GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+    ;;;
+    ;;;;;;;;;;;;;;;;;
+    
 	EQ2Bot:Init_Config
 	EQ2Bot:Init_Events
 	EQ2Bot:Init_Triggers
@@ -308,6 +320,19 @@ function main()
 	do
 	{
 	    ;echo "Main Loop: Test-${Time.Timestamp}"
+        ;;;;;;;;;;;;;;;;;
+        ;;;; Set strings used in UI.  They are set here in order to make for custom strings based upon level, etc.  Also, any ${} called in the UI is accessed
+        ;;;; EVERY frame.  By moving things here, we can reduce the number of times things are called, increasing efficiency (when desired.)
+        ;;;
+        if (${Me.Level} < 80)
+    		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+    	else
+    	    GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+        ;;;
+        ;;;;;;;;;;;;;;;;;	    
+	    
+	    
+	    
 		if ${EQ2.Zoning}
 		{
 			KillTarget:Set[]
@@ -672,11 +697,22 @@ function main()
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 		; Check if we have leveled and reset XP Calculations in UI
-		if ${Me.Level}>${StartLevel} && !${CloseUI}
+		if ${Me.Level} < 80
 		{
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartXP",${Me.Exp}]:Save
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartTime",${Time.Timestamp}]:Save
-		}
+    		if ${Me.Level} > ${StartLevel} && !${CloseUI}
+    		{
+    			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartXP",${Me.Exp}]:Save
+    			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartTime",${Time.Timestamp}]:Save
+    		}
+	    }
+	    else
+	    {
+    		if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
+    		{
+    			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartAPXP",${Me.APExp}]:Save
+    			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartTime",${Time.Timestamp}]:Save  
+    		}
+	    }
 
 		; Check if we have leveled and reload spells
 		if ${Me.Level}>${StartLevel} && ${Me.Level}<80
@@ -688,10 +724,10 @@ function main()
 			StartLevel:Set[${Me.Level}]
 		}
 
-		if (${Actor[ExactName,${MainAssist}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[${OriginalMA}].IsDead})
+		if (${Actor[ExactName,${MainAssist}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[exactname,${OriginalMA}].IsDead})
 			EQ2Bot:MainAssist_Dead
 
-		if (${Actor[${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].IsDead})
+		if (${Actor[exactname,${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,${OriginalMT}].IsDead})
 			EQ2Bot:MainTank_Dead
 
 		call ProcessTriggers
@@ -984,7 +1020,7 @@ function Combat()
     						break
     					}
 
-    					if ${Actor[${MainTankPC}].IsDead}
+    					if ${Actor[exactname,${MainTankPC}].IsDead}
     					{
     						EQ2Bot:MainTank_Dead
     						break
@@ -1040,7 +1076,7 @@ function Combat()
     					elseif ${Target.Target.ID}==${Me.ID}
     					{
     						;we have aggro, move to the maintank
-    						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
+    						call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
     						do
     						{
     								waitframe
@@ -1052,9 +1088,9 @@ function Combat()
     						call CheckPosition 1 ${Target.IsEpic}
     					}
     				}
-    				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
+    				elseif ${Target.Distance}>40 || ${Actor[exactname,${MainTankPC}].Distance}>40
     				{
-    					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
+    					call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
     					do
     					{
     							waitframe
@@ -1122,7 +1158,7 @@ function Combat()
     						break
     					}
 
-    					if ${Actor[${MainTankPC}].IsDead}
+    					if ${Actor[exactname,${MainTankPC}].IsDead}
     					{
     						EQ2Bot:MainTank_Dead
     						break
@@ -3009,6 +3045,7 @@ function StartBot()
 	variable int tempvar2
 
 	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartXP",${Me.Exp}]:Save
+	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartAPXP",${Me.APExp}]:Save
 	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartTime",${Time.Timestamp}]:Save
 
 	if ${CloseUI}
@@ -3060,7 +3097,7 @@ function StartBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
-    if ${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+    if ${Actor[exactname,${MainTankPC}].InCombatMode}
         UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	
 	StartBot:Set[TRUE]
 }
@@ -3126,6 +3163,7 @@ function CheckBuffsOnce()
 		call Buff_Routine ${i}
 		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 			break
+		call ProcessTriggers
 	}
 	while ${i:Inc}<=40
 
@@ -3143,7 +3181,7 @@ function CheckBuffsOnce()
 	
 	if ${MainTank}
     	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	    
-    elseif ${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+    elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
         UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
     CurrentAction:Set["Waiting..."]
     return
@@ -4657,8 +4695,7 @@ function atexit()
 {
 	Echo Ending EQ2Bot!
 	CurrentTask:Set[FALSE]
-	SettingXML[${charfile}]:Unload
-	SettingXML[${spellfile}]:Unload
+
 
 	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
@@ -4672,9 +4709,11 @@ function atexit()
 	;Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 
-
     press -release ${forward}
     press -release ${backward}
     press -release ${strafeleft}
     press -release ${straferight}
+   
+	SettingXML[${charfile}]:Unload
+	SettingXML[${spellfile}]:Unload     
 }

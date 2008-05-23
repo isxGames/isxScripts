@@ -286,7 +286,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-    if !${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+    if !${Actor[pc,${MainTankPC},exactname].InCombatMode}
     	ExecuteAtom CheckStuck
 
 	if ${Groupwiped}
@@ -484,11 +484,11 @@ function Buff_Routine(int xAction)
 			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				break
 
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 
 			break
 		case SummonImpOfRoBuff
@@ -502,6 +502,7 @@ function Buff_Routine(int xAction)
 			return Buff Complete
 			break
 	}
+	call ProcessTriggers
 }
 
 function Combat_Routine(int xAction)
@@ -1055,13 +1056,13 @@ function CheckHeals()
 	{
 		do
 		{
-			if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}](exists)}
+			if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname](exists)}
 			{
-				if !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Name.Equal[${Me.Name}]} && !${Me.Group[${Actor[pc,exactname,${Me.Raid[${temph2}].Name}]}].ID(exists)}
+				if !${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Name.Equal[${Me.Name}]} && !${Me.Group[${Actor[pc,${Me.Raid[${temph2}].Name}]},exactname].ID(exists)}
 				{
-					if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < 100 && !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].IsDead} && ${Me.Raid[${temph2}](exists)}
+					if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Health} < 100 && !${Actor[pc,${Me.Raid[${temph2}].Name},exactname].IsDead} && ${Me.Raid[${temph2}](exists)}
 					{
-						if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health}
+						if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Health} < ${Actor[pc,${Me.Raid[${raidlowest}].Name},exactname].Health}
 							raidlowest:Set[${temph2}]
 					}
 				}
@@ -1073,9 +1074,9 @@ function CheckHeals()
 		{
 			;echo Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} health
 			if ${Me.Ability[${SpellType[4]}].IsReady}
-				call CastSpellRange 4 0 0 0 ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].ID}
+				call CastSpellRange 4 0 0 0 ${Actor[pc,${Me.Raid[${raidlowest}].Name},exactname].ID}
 			elseif ${Me.Ability[${SpellType[1]}].IsReady}
-				call CastSpellRange 1 0 0 0 ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].ID}
+				call CastSpellRange 1 0 0 0 ${Actor[pc,${Me.Raid[${raidlowest}].Name},exactname].ID}
 		}
 	}
 
