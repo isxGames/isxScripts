@@ -36,6 +36,8 @@ objectdef EQ2Nav
     ;;   a larger wait time, then you should reduce this or set to zero entirely.
     ;; ~ SmartDestinationDetection:  If set to TRUE, then the script will check, when it is within 10 meters of 
     ;;   the destination, if there are any collisions.  If there are none, it will move there directly.    
+    ;; ~ DirectMovingToTimer:  The limitation, in milliseconds, of how often the script will check its location when moving directly
+    ;;   to a location (outside of the navigation system) 
     ;;
     ;;   NOTE: DO NOT EDIT THESE VALUES HERE!  Have your script set them!  These default values MUST remain constant so that scripters
     ;;         know what to expect.  
@@ -44,6 +46,7 @@ objectdef EQ2Nav
     variable float DestinationPrecision = 5
     variable int SkipNavTime = 50
     variable bool SmartDestinationDetection = true
+    variable int DirectMovingToTimer = 250
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -163,6 +166,18 @@ objectdef EQ2Nav
 		This.Path:Clear
 	}
 
+	member NearestRegionDistance(float FinalDestX, float FinalDestY, float FinalDestZ)
+	{
+		variable lnavregionref ZoneRegion
+		variable lnavregionref NextRegion
+		variable float NearestRegionDistance
+		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
+		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
+		NearestRegionDistance:Set[${Math.Distance[${Me.ToActor.Loc},${NextRegion.CenterPoint}]}]
+		
+		return ${NearestRegionDistance}
+	}
+
 	member:lnavregionref NearestRegion(float X, float Y, float Z)
 	{
 		return ${Mapper.BestorNearestContainer[${X},${Y},${Z}]}
@@ -275,6 +290,7 @@ objectdef EQ2Nav
     	;; If we're moving to a specific point, or if this is the final destination -- then accept a much higher precision value
     	if !${This.NavigationPath.Get[1](exists)} || ${This.NavigationPath.Used} == 0
     	{
+    	    This:Debug["MoveTo:: Distance to Destination: ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}"]
     	    if (${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} <= ${DestinationPrecision})   
     	    {         
         	    ;This:Debug["Me.CheckCollision[${X},${Y},${Z}] = ${Me.CheckCollision[${X},${Y},${Z}]}"]
@@ -480,6 +496,7 @@ objectdef EQ2Nav
         This:Debug["PopulateNavigationPath(): ${NavigationPath.Used} hops used."]
     }	    
 	
+	
 	method MoveToRegion(string RegionName)
 	{
 		variable lnavregionref ZoneRegion
@@ -491,6 +508,41 @@ objectdef EQ2Nav
 		DestinationRegion:SetRegion[${RegionName}]
 		This:Debug["MoveToRegion:: Moving to ${DestinationRegion.FQN}"]
 		This:MoveToLoc[${DestinationRegion.CenterPoint}]
+	}
+	
+	method MoveToLocNoMapping(float X, float Y, float Z)
+	{
+		variable int count = 0
+		variable index:lnavregionref SurroundingRegions
+
+		if ${X}==0 && ${Y}==0 && ${Z}==0
+		{
+			; No reason to run to NOTHING
+			return
+		}
+
+		; If we are already PRECISION from it why bother moving?
+		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.PRECISION}
+		{
+			This:Output["Already here, not moving."]
+			This:ClearPath
+			This.MeMoving:Set[FALSE]
+			This.DoorsOpenedThisTrip:Clear
+			return
+		}
+		
+		This:ClearPath
+	    This:Debug["Moving to ${X},${Y},${Z} directly."]
+
+		This.MovingToNearestRegion:Set[TRUE]
+    	This.MovingTo_X:Set[${X}]
+    	This.MovingTo_Y:Set[${Y}]
+    	This.MovingTo_Z:Set[${Z}]
+    	This.MovingTo_Precision:Set[${This.gPrecision}]
+        This.MovingTo_Timer:Set[0]
+        This.MeMoving:Set[TRUE]		
+	    This.NavDestination:Set[${X},${Y},${Z}]  		
+		return
 	}
 
 	method MoveToLoc(float X, float Y, float Z)
@@ -562,7 +614,6 @@ objectdef EQ2Nav
 		}
 	}
 	
-
 	; If you're currently in an unmapped region, call this to move to the nearest mapped region.
 	method MoveToNearestRegion(float FinalDestX, float FinalDestY, float FinalDestZ)
 	{
@@ -589,7 +640,7 @@ objectdef EQ2Nav
 		*/
 		
 		
-		if ${NearestRegionDistance} > 20
+		if ${NearestRegionDistance} > 50
 		{
 		    This:StopRunning
 		    face ${FinalDestX} ${FinalDestY} ${FinalDestZ}
@@ -621,7 +672,7 @@ objectdef EQ2Nav
 		}
 		
 		
-		if ${Me.CheckCollision[${destregion.CenterPoint}]}
+		if ${Me.CheckCollision[${NextRegion.CenterPoint}]}
 		{
 		    This:StopRunning
 		    face ${FinalDestX} ${FinalDestY} ${FinalDestZ}		
@@ -652,8 +703,8 @@ objectdef EQ2Nav
 	    variable point3f Dest
 	    
 		
-		;Only do every 2 frames (CPU Saver)
-		if ${This.SKIPNAV} < 50
+		;Only do every x frames (CPU Saver)
+		if ${This.SKIPNAV} < ${This.SkipNavTime}
 		{
 			This.SKIPNAV:Inc
 			return
@@ -687,7 +738,7 @@ objectdef EQ2Nav
 		;; Deal with Movement without a Path
 		if ${This.MeMoving}
 		{
-		    if ${LavishScript.RunningTime}-${This.MovingTo_Timer}>1000
+		    if ${LavishScript.RunningTime}-${This.MovingTo_Timer}> ${This.DirectMovingToTimer}
 		    {
 		        ;; Only pertinant if there is no current NavigationPath
 		        if !${This.NavigationPath.Get[1](exists)} || ${This.NavigationPath.Used} == 0
