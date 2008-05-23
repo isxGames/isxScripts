@@ -917,7 +917,7 @@ objectdef EQ2HarvestBot
 	method LoadUI()
 	{
 		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
-		ui -reload "${UIPath}HarvestGUI.xml"
+		ui -reload "${UIPath}HarvestGUI_Legacy.xml"
 		call InjectPatherTab "EQ2Harvest Tabs@Harvest" "${NavigationPath}"
 	}
 
@@ -1160,7 +1160,7 @@ atom atexit()
 	call CheckInventory 10 "CleanUpOnExit"    
     
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
-	ui -unload "${UIPath}HarvestGUI.xml"
+	ui -unload "${UIPath}HarvestGUI_Legacy.xml"
 
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
