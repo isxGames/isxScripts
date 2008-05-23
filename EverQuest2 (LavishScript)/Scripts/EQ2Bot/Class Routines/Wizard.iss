@@ -521,35 +521,23 @@ function RefreshPower()
 		call Shard
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45
-	{
 		call UseItem "Spiritise Censer"
-	}
 
 	;Conjuror Shard
 	if ${Me.ToActor.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
-	{
 		Me.Inventory[${ShardType}]:Use
-	}
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<20
-	{
 		call UseItem "Dracomancer Gloves"
-	}
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-	{
 		call UseItem "Stein of the Everling Lord"
-	}
 
 	if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>20 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
-	{
 		call CastSpellRange 309
-	}
 
 	if ${Me.ToActor.Power}<5
-	{
 		call CastSpellRange 310
-	}
 }
 
 function CheckHeals()
@@ -564,9 +552,7 @@ function CheckHeals()
 		call CastSpellRange 213 0 0 0 ${Me.ID}
 
 		if ${Actor[${KillTarget}](exists)}
-		{
 			Target ${KillTarget}
-		}
 	}
 
 	do
@@ -577,9 +563,7 @@ function CheckHeals()
 			call CastSpellRange 213 0 0 0 ${Me.Group[${temphl}].ID}
 
 			if ${Actor[${KillTarget}](exists)}
-			{
 				Target ${KillTarget}
-			}
 		}
 	}
 	while ${temphl:Inc}<${grpcnt}

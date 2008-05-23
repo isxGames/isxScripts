@@ -1202,19 +1202,17 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
 
-	if !${Me.Group[${gMember}].ToActor(exists)} || ${Me.Group[${gMember}].ToActor.IsDead}
+	if !${Me.Group[${gMember}].ToActor(exists)} || ${Me.Group[${gMember}].ToActor.IsDead} || !${Me.Group[${gMember}].IsAfflicted}
 		return
 
-	do
+	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)} && !${Me.Group[${gMember}].ToActor.IsDead}
 	{
 		if ${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0
 		{
 			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 			wait 2
 		}
-		tmpcure:Inc
 	}
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)} && !${Me.Group[${gMember}].ToActor.IsDead}
 }
 
 function CureMe()
@@ -1231,7 +1229,7 @@ function CureMe()
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
-	do
+	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<4
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 
@@ -1239,7 +1237,7 @@ function CureMe()
 		if ${Me.ToActor.Health}<30 && ${EpicMode}
 			call HealMe
 	}
-	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<5
+
 }
 
 function CheckCures()
