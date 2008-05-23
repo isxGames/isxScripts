@@ -226,9 +226,9 @@
 		<Setting Name="Tynnonium Cluster">Tynnonium Cluster</Setting>
 		<Setting Name="Kunzite">Rough Kunzite</Setting>
 		<Setting Name="Raw Lichenclover Root">Lichenclover Root</Setting>
-    <Setting Name="Raw Kunzite">Rough Kunzite</Setting>
-    <Setting Name="Rough Kunzite">Rough Kunzite</Setting>
-    <Setting Name="Ferrite Cluster">Ferrite Cluster</Setting>
+        <Setting Name="Raw Kunzite">Rough Kunzite</Setting>
+        <Setting Name="Rough Kunzite">Rough Kunzite</Setting>
+        <Setting Name="Ferrite Cluster">Ferrite Cluster</Setting>
 		<Setting Name="Mineral Salt Loam">Mineral Salt Loam</Setting>
 		<Setting Name="King Prawn">King Prawn</Setting>
 		<Setting Name="Succulent">Raw Succulent Petal</Setting>
@@ -338,5 +338,7 @@
 		<Setting Name="Infusion of Earth">Infusion of Earth</Setting>
 		<Setting Name="Ulteran Powder">Ulteran Powder</Setting>
 		<Setting Name="Lapiz Lazuli Fragment">Lapiz Lazuli Fragment</Setting>
+		<Setting Name="Raw Succulent Petal">Raw Succulent Petal</Setting>
+		<Setting Name="Cockatrice Meat">Cockatrice Meat</Setting>
 	</Set>
 </InnerSpaceSettings>
