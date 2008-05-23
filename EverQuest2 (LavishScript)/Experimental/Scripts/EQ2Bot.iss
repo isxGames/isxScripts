@@ -865,7 +865,13 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 			case default
 				Me.Inventory[exactname,"Expert's Noxious Remedy"]:Use
 		}
+		do
+		{
+			wait 0.5
+		}
+		while ${Me.CastingSpell}
 	}
+
 
 	if ${Me.ToActor.Power}<40
 	{
