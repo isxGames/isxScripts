@@ -1,112 +1,38 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss Version 2.7.2a Updated: 04/25/08 by Pygar
 ;
-;2.7.2a (Pygar)
-; * Added a check to verify target exists before adding to donotpull collection.  This was just to set peoples mind at ease
-; * Removed a range verifaction from CheckPosition causing it not to fire when MA was more than 8 meters from target.  This
-;		setting no longer holds much water with RoK ranged mob AI's.  Use the max range on main tab to set how far to set safe
-; 	distances to move.
-;
-;2.7.2 (Amadeus)
-; * If your 'forward' key is mapped to one supported by the new "EQ2Press" command, you will now move to loot chests and corpses even if
-;   the bot is not in focus (ie, if another window is opened on top of the one in which the bot is running.)
-;   (Dev. Note:  This change was applied to FastMove(), so any call to it should now work in the same fashion.  Also, see FastMove() on how
-;                to properly impliment the new "EQ2Press" command.)
-;
-;2.7.1m (Amadeus)
-; * The bot will again loot chests (that are close by) during/between combat.  It will loot chests further away after combat has completed.
-; * "AutoFollow" should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a
-;   griffon-like transport or if they (or the bot) are currently climbing a wall.
-;
-;2.7.1l (Amadeus)
-; * Added a function to EQ2BotLib.iss called "AmIInvis".  CastSpell() and CastSpellRange() now check this before they
-;   will cast any spells outside of combat.
-; * Tweaked CheckAbilities().  It should work for all players at all times now if AA abilities are properly listed in
-;   spell lists as level 10 for all classes.
-;
-;2.7.1k (Pygar)
-; * Added a knowledgebook toggle to the begining of CheckAbilities.  Several higher level users reporting sporadic AA ability
-;		usage due to ability not being loaded.  We may need to actually attempt examine methods on a missing ability, more testing to
-;		follow.
-;
-;2.7.1j (Pygar)
-; * Updated InvalidMasteryTargets collection to only add targets if they exist, and to work off KillTarget instead of
-;		target in case healer has targeted another mob by time trigger fires.
-;
-;2.7.2i (Amadeus)
-; * All Post_Combat_Routine functions (in all of the class files) should have this as their default case:
-;		Default
-;			return PostCombatRoutineComplete
-;			break
-; * The "Stop EQ2Bot" and "Pause EQ2Bot" buttons should now work properly
-;
-;2.7.2h (Amadeus)
-; * Renamed the method "CheckSpells" to "CheckAbilities" and moved it to its own function
-; * If you are missing more than 6 abilities that are within 20 levels below your current level, EQ2Bot will assume that it is an error.
-;   It will then open your knowledge book, wait a half second, and then try again.  This should fix the issue where eq2bot does not
-;   initialize properly when you first start up EverQuest2.  (The console spew during initialization should tell you everything you need to know.)
-; * Fixed a bug in EQ2BotLib.iss that was causing the "Invalid operator in calculation (single equal)" error message on startup. (This
-;   was probably causing a bug with raid healing by the way.)
-; * Various updates/optimizations (ie, the CheckLoot() function should make a lot more sense now)
-;
-;2.7.2g (Amadeus)
-; * EQ2Bot now maintains a "DoNotPullList" collection.  Initially, this list is only populated with actors for which the message
-;   'you may not order your pet to attack the selected or implied target' is sent to the client.
-; * EQ2Bot now maintains a "InvalidMasteryTargets" collection.  Each class routine file will have to be updated to utilize this
-;   feature (see Fury.iss for example)
-; * EQ2Bot will no longer loot corpses during battle if you have "Loot Corpses and Chests" unchecked
-; * The Detect() method now uses the ${EngageDistance} variable to determine how closely it should check for mobs (which is set based
-;   upon character archetype during Init_Character()
-;
-;2.7.1f (Amadeus)
-; * There is now two options on the UI in regards to looting lore items and looting no trade items.
-; * If a loot item is a collectible, and you've already collected it AND there is more than just yourself in your group, you will decline.
-;
-;2.7.1e (Amadeus)
-; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
-;
-;2.7.1d (Amadeus)
-; * Added a 'Health' case to the CheckCondition function (see Fury.iss (Combat_Init() and Combat_Routines()) for examples)
-; * Removed some scripting that was causing crashes in the onLootWindowAppeared atom
-; * Added a 'GroupWiped' variable (bool) that is set to TRUE whenever "Revive on Group Wipes" is checked and your entire
-;   group wipes.  This variable can be checked in the class file at any point and should be reset to FALSE after any desired
-;   action has been taken.  See Fury.iss (Buff_Routine()) for example.
-; * Added a 'InitialBuffsDone' scriptwide variable (bool) that is set initially set to FALSE.  This is to allow for specific class
-;   files to cast buffs (or any other spells) when the script is first run (ie, to give out rez feathers.)  See Fury.iss (Buff_Routine()) for example.
-;
-;2.7.1c (Pygar)
-; Adjusted for new IsDead member of Actor.  This will fix false positives on death checks due to coagulate and other unconcious health buffs.
-;	Adjusted MA_Dead and MT_Dead functions
-; Adjusted LostAggro - Now fires with the ID of the mob that is lost, it no longer switched the MT's killtarget to the add.  This should allow
-;	for mezing to be more effective, and allow for more control of how to react to aggro loss in the Lost_aggro() function in individual class files.
-;
-;2.7.1b (Pygar)
-; Minor tweaks to AcceptWindow code
-;
-;2.7.1 (Pygar)
-; Updated Lootwindow to fire on isxeq2 events rather than triggers
-;	Update LootWindow to process on current window ID, this should allow for processing more than one window at a time now.
-;
-;2.7.0 (Blazer)
-; You can now set Points of Interest for Dungeon Crawl Mode (This will help with moving to designated points that you want your bots to pass through)
-; POI's can be re-arranged in priority order (top being first) by clicking and dragging the selection in the listbox.
-; POI's can be excluded as well.
-; Fixed MoveToMaster
-; Added a Main Assist Range. This will ensure your group members dont engage a target unless the Main Assist is within this set range.
-;
-;2.6.1 (Pygar)
-; Using new Loot Events
-; New Pull code for Pet / Bow / Spell
-; Pull Tweaks
-;
-;2.6.0 (Blazer)
-;Pathing is now done with LavishNav
-;
-; Description:
-; ------------
-; Automated BOT for any class.
-; Syntax: run eq2bot
+; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
+;===================================================
+;===        Version Checking             ====
+;===================================================
+;;; /EQ2Bot/Class Routines ONLY here
+;;; The spell list and GUI files for each class should be handled within the initialization of each class file.
+;;; The main script, EQ2BotLib, and the primary GUI files are included in the isxeq2 patcher.
+variable int Latest_AssassinVersion = 0
+variable int Latest_BerserkerVersion = 0
+variable int Latest_BrigandVersion = 0
+variable int Latest_BruiserVersion = 0
+variable int Latest_CoercerVersion = 0
+variable int Latest_ConjurerVersion = 0
+variable int Latest_DefilerVersion = 0
+variable int Latest_DirgeVersion = 0
+variable int Latest_FuryVersion = 0
+variable int Latest_GuardianVersion = 0
+variable int Latest_IllusionistVersion = 20080517
+variable int Latest_InquisitorVersion = 0
+variable int Latest_MonkVersion = 0
+variable int Latest_MysticVersion = 0
+variable int Latest_NecromancerVersion = 0
+variable int Latest_PaladinVersion = 0
+variable int Latest_RangerVersion = 0
+variable int Latest_ShadownightVersion = 0
+variable int Latest_SwashbucklerVersion = 0
+variable int Latest_TemplarVersion = 0
+variable int Latest_TroubadorVersion = 0
+variable int Latest_WardenVersion = 0
+variable int Latest_WarlockVersion = 0
+variable int Latest_WizardVersion = 0
 ;===================================================
 ;===        Keyboard Configuration              ====
 ;===================================================
@@ -151,6 +77,7 @@ variable string OriginalMT
 variable bool AutoSwitch
 variable bool AutoMelee
 variable bool AutoPull
+variable bool PullOnlySoloMobs
 variable bool AutoLoot
 variable bool LootAll
 variable int KillTarget
@@ -166,6 +93,16 @@ variable int Health[40,2]
 variable int SpellRange[40,10]
 variable string PostAction[20]
 variable int PostSpellRange[20,5]
+variable string _PreAction[40]
+variable int _PreMobHealth[40,2]
+variable int _PrePower[40,2]
+variable int _PreSpellRange[40,5]
+variable string _Action[40]
+variable int _MobHealth[40,2]
+variable int _Power[40,2]
+variable int _Health[40,2]
+variable int _SpellRange[40,10]
+variable string _PostAction[20]
 variable bool stealth=FALSE
 variable bool direction=TRUE
 variable float targetheading
@@ -192,9 +129,6 @@ variable bool engagetarget=FALSE
 variable bool islooting=FALSE
 variable int CurrentPull
 variable bool pathdirection=0
-variable bool Following
-variable int Deviation
-variable int Leash
 variable bool movingtowp
 variable bool pulling
 variable int stuckcnt
@@ -230,6 +164,7 @@ variable float PositionHeading
 variable bool PullWithBow
 variable bool LoreConfirm
 variable bool NoTradeConfirm
+variable bool LootPrevCollectedShineys
 variable bool CheckPriestPower
 variable int LootWndCount
 variable int LootDecline
@@ -247,8 +182,12 @@ variable bool InitialBuffsDone
 variable int EngageDistance
 variable(script) collection:string ActorsLooted
 variable(script) collection:string DoNotPullList
+variable(script) collection:string TempDoNotPullList
+variable(script) int TempDoNotPullListTimer
 variable(script) collection:string InvalidMasteryTargets
 variable(script) bool IsMoving
+variable bool UseCustomRoutines=FALSE
+variable int gRtnCtr=1
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -288,11 +227,10 @@ variable int PathType
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
 #include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
-
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.iss
 
 function main()
 {
-	;ext -require isxeq2
 	variable int tempvar
 	variable int tempvar1
 	variable int tempvar2
@@ -311,8 +249,9 @@ function main()
 	;Script:Squelch
 	;Script:EnableProfiling
 
-		echo "---------"
-		echo "* Initializing EQ2Bot..."
+    CurrentAction:Set["* Initializing EQ2Bot..."]
+	echo "---------"
+	echo "* Initializing EQ2Bot..."
 
 	EQ2Bot:Init_Config
 	EQ2Bot:Init_Events
@@ -325,30 +264,50 @@ function main()
 	call Class_Declaration
 	call CheckManaStone
 
+	#ifdef __USING_CUSTOM_ROUTINES__
+	echo "* Utilizing Custom Routines via ${Me.Name}.iss"
+	call Custom__Initialization
+	UseCustomRoutines:Set[TRUE]
+	#endif
+
 	echo "...Initialization Complete."
 	echo "* EQ2Bot Ready!"
 	echo "---------"
-
+    CurrentAction:Set["Idle..."]
+    
+	EQ2Nav:UpdateNavGUI
+	if ${StartNav}
+	{
+		EQ2Nav:AutoBox
+		EQ2Nav:ConnectRegions
+	}
+	
 	do
 	{
 		waitframe
 		call ProcessTriggers
-		EQ2Nav:UpdateNavGUI
-		if ${StartNav}
-		{
-			EQ2Nav:AutoBox
-			EQ2Nav:ConnectRegions
-		}
 	}
 	while !${StartBot}
 
-	; The following 3 scripts are Initialized which are customizable
+	; These are called from within the individual class file used
 	call Buff_Init
 	call Combat_Init
 	call PostCombat_Init
 
+	;; If using CustomRoutines...
+	if ${UseCustomRoutines}
+	{
+	    call Custom__Buff_Init
+	    call Custom__Combat_Init
+	    call Custom__PostCombat_Init
+	}
+
+
+    UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+    UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	do
 	{
+	    ;echo "Main Loop: Test-${Time.Timestamp}"
 		if ${EQ2.Zoning}
 		{
 			KillTarget:Set[]
@@ -382,16 +341,14 @@ function main()
 			}
 		}
 
-		;Process Pre-Combat Scripts
-		tempvar:Set[1]
+		;;;;;;;;;;;;;;
+		;;; Pre-Combat Routines Loop (ie, Buff Routine, etc.)
+		;;;;;;;;;;;;;;
+		gRtnCtr:Set[1]
 		do
 		{
-			do
-			{
-				waitframe
-			}
-			while ${Following} && ${FollowTask}==3
-
+		    ;echo "Pre-Combat Routines Loop: Test - ${gRtnCtr}"
+		    
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
@@ -417,59 +374,32 @@ function main()
 				if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 
-				if ${Following}
-				{
-					if ${Mob.Target[${KillTarget}]}
-					{
-						FollowTask:Set[2]
-						WaitFor ${Script[EQ2Follow].Variable[pausestate]} 30
-						if ${AutoMelee}
-						{
-							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[5]:Inc[5]}
-							do
-							{
-									waitframe
-							}
-							while (${IsMoving} || ${Me.IsMoving})
-						}
-						else
-						{
-							call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} 10
-							do
-							{
-									waitframe
-							}
-							while (${IsMoving} || ${Me.IsMoving})
-						}
-
-						if ${Me.IsMoving}
-						{
-                    	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                    	        eq2press -release ${forward}
-                    	    else
-                    	        press -release ${forward}
-							wait 20 !${Me.IsMoving}
-						}
-						FollowTask:Set[1]
-					}
-				}
-
 				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
 				if ${KillTarget}
 				{
-					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
-					{
-						if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
-						{
-							if ${Mob.Target[${KillTarget}]}
-								call Combat
-						}
-					}
-					;else
-					;    echo "DEBUG: EQ2Bot did not call 'combat' because mob was not in camp or MainTank was not within designated range"
+				    if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
+				    {
+    					if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+    					{
+    						if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
+    						{
+    						    if ${Mob.Target[${KillTarget}]}
+    							{
+    							    call Combat
+    							}
+    						}
+    						;else
+    						    ;echo "DEBUG: if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"
+    					}
+    					;else
+    					    ;echo "DEBUG: if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"
+    				}
+    				else
+    				    KillTarget:Set[0]
 				}
 			}
 
+            ;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
 			if ${PathType}==4 && ${MainTank}
 			{
 				if ${Me.InCombat} && ${Mob.Detect}
@@ -480,11 +410,6 @@ function main()
 						call Combat
 					}
 				}
-				else
-				{
-					if ${Me.ToActor.Power}<${PowerCheck} || ${Me.ToActor.Health}<${HealthCheck}
-						call ScanAdds
-				}
 			}
 
             MobDetected:Set[${Mob.Detect}]
@@ -493,130 +418,110 @@ function main()
 			;this should force the tank to react to any aggro, regardless
 			if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
 			{
-				if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
-				{
-					call Combat
-				}
-				else
-				{
-					if ${Mob.NearestAggro}
-					{
-						target ${Mob.NearestAggro}
-						call Combat
-					}
-				}
-				MobDetected:Set[${Mob.Detect}]
+			    do
+			    {
+    				if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
+    				{
+    				    KillTarget:Set[${Target.ID}]
+    					call Combat
+    				}
+    				else
+    				{
+    				    variable int AggroMob
+    				    AggroMob:Set[${Mob.NearestAggro}]
+    					if ${AggroMob} > 0
+    					{
+    					    if ${Mob.ValidActor[${AggroMob}]}
+    					    {
+    					        if ${KillTarget} != ${AggroMob}
+    					        {
+    					            CurrentAction:Set["Targetting Nearest Aggro Mob"]
+            					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+            					    KillTarget:Set[${AggroMob}]
+            					}
+        						target ${AggroMob}
+        						call Combat
+        					}
+    					}
+    				}
+    				MobDetected:Set[${Mob.Detect}]
+    			}
+    			while ${MobDetected}
 			}
             ;;
             ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-			; Do Pre-Combat Script if there is no mob nearby
+
 			if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
 				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
-						tempvar:Set[40]
+						gRtnCtr:Set[40]
+						CurrentAction:Set["Idle..."]
 						break
 					}
 				}
 
-				call Buff_Routine ${tempvar}
-				if ${Return.Equal[Buff Complete]}
+                ;;;;;;;;;
+                ;;;;; Call the buff routine from the class file
+                ;;;;;;;;;
+				call Buff_Routine ${gRtnCtr}
+				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 				{
 					; end after this round
-					tempvar:Set[40]
+					gRtnCtr:Set[40]
+					CurrentAction:Set["Idle..."]
 					break
 				}
 
 				;disable autoattack if not in combat
 				if (${Me.AutoAttackOn} && !${Mob.Detect})
 					EQ2Execute /toggleautoattack
-
-				;allow class file to set a var to override eq2bot stance / pet casting
-				if !${NoEQ2BotStance}
-				{
-					switch ${Me.Archetype}
-					{
-						case scout
-							if ${MainTank} && ${Me.GroupCount}!=1
-							{
-								if ${Me.Maintained[${SpellType[290]}](exists)}
-								{
-									Me.Maintained[${SpellType[290]}]:Cancel
-								}
-								call CastSpellRange 295 0 0 0 0 0 0 1
-							}
-							else
-							{
-								if ${Me.Maintained[${SpellType[295]}](exists)}
-								{
-									Me.Maintained[${SpellType[295]}]:Cancel
-								}
-
-								call CastSpellRange 290 0 0 0 0 0 0 1
-							}
-
-							if !${Me.Effect[Pathfinding](exists)}
-							{
-								call CastSpellRange 302 0 0 0 0 0 0 1
-							}
-							break
-
-						case fighter
-							if ${MainTank} && ${Me.GroupCount}!=1
-							{
-								if ${Me.Maintained[${SpellType[290]}](exists)}
-								{
-									Me.Maintained[${SpellType[290]}]:Cancel
-								}
-								call CastSpellRange 295 0 0 0 0 0 0 1
-							}
-							else
-							{
-								if ${Me.Maintained[${SpellType[295]}](exists)}
-								{
-									Me.Maintained[${SpellType[295]}]:Cancel
-								}
-								call CastSpellRange 290 0 0 0 0 0 0 1
-							}
-							break
-						case mage
-							if (${MainTank} && ${Actor[MyPet](exists)}) || ${Actor[MyPet].ID}==${Actor[exactname,${Maintank}].ID}
-							{
-								if ${Me.Maintained[${SpellType[290]}](exists)}
-								{
-									Me.Maintained[${SpellType[290]}]:Cancel
-								}
-								call CastSpellRange 295
-							}
-							elseif ${Actor[MyPet](exists)}
-							{
-								if ${Me.Maintained[${SpellType[295]}](exists)}
-								{
-									Me.Maintained[${SpellType[295]}]:Cancel
-								}
-								call CastSpellRange 290
-							}
-							break
-
-						case priest
-							break
-						case default
-							break
-					}
-				}
-
 			}
 		}
-		while ${tempvar:Inc}<=40
+		while ${gRtnCtr:Inc}<=40
+
+        if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
+        {
+    		if (${UseCustomRoutines})
+    		{
+    		    gRtnCtr:Set[1]
+    		    do
+    		    {
+    				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
+    				{
+    					if ${Mob.Target[${KillTarget}]}
+    					{
+    						gRtnCtr:Set[40]
+    						CurrentAction:Set["Idle..."]
+    						break
+    					}
+    				}
+
+    				call Custom__Buff_Routine ${gRtnCtr}
+    				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+    				{
+    					gRtnCtr:Set[40]
+    					CurrentAction:Set["Idle..."]
+    					break
+    				}
+    		    }
+    		    while ${gRtnCtr:Inc} <= 40
+    		}
+    	}
+	    ;;;;;;;;;;;;;;
+		;;; END Pre-Combat Routines Loop (ie, Buff Routine, etc.)
+		;;;;;;;;;;;;;;
+
 
 		if ${AutoLoot}
 			call CheckLoot
 
-		if ${AutoPull}
+		if ${AutoPull} && !${Me.InCombat}
 		{
+		    ;echo "AutoPull Loop: Test-${Time.Timestamp}"
 			if ${PathType}==2 && (${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
 			{
 				PullPoint:SetRegion[${EQ2Bot.ScanWaypoints}]
@@ -654,64 +559,117 @@ function main()
 				EQ2Execute /target_none
 			}
 
-			if ${Mob.Detect} || ((${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck})
-			{
-				if ${PathType}==4 && !${Me.InCombat}
+            if ${Mob.Detect} || ${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}
+            {
+                if (${Me.ToActor.Power}>=${PowerCheck} && ${Me.ToActor.Health}>=${HealthCheck})
+    			{
+    				if ${PathType}==4 && !${Me.InCombat}
+    				{
+    					if ${EQ2Bot.PriestPower}
+    					{
+    						call Pull any
+    						if ${engagetarget}
+    						{
+    							wait 10
+    							if ${Mob.Target[${Target.ID}]}
+    							{
+    							    ;echo "DEBUG:: Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
+    								call Combat
+    								;echo "DEBUG:: Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
+    							}
+    						}
+    					}
+    				}
+    				else
+    				{
+    					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.InCombatMode} && ${Target.Distance}<8
+    					{
+    					    ;echo "Calling Combat(2) within AutoPull Loop: Test-${Time.Timestamp}"
+    						call Combat
+    					}
+    					else
+    					{
+    					    variable int AggroNPC
+    					    AggroNPC:Set[${Mob.NearestAggro}]
+    						if ${AggroNPC} > 0
+    						{
+    						    if ${Mob.ValidActor[${AggroNPC}]}
+    						    {
+        							target ${AggroNPC}
+        							;echo "Calling Combat(3) within AutoPull Loop: Test-${Time.Timestamp}"
+        							call Combat
+        						}
+    						}
+    						else
+    						{
+    							if ${EQ2Bot.PriestPower}
+    							{
+    								EQ2Execute /target_none
+    								call Pull any
+    								if ${engagetarget}
+    								{
+    								    ;echo "Calling Combat(4) within AutoPull Loop: Test-${Time.Timestamp}"
+    									call Combat
+    								}
+    							}
+    						}
+    					}
+
+
+    					if ${EQ2Bot.PriestPower} || ${Mob.Detect}
+    					{
+    						EQ2Execute /target_none
+    						call Pull any
+    						if ${engagetarget}
+    						{
+    						    ;echo "Calling Combat(5) within AutoPull Loop: Test-${Time.Timestamp}"
+    							call Combat
+    						}
+    					}
+    				}
+    			}
+    		}
+    	;echo "END AutoPull Loop: Test-${Time.Timestamp}"
+		}
+		call ProcessTriggers
+
+
+
+        MobDetected:Set[${Mob.Detect}]
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;;;; This is repeated here for instances where the MT is the same as the MA
+		;;
+		if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
+		{
+		    do
+		    {
+				if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
 				{
-					if ${EQ2Bot.PriestPower}
-					{
-						call Pull any
-						if ${engagetarget}
-						{
-							wait 10
-							if ${Mob.Target[${Target.ID}]}
-							{
-								call Combat
-							}
-						}
-					}
+				    KillTarget:Set[${Target.ID}]
+					call Combat
 				}
 				else
 				{
-					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.InCombatMode} && ${Target.Distance}<8
+				    variable int AgressiveNPC
+				    AgressiveNPC:Set[${Mob.NearestAggro}]
+					if ${AgressiveNPC} > 0
 					{
-						call Combat
-					}
-					else
-					{
-						if ${Mob.NearestAggro}
-						{
-							target ${Mob.NearestAggro}
-							call Combat
-						}
-						else
-						{
-							if ${EQ2Bot.PriestPower}
-							{
-								EQ2Execute /target_none
-								call Pull any
-								if ${engagetarget}
-								{
-									call Combat
-								}
-							}
-						}
-					}
-
-
-					if ${EQ2Bot.PriestPower} || ${Mob.Detect}
-					{
-						EQ2Execute /target_none
-						call Pull any
-						if ${engagetarget}
-						{
-							call Combat
-						}
+					    if ${Mob.ValidActor[${AgressiveNPC}]}
+					    {
+					        CurrentAction:Set["Targetting Nearest Aggro Mob"] 
+    					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+    					    KillTarget:Set[${AgressiveNPC}]
+    						target ${AgressiveNPC}
+    						call Combat
+    					}
 					}
 				}
+				MobDetected:Set[${Mob.Detect}]
 			}
+			while ${MobDetected}
 		}
-		call ProcessTriggers
+        ;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 		; Check if we have leveled and reset XP Calculations in UI
 		if ${Me.Level}>${StartLevel} && !${CloseUI}
@@ -735,13 +693,6 @@ function main()
 
 		if (${Actor[${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[${OriginalMT}].IsDead})
 			EQ2Bot:MainTank_Dead
-
-		; Check that we are close to MainAssist if we are following and not in combat
-		if ${Following} && ${Actor[ExactName,${MainAssist}].Distance}>10 && ${Script[EQ2Follow].Variable[pausestate]} && !${Mob.Detect}
-		{
-			FollowTask:Set[1]
-			wait 20
-		}
 
 		call ProcessTriggers
 	}
@@ -787,7 +738,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 	if ${Me.IsMoving} && !${castwhilemoving}
 		return -1
 
-	if ${targettobuff}>0 && !${Actor[${targettobuff}](exists)}
+	if ${targettobuff}>0 && !${Actor[id,${targettobuff}](exists)}
 		return -1
 
 	do
@@ -828,12 +779,15 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 							originaltarget:Set[${Target.ID}]
 						}
 
-						if ${targettobuff(exists)}
+						if ${targettobuff} > 0
 						{
 							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]})
 							{
-								target ${targettobuff}
-								wait 10 ${Target.ID}==${targettobuff}
+							    if ${Actor[id,${targettobuff}](exists)}
+							    {
+    								target ${targettobuff}
+    								wait 10 ${Target.ID}==${targettobuff}
+    							}
 							}
 						}
 
@@ -893,8 +847,14 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	if ${Me.IsMoving} && !${castwhilemoving}
 		return
 
-	CurrentAction:Set[Casting ${spell}]
-	Me.Ability[${spell}]:Use
+	CurrentAction:Set[Casting '${spell}']
+
+    ;; Disallow some abilities that are named the same as crafting abilities.
+    ;; 1. Agitate (CraftingID: 601887089 -- Fury Spell ID: 1287322154)
+    if (${Me.Ability[${spell}].ID} == 601887089)
+	    Me.Ability[id,1287322154]:Use
+	else
+    	Me.Ability[${spell}]:Use
 
 	if !${castwhilemoving}
 	{
@@ -915,163 +875,297 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 function Combat()
 {
 	variable int tempvar
+	variable bool ContinueCombat
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
-	FollowTask:Set[2]
+	
+	if !${Actor[${KillTarget}](exists)}
+	    return
 
+	FollowTask:Set[2]
 	; Make sure we are still not moving when we enter combat
 	if ${Me.IsMoving}
 	{
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -release ${forward}
-        else
-            press -release ${forward}
-        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-            eq2press -release ${backward}
-        else
-            press -release ${backward}
+        press -release ${forward}
+        press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
+	
+	if !${Target(exists)}
+	{
+	    target ${KillTarget}
+        wait 2
+        if !${Target(exists)}
+            return
+    }
 
+	if ${Target.ID}!=${Me.ID} && ${Target(exists)}
+		face ${Target.X} ${Target.Z}
+		
+	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show		
 	do
 	{
 		if !${MainTank}
-			target ${KillTarget}
-
-		if ${Target.ID}!=${Me.ID} && ${Target(exists)}
 		{
-			face ${Target.X} ${Target.Z}
+		    if !${Actor[${KillTarget}](exists)}
+		        echo "EQ2Bot:: KillTarget did not exist in Combat() routine ... how did that happen?"
+		    else
+    			target ${KillTarget}
 		}
 
+	    if ${ContinueCombat}
+	    {
+    	    ContinueCombat:Set[FALSE]
+    	    if !${Target(exists)}
+    	    {
+    	        target ${KillTarget}
+    	        wait 1
+    	        face ${Target.X} ${Target.Z}
+    	    }
+        	elseif ${Target.ID}!=${Me.ID}
+        		face ${Target.X} ${Target.Z}
+        }
+        
+        if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+            break
+            
 		do
 		{
 			;these checks should be done before calling combat, once called, combat should insue, regardless.
 			if !${Actor[${Target.ID}].InCombatMode}
-				break
+			    break
+			    
+    		if ${Target.Distance} > ${MARange}
+    		{
+    		    do 
+    		    {
+    		        wait 5
+    		        if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+    		            break
+    		        call ProcessTriggers
+    		    }
+    		    while ${Target.Distance} > ${MARange}
+    		    
+                if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+                    break    		     
+                    
+                face ${Target.X} ${Target.Y} ${Target.Z}
+    		}
+    		
+            if (${Mob.ValidActor[${KillTarget}]})
+            {
+    			gRtnCtr:Set[1]
+    			do
+    			{
+    				call ProcessTriggers
 
-			if ${Target.ID} != ${Me.ID} && ${Target(exists)}
-			{
-				face ${Target.X} ${Target.Z}
-			}
+    				if ${PathType}==4 && ${MainTank}
+    					call ScanAdds
 
-			tempvar:Set[1]
-			do
-			{
-				call ProcessTriggers
+    				if ${MainTank}
+    				{
+    					if ${Target.Target.ID}==${Me.ID}
+    						call CheckMTAggro
+    					else
+    					{
+    						call Lost_Aggro ${Target.ID}
+    						if ${UseCustomRoutines}
+    						    call Custom__Lost_Aggro ${Target.ID}
+    					}
+    				}
+    				else
+    				{
+    					Mob:CheckMYAggro
 
-				if ${PathType}==4 && ${MainTank}
-					call ScanAdds
+    					if ${Actor[ExactName,${MainAssist}].IsDead}
+    					{
+    						EQ2Bot:MainAssist_Dead
+    						break
+    					}
 
-				if ${MainTank}
-				{
-					if ${Target.Target.ID}==${Me.ID}
-						call CheckMTAggro
-					else
-						call Lost_Aggro ${Target.ID}
-				}
-				else
-				{
-					Mob:CheckMYAggro
+    					if ${Actor[${MainTankPC}].IsDead}
+    					{
+    						EQ2Bot:MainTank_Dead
+    						break
+    					}
+    				}
 
-					if ${Actor[ExactName,${MainAssist}].IsDead}
-					{
-						EQ2Bot:MainAssist_Dead
-						break
-					}
+    				if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+    				{
+    					call Have_Aggro
+    					if ${UseCustomRoutines}
+    					    call Custom__Have_Aggro
+    	    		}
 
-					if ${Actor[${MainTankPC}].IsDead}
-					{
-						EQ2Bot:MainTank_Dead
-						break
-					}
-				}
+    				do
+    				{
+    					waitframe
+    				}
+    				while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
 
-				if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
-					call Have_Aggro
+    				call Combat_Routine ${gRtnCtr}
+    				if ${Return.Equal[CombatComplete]}
+    				{
+    				    CurrentAction:Set["Idle..."]
+    					gRtnCtr:Set[40]
+    				}
+    				
+    				if !${Me.AutoAttackOn} && ${AutoMelee}
+    					EQ2Execute /toggleautoattack
 
-				do
-				{
-					waitframe
-				}
-				while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
+    				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+    				{
+    					EQ2Execute /target_none
+    					break
+    				}
 
-				call Combat_Routine ${tempvar}
-				if ${Return.Equal[CombatComplete]}
-				{
-					; end loop after this round
-					tempvar:Set[40]
-				}
+    				if ${AutoMelee} && !${MainTank}
+    				{
+    					;check valid rear position
+    					if ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-305)) && ${Target.Distance}<6
+    					{
+    						;we're behind and in range
+    					}
+    					;check right flank
+    					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)) && ${Target.Distance}<6
+    					{
+    						;we're right flank and in range
+    					}
+    					;check left flank
+    					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)) && ${Target.Distance}<6
+    					{
+    						;we're left flank and in range
+    					}
+    					elseif ${Target.Target.ID}==${Me.ID}
+    					{
+    						;we have aggro, move to the maintank
+    						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
+    						do
+    						{
+    								waitframe
+    						}
+    						while (${IsMoving} || ${Me.IsMoving})
+    					}
+    					else
+    					{
+    						call CheckPosition 1 ${Target.IsEpic}
+    					}
+    				}
+    				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
+    				{
+    					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
+    					do
+    					{
+    							waitframe
+    					}
+    					while (${IsMoving} || ${Me.IsMoving})
+    				}
 
-				if !${Me.AutoAttackOn} && ${AutoMelee}
-					EQ2Execute /toggleautoattack
+    				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
+    				{
+    					if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+    					{
+    						Me.Inventory[ExactName,ManaStone]:Use
+    						mstimer:Set[${Time.Timestamp}]
+    					}
+    				}
 
-				if ${AutoMelee} && !${MainTank}
-				{
-					;check valid rear position
-					if ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-305)) && ${Target.Distance}<6
-					{
-						;we're behind and in range
-					}
-					;check right flank
-					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)) && ${Target.Distance}<6
-					{
-						;we're right flank and in range
-					}
-					;check left flank
-					elseif ((${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)) && ${Target.Distance}<6
-					{
-						;we're left flank and in range
-					}
-					elseif ${Target.Target.ID}==${Me.ID}
-					{
-						;we have aggro, move to the maintank
-						call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 1
-						do
-						{
-								waitframe
-						}
-						while (${IsMoving} || ${Me.IsMoving})
-					}
-					else
-						call CheckPosition 1 ${Target.IsEpic}
-				}
-				elseif ${Target.Distance}>40 || ${Actor[${MainTankPC}].Distance}>40
-				{
-					call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 25
-					do
-					{
-							waitframe
-					}
-					while (${IsMoving} || ${Me.IsMoving})
-				}
+    				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+    				{
+    				    variable int ActorID
+    				    ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+    					if ${Mob.ValidActor[${ActorID}]}
+    					{
+    						KillTarget:Set[${ActorID}]
+    						target ${KillTarget}
+    						call ProcessTriggers
+    					}
+    				}
+    			}
+    			while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+    		}
+    		else
+    		    break
 
-				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
-				{
-					if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
-					{
-						Me.Inventory[ExactName,ManaStone]:Use
-						mstimer:Set[${Time.Timestamp}]
-					}
-				}
+			;;;;
+			;;;; Custom Combat Routines (per character)
+			;;;;
+			if (${UseCustomRoutines} && ${Mob.ValidActor[${KillTarget}]})
+		    {
+    		    gRtnCtr:Set[1]
+    		    do
+    		    {
+    				call ProcessTriggers
 
-				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-				{
-						EQ2Execute /target_none
-						break
-				}
+    				if ${PathType}==4 && ${MainTank}
+    					call ScanAdds
 
-				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
-				{
-					if ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
-					{
-						KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
-						target ${KillTarget}
-						call ProcessTriggers
-					}
-				}
-			}
-			while ${tempvar:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+    				if ${MainTank}
+    				{
+    					if ${Target.Target.ID}==${Me.ID}
+    						call CheckMTAggro
+    					else
+    					{
+    						call Lost_Aggro ${Target.ID}
+    						if ${UseCustomRoutines}
+    						    call Custom__Lost_Aggro ${Target.ID}
+    					}
+    				}
+    				else
+    				{
+    					Mob:CheckMYAggro
+
+    					if ${Actor[ExactName,${MainAssist}].IsDead}
+    					{
+    						EQ2Bot:MainAssist_Dead
+    						break
+    					}
+
+    					if ${Actor[${MainTankPC}].IsDead}
+    					{
+    						EQ2Bot:MainTank_Dead
+    						break
+    					}
+    				}
+
+    				call Custom__Combat_Routine ${gRtnCtr}
+    				if ${Return.Equal[CombatComplete]}
+    				{
+    				    CurrentAction:Set["Idle..."]
+    				    gRtnCtr:Set[40]
+    				}
+
+    				if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
+    				{
+    					if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+    					{
+    						Me.Inventory[ExactName,ManaStone]:Use
+    						mstimer:Set[${Time.Timestamp}]
+    					}
+    				}
+
+    				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+    				{
+    					EQ2Execute /target_none
+    					break
+    				}
+
+    				if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+    				{
+    				    ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+    					if ${Mob.ValidActor[${ActorID}]}
+    					{
+    						KillTarget:Set[${ActorID}]
+    						target ${KillTarget}
+    						call ProcessTriggers
+    					}
+    				}
+    		    }
+		        while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+		    }
+			;;;; END Combat_Routine Loop ;;;;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 			if !${CurrentTask}
 				Script:End
@@ -1082,11 +1176,15 @@ function Combat()
 			call ProcessTriggers
 		}
 		while ((${Actor[${KillTarget}](exists)} && !${MainTank}) || (${Target(exists)} && ${MainTank})) && !${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]}
+        ;;; END LOOP DEALING WITH CURRENT TARGET ;;;;;;
 
 		disablebehind:Set[FALSE]
 		disablefront:Set[FALSE]
 
-		if !${MainTank}
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;; Target New Mob (if applicable)
+        ;;
+		if !${MainTank} && ${Actor[ExactName,${MainAssist}](exists)}
 		{
 			if ${Mob.Detect}
 				wait 50 ${Actor[ExactName,${MainAssist}].Target(exists)}
@@ -1094,34 +1192,71 @@ function Combat()
 			if ${Actor[ExactName,${MainAssist}].Target(exists)} && ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
 			{
 				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+				ContinueCombat:Set[TRUE]
 				continue
 			}
 			else
 				break
 		}
-
-		if ${AutoPull} || ${MainTank}
+		elseif ${MainTank} && !${Me.IsMoving}
 		{
-			checkadds:Set[TRUE]
+		    if ${Mob.Detect}
+		    {
+		        variable int AggroMob
+		        AggroMob:Set[${Mob.NearestAggro}]
 
-			call Pull any
-			if ${engagetarget}
-				continue
+				if ${AggroMob} > 0
+				{
+				    if ${Mob.ValidActor[${AggroMob}]}
+				    {
+				        if ${KillTarget} != ${AggroMob}
+				        {
+				            CurrentAction:Set["Targetting Nearest Aggro Mob and continuing combat"] 
+        				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
+        				    KillTarget:Set[${AggroMob}]
+        	            }
+    					target ${AggroMob}
+    					ContinueCombat:Set[TRUE]
+    				}
+				}
+			}
 		}
+        ;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	}
-	while ${Me.InCombat}
+	while ${Me.InCombat} || ${ContinueCombat}
+
+    UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 
 	avoidhate:Set[FALSE]
 	checkadds:Set[FALSE]
 
-	tempvar:Set[1]
+	gRtnCtr:Set[1]
 	do
 	{
-		call Post_Combat_Routine ${tempvar}
+		call Post_Combat_Routine ${gRtnCtr}
 		if ${Return.Equal[PostCombatRoutineComplete]}
-			tempvar:Set[20]
+		{
+		    CurrentAction:Set["Idle..."]
+			gRtnCtr:Set[20]
+		}
 	}
-	while ${tempvar:Inc}<=20
+	while ${gRtnCtr:Inc}<=20
+
+	if ${UseCustomRoutines}
+	{
+    	gRtnCtr:Set[1]
+    	do
+    	{
+    		call Custom__Post_Combat_Routine ${gRtnCtr}
+    		if ${Return.Equal[PostCombatRoutineComplete]}
+    		{
+    		    CurrentAction:Set["Idle..."]
+    			gRtnCtr:Set[20]
+    		}
+    	}
+    	while ${gRtnCtr:Inc}<=20	
+    }
 
 	if ${Me.AutoAttackOn}
 		EQ2Execute /toggleautoattack
@@ -1129,9 +1264,9 @@ function Combat()
 
 	if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
 	{
-        ;echo "DEBUG: Calling CheckLootNoMove()"
+	    ;echo "DEBUG: Calling CheckLootNoMove()"
 		call CheckLootNoMove
-	}
+    }
 
 	if ${PathType}==1
 	{
@@ -1148,9 +1283,6 @@ function Combat()
 			face ${Math.Rand[45]:Inc[315]}
 		}
 	}
-
-	if ${Following}
-		FollowTask:Set[1]
 
 	if ${MainAssist.NotEqual[${OriginalMA}]} && !${MainTank}
 		EQ2Bot:MainAssist_Dead
@@ -1172,7 +1304,7 @@ function Combat()
 			call FastMove ${WPX} ${WPZ} 4
 			do
 			{
-					waitframe
+				waitframe
 			}
 			while (${IsMoving} || ${Me.IsMoving})
 		}
@@ -1195,9 +1327,7 @@ function GetBehind()
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-	{
 		face ${Target.X} ${Target.Z}
-	}
 
 }
 
@@ -1235,9 +1365,7 @@ function GetToFlank(int extended)
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-	{
 		face ${Target.X} ${Target.Z}
-	}
 }
 
 function GetinFront()
@@ -1256,9 +1384,8 @@ function GetinFront()
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-	{
 		face ${Target.X} ${Target.Z}
-	}
+		
 	;removing cause this seems stupid
 	;wait 4
 }
@@ -1331,7 +1458,7 @@ function CheckPosition(int rangetype, int position)
 	{
 		;I don't think this is a good idea.  We're ignoring position checks when people get knocked back... Changing from 8 to MARange
 		;it is also not good with new mob AI's that 'range' fight.
-		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>${MARange} && !${Following}
+		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>${MARange}
 			return
 	}
 	elseif ${PathType}==2
@@ -1358,15 +1485,9 @@ function CheckPosition(int rangetype, int position)
 	if ${Target.Distance}<${minrange} && ${Target(exists)} && (${Me.ID}!=${Target.ID}) && (${rangetype}==1 || ${rangetype}==3)
 	{
 		movetimer:Set[${Time.Timestamp}]
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -release ${forward}
-        else
-            press -release ${forward}
+        press -release ${forward}
         wait 1
-        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-            eq2press -hold ${backward}
-        else
-            press -hold ${backward}
+        press -hold ${backward}
 		do
 		{
 			if ${Target(exists)} && (${Me.ID}!=${Target.ID})
@@ -1380,10 +1501,7 @@ function CheckPosition(int rangetype, int position)
 		}
 		while ${Target.Distance}<${minrange} && ${Target(exists)}
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-            eq2press -release ${backward}
-        else
-            press -release ${backward}
+        press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -1464,7 +1582,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 				return "OK"
 			else
 			{
-					;echo "DEBUG: Not Casting Spell due to my health being too low!"
+				;echo "DEBUG: Not Casting Spell due to my health being too low!"
 				return "FAIL"
 			}
 			break
@@ -1474,242 +1592,424 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 function Pull(string npcclass)
 {
 	variable int tcount=2
-	variable bool chktarget
 	variable int tempvar
 	variable bool aggrogrp=FALSE
+	variable int ThisActorID
+	variable int ThisActorTargetID
+	variable bool bContinue=FALSE
 
+    ;; This variable must be set before anything is done in this function
 	engagetarget:Set[FALSE]
 
+	if !${AutoPull}
+	    return 0
+
+	;; If we are already in combat...why are we pulling? Cause sometimes we pull nearest mob when group member enters combat?
+	if (${Me.InCombat})
+	    return 0
+
 	if !${Actor[NPC,range,${ScanRange}](exists)} && !(${Actor[NamedNPC,range,${ScanRange}](exists)} && !${IgnoreNamed})
-		return
+		return 0
+
+
+	if ${PullType.Equal[Pet Pull]}
+	{
+	    if !${Me.Pet(exists)}
+	        return 0
+	}
+
+    CurrentAction:Set["Beginning pull routine..."]
+
+    ;; Clear the TempDoNotPullList every 5 minutes
+    if (${TempDoNotPullListTimer} < ${Math.Calc64[${Time.Timestamp}-300]})
+    {
+        TempDoNotPullListTimer:Set[${Time.Timestamp}]
+        if ${TempDoNotPullList.Used} > 0
+        {
+            echo "DEBUG: Clearing TempDoNotPullList (5 minute mark)"
+            TempDoNotPullList:Clear
+        }
+    }
 
 	EQ2:CreateCustomActorArray[byDist,${ScanRange}]
 	do
 	{
-		chktarget:Set[FALSE]
+	    ThisActorID:Set[${CustomActor[${tcount}].ID}]
+	    ThisActorTargetID:Set[${CustomActor[${tcount}].Target.ID}]
 
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
+		if (${TempDoNotPullList.Element[${ThisActorID}](exists)})
 		{
-			if ${Mob.AggroGroup[${CustomActor[${tcount}].ID}]}
+		    ;echo "DEBUG: Actor (ID: ${actorid}) is in the TempDoNotPullList -- skipping..."
+			continue
+		}
+		
+		if (${PullOnlySoloMobs} && !${CustomActor[${tcount}].IsSolo})
+		    continue
+
+		if ${Mob.ValidActor[${ThisActorID}]}
+		{
+			if ${Mob.AggroGroup[${ThisActorID}]}
 				aggrogrp:Set[TRUE]
 
 			if !${CustomActor[${tcount}].IsAggro}
 			{
 
-				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && !${Me.InCombat} && (${Me.ToActor.Power}<75 || ${Me.ToActor.Health}<90) && !${CustomActor[${tcount}].InCombatMode}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && !${Me.InCombat} && (${Me.ToActor.Power}<75 || ${Me.ToActor.Health}<90) && !${CustomActor[${tcount}].InCombatMode}
 					continue
 
-				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && ${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && ${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
 					continue
 
-				if !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID} && !${PullNonAggro}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && !${PullNonAggro}
 					continue
 			}
 
-			if ${checkadds} && !${aggrogrp} && ${CustomActor[${tcount}].Target.ID}!=${Me.ID}
+			if ${checkadds} && !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID}
 				continue
 
-			chktarget:Set[TRUE]
+		    if ${CustomActor[${tcount}].Y} < ${Math.Calc64[${Me.Y}-10]}
+		        continue
+		    if ${CustomActor[${tcount}].Y} > ${Math.Calc64[${Me.Y}+10]}
+		        continue
 
-			if ${chktarget}
+
+			target ${ThisActorID}
+
+			wait 20 ${ThisActorID}==${Target.ID}
+
+			wait 20 ${Target(exists)}
+
+			if (${ThisActorID}!=${Target.ID})
+			    continue
+
+
+			;;; Note: I do not know what the fuck ${pulling} is used for or about (Amadeus)
+            ;echo "DEBUG: PathType: ${PathType} - PullRange: ${PullRange} - pulling: ${pulling} - ScanRange: ${ScanRange}"
+			if (${PathType}==4)
 			{
-				target ${CustomActor[${tcount}].ID}
+			    if (${PullType.Equal[Spell or CA Pull]})
+			    {
+    			    if ${Target.Distance} > ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
+    			    {
+    			        ;echo "DEBUG: Moving within range for your pull spell or combat art..."
+    			        call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
+    			    }
+    			    ;; Check again....stupid moving mobs...
+    			    if ${Target.Distance} > ${Me.Ability[${PullSpell}].Range}
+    			    {
+    			        ;echo "DEBUG: Moving within range for your pull spell or combat art..."
+    			        call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-2]}
+    			    }    			    
+    			}
+			    elseif (${PullType.Equal[Bow Pull]})
+			    {
+    			    if ${Target.Distance} > ${Me.Equipment[ranged].Range}
+    			    {
+    			        ;echo "DEBUG: Moving within range for your bow..."
+    			        call FastMove ${Target.X} ${Target.Z} ${Me.Equipment[ranged].Range}
+    			    }
+    			}
+		    }
+			if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
+			{
+			    ;echo "DEBUG: Moving within Range..."
+				call FastMove ${Target.X} ${Target.Z} ${PullRange}
+			}
+			elseif ${PathType}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
+			{
+				;echo "DEBUG: Moving within Range..."
+				call FastMove ${Target.X} ${Target.Z} ${PullRange}
+			}
 
-				wait 10 ${CustomActor[${tcount}].ID}==${Target.ID}
-				wait 10 ${Me.TargetLOS}
 
-				;echo check if in range
-				if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
+			wait 2
+		    if (${PathType} > 0 && !${PullType.Equal[Pet Pull]})
+		    {
+		        CurrentAction:Set["Checking LOS/Collision..."]
+		        ;echo "DEUBG: Checking LOS/Collision"
+    			if ${Target.CheckCollision}
+    			{
+        		    if (!${Me.TargetLOS})
+        		    {
+        		        ;; try strafing a bit to see if can get no collision/LOS
+        		        press -hold MOVEBACKWARD
+        		        wait 4
+        		        press -release MOVEBACKWARD
+        		        waitframe
+        				press -hold STRAFELEFT
+        				wait 10
+        				press -release STRAFELEFT
+        				waitframe
+        				if !${Me.TargetLOS} && ${Target.CheckCollision}
+        				{
+        				    press -hold STRAFERIGHT
+        				    wait 20
+        				    press -release STRAFERIGHT
+        				    waitframe
+        				    if !${Me.TargetLOS} && ${Target.CheckCollision}
+        				    {
+        				        press -hold STRAFELEFT
+        				        wait 10
+        				        press -release STRAFELEFT
+        				        waitframe
+        				        if !${Me.TargetLOS} && ${Target.CheckCollision}
+                                {
+                            		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"
+                            	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
+
+                            		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+                            		continue
+                                }
+        				    }
+        				}
+        			}
+    			}
+    		}
+
+			if ${Me.IsMoving}
+			{
+                press -release ${forward}
+				wait 20 !${Me.IsMoving}
+			}
+
+            ;echo "DEUBG: Pulling! (PullType: ${PullType})"
+			if ${PullType.Equal[Bow Pull]} && ${Target.Distance}>6
+			{
+			    CurrentAction:Set[Pulling ${Target} (with bow)]    
+				; Use Bow to pull
+				EQ2Execute /togglerangedattack
+				wait 50 ${CustomActor[${tcount}].InCombatMode}
+				if ${CustomActor[${tcount}].InCombatMode}
 				{
-					;echo Move to target Range!
-					call FastMove ${Target.X} ${Target.Z} ${PullRange}
-				}
-
-				if ${PathType}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
-				{
-					;echo Move to target Range!
-					call FastMove ${Target.X} ${Target.Z} ${PullRange}
-				}
-
-				if ${Me.IsMoving}
-				{
-                    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                        eq2press -release ${forward}
-                    else
-                        press -release ${forward}
-					wait 20 !${Me.IsMoving}
-				}
-
-				; Use pull spell
-				if ${PullType.Equal[Bow Pull]} && ${Target.Distance}>6
-				{
-					; Use Bow to pull
-					EQ2Execute /togglerangedattack
-					wait 50 ${CustomActor[${tcount}].InCombatMode}
-					if ${CustomActor[${tcount}].InCombatMode}
-					{
-						KillTarget:Set[${Target.ID}]
-						if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
-							face ${Target.X} ${Target.Z}
-						engagetarget:Set[TRUE]
-					}
-					if ${Me.InCombat}
-						EQ2Execute /togglerangedattack
-					break
-				}
-				elseif ${PullType.Equal[Pet Pull]}
-				{
-					; Use Pet to pull
-					EQ2Execute /pet attack
-					wait 200 ${Me.ToActor.InCombatMode}
-					if ${Me.ToActor.InCombatMode}
-					{
-						KillTarget:Set[${Target.ID}]
-						EQ2Execute /pet backoff
-						wait 300 ${CustomActor[${tcount}].Distance}<10
-						EQ2Execute /pet attack
-						if ${PetGuard}
-						{
-							EQ2Execute /pet preserve_self
-							wait 1
-							EQ2Execute /pet preserve_master
-							wait 1
-						}
-						if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
-						{
-							face ${Target.X} ${Target.Z}
-							wait 1
-						}
-						engagetarget:Set[TRUE]
-					}
-					break
-				}
-				else
-					call CastSpell "${PullSpell}"
-
-				if (${Return.Equal[CANTSEETARGET]} || ${Return.Equal[TOOFARAWAY]}) && ${pulling} && !${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
-				{
-					;randomly pick a direction
-					if ${Math.Rand[10]}>5
-					{
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                            eq2press -hold STRAFELEFT
-                        else
-                            press -hold STRAFELEFT
-						wait ${Math.Rand[40]}
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFELEFT]}
-                            eq2press -release STRAFELEFT
-                        else
-                            press -release STRAFELEFT
-					}
-					else
-					{
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                            eq2press -hold STRAFERIGHT
-                        else
-                            press -hold STRAFERIGHT
-						wait ${Math.Rand[40]}
-                        if ${ISXEQ2.IsValidEQ2PressKey[STRAFERIGHT]}
-                            eq2press -release STRAFERIGHT
-                        else
-                            press -release STRAFERIGHT
-					}
-					call FastMove ${Target.X} ${Target.Z} 15
-					EQ2Execute /target_none
-				}
-				else
-				{
-					if ${Return.Equal[TOOFARAWAY]} && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<8 && ${PathType}==2
-						call FastMove ${Target.X} ${Target.Z} 3
-					elseif ${Return.Equal[CANTSEETARGET]} || ${Return.Equal[TOOFARAWAY]}
-					{
-						aggrogrp:Set[FALSE]
-						if ${Me.GroupCount}>1
-						{
-							tempvar:Set[1]
-							do
-							{
-								if ${Target.Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}
-								{
-									aggrogrp:Set[TRUE]
-									break
-								}
-							}
-							while ${tempvar:Inc}<${Me.GroupCount}
-						}
-
-						if !${aggrogrp} && ${Target.Target.ID}!=${Me.ID}
-						{
-							if ${PathType}==4
-							{
-								if ${Return.Equal[CANTSEETARGET]}
-								{
-									EQ2Execute /target_none
-									continue
-								}
-
-								if ${AutoMelee}
-									call FastMove ${Target.X} ${Target.Z} 10
-								else
-									call FastMove ${Target.X} ${Target.Z} 20
-
-								if ${Return.Equal[STUCK]}
-								{
-									EQ2Execute /target_none
-									continue
-								}
-							}
-							else
-								continue
-						}
-
-						if ${PathType}==4 && ${Target.Distance}>15
-						{
-							if ${AutoMelee}
-								call FastMove ${Target.X} ${Target.Z} 4
-							else
-								call FastMove ${Target.X} ${Target.Z} 10
-							if ${Return.Equal[STUCK]}
-							{
-								EQ2Execute /target_none
-								continue
-							}
-						}
-					}
-
-
-					do
-					{
-						waitframe
-					}
-					while ${Target.Distance}>10 && ${Target.Target.ID}==${Me.ID} && ${Target.ID}==${KillTarget}
-
-
-					if ${Target.Distance}>10 && !${pulling} && ${PathType}!=2
-					{
-						if ${AutoMelee}
-							call FastMove ${Target.X} ${Target.Z} 5
-						elseif ${Target.Distance}>20
-							call FastMove ${Target.X} ${Target.Z} 20
-
-						if ${Return.Equal[STUCK]}
-						{
-							EQ2Execute /target_none
-							continue
-						}
-					}
-
-					KillTarget:Set[${Target.ID}]
 					if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
 						face ${Target.X} ${Target.Z}
-					engagetarget:Set[TRUE]
-					break
+				    if ${Target(exists)}
+				    {
+				        KillTarget:Set[${Target.ID}]
+    					engagetarget:Set[TRUE]
+    					return ${Target.ID}
+    				}
+    				else
+    				{
+    				    if ${Me.InCombat}
+					        EQ2Execute /togglerangedattack
+					    continue
+					}
 				}
+				if ${Me.InCombat}
+					EQ2Execute /togglerangedattack
+				continue
+			}
+			elseif ${PullType.Equal[Pet Pull]}
+			{
+			    CurrentAction:Set[Pulling ${Target} (with pet)]    
+			    variable int AggroMob
+			    
+			    ;; This should not happen...but just in case
+			    if !${Target(exists)}
+			        continue
+
+			    EQ2Execute /pet attack
+			    WaitFor "You may not order your pet to attack the selected or implied target." 30
+
+				if "${WaitFor}==1"
+				{
+					echo "EQ2Bot-Pull():: Not allowed to use pet to attack this target"
+					wait 1
+            		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"
+            	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
+
+            		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+            		eq2execute /pet backoff
+            		eq2execute target_none
+					continue
+				}
+				else
+				{
+				    face
+				    CurrentAction:Set[Sending Pet in for attack...]    
+					;echo "EQ2Bot-Pull():: Sending Pet in for attack..."
+					variable int StartTime = ${Script.RunningTime}
+					do
+					{
+					    if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 20000)
+					    {
+					        echo "EQ2Bot-Pull():: Pet did not finish a pull within 20 seconds....moving on."
+					        eq2execute /pet backoff
+        					wait 1
+                    		echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (Timeout while pulling)"
+                    	    TempDoNotPullList:Set[${Target.ID},${Target.Name}]
+        
+                    		echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+                    		eq2execute target_none
+                    		bContinue:Set[TRUE]	
+                    		CurrentAction:Set["Timeout while pulling -- moving on..."]
+                    		break 
+					    }
+						Wait 5
+						CurrentAction:Set["Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"] 
+						;echo "EQ2Bot-Pull():: Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"
+
+
+						if !(${Target(exists)})
+						{
+							eq2execute /pet backoff
+                    		eq2execute target_none
+                    		bContinue:Set[TRUE]					        
+					        break 
+						}
+
+					    if !${Me.Pet(exists)}
+					        break
+
+
+		  			    ;; if the pet's target is in combat mode and it's target is the pet
+		  			    if ${Me.Pet.Target.InCombatMode}
+		  			    {
+		  			        if ${Me.Pet.Target.Target.Name.Equal[${Me.Pet.Name}]}
+    		  			        break
+    		  			}
+    		  			
+                		if ${MainTank}
+                		{
+                		    if ${Mob.Detect}
+                		    {
+                		        AggroMob:Set[${Mob.NearestAggro}]
+                				if ${AggroMob} > 0
+                				{
+                				    if ${Mob.ValidActor[${AggroMob}]}
+                				    {
+                				        CurrentAction:Set["Mob in camp -- starting combat."] 
+                    				    echo "EQ2Bot-Pull(MainTank):: Mob in camp -- starting combat."
+                    				    KillTarget:Set[${AggroMob}]
+                    					target ${AggroMob}
+                    		            wait 1
+                    					face
+                    					wait 1
+                    					eq2execute /pet attack
+                                        return ${AggroMob}
+                                    }
+                				}
+                			}
+                		}
+					}
+					while !(${Target.Target(exists)})
+
+				    if ${bContinue}
+				    {
+				        bContinue:Set[FALSE]
+				        continue
+				    }
+
+
+					if !${Target(exists)}
+					    continue
+					if !${Me.Pet(exists)}
+					{
+					    CurrentAction:Set["Pet has died -- mob should be in camp soon (starting combat)"] 
+    				    echo "EQ2Bot-Pull():: Pet has died -- mob should be in camp soon (starting combat)"
+    				    KillTarget:Set[${Target.ID}]
+	    				engagetarget:Set[TRUE]
+	    				wait 5
+    					return ${Target.ID}
+    				}
+
+					wait 1
+					eq2execute /pet backoff
+					wait 25 !${Me.Pet.InCombatMode}
+					if ${Me.Pet.InCombatMode}
+					    eq2execute /pet backoff
+
+                    StartTime:Set[${Script.RunningTime}]
+					do
+					{
+					    if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 120000)
+					    {
+					        CurrentAction:Set["Pet did not finish a pull within 2 minutes....moving on."] 
+					        echo "EQ2Bot-Pull():: Pet did not finish a pull within 2 minutes....moving on."
+					        eq2execute /pet backoff
+					        eq2execute target_none
+					        break 
+					    }					    
+						wait 5
+						CurrentAction:Set["Waiting for ${Target} (${Target.Distance.Precision[1]}m)"] 
+						;echo "EQ2Bot-Pull():: Waiting for ${Target} (${Target.Distance.Precision[1]}m)"
+
+                		if ${MainTank}
+                		{
+                		    if ${Mob.Detect}
+                		    {
+                		        AggroMob:Set[${Mob.NearestAggro}]
+                				if ${AggroMob} > 0
+                				{
+                				    if ${Mob.ValidActor[${AggroMob}]}
+                				    {
+                				        CurrentAction:Set["Mob in camp -- starting combat."] 
+                    				    echo "EQ2Bot-Pull(MainTank):: Mob in camp -- starting combat."
+                    				    KillTarget:Set[${AggroMob}]
+                    					target ${AggroMob}
+                    		            wait 1
+                    					face
+                    					wait 1
+                    					eq2execute /pet attack
+                                        return ${AggroMob}
+                                    }
+                				}
+                			}
+                		}
+					}
+    				while (((${Target.Distance} > ${MARange}) && (${Target.Target(exists)})) || !${Me.TargetLOS})
+
+    				if ${Target(exists)}
+    				{
+    					face
+    				    wait 1
+    					eq2execute /pet attack
+    				    CurrentAction:Set["${Target} in camp -- starting combat."] 
+    				    echo "EQ2Bot-Pull():: ${Target} in camp -- starting combat."
+    				    KillTarget:Set[${Target.ID}]
+	    				engagetarget:Set[TRUE]
+    					return ${Target.ID}
+    				}
+    				else
+    				    continue
+
+			    }
+			}
+			;;;; Otherwise, Using "PullSpell" ;;;;;;;;;;;;;
+
+			call CastSpell "${PullSpell}"
+			CurrentAction:Set["${Target} pulled using ${PullSpell}"] 
+            ;echo "DEBUG: Pulled...waiting for mob to come within range"
+			do
+			{
+				waitframe
+			}
+			while ${Target.Distance}>${MARange} && ${Target.Target.ID}==${Me.ID}
+
+			if ${Target.Distance} > 5 && !${pulling} && ${PathType}!=2
+			{
+				if ${AutoMelee}
+					call FastMove ${Target.X} ${Target.Z} 5
+				elseif ${Target.Distance} > ${MARange}
+					call FastMove ${Target.X} ${Target.Z} ${MARange}
+			}
+
+			if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
+				face ${Target.X} ${Target.Z}
+			if ${Target(exists)}
+			{
+			    KillTarget:Set[${Target.ID}]
+			    engagetarget:Set[TRUE]
+			    return ${Target.ID}
 			}
 		}
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 	FlushQueued CantSeeTarget
+
+	engagetarget:Set[FALSE]
+	return 0
 }
 
 function CheckLootNoMove()
@@ -1759,6 +2059,7 @@ function CheckLootNoMove()
 		}
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
+		    CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"] 
 			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
@@ -1782,7 +2083,7 @@ function CheckLoot()
 	islooting:Set[TRUE]
 	;think this is legacy, removing
 	;wait 10
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:CreateCustomActorArray[byDist,25]
 
 	do
 	{
@@ -1795,6 +2096,7 @@ function CheckLoot()
 
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
+		    CurrentAction:Set[Looting ${CustomActor[${tcount}].Name} (Chest) -- Distance: ${CustomActor[${tcount}].Distance}]
 			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLoot()] -- Distance: ${CustomActor[${tcount}].Distance}"
 			if (${CustomActor[${tcount}].Distance} > 4)
 			{
@@ -1842,6 +2144,7 @@ function CheckLoot()
 		}
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
+		    CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
 			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"
 			if (${CustomActor[${tcount}].Distance} > 10)
 			{
@@ -1921,7 +2224,7 @@ function FastMove(float X, float Z, int range)
 		return "INVALIDLOC"
 	}
 
-	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && !${Following} && ${PathType}!=4
+	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && ${PathType}!=4
 	{
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC"
@@ -1936,18 +2239,10 @@ function FastMove(float X, float Z, int range)
 
 	if !${pulling}
 	{
-	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-	    {
-	        eq2press -release ${forward}
-	        wait 1
-	        eq2press -hold ${forward}
-	    }
-	    else
-	    {
-    	    press -release ${forward}
-    	    wait 1
-    	    press -hold ${forward}
-    	}
+	    press -release ${forward}
+    	wait 1
+    	press -hold ${forward}
+
 	    ;echo "DEBUG: Moving....  (WhoFollowing: ${Me.ToActor.WhoFollowing})"
 	}
 
@@ -1967,10 +2262,7 @@ function FastMove(float X, float Z, int range)
 				isstuck:Set[TRUE]
 				if !${pulling}
 				{
-				    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-				        eq2press -release ${forward}
-				    else
-    					press -release ${forward}
+				    press -release ${forward}
 					wait 20 !${Me.IsMoving}
 				}
 				IsMoving:Set[FALSE]
@@ -1989,10 +2281,7 @@ function FastMove(float X, float Z, int range)
 
 	if !${pulling}
 	{
-	    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-	        eq2press -release ${forward}
-	    else
-			press -release ${forward}
+	    press -release ${forward}
 		wait 20 !${Me.IsMoving}
 	}
 
@@ -2030,10 +2319,7 @@ function MovetoWP(lnavregionref destination)
 		{
 			face ${CurrentPath.Region[2].CenterPoint.X} ${CurrentPath.Region[2].CenterPoint.Y}
 			wait 5
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -hold ${forward}
-            else
-                press -hold ${forward}
+            press -hold ${forward}
 			PositionHeading:Set[${Me.Heading}]
 		}
 
@@ -2060,10 +2346,7 @@ function MovetoWP(lnavregionref destination)
 
 				if (${pulling} || ${PathType}==3) && !${Me.IsMoving}
 				{
-                    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                        eq2press -hold ${forward}
-                    else
-                        press -hold ${forward}
+                    press -hold ${forward}
 				}
 			}
 
@@ -2132,10 +2415,7 @@ function MovetoWP(lnavregionref destination)
 
 		if (${pulling} || ${PathType}==3) && ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 			wait 20 !${Me.IsMoving}
 		}
 	}
@@ -2176,10 +2456,7 @@ function MovetoMaster()
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -hold ${forward}
-        else
-            press -hold ${forward}
+        press -hold ${forward}
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
 		{
@@ -2191,10 +2468,7 @@ function MovetoMaster()
 
 		if ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -2218,6 +2492,7 @@ function IamDead(string Line)
 
 	together:Set[1]
 
+    CurrentAction:Set["You have been killed"]
 	echo "You have been killed"
 
 	if ${Me.GroupCount}==1 && ${WipeRevive}
@@ -2237,7 +2512,7 @@ function IamDead(string Line)
 		do
 		{
 			wipe:Set[1]
-			wipegroup:Set[1]
+			wipegroup:Set[0]
 			do
 			{
 				if ${Me.Group[${wipegroup}](exists)} && ${Me.Group[${wipegroup}].ToActor.IsDead}
@@ -2252,6 +2527,7 @@ function IamDead(string Line)
 
 			if ${wipe}==${grpcnt}
 			{
+			        CurrentAction:Set["Everyone is dead, waiting 10 seconds to revive"]
 					echo "Everyone is dead, waiting 10 seconds to revive"
 					GroupWiped:Set[TRUE]
 					wait 100
@@ -2299,6 +2575,7 @@ function IamDead(string Line)
 					echo "Everyone is here"
 					if ${MainTank}
 					{
+					    CurrentAction:Set["I am Main Tank, waiting 60 seconds for group buffing"]
 						echo "I am Main Tank, waiting 60 seconds for group buffing"
 						wait 600
 					}
@@ -2327,17 +2604,50 @@ function IamDead(string Line)
 
 function LoreItem(string Line)
 {
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+	if ${ID.Equal[${LastWindow}]}
+	{
+    	switch ${LootWindow.Type}
+    	{
+    	    case Free For All
+    		case Lottery
+    			LootWindow:DeclineLotto
+                return
+    		case Need Before Greed
+    			LootWindow:DeclineNBG
+    			return
+    		case Unknown
+    		Default
+    			echo "EQ2Bot(LoreItem):: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+    			return
+    	}
+	}
 }
 
 function LootWindowBusy(string Line)
 {
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+	if ${ID.Equal[${LastWindow}]}
+	{
+    	switch ${LootWindow.Type}
+    	{
+    	    case Free For All
+    		case Lottery
+    			LootWindow:DeclineLotto
+                return
+    		case Need Before Greed
+    			LootWindow:DeclineNBG
+    			return
+    		case Unknown
+    		Default
+    			echo "EQ2Bot(LootWindowBusy):: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+    			return
+    	}
+	}
 }
 
 function InventoryFull(string Line)
 {
-	EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+    ;; Is this necessary? ..if so, should use "EQ2Execute /togglebags" instead I think.
+	;EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 
 	LootMethod:Set[Decline]
 
@@ -2399,6 +2709,8 @@ function CheckMTAggro()
 				;}
 
 				call Lost_Aggro ${CustomActor[${tcount}].ID}
+				if ${UseCustomRoutines}
+    		        call Custom__Lost_Aggro ${CustomActor[${tcount}].ID}
 				lostaggro:Set[TRUE]
 				return
 			}
@@ -2407,23 +2719,24 @@ function CheckMTAggro()
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 	;again this seems wrong
-	if ${Actor[${newtarget}](exists)}
-	{
-		KillTarget:Set[${newtarget}]
-		target ${KillTarget}
-
-		wait 10 ${Target.ID}==${KillTarget}
-
-		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-		{
-			face ${Target.X} ${Target.Z}
-		}
-	}
+	;if ${Actor[id,${newtarget}](exists)}
+	;{
+    ;
+	;	KillTarget:Set[${newtarget}]
+	;	target ${KillTarget}
+    ;
+	;	wait 10 ${Target.ID}==${KillTarget}
+    ;
+	;	if ${Target(exists)} && (${Me.ID}!=${Target.ID})
+	;	{
+	;		face ${Target.X} ${Target.Z}
+	;	}
+	;}
 }
 
 function ScanAdds()
 {
-	variable int tcount=2
+    variable int tcount=2
 	variable float X
 	variable float Z
 
@@ -2503,8 +2816,20 @@ atom(script) LootWDw(string ID)
 
 	if ${ID.Equal[${LastWindow}]}
 	{
-		EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-		return
+    	switch ${LootWindow[${ID}].Type}
+    	{
+    	    case Free For All
+    		case Lottery
+    			LootWindow[${ID}]:DeclineLotto
+                return
+    		case Need Before Greed
+    			LootWindow[${ID}]:DeclineNBG
+    			return
+    		case Unknown
+    		Default
+    			echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+    			return
+    	}
 	}
 
 
@@ -2529,18 +2854,21 @@ atom(script) LootWDw(string ID)
     						deccnt:Inc
 			    }
 			}
-			if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
+			if (!${LootPrevCollectedShineys})
 			{
-				if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
-				{
-				    ; If we are running EQ2Harvest, then we will collect everything.
-				    if !${Script[EQ2harvest](exists)}
-				    {
-    					echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
-    					deccnt:Inc
-				    }
-				}
-			}
+    			if (${LootWindow[${ID}].Item[${tmpcnt}].IsCollectible})
+    			{
+    				if (${LootWindow[${ID}].Item[${tmpcnt}].AlreadyCollected} && ${Me.Group} > 1)
+    				{
+    				    ; If we are running EQ2Harvest, then we will collect everything.
+    				    if !${Script[EQ2harvest](exists)}
+    				    {
+        					echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
+        					deccnt:Inc
+    				    }
+    				}
+    			}
+    		}
 		}
 		while ${tmpcnt:Inc}<=${LootWindow[${ID}].NumItems}
 	}
@@ -2560,67 +2888,27 @@ atom(script) LootWDw(string ID)
 	switch ${LootWindow[${ID}].Type}
 	{
 		case Lottery
-			if !${deccnt} && ${LootMethod.Equal[Accept]}
-				LootWindow:RequestAll
-			elseif ${LootMethod.Equal[Accept]}
-			{
-				tmpcnt:Set[0]
-				do
-				{
-					if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} || ${LootWindow[${ID}].Item[${tmpcnt}].NoTrade}) && !${LootConfirm}
-					{
-						;There is no decline item
-					}
-					else
-					{
-						LootWindow[${ID}]:LootItem[${tmpcnt}]
-					}
-				}
-				while ${tmpcnt:Inc}<=${LootWindow.NumItems}
-			}
-			elseif ${LootWindow[${ID}].IsLotto} && ${LootMethod.Equal[Decline]}
-			{
+			if ${deccnt}
 				LootWindow[${ID}]:DeclineLotto
-			}
-			elseif ${LootMethod.Equal[Idle]}
-			{
-				Return
-			}
+			else
+				LootWindow[${ID}]:RequestAll
 			break
 		case Free For All
 			if ${deccnt}
-			{
-				tmpcnt:Set[0]
-				do
-				{
-					if (${LootWindow[${ID}].Item[${tmpcnt}].Lore} || ${LootWindow[${ID}].Item[${tmpcnt}].NoTrade}) && !${LootConfirm}
-					{
-						;There is no decline item
-					}
-					else
-					{
-						LootWindow[${ID}]:LootItem[${tmpcnt}]
-					}
-				}
-				while ${tmpcnt:Inc}<=${LootWindow.NumItems}			}
+				LootWindow[${ID}]:DeclineLotto
 			else
-			{
 				LootWindow[${ID}]:LootAll
-			}
 			break
 		case Need Before Greed
 			if ${deccnt}
-			{
-				EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
-			}
+				LootWindow:${ID}]:DeclineNBG
 			else
-			{
 				LootWindow[${ID}]:SelectGreed
-			}
 			break
 		case Unknown
 		Default
-			EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
+			echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+			break
 	}
 }
 
@@ -2635,53 +2923,13 @@ function CantSeeTarget(string Line)
 				face ${Target.X} ${Target.Z}
 			}
 
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
             wait 1
-            if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-                eq2press -hold ${backward}
-            else
-                press -hold ${backward}
+            press -hold ${backward}
 			wait 5
-            if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-                eq2press -release ${backward}
-            else
-                press -release ${backward}
+            press -release ${backward}
 			wait 20 !${Me.IsMoving}
 			return
-		}
-	}
-}
-
-
-function BotFollow(string Line, string FollowTarget)
-{
-	variable string tempTarget
-
-		if (${PauseBot} || !${StartBot})
-				return
-
-
-	if ${FollowTarget.Equal[me]}
-		tempTarget:Set[${MainAssist}]
-	else
-		tempTarget:Set[${FollowTarget}]
-
-	if !${Actor[${tempTarget},radius,30].ID}
-		Echo ${tempTarget} is out of range or does not exist.
-	else
-	{
-		if ${Script[EQ2Follow](exists)}
-		{
-			Script[EQ2Follow].Variable[ftarget]:Set[${tempTarget}]
-			Script[EQ2Follow]:QueueCommand[call ResetPoints]
-		}
-		if ${tempTarget.Length} && !${Script[EQ2Follow](exists)}
-		{
-			run eq2follow 1 "${tempTarget}"
-			Following:Set[TRUE]
 		}
 	}
 }
@@ -2806,21 +3054,14 @@ function StartBot()
 	OriginalMA:Set[${MainAssist}]
 	OriginalMT:Set[${MainTankPC}]
 
-
-	if !${PathType} && ${Following}
-	{
-		if ${Script[EQ2Follow](exists)}
-		{
-			Script[EQ2Follow]:End
-			wait 10
-		}
-		run eq2follow "${Follow}" ${Leash} ${Deviation}
-	}
-	else
-	{
-		Following:Set[FALSE]
-	}
-
+	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
+    if ${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+        UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	
 	StartBot:Set[TRUE]
 }
 
@@ -2829,13 +3070,17 @@ function PauseBot()
 	PauseBot:Set[TRUE]
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
-
+	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide	
+    StartBot:Set[FALSE]
 	do
 	{
 		waitframe
 		call ProcessTriggers
 	}
 	while ${PauseBot}
+	StartBot:Set[TRUE]
+	PauseBot:Set[FALSE]
 }
 
 function ResumeBot()
@@ -2843,6 +3088,9 @@ function ResumeBot()
 	PauseBot:Set[FALSE]
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	StartBot:Set[TRUE]
+    if ${Me.InCombat}
+        UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	
 }
 
 function StopBot()
@@ -2853,8 +3101,52 @@ function StopBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Show
-
+    UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
+    UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide	
+    
 	StartBot:Set[FALSE]
+}
+
+function CheckBuffsOnce()
+{
+    ;;;
+    ;;; This should only be called while in combat.
+    ;;;
+    variable int i
+    
+    UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide    
+    CurrentAction:Set["Checking Buffs Once..."]
+    
+	i:Set[1]
+	do
+	{
+        ;;;;;;;;;
+        ;;;;; Call the buff routine from the class file
+        ;;;;;;;;;
+		call Buff_Routine ${i}
+		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+			break
+	}
+	while ${i:Inc}<=40
+
+	if (${UseCustomRoutines})
+	{
+	    i:Set[1]
+	    do
+	    {
+			call Custom__Buff_Routine ${i}
+			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+				break
+	    }
+	    while ${i:Inc} <= 40
+	}
+	
+	if ${MainTank}
+    	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show	    
+    elseif ${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+        UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+    CurrentAction:Set["Waiting..."]
+    return
 }
 
 
@@ -2863,6 +3155,12 @@ objectdef ActorCheck
 	;returns true for valid targets
 	member:bool ValidActor(int actorid)
 	{
+	    if !${Actor[id,${actorid}](exists)}
+	        return FALSE
+
+	    if ${Actor[id,${actorid}].IsDead}
+	        return FALSE
+
 		switch ${Actor[${actorid}].Type}
 		{
 			case NPC
@@ -2932,7 +3230,10 @@ objectdef ActorCheck
 
 		;checks if mob is too far above or below us
 		if ${Me.Y}+10<${Actor[${actorid}].Y} || ${Me.Y}-10>${Actor[${actorid}].Y}
+		{
+		    ;echo "DEBUG: Actor (ID: ${actorid} is too far above or below me"
 			return FALSE
+		}
 
 		if ${Actor[${actorid}].IsLocked}
 			return FALSE
@@ -2945,18 +3246,33 @@ objectdef ActorCheck
 
 		;actor is a charmed pet, ignore it
 		if ${This.FriendlyPet[${actorid}]}
+		{
+		    ;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
 			return FALSE
+		}
 
 		if (${DoNotPullList.Element[${actorid}](exists)})
 		{
-				echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
-				return FALSE
-		}
-
-		if ${Actor[${actorid}](exists)}
-			return TRUE
-		else
+			;echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
 			return FALSE
+		}
+		
+		if ${Target.ID} == ${actorid}
+		{
+    		if !${Me.TargetLOS}
+    		{
+    		    ;echo "EQ2Bot-ValidActor():: No line of sight to ${Target}."
+    		    return FALSE
+    		}
+    		    
+    		if ${Target.Distance} > ${MARange}
+    		{
+    		    ;echo "EQ2Bot-ValidActor():: ${Target} is not within MARange (${MARange})"
+    		    return FALSE
+    		}
+    	}
+
+		return TRUE
 	}
 
 	member:bool CheckActor(int actorid)
@@ -3030,16 +3346,16 @@ objectdef ActorCheck
 			{
 					if (${Me.Group[${tempvar}](exists)})
 					{
-							if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID})
-									return TRUE
+						if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID})
+							return TRUE
 					}
 					if (${Me.Group[${tempvar}].ToActor.Pet.ID(exists)})
 					{
-							if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
-									return TRUE
+						if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
+							return TRUE
 					}
 			}
-			while ${tempvar:Inc}<=${Me.GroupCount}
+			while ${tempvar:Inc}<${Me.GroupCount}
 
 			; Check if mob is aggro on raid or pet
 			if ${Me.InRaid}
@@ -3092,18 +3408,18 @@ objectdef ActorCheck
 	}
 
 	;returns true if you, group, raidmember, or pets have agro from mob in range
-	member:bool Detect()
+	member:bool Detect(int iEngageDistance=${EngageDistance})
 	{
 		variable int tcount=2
 
-		if !${Actor[NPC,range,${EngageDistance}](exists)} && !(${Actor[NamedNPC,range,${EngageDistance}](exists)} && !${IgnoreNamed})
+		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !(${Actor[NamedNPC,range,${iEngageDistance}](exists)} && !${IgnoreNamed})
 		{
-			;echo "DEBUG: No NPCs within a range of ${EngageDistance}m"
+			;echo "DEBUG: No NPCs within a range of ${iEngageDistance}m"
 			return FALSE
 		}
 
-		EQ2:CreateCustomActorArray[byDist,${EngageDistance}]
-		;echo "DEBUG: Detect() -- ${EQ2.CustomActorArraySize} mobs within ${EngageDistance} meters."
+		EQ2:CreateCustomActorArray[byDist,${iEngageDistance}]
+		;echo "DEBUG: Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."
 		do
 		{
 			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
@@ -3118,21 +3434,17 @@ objectdef ActorCheck
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 
-		;echo "DEBUG: No NPC was found within ${EngageDistance} meters that was aggro to you or anyone in your group."
+		;echo "DEBUG: No NPC was found within ${iEngageDistance} meters that was aggro to you or anyone in your group."
 		return FALSE
 	}
 
 	member:bool Target(int targetid)
 	{
 		if !${Actor[${targetid}].InCombatMode}
-		{
 			return FALSE
-		}
 
 		if ${This.AggroGroup[${targetid}]} || ${Actor[${targetid}].Target.ID}==${Me.ID}
-		{
 			return TRUE
-		}
 
 		return FALSE
 	}
@@ -3149,6 +3461,9 @@ objectdef ActorCheck
 		EQ2:CreateCustomActorArray[byDist,20]
 		do
 		{
+		    if (${CustomActor[${tcount}].Type.Equal[PC]})
+		        continue
+
 			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode}
 			{
 				if ${CustomActor[${tcount}].ID}
@@ -3169,13 +3484,13 @@ objectdef ActorCheck
 		if (${Me.GroupCount} > 1)
 		{
 			;echo Check if mob is a pet of my group
-			tempvar:Set[1]
+			tempvar:Set[0]
 			do
 			{
 				if (${Me.Group[${tempvar}](exists)} && ${actorid} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
             		return TRUE
 			}
-			while ${tempvar:Inc}<=${Me.GroupCount}
+			while ${tempvar:Inc}<${Me.GroupCount}
 		}
 
 		;echo Check if mob is a pet of my raid
@@ -3201,6 +3516,7 @@ objectdef ActorCheck
 	{
 		variable int tcount=2
 		haveaggro:Set[FALSE]
+		variable int ActorID
 
 		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
 		{
@@ -3210,12 +3526,14 @@ objectdef ActorCheck
 		EQ2:CreateCustomActorArray[byDist,15]
 		do
 		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
+		    ActorID:Set[${CustomActor[${tcount}].ID}]
+
+			if ${This.ValidActor[${ActorID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
 			{
-				if ${CustomActor[${tcount}].ID}
+				if ${ActorID}
 				{
 					haveaggro:Set[TRUE]
-					aggroid:Set[${CustomActor[${tcount}].ID}]
+					aggroid:Set[${ActorID}]
 					return
 				}
 			}
@@ -3274,6 +3592,7 @@ objectdef EQ2BotObj
 		LootAll:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Accept Loot Automatically?,TRUE]}]
 		LootMethod:Set[${SettingXML[${charfile}].Set[General Settings].GetString[LootMethod,Accept]}]
 		AutoPull:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Pull,FALSE]}]
+		PullOnlySoloMobs:Set[${SettingXML[${charfile}].Set[General Settings].GetString[PullOnlySoloMobs,TRUE]}]
 		PullSpell:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What to use when PULLING?,SPELL]}]
 		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to PULL from?,15]}]
 		PullWithBow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Pull with Bow (Ranged Attack)?,FALSE]}]
@@ -3294,9 +3613,6 @@ objectdef EQ2BotObj
 		PullNonAggro:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Pull Non Aggro Mobs?,TRUE]}]
 		AssistHP:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Assist and Engage in combat at what Health?,96]}]
 		Following:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Are we following someone?,FALSE]}]
-		Follow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who are we following?,${MainAssist}]}]
-		Deviation:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What is our Deviation for following?,1]}]
-		Leash:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What is our Leash Range?,3]}]
 		PathType:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What Path Type (0-4)?,0]}]
 		CloseUI:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Close the UI after starting EQ2Bot?,FALSE]}]
 		MasterSession:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Master IS Session,Master.is1]}]
@@ -3305,6 +3621,7 @@ objectdef EQ2BotObj
 		BoxWidth:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Navigation: Size of Box?,4]}]
 		LoreConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore Items?,TRUE]}]
 		NoTradeConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot NoTrade Items?,FALSE]}]
+		LootPrevCollectedShineys:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to loot previously collected shineys?,FALSE]}]
 
 		if ${PullWithBow}
 		{
@@ -3432,7 +3749,7 @@ objectdef EQ2BotObj
 
 	member:int ProtectHealer()
 	{
-		variable int tempvar=1
+		variable int tempvar=0
 
 		do
 		{
@@ -3492,7 +3809,7 @@ objectdef EQ2BotObj
 		}
 
 		grpcnt:Set[${Me.GroupCount}]
-		tempgrp:Set[1]
+		tempgrp:Set[0]
 		do
 		{
 			switch ${Me.Group[${tempgrp}].Class}
@@ -3648,12 +3965,10 @@ objectdef EQ2BotObj
 
 	member:bool PriestPower()
 	{
-		variable int tempvar=1
+		variable int tempvar=0
 
 		if !${CheckPriestPower}
-		{
 			return TRUE
-		}
 
 		do
 		{
@@ -3726,12 +4041,14 @@ function CheckAbilities(string class)
 			}
 			else
 			{
+			    ;echo "DEBUG: tempnme: ${tempnme}"
 				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 			}
 		}
 		else
 		{
+		    ;echo "DEBUG: tempnme: ${tempnme}"
 			;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
 			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 		}
@@ -4077,10 +4394,7 @@ function MoveToGroup(string gname)
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -hold ${forward}
-        else
-            press -hold ${forward}
+        press -hold ${forward}
 
 		WPX:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.X}]
 		WPY:Set[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}].CenterPoint.Y}]
@@ -4089,10 +4403,7 @@ function MoveToGroup(string gname)
 
 		if ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -4103,10 +4414,7 @@ function MoveToGroup(string gname)
 		movingtowp:Set[TRUE]
 		pulling:Set[TRUE]
 
-        if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-            eq2press -hold ${forward}
-        else
-            press -hold ${forward}
+        press -hold ${forward}
 
 
 		while ${PathIndex:Inc}<=${CurrentPath.Hops}
@@ -4119,10 +4427,7 @@ function MoveToGroup(string gname)
 
 		if ${Me.IsMoving}
 		{
-            if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-                eq2press -release ${forward}
-            else
-                press -release ${forward}
+            press -release ${forward}
 		}
 
 		movetowp:Set[FALSE]
@@ -4317,21 +4622,21 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-		if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
-		{
+	if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
+	{
 		if ${LoreConfirm}
 			ChoiceWindow:DoChoice1
 		else
 			ChoiceWindow:DoChoice2
-			return
-		}
+		return
+	}
 
 	if ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
 		if ${NoTradeConfirm}
 			ChoiceWindow:DoChoice1
 		else
-				ChoiceWindow:DoChoice2
+			ChoiceWindow:DoChoice2
 		return
 	}
 
@@ -4358,11 +4663,6 @@ function atexit()
 	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
 
-	if ${Following}
-	{
-		FollowTask:Set[0]
-	}
-
 	squelch bind -delete EndBot
 
 	DeleteVariable CurrentTask
@@ -4373,20 +4673,8 @@ function atexit()
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 
 
-    if ${ISXEQ2.IsValidEQ2PressKey[${forward}]}
-        eq2press -release ${forward}
-    else
-        press -release ${forward}
-    if ${ISXEQ2.IsValidEQ2PressKey[${backward}]}
-        eq2press -release ${backward}
-    else
-        press -release ${backward}
-    if ${ISXEQ2.IsValidEQ2PressKey[${strafeleft}]}
-        eq2press -release ${strafeleft}
-    else
-        press -release ${strafeleft}
-    if ${ISXEQ2.IsValidEQ2PressKey[${straferight}]}
-        eq2press -release ${straferight}
-    else
-        press -release ${straferight}
+    press -release ${forward}
+    press -release ${backward}
+    press -release ${strafeleft}
+    press -release ${straferight}
 }
