@@ -15,6 +15,7 @@
 #define SAVEPOINTS f3
 #define TOGGLELSO ALT+F3
 #define TOGGLEREGIONTYPE CTRL+F3
+#define SETSPHERERADIUS F5
 #define QUIT f11
 
 variable(global) string SaveMode 
@@ -24,11 +25,13 @@ variable(global) string CreationMode
 variable(global) string SaveToFile
 variable(global) EQ2Mapper Mapper
 variable(global) int CurrentTask
+variable(global) float SphereRadius
 variable(script) int HudX
 variable(script) int HudY
 variable(script) bool AutoPlot
 variable(script) bool NoCollision
 variable(script) bool PointToPoint
+
 
 
 function main(... Args)
@@ -47,6 +50,7 @@ function main(... Args)
     ;; defaults (Save to config file?)
     SaveAsLSO:Set[FALSE]
     RegionCreationType:Set["Sphere"]
+    SphereRadius:Set[3]
     
 	Script:Squelch
 	
@@ -144,6 +148,7 @@ function main(... Args)
 	bind quit "QUIT" "CurrentTask:Set[6]"
 	bind togglelso "TOGGLELSO" "CurrentTask:Set[7]"
 	bind togglergt "TOGGLEREGIONTYPE" "CurrentTask:Set[8]"
+	bind dosetsphereradius "SETSPHERERADIUS" "CurrentTask:Set[9]"
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
@@ -158,6 +163,8 @@ function main(... Args)
 	HUD -add FunctionKey3  ${HudX},${HudY:Inc[25]} "F3     - Save all Regions."
 	HUD -add FunctionKey3b ${HudX},${HudY:Inc[15]} "ALT+F3 - Toggle Save Mode"
 	HUD -add FunctionKey3c ${HudX},${HudY:Inc[15]} "CTL+F3 - Toggle Region Creation Type"
+	
+	HUD -add FunctionKey5  ${HudX},${HudY:Inc[25]} "F5     - Set Sphere creation radius" 
 	
 	HUD -add FunctionKey11 ${HudX},${HudY:Inc[25]} "F11    - Exit EQ2NavCreator (and save all regions)"
 	
@@ -192,7 +199,7 @@ function main(... Args)
     		    elseif (${RegionCreationType.Equal[Point]})
     		        Mapper:PlotPoint[${Me.ToActor.Loc}]
     		    else
-    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc}]
+    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius}]
 		        break
 		        
 		    case 2
@@ -203,7 +210,7 @@ function main(... Args)
     		    elseif (${RegionCreationType.Equal[Point]})
     		        Mapper:PlotPoint[${Me.ToActor.Loc}]
     		    else
-    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc}]
+    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius}]
 		        Mapper.NoCollisionDetection:Set[FALSE]
 		        break
 		    
@@ -217,7 +224,7 @@ function main(... Args)
         		    elseif (${RegionCreationType.Equal[Point]})
         		        Mapper:PlotPoint[${Me.ToActor.Loc},${UserInput}]
         		    else
-        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},3,${UserInput},TRUE]				        
+        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius},${UserInput},TRUE]				        
 				}
 				break
 				
@@ -232,7 +239,7 @@ function main(... Args)
         		    elseif (${RegionCreationType.Equal[Point]})
         		        Mapper:PlotPoint[${Me.ToActor.Loc},${UserInput}]
         		    else
-        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},3,${UserInput},TRUE]	
+        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius},${UserInput},TRUE]	
         		    Mapper.NoCollisionDetection:Set[FALSE]
 				}
 				break
@@ -289,14 +296,24 @@ function main(... Args)
 			    }	
 			    else
 			        break
-			        		    
+			        	
+		    case 9
+				CurrentTask:Set[0]
+				InputBox "Please enter the radius you wish to use when creating map files utilizing the 'sphere' creation mode."
+				if ${UserInput.Length}
+				{
+    		        SphereRadius:Set[${UserInput}]
+    		        Mapper.DefaultSphereRadius:Set[${SphereRadius}]		
+    		        echo "EQ2NavCreator:: Now using a sphere radius of ${SphereRadius}"
+    		    }
+				break		        		    
 		}
 		
 		if (${AutoPlot})
     		Mapper:Pulse
 		waitframe
 	}
-	while ${CurrentTask}<10
+	while ${CurrentTask}<11
 
 	Script:End
 }
@@ -313,6 +330,7 @@ function atexit()
 	bind -delete quit
 	bind -delete togglelso
 	bind -delete togglergt
+	bind -delete dosetsphereradius
 
     HUD -remove FunctionKey1
     HUD -remove FunctionKey1b
@@ -321,6 +339,7 @@ function atexit()
 	HUD -remove FunctionKey3
 	HUD -remove FunctionKey3b
 	HUD -remove FunctionKey3c
+	HUD -remove FunctionKey5
 	HUD -remove FunctionKey11
 	HUD -remove NavPointStatus
 	HUD -remove NavCountStatus
