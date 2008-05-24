@@ -98,8 +98,9 @@ function main(string mode)
     ;;;;;;;;;;;;
 	;; Load Navigation System and initialize variables
     Nav:LoadMap
-    Nav.DirectMovingToTimer:Set[200]
-    Nav.gPrecision:Set[3]
+    Nav.DirectMovingToTimer:Set[170]
+    Nav.gPrecision:Set[5]
+    Nav.SkipNavTime:Set[35]
     
     rStart:SetRegion[${StartPoint}]
     rFinish:SetRegion[${FinishPoint}]
@@ -204,8 +205,12 @@ function PathingRoutine(string Dest)
 		Script:End
 	}        
     
+    
+    echo "EQ2Harvest-Debug::-> Moving to ${Dest}"
+    Nav:MoveToRegion["${Dest}"]    
     do
     {
+        Nav:Pulse
     	call CheckAggro
     	call CheckTimer
     
@@ -214,9 +219,6 @@ function PathingRoutine(string Dest)
 		{
 			EQ2Execute /useability Sprint
 		}
-   
-        echo "EQ2Harvest-Debug:: Main Loop -> Moving to ${Dest}"
-        Nav:MoveToRegion["${Dest}"]
         
         ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
     	NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
@@ -250,7 +252,7 @@ function PathingRoutine(string Dest)
 					        wait 0.5
 					        call ProcessTriggers
 					    }
-					    while ${ISXEQ2(exists)} && ${Nav.Moving} 
+					    while ${ISXEQ2(exists)} && ${Nav.MeMoving} 
 					    Nav.DestinationPrecision:Set[5]
 					    echo "EQ2Harvest-Debug:: Move complete..."
 					}
@@ -264,7 +266,7 @@ function PathingRoutine(string Dest)
 					        wait 0.5
 					        call ProcessTriggers
 					    }
-					    while ${ISXEQ2(exists)} && ${Nav.Moving} 
+					    while ${ISXEQ2(exists)} && ${Nav.MeMoving} 
 					    echo "EQ2Harvest-Debug:: Move complete..."
 					}
 
@@ -318,7 +320,7 @@ function PathingRoutine(string Dest)
             {
                 echo "EQ2Harvest-Debug:: The nearest mapped point from your current location is ${Nav.NearestRegionDistance[${rDestination.CenterPoint}]}m away.  More mapping data is needed for this zone."
                 Nav:StopRunning
-                Script:End
+                endscript EQ2Harvest
                 return
             }
             
@@ -328,7 +330,7 @@ function PathingRoutine(string Dest)
     		{
     		    Nav:StopRunning   
     		    echo "EQ2Harvest:: The nearest mapped point (${NearestRegion.CenterPoint}) is only ${Nav.NearestRegionDistance[${rDestination.CenterPoint}]}m away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]
-                Script:End
+                endscript EQ2Harvest
                 return
     		}
 		
@@ -340,8 +342,11 @@ function PathingRoutine(string Dest)
                 wait 0.5 
                 call ProcessTriggers
             }
-            while ${ISXEQ2(exists)} && ${Nav.Moving} 
+            while ${ISXEQ2(exists)} && ${Nav.MeMoving} 
             echo "EQ2Harvest-Debug:: Move complete..."
+            echo "EQ2Harvest-Debug::-> Moving to ${Dest}"
+            Nav:MoveToRegion["${Dest}"]     
+            Nav:Pulse           
             continue
         }
         else
@@ -350,8 +355,9 @@ function PathingRoutine(string Dest)
             wait 0.5
             call ProcessTriggers         
         }
+        ;echo "EQ2Harvest-Debug:: Distance to ${Dest}: ${Math.Distance[${Me.ToActor.Loc},${rDestination.CenterPoint}]}"
     }
-    while ${Math.Distance[${Me.ToActor.Loc},${rDestination.CenterPoint}]} <= 5  
+    while ${Math.Distance[${Me.ToActor.Loc},${rDestination.CenterPoint}]} >= 5 && ${Nav.MeMoving}
     echo "EQ2Harvest-Debug:: Reached Destination (${Dest})"
 }
 
@@ -489,6 +495,7 @@ function Harvest()
 
 		do
 		{
+		    ;echo "waiting..."
 		    waitframe
 		}
 		while (${Me.CastingSpell})

@@ -58,6 +58,7 @@ objectdef EQ2Nav
     variable string STRAFERIGHT = "e"
     variable string TURNLEFT = "a"
     variable string TURNRIGHT = "d"
+    ;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -98,6 +99,13 @@ objectdef EQ2Nav
     variable collection:string DoorsOpenedThisTrip
     
     variable bool UsingLSO
+    variable float CheckX
+    variable float CheckY
+    variable float CheckZ
+    variable int CheckLocSet
+    variable int CheckLocPassCount
+    variable int StrafeTime
+    variable int BackupTime
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;
@@ -118,6 +126,10 @@ objectdef EQ2Nav
 		This.NAV_Wait_Until:Set[0]
 		This.NAV_Wait_Until_Timeout:Set[10]
 		This.MovingToNearestRegion:Set[FALSE]
+		This.CheckLocSet:Set[0]
+		This.CheckLocPassCount:Set[0]
+		This.StrafeTime:Set[15]
+		This.BackupTime:Set[15]
 	}
 	
 	method UseLSO(bool UseIt)
@@ -281,6 +293,11 @@ objectdef EQ2Nav
 	
 	method MoveTo(float X, float Y, float Z, float fPrecision)
 	{
+	    This.CheckX:Set[${Me.ToActor.X}]
+	    This.CheckY:Set[${Me.ToActor.Y}]
+	    This.CheckZ:Set[${Me.ToActor.Z}]
+	    This.CheckLocPassCount:Inc
+	    This.CheckLocSet:Set[${Time.Timestamp}]
 	    ;;;;;;;;;;;
 	    ;;; This method should ONLY be called from Pulse()! 
 	    ;;;;;;;;;;;
@@ -499,6 +516,7 @@ objectdef EQ2Nav
 	
 	method MoveToRegion(string RegionName)
 	{
+	    This.CheckLocPassCount:Set[0]
 		variable lnavregionref ZoneRegion
 		variable lnavregionref DestZoneRegion
 		variable lnavregionref DestinationRegion	    
@@ -512,8 +530,15 @@ objectdef EQ2Nav
 	
 	method MoveToLocNoMapping(float X, float Y, float Z)
 	{
+	    This.CheckX:Set[${Me.ToActor.X}]
+	    This.CheckY:Set[${Me.ToActor.Y}]
+	    This.CheckZ:Set[${Me.ToActor.Z}]
+	    This.CheckLocPassCount:Inc
+	    This.CheckLocSet:Set[${Time.Timestamp}]
+	    	    
 		variable int count = 0
 		variable index:lnavregionref SurroundingRegions
+		This.CheckLocPassCount:Set[0]
 
 		if ${X}==0 && ${Y}==0 && ${Z}==0
 		{
@@ -547,14 +572,23 @@ objectdef EQ2Nav
 
 	method MoveToLoc(float X, float Y, float Z)
 	{
+	    This.CheckX:Set[${Me.ToActor.X}]
+	    This.CheckY:Set[${Me.ToActor.Y}]
+	    This.CheckZ:Set[${Me.ToActor.Z}]
+	    This.CheckLocPassCount:Inc
+	    This.CheckLocSet:Set[${Time.Timestamp}]
+	    	    
 		variable int count = 0
 		variable index:lnavregionref SurroundingRegions
+		This.CheckLocPassCount:Set[0]
 
 		if ${X}==0 && ${Y}==0 && ${Z}==0
 		{
 			; No reason to run to NOTHING
 			return
 		}
+		
+		
 
 		; If we are already PRECISION from it why bother moving?
 		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.PRECISION}
@@ -617,6 +651,13 @@ objectdef EQ2Nav
 	; If you're currently in an unmapped region, call this to move to the nearest mapped region.
 	method MoveToNearestRegion(float FinalDestX, float FinalDestY, float FinalDestZ)
 	{
+	    This.CheckX:Set[${Me.ToActor.X}]
+	    This.CheckY:Set[${Me.ToActor.Y}]
+	    This.CheckZ:Set[${Me.ToActor.Z}]
+	    This.CheckLocPassCount:Inc
+	    This.CheckLocSet:Set[${Time.Timestamp}]	    
+	    
+	    This.CheckLocPassCount:Set[0]
 		;declarevariable NextRegion lnavregionref local ${This.NearestRegion[${Me.ToActor.Loc}]}
 		variable lnavregionref ZoneRegion
 		variable lnavregionref NextRegion
@@ -646,12 +687,14 @@ objectdef EQ2Nav
 		    face ${FinalDestX} ${FinalDestY} ${FinalDestZ}
 		    This.MeMoving:Set[FALSE]		
 		    This:Output["The nearest mapped CenterPoint (${NextRegion.CenterPoint}) is ${NearestRegionDistance} away.  More mapping data is required before continuing"]
+		    if ${Script[EQ2Harvest](exists)}
+		        endscript EQ2Harvest
 		    return
 		}
 		
 		if ${NearestRegionDistance} < ${DestinationPrecision}
 		{
-		    This:Output["The nearest mapped CenterPoint (${NextRegion.CenterPoint}) is within ${DestRegionDistance} meters -- Finding path to destination"]
+		    This:Output["The nearest mapped CenterPoint (${NextRegion.CenterPoint}) is within ${NearestRegionDistance} meters -- Finding path to destination"]
 		    This:StopRunning
 		    face ${FinalDestX} ${FinalDestY} ${FinalDestZ}
 		    
@@ -678,6 +721,8 @@ objectdef EQ2Nav
 		    face ${FinalDestX} ${FinalDestY} ${FinalDestZ}		
 		    This.MeMoving:Set[FALSE]    
 		    This:Output["The nearest mapped point (${NextRegion.CenterPoint}) is only ${NearestRegionDistance} away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]
+		    if ${Script[EQ2Harvest](exists)}
+		        endscript EQ2Harvest		    
 		    return
 		}
 		
@@ -692,9 +737,9 @@ objectdef EQ2Nav
         
         This:Debug["MoveToNearestRegion() -- Moving to ${This.MovingTo_X}, ${This.MovingTo_Y}, ${This.MovingTo_Z} -- Final Destination: ${NavDestination}"]
 	}	
-	
+
 	method Pulse()
-	{	    
+	{	     
 	    ;;;;;;;;;;;
         ;; NOTES:
         ;; 1. 
@@ -711,6 +756,15 @@ objectdef EQ2Nav
 		}
 		This.SKIPNAV:Set[0]
 		
+		;;; 
+		;; If the obstacle handler is running...then return
+	    if ${Script[EQ2NavObstacleHandler](exists)}
+	    {
+	        This:Debug["EQ2NavObstacleHandler running...."]
+	        return		
+	    }
+	    ;;
+	    ;;;
 
         ;; TO DO -- do we want to utilize this to know if we should stop?`
 		This.MeLastLocation:Set[${Me.ToActor.Loc}]
@@ -731,6 +785,28 @@ objectdef EQ2Nav
 		}
 		;;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		
+		;;;;;;;;;;;;;;;;;;;;;;
+		;; If the script thinks we are moving...but we really are not, then we should handle that.
+		if ${This.CheckLocPassCount} > 2
+		{
+		    ;echo "This.CheckLocPassCount: ${This.CheckLocPassCount}"
+    		if ${Math.Calc64[${Time.Timestamp}-${CheckLocSet}]} < 2
+    		{
+    		    ;echo "{Math.Calc64[{Time.Timestamp}-{CheckLocSet}]}: ${Math.Calc64[${Time.Timestamp}-${CheckLocSet}]}"
+        		if ${Math.Distance[${Me.ToActor.Loc},${This.CheckX},${This.CheckY},${This.CheckZ}]} < .1
+        		{
+        		    echo "{Math.Distance[{Me.ToActor.Loc},{This.CheckX},{This.CheckY},{This.CheckZ}]}: ${Math.Distance[${Me.ToActor.Loc},${This.CheckX},${This.CheckY},${This.CheckZ}]}"
+        		    This:Debug["We must be stuck...handling."]
+        		    This:StopRunning
+        	    	run "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavObstacleHandler.iss" "${This.AUTORUN}" "${This.MOVEFORWARD}" "${This.MOVEBACKWARD}" "${This.STRAFELEFT}" "${This.STRAFERIGHT}" "${This.BackupTime}" "${This.StrafeTime}"
+        	    	This.CheckLocPassCount:Set[0]
+        		    return  
+        		}
+        	}
+        }
+		;;
+		;;;;;;;;;;;;;;;;;;;;;;
 		
 		
 		
