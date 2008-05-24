@@ -26,11 +26,13 @@ objectdef EQ2Mapper
     ;;   workable option)
     ;; ~ NoCollisionDetection:  If set to TRUE, then the script will not make any collision checks at all when
     ;;   determining if regions should connect.
+    ;; ~ DefaultSphereRadius:  Self explanatory -- used when creating sphere region types
     ;;
     variable float BoxRadius = 2
     variable int MinBoxIntersectionDistance = 2
     variable int MaxBoxIntersectionDistance = 10    
     variable bool NoCollisionDetection = false
+    variable float DefaultSphereRadius = 10
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -276,7 +278,7 @@ objectdef EQ2Mapper
 		This:ConnectNeighbours[${LastCreatedRegion}]		
 	}
 		
-	method PlotSphereFromPoint(float X, float Y, float Z, float Radius=3, string RegionName="auto",bool AsUnique=FALSE)
+	method PlotSphereFromPoint(float X, float Y, float Z, float Radius=${DefaultSphereRadius}, string RegionName="auto",bool AsUnique=FALSE)
 	{
 		variable point3f Location
 		Location:Set[${X},${Y},${Z}]
