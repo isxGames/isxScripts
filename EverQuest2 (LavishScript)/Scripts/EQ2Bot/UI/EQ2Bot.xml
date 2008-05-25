@@ -113,12 +113,16 @@
 									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,frame]:Hide
 									Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,TRUE]:Save
+									Script[EQ2Bot].Variable[MainTankPC]:Set[${Me.Name}]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${Me.Name}]:Save										
 								}
 								else
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,frame]:Show
 									Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,FALSE]:Save
+									Script[EQ2Bot].Variable[MainTankPC]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]:Save									
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -145,12 +149,26 @@
 									<Height>20</height>
 									<Items></items>
 									<OnLoad>
-										This:AddItem[${Script[EQ2Bot].Variable[MainTankPC]}]
-										This.ItemByValue[${Script[EQ2Bot].Variable[MainTankPC]}]:Select
+									    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}](exists)}
+									    {
+    										This:AddItem[${Script[EQ2Bot].Variable[MainTankPC]}]
+    										This.ItemByValue[${Script[EQ2Bot].Variable[MainTankPC]}]:Select
+    									}
 									</OnLoad>
 									<OnSelect>
+									    if ${UIElement[MainTank@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
+									    {
+    									    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,TRUE]:Save
+									        Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
+									    }
+									    else
+									    {
+									        SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,FALSE]:Save
+									        Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
+									    }
 										Script[EQ2Bot].Variable[MainTankPC]:Set[${This.SelectedItem.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${This.SelectedItem.Text}]:Save</OnSelect>
+										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${This.SelectedItem.Text}]:Save
+									</OnSelect>
 									<OnLeftClick>
 										declare tmpvar int
 										This:ClearItems
@@ -159,14 +177,17 @@
 										{
 											do
 											{
-												if ${Me.Raid[${tmpvar}].Name(exists)} &amp;&amp; !${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]}
-												{
-													This:AddItem[${Me.Raid[${tmpvar}].Name}]
-												}
+    											if ${Me.Raid[${tmpvar}](exists)}
+    											{
+    												if ${Me.Raid[${tmpvar}].Name(exists)} &amp;&amp; !${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]}
+    												{
+    													This:AddItem[${Me.Raid[${tmpvar}].Name}]
+    												}
+    											}
 											}
 											while ${tmpvar:Inc}&lt;=24
 										}
-										else
+										elseif ${Me.Group} > 1
 										{
 											do
 											{
@@ -176,15 +197,18 @@
 												}
 												if ${Me.Group[${tmpvar}].PetID(exists)}
 												{
-													This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
+												    if ${Actor[${Me.Group[${tmpvar}].PetID}](exists)}
+												    {
+    													This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
+    												}
 												}
 											}
-											while ${tmpvar:Inc}&lt;=5
+											while ${tmpvar:Inc}&lt; ${Me.Group}
 										}
 
-										if ${Actor[MyPet](exists)}
+										if ${Me.Pet(exists)}
 										{
-											This:AddItem[${Me.PetName}]
+											This:AddItem[${Me.Pet.Name}]
 										}
 									</OnLeftClick>
 									<AutoTooltip>Check the box to set yourself as MT</AutoTooltip>
@@ -209,12 +233,16 @@
 									UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
 									Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,TRUE]:Save
+									Script[EQ2Bot].Variable[MainAssist]:Set[${Me.Name}]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${Me.Name}]:Save											
 								}
 								else
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Show
 									Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
+									Script[EQ2Bot].Variable[MainAssist]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]:Save											
 								}
 							</OnLeftClick>
 							<AutoTooltip>Check the box to set yourself as MA</AutoTooltip>
@@ -242,10 +270,23 @@
 									<Height>20</height>
 									<Items></items>
 									<OnLoad>
-										This:AddItem[${Script[EQ2Bot].Variable[MainAssist]}]
-										This.ItemByValue[${Script[EQ2Bot].Variable[MainAssist]}]:Select
+									    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainAssist]}](exists)}
+									    {
+    										This:AddItem[${Script[EQ2Bot].Variable[MainAssist]}]
+    										This.ItemByValue[${Script[EQ2Bot].Variable[MainAssist]}]:Select
+    									}
 									</OnLoad>
 									<OnSelect>
+									    if ${UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
+									    {
+    									    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,TRUE]:Save
+									        Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
+									    }
+									    else
+									    {
+    									    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
+									        Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
+									    }									
 										Script[EQ2Bot].Variable[MainAssist]:Set[${This.SelectedItem.Text}]
 										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${This.SelectedItem.Text}]:Save</OnSelect>
 									<OnLeftClick>
@@ -263,7 +304,7 @@
 											}
 											while ${tmpvar:Inc}&lt;=24
 										}
-										else
+										elseif ${Me.Group} > 1
 										{
 											do
 											{
@@ -273,15 +314,18 @@
 												}
 												if ${Me.Group[${tmpvar}].PetID(exists)}
 												{
-													This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
+												    if ${Actor[${Me.Group[${tmpvar}].PetID}](exists)}
+												    {
+    													This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
+    											    }
 												}
 											}
-											while ${tmpvar:Inc}&lt;=5
+											while ${tmpvar:Inc}&lt; ${Me.Group}
 										}
 
-										if ${Actor[MyPet](exists)}
+										if ${Me.Pet(exists)}
 										{
-											This:AddItem[${Me.PetName}]
+											This:AddItem[${Me.Pet.Name}]
 										}
 									</OnLeftClick>
 								</combobox>
@@ -362,8 +406,11 @@
                             		<AutoTooltip>The Group Member to auto follow</AutoTooltip>
                             		<Items></items>
                             		<OnLoad>
-                            			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]
-                            			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]:Select
+                            		    if ${Actor[exactname,${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}](exists)}
+                            		    {
+                                			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]
+                                			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]:Select
+                                		}
                             		</OnLoad>
                             		<OnSelect>
                             			Script[EQ2Bot].Variable[AutoFollowee]:Set[${This.SelectedItem.Text}]
@@ -373,14 +420,14 @@
                             
                             			This:ClearItems
                             			tmpvar:Set[1]
-                            				do
-                            				{
-                            					if ${Me.Group[${tmpvar}](exists)}
-                            					{
-                            						This:AddItem[${Me.Group[${tmpvar}].Name}]
-                            					}
-                            				}
-                            				while ${tmpvar:Inc}&lt;=5
+                        				do
+                        				{
+                        					if ${Me.Group[${tmpvar}](exists)}
+                        					{
+                        						This:AddItem[${Me.Group[${tmpvar}].Name}]
+                        					}
+                        				}
+                            			while ${tmpvar:Inc}&lt; ${Me.Group}
                             		</OnLeftClick>
                             	</combobox>							
 						    </Children>
