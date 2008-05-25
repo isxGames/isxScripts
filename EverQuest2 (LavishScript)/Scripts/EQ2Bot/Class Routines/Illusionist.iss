@@ -54,6 +54,8 @@ function Class_Declaration()
 	declare SummonImpOfRo bool script FALSE
 	declare UseTouchOfEmpathy bool script FALSE
 	declare UseDoppleganger bool script FALSE
+	declare BuffEmpathicAura bool script FALSE
+	declare BuffEmpathicSoothing bool script FALSE
 	
 	call EQ2BotLib_Init
 
@@ -70,6 +72,8 @@ function Class_Declaration()
 	SummonImpOfRo:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Summon Imp of Ro,FALSE]}]
 	UseTouchOfEmpathy:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTouchOfEmpathy,FALSE]}]
 	UseDoppleganger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDoppleganger,FALSE]}]
+	BuffEmpathicAura:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEmpathicAura,FALSE]}]
+	BuffEmpathicSoothing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEmpathicSoothing,FALSE]}]    
 	    
 	NoEQ2BotStance:Set[TRUE]
 
@@ -113,6 +117,7 @@ function Buff_Init()
 	PreSpellRange[11,1]:Set[394]
 	
 	PreAction[12]:Set[SummonImpOfRoBuff]
+	
 }
 
 function Combat_Init()
@@ -432,15 +437,24 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 			break
 		case AA_Empathic_Aura
-		case AA_Empathic_Soothing
-		    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+		    if ${BuffEmpathicAura}
 		    {
-    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    		    if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
     			{
     				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
     				wait 5
     			}
-    		}
+        	}
+			break		
+		case AA_Empathic_Soothing
+		    if ${BuffEmpathicSoothing}
+		    {
+    		    if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+        		{
+        			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+        			wait 5
+        		}
+        	}
 			break
 		case SummonImpOfRoBuff
 			if (${SummonImpOfRo})
