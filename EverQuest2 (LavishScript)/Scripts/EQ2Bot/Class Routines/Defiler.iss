@@ -633,23 +633,7 @@ function Post_Combat_Routine(int xAction)
 
 function Have_Aggro()
 {
-	if !${TellTank} && ${WarnTankWhenAggro}
-	{
-		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
-		TellTank:Set[TRUE]
-	}
 
-	if !${MainTank}
-	{
-		;Try AE fear hate reduction first
-		call CastSpellRange 180
-
-		;if something is still on me single fear it
-		if ${Actor[${aggroid}].Distance}<=5 && (${Actor[${aggroid}].Target.ID} == ${Me.ID})
-		{
-			call CastSpellRange 181 0 0 0 ${aggroid}
-		}
-	}
 }
 
 function RefreshPower()
@@ -751,7 +735,7 @@ function CheckCures()
 					grpcure:Inc
 			}
 		}
-		while ${temphl:Inc}<=${grpcnt}
+		while ${temphl:Inc}<${grpcnt}
 
 		;Use group cure if more than 3 afflictions will be removed
 		if ${grpcure}>3
