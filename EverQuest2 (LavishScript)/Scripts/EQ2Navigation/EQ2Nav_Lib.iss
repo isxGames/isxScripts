@@ -6,6 +6,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavMapper_Lib.iss
+#include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavAggressionHandler.iss
 
 objectdef EQ2NavPath
 {
@@ -73,6 +74,7 @@ objectdef EQ2Nav
 	variable int degrees
 	variable point3f BestPoint
 	variable float BestPointDistance
+	variable bool UseMapping
 
 	variable int NAV_Wait_Until
 	variable int NAV_Wait_Until_Timeout
@@ -106,6 +108,10 @@ objectdef EQ2Nav
     variable int CheckLocPassCount
     variable int StrafeTime
     variable int BackupTime
+    
+    variable bool LootNearby
+    variable bool AggroDetected
+    variable int AggroDetectionTimer
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;
@@ -130,6 +136,9 @@ objectdef EQ2Nav
 		This.CheckLocPassCount:Set[0]
 		This.StrafeTime:Set[15]
 		This.BackupTime:Set[15]
+		This.LootNearby:Set[FALSE]
+		This.AggroDetected:Set[FALSE]
+		This.AggroDetectionTimer:Set[0]
 	}
 	
 	method UseLSO(bool UseIt)
@@ -266,9 +275,32 @@ objectdef EQ2Nav
 	
 	method CheckAggro()
 	{
-	    ;; To Do   
-	    
-	    
+	    This:Debug["Checking for aggro..."]
+    	;Stop Moving and pause if we have aggro
+    	if ${MobCheck.Detect}
+    	{
+    		This:Output["Agression Detected"]
+    		This:StopRunning
+    
+            This.AggroDetected:Set[TRUE]
+    	}
+    	else
+    	    This.AggroDetected:Set[FALSE]
+    	    
+    	AggroDetectionTimer:Set[${Time.Timestamp}]    
+	}
+	
+	method CheckLoot()
+	{
+		EQ2:CreateCustomActorArray[byDist,15]
+
+		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
+		{
+			This:Debug["Loot nearby..."]
+			This.LootNearby:Set[TRUE]
+		}   
+		else
+		    This.LootNearby:Set[FALSE]
 	}
 	
 	method StartRunning()
@@ -302,8 +334,6 @@ objectdef EQ2Nav
 	    ;;; This method should ONLY be called from Pulse()! 
 	    ;;;;;;;;;;;
 
-    	This:CheckAggro
-    	
     	;; If we're moving to a specific point, or if this is the final destination -- then accept a much higher precision value
     	if !${This.NavigationPath.Get[1](exists)} || ${This.NavigationPath.Used} == 0
     	{
@@ -367,7 +397,7 @@ objectdef EQ2Nav
             	}
     	    }
     	    ;; this value needs to be less than the one used with "within 15m of the destination and no obstruction found"
-    	    if (${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > 12)
+    	    if (${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > 12 && ${This.UseMapping})
     	    {
     	        ;; if Distance is greater than 10m and the zone contains a "path" to XYZ, use it!   
     	        if (${This.PointsConnect[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]})
@@ -384,7 +414,6 @@ objectdef EQ2Nav
         	This.MovingTo_Y:Set[${Y}]
         	This.MovingTo_Z:Set[${Z}]
         	This.MovingTo_Precision:Set[${fPrecision}]
-    	    This:CheckAggro
     	    
         	face ${X} ${Y} ${Z}
         	This:StartRunning
@@ -405,7 +434,6 @@ objectdef EQ2Nav
         ;This:Debug["MoveTo()-] Math.Distance[${Me.X},${Me.Z},${X},${Z}]: ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} (Precision: ${fPrecision})"]
     	if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > ${fPrecision} || ${Mapper.IsSteep[${X},${Y},${Z},${Me.ToActor.Loc}]} || ${Me.CheckCollision[${X},${Y},${Z}]}
     	{
-    	    This:CheckAggro
     	    
         	face ${X} ${Y} ${Z}
         	This:StartRunning
@@ -516,6 +544,7 @@ objectdef EQ2Nav
 	
 	method MoveToRegion(string RegionName)
 	{
+	    This.UseMapping:Set[TRUE]	
 	    This.CheckLocPassCount:Set[0]
 		variable lnavregionref ZoneRegion
 		variable lnavregionref DestZoneRegion
@@ -528,7 +557,7 @@ objectdef EQ2Nav
 		This:MoveToLoc[${DestinationRegion.CenterPoint}]
 	}
 	
-	method MoveToLocNoMapping(float X, float Y, float Z)
+	method MoveToLocNoMapping(float X, float Y, float Z,float Precision=${gPrecision})
 	{
 	    This.CheckX:Set[${Me.ToActor.X}]
 	    This.CheckY:Set[${Me.ToActor.Y}]
@@ -557,16 +586,16 @@ objectdef EQ2Nav
 		}
 		
 		This:ClearPath
-	    This:Debug["Moving to ${X},${Y},${Z} directly."]
+	    This:Debug["Moving to ${X},${Y},${Z} directly. (Precision: ${Precision})"]
 
-		This.MovingToNearestRegion:Set[TRUE]
-    	This.MovingTo_X:Set[${X}]
+		This.MovingTo_X:Set[${X}]
     	This.MovingTo_Y:Set[${Y}]
     	This.MovingTo_Z:Set[${Z}]
-    	This.MovingTo_Precision:Set[${This.gPrecision}]
+    	This.MovingTo_Precision:Set[${Precision}]
         This.MovingTo_Timer:Set[0]
         This.MeMoving:Set[TRUE]		
-	    This.NavDestination:Set[${X},${Y},${Z}]  		
+	    This.NavDestination:Set[${X},${Y},${Z}]  	
+	    This.UseMapping:Set[FALSE]	
 		return
 	}
 
@@ -577,6 +606,7 @@ objectdef EQ2Nav
 	    This.CheckZ:Set[${Me.ToActor.Z}]
 	    This.CheckLocPassCount:Inc
 	    This.CheckLocSet:Set[${Time.Timestamp}]
+	    This.UseMapping:Set[TRUE]	
 	    	    
 		variable int count = 0
 		variable index:lnavregionref SurroundingRegions
@@ -614,7 +644,7 @@ objectdef EQ2Nav
 
 		This:ClearPath
 
-		if (${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 10 && !${Me.CheckCollision[${X},${Y},${Z}]})
+		if (${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 20 && !${Me.CheckCollision[${X},${Y},${Z}]})
 		{
 		    This:Debug["Moving to ${X},${Y},${Z} directly."]
 
@@ -655,7 +685,8 @@ objectdef EQ2Nav
 	    This.CheckY:Set[${Me.ToActor.Y}]
 	    This.CheckZ:Set[${Me.ToActor.Z}]
 	    This.CheckLocPassCount:Inc
-	    This.CheckLocSet:Set[${Time.Timestamp}]	    
+	    This.CheckLocSet:Set[${Time.Timestamp}]	  
+	    This.UseMapping:Set[TRUE]	  
 	    
 	    This.CheckLocPassCount:Set[0]
 		;declarevariable NextRegion lnavregionref local ${This.NearestRegion[${Me.ToActor.Loc}]}
@@ -745,9 +776,7 @@ objectdef EQ2Nav
         ;; 1. 
         ;;;;;;;;;;;
 
-	    variable point3f Dest
-	    
-		
+
 		;Only do every x frames (CPU Saver)
 		if ${This.SKIPNAV} < ${This.SkipNavTime}
 		{
@@ -756,15 +785,51 @@ objectdef EQ2Nav
 		}
 		This.SKIPNAV:Set[0]
 		
+		;;;
+		;; Check for Aggression every 3 seconds or so
+		variable bool PreviousAggro 
+		PreviousAggro:Set[${AggroDetected}]
+		if (${Math.Calc64[${Time.Timestamp}-${AggroDetectionTimer}]} > 3)
+		   This:CheckAggro
+		if ${AggroDetected}
+		    return
+		else
+		{
+		    if ${PreviousAggro}
+		    {
+		        This:CheckLoot
+		        return
+		    }
+		}
+		if ${CheckLoot}
+		    return
+		;;
+		;;;
+		
 		;;; 
 		;; If the obstacle handler is running...then return
 	    if ${Script[EQ2NavObstacleHandler](exists)}
 	    {
-	        This:Debug["EQ2NavObstacleHandler running...."]
+	        ;This:Debug["EQ2NavObstacleHandler running...."]
 	        return		
 	    }
 	    ;;
 	    ;;;
+	    
+	    ;;;
+	    ;; If eq2bot is running and we are in combat...then return
+	    if ${Script[eq2bot](exists)}
+	    {
+	        if ${Me.InCombat} || ${Actor[${Scipt[eq2bot].Variable[KillTarget]}](exists)}
+	        {
+	            if ${Me.IsMoving}
+	                This:StopRunning
+	            return
+	        }
+	    }
+	    ;;
+	    ;;;
+	    
 
         ;; TO DO -- do we want to utilize this to know if we should stop?`
 		This.MeLastLocation:Set[${Me.ToActor.Loc}]
@@ -829,7 +894,6 @@ objectdef EQ2Nav
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;
 
-		
 		if ${This.NavigationPath.Get[1](exists)}
 		{
 		    ;This:Debug["DESTINATION: ${This.NavigationPath.Get[${NavigationPath.Used}].FQN}"]
@@ -885,16 +949,16 @@ objectdef EQ2Nav
                 }  
             }  
             
-            ;; TODO -- make this value an option`
-            if ${This.NextHopDistance} > 30
-            {
-                This:Debug["Bypassed next Hop in path -- resetting path"]
-                Dest:Set[${This.NavDestination}]
-                This:ClearPath
-                This.MeMoving:Set[TRUE]
-                This:MoveToLoc[${Dest}]
-                return           
-            }
+            ;; TODO -- make this value an option ....and fix ..it is not working as intended...maybe it is not a good idea at all
+            ;if ${This.NextHopDistance} > 50
+            ;{
+            ;    This:Debug["Bypassed next Hop in path -- resetting path"]
+            ;    Dest:Set[${This.NavDestination}]
+            ;    This:ClearPath
+            ;    This.MeMoving:Set[TRUE]
+            ;    This:MoveToLoc[${Dest}]
+            ;    return           
+            ;}
             
 			if ${This.NextHopDistance} <= ${This.gPrecision}
 			{
