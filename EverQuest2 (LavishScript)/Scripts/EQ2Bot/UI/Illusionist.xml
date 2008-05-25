@@ -422,7 +422,7 @@
 				UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Pet}:${Me.Pet.Type}, FF0000FF]
 			}
 
-			if ${Me.Grouped}
+			if ${Me.Group} > 1
 			{
 
 				tmpvar:Set[1]
@@ -471,6 +471,7 @@
 		<height>110</height>
 		<SelectMultiple>1</SelectMultiple>
 		<Items></items>
+		<Sort>Text</Sort>
 		<OnLoad>
 			declare tmpvar int
 			declare tmpCollection collection:string
@@ -588,7 +589,7 @@
 			if ${Me.Pet(exists)}
 				UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Pet}:${Me.Pet.Type}, FF0000FF]
 
-			if ${Me.Grouped}
+			if ${Me.Group} > 1
 			{
 
 				tmpvar:Set[1]
@@ -634,6 +635,7 @@
 		<width>150</width>
 		<height>110</height>
 		<SelectMultiple>1</SelectMultiple>
+		<Sort>Text</Sort>
 		<Items></items>
 		<OnLoad>
 			declare tmpvar int
