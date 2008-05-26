@@ -40,7 +40,6 @@ variable string forward=w
 variable string backward=s
 variable string strafeleft=q
 variable string straferight=e
-variable string endbot=f11
 ;===================================================
 ;===           Custom Variables                 ====
 ;===================================================
@@ -484,7 +483,8 @@ function main()
 					if ${Mob.Target[${KillTarget}]}
 					{
 						gRtnCtr:Set[40]
-						CurrentAction:Set["Idle..."]
+						if !${Me.InCombat}
+    						CurrentAction:Set["Idle..."]
 						break
 					}
 				}
@@ -497,7 +497,8 @@ function main()
 				{
 					; end after this round
 					gRtnCtr:Set[40]
-					CurrentAction:Set["Idle..."]
+					if !${Me.InCombat}
+    					CurrentAction:Set["Idle..."]
 					break
 				}
 
@@ -520,7 +521,8 @@ function main()
     					if ${Mob.Target[${KillTarget}]}
     					{
     						gRtnCtr:Set[40]
-    						CurrentAction:Set["Idle..."]
+    						if !${Me.InCombat}
+        						CurrentAction:Set["Idle..."]
     						break
     					}
     				}
@@ -529,7 +531,8 @@ function main()
     				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
     				{
     					gRtnCtr:Set[40]
-    					CurrentAction:Set["Idle..."]
+    					if !${Me.InCombat}
+        					CurrentAction:Set["Idle..."]
     					break
     				}
     		    }
@@ -1042,7 +1045,8 @@ function Combat()
   				call Combat_Routine ${gRtnCtr}
   				if ${Return.Equal[CombatComplete]}
   				{
- 				    CurrentAction:Set["Idle..."]
+  				    if !${Me.InCombat}
+     				    CurrentAction:Set["Idle..."]
   					gRtnCtr:Set[40]
   				}
 
@@ -1167,7 +1171,8 @@ function Combat()
     				call Custom__Combat_Routine ${gRtnCtr}
     				if ${Return.Equal[CombatComplete]}
     				{
-    				    CurrentAction:Set["Idle..."]
+    				    if !${Me.InCombat}
+        				    CurrentAction:Set["Idle..."]
     				    gRtnCtr:Set[40]
     				}
 
@@ -1272,7 +1277,8 @@ function Combat()
 		call Post_Combat_Routine ${gRtnCtr}
 		if ${Return.Equal[PostCombatRoutineComplete]}
 		{
-		    CurrentAction:Set["Idle..."]
+		    if !${Me.InCombat}
+    		    CurrentAction:Set["Idle..."]
 			gRtnCtr:Set[20]
 		}
 	}
@@ -1286,7 +1292,8 @@ function Combat()
     		call Custom__Post_Combat_Routine ${gRtnCtr}
     		if ${Return.Equal[PostCombatRoutineComplete]}
     		{
-    		    CurrentAction:Set["Idle..."]
+    		    if !${Me.InCombat}
+        		    CurrentAction:Set["Idle..."]
     			gRtnCtr:Set[20]
     		}
     	}
@@ -3677,7 +3684,6 @@ objectdef EQ2BotObj
 
 	method Init_Config()
 	{
-		squelch bind EndBot ${endbot} "Script[EQ2Bot]:End"
 		spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.SubClass}.xml]
 	}
 
@@ -4698,8 +4704,6 @@ function atexit()
 
 	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
-
-	squelch bind -delete EndBot
 
 	DeleteVariable CurrentTask
 
