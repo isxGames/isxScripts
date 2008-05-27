@@ -1229,7 +1229,7 @@
 							<OnLoad>
 								if ${Script[EQ2Bot].Variable[LootPrevCollectedShineys]}
 								{
-									UIElementLoot Previously Collected Shineys@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
+									UIElement[Loot Previously Collected Shineys@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
