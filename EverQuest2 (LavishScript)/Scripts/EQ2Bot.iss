@@ -286,17 +286,16 @@ function main()
 	echo "---------"
     CurrentAction:Set["Idle..."]
 
-	EQ2Nav:UpdateNavGUI
-	if ${StartNav}
-	{
-		EQ2Nav:AutoBox
-		EQ2Nav:ConnectRegions
-	}
-
 	do
 	{
 		waitframe
 		call ProcessTriggers
+		EQ2Nav:UpdateNavGUI
+    	if ${StartNav}
+    	{
+    		EQ2Nav:AutoBox
+    		EQ2Nav:ConnectRegions
+    	}
 	}
 	while !${StartBot}
 
