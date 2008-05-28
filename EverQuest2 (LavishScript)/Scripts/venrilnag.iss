@@ -1,10 +1,10 @@
 variable string myname
 variable string respondSpeaker
 variable string respondTimer
-declare HudX int script
-declare HudY int script
-declare NotifyMana bool script
-declare NotifyPower string script
+variable int HudX
+variable int HudY
+variable bool NotifyMana
+variable string NotifyPower
 
 #macro ProcessTriggers()
 if "${QueuedCommands}"
