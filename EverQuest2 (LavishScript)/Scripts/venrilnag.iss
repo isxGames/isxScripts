@@ -26,8 +26,8 @@ function main(int rCheck)
 	HudY:Set[400]
 	myname:Set[${Me.Name}]
 
-	HUD -fontsize 24
-	HUD -add PowerStatus ${HudX},${HudY} "Current Power: ${Me.ToActor.Power}"
+	HUD -fontsize 30
+	HUD -add PowerStatus ${HudX},${HudY} "Current Power: \${Me.ToActor.Power}"
 
 	do
 	{
@@ -48,7 +48,7 @@ function CheckDebuff()
 	if ${Me.Effect[detrimental,Mana](exists)} && !${NotifyMana}
 	{
 		HUD -add ManaSac 400,360 "DEBUFFED!!! MANA SACRAFICE!!!"
-		Hudset ManaSac -c FF0000
+		HUDSet ManaSac -c FF0000
 		NotifyMana:Set[1]
 	}
 
@@ -63,19 +63,19 @@ function CheckPower()
 {
 	if ${Me.ToActor.Power}>60 && !${NotifyPower.Equal[YELLOW]}
 	{
-		hudset PowerStatus -c FFFF00
+		HUDSet PowerStatus -c FFFF00
 		NotifyPower:Set[YELLOW]
 	}
 
 	if ${Me.ToActor.Power}<=60 && ${Me.ToActor.Power}>42 && !${NotifyPower.Equal[GREEN]}
 	{
-		hudset PowerStatus -c 00FF00
+		HUDSet PowerStatus -c 00FF00
 		NotifyPower:Set[GREEN]
 	}
 
 	if ${Me.ToActor.Power}<=42 && !${NotifyPower.Equal[RED]}
 	{
-		hudset PowerStatus -c FF0000
+		HUDSet PowerStatus -c FF0000
 		NotifyPower:Set[RED]
 	}
 }
@@ -92,7 +92,7 @@ function RaidCheck()
 
 	do
 	{
-		if ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Power}]}>60
+		if ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}].Power}>60
 		{
 			eq2execute /ooc --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is over 60% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
 
@@ -101,7 +101,7 @@ function RaidCheck()
 
 			;wait 0.3
 		}
-		if ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Power}]}<=40 && !${Actor[pc,exactname,${Me.Raid[${raidcnt}].IsDead}]}
+		if ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}].Power}<=40 && !${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}].IsDead}
 		{
 			eq2execute /shout --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is over 60% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
 
