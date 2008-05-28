@@ -7,8 +7,8 @@ function Class_Declaration()
 {
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
-    ;;;;    
-    
+    ;;;;
+
     call EQ2BotLib_Init
 }
 
@@ -79,13 +79,13 @@ function PostCombat_Init()
 
 function Buff_Routine(int xAction)
 {
-    
+
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
 	    ExecuteAtom AutoFollowTank
 		wait 5
-	}    
-    
+	}
+
 	switch ${PreAction[${xAction}]}
 	{
 		case Self_Buff
@@ -230,32 +230,35 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${Me.Maintained[${SpellType[307]}](exists)}
+	if ${Me.ToActor.Power}>5
 	{
-		Me.Maintained[${SpellType[307]}]:Cancel
-	}
+		if ${Me.Maintained[${SpellType[307]}](exists)}
+		{
+			Me.Maintained[${SpellType[307]}]:Cancel
+		}
 
-	call CastSpellRange 170 171
+		call CastSpellRange 170 171
 
-	if ${Me.Ability[${SpellType[160]}].IsReady}
-	{
-		call CastSpellRange 160 0 0 0 ${mobid}
-	}
-	elseif ${Me.Ability[${SpellType[270]}].IsReady}
-	{
-		call CastSpellRange 270 0 0 0 ${mobid}
-	}
-	elseif ${Me.Ability[${SpellType[110]}].IsReady}
-	{
-		call CastSpellRange 110 0 1 3 ${mobid}
-	}
-	elseif ${Me.Ability[${SpellType[320]}].IsReady}
-	{
-		call CastSpellRange 320 0 0 0 ${mobid}
-	}
-	elseif ${Me.Ability[${SpellType[390]}].IsReady}
-	{
-		call CastSpellRange 323 0 0 0 ${mobid}
+		if ${Me.Ability[${SpellType[160]}].IsReady}
+		{
+			call CastSpellRange 160 0 0 0 ${mobid}
+		}
+		elseif ${Me.Ability[${SpellType[270]}].IsReady}
+		{
+			call CastSpellRange 270 0 0 0 ${mobid}
+		}
+		elseif ${Me.Ability[${SpellType[110]}].IsReady}
+		{
+			call CastSpellRange 110 0 1 3 ${mobid}
+		}
+		elseif ${Me.Ability[${SpellType[320]}].IsReady}
+		{
+			call CastSpellRange 320 0 0 0 ${mobid}
+		}
+		elseif ${Me.Ability[${SpellType[390]}].IsReady}
+		{
+			call CastSpellRange 323 0 0 0 ${mobid}
+		}
 	}
 }
 

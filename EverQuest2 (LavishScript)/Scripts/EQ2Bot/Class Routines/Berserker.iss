@@ -19,8 +19,8 @@ function Class_Declaration()
 {
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
-    ;;;;    
-    
+    ;;;;
+
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
 	declare OffensiveMode bool script TRUE
@@ -430,7 +430,7 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${FullAutoMode}
+	if ${FullAutoMode} && ${Me.ToActor.Power}>5
 	{
 		if ${TauntMode}
 		{

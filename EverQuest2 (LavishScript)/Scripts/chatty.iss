@@ -22,7 +22,7 @@ function main()
 	ext -require isxeq2
 
 	myname:Set[]
-	Asshat:Set[Mandevo]
+	AssHat:Set[Mandevo]
 
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
 	call Init_Triggers

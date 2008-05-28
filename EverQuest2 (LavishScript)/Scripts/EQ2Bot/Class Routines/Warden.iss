@@ -281,7 +281,11 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},2]}
 			break
 		case AA_Shapeshift
-			call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
+			}
 			break
 		case BuffBoon
 			if ${BuffBoon}
@@ -344,7 +348,10 @@ function Buff_Routine(int xAction)
 			break
 		case AA_Infusion
 			if !${InfusionMode}
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				break
+			}
 		case AA_Nature_Walk
 		case AA_Force_of_Nature
 		case AA_Rebirth

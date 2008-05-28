@@ -564,6 +564,40 @@ function IsFighter(int ID)
 	}
 }
 
+function IsMage(int ID)
+{
+	switch ${Actor[${ID}].Class}
+	{
+
+		case warlock
+		case wizard
+		case necromancer
+		case conjuror
+		case coercer
+		case illusionist
+			return TRUE
+		default
+			return FALSE
+	}
+}
+
+function IsScout(int ID)
+{
+	switch ${Actor[${ID}].Class}
+	{
+
+		case ranger
+		case assassin
+		case swashbuckler
+		case brigand
+		case troubador
+		case dirge
+			return TRUE
+		default
+			return FALSE
+	}
+}
+
 function Shard(int sPower)
 {
 	if !${sPower}

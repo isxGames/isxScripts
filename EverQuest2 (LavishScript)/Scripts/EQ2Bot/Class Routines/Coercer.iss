@@ -53,6 +53,8 @@ function Class_Declaration()
 	declare DPSMode bool script 1
 	declare TSMode bool script 1
 	declare StartHO bool script 1
+	declare BuffRegen bool script 1
+
 
 	declare CharmTarget int script
 
@@ -71,7 +73,7 @@ function Class_Declaration()
 	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
 	TSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTS,FALSE]}]
-
+	BuffRegen:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffRegen,FALSE]}]
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
 }
@@ -147,11 +149,11 @@ function Buff_Routine(int xAction)
 
 		case AAEmpathic_Aura
 		case Clarity
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-				wait 20
-			}
+		    if ${BuffRegen}
+		    {
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+	    			call CastSpellRange ${PreSpellRange[${xAction},1]}
+	    	}
 			break
 		case Signet
 			if ${BuffSignet}
