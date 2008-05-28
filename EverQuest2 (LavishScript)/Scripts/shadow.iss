@@ -17,16 +17,18 @@
 ;===================================================
 variable string forward=w
 variable int FollowTask
+variable string sTarget
 #define QUIT f7
 
 function main(string ShadowTarget, float srange)
 {
 	squelch bind quit "QUIT" "FollowTask:Set[0]"
 	FollowTask:Set[1]
+	sTarget:Set[ShadowTarget]
 	Script[EQ2Bot].Variable[NoMovement]:Set[TRUE]
 	do
 	{
-		do
+		while ${Actor[${ShadowTarget}](exists)} && !${Actor[${ShadowTarget}].IsDead}
 		{
 			if ${Actor[${ShadowTarget}].Distance}>${srange}
 			{
@@ -34,7 +36,7 @@ function main(string ShadowTarget, float srange)
 			}
 			waitframe
 		}
-		while ${Actor[${ShadowTarget}](exists)} && !${Actor[].IsDead}
+
 	}
 	while ${FollowTask}
 }
@@ -45,24 +47,20 @@ function FastMove(float X, float Z, float range)
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
 
+	if ${range}<1
+		range:Set[1]
+
 	if !${X} || !${Z}
-	{
 		return "INVALIDLOC"
-	}
 
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>35
-	{
 		return "INVALIDLOC"
-	}
 
 	face ${X} ${Z}
-
 	press -hold ${forward}
-
-
 	xTimer:Set[${Script.RunningTime}]
 
-	do
+	while ${Math.Distance[${Me.X},${Me.Z},${Actor[${sTarget}].X},${Actor[${sTarget}].Z}]}>${range}
 	{
 		xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
 
@@ -84,7 +82,7 @@ function FastMove(float X, float Z, float range)
 
 		face ${X} ${Z}
 	}
-	while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${range}
+
 
 	press -release ${forward}
 	wait 20 !${Me.IsMoving}

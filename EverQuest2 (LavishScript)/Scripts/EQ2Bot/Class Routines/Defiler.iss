@@ -421,6 +421,12 @@ function Combat_Routine(int xAction)
 	call CheckHeals
 	call RefreshPower
 
+	if ${Me.Equipment[Dream Scorcher](exists)} && ${Me.Equipment[Dream Scorcher].IsReady}
+	{
+		Target ${KillTarget}
+		Me.Equipment[Dream Scorcher]:Use
+	}
+
 	call CheckGroupHealth 60
 	if ${Return} && ${DebuffMode} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsHeroic})
 	{

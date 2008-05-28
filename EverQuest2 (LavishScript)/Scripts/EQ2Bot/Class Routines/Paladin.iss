@@ -16,7 +16,7 @@ function Class_Declaration()
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
     ;;;;
-    
+
 	declare TauntMode bool script TRUE
 	declare HealerMode bool script FALSE
 	declare Start_HO bool script FALSE
@@ -422,25 +422,24 @@ function Have_Aggro()
 function Lost_Aggro(int mobid)
 {
 
-    if ${Target(exists)} && ${Target.Health} > 5
-    {
+  if ${Target(exists)} && ${Target.Health}>5 && ${Me.ToActor.Power}>5
+  {
 
-	call CastSpellRange 160 161
+		call CastSpellRange 160 161
 
-	if ${Me.Ability[${SpellType[270]}].IsReady}
-	{
-	    call CastSpellRange 270 0 0 0 ${mobid}
+		if ${Me.Ability[${SpellType[270]}].IsReady}
+		{
+		    call CastSpellRange 270 0 0 0 ${mobid}
+		}
+		elseif ${Me.Ability[${SpellType[275]}].IsReady}
+		{
+		    call CastSpellRange 275 0 0 0 ${mobid}
+		}
+		elseif ${Me.Ability[${SpellType[320]}].IsReady}
+		{
+		    call CastSpellRange 320 0 0 0 ${mobid}
+		}
 	}
-	elseif ${Me.Ability[${SpellType[275]}].IsReady}
-	{
-	    call CastSpellRange 275 0 0 0 ${mobid}
-	}
-	elseif ${Me.Ability[${SpellType[320]}].IsReady}
-	{
-	    call CastSpellRange 320 0 0 0 ${mobid}
-	}
-    }
-
 }
 
 function MA_Lost_Aggro()

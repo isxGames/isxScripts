@@ -32,8 +32,8 @@ function Class_Declaration()
 {
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
-    ;;;;    
-    
+    ;;;;
+
 	declare PBAoEMode bool script FALSE
 	declare OffensiveMode bool script TRUE
 	declare DefensiveMode bool script TRUE
@@ -184,12 +184,12 @@ function Buff_Routine(int xAction)
 	{
 		call Shard
 	}
-	
+
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
 	    ExecuteAtom AutoFollowTank
 		wait 5
-	}	
+	}
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -397,7 +397,7 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${FullAutoMode}
+	if ${FullAutoMode} && ${Me.ToActor.Power}>5
 	{
 		if ${TauntMode}
 		{

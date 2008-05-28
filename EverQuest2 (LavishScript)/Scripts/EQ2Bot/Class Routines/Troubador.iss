@@ -40,7 +40,7 @@ function Class_Declaration()
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
     ;;;;
-        
+
 	declare OffenseMode bool script 1
 	declare DebuffMode bool script 0
 	declare DebuffMitMode bool script 1
@@ -499,7 +499,7 @@ function Combat_Routine(int xAction)
 		call DoJesterCap
 
 	call CheckHeals
-	
+
 	if ${Actor[ID,${KillTarget}].Distance}>5 && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA,Z, Target.X, Target.Z]}<=8
 		call CheckPosition 1 1
 
@@ -514,9 +514,9 @@ function Combat_Routine(int xAction)
 		{
 			call CastSpellRange 51 0 1 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
-		}		
+		}
 	}
-	
+
 	if (${DebuffMode} || ${FullDebuffNamed}) && ${DebuffCnt}<1
 	{
 		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady} && ${DebuffCnt}<1
@@ -537,14 +537,14 @@ function Combat_Routine(int xAction)
 	}
 
 	call ActionChecks
-	
+
 	; PoTM
 	if !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 	{
 		call CastSpellRange 155 0 2 0 ${KillTarget} 0 0 0
 		return
 	}
-	
+
 	if ${OffenseMode}
 	{
 		; AoE+Dot
@@ -553,7 +553,7 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 91 0 2 0 ${KillTarget} 0 0 1
 			return
 		}
-		
+
 		; Master Strike
 		if ${Me.Ability[Sinister Strike].IsReady} && !${RangedAttackMode} && !${InvalidMasteryTargets.Element[${Target.ID}](exists)}
 		{
@@ -567,28 +567,28 @@ function Combat_Routine(int xAction)
 			while ${Me.CastingSpell}
 			wait 1
 		}
-		
+
 		; Flank debuff
 		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode}
 		{
 			call CastSpellRange 110 0 1 1 ${KillTarget} 0 0 1
 			;return
 		}
-		
+
 		; Long casting AoE - Good for setting off proc gear
 		if ${Me.Ability[${SpellType[92]}].IsReady}
 		{
 			call CastSpellRange 92 0 2 0 ${KillTarget} 0 0 1
 			return
 		}
-		
+
 		; Long Cast Nuke - Good for setting off proc gear - Mainstay of your damage
 		if ${Me.Ability[${SpellType[61]}].IsReady} && ${Actor[id, ${KillTarget}].Distance}<=${Me.Ability[${SpellType[61]}].Range}
 		{
 			call CastSpellRange 61 0 2 0 ${KillTarget} 0 0 1
 			return
 		}
-		
+
 		; Stealth Attack Combo
 		; Check if we have the bump AA and use it to stealth us, if we do not, skip it entirely
 		if ${Me.Ability[${SpellType[391]}](exists)} && ${Me.Ability[${SpellType[391]}].IsReady} && !${RangedAttackMode}
@@ -598,28 +598,28 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 130 0 1 1 ${KillTarget}
 			return
 		}
-		
+
 		; Fast Cast Nuke
 		if ${Me.Ability[${SpellType[60]}].IsReady}
 		{
 			call CastSpellRange 60 0 2 0 ${KillTarget} 0 0 1
 			return
 		}
-		
+
 		; De-agro if not MainTank
 		if ${Me.Ability[${SpellType[180]}].IsReady} && !${MainTank}
 		{
 			call CastSpellRange 180 0 2 0 ${KillTarget} 0 0 0
 			return
 		}
-			
+
 		; Low Damage Power Tap
 		if ${Me.Ability[${SpellType[62]}].IsReady}
 		{
 			call CastSpellRange 62 0 2 0 ${KillTarget} 0 0 0
 			return
 		}
-		
+
 		; Moderate Melee Attack
 		if ${Me.Ability[${SpellType[151]}].IsReady} && !${RangedAttackMode}
 		{
@@ -632,7 +632,7 @@ function Combat_Routine(int xAction)
 	{
 		objHeroicOp:DoHO
 	}
-	
+
 	switch ${Action[${xAction}]}
 	{
 		case AATurnstrike
@@ -701,13 +701,13 @@ function Post_Combat_Routine(int xAction)
 	;reset rangedattack in case it was modified by joust call.
 	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
-	
+
 	switch ${PostAction[${xAction}]}
 	{
 		default
 			return PostCombatRoutineComplete
 			break
-	}	
+	}
 
 }
 
@@ -900,7 +900,7 @@ function DoJesterCap()
 				if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
 				{
 					call CastSpellRange 156 0 0 0 ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].ID}
-					if ${Return} != -1
+					if ${Return} != -1 && ${Me.Maintained[${SpellType[156](exists)}
 					{
 						eq2execute /tell ${JCActor.Token[1,:]} "You've been J-Capped!"
 						;if we successfully cast Jester Cap, Add/Update the collection with the current timestamp

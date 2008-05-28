@@ -821,7 +821,7 @@ function CheckHeals()
 
 	call CheckReactives
 
-	if ${InquisitionMode} && ${Me.InCombat} && ${Me.Ability[${SpellType[11].IsReady} && !${Me.Maintained[${SpellType[11]}](exists)}
+	if ${InquisitionMode} && ${Me.InCombat} && ${Me.Ability[${SpellType[11]}].IsReady} && !${Me.Maintained[${SpellType[11]}](exists)}
 		call CastSpellRange 11 0 0 0 ${KillTarget}
 
 	do

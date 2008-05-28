@@ -132,17 +132,19 @@
 		<Text>ShapeShift:</Text>
 	</Text>
 	<combobox Name='ShiftForm' Template='EQ2.Combobox'>
-		<X>19%</X>
+		<X>20%</X>
 		<Y>130</Y>
 		<Width>80</Width>
 		<Height>20</Height>
 		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
 		<Items>
+		  <Item Value='0'>None</Item>
 			<Item Value='1'>Wolf</Item>
 			<Item Value='2'>Tiger</Item>
 			<Item Value='3'>Treant</Item>
 		</items>
 		<OnLoad>
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ShiftForm]}]
 			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[ShiftForm]}]:Select
 		</OnLoad>
 		<OnSelect>
