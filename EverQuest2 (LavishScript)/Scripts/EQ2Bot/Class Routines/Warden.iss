@@ -623,7 +623,7 @@ function CheckHeals()
 	declare temph2 int local 1
 	declare grpheal int local 0
 	declare lowest int local 0
-	declare raidlowest int local 1
+	declare raidlowest int local 0
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
@@ -718,7 +718,7 @@ function CheckHeals()
 				{
 					if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health}<80 && !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].IsDead} && ${Me.Raid[${temph2}](exists)}
 					{
-						if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health}
+						if (${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health}) || ${raidlowest}==0
 							raidlowest:Set[${temph2}]
 					}
 				}
@@ -726,7 +726,7 @@ function CheckHeals()
 		}
 		while ${temph2:Inc}<=24
 
-		if ${Me.InCombat} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].IsDead}
+		if ${Me.InCombat} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && !${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].IsDead}
 		{
 			;echo Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} health
 			if ${Me.Ability[${SpellType[4]}].IsReady}

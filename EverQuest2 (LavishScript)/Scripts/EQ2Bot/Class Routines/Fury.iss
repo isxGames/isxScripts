@@ -1059,7 +1059,7 @@ function CheckHeals()
 				{
 					if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Health} < 100 && !${Actor[pc,${Me.Raid[${temph2}].Name},exactname].IsDead} && ${Me.Raid[${temph2}](exists)}
 					{
-						if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Health} < ${Actor[pc,${Me.Raid[${raidlowest}].Name},exactname].Health}
+						if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Health} < ${Actor[pc,${Me.Raid[${raidlowest}].Name},exactname].Health} || ${raidlowest}==0
 							raidlowest:Set[${temph2}]
 					}
 				}
@@ -1067,7 +1067,7 @@ function CheckHeals()
 		}
 		while ${temph2:Inc}<=24
 
-		if ${Me.InCombat} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && !${Actor[exactname,${Me.Raid[${temph2}].Name}].IsDead}
+		if ${Me.InCombat} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && !${Actor[exactname,${Me.Raid[${raidlowest}].Name}].IsDead}
 		{
 			;echo Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} health
 			if ${Me.Ability[${SpellType[4]}].IsReady}
