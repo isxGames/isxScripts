@@ -148,6 +148,7 @@
 									<Width>20%</width>
 									<Height>20</height>
 									<Items></items>
+									<Sort>Text</Sort>
 									<OnLoad>
 									    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}](exists)}
 									    {
@@ -210,6 +211,7 @@
 										{
 											This:AddItem[${Me.Pet.Name}]
 										}
+										This:Sort
 									</OnLeftClick>
 									<AutoTooltip>Check the box to set yourself as MT</AutoTooltip>
 								</combobox>
@@ -269,6 +271,7 @@
 									<Width>20%</width>
 									<Height>20</height>
 									<Items></items>
+									<Sort>Text</Sort>
 									<OnLoad>
 									    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainAssist]}](exists)}
 									    {
@@ -327,6 +330,7 @@
 										{
 											This:AddItem[${Me.Pet.Name}]
 										}
+										This:Sort
 									</OnLeftClick>
 								</combobox>
 								<Text Name='MainAssist Text' Template='EQ2.text'>
@@ -1256,6 +1260,30 @@
 								{
 									UIElement[AutoPull@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Show
+									if ${Script[EQ2Bot].Variable[PullType].Equal[Bow Pull]}
+									{
+										UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Show
+										UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+										UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
+									}
+									elseif ${Script[EQ2Bot].Variable[PullType].Equal[Pet Pull]}
+									{
+										UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Show
+										UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide
+										UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
+									}
+									elseif ${Script[EQ2Bot].Variable[PullType].Equal[Spell or CA Pull]}
+									{
+										UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Show
+										UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+										UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide
+									}
+									else
+									{
+										UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
+										UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
+										UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide		
+									}									
 								}
 								else
 								{
@@ -1310,6 +1338,7 @@
 						<Frame Name='Pull Frame'>
 							<X>5%</X>
 							<Y>220</Y>
+							<Visible>0</Visible>
 							<Height>20</Height>
 							<Width>95%</Width>
 							<OnLoad>
@@ -1408,6 +1437,7 @@
 						<frame name='Bow Pull Frame'>
 							<x>5%</x>
 							<y>240</y>
+							<Visible>0</Visible>
 							<Height>40</Height>
 							<Width>95%</Width>
 							<OnLoad>
@@ -1511,6 +1541,7 @@
 						<frame name='Pet Pull Frame'>
 							<x>5%</x>
 							<y>240</y>
+							<Visible>0</Visible>
 							<Height>40</Height>
 							<Width>95%</Width>
 							<OnLoad>
@@ -1614,6 +1645,7 @@
 						<frame name='Spell Pull Frame'>
 							<x>5%</x>
 							<y>240</y>
+							<Visible>0</Visible>
 							<Height>40</Height>
 							<Width>95%</Width>
 							<OnLoad>
