@@ -1055,7 +1055,7 @@ function CheckHeals()
 		{
 			if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname](exists)}
 			{
-				if !${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Name.Equal[${Me.Name}]} && !${Me.Group[${Actor[pc,${Me.Raid[${temph2}].Name}]},exactname].ID(exists)}
+				if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]} && !${Me.Group[${Actor[pc,${Me.Raid[${temph2}].Name}]},exactname].ID(exists)}
 				{
 					if ${Actor[pc,${Me.Raid[${temph2}].Name},exactname].Health} < 100 && !${Actor[pc,${Me.Raid[${temph2}].Name},exactname].IsDead} && ${Me.Raid[${temph2}](exists)}
 					{

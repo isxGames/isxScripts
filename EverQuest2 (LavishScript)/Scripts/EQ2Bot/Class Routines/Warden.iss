@@ -714,9 +714,9 @@ function CheckHeals()
 		{
 			if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}](exists)}
 			{
-				if !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Name.Equal[${Me.Name}]} && !${Me.Group[${Actor[pc,exactname,${Me.Raid[${temph2}].Name}]}].ID(exists)}
+				if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]} && !${Me.Group[${Actor[pc,exactname,${Me.Raid[${temph2}].Name}]}].ID(exists)}
 				{
-					if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < 100 && !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].IsDead} && ${Me.Raid[${temph2}](exists)}
+					if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health}<80 && !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].IsDead} && ${Me.Raid[${temph2}](exists)}
 					{
 						if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health}
 							raidlowest:Set[${temph2}]
@@ -726,7 +726,7 @@ function CheckHeals()
 		}
 		while ${temph2:Inc}<=24
 
-		if ${Me.InCombat} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && !${Actor[exactname,${Me.Raid[${temph2}].Name}].IsDead}
+		if ${Me.InCombat} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].IsDead}
 		{
 			;echo Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} health
 			if ${Me.Ability[${SpellType[4]}].IsReady}
@@ -849,6 +849,22 @@ function HealMT(int MainTankID, int MTInMyGroup)
 	if ${Actor[${MainTankID}].Health}<60 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 	{
 		call CastSpellRange 1 0 0 0 ${MainTankID}
+	}
+
+	if ${Actor[${KillTarget}].Target.ID}==${MainTankID}
+		return
+
+	call IsFighter ${Actor[${KillTarget}].Target.ID}
+	if ${Actor[${MainTankID}].Health}>90 && ${return} && ${Actor[${KillTarget}].Target.ID}!=${MainTankID}
+	{
+		if ${Actor[${KillTarget}].Target.Health}<50
+			call CastSpellRange 4 0 0 0 ${Actor[${KillTarget}].Target.ID}
+
+		if ${Actor[${KillTarget}].Target.Health}<70
+			call CastSpellRange 1 0 0 0 ${Actor[${KillTarget}].Target.ID}
+
+		if ${Me.Ability[${SpellType[7]}].IsReady} && ${EpicMode} && !${Me.Maintained[${SpellType[7]}].Target.ID}==${Actor[${KillTarget}].Target.ID}}
+			call CastSpellRange 7 0 0 0 ${Actor[${KillTarget}].Target.ID}
 	}
 
 }
