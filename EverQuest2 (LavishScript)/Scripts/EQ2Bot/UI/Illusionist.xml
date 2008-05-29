@@ -283,6 +283,7 @@
 		<y>120</y>
 		<Width>100</width>
 		<Height>20</height>
+		<Sort>Text</Sort>
 		<AutoTooltip>The Group Member to buff Double Attack</AutoTooltip>
 		<Items></items>
 		<OnLoad>
@@ -327,6 +328,7 @@
 
 			}
 			while ${tmpvar:Inc}&lt;=5
+			This:Sort
 		</OnLeftClick>
 	</combobox>
 	<Text Name='lblBuffTime_Compression' Template='EQ2.text'>
@@ -345,6 +347,7 @@
 		<Height>20</height>
 		<AutoTooltip>The Group Member to Buff Time Compression on</AutoTooltip>
 		<Items></items>
+		<Sort>Text</Sort>
         <OnLoad>
 		    if (${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffTime_Compression](exists)})
 		    {
@@ -387,6 +390,7 @@
 
 			}
 			while ${tmpvar:Inc}&lt;=5
+			This:Sort
 		</OnLeftClick>
 	</combobox>	
 	<Commandbutton name='RefreshDPS' Template='EQ2.Commandbutton'>
@@ -453,6 +457,7 @@
 				}
 				while ${tmpCollection.NextKey(exists)}
 			}
+			UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:Sort
 		</OnLeftClick>
 	</Commandbutton>
 	<Text Name='lblBuffDPS' Template='EQ2.text'>
@@ -618,6 +623,7 @@
 				}
 				while ${tmpCollection.NextKey(exists)}
 			}
+			UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:Sort
 		</OnLeftClick>
 	</Commandbutton>	
 	<Text Name='lblBuffCasterDPS' Template='EQ2.text'>
