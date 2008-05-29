@@ -1,5 +1,6 @@
 variable string myname
 declare InsultTimer int script
+declare ChuckTimer int script
 variable string respondSpeaker
 variable string respondTimer
 variable string AssHat
@@ -21,7 +22,7 @@ function main()
 {
 	ext -require isxeq2
 
-	myname:Set[]
+	myname:Set[${Me.Name}]
 	AssHat:Set[Mandevo]
 
 	Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
@@ -46,11 +47,11 @@ function RandomMsg(string chatTarget, string randomKey, bit PrefixName, string S
 
 	if ${PrefixName}
 	{
-		EQ2Execute /${chatTarget} ${Speaker}, ${SettingXML[${chatfile}].Set[${randomKey}].Key[${Math.Rand[${keycount}]}]}
+		EQ2Execute /${chatTarget} ${Speaker}, ${SettingXML[${chatfile}].Set[${randomKey}].GetString[${Math.Rand[${keycount}]}]}
 	}
 	else
 	{
-		EQ2Execute /${chatTarget} ${SettingXML[${chatfile}].Set[${randomKey}].Key[${Math.Rand[${keycount}]}]}
+		EQ2Execute /${chatTarget} ${SettingXML[${chatfile}].Set[${randomKey}].GetString[${Math.Rand[${keycount}]}]}
 	}
 }
 
@@ -63,7 +64,6 @@ function GratsFunction(string WhoGrats)
 	{
 		switch ${gratsvar}
 		{
-
 			case 0
 				wait ${Math.Rand[200]:Inc[10]}
 				EQ2Execute /gu Grats!!! ${WhoGrats}
@@ -114,6 +114,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 	{
 		switch ${ChatType}
 		{
+			case 28	;tell
 			case 18
 				;guild
 				if ${Message.Find[${myname}?]}
@@ -131,18 +132,27 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 				{
 					InsultTimer:Set[${Time.Timestamp}]
 					chatDest:Set[gu]
-					call RandomMsg Insults 1 ${Message.Token[2, ]}
+					call RandomMsg ${chatDest} Insults 1 ${Message.Token[2, ]}
 				}
-				elseif ${Message.Left[Private Insult]} && ${Message.Token[2, ](exists)} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
+				elseif ${Message.Left[Private Insult]} && ${Message.Token[3, ](exists)} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
 				{
 					InsultTimer:Set[${Time.Timestamp}]
-					chatDest:Set[tell  ${Message.Token[2, ]}]
-					call RandomMsg Insults 0
+					chatDest:Set[tell  ${Message.Token[3, ]}]
+					call RandomMsg ${chatDest} Insults 0
 				}
 				elseif ${Message.Find[Chuck]}
 				{
-					chatDest:Set[gu]
-					call RandomMsg ${chatDest} Chuckisms 0
+					if ${Math.Calc[${Time.Timestamp}-${ChuckTimer}]}>10
+					{
+						ChuckTimer:Set[${Time.Timestamp}]
+						chatDest:Set[gu]
+						call RandomMsg ${chatDest} Chuckisms 0
+					}
+					else
+					{
+						chatDest:Set[gu]
+						call RandomMsg ${chatDest} Insults 1 ${Speaker}
+					}
 				}
 				break
 			case 32 ;ooc
@@ -162,15 +172,20 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 				{
 					InsultTimer:Set[${Time.Timestamp}]
 					chatDest:Set[say]
-					call RandomMsg Insults 1 ${Speaker}
+					call RandomMsg ${chatDest} Insults 1 ${Speaker}
 				}
 			case 15	;group
-			case 28	;tell
 			case 16	;raid
-				if ${Message.Find[Chuck]}
+				if ${Math.Calc[${Time.Timestamp}-${ChuckTimer}]}>10
 				{
+					ChuckTimer:Set[${Time.Timestamp}]
 					chatDest:Set[say]
 					call RandomMsg ${chatDest} Chuckisms 0
+				}
+				else
+				{
+					chatDest:Set[say]
+					call RandomMsg ${chatDest} Insults 0 ${Speaker}
 				}
 			default
 				break

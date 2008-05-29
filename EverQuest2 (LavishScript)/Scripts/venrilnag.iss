@@ -1,6 +1,3 @@
-variable string myname
-variable string respondSpeaker
-variable string respondTimer
 variable int HudX
 variable int HudY
 variable bool NotifyMana
@@ -24,7 +21,6 @@ function main(int rCheck)
 	; Set the default location of the HUD
 	HudX:Set[400]
 	HudY:Set[400]
-	myname:Set[${Me.Name}]
 
 	HUD -fontsize 30
 	HUD -add PowerStatus ${HudX},${HudY} "Current Power: \${Me.ToActor.Power}"
@@ -85,7 +81,7 @@ function RaidCheck()
 	if !${Me.InRaid}
 		return
 
-	if !${Actor[Venril](exists}} || ${Actor[Venril].Health}>=65
+	if !${Actor[Venril](exists)} || ${Actor[Venril].Health}>=65
 		return
 
 	declare raidcnt int local 1

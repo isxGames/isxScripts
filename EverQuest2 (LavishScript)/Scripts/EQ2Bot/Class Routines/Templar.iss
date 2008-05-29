@@ -462,14 +462,11 @@ function Combat_Routine(int xAction)
 	if ${FocusedMode}
 	{
 		call CheckGroupHealth 60
+
 		if ${Return}
-		{
 			call CastSpellRange 9
-		}
 		elseif ${Me.Maintained[${SpellType[9]}](exists)}
-		{
 			Me.Maintained[${SpellType[9]}]:Cancel
-		}
 	}
 	elseif ${Me.Maintained[${SpellType[9]}](exists)}
 	{
@@ -480,7 +477,6 @@ function Combat_Routine(int xAction)
 	call CheckGroupHealth 50
 	if ${Return}
 	{
-
 		if ${MeleeMode} && ${Actor[${KillTaget}].Distance}>4
 			call CheckPosition 1 ${Actor[${KillTarget}].IsEpic}
 
@@ -839,7 +835,7 @@ function CheckHeals()
 
 	do
 	{
-		if ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
 		{
 
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}

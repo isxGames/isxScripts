@@ -906,12 +906,48 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	{
 		;if spells are being interupted do to movement
 		;increase the wait below slightly. Default=2
-		wait 5
+		wait 2
 	}
 
 	do
 	{
-		waitframe
+
+		Me:InitializeEffects
+
+		if ${Me.Effect[detrimental,Toxic](exists)} && ${spellid}!=220
+		{
+			switch ${Me.SubClass}
+			{
+				case templar
+				case inquisitor
+				case defiler
+				case mystic
+				case warden
+				case fury
+					if ${Me.ToActor.Power}>39 && ${spellid}!=210
+					{
+						press esc
+						waitframe
+						Target ${Me.Name}
+						waitframe
+						Me.Ability[Cure]:Use
+					}
+					elseif ${Me.ToActor.Power}<40
+					{
+						press esc
+						waitframe
+						Me.Inventory[exactname,"Expert's Noxious Remedy"]:Use
+					}
+				case default
+					Me.Inventory[exactname,"Expert's Noxious Remedy"]:Use
+			}
+			do
+			{
+				wait 0.5
+			}
+			while ${Me.CastingSpell}
+		}
+		wait 0.5
 	}
 	while ${Me.CastingSpell}
 

@@ -900,7 +900,7 @@ function DoJesterCap()
 				if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
 				{
 					call CastSpellRange 156 0 0 0 ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].ID}
-					if ${Return} != -1 && ${Me.Maintained[${SpellType[156](exists)}
+					if ${Return} != -1 && ${Me.Maintained[${SpellType[156]}](exists)}
 					{
 						eq2execute /tell ${JCActor.Token[1,:]} "You've been J-Capped!"
 						;if we successfully cast Jester Cap, Add/Update the collection with the current timestamp

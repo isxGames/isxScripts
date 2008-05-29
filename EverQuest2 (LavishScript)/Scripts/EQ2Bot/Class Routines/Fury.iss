@@ -979,15 +979,12 @@ function CheckHeals()
 
 	do
 	{
-		if ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
 		{
-
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
 				if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
-				{
 					lowest:Set[${temphl}]
-				}
 			}
 
 			if ${Me.Group[${temphl}].ID}==${MainTankID}
