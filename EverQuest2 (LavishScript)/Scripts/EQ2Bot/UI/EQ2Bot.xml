@@ -180,7 +180,7 @@
 											{
     											if ${Me.Raid[${tmpvar}](exists)}
     											{
-    												if ${Me.Raid[${tmpvar}].Name(exists)} &amp;&amp; !${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]}
+    												if !${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]}
     												{
     													This:AddItem[${Me.Raid[${tmpvar}].Name}]
     												}
