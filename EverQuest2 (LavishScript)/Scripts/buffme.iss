@@ -58,6 +58,10 @@
 
 variable bool notBuffed
 
+variable string TargetName
+
+
+
 function main()
 {
 
@@ -71,7 +75,6 @@ variable int cBuff
 variable bool isAlreadyBuffed
 variable string myBuffTarget
 variable int scanID
-
 
 ; NOTICE:
 
@@ -105,27 +108,12 @@ variable int scanID
 
 
 
-
-; This script was setup to run on a 2-box single PC. 
-; If you have this script in multiple places, you do not need to have multiple characters in the buff routine here:
-
-
-
-
 ; SET YOUR SPELLS HERE:
 
 
-; Be sure to replace Tanktastic or Healtastic with your EXACT character name
 
 
-; BUFFS ARE CASE SENSITIVE
-; BUFFS ARE CASE SENSITIVE
-; BUFFS ARE CASE SENSITIVE
-; BUFFS ARE CASE SENSITIVE
-
-
-
-if ${Me.Name.Equal[Tanktastic]}
+if ${Me.Name.Equal[Vandit]}
 {
 
 ; My Buffs
@@ -134,26 +122,26 @@ buffs[1]:Set["Contract of Shadows"]
 buffs[2]:Set["Insatiable Hunger"]
 buffs[3]:Set["Cursed Caress"]
 buffs[4]:Set["Unhallowed Aura"]
-buffs[5]:Set["Evasive Maneuvers"]
+buffs[5]:Set["Calculated Evasion"]
 buffs[6]:Set["Reaver"]
-buffs[7]:Set["Stance: Grim Sword"]
+buffs[7]:Set["Stance: Plague Sword"]
 buffs[8]:Set["Contract of Shadows"]
 
 ; Target of a specific buff
 
-buffTarget[5]:Set["Healtastic"]
+buffTarget[5]:Set["Armind"]
 }
 
 
 
-if ${Me.Name.Equal[Healtastic]}
+if ${Me.Name.Equal[Armind]}
 {
 
 ; My Buffs
 
 buffs[1]:Set["Dire Shroud"]
 buffs[2]:Set["Baleful Efflux"]
-buffs[3]:Set["Vehemence"]
+buffs[3]:Set["Voracity"]
 buffs[4]:Set["Immunities"]
 buffs[5]:Set["Sinister Countenance"]
 buffs[6]:Set["Abominus"]
@@ -164,13 +152,14 @@ buffs[10]:Set["Harbinger"]
 
 ; Target of a specific buff
 
-buffTarget[7]:Set["Tanktastic"]
-buffTarget[8]:Set["Tanktastic"]
-buffTarget[9]:Set["Tanktastic"]
+buffTarget[7]:Set["Vandit"]
+buffTarget[8]:Set["Vandit"]
+buffTarget[9]:Set["Vandit"]
 }
 
 
 
+call PauseTargettingScripts
 
 
 
@@ -193,14 +182,24 @@ myBuffTarget:Set[${buffTarget[${cBuff}]}]
 if ${myBuffTarget.Length} > 2
 {
 ; I have a buff target...
-call targetSomeone ${myBuffTarget}
-scanID:Set[${Actor[${myBuffTarget}].ID}]
+
+;//////////////////
+;-> New targetting system added Removed this command.
+;   call targetSomeone ${myBuffTarget}
+
+; New Version:
+
+TargetName:Set[${myBuffTarget}]
+
+;//////////////////
+
+scanID:Set[${Actor[${myBuffTarget}, PC, EXACT].ID}]
 }
 else
 {
 ; Target myself....
 scanID:Set[${Me.ID}]
-Actor[${Me.ID}]:DoTarget
+TargetName:Set[${Me.Name}]
 }
 
 ; Check my Maintained for an existing buff of this spell...
@@ -220,13 +219,24 @@ call castBuff "${buffs[${cBuff}]}"
 while ${cBuff:Inc}<=15 
 
 
+call ResumeTargettingScripts
+
 }
 
 
 function castBuff(string spell)
 {
 call waitForBuffToBeReady "${spell}"
+if ${TargetName.Equal[""]}
+{
+; Old Targetting System
 Me.Ability["${spell}"]:Use
+}
+else
+{
+; New Targetting System
+eq2execute /useabilityonplayer ${TargetName} ${spell}
+}
 wait 07
 }
 
@@ -331,4 +341,59 @@ break
 }
 }
 while 1
+}
+
+
+
+
+
+
+function PauseTargettingScripts()
+{
+; Pauses scripts that might change targetting..
+
+if ${Script[heal](exists)}
+{
+Script[heal]:Pause
+wait 10
+}
+
+
+if ${Script[assist](exists)}
+{
+Script[assist]:Pause
+wait 10
+}
+
+if ${Script[eq2bot](exists)}
+{
+Script[eq2bot]:Pause
+wait 10
+}
+
+
+}
+
+
+function ResumeTargettingScripts()
+{
+; Resumse scripts that were paused...
+
+if ${Script[assist](exists)}
+{
+Script[assist]:Resume
+}
+
+if ${Script[eq2bot](exists)}
+{
+Script[eq2bot]:Resume
+}
+
+if ${Script[heal](exists)}
+{
+Script[heal]:Resume
+wait 10
+}
+
+
 }
