@@ -347,7 +347,11 @@ function Buff_Routine(int xAction)
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+					{
+					    if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+            			    call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+            		}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -409,7 +413,11 @@ function Buff_Routine(int xAction)
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+					{
+					    if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
+        					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+        			}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
@@ -424,7 +432,10 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			{
+			    if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+    				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+    		}
 			break
 		case AA_Illusory_Arm	
 		    if ${BuffTarget.Equal["No one"]}
@@ -434,7 +445,10 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			{
+			    if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+    				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+    		}
 			break
 		case AA_Empathic_Aura
 		    if ${BuffEmpathicAura}
@@ -889,7 +903,6 @@ function RefreshPower()
 
     if ${Me.Group} > 1
     {
-    	;Conjuror Shard
     	if ${Me.Power} < 40
     		call Shard        
         
@@ -916,7 +929,7 @@ function RefreshPower()
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Me.InCombat}
+	if ${Me.InCombat} && ${Me.Group[${MainTankPC}](exists)}
 	{
     	if ${Actor[pc,${MainTankPC},exactname].Power} < 20 && ${Actor[pc,${MainTankPC},exactname].Distance}<50  && ${Actor[pc,${MainTankPC},exactname].InCombatMode}
     	{
