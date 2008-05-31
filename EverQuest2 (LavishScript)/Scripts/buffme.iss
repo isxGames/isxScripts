@@ -113,7 +113,7 @@ variable int scanID
 
 
 
-if ${Me.Name.Equal[Vandit]}
+if ${Me.Name.Equal[Tanktastic]}
 {
 
 ; My Buffs
@@ -129,12 +129,12 @@ buffs[8]:Set["Contract of Shadows"]
 
 ; Target of a specific buff
 
-buffTarget[5]:Set["Armind"]
+buffTarget[5]:Set["Healtastic"]
 }
 
 
 
-if ${Me.Name.Equal[Armind]}
+if ${Me.Name.Equal[Healtastic]}
 {
 
 ; My Buffs
@@ -152,9 +152,9 @@ buffs[10]:Set["Harbinger"]
 
 ; Target of a specific buff
 
-buffTarget[7]:Set["Vandit"]
-buffTarget[8]:Set["Vandit"]
-buffTarget[9]:Set["Vandit"]
+buffTarget[7]:Set["Tanktastic"]
+buffTarget[8]:Set["Tanktastic"]
+buffTarget[9]:Set["Tanktastic"]
 }
 
 
