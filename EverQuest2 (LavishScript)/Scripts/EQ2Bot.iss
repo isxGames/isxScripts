@@ -2777,9 +2777,6 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-    ;;; I HATE THIS FUNCTION
-    return
-    
     variable int tcount=2
 	variable float X
 	variable float Z
