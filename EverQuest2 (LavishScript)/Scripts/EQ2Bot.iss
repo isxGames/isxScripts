@@ -2777,6 +2777,9 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
+    ;;; I HATE THIS FUNCTION
+    return
+    
     variable int tcount=2
 	variable float X
 	variable float Z
@@ -3407,11 +3410,14 @@ objectdef ActorCheck
 				tempvar:Set[1]
 				do
 				{
-					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)})
-					{
-						;echo aggro detected on raid
-						return TRUE
-					}
+				    if (${Me.Raid[${tempvar}](exists)})
+				    {
+    					if (${Actor[${actorid}].Target.ID} == ${Me.Raid[${tempvar}].ID})
+    					{
+    						;echo aggro detected on raid
+    						return TRUE
+    					}
+    				}
 				}
 				while ${tempvar:Inc}<24
 			}
@@ -3543,7 +3549,7 @@ objectdef ActorCheck
 			tempvar:Set[1]
 			do
 			{
-				if (${Me.Raid[${tempvar}](exists)} && ${actorid} == ${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
+				if (${Me.Raid[${tempvar}](exists)} && ${actorid} == ${Actor[${Me.Raid[${tempvar}].ID}].Pet.ID})
 				    return TRUE
 			}
 			while ${tempvar:Inc}<=24
@@ -3885,9 +3891,9 @@ objectdef EQ2BotObj
 					case monk
 					case paladin
 					case shadowknight
-						if ${Me.Raid[${tempgrp}].MaxHealth}>${highesthp}
+						if ${Me.Raid[${tempgrp}].MaxHitPoints}>${highesthp}
 						{
-							highesthp:Set[${Me.Raid[${tempgrp}].MaxHealth}]
+							highesthp:Set[${Me.Raid[${tempgrp}].MaxHitPoints}]
 							MainTank:Set[FALSE]
 							MainTankPC:Set[${Me.Raid[${tempgrp}].Name}]
 						}
