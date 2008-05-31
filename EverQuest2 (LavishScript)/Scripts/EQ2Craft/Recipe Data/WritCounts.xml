@@ -57,7 +57,7 @@
       <Setting Name="59">1,1,1,1,2</Setting>
       <Setting Name="60">6</Setting>
       <Setting Name="64">3,3</Setting>
-      <Setting Name="69"></Setting>
+      <Setting Name="69">3,3</Setting>
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
@@ -76,7 +76,7 @@
       <Setting Name="54">1,1,1,1,1,1</Setting>
       <Setting Name="59">1,1,1,1,1,1</Setting>
       <Setting Name="60">2,2,2</Setting>
-      <Setting Name="64"></Setting>
+      <Setting Name="64">1,1,1,1,1,1</Setting>
       <Setting Name="69">1,1,1,1,1,1</Setting>
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
@@ -160,11 +160,11 @@
       <Setting Name="69"></Setting>
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
-      <Setting Name="79">2,2,2</Setting>
+      <Setting Name="79">3,3</Setting>
     </Set>
     <Set Name="woodworker">
-      <Setting Name="20"></Setting>
-      <Setting Name="24"></Setting>
+      <Setting Name="20">6</Setting>
+      <Setting Name="24">3,3</Setting>
       <Setting Name="29"></Setting>
       <Setting Name="30">6</Setting>
       <Setting Name="34">3,3</Setting>

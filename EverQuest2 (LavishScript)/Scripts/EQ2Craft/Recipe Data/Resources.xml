@@ -152,7 +152,8 @@
 		<Setting Name="Raw Ruby">Rough Ruby</Setting>
 		<Setting Name="Raw Ruthenium">Ruthenium Cluster</Setting>
 		<Setting Name="Raw Sabertooth Meat">Sabertooth Meat</Setting>
-		<Setting Name="Raw Saguaro Roots">Saguaro Roots</Setting>
+		<Setting Name="Raw Saguaro Root">Saguaro Root</Setting>
+		<Setting Name="Raw Saguaro Roots">Saguaro Root</Setting>
 		<Setting Name="Raw Salty Loam">Salty Loam</Setting>
 		<Setting Name="Raw Sandalwood">Severed Sandalwood</Setting>
 		<Setting Name="Raw Scaled Leather">Scaled Leather Pelt</Setting>
@@ -226,9 +227,9 @@
 		<Setting Name="Tynnonium Cluster">Tynnonium Cluster</Setting>
 		<Setting Name="Kunzite">Rough Kunzite</Setting>
 		<Setting Name="Raw Lichenclover Root">Lichenclover Root</Setting>
-        <Setting Name="Raw Kunzite">Rough Kunzite</Setting>
-        <Setting Name="Rough Kunzite">Rough Kunzite</Setting>
-        <Setting Name="Ferrite Cluster">Ferrite Cluster</Setting>
+		<Setting Name="Raw Kunzite">Rough Kunzite</Setting>
+		<Setting Name="Rough Kunzite">Rough Kunzite</Setting>
+		<Setting Name="Ferrite Cluster">Ferrite Cluster</Setting>
 		<Setting Name="Mineral Salt Loam">Mineral Salt Loam</Setting>
 		<Setting Name="King Prawn">King Prawn</Setting>
 		<Setting Name="Succulent">Raw Succulent Petal</Setting>
@@ -340,5 +341,6 @@
 		<Setting Name="Lapiz Lazuli Fragment">Lapiz Lazuli Fragment</Setting>
 		<Setting Name="Raw Succulent Petal">Raw Succulent Petal</Setting>
 		<Setting Name="Cockatrice Meat">Cockatrice Meat</Setting>
+		<Setting Name="Gold Cluster">Gold Cluster</Setting>
 	</Set>
 </InnerSpaceSettings>
