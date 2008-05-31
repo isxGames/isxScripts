@@ -275,7 +275,7 @@ objectdef EQ2Nav
 	
 	method CheckAggro()
 	{
-	    This:Debug["Checking for aggro..."]
+	    ;This:Debug["Checking for aggro..."]
     	;Stop Moving and pause if we have aggro
     	if ${MobCheck.Detect}
     	{
@@ -558,13 +558,7 @@ objectdef EQ2Nav
 	}
 	
 	method MoveToLocNoMapping(float X, float Y, float Z,float Precision=${gPrecision})
-	{
-	    This.CheckX:Set[${Me.ToActor.X}]
-	    This.CheckY:Set[${Me.ToActor.Y}]
-	    This.CheckZ:Set[${Me.ToActor.Z}]
-	    This.CheckLocPassCount:Inc
-	    This.CheckLocSet:Set[${Time.Timestamp}]
-	    	    
+	{   
 		variable int count = 0
 		variable index:lnavregionref SurroundingRegions
 		This.CheckLocPassCount:Set[0]
@@ -601,23 +595,18 @@ objectdef EQ2Nav
 
 	method MoveToLoc(float X, float Y, float Z)
 	{
-	    This.CheckX:Set[${Me.ToActor.X}]
-	    This.CheckY:Set[${Me.ToActor.Y}]
-	    This.CheckZ:Set[${Me.ToActor.Z}]
-	    This.CheckLocPassCount:Inc
-	    This.CheckLocSet:Set[${Time.Timestamp}]
 	    This.UseMapping:Set[TRUE]	
-	    	    
+	    This.CheckLocPassCount:Set[0]
+	    
 		variable int count = 0
 		variable index:lnavregionref SurroundingRegions
-		This.CheckLocPassCount:Set[0]
+	
 
 		if ${X}==0 && ${Y}==0 && ${Z}==0
 		{
 			; No reason to run to NOTHING
 			return
 		}
-		
 		
 
 		; If we are already PRECISION from it why bother moving?
@@ -681,13 +670,6 @@ objectdef EQ2Nav
 	; If you're currently in an unmapped region, call this to move to the nearest mapped region.
 	method MoveToNearestRegion(float FinalDestX, float FinalDestY, float FinalDestZ)
 	{
-	    This.CheckX:Set[${Me.ToActor.X}]
-	    This.CheckY:Set[${Me.ToActor.Y}]
-	    This.CheckZ:Set[${Me.ToActor.Z}]
-	    This.CheckLocPassCount:Inc
-	    This.CheckLocSet:Set[${Time.Timestamp}]	  
-	    This.UseMapping:Set[TRUE]	  
-	    
 	    This.CheckLocPassCount:Set[0]
 		;declarevariable NextRegion lnavregionref local ${This.NearestRegion[${Me.ToActor.Loc}]}
 		variable lnavregionref ZoneRegion
@@ -718,8 +700,6 @@ objectdef EQ2Nav
 		    face ${FinalDestX} ${FinalDestY} ${FinalDestZ}
 		    This.MeMoving:Set[FALSE]		
 		    This:Output["The nearest mapped CenterPoint (${NextRegion.CenterPoint}) is ${NearestRegionDistance} away.  More mapping data is required before continuing"]
-		    if ${Script[EQ2Harvest](exists)}
-		        endscript EQ2Harvest
 		    return
 		}
 		
@@ -751,9 +731,7 @@ objectdef EQ2Nav
 		    This:StopRunning
 		    face ${FinalDestX} ${FinalDestY} ${FinalDestZ}		
 		    This.MeMoving:Set[FALSE]    
-		    This:Output["The nearest mapped point (${NextRegion.CenterPoint}) is only ${NearestRegionDistance} away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]
-		    if ${Script[EQ2Harvest](exists)}
-		        endscript EQ2Harvest		    
+		    This:Output["The nearest mapped point (${NextRegion.CenterPoint}) is only ${NearestRegionDistance} away; however, there is an obstacle in the way.  More mapping data or manual editing of the map file is required."]	    
 		    return
 		}
 		
@@ -1037,6 +1015,7 @@ objectdef EQ2Nav
 				    This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
 				    This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
 				    This.MeMoving:Set[TRUE]
+				    This.CheckLocPassCount:Set[0]
 				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]
                     return
     	        }
@@ -1046,6 +1025,7 @@ objectdef EQ2Nav
 				    This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
 				    ;This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
 				    This.MeMoving:Set[TRUE]
+				    This.CheckLocPassCount:Set[0]
 				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]        
     	        }
 			}
