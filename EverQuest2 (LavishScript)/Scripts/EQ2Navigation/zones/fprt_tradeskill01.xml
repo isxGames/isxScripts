@@ -7,7 +7,7 @@
 				<X>2.562776</X>
 				<Y>-0.181678</Y>
 				<Z>0.278620</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Fourth_Floor_Stairwell_Top" />
 				<Connection To="fprt_tradeskill01-1210530155-3.fprt_tradeskill01" />
 				<Connection To="Wholesaler" />
@@ -17,7 +17,7 @@
 				<X>2.562776</X>
 				<Y>-0.181678</Y>
 				<Z>0.278620</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Fourth_Floor_Stairwell_Top" />
 				<Connection To="fprt_tradeskill01-1210530155-3.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
@@ -27,7 +27,7 @@
 				<X>-2.104944</X>
 				<Y>-0.177941</Y>
 				<Z>7.091123</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="RushOrder" />
 				<Connection To="WorkOrder" />
 			</Sphere>
@@ -35,7 +35,7 @@
 				<X>-0.717127</X>
 				<Y>-0.180914</Y>
 				<Z>1.064655</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Fourth_Floor_Stairwell_Top" />
 				<Connection To="fprt_tradeskill01-1210530186-4.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
@@ -46,7 +46,7 @@
 				<X>-7.065870</X>
 				<Y>-0.172016</Y>
 				<Z>1.577755</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210530155-3.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1210530196-5.fprt_tradeskill01" />
 				<Connection To="Work Bench 1" />
@@ -55,7 +55,7 @@
 				<X>-5.831053</X>
 				<Y>-0.172016</Y>
 				<Z>-4.172583</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210530186-4.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
 			</Sphere>
@@ -63,7 +63,7 @@
 				<X>-12.731576</X>
 				<Y>-0.172016</Y>
 				<Z>-3.073890</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Chemistry Table 1" />
 				<Connection To="Chemistry Table 2" />
 				<Connection To="Chemistry Table 3" />
@@ -73,28 +73,28 @@
 				<X>-12.738211</X>
 				<Y>-0.172016</Y>
 				<Z>-8.454728</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Chemistry Table 2" Unique='1'>
 				<X>-11.195518</X>
 				<Y>-0.172016</Y>
 				<Z>-11.054147</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Chemistry Table 3" Unique='1'>
 				<X>-11.195518</X>
 				<Y>-0.172016</Y>
 				<Z>-11.054147</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Work Bench 1" Unique='1'>
 				<X>-6.010262</X>
 				<Y>-0.172016</Y>
 				<Z>10.247108</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210530186-4.fprt_tradeskill01" />
 				<Connection To="Work Bench 2" />
 				<Connection To="Work Bench 3" />
@@ -103,21 +103,21 @@
 				<X>-15.904237</X>
 				<Y>-0.172016</Y>
 				<Z>9.797400</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Work Bench 1" />
 			</Sphere>
 			<Sphere Name="Work Bench 3" Unique='1'>
 				<X>-15.904237</X>
 				<Y>-0.172016</Y>
 				<Z>9.797400</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Work Bench 1" />
 			</Sphere>
 			<Sphere Name="Fourth_Floor_Stairwell_Top" Unique='1'>
 				<X>2.079796</X>
 				<Y>-0.176777</Y>
 				<Z>4.630564</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210531005-14.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
 				<Connection To="WorkOrder" />
@@ -126,7 +126,7 @@
 				<X>3.688669</X>
 				<Y>-3.576795</Y>
 				<Z>14.886919</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Fourth_Floor_Stairwell_Top" />
 				<Connection To="Sewing Table &amp; Mannequin 1" />
 			</Sphere>
@@ -134,7 +134,7 @@
 				<X>-10.802472</X>
 				<Y>-6.607398</Y>
 				<Z>13.947946</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210531005-14.fprt_tradeskill01" />
 				<Connection To="Sewing Table &amp; Mannequin 2" />
 				<Connection To="Sewing Table &amp; Mannequin 3" />
@@ -143,7 +143,7 @@
 				<X>-15.312971</X>
 				<Y>-6.607398</Y>
 				<Z>13.271830</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Sewing Table &amp; Mannequin 1" />
 				<Connection To="Third_Floor_Stairwell_Top" />
 			</Sphere>
@@ -151,7 +151,7 @@
 				<X>-15.312971</X>
 				<Y>-6.607398</Y>
 				<Z>13.271830</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Sewing Table &amp; Mannequin 1" />
 				<Connection To="Third_Floor_Stairwell_Top" />
 			</Sphere>
@@ -159,7 +159,7 @@
 				<X>-21.711344</X>
 				<Y>-6.290833</Y>
 				<Z>13.280252</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Sewing Table &amp; Mannequin 2" />
 				<Connection To="Sewing Table &amp; Mannequin 3" />
 				<Connection To="Third_Floor_Stairwell_Bottom" />
@@ -168,7 +168,7 @@
 				<X>-21.702688</X>
 				<Y>-13.097155</Y>
 				<Z>-4.374748</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Third_Floor_Stairwell_Top" />
 				<Connection To="Woodworking Table 1" />
 			</Sphere>
@@ -176,7 +176,7 @@
 				<X>-12.417022</X>
 				<Y>-13.097170</Y>
 				<Z>-3.091978</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Third_Floor_Stairwell_Bottom" />
 				<Connection To="Woodworking Table 2" />
 				<Connection To="Woodworking Table 3" />
@@ -185,7 +185,7 @@
 				<X>-6.671185</X>
 				<Y>-13.097171</Y>
 				<Z>-3.427289</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210531363-23.fprt_tradeskill01" />
 				<Connection To="Second_Floor_Stairwell_Top" />
 				<Connection To="Woodworking Table 1" />
@@ -201,7 +201,7 @@
 				<X>-5.868332</X>
 				<Y>-13.097171</Y>
 				<Z>-1.081796</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Stove &amp; Keg 1" />
 				<Connection To="Woodworking Table 2" />
 			</Sphere>
@@ -209,7 +209,7 @@
 				<X>-5.659390</X>
 				<Y>-12.745522</Y>
 				<Z>15.224185</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210531363-23.fprt_tradeskill01" />
 				<Connection To="Stove &amp; Keg 2" />
 				<Connection To="Stove &amp; Keg 3" />
@@ -218,21 +218,21 @@
 				<X>-18.353735</X>
 				<Y>-13.097171</Y>
 				<Z>14.123612</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Stove &amp; Keg 1" />
 			</Sphere>
 			<Sphere Name="Stove &amp; Keg 3" Unique='1'>
 				<X>-17.153370</X>
 				<Y>-12.851768</Y>
 				<Z>14.620404</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Stove &amp; Keg 1" />
 			</Sphere>
 			<Sphere Name="Second_Floor_Stairwell_Top" Unique='1'>
 				<X>-0.904354</X>
 				<Y>-12.576238</Y>
 				<Z>-3.831991</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Second_Floor_Stairwell_Bottom" />
 				<Connection To="Woodworking Table 2" />
 			</Sphere>
@@ -240,15 +240,15 @@
 				<X>-0.986176</X>
 				<Y>-19.207743</Y>
 				<Z>13.621604</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Broker" />
 				<Connection To="Second_Floor_Stairwell_Top" />
 			</Sphere>
 			<Sphere Name="Broker" Unique='1'>
-				<X>-7.342949</X>
-				<Y>-19.584948</Y>
-				<Z>13.203285</Z>
-				<Size>4.000000</Size>
+				<X>-10.535778</X>
+				<Y>-19.584949</Y>
+				<Z>13.117606</Z>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210531962-30.fprt_tradeskill01" />
 				<Connection To="Second_Floor_Stairwell_Bottom" />
 			</Sphere>
@@ -256,7 +256,7 @@
 				<X>-14.998973</X>
 				<Y>-19.712566</Y>
 				<Z>5.792415</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Broker" />
 				<Connection To="Forge 1" />
 				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
@@ -265,7 +265,7 @@
 				<X>-11.011978</X>
 				<Y>-19.721899</Y>
 				<Z>5.683229</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Forge 2" />
 				<Connection To="fprt_tradeskill01-1210531962-30.fprt_tradeskill01" />
 			</Sphere>
@@ -273,7 +273,7 @@
 				<X>-15.323740</X>
 				<Y>-19.724062</Y>
 				<Z>-1.032114</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Forge 1" />
 				<Connection To="Forge 3" />
 			</Sphere>
@@ -281,14 +281,14 @@
 				<X>-15.323740</X>
 				<Y>-19.724062</Y>
 				<Z>-1.032114</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Forge 2" />
 			</Sphere>
 			<Sphere Name="fprt_tradeskill01-1210532062-34">
 				<X>-23.625237</X>
 				<Y>-19.650860</Y>
 				<Z>6.267550</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Engraved Desk 1" />
 				<Connection To="Engraved Desk 2" />
 				<Connection To="Engraved Desk 3" />
@@ -298,7 +298,7 @@
 				<X>-24.076422</X>
 				<Y>-19.587105</Y>
 				<Z>13.438284</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="Engraved Desk 2" />
 				<Connection To="Engraved Desk 3" />
 				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
@@ -307,14 +307,14 @@
 				<X>-26.346071</X>
 				<Y>-19.649960</Y>
 				<Z>2.081144</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Engraved Desk 3" Unique='1'>
 				<X>-26.346071</X>
 				<Y>-19.649960</Y>
 				<Z>2.081144</Z>
-				<Size>4.000000</Size>
+				<Size>5.000000</Size>
 				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
 			</Sphere>
 		</Children>

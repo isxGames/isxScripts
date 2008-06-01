@@ -68,7 +68,7 @@ objectdef EQ2Nav
 	variable index:EQ2NavPath NavigationPath
 	variable point3f NavDestination
 	variable lnavpath Path
-	variable int StuckTime =
+	variable int StuckTime
 	variable int TotalStuck
 	variable int SKIPNAV
 	variable int degrees
@@ -108,10 +108,12 @@ objectdef EQ2Nav
     variable int CheckLocPassCount
     variable int StrafeTime
     variable int BackupTime
+    variable int NotMovingPassCount
     
     variable bool LootNearby
     variable bool AggroDetected
     variable int AggroDetectionTimer
+    variable float HopDistanceCheck
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;
@@ -134,11 +136,13 @@ objectdef EQ2Nav
 		This.MovingToNearestRegion:Set[FALSE]
 		This.CheckLocSet:Set[0]
 		This.CheckLocPassCount:Set[0]
-		This.StrafeTime:Set[15]
-		This.BackupTime:Set[15]
+		This.StrafeTime:Set[10]
+		This.BackupTime:Set[10]
 		This.LootNearby:Set[FALSE]
 		This.AggroDetected:Set[FALSE]
 		This.AggroDetectionTimer:Set[0]
+		This.NotMovingPassCount:Set[0]
+		This.HopDistanceCheck:Set[0]
 	}
 	
 	method UseLSO(bool UseIt)
@@ -1010,6 +1014,16 @@ objectdef EQ2Nav
 			    ;This:Debug["${This.NavigationPath.Get[1].FQN} still out of precision range."]
 			    if (!${Me.IsMoving})
 			    {
+			        ;;; If we have not moved in more than 4 pulses, then we must be stuck... ;;;
+			        if (${This.NotMovingPassCount} > 4)
+			        {
+            		    This:Debug["We must be stuck...handling. (NotMovingPassCount: ${This.NotMovingPassCount})"]
+            		    This:StopRunning
+            	    	run "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavObstacleHandler.iss" "${This.AUTORUN}" "${This.MOVEFORWARD}" "${This.MOVEBACKWARD}" "${This.STRAFELEFT}" "${This.STRAFERIGHT}" "${This.BackupTime}" "${This.StrafeTime}"
+            	    	This.NotMovingPassCount:Set[0]
+            		    return  			        
+			        }
+			        
 			        This:Debug["NavigationPath exists, but not moving -- issuing movement"]
 			        This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
 				    This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
@@ -1017,6 +1031,8 @@ objectdef EQ2Nav
 				    This.MeMoving:Set[TRUE]
 				    This.CheckLocPassCount:Set[0]
 				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]
+				    This.NotMovingPassCount:Inc
+				    This.HopDistanceCheck:Set[${This.NextHopDistance}]
                     return
     	        }
     	        else
@@ -1026,28 +1042,14 @@ objectdef EQ2Nav
 				    ;This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
 				    This.MeMoving:Set[TRUE]
 				    This.CheckLocPassCount:Set[0]
-				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]        
+				    ;;; If we have moved more than 0.1, then reset the NotMovingPassCount var. ;;;
+				    if (${Math.Abs[${This.NextHopDistance}-${This.HopDistanceCheck}]} > 0.1)
+    				    This.NotMovingPassCount:Set[0]
+				    This:MoveTo[${This.NavigationPath.Get[1].Location},${This.gPrecision}]  
+				    This.HopDistanceCheck:Set[${This.NextHopDistance}]
+				    return      
     	        }
 			}
-
-            ;;
-            ;;;;; THIS ALL NEEDS TO BE INTEGRATED/REDONE
-            ;;
-			This.NextHopOldTime:Set[${LavishScript.RunningTime}]
-			This.NextHopOldDistance:Set[${This.NextHopDistance}]
-			if ${This.Moving} && ${This.NextHopSpeed} > 0.001
-			{
-				This.StuckTime:Set[${LavishScript.RunningTime}]
-			}
-			else
-			{
-				if ${LavishScript.RunningTime}-${This.StuckTime}>1000
-				{
-					;This:HandleObstacle
-					This.StuckTime:Set[${LavishScript.RunningTime}]
-				}
-			}
-			This.TotalStuck:Set[0]
 		}
 	}
 
