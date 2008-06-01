@@ -335,12 +335,25 @@ function StopRunning()
 
 function StartRunning()
 {
+    variable int Count
+    Count:Set[0]
+    
 	if !${Me.IsMoving}
 	{
 		do
 		{
+		    if ${Count} > 20
+		    {
+		        ;; we must be stuck....   
+		        press MOVEBACKWARD
+		        press -hold MOVEBACKWARD
+		        wait 5
+		        press -release MOVEBACKWARD
+		        Count:Set[0]
+		    }
     	    press AUTORUN
-			wait 5
+			wait 2
+			Count:Inc[2]
 		}
 		while !${Me.IsMoving}
 	}
