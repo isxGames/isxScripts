@@ -624,11 +624,10 @@ function CheckHeals()
 	if ${Me.InRaid} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	{
 		;Res Fallen RAID members only if in range
-		grpcnt:Set[${Me.RaidCount}]
 		do
 		{
-			if ${Actor[exactname,${RaidMember[${tempraid}].Name}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Actor[pc,exactname,${RaidMember[${tempraid}].Name}].Distance}<35
-				call CastSpellRange 300 301 1 0 ${Actor[exactname,${RaidMember[${tempraid}].Name}].ID} 1
+			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<35
+				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1
 		}
 		while ${tempraid:Inc}<=24 && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	}
@@ -675,7 +674,7 @@ function DoMagneticNote()
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 }
 
-function StartHo()
+function StartHO()
 {
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 		call CastSpellRange 303

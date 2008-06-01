@@ -1018,7 +1018,7 @@ function Mezmerise_Targets()
 			{
 				do
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[$tempvar}].Name}].ID} || (${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
+					if ${CustomActor[${tcount}].Target.ID}==${Me.Raid[$tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ToActor.Pet.ID}
 					{
 						aggrogrp:Set[TRUE]
 						break

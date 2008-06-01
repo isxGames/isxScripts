@@ -712,28 +712,31 @@ function CheckHeals()
 	{
 		do
 		{
-			if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}](exists)}
+			${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
 			{
-				if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]} && !${Me.Group[${Actor[pc,exactname,${Me.Raid[${temph2}].Name}]}].ID(exists)}
+			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
 				{
-					if ${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health}<80 && !${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].IsDead} && ${Me.Raid[${temph2}](exists)}
-					{
-						if (${Actor[pc,exactname,${Me.Raid[${temph2}].Name}].Health} < ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health}) || ${raidlowest}==0
-							raidlowest:Set[${temph2}]
-					}
+				    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
+    				{
+    					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
+    						raidlowest:Set[${temph2}]
+    				}
 				}
 			}
 		}
 		while ${temph2:Inc}<=24
 
-		if ${Me.InCombat} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].Health} < 60 && !${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].IsDead}
-		{
-			;echo Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Actor[exactname,${Me.Raid[${raidlowest}].Name}].Health} health
-			if ${Me.Ability[${SpellType[4]}].IsReady}
-				call CastSpellRange 4 0 0 0 ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].ID}
-			elseif ${Me.Ability[${SpellType[1]}].IsReady}
-				call CastSpellRange 1 0 0 0 ${Actor[pc,exactname,${Me.Raid[${raidlowest}].Name}].ID}
-		}
+    if (${Me.Raid[${raidlowest}].ToActor(exists)})
+    {
+  		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
+  		{
+  			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
+  			if ${Me.Ability[${SpellType[4]}].IsReady}
+  				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
+  			elseif ${Me.Ability[${SpellType[1]}].IsReady}
+  				call CastSpellRange 1 0 0 0 ${Me.Raid[${raidlowest}].ID}
+  		}
+  	}
 	}
 
 	;PET HEALS
