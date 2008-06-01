@@ -3455,7 +3455,7 @@ objectdef ActorCheck
 				tempvar:Set[1]
 				do
 				{
-					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)})
+					if (${Actor[${actorid}].Target.ID}==${Me.Raid[${tempvar}].ID} && ${Me.Raid[${tempvar}](exists)})
 					{
 						;echo aggro detected on raid
 						return TRUE
@@ -3591,7 +3591,7 @@ objectdef ActorCheck
 			tempvar:Set[1]
 			do
 			{
-				if (${Me.Raid[${tempvar}](exists)} && ${actorid} == ${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
+				if (${Me.Raid[${tempvar}](exists)} && ${actorid} == ${Me.Raid[${tempvar}].Pet.ID})
 				    return TRUE
 			}
 			while ${tempvar:Inc}<=24
