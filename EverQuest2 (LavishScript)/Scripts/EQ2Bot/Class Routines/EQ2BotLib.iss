@@ -1000,24 +1000,24 @@ function FindHealer()
 
     		do
     		{
-    			switch ${Me.RaidMember[${tempgrp}].Class}
+    			switch ${Me.Raid[${tempgrp}].Class}
     			{
     				case templar
     				case fury
     				case mystic
     				case defiler
-    					healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
+    					healer:Set[${Me.Raid[${tempgrp}].ID}]
     					break
     				case warden
     				case inquisitor
     					if ${healer}==${Me.ID}
-    						healer:Set[${Actor[exactname,pc,${Me.RaidMember[${tempgrp}].Name}].ID}]
+    						healer:Set[${Me.Raid[${tempgrp}].ID}]
     					break
     				Default
     					break
     			}
     		}
-    		while (${tempgrp:Inc} <= ${Me.RaidCount})
+    		while (${tempgrp:Inc} <= 24)
     	}
     }
 

@@ -659,11 +659,11 @@ function RefreshPower()
 	}
 
 	;Forced Canabalize
-	if ${Me.ToActor.Power}<48 && ${Me.InCombat}  && !${Actor[${KillTarget}].Name.Upper.Find[DRUSELLA]}
-	{
-		Target ${KillTarget}
-		Me.Ability[{SpellType[72]}]:Use
-	}
+	;if ${Me.ToActor.Power}<48 && ${Me.InCombat}  && !${Actor[${KillTarget}].Name.Upper.Find[DRUSELLA]}
+	;{
+	;	Target ${KillTarget}
+	;	Me.Ability[{SpellType[72]}]:Use
+	;}
 
 
 	if ${ShardMode}
