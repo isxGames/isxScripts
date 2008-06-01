@@ -564,8 +564,8 @@ function Harvest()
         wait 20
         if (${OnBadNode})
         {
-            return PROBLEM
             OnBadNode:Set[FALSE]
+            return PROBLEM
         }
 		call ProcessTriggers
 
@@ -1217,7 +1217,16 @@ atom(script) EQ2_onIncomingText(string Text)
     	    Harvest:SetBadNode[${NodeID}]   
     	    OnBadNode:Set[TRUE]
     	}
-	}					
+	}	
+	elseif (${Text.Find["Your target is already in use"]} > 0)
+	{
+	    if (${Actor[id,${NodeID}].Type.Equal[Resource]} && !${Me.InCombat})
+	    {
+            echo "DEBUG: Received 'Your target is already in use by someone else' message...adding to BadNodes"
+    	    Harvest:SetBadNode[${NodeID}]   
+    	    OnBadNode:Set[TRUE]
+    	}
+	}						
 }
 
 atom(script) EQ2_onChoiceWindowAppeared()
