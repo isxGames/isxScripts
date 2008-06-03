@@ -805,8 +805,12 @@ function CheckHeals()
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 
-	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 	grpcnt:Set[${Me.GroupCount}]
+
+	if ${Me.Name.Equals[${MainTankPC}]}
+		MainTankID:Set[${Me.ID}]
+	else
+		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
