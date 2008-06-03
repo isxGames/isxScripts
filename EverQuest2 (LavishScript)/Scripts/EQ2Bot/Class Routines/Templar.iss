@@ -816,8 +816,12 @@ function CheckHeals()
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 
-	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 	grpcnt:Set[${Me.GroupCount}]
+
+	if ${Me.Name.Equals[${MainTankPC}]}
+		MainTankID:Set[${Me.ID}]
+	else
+		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
@@ -837,7 +841,6 @@ function CheckHeals()
 	{
 		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
 		{
-
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
 				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
@@ -1033,7 +1036,6 @@ function CheckReactives()
 			{
 				;echo Single react is Present on MT
 				hot1:Set[1]
-				break
 			}
 			elseif ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
 			{

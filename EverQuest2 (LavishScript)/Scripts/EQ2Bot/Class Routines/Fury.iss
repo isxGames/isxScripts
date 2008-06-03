@@ -511,7 +511,7 @@ function Combat_Routine(int xAction)
         CurrentAction:Set[OffenseMode: OFF]
     	if ${CureMode}
     		call CheckCures
-    
+
     	call CheckHeals
         call RefreshPower
         if ${ShardMode}
@@ -537,15 +537,15 @@ function Combat_Routine(int xAction)
     				DebuffCnt:Inc
     			}
     		}
-    	}		
+    	}
     	;if we cast a debuff, check heals again before continue
     	if (${DebuffCnt} > 0)
     	{
     		if ${CureMode}
     			call CheckCures
-    
+
     		call CheckHOTs
-    	}    	    
+    	}
     	if (${StartHO})
     	{
     		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
@@ -553,7 +553,7 @@ function Combat_Routine(int xAction)
     			call CastSpellRange 304
     		}
     	}
-    	
+
     	;;
     	;;;; FEAST
     	;;
@@ -568,7 +568,7 @@ function Combat_Routine(int xAction)
 					call CastSpellRange ${SpellRange[${FeastAction},1]} 0 0 0 ${KillTarget}
 				}
 			}
-		}    	
+		}
 		CurrentAction:Set[OffenseMode: OFF]
         return CombatComplete
     }
@@ -1013,18 +1013,22 @@ function CheckHeals()
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 
-	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 	grpcnt:Set[${Me.GroupCount}]
+
+	if ${Me.Name.Equals[${MainTankPC}]}
+		MainTankID:Set[${Me.ID}]
+	else
+		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;Res the MT if they are dead
-	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) 
+	if (!${Me.ToActor.InCombatMode} || ${CombatRez})
 	{
 	    if ${Actor[${MainTankID}](exists)}
-	    {        
+	    {
     	    if (${Actor[${MainTankID}].IsDead} || ${Actor[${MainTankID}].Health} < 0)
 		        call CastSpellRange 300 0 1 1 ${MainTankID}
 		}

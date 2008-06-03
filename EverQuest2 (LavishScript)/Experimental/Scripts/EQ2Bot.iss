@@ -1655,7 +1655,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 	switch ${xType}
 	{
 		case MobHealth
-			if ${Target.Health}>=${xvar1} && ${Target.Health}<=${xvar2}
+			if ${Actor[${KillTarget}].Health}>=${xvar1} && ${Actor[${KillTarget}].Health}<=${xvar2}
 				return "OK"
 			else
 				return "FAIL"
