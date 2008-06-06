@@ -807,7 +807,7 @@ function CheckHeals()
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	if ${Me.Name.Equals[${MainTankPC}]}
+	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
