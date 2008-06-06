@@ -630,7 +630,7 @@ function CheckHeals()
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	if ${Me.Name.Equals[${MainTankPC}]}
+	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
@@ -1123,21 +1123,21 @@ function CheckHOTs()
 
 function HandleGroupWiped()
 {
-		;;; There was a full group wipe and now we are rebuffing
+	;;; There was a full group wipe and now we are rebuffing
 
-		;assume that someone used a feather
-		if (${Me.GroupCount} > 1)
+	;assume that someone used a feather
+	if (${Me.GroupCount} > 1)
+	{
+		Me.Ability[Favor of the Phoenix]:Use
+		do
 		{
-			Me.Ability[Favor of the Phoenix]:Use
-			do
-			{
-				waitframe
-			}
-			while ${Me.CastingSpell}
-			wait 1
+			waitframe
 		}
+		while ${Me.CastingSpell}
+		wait 1
+	}
 
-		return OK
+	return OK
 }
 
 
