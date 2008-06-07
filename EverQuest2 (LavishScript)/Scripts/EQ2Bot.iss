@@ -802,10 +802,11 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 
 					if !${fndspell}
 					{
-						if !${Actor[${targettobuff}](exists)} || ${Actor[${targettobuff}].Distance}>35
-						{
-							return -1
-						}
+                        if !${Actor[${targettobuff}](exists)}
+                            return -1
+					         
+                        if ${Actor[${targettobuff}].Distance}>35
+                            return -1
 
 						if ${xvar1} || ${xvar2}
 						{
