@@ -975,131 +975,131 @@ function Combat()
 			if !${Actor[${Target.ID}].InCombatMode}
 			  break
 
-		  while ${Actor[${KillTarget}].Distance}> ${MARange}
-		  {
-        wait 5
-        if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
-            break
-        call ProcessTriggers
-	    }
+		    while ${Actor[${KillTarget}].Distance} > ${MARange}
+		    {
+                wait 5
+                if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+                    break
+                call ProcessTriggers
+	        }
 
-      if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
-          break
+            if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+                break
 
-      face ${Target.X} ${Target.Y} ${Target.Z}
+            ;face ${Target.X} ${Target.Y} ${Target.Z}
 
-			if (${Mob.ValidActor[${KillTarget}]})
-      {
-    		gRtnCtr:Set[1]
-  			do
-  			{
-  				call ProcessTriggers
+	        if (${Mob.ValidActor[${KillTarget}]})
+            {
+    		    gRtnCtr:Set[1]
+  			    do
+  			    {
+  				    call ProcessTriggers
 
-  				;if ${PathType}==4 && ${MainTank}
-  				;	call ScanAdds
+  				    ;if ${PathType}==4 && ${MainTank}
+  				    ;	call ScanAdds
 
-  				if ${MainTank}
-  				{
-  					Target ${KillTarget}
-  					waitframe
+  				    if ${MainTank}
+  				    {
+  					    Target ${KillTarget}
+  					    waitframe
 
-  					if ${Target.Target.ID}==${Me.ID}
-  						call CheckMTAggro
-  					else
-  					{
-  						call Lost_Aggro ${Target.ID}
-  						if ${UseCustomRoutines}
-  					    call Custom__Lost_Aggro ${Target.ID}
-  					}
-  				}
-  				else
-  				{
-  					Mob:CheckMYAggro
+  					    if ${Target.Target.ID}==${Me.ID}
+  						    call CheckMTAggro
+  					    else
+  					    {
+  						    call Lost_Aggro ${Target.ID}
+  						    if ${UseCustomRoutines}
+  					        call Custom__Lost_Aggro ${Target.ID}
+  					    }
+  				    }
+  				    else
+  				    {
+  					    Mob:CheckMYAggro
 
-  					if ${Actor[ExactName,${MainAssist}].IsDead}
-  					{
-  						EQ2Bot:MainAssist_Dead
-  						break
-  					}
+  					    if ${Actor[ExactName,${MainAssist}].IsDead}
+  					    {
+  						    EQ2Bot:MainAssist_Dead
+  						    break
+  					    }
 
-  					if ${Actor[exactname,${MainTankPC}].IsDead}
-  					{
-  						EQ2Bot:MainTank_Dead
-  						break
-  					}
-  				}
+  					    if ${Actor[exactname,${MainTankPC}].IsDead}
+  					    {
+  						    EQ2Bot:MainTank_Dead
+  						    break
+  					    }
+  				    }
 
-  				if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
-  				{
-  					call Have_Aggro
-  					if ${UseCustomRoutines}
-  				    call Custom__Have_Aggro
-  	    	}
+  				    if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+  				    {
+  					    call Have_Aggro
+  					    if ${UseCustomRoutines}
+  				        call Custom__Have_Aggro
+  	    	        }
 
-  				do
-  				{
-  					waitframe
-  				}
-  				while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
+  				    do
+  				    {
+  					    waitframe
+  				    }
+  				    while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${EngageDistance}
 
-  				call Combat_Routine ${gRtnCtr}
-  				if ${Return.Equal[CombatComplete]}
-  				{
-  				    if !${Me.InCombat}
-     				    CurrentAction:Set["Idle..."]
-  					gRtnCtr:Set[40]
-  				}
+  				    call Combat_Routine ${gRtnCtr}
+  				    if ${Return.Equal[CombatComplete]}
+  				    {
+  				        if !${Me.InCombat}
+     				        CurrentAction:Set["Idle..."]
+  					    gRtnCtr:Set[40]
+  				    }
 
-   				if !${Me.AutoAttackOn} && ${AutoMelee}
-   					EQ2Execute /toggleautoattack
+   				    if !${Me.AutoAttackOn} && ${AutoMelee}
+   					    EQ2Execute /toggleautoattack
 
-  				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-  				{
-  					EQ2Execute /target_none
-  					break
-  				}
+      				if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+      				{
+      					EQ2Execute /target_none
+      					break
+      				}
 
-  				if ${AutoMelee} && !${MainTank}
-  				{
-  					;check valid rear position
-  					if ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<6
-  					{
-  						;we're behind and in range
-  					}
-  					;check right flank
-  					elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<6
-  					{
-  						;we're right flank and in range
-  					}
-  					;check left flank
-  					elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<6
-  					{
-  						;we're left flank and in range
-  					}
-  					elseif ${Actor[${KillTarget}].Target.ID}==${Me.ID}
-  					{
-  						;we have aggro, move to the maintank
-  						call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
-  						do
-  						{
-  								waitframe
-  						}
-  						while (${IsMoving} || ${Me.IsMoving})
-  					}
-  					else
-  					{
-  						call CheckPosition 1 ${Target.IsEpic}
-  					}
-  				}
-  				elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[exactname,${MainTankPC}].Distance}>40
-  				{
-  					call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
-  					do
-  					{
-  							waitframe
-  					}
-  					while (${IsMoving} || ${Me.IsMoving})
-  				}
+      				if ${AutoMelee} && !${MainTank}
+      				{
+      					;check valid rear position
+      					if ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<6
+      					{
+      						;we're behind and in range
+      					}
+      					;check right flank
+      					elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<6
+      					{
+      						;we're right flank and in range
+      					}
+      					;check left flank
+      					elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<6
+      					{
+      						;we're left flank and in range
+      					}
+      					elseif ${Actor[${KillTarget}].Target.ID}==${Me.ID}
+      					{
+      						;we have aggro, move to the maintank
+      						call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
+      						do
+      						{
+      								waitframe
+      						}
+      						while (${IsMoving} || ${Me.IsMoving})
+      					}
+      					else
+      					{
+      						call CheckPosition 1 ${Target.IsEpic}
+      					}
+      				}
+      				elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[exactname,${MainTankPC}].Distance}>40
+      				{
+      					call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
+      					do
+      					{
+      							waitframe
+      					}
+      					while (${IsMoving} || ${Me.IsMoving})
+      				}
 
     				if ${Me.ToActor.Power}<55 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
     				{
@@ -1232,6 +1232,8 @@ function Combat()
 			if ${Actor[ExactName,${MainAssist}].Target(exists)} && ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
 			{
 				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+				Actor[${KillTarget}]:DoTarget
+				Actor[${KillTarget}]:DoFace
 				ContinueCombat:Set[TRUE]
 				continue
 			}
@@ -1256,6 +1258,7 @@ function Combat()
         				    KillTarget:Set[${AggroMob}]
         	            }
     					target ${AggroMob}
+    					Actor[${KillTarget}]:DoFace
     					ContinueCombat:Set[TRUE]
     				}
 				}
@@ -4063,7 +4066,7 @@ function CheckAbilities(string class)
 	variable string spellname
 	variable int MissingAbilitiesCount
 
-	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
+	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]	
 	do
 	{
 		tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
@@ -4074,24 +4077,27 @@ function CheckAbilities(string class)
 			continue
 
 		spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
-		if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
+		if (${spellname.Length})
 		{
-			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
-			{
-				; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
-				if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
-				{
-					echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-					MissingAbilitiesCount:Inc
-			    }
-			}
-			else
-			{
-			    ;echo "DEBUG: tempnme: ${tempnme}"
-				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
-				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
-			}
-		}
+    		if !${Me.Ability[${spellname}](exists)}
+    		{
+    			if !${Me.Ability[${spellname}](exists)}
+    			{
+    				; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
+    				if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+    				{
+    					echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+    					MissingAbilitiesCount:Inc
+    			    }
+    			}
+    			else
+    			{
+    			    ;echo "DEBUG: tempnme: ${tempnme}"
+    				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+    				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    			}
+    		}
+    	}
 		else
 		{
 		    ;echo "DEBUG: tempnme: ${tempnme}"
@@ -4101,14 +4107,14 @@ function CheckAbilities(string class)
 	}
 	while ${tempvar:Inc}<=${keycount}
 
-
 	if (${MissingAbilitiesCount} > 0 && ${Me.Level} >= 10)
 	{
 		echo "------------"
 		echo "You appear to be missing abilities.  Checking knowledge book and searching again..."
-		EQ2Execute /toggleknowledge
 		wait 5
 		EQ2Execute /toggleknowledge
+		wait 5
+		EQ2Execute /toggleknowledge			
 		MissingAbilitiesCount:Set[0]
 		tempvar:Set[1]
 
@@ -4122,31 +4128,141 @@ function CheckAbilities(string class)
 				continue
 
 			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
-			if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
+			if (${spellname.Length})
 			{
-				if !${Me.Ability[${spellname}](exists)} && ${spellname.Length}
-				{
-					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-					; By this point the list should be accurate
-					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-20]}))
-					{
-						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-						MissingAbilitiesCount:Inc
-				    }
-				}
-				else
-					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
-			}
-			else
-				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    			if !${Me.Ability[${spellname}](exists)}
+    			{
+    				if !${Me.Ability[${spellname}](exists)}
+    				{
+    					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+    					; By this point the list should be accurate
+    					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+    					{
+    						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+    						MissingAbilitiesCount:Inc
+    				    }
+    				}
+    				else
+    					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    			}
+    			else
+    				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    		}
+		}
+		while ${tempvar:Inc}<=${keycount}
+	}
+	else
+	{
+		echo "Much better -- abilities Set."	
+		return
+	}
+		
+	if (${MissingAbilitiesCount} > 6 && ${Me.Level} >= 10)
+	{
+		echo "------------"
+		echo "You still appear to be missing abilities.  Checking knowledge book and searching again..."
+		wait 20
+		EQ2Execute /toggleknowledge
+		wait 20
+		EQ2Execute /toggleknowledge			
+		MissingAbilitiesCount:Set[0]
+		tempvar:Set[1]
+
+		do
+		{
+			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
+
+			templvl:Set[${Arg[1,${tempnme}]}]
+
+			if ${templvl} > ${Me.Level}
+				continue
+
+			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
+			if (${spellname.Length})
+			{
+    			if !${Me.Ability[${spellname}](exists)}
+    			{
+    				if !${Me.Ability[${spellname}](exists)}
+    				{
+    					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+    					; By this point the list should be accurate
+    					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+    					{
+    						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+    						MissingAbilitiesCount:Inc
+    				    }
+    				}
+    				else
+    					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    			}
+    			else
+    				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    		}
+		}
+		while ${tempvar:Inc}<=${keycount}
+	}	
+	else
+	{
+		echo "Much better -- abilities Set."	
+		return
+	}
+		
+	if (${MissingAbilitiesCount} > 6 && ${Me.Level} >= 10)
+	{
+		echo "------------"
+		echo "You STILL appear to be missing abilities.  Checking knowledge book and searching again..."
+		wait 30
+		EQ2Execute /toggleknowledge
+		wait 30
+		EQ2Execute /toggleknowledge			
+		MissingAbilitiesCount:Set[0]
+		tempvar:Set[1]
+
+		do
+		{
+			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
+
+			templvl:Set[${Arg[1,${tempnme}]}]
+
+			if ${templvl} > ${Me.Level}
+				continue
+
+			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
+			if (${spellname.Length})
+			{
+    			if !${Me.Ability[${spellname}](exists)}
+    			{
+    				if !${Me.Ability[${spellname}](exists)}
+    				{
+    					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+    					; By this point the list should be accurate
+    					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+    					{
+    						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+    						MissingAbilitiesCount:Inc
+    				    }
+    				}
+    				else
+    					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    			}
+    			else
+    				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    		}
 		}
 		while ${tempvar:Inc}<=${keycount}
 
+
+
 		if ${MissingAbilitiesCount} > 6
-				echo "It appears that are missing more than 6 abilities for this character. If this is not an error, please ignore this message (and buy your skills!) -- otherwise, please restart EQ2Bot."
+			echo "It appears that are missing more than 6 abilities for this character. If this is not an error, please ignore this message (and buy your skills!) -- otherwise, please restart EQ2Bot."
 		else
-				echo "Much better -- abilities Set."
+			echo "Much better -- abilities Set."
 		echo "------------"
+	}
+	else
+	{
+		echo "Much better -- abilities Set."	
+		return
 	}
 }
 
