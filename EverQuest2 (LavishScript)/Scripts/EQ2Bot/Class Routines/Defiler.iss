@@ -83,7 +83,6 @@ function Class_Declaration()
 
 function Buff_Init()
 {
-
 	PreAction[1]:Set[BuffPower]
 	PreSpellRange[1,1]:Set[35]
 
@@ -571,7 +570,7 @@ function Combat_Routine(int xAction)
 			case AoE1
 			case AoE2
 			case AARabies
-				if ${AoEMode} && ${Mob.Count}>2
+				if ${AoEMode} && ${Mob.Count}>2 && ${OffenseMode}
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				break
 			case Mastery
@@ -580,7 +579,7 @@ function Combat_Routine(int xAction)
 				if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
 						break
 				;;;;;;;;;;;
-				if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)}
+				if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)} && ${OffenseMode}
 				{
 					Target ${KillTarget}
 					Me.Ability[Master's Smite]:Use
@@ -967,7 +966,7 @@ function CheckHeals()
 	if ${grpheal}>2
 		call GroupHeal
 
-	if ${Actor[${MainTankID}].Health}<90
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)}
 	{
 		if ${Me.ID}==${MainTankID}
 			call HealMe

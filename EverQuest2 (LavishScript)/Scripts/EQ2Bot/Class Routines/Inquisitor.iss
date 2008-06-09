@@ -820,7 +820,7 @@ function CheckHeals()
 	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 		call CastSpellRange 300 0 1 1 ${MainTankID}
 
-	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
+	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady} && ${Actor[${MainTankID}](exists)}
 		call CastSpellRange 4 0 0 0 ${MainTankID}
 
 	call CheckReactives
