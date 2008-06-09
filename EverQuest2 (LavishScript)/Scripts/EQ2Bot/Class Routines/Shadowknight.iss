@@ -84,84 +84,146 @@ function Buff_Init()
    PreAction[1]:Set[Armament_Target]
    PreSpellRange[1,1]:Set[30]
 
-   PreAction[2]:Set[Self_Buff]
+   PreAction[2]:Set[Self_Buff1]
    PreSpellRange[2,1]:Set[25]
-   PreSpellRange[2,2]:Set[26]
+   
+   PreAction[3]:Set[Self_Buff2]
+   PreSpellRange[3,1]:Set[26]  
 
-   PreAction[3]:Set[Group_Buff]
-   PreSpellRange[3,1]:Set[20]
-   PreSpellRange[3,2]:Set[21]
+   PreAction[4]:Set[Group_Buff1]
+   PreSpellRange[4,1]:Set[20]
 
-   PreAction[4]:Set[Tactics_Target]
-   PreSpellRange[4,1]:Set[31]
+   PreAction[5]:Set[Group_Buff2]
+   PreSpellRange[5,1]:Set[21]
+
+   PreAction[6]:Set[Tactics_Target]
+   PreSpellRange[6,1]:Set[31]
+   
+   PreAction[7]:Set[OffensiveMode]
+   PreSpellRange[7,1]:Set[290]
+   
+   PreAction[8]:Set[DefensiveMode]
+   PreSpellRange[8,1]:Set[295]      
 
 }
 
 function Combat_Init()
 {
-   Action[1]:Set[AoE_Taunt]
-   SpellRange[1,1]:Set[170]
-
+   Action[1]:Set[AA_Swiftaxe]
+   MobHealth[1,1]:Set[1]
+   MobHealth[1,2]:Set[100]
+   SpellRange[1,1]:Set[381]
+   
    Action[2]:Set[Taunt]
    SpellRange[2,1]:Set[160]
+   
+   Action[3]:Set[AoE_Taunt]
+   SpellRange[3,1]:Set[170]
 
-   Action[3]:Set[AA_Swiftaxe]
-   MobHealth[3,1]:Set[1]
-   MobHealth[3,2]:Set[100]
-   SpellRange[3,1]:Set[381]
-
-   Action[4]:Set[Melee_Attack]
-   Power[4,1]:Set[5]
-   Power[4,2]:Set[100]
-   SpellRange[4,1]:Set[150]
-   SpellRange[4,2]:Set[151]
-   SpellRange[4,3]:Set[152]
-   SpellRange[4,4]:Set[153]
-   SpellRange[4,5]:Set[154]
-
-   Action[5]:Set[Melee_Nuke]
+   Action[4]:Set[AA_Legionnaire_Smite]
+   
+   ;; nuke + dot
+   Action[5]:Set[DDAttack_1]
    Power[5,1]:Set[5]
    Power[5,2]:Set[100]
    SpellRange[5,1]:Set[60]
-   SpellRange[5,2]:Set[61]
-   SpellRange[5,3]:Set[62]
-   SpellRange[5,4]:Set[63]
-
-   Action[6]:Set[Mist]
-   MobHealth[6,1]:Set[50]
-   MobHealth[6,2]:Set[100]
+   
+   Action[6]:Set[PBAoE_1]
    Power[6,1]:Set[20]
    Power[6,2]:Set[100]
-   SpellRange[6,1]:Set[55]
-
-   Action[7]:Set[PBAoE]
+   SpellRange[6,1]:Set[96]
+   
+   Action[7]:Set[PBAoE_2]
    Power[7,1]:Set[20]
    Power[7,2]:Set[100]
    SpellRange[7,1]:Set[95]
-   SpellRange[7,2]:Set[96]
-   SpellRange[7,3]:Set[97]
-   SpellRange[7,4]:Set[98]
-   SpellRange[7,5]:Set[99]
-
-   Action[8]:Set[Damage_Debuff]
-   MobHealth[8,1]:Set[5]
-   MobHealth[8,2]:Set[100]
+   
+   ;; Level 35 or higher
+   Action[8]:Set[PBAoE_3]
    Power[8,1]:Set[20]
    Power[8,2]:Set[100]
-   SpellRange[8,1]:Set[80]
-   SpellRange[8,2]:Set[81]
-
-   Action[9]:Set[Shield_Attack]
-   Power[9,1]:Set[5]
+   SpellRange[8,1]:Set[97]   
+   
+   ;; Level 55 or higher
+   Action[9]:Set[PBAoE_4]
+   Power[9,1]:Set[20]
    Power[9,2]:Set[100]
-   SpellRange[9,1]:Set[240]
+   SpellRange[9,1]:Set[98]   
+   
+   ;; Level 65 or higher
+   Action[10]:Set[PBAoE_5]
+   Power[10,1]:Set[20]
+   Power[10,2]:Set[100]
+   SpellRange[10,1]:Set[99]   
+    
+   ;; nuke + lifetap
+   Action[11]:Set[DDAttack_2]
+   Power[11,1]:Set[5]
+   Power[11,2]:Set[100]
+   SpellRange[11,1]:Set[153]
+  
+   ;; nuke + dot 
+   Action[12]:Set[DDAttack_3]
+   Power[12,1]:Set[5]
+   Power[12,2]:Set[100]
+   SpellRange[12,1]:Set[150]
+   
+    ;; Nuke + wis debuff
+   Action[13]:Set[DDAttack_4]
+   Power[13,1]:Set[5]
+   Power[13,2]:Set[100]
+   SpellRange[13,1]:Set[152]
 
-   Action[10]:Set[Pet]
-   MobHealth[10,1]:Set[50]
-   MobHealth[10,2]:Set[100]
-   SpellRange[10,1]:Set[45]
+   ;; Nuke + damage on termination
+   Action[14]:Set[DDAttack_5]
+   Power[14,1]:Set[5]
+   Power[14,2]:Set[100]
+   SpellRange[14,1]:Set[61]
+   
+   ;; "Boot" (knockdown)
+   Action[15]:Set[DDAttack_6]
+   Power[15,1]:Set[5]
+   Power[15,2]:Set[100]
+   SpellRange[15,1]:Set[151]
+   
+   ;; Pure Nuke
+   Action[16]:Set[DDAttack_7]
+   Power[16,1]:Set[5]
+   Power[16,2]:Set[100]
+   SpellRange[16,1]:Set[62]   
+   
+   ;; Level 40 and higher
+   Action[17]:Set[DDAttack_8]
+   Power[17,1]:Set[5]
+   Power[17,2]:Set[100]
+   SpellRange[17,1]:Set[154]      
 
-   Action[11]:Set[ThermalShocker]
+   ;; NOTE:  "63" is Harm touch
+    
+   ; Level 50+
+   Action[18]:Set[Mist]
+   MobHealth[18,1]:Set[50]
+   MobHealth[18,2]:Set[100]
+   Power[18,1]:Set[20]
+   Power[18,2]:Set[100]
+   SpellRange[18,1]:Set[55]
+
+   Action[19]:Set[Damage_Debuff]
+   MobHealth[19,1]:Set[5]
+   MobHealth[19,2]:Set[100]
+   Power[19,1]:Set[20]
+   Power[19,2]:Set[100]
+   SpellRange[19,1]:Set[81]
+
+   Action[20]:Set[Shield_Attack]
+   Power[20,1]:Set[5]
+   Power[20,2]:Set[100]
+   SpellRange[20,1]:Set[240]
+
+   Action[21]:Set[Pet]
+   MobHealth[21,1]:Set[50]
+   MobHealth[21,2]:Set[100]
+   SpellRange[21,1]:Set[45]
 
 }
 
@@ -207,13 +269,53 @@ function Buff_Routine(int xAction)
 			}
 			break
 
-		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 1
+		case OffensiveMode
+		    if ${OffensiveMode}
+		    {
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+		    }
+		    else
+		    {
+    			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    		        Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+		    }
 			break
 
-		case Group_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 1
+		case DefensiveMode
+		    if ${DefensiveMode}
+		    {
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+		    }
+		    else
+		    {
+    			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    		        Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+		    }
 			break
+
+		case Self_Buff1
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+			break
+
+		case Self_Buff2
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+			break
+
+
+		case Group_Buff1
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		        call CastSpellRange ${PreSpellRange[${xAction},1]}
+			break
+			
+		case Group_Buff2
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		        call CastSpellRange ${PreSpellRange[${xAction},1]}	
+			break			
+
 
 		case Tactics_Target
 			BuffTarget:Set[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -227,10 +329,8 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 1
 			}
 			break
-
 		Default
-			xAction:Set[40]
-			break
+			return BuffComplete
 	}
 
 }
@@ -243,65 +343,130 @@ function Combat_Routine(int xAction)
 	{
 		objHeroicOp:DoHO
 	}
-
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+    
+    if ${StartHO}
+    {
+    	if !${EQ2.HOWindowActive}
+    	{
+    		call CastSpellRange 303
+    	}
+    }
+    
+	;; Draw Strength (Always cast this when it is ready!
+	if !${Me.Maintained[${SpellType[80]}](exists)}
 	{
-		call CastSpellRange 303
-	}
+    	if ${Me.Ability[${SpellType[80]}](exists)}
+    	{
+    	    if (${Me.Ability[${SpellType[80]}].IsReady})
+    		    call CastSpellRange 80 0 0 0 ${KillTarget}
+    	}   
+    } 
 
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
 	call UseCrystallizedSpirit 60
 
-	if ${Me.ToActor.Health}<70
+    call CheckGroupAggro
+
+	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
+	switch ${Action[${xAction}]}
 	{
-		call CastSpellRange 7
-	}
+		case Taunt
+		case AoE_Taunt
+			if ${TauntMode}
+			{
+    			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
+			
+        case DDAttack_1
+        case DDAttack_2
+        case DDAttack_3
+        case DDAttack_4
+        case DDAttack_5
+        case DDAttack_6
+        case DDAttack_7
+        case DDAttack_8
+        case PBAoE_1
+        case PBAoE_2
+            call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+            if ${Return.Equal[OK]}
+            {
+    			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
+			
+		case AA_Legionnaire_Smite
+		    if (${Me.Ability["Legionnaire's Smite"](exists)})
+		    {
+    			if ${Me.Ability["Legionnaire's Smite"].IsReady}
+    			    call CastSpellRange "Legionnaire's Smite" 0 0 0 ${KillTarget}		
+    		}    
+        
+        case PBAoE_3
+            if ${Me.Level} <= 35 && ${OffensiveMode}
+            {
+                call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+                if ${Return.Equal[OK]}
+                {
+        			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+    			}
+			}
+			break
+        
+        case PBAoE_4
+            if ${Me.Level} <= 55 && ${OffensiveMode}
+            {
+                call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+                if ${Return.Equal[OK]}
+                {
+        			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+    			}
+			}
+			break  
 
-	;echo in combat
-	if ${FullAutoMode}
-	{
-
-		switch ${Action[${xAction}]}
-		{
-
-			case Taunt
-				if ${TauntMode}
+        case PBAoE_5
+            if ${Me.Level} <= 65 && ${OffensiveMode}
+            {
+                call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+                if ${Return.Equal[OK]}
+                {
+        			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+    			}
+			}
+			break  
+			
+			
+		case Damage_Debuff
+			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+			if ${Return.Equal[OK]}
+			{
+				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1
 				}
-				break
-
-
-			case AoE_Taunt
-				if ${TauntMode}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-				}
-				break
-
-			case Damage_Debuff
-				if ${OffensiveMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1
-						}
-					}
-				}
-				break
-
-			case Pet
+			}
+			break
+			
+		case Pet
+		    if (${PetMode})
+		    {
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]} && ${PetMode}
+				if ${Return.Equal[OK]}
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				}
-				break
-			case Mist
+			}
+			break
+			
+		case Mist
+			if ${Me.Level} >= 50
+			{
 				if ${Mob.Count}>1
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
@@ -310,73 +475,32 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
-				break
-			case PBAoE
-				if ${PBAoEMode} && ${Mob.Count}>1
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0 ${KillTarget}
-					}
-				}
-				break
-			case Melee_Attack
-				if ${OffensiveMode}
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},5]} 1 0 ${KillTarget} 0 0 1
-					}
-				}
-				break
+			}
+			break
 
-			case Shield_Attack
-				if ${OffensiveMode}
+		case Shield_Attack
+			If ${Me.Equipment[Secondary].Type.Equal[Shield]}
+			{
+				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					If ${Me.Equipment[Secondary].Type.Equal[Shield]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-						}
-					}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
-				break
+			}
+			break
 
-			case ThermalShocker
-				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
+		case AA_Swiftaxe
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				}
-				break
-
-			case Melee_Nuke
-				if ${OffensiveMode}
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},4]} 1 0 ${KillTarget}
-					}
-				}
-				break
-			case AA_Swiftaxe
-				if ${OffensiveMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-					}
-				}
-				break
-			case default
-				xAction:Set[40]
-				break
-		}
+			}
+			break
+		default
+			return CombatComplete
 	}
 }
 
@@ -390,6 +514,44 @@ function Post_Combat_Routine(int xAction)
 	}
 }
 
+function CheckGroupAggro()
+{
+    if !${Me.Ability[${SpellType[270]}].IsReady} && !${Me.Ability[${SpellType[7]}].IsReady}
+        return
+    
+	variable int Counter = 1
+
+	EQ2:CreateCustomActorArray[byDist,10]   
+    
+	do
+	{
+	    if ${CustomActor[${Counter}].Type.Equal[NPC]}
+	    {
+	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
+	        {
+	            if (${Me.Group[${CustomActor[${Counter}].Target.Name}](exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
+	            {
+	                if ${Me.Ability[${SpellType[270]}].IsReady}
+	                {
+	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
+	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID}
+	                }            
+	                if !${Me.Maintained[${SpellType[7]}](exists)}
+	                {
+    	                if ${Me.Ability[${SpellType[7]}].IsReady}
+    	                {
+    	                    echo "EQ2Bot-DEBUG: Casting 'Infernal Pact' (line) on ${CustomActor[${Counter}].Target}"
+    	                    call CastSpellRange 7 0 0 0 ${CustomActor[${Counter}].Target.ID}
+    	                }
+    	            }
+	                return
+	            }
+	        }
+	    }
+	}
+	while ${Counter:Inc}<=${EQ2.CustomActorArraySize}
+}
+
 function Have_Aggro()
 {
 
@@ -397,24 +559,27 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${FullAutoMode} && ${Me.ToActor.Power}>5
-	{
-		if ${TauntMode}
-		{
-			;intercept damage on the person now with agro
-			call CastSpellRange 7 0 1 0 ${mobid} 0 0 1
-			call CastSpellRange 270 0 1 0 ${mobid} 0 0 1
-			call CastSpellRange 160 0 1 0 ${mobid} 0 0 1
-
-
-
-			;use rescue if new agro target is under 65 health
-			if ${Me.ToActor.Target.Target.Health}<65
-			{
-				call CastSpellRange 320 0 1 0 ${mobid} 0 0 1
-			}
-		}
-	}
+    if ${MainTank}
+    {
+    	if ${Me.ToActor.Power}>5
+    	{
+    		if ${TauntMode}
+    		{
+    			;intercept damage on the person now with agro
+    			call CastSpellRange 7 0 1 0 ${mobid} 0 0 1
+    			call CastSpellRange 270 0 1 0 ${mobid} 0 0 1
+    			call CastSpellRange 160 0 1 0 ${mobid} 0 0 1
+    
+    
+    
+    			;use rescue if new agro target is under 65 health
+    			if ${Me.ToActor.Target.Target.Health}<65
+    			{
+    				call CastSpellRange 320 0 1 0 ${mobid} 0 0 1
+    			}
+    		}
+    	}
+    }
 }
 
 function MA_Lost_Aggro()

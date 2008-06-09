@@ -479,7 +479,6 @@ function Buff_Routine(int xAction)
 			break			
 		default
 			return BuffComplete
-			break
 	}
 }
 
@@ -792,7 +791,6 @@ function Combat_Routine(int xAction)
             
 		default
 			return CombatComplete
-			break
 	}
 }
 
@@ -808,7 +806,6 @@ function Post_Combat_Routine(int xAction)
 			break
 		default
 			return PostCombatRoutineComplete
-			break
 	}
 }
 
