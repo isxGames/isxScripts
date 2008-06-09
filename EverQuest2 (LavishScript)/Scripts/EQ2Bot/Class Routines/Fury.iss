@@ -1076,7 +1076,7 @@ function CheckHeals()
 	if ${grpheal}>2
 		call GroupHeal
 
-	if ${Actor[${MainTankID}].Health}<90
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)}
 	{
 		if ${Me.ID}==${MainTankID}
 			call HealMe
