@@ -804,7 +804,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 					{
                         if !${Actor[${targettobuff}](exists)}
                             return -1
-					         
+
                         if ${Actor[${targettobuff}].Distance}>35
                             return -1
 
@@ -1682,13 +1682,13 @@ function Pull(string npcclass)
 	    ThisActorID:Set[${CustomActor[${tcount}].ID}]
 	    ThisActorTargetID:Set[${CustomActor[${tcount}].Target.ID}]
 
-		if (${TempDoNotPullList.Element[${ThisActorID}](exists)})
+		if (${TempDoNotPullList.Element[${ThisActorID}](exists)} && ${Actor[${ThisActorID}].Target.ID}!=${Me.ID})
 		{
 		    ;echo "DEBUG: Actor (ID: ${actorid}) is in the TempDoNotPullList -- skipping..."
 			continue
 		}
 
-		if (${PullOnlySoloMobs} && !${CustomActor[${tcount}].IsSolo})
+		if (${IgnoreHeroic} && !${CustomActor[${tcount}].IsSolo})
 		    continue
 
 		if ${Mob.ValidActor[${ThisActorID}]}
@@ -3642,7 +3642,7 @@ objectdef EQ2BotObj
 		LootAll:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Accept Loot Automatically?,TRUE]}]
 		LootMethod:Set[${SettingXML[${charfile}].Set[General Settings].GetString[LootMethod,Accept]}]
 		AutoPull:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Pull,FALSE]}]
-		PullOnlySoloMobs:Set[${SettingXML[${charfile}].Set[General Settings].GetString[PullOnlySoloMobs,TRUE]}]
+		PullOnlySoloMobs:Set[${SettingXML[${charfile}].Set[General Settings].GetString[PullOnlySoloMobs,FALSE]}]
 		PullSpell:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What to use when PULLING?,SPELL]}]
 		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to PULL from?,15]}]
 		PullWithBow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Pull with Bow (Ranged Attack)?,FALSE]}]
@@ -4066,7 +4066,7 @@ function CheckAbilities(string class)
 	variable string spellname
 	variable int MissingAbilitiesCount
 
-	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]	
+	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
 	do
 	{
 		tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
@@ -4114,7 +4114,7 @@ function CheckAbilities(string class)
 		wait 5
 		EQ2Execute /toggleknowledge
 		wait 5
-		EQ2Execute /toggleknowledge			
+		EQ2Execute /toggleknowledge
 		MissingAbilitiesCount:Set[0]
 		tempvar:Set[1]
 
@@ -4153,10 +4153,10 @@ function CheckAbilities(string class)
 	}
 	else
 	{
-		echo "Much better -- abilities Set."	
+		echo "Much better -- abilities Set."
 		return
 	}
-		
+
 	if (${MissingAbilitiesCount} > 6 && ${Me.Level} >= 10)
 	{
 		echo "------------"
@@ -4164,7 +4164,7 @@ function CheckAbilities(string class)
 		wait 20
 		EQ2Execute /toggleknowledge
 		wait 20
-		EQ2Execute /toggleknowledge			
+		EQ2Execute /toggleknowledge
 		MissingAbilitiesCount:Set[0]
 		tempvar:Set[1]
 
@@ -4200,13 +4200,13 @@ function CheckAbilities(string class)
     		}
 		}
 		while ${tempvar:Inc}<=${keycount}
-	}	
+	}
 	else
 	{
-		echo "Much better -- abilities Set."	
+		echo "Much better -- abilities Set."
 		return
 	}
-		
+
 	if (${MissingAbilitiesCount} > 6 && ${Me.Level} >= 10)
 	{
 		echo "------------"
@@ -4214,7 +4214,7 @@ function CheckAbilities(string class)
 		wait 30
 		EQ2Execute /toggleknowledge
 		wait 30
-		EQ2Execute /toggleknowledge			
+		EQ2Execute /toggleknowledge
 		MissingAbilitiesCount:Set[0]
 		tempvar:Set[1]
 
@@ -4261,7 +4261,7 @@ function CheckAbilities(string class)
 	}
 	else
 	{
-		echo "Much better -- abilities Set."	
+		echo "Much better -- abilities Set."
 		return
 	}
 }
