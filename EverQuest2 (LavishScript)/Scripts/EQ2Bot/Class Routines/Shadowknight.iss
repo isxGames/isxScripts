@@ -59,8 +59,8 @@ function Class_Declaration()
 
 	FullAutoMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Full Auto Mode,FALSE]}]
 	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Taunt Spells,TRUE]}]
-	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
-	OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
+	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDefensiveStance,TRUE]}]
+	OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseOffensiveStance,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
@@ -405,7 +405,7 @@ function Combat_Routine(int xAction)
     		}    
         
         case PBAoE_3
-            if ${Me.Level} <= 35 && ${OffensiveMode}
+            if ${Me.Level} >= 35
             {
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
@@ -417,7 +417,7 @@ function Combat_Routine(int xAction)
 			break
         
         case PBAoE_4
-            if ${Me.Level} <= 55 && ${OffensiveMode}
+            if ${Me.Level} >= 55
             {
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
@@ -429,7 +429,7 @@ function Combat_Routine(int xAction)
 			break  
 
         case PBAoE_5
-            if ${Me.Level} <= 65 && ${OffensiveMode}
+            if ${Me.Level} >= 65
             {
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
