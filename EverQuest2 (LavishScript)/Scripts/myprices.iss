@@ -1078,7 +1078,7 @@ function BrokerSearch(string lookup)
 			do
 			{
 				; check that the items name being looked at is an exact match and not just a partial match
-				if "${lookup.Equal["${Vendor.Broker[${CurrentItem}]}"]}"
+				if ${lookup.Equal[${Vendor.Broker[${CurrentItem}]}]}
 				{
 					TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
 					stopsearch:Set[TRUE]
