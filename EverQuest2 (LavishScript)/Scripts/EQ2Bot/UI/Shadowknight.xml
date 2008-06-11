@@ -10,15 +10,15 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[OffensiveMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Offensive Spells",TRUE]:Save
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseOffensiveStance",TRUE]:Save
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[OffensiveMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Offensive Spells",FALSE]:Save
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseOffensiveStance",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseOffensiveStance]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='DefensiveMode' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
@@ -30,15 +30,15 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[DefensiveMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Defensive Spells",TRUE]:Save
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseDefensiveStance",TRUE]:Save
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[DefensiveMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Defensive Spells",FALSE]:Save
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseDefensiveStance",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Defensive Spells]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseDefensiveStance]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
