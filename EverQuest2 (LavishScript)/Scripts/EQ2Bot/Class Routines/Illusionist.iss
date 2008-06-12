@@ -225,6 +225,7 @@ function Buff_Routine(int xAction)
    
     call CheckHeals
     call RefreshPower
+    call CheckSKFD
 
 	ExecuteAtom CheckStuck
 
@@ -520,6 +521,8 @@ function Combat_Routine(int xAction)
 
     if !${UltraDPSMode}
     	call RefreshPower
+    	
+    call CheckSKFD
 
 	;; Chronosiphoning (Always cast this when it is ready!
 	if ${Me.Ability[${SpellType[385]}](exists)}
@@ -1083,3 +1086,20 @@ function Mezmerise_Targets()
 	}
 }
 
+function CheckSKFD()
+{
+    if !${Me.ToActor.IsFD}
+        return
+         
+    if !${Actor[exactname,${MainTankPC}](exists)}
+        return
+    
+    if ${Actor[exactname,${MainTankPC}].IsDead}
+        return
+        
+    if ${Me.ToActor.Health} < 20
+        return
+            
+    call RemoveSKFD "Illusionist::CheckSKFD"
+    return
+}

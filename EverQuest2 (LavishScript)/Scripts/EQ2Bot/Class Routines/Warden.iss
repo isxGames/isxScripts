@@ -627,6 +627,7 @@ function CheckHeals()
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
+	declare MainTankExists bool local 1
 
 	grpcnt:Set[${Me.GroupCount}]
 
@@ -635,14 +636,25 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
+    if !${Actor[${MainTankID}](exists)}
+    {
+        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"    
+        MainTankExists:Set[FALSE]  
+    }
+    else
+        MainTankExists:Set[TRUE]
+
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;Res the MT if they are dead
-	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
-		call CastSpellRange 300 0 1 1 ${MainTankID}
-
+	if (${MainTankExists})
+	{
+    	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+    		call CastSpellRange 300 0 1 1 ${MainTankID}
+    }
+    
 	call CheckHOTs
 
 	if ${EpicMode} && ${Me.InCombat} && ${PetMode}
@@ -680,18 +692,25 @@ function CheckHeals()
 	if ${grpheal}>2
 		call GroupHeal
 
-	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)}
-	{
-		if ${Me.ID}==${MainTankID}
-			call HealMe
-		else
-			call HealMT ${MainTankID} ${MainTankInGroup}
-	}
-
-
-	;Check My health after MT
-	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<80
-		call HealMe
+    if (${MainTankExists})
+    {
+    	if ${Actor[${MainTankID}].Health}<90
+    	{
+    		if ${Me.ID}==${MainTankID}
+    			call HealMe
+    		else
+    			call HealMT ${MainTankID} ${MainTankInGroup}
+    	}
+    	
+    	;Check My health after MT
+	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+		    call HealMe
+    }
+    else
+    {
+        if ${Me.ToActor.Health}<80
+            call HealMe
+    }
 
 	;now lets heal individual groupmembers if needed
 	if ${lowest}
@@ -712,36 +731,39 @@ function CheckHeals()
 
 
 	;RAID HEALS - Only check if in raid, raid heal mode on, maintank is green, I'm above 50, and a direct heal is available.  Otherwise don't waste time.
-	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ${Actor[${MainTankID}].Health}>70 && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
+	if (${MainTankExists})
 	{
-		do
-		{
-			${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
-			{
-			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
-				{
-				    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
+    	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ${Actor[${MainTankID}].Health}>70 && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
+    	{
+    		do
+    		{
+    			${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
+    			{
+    			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
     				{
-    					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
-    						raidlowest:Set[${temph2}]
+    				    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
+        				{
+        					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
+        						raidlowest:Set[${temph2}]
+        				}
     				}
-				}
-			}
-		}
-		while ${temph2:Inc}<=24
-
-    if (${Me.Raid[${raidlowest}].ToActor(exists)})
-    {
-  		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
-  		{
-  			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
-  			if ${Me.Ability[${SpellType[4]}].IsReady}
-  				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
-  			elseif ${Me.Ability[${SpellType[1]}].IsReady}
-  				call CastSpellRange 1 0 0 0 ${Me.Raid[${raidlowest}].ID}
-  		}
-  	}
-	}
+    			}
+    		}
+    		while ${temph2:Inc}<=24
+    
+            if (${Me.Raid[${raidlowest}].ToActor(exists)})
+            {
+          		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
+          		{
+          			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
+          			if ${Me.Ability[${SpellType[4]}].IsReady}
+          				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
+          			elseif ${Me.Ability[${SpellType[1]}].IsReady}
+          				call CastSpellRange 1 0 0 0 ${Me.Raid[${raidlowest}].ID}
+          		}
+          	}
+    	}
+    }
 
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode} && !${Me.InRaid}

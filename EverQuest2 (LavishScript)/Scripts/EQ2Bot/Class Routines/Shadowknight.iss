@@ -368,6 +368,7 @@ function Combat_Routine(int xAction)
     call CheckGroupAggro
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
+	
 	switch ${Action[${xAction}]}
 	{
 		case Taunt
@@ -392,7 +393,7 @@ function Combat_Routine(int xAction)
             call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
             if ${Return.Equal[OK]}
             {
-    			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+                if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
     			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
@@ -452,18 +453,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-			
-		case Pet
-		    if (${PetMode})
-		    {
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
-			}
-			break
-			
+		
 		case Mist
 			if ${Me.Level} >= 50
 			{
@@ -499,6 +489,19 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
+			
+		case Pet
+		    if (${PetMode})
+		    {
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+			}
+			;; "Pet" is the last thing in the routine ...so, return CombatComplete
+			return CombatComplete		
+			
 		default
 			return CombatComplete
 	}

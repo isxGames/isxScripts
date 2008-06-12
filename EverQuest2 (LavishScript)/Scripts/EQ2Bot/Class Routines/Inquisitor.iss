@@ -804,6 +804,7 @@ function CheckHeals()
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
+	declare MainTankExists bool local 1
 
 	grpcnt:Set[${Me.GroupCount}]
 
@@ -812,16 +813,28 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
+    if !${Actor[${MainTankID}](exists)}
+    {
+        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"    
+        MainTankExists:Set[FALSE]  
+    }
+    else
+        MainTankExists:Set[TRUE]
+
+
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;Res the MT if they are dead
-	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
-		call CastSpellRange 300 0 1 1 ${MainTankID}
-
-	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady} && ${Actor[${MainTankID}](exists)}
-		call CastSpellRange 4 0 0 0 ${MainTankID}
+	if (${MainTankExists})
+	{
+    	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+    		call CastSpellRange 300 0 1 1 ${MainTankID}
+    		
+    	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
+    		call CastSpellRange 4 0 0 0 ${MainTankID}    		
+    }
 
 	call CheckReactives
 
@@ -867,9 +880,25 @@ function CheckHeals()
 			call HealMT ${MainTankID} ${MainTankInGroup}
 	}
 
-	;Check My health after MT
-	if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<80
-		call HealMe
+    if (${MainTankExists})
+    {
+    	if ${Actor[${MainTankID}].Health}<90
+    	{
+    		if ${Me.ID}==${MainTankID}
+    			call HealMe
+    		else
+    			call HealMT ${MainTankID} ${MainTankInGroup}
+    	}
+    	
+    	;Check My health after MT
+	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+		    call HealMe
+    }
+    else
+    {
+        if ${Me.ToActor.Health}<80
+            call HealMe
+    }
 
 	;now lets heal individual groupmembers if needed
 	if ${lowest}
