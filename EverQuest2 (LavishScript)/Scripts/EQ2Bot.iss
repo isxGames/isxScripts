@@ -4072,24 +4072,23 @@ function CheckAbilities(string class)
 		tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
 
 		templvl:Set[${Arg[1,${tempnme}]}]
-
+		
 		if ${templvl} > ${Me.Level}
 			continue
 
 		spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
+		
+		;echo "DEBUG-CheckAbilities: spellname: ${spellname} -- tempnme: ${tempnme} -- templvl: ${templvl}  (Me.Level: ${Me.Level})"
 		if (${spellname.Length})
 		{
     		if !${Me.Ability[${spellname}](exists)}
     		{
-    			if !${Me.Ability[${spellname}](exists)}
-    			{
-    				; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
-    				if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
-    				{
-    					echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-    					MissingAbilitiesCount:Inc
-    			    }
-    			}
+				; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
+				if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+				{
+					echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+					MissingAbilitiesCount:Inc
+			    }
     			else
     			{
     			    ;echo "DEBUG: tempnme: ${tempnme}"
@@ -4097,13 +4096,13 @@ function CheckAbilities(string class)
     				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
     			}
     		}
+    		else
+    		{
+    		    ;echo "DEBUG: tempnme: ${tempnme}"
+    			;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+    			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+    		}    		
     	}
-		else
-		{
-		    ;echo "DEBUG: tempnme: ${tempnme}"
-			;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
-			SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
-		}
 	}
 	while ${tempvar:Inc}<=${keycount}
 
@@ -4132,18 +4131,15 @@ function CheckAbilities(string class)
 			{
     			if !${Me.Ability[${spellname}](exists)}
     			{
-    				if !${Me.Ability[${spellname}](exists)}
-    				{
-    					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-    					; By this point the list should be accurate
-    					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
-    					{
-    						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-    						MissingAbilitiesCount:Inc
-    				    }
-    				}
-    				else
-    					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+					; By this point the list should be accurate
+					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					{
+						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+						MissingAbilitiesCount:Inc
+				    }
+				    else
+					    SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
     			}
     			else
     				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
@@ -4153,7 +4149,7 @@ function CheckAbilities(string class)
 	}
 	else
 	{
-		echo "Much better -- abilities Set."
+		echo "Abilities Set."
 		return
 	}
 
@@ -4182,18 +4178,15 @@ function CheckAbilities(string class)
 			{
     			if !${Me.Ability[${spellname}](exists)}
     			{
-    				if !${Me.Ability[${spellname}](exists)}
-    				{
-    					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-    					; By this point the list should be accurate
-    					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
-    					{
-    						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-    						MissingAbilitiesCount:Inc
-    				    }
-    				}
-    				else
-    					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+					; By this point the list should be accurate
+					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					{
+						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+						MissingAbilitiesCount:Inc
+				    }
+				    else
+					    SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
     			}
     			else
     				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
@@ -4232,18 +4225,15 @@ function CheckAbilities(string class)
 			{
     			if !${Me.Ability[${spellname}](exists)}
     			{
-    				if !${Me.Ability[${spellname}](exists)}
-    				{
-    					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-    					; By this point the list should be accurate
-    					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
-    					{
-    						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-    						MissingAbilitiesCount:Inc
-    				    }
-    				}
-    				else
-    					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+					; By this point the list should be accurate
+					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					{
+						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+						MissingAbilitiesCount:Inc
+				    }
+				    else
+					    SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
     			}
     			else
     				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
