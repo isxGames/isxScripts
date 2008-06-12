@@ -388,8 +388,6 @@ function Combat_Routine(int xAction)
         case DDAttack_6
         case DDAttack_7
         case DDAttack_8
-        case PBAoE_1
-        case PBAoE_2
             call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
             if ${Return.Equal[OK]}
             {
@@ -397,6 +395,23 @@ function Combat_Routine(int xAction)
     			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
+			
+			
+        case PBAoE_1
+        case PBAoE_2
+            if ${Actor[${KillTarget}].IsSolo}
+            {
+                EQ2:CreateCustomActorArray[byDist,5,npc]   
+                if ${EQ2.CustomActorArraySize} < 2
+                    break
+            }
+            call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+            if ${Return.Equal[OK]}
+            {
+                if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break			
 			
 		case AA_Legionnaire_Smite
 		    if (${Me.Ability["Legionnaire's Smite"](exists)})
@@ -408,6 +423,12 @@ function Combat_Routine(int xAction)
         case PBAoE_3
             if ${Me.Level} >= 35
             {
+                if ${Actor[${KillTarget}].IsSolo}
+                {
+                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    if ${EQ2.CustomActorArraySize} < 2
+                        break
+                }                
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
                 {
@@ -420,6 +441,12 @@ function Combat_Routine(int xAction)
         case PBAoE_4
             if ${Me.Level} >= 55
             {
+                if ${Actor[${KillTarget}].IsSolo}
+                {
+                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    if ${EQ2.CustomActorArraySize} < 2
+                        break
+                }                    
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
                 {
@@ -432,6 +459,12 @@ function Combat_Routine(int xAction)
         case PBAoE_5
             if ${Me.Level} >= 65
             {
+                if ${Actor[${KillTarget}].IsSolo}
+                {
+                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    if ${EQ2.CustomActorArraySize} < 2
+                        break
+                }                    
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
                 {
@@ -521,6 +554,7 @@ function CheckGroupAggro()
 {
     if !${Me.Ability[${SpellType[270]}].IsReady} && !${Me.Ability[${SpellType[7]}].IsReady}
         return
+        
     
 	variable int Counter = 1
 
@@ -530,7 +564,7 @@ function CheckGroupAggro()
 	{
 	    if ${CustomActor[${Counter}].Type.Equal[NPC]}
 	    {
-	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
+	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].IsSolo} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
 	        {
 	            if (${Me.Group[${CustomActor[${Counter}].Target.Name}](exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
 	            {
