@@ -103,6 +103,9 @@ variable(script) collection:int MezSpells
 ; Invis Spells
 variable(script) collection:int InvisSpells
 
+; SK FD Spells
+variable(script) collection:int SKFDSpells
+
 ;AutoFollow Variables
 variable bool AutoFollowMode=FALSE
 variable bool AutoFollowingMA=FALSE
@@ -184,6 +187,7 @@ function EQ2BotLib_Init()
 
 	call PopulateMezSpells
 	call PopulateInvisSpells
+	call PopulateSKFDSpells
 
 	AutoFollowLastSetTime:Set[0]
 
@@ -206,6 +210,49 @@ function PopulateInvisSpells()
     ;echo "DEBUG: ${InvisSpells.Used} spells were added to the InvisSpells collection."
 
     return ${InvisSpells.Used}
+}
+
+function PopulateSKFDSpells()
+{
+	variable int keycount
+	variable int iLevel=1
+	variable int iType = 0
+	variable string tempnme
+	variable int tempvar=1
+	variable string SpellName
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Shadowknight FD Spells
+	;;;;;
+	spellfile:Set[${mainpath}EQ2Bot/Spell List/Shadowknight.xml]
+	keycount:Set[${SettingXML[${spellfile}].Set[Shadowknight].Keys}]
+	do
+	{
+		tempnme:Set["${SettingXML[${spellfile}].Set[Shadowknight].Key[${tempvar}]}"]
+
+		iLevel:Set[${Arg[1,${tempnme}]}]
+		iType:Set[${Arg[2,${tempnme}]}]
+		SpellName:Set[${SettingXML[${spellfile}].Set[Shadowknight].GetString["${tempnme}"]}]
+
+		;echo "Debug: Processing Shadowknight Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+
+        switch ${iType}
+        {
+            case 330
+                ;echo "DEBUG: Shadowknight Spell '${SpellName}' (Level: ${iLevel} was added to the SKFDSpells collection"
+                SKFDSpells:Set[${SpellName},${iLevel}]
+                break
+
+            Default
+                break
+        }
+
+
+	}
+	while ${tempvar:Inc} <= ${keycount}
+    ;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
 }
 
 function PopulateMezSpells()
@@ -311,6 +358,24 @@ function AmIInvis(string param1)
     return FALSE
 }
 
+function RemoveSKFD(string parm1)
+{
+    variable int i = 1
+    Me:InitializeEffects
+    
+    do
+    {
+        if (${SKFDSpells.Element[${Me.Effect[${i}].Name}](exists)})
+        {
+            echo "DEBUG: I am feigning death due to a Shadowknight...cancelling.  (Called By: ${param1})"
+            Me.Effect[${i}]:Cancel
+        }
+    }
+    while ${i:Inc} <= ${Me.CountEffects}
+
+    return OK    
+}
+
 function CheckForMez(string param1)
 {
     if !${Target.IsRooted}
@@ -338,6 +403,7 @@ function CheckForMez(string param1)
 
     return FALSE
 }
+
 
 function CheckForStun()
 {
