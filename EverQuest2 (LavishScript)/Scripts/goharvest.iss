@@ -82,6 +82,7 @@ function harvestnode(int HID)
 		if ${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
 		{
 			call LOScircle ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+			Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
 		}
 		else
 		{
@@ -138,7 +139,6 @@ function checkPC(int HID)
 
 function LOScircle(float CX, float CY, float CZ)
 {
-	Echo checking alternative route to : ${CX} ${CY} ${CZ}
 	
 	; angle of the point on the circle
 	variable int circleangle=1
@@ -182,6 +182,6 @@ function LOScircle(float CX, float CY, float CZ)
 		circleangle:Set[1]
 	}
 	; increase the size of the circle
-	while ${cradius:Inc} <=20
+	while ${cradius:Inc} <=50
 	return STUCK
 }
