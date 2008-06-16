@@ -894,6 +894,9 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	    Me.Ability[id,1287322154]:Use
 	else
     	Me.Ability[${spell}]:Use
+    	
+    ; need a slight weight here for Me.CastingSpell to initiate
+    wait 1
 
 	if !${castwhilemoving}
 	{
