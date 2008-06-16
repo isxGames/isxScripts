@@ -152,7 +152,6 @@ function LOScircle(float CX, float CY, float CZ)
 	
 	do
 	{
-		Echo Circle Radius ${cradius}
 		do
 		{
 			; get the X,Z point on the circle
