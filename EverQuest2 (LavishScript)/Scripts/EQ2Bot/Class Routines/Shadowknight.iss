@@ -155,48 +155,50 @@ function Combat_Init()
    Power[10,1]:Set[20]
    Power[10,2]:Set[100]
    SpellRange[10,1]:Set[99]   
-    
-   ;; nuke + lifetap
-   Action[11]:Set[DDAttack_2]
-   Power[11,1]:Set[5]
-   Power[11,2]:Set[100]
-   SpellRange[11,1]:Set[153]
-  
-   ;; nuke + dot 
-   Action[12]:Set[DDAttack_3]
-   Power[12,1]:Set[5]
-   Power[12,2]:Set[100]
-   SpellRange[12,1]:Set[150]
-   
-    ;; Nuke + wis debuff
-   Action[13]:Set[DDAttack_4]
-   Power[13,1]:Set[5]
-   Power[13,2]:Set[100]
-   SpellRange[13,1]:Set[152]
-
-   ;; Nuke + damage on termination
-   Action[14]:Set[DDAttack_5]
-   Power[14,1]:Set[5]
-   Power[14,2]:Set[100]
-   SpellRange[14,1]:Set[61]
-   
-   ;; "Boot" (knockdown)
-   Action[15]:Set[DDAttack_6]
-   Power[15,1]:Set[5]
-   Power[15,2]:Set[100]
-   SpellRange[15,1]:Set[151]
-   
-   ;; Pure Nuke
-   Action[16]:Set[DDAttack_7]
-   Power[16,1]:Set[5]
-   Power[16,2]:Set[100]
-   SpellRange[16,1]:Set[62]   
    
    ;; Level 40 and higher
-   Action[17]:Set[DDAttack_8]
+   Action[11]:Set[DDAttack_8]
+   Power[11,1]:Set[5]
+   Power[11,2]:Set[100]
+   SpellRange[11,1]:Set[154]      
+    
+   ;; nuke + lifetap
+   Action[12]:Set[DDAttack_2]
+   Power[12,1]:Set[5]
+   Power[12,2]:Set[100]
+   SpellRange[12,1]:Set[153]
+  
+   ;; nuke + dot 
+   Action[13]:Set[DDAttack_3]
+   Power[13,1]:Set[5]
+   Power[13,2]:Set[100]
+   SpellRange[13,1]:Set[150]
+   
+    ;; Nuke + wis debuff
+   Action[14]:Set[DDAttack_4]
+   Power[14,1]:Set[5]
+   Power[14,2]:Set[100]
+   SpellRange[14,1]:Set[152]
+
+   ;; Nuke + damage on termination
+   Action[15]:Set[DDAttack_5]
+   Power[15,1]:Set[5]
+   Power[15,2]:Set[100]
+   SpellRange[15,1]:Set[61]
+   
+   ;; "Boot" (knockdown)
+   Action[16]:Set[DDAttack_6]
+   Power[16,1]:Set[5]
+   Power[16,2]:Set[100]
+   SpellRange[16,1]:Set[151]
+   
+   ;; Pure Nuke
+   Action[17]:Set[DDAttack_7]
    Power[17,1]:Set[5]
    Power[17,2]:Set[100]
-   SpellRange[17,1]:Set[154]      
+   SpellRange[17,1]:Set[62]   
+   
+   
 
    ;; NOTE:  "63" is Harm touch
     
@@ -365,7 +367,7 @@ function Combat_Routine(int xAction)
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
 	call UseCrystallizedSpirit 60
 
-    call CheckGroupAggro
+    call CheckGroupOrRaidAggro
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 	
@@ -550,9 +552,10 @@ function Post_Combat_Routine(int xAction)
 	}
 }
 
-function CheckGroupAggro()
+function CheckGroupOrRaidAggro()
 {
-    if !${Me.Ability[${SpellType[270]}].IsReady} && !${Me.Ability[${SpellType[7]}].IsReady}
+    
+    if !${Me.Ability[${SpellType[270]}].IsReady} && !${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Ability[${SpellType[160]}].IsReady}
         return
         
     
@@ -562,27 +565,91 @@ function CheckGroupAggro()
     
 	do
 	{
-	    if ${CustomActor[${Counter}].Type.Equal[NPC]}
+	    if (${CustomActor[${Counter}].Type.Find[NPC]} && !${CustomActor[${Counter}].IsSolo})
 	    {
-	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].IsSolo} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
+	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
 	        {
-	            if (${Me.Group[${CustomActor[${Counter}].Target.Name}](exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
+	            if ${Me.InRaid}
 	            {
-	                if ${Me.Ability[${SpellType[270]}].IsReady}
-	                {
-	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
-	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID}
-	                }            
-	                if !${Me.Maintained[${SpellType[7]}](exists)}
-	                {
-    	                if ${Me.Ability[${SpellType[7]}].IsReady}
-    	                {
-    	                    echo "EQ2Bot-DEBUG: Casting 'Infernal Pact' (line) on ${CustomActor[${Counter}].Target}"
-    	                    call CastSpellRange 7 0 0 0 ${CustomActor[${Counter}].Target.ID}
-    	                }
-    	            }
-	                return
+            	    if (${Me.Raid[${CustomActor[${Counter}].Target.Name}](exists)})
+            	    {
+        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
+        	            {
+        	                if ${Me.Group[${CustomActor[${Counter}].Target.Name}].ToActor.Health} < 60
+        	                {
+            	                if ${Me.Ability[${SpellType[320]}].IsReady}
+            	                {
+            	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
+            	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID}
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                }          	                
+        	                }        	                
+        	                if ${Me.Ability[${SpellType[270]}].IsReady}
+        	                {
+        	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
+        	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID}     	                    
+        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+        	                }  
+        	                if ${Me.Ability[${SpellType[160]}].IsReady}
+        	                {
+        	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
+        	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID}      	                    
+        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+        	                }            	                          
+        	                if !${Me.Maintained[${SpellType[7]}](exists)}
+        	                {
+            	                if ${Me.Ability[${SpellType[7]}].IsReady}
+            	                {
+            	                    echo "EQ2Bot-DEBUG: Casting 'Infernal Pact' (line) on ${CustomActor[${Counter}].Target}"
+            	                    call CastSpellRange 7 0 0 0 ${CustomActor[${Counter}].Target.ID}
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                }          	                
+            	            }
+        	                return
+        	            }
+    	            }    
 	            }
+	            else
+	            {
+            	    if (${Me.Group[${CustomActor[${Counter}].Target.Name}](exists)})
+            	    {
+            	        echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"
+        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
+        	            {
+        	                if ${Me.Group[${CustomActor[${Counter}].Target.Name}].ToActor.Health} < 60
+        	                {
+            	                if ${Me.Ability[${SpellType[320]}].IsReady}
+            	                {
+            	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
+            	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID}
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                }  
+        	                }
+        	                if ${Me.Ability[${SpellType[270]}].IsReady}
+        	                {
+        	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
+        	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID}     	                    
+        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+        	                }   
+        	                if ${Me.Ability[${SpellType[160]}].IsReady}
+        	                {
+        	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
+        	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID}    	  
+        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"                   
+        	                }         	                         
+        	                if !${Me.Maintained[${SpellType[7]}](exists)}
+        	                {
+            	                if ${Me.Ability[${SpellType[7]}].IsReady}
+            	                {
+            	                    echo "EQ2Bot-DEBUG: Casting 'Infernal Pact' (line) on ${CustomActor[${Counter}].Target}"
+            	                    call CastSpellRange 7 0 0 0 ${CustomActor[${Counter}].Target.ID}
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                }  	                
+            	            }
+        	                return
+        	            }
+    	            }
+    	        }
 	        }
 	    }
 	}
@@ -596,6 +663,9 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
+    ;; This is now handled in CheckGroupOrRaidAggro()
+    return
+    
     if ${MainTank}
     {
     	if ${Me.ToActor.Power}>5
