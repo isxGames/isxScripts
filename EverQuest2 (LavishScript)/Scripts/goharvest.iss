@@ -6,8 +6,18 @@ variable int harvestcount
 variable int harvestloop
 variable string actorname
 
+variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/EQ2Harvest/Harvest Config/"
+variable bool HarvestNode[7]
+variable string NodeName[7]
+variable string HarvestFile
+variable GoHarvestBot GoHarvest
+
+
 function main(int scan, string h0, string h1, string h2, string h3)
 {
+	GoHarvest:Init
+	GoHarvest:InitTriggersAndEvents
+	
 	if ${h3.Length} > 0
 	{
 		 call startharvest ${scan} "${h0} ${h1} ${h2} ${h3}"
@@ -58,9 +68,13 @@ function startharvest(int scan, string h1)
 						}
 					}
 				}
-				elseif ${CustomActor[${harvestloop}].Type.Equal[resource]} && !${actorname.Equal["!"]} && !${actorname.Equal["?"]} && !${actorname.Equal["NULL"]}
+				elseif ${CustomActor[${harvestloop}].Type.Equal[resource]}
 				{
-					call harvestnode ${CustomActor[${harvestloop}].ID} ${h0}
+					call checknode "${actorname}"
+					if ${Return}
+					{
+						call harvestnode ${CustomActor[${harvestloop}].ID} ${h0}
+					}
 				}
 			}
 			while ${harvestloop:Inc} <= ${harvestcount}
@@ -83,6 +97,12 @@ function harvestnode(int HID)
 		{
 			Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
 			call LOScircle ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+			call checkPC ${HID}
+			if ${Return}
+			{
+				return
+			}
+
 		}
 		else
 		{
@@ -91,7 +111,6 @@ function harvestnode(int HID)
 		}
 		if ${Return.Equal["STUCK"]}
 		{
-			Echo stuck
 			return STUCK
 		}
 		else 
@@ -159,8 +178,8 @@ function LOScircle(float CX, float CY, float CZ)
 			pz:Set[${Math.Calc[${cradius} * ${Math.Sin[${circleangle}]}]}]
 
 			; Add it to the character location to give the mid-loc
-			px:Set[${Math.Calc[${px}+${Me.X}]}]
-			pz:Set[${Math.Calc[${pz}+${Me.Z}]}]
+			px:Inc[${Me.X}]
+			pz:Inc[${Me.Z}]
 			
 			; check to see if the mid-loc being checked is not blocked also
 			
@@ -169,7 +188,7 @@ function LOScircle(float CX, float CY, float CZ)
 				; check to see if there is LOS from that mid-loc to the node
 				if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]}
 				{
-					call moveto ${px} ${pz} 5 0 3 1
+					call moveto ${px} ${pz} 5 1 3 1
 					waitframe
 					call moveto ${CX} ${CZ} 5 0 3 1
 					Return THERE
@@ -182,6 +201,91 @@ function LOScircle(float CX, float CY, float CZ)
 		circleangle:Set[1]
 	}
 	; increase the size of the circle
-	while ${cradius:Inc} <=50
+	while ${cradius:Inc} <=100
 	return STUCK
+}
+
+function checknode(actorname)
+{
+	variable int tempvar=1
+	do
+	{
+		if ${actorname.Equal[${NodeName[${tempvar}]}]}
+		{
+			Return TRUE
+		}
+	}
+	while ${tempvar:Inc} <=7
+	Return FALSE
+}
+
+objectdef GoHarvestBot
+{
+	method Init()
+	{
+		variable int tempvar
+		HarvestFile:Set[${ConfigPath}Harvest.xml]
+
+
+		tempvar:Set[1]
+		do
+		{
+			NodeName[${tempvar}]:Set[${SettingXML[${HarvestFile}].Set[${Zone.ShortName}].GetString[${tempvar}]}]
+			Echo ${NodeName[${tempvar}]}
+		}
+		while ${tempvar:Inc}<=7
+
+	}
+
+	method InitTriggersAndEvents()
+	{
+		Event[EQ2_onLootWindowAppeared]:AttachAtom[EQ2_onLootWindowAppeared]
+		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
+	}
+
+}
+
+
+atom(script) EQ2_onChoiceWindowAppeared()
+{
+    ;; if EQ2Bot is running, let IT handle this...
+    if (${Script[EQ2Bot](exists)})
+        return    
+    
+	if ${ChoiceWindow.Text.Find[No-Trade]}
+        ChoiceWindow:DoChoice1
+
+	return
+}
+
+atom(script) EQ2_onLootWindowAppeared(int ID)
+{    
+    ; deal with collectibles
+    if (${gNodeName.Equal[?]} || ${gNodeName.Equal[!]})
+        Harvest:CollectibleFound[${LootWindow[${ID}].Item[1].Name}] 
+    
+    ;; if EQ2Bot is running, let IT handle actual looting
+    if (${Script[EQ2Bot](exists)})
+        return
+    
+    
+    ;; Now do the actual looting
+    if ${LootWindow.Type.Equal[Lottery]}
+    {
+        LootWindow:RequestAll
+        return
+    }
+    elseif ${LootWindow.Type.Equal[Need Before Greed]}
+    {
+        LootWindow:SelectGreed
+        return
+    }
+    else
+    {
+        LootWindow:LootItem[1]
+        return
+    }
+    
+    
+    return    
 }
