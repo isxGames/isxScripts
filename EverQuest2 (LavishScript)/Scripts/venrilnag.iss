@@ -78,36 +78,32 @@ function CheckPower()
 
 function RaidCheck()
 {
+	declare raidcnt int local 1
+
 	if !${Me.InRaid}
 		return
 
 	if !${Actor[Venril](exists)} || ${Actor[Venril].Health}>=65
 		return
 
-	declare raidcnt int local 1
-
 	do
 	{
-		if ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}].Power}>60
+		if ${Me.Raid[${raidcnt}].ToActor(exists)} && ${Me.Raid[${raidcnt}].ToActor.Power}>60
 		{
 			eq2execute /ooc --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is over 60% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
 
 			call CheckDebuff
 			call CheckPower
-
-			;wait 0.3
+			wait 0.3
 		}
-		if ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}](exists)} && ${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}].Power}<=40 && !${Actor[pc,exactname,${Me.Raid[${raidcnt}].Name}].IsDead}
+		if ${Me.Raid[${raidcnt}].ToActor(exists)} && ${Me.Raid[${raidcnt}].ToActor.Power}<=40 && !${Me.Raid[${raidcnt}].ToActor.IsDead}
 		{
 			eq2execute /shout --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is over 60% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
 
 			call CheckDebuff
 			call CheckPower
-
-			;wait 0.3
+			wait 0.3
 		}
 	}
 	while ${raidcnt:Inc}<=24
-
 }
-
