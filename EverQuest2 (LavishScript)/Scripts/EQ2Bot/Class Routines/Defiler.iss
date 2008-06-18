@@ -435,7 +435,7 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<1
+		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<1 && ${OffenseMode}
 		{
 			call CastSpellRange 51 0 0 0 ${KillTarget}
 			spellsused:Inc

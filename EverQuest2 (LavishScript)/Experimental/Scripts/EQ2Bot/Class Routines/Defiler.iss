@@ -430,7 +430,7 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<1
+		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<1 && ${OffenseMode}
 		{
 			call CastSpellRange 51 0 0 0 ${KillTarget}
 			spellsused:Inc
@@ -571,14 +571,14 @@ function Combat_Routine(int xAction)
 				if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
 						break
 				;;;;;;;;;;;
-				if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)}
+				if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)} && ${OffenseMode}
 				{
 					Target ${KillTarget}
 					Me.Ability[Master's Smite]:Use
 				}
 				break
 			case ThermalShocker
-				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
+				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady} && ${OffenseMode}
 					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
 			default
 				return CombatComplete
