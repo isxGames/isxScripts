@@ -68,7 +68,7 @@ function startharvest(int scan, string h1)
 						}
 					}
 				}
-				elseif ${CustomActor[${harvestloop}].Type.Equal[resource]}
+				elseif ${CustomActor[${harvestloop}].Type.Equal[resource]} && !${actorname.Equal[NULL]}
 				{
 					call checknode "${actorname}"
 					if ${Return}
@@ -93,10 +93,25 @@ function harvestnode(int HID)
 		{
 			return
 		}
-		if ${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
+		if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
+		{
+			echo Moving to ->  ${HID} : ${Actor[${HID}]}
+			call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 5 0 3 1
+		}
+		else
 		{
 			Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
-			call LOScircle ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+			Echo Checking area around character
+			;  check area around the character
+			call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+			
+			if ${Return.Equal["STUCK"]}
+			{
+				Echo Checking area around node
+				;  check area around the node
+				call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+			}
+			
 			call checkPC ${HID}
 			if ${Return}
 			{
@@ -104,11 +119,7 @@ function harvestnode(int HID)
 			}
 
 		}
-		else
-		{
-			echo Moving to ->  ${HID} : ${Actor[${HID}]}
-			call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 5 0 3 1
-		}
+
 		if ${Return.Equal["STUCK"]}
 		{
 			return STUCK
@@ -156,7 +167,7 @@ function checkPC(int HID)
 	return FALSE
 }
 
-function LOScircle(float CX, float CY, float CZ)
+function LOScircle(bool node,float CX, float CY, float CZ)
 {
 	
 	; angle of the point on the circle
@@ -177,10 +188,19 @@ function LOScircle(float CX, float CY, float CZ)
 			px:Set[${Math.Calc[${cradius} * ${Math.Cos[${circleangle}]}]}]
 			pz:Set[${Math.Calc[${cradius} * ${Math.Sin[${circleangle}]}]}]
 
-			; Add it to the character location to give the mid-loc
-			px:Inc[${Me.X}]
-			pz:Inc[${Me.Z}]
-			
+			if ${node}
+			{
+
+				; Add it to the node location to give the mid-loc
+				px:Inc[${CX}]
+				pz:Inc[${CZ}]
+			}
+			else
+			{
+				; Add it to the characters location to give the mid-loc
+				px:Inc[${Me.X}]
+				pz:Inc[${Me.Z}]
+			}
 			; check to see if the mid-loc being checked is not blocked also
 			
 			if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]}
@@ -188,12 +208,12 @@ function LOScircle(float CX, float CY, float CZ)
 				; check to see if there is LOS from that mid-loc to the node
 				if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]}
 				{
+					Echo Moving to ${CX},${CZ} via ${px},${pz}
 					call moveto ${px} ${pz} 5 1 3 1
 					waitframe
 					call moveto ${CX} ${CZ} 5 0 3 1
 					Return THERE
 				}
-				
 			}
 		}
 		; move 5 degree angle along circumfrence
@@ -201,12 +221,13 @@ function LOScircle(float CX, float CY, float CZ)
 		circleangle:Set[1]
 	}
 	; increase the size of the circle
-	while ${cradius:Inc} <=100
+	while ${cradius:Inc} <=50
 	return STUCK
 }
 
 function checknode(actorname)
 {
+	if
 	variable int tempvar=1
 	do
 	{
