@@ -1693,7 +1693,13 @@ function Pull(string npcclass)
 
 		if (${IgnoreHeroic} && !${CustomActor[${tcount}].IsSolo})
 		    continue
-
+		    
+		if (${DoNotPullList.Element[${ThisActorID}](exists)})
+		{
+			;echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
+			return FALSE
+		}   
+		    
 		if ${Mob.ValidActor[${ThisActorID}]}
 		{
 			if ${Mob.AggroGroup[${ThisActorID}]}
@@ -3298,12 +3304,6 @@ objectdef ActorCheck
 		if ${This.FriendlyPet[${actorid}]}
 		{
 		    ;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
-			return FALSE
-		}
-
-		if (${DoNotPullList.Element[${actorid}](exists)})
-		{
-			;echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
 			return FALSE
 		}
 
