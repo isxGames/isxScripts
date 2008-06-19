@@ -454,17 +454,14 @@ function main()
     				    AggroMob:Set[${Mob.NearestAggro}]
     					if ${AggroMob} > 0
     					{
-    					    if ${Mob.ValidActor[${AggroMob}]}
-    					    {
-    					        if ${KillTarget} != ${AggroMob}
-    					        {
-    					            CurrentAction:Set["Targetting Nearest Aggro Mob"]
-            					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-            					    KillTarget:Set[${AggroMob}]
-            					}
-        						target ${AggroMob}
-        						call Combat
+					        if ${KillTarget} != ${AggroMob}
+					        {
+					            CurrentAction:Set["Targetting Nearest Aggro Mob"]
+        					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+        					    KillTarget:Set[${AggroMob}]
         					}
+    						target ${AggroMob}
+    						call Combat
     					}
     				}
     				MobDetected:Set[${Mob.Detect}]
@@ -681,14 +678,11 @@ function main()
 				    AgressiveNPC:Set[${Mob.NearestAggro}]
 					if ${AgressiveNPC} > 0
 					{
-					    if ${Mob.ValidActor[${AgressiveNPC}]}
-					    {
-					        CurrentAction:Set["Targetting Nearest Aggro Mob"]
-    					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-    					    KillTarget:Set[${AgressiveNPC}]
-    						target ${AgressiveNPC}
-    						call Combat
-    					}
+				        CurrentAction:Set["Targetting Nearest Aggro Mob"]
+					    echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+					    KillTarget:Set[${AgressiveNPC}]
+						target ${AgressiveNPC}
+						call Combat
 					}
 				}
 				MobDetected:Set[${Mob.Detect}]
@@ -1252,18 +1246,15 @@ function Combat()
 
 				if ${AggroMob} > 0
 				{
-				    if ${Mob.ValidActor[${AggroMob}]}
-				    {
-				        if ${KillTarget} != ${AggroMob}
-				        {
-				            CurrentAction:Set["Targetting Nearest Aggro Mob and continuing combat"]
-        				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
-        				    KillTarget:Set[${AggroMob}]
-        	            }
-    					target ${AggroMob}
-    					Actor[${KillTarget}]:DoFace
-    					ContinueCombat:Set[TRUE]
-    				}
+			        if ${KillTarget} != ${AggroMob}
+			        {
+			            CurrentAction:Set["Targetting Nearest Aggro Mob and continuing combat"]
+    				    echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
+    				    KillTarget:Set[${AggroMob}]
+    	            }
+					target ${AggroMob}
+					Actor[${KillTarget}]:DoFace
+					ContinueCombat:Set[TRUE]
 				}
 			}
 		}
