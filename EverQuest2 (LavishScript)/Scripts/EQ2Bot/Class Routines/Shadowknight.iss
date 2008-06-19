@@ -363,9 +363,22 @@ function Combat_Routine(int xAction)
     		    call CastSpellRange 80 0 0 0 ${KillTarget}
     	}   
     } 
+    
+	;; Reverse Dmg Shield (5 procs / "'Unholy Blessing' line") when I am tank (Always cast this when it is ready!)
+	if ${MainTank}
+	{
+    	if !${Me.Maintained[${SpellType[7]}](exists)}
+    	{
+        	if ${Me.Ability[${SpellType[7]}](exists)}
+        	{
+        	    if (${Me.Ability[${SpellType[7]}].IsReady})
+        		    call CastSpellRange 7 0 0 0 ${Me.ToActor.ID}
+        	}   
+        }
+    } 
+    
 
-	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
-	call UseCrystallizedSpirit 60
+	;call UseCrystallizedSpirit 60
 
     call CheckGroupOrRaidAggro
 
@@ -596,12 +609,12 @@ function CheckGroupOrRaidAggro()
         	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID}      	                    
         	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
         	                }            	                          
-        	                if !${Me.Maintained[${SpellType[7]}](exists)}
+        	                if !${Me.Maintained[${SpellType[240]}](exists)}
         	                {
-            	                if ${Me.Ability[${SpellType[7]}].IsReady}
+            	                if ${Me.Ability[${SpellType[240]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Casting 'Infernal Pact' (line) on ${CustomActor[${Counter}].Target}"
-            	                    call CastSpellRange 7 0 0 0 ${CustomActor[${Counter}].Target.ID}
+            	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
+            	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID}
             	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
             	                }          	                
             	            }
@@ -637,14 +650,14 @@ function CheckGroupOrRaidAggro()
         	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID}    	  
         	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"                   
         	                }         	                         
-        	                if !${Me.Maintained[${SpellType[7]}](exists)}
+        	                if !${Me.Maintained[${SpellType[240]}](exists)}
         	                {
-            	                if ${Me.Ability[${SpellType[7]}].IsReady}
+            	                if ${Me.Ability[${SpellType[240]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Casting 'Infernal Pact' (line) on ${CustomActor[${Counter}].Target}"
-            	                    call CastSpellRange 7 0 0 0 ${CustomActor[${Counter}].Target.ID}
+            	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
+            	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID}
             	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-            	                }  	                
+            	                }          	                
             	            }
         	                return
         	            }
