@@ -1696,7 +1696,7 @@ function Pull(string npcclass)
 		    
 		if (${DoNotPullList.Element[${ThisActorID}](exists)})
 		{
-			echo "DEBUG: Actor (ID: ${actorid}) is in the DoNotPullList -- skipping..."
+			echo "DEBUG: ${CustomActor[${tcount}]} (ID: ${ThisActorID}) is in the DoNotPullList -- skipping..."
 			continue
 		}   
 		    
