@@ -109,17 +109,19 @@ function Buff_Init()
 
 function Combat_Init()
 {
-   Action[1]:Set[AA_Swiftaxe]
+   Action[1]:Set[Placeholder]
    MobHealth[1,1]:Set[1]
    MobHealth[1,2]:Set[100]
    SpellRange[1,1]:Set[381]
+    
+   Action[2]:Set[AA_Swiftaxe]
+   MobHealth[2,1]:Set[1]
+   MobHealth[2,2]:Set[100]
+   SpellRange[2,1]:Set[381]
    
-   Action[2]:Set[Taunt]
-   SpellRange[2,1]:Set[160]
+   Action[3]:Set[Taunt]
+   SpellRange[3,1]:Set[160]
    
-   Action[3]:Set[AoE_Taunt]
-   SpellRange[3,1]:Set[170]
-
    Action[4]:Set[AA_Legionnaire_Smite]
    
    ;; nuke + dot
@@ -156,49 +158,48 @@ function Combat_Init()
    Power[10,2]:Set[100]
    SpellRange[10,1]:Set[99]   
    
-   ;; Level 40 and higher
-   Action[11]:Set[DDAttack_8]
+   
+   ;; nuke + lifetap
+   Action[11]:Set[DDAttack_2]
    Power[11,1]:Set[5]
    Power[11,2]:Set[100]
-   SpellRange[11,1]:Set[154]      
-    
-   ;; nuke + lifetap
-   Action[12]:Set[DDAttack_2]
-   Power[12,1]:Set[5]
-   Power[12,2]:Set[100]
-   SpellRange[12,1]:Set[153]
+   SpellRange[11,1]:Set[153]
   
    ;; nuke + dot 
-   Action[13]:Set[DDAttack_3]
-   Power[13,1]:Set[5]
-   Power[13,2]:Set[100]
-   SpellRange[13,1]:Set[150]
+   Action[12]:Set[DDAttack_3]
+   Power[12,1]:Set[5]
+   Power[12,2]:Set[100]
+   SpellRange[12,1]:Set[150]
    
     ;; Nuke + wis debuff
-   Action[14]:Set[DDAttack_4]
-   Power[14,1]:Set[5]
-   Power[14,2]:Set[100]
-   SpellRange[14,1]:Set[152]
+   Action[13]:Set[DDAttack_4]
+   Power[13,1]:Set[5]
+   Power[13,2]:Set[100]
+   SpellRange[13,1]:Set[152]
 
    ;; Nuke + damage on termination
-   Action[15]:Set[DDAttack_5]
-   Power[15,1]:Set[5]
-   Power[15,2]:Set[100]
-   SpellRange[15,1]:Set[61]
+   Action[14]:Set[DDAttack_5]
+   Power[14,1]:Set[5]
+   Power[14,2]:Set[100]
+   SpellRange[14,1]:Set[61]
    
    ;; "Boot" (knockdown)
-   Action[16]:Set[DDAttack_6]
-   Power[16,1]:Set[5]
-   Power[16,2]:Set[100]
-   SpellRange[16,1]:Set[151]
+   Action[15]:Set[DDAttack_6]
+   Power[15,1]:Set[5]
+   Power[15,2]:Set[100]
+   SpellRange[15,1]:Set[151]
    
    ;; Pure Nuke
-   Action[17]:Set[DDAttack_7]
+   Action[16]:Set[DDAttack_7]
+   Power[16,1]:Set[5]
+   Power[16,2]:Set[100]
+   SpellRange[16,1]:Set[62]   
+   
+   ;; Level 40 and higher
+   Action[17]:Set[DDAttack_8]
    Power[17,1]:Set[5]
    Power[17,2]:Set[100]
-   SpellRange[17,1]:Set[62]   
-   
-   
+   SpellRange[17,1]:Set[154]   
 
    ;; NOTE:  "63" is Harm touch
     
@@ -221,11 +222,18 @@ function Combat_Init()
    Power[20,1]:Set[5]
    Power[20,2]:Set[100]
    SpellRange[20,1]:Set[240]
-
-   Action[21]:Set[Pet]
+   
+   Action[21]:Set[RvsDmgShield]
+   Power[21,1]:Set[5]
+   Power[21,2]:Set[100]
    MobHealth[21,1]:Set[50]
-   MobHealth[21,2]:Set[100]
-   SpellRange[21,1]:Set[45]
+   MobHealth[21,2]:Set[100]   
+   SpellRange[21,1]:Set[7]   
+
+   Action[22]:Set[Pet]
+   MobHealth[22,1]:Set[50]
+   MobHealth[22,2]:Set[100]
+   SpellRange[22,1]:Set[45]
 
 }
 
@@ -354,30 +362,39 @@ function Combat_Routine(int xAction)
     	}
     }
     
+    ; always cast when up (Disease Resist Reduction and Hate Builder (AE))
+    if ${MainTank}
+    {
+	    if (${Me.Ability[${SpellType[170]}].IsReady})
+	    {
+	        if ${Actor[${KillTarget}].Target.Name.Equal[${Me.Name}]} && !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50
+    		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
+    	}
+    }
+    else
+    {
+        if !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 90
+        {
+    	    if (${Me.Ability[${SpellType[170]}].IsReady})
+    		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
+    	}
+    	else
+    	{
+    	    if (${Me.Ability[${SpellType[170]}].IsReady})
+    		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
+    	}
+    }            
+    
 	;; Draw Strength (Always cast this when it is ready!
 	if !${Me.Maintained[${SpellType[80]}](exists)}
 	{
     	if ${Me.Ability[${SpellType[80]}](exists)}
     	{
     	    if (${Me.Ability[${SpellType[80]}].IsReady})
-    		    call CastSpellRange 80 0 0 0 ${KillTarget}
+    		    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
     	}   
     } 
     
-	;; Reverse Dmg Shield (5 procs / "'Unholy Blessing' line") when I am tank (Always cast this when it is ready!)
-	if ${MainTank}
-	{
-    	if !${Me.Maintained[${SpellType[7]}](exists)}
-    	{
-        	if ${Me.Ability[${SpellType[7]}](exists)}
-        	{
-        	    if (${Me.Ability[${SpellType[7]}].IsReady})
-        		    call CastSpellRange 7 0 0 0 ${Me.ToActor.ID}
-        	}   
-        }
-    } 
-    
-
 	;call UseCrystallizedSpirit 60
 
     call CheckGroupOrRaidAggro
@@ -386,12 +403,14 @@ function Combat_Routine(int xAction)
 	
 	switch ${Action[${xAction}]}
 	{
+	    case Placeholder
+	        break
+	        
 		case Taunt
-		case AoE_Taunt
 			if ${TauntMode}
 			{
     			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
 			}
 			break
 			
@@ -407,36 +426,39 @@ function Combat_Routine(int xAction)
             if ${Return.Equal[OK]}
             {
                 if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
 			}
 			break
 			
 			
         case PBAoE_1
         case PBAoE_2
-            if ${Actor[${KillTarget}].IsSolo}
+            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1)
             {
-                EQ2:CreateCustomActorArray[byDist,5,npc]   
-                if ${EQ2.CustomActorArraySize} < 2
-                    break
-            }
-            call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-            if ${Return.Equal[OK]}
-            {
-                if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-    			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
+                if ${Actor[${KillTarget}].IsSolo}
+                {
+                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    if ${EQ2.CustomActorArraySize} < 2
+                        break
+                }
+                call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+                if ${Return.Equal[OK]}
+                {
+                    if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
+    			}
+    		}
 			break			
 			
 		case AA_Legionnaire_Smite
 		    if (${Me.Ability["Legionnaire's Smite"](exists)})
 		    {
     			if ${Me.Ability["Legionnaire's Smite"].IsReady}
-    			    call CastSpellRange "Legionnaire's Smite" 0 0 0 ${KillTarget}		
+    			    call CastSpellRange "Legionnaire's Smite" 0 0 0 ${KillTarget} 0 0 0 1		
     		}    
         
         case PBAoE_3
-            if ${Me.Level} >= 35
+            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 35)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -448,13 +470,13 @@ function Combat_Routine(int xAction)
                 if ${Return.Equal[OK]}
                 {
         			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
     			}
 			}
 			break
         
         case PBAoE_4
-            if ${Me.Level} >= 55
+            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 55)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -466,13 +488,13 @@ function Combat_Routine(int xAction)
                 if ${Return.Equal[OK]}
                 {
         			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
     			}
 			}
 			break  
 
         case PBAoE_5
-            if ${Me.Level} >= 65
+            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 65)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -484,7 +506,7 @@ function Combat_Routine(int xAction)
                 if ${Return.Equal[OK]}
                 {
         			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
     			}
 			}
 			break  
@@ -497,7 +519,7 @@ function Combat_Routine(int xAction)
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1 1
 				}
 			}
 			break
@@ -510,7 +532,7 @@ function Combat_Routine(int xAction)
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 1
 					}
 				}
 			}
@@ -522,7 +544,7 @@ function Combat_Routine(int xAction)
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1 1
 				}
 			}
 			break
@@ -533,18 +555,43 @@ function Combat_Routine(int xAction)
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1 1
 				}
 			}
 			break
 			
+	    case RvsDmgShield
+        	if ${MainTank}
+        	{
+            	if !${Me.Maintained[${SpellType[7]}](exists)}
+            	{
+                	if ${Me.Ability[${SpellType[7]}](exists)}
+                	{
+                	    if (${Me.Ability[${SpellType[7]}].IsReady})
+                		    call CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+                	}   
+                }
+            } 
+            else
+            {
+            	if !${Me.Maintained[${SpellType[7]}](exists)}
+            	{
+                	if ${Me.Ability[${SpellType[7]}](exists)}
+                	{
+                	    if (${Me.Ability[${SpellType[7]}].IsReady})
+                		    call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID} 0 0 0 1
+                	}   
+                }        
+            }
+            break
+            
 		case Pet
 		    if (${PetMode})
 		    {
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
 				}
 			}
 			;; "Pet" is the last thing in the routine ...so, return CombatComplete
@@ -588,10 +635,11 @@ function CheckGroupOrRaidAggro()
             	    {
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
         	            {
-        	                if ${Me.Group[${CustomActor[${Counter}].Target.Name}].ToActor.Health} < 60
+        	                if ${CustomActor[${Counter}].Target.Health} < 60
         	                {
             	                if ${Me.Ability[${SpellType[320]}].IsReady}
             	                {
+            	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
             	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
             	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID}
             	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
@@ -629,10 +677,11 @@ function CheckGroupOrRaidAggro()
             	        echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
         	            {
-        	                if ${Me.Group[${CustomActor[${Counter}].Target.Name}].ToActor.Health} < 60
+        	                if ${CustomActor[${Counter}].Target.Health} < 60
         	                {
             	                if ${Me.Ability[${SpellType[320]}].IsReady}
             	                {
+            	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
             	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
             	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID}
             	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
@@ -678,28 +727,6 @@ function Lost_Aggro(int mobid)
 {
     ;; This is now handled in CheckGroupOrRaidAggro()
     return
-    
-    if ${MainTank}
-    {
-    	if ${Me.ToActor.Power}>5
-    	{
-    		if ${TauntMode}
-    		{
-    			;intercept damage on the person now with agro
-    			call CastSpellRange 7 0 1 0 ${mobid} 0 0 1
-    			call CastSpellRange 270 0 1 0 ${mobid} 0 0 1
-    			call CastSpellRange 160 0 1 0 ${mobid} 0 0 1
-    
-    
-    
-    			;use rescue if new agro target is under 65 health
-    			if ${Me.ToActor.Target.Target.Health}<65
-    			{
-    				call CastSpellRange 320 0 1 0 ${mobid} 0 0 1
-    			}
-    		}
-    	}
-    }
 }
 
 function MA_Lost_Aggro()
