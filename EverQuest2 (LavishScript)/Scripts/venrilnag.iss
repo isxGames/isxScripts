@@ -88,17 +88,21 @@ function RaidCheck()
 
 	do
 	{
-		if ${Me.Raid[${raidcnt}].ToActor(exists)} && ${Me.Raid[${raidcnt}].ToActor.Power}>60
+		if ${Me.Raid[${raidcnt}].ToActor(exists)} && ${Me.Raid[${raidcnt}].ToActor.Power}>=59
 		{
-			eq2execute /ooc --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is over 60% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
+			eq2execute /ooc --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is over 59% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
+			wait 0.3
+			eq2execute /tell ${Me.Raid[${raidcnt}].Name} SPRINT NOW - Your power is too HIGH!
 
 			call CheckDebuff
 			call CheckPower
 			wait 0.3
 		}
-		if ${Me.Raid[${raidcnt}].ToActor(exists)} && ${Me.Raid[${raidcnt}].ToActor.Power}<=40 && !${Me.Raid[${raidcnt}].ToActor.IsDead}
+		if ${Me.Raid[${raidcnt}].ToActor(exists)} && ${Me.Raid[${raidcnt}].ToActor.Power}<=42 && !${Me.Raid[${raidcnt}].ToActor.IsDead}
 		{
-			eq2execute /shout --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is over 60% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
+			eq2execute /shout --==[ ${Me.Raid[${raidcnt}].Name} ]==-- You're Power is under 42% --==[ ${Me.Raid[${raidcnt}].Name} ]==--
+			wait 0.3
+			eq2execute /tell ${Me.Raid[${raidcnt}].Name} Your power is dangerously LOW!
 
 			call CheckDebuff
 			call CheckPower

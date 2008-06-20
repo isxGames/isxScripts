@@ -402,6 +402,12 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 50 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
+	;;;; Cataclysmic Mind
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+	{
+		call CastSpellRange 72 0 0 0 ${Me.ID}
+		spellsused:Inc
+	}
 	;;;; Hostage
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
 	{
@@ -418,12 +424,6 @@ function Combat_Routine(int xAction)
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
 	{
 		call CastSpellRange 391 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
-	;;;; Cataclysmic Mind
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
-	{
-		call CastSpellRange 72 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Daze

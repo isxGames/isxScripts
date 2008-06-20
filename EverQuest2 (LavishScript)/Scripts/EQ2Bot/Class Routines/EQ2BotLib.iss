@@ -252,7 +252,7 @@ function PopulateSKFDSpells()
 	while ${tempvar:Inc} <= ${keycount}
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    
+
 }
 
 function PopulateMezSpells()
@@ -362,7 +362,7 @@ function RemoveSKFD(string parm1)
 {
     variable int i = 1
     Me:InitializeEffects
-    
+
     do
     {
         if (${SKFDSpells.Element[${Me.Effect[${i}].Name}](exists)})
@@ -373,7 +373,7 @@ function RemoveSKFD(string parm1)
     }
     while ${i:Inc} <= ${Me.CountEffects}
 
-    return OK    
+    return OK
 }
 
 function CheckForMez(string param1)
@@ -683,12 +683,14 @@ function Shard(int sPower)
 
 	if ${Me.Inventory["Splintered Heart"](exists)}
 		HeartTypeL:Set[Splintered Heart]
-	elseif ${Me.Inventory["Darkness Heart"](exists)}
-		HeartTypeL:Set[Darkness Heart]
+	elseif ${Me.Inventory["Dark Heart"](exists)}
+		HeartTypeL:Set[Dark Heart]
 	elseif ${Me.Inventory["Sacrificial Heart"](exists)}
 		HeartTypeL:Set[Sacrificial Heart]
 	elseif ${Me.Inventory["Ruinous Heart"](exists)}
 		HeartTypeL:Set[Ruinous Heart]
+	elseif ${Me.Inventory["Darkness Heart"](exists)}
+		HeartTypeL:Set[Darkness Heart]
 
 	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${ShardTypeL}].IsReady} && ${Me.InCombat}
 	{

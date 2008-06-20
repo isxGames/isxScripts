@@ -93,14 +93,17 @@ function Class_Declaration()
 		case Splintered Heart
 			ShardType:Set["Splintered Heart"]
 			break
-		case Darkness Heart
-			ShardType:Set["Darkness Heart"]
+		case Dark Heart
+			ShardType:Set["Dark Heart"]
 			break
 		case Sacrificial Heart
 			ShardType:Set["Sacrificial Heart"]
 			break
 		case Ruinous Heart
 			ShardType:Set["Ruinous Heart"]
+			break
+		case Darkness Heart
+			ShardType:Set["Darkness Heart"]
 			break
 		case Default
 			break
