@@ -731,39 +731,36 @@ function CheckHeals()
 
 
 	;RAID HEALS - Only check if in raid, raid heal mode on, maintank is green, I'm above 50, and a direct heal is available.  Otherwise don't waste time.
-	if (${MainTankExists})
-	{
-    	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ${Actor[${MainTankID}].Health}>70 && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
-    	{
-    		do
-    		{
-    			${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
-    			{
-    			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
-    				{
-    				    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
-        				{
-        					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
-        						raidlowest:Set[${temph2}]
-        				}
-    				}
-    			}
-    		}
-    		while ${temph2:Inc}<=24
+ 	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ((${MainTankExists} && ${Actor[${MainTankID}].Health}>70) || !${MainTankExists}) && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
+  {
+  	do
+		{
+			${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
+			{
+			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
+				{
+			    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
+  				{
+  					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
+  						raidlowest:Set[${temph2}]
+  				}
+				}
+			}
+		}
+		while ${temph2:Inc}<=24
 
-        if (${Me.Raid[${raidlowest}].ToActor(exists)})
-        {
-      		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
-      		{
-      			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
-      			if ${Me.Ability[${SpellType[4]}].IsReady}
-      				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
-      			elseif ${Me.Ability[${SpellType[1]}].IsReady}
-      				call CastSpellRange 1 0 0 0 ${Me.Raid[${raidlowest}].ID}
-      		}
-      	}
-    	}
-    }
+    if (${Me.Raid[${raidlowest}].ToActor(exists)})
+    {
+  		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
+  		{
+  			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
+  			if ${Me.Ability[${SpellType[4]}].IsReady}
+  				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
+  			elseif ${Me.Ability[${SpellType[1]}].IsReady}
+  				call CastSpellRange 1 0 0 0 ${Me.Raid[${raidlowest}].ID}
+  		}
+  	}
+  }
 
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode} && !${Me.InRaid}
