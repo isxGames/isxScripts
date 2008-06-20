@@ -751,8 +751,12 @@ function CheckManaStone()
 	usemanastone:Set[FALSE]
 }
 
-function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targettobuff, int notall, int refreshtimer, bool castwhilemoving)
+function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained)
 {
+    ;; Notes:
+    ;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
+    ;;;;;;;
+    
 	variable bool fndspell
 	variable int tempvar=${start}
 	variable int originaltarget
@@ -770,7 +774,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 	if ${Me.IsMoving} && !${castwhilemoving}
 		return -1
 
-	if ${targettobuff}>0 && !${Actor[id,${targettobuff}](exists)}
+	if ${TargetID}>0 && !${Actor[id,${TargetID}](exists)}
 		return -1
 
 	do
@@ -780,26 +784,29 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 
 			if ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
 			{
-				if ${targettobuff}
+				if ${TargetID}
 				{
 					fndspell:Set[FALSE]
-					tempgrp:Set[1]
-					do
+					if !${IgnoreMaintained}
 					{
-						if ${Me.Maintained[${tempgrp}].Name.Equal[${SpellType[${tempvar}]}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${targettobuff} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
-						{
-							fndspell:Set[TRUE]
-							break
-						}
-					}
-					while ${tempgrp:Inc}<=${Me.CountMaintained}
+    					tempgrp:Set[1]
+    					do
+    					{
+    						if ${Me.Maintained[${tempgrp}].Name.Equal[${SpellType[${tempvar}]}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${TargetID} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
+    						{
+    							fndspell:Set[TRUE]
+    							break
+    						}
+    					}
+    					while ${tempgrp:Inc}<=${Me.CountMaintained}
+    				}
 
 					if !${fndspell}
 					{
-                        if !${Actor[${targettobuff}](exists)}
+                        if !${Actor[${TargetID}](exists)}
                             return -1
 
-                        if ${Actor[${targettobuff}].Distance}>35
+                        if ${Actor[${TargetID}].Distance}>35
                             return -1
 
 						if ${xvar1} || ${xvar2}
@@ -812,14 +819,14 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int targett
 							originaltarget:Set[${Target.ID}]
 						}
 
-						if ${targettobuff} > 0
+						if ${TargetID} > 0
 						{
-							if !(${targettobuff}==${Target.ID}) && !(${targettobuff}==${Target.Target.ID} && ${Target.Type.Equal[NPC]})
+							if !(${TargetID}==${Target.ID}) && !(${TargetID}==${Target.Target.ID} && ${Target.Type.Equal[NPC]})
 							{
-							    if ${Actor[id,${targettobuff}](exists)}
+							    if ${Actor[id,${TargetID}](exists)}
 							    {
-    								target ${targettobuff}
-    								wait 10 ${Target.ID}==${targettobuff}
+    								target ${TargetID}
+    								wait 10 ${Target.ID}==${TargetID}
     							}
 							}
 						}
