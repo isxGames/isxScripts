@@ -3077,6 +3077,25 @@ function SetNewKillTarget()
     return OK
 }
 
+function ReacquireKillTargetFromMA()
+{ 
+    CurrentAction:Set[Reacquiring KillTarget from ${MainAssist} in 1 seconds...]
+    wait 10   
+    
+    if ${Actor[ExactName,${MainAssist}](exists)}
+    {
+        if ${Actor[ExactName,${MainAssist}].Target(exists)} && ${Actor[ExactName,${MainAssist}].Target.Type.Find[NPC]}
+        {
+            KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+            echo "DEBUG:: KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[ExactName,${MainAssist}].Target} (ID: ${KillTarget})"
+            return OK
+        }
+    }
+    
+    echo "DEBUG:: ReacquireKillTargetFromMA() FAILED"
+    return FAILED
+}
+
 function StartBot()
 {
 	variable int tempvar1
@@ -3099,6 +3118,7 @@ function StartBot()
 		UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
 		UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
 		UIElement[EQ2 Bot].FindUsableChild[Set KillTarget,commandbutton]:Show
+		UIElement[EQ2 Bot].FindUsableChild[Reacquire KillTarget,commandbutton]:Show
 	}
 	
 	if ${Me.SubClass.Equal[shadowknight]}
