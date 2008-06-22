@@ -2996,7 +2996,6 @@ function BotStop()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
-
 }
 
 function BotAbort()
@@ -3055,6 +3054,29 @@ function BotCastTarget(string line, string Spell, string castTarget)
 	call CastSpell "${Spell}"
 }
 
+function SetNewKillTarget()
+{ 
+    CurrentAction:Set[Setting KillTarget to your current target in 3 seconds...]
+    wait 10   
+    CurrentAction:Set[Setting KillTarget to your current target in 2 seconds...]
+    wait 10               
+    CurrentAction:Set[Setting KillTarget to your current target in 1 seconds...]
+    wait 10   
+    
+    if ${Target(exists)} && ${Target.Type.Find[NPC]}
+    {
+        KillTarget:Set[${Target.ID}]
+        echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID}"
+    }
+    else
+    {
+        echo "DEBUG:: SetNewKillTarget() FAILED -- Target invalid."
+        return FAILED
+    }
+    
+    return OK
+}
+
 function StartBot()
 {
 	variable int tempvar1
@@ -3076,7 +3098,12 @@ function StartBot()
 		UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
 		UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
 		UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+		UIElement[EQ2 Bot].FindUsableChild[Set KillTarget,commandbutton]:Show
 	}
+	
+	if ${Me.SubClass.Equal[shadowknight]}
+        UIElement[EQ2 Bot].FindUsableChild[Feign Death,commandbutton]:Show
+	
 
 	switch ${PathType}
 	{
