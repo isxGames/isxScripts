@@ -218,11 +218,27 @@
 							</Children>
 						</Frame>
 						
-						<Commandbutton name='Set KillTarget' Template='EQ2.Commandbutton'>
+						
+						
+						<Commandbutton name='Reacquire KillTarget' Template='EQ2.Commandbutton'>
 							<X>65%</X>
 							<Y>70</Y>
-							<Width>110</Width>
-							<Height>20</Height>
+							<Width>115</Width>
+							<Height>21</Height>
+							<Visible>0</Visible>
+							<Text>Reacquire KillTarget</Text>
+							<AutoTooltip>Reacquire KillTarget from MA</AutoTooltip>
+							<OnLoad>
+							</OnLoad>							
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call ReacquireKillTargetFromMA]
+							</OnLeftClick>
+						</Commandbutton>					
+						<Commandbutton name='Set KillTarget' Template='EQ2.Commandbutton'>
+							<X>65%</X>
+							<Y>95</Y>
+							<Width>115</Width>
+							<Height>21</Height>
 							<Visible>0</Visible>
 							<Text>Set New KillTarget</Text>
 							<OnLoad>
@@ -233,9 +249,9 @@
 						</Commandbutton>	
 						<Commandbutton name='Feign Death' Template='EQ2.Commandbutton'>
 							<X>65%</X>
-							<Y>95</Y>
-							<Width>110</Width>
-							<Height>20</Height>
+							<Y>120</Y>
+							<Width>115</Width>
+							<Height>21</Height>
 							<Visible>0</Visible>
 							<Text>Feign Death</Text>
 							<OnLoad>
