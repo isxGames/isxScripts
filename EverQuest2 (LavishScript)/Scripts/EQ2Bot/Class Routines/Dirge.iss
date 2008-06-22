@@ -125,20 +125,17 @@ function Buff_Init()
 	PreAction[12]:Set[Buff_Self]
 	PreSpellRange[12,1]:Set[31]
 
-	PreAction[13]:Set[Buff_AAHarbingersSonnet]
-	PreSpellRange[13,1]:Set[385]
+	PreAction[13]:Set[Buff_AAAllegro]
+	PreSpellRange[13,1]:Set[390]
 
-	PreAction[14]:Set[Buff_AAAllegro]
-	PreSpellRange[14,1]:Set[390]
+	PreAction[14]:Set[Buff_AADontKillTheMessenger]
+	PreSpellRange[14,1]:Set[395]
 
-	PreAction[15]:Set[Buff_AADontKillTheMessenger]
-	PreSpellRange[15,1]:Set[395]
+	PreAction[15]:Set[Buff_AALuckOfTheDirge]
+	PreSpellRange[15,1]:Set[382]
 
-	PreAction[16]:Set[Buff_AALuckOfTheDirge]
-	PreSpellRange[16,1]:Set[382]
-
-	PreAction[17]:Set[Buff_AAFortissimo]
-	PreSpellRange[17,1]:Set[398]
+	PreAction[16]:Set[Buff_AAFortissimo]
+	PreSpellRange[16,1]:Set[398]
 }
 
 function Combat_Init()
@@ -302,7 +299,6 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_AAHeroicStorytelling
-		case Buff_AAHarbingersSonnet
 		case Buff_AAAllegro
 		case Buff_AALuckOfTheDirge
 		case Buff_AADontKillTheMessenger
