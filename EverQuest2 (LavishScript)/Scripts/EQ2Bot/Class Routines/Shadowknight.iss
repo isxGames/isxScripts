@@ -362,7 +362,7 @@ function Combat_Routine(int xAction)
     	}
     }
     
-    ; always cast when up (Disease Resist Reduction and Hate Builder (AE))
+    ; always cast when up (Disease Resist Reduction and Hate Builder (AE))  -- (AE TAUNT!)
     if ${MainTank}
     {
 	    if (${Me.Ability[${SpellType[170]}].IsReady})
@@ -370,6 +370,11 @@ function Combat_Routine(int xAction)
 	        if ${Actor[${KillTarget}].Target.Name.Equal[${Me.Name}]} && !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50
     		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
     	}
+    	;; Always try to cast fast casting Combat Arts aftewards to gain aggro (if tank)
+        if (${Me.Ability[${SpellType[152]}].IsReady})
+            call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1   	
+        if (${Me.Ability[${SpellType[151]}].IsReady})
+            call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1   	            
     }
     else
     {
@@ -383,7 +388,20 @@ function Combat_Routine(int xAction)
     	    if (${Me.Ability[${SpellType[170]}].IsReady})
     		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
     	}
-    }            
+    }    
+    
+    ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
+    if ${Me.Level} >= 50
+	{
+	    if (${Actor[${KillTarget}].Health} > 70 || ${Actor[${KillTarget}].IsEpic})
+	    {
+	        if !${Me.Maintained[${SpellType[55]}](exists)}
+	        {
+    	        if (${Me.Ability[${SpellType[55]}].IsReady})
+    		        call CastSpellRange 55 0 0 0 ${KillTarget} 0 0 0 1
+        	}
+    	}
+	}      
     
 	;; Draw Strength (Always cast this when it is ready!
 	if !${Me.Maintained[${SpellType[80]}](exists)}
@@ -524,20 +542,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 		
-		case Mist
-			if ${Me.Level} >= 50
-			{
-				if ${Mob.Count}>1
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 1
-					}
-				}
-			}
-			break
-
 		case Shield_Attack
 			If ${Me.Equipment[Secondary].Type.Equal[Shield]}
 			{
@@ -561,7 +565,7 @@ function Combat_Routine(int xAction)
 			break
 			
 	    case RvsDmgShield
-        	if ${MainTank}
+        	if ${MainTank} && ${Actor[${KillTarget}].Health} > 50 && ${Actor[${KillTarget}].Target.Name.Equal[${MainTankPC}]}
         	{
             	if !${Me.Maintained[${SpellType[7]}](exists)}
             	{

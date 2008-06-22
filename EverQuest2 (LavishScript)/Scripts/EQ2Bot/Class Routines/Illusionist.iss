@@ -507,6 +507,8 @@ function Combat_Routine(int xAction)
 
     if !${UltraDPSMode}
     	call RefreshPower
+    elseif ${Me.ToActor.Power} < 20
+        call RefreshPower
     	
     call CheckSKFD
 
@@ -617,9 +619,9 @@ function Combat_Routine(int xAction)
 	}
 	
     ;; Melee Debuff -- only for Epic mobs for now
-    if !${UltraDPSMode}
+    if ${Me.ToActor.Power} > 40
     {
-    	if ${Actor[${KillTarget}].IsEpic}
+    	if !${Actor[${KillTarget}].IsSolo}
     	{
         	if ${Me.Ability[${SpellType[50]}](exists)}
         	{
