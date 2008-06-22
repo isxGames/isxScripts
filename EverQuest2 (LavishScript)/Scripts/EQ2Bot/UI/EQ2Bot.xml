@@ -217,6 +217,34 @@
 								</combobox>
 							</Children>
 						</Frame>
+						
+						<Commandbutton name='Set KillTarget' Template='EQ2.Commandbutton'>
+							<X>65%</X>
+							<Y>70</Y>
+							<Width>110</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Set New KillTarget</Text>
+							<OnLoad>
+							</OnLoad>							
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call SetNewKillTarget]
+							</OnLeftClick>
+						</Commandbutton>	
+						<Commandbutton name='Feign Death' Template='EQ2.Commandbutton'>
+							<X>65%</X>
+							<Y>95</Y>
+							<Width>110</Width>
+							<Height>20</Height>
+							<Visible>0</Visible>
+							<Text>Feign Death</Text>
+							<OnLoad>
+							</OnLoad>							
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call FeignDeath]
+							</OnLeftClick>
+						</Commandbutton>		
+						
 						<checkbox Name='MainAssist' Template='EQ2.checkbox'>
 							<X>5%</X>
 							<Y>30</Y>
@@ -645,7 +673,7 @@
 						</Frame>
 						<Frame Name='Combat Frame'>
 							<X>1</X>
-							<Y>25%</Y>
+							<Y>45%</Y>
 							<Height>150</Height>
 							<Width>95%</Width>
 							<Visible>0</Visible>
@@ -723,9 +751,9 @@
 						</Commandbutton>
 						<Commandbutton name='Stop EQ2Bot' Template='EQ2.Commandbutton'>
 							<X>15%</X>
-							<Y>80%</Y>
+							<Y>90%</Y>
 							<Width>100</Width>
-							<Height>20</Height>
+							<Height>30</Height>
 							<Visible>0</Visible>
 							<Text>Stop EQ2Bot</Text>
 							<OnLeftClick>
@@ -734,9 +762,9 @@
 						</Commandbutton>	
 						<Commandbutton name='Check Buffs' Template='EQ2.Commandbutton'>
 							<X>40%</X>
-							<Y>80%</Y>
+							<Y>90%</Y>
 							<Width>100</Width>
-							<Height>20</Height>
+							<Height>30</Height>
 							<Visible>0</Visible>
 							<Text>Check Buffs</Text>
 							<AutoTooltip>'Check Buffs' routine ONCE (Combat)</AutoTooltip>
@@ -746,9 +774,9 @@
 						</Commandbutton>						
 						<Commandbutton name='Pause EQ2Bot' Template='EQ2.Commandbutton'>
 							<X>65%</X>
-							<Y>80%</Y>
+							<Y>90%</Y>
 							<Width>100</Width>
-							<Height>20</Height>
+							<Height>30</Height>
 							<Visible>0</Visible>
 							<Text>Pause EQ2Bot</Text>
 							<OnLeftClick>
@@ -757,9 +785,9 @@
 						</Commandbutton>
 						<Commandbutton name='Resume EQ2Bot' Template='EQ2.Commandbutton'>
 							<X>65%</X>
-							<Y>80%</Y>
+							<Y>90%</Y>
 							<Width>100</Width>
-							<Height>20</Height>
+							<Height>30</Height>
 							<Visible>0</Visible>
 							<Text>Resume EQ2Bot</Text>
 							<OnLeftClick>
