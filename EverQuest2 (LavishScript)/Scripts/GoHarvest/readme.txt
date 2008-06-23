@@ -57,17 +57,19 @@ The LOS routine and how it works.. (If you are interested)
 The script finds a node , if it cannot see LOS to it, it scans in a 'cone' around the node pointing towards your character
 in ever increasing distances from the node.
 
-If at one of those points it finds it can see your character then your character is moved to that point and then onward to the node.
+If at one of those points it finds it has LOS to character then your character is moved to that point and then onward to the node.
 
     |  Node   |
-    |  /   \  |
-    | / ROCKS |
-    |x        |
-    | \       |
-    |  \      |
-    |   \     |
-    |    \    |
-    |     X  -  character
+    |    .    |
+    |   ...   |
+    |  .....  |
+    | X*ROCKS*|
+    |  .      |
+    |   .     |
+    |    .    |
+    |     .   |
+    |      .  |
+    |       X  -  character
 
 If the max distance is reached then the angle of the cone checked is increased and the process starts again.
 
@@ -76,13 +78,15 @@ as it's start point and checking in the direction of the node in ever widening a
 
 
     |  Node   |
-    |  /      |
-    | / ROCKS |
-    |x        |
-    | \       |
-    |  \     /|
-    |   \   / |
-    |    \ /  |
+    |   .     |
+    |  .      |
+    | .       |
+    |X*ROCKS*.|
+    | ........|
+    |  .......|
+    |   ......|
+    |    .... |
+    |     ..  |
           X  -  character
 
 
