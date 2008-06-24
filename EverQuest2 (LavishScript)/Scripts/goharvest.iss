@@ -9,10 +9,12 @@ variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/GoHarvest/"
 variable bool HarvestNode[9]=TRUE
 variable bool pauseharvest=TRUE
 
-variable string NodeName[7]
+variable string NodeName[9]
 variable string HarvestFile
 variable GoHarvestBot GoHarvest
-variable int scan=100
+variable int scan=150
+variable int HID
+variable bool BadNode=FALSE
 
 function main()
 {
@@ -27,9 +29,9 @@ function main()
 		}
 		while ${pauseharvest}
 		scan:Set[${UIElement[GoHarvest].FindChild[GUITabs].FindChild[Harvest].FindChild[ScanArea].Text}]
-		if ${scan} <0 || ${scan} > 100
+		if ${scan} <0 || ${scan} > 300
 		{
-			scan:Set[100]
+			scan:Set[150]
 		}
 		Echo Scanning ${scan} units
 		call startharvest ${scan}
@@ -70,7 +72,10 @@ function startharvest(int scan)
 								{
 									if ${CustomActor[${harvestloop}](exists)}
 									{
-										call harvestnode ${CustomActor[${harvestloop}].ID}
+										HID:Set[${CustomActor[${harvestloop}].ID}]
+										call harvestnode
+										Badnode:Set[FALSE]
+
 									}
 									break
 								}
@@ -78,16 +83,16 @@ function startharvest(int scan)
 						}
 						while ${tempvar:Inc} <=9
 					}
-					if ${pauseharvest}
-						break
 				}
+				if ${pauseharvest}
+				break
 			}
 			while ${harvestloop:Inc} <= ${harvestcount}
 		}
 	}
 }
 
-function harvestnode(int HID)
+function harvestnode()
 {
 	variable int hitcount
 
@@ -101,18 +106,26 @@ function harvestnode(int HID)
 		if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+1]},${Actor[${HID}].Z}]}
 		{
 			echo Moving to ->  ${HID} : ${Actor[${HID}]}
-			call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 5 0 3 1
+
+			if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
+			{
+			    	call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 3 0 3 1
+			}
+			else
+			{
+				call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 5 0 3 1
+			}
 		}
 		else
 		{
 			Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
 			;  check area around the node
-			call LOScircle ${HID} TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+			call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+1]} ${Actor[${HID}].Z}
 			
 			if ${Return.Equal["STUCK"]}
 			{
 				;  check area around the character
-				call LOScircle ${HID} FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+				call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+1]} ${Actor[${HID}].Z}
 			}
 		}
 
@@ -122,7 +135,7 @@ function harvestnode(int HID)
 		}
 		else 
 		{
-			call checkPC ${HID}
+			call checkPC
 			if ${Return}
 			{
 				return
@@ -133,17 +146,26 @@ function harvestnode(int HID)
 			; while the target exists
 			while ${Target(exists)} && ${hitcount:Inc} <50
 			{
-				waitframe
-				Target:DoubleClick
-				waitframe
-				while ${Me.CastingSpell}
-				waitframe
+					waitframe
+					Target:DoubleClick
+					if ${BadNode}
+					{
+						break
+					}
+					waitframe
+					while ${Me.CastingSpell}
+					waitframe
+			}
+			if ${BadNode}
+			{
+				BadNode:Set[FALSE]
+				Return STUCK
 			}
 		}
 	}
 }
 
-function checkPC(int HID)
+function checkPC()
 {
 	variable int PCloop=1
 	do
@@ -163,7 +185,7 @@ function checkPC(int HID)
 	return FALSE
 }
 
-function LOScircle(int HID, bool node,float CX, float CY, float CZ)
+function LOScircle(bool node,float CX, float CY, float CZ)
 {
 	
 	; variable used to calculate angle around circumfrence
@@ -180,7 +202,7 @@ function LOScircle(int HID, bool node,float CX, float CY, float CZ)
 	variable float pz
 
 	; distance from point (node or char)
-	variable int cr
+	variable float cr
 	
 	; loop control variable
 	
@@ -250,7 +272,14 @@ function LOScircle(int HID, bool node,float CX, float CY, float CZ)
 						Echo Moving to ${CX},${CZ} via ${px},${pz}
 						call moveto ${px} ${pz} 5 1 3 1
 						waitframe
-						call moveto ${CX} ${CZ} 5 0 3 1
+						if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
+						{
+						    	call moveto ${CX} ${CZ} 3 0 3 1
+						}
+						else
+						{
+							call moveto ${CX} ${CZ} 5 0 3 1
+						}
 						Return THERE
 					}
 				}
@@ -258,7 +287,7 @@ function LOScircle(int HID, bool node,float CX, float CY, float CZ)
 			while ${cloop:Inc}<=2
 		}
 		; Expand the circle
-		while ${cr:Inc} <=50
+		while ${cr:Inc[1]} <=50
 	}
 	; add 1 shift (5 degrees)
 	while ${counter:Inc} <= 34
@@ -289,6 +318,7 @@ objectdef GoHarvestBot
 	{
 		Event[EQ2_onLootWindowAppeared]:AttachAtom[EQ2_onLootWindowAppeared]
 		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
+		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 	}
 
 	method LoadUI()
@@ -355,4 +385,40 @@ atom atexit()
 	}
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${ConfigPath}GoHarvestUI.xml"
+}
+
+atom(script) EQ2_onIncomingText(string Text)
+{
+	if ${Text.Find["too far away"]} > 0  && !${BadNode}
+	{
+		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+		{
+			echo "Node is 'too far away'..."
+			BadNode:Set[TRUE]
+		}
+	}
+	elseif (${Text.Find["Can't see target"]} > 0)  && !${BadNode}
+	{
+		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+		{
+			echo "Received 'Cant see target' message..."
+			BadNode:Set[TRUE]
+		}
+	}
+	elseif ${Text.Find["You cannot "]} > 0 && !${BadNode}
+	{
+	    if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+			{
+	            echo " Received 'You cannot ...' message..."
+	    	    BadNode:Set[TRUE]
+		}
+	}	
+	elseif (${Text.Find["Your target is already in use"]} > 0)  && !${BadNode}
+	{
+		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+		{
+			echo "Received 'Your target is already in use by someone else' message..."
+			BadNode:Set[TRUE]
+		}
+	}
 }
