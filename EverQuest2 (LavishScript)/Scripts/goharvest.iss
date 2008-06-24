@@ -74,8 +74,6 @@ function startharvest(int scan)
 									{
 										HID:Set[${CustomActor[${harvestloop}].ID}]
 										call harvestnode
-										Badnode:Set[FALSE]
-
 									}
 									break
 								}
@@ -146,20 +144,16 @@ function harvestnode()
 			; while the target exists
 			while ${Target(exists)} && ${hitcount:Inc} <50
 			{
-					waitframe
-					Target:DoubleClick
-					if ${BadNode}
-					{
-						break
-					}
-					waitframe
-					while ${Me.CastingSpell}
-					waitframe
-			}
-			if ${BadNode}
-			{
-				BadNode:Set[FALSE]
-				Return STUCK
+				waitframe
+				Target:DoubleClick
+				waitframe
+				if ${BadNode}
+				{
+					BadNode:Set[FALSE]
+					return STUCK
+				}
+				while ${Me.CastingSpell}
+				waitframe
 			}
 		}
 	}
@@ -272,6 +266,11 @@ function LOScircle(bool node,float CX, float CY, float CZ)
 						Echo Moving to ${CX},${CZ} via ${px},${pz}
 						call moveto ${px} ${pz} 5 1 3 1
 						waitframe
+						call checkPC ${HID}
+						if ${Return}
+						{
+							return
+						}
 						if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
 						{
 						    	call moveto ${CX} ${CZ} 3 0 3 1
