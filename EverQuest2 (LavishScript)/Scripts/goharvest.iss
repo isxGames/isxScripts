@@ -15,6 +15,7 @@ variable GoHarvestBot GoHarvest
 variable int scan=150
 variable int HID
 variable bool BadNode=FALSE
+variable int BadNodeNo
 
 function main()
 {
@@ -73,7 +74,11 @@ function startharvest(int scan)
 									if ${CustomActor[${harvestloop}](exists)}
 									{
 										HID:Set[${CustomActor[${harvestloop}].ID}]
-										call harvestnode
+										if !${BadNode} || ${BadNode} && ${HID} != ${BadNodeNo}
+										{
+											BadNode:Set[FALSE]
+											call harvestnode
+										}
 									}
 									break
 								}
@@ -149,7 +154,6 @@ function harvestnode()
 				waitframe
 				if ${BadNode}
 				{
-					BadNode:Set[FALSE]
 					return STUCK
 				}
 				while ${Me.CastingSpell}
@@ -264,7 +268,7 @@ function LOScircle(bool node,float CX, float CY, float CZ)
 					if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} && ${Actor[${HID}](exists)}
 					{
 						Echo Moving to ${CX},${CZ} via ${px},${pz}
-						call moveto ${px} ${pz} 5 1 3 1
+						call moveto ${px} ${pz} 2 1 3 1
 						waitframe
 						call checkPC ${HID}
 						if ${Return}
@@ -394,6 +398,7 @@ atom(script) EQ2_onIncomingText(string Text)
 		{
 			echo "Node is 'too far away'..."
 			BadNode:Set[TRUE]
+			BadNodeNo:Set[${HID}]
 		}
 	}
 	elseif (${Text.Find["Can't see target"]} > 0)  && !${BadNode}
@@ -402,14 +407,16 @@ atom(script) EQ2_onIncomingText(string Text)
 		{
 			echo "Received 'Cant see target' message..."
 			BadNode:Set[TRUE]
+			BadNodeNo:Set[${HID}]
 		}
 	}
 	elseif ${Text.Find["You cannot "]} > 0 && !${BadNode}
 	{
 	    if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 			{
-	            echo " Received 'You cannot ...' message..."
-	    	    BadNode:Set[TRUE]
+			echo " Received 'You cannot ...' message..."
+			BadNode:Set[TRUE]
+			BadNodeNo:Set[${HID}]
 		}
 	}	
 	elseif (${Text.Find["Your target is already in use"]} > 0)  && !${BadNode}
@@ -418,6 +425,7 @@ atom(script) EQ2_onIncomingText(string Text)
 		{
 			echo "Received 'Your target is already in use by someone else' message..."
 			BadNode:Set[TRUE]
+			BadNodeNo:Set[${HID}]
 		}
 	}
 }
