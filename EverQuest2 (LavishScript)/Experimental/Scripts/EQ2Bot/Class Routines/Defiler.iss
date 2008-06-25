@@ -217,8 +217,6 @@ function Combat_Init()
 	Power[14,2]:Set[100]
 	SpellRange[14,1]:Set[52]
 
-	Action[15]:Set[ThermalShocker]
-
 	Action[16]:Set[AA_CripplingBash]
 	MobHealth[16,1]:Set[1]
 	MobHealth[16,2]:Set[100]
@@ -262,7 +260,6 @@ function Buff_Routine(int xAction)
 
 	if ${Me.ToActor.Power}>85 && ${KeepWardUp}
 		call CheckWards
-
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -430,12 +427,6 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<1 && ${OffenseMode}
-		{
-			call CastSpellRange 51 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-
 		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${spellsused}<1
 		{
 			call CastSpellRange 52 0 0 0 ${KillTarget}
@@ -577,9 +568,6 @@ function Combat_Routine(int xAction)
 					Me.Ability[Master's Smite]:Use
 				}
 				break
-			case ThermalShocker
-				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady} && ${OffenseMode}
-					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
 			default
 				return CombatComplete
 				break
