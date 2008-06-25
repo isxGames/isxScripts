@@ -74,7 +74,7 @@ function startharvest(int scan)
 									if ${CustomActor[${harvestloop}](exists)}
 									{
 										HID:Set[${CustomActor[${harvestloop}].ID}]
-										if !${BadNode} || ${BadNode} && ${HID} != ${BadNodeNo}
+										if !${BadNode} || (${BadNode} && ${HID} != ${BadNodeNo})
 										{
 											BadNode:Set[FALSE]
 											call harvestnode
@@ -106,7 +106,7 @@ function harvestnode()
 		{
 			return
 		}
-		if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+1]},${Actor[${HID}].Z}]}
+		if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
 		{
 			echo Moving to ->  ${HID} : ${Actor[${HID}]}
 
@@ -123,12 +123,12 @@ function harvestnode()
 		{
 			Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
 			;  check area around the node
-			call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+1]} ${Actor[${HID}].Z}
+			call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
 			
 			if ${Return.Equal["STUCK"]}
 			{
 				;  check area around the character
-				call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+1]} ${Actor[${HID}].Z}
+				call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
 			}
 		}
 
