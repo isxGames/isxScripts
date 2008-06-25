@@ -743,14 +743,14 @@ function CheckCures()
 	}
 
 	;Cure Ourselves first
-	do
+	while ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0)
 	{
 		call CureMe
 
 		if ${Me.ToActor.Health}<30 && ${EpicMode}
 			call HealMe
 	}
-	while ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0)
+
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
 	;	all afflictions unless group health or mt health gets low
