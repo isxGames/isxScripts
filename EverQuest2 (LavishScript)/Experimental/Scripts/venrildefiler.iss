@@ -49,7 +49,7 @@ function main(string MT)
 
 		call CheckDebuffs
 		if !${Return} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32 && ${Me.ToActor.Power}>44
-			call DoHeals ${MTID}
+			call DoHeals ${MT}
 
 		if ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 			call CheckCures ${MTID}
@@ -202,7 +202,7 @@ function CastPause()
 		}
 }
 
-function DoAttack(string MA)
+function DoDebuffs(string MA)
 {
 	declare CastCnt int 0
 	declare movecnt int 0
@@ -214,78 +214,88 @@ function DoAttack(string MA)
 	if ${Me.ToActor.Power}<=42 || ${Return}
 		return
 
-	eq2execute /assist ${MA}
-	face Venril
+	eq2execute /target ${MA}
 
-	if ${Actor[Venril].Distance}>10
+	;Umbral Trap
+	if ${Me.Ability[Umbral Trap].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
-		press -hold w
-		do
-		{
-			face Venril
-			waitframe
-		}
-		while ${movecnt:Inc}<30 && ${Me.Noxious}<1 && ${Me.Arcane}<1 && ${Actor[Venril].Distance}>10
-		press -release w
-	}
-
-	;we're good to use one abilitiy
-	;CoB Check
-	if ${Me.Ability[Chimes of Blades].IsReady}
-	{
-		Me.Ability[Chimes of Blades]:Use
+		Me.Ability[Umbral Trap]:Use
 		call CastPause
 		return
 	}
 
-	;Scream of Blood
-	if ${Me.Ability[Scream of Blood].IsReady} && ${Me.Ability[Shroud].IsReady} && ${Actor[Venril].Distance}>10
+	;Bane of Warding
+	if ${Me.Ability[Bane of Warding].IsReady}
 	{
-		Me.Ability[Shroud]:Use
-		call CastPause
-		Me.Ability[Scream of Blood]:Use
+		Me.Ability[Bane of Warding]:Use
 		call CastPause
 		return
 	}
 
-	;Shriek Blade
-	if ${Me.Ability[Shriek Blade].IsReady}
+	;Hideous Seal
+	if ${Me.Ability[Hideous Seal].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
-		Me.Ability[Shriek Blade]:Use
+		Me.Ability[Hideous Seal]:Use
 		call CastPause
 		return
 	}
 
-	;Deprivating Shot
-	if ${Me.Ability[Deprivating Shot].IsReady}
+	;Abomination
+	if ${Me.Ability[Abomination].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
-		Me.Ability[Deprivating Shot]:Use
+		Me.Ability[Abomination]:Use
 		call CastPause
 		return
 	}
 
-	;Siphon Blade
-	if ${Me.Ability[Siphon Blade].IsReady}
+	;Hexation
+	if ${Me.Ability[Hexation].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
-		Me.Ability[Siphon Blade]:Use
+		Me.Ability[Hexation]:Use
+		call CastPause
+		return
+	}
+}
+
+function DoHeals(string MT)
+{
+
+	;recheck debuffs
+	call CheckDebuffs
+	if ${Me.ToActor.Power}<=42 || ${Return}
+		return
+
+	if !${Me.Maintained[Carrion Warding](exists)} && ${Me.Ability[Carrion Warding].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<30
+	{
+		Me.Ability[Carrion Warding]:Use
 		call CastPause
 		return
 	}
 
-	;Rhyming Curse
-	if ${Me.Ability[Rhyming Curse].IsReady}
+	if !${Me.Maintained[Carrion Warding](exists)} && ${Me.Ability[Ancient Shroud].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
-		Me.Ability[Rhyming Curse]:Use
+		Me.Ability[Ancient Shroud]:Use
 		call CastPause
 		return
 	}
 
-	;Grim Strike
-	if ${Me.Ability[Grim Strike].IsReady} && ${Me.Ability[Shroud].IsReady} && ${Actor[Venril].Distance}>10
+	if !${Me.Maintained[Deathward](exists)} && ${Me.Ability[Deathward].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
-		Me.Ability[Shroud]:Use
+		Me.Ability[Deathward]:Use
 		call CastPause
-		Me.Ability[Grim Strike]:Use
+		return
+	}
+
+	if !${Me.Maintained[Spiritual Shrine](exists)} && ${Me.Ability[Spiritual Shrine].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
+	{
+		Me.Ability[Spiritual Shrine]:Use
+		call CastPause
+		return
+	}
+
+	if ${Actor[pc,exactname,${MT}].Health}<80 && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
+	{
+		Me.Ability[Sacrificial Restoration]:Use
 		call CastPause
 		return
 	}
