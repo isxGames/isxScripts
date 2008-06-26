@@ -1135,7 +1135,7 @@ function CheckHeals()
     	{
     		do
     		{
-    			${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
+    			if ${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
     			{
     			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
     				{
