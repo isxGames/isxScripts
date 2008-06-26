@@ -257,7 +257,10 @@ function Buff_Routine(int xAction)
 		call Shard
 
 	if ${xAction}==1
+	{
 		call CheckHeals
+		call CheckCures
+	}
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{

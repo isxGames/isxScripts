@@ -72,92 +72,98 @@ function Combat_Init()
    Action[3]:Set[Taunt2]
    SpellRange[3,1]:Set[161]
 
-   Action[4]:Set[Combat_Buff1]
-   SpellRange[4,1]:Set[155]
+   Action[4]:Set[AA_Accel]
+   SpellRange[4,1]:Set[399]
 
-   Action[5]:Set[Combat_Buff2]
-   SpellRange[5,1]:Set[156]
+   Action[5]:Set[Combat_Buff1]
+   SpellRange[5,1]:Set[155]
 
-   Action[6]:Set[AoE1]
-   Power[6,1]:Set[20]
-   Power[6,2]:Set[100]
-   SpellRange[6,1]:Set[90]
+   Action[6]:Set[Combat_Buff2]
+   SpellRange[6,1]:Set[156]
 
-   Action[7]:Set[AoE2]
-   Power[7,1]:Set[20]
-   Power[7,2]:Set[100]
-   SpellRange[7,1]:Set[91]
+   Action[7]:Set[AA_Wrath]
+   SpellRange[7,1]:Set[397]
 
-   Action[8]:Set[AoE3]
+   Action[8]:Set[AoE1]
    Power[8,1]:Set[20]
    Power[8,2]:Set[100]
-   SpellRange[8,1]:Set[92]
+   SpellRange[8,1]:Set[90]
 
-   Action[9]:Set[PBAoE1]
+   Action[9]:Set[AoE2]
    Power[9,1]:Set[20]
    Power[9,2]:Set[100]
-   SpellRange[9,1]:Set[93]
+   SpellRange[9,1]:Set[91]
 
-   Action[10]:Set[PBAoE2]
+   Action[10]:Set[AoE3]
    Power[10,1]:Set[20]
    Power[10,2]:Set[100]
-   SpellRange[10,1]:Set[94]
+   SpellRange[10,1]:Set[92]
 
-   Action[11]:Set[PBAoE3]
+   Action[11]:Set[PBAoE1]
    Power[11,1]:Set[20]
    Power[11,2]:Set[100]
-   SpellRange[11,1]:Set[95]
+   SpellRange[11,1]:Set[93]
 
-   Action[12]:Set[Damage_Debuff1]
-   MobHealth[12,1]:Set[5]
-   MobHealth[12,2]:Set[100]
+   Action[12]:Set[PBAoE2]
    Power[12,1]:Set[20]
    Power[12,2]:Set[100]
-   SpellRange[12,1]:Set[80]
+   SpellRange[12,1]:Set[94]
 
-   Action[13]:Set[Damage_Debuff2]
-   MobHealth[13,1]:Set[5]
-   MobHealth[13,2]:Set[100]
+   Action[13]:Set[PBAoE3]
    Power[13,1]:Set[20]
    Power[13,2]:Set[100]
-   SpellRange[13,1]:Set[81]
+   SpellRange[13,1]:Set[95]
 
-   Action[14]:Set[Damage_Debuff3]
+   Action[14]:Set[Damage_Debuff1]
    MobHealth[14,1]:Set[5]
    MobHealth[14,2]:Set[100]
    Power[14,1]:Set[20]
    Power[14,2]:Set[100]
-   SpellRange[14,1]:Set[82]
+   SpellRange[14,1]:Set[80]
 
-   Action[15]:Set[Melee_Attack1]
-   Power[15,1]:Set[5]
+   Action[15]:Set[Damage_Debuff2]
+   MobHealth[15,1]:Set[5]
+   MobHealth[15,2]:Set[100]
+   Power[15,1]:Set[20]
    Power[15,2]:Set[100]
-   SpellRange[15,1]:Set[150]
+   SpellRange[15,1]:Set[81]
 
-   Action[16]:Set[Melee_Attack2]
-   Power[16,1]:Set[5]
+   Action[16]:Set[Damage_Debuff3]
+   MobHealth[16,1]:Set[5]
+   MobHealth[16,2]:Set[100]
+   Power[16,1]:Set[20]
    Power[16,2]:Set[100]
-   SpellRange[16,1]:Set[151]
+   SpellRange[16,1]:Set[82]
 
-   Action[17]:Set[Shield_Attack]
+   Action[17]:Set[Melee_Attack1]
    Power[17,1]:Set[5]
    Power[17,2]:Set[100]
-   SpellRange[17,1]:Set[240]
+   SpellRange[17,1]:Set[150]
 
-   Action[18]:Set[Belly_Smash]
+   Action[18]:Set[Melee_Attack2]
    Power[18,1]:Set[5]
    Power[18,2]:Set[100]
-   SpellRange[18,1]:Set[400]
+   SpellRange[18,1]:Set[151]
 
-   Action[19]:Set[Melee_Attack3]
+   Action[19]:Set[Shield_Attack]
    Power[19,1]:Set[5]
    Power[19,2]:Set[100]
-   SpellRange[19,1]:Set[152]
+   SpellRange[19,1]:Set[240]
 
-   Action[20]:Set[Melee_Attack4]
+   Action[20]:Set[Belly_Smash]
    Power[20,1]:Set[5]
    Power[20,2]:Set[100]
-   SpellRange[20,1]:Set[153]
+   SpellRange[20,1]:Set[400]
+
+   Action[21]:Set[Melee_Attack3]
+   Power[21,1]:Set[5]
+   Power[21,2]:Set[100]
+   SpellRange[21,1]:Set[152]
+
+   Action[22]:Set[Melee_Attack4]
+   Power[22,1]:Set[5]
+   Power[22,2]:Set[100]
+   SpellRange[22,1]:Set[153]
 
 
 }
@@ -387,6 +393,10 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
+				break
+			case AA_Wrath
+			case AA_Accel
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				break
 			case default
 				return Combat Complete

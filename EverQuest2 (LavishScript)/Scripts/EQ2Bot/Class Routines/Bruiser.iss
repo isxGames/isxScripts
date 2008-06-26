@@ -9,7 +9,34 @@ function Class_Declaration()
     declare ClassFileVersion int script 20080408
     ;;;;
 
-    call EQ2BotLib_Init
+	declare AoEMode bool script FALSE
+	declare PBAoEMode bool script FALSE
+	declare DefensiveMode bool script TRUE
+	declare TauntMode bool Script TRUE
+	declare FullAutoMode bool Script FALSE
+	declare CraneTwirlMode bool Script FALSE
+	declare StanceType int script
+	declare BuffProtectGroupMember string script
+	declare RangedAttackMode bool script TRUE
+	declare ThrownAttacksMode bool script TRUE
+
+	;Alias DebugSpew "Redirect -append c:/Bruiser.txt"
+	;Script:EnableDebugLogging[c:/Bruiser.txt]
+	;DebugSpew echo +++++++ Start Bruiser+++++++
+
+	call EQ2BotLib_Init
+
+	StanceType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Stance Type,1]}]
+	FullAutoMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Full Auto Mode,FALSE]}]
+	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Taunt Spells,TRUE]}]
+	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
+	CraneTwirlMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Crane Twirl,TRUE]}]
+	BuffProtectGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProtectGroupMember,]}]
+	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
+	ThrownAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Thrown Attack Spells,FALSE]}]
+
+	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
+	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 }
 
 function Buff_Init()
@@ -30,6 +57,9 @@ function Buff_Init()
 
 	PreAction[5]:Set[Cure_Trauma]
 	PreSpellRange[5,1]:Set[211]
+
+	PreAction[6]:Set[AACraneTwirl]
+	PreSpellRange[6,1]:Set[394]
 }
 
 function Combat_Init()
@@ -38,38 +68,66 @@ function Combat_Init()
 	SpellRange[1,1]:Set[155]
 	SpellRange[1,2]:Set[156]
 
-	Action[2]:Set[Taunt]
-	SpellRange[2,1]:Set[160]
+	Action[2]:Set[AoE_Taunt]
+	SpellRange[2,1]:Set[170]
 
-	Action[3]:Set[Cure_Trauma]
-	SpellRange[3,1]:Set[211]
+	Action[3]:Set[Taunt1]
+	SpellRange[3,1]:Set[160]
 
-	Action[4]:Set[Self_Heal]
-	SpellRange[4,1]:Set[320]
+	Action[4]:Set[Cure_Trauma]
+	SpellRange[4,1]:Set[211]
 
-	Action[5]:Set[DoT]
-	SpellRange[5,1]:Set[70]
-	SpellRange[5,2]:Set[71]
+	Action[5]:Set[Self_Heal]
+	SpellRange[5,1]:Set[320]
 
-	Action[6]:Set[Stun]
-	SpellRange[6,1]:Set[190]
+	Action[6]:Set[DoT]
+	SpellRange[6,1]:Set[70]
+	SpellRange[6,2]:Set[71]
 
-	Action[7]:Set[Melee_Attack]
-	SpellRange[7,1]:Set[150]
-	SpellRange[7,2]:Set[154]
+	Action[7]:Set[Stun]
+	SpellRange[7,1]:Set[190]
 
-	Action[8]:Set[High_Attack]
-	SpellRange[8,1]:Set[321]
+	Action[8]:Set[Melee_Attack]
+	SpellRange[8,1]:Set[150]
+	SpellRange[8,2]:Set[154]
 
-	Action[9]:Set[AoE_All]
-	SpellRange[9,1]:Set[95]
-	SpellRange[9,2]:Set[96]
+	Action[9]:Set[High_Attack]
+	SpellRange[9,1]:Set[321]
 
-	Action[10]:Set[AoE]
-	SpellRange[10,1]:Set[90]
+	Action[10]:Set[AoE_All]
+	SpellRange[10,1]:Set[95]
+	SpellRange[10,2]:Set[96]
 
-	Action[11]:Set[Combat_Defense]
-	SpellRange[11,1]:Set[307]
+	Action[11]:Set[AoE]
+	SpellRange[11,1]:Set[90]
+
+	Action[12]:Set[Combat_Defense]
+	SpellRange[12,1]:Set[307]
+
+	Action[13]:Set[AACraneSweep]
+	SpellRange[13,1]:Set[395]
+
+	Action[14]:Set[AACraneFlock]
+	SpellRange[14,1]:Set[393]
+
+	Action[15]:Set[AAPressurePoint]
+	SpellRange[15,1]:Set[399]
+
+	Action[16]:Set[AAChi]
+	SpellRange[16,1]:Set[387]
+
+	Action[17]:Set[AABatonFlurry]
+	SpellRange[17,1]:Set[398]
+
+	Action[18]:Set[AAMantisStar]
+	SpellRange[18,1]:Set[397]
+
+	Action[19]:Set[AAEagleSpin]
+	SpellRange[19,1]:Set[392]
+
+	Action[20]:Set[AAEvade]
+	SpellRange[20,1]:Set[390]
+
 }
 
 function PostCombat_Init()
@@ -79,6 +137,14 @@ function PostCombat_Init()
 
 function Buff_Routine(int xAction)
 {
+
+	declare BuffTarget string local
+
+	call CheckHeals
+
+	call ApplyStance
+
+	ExecuteAtom CheckStuck
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
@@ -98,12 +164,23 @@ function Buff_Routine(int xAction)
 			break
 
 		case Protect_Target
-			if ${EQ2Bot.ProtectHealer}
+			BuffTarget:Set[${UIElement[cbBuffProtectGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.GroupCount}>1
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 ${EQ2Bot.ProtectHealer}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},2]} 0 0 0
 			}
 			break
-
+		case AACraneTwirl
+			if ${CraneTwirlMode}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			else
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+			break
 		case Cure_Trauma
 			if ${Me.Trauma}
 			{
@@ -112,23 +189,48 @@ function Buff_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[20]
+			xAction:Set[40]
 			break
 	}
 }
 
 function Combat_Routine(int xAction)
 {
+	AutoFollowingMA:Set[FALSE]
+
+	if ${Me.ToActor.WhoFollowing(exists)}
+	{
+		EQ2Execute /stopfollow
+	}
+
+	call CheckHeals
+
+	if ${DoHOs}
+	{
+
+		objHeroicOp:DoHO
+	}
+
+	if !${EQ2.HOWindowActive} && ${Me.InCombat}
+	{
+		call CastSpellRange 303
+	}
+
+	if ${ShardMode}
+	{
+		call Shard
+	}
+
 	switch ${Action[${xAction}]}
 	{
 		case Combat_Buff
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			break
-
+		case AoE_Taunt
 		case Taunt
-			if ${MainTank}
+			if ${TauntMode} && !${RangedAttacksMode}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			}
 			break
 
@@ -187,7 +289,54 @@ function Combat_Routine(int xAction)
 				Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
-
+		case AAEagleSpin
+			if !${RangedAttackMode} && ${Me.GroupCount}<=1
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			}
+			break
+		case AAEvade
+			if !${RangedAttackMode} && !${MainTank}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+			}
+			break
+		case AACraneFlock
+			if ${PBAoEMode} && ${Mob.Count}>2 && !${RangedAttackMode}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			}
+			break
+		case AAPressurePoint
+			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			}
+			break
+		case AAChi
+			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}<60 && !${RangedAttackMode}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 0 0 0 1
+			}
+			break
+		case AABatonFlurry
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${RangedAttackMode}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			}
+			break
+		case AACraneSweep
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${RangedAttackMode}  && ${PBAoEMode} && ${Mob.Count}>2
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			}
+			break
+		case AAMantisStar
+			if ${ThrownAttacksMode} && !${MainTank}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
+			}
+			break
 		Default
 			xAction:Set[20]
 			break
@@ -270,4 +419,104 @@ function MA_Lost_Aggro()
 function Cancel_Root()
 {
 
+}
+
+function CheckHeals()
+{
+	declare grpcnt int local
+	declare temphl int local 1
+	grpcnt:Set[${Me.GroupCount}]
+
+	;Feign Death if I am solo and low on health
+	if ${Me.ToActor.Health}<15 && ${Me.GroupCount}==1
+	{
+		call CastSpellRange 368 0 0 0 0 0 0 1
+	}
+
+	;Use Chi if low health
+	if ${Me.ToActor.Health}<35 && ${Me.InCombat} && ${Me.Ability[${SpellType[387]}].IsReady}
+	{
+		call CastSpellRange 387 0 0 0 0 0 0 1
+	}
+
+	;Cancel Feign if Health is better
+	if ${Me.Maintained[${SpellType[368]}](exists)} && ${Me.ToActor.Health}>60
+	{
+		Me.Maintained[${SpellType[368]}]:Cancel
+	}
+
+	;Tsunami
+	if ${Me.ToActor.Health}<25 && ${DefensiveMode}
+	{
+		call CastSpellRange 300 0 0 0 0 0 0 1
+	}
+
+	;Toggle Stone Stance
+	if ${Me.ToActor.Health}<50 && ${DefensiveMode}
+	{
+		call CastSpellRange 157 0 0 0 0 0 0 1
+	}
+	elseif ${Me.Maintained[${SpellType[157]}](exists)}
+	{
+		Me.Maintained[${SpellType[157]}]:Cancel
+	}
+
+	; Cure afflictions Me
+	if ${Me.Arcane}>=1 || ${Me.Noxious}>=1 || ${Me.Elemental}>=1
+	{
+		call CastSpellRange 367 0 0 0 0 0 0 1
+
+	}
+
+	;Check Me first for mending,
+	if ${Me.ToActor.Health}<30
+	{
+		call CastSpellRange 366 0 0 0 ${Me.ToActor.ID} 0 0 1
+
+	}
+
+	do
+	{
+		;Check Group members
+		if ${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor(exists)}
+		{
+			call CastSpellRange 366 0 0 0 ${Me.Group[${temphl}].ToActor.ID} 0 0 1
+
+		}
+	}
+	while ${temphl:Inc}<${grpcnt}
+
+	;Outward Calm
+	if ${Me.ToActor.Health}<50
+	{
+		call CastSpellRange 369 0 0 0 ${Me.ToActor.ID} 0 0 1
+
+	}
+
+	call UseCrystallizedSpirit 60
+
+}
+
+function ApplyStance()
+{
+;1=Offensive,2=Defensive,3=Mixed
+
+	switch ${StanceType}
+	{
+		case 1
+			call CastSpellRange 291
+			break
+
+		case 2
+			call CastSpellRange 296
+			break
+
+		case 3
+			call CastSpellRange 292
+			break
+
+		case default
+			call CastSpellRange 291
+			break
+	}
 }
