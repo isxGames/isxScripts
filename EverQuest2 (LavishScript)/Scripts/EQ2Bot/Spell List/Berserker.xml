@@ -17,6 +17,12 @@
 		<Setting Name="9,160">Offend</Setting>
 		<Setting Name="10,161">Raging Blow</Setting>
 		<Setting Name="10,27">Focus Hate</Setting>
+		<Setting Name="10,400">Belly Smash</Setting>
+		<Setting Name="10,399">Acceleration Strike</Setting>
+		<Setting Name="10,397">Executioner\'s Wrath</Setting>
+		<Setting Name="10,396">Executioner\'s Fury</Setting>
+		<Setting Name="10,395">Dragooon\'s Reflexes</Setting>
+		<Setting Name="10,394">Buckler Reversal</Setting>
 		<Setting Name="11,81">Mangle</Setting>
 		<Setting Name="12,156">Disorder</Setting>
 		<Setting Name="13,240">Tackle</Setting>
@@ -35,12 +41,6 @@
 		<Setting Name="20,398">Bind Wound</Setting>
 		<Setting Name="20,95">Dragoon Spin</Setting>
 		<Setting Name="20,29">Dragoon\'s Cyclone</Setting>
-		<Setting Name="20,400">Belly Smash</Setting>
-		<Setting Name="20,399">Acceleration Strike</Setting>
-		<Setting Name="20,397">Executioner\'s Wrath</Setting>
-		<Setting Name="20,396">Executioner\'s Fury</Setting>
-		<Setting Name="20,395">Dragooon\'s Reflexes</Setting>
-		<Setting Name="20,394">Buckler Reversal</Setting>
 		<Setting Name="20,393">Berserk</Setting>
 		<Setting Name="20,392">Gut Roar</Setting>
 		<Setting Name="21,25">Blood Rage</Setting>

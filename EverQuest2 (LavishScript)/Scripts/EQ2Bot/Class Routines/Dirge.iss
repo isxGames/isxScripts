@@ -417,6 +417,8 @@ function Combat_Routine(int xAction)
 			call CheckPosition 3 0
 		}
 	}
+	elseif ${Actor[${KillTarget}].Distance}>6
+		call CheckPosition 1 1
 
 	switch ${Action[${xAction}]}
 	{
