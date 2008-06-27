@@ -78,6 +78,13 @@ function startharvest(int scan)
 										{
 											BadNode:Set[FALSE]
 											call harvestnode
+											if !${Return.Equal["STUCK"]}
+											{
+												EQ2:CreateCustomActorArray[byDist,${scan}]
+												waitframe
+												harvestloop:Set[1]
+												harvestcount:Set[${EQ2.CustomActorArraySize}]
+											}
 										}
 									}
 									break
