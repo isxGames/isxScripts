@@ -22,7 +22,7 @@ if "${QueuedCommands}"
 
 function main(string MT)
 {
-	if !${MT}
+	if ${MT.Equal[]}
 	{
 		echo ERROR: No MainTank set - run venrildirge <MainTank>
 		endscript
@@ -33,8 +33,9 @@ function main(string MT)
 	{
 		if !${ToxicStarted}
 		{
+			echo DEBUG: Waiting for Infusion
 			call CheckDebuffs
-			call DoPreHeals
+			call DoPreHeals ${MT}
 			continue
 		}
 		call CheckDebuffs
@@ -99,7 +100,7 @@ function CheckDebuffs()
 {
 	Me:InitializeEffects
 
-	if ${Me.Afflicted} && ${Me.Noxious}>0 && ${Me.Effect[detrimental,Toxic](exists)}
+	if ${Me.IsAfflicted} && ${Me.Noxious}>0 && ${Me.Effect[detrimental,Toxic](exists)}
 	{
 		Me.Ability[Cure: Mail of Phantoms]:Use
 		ToxicTimer:Set[${Time.Timestamp}]
@@ -259,7 +260,7 @@ function DoDebuffs(string MA)
 
 function DoHeals(string MT)
 {
-
+	echo Debug: Run Heals
 	;recheck debuffs
 	call CheckDebuffs
 	if ${Me.ToActor.Power}<=42 || ${Return}
@@ -267,6 +268,7 @@ function DoHeals(string MT)
 
 	if !${Me.Maintained[Carrion Warding](exists)} && ${Me.Ability[Carrion Warding].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<30
 	{
+		echo Debug: Cast group ward
 		Me.Ability[Carrion Warding]:Use
 		call CastPause
 		return
@@ -274,6 +276,7 @@ function DoHeals(string MT)
 
 	if !${Me.Maintained[Carrion Warding](exists)} && ${Me.Ability[Ancient Shroud].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
+		echo Debug: Cast single ward
 		Me.Ability[Ancient Shroud]:Use
 		call CastPause
 		return
@@ -281,6 +284,7 @@ function DoHeals(string MT)
 
 	if !${Me.Maintained[Deathward](exists)} && ${Me.Ability[Deathward].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
+		echo Debug: Cast death ward
 		Me.Ability[Deathward]:Use
 		call CastPause
 		return
@@ -288,19 +292,56 @@ function DoHeals(string MT)
 
 	if !${Me.Maintained[Spiritual Shrine](exists)} && ${Me.Ability[Spiritual Shrine].IsReady} && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
 	{
+		echo Debug: Cast shrine
 		Me.Ability[Spiritual Shrine]:Use
 		call CastPause
 		return
 	}
 
-	if ${Actor[pc,exactname,${MT}].Health}<80 && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32
+	if ${Actor[pc,exactname,${MT}].Health}<80 && ${Math.Calc64[${Time.Timestamp}-${ToxicTimer}]}<32 && ${Me.Ability[Sacrificial Restoration].IsReady}
 	{
+		echo Debug: Cast direct heal
 		Me.Ability[Sacrificial Restoration]:Use
 		call CastPause
 		return
 	}
 
 }
+
+function DoPreHeals(string MT)
+{
+	echo Debug: Run Pre Heals
+	;recheck debuffs
+	call CheckDebuffs
+	if ${Me.ToActor.Power}<=42 || ${Return}
+		return
+
+	if !${Me.Maintained[Carrion Warding](exists)} && ${Me.Ability[Carrion Warding].IsReady}
+	{
+		echo Debug: Cast group ward
+		Me.Ability[Carrion Warding]:Use
+		call CastPause
+		return
+	}
+
+	if !${Me.Maintained[Ancient Shroud](exists)} && ${Me.Ability[Ancient Shroud].IsReady} 
+	{
+		echo Debug: Cast single ward
+		Me.Ability[Ancient Shroud]:Use
+		call CastPause
+		return
+	}
+
+	if ${Actor[pc,exactname,${MT}].Health}<80 && ${Me.Ability[Sacrificial Restoration].IsReady}
+	{
+		echo Debug: Cast direct heal
+		Me.Ability[Sacrificial Restoration]:Use
+		call CastPause
+		return
+	}
+
+}
+
 
 function CheckCures(int MTID)
 {
