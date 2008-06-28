@@ -176,18 +176,6 @@ function DoAttack(string MA)
 	eq2execute /assist ${MA}
 	face Venril
 
-	if ${Actor[Venril].Distance}>20
-	{
-		press -hold w
-		do
-		{
-			face Venril
-			waitframe
-		}
-		while ${movecnt:Inc}<30 && ${Me.Noxious}<1 && ${Me.Arcane}<1 && ${Actor[Venril].Distance}>20
-		press -release w
-	}
-
 	;we're good to use one abilitiy
 	;Spell Rebuff
 	if ${Me.Ability[Spell Rebuff].IsReady} && !${Me.Maintained[Spell Rebuff](exists)}
