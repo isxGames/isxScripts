@@ -95,7 +95,8 @@ function CancelMaintained()
 
 function RefreshPower()
 {
-	;conj shard
+	
+;conj shard
 	if ${Me.ToActor.Power}<=50 && ${Me.Inventory["Scale of Essence"].IsReady} && ${Me.InCombat}
 	{
 		Me.Inventory["Scale of Essence"]:Use
@@ -110,7 +111,7 @@ function RefreshPower()
 		call CastPause
 		call CheckDebuffs
 	}
-
+return
 	;manastone
 	if ${Me.ToActor.Power}<=55 && ${Me.Inventory[ExactName,ManaStone].IsReady}
 	{
@@ -163,6 +164,7 @@ function CastPause()
 
 function DoAttack(string MA)
 {
+	return 
 	declare CastCnt int 0
 	declare movecnt int 0
 	;check power
