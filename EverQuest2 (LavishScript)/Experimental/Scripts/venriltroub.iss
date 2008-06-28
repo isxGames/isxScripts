@@ -45,7 +45,7 @@ function CheckPower()
 	if ${Me.ToActor.Power}>60
 	{
 		Me.Ability[Sprint]:Use
-		wait 5
+		wait 2
 
 		Me.Maintained[Sprint]:Cancel
 		return 1
