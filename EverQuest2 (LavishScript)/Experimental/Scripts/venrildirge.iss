@@ -18,7 +18,7 @@ if "${QueuedCommands}"
 
 function main(string MA)
 {
-	if !${MA}
+	if ${MA.Equal[]}
 	{
 		echo ERROR: No MainAssist set - run venrildirge <MainAssist>
 		endscript
@@ -31,7 +31,7 @@ function main(string MA)
 		ProcessTriggers()
 		call CheckDebuffs
 		if !${Return}
-			call DoAttack	${MA}
+			call DoAttack ${MA}
 		waitframe
 	}
 	while 1
@@ -70,7 +70,7 @@ function CheckDebuffs()
 {
 	Me:InitializeEffects
 
-	if ${Me.Afflicted} && ${Me.Noxious}>0 && ${Me.Effect[detrimental,Toxic](exists)}
+	if ${Me.IsAfflicted} && ${Me.Noxious}>0 && ${Me.Effect[detrimental,Toxic](exists)}
 	{
 		Me.Inventory["Expert's Noxious Remedy"]:Use
 		call CastPause
@@ -164,6 +164,9 @@ function CastPause()
 
 function DoAttack(string MA)
 {
+	if !${Actor[Venril](exists)}
+		return	
+
 	declare CastCnt int 0
 	declare movecnt int 0
 	;check power
