@@ -16,22 +16,23 @@ if "${QueuedCommands}"
 #endmac
 
 
+
 function main(string MA)
 {
-	if !${MA}
+	if ${MA.Equal[]}
 	{
-		echo ERROR: No MainAssist set - run venriltroub <MainAssist>
+		echo ERROR: No MainAssist set - run venrildirge <MainAssist>
 		endscript
 	}
 
 	do
 	{
-		if ${Actor[Venril](exists)} && ${Actor[Venril].Health}<65
-			call CheckPower
+		
+		call CheckPower
 		ProcessTriggers()
 		call CheckDebuffs
 		if !${Return}
-			call DoAttack	${MA}
+			call DoAttack ${MA}
 		waitframe
 	}
 	while 1
@@ -39,17 +40,13 @@ function main(string MA)
 
 function CheckPower()
 {
-	if !${Actor[Venril](exists)} || ${Actor[Venril].Health}>=65
-		return 1
 
-	if ${Me.ToActor.Power}>60 && ${Actor[Venril].Health}<=65
+
+	if ${Me.ToActor.Power}>60
 	{
 		Me.Ability[Sprint]:Use
-		wait 0.3
-		while ${Me.ToActor.Power}>60 && ${Me.Ability[Sprint](exists)}
-		{
-			waitframe
-		}
+		wait 5
+
 		Me.Maintained[Sprint]:Cancel
 		return 1
 	}
@@ -65,7 +62,6 @@ function CheckPower()
 		return 1
 	}
 }
-
 function CheckDebuffs()
 {
 	Me:InitializeEffects
