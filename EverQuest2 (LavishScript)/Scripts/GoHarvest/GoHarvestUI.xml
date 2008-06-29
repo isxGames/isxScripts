@@ -94,7 +94,7 @@
 						<Height>15</Height>
 						<MaxLength>4</MaxLength>
 						<OnLoad>
-							UIElement[ScanArea@Harvest@GUITabs@GoHarvest]:SetText[100]
+							UIElement[ScanArea@Harvest@GUITabs@GoHarvest]:SetText[150]
 						</OnLoad>
 					</Textentry>
 					<checkbox Name='Ore' Template='EQ2.checkbox'>
