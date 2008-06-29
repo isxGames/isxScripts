@@ -193,14 +193,16 @@ function checkPC()
 	variable int PCloop=1
 	do
 	{
-		waitframe
 		if ${CustomActor[${PCloop}].Type.Equal[PC]} && !${CustomActor[${PCloop}].Name.Equal[${Me.Name}]}
 		{
-			if ${Math.Distance[${Actor[${HID}].X},${CustomActor[${PCloop}].X}]} <= 7 && ${Math.Distance[${Actor[${HID}].Z},${CustomActor[${PCloop}].Z}]} <= 7
+			if !${Me.Group[${CustomActor[${PCloop}].Name}](exists)}
 			{
-				; PC near a node - ignore it and move on
-				Echo Someone at that node - ignore
-				return TRUE
+				if ${Math.Distance[${Actor[${HID}].X},${CustomActor[${PCloop}].X}]} <= 7 && ${Math.Distance[${Actor[${HID}].Z},${CustomActor[${PCloop}].Z}]} <= 7
+				{
+					; non-grouped PC near a node - ignore it and move on
+					Echo Someone at that node - ignore
+					return TRUE
+				}
 			}
 		}
 	}
@@ -449,6 +451,15 @@ atom(script) EQ2_onIncomingText(string Text)
 		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 		{
 			echo "Received 'Your target is already in use by someone else' message..."
+			BadNode:Set[TRUE]
+			BadNodeNo:Set[${HID}]
+		}
+	}
+	elseif (${Text.Find["not enough skill"]} > 0)  && !${BadNode}
+	{
+		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+		{
+			echo "Received 'You do not have enough skill' message..."
 			BadNode:Set[TRUE]
 			BadNodeNo:Set[${HID}]
 		}
