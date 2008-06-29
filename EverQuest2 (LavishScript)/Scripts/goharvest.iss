@@ -94,7 +94,7 @@ function startharvest(int scan)
 						while ${tempvar:Inc} <=9
 					}
 				}
-				if ${pauseharvest}
+				if ${pauseharvest} || ${Me.InCombat}
 				break
 			}
 			while ${harvestloop:Inc} <= ${harvestcount}
@@ -105,66 +105,84 @@ function startharvest(int scan)
 function harvestnode()
 {
 	variable int hitcount
-
-	if ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]} <= 30
+	if !${Me.InCombat}
 	{
-		call checkPC ${HID}
-		if ${Return}
+		; check node is not too high or too low (avoids running off islands etc)
+		if ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]} <= 30
 		{
-			return
-		}
-		if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
-		{
-			echo Moving to ->  ${HID} : ${Actor[${HID}]}
-
-			if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
-			{
-			    	call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 3 0 3 1
-			}
-			else
-			{
-				call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 5 0 3 1
-			}
-		}
-		else
-		{
-			Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
-			;  check area around the node
-			call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
-			
-			if ${Return.Equal["STUCK"]}
-			{
-				;  check area around the character
-				call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
-			}
-		}
-
-		if ${Return.Equal["STUCK"]}
-		{
-			return STUCK
-		}
-		else 
-		{
-			call checkPC
+			call checkPC ${HID}
 			if ${Return}
 			{
 				return
 			}
-			Actor[${HID}]:DoTarget
-			wait 5
-			hitcount:Set[0]
-			; while the target exists
-			while ${Target(exists)} && ${hitcount:Inc} <50
+			if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
 			{
-				waitframe
-				Target:DoubleClick
-				waitframe
-				if ${BadNode}
+				if !${Me.InCombat}
 				{
-					return STUCK
+
+					echo Moving to ->  ${HID} : ${Actor[${HID}]}
+		
+					if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
+					{
+					    	call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 3 0 3 1
+					}
+					else
+					{
+						call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 5 0 3 1
+					}
 				}
-				while ${Me.CastingSpell}
-				waitframe
+				else
+				{
+					Return
+				}
+			}
+			else
+			{
+				if !${Me.InCombat}
+				{
+					Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
+					;  check area around the node
+					call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+					
+					if ${Return.Equal["STUCK"]}
+					{
+						;  check area around the character
+						call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
+					}
+				}
+				else
+				{
+					Return
+				}
+			}
+	
+			if ${Return.Equal["STUCK"]}
+			{
+				return STUCK
+			}
+			else 
+			{
+				call checkPC
+				if ${Return}
+				{
+					return
+				}
+				Actor[${HID}]:DoTarget
+				wait 5
+				hitcount:Set[0]
+				; while the target exists
+				while ${Target(exists)} && ${hitcount:Inc} <50
+				{
+					waitframe
+					Target:DoubleClick
+					waitframe
+					if ${BadNode}
+					{
+						return STUCK
+					}
+					while ${Me.CastingSpell}
+					waitframe
+				}
 			}
 		}
 	}
