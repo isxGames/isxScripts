@@ -165,8 +165,18 @@ function harvestnode()
 				call checkPC
 				if ${Return}
 				{
-					return
+					Return
 				}
+				
+;				echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
+				 if ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]} > 5
+				{
+					echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
+					BadNode:Set[TRUE]
+					BadNodeNo:Set[${HID}]
+					return STUCK
+				}
+				
 				Actor[${HID}]:DoTarget
 				wait 5
 				hitcount:Set[0]
