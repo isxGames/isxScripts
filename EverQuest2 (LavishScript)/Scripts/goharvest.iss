@@ -15,7 +15,7 @@ variable GoHarvestBot GoHarvest
 variable int scan=150
 variable int HID
 variable bool BadNode=FALSE
-variable int BadNodeNo
+variable collection:string BadNodes
 
 function main()
 {
@@ -74,7 +74,7 @@ function startharvest(int scan)
 									if ${CustomActor[${harvestloop}](exists)}
 									{
 										HID:Set[${CustomActor[${harvestloop}].ID}]
-										if !${BadNode} || (${BadNode} && ${HID} != ${BadNodeNo})
+										if !${BadNodes.Element[${CustomActor[${harvestloop}].ID}](exists)}
 										{
 											BadNode:Set[FALSE]
 											call harvestnode
@@ -172,8 +172,8 @@ function harvestnode()
 				 if ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]} > 5
 				{
 					echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
+					GoHarvest:SetBadNode[${HID}]  
 					BadNode:Set[TRUE]
-					BadNodeNo:Set[${HID}]
 					return STUCK
 				}
 				
@@ -185,7 +185,7 @@ function harvestnode()
 				{
 					waitframe
 					Target:DoubleClick
-					waitframe
+					wait 20
 					if ${BadNode}
 					{
 						return STUCK
@@ -369,7 +369,13 @@ objectdef GoHarvestBot
 		ui -reload "${ConfigPath}GoHarvestUI.xml"
 		return
 	}
+	method SetBadNode(string badnodeid)
+	{
+	    	echo  Adding (${badnodeid},${Actor[id,${badnodeid}].Name}) to the BadNodes list
+		BadNodes:Set[${badnodeid},${Actor[id,${badnodeid}].Name}]
 
+		echo BadNodes now has ${BadNodes.Used} nodes in it.	    
+	}
 }
 
 
@@ -434,8 +440,8 @@ atom(script) EQ2_onIncomingText(string Text)
 		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 		{
 			echo "Node is 'too far away'..."
+			GoHarvest:SetBadNode[${HID}]  
 			BadNode:Set[TRUE]
-			BadNodeNo:Set[${HID}]
 		}
 	}
 	elseif (${Text.Find["Can't see target"]} > 0)  && !${BadNode}
@@ -443,8 +449,8 @@ atom(script) EQ2_onIncomingText(string Text)
 		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 		{
 			echo "Received 'Cant see target' message..."
+			GoHarvest:SetBadNode[${HID}]  
 			BadNode:Set[TRUE]
-			BadNodeNo:Set[${HID}]
 		}
 	}
 	elseif ${Text.Find["You cannot "]} > 0 && !${BadNode}
@@ -452,8 +458,8 @@ atom(script) EQ2_onIncomingText(string Text)
 	    if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 			{
 			echo " Received 'You cannot ...' message..."
+			GoHarvest:SetBadNode[${HID}]  
 			BadNode:Set[TRUE]
-			BadNodeNo:Set[${HID}]
 		}
 	}	
 	elseif (${Text.Find["Your target is already in use"]} > 0)  && !${BadNode}
@@ -461,8 +467,8 @@ atom(script) EQ2_onIncomingText(string Text)
 		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 		{
 			echo "Received 'Your target is already in use by someone else' message..."
+			GoHarvest:SetBadNode[${HID}]  
 			BadNode:Set[TRUE]
-			BadNodeNo:Set[${HID}]
 		}
 	}
 	elseif (${Text.Find["not enough skill"]} > 0)  && !${BadNode}
@@ -470,8 +476,8 @@ atom(script) EQ2_onIncomingText(string Text)
 		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 		{
 			echo "Received 'You do not have enough skill' message..."
+			GoHarvest:SetBadNode[${HID}]  
 			BadNode:Set[TRUE]
-			BadNodeNo:Set[${HID}]
 		}
 	}
 }
