@@ -6,16 +6,19 @@
 
 variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/GoHarvest/"
 
+variable filepath HarvestFile="${ConfigPath}Harvest.xml"
+
 variable bool HarvestNode[9]=TRUE
 variable bool pauseharvest=TRUE
 
-variable string NodeName[9]
-variable string HarvestFile
 variable GoHarvestBot GoHarvest
 variable int scan=150
 variable int HID
 variable bool BadNode=FALSE
 variable collection:string BadNodes
+
+variable settingsetref harvest
+variable settingsetref harvesttype
 
 function main()
 {
@@ -69,7 +72,8 @@ function startharvest(int scan)
 						{
 							if ${HarvestNode[${tempvar}]}
 							{
-								if ${actorname.Equal[${NodeName[${tempvar}]}]}
+								call checknodename ${tempvar} "${actorname}"
+								if ${Return}
 								{
 									if ${CustomActor[${harvestloop}](exists)}
 									{
@@ -102,6 +106,18 @@ function startharvest(int scan)
 	}
 }
 
+function checknodename(int tempvar, string actorname)
+{
+	variable string match
+	harvesttype:Set[${LavishSettings[goharvest].FindSet[${tempvar}]}]
+	match:Set[${harvesttype.FindSetting[${actorname}]}]
+	if !${match.Equal[NULL]}
+	{
+		 Return TRUE
+	}
+	Return FALSE
+}
+
 function harvestnode()
 {
 	variable int hitcount
@@ -113,7 +129,7 @@ function harvestnode()
 			call checkPC ${HID}
 			if ${Return}
 			{
-				return
+				return STUCK
 			}
 			if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
 			{
@@ -183,6 +199,11 @@ function harvestnode()
 				; while the target exists
 				while ${Target(exists)} && ${hitcount:Inc} <50
 				{
+					do
+					{
+						waitframe
+					}
+					while ${Me.InCombat}
 					waitframe
 					Target:DoubleClick
 					wait 20
@@ -339,20 +360,9 @@ objectdef GoHarvestBot
 {
 	method Init()
 	{
-		variable int tempvar
-		HarvestFile:Set[${ConfigPath}Harvest.xml]
-
-
-		tempvar:Set[1]
-		do
-		{
-			NodeName[${tempvar}]:Set[${SettingXML[${HarvestFile}].Set[${Zone.ShortName}].GetString[${tempvar}]}]
-		}
-		while ${tempvar:Inc}<=7
-		NodeName[8]:Set["?"]
-		NodeName[9]:Set["!"]
-
-	}
+		LavishSettings:AddSet[goharvest]
+		LavishSettings[goharvest]:Import[${HarvestFile}]
+}
 
 	method InitTriggersAndEvents()
 	{
@@ -431,6 +441,8 @@ atom atexit()
 	}
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${ConfigPath}GoHarvestUI.xml"
+	LavishSettings[harvest]:Clear
+
 }
 
 atom(script) EQ2_onIncomingText(string Text)
