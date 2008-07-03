@@ -515,7 +515,7 @@ function Combat_Routine(int xAction)
 			break
 		case Flank_Attack
 			if !${RangedAttackMode} && !${MainTank}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 2 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
 			break
 		case Rebuff
 		case Luda

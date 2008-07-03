@@ -429,33 +429,33 @@ function Combat_Routine(int xAction)
 	call CheckGroupHealth 60
 	if ${Return} && ${DebuffMode} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsHeroic})
 	{
-		if ${Me.Ability[${SpellType[54]}].IsReady} && !${Me.Maintained[${SpellType[54]}](exists)}
-		{
-			call CastSpellRange 54 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-
-		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<1 && ${OffenseMode}
-		{
-			call CastSpellRange 51 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-
-		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${spellsused}<1
+		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)}
 		{
 			call CastSpellRange 52 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[53]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<1
+		if ${Me.Ability[${SpellType[53]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<2
 		{
 			call CastSpellRange 53 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[322]}].IsReady} && !${Me.Maintained[${SpellType[322]}](exists)} && ${spellsused}<1
+		if ${Me.Ability[${SpellType[322]}].IsReady} && !${Me.Maintained[${SpellType[322]}](exists)} && ${spellsused}<2
 		{
 			call CastSpellRange 322 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<2 && ${OffenseMode}
+		{
+			call CastSpellRange 51 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[54]}].IsReady} && !${Me.Maintained[${SpellType[54]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 54 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 	}
@@ -914,22 +914,22 @@ function CheckHeals()
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
     declare MainTankExists bool local 1
-    
+
 	grpcnt:Set[${Me.GroupCount}]
 
 	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
-		
+
     if !${Actor[${MainTankID}](exists)}
     {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"    
-        MainTankExists:Set[FALSE]  
+        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+        MainTankExists:Set[FALSE]
     }
     else
         MainTankExists:Set[TRUE]
-        
+
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
@@ -987,7 +987,7 @@ function CheckHeals()
     		else
     			call HealMT ${MainTankID} ${MainTankInGroup}
     	}
-    	
+
     	;Check My health after MT
 	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
 		    call HealMe
