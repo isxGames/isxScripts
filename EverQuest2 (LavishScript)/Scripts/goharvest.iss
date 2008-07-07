@@ -369,6 +369,10 @@ objectdef GoHarvestBot
 		Event[EQ2_onLootWindowAppeared]:AttachAtom[EQ2_onLootWindowAppeared]
 		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
+		; Harvest triggers
+		; AddTrigger Harvested "Announcement::You have @action@:\n@number@ @result@"
+		; AddTrigger Harvest:Rare "Announcement::Rare item found!\n@rare@"
+
 	}
 
 	method LoadUI()
