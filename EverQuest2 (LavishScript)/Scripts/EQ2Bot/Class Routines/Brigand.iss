@@ -455,7 +455,7 @@ function Post_Combat_Routine(int xAction)
 	}
 }
 
-function Have_Aggro(ing agroid)
+function Have_Aggro(int agroid)
 {
 
 	echo I have agro from ${agroid}

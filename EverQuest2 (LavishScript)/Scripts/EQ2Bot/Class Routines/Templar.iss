@@ -827,8 +827,8 @@ function CheckHeals()
 
     if !${Actor[${MainTankID}](exists)}
     {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"    
-        MainTankExists:Set[FALSE]  
+        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+        MainTankExists:Set[FALSE]
     }
     else
         MainTankExists:Set[TRUE]
@@ -843,12 +843,12 @@ function CheckHeals()
 	{
     	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
     		call CastSpellRange 300 0 1 1 ${MainTankID}
-    		
+
     	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
-    		call CastSpellRange 4 0 0 0 ${MainTankID}    		
+    		call CastSpellRange 4 0 0 0 ${MainTankID}
     }
 
-    
+
 	call CheckReactives
 
 	if ${InquisitionMode} && ${Me.InCombat} && ${Me.Ability[${SpellType[11]}].IsReady} && !${Me.Maintained[${SpellType[11]}](exists)}
@@ -902,7 +902,7 @@ function CheckHeals()
     		else
     			call HealMT ${MainTankID} ${MainTankInGroup}
     	}
-    	
+
     	;Check My health after MT
 	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
 		    call HealMe
@@ -1092,5 +1092,7 @@ function CheckReactives()
 			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 				call CastSpellRange 15
 		}
+		if !${Me.Maintained[${SpellType[2]}](exists)}
+			call CastSpellRange 2
 	}
 }
