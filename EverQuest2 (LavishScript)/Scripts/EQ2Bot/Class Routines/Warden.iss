@@ -257,10 +257,7 @@ function Buff_Routine(int xAction)
 		call Shard
 
 	if ${xAction}==1
-	{
 		call CheckHeals
-		call CheckCures
-	}
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
@@ -736,16 +733,20 @@ function CheckHeals()
 	;RAID HEALS - Only check if in raid, raid heal mode on, maintank is green, I'm above 50, and a direct heal is available.  Otherwise don't waste time.
  	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ((${MainTankExists} && ${Actor[${MainTankID}].Health}>70) || !${MainTankExists}) && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
   {
+  	;echo Debug: Check Raid Heals - ${temph2}
   	do
 		{
-			${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
+			if ${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
 			{
 			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
 				{
 			    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
   				{
   					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
+  					{
+  						;echo Debug: Lowest - ${temph2}
   						raidlowest:Set[${temph2}]
+  					}
   				}
 				}
 			}
@@ -754,7 +755,8 @@ function CheckHeals()
 
     if (${Me.Raid[${raidlowest}].ToActor(exists)})
     {
-  		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
+  		;echo Debug: We need to heal ${raidlowest}
+  		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 90 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
   		{
   			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
   			if ${Me.Ability[${SpellType[4]}].IsReady}
