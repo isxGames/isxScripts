@@ -8,6 +8,7 @@ variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/GoHarvest/"
 
 variable filepath HarvestFile="${ConfigPath}Harvest.xml"
 
+
 variable bool HarvestNode[9]=TRUE
 variable bool pauseharvest=TRUE
 
@@ -25,10 +26,12 @@ function main()
 	GoHarvest:Init
 	GoHarvest:InitTriggersAndEvents
 	GoHarvest:LoadUI
+	
 	While 1
 	{
 		do
 		{
+			ExecuteQueued
 			waitframe
 		}
 		while ${pauseharvest}
@@ -131,45 +134,23 @@ function harvestnode()
 			{
 				return STUCK
 			}
-			if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${Actor[${HID}].X},${Math.Calc[${Actor[${HID}].Y}+2]},${Actor[${HID}].Z}]}
-			{
-				if !${Me.InCombat}
-				{
 
-					echo Moving to ->  ${HID} : ${Actor[${HID}]}
-		
-					if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
-					{
-					    	call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 3 0 3 1
-					}
-					else
-					{
-						call moveto ${Actor[${HID}].X} ${Actor[${HID}].Z} 5 0 3 1
-					}
-				}
-				else
+			; check route to node
+			if !${Me.InCombat}
+			{
+				Echo checking route to ->  ${HID} : ${Actor[${HID}]}
+				;  check area around the node
+				call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 50
+				
+				if ${Return.Equal["STUCK"]}
 				{
-					Return
+					;  check area around the character
+					call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 50
 				}
 			}
 			else
 			{
-				if !${Me.InCombat}
-				{
-					Echo checking alternative route to ->  ${HID} : ${Actor[${HID}]}
-					;  check area around the node
-					call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
-					
-					if ${Return.Equal["STUCK"]}
-					{
-						;  check area around the character
-						call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z}
-					}
-				}
-				else
-				{
-					Return
-				}
+				Return
 			}
 	
 			if ${Return.Equal["STUCK"]}
@@ -241,14 +222,14 @@ function checkPC()
 	return FALSE
 }
 
-function LOScircle(bool node,float CX, float CY, float CZ)
+function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 {
 	
 	; variable used to calculate angle around circumfrence
 	variable int counter
 
 	; angle of the point on the circle
-	variable int cx
+	variable float cx
 
 	; temporary variable to calculate angle points on circumfrence
 	variable int tx	
@@ -263,18 +244,22 @@ function LOScircle(bool node,float CX, float CY, float CZ)
 	; loop control variable
 	
 	variable int cloop
-	
 	if ${node}
 	{
 		Echo Checking area around node
-
-		cx:Set[${HeadingTo[${Me.X},${Me.Y},${Me.Z},${CX},${CY},${CZ}]}]
+		cx:Set[${Actor[${HID}].HeadingTo}]
 	}
 	else
 	{
 		Echo Checking area around character
-		cx:Set[${HeadingTo[${CX},${CY},${CZ},${Me.X},${Me.Y},${Me.Z}]}]
+		cx:Set[${Actor[${HID}].HeadingTo}]
+		cx:Inc[-180]
+		if ${cx} <0
+		{
+			cx:Inc[360]
+		}
 	}
+	
 	; start at angle + 0 shift (Direct Line to item)
 	counter:Set[0]
 	do
@@ -286,69 +271,71 @@ function LOScircle(bool node,float CX, float CY, float CZ)
 			cloop:Set[1]
 			do
 			{
-				if ${cloop} == 1
+				if !${Blocked[${cloop}]}
 				{
-					; check clockwise from point along circumfrence from node/char
-					tx:Set[${Math.Calc[${cx}+(5*${counter})]}]
-					
-					if ${tx} > 360
-						tx:Dec[360]
-				}
-				else
-				{
-					; otherwise check anti-clockwise along circumfrence from node/char
-					tx:Set[${Math.Calc[${cx}-(5*${counter})]}]
-				
-					if ${tx} < 0
-						tx:Inc[360]
-				}
-				; calculate the x,y point on the circumfrence
-				px:Set[${Math.Calc[${cr} * ${Math.Cos[${tx}]}]}]
-				pz:Set[${Math.Calc[${cr} * ${Math.Sin[${tx}]}]}]
-	
-				if ${node}
-				{
-					; Add it to the node location to give the mid-loc
-					px:Inc[${CX}]
-					pz:Inc[${CZ}]
-				}
-				else
-				{
-					; Add it to the characters location to give the mid-loc
-					px:Inc[${Me.X}]
-					pz:Inc[${Me.Z}]
-				}
-	
-				; check to see if mid-point is available
-				if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]}
-				{
-					; check to see if there is LOS from that mid-loc to the node
-					if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} && ${Actor[${HID}](exists)}
+					if ${cloop} == 1
 					{
-						Echo Moving to ${CX},${CZ} via ${px},${pz}
-						call moveto ${px} ${pz} 2 1 3 1
-						waitframe
-						call checkPC ${HID}
-						if ${Return}
+						; check clockwise from point along circumfrence from node/char
+						tx:Set[${Math.Calc[${cx}+(5*${counter})]}]
+						
+						if ${tx} > 360
+							tx:Dec[360]
+					}
+					else
+					{
+						; otherwise check anti-clockwise along circumfrence from node/char
+						tx:Set[${Math.Calc[${cx}-(5*${counter})]}]
+					
+						if ${tx} < 0
+							tx:Inc[360]
+					}
+					; calculate the x,y point on the circumfrence
+					px:Set[${Math.Calc[${cr} * ${Math.Cos[${tx}]}]}]
+					pz:Set[${Math.Calc[${cr} * ${Math.Sin[${tx}]}]}]
+		
+					if ${node}
+					{
+						; Add it to the node location to give the mid-loc
+						px:Inc[${CX}]
+						pz:Inc[${CZ}]
+					}
+					else
+					{
+						; Add it to the characters location to give the mid-loc
+						px:Inc[${Me.X}]
+						pz:Inc[${Me.Z}]
+					}
+					; check to see if mid-point is available
+					if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]}
+					{	
+						; check to see if there is LOS from that mid-loc to the node
+						if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} && ${Actor[${HID}](exists)}
 						{
-							return
+							Echo Moving to ${CX},${CZ} via ${px},${pz}
+							call moveto ${px} ${pz} 2 1 3 1
+							waitframe
+							call checkPC ${HID}
+							if ${Return}
+							{
+								return
+							}
+							if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
+							{
+							    	call moveto ${CX} ${CZ} 3 0 3 1
+							}
+							else
+							{
+								call moveto ${CX} ${CZ} 4 0 3 1
+							}
+							Return THERE
 						}
-						if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
-						{
-						    	call moveto ${CX} ${CZ} 3 0 3 1
-						}
-						else
-						{
-							call moveto ${CX} ${CZ} 5 0 3 1
-						}
-						Return THERE
 					}
 				}
 			}
 			while ${cloop:Inc}<=2
 		}
 		; Expand the circle
-		while ${cr:Inc[1]} <=50
+		while ${cr:Inc[1]} <=${distancecheck}
 	}
 	; add 1 shift (5 degrees)
 	while ${counter:Inc} <= 34
@@ -356,13 +343,27 @@ function LOScircle(bool node,float CX, float CY, float CZ)
 	return STUCK
 }
 
+function checkblocked()
+{
+	Declare nodedist float
+	Declare nodeangle float
+	
+	nodedist:Set[${Actor[${HID}].Distance}]
+	nodeangle:Set[${Actor[${HID}].HeadingTo}]
+	
+	echo node is ${nodedist} at angle ${nodeangle}
+	Return FALSE
+
+}
+
+
 objectdef GoHarvestBot
 {
 	method Init()
 	{
 		LavishSettings:AddSet[goharvest]
 		LavishSettings[goharvest]:Import[${HarvestFile}]
-}
+	}
 
 	method InitTriggersAndEvents()
 	{
@@ -445,8 +446,6 @@ atom atexit()
 	}
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${ConfigPath}GoHarvestUI.xml"
-	LavishSettings[harvest]:Clear
-
 }
 
 atom(script) EQ2_onIncomingText(string Text)
