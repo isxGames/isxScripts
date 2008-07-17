@@ -27,7 +27,6 @@
 		<Setting Name="Cabilisian lode">Cabilisian lode</Setting>
 		<Setting Name="bedded ore">bedded ore</Setting>
 		<Setting Name="uncovered stone">uncovered stone</Setting>
-		<Setting Name="uncovered stone">uncovered stone</Setting>
 	</Set>
 	<Set Name="2">
 		<Setting Name="luminous stone">luminous stone</Setting>
@@ -83,6 +82,7 @@
 		<Setting Name="gangly arbor">gangly arbor</Setting>
 		<Setting Name="sundrenched cordwood">sundrenched cordwood</Setting>
 		<Setting Name="fallen palm">fallen palm</Setting>
+		<Setting Name="felled desert arbor">Felled desert arbor</Setting>
 	</Set>
 	<Set Name="4">
 		<Setting Name="vestigial roots">vestigial roots</Setting>
@@ -153,6 +153,7 @@
 		<Setting Name="wastelands shrub">wastelands shrub</Setting>
 		<Setting Name="kunzar berrybush">kunzar berrybush</Setting>
 		<Setting Name="flowering shrubbery">flowering shrubbery</Setting>
+		<Setting Name="desert shrubbery">desert shrubbery</Setting>
 	</Set>
 	<Set Name="7">
 		<Setting Name="brood of fish">brood of fish</Setting>
