@@ -10,6 +10,7 @@ variable filepath HarvestFile="${ConfigPath}Harvest.xml"
 
 
 variable bool HarvestNode[9]=TRUE
+variable bool HBlocked[2]=FALSE
 variable bool pauseharvest=TRUE
 
 variable GoHarvestBot GoHarvest
@@ -140,12 +141,12 @@ function harvestnode()
 			{
 				Echo checking route to ->  ${HID} : ${Actor[${HID}]}
 				;  check area around the node
-				call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 50
+				call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 30
 				
 				if ${Return.Equal["STUCK"]}
 				{
 					;  check area around the character
-					call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 50
+					call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 30
 				}
 			}
 			else
@@ -271,12 +272,12 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 			cloop:Set[1]
 			do
 			{
-				if !${Blocked[${cloop}]}
+				if !${HBlocked[${cloop}]}
 				{
 					if ${cloop} == 1
 					{
 						; check clockwise from point along circumfrence from node/char
-						tx:Set[${Math.Calc[${cx}+(5*${counter})]}]
+						tx:Set[${Math.Calc[${cx}+(2*${counter})]}]
 						
 						if ${tx} > 360
 							tx:Dec[360]
@@ -284,7 +285,7 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 					else
 					{
 						; otherwise check anti-clockwise along circumfrence from node/char
-						tx:Set[${Math.Calc[${cx}-(5*${counter})]}]
+						tx:Set[${Math.Calc[${cx}-(2*${counter})]}]
 					
 						if ${tx} < 0
 							tx:Inc[360]
@@ -311,13 +312,23 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 						; check to see if there is LOS from that mid-loc to the node
 						if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} && ${Actor[${HID}](exists)}
 						{
-							Echo Moving to ${CX},${CZ} via ${px},${pz}
-							call moveto ${px} ${pz} 2 1 3 1
-							waitframe
+
+							; check nobody at that node
 							call checkPC ${HID}
 							if ${Return}
 							{
-								return
+								return STUCK
+							}
+
+							Echo Moving to ${CX},${CZ} via ${px},${pz}
+							call moveto ${px} ${pz} 2 0 3 1
+							waitframe
+							
+							; check still nobody at that node
+							call checkPC ${HID}
+							if ${Return}
+							{
+								return STUCK
 							}
 							if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
 							{
@@ -330,15 +341,33 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 							Return THERE
 						}
 					}
+					else
+					{
+						; Route via that angle is blocked , stop checking along that line.
+						HBlocked[${cloop}]:Set[TRUE]
+					}
 				}
 			}
 			while ${cloop:Inc}<=2
+			
+			; if both > and < angles from node are blocked then no point looking further along those routes
+			; exit loop and increase angles
+			if ${HBlocked[1]} && ${HBlocked[2]} 
+			{
+				break
+			}
 		}
-		; Expand the circle
+		
+		; Expand the length of the lines being checked
 		while ${cr:Inc[1]} <=${distancecheck}
+		
+		; Reset blocked flags
+		HBlocked[1]:Set[FALSE]
+		HBlocked[2]:Set[FALSE]
+
 	}
-	; add 1 shift (5 degrees)
-	while ${counter:Inc} <= 34
+	; add 1 shift (2 degrees)
+	while ${counter:Inc} <= 89
 	; all angles all distances checked - no LOS
 	return STUCK
 }
