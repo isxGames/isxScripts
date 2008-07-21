@@ -1340,11 +1340,11 @@ function GetBehind()
 	X:Set[${Math.Calc[-4*${Math.Sin[-${Target.Heading}]}+${Target.X}]}]
 	Z:Set[${Math.Calc[4*${Math.Cos[-${Target.Heading}]}+${Target.Z}]}]
 
-	call FastMove ${X} ${Z} 2
+	call FastMove ${X} ${Z} 4
 	if ${Return.Equal[STUCK]}
 	{
 		disablebehind:Set[TRUE]
-		call FastMove ${Target.X} ${Target.Z} 3
+		call FastMove ${Target.X} ${Target.Z} 6
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
@@ -1378,11 +1378,11 @@ function GetToFlank(int extended)
 	X:Set[${Math.Calc[${tempdir}*${Math.Cos[-${Target.Heading}]}+${Target.X}]}]
 	Z:Set[${Math.Calc[${tempdir}*${Math.Sin[-${Target.Heading}]}+${Target.Z}]}]
 
-	call FastMove ${X} ${Z} 1
+	call FastMove ${X} ${Z} 3
 	if ${Return.Equal[STUCK]}
 	{
 		disablebehind:Set[TRUE]
-		call FastMove ${Target.X} ${Target.Z} 3
+		call FastMove ${Target.X} ${Target.Z} 5
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
@@ -1401,7 +1401,7 @@ function GetinFront()
 	if ${Return.Equal[STUCK]}
 	{
 		disablefront:Set[TRUE]
-		call FastMove ${Target.X} ${Target.Z} 3
+		call FastMove ${Target.X} ${Target.Z} 5
 	}
 
 	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
