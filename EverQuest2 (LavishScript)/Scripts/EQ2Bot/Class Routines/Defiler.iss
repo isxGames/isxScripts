@@ -15,19 +15,19 @@
 ; Added Toggle for Innitiating HO
 ;
 ;20070404a
-;Updated for latest eq2bot
+; Updated for latest eq2bot
 ;
 ;20061201a
-;Fixed Cyrstalize Spirit line
-;implemented EoF Mastery attacks
-;implemented Turgur's Spirit Sight
-;implemented Vampire Theft Of Vitality
-;Implemented AA Cannibalize
-;Implemented AA Hexation
-;Implemented AA Soul Ward
-;Fixed a bug with AE healing group members out of zone
-;Fixed a bug with curing uncurable afflictions
-;The defiler will now use spiritual circle more often
+; Fixed Cyrstalize Spirit line
+; implemented EoF Mastery attacks
+; implemented Turgur's Spirit Sight
+; implemented Vampire Theft Of Vitality
+; Implemented AA Cannibalize
+; Implemented AA Hexation
+; Implemented AA Soul Ward
+; Fixed a bug with AE healing group members out of zone
+; Fixed a bug with curing uncurable afflictions
+; The defiler will now use spiritual circle more often
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -860,7 +860,6 @@ function CureMe()
 			wait 2
 		}
 	}
-
 }
 
 function HealMe()
@@ -913,7 +912,7 @@ function CheckHeals()
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
-    declare MainTankExists bool local 1
+  declare MainTankExists bool local 1
 
 	grpcnt:Set[${Me.GroupCount}]
 
@@ -922,13 +921,13 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
-    if !${Actor[${MainTankID}](exists)}
-    {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
-        MainTankExists:Set[FALSE]
-    }
-    else
-        MainTankExists:Set[TRUE]
+  if !${Actor[${MainTankID}](exists)}
+  {
+    echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+    MainTankExists:Set[FALSE]
+  }
+  else
+		MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
@@ -937,9 +936,9 @@ function CheckHeals()
 	;Res the MT if they are dead
 	if (${MainTankExists})
 	{
-    	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-    		call CastSpellRange 300 0 1 1 ${MainTankID}
-    }
+  	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+    	call CastSpellRange 300 0 1 1 ${MainTankID}
+	}
 
 	;Persist wards if selected.
 	call CheckWards
@@ -994,8 +993,8 @@ function CheckHeals()
     }
     else
     {
-        if ${Me.ToActor.Health}<90
-            call HealMe
+      if ${Me.ToActor.Health}<90
+        call HealMe
     }
 
 	;now lets heal individual groupmembers if needed
@@ -1029,7 +1028,7 @@ function CheckHeals()
 		temphl:Set[1]
 		do
 		{
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[301]}].Range}
+			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[301]}].Range}
 				call CastSpellRange 300 303 0 0 ${Me.Group[${temphl}].ID} 1
 		}
 		while ${temphl:Inc}<${grpcnt}
@@ -1090,7 +1089,6 @@ function GroupHeal()
 
 function EmergencyHeal(int healtarget)
 {
-
 	;Soul Ward
 	call CastSpellRange 380 0 2 0 ${healtarget}
 
@@ -1105,7 +1103,6 @@ function EmergencyHeal(int healtarget)
 		call CastSpellRange 335 0 2 0 ${healtarget}
 	else
 		call CastSpellRange 334 0 2 0 ${healtarget}
-
 }
 
 function CureGroupMember(int gMember)
