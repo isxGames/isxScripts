@@ -98,6 +98,7 @@
 		<Setting Name="52,25">Infernal Caress</Setting>
 		<Setting Name="52,81">Mana Sieve</Setting>
 		<Setting Name="53,61">Dire Smite</Setting>
+		<Setting Name="53,97">Doom Aura</Setting>
 		<Setting Name="54,154">Baleful Wrath</Setting>
 		<Setting Name="54,7">Heinous Blessing</Setting>
 		<Setting Name="54,45">Infernal Sacrament</Setting>
@@ -109,7 +110,7 @@
 		<Setting Name="57,150">Pariah\'s Brand</Setting>
 		<Setting Name="57,152">Agony</Setting>
 		<Setting Name="58,312">Death March</Setting>
-		<Setting Name="58,80">Siphon Magic</Setting>
+		<Setting Name="58,80">Siphon Might</Setting>
 		<Setting Name="58,295">Stance: Infernal Circle</Setting>
 		<Setting Name="59,330">Deathly Embrace</Setting>
 		<Setting Name="59,160">Insidious Promise</Setting>
@@ -117,6 +118,7 @@
 		<Setting Name="60,31">Devious Evasion</Setting>
 		<Setting Name="60,290">Stance: Pox Sword</Setting>
 		<Setting Name="61,151">Smash</Setting>
+		<Setting Name="61,21">Unhallowed Strength</Setting>
 		<Setting Name="62,63">Pestilent Touch</Setting>
 		<Setting Name="63,95">Death Circle</Setting>
 		<Setting Name="63,330">Mortal Embrace</Setting>
@@ -135,5 +137,35 @@
 		<Setting Name="70,55">Despoil</Setting>
 		<Setting Name="70,153">Drain Vitae</Setting>
 		<Setting Name="70,96">Unending Misery</Setting>
+		<Setting Name="71,152">Anguish</Setting>
+		<Setting Name="71,97">Doom Rays</Setting>
+		<Setting Name="71,150">Pariah's Strike</Setting>
+		<Setting Name="72,81">Mana Siege</Setting>
+		<Setting Name="72,160">Insinuate</Setting>
+		<Setting Name="72,80">Drain Might</Setting>
+		<Setting Name="72,295">Stance: Fiendish Circle</Setting>
+		<Setting Name="73,330">Stance: Lucan's Sword</Setting>
+		<Setting Name="73,30">Donation of Armament</Setting>
+		<Setting Name="73,21">Lucan's Leadership</Setting>
+		<Setting Name="74,63">Death Touch</Setting>
+		<Setting Name="74,98">Tap Arteries</Setting>
+		<Setting Name="74,151">Lucan's Boot</Setting>
+		<Setting Name="75,95">Crimson Circle</Setting>
+		<Setting Name="76,20">Relentless Hunger</Setting>
+		<Setting Name="76,170">Chastisement</Setting>
+		<Setting Name="76,60">Shadow Coil</Setting>
+		<Setting Name="77,25">Innoruuk's Caress</Setting>
+		<Setting Name="77,26">Unholy Arms</Setting>
+		<Setting Name="77,61">Siphon Strike</Setting>
+		<Setting Name="78,99">Contagion</Setting>
+		<Setting Name="78,154">Pain Wrath</Setting>
+		<Setting Name="78,45">Grave Sacrament</Setting>
+		<Setting Name="79,7">Life Pact</Setting>
+		<Setting Name="79,240">Hateful Slam</Setting>
+		<Setting Name="79,62">Malice</Setting>
+		<Setting Name="80,999">Bloodletter</Setting>
+		<Setting Name="80,153">Siphon Vitae</Setting>
+		<Setting Name="80,55">Devouring Mist</Setting>
+		<Setting Name="80,96">Painful Aura</Setting>
 	</Set>
 </InnerSpaceSettings>
