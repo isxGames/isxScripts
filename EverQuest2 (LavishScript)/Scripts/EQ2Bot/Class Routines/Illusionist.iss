@@ -124,70 +124,66 @@ function Combat_Init()
 {
     ;;;;;;;;;;;;;;;;; DPS ;;;;;;;;;;;;;;;;;
     
-    ;; Stifle over time, and NUKE
-	Action[1]:Set[Silence]
-	SpellRange[1,1]:Set[260]
-	
     ;; Slow casting NUKE and DAZE
-	Action[2]:Set[NukeDaze]
-	SpellRange[2,1]:Set[61]
-	
+	Action[1]:Set[NukeDaze]
+	SpellRange[1,1]:Set[61]        
+    
     ;; Mental DOT 
-	Action[3]:Set[MindDoT]
-	SpellRange[3,1]:Set[70]	
- 
-    ;; Mental DOT and arcane resistance debuff (fast casting)
-	Action[4]:Set[Despair]
-	SpellRange[4,1]:Set[80]
-
+	Action[2]:Set[MindDoT]
+	SpellRange[2,1]:Set[70]	    
+    
     ;; Encounter DOT   (RENAME)
-	Action[5]:Set[Ego]
-	SpellRange[5,1]:Set[91]
+	Action[3]:Set[Ego]
+	SpellRange[3,1]:Set[91]
 	
     ;; Slow recast, Encounter DOT
-	Action[6]:Set[Shower]
-	SpellRange[6,1]:Set[388]
+	Action[4]:Set[Shower]
+	SpellRange[4,1]:Set[388]
+	
+    ;; Stifle over time, and NUKE
+	Action[5]:Set[Silence]
+	SpellRange[5,1]:Set[260]	
 
     ;; Master Strike
-	MobHealth[7,1]:Set[20]
-	MobHealth[7,2]:Set[100]    
-    Action[7]:Set[Master_Strike]
+	MobHealth[6,1]:Set[20]
+	MobHealth[6,2]:Set[100]    
+    Action[6]:Set[Master_Strike]
 
     ;; Construct
-	Action[8]:Set[Constructs]
-	SpellRange[8,1]:Set[51]
+	Action[7]:Set[Constructs]
+	SpellRange[7,1]:Set[51]
 
 
     ;;;;;;;;;;;;;;;;; STUNS ;;;;;;;;;;;;;;;;;
 
     ;; Group Encounter fast casting Stun
-	Action[9]:Set[AEStun]
-	MobHealth[9,1]:Set[1]
-	MobHealth[9,2]:Set[100]
-	SpellRange[9,1]:Set[191]
+	Action[8]:Set[AEStun]
+	MobHealth[8,1]:Set[1]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[191]
 
     ;; Single Target Stun (longer duration)
-	Action[10]:Set[Stun]
-	MobHealth[10,1]:Set[1]
-	MobHealth[10,2]:Set[100]	
-	SpellRange[10,1]:Set[190]
+	Action[9]:Set[Stun]
+	MobHealth[9,1]:Set[1]
+	MobHealth[9,2]:Set[100]	
+	SpellRange[9,1]:Set[190]
 
     ;;;;;;;;;;;;;;;;; UTILITY ;;;;;;;;;;;;;;;;;
 
     ;; Savante
-	Action[11]:Set[Savante]
-	MobHealth[11,1]:Set[20]
-	MobHealth[11,2]:Set[100]
-	SpellRange[11,1]:Set[389]
+	Action[10]:Set[Savante]
+	MobHealth[10,1]:Set[20]
+	MobHealth[10,2]:Set[100]
+	SpellRange[10,1]:Set[389]
 
     ;; Mana Shroud
 	;;; NOTE: This is handled in RefreshPower()
 
     ;; Power Drain -> Group
-	Action[12]:Set[Gaze]
-	MobHealth[12,1]:Set[1]
-	MobHealth[12,2]:Set[40]
-	SpellRange[12,1]:Set[90]
+	Action[11]:Set[Gaze]
+	MobHealth[11,1]:Set[1]
+	MobHealth[11,2]:Set[40]
+	SpellRange[11,1]:Set[90]
 
 }
 
@@ -425,9 +421,9 @@ function Buff_Routine(int xAction)
     		}
 			break
 		case AA_Illusory_Arm	
+		    BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 		    if ${BuffTarget.Equal["No one"]}
 			    break			
-			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
@@ -471,6 +467,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare BuffTarget string local    
 	declare spellsused int local
 	spellsused:Set[0]
 	
@@ -523,11 +520,69 @@ function Combat_Routine(int xAction)
     if (${Me.Ability[${SpellType[60]}].IsReady})
 	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	
 	    
-	    
 	;; Short Duration Buff .. adds INT, Focus, Disruption, etc. (cast any time it's ready)
     if (${Me.Ability[${SpellType[23]}].IsReady})
-	    call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1 
-
+	    call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1 	    
+	   
+	    
+    ;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos) -- only cast it once we have casted our initial spells
+    if !${MainTank}
+    {
+        if (${Me.Group} > 1 || ${Me.Raid} > 1)
+        {
+            if ${Actor[${KillTarget}].Health} > 2
+            {
+            	if ${Me.Ability[${SpellType[72]}].IsReady}
+            	{
+        			BuffTarget:Set[${UIElement[cbBuffPrismOn@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+        			if !${BuffTarget.Equal["No one"]}
+        			{
+        			    ;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
+            			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+            			    call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
+            			else
+            			    echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+                    }      
+                    else
+                        call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 
+            	}
+        	}
+        }
+    }    
+	      
+    ; Mental DOT and arcane resistance debuff (fast casting - "Despair") ...cast every time it's ready! 
+    ;;; The rest of this block is basically to insure that all DoTs are loaded and things are primed at the
+    ;;; beginning of the fight.
+    if (${Me.Ability[${SpellType[80]}].IsReady})
+    {
+	    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1   
+	     	 
+	    ;if !${Me.Maintained[${SpellType[70]}](exists)}   
+	    ;{
+    	    ;if (${Me.Ability[${SpellType[70]}].IsReady})
+	            call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1  
+	    ;}
+        if (${Me.Ability[${SpellType[60]}].IsReady})
+	        call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	
+	        	    
+	    if !${Me.Maintained[${SpellType[91]}](exists)}   
+	    {
+    	    ;if (${Me.Ability[${SpellType[91]}].IsReady})
+	            call CastSpellRange 91 0 0 0 ${KillTarget} 0 0 0 1  
+	    }	
+        if (${Me.Ability[${SpellType[60]}].IsReady})
+	        call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1   
+	        
+	    if !${Me.Maintained[${SpellType[388]}](exists)}   
+	    {
+    	   ;if (${Me.Ability[${SpellType[388]}].IsReady})
+	            call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 1  
+	    }	
+        if (${Me.Ability[${SpellType[60]}].IsReady})
+	        call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1  
+	           		    	     
+	}
+	    
     if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
 	{
 		;echo "DEBUG: Checking Doppleganger..."
@@ -634,43 +689,34 @@ function Combat_Routine(int xAction)
     ;; If Target is Epic, be sure that the Daze Debuff is being used as often as possible, but only once we have casted our initial spells.)  (This is the slow casting Nuke.)	
 	if ${Actor[${KillTarget}].IsEpic}
 	{
-        ;; (Checking now to wait until the fast casting single target DOT is active.)
-        if ${Me.Maintained[${SpellType[80]}](exists)}
-    	{	    
-        	if ${Me.Ability[${SpellType[61]}](exists)}
-        	{
-        	    if (${Me.Ability[${SpellType[61]}].IsReady})
-        		    call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1
-        	}	
-        }
+        if ${Me.Ability[${SpellType[61]}](exists)}
+    	{
+    	    ;if (${Me.Ability[${SpellType[61]}].IsReady})
+    		    call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1
+    	}	
     }
 
-    ;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos) -- only cast it once we have casted our initial spells
-    ;; (Checking now to wait until the fast casting single target DOT is active.)
-    if ${Me.Maintained[${SpellType[80]}](exists)}
-	{
-	    ;echo "[${Time}]DEBUG:: Casting Melee Short-term Buff!"
-        if !${MainTank} && ${Me.Group} > 1
-        {
-            if ${Actor[${KillTarget}].Health} > 20
-            {
-            	if ${Me.Ability[${SpellType[72]}].IsReady}
-            	    call CastSpellRange 72 0 0 0 ${Actor[pc,${MainTankPC},exactname].ID} 0 0 0 1
-        	}
-        }
-    }
-     
 	switch ${Action[${xAction}]}
 	{
 	    ;; Straight Nukes
         case Silence
-        case NukeDaze      
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+        case NukeDaze    
+            ;; if either of these are called ...try to call both with a fast nuke before, between, and after
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	            
+            if (${Me.Ability[${SpellType[61]}].IsReady})
+	            call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1    
+	        wait 2 
+            if (${Me.Ability[${SpellType[260]}].IsReady})
+	            call CastSpellRange 260 0 0 0 ${KillTarget} 0 0 0 1 
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+	            call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1     	            	            
 			break
 			
         ;; Single Target DoTs
         case MindDoT   
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1            
             ;echo "DEBUG::  ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"
             if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
             {
@@ -679,42 +725,43 @@ function Combat_Routine(int xAction)
             }
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-			    ;echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) ready..."
-			    if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-			    {
+			    ;;; For now, let's try casting this every time it's ready. More testing needed to see if this is 
+			    ;;; detrimental to dps and/or power usage
+			   
+			    ;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+			    ;{
 			        ;echo "DEBUG:: Casting ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]})"
 			        call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
-			    }
+                    if (${Me.Ability[${SpellType[60]}].IsReady})
+                	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	        
+			        if (${Me.Ability[${SpellType[80]}].IsReady})
+	                    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1  
+                    if (${Me.Ability[${SpellType[60]}].IsReady})
+                	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	                    
+			    ;}
 			}
 			;else
-			   ;echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."
+			;   echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."
 			break
 			             
-        case Despair
-            ;echo "[${Time}]DEBUG::  ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called (Despair)"
-            if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
-            {
-                ;echo "DEBUG:: Health of Target: ${Actor[${KillTarget}].Health}
-                break
-            }
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
-			break
-        
         ;; Group Encounter DoTs
         case Shower
         case Ego
-            if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 30
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    
+            if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
                 break   
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-			    if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+			    ;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 			        call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
 			}
 			break
         
 		case Master_Strike
-            if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 10
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    		
+            if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
                 break		
 		    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
 		    ;;;;;;;;;;
@@ -740,10 +787,12 @@ function Combat_Routine(int xAction)
 			break        
         
         case Constructs
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1            
             if ${UltraDPSMode}
             {
                 ;; Always set to one less than the index of the next ability you want to have run (it is incremented on the loop)
-                gRtnCtr:Set[12]
+                gRtnCtr:Set[11]
                 break
             }        
             if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 30
@@ -754,10 +803,12 @@ function Combat_Routine(int xAction)
 
         case AEStun
         case Stun
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1            
             if ${UltraDPSMode}
             {
                 ;; Always set to one less than the index of the next ability you want to have run (it is incremented on the loop)
-                gRtnCtr:Set[12]
+                gRtnCtr:Set[11]
                 break
             }    
             if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
@@ -769,16 +820,10 @@ function Combat_Routine(int xAction)
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
-
-        case Focus
-            if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed}
-            {
-    			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-	    		    call CastSpellRange ${SpellRange[${xAction},1]}
-	    	}
-			break
 			        
         case Savante 
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1            
             if ${Me.ToActor.Power} > 50
                 break 
             if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed}
@@ -789,6 +834,8 @@ function Combat_Routine(int xAction)
 			break
 			
         case Gaze
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1            
             if ${Me.ToActor.Power} > 50
                 return CombatComplete      
             if ${UltraDPSMode} && ${Actor[${KillTarget}].IsSolo}
@@ -808,6 +855,8 @@ function Combat_Routine(int xAction)
 			break
             
 		default
+            if (${Me.Ability[${SpellType[60]}].IsReady})
+        	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    		
 			return CombatComplete
 	}
 }

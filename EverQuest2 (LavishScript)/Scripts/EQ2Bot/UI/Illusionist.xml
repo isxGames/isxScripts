@@ -269,6 +269,71 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UltraDPSMode]}</Data>
 	</Commandcheckbox>	
+	<Text Name='lblBuffPrismOn' Template='EQ2.text'>
+		<X>10</X>
+		<Y>278</Y>
+		<Width>35%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Cast "Prismatic" proc on:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffPrismOn' Template='EQ2.Combobox'>
+		<x>156</x>
+		<y>275</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Raid Friend to cast the 3-proc "Prismatic" buff upon.</AutoTooltip>
+		<Items></items>
+		<Sort>Text</Sort>
+        <OnLoad>
+		    if (${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffPrism](exists)})
+		    {
+    			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffPrism]}]
+    			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffPrism]}]:Select
+    		}
+    		else
+    		{
+    		    This:AddItem["No one"]
+    		    This.ItemByValue["No one"]:Select
+    		}
+        </OnLoad>        		
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffPrism,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem["No one"]
+			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
+			if ${Me.Pet(exists)}
+			{
+				This:AddItem[${Me.Pet.Name}:${Me.Pet.Type}]
+			}
+			if ${Me.Raid} > 0
+			{
+			
+			
+			}
+			elseif ${Me.Group} > 1
+			{
+			    do
+			    {
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+					}
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Group}
+			}
+			This:Sort
+		</OnLeftClick>
+	</combobox>	
 	<Text Name='lblBuffIllusory_Arm' Template='EQ2.text'>
 		<X>155</X>
 		<Y>100</Y>
@@ -311,10 +376,10 @@
 			{
 				This:AddItem[${Me.Pet.Name}:${Me.Pet.Type}]
 			}
-			do
+			if ${Me.Group} > 1
 			{
-				if ${Me.Group} > 1
-				{
+			    do
+			    {
 					if ${Me.Group[${tmpvar}].ToActor(exists)}
 					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
@@ -323,11 +388,9 @@
 					{
 						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 					}
-
-				}
-
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Group}
 			}
-			while ${tmpvar:Inc}&lt;=5
 			This:Sort
 		</OnLeftClick>
 	</combobox>
@@ -373,10 +436,10 @@
 			{
 				This:AddItem[${Me.Pet.Name}:${Me.Pet.Type}]
 			}
-			do
+			elseif ${Me.Group} > 1
 			{
-				if ${Me.Group} > 1
-				{
+			    do
+			    {
 					if ${Me.Group[${tmpvar}].ToActor(exists)}
 					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
@@ -385,11 +448,9 @@
 					{
 						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 					}
-
-				}
-
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Group}
 			}
-			while ${tmpvar:Inc}&lt;=5
 			This:Sort
 		</OnLeftClick>
 	</combobox>	
