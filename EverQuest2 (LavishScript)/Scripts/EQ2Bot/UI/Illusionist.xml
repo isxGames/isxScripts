@@ -313,8 +313,18 @@
 			}
 			if ${Me.Raid} > 0
 			{
-			
-			
+			    do
+			    {
+					if ${Me.Raid[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Raid[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type}]
+					}
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Raid}			
 			}
 			elseif ${Me.Group} > 1
 			{
