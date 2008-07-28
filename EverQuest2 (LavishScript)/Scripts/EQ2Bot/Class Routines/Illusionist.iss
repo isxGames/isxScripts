@@ -662,7 +662,7 @@ function Combat_Routine(int xAction)
 	;; If we have the skill 'Nullifying Staff' and the mob is within range
 	if ${Me.Ability[${SpellType[396]}](exists)}
 	{
-	    if (${Actor[${KillTarget}].Distance} <= 7)
+	if (${Actor[${KillTarget}].Distance} <= ${Math.Calc[${Actor[${KillTarget}].TargetRingRadius}+5]})
 	    {
     	    if (${Me.Ability[${SpellType[396]}].IsReady})
     	    {
@@ -676,7 +676,7 @@ function Combat_Routine(int xAction)
     ;; Melee Debuff -- only for Epic mobs for now
     if ${Me.ToActor.Power} > 40
     {
-    	if !${Actor[${KillTarget}].IsSolo}
+    	if ${Actor[${KillTarget}].IsEpic}
     	{
         	if ${Me.Ability[${SpellType[50]}](exists)}
         	{
