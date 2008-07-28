@@ -680,8 +680,11 @@ function Combat_Routine(int xAction)
     	{
         	if ${Me.Ability[${SpellType[50]}](exists)}
         	{
-        	    if (${Me.Ability[${SpellType[50]}].IsReady})
-        		    call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+        	    if !${Me.Maintained[${SpellType[50]}](exists)}
+        	    {
+            	    if (${Me.Ability[${SpellType[50]}].IsReady})
+            		    call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+        		}
         	}	
         }
     }
