@@ -315,6 +315,8 @@
 			{
 			    do
 			    {
+			        if ${Me.Raid[${tmpvar]}.Name.Equal[${Me.Name}]}
+			            continue
 					if ${Me.Raid[${tmpvar}].ToActor(exists)}
 					{
 						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
@@ -669,6 +671,8 @@
 			{
 			    do
 			    {
+			        if ${Me.Raid[${tmpvar]}.Name.Equal[${Me.Name}]}
+			            continue
 					if ${Me.Raid[${tmpvar}].ToActor(exists)}
 					{
 						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
@@ -697,7 +701,6 @@
 				}
 				while ${tmpvar:Inc}&lt; ${Me.Group}
 			}
-
 
 			tmpvar:Set[1]
 
@@ -758,6 +761,8 @@
 			{
 			    do
 			    {
+			        if ${Me.Raid[${tmpvar]}.Name.Equal[${Me.Name}]}
+			            continue
 					if ${Me.Raid[${tmpvar}].ToActor(exists)}
 					{
 						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
