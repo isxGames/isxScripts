@@ -81,6 +81,10 @@ function Class_Declaration()
 	BuffAlacrityGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAlacrityGroupMember,]}]
 }
 
+function Class_Shutdown()
+{
+}
+
 function Buff_Init()
 {
 	PreAction[1]:Set[BuffPower]

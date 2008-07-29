@@ -68,8 +68,8 @@ function Class_Declaration()
 	declare ShardRequestTimer int script ${Time.Timestamp}
 	declare ShardType string script
 
-  declare Undead_Army bool script TRUE
-  declare Auto_Res bool script TRUE
+    declare Undead_Army bool script TRUE
+    declare Auto_Res bool script TRUE
 
 	call EQ2BotLib_Init
 
@@ -108,6 +108,10 @@ function Class_Declaration()
 		case Default
 			break
 	}
+}
+
+function Class_Shutdown()
+{
 }
 
 function Buff_Init()

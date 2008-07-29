@@ -33,6 +33,9 @@ function Class_Declaration()
 
 }
 
+function Class_Shutdown()
+{
+}
 
 function Buff_Init()
 {

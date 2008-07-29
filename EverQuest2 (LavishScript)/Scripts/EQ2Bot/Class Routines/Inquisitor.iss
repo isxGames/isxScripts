@@ -76,6 +76,10 @@ function Class_Declaration()
 	BuffShieldAllyGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffShieldAllyGroupMember,]}]
 }
 
+function Class_Shutdown()
+{
+}
+
 function Buff_Init()
 {
 	PreAction[1]:Set[BuffDPS]

@@ -68,6 +68,9 @@ function Class_Declaration()
 	TowerShield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["TowerShield",""]}]
 }
 
+function Class_Shutdown()
+{
+}
 
 function Buff_Init()
 {

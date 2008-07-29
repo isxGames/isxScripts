@@ -54,8 +54,10 @@ function Class_Declaration()
 
 	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
 	Secondary_Assist:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Secondary Assist,]}]
+}
 
-
+function Class_Shutdown()
+{
 }
 
 function Buff_Init()

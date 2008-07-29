@@ -76,8 +76,15 @@ function Class_Declaration()
 	BuffEmpathicSoothing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEmpathicSoothing,FALSE]}]    
 	    
 	NoEQ2BotStance:Set[TRUE]
-
+	
+	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]  
 }
+
+function Class_Shutdown()
+{
+    Event[EQ2_FinishedZoning]:DetachAtom[EQ2_FinishedZoning]  
+}
+
 
 function Buff_Init()
 {
@@ -297,11 +304,9 @@ function Buff_Routine(int xAction)
 					;iterate through the members to buff
 					if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
-
 						tempvar:Set[1]
 						do
 						{
-
 							BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
@@ -309,8 +314,6 @@ function Buff_Routine(int xAction)
 								BuffMember:Set[OK]
 								break
 							}
-
-
 						}
 						while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
@@ -335,7 +338,6 @@ function Buff_Routine(int xAction)
 			;iterate through the to be buffed Selected Items and buff them
 			if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
-
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
@@ -363,11 +365,9 @@ function Buff_Routine(int xAction)
 					;iterate through the members to buff
 					if ${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
-
 						tempvar:Set[1]
 						do
 						{
-
 							BuffTarget:Set[${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
@@ -375,8 +375,6 @@ function Buff_Routine(int xAction)
 								BuffMember:Set[OK]
 								break
 							}
-
-
 						}
 						while ${tempvar:Inc}<=${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
@@ -401,7 +399,6 @@ function Buff_Routine(int xAction)
 			;iterate through the to be buffed Selected Items and buff them
 			if ${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
-
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
@@ -1178,4 +1175,9 @@ function CheckSKFD()
             
     call RemoveSKFD "Illusionist::CheckSKFD"
     return
+}
+
+atom(script) EQ2_FinishedZoning()
+{
+   
 }

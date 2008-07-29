@@ -46,8 +46,8 @@ function Class_Declaration()
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffGloryGroupMember string script
 	declare BuffBennedictionGroupMember string script
-  declare BuffPraetorateGroupMember string script
-  declare BuffShieldAllyGroupMember string script
+    declare BuffPraetorateGroupMember string script
+    declare BuffShieldAllyGroupMember string script
 	declare HolyShieldGroupMember string script
 	declare ManaCureGroupMember string script
 	declare tempMH string script
@@ -81,6 +81,10 @@ function Class_Declaration()
 	BuffShieldAllyGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffShieldAllyGroupMember,]}]
 	HolyShieldGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[HolyShieldGroupMember,]}]
 	ManaCureGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[ManaCureGroupMember,]}]
+}
+
+function Class_Shutdown()
+{
 }
 
 function Buff_Init()

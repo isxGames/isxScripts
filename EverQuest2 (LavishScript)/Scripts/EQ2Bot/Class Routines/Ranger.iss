@@ -45,8 +45,12 @@ function Class_Declaration()
 	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
 	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
 	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-
 }
+
+function Class_Shutdown()
+{
+}
+
 function Buff_Init()
 {
 	PreAction[1]:Set[Reconnoiter]
