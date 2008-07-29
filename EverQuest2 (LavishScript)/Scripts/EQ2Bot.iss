@@ -2709,7 +2709,7 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-		variable int tcount=2
+	variable int tcount=2
 	variable float X
 	variable float Z
 
@@ -4732,6 +4732,7 @@ function atexit()
 {
 	Echo Ending EQ2Bot!
 	CurrentTask:Set[FALSE]
+	call Class_Shutdown
 
 	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
