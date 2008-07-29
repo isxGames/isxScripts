@@ -69,7 +69,7 @@ function Class_Declaration()
 	declare KeepMTHOTUp bool script 0
 	declare KeepGroupHOTUp bool script 0
 	declare RaidHealMode bool script 1
-  declare ShiftForm int script 1
+    declare ShiftForm int script 1
 
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
@@ -101,7 +101,10 @@ function Class_Declaration()
 	BuffSporesGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSporesGroupMember,]}]
 	BuffVigorGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffVigorGroupMember,]}]
 	BuffBoon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBoon,FALSE]}]
+}
 
+function Class_Shutdown()
+{
 }
 
 function Buff_Init()

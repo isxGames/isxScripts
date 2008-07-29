@@ -102,7 +102,10 @@ function Class_Declaration()
 	PosionCureItem:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Poison Cure Item","Antivenom Hypo Bracer"]}]
 
 	BuffJesterCap:GetIterator[BuffJesterCapIterator]
+}
 
+function Class_Shutdown()
+{
 }
 
 function Buff_Init()

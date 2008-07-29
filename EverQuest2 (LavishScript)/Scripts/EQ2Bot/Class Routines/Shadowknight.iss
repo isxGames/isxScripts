@@ -75,7 +75,10 @@ function Class_Declaration()
 	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
 	WeaponTwohanded:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Twohanded",""]}]
 	WeaponAxe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Axe",""]}]
+}
 
+function Class_Shutdown()
+{
 }
 
 

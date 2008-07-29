@@ -59,7 +59,10 @@ function Class_Declaration()
 	CastCures:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Cures,TRUE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	FocusMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Focused Casting,TRUE]}]
+}
 
+function Class_Shutdown()
+{
 }
 
 function Buff_Init()

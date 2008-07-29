@@ -47,6 +47,10 @@ function Class_Declaration()
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 }
 
+function Class_Shutdown()
+{
+}
+
 function Buff_Init()
 {
 	PreAction[1]:Set[DragonStance]
