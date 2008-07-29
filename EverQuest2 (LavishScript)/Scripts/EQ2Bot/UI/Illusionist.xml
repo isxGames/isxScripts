@@ -512,7 +512,7 @@
 							UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 						}
 				}
-				while ${tmpvar:Inc}&lt;=5
+				while ${tmpvar:Inc}&lt; ${Me.Group}
 			}
 
 
@@ -522,9 +522,7 @@
 			{
 				do
 				{
-
 					UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
-
 				}
 				while ${tmpCollection.NextKey(exists)}
 			}
@@ -588,7 +586,7 @@
 							UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 						}
 				}
-				while ${tmpvar:Inc}&lt;=5
+				while ${tmpvar:Inc}&lt; ${Me.Group}
 			}
 
 			tmpvar:Set[1]
@@ -601,6 +599,7 @@
 				}
 				while ${tmpCollection.NextKey(exists)}
 			}
+			This:Sort
 		</OnLoad>
 		<OnSelect>
 			declare tmpvar int
@@ -665,7 +664,23 @@
 			if ${Me.Pet(exists)}
 				UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Pet}:${Me.Pet.Type}, FF0000FF]
 
-			if ${Me.Group} > 1
+
+			if ${Me.Raid} > 0
+			{
+			    do
+			    {
+					if ${Me.Raid[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Raid[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type}]
+					}
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Raid}			
+			}
+			elseif ${Me.Group} > 1
 			{
 
 				tmpvar:Set[1]
@@ -680,7 +695,7 @@
 							UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 						}
 				}
-				while ${tmpvar:Inc}&lt;=5
+				while ${tmpvar:Inc}&lt; ${Me.Group}
 			}
 
 
@@ -739,7 +754,22 @@
 			if ${Me.Pet(exists)}
 				UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Pet}:${Me.Pet.Type}, FF0000FF]
 
-			if ${Me.Group} > 1
+			if ${Me.Raid} > 0
+			{
+			    do
+			    {
+					if ${Me.Raid[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Raid[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type}]
+					}
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Raid}			
+			}
+			elseif ${Me.Group} > 1
 			{
 
 				tmpvar:Set[1]
@@ -754,7 +784,7 @@
 							UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 						}
 				}
-				while ${tmpvar:Inc}&lt;=5
+				while ${tmpvar:Inc}&lt; ${Me.Group}
 			}
 
 			tmpvar:Set[1]
@@ -769,6 +799,7 @@
 				}
 				while ${tmpCollection.NextKey(exists)}
 			}
+			This:Sort
 		</OnLoad>
 		<OnSelect>
 			declare tmpvar int
