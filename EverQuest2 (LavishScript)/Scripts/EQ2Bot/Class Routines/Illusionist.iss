@@ -3,6 +3,11 @@
 ;version 20080323a
 ;by pygar
 ;
+;20080730a (Amadeus)
+; * So many changes over the past few months it is not even funny
+; * Latest change:  Added the ability to use a "Runed Guard of the Sel'Nok" to the script.  You can indicate whether or not
+;   to use it via the UI.
+;
 ;20080323a (Amadeus)
 ; * Moved "Focus" buff to the combat routines.  It is a short duration buff and should only be used during combat when the
 ;   target is over 80% health.
@@ -43,6 +48,12 @@ function Class_Declaration()
     declare ClassFileVersion int script 20080517
     ;;;;
     
+	call EQ2BotLib_Init    
+    
+    UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Buffs]
+    UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
+    ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" "EQ2Bot/UI/${Me.SubClass}_Buffs.xml"
+    
 	declare MezzMode bool script FALSE
 	declare Makepet bool script FALSE
 	declare BuffAspect bool script FALSE
@@ -54,10 +65,10 @@ function Class_Declaration()
 	declare SummonImpOfRo bool script FALSE
 	declare UseTouchOfEmpathy bool script FALSE
 	declare UseDoppleganger bool script FALSE
+	declare UseRunedGuardItem bool script FALSE
 	declare BuffEmpathicAura bool script FALSE
 	declare BuffEmpathicSoothing bool script FALSE
 	
-	call EQ2BotLib_Init
 
 	BuffAspect:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAspect,FALSE]}]
 	BuffRune:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffRune,FALSE]}]
@@ -72,17 +83,18 @@ function Class_Declaration()
 	SummonImpOfRo:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Summon Imp of Ro,FALSE]}]
 	UseTouchOfEmpathy:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTouchOfEmpathy,FALSE]}]
 	UseDoppleganger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDoppleganger,FALSE]}]
+	UseRunedGuardItem:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseRunedGuardItem,FALSE]}]
 	BuffEmpathicAura:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEmpathicAura,FALSE]}]
 	BuffEmpathicSoothing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEmpathicSoothing,FALSE]}]    
 	    
 	NoEQ2BotStance:Set[TRUE]
 	
-	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]  
+	Event[EQ2_FinishedZoning]:AttachAtom[Illusionist_FinishedZoning]  
 }
 
 function Class_Shutdown()
 {
-    Event[EQ2_FinishedZoning]:DetachAtom[EQ2_FinishedZoning]  
+    Event[EQ2_FinishedZoning]:DetachAtom[Illusionist_FinishedZoning]  
 }
 
 
@@ -124,7 +136,6 @@ function Buff_Init()
 	PreSpellRange[11,1]:Set[394]
 	
 	PreAction[12]:Set[SummonImpOfRoBuff]
-	
 }
 
 function Combat_Init()
@@ -302,12 +313,12 @@ function Buff_Routine(int xAction)
 				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
 				{
 					;iterate through the members to buff
-					if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+					if ${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
 						tempvar:Set[1]
 						do
 						{
-							BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							BuffTarget:Set[${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 							{
@@ -315,7 +326,7 @@ function Buff_Routine(int xAction)
 								break
 							}
 						}
-						while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
 						if !${BuffMember.Equal[OK]}
 						{
@@ -336,18 +347,18 @@ function Buff_Routine(int xAction)
 
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
-			if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			if ${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
 				do
 				{
-					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					BuffTarget:Set[${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
 					    if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
             			    call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
             		}
 				}
-				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
 			break
 
@@ -363,12 +374,12 @@ function Buff_Routine(int xAction)
 				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
 				{
 					;iterate through the members to buff
-					if ${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+					if ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
 						tempvar:Set[1]
 						do
 						{
-							BuffTarget:Set[${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							BuffTarget:Set[${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 							{
@@ -376,7 +387,7 @@ function Buff_Routine(int xAction)
 								break
 							}
 						}
-						while ${tempvar:Inc}<=${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						while ${tempvar:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
 						if !${BuffMember.Equal[OK]}
 						{
@@ -397,24 +408,24 @@ function Buff_Routine(int xAction)
 
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
-			if ${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			if ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
 				do
 				{
-					BuffTarget:Set[${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					BuffTarget:Set[${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
 					    if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
         					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
         			}
 				}
-				while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+				while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
 			break
 
 
 		case AA_Time_Compression
-			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${BuffTarget.Equal["No one"]}
 			    break
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
@@ -427,7 +438,7 @@ function Buff_Routine(int xAction)
     		}
 			break
 		case AA_Illusory_Arm	
-		    BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+		    BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 		    if ${BuffTarget.Equal["No one"]}
 			    break			
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
@@ -479,6 +490,54 @@ function Combat_Routine(int xAction)
 	
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 	    return CombatComplete
+	    
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;; Check for "Runed Guard of the Sel'Nok" ;;;;
+	if (${UseRunedGuardItem})
+	{
+    	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 10)
+    	{
+        	if ${Me.Equipment["Runed Guard of the Sel'Nok"](exists)}
+        	{
+        	    if ${Me.Equipment["Runed Guard of the Sel'Nok"].IsReady}
+        	    {
+        	        CurrentAction:Set[Using: Runed Guard of the Sel'Nok]
+        	        Me.Equipment["Runed Guard of the Sel'Nok"]:Use
+            	    wait 1
+            	    do
+            	    {
+            	        waitframe
+            	    }
+            	    while ${Me.CastingSpell}
+            	    wait 1
+            	}	        
+        	}
+        	elseif ${Me.Inventory["Runed Guard of the Sel'Nok"](exists)}
+        	{
+        	    if ${Me.Inventory["Runed Guard of the Sel'Nok"].IsReady}
+        	    {
+        	        CurrentAction:Set[Using: Runed Guard of the Sel'Nok]
+            	    variable string SecondarySlotItem
+            	    variable uint TimeBeforeEquip
+            	    SecondarySlotItem:Set[${Me.Equipment[Secondary]}]
+            	    TimeBeforeEquip:Set[${Time.Timestamp}]
+            	    
+            	    Me.Inventory["Runed Guard of the Sel'Nok"]:Equip
+            	    wait 3
+            	    Me.Equipment["Runed Guard of the Sel'Nok"]:Use
+            	    wait 1
+            	    do
+            	    {
+            	        waitframe
+            	    }
+                	while (${Me.CastingSpell} || (${Math.Calc64[${Time.Timestamp}-${TimeBeforeEquip}]} <= 2))
+            	    Me.Inventory[${SecondarySlotItem}]:Equip
+            	}
+        	}    
+        }
+    }
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   
+	    
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 
@@ -540,7 +599,7 @@ function Combat_Routine(int xAction)
             {
             	if ${Me.Ability[${SpellType[72]}].IsReady}
             	{
-        			BuffTarget:Set[${UIElement[cbBuffPrismOn@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+        			BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
         			if !${BuffTarget.Equal["No one"]}
         			{
         			    ;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
@@ -576,6 +635,8 @@ function Combat_Routine(int xAction)
     	    ;if (${Me.Ability[${SpellType[91]}].IsReady})
 	            call CastSpellRange 91 0 0 0 ${KillTarget} 0 0 0 1  
 	    }	
+	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+	        return CombatComplete	    
         if (${Me.Ability[${SpellType[60]}].IsReady})
 	        call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1   
 	        
@@ -586,7 +647,8 @@ function Combat_Routine(int xAction)
 	    }	
         if (${Me.Ability[${SpellType[60]}].IsReady})
 	        call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1  
-	           		    	     
+	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+	        return CombatComplete	 		    	     
 	}
 	    
     if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
@@ -704,6 +766,9 @@ function Combat_Routine(int xAction)
     		    call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1
     	}	
     }
+    
+    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+        return CombatComplete		    
 
 	switch ${Action[${xAction}]}
 	{
@@ -715,11 +780,15 @@ function Combat_Routine(int xAction)
         	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	            
             if (${Me.Ability[${SpellType[61]}].IsReady})
 	            call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1    
+    	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+    	        return CombatComplete		            
 	        wait 2 
             if (${Me.Ability[${SpellType[260]}].IsReady})
 	            call CastSpellRange 260 0 0 0 ${KillTarget} 0 0 0 1 
             if (${Me.Ability[${SpellType[60]}].IsReady})
-	            call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1     	            	            
+	            call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1   
+    	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+    	        return CombatComplete			              	            	            
 			break
 			
         ;; Single Target DoTs
@@ -745,6 +814,8 @@ function Combat_Routine(int xAction)
                 	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	        
 			        if (${Me.Ability[${SpellType[80]}].IsReady})
 	                    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1  
+            	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+            	        return CombatComplete			                    
                     if (${Me.Ability[${SpellType[60]}].IsReady})
                 	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	                    
 			    ;}
@@ -1177,7 +1248,7 @@ function CheckSKFD()
     return
 }
 
-atom(script) EQ2_FinishedZoning()
+atom(script) Illusionist_FinishedZoning(string TimeInSeconds)
 {
    
 }
