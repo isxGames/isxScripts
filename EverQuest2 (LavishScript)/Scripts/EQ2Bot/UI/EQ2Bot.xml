@@ -1877,7 +1877,7 @@
 							</OnLeftClick>
 						</checkbox>
 					</Tab>
-					<Tab name='Navigation'>
+					<Tab Name='Navigation'>
 						<Text Name='Zone Name' Template='EQ2.text'>
 							<X>0</X>
 							<Y>10</Y>
