@@ -315,7 +315,7 @@
 			{
 			    do
 			    {
-			        if ${Me.Raid[${tmpvar]}.Name.Equal[${Me.Name}]}
+			        if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
 			            continue
 					if ${Me.Raid[${tmpvar}].ToActor(exists)}
 					{
@@ -486,7 +486,6 @@
 					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].GetString[${tmpvar}]}]
 				}
 				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].Keys}
-
 			}
 
 			tmpvar:Set[1]
@@ -501,7 +500,6 @@
 
 			if ${Me.Group} > 1
 			{
-
 				tmpvar:Set[1]
 				do
 				{
@@ -658,8 +656,6 @@
 
 			}
 
-			tmpvar:Set[1]
-
 			UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
 			UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
 
@@ -669,20 +665,24 @@
 
 			if ${Me.Raid} > 0
 			{
+			    tmpvar:Set[1]
 			    do
 			    {
-			        if ${Me.Raid[${tmpvar]}.Name.Equal[${Me.Name}]}
+			        if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
+			        {
+			            echo "TEST"
 			            continue
+			        }
 					if ${Me.Raid[${tmpvar}].ToActor(exists)}
 					{
-						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+						UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
 					}
 					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Raid[${tmpvar}].ToActor.Pet(exists)}
 					{
-						This:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type}]
+						UIElement[lbBuffCasterDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 					}
 			    }
-			    while ${tmpvar:Inc}&lt; ${Me.Raid}			
+			    while ${tmpvar:Inc} &lt; ${Me.Raid}			
 			}
 			elseif ${Me.Group} > 1
 			{
@@ -761,7 +761,7 @@
 			{
 			    do
 			    {
-			        if ${Me.Raid[${tmpvar]}.Name.Equal[${Me.Name}]}
+			        if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
 			            continue
 					if ${Me.Raid[${tmpvar}].ToActor(exists)}
 					{
