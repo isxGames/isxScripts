@@ -734,7 +734,22 @@ function CheckGroupOrRaidAggro()
 function FeignDeath()
 {
     if ${Me.Ability[${SpellType[330]}].IsReady}
+    {
+        CurrentAction:Set[Casting Feign Death!]
         call CastSpellRange 330 0 0 0 ${Me.ToActor.ID} 0 0 0 1 
+    }
+}
+
+function HarmTouch()
+{
+    ;; Cast Harmtouch on current KillTarget
+    
+    if ${Me.Ability[${SpellType[63]}].IsReady}
+    {
+        CurrentAction:Set[Combat :: Casting Harm Touch!]
+	    call CastSpellRange 63 0 0 0 ${KillTarget} 0 0 0 1    
+	}
+    
 }
    
 function Have_Aggro()

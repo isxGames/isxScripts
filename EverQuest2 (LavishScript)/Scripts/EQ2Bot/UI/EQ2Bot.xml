@@ -259,7 +259,20 @@
 							<OnLeftClick>
 								Script[EQ2Bot]:QueueCommand[call FeignDeath]
 							</OnLeftClick>
-						</Commandbutton>		
+						</Commandbutton>	
+						<Commandbutton name='Harm Touch' Template='EQ2.Commandbutton'>
+							<X>65%</X>
+							<Y>145</Y>
+							<Width>115</Width>
+							<Height>21</Height>
+							<Visible>0</Visible>
+							<Text>Harm Touch</Text>
+							<OnLoad>
+							</OnLoad>							
+							<OnLeftClick>
+								Script[EQ2Bot]:QueueCommand[call HarmTouch]
+							</OnLeftClick>
+						</Commandbutton>								
 						
 						<checkbox Name='MainAssist' Template='EQ2.checkbox'>
 							<X>5%</X>
