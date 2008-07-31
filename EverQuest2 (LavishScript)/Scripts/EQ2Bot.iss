@@ -2987,7 +2987,7 @@ function SetNewKillTarget()
 		if ${Target(exists)} && ${Target.Type.Find[NPC]}
 		{
 				KillTarget:Set[${Target.ID}]
-				echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID}"
+				echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID})"
 		}
 		else
 		{
@@ -3042,8 +3042,15 @@ function StartBot()
 		UIElement[EQ2 Bot].FindUsableChild[Reacquire KillTarget,commandbutton]:Show
 	}
 
+    ;; Any subclass that can "Feign Death" can be added here; however, be sure that you add a "function FeignDeath()"
+    ;; to the class file (see Shadowknight.iss class file for example)
 	if ${Me.SubClass.Equal[shadowknight]}
 				UIElement[EQ2 Bot].FindUsableChild[Feign Death,commandbutton]:Show
+
+    ;; Any subclass that can "Harm Touch" can be added here; however, be sure that you add a "function HarmTouch()"
+    ;; to the class file (see Shadowknight.iss class file for example)
+	if ${Me.SubClass.Equal[shadowknight]}
+				UIElement[EQ2 Bot].FindUsableChild[Harm Touch,commandbutton]:Show
 
 
 	switch ${PathType}
@@ -3611,6 +3618,12 @@ objectdef EQ2BotObj
 		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to PULL from?,15]}]
 		PullWithBow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Pull with Bow (Ranged Attack)?,FALSE]}]
 		ScanRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to SCAN for Mobs?,20]}]
+		if ${ScanRange} > 50
+		{
+		    echo "WARNING:  Your 'Maximum Scan Range' is currently set to ${ScanRange}, which is a fairly high number."
+		    echo "          If this works for you, great; however, be advised that it might result in a loss of FPS in"
+		    echo "          particular zones or situations."
+		}
 		MARange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to Engage from Main Assist?,15]}]
 		PowerCheck:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Minimum Power the puller will pull at?,80]}]
 		HealthCheck:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Minimum Health the puller will pull at?,90]}]
