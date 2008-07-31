@@ -634,7 +634,6 @@ function IsMage(int ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
-
 		case warlock
 		case wizard
 		case necromancer
