@@ -401,6 +401,7 @@ function Combat_Routine(int xAction)
     ; always cast when up (Disease Resist Reduction and Hate Builder (AE))  -- (AE TAUNT!)
     if ${MainTank}
     {
+        CurrentAction:Set[Combat :: Taunting]
 	    if (${Me.Ability[${SpellType[170]}].IsReady})
 	    {
 	        if !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50
@@ -433,6 +434,7 @@ function Combat_Routine(int xAction)
 	    {
     	    if (${Actor[${KillTarget}].Health} > 70 || ${Actor[${KillTarget}].IsEpic})
     	    {
+	            CurrentAction:Set[Combat :: Mist]    	        
     	        if !${Me.Maintained[${SpellType[55]}](exists)}
     	        {
         	        if (${Me.Ability[${SpellType[55]}].IsReady})
@@ -445,6 +447,7 @@ function Combat_Routine(int xAction)
 	;; Draw Strength (Always cast this when it is ready!
 	if !${Actor[${KillTarget}].IsSolo}
 	{
+	    CurrentAction:Set[Combat :: Draw Strength]
     	if !${Me.Maintained[${SpellType[80]}](exists)}
     	{
         	if ${Me.Ability[${SpellType[80]}](exists)}
@@ -452,6 +455,17 @@ function Combat_Routine(int xAction)
         	    if (${Me.Ability[${SpellType[80]}].IsReady})
         		    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
         	}   
+        } 
+    }
+    
+    ;; Death March
+	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].IsSolo})
+	{
+        CurrentAction:Set[Combat :: Death March]	    
+    	if !${Me.Maintained[${SpellType[312]}](exists)}
+    	{
+    	    if (${Me.Ability[${SpellType[312]}].IsReady})
+    		    call CastSpellRange 312 0 0 0 ${KillTarget} 0 0 0 1
         } 
     }
     
