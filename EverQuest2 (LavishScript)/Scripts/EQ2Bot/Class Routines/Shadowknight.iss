@@ -41,19 +41,11 @@ function Class_Declaration()
 	declare FullAutoMode bool Script FALSE
 	declare StartHO bool script 1
 	declare PetMode bool script 1
+	declare UseReaver bool script TRUE
+	declare UseSiphonHateWhenNotMT bool script FALSE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
-
-	declare WeaponHammer string script
-	declare WeaponSword string script
-	declare WeaponSpear string script
-	declare WeaponTwohanded string script
-	declare WeaponAxe string script
-	declare WeaponMain string script
-	declare OffHand string script
-	declare EquipmentChangeTimer int script
-
 
 	call EQ2BotLib_Init
 
@@ -64,17 +56,11 @@ function Class_Declaration()
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
+	UseReaver:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseReaver,TRUE]}]
+	UseSiphonHateWhenNotMT:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSiphonHateWhenNotMT,FALSE]}]	
 
 	BuffArmamentMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArmamentMember,]}]
 	BuffTacticsGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember,]}]
-
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Main",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponHammer:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Hammer",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
-	WeaponTwohanded:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Twohanded",""]}]
-	WeaponAxe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Axe",""]}]
 }
 
 function Class_Shutdown()
@@ -107,23 +93,28 @@ function Buff_Init()
    
    PreAction[8]:Set[DefensiveMode]
    PreSpellRange[8,1]:Set[295]      
+   
+   PreAction[9]:Set[Reaver]
+   
+   PreAction[10]:Set[SiphonHate]
 
 }
 
 function Combat_Init()
 {
-   Action[1]:Set[Placeholder]
+   Action[1]:Set[AA_Swiftaxe]
    MobHealth[1,1]:Set[1]
    MobHealth[1,2]:Set[100]
    SpellRange[1,1]:Set[381]
-    
-   Action[2]:Set[AA_Swiftaxe]
-   MobHealth[2,1]:Set[1]
-   MobHealth[2,2]:Set[100]
-   SpellRange[2,1]:Set[381]
    
-   Action[3]:Set[Taunt]
-   SpellRange[3,1]:Set[160]
+   Action[2]:Set[Taunt]
+   SpellRange[2,1]:Set[160]
+   
+   ;; For now, I want to cast PBAoE_3 early in the fight (ie, Tap Veins) as it gives health on termination
+   Action[3]:Set[PBAoE_3]
+   MobHealth[3,1]:Set[50]
+   MobHealth[3,2]:Set[100]
+   SpellRange[3,1]:Set[98]   
    
    Action[4]:Set[AA_Legionnaire_Smite]
    
@@ -134,30 +125,30 @@ function Combat_Init()
    SpellRange[5,1]:Set[60]
    
    Action[6]:Set[PBAoE_1]
-   Power[6,1]:Set[20]
+   Power[6,1]:Set[10]
    Power[6,2]:Set[100]
    SpellRange[6,1]:Set[96]
    
+   ;; Level 35 or higher   
    Action[7]:Set[PBAoE_2]
-   Power[7,1]:Set[20]
+   Power[7,1]:Set[10]
    Power[7,2]:Set[100]
-   SpellRange[7,1]:Set[95]
-   
-   ;; Level 35 or higher
-   Action[8]:Set[PBAoE_3]
-   Power[8,1]:Set[20]
-   Power[8,2]:Set[100]
-   SpellRange[8,1]:Set[97]   
+   SpellRange[7,1]:Set[97]
    
    ;; Level 55 or higher
+   Action[8]:Set[PBAoE_3]
+   Power[8,1]:Set[10]
+   Power[8,2]:Set[100]
+   SpellRange[8,1]:Set[98]   
+   
    Action[9]:Set[PBAoE_4]
-   Power[9,1]:Set[20]
+   Power[9,1]:Set[10]
    Power[9,2]:Set[100]
-   SpellRange[9,1]:Set[98]   
+   SpellRange[9,1]:Set[95]   
    
    ;; Level 65 or higher
    Action[10]:Set[PBAoE_5]
-   Power[10,1]:Set[20]
+   Power[10,1]:Set[10]
    Power[10,2]:Set[100]
    SpellRange[10,1]:Set[99]   
    
@@ -174,7 +165,7 @@ function Combat_Init()
    Power[12,2]:Set[100]
    SpellRange[12,1]:Set[150]
    
-    ;; Nuke + wis debuff
+    ;; Nuke + **wis debuff**
    Action[13]:Set[DDAttack_4]
    Power[13,1]:Set[5]
    Power[13,2]:Set[100]
@@ -208,17 +199,15 @@ function Combat_Init()
     
    ; Level 50+
    Action[18]:Set[Mist]
-   MobHealth[18,1]:Set[50]
+   MobHealth[18,1]:Set[10]
    MobHealth[18,2]:Set[100]
    Power[18,1]:Set[20]
    Power[18,2]:Set[100]
    SpellRange[18,1]:Set[55]
 
-   Action[19]:Set[Damage_Debuff]
-   MobHealth[19,1]:Set[5]
-   MobHealth[19,2]:Set[100]
-   Power[19,1]:Set[20]
-   Power[19,2]:Set[100]
+   Action[19]:Set[Mana_Tap]
+   Power[19,1]:Set[0]
+   Power[19,2]:Set[50]
    SpellRange[19,1]:Set[81]
 
    Action[20]:Set[Shield_Attack]
@@ -229,7 +218,7 @@ function Combat_Init()
    Action[21]:Set[RvsDmgShield]
    Power[21,1]:Set[5]
    Power[21,2]:Set[100]
-   MobHealth[21,1]:Set[50]
+   MobHealth[21,1]:Set[10]
    MobHealth[21,2]:Set[100]   
    SpellRange[21,1]:Set[7]   
 
@@ -252,8 +241,6 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 	variable int temp
-
-	call WeaponChange
 
 	if ${ShardMode}
 	{
@@ -342,6 +329,54 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 1
 			}
 			break
+			
+		case Reaver
+		    if ${UseReaver}
+		    {
+    			if !${Me.Maintained[Reaver](exists)}
+    		    {
+    		        Me.Ability[Reaver]:Use
+    		        wait 1
+    		        do
+    		        {
+    		            waitframe
+    		        }
+    		        while ${Me.CastingSpell}
+    		        wait 1
+    		    }
+		    }
+		    else
+		    {
+		        if ${Me.Maintained[Reaver](exists)}
+		            Me.Maintained[Reaver]:Cancel
+		    }
+			break	
+			
+		case SiphonHate
+		    if !${Me.Ability[Siphon Hate](exists)}
+		        break
+		        
+		    if (${MainTank} || ${UseSiphonHateWhenNotMT})
+		    {
+    			if !${Me.Maintained[Siphon Hate](exists)}
+    		    {
+    		        Me.Ability[Siphon Hate]:Use
+    		        wait 1
+    		        do
+    		        {
+    		            waitframe
+    		        }
+    		        while ${Me.CastingSpell}
+    		        wait 1
+    		    }
+    		}
+		    else
+		    {
+		        if ${Me.Maintained[Siphon Hate](exists)}
+		            Me.Maintained[Siphon Hate]:Cancel
+		    }
+			break				
+			
 		Default
 			return BuffComplete
 	}
@@ -350,8 +385,6 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	call WeaponChange
-
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -459,8 +492,25 @@ function Combat_Routine(int xAction)
 			
 			
         case PBAoE_1
+            if (${PBAoEMode})
+            {
+                if ${Actor[${KillTarget}].IsSolo}
+                {
+                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    if ${EQ2.CustomActorArraySize} < 2
+                        break
+                }
+                call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+                if ${Return.Equal[OK]}
+                {
+                    if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+        			    call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
+    			}
+    		}
+			break	
+			        
         case PBAoE_2
-            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1)
+            if (${PBAoEMode})
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -478,14 +528,17 @@ function Combat_Routine(int xAction)
 			break			
 			
 		case AA_Legionnaire_Smite
+		    if ${Me.Level} > 50
+		        break
 		    if (${Me.Ability["Legionnaire's Smite"](exists)})
 		    {
     			if ${Me.Ability["Legionnaire's Smite"].IsReady}
     			    call CastSpellRange "Legionnaire's Smite" 0 0 0 ${KillTarget} 0 0 0 1		
     		}    
+    		break
         
         case PBAoE_3
-            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 35)
+            if (${PBAoEMode} && ${Me.Level} >= 35)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -539,15 +592,11 @@ function Combat_Routine(int xAction)
 			break  
 			
 			
-		case Damage_Debuff
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+		case Mana_Tap
+			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1 1
-				}
+				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1 1
 			}
 			break
 		
@@ -783,25 +832,6 @@ function Cancel_Root()
 
 function CheckHeals()
 {
-
-}
-
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
 
 }
 
