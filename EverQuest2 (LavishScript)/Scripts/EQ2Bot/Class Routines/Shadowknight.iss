@@ -43,6 +43,7 @@ function Class_Declaration()
 	declare PetMode bool script 1
 	declare UseReaver bool script TRUE
 	declare UseSiphonHateWhenNotMT bool script FALSE
+	declare UseDeathMarch bool script FALSE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -58,9 +59,13 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	UseReaver:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseReaver,TRUE]}]
 	UseSiphonHateWhenNotMT:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSiphonHateWhenNotMT,FALSE]}]	
+	UseDeathMarch:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDeathMarch,FALSE]}]	
 
 	BuffArmamentMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArmamentMember,]}]
 	BuffTacticsGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember,]}]
+	
+	if ${Me.Level} < 58
+	    UIElement[UseDeathMarch@Class@EQ2Bot Tabs@EQ2 Bot]:ToggleVisible
 }
 
 function Class_Shutdown()
@@ -459,14 +464,17 @@ function Combat_Routine(int xAction)
     }
     
     ;; Death March
-	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].IsSolo} && !${Actor[${KillTarget}].ConColor.Equal[Grey]})
-	{
-        CurrentAction:Set[Combat :: Death March]	    
-    	if !${Me.Maintained[${SpellType[312]}](exists)}
+    if ${UseDeathMarch}
+    {
+    	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].IsSolo} && !${Actor[${KillTarget}].ConColor.Equal[Grey]})
     	{
-    	    if (${Me.Ability[${SpellType[312]}].IsReady})
-    		    call CastSpellRange 312 0 0 0 ${KillTarget} 0 0 0 1
-        } 
+            CurrentAction:Set[Combat :: Death March]	    
+        	if !${Me.Maintained[${SpellType[312]}](exists)}
+        	{
+        	    if (${Me.Ability[${SpellType[312]}].IsReady})
+        		    call CastSpellRange 312 0 0 0 ${KillTarget} 0 0 0 1
+            } 
+        }
     }
     
 	;call UseCrystallizedSpirit 60
