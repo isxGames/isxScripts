@@ -459,7 +459,7 @@ function Combat_Routine(int xAction)
     }
     
     ;; Death March
-	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].IsSolo})
+	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].IsSolo} && !${Actor[${KillTarget}].ConColor.Equal[Grey]})
 	{
         CurrentAction:Set[Combat :: Death March]	    
     	if !${Me.Maintained[${SpellType[312]}](exists)}
