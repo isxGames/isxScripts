@@ -103,7 +103,7 @@ variable float LastZ
 variable string CurrentLabel
 variable bool OnBadNode
 variable string gNodeName
-variable collection:string CollectiblesFound
+variable collection:string Collectibles
 variable bool CheckingAggro
 
 function main(string mode)
@@ -1001,8 +1001,11 @@ objectdef EQ2HarvestBot
 			RareStat:Inc
 	}
 
-    method CollectibleFound(string sName)
+    method CollectibleFound(string sName,int ID)
     {
+	    if (${Collectibles.Element[${ID}](exists)})
+	        return
+        
         echo "DEBUG: Collectible Found('${sName}')"
         
     	variable int tempvar
@@ -1041,6 +1044,7 @@ objectdef EQ2HarvestBot
     			}
     		}
     	}
+    	Collectibles:Set[${ID},${sName}]
     }
 
 	method SearchItems(string itemsearch)
@@ -1245,7 +1249,7 @@ atom(script) EQ2_onLootWindowAppeared(int ID)
 {    
     ; deal with collectibles
     if (${gNodeName.Equal[?]} || ${gNodeName.Equal[!]})
-        Harvest:CollectibleFound[${LootWindow[${ID}].Item[1].Name}] 
+        Harvest:CollectibleFound[${LootWindow[${ID}].Item[1].Name},${LootWindow[${ID}].Item[1].ID}]  
     
     ;; if EQ2Bot is running, let IT handle actual looting
     if (${Script[EQ2Bot](exists)})
