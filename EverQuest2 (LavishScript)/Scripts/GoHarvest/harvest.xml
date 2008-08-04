@@ -27,8 +27,10 @@
 		<Setting Name="Cabilisian lode">Cabilisian lode</Setting>
 		<Setting Name="bedded ore">bedded ore</Setting>
 		<Setting Name="uncovered stone">uncovered stone</Setting>
+		<Setting Name="excavated ore">dark stone</Setting>
 	</Set>
 	<Set Name="2">
+		<Setting Name="dark stone">dark stone</Setting>
 		<Setting Name="luminous stone">luminous stone</Setting>
 		<Setting Name="wind swept stones">wind swept stones</Setting>
 		<Setting Name="sandwashed rock">sandwashed rock</Setting>
@@ -85,6 +87,7 @@
 		<Setting Name="felled desert arbor">Felled desert arbor</Setting>
 	</Set>
 	<Set Name="4">
+		<Setting Name="salty roots">salty garden</Setting>
 		<Setting Name="vestigial roots">vestigial roots</Setting>
 		<Setting Name="musty roots">musty roots</Setting>
 		<Setting Name="wintry roots">wintry roots</Setting>
@@ -129,8 +132,10 @@
 		<Setting Name="varmint burrow">varmint burrow</Setting>
 		<Setting Name="jungle beast den">jungle beast den</Setting>
 		<Setting Name="unkempt nest">unkempt nest</Setting>
+		<Setting Name="small nest">small nest</Setting>
 	</Set>
 	<Set Name="6">
+		<Setting Name="salty garden">salty garden</Setting>
 		<Setting Name="mystical natural garden">mystical natural garden</Setting>
 		<Setting Name="overgrown bed of greenslade">overgrown bed of greenslade</Setting>
 		<Setting Name="high plains shrubbery">high plains shrubbery</Setting>
@@ -168,6 +173,7 @@
 		<Setting Name="bedlam of fish">bedlam of fish</Setting>
 		<Setting Name="cluster of fish">cluster of fish</Setting>
 		<Setting Name="clutch of fish">clutch of fish</Setting>
+		<Setting Name="school of saltfin">school of saltfin</Setting>
 		<Setting Name="school of flying fish">school of flying fish</Setting>
 		<Setting Name="crowd of fish">crowd of fish</Setting>
 		<Setting Name="school of fish">school of fish</Setting>
