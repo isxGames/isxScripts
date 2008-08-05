@@ -583,6 +583,8 @@ function Harvest()
 		}
 
 		call ProcessTriggers
+        if (${BadNodes.Element[${NodeID}](exists)})
+            break            
 	}
 	while ${Actor[id,${NodeID}](exists)}
 
@@ -1248,13 +1250,25 @@ atom(script) EQ2_onChoiceWindowAppeared()
 atom(script) EQ2_onLootWindowAppeared(int ID)
 {    
     ; deal with collectibles
+    ;; Check first to make sure that if the item is LORE and we already have it, we have to decline.
+    if ${LootWindow.Item[1].Lore}
+    {
+        if ${Me.Inventory[${LootWindow.Item[1]}](exists)}
+        {
+            LootWindow:DeclineLotto
+            Harvest:SetBadNode[${NodeID}]
+            press ESC
+            echo "DEBUG:: Collectible is LORE and we already posess it ... ignoring. [${LootWindow.Item[1]}]"
+            return
+        }   
+    }
     if (${gNodeName.Equal[?]} || ${gNodeName.Equal[!]})
         Harvest:CollectibleFound[${LootWindow[${ID}].Item[1].Name},${LootWindow[${ID}].Item[1].ID}]  
     
+     
     ;; if EQ2Bot is running, let IT handle actual looting
     if (${Script[EQ2Bot](exists)})
         return
-    
     
     ;; Now do the actual looting
     if ${LootWindow.Type.Equal[Lottery]}
