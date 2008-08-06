@@ -210,27 +210,15 @@ function Combat_Init()
    Power[18,2]:Set[100]
    SpellRange[18,1]:Set[55]
 
-   Action[19]:Set[Mana_Tap]
-   Power[19,1]:Set[0]
-   Power[19,2]:Set[50]
-   SpellRange[19,1]:Set[81]
+   Action[19]:Set[Shield_Attack]
+   Power[19,1]:Set[5]
+   Power[19,2]:Set[100]
+   SpellRange[19,1]:Set[240]
 
-   Action[20]:Set[Shield_Attack]
-   Power[20,1]:Set[5]
-   Power[20,2]:Set[100]
-   SpellRange[20,1]:Set[240]
-   
-   Action[21]:Set[RvsDmgShield]
-   Power[21,1]:Set[5]
-   Power[21,2]:Set[100]
-   MobHealth[21,1]:Set[10]
-   MobHealth[21,2]:Set[100]   
-   SpellRange[21,1]:Set[7]   
-
-   Action[22]:Set[Pet]
-   MobHealth[22,1]:Set[50]
-   MobHealth[22,2]:Set[100]
-   SpellRange[22,1]:Set[45]
+   Action[20]:Set[Pet]
+   MobHealth[20,1]:Set[50]
+   MobHealth[20,2]:Set[100]
+   SpellRange[20,1]:Set[45]
 
 }
 
@@ -392,6 +380,8 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+    declare BuffTarget string local 
+    
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -432,8 +422,9 @@ function Combat_Routine(int xAction)
     	    if (${Me.Ability[${SpellType[170]}].IsReady})
     		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
     	}
-    }    
+    } 
     
+
     ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
     if ${Me.Level} >= 50
 	{
@@ -479,9 +470,40 @@ function Combat_Routine(int xAction)
         }
     }
     
+    ;; Cast 5-Proc Damage Shield every time it is ready (And as long as we are fighting non-solo mobs)
+    CurrentAction:Set[Combat :: Checking 'Damage Shield']
+    if !${Actor[${KillTarget}].IsSolo}
+    {
+        if ${Actor[${KillTarget}].Health} > 25
+        {
+            BuffTarget:Set[${UIElement[cbBuffDSGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+            if ${Actor[${KillTarget}].Target.Name.Equal[${BuffTarget.Token[1,:]}]}
+            {
+                if !${Me.Maintained[${SpellType[7]}](exists)}
+                {
+                	if ${Me.Ability[${SpellType[7]}].IsReady}
+                	{
+                		if !${BuffTarget.Equal["No one"]}
+                		{
+                		    CurrentAction:Set[Combat :: Casting 'Damage Shield']
+                		    ;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
+                			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+                			    call CastSpellRange 7 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
+                			else
+                			    echo "ERROR: Damage Shield proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+                        }     
+                        ;; If set to "no one" we assume they do not want to use this spell.
+                	}
+                }
+            }
+        }   
+    } 
+       
 	;call UseCrystallizedSpirit 60
 
     call CheckGroupOrRaidAggro
+    
+    call CheckPower
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 	
@@ -614,15 +636,6 @@ function Combat_Routine(int xAction)
     			}
 			}
 			break  
-			
-			
-		case Mana_Tap
-			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 1 0 ${KillTarget} 0 0 1 1
-			}
-			break
 		
 		case Shield_Attack
 			If ${Me.Equipment[Secondary].Type.Equal[Shield]}
@@ -646,31 +659,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 			
-	    case RvsDmgShield
-        	if ${MainTank} && ${Actor[${KillTarget}].Health} > 50 && ${Actor[${KillTarget}].Target.Name.Equal[${MainTankPC}]}
-        	{
-            	if !${Me.Maintained[${SpellType[7]}](exists)}
-            	{
-                	if ${Me.Ability[${SpellType[7]}](exists)}
-                	{
-                	    if (${Me.Ability[${SpellType[7]}].IsReady})
-                		    call CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-                	}   
-                }
-            } 
-            else
-            {
-            	if !${Me.Maintained[${SpellType[7]}](exists)}
-            	{
-                	if ${Me.Ability[${SpellType[7]}](exists)}
-                	{
-                	    if (${Me.Ability[${SpellType[7]}].IsReady})
-                		    call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID} 0 0 0 1
-                	}   
-                }        
-            }
-            break
-            
 		case Pet
 		    if (${PetMode})
 		    {
@@ -857,5 +845,14 @@ function Cancel_Root()
 function CheckHeals()
 {
 
+}
+
+function CheckPower()
+{
+    if ${Me.Power} < 50
+    {
+	    if (${Me.Ability[${SpellType[81]}].IsReady})
+		    call CastSpellRange 81 0 0 0 ${KillTarget} 0 0 0 1
+    }   
 }
 

@@ -192,120 +192,218 @@
 	
 	
 	<Text Name='lblBuffArmamentMember' Template='EQ2.text'>
-			<X>75%</X>
-			<Y>10</Y>
-			<Width>20%</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Buff Armament:</Text>
-			<AutoTooltip></AutoTooltip>
-		</Text>
-		<combobox name='cbBuffArmamentGroupMember' Template='EQ2.Combobox'>
-			<x>75%</x>
-			<y>30</y>
-			<Width>100</width>
-			<Height>20</height>
-			<AutoTooltip>The Group Member to Armament Buff</AutoTooltip>
-			<Items></items>
-			<Sort>Text</Sort>
-			<OnLoad>
-    		    if (${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffArmamentGroupMember](exists)})
-    		    {
-                    This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffArmamentGroupMember]}]
-				    This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffArmamentGroupMember]}]:Select
-        		}
-        		else
-        		{
-        		    This:AddItem["No one"]
-        		    This.ItemByValue["No one"]:Select
-        		}			
-			</OnLoad>
-			<OnSelect>
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffArmamentGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
-			<OnLeftClick>
-				declare tmpvar int
+		<X>65%</X>
+		<Y>10</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Armament:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffArmamentGroupMember' Template='EQ2.Combobox'>
+		<x>65%</x>
+		<y>30</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group/Raid Member to Armament Buff</AutoTooltip>
+		<Items></items>
+		<Sort>Text</Sort>
+		<OnLoad>
+		    if (${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffArmamentGroupMember](exists)})
+		    {
+                This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffArmamentGroupMember]}]
+			    This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffArmamentGroupMember]}]:Select
+    		}
+    		else
+    		{
+    		    This:AddItem["No one"]
+    		    This.ItemByValue["No one"]:Select
+    		}			
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffArmamentGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
 
-				This:ClearItems
+			This:ClearItems
+			tmpvar:Set[1]
+            This:AddItem["No one"]
+
+			if ${Me.Raid} > 0
+			{
+			    do
+			    {
+			        if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
+			            continue
+					if ${Me.Raid[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Raid[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type}]
+					}
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Raid}			
+			}
+			elseif ${Me.Group} > 1
+			{
 				tmpvar:Set[1]
-                This:AddItem["No one"]
-				if ${Me.ToActor.Pet(exists)}
-				{
-					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-				}
 				do
 				{
-					if ${Me.Grouped}
-					{
 						if ${Me.Group[${tmpvar}].ToActor(exists)}
 						{
 							This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
 						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						{
-							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
+							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 						}
-					}
 				}
-				while ${tmpvar:Inc}&lt;=5
-			</OnLeftClick>
-		</combobox>
-	<Text Name='lblBuffTacticsGroupMember' Template='EQ2.text'>
-			<X>75%</X>
-			<Y>60</Y>
-			<Width>20%</Width>
-			<Height>20</Height>
-			<Alignment>Left</Alignment>
-			<Text>Buff Tactics:</Text>
-			<AutoTooltip></AutoTooltip>
-		</Text>
-		<combobox name='cbBuffTacticsGroupMember' Template='EQ2.Combobox'>
-			<x>75%</x>
-			<y>80</y>
-			<Width>100</width>
-			<Height>20</height>
-			<AutoTooltip>The Group Member to Tactics Buff</AutoTooltip>
-			<Items></items>
-			<OnLoad>
-    		    if (${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember](exists)})
-    		    {
-                    This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember]}]
-				    This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember]}]:Select
-        		}
-        		else
-        		{
-        		    This:AddItem["No one"]
-        		    This.ItemByValue["No one"]:Select
-        		}
-			</OnLoad>
-			<OnSelect>
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffTacticsGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
-			<OnLeftClick>
-				declare tmpvar int
-
-				This:ClearItems
-				tmpvar:Set[1]
-				This:AddItem["No one"]
-				if ${Me.ToActor.Pet(exists)}
-				{
-					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-				}
-				do
-				{
-					if ${Me.Grouped}
-					{
-						if ${Me.Group[${tmpvar}].ToActor(exists)}
-						{
-							This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						{
-							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-						}
-
-					}
-
-				}
-				while ${tmpvar:Inc}&lt;=5
-			</OnLeftClick>
+				while ${tmpvar:Inc}&lt; ${Me.Group}
+			}
+		</OnLeftClick>
 	</combobox>
+    <Text Name='lblBuffTacticsGroupMember' Template='EQ2.text'>
+		<X>65%</X>
+		<Y>60</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Tactics:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffTacticsGroupMember' Template='EQ2.Combobox'>
+		<x>65%</x>
+		<y>80</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group/Raid Member to Tactics Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+		    if (${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember](exists)})
+		    {
+                This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember]}]
+			    This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember]}]:Select
+    		}
+    		else
+    		{
+    		    This:AddItem["No one"]
+    		    This.ItemByValue["No one"]:Select
+    		}
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffTacticsGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem["No one"]
+
+			if ${Me.Raid} > 0
+			{
+			    do
+			    {
+			        if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
+			            continue
+					if ${Me.Raid[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Raid[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type}]
+					}
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Raid}			
+			}
+			elseif ${Me.Group} > 1
+			{
+				tmpvar:Set[1]
+				do
+				{
+						if ${Me.Group[${tmpvar}].ToActor(exists)}
+						{
+							This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+						}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						{
+							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						}
+				}
+				while ${tmpvar:Inc}&lt; ${Me.Group}
+			}
+		</OnLeftClick>
+    </combobox>
+    <Text Name='lblBuffDSGroupMember' Template='EQ2.text'>
+		<X>65%</X>
+		<Y>110</Y>
+		<Width>40%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff 5-Proc. Dmg. Shld.:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffDSGroupMember' Template='EQ2.Combobox'>
+		<x>65%</x>
+		<y>130</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group/Raid Member to give 5-proc Damage Shield</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+		    if (${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffDSGroupMember](exists)})
+		    {
+                This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffDSGroupMember]}]
+			    This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffDSGroupMember]}]:Select
+    		}
+    		else
+    		{
+    		    This:AddItem["No one"]
+    		    This.ItemByValue["No one"]:Select
+    		}
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffDSGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			This:AddItem["No one"]
+			
+			if ${Me.Raid} > 0
+			{
+			    do
+			    {
+					if ${Me.Raid[${tmpvar}].ToActor(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					}
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Raid[${tmpvar}].ToActor.Pet(exists)}
+					{
+						This:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type}]
+					}
+			    }
+			    while ${tmpvar:Inc}&lt; ${Me.Raid}			
+			}
+			else
+			{
+				tmpvar:Set[0]
+				do
+				{
+						if ${Me.Group[${tmpvar}].ToActor(exists)}
+						{
+							This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+						}
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						{
+							This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						}
+				}
+				while ${tmpvar:Inc}&lt; ${Me.Group}
+			}
+		</OnLeftClick>
+	</combobox>	
 </ISUI>
