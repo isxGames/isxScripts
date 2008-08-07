@@ -1047,7 +1047,7 @@ function RefreshPower()
 
     if ${Me.Group} > 1
     {
-    	if ${Me.Power} < 40
+    	if ${Me.ToActor.Power} < 40
     		call Shard        
         
         if ${Me.ToActor.Power} > 45

@@ -959,7 +959,8 @@ function Post_Combat_Routine(int xAction)
 			break
 		case CheckForCures
 			;echo "DEBUG: Checking if Cures are needed post combat..."
-			call CheckCures
+			if ${CureMode}			
+			    call CheckCures
 			break
 		case AutoFollowTank
 			if ${AutoFollowMode}
@@ -1171,7 +1172,7 @@ function CheckHeals()
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode} && !${Me.InRaid}
 		call CastSpellRange 4 0 0 0 ${PetToHeal}
 
-	if ${EpicMode}
+	if (${EpicMode} && ${CureMode})
 		call CheckCures
 
 	;Check Rezes
@@ -1246,7 +1247,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup} && ${EpicMode}
 		{
 			call CastSpellRange 15
-			if ${EpicMode}
+			if (${EpicMode} && ${CureMode})
 				call CheckCures
 		}
 		elseif ${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Maintained[${SpellType[7]}].Target.ID}==${Actor[${MainTankPC}].ID}
