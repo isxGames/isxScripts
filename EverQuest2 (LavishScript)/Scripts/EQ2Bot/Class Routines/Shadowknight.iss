@@ -504,6 +504,42 @@ function Combat_Routine(int xAction)
     call CheckGroupOrRaidAggro
     
     call CheckPower
+    
+    ; If Kerran, use Physical Mitigation Debuff on Epic Mobs or Heroics that are yellow/orange/red cons
+    if ${Me.Race.Equal[Kerran]}
+    {
+        if ${Actor[${KillTarget}].IsEpic}
+        {
+			if ${Me.Ability[Claw].IsReady}
+			{
+				Target ${KillTarget}
+				Me.Ability[Claw]:Use
+				do
+				{
+				    waitframe
+				}
+				while ${Me.CastingSpell}
+				wait 1						
+			} 
+        }
+        elseif ${Actor[${KillTarget}].IsHeroic}
+        {
+            if ${Actor[${KillTarget}].Level} > ${Me.Level}
+            {
+    			if ${Me.Ability[Claw].IsReady}
+    			{
+    				Target ${KillTarget}
+    				Me.Ability[Claw]:Use
+    				do
+    				{
+    				    waitframe
+    				}
+    				while ${Me.CastingSpell}
+    				wait 1						
+    			} 
+            }
+        }
+    }
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 	
@@ -849,7 +885,7 @@ function CheckHeals()
 
 function CheckPower()
 {
-    if ${Me.Power} < 50
+    if ${Me.ToActor.Power} < 50
     {
 	    if (${Me.Ability[${SpellType[81]}].IsReady})
 		    call CastSpellRange 81 0 0 0 ${KillTarget} 0 0 0 1
