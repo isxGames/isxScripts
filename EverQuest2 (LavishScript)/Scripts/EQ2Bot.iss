@@ -2781,6 +2781,26 @@ atom(script) EQ2_onIncomingText(string Text)
 	}
 }
 
+atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
+{
+    ;echo "DEBUG:  ChatType: ${ChatType} -- Speaker: ${Speaker} -- Target: ${sTarget} -- ChannelName: ${ChannelName} -- Message: ${Message}"
+    
+	if (${Message.Find[Invis us please]} > 0)
+	{
+	    if ${Me.Group[${Speaker}](exists)}
+	    {
+        	if (${Me.SubClass.Equal[Illusionist]} && ${Me.Level} >= 24)
+        	{
+                eq2execute /useabilityonplayer ${Speaker} "Illusory Mask" 	    
+        	}
+        	elseif (${Me.SubClass.Equal[Fury]} && ${Me.Level} >= 45)
+        	{
+                eq2execute /useabilityonplayer ${Speaker} "Untamed Shroud" 		    
+        	}        	
+        }
+    } 
+}
+
 atom(script) LootWDw(string ID)
 {
 	declare i int local
@@ -3672,6 +3692,7 @@ objectdef EQ2BotObj
 		Event[EQ2_onLootWindowAppeared]:AttachAtom[LootWdw]
 		;Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
 		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
+		Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
 	}
 
 	method Init_Triggers()
@@ -4756,6 +4777,7 @@ function atexit()
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
 	;Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
+	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 
 	press -release ${forward}
 	press -release ${backward}
