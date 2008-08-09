@@ -1816,7 +1816,7 @@ objectdef BrokerBot
 
 		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
 
-		; make sure nothing from a previous run is in memory (DEVL)
+		; make sure nothing from a previous run is in memory
 		myprices[ItemList]:Clear
 		myprices[BuyList]:Clear
 		LavishSettings[craft]:Clear
