@@ -26,9 +26,9 @@
 		<Setting Name="ryjesium node">ryjesium node</Setting>
 		<Setting Name="Cabilisian lode">Cabilisian lode</Setting>
 		<Setting Name="bedded ore">bedded ore</Setting>
-		<Setting Name="uncovered stone">uncovered stone</Setting>
-		<Setting Name="excavated ore">dark stone</Setting>
 		<Setting Name="unearthed ore">unearthed ore</Setting>
+		<Setting Name="uncovered stone">uncovered stone</Setting>
+		<Setting Name="excavated ore">excavated ore</Setting>
 	</Set>
 	<Set Name="2">
 		<Setting Name="dark stone">dark stone</Setting>
