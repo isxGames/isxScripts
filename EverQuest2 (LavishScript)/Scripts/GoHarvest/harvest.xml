@@ -28,6 +28,7 @@
 		<Setting Name="bedded ore">bedded ore</Setting>
 		<Setting Name="uncovered stone">uncovered stone</Setting>
 		<Setting Name="excavated ore">dark stone</Setting>
+		<Setting Name="unearthed ore">unearthed ore</Setting>
 	</Set>
 	<Set Name="2">
 		<Setting Name="dark stone">dark stone</Setting>
@@ -57,8 +58,10 @@
 		<Setting Name="exposed limestone">exposed limestone</Setting>
 		<Setting Name="dense rock">dense rock</Setting>
 		<Setting Name="wind swept rock">wind swept rock</Setting>
+		<Setting Name="rugged stones">rugged stones</Setting>
 	</Set>
 	<Set Name="3">
+		<Setting Name="felled elm tree">felled elm tree</Setting>
 		<Setting Name="wind felled tree">wind felled tree</Setting>
 		<Setting Name="putrid arbor">putrid arbor</Setting>
 		<Setting Name="marred arbor">marred arbor</Setting>
