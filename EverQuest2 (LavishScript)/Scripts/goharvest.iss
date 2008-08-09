@@ -469,6 +469,21 @@ atom(script) EQ2_onLootWindowAppeared(int ID)
 
 atom atexit()
 {
+	press -release MOVEFORWARD
+	press -release MOVEBACKWARD
+	press -release STRAFERIGHT
+	press -release STRAFELEFT
+
+	if ${Me.IsMoving}
+	{
+		do
+		{
+    	    press AUTORUN
+			wait 5
+		}
+		while ${Me.IsMoving}
+	}
+	
 	if !${ISXEQ2.IsReady}
 	{
 		return
