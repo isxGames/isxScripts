@@ -474,16 +474,6 @@ atom atexit()
 	press -release STRAFERIGHT
 	press -release STRAFELEFT
 
-	if ${Me.IsMoving}
-	{
-		do
-		{
-    	    press AUTORUN
-			wait 5
-		}
-		while ${Me.IsMoving}
-	}
-	
 	if !${ISXEQ2.IsReady}
 	{
 		return
