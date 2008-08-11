@@ -144,18 +144,19 @@ function Combat_Init()
    Action[8]:Set[PBAoE_3]
    Power[8,1]:Set[10]
    Power[8,2]:Set[100]
-   SpellRange[8,1]:Set[98]   
+   SpellRange[8,1]:Set[98]  
    
+    
+   ;; Level 65 or higher
    Action[9]:Set[PBAoE_4]
    Power[9,1]:Set[10]
    Power[9,2]:Set[100]
-   SpellRange[9,1]:Set[95]   
+   SpellRange[9,1]:Set[99]   
    
-   ;; Level 65 or higher
    Action[10]:Set[PBAoE_5]
    Power[10,1]:Set[10]
    Power[10,2]:Set[100]
-   SpellRange[10,1]:Set[99]   
+   SpellRange[10,1]:Set[95]   
    
    
    ;; nuke + lifetap
@@ -592,7 +593,7 @@ function Combat_Routine(int xAction)
 			break	
 			        
         case PBAoE_2
-            if (${PBAoEMode})
+            if (${PBAoEMode} && ${Me.Level} >= 35)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -620,7 +621,7 @@ function Combat_Routine(int xAction)
     		break
         
         case PBAoE_3
-            if (${PBAoEMode} && ${Me.Level} >= 35)
+            if (${PBAoEMode} && ${Me.Level} >= 55)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -638,7 +639,7 @@ function Combat_Routine(int xAction)
 			break
         
         case PBAoE_4
-            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 55)
+            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 65)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
@@ -656,7 +657,7 @@ function Combat_Routine(int xAction)
 			break  
 
         case PBAoE_5
-            if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 65)
+            if (${PBAoEMode})
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
