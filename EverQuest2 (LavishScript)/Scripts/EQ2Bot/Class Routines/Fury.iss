@@ -974,14 +974,19 @@ function Post_Combat_Routine(int xAction)
 
 function RefreshPower()
 {
-	if ${Me.InCombat} && ${Me.ToActor.Power}<65  && ${Me.ToActor.Health}>25
-		call UseItem "Helm of the Scaleborn"
+    if ${Me.Level} < 75
+    {
+    	if ${Me.InCombat} && ${Me.ToActor.Power}<65  && ${Me.ToActor.Health}>25
+    		call UseItem "Helm of the Scaleborn"
+    
+    	if ${Me.InCombat} && ${Me.ToActor.Power}<45
+    		call UseItem "Spiritise Censer"
+    		
+    	if ${Me.InCombat} && ${Me.ToActor.Power}<15
+    		call UseItem "Stein of the Everling Lord"    		
+	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<45
-		call UseItem "Spiritise Censer"
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-		call UseItem "Stein of the Everling Lord"
 }
 
 function Have_Aggro()
