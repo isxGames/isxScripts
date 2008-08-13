@@ -1031,13 +1031,16 @@ function RefreshPower()
 	declare MemberLowestPower int local
 		
 	;Spiritise Censer
-	if !${Swapping} && ${Me.Inventory[Spirtise Censer](exists)}
+	if ${Me.Level} < 75
 	{
-		OriginalItem:Set[${Me.Equipment[Secondary].Name}]
-		ItemToBeEquipped:Set[Spirtise Censer]
-		call Swap
-		Me.Equipment[Spirtise Censer]:Use
-	}
+    	if !${Swapping} && ${Me.Inventory[Spirtise Censer](exists)}
+    	{
+    		OriginalItem:Set[${Me.Equipment[Secondary].Name}]
+    		ItemToBeEquipped:Set[Spirtise Censer]
+    		call Swap
+    		Me.Equipment[Spirtise Censer]:Use
+    	}
+    }
 
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<80 && !${Me.InCombat}
