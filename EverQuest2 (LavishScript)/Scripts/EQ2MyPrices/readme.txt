@@ -307,7 +307,7 @@ Contact the author
 
 If you do decide to try this script I'd be greatful for any bug reports or suggestions.
 
-Discussion thread for myprices can be found at : http://www.isxgames.com/forums/showthread.php?p=11994#post11994
+Discussion thread for myprices can be found at : http://www.isxgames.com/forums/showthread.php?t=1808
 
 The more feedback I get the better I know which direction to take this and the faster I can squash any bugs that appear.
 
