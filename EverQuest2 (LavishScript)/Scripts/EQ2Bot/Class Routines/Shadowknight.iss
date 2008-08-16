@@ -43,6 +43,7 @@ function Class_Declaration()
 	declare PetMode bool script 1
 	declare UseReaver bool script TRUE
 	declare UseSiphonHateWhenNotMT bool script FALSE
+	declare UseBattleLeadershipAABuff bool script FALSE
 	declare UseDeathMarch bool script FALSE
 
 	declare BuffArmamentMember string script
@@ -59,6 +60,7 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	UseReaver:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseReaver,TRUE]}]
 	UseSiphonHateWhenNotMT:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSiphonHateWhenNotMT,FALSE]}]	
+	UseBattleLeadershipAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseBattleLeadershipAABuff,FALSE]}]	
 	UseDeathMarch:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDeathMarch,FALSE]}]	
 
 	BuffArmamentMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArmamentMember,]}]
@@ -102,6 +104,8 @@ function Buff_Init()
    PreAction[9]:Set[Reaver]
    
    PreAction[10]:Set[SiphonHate]
+   
+   PreAction[11]:Set[BattleLeadershipAABuff]
 
 }
 
@@ -371,7 +375,30 @@ function Buff_Routine(int xAction)
 		        if ${Me.Maintained[Siphon Hate](exists)}
 		            Me.Maintained[Siphon Hate]:Cancel
 		    }
-			break				
+			break	
+			
+	    case BattleLeadershipAABuff			
+		    if ${UseBattleLeadershipAABuff}
+		    {
+    			if !${Me.Maintained[Battle Leadership](exists)}
+    		    {
+    		        Me.Ability[Battle Leadership]:Use
+    		        wait 1
+    		        do
+    		        {
+    		            waitframe
+    		        }
+    		        while ${Me.CastingSpell}
+    		        wait 1
+    		    }
+		    }
+		    else
+		    {
+		        if ${Me.Maintained[Battle Leadership](exists)}
+		            Me.Maintained[Battle Leadership]:Cancel
+		    }
+			break
+			
 			
 		Default
 			return BuffComplete
@@ -443,7 +470,7 @@ function Combat_Routine(int xAction)
         }
 	}      
     
-	;; Draw Strength (Always cast this when it is ready!
+	;; Draw Strength (Always cast this when it is ready!)
 	if !${Actor[${KillTarget}].IsSolo}
 	{
 	    CurrentAction:Set[Combat :: Draw Strength]
