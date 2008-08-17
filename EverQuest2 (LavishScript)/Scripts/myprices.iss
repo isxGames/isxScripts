@@ -1084,6 +1084,7 @@ function BrokerSearch(string lookup)
 					stopsearch:Set[TRUE]
 					break
 				}
+				waitframe
 			}
 			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && !${stopsearch}
 		}
