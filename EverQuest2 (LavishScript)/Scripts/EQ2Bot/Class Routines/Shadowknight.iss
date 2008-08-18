@@ -44,6 +44,7 @@ function Class_Declaration()
 	declare UseReaver bool script TRUE
 	declare UseSiphonHateWhenNotMT bool script FALSE
 	declare UseBattleLeadershipAABuff bool script FALSE
+	declare UseFearlessMoraleAABuff bool script FALSE
 	declare UseDeathMarch bool script FALSE
 
 	declare BuffArmamentMember string script
@@ -61,6 +62,7 @@ function Class_Declaration()
 	UseReaver:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseReaver,TRUE]}]
 	UseSiphonHateWhenNotMT:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSiphonHateWhenNotMT,FALSE]}]	
 	UseBattleLeadershipAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseBattleLeadershipAABuff,FALSE]}]	
+	UseFearlessMoraleAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseFearlessMoraleAABuff,FALSE]}]	
 	UseDeathMarch:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDeathMarch,FALSE]}]	
 
 	BuffArmamentMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArmamentMember,]}]
@@ -106,6 +108,8 @@ function Buff_Init()
    PreAction[10]:Set[SiphonHate]
    
    PreAction[11]:Set[BattleLeadershipAABuff]
+   
+   PreAction[12]:Set[FearlessMoraleAABuff]
 
 }
 
@@ -398,6 +402,28 @@ function Buff_Routine(int xAction)
 		            Me.Maintained[Battle Leadership]:Cancel
 		    }
 			break
+			
+	    case FearlessMoraleAABuff			
+		    if ${UseFearlessMoraleAABuff}
+		    {
+    			if !${Me.Maintained[Fearless Morale](exists)}
+    		    {
+    		        Me.Ability[Fearless Morale]:Use
+    		        wait 1
+    		        do
+    		        {
+    		            waitframe
+    		        }
+    		        while ${Me.CastingSpell}
+    		        wait 1
+    		    }
+		    }
+		    else
+		    {
+		        if ${Me.Maintained[Fearless Morale](exists)}
+		            Me.Maintained[Fearless Morale]:Cancel
+		    }
+			break			
 			
 			
 		Default
