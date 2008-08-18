@@ -1017,7 +1017,7 @@ function Have_Aggro()
 function CheckHeals()
 {
 	declare tempgrp int local 1
-	declare temphl int local 1
+	declare temphl int local 0
 	declare temph2 int local 1
 	declare grpheal int local 0
 	declare lowest int local 0
@@ -1026,6 +1026,7 @@ function CheckHeals()
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 	declare MainTankExists bool local 1
+	declare lowestset bool local 0
 
 	grpcnt:Set[${Me.GroupCount}]
 
@@ -1059,45 +1060,6 @@ function CheckHeals()
 
 	call CheckHOTs
 
-	do
-	{
-		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
-		{
-			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
-			{
-				if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
-					lowest:Set[${temphl}]
-			}
-
-			if ${Me.Group[${temphl}].ID}==${MainTankID}
-				MainTankInGroup:Set[1]
-
-			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
-				grpheal:Inc
-
-			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[coercer]})
-			{
-    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
-    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-			}
-
-			if (${Me.Group[${temphl}].Class.Equal[illusionist]} && !${Me.InCombat})
-			{
-    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
-    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-			}
-
-			if ${Me.Pet.Health}<60
-				PetToHeal:Set[${Me.ToActor.Pet.ID}]
-		}
-	}
-	while ${temphl:Inc}<=${grpcnt}
-
-	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
-		grpheal:Inc
-
-	if ${grpheal}>2
-		call GroupHeal
 
     if (${MainTankExists})
     {
@@ -1119,9 +1081,52 @@ function CheckHeals()
             call HealMe
     }
 
-	;now lets heal individual groupmembers if needed
-	if ${lowest}
+	do
 	{
+		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
+		{
+			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
+			{
+				if ${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowestset}==0
+				{
+				    lowestset:Set[1]
+					lowest:Set[${temphl}]
+				}
+			}
+
+			if ${Me.Group[${temphl}].ID}==${MainTankID}
+				MainTankInGroup:Set[1]
+
+			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
+				grpheal:Inc
+
+			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[coercer]})
+			{
+    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+			}
+
+			if (${Me.Group[${temphl}].Class.Equal[illusionist]} && !${Me.InCombat})
+			{
+    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+			}
+		}
+	}
+	while ${temphl:Inc}<=${grpcnt}
+
+	;if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
+	;	grpheal:Inc
+
+	if ${grpheal}>2
+		call GroupHeal
+
+
+
+	;now lets heal individual groupmembers if needed
+	if ${lowestset}
+	{
+	    ;echo "DEBUG:: ${Group[${lowest}]}'s health is lowest at ${Me.Group[${Lowest}].ToActor.Health}"
 		call UseCrystallizedSpirit 60
 
 		if ${Me.Group[${lowest}].ToActor.Health}<50 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
@@ -1195,6 +1200,26 @@ function CheckHeals()
 		}
 		while ${temphl:Inc}<${grpcnt}
 	}
+	
+    if (${MainTankExists})
+    {
+    	if ${Actor[${MainTankID}].Health}<90
+    	{
+    		if ${Me.ID}==${MainTankID}
+    			call HealMe
+    		else
+    			call HealMT ${MainTankID} ${MainTankInGroup}
+    	}
+    	
+    	;Check My health after MT
+	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+		    call HealMe
+    }
+    else
+    {
+        if ${Me.ToActor.Health}<90
+            call HealMe
+    }	
 }
 
 function HealMe()
@@ -1249,22 +1274,21 @@ function HealMT(int MainTankID, int MTInMyGroup)
 	; Use regens first, then Patch Heals
 	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
 	{
-		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup} && ${EpicMode}
+		if ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.Maintained[${SpellType[7]}].Target.ID} != ${Actor[${MainTankPC}].ID}
+			call CastSpellRange 7 0 0 0 ${MainTankID}
+		elseif ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup}
 		{
 			call CastSpellRange 15
-			if (${EpicMode} && ${CureMode})
-				call CheckCures
 		}
-		elseif ${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Maintained[${SpellType[7]}].Target.ID}==${Actor[${MainTankPC}].ID}
-			call CastSpellRange 7 0 0 0 ${MainTankID}
-
-		if ${Me.Ability[${SpellType[7]}].IsReady} && ${EpicMode}
-			call CastSpellRange 7 0 0 0 ${MainTankID}
 	}
 
 	if ${Actor[${MainTankID}].Health}<60 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 	{
 		call CastSpellRange 1 0 0 0 ${MainTankID}
+	}
+	if ${Actor[${MainTankID}].Health}<70 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+	{
+		call CastSpellRange 4 0 0 0 ${MainTankID}
 	}
 }
 
