@@ -204,13 +204,33 @@
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[UseSiphonHateWhenNotMT]:Set[FALSE]
+				Script[EQ2Bot].Variable[UseBattleLeadershipAABuff]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[UseBattleLeadershipAABuff,FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseBattleLeadershipAABuff]}</Data>
 	</Commandcheckbox>
-	
+	<Commandcheckbox Name='UseFearlessMoraleAABuff' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>240</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use "Fearless Morale" AA Buff</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseFearlessMoraleAABuff]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[UseFearlessMoraleAABuff,TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseFearlessMoraleAABuff]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[UseFearlessMoraleAABuff,FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseFearlessMoraleAABuff]}</Data>
+	</Commandcheckbox>
 	
 	<Text Name='lblBuffArmamentMember' Template='EQ2.text'>
 		<X>65%</X>
