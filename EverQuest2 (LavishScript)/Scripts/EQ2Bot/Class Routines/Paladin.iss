@@ -511,7 +511,7 @@ function CheckHeals()
 		}
 
 	}
-	while ${temphl:Inc}<${grpcnt}
+	while ${temphl:Inc} <= ${Me.GroupCount}
 
 	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
 	{

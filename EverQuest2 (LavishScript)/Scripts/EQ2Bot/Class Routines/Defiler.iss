@@ -625,14 +625,13 @@ function Post_Combat_Routine(int xAction)
 	switch ${PostAction[${xAction}]}
 	{
 		case Resurrection
-			grpcnt:Set[${Me.GroupCount}]
 			tempgrp:Set[1]
 			do
 			{
 				if ${Me.Group[${tempgrp}].ToActor.IsDead}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 1 0 ${Me.Group[${tempgrp}].ID} 1
 			}
-			while ${tempgrp:Inc}<${grpcnt}
+			while ${tempgrp:Inc} <= ${Me.GroupCount}
 			break
 		default
 			return PostCombatRoutineComplete
@@ -715,10 +714,8 @@ function CheckCures()
 	declare temphl int local 1
 	declare grpcure int local 0
 
-	grpcnt:Set[${Me.GroupCount}]
-
 	;check for group cures, if it is ready and we are in a large enough group
-	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>3
+	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
 	{
 		;check ourselves
 		if ${Me.IsAfflicted}
@@ -744,7 +741,7 @@ function CheckCures()
 					grpcure:Inc
 			}
 		}
-		while ${temphl:Inc}<${grpcnt}
+		while ${temphl:Inc} <= ${Me.GroupCount}
 
 		;Use group cure if more than 3 afflictions will be removed
 		if ${grpcure}>3
@@ -823,7 +820,7 @@ function FindAfflicted()
 			}
 		}
 	}
-	while ${temphl:Inc}<${grpcnt}
+	while ${temphl:Inc} <= ${Me.GroupCount}
 
 	if ${mostafflicted}>0
 		return ${mostafflicted}
@@ -916,22 +913,20 @@ function CheckHeals()
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
-  declare MainTankExists bool local 1
-
-	grpcnt:Set[${Me.GroupCount}]
+    declare MainTankExists bool local 1
 
 	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
-  if !${Actor[${MainTankID}](exists)}
-  {
-    echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
-    MainTankExists:Set[FALSE]
-  }
-  else
-		MainTankExists:Set[TRUE]
+    if !${Actor[${MainTankID}](exists)}
+    {
+        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+        MainTankExists:Set[FALSE]
+    }
+    else
+        MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
@@ -940,8 +935,8 @@ function CheckHeals()
 	;Res the MT if they are dead
 	if (${MainTankExists})
 	{
-  	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-    	call CastSpellRange 300 0 1 1 ${MainTankID}
+      	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+        	call CastSpellRange 300 0 1 1 ${MainTankID}
 	}
 
 	;Persist wards if selected.
@@ -970,7 +965,7 @@ function CheckHeals()
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
 		}
 	}
-	while ${temphl:Inc}<=${grpcnt}
+	while ${temphl:Inc} <= ${Me.GroupCount}
 
 	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 		grpheal:Inc
@@ -1028,14 +1023,13 @@ function CheckHeals()
 	;Check Rezes
 	if ${CombatRez} || !${Me.InCombat}
 	{
-		grpcnt:Set[${Me.GroupCount}]
 		temphl:Set[1]
 		do
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[301]}].Range}
 				call CastSpellRange 300 303 0 0 ${Me.Group[${temphl}].ID} 1
 		}
-		while ${temphl:Inc}<${grpcnt}
+		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
 }
 
