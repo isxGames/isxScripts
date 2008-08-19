@@ -632,10 +632,7 @@ function CheckCures()
 		if ${Me.IsAfflicted}
 		{
 			;add ticks for group cures based upon our afflicions
-			if ${Me.Arcane}>0
-				grpcure:Inc
-
-			if ${Me.Trauma}>0
+			if ${Me.Arcane}>0 || ${Me.Trauma}>0
 				grpcure:Inc
 		}
 
@@ -645,17 +642,13 @@ function CheckCures()
 			;make sure they in zone and in range
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<35
 			{
-				if ${Me.Group[${temphl}].Arcane}>0
-					grpcure:Inc
-
-				if ${Me.Group[${temphl}].Trauma}>0
+				if ${Me.Group[${temphl}].Arcane}>0 || ${Me.Group[${temphl}].Trauma}>0
 					grpcure:Inc
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 
-		;Use group cure if more than 3 afflictions will be removed
-		if ${grpcure}>3
+		if ${grpcure}>2
 		{
 			call CastSpellRange 220
 			call CastSpellRange 221
