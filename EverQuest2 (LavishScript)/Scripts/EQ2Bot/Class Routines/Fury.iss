@@ -1353,10 +1353,7 @@ function CheckCures()
 		if ${Me.IsAfflicted}
 		{
 			;add ticks for group cures based upon our afflicions
-			if ${Me.Noxious}>0
-				grpcure:Inc
-
-			if ${Me.Elemental}>0
+			if ${Me.Noxious}>0 || ${Me.Elemental}>0
 				grpcure:Inc
 		}
 		;echo "DEBUG:: CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"
@@ -1367,10 +1364,7 @@ function CheckCures()
 			;make sure they in zone and in range
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<35
 			{
-				if ${Me.Group[${temphl}].Noxious}>0
-					grpcure:Inc
-
-				if ${Me.Group[${temphl}].Elemental}>0
+				if ${Me.Group[${temphl}].Noxious}>0 || if ${Me.Group[${temphl}].Elemental}>0
 					grpcure:Inc
 			}
 		}
@@ -1378,8 +1372,7 @@ function CheckCures()
 		
 		;echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
 
-		;Use group cure period
-		if ${grpcure} > 0
+		if ${grpcure} > 1
 		{
 			call CastSpellRange 220
 			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
