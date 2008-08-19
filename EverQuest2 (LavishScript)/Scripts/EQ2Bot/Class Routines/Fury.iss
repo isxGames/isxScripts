@@ -1364,7 +1364,7 @@ function CheckCures()
 			;make sure they in zone and in range
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<35
 			{
-				if ${Me.Group[${temphl}].Noxious}>0 || if ${Me.Group[${temphl}].Elemental}>0
+				if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Elemental}>0
 					grpcure:Inc
 			}
 		}
