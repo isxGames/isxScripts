@@ -214,12 +214,11 @@
 			This:ClearItems
 			tmpvar:Set[1]
 			This:AddItem["No one"]
-			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
 			if ${Me.Pet(exists)}
 			{
 				This:AddItem[${Me.Pet.Name}:${Me.Pet.Type}]
 			}
-			if ${Me.Group} > 1
+			if ${Me.GroupCount} > 1
 			{
 			    do
 			    {
@@ -232,7 +231,7 @@
 						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 					}
 			    }
-			    while ${tmpvar:Inc}&lt; ${Me.Group}
+			    while ${tmpvar:Inc}&lt; ${Me.GroupCount}
 			}
 			This:Sort
 		</OnLeftClick>
@@ -274,12 +273,11 @@
 			This:ClearItems
 			tmpvar:Set[1]
 			This:AddItem["No one"]
-			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
 			if ${Me.Pet(exists)}
 			{
 				This:AddItem[${Me.Pet.Name}:${Me.Pet.Type}]
 			}
-			elseif ${Me.Group} > 1
+			if ${Me.GroupCount} > 1
 			{
 			    do
 			    {
@@ -292,7 +290,7 @@
 						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
 					}
 			    }
-			    while ${tmpvar:Inc}&lt; ${Me.Group}
+			    while ${tmpvar:Inc}&lt; ${Me.GroupCount}
 			}
 			This:Sort
 		</OnLeftClick>
