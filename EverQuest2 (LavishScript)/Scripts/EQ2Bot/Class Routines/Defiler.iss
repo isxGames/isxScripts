@@ -721,10 +721,7 @@ function CheckCures()
 		if ${Me.IsAfflicted}
 		{
 			;add ticks for group cures based upon our afflicions
-			if ${Me.Noxious}>0
-				grpcure:Inc
-
-			if ${Me.Trauma}>0
+			if ${Me.Noxious}>0 || ${Me.Trauma}>0
 				grpcure:Inc
 		}
 
@@ -734,10 +731,7 @@ function CheckCures()
 			;make sure they in zone and in range
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[220]}].Range}
 			{
-				if ${Me.Group[${temphl}].Noxious}>0
-					grpcure:Inc
-
-				if ${Me.Group[${temphl}].Trauma}>0
+				if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Trauma}>0
 					grpcure:Inc
 			}
 		}
