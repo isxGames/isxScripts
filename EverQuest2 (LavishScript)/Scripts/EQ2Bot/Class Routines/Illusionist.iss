@@ -299,7 +299,7 @@ function Buff_Routine(int xAction)
 			;; If we have mythical, just cast on self since it is a group buff
 			if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]}) || (${Me.Inventory[Mirage Star](exists)} && ${Me.Inventory[Mirage Star].Tier.Equal[MYTHICAL]})
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists))}
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 
 				break
