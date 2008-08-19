@@ -571,7 +571,7 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
-
+    declare tempgrp int 1
 	;Turn off Oberon so we can move
 	if ${Me.Maintained[${SpellType[317]}](exists)}
 	{
@@ -598,7 +598,7 @@ function Post_Combat_Routine(int xAction)
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 1 0 ${Me.Group[${tempgrp}].ID} 1
 				}
 			}
-			while ${tempgrp:Inc}<${grpcnt}
+			while ${tempgrp:Inc} <= ${Me.GroupCount}
 			break
 		case LoadDefaultEquipment
 			break
@@ -658,7 +658,6 @@ function CheckHeals()
 	declare PetToHeal int local 0
 	declare MTinMyGroup bool local FALSE
 
-	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
 
 	temphl:Set[1]
@@ -696,7 +695,6 @@ function CheckHeals()
 			}
 
 			if ${Me.Group[${temphl}].IsAfflicted}
-
 			{
 				if ${Me.Group[${temphl}].Arcane}>0
 				{
@@ -756,7 +754,7 @@ function CheckHeals()
 		}
 
 	}
-	while ${temphl:Inc}<${grpcnt}
+	while ${temphl:Inc} <= ${Me.GroupCount}
 
 	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
 	{

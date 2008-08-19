@@ -40,29 +40,9 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Debuff Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
-		<X>5%</X>
-		<Y>50</Y>
-		<Width>30%</Width>
-		<Height>20</Height>
-		<Text>Cast AoE Spells</Text>
-		<OnLeftClick>
-			if ${This.Checked}
-			{
-				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",TRUE]:Save
-			}
-			else
-			{
-				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",FALSE]:Save
-			}
-		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
-	</Commandcheckbox>
 	<Commandcheckbox Name='CureMode' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
-		<Y>70</Y>
+		<Y>50</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Cast Cures</Text>
@@ -80,47 +60,67 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Cure Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>70</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Initiate HO's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='MeleeAAAttacksMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>90</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Cast Ring of Fire</Text>
+		<Text>Use Melee AA Attacks</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[PBAoEMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast PBAoE Spells",TRUE]:Save
+				Script[EQ2Bot].Variable[MeleeAAAttacksMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MeleeAAAttacksMode",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[PBAoEMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast PBAoE Spells",FALSE]:Save
+				Script[EQ2Bot].Variable[MeleeAAAttacksMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MeleeAAAttacksMode",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
-	</Commandcheckbox>
-	<Commandcheckbox Name='StormsMode' Template='EQ2.Commandcheckbox'>
-		<Visible>1</Visible>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[MeleeAAAttacksMode]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
 		<X>5%</X>
 		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Cast Call of Storms</Text>
+		<Text>Cast AoE Spells</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[StormsMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Call of Storms",TRUE]:Save
+				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[StormsMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Call of Storms",FALSE]:Save
+				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Call of Storms]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='VortexMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
@@ -143,51 +143,118 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Vortex]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='MeleeMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseMeleeProcSpells' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>150</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Use Melee AA Attacks</Text>
+		<Text>Use Melee Proc Spells</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[MeleeMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Melee",TRUE]:Save
+				Script[EQ2Bot].Variable[UseMeleeProcSpells]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Melee Proc Spells",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[MeleeMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Melee",FALSE]:Save
+				Script[EQ2Bot].Variable[UseMeleeProcSpells]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Melee Proc Spells",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Melee]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Melee Proc Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='SummonImpOfRo' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseFastOffensiveSpellsOnly' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>170</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Summon Imp of Ro</Text>
+		<Text>Use Fast Offensive Spells Only</Text>
+		<AutoTooltip>Only offensive spells that take one second or less will be cast</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",TRUE]:Save
+				Script[EQ2Bot].Variable[UseFastOffensiveSpellsOnly]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseFastOffensiveSpellsOnly",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",FALSE]:Save
+				Script[EQ2Bot].Variable[UseFastOffensiveSpellsOnly]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseFastOffensiveSpellsOnly",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString["Summon Imp of Ro"]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseFastOffensiveSpellsOnly]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='UseRingOfFire' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>210</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Cast Ring of Fire (PBAoE "pet")</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseRingOfFire]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseRingOfFire",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseRingOfFire]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseRingOfFire",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseRingOfFire]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='UseBallLightning' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>230</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Cast Ball Lightning (PBAoE "pet")</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseBallLightning]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseBallLightning",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseBallLightning]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseBallLightning",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseBallLightning]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseStormBolt' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>250</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Cast Call of Storms (PBAoE - Stuns Fury)</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseStormBolt]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseStormBolt",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseStormBolt]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseStormBolt",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseStormBolt]}</Data>
+	</Commandcheckbox>
+	
+	
+	
 	<Text name='lblShiftForm' Template='EQ2.text'>
 	  <x>5%</x>
-	  <y>200</y>
+	  <y>280</y>
 	  <Height>20</Height>
 		<Width>80</Width>
 		<Alignment>Left</Alignment>
@@ -195,7 +262,7 @@
 	</Text>
 	<combobox Name='ShiftForm' Template='EQ2.Combobox'>
 		<X>20%</X>
-		<Y>195</Y>
+		<Y>275</Y>
 		<Width>80</Width>
 		<Height>20</Height>
 		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
@@ -214,27 +281,6 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[ShiftForm,${This.SelectedItem.Value}]:Save</OnSelect>
 		<OnLeftClick></OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='InfusionMode' Template='EQ2.Commandcheckbox'>
-		<Visible>1</Visible>
-		<X>5%</X>
-		<Y>220</Y>
-		<Width>30%</Width>
-		<Height>20</Height>
-		<Text>Buff Infusion</Text>
-		<OnLeftClick>
-			if ${This.Checked}
-			{
-				Script[EQ2Bot].Variable[InfusionMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["InfusionMode",TRUE]:Save
-			}
-			else
-			{
-				Script[EQ2Bot].Variable[InfusionMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["InfusionMode",FALSE]:Save
-			}
-		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[InfusionMode]}</Data>
-	</Commandcheckbox>
 	<Text Name='lblBuffBatGroupMember' Template='EQ2.text'>
 		<X>335</X>
 		<Y>90</Y>
@@ -336,7 +382,7 @@
 		</OnLeftClick>
 	</combobox>
 	<Commandbutton name='RefreshVim' Template='EQ2.Commandbutton'>
-		<X>320</X>
+		<X>310</X>
 		<Y>170</Y>
 		<Width>20</Width>
 		<Height>20</Height>
@@ -404,7 +450,7 @@
 		</OnLeftClick>
 	</Commandbutton>
 	<Text Name='lblBuffVim' Template='EQ2.text'>
-		<X>345</X>
+		<X>335</X>
 		<Y>172</Y>
 		<Width>150</Width>
 		<Height>20</Height>
@@ -413,7 +459,7 @@
 		<AutoTooltip>Shift Left click to select group members to buff Int on</AutoTooltip>
 	</Text>
 	<listbox name='lbBuffVim' Template='EQ2.Listbox'>
-		<X>320</X>
+		<X>310</X>
 		<y>190</y>
 		<width>155</width>
 		<height>100</height>
@@ -698,10 +744,32 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffEel]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='InfusionMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>180</X>
 		<Y>110</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Infusion</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[InfusionMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["InfusionMode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[InfusionMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["InfusionMode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[InfusionMode]}</Data>
+	</Commandcheckbox>
+	
+	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>180</X>
+		<Y>130</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Rez's in Combat</Text>
@@ -719,46 +787,25 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Combat Rez]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
-		<Visible>1</Visible>
-		<X>180</X>
-		<Y>130</Y>
-		<Width>30%</Width>
-		<Height>20</Height>
-		<Text>Initiate HO's</Text>
-		<OnLeftClick>
-			if ${This.Checked}
-			{
-				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
-			}
-			else
-			{
-				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
-			}
-		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
-	</Commandcheckbox>
-	<Commandcheckbox Name='UseMeleeProcSpells' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='SummonImpOfRo' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>180</X>
 		<Y>150</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Use Melee Proc Spells</Text>
+		<Text>Summon Imp of Ro</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[UseMeleeProcSpells]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Melee Proc Spells",TRUE]:Save
+				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",TRUE]:Save
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[UseMeleeProcSpells]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Melee Proc Spells",FALSE]:Save
+				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Melee Proc Spells]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString["Summon Imp of Ro"]}</Data>
 	</Commandcheckbox>
 </ISUI>

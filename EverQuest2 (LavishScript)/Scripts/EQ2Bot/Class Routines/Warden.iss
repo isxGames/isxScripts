@@ -544,7 +544,7 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
-
+    declare tempgrp int 1
 	TellTank:Set[FALSE]
 
 	; turn off auto attack if we were casting while the last mob died
@@ -569,7 +569,6 @@ function Post_Combat_Routine(int xAction)
 	switch ${PostAction[${xAction}]}
 	{
 		case Resurrection
-			grpcnt:Set[${Me.GroupCount}]
 			tempgrp:Set[1]
 			do
 			{
@@ -579,7 +578,7 @@ function Post_Combat_Routine(int xAction)
 					wait 5
 				}
 			}
-			while ${tempgrp:Inc}<${grpcnt}
+			while ${tempgrp:Inc} <= ${Me.GroupCount}
 			break
 		default
 			return PostCombatRoutineComplete
@@ -631,8 +630,6 @@ function CheckHeals()
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 	declare MainTankExists bool local 1
-
-	grpcnt:Set[${Me.GroupCount}]
 
 	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
@@ -687,7 +684,7 @@ function CheckHeals()
 				PetToHeal:Set[${Me.ToActor.Pet.ID}]
 		}
 	}
-	while ${temphl:Inc}<=${grpcnt}
+	while ${temphl:Inc} <= ${Me.GroupCount}
 
 	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 		grpheal:Inc
@@ -735,40 +732,40 @@ function CheckHeals()
 
 	;RAID HEALS - Only check if in raid, raid heal mode on, maintank is green, I'm above 50, and a direct heal is available.  Otherwise don't waste time.
  	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ((${MainTankExists} && ${Actor[${MainTankID}].Health}>70) || !${MainTankExists}) && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
-  {
-  	;echo Debug: Check Raid Heals - ${temph2}
-  	do
-		{
-			if ${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
-			{
-			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
-				{
-			    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
-  				{
-  					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
-  					{
-  						;echo Debug: Lowest - ${temph2}
-  						raidlowest:Set[${temph2}]
-  					}
-  				}
-				}
-			}
-		}
-		while ${temph2:Inc}<=24
-
-    if (${Me.Raid[${raidlowest}].ToActor(exists)})
     {
-  		;echo Debug: We need to heal ${raidlowest}
-  		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 90 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
-  		{
-  			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
-  			if ${Me.Ability[${SpellType[4]}].IsReady}
-  				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
-  			elseif ${Me.Ability[${SpellType[1]}].IsReady}
-  				call CastSpellRange 1 0 0 0 ${Me.Raid[${raidlowest}].ID}
-  		}
-  	}
-  }
+      	;echo Debug: Check Raid Heals - ${temph2}
+      	do
+    	{
+    		if ${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
+    		{
+    		    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
+    			{
+    		    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead}
+    			{
+    				if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
+    				{
+    					;echo Debug: Lowest - ${temph2}
+    					raidlowest:Set[${temph2}]
+    				}
+    			}
+    			}
+    		}
+    	}
+    	while ${temph2:Inc}<=24
+    
+        if (${Me.Raid[${raidlowest}].ToActor(exists)})
+        {
+      		;echo Debug: We need to heal ${raidlowest}
+      		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 90 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
+      		{
+      			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
+      			if ${Me.Ability[${SpellType[4]}].IsReady}
+      				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
+      			elseif ${Me.Ability[${SpellType[1]}].IsReady}
+      				call CastSpellRange 1 0 0 0 ${Me.Raid[${raidlowest}].ID}
+      		}
+      	}
+    }
 
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode} && !${Me.InRaid}
@@ -780,14 +777,13 @@ function CheckHeals()
 	;Check Rezes
 	if ${CombatRez} || !${Me.InCombat}
 	{
-		grpcnt:Set[${Me.GroupCount}]
 		temphl:Set[1]
 		do
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead}
 				call CastSpellRange 300 303 0 0 ${Me.Group[${temphl}].ID} 1
 		}
-		while ${temphl:Inc}<${grpcnt}
+		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
 }
 
@@ -983,10 +979,8 @@ function CheckCures()
 	declare temphl int local 1
 	declare grpcure int local 0
 
-	grpcnt:Set[${Me.GroupCount}]
-
 	;check for group cures, if it is ready and we are in a large enough group
-	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>3
+	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
 	{
 		;check ourselves
 		if ${Me.IsAfflicted}
@@ -1012,7 +1006,7 @@ function CheckCures()
 					grpcure:Inc
 			}
 		}
-		while ${temphl:Inc}<${grpcnt}
+		while ${temphl:Inc} <= ${Me.GroupCount}
 
 		;Use group cure if more than 3 afflictions will be removed
 		if ${grpcure}>3
@@ -1093,7 +1087,7 @@ function FindAfflicted()
 			}
 		}
 	}
-	while ${temphl:Inc}<${grpcnt}
+	while ${temphl:Inc} <= ${Me.GroupCount}
 
 	if ${mostafflicted}>0
 		return ${mostafflicted}
