@@ -1372,15 +1372,30 @@ function CheckCures()
 		
 		;echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
 
-		if ${grpcure} > 1
-		{
-			call CastSpellRange 220
-			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
-			wait 5
-			call FindAfflicted
-			if ${Return} <= 0
-			    return
-		}
+        if ${EpicMode}
+        {
+    		if ${grpcure} > 2
+    		{
+    			call CastSpellRange 220
+    			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
+    			wait 5
+    			call FindAfflicted
+    			if ${Return} <= 0
+    			    return
+    		}            
+        }
+        else
+        {
+    		if ${grpcure} > 1
+    		{
+    			call CastSpellRange 220
+    			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
+    			wait 5
+    			call FindAfflicted
+    			if ${Return} <= 0
+    			    return
+    		}
+    	}
 	}
 
 	;Cure Ourselves first
