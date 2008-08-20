@@ -611,6 +611,7 @@ function CheckCures()
 {
 	declare temphl int local 1
 	declare grpcure int local 0
+	declare Affcnt int local 0
 
 	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
@@ -627,7 +628,7 @@ function CheckCures()
 		do
 		{
 			;make sure they in zone and in range
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<35
+			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<${Me.Ability[${SpellType[220]}].Range}
 			{
 				if ${Me.Group[${temphl}].Arcane}>0 || ${Me.Group[${temphl}].Elemental}>0
 					grpcure:Inc
@@ -643,18 +644,18 @@ function CheckCures()
 	}
 
 	;Cure Ourselves first
-	do
+	while ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0)
 	{
 		call CureMe
 
 		if ${Me.ToActor.Health}<30 && ${EpicMode}
 			call CastSpellRange 4 0 0 0 ${Me.ID}
 	}
-	while ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0)
+
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
 	;	all afflictions unless group health or mt health gets low
-	do
+	while ${Affcnt:Inc}<7 && ${Me.ToActor.Health}>30 && (${Me.Arcane}<1 && ${Me.Noxious}<1 && ${Me.Elemental}<1 && ${Me.Trauma}<1)
 	{
 		call FindAfflicted
 		if ${Return}>0
@@ -680,7 +681,7 @@ function CheckCures()
 				call HealMT
 		}
 	}
-	while ${Me.ToActor.Health}>30 && (${Me.Arcane}<1 && ${Me.Noxious}<1 && ${Me.Elemental}<1 && ${Me.Trauma}<1)
+
 }
 
 function FindAfflicted()
@@ -693,7 +694,7 @@ function FindAfflicted()
 	;check for single target cures
 	do
 	{
-		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Distance}<35
+		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[210]}].Range}
 		{
 			if ${Me.Group[${temphl}].Arcane}>0
 				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
@@ -803,12 +804,12 @@ function CheckHeals()
 	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
 	else
-		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
+		MainTankID:Set[${Actor[PC,ExactName,${MainTankPC}].ID}]
 
     if !${Actor[${MainTankID}](exists)}
     {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"    
-        MainTankExists:Set[FALSE]  
+        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+        MainTankExists:Set[FALSE]
     }
     else
         MainTankExists:Set[TRUE]
@@ -821,12 +822,12 @@ function CheckHeals()
 	;Res the MT if they are dead
 	if (${MainTankExists})
 	{
-    	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-    		call CastSpellRange 300 0 1 1 ${MainTankID}
-    		
-    	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
-    		call CastSpellRange 4 0 0 0 ${MainTankID}    		
-    }
+   	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+   		call CastSpellRange 300 0 1 1 ${MainTankID}
+
+   	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
+   		call CastSpellRange 4 0 0 0 ${MainTankID}
+  }
 
 	call CheckReactives
 
@@ -839,14 +840,14 @@ function CheckHeals()
 		{
 			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0
+				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
 					lowest:Set[${temphl}]
 			}
 
 			if ${Me.Group[${temphl}].ID}==${MainTankID}
 				MainTankInGroup:Set[1]
 
-			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
+			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
 				grpheal:Inc
 
 			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
@@ -864,40 +865,32 @@ function CheckHeals()
 	if ${grpheal}>2
 		call GroupHeal
 
-	if ${Actor[${MainTankID}].Health}<90
-	{
-		if ${Me.ID}==${MainTankID}
-			call HealMe
-		else
-			call HealMT ${MainTankID} ${MainTankInGroup}
-	}
+  if (${MainTankExists})
+  {
+  	if ${Actor[${MainTankID}].Health}<90
+  	{
+  		if ${Me.ID}==${MainTankID}
+  			call HealMe
+  		else
+  			call HealMT ${MainTankID} ${MainTankInGroup}
+  	}
 
-    if (${MainTankExists})
-    {
-    	if ${Actor[${MainTankID}].Health}<90
-    	{
-    		if ${Me.ID}==${MainTankID}
-    			call HealMe
-    		else
-    			call HealMT ${MainTankID} ${MainTankInGroup}
-    	}
-    	
-    	;Check My health after MT
-	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
-		    call HealMe
-    }
-    else
-    {
-        if ${Me.ToActor.Health}<80
-            call HealMe
-    }
+  	;Check My health after MT
+    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+	    call HealMe
+  }
+  else
+  {
+    if ${Me.ToActor.Health}<70
+      call HealMe
+  }
 
 	;now lets heal individual groupmembers if needed
 	if ${lowest}
 	{
 		call UseCrystallizedSpirit 60
 
-		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)}
+		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
 		{
 			if ${Me.Ability[${SpellType[4]}].IsReady}
 				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
@@ -919,8 +912,8 @@ function CheckHeals()
 		temphl:Set[1]
 		do
 		{
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead}
-				call CastSpellRange 300 301 0 0 ${Me.Group[${temphl}].ID} 1
+			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
+				call CastSpellRange 300 301 1 0 ${Me.Group[${temphl}].ID} 1
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
@@ -979,7 +972,7 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
 
-	if !${Me.Group[${gMember}].ToActor(exists)} || ${Me.Group[${gMember}].ToActor.IsDead} || !${Me.Group[${gMember}].IsAfflicted}
+	if !${Me.Group[${gMember}].ToActor(exists)} || ${Me.Group[${gMember}].ToActor.IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].ToActor.Distance}>${Me.Ability[${SpellType[210]}].Range}
 		return
 
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<6 && ${Me.Group[${gMember}].ToActor(exists)} && !${Me.Group[${gMember}].ToActor.IsDead}
@@ -1004,7 +997,7 @@ function CheckReactives()
 	{
 		do
 		{
-			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID}==${Actor[exactname,${MainTankPC}].ID}
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID}==${Actor[pc,exactname,${MainTankPC}].ID}
 			{
 				;echo Single react is Present on MT
 				hot1:Set[1]
@@ -1022,7 +1015,7 @@ function CheckReactives()
 		{
 			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
-				call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
+				call CastSpellRange 7 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
 				hot1:Set[1]
 			}
 		}
