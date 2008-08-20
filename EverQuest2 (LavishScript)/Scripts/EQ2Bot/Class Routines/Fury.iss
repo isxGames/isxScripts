@@ -285,11 +285,11 @@ function Buff_Routine(int xAction)
 	if ${ShardMode}
 		call Shard
 
-  if ${xAction}==1 || ${xAction}==10
+    if ${xAction}== 1 || ${xAction} == 10
 	{
 		call CheckHeals
 		if ${CureMode}
-			call CheckCures
+    		call CheckCures
 	}
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
@@ -1013,13 +1013,13 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
-  if !${Actor[${MainTankID}](exists)}
-  {
+    if !${Actor[${MainTankID}](exists)}
+    {
 		echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
-    MainTankExists:Set[FALSE]
-  }
-  else
-    MainTankExists:Set[TRUE]
+        MainTankExists:Set[FALSE]
+    }
+    else
+        MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
@@ -1028,34 +1028,34 @@ function CheckHeals()
 	;Res the MT if they are dead
 	if (!${Me.ToActor.InCombatMode} || ${CombatRez})
 	{
-    if ${MainTankExists}
-    {
-	    if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-		    call CastSpellRange 300 0 1 1 ${MainTankID}
+        if ${MainTankExists}
+        {
+	        if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+		        call CastSpellRange 300 0 1 1 ${MainTankID}
 		}
 	}
 
 	call CheckHOTs
 
-  if (${MainTankExists})
-  {
-  	if ${Actor[${MainTankID}].Health}<90
-  	{
-  		if ${Me.ID}==${MainTankID}
-  			call HealMe
-  		else
-  			call HealMT ${MainTankID} ${MainTankInGroup}
-  	}
+    if (${MainTankExists})
+    {
+  	    if ${Actor[${MainTankID}].Health}<90
+  	    {
+  		    if ${Me.ID}==${MainTankID}
+  			    call HealMe
+  		    else
+  			    call HealMT ${MainTankID} ${MainTankInGroup}
+  	    }
 
-  	;Check My health after MT
-    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
-	    call HealMe
-  }
-  else
-  {
-    if ${Me.ToActor.Health}<70
-	    call HealMe
-  }
+  	    ;Check My health after MT
+        if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+	        call HealMe
+    }
+    else
+    {
+        if ${Me.ToActor.Health}<85
+	        call HealMe
+    }
 
 	do
 	{
@@ -1167,8 +1167,8 @@ function CheckHeals()
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)}
 			{
-        if ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
-    			call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1
+                if ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
+    			    call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
