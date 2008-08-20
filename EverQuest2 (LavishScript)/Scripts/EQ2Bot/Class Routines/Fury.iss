@@ -195,7 +195,7 @@ function Combat_Init()
 	Power[2,1]:Set[40]
 	Power[2,2]:Set[100]
 	SpellRange[2,1]:Set[95]
-	
+
 	Action[3]:Set[BallLightning]
 	Power[3,1]:Set[40]
 	Power[3,2]:Set[100]
@@ -285,9 +285,11 @@ function Buff_Routine(int xAction)
 	if ${ShardMode}
 		call Shard
 
-    if ${xAction}==1
+  if ${xAction}==1 || ${xAction}==10
+	{
 		call CheckHeals
-
+		call CheckCures
+	}
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
 		ExecuteAtom AutoFollowTank
@@ -296,7 +298,7 @@ function Buff_Routine(int xAction)
 
 	if ${Me.ToActor.Power}>85
 		call CheckHOTs
-		
+
     call CheckSKFD
 
 	switch ${PreAction[${xAction}]}
@@ -305,7 +307,7 @@ function Buff_Routine(int xAction)
 			if ${MainTank} || (${BuffThorns} && ${Actor[exactname,${MainTankPC}](exists)})
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[PC,ExactName,${MainTankPC}].ID}
 			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -488,26 +490,26 @@ function Combat_Routine(int xAction)
     if !${OffenseMode}
     {
         CurrentAction:Set[OffenseMode: OFF]
-        
+
         if ${EpicMode} || ${RaidHealMode}
         {
-            call CheckCures 
+            call CheckCures
         	call CheckHeals
         }
         else
         {
         	call CheckHeals
-        	
+
         	if ${CureMode}
         		call CheckCures
-    	}                   
- 
+    	}
+
         call CheckSKFD
         call RefreshPower
         if ${ShardMode}
 		    call Shard
-		    
-		    
+
+
     	;if named epic, maintain debuffs
     	if (${DebuffMode})
     	{
@@ -535,18 +537,18 @@ function Combat_Routine(int xAction)
     	{
             if ${EpicMode} || ${RaidHealMode}
             {
-                call CheckCures 
+                call CheckCures
             	call CheckHOTs
             }
             else
             {
             	call CheckHOTs
-            	
+
             	if ${CureMode}
             		call CheckCures
-        	}    
+        	}
     	}
-    	
+
     	if (${StartHO})
     	{
     		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
@@ -584,19 +586,19 @@ function Combat_Routine(int xAction)
 		AutoFollowingMA:Set[FALSE]
 		wait 3
 	}
-	
+
     if ${EpicMode} || ${RaidHealMode}
     {
-        call CheckCures 
+        call CheckCures
     	call CheckHeals
     }
     else
     {
     	call CheckHeals
-    	
+
     	if ${CureMode}
     		call CheckCures
-	} 
+	}
 
 	call RefreshPower
 
@@ -637,16 +639,16 @@ function Combat_Routine(int xAction)
 	{
         if ${EpicMode} || ${RaidHealMode}
         {
-            call CheckCures 
+            call CheckCures
         	call CheckHOTs
         }
         else
         {
         	call CheckHOTs
-        	
+
         	if ${CureMode}
         		call CheckCures
-    	}    
+    	}
 	}
 
 	if (${VortexMode})
@@ -691,7 +693,7 @@ function Combat_Routine(int xAction)
 	{
 		case Nuke
 		    if ${UseFastOffensiveSpellsOnly}
-		        break 
+		        break
 			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
@@ -702,7 +704,7 @@ function Combat_Routine(int xAction)
 					call ReacquireTargetFromMA
 			}
 			break
-			
+
 		case AA_Thunderspike
 			if (${MeleeAAAttacksMode} && ${Actor[${KillTarget}].Distance} <= 5)
 			{
@@ -719,7 +721,7 @@ function Combat_Routine(int xAction)
     			}
 			}
 			break
-			
+
 		case AoE
 			if ${AoEMode} && !${UseFastOffensiveSpellsOnly}
 			{
@@ -734,7 +736,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-			
+
 		case Proc
 			if ${UseMeleeProcSpells} && ${Me.GroupCount} > 1
 			{
@@ -743,7 +745,7 @@ function Combat_Routine(int xAction)
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
-			
+
 		case DoT
 			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
@@ -754,9 +756,9 @@ function Combat_Routine(int xAction)
 				else
 					call ReacquireTargetFromMA
 			}
-			
+
 			break
-			
+
 		case DoT2
 			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
@@ -768,7 +770,7 @@ function Combat_Routine(int xAction)
 					call ReacquireTargetFromMA
 			}
 			break
-			
+
 		case AA_Primordial_Strike
 			if (${MeleeAAAttacksMode} && ${Actor[${KillTarget}].Distance} <= 5)
 			{
@@ -780,7 +782,7 @@ function Combat_Routine(int xAction)
     			}
 			}
 			break
-			
+
 		case AA_Nature_Blade
 			if (${MeleeAAAttacksMode} && ${Actor[${KillTarget}].Distance} <= 5)
 			{
@@ -791,8 +793,8 @@ function Combat_Routine(int xAction)
     					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
     			}
 			}
-			break	
-					
+			break
+
 		case RingOfFire
 			if ${UseRingOfFire}
 			{
@@ -807,7 +809,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-			
+
 		case BallLightning
 			if ${UseBallLightning}
 			{
@@ -821,8 +823,8 @@ function Combat_Routine(int xAction)
 						call ReacquireTargetFromMA
 				}
 			}
-			break			
-			
+			break
+
 		case Snare
 		case Feast
 			if !${Target.IsEpic}
@@ -835,7 +837,7 @@ function Combat_Routine(int xAction)
 
 		case Mastery
 		    if ${UseFastOffensiveSpellsOnly}
-		        break 		
+		        break
 			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
 			;;;;;;;;;;
 			if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
@@ -876,7 +878,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-			
+
 		default
 			return CombatComplete
 			break
@@ -894,7 +896,7 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
     declare tempgrp int local 1
-	
+
 	TellTank:Set[FALSE]
 
 	; turn off auto attack if we were casting while the last mob died
@@ -955,12 +957,12 @@ function RefreshPower()
     {
     	if ${Me.InCombat} && ${Me.ToActor.Power}<65  && ${Me.ToActor.Health}>25
     		call UseItem "Helm of the Scaleborn"
-    
+
     	if ${Me.InCombat} && ${Me.ToActor.Power}<45
     		call UseItem "Spiritise Censer"
-    		
+
     	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-    		call UseItem "Stein of the Everling Lord"    		
+    		call UseItem "Stein of the Everling Lord"
 	}
 
 
@@ -1012,8 +1014,8 @@ function CheckHeals()
 
     if !${Actor[${MainTankID}](exists)}
     {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"    
-        MainTankExists:Set[FALSE]  
+        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+        MainTankExists:Set[FALSE]
     }
     else
         MainTankExists:Set[TRUE]
@@ -1045,7 +1047,7 @@ function CheckHeals()
     		else
     			call HealMT ${MainTankID} ${MainTankInGroup}
     	}
-    	
+
     	;Check My health after MT
 	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
 		    call HealMe
@@ -1138,7 +1140,7 @@ function CheckHeals()
     			}
     		}
     		while ${temph2:Inc}<=24
-    
+
             if (${Me.Raid[${raidlowest}].ToActor(exists)})
             {
         		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead}
@@ -1174,7 +1176,7 @@ function CheckHeals()
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
-	
+
     if (${MainTankExists})
     {
     	if ${Actor[${MainTankID}].Health}<90
@@ -1184,7 +1186,7 @@ function CheckHeals()
     		else
     			call HealMT ${MainTankID} ${MainTankInGroup}
     	}
-    	
+
     	;Check My health after MT
 	    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
 		    call HealMe
@@ -1193,7 +1195,7 @@ function CheckHeals()
     {
         if ${Me.ToActor.Health}<90
             call HealMe
-    }	
+    }
 }
 
 function HealMe()
@@ -1341,8 +1343,8 @@ function CheckCures()
     {
         if !${CureMode} && ${Me.ToActor.InCombatMode}
             return
-    } 
-       
+    }
+
 	declare temphl int local 1
 	declare grpcure int local 0
 
@@ -1369,7 +1371,7 @@ function CheckCures()
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
-		
+
 		;echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
 
         if ${EpicMode}
@@ -1382,7 +1384,7 @@ function CheckCures()
     			call FindAfflicted
     			if ${Return} <= 0
     			    return
-    		}            
+    		}
         }
         else
         {
@@ -1488,7 +1490,7 @@ function CheckHOTs()
 	{
 		do
 		{
-			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID}==${Actor[exactname,${MainTankPC}].ID}
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID}==${Actor[PC,ExactName,${MainTankPC}].ID}
 			{
 				;echo Single HoT is Present on MT
 				hot1:Set[1]
@@ -1506,7 +1508,7 @@ function CheckHOTs()
 		{
 			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
-				call CastSpellRange 7 0 0 0 ${Actor[exactname,${MainTankPC}].ID}
+				call CastSpellRange 7 0 0 0 ${Actor[PC,ExactName,${MainTankPC}].ID}
 				hot1:Set[1]
 			}
 		}
@@ -1572,16 +1574,16 @@ function CheckSKFD()
 {
     if !${Me.ToActor.IsFD}
         return
-         
+
     if !${Actor[exactname,${MainTankPC}](exists)}
         return
-    
+
     if ${Actor[exactname,${MainTankPC}].IsDead}
         return
-        
+
     if ${Me.ToActor.Health} < 20
         return
-            
+
     call RemoveSKFD "Fury::CheckSKFD"
     return
 }

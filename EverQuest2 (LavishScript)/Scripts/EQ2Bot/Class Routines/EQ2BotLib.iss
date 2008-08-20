@@ -856,12 +856,13 @@ function UseItem(string Item)
 		{
 			Me.Equipment[ExactName,"${Item}"]:Use
 		}
+		;we can no longer swap equipment in combat...
 		;else lets check if its in our inventory and swap it in to use if ready and were not swaping any other items.
-		elseif ${Me.Inventory[ExactName,"${Item}"].IsReady} && ${Math.Calc64[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-		{
-			Me.Inventory[ExactName,"${Item}"]:Equip
-			Me.Equipment["${Item}"]:Use
-		}
+		;elseif ${Me.Inventory[ExactName,"${Item}"].IsReady} && ${Math.Calc64[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+		;{
+		;	Me.Inventory[ExactName,"${Item}"]:Equip
+		;	Me.Equipment["${Item}"]:Use
+		;}
 }
 
 function UseCrystallizedSpirit(int Health)
