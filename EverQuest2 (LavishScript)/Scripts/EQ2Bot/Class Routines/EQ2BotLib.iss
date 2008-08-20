@@ -709,7 +709,7 @@ function Shard(int sPower)
 		HeartRequested:Set[FALSE]
 	}
 
-	if !${Me.Inventory[${HeartTypeL}](exists)} && !${HeartRequested} && ${ShardMode}
+	if !${Me.Inventory[${HeartTypeL}](exists)} && !${HeartRequested} && ${HeartMode}
 	{
 		HeartRequested:Set[TRUE]
 		EQ2Execute /tell ${HeartGroupMember} shard please
