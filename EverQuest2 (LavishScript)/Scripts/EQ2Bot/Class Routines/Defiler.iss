@@ -938,6 +938,26 @@ function CheckHeals()
 	;Persist wards if selected.
 	call CheckWards
 
+  if (${MainTankExists})
+  {
+  	if ${Actor[${MainTankID}].Health}<90
+  	{
+  		if ${Me.ID}==${MainTankID}
+  			call HealMe
+  		else
+  			call HealMT ${MainTankID} ${MainTankInGroup}
+  	}
+
+  	;Check My health after MT
+    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+	    call HealMe
+  }
+  else
+  {
+    if ${Me.ToActor.Health}<70
+      call HealMe
+  }
+
 	do
 	{
 		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
@@ -972,25 +992,6 @@ function CheckHeals()
 	if ${grpheal}>2
 		call GroupHeal
 
-  if (${MainTankExists})
-  {
-  	if ${Actor[${MainTankID}].Health}<90
-  	{
-  		if ${Me.ID}==${MainTankID}
-  			call HealMe
-  		else
-  			call HealMT ${MainTankID} ${MainTankInGroup}
-  	}
-
-  	;Check My health after MT
-    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
-	    call HealMe
-  }
-  else
-  {
-    if ${Me.ToActor.Health}<70
-      call HealMe
-  }
 
 	;now lets heal individual groupmembers if needed
 	if ${lowest}
