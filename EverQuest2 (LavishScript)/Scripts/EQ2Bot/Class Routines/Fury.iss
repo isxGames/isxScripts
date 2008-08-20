@@ -1324,6 +1324,7 @@ function CheckCures()
 
 	declare temphl int local 1
 	declare grpcure int local 0
+	declare Affcnt int local 0
 
 	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount} > 1
@@ -1341,7 +1342,7 @@ function CheckCures()
 		do
 		{
 			;make sure they in zone and in range
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<${Me.Ability[${SpellType[220]}].Range}
+			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[220]}].Range}
 			{
 				if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Elemental}>0
 					grpcure:Inc
@@ -1382,7 +1383,7 @@ function CheckCures()
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
 	;	all afflictions unless group health or mt health gets low
-	do
+	while ${Affcnt:Inc}<7 && ${Me.ToActor.Health}>30 && (${Me.Arcane}<1 && ${Me.Noxious}<1 && ${Me.Elemental}<1 && ${Me.Trauma}<1)
 	{
 		call FindAfflicted
 		if ${Return}>0
@@ -1409,7 +1410,7 @@ function CheckCures()
 			break
 
 	}
-	while ${Me.ToActor.Health}>30 && (${Me.Arcane}<1 && ${Me.Noxious}<1 && ${Me.Elemental}<1 && ${Me.Trauma}<1)
+
 }
 
 
@@ -1423,7 +1424,7 @@ function FindAfflicted()
 	;check for single target cures
 	do
 	{
-		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Distance}<35
+		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[210]}].Range}
 		{
 			if ${Me.Group[${temphl}].Arcane}>0
 				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
@@ -1514,10 +1515,10 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-    if (${Actor[exactname,${MainTankPC}](exists)} && ${CombatRez})
-    {
-	    if (${Actor[exactname,${MainTankPC}].IsDead} || ${Actor[exactname,${MainTankPC}].Health} < 0)
-		    call CastSpellRange 300 303 1 0 ${MainTankPC} 1
+  if (${Actor[exactname,${MainTankPC}](exists)} && ${CombatRez})
+  {
+    if (${Actor[exactname,${MainTankPC}].IsDead} || ${Actor[exactname,${MainTankPC}].Health} < 0)
+	    call CastSpellRange 300 303 1 0 ${MainTankPC} 1
 	}
 
 }
