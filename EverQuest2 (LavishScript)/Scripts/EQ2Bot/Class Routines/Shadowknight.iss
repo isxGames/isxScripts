@@ -905,7 +905,6 @@ function HarmTouch()
    
 function Have_Aggro()
 {
-
 }
 
 function Lost_Aggro(int mobid)
@@ -929,12 +928,10 @@ function MA_Dead()
 
 function Cancel_Root()
 {
-
 }
 
 function CheckHeals()
 {
-
 }
 
 function CheckPower()
