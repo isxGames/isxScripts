@@ -515,7 +515,6 @@ function Post_Combat_Routine(int xAction)
 
 function Have_Aggro()
 {
-
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
@@ -621,10 +620,7 @@ function CheckHeals()
 	call UseCrystallizedSpirit 60
 
 	if ${BuffManaward} && ${Me.InCombat}
-	{
 		call CastSpellRange 378
-	}
-
 }
 
 function Mezmerise_Targets()
@@ -633,7 +629,6 @@ function Mezmerise_Targets()
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
-	grpcnt:Set[${Me.GroupCount}]
 	EQ2:CreateCustomActorArray[byDist,20]
 
 	do
@@ -648,7 +643,7 @@ function Mezmerise_Targets()
 			aggrogrp:Set[FALSE]
 
 			;check if its agro on a group member or group member's pet
-			if ${grpcnt}>1
+			if ${Me.GroupCount} > 1
 			{
 				do
 				{
@@ -658,10 +653,11 @@ function Mezmerise_Targets()
 						break
 					}
 				}
-				while ${tempvar:Inc}<=${grpcnt}
+				while ${tempvar:Inc} <= ${Me.GroupCount}
 			}
 
 			;check if its agro on a raid member or raid member's pet
+			tempvar:Set[1]
 			if ${Me.InRaid}
 			{
 				do
@@ -672,7 +668,7 @@ function Mezmerise_Targets()
 						break
 					}
 				}
-				while ${tempvar:Inc}<=24
+				while ${tempvar:Inc} <= ${Me.Raid}
 			}
 			;check if its agro on me
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${CustomActor[${tcount}].Target.IsMyPet}
@@ -723,7 +719,6 @@ function DoCharm()
 	if ${Me.Maintained[${SpellType[351]}](exists)} || ${Me.UsedConc}>2
 		return
 
-	grpcnt:Set[${Me.GroupCount}]
 
 	EQ2:CreateCustomActorArray[byDist,15]
 
@@ -736,7 +731,7 @@ function DoCharm()
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
-			if ${grpcnt}>1
+			if ${Me.GroupCount} > 1
 			{
 				do
 				{
@@ -746,7 +741,7 @@ function DoCharm()
 						break
 					}
 				}
-				while ${tempvar:Inc}<=${grpcnt}
+				while ${tempvar:Inc} <= ${Me.GroupCount}
 			}
 
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
@@ -780,8 +775,6 @@ function DoAmnesia()
 
 	tempvar:Set[1]
 
-	grpcnt:Set[${Me.GroupCount}]
-
 	EQ2:CreateCustomActorArray[byDist,35]
 
 	do
@@ -793,7 +786,7 @@ function DoAmnesia()
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
-			if ${grpcnt}>1
+			if ${Me.GroupCount} > 1
 			{
 				do
 				{
@@ -809,7 +802,7 @@ function DoAmnesia()
 						}
 					}
 				}
-				while ${tempvar:Inc}<=${grpcnt}
+				while ${tempvar:Inc} <= ${Me.GroupCount}
 			}
 
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}  && !${MainTank}
