@@ -947,7 +947,6 @@ function Post_Combat_Routine(int xAction)
 
 	switch ${PostAction[${xAction}]}
 	{
-
 		case LoadDefaultEquipment
 			ExecuteAtom LoadEquipmentSet "Default"
 			break
@@ -995,34 +994,25 @@ function Have_Aggro()
     	call CastSpellRange 361
 
 	if ${Actor[${aggroid}].Distance} < 5
-	{
 		call CastSpellRange 357
-	}
-
 }
 
 function Lost_Aggro()
 {
-
 }
 
 function MA_Lost_Aggro()
 {
 	if ${Me.Ability[${SpellType[386]}].IsReady}
-	{
 		call CastSpellRange 386 0 0 0 ${KillTarget}
-	}
-
 }
 
 function MA_Dead()
 {
-
 }
 
 function Cancel_Root()
 {
-
 }
 
 function RefreshPower()
@@ -1091,7 +1081,6 @@ function CheckHeals()
 	call UseCrystallizedSpirit 60
 
 	declare temphl int local 1
-	grpcnt:Set[${Me.GroupCount}]
 
 	; Cure Arcane Me
 	if ${Me.Arcane}>=1
@@ -1099,9 +1088,7 @@ function CheckHeals()
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 
 		if ${Actor[${KillTarget}](exists)}
-		{
 			Target ${KillTarget}
-		}
 	}
 	
 	if ${grpcnt} > 1
@@ -1109,17 +1096,18 @@ function CheckHeals()
     	do
     	{
     		; Cure Arcane
-    		if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
+    		if ${Me.Group[${temphl}].ToActor(exists)}
     		{
-    			call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
-    
-    			if ${Actor[${KillTarget}](exists)}
-    			{
-    				Target ${KillTarget}
-    			}
-    		}
+        		if ${Me.Group[${temphl}].Arcane} >= 1
+        		{
+        			call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+        
+        			if ${Actor[${KillTarget}](exists)}
+        				Target ${KillTarget}
+        		}
+        	}
     	}
-    	while ${temphl:Inc}<${grpcnt}
+    	while ${temphl:Inc} <= ${Me.GroupCount}
     }
 }
 function Mezmerise_Targets()
@@ -1128,7 +1116,6 @@ function Mezmerise_Targets()
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
-	grpcnt:Set[${Me.GroupCount}]
 
 	EQ2:CreateCustomActorArray[byDist,15]
 
@@ -1138,29 +1125,27 @@ function Mezmerise_Targets()
 		{
 			;if its the kill target skip it
 			if ${Actor[exactname,${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
-			{
 				continue
-			}
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
 
 			;check if its agro on a group member or group member's pet
-			if ${grpcnt}>1
+			if ${Me.GroupCount} > 1
 			{
 				do
 				{
-
 					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
 					{
 						aggrogrp:Set[TRUE]
 						break
 					}
 				}
-				while ${tempvar:Inc}<=${grpcnt}
+				while ${tempvar:Inc} <= ${Me.GroupCount}
 			}
 
 			;check if its agro on a raid member or raid member's pet
+			tempvar:Set[1]
 			if ${Me.InRaid}
 			{
 				do
@@ -1171,51 +1156,36 @@ function Mezmerise_Targets()
 						break
 					}
 				}
-				while ${tempvar:Inc}<=24
+				while ${tempvar:Inc} <= ${Me.Raid}
 			}
 			;check if its agro on me
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-			{
 				aggrogrp:Set[TRUE]
-			}
 
 			;if i have a mob charmed check if its agro on my charmed pet
 			if ${Me.Maintained[${SpellType[351]}](exists)}
 			{
 				if ${CustomActor[${tcount}].Target.IsMyPet}
-				{
 					aggrogrp:Set[TRUE]
-				}
 			}
 
 			if ${aggrogrp}
 			{
-
 				if ${Me.AutoAttackOn}
-				{
 					eq2execute /toggleautoattack
-				}
 
 				if ${Me.RangedAutoAttackOn}
-				{
 					eq2execute /togglerangedattack
-				}
 
 				;try to AE mezz first and check if its not single target mezzed
 				if !${CustomActor[${tcount}].Effect[${SpellType[352]}](exists)}
-				{
 					call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
-				}
 
 				;if the actor is not AE Mezzed then single target Mezz
 				if !${CustomActor[${tcount}].Effect[${SpellType}[353]](exists)}
-				{
 					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 10
-				}
 				else
-				{
 					call CastSpellRange 92 0 0 0 ${CustomActor[${tcount}].ID} 0 10
-				}
 				aggrogrp:Set[FALSE]
 			}
 		}
@@ -1230,6 +1200,7 @@ function Mezmerise_Targets()
 	else
 	{
 		EQ2Execute /target_none
+		KillTarget:Set[]
 	}
 }
 
