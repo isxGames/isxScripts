@@ -909,34 +909,37 @@ function Post_Combat_Routine(int xAction)
 	switch ${PostAction[${xAction}]}
 	{
 		case Resurrection
-			tempgrp:Set[1]
-			do
-			{
-				if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Health}==-99
-				{
-					if ${Me.Ability[${SpellType[300]}].IsReady}
-					{
-						call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
-					}
-					elseif ${Me.Ability[${SpellType[301]}].IsReady}
-					{
-						call CastSpellRange 301 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
-					}
-					elseif ${Me.Ability[${SpellType[302]}].IsReady}
-					{
-						call CastSpellRange 302 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
-					}
-					else
-					{
-						call CastSpellRange 303 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-						wait 100
-					}
-				}
-			}
-			while ${tempgrp:Inc}<=${Me.GroupCount}
+		    if !${Me.ToActor.InCombatMode} || ${CombatRez}
+		    {
+    			tempgrp:Set[1]
+    			do
+    			{
+    				if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Health}==-99
+    				{
+    					if ${Me.Ability[${SpellType[300]}].IsReady}
+    					{
+    						call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						wait 100
+    					}
+    					elseif ${Me.Ability[${SpellType[301]}].IsReady}
+    					{
+    						call CastSpellRange 301 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						wait 100
+    					}
+    					elseif ${Me.Ability[${SpellType[302]}].IsReady}
+    					{
+    						call CastSpellRange 302 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						wait 100
+    					}
+    					else
+    					{
+    						call CastSpellRange 303 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						wait 100
+    					}
+    				}
+    			}
+    			while ${tempgrp:Inc}<=${Me.GroupCount}
+    		}
 			break
 		case CheckForCures
 			;echo "DEBUG: Checking if Cures are needed post combat..."
