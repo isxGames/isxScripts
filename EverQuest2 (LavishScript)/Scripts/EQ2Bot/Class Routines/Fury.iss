@@ -940,7 +940,10 @@ function Post_Combat_Routine(int xAction)
 			break
 		case CheckForCures
 			;echo "DEBUG: Checking if Cures are needed post combat..."
-			call CheckCures
+			if ${Me.ToActor.InCombatMode}
+    			call CheckCures 1
+    		else
+    		    call CheckCures 0
 			break
 		case AutoFollowTank
 			if ${AutoFollowMode}
@@ -1314,12 +1317,15 @@ function CureMe()
 
 }
 
-function CheckCures()
+function CheckCures(int InCombat=1)
 {
-    if !${EpicMode}
+    if ${InCombat}
     {
-        if !${CureMode} && ${Me.ToActor.InCombatMode}
-            return
+        if !${EpicMode}
+        {
+            if !${CureMode} && ${Me.ToActor.InCombatMode}
+                return
+        }
     }
 
 	declare temphl int local 1
@@ -1336,7 +1342,7 @@ function CheckCures()
 			if ${Me.Noxious}>0 || ${Me.Elemental}>0
 				grpcure:Inc
 		}
-		;echo "DEBUG:: CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"
+		echo "DEBUG:: CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"
 
 		;loop group members, and check for group curable afflictions
 		do
@@ -1350,7 +1356,7 @@ function CheckCures()
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 
-		;echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
+		echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
 
         if ${EpicMode}
         {
