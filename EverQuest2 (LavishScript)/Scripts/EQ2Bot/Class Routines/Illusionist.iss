@@ -1085,7 +1085,8 @@ function Post_Combat_Routine(int xAction)
 	switch ${PostAction[${xAction}]}
 	{
 		case LoadDefaultEquipment
-			ExecuteAtom LoadEquipmentSet "Default"
+		    if !${Me.ToActor.InCombatMode}
+    			ExecuteAtom LoadEquipmentSet "Default"
 			break
 		default
 			return PostCombatRoutineComplete
