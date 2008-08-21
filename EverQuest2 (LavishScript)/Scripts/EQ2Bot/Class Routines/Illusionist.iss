@@ -805,7 +805,7 @@ function Combat_Routine(int xAction)
     if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
         return CombatComplete		    
 
-    echo "DEBUG:: Entering Switch (${Action[${xAction}]})"
+    ;echo "DEBUG:: Entering Switch (${Action[${xAction}]})"
 	switch ${Action[${xAction}]}
 	{
 	    ;; Straight Nukes
@@ -1045,7 +1045,7 @@ function Combat_Routine(int xAction)
 	
 	if ${spellsused} < 1
 	    call CastSomething	
-	echo "DEBUG:: Exiting Switch (${Action[${xAction}]})"
+	;echo "DEBUG:: Exiting Switch (${Action[${xAction}]})"
 }
 
 function CastSomething()
@@ -1056,7 +1056,7 @@ function CastSomething()
     if !${Me.Ability[Perpetuality](exists)}
         return
         
-    echo "DEBUG:: CastSomething() called."
+    ;echo "DEBUG:: CastSomething() called."
  
 	; fast-casting encounter stun
     if (${Me.Ability[${SpellType[191]}].IsReady})
