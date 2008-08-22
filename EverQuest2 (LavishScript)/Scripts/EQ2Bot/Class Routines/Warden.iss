@@ -663,7 +663,7 @@ function CheckHeals()
     {
     	do
     	{
-    		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
+    		if ${Me.Group[${temphl}].ToActor(exists)}
     		{
     			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
     			{
