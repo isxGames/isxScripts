@@ -1365,7 +1365,7 @@ function CheckCures(int InCombat=1)
 			if ${Me.Noxious}>0 || ${Me.Elemental}>0
 				grpcure:Inc
 		}
-		echo "DEBUG:: CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"
+		;echo "DEBUG:: CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"
 
 		;loop group members, and check for group curable afflictions
 		do
@@ -1379,7 +1379,7 @@ function CheckCures(int InCombat=1)
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 
-		echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
+		;echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
 
         if ${EpicMode}
         {
