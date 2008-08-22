@@ -114,6 +114,7 @@
 									Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,TRUE]:Save
 									Script[EQ2Bot].Variable[MainTankPC]:Set[${Me.Name}]
+									Script[EQ2Bot].Variable[OriginalMT]:Set[${Me.Name}]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${Me.Name}]:Save										
 								}
 								else
@@ -122,6 +123,7 @@
 									Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,FALSE]:Save
 									Script[EQ2Bot].Variable[MainTankPC]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
+									Script[EQ2Bot].Variable[OriginalMT]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]:Save									
 								}
 							</OnLeftClick>
@@ -168,6 +170,7 @@
 									        Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
 									    }
 										Script[EQ2Bot].Variable[MainTankPC]:Set[${This.SelectedItem.Text}]
+										Script[EQ2Bot].Variable[OriginalMT]:Set[${This.SelectedItem.Text}]
 										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${This.SelectedItem.Text}]:Save
 									</OnSelect>
 									<OnLeftClick>
@@ -293,6 +296,7 @@
 									Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,TRUE]:Save
 									Script[EQ2Bot].Variable[MainAssist]:Set[${Me.Name}]
+									Script[EQ2Bot].Variable[OriginalMA]:Set[${Me.Name}]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${Me.Name}]:Save											
 								}
 								else
@@ -301,6 +305,7 @@
 									Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
 									Script[EQ2Bot].Variable[MainAssist]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+									Script[EQ2Bot].Variable[OriginalMA]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
 									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]:Save											
 								}
 							</OnLeftClick>
@@ -348,6 +353,7 @@
 									        Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 									    }									
 										Script[EQ2Bot].Variable[MainAssist]:Set[${This.SelectedItem.Text}]
+										Script[EQ2Bot].Variable[OriginalMA]:Set[${This.SelectedItem.Text}]
 										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${This.SelectedItem.Text}]:Save</OnSelect>
 									<OnLeftClick>
 										declare tmpvar int
