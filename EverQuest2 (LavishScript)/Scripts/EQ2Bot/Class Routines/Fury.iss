@@ -1012,7 +1012,7 @@ function CheckHeals()
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 	declare MainTankExists bool local 1
-	declare lowestset bool local 0
+	declare lowestset bool local FALSE
 
 	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
@@ -1063,63 +1063,80 @@ function CheckHeals()
 	        call HealMe
     }
 
-	do
-	{
-		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
-		{
-			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
-			{
-				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
-				{
-			    lowestset:Set[1]
-					lowest:Set[${temphl}]
-				}
-			}
-
-			if ${Me.Group[${temphl}].ID}==${MainTankID}
-				MainTankInGroup:Set[1]
-
-			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
-				grpheal:Inc
-
-			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[coercer]})
-			{
-    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
-    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-			}
-
-			if (${Me.Group[${temphl}].Class.Equal[illusionist]} && !${Me.InCombat})
-			{
-    			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
-    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-			}
-		}
-	}
-	while ${temphl:Inc} <= ${Me.GroupCount}
+    if ${Me.GroupCount} > 1
+    {
+    	do
+    	{
+    		if ${Me.Group[${temphl}].ToActor(exists)}
+    		{
+    		    
+    			if (${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead})
+    			{
+    				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || !${lowestset}) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+    				{
+    			        lowestset:Set[TRUE]
+    					lowest:Set[${temphl}]
+    					;echo "DEBUG:: CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"
+    				}
+    			}
+    
+    			if ${Me.Group[${temphl}].ID}==${MainTankID}
+    				MainTankInGroup:Set[1]
+    
+    			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
+    				grpheal:Inc
+    
+    			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[coercer]})
+    			{
+        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+        				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+    			}
+    
+    			if (${Me.Group[${temphl}].Class.Equal[illusionist]} && !${Me.InCombat})
+    			{
+        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+        				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+    			}
+    		}
+    	}
+    	while ${temphl:Inc} <= ${Me.GroupCount}
+    }
 
 	;if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 	;	grpheal:Inc
 
-	if ${grpheal}>2
+	if ${grpheal}>1
 		call GroupHeal
 
 	;now lets heal individual groupmembers if needed
 	if ${lowestset}
 	{
-	  ;echo "DEBUG:: ${Group[${lowest}]}'s health is lowest at ${Me.Group[${Lowest}].ToActor.Health}"
+	    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest at ${Me.Group[${lowest}].ToActor.Health}"
 		call UseCrystallizedSpirit 60
 
-		if ${Me.Group[${lowest}].ToActor.Health}<50 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
+		if ${Me.Group[${lowest}].ToActor.Health}<60 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
+		{
+		    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
 			call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
+		}
 
-		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[7]}].Range}
+		if ${Me.Group[${lowest}].ToActor.Health}<75 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[7]}].Range}
 		{
 			if ${Me.Ability[${SpellType[7]}].IsReady}
+			{
+			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
 				call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ID}
+			}
 			elseif ${Me.Ability[${SpellType[1]}].IsReady}
+			{
+			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
 				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
+			}
 			else
+			{
+			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
 				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
+			}
 		}
 	}
 
@@ -1132,13 +1149,13 @@ function CheckHeals()
     		{
     			if ${Me.Raid[${temph2}](exists)} && ${Me.Raid[${temph2}].ToActor(exists)}
     			{
-    			  if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
+    			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
     				{
-  				    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead} && ${Me.Raid[${temph2}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
-      				{
-      					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
-      						raidlowest:Set[${temph2}]
-      				}
+      				    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead} && ${Me.Raid[${temph2}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+          				{
+          					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
+          						raidlowest:Set[${temph2}]
+          				}
     				}
     			}
     		}
@@ -1281,14 +1298,17 @@ function EmergencyHeal(int healtarget)
 function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
+	
+	;echo "DEBUG:: CureGroupMember(${gMember})"
 
 	if !${Me.Group[${gMember}].ToActor(exists)} || ${Me.Group[${gMember}].ToActor.IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].ToActor.Health} < 0 || ${Me.Group[${gMember}].ToActor.Distance}>=${Me.Ability[${SpellType[210]}].Range}
 		return
-
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)} && !${Me.Group[${gMember}].ToActor.IsDead}
+		
+	while ${Me.Group[${gMember}].IsAfflicted} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)} && !${Me.Group[${gMember}].ToActor.IsDead}
 	{
-		if ${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0
+		if (${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0)
 		{
+		    ;echo "DEBUG:: Curing ${Me.Group[${gMember}]}"
 			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 			wait 2
 		}
@@ -1456,7 +1476,7 @@ function FindAfflicted()
 	}
 	while ${temphl:Inc} <= ${Me.GroupCount}
 
-   ;echo "DEBUG:: FindAfflicted() returning ${mostafflicted}"
+    ;echo "DEBUG:: FindAfflicted() returning ${mostafflicted}"
 
 	if ${mostafflicted}>0
 		return ${mostafflicted}
