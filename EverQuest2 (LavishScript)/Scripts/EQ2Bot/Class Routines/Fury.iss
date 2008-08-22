@@ -86,7 +86,7 @@ function Class_Declaration()
 	declare RaidHealMode bool script 1
 	declare ShiftForm int script 1
 	declare SummonImpOfRo bool script 0
-	declare FeastAction int script 8
+	declare FeastAction int script 9
 	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
 
@@ -227,6 +227,7 @@ function Combat_Init()
 	Power[9,1]:Set[30]
 	Power[9,2]:Set[100]
 	SpellRange[9,1]:Set[312]
+	FeastAction:Set[9]
 
 	Action[10]:Set[Storms]
 	Power[10,1]:Set[40]
@@ -689,7 +690,19 @@ function Combat_Routine(int xAction)
 
 	;echo "DEBUG: Combat_Routine() -- Action: ${Action[${xAction}]} (xAction: ${xAction})"
 	;echo "DEBUG: Combat_Routine() -- MainAssist: ${MainAssist}"
-
+	
+	if !${OffenseMode}
+	{
+    	if ${DoHOs}
+    	{
+			call CheckGroupHealth 60
+			if ${Return}
+				objHeroicOp:DoHO
+    	}	    
+	    return CombatComplete
+    }
+    
+    
 	switch ${Action[${xAction}]}
 	{
 		case Nuke
