@@ -551,9 +551,9 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-    if ${CombatRez}
+    if ${StartHO}
     {
-    	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+    	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	    	call CastSpellRange 303
     }
     
@@ -641,11 +641,14 @@ function Combat_Routine(int xAction)
 	    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1   
 	    spellsused:Inc
 	     	 
-	    ;if !${Me.Maintained[${SpellType[70]}](exists)}   
-	    ;{
-    	    ;if (${Me.Ability[${SpellType[70]}].IsReady})
+	    if !${Me.Maintained[${SpellType[70]}](exists)}   
+	    {
+    	    if (${Me.Ability[${SpellType[70]}].IsReady})
+    	    {
 	            call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1  
-	    ;}
+	            spellsused:Inc
+	        }
+	    }
         if (${Me.Ability[${SpellType[60]}].IsReady})
         {
 	        call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	
@@ -654,9 +657,11 @@ function Combat_Routine(int xAction)
 	        	    
 	    if !${Me.Maintained[${SpellType[91]}](exists)}   
 	    {
-    	    ;if (${Me.Ability[${SpellType[91]}].IsReady})
+    	    if (${Me.Ability[${SpellType[91]}].IsReady})
+    	    {
 	            call CastSpellRange 91 0 0 0 ${KillTarget} 0 0 0 1 
 	            spellsused:Inc 
+	        }
 	    }	
 	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 	        return CombatComplete	    
@@ -668,9 +673,11 @@ function Combat_Routine(int xAction)
 	        
 	    if !${Me.Maintained[${SpellType[388]}](exists)}   
 	    {
-    	   ;if (${Me.Ability[${SpellType[388]}].IsReady})
+    	   if (${Me.Ability[${SpellType[388]}].IsReady})
+    	   {
 	            call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 1  
 	            spellsused:Inc
+	       }
 	    }	
         if (${Me.Ability[${SpellType[60]}].IsReady})
         {
@@ -760,7 +767,7 @@ function Combat_Routine(int xAction)
 	;; If we have the skill 'Nullifying Staff' and the mob is within range
 	if ${Me.Ability[${SpellType[396]}](exists)}
 	{
-	    if (${Actor[${KillTarget}].Distance} <= ${Math.Calc[${Actor[${KillTarget}].TargetRingRadius}+5]})
+	    if (${Actor[${KillTarget}].Distance} < 5)
 	    {
     	    if (${Me.Ability[${SpellType[396]}].IsReady})
     	    {
@@ -796,9 +803,11 @@ function Combat_Routine(int xAction)
 	{
         if ${Me.Ability[${SpellType[61]}](exists)}
     	{
-    	    ;if (${Me.Ability[${SpellType[61]}].IsReady})
+    	    if (${Me.Ability[${SpellType[61]}].IsReady})
+    	    {
     		    call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1
     		    spellsused:Inc
+    		}
     	}	
     }
     
@@ -1012,19 +1021,47 @@ function Combat_Routine(int xAction)
         	    spellsused:Inc
         	}
             if ${Me.ToActor.Power} > 50
-                return CombatComplete      
+            {
+            	if ${spellsused} < 1
+            	    call CastSomething                
+                return CombatComplete    
+            }  
             if ${UltraDPSMode} && ${Actor[${KillTarget}].IsSolo}
-                return CombatComplete
+            {
+            	if ${spellsused} < 1
+            	    call CastSomething                
+                return CombatComplete    
+            }  
             if ${DPSMode} && ${Actor[${KillTarget}].IsSolo}
-                return CombatComplete
+            {
+            	if ${spellsused} < 1
+            	    call CastSomething                
+                return CombatComplete    
+            }  
             if ${Actor[${KillTarget}].IsSolo} && ${Me.Group} > 1
-                return CombatComplete
+            {
+            	if ${spellsused} < 1
+            	    call CastSomething                
+                return CombatComplete    
+            }  
             elseif ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 70
-                return CombatComplete
+            {
+            	if ${spellsused} < 1
+            	    call CastSomething                
+                return CombatComplete    
+            }  
             elseif ${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} < 50
-                return CombatComplete
+            {
+            	if ${spellsused} < 1
+            	    call CastSomething                
+                return CombatComplete    
+            }  
             elseif ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health} < 15
-                return CombatComplete                
+            {
+            	if ${spellsused} < 1
+            	    call CastSomething                
+                return CombatComplete    
+            }              
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 			    call CastSpellRange ${SpellRange[${xAction},1]}
@@ -1038,14 +1075,14 @@ function Combat_Routine(int xAction)
         	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    		
         	    spellsused:Inc
         	}
-        	if ${spellsused} < 1
+        	if (${spellsused} < 1)
         	    call CastSomething
 			return CombatComplete
 	}
 	
-	if ${spellsused} < 1
+	if (${spellsused} < 1)
 	    call CastSomething	
-	;echo "DEBUG:: Exiting Switch (${Action[${xAction}]})"
+	;echo "DEBUG:: Exiting Switch (${Action[${xAction}]}) (spellsused: ${spellsused})"
 }
 
 function CastSomething()
@@ -1053,27 +1090,42 @@ function CastSomething()
     ;; If this function is called, it is because we went through teh combat routine without casting any spells.  
     ;; This function is intended to cast SOMETHING in order to keep "Perputuality" going.
     
-    if !${Me.Ability[Perpetuality](exists)}
-        return
-        
+    ;echo "DEBUG:: ---"
     ;echo "DEBUG:: CastSomething() called."
  
 	; fast-casting encounter stun
     if (${Me.Ability[${SpellType[191]}].IsReady})
     {
-	    call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1            
+        echo "DEBUG:: Casting 'Encounter Stun'"
+	    call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1        
 	    return
 	} 
     ;  contruct
     if (${Me.Ability[${SpellType[51]}].IsReady})
     {
+        echo "DEBUG:: Casting 'Construct'"
 	    call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
 	; melee debuff
     if (${Me.Ability[${SpellType[50]}].IsReady})
     {
+        echo "DEBUG:: Casting 'Melee Debuff'"
 	    call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1            
+	    return
+	}
+	; extract mana
+    if (${Me.Ability[${SpellType[309]}].IsReady})
+    {
+        echo "DEBUG:: Casting 'Mana Recovery'"
+	    call CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1            
+	    return
+	}	
+	; root
+    if (${Me.Ability[${SpellType[230]}].IsReady})
+    {
+        echo "DEBUG:: Casting 'Root'"
+	    call CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
 }
@@ -1099,18 +1151,6 @@ function Have_Aggro()
     ;; The logic here needs to be reviewed ..do we really want to do these things?
     ;;;;
     
-    if (!${MainTank} && ${Me.Group} > 1)
-    {
-        if ${Me.Inventory[Behavioral Modificatinator Stereopticon](exists)}
-        {
-            if (${Me.Inventory[Behavioral Modificatinator Stereopticon].IsReady})
-            {
-                Me.Inventory[Behavioral Modificatinator Stereopticon]:Use
-                return
-            }
-        }
-    }
-
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
