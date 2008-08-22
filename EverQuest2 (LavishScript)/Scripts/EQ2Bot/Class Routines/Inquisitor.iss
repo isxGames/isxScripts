@@ -834,30 +834,33 @@ function CheckHeals()
 	if ${InquisitionMode} && ${Me.InCombat} && ${Me.Ability[${SpellType[11]}].IsReady} && !${Me.Maintained[${SpellType[11]}](exists)}
 		call CastSpellRange 11 0 0 0 ${KillTarget}
 
-	do
-	{
-		if ${Me.Group[${temphl}].ToActor(exists)} && ${grpcnt}>1
-		{
-			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
-			{
-				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
-					lowest:Set[${temphl}]
-			}
-
-			if ${Me.Group[${temphl}].ID}==${MainTankID}
-				MainTankInGroup:Set[1]
-
-			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
-				grpheal:Inc
-
-			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-
-			if ${Me.ToActor.Pet.Health}<60
-				PetToHeal:Set[${Me.ToActor.Pet.ID}]
-		}
-	}
-	while ${temphl:Inc} <= ${Me.GroupCount}
+    if ${Me.GroupCount} > 1
+    {
+    	do
+    	{
+    		if ${Me.Group[${temphl}].ToActor(exists)}
+    		{
+    			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
+    			{
+    				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+    					lowest:Set[${temphl}]
+    			}
+    
+    			if ${Me.Group[${temphl}].ID}==${MainTankID}
+    				MainTankInGroup:Set[1]
+    
+    			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
+    				grpheal:Inc
+    
+    			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+    
+    			if ${Me.ToActor.Pet.Health}<60
+    				PetToHeal:Set[${Me.ToActor.Pet.ID}]
+    		}
+    	}
+    	while ${temphl:Inc} <= ${Me.GroupCount}
+    }
 
 	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 		grpheal:Inc
