@@ -96,7 +96,7 @@
 						</Font>
 						<TabHeight>27</TabHeight>
 						<TabBorder>3</TabBorder>
-						<Height>300</Height>
+						<Height>400</Height>
 						<Width>100%</Width>
 						<OnLeftClick>
 							if ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Advanced]}
@@ -139,7 +139,7 @@
 									<X>5</X> 
 									<Y>6</Y> 
 									<Width>97.8%</Width> 
-									<Height>8%</Height> 
+									<Height>6%</Height> 
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
 								<!--	<Font>
@@ -596,7 +596,7 @@
 									<X>100</X> 
 									<Y>10</Y> 
 									<Width>65%</Width> 
-									<Height>8%</Height> 
+									<Height>6%</Height> 
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
 								<!--	<Font>
@@ -1220,15 +1220,15 @@
 					</TabControl>
 					<Frame Name='Crafting List Frame'>
 						<X>0</X>
-						<Y>300</Y>
-						<Height>500</Height>
+						<Y>400</Y>
+						<Height>250</Height>
 						<Width>500</Width>
 						<Visible>0</Visible>
 						<Children>
 							<Button Name='Craft Title' Template='EQ2.Button'>
 								<X>0</X>
 								<Y>0</Y>
-								<Width>410</Width> 
+								<Width>415</Width> 
 								<Height>30</Height> 
 								<TextColor>FFEECC00</TextColor>
 								<Text>Current list of Recipes in Queue</Text>
@@ -1236,8 +1236,8 @@
 							<Listbox Name='Craft List' Template='EQ2.Listbox'>
 								<X>0</X>
 								<Y>25</Y>
-								<Width>410</Width>
-								<Height>340</Height>
+								<Width>415</Width>
+								<Height>250</Height>
 								<Font>
 									<Name>terminal</Name>
 									<Size>12</Size>
@@ -1251,7 +1251,7 @@
 					<Frame Name='Additional Options Frame'>
 						<X>0</X>
 						<Y>450</Y>
-						<Height>500</Height>
+						<Height>200</Height>
 						<Width>500</Width>
 						<Visible>0</Visible>
 						<Children>
