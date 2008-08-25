@@ -736,7 +736,7 @@ function CheckGroupHealth(int MinHealth)
 		Return FALSE
 
 	if ${Me.GroupCount} <= 1
-		return true
+		return TRUE
 
 	do
 	{
