@@ -752,7 +752,7 @@ function CheckGroupHealth(int MinHealth)
 		}
 
 	}
-	while ${counter:Inc} =< ${Me.GroupCount}
+	while ${counter:Inc}<=${Me.GroupCount}
 
 	Return TRUE
 }
