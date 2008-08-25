@@ -386,6 +386,7 @@ function Combat_Routine(int xAction)
 			case Forced_Obedience
 			case Debase
 			case Convict
+			case Maladroit
 				if ${DebuffMode}
 				{
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
