@@ -492,7 +492,7 @@ function Combat_Routine(int xAction)
 	;Cast Alacrity if available
 	if ${Me.Ability[${SpellType[398]}].IsReady}
 	{
-		BuffTarget:Set[${UIElement[cbBuffProcGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+		BuffTarget:Set[${UIElement[BuffAlacrityGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			call CastSpellRange 398 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -717,6 +717,9 @@ function CheckCures()
 	declare grpcure int local 0
 	declare Affcnt int local 0
 
+	if ${Me.Cursed}
+		call CastSpellRange 211 0 0 0 ${Me.ID}
+
 	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
 	{
@@ -746,13 +749,8 @@ function CheckCures()
 	}
 
 	;Cure Ourselves first
-	while ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0)
-	{
+  if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
 		call CureMe
-
-		if ${Me.ToActor.Health}<30 && ${EpicMode}
-			call HealMe
-	}
 
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
@@ -828,6 +826,7 @@ function FindAfflicted()
 function CureMe()
 {
 	declare AffCnt int 0
+	declare CureCnt int 0
 
 	;check if we are not in control, and use control cure if needed
 	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
@@ -839,7 +838,7 @@ function CureMe()
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
-	while ${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
+	while ${CureCnt:Inc}<4 && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0)
 	{
 		if ${Me.Arcane}>0
 		{
@@ -857,6 +856,9 @@ function CureMe()
 			call CastSpellRange 210 0 0 0 ${Me.ID}
 			wait 2
 		}
+
+		if ${Me.ToActor.Health}<30 && ${EpicMode}
+			call HealMe
 	}
 }
 
@@ -910,7 +912,7 @@ function CheckHeals()
 	declare PetToHeal int local 0
 	declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
-    declare MainTankExists bool local 1
+  declare MainTankExists bool local 1
 
 	if ${Me.Name.Equal[${MainTankPC}]}
 		MainTankID:Set[${Me.ID}]
@@ -959,36 +961,36 @@ function CheckHeals()
       call HealMe
   }
 
-    if ${Me.GroupCount} > 1
-    {
-    	do
-    	{
-    		if ${Me.Group[${temphl}].ToActor(exists)}
-    		{
-    			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
-    			{
-    				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
-    					lowest:Set[${temphl}]
-    			}
-    
-    			if ${Me.Group[${temphl}].ID}==${MainTankID}
-    				MainTankInGroup:Set[1]
-    
-    			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
-    				grpheal:Inc
-    
-    			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0 && !${EpicMode}
-    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-    
-    			if ${Me.ToActor.Pet.Health}<60 && !${EpicMode}
-    				PetToHeal:Set[${Me.ToActor.Pet.ID}]
-    		}
-    	}
-    	while ${temphl:Inc} <= ${Me.GroupCount}
-    }
+  if ${Me.GroupCount} > 1
+  {
+		do
+		{
+			if ${Me.Group[${temphl}].ToActor(exists)}
+			{
+				if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
+				{
+					if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+						lowest:Set[${temphl}]
+				}
 
-	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
-		grpheal:Inc
+				if ${Me.Group[${temphl}].ID}==${MainTankID}
+					MainTankInGroup:Set[1]
+
+				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
+					grpheal:Inc
+
+				if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0 && !${EpicMode}
+					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+
+				if ${Me.ToActor.Pet.Health}<60 && !${EpicMode}
+					PetToHeal:Set[${Me.ToActor.Pet.ID}]
+			}
+		}
+		while ${temphl:Inc} <= ${Me.GroupCount}
+
+		if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
+			grpheal:Inc
+	}
 
 	if ${PetMode} && ${grpheal}>2 && ${Me.Ability[${SpellType[16]}].IsReady}
 		call CastSpellRange 16
