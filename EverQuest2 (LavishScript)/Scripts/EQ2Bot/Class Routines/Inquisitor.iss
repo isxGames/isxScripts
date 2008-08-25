@@ -377,10 +377,6 @@ function Combat_Routine(int xAction)
 		call Shard
 
 	;echo BattleClericMode is ${BattleClericMode}
-	;Before we do our Action, check to make sure our group doesnt need healing
-	call CheckGroupHealth 60
-	if ${Return}
-	{
 		if ${BattleClericMode}
 			call CheckPosition 1 0
 
@@ -542,11 +538,6 @@ function Combat_Routine(int xAction)
 				return CombatComplete
 				break
 		}
-	}
-	else
-	{
-		call CheckHeals
-	}
 }
 
 function Post_Combat_Routine(int xAction)
