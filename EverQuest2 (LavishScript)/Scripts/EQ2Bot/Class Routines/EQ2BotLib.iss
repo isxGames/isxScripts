@@ -732,24 +732,27 @@ function CheckGroupHealth(int MinHealth)
 {
 	declare counter int local 0
 
+	if ${Me.ToActor.Health} < ${MinHealth}
+		Return FALSE
+
+	if ${Me.GroupCount} <= 1
+		return true
+
 	do
 	{
 		;check groupmates health
-		if ${Me.Group[${counter}].ToActor.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Health} > 0
+		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].ToActor.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Health} > 0
 			Return FALSE
 
 		;check health of summoner pets
-		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]}
+		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]}
 		{
 			if ${Me.Group[${counter}].ToActor.Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Pet.Health} > 0
 				Return FALSE
 		}
 
 	}
-	while ${counter:Inc} < ${Me.GroupCount}
-
-	if ${Me.ToActor.Health} < ${MinHealth}
-		Return FALSE
+	while ${counter:Inc} =< ${Me.GroupCount}
 
 	Return TRUE
 }

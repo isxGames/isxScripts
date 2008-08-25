@@ -657,14 +657,8 @@ function CheckCures()
 	}
 
 	;Cure Ourselves first
-	while ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0)
-	{
+  if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
 		call CureMe
-
-		if ${Me.ToActor.Health}<30 && ${EpicMode}
-			call CastSpellRange 4 0 0 0 ${Me.ID}
-	}
-
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
 	;	all afflictions unless group health or mt health gets low
@@ -846,40 +840,39 @@ function CheckHeals()
 
 	call CheckReactives
 
-    if ${Me.GroupCount} > 1
-    {
-    	do
-    	{
-    		if ${Me.Group[${temphl}].ToActor(exists)}
-    		{
-    			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
-    			{
-    				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
-    					lowest:Set[${temphl}]
-    			}
-    
-    			if ${Me.Group[${temphl}].ID}==${MainTankID}
-    				MainTankInGroup:Set[1]
-    
-    			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
-    				grpheal:Inc
-    
-    			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-    
-    			if ${Me.ToActor.Pet.Health}<60
-    				PetToHeal:Set[${Me.ToActor.Pet.ID}]
-    		}
-    	}
-    	while ${temphl:Inc}<=${Me.GroupCount}
-    }
+  if ${Me.GroupCount} > 1
+  {
+		do
+		{
+			if ${Me.Group[${temphl}].ToActor(exists)}
+			{
+				if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
+				{
+					if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+						lowest:Set[${temphl}]
+				}
 
-	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
-		grpheal:Inc
+				if ${Me.Group[${temphl}].ID}==${MainTankID}
+					MainTankInGroup:Set[1]
 
-	if ${grpheal}>2
-		call GroupHeal
+				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
+					grpheal:Inc
 
+				if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}) && ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+
+				if ${Me.ToActor.Pet.Health}<60
+					PetToHeal:Set[${Me.ToActor.Pet.ID}]
+			}
+		}
+		while ${temphl:Inc}<=${Me.GroupCount}
+
+		if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
+			grpheal:Inc
+
+		if ${grpheal}>2
+			call GroupHeal
+	}
 
   if (${MainTankExists})
   {
