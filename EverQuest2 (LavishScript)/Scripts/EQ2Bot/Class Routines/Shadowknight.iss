@@ -839,37 +839,42 @@ function CheckGroupOrRaidAggro()
             	    {
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
         	            {
-        	                if ${CustomActor[${Counter}].Target.Health} < 60
+        	                call IsFighter ${CustomActor[${Counter}].Target.ID}
+        	                if ${Return.Equal[FALSE]}
         	                {
-            	                if ${Me.Ability[${SpellType[320]}].IsReady}
+        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
+            	                if ${CustomActor[${Counter}].Target.Health} < 60 || ${CustomActor[${Counter}].IsEpic}
             	                {
-            	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
-            	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
-            	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-            	                }          	                
-        	                }        	                
-        	                if ${Me.Ability[${SpellType[270]}].IsReady}
-        	                {
-        	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
-        	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1     	                    
-        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-        	                }  
-        	                if ${Me.Ability[${SpellType[160]}].IsReady}
-        	                {
-        	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
-        	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1      	                    
-        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-        	                }            	                          
-        	                if !${Me.Maintained[${SpellType[240]}](exists)}
-        	                {
-            	                if ${Me.Ability[${SpellType[240]}].IsReady}
+                	                if ${Me.Ability[${SpellType[320]}].IsReady}
+                	                {
+                	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
+                	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
+                	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                }          	                
+            	                }        	                
+            	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
-            	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+            	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
+            	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1     	                    
             	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-            	                }          	                
-            	            }
+            	                }  
+            	                if ${Me.Ability[${SpellType[160]}].IsReady}
+            	                {
+            	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
+            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1      	                    
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                }            	                          
+            	                if !${Me.Maintained[${SpellType[240]}](exists)}
+            	                {
+                	                if ${Me.Ability[${SpellType[240]}].IsReady}
+                	                {
+                	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
+                	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                }          	                
+                	            }
+                	        }
         	                return
         	            }
     	            }    
@@ -885,7 +890,7 @@ function CheckGroupOrRaidAggro()
         	                if ${Return.Equal[FALSE]}
         	                {
         	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
-            	                if ${CustomActor[${Counter}].Target.Health} < 60
+            	                if ${CustomActor[${Counter}].Target.Health} < 60 || ${CustomActor[${Counter}].IsNamed}
             	                {
             	                    ;echo "DEBUG:: TEST:: ${SpellType[320]}"
             	                    ;echo "DEBUG:: TEST2:: ${SpellType[330]}"
