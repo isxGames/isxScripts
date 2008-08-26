@@ -802,11 +802,11 @@
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[CampTimer]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampTimer]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Camp out after a specified time has elapsed for a crafting session?]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[CampTimer]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampTimer]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
     								</OnChange>
 								</Textentry>
 								<Commandcheckbox Name='Show All Lists' Template='EQ2.Commandcheckbox'>
@@ -820,7 +820,7 @@
 									<Width>100</Width>
 									<Height>20</Height>
 									<Text>Show entire Shopping List</Text>
-									<Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+									<Command>noop ${Script[${If[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]}</Data>
 								</Commandcheckbox>
@@ -891,11 +891,11 @@
 									<Height>20</Height>
 									<MaxLength>5</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[MaxBuyPrice]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Specify the MAXIMUM price for purchasing Resources]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[MaxBuyPrice]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
     								</OnChange>							
 								</Textentry>
 								<Commandcheckbox name='Auto Transmute' Template='EQ2.Commandcheckbox'>
@@ -974,12 +974,12 @@
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[AutoRunKey]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[AutoRun Key]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[AutoRunKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-                                        Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
     								</OnChange>							
 								</Textentry>
 								<Text Name='BackupKeyLabel'>
@@ -1001,12 +1001,12 @@
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[BackwardKey]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Backwards Key]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[BackwardKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-                                        Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
     								</OnChange>							
 								</Textentry>											
 								<Text Name='StrafeRightKeyLabel'>
@@ -1028,12 +1028,12 @@
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[StrafeRightKey]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeRight Key]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[StrafeRightKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-                                        Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
     								</OnChange>							
 								</Textentry>	
 								<Text Name='StrafeLeftKeyLabel'>
@@ -1055,12 +1055,12 @@
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[StrafeLeftKey]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeLeft Key]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[StrafeLeftKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-                                        Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
     								</OnChange>							
 								</Textentry>	
 							</Tab>
@@ -1084,11 +1084,11 @@
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[WritCount]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[WritCount]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
     								</OnChange>	
 								</Textentry>
 								<Text Name='Writ Qty Label'>
@@ -1110,11 +1110,11 @@
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[WritQty]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritQty]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Recipes per Writ?]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[WritQty]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritQty]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
     								</OnChange>							
 								</Textentry>
 								<Text Name='Tier Label'>
@@ -1136,11 +1136,11 @@
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[Tier]}]</OnLoad>
+                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Tier]}]</OnLoad>
                                     <OnChange>
                                         LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Which Writ Tier to use?]:Set[${This.Text}]
-                                        Script[Buffer:Craft].Variable[Tier]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Tier]:Set[${This.Text}]
+                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
     								</OnChange>									
 								</Textentry>
 								<Commandbutton Name='Create Work Order' Template='EQ2.Commandbutton'>
@@ -1289,11 +1289,11 @@
 								<Height>20</Height>
 								<MaxLength>4</MaxLength>
 								<Color>FFDDBB00</Color>
-                                <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[CraftDelay]}]</OnLoad>
+                                <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftDelay]}]</OnLoad>
                                 <OnChange>
                                     LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Time to wait between combines?]:Set[${This.Text}]
-                                    Script[Buffer:Craft].Variable[CraftDelay]:Set[${This.Text}]
-                                    LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+                                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftDelay]:Set[${This.Text}]
+                                    LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
 								</OnChange>							
 							</Textentry>
                             <Text Name='Path Precision Text'>
@@ -1316,11 +1316,11 @@
                                 <Height>20</Height>
                                 <MaxLength>4</MaxLength>
                                 <Visible>FALSE</Visible>
-                                <OnLoad>This:SetText[${Script[Buffer:Craft].Variable[PathPrecision]}]</OnLoad>
+                                <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PathPrecision]}]</OnLoad>
                                 <OnChange>
                                     LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Pather Precision]:Set[${This.Text}]
-                                    Script[Buffer:Craft].Variable[PathPrecision]:Set[${This.Text}]
-                                    LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+                                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PathPrecision]:Set[${This.Text}]
+                                    LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
 								</OnChange>
                                 <Color>FFDDBB00</Color>
                             </Textentry>
