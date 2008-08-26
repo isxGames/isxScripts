@@ -1,5 +1,14 @@
 Revision History ||
 ===================
+v8.31 - New option on Options tab - Save recipe list range. Enabling this option will keep EQ2Craft
+        from automatically assigning the most recent 10 levels to the Recipe List drop-down box.
+        The current level range will be saved when setting this option, and every time you refresh
+        the list.
+        *NOTE* If you set this to a large range, it may take significantly longer for Craft to
+               initialize.
+      - Fixed the disappearing secondary tradeskill filter. If there are any secondary tradeskill
+        recipes in the level range, the secondary tradeskill filter checkbox will become visible
+        when the list is refreshed.
 
 ***** THIS IS FOR THE BETA TEST OF CRAFT 8.0 -- READ THE FORUMS *****
 BETA 8.0 - Fixed a ton of stuff.  A lot of things that were broken are now fixed.  I don't remember
@@ -13,6 +22,7 @@ BETA 8.0 - Fixed a ton of stuff.  A lot of things that were broken are now fixed
            the file as you always did, and then the next time you end craft it will sort properly upon exit.
            
 ================================================
+
 v7.10 - EQ2Craft should be less likely to be stuck "Processing Recipes".
       - When you gain a tradeskill level (after level 20) EQ2Craft will scribe any 'essentials'
         or 'advanced' recipe books that you have in your inventory for the level gained before
