@@ -14,7 +14,7 @@
 			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
 			</Button>
 			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-				<Command>Script[Buffer:Craft]:End</Command>
+				<Command>Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:End</Command>
 			</commandbutton>
 		</Children>
 	</template>
@@ -927,6 +927,21 @@
 									<Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]:Set[TRUE]}</Command>
 									<CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]:Set[FALSE]}</CommandChecked>
 									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]}</Data>
+								</Commandcheckbox>
+								<Commandcheckbox Name='Save Recipe List Range' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>10</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>10</X>
+									<Y>220</Y>
+									<Width>100</Width>
+									<Height>20</Height>
+									<Text>Save recipe list range</Text>
+									<Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RecipeListRange]:Set[TRUE]} ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+									<CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RecipeListRange]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RecipeListRange]}</Data>
 								</Commandcheckbox>
 								<Text Name='MovementKeysLabel'>
 									<Font>
