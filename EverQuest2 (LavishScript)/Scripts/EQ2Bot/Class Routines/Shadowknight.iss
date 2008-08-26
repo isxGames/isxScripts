@@ -435,7 +435,7 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
     declare BuffTarget string local 
-    
+    declare NumNPCs int local
 	if ${DoHOs}
 	{
 		objHeroicOp:DoHO
@@ -449,6 +449,10 @@ function Combat_Routine(int xAction)
     	}
     }
     
+    EQ2:CreateCustomActorArray[ByDist,10,npc]
+    NumNPCs:Set[${EQ2.CustomActorArraySize}]
+    ;echo "DEBUG:: NumNPCs: ${NumNPCs}"
+    
     ; always cast when up (Disease Resist Reduction and Hate Builder (AE))  -- (AE TAUNT!)
     if ${MainTank}
     {
@@ -456,6 +460,8 @@ function Combat_Routine(int xAction)
 	    if (${Me.Ability[${SpellType[170]}].IsReady})
 	    {
 	        if !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50
+    		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
+    		elseif (${NumNPCs} > 1 && ${Actor[${KillTarget}].Health} > 50)
     		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
     	}
     	;; Always try to cast fast casting Combat Arts aftewards to gain aggro (if tank)
@@ -471,18 +477,48 @@ function Combat_Routine(int xAction)
     	    if (${Me.Ability[${SpellType[170]}].IsReady})
     		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
     	}
-    	else
+    	elseif (${NumNPCs} > 1 && ${Actor[${KillTarget}].Health} > 50)
     	{
     	    if (${Me.Ability[${SpellType[170]}].IsReady})
     		    call CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
     	}
     } 
     
+    
+    ;; If we pulled a large group of mobs, do some oh shit stuff
+    if ${NumNPCs} > 3
+    {
+        ;; DeathMarch
+        if ${Me.Level} >= 58
+        {
+        	if !${Me.Maintained[${SpellType[312]}](exists)}
+        	{
+        	    if (${Me.Ability[${SpellType[312]}].IsReady})
+        		    call CastSpellRange 312 0 0 0 ${KillTarget} 0 0 0 1
+            } 
+        }
+        ;; AE Life Tap
+        ;waitframe
+	    if (${Me.Ability[${SpellType[98]}].IsReady})
+		    call CastSpellRange 98 0 0 0 ${KillTarget} 0 0 0 1  
+        ;; Self Reverse DS (with life tap proc)
+        if !${Me.Maintained[${SpellType[7]}](exists)}
+        {
+        	if ${Me.Ability[${SpellType[7]}].IsReady}
+        	{
+        	    if ${MainTank}
+            	    call CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1 
+        	    else
+            	    call CastSpellRange 7 0 0 0 ${Actor[pc,${MainTankPC}].ID} 0 0 0 1 
+            }
+        }
+    }
+    
 
     ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
     if ${Me.Level} >= 50
 	{
-	    if !${Actor[${KillTarget}].IsSolo}
+	    if (!${Actor[${KillTarget}].IsSolo} || ${NumNPCs} > 1)
 	    {
     	    if (${Actor[${KillTarget}].Health} > 70 || ${Actor[${KillTarget}].IsEpic})
     	    {
@@ -493,11 +529,11 @@ function Combat_Routine(int xAction)
         		        call CastSpellRange 55 0 0 0 ${KillTarget} 0 0 0 1
             	}
         	}
-        }
+        }  
 	}      
     
 	;; Draw Strength (Always cast this when it is ready!)
-	if !${Actor[${KillTarget}].IsSolo}
+	if (!${Actor[${KillTarget}].IsSolo} || ${NumNPCs} > 1)
 	{
 	    CurrentAction:Set[Combat :: Draw Strength]
     	if !${Me.Maintained[${SpellType[80]}](exists)}
@@ -511,9 +547,9 @@ function Combat_Routine(int xAction)
     }
     
     ;; Death March
-    if ${UseDeathMarch}
+    if (${UseDeathMarch})
     {
-    	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].IsSolo} && !${Actor[${KillTarget}].ConColor.Equal[Grey]})
+    	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].ConColor.Equal[Grey]})
     	{
             CurrentAction:Set[Combat :: Death March]	    
         	if !${Me.Maintained[${SpellType[312]}](exists)}
@@ -778,6 +814,8 @@ function Post_Combat_Routine(int xAction)
 
 function CheckGroupOrRaidAggro()
 {
+    declare NumNPCs int local
+
     
     if !${Me.Ability[${SpellType[270]}].IsReady} && !${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Ability[${SpellType[160]}].IsReady}
         return
@@ -785,11 +823,13 @@ function CheckGroupOrRaidAggro()
     
 	variable int Counter = 1
 
-	EQ2:CreateCustomActorArray[byDist,10]   
+    ;; This is now created in the Combat_Routine() each time it is called (and Combat_Routine() is the only function that calls THIS function)
+	;EQ2:CreateCustomActorArray[npc,byDist,10]   
+    NumNPCs:Set[${EQ2.CustomActorArraySize}]
     
 	do
 	{
-	    if (${CustomActor[${Counter}].Type.Find[NPC]} && !${CustomActor[${Counter}].IsSolo})
+	    if (!${CustomActor[${Counter}].IsSolo} || ${NumNPCs} > 2)
 	    {
 	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
 	        {
@@ -841,37 +881,51 @@ function CheckGroupOrRaidAggro()
             	        echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
         	            {
-        	                if ${CustomActor[${Counter}].Target.Health} < 60
+        	                call IsFighter ${CustomActor[${Counter}].Target.ID}
+        	                if ${Return.Equal[FALSE]}
         	                {
-            	                if ${Me.Ability[${SpellType[320]}].IsReady}
+        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
+            	                if ${CustomActor[${Counter}].Target.Health} < 60
             	                {
-            	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
-            	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
-            	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-            	                }  
-        	                }
-        	                if ${Me.Ability[${SpellType[270]}].IsReady}
-        	                {
-        	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
-        	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1     	                    
-        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-        	                }   
-        	                if ${Me.Ability[${SpellType[160]}].IsReady}
-        	                {
-        	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
-        	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1    	  
-        	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"                   
-        	                }         	                         
-        	                if !${Me.Maintained[${SpellType[240]}](exists)}
-        	                {
-            	                if ${Me.Ability[${SpellType[240]}].IsReady}
+            	                    ;echo "DEBUG:: TEST:: ${SpellType[320]}"
+            	                    ;echo "DEBUG:: TEST2:: ${SpellType[330]}"
+                	                if ${Me.Ability[${SpellType[320]}].IsReady}
+                	                {
+                	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
+                	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
+                	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                } 
+                	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
+                	                {
+                	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
+                	                    echo "EQ2Bot-DEBUG: Feigning ${CustomActor[${Counter}].Target}!"
+                	                    call CastSpellRange 330 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                }             	                         	                 
+            	                }
+            	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
-            	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+            	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${CustomActor[${Counter}].Target}"
+            	                    call CastSpellRange 270 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1     	                    
             	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-            	                }          	                
-            	            }
+            	                }   
+            	                if ${Me.Ability[${SpellType[160]}].IsReady}
+            	                {
+            	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
+            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1    	  
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"                   
+            	                }         	                         
+            	                if !${Me.Maintained[${SpellType[240]}](exists)}
+            	                {
+                	                if ${Me.Ability[${SpellType[240]}].IsReady}
+                	                {
+                	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
+                	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                }          	                
+                	            }
+                	        }
         	                return
         	            }
     	            }
