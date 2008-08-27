@@ -30,6 +30,8 @@
 		<Setting Name="10,394">Illusory Arm</Setting>
 		<Setting Name="10,396">Nullifying Staff</Setting>
 		<Setting Name="10,397">Shrink Servant</Setting>
+		<Setting name="10,398">Spellblade\'s Counter</Setting>
+		<Setting Mame="10,399">Counterblade</Setting>
 		<Setting Name="11,61">Headache</Setting>
 		<Setting Name="12,60">Phantasmal Jolt</Setting>
 		<Setting Name="12,20">Rune of Thought</Setting>
