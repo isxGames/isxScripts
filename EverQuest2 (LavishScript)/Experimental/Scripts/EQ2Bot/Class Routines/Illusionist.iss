@@ -413,7 +413,7 @@ function Combat_Routine(int xAction)
 	declare spellthreshold int local
 
 	spellsused:Set[0]
-	spellthreshold:Set[3]
+	spellthreshold:Set[1]
 
 	CurrentAction:Set[Combat]
 
@@ -447,8 +447,6 @@ function Combat_Routine(int xAction)
 		call RefreshPower
 	elseif ${Me.ToActor.Power} < 20
 		call RefreshPower
-
-	call CheckSKFD
 
 	; Doppleganger
 	if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1) && ${Actor[${MainTankPC}].Health}<60
