@@ -43,7 +43,7 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString["Summon Imp of Ro"]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='UseTouchofEmpathy' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
 		<Y>90</Y>
@@ -64,7 +64,7 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseTouchOfEmpathy]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='UseDoppleganger' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
 		<Y>110</Y>
@@ -85,7 +85,7 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseDoppleganger]}</Data>
-	</Commandcheckbox>		
+	</Commandcheckbox>
 	<Commandcheckbox Name='UseRunedGuardItem' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
 		<Y>130</Y>
@@ -101,13 +101,13 @@
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[UseDoppleganger]:Set[FALSE]
+				Script[EQ2Bot].Variable[UseRunedGuardItem]:Set[FALSE]
 				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseRunedGuardItem",FALSE]:Save
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseRunedGuardItem]}</Data>
-	</Commandcheckbox>		
-	
+	</Commandcheckbox>
+
 	<Commandcheckbox Name='Mezz' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>240</X>
@@ -129,7 +129,7 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Mezz Mode]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>240</X>
@@ -151,7 +151,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
 	</Commandcheckbox>
-	
+
 	<Commandcheckbox Name='DPSMode' Template='EQ2.Commandcheckbox'>
 		<X>240</X>
 		<Y>70</Y>
@@ -191,5 +191,5 @@
 			}
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UltraDPSMode]}</Data>
-	</Commandcheckbox>		
+	</Commandcheckbox>
 </ISUI>
