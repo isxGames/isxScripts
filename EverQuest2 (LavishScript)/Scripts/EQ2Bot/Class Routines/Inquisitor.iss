@@ -367,6 +367,9 @@ function Combat_Routine(int xAction)
 	if ${MezzMode}
 		call Mezmerise_Targets
 
+	if ${CureMode}
+		call CheckCures
+
 	call CheckHeals
 	call RefreshPower
 	call Yaulp
