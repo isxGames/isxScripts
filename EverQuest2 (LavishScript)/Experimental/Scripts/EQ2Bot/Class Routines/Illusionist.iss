@@ -522,6 +522,10 @@ function Combat_Routine(int xAction)
 	if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
 		call PetAttack
 
+	;; Chronosiphoning (Always cast this when it is ready!
+	if (${Me.Ability[${SpellType[385]}].IsReady})
+		call CastSpellIlly 385 0 0 0 ${KillTarget} 0 0 0 1
+
 	if !${DPSMode} && !${UltraDPSMode}
 		call CheckHeals
 
@@ -584,12 +588,7 @@ function Combat_Routine(int xAction)
 			eq2execute /toggleautoattack
 
 		call CheckPosition 1 ${Actor[${KillTarget}].IsEpic}
-
 	}
-
-	;; Chronosiphoning (Always cast this when it is ready!
-	if (${Me.Ability[${SpellType[385]}].IsReady})
-		call CastSpellIlly 385 0 0 0 ${KillTarget} 0 0 0 1
 
 	;Daunted
 	if ${spellsused}<=${spellthreshold} && ${Actor[${KillTarget}].IsEpic} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}
@@ -597,7 +596,6 @@ function Combat_Routine(int xAction)
 		call CastSpellIlly 50 0 0 0 ${KillTarget} 0 0 0 1
 		spellsused:Inc
 	}
-
 
 	;;; AoE Checks
 	if ${Mob.Count}>1 && ${Actor[${KillTarget}].EncounterSize}>1
@@ -1073,4 +1071,9 @@ function CastSpellIlly(int start, int finish, int xvar1, int xvar2, int TargetID
 	}
 
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained}
+}
+
+atom(script) Illusionist_FinishedZoning(string TimeInSeconds)
+{
+
 }
