@@ -1,5 +1,11 @@
 Revision History ||
 ===================
+v8.32 - Forcing script to forget what device it was at after finishing a craft session. This should
+        eliminate a few annoying issues where you move around after doing some crafting, and the
+        script thinks you're still in front of a device (or targetting a particular NPC).
+      - Fixed the GUI to allow mouse focus where mouse focus is desired, e.g. the harvest list
+        scrollbar. This fix also includes miscellaneous other shuffling and resizing of UI elements.
+
 v8.31 - New option on Options tab - Save recipe list range. Enabling this option will keep EQ2Craft
         from automatically assigning the most recent 10 levels to the Recipe List drop-down box.
         The current level range will be saved when setting this option, and every time you refresh
