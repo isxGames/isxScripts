@@ -849,9 +849,16 @@ function CheckGroupOrRaidAggro()
                 	                {
                 	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
-                	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
-                	                }          	                
+                	                }    
+                	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
+                	                {
+                	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
+                	                    echo "EQ2Bot-DEBUG: Feigning ${CustomActor[${Counter}].Target}!"
+                	                    call CastSpellRange 330 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                }       	                
             	                }        	                
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
@@ -898,14 +905,14 @@ function CheckGroupOrRaidAggro()
                 	                {
                 	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${CustomActor[${Counter}].Target}!"
-                	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    call CastSpellRange 320 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
                 	                } 
                 	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
                 	                {
                 	                    announce "${CustomActor[${Counter}].Target} has aggro (${CustomActor[${Counter}].Target.Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Feigning ${CustomActor[${Counter}].Target}!"
-                	                    call CastSpellRange 330 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+                	                    call CastSpellRange 330 0 0 0 ${CustomActor[${Counter}].Target.ID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
                 	                }             	                         	                 
             	                }
