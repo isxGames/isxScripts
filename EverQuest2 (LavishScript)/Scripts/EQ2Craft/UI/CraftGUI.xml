@@ -130,7 +130,6 @@
 									UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Show:SetZOrder[movetop]
 								}
 							}
-							echo ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name}
 						</OnLeftClick>
 						<Tabs>
 							<Tab Name='Recipes'>
