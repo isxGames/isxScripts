@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
 	<template name='My.window.TitleBar'>
-    		<Border>1</Border>
+		<Border>1</Border>
 		<x>3</x>
-    		<BorderColor>FF000033</BorderColor>
-    		<Width>r6</Width>
+		<BorderColor>FF000033</BorderColor>
+		<Width>r6</Width>
 		<Height>26</Height>
 		<Texture Template='EQ2.window.TitleBar.Texture' />
 		<Children>
@@ -25,7 +25,7 @@
 		<MinimizeButton />
 		<MaximizeButton />
 		<TitleBar template='My.window.TitleBar' />
- 		<OffsetTitleBarHeight />
+		<OffsetTitleBarHeight />
 		<Client template='EQ2.window.Client' />
 		<StorePosition>1</StorePosition>
 	</template>
@@ -94,71 +94,70 @@
 							<Name>Times New Roman</Name>
 							<Size>19</Size>
 						</Font>
+						<FrameTexture Template="EQ2.tabcontrol.FrameTexture">
+							<Top>184</Top>
+						</FrameTexture>
 						<TabHeight>27</TabHeight>
 						<TabBorder>3</TabBorder>
-						<Height>400</Height>
+						<Height>r5</Height>
 						<Width>100%</Width>
 						<OnLeftClick>
 							if ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Advanced]}
 							{
 								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Show
+								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Show:SetZOrder[movetop]
 							}
 							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Options]}
 							{
 								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Show
 							}
 							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Writs]}
 							{
 								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Hide
-							}	
+							}
 							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[About]}
 							{
 								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Hide
-							}														
+							}
 							else
 							{
 								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Additional Options Frame,frame]:Hide
 								if ${thisharvestframe}
 								{
-									UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Show
+									UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Show:SetZOrder[movetop]
 								}
 							}
+							echo ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name}
 						</OnLeftClick>
 						<Tabs>
 							<Tab Name='Recipes'>
 								<Combobox Name='Recipe List' Template='EQ2.Combobox'>
-									<X>5</X> 
-									<Y>6</Y> 
-									<Width>97.8%</Width> 
-									<Height>6%</Height> 
+									<X>5</X>
+									<Y>6</Y>
+									<Width>97.8%</Width>
+									<Height>23</Height>
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
-								<!--	<Font>
+									<!--	<Font>
 										<Name>terminal</Name>
 										<Size>18</Size>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
 								</Combobox>
-								<Text name='Sort Order'> 
-									<X>18</X> 
-									<Y>35</Y> 
-									<Width>150</Width> 
+								<Text name='Sort Order'>
+									<X>18</X>
+									<Y>35</Y>
+									<Width>150</Width>
 									<Height>20</Height>
 									<Font>
 										<Name>terminal</Name>
 										<Size>12</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>Sort Order:</Text> 
+									<Text>Sort Order:</Text>
 								</Text>
 								<Checkbox Name='Sort Name' Template='EQ2.Commandcheckbox'>
 									<Font>
@@ -174,7 +173,7 @@
 									<OnLoad>
 										if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[SortLevel]}
 										{
-											UIElement[Sort Name@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										UIElement[Sort Name@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
@@ -195,7 +194,7 @@
 									<OnLoad>
 										if !${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[SortLevel]}
 										{
-											UIElement[Sort Level@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										UIElement[Sort Level@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
@@ -205,7 +204,7 @@
 								<Textentry Name='Level Min' Template='EQ2.Textentry'>
 									<X>300</X>
 									<Y>33</Y>
-									<Width>30</Width> 
+									<Width>30</Width>
 									<Height>15</Height>
 									<MaxLength>3</MaxLength>
 									<Color>FFDDBB00</Color>
@@ -216,16 +215,16 @@
 										<Size>12</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>340</X> 
-									<Y>35</Y> 
+									<X>340</X>
+									<Y>35</Y>
 									<Width>10</Width>
 									<Height>20</Height>
-									<Text>-</Text> 
+									<Text>-</Text>
 								</Text>
 								<Textentry Name='Level Max' Template='EQ2.Textentry'>
 									<X>360</X>
 									<Y>33</Y>
-									<Width>30</Width> 
+									<Width>30</Width>
 									<Height>15</Height>
 									<MaxLength>3</MaxLength>
 									<Color>FFDDBB00</Color>
@@ -233,7 +232,7 @@
 								<Textentry Name='Quantity Value' Template='EQ2.Textentry'>
 									<X>105</X>
 									<Y>57</Y>
-									<Width>50</Width> 
+									<Width>50</Width>
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
@@ -244,52 +243,52 @@
 										<Size>12</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>18</X> 
-									<Y>63</Y> 
+									<X>18</X>
+									<Y>63</Y>
 									<Width>100</Width>
 									<Height>20</Height>
-									<Text>Quantity:</Text> 
+									<Text>Quantity:</Text>
 								</Text>
-								<Commandbutton name='Add Recipe' Template='EQ2.Commandbutton'> 
-									<X>175</X> 
-									<Y>57</Y> 
-									<Width>100</Width> 
+								<Commandbutton name='Add Recipe' Template='EQ2.Commandbutton'>
+									<X>175</X>
+									<Y>57</Y>
+									<Width>100</Width>
 									<Height>20</Height>
 									<Text>Add Recipe</Text>
 									<OnLeftClick>
 										if !${thisbuttondisabled}
 										{
-											thisbuttondisabled:Set[1]
-											UIElement[Craft Selection].FindUsableChild[Add Recipe,commandbutton]:Hide
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:AddRecipe]
+										thisbuttondisabled:Set[1]
+										UIElement[Craft Selection].FindUsableChild[Add Recipe,commandbutton]:Hide
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:AddRecipe]
 										}
 									</OnLeftClick>
 								</Commandbutton>
-								<Commandbutton name='Refresh List' Template='EQ2.Commandbutton'> 
-									<X>295</X> 
-									<Y>57</Y> 
-									<Width>100</Width> 
+								<Commandbutton name='Refresh List' Template='EQ2.Commandbutton'>
+									<X>295</X>
+									<Y>57</Y>
+									<Width>100</Width>
 									<Height>20</Height>
 									<Text>Refresh List</Text>
 									<OnLeftClick>
 										if !${thisbuttonrefresh}
 										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
+										thisbuttonrefresh:Set[1]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
-								</Commandbutton> 
+								</Commandbutton>
 								<Text Name='Filter Label'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>12</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>5%</X> 
-									<Y>95</Y> 
+									<X>5%</X>
+									<Y>95</Y>
 									<Width>95%</Width>
 									<Height>20</Height>
-									<Text>Filters:</Text> 
+									<Text>Filters:</Text>
 								</Text>
 								<Checkbox Name='Standard Filter' Template='EQ2.Commandcheckbox'>
 									<Font>
@@ -305,28 +304,28 @@
 									<OnLoad>
 										if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StandardFilter]}
 										{
-											UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
 										if ${UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StandardFilter]:Set[TRUE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StandardFilter]:Set[TRUE]
 										}
 										else
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StandardFilter]:Set[FALSE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StandardFilter]:Set[FALSE]
 										}
 
 										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
-										
+
 										if !${thisbuttonrefresh}
 										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
+										thisbuttonrefresh:Set[1]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
-								</checkbox>
+								</Checkbox>
 								<Checkbox Name='Imbued Filter' Template='EQ2.Commandcheckbox'>
 									<Font>
 										<Name>terminal</Name>
@@ -341,28 +340,28 @@
 									<OnLoad>
 										if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ImbuedFilter]}
 										{
-											UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
 										if ${UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ImbuedFilter]:Set[TRUE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ImbuedFilter]:Set[TRUE]
 										}
 										else
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ImbuedFilter]:Set[FALSE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ImbuedFilter]:Set[FALSE]
 										}
 
 										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
-										
+
 										if !${thisbuttonrefresh}
 										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
+										thisbuttonrefresh:Set[1]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
-								</checkbox>
+								</Checkbox>
 								<Checkbox Name='Rare Filter' Template='EQ2.Commandcheckbox'>
 									<Font>
 										<Name>terminal</Name>
@@ -377,28 +376,28 @@
 									<OnLoad>
 										if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RareFilter]}
 										{
-											UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
 										if ${UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RareFilter]:Set[TRUE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RareFilter]:Set[TRUE]
 										}
 										else
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RareFilter]:Set[FALSE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RareFilter]:Set[FALSE]
 										}
 
 										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
-										
+
 										if !${thisbuttonrefresh}
 										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
+										thisbuttonrefresh:Set[1]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
-								</checkbox>
+								</Checkbox>
 								<Checkbox Name='Secondary Tradeskill' Template='EQ2.Commandcheckbox'>
 									<Visible>0</Visible>
 									<Font>
@@ -413,42 +412,40 @@
 									<OnLoad>
 										if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[SecondaryTS]}
 										{
-											UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
+										UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
 										if ${UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[SecondaryTS]:Set[TRUE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[SecondaryTS]:Set[TRUE]
 										}
 										else
 										{
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[SecondaryTS]:Set[FALSE]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[SecondaryTS]:Set[FALSE]
 										}
 
 										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
-										
+
 										if !${thisbuttonrefresh}
 										{
-											thisbuttonrefresh:Set[1]
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
+										thisbuttonrefresh:Set[1]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
-								</checkbox>
-								
-								
+								</Checkbox>
 								<Text Name='Quality Level'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>12</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>5%</X> 
-									<Y>120</Y> 
-									<Width>150</Width> 
+									<X>5%</X>
+									<Y>120</Y>
+									<Width>150</Width>
 									<Height>20</Height>
 									<Color>FFDDBB00</Color>
-									<Text>Quality Level:</Text> 
+									<Text>Quality Level:</Text>
 								</Text>
 								<Commandcheckbox Name='Quality 1' Template='EQ2.Commandcheckbox'>
 									<Font>
@@ -509,14 +506,7 @@
 									<Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality1]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality2]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality3]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality4]:Set[TRUE]}</Command>
 									<CommandChecked />
 									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality4]}</Data>
-								</Commandcheckbox>						
-								
-								
-								
-								
-								
-								
-								
+								</Commandcheckbox>
 								<Text Name='Gauge Label'>
 									<Visible>0</Visible>
 									<Font>
@@ -524,11 +514,11 @@
 										<Size>12</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>30%</X> 
-									<Y>140</Y> 
+									<X>30%</X>
+									<Y>140</Y>
 									<Width>500</Width>
 									<Height>20</Height>
-									<Text>Currently Processing Recipe..</Text> 
+									<Text>Currently Processing Recipe..</Text>
 								</Text>
 								<VariableGauge Name='Process Recipe' Template='EQ2.VariableGauge'>
 									<Visible>0</Visible>
@@ -541,9 +531,9 @@
 								</VariableGauge>
 								<Commandbutton Name='Start Crafting' Template='EQ2.Commandbutton'>
 									<Visible>0</Visible>
-									<X>38</X> 
+									<X>38</X>
 									<Y>145</Y>
-									<Width>120</Width> 
+									<Width>120</Width>
 									<Height>20</Height>
 									<Text>Begin Crafting</Text>
 									<OnLeftClick>
@@ -552,9 +542,9 @@
 								</Commandbutton>
 								<Commandbutton Name='Resume Crafting' Template='EQ2.Commandbutton'>
 									<Visible>0</Visible>
-									<X>38</X> 
-									<Y>145</Y> 
-									<Width>120</Width> 
+									<X>38</X>
+									<Y>145</Y>
+									<Width>120</Width>
 									<Height>20</Height>
 									<Text>Resume Crafting</Text>
 									<OnLeftClick>
@@ -584,75 +574,75 @@
 										<Size>10</Size>
 										<Color>FF22FF22</Color>
 									</Font>
-									<X>25</X> 
-									<Y>170</Y> 
+									<X>25</X>
+									<Y>170</Y>
 									<Width>95%</Width>
 									<Height>20</Height>
-									<Text>Not all HARVESTS have been bought. Click Resume Crafting.</Text> 
+									<Text>Not all HARVESTS have been bought. Click Resume Crafting.</Text>
 								</Text>
 							</Tab>
 							<Tab Name='Advanced'>
 								<Combobox Name='Favourites List' Template='EQ2.Combobox'>
-									<X>100</X> 
-									<Y>10</Y> 
-									<Width>65%</Width> 
-									<Height>6%</Height> 
+									<X>100</X>
+									<Y>10</Y>
+									<Width>65%</Width>
+									<Height>23</Height>
 									<FullHeight>250%</FullHeight>
 									<ButtonWidth>20</ButtonWidth>
-								<!--	<Font>
+									<!--	<Font>
 										<Name>terminal</Name>
 										<Size>14</Size>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
 								</Combobox>
 								<Commandbutton Name='Load Recipe Queue' Template='EQ2.Commandbutton'>
-									<X>5</X> 
-									<Y>10</Y> 
-									<Width>85</Width> 
+									<X>5</X>
+									<Y>10</Y>
+									<Width>85</Width>
 									<Height>20</Height>
 									<Text>Load</Text>
 									<OnLeftClick>
 										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:LoadRecipeList]
 									</OnLeftClick>
 								</Commandbutton>
-								<Text Name='Remove Title'> 
-									<X>100</X> 
-									<Y>40</Y> 
-									<Width>350</Width> 
+								<Text Name='Remove Title'>
+									<X>100</X>
+									<Y>40</Y>
+									<Width>350</Width>
 									<Height>20</Height>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>Remove selected Recipes from the queue</Text> 
+									<Text>Remove selected Recipes from the queue</Text>
 								</Text>
 								<Commandbutton Name='Remove Button' Template='EQ2.Commandbutton'>
-									<X>5</X> 
-									<Y>35</Y> 
-									<Width>85</Width> 
+									<X>5</X>
+									<Y>35</Y>
+									<Width>85</Width>
 									<Height>20</Height>
 									<Text>Remove</Text>
 									<OnLeftClick>
 										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:RemoveRecipe]
 									</OnLeftClick>
 								</Commandbutton>
-								<Text Name='Add Level Title'> 
-									<X>100</X> 
-									<Y>65</Y> 
-									<Width>350</Width> 
+								<Text Name='Add Level Title'>
+									<X>100</X>
+									<Y>65</Y>
+									<Width>350</Width>
 									<Height>20</Height>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>Add ALL Level      Recipes X Qty:</Text> 
+									<Text>Add ALL Level      Recipes X Qty:</Text>
 								</Text>
 								<Textentry Name='Qty Level Value' Template='EQ2.Textentry'>
 									<X>300</X>
 									<Y>60</Y>
-									<Width>33</Width> 
+									<Width>33</Width>
 									<Height>20</Height>
 									<MaxLength>3</MaxLength>
 									<Color>FFDDBB00</Color>
@@ -660,44 +650,44 @@
 								<Textentry Name='Level Value' Template='EQ2.Textentry'>
 									<X>180</X>
 									<Y>60</Y>
-									<Width>30</Width> 
+									<Width>30</Width>
 									<Height>20</Height>
 									<MaxLength>3</MaxLength>
 									<Color>FFDDBB00</Color>
 								</Textentry>
 								<Commandbutton Name='Add Level' Template='EQ2.Commandbutton'>
-									<X>5</X> 
-									<Y>60</Y> 
-									<Width>85</Width> 
+									<X>5</X>
+									<Y>60</Y>
+									<Width>85</Width>
 									<Height>20</Height>
 									<Text>Add Level</Text>
 									<OnLeftClick>
 										if !${thisbuttonadd}
 										{
-											thisbuttonadd:Set[1]
-											UIElement[Craft Selection].FindUsableChild[Add Level,commandbutton]:Hide
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:LoadLevel]
+										thisbuttonadd:Set[1]
+										UIElement[Craft Selection].FindUsableChild[Add Level,commandbutton]:Hide
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:LoadLevel]
 										}
 									</OnLeftClick>
 								</Commandbutton>
 								<Commandbutton Name='Submit Button' Template='EQ2.Commandbutton'>
-									<X>25</X> 
-									<Y>100</Y> 
-									<Width>100</Width> 
+									<X>25</X>
+									<Y>100</Y>
+									<Width>100</Width>
 									<Height>30</Height>
 									<Text>Submit Queue</Text>
 									<OnLeftClick>
 										if !${thisbuttonsubmit}
 										{
-											thisbuttonsubmit:Set[1]
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[call ProcessQueue]
+										thisbuttonsubmit:Set[1]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[call ProcessQueue]
 										}
 									</OnLeftClick>
 								</Commandbutton>
 								<Commandbutton Name='Save Recipe Queue' Template='EQ2.Commandbutton'>
-									<X>155</X> 
-									<Y>100</Y> 
-									<Width>100</Width> 
+									<X>155</X>
+									<Y>100</Y>
+									<Width>100</Width>
 									<Height>30</Height>
 									<Text>Save Queue</Text>
 									<OnLeftClick>
@@ -705,16 +695,16 @@
 									</OnLeftClick>
 								</Commandbutton>
 								<Commandbutton Name='Clear Recipe Queue' Template='EQ2.Commandbutton'>
-									<X>280</X> 
-									<Y>100</Y> 
-									<Width>100</Width> 
+									<X>280</X>
+									<Y>100</Y>
+									<Width>100</Width>
 									<Height>30</Height>
 									<Text>Clear Queue</Text>
 									<OnLeftClick>
 										if !${thisbuttonlist}
 										{
-											thisbuttonlist:Set[1]
-											Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:ClearAllRecipes]
+										thisbuttonlist:Set[1]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:ClearAllRecipes]
 										}
 									</OnLeftClick>
 								</Commandbutton>
@@ -725,11 +715,11 @@
 										<Size>12</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>30%</X> 
-									<Y>98</Y> 
+									<X>30%</X>
+									<Y>98</Y>
 									<Width>500</Width>
 									<Height>20</Height>
-									<Text>Clearing the Recipe Queue..</Text> 
+									<Text>Clearing the Recipe Queue..</Text>
 								</Text>
 								<VariableGauge Name="List Recipe" Template='EQ2.VariableGauge'>
 									<Visible>0</Visible>
@@ -760,7 +750,7 @@
 								<Textentry Name='Power Regen' Template='EQ2.Textentry'>
 									<X>225</X>
 									<Y>20</Y>
-									<Width>35</Width> 
+									<Width>35</Width>
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
@@ -798,16 +788,16 @@
 								<Textentry Name='Camp Timer' Template='EQ2.Textentry'>
 									<X>300</X>
 									<Y>60</Y>
-									<Width>45</Width> 
+									<Width>45</Width>
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampTimer]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Camp out after a specified time has elapsed for a crafting session?]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampTimer]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-    								</OnChange>
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampTimer]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Camp out after a specified time has elapsed for a crafting session?]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampTimer]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+									</OnChange>
 								</Textentry>
 								<Commandcheckbox Name='Show All Lists' Template='EQ2.Commandcheckbox'>
 									<Font>
@@ -887,16 +877,16 @@
 								<Textentry Name='Max Buy Price' Template='EQ2.Textentry'>
 									<X>298</X>
 									<Y>157</Y>
-									<Width>45</Width> 
+									<Width>45</Width>
 									<Height>20</Height>
 									<MaxLength>5</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Specify the MAXIMUM price for purchasing Resources]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-    								</OnChange>							
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Specify the MAXIMUM price for purchasing Resources]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+									</OnChange>
 								</Textentry>
 								<Commandcheckbox name='Auto Transmute' Template='EQ2.Commandcheckbox'>
 									<Font>
@@ -949,38 +939,38 @@
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>10</X> 
-									<Y>260</Y> 
+									<X>10</X>
+									<Y>260</Y>
 									<Width>25%</Width>
 									<Height>20</Height>
-									<Text>Movement Keys:</Text> 
-								</Text>									
+									<Text>Movement Keys:</Text>
+								</Text>
 								<Text Name='AutoRunKeyLabel'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>20</X> 
-									<Y>280</Y> 
+									<X>20</X>
+									<Y>280</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
-									<Text>AutoRun:</Text> 
-								</Text>	
+									<Text>AutoRun:</Text>
+								</Text>
 								<Textentry Name='TEAutoRunKey' Template='EQ2.Textentry'>
 									<X>25%</X>
 									<Y>270</Y>
-									<Width>20%</Width> 
+									<Width>20%</Width>
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[AutoRun Key]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
-    								</OnChange>							
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[AutoRun Key]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+									</OnChange>
 								</Textentry>
 								<Text Name='BackupKeyLabel'>
 									<Font>
@@ -988,108 +978,318 @@
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>20</X> 
-									<Y>300</Y> 
+									<X>20</X>
+									<Y>300</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
-									<Text>Backward:</Text> 
-								</Text>	
+									<Text>Backward:</Text>
+								</Text>
 								<Textentry Name='TEBackwardKey' Template='EQ2.Textentry'>
 									<X>25%</X>
 									<Y>290</Y>
-									<Width>20%</Width> 
+									<Width>20%</Width>
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Backwards Key]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
-    								</OnChange>							
-								</Textentry>											
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Backwards Key]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+									</OnChange>
+								</Textentry>
 								<Text Name='StrafeRightKeyLabel'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>20</X> 
-									<Y>320</Y> 
+									<X>20</X>
+									<Y>320</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
-									<Text>Strafe Right:</Text> 
-								</Text>	
+									<Text>Strafe Right:</Text>
+								</Text>
 								<Textentry Name='TEStrafeRightKey' Template='EQ2.Textentry'>
 									<X>25%</X>
 									<Y>310</Y>
-									<Width>20%</Width> 
+									<Width>20%</Width>
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeRight Key]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
-    								</OnChange>							
-								</Textentry>	
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeRight Key]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+									</OnChange>
+								</Textentry>
 								<Text Name='StrafeLeftKeyLabel'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>20</X> 
-									<Y>340</Y> 
+									<X>20</X>
+									<Y>340</Y>
 									<Width>20%</Width>
 									<Height>20</Height>
-									<Text>Strafe Left:</Text> 
-								</Text>	
+									<Text>Strafe Left:</Text>
+								</Text>
 								<Textentry Name='TEStrafeLeftKey' Template='EQ2.Textentry'>
 									<X>25%</X>
 									<Y>330</Y>
-									<Width>20%</Width> 
+									<Width>20%</Width>
 									<Height>20</Height>
 									<MaxLength>20</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeLeft Key]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
-    								</OnChange>							
-								</Textentry>	
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeLeft Key]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+									</OnChange>
+								</Textentry>
+								<Frame Name='Additional Options Frame'>
+									<X>0</X>
+									<Y>400</Y>
+									<Height>200</Height>
+									<Width>100%</Width>
+									<Visible>1</Visible>
+									<Children>
+										<Text Name='Craft Delay Text'>
+											<X>20</X>
+											<Y>5</Y>
+											<Width>100%</Width>
+											<Height>20</Height>
+											<Font>
+												<Name>terminal</Name>
+												<Size>10</Size>
+												<Color>FFEBDEAA</Color>
+											</Font>
+											<Text>Time to wait between combines:       seconds</Text>
+										</Text>
+										<Textentry Name='Craft Delay' Template='EQ2.Textentry'>
+											<X>205</X>
+											<Y>0</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Color>FFDDBB00</Color>
+											<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftDelay]}]</OnLoad>
+											<OnChange>
+												LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Time to wait between combines?]:Set[${This.Text}]
+												Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftDelay]:Set[${This.Text}]
+												LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+											</OnChange>
+										</Textentry>
+										<Text Name='Path Precision Text'>
+											<X>20</X>
+											<Y>27</Y>
+											<Width>100%</Width>
+											<Height>20</Height>
+											<Font>
+												<Name>terminal</Name>
+												<Size>10</Size>
+												<Color>FFEBDEAA</Color>
+											</Font>
+											<Visible>FALSE</Visible>
+											<Text>Precision for running path:</Text>
+										</Text>
+										<Textentry Name='Path Precision' Template='EQ2.Textentry'>
+											<X>190</X>
+											<Y>22</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Visible>FALSE</Visible>
+											<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PathPrecision]}]</OnLoad>
+											<OnChange>
+												LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Pather Precision]:Set[${This.Text}]
+												Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PathPrecision]:Set[${This.Text}]
+												LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+											</OnChange>
+											<Color>FFDDBB00</Color>
+										</Textentry>
+										<Text Name='Threshold Text'>
+											<X>0</X>
+											<Y>45</Y>
+											<Width>100%</Width>
+											<Height>20</Height>
+											<Alignment>Center</Alignment>
+											<Font>
+												<Name>terminal</Name>
+												<Size>10</Size>
+												<Color>FFEBDEAA</Color>
+											</Font>
+											<Alignment>Center</Alignment>
+											<Text>-= Durability Threshold for Standard and Rare Recipes =-</Text>
+										</Text>
+										<Text Name='Quality 1 Text'>
+											<X>5%</X>
+											<Y>70</Y>
+											<Width>100%</Width>
+											<Height>20</Height>
+											<Font>
+												<Name>terminal</Name>
+												<Size>10</Size>
+												<Color>FFEBDEAA</Color>
+											</Font>
+											<Text>* Standard Quality 1:       %   * Rare Quality 1:       %</Text>
+										</Text>
+										<Textentry Name='Standard Quality1' Template='EQ2.Textentry'>
+											<X>153</X>
+											<Y>65</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Color>FFDDBB00</Color>
+										</Textentry>
+										<Textentry Name='Rare Quality1' Template='EQ2.Textentry'>
+											<X>320</X>
+											<Y>65</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Color>FFDDBB00</Color>
+										</Textentry>
+										<Text Name='Quality 2 Text'>
+											<X>5%</X>
+											<Y>100</Y>
+											<Width>100%</Width>
+											<Height>20</Height>
+											<Font>
+												<Name>terminal</Name>
+												<Size>10</Size>
+												<Color>FFEBDEAA</Color>
+											</Font>
+											<Text>* Standard Quality 2:       %   * Rare Quality 2:       %</Text>
+										</Text>
+										<Textentry Name='Standard Quality2' Template='EQ2.Textentry'>
+											<X>153</X>
+											<Y>95</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Color>FFDDBB00</Color>
+										</Textentry>
+										<Textentry Name='Rare Quality2' Template='EQ2.Textentry'>
+											<X>320</X>
+											<Y>95</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Color>FFDDBB00</Color>
+										</Textentry>
+										<Text Name='Quality 3 Text'>
+											<X>5%</X>
+											<Y>130</Y>
+											<Width>100%</Width>
+											<Height>20</Height>
+											<Font>
+												<Name>terminal</Name>
+												<Size>10</Size>
+												<Color>FFEBDEAA</Color>
+											</Font>
+											<!--	<Text>* Standard Quality 3:       %   * Rare Quality 3:       %</text> -->
+											<Text>  * Standard Power 3:       %     * Rare Power 3:       %</Text>
+										</Text>
+										<Textentry Name='Standard Quality3' Template='EQ2.Textentry'>
+											<X>153</X>
+											<Y>125</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Color>FFDDBB00</Color>
+										</Textentry>
+										<Textentry Name='Rare Quality3' Template='EQ2.Textentry'>
+											<X>320</X>
+											<Y>125</Y>
+											<Width>35</Width>
+											<Height>20</Height>
+											<MaxLength>4</MaxLength>
+											<Color>FFDDBB00</Color>
+										</Textentry>
+										<!--		<Text Name='Quality 4 Text'>
+								<X>5%</X>
+								<Y>160</Y>
+								<Width>100%</Width>
+								<Height>20</Height>
+								<Font>
+									<Name>terminal</Name>
+									<Size>10</Size>
+									<Color>FFEBDEAA</Color>
+								</Font>
+								<Text>* Standard Quality 4:       %   * Rare Quality 4:       %</Text>
+							</Text> -->
+										<!--	<Textentry Name='Standard Quality4' Template='EQ2.Textentry'>
+								<X>153</X>
+								<Y>155</Y>
+								<Width>35</Width> 
+								<Height>20</Height>
+								<MaxLength>4</MaxLength>
+								<Color>FFDDBB00</Color>
+							</Textentry> -->
+										<!--	<Textentry Name='Rare Quality4' Template='EQ2.Textentry'>
+								<X>320</X>
+								<Y>155</Y>
+								<Width>35</Width> 
+								<Height>20</Height>
+								<MaxLength>4</MaxLength>
+								<Color>FFDDBB00</Color>
+							</Textentry> -->
+										<Commandbutton Name='Save Threshold' Template='EQ2.Commandbutton'>
+											<X>80</X>
+											<Y>185</Y>
+											<Width>100</Width>
+											<Height>20</Height>
+											<Text>Save Threshold</Text>
+											<OnLeftClick>
+												Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:SaveThreshold]
+											</OnLeftClick>
+										</Commandbutton>
+										<Commandbutton Name='Reset Threshold' Template='EQ2.Commandbutton'>
+											<X>240</X>
+											<Y>185</Y>
+											<Width>100</Width>
+											<Height>20</Height>
+											<Text>Reset Threshold</Text>
+											<OnLeftClick>
+												Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:ResetThreshold]
+											</OnLeftClick>
+										</Commandbutton>
+									</Children>
+								</Frame>
 							</Tab>
-							<Tab Name='Writs'>					
+							<Tab Name='Writs'>
 								<Text Name='Writ Count Label'>
 									<Font>
 										<Name>terminal</Name>
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>10</X> 
-									<Y>20</Y> 
+									<X>10</X>
+									<Y>20</Y>
 									<Width>500</Width>
 									<Height>20</Height>
-									<Text>Writ Count:</Text> 
+									<Text>Writ Count:</Text>
 								</Text>
 								<Textentry Name='Writ Count' Template='EQ2.Textentry'>
 									<X>80</X>
 									<Y>10</Y>
-									<Width>35</Width> 
+									<Width>35</Width>
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-    								</OnChange>	
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+									</OnChange>
 								</Textentry>
 								<Text Name='Writ Qty Label'>
 									<Font>
@@ -1097,25 +1297,25 @@
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>135</X> 
-									<Y>20</Y> 
+									<X>135</X>
+									<Y>20</Y>
 									<Width>500</Width>
 									<Height>20</Height>
-									<Text>Quantity:</Text> 
+									<Text>Quantity:</Text>
 								</Text>
 								<Textentry Name='Writ Qty' Template='EQ2.Textentry'>
 									<X>190</X>
 									<Y>10</Y>
-									<Width>35</Width> 
+									<Width>35</Width>
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritQty]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Recipes per Writ?]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritQty]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-    								</OnChange>							
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritQty]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Recipes per Writ?]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritQty]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+									</OnChange>
 								</Textentry>
 								<Text Name='Tier Label'>
 									<Font>
@@ -1123,30 +1323,30 @@
 										<Size>10</Size>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<X>242</X> 
-									<Y>20</Y> 
+									<X>242</X>
+									<Y>20</Y>
 									<Width>500</Width>
 									<Height>20</Height>
-									<Text>Choice:</Text> 
+									<Text>Choice:</Text>
 								</Text>
 								<Textentry Name='Tier' Template='EQ2.Textentry'>
 									<X>285</X>
 									<Y>10</Y>
-									<Width>35</Width> 
+									<Width>35</Width>
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-                                    <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Tier]}]</OnLoad>
-                                    <OnChange>
-                                        LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Which Writ Tier to use?]:Set[${This.Text}]
-                                        Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Tier]:Set[${This.Text}]
-                                        LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-    								</OnChange>									
+									<OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Tier]}]</OnLoad>
+									<OnChange>
+										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Which Writ Tier to use?]:Set[${This.Text}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Tier]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+									</OnChange>
 								</Textentry>
 								<Commandbutton Name='Create Work Order' Template='EQ2.Commandbutton'>
-									<X>60</X> 
-									<Y>40</Y> 
-									<Width>120</Width> 
+									<X>60</X>
+									<Y>40</Y>
+									<Width>120</Width>
 									<Height>20</Height>
 									<Text>Create Work Orders</Text>
 									<OnLeftClick>
@@ -1154,9 +1354,9 @@
 									</OnLeftClick>
 								</Commandbutton>
 								<Commandbutton Name='Create Rush Order' Template='EQ2.Commandbutton'>
-									<X>240</X> 
-									<Y>40</Y> 
-									<Width>120</Width> 
+									<X>240</X>
+									<Y>40</Y>
+									<Width>120</Width>
 									<Height>20</Height>
 									<Text>Create Rush Orders</Text>
 									<OnLeftClick>
@@ -1232,19 +1432,19 @@
 								</Text>
 							</Tab>
 						</Tabs>
-					</TabControl>
+					</Tabcontrol>
 					<Frame Name='Crafting List Frame'>
 						<X>0</X>
-						<Y>400</Y>
-						<Height>250</Height>
-						<Width>500</Width>
+						<Y>180</Y>
+						<Height>470</Height>
+						<Width>100%</Width>
 						<Visible>0</Visible>
 						<Children>
 							<Button Name='Craft Title' Template='EQ2.Button'>
 								<X>0</X>
 								<Y>0</Y>
-								<Width>415</Width> 
-								<Height>30</Height> 
+								<Width>415</Width>
+								<Height>30</Height>
 								<TextColor>FFEECC00</TextColor>
 								<Text>Current list of Recipes in Queue</Text>
 							</Button>
@@ -1252,7 +1452,7 @@
 								<X>0</X>
 								<Y>25</Y>
 								<Width>415</Width>
-								<Height>250</Height>
+								<Height>r5</Height>
 								<Font>
 									<Name>terminal</Name>
 									<Size>12</Size>
@@ -1261,215 +1461,6 @@
 								<SelectMultiple>1</SelectMultiple>
 								<Sort>Text</Sort>
 							</Listbox>
-						</Children>
-					</Frame>
-					<Frame Name='Additional Options Frame'>
-						<X>0</X>
-						<Y>450</Y>
-						<Height>200</Height>
-						<Width>500</Width>
-						<Visible>0</Visible>
-						<Children>
-							<Text Name='Craft Delay Text'>
-								<X>20</X>
-								<Y>5</Y>
-								<Width>100%</Width>
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>Time to wait between combines:       seconds</Text>
-							</Text>
-							<Textentry Name='Craft Delay' Template='EQ2.Textentry'>
-								<X>205</X>
-								<Y>0</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-                                <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftDelay]}]</OnLoad>
-                                <OnChange>
-                                    LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Time to wait between combines?]:Set[${This.Text}]
-                                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftDelay]:Set[${This.Text}]
-                                    LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-								</OnChange>							
-							</Textentry>
-                            <Text Name='Path Precision Text'>
-                                <X>20</X>
-                                <Y>27</Y>
-                                <Width>100%</Width>
-                                <Height>20</Height>
-                                <Font>
-                                    <Name>terminal</Name>
-                                    <Size>10</Size>
-                                    <Color>FFEBDEAA</Color>
-                                </Font>
-                                <Visible>FALSE</Visible>
-                                <Text>Precision for running path:</Text>
-                            </Text>
-                            <Textentry Name='Path Precision' Template='EQ2.Textentry'>
-                                <X>190</X>
-                                <Y>22</Y>
-                                <Width>35</Width>
-                                <Height>20</Height>
-                                <MaxLength>4</MaxLength>
-                                <Visible>FALSE</Visible>
-                                <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PathPrecision]}]</OnLoad>
-                                <OnChange>
-                                    LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Pather Precision]:Set[${This.Text}]
-                                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PathPrecision]:Set[${This.Text}]
-                                    LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-								</OnChange>
-                                <Color>FFDDBB00</Color>
-                            </Textentry>
-                            <Text Name='Threshold Text'>
-								<X>0</X>
-								<Y>45</Y>
-								<Width>80%</Width>
-								<Height>20</Height>
-								<Alignment>Center</Alignment>
-								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>-= Durability Threshold for Standard and Rare Recipes =-</Text>
-							</Text>
-							<Text Name='Quality 1 Text'>
-								<X>5%</X>
-								<Y>70</Y>
-								<Width>100%</Width>
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>* Standard Quality 1:       %   * Rare Quality 1:       %</Text>
-							</Text>
-							<Textentry Name='Standard Quality1' Template='EQ2.Textentry'>
-								<X>153</X>
-								<Y>65</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry>
-							<Textentry Name='Rare Quality1' Template='EQ2.Textentry'>
-								<X>320</X>
-								<Y>65</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry>
-							<Text Name='Quality 2 Text'>
-								<X>5%</X>
-								<Y>100</Y>
-								<Width>100%</Width>
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>* Standard Quality 2:       %   * Rare Quality 2:       %</Text>
-							</Text>
-							<Textentry Name='Standard Quality2' Template='EQ2.Textentry'>
-								<X>153</X>
-								<Y>95</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry>
-							<Textentry Name='Rare Quality2' Template='EQ2.Textentry'>
-								<X>320</X>
-								<Y>95</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry>
-							<Text Name='Quality 3 Text'>
-								<X>5%</X>
-								<Y>130</Y>
-								<Width>100%</Width>
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-							<!--	<Text>* Standard Quality 3:       %   * Rare Quality 3:       %</text> -->
-								<Text>  * Standard Power 3:       %     * Rare Power 3:       %</Text>
-							</Text>
-							<Textentry Name='Standard Quality3' Template='EQ2.Textentry'>
-								<X>153</X>
-								<Y>125</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry>
-							<Textentry Name='Rare Quality3' Template='EQ2.Textentry'>
-								<X>320</X>
-								<Y>125</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry>
-					<!--		<Text Name='Quality 4 Text'>
-								<X>5%</X>
-								<Y>160</Y>
-								<Width>100%</Width>
-								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
-									<Color>FFEBDEAA</Color>
-								</Font>
-								<Text>* Standard Quality 4:       %   * Rare Quality 4:       %</Text>
-							</Text> -->
-						<!--	<Textentry Name='Standard Quality4' Template='EQ2.Textentry'>
-								<X>153</X>
-								<Y>155</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry> -->
-						<!--	<Textentry Name='Rare Quality4' Template='EQ2.Textentry'>
-								<X>320</X>
-								<Y>155</Y>
-								<Width>35</Width> 
-								<Height>20</Height>
-								<MaxLength>4</MaxLength>
-								<Color>FFDDBB00</Color>
-							</Textentry> -->
-							<Commandbutton Name='Save Threshold' Template='EQ2.Commandbutton'>
-								<X>80</X> 
-								<Y>185</Y> 
-								<Width>100</Width> 
-								<Height>20</Height>
-								<Text>Save Threshold</Text>
-								<OnLeftClick>
-									Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:SaveThreshold]
-								</OnLeftClick>
-							</Commandbutton>
-							<Commandbutton Name='Reset Threshold' Template='EQ2.Commandbutton'>
-								<X>240</X> 
-								<Y>185</Y> 
-								<Width>100</Width> 
-								<Height>20</Height>
-								<Text>Reset Threshold</Text>
-								<OnLeftClick>
-									Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:ResetThreshold]
-								</OnLeftClick>
-							</Commandbutton>
 						</Children>
 					</Frame>
 					<Frame Name='Harvest Frame'>
@@ -1482,8 +1473,8 @@
 							<Button Name='Harvest Title' Template='EQ2.Button'>
 								<X>0</X>
 								<Y>0</Y>
-								<Width>83%</Width> 
-								<Height>4%</Height> 
+								<Width>83%</Width>
+								<Height>20</Height>
 								<TextColor>FFEECC00</TextColor>
 								<Text>RAW HARVESTED RESOURCES</Text>
 							</Button>
@@ -1503,8 +1494,8 @@
 							<Button Name='Vendor Bought Title' Template='EQ2.Button'>
 								<X>0</X>
 								<Y>77</Y>
-								<Width>83%</Width> 
-								<Height>4%</Height> 
+								<Width>83%</Width>
+								<Height>20</Height>
 								<TextColor>FFEECC00</TextColor>
 								<Text>VENDOR BOUGHT COMPONENTS</Text>
 							</Button>
@@ -1524,8 +1515,8 @@
 							<Button Name='Fuel Title' Template='EQ2.Button'>
 								<X>0</X>
 								<Y>154</Y>
-								<Width>83%</Width> 
-								<Height>20</Height> 
+								<Width>83%</Width>
+								<Height>20</Height>
 								<TextColor>FFEECC00</TextColor>
 								<Text>FUEL COMPONENTS</Text>
 							</Button>
@@ -1545,8 +1536,8 @@
 							<Button Name='Crafted Title' Template='EQ2.Button'>
 								<X>0</X>
 								<Y>234</Y>
-								<Width>83%</Width> 
-								<Height>20</Height> 
+								<Width>83%</Width>
+								<Height>20</Height>
 								<TextColor>FFEECC00</TextColor>
 								<Text>CRAFTED COMPONENTS</Text>
 							</Button>
@@ -1577,8 +1568,8 @@
 					<Button Name='Process Title' Template='EQ2.Button'>
 						<X>20</X>
 						<Y>55</Y>
-						<Width>386</Width> 
-						<Height>30</Height> 
+						<Width>386</Width>
+						<Height>30</Height>
 						<TextColor>FFEECC00</TextColor>
 						<Text>Current Crafting Progress List</Text>
 					</Button>
@@ -1599,9 +1590,9 @@
 			</Frame>
 			<Commandbutton Name='Quit Button' Template='EQ2.Commandbutton'>
 				<visible>0</visible>
-				<X>65</X> 
-				<Y>640</Y> 
-				<Width>130</Width> 
+				<X>65</X>
+				<Y>640</Y>
+				<Width>130</Width>
 				<Height>30</Height>
 				<Text>Quit</Text>
 				<OnLeftClick>
@@ -1612,25 +1603,25 @@
 			</Commandbutton>
 			<Commandbutton Name='Pause Button' Template='EQ2.Commandbutton'>
 				<visible>0</visible>
-				<X>235</X> 
-				<Y>640</Y> 
-				<Width>130</Width> 
+				<X>235</X>
+				<Y>640</Y>
+				<Width>130</Width>
 				<Height>30</Height>
 				<Text>Pause</Text>
 				<OnLeftClick>
 					if !${thisbuttonpaused}
 					{
-						thisbuttonpaused:Set[1]
-						UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Resume] 
+					thisbuttonpaused:Set[1]
+					UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Resume]
 					}
 					else
 					{
-						thisbuttonpaused:Set[0]
-						UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Pause] 
+					thisbuttonpaused:Set[0]
+					UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Pause]
 					}
 				</OnLeftClick>
 			</Commandbutton>
-			<checkbox Name='Camp Now' Template='EQ2.Commandcheckbox'>
+			<Checkbox Name='Camp Now' Template='EQ2.Commandcheckbox'>
 				<visible>0</visible>
 				<Font>
 					<Name>terminal</Name>
@@ -1645,21 +1636,21 @@
 				<OnLoad>
 					if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]}
 					{
-						UIElement[Camp Now@Craft Selection]:SetChecked
+					UIElement[Camp Now@Craft Selection]:SetChecked
 					}
 				</OnLoad>
 				<OnLeftClick>
 					if ${UIElement[Camp Now@Craft Selection].Checked}
 					{
-						Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[TRUE]
+					Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[TRUE]
 					}
 					else
 					{
-						Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[FALSE]
+					Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[FALSE]
 					}
 					Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
 				</OnLeftClick>
-			</checkbox>
+			</Checkbox>
 		</Children>
 	</Window>
 </ISUI>
