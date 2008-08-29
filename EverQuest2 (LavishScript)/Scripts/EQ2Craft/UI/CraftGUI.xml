@@ -32,14 +32,14 @@
 
 	<!-- Main LGUI -->
 	<Window Name='Craft Selection' template='My.window'>
-		<X>20%</X>
-		<Y>10%</Y>
+		<X>100</X>
+		<Y>100</Y>
 		<Width>433</Width>
 		<Height>720</Height>
+		<StorePosition>1</StorePosition>
 		<Client Template='EQ2.Window.Client'>
 			<Y>20</Y>
 		</Client>
-		<StorePosition>1</StorePosition>
 		<Title>Automatic Crafting Bot</Title>
 		<TitleBar Template='EQ2.Window.TitleBar'>
 			<X>0</X>
