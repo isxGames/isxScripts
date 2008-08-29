@@ -99,36 +99,36 @@
 						</FrameTexture>
 						<TabHeight>27</TabHeight>
 						<TabBorder>3</TabBorder>
-						<Height>r5</Height>
+						<Height>r50</Height>
 						<Width>100%</Width>
 						<OnLeftClick>
 							if ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Advanced]}
 							{
-								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Show:SetZOrder[movetop]
+							UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
+							UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Show:SetZOrder[alwaysontop]:SetZOrder[movetop]
 							}
 							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Options]}
 							{
-								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
+							UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
+							UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
 							}
 							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Writs]}
 							{
-								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
+							UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
+							UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
 							}
 							elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[About]}
 							{
-								UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide
-								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
+							UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
+							UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
 							}
 							else
 							{
-								UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide
-								if ${thisharvestframe}
-								{
-									UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Show:SetZOrder[movetop]
-								}
+							UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
+							if ${thisharvestframe}
+							{
+							UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Show:SetZOrder[alwaysontop]:SetZOrder[movetop]
+							}
 							}
 						</OnLeftClick>
 						<Tabs>
