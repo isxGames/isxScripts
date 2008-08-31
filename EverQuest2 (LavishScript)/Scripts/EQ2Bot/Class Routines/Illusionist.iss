@@ -1022,43 +1022,43 @@ function Combat_Routine(int xAction)
         	}
             if ${Me.ToActor.Power} > 50
             {
-            	if ${spellsused} < 1
+            	if ${spellsused} < 1 && !${MezzMode}
             	    call CastSomething                
                 return CombatComplete    
             }  
             if ${UltraDPSMode} && ${Actor[${KillTarget}].IsSolo}
             {
-            	if ${spellsused} < 1
+            	if ${spellsused} < 1 && !${MezzMode}
             	    call CastSomething                
                 return CombatComplete    
             }  
             if ${DPSMode} && ${Actor[${KillTarget}].IsSolo}
             {
-            	if ${spellsused} < 1
+            	if ${spellsused} < 1 && !${MezzMode}
             	    call CastSomething                
                 return CombatComplete    
             }  
             if ${Actor[${KillTarget}].IsSolo} && ${Me.Group} > 1
             {
-            	if ${spellsused} < 1
+            	if ${spellsused} < 1 && !${MezzMode}
             	    call CastSomething                
                 return CombatComplete    
             }  
             elseif ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 70
             {
-            	if ${spellsused} < 1
+            	if ${spellsused} < 1 && !${MezzMode}
             	    call CastSomething                
                 return CombatComplete    
             }  
             elseif ${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} < 50
             {
-            	if ${spellsused} < 1
+            	if ${spellsused} < 1 && !${MezzMode}
             	    call CastSomething                
                 return CombatComplete    
             }  
             elseif ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health} < 15
             {
-            	if ${spellsused} < 1
+            	if ${spellsused} < 1 && !${MezzMode}
             	    call CastSomething                
                 return CombatComplete    
             }              
@@ -1075,13 +1075,16 @@ function Combat_Routine(int xAction)
         	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    		
         	    spellsused:Inc
         	}
-        	if (${spellsused} < 1)
+        	if (${spellsused} < 1) && !${MezzMode}
         	    call CastSomething
 			return CombatComplete
 	}
 	
-	if (${spellsused} < 1)
-	    call CastSomething	
+	if !${MezzMode}
+	{
+    	if (${spellsused} < 1) 
+    	    call CastSomething	
+	}
 	;echo "DEBUG:: Exiting Switch (${Action[${xAction}]}) (spellsused: ${spellsused})"
 }
 
