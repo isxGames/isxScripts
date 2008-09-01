@@ -736,6 +736,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 {
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
+	;; - If this function is altered, then the corresponding function needs to be altered in: Illusionist.iss
 	;;;;;;;
 
 	variable bool fndspell
@@ -876,9 +877,9 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 
 	if !${castwhilemoving}
 	{
-		;if spells are being interupted do to movement
+		;if spells are being interupted do to movement  (This may yet need tweaking - Amadeus)
 		;increase the wait below slightly. Default=2
-		wait 5
+		wait 2
 	}
 
 	do
@@ -2709,7 +2710,7 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-	variable int tcount=2
+    variable int tcount=2
 	variable float X
 	variable float Z
 
@@ -2803,6 +2804,13 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 
 atom(script) LootWDw(string ID)
 {
+    if ${PauseBot} || !${StartBot}
+        return
+    
+    echo "DEBUG:: LootWDw(${ID}) -- (LastWindow: ${LastWindow})"
+    echo "DEBUG:: LootWindow.Type: ${LootWindow[${ID}].Type}"
+    echo "DEBUG:: LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"
+    
 	declare i int local
 	variable int tmpcnt=1
 	variable int deccnt=0
@@ -2811,7 +2819,7 @@ atom(script) LootWDw(string ID)
 	{
 			switch ${LootWindow[${ID}].Type}
 			{
-					case Free For All
+				case Free For All
 				case Lottery
 					LootWindow[${ID}]:DeclineLotto
 								return
@@ -4717,6 +4725,11 @@ atom ExcludePOI()
 
 atom(script) EQ2_onChoiceWindowAppeared()
 {
+    if ${PauseBot} || !${StartBot}
+        return    
+    
+    echo "DEBUG:: EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"
+    
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{
 		ChoiceWindow:DoChoice1
