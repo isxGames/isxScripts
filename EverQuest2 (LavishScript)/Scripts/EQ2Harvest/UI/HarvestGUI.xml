@@ -35,8 +35,8 @@
 		<FadeDelay>0</FadeDelay>
 		<FadeDuration>200</FadeDuration>
 		<FadeAlpha>0</FadeAlpha>
-		<X>5%</X>
-		<Y>20%</Y>
+		<X>5</X>
+		<Y>10</Y>
 		<Width>430</Width>
 		<Height>420</Height>
 		<Client Template='EQ2.Window.Client'>
