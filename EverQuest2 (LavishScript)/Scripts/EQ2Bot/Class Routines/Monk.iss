@@ -443,13 +443,13 @@ function CheckHeals()
 	}
 
 	;Cancel Feign if Health is better
-	if ${Me.Maintained[${SpellType[368]}](exists)} && ${Me.ToActor.Health}>60
+	if ${Me.Effect[${SpellType[368]}](exists)} && ${Me.ToActor.Health}>60
 	{
-		Me.Maintained[${SpellType[368]}]:Cancel
+		Me.Effect[${SpellType[368]}]:Cancel
 	}
 
 	;Tsunami
-	if ${Me.ToActor.Health}<25 && ${DefensiveMode}
+	if ${Me.ToActor.Health}<25
 	{
 		call CastSpellRange 300 0 0 0 0 0 0 1
 	}
@@ -493,7 +493,7 @@ function CheckHeals()
 	if ${Me.ToActor.Health}<50
 	{
 		call CastSpellRange 369 0 0 0 ${Me.ToActor.ID} 0 0 1
-
+		call CastSpellRange 300 0 0 0 ${Me.ToActor.ID} 0 0 1
 	}
 
 	call UseCrystallizedSpirit 60
