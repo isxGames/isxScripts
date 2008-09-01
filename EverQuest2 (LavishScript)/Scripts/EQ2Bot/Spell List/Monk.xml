@@ -64,7 +64,7 @@
 		<Setting Name="29,155">Jolting Hand</Setting>
 		<Setting Name="30,296">Stance: Sweeping Crane</Setting>
 		<Setting Name="30,371">Instill Doubt</Setting>
-            	<Setting Name="30,190">Winter\'s Talon</Setting>
+		<Setting Name="30,190">Winter\'s Talon</Setting>
 		<Setting Name="31,140">Stumbling Boar</Setting>
 		<Setting Name="31,160">Silent Threat</Setting>
 		<Setting Name="32,26">Everburning Flame</Setting>
@@ -143,6 +143,7 @@
 		<Setting Name="68,156">Spirit Like Mountain</Setting>
 		<Setting Name="69,153">Assailing Jaguar</Setting>
 		<Setting Name="69,367">Will of the Heavens</Setting>
+		<Setting Name="70,368">Last Breath</Setting>
 		<Setting Name="70,260">Silencing Palm</Setting>
 		<Setting Name="70,29">Storm Advance</Setting>
 		<Setting Name="71,155">Lightning Palm</Setting>
