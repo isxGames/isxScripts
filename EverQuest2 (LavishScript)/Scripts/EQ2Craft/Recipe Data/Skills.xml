@@ -43,7 +43,7 @@
 	</Set>
 	<Set Name="Light Armoring">
 		<Setting Name="1 1">Stitching</Setting>
-		<Setting Name="1 2">Nimble</Setting>
+		<Setting Name="1 2">id,3309938673</Setting>
 		<Setting Name="1 3">Knots</Setting>
 		<Setting Name="2 1">Hem</Setting>
 		<Setting Name="2 2">Dexterous</Setting>
