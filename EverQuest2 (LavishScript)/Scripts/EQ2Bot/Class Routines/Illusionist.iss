@@ -236,6 +236,39 @@ function Buff_Routine(int xAction)
 		ExecuteAtom AutoFollowTank
 		wait 5
 	}
+	
+    ;; Prismatic Proc
+    ;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
+    if !${MainTank} || ${AutoMelee}
+    {
+        if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
+        {
+            if ${Actor[${MainTankPC},exactname].InCombatMode}
+            {
+            	if ${Me.Ability[${SpellType[72]}].IsReady}
+            	{
+        			BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+        			if !${BuffTarget.Equal["No one"]}
+        			{
+        			    if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+            			{
+            			    echo "DEBUG:: Casting ''Prismatic'"
+            			    call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
+            			    return
+            			}
+            			else
+            			    echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+                    }      
+                    else
+                    {
+                        echo "DEBUG:: Casting ''Prismatic'"
+                        call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 
+                        return
+                    }
+            	}
+        	}
+        }
+    } 	
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -493,16 +526,13 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
     
     ; Fast Nuke (beam) ...cast every time it is ready!
     if (${Me.Ability[${SpellType[60]}].IsReady})
-    {
 	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	
-	    spellsused:Inc
-	}
     
     ;; Prismatic Proc
     ;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
-    if !${MainTank}
+    if !${MainTank} || ${AutoMelee}
     {
-        if (${Me.Group} > 1 || ${Me.Raid} > 1)
+        if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
         {
             if ${Actor[${KillTarget}].Health} > 2
             {
@@ -513,23 +543,21 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
         			{
         			    ;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
             			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-            			{
             			    call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
-            			    spellsused:Inc
-            			}
             			else
             			    echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
                     }      
                     else
-                    {
                         call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 
-                        spellsused:Inc
-                    }
             	}
         	}
         }
     } 
     
+    ; Fast casting DoT
+    if (${Me.Ability[${SpellType[80]}].IsReady})
+	    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1    	
+     
     call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained}
     return ${Return}
 }
@@ -854,14 +882,14 @@ function Combat_Routine(int xAction)
 	    ;; Straight Nukes
         case Silence
         	;; This spell is just too slow to cast and typically does about 40 dps over an entire fight ..it is just not worth it.
-        	if !${DPSMode} && !${UltraDPSMode}
-        	{
+        	;if !${DPSMode} && !${UltraDPSMode}
+        	;{
                 if (${Me.Ability[${SpellType[260]}].IsReady})
                 {
     	            call _CastSpellRange 260 0 0 0 ${KillTarget} 0 0 0 1    
     	            spellsused:Inc
     	        }
-	        }
+	        ;}
     	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
     	        return CombatComplete		            		              	            	            
 			break        
@@ -1079,13 +1107,63 @@ function CastSomething()
     ;echo "DEBUG:: ---"
     ;echo "DEBUG:: CastSomething() called."
  
-	; fast-casting encounter stun
-    if (${Me.Ability[${SpellType[191]}].IsReady})
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;; Things we should be checking EVERY time
+    if (${Me.Ability[${SpellType[60]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Encounter Stun'"
-	    call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1        
+        echo "DEBUG:: Casting 'Fast Nuke'"
+	    call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1    	
 	    return
-	} 
+	}
+    ;; Prismatic Proc
+    ;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
+    if !${MainTank} || ${AutoMelee}
+    {
+        if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
+        {
+            if ${Actor[${KillTarget}].Health} > 2
+            {
+            	if ${Me.Ability[${SpellType[72]}].IsReady}
+            	{
+        			BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+        			if !${BuffTarget.Equal["No one"]}
+        			{
+        			    if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+            			{
+            			    echo "DEBUG:: Casting ''Prismatic'"
+            			    call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
+            			    return
+            			}
+            			else
+            			    echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+                    }      
+                    else
+                    {
+                        echo "DEBUG:: Casting ''Prismatic'"
+                        call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 
+                        return
+                    }
+            	}
+        	}
+        }
+    } 
+    if (${Me.Ability[${SpellType[80]}].IsReady})
+    {
+        echo "DEBUG:: Casting 'Fast Casting DoT'"
+	    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1    	
+	    return
+	}
+    if (${Me.Ability[${SpellType[70]}].IsReady})
+    {
+        echo "DEBUG:: Casting 'Mind DoT'"
+	    call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1    	
+	    return
+	}	
+	;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+
+
     ;  contruct
     if (${Me.Ability[${SpellType[51]}].IsReady})
     {
@@ -1093,25 +1171,43 @@ function CastSomething()
 	    call _CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
+	;; AA Melee Ability (very fast casting -- low dmg
+	if ${Me.Ability[Spellblade's Counter](exists)} && ${AutoMelee}
+	{
+	    if (${Me.Ability[Spellblade's Counter].IsReady})
+	    {
+	        echo "DEBUG:: Casting 'Melee AA Ability'"
+	        Actor[${KillTarget}]:DoTarget
+	        call CastSpell "Spellblade's Counter" 395 0
+		    return
+		}
+	}
+	; fast-casting encounter stun
+    if (${Me.Ability[${SpellType[191]}].IsReady})
+    {
+        echo "DEBUG:: Casting 'Encounter Stun'"
+	    call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1        
+	    return
+	} 
 	; melee debuff
     if (${Me.Ability[${SpellType[50]}].IsReady})
     {
         echo "DEBUG:: Casting 'Melee Debuff'"
-	    call _CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1            
+	    call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
 	; extract mana
     if (${Me.Ability[${SpellType[309]}].IsReady})
     {
         echo "DEBUG:: Casting 'Mana Recovery'"
-	    call _CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1            
+	    call CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}	
 	; root
     if (${Me.Ability[${SpellType[230]}].IsReady})
     {
         echo "DEBUG:: Casting 'Root'"
-	    call _CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1            
+	    call CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
 }
