@@ -107,17 +107,17 @@ function Buff_Init()
 	PreAction[6]:Set[ShieldAlly]
 	PreSpellRange[6,1]:Set[383]
 
-	PreAction[8]:Set[ManaCure]
-	PreSpellRange[8,1]:Set[394]
+	PreAction[7]:Set[ManaCure]
+	PreSpellRange[7,1]:Set[394]
 
-	PreAction[9]:Set[WaterBreathing]
-	PreSpellRange[9,1]:Set[22]
+	PreAction[8]:Set[WaterBreathing]
+	PreSpellRange[8,1]:Set[22]
 
-	PreAction[10]:Set[BuffCourage]
-	PreSpellRange[10,1]:Set[20]
+	PreAction[9]:Set[BuffCourage]
+	PreSpellRange[9,1]:Set[20]
 
-	PreAction[11]:Set[BuffSymbol]
-	PreSpellRange[11,1]:Set[21]
+	PreAction[10]:Set[BuffSymbol]
+	PreSpellRange[10,1]:Set[21]
 }
 
 function Combat_Init()
@@ -344,7 +344,7 @@ function Buff_Routine(int xAction)
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
-		case BuffWaterBreathing
+		case WaterBreathing
 			if ${BuffWaterBreathing}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			else
