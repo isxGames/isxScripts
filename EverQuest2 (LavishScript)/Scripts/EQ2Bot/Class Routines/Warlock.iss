@@ -631,6 +631,10 @@ function Post_Combat_Routine(int xAction)
 {
 	TellTank:Set[FALSE]
 
+	if ${Me.Maintained[${SpellType[387]}](exists)}
+		Me.Maintained[${SpellType[387]}]:Cancel
+
+
 	switch ${PostAction[${xAction}]}
 	{
         case AutoFollowTank

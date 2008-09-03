@@ -222,6 +222,10 @@ function Buff_Routine(int xAction)
 	{
 		case Avoidance_Target
 			BuffTarget:Set[${UIElement[cbBuffAvoidanceGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+
+			if ${BuffTarget.Equal["None"]}
+				break
+
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[1,:]}].ID}
@@ -269,6 +273,10 @@ function Buff_Routine(int xAction)
 			break
 		case Sentinel_Target
 			BuffTarget:Set[${UIElement[cbBuffSentinelGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+
+			if ${BuffTarget.Equal["None"]}
+				break
+
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -281,6 +289,10 @@ function Buff_Routine(int xAction)
 			break
 		case Deagro_Target
 			BuffTarget:Set[${UIElement[cbBuffDeagroGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+
+			if ${BuffTarget.Equal["None"]}
+				break
+
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel

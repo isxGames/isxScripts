@@ -32,9 +32,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+  declare ClassFileVersion int script 20080408
+  ;;;;
 
 	declare OffenseMode bool script 1
 	declare DebuffMode bool script 0
@@ -55,6 +55,8 @@ function Class_Declaration()
 	DebuffPoisonShort:Set[enfeebling poison]
 	UtilityPoisonShort:Set[ignorant bliss]
 
+	NoEQ2BotStance:Set[1]
+
 	call EQ2BotLib_Init
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
@@ -74,7 +76,6 @@ function Class_Shutdown()
 
 function Buff_Init()
 {
-
 	PreAction[1]:Set[Street_Smarts]
 	PreSpellRange[1,1]:Set[25]
 
@@ -134,7 +135,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case Offensive_Stance
-			if ${OffenseMode} || !${TankMode}
+			if (${OffenseMode} || !${TankMode}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -156,7 +157,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case Deffensive_Stance
-			if ${TankMode} && !${OffenseMode}
+			if (${TankMode} && !${OffenseMode}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}

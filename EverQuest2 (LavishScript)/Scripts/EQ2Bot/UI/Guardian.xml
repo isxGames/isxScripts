@@ -240,144 +240,6 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OffHand,"${This.SelectedItem.Text}"]:Save
 		</OnSelect>
 	</combobox>
-	<Text Name='lblAxe' Template='EQ2.text'>
-		<X>10</X>
-		<Y>190</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Axe:</Text>
-		<AutoTooltip>Weapon to use during Axe required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbAxe' Template='EQ2.Combobox'>
-		<x>100</x>
-		<y>190</y>
-		<width>30%</width>
-		<height>20</height>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Axe]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Great Axe]}
-				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Axe]} || ${Me.Equipment[${Counter}].SubType.Equal[Great Axe]}
-				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem["${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Axe]}"]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Axe]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[WeaponAxe]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Axe,"${This.SelectedItem.Text}"]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblSword' Template='EQ2.text'>
-		<X>10</X>
-		<Y>210</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Sword:</Text>
-		<AutoTooltip>Weapon to use during Sword required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbSword' Template='EQ2.Combobox'>
-		<x>100</x>
-		<y>210</y>
-		<width>30%</width>
-		<height>20</height>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Sword]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Great Sword]}
-				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Sword]} || ${Me.Equipment[${Counter}].SubType.Equal[Great Sword]}
-				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem["${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Sword]}"]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Sword]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[WeaponSword]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Sword,"${This.SelectedItem.Text}"]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblHammer' Template='EQ2.text'>
-		<X>10</X>
-		<Y>230</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Hammer:</Text>
-		<AutoTooltip>Weapon to use during Hammer required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbHammer' Template='EQ2.Combobox'>
-		<x>100</x>
-		<y>230</y>
-		<width>30%</width>
-		<height>20</height>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Great Hammer]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Mace]}
-				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Great Hammer]} || ${Me.Equipment[${Counter}].SubType.Equal[Mace]}
-				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem["${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Hammer]}"]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Hammer]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[WeaponHammer]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Hammer,"${This.SelectedItem.Text}"]:Save
-		</OnSelect>
-	</combobox>
 	<Text Name='lblTowerShield' Template='EQ2.text'>
 		<X>10</X>
 		<Y>250</Y>
@@ -400,7 +262,7 @@
 			Me:CreateCustomInventoryArray[nonbankonly]
 			do
 			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Tower]}
+				if ${Me.CustomInventory[${Counter}].Type.Equal[Shield]}
 				{
 					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
 				}
@@ -409,7 +271,7 @@
 			Counter:Set[1]
 			do
 			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Tower]}
+				if ${Me.Equipment[${Counter}].Type.Equal[Shield]}
 				{
 					This:AddItem["${Me.Equipment[${Counter}].Name}"]
 				}
@@ -423,53 +285,6 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[TowerShield]:Set[${This.SelectedItem.Text}]
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[TowerShield,"${This.SelectedItem.Text}"]:Save
-		</OnSelect>
-	</combobox>
-	<Text Name='lblSpear' Template='EQ2.text'>
-		<X>10</X>
-		<Y>270</Y>
-		<Width>20%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>AA Spear:</Text>
-		<AutoTooltip>Weapon to use during Spear required AA skills</AutoTooltip>
-	</Text>
-	<combobox name='cbSpear' Template='EQ2.Combobox'>
-		<x>100</x>
-		<y>270</y>
-		<width>30%</width>
-		<height>20</height>
-		<AutoTooltip>Weapon to use during Spear required AA skills</AutoTooltip>
-		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
-			{
-				if (${Me.CustomInventory[${Counter}].SubType.Equal[Great Spear]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Spear]})
-				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
-			do
-			{
-				if (${Me.Equipment[${Counter}].SubType.Equal[Great Spear]} || ${Me.Equipment[${Counter}].SubType.Equal[Spear]})
-				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
-				}
-			}
-			while ${Counter:Inc}&lt;=22
-		</OnLeftClick>
-		<OnLoad>
-			This:AddItem["${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Spear]}"]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Spear]}]:Select
-		</OnLoad>
-		<OnSelect>
-			Script[EQ2Bot].Variable[WeaponSpear]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Spear,"${This.SelectedItem.Text}"]:Save
 		</OnSelect>
 	</combobox>
 	<Text Name='lblBuffAvoidanceGroupMember' Template='EQ2.text'>
@@ -499,11 +314,7 @@
 
 				This:ClearItems
 				tmpvar:Set[1]
-				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
-				if ${Me.ToActor.Pet(exists)}
-				{
-					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-				}
+				This:AddItem[None]
 				do
 				{
 					if ${Me.Grouped}
@@ -550,11 +361,7 @@
 
 				This:ClearItems
 				tmpvar:Set[1]
-				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
-				if ${Me.ToActor.Pet(exists)}
-				{
-					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-				}
+				This:AddItem[None]
 				do
 				{
 					if ${Me.Grouped}
@@ -601,11 +408,7 @@
 
 				This:ClearItems
 				tmpvar:Set[1]
-				This:AddItem[${Me.Name}:${Me.ToActor.Type}]
-				if ${Me.ToActor.Pet(exists)}
-				{
-					This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-				}
+				This:AddItem[None]
 				do
 				{
 					if ${Me.Grouped}

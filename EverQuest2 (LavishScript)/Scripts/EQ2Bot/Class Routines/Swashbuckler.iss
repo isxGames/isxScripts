@@ -24,16 +24,16 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;    
-    
+  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+  declare ClassFileVersion int script 20080408
+  ;;;;
+
 	declare OffenseMode bool script 1
 	declare AoEMode bool script 0
 	declare SnareMode bool script 0
-    declare TankMode bool script 0
-    declare AnnounceMode bool script 0
-    declare BuffLunge bool script 0
+  declare TankMode bool script 0
+  declare AnnounceMode bool script 0
+  declare BuffLunge bool script 0
 	declare MaintainPoison bool script 1
 	declare DebuffPoisonShort string script
 	declare DammagePoisonShort string script
@@ -55,6 +55,8 @@ function Class_Declaration()
 		UtilityPoisonShort:Set[ignorant bliss]
 	}
 	DebuffPoisonShort:Set[enfeebling poison]
+
+	NoEQ2BotStance:Set[1]
 
 	call EQ2BotLib_Init
 
@@ -204,7 +206,7 @@ function Buff_Routine(int xAction)
 	    ExecuteAtom AutoFollowTank
 		wait 5
 	}
-	
+
 	switch ${PreAction[${xAction}]}
 	{
 		case Foot_Work
@@ -213,7 +215,7 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case Offensive_Stance
-			if ${OffenseMode} || !${TankMode}
+			if (${OffenseMode} || !${TankMode}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -235,7 +237,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case Deffensive_Stance
-			if ${TankMode} && !${OffenseMode}
+			if (${TankMode} && !${OffenseMode}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -385,8 +387,6 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-
-
 	switch ${Action[${xAction}]}
 	{
 		case Melee_Attack1
@@ -529,13 +529,13 @@ function Post_Combat_Routine(int xAction)
 	{
 		Me.Maintained[Stealth]:Cancel
 	}
-	
+
 	switch ${PostAction[${xAction}]}
 	{
 		default
 			return PostCombatRoutineComplete
 			break
-	}	
+	}
 }
 
 function Have_Aggro()
