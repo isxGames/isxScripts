@@ -29,6 +29,7 @@
 		<Setting Name="unearthed ore">unearthed ore</Setting>
 		<Setting Name="uncovered stone">uncovered stone</Setting>
 		<Setting Name="excavated ore">excavated ore</Setting>
+		<Setting Name="pyroclastic cluster">pyroclastic cluster</Setting>
 	</Set>
 	<Set Name="2">
 		<Setting Name="dark stone">dark stone</Setting>
