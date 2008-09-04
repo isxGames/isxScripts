@@ -523,9 +523,6 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
 	declare BuffTarget string local
-	
-	if ${MezzMode}
-	    call Mezmerise_Targets
     
     ; Fast Nuke (beam) ...cast every time it is ready!
     if (${Me.Ability[${SpellType[60]}].IsReady})
@@ -714,6 +711,9 @@ function Combat_Routine(int xAction)
     {
 	    call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1   
 	    spellsused:Inc
+	    
+	    if ${MezzMode}
+	        call Mezmerise_Targets
 	     	 
 	    if !${Me.Maintained[${SpellType[70]}](exists)}   
 	    {
@@ -744,6 +744,9 @@ function Combat_Routine(int xAction)
 	        call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1   
 	        spellsused:Inc
 	    }
+	    
+	    if ${MezzMode}
+	        call Mezmerise_Targets
 	        
 	    if !${Me.Maintained[${SpellType[388]}](exists)}   
 	    {
@@ -761,6 +764,10 @@ function Combat_Routine(int xAction)
 	    if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 	        return CombatComplete	 		    	     
 	}
+	
+	if ${MezzMode}
+	    call Mezmerise_Targets
+	
 	    
     if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
 	{
@@ -887,6 +894,10 @@ function Combat_Routine(int xAction)
     
     if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
         return CombatComplete		    
+
+	if ${MezzMode}
+	    call Mezmerise_Targets
+
 
     ;echo "DEBUG:: Entering Switch (${Action[${xAction}]})"
 	switch ${Action[${xAction}]}
