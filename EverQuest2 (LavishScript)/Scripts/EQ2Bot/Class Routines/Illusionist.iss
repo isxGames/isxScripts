@@ -523,6 +523,9 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
 	declare BuffTarget string local
+	
+	if ${MezzMode}
+	    call Mezmerise_Targets
     
     ; Fast Nuke (beam) ...cast every time it is ready!
     if (${Me.Ability[${SpellType[60]}].IsReady})
@@ -657,6 +660,15 @@ function Combat_Routine(int xAction)
     	
     ;; Add back later...(TODO)
     ;call CheckSKFD
+    
+    
+    if ${AutoMelee}
+    {
+        if ${Actor[${KillTarget}].Distance} > 3
+        {
+            call CheckPosition 1 0
+        }
+    }    
     
 	;; Illuminate
 	if ${UseIlluminate}
@@ -1250,11 +1262,8 @@ function Have_Aggro()
     }
 
 	;Phase
-	if (!${Me.Grouped})
-    	call CastSpellRange 361
-
-	if ${Actor[${aggroid}].Distance} < 5
-		call CastSpellRange 357
+	if (!${Me.Grouped} && ${Actor[${aggroid}].Distance} < 5
+    	call CastSpellRange 357
 }
 
 function Lost_Aggro()
@@ -1377,7 +1386,7 @@ function Mezmerise_Targets()
 	declare aggrogrp bool local FALSE
 
 
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:CreateCustomActorArray[npc,byDist,15]
 
 	do
 	{
