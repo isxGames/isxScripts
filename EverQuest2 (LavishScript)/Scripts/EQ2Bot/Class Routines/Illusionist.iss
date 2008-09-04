@@ -1393,6 +1393,8 @@ function Mezmerise_Targets()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 			;if its the kill target skip it
+			if ${CustomActor[${tcount}].ID} == ${KillTarget}
+			    continue
 			if ${Actor[exactname,${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
 				continue
 
