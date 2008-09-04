@@ -1397,7 +1397,7 @@ function Mezmerise_Targets()
 	declare aggrogrp bool local FALSE
 
 
-	EQ2:CreateCustomActorArray[npc,byDist,15]
+	EQ2:CreateCustomActorArray[byDist,15,npc]
 
 	do
 	{
