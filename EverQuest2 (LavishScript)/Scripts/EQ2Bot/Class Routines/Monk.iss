@@ -25,6 +25,7 @@ function Class_Declaration()
 	declare CraneTwirlMode bool Script FALSE
 	declare StanceType int script
 	declare BuffProtectGroupMember string script
+	declare BuffAltruismMember string script
 	declare RangedAttackMode bool script TRUE
 	declare ThrownAttacksMode bool script TRUE
 
@@ -40,6 +41,7 @@ function Class_Declaration()
 	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
 	CraneTwirlMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Crane Twirl,FALSE]}]
 	BuffProtectGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProtectGroupMember,]}]
+	BuffAltruismMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAltruismMember,]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
 	ThrownAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Thrown Attack Spells,FALSE]}]
 
@@ -73,6 +75,9 @@ function Buff_Init()
 
 	PreAction[6]:Set[AACraneTwirl]
 	PreSpellRange[6,1]:Set[394]
+
+	PreAction[7]:Set[Altruism_Target]
+	PreSpellRange[7,1]:Set[386]
 }
 
 function Combat_Init()
@@ -207,6 +212,13 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break
+		case Altruism_Target
+			BuffTarget:Set[${UIElement[cbBuffAltruismMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.GroupCount}>1
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			}
+			break
 		case AACraneTwirl
 			if ${CraneTwirlMode}
 			{
@@ -218,7 +230,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 }
@@ -350,7 +362,7 @@ function Combat_Routine(int xAction)
 				}
 				break
 			case Default
-				xAction:Set[40]
+				return CombatComplete
 				break
 		}
 	}
