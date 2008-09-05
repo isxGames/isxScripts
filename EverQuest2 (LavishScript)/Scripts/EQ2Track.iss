@@ -18,7 +18,11 @@
 
 	variable bool Tracking
 	variable string itemInfo
-
+	variable bool TrackAggro
+	variable string ReverseFilter
+	variable int LevelMin
+	variable int LevelMax
+	
 ;-------------------------------------
 
 
@@ -40,23 +44,23 @@ objectdef TrackHelper
 {
 	member:bool CheckFilter(int ID)
 	{
-		if ${UIElement[TrackAggro@EQ2 Track].Checked} && !${Actor[id,${ID}].IsAggro}
+		if ${TrackAggro} && !${Actor[${ID}].IsAggro}
 			return FALSE
-		if ${UIElement[TrackMinLevel@EQ2 Track].Text.Equal[""]} || ${UIElement[TrackMaxLevel@EQ2 Track].Text.Equal[""]}
+		if ${LevelMin} == -1 || ${LevelMax} == -1
 			return FALSE
-		Level:Set[${Actor[id,${ID}].Level}]
-		if (${Level} < ${UIElement[TrackMinLevel@EQ2 Track].Text}) || (${Level} > ${UIElement[TrackMaxLevel@EQ2 Track].Text})
+		Level:Set[${Actor[${ID}].Level}]
+		if ${Level} < ${LevelMin} || ${Level} > ${LevelMax}
 			return FALSE
-		if ${UIElement[TrackFilter@EQ2 Track].Text.Equal[""]}
+		if ${ReverseFilter.Equal[""]}
 			return TRUE
-		if ${itemInfo.Find[${UIElement[TrackFilter@EQ2 Track].Text}]}
+		if ${itemInfo.Find[${ReverseFilter}]}
 			return TRUE
 		return FALSE
 	}
 	variable int Level
 	method VerifyList()
 	{
-		if !${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}](exists)}
+		if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)} && !${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}](exists)}
 		{
 			eq2execute /waypoint_cancel
 			UIElement[TrackItems@EQ2 Track].SelectedItem:Remove
@@ -118,6 +122,25 @@ function RefreshWaypointTimer()
 atom(script) RefreshList()
 {
 	variable int tcount
+	TrackAggro:Set[${UIElement[TrackAggro@EQ2 Track].Checked}]
+	if ${UIElement[TrackMinLevel@EQ2 Track].Text.Equal[""]}
+	{
+		LevelMin:Set[-1]
+	}
+	else
+	{
+		LevelMin:Set[${UIElement[TrackMinLevel@EQ2 Track].Text}]
+	}
+	if ${UIElement[TrackMaxLevel@EQ2 Track].Text.Equal[""]}
+	{
+		LevelMax:Set[-1]
+	}
+	else
+	{
+		LevelMax:Set[${UIElement[TrackMaxLevel@EQ2 Track].Text}]
+	}
+	ReverseFilter:Set[${UIElement[TrackFilter@EQ2 Track].Text}]
+	
 	UIElement[TrackItems@EQ2 Track]:ClearItems
 	EQ2:CreateCustomActorArray
 	tcount:Set[${EQ2.CustomActorArraySize}]
@@ -132,7 +155,7 @@ atom(script) RefreshList()
 
 atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string ActorType)
 {
-	itemInfo:Set[${Level} (${ActorType}) ${Name} ${Actor[id,${ID}].Class} ${Actor[id,${ID}].Distance}]
+	itemInfo:Set[${Level} (${ActorType}) ${Name} ${Actor[${ID}].Class} ${Actor[${ID}].Distance}]
 
 	; check our filters.
 	if ${Tracker.CheckFilter[${ID}]}
