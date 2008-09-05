@@ -26,11 +26,9 @@ function main(string MA)
 
 	do
 	{
-		
+		call CheckDebuffs
 		call CheckPower
 		ProcessTriggers()
-		call CheckDebuffs
-
 		waitframe
 	}
 	while 1
@@ -38,12 +36,10 @@ function main(string MA)
 
 function CheckPower()
 {
-
-
 	if ${Me.ToActor.Power}>60
 	{
 		Me.Ability[Sprint]:Use
-		wait 2
+		wait 5
 
 		Me.Maintained[Sprint]:Cancel
 		return 1
@@ -73,6 +69,14 @@ function CheckDebuffs()
 	if ${Me.Effect[detrimental,Sacrifice](exists)}
 	{
 		call CancelMaintained
+
+		while ${Me.Effect[detrimental,Sacrifice](exists)}
+		{
+			waitframe
+			if ${Me.ToActor.Power}>60
+				press 1
+		}
+
 		return 1
 	}
 	return 0
@@ -150,7 +154,7 @@ function RefreshPower()
 
 function CastPause()
 {
-		wait 0.3
+		wait 2
 		while ${Me.CastingSpell}
 		{
 			waitframe

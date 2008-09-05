@@ -553,20 +553,9 @@ function RefreshPower()
 {
 	declare tempvar int local
 	declare MemberLowestPower int local
-	;Spiritise Censer
-	if !${Swapping} && ${Me.Inventory[Spirtise Censer](exists)}
-	{
-		OriginalItem:Set[${Me.Equipment[Secondary].Name}]
-		ItemToBeEquipped:Set[Spirtise Censer]
-		call Swap
-		Me.Equipment[Spirtise Censer]:Use
-	}
 
-	;Conjuror Shard
-	if ${Me.ToActor.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
-	{
-		Me.Inventory[${ShardType}]:Use
-	}
+
+	call shard 40
 
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50 && !${Me.InCombat}
@@ -575,7 +564,7 @@ function RefreshPower()
 	}
 
 	;Transference Line in Combat
-	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<10
+	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<30
 	{
 		call CastSpellRange 309
 	}
@@ -598,17 +587,17 @@ function RefreshPower()
 
 	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 	{
-		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ID}
 	}
 
 	;Channel if group member is below 20 and we are in combat
-	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<20 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<20 && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 	{
 		call CastSpellRange 310
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power}<15 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+	if ${Actor[${MainTankPC}].Power}<25 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 	{
 		call CastSpellRange 354
 	}
@@ -814,7 +803,7 @@ function DoAmnesia()
 				if ${Me.Ability[${SpellType[376]}].IsReady}
 					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
 				elseif ${Me.Ability[${SpellType[384]}].IsReady}
-					call CastSpellRange 382 0 0 0 ${KillTarget}
+					call CastSpellRange 384 0 0 0 ${KillTarget}
 				else
 					call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
 				return
