@@ -1,8 +1,9 @@
 
 ;-----------------------------------------------------------------------------------------------
-; EQ2Track.iss Version 1.0.2a Updated: 05/11/08 by Equidis
+; EQ2Track.iss Version 2.0 Updated: 09/05/08 by Valerian
 ;-----------------------------------------------------------------------------------------------
-; EQ2 Track Created by Equidis
+; EQ2 Track originally created by Equidis
+; Rewritten by Valerian
 ;-----------------------------------------------------------------------------------------------
 
 ; ** Additional credits to Karye & Blazer: Some of the UI & Elements & Coding
@@ -32,20 +33,19 @@ function zoneWait()
 			waitframe
 		}
 		while ${EQ2.Zoning}
-
 	}
 }
 
-objectdef Filters
+objectdef TrackHelper
 {
-	member:bool Check(int ID)
+	member:bool CheckFilter(int ID)
 	{
 		if ${UIElement[TrackAggro@EQ2 Track].Checked} && !${Actor[id,${ID}].IsAggro}
 			return FALSE
 		if ${UIElement[TrackMinLevel@EQ2 Track].Text.Equal[""]} || ${UIElement[TrackMaxLevel@EQ2 Track].Text.Equal[""]}
 			return FALSE
 		Level:Set[${Actor[id,${ID}].Level}]
-		if ${Level}!=0 && ((${Level} < ${UIElement[TrackMinLevel@EQ2 Track].Text}) || (${Level} > ${UIElement[TrackMaxLevel@EQ2 Track].Text}))
+		if (${Level} < ${UIElement[TrackMinLevel@EQ2 Track].Text}) || (${Level} > ${UIElement[TrackMaxLevel@EQ2 Track].Text})
 			return FALSE
 		if ${UIElement[TrackFilter@EQ2 Track].Text.Equal[""]}
 			return TRUE
@@ -54,8 +54,26 @@ objectdef Filters
 		return FALSE
 	}
 	variable int Level
+	method VerifyList()
+	{
+		if !${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}](exists)}
+		{
+			eq2execute /waypoint_cancel
+			UIElement[TrackItems@EQ2 Track].SelectedItem:Remove
+		}
+		variable int tcount
+		tcount:Set[${UIElement[TrackItems@EQ2 Track].Items}]
+		do
+		{
+			if !${Actor[${UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}].Value}](exists)}
+			{
+				UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
+			}
+		}
+		while ${tcount:Dec[1]} > 0
+	}
 }
-variable Filters Filter
+variable TrackHelper Tracker
 
 function main()
 {
@@ -64,12 +82,15 @@ function main()
 	ui -reload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -reload -skin eq2skin "${LavishScript.HomeDirectory}/Scripts/EQ2Track/UI/EQ2Track.xml"
 	RefreshList
+	call CheckListTimer
+	call RefreshWaypointTimer
 	
 	do
 	{
 		if ${QueuedCommands}
 			ExecuteQueued
 		waitframe
+		
 		call zoneWait
 		if ${filtersChanged}
 		{
@@ -81,6 +102,19 @@ function main()
 
 }
 
+function CheckListTimer()
+{
+	Tracker:VerifyList
+	timedcommand 20 Script[${Script.Filename}]:QueueCommand[call CheckListTimer]
+}
+
+function RefreshWaypointTimer()
+{
+	if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)}
+		eq2execute /waypoint ${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}].Loc}
+	timedcommand 80 Script[${Script.Filename}]:QueueCommand[call RefreshWaypointTimer]
+}
+
 atom(script) RefreshList()
 {
 	variable int tcount
@@ -90,7 +124,7 @@ atom(script) RefreshList()
 	do
 	{
 		itemInfo:Set[${CustomActor[${tcount}].Level} (${CustomActor[${tcount}].Type}) ${CustomActor[${tcount}].Name} ${CustomActor[${tcount}].Class} ${CustomActor[${tcount}].Distance}]
-		if ${Filter.Check[${CustomActor[${tcount}].ID}]}
+		if ${Tracker.CheckFilter[${CustomActor[${tcount}].ID}]}
 			UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${CustomActor[${tcount}].ID}]
 	}
 	while ${tcount:Dec[1]} > 0
@@ -101,7 +135,7 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Actor
 	itemInfo:Set[${Level} (${ActorType}) ${Name} ${Actor[id,${ID}].Class} ${Actor[id,${ID}].Distance}]
 
 	; check our filters.
-	if ${Filter.Check[${ID}]}
+	if ${Tracker.CheckFilter[${ID}]}
 		UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${ID}]
 	; if this actor matches our filters, add it to the tracking window
 	
