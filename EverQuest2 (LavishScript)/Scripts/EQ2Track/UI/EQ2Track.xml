@@ -20,7 +20,7 @@
 	</template>
 	<template name='My.window'>
 		<Border>1</Border>
-		<Resizable>1</Resizable>
+		<Resizable MinHeight='190' MinWidth='225'>1</Resizable>
 		<CloseButton />
 		<MinimizeButton />
 		<TitleBar template='My.window.TitleBar' />
@@ -44,10 +44,10 @@
 		</OnLeftClick>
 		<Children>
 
-    <checkbox Name='TrackAggro' Template='EQ2.checkbox'>
-    	<X>5%</X>
+  <checkbox Name='TrackAggro' Template='EQ2.checkbox'>
+    	<X>20</X>
     	<Y>20</Y>
-    	<Width>20%</Width>
+    	<Width>100</Width>
     	<Height>20</Height>
     	<Text>Track aggro mobs only</Text>
     	<OnLoad>
@@ -59,30 +59,26 @@
     	<OnLeftClick>
     		if ${UIElement[TrackAggro@EQ2 Track].Checked}
     		{
-    			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Hide
-    			Script[EQ2Bot].Variable[TrackAggro]:Set[TRUE]
     			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,TRUE]:Save
     			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
     		}
     		else
     		{
-    			UIElement[EQ2 Bot].FindUsableChild[TrackAggro Frame,frame]:Show
-    			Script[EQ2Bot].Variable[TrackAggro]:Set[FALSE]
     			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,FALSE]:Save
     			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
     		}
     	</OnLeftClick>
     </checkbox>
 	<Text Name='lblTrackFilter' Template='EQ2.text'>
-		<X>5%</X>
+		<X>20</X>
 		<Y>50</Y>
-		<Width>25%</Width>
+		<Width>100</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
 		<Text>Reverse Filter:</Text>
-	</Text>    
+	</Text>
 	<textentry name='TrackFilter'>
-		<X>25%</X>
+		<X>105</X>
 		<Y>50</Y>
 		<Width>100</Width>
 		<Height>15</Height>
@@ -100,18 +96,16 @@
 			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
 		</OnKeyUp>
 	</textentry>
-	
-	
 	<Text Name='lblLvlRangeFilter' Template='EQ2.text'>
-		<X>5%</X>
+		<X>20</X>
 		<Y>80</Y>
-		<Width>25%</Width>
+		<Width>100</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
 		<Text>Level Range:</Text>
 	</Text>	
 	<textentry name='TrackMinLevel'>
-		<X>25%</X>
+		<X>100</X>
 		<Y>80</Y>
 		<Width>25</Width>
 		<Height>15</Height>
@@ -130,7 +124,7 @@
 		</OnKeyUp>
 	</textentry>
 	<Text Name='lblLvlRangeFilter2' Template='EQ2.text'>
-		<X>32%</X>
+		<X>130</X>
 		<Y>80</Y>
 		<Width>25%</Width>
 		<Height>20</Height>
@@ -138,7 +132,7 @@
 		<Text>-</Text>
 	</Text>		
 	<textentry name='TrackMaxLevel'>
-		<X>35%</X>
+		<X>140</X>
 		<Y>80</Y>
 		<Width>25</Width>
 		<Height>15</Height>
@@ -156,20 +150,20 @@
 			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
 		</OnKeyUp>
 	</textentry>
-	
-	
-	
 	<listbox name='TrackItems'>
-		<X>5%</X>
+		<X>20</X>
 		<Y>110</Y>
-		<Width>90%</Width>
-		<Height>82%</Height>
-		<SelectMultiple>1</SelectMultiple>
+		<Width>r40</Width>
+		<Height>r130</Height>
+		<SelectMultiple>0</SelectMultiple>
 		<Texture filename='Listbox.png'/>
 		<Items>
 			<Item Value='1'>Tracking</Item>
 			<Item Value='2'>Please Wait</Item>
 		</Items>
+		<OnLeftClick>
+      eq2execute /waypoint ${Actor[id,${This.SelectedItem.Value}]:DoTarget.Loc}
+    </OnLeftClick>
 	</listbox>
 
 		</Children>
