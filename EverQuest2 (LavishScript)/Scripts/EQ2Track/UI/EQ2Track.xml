@@ -46,7 +46,7 @@
 
   <checkbox Name='TrackAggro' Template='EQ2.checkbox'>
     	<X>20</X>
-    	<Y>20</Y>
+    	<Y>10</Y>
     	<Width>100</Width>
     	<Height>20</Height>
     	<Text>Track aggro mobs only</Text>
@@ -71,7 +71,7 @@
     </checkbox>
 	<Text Name='lblTrackFilter' Template='EQ2.text'>
 		<X>20</X>
-		<Y>50</Y>
+		<Y>35</Y>
 		<Width>100</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -79,7 +79,7 @@
 	</Text>
 	<textentry name='TrackFilter'>
 		<X>105</X>
-		<Y>50</Y>
+		<Y>35</Y>
 		<Width>100</Width>
 		<Height>15</Height>
 		<OnLoad>
@@ -98,7 +98,7 @@
 	</textentry>
 	<Text Name='lblLvlRangeFilter' Template='EQ2.text'>
 		<X>20</X>
-		<Y>80</Y>
+		<Y>60</Y>
 		<Width>100</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -106,7 +106,7 @@
 	</Text>	
 	<textentry name='TrackMinLevel'>
 		<X>100</X>
-		<Y>80</Y>
+		<Y>60</Y>
 		<Width>25</Width>
 		<Height>15</Height>
 		<OnLoad>
@@ -125,7 +125,7 @@
 	</textentry>
 	<Text Name='lblLvlRangeFilter2' Template='EQ2.text'>
 		<X>130</X>
-		<Y>80</Y>
+		<Y>60</Y>
 		<Width>25%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -133,7 +133,7 @@
 	</Text>		
 	<textentry name='TrackMaxLevel'>
 		<X>140</X>
-		<Y>80</Y>
+		<Y>60</Y>
 		<Width>25</Width>
 		<Height>15</Height>
 		<OnLoad>
@@ -146,10 +146,45 @@
 		UIElement[TrackMaxLevel@EQ2 Track]:SetText[${TrackMaxLevelText}]
 		</OnLoad>
 		<OnKeyUp>
-			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackMaxLevel,${UIElement[TrackMaxLevel@EQ2 Track].Text}]:Save
-			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
-		</OnKeyUp>
+      SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackMaxLevel,${UIElement[TrackMaxLevel@EQ2 Track].Text}]:Save
+      Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+    </OnKeyUp>
 	</textentry>
+      <Text Name='TrackSortLabel'>
+        <X>20</X>
+        <Y>80</Y>
+        <Width>50</Width>
+        <Height>20</Height>
+        <Text>Sort by:</Text>
+      </Text>
+      <combobox name='TrackSort'>
+        <X>70</X>
+        <Y>80</Y>
+        <Width>100</Width>
+        <Height>20</Height>
+        <FullHeight>120</FullHeight>
+        <ButtonWidth>20</ButtonWidth>
+        <Items>
+          <Item Value='1'>Distance</Item>
+          <Item Value='2'>Name</Item>
+          <Item Value='3'>Level</Item>
+          <Item Value='4'>Type</Item>
+          <Item Value='5'>None</Item>
+        </Items>
+        <OnLoad>
+          variable int TrackSortInt
+          TrackSortInt:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[TrackSort]}]
+          if ${TrackSortInt} == 0
+          {
+          TrackSortInt:Set[1]
+          }
+          UIElement[TrackSort@EQ2 Track]:SetSelection[${TrackSortInt}]
+        </OnLoad>
+        <OnSelect>
+          SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackSort,${This.Selection}]:Save
+          Script[EQ2Track].Variable[SortChanged]:Set[TRUE]
+        </OnSelect>
+      </combobox>
 	<listbox name='TrackItems'>
 		<X>20</X>
 		<Y>110</Y>
@@ -162,7 +197,7 @@
 			<Item Value='2'>Please Wait</Item>
 		</Items>
 		<OnLeftClick>
-      eq2execute /waypoint ${Actor[id,${This.SelectedItem.Value}]:DoTarget.Loc}
+      eq2execute /waypoint ${Actor[${This.SelectedItem.Value}]:DoTarget.Loc}
     </OnLeftClick>
 	</listbox>
 
