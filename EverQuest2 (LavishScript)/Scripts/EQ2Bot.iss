@@ -189,6 +189,7 @@ variable(script) bool IsMoving
 variable bool UseCustomRoutines=FALSE
 variable int gRtnCtr=1
 variable string GainedXPString
+variable string LastQueuedAbility
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -221,10 +222,6 @@ variable int CurrentPOI=1
 ; 4 = Auto Hunting - Pull nearby Mobs within a Maximum Range
 ;===========================================================
 variable int PathType
-;AutoFollow Variables
-;variable bool AutoFollowMode=FALSE
-;variable bool AutoFollowingMA=FALSE
-;variable string AutoFollowee
 
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
 #include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
@@ -736,7 +733,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 {
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
-	;; - If this function is altered, then the corresponding function needs to be altered in: Illusionist.iss
+	;; - If the parameters of this function are altered, then the corresponding function needs to be altered in: Illusionist.iss
 	;;;;;;;
 
 	variable bool fndspell
@@ -853,6 +850,8 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 
 function CastSpell(string spell, int spellid, bool castwhilemoving)
 {
+    variable int Counter
+    
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpell()"
@@ -863,7 +862,39 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	if ${Me.IsMoving} && !${castwhilemoving}
 		return
 
-	CurrentAction:Set[Casting '${spell}']
+    if ${Me.Ability[${LastQueuedAbility}].IsQueued}
+    {
+        Counter:Set[0]
+        CurrentAction:Set[-Waiting for ${LastQueuedAbility} to cast (${Me.Ability[${LastQueuedAbility}].TimeUntilReady.Precision[2]}s)]
+        do
+        {
+            waitframe
+            Counter:Inc
+            if ${Counter} > 500
+                break            
+        }
+        while ${Me.Ability[${LastQueuedAbility}].IsQueued}
+    }
+    Counter:Set[0]
+    if ${Me.Ability[${spell}].IsQueued}
+    {
+        CurrentAction:Set[--Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
+        do
+        {
+            waitframe
+            Counter:Inc
+            if ${Counter} > 500
+                break         
+        }
+        while ${Me.Ability[${spell}].IsQueued}
+    }
+		
+		
+    wait 2
+    if !${Me.Ability[${spell}].IsReady}
+        return
+        
+	CurrentAction:Set[Queueing '${spell}']
 
 	;; Disallow some abilities that are named the same as crafting abilities.
 	;; 1. Agitate (CraftingID: 601887089 -- Fury Spell ID: 1287322154)
@@ -871,23 +902,28 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 		Me.Ability[id,1287322154]:Use
 	else
 		Me.Ability[${spell}]:Use
-
-	; need a slight weight here for Me.CastingSpell to initiate
-	wait 1
-
-	if !${castwhilemoving}
-	{
-		;if spells are being interupted do to movement  (This may yet need tweaking - Amadeus)
-		;increase the wait below slightly. Default=2
-		wait 2
-	}
-
-	do
-	{
-		waitframe
-	}
-	while ${Me.CastingSpell}
-
+		
+	
+	; reducing this too much will cause problems ... 4 seems to be a sweet spot
+	wait 4
+	;wait 20 ${Me.Ability[${spell}].IsQueued}
+	
+	Counter:Set[0]
+    if ${Me.Ability[${spell}].IsQueued}
+    {
+        CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
+        do
+        {
+            waitframe
+            Counter:Inc
+            if ${Counter} > 500
+                break
+        }
+        while ${Me.Ability[${spell}].IsQueued}
+    }	
+    LastQueuedAbility:Set[${spell}]
+    CurrentAction:Set[Casting '${spell}']
+    
 	return SUCCESS
 }
 
@@ -1022,6 +1058,9 @@ function Combat()
 					}
 					while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${MARange}
 
+					if !${Me.AutoAttackOn} && ${AutoMelee}
+						EQ2Execute /toggleautoattack
+
 					call Combat_Routine ${gRtnCtr}
 					if ${Return.Equal[CombatComplete]}
 					{
@@ -1030,29 +1069,26 @@ function Combat()
 						gRtnCtr:Set[40]
 					}
 
-					if !${Me.AutoAttackOn} && ${AutoMelee}
-						EQ2Execute /toggleautoattack
-
 					if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 					{
 						EQ2Execute /target_none
 						break
 					}
 
-					if ${AutoMelee} && !${MainTank}
+					if ${AutoMelee} && !${MainTank} && !${NoAutoMovement}
 					{
 						;check valid rear position
-						if ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<6
+						if ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<5
 						{
 							;we're behind and in range
 						}
 						;check right flank
-						elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<6
+						elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<5
 						{
 							;we're right flank and in range
 						}
 						;check left flank
-						elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<6
+						elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<5
 						{
 							;we're left flank and in range
 						}
@@ -1068,17 +1104,24 @@ function Combat()
 						}
 						else
 						{
-							call CheckPosition 1 ${Target.IsEpic}
+							;call CheckPosition 1 ${Target.IsEpic}
+							if ${MainTank}
+							    call CheckPosition 1 0
+							else
+							    call CheckPosition 1 1
 						}
 					}
 					elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[exactname,${MainTankPC}].Distance}>40
 					{
-						call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
-						do
-						{
-							waitframe
-						}
-						while (${IsMoving} || ${Me.IsMoving})
+					    if !${NoAutoMovement}
+					    {
+    						call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
+    						do
+    						{
+    							waitframe
+    						}
+    						while (${IsMoving} || ${Me.IsMoving})
+    					}
 					}
 
 					if ${Me.ToActor.Power}<55 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
@@ -1290,7 +1333,7 @@ function Combat()
 		call CheckLootNoMove
 	}
 
-	if ${PathType}==1
+	if ${PathType}==1 && !${NoAutoMovement}
 	{
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>4
 		{
@@ -1312,7 +1355,7 @@ function Combat()
 	if ${MainTankPC.NotEqual[${OriginalMT}]} && !${MainTank}
 		EQ2Bot:MainTank_Dead
 
-	if ${PathType}==4
+	if ${PathType}==4 && !${NoAutoMovement}
 	{
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>${ScanRange}
 		{
@@ -1338,18 +1381,19 @@ function GetBehind()
 	variable float X
 	variable float Z
 
-	X:Set[${Math.Calc[-4*${Math.Sin[-${Target.Heading}]}+${Target.X}]}]
-	Z:Set[${Math.Calc[4*${Math.Cos[-${Target.Heading}]}+${Target.Z}]}]
+	X:Set[${Math.Calc[-4*${Math.Sin[-${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].X}]}]
+	Z:Set[${Math.Calc[4*${Math.Cos[-${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].Z}]}]
 
 	call FastMove ${X} ${Z} 4
 	if ${Return.Equal[STUCK]}
 	{
 		disablebehind:Set[TRUE]
-		call FastMove ${Target.X} ${Target.Z} 6
+		
+    	call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 6
 	}
 
-	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-		face ${Target.X} ${Target.Z}
+	if ${Actor[${KillTarget}](exists)} && (${KillTarget}!=${Me.ID})
+		face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 
 }
 
@@ -1376,37 +1420,48 @@ function GetToFlank(int extended)
 		}
 	}
 
-	X:Set[${Math.Calc[${tempdir}*${Math.Cos[-${Target.Heading}]}+${Target.X}]}]
-	Z:Set[${Math.Calc[${tempdir}*${Math.Sin[-${Target.Heading}]}+${Target.Z}]}]
+	X:Set[${Math.Calc[${tempdir}*${Math.Cos[-${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].X}]}]
+	Z:Set[${Math.Calc[${tempdir}*${Math.Sin[-${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].Z}]}]
 
 	call FastMove ${X} ${Z} 3
 	if ${Return.Equal[STUCK]}
 	{
 		disablebehind:Set[TRUE]
-		call FastMove ${Target.X} ${Target.Z} 5
+		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 5
 	}
 
-	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-		face ${Target.X} ${Target.Z}
+	if ${Actor[${KillTarget}](exists)} && (${KillTarget}!=${Me.ID})
+		face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 }
 
 function GetinFront()
 {
 	variable float X
 	variable float Z
-
-	X:Set[${Math.Calc[-3*${Math.Sin[${Target.Heading}]}+${Target.X}]}]
-	Z:Set[${Math.Calc[-3*${Math.Cos[${Target.Heading}]}+${Target.Z}]}]
-
+	
+	;; if you are not the tank, then you should assume the tank is already in front of the mob and move to the TANK instead of the KillTarget
+    if ${MainTank}
+    {
+	    X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].X}]}]
+	    Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].Z}]}]
+    }
+    else
+    {
+        variable uint MainTankPCID
+        MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]
+        
+	    X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].X}]}]
+	    Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].Z}]}]   
+    }
 	call FastMove ${X} ${Z} 3
 	if ${Return.Equal[STUCK]}
 	{
 		disablefront:Set[TRUE]
-		call FastMove ${Target.X} ${Target.Z} 5
+		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 5
 	}
 
-	if ${Target(exists)} && (${Target.ID}!=${Me.ID})
-		face ${Target.X} ${Target.Z}
+	if ${Actor[${KillTarget}](exists)} && (${KillTarget}!=${Me.ID})
+		face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 
 	;removing cause this seems stupid
 	;wait 4
@@ -1420,8 +1475,12 @@ function CheckPosition(int rangetype, int position)
 
 	variable float minrange
 	variable float maxrange
+	variable uint MainTankPCID
+	
+	if ${NoAutoMovement} && ${Me.ToActor.InCombatMode}
+	    return
 
-	if !${Target(exists)} || ${NoMovement}
+	if !${Actor[${KillTarget}](exists)} || ${NoMovement}
 		return
 
 	switch ${rangetype}
@@ -1464,7 +1523,7 @@ function CheckPosition(int rangetype, int position)
 			break
 	}
 
-	if ${Target.Target.ID}==${Me.ID} && ${AutoMelee}
+	if ${Actor[${KillTarget}].Target.ID}==${Me.ID} && ${AutoMelee}
 	{
 		minrange:Set[0]
 		maxrange:Set[4]
@@ -1474,37 +1533,75 @@ function CheckPosition(int rangetype, int position)
 		position:Set[2]
 
 	if ${disablebehind} && (${position}==1 || ${position}==3)
-		position:Set[0]
+		position:Set[2]
+		
+	;if ${position} == 0
+	;    position:Set[2]
 
 	if !${MainTank}
 	{
 		;I don't think this is a good idea.  We're ignoring position checks when people get knocked back... Changing from 8 to MARange
 		;it is also not good with new mob AI's that 'range' fight.
-		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Target.X},${Target.Z}]}>${MARange}
+		if ${Math.Distance[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Actor[${KillTarget}].X},${Actor[${KillTarget}].Z}]}>${MARange}
+		{
 			return
+		}
 	}
 	elseif ${PathType}==2
 	{
-		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<8 && ${Me.InCombat} && !${lostaggro} && ${Target.Distance}>10
+		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<8 && ${Me.InCombat} && !${lostaggro} && ${Actor[${KillTarget}].Distance}>10
 			return
 
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>5 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<10 && ${Me.InCombat} && !${lostaggro}
 		{
+		    if ${Me.CastingSpell} && !${MainTank}
+		    {
+    		    do
+    		    {
+    		        waitframe
+    		    }
+    		    while ${Me.CastingSpell}
+		    }
 			call FastMove ${HomeX} ${HomeZ} 3
 			return
 		}
 	}
 
-	if ${Target.Distance}>${maxrange} && ${Target.Distance}<45 && ${PathType}!=2 && !${isstuck}
+	if ${Actor[${KillTarget}].Distance}>${maxrange} && ${Actor[${KillTarget}].Distance}<45 && ${PathType}!=2 && !${isstuck}
 	{
-		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-			face ${Target.X} ${Target.Z}
+	    MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]    
+	    
+		if ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${Actor[${KillTarget}].ID})
+			face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 
-		call FastMove ${Target.X} ${Target.Z} ${maxrange}
+	    if ${Me.CastingSpell} && !${MainTank}
+	    {
+		    do
+		    {
+		        waitframe
+		    }
+		    while ${Me.CastingSpell}
+	    }
+	    
+	    ; If we are not the main tank, simply move to the tank rather than to the mob
+	    ;echo "TEST2 (maxrange: ${maxrange.Precision[2]} -- TargetDistance: ${Actor[${KillTarget}].Distance.Precision[2]} -- TankDistnace: ${Actor[pc,exactname,${MainTankPC}].Distance.Precision[2]}"
+	    if ${MainTank} || ${Math.Distance[${Actor[${KillTarget}].X},${Actor[${KillTarget}].Z},${Actor[${MainTankPCID}].X},${Actor[${MainTankPCID}].Z}]} <= 9
+    		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} ${maxrange}
+    	else 	    
+    		call FastMove ${Actor[${MainTankPCID}].X} ${Actor[${MainTankPCID}].Z} 1    	    
 	}
 
-	if ${Target.Distance}<${minrange} && ${Target(exists)} && (${Me.ID}!=${Target.ID}) && (${rangetype}==1 || ${rangetype}==3)
+	if ${Actor[${KillTarget}].Distance}<${minrange} && ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${Actor[${KillTarget}].ID}) && (${rangetype}==1 || ${rangetype}==3)
 	{
+	    if ${Me.CastingSpell} && !${MainTank}
+	    {
+		    do
+		    {
+		        waitframe
+		    }
+		    while ${Me.CastingSpell}
+	    }	    
+	    
 		movetimer:Set[${Time.Timestamp}]
 		press -release ${forward}
 		wait 1
@@ -1512,8 +1609,8 @@ function CheckPosition(int rangetype, int position)
 
 		do
 		{
-			if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-				face ${Target.X} ${Target.Z}
+			if ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${Actor[${KillTarget}].ID})
+				face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 
 			if ${Math.Calc64[${Time.Timestamp}-${movetimer}]}>2
 			{
@@ -1521,58 +1618,116 @@ function CheckPosition(int rangetype, int position)
 				break
 			}
 		}
-		while ${Target.Distance}<${minrange} && ${Target(exists)}
+		while ${Actor[${KillTarget}].Distance}<${minrange} && ${Actor[${KillTarget}](exists)}
 
 		press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
 
-	if ${AutoMelee} && ${Target.Distance}>4.5 && (${Me.ID}!=${Target.ID})
+	if ${AutoMelee} && ${Actor[${KillTarget}].Distance}>4.5 && (${Me.ID}!=${KillTarget})
 	{
-		call FastMove ${Target.X} ${Target.Z} 3
+	    MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]  
+	    if ${Me.CastingSpell} && !${MainTank}
+	    {
+		    do
+		    {
+		        waitframe
+		    }
+		    while ${Me.CastingSpell}
+	    }	
+	    ;echo "DEBUG:: CheckPosition() to  -= (${KillTarget}) =-"    
+	    
+	    if ${MainTank} || ${Math.Distance[${Actor[${KillTarget}].X},${Actor[${KillTarget}].Z},${Actor[${MainTankPCID}].X},${Actor[${MainTankPCID}].Z}]} <= 9
+	    {
+    		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 4
+    		;echo "DEBUG:: FastMove() returned: ${Return}"
+    	}
+    	else
+    	{
+    	    call FastMove ${Actor[${MainTankPCID}].X} ${Actor[${MainTankPCID}].Z} 1
+    		;echo "DEBUG:: FastMove() returned: ${Return}" 
+    	}
 
-		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-			face ${Target.X} ${Target.Z}
+		if ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${Actor[${KillTarget}].ID})
+			face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 	}
 
-	if ${position}
+	if ${position(exists)}
 	{
 		switch ${position}
 		{
 			case 1
 				; Behind arc is 60 degree arc. Using 50 degree arc to allow for error
-				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
+				if (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-335
 					return
 				else
-					call GetBehind
+				{
+        		    if ${Me.CastingSpell} && !${MainTank}
+        		    {
+            		    do
+            		    {
+            		        waitframe
+            		    }
+            		    while ${Me.CastingSpell}
+        		    }		
+        		    call GetBehind
+				}
 				break
 			case 2
 
 				; Frontal Arc is 120 degree arc. Using 110 to allow for error
-				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
+				if (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-125)
 					return
 				else
-					call GetinFront
+				{
+        		    if ${Me.CastingSpell} && !${MainTank}
+        		    {
+            		    do
+            		    {
+            		        waitframe
+            		    }
+            		    while ${Me.CastingSpell}
+        		    }					
+        		    call GetinFront
+				}
 				break
 			case 3
 				; Using 80 degree flank arc between front and rear arcs with 5 degree error on front and back of the arc
 				;check if we are on the left flank
-				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
+				if (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)
 					return
 
 				;check if we are at the right flank
-				if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
+				if (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)
 					return
 
 				;note parameter for GetToflank is null for right, 1 for left
 
 				;check if we are on the left side of the mob, if so move to the left flank
-				if ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-180 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<0
-					call GetToFlank 1
+				if ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-180 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<0
+				{
+        		    if ${Me.CastingSpell}
+        		    {
+            		    do
+            		    {
+            		        waitframe
+            		    }
+            		    while ${Me.CastingSpell}
+        		    }		
+        		    call GetToFlank 1
+				}
 				else
 				{
 					; we must be on the right side of the mob so move to the right flank
-					call GetToFlank
+					if ${Me.CastingSpell} && !${MainTank}
+        		    {
+            		    do
+            		    {
+            		        waitframe
+            		    }
+            		    while ${Me.CastingSpell}
+        		    }	
+        		    call GetToFlank
 				}
 				break
 			case default
@@ -2208,7 +2363,7 @@ function CheckLoot()
 
 function FastMove(float X, float Z, int range)
 {
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;; NOTE -- If you are calling this you will need to ensure that the character is not using AutoFollowMode (and/or turn it off appropriately)
 	;;;         otherwise this function will move you and then you will just richocet back
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2229,10 +2384,16 @@ function FastMove(float X, float Z, int range)
 	variable float xDist
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
-
+	variable int MoveToRange
+	
+	if ${ScanRange} > 30
+	    MoveToRange:Set[${ScanRange}]
+    else
+        MoveToRange:Set[30]
+        
 	IsMoving:Set[TRUE]
 
-	if !${Target(exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
+	if !${Actor[${KillTarget}](exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
 	{
 		IsMoving:Set[FALSE]
 		return "TARGETDEAD"
@@ -2247,18 +2408,19 @@ function FastMove(float X, float Z, int range)
 	if !${X} || !${Z}
 	{
 		IsMoving:Set[FALSE]
-		return "INVALIDLOC"
+		return "INVALIDLOC1"
 	}
 
-	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${ScanRange} && ${PathType}!=4
+	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${MoveToRange} && ${PathType}!=4
 	{
+	    ;echo "DEBUG:: In FastMove() -- Math.Distance[${Me.X},${Me.Z},${X},${Z}] > MoveToRange == ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${MoveToRange}"
 		IsMoving:Set[FALSE]
-		return "INVALIDLOC"
+		return "INVALIDLOC2"
 	}
 	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>50 && ${PathType}!=4
 	{
 		IsMoving:Set[FALSE]
-		return "INVALIDLOC"
+		return "INVALIDLOC3"
 	}
 
 	face ${X} ${Z}
@@ -2673,8 +2835,8 @@ function CheckMTAggro()
 	if ${PathType}==2 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>8
 	{
 		call FastMove ${HomeX} ${HomeZ} 4
-		if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-			face ${Target.X} ${Target.Z}
+		if ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${KillTarget})
+			face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 	}
 
 	lostaggro:Set[FALSE]
@@ -2713,6 +2875,9 @@ function ScanAdds()
     variable int tcount=2
 	variable float X
 	variable float Z
+	
+	if !${NoAutoMovement} || !${MainTank}
+	    return
 
 	EQ2:CreateCustomActorArray[byDist,20]
 	do
@@ -2779,6 +2944,11 @@ atom(script) EQ2_onIncomingText(string Text)
 
 			;echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
 		}
+	}
+	elseif (${Text.Find[Move closer!]} > 0)
+	{
+	    ;; This variable should be utilized in individual class files (see Illusionist.iss for example)
+	    DoCallCheckPosition:Set[TRUE]
 	}
 }
 
@@ -2920,15 +3090,13 @@ function CantSeeTarget(string Line)
 		if ${Target.Target.ID}==${Me.ID}
 		{
 			if ${Target(exists)} && (${Me.ID}!=${Target.ID})
-			{
 				face ${Target.X} ${Target.Z}
-			}
 
-						press -release ${forward}
-						wait 1
-						press -hold ${backward}
+			press -release ${forward}
+			wait 1
+			press -hold ${backward}
 			wait 5
-						press -release ${backward}
+			press -release ${backward}
 			wait 20 !${Me.IsMoving}
 			return
 		}
