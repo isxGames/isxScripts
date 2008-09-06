@@ -83,9 +83,9 @@ function Class_Declaration()
 	declare StartHO bool script 1
 	declare KeepMTHOTUp bool script 0
 	declare KeepGroupHOTUp bool script 0
-	declare RaidHealMode bool script 1
+	declare RaidHealMode bool script 0
 	declare ShiftForm int script 1
-	declare SummonImpOfRo bool script 0
+	declare SpamHealMode bool script 0
 	declare FeastAction int script 9
 	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
@@ -116,7 +116,7 @@ function Class_Declaration()
 	UseMeleeProcSpells:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Melee Proc Spells,FALSE]}]
 	KeepMTHOTUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepMTHOTUp,FALSE]}]
 	KeepGroupHOTUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepGroupHOTUp,FALSE]}]
-	RaidHealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Raid Heals,TRUE]}]
+	RaidHealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Raid Heals,FALSE]}]
 	UseFastOffensiveSpellsOnly:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseFastOffensiveSpellsOnly,FALSE]}]
 	UseBallLightning:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseBallLightning,FALSE]}]
 
@@ -127,7 +127,7 @@ function Class_Declaration()
 	BuffMask:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMask,TRUE]}]
 	BuffEel:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEel,FALSE]}]
 	ShiftForm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[ShiftForm,]}]
-	SummonImpOfRo:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Summon Imp of Ro,]}]
+	SpamHealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[SpamHealMode,]}]
 
 	NoEQ2BotStance:Set[TRUE]
 
@@ -180,8 +180,6 @@ function Buff_Init()
 	PreSpellRange[12,1]:Set[396]
 	PreSpellRange[12,2]:Set[397]
 	PreSpellRange[12,3]:Set[398]
-
-	PreAction[13]:Set[SummonImpOfRoBuff]
 }
 
 function Combat_Init()
@@ -468,13 +466,6 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 
 			break
-		case SummonImpOfRoBuff
-			if (${SummonImpOfRo})
-			{
-				if !${Me.Maintained["Summon: Imp of Ro"](exists)}
-					call CastSpell "Summon: Imp of Ro"
-			}
-			break
 		Default
 			return Buff Complete
 			break
@@ -485,6 +476,14 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
+
+	if ${Me.ToActor.WhoFollowing(exists)}
+	{
+		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
+
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; IF "Cast Offensive Spells" is NOT checked
@@ -581,13 +580,6 @@ function Combat_Routine(int xAction)
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 
-
-	if ${Me.ToActor.WhoFollowing(exists)}
-	{
-		EQ2Execute /stopfollow
-		AutoFollowingMA:Set[FALSE]
-		wait 3
-	}
 
     if ${EpicMode} || ${RaidHealMode}
     {

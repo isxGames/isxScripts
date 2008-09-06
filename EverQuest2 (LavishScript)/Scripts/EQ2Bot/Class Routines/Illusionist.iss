@@ -557,6 +557,16 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
     ; Fast casting DoT
     if (${Me.Ability[${SpellType[80]}].IsReady})
 	    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1    	
+	    
+	
+	if ${AutoMelee} && ${DoCallCheckPosition}
+	{
+		if ${MainTank}
+		    call CheckPosition 1 0
+		else
+		    call CheckPosition 1 1
+		DoCallCheckPosition:Set[FALSE]
+	}	    
      
     call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained}
     return ${Return}
@@ -567,6 +577,8 @@ function Combat_Routine(int xAction)
 	declare BuffTarget string local    
 	declare spellsused int local
 	spellsused:Set[0]
+	declare MainTankID uint local
+	MainTankID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]
 	
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 	    return CombatComplete
@@ -659,11 +671,22 @@ function Combat_Routine(int xAction)
     ;call CheckSKFD
     
     
-    if ${AutoMelee}
+    if ${AutoMelee} && !${NoAutoMovement}
     {
-        if ${Actor[${KillTarget}].Distance} > 3
+        if ${Actor[${KillTarget}].Distance} > 3.5
         {
-            call CheckPosition 1 0
+            switch ${Actor[${KillTarget}].ConColor}
+            {
+                case Green
+                case Grey
+                    echo "DEBUG:: Calling CheckPosition(1 0)"
+                    call CheckPosition 1 0
+                    break
+                Default
+                    echo "DEBUG:: Calling CheckPosition(1 1)"
+                    call CheckPosition 1 1
+                    break
+            }
         }
     }    
     
@@ -1404,7 +1427,7 @@ function Mezmerise_Targets()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 			;if its the kill target skip it
-			if ${CustomActor[${tcount}].ID} == ${KillTarget}
+			if (${CustomActor[${tcount}].ID} == ${KillTarget})
 			    continue
 			if ${Actor[exactname,${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
 				continue

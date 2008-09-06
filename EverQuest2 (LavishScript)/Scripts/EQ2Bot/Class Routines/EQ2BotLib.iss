@@ -115,12 +115,15 @@ variable int AutoFollowLastSetTime
 
 ;misc
 variable bool EpicMode=FALSE
+variable bool NoAutoMovement
+variable bool DoCallCheckPosition=FALSE
 
 function EQ2BotLib_Init()
 {
 
 	;INI Settings
 	AutoFollowMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Auto Follow Mode,FALSE]}]
+	NoAutoMovement:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[NoAutoMovement,FALSE]}]
 	CombatFollow:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[CombatFollow,FALSE]}]
 	EpicMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[EpicMode,FALSE]}]
 	AutoFollowee:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[AutoFollowee,""]}]

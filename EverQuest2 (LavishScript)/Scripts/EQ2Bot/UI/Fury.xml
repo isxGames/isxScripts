@@ -787,25 +787,25 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Combat Rez]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='SummonImpOfRo' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='SpamHealMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>180</X>
 		<Y>150</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Summon Imp of Ro</Text>
+		<Text>'Spam Heal' Mode</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",TRUE]:Save
+				Script[EQ2Bot].Variable[SpamHealMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["SpamHealMode",TRUE]:Save
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[SummonImpOfRo]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Summon Imp of Ro",FALSE]:Save
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["SpamHealMode",FALSE]:Save
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString["Summon Imp of Ro"]}</Data>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString["SpamHealMode"]}</Data>
 	</Commandcheckbox>
 </ISUI>
