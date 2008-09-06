@@ -186,7 +186,7 @@ function main()
 				{
 					Commission:Set[20]
 				}
-				if ${SellCon.Equal["Veteran's Display Case"]}
+				if ${SellCon.Equal["Veteran's Display Case"]} || ${SellCon.Equal["Veteranen-Vitrine"]}
 				{
 					Commission:Set[${Math.Calc[${Commission}/2]}]
 				}
@@ -1081,6 +1081,7 @@ function BrokerSearch(string lookup)
 				if ${lookup.Equal[${Vendor.Broker[${CurrentItem}]}]}
 				{
 					TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+					Echo Actual Price of ${Vendor.Broker[${CurrentItem}]} : ${Vendor.Broker[${CurrentItem}].BasePrice}
 					stopsearch:Set[TRUE]
 					break
 				}
