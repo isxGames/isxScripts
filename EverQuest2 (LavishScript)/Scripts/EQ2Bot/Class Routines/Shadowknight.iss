@@ -831,7 +831,7 @@ function CheckGroupOrRaidAggro()
 	variable int Counter = 1
 
     ;; This is now created in the Combat_Routine() each time it is called (and Combat_Routine() is the only function that calls THIS function)
-	;EQ2:CreateCustomActorArray[npc,byDist,10]   
+	;EQ2:CreateCustomActorArray[byDist,10,npc]   
     NumNPCs:Set[${EQ2.CustomActorArraySize}]
     
 	do

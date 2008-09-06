@@ -499,9 +499,40 @@
                             	</combobox>							
 						    </Children>
 						</Frame>
+					    <Frame Name='Movement Frame'>
+							<X>1</X>
+							<Y>62</Y>
+							<Height>40</Height>
+							<Width>95%</Width>
+							<OnLoad>
+							</OnLoad>
+							<Children>
+                            	<Commandcheckbox Name='NoAutoMovement' Template='EQ2.Commandcheckbox'>
+                            		<X>5%</X>
+                            		<Y>13</Y>
+                            		<Width>40</Width>
+                            		<Height>20</Height>
+                            		<Text>No in-combat auto movement</Text>
+                            		<AutoTooltip>Select to have the bot do NO 'auto' movement during combat</AutoTooltip>
+                            		<OnLeftClick>
+                            			if ${This.Checked}
+                            			{
+                            				Script[EQ2Bot].Variable[NoAutoMovement]:Set[TRUE]
+                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["NoAutoMovement",TRUE]:Save
+                            			}
+                            			else
+                            			{
+                            				Script[EQ2Bot].Variable[NoAutoMovement]:Set[FALSE]
+                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["NoAutoMovement",FALSE]:Save
+                            			}
+                            		</OnLeftClick>
+                            		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[NoAutoMovement]}</Data>
+                            	</Commandcheckbox>
+						    </Children>
+				        </Frame>
 						<Frame Name='Pathing Frame'>
 							<X>1</X>
-							<Y>90</Y>
+							<Y>110</Y>
 							<Height>160</Height>
 							<Width>95%</Width>
 							<OnLoad>
@@ -669,7 +700,7 @@
 									<Text>Maximum Scan Range for Camp, DC or AH: </Text>
 								</Text>
 								<Textentry Name='ScanRange' Template='EQ2.textentry'>
-									<X>76%</X>
+									<X>78%</X>
 									<Y>121</Y>
 									<Width>7%</Width>
 									<Height>15</Height>
@@ -691,7 +722,7 @@
 									<Text>Maximum Engage Range from Main Assist: </Text>
 								</Text>
 								<Textentry Name='MARange' Template='EQ2.textentry'>
-									<X>75%</X>
+									<X>78%</X>
 									<Y>145</Y>
 									<Width>7%</Width>
 									<Height>15</Height>
@@ -776,7 +807,7 @@
 						</Frame>
 						<Commandbutton name='Start EQ2Bot' Template='EQ2.Commandbutton'>
 							<X>40%</X>
-							<Y>88%</Y>
+							<Y>94%</Y>
 							<Width>100</Width>
 							<Height>20</Height>
 							<Text>Start EQ2Bot</Text>
