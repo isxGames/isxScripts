@@ -1,4 +1,4 @@
-MyPrices - Version 0.12e
+MyPrices - Version 0.12f
 
 For update details see the bottom of this file.
 
@@ -247,12 +247,12 @@ During the Scan
 
 As the items are checked the color of the item changes in the GUI list.
 
-Black  - The item price was unchanged , there was nothing on the broker to compare it to or your price is the lowest
-         and you haven't set the script to increase prices to match.
-Green  - The item price matches the current lowest price on the broker.
+Black  - The item price was unlisted and unchanged , there was nothing on the broker to compare it to.
+Green  - The item price was matched to the current lowest price on the broker.
 Red    - Your item is priced higher than the lowest price on the broker , but that price is below your minimum allowed price. 
 Blue   - New unlisted Item added to the broker list
-Orange - The item was not inside your broker containers when it was reached in the list , sold or removed.
+Orange - The item was not inside your broker containers when it was reached in the list , may have been sold or removed
+         during the scan.
 
 
 The Buy TAB
@@ -298,8 +298,13 @@ The Future
 
 Plans for developing this script are the following:
 
+Add an option to make your sale price (minus the broker fee) the same as the sale price of the lowest priced item ignoring the 
+brokers fee.
+
+Add an option to set a maximum value to set your items too (for those using the increase item price option).
+
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
-by more efficient code once it's all working as I want it to.
+by more efficient code as I re-code parts of it.
 
 
 Contact the author
@@ -313,6 +318,10 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+version  0.12f
+--------------
+Recoded the scan routine , it will now recognise more items in the broker list that it used to miss because of (',") in the name.
 
 Version 0.12c-0.12e
 -------------------
