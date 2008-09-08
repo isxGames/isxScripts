@@ -490,9 +490,6 @@ function Combat_Routine(int xAction)
 	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady}
 		call CastSpellRange 42
 
-	if ${ShardMode}
-		call Shard
-
 	CurrentAction:Set[Combat Checking Power]
 	call RefreshPower
 
@@ -555,7 +552,7 @@ function RefreshPower()
 	declare MemberLowestPower int local
 
 
-	call shard 40
+	call Shard 40
 
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50 && !${Me.InCombat}

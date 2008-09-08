@@ -215,13 +215,9 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case Offensive_Stance
-			if (${OffenseMode} || !${TankMode}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
+			if (${OffenseMode} || !${TankMode}) && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
-			else
-			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
 
@@ -237,13 +233,9 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case Deffensive_Stance
-			if (${TankMode} && !${OffenseMode}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
+			if (${TankMode} && !${OffenseMode}) && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
-			else
-			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
 		case Poisons
