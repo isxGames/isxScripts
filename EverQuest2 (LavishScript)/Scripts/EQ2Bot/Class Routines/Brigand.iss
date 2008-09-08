@@ -47,6 +47,7 @@ function Class_Declaration()
 	declare UtilityPoisonShort string script
 	declare StartHO bool script 1
 	declare PetMode bool script 1
+  declare TankMode bool script 0
 
 	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
@@ -63,6 +64,7 @@ function Class_Declaration()
 	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	AnnounceMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Announce Debuffs,FALSE]}]
+	TankMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Try to Tank,FALSE]}]
 	BuffLunge:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Lunge Reversal,FALSE]}]
 	MaintainPoison:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MaintainPoison,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
