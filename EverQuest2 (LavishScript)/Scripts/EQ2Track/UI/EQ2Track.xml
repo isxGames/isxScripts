@@ -31,8 +31,8 @@
 	<Window name='EQ2 Track' Template='My.Window'>
 		<X>10</X>
 		<Y>10</Y>
-		<Width>500</Width>
-		<Height>750</Height>
+		<Width>315</Width>
+		<Height>190</Height>
     <Resizable MinHeight='190' MinWidth='315'>1</Resizable>
     <StorePosition>1</StorePosition>
 		<Title>${Me.Name} Track</Title>
