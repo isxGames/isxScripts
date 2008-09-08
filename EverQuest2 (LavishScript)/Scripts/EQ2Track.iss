@@ -1,6 +1,6 @@
 
 ;-----------------------------------------------------------------------------------------------
-; EQ2Track.iss Version 2.0 Updated: 09/05/08 by Valerian
+; EQ2Track.iss Version 2.1 Updated: 09/07/08 by Valerian
 ;-----------------------------------------------------------------------------------------------
 ; EQ2 Track originally created by Equidis
 ; Rewritten by Valerian
@@ -20,11 +20,15 @@
 	variable bool Tracking
 	variable string itemInfo
 	variable bool TrackAggro
-	variable string ReverseFilter
+	variable string ReverseFilter[20]
+	;variable string ReverseFilter
+	variable int NumReverseFilters=0
 	variable int LevelMin
 	variable int LevelMax
 	variable int SortMethod=1
 	variable bool ReverseSort=FALSE
+	
+	variable settingsetref User
 	
 	variable int aID1
 	variable int aID2
@@ -53,6 +57,7 @@ function zoneWait()
 
 objectdef TrackHelper
 {
+	variable int tcount
 	member:bool CheckFilter(int ID)
 	{
 		if ${TrackAggro} && !${Actor[${ID}].IsAggro}
@@ -62,10 +67,16 @@ objectdef TrackHelper
 		Level:Set[${Actor[${ID}].Level}]
 		if ${Level} < ${LevelMin} || ${Level} > ${LevelMax}
 			return FALSE
-		if ${ReverseFilter.Equal[""]}
+		if ${NumReverseFilters} == 0
 			return TRUE
-		if ${itemInfo.Find[${ReverseFilter}]}
-			return TRUE
+		tcount:Set[${NumReverseFilters}]
+		do
+		{
+			if ${itemInfo.Find[${ReverseFilter[${tcount}]}]}
+				return TRUE
+		}
+		while ${tcount:Dec[1]} > 0
+
 		return FALSE
 	}
 	variable int Level
@@ -100,14 +111,62 @@ variable TrackHelper Tracker
 
 function main()
 {
-	Event[EQ2_ActorSpawned]:AttachAtom[EQ2_ActorSpawned]
-	Event[EQ2_ActorDespawned]:AttachAtom[EQ2_ActorDespawned]
+	LavishSettings:AddSet[EQ2Track]
+	LavishSettings[EQ2Track]:AddSet[Users]
+	LavishSettings[EQ2Track].FindSet[Users]:AddSet[${Me.Name}]
+	User:Set[${LavishSettings[EQ2Track].FindSet[Users].FindSet[${Me.Name}]}]
+	User:AddSet[ReverseFilters]
+	User:Import["${LavishScript.HomeDirectory}/Scripts/EQ2Track/Character Config/${Me.Name}_Settings.xml"]
 	ui -reload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -reload -skin eq2skin "${LavishScript.HomeDirectory}/Scripts/EQ2Track/UI/EQ2Track.xml"
-	RefreshList
+
+/*	variable bool TrackAggro
+	;variable string ReverseFilter[20]
+	variable string ReverseFilter
+	variable int NumReverseFilters
+	variable int LevelMin
+	variable int LevelMax
+	variable int SortMethod=1
+	variable bool ReverseSort=FALSE
+*/
+	
+		
+	TrackAggro:Set[${User.FindSetting[TrackAggro,FALSE]}]
+	LevelMin:Set[${User.FindSetting[LevelMin,0]}]
+	LevelMax:Set[${User.FindSetting[LevelMax,90]}]
+	SortMethod:Set[${User.FindSetting[SortMethod,1]}]
+	ReverseSort:Set[${User.FindSetting[ReverseSort,FALSE]}]
+
+	if ${TrackAggro}
+		UIElement[TrackAggro@EQ2 Track]:SetChecked
+	else
+		UIElement[TrackAggro@EQ2 Track]:UnsetChecked
+	UIElement[TrackMinLevel@EQ2 Track]:SetText[${LevelMin}]
+	UIElement[TrackMaxLevel@EQ2 Track]:SetText[${LevelMax}]
+	UIElement[TrackSort@EQ2 Track]:SetSelection[${SortMethod}]
+
+	variable iterator SettingIterator
+	User.FindSet[ReverseFilters]:GetSettingIterator[SettingIterator]
+	NumReverseFilters:Set[0]
+	if ${SettingIterator:First(exists)}
+	{
+		do
+		{
+			NumReverseFilters:Inc
+			ReverseFilter[${NumReverseFilters}]:Set[${SettingIterator.Value}]
+			UIElement[FiltersList@EQ2 Track]:AddItem[${ReverseFilter[${NumReverseFilters}]}]
+		}
+		while ${SettingIterator:Next(exists)}
+	}
+	
+
+	call RefreshList
 	call CheckListTimer
 	call RefreshWaypointTimer
 	SortMethod:Set[${UIElement[TrackSort@EQ2 Track].Selection}]
+
+	Event[EQ2_ActorSpawned]:AttachAtom[EQ2_ActorSpawned]
+	Event[EQ2_ActorDespawned]:AttachAtom[EQ2_ActorDespawned]
 	
 	do
 	{
@@ -118,13 +177,17 @@ function main()
 		call zoneWait
 		if ${filtersChanged}
 		{
-			RefreshList
+			call RefreshList
 			filtersChanged:Set[FALSE]
 		}
 		if ${SortChanged}
 		{
 			SortMethod:Set[${UIElement[TrackSort@EQ2 Track].Selection}]
+			ReverseSort:Set[FALSE]
 			UIElement[TrackItems@EQ2 Track]:Sort[TrackSort]
+			User.FindSetting[SortMethod]:Set[${SortMethod}]
+			User.FindSetting[ReverseSort]:Set[${ReverseSort}]
+			User:Export["${LavishScript.HomeDirectory}/Scripts/EQ2Track/Character Config/${Me.Name}_Settings.xml"]
 			SortChanged:Set[FALSE]
 		}
 	}
@@ -132,22 +195,10 @@ function main()
 
 }
 
-function CheckListTimer()
+;atom(script) UpdateSettings()
+function UpdateSettings()
 {
-	Tracker:VerifyList
-	timedcommand 20 Script[${Script.Filename}]:QueueCommand[call CheckListTimer]
-}
-
-function RefreshWaypointTimer()
-{
-	if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)}
-		eq2execute /waypoint ${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}].Loc}
-	timedcommand 80 Script[${Script.Filename}]:QueueCommand[call RefreshWaypointTimer]
-}
-
-atom(script) RefreshList()
-{
-	variable int tcount
+	variable settingsetref filters
 	TrackAggro:Set[${UIElement[TrackAggro@EQ2 Track].Checked}]
 	if ${UIElement[TrackMinLevel@EQ2 Track].Text.Equal[""]}
 	{
@@ -165,8 +216,51 @@ atom(script) RefreshList()
 	{
 		LevelMax:Set[${UIElement[TrackMaxLevel@EQ2 Track].Text}]
 	}
-	ReverseFilter:Set[${UIElement[TrackFilter@EQ2 Track].Text}]
+
+	User.FindSetting[TrackAggro]:Set[${TrackAggro}]
+	User.FindSetting[LevelMin]:Set[${LevelMin}]
+	User.FindSetting[LevelMax]:Set[${LevelMax}]
 	
+	variable iterator SettingIterator
+	filters:Set[${User.FindSet[ReverseFilters]}]
+	filters:Clear
+	NumReverseFilters:Set[0]
+	if ${UIElement[FiltersList@EQ2 Track].Items}
+	{
+		do
+		{
+			NumReverseFilters:Inc
+			ReverseFilter[${NumReverseFilters}]:Set[${UIElement[FiltersList@EQ2 Track].Item[${NumReverseFilters}].Text}]
+			filters:AddSetting[${NumReverseFilters},${ReverseFilter[${NumReverseFilters}]}]
+		}
+		while ${NumReverseFilters} < ${UIElement[FiltersList@EQ2 Track].Items}
+	}
+	User:Export["${LavishScript.HomeDirectory}/Scripts/EQ2Track/Character Config/${Me.Name}_Settings.xml"]
+
+}
+
+function CheckListTimer()
+{
+	Tracker:VerifyList
+	timedcommand 20 Script[${Script.Filename}]:QueueCommand[call CheckListTimer]
+}
+
+function RefreshWaypointTimer()
+{
+	if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)}
+		eq2execute /waypoint ${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}].Loc}
+	timedcommand 80 Script[${Script.Filename}]:QueueCommand[call RefreshWaypointTimer]
+}
+
+;atom(script) RefreshList()
+function RefreshList()
+{
+	call UpdateSettings
+	if ${Tracking}
+		return
+	Tracking:Set[TRUE]
+	variable int tcount
+
 	UIElement[TrackItems@EQ2 Track]:ClearItems
 	EQ2:CreateCustomActorArray
 	tcount:Set[${EQ2.CustomActorArraySize}]
@@ -174,9 +268,12 @@ atom(script) RefreshList()
 	{
 		itemInfo:Set[${CustomActor[${tcount}].Level} (${CustomActor[${tcount}].Type}) ${CustomActor[${tcount}].Name} ${CustomActor[${tcount}].Class} ${CustomActor[${tcount}].Distance.Centi}]
 		if ${Tracker.CheckFilter[${CustomActor[${tcount}].ID}]}
-			UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${CustomActor[${tcount}].ID}]:Sort[TrackSort]
+			UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${CustomActor[${tcount}].ID}]
 	}
 	while ${tcount:Dec[1]} > 0
+	UIElement[TrackItems@EQ2 Track]:Sort[TrackSort]
+	
+	Tracking:Set[FALSE]
 }
 
 atom(global):int TrackSort(int ID1, int ID2)

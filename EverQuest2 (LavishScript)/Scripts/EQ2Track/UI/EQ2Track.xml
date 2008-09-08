@@ -20,7 +20,7 @@
 	</template>
 	<template name='My.window'>
 		<Border>1</Border>
-		<Resizable MinHeight='190' MinWidth='225'>1</Resizable>
+		<Resizable>1</Resizable>
 		<CloseButton />
 		<MinimizeButton />
 		<TitleBar template='My.window.TitleBar' />
@@ -33,7 +33,8 @@
 		<Y>10</Y>
 		<Width>500</Width>
 		<Height>750</Height>
-		<StorePosition>1</StorePosition>
+    <Resizable MinHeight='190' MinWidth='315'>1</Resizable>
+    <StorePosition>1</StorePosition>
 		<Title>${Me.Name} Track</Title>
 		<OnLoad>
 		</OnLoad>
@@ -50,23 +51,8 @@
     	<Width>100</Width>
     	<Height>20</Height>
     	<Text>Track aggro mobs only</Text>
-    	<OnLoad>
-    	if ${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Aggro]}
-    	{
-    		UIElement[TrackAggro@EQ2 Track]:SetChecked
-    	}
-    	</OnLoad>
     	<OnLeftClick>
-    		if ${UIElement[TrackAggro@EQ2 Track].Checked}
-    		{
-    			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,TRUE]:Save
-    			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
-    		}
-    		else
-    		{
-    			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Aggro,FALSE]:Save
-    			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
-    		}
+  		Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
     	</OnLeftClick>
     </checkbox>
 	<Text Name='lblTrackFilter' Template='EQ2.text'>
@@ -76,25 +62,17 @@
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
 		<Text>Reverse Filter:</Text>
+    <Visible>0</Visible>
 	</Text>
 	<textentry name='TrackFilter'>
 		<X>105</X>
 		<Y>35</Y>
 		<Width>100</Width>
 		<Height>15</Height>
-		<OnLoad>
-		variable string TrackFilterText
-		TrackFilterText:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Filter]}]
-		if ${TrackFilterText.Equal[NULL]}
-		{
-			TrackFilterText:Set[PC]
-		}
-		UIElement[TrackFilter@EQ2 Track]:SetText[${TrackFilterText}]
-		</OnLoad>
 		<OnKeyUp>
-			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Filter,${UIElement[TrackFilter@EQ2 Track].Text}]:Save
 			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
 		</OnKeyUp>
+    <Visible>0</Visible>
 	</textentry>
 	<Text Name='lblLvlRangeFilter' Template='EQ2.text'>
 		<X>20</X>
@@ -109,17 +87,7 @@
 		<Y>60</Y>
 		<Width>25</Width>
 		<Height>15</Height>
-		<OnLoad>
-		variable string TrackMinLevelText
-		TrackMinLevelText:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[TrackMinLevel]}]
-		if ${TrackMinLevelText.Equal[NULL]}
-		{
-			TrackMinLevelText:Set[1]
-		}
-		UIElement[TrackMinLevel@EQ2 Track]:SetText[${TrackMinLevelText}]
-		</OnLoad>
 		<OnKeyUp>
-			SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackMinLevel,${UIElement[TrackMinLevel@EQ2 Track].Text}]:Save
 			Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
 		</OnKeyUp>
 	</textentry>
@@ -136,17 +104,7 @@
 		<Y>60</Y>
 		<Width>25</Width>
 		<Height>15</Height>
-		<OnLoad>
-		variable string TrackMaxLevelText
-		TrackMaxLevelText:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetString[TrackMaxLevel]}]
-		if ${TrackMaxLevelText.Equal[NULL]}
-		{
-			TrackMaxLevelText:Set[80]
-		}
-		UIElement[TrackMaxLevel@EQ2 Track]:SetText[${TrackMaxLevelText}]
-		</OnLoad>
 		<OnKeyUp>
-      SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackMaxLevel,${UIElement[TrackMaxLevel@EQ2 Track].Text}]:Save
       Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
     </OnKeyUp>
 	</textentry>
@@ -171,21 +129,79 @@
           <Item Value='4'>Type</Item>
           <Item Value='5'>None</Item>
         </Items>
-        <OnLoad>
-          variable int TrackSortInt
-          TrackSortInt:Set[${SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[TrackSort]}]
-          if ${TrackSortInt} == 0
-          {
-          TrackSortInt:Set[1]
-          }
-          UIElement[TrackSort@EQ2 Track]:SetSelection[${TrackSortInt}]
-        </OnLoad>
         <OnSelect>
-          SettingXML[Scripts/EQ2Track/Character Config/${Me.Name}.xml].Set[General Settings]:Set[TrackSort,${This.Selection}]:Save
           Script[EQ2Track].Variable[SortChanged]:Set[TRUE]
         </OnSelect>
       </combobox>
-	<listbox name='TrackItems'>
+      <Text Name='FiltersLabel'>
+        <X>195</X>
+        <Y>10</Y>
+        <Width>50</Width>
+        <Height>20</Height>
+        <Text>Filters</Text>
+      </Text>
+      <textentry Name='FilterEditing'>
+        <X>190</X>
+        <Y>30</Y>
+        <Width>r212</Width>
+        <Height>15</Height>
+      </textentry>
+      <Listbox Name='FiltersList'>
+        <X>190</X>
+        <Y>45</Y>
+        <Width>r212</Width>
+        <Height>60</Height>
+        <Texture filename='Listbox.png' />
+        <Items>
+        </Items>
+        <OnSelect>
+          This.Parent.FindChild[FilterEditing]:SetText[${This.SelectedItem.Text}]
+        </OnSelect>
+      </Listbox>
+      <Button name='FilterAdd'>
+        <X>r70</X>
+        <Y>10</Y>
+        <Width>25</Width>
+        <Height>20</Height>
+        <Text>Add</Text>
+        <OnLeftClick>
+          if ${This.Parent.FindChild[FiltersList].SelectedItems}
+          {
+            do
+            {
+              if ${This.Parent.FindChild[FiltersList].SelectedItems} > 1
+              This.Parent.FindChild[FiltersList].SelectedItem[1]:Remove
+            }
+            while ${This.Parent.FindChild[FiltersList].SelectedItems} > 1
+            This.Parent.FindChild[FiltersList].SelectedItem[1]:SetText[${This.Parent.FindChild[FilterEditing].Text}]
+          }
+          else
+          {
+            if ${This.Parent.FindChild[FiltersList].Items} != 20
+              This.Parent.FindChild[FiltersList]:AddItem[${This.Parent.FindChild[FilterEditing].Text}]
+          }
+          Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+        </OnLeftClick>
+      </Button>
+      <Button name='FilterDel'>
+        <X>r45</X>
+        <Y>10</Y>
+        <Width>25</Width>
+        <Height>20</Height>
+        <Text>Del</Text>
+        <OnLeftClick>
+          if ${This.Parent.FindChild[FiltersList].SelectedItems}
+          {
+          do
+          {
+          This.Parent.FindChild[FiltersList].SelectedItem[1]:Remove
+          }
+          while ${This.Parent.FindChild[FiltersList].SelectedItems}
+          }
+          Script[EQ2Track].Variable[filtersChanged]:Set[TRUE]
+        </OnLeftClick>
+      </Button>
+      <listbox name='TrackItems'>
 		<X>20</X>
 		<Y>110</Y>
 		<Width>r40</Width>
