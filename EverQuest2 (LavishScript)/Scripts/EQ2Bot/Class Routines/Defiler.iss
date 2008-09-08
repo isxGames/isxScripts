@@ -941,25 +941,6 @@ function CheckHeals()
 	;Persist wards if selected.
 	call CheckWards
 
-  if (${MainTankExists})
-  {
-  	if ${Actor[${MainTankID}].Health}<90
-  	{
-  		if ${Me.ID}==${MainTankID}
-  			call HealMe
-  		else
-  			call HealMT ${MainTankID} ${MainTankInGroup}
-  	}
-
-  	;Check My health after MT
-    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
-	    call HealMe
-  }
-  else
-  {
-    if ${Me.ToActor.Health}<70
-      call HealMe
-  }
 
   if ${Me.GroupCount} > 1
   {
@@ -991,6 +972,22 @@ function CheckHeals()
 		if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 			grpheal:Inc
 	}
+
+  if (${MainTankExists})
+  {
+  	if ${Actor[${MainTankID}].Health}<90
+  	{
+  		if ${Me.ID}==${MainTankID}
+  			call HealMe
+  		else
+  			call HealMT ${MainTankID} ${MainTankInGroup}
+  	}
+
+  	;Check My health after MT
+    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+	    call HealMe
+  }
+
 
 	if ${PetMode} && ${grpheal}>2 && ${Me.Ability[${SpellType[16]}].IsReady}
 		call CastSpellRange 16
