@@ -49,7 +49,7 @@ function Class_Declaration()
 	declare PetMode bool script 1
   declare TankMode bool script 0
 
-	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
+	;POISON DECLERATIONS
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
 	;The SHORT name is the name of the poison buff icon
 	DammagePoisonShort:Set[caustic poison]
@@ -107,7 +107,6 @@ function Combat_Init()
 
 
 }
-
 
 function PostCombat_Init()
 {
@@ -217,8 +216,6 @@ function Combat_Routine(int xAction)
 	if ${Me.ToActor.WhoFollowing(exists)}
 		EQ2Execute /stopfollow
 
-
-
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 		call CastSpellRange 130 0 1 0 ${KillTarget}
@@ -226,25 +223,14 @@ function Combat_Routine(int xAction)
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 		call CastSpellRange 303
 
-	;use best debuffs on target if epic
-	if ${Actor[${KillTarget}].IsEpic}
-	{
-		if ${Me.Ability[${SpellType[155]}].IsReady}
-			call CastSpellRange 155 0 1 0 ${KillTarget} 0 0 1
-
-		if ${Me.Ability[${SpellType[156]}].IsReady}
-			call CastSpellRange 156 0 1 0 ${KillTarget} 0 0 1
-	}
-
 	;if heroic and over 80% health, use dps buffs
-	if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health}>80) || (${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}>20)
+	if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health}>80) || (${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}>5)
 	{
 		if ${Me.Ability[${SpellType[155]}].IsReady}
 			call CastSpellRange 155 0 1 0 ${KillTarget} 0 0 1
 		if ${Me.Ability[${SpellType[156]}].IsReady}
 			call CastSpellRange 156 0 1 0 ${KillTarget} 0 0 1
 	}
-
 
 	;;; AoE Checks
 	if ${Mob.Count}>1

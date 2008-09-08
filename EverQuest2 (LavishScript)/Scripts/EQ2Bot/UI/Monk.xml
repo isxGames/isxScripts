@@ -475,7 +475,6 @@
 			declare tmpvar int
 
 			This:ClearItems
-			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
 			if ${Me.Raid} > 0
 			{
 			    do

@@ -126,7 +126,7 @@ function Combat_Init()
 	SpellRange[4,1]:Set[96]
 
 	Action[5]:Set[AA_WalkthePlank]
-	SpellRange[5,1]:Set[405]
+	SpellRange[5,1]:Set[385]
 
 	Action[6]:Set[Rear_Attack1]
 	SpellRange[6,1]:Set[101]
@@ -185,7 +185,6 @@ function Combat_Init()
 
 	Action[22]:Set[AA_BootDagger]
 	SpellRange[22,1]:Set[386]
-
 }
 
 
@@ -354,6 +353,11 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 382 0 1 1 ${KillTarget} 0 0 1
 		}
 
+		if ${Me.Ability[${SpellType[386]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
+		{
+			call CastSpellRange 386 0 1 1 ${KillTarget} 0 0 1
+		}
+
 		if ${Me.Ability[${SpellType[101]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
 		{
 			call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
@@ -364,17 +368,14 @@ function Combat_Routine(int xAction)
 	if ${Actor[${KillTarget}].IsEpic} || (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].IsNamed})
 	{
 		call CheckCondition MobHealth 60 100
-		if ${Return.Equal[OK]}
+		if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
 		{
 			call CheckPosition 1 1
 			if ${Me.Ability[${SpellType[155]}].IsReady} || ${Me.Ability[${SpellType[157]}].IsReady}
 			{
 				call CastSpellRange 155 158 1 0 ${KillTarget} 0 0 1
-				wait 30
 				call CastSpellRange 151 0 1 0 ${KillTarget} 0 0 1
-				wait 30
 				call CastSpellRange 153 0 1 0 ${KillTarget} 0 0 1
-				wait 40
 			}
 		}
 	}
