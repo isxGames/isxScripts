@@ -230,7 +230,7 @@ function UpdateSettings()
 		do
 		{
 			NumReverseFilters:Inc
-			ReverseFilter[${NumReverseFilters}]:Set[${UIElement[FiltersList@EQ2 Track].Item[${NumReverseFilters}].Text}]
+			ReverseFilter[${NumReverseFilters}]:Set[${UIElement[FiltersList@EQ2 Track].OrderedItem[${NumReverseFilters}].Text}]
 			filters:AddSetting[${NumReverseFilters},${ReverseFilter[${NumReverseFilters}]}]
 		}
 		while ${NumReverseFilters} < ${UIElement[FiltersList@EQ2 Track].Items}
@@ -349,8 +349,8 @@ atom(script) RemoveActorByID(int ID)
 
 	do
 	{
-		if (${UIElement[TrackItems@EQ2 Track].Item[${tcount}].Value} == ${ID})
-			UIElement[TrackItems@EQ2 Track].Item[${tcount}]:Remove
+		if (${UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}].Value} == ${ID})
+			UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 		tcount:Dec[1]
 	}
 	while ${tcount}>0
