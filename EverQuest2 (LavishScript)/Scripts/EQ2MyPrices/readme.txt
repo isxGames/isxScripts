@@ -330,10 +330,11 @@ version 0.12g
 
 Added an option to sell at the same price as the lowest price on the broker (ignoring the sellers broker fee)
 
-If someone in  is selling an item for 25g without commission then yours will be set to 25g also , it will appear
-on the Freeport broker as cheaper than the one for sale in Qeynos, but still show as more expensive to people scanning
-the Qeynos broker due to higher broker charges.
+If you sell on the Freeport broker and someone in Qeynos  is selling an item for 25g without commission then your same item will be 
+set to 25g also.
 
+It will appear on the Freeport broker as cheaper than the one for sale in Qeynos, but still show as more expensive to people scanning
+the Qeynos broker due to higher broker charges.
 
 version  0.12f
 --------------
