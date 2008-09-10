@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12f :  released 12 May 2008
+; Version 0.12g :  released 10th October 2008
 ;
 ; Declare Variables
 ;
@@ -21,6 +21,7 @@ variable bool SellItems
 variable bool Craft
 variable bool Logging
 variable bool Natural
+variable bool MatchActual
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
@@ -236,6 +237,7 @@ function main()
 						; Call Search routine to find the lowest price
 						Call echolog "Call BrokerSearch ${currentitem}"
 						Call BrokerSearch "${currentitem}"
+
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
 						{
@@ -249,8 +251,15 @@ function main()
 							; if a stored Minimum Sale price was found then carry on
 							if ${MinSalePrice}!= -1
 							{
-								; Calculate the Baseprice + Commission to set the value to match the currently lowest price
-								MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
+								if ${MatchActual}
+								{
+									MinBasePrice:Set[${MinPrice}]
+								}
+								else
+								{
+									MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
+								}
+
 								; if the flag to ignore copper is set and the price is > 1 gold
 								if ${IgnoreCopper} && ${MinBasePrice} > 100
 								{
@@ -1080,8 +1089,16 @@ function BrokerSearch(string lookup)
 				; check that the items name being looked at is an exact match and not just a partial match
 				if ${lookup.Equal[${Vendor.Broker[${CurrentItem}]}]}
 				{
-					TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
-					Echo Actual Price of ${Vendor.Broker[${CurrentItem}]} : ${Vendor.Broker[${CurrentItem}].BasePrice}
+					; if checkbox set to ignore broker fee when matching prices
+					if ${MatchActual}
+					{
+						TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].BasePrice}]
+					}
+					else
+					{
+						TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+					}
+					waitframe
 					stopsearch:Set[TRUE]
 					break
 				}
@@ -1838,6 +1855,7 @@ objectdef BrokerBot
 		SellItems:Set[${General.FindSetting[SellItems]}]
 		PauseTimer:Set[${General.FindSetting[PauseTimer]}]
 		Craft:Set[${General.FindSetting[Craft]}]
+		MatchActual:Set[${General.FindSetting[ActualPrice]}]
 		box[1]:Set[${General.FindSetting[box1]}]
 		box[2]:Set[${General.FindSetting[box2]}]
 		box[3]:Set[${General.FindSetting[box3]}]
