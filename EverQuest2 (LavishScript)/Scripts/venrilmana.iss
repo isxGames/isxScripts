@@ -26,6 +26,9 @@ function main(string MA)
 
 	do
 	{
+		if ${Me.Maintained[Sprint]}
+			Me.Maintained[Sprint]:Cancel
+
 		call CheckDebuffs
 		call CheckPower
 		ProcessTriggers()
@@ -36,7 +39,9 @@ function main(string MA)
 
 function CheckPower()
 {
-	if ${Me.ToActor.Power}>60
+	call CheckDebuffs
+
+	if ${Me.ToActor.Power}>58
 	{
 		Me.Ability[Sprint]:Use
 		wait 5
@@ -66,6 +71,7 @@ function CheckDebuffs()
 		Me.Inventory["Expert's Noxious Remedy"]:Use
 		call CastPause
 	}
+
 	if ${Me.Effect[detrimental,Sacrifice](exists)}
 	{
 		call CancelMaintained
@@ -95,60 +101,67 @@ function CancelMaintained()
 
 function RefreshPower()
 {
-	;conj shard
-	if ${Me.ToActor.Power}<=50 && ${Me.Inventory["Scale of Essence"].IsReady} && ${Me.InCombat}
-	{
-		Me.Inventory["Scale of Essence"]:Use
-		call CastPause
-		call CheckDebuffs
-	}
-
-	;necro heart
-	if ${Me.ToActor.Power}<=50 && ${Me.Inventory["Darkness Heart"].IsReady} && ${Me.InCombat}
-	{
-		Me.Inventory["Darkness Heart"]:Use
-		call CastPause
-		call CheckDebuffs
-	}
-
 	;manastone
-	if ${Me.ToActor.Power}<=55 && ${Me.Inventory[ExactName,ManaStone].IsReady}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory[ExactName,ManaStone].IsReady}
 	{
 		Me.Inventory[ExactName,ManaStone]:Use
 		call CastPause
 		call CheckDebuffs
+		return
+	}
+
+	;conj shard
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Scale of Essence"].IsReady} && ${Me.InCombat}
+	{
+		Me.Inventory["Scale of Essence"]:Use
+		call CastPause
+		call CheckDebuffs
+		return
+	}
+
+	;necro heart
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Darkness Heart"].IsReady} && ${Me.InCombat}
+	{
+		Me.Inventory["Darkness Heart"]:Use
+		call CastPause
+		call CheckDebuffs
+		return
 	}
 
 	;Rare Mana Regen Potion
-	if ${Me.ToActor.Power}<=45 && ${Me.Inventory["Expert's Essence of Clarity"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Expert's Essence of Clarity"].IsReady} && ${Me.InCombat}
 	{
 		Me.Inventory["Expert's Essence of Clarity"]:Use
 		call CastPause
 		call CheckDebuffs
+		return
 	}
 
 	;Mana Regen Potion
-	if ${Me.ToActor.Power}<=45 && ${Me.Inventory["Dedicated Essence of Clarity"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Dedicated Essence of Clarity"].IsReady} && ${Me.InCombat}
 	{
 		Me.Inventory["Dedicated Essence of Clarity"]:Use
 		call CastPause
 		call CheckDebuffs
+		return
 	}
 
 	;Rare Mana Potion
-	if ${Me.ToActor.Power}<=45 && ${Me.Inventory["Expert's Essence of Power"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Expert's Essence of Power"].IsReady} && ${Me.InCombat}
 	{
 		Me.Inventory["Expert's Essence of Power"]:Use
 		call CastPause
 		call CheckDebuffs
+		return
 	}
 
 	;Mana Potion
-	if ${Me.ToActor.Power}<=45 && ${Me.Inventory["Dedicated Essence of Power"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Dedicated Essence of Power"].IsReady} && ${Me.InCombat}
 	{
 		Me.Inventory["Dedicated Essence of Power"]:Use
 		call CastPause
 		call CheckDebuffs
+		return
 	}
 }
 
