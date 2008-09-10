@@ -614,22 +614,55 @@ function Mezmerise_Targets()
 	declare tcount int local 1
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
+	declare Counter int local
+	declare alreadymezed bool local FALSE
 
 	EQ2:CreateCustomActorArray[byDist,20]
 
 	do
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
+		if ${CustomActor[${tcount}].Name.Equal[an undertaker supplicant]} && ${CustomActor[${tcount}].CanTurn}
+			call CastSpellRange 352 353 0 0 ${CustomActor[${tcount}].ID} 1 5
+
+		if ${Mob.AggroGroup[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 			;if its the kill target skip it
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
+			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[pc,exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
+				continue
+
+			;if the actor can't turn and isrooted lets ignore it, perhaps it is already mezed or parked
+			if !${CustomActor[${tcount}].CanTurn} && ${CustomActor[${tcount}].IsRooted}
+				alreadymezed:Set[TRUE]
+
+			;lets see if it is already mez'd
+			do
+			{
+				;find single target mez
+				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[352]}]}
+				{
+					;check if this mez is on current target
+					if ${Me.Maintained[${Counter}].Target.ID}==${CustomActor[${tcount}].ID}
+					{
+						;lets check duration, if less then 4 seconds left, lets remez
+						if ${Me.Maintained[${Counter}].Duration}<=8 && !${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
+						{
+							if !${Actor[pc,exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
+								call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 8
+						}
+						alreadymezed:Set[TRUE]
+					}
+				}
+			}
+			while ${Counter:Inc}<=${Me.CountMaintained}
+
+			if ${alreadymezed}
 				continue
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
 
 			;check if its agro on a group member or group member's pet
-			if ${Me.GroupCount} > 1
+			if ${Me.GroupCount}>1
 			{
 				do
 				{
@@ -668,14 +701,12 @@ function Mezmerise_Targets()
 				if ${Me.RangedAutoAttackOn}
 					eq2execute /togglerangedattack
 
-				;try to AE mezz first and check if its not single target mezzed
-				if !${CustomActor[${tcount}].Effect[${SpellType[352]}](exists)}
+				if ${Me.Ability[${SpellType[352]}].IsReady}
+					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 5
+				elseif ${Me.Ability[${SpellType[353]}].IsReady}
 					call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
-
-				;if the actor is not AE Mezzed then single target Mezz
-				if !${CustomActor[${tcount}].Effect[${SpellType}[353]](exists)}
-					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 10
-
+				elseif !${Me.Maintained[${SpellType[351]}](exists)} && ${Me.UsedConc}<3
+					call CastSpellRange 351 0 0 0 ${CustomActor[${tcount}].ID}
 				aggrogrp:Set[FALSE]
 			}
 		}
@@ -704,7 +735,6 @@ function DoCharm()
 
 	if ${Me.Maintained[${SpellType[351]}](exists)} || ${Me.UsedConc}>2
 		return
-
 
 	EQ2:CreateCustomActorArray[byDist,15]
 
