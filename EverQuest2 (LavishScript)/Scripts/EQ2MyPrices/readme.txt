@@ -1,4 +1,4 @@
-MyPrices - Version 0.12f
+MyPrices - Version 0.12g
 
 For update details see the bottom of this file.
 
@@ -138,6 +138,12 @@ Natural Scan
 
 This makes the script act in a more natural way , items aren't scanned in a particular order , there are pauses between broker checks for each
 item in your list , the pause between automatic scans is randomised somewhat.
+
+
+Match without Broker %
+----------------------
+
+If someone in  is selling an item for 25g without commission then yours will be set to 25g also, the broker fee is ignored.
 
 
 Delay in Minutes
@@ -318,6 +324,16 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+version 0.12g
+-------------
+
+Added an option to sell at the same price as the lowest price on the broker (ignoring the sellers broker fee)
+
+If someone in  is selling an item for 25g without commission then yours will be set to 25g also , it will appear
+on the Freeport broker as cheaper than the one for sale in Qeynos, but still show as more expensive to people scanning
+the Qeynos broker due to higher broker charges.
+
 
 version  0.12f
 --------------
