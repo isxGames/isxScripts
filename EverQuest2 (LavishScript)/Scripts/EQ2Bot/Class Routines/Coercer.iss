@@ -616,16 +616,22 @@ function Mezmerise_Targets()
 	declare aggrogrp bool local FALSE
 	declare Counter int local
 	declare alreadymezed bool local FALSE
+	declare mezduration float local 0
 
 	EQ2:CreateCustomActorArray[byDist,20]
 
 	do
 	{
+		alreadymezed:Set[FALSE]
+
 		if ${CustomActor[${tcount}].Name.Equal[an undertaker supplicant]} && ${CustomActor[${tcount}].CanTurn}
 			call CastSpellRange 352 353 0 0 ${CustomActor[${tcount}].ID} 1 5
 
 		if ${Mob.AggroGroup[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
+			if ${Me.AutoAttackOn}
+				eq2execute /toggleautoattack
+
 			;if its the kill target skip it
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[pc,exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
 				continue
@@ -634,6 +640,8 @@ function Mezmerise_Targets()
 			if !${CustomActor[${tcount}].CanTurn} && ${CustomActor[${tcount}].IsRooted}
 				alreadymezed:Set[TRUE]
 
+			Counter:Set[0]
+			mezduration:Set[0]
 			;lets see if it is already mez'd
 			do
 			{
@@ -643,72 +651,33 @@ function Mezmerise_Targets()
 					;check if this mez is on current target
 					if ${Me.Maintained[${Counter}].Target.ID}==${CustomActor[${tcount}].ID}
 					{
-						;lets check duration, if less then 4 seconds left, lets remez
-						if ${Me.Maintained[${Counter}].Duration}<=8 && !${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
-						{
-							if !${Actor[pc,exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
-								call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 8
-						}
 						alreadymezed:Set[TRUE]
+						mezduration:Set[${Me.Maintained[${Counter}].Duration}]
 					}
 				}
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
 
+			if ${alreadymezed} && ${mezduration}<8 && ${mezduration}>0 && ${Actor[${MainAssist}].Target.ID}!=${CustomActor[${tcount}].ID}
+			{
+				if ${Actor[pc,exactname,${MainTankPC}].Target.ID}!=${CustomActor[${tcount}].ID}
+				{
+					if ${Me.Ability[${SpellType[352]}].IsReady}
+					{
+						call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 5
+					}
+				}
+			}
+
 			if ${alreadymezed}
 				continue
 
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-
-			;check if its agro on a group member or group member's pet
-			if ${Me.GroupCount}>1
-			{
-				do
-				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
-					{
-						aggrogrp:Set[TRUE]
-						break
-					}
-				}
-				while ${tempvar:Inc} <= ${Me.GroupCount}
-			}
-
-			;check if its agro on a raid member or raid member's pet
-			tempvar:Set[1]
-			if ${Me.InRaid}
-			{
-				do
-				{
-					if ${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[$tempvar}].Name}].ID}  || (${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
-					{
-						aggrogrp:Set[TRUE]
-						break
-					}
-				}
-				while ${tempvar:Inc} <= ${Me.Raid}
-			}
-			;check if its agro on me
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${CustomActor[${tcount}].Target.IsMyPet}
-				aggrogrp:Set[TRUE]
-
-			if ${aggrogrp}
-			{
-				if ${Me.AutoAttackOn}
-					eq2execute /toggleautoattack
-
-				if ${Me.RangedAutoAttackOn}
-					eq2execute /togglerangedattack
-
-				if ${Me.Ability[${SpellType[352]}].IsReady}
-					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 5
-				elseif ${Me.Ability[${SpellType[353]}].IsReady}
-					call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
-				elseif !${Me.Maintained[${SpellType[351]}](exists)} && ${Me.UsedConc}<3
-					call CastSpellRange 351 0 0 0 ${CustomActor[${tcount}].ID}
-				aggrogrp:Set[FALSE]
-			}
+			if ${Me.Ability[${SpellType[352]}].IsReady}
+				call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 5
+			elseif ${Me.Ability[${SpellType[353]}].IsReady}
+				call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
+			elseif ${Me.Ability[${SpellType[92]}].IsReady}
+				call CastSpellRange 92 0 0 0 ${CustomActor[${tcount}].ID} 0 5
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}

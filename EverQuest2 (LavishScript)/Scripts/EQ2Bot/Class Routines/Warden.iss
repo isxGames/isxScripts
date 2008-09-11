@@ -635,13 +635,13 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
-    if !${Actor[${MainTankID}](exists)}
-    {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
-        MainTankExists:Set[FALSE]
-    }
-    else
-        MainTankExists:Set[TRUE]
+	if !${Actor[${MainTankID}](exists)}
+	{
+	  echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+	  MainTankExists:Set[FALSE]
+	}
+	else
+		MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
@@ -650,42 +650,42 @@ function CheckHeals()
 	;Res the MT if they are dead
 	if (${MainTankExists})
 	{
-    	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-    		call CastSpellRange 300 0 1 1 ${MainTankID}
-    }
+  	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+  		call CastSpellRange 300 0 1 1 ${MainTankID}
+	}
 
 	call CheckHOTs
 
 	if ${EpicMode} && ${Me.InCombat} && ${PetMode}
 		call CastSpellRange 330 331 0 0 ${KillTarget}
 
-    if ${Me.GroupCount} > 1
-    {
-    	do
-    	{
-    		if ${Me.Group[${temphl}].ToActor(exists)}
-    		{
-    			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
-    			{
-    				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
-    					lowest:Set[${temphl}]
-    			}
-    
-    			if ${Me.Group[${temphl}].ID}==${MainTankID}
-    				MainTankInGroup:Set[1]
-    
-    			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
-    				grpheal:Inc
-    
-    			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-    				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-    
-    			if ${Me.ToActor.Pet.Health}<60
-    				PetToHeal:Set[${Me.ToActor.Pet.ID}]
-    		}
-    	}
-    	while ${temphl:Inc} <= ${Me.GroupCount}
-    }
+  if ${Me.GroupCount} > 1
+  {
+  	do
+  	{
+  		if ${Me.Group[${temphl}].ToActor(exists)}
+  		{
+  			if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
+  			{
+  				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+  					lowest:Set[${temphl}]
+  			}
+
+  			if ${Me.Group[${temphl}].ID}==${MainTankID}
+  				MainTankInGroup:Set[1]
+
+  			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80
+  				grpheal:Inc
+
+  			if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+  				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+
+  			if ${Me.ToActor.Pet.Health}<60
+  				PetToHeal:Set[${Me.ToActor.Pet.ID}]
+  		}
+  	}
+  	while ${temphl:Inc} <= ${Me.GroupCount}
+  }
 
 	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 		grpheal:Inc
@@ -917,7 +917,7 @@ function GroupHeal()
 function EmergencyHeal(int healtarget, int MTInMyGroup)
 {
 	;death prevention
-	if ${Me.Ability[${SpellType[316]}].IsReady} && ${MTInMyGroup}
+	if ${Me.Ability[${SpellType[317]}].IsReady} && ${MTInMyGroup}
 		call CastSpellRange 317 0 0 0 ${healtarget}
 	else
 		call CastSpellRange 316 0 0 0 ${healtarget}
