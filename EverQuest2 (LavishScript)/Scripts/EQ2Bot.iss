@@ -851,7 +851,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 function CastSpell(string spell, int spellid, bool castwhilemoving)
 {
     variable int Counter
-    
+
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpell()"
@@ -871,7 +871,7 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
             waitframe
             Counter:Inc
             if ${Counter} > 500
-                break            
+                break
         }
         while ${Me.Ability[${LastQueuedAbility}].IsQueued}
     }
@@ -884,16 +884,16 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
             waitframe
             Counter:Inc
             if ${Counter} > 500
-                break         
+                break
         }
         while ${Me.Ability[${spell}].IsQueued}
     }
-		
-		
+
+
     wait 2
     if !${Me.Ability[${spell}].IsReady}
         return
-        
+
 	CurrentAction:Set[Queueing '${spell}']
 
 	;; Disallow some abilities that are named the same as crafting abilities.
@@ -902,12 +902,12 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 		Me.Ability[id,1287322154]:Use
 	else
 		Me.Ability[${spell}]:Use
-		
-	
+
+
 	; reducing this too much will cause problems ... 4 seems to be a sweet spot
 	wait 4
 	;wait 20 ${Me.Ability[${spell}].IsQueued}
-	
+
 	Counter:Set[0]
     if ${Me.Ability[${spell}].IsQueued}
     {
@@ -920,10 +920,10 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
                 break
         }
         while ${Me.Ability[${spell}].IsQueued}
-    }	
+    }
     LastQueuedAbility:Set[${spell}]
     CurrentAction:Set[Casting '${spell}']
-    
+
 	return SUCCESS
 }
 
@@ -1388,7 +1388,7 @@ function GetBehind()
 	if ${Return.Equal[STUCK]}
 	{
 		disablebehind:Set[TRUE]
-		
+
     	call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 6
 	}
 
@@ -1438,7 +1438,7 @@ function GetinFront()
 {
 	variable float X
 	variable float Z
-	
+
 	;; if you are not the tank, then you should assume the tank is already in front of the mob and move to the TANK instead of the KillTarget
     if ${MainTank}
     {
@@ -1449,9 +1449,9 @@ function GetinFront()
     {
         variable uint MainTankPCID
         MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]
-        
+
 	    X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].X}]}]
-	    Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].Z}]}]   
+	    Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].Z}]}]
     }
 	call FastMove ${X} ${Z} 3
 	if ${Return.Equal[STUCK]}
@@ -1476,7 +1476,7 @@ function CheckPosition(int rangetype, int position)
 	variable float minrange
 	variable float maxrange
 	variable uint MainTankPCID
-	
+
 	if ${NoAutoMovement} && ${Me.ToActor.InCombatMode}
 	    return
 
@@ -1534,7 +1534,7 @@ function CheckPosition(int rangetype, int position)
 
 	if ${disablebehind} && (${position}==1 || ${position}==3)
 		position:Set[2]
-		
+
 	;if ${position} == 0
 	;    position:Set[2]
 
@@ -1569,8 +1569,8 @@ function CheckPosition(int rangetype, int position)
 
 	if ${Actor[${KillTarget}].Distance}>${maxrange} && ${Actor[${KillTarget}].Distance}<45 && ${PathType}!=2 && !${isstuck}
 	{
-	    MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]    
-	    
+	    MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]
+
 		if ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${Actor[${KillTarget}].ID})
 			face ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z}
 
@@ -1582,13 +1582,13 @@ function CheckPosition(int rangetype, int position)
 		    }
 		    while ${Me.CastingSpell}
 	    }
-	    
+
 	    ; If we are not the main tank, simply move to the tank rather than to the mob
 	    ;echo "TEST2 (maxrange: ${maxrange.Precision[2]} -- TargetDistance: ${Actor[${KillTarget}].Distance.Precision[2]} -- TankDistnace: ${Actor[pc,exactname,${MainTankPC}].Distance.Precision[2]}"
 	    if ${MainTank} || ${Math.Distance[${Actor[${KillTarget}].X},${Actor[${KillTarget}].Z},${Actor[${MainTankPCID}].X},${Actor[${MainTankPCID}].Z}]} <= 9
     		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} ${maxrange}
-    	else 	    
-    		call FastMove ${Actor[${MainTankPCID}].X} ${Actor[${MainTankPCID}].Z} 1    	    
+    	else
+    		call FastMove ${Actor[${MainTankPCID}].X} ${Actor[${MainTankPCID}].Z} 1
 	}
 
 	if ${Actor[${KillTarget}].Distance}<${minrange} && ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${Actor[${KillTarget}].ID}) && (${rangetype}==1 || ${rangetype}==3)
@@ -1600,8 +1600,8 @@ function CheckPosition(int rangetype, int position)
 		        waitframe
 		    }
 		    while ${Me.CastingSpell}
-	    }	    
-	    
+	    }
+
 		movetimer:Set[${Time.Timestamp}]
 		press -release ${forward}
 		wait 1
@@ -1626,7 +1626,7 @@ function CheckPosition(int rangetype, int position)
 
 	if ${AutoMelee} && ${Actor[${KillTarget}].Distance}>4.5 && (${Me.ID}!=${KillTarget})
 	{
-	    MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]  
+	    MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]
 	    if ${Me.CastingSpell} && !${MainTank}
 	    {
 		    do
@@ -1634,9 +1634,9 @@ function CheckPosition(int rangetype, int position)
 		        waitframe
 		    }
 		    while ${Me.CastingSpell}
-	    }	
-	    ;echo "DEBUG:: CheckPosition() to  -= (${KillTarget}) =-"    
-	    
+	    }
+	    ;echo "DEBUG:: CheckPosition() to  -= (${KillTarget}) =-"
+
 	    if ${MainTank} || ${Math.Distance[${Actor[${KillTarget}].X},${Actor[${KillTarget}].Z},${Actor[${MainTankPCID}].X},${Actor[${MainTankPCID}].Z}]} <= 9
 	    {
     		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 4
@@ -1645,7 +1645,7 @@ function CheckPosition(int rangetype, int position)
     	else
     	{
     	    call FastMove ${Actor[${MainTankPCID}].X} ${Actor[${MainTankPCID}].Z} 1
-    		;echo "DEBUG:: FastMove() returned: ${Return}" 
+    		;echo "DEBUG:: FastMove() returned: ${Return}"
     	}
 
 		if ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${Actor[${KillTarget}].ID})
@@ -1669,7 +1669,7 @@ function CheckPosition(int rangetype, int position)
             		        waitframe
             		    }
             		    while ${Me.CastingSpell}
-        		    }		
+        		    }
         		    call GetBehind
 				}
 				break
@@ -1687,7 +1687,7 @@ function CheckPosition(int rangetype, int position)
             		        waitframe
             		    }
             		    while ${Me.CastingSpell}
-        		    }					
+        		    }
         		    call GetinFront
 				}
 				break
@@ -1713,7 +1713,7 @@ function CheckPosition(int rangetype, int position)
             		        waitframe
             		    }
             		    while ${Me.CastingSpell}
-        		    }		
+        		    }
         		    call GetToFlank 1
 				}
 				else
@@ -1726,7 +1726,7 @@ function CheckPosition(int rangetype, int position)
             		        waitframe
             		    }
             		    while ${Me.CastingSpell}
-        		    }	
+        		    }
         		    call GetToFlank
 				}
 				break
@@ -2385,12 +2385,12 @@ function FastMove(float X, float Z, int range)
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
 	variable int MoveToRange
-	
+
 	if ${ScanRange} > 30
 	    MoveToRange:Set[${ScanRange}]
     else
         MoveToRange:Set[30]
-        
+
 	IsMoving:Set[TRUE]
 
 	if !${Actor[${KillTarget}](exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
@@ -2875,7 +2875,7 @@ function ScanAdds()
     variable int tcount=2
 	variable float X
 	variable float Z
-	
+
 	if !${NoAutoMovement} || !${MainTank}
 	    return
 
@@ -2955,32 +2955,32 @@ atom(script) EQ2_onIncomingText(string Text)
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
 {
     ;echo "DEBUG:  ChatType: ${ChatType} -- Speaker: ${Speaker} -- Target: ${sTarget} -- ChannelName: ${ChannelName} -- Message: ${Message}"
-    
+
 	if (${Message.Find[Invis us please]} > 0)
 	{
 	    if ${Me.Group[${Speaker}](exists)}
 	    {
         	if (${Me.SubClass.Equal[Illusionist]} && ${Me.Level} >= 24)
         	{
-                eq2execute /useabilityonplayer ${Speaker} "Illusory Mask" 	    
+                eq2execute /useabilityonplayer ${Speaker} "Illusory Mask"
         	}
         	elseif (${Me.SubClass.Equal[Fury]} && ${Me.Level} >= 45)
         	{
-                eq2execute /useabilityonplayer ${Speaker} "Untamed Shroud" 		    
-        	}        	
+                eq2execute /useabilityonplayer ${Speaker} "Untamed Shroud"
+        	}
         }
-    } 
+    }
 }
 
 atom(script) LootWDw(string ID)
 {
     if ${PauseBot} || !${StartBot}
         return
-    
+
     echo "DEBUG:: LootWDw(${ID}) -- (LastWindow: ${LastWindow})"
     echo "DEBUG:: LootWindow.Type: ${LootWindow[${ID}].Type}"
     echo "DEBUG:: LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"
-    
+
 	declare i int local
 	variable int tmpcnt=1
 	variable int deccnt=0
@@ -3558,6 +3558,9 @@ objectdef ActorCheck
 			return FALSE
 		}
 
+		if ${Actor[${actorid}].Type.Equal[PC]}
+			return FALSE
+
 		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
 			;echo Check if mob is aggro on group or pet
@@ -3566,6 +3569,9 @@ objectdef ActorCheck
 			{
 				if (${Me.Group[${tempvar}](exists)})
 				{
+					if ${Actor[${actorid}].ID} == ${Me.Group[${tempvar}].ID}
+						return FALSE
+
 					if (${Actor[${actorid}].Target.ID} == ${Me.Group[${tempvar}].ID})
 						return TRUE
 				}
@@ -3586,6 +3592,9 @@ objectdef ActorCheck
 				{
 					if (${Me.Raid[${tempvar}](exists)})
 					{
+						if ${Actor[${actorid}].ID} == ${Me.Raid[${tempvar}].ID}
+							return FALSE
+
 						if (${Actor[${actorid}].Target.ID} == ${Me.Raid[${tempvar}].ID})
 						{
 							;echo aggro detected on raid
@@ -4894,10 +4903,10 @@ atom ExcludePOI()
 atom(script) EQ2_onChoiceWindowAppeared()
 {
     if ${PauseBot} || !${StartBot}
-        return    
-    
+        return
+
     echo "DEBUG:: EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"
-    
+
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{
 		ChoiceWindow:DoChoice1

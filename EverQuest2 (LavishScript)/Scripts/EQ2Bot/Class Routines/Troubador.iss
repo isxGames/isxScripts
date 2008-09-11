@@ -504,8 +504,11 @@ function Combat_Routine(int xAction)
 	call CheckHeals
 
 	if ${Actor[ID,${KillTarget}].Distance}>5 && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA,Z, Target.X, Target.Z]}<=8
+	{
 		call CheckPosition 1 1
-
+		if !${Me.AutoAttackOn}
+			EQ2Execute /auto 1
+	}
 	if ${DebuffMitMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
 	{
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
@@ -519,7 +522,7 @@ function Combat_Routine(int xAction)
 			DebuffCnt:Inc
 		}
 	}
-	
+
 	if (${DebuffMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]}) && ${DebuffCnt}<1
 	{
 		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady} && ${DebuffCnt}<1

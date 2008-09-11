@@ -762,18 +762,18 @@ function CheckGroupHealth(int MinHealth)
 
 function PetAttack()
 {
-    ;echo "Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"
+	;echo "Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"
 
-    if !${Actor[${KillTarget}](exists)}
-        return
+	if !${Actor[${KillTarget}](exists)}
+		return
 
 	if ${Me.Pet.Target.ID} != ${KillTarget}
 	{
-	    if ${Me.Pet.Target(exists)}
-	    {
-    		EQ2Execute /pet backoff
-    		wait 2
-    	}
+		if ${Me.Pet.Target(exists)}
+		{
+			EQ2Execute /pet backoff
+			wait 2
+		}
 		target ${KillTarget}
 		wait 1
 		EQ2Execute /pet attack
@@ -885,38 +885,27 @@ function UseCrystallizedSpirit(int Health)
 	if ${Me.Inventory[Crystallized Spirit].IsReady}
 	{
 		if ${Me.ToActor.Health}>0 && ${Me.Group[${temphl}].ToActor.Health}<${Health}
-		{
 			grpheal:Inc
-		}
 
 		do
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)}
 			{
-
 				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<${Health}
-				{
 					grpheal:Inc
-				}
 
 				if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
 				{
 					if ${Me.Group[${temphl}].ToActor.Pet.Health}<${Health} && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-					{
 						grpheal:Inc
-					}
 				}
-
 			}
-
 		}
 		while ${temphl:Inc}<${grpcnt}
 
 
 		if ${grpheal}>=2
-		{
 			Me.Inventory[Crystallized Spirit]:Use
-		}
 	}
 }
 
@@ -953,20 +942,15 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 
 	do
 	{
-
 		;check groupmates health
 		if ${Me.Group[${counter}].ToActor.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Health}>0
-		{
 			Return FALSE
-		}
 
 		;check health of summoner pets
 		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
 		{
 			if ${Me.Group[${counter}].ToActor.Pet.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Pet.Health}>0
-			{
 				Return FALSE
-			}
 		}
 
 	}
@@ -975,15 +959,11 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 	;check mt health
 	call GetActorID ${MainTankPC}
 	if ${Return} && ${Actor[${Return}].Health}<${MTHealth}
-	{
 		Return FALSE
-	}
 
 	;check my health
 	if ${Me.ToActor.Health}<${MyHealth}
-	{
 		Return FALSE
-	}
 
 	Return TRUE
 }
@@ -992,30 +972,21 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 {
 	switch ${ChatType}
 	{
-
 		case 28
 		case 27
 		case 26
 		case 15
 		case 16
 			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombat}
-			{
 				JoustStatus:Set[1]
-			}
 			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
-			{
 				JoustStatus:Set[0]
-			}
 			elseif ${Message.Find[${BDTrigger}]}
-			{
 				BDStatus:Set[1]
-			}
 		case 18
 		case 8
 			if (${Message.Upper.Find[SHARD]} || ${Message.Upper.Find[HEART]}) && ${Me.Class.Equal[summoner]}
-			{
 				call QueueShardRequest ${Speaker} ${Speaker}
-			}
 			break
 		default
 			break
@@ -1035,9 +1006,7 @@ function FindHealer()
 	declare	healer int local 0
 
 	if !${Me.Grouped}
-	{
 		return ${Me.ID}
-	}
 
 	healer:Set[${Me.ID}]
 
@@ -1055,9 +1024,7 @@ function FindHealer()
 			case inquisitor
 				;don't trust priests that have melee configs unless no other priest is available
 				if ${healer}==${Me.ID}
-				{
 					healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
-				}
 				break
 			Default
 				break
