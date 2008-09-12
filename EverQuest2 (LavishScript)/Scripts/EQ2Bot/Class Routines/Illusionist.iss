@@ -211,8 +211,6 @@ function PostCombat_Init()
 {
 	;PostAction[1]:Set[]
 	;PostSpellRange[1,1]:Set[]
-
-	PostAction[1]:Set[LoadDefaultEquipment]
 }
 
 function Buff_Routine(int xAction)
@@ -1261,13 +1259,15 @@ function CastSomething()
 function Post_Combat_Routine(int xAction)
 {
 	TellTank:Set[FALSE]
-
+	
+	; turn off auto attack if we were casting while the last mob died
+	if ${Me.AutoAttackOn}
+	{
+		EQ2Execute /toggleautoattack
+	}
+	
 	switch ${PostAction[${xAction}]}
 	{
-		case LoadDefaultEquipment
-		    if !${Me.ToActor.InCombatMode}
-    			ExecuteAtom LoadEquipmentSet "Default"
-			break
 		default
 			return PostCombatRoutineComplete
 	}
