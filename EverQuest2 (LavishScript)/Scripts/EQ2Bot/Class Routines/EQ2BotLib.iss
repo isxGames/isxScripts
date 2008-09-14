@@ -901,7 +901,7 @@ function UseCrystallizedSpirit(int Health)
 				}
 			}
 		}
-		while ${temphl:Inc}<${grpcnt}
+		while ${temphl:Inc}<=${grpcnt}
 
 
 		if ${grpheal}>=2
@@ -944,28 +944,28 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 	{
 		;check groupmates health
 		if ${Me.Group[${counter}].ToActor.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Health}>0
-			Return FALSE
+			return FALSE
 
 		;check health of summoner pets
 		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
 		{
 			if ${Me.Group[${counter}].ToActor.Pet.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Pet.Health}>0
-				Return FALSE
+				return FALSE
 		}
 
 	}
-	while ${counter:Inc}<${Me.GroupCount}
+	while ${counter:Inc}<=${Me.GroupCount}
 
 	;check mt health
 	call GetActorID ${MainTankPC}
 	if ${Return} && ${Actor[${Return}].Health}<${MTHealth}
-		Return FALSE
+		return FALSE
 
 	;check my health
 	if ${Me.ToActor.Health}<${MyHealth}
-		Return FALSE
+		return FALSE
 
-	Return TRUE
+	return TRUE
 }
 
 atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatTarget, string SpeakerIsNPC, string ChannelName)
@@ -1031,7 +1031,7 @@ function FindHealer()
 		}
 
 	}
-	while ${tempgrp:Inc}<${Me.GroupCount}
+	while ${tempgrp:Inc}<=${Me.GroupCount}
 
     if (${Me.InRaid})
     {
@@ -1058,7 +1058,7 @@ function FindHealer()
     					break
     			}
     		}
-    		while (${tempgrp:Inc} <= 24)
+    		while (${tempgrp:Inc} <= ${Me.RaidCount})
     	}
     }
 
