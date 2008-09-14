@@ -466,7 +466,7 @@ function main()
 					{
 						gRtnCtr:Set[40]
 						if !${Me.InCombat}
-								CurrentAction:Set["Idle..."]
+							CurrentAction:Set["Idle..."]
 						break
 					}
 				}
@@ -2694,7 +2694,7 @@ function IamDead(string Line)
 				}
 				wait 10
 			}
-			while ${wipegroup:Inc}<${Me.GroupCount}
+			while ${wipegroup:Inc}<=${Me.GroupCount}
 
 			if ${wipe}==${grpcnt}
 			{
@@ -2739,7 +2739,7 @@ function IamDead(string Line)
 							echo "There are now " ${together} " ready group members (" ${grpcnt} " Total)"
 						}
 					}
-					while ${tempgrp:Inc}<${grpcnt}
+					while ${tempgrp:Inc}<=${grpcnt}
 					wait 10
 				}
 				while ${together}<${grpcnt}
@@ -3581,7 +3581,7 @@ objectdef ActorCheck
 						return TRUE
 				}
 			}
-			while ${tempvar:Inc}<${Me.GroupCount}
+			while ${tempvar:Inc} <= ${Me.GroupCount}
 
 			; Check if mob is aggro on raid or pet
 			if ${Me.InRaid}
@@ -3602,7 +3602,7 @@ objectdef ActorCheck
 						}
 					}
 				}
-				while ${tempvar:Inc}<24
+				while ${tempvar:Inc} <= ${Me.RaidCount}
 			}
 		}
 
@@ -3720,9 +3720,9 @@ objectdef ActorCheck
 			do
 			{
 				if (${Me.Group[${tempvar}](exists)} && ${actorid} == ${Me.Group[${tempvar}].ToActor.Pet.ID})
-								return TRUE
+					return TRUE
 			}
-			while ${tempvar:Inc}<${Me.GroupCount}
+			while ${tempvar:Inc}<=${Me.GroupCount}
 		}
 
 		;echo Check if mob is a pet of my raid
@@ -3735,7 +3735,7 @@ objectdef ActorCheck
 				if (${Me.Raid[${tempvar}](exists)} && ${actorid} == ${Actor[${Me.Raid[${tempvar}].ID}].Pet.ID})
 						return TRUE
 			}
-			while ${tempvar:Inc}<=24
+			while ${tempvar:Inc}<=${Me.RaidCount}
 		}
 
 		if ${Actor[${actorid}](exists)} && ${actorid}==${Me.Pet.ID}
@@ -3996,7 +3996,7 @@ objectdef EQ2BotObj
 					return ${Me.Group[${tempvar}].ID}
 			}
 		}
-		while ${tempvar:Inc}<${Me.GroupCount}
+		while ${tempvar:Inc}<=${Me.GroupCount}
 
 		return 0
 	}
@@ -4056,7 +4056,7 @@ objectdef EQ2BotObj
 					}
 			}
 		}
-		while ${tempgrp:Inc}<${grpcnt}
+		while ${tempgrp:Inc}<=${grpcnt}
 
 		if ${Me.InRaid}
 		{
@@ -4079,7 +4079,7 @@ objectdef EQ2BotObj
 						}
 				}
 			}
-			while ${tempgrp:Inc}<24
+			while ${tempgrp:Inc}<=${Me.RaidCount}
 		}
 
 		if ${highesthp}
@@ -4222,7 +4222,7 @@ objectdef EQ2BotObj
 					break
 			}
 		}
-		while ${tempvar:Inc}<${Me.GroupCount}
+		while ${tempvar:Inc}<=${Me.GroupCount}
 
 		return TRUE
 	}
