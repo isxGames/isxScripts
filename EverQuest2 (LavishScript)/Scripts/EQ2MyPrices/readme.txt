@@ -1,4 +1,4 @@
-MyPrices - Version 0.12h
+MyPrices - Version 0.12i
 
 For update details see the bottom of this file.
 
@@ -345,6 +345,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+version 0.12i
+-------------
+
+Updated script so that if you add an item that nobody else currently has on the broker (nothing to compare your item to) and you have a
+maximum price set for items of that name, then the script will set your new item to that price.
 
 version 0.12h
 -------------

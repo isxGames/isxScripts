@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12h :  released 17th October 2008
+; Version 0.12i :  released 17th October 2008
 ;
 ; Declare Variables
 ;
@@ -406,11 +406,24 @@ function main()
 						}
 						else
 						{
-							; if if no match was found and the item was STILL listed for sale before
-							; then re-list it
-							if !${ItemUnlisted}
+							; if the item has a maximum price saved then use this
+							if ${MaxPriceSet}
 							{
-								call ReListItem ${i} "${currentitem}"
+								; Find where the Item is stored in the container
+								call FindItem ${i} "${currentitem}"
+								j:Set[${Return}]
+								; Read the maximum price you will allow and set it to that price								
+								call checkmaxitem "${currentitem}"
+								call SetItemPrice ${i} ${j} ${Return}
+							}
+							else
+							{
+								; if if no match or max price was found and the item was STILL listed for sale before
+								; then re-list it
+								if !${ItemUnlisted}
+								{
+									call ReListItem ${i} "${currentitem}"
+								}
 							}
 						}
 						; if the Quit Button on the UI has been pressed then exit
