@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12g :  released 10th October 2008
+; Version 0.12h :  released 17th October 2008
 ;
 ; Declare Variables
 ;
@@ -22,6 +22,7 @@ variable bool Craft
 variable bool Logging
 variable bool Natural
 variable bool MatchActual
+variable bool MaxPriceSet
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
@@ -52,6 +53,7 @@ variable float MyBasePrice
 variable float MerchPrice
 variable float PriceInSilver
 variable float MinSalePrice
+variable float MaxSalePrice
 variable float MinPrice=0
 variable float MinBasePrice=0
 variable float ItemPrice=0
@@ -164,7 +166,8 @@ function main()
 			{
 				Call CheckFocus
 				currentitem:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}]
-
+				; test here
+				; EQ2UIPage[MainPage,Market].Child[listbox,TabPages.SellPage]:HighlightRow[${currentpos}]
 				; container number
 				i:Set[${itemprice[${currentpos}]}]
 
@@ -234,6 +237,8 @@ function main()
 						; check to see if the items minimum price should be used or not
 						Call CheckMinPriceSet "${currentitem}"
 						MinPriceSet:Set[${Return}]
+						Call CheckMaxPriceSet "${currentitem}"
+						MaxPriceSet:Set[${Return}]
 						; Call Search routine to find the lowest price
 						Call echolog "Call BrokerSearch ${currentitem}"
 						Call BrokerSearch "${currentitem}"
@@ -243,6 +248,10 @@ function main()
 						{
 							; record the minimum broker price
 							MinPrice:Set[${Return}]
+
+							; check if the item has a MaxPrice
+							call checkmaxitem "${currentitem}"
+							MaxSalePrice:Set[${Return}]
 
 							; check if the item is in the myprices settings file
 							call checkitem "${currentitem}"
@@ -304,6 +313,15 @@ function main()
 									}
 									else
 									{
+										; If you have a maximum price set and the sale price is > than that
+										; then use the maximum price you will allow.
+										if ${MinBasePrice}>${MaxSalePrice} && ${MaxPriceSet}
+										{
+											MinBasePrice:Set[${MaxSalePrice}]
+											call StringFromPrice ${MaxSalePrice}
+											call AddLog "${currentitem} : Price higher than you will allow: ${Return}" FFFF0000
+										}
+										
 										; otherwise inform/change value to match
 										call StringFromPrice ${MinBasePrice}
 										call AddLog "${currentitem} :  Price to match is ${Return}" FF00FF00
@@ -326,6 +344,12 @@ function main()
 									{
 										If !${ItemUnlisted}
 										{
+											; If you have a maximum price set and the sale price is > than that
+											; then use the maximum price you will allow.
+											if ${MinBasePrice}>${MaxSalePrice} && ${MaxPriceSet}
+											{
+												MinBasePrice:Set[${MaxSalePrice}]
+											}
 											call StringFromPrice ${MinBasePrice}
 											call AddLog "${currentitem} : Price to match is ${Return} :" FF00FF00
 											Call echolog "<Main> (Increase Price)"
@@ -341,12 +365,16 @@ function main()
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FFFF0000
 												Call echolog "<Main> (Unlisted Item - Min Sale price)"
 												call SetItemPrice ${i} ${j} ${MinSalePrice}
-												Call Saveitem Sell "${currentitem}" ${MinSalePrice}
+												Call Saveitem Sell "${currentitem}" ${MinSalePrice} ${MinSalePrice}
 												call SetColour ${currentpos} FFFF0000
 											}
 											else
 											{
-												; otherwise use the lowest price on the vendor
+												; otherwise use the lowest price on the vendor or your highest price allowed
+												if ${MinBasePrice}>${MaxSalePrice} && ${MaxPriceSet}
+												{
+													MinBasePrice:Set[${MaxSalePrice}]
+												}
 												call StringFromPrice ${MinBasePrice}
 												call AddLog "${currentitem} : Unlisted : Setting to ${Return}" FF00FF00
 												Call echolog "<Main> (Unlisted Item - Lowest Broker Price)"
@@ -354,7 +382,7 @@ function main()
 												; if no previous minimum price was saved then save the lowest current price (makes sure a value is there)
 												if ${MinSalePrice} == 0
 												{
-													Call Saveitem Sell "${currentitem}" ${MinBasePrice}
+													Call Saveitem Sell "${currentitem}" ${MinBasePrice} ${MinBasePrice}
 												}
 												call SetColour ${currentpos} FF0000FF
 											}
@@ -369,7 +397,7 @@ function main()
 							else
 							{
 								call AddLog "Adding ${currentitem} at ${MyBasePrice}" FF00CCFF
-								call Saveitem Sell "${currentitem}" ${MyBasePrice}
+								call Saveitem Sell "${currentitem}" ${MyBasePrice} ${MyBasePrice}
 							}
 
 							; Re-List item for sale
@@ -880,7 +908,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 		; keep going till all items listed have been scanned and bought or you have reached your limit
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 		; now we've bought all that are available , save the number we've still got left to buy
-		call Saveitem Buy "${BuyName}" ${BuyPrice} ${BuyNumber} ${Harvest}
+		call Saveitem Buy "${BuyName}" ${BuyPrice} 0 ${BuyNumber} ${Harvest}
 	}
 	call echolog "<end> : BuyItems"
 }
@@ -1133,6 +1161,25 @@ function checkitem(string name)
 	}
 }
 
+function checkmaxitem(string name)
+{
+	call echolog "-> checkmaxitem : ${name}"
+	; keep a reference directly to the Item set.
+	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+	Item:Set[${ItemList.FindSet[${name}]}]
+
+	if ${Item.FindSetting[MaxPrice](exists)}
+	{
+		call echolog "<- checkmaxitem : ${Item.FindSetting[MaxPrice]}"
+		return ${Item.FindSetting[MaxPrice]}
+	}
+	else
+	{
+		call echolog "<- checkmaxitem : -1"
+		return -1
+	}
+}
+
 function LoadList()
 {
 	call echolog "<start> : Loadlist"
@@ -1187,7 +1234,7 @@ function LoadList()
 					{
 						call SetColour ${numitems} FF0000FF
 						call AddLog "Item Missing from Settings File,  Adding : ${labelname}" FF00CCFF
-						call Saveitem Sell "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice}
+						call Saveitem Sell "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice} ${Me.Vending[${i}].Consignment[${j}].BasePrice}
 					}
 				}
 				while ${j:Inc} <= ${Me.Vending[${i}].NumItems}
@@ -1229,6 +1276,7 @@ function pricefromstring()
 	Declare Silver int local
 	Declare Copper float local
 	Declare Money float local
+	Declare MaxMoney float local
 	Declare Flagged bool local
 
 	itemname:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Itemname].Text}]
@@ -1249,8 +1297,25 @@ function pricefromstring()
 		Gold:Set[${Math.Calc[${Gold}*100]}]
 		Copper:Set[${Math.Calc[${Copper}/100]}]
 		Money:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+		
+		Platina:Set[0]
+		Gold:Set[0]
+		Silver:Set[0]
+		Copper:Set[0]
+		
+		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxPlatPrice].Text}]
+		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxGoldPrice].Text}]
+		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxSilverPrice].Text}]
+		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxCopperPrice].Text}]
+
+		; calclulate the value in silver
+		Platina:Set[${Math.Calc[${Platina}*10000]}]
+		Gold:Set[${Math.Calc[${Gold}*100]}]
+		Copper:Set[${Math.Calc[${Copper}/100]}]
+		MaxMoney:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+
 		; Save the new value in your settings file
-		call Saveitem Sell "${itemname}" ${Money} 0 ${UIElement[CraftItem@Sell@GUITabs@MyPrices].Checked}
+		call Saveitem Sell "${itemname}" ${Money} ${MaxMoney} 0 ${UIElement[CraftItem@Sell@GUITabs@MyPrices].Checked}
 	}
 	call echolog "<end> : pricefromstring"
 }
@@ -1258,7 +1323,7 @@ function pricefromstring()
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier, string Recipe)
+function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier, string Recipe)
 {
 	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${startlevel} ${endlevel} ${tier} ${Recipe}"
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
@@ -1287,6 +1352,15 @@ function Saveitem(string Saveset, string ItemName, float Money, int Number, bool
 		else
 		{
 			Item:AddSetting[MinSalePrice,FALSE]
+		}
+		if ${UIElement[MaxPrice@Sell@GUITabs@MyPrices].Checked}
+		{
+			Item:AddSetting[MaxSalePrice,TRUE]
+			Item:AddSetting[MaxPrice,${MaxMoney}]
+		}
+		else
+		{
+			Item:AddSetting[MaxSalePrice,FALSE]
 		}
 		if ${flagged}
 		{
@@ -1473,7 +1547,54 @@ function FillMinPrice(int ItemID)
 		UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetText[${Gold}]
 		UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetText[${Silver}]
 		UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
+
+		Money:Set[${Item.FindSetting[MaxPrice]}]
+		
+		if !${Item.FindSetting[MaxSalePrice]}
+		{
+			UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[MaxPrice@Sell@GUITabs@MyPrices]:UnsetChecked
+		}
+		else
+		{
+			UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[MaxPrice@Sell@GUITabs@MyPrices]:SetChecked
+		}
+
+		Platina:Set[${Math.Calc[${Money}/10000]}]
+		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
+		Gold:Set[${Math.Calc[${Money}/100]}]
+		Money:Set[${Math.Calc[${Money}-(${Gold}*100)]}]
+		Silver:Set[${Money}]
+		Money:Set[${Math.Calc[${Money}-${Silver}]}]
+		Copper:Set[${Math.Calc[${Money}*100]}]
+
+		UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetText[${Platina}]
+		UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetText[${Gold}]
+		UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetText[${Silver}]
+		UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
+		
+
 	}
+
 	call echolog "<end> : FillMinPrice"
 }
 
@@ -1490,6 +1611,21 @@ function CheckMinPriceSet(string itemname)
 	Item:Set[${ItemList.FindSet[${itemname}]}]
 	call echolog "<- CheckMinPriceSet ${Item.FindSetting[MinSalePrice]}"
 	return ${Item.FindSetting[MinSalePrice]}
+}
+
+function CheckMaxPriceSet(string itemname)
+{
+	call echolog "-> CheckMaxPriceSet ${itemname}"
+	LavishSettings:AddSet[myprices]
+	LavishSettings[myprices]:AddSet[General]
+	LavishSettings[myprices]:AddSet[Item]
+
+	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
+	ItemList:AddSet[${itemName}]
+
+	Item:Set[${ItemList.FindSet[${itemname}]}]
+	call echolog "<- CheckMaxPriceSet ${Item.FindSetting[MaxSalePrice]}"
+	return ${Item.FindSetting[MaxSalePrice]}
 }
 
 function savebuyinfo()
@@ -1543,7 +1679,7 @@ function savebuyinfo()
 	else
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Saving Information]
-		call Saveitem Buy "${itemname}" ${Money} ${itemnumber} ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked} ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked} ${startlevel} ${endlevel} ${tier}
+		call Saveitem Buy "${itemname}" ${Money} 0 ${itemnumber} ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked} ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked} ${startlevel} ${endlevel} ${tier}
 		call buy Buy init
 	}
 	call echolog "<end> : savebuyinfo"
@@ -1580,7 +1716,7 @@ function savecraftinfo()
 	{
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
 	; Parameters : Craft , Itemname , Stackszie , Number , <Bool> Craftitem, <Bool> nameonly,startlevel,endlevel,tier, Recipe Name
-		call Saveitem Craft "${CraftName}" ${CraftStack} ${CraftNumber} TRUE TRUE 0 0 0 "${RecipeName}"
+		call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE 0 0 0 "${RecipeName}"
 	}
 	call echolog "<end> : savecraftinfo"
 }

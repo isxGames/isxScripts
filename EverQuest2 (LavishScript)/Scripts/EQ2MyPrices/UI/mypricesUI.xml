@@ -633,6 +633,72 @@
 						<Text>CP</Text>
 					</Text>
 
+
+					<Text Name='Label3' Template='EQ2.Text'>
+						<X>25</X>
+						<Y>470</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Maximum Price</Text>
+					</Text>
+
+					<Textentry Name='MaxPlatPrice' Template='EQ2.Textentry'>
+						<X>125</X>
+						<Y>470</Y>
+						<Width>50</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Text Name='MaxPlatPriceText' Template='EQ2.Text'>
+						<X>180</X>
+						<Y>470</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>PP</Text>
+					</Text>
+					<Textentry Name='MaxGoldPrice' Template='EQ2.Textentry'>
+						<X>205</X>
+						<Y>470</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MaxGoldPriceText' Template='EQ2.Text'>
+						<X>240</X>
+						<Y>470</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>GP</Text>
+					</Text>
+					<Textentry Name='MaxSilverPrice' Template='EQ2.Textentry'>
+						<X>265</X>
+						<Y>470</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MaxSilverPriceText' Template='EQ2.Text'>
+						<X>300</X>
+						<Y>470</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>SP</Text>
+					</Text>
+					<Textentry Name='MaxCopperPrice' Template='EQ2.Textentry'>
+						<X>325</X>
+						<Y>470</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MaxCopperPriceText' Template='EQ2.Text'>
+						<X>360</X>
+						<Y>470</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>CP</Text>
+					</Text>
+
 					<Commandbutton name='UpdatePrice' Template='EQ2.Commandbutton'> 
 						<X>400</X> 
 						<Y>450</Y> 
@@ -643,11 +709,12 @@
 							Script[myprices]:QueueCommand[call pricefromstring]
 						</OnLeftClick>
 						<AutoTooltip>
-							Update your Minimum Sale Price
+							Update your Min Sale Price
 						</AutoTooltip>
 					</Commandbutton>
+					
 					<checkbox Name='CraftItem' Template='EQ2.checkbox'>
-						<X>220</X>
+						<X>130</X>
 						<Y>395</Y>
 						<Width>20</Width>
 						<Height>20</Height>
@@ -704,6 +771,55 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					
+					<checkbox Name='MaxPrice' Template='EQ2.checkbox'>
+						<X>240</X>
+						<Y>395</Y>
+						<Width>10%</Width>
+						<Height>20</Height>
+						<Text>Max price</Text>
+						<AutoTooltip>
+							Item has a Maximum Sale Price
+						</AutoTooltip>
+						<OnLoad>
+							UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+						</OnLoad>						
+						<OnLeftClick>
+							if ${UIElement[MaxPrice@Sell@GUITabs@MyPrices].Checked}
+							{
+							UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							}
+							else
+							{
+							UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							}
+						</OnLeftClick>
+					</checkbox>
+					
 					<listbox Name='ItemList' Template='EQ2.listbox'>
 						<X>45%</X>
 						<Y>2%</Y>
