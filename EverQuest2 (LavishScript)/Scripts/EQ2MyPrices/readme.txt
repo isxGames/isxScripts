@@ -1,4 +1,4 @@
-MyPrices - Version 0.12g
+MyPrices - Version 0.12h
 
 For update details see the bottom of this file.
 
@@ -217,6 +217,26 @@ will be updated and the list will re-load.
 To stop using a minimum price just untick the box, the minimum price boxes will grey out and the script will not check for
 a minimum price for that item when doing it's scan.
 
+Setting a Maximum Price for Items to be sold at.
+----------------------------------------------
+
+To stop the script matching someones overly high price the script can store the the maximum price you will accept for it 
+(Minus Broker fee).
+
+The script will then NOT raise or set your price for that item above that price.
+
+To set/change the maximum sale price for an item click on it's name in the list , the current price and your current minimum price
+and current maximum price will be shown at the bottom.
+
+Tick the Box marked Max Price if it's unticked , this makes the script check the maximum price when it scans that item.
+
+Change the values in the boxes under 'Maximum Price' to match what you want them to be and press 'Save' , the setting and value
+will be updated and the list will re-load.
+
+To stop using a maximum price just untick the box, the maximum price boxes will grey out and the script will not check for
+a maximum price for that item when doing it's scan.
+
+
 
 Setting an item to be marked as a craftable item 
 ------------------------------------------------
@@ -232,9 +252,10 @@ the following will happen.
 
 The script scans for the lowest price for each item currently on the broker.
 
-1. If a minimum price for that item was set previously and the lowest price is LOWER then your minimum price the minimum price is used.
-2. If a minimum price for that item was set previously and the lowest price is HIGHER then your minimum price the lowest price is matched.
-3. If the item does not have a minimum price set then the item price is matched with the lowest price on the broker.
+1. If a minimum price for that item was set and the lowest price is LOWER then your minimum price the minimum price is used.
+2. If a minimum price for that item was set and the lowest price is HIGHER then your minimum price the lowest price is matched.
+4. If the item has a maximum price set and the lowest broker price is HIGHER than this then the price is set to your maximum price.
+3. If the item does not have a minimum price or maximum price set then the item price is matched with the lowest price on the broker.
 
 What this means is you can just dump items in your broker list and let myprices set the price for you and mark them as Listed.
 
@@ -324,6 +345,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+version 0.12h
+-------------
+
+Added an option to set a maximum price to sell each item for.
+
 
 version 0.12g
 -------------
