@@ -1138,7 +1138,8 @@
 												<Color>FFEBDEAA</Color>
 											</Font>
 											<Text>* Standard Quality 1:       %   * Rare Quality 1:       %</Text>
-										</Text>
+                      <AutoTooltip>Will cast progress + durability if DUR is below this.</AutoTooltip>
+                    </Text>
 										<Textentry Name='Standard Quality1' Template='EQ2.Textentry'>
 											<X>153</X>
 											<Y>65</Y>
@@ -1166,7 +1167,8 @@
 												<Color>FFEBDEAA</Color>
 											</Font>
 											<Text>* Standard Quality 2:       %   * Rare Quality 2:       %</Text>
-										</Text>
+                      <AutoTooltip>Will cast pure durability if DUR is below this.</AutoTooltip>
+                    </Text>
 										<Textentry Name='Standard Quality2' Template='EQ2.Textentry'>
 											<X>153</X>
 											<Y>95</Y>
@@ -1195,7 +1197,8 @@
 											</Font>
 											<!--	<Text>* Standard Quality 3:       %   * Rare Quality 3:       %</text> -->
 											<Text>  * Standard Power 3:       %     * Rare Power 3:       %</Text>
-										</Text>
+                      <AutoTooltip>Will spam power-consuming buff if power is above this.</AutoTooltip>
+                    </Text>
 										<Textentry Name='Standard Quality3' Template='EQ2.Textentry'>
 											<X>153</X>
 											<Y>125</Y>
