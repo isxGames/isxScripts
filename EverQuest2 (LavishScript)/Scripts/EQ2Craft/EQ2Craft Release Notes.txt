@@ -1,5 +1,12 @@
 Revision History ||
 ===================
+v8.33 - Fixed auto-transmute functionality (I think)
+      - Trimmed out much unused code.
+      - Tuned buff spamming - This should speed up the crafting process immensely.
+      - Added tooltips to the Durability Threshold elements explaining what they are used for.
+      - Tweaked imbue code. Blessed items should now be filtered by the imbue checkbox, and imbues
+        of all levels should work correctly.
+
 v8.32 - Forcing script to forget what device it was at after finishing a craft session. This should
         eliminate a few annoying issues where you move around after doing some crafting, and the
         script thinks you're still in front of a device (or targetting a particular NPC).
