@@ -1,6 +1,6 @@
 Revision History ||
 ===================
-v8.44 - Craft Lite!
+v8.40 - Craft Lite!
         - You can now use the Craft Lite button in the titlebar to switch between the Craft Full
           version and the Craft Lite version.
         - When Craft is in Lite mode, it will pick up and button mash for any recipe you start
