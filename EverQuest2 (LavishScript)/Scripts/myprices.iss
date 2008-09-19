@@ -23,6 +23,7 @@ variable bool Logging
 variable bool Natural
 variable bool MatchActual
 variable bool MaxPriceSet
+variable bool runautoscan
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
@@ -77,7 +78,7 @@ variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
 
 ; Main Script
 ;
-function main()
+function main(string goscan)
 {
 #define WAITEXTPERIOD 120
 	Declare tempstring string local
@@ -123,12 +124,18 @@ function main()
 	}
 	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices Version 0.12f : released 12 May 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.12i : released 17th October 2008" FF11FFCC
 	call LoadList
 
 	if ${ScanSellNonStop}
 	{
 		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
+	}
+	
+	if ${goscan.Equal["SCAN"]}
+	{
+		Pausemyprices:Set[FALSE]
+		runautoscan:Set[TRUE]
 	}
 
 	do
@@ -460,11 +467,19 @@ function main()
 		{
 			call buy Buy scan
 		}
+
 		if !${ScanSellNonStop}
 		{
 			UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Start Scanning]
 			Pausemyprices:Set[TRUE]
 		}
+		
+		if ${runautoscan}
+		{
+			Exitmyprices:Set[TRUE]
+			ScanSellNonStop:Set[FALSE]
+		}
+
 		if ${ScanSellNonStop} && ${PauseTimer} > 0
 		{
 			if ${Natural}
