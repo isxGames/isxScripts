@@ -165,7 +165,7 @@
     <Set Name="woodworker">
       <Setting Name="20">6</Setting>
       <Setting Name="24">3,3</Setting>
-      <Setting Name="29"></Setting>
+      <Setting Name="29">3,3</Setting>
       <Setting Name="30">6</Setting>
       <Setting Name="34">3,3</Setting>
       <Setting Name="39"></Setting>
