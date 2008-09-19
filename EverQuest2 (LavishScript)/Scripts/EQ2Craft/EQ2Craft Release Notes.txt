@@ -1,5 +1,15 @@
 Revision History ||
 ===================
+v8.44 - Craft Lite!
+        - You can now use the Craft Lite button in the titlebar to switch between the Craft Full
+          version and the Craft Lite version.
+        - When Craft is in Lite mode, it will pick up and button mash for any recipe you start
+          manually. Craft will start mashing buttons after the first "tick". This should work
+          for ANY recipe, though I'm not sure I'd trust it with the level 100 artisan epic quest
+          recipes.
+        - Craft Lite will use the "Rare" thresholds from the Options page to determine when to 
+          use power and durability buffs.
+
 v8.33 - Fixed auto-transmute functionality (I think)
       - Trimmed out much unused code.
       - Tuned buff spamming - This should speed up the crafting process immensely.
