@@ -25,7 +25,7 @@ This is a limitation of SoE's broker system and I cannot work around it.
 Listing the same item seperately in 2 or more DIFFERENT containers will not cause this problem.
 
 
-Items with Commas in the name have problems in the buying and selling parts of the script due to the fact Innerspace
+Items with Commas in the name may have problems in the buying and selling parts of the script due to the fact Innerspace
 currently reads the name in the UI box upto the comma then assumes the next part of the text is another item.
 
 
@@ -77,6 +77,12 @@ or
 The script will then open the GUI , either doubleclick your market board or the closest non-agro NPC (should be the broker)
 scan your broker system and list whats on it.
 
+
+3. You can auto-run a scan and exit the script by passing the paramater SCAN to it.
+
+   run myprices SCAN   or /run myprices SCAN
+ 
+   Script will load , scan your broker list then auto-exit.
 
 The Sell TAB
 ============
