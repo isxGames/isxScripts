@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.41 - Changed writ recipe name code slightly. Should now correctly identify recipes it previously
+        had marked as "Pristine XXX" or "Pristine Forged XXX".
+
 v8.40 - Craft Lite!
         - You can now use the Craft Lite button in the titlebar to switch between the Craft Full
           version and the Craft Lite version.
