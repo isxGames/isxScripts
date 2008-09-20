@@ -257,7 +257,7 @@ function main()
 	if (${Me.Level} < 80)
 		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
 	else
-			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+		GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
 	;;;
 	;;;;;;;;;;;;;;;;;
 
@@ -783,7 +783,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 						if !${Actor[${TargetID}](exists)}
 								return -1
 
-						if ${Actor[${TargetID}].Distance}>35
+						if ${Actor[${TargetID}].Distance} > 35
 								return -1
 
 						if ${xvar1} || ${xvar2}
@@ -794,9 +794,9 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 
 						if ${TargetID} > 0
 						{
-							if !(${TargetID}==${Target.ID}) && !(${TargetID}==${Target.Target.ID} && ${Target.Type.Equal[NPC]})
+						    if ${TargetID} != ${Target.ID} && ${TargetID} != ${Target.Target.ID}
 							{
-								if ${Actor[id,${TargetID}](exists)}
+								if ${Actor[${TargetID}](exists)}
 								{
 									target ${TargetID}
 									wait 10 ${Target.ID}==${TargetID}
@@ -1053,6 +1053,9 @@ function Combat()
 
 		if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
 			break
+			
+	    if ${Actor[${KillTargeT}].IsDead}
+	        break
 
 		do
 		{
@@ -1064,7 +1067,7 @@ function Combat()
 			{
 				wait 5
 				if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
-						break
+					break
 				call ProcessTriggers
 			}
 
@@ -1302,12 +1305,20 @@ function Combat()
 			if !${CurrentTask}
 				Script:End
 
-			if (${Actor[${KillTarget}].IsDead} && !${MainTank}) || (${Target.IsDead} && ${MainTank} && (${Actor[${KillTarget}].Type.Equal[NPC]} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].Type.Equal[Corpse]}))
-				break
+            if ${MainTank}
+            {
+                if ${Target.IsDead}
+                    break
+            }
+            else
+            {
+                if ${Actor[${KillTarget}].IsDead}
+                    break
+            }               
 
 			call ProcessTriggers
 		}
-		while ((${Actor[${KillTarget}](exists)} && !${MainTank}) || (${Target(exists)} && ${MainTank})) && !${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]}
+		while (!${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]})
 		;;; END LOOP DEALING WITH CURRENT TARGET ;;;;;;
 
 		disablebehind:Set[FALSE]
@@ -3449,11 +3460,11 @@ objectdef ActorCheck
 	;returns true for valid targets
 	member:bool ValidActor(int actorid)
 	{
-			if !${Actor[id,${actorid}](exists)}
-					return FALSE
+		if !${Actor[${actorid}](exists)}
+				return FALSE
 
-			if ${Actor[id,${actorid}].IsDead}
-					return FALSE
+		if ${Actor[${actorid}].IsDead}
+				return FALSE
 
 		switch ${Actor[${actorid}].Type}
 		{
@@ -3464,18 +3475,6 @@ objectdef ActorCheck
 				if ${IgnoreNamed}
 					return FALSE
 				break
-
-			case PC
-				return FALSE
-
-			case NoKill NPC
-				return FALSE
-
-				case Pet
-						return FALSE
-
-				case MyPet
-						return FALSE
 
 			Default
 				return FALSE
@@ -3759,12 +3758,13 @@ objectdef ActorCheck
 			return 0
 		}
 
-		EQ2:CreateCustomActorArray[byDist,20]
+		EQ2:CreateCustomActorArray[byDist,20,npc]
 		do
 		{
-			if (${CustomActor[${tcount}].Type.Equal[PC]})
-					continue
-
+		    ; this should not be necessary, but I will put it here anyway
+		    if ${CustomActor[${tcount}].IsDead}
+		        continue
+		        
 			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode}
 			{
 				if ${CustomActor[${tcount}].ID}
