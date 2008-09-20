@@ -3,319 +3,2729 @@
 <LavishNav>
 	<Universe Name="fprt_tradeskill01" Unique='1'>
 		<Children>
+			<Sphere Name="fprt_tradeskill01-1221925227-0">
+				<X>0.012465</X>
+				<Y>-0.179756</Y>
+				<Z>2.470834</Z>
+				<Size>3.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-3.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925444-7.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
+				<Connection To="RushOrder" />
+				<Connection To="Wholesaler" />
+				<Connection To="WorkOrder" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925244-1">
+				<X>3.080924</X>
+				<Y>-0.179053</Y>
+				<Z>2.377544</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-3.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925248-4.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925444-7.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
+				<Connection To="RushOrder" />
+				<Connection To="Wholesaler" />
+				<Connection To="WorkOrder" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925247-2">
+				<X>3.001890</X>
+				<Y>-0.181644</Y>
+				<Z>0.344816</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-3.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925248-4.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
+				<Connection To="RushOrder" />
+				<Connection To="Wholesaler" />
+				<Connection To="WorkOrder" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925247-3">
+				<X>2.957702</X>
+				<Y>-0.183740</Y>
+				<Z>-1.768578</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925248-4.fprt_tradeskill01" />
+				<Connection To="RushOrder" />
+				<Connection To="WorkOrder" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925248-4">
+				<X>2.925779</X>
+				<Y>-0.185607</Y>
+				<Z>-3.773234</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-3.fprt_tradeskill01" />
+			</Sphere>
 			<Sphere Name="RushOrder" Unique='1'>
-				<X>2.562776</X>
-				<Y>-0.181678</Y>
-				<Z>0.278620</Z>
-				<Size>5.000000</Size>
-				<Connection To="Fourth_Floor_Stairwell_Top" />
-				<Connection To="fprt_tradeskill01-1210530155-3.fprt_tradeskill01" />
+				<X>-1.106682</X>
+				<Y>-0.181802</Y>
+				<Z>0.008197</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-3.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925444-7.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
 				<Connection To="Wholesaler" />
 				<Connection To="WorkOrder" />
 			</Sphere>
 			<Sphere Name="WorkOrder" Unique='1'>
-				<X>2.562776</X>
-				<Y>-0.181678</Y>
-				<Z>0.278620</Z>
-				<Size>5.000000</Size>
-				<Connection To="Fourth_Floor_Stairwell_Top" />
-				<Connection To="fprt_tradeskill01-1210530155-3.fprt_tradeskill01" />
+				<X>-1.106682</X>
+				<Y>-0.181802</Y>
+				<Z>0.008197</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-3.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925444-7.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
 				<Connection To="Wholesaler" />
 			</Sphere>
-			<Sphere Name="Wholesaler" Unique='1'>
-				<X>-2.104944</X>
-				<Y>-0.177941</Y>
-				<Z>7.091123</Z>
-				<Size>5.000000</Size>
-				<Connection To="RushOrder" />
-				<Connection To="WorkOrder" />
-			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210530155-3">
-				<X>-0.717127</X>
-				<Y>-0.180914</Y>
-				<Z>1.064655</Z>
-				<Size>5.000000</Size>
-				<Connection To="Fourth_Floor_Stairwell_Top" />
-				<Connection To="fprt_tradeskill01-1210530186-4.fprt_tradeskill01" />
+			<Sphere Name="fprt_tradeskill01-1221925444-7">
+				<X>-1.370680</X>
+				<Y>-0.176588</Y>
+				<Z>5.142342</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
 				<Connection To="Wholesaler" />
 				<Connection To="WorkOrder" />
 			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210530186-4">
-				<X>-7.065870</X>
+			<Sphere Name="fprt_tradeskill01-1221925454-9">
+				<X>-2.870327</X>
+				<Y>-0.182359</Y>
+				<Z>1.512982</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925444-7.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925459-10.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
+				<Connection To="RushOrder" />
+				<Connection To="Wholesaler" />
+				<Connection To="WorkOrder" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925459-10">
+				<X>-4.993572</X>
+				<Y>-0.153191</Y>
+				<Z>1.253860</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925463-11.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925466-12.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925472-13.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925511-29.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925514-30.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925463-11">
+				<X>-6.514308</X>
 				<Y>-0.172016</Y>
-				<Z>1.577755</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210530155-3.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1210530196-5.fprt_tradeskill01" />
+				<Z>-0.178064</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925459-10.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925466-12.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925472-13.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925511-29.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925514-30.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925466-12">
+				<X>-6.564181</X>
+				<Y>-0.172016</Y>
+				<Z>-2.187585</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925459-10.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925463-11.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925472-13.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925514-30.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925472-13">
+				<X>-8.036137</X>
+				<Y>-0.172016</Y>
+				<Z>-3.614493</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925459-10.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925463-11.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925466-12.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925479-14">
+				<X>-10.115767</X>
+				<Y>-0.172016</Y>
+				<Z>-3.887711</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925466-12.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925472-13.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925487-17.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925484-15">
+				<X>-12.114684</X>
+				<Y>-0.172016</Y>
+				<Z>-3.985417</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 1" />
+				<Connection To="fprt_tradeskill01-1221925466-12.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925472-13.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925487-17.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925523-33.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925485-16">
+				<X>-14.116209</X>
+				<Y>-0.172016</Y>
+				<Z>-3.963786</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925472-13.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925487-17.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925487-17">
+				<X>-16.130020</X>
+				<Y>-0.172016</Y>
+				<Z>-3.725516</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925491-18">
+				<X>-16.952499</X>
+				<Y>-0.172016</Y>
+				<Z>-1.734398</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925487-17.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925568-43.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925570-44.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925492-19">
+				<X>-17.068209</X>
+				<Y>-0.172016</Y>
+				<Z>0.266046</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925487-17.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925568-43.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925570-44.fprt_tradeskill01" />
 				<Connection To="Work Bench 1" />
 			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210530196-5">
-				<X>-5.831053</X>
+			<Sphere Name="fprt_tradeskill01-1221925495-20">
+				<X>-17.083313</X>
 				<Y>-0.172016</Y>
-				<Z>-4.172583</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210530186-4.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
+				<Z>2.277858</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925487-17.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925568-43.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925570-44.fprt_tradeskill01" />
+				<Connection To="Work Bench 1" />
 			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210530206-6">
-				<X>-12.731576</X>
+			<Sphere Name="fprt_tradeskill01-1221925497-21">
+				<X>-17.083502</X>
 				<Y>-0.172016</Y>
-				<Z>-3.073890</Z>
-				<Size>5.000000</Size>
+				<Z>4.325709</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925568-43.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925570-44.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="Work Bench 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925498-22">
+				<X>-17.061064</X>
+				<Y>-0.172016</Y>
+				<Z>6.431642</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925568-43.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925501-23">
+				<X>-16.220528</X>
+				<Y>-0.172016</Y>
+				<Z>8.289104</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-48.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925501-24">
+				<X>-14.200250</X>
+				<Y>-0.172016</Y>
+				<Z>8.413121</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-48.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925503-25">
+				<X>-12.131981</X>
+				<Y>-0.172016</Y>
+				<Z>8.619215</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925504-26">
+				<X>-10.125417</X>
+				<Y>-0.172016</Y>
+				<Z>8.871105</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925593-53.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925506-27">
+				<X>-8.021553</X>
+				<Y>-0.172016</Y>
+				<Z>9.131299</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925511-29.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925514-30.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925593-53.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
+				<Connection To="Work Bench 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925509-28">
+				<X>-6.554651</X>
+				<Y>-0.172016</Y>
+				<Z>7.715713</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925511-29.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925514-30.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925511-29">
+				<X>-6.418772</X>
+				<Y>-0.172016</Y>
+				<Z>5.566075</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925459-10.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925463-11.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925514-30.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925514-30">
+				<X>-6.352485</X>
+				<Y>-0.172016</Y>
+				<Z>3.541012</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925459-10.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925463-11.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925466-12.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925511-29.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925520-31">
+				<X>-11.559901</X>
+				<Y>-0.172016</Y>
+				<Z>-6.007524</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 1" />
+				<Connection To="Chemistry Table 3" />
+				<Connection To="fprt_tradeskill01-1221925466-12.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925472-13.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925487-17.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925523-33.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925521-32">
+				<X>-9.927343</X>
+				<Y>-0.172016</Y>
+				<Z>-7.171572</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 1" />
+				<Connection To="Chemistry Table 3" />
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925523-33.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925532-37.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925523-33">
+				<X>-7.932597</X>
+				<Y>-0.172016</Y>
+				<Z>-7.661528</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 1" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="Chemistry Table 1" Unique='1'>
+				<X>-7.737006</X>
+				<Y>-0.172016</Y>
+				<Z>-7.629154</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925523-33.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925530-35">
+				<X>-10.110237</X>
+				<Y>-0.172016</Y>
+				<Z>-9.254116</Z>
+				<Size>2.000000</Size>
 				<Connection To="Chemistry Table 1" />
 				<Connection To="Chemistry Table 2" />
 				<Connection To="Chemistry Table 3" />
-				<Connection To="fprt_tradeskill01-1210530196-5.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925479-14.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925523-33.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925532-37.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
 			</Sphere>
-			<Sphere Name="Chemistry Table 1" Unique='1'>
-				<X>-12.738211</X>
+			<Sphere Name="fprt_tradeskill01-1221925530-36">
+				<X>-10.910277</X>
 				<Y>-0.172016</Y>
-				<Z>-8.454728</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
+				<Z>-11.156607</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 1" />
+				<Connection To="Chemistry Table 2" />
+				<Connection To="Chemistry Table 3" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925523-33.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925532-37.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925532-37">
+				<X>-11.130156</X>
+				<Y>-0.172016</Y>
+				<Z>-13.146625</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 2" />
+				<Connection To="Chemistry Table 3" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Chemistry Table 2" Unique='1'>
-				<X>-11.195518</X>
+				<X>-11.004222</X>
 				<Y>-0.172016</Y>
-				<Z>-11.054147</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
+				<Z>-13.837984</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925532-37.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925539-39">
+				<X>-12.156188</X>
+				<Y>-0.172016</Y>
+				<Z>-9.456207</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 1" />
+				<Connection To="Chemistry Table 2" />
+				<Connection To="Chemistry Table 3" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925523-33.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925532-37.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925540-40">
+				<X>-14.128835</X>
+				<Y>-0.172016</Y>
+				<Z>-9.073561</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 2" />
+				<Connection To="Chemistry Table 3" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925532-37.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Chemistry Table 3" Unique='1'>
-				<X>-11.195518</X>
+				<X>-15.723674</X>
+				<Y>-0.173573</Y>
+				<Z>-9.260813</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-36.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925532-37.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925553-42.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925553-42">
+				<X>-13.254169</X>
 				<Y>-0.172016</Y>
-				<Z>-11.054147</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210530206-6.fprt_tradeskill01" />
+				<Z>-7.157897</Z>
+				<Size>2.000000</Size>
+				<Connection To="Chemistry Table 3" />
+				<Connection To="fprt_tradeskill01-1221925484-15.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925485-16.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925520-31.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925521-32.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925530-35.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925539-39.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925540-40.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925568-43">
+				<X>-19.084335</X>
+				<Y>-0.172306</Y>
+				<Z>2.275825</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925570-44.fprt_tradeskill01" />
+				<Connection To="Work Bench 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925570-44">
+				<X>-21.152617</X>
+				<Y>-0.173016</Y>
+				<Z>2.178491</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925491-18.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925568-43.fprt_tradeskill01" />
+				<Connection To="Work Bench 1" />
 			</Sphere>
 			<Sphere Name="Work Bench 1" Unique='1'>
-				<X>-6.010262</X>
+				<X>-22.501997</X>
+				<Y>-0.173479</Y>
+				<Z>1.840758</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925492-19.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925495-20.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925568-43.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925570-44.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925579-46">
+				<X>-15.899549</X>
 				<Y>-0.172016</Y>
-				<Z>10.247108</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210530186-4.fprt_tradeskill01" />
+				<Z>10.394317</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925497-21.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-48.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
 				<Connection To="Work Bench 2" />
-				<Connection To="Work Bench 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925580-47">
+				<X>-15.542065</X>
+				<Y>-0.172016</Y>
+				<Z>12.420788</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925498-22.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-48.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+				<Connection To="Work Bench 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925580-48">
+				<X>-15.174933</X>
+				<Y>-0.172016</Y>
+				<Z>14.501946</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+				<Connection To="Work Bench 2" />
 			</Sphere>
 			<Sphere Name="Work Bench 2" Unique='1'>
-				<X>-15.904237</X>
+				<X>-15.120295</X>
 				<Y>-0.172016</Y>
-				<Z>9.797400</Z>
-				<Size>5.000000</Size>
-				<Connection To="Work Bench 1" />
+				<Z>15.222204</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-48.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925586-50">
+				<X>-14.007153</X>
+				<Y>-0.172016</Y>
+				<Z>11.086409</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925501-23.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925579-46.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-47.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925580-48.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="Work Bench 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925590-51">
+				<X>-9.510816</X>
+				<Y>-0.172016</Y>
+				<Z>10.890550</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925501-24.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925511-29.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925586-50.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925593-53.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
+				<Connection To="Work Bench 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925592-52">
+				<X>-9.563314</X>
+				<Y>-0.172016</Y>
+				<Z>13.000132</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925503-25.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925593-53.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
+				<Connection To="Work Bench 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925593-53">
+				<X>-8.435740</X>
+				<Y>-0.172016</Y>
+				<Z>14.722229</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
+				<Connection To="Work Bench 3" />
 			</Sphere>
 			<Sphere Name="Work Bench 3" Unique='1'>
-				<X>-15.904237</X>
+				<X>-8.027921</X>
 				<Y>-0.172016</Y>
-				<Z>9.797400</Z>
-				<Size>5.000000</Size>
-				<Connection To="Work Bench 1" />
+				<Z>14.953246</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925593-53.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
 			</Sphere>
-			<Sphere Name="Fourth_Floor_Stairwell_Top" Unique='1'>
-				<X>2.079796</X>
-				<Y>-0.176777</Y>
-				<Z>4.630564</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210531005-14.fprt_tradeskill01" />
+			<Sphere Name="fprt_tradeskill01-1221925599-55">
+				<X>-7.098979</X>
+				<Y>-0.172016</Y>
+				<Z>13.027036</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925593-53.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-56.fprt_tradeskill01" />
+				<Connection To="Work Bench 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925599-56">
+				<X>-7.006655</X>
+				<Y>-0.172016</Y>
+				<Z>10.873352</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925504-26.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925506-27.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925509-28.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925590-51.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925592-52.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925593-53.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925599-55.fprt_tradeskill01" />
+				<Connection To="Work Bench 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925604-57">
+				<X>1.943971</X>
+				<Y>-0.176547</Y>
+				<Z>4.881025</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925444-7.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925607-58.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
+				<Connection To="Wholesaler" />
 				<Connection To="WorkOrder" />
 			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210531005-14">
-				<X>3.688669</X>
+			<Sphere Name="fprt_tradeskill01-1221925607-58">
+				<X>2.115125</X>
+				<Y>-0.316283</Y>
+				<Z>6.943559</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925643-59.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925645-60.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925652-61.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925643-59">
+				<X>2.161898</X>
+				<Y>-1.427656</Y>
+				<Z>8.750109</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925607-58.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925645-60.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925652-61.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925653-62.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925670-63.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925645-60">
+				<X>2.188113</X>
+				<Y>-2.479755</Y>
+				<Z>10.468004</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925607-58.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925643-59.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925652-61.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925653-62.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925670-63.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925673-64.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925652-61">
+				<X>2.273982</X>
+				<Y>-3.461242</Y>
+				<Z>12.244686</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925607-58.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925643-59.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925645-60.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925653-62.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925670-63.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925653-62">
+				<X>2.325436</X>
 				<Y>-3.576795</Y>
-				<Z>14.886919</Z>
-				<Size>5.000000</Size>
-				<Connection To="Fourth_Floor_Stairwell_Top" />
+				<Z>14.258708</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925643-59.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925645-60.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925652-61.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925670-63.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925670-63">
+				<X>0.240760</X>
+				<Y>-3.576794</Y>
+				<Z>14.127514</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925643-59.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925645-60.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925652-61.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925653-62.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925673-64.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925673-64">
+				<X>-1.612811</X>
+				<Y>-4.498790</Y>
+				<Z>13.903301</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925645-60.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925670-63.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925675-65.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925675-65">
+				<X>-3.359527</X>
+				<Y>-5.516791</Y>
+				<Z>13.692014</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925673-64.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925678-66">
+				<X>-5.096374</X>
+				<Y>-6.504888</Y>
+				<Z>13.585983</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925673-64.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925675-65.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925721-96.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925679-67">
+				<X>-7.135235</X>
+				<Y>-6.607398</Y>
+				<Z>13.543276</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925673-64.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925675-65.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925721-96.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925682-68">
+				<X>-6.903256</X>
+				<Y>-6.607398</Y>
+				<Z>11.550406</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925721-96.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925684-69">
+				<X>-6.768063</X>
+				<Y>-6.607398</Y>
+				<Z>9.496284</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-71.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925736-98.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925684-70">
+				<X>-6.725202</X>
+				<Y>-6.607398</Y>
+				<Z>7.378446</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-71.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-72.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-73.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925736-98.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925684-71">
+				<X>-6.680038</X>
+				<Y>-6.607398</Y>
+				<Z>5.147397</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-72.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-73.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-74.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925736-98.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925685-72">
+				<X>-6.638749</X>
+				<Y>-6.607398</Y>
+				<Z>3.108288</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-71.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-73.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-74.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925687-75.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925736-98.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925685-73">
+				<X>-6.600159</X>
+				<Y>-6.607398</Y>
+				<Z>1.056457</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-71.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-72.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-74.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925687-75.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925736-98.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925685-74">
+				<X>-6.584598</X>
+				<Y>-6.607398</Y>
+				<Z>-1.083472</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925684-71.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-72.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-73.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925687-75.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-76.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925687-75">
+				<X>-6.623899</X>
+				<Y>-6.607398</Y>
+				<Z>-3.120444</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925685-72.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-73.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-74.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-76.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-77.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925689-76">
+				<X>-8.727282</X>
+				<Y>-6.607398</Y>
+				<Z>-3.332282</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925685-74.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925687-75.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-77.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-78.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925689-77">
+				<X>-10.819980</X>
+				<Y>-6.607398</Y>
+				<Z>-3.438083</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925687-75.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-76.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-78.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925690-79.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925689-78">
+				<X>-12.961744</X>
+				<Y>-6.607398</Y>
+				<Z>-3.510387</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925689-76.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-77.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925690-79.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-80.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925690-79">
+				<X>-15.052641</X>
+				<Y>-6.607398</Y>
+				<Z>-3.490665</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925689-77.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925689-78.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-80.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-81.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925693-80">
+				<X>-16.487862</X>
+				<Y>-6.607398</Y>
+				<Z>-1.896230</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925689-78.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925690-79.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-81.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-82.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-83.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925693-81">
+				<X>-16.508150</X>
+				<Y>-6.607398</Y>
+				<Z>0.104079</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925690-79.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-80.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-82.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-83.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-84.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925693-82">
+				<X>-16.568226</X>
+				<Y>-6.607398</Y>
+				<Z>2.254146</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925693-80.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-81.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-83.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-84.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-85.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925694-83">
+				<X>-16.578384</X>
+				<Y>-6.607398</Y>
+				<Z>4.372372</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925693-80.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-81.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-82.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-84.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-85.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-86.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925694-84">
+				<X>-16.556368</X>
+				<Y>-6.607398</Y>
+				<Z>6.407240</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925693-81.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925693-82.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-83.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-85.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-86.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925694-85">
+				<X>-16.533070</X>
+				<Y>-6.607398</Y>
+				<Z>8.547144</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925693-82.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-83.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-84.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-86.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925694-86">
+				<X>-16.510427</X>
+				<Y>-6.607398</Y>
+				<Z>10.626290</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925694-83.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-84.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-85.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925697-87">
+				<X>-16.633900</X>
+				<Y>-6.607398</Y>
+				<Z>12.777993</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925694-85.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-86.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925709-92.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925710-93.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925749-100.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925702-88">
+				<X>-14.531548</X>
+				<Y>-6.607398</Y>
+				<Z>13.276254</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925694-85.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-86.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925709-92.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925710-93.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925702-89">
+				<X>-12.522603</X>
+				<Y>-6.607398</Y>
+				<Z>13.353106</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925694-86.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925709-92.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925710-93.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925721-96.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 1" />
+				<Connection To="Sewing Table &amp; Mannequin 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925703-90">
+				<X>-10.442782</X>
+				<Y>-6.607398</Y>
+				<Z>13.434506</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925709-92.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925721-96.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925707-91">
+				<X>-15.278088</X>
+				<Y>-6.607398</Y>
+				<Z>15.216150</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925694-86.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925709-92.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925710-93.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925709-92">
+				<X>-15.142924</X>
+				<Y>-6.607398</Y>
+				<Z>17.217989</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925710-93.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925710-93">
+				<X>-15.173326</X>
+				<Y>-6.607398</Y>
+				<Z>17.983744</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925709-92.fprt_tradeskill01" />
 				<Connection To="Sewing Table &amp; Mannequin 1" />
 			</Sphere>
 			<Sphere Name="Sewing Table &amp; Mannequin 1" Unique='1'>
-				<X>-10.802472</X>
+				<X>-15.173326</X>
 				<Y>-6.607398</Y>
-				<Z>13.947946</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210531005-14.fprt_tradeskill01" />
+				<Z>17.983744</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925707-91.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925709-92.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925710-93.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925720-95">
+				<X>-8.863266</X>
+				<Y>-6.607398</Y>
+				<Z>14.944437</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925675-65.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-88.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925721-96.fprt_tradeskill01" />
 				<Connection To="Sewing Table &amp; Mannequin 2" />
-				<Connection To="Sewing Table &amp; Mannequin 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925721-96">
+				<X>-8.881395</X>
+				<Y>-6.607398</Y>
+				<Z>17.008347</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925682-68.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 2" />
 			</Sphere>
 			<Sphere Name="Sewing Table &amp; Mannequin 2" Unique='1'>
-				<X>-15.312971</X>
+				<X>-9.007105</X>
 				<Y>-6.607398</Y>
-				<Z>13.271830</Z>
-				<Size>5.000000</Size>
-				<Connection To="Sewing Table &amp; Mannequin 1" />
-				<Connection To="Third_Floor_Stairwell_Top" />
+				<Z>17.808498</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925678-66.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925679-67.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925702-89.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925703-90.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925720-95.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925721-96.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925736-98">
+				<X>-4.585349</X>
+				<Y>-6.607398</Y>
+				<Z>5.197456</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-71.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-72.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-73.fprt_tradeskill01" />
+				<Connection To="Sewing Table &amp; Mannequin 3" />
 			</Sphere>
 			<Sphere Name="Sewing Table &amp; Mannequin 3" Unique='1'>
-				<X>-15.312971</X>
+				<X>-4.067537</X>
 				<Y>-6.607398</Y>
-				<Z>13.271830</Z>
-				<Size>5.000000</Size>
-				<Connection To="Sewing Table &amp; Mannequin 1" />
-				<Connection To="Third_Floor_Stairwell_Top" />
+				<Z>5.047865</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925684-69.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-70.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925684-71.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-72.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925685-73.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925736-98.fprt_tradeskill01" />
 			</Sphere>
-			<Sphere Name="Third_Floor_Stairwell_Top" Unique='1'>
-				<X>-21.711344</X>
-				<Y>-6.290833</Y>
-				<Z>13.280252</Z>
-				<Size>5.000000</Size>
-				<Connection To="Sewing Table &amp; Mannequin 2" />
-				<Connection To="Sewing Table &amp; Mannequin 3" />
-				<Connection To="Third_Floor_Stairwell_Bottom" />
+			<Sphere Name="fprt_tradeskill01-1221925749-100">
+				<X>-18.677433</X>
+				<Y>-6.568160</Y>
+				<Z>13.201324</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925697-87.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925751-101.fprt_tradeskill01" />
 			</Sphere>
-			<Sphere Name="Third_Floor_Stairwell_Bottom" Unique='1'>
-				<X>-21.702688</X>
-				<Y>-13.097155</Y>
-				<Z>-4.374748</Z>
-				<Size>5.000000</Size>
-				<Connection To="Third_Floor_Stairwell_Top" />
-				<Connection To="Woodworking Table 1" />
+			<Sphere Name="fprt_tradeskill01-1221925751-101">
+				<X>-20.693220</X>
+				<Y>-6.625345</Y>
+				<Z>12.771186</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925749-100.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925754-102.fprt_tradeskill01" />
 			</Sphere>
-			<Sphere Name="Woodworking Table 1" Unique='1'>
-				<X>-12.417022</X>
+			<Sphere Name="fprt_tradeskill01-1221925754-102">
+				<X>-21.115839</X>
+				<Y>-6.625345</Y>
+				<Z>10.812605</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925751-101.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925758-103.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925758-103">
+				<X>-20.990564</X>
+				<Y>-7.116201</Y>
+				<Z>8.857931</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925754-102.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925759-104.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925759-105.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925760-106.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925759-104">
+				<X>-20.878096</X>
+				<Y>-8.149109</Y>
+				<Z>7.086094</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925758-103.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925759-105.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925760-106.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925761-107.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925759-105">
+				<X>-20.768612</X>
+				<Y>-9.318206</Y>
+				<Z>5.361493</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925758-103.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925759-104.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925760-106.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925760-106">
+				<X>-20.655329</X>
+				<Y>-10.263273</Y>
+				<Z>3.577260</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925758-103.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925759-104.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925759-105.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925761-107.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925763-108.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925764-109.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925761-107">
+				<X>-20.543211</X>
+				<Y>-11.362579</Y>
+				<Z>1.811577</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925759-104.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925760-106.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925763-108.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925764-109.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925769-110.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925763-108">
+				<X>-20.426271</X>
+				<Y>-12.439056</Y>
+				<Z>-0.029704</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925760-106.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925761-107.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925764-109.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925769-110.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925764-109">
+				<X>-20.301605</X>
+				<Y>-13.097156</Y>
+				<Z>-1.992493</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925760-106.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925761-107.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925763-108.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925769-110.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925769-110">
+				<X>-18.762831</X>
+				<Y>-13.097156</Y>
+				<Z>-3.417221</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925761-107.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925763-108.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925764-109.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925771-111">
+				<X>-16.721460</X>
 				<Y>-13.097170</Y>
-				<Z>-3.091978</Z>
-				<Size>5.000000</Size>
-				<Connection To="Third_Floor_Stairwell_Bottom" />
+				<Z>-3.336349</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925769-110.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
 				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925775-112">
+				<X>-15.870962</X>
+				<Y>-13.097171</Y>
+				<Z>-1.491793</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925775-113">
+				<X>-16.052259</X>
+				<Y>-13.097171</Y>
+				<Z>0.532147</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
 				<Connection To="Woodworking Table 3" />
 			</Sphere>
-			<Sphere Name="Woodworking Table 2" Unique='1'>
-				<X>-6.671185</X>
+			<Sphere Name="fprt_tradeskill01-1221925777-114">
+				<X>-16.230127</X>
 				<Y>-13.097171</Y>
-				<Z>-3.427289</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210531363-23.fprt_tradeskill01" />
-				<Connection To="Second_Floor_Stairwell_Top" />
-				<Connection To="Woodworking Table 1" />
+				<Z>2.574724</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
 			</Sphere>
-			<Sphere Name="Woodworking Table 3" Unique='1'>
-				<X>-6.671185</X>
-				<Y>-13.097171</Y>
-				<Z>-3.427289</Z>
-				<Connection To="fprt_tradeskill01-1210531363-23.fprt_tradeskill01" />
-				<Connection To="Woodworking Table 1" />
+			<Sphere Name="fprt_tradeskill01-1221925779-115">
+				<X>-16.352655</X>
+				<Y>-13.097170</Y>
+				<Z>4.590641</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
 			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210531363-23">
-				<X>-5.868332</X>
+			<Sphere Name="fprt_tradeskill01-1221925780-116">
+				<X>-16.312435</X>
+				<Y>-13.097170</Y>
+				<Z>6.647990</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925780-117">
+				<X>-16.306726</X>
 				<Y>-13.097171</Y>
-				<Z>-1.081796</Z>
-				<Size>5.000000</Size>
+				<Z>8.649923</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
 				<Connection To="Stove &amp; Keg 1" />
-				<Connection To="Woodworking Table 2" />
+				<Connection To="Woodworking Table 3" />
 			</Sphere>
-			<Sphere Name="Stove &amp; Keg 1" Unique='1'>
-				<X>-5.659390</X>
-				<Y>-12.745522</Y>
-				<Z>15.224185</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210531363-23.fprt_tradeskill01" />
+			<Sphere Name="fprt_tradeskill01-1221925780-118">
+				<X>-16.346611</X>
+				<Y>-13.097171</Y>
+				<Z>10.732475</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 1" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925782-119">
+				<X>-16.373587</X>
+				<Y>-13.097171</Y>
+				<Z>12.848499</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 1" />
+				<Connection To="Stove &amp; Keg 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925786-120">
+				<X>-15.460407</X>
+				<Y>-13.097170</Y>
+				<Z>14.628753</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 1" />
+				<Connection To="Stove &amp; Keg 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925787-121">
+				<X>-13.383962</X>
+				<Y>-13.097170</Y>
+				<Z>14.811744</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925884-159.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925788-122">
+				<X>-11.247261</X>
+				<Y>-13.097170</Y>
+				<Z>14.894295</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925791-125.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925884-159.fprt_tradeskill01" />
 				<Connection To="Stove &amp; Keg 2" />
 				<Connection To="Stove &amp; Keg 3" />
 			</Sphere>
-			<Sphere Name="Stove &amp; Keg 2" Unique='1'>
-				<X>-18.353735</X>
+			<Sphere Name="fprt_tradeskill01-1221925788-123">
+				<X>-9.158474</X>
 				<Y>-13.097171</Y>
-				<Z>14.123612</Z>
-				<Size>5.000000</Size>
-				<Connection To="Stove &amp; Keg 1" />
+				<Z>14.949133</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925791-125.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925884-159.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 3" />
 			</Sphere>
-			<Sphere Name="Stove &amp; Keg 3" Unique='1'>
-				<X>-17.153370</X>
-				<Y>-12.851768</Y>
-				<Z>14.620404</Z>
-				<Size>5.000000</Size>
-				<Connection To="Stove &amp; Keg 1" />
+			<Sphere Name="fprt_tradeskill01-1221925789-124">
+				<X>-7.136236</X>
+				<Y>-13.097171</Y>
+				<Z>14.791365</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925791-125.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-126.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-127.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925884-159.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 3" />
 			</Sphere>
-			<Sphere Name="Second_Floor_Stairwell_Top" Unique='1'>
-				<X>-0.904354</X>
-				<Y>-12.576238</Y>
-				<Z>-3.831991</Z>
-				<Size>5.000000</Size>
-				<Connection To="Second_Floor_Stairwell_Bottom" />
+			<Sphere Name="fprt_tradeskill01-1221925791-125">
+				<X>-5.854341</X>
+				<Y>-13.097170</Y>
+				<Z>13.106106</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-126.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-127.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925884-159.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925792-126">
+				<X>-5.728583</X>
+				<Y>-13.097171</Y>
+				<Z>10.967673</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925791-125.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-127.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-128.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925884-159.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925792-127">
+				<X>-5.603757</X>
+				<Y>-13.097171</Y>
+				<Z>8.845284</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925791-125.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-126.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-128.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-129.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925792-128">
+				<X>-5.532901</X>
+				<Y>-13.097171</Y>
+				<Z>6.658881</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925792-126.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-127.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-129.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925793-130.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925792-129">
+				<X>-5.546932</X>
+				<Y>-13.097171</Y>
+				<Z>4.441208</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925792-127.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-128.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925793-130.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925794-131.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925793-130">
+				<X>-5.605879</X>
+				<Y>-13.097171</Y>
+				<Z>2.309991</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925792-128.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-129.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925794-131.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925794-131">
+				<X>-5.739101</X>
+				<Y>-13.097170</Y>
+				<Z>0.289945</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925792-129.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925793-130.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925795-132">
+				<X>-5.788476</X>
+				<Y>-13.097170</Y>
+				<Z>-1.758798</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925792-129.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925793-130.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925794-131.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925798-133">
+				<X>-6.523460</X>
+				<Y>-13.097170</Y>
+				<Z>-3.621837</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925793-130.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925794-131.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925811-136.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925897-161.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925799-134">
+				<X>-7.535587</X>
+				<Y>-13.097170</Y>
+				<Z>-5.397574</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925794-131.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925811-136.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925812-137.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925814-138.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="Woodworking Table 1" Unique='1'>
+				<X>-7.935977</X>
+				<Y>-13.097171</Y>
+				<Z>-7.312473</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925811-136.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925812-137.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925814-138.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925897-161.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925811-136">
+				<X>-6.300095</X>
+				<Y>-13.085783</Y>
+				<Z>-8.478615</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925812-137.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925814-138.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925812-137">
+				<X>-7.490353</X>
+				<Y>-13.099228</Y>
+				<Z>-10.171389</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925811-136.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925814-138.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925814-138">
+				<X>-9.408079</X>
+				<Y>-13.097171</Y>
+				<Z>-9.533929</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925811-136.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925812-137.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925818-139">
+				<X>-8.709761</X>
+				<Y>-13.097171</Y>
+				<Z>-3.768673</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925794-131.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925811-136.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925814-138.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925897-161.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925821-140">
+				<X>-10.722090</X>
+				<Y>-13.097171</Y>
+				<Z>-2.951779</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925794-131.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925795-132.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925897-161.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
 				<Connection To="Woodworking Table 2" />
 			</Sphere>
-			<Sphere Name="Second_Floor_Stairwell_Bottom" Unique='1'>
-				<X>-0.986176</X>
-				<Y>-19.207743</Y>
-				<Z>13.621604</Z>
-				<Size>5.000000</Size>
+			<Sphere Name="fprt_tradeskill01-1221925823-141">
+				<X>-12.769976</X>
+				<Y>-13.097170</Y>
+				<Z>-3.059991</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925799-134.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925828-142">
+				<X>-14.645168</X>
+				<Y>-13.097171</Y>
+				<Z>-4.160028</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-146.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925841-147.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925833-143">
+				<X>-14.205885</X>
+				<Y>-13.097171</Y>
+				<Z>-6.258019</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-146.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925841-147.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="Woodworking Table 2" Unique='1'>
+				<X>-14.176808</X>
+				<Y>-13.097171</Y>
+				<Z>-6.968409</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925775-112.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-146.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925841-147.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925840-145">
+				<X>-12.234496</X>
+				<Y>-13.097171</Y>
+				<Z>-7.524486</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925771-111.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925823-141.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-146.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925841-147.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925840-146">
+				<X>-12.233478</X>
+				<Y>-13.097171</Y>
+				<Z>-9.538110</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925841-147.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925841-147">
+				<X>-14.289976</X>
+				<Y>-13.097170</Y>
+				<Z>-9.780951</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925828-142.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925833-143.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-145.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925840-146.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 2" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925848-148">
+				<X>-18.089853</X>
+				<Y>-13.097170</Y>
+				<Z>5.697609</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="Woodworking Table 3" Unique='1'>
+				<X>-18.598141</X>
+				<Y>-13.097170</Y>
+				<Z>6.054519</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925775-113.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925854-150">
+				<X>-19.577923</X>
+				<Y>-13.097171</Y>
+				<Z>4.278038</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925855-151">
+				<X>-21.420664</X>
+				<Y>-13.097171</Y>
+				<Z>3.322947</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925777-114.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925856-152">
+				<X>-22.249249</X>
+				<Y>-13.099066</Y>
+				<Z>5.266847</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925856-153">
+				<X>-22.011448</X>
+				<Y>-13.097171</Y>
+				<Z>7.256659</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925779-115.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925857-154.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925857-154">
+				<X>-19.968487</X>
+				<Y>-12.561996</Y>
+				<Z>7.425569</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925848-148.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925854-150.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925855-151.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-152.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925856-153.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 3" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925866-155">
+				<X>-18.437046</X>
+				<Y>-13.097170</Y>
+				<Z>12.404135</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925780-116.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 1" />
+			</Sphere>
+			<Sphere Name="Stove &amp; Keg 1" Unique='1'>
+				<X>-19.982302</X>
+				<Y>-13.097171</Y>
+				<Z>12.230446</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925780-117.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925875-157">
+				<X>-14.548174</X>
+				<Y>-13.097171</Y>
+				<Z>16.527309</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925780-118.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925866-155.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 2" />
+			</Sphere>
+			<Sphere Name="Stove &amp; Keg 2" Unique='1'>
+				<X>-14.281063</X>
+				<Y>-13.097171</Y>
+				<Z>17.893993</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925782-119.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925786-120.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925875-157.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925884-159">
+				<X>-7.929910</X>
+				<Y>-13.097171</Y>
+				<Z>16.716394</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925787-121.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925791-125.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925792-126.fprt_tradeskill01" />
+				<Connection To="Stove &amp; Keg 3" />
+			</Sphere>
+			<Sphere Name="Stove &amp; Keg 3" Unique='1'>
+				<X>-7.961316</X>
+				<Y>-13.097170</Y>
+				<Z>17.867105</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925788-122.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925788-123.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925789-124.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925791-125.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925884-159.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925897-161">
+				<X>-4.421183</X>
+				<Y>-13.057933</Y>
+				<Z>-3.321475</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925798-133.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925818-139.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925821-140.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925899-162.fprt_tradeskill01" />
+				<Connection To="Woodworking Table 1" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925899-162">
+				<X>-2.404912</X>
+				<Y>-13.115108</Y>
+				<Z>-3.134498</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925897-161.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925909-163.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925909-163">
+				<X>-1.827747</X>
+				<Y>-13.115108</Y>
+				<Z>-1.127651</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925899-162.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925910-164.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925910-164">
+				<X>-1.895015</X>
+				<Y>-13.559123</Y>
+				<Z>0.834240</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925909-163.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925913-165.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925915-166.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925913-165">
+				<X>-1.963216</X>
+				<Y>-14.570558</Y>
+				<Z>2.581800</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925910-164.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925915-166.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925919-167.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925915-166">
+				<X>-2.040607</X>
+				<Y>-15.818501</Y>
+				<Z>4.414941</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925910-164.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925913-165.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925919-167.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925919-167">
+				<X>-2.011079</X>
+				<Y>-16.873615</Y>
+				<Z>6.297577</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925913-165.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925915-166.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925922-168.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925924-169.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925927-170.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925922-168">
+				<X>-1.932600</X>
+				<Y>-17.877041</Y>
+				<Z>8.042676</Z>
+				<Size>2.000000</Size>
 				<Connection To="Broker" />
-				<Connection To="Second_Floor_Stairwell_Top" />
+				<Connection To="fprt_tradeskill01-1221925919-167.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925924-169.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925927-170.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925929-171.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925924-169">
+				<X>-1.919068</X>
+				<Y>-18.919943</Y>
+				<Z>9.770305</Z>
+				<Size>2.000000</Size>
+				<Connection To="Broker" />
+				<Connection To="fprt_tradeskill01-1221925919-167.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925922-168.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925927-170.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925929-171.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926029-173.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925927-170">
+				<X>-2.019653</X>
+				<Y>-19.586931</Y>
+				<Z>11.760359</Z>
+				<Size>2.000000</Size>
+				<Connection To="Broker" />
+				<Connection To="fprt_tradeskill01-1221925919-167.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925922-168.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925924-169.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925929-171.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221925929-171">
+				<X>-3.574779</X>
+				<Y>-19.586931</Y>
+				<Z>13.024063</Z>
+				<Size>2.000000</Size>
+				<Connection To="Broker" />
+				<Connection To="fprt_tradeskill01-1221925922-168.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925924-169.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925927-170.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Broker" Unique='1'>
-				<X>-10.535778</X>
-				<Y>-19.584949</Y>
-				<Z>13.117606</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210531962-30.fprt_tradeskill01" />
-				<Connection To="Second_Floor_Stairwell_Bottom" />
+				<X>-3.715602</X>
+				<Y>-19.586931</Y>
+				<Z>13.059896</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925922-168.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925924-169.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925927-170.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925929-171.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926029-173.fprt_tradeskill01" />
 			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210531962-30">
-				<X>-14.998973</X>
-				<Y>-19.712566</Y>
-				<Z>5.792415</Z>
-				<Size>5.000000</Size>
+			<Sphere Name="fprt_tradeskill01-1221926029-173">
+				<X>-5.809193</X>
+				<Y>-19.584948</Y>
+				<Z>13.021409</Z>
+				<Size>2.000000</Size>
 				<Connection To="Broker" />
+				<Connection To="fprt_tradeskill01-1221925924-169.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926030-174.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926031-175.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926030-174">
+				<X>-7.838209</X>
+				<Y>-19.584948</Y>
+				<Z>13.018551</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926029-173.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926031-175.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926031-175">
+				<X>-9.529437</X>
+				<Y>-19.586636</Y>
+				<Z>11.950315</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926029-173.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926030-174.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926031-176.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926033-177.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926040-180.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926031-176">
+				<X>-10.861395</X>
+				<Y>-19.669151</Y>
+				<Z>10.385201</Z>
+				<Size>2.000000</Size>
 				<Connection To="Forge 1" />
-				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926031-175.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926033-177.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926034-178.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926040-180.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926033-177">
+				<X>-12.888041</X>
+				<Y>-19.620047</Y>
+				<Z>10.186791</Z>
+				<Size>2.000000</Size>
+				<Connection To="Forge 1" />
+				<Connection To="fprt_tradeskill01-1221926031-175.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926031-176.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926034-178.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926034-178">
+				<X>-14.311586</X>
+				<Y>-19.534220</Y>
+				<Z>11.742554</Z>
+				<Size>2.000000</Size>
+				<Connection To="Forge 1" />
+				<Connection To="fprt_tradeskill01-1221926031-176.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926033-177.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926040-180.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Forge 1" Unique='1'>
-				<X>-11.011978</X>
-				<Y>-19.721899</Y>
-				<Z>5.683229</Z>
-				<Size>5.000000</Size>
+				<X>-15.143246</X>
+				<Y>-19.479252</Y>
+				<Z>12.511326</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926031-176.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926033-177.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926034-178.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926040-180.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926040-180">
+				<X>-11.319711</X>
+				<Y>-19.653986</Y>
+				<Z>8.437516</Z>
+				<Size>2.000000</Size>
+				<Connection To="Forge 1" />
+				<Connection To="fprt_tradeskill01-1221926031-175.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926031-176.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926034-178.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926040-181.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926040-181">
+				<X>-9.618198</X>
+				<Y>-19.745419</Y>
+				<Z>7.050185</Z>
+				<Size>2.000000</Size>
 				<Connection To="Forge 2" />
-				<Connection To="fprt_tradeskill01-1210531962-30.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926040-180.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926044-183.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Forge 2" Unique='1'>
-				<X>-15.323740</X>
-				<Y>-19.724062</Y>
-				<Z>-1.032114</Z>
-				<Size>5.000000</Size>
-				<Connection To="Forge 1" />
+				<X>-8.811597</X>
+				<Y>-19.765371</Y>
+				<Z>6.334937</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926040-181.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926044-183.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926044-183">
+				<X>-10.537801</X>
+				<Y>-19.752142</Y>
+				<Z>5.236483</Z>
+				<Size>2.000000</Size>
+				<Connection To="Forge 2" />
+				<Connection To="fprt_tradeskill01-1221926040-181.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926045-184.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926045-184">
+				<X>-12.305213</X>
+				<Y>-19.771315</Y>
+				<Z>4.262677</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926044-183.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926046-185.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926054-188.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926227-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926046-185">
+				<X>-12.904479</X>
+				<Y>-19.791599</Y>
+				<Z>2.332546</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926045-184.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926047-186.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926054-188.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926227-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926047-186">
+				<X>-11.957957</X>
+				<Y>-19.818270</Y>
+				<Z>0.504908</Z>
+				<Size>2.000000</Size>
 				<Connection To="Forge 3" />
+				<Connection To="fprt_tradeskill01-1221926046-185.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926227-211.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Forge 3" Unique='1'>
-				<X>-15.323740</X>
-				<Y>-19.724062</Y>
-				<Z>-1.032114</Z>
-				<Size>5.000000</Size>
-				<Connection To="Forge 2" />
+				<X>-10.661351</X>
+				<Y>-19.820271</Y>
+				<Z>-0.871289</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926047-186.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926227-211.fprt_tradeskill01" />
 			</Sphere>
-			<Sphere Name="fprt_tradeskill01-1210532062-34">
-				<X>-23.625237</X>
-				<Y>-19.650860</Y>
-				<Z>6.267550</Z>
-				<Size>5.000000</Size>
-				<Connection To="Engraved Desk 1" />
+			<Sphere Name="fprt_tradeskill01-1221926054-188">
+				<X>-14.320724</X>
+				<Y>-19.800499</Y>
+				<Z>4.836004</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926045-184.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926046-185.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-189.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926227-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926055-189">
+				<X>-16.183342</X>
+				<Y>-19.662199</Y>
+				<Z>5.760543</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926054-188.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-190.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926227-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926055-190">
+				<X>-18.353479</X>
+				<Y>-19.666065</Y>
+				<Z>6.125420</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926055-189.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-191.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926055-191">
+				<X>-20.404625</X>
+				<Y>-19.615091</Y>
+				<Z>6.392031</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926055-190.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-192.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926056-193.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926069-205.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926088-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926055-192">
+				<X>-22.192175</X>
+				<Y>-19.651920</Y>
+				<Z>5.441340</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926055-191.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926056-193.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926070-206.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926088-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926056-193">
+				<X>-22.642973</X>
+				<Y>-19.657120</Y>
+				<Z>3.351417</Z>
+				<Size>2.000000</Size>
 				<Connection To="Engraved Desk 2" />
+				<Connection To="fprt_tradeskill01-1221926055-191.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-192.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926057-194.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926070-206.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926088-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926057-194">
+				<X>-24.577557</X>
+				<Y>-19.657022</Y>
+				<Z>2.358625</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 2" />
+				<Connection To="fprt_tradeskill01-1221926056-193.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926057-195.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926070-206.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926057-195">
+				<X>-26.731239</X>
+				<Y>-19.642532</Y>
+				<Z>2.514832</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 2" />
+				<Connection To="fprt_tradeskill01-1221926057-194.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926057-196.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926070-206.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926057-196">
+				<X>-28.716444</X>
+				<Y>-19.629803</Y>
+				<Z>3.087788</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926057-195.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926058-197.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926058-197">
+				<X>-29.839346</X>
+				<Y>-19.641832</Y>
+				<Z>4.855625</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926057-196.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926058-198.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926058-198">
+				<X>-30.332516</X>
+				<Y>-19.634823</Y>
+				<Z>6.915355</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926058-197.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926059-199.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926080-209.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926059-199">
+				<X>-29.784975</X>
+				<Y>-19.662899</Y>
+				<Z>8.924899</Z>
+				<Size>2.000000</Size>
 				<Connection To="Engraved Desk 3" />
-				<Connection To="fprt_tradeskill01-1210531962-30.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926058-198.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-200.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-201.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926080-209.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926060-200">
+				<X>-27.703049</X>
+				<Y>-19.694069</Y>
+				<Z>9.470879</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926059-199.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-201.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-203.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926060-201">
+				<X>-25.629429</X>
+				<Y>-19.678780</Y>
+				<Z>9.462557</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 1" />
+				<Connection To="fprt_tradeskill01-1221926059-199.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-200.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-203.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926062-202">
+				<X>-24.390854</X>
+				<Y>-19.644600</Y>
+				<Z>11.132382</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 1" />
+				<Connection To="fprt_tradeskill01-1221926055-191.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926059-199.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-200.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-201.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-203.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926069-205.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926080-209.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926088-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926062-203">
+				<X>-23.838284</X>
+				<Y>-19.595648</Y>
+				<Z>13.073055</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 1" />
+				<Connection To="fprt_tradeskill01-1221926060-200.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-201.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926069-205.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926088-211.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Engraved Desk 1" Unique='1'>
-				<X>-24.076422</X>
-				<Y>-19.587105</Y>
-				<Z>13.438284</Z>
-				<Size>5.000000</Size>
+				<X>-23.683361</X>
+				<Y>-19.532654</Y>
+				<Z>14.793341</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926060-201.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-203.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926069-205.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926069-205">
+				<X>-23.328695</X>
+				<Y>-19.654913</Y>
+				<Z>9.270172</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 1" />
+				<Connection To="fprt_tradeskill01-1221926055-191.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-203.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926088-211.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926070-206">
+				<X>-25.192268</X>
+				<Y>-19.625313</Y>
+				<Z>0.447366</Z>
+				<Size>2.000000</Size>
 				<Connection To="Engraved Desk 2" />
-				<Connection To="Engraved Desk 3" />
-				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-192.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926056-193.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926057-194.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926057-195.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Engraved Desk 2" Unique='1'>
-				<X>-26.346071</X>
-				<Y>-19.649960</Y>
-				<Z>2.081144</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
+				<X>-25.764565</X>
+				<Y>-19.591303</Y>
+				<Z>-0.850906</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926056-193.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926057-194.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926057-195.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926070-206.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926079-208">
+				<X>-29.521460</X>
+				<Y>-19.670017</Y>
+				<Z>10.992121</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 3" />
+				<Connection To="fprt_tradeskill01-1221926058-198.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926059-199.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-200.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926060-201.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-203.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926080-209.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926080-209">
+				<X>-30.230261</X>
+				<Y>-19.647181</Y>
+				<Z>12.893447</Z>
+				<Size>2.000000</Size>
+				<Connection To="Engraved Desk 3" />
+				<Connection To="fprt_tradeskill01-1221926058-198.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926059-199.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
 			</Sphere>
 			<Sphere Name="Engraved Desk 3" Unique='1'>
-				<X>-26.346071</X>
-				<Y>-19.649960</Y>
-				<Z>2.081144</Z>
-				<Size>5.000000</Size>
-				<Connection To="fprt_tradeskill01-1210532062-34.fprt_tradeskill01" />
+				<X>-30.308830</X>
+				<Y>-19.641731</Y>
+				<Z>13.312960</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926059-199.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926079-208.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926080-209.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926088-211">
+				<X>-22.123690</X>
+				<Y>-19.642183</Y>
+				<Z>7.605935</Z>
+				<Size>2.000000</Size>
+				<Connection To="fprt_tradeskill01-1221926055-191.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-192.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926056-193.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-202.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926062-203.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926069-205.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="fprt_tradeskill01-1221926227-211">
+				<X>-14.845476</X>
+				<Y>-19.651337</Y>
+				<Z>7.259977</Z>
+				<Size>10.000000</Size>
+				<Connection To="Forge 3" />
+				<Connection To="fprt_tradeskill01-1221926045-184.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926046-185.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926047-186.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926054-188.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221926055-189.fprt_tradeskill01" />
+			</Sphere>
+			<Sphere Name="Wholesaler" Unique='1'>
+				<X>-1.332216</X>
+				<Y>-0.176801</Y>
+				<Z>5.968871</Z>
+				<Size>3.000000</Size>
+				<Connection To="fprt_tradeskill01-1221925227-0.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925244-1.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925247-2.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925444-7.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925454-9.fprt_tradeskill01" />
+				<Connection To="fprt_tradeskill01-1221925604-57.fprt_tradeskill01" />
+				<Connection To="RushOrder" />
+				<Connection To="WorkOrder" />
 			</Sphere>
 		</Children>
 	</Universe>
