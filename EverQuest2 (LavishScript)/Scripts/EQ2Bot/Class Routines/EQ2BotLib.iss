@@ -507,10 +507,10 @@ atom AutoFollowTank()
 			}
 			else
 			{
-			AutoFollowingMA:Set[FALSE]
-			;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
+			    AutoFollowingMA:Set[FALSE]
+			    ;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
 			}
-    		}
+    	}
 	}
 }
 
