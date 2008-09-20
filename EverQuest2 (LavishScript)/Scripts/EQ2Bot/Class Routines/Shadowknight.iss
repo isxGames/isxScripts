@@ -110,6 +110,9 @@ function Buff_Init()
    PreAction[11]:Set[BattleLeadershipAABuff]
    
    PreAction[12]:Set[FearlessMoraleAABuff]
+   
+   PreAction[13]:Set[Bloodletter]
+   PreSpellRange[13,1]:Set[331]
 
 }
 
@@ -425,6 +428,15 @@ function Buff_Routine(int xAction)
 		    }
 			break			
 			
+		case Bloodletter
+		    if ${Me.Level} < 80
+		        break
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			{
+			    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+			        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+			}
+			break
 			
 		Default
 			return BuffComplete
@@ -836,6 +848,10 @@ function CheckGroupOrRaidAggro()
     
 	do
 	{
+	    ;; For now, do not do anything automatically when we are not maintank
+	    if (!${MainTank})
+	        continue
+	        
 	    if (!${CustomActor[${Counter}].IsSolo} || ${NumNPCs} > 2)
 	    {
 	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
@@ -844,10 +860,10 @@ function CheckGroupOrRaidAggro()
 	            {
             	    if (${Me.Raid[${CustomActor[${Counter}].Target.Name}](exists)})
             	    {
-        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
+        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
         	            {
         	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
-        	                call IsFighter ${MobTargetID}
+        	                call IsFighterOrScout ${MobTargetID}
         	                if ${Return.Equal[FALSE]}
         	                {
         	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
@@ -904,10 +920,10 @@ function CheckGroupOrRaidAggro()
             	    if (${Me.Group[${CustomActor[${Counter}].Target.Name}](exists)})
             	    {
             	        echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"
-        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${Me.Name}]})
+        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
         	            {
         	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
-        	                call IsFighter ${MobTargetID}
+        	                call IsFighterOrScout ${MobTargetID}
         	                if ${Return.Equal[FALSE]}
         	                {
         	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
