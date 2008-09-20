@@ -666,6 +666,28 @@ function IsScout(int ID)
 	}
 }
 
+function IsFighterOrScout(int ID)
+{
+	switch ${Actor[${ID}].Class}
+	{
+		case guardian
+		case berserker
+		case shadowknight
+		case paladin
+		case bruiser
+		case monk
+		case ranger
+		case assassin
+		case swashbuckler
+		case brigand
+		case troubador
+		case dirge
+			return TRUE
+		default
+			return FALSE
+	}    
+}
+
 function Shard(int sPower)
 {
 	if !${sPower}
