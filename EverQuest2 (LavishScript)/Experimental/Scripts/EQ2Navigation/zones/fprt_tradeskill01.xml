@@ -18,7 +18,6 @@
 				<Connection To="fprt_tradeskill01-1221939866-8.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939867-9.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939883-11.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939885-12.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940013-54.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940014-55.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
@@ -178,8 +177,6 @@
 				<Connection To="fprt_tradeskill01-1221939836-4.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939846-5.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939867-9.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939883-11.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939885-12.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939888-13.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
 				<Connection To="Wholesaler" />
@@ -198,7 +195,6 @@
 				<Connection To="fprt_tradeskill01-1221939835-3.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939846-5.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939866-8.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939883-11.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939888-13.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
 				<Connection To="WorkOrder" />
@@ -229,8 +225,6 @@
 				<Connection To="fprt_tradeskill01-1221939792-0.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939825-1.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939846-5.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939866-8.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939867-9.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939885-12.fprt_tradeskill01" />
 				<Connection To="RushOrder" />
 				<Connection To="Wholesaler" />
@@ -243,11 +237,9 @@
 				<Y2>2.845128</Y2>
 				<Z1>-0.887110</Z1>
 				<Z2>3.112890</Z2>
-				<Connection To="fprt_tradeskill01-1221939792-0.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939825-1.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939830-2.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939846-5.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939866-8.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939883-11.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939888-13.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939893-14.fprt_tradeskill01" />
@@ -330,7 +322,6 @@
 				<Connection To="fprt_tradeskill01-1221939915-20.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939951-34.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939952-35.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939954-36.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939956-37.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939963-39.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939964-40.fprt_tradeskill01" />
@@ -505,7 +496,6 @@
 				<Connection To="fprt_tradeskill01-1221939921-24.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939990-48.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939991-49.fprt_tradeskill01" />
@@ -523,7 +513,6 @@
 				<Connection To="fprt_tradeskill01-1221939921-24.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939923-25.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
@@ -543,7 +532,6 @@
 				<Connection To="fprt_tradeskill01-1221939921-24.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939923-25.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
@@ -552,25 +540,6 @@
 				<Connection To="fprt_tradeskill01-1221940000-51.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940001-52.fprt_tradeskill01" />
 				<Connection To="Work Bench 2" />
-			</Box>
-			<Box Name="fprt_tradeskill01-1221939929-28">
-				<X1>-12.539353</X1>
-				<X2>-8.539353</X2>
-				<Y1>-3.172016</Y1>
-				<Y2>2.827984</Y2>
-				<Z1>7.779531</Z1>
-				<Z2>11.779531</Z2>
-				<Connection To="fprt_tradeskill01-1221939923-25.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939990-48.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939991-49.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221940000-51.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221940001-52.fprt_tradeskill01" />
-				<Connection To="Work Bench 3" />
 			</Box>
 			<Box Name="fprt_tradeskill01-1221939930-29">
 				<X1>-10.387534</X1>
@@ -583,7 +552,6 @@
 				<Connection To="fprt_tradeskill01-1221939923-25.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939937-32.fprt_tradeskill01" />
@@ -603,7 +571,6 @@
 				<Connection To="fprt_tradeskill01-1221939885-12.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939937-32.fprt_tradeskill01" />
@@ -624,7 +591,6 @@
 				<Connection To="fprt_tradeskill01-1221939888-13.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939937-32.fprt_tradeskill01" />
@@ -722,7 +688,6 @@
 				<Z1>-10.289824</Z1>
 				<Z2>-6.289824</Z2>
 				<Connection To="Chemistry Table 2" />
-				<Connection To="fprt_tradeskill01-1221939901-16.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939907-17.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939909-18.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939951-34.fprt_tradeskill01" />
@@ -924,7 +889,6 @@
 				<Connection To="fprt_tradeskill01-1221939923-25.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939991-49.fprt_tradeskill01" />
@@ -941,7 +905,6 @@
 				<Connection To="fprt_tradeskill01-1221939923-25.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939990-48.fprt_tradeskill01" />
 			</Box>
 			<Box Name="Work Bench 2" Unique='1'>
@@ -966,7 +929,6 @@
 				<Z2>13.990778</Z2>
 				<Connection To="fprt_tradeskill01-1221939926-26.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
@@ -983,7 +945,6 @@
 				<Z1>12.160020</Z1>
 				<Z2>16.160021</Z2>
 				<Connection To="fprt_tradeskill01-1221939928-27.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
@@ -997,7 +958,6 @@
 				<Y2>2.827984</Y2>
 				<Z1>13.258101</Z1>
 				<Z2>17.258101</Z2>
-				<Connection To="fprt_tradeskill01-1221939929-28.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939930-29.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939934-30.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221939936-31.fprt_tradeskill01" />
@@ -2712,7 +2672,6 @@
 				<Connection To="fprt_tradeskill01-1221940176-151.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940184-154.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940185-155.fprt_tradeskill01" />
-				<Connection To="fprt_tradeskill01-1221940187-156.fprt_tradeskill01" />
 			</Box>
 			<Box Name="fprt_tradeskill01-1221940184-154">
 				<X1>-7.906072</X1>
@@ -2751,7 +2710,6 @@
 				<Y2>-16.690344</Y2>
 				<Z1>9.502361</Z1>
 				<Z2>13.502361</Z2>
-				<Connection To="fprt_tradeskill01-1221940182-153.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940184-154.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940185-155.fprt_tradeskill01" />
 				<Connection To="fprt_tradeskill01-1221940189-157.fprt_tradeskill01" />
