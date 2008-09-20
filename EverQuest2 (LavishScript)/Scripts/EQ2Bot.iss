@@ -729,7 +729,7 @@ function CheckManaStone()
 	usemanastone:Set[FALSE]
 }
 
-function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained)
+function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW)
 {
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
@@ -804,7 +804,10 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 							}
 						}
 
-						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                        if ${CastSpellNOW}
+                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                        else
+    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
 
 						if ${Actor[${originaltarget}](exists)}
 						{
@@ -827,7 +830,10 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 							call CheckPosition ${xvar1} ${xvar2}
 						}
 
-						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                        if ${CastSpellNOW}
+                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                        else
+    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
 
 						if ${notall}==1
 						{
@@ -846,6 +852,69 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 	while ${tempvar:Inc}<=${finish}
 
 	return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+}
+
+
+function CastSpellNOW(string spell, int spellid, bool castwhilemoving)
+{
+    variable int Counter
+
+	if !${Me.InCombat}
+	{
+		call AmIInvis "CastSpellNOW()"
+		if ${Return.Equal[TRUE]}
+			return
+	}
+
+	if ${Me.IsMoving} && !${castwhilemoving}
+		return
+		
+	;; Stop casting whatever is casting
+	if ${Me.CastingSpell}
+	{
+	    do
+	    {
+	        press ESC
+	        wait 3
+	    }
+	    while ${Me.CastingSpell}
+	}
+
+    waitframe
+    if !${Me.Ability[${spell}].IsReady}
+        return
+
+	CurrentAction:Set[Queueing '${spell}']
+
+	;; Disallow some abilities that are named the same as crafting abilities.
+	;; 1. Agitate (CraftingID: 601887089 -- Fury Spell ID: 1287322154)
+	if (${Me.Ability[${spell}].ID} == 601887089)
+		Me.Ability[id,1287322154]:Use
+	else
+		Me.Ability[${spell}]:Use
+
+
+	; reducing this too much will cause problems ... 4 seems to be a sweet spot
+	wait 4
+	;wait 20 ${Me.Ability[${spell}].IsQueued}
+
+	Counter:Set[0]
+    if ${Me.Ability[${spell}].IsQueued}
+    {
+        CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
+        do
+        {
+            waitframe
+            Counter:Inc
+            if ${Counter} > 500
+                break
+        }
+        while ${Me.Ability[${spell}].IsQueued}
+    }
+    LastQueuedAbility:Set[${spell}]
+    CurrentAction:Set[Casting '${spell}']
+
+	return SUCCESS 
 }
 
 function CastSpell(string spell, int spellid, bool castwhilemoving)
@@ -4037,7 +4106,9 @@ objectdef EQ2BotObj
 		}
 
 		grpcnt:Set[${Me.GroupCount}]
-		tempgrp:Set[0]
+		
+		; We really should check "ourself" (ie, start at zero); however, Group[0] is 'actortype' and doesn't have a MaxHitPoints member.
+		tempgrp:Set[1]
 		do
 		{
 			switch ${Me.Group[${tempgrp}].Class}
