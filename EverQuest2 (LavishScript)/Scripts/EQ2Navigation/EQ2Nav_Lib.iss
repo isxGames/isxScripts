@@ -409,7 +409,7 @@ objectdef EQ2Nav
         	        This:Debug["Destination is greater than 10m from your current location and a path exists -- using it."]
 
                     This.MovingToNearestRegion:Set[FALSE]
-        	        This:MoveToLoc[${X},${Y},${Z},${This.gPrecision}]
+        	        This:MoveToLocNoMapping[${X},${Y},${Z},${This.gPrecision}]
         	        return
                 } 	        
     	    }
