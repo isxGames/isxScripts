@@ -135,7 +135,7 @@ function harvestnode()
 				return STUCK
 			}
 
-			if ${Math.Distance[${Actor[${HID}].X},${Me.X}]} <= 4 && ${Math.Distance[${Actor[${HID}].Z},${Me.Z}]} <=3
+			if ${Math.Distance[${Actor[${HID}].X},${Me.X}]} <= 4 && ${Math.Distance[${Actor[${HID}].Z},${Me.Z}]} <=4
 			{
 				call checkPC
 				if ${Return}
