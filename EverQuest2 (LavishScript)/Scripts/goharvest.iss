@@ -124,7 +124,6 @@ function checknodename(int tempvar, string actorname)
 
 function harvestnode()
 {
-	variable int hitcount
 	if !${Me.InCombat}
 	{
 		; check node is not too high or too low (avoids running off islands etc)
@@ -136,69 +135,87 @@ function harvestnode()
 				return STUCK
 			}
 
-			; check route to node
-			if !${Me.InCombat}
-			{
-				Echo checking route to ->  ${HID} : ${Actor[${HID}]}
-				;  check area around the node
-				call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 30
-				
-				if ${Return.Equal["STUCK"]}
-				{
-					;  check area around the character
-					call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 30
-				}
-			}
-			else
-			{
-				Return
-			}
-	
-			if ${Return.Equal["STUCK"]}
-			{
-				return STUCK
-			}
-			else 
+			if ${Math.Distance[${Actor[${HID}].X},${Me.X}]} <= 4 && ${Math.Distance[${Actor[${HID}].Z},${Me.Z}]} <=3
 			{
 				call checkPC
 				if ${Return}
 				{
 					Return
 				}
-				
-;				echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
-				 if ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]} > 5
+				call hitnode ${HID}
+			}
+			else
+			{
+				; check route to node
+				if !${Me.InCombat}
 				{
-					echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
-					GoHarvest:SetBadNode[${HID}]  
-					BadNode:Set[TRUE]
+					Echo checking route to ->  ${HID} : ${Actor[${HID}]}
+					;  check area around the node
+					call LOScircle TRUE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 30
+					
+					if ${Return.Equal["STUCK"]}
+					{
+						;  check area around the character
+						call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 30
+					}
+				}
+				else
+				{
+					Return
+				}
+		
+				if ${Return.Equal["STUCK"]}
+				{
 					return STUCK
 				}
-				
-				Actor[${HID}]:DoTarget
-				wait 5
-				hitcount:Set[0]
-				; while the target exists
-				while ${Target(exists)} && ${hitcount:Inc} <50
+				else 
 				{
-					do
+					call checkPC
+					if ${Return}
 					{
-						waitframe
+						Return
 					}
-					while ${Me.InCombat}
-					waitframe
-					Target:DoubleClick
-					wait 20
-					if ${BadNode}
+					
+;					echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
+					 if ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]} > 5
 					{
+						echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
+						GoHarvest:SetBadNode[${HID}]  
+						BadNode:Set[TRUE]
 						return STUCK
 					}
-					while ${Me.CastingSpell}
-					waitframe
+					call hitnode ${HID}
 				}
 			}
 		}
 	}
+}
+
+function hitnode(float HID)
+{
+	variable int hitcount
+	Actor[${HID}]:DoTarget
+	wait 5
+	hitcount:Set[0]
+	; while the target exists
+	while ${Target(exists)} && ${hitcount:Inc} <50
+	{
+		do
+		{
+			waitframe
+		}
+		while ${Me.InCombat}
+		waitframe
+		Target:DoubleClick
+		wait 20
+		if ${BadNode}
+		{
+			return STUCK
+		}
+		while ${Me.CastingSpell}
+		waitframe
+	}
+
 }
 
 function checkPC()
@@ -527,6 +544,31 @@ atom(script) EQ2_onIncomingText(string Text)
 			echo "Received 'You do not have enough skill' message..."
 			GoHarvest:SetBadNode[${HID}]  
 			BadNode:Set[TRUE]
+		}
+	}
+}
+
+function CheckAggro()
+{
+ 	;Stop Moving and pause if we have aggro
+	if ${MobCheck.Detect}
+	{
+		Echo Aggro Detected Pausing...
+		call StopRunning
+
+		Echo Waiting till aggro gone, and over 90 health...
+		do
+		{
+			wait 3
+		}
+		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
+
+		EQ2:CreateCustomActorArray[byDist,15]
+
+		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
+		{
+			Echo Loot nearby waiting 5 seconds...
+			wait 50
 		}
 	}
 }
