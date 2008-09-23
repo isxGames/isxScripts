@@ -22,7 +22,7 @@ namespace ISXEQ2DotNet
             {
                 ISXEQ2 isxeq2 = Ext.ISXEQ2();
 
-                for (int i = 1; i < isxeq2.EQ2LocsCount(true); i++)
+                for (int i = 1; i < isxeq2.EQ2LocsCountAllZones; i++)
                 {
                     EQ2Location Loc = new EQ2LocationAllZones(i);
                     if (Loc.Label.Length == 0) continue;
@@ -30,7 +30,7 @@ namespace ISXEQ2DotNet
                     EQ2LocationsList.Items.Add(i.ToString() + ". " + Loc.Label);
                 }
                 EQ2LocationsList.Items.Add("---");
-                EQ2LocationsList.Items.Add("Total Locations: " + isxeq2.EQ2LocsCount(true).ToString());
+                EQ2LocationsList.Items.Add("Total Locations: " + isxeq2.EQ2LocsCountAllZones.ToString());
             }
         }
 
@@ -56,7 +56,7 @@ namespace ISXEQ2DotNet
                 string buf = EQ2LocationsList.SelectedItem.ToString();
                 int PerioidLoc = buf.IndexOf(".") + 2;
                 string Label = buf.Substring(PerioidLoc);
-                EQ2Location Loc = Ext.EQ2Loc(Label, true);
+                EQ2Location Loc = Ext.EQ2LocAllZones(Label);
                 NameLabel.Text = "Name: " + Loc.Label;
                 ZoneLabel.Text = "Zone: " + Loc.Zone;
                 LocLabel.Text = "Coordinates: " + Loc.X + ", " + Loc.Y + ", " + Loc.Z;
