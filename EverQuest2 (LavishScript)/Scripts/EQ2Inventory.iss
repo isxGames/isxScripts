@@ -1948,6 +1948,12 @@ function selljunk()
 		while ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}](exists)}
 	}
 	while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Keys}
+	
+	if ${UIElement[SellTreasured@EQ2Junk@GUITabs@EQ2Inventory].Checked}
+		{
+			call selltreasured
+		}
+		
 	call AddSellLog "**Junk Items Sold**" FFFF00FF
 	press ESC
 	press ESC
@@ -1988,6 +1994,23 @@ function sellstatus()
 	press ESC
 	press ESC
 	press ESC
+}
+
+function selltreasured()
+{
+	variable int ArrayPosition=1
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 5
+	Do
+	{		
+	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[TREASURED]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+			{	
+				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
+				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+				wait ${Math.Rand[30]:Inc[20]}
+			}			
+	}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
 		
 function junklist()
