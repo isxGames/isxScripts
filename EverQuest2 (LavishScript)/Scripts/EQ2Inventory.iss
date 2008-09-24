@@ -54,12 +54,9 @@ function placeitems()
 		
 	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked}	
 		{
-			call AddLog "**Checking Collections List 1000+ Items**"	FFFF00FF
+			call AddLog "**Checking Collections List**"	FFFF00FF
 			call placecollection
-		}	
-		
-	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked}	
-		call placecollection	
+		}		
 		
 	if ${UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory].Checked}
 		{
@@ -526,35 +523,22 @@ function placeharvestt8()
 	}
 }	
 
-
 function placecollection()
 {
-	variable int tempvar=1
-  call CheckFocus
-  Me:CreateCustomInventoryArray[nonbankonly]
-	wait 25
-  
-	if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
-	{
-		if ${Math.Calc[${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}].TotalCapacity}-${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}].UsedCapacity}]} > 0	
-		{
-			Do
+	variable int ArrayPosition=1
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 5
+	echo Size ${Me.CustomInventoryArraySize}
+	Do
+	{		
+	  	if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked} && ${Me.CustomInventory[${ArrayPosition}].IsCollectible}
 			{	
-				Do
-				{	 
-					if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}].Quantity} > 0
-	  			{	
-	  				call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]} to Broker" FF11CCFF
-	  				Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}].SerialNumber}]
-	  				wait ${Math.Rand[30]:Inc[20]}		
-					}
-	  		}		
-				while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}](exists)}
-				call CheckFocus
-			}
-			while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Keys}
-		}
+				call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
+				Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
+				wait ${Math.Rand[30]:Inc[20]}
+			}			
 	}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
 
 function placecraftbooks()
