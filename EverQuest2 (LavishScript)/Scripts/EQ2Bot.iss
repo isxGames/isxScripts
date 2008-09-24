@@ -1054,7 +1054,7 @@ function Combat()
 		if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
 			break
 			
-	    if ${Actor[${KillTargeT}].IsDead}
+	    if ${Actor[${KillTarget}].IsDead}
 	        break
 
 		do
