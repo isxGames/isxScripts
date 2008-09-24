@@ -68,7 +68,7 @@ objectdef TrackHelper
 		if ${Level} < ${LevelMin} || ${Level} > ${LevelMax}
 			return FALSE
 		if ${NumReverseFilters} == 0
-			return TRUE
+			return FALSE
 		tcount:Set[${NumReverseFilters}]
 		do
 		{
@@ -160,7 +160,7 @@ function main()
 	}
 	
 
-	call RefreshList
+	RefreshList
 	call CheckListTimer
 	call RefreshWaypointTimer
 	SortMethod:Set[${UIElement[TrackSort@EQ2 Track].Selection}]
@@ -177,7 +177,7 @@ function main()
 		call zoneWait
 		if ${filtersChanged}
 		{
-			call RefreshList
+			RefreshList
 			filtersChanged:Set[FALSE]
 		}
 		if ${SortChanged}
@@ -195,8 +195,7 @@ function main()
 
 }
 
-;atom(script) UpdateSettings()
-function UpdateSettings()
+atom(script) UpdateSettings()
 {
 	variable settingsetref filters
 	TrackAggro:Set[${UIElement[TrackAggro@EQ2 Track].Checked}]
@@ -252,10 +251,9 @@ function RefreshWaypointTimer()
 	timedcommand 80 Script[${Script.Filename}]:QueueCommand[call RefreshWaypointTimer]
 }
 
-;atom(script) RefreshList()
-function RefreshList()
+atom(script) RefreshList()
 {
-	call UpdateSettings
+	UpdateSettings
 	if ${Tracking}
 		return
 	Tracking:Set[TRUE]
