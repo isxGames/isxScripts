@@ -12,6 +12,7 @@ variable filepath HarvestFile="${ConfigPath}Harvest.xml"
 variable bool HarvestNode[9]=TRUE
 variable bool HBlocked[2]=FALSE
 variable bool pauseharvest=TRUE
+variable bool StrictLos=TRUE
 
 variable GoHarvestBot GoHarvest
 variable int scan=150
@@ -360,8 +361,12 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 					}
 					else
 					{
-						; Route via that angle is blocked , stop checking along that line.
-						HBlocked[${cloop}]:Set[TRUE]
+						; if setting for enforce Line Of Sight is ON then stop scanning along that line
+						if ${StrictLos}
+						{
+							; Route via that angle is blocked , stop checking along that line.
+							HBlocked[${cloop}]:Set[TRUE]
+						}
 					}
 				}
 			}
