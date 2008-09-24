@@ -2296,15 +2296,6 @@
 					<AutoTooltip>Adds The selected Item to the Custom List</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call addcustom]</Command>
 				</CommandButton>
-				<CommandButton Name='Collection Items Add' Template='EQ2.Button'>
-					<X>10</X>
-					<Y>250</Y>
-					<Width>110</Width>
-					<Height>35</Height>
-					<Text>Add Collection Item</Text>
-					<AutoTooltip>Adds The selected Item to the Collections List</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call addcollection]</Command>
-				</CommandButton>
     		<listbox Name='AddItemList' Template='EQ2.listbox'>
 					<X>130</X>
 					<Y>15</Y>
