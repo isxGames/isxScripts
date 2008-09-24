@@ -3764,7 +3764,7 @@ objectdef ActorCheck
 			return 0
 		}
 
-		EQ2:CreateCustomActorArray[npc,byDist,${iEngageDistance}]
+		EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
 		do
 		{
 		    ; this should not be necessary, but I will put it here anyway
