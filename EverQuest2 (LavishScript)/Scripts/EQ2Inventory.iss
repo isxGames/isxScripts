@@ -28,22 +28,6 @@ function main()
   }
 } 
 
-function DoStuff(param1)
-{	
-	
-	if ${param1.Equal[selljunk]}
-		call selljunk
-	
-	if ${param1.Equal[brokeritems]}
-		call placeitems 
-	
-	if ${param1.Equal[destroyitems]}
-		call destroyitems	
-}
-
-
-
-
 function placeitems()
 {
 	variable int tempvar=1
@@ -139,7 +123,7 @@ function placeraret1()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${tempvar}]}](exists)}
@@ -164,7 +148,7 @@ function placeraret2()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${tempvar}]}](exists)}
@@ -189,7 +173,7 @@ function placeraret3()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${tempvar}]}](exists)}
@@ -214,7 +198,7 @@ function placeraret4()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${tempvar}]}](exists)}
@@ -239,7 +223,7 @@ function placeraret5()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${tempvar}]}](exists)}
@@ -264,7 +248,7 @@ function placeraret6()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${tempvar}]}](exists)}
@@ -289,7 +273,7 @@ function placeraret7()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${tempvar}]}](exists)}
@@ -314,7 +298,7 @@ function placeraret8()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${tempvar}]}](exists)}
@@ -357,7 +341,7 @@ function placeharvestt1()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${tempvar}]}](exists)}
@@ -382,7 +366,7 @@ function placeharvestt2()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${tempvar}]}](exists)}
@@ -407,7 +391,7 @@ function placeharvestt3()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${tempvar}]}](exists)}
@@ -432,7 +416,7 @@ function placeharvestt4()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${tempvar}]}](exists)}
@@ -457,7 +441,7 @@ function placeharvestt5()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${tempvar}]}](exists)}
@@ -482,7 +466,7 @@ function placeharvestt6()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${tempvar}]}](exists)}
@@ -507,7 +491,7 @@ function placeharvestt7()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${tempvar}]}](exists)}
@@ -532,7 +516,7 @@ function placeharvestt8()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${tempvar}]}](exists)}
@@ -562,7 +546,7 @@ function placecollection()
 	  			{	
 	  				call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]} to Broker" FF11CCFF
 	  				Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}].SerialNumber}]
-	  				wait 20		
+	  				wait ${Math.Rand[30]:Inc[20]}		
 					}
 	  		}		
 				while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection].Key[${tempvar}]}](exists)}
@@ -604,7 +588,7 @@ function placealchemist()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Alchemist].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Alchemist].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Alchemist].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Alchemist].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Alchemist].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Alchemist].Key[${tempvar}]}](exists)}
@@ -628,7 +612,7 @@ function placearmorer()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Armorer].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Armorer].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Armorer].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Armorer].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Armorer].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Armorer].Key[${tempvar}]}](exists)}
@@ -652,7 +636,7 @@ function placecarpenter()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Carpenter].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Carpenter].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Carpenter].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Carpenter].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Carpenter].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Carpenter].Key[${tempvar}]}](exists)}
@@ -676,7 +660,7 @@ function placejeweler()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Jeweler].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Jeweler].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Jeweler].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Jeweler].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Jeweler].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Jeweler].Key[${tempvar}]}](exists)}
@@ -700,7 +684,7 @@ function placesage()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Sage].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Sage].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Sage].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Sage].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Sage].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Sage].Key[${tempvar}]}](exists)}
@@ -724,7 +708,7 @@ function placetailor()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Tailor].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Tailor].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Tailor].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Tailor].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Tailor].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Tailor].Key[${tempvar}]}](exists)}
@@ -748,7 +732,7 @@ function placeweaponsmith()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Weaponsmith].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Weaponsmith].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Weaponsmith].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Weaponsmith].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Weaponsmith].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Weaponsmith].Key[${tempvar}]}](exists)}
@@ -772,7 +756,7 @@ function placewoodworker()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Woodworker].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Woodworker].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Woodworker].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Woodworker].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Woodworker].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Woodworker].Key[${tempvar}]}](exists)}
@@ -796,7 +780,7 @@ function placecraftsman()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Craftsman].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Craftsman].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Craftsman].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Craftsman].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Craftsman].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Craftsman].Key[${tempvar}]}](exists)}
@@ -820,7 +804,7 @@ function placeoutfitter()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Outfitter].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Outfitter].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Outfitter].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Outfitter].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Outfitter].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Outfitter].Key[${tempvar}]}](exists)}
@@ -844,7 +828,7 @@ function placescholar()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Scholar].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Scholar].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Scholar].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Scholar].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Scholar].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Tradeskills.xml].Set[Scholar].Key[${tempvar}]}](exists)}
@@ -899,7 +883,7 @@ function placeassassin()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Assassin].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Assassin].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Assassin].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Assassin].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Assassin].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Assassin].Key[${tempvar}]}](exists)}
@@ -923,7 +907,7 @@ function placeberserker()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Berserker].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Berserker].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Berserker].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Berserker].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Berserker].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Berserker].Key[${tempvar}]}](exists)}
@@ -948,7 +932,7 @@ function placebrigand()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Brigand].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Brigand].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Brigand].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Brigand].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Brigand].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Brigand].Key[${tempvar}]}](exists)}
@@ -973,7 +957,7 @@ function placebruiser()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Bruiser].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Bruiser].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Bruiser].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Bruiser].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Bruiser].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Bruiser].Key[${tempvar}]}](exists)}
@@ -998,7 +982,7 @@ function placecoercer()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Coercer].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Coercer].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Coercer].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Coercer].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Coercer].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Coercer].Key[${tempvar}]}](exists)}
@@ -1023,7 +1007,7 @@ function placeconjuror()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Conjuror].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Conjuror].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Conjuror].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Conjuror].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Conjuror].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Conjuror].Key[${tempvar}]}](exists)}
@@ -1048,7 +1032,7 @@ function placedefiler()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Defiler].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Defiler].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Defiler].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Defiler].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Defiler].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Defiler].Key[${tempvar}]}](exists)}
@@ -1073,7 +1057,7 @@ function placedirge()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Dirge].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Dirge].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Dirge].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Dirge].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Dirge].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Dirge].Key[${tempvar}]}](exists)}
@@ -1098,7 +1082,7 @@ function placefury()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Fury].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Fury].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Fury].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Fury].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Fury].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Fury].Key[${tempvar}]}](exists)}
@@ -1123,7 +1107,7 @@ function placeguardian()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Guardian].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Guardian].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Guardian].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Guardian].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Guardian].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Guardian].Key[${tempvar}]}](exists)}
@@ -1148,7 +1132,7 @@ function placeillusionist()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Illusionist].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Illusionist].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Illusionist].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Illusionist].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Illusionist].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Illusionist].Key[${tempvar}]}](exists)}
@@ -1173,7 +1157,7 @@ function placeinquisitor()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Inquisitor].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Inquisitor].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Inquisitor].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Inquisitor].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Inquisitor].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Inquisitor].Key[${tempvar}]}](exists)}
@@ -1198,7 +1182,7 @@ function placemonk()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Monk].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Monk].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Monk].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Monk].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Monk].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Monk].Key[${tempvar}]}](exists)}
@@ -1224,7 +1208,7 @@ function placemystic()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Mystic].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Mystic].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Mystic].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Mystic].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Mystic].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Mystic].Key[${tempvar}]}](exists)}
@@ -1250,7 +1234,7 @@ function placenecromancer()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Necromancer].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Necromancer].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Necromancer].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Necromancer].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Necromancer].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Necromancer].Key[${tempvar}]}](exists)}
@@ -1275,7 +1259,7 @@ function placepaladin()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Paladin].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Paladin].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Paladin].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Paladin].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Paladin].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Paladin].Key[${tempvar}]}](exists)}
@@ -1300,7 +1284,7 @@ function placeranger()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Ranger].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Ranger].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Ranger].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Ranger].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Ranger].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Ranger].Key[${tempvar}]}](exists)}
@@ -1325,7 +1309,7 @@ function placeshadowknight()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Shadowknight].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Shadowknight].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Shadowknight].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Shadowknight].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Shadowknight].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Shadowknight].Key[${tempvar}]}](exists)}
@@ -1350,7 +1334,7 @@ function placeswashbuckler()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Swashbuckler].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Swashbuckler].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Swashbuckler].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Swashbuckler].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Swashbuckler].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Swashbuckler].Key[${tempvar}]}](exists)}
@@ -1375,7 +1359,7 @@ function placetemplar()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Templar].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Templar].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Templar].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Templar].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Templar].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Templar].Key[${tempvar}]}](exists)}
@@ -1400,7 +1384,7 @@ function placetroubador()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Troubador].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Troubador].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Troubador].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Troubador].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Troubador].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Troubador].Key[${tempvar}]}](exists)}
@@ -1425,7 +1409,7 @@ function placewarden()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warden].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warden].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warden].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warden].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warden].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warden].Key[${tempvar}]}](exists)}
@@ -1450,7 +1434,7 @@ function placewarlock()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warlock].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warlock].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warlock].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warlock].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warlock].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Warlock].Key[${tempvar}]}](exists)}
@@ -1475,7 +1459,7 @@ function placewizard()
 	  		{	
 	  			call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Wizard].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Wizard].Key[${tempvar}]} to Broker" FF11CCFF
 	  			Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Wizard].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Wizard].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Wizard].Key[${tempvar}]}].SerialNumber}]
-	  			wait 20		
+	  			wait ${Math.Rand[30]:Inc[20]}		
 	  		}	
 			}
 			while ${Me.Vending[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SpellList.xml].Set[Wizard].Key[${tempvar}]}](exists)}
@@ -1512,17 +1496,17 @@ function placestatust1()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT1].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Keys}
 	}
 }	
 function placestatust2()	
@@ -1537,17 +1521,17 @@ function placestatust2()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT2].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Keys}
 	}
 }
 function placestatust3()	
@@ -1562,17 +1546,17 @@ function placestatust3()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT3].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Keys}
 	}
 }	
 function placestatust4()	
@@ -1587,17 +1571,17 @@ function placestatust4()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT4].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Keys}
 	}
 }	
 function placestatust5()	
@@ -1612,17 +1596,17 @@ function placestatust5()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT5].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Keys}
 	}
 }	
 function placestatust6()	
@@ -1637,17 +1621,17 @@ function placestatust6()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT6].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Keys}
 	}
 }	
 function placestatust7()	
@@ -1662,17 +1646,17 @@ function placestatust7()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT7].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Keys}
 	}
 }	
 function placestatust8()	
@@ -1687,17 +1671,17 @@ function placestatust8()
 		{	
 			Do
 			{	 	
-		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Key[${tempvar}]}].Quantity} > 0
+		  	if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${tempvar}]}].Quantity} > 0
 		  	{
-		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Key[${tempvar}]} to Broker" FF11CCFF
-		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${tempvar}]} to Broker" FF11CCFF
+		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${tempvar}]}].SerialNumber}]
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Key[${tempvar}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${tempvar}]}](exists)}
 			call CheckFocus
 		}
-		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusT8].Keys}
+		while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Keys}
 	}
 }
 function placefertilizer()
@@ -1730,7 +1714,7 @@ function placefertilizert1()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${tempvar}]}](exists)}
@@ -1755,7 +1739,7 @@ function placefertilizert2()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${tempvar}]}](exists)}
@@ -1780,7 +1764,7 @@ function placefertilizert3()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${tempvar}]}](exists)}
@@ -1805,7 +1789,7 @@ function placefertilizert4()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${tempvar}]}](exists)}
@@ -1830,7 +1814,7 @@ function placefertilizert5()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${tempvar}]}](exists)}
@@ -1855,7 +1839,7 @@ function placefertilizert7()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${tempvar}]}](exists)}
@@ -1881,7 +1865,7 @@ function placecustom()
 		  	{
 		 	  	call AddLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${tempvar}]}].Quantity} ${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${tempvar}]} to Broker" FF11CCFF
 		 	  	Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${tempvar}]}]:AddToConsignment[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${tempvar}]}].Quantity},${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]},${Me.Vending[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}].Consignment[${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${tempvar}]}].SerialNumber}]
-  		  	wait 20	
+  		  	wait ${Math.Rand[30]:Inc[20]}	
 	  		}
 			}
 			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${tempvar}]}](exists)}
@@ -1895,11 +1879,11 @@ function destroyitems()
 {
 	variable int tempvar=1
 	wait 5
-	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
-	call AddLog "**Starting EQ2Destroy v2 By Syliac**" FF00FF00	
+	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
+	call AddSellLog "**Starting EQ2Destroy v2 By Syliac**" FF00FF00	
 	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 5
-	call AddLog "**Destroying Items**" FFFF00FF
+	call AddSellLog "**Destroying Items**" FFFF00FF
 	wait 5
 	Do
 	{	
@@ -1907,79 +1891,109 @@ function destroyitems()
 		{	
 			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}].Quantity} > 0 
 	  	{
-	  		call AddLog "Destroying  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}]}" FFFF0000
+	  		call AddSellLog "Destroying  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}]}" FFFF0000
 	  		Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}]:Destroy[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}].Quantity}]
-				wait 10
+				wait ${Math.Rand[30]:Inc[20]}
 			}
 		}	
 		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${tempvar}]}](exists)}
 	}
 	while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Keys}
-	call AddLog "******Items Destroyed******" FFFF00FF
+	call AddSellLog "**Items Destroyed**" FFFF00FF
 	announce "\You have Destroyed Items" 1 2
+	
+}
+
+function vendortype()
+{
+	if ${UIElement[StatusMerchant@EQ2Junk@GUITabs@EQ2Inventory].Checked}
+	{
+		call sellstatus
+	}	
+	else
+	{
+		call selljunk
+	}		
 	
 }
 
 function selljunk()
 {
 	variable int tempvar=1
-	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
-	call AddLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00		
+	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
+	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00		
 	Actor[nokillnpc]:DoTarget
 	wait 5
 	Target:DoFace
 	wait 5
 	Target:DoubleClick
-	wait 5	
+	wait 5
+	press b
+	wait 5
+	press b	
 	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 10
-	call AddLog "*******Selling Items*******" FFFF00FF
+	call AddSellLog "**Selling Junk Items**" FFFF00FF
 	Do
 	{	
 		Do
 		{	
 			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}].Quantity} > 0
 	  	{
-	  		call AddLog "Selling ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}].Quantity}  ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}]}" FF11CCFF
+	  		call AddSellLog "Selling ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}].Quantity}  ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}]}" FF11CCFF
 	  		Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}]:Sell[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}].Quantity}]
-				wait 15
+				wait ${Math.Rand[30]:Inc[20]}
 			}
 		}	
 		while ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${tempvar}]}](exists)}
 	}
 	while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Keys}
-	call AddLog "*********Items Sold********" FFFF00FF
-	announce "\You have sold Junk" 1 2
+	call AddSellLog "**Junk Items Sold**" FFFF00FF
 	press ESC
 	press ESC
 	press ESC
-}
-		
-function ShutDown()
-{
-	press ESC
-	press ESC
-	press ESC
-	call AddLog "**Ending EQ2Broker**" FF00FF00
-	announce "\Broker Items Placed" 1 2
-	
-	if ${UIElement[RunMyPrices@EQ2Broker@GUITabs@EQ2Inventory].Checked}
-	{
-		call AddLog "*****Starting MyPrices*****" FFEECC00
-		wait 5
-		run myprices.iss
-		Wait 125
-		
-		UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Start Scanning]:LeftClick
-	}
-	call savesettings
-		 
 }
 
+function sellstatus()
+{
+	variable int tempvar=1
+	UIElement[SellItemList@EQ2junk@GUITabs@EQ2Inventory]:ClearItems
+	wait 5
+	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00		
+	Actor[nokillnpc]:DoTarget
+	wait 5
+	Target:DoFace
+	wait 5
+	Target:DoubleClick
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 20
+	call AddSellLog "**Selling Status Items**" FFFF00FF
+	Do
+	{	
+		Do
+		{	
+			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusMerchant].Key[${tempvar}]}].Quantity} > 0
+	  	{
+	  		call AddSellLog "Selling ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusMerchant].Key[${tempvar}]}].Quantity}  ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusMerchant].Key[${tempvar}]}]}" FF11CCFF
+	  		Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusMerchant].Key[${tempvar}]}]:Sell[${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusMerchant].Key[${tempvar}]}].Quantity}]
+				wait ${Math.Rand[30]:Inc[20]}
+			}
+		}	
+		while ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusMerchant].Key[${tempvar}]}](exists)}
+	}
+	while ${tempvar:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.xml].Set[StatusMerchant].Keys}
+	
+	call AddSellLog "**Status Items Sold**" FFFF00FF
+	
+	press ESC
+	press ESC
+	press ESC
+}
+		
 function junklist()
 {
 	variable int tempvar=1
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory]:ClearItems
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
 	wait 5
 	call AddRemoveList "*******Vendor Junk List*******" FFFF00FF
 	Do
@@ -1992,7 +2006,7 @@ function junklist()
 function destroylist()
 {
 	variable int tempvar=1
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory]:ClearItems
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
 	wait 5
 	call AddRemoveList "*******Destroy Item List*******" FFFF00FF
 	Do
@@ -2005,7 +2019,7 @@ function destroylist()
 function customlist()
 {
 	variable int tempvar=1
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory]:ClearItems
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
 	wait 5
 	call AddRemoveList "*******Custom Item List*******" FFFF00FF
 	Do
@@ -2040,88 +2054,112 @@ function deletemeat()
 
 function addcollection(string brokeritem)
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection]:Set[${UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml].Set[Collection]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/Collections.xml]:Save
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
 function addjunk()
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:Set[${UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml]:Save
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
 function adddestroy()
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy]:Set[${UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml]:Save
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
 function addcustom()
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems]:Set[${UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml]:Save
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
 function removejunk()
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:UnSet[${UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
+	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml]:Save
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 function removedestroy()
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy]:UnSet[${UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
+	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml]:Save
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
 function removecustom()
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems]:UnSet[${UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
+	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml]:Save
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+}
+
+function invlist()
+{
+	call createinventorylist
+	call createinventorylist
+	call createinventorylist
+	call createinventorylist
+	call createinventorylist
+	call createinventorylist
 }
 
 function createinventorylist()
 {
-	variable int ArrayPosition
-	variable int TempArrayPosition
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory]:ClearItems
+	variable int ArrayPosition=1
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:ClearItems
 	Me:CreateCustomInventoryArray[nonbankonly]
-	wait 10
-	ArrayPosition:Set[1]
 	call AddInvList "**Creating Inventory List ${Me.CustomInventoryArraySize} Items**" FFFF00FF
+	
+	
 	
 	Do
 	{		
 	  	call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
-	  	TempArrayPosition:Set[${ArrayPosition}]
-	  	ArrayPosition:Set[${Math.Calc[${TempArrayPosition}+1]}]
 	}
-	while ${ArrayPosition} <= ${Me.CustomInventoryArraySize}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
+}
+
+function AddLog(string textline, string colour)
+{
+	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
+}
+
+function AddSellLog(string textline, string colour)
+{
+	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
 }
 
 function AddInvList(string textline, string colour)
 {
-	UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+}
+
+function AddRemoveList(string textline, string colour)
+{
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
 }
 
 function CheckFocus()
@@ -2138,15 +2176,9 @@ function CheckFocus()
 	return
 }
 
-function AddLog(string textline, string colour)
+function echolog(string logline)
 {
-	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
-	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
-}
-
-function AddRemoveList(string textline, string colour)
-{
-	UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+		Redirect -append "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/EQ2Inventory.log" Echo "${logline}"
 }
 
 function makefile()
@@ -2236,6 +2268,28 @@ function makefile()
 	SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[FertT5,1]
 	SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[FertT7,1]
 }
+
+function ShutDown()
+{
+	press ESC
+	press ESC
+	press ESC
+	call AddLog "**Ending EQ2Broker**" FF00FF00
+	announce "\Broker Items Placed" 1 2
+	
+	if ${UIElement[RunMyPrices@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	{
+		call AddLog "*****Starting MyPrices*****" FFEECC00
+		wait 5
+		run myprices.iss
+		Wait 125
+		
+		UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Start Scanning]:LeftClick
+	}
+	call savesettings
+		 
+}
+
 function savesettings()
 {
 	SettingXML["./EQ2Inventory/ScriptConfig/Collections.xml"]:Save
@@ -2252,8 +2306,8 @@ function savesettings()
 	SettingXML["./EQ2Inventory/ScriptConfig/Junk.xml"]:Unload
 	SettingXML["./EQ2Inventory/ScriptConfig/SpellList.xml"]:Save
 	SettingXML["./EQ2Inventory/ScriptConfig/SpellList.xml"]:Unload
-	SettingXML["./EQ2Inventory/ScriptConfig/StatusItems.xml"]:Save
-	SettingXML["./EQ2Inventory/ScriptConfig/StatusItems.xml"]:Unload
+	SettingXML["./EQ2Inventory/ScriptConfig/StatusItems.XML"]:Save
+	SettingXML["./EQ2Inventory/ScriptConfig/StatusItems.XML"]:Unload
 	SettingXML["./EQ2Inventory/ScriptConfig/Tradeskills.xml"]:Save
 	SettingXML["./EQ2Inventory/ScriptConfig/Tradeskills.xml"]:Unload
 	SettingXML["./EQ2Inventory/ScriptConfig/DeleteMeats.xml"]:Save
