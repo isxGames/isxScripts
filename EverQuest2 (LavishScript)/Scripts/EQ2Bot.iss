@@ -1485,18 +1485,18 @@ function GetToFlank(int extended)
 
 	if ${direction}
 	{
-		tempdir:Set[-3]
+		tempdir:Set[-1]
 		if ${extended}
 		{
-			tempdir:Dec[3]
+			tempdir:Dec[1]
 		}
 	}
 	else
 	{
-		tempdir:Set[3]
+		tempdir:Set[1]
 		if ${extended}
 		{
-			tempdir:Inc[3]
+			tempdir:Inc[1]
 		}
 	}
 
