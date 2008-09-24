@@ -49,4 +49,38 @@
 		<Setting Name="Kunzite Amulet">Sell</Setting>
 		<Setting Name="Apophelli Wax Sealed Document">Sell</Setting>
 	</Set>
+	<Set Name="StatusMerchant">
+		<Setting Name="Blackened Iron Relic">Sell</Setting>
+		<Setting Name="Coral Scrying Stone">Sell</Setting>
+		<Setting Name="Coral Amulet">Sell</Setting>
+		<Setting Name="Parraffin Sealed Document">Sell</Setting>
+		<Setting Name="Steel Relic">Sell</Setting>
+		<Setting Name="Jasper Scrying Stone">Sell</Setting>
+		<Setting Name="Jasper Amulet">Sell</Setting>
+		<Setting Name="Tallow Sealed Document">Sell</Setting>
+		<Setting Name="Feysteel Relic">Sell</Setting>
+		<Setting Name="Opal Scrying Stone">Sell</Setting>
+		<Setting Name="Opal Amulet">Sell</Setting>
+		<Setting Name="Gel Sealed Document">Sell</Setting>
+		<Setting Name="Ebon Relic">Sell</Setting>
+		<Setting Name="Ruby Scrying Stone">Sell</Setting>
+		<Setting Name="Ruby Amulet">Sell</Setting>
+		<Setting Name="Beeswax Sealed Document">Sell</Setting>
+		<Setting Name="Indicolite Relic">Sell</Setting>
+		<Setting Name="Star Sapphire Scrying Stone">Sell</Setting>
+		<Setting Name="Star Sapphire Amulet">Sell</Setting>
+		<Setting Name="Bayberry Sealed Document">Sell</Setting>
+		<Setting Name="Xegolite Relic">Sell</Setting>
+		<Setting Name="Moonstone Scrying Stone">Sell</Setting>
+		<Setting Name="Moonstone Amulet">Sell</Setting>
+		<Setting Name="Flamewrought Sealed Document">Sell</Setting>
+		<Setting Name="Beryllium Relic">Sell</Setting>
+		<Setting Name="Emerald Scrying Stone">Sell</Setting>
+		<Setting Name="Emerald Amulet">Sell</Setting>
+		<Setting Name="Faywax Sealed Document">Sell</Setting>
+		<Setting Name="Deklium Relic">Sell</Setting>
+		<Setting Name="Kunzite Scrying Stone">Sell</Setting>
+		<Setting Name="Kunzite Amulet">Sell</Setting>
+		<Setting Name="Apophelli Wax Sealed Document">Sell</Setting>
+	</Set>
 </InnerSpaceSettings>

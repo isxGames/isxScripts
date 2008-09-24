@@ -75,7 +75,7 @@
 					<Height>65</Height>
 					<Text>Broker Items</Text>
 					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call DoStuff brokeritems]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call placeitems]</Command>
 				</CommandButton>
 				<checkbox Name='RunMyPrices' Template='EQ2.checkbox'>
     			<X>5</X>
@@ -100,25 +100,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<CommandButton Name='Vendor Items' Template='EQ2.Button'>
-					<X>20</X>
-					<Y>320</Y>
-					<Width>90</Width>
-					<Height>65</Height>
-					<Text>Vendor Items</Text>
-					<AutoTooltip>Automatically Sells Items to Vendor</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call DoStuff selljunk]</Command>
-				</CommandButton>
-				<CommandButton Name='Destroy Items' Template='EQ2.Button'>
-					<X>20</X>
-					<Y>390</Y>
-					<Width>90</Width>
-					<Height>65</Height>
-					<Text>Destroy Items</Text>
-					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call DoStuff destroyitems]</Command>
-				</CommandButton>
-								<checkbox Name='ScanRares' Template='EQ2.checkbox'>
+				<checkbox Name='ScanRares' Template='EQ2.checkbox'>
     			<X>5</X>
     			<Y>115</Y>
     			<Width>100</Width>
@@ -1207,7 +1189,7 @@
 					<Y>200</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
-					<Text>Add following item's broker:</Text>
+					<Text>Add following items broker:</Text>
 				</Text>
 				<checkbox Name='Collections' Template='EQ2.checkbox'>
 				<X>5</X>
@@ -1314,7 +1296,7 @@
 					<Y>245</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
-					<Text>Add Common Harvest item's to broker:</Text>
+					<Text>Add Common Harvest items to broker:</Text>
 				</Text>
 				<Text Name='CHarvestBoxText' Template='EQ2.Text'>
 					<X>235</X>
@@ -1555,7 +1537,7 @@
 					<Y>300</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
-					<Text>Add Rare Harvest item's to broker:</Text>
+					<Text>Add Rare Harvest items to broker:</Text>
 				</Text>
 				<Text Name='RHarvestBoxText' Template='EQ2.Text'>
 					<X>225</X>
@@ -1773,7 +1755,7 @@
 					<Y>355</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
-					<Text>Add status item's to broker:</Text>
+					<Text>Add status items to broker:</Text>
 				</Text>
 				<Text Name='StatusItemBoxText' Template='EQ2.Text'>
 					<X>235</X>
@@ -1991,7 +1973,7 @@
 					<Y>410</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
-					<Text>Add fertilizer item's to broker:</Text>
+					<Text>Add fertilizer items to broker:</Text>
 				</Text>
 				<Text Name='FertilizerItemBoxText' Template='EQ2.Text'>
 					<X>235</X>
@@ -2159,6 +2141,77 @@
 					</OnLeftClick>
 				</checkbox>
 			</Tab>
+			<Tab Name='EQ2Junk'>
+				<CommandButton Name='Vendor Items' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>25</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Vendor Items</Text>
+					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call vendortype]</Command>
+				</CommandButton>
+				<checkbox Name='StatusMerchant' Template='EQ2.checkbox'>
+				<X>5</X>
+  			<Y>85</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Status Merchant</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusMerchant,1]} == 1
+								{
+									UIElement[StatusMerchant@EQ2Junk@GUITabs@EQ2Inventory]:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[StatusMerchant@EQ2Junk@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[StatusMerchant,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[StatusMerchant,0]:Save								
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell Status Items to a Status Merchant.</AutoTooltip>
+				</checkbox>
+				<CommandButton Name='Destroy Items' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>150</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Destroy Items</Text>
+					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call destroyitems]</Command>
+				</CommandButton>
+				<listbox Name='SellItemList' Template='EQ2.listbox'>
+					<X>130</X>
+					<Y>15</Y>
+					<Width>350</Width>
+					<Height>420</Height>
+					<Font>
+						<Name>Times New Roman</Name>
+						<Size>19</Size>
+					</Font>
+					<SelectMultiple>0</SelectMultiple>
+					<OnSelect>
+					</OnSelect>
+					<Sort></Sort>
+				</listbox>
+				<Commandbutton name='ClearSelllog' Template='EQ2.Commandbutton'> 
+					<X>340</X> 
+					<Y>440</Y> 
+					<Width>100</Width> 
+					<Height>15</Height>
+					<Text>Clear Log</Text>
+					<OnLeftClick>
+						UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
+					</OnLeftClick>
+					<AutoTooltip>
+						Clear Log
+					</AutoTooltip>
+				</Commandbutton>
+			</Tab>	
 			<Tab Name='Add Items'>
     		<CommandButton Name='Inventory List' Template='EQ2.Button'>
 					<X>10</X>
@@ -2167,7 +2220,7 @@
 					<Height>55</Height>
 					<Text>Inventory List</Text>
 					<AutoTooltip>Outputs Current Inventory to Log Window</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call createinventorylist]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call invlist]</Command>
 				</CommandButton>
 				<checkbox Name='Examine' Template='EQ2.checkbox'>
 				<X>5</X>
@@ -2228,7 +2281,7 @@
 					<AutoTooltip>Adds The selected Item to the Collections List</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call addcollection]</Command>
 				</CommandButton>
-    		<listbox Name='ItemList3' Template='EQ2.listbox'>
+    		<listbox Name='AddItemList' Template='EQ2.listbox'>
 					<X>130</X>
 					<Y>15</Y>
 					<Width>350</Width>
@@ -2240,7 +2293,7 @@
 					<SelectMultiple>0</SelectMultiple>
 					<OnSelect>
 						if ${UIElement[Examine@Add Items@GUITabs@EQ2Inventory].Checked}
-							Me.CustomInventory[${UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory].SelectedItem}]:Examine
+							Me.CustomInventory[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem}]:Examine
 					</OnSelect>
 					<Sort>Text</Sort>
 				</listbox>
@@ -2251,7 +2304,7 @@
 					<Height>15</Height>
 					<Text>Clear Log</Text>
 					<OnLeftClick>
-						UIElement[ItemList3@Add Items@GUITabs@EQ2Inventory]:ClearItems
+						UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:ClearItems
 					</OnLeftClick>
 					<AutoTooltip>
 						Clear Log
@@ -2313,7 +2366,7 @@
 					<AutoTooltip>Removes The selected Item from the Custom Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call removecustom]</Command>
 				</CommandButton>   		
-    		<listbox Name='ItemList2' Template='EQ2.listbox'>
+    		<listbox Name='RemoveItemList' Template='EQ2.listbox'>
 					<X>130</X>
 					<Y>15</Y>
 					<Width>350</Width>
@@ -2332,7 +2385,7 @@
 					<Height>15</Height>
 					<Text>Clear Log</Text>
 					<OnLeftClick>
-						UIElement[ItemList2@Remove Items@GUITabs@EQ2Inventory]:ClearItems
+						UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
 					</OnLeftClick>
 					<AutoTooltip>
 						Clear Log
