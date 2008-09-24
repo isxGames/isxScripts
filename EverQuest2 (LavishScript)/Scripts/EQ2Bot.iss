@@ -868,7 +868,7 @@ function CastSpellNOW(string spell, int spellid, bool castwhilemoving)
 
 	if ${Me.IsMoving} && !${castwhilemoving}
 		return
-		
+
 	;; Stop casting whatever is casting
 	if ${Me.CastingSpell}
 	{
@@ -914,7 +914,7 @@ function CastSpellNOW(string spell, int spellid, bool castwhilemoving)
     LastQueuedAbility:Set[${spell}]
     CurrentAction:Set[Casting '${spell}']
 
-	return SUCCESS 
+	return SUCCESS
 }
 
 function CastSpell(string spell, int spellid, bool castwhilemoving)
@@ -1053,7 +1053,7 @@ function Combat()
 
 		if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
 			break
-			
+
 	    if ${Actor[${KillTarget}].IsDead}
 	        break
 
@@ -1314,7 +1314,7 @@ function Combat()
             {
                 if ${Actor[${KillTarget}].IsDead}
                     break
-            }               
+            }
 
 			call ProcessTriggers
 		}
@@ -3564,6 +3564,9 @@ objectdef ActorCheck
 
 	member:bool CheckActor(int actorid)
 	{
+		if ${Actor[${actorid}].IsDead}
+			return FALSE
+
 		switch ${Actor[${actorid}].Type}
 		{
 			case NPC
@@ -3618,6 +3621,9 @@ objectdef ActorCheck
 	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
 	member:bool AggroGroup(int actorid)
 	{
+		if ${Actor[${actorid}].IsDead}
+			return FALSE
+
 		variable int tempvar
 
 		if ${This.FriendlyPet[${actorid}]}
@@ -3722,7 +3728,7 @@ objectdef ActorCheck
 		;echo "DEBUG: Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."
 		do
 		{
-			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
+			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode} && !${CustomActor[${tcount}].IsDead}
 			{
 				if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
 					return TRUE
@@ -3749,23 +3755,23 @@ objectdef ActorCheck
 		return FALSE
 	}
 
-	member:int NearestAggro()
+	member:int NearestAggro(int iEngageDistance=${ScanRange})
 	{
-		variable int tcount=2
+		variable int tcount=1
 
-		if !${Actor[NPC,range,20](exists)} && !${Actor[NamedNPC,range,20](exists)}
+		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !${Actor[NamedNPC,range,${iEngageDistance}](exists)}
 		{
 			return 0
 		}
 
-		EQ2:CreateCustomActorArray[byDist,20,npc]
+		EQ2:CreateCustomActorArray[npc,byDist,${iEngageDistance}]
 		do
 		{
 		    ; this should not be necessary, but I will put it here anyway
 		    if ${CustomActor[${tcount}].IsDead}
 		        continue
-		        
-			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode}
+
+			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode} && ${This.CheckActor[${CustomActor[${tcount}].ID}]}
 			{
 				if ${CustomActor[${tcount}].ID}
 				{
@@ -4106,7 +4112,7 @@ objectdef EQ2BotObj
 		}
 
 		grpcnt:Set[${Me.GroupCount}]
-		
+
 		; We really should check "ourself" (ie, start at zero); however, Group[0] is 'actortype' and doesn't have a MaxHitPoints member.
 		tempgrp:Set[1]
 		do
