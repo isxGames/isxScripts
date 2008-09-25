@@ -46,6 +46,7 @@ function Class_Declaration()
 	declare UseBattleLeadershipAABuff bool script FALSE
 	declare UseFearlessMoraleAABuff bool script FALSE
 	declare UseDeathMarch bool script FALSE
+	declare UseMastersRage bool script TRUE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -64,6 +65,8 @@ function Class_Declaration()
 	UseBattleLeadershipAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseBattleLeadershipAABuff,FALSE]}]	
 	UseFearlessMoraleAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseFearlessMoraleAABuff,FALSE]}]	
 	UseDeathMarch:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDeathMarch,FALSE]}]	
+	UseMastersRage:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseMastersRage,TRUE]}]	
+
 
 	BuffArmamentMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArmamentMember,]}]
 	BuffTacticsGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember,]}]
@@ -648,6 +651,27 @@ function Combat_Routine(int xAction)
             }
         }
     }
+    
+    
+    if ${UseMastersRage}
+    {
+	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+	    ;;;;;;;;;;
+	    if (!${InvalidMasteryTargets.Element[${KillTarget}](exists)})
+	    {
+    		if ${Me.Ability["Master's Rage"].IsReady}
+    		{
+    			Target ${KillTarget}
+    			Me.Ability["Master's Rage"]:Use
+    			do
+    			{
+    			    waitframe
+    			}
+    			while ${Me.CastingSpell}
+    			wait 1						
+    		}
+    	}
+    }
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 	
@@ -864,7 +888,7 @@ function CheckGroupOrRaidAggro()
         	            {
         	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
         	                call IsFighterOrScout ${MobTargetID}
-        	                if ${Return.Equal[FALSE]}
+        	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
         	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
             	                if ${Actor[${MobTargetID}].Health} < 65
@@ -924,9 +948,9 @@ function CheckGroupOrRaidAggro()
         	            {
         	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
         	                call IsFighterOrScout ${MobTargetID}
-        	                if ${Return.Equal[FALSE]}
+        	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
-        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
+        	                    echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
             	                if ${Actor[${MobTargetID}].Health} < 65
             	                {
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
