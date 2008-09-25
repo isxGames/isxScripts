@@ -1517,6 +1517,9 @@
                 </Font>
                 <Texture />
                 <SelectMultiple>1</SelectMultiple>
+                <OnSelect>
+                  broker Name "${This.Item[${ID}].Text.Token[1,|]}" Sort ByPriceAsc MinTier Handcrafted MaxTier Treasured
+                </OnSelect>
                 <Sort>Text</Sort>
               </Listbox>
               <Button Name='Vendor Bought Title' Template='EQ2.Button'>
