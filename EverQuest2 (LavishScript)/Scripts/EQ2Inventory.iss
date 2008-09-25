@@ -37,7 +37,7 @@ function main()
 	}
 	else
 	{
-		call makefile
+		call MakeFile
 		wait 5
 		ui -reload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 		ui -reload -skin eq2skin "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
