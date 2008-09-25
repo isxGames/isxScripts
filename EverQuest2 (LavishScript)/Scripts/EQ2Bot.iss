@@ -1060,18 +1060,18 @@ function Combat()
 		do
 		{
 			;these checks should be done before calling combat, once called, combat should insue, regardless.
-			if !${Actor[${Target.ID}].InCombatMode}
+			if !${Actor[${KillTarget}].InCombatMode}
 				break
 
 			while ${Actor[${KillTarget}].Distance} > ${MARange}
 			{
 				wait 5
-				if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+				if !${Actor[${KillTarget}](exists)}
 					break
 				call ProcessTriggers
 			}
 
-			if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+			if !${Actor[${KillTarget}](exists)}
 				break
 
 			;face ${Target.X} ${Target.Y} ${Target.Z}
@@ -1091,13 +1091,13 @@ function Combat()
 						Target ${KillTarget}
 						waitframe
 
-						if ${Target.Target.ID}==${Me.ID}
+						if ${Actor[${KillTarget}].Target.ID}==${Me.ID}
 							call CheckMTAggro
 						else
 						{
-							call Lost_Aggro ${Target.ID}
+							call Lost_Aggro ${KillTarget}
 							if ${UseCustomRoutines}
-								call Custom__Lost_Aggro ${Target.ID}
+								call Custom__Lost_Aggro ${KillTarget}
 						}
 					}
 					else
@@ -1115,20 +1115,20 @@ function Combat()
 							EQ2Bot:MainTank_Dead
 							break
 						}
-					}
-
-					if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
-					{
-						call Have_Aggro
-						if ${UseCustomRoutines}
-						call Custom__Have_Aggro
+						
+    					if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+    					{
+    						call Have_Aggro
+    						if ${UseCustomRoutines}
+    						call Custom__Have_Aggro
+    					}						
 					}
 
 					do
 					{
 						waitframe
 					}
-					while ${MainTank} && ${Target.Target.ID} == ${Me.ID} && ${Target.Distance} > ${MARange}
+					while ${MainTank} && ${Actor[${KillTarget}].Target.ID} == ${Me.ID} && ${Actor[${KillTarget}].Distance} > ${MARange}
 
 					if !${Me.AutoAttackOn} && ${AutoMelee}
 						EQ2Execute /toggleautoattack
@@ -2926,7 +2926,7 @@ function CheckMTAggro()
 
 	newtarget:Set[${Target.ID}]
 
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:CreateCustomActorArray[byDist,15,npc]
 	do
 	{
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
@@ -2941,7 +2941,7 @@ function CheckMTAggro()
 
 				call Lost_Aggro ${CustomActor[${tcount}].ID}
 				if ${UseCustomRoutines}
-								call Custom__Lost_Aggro ${CustomActor[${tcount}].ID}
+					call Custom__Lost_Aggro ${CustomActor[${tcount}].ID}
 				lostaggro:Set[TRUE]
 				return
 			}
@@ -3828,22 +3828,25 @@ objectdef ActorCheck
 		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
 			return
 
-		EQ2:CreateCustomActorArray[byDist,15]
+		EQ2:CreateCustomActorArray[byDist,15,npc]
 		do
 		{
 			ActorID:Set[${CustomActor[${tcount}].ID}]
-
-			if ${This.ValidActor[${ActorID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
+			
+			if ${ActorID} > 0
 			{
-				if ${ActorID}
-				{
-					haveaggro:Set[TRUE]
-					aggroid:Set[${ActorID}]
-					return
-				}
-			}
+    			if ${This.ValidActor[${ActorID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
+    			{
+    				haveaggro:Set[TRUE]
+    				aggroid:Set[${ActorID}]
+    				return
+    			}
+		    }
 		}
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+		
+		haveaggro:Set[FALSE]
+		return
 	}
 }
 
