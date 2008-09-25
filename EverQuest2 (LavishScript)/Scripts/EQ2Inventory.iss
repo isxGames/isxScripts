@@ -8,6 +8,7 @@ variable int SBBox
 variable int CLBox
 variable int CHBox
 variable int RHBox
+variable int LLBox
 variable int FertBox
 variable int StatBox
 variable int CustBox
@@ -47,10 +48,11 @@ function main()
 	CLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}]
   CHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}]
   RHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}]
+  LLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegendBox]}]
   FertBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}]
   StatBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}]
   CustBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}]
-
+	
   while 1
   {
     while ${QueuedCommands}
@@ -93,6 +95,9 @@ function PlaceItems()
 	if ${UIElement[ScanSpellBooks@EQ2Broker@GUITabs@EQ2Inventory].Checked}
 		call PlaceSpellBooks
 
+	if ${UIElement[ScanLoreAndLegend@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+		call PlaceLoreAndLegend
+	
 	if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked}
 		call PlaceStatusItems
 
@@ -100,7 +105,7 @@ function PlaceItems()
 		call PlaceFertilizer
 
 	if ${UIElement[ScanCustom@EQ2Broker@GUITabs@EQ2Inventory].Checked}
-		call PlaceCustom
+		call PlaceCustom	
 
 		call ShutDown
 }
@@ -563,7 +568,7 @@ function PlaceTradeskillBooks()
 	NameFilter2:Set[Enigma]
 	NameFilter3:Set[Ancient]
 	UseBox:Set[${TSBox}]
-		call AddLog "**Checking for Tradeskill Books**"	FFFF00FF
+		call AddLog "**Checking Tradeskill Books**"	FFFF00FF
 
 		if ${UIElement[Alchemist@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
 			{
@@ -629,7 +634,7 @@ function PlaceSpellBooks()
 	NameFilter2:Set[Master I)]
 	NameFilter3:Set[Adept I)]
 	UseBox:Set[${SBBox}]
-		call AddLog "**Checking for Spell Books**" FFFF00FF
+		call AddLog "**Checking Spell Books**" FFFF00FF
 
 		if ${UIElement[Assassin@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
 			{
@@ -1158,6 +1163,30 @@ function PlaceFertilizerT7()
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Keys}
 	}
+}
+
+function PlaceLoreAndLegend()
+{
+	variable int ArrayPosition=1
+	NameFilter1:Set[could be studied to learn]
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 5
+	call CheckFocus
+	call AddLog "**Checking Lore & Legend Items**" FFFF00FF	
+	echo ${LLBox}
+	if ${UIElement[LoreAndLegend@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+		{
+			Do
+			{	
+				if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]} 
+				{
+					call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
+					Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${Me.Vending[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
+					wait ${Math.Rand[30]:Inc[20]}
+				}	
+			}
+			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}		
+		}
 }
 
 function PlaceCustom()
