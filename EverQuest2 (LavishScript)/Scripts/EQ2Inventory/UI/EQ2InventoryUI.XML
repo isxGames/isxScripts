@@ -2306,10 +2306,14 @@
 						<Size>19</Size>
 					</Font>
 					<SelectMultiple>0</SelectMultiple>
-					<OnSelect>
+					<OnLeftDown>
 						if ${UIElement[Examine@Add Items@GUITabs@EQ2Inventory].Checked}
-							Me.CustomInventory[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem}]:Examine
-					</OnSelect>
+							Me.CustomInventory[${This.SelectedItem}]:Examine
+					</OnLeftDown>
+					<OnLeftClick>
+						if ${UIElement[Examine@Add Items@GUITabs@EQ2Inventory].Checked}
+							Me.CustomInventory[${This.SelectedItem}]:Examine
+					</OnLeftClick>
 					<Sort>Text</Sort>
 				</listbox>
 				<Commandbutton name='Clearlog' Template='EQ2.Commandbutton'> 
