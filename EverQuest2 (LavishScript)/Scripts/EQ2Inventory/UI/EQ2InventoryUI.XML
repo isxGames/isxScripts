@@ -2197,11 +2197,35 @@
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellTreasured,0]:Save								
 								}
 					</OnLeftClick>
-					<AutoTooltip>Check to sell ALL for sale TREASURED Items to a Merchant. (BE SURE TO MARK BAGS "contents not for sale" on items you want to keep before using this option.)</AutoTooltip>
+					<AutoTooltip>Check to sell ALL for sale TREASURED Items to a Merchant.</AutoTooltip>
+				</checkbox>
+				<checkbox Name='SellAdeptI' Template='EQ2.checkbox'>
+				<X>5</X>
+  			<Y>135</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+				<Text>Sell Adept I</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[SellAdeptI,1]} == 1
+								{
+									UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory]:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellAdeptI,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellAdeptI,0]:Save								
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell ALL for sale Adept I Items to a Merchant.</AutoTooltip>
 				</checkbox>
 				<CommandButton Name='Destroy Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>150</Y>
+					<Y>200</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Destroy Items</Text>
