@@ -145,16 +145,13 @@ function Buff_Init()
 	PreAction[11]:Set[AA_Infusion]
 	PreSpellRange[11,1]:Set[391]
 
-	PreAction[12]:Set[AA_Force_of_Nature]
-	PreSpellRange[12,1]:Set[393]
+	PreAction[12]:Set[AA_Nature_Walk]
+	PreSpellRange[12,1]:Set[392]
 
-	PreAction[13]:Set[AA_Nature_Walk]
-	PreSpellRange[13,1]:Set[392]
-
-	PreAction[14]:Set[AA_Shapeshift]
-	PreSpellRange[14,1]:Set[396]
-	PreSpellRange[14,2]:Set[397]
-	PreSpellRange[14,3]:Set[398]
+	PreAction[13]:Set[AA_Shapeshift]
+	PreSpellRange[13,1]:Set[396]
+	PreSpellRange[13,2]:Set[397]
+	PreSpellRange[13,3]:Set[398]
 }
 
 function Combat_Init()
@@ -355,7 +352,6 @@ function Buff_Routine(int xAction)
 				break
 			}
 		case AA_Nature_Walk
-		case AA_Force_of_Nature
 		case AA_Rebirth
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
