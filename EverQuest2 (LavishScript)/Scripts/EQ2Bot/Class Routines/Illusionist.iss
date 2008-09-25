@@ -250,7 +250,7 @@ function Buff_Routine(int xAction)
         			{
         			    if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
             			{
-            			    echo "DEBUG:: Casting ''Prismatic'"
+            			    ;echo "DEBUG:: Casting ''Prismatic'"
             			    call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
             			    return
             			}
@@ -259,7 +259,7 @@ function Buff_Routine(int xAction)
                     }      
                     else
                     {
-                        echo "DEBUG:: Casting ''Prismatic'"
+                        ;echo "DEBUG:: Casting ''Prismatic'"
                         call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 
                         return
                     }
@@ -580,6 +580,21 @@ function Combat_Routine(int xAction)
 	
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 	    return CombatComplete
+	    
+	;; Aggro Control...
+	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
+	{
+	    if ${Me.Ability["Phase"].IsReady}
+	    {
+	        echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
+        	call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
+        }
+        elseif ${Me.Ability["Blink"].IsReady}
+        {           
+            echo "DEBUG:: Casting 'Blink'!"
+            call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1    
+        }
+    }	    
 	    
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;; Check for "Runed Guard of the Sel'Nok" ;;;;
@@ -1174,7 +1189,7 @@ function CastSomething()
         			{
         			    if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
             			{
-            			    echo "DEBUG:: Casting ''Prismatic'"
+            			    ;echo "DEBUG:: Casting ''Prismatic'"
             			    call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
             			    return
             			}
@@ -1183,7 +1198,7 @@ function CastSomething()
                     }      
                     else
                     {
-                        echo "DEBUG:: Casting ''Prismatic'"
+                        ;echo "DEBUG:: Casting ''Prismatic'"
                         call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 
                         return
                     }
@@ -1193,13 +1208,13 @@ function CastSomething()
     } 
     if (${Me.Ability[${SpellType[80]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Fast Casting DoT'"
+        ;echo "DEBUG:: Casting 'Fast Casting DoT'"
 	    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1    	
 	    return
 	}
     if (${Me.Ability[${SpellType[70]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Mind DoT'"
+        ;echo "DEBUG:: Casting 'Mind DoT'"
 	    call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1    	
 	    return
 	}	
@@ -1211,7 +1226,7 @@ function CastSomething()
     ;  contruct
     if (${Me.Ability[${SpellType[51]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Construct'"
+        ;echo "DEBUG:: Casting 'Construct'"
 	    call _CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
@@ -1220,7 +1235,7 @@ function CastSomething()
 	{
 	    if (${Me.Ability[Spellblade's Counter].IsReady})
 	    {
-	        echo "DEBUG:: Casting 'Melee AA Ability'"
+	        ;echo "DEBUG:: Casting 'Melee AA Ability'"
 	        Actor[${KillTarget}]:DoTarget
 	        call CastSpell "Spellblade's Counter" 395 0
 		    return
@@ -1229,28 +1244,28 @@ function CastSomething()
 	; fast-casting encounter stun
     if (${Me.Ability[${SpellType[191]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Encounter Stun'"
+        ;echo "DEBUG:: Casting 'Encounter Stun'"
 	    call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1        
 	    return
 	} 
 	; melee debuff
     if (${Me.Ability[${SpellType[50]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Melee Debuff'"
+        ;echo "DEBUG:: Casting 'Melee Debuff'"
 	    call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
 	; extract mana
     if (${Me.Ability[${SpellType[309]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Mana Recovery'"
+        ;echo "DEBUG:: Casting 'Mana Recovery'"
 	    call CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}	
 	; root
     if (${Me.Ability[${SpellType[230]}].IsReady})
     {
-        echo "DEBUG:: Casting 'Root'"
+        ;echo "DEBUG:: Casting 'Root'"
 	    call CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1            
 	    return
 	}
@@ -1291,13 +1306,27 @@ function Have_Aggro()
         if ${Me.Ability["Illusory Allies"](exists)}
         {
             if ${Me.Ability["Illusory Allies"].IsReady}
-    			call CastSpellRange 192 0 0 0 ${Actor[${aggroid}].ID}
+            {
+    			call CastSpellRange 192 0 0 0 ${aggroid} 0 0 0 1
+    			return
+    		}
     	}
     }
 
 	;Phase
-	if (!${Me.Grouped} && ${Actor[${aggroid}].Distance} < 5
-    	call CastSpellRange 357
+	if ${Me.ToActor.Health} < 70
+	{
+	    if (${Me.Ability["Phase"].IsReady} && ${Actor[${aggroid}].Target.ID} == ${Me.ID})
+	    {
+	        echo "DEBUG:: Casting 'Phase' on ${Actor[${aggroid}].Name}!"
+        	call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
+        }
+        elseif ${Me.Ability["Blink"].IsReady}
+        {           
+            echo "DEBUG:: Casting 'Blink'!"
+            call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1    
+        }
+    }
 }
 
 function Lost_Aggro()

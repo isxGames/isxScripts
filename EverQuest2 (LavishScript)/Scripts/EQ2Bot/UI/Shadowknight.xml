@@ -147,10 +147,32 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Pets]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseReaver' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseMastersRage' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>180</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Master Strike</Text>
+		<AutoTooltip>Use Master Strike spell on all targets.  It will only cast it once per target if the target is not eligable for Master Strike.</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseMastersRage]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[UseMastersRage,TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseMastersRage]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[UseMastersRage,FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseMastersRage]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='UseReaver' Template='EQ2.Commandcheckbox'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>200</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use "Reaver"</Text>
@@ -171,7 +193,7 @@
 	<Commandcheckbox Name='UseSiphonHateWhenNotMT' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>200</Y>
+		<Y>220</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use "Siphon Hate" when NOT MainTank</Text>
@@ -192,7 +214,7 @@
 	<Commandcheckbox Name='UseBattleLeadershipAABuff' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>220</Y>
+		<Y>240</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use "Battle Leadership" AA Buff</Text>
@@ -213,7 +235,7 @@
 	<Commandcheckbox Name='UseFearlessMoraleAABuff' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>240</Y>
+		<Y>260</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use "Fearless Morale" AA Buff</Text>
