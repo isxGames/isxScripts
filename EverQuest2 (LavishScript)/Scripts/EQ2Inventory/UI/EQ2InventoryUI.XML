@@ -75,7 +75,7 @@
 					<Height>65</Height>
 					<Text>Broker Items</Text>
 					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call placeitems]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call PlaceItems]</Command>
 				</CommandButton>
 				<checkbox Name='RunMyPrices' Template='EQ2.checkbox'>
     			<X>5</X>
@@ -86,7 +86,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RunMyPrices,1]} == 1
 								{
-									UIElement[RunMyPrices@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -109,7 +109,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanRares,1]} == 1
 								{
-									UIElement[ScanRares@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -132,7 +132,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanHarvests,1]} == 1
 								{
-									UIElement[ScanHarvests@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -155,7 +155,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanCollections,1]} == 1
 								{
-									UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -178,7 +178,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanTradeskills,1]} == 1
 								{
-									UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -201,7 +201,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanSpellBooks,1]} == 1
 								{
-									UIElement[ScanSpellBooks@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -224,7 +224,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanStatus,1]} == 1
 								{
-									UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -247,7 +247,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanFertilizer,1]} == 1
 								{
-									UIElement[ScanFertilizer@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -270,7 +270,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanCustom,1]} == 1
 								{
-									UIElement[ScanCustom@EQ2Broker@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -354,7 +354,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Alchemist,1]} == 1
 								{
-									UIElement[Alchemist@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -377,7 +377,7 @@
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Armorer,1]} == 1
 								{
-									UIElement[Armorer@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -400,7 +400,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Carpenter,1]} == 1
 								{
-									UIElement[Carpenter@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -423,7 +423,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Jeweler,1]} == 1
 								{
-									UIElement[Jeweler@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -446,7 +446,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Sage,1]} == 1
 								{
-									UIElement[Sage@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -469,7 +469,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Tailor,1]} == 1
 								{
-									UIElement[Tailor@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -492,7 +492,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Weaponsmith,1]} == 1
 								{
-									UIElement[Weaponsmith@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -515,7 +515,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Woodworker,1]} == 1
 								{
-									UIElement[Woodworker@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -538,7 +538,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Craftsman,1]} == 1
 								{
-									UIElement[Craftsman@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -561,7 +561,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Outfitter,1]} == 1
 								{
-									UIElement[Outfitter@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -584,7 +584,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Scholar,1]} == 1
 								{
-									UIElement[Scholar@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -641,7 +641,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Assassin,1]} == 1
 								{
-									UIElement[Assassin@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -664,7 +664,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Berserker,1]} == 1
 								{
-									UIElement[Berserker@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -687,7 +687,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Brigand,1]} == 1
 								{
-									UIElement[Brigand@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -710,7 +710,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Bruiser,1]} == 1
 								{
-									UIElement[Bruiser@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -733,7 +733,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Coercer,1]} == 1
 								{
-									UIElement[Coercer@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -756,7 +756,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Conjuror,1]} == 1
 								{
-									UIElement[Conjuror@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -779,7 +779,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Defiler,1]} == 1
 								{
-									UIElement[Defiler@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -802,7 +802,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Dirge,1]} == 1
 								{
-									UIElement[Dirge@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -825,7 +825,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Fury,1]} == 1
 								{
-									UIElement[Fury@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -848,7 +848,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Guardian,1]} == 1
 								{
-									UIElement[Guardian@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -871,7 +871,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Illusionist,1]} == 1
 								{
-									UIElement[Illusionist@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -894,7 +894,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Inquisitor,1]} == 1
 								{
-									UIElement[Inquisitor@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -917,7 +917,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Monk,1]} == 1
 								{
-									UIElement[Monk@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -940,7 +940,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Mystic,1]} == 1
 								{
-									UIElement[Mystic@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -963,7 +963,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Necromancer,1]} == 1
 								{
-									UIElement[Necromancer@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -986,7 +986,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Paladin,1]} == 1
 								{
-									UIElement[Paladin@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1009,7 +1009,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Ranger,1]} == 1
 								{
-									UIElement[Ranger@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1032,7 +1032,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Shadowknight,1]} == 1
 								{
-									UIElement[Shadowknight@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1055,7 +1055,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Swashbuckler,1]} == 1
 								{
-									UIElement[Swashbuckler@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1078,7 +1078,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Templar,1]} == 1
 								{
-									UIElement[Templar@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1101,7 +1101,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Troubador,1]} == 1
 								{
-									UIElement[Troubador@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1124,7 +1124,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Warden,1]} == 1
 								{
-									UIElement[Warden@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1147,7 +1147,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Warlock,1]} == 1
 								{
-									UIElement[Warlock@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1170,7 +1170,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Wizard,1]} == 1
 								{
-									UIElement[Wizard@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1200,7 +1200,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[AddCollections,1]} == 1
 								{
-									UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1250,7 +1250,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[AddCustomItems,1]} == 1
 								{
-									UIElement[CustomItems@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1334,7 +1334,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[DeleteMeat,1]} == 1
 								{
-									UIElement[DeleteMeat@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1357,7 +1357,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT1,1]} == 1
 								{
-									UIElement[CHarvestT1@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1380,7 +1380,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT2,1]} == 1
 								{
-									UIElement[CHarvestT2@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1403,7 +1403,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT3,1]} == 1
 								{
-									UIElement[CHarvestT3@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1426,7 +1426,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT4,1]} == 1
 								{
-									UIElement[CHarvestT4@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1449,7 +1449,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT5,1]} == 1
 								{
-									UIElement[CHarvestT5@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1472,7 +1472,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT6,1]} == 1
 								{
-									UIElement[CHarvestT6@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1495,7 +1495,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT7,1]} == 1
 								{
-									UIElement[CHarvestT7@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1518,7 +1518,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestT8,1]} == 1
 								{
-									UIElement[CHarvestT8@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1575,7 +1575,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT1,1]} == 1
 								{
-									UIElement[RHarvestT1@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1598,7 +1598,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT2,1]} == 1
 								{
-									UIElement[RHarvestT2@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1621,7 +1621,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT3,1]} == 1
 								{
-									UIElement[RHarvestT3@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1644,7 +1644,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT4,1]} == 1
 								{
-									UIElement[RHarvestT4@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1667,7 +1667,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT5,1]} == 1
 								{
-									UIElement[RHarvestT5@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1690,7 +1690,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT6,1]} == 1
 								{
-									UIElement[RHarvestT6@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1713,7 +1713,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT7,1]} == 1
 								{
-									UIElement[RHarvestT7@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1736,7 +1736,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestT8,1]} == 1
 								{
-									UIElement[RHarvestT8@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1793,7 +1793,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT1,1]} == 1
 								{
-									UIElement[StatusItemT1@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1816,7 +1816,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT2,1]} == 1
 								{
-									UIElement[StatusItemT2@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1839,7 +1839,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT3,1]} == 1
 								{
-									UIElement[StatusItemT3@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1862,7 +1862,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT4,1]} == 1
 								{
-									UIElement[StatusItemT4@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1885,7 +1885,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT5,1]} == 1
 								{
-									UIElement[StatusItemT5@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1908,7 +1908,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT6,1]} == 1
 								{
-									UIElement[StatusItemT6@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1931,7 +1931,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT7,1]} == 1
 								{
-									UIElement[StatusItemT7@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -1954,7 +1954,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemT8,1]} == 1
 								{
-									UIElement[StatusItemT8@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2011,7 +2011,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertT1,1]} == 1
 								{
-									UIElement[FertT1@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2034,7 +2034,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertT2,1]} == 1
 								{
-									UIElement[FertT2@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2057,7 +2057,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertT3,1]} == 1
 								{
-									UIElement[FertT3@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2080,7 +2080,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertT4,1]} == 1
 								{
-									UIElement[FertT4@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2103,7 +2103,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertT5,1]} == 1
 								{
-									UIElement[FertT5@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2126,7 +2126,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertT7,1]} == 1
 								{
-									UIElement[FertT7@EQ2Broker Setup@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2149,7 +2149,7 @@
 					<Height>55</Height>
 					<Text>Vendor Items</Text>
 					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call vendortype]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call VendorType]</Command>
 				</CommandButton>
 				<checkbox Name='StatusMerchant' Template='EQ2.checkbox'>
 				<X>5</X>
@@ -2160,7 +2160,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusMerchant,1]} == 1
 								{
-									UIElement[StatusMerchant@EQ2Junk@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2184,7 +2184,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[SellTreasured,1]} == 1
 								{
-									UIElement[SellTreasured@EQ2Junk@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2208,7 +2208,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[SellAdeptI,1]} == 1
 								{
-									UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2230,7 +2230,7 @@
 					<Height>55</Height>
 					<Text>Destroy Items</Text>
 					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call destroyitems]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call DestroyItems]</Command>
 				</CommandButton>
 				<listbox Name='SellItemList' Template='EQ2.listbox'>
 					<X>130</X>
@@ -2268,7 +2268,7 @@
 					<Height>55</Height>
 					<Text>Inventory List</Text>
 					<AutoTooltip>Outputs Current Inventory to Log Window</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call invlist]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call InvList]</Command>
 				</CommandButton>
 				<checkbox Name='Examine' Template='EQ2.checkbox'>
 				<X>5</X>
@@ -2279,7 +2279,7 @@
   				<OnLoad>
   					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[Examine,1]} == 1
 								{
-									UIElement[Examine@Add Items@GUITabs@EQ2Inventory]:SetChecked
+									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
@@ -2300,7 +2300,7 @@
 					<Height>35</Height>
 					<Text>Add Vendor Item</Text>
 					<AutoTooltip>Adds The selected Item to the Vendor Item List.</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call addjunk]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call AddJunk]</Command>
 				</CommandButton>
 				<CommandButton Name='Destroy Items Add' Template='EQ2.Button'>
 					<X>10</X>
@@ -2309,7 +2309,7 @@
 					<Height>35</Height>
 					<Text>Add Destroy Item</Text>
 					<AutoTooltip>Adds The selected Item to the Destroy List</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call adddestroy]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call AddDestroy]</Command>
 				</CommandButton>
 				<CommandButton Name='Custom Items Add' Template='EQ2.Button'>
 					<X>10</X>
@@ -2318,7 +2318,7 @@
 					<Height>35</Height>
 					<Text>Add Custom Item</Text>
 					<AutoTooltip>Adds The selected Item to the Custom List</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call addcustom]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call AddCustom]</Command>
 				</CommandButton>
     		<listbox Name='AddItemList' Template='EQ2.listbox'>
 					<X>130</X>
@@ -2362,7 +2362,7 @@
 					<Height>35</Height>
 					<Text>Vendor List</Text>
 					<AutoTooltip>Outputs the Vendor List to Log Window</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call junklist]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call JunkList]</Command>
 				</CommandButton>
 				<CommandButton Name='Vendor Items Remove' Template='EQ2.Button'>
 					<X>5</X>
@@ -2371,7 +2371,7 @@
 					<Height>35</Height>
 					<Text>Remove Vendor Item</Text>
 					<AutoTooltip>Removes The selected Item from the Vendor Item List.</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call removejunk]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveJunk]</Command>
 				</CommandButton>
 				<CommandButton Name='Destroy Items List' Template='EQ2.Button'>
 					<X>5</X>
@@ -2380,7 +2380,7 @@
 					<Height>35</Height>
 					<Text>Destroy List</Text>
 					<AutoTooltip>Outputs the Destroy List to Log Window</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call destroylist]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call DestroyList]</Command>
 				</CommandButton>
 				<CommandButton Name='Destroy Items Remove' Template='EQ2.Button'>
 					<X>5</X>
@@ -2389,7 +2389,7 @@
 					<Height>35</Height>
 					<Text>Remove Destroy Item</Text>
 					<AutoTooltip>Removes The selected Item from the Destroy Item List.</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call removedestroy]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveDestroy]</Command>
 				</CommandButton> 
 				<CommandButton Name='Custom Items List' Template='EQ2.Button'>
 					<X>5</X>
@@ -2398,7 +2398,7 @@
 					<Height>35</Height>
 					<Text>Custom List</Text>
 					<AutoTooltip>Outputs the Custom List to Log Window</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call customlist]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call CustomList]</Command>
 				</CommandButton>
 				<CommandButton Name='Custom Items Remove' Template='EQ2.Button'>
 					<X>5</X>
@@ -2407,7 +2407,7 @@
 					<Height>35</Height>
 					<Text>Remove Custom Item</Text>
 					<AutoTooltip>Removes The selected Item from the Custom Item List.</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call removecustom]</Command>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveCustom]</Command>
 				</CommandButton>   		
     		<listbox Name='RemoveItemList' Template='EQ2.listbox'>
 					<X>130</X>
