@@ -1219,7 +1219,7 @@ function vendortype()
 {
 	if ${UIElement[StatusMerchant@EQ2Junk@GUITabs@EQ2Inventory].Checked}
 	{
-		call sellstatus
+		call SellStatus
 	}
 	else
 	{
