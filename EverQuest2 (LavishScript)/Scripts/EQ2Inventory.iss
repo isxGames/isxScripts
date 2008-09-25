@@ -60,7 +60,7 @@ function main()
   }
 }
 
-function placeitems()
+function PlaceItems()
 {
 	variable int KeyNum=1
 	wait 5
@@ -325,7 +325,7 @@ function PlaceHarvest()
  	call AddLog "**Checking Harvests List**" FFFF00FF
 
 	if ${UIElement[DeleteMeat@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
-		call deletemeat
+		call DeleteMeat
 
 	call PlaceHarvestT1
 	call PlaceHarvestT2
@@ -1186,7 +1186,7 @@ function PlaceCustom()
 	}
 }
 
-function destroyitems()
+function DestroyItems()
 {
 	variable int KeyNum=1
 	wait 5
@@ -1215,7 +1215,7 @@ function destroyitems()
 
 }
 
-function vendortype()
+function VendorType()
 {
 	if ${UIElement[StatusMerchant@EQ2Junk@GUITabs@EQ2Inventory].Checked}
 	{
@@ -1223,11 +1223,11 @@ function vendortype()
 	}
 	else
 	{
-		call selljunk
+		call SellJunk
 	}
 }
 
-function selljunk()
+function SellJunk()
 {
 	variable int KeyNum=1
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
@@ -1342,7 +1342,7 @@ function SellAdeptI()
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
 
-function junklist()
+function JunkList()
 {
 	variable int KeyNum=1
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
@@ -1355,7 +1355,7 @@ function junklist()
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Keys}
 }
 
-function destroylist()
+function DestroyList()
 {
 	variable int KeyNum=1
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
@@ -1368,7 +1368,7 @@ function destroylist()
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Keys}
 }
 
-function customlist()
+function CustomList()
 {
 	variable int KeyNum=1
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
@@ -1381,7 +1381,7 @@ function customlist()
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Keys}
 }
 
-function deletemeat()
+function DeleteMeat()
 {
 	variable int KeyNum=1
 	call AddLog "**Deleting Meats**" FFFF0000
@@ -1404,7 +1404,7 @@ function deletemeat()
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/DeleteMeats.xml].Set[Meats].Keys}
 }
 
-function addjunk()
+function AddJunk()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
 	wait 5
@@ -1413,7 +1413,7 @@ function addjunk()
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
-function adddestroy()
+function AddDestroy()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
 	wait 5
@@ -1422,7 +1422,7 @@ function adddestroy()
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
-function addcustom()
+function AddCustom()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
 	wait 5
@@ -1431,7 +1431,7 @@ function addcustom()
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
-function removejunk()
+function RemoveJunk()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
 	wait 5
@@ -1439,7 +1439,7 @@ function removejunk()
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
-function removedestroy()
+function RemoveDestroy()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
 	wait 5
@@ -1448,7 +1448,7 @@ function removedestroy()
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
-function removecustom()
+function RemoveCustom()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
 	wait 5
@@ -1457,16 +1457,16 @@ function removecustom()
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
-function invlist()
+function InvList()
 {
-	call createinventorylist
+	call CreateInventorylist
 	wait 5
-	call createinventorylist
+	call CreateInventorylist
 	wait 5
-	call createinventorylist
+	call CreateInventorylist
 }
 
-function createinventorylist()
+function CreateInventorylist()
 {
 	variable int ArrayPosition=1
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:ClearItems
@@ -1516,12 +1516,7 @@ function CheckFocus()
 	return
 }
 
-function echolog(string logline)
-{
-		Redirect -append "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/EQ2Inventory.log" Echo "${logline}"
-}
-
-function makefile()
+function MakeFile()
 {
 	echo **Creating Settings File**
 	SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[RunMyPrices,1]
@@ -1626,11 +1621,11 @@ function ShutDown()
 
 		UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Start Scanning]:LeftClick
 	}
-	call savesettings
+	call SaveSettings
 
 }
 
-function savesettings()
+function SaveSettings()
 {
 	SettingXML["./EQ2Inventory/ScriptConfig/CustomItems.xml"]:Save
 	SettingXML["./EQ2Inventory/ScriptConfig/CustomItems.xml"]:Unload
