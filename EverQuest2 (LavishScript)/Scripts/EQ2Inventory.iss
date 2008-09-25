@@ -1173,7 +1173,6 @@ function PlaceLoreAndLegend()
 	wait 5
 	call CheckFocus
 	call AddLog "**Checking Lore & Legend Items**" FFFF00FF	
-	echo ${LLBox}
 	if ${UIElement[LoreAndLegend@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
 		{
 			Do
