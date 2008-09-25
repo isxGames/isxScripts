@@ -1020,7 +1020,7 @@ function Combat()
 	{
 		target ${KillTarget}
 		wait 2
-		if !${Target(exists)}
+		if ${MainTank} && !${Target(exists)}
 			return
 	}
 
@@ -1051,7 +1051,7 @@ function Combat()
 				face ${Target.X} ${Target.Z}
 		}
 
-		if !${Target(exists)} || !${Actor[${KillTarget}](exists)}
+		if !${Actor[${KillTarget}](exists)}
 			break
 
 	    if ${Actor[${KillTarget}].IsDead}
@@ -1120,13 +1120,14 @@ function Combat()
     					{
     						call Have_Aggro
     						if ${UseCustomRoutines}
-    						call Custom__Have_Aggro
+    						    call Custom__Have_Aggro
     					}						
 					}
 
 					do
 					{
 						waitframe
+						call ProcessTriggers
 					}
 					while ${MainTank} && ${Actor[${KillTarget}].Target.ID} == ${Me.ID} && ${Actor[${KillTarget}].Distance} > ${MARange}
 
@@ -1150,17 +1151,17 @@ function Combat()
 					if ${AutoMelee} && !${MainTank} && !${NoAutoMovement}
 					{
 						;check valid rear position
-						if ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<5
+						if ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<5
 						{
 							;we're behind and in range
 						}
 						;check right flank
-						elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<5
+						elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<5
 						{
 							;we're right flank and in range
 						}
 						;check left flank
-						elseif ((${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<5
+						elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<5
 						{
 							;we're left flank and in range
 						}
@@ -1171,6 +1172,7 @@ function Combat()
 							do
 							{
 								waitframe
+								call ProcessTriggers
 							}
 							while (${IsMoving} || ${Me.IsMoving})
 						}
@@ -1191,6 +1193,7 @@ function Combat()
     						do
     						{
     							waitframe
+    							call ProcessTriggers
     						}
     						while (${IsMoving} || ${Me.IsMoving})
     					}
@@ -1213,9 +1216,9 @@ function Combat()
 						{
 							KillTarget:Set[${ActorID}]
 							target ${KillTarget}
-							call ProcessTriggers
 						}
 					}
+					call ProcessTriggers
 				}
 				while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
 			}
@@ -1240,11 +1243,7 @@ function Combat()
 						if ${Target.Target.ID}==${Me.ID}
 							call CheckMTAggro
 						else
-						{
-							call Lost_Aggro ${Target.ID}
-							if ${UseCustomRoutines}
 							call Custom__Lost_Aggro ${Target.ID}
-						}
 					}
 					else
 					{
@@ -1261,6 +1260,9 @@ function Combat()
 							EQ2Bot:MainTank_Dead
 							break
 						}
+						
+    					if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+    					    call Custom__Have_Aggro
 					}
 
 					call Custom__Combat_Routine ${gRtnCtr}
@@ -1293,9 +1295,9 @@ function Combat()
 						{
 							KillTarget:Set[${ActorID}]
 							target ${KillTarget}
-							call ProcessTriggers
 						}
 					}
+					call ProcessTriggers
 				}
 				while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
 			}
@@ -1305,16 +1307,8 @@ function Combat()
 			if !${CurrentTask}
 				Script:End
 
-            if ${MainTank}
-            {
-                if ${Target.IsDead}
-                    break
-            }
-            else
-            {
-                if ${Actor[${KillTarget}].IsDead}
-                    break
-            }
+            if ${Actor[${KillTarget}].IsDead}
+                break
 
 			call ProcessTriggers
 		}
@@ -1366,6 +1360,7 @@ function Combat()
 		}
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		call ProcessTriggers
 	}
 	while ${Me.InCombat} || ${ContinueCombat}
 
