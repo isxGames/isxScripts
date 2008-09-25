@@ -215,26 +215,26 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanStatus' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanLoreAndLegend' Template='EQ2.checkbox'>
     			<X>5</X>
     			<Y>240</Y>
     			<Width>100</Width>
 	    		<Height>20</Height>
-  	  		<Text>Scan Status Items</Text>
+  	  		<Text>Scan Lore Legend</Text>
   	  		<OnLoad>
-  	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanStatus,1]} == 1
+  	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanLoreAndLegend,1]} == 1
 								{
 									This:SetChecked
 								}
 					</OnLoad>
 					<OnLeftClick>
-						if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+						if ${UIElement[ScanLoreAndLegend@EQ2Broker@GUITabs@EQ2Inventory].Checked}
 								{
-									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[ScanStatus,1]:Save										
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[ScanLoreAndLegend,1]:Save										
 								}
 								else
 								{
-									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[ScanStatus,0]:Save								
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[ScanLoreAndLegend,0]:Save								
 								}
 					</OnLeftClick>
     		</checkbox>
@@ -1184,16 +1184,9 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<Text Name='AddItemsText' Template='EQ2.Text'>
-					<X>5</X>
-					<Y>200</Y>
-					<Width>250</Width> 
-					<Height>20</Height>
-					<Text>Add following items broker:</Text>
-				</Text>
 				<checkbox Name='Collections' Template='EQ2.checkbox'>
 				<X>5</X>
-  			<Y>220</Y>
+  			<Y>200</Y>
 			  <Width>150</Width>
 				<Height>20</Height>
   			<Text>Add Collections</Text>
@@ -1216,14 +1209,14 @@
 				</checkbox>	
 				<Text Name='CollectionsBoxText' Template='EQ2.Text'>
 					<X>120</X>
-					<Y>222</Y>
+					<Y>202</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
     		<combobox name='CollectionsBoxNumber' Template='EQ2.Combobox'>
           <x>155</x>
-          <y>217</y>
+          <y>197</y>
           <width>35</width>
           <height>20</height>
           <items>
@@ -1241,8 +1234,58 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}]:Select
           </OnLoad>
      		</combobox>	
+     		<checkbox Name='LoreAndLegend' Template='EQ2.checkbox'>
+				<X>5</X>
+  			<Y>220</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Add Lore And Legend</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegend,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[LoreAndLegend@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[LoreAndLegend,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[LoreAndLegend,0]:Save								
+								}
+					</OnLeftClick>
+				</checkbox>	
+				<Text Name='LoreAndLegendBoxText' Template='EQ2.Text'>
+					<X>160</X>
+					<Y>222</Y>
+					<Width>30</Width> 
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='LoreAndLegendBox' Template='EQ2.Combobox'>
+          <x>195</x>
+          <y>217</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[LoreAndLegendBox,${This.SelectedItem.ID}]:Save  
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegendBox]}]:Select
+          </OnLoad>
+     		</combobox>	
      		<checkbox Name='CustomItems' Template='EQ2.checkbox'>
-				<X>225</X>
+				<X>235</X>
   			<Y>220</Y>
 			  <Width>150</Width>
 				<Height>20</Height>
@@ -1265,14 +1308,14 @@
 					</OnLeftClick>
 				</checkbox>	
 				<Text Name='CustomItemsBoxText' Template='EQ2.Text'>
-					<X>360</X>
+					<X>370</X>
 					<Y>222</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
     		<combobox name='CustomItemsBoxNumber' Template='EQ2.Combobox'>
-          <x>395</x>
+          <x>405</x>
           <y>217</y>
           <width>35</width>
           <height>20</height>
