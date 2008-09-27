@@ -238,9 +238,32 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanFertilizer' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanStatus' Template='EQ2.checkbox'>
     			<X>5</X>
     			<Y>265</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Status Items</Text>
+  	  		<OnLoad>
+  	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanStatus,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[ScanStatus,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[ScanStatus,0]:Save								
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='ScanFertilizer' Template='EQ2.checkbox'>
+    			<X>5</X>
+    			<Y>290</Y>
     			<Width>100</Width>
 	    		<Height>20</Height>
   	  		<Text>Scan Fertailizers</Text>
@@ -263,7 +286,7 @@
     		</checkbox>
 				<checkbox Name='ScanCustom' Template='EQ2.checkbox'>
     			<X>5</X>
-    			<Y>290</Y>
+    			<Y>315</Y>
     			<Width>100</Width>
 	    		<Height>20</Height>
   	  		<Text>Scan Custom List</Text>
