@@ -9,6 +9,14 @@
 		<Setting name="2 2">Synthesis</Setting>
 		<Setting name="2 3">Analyze</Setting>
 	</Set>
+	<Set Name="Apothecary">
+		<Setting Name="1 1">Test</Setting>
+		<Setting Name="1 2">Coalesce</Setting>
+		<Setting Name="1 3">Stir</Setting>
+		<Setting Name="2 1">Examine</Setting>
+		<Setting Name="2 2">Consolidate</Setting>
+		<Setting Name="2 3">Agitate</Setting>
+	</Set>
 	<Set Name="Arcana">
 		<Setting Name="1 1">Spellbinding</Setting>
 		<Setting Name="1 2">Notation</Setting>
