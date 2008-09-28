@@ -770,8 +770,7 @@ function PlaceBooks()
 	wait 5
 	Do
 	{
-		Do
-		{	
+		
 			if ${Me.CustomInventory[${ArrayPosition}].Type.Equal[${ItemType}]} && ${Me.CustomInventory[${ArrayPosition}].Class[1].Name.Equal[${ClassName}]} && ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter1}]}
 	  	{
 	  		call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to broker" FF11CCFF
@@ -789,9 +788,7 @@ function PlaceBooks()
 	  		call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to broker" FF11CCFF
 	  		Me.CustomInventory[ExactName,${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${ArrayPosition}].Quantity},${UseBox},${Me.Vending[${UseBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 	  		wait ${Math.Rand[30]:Inc[20]}
-			}
-		}
-		while ${Me.CustomInventory[${ArrayPosition}].Name(exists)}		
+			}		
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
@@ -1187,13 +1184,9 @@ function PlaceLoreAndLegend()
 			{	
 				if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]} 
 				{
-					Do 
-					{
 						call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
 						Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${Me.Vending[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 						wait ${Math.Rand[30]:Inc[20]}
-					}
-					while ${Me.CustomInventory[${ArrayPosition}].Name(exists)}			
 				}			
 			}
 			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}		
