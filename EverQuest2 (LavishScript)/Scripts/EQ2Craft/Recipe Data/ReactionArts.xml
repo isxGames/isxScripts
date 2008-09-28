@@ -18,6 +18,17 @@
 		<Setting Name="Flawless Reaction">3</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
 	</Set>
+	<Set Name="Apothecary">
+		<Setting Name="Minor Negative Result">1</Setting>
+		<Setting Name="Negative Result">1</Setting>
+		<Setting Name="Major Negative Result">1</Setting>
+		<Setting Name="Minor Liquefy">2</Setting>
+		<Setting Name="Liquefy">2</Setting>
+		<Setting Name="Major Liquefy">2</Setting>
+		<Setting Name="Minor Congeal">3</Setting>
+		<Setting Name="Congeal">3</Setting>
+		<Setting Name="Major Congeal">3</Setting>
+	</Set>
 	<Set Name="Arcana">
 		<Setting Name="Minor Mystic Anomaly">1</Setting>
 		<Setting Name="Mystic Anomaly">1</Setting>
