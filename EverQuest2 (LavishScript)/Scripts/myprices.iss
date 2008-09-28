@@ -637,7 +637,7 @@ function checkstock()
 function buy(string tabname, string action)
 {
 	
-	call echolog "-> buy ${tabname} ${action}"
+	call echolog "-> buy Tab : ${tabname} Action : ${action}"
 	; Read data from the Item Set
 	;
 	Declare CraftItem bool local
@@ -685,7 +685,7 @@ function buy(string tabname, string action)
 				BuyName:Set[${BuyList.FindSet[${BuyIterator.Key}]}]
 				; Create an Index of all the data in that Sub-set
 				BuyName:GetSettingIterator[BuyNameIterator]
-				; run the various options (Scan / update price etc based on the paramater passed to the routine
+				; run the various options (Scan / update price etc based on the parameter passed to the routine
 				;
 				; init = build up the list of items on the buy tab
 				; scan = check the broker list one by one - do buy and various workhorse routines
@@ -731,7 +731,9 @@ function buy(string tabname, string action)
 							}
 						}
 						while ${BuyNameIterator:Next(exists)}
+
 						; run the routine to scan and buy items if we still need more bought
+						
 						if ${BuyNumber} > 0 && ${tabname.Equal["Buy"]}
 						{
 							Call CheckFocus
@@ -851,8 +853,9 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 	Declare MaxBuy int local
 
 	Call echolog "<BuyItems> Call BrokerSearch ${BuyName}"
-	Call BrokerSearch "${BuyName}"
 
+	Call BrokerSearch "${BuyName}"
+	
 	; if items listed on the broker
 	if ${Return} != -1
 	{
