@@ -755,7 +755,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 	if ${TargetID}>0 && !${Actor[id,${TargetID}](exists)}
 		return -1
 
-	if ${TargetID}==${Actor[${KillTarget}].ID}
+	if ${TargetID} && ${TargetID}==${KillTarget}
 	{
 		call VerifyTarget ${TargetID}
 		if !${Return}
@@ -3278,21 +3278,43 @@ function SetNewKillTarget()
 
 function ReacquireKillTargetFromMA()
 {
-		CurrentAction:Set[Reacquiring KillTarget from ${MainAssist} in 1 seconds...]
-		wait 10
+    variable int NextKillTarget
+	CurrentAction:Set[Reacquiring KillTarget from ${MainAssist} in 0.5 seconds...]
+	wait 5
 
-		if ${Actor[ExactName,${MainAssist}](exists)}
+	if ${Actor[ExactName,${MainAssist}](exists)}
+	{
+		if ${Actor[ExactName,${MainAssist}].Target(exists)}
 		{
-				if ${Actor[ExactName,${MainAssist}].Target(exists)} && ${Actor[ExactName,${MainAssist}].Target.Type.Find[NPC]}
-				{
-						KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
-						echo "DEBUG:: KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[ExactName,${MainAssist}].Target} (ID: ${KillTarget})"
-						return OK
-				}
+		    NextKillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+		    if (${NextKillTarget})
+		    {	    	    
+		        if ${Actor[${NextKillTarget}].Type.Find[NPC]} && !${Actor[${NextKillTarget}].IsDead}
+		        {		    
+			        KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+			        echo "DEBUG:: KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[ExactName,${MainAssist}].Target} (ID: ${KillTarget})"
+			        return OK
+			    }
+			    else
+			    {
+			        echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist's target was not valid]"
+			        return FAILED
+			    }
 		}
+		else
+		{
+		    echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"
+		    return FAILED
+		}
+	}
+	else
+	{
+	    echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist doesn't exist!]"
+	    return FAILED
+	}
 
-		echo "DEBUG:: ReacquireKillTargetFromMA() FAILED"
-		return FAILED
+	echo "DEBUG:: ReacquireKillTargetFromMA() FAILED"
+	return FAILED
 }
 
 function VerifyTarget(int TargetID=0)
