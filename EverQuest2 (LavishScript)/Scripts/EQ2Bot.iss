@@ -3291,7 +3291,7 @@ function ReacquireKillTargetFromMA()
 		    {	    	    
 		        if ${Actor[${NextKillTarget}].Type.Find[NPC]} && !${Actor[${NextKillTarget}].IsDead}
 		        {		    
-			        KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+			        KillTarget:Set[${NextKillTarget}]
 			        echo "DEBUG:: KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[ExactName,${MainAssist}].Target} (ID: ${KillTarget})"
 			        return OK
 			    }
