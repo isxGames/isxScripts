@@ -3299,7 +3299,7 @@ function VerifyTarget(int TargetID=0)
 {
     if !${TargetID}
     {
-        if (!${Actor[${KillTarget}(exists) || ${Actor[${KillTarget}].IsDead)
+        if (!${Actor[${KillTarget}(exists) || ${Actor[${KillTarget}].IsDead})
         {
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
@@ -3311,7 +3311,7 @@ function VerifyTarget(int TargetID=0)
     }
     else
     {
-    	if ${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead}
+    	if (${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead})
     	{
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
