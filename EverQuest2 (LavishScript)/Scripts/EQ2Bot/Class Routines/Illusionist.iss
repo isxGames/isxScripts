@@ -524,6 +524,8 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	declare BuffTarget string local
 
 	call VerifyTarget ${TargetID}
+	if !${Return}
+		return -1
 
 	; Fast Nuke (beam) ...cast every time it is ready!
 	if (${Me.Ability[${SpellType[60]}].IsReady}) && ${Return}
@@ -556,13 +558,17 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	}
 
 	call VerifyTarget ${TargetID}
+	if !${Return}
+		return -1
 
 	; Fast casting DoT
 	if (${Me.Ability[${SpellType[80]}].IsReady}) && ${Return}
 		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 
 	call VerifyTarget ${TargetID}
-
+    if !${Return}
+        return -1
+        
 	if ${AutoMelee} && ${DoCallCheckPosition} && ${Return}
 	{
 		if ${MainTank}
@@ -573,7 +579,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	}
 
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW}
-  return ${Return}
+    return ${Return}
 }
 
 function Combat_Routine(int xAction)
@@ -586,6 +592,24 @@ function Combat_Routine(int xAction)
 
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 		return CombatComplete
+		
+		
+	;; Aggro Control...
+	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
+	{
+		if ${Me.Ability["Phase"].IsReady}
+		{
+			echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
+			call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
+			return
+		}
+		elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
+		{
+			echo "DEBUG:: Casting 'Blink'!"
+			call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
+			return
+		}
+	}		
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;; Check for "Runed Guard of the Sel'Nok" ;;;;
@@ -1324,7 +1348,7 @@ function Have_Aggro(int aggroid)
 		return
 
 	;; Aggro Control...
-	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} = ${Me.ID})
+	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
 	{
 		if ${Me.Ability["Phase"].IsReady}
 		{
