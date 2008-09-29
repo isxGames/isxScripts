@@ -3297,19 +3297,32 @@ function ReacquireKillTargetFromMA()
 
 function VerifyTarget(int TargetID=0)
 {
-	if ${Actor[${KillTarget}](exists)} && !${TargetID}
-		TargetID:Set[${Actor[${KillTarget}].ID]
-
-	if ${TargetID}==${Actor[${KillTarget}].ID} && ${Actor[${KillTarget}].IsDead}
-	{
-   	call ReacquireKillTargetFromMA
-   	if ${Return.Equal[FAILED]}
-   	{
-   		KillTarget:Set[]
-   		return FALSE
-   	}
-  }
-  return TRUE
+    if !${TargetID}
+    {
+        if (!${Actor[${KillTarget}(exists) || ${Actor[${KillTarget}].IsDead)
+        {
+       	    call ReacquireKillTargetFromMA
+        	if ${Return.Equal[FAILED]}
+       	    {
+       		    KillTarget:Set[]
+       		    return FALSE
+       	    } 
+        }
+    }
+    else
+    {
+    	if ${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead}
+    	{
+       	    call ReacquireKillTargetFromMA
+        	if ${Return.Equal[FAILED]}
+       	    {
+       		    KillTarget:Set[]
+       		    return FALSE
+       	    }
+        }
+    }
+    
+    return TRUE
 }
 
 function StartBot()
