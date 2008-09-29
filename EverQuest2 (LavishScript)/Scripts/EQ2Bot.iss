@@ -757,7 +757,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 
 	if ${TargetID}==${Actor[${KillTarget}].ID}
 	{
-		call VerifyTarget
+		call VerifyTarget ${TargetID}
 		if !${Return}
 			return -1
 	}
@@ -3295,8 +3295,11 @@ function ReacquireKillTargetFromMA()
 		return FAILED
 }
 
-function VerifyTarget()
+function VerifyTarget(int TargetID=0)
 {
+	if ${Actor[${KillTarget}](exists)} && !${TargetID}
+		TargetID:Set[${Actor[${KillTarget}].ID]
+
 	if ${TargetID}==${Actor[${KillTarget}].ID} && ${Actor[${KillTarget}].IsDead}
 	{
    	call ReacquireKillTargetFromMA

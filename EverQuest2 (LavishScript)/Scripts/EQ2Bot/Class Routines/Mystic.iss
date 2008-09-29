@@ -31,6 +31,7 @@ function Class_Declaration()
 	declare PetMode bool script 1
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
+	declare MeleeMode bool script 1
 
 	declare BuffNoxious bool script FALSE
 	declare BuffMitigation bool script FALSE
@@ -53,6 +54,7 @@ function Class_Declaration()
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	CombatRez:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Combat Rez,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
+	MeleeMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MeleeMode,FALSE]}]
 
 	BuffNoxious:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffNoxious,TRUE]}]
 	BuffMitigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMitigation,TRUE]}]
@@ -122,16 +124,18 @@ function Buff_Init()
 	PreAction[17]:Set[AA_Virulence]
 	PreSpellRange[17,1]:Set[374]
 
+	PreAction[18]:Set[AA_WeaponMastery]
+	PreSpellRange[18,1]:Set[380]
+
 }
 
 function Combat_Init()
 {
-
-	Action[1]:Set[Bolster]
-	SpellRange[1,1]:Set[21]
-
 	Action[2]:Set[AoE1]
 	SpellRange[2,1]:Set[90]
+	SpellRange[2,1]:Set[383]
+
+	Action[7]:Set[Mastery]
 
 	Action[3]:Set[AARabies]
 	SpellRange[3,1]:Set[352]
@@ -142,6 +146,7 @@ function Combat_Init()
 	Power[4,1]:Set[1]
 	Power[4,2]:Set[100]
 	SpellRange[4,1]:Set[82]
+	SpellRange[4,2]:Set[382]
 
 	Action[5]:Set[ChillingWinds]
 	MobHealth[5,1]:Set[1]
@@ -149,20 +154,22 @@ function Combat_Init()
 	Power[5,1]:Set[60]
 	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[80]
+	SpellRange[5,2]:Set[381]
 
-	Action[6]:Set[TheftOfVitality]
-	MobHealth[6,1]:Set[1]
-	MobHealth[6,2]:Set[100]
-	Power[6,1]:Set[20]
-	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[55]
-
-	Action[7]:Set[Mastery]
+	Action[8]:Set[AA_Phalanx]
+	MobHealth[8,1]:Set[1]
+	MobHealth[8,2]:Set[100]
+	SpellRange[8,1]:Set[365]
 
 	Action[8]:Set[UmbralTrap]
 	MobHealth[8,1]:Set[1]
 	MobHealth[8,2]:Set[100]
 	SpellRange[8,1]:Set[54]
+
+	Action[14]:Set[AA_CripplingBash]
+	MobHealth[14,1]:Set[1]
+	MobHealth[14,2]:Set[100]
+	SpellRange[14,1]:Set[366]
 
 	Action[9]:Set[Cold_Flame]
 	MobHealth[9,1]:Set[1]
@@ -171,37 +178,9 @@ function Combat_Init()
 	Power[9,2]:Set[100]
 	SpellRange[9,1]:Set[81]
 
-	Action[10]:Set[Haze]
-	MobHealth[10,1]:Set[1]
-	MobHealth[10,2]:Set[100]
-	Power[10,1]:Set[1]
-	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[50]
-
-	Action[11]:Set[Enfeeble]
-	MobHealth[11,1]:Set[1]
-	MobHealth[11,2]:Set[100]
-	Power[11,1]:Set[1]
-	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[52]
-
-	Action[12]:Set[Mourning_Soul]
-	MobHealth[12,1]:Set[1]
-	MobHealth[12,2]:Set[100]
-	Power[12,1]:Set[1]
-	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[53]
-
 	Action[13]:Set[ThermalShocker]
 
-	Action[14]:Set[AA_CripplingBash]
-	MobHealth[14,1]:Set[1]
-	MobHealth[14,2]:Set[100]
-	SpellRange[14,1]:Set[366]
-
 	Action[15]:Set[Slothful_Spirit]
-	MobHealth[15,1]:Set[1]
-	MobHealth[15,2]:Set[100]
 	Power[15,1]:Set[1]
 	Power[15,2]:Set[100]
 	SpellRange[15,1]:Set[83]
@@ -326,66 +305,46 @@ function Buff_Routine(int xAction)
 			break
 
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-			break
-
+		case AA_WeaponMastery
 		case AA_Coagulate
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
+
 		case BuffNoxious
 			if ${BuffNoxious}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case BuffMitigation
 			if ${BuffMitigation}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case BuffStrength
 			if ${BuffStrength}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case BuffWaterBreathing
 			if ${BuffWaterBreathing}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case BuffAvatar
 			BuffTarget:Set[${UIElement[cbBuffAvatarGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
 				;break of pc is out of your group
 				if ${BuffTarget.Token[2,:].Equal[PC]} && !${Me.Group[${Actor[id,${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}].Name}](exists)}
-				{
 					break
-				}
+
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break
@@ -403,9 +362,7 @@ function Buff_Routine(int xAction)
 		case AA_Immunities
 		case AA_AuraOfHaste
 			if !${Me.ToActor.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.ToActor.Pet(exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
 		case AA_SpiritualForesight
 		case AA_RitualisticAggression
@@ -414,9 +371,7 @@ function Buff_Routine(int xAction)
 		case AA_Virulence
 		case AA_AuraOfWarding
 			if ${Me.ToActor.Pet(exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-			}
 			break
 		Default
 			return Buff Complete
@@ -436,136 +391,132 @@ function Combat_Routine(int xAction)
 
 	call CheckGroupHealth 60
 	if ${DoHOs} && ${Return}
-	{
 		objHeroicOp:DoHO
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
 		call CastSpellRange 303
-	}
 
 	call PetAttack
-
 	call CheckWards
 	call CheckHeals
 	call RefreshPower
 
+	;bolster MT
+	if !${Me.Maintained[${SpellType[21]}](exists)} && ${Me.Ability[${SpellType[21]}].IsReady}
+		call CastSpellRange 21 0 0 0 ${Actor[${MainTankPC}].ID} 1
+
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[360]}](exists)}
-	{
 		call CastSpellRange 360
-	}
 
-	if ${ShardMode}
-	{
-		call Shard
-	}
+
 
 	if ${OberonMode}
 	{
 		call CheckGroupHealth 60
 
 		if !${Return} && ${Me.Maintained[${SpellType[317]}](exists)}
-		{
 			Me.Maintained[${SpellType[317]}]:Cancel
-		}
-
 	}
 	elseif ${Me.Maintained[${SpellType[317]}](exists)}
-	{
 		Me.Maintained[${SpellType[317]}]:Cancel
+
+	call CheckGroupHealth 60
+	if ${Return} && ${DebuffMode}
+	{
+		;enfeeble
+		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)}
+		{
+			call CastSpellRange 52 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		;haze
+		if ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 50 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		;mourning soul
+		if ${Me.Ability[${SpellType[53]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 53 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		;lethargy
+		if ${Me.Ability[${SpellType[55]}].IsReady} && !${Me.Maintained[${SpellType[55]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 55 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		;umbral trap
+		if ${Me.Ability[${SpellType[54]}].IsReady} && !${Me.Maintained[${SpellType[54]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 54 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
 	}
 
-	;Before we do our Action, check to make sure our group doesnt need healing
-	call CheckGroupHealth 60
-	if ${Return}
+	switch ${Action[${xAction}]}
 	{
-		switch ${Action[${xAction}]}
-		{
-			case Enfeeble
-			case Haze
-			case Mourning_Soul
-			case Slothful_Spirit
-			case UmbralTrap
-			case TheftOfVitality
-			case AA_Hexation
-				if ${DebuffMode}
+		case Slothful_Spirit *need combat
+		case AA_CripplingBash
+			;note: will only bash if within 5 meters, this is by design to prevent having to implement a range only mode
+			if ${MeleeMode} && ${Me.Maintained[${SpellType[360]}](exists)}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-
-						}
-					}
-				}
-				break
-			case AA_CripplingBash
-				;note: will only bash if within 5 meters, this is by design to prevent having to implement a range only mode
-				if ${DebuffMode} && ${Me.Maintained[${SpellType[360]}](exists)}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-				break
-			case Fever
-			case ChillingWinds
-			case Cold_Flame
-				if ${OffenseMode}
-					{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-				break
-			case AoE1
-			case AARabies
-				if ${AoEMode}
-				{
-					if ${Mob.Count}>2
-					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-				break
-			case Mastery
-			if ${OffenseMode} && ${DebuffMode}
-			{
-				if ${Me.Ability[Master's Smite].IsReady}
-				{
-					Target ${KillTarget}
-					Me.Ability[Master's Smite]:Use
 				}
 			}
 			break
-			case ThermalShocker
-				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady} && ${OffenseMode}
-				{
-					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
-				}
-			case Bolster
-			if ${Actor[${MainTankPC}].Health}>80
+		case AoE1
+		case Fever
+		case ChillingWinds
+		case Cold_Flame
+			if ${OffenseMode}
 			{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankPC}].ID} 1
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+					{
+						if ${MeleeMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},2]}]}].IsReady}
+							call CastSpellRange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget}
+						else
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
 			}
 			break
-			default
-				return CombatComplete
-				break
-		}
+
+		case AARabies
+			if ${AoEMode}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
+		case Mastery
+			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+			;;;;;;;;;;
+			if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
+					break
+			;;;;;;;;;;;
+			if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)} && ${OffenseMode}
+			{
+				Target ${KillTarget}
+				Me.Ability[Master's Smite]:Use
+			}
+			break
+		case ThermalShocker
+			if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady} && ${OffenseMode}
+				Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
+		default
+			return CombatComplete
+			break
 	}
 }
 
@@ -629,20 +580,7 @@ function Have_Aggro()
 function RefreshPower()
 {
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<65  && ${Me.ToActor.Health}>25
-	{
-		call UseItem "Tribal Spiritist's Hat"
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<45
-	{
-		call UseItem "Spiritise Censer"
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-	{
-		call UseItem "Stein of the Everling Lord"
-	}
+	call Shard 60
 
 }
 

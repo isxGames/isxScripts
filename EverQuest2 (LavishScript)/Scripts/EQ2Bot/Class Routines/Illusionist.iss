@@ -523,7 +523,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;;;;;;;
 	declare BuffTarget string local
 
-	call VerifyTarget
+	call VerifyTarget ${TargetID}
 
 	; Fast Nuke (beam) ...cast every time it is ready!
 	if (${Me.Ability[${SpellType[60]}].IsReady}) && ${Return}
@@ -555,13 +555,13 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 		}
 	}
 
-	call VerifyTarget
+	call VerifyTarget ${TargetID}
 
 	; Fast casting DoT
 	if (${Me.Ability[${SpellType[80]}].IsReady}) && ${Return}
 		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 
-	call VerifyTarget
+	call VerifyTarget ${TargetID}
 
 	if ${AutoMelee} && ${DoCallCheckPosition} && ${Return}
 	{
