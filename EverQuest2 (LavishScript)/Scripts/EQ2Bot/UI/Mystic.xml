@@ -362,7 +362,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepMTWardUp]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='ChainWardGroup' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='KeepGroupWardUp' Template='EQ2.Commandcheckbox'>
 		<X>340</X>
 		<Y>90</Y>
 		<Width>30%</Width>

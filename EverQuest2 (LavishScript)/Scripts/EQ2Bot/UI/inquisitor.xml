@@ -263,13 +263,34 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[YaulpWeapon,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
-	<Commandcheckbox Name='PreReactiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PreHealMode' Template='EQ2.Commandcheckbox'>
 		<X>200</X>
 		<Y>10</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Pre-Reactive</Text>
-		<AutoTooltip>keep single reactives always up out of combat when power is greater than 85</AutoTooltip>
+		<Text>Cast PreHeal </Text>
+		<AutoTooltip>Casts reactives out of combat</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PreHealMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["PreHeal Mode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PreHealMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["PreHeal Mode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[PreHeal Mode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='KeepReactiveUp' Template='EQ2.Commandcheckbox'>
+		<X>200</X>
+		<Y>30</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Maintain Single Target Reactive on MT</Text>
+		<AutoTooltip>keep single reactives always up on MT</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
@@ -286,11 +307,11 @@
 	</Commandcheckbox>
 	<Commandcheckbox Name='PreGroupReactiveMode' Template='EQ2.Commandcheckbox'>
 		<X>200</X>
-		<Y>30</Y>
+		<Y>50</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Pre-Reactive Grp</Text>
-		<AutoTooltip>keep group reactives always up out of combat when power is greater than 85</AutoTooltip>
+		<Text>Maintain Group Reactive</Text>
+		<AutoTooltip>keep group reactives always up</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
@@ -308,7 +329,7 @@
 	<Commandcheckbox Name='Mezz' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>200</X>
-		<Y>50</Y>
+		<Y>70</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Mezz an Add</Text>
@@ -330,7 +351,7 @@
 	<Commandcheckbox Name='Fanaticism' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>200</X>
-		<Y>70</Y>
+		<Y>90</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Fanaticism</Text>
@@ -351,7 +372,7 @@
 	<Commandcheckbox Name='Yaulp' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>200</X>
-		<Y>90</Y>
+		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Yaulp</Text>
@@ -372,7 +393,7 @@
 	<Commandcheckbox Name='BattleClericMode' Template='EQ2.Commandcheckbox'>
 		<Visible>1</Visible>
 		<X>200</X>
-		<Y>110</Y>
+		<Y>130</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Battle Cleric?</Text>
