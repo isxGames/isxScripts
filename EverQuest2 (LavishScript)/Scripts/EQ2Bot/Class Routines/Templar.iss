@@ -948,11 +948,16 @@ function HealMT(int MainTankID, int MTInMyGroup)
 
 	if ${Actor[${MainTankID}].Health}<70 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
 	{
-		if ${Me.Ability[${SpellType[1]}].IsReady}
+		if !${Me.Maintained[${SpellType[7]}](exists)} && ${Me.Ability[${SpellType[7]}].IsReady}
+			call CastSpellRange 7 0 0 0 ${MainTankID}
+		elseif !${Me.Maintained[${SpellType[15]}](exists)} && ${Me.Ability[${SpellType[15]}].IsReady}
+			call CastSpellRange 15 0 0 0 ${MainTankID}
+
+		if ${Me.Ability[${SpellType[1]}].IsReady} && ${Actor[${MainTankID}].Health}<70
 			call CastSpellRange 1 0 0 0 ${MainTankID}
-		elseif ${Me.Ability[${SpellType[4]}].IsReady}
+		elseif ${Me.Ability[${SpellType[4]}].IsReady} && ${Actor[${MainTankID}].Health}<70
 			call CastSpellRange 4 0 0 0 ${MainTankID}
-		elseif ${Me.Ability[${SpellType[2]}].IsReady}
+		elseif ${Me.Ability[${SpellType[2]}].IsReady} && ${Actor[${MainTankID}].Health}<70
 			call CastSpellRange 2 0 0 0 ${MainTankID}
 	}
 

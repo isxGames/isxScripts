@@ -39,6 +39,7 @@ function Class_Declaration()
 	declare ConvertMode bool script
 	declare YaulpMode bool script
 	declare FanaticismMode bool script
+ 	declare PreHealMode bool script 0
 	declare KeepReactiveUp bool script
 	declare KeepGroupReactiveUp bool script
 	declare MezzMode bool script
@@ -883,7 +884,7 @@ function CheckHeals()
 	{
 		call UseCrystallizedSpirit 60
 
-		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+		if ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
 		{
 			if ${Me.Ability[${SpellType[4]}].IsReady}
 				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
@@ -932,9 +933,14 @@ function HealMT(int MainTankID, int MTInMyGroup)
 
 	if ${Actor[${MainTankID}].Health}<70 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
 	{
-		if ${Me.Ability[${SpellType[1]}].IsReady}
+		if !${Me.Maintained[${SpellType[7]}](exists)} && ${Me.Ability[${SpellType[7]}].IsReady}
+			call CastSpellRange 7 0 0 0 ${MainTankID}
+		elseif !${Me.Maintained[${SpellType[15]}](exists)} && ${Me.Ability[${SpellType[15]}].IsReady}
+			call CastSpellRange 15 0 0 0 ${MainTankID}
+
+		if ${Me.Ability[${SpellType[1]}].IsReady} && ${Actor[${MainTankID}].Health}<70
 			call CastSpellRange 1 0 0 0 ${MainTankID}
-		elseif ${Me.Ability[${SpellType[4]}].IsReady}
+		elseif ${Me.Ability[${SpellType[4]}].IsReady} && ${Actor[${MainTankID}].Health}<70
 			call CastSpellRange 4 0 0 0 ${MainTankID}
 	}
 
@@ -986,7 +992,7 @@ function CheckReactives()
 	hot1:Set[0]
 	grphot:Set[0]
 
-	if ${KeepReactiveUp} || ${KeepGroupReactiveUp}
+	if ${KeepReactiveUp} || ${KeepGroupReactiveUp} || ${PreHealMode}
 	{
 		do
 		{
@@ -994,7 +1000,6 @@ function CheckReactives()
 			{
 				;echo Single react is Present on MT
 				hot1:Set[1]
-				break
 			}
 			elseif ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
 			{
@@ -1004,7 +1009,7 @@ function CheckReactives()
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
 
-		if ${KeepReactiveUp}
+		if ${KeepReactiveUp} || ${PreHealMode}
 		{
 			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
 			{
@@ -1013,7 +1018,7 @@ function CheckReactives()
 			}
 		}
 
-		if ${KeepGroupReactiveUp}
+		if ${KeepGroupReactiveUp} || ${PreHealMode}
 		{
 			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 				call CastSpellRange 15
@@ -1162,7 +1167,6 @@ function Mezmerise_Targets()
 
 function Yaulp()
 {
-
 	if ${YaulpMode} && ${Me.ToActor.Power}>30
 	{
 		call CastSpellRange 385

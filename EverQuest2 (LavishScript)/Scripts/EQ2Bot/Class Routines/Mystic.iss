@@ -27,7 +27,7 @@ function Class_Declaration()
 	declare TorporMode bool script 0
 	declare KeepWardUp bool script 0
 	declare KeepMTWardUp bool script 0
-	declare KeepGroupWardUp bool script 0
+	declare KeepGroupWardUp bool script 1
 	declare PetMode bool script 1
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
@@ -49,7 +49,7 @@ function Class_Declaration()
 	TorporMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Torpor Mode,FALSE]}]
 	KeepWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepWardUp,FALSE]}]
 	KeepMTWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepMTWardUp,FALSE]}]
-	KeepGroupWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepGroupWardUp,FALSE]}]
+	KeepGroupWardUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepGroupWardUp,TRUE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	CombatRez:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Combat Rez,FALSE]}]
 	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
@@ -419,7 +419,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 }
@@ -563,7 +563,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 			default
-				xAction:Set[40]
+				return CombatComplete
 				break
 		}
 	}
@@ -950,7 +950,7 @@ function CheckWards()
 			elseif ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
 			{
 				;echo Group ward Present
-			grpward:Set[1]
+				grpward:Set[1]
 			}
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
@@ -966,7 +966,7 @@ function CheckWards()
 
 		if ${KeepGroupWardUp}
 		{
-			if ${grpward}==0&&${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+			if ${grpward}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
 			{
 				call CastSpellRange 15
 			}

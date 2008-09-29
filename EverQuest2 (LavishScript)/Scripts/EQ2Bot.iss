@@ -755,6 +755,13 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 	if ${TargetID}>0 && !${Actor[id,${TargetID}](exists)}
 		return -1
 
+	if ${TargetID}==${Actor[${KillTarget}].ID}
+	{
+		call VerifyTarget
+		if !${Return}
+			return -1
+	}
+
 	do
 	{
 		if ${SpellType[${tempvar}].Length}
@@ -1115,13 +1122,13 @@ function Combat()
 							EQ2Bot:MainTank_Dead
 							break
 						}
-						
+
     					if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
     					{
     						call Have_Aggro
     						if ${UseCustomRoutines}
     						    call Custom__Have_Aggro
-    					}						
+    					}
 					}
 
 					do
@@ -1260,7 +1267,7 @@ function Combat()
 							EQ2Bot:MainTank_Dead
 							break
 						}
-						
+
     					if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
     					    call Custom__Have_Aggro
 					}
@@ -3288,6 +3295,20 @@ function ReacquireKillTargetFromMA()
 		return FAILED
 }
 
+function VerifyTarget()
+{
+	if ${TargetID}==${Actor[${KillTarget}].ID} && ${Actor[${KillTarget}].IsDead}
+	{
+   	call ReacquireKillTargetFromMA
+   	if ${Return.Equal[FAILED]}
+   	{
+   		KillTarget:Set[]
+   		return FALSE
+   	}
+  }
+  return TRUE
+}
+
 function StartBot()
 {
 	variable int tempvar1
@@ -3827,7 +3848,7 @@ objectdef ActorCheck
 		do
 		{
 			ActorID:Set[${CustomActor[${tcount}].ID}]
-			
+
 			if ${ActorID} > 0
 			{
     			if ${This.ValidActor[${ActorID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
@@ -3839,7 +3860,7 @@ objectdef ActorCheck
 		    }
 		}
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-		
+
 		haveaggro:Set[FALSE]
 		return
 	}
