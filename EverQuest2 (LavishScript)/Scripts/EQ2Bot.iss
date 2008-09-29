@@ -3300,6 +3300,12 @@ function ReacquireKillTargetFromMA()
 			        echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist's target was not valid]"
 			        return FAILED
 			    }
+			}
+		    else
+		    {
+		        echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist's target ID was zero]"
+		        return FAILED
+		    }
 		}
 		else
 		{
