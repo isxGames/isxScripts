@@ -26,8 +26,6 @@
 		<Setting Name="10,362">Aura of Haste</Setting>
 		<Setting Name="10,363">Aura of Warding</Setting>
 		<Setting Name="10,364">Spiritual Foresight</Setting>
-		<Setting Name="10,365">Phalanx</Setting>
-		<Setting Name="10,366">Crippling Bash</Setting>
 		<Setting Name="10,367">Infective Bites</Setting>
 		<Setting Name="10,368">Coagulate</Setting>
 		<Setting Name="10,369">Ritual</Setting>
@@ -42,6 +40,14 @@
 		<Setting Name="10,377">Spirit Dance</Setting>
 		<Setting Name="10,378">Ancestry</Setting>
 		<Setting Name="10,379">Immunization</Setting>
+		<Setting Name="10,380">Weapon Mastery</Setting>
+		<!--Melee AA Abilities -->
+		<Setting Name="10,381">Chilling Strike</Setting>
+		<Setting Name="10,382">Feverish Strike</Setting>
+		<Setting Name="10,383">Circle of the Ancients</Setting>
+		<Setting Name="10,384">Glacial Strike</Setting>
+		<Setting Name="10,365">Phalanx</Setting>
+		<Setting Name="10,366">Crippling Bash</Setting>
 		<Setting Name="11,313">Spirit Guide</Setting>
 		<Setting Name="11,82">Sickness</Setting>
 		<Setting Name="12,7">Spectral Ward</Setting>
@@ -83,7 +89,7 @@
 		<Setting Name="34,25">Ursine Oracle</Setting>
 		<Setting Name="35,55">Grim Lethargy</Setting>
 		<Setting Name="35,53">Umbral Trap</Setting>
-		<Setting Name="35,55">Theft of Vitality</Setting>
+		<Setting Name="35,0">Theft of Vitality</Setting>
 		<Setting Name="35,51">Fallacy</Setting>
 		<Setting Name="36,301">Fields of the Grey</Setting>
 		<Setting Name="37,81">Icy Flames</Setting>
