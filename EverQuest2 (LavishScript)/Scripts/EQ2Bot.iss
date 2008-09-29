@@ -3332,7 +3332,7 @@ function VerifyTarget(int TargetID=0)
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
-       		    KillTarget:Set[]
+       		    KillTarget:Set[0]
        		    return FALSE
        	    } 
         }
@@ -3344,7 +3344,7 @@ function VerifyTarget(int TargetID=0)
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
-       		    KillTarget:Set[]
+       		    KillTarget:Set[0]
        		    return FALSE
        	    }
         }
