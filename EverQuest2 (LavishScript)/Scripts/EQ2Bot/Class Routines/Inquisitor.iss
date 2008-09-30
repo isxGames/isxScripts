@@ -32,6 +32,12 @@ function Class_Declaration()
   declare ClassFileVersion int script 20080408
   ;;;;
 
+	;UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Buffs]
+	;UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
+	;ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" "EQ2Bot/UI/${Me.SubClass}_Buffs.xml"
+
+
+
 	declare OffenseMode bool script
 	declare DebuffMode bool script
 	declare AoEMode bool script
@@ -259,13 +265,13 @@ function Buff_Routine(int xAction)
 				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
 				{
 					;iterate through the members to buff
-					if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+					if ${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}>0
 					{
 						tempvar:Set[1]
 						do
 						{
 
-							BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							BuffTarget:Set[${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 							{
@@ -273,7 +279,7 @@ function Buff_Routine(int xAction)
 								break
 							}
 						}
-						while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						while ${tempvar:Inc}<=${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}
 						;we went through the buff collection and had no match for this maintaned target so cancel it
 						if !${BuffMember.Equal[OK]}
 						{
@@ -292,14 +298,14 @@ function Buff_Routine(int xAction)
 
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
-			if ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			if ${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}>0
 			{
 				do
 				{
-					BuffTarget:Set[${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					BuffTarget:Set[${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItem[${Counter}].Text}]
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				}
-				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+				while ${Counter:Inc}<=${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}
 			}
 			break
 		case Self_Buff
