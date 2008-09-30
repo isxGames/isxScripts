@@ -381,6 +381,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare spellsused int local
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -408,8 +409,6 @@ function Combat_Routine(int xAction)
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[360]}](exists)}
 		call CastSpellRange 360
-
-
 
 	if ${OberonMode}
 	{
@@ -454,7 +453,6 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 54 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
-
 	}
 
 	switch ${Action[${xAction}]}
@@ -489,15 +487,14 @@ function Combat_Routine(int xAction)
 							call CastSpellRange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget}
 						else
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					}
 				}
 			}
 			break
 
 		case AARabies
 			if ${AoEMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
 		case Mastery
 			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
