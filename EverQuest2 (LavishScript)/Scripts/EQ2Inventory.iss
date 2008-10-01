@@ -74,9 +74,9 @@ function PlaceItems()
 	wait 5
 	Target:DoubleClick
 	wait 5
-	press b
+	eq2execute /togglebags
 	wait 5
-	press b
+	eq2execute /togglebags
 
 	call CheckFocus
 
