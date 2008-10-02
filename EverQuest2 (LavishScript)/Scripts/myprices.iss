@@ -664,6 +664,7 @@ function buy(string tabname, string action)
 	Declare startlevel int local
 	Declare endlevel int local
 	Declare tier int local
+	Declare box int local
 	
 	if ${tabname.Equal["Buy"]}
 	{
@@ -758,6 +759,9 @@ function buy(string tabname, string action)
 								Case Tier
 									tier:Set[${BuyNameIterator.Value}]
 									break
+								Case Box
+									box:Set[${BuyNameIterator.Value}]
+									break
 							}
 						}
 						while ${BuyNameIterator:Next(exists)}
@@ -782,7 +786,7 @@ function buy(string tabname, string action)
 							 if ${CraftItem}
 							 {
 								Call CheckFocus
-								call placeitem "${BuyIterator.Key}"
+								call placeitem "${BuyIterator.Key}" ${box}
 							 }
 						}
 						elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
@@ -1418,7 +1422,7 @@ function pricefromstring()
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier, string Recipe)
+function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier, int boxnumber, string Recipe)
 {
 	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${startlevel} ${endlevel} ${tier} ${Recipe}"
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
@@ -1479,6 +1483,7 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 			Item:AddSetting[Recipe,${Recipe}]
 		}
 		Item:AddSetting[CraftItem,TRUE]
+		Item:AddSetting[Box,${boxnumber}]
 	}
 	elseif ${Saveset.Equal["Buy"]}
 	{
@@ -1787,11 +1792,13 @@ function savecraftinfo()
 	Declare RecipeName string local
 	Declare CraftStack int local
 	Declare CraftNumber int local
+	Declare BoxNumber int local
 
 	CraftName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftName].Text}]
 	RecipeName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[RecipeName].Text}]
 	CraftStack:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftStack].Text}]
 	CraftNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftNumber].Text}]
+	BoxNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[BoxNumber].Text}]
 
 	; check information was entered in all boxes and save
 
@@ -1807,11 +1814,15 @@ function savecraftinfo()
 	{
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Try setting a valid Stock Limit]
 	}
+	elseif !${Me.Vending[${BoxNumber}](exists)} || ${BoxNumber} == 0
+	{
+		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Try setting a valid Box Number]
+	}
 	else
 	{
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
-	; Parameters : Craft , Itemname , Stackszie , Number , <Bool> Craftitem, <Bool> nameonly,startlevel,endlevel,tier, Recipe Name
-		call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE 0 0 0 "${RecipeName}"
+	; Parameters : Craft , Itemname , Stackszie , Number , <Bool> Craftitem, <Bool> nameonly,startlevel,endlevel,tier, Boxnumber, Recipe Name
+		call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
 	}
 	call echolog "<end> : savecraftinfo"
 }
@@ -1927,6 +1938,7 @@ function ShowCraftInfo(int ItemID)
 	Declare Recipe string local
 	Declare Stack int local
 	Declare Stock int local
+	Declare BoxNumber int local
 
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[ItemList].Item[${ItemID}]}]
 
@@ -1937,6 +1949,7 @@ function ShowCraftInfo(int ItemID)
 	Recipe:Set[${CraftItemList.FindSetting[Recipe]}]
 	Stack:Set[${CraftItemList.FindSetting[Stack]}]
 	Stock:Set[${CraftItemList.FindSetting[Stock]}]
+	BoxNumber:Set[${CraftItemList.FindSetting[Box]}]
 
 	UIElement[CraftName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
 	if !${Recipe.Equal[NULL]}
@@ -1950,6 +1963,7 @@ function ShowCraftInfo(int ItemID)
 	}
 	UIElement[CraftStack@Craft@GUITabs@MyPrices]:SetText[${Stack}]
 	UIElement[CraftNumber@Craft@GUITabs@MyPrices]:SetText[${Stock}]
+	UIElement[BoxNumber@Craft@GUITabs@MyPrices]:SetText[${BoxNumber}]
 	call echolog " <end> : ShowCraftInfo"
 }
 
@@ -2117,7 +2131,7 @@ objectdef BrokerBot
 }
 
 ;search your current broker boxes for existing stacks of items and see if theres room for more
-function placeitem(string itemname)
+function placeitem(string itemname, int box)
 {
 	call echolog "<start> placeitem ${itemname}"
 	variable int xvar
@@ -2138,26 +2152,37 @@ function placeitem(string itemname)
 	; if there are items to be placed
 	if ${numitems} > 0
 	{
-		i:Set[1]
-		do
+		if ${box} > 0
 		{
-			; check to see if there is are boxes with the same item in already
-			call FindItem ${i} "${itemname}"
-			if ${Return} != -1
+			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+		}
+		if ${box} > 0 && ${space} > 0
+		{
+			call placeitems "${itemname}" ${box} ${numitems}
+			numitems:Set[${Return}]
+		}
+		else
+		{
+			i:Set[1]
+			do
 			{
-				; check the box has free space
-				space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
-
-				if ${space} > 0
+				; check to see if there is are boxes with the same item in already
+				call FindItem ${i} "${itemname}"
+				if ${Return} != -1
 				{
-					; place the item into the box
-					call placeitems "${itemname}" ${i} ${numitems}
-					numitems:Set[${Return}]
+					; check the box has free space
+					space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+	
+					if ${space} > 0
+					{
+						; place the item into the box
+						call placeitems "${itemname}" ${i} ${numitems}
+						numitems:Set[${Return}]
+					}
 				}
 			}
+			while ${i:Inc} <= 6 && ${numitems} > 0		
 		}
-		while ${i:Inc} <= 6 && ${numitems} > 0		
-
 		;   place the rest of the items (if any) where there are spaces , boxes with most space first
 		if ${numitems} >0
 		{

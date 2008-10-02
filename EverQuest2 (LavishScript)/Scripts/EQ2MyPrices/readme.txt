@@ -1,4 +1,4 @@
-MyPrices - Version 0.12i
+MyPrices - Version 0.12j
 
 For update details see the bottom of this file.
 
@@ -322,6 +322,8 @@ Craft Stack:  This should be the number of items you make every time you get a p
 Stock Limit : Put how many (single) items you want as a minimum number in your broker list..
 (if you wanted to keep 60 Chameleon Totems on your broker then enter 60 , 4000 arrows you'd enter 4000)
 
+Box :  The box number to attempt to place these items first in when you use the Place Items button on the
+main page.
 
 Press the Save button.
 
@@ -351,6 +353,18 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+version 0.12j
+-------------
+
+Re-added and updated the additional filters under the buy tab so they work on the automated buying option instead of 
+just the item clicking , use this with caution , I'd suggest not just filtering by tier etc , but also include partial names
+(adept i for example) in the name box.
+
+Added a box to the Craft tab  Box : Enter here the number of the box you want the script to place items in when you use the
+'Place items' button on the Main Tab , the script will fill up this box first then attempt to store the rest if it's full
+into the other boxes available. (Useful if you use the speciality broker storage boxes).
+
 
 version 0.12i
 -------------
