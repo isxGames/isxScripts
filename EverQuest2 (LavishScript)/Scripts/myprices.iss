@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12i :  released 18th October 2008
+; Version 0.12j :  released 2nd October 2008
 ;
 ; Declare Variables
 ;
