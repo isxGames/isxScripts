@@ -136,6 +136,7 @@ function main(string goscan)
 	{
 		Pausemyprices:Set[FALSE]
 		runautoscan:Set[TRUE]
+		UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Stop and Quit]
 	}
 
 	do
@@ -174,7 +175,7 @@ function main(string goscan)
 				Call CheckFocus
 				currentitem:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}]
 				; test here
-				; EQ2UIPage[MainPage,Market].Child[listbox,TabPages.SellPage]:HighlightRow[${currentpos}]
+				EQ2UIPage[Inventory,Market].Child[page,MainPage.TabPages.SellPage]:HighlightRow[${currentpos}]
 				; container number
 				i:Set[${itemprice[${currentpos}]}]
 
@@ -246,8 +247,11 @@ function main(string goscan)
 						MinPriceSet:Set[${Return}]
 						Call CheckMaxPriceSet "${currentitem}"
 						MaxPriceSet:Set[${Return}]
-						; Call Search routine to find the lowest price
-						Call echolog "Call BrokerSearch ${currentitem}"
+
+						broker Name "${currentitem}" Sort ByPriceAsc MaxLevel 999
+
+						; scan to make sure the item is listed and get lowest price
+						Call echolog "<Main> Call BrokerSearch ${currentitem}"
 						Call BrokerSearch "${currentitem}"
 
 						; Broker search returns -1 if no items to compare were found
@@ -264,24 +268,33 @@ function main(string goscan)
 							call checkitem "${currentitem}"
 							MinSalePrice:Set[${Return}]
 
-							; if a stored Minimum Sale price was found then carry on
+							; if a stored Sale price was found then carry on
 							if ${MinSalePrice}!= -1
 							{
-								if ${MatchActual}
+								;if my current price is less than my minimum price then increase it
+								if (${MyBasePrice} < ${MinSalePrice}) && !${ItemUnlisted} && ${MinPriceSet}
 								{
-									MinBasePrice:Set[${MinPrice}]
+									MinBasePrice:Set[${MinSalePrice}]
+									call StringFromPrice ${MinSalePrice}
+									call AddLog "${currentitem} : Item price lower than your Minium Price : ${Return}" FFFF0000
 								}
 								else
 								{
-									MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
-								}
-
-								; if the flag to ignore copper is set and the price is > 1 gold
-								if ${IgnoreCopper} && ${MinBasePrice} > 100
-								{
-									; round the value to remove the coppers
-									IntMinBasePrice:Set[${MinBasePrice}]
-									MinBasePrice:Set[${IntMinBasePrice}]
+									if ${MatchActual}
+									{
+										MinBasePrice:Set[${MinPrice}]
+									}
+									else
+									{
+										MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
+									}
+									; if the flag to ignore copper is set and the price is > 1 gold
+									if ${IgnoreCopper} && ${MinBasePrice} > 100
+									{
+										; round the value to remove the coppers
+										IntMinBasePrice:Set[${MinBasePrice}]
+										MinBasePrice:Set[${IntMinBasePrice}]
+									}
 								}
 
 								; do conversion from silver value to pp gp sp cp format
@@ -290,13 +303,13 @@ function main(string goscan)
 
 								; ***** If your price is less than what a merchant would buy for ****
 								if ${MerchantMatch} && ${MyPrice} < ${MerchPrice} && !${ItemUnlisted}
-									{
-										Call echolog "<Main> (Match Mechant Price)"
-										call SetItemPrice ${i} ${j} ${MerchPrice}
-										MinBasePrice:Set[${MerchPrice}]
-										call StringFromPrice ${MerchPrice}
-										call AddLog "${currentitem} : Merchant Would buy for : ${Return}" FFFF0000
-									}
+								{
+									Call echolog "<Main> (Match Mechant Price)"
+									call SetItemPrice ${i} ${j} ${MerchPrice}
+									MinBasePrice:Set[${MerchPrice}]
+									call StringFromPrice ${MerchPrice}
+									call AddLog "${currentitem} : Merchant Would buy for : ${Return}" FFFF0000
+								}
 
 								; ***** If your price is more than the lowest price on sale ****
 								if ${MinPrice}<${MyPrice}
@@ -647,6 +660,11 @@ function buy(string tabname, string action)
 	Declare Harvest bool local
 	Declare Recipe string local
 
+	Declare BuyNameOnly bool local
+	Declare startlevel int local
+	Declare endlevel int local
+	Declare tier int local
+	
 	if ${tabname.Equal["Buy"]}
 	{
 		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
@@ -728,6 +746,18 @@ function buy(string tabname, string action)
 								Case Recipe
 									CraftRecipe:Set[${BuyNameIterator.Value}]
 									break
+								Case BuyNameOnly
+									BuyNameOnly:Set[${BuyNameIterator.Value}]
+									break
+								Case StartLevel
+									startlevel:Set[${BuyNameIterator.Value}]
+									break
+								Case EndLevel
+									endlevel:Set[${BuyNameIterator.Value}]
+									break
+								Case Tier
+									tier:Set[${BuyNameIterator.Value}]
+									break
 							}
 						}
 						while ${BuyNameIterator:Next(exists)}
@@ -737,7 +767,7 @@ function buy(string tabname, string action)
 						if ${BuyNumber} > 0 && ${tabname.Equal["Buy"]}
 						{
 							Call CheckFocus
-							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest}
+							call BuyItems "${BuyIterator.Key}" ${Math.Calc[${BuyPrice}*100]} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
 						}
 						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
 						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
@@ -837,9 +867,10 @@ function addtocraft(string itemname, int Makemore)
 	call echolog "<end> : addtocraft"
 }
 
-function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
+function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, bool BuyNameOnly, int startlevel, int endlevel, int tier)
 {
-	call echolog "-> BuyItems ${BuyName} ${BuyPrice} ${BuyNumber} ${Harvest}"
+	call echolog "-> BuyItems ${BuyName} ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}"
+
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare FinishBuy bool local
@@ -852,8 +883,24 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest)
 	Declare BoughtNumber int local
 	Declare MaxBuy int local
 
+	Declare namesearch string local
+	Declare startsearch string local
+	Declare endsearch string local
+	Declare tiersearch string local
+	Declare costsearch string local
+
+	if  ${BuyNameOnly}
+	{
+		broker Name "${BuyName}" Sort ByPriceAsc MaxLevel 999
+	}
+	else
+	{
+		call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${BuyPrice}
+	}
+
 	Call echolog "<BuyItems> Call BrokerSearch ${BuyName}"
 
+	; scan to make sure the item is listed and get lowest price
 	Call BrokerSearch "${BuyName}"
 	
 	; if items listed on the broker
@@ -1029,11 +1076,6 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 	call echolog "-> ClickBrokerSearch ${tabtype} ${ItemID}"
 
 	Declare LBoxString string local
-	Declare namesearch string local
-	Declare startsearch string local
-	Declare endsearch string local
-	Declare tiersearch string local
-	Declare costsearch string local
 	Declare startlevel int local
 	Declare endlevel int local
 	Declare tier int local
@@ -1065,54 +1107,8 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 			cost:Set[${Math.Calc[${cost}+(${gp}*10000)]}]
 			cost:Set[${Math.Calc[${cost}+(${sp}*100)]}]
 			cost:Set[${Math.Calc[${cost}+${cp}]}]
-			costsearch:Set["MaxPrice ${cost}"]
-			if !${LBoxString.Left[6].Equal[NoName]}
-			{
-				namesearch:Set[Name "${LBoxString}"]
-			}
-			if ${startlevel}>0
-			{
-				startsearch:Set["MinLevel ${startlevel}"]
-			}
-			if ${endlevel}>0
-			{
-				endsearch:Set["MaxLevel ${endlevel}"]
-			}
-			if ${tier}>1
-			{
-				Switch "${tier}"
-				{
-					Case 2
-						tiersearch:Set["MinTier Common MaxTier Common"]
-						break
-					Case 3
-						tiersearch:Set["MinTier Handcrafted MaxTier Handcrafted"]
-						break
-					Case 4
-						tiersearch:Set["MinTier Treasured MaxTier Treasured"]
-						break
-					Case 5
-						tiersearch:Set["MinTier Mastercrafted MaxTier Mastercrafted"]
-						break
-					Case 6
-						tiersearch:Set["MinTier Legendary MaxTier Legendary"]
-						break
-					Case 7
-						tiersearch:Set["MinTier Fabled MaxTier Fabled"]
-						break
-					Case 8
-						tiersearch:Set["MinTier Mythical MaxTier Mythical"]
-						break
-				}
-			}
-			if ${namesearch.Length}>0
-			{
-				broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch}
-			}
-			else
-			{
-				broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch}
-			}
+			
+			call searchbrokerlist "${LBoxString}" ${startlevel} ${endlevel} ${tier} ${cost}
 		}
 	}
 	else
@@ -1124,17 +1120,84 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 }
 
 
+function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int tier, float cost)
+{
+
+	call echolog "-> searchbrokerlist ${LBoxString} , ${startlevel} , ${endlevel} , ${tier} , ${cost}"
+
+	Declare namesearch string local
+	Declare startsearch string local
+	Declare endsearch string local
+	Declare tiersearch string local
+	Declare costsearch string local
+
+	if !${LBoxString.Left[6].Equal[NoName]}
+	{
+		namesearch:Set[Name "${LBoxString}"]
+	}
+	if ${startlevel}>0
+	{
+		startsearch:Set["MinLevel ${startlevel}"]
+	}
+	if ${endlevel}>0
+	{
+		endsearch:Set["MaxLevel ${endlevel}"]
+	}
+	if ${tier}>0
+	{
+		Switch "${tier}"
+		{
+			Case 1
+				tiersearch:Set["MinTier Common MaxTier Mythical"]
+				break
+			Case 2
+				tiersearch:Set["MinTier Common MaxTier Common"]
+				break
+			Case 3
+				tiersearch:Set["MinTier Handcrafted MaxTier Handcrafted"]
+				break
+			Case 4
+				tiersearch:Set["MinTier Treasured MaxTier Treasured"]
+				break
+			Case 5
+				tiersearch:Set["MinTier Mastercrafted MaxTier Mastercrafted"]
+				break
+			Case 6
+				tiersearch:Set["MinTier Legendary MaxTier Legendary"]
+				break
+			Case 7
+				tiersearch:Set["MinTier Fabled MaxTier Fabled"]
+				break
+			Case 8
+				tiersearch:Set["MinTier Mythical MaxTier Mythical"]
+				break
+		}
+	}
+
+	costsearch:Set["MaxPrice ${cost}"]
+
+	if ${namesearch.Length}>0
+	{
+		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} Sort ByPriceAsc
+	}
+	else
+	{
+		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} Sort ByPriceAsc
+	}
+	
+	call echolog "<- searchbrokerlist
+}	
+
 ; Search the broker for items , return the cheapest price found
 
 function BrokerSearch(string lookup)
 {
-	call echolog "-> BrokerSearch ${lookup}"
+	call echolog "-> BrokerSearch"
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
 	Declare stopsearch bool FALSE local
-	broker Name "${lookup}" Sort ByPriceAsc MaxLevel 999
-	Wait 15
+	wait 5
 	; check if broker has any listed to compare with your item
 	if ${Vendor.NumItemsForSale} >0
 	{
@@ -1242,9 +1305,10 @@ function LoadList()
 			{
 				do
 				{
-
+					call CheckFocus
 					numitems:Inc
 					labelname:Set[${Me.Vending[${i}].Consignment[${j}]}]
+					waitframe
 					; add the item name onto the sell tab list
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem[${labelname}]
 
