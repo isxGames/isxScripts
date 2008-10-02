@@ -185,6 +185,9 @@ function harvestnode()
 						BadNode:Set[TRUE]
 						return STUCK
 					}
+					
+					Actor[${HID}]:DoTarget
+					wait 5
 					call hitnode ${HID}
 				}
 			}
@@ -195,8 +198,6 @@ function harvestnode()
 function hitnode(float HID)
 {
 	variable int hitcount
-	Actor[${HID}]:DoTarget
-	wait 5
 	hitcount:Set[0]
 	; while the target exists
 	while ${Target(exists)} && ${hitcount:Inc} <50
