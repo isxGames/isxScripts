@@ -7,9 +7,6 @@ v8.42 - Added code to account for "Pristine Tailored XXX" recipes in writ recipe
 
 v8.41 - Changed writ recipe name code slightly. Should now correctly identify recipes it previously
         had marked as "Pristine XXX" or "Pristine Forged XXX".
-      - Removed writ desk facing code. Looked way too botty.
-      - Tweaks to movement code should make pathing better.
-      - Re-tuned CraftLite code. It should now pick up on the first crafting tick as advertised.
 
 v8.40 - Craft Lite!
         - You can now use the Craft Lite button in the titlebar to switch between the Craft Full
