@@ -1,4 +1,4 @@
-MyPrices - Version 0.12j
+MyPrices - Version 0.13
 
 For update details see the bottom of this file.
 
@@ -6,7 +6,7 @@ For update details see the bottom of this file.
 Known Problems:
 ---------------
 
-To fully use the selling part of this script , you MUST group all items of the same name listed in
+1) To fully use the selling part of this script , you MUST group all items of the same name listed in
 the same container together on your broker list...
 
 If you have 2 items listed in the same container (Ebon Cluster for example) and you list them seperately
@@ -24,10 +24,12 @@ This is a limitation of SoE's broker system and I cannot work around it.
 
 Listing the same item seperately in 2 or more DIFFERENT containers will not cause this problem.
 
-
-Items with Commas in the name may have problems in the buying and selling parts of the script due to the fact Innerspace
+2) Items with Commas in the name may have problems in the buying and selling parts of the script due to the fact Innerspace
 currently reads the name in the UI box upto the comma then assumes the next part of the text is another item.
 
+3) The buy routine currently doesn't take commission into it's calculations when listing items , so if you set it up to buy
+and item at 1g , it will SHOW items being sold than 1g 20s and 1g 40s (based on different broker commission rates)
+it DOES NOT however buy items over your set maximum price.
 
 What this Script will do
 ------------------------
@@ -143,7 +145,7 @@ Natural Scan
 ------------
 
 This makes the script act in a more natural way , items aren't scanned in a particular order , there are pauses between broker checks for each
-item in your list , the pause between automatic scans is randomised somewhat.
+item in your list , the pause between automatic scans is randomised somewhat , it will however DOUBLE the scan time at least.
 
 
 Match without Broker %
@@ -192,12 +194,20 @@ Place Items
 This will make the script scan your bags for items marked in your craft list , if any are found it will place them in the broker system for
 you automatically.
 
-1. It goes through your craft flagged items one by one.
-2. The script searches for items of the same type , if found the items are placed in that box until they are all added or that box is full.
-3. If there is no (more) space in a box with the same type of item or no matching items in your broker slots, then it places the items in
-   the box with the enough space to fit ALL those items in your inventory.
-4. If no box has enough space to fit all of those items it distributes them between the boxes (filling boxes with the most space first).
-5. it stops when you have no more space left anywhere.
+1.  It goes through your craft flagged items one by one.
+
+either
+
+2a. If you have set a box for items to be stored in then it will fill that box up first.
+
+or
+
+2b. The script searches for items of the same type , if found the items are placed in that box until they are all added or that box is full.
+
+3.  If there is no (more) space in a box with the same type of item or no matching items in your broker slots, then it places the items in
+    the box with the enough space to fit ALL those items in your inventory.
+4.  If no box has enough space to fit all of those items it distributes them between the boxes (filling boxes with the most space first).
+5.  it stops when you have no more space left anywhere.
 
 
 The Sell TAB
@@ -265,14 +275,14 @@ The script scans for the lowest price for each item currently on the broker.
 
 What this means is you can just dump items in your broker list and let myprices set the price for you and mark them as Listed.
 
-If there are no broker items to compare a new item to then nothing will happen.
-
+If there are no broker items to compare a new item to and you haven't set a maximum price then nothing will happen.
 You can either leave the item there until someone else lists one or set a price using EQ2 broker system.
 
 
 When the List is Populated
 --------------------------
 Yellow - The item was marked a craft item (links with the Craft script).
+Blue - Item has never been seen on the system before.
 
 
 During the Scan
@@ -293,7 +303,14 @@ The Buy TAB
 
 Check the Buy Items checkbox to make the script look for items you wish to buy.
 
+There are 2 ways to use this feature
+
+1) Exact name  (e.g. ferrite cluster)
+--------------
+
 Type the name of the item in the name box (case doesn't matter , spelling does)
+
+Click the 'Name only' box.
 
 Enter the number of that item you want the script to buy
 
@@ -301,10 +318,33 @@ Enter the PP , Gold , Silver and Copper you are willing to pay for EACH item int
 
 Press Save to add the item to the list.
 
-Selecting an item in the listbox and pressing delete removes it from the list.
 
-When you select an item in the list box the script will do a broker search using that name
+2) Partial name with filters (e.g. (adept i) )
+-----------------------------
+
+this option is Useful for Muters.
+
+Enter a partial name in the name box 
+
+Enter the number of items you want the script to buy
+
+Enter the start and end level for the items to be scanned for.
+
+Select the Tier to scan for from the drop down box.
+
+Enter the PP , Gold , Silver and Copper you are willing to pay for EACH item into the relevant boxes.
+
+Press Save to add the item to the list.
+
+
+
+To test your filters click on the entry in the list  box the script will do a broker search.
  (helps to make sure you have the correct spelling)
+
+Clicking on Harvest item tickbox alters the maximum number of items it will buy at once, (harvests can be bought at 200 per time
+not 100 like other stacks of items.)
+
+Selecting an item in the listbox and pressing delete removes it from the list.
 
 
 The Craft TAB
@@ -333,10 +373,12 @@ The Future
 
 Plans for developing this script are the following:
 
-Add an option to make your sale price (minus the broker fee) the same as the sale price of the lowest priced item ignoring the 
-brokers fee.
+Currently the auto-buy option takes the sellers base price (minus commission) as the price to pay when listing items,
+as soon as ISXEQ2 has the option I intend that the script will take the 'actual' cost shown on the broker into consideration
+before listing them. (it DOESN'T buy items over your set price - only lists them).
 
-Add an option to set a maximum value to set your items too (for those using the increase item price option).
+To round the script off , coding that by clicking on an item in your list , altering it's value in the price boxes and pressing
+a 'Set' button will change the price of that item on the broker.
 
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
 by more efficient code as I re-code parts of it.
@@ -353,6 +395,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13
+------------
+
+Bugfixed the buy routine filters and actual item buying routines , the buying routine will now look for an EXACT name match
+if you have the Name Only box ticked , otherwise it just checks for ANY items listed at all if you use the other filters.
 
 version 0.12j
 -------------
