@@ -280,7 +280,6 @@ function main(string goscan)
 								}
 								else
 								{
-									Echo MinPrice is ${MinPrice}
 									if ${MatchActual}
 									{
 										MinBasePrice:Set[${MinPrice}]
