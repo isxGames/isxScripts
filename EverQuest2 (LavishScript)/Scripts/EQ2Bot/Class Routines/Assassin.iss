@@ -55,7 +55,7 @@ function Class_Declaration()
     ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
     declare ClassFileVersion int script 20080408
     ;;;;
-    
+
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
 	declare UseRangeMode bool script 0
@@ -120,7 +120,7 @@ function Buff_Init()
 	PreSpellRange[3,1]:Set[357]
 
 	PreAction[4]:Set[Shadows]
-	PreSpellRange[4,1]:Set[386]
+	PreSpellRange[4,1]:Set[356]
 
 	PreAction[5]:Set[AA_Neurotoxic_Coating]
 	PreSpellRange[5,1]:Set[389]

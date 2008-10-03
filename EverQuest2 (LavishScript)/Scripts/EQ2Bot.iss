@@ -1215,7 +1215,7 @@ function Combat()
 						}
 					}
 
-					if ${AutoSwitch} && !${MainTank} && ${Actor[${KillTarget}].Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 					{
 						variable int ActorID
 						ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
@@ -1295,7 +1295,7 @@ function Combat()
 						break
 					}
 
-					if ${AutoSwitch} && !${MainTank} && ${Target.Health}>30 && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 					{
 						ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 						if ${Mob.ValidActor[${ActorID}]}
@@ -1471,7 +1471,7 @@ function GetBehind()
 	{
 		disablebehind:Set[TRUE]
 
-    	call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 6
+		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 6
 	}
 
 	if ${Actor[${KillTarget}](exists)} && (${KillTarget}!=${Me.ID})
@@ -3131,7 +3131,7 @@ atom(script) LootWDw(string ID)
 	}
 	elseif ${LootMethod.Equal[Idle]}
 	{
-			LastWindow:Set[${ID}]
+		LastWindow:Set[${ID}]
 		return
 	}
 
@@ -3288,9 +3288,9 @@ function ReacquireKillTargetFromMA()
 		{
 		    NextKillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 		    if (${NextKillTarget})
-		    {	    	    
+		    {
 		        if ${Actor[${NextKillTarget}].Type.Find[NPC]} && !${Actor[${NextKillTarget}].IsDead}
-		        {		    
+		        {
 			        KillTarget:Set[${NextKillTarget}]
 			        echo "DEBUG:: KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[${KillTarget}]} (ID: ${KillTarget})"
 			        return OK
@@ -3334,7 +3334,7 @@ function VerifyTarget(int TargetID=0)
        	    {
        		    KillTarget:Set[0]
        		    return FALSE
-       	    } 
+       	    }
         }
     }
     else
@@ -3349,7 +3349,7 @@ function VerifyTarget(int TargetID=0)
        	    }
         }
     }
-    
+
     return TRUE
 }
 
