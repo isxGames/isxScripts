@@ -4,6 +4,9 @@
 ;
 
 
+#ifndef _PositionUtils_
+#define _PositionUtils_
+
 objectdef EQ2Position
 {
 	; Returns angle 0-180 degrees:
@@ -13,7 +16,9 @@ objectdef EQ2Position
 	member:float Angle(uint ActorID)
 	{
 		variable float RetVal
-		RetVal:Set[${Math.Calc[${Math.Cos[${Actor[${ActorID}].Heading}]} * ${Math.Cos[${Actor[${ActorID}].HeadingTo}]} + ${Math.Sin[${Actor[${ActorID}].Heading}]} * ${Math.Sin[${Actor[${ActorID}].HeadingTo}]}]}]
+		variable float Heading=${Actor[${ActorID}].Heading}
+		variable float HeadingTo=${Actor[${ActorID}].HeadingTo}
+		RetVal:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
 		RetVal:Set[${Math.Acos[${RetVal}]}]
 		return ${RetVal}
 	}
@@ -22,7 +27,9 @@ objectdef EQ2Position
 	member:string Side(uint ActorID)
 	{
 		variable float Side
-		Side:Set[${Math.Calc[${Math.Cos[${Actor[${ActorID}].Heading}+90]} * ${Math.Cos[${Actor[${ActorID}].HeadingTo}]} + ${Math.Sin[${Actor[${ActorID}].Heading}+90]} * ${Math.Sin[${Actor[${ActorID}].HeadingTo}]}]}]
+		variable float Heading=${Actor[${ActorID}].Heading}
+		variable float HeadingTo=${Actor[${ActorID}].HeadingTo}
+		Side:Set[${Math.Calc[${Math.Cos[${Heading}+90]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}+90]} * ${Math.Sin[${HeadingTo}]}]}]
 		if ${Side}>0
 			return Left
 		else
@@ -36,15 +43,37 @@ objectdef EQ2Position
 	member:point3f PointAtAngle(uint ActorID, float Angle, float Distance = 3)
 	{
 		variable point3f RetVal
+		variable float Heading=${Actor[${ActorID}].Heading}
 		RetVal.Y:Set[${Actor[${ActorID}].Y}]
 
 		if ${This.Side[${ActorID}].Equal[Right]}
 		{
 			Angle:Set[-(${Angle})]
 		}
-		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Actor[${ActorID}].Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
-		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Actor[${ActorID}].Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
+		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
+		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
 		return ${RetVal.X} ${RetVal.Y} ${RetVal.Z}
+	}
+	
+	member:point3f PredictPointAtAngle(uint ActorID, float Angle, float Seconds=1, float Distance=3)
+	{
+		variable point3f RetVal
+		variable point3f Velocity
+
+		variable float Heading=${Actor[${ActorID}].Heading}
+		Velocity:Set[${Actor[${ActorID}].Velocity}]
+		RetVal.Y:Set[${Actor[${ActorID}].Y}]
+
+		if ${This.Side[${ActorID}].Equal[Right]}
+		{
+			Angle:Set[-(${Angle})]
+		}
+		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
+		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
+		RetVal.X:Inc[${Velocity.X}*${Seconds}]
+		RetVal.Y:Inc[${Velocity.Y}*${Seconds}]
+		RetVal.Z:Inc[${Velocity.Z}*${Seconds}]
+		return ${RetVal.X},${RetVal.Y},${RetVal.Z}
 	}
 
 	member:float GetBaseMaxRange(uint ActorID)
@@ -70,3 +99,4 @@ objectdef EQ2Position
 
 variable EQ2Position Position
 
+#endif
