@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.12j :  released 2nd October 2008
+; Version 0.13 :  released 3nd October 2008
 ;
 ; Declare Variables
 ;
@@ -250,9 +250,9 @@ function main(string goscan)
 
 						broker Name "${currentitem}" Sort ByPriceAsc MaxLevel 999
 
-						; scan to make sure the item is listed and get lowest price
-						Call echolog "<Main> Call BrokerSearch ${currentitem}"
-						Call BrokerSearch "${currentitem}"
+						; scan to make sure the item is listed and get lowest price , TRUE means exact name match only
+						Call echolog "<Main> Call BrokerSearch ${currentitem} TRUE"
+						Call BrokerSearch "${currentitem}" TRUE
 
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
@@ -276,10 +276,11 @@ function main(string goscan)
 								{
 									MinBasePrice:Set[${MinSalePrice}]
 									call StringFromPrice ${MinSalePrice}
-									call AddLog "${currentitem} : Item price lower than your Minium Price : ${Return}" FFFF0000
+									call AddLog "${currentitem} : Item price lower than your Minimum Price : ${Return}" FFFF0000
 								}
 								else
 								{
+									Echo MinPrice is ${MinPrice}
 									if ${MatchActual}
 									{
 										MinBasePrice:Set[${MinPrice}]
@@ -771,7 +772,7 @@ function buy(string tabname, string action)
 						if ${BuyNumber} > 0 && ${tabname.Equal["Buy"]}
 						{
 							Call CheckFocus
-							call BuyItems "${BuyIterator.Key}" ${Math.Calc[${BuyPrice}*100]} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
+							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
 						}
 						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
 						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
@@ -895,17 +896,19 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 
 	if  ${BuyNameOnly}
 	{
-		broker Name "${BuyName}" Sort ByPriceAsc MaxLevel 999
+		call echolog "searchbrokerlist "${BuyName}" 0 0 0 ${Math.Calc[${BuyPrice} * 100]}"
+		call searchbrokerlist "${BuyName}" 0 0 0 ${Math.Calc[${BuyPrice} * 100]}
 	}
 	else
 	{
-		call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${BuyPrice}
+		call echolog "<BuyItems> call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${Math.Calc[${BuyPrice} * 100]}"
+		call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${Math.Calc[${BuyPrice} * 100]}
 	}
 
 	Call echolog "<BuyItems> Call BrokerSearch ${BuyName}"
 
 	; scan to make sure the item is listed and get lowest price
-	Call BrokerSearch "${BuyName}"
+	Call BrokerSearch "${BuyName}" ${BuyNameOnly}
 	
 	; if items listed on the broker
 	if ${Return} != -1
@@ -929,6 +932,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 					StopSearch:Set[TRUE]
 					break
 				}
+				
 				; if there are items available (sometimes broker number shows 0 available when someone beats you to it)
 				if ${BrokerNumber} >0
 				{
@@ -1094,23 +1098,25 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 
 	If ${tabtype.Equal["Buy"]}
 	{
+		startlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[StartLevel].Text}]
+		endlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[EndLevel].Text}]
+		tier:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Tier].Selection}]
+		pp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinPlatPrice].Text}]
+		gp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
+		sp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinSilverPrice].Text}]
+		cp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinCopperPrice].Text}]
+		cost:Set[${Math.Calc[${pp}*1000000]}]
+		cost:Set[${Math.Calc[${cost}+(${gp}*10000)]}]
+		cost:Set[${Math.Calc[${cost}+(${sp}*100)]}]
+		cost:Set[${Math.Calc[${cost}+${cp}]}]
+
 		if ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked}
 		{
-			broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
+			call searchbrokerlist "${LBoxString}" 0 0 0  ${cost}
+			; broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
 		}
 		else
 		{
-			startlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[StartLevel].Text}]
-			endlevel:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[EndLevel].Text}]
-			tier:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Tier].Selection}]
-			pp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinPlatPrice].Text}]
-			gp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
-			sp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinSilverPrice].Text}]
-			cp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinCopperPrice].Text}]
-			cost:Set[${Math.Calc[${pp}*1000000]}]
-			cost:Set[${Math.Calc[${cost}+(${gp}*10000)]}]
-			cost:Set[${Math.Calc[${cost}+(${sp}*100)]}]
-			cost:Set[${Math.Calc[${cost}+${cp}]}]
 			
 			call searchbrokerlist "${LBoxString}" ${startlevel} ${endlevel} ${tier} ${cost}
 		}
@@ -1194,15 +1200,27 @@ function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int t
 
 ; Search the broker for items , return the cheapest price found
 
-function BrokerSearch(string lookup)
+function BrokerSearch(string lookup, bool BuyNameOnly)
 {
-	call echolog "-> BrokerSearch"
+	call echolog "-> BrokerSearch ${lookup} ${BuyNameOnly}"
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
 	Declare stopsearch bool FALSE local
 	wait 5
 	; check if broker has any listed to compare with your item
+	if !${BuyNameOnly}
+	{
+		if ${Vendor.NumItemsForSale} >0
+		{
+			Return TRUE
+		}
+		else
+		{
+			Return FALSE
+		}
+	}
+	
 	if ${Vendor.NumItemsForSale} >0
 	{
 		; Work through the brokers list page by page
