@@ -141,8 +141,10 @@ function harvestnode()
 				call checkPC
 				if ${Return}
 				{
-					Return
+					Return STUCK
 				}
+				Actor[${HID}]:DoTarget
+				wait 5
 				call hitnode ${HID}
 			}
 			else
