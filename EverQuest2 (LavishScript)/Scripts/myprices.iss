@@ -772,6 +772,12 @@ function buy(string tabname, string action)
 						{
 							Call CheckFocus
 							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
+							; Pause or quit pressed then exit the routine
+							ExecuteQueued
+							if ${Exitmyprices} || ${Pausemyprices}
+							{
+								Return
+							}
 						}
 						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
 						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
@@ -800,7 +806,6 @@ function buy(string tabname, string action)
 					}
 				}
 			}
-
 			; Keep looping till you've read all the Items listed under the ${tabname} Sub-Set
 			while ${NameIterator:Next(exists)}
 		}
@@ -916,6 +921,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 		do
 		{
 			Vendor:GotoSearchPage[${CurrentPage}]
+			wait 5
 			do
 			{
 				; calculate how much coin this character has on it
@@ -979,6 +985,13 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 							StopSearch:Set[TRUE]
 							break
 						}
+						
+						ExecuteQueued
+						if ${Exitmyprices} || ${Pausemyprices}
+						{
+							break
+						}
+
 					}
 					While ${BrokerNumber} > 0 && ${BuyNumber} > 0
 				}
@@ -986,14 +999,27 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 				{
 					break
 				}
+				
+				ExecuteQueued
+				if ${Exitmyprices} || ${Pausemyprices}
+				{
+					break
+				}
 			}
 			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 			CurrentItem:Set[1]
+			
+			ExecuteQueued
+			if ${Exitmyprices} || ${Pausemyprices}
+			{
+				break
+			}
 		}
 		; keep going till all items listed have been scanned and bought or you have reached your limit
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
+
 		; now we've bought all that are available , save the number we've still got left to buy
-		call Saveitem Buy "${BuyName}" ${BuyPrice} 0 ${BuyNumber} ${Harvest}
+		call Saveitem Buy "${BuyName}" ${BuyPrice} 0 ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
 	}
 	call echolog "<end> : BuyItems"
 }
