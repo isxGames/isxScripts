@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13 :  released 3nd October 2008
+; Version 0.13 :  released 4th October 2008
 ;
 ; Declare Variables
 ;
@@ -24,6 +24,7 @@ variable bool Natural
 variable bool MatchActual
 variable bool MaxPriceSet
 variable bool runautoscan
+variable bool ItemNotStack
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
@@ -96,6 +97,8 @@ function main(string goscan)
 
 	MyPrices:loadsettings
 	MyPrices:LoadUI
+	MyPrices:InitTriggersAndEvents
+
 	tempstring:Set[${Actor[name,a market bulletin board]}]
 	if ${tempstring.Length} >4
 	{
@@ -891,6 +894,8 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 	Declare OldCash float local
 	Declare BoughtNumber int local
 	Declare MaxBuy int local
+	Declare CurrentQuantity int local
+	Declare StackBuySize int local
 
 	Declare namesearch string local
 	Declare startsearch string local
@@ -967,9 +972,30 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 						; buy what you can afford
 						if ${Return} > 0
 						{
+							StackBuySize:Set[${Return}]
 							OldCash:Set[${MyCash}]
-							Vendor.Broker[${CurrentItem}]:Buy[${Return}]
-							wait 25
+							Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+
+							wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${BrokerNumber}
+							wait 5
+							
+							; if unable to buy the required stack due to stack limitations then change to buying singles
+							
+							if ${Vendor.Item[${CurrentItem}].Quantity} == ${BrokerNumber} && ${Vendor.Item[${CurrentItem}].Quantity} != 0
+							{
+								; Number on broker not changed ( Buy Singles )
+								do
+								{
+									CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+									
+									Vendor.Item[${CurrentItem}]:Buy[1]  
+									wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+									wait 5
+									
+								}
+								while ${StackBuySize:Dec} >= 0 && ${Vendor.Item[${CurrentItem}].Quantity} != 0
+							}
+							
 							MyCash:Set[${Math.Calc[(${Me.Platinum}*10000)+(${Me.Gold}*100)+(${Me.Silver})+(${Me.Copper}/100)]}]
 							; check you have actually bought an item
 							call checkbought ${BrokerPrice} ${OldCash} ${MyCash}
@@ -2369,5 +2395,3 @@ atom atexit()
 	LavishSettings[myprices]:Clear
 	LavishSettings[craft]:Clear
 }
-
-
