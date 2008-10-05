@@ -593,7 +593,7 @@ function Combat_Routine(int xAction)
 
 
 	;; Aggro Control...
-	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
+	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
 	{
 		if ${Me.Ability["Phase"].IsReady}
 		{
@@ -696,6 +696,8 @@ function Combat_Routine(int xAction)
 	;; Add back later...(TODO)
 		;call CheckSKFD
 
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
 
 	if ${AutoMelee} && !${NoAutoMovement}
 	{
@@ -733,6 +735,9 @@ function Combat_Routine(int xAction)
 	if !${Return}
 		return CombatComplete
 
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
+
 	;; Chronosiphoning (Always cast this when it is ready!
 	if ${Me.Ability[${SpellType[385]}](exists)}
 	{
@@ -743,12 +748,18 @@ function Combat_Routine(int xAction)
 		}
 	}
 
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
+
 	; Fast Nuke (beam) ...cast every time it's ready!
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 		spellsused:Inc
 	}
+
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
 
 	;; Short Duration Buff .. adds INT, Focus, Disruption, etc. (cast any time it's ready)  (else cast a short casting spell to kick up rapidity)
 	if (${Me.Ability[${SpellType[23]}].IsReady})
@@ -760,6 +771,9 @@ function Combat_Routine(int xAction)
 	call VerifyTarget
 	if !${Return}
 		return CombatComplete
+
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
 
 	; Mental DOT and arcane resistance debuff (fast casting - "Despair") ...cast every time it's ready!
 	;;; The rest of this block is basically to insure that all DoTs are loaded and things are primed at the
@@ -776,6 +790,9 @@ function Combat_Routine(int xAction)
 		if !${Return}
 			return CombatComplete
 
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
+
 		if !${Me.Maintained[${SpellType[70]}](exists)}
 		{
 			if (${Me.Ability[${SpellType[70]}].IsReady})
@@ -784,6 +801,9 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			}
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
+
 		if (${Me.Ability[${SpellType[60]}].IsReady})
 		{
 			call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
@@ -792,6 +812,9 @@ function Combat_Routine(int xAction)
 		call VerifyTarget
 		if !${Return}
 			return CombatComplete
+
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 
 		if !${Me.Maintained[${SpellType[91]}](exists)}
 		{
@@ -806,6 +829,9 @@ function Combat_Routine(int xAction)
 		if !${Return}
 			return CombatComplete
 
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
+
 		if (${Me.Ability[${SpellType[60]}].IsReady})
 		{
 			call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
@@ -819,6 +845,9 @@ function Combat_Routine(int xAction)
 		if !${Return}
 			return CombatComplete
 
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
+
 		if !${Me.Maintained[${SpellType[388]}](exists)}
 		{
 			if (${Me.Ability[${SpellType[388]}].IsReady})
@@ -827,6 +856,9 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			}
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
+
 		if (${Me.Ability[${SpellType[60]}].IsReady})
 		{
 			call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
@@ -887,6 +919,9 @@ function Combat_Routine(int xAction)
 		}
 	}
 
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
+
 	;; Check Group members to see if anyone needs 'Touch of Empathy'
 	if ${UseTouchOfEmpathy} && ${Me.Group} > 1
 	{
@@ -903,7 +938,7 @@ function Combat_Routine(int xAction)
 				case Brawler
 				case Bruiser
 				case Guardian
-				case Berzerker
+				case Berserker
 					break
 
 				default
@@ -925,6 +960,9 @@ function Combat_Routine(int xAction)
 	if !${Return}
 		return CombatComplete
 
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
+
 	;; If we have the skill 'Nullifying Staff' and the mob is within range
 	if ${Me.Ability[${SpellType[396]}](exists)}
 	{
@@ -944,6 +982,9 @@ function Combat_Routine(int xAction)
 	if !${Return}
 		return CombatComplete
 
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
+
 	;; Melee Debuff -- only for Epic mobs for now
 	if ${Me.ToActor.Power} > 40
 	{
@@ -962,6 +1003,9 @@ function Combat_Routine(int xAction)
 			}
 		}
 	}
+
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
 
 	;; If Target is Epic, be sure that the Daze Debuff is being used as often as possible, but only once we have casted our initial spells.)  (This is the slow casting Nuke.)
 	if ${Actor[${KillTarget}].IsEpic}
@@ -1001,6 +1045,8 @@ function Combat_Routine(int xAction)
 		call VerifyTarget
 		if !${Return}
 			return CombatComplete
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	case NukeDaze
@@ -1012,6 +1058,8 @@ function Combat_Routine(int xAction)
 		call VerifyTarget
 		if !${Return}
 			return CombatComplete
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	;; Single Target DoTs
@@ -1044,6 +1092,8 @@ function Combat_Routine(int xAction)
 		}
 		;else
 			;   echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	;; Group Encounter DoTs
@@ -1059,6 +1109,8 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			;}
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	case Master_Strike
@@ -1067,6 +1119,8 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 			spellsused:Inc
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
 			break
 		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
@@ -1091,6 +1145,8 @@ function Combat_Routine(int xAction)
 				wait 1
 			}
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	case Constructs
@@ -1107,6 +1163,8 @@ function Combat_Routine(int xAction)
 			call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 		case AEStun
@@ -1128,6 +1186,8 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			}
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	case Savante
@@ -1141,6 +1201,8 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			}
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	case Gaze
@@ -1191,6 +1253,8 @@ function Combat_Routine(int xAction)
 			call _CastSpellRange ${SpellRange[${xAction},1]}
 			spellsused:Inc
 		}
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		break
 
 	default
@@ -1201,6 +1265,8 @@ function Combat_Routine(int xAction)
 		}
 		if (${spellsused} < 1) && !${MezzMode}
 			call CastSomething
+		ExecuteQueued Mezmerise_Targets
+		FlushQueued Mezmerise_Targets
 		return CombatComplete
 	}
 
@@ -1209,6 +1275,8 @@ function Combat_Routine(int xAction)
 		if (${spellsused} < 1)
 		call CastSomething
 	}
+	ExecuteQueued Mezmerise_Targets
+	FlushQueued Mezmerise_Targets
 	;echo "DEBUG:: Exiting Switch (${Action[${xAction}]}) (spellsused: ${spellsused})"
 }
 
