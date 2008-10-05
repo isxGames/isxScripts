@@ -55,6 +55,9 @@ objectdef EQ2Position
 		return ${RetVal}
 	}
 	
+	; and this member will return a point in 3d space at any angle of attack from the
+	; Actor passed to it, predicting that Actor's position based on their current speed
+	; and direction, and the time argument passed to this function.
 	member:point3f PredictPointAtAngle(uint ActorID, float Angle, float Seconds=1, float Distance=3)
 	{
 		variable point3f RetVal
