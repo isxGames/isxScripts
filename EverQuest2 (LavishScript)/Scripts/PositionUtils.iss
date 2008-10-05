@@ -52,7 +52,7 @@ objectdef EQ2Position
 		}
 		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
 		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
-		return ${RetVal.X} ${RetVal.Y} ${RetVal.Z}
+		return ${RetVal}
 	}
 	
 	member:point3f PredictPointAtAngle(uint ActorID, float Angle, float Seconds=1, float Distance=3)
@@ -60,20 +60,14 @@ objectdef EQ2Position
 		variable point3f RetVal
 		variable point3f Velocity
 
-		variable float Heading=${Actor[${ActorID}].Heading}
 		Velocity:Set[${Actor[${ActorID}].Velocity}]
-		RetVal.Y:Set[${Actor[${ActorID}].Y}]
 
-		if ${This.Side[${ActorID}].Equal[Right]}
-		{
-			Angle:Set[-(${Angle})]
-		}
-		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
-		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
+		RetVal:Set[${This.PointAtAngle[${ActorID},${Angle},${Distance}]}]
+
 		RetVal.X:Inc[${Velocity.X}*${Seconds}]
 		RetVal.Y:Inc[${Velocity.Y}*${Seconds}]
 		RetVal.Z:Inc[${Velocity.Z}*${Seconds}]
-		return ${RetVal.X},${RetVal.Y},${RetVal.Z}
+		return ${RetVal}
 	}
 
 	member:float GetBaseMaxRange(uint ActorID)
@@ -81,18 +75,24 @@ objectdef EQ2Position
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale}]}
 	}
 
-	member:float GetMeleeMaxRange(uint ActorID, float MeleeRange = 2.5)
+	member:float GetMeleeMaxRange(uint ActorID, float PercentMod = 0, float MeleeRange = 2)
 	{
+		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
+		MeleeRange:Set[${Math.Calc[${MeleeRange}*${PercentMod}]}]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${MeleeRange}]}
 	}
 
-	member:float GetSpellMaxRange(uint ActorID, float SpellRange = 30)
+	member:float GetSpellMaxRange(uint ActorID, float PercentMod = 0, float SpellRange = 30)
 	{
+		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
+		SpellRange:Set[${Math.Calc[${MeleeRange}*${PercentMod}]}]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${SpellRange}]}
 	}
 
-	member:float GetCAMaxRange(uint ActorID, float CARange = 5)
+	member:float GetCAMaxRange(uint ActorID, float PercentMod = 0, float CARange = 5)
 	{
+		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
+		CARange:Set[${Math.Calc[${MeleeRange}*${PercentMod}]}]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${CARange}]}
 	}
 }
