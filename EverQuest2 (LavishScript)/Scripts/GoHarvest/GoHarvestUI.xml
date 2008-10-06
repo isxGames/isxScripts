@@ -367,36 +367,30 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='LOS' Template='EQ2.checkbox'>
-						<X>55%</X>
-						<Y>50</Y>
-						<Width>20%</Width>
-						<Height>20</Height>
-						<Text>Strict LOS</Text>
-						<AutoTooltip>
-							Enable strick LOS checking.
-						</AutoTooltip>
-						<OnLoad>
-							if ${Script[goharvest].VariableScope.StrictLos}
-							{
-								UIElement[LOS@Harvest@GUITabs@GoHarvest]:SetChecked
-							}
-							else
-							{
-								UIElement[LOS@Harvest@GUITabs@GoHarvest]:UnsetChecked
-							}
-						</OnLoad>
+					<Commandbutton name='Avoid' Template='EQ2.Commandbutton'> 
+						<X>45%</X> 
+						<Y>30%</Y> 
+						<Width>45%</Width> 
+						<Height>25</Height>
+						<Text>Mark Avoid</Text>
 						<OnLeftClick>
-							if ${UIElement[LOS@Harvest@GUITabs@GoHarvest].Checked}
+							if ${Script[goharvest].VariableScope.Mapping}
 							{
-								Script[goharvest].VariableScope.StrictLos:Set[TRUE]
+								Echo Stopping mapping
+								Script[goharvest].VariableScope.Mapping:Set[FALSE]
+								UIElement[Avoid@Harvest@GUITabs@GoHarvest]:SetText[Mark Avoid]
 							}
 							else
 							{
-								Script[goharvest].VariableScope.StrictLos:Set[FALSE]
+								Echo Mapping
+								Script[goharvest].VariableScope.Mapping:Set[TRUE]
+								UIElement[Avoid@Harvest@GUITabs@GoHarvest]:SetText[Stop Marking]
 							}
 						</OnLeftClick>
-					</checkbox>
+						<AutoTooltip>
+							Mark area 2 x 2 as avoid
+						</AutoTooltip>
+					</Commandbutton>
 					<Commandbutton name='Start Harvesting' Template='EQ2.Commandbutton'> 
 						<X>20%</X> 
 						<Y>90%</Y> 
