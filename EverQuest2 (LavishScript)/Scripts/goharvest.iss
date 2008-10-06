@@ -3,6 +3,9 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/moveto.iss"
 #endif
 
+#ifndef _golavnav_
+	#include "${LavishScript.HomeDirectory}/Scripts/GoHarvest/golavnav.iss"
+#endif
 
 variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/GoHarvest/"
 
@@ -13,6 +16,7 @@ variable bool HarvestNode[9]=TRUE
 variable bool HBlocked[2]=FALSE
 variable bool pauseharvest=TRUE
 variable bool StrictLos=TRUE
+variable bool Mapping=FALSE
 
 variable GoHarvestBot GoHarvest
 variable int scan=150
@@ -23,9 +27,15 @@ variable collection:string BadNodes
 variable settingsetref harvest
 variable settingsetref harvesttype
 
+variable string World=${Zone.ShortName}
+variable filepath NavFile=${ConfigPath}${World}.xml
+variable string Region
+variable string Container
+
 function main()
 {
 	GoHarvest:Init
+	GoHarvest:InitMap
 	GoHarvest:InitTriggersAndEvents
 	GoHarvest:LoadUI
 	
@@ -35,6 +45,10 @@ function main()
 		{
 			ExecuteQueued
 			waitframe
+			If ${Mapping}
+			{
+				call AutoBox 2
+			}
 		}
 		while ${pauseharvest}
 		scan:Set[${UIElement[GoHarvest].FindChild[GUITabs].FindChild[Harvest].FindChild[ScanArea].Text}]
@@ -327,44 +341,62 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 						px:Inc[${Me.X}]
 						pz:Inc[${Me.Z}]
 					}
-					; check to see if mid-point is available
-					if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]}
-					{	
-						; check to see if there is LOS from that mid-loc to the node
-						if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} && ${Actor[${HID}](exists)}
+					
+					; make sure that mid-point isn't marked as 'bad'
+					
+					; check to make sure location hasn't been blocked by user
+					call FindClosestPoint ${px} ${Me.Y} ${pz} 
+											
+					; Universe = no area set to blocked
+					if ${Return.Equal[Universe]}
+					{
+						; check to see if mid-point is available
+						if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]}
+						{	
+							; check to see if there is LOS from that mid-loc to the node
+							if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} && ${Actor[${HID}](exists)}
+							{
+	
+								; check nobody at that node
+								call checkPC ${HID}
+								if ${Return}
+								{
+									return STUCK
+								}
+	
+								Echo Moving to ${CX},${CZ} via ${px},${pz}
+								call moveto ${px} ${pz} 2 0 3 1
+								waitframe
+								
+								; check still nobody at that node
+								call checkPC ${HID}
+								if ${Return}
+								{
+									return STUCK
+								}
+								if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
+								{
+								    	call moveto ${CX} ${CZ} 3 0 3 1
+								}
+								else
+								{
+									call moveto ${CX} ${CZ} 4 0 3 1
+								}
+								Return THERE
+							}
+						}
+						else
 						{
-
-							; check nobody at that node
-							call checkPC ${HID}
-							if ${Return}
+							; if setting for enforce Line Of Sight is ON then stop scanning along that line
+							if ${StrictLos}
 							{
-								return STUCK
+								; Route via that angle is blocked , stop checking along that line.
+								HBlocked[${cloop}]:Set[TRUE]
 							}
-
-							Echo Moving to ${CX},${CZ} via ${px},${pz}
-							call moveto ${px} ${pz} 2 0 3 1
-							waitframe
-							
-							; check still nobody at that node
-							call checkPC ${HID}
-							if ${Return}
-							{
-								return STUCK
-							}
-							if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
-							{
-							    	call moveto ${CX} ${CZ} 3 0 3 1
-							}
-							else
-							{
-								call moveto ${CX} ${CZ} 4 0 3 1
-							}
-							Return THERE
 						}
 					}
 					else
 					{
-						; if setting for enforce Line Of Sight is ON then stop scanning along that line
 						if ${StrictLos}
 						{
 							; Route via that angle is blocked , stop checking along that line.
@@ -445,6 +477,20 @@ objectdef GoHarvestBot
 
 		echo BadNodes now has ${BadNodes.Used} nodes in it.	    
 	}
+	method InitMap()
+	{
+		LavishNav:Clear
+		if ${ConfigPath.FileExists[${World}.xml]}
+			{
+				LavishNav.Tree:Import[${NavFile}]
+				echo Loaded ${NavFile} with ${LNavRegion[${World}].ChildCount} children
+			}
+			else
+			{
+				echo Creating New Zone
+				LavishNav.Tree:AddChild[universe,${World},-unique]
+			}
+	}
 }
 
 
@@ -505,6 +551,10 @@ atom atexit()
 	}
 	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${ConfigPath}GoHarvestUI.xml"
+	
+	call SavePaths
+	LNavRegion[${World}]:Remove
+
 }
 
 atom(script) EQ2_onIncomingText(string Text)
