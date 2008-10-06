@@ -271,246 +271,246 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
-	case Self_Buff
-		if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-		call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
-		break
-
-	case Clarity
-		if ${BuffPowerRegen}
-		{
+		case Self_Buff
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-		}
-		break
-
-	case Rune
-		if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			break
-		if ${BuffRune}
-		{
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-		}
-		else
-			Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-		break
-
-	case Aspect
-		if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
-			break
-		if ${BuffAspect}
-		{
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-		}
-		else
-			Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-		break
-
-	case MakePet
-		if ${Makepet} && ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3
-		{
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+	
+		case Clarity
+			if ${BuffPowerRegen}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-				wait 1
-				;; Shrink pets...
-				if ${Me.Ability["Shrink Servant"].IsReady}
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			break
+	
+		case Rune
+			if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
+				break
+			if ${BuffRune}
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			else
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			break
+	
+		case Aspect
+			if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
+				break
+			if ${BuffAspect}
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			else
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			break
+	
+		case MakePet
+			if ${Makepet} && ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				{
-					Me.Ability["Shrink Servant"]:Use
-					do
-					{
-						waitframe
-					}
-					while ${Me.CastingSpell}
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
 					wait 1
+					;; Shrink pets...
+					if ${Me.Ability["Shrink Servant"].IsReady}
+					{
+						Me.Ability["Shrink Servant"]:Use
+						do
+						{
+							waitframe
+						}
+						while ${Me.CastingSpell}
+						wait 1
+					}
 				}
 			}
-		}
-		break
-
-	case Melee_Buff
-		Counter:Set[1]
-		tempvar:Set[1]
-
-		;; If we have mythical, just cast on self since it is a group buff
-		if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]}) || (${Me.Inventory[Mirage Star](exists)} && ${Me.Inventory[Mirage Star].Tier.Equal[MYTHICAL]})
-		{
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 			break
-		}
-
-		;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
-		do
-		{
-			BuffMember:Set[]
-			;check if the maintained buff is of the spell type we are buffing
-			if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
+	
+		case Melee_Buff
+			Counter:Set[1]
+			tempvar:Set[1]
+	
+			;; If we have mythical, just cast on self since it is a group buff
+			if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]}) || (${Me.Inventory[Mirage Star](exists)} && ${Me.Inventory[Mirage Star].Tier.Equal[MYTHICAL]})
 			{
-				;iterate through the members to buff
-				if ${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+				break
+			}
+	
+			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
+			do
+			{
+				BuffMember:Set[]
+				;check if the maintained buff is of the spell type we are buffing
+				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
 				{
-					tempvar:Set[1]
-					do
+					;iterate through the members to buff
+					if ${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
-						BuffTarget:Set[${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
-						if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+						tempvar:Set[1]
+						do
 						{
-							BuffMember:Set[OK]
-							break
+							BuffTarget:Set[${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+							{
+								BuffMember:Set[OK]
+								break
+							}
+						}
+						while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						;we went through the buff collection and had no match for this maintaned target so cancel it
+						if !${BuffMember.Equal[OK]}
+						{
+							;we went through the buff collection and had no match for this maintaned target so cancel it
+							Me.Maintained[${Counter}]:Cancel
 						}
 					}
-					while ${tempvar:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
-					;we went through the buff collection and had no match for this maintaned target so cancel it
-					if !${BuffMember.Equal[OK]}
+					else
 					{
-						;we went through the buff collection and had no match for this maintaned target so cancel it
+						;our buff member collection is empty so this maintained target isnt in it
 						Me.Maintained[${Counter}]:Cancel
 					}
 				}
-				else
-				{
-					;our buff member collection is empty so this maintained target isnt in it
-					Me.Maintained[${Counter}]:Cancel
-				}
 			}
-		}
-		while ${Counter:Inc}<=${Me.CountMaintained}
-
-		Counter:Set[1]
-		;iterate through the to be buffed Selected Items and buff them
-		if ${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
-		{
+			while ${Counter:Inc}<=${Me.CountMaintained}
+	
+			Counter:Set[1]
+			;iterate through the to be buffed Selected Items and buff them
+			if ${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			{
+				do
+				{
+					BuffTarget:Set[${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+					{
+						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
+							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+					}
+				}
+				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+			}
+			break
+	
+		case Caster_Buff
+			Counter:Set[1]
+			tempvar:Set[1]
+	
+			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
 			{
-				BuffTarget:Set[${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-				if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+				BuffMember:Set[]
+				;check if the maintained buff is of the spell type we are buffing
+				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
 				{
-					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
-				}
-			}
-			while ${Counter:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
-		}
-		break
-
-	case Caster_Buff
-		Counter:Set[1]
-		tempvar:Set[1]
-
-		;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
-		do
-		{
-			BuffMember:Set[]
-			;check if the maintained buff is of the spell type we are buffing
-			if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
-			{
-				;iterate through the members to buff
-				if ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
-				{
-					tempvar:Set[1]
-					do
+					;iterate through the members to buff
+					if ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
-						BuffTarget:Set[${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
-						if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+						tempvar:Set[1]
+						do
 						{
-							BuffMember:Set[OK]
-							break
+							BuffTarget:Set[${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+							{
+								BuffMember:Set[OK]
+								break
+							}
+						}
+						while ${tempvar:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						;we went through the buff collection and had no match for this maintaned target so cancel it
+						if !${BuffMember.Equal[OK]}
+						{
+							;we went through the buff collection and had no match for this maintaned target so cancel it
+							Me.Maintained[${Counter}]:Cancel
 						}
 					}
-					while ${tempvar:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
-					;we went through the buff collection and had no match for this maintaned target so cancel it
-					if !${BuffMember.Equal[OK]}
+					else
 					{
-						;we went through the buff collection and had no match for this maintaned target so cancel it
+						;our buff member collection is empty so this maintained target isnt in it
 						Me.Maintained[${Counter}]:Cancel
 					}
 				}
-				else
-				{
-					;our buff member collection is empty so this maintained target isnt in it
-					Me.Maintained[${Counter}]:Cancel
-				}
 			}
-		}
-		while ${Counter:Inc}<=${Me.CountMaintained}
-
-		Counter:Set[1]
-		;iterate through the to be buffed Selected Items and buff them
-		if ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
-		{
-			do
+			while ${Counter:Inc}<=${Me.CountMaintained}
+	
+			Counter:Set[1]
+			;iterate through the to be buffed Selected Items and buff them
+			if ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
-				BuffTarget:Set[${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-				if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+				do
 				{
-					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+					BuffTarget:Set[${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+					{
+						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
+							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+					}
 				}
+				while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
-			while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
-		}
-		break
-
-	case AA_Time_Compression
-		BuffTarget:Set[${UIElement[cbBuffTime_Compression@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-		if ${BuffTarget.Equal["No one"]}
 			break
-		if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
-			Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-		{
-			if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+	
+		case AA_Time_Compression
+			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if ${BuffTarget.Equal["No one"]}
+				break
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			{
+				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			}
+			break
+	
+		case AA_Illusory_Arm
+			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if ${BuffTarget.Equal["No one"]}
+				break
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			{
+				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
-		}
-		break
-
-	case AA_Illusory_Arm
-		BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-		if ${BuffTarget.Equal["No one"]}
+			}
 			break
-		if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
-			Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-		{
-			if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
-			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
-		}
-		break
-
-	case AA_Empathic_Aura
-		if ${BuffEmpathicAura}
-		{
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+	
+		case AA_Empathic_Aura
+			if ${BuffEmpathicAura}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-				wait 5
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				{
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+					wait 5
+				}
 			}
-		}
-		break
-
-	case AA_Empathic_Soothing
-		if ${BuffEmpathicSoothing}
-		{
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			break
+	
+		case AA_Empathic_Soothing
+			if ${BuffEmpathicSoothing}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-				wait 5
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				{
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+					wait 5
+				}
 			}
-		}
-		break
-
-	case SummonImpOfRoBuff
-		if (${SummonImpOfRo})
-		{
-			if !${Me.Maintained["Summon: Imp of Ro"](exists)}
-				call CastSpell "Summon: Imp of Ro"
-		}
-		break
-	default
-		return BuffComplete
+			break
+	
+		case SummonImpOfRoBuff
+			if (${SummonImpOfRo})
+			{
+				if !${Me.Maintained["Summon: Imp of Ro"](exists)}
+					call CastSpell "Summon: Imp of Ro"
+			}
+			break
+		default
+			return BuffComplete
 	}
 }
 
@@ -690,7 +690,7 @@ function Combat_Routine(int xAction)
 
 	if !${UltraDPSMode}
 		call RefreshPower
-	elseif ${Me.ToActor.Power} < 20
+	elseif ${Me.ToActor.Power} <= 10
 		call RefreshPower
 
 	;; Add back later...(TODO)
@@ -1031,243 +1031,243 @@ function Combat_Routine(int xAction)
 	;echo "DEBUG:: Entering Switch (${Action[${xAction}]})"
 	switch ${Action[${xAction}]}
 	{
-	;; Straight Nukes
-	case Silence
-		;; This spell is just too slow to cast and typically does about 40 dps over an entire fight ..it is just not worth it.
-		;if !${DPSMode} && !${UltraDPSMode}
-		;{
-			if (${Me.Ability[${SpellType[260]}].IsReady})
-			{
-				call _CastSpellRange 260 0 0 0 ${KillTarget} 0 0 0 1
-				spellsused:Inc
-			}
-		;}
-		call VerifyTarget
-		if !${Return}
-			return CombatComplete
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	case NukeDaze
-		if (${Me.Ability[${SpellType[61]}].IsReady})
-		{
-			call _CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1
-			spellsused:Inc
-		}
-		call VerifyTarget
-		if !${Return}
-			return CombatComplete
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	;; Single Target DoTs
-	case MindDoT
-		;echo "DEBUG::  ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"
-		if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
-		{
-			;echo "DEBUG:: Health of Target: ${Actor[${KillTarget}].Health}
-			break
-		}
-		if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-		{
-			;;; For now, let's try casting this every time it's ready. More testing needed to see if this is
-			;;; detrimental to dps and/or power usage
-
-			;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+		;; Straight Nukes
+		case Silence
+			;; This spell is just too slow to cast and typically does about 40 dps over an entire fight ..it is just not worth it.
+			;if !${DPSMode} && !${UltraDPSMode}
 			;{
-				;echo "DEBUG:: Casting ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]})"
-				call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
-				spellsused:Inc
-				if (${Me.Ability[${SpellType[80]}].IsReady})
+				if (${Me.Ability[${SpellType[260]}].IsReady})
 				{
-					call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+					call _CastSpellRange 260 0 0 0 ${KillTarget} 0 0 0 1
 					spellsused:Inc
 				}
-				call VerifyTarget
-				if !${Return}
-					return CombatComplete
 			;}
-		}
-		;else
-			;   echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	;; Group Encounter DoTs
-	case Shower
-	case Ego
-		if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
+			call VerifyTarget
+			if !${Return}
+				return CombatComplete
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
 			break
-		if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-		{
-			;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-			;{
-				call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
-				spellsused:Inc
-			;}
-		}
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	case Master_Strike
-		if (${Me.Ability[${SpellType[60]}].IsReady})
-		{
-			call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-			spellsused:Inc
-		}
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
-			break
-		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-		;;;;;;;;;;
-		if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
-			break
-		;;;;;;;;;;;
-
-		call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-		if ${Return.Equal[OK]}
-		{
-			if ${Me.Ability["Master's Strike"].IsReady}
+	
+		case NukeDaze
+			if (${Me.Ability[${SpellType[61]}].IsReady})
 			{
-				Target ${KillTarget}
-				Me.Ability["Master's Strike"]:Use
-				do
-				{
-					waitframe
-				}
-				while ${Me.CastingSpell}
+				call _CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1
 				spellsused:Inc
-				wait 1
 			}
-		}
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	case Constructs
-		if ${UltraDPSMode}
-		{
-			;; Always set to one less than the index of the next ability you want to have run (it is incremented on the loop)
-			gRtnCtr:Set[11]
+			call VerifyTarget
+			if !${Return}
+				return CombatComplete
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
 			break
-		}
-		if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 30
+	
+		;; Single Target DoTs
+		case MindDoT
+			;echo "DEBUG::  ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"
+			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
+			{
+				;echo "DEBUG:: Health of Target: ${Actor[${KillTarget}].Health}
+				break
+			}
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				;;; For now, let's try casting this every time it's ready. More testing needed to see if this is
+				;;; detrimental to dps and/or power usage
+	
+				;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+				;{
+					;echo "DEBUG:: Casting ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]})"
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
+					spellsused:Inc
+					if (${Me.Ability[${SpellType[80]}].IsReady})
+					{
+						call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+						spellsused:Inc
+					}
+					call VerifyTarget
+					if !${Return}
+						return CombatComplete
+				;}
+			}
+			;else
+				;   echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
 			break
-		if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-		{
-			call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-		case AEStun
-		case Stun
-		if ${UltraDPSMode}
-		{
-			;; Always set to one less than the index of the next ability you want to have run (it is incremented on the loop)
-			gRtnCtr:Set[11]
+	
+		;; Group Encounter DoTs
+		case Shower
+		case Ego
+			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
+				break
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+				;{
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
+					spellsused:Inc
+				;}
+			}
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
 			break
-		}
-		if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
-			break
-		if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-		{
+	
+		case Master_Strike
+			if (${Me.Ability[${SpellType[60]}].IsReady})
+			{
+				call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+				spellsused:Inc
+			}
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
+			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
+				break
+			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+			;;;;;;;;;;
+			if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
+				break
+			;;;;;;;;;;;
+	
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
+			{
+				if ${Me.Ability["Master's Strike"].IsReady}
+				{
+					Target ${KillTarget}
+					Me.Ability["Master's Strike"]:Use
+					do
+					{
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					spellsused:Inc
+					wait 1
+				}
+			}
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
+			break
+	
+		case Constructs
+			if ${UltraDPSMode}
+			{
+				;; Always set to one less than the index of the next ability you want to have run (it is incremented on the loop)
+				gRtnCtr:Set[11]
+				break
+			}
+			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 30
+				break
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 				call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				spellsused:Inc
 			}
-		}
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	case Savante
-		if ${Me.ToActor.Power} > 50
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
 			break
-		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed}
-		{
+	
+			case AEStun
+			case Stun
+			if ${UltraDPSMode}
+			{
+				;; Always set to one less than the index of the next ability you want to have run (it is incremented on the loop)
+				gRtnCtr:Set[11]
+				break
+			}
+			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
+				break
+			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					spellsused:Inc
+				}
+			}
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
+			break
+	
+		case Savante
+			if ${Me.ToActor.Power} > 50
+				break
+			if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed}
+			{
+				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+				{
+					call _CastSpellRange ${SpellRange[${xAction},1]}
+					spellsused:Inc
+				}
+			}
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
+			break
+	
+		case Gaze
+			if ${Me.ToActor.Power} > 50
+			{
+				if ${spellsused} < 1 && !${MezzMode}
+				call CastSomething
+				return CombatComplete
+			}
+			if ${UltraDPSMode} && ${Actor[${KillTarget}].IsSolo}
+			{
+				if ${spellsused} < 1 && !${MezzMode}
+					call CastSomething
+				return CombatComplete
+			}
+			if ${DPSMode} && ${Actor[${KillTarget}].IsSolo}
+			{
+				if ${spellsused} < 1 && !${MezzMode}
+					call CastSomething
+				return CombatComplete
+			}
+			if ${Actor[${KillTarget}].IsSolo} && ${Me.Group} > 1
+			{
+				if ${spellsused} < 1 && !${MezzMode}
+					call CastSomething
+				return CombatComplete
+			}
+			elseif ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 70
+			{
+				if ${spellsused} < 1 && !${MezzMode}
+					call CastSomething
+				return CombatComplete
+			}
+			elseif ${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} < 50
+			{
+				if ${spellsused} < 1 && !${MezzMode}
+					call CastSomething
+				return CombatComplete
+			}
+			elseif ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health} < 15
+			{
+				if ${spellsused} < 1 && !${MezzMode}
+					call CastSomething
+				return CombatComplete
+			}
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
 				call _CastSpellRange ${SpellRange[${xAction},1]}
 				spellsused:Inc
 			}
-		}
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	case Gaze
-		if ${Me.ToActor.Power} > 50
-		{
-			if ${spellsused} < 1 && !${MezzMode}
-			call CastSomething
-			return CombatComplete
-		}
-		if ${UltraDPSMode} && ${Actor[${KillTarget}].IsSolo}
-		{
-			if ${spellsused} < 1 && !${MezzMode}
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
+			break
+	
+		default
+			if (${Me.Ability[${SpellType[60]}].IsReady})
+			{
+				call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+				spellsused:Inc
+			}
+			if (${spellsused} < 1) && !${MezzMode}
 				call CastSomething
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets
 			return CombatComplete
-		}
-		if ${DPSMode} && ${Actor[${KillTarget}].IsSolo}
-		{
-			if ${spellsused} < 1 && !${MezzMode}
-				call CastSomething
-			return CombatComplete
-		}
-		if ${Actor[${KillTarget}].IsSolo} && ${Me.Group} > 1
-		{
-			if ${spellsused} < 1 && !${MezzMode}
-				call CastSomething
-			return CombatComplete
-		}
-		elseif ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 70
-		{
-			if ${spellsused} < 1 && !${MezzMode}
-				call CastSomething
-			return CombatComplete
-		}
-		elseif ${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} < 50
-		{
-			if ${spellsused} < 1 && !${MezzMode}
-				call CastSomething
-			return CombatComplete
-		}
-		elseif ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health} < 15
-		{
-			if ${spellsused} < 1 && !${MezzMode}
-				call CastSomething
-			return CombatComplete
-		}
-		if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-		{
-			call _CastSpellRange ${SpellRange[${xAction},1]}
-			spellsused:Inc
-		}
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		break
-
-	default
-		if (${Me.Ability[${SpellType[60]}].IsReady})
-		{
-			call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-			spellsused:Inc
-		}
-		if (${spellsused} < 1) && !${MezzMode}
-			call CastSomething
-		ExecuteQueued Mezmerise_Targets
-		FlushQueued Mezmerise_Targets
-		return CombatComplete
 	}
 
 	if !${MezzMode}
