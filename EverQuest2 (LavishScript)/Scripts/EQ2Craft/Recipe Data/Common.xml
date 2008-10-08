@@ -114,4 +114,9 @@
 		<Setting Name="hidebound pelt">Hidebound Leather</Setting>
 		<Setting Name="Mantrap">mantrap</Setting>
 	</Set>
+  <Set Name="Wholesalers">
+    <Setting Name="Wholesaler"></Setting>
+    <Setting Name="Fuel Merchant>"></Setting>
+    
+  </Set>
 </InnerSpaceSettings>
