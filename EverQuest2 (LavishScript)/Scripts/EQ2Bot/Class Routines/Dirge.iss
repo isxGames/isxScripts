@@ -46,7 +46,8 @@ function Class_Declaration()
 	declare AoEMode bool script 0
 	declare BowAttacksMode bool script 0
 	declare RangedAttackMode bool script 0
-	declare AnnounceMode bool script 0
+	declare AnnounceMode bool script 1
+	declare MagNoteMode bool script 1
 
 	declare BuffParry bool script FALSE
 	declare BuffPower bool script FALSE
@@ -70,8 +71,9 @@ function Class_Declaration()
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	BowAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Bow Attack Spells,FALSE]}]
 	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
-	AnnounceMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Announce Cacophony,FALSE]}]
+	AnnounceMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Announce Cacophony,TRUE]}]
 	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
+	MagNoteMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MagNoteMode,TRUE]}]
 
 	BuffParry:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Parry","FALSE"]}]
 	BuffPower:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Power","FALSE"]}]
@@ -380,7 +382,8 @@ function Combat_Routine(int xAction)
 
 	call ActionChecks
 
-	call DoMagneticNote
+	if ${MagNoteMode}
+		call DoMagneticNote
 
 	if ${DebuffMode}
 	{
@@ -404,10 +407,9 @@ function Combat_Routine(int xAction)
 	;Always use Cacophony of Blades if available.
 	if ${Me.Ability[${SpellType[155]}].IsReady}
 	{
-		call CastSpellRange 155
-		wait 0.5
 		if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
 			eq2execute /gsay Caco of Blades is up!
+		call CastSpellRange 155
 	}
 
 	if ${RangedAttackMode}
@@ -422,7 +424,10 @@ function Combat_Routine(int xAction)
 		}
 	}
 	elseif ${Actor[${KillTarget}].Distance}>6
-		call CheckPosition 1 1
+		call CheckPosition 1 1 ${KillTarget} 0 1
+
+	if ${DoHOs}
+		objHeroicOp:DoHO
 
 	switch ${Action[${xAction}]}
 	{
@@ -432,6 +437,7 @@ function Combat_Routine(int xAction)
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 				call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
+				wait 30 ${EQ2.HOWindowActive}
 				if !${EQ2.HOName.Equal[Bravo's Dance]}
 				{
 					if ${Me.Ability[${SpellType[180]}].IsReady}
@@ -442,6 +448,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},3]} 0 1 0 ${KillTarget}
 			}
 			break
+		case Stealth_Attack
 		case ScreamOfDeath
 			if !${RangedAttackMode} && ${Me.Ability[Shroud].IsReady} && ${Me.Ability[Scream of Death].IsReady} && !${MainTank}
 			{
@@ -450,24 +457,7 @@ function Combat_Routine(int xAction)
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
 
 				;if we didnt bardAA "Bump" into stealth use normal stealth
-				if ${Me.ToActor.Effect[Shroud](exists)}
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
-				else
-				{
-					call CastSpellRange 200
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
-				}
-			}
-			break
-		case Stealth_Attack
-			if ${OffenseMode} && !${MainTank} && !${RangedAttackMode}
-			{
-				;check if we have the bump AA and use it to stealth us
-				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-
-				;if we didnt bardAA "Bump" into stealth use normal stealth
-				if ${Me.ToActor.Effect[Shroud](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},2]}]}].IsReady}
+				if ${Me.ToActor.IsInvis}
 					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
 				else
 				{
@@ -498,12 +488,7 @@ function Combat_Routine(int xAction)
 		case AAHarmonizingShot
 		case Jael
 			if ${BowAttacksMode}
-			{
-				if ${Target.Distance}>25
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
-				else
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
 			break
 		case AARhythm_Blade
 		case Grievance
@@ -534,9 +519,6 @@ function Combat_Routine(int xAction)
 			return CombatComplete
 			break
 	}
-
-	if ${DoHOs}
-		objHeroicOp:DoHO
 
 }
 
