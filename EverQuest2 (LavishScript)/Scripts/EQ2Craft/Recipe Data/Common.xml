@@ -116,7 +116,8 @@
 	</Set>
   <Set Name="Wholesalers">
     <Setting Name="Wholesaler"></Setting>
-    <Setting Name="Fuel Merchant>"></Setting>
-    
+    <Setting Name="Fuel Merchant"></Setting>
+    <Setting Name="Guild Fuel Merchant"></Setting>
+
   </Set>
 </InnerSpaceSettings>

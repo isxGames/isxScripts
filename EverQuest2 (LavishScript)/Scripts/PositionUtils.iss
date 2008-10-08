@@ -52,7 +52,6 @@ objectdef EQ2Position
 		}
 		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
 		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
-		echo DEBUG: X ${RetVal.X} Y ${RetVal.Y} Z ${RetVal.Z}
 		return ${RetVal.X} ${RetVal.Y} ${RetVal.Z}
 	}
 	
