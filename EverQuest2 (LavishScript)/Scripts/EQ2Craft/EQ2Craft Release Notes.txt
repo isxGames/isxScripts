@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.43 - Added basic Guild Hall crafting functionality - Rush Order and Work Order NPCs,
+        Work Order Clipboard, and Guild Fuel Merchant recognition.
+
 v8.42 - Added code to account for "Pristine Tailored XXX" recipes in writ recipe names.
       - Removed writ desk facing code. Looked way too botty.
       - Tweaks to movement code should make pathing better.

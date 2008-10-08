@@ -52,7 +52,8 @@ objectdef EQ2Position
 		}
 		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
 		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
-		return ${RetVal}
+		echo DEBUG: X ${RetVal.X} Y ${RetVal.Y} Z ${RetVal.Z}
+		return ${RetVal.X} ${RetVal.Y} ${RetVal.Z}
 	}
 	
 	; and this member will return a point in 3d space at any angle of attack from the
@@ -70,7 +71,7 @@ objectdef EQ2Position
 		RetVal.X:Inc[${Velocity.X}*${Seconds}]
 		RetVal.Y:Inc[${Velocity.Y}*${Seconds}]
 		RetVal.Z:Inc[${Velocity.Z}*${Seconds}]
-		return ${RetVal}
+		return ${RetVal.X} ${RetVal.Y} ${RetVal.Z}
 	}
 
 	member:float GetBaseMaxRange(uint ActorID)
