@@ -33,7 +33,7 @@
 	<Window Name='EQ2Inventory' template='My.window'>
 	<X>50</X>
 	<Y>100</Y>
-	<Width>490</Width>
+	<Width>540</Width>
 	<Height>500</Height>
 	<Client Template='EQ2.Window.Client'>
 		<Y>20</Y>
@@ -61,11 +61,21 @@
 		</Children>
 	</TitleBar>
 	<Children>
-		<Tabcontrol Name='GUITabs' Template='EQ2.Tabcontrol'>
-			<X>1%</X>
+		<Text name='StatusText' Template='EQ2.text'>
+			<X>15</X>
 			<Y>1%</Y>
-			<Height>98%</Height>
-			<Width>98%</Width>
+			<Width>485</Width>
+			<Height>20</Height>
+			<Alignment>Left</Alignment>
+			<Font>
+				<Color>FF11CCFF</Color>
+			</Font>
+		</Text>
+		<Tabcontrol Name='GUITabs' Template='EQ2.Tabcontrol'>
+			<X>1</X>
+			<Y>5</Y>
+			<Height>99%</Height>
+			<Width>100%</Width>
 			<Tabs>
 				<Tab Name='EQ2Broker'>
 					<CommandButton Name='Place Items' Template='EQ2.Button'>
@@ -308,9 +318,9 @@
 					</OnLeftClick>
     		</checkbox>    		
     		<listbox Name='ItemList' Template='EQ2.listbox'>
-					<X>130</X>
+					<X>140</X>
 					<Y>15</Y>
-					<Width>350</Width>
+					<Width>390</Width>
 					<Height>420</Height>
 					<Font>
 						<Name>Times New Roman</Name>
@@ -2299,9 +2309,9 @@
 					<Command>Script[eq2inventory]:QueueCommand[call DestroyItems]</Command>
 				</CommandButton>
 				<listbox Name='SellItemList' Template='EQ2.listbox'>
-					<X>130</X>
+					<X>140</X>
 					<Y>15</Y>
-					<Width>350</Width>
+					<Width>390</Width>
 					<Height>420</Height>
 					<Font>
 						<Name>Times New Roman</Name>
@@ -2326,6 +2336,42 @@
 					</AutoTooltip>
 				</Commandbutton>
 			</Tab>	
+			<Tab Name='EQ2Depot'>
+    		<CommandButton Name='PlaceInDepot' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>25</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Place Depot Items</Text>
+					<AutoTooltip>Places Items in Harvest Depot</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddToDepot]</Command>
+				</CommandButton>
+    		<listbox Name='DepotItemList' Template='EQ2.listbox'>
+					<X>140</X>
+					<Y>15</Y>
+					<Width>390</Width>
+					<Height>420</Height>
+					<Font>
+						<Name>Times New Roman</Name>
+						<Size>19</Size>
+					</Font>
+					<SelectMultiple>0</SelectMultiple>
+					<Sort></Sort>
+				</listbox>
+				<Commandbutton name='Clearlog' Template='EQ2.Commandbutton'> 
+					<X>340</X> 
+					<Y>440</Y> 
+					<Width>100</Width> 
+					<Height>15</Height>
+					<Text>Clear Log</Text>
+					<OnLeftClick>
+						UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
+					</OnLeftClick>
+					<AutoTooltip>
+						Clear Log
+					</AutoTooltip>
+				</Commandbutton>
+			</Tab>		
 			<Tab Name='Add Items'>
     		<CommandButton Name='Inventory List' Template='EQ2.Button'>
 					<X>10</X>
@@ -2386,10 +2432,19 @@
 					<AutoTooltip>Adds The selected Item to the Custom List</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddCustom]</Command>
 				</CommandButton>
+				<CommandButton Name='Depot Items Add' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>250</Y>
+					<Width>110</Width>
+					<Height>35</Height>
+					<Text>Add Depot Item</Text>
+					<AutoTooltip>Adds The selected Item to the Supply Depot List</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddDepot]</Command>
+				</CommandButton>
     		<listbox Name='AddItemList' Template='EQ2.listbox'>
-					<X>130</X>
+					<X>140</X>
 					<Y>15</Y>
-					<Width>350</Width>
+					<Width>390</Width>
 					<Height>420</Height>
 					<Font>
 						<Name>Times New Roman</Name>
@@ -2422,7 +2477,7 @@
 			</Tab>	
 			<Tab Name='Remove Items'>
     		<CommandButton Name='Vendor Items List' Template='EQ2.Button'>
-					<X>5</X>
+					<X>10</X>
 					<Y>25</Y>
 					<Width>115</Width>
 					<Height>35</Height>
@@ -2431,7 +2486,7 @@
 					<Command>Script[eq2inventory]:QueueCommand[call JunkList]</Command>
 				</CommandButton>
 				<CommandButton Name='Vendor Items Remove' Template='EQ2.Button'>
-					<X>5</X>
+					<X>10</X>
 					<Y>65</Y>
 					<Width>115</Width>
 					<Height>35</Height>
@@ -2440,8 +2495,8 @@
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveJunk]</Command>
 				</CommandButton>
 				<CommandButton Name='Destroy Items List' Template='EQ2.Button'>
-					<X>5</X>
-					<Y>130</Y>
+					<X>10</X>
+					<Y>125</Y>
 					<Width>115</Width>
 					<Height>35</Height>
 					<Text>Destroy List</Text>
@@ -2449,8 +2504,8 @@
 					<Command>Script[eq2inventory]:QueueCommand[call DestroyList]</Command>
 				</CommandButton>
 				<CommandButton Name='Destroy Items Remove' Template='EQ2.Button'>
-					<X>5</X>
-					<Y>170</Y>
+					<X>10</X>
+					<Y>165</Y>
 					<Width>115</Width>
 					<Height>35</Height>
 					<Text>Remove Destroy Item</Text>
@@ -2458,8 +2513,8 @@
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveDestroy]</Command>
 				</CommandButton> 
 				<CommandButton Name='Custom Items List' Template='EQ2.Button'>
-					<X>5</X>
-					<Y>235</Y>
+					<X>10</X>
+					<Y>225</Y>
 					<Width>115</Width>
 					<Height>35</Height>
 					<Text>Custom List</Text>
@@ -2467,18 +2522,36 @@
 					<Command>Script[eq2inventory]:QueueCommand[call CustomList]</Command>
 				</CommandButton>
 				<CommandButton Name='Custom Items Remove' Template='EQ2.Button'>
-					<X>5</X>
-					<Y>275</Y>
+					<X>10</X>
+					<Y>265</Y>
 					<Width>115</Width>
 					<Height>35</Height>
 					<Text>Remove Custom Item</Text>
 					<AutoTooltip>Removes The selected Item from the Custom Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveCustom]</Command>
-				</CommandButton>   		
+				</CommandButton> 
+				<CommandButton Name='Depot Items List' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>325</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Depot List</Text>
+					<AutoTooltip>Outputs the Depot List to Log Window</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call DepotList]</Command>
+				</CommandButton> 
+				<CommandButton Name='Depot Items Remove' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>365</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Remove Depot Item</Text>
+					<AutoTooltip>Removes The selected Item from the Sepot Item List.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveDepot]</Command>
+				</CommandButton> 		
     		<listbox Name='RemoveItemList' Template='EQ2.listbox'>
-					<X>130</X>
+					<X>140</X>
 					<Y>15</Y>
-					<Width>350</Width>
+					<Width>390</Width>
 					<Height>420</Height>
 					<Font>
 						<Name>Times New Roman</Name>
