@@ -2,6 +2,9 @@ Revision History ||
 ===================
 v8.43 - Added basic Guild Hall crafting functionality - Rush Order and Work Order NPCs,
         Work Order Clipboard, and Guild Fuel Merchant recognition.
+      - Added code that will cause the script to utilize the harvest depot while in a guild hall
+        as well as other optimizations dealing with available resources when the script first starts
+      - Buying from the broker should be faster now
 
 v8.42 - Added code to account for "Pristine Tailored XXX" recipes in writ recipe names.
       - Removed writ desk facing code. Looked way too botty.
