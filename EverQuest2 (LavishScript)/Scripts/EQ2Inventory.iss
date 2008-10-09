@@ -74,9 +74,9 @@ function PlaceItems()
 	wait 5
 	Target:DoubleClick
 	wait 5
-	eq2execute /togglebags
+	press b
 	wait 5
-	eq2execute /togglebags
+	press b
 
 	call CheckFocus
 
@@ -1375,6 +1375,35 @@ function SellAdeptI()
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
 
+function AddToDepot()
+{
+	variable int KeyNum=1
+	wait 5
+	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 5
+	call AddDepotLog "**Adding Items to Supply Depot**" FFFF00FF
+	wait 5
+	Do
+	{
+		Do
+		{
+			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
+	  	{
+	  		call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
+	  		Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
+				wait ${Math.Rand[30]:Inc[20]}
+			}
+		}
+		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)}
+	}
+	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Keys}
+	call AddDepotLog "**Items Added to Supply Depot**" FFFF00FF
+}
+
+				
+
+
 function JunkList()
 {
 	variable int KeyNum=1
@@ -1412,6 +1441,19 @@ function CustomList()
 	  	call AddRemoveList "${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${KeyNum}]}"
 	}
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Keys}
+}
+
+function DepotList()
+{
+	variable int KeyNum=1
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
+	wait 5
+	call AddRemoveList "*******Depot Item List*******" FFFF00FF
+	Do
+	{
+	  	call AddRemoveList "${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}"
+	}
+	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Keys}
 }
 
 function DeleteMeat()
@@ -1464,6 +1506,15 @@ function AddCustom()
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
+function AddDepot()
+{
+	SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	wait 5
+	SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml]:Save
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+}
+
 function RemoveJunk()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
@@ -1486,6 +1537,15 @@ function RemoveCustom()
 	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml]:Save
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+}
+
+function RemoveDepot()
+{
+	SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys]:UnSet[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]
+	wait 5
+	SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml]:Save
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
@@ -1525,6 +1585,11 @@ function AddSellLog(string textline, string colour)
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
 }
 
+function AddDepotLog(string textline, string colour)
+{
+	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
+}
 function AddInvList(string textline, string colour)
 {
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
