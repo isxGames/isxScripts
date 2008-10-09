@@ -1,5 +1,12 @@
 Revision History ||
 ===================
+v8.5  - Buying from the broker should be even faster now
+      - Lots of little bugs fixed
+      - Added UI option to "disable guild events while doing writs" (it will properly restore
+        your setting after finishing with writs and will ONLY disable during writs, not regular
+        recipes.)
+      - Craft will now shut down if you start to camp out of the game
+
 v8.43 - Added basic Guild Hall crafting functionality - Rush Order and Work Order NPCs,
         Work Order Clipboard, and Guild Fuel Merchant recognition.
       - Added code that will cause the script to utilize the harvest depot while in a guild hall
