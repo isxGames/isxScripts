@@ -1493,9 +1493,6 @@ function EQ2Hirelings()
 	variable int RunTime
 	variable int TripCount
 	
-	GathererTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererTierNumber]}]
-	HunterTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterTierNumber]}]
-	MinerTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerTierNumber]}]
 	RunTime:Set[${Time.Timestamp}]
 	wait 5
 	RunHirelings:Set[1]
@@ -1505,6 +1502,10 @@ function EQ2Hirelings()
 	wait 5
 	do
 	{
+		GathererTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererTierNumber]}]
+		HunterTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterTierNumber]}]
+		MinerTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerTierNumber]}]
+	
 		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			Actor[guild,"Guild Gatherer"]:DoTarget
@@ -1582,6 +1583,7 @@ function EQ2Hirelings()
 		TripCount:Inc
 		wait 5
 		UIElement[TripText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${TripCount}]
+		
 		if ${UIElement[UseHarvestDepot@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Adding Items to Supply Depot.]
