@@ -2371,6 +2371,273 @@
 						Clear Log
 					</AutoTooltip>
 				</Commandbutton>
+			</Tab>
+			<Tab Name='EQ2Hirelings'>	
+				<CommandButton Name='StartHirelings' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>10</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Start Hireling Bot</Text>
+					<AutoTooltip>Starts Hirelings Bot</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call EQ2Hirelings]</Command>
+				</CommandButton>
+				<CommandButton Name='StopHirelings' Template='EQ2.Button'>
+					<X>130</X>
+					<Y>10</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop Hireling Bot</Text>
+					<AutoTooltip>Stops Hirelings Bot</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunHirelings]:Set[0]</Command>
+				</CommandButton>
+				<Text Name='Status Text' Template='EQ2.text'>
+					<X>10</X>
+					<Y>70</Y>
+					<Width>40</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Status:</Text>
+				</Text>
+				<Text Name='StatusText' Template='EQ2.text'>
+					<X>55</X>
+					<Y>70</Y>
+					<Width>90%</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text></Text>
+				</Text>
+				<Text Name='Trip Text' Template='EQ2.text'>
+					<X>270</X>
+					<Y>70</Y>
+					<Width>80</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Trips Made:</Text>
+				</Text>
+				<Text Name='TripText' Template='EQ2.text'>
+					<X>345</X>
+					<Y>70</Y>
+					<Width>90%</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>0</Text>
+				</Text>
+				<checkbox Name='GathererHireling' Template='EQ2.checkbox'>
+					<X>10</X>
+  				<Y>95</Y>
+			  	<Width>60</Width>
+					<Height>20</Height>
+  				<Text>Gatherer Hireling</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererHireling,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[GathererHireling,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[GathererHireling,0]:Save								
+								}
+					</OnLeftClick>
+				</checkbox>	
+				<Text Name='GathererTierText' Template='EQ2.Text'>
+					<X>135</X>
+					<Y>98</Y>
+					<Width>30</Width> 
+					<Height>20</Height>
+					<Text>Tier:</Text>
+				</Text>
+    		<combobox name='GathererTierNumber' Template='EQ2.Combobox'>
+          <x>165</x>
+          <y>95</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+               <Item Value='7'>7</Item>
+               <Item Value='8'>8</Item>
+          </items>
+          <OnSelect>
+               	SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[GathererTierNumber,${This.SelectedItem.ID}]:Save  
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererTierNumber]}]:Select
+          </OnLoad>
+     		</combobox>	
+			<checkbox Name='HunterHireling' Template='EQ2.checkbox'>
+				<X>10</X>
+  			<Y>117</Y>
+			  <Width>60</Width>
+				<Height>20</Height>
+  			<Text>Hunter Hireling</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterHireling,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[HunterHireling,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[HunterHireling,0]:Save								
+								}
+					</OnLeftClick>
+				</checkbox>	
+				<Text Name='HunterTierText' Template='EQ2.Text'>
+					<X>135</X>
+					<Y>120</Y>
+					<Width>30</Width> 
+					<Height>20</Height>
+					<Text>Tier:</Text>
+				</Text>
+    		<combobox name='HunterTierNumber' Template='EQ2.Combobox'>
+          <x>165</x>
+          <y>117</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+               <Item Value='7'>7</Item>
+               <Item Value='8'>8</Item>
+          </items>
+          <OnSelect>
+               	SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[HunterTierNumber,${This.SelectedItem.ID}]:Save  
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterTierNumber]}]:Select
+          </OnLoad>
+     		</combobox>	
+			<checkbox Name='MinerHireling' Template='EQ2.checkbox'>
+				<X>10</X>
+  			<Y>140</Y>
+			  <Width>60</Width>
+				<Height>20</Height>
+  			<Text>Miner Hireling</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerHireling,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[MinerHireling,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[MinerHireling,0]:Save								
+								}
+					</OnLeftClick>
+				</checkbox>	
+				<Text Name='MinerTierText' Template='EQ2.Text'>
+					<X>135</X>
+					<Y>143</Y>
+					<Width>30</Width> 
+					<Height>20</Height>
+					<Text>Tier:</Text>
+				</Text>
+    		<combobox name='MinerTierNumber' Template='EQ2.Combobox'>
+          <x>165</x>
+          <y>140</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+               <Item Value='7'>7</Item>
+               <Item Value='8'>8</Item>
+          </items>
+          <OnSelect>
+               	SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[MinerTierNumber,${This.SelectedItem.ID}]:Save  
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerTierNumber]}]:Select
+          </OnLoad>
+     		</combobox>	
+			<Text Name='Waittime' Template='EQ2.text'>
+				<X>15</X>
+				<Y>165</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text>Wait Time:</Text>
+			</Text>
+			<Text Name='WaittimeText' Template='EQ2.text'>
+				<X>80</X>
+				<Y>165</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text></Text>
+			</Text>
+			<Text Name='Runtime' Template='EQ2.text'>
+				<X>15</X>
+				<Y>185</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text>Runtime:</Text>
+			</Text>
+			<Text Name='RuntimeText' Template='EQ2.text'>
+				<X>70</X>
+				<Y>185</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text></text>
+			</Text>
+			<checkbox Name='UseHarvestDepot' Template='EQ2.checkbox'>
+				<X>10</X>
+  			<Y>205</Y>
+			  <Width>90%</Width>
+				<Height>20</Height>
+  			<Text>Place Items in Supply Depot after Retrevial.</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[UseHarvestDepot,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[UseHarvestDepot,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[UseHarvestDepot,0]:Save								
+								}
+					</OnLeftClick>
+				</checkbox>	
 			</Tab>		
 			<Tab Name='Add Items'>
     		<CommandButton Name='Inventory List' Template='EQ2.Button'>

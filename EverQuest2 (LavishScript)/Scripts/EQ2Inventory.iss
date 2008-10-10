@@ -23,6 +23,7 @@ variable string ItemType
 variable string NameFilter1
 variable string NameFilter2
 variable string NameFilter3
+variable int RunHirelings
 ;================================
 
 
@@ -52,6 +53,9 @@ function main()
   FertBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}]
   StatBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}]
   CustBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}]
+	
+	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
+	wait 5
 	
   while 1
   {
@@ -1388,7 +1392,7 @@ function AddToDepot()
 	{
 		Do
 		{
-			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
+			if ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
 	  	{
 	  		call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
 	  		Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
@@ -1479,6 +1483,119 @@ function DeleteMeat()
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/DeleteMeats.xml].Set[Meats].Keys}
 }
 
+function EQ2Hirelings()
+{
+	variable int GathererTier
+	variable int HunterTier
+	variable int MinerTier
+	variable int StartTime
+	variable int StopTime
+	variable int RunTime
+	variable int TripCount
+	
+	GathererTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererTierNumber]}]
+	HunterTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterTierNumber]}]
+	MinerTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerTierNumber]}]
+	RunTime:Set[${Time.Timestamp}]
+	wait 5
+	RunHirelings:Set[1]
+	TripCount:Set[0]
+	wait 5
+	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Sending Hirelings to Harvest.]
+	wait 5
+	do
+	{
+		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
+		{
+			Actor[guild,"Guild Gatherer"]:DoTarget
+			wait 5
+			Actor[guild,"Guild Gatherer"]:DoubleClick
+			wait 5
+			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${GathererTier}]:LeftClick
+			wait 10
+		}
+		if ${UIElement[HunterHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
+		{
+			Actor[guild,"Guild Hunter"]:DoTarget
+			wait 5
+			Actor[guild,"Guild Hunter"]:DoubleClick
+			wait 5
+			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${HunterTier}]:LeftClick
+			wait 10
+		}
+		if ${UIElement[MinerHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
+		{
+			Actor[guild,"Guild Miner"]:DoTarget
+			wait 5
+			Actor[guild,"Guild Miner"]:DoubleClick
+			wait 5
+			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${MinerTier}]:LeftClick
+			wait 10
+		}
+		StartTime:Set[${Time.Timestamp}]
+		wait 10
+		StopTime:Set[${Math.Calc64[${StartTime}+7260]}]
+		wait 5
+		UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Waiting for Hirelings to Return.]
+		wait 5
+		do
+		{
+			UIElement[RuntimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${Math.Calc[(${Time.Timestamp}-${RunTime})/60].Precision[2]} min.]
+		 	UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${Math.Calc[(${StopTime}-${Time.Timestamp})/60].Precision[2]} min.]
+		}
+		while ${Math.Calc64[(${StopTime}-${Time.Timestamp}]} > 0 && ${RunHirelings} == 1
+		
+		if ${RunHirelings} == 0
+		{
+			UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
+			wait 5
+			Return
+		}
+		
+		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
+		{
+			Actor[guild,"Guild Gatherer"]:DoTarget
+			wait 5
+			Actor[guild,"Guild Gatherer"]:DoubleClick
+			wait 5
+			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+			wait 5
+		}
+		if ${UIElement[HunterHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
+		{
+			Actor[guild,"Guild Hunter"]:DoTarget
+			wait 5
+			Actor[guild,"Guild Hunter"]:DoubleClick
+			wait 5
+			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+			wait 5
+		}
+		if ${UIElement[MinerHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
+		{
+			Actor[guild,"Guild Miner"]:DoTarget
+			wait 5
+			Actor[guild,"Guild Miner"]:DoubleClick
+			wait 5
+			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+			wait 5
+		}
+		TripCount:Inc
+		wait 5
+		UIElement[TripText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${TripCount}]
+		if ${UIElement[UseHarvestDepot@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
+		{
+			UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Adding Items to Supply Depot.]
+			wait 5
+			call AddToDepot
+		}
+		UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Sending Hirelings to Harvest.]
+		wait 5
+	}
+	while ${RunHirelings} == 1
+	wait 5
+	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
+}
+
 function AddJunk()
 {
 	SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
@@ -1508,7 +1625,7 @@ function AddCustom()
 
 function AddDepot()
 {
-	SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys]:Set[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Save]
 	wait 5
 	SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml]:Save
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
