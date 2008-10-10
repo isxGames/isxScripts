@@ -49,7 +49,7 @@ function main(... Args)
 
     ;; defaults (Save to config file?)
     SaveAsLSO:Set[FALSE]
-    RegionCreationType:Set["Sphere"]
+    RegionCreationType:Set["Box"]
     SphereRadius:Set[3]
     
 	Script:Squelch
