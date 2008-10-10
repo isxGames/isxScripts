@@ -2436,7 +2436,7 @@
 								}
 					</OnLoad>
 					<OnLeftClick>
-						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+						if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 								{
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[GathererHireling,1]:Save										
 								}
@@ -2488,7 +2488,7 @@
 								}
 					</OnLoad>
 					<OnLeftClick>
-						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+						if ${UIElement[HunterHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 								{
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[HunterHireling,1]:Save										
 								}
@@ -2540,7 +2540,7 @@
 								}
 					</OnLoad>
 					<OnLeftClick>
-						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+						if ${UIElement[MinerHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 								{
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[MinerHireling,1]:Save										
 								}
@@ -2628,7 +2628,7 @@
 								}
 					</OnLoad>
 					<OnLeftClick>
-						if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+						if ${UIElement[UseHarvestDepot@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 								{
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings]:Set[UseHarvestDepot,1]:Save										
 								}
