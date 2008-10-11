@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.51 - Craft will now move you to within 3m of tradeskill desks in a guildhall
+      - New option added: "disable guild notifications entirely (while crafting)"
+      
 v8.5  - Buying from the broker should be even faster now
       - Lots of little bugs fixed
       - Added UI option to "disable guild events while doing writs" (it will properly restore
