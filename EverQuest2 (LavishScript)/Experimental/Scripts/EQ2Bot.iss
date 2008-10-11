@@ -231,7 +231,7 @@ variable int PathType
 #endif
 
 #ifndef _PositionUtils_
-	#include "${LavishScript.HomeDirectory}/Scripts/PosutionUtils.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/PositionUtils.iss"
 #endif
 
 function main()
