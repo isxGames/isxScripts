@@ -1392,10 +1392,10 @@ function AddToDepot()
 	{
 		Do
 		{
-			if ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
+			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
 	  	{
 	  		call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
-	  		Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
+	  		Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 		}
@@ -1509,27 +1509,27 @@ function EQ2Hirelings()
 		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			Actor[guild,"Guild Gatherer"]:DoTarget
-			wait 5
+			wait 10
 			Actor[guild,"Guild Gatherer"]:DoubleClick
-			wait 5
+			wait 25
 			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${GathererTier}]:LeftClick
 			wait 10
 		}
 		if ${UIElement[HunterHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			Actor[guild,"Guild Hunter"]:DoTarget
-			wait 5
+			wait 10
 			Actor[guild,"Guild Hunter"]:DoubleClick
-			wait 5
+			wait 25
 			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${HunterTier}]:LeftClick
 			wait 10
 		}
 		if ${UIElement[MinerHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			Actor[guild,"Guild Miner"]:DoTarget
-			wait 5
+			wait 10
 			Actor[guild,"Guild Miner"]:DoubleClick
-			wait 5
+			wait 25
 			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${MinerTier}]:LeftClick
 			wait 10
 		}
@@ -1556,29 +1556,29 @@ function EQ2Hirelings()
 		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			Actor[guild,"Guild Gatherer"]:DoTarget
-			wait 5
+			wait 10
 			Actor[guild,"Guild Gatherer"]:DoubleClick
-			wait 5
+			wait 25
 			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
-			wait 5
+			wait 10
 		}
 		if ${UIElement[HunterHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			Actor[guild,"Guild Hunter"]:DoTarget
-			wait 5
+			wait 10
 			Actor[guild,"Guild Hunter"]:DoubleClick
-			wait 5
+			wait 25
 			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
-			wait 5
+			wait 10
 		}
 		if ${UIElement[MinerHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
 			Actor[guild,"Guild Miner"]:DoTarget
-			wait 5
+			wait 10
 			Actor[guild,"Guild Miner"]:DoubleClick
-			wait 5
+			wait 25
 			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
-			wait 5
+			wait 10
 		}
 		TripCount:Inc
 		wait 5
