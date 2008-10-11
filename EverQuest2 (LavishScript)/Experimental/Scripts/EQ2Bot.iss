@@ -1731,33 +1731,33 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	;
 	if ${AutoMelee} && ${Actor[${TID}].Distance}<15 && ${Actor[${TID}].Distance}>${maxrange}
 	{
-		face ${Actor[${TID}]}
 		do
 		{
+			Actor[${TID}]:DoFace
 			press ${forward}
-			wait .2
+			wait 1
 		}
 		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}>${maxrange}
 	}
 
 	if ${rangetype}>1 && ${Actor[${TID}].Distance}<${minrange}
 	{
-		face ${Actor[${TID}]}
 		do
 		{
+			Actor[${TID}]:DoFace
 			press ${backward}
-			wait .2
+			wait 1
 		}
 		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}<${minrange}
 	}
 
 	if ${rangetype}>1 && ${Actor[${TID}].Distance}>${maxrange}
 	{
-		face ${Actor[${TID}]}
 		do
 		{
+			Actor[${TID}]:DoFace
 			press ${forward}
-			wait .2
+			wait 1
 		}
 		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}>${maxrange}
 	}
@@ -2097,25 +2097,25 @@ function Pull(string npcclass)
 					if (!${Me.TargetLOS})
 					{
 						;; try strafing a bit to see if can get no collision/LOS
-						press -hold MOVEBACKWARD
+						press -hold ${backward}
 						wait 4
-						press -release MOVEBACKWARD
+						press -release ${backward}
 						waitframe
-						press -hold STRAFELEFT
+						press -hold ${strafeleft}
 						wait 10
-						press -release STRAFELEFT
+						press -release ${strafeleft}
 						waitframe
 						if !${Me.TargetLOS} && ${Target.CheckCollision}
 						{
-							press -hold STRAFERIGHT
+							press -hold ${straferight}
 							wait 20
-							press -release STRAFERIGHT
+							press -release ${straferight}
 							waitframe
 							if !${Me.TargetLOS} && ${Target.CheckCollision}
 							{
-								press -hold STRAFELEFT
+								press -hold ${strafeleft}
 								wait 10
-								press -release STRAFELEFT
+								press -release ${strafeleft}
 								waitframe
 								if !${Me.TargetLOS} && ${Target.CheckCollision}
 								{
