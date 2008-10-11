@@ -1,8 +1,8 @@
 ;EQ2Broker v2
 ;By Syliac
-;================================
+;=================================
 ;Consignment Box Variables
-;================================
+;=================================
 variable int TSBox
 variable int SBBox
 variable int CLBox
@@ -13,9 +13,9 @@ variable int FertBox
 variable int StatBox
 variable int CustBox
 variable int UseBox
-;================================
+;=================================
 ;Item Variables
-;================================
+;=================================
 variable string ClassName
 variable string TradeClass
 variable string BookTradeClass
@@ -23,10 +23,16 @@ variable string ItemType
 variable string NameFilter1
 variable string NameFilter2
 variable string NameFilter3
+;=================================
+;Run Variables
+;=================================
+
+variable int RunBroker
+variable int RunDepot
 variable int RunHirelings
-;================================
-
-
+variable int RunJunk
+variable int RunDestroy
+;=================================
 function main()
 {
 	declare FP filepath "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/CharConfig/"
@@ -43,16 +49,12 @@ function main()
 		ui -reload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 		ui -reload -skin eq2skin "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
 	}
-
-	TSBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}]
- 	SBBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}]
-	CLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}]
-  CHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}]
-  RHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}]
-  LLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegendBox]}]
-  FertBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}]
-  StatBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}]
-  CustBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}]
+	RunBroker:Set[1]
+	RunDepot:Set[1]
+	RunJunk:Set[1]
+	RunDestroy:Set[1]
+	RunHirelings:Set[1]
+	wait 1
 	
 	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
 	wait 5
@@ -68,7 +70,16 @@ function main()
 
 function PlaceItems()
 {
-	variable int KeyNum=1
+	TSBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}]
+ 	SBBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}]
+	CLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}]
+  CHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}]
+  RHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}]
+  LLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegendBox]}]
+  FertBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}]
+  StatBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}]
+  CustBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}]
+	RunBroker:Set[1]
 	wait 5
 	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
 	call AddLog "**Starting EQ2Broker v2 By Syliac**" FF00FF00
@@ -78,40 +89,51 @@ function PlaceItems()
 	wait 5
 	Target:DoubleClick
 	wait 5
-	press b
+	EQ2Execute /togglebags
 	wait 5
-	press b
+	EQ2Execute /togglebags
+	wait 5
+	EQ2Execute /togglebags
+	wait 5
+	EQ2Execute /togglebags
 
 	call CheckFocus
 
-	if ${UIElement[ScanRares@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanRares@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceRare
 
-	if ${UIElement[ScanHarvests@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanHarvests@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceHarvest
 
-	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceCollection
 
-	if ${UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceTradeskillBooks
 
-	if ${UIElement[ScanSpellBooks@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanSpellBooks@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceSpellBooks
 
-	if ${UIElement[ScanLoreAndLegend@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanLoreAndLegend@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceLoreAndLegend
 	
-	if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceStatusItems
 
-	if ${UIElement[ScanFertilizer@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanFertilizer@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceFertilizer
 
-	if ${UIElement[ScanCustom@EQ2Broker@GUITabs@EQ2Inventory].Checked}
+	if ${UIElement[ScanCustom@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceCustom	
 
+	if ${RunBroker} == 1
+	{
 		call ShutDown
+	}
+	else
+	{
+		call AddLog "**EQ2Broker Canceled!**" FF00FF00
+	}		
 }
 
 function PlaceRare()
@@ -147,7 +169,7 @@ function PlaceRaret1()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[2].Keys}
@@ -172,7 +194,7 @@ function PlaceRaret2()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[4].Keys}
@@ -197,7 +219,7 @@ function PlaceRaret3()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[6].Keys}
@@ -222,7 +244,7 @@ function PlaceRaret4()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[8].Keys}
@@ -247,7 +269,7 @@ function PlaceRaret5()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[10].Keys}
@@ -272,7 +294,7 @@ function PlaceRaret6()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[12].Keys}
@@ -297,7 +319,7 @@ function PlaceRaret7()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[14].Keys}
@@ -322,7 +344,7 @@ function PlaceRaret8()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[16].Keys}
@@ -365,7 +387,7 @@ function PlaceHarvestT1()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[1].Keys}
@@ -390,7 +412,7 @@ function PlaceHarvestT2()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[3].Keys}
@@ -415,7 +437,7 @@ function PlaceHarvestT3()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[5].Keys}
@@ -440,7 +462,7 @@ function PlaceHarvestT4()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[7].Keys}
@@ -465,7 +487,7 @@ function PlaceHarvestT5()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[9].Keys}
@@ -490,7 +512,7 @@ function PlaceHarvestT6()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[11].Keys}
@@ -515,7 +537,7 @@ function PlaceHarvestT7()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[13].Keys}
@@ -540,7 +562,7 @@ function PlaceHarvestT8()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Harvests.xml].Set[15].Keys}
@@ -794,7 +816,7 @@ function PlaceBooks()
 	  		wait ${Math.Rand[30]:Inc[20]}
 			}		
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker} == 1
 }
 
 function PlaceStatusItems()
@@ -830,7 +852,7 @@ function PlaceStatusT1()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT1].Keys}
@@ -855,7 +877,7 @@ function PlaceStatusT2()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT2].Keys}
@@ -880,7 +902,7 @@ function PlaceStatusT3()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT3].Keys}
@@ -905,7 +927,7 @@ function PlaceStatusT4()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT4].Keys}
@@ -930,7 +952,7 @@ function PlaceStatusT5()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT5].Keys}
@@ -955,7 +977,7 @@ function PlaceStatusT6()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT6].Keys}
@@ -980,7 +1002,7 @@ function PlaceStatusT7()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT7].Keys}
@@ -1005,7 +1027,7 @@ function PlaceStatusT8()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/StatusItems.XML].Set[StatusT8].Keys}
@@ -1042,7 +1064,7 @@ function PlaceFertilizerT1()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT1].Keys}
@@ -1067,7 +1089,7 @@ function PlaceFertilizerT2()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT2].Keys}
@@ -1092,7 +1114,7 @@ function PlaceFertilizerT3()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT3].Keys}
@@ -1117,7 +1139,7 @@ function PlaceFertilizerT4()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT4].Keys}
@@ -1142,7 +1164,7 @@ function PlaceFertilizerT5()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT5].Keys}
@@ -1167,7 +1189,7 @@ function PlaceFertilizerT7()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Fertilizer.xml].Set[FertT7].Keys}
@@ -1193,7 +1215,7 @@ function PlaceLoreAndLegend()
 						wait ${Math.Rand[30]:Inc[20]}
 				}			
 			}
-			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}		
+			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker} == 1	
 		}
 }
 
@@ -1216,7 +1238,7 @@ function PlaceCustom()
   		  	wait ${Math.Rand[30]:Inc[20]}
 	  		}
 			}
-			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${KeyNum}]}](exists)}
+			while ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Key[${KeyNum}]}](exists)} && ${RunBroker} == 1
 			call CheckFocus
 		}
 		while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/CustomItems.xml].Set[CustomItems].Keys}
@@ -1226,6 +1248,7 @@ function PlaceCustom()
 function DestroyItems()
 {
 	variable int KeyNum=1
+	RunDestroy:Set[1]
 	wait 5
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Destroy v2 By Syliac**" FF00FF00
@@ -1244,12 +1267,18 @@ function DestroyItems()
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 		}
-		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${KeyNum}]}](exists)}
+		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Key[${KeyNum}]}](exists)} && ${RunDestroy} == 1
 	}
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Destroy.xml].Set[Destroy].Keys}
-	call AddSellLog "**Items Destroyed**" FFFF00FF
-	announce "\You have Destroyed Items" 1 2
-
+	
+	if ${RunDestroy} == 1
+	{
+		call AddSellLog "**Items Destroyed**" FFFF00FF
+	}
+	else
+	{
+		call AddSellLog "**EQ2Destroy Canceled!**" FFFF00FF
+	}	
 }
 
 function VendorType()
@@ -1267,6 +1296,7 @@ function VendorType()
 function SellJunk()
 {
 	variable int KeyNum=1
+	RunJunk:Set[1]
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00
 	Actor[nokillnpc]:DoTarget
@@ -1275,9 +1305,10 @@ function SellJunk()
 	wait 5
 	Target:DoubleClick
 	wait 5
-	press b
 	wait 5
-	press b
+	EQ2Execute /togglebags
+	wait 5
+	EQ2Execute /togglebags
 	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 10
 	call AddSellLog "**Selling Junk Items**" FFFF00FF
@@ -1292,21 +1323,28 @@ function SellJunk()
 				wait 15
 			}
 		}
-		while ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${KeyNum}]}](exists)}
+		while ${Me.Merchandise[${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Key[${KeyNum}]}](exists)} && ${RunJunk} == 1
 	}
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/Junk.xml].Set[Junk].Keys}
 
-	if ${UIElement[SellTreasured@EQ2Junk@GUITabs@EQ2Inventory].Checked}
-		{
-			call SellTreasured
-		}
+	if ${UIElement[SellTreasured@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	{
+		call SellTreasured
+	}
 
-	if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked}
-		{
-			call SellAdeptI
-		}
-
-	call AddSellLog "**Junk Items Sold**" FFFF00FF
+	if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	{
+		call SellAdeptI
+	}
+	
+	if ${RunJunk) == 1
+	{
+		call AddSellLog "**Junk Items Sold**" FFFF00FF
+	}
+	else	
+	{
+		call AddSellLog "**EQ2Junk Canceled!**" FFFF00FF
+	}	
 	press ESC
 	press ESC
 	press ESC
@@ -1330,13 +1368,13 @@ function SellStatus()
 
 	Do
 	{
-			if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]}
+			if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]} 
 	  	{
 	  		call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 	  		Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 			}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
 	call AddSellLog "**Status Items Sold to Status Vendor**" FFFF00FF
 
 	press ESC
@@ -1358,7 +1396,7 @@ function SellTreasured()
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
 }
 
 function SellAdeptI()
@@ -1369,19 +1407,20 @@ function SellAdeptI()
 
 	Do
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Type.Equal[Spell Scroll]} && ${Me.CustomInventory[${ArrayPosition}].Name.Find[Adept I)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+		if ${Me.CustomInventory[${ArrayPosition}].Type.Equal[Spell Scroll]} && ${Me.CustomInventory[${ArrayPosition}].Name.Find[Adept I)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk} == 1
 			{
 				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
 }
 
 function AddToDepot()
 {
 	variable int KeyNum=1
+	RunDepot:Set[1]
 	wait 5
 	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
 	Me:CreateCustomInventoryArray[nonbankonly]
@@ -1395,14 +1434,22 @@ function AddToDepot()
 			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
 	  	{
 	  		call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
-	  		Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
+	  		Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 		}
-		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)}
+		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)} && ${RunDepot} == 1
 	}
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Keys}
-	call AddDepotLog "**Items Added to Supply Depot**" FFFF00FF
+	
+	if ${RunDepot} == 1
+	{
+		call AddDepotLog "**Items Added to Supply Depot**" FFFF00FF
+	}
+	else
+	{
+		call AddDepotLog "**EQ2Depot Canceled!**" FFFF00FF
+	}	
 }
 
 				

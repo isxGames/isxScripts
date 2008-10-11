@@ -316,7 +316,16 @@
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[ScanCustom,0]:Save								
 								}
 					</OnLeftClick>
-    		</checkbox>    		
+    		</checkbox> 
+    		<CommandButton Name='Stop Broker' Template='EQ2.Button'>
+					<X>20</X>
+					<Y>345</Y>
+					<Width>90</Width>
+					<Height>65</Height>
+					<Text>Stop Broker</Text>
+					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunBroker]:Set[0]</Command>
+				</CommandButton>   		
     		<listbox Name='ItemList' Template='EQ2.listbox'>
 					<X>140</X>
 					<Y>15</Y>
@@ -2299,14 +2308,32 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell ALL for sale Adept I Items to a Merchant.</AutoTooltip>
 				</checkbox>
+				<CommandButton Name='Stop Vendor Items' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>165</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop Vending Items</Text>
+					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunJunk]:Set[0]</Command>
+				</CommandButton>
 				<CommandButton Name='Destroy Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>200</Y>
+					<Y>230</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Destroy Items</Text>
 					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call DestroyItems]</Command>
+				</CommandButton>
+				<CommandButton Name='Stop Destroy Items' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>295</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop Destroying</Text>
+					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunDestroy]:Set[0]</Command>
 				</CommandButton>
 				<listbox Name='SellItemList' Template='EQ2.listbox'>
 					<X>140</X>
@@ -2345,6 +2372,15 @@
 					<Text>Place Depot Items</Text>
 					<AutoTooltip>Places Items in Harvest Depot</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddToDepot]</Command>
+				</CommandButton>
+				<CommandButton Name='PauseDepot' Template='EQ2.Button'>
+					<X>10</X>
+					<Y>95</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop EQ2Depot</Text>
+					<AutoTooltip>Stops Placing Items in Harvest Depot</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunDepot]:Set[0]</Command>
 				</CommandButton>
     		<listbox Name='DepotItemList' Template='EQ2.listbox'>
 					<X>140</X>
