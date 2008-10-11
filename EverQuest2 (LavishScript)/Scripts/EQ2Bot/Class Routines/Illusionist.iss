@@ -70,6 +70,7 @@ function Class_Declaration()
 	declare BuffEmpathicSoothing bool script FALSE
 	declare UseIlluminate bool script FALSE
 	declare BlinkMode bool script FALSE
+	declare LastSpellCast int script 0
 
 
 	BuffAspect:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAspect,FALSE]}]
@@ -253,6 +254,7 @@ function Buff_Routine(int xAction)
 						{
 							;echo "DEBUG:: Casting ''Prismatic'"
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+							LastSpellCast:Set[72]
 							return
 						}
 						else
@@ -262,6 +264,7 @@ function Buff_Routine(int xAction)
 					{
 						;echo "DEBUG:: Casting ''Prismatic'"
 						call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
+						LastSpellCast:Set[72]
 						return
 					}
 				}
@@ -514,7 +517,28 @@ function Buff_Routine(int xAction)
 	}
 }
 
-function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW)
+function CheckCastBeam()
+{
+	;; Cast Beam if it is ready
+	if (${Me.Ability[${SpellType[60]}].IsReady})
+	{
+		LastSpellCast:Set[60]
+		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+	}
+	elseif (${LastSpellCast} != 60)
+	{
+		;echo "EQ2Bot-Debug:: LastSpellCast: ${LastSpellCast}"
+		if (${Me.Ability[${SpellType[60]}].TimeUntilReady} <= 1)	
+		{		
+			LastSpellCast:Set[60]
+			call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1 0 1
+		}
+	}
+}
+	
+	
+
+function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
@@ -525,9 +549,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	if !${Return}
 		return -1
 
-	; Fast Nuke (beam) ...cast every time it is ready!
-	if (${Me.Ability[${SpellType[60]}].IsReady}) && ${Return}
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+	call CheckCastBeam
 
 	;; Prismatic Proc
 	;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
@@ -544,12 +566,20 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 					{
 						;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
 						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+						{
+							LastSpellCast:Set[72]
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 0
+							call CheckCastBeam
+						}
 						else
 							echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
 					}
 					else
+					{
+						LastSpellCast:Set[72]
 						call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 0
+						call CheckCastBeam
+					}
 				}
 			}
 		}
@@ -560,14 +590,18 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 		return -1
 
 	; Fast casting DoT
-	if (${Me.Ability[${SpellType[80]}].IsReady}) && ${Return}
+	if (${Me.Ability[${SpellType[80]}].IsReady})
+	{
+		LastSpellCast:Set[80]
 		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		call CheckCastBeam
+	}
 
 	call VerifyTarget ${TargetID}
 	if !${Return}
 		return -1
 
-	if ${AutoMelee} && ${DoCallCheckPosition} && ${Return}
+	if ${AutoMelee} && ${DoCallCheckPosition}
 	{
 		if ${MainTank}
 			call CheckPosition 1 0
@@ -575,8 +609,10 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 			call CheckPosition 1 1
 		DoCallCheckPosition:Set[FALSE]
 	}
+	
 
-	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW}
+	LastSpellCast:Set[${start}]
+	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	return ${Return}
 }
 
@@ -599,12 +635,14 @@ function Combat_Routine(int xAction)
 		{
 			echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
 			call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
+			LastSpellCast:Set[357]
 			return
 		}
 		elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
 		{
 			echo "DEBUG:: Casting 'Blink'!"
 			call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
+			LastSpellCast:Set[358]
 			return
 		}
 	}
@@ -673,6 +711,7 @@ function Combat_Routine(int xAction)
 	{
 		if !${EQ2.HOWindowActive} && ${Me.InCombat}
 		call CastSpellRange 303
+		LastSpellCast:Set[303]
 	}
 
 	;; TO DO (Revamp)
@@ -689,8 +728,6 @@ function Combat_Routine(int xAction)
 		call Shard
 
 	if !${UltraDPSMode}
-		call RefreshPower
-	elseif ${Me.ToActor.Power} <= 10
 		call RefreshPower
 
 	;; Add back later...(TODO)
@@ -726,6 +763,7 @@ function Combat_Routine(int xAction)
 			if (${Me.Ability[${SpellType[387]}].IsReady})
 			{
 				call CastSpellRange 387 0 0 0 ${KillTarget} 0 0 0 1
+				LastSpellCast:Set[387]
 				spellsused:Inc
 			}
 		}
@@ -744,6 +782,7 @@ function Combat_Routine(int xAction)
 		if (${Me.Ability[${SpellType[385]}].IsReady})
 		{
 			call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
+			LastSpellCast:Set[385]
 			spellsused:Inc
 		}
 	}
@@ -752,11 +791,7 @@ function Combat_Routine(int xAction)
 	FlushQueued Mezmerise_Targets
 
 	; Fast Nuke (beam) ...cast every time it's ready!
-	if (${Me.Ability[${SpellType[60]}].IsReady})
-	{
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		spellsused:Inc
-	}
+	call CheckCastBeam
 
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
@@ -765,6 +800,7 @@ function Combat_Routine(int xAction)
 	if (${Me.Ability[${SpellType[23]}].IsReady})
 	{
 		call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[23]
 		spellsused:Inc
 	}
 
@@ -971,9 +1007,14 @@ function Combat_Routine(int xAction)
 			if (${Me.Ability[${SpellType[396]}].IsReady})
 			{
 				call CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
+				LastSpellCast:Set[396]
 				spellsused:Inc
-				if ${Me.AutoAttackOn}
-				EQ2Execute /toggleautoattack
+				if !${AutoMelee}
+				{
+					if ${Me.AutoAttackOn}
+						EQ2Execute /toggleautoattack
+				}
+				call CheckCastBeam
 			}
 		}
 	}
@@ -997,7 +1038,9 @@ function Combat_Routine(int xAction)
 					if (${Me.Ability[${SpellType[50]}].IsReady})
 					{
 						call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+						LastSpellCast:Set[50]
 						spellsused:Inc
+						call CheckCastBeam
 					}
 				}
 			}
@@ -1015,11 +1058,12 @@ function Combat_Routine(int xAction)
 			if (${Me.Ability[${SpellType[61]}].IsReady})
 			{
 				call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 0 1
+				LastSpellCast:Set[61]
 				spellsused:Inc
+				call CheckCastBeam
 			}
 		}
 	}
-
 
 	if ${MezzMode}
 		call Mezmerise_Targets
@@ -1117,6 +1161,7 @@ function Combat_Routine(int xAction)
 			if (${Me.Ability[${SpellType[60]}].IsReady})
 			{
 				call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+				LastSpellCast:Set[60]
 				spellsused:Inc
 			}
 			ExecuteQueued Mezmerise_Targets
@@ -1167,8 +1212,8 @@ function Combat_Routine(int xAction)
 			FlushQueued Mezmerise_Targets
 			break
 	
-			case AEStun
-			case Stun
+		case AEStun
+		case Stun
 			if ${UltraDPSMode}
 			{
 				;; Always set to one less than the index of the next ability you want to have run (it is incremented on the loop)
@@ -1273,7 +1318,7 @@ function Combat_Routine(int xAction)
 	if !${MezzMode}
 	{
 		if (${spellsused} < 1)
-		call CastSomething
+			call CastSomething
 	}
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
@@ -1291,6 +1336,8 @@ function CastSomething()
 	call VerifyTarget
 	if !${Return}
 		return
+		
+	call CheckCastBeam		
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;; Things we should be checking EVERY time
@@ -1311,6 +1358,8 @@ function CastSomething()
 						{
 							;echo "DEBUG:: Casting ''Prismatic'"
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+							LastSpellCast:Set[72]
+							call CheckCastBeam
 							return
 						}
 						else
@@ -1320,6 +1369,8 @@ function CastSomething()
 					{
 						;echo "DEBUG:: Casting ''Prismatic'"
 						call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
+						LastSpellCast:Set[72]
+						call CheckCastBeam
 						return
 					}
 				}
@@ -1327,17 +1378,11 @@ function CastSomething()
 		}
 	}
 
-	if (${Me.Ability[${SpellType[60]}].IsReady})
-	{
-		echo "DEBUG:: Casting 'Fast Nuke'"
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		return
-	}
-
 	if (${Me.Ability[${SpellType[80]}].IsReady})
 	{
 		;echo "DEBUG:: Casting 'Fast Casting DoT'"
 		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[80]
 		return
 	}
 
@@ -1345,6 +1390,7 @@ function CastSomething()
 	{
 		;echo "DEBUG:: Casting 'Mind DoT'"
 		call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[70]
 		return
 	}
 
@@ -1365,7 +1411,7 @@ function CastSomething()
 		{
 			;echo "DEBUG:: Casting 'Melee AA Ability'"
 			Actor[${KillTarget}]:DoTarget
-			call CastSpell "Spellblade's Counter" 395 0
+			call CastSpell "Spellblade's Counter" 395 ${KillTargeT} 0
 			return
 		}
 	}
@@ -1375,6 +1421,7 @@ function CastSomething()
 	{
 		;echo "DEBUG:: Casting 'Encounter Stun'"
 		call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[191]
 		return
 	}
 
@@ -1383,6 +1430,7 @@ function CastSomething()
 	{
 		;echo "DEBUG:: Casting 'Melee Debuff'"
 		call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[50]
 		return
 	}
 
@@ -1391,6 +1439,7 @@ function CastSomething()
 	{
 		;echo "DEBUG:: Casting 'Mana Recovery'"
 		call CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[309]
 		return
 	}
 
@@ -1399,6 +1448,7 @@ function CastSomething()
 	{
 		;echo "DEBUG:: Casting 'Root'"
 		call CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[230]
 		return
 	}
 }
@@ -1432,12 +1482,16 @@ function Have_Aggro(int aggroid)
 		{
 			echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
 			call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
+			LastSpellCast:Set[357]
+			call CheckCastBeam
 			return
 		}
 		elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
 		{
 			echo "DEBUG:: Casting 'Blink'!"
 			call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
+			LastSpellCast:Set[358]
+			call CheckCastBeam
 			return
 		}
 	}
@@ -1450,6 +1504,7 @@ function Have_Aggro(int aggroid)
 			if ${Me.Ability["Illusory Allies"].IsReady}
 			{
 				call CastSpellRange 192 0 0 0 ${aggroid} 0 0 0 1
+				LastSpellCast:Set[192]
 				return
 			}
 		}
@@ -1463,7 +1518,10 @@ function Lost_Aggro()
 function MA_Lost_Aggro()
 {
 	if ${Me.Ability[${SpellType[386]}].IsReady}
+	{
 		call CastSpellRange 386 0 0 0 ${KillTarget}
+		LastSpellCast:Set[386]
+	}
 }
 
 function MA_Dead()
@@ -1493,9 +1551,17 @@ function RefreshPower()
 
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<80 && !${Me.InCombat}
+	{
 		call CastSpellRange 309
+		LastSpellCast:Set[309]
+	}
 	elseif ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<50
+	{
 		call CastSpellRange 309
+		LastSpellCast:Set[309]
+		if ${Me.InCombat}
+			call CheckCastBeam
+	}
 
 	if ${Me.Group} > 1
 	{
@@ -1520,7 +1586,12 @@ function RefreshPower()
 			while ${tempvar:Inc}<${Me.GroupCount}
 
 			if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>30 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+			{
 				call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+				LastSpellCast:Set[360]
+				if ${Me.InCombat}
+					call CheckCastBeam
+			}
 		}
 	}
 
@@ -1530,6 +1601,8 @@ function RefreshPower()
 		if ${Actor[pc,${MainTankPC},exactname].Power} < 20 && ${Actor[pc,${MainTankPC},exactname].Distance}<50  && ${Actor[pc,${MainTankPC},exactname].InCombatMode}
 		{
 			call CastSpellRange 354
+			LastSpellCast:Set[354]
+			call CheckCastBeam
 			;; Savant is now called in the main routine
 		}
 	}
@@ -1545,7 +1618,8 @@ function CheckHeals()
 	if ${Me.Arcane}>=1
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
-
+		LastSpellCast:Set[210]
+		
 		if ${Actor[${KillTarget}](exists)}
 			Target ${KillTarget}
 	}
@@ -1560,6 +1634,7 @@ function CheckHeals()
 				if ${Me.Group[${temphl}].Arcane} >= 1
 				{
 					call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+					LastSpellCast:Set[210]
 
 					if ${Actor[${KillTarget}](exists)}
 						Target ${KillTarget}
@@ -1641,13 +1716,22 @@ function Mezmerise_Targets()
 
 				;try to AE mezz first and check if its not single target mezzed
 				if !${CustomActor[${tcount}].Effect[${SpellType[352]}](exists)}
+				{
 					call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
+					LastSpellCast:Set[352]
+				}
 
 				;if the actor is not AE Mezzed then single target Mezz
 				if !${CustomActor[${tcount}].Effect[${SpellType}[353]](exists)}
+				{
 					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 10
+					LastSpellCast:Set[352]
+				}
 				else
+				{
 					call CastSpellRange 92 0 0 0 ${CustomActor[${tcount}].ID} 0 10
+					LastSpellCast:Set[92]
+				}
 				aggrogrp:Set[FALSE]
 			}
 		}
