@@ -1616,7 +1616,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 			break
 	}
 
-	if ${Actor[${KillTarget}].Target.ID}==${Me.ID} && {Actor[${KillTarget}].Target.ID}==${TID} && ${AutoMelee}
+	if ${Actor[${KillTarget}].Target.ID}==${Me.ID} && ${Actor[${KillTarget}].Target.ID}==${TID} && ${AutoMelee}
 	{
 		minrange:Set[0]
 		maxrange:Set[${Postion.GetMeleeMaxRange[${TID}]}]
