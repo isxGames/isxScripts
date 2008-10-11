@@ -970,30 +970,33 @@
                   <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacy]:Set[TRUE]} ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
                   <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacy]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacy]}</Data>
-                </Commandcheckbox>   
-                <Commandcheckbox Name='GuildPrivacyAlways' Template='EQ2.Commandcheckbox'>
+                </Commandcheckbox>
+								<Commandcheckbox Name='DeclineInvites' Template='EQ2.Commandcheckbox'>
+									<Font>
+										<Name>terminal</Name>
+										<Size>10</Size>
+										<Color>FFEBDEAA</Color>
+									</Font>
+									<X>10</X>
+									<Y>260</Y>
+									<Width>100</Width>
+									<Height>20</Height>
+									<Text>Ignore Duels, Trades, and Groups when craft script is running</Text>
+									<OnLeftClick>
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[DeclineInvites]:Set[${This.Checked}]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
+										Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].VariableScope.Craft:DoIgnores[${This.Checked}]
+									</OnLeftClick>
+									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].VariableScope.DeclineInvites}</Data>
+								</Commandcheckbox>
+								<Text Name='MovementKeysLabel'>
                   <Font>
                     <Name>terminal</Name>
                     <Size>10</Size>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
-                  <Y>260</Y>
-                  <Width>100</Width>
-                  <Height>20</Height>
-                  <Text>Disable guild notifications entirely (while crafting)</Text>
-                  <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacyAlways]:Set[TRUE]} ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-                  <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacyAlways]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-                  <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacyAlways]}</Data>
-                </Commandcheckbox>                          
-                <Text Name='MovementKeysLabel'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
-                    <Color>FFEBDEAA</Color>
-                  </Font>
-                  <X>10</X>
-                  <Y>300</Y>
+                  <Y>280</Y>
                   <Width>25%</Width>
                   <Height>20</Height>
                   <Text>Movement Keys:</Text>
@@ -1005,14 +1008,14 @@
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
-                  <Y>320</Y>
+                  <Y>300</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <Text>AutoRun:</Text>
                 </Text>
                 <Textentry Name='TEAutoRunKey' Template='EQ2.Textentry'>
                   <X>25%</X>
-                  <Y>310</Y>
+                  <Y>290</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
@@ -1032,14 +1035,14 @@
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
-                  <Y>340</Y>
+                  <Y>320</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <Text>Backward:</Text>
                 </Text>
                 <Textentry Name='TEBackwardKey' Template='EQ2.Textentry'>
                   <X>25%</X>
-                  <Y>330</Y>
+                  <Y>310</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
@@ -1059,14 +1062,14 @@
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
-                  <Y>360</Y>
+                  <Y>340</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <Text>Strafe Right:</Text>
                 </Text>
                 <Textentry Name='TEStrafeRightKey' Template='EQ2.Textentry'>
                   <X>25%</X>
-                  <Y>350</Y>
+                  <Y>330</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
@@ -1086,14 +1089,14 @@
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
-                  <Y>380</Y>
+                  <Y>360</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <Text>Strafe Left:</Text>
                 </Text>
                 <Textentry Name='TEStrafeLeftKey' Template='EQ2.Textentry'>
                   <X>25%</X>
-                  <Y>370</Y>
+                  <Y>350</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
