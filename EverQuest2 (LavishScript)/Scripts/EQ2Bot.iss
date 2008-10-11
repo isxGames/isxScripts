@@ -213,6 +213,7 @@ variable string POIList[50]
 variable bool POIInclude[50]
 variable int POICount
 variable int CurrentPOI=1
+variable bool NoEligibleTarget
 ;===========================================================
 ; Define the PathType
 ; 0 = Manual Movement
@@ -729,7 +730,7 @@ function CheckManaStone()
 	usemanastone:Set[FALSE]
 }
 
-function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW)
+function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
@@ -766,7 +767,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 	{
 		if ${SpellType[${tempvar}].Length}
 		{
-			if ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
+			if ${IgnoreIsReady} || ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
 			{
 				if ${TargetID}
 				{
@@ -788,10 +789,10 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 					if !${fndspell}
 					{
 						if !${Actor[${TargetID}](exists)}
-								return -1
+							return -1
 
 						if ${Actor[${TargetID}].Distance} > 35
-								return -1
+							return -1
 
 						if ${xvar1} || ${xvar2}
 							call CheckPosition ${xvar1} ${xvar2}
@@ -812,9 +813,9 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 						}
 
                         if ${CastSpellNOW}
-                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
                         else
-    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
 
 						if ${Actor[${originaltarget}](exists)}
 						{
@@ -823,9 +824,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 						}
 
 						if ${notall}==1
-						{
 							return -1
-						}
 					}
 				}
 				else
@@ -833,19 +832,15 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 					if !${Me.Maintained[${SpellType[${tempvar}]}](exists)} || (${Me.Maintained[${SpellType[${tempvar}]}].Duration}<${refreshtimer} && ${Me.Maintained[${SpellType[${tempvar}]}].Duration}!=-1)
 					{
 						if ${xvar1} || ${xvar2}
-						{
 							call CheckPosition ${xvar1} ${xvar2}
-						}
 
                         if ${CastSpellNOW}
-                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
                         else
-    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
 
 						if ${notall}==1
-						{
 							return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
-						}
 					}
 				}
 			}
@@ -862,7 +857,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 }
 
 
-function CastSpellNOW(string spell, int spellid, bool castwhilemoving)
+function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
     variable int Counter
 
@@ -924,10 +919,20 @@ function CastSpellNOW(string spell, int spellid, bool castwhilemoving)
 	return SUCCESS
 }
 
-function CastSpell(string spell, int spellid, bool castwhilemoving)
+function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
     variable int Counter
-
+    
+    ;echo "EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"
+    ;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
+    ;echo "EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"
+    
+    if (${Me.InCombat} && ${spell.Equal[${LastQueuedAbility}]})
+    {
+    	LastQueuedAbility:Set[]
+    	return
+    }
+    
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpell()"
@@ -936,40 +941,16 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	}
 
 	if ${Me.IsMoving} && !${castwhilemoving}
+	{
+		echo "EQ2Bot-Debug:: Me.IsMoving is ${Me.IsMoving} and this spell should not be cast while moving."
+		LastQueuedAbility:Set[${spell}]
 		return
+	}
 
-    if ${Me.Ability[${LastQueuedAbility}].IsQueued}
-    {
-        Counter:Set[0]
-        CurrentAction:Set[-Waiting for ${LastQueuedAbility} to cast (${Me.Ability[${LastQueuedAbility}].TimeUntilReady.Precision[2]}s)]
-        do
-        {
-            waitframe
-            Counter:Inc
-            if ${Counter} > 500
-                break
-        }
-        while ${Me.Ability[${LastQueuedAbility}].IsQueued}
-    }
-    Counter:Set[0]
-    if ${Me.Ability[${spell}].IsQueued}
-    {
-        CurrentAction:Set[--Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
-        do
-        {
-            waitframe
-            Counter:Inc
-            if ${Counter} > 500
-                break
-        }
-        while ${Me.Ability[${spell}].IsQueued}
-    }
-
-
-    wait 2
-    if !${Me.Ability[${spell}].IsReady}
-        return
-
+    ;if !${Me.Ability[${spell}].IsReady}
+    ;    return
+    
+    ;echo "EQ2Bot-Debug:: Queueing '${spell}'"
 	CurrentAction:Set[Queueing '${spell}']
 
 	;; Disallow some abilities that are named the same as crafting abilities.
@@ -978,27 +959,70 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 		Me.Ability[id,1287322154]:Use
 	else
 		Me.Ability[${spell}]:Use
-
-
-	; reducing this too much will cause problems ... 4 seems to be a sweet spot
+		
+	;; this is ghetto ..but required	
 	wait 4
-	;wait 20 ${Me.Ability[${spell}].IsQueued}
+	if (!${Me.Ability[${spell}].IsQueued})
+		wait 4
 
+		
+	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+	{
+		Counter:Set[0]
+		;echo "EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting..."
+        CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting...]
+        do
+        {
+            waitframe
+            Counter:Inc
+            if ${Counter} > 400
+                break
+            ;echo "EQ2Bot-Debug:: Waiting..."     
+        }
+        while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+    }
+	
 	Counter:Set[0]
-    if ${Me.Ability[${spell}].IsQueued}
+	if (!${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
     {
+    	;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)"
         CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
         do
         {
             waitframe
             Counter:Inc
+            if ${Counter} == 40 || ${Counter} == 60 || ${Counter} == 80 || ${Counter} == 100 || ${Counter} == 120 || ${Counter} > 150
+            {
+            	;echo "EQ2Bot-Debug:: Waiting... (${Counter}) (checking ActorID: ${TargetID})"  
+				call VerifyTarget ${TargetID}
+				if !${Return}
+					break    
+			}      	
             if ${Counter} > 500
+            {
+            	;echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....
                 break
+            }
+            ;echo "EQ2Bot-Debug:: Waiting..."  
+            CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]        
         }
-        while ${Me.Ability[${spell}].IsQueued}
+        while (!${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
     }
+    wait 2
+    
+    ;; This will go off on really fast casting spells....Used just for debugging purposes....
+	;if !${Me.CastingSpell}
+	;{
+	;	echo "EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"
+	;	echo "EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"
+	;	echo "EQ2Bot-Debug:: EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
+	;	wait 1
+	;}
+
     LastQueuedAbility:Set[${spell}]
     CurrentAction:Set[Casting '${spell}']
+    ;echo "EQ2Bot-Debug:: Casting Spell -- END CastSpell()"
+    ;echo "EQ2Bot-Debug:: --------------"
 
 	return SUCCESS
 }
@@ -3032,6 +3056,8 @@ atom(script) EQ2_onIncomingText(string Text)
 	    ;; This variable should be utilized in individual class files (see Illusionist.iss for example)
 	    DoCallCheckPosition:Set[TRUE]
 	}
+	elseif (${Text.Find[No Eligible Target]} > 0)
+		NoEligibleTarget:Set[TRUE]
 }
 
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
@@ -3348,6 +3374,8 @@ function VerifyTarget(int TargetID=0)
        		    return FALSE
        	    }
         }
+        elseif (!${Actor[${TargetID}](exists)} || ${Actor[${TargetID}].IsDead})
+        	return FALSE
     }
 
     return TRUE
