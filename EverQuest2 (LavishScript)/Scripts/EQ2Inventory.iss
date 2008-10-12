@@ -32,6 +32,7 @@ variable int RunDepot
 variable int RunHirelings
 variable int RunJunk
 variable int RunDestroy
+variable int CloseScript
 ;=================================
 function main()
 {
@@ -54,6 +55,7 @@ function main()
 	RunJunk:Set[1]
 	RunDestroy:Set[1]
 	RunHirelings:Set[1]
+	CloseScript:Set[0]
 	wait 1
 	
 	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
@@ -1337,7 +1339,7 @@ function SellJunk()
 		call SellAdeptI
 	}
 	
-	if ${RunJunk) == 1
+	if ${RunJunk} == 1
 	{
 		call AddSellLog "**Junk Items Sold**" FFFF00FF
 	}
@@ -1450,6 +1452,11 @@ function AddToDepot()
 	{
 		call AddDepotLog "**EQ2Depot Canceled!**" FFFF00FF
 	}	
+	
+	if ${CloseScript} == 1
+	{
+		Script[EQ2Inventory]:End
+	}
 }
 
 				
