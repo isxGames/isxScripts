@@ -105,15 +105,29 @@ function main(string goscan)
 		Actor[name,a market bulletin board]:DoubleClick
 		wait 20
 		Actor[${Me}]:DoTarget
+		wait 20
 		call echolog " * Scanning using Room Board *"
 	}
 	else
 	{
-		Actor[nokillnpc]:DoTarget
-		wait 5
-		Target:DoubleClick
-		wait 20
-		call echolog " * Scanning using Broker *"
+		tempstring:Set[${Actor[name,guild hall world market broker]}]
+		if ${tempstring.Length} >4
+		{
+			Actor[name,guild hall world market broker]:DoTarget
+			wait 5
+			Actor[name,guild hall world market broker]:DoubleClick
+			wait 20
+			call echolog " * Scanning using Guild Hall Broker *"
+			echo " * Scanning using Guild Hall Broker *"
+		}
+		else
+		{
+			Actor[nokillnpc]:DoTarget
+			wait 5
+			Target:DoubleClick
+			wait 20
+			call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
+		}
 	}
 
 	i:Set[1]
@@ -777,6 +791,7 @@ function buy(string tabname, string action)
 							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
 							; Pause or quit pressed then exit the routine
 							ExecuteQueued
+							Waitframe
 							if ${Exitmyprices} || ${Pausemyprices}
 							{
 								Return
@@ -991,7 +1006,12 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 									Vendor.Item[${CurrentItem}]:Buy[1]  
 									wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
 									wait 5
-									
+									ExecuteQueued
+									Waitframe
+									if ${Exitmyprices} || ${Pausemyprices}
+									{
+										break
+									}
 								}
 								while ${StackBuySize:Dec} >= 0 && ${Vendor.Item[${CurrentItem}].Quantity} != 0
 							}
@@ -1013,6 +1033,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 						}
 						
 						ExecuteQueued
+						Waitframe
 						if ${Exitmyprices} || ${Pausemyprices}
 						{
 							break
@@ -1027,6 +1048,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 				}
 				
 				ExecuteQueued
+				WaitFrame
 				if ${Exitmyprices} || ${Pausemyprices}
 				{
 					break
@@ -1036,6 +1058,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 			CurrentItem:Set[1]
 			
 			ExecuteQueued
+			Waitframe
 			if ${Exitmyprices} || ${Pausemyprices}
 			{
 				break
