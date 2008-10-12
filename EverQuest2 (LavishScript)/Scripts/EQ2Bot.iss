@@ -927,6 +927,8 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
     ;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
     ;echo "EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"
     
+    call ProcessTriggers
+    
     if (${Me.InCombat} && ${spell.Equal[${LastQueuedAbility}]})
     {
     	LastQueuedAbility:Set[]
@@ -1032,7 +1034,6 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
     ;echo "EQ2Bot-Debug:: Casting Spell -- END CastSpell()"
     ;echo "EQ2Bot-Debug:: --------------"
 
-	call ProcessTriggers
 	return SUCCESS
 }
 
@@ -3364,6 +3365,9 @@ function VerifyTarget(int TargetID=0)
     {
         if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
         {
+        	if ${MainAssist.Equal[${Me.Name}]}
+        		return FALSE
+        		
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
@@ -3376,6 +3380,9 @@ function VerifyTarget(int TargetID=0)
     {
     	if (${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead})
     	{
+        	if ${MainAssist.Equal[${Me.Name}]}
+        		return FALSE    		
+    		
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
@@ -3517,6 +3524,17 @@ function CheckBuffsOnce()
 
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 	CurrentAction:Set["Checking Buffs Once..."]
+	
+	if ${Me.CastingSpell}
+	{
+		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel to finish casting..."]
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}
+		CurrentAction:Set["Checking Buffs Once..."]
+	}
 
 	i:Set[1]
 	do
