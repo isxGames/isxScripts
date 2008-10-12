@@ -983,30 +983,38 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
     }
 	
 	Counter:Set[0]
-	if (!${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+	if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
     {
     	;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)"
         CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
         do
         {
-            waitframe
-            Counter:Inc
-            if ${Counter} == 40 || ${Counter} == 60 || ${Counter} == 80 || ${Counter} == 100 || ${Counter} == 120 || ${Counter} > 150
+            wait 2
+            Counter:Inc[2]
+            
+	        if ${Counter} > ${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}
+    			break        
+            
+	        if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
             {
-            	;echo "EQ2Bot-Debug:: Waiting... (${Counter}) (checking ActorID: ${TargetID})"  
-				call VerifyTarget ${TargetID}
+            	call VerifyTarget ${TargetID}
 				if !${Return}
 					break    
 			}      	
-            if ${Counter} > 500
+            if ${Counter} > 50 && ${Me.InCombat}
             {
-            	;echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
                 break
             }
+            elseif !${Me.InCombat} && ${Counter} > 100
+            {
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+                break
+            }            
             ;echo "EQ2Bot-Debug:: Waiting..."  
             CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]        
         }
-        while (!${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+        while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
     }
     wait 2
     
@@ -1024,6 +1032,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
     ;echo "EQ2Bot-Debug:: Casting Spell -- END CastSpell()"
     ;echo "EQ2Bot-Debug:: --------------"
 
+	call ProcessTriggers
 	return SUCCESS
 }
 
@@ -3464,7 +3473,7 @@ function PauseBot()
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
-		StartBot:Set[FALSE]
+	StartBot:Set[FALSE]
 	do
 	{
 		waitframe
@@ -3481,8 +3490,8 @@ function ResumeBot()
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
 	StartBot:Set[TRUE]
-		if ${Me.InCombat}
-				UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	if ${Me.InCombat}
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 }
 
 function StopBot()
@@ -3493,28 +3502,28 @@ function StopBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Show
-		UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
-		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 
 	StartBot:Set[FALSE]
 }
 
 function CheckBuffsOnce()
 {
-		;;;
-		;;; This should only be called while in combat.
-		;;;
-		variable int i
+	;;;
+	;;; This should only be called while in combat.
+	;;;
+	variable int i
 
-		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
-		CurrentAction:Set["Checking Buffs Once..."]
+	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
+	CurrentAction:Set["Checking Buffs Once..."]
 
 	i:Set[1]
 	do
 	{
-				;;;;;;;;;
-				;;;;; Call the buff routine from the class file
-				;;;;;;;;;
+		;;;;;;;;;
+		;;;;; Call the buff routine from the class file
+		;;;;;;;;;
 		call Buff_Routine ${i}
 		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 			break
@@ -3524,22 +3533,22 @@ function CheckBuffsOnce()
 
 	if (${UseCustomRoutines})
 	{
-			i:Set[1]
-			do
-			{
+		i:Set[1]
+		do
+		{
 			call Custom__Buff_Routine ${i}
 			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 				break
-			}
-			while ${i:Inc} <= 40
+		}
+		while ${i:Inc} <= 40
 	}
 
 	if ${MainTank}
-			UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
-		elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
-				UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
-		CurrentAction:Set["Waiting..."]
-		return
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	CurrentAction:Set["Waiting..."]
+	return
 }
 
 
@@ -3549,10 +3558,10 @@ objectdef ActorCheck
 	member:bool ValidActor(int actorid)
 	{
 		if !${Actor[${actorid}](exists)}
-				return FALSE
+			return FALSE
 
 		if ${Actor[${actorid}].IsDead}
-				return FALSE
+			return FALSE
 
 		switch ${Actor[${actorid}].Type}
 		{
@@ -3628,7 +3637,7 @@ objectdef ActorCheck
 		;actor is a charmed pet, ignore it
 		if ${This.FriendlyPet[${actorid}]}
 		{
-				;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
+			;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
 			return FALSE
 		}
 
