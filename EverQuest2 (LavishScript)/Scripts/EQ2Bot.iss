@@ -17,9 +17,9 @@ variable int Latest_CoercerVersion = 0
 variable int Latest_ConjurerVersion = 0
 variable int Latest_DefilerVersion = 0
 variable int Latest_DirgeVersion = 0
-variable int Latest_FuryVersion = 0
+variable int Latest_FuryVersion = 20081013
 variable int Latest_GuardianVersion = 0
-variable int Latest_IllusionistVersion = 20080517
+variable int Latest_IllusionistVersion = 20081013
 variable int Latest_InquisitorVersion = 0
 variable int Latest_MonkVersion = 0
 variable int Latest_MysticVersion = 0
@@ -389,7 +389,7 @@ function main()
 				if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 
-				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
+				; Add additional check to see if Mob is in Camp OR MainTank is within designated range
 				if ${KillTarget}
 				{
 					if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
@@ -922,6 +922,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
     variable int Counter
+    variable float TimeOut
     
     ;echo "EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"
     ;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
@@ -973,12 +974,36 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		Counter:Set[0]
 		;echo "EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting..."
         CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting...]
+        TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
         do
         {
-            waitframe
-            Counter:Inc
-            if ${Counter} > 400
-                break
+            wait 2
+            Counter:Inc[2]
+            
+	        if (${Counter} > ${TimeOut})
+    			break        
+            
+	        if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
+            {
+            	call VerifyTarget ${TargetID}
+				if !${Return}
+				{
+					CurrentAction:Set[]
+					return
+				}  
+			}     
+            if ${Counter} >= 50 && ${Me.InCombat}
+            {
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				CurrentAction:Set[]
+				return
+            }
+            elseif !${Me.InCombat} && ${Counter} > 100
+            {
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				CurrentAction:Set[]
+				return
+            }  
             ;echo "EQ2Bot-Debug:: Waiting..."     
         }
         while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
@@ -987,34 +1012,43 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	Counter:Set[0]
 	if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
     {
-    	;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)"
-        CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
+    	;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast"
+        CurrentAction:Set[---Waiting for ${spell} to cast]
+        TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
         do
         {
             wait 2
             Counter:Inc[2]
             
-	        if ${Counter} > ${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}
+	        if (${Counter} > ${TimeOut})
+	        {
+	        	Me.Ability[${spell}]:Use
     			break        
+    		}
             
 	        if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
             {
             	call VerifyTarget ${TargetID}
 				if !${Return}
-					break    
+				{
+					CurrentAction:Set[]
+					return
+				}  
 			}      	
-            if ${Counter} > 50 && ${Me.InCombat}
+            if ${Counter} >= 50 && ${Me.InCombat}
             {
             	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
-                break
+				CurrentAction:Set[]
+				return
             }
             elseif !${Me.InCombat} && ${Counter} > 100
             {
             	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
-                break
+				CurrentAction:Set[]
+				return
             }            
             ;echo "EQ2Bot-Debug:: Waiting..."  
-            CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]        
+            CurrentAction:Set[---Waiting for ${spell} to cast]        
         }
         while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
     }
@@ -1183,7 +1217,7 @@ function Combat()
 						gRtnCtr:Set[40]
 					}
 
-					if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+					if ${Actor[${KillTarget}].IsDead}
 					{
 						EQ2Execute /target_none
 						break
@@ -1210,6 +1244,7 @@ function Combat()
 						{
 							;we have aggro, move to the maintank
 							call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
+							wait 2
 							do
 							{
 								waitframe
@@ -1231,6 +1266,7 @@ function Combat()
 					    if !${NoAutoMovement}
 					    {
     						call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
+    						wait 2
     						do
     						{
     							waitframe
@@ -1323,7 +1359,7 @@ function Combat()
 						}
 					}
 
-					if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+					if ${Actor[${KillTarget}].IsDead}
 					{
 						EQ2Execute /target_none
 						break
@@ -2082,7 +2118,7 @@ function Pull(string npcclass)
 
 					if ${Target(exists)}
 					{
-							KillTarget:Set[${Target.ID}]
+						KillTarget:Set[${Target.ID}]
 						engagetarget:Set[TRUE]
 						return ${Target.ID}
 					}
@@ -2824,7 +2860,7 @@ function IamDead(string Line)
 						waitframe
 				}
 				while ${EQ2.Zoning}
-				;KillTarget:Set[]
+				KillTarget:Set[]
 				wait 100
 				echo "reloading config"
 				EQ2Bot:Init_Config
@@ -2883,7 +2919,7 @@ function IamDead(string Line)
 			if ${Math.Calc64[${Time.Timestamp}-${deathtimer}]}>5000
 				Exit
 		}
-		while ${Me.ToActor.Health}<1
+		while ${Me.ToActor.IsDead}
 	}
 }
 
@@ -3300,13 +3336,13 @@ function SetNewKillTarget()
 
 		if ${Target(exists)} && ${Target.Type.Find[NPC]}
 		{
-				KillTarget:Set[${Target.ID}]
-				echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID})"
+			KillTarget:Set[${Target.ID}]
+			echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID})"
 		}
 		else
 		{
-				echo "DEBUG:: SetNewKillTarget() FAILED -- Target invalid."
-				return FAILED
+			echo "DEBUG:: SetNewKillTarget() FAILED -- Target invalid."
+			return FAILED
 		}
 
 		return OK
@@ -3345,7 +3381,7 @@ function ReacquireKillTargetFromMA()
 		}
 		else
 		{
-		    echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"
+		    ;echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"
 		    return FAILED
 		}
 	}
