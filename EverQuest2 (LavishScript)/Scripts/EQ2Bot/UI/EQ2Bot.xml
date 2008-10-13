@@ -189,7 +189,7 @@
     												}
     											}
 											}
-											while ${tmpvar:Inc}&lt;=24
+											while ${tmpvar:Inc}&lt;= ${Me.Raid}
 										}
 										elseif ${Me.Group} > 1
 										{
@@ -368,7 +368,7 @@
 													This:AddItem[${Me.Raid[${tmpvar}].Name}]
 												}
 											}
-											while ${tmpvar:Inc}&lt;=24
+											while ${tmpvar:Inc}&lt;= ${Me.Raid}
 										}
 										elseif ${Me.Group} > 1
 										{
