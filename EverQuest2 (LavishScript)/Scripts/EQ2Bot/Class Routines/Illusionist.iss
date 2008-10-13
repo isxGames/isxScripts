@@ -1,6 +1,6 @@
 ;*************************************************************
 ;Illusionist.iss
-;version 20080323a
+;version 20081013
 ;by pygar
 ;
 ;20080730a (Amadeus)
@@ -45,7 +45,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20080517
+	declare ClassFileVersion int script 20081013
 	;;;;
 
 	call EQ2BotLib_Init
