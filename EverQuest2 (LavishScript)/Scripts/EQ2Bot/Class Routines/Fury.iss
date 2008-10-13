@@ -1018,8 +1018,14 @@ function CheckHeals()
 	declare MainTankInGroup bool local 0
 	declare MainTankExists bool local 1
 	declare lowestset bool local FALSE
+	declare cGroupMemberID int local 0
+	declare cGroupMemberHealth int local 0
+	declare lGroupMemberHealth int local 0
+	declare cGroupMemberDistance float local 0
+	declare cGroupMemberClass string local 0
+	declare cGroupMemberIsDead bool local FALSE
 
-	if ${Me.Name.Equal[${MainTankPC}]}
+	if ${Me.Name.Equal[${MainTankPC}]} || ${MainTank}
 		MainTankID:Set[${Me.ID}]
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
@@ -1037,15 +1043,11 @@ function CheckHeals()
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;Res the MT if they are dead
-	if (!${Me.ToActor.InCombatMode} || ${CombatRez})
+	if ${MainTankExists} && ${Actor[${MainTankID}].IsDead}
 	{
-        if ${MainTankExists}
-        {
-	        if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-		        call CastSpellRange 300 0 1 1 ${MainTankID}
-		}
+		if (!${Me.ToActor.InCombatMode} || ${CombatRez})
+			call CastSpellRange 300 0 1 1 ${MainTankID}
 	}
-
 	call CheckHOTs
 
     if (${MainTankExists})
@@ -1074,10 +1076,29 @@ function CheckHeals()
     	{
     		if ${Me.Group[${temphl}].ToActor(exists)}
     		{
+    		    ;; Set some variables now:
+    		    cGroupMemberID:Set[${Me.Group[${temphl}].ID}]    			
+    				
+    		    ; FIRST -- If group member has health below a certain threshold, heal them immediately
+    		    if ${Me.Group[${temphl}].ToActor.Health} < 60 && !${Me.Group[${temphl}].ToActor.IsDead}
+    		    {
+    		    	if ${Me.Ability[${SpellType[2]}].IsReady}
+						call CastSpellRange 2 0 0 0 ${cGroupMemberID}
+				}
     		    
-    			if (${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead})
+    		    ;;;;;;;;
+    		    ;; Set variables now:
+    		    cGroupMemberHealth:Set[${Me.Group[${temphl}].ToActor.Health}]
+    		    lGroupMemberHealth:Set[${Me.Group[${lowest}].ToActor.Health}]
+    		    cGroupMemberDistance:Set[${Me.Group[${temphl}].ToActor.Distance}]
+    		    cGroupMemberClass:Set[${Me.Group[${temphl}].Class}]
+    		    cGroupMemberIsDead:Set[${Me.Group[${temphl}].ToActor.IsDead}]
+    		    ;;
+    		    ;;;;;;;;
+    		    
+    			if (${cGroupMemberHealth}<100 && !${cGroupMemberIsDead})
     			{
-    				if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || !${lowestset}) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+    				if (${cGroupMemberHealth}<${lGroupMemberHealth} || !${lowestset}) && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[1]}].Range}
     				{
     			        lowestset:Set[TRUE]
     					lowest:Set[${temphl}]
@@ -1088,18 +1109,17 @@ function CheckHeals()
     			if ${Me.Group[${temphl}].ID}==${MainTankID}
     				MainTankInGroup:Set[1]
     
-    			if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[15]}].Range}
+    			if !${cGroupMemberIsDead} && ${cGroupMemberHealth}<80 && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[15]}].Range}
     				grpheal:Inc
     
-    			if (${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[coercer]})
+    			if (${cGroupMemberClass.Equal[conjuror]}  || ${cGroupMemberClass.Equal[necromancer]} || ${cGroupMemberClass.Equal[coercer]})
     			{
-        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
         				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
     			}
-    
-    			if (${Me.Group[${temphl}].Class.Equal[illusionist]} && !${Me.InCombat})
+    			elseif (${cGroupMemberClass.Equal[illusionist]} && !${Me.InCombat})
     			{
-        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0)
+        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
         				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
     			}
     		}
@@ -1109,6 +1129,7 @@ function CheckHeals()
 
 	;if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 	;	grpheal:Inc
+	
 
 	if ${grpheal}>1
 		call GroupHeal
@@ -1122,7 +1143,8 @@ function CheckHeals()
 		if ${Me.Group[${lowest}].ToActor.Health}<60 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
 		{
 		    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
-			call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
+		    if ${Me.Ability[${SpellType[2]}].IsReady}
+				call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
 		}
 
 		if ${Me.Group[${lowest}].ToActor.Health}<75 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[7]}].Range}
@@ -1137,7 +1159,7 @@ function CheckHeals()
 			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
 				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
 			}
-			else
+			elseif ${Me.Ability[${SpellType[4]}].IsReady}
 			{
 			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
 				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
@@ -1164,7 +1186,7 @@ function CheckHeals()
     				}
     			}
     		}
-    		while ${temph2:Inc}<=24
+    		while ${temph2:Inc}<= ${Me.Raid}
 
 	      if (${Me.Raid[${raidlowest}].ToActor(exists)})
 	      {
@@ -1219,21 +1241,30 @@ function HealMe()
 		{
 			if ${Me.Ability[${SpellType[4]}].IsReady}
 				call CastSpellRange 4 0 0 0 ${Me.ID}
-			else
+			elseif ${Me.Ability[${SpellType[1]}].IsReady}
 				call CastSpellRange 1 0 0 0 ${Me.ID}
 		}
 	}
-
+	
+	if ${Me.ToActor.Health}<40
+	{
+		if ${Me.Ability[${SpellType[1]}].IsReady}
+			call CastSpellRange 1 0 0 0 ${Me.ID}
+	}
+		
 	if ${Me.ToActor.Health}<65
 	{
 		if !${EpicMode} || (${haveaggro} && ${Me.ToActor.InCombatMode})
-			call CastSpellRange 7 0 0 0 ${Me.ID}
+		{
+			if ${Me.Ability[${SpellType[7]}].IsReady}
+				call CastSpellRange 7 0 0 0 ${Me.ID}
+		}
 		else
-			call CastSpellRange 1 0 0 0 ${Me.ID}
+		{
+			if ${Me.Ability[${SpellType[1]}].IsReady}
+				call CastSpellRange 1 0 0 0 ${Me.ID}
+		}
 	}
-
-	if ${Me.ToActor.Health}<40
-		call CastSpellRange 1 0 0 0 ${Me.ID}
 }
 
 function HealMT(int MainTankID, int MTInMyGroup)
@@ -1241,35 +1272,39 @@ function HealMT(int MainTankID, int MTInMyGroup)
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
-	;Frey Check
-	if ${Actor[${MainTankID}].Health}<50 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[2]}].Range}
-	{
-		call CastSpellRange 2 0 0 0 ${MainTankID}
-	}
 
 	;MAINTANK EMERGENCY HEAL
 	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 		call EmergencyHeal ${MainTankID} ${MTInMyGroup}
 
+	;Frey Check
+	if ${Actor[${MainTankID}].Health}<50 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[2]}].Range}
+	{
+		if ${Me.Ability[${SpellType[2]}].IsReady}
+			call CastSpellRange 2 0 0 0 ${MainTankID}
+	}
+
+	if ${Actor[${MainTankID}].Health}<60 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
+	{
+		if ${Me.Ability[${SpellType[1]}].IsReady}
+			call CastSpellRange 1 0 0 0 ${MainTankID}
+	}
+	if ${Actor[${MainTankID}].Health}<70 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[4]}].Range}
+	{
+		if ${Me.Ability[${SpellType[4]}].IsReady}
+			call CastSpellRange 4 0 0 0 ${MainTankID}
+	}
+	
 	;MAINTANK HEALS
 	; Use regens first, then Patch Heals
 	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
 	{
-		if ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.Maintained[${SpellType[7]}].Target.ID} != ${Actor[PC,ExactName,${MainTankPC}].ID} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[7]}].Range}
+		if ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.Maintained[${SpellType[7]}].Target.ID} != ${MainTankID} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[7]}].Range}
 			call CastSpellRange 7 0 0 0 ${MainTankID}
 		elseif ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup}
 		{
 			call CastSpellRange 15
 		}
-	}
-
-	if ${Actor[${MainTankID}].Health}<60 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
-	{
-		call CastSpellRange 1 0 0 0 ${MainTankID}
-	}
-	if ${Actor[${MainTankID}].Health}<70 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[4]}].Range}
-	{
-		call CastSpellRange 4 0 0 0 ${MainTankID}
 	}
 }
 
@@ -1278,11 +1313,12 @@ function GroupHeal()
 	if ${Me.Cursed}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
-	call CastSpellRange 11
+	if ${Me.Ability[${SpellType[11]}].IsReady}
+		call CastSpellRange 11
 
 	if ${Me.Ability[${SpellType[10]}].IsReady}
 		call CastSpellRange 10
-	else
+	elseif ${Me.Ability[${SpellType[15]}].IsReady}
 		call CastSpellRange 15
 }
 
@@ -1295,7 +1331,7 @@ function EmergencyHeal(int healtarget)
 	;emergency heals
 	if ${Me.Ability[${SpellType[8]}].IsReady}
 		call CastSpellRange 8 0 0 0 ${healtarget}
-	else
+	elseif ${Me.Ability[${SpellType[16]}].IsReady}
 		call CastSpellRange 16 0 0 0 ${healtarget}
 
 }
