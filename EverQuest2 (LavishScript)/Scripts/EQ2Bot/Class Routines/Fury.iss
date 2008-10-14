@@ -251,9 +251,9 @@ function Combat_Init()
 
 function PostCombat_Init()
 {
-	PostAction[1]:Set[Resurrection]
-	PostAction[2]:Set[CheckForCures]
-	PostAction[3]:Set[AutoFollowTank]
+	PostAction[1]:Set[AutoFollowTank]	
+	PostAction[2]:Set[CheckForCures]	
+	PostAction[3]:Set[Resurrection]
 }
 
 function Buff_Routine(int xAction)
@@ -511,7 +511,7 @@ function Combat_Routine(int xAction)
 		    call Shard
 
 
-    	;if named epic, maintain debuffs
+    	;maintain debuffs
     	if (${DebuffMode})
     	{
     		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
@@ -532,7 +532,25 @@ function Combat_Routine(int xAction)
     				DebuffCnt:Inc
     			}
     		}
+    		elseif ${Actor[${KillTarget}].IsHeroic}
+    		{
+				;; Fast-casting encounter debuff that should be used always 
+				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+				{
+					call CastSpellRange 52 0 0 0 ${KillTarget}
+					DebuffCnt:Inc
+				}    		
+			}
     	}
+		elseif ${Actor[${KillTarget}].IsHeroic}
+		{
+			;; Fast-casting encounter debuff that should be used always 
+			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+			{
+				call CastSpellRange 52 0 0 0 ${KillTarget}
+				DebuffCnt:Inc
+			}		
+		}    	
     	;if we cast a debuff, check heals again before continue
     	if (${DebuffCnt} > 0)
     	{
@@ -553,9 +571,7 @@ function Combat_Routine(int xAction)
     	if (${StartHO})
     	{
     		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
-    		{
     			call CastSpellRange 304
-    		}
     	}
 
     	;;
@@ -626,6 +642,24 @@ function Combat_Routine(int xAction)
 				DebuffCnt:Inc
 			}
 		}
+		elseif ${Actor[${KillTarget}].IsHeroic}
+		{
+			;; Fast-casting encounter debuff that should be used always 
+			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+			{
+				call CastSpellRange 52 0 0 0 ${KillTarget}
+				DebuffCnt:Inc
+			}    		
+		}		
+	}
+	elseif ${Actor[${KillTarget}].IsHeroic}
+	{
+		;; Fast-casting encounter debuff that should be used always 
+		if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+		{
+			call CastSpellRange 52 0 0 0 ${KillTarget}
+			DebuffCnt:Inc
+		}		
 	}
 
 	;if we cast a debuff, check heals again before continue
@@ -893,9 +927,9 @@ function Combat_Routine(int xAction)
 
 	if ${DoHOs}
 	{
-			call CheckGroupHealth 60
-			if ${Return}
-				objHeroicOp:DoHO
+		call CheckGroupHealth 60
+		if ${Return}
+			objHeroicOp:DoHO
 	}
 }
 
@@ -907,9 +941,7 @@ function Post_Combat_Routine(int xAction)
 
 	; turn off auto attack if we were casting while the last mob died
 	if ${Me.AutoAttackOn}
-	{
 		EQ2Execute /toggleautoattack
-	}
 
 	switch ${PostAction[${xAction}]}
 	{
@@ -919,27 +951,47 @@ function Post_Combat_Routine(int xAction)
     			tempgrp:Set[1]
     			do
     			{
-    				if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Health}==-99
+    				if (${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead})
     				{
     					if ${Me.Ability[${SpellType[300]}].IsReady}
     					{
     						call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-    						wait 100
+    						wait 5
+    						do
+    						{
+    							waitframe
+    						}
+    						while ${Me.CastingSpell}
     					}
     					elseif ${Me.Ability[${SpellType[301]}].IsReady}
     					{
     						call CastSpellRange 301 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-    						wait 100
+    						wait 5
+    						do
+    						{
+    							waitframe
+    						}
+    						while ${Me.CastingSpell}
     					}
     					elseif ${Me.Ability[${SpellType[302]}].IsReady}
     					{
     						call CastSpellRange 302 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-    						wait 100
+    						wait 5
+    						do
+    						{
+    							waitframe
+    						}
+    						while ${Me.CastingSpell}
     					}
     					else
     					{
     						call CastSpellRange 303 0 1 0 ${Me.Group[${tempgrp}].ID} 1
-    						wait 100
+    						wait 5
+    						do
+    						{
+    							waitframe
+    						}
+    						while ${Me.CastingSpell}
     					}
     				}
     			}
@@ -995,8 +1047,8 @@ function Have_Aggro()
 		{
 			if (${Me.Inventory[Behavioral Modificatinator Stereopticon].IsReady})
 			{
-					Me.Inventory[Behavioral Modificatinator Stereopticon]:Use
-					return
+				Me.Inventory[Behavioral Modificatinator Stereopticon]:Use
+				return
 			}
 		}
 	}
@@ -1374,7 +1426,6 @@ function CureMe()
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 
-
 		if ${Me.ToActor.Health}<30 && ${EpicMode}
 			call HealMe
 	}
@@ -1575,58 +1626,60 @@ function CheckHOTs()
 
 function Lost_Aggro()
 {
-
 }
 
 function MA_Lost_Aggro()
 {
-
 }
 
 function MA_Dead()
 {
-  if (${Actor[exactname,${MainTankPC}](exists)} && ${CombatRez})
-  {
-    if (${Actor[exactname,${MainTankPC}].IsDead} || ${Actor[exactname,${MainTankPC}].Health} < 0)
-	    call CastSpellRange 300 303 1 0 ${MainTankPC} 1
+	variable int MainTankID
+	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
+	
+  	if (${Actor[${MainTankID}](exists)} && ${CombatRez})
+  	{
+    	if (${Actor[${MainTankID}].IsDead} || ${Actor[${MainTankID}].Health} < 0)
+			call CastSpellRange 300 303 1 0 ${MainTankID} 1
 	}
-
 }
 
 function Cancel_Root()
 {
-
 }
 
 
 function HandleGroupWiped()
 {
-		;;; There was a full group wipe and now we are rebuffing
+	;;; There was a full group wipe and now we are rebuffing
 
-		;assume that someone used a feather
-		if (${Me.GroupCount} > 1)
+	;assume that someone used a feather
+	if (${Me.GroupCount} > 1)
+	{
+		Me.Ability[Favor of the Phoenix]:Use
+		do
 		{
-			Me.Ability[Favor of the Phoenix]:Use
-			do
-			{
-				waitframe
-			}
-			while ${Me.CastingSpell}
-			wait 1
+			waitframe
 		}
+		while ${Me.CastingSpell}
+		wait 1
+	}
 
-		return OK
+	return OK
 }
 
 function CheckSKFD()
 {
     if !${Me.ToActor.IsFD}
         return
+        
+	variable int MainTankID
+	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]        
 
-    if !${Actor[exactname,${MainTankPC}](exists)}
+    if !${Actor[${MainTankID}](exists)}
         return
 
-    if ${Actor[exactname,${MainTankPC}].IsDead}
+    if ${Actor[${MainTankID}].IsDead}
         return
 
     if ${Me.ToActor.Health} < 20
