@@ -17,9 +17,9 @@ variable int Latest_CoercerVersion = 0
 variable int Latest_ConjurerVersion = 0
 variable int Latest_DefilerVersion = 0
 variable int Latest_DirgeVersion = 0
-variable int Latest_FuryVersion = 0
+variable int Latest_FuryVersion = 20081013
 variable int Latest_GuardianVersion = 0
-variable int Latest_IllusionistVersion = 20080517
+variable int Latest_IllusionistVersion = 20081013
 variable int Latest_InquisitorVersion = 0
 variable int Latest_MonkVersion = 0
 variable int Latest_MysticVersion = 0
@@ -213,6 +213,7 @@ variable string POIList[50]
 variable bool POIInclude[50]
 variable int POICount
 variable int CurrentPOI=1
+variable bool NoEligibleTarget
 ;===========================================================
 ; Define the PathType
 ; 0 = Manual Movement
@@ -231,6 +232,7 @@ variable int PathType
 #endif
 
 #ifndef _PositionUtils_
+	#define _IncludePositionUtils_
 	#include "${LavishScript.HomeDirectory}/Scripts/PositionUtils.iss"
 #endif
 
@@ -395,7 +397,7 @@ function main()
 				if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 
-				; Add additional check to see if Mob is in Camp (assume radius of 25) OR MainTank is within designated range
+				; Add additional check to see if Mob is in Camp OR MainTank is within designated range
 				if ${KillTarget}
 				{
 					if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
@@ -490,7 +492,7 @@ function main()
 						CurrentAction:Set["Idle..."]
 					break
 				}
-
+			
 				;disable autoattack if not in combat
 				if (${Me.AutoAttackOn} && !${Mob.Detect})
 					EQ2Execute /toggleautoattack
@@ -736,7 +738,7 @@ function CheckManaStone()
 	usemanastone:Set[FALSE]
 }
 
-function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW)
+function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
@@ -773,7 +775,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 	{
 		if ${SpellType[${tempvar}].Length}
 		{
-			if ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
+			if ${IgnoreIsReady} || ${Me.Ability[${SpellType[${tempvar}]}].IsReady}
 			{
 				if ${TargetID}
 				{
@@ -795,10 +797,10 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 					if !${fndspell}
 					{
 						if !${Actor[${TargetID}](exists)}
-								return -1
+							return -1
 
 						if ${Actor[${TargetID}].Distance} > 35
-								return -1
+							return -1
 
 						if ${xvar1} || ${xvar2}
 							call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
@@ -819,9 +821,9 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 						}
 
                         if ${CastSpellNOW}
-                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
                         else
-    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
 
 						if ${Actor[${originaltarget}](exists)}
 						{
@@ -830,9 +832,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 						}
 
 						if ${notall}==1
-						{
 							return -1
-						}
 					}
 				}
 				else
@@ -840,19 +840,15 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 					if !${Me.Maintained[${SpellType[${tempvar}]}](exists)} || (${Me.Maintained[${SpellType[${tempvar}]}].Duration}<${refreshtimer} && ${Me.Maintained[${SpellType[${tempvar}]}].Duration}!=-1)
 					{
 						if ${xvar1} || ${xvar2}
-						{
 							call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
-						}
 
                         if ${CastSpellNOW}
-                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+                            call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
                         else
-    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${castwhilemoving}
+    						call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
 
 						if ${notall}==1
-						{
 							return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
-						}
 					}
 				}
 			}
@@ -869,7 +865,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 }
 
 
-function CastSpellNOW(string spell, int spellid, bool castwhilemoving)
+function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
     variable int Counter
 
@@ -931,10 +927,23 @@ function CastSpellNOW(string spell, int spellid, bool castwhilemoving)
 	return SUCCESS
 }
 
-function CastSpell(string spell, int spellid, bool castwhilemoving)
+function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
     variable int Counter
-
+    variable float TimeOut
+    
+    ;echo "EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"
+    ;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
+    ;echo "EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"
+    
+    call ProcessTriggers
+    
+    if (${Me.InCombat} && ${spell.Equal[${LastQueuedAbility}]})
+    {
+    	LastQueuedAbility:Set[]
+    	return
+    }
+    
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpell()"
@@ -943,40 +952,16 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 	}
 
 	if ${Me.IsMoving} && !${castwhilemoving}
+	{
+		echo "EQ2Bot-Debug:: Me.IsMoving is ${Me.IsMoving} and this spell should not be cast while moving."
+		LastQueuedAbility:Set[${spell}]
 		return
+	}
 
-    if ${Me.Ability[${LastQueuedAbility}].IsQueued}
-    {
-        Counter:Set[0]
-        CurrentAction:Set[-Waiting for ${LastQueuedAbility} to cast (${Me.Ability[${LastQueuedAbility}].TimeUntilReady.Precision[2]}s)]
-        do
-        {
-            waitframe
-            Counter:Inc
-            if ${Counter} > 500
-                break
-        }
-        while ${Me.Ability[${LastQueuedAbility}].IsQueued}
-    }
-    Counter:Set[0]
-    if ${Me.Ability[${spell}].IsQueued}
-    {
-        CurrentAction:Set[--Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
-        do
-        {
-            waitframe
-            Counter:Inc
-            if ${Counter} > 500
-                break
-        }
-        while ${Me.Ability[${spell}].IsQueued}
-    }
-
-
-    wait 2
-    if !${Me.Ability[${spell}].IsReady}
-        return
-
+    ;if !${Me.Ability[${spell}].IsReady}
+    ;    return
+    
+    ;echo "EQ2Bot-Debug:: Queueing '${spell}'"
 	CurrentAction:Set[Queueing '${spell}']
 
 	;; Disallow some abilities that are named the same as crafting abilities.
@@ -985,27 +970,111 @@ function CastSpell(string spell, int spellid, bool castwhilemoving)
 		Me.Ability[id,1287322154]:Use
 	else
 		Me.Ability[${spell}]:Use
-
-
-	; reducing this too much will cause problems ... 4 seems to be a sweet spot
+		
+	;; this is ghetto ..but required	
 	wait 4
-	;wait 20 ${Me.Ability[${spell}].IsQueued}
+	if (!${Me.Ability[${spell}].IsQueued})
+		wait 4
 
-	Counter:Set[0]
-    if ${Me.Ability[${spell}].IsQueued}
-    {
-        CurrentAction:Set[---Waiting for ${spell} to cast (${Me.Ability[${spell}].TimeUntilReady.Precision[2]}s)]
+		
+	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+	{
+		Counter:Set[0]
+		;echo "EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting..."
+        CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting...]
+        TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
         do
         {
-            waitframe
-            Counter:Inc
-            if ${Counter} > 500
-                break
+            wait 2
+            Counter:Inc[2]
+            
+	        if (${Counter} > ${TimeOut})
+    			break        
+            
+	        if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
+            {
+            	call VerifyTarget ${TargetID}
+				if !${Return}
+				{
+					CurrentAction:Set[]
+					return
+				}  
+			}     
+            if ${Counter} >= 50 && ${Me.InCombat}
+            {
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				CurrentAction:Set[]
+				return
+            }
+            elseif !${Me.InCombat} && ${Counter} > 100
+            {
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				CurrentAction:Set[]
+				return
+            }  
+            ;echo "EQ2Bot-Debug:: Waiting..."     
         }
-        while ${Me.Ability[${spell}].IsQueued}
+        while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
     }
+	
+	Counter:Set[0]
+	if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+    {
+    	;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast"
+        CurrentAction:Set[---Waiting for ${spell} to cast]
+        TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
+        do
+        {
+            wait 2
+            Counter:Inc[2]
+            
+	        if (${Counter} > ${TimeOut})
+	        {
+	        	Me.Ability[${spell}]:Use
+    			break        
+    		}
+            
+	        if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
+            {
+            	call VerifyTarget ${TargetID}
+				if !${Return}
+				{
+					CurrentAction:Set[]
+					return
+				}  
+			}      	
+            if ${Counter} >= 50 && ${Me.InCombat}
+            {
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				CurrentAction:Set[]
+				return
+            }
+            elseif !${Me.InCombat} && ${Counter} > 100
+            {
+            	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				CurrentAction:Set[]
+				return
+            }            
+            ;echo "EQ2Bot-Debug:: Waiting..."  
+            CurrentAction:Set[---Waiting for ${spell} to cast]        
+        }
+        while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+    }
+    wait 2
+    
+    ;; This will go off on really fast casting spells....Used just for debugging purposes....
+	;if !${Me.CastingSpell}
+	;{
+	;	echo "EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"
+	;	echo "EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"
+	;	echo "EQ2Bot-Debug:: EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
+	;	wait 1
+	;}
+
     LastQueuedAbility:Set[${spell}]
     CurrentAction:Set[Casting '${spell}']
+    ;echo "EQ2Bot-Debug:: Casting Spell -- END CastSpell()"
+    ;echo "EQ2Bot-Debug:: --------------"
 
 	return SUCCESS
 }
@@ -1156,7 +1225,7 @@ function Combat()
 						gRtnCtr:Set[40]
 					}
 
-					if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+					if ${Actor[${KillTarget}].IsDead}
 					{
 						EQ2Execute /target_none
 						break
@@ -1183,6 +1252,7 @@ function Combat()
 						{
 							;we have aggro, move to the maintank
 							call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
+							wait 2
 							do
 							{
 								waitframe
@@ -1204,6 +1274,7 @@ function Combat()
 					    if !${NoAutoMovement}
 					    {
     						call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
+    						wait 2
     						do
     						{
     							waitframe
@@ -1296,7 +1367,7 @@ function Combat()
 						}
 					}
 
-					if ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
+					if ${Actor[${KillTarget}].IsDead}
 					{
 						EQ2Execute /target_none
 						break
@@ -1571,11 +1642,17 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	variable point3f destmaxpoint
 
 	if ${NoAutoMovement} && ${Me.ToActor.InCombatMode}
+	{	
+		echo DEBUG:: CheckPosition - NoAutoMovement
 		return
-
-	if !${Actor[${KillTarget}](exists)} || ${NoMovement}
+	}
+	if !${Actor[${KillTarget}](exists)} && ${NoMovement}
+	{	
+		echo DEBUG:: CheckPosition - NoMovement
 		return
+	}
 
+	
 	switch ${rangetype}
 	{
 		case NULL
@@ -1583,48 +1660,50 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 			if ${AutoMelee}
 			{
 				minrange:Set[.5]
-				maxrange:Set[${Postion.GetMeleeMaxRange[${TID}]}]
+				maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			}
 			else
 			{
 				minrange:Set[.5]
-				maxrange:Set[${Postion.GetSpellMaxRange[${TID}]}]
+				maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			}
 			break
 		case 1
 			minrange:Set[.5]
-			maxrange:Set[${Postion.GetMeleeMaxRange[${TID}]}]
+			maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			break
 		case 2
 			if ${AutoMelee}
 			{
 				minrange:Set[.5]
-				maxrange:Set[${Postion.GetMeleeMaxRange[${TID}]}]
+				maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			}
 			else
 			{
 				minrange:Set[19]
-				maxrange:Set[${Postion.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[${AbilityID}]}].Range}]}]
+				maxrange:Set[${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[${AbilityID}]}].Range}]}]
 			}
 			break
 		case 3
-			minrange:Set[${Math.Calc[${Me.Equipment[Ranged].MinRange}]}+.75+${Postion.GetBaseMaxRange[${TID}]}]}]
+			minrange:Set[${Math.Calc[${Me.Equipment[Ranged].MinRange}]}+.75+${Position.GetBaseMaxRange[${TID}]}]}]
 			if ${Me.Equipment[Ranged].Type.Equal[Weapon]}
-				maxrange:Set[${Postion.GetSpellMaxRange[${TID},${Me.Equipment[Ranged].Range}]}]
+				maxrange:Set[${Position.GetSpellMaxRange[${TID},${Me.Equipment[Ranged].Range}]}]
 			else
-				maxrange:Set[${Postion.GetSpellMaxRange[${TID}]}]
+				maxrange:Set[${Position.GetSpellMaxRange[${TID}]}]
 			break
 	}
 
 	if ${Actor[${KillTarget}].Target.ID}==${Me.ID} && ${Actor[${KillTarget}].Target.ID}==${TID} && ${AutoMelee}
 	{
 		minrange:Set[0]
-		maxrange:Set[${Postion.GetMeleeMaxRange[${TID}]}]
+		maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 	}
 
 	if ${disablebehind} && (${quadrant}==1 || ${quadrant}==3 || ${quadrant}==4)
 		quadrant:Set[5]
 
+	;echo ${Position.GetMeleeMaxRange[${TID}]}
+	;echo DEBUG:: CheckPosition - tid ${TID} -rangetype ${rangetype} - minrange ${minrange} - maxrange ${maxrange} - quadrant ${quadrant}
 	switch ${quadrant}
 	{
 		case 0
@@ -1668,8 +1747,8 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	;
 	; ok which point is closer our min range or max range, will vary depending on our vector to mob
 	;
-	destminpoint:Set[${Postion.PointAtAngle[${TID},${destangle},${minrange}]}]
-	destmaxpoint:Set[${Postion.PointAtAngle[${TID},${destangle},${maxrange}]}]
+	destminpoint:Set[${Position.PointAtAngle[${TID},${destangle},${minrange}]}]
+	destmaxpoint:Set[${Position.PointAtAngle[${TID},${destangle},${maxrange}]}]
 
 	if ${Math.Distance[${Me.ToActor.Loc},${destminpoint}]}<${Math.Distance[${Me.ToActor.Loc},${destmaxpoint}]}
 		destpoint:Set[${destminpoint}]
@@ -1681,8 +1760,9 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	;
 	if ${Actor[${TID}].Distance}<${maxrange} && ${Actor[${TID}].Distance}>${minrange}
 	{
+		echo we're already close
 		call CheckQuadrant ${TID} ${quadrant}
-		return ${Return}
+		;return ${Return}
 	}
 
 	;
@@ -1690,8 +1770,9 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	;
 	if ${Math.Distance[${Me.ToActor.Loc},${destpoint}]}<3
 	{
+		echo we're redundantly already there
 		call CheckQuadrant ${TID} ${quadrant}
-		return ${Return}
+		;return ${Return}
 	}
 
 	;
@@ -1706,21 +1787,27 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 
 	;if melee is on we'll face the target if its killtarget
 	if ${Actor[${TID}](exists)} && ${Actor[${KillTarget}].ID}==${TID} && ${Me.AutoAttackOn}
+	{
+		echo egg on face?
 		face ${Actor[${TID}].X} ${Actor[${TID}].Z}
-
+	}
   ;lets wait if we're currently casting and we don't want to interupt
   if ${Me.CastingSpell} && !${MainTank} && !${castwhilemoving}
   {
-    do
+    while ${Me.CastingSpell}
     {
+			echo waiting on spell
 			waitframe
     }
-    while ${Me.CastingSpell}
+    
   }
 
+	echo stuckcheck - ${isstuck}
 	if !${isstuck}
+	{
+		echo not stuck, calling fastmove
 		call FastMove ${destpoint.X} ${destpoint.Z} 2
-
+	}
 	;
 	;check quadrant due to fastmove precision
 	;
@@ -1768,7 +1855,7 @@ function CheckQuadrant(uint TID, int quadrant)
 	variable string side
 	variable float targetaspect
 
-	side:Set[${Position.Angle[${TID}]}]
+	side:Set[${Position.Side[${TID}]}]
 	targetaspect:Set[${Position.Angle[${TID}]}]
 
 	;we're in range, lets verify quadrant in case fudge factor placed us on wrong side.
@@ -1783,9 +1870,15 @@ function CheckQuadrant(uint TID, int quadrant)
 			else
 			{
 				if ${side.Equal[right]}
+				{
+					echo 1st left ${TID} 40
 					call StrafeToLeft ${TID} 40
+				}
 				else
+				{
+					echo 1st right ${TID} 40
 					call StrafeToRight ${TID} 40
+				}
 				return
 			}
 			break
@@ -1795,9 +1888,15 @@ function CheckQuadrant(uint TID, int quadrant)
 			else
 			{
 				if ${side.Equal[right]}
+				{
+					echo 2nd right 
 					call StrafeToRight ${TID} 150
+				}
 				else
+				{
+					echo 2nd left
 					call StrafeToLeft ${TID} 150
+				}
 				return
 			}
 			break
@@ -1809,16 +1908,28 @@ function CheckQuadrant(uint TID, int quadrant)
 				if ${side.Equal[right]}
 				{
 					if ${targetaspect}>45
-						call StrafeTo ${TID} 60
+					{
+						echo 3rd left
+						call StrafeToLeft ${TID} 60
+					}
 					if ${targetaspect}<135
+					{
+						echo 3rd right
 						call StrafeToRight ${TID} 120
+					}
 				}
 				else
 				{
 					if ${targetaspect}>45
+					{
+						echo 4th right 
 						call StrafeToRight ${TID} 60
+					}
 					if ${targetaspect}<135
+					{
+						echo 4th left
 						call StrafeToLeft ${TID} 120
+					}
 				}
 				return
 			}
@@ -1829,9 +1940,15 @@ function CheckQuadrant(uint TID, int quadrant)
 			else
 			{
 				if ${side.Equal[right]}
+				{
+					echo 5th right
 					call StrafeToRight ${TID} 120
+				}
 				else
+				{
+					echo 5th left
 					call StrafeToLeft ${TID} 120
+				}
 				return
 			}
 			break
@@ -1841,9 +1958,15 @@ function CheckQuadrant(uint TID, int quadrant)
 			else
 			{
 				if ${side.Equal[right]}
+				{
+					echo 6th left
 					call StrafeToLeft ${TID} 65
+				}
 				else
+				{
+					echo 6th right
 					call StrafeToRight ${TID} 65
+				}
 				return
 			}
 			break
@@ -1865,60 +1988,76 @@ function StrafeToLeft(uint TID, float destangle)
 	{
 		do
 		{
-			face ${TID}
-			waitframe
+			echo strafing left... : ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			Actor[${TID}]:DoFace
+			wait 1
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) > 500)
+		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
-		if ${Position.Angle[${TID}]}<${destangle}
+		if ${Position.Angle[${TID}]}>${destangle}
 			isstuck:Set[TRUE]
 	}
 	else
 	{
 		do
 		{
-			face ${TID}
-			waitframe
+			echo strafing left....4 : ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			Actor[${TID}]:DoFace
+			wait 1
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) > 500)
+		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
-		if ${Position.Angle[${TID}]}>${destangle}
+		if ${Position.Angle[${TID}]}<${destangle}
+		{
+			echo stuck!
 			isstuck:Set[TRUE]
+		}
 	}
 
 	press -release ${strafeleft}
+	Actor[${TID}]:DoFace
 }
 
 function StrafeToRight(uint TID, float destangle)
 {
+	variable int xTimer
+	xTimer:Set[${Script.RunningTime}]
+	
 	press -hold ${straferight}
 
 	if ${Position.Side[${TID}].Equal[right]}
 	{
 		do
 		{
-			face ${TID}
-			waitframe
+			echo strafing right... - ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			Actor[${TID}]:DoFace
+			wait 1
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) > 500)
+		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+		
 
-		if ${Position.Angle[${TID}]}>${destangle}
+		if ${Position.Angle[${TID}]}<${destangle}
+		{
+			echo stuck!
 			isstuck:Set[TRUE]
+		}
 	}
 	else
 	{
 		do
 		{
-			face ${TID}
-			waitframe
+			echo strafing right....4 - ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			Actor[${TID}]:DoFace
+			wait 1
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) > 500)
+		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
-		if ${Position.Angle[${TID}]}<${destangle}
+		if ${Position.Angle[${TID}]}>${destangle}
 			isstuck:Set[TRUE]
 	}
 
 	press -release ${straferight}
+	Actor[${TID}]:DoFace
 }
 
 function CheckCondition(string xType, int xvar1, int xvar2)
@@ -2893,7 +3032,7 @@ function IamDead(string Line)
 						waitframe
 				}
 				while ${EQ2.Zoning}
-				;KillTarget:Set[]
+				KillTarget:Set[]
 				wait 100
 				echo "reloading config"
 				EQ2Bot:Init_Config
@@ -2952,7 +3091,7 @@ function IamDead(string Line)
 			if ${Math.Calc64[${Time.Timestamp}-${deathtimer}]}>5000
 				Exit
 		}
-		while ${Me.ToActor.Health}<1
+		while ${Me.ToActor.IsDead}
 	}
 }
 
@@ -3135,6 +3274,8 @@ atom(script) EQ2_onIncomingText(string Text)
 	    ;; This variable should be utilized in individual class files (see Illusionist.iss for example)
 	    DoCallCheckPosition:Set[TRUE]
 	}
+	elseif (${Text.Find[No Eligible Target]} > 0)
+		NoEligibleTarget:Set[TRUE]
 }
 
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
@@ -3367,13 +3508,13 @@ function SetNewKillTarget()
 
 		if ${Target(exists)} && ${Target.Type.Find[NPC]}
 		{
-				KillTarget:Set[${Target.ID}]
-				echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID})"
+			KillTarget:Set[${Target.ID}]
+			echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID})"
 		}
 		else
 		{
-				echo "DEBUG:: SetNewKillTarget() FAILED -- Target invalid."
-				return FAILED
+			echo "DEBUG:: SetNewKillTarget() FAILED -- Target invalid."
+			return FAILED
 		}
 
 		return OK
@@ -3412,7 +3553,7 @@ function ReacquireKillTargetFromMA()
 		}
 		else
 		{
-		    echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"
+		    ;echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"
 		    return FAILED
 		}
 	}
@@ -3432,6 +3573,9 @@ function VerifyTarget(int TargetID=0)
     {
         if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
         {
+        	if ${MainAssist.Equal[${Me.Name}]}
+        		return FALSE
+        		
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
@@ -3444,6 +3588,9 @@ function VerifyTarget(int TargetID=0)
     {
     	if (${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead})
     	{
+        	if ${MainAssist.Equal[${Me.Name}]}
+        		return FALSE    		
+    		
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
@@ -3451,6 +3598,8 @@ function VerifyTarget(int TargetID=0)
        		    return FALSE
        	    }
         }
+        elseif (!${Actor[${TargetID}](exists)} || ${Actor[${TargetID}].IsDead})
+        	return FALSE
     }
 
     return TRUE
@@ -3539,7 +3688,7 @@ function PauseBot()
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
-		StartBot:Set[FALSE]
+	StartBot:Set[FALSE]
 	do
 	{
 		waitframe
@@ -3556,8 +3705,8 @@ function ResumeBot()
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
 	StartBot:Set[TRUE]
-		if ${Me.InCombat}
-				UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	if ${Me.InCombat}
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 }
 
 function StopBot()
@@ -3568,28 +3717,39 @@ function StopBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Show
-		UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
-		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 
 	StartBot:Set[FALSE]
 }
 
 function CheckBuffsOnce()
 {
-		;;;
-		;;; This should only be called while in combat.
-		;;;
-		variable int i
+	;;;
+	;;; This should only be called while in combat.
+	;;;
+	variable int i
 
-		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
+	CurrentAction:Set["Checking Buffs Once..."]
+	
+	if ${Me.CastingSpell}
+	{
+		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel to finish casting..."]
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}
 		CurrentAction:Set["Checking Buffs Once..."]
+	}
 
 	i:Set[1]
 	do
 	{
-				;;;;;;;;;
-				;;;;; Call the buff routine from the class file
-				;;;;;;;;;
+		;;;;;;;;;
+		;;;;; Call the buff routine from the class file
+		;;;;;;;;;
 		call Buff_Routine ${i}
 		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 			break
@@ -3599,22 +3759,22 @@ function CheckBuffsOnce()
 
 	if (${UseCustomRoutines})
 	{
-			i:Set[1]
-			do
-			{
+		i:Set[1]
+		do
+		{
 			call Custom__Buff_Routine ${i}
 			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 				break
-			}
-			while ${i:Inc} <= 40
+		}
+		while ${i:Inc} <= 40
 	}
 
 	if ${MainTank}
-			UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
-		elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
-				UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
-		CurrentAction:Set["Waiting..."]
-		return
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	CurrentAction:Set["Waiting..."]
+	return
 }
 
 
@@ -3624,10 +3784,10 @@ objectdef ActorCheck
 	member:bool ValidActor(int actorid)
 	{
 		if !${Actor[${actorid}](exists)}
-				return FALSE
+			return FALSE
 
 		if ${Actor[${actorid}].IsDead}
-				return FALSE
+			return FALSE
 
 		switch ${Actor[${actorid}].Type}
 		{
@@ -3703,7 +3863,7 @@ objectdef ActorCheck
 		;actor is a charmed pet, ignore it
 		if ${This.FriendlyPet[${actorid}]}
 		{
-				;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
+			;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
 			return FALSE
 		}
 
