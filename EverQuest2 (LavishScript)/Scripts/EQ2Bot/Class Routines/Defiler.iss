@@ -476,18 +476,12 @@ function Combat_Routine(int xAction)
 	{
 		call CheckGroupHealth 60
 		if ${Return}
-		{
 			call CastSpellRange 317
-		}
 		elseif ${Me.Maintained[${SpellType[317]}](exists)}
-		{
 			Me.Maintained[${SpellType[317]}]:Cancel
-		}
 	}
 	elseif ${Me.Maintained[${SpellType[317]}](exists)}
-	{
 		Me.Maintained[${SpellType[317]}]:Cancel
-	}
 
 	;Cast Alacrity if available
 	if ${Me.Ability[${SpellType[398]}].IsReady}
@@ -745,7 +739,7 @@ function CheckCures()
 
 		;Use group cure if more than 3 afflictions will be removed
 		if ${grpcure}>3
-			call CastSpellRange 220
+			call CastSpellRange 220 0 0 0 ${KillTarget} 0 0 0 1
 	}
 
 	;Cure Ourselves first
@@ -836,24 +830,24 @@ function CureMe()
 		return
 
 	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 1
 
 	while ${CureCnt:Inc}<4 && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0)
 	{
 		if ${Me.Arcane}>0
 		{
 			AffCnt:Set[${Me.Arcane}]
-			call CastSpellRange 210 0 0 0 ${Me.ID}
+			call CastSpellRange 210 0 0 0 ${Me.ID} 0 0 0 1
 			wait 2
 
 			;if we tried to cure and it failed to work, we might be charmed, use control cure
 			if ${Me.Arcane}==${AffCnt}
-				call CastSpellRange 326
+				call CastSpellRange 326 0 0 0 ${KillTarget} 0 0 0 1
 		}
 
 		if  ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
 		{
-			call CastSpellRange 210 0 0 0 ${Me.ID}
+			call CastSpellRange 210 0 0 0 ${Me.ID} 0 0 0 1
 			wait 2
 		}
 
@@ -865,7 +859,7 @@ function CureMe()
 function HealMe()
 {
 	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 1
 
 	;ME HEALS
 	; if i have summoned a defiler crystal use that to heal first
@@ -881,12 +875,12 @@ function HealMe()
 			if ${Me.Ability[${SpellType[1]}].IsReady}
 			{
 				call CastSpellRange 387
-				call CastSpellRange 1 0 0 0 ${Me.ID}
+				call CastSpellRange 1 0 0 0 ${Me.ID} 0 0 0 1
 			}
 			else
 			{
 				call CastSpellRange 387
-				call CastSpellRange 4 0 0 0 ${Me.ID}
+				call CastSpellRange 4 0 0 0 ${Me.ID} 0 0 0 1
 			}
 		}
 	}
@@ -929,13 +923,13 @@ function CheckHeals()
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 1
 
 	;Res the MT if they are dead
 	if (${MainTankExists})
 	{
   	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-    	call CastSpellRange 300 0 1 1 ${MainTankID}
+    	call CastSpellRange 300 0 1 1 ${MainTankID} 0 0 0 1
 	}
 
 	;Persist wards if selected.
@@ -989,7 +983,7 @@ function CheckHeals()
   }
 
 
-	if ${PetMode} && ${grpheal}>2 && ${Me.Ability[${SpellType[16]}].IsReady}
+	if ${PetMode} && ${grpheal}>1 && ${Me.Ability[${SpellType[16]}].IsReady} || ${EpicMode}
 		call CastSpellRange 16
 
 	if ${grpheal}>2
@@ -1036,13 +1030,13 @@ function CheckHeals()
 function HealMT(int MTID, int MTInMyGroup)
 {
 	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 1
 
 	;DeathWard Check
 	if ${Actor[${MTID}].Health}<50 && !${Actor[${MTID}].IsDead} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[8]}].Range}
 	{
 		call CastSpellRange 387
-		call CastSpellRange 8 0 0 0 ${MTID}
+		call CastSpellRange 8 0 0 0 ${MTID} 0 0 0 1
 	}
 
 	;MAINTANK EMERGENCY HEAL
@@ -1075,7 +1069,7 @@ function HealMT(int MTID, int MTInMyGroup)
 function GroupHeal()
 {
 	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 1
 
 	call CastSpellRange 387
 
@@ -1095,12 +1089,12 @@ function EmergencyHeal(int healtarget)
 		return
 
 	;Avenger Death Save
-	call CastSpellRange 338 0 2 0 ${healtarget}
+	call CastSpellRange 338 0 2 0 ${healtarget} 0 0 0 1
 
 	if ${Me.Ability[${SpellType[335]}].IsReady}
-		call CastSpellRange 335 0 2 0 ${healtarget}
+		call CastSpellRange 335 0 2 0 ${healtarget} 0 0 0 1
 	else
-		call CastSpellRange 334 0 2 0 ${healtarget}
+		call CastSpellRange 334 0 2 0 ${healtarget} 0 0 0 1
 }
 
 function CureGroupMember(int gMember)
@@ -1114,7 +1108,7 @@ function CureGroupMember(int gMember)
 	{
 		if ${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0
 		{
-			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
+			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID} 0 0 0 ${EpicMode}
 			wait 2
 		}
 	}

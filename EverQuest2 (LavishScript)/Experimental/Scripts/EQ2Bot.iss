@@ -492,7 +492,7 @@ function main()
 						CurrentAction:Set["Idle..."]
 					break
 				}
-			
+
 				;disable autoattack if not in combat
 				if (${Me.AutoAttackOn} && !${Mob.Detect})
 					EQ2Execute /toggleautoattack
@@ -931,19 +931,19 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 {
     variable int Counter
     variable float TimeOut
-    
+
     ;echo "EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"
     ;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
     ;echo "EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"
-    
+
     call ProcessTriggers
-    
+
     if (${Me.InCombat} && ${spell.Equal[${LastQueuedAbility}]})
     {
     	LastQueuedAbility:Set[]
     	return
     }
-    
+
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpell()"
@@ -960,7 +960,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 
     ;if !${Me.Ability[${spell}].IsReady}
     ;    return
-    
+
     ;echo "EQ2Bot-Debug:: Queueing '${spell}'"
 	CurrentAction:Set[Queueing '${spell}']
 
@@ -970,13 +970,13 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		Me.Ability[id,1287322154]:Use
 	else
 		Me.Ability[${spell}]:Use
-		
-	;; this is ghetto ..but required	
+
+	;; this is ghetto ..but required
 	wait 4
 	if (!${Me.Ability[${spell}].IsQueued})
 		wait 4
 
-		
+
 	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
 	{
 		Counter:Set[0]
@@ -987,10 +987,10 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
         {
             wait 2
             Counter:Inc[2]
-            
+
 	        if (${Counter} > ${TimeOut})
-    			break        
-            
+    			break
+
 	        if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
             {
             	call VerifyTarget ${TargetID}
@@ -998,8 +998,8 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 				{
 					CurrentAction:Set[]
 					return
-				}  
-			}     
+				}
+			}
             if ${Counter} >= 50 && ${Me.InCombat}
             {
             	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
@@ -1011,12 +1011,12 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
             	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
 				CurrentAction:Set[]
 				return
-            }  
-            ;echo "EQ2Bot-Debug:: Waiting..."     
+            }
+            ;echo "EQ2Bot-Debug:: Waiting..."
         }
         while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
     }
-	
+
 	Counter:Set[0]
 	if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
     {
@@ -1027,13 +1027,13 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
         {
             wait 2
             Counter:Inc[2]
-            
+
 	        if (${Counter} > ${TimeOut})
 	        {
 	        	Me.Ability[${spell}]:Use
-    			break        
+    			break
     		}
-            
+
 	        if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
             {
             	call VerifyTarget ${TargetID}
@@ -1041,8 +1041,8 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 				{
 					CurrentAction:Set[]
 					return
-				}  
-			}      	
+				}
+			}
             if ${Counter} >= 50 && ${Me.InCombat}
             {
             	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
@@ -1054,14 +1054,14 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
             	echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
 				CurrentAction:Set[]
 				return
-            }            
-            ;echo "EQ2Bot-Debug:: Waiting..."  
-            CurrentAction:Set[---Waiting for ${spell} to cast]        
+            }
+            ;echo "EQ2Bot-Debug:: Waiting..."
+            CurrentAction:Set[---Waiting for ${spell} to cast]
         }
         while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
     }
     wait 2
-    
+
     ;; This will go off on really fast casting spells....Used just for debugging purposes....
 	;if !${Me.CastingSpell}
 	;{
@@ -1220,6 +1220,7 @@ function Combat()
 					call Combat_Routine ${gRtnCtr}
 					if ${Return.Equal[CombatComplete]}
 					{
+						isstuck:Set[FALSE]
 						if !${Me.InCombat}
 							CurrentAction:Set["Idle..."]
 						gRtnCtr:Set[40]
@@ -1642,17 +1643,26 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	variable point3f destmaxpoint
 
 	if ${NoAutoMovement} && ${Me.ToActor.InCombatMode}
-	{	
+	{
 		echo DEBUG:: CheckPosition - NoAutoMovement
 		return
 	}
 	if !${Actor[${KillTarget}](exists)} && ${NoMovement}
-	{	
+	{
 		echo DEBUG:: CheckPosition - NoMovement
 		return
 	}
 
-	
+  ;lets wait if we're currently casting and we don't want to interupt
+  if ${Me.CastingSpell} && !${MainTank} && !${castwhilemoving}
+  {
+    while ${Me.CastingSpell}
+    {
+			echo DEBUG::CheckPostion - waiting on spell
+			waitframe
+    }
+  }
+
 	switch ${rangetype}
 	{
 		case NULL
@@ -1702,7 +1712,6 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	if ${disablebehind} && (${quadrant}==1 || ${quadrant}==3 || ${quadrant}==4)
 		quadrant:Set[5]
 
-	;echo ${Position.GetMeleeMaxRange[${TID}]}
 	;echo DEBUG:: CheckPosition - tid ${TID} -rangetype ${rangetype} - minrange ${minrange} - maxrange ${maxrange} - quadrant ${quadrant}
 	switch ${quadrant}
 	{
@@ -1756,30 +1765,33 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 		destpoint:Set[${destmaxpoint}]
 
 	;
+	;if distance over 75, its probably not safe to fastmove
+	;
+	if ${Math.Distance[${Me.ToActor.Loc},${destpoint}]}>75
+		return TOFARAWAY
+
+	;
 	; if we're as close as we need to be lets just strafe
 	;
 	if ${Actor[${TID}].Distance}<${maxrange} && ${Actor[${TID}].Distance}>${minrange}
 	{
-		echo we're already close
+		echo DEBUG:: CheckPosition Already Close to target, Checking Quadrant
 		call CheckQuadrant ${TID} ${quadrant}
-		;return ${Return}
+
+		;verify distance and return
+		if ${Actor[${TID}].Distance}<${maxrange} && ${Actor[${TID}].Distance}>${minrange}
+			return ${Return}
 	}
 
 	;
 	;now lets first make sure we're not already there; is this really needed given previous check?!?
 	;
-	if ${Math.Distance[${Me.ToActor.Loc},${destpoint}]}<3
-	{
-		echo we're redundantly already there
-		call CheckQuadrant ${TID} ${quadrant}
-		;return ${Return}
-	}
-
-	;
-	;if distance over 75, its probably not safe to fastmove
-	;
-	if ${Math.Distance[${Me.ToActor.Loc},${destpoint}]}>75
-		return TOFARAWAY
+	;if ${Math.Distance[${Me.ToActor.Loc},${destpoint}]}<3
+	;{
+	;	echo DEBUG::CheckPosition -
+	;	call CheckQuadrant ${TID} ${quadrant}
+	;	return ${Return}
+	;}
 
 	;
 	;if we didn't return already, we're too far away
@@ -1788,24 +1800,15 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarge
 	;if melee is on we'll face the target if its killtarget
 	if ${Actor[${TID}](exists)} && ${Actor[${KillTarget}].ID}==${TID} && ${Me.AutoAttackOn}
 	{
-		echo egg on face?
+		echo DEBUG::CheckPosition - Facing KillTarget
 		face ${Actor[${TID}].X} ${Actor[${TID}].Z}
 	}
-  ;lets wait if we're currently casting and we don't want to interupt
-  if ${Me.CastingSpell} && !${MainTank} && !${castwhilemoving}
-  {
-    while ${Me.CastingSpell}
-    {
-			echo waiting on spell
-			waitframe
-    }
-    
-  }
 
-	echo stuckcheck - ${isstuck}
+
+	echo DEBUG::CheckPostion - Checking stuck state :: ${isstuck}
 	if !${isstuck}
 	{
-		echo not stuck, calling fastmove
+		echo DEBUG::CheckPosition - Currently not stuck, attempting FastMove to destination
 		call FastMove ${destpoint.X} ${destpoint.Z} 2
 	}
 	;
@@ -1889,7 +1892,7 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					echo 2nd right 
+					echo 2nd right
 					call StrafeToRight ${TID} 150
 				}
 				else
@@ -1922,7 +1925,7 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						echo 4th right 
+						echo 4th right
 						call StrafeToRight ${TID} 60
 					}
 					if ${targetaspect}<135
@@ -1981,6 +1984,22 @@ function StrafeToLeft(uint TID, float destangle)
 {
 	variable int xTimer
 	xTimer:Set[${Script.RunningTime}]
+	variable int movingforward
+	variable int startdistance
+
+	startdistance:Set[${Actor[${TID}].Distance}]
+
+	;if we're stuck lets try moving to MT first.
+	if ${isstuck}
+	{
+		;set stuckstate to off
+		isstuck:Set[FALSE]
+		;attempt move
+		call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 4
+		;if move to tank also returned stuck, we really stuck
+		if ${isstuck}
+			return STUCK
+	}
 
 	press -hold ${strafeleft}
 
@@ -1988,28 +2007,60 @@ function StrafeToLeft(uint TID, float destangle)
 	{
 		do
 		{
-			echo strafing left... : ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			echo DEBUG:: Strafing to LEFT from RIGHT Side
+			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
+			{
+				press -release ${forward}
+				movingfoward:Set[FALSE]
+			}
+
 			Actor[${TID}]:DoFace
-			wait 1
+			waitframe
+
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			{
+				press -hold ${forward}
+				movingforward:Set[TRUE]
+			}
 		}
 		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
+		if ${movingforward}
+			press -release ${forward}
+			movingfoward:Set[FALSE]
+		}
+
 		if ${Position.Angle[${TID}]}>${destangle}
+		{
+			echo DEBUG:: Stuck While Strafing
 			isstuck:Set[TRUE]
+		}
 	}
 	else
 	{
 		do
 		{
-			echo strafing left....4 : ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			echo DEBUG:: Strafing to LEFT from LEFT Side
+			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
+			{
+				press -release ${forward}
+				movingfoward:Set[FALSE]
+			}
+
 			Actor[${TID}]:DoFace
-			wait 1
+			waitframe
+
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			{
+				press -hold ${forward}
+				movingforward:Set[TRUE]
+			}
 		}
 		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
 		if ${Position.Angle[${TID}]}<${destangle}
 		{
-			echo stuck!
+			echo DEBUG:: Stuck While Strafing
 			isstuck:Set[TRUE]
 		}
 	}
@@ -2022,23 +2073,53 @@ function StrafeToRight(uint TID, float destangle)
 {
 	variable int xTimer
 	xTimer:Set[${Script.RunningTime}]
-	
+	variable int movingforward
+	variable int startdistance
+
+	startdistance:Set[${Actor[${TID}].Distance}]
+
+	;if we're stuck lets try moving to MT first.
+	if ${isstuck}
+	{
+		;set stuckstate to off
+		isstuck:Set[FALSE]
+
+		;attempt move to tank
+		call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 4
+
+		;if move to tank also returned stuck, we really stuck
+		if ${isstuck}
+			return STUCK
+	}
+
 	press -hold ${straferight}
 
 	if ${Position.Side[${TID}].Equal[right]}
 	{
 		do
 		{
-			echo strafing right... - ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			echo DEBUG:: Strafing to RIGHT from RIGHT Side
+			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
+			{
+				press -release ${forward}
+				movingfoward:Set[FALSE]
+			}
+
 			Actor[${TID}]:DoFace
-			wait 1
+			waitframe
+
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			{
+				press -hold ${forward}
+				movingforward:Set[TRUE]
+			}
 		}
 		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
-		
+
 
 		if ${Position.Angle[${TID}]}<${destangle}
 		{
-			echo stuck!
+			echo DEBUG:: Stuck While Strafing
 			isstuck:Set[TRUE]
 		}
 	}
@@ -2046,14 +2127,29 @@ function StrafeToRight(uint TID, float destangle)
 	{
 		do
 		{
-			echo strafing right....4 - ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+			echo DEBUG:: Strafing to RIGHT from LEFT Side
+			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
+			{
+				press -release ${forward}
+				movingfoward:Set[FALSE]
+			}
+
 			Actor[${TID}]:DoFace
-			wait 1
+			waitframe
+
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			{
+				press -hold ${forward}
+				movingforward:Set[TRUE]
+			}
 		}
 		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
 		if ${Position.Angle[${TID}]}>${destangle}
+		{
+			echo DEBUG:: Stuck While Strafing
 			isstuck:Set[TRUE]
+		}
 	}
 
 	press -release ${straferight}
@@ -2741,7 +2837,7 @@ function FastMove(float X, float Z, int range)
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC2"
 	}
-	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>50 && ${PathType}!=4
+	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${MoveToRange} && ${PathType}!=4
 	{
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC3"
@@ -2769,8 +2865,24 @@ function FastMove(float X, float Z, int range)
 		{
 			if (${Script.RunningTime}-${xTimer}) > 500
 			{
+				press -hold ${strafeleft}
+				wait 8
+				press -release ${strafeleft}
+
+				if ${Math.Calc[${SavDist}-${xDist}]} < 0.8
+				{
+					press -hold ${straferight}
+					wait 8
+					press -release ${straferight}
+				}
+
+				xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
+				if ${Math.Calc[${SavDist}-${xDist}]} > 0.8
+					continue
+
 				;echo "DEBUG: Script.RunningTime (${Script.RunningTime}) - xTimer (${xTimer}) is greater than 500 -- returning STUCK  (WhoFollowing: ${Me.ToActor.WhoFollowing})"
 				;echo "DEBUG: Using Math.Calc64 value is ${Math.Calc64[${Script.RunningTime}-${xTimer}]}"
+
 				isstuck:Set[TRUE]
 				if !${pulling}
 				{
@@ -3575,7 +3687,7 @@ function VerifyTarget(int TargetID=0)
         {
         	if ${MainAssist.Equal[${Me.Name}]}
         		return FALSE
-        		
+
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
@@ -3589,8 +3701,8 @@ function VerifyTarget(int TargetID=0)
     	if (${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead})
     	{
         	if ${MainAssist.Equal[${Me.Name}]}
-        		return FALSE    		
-    		
+        		return FALSE
+
        	    call ReacquireKillTargetFromMA
         	if ${Return.Equal[FAILED]}
        	    {
@@ -3732,7 +3844,7 @@ function CheckBuffsOnce()
 
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 	CurrentAction:Set["Checking Buffs Once..."]
-	
+
 	if ${Me.CastingSpell}
 	{
 		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel to finish casting..."]
