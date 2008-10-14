@@ -15,12 +15,11 @@ objectdef EQ2Position
 	; 90 == Directly beside (either side)
 	member:float Angle(uint ActorID)
 	{
-		variable float RetVal
 		variable float Heading=${Actor[${ActorID}].Heading}
 		variable float HeadingTo=${Actor[${ActorID}].HeadingTo}
-		RetVal:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
-		RetVal:Set[${Math.Acos[${RetVal}]}]
-		return ${RetVal}
+		Returning:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
+		Returning:Set[${Math.Acos[${RetVal}]}]
+		return
 	}
 
 	; Returns which side of the Actor I am on, Left or Right.
@@ -42,17 +41,16 @@ objectdef EQ2Position
 	; 0 to 180 (or -0 to -180 if you wish to get a point on the opposite side.)
 	member:point3f PointAtAngle(uint ActorID, float Angle, float Distance = 3)
 	{
-		variable point3f RetVal
 		variable float Heading=${Actor[${ActorID}].Heading}
-		RetVal.Y:Set[${Actor[${ActorID}].Y}]
+		Returning.Y:Set[${Actor[${ActorID}].Y}]
 
 		if ${This.Side[${ActorID}].Equal[Right]}
 		{
 			Angle:Set[-(${Angle})]
 		}
-		RetVal.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
-		RetVal.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
-		return ${RetVal.X} ${RetVal.Y} ${RetVal.Z}
+		Returning.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
+		Returning.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
+		return
 	}
 	
 	; and this member will return a point in 3d space at any angle of attack from the
@@ -60,17 +58,16 @@ objectdef EQ2Position
 	; and direction, and the time argument passed to this function.
 	member:point3f PredictPointAtAngle(uint ActorID, float Angle, float Seconds=1, float Distance=3)
 	{
-		variable point3f RetVal
 		variable point3f Velocity
 
 		Velocity:Set[${Actor[${ActorID}].Velocity}]
 
-		RetVal:Set[${This.PointAtAngle[${ActorID},${Angle},${Distance}]}]
+		Returning:Set[${This.PointAtAngle[${ActorID},${Angle},${Distance}]}]
 
-		RetVal.X:Inc[${Velocity.X}*${Seconds}]
-		RetVal.Y:Inc[${Velocity.Y}*${Seconds}]
-		RetVal.Z:Inc[${Velocity.Z}*${Seconds}]
-		return ${RetVal.X} ${RetVal.Y} ${RetVal.Z}
+		Returning.X:Inc[${Velocity.X}*${Seconds}]
+		Returning.Y:Inc[${Velocity.Y}*${Seconds}]
+		Returning.Z:Inc[${Velocity.Z}*${Seconds}]
+		return
 	}
 
 	member:float GetBaseMaxRange(uint ActorID)
@@ -88,18 +85,35 @@ objectdef EQ2Position
 	member:float GetSpellMaxRange(uint ActorID, float PercentMod = 0, float SpellRange = 30)
 	{
 		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
-		SpellRange:Set[${Math.Calc[${MeleeRange}*${PercentMod}]}]
+		SpellRange:Set[${Math.Calc[${SpellRange}*${PercentMod}]}]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${SpellRange}]}
 	}
 
 	member:float GetCAMaxRange(uint ActorID, float PercentMod = 0, float CARange = 5)
 	{
 		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
-		CARange:Set[${Math.Calc[${MeleeRange}*${PercentMod}]}]
+		CARange:Set[${Math.Calc[${CARange}*${PercentMod}]}]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${CARange}]}
 	}
 }
 
+
+
+#ifndef _IncludePositionUtils_
+function main()
+{
+	declare PositionUtils EQ2Position global
+	while 1
+	{
+		if ${QueuedCommands}
+			ExecuteQueued
+		waitframe
+	}
+}
+#else /* _IncludePositionUtils_ */
+
 variable EQ2Position Position
 
-#endif
+#endif /* _IncludePositionUtils_ */
+
+#endif /* _PositionUtils_ */
