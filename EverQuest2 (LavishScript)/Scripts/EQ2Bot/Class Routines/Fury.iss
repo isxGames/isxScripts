@@ -542,15 +542,7 @@ function Combat_Routine(int xAction)
 				}    		
 			}
     	}
-		elseif ${Actor[${KillTarget}].IsHeroic}
-		{
-			;; Fast-casting encounter debuff that should be used always 
-			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
-			{
-				call CastSpellRange 52 0 0 0 ${KillTarget}
-				DebuffCnt:Inc
-			}		
-		}    	
+   	
     	;if we cast a debuff, check heals again before continue
     	if (${DebuffCnt} > 0)
     	{
