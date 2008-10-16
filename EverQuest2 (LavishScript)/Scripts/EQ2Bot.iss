@@ -66,7 +66,7 @@ variable bool IgnoreGreyCon
 variable filepath mainpath="${LavishScript.HomeDirectory}/Scripts/"
 variable string spellfile
 variable string charfile
-variable string SpellType[400]
+variable string SpellType[600]
 variable int AssistHP
 variable string MainAssist
 variable string MainTankPC
