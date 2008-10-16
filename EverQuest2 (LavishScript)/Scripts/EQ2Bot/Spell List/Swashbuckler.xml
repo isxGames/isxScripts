@@ -4,6 +4,7 @@
   <Set Name="Swashbuckler">
    			 <Setting Name="1,201">Sneak</Setting>
 				 <Setting Name="1,150">Swipe</Setting>
+				 <Setting Name="1,553">Salve</Setting>
 		 		 <Setting Name="2,130">Pincer</Setting>
 		 		 <Setting Name="2,100">Spine Attack</Setting>
 		 		 <Setting Name="3,95">Circle Attack</Setting>

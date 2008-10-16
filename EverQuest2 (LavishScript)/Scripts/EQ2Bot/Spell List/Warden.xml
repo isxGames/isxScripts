@@ -4,6 +4,7 @@
 	<Set Name="warden">
 		<Setting Name="1,4">Minor Bloom</Setting>
 		<Setting Name="1,60">Fire</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,40">Barbs</Setting>
 		<Setting Name="3,61">Cold</Setting>
 		<Setting Name="3,1">Minor Florescence</Setting>

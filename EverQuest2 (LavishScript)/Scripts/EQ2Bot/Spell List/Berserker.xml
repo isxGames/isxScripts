@@ -4,6 +4,7 @@
 	<Set Name="Berserker">
 		<Setting Name="1,160">Taunt</Setting>
 		<Setting Name="1,152">Wild Swing</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,27">Focus Anger</Setting>
 		<Setting Name="3,28">Bullying Defense</Setting>
 		<Setting Name="4,295">Stance: Defensive Stance</Setting>

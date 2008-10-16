@@ -4,6 +4,7 @@
 	<Set Name="Coercer">
 		<Setting Name="1,60">Mind Shock</Setting>
 		<Setting Name="1,352">Slumber</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,351">Befriend</Setting>
 		<Setting Name="2,190">Medusa Gaze</Setting>
 		<Setting Name="3,70">Cerebral Shock</Setting>

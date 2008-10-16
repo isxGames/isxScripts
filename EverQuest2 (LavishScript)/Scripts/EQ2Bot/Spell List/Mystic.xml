@@ -5,6 +5,7 @@
 		<!--Normal Abilities -->
 		<Setting Name="1,80">Chilling Winds</Setting>
 		<Setting Name="1,4">Minor Aid</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,50">Haze</Setting>
 		<Setting Name="3,82">Fever</Setting>
 		<Setting Name="3,1">Minor Ritual</Setting>

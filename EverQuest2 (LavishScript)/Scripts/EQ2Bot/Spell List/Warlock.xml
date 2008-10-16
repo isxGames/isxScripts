@@ -4,6 +4,7 @@
 	<Set Name="warlock">
 		<Setting Name="1,63">Corrosive Strike</Setting>
 		<Setting Name="1,57">Stop Breath</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,95">Poison Cloud</Setting>
 		<Setting Name="3,72">Erupt</Setting>
 		<Setting Name="4,25">Magi\'s Shielding</Setting>

@@ -4,6 +4,7 @@
 	<Set Name="Illusionist">
 		<Setting Name="1,60">Phantasmal Shock</Setting>
 		<Setting Name="1,352">Sleep</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,190">Confusion</Setting>
 		<Setting Name="2,355">Personae</Setting>
 		<Setting Name="3,70">Migraine</Setting>
@@ -30,7 +31,7 @@
 		<Setting Name="10,394">Illusory Arm</Setting>
 		<Setting Name="10,396">Nullifying Staff</Setting>
 		<Setting Name="10,397">Shrink Servant</Setting>
-		<Setting name="10,398">Spellblade\'s Counter</Setting>
+		<Setting Name="10,398">Spellblade\'s Counter</Setting>
 		<Setting Mame="10,399">Counterblade</Setting>
 		<Setting Name="11,61">Headache</Setting>
 		<Setting Name="12,60">Phantasmal Jolt</Setting>

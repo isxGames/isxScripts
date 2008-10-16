@@ -4,6 +4,7 @@
 	<Set Name="Paladin">
 		<Setting Name="1,151">Faithful Swing</Setting>
 		<Setting Name="1,160">Taunt</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,61">Righteous Anger</Setting>
 		<Setting Name="3,10">Prayer of Healing</Setting>
 		<Setting Name="4,290">Stance: Courageousness</Setting>

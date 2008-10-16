@@ -85,6 +85,7 @@ function Class_Declaration()
 	declare KeepGroupHOTUp bool script 0
 	declare RaidHealMode bool script 0
 	declare ShiftForm int script 1
+	declare PactOfNature string script 
 	declare SpamHealMode bool script 0
 	declare FeastAction int script 9
 	declare UseFastOffensiveSpellsOnly bool script 0
@@ -127,10 +128,10 @@ function Class_Declaration()
 	BuffMask:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMask,TRUE]}]
 	BuffEel:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEel,FALSE]}]
 	ShiftForm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[ShiftForm,]}]
+	PactOfNature:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[PactOfNature,]}]
 	SpamHealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[SpamHealMode,]}]
 
 	NoEQ2BotStance:Set[TRUE]
-
 }
 
 function Class_Shutdown()
@@ -180,6 +181,9 @@ function Buff_Init()
 	PreSpellRange[12,1]:Set[396]
 	PreSpellRange[12,2]:Set[397]
 	PreSpellRange[12,3]:Set[398]
+	
+	PreAction[13]:Set[BuffPactOfNature]
+	PreSpellRange[13,1]:Set[399]
 }
 
 function Combat_Init()
@@ -466,11 +470,40 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 
 			break
+		case BuffPactOfNature
+			if !${Me.Ability[Pact of Nature](exists)}
+				break
+				
+			BuffTarget:Set[${UIElement[PactOfNature@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				break
+
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+
+			break			
 		Default
 			return Buff Complete
 			break
 	}
 	call ProcessTriggers
+}
+
+function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
+{
+	;; Notes:
+	;; - For Fury, this function is utilized throughout the Combat_Routine to make sure that we are making desired checks before any spell cast
+	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
+	;;;;;;;
+
+	call CheckMTNearDeath
+
+
+	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
+	return ${Return}
 }
 
 function Combat_Routine(int xAction)
@@ -518,17 +551,17 @@ function Combat_Routine(int xAction)
     		{
     			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
     			{
-    				call CastSpellRange 50 0 0 0 ${KillTarget}
+    				call _CastSpellRange 50 0 0 0 ${KillTarget}
     				DebuffCnt:Inc
     			}
     			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && ${DebuffCnt}<1
     			{
-    				call CastSpellRange 51 0 0 0 ${KillTarget}
+    				call _CastSpellRange 51 0 0 0 ${KillTarget}
     				DebuffCnt:Inc
     			}
     			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
     			{
-    				call CastSpellRange 52 0 0 0 ${KillTarget}
+    				call _CastSpellRange 52 0 0 0 ${KillTarget}
     				DebuffCnt:Inc
     			}
     		}
@@ -537,7 +570,7 @@ function Combat_Routine(int xAction)
 				;; Fast-casting encounter debuff that should be used always 
 				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
 				{
-					call CastSpellRange 52 0 0 0 ${KillTarget}
+					call _CastSpellRange 52 0 0 0 ${KillTarget}
 					DebuffCnt:Inc
 				}    		
 			}
@@ -563,7 +596,7 @@ function Combat_Routine(int xAction)
     	if (${StartHO})
     	{
     		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
-    			call CastSpellRange 304
+    			call _CastSpellRange 304
     	}
 
     	;;
@@ -574,7 +607,7 @@ function Combat_Routine(int xAction)
 			call CheckCondition Power ${Power[${FeastAction},1]} ${Power[${FeastAction},2]}
 			if ${Return.Equal[OK]}
 			{
-				call CastSpellRange ${SpellRange[${FeastAction},1]} 0 0 0 ${KillTarget}
+				call _CastSpellRange ${SpellRange[${FeastAction},1]} 0 0 0 ${KillTarget}
 			}
 		}
 		CurrentAction:Set[OffenseMode: OFF]
@@ -607,7 +640,7 @@ function Combat_Routine(int xAction)
 	if (${StartHO})
 	{
 		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
-			call CastSpellRange 304
+			call _CastSpellRange 304
 	}
 
 	if ${ShardMode}
@@ -620,17 +653,17 @@ function Combat_Routine(int xAction)
 		{
 			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
 			{
-				call CastSpellRange 50 0 0 0 ${KillTarget}
+				call _CastSpellRange 50 0 0 0 ${KillTarget}
 				DebuffCnt:Inc
 			}
 			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && ${DebuffCnt}<1
 			{
-				call CastSpellRange 51 0 0 0 ${KillTarget}
+				call _CastSpellRange 51 0 0 0 ${KillTarget}
 				DebuffCnt:Inc
 			}
 			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
 			{
-				call CastSpellRange 52 0 0 0 ${KillTarget}
+				call _CastSpellRange 52 0 0 0 ${KillTarget}
 				DebuffCnt:Inc
 			}
 		}
@@ -639,7 +672,7 @@ function Combat_Routine(int xAction)
 			;; Fast-casting encounter debuff that should be used always 
 			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
 			{
-				call CastSpellRange 52 0 0 0 ${KillTarget}
+				call _CastSpellRange 52 0 0 0 ${KillTarget}
 				DebuffCnt:Inc
 			}    		
 		}		
@@ -649,7 +682,7 @@ function Combat_Routine(int xAction)
 		;; Fast-casting encounter debuff that should be used always 
 		if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 52 0 0 0 ${KillTarget}
+			call _CastSpellRange 52 0 0 0 ${KillTarget}
 			DebuffCnt:Inc
 		}		
 	}
@@ -731,7 +764,7 @@ function Combat_Routine(int xAction)
 			{
 				call CheckForMez "Fury Nuke"
 				if ${Return.Equal[FALSE]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				else
 					call ReacquireTargetFromMA
 			}
@@ -747,7 +780,7 @@ function Combat_Routine(int xAction)
     				{
     					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
     					{
-    						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+    						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
     					}
     				}
     			}
@@ -762,7 +795,7 @@ function Combat_Routine(int xAction)
 				{
 					call CheckForMez "Fury AoE"
 					if ${Return.Equal[FALSE]}
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					else
 						call ReacquireTargetFromMA
 				}
@@ -774,7 +807,7 @@ function Combat_Routine(int xAction)
 			{
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
@@ -784,7 +817,7 @@ function Combat_Routine(int xAction)
 			{
 				call CheckForMez "Fury DoT"
 				if ${Return.Equal[FALSE]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				else
 					call ReacquireTargetFromMA
 			}
@@ -797,7 +830,7 @@ function Combat_Routine(int xAction)
 			{
 				call CheckForMez "Fury DoT2"
 				if ${Return.Equal[FALSE]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				else
 					call ReacquireTargetFromMA
 			}
@@ -810,7 +843,7 @@ function Combat_Routine(int xAction)
 			    {
     				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
     				if ${Return.Equal[OK]}
-    					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+    					call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
     			}
 			}
 			break
@@ -822,7 +855,7 @@ function Combat_Routine(int xAction)
 			    {
     				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
     				if ${Return.Equal[OK]}
-    					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+    					call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
     			}
 			}
 			break
@@ -835,7 +868,7 @@ function Combat_Routine(int xAction)
 				{
 					call CheckForMez "Fury Ring of Fire"
 					if ${Return.Equal[FALSE]}
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					else
 						call ReacquireTargetFromMA
 				}
@@ -850,7 +883,7 @@ function Combat_Routine(int xAction)
 				{
 					call CheckForMez "Fury Ball Lightning"
 					if ${Return.Equal[FALSE]}
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					else
 						call ReacquireTargetFromMA
 				}
@@ -863,7 +896,7 @@ function Combat_Routine(int xAction)
 			{
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
@@ -904,7 +937,7 @@ function Combat_Routine(int xAction)
 				{
 					call CheckForMez "Fury Storms"
 					if ${Return.Equal[FALSE]}
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					else
 						call ReacquireTargetFromMA
 				}
@@ -1570,50 +1603,131 @@ function FindAfflicted()
 
 function CheckHOTs()
 {
-
 	declare tempvar int local 1
 	declare hot1 int local 0
 	declare grphot int local 0
+	declare MainTankID int local 0
 	hot1:Set[0]
 	grphot:Set[0]
-
-	if ((${Me.InCombat} || ${Actor[exactname,${MainTankPC}].InCombatMode}) && (${KeepMTHOTUp} || ${KeepGroupHOTUp})) || (${KeepReactiveUp} && ${Me.ToActor.Power}>85)
+	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
+	
+	
+	if (${Me.InCombat} || ${Actor[${MainTankID}].InCombatMode})
 	{
+		if ${KeepMTHOTUp}
+		{
+			if !${Me.InRaid} || !${Me.Group[${MainTankPC}](exists)}
+			{
+				tempvar:Set[1]
+				do
+				{
+					if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID} == ${MainTankID}
+					{
+						;echo Single HoT is Present on MT
+						hot1:Set[1]
+						break
+					}
+				}
+				while ${tempvar:Inc}<=${Me.CountMaintained}
+				
+				if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost} && ${Actor[${MainTankID}](exists)}
+				{
+					; Single Target HoT
+					call CastSpellRange 7 0 0 0 ${MainTankID}
+					hot1:Set[1]
+				}
+			}
+		}
+		if ${KeepGroupHOTUp}
+		{
+			if !${Me.InRaid} || ${Me.Group[${MainTankPC}](exists)}
+			{
+				tempvar:Set[1]
+				do
+				{
+					if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
+					{
+						;echo Group HoT is Present
+						grphot:Set[1]
+						break
+					}
+				}
+				while ${tempvar:Inc}<=${Me.CountMaintained}
+				
+				if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+				{
+					; group HoT
+					call CastSpellRange 15
+				}
+			}
+		}
+		
+		; Hibernate
+		if ${Actor[${KillTarget}].IsEpic}
+		{
+			if ${Me.ToActor.Power} > 55 && !${Me.Maintained[${SpellType[11]}](exists)}
+				call CastSpellRange 11
+		}
+	}
+	elseif (${KeepReactiveUp} && ${Me.ToActor.Power} >= 85)
+	{
+		;; Pre HoT		
+		tempvar:Set[1]
 		do
 		{
-			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID}==${Actor[PC,ExactName,${MainTankPC}].ID}
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID} == ${MainTankID}
 			{
 				;echo Single HoT is Present on MT
 				hot1:Set[1]
-				break
+				if ${grphot} > 0
+					break
+				continue
 			}
 			elseif ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
 			{
 				;echo Group HoT is Present
 				grphot:Set[1]
+				if ${hot1} > 0
+					break
 			}
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
-
-		if (${Me.InCombat} && ${KeepMTHOTUp}) || ${KeepReactiveUp}
+		
+		if !${Me.InRaid} || !${Me.Group[${MainTankPC}](exists)}
 		{
-			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}
+			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost} && ${Actor[${MainTankID}](exists)}
 			{
-				call CastSpellRange 7 0 0 0 ${Actor[PC,ExactName,${MainTankPC}].ID}
+				; Single Target HoT
+				call CastSpellRange 7 0 0 0 ${MainTankID}
 				hot1:Set[1]
 			}
 		}
-
-		if (${Me.InCombat} && ${KeepGroupHOTUp}) || ${KeepReactiveUp}
+		if !${Me.InRaid} || ${Me.Group[${MainTankPC}](exists)}
 		{
 			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+			{
+				; group HoT
 				call CastSpellRange 15
+			}
 		}
+		
+
+		; Hibernate
+		if !${Me.Maintained[${SpellType[11]}](exists)}
+			call CastSpellRange 11
 	}
+}
 
-	if ${KeepReactiveUp} && !${Me.Maintained[${SpellType[11]}](exists)}
-		call CastSpellRange 11
-
+function CheckMTNearDeath()
+{
+	declare MainTankID int local 0
+	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]	
+	
+	if (${Actor[${MainTankID}].Health} <= 25)
+	{
+		if (${Me.Ability[${SpellType[316]}].IsReady} && ${Me.ID}==${MainTankID})
+			call CastSpellRange 316 0 0 0 ${MainTankID}		
+	}
 }
 
 function Lost_Aggro()
