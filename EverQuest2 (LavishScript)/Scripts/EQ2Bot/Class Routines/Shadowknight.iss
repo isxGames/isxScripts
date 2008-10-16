@@ -692,6 +692,8 @@ function Combat_Routine(int xAction)
     
     call CheckPower
     
+    call CheckHeals
+    
     ; If Kerran, use Physical Mitigation Debuff on Epic Mobs or Heroics that are yellow/orange/red cons
     if ${Me.Race.Equal[Kerran]}
     {
@@ -1176,7 +1178,40 @@ function Cancel_Root()
 }
 
 function CheckHeals()
-{
+{	
+	if ${Me.Effect[Pact of Nature](exists)}
+	{
+		variable int MainTankID
+		if ${MainTank}
+			MainTankID:Set[${Me.ID}]
+		else
+			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
+				
+		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${MainTankID}
+			    return
+			}	
+		}
+		elseif !${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 75
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${Me.ID}
+			    return
+			}	
+		}
+		elseif ${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 35
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${Me.ID}
+			    return
+			}
+		}
+	}
 }
 
 function CheckPower()

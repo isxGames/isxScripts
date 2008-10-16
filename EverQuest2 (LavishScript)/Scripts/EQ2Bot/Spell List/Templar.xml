@@ -4,6 +4,7 @@
 	<Set Name="templar">
 		<Setting Name="1,4">Minor Healing</Setting>
 		<Setting Name="1,60">Smite</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,50">Rebuke</Setting>
 		<Setting Name="3,61">Light Strike</Setting>
 		<Setting Name="3,1">Minor Arch Healing</Setting>

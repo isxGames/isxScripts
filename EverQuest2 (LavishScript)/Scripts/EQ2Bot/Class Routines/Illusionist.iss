@@ -721,8 +721,7 @@ function Combat_Routine(int xAction)
 	if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
 		call PetAttack
 
-	if !${DPSMode} && !${UltraDPSMode}
-		call CheckHeals
+	call CheckHeals
 
 	if ${ShardMode}
 		call Shard
@@ -1610,39 +1609,81 @@ function RefreshPower()
 
 function CheckHeals()
 {
-	call UseCrystallizedSpirit 60
-
-	declare temphl int local 1
-
-	; Cure Arcane Me
-	if ${Me.Arcane}>=1
+	
+	if !${DPSMode} && !${UltraDPSMode}
 	{
-		call CastSpellRange 210 0 0 0 ${Me.ID}
-		LastSpellCast:Set[210]
-		
-		if ${Actor[${KillTarget}](exists)}
-			Target ${KillTarget}
-	}
-
-	if ${grpcnt} > 1
-	{
-		do
+		call UseCrystallizedSpirit 60
+	
+		declare temphl int local 1
+	
+		; Cure Arcane Me
+		if ${Me.Arcane}>=1
 		{
-			; Cure Arcane
-			if ${Me.Group[${temphl}].ToActor(exists)}
+			call CastSpellRange 210 0 0 0 ${Me.ID}
+			LastSpellCast:Set[210]
+			
+			if ${Actor[${KillTarget}](exists)}
+				Target ${KillTarget}
+		}
+	
+		if ${grpcnt} > 1
+		{
+			do
 			{
-				if ${Me.Group[${temphl}].Arcane} >= 1
+				; Cure Arcane
+				if ${Me.Group[${temphl}].ToActor(exists)}
 				{
-					call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
-					LastSpellCast:Set[210]
-
-					if ${Actor[${KillTarget}](exists)}
-						Target ${KillTarget}
+					if ${Me.Group[${temphl}].Arcane} >= 1
+					{
+						call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+						LastSpellCast:Set[210]
+	
+						if ${Actor[${KillTarget}](exists)}
+							Target ${KillTarget}
+					}
 				}
 			}
+			while ${temphl:Inc} <= ${Me.GroupCount}
 		}
-		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;
+	if ${Me.Effect[Pact of Nature](exists)}
+	{
+		variable int MainTankID
+		if ${MainTank}
+			MainTankID:Set[${Me.ID}]
+		else
+			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
+		
+		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${MainTankID}
+			    return
+			}	
+		}
+		elseif !${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 75
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${MainTankID}
+			    return
+			}	
+		}
+		elseif ${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 35
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${MainTankID}
+			    return
+			}
+		}
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 }
 
 function Mezmerise_Targets()

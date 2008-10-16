@@ -4,6 +4,7 @@
 	<Set Name="Conjuror">
 		<Setting Name="1,61">Dust Blast</Setting>
 		<Setting Name="1,357">Tellurian Recruit</Setting>
+		<Setting Name="1,553">Salve</Setting>
 		<Setting Name="2,1">Heal Servant</Setting>
 		<Setting Name="3,73">Burn</Setting>
 		<Setting Name="4,25">Magi\'s Shielding</Setting>

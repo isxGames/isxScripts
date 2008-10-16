@@ -4,6 +4,7 @@
 <Set Name="Bruiser">
 	<Setting Name="1,152">Jab</Setting>
 	<Setting Name="1,160">Taunt</Setting>
+	<Setting Name="1,553">Salve</Setting>
 	<Setting Name="2,120">Bruising Fist</Setting>
 	<Setting Name="3,320">Ignore Bruises</Setting>
 	<Setting Name="4,295">Stance: Brawler's Stance</Setting>

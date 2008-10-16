@@ -249,9 +249,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseStormBolt]}</Data>
 	</Commandcheckbox>
-	
-	
-	
+
 	<Text name='lblShiftForm' Template='EQ2.text'>
 	  <x>5%</x>
 	  <y>280</y>
@@ -263,7 +261,7 @@
 	<combobox Name='ShiftForm' Template='EQ2.Combobox'>
 		<X>20%</X>
 		<Y>275</Y>
-		<Width>80</Width>
+		<Width>65</Width>
 		<Height>20</Height>
 		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
 		<Items>
@@ -281,6 +279,54 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[ShiftForm,${This.SelectedItem.Value}]:Save</OnSelect>
 		<OnLeftClick></OnLeftClick>
 	</combobox>
+	
+	<Text Name='lblPactOfNatureGroupMember' Template='EQ2.text'>
+		<X>36%</X>
+		<Y>280</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Visible>0</Visible>
+		<Text>Pact of Nature:</Text>
+		<AutoTooltip></AutoTooltip>
+		<OnLoad>
+			if ${Me.Ability[Pact of Nature](exists)}
+				This:ToggleVisible
+		</OnLoad>		
+	</Text>
+	<combobox name='PactOfNature' Template='EQ2.Combobox'>
+		<X>55%</X>
+		<y>275</y>
+		<Width>100</width>
+		<Height>20</height>
+		<Visible>0</Visible>
+		<AutoTooltip>The Group Member to give Pact of Nature</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			if ${Me.Ability[Pact of Nature](exists)}
+				This:ToggleVisible
+			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[PactOfNature]}]
+			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[PactOfNature]}]:Select
+		</OnLoad>
+		<OnSelect>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[PactOfNature,${This.SelectedItem.Text}]:Save</OnSelect>
+		<OnLeftClick>
+			declare tmpvar int
+
+			This:ClearItems
+			tmpvar:Set[1]
+			if ${Me.Grouped}
+			{
+				do
+				{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+				}
+				while ${tmpvar:Inc}&lt;= ${Me.Group}
+			}
+		</OnLeftClick>
+	</combobox>
+	
 	<Text Name='lblBuffBatGroupMember' Template='EQ2.text'>
 		<X>335</X>
 		<Y>90</Y>
@@ -310,26 +356,18 @@
 			tmpvar:Set[1]
 			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
 			if ${Me.ToActor.Pet(exists)}
-			{
 				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-			}
 			do
 			{
 				if ${Me.Grouped}
 				{
 					if ${Me.Group[${tmpvar}].ToActor(exists)}
-					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-					}
 					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-					{
 						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-					}
-
 				}
-
 			}
-			while ${tmpvar:Inc}&lt;=5
+			while ${tmpvar:Inc}&lt;= ${Me.Group}
 		</OnLeftClick>
 	</combobox>
 	<Text Name='lblBuffSavageryGroupMember' Template='EQ2.text'>
@@ -361,28 +399,22 @@
 			tmpvar:Set[1]
 			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
 			if ${Me.ToActor.Pet(exists)}
-			{
 				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-			}
 			do
 			{
 				if ${Me.Grouped}
 				{
 					if ${Me.Group[${tmpvar}].ToActor(exists)}
-					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-					}
 					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-					{
 						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-					}
 				}
 			}
-			while ${tmpvar:Inc}&lt;=5
+			while ${tmpvar:Inc}&lt;= ${Me.Group}
 		</OnLeftClick>
 	</combobox>
 	<Commandbutton name='RefreshVim' Template='EQ2.Commandbutton'>
-		<X>310</X>
+		<X>350</X>
 		<Y>170</Y>
 		<Width>20</Width>
 		<Height>20</Height>
@@ -395,73 +427,58 @@
 			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}&gt;0
 			{
 				tmpvar:Set[1]
-
 				do
 				{
 					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].GetString[${tmpvar}]}]
 				}
 				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}
-
 			}
 
 			tmpvar:Set[1]
 
 			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-
-
 			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
 
 			if ${Me.ToActor.Pet(exists)}
-			{
 				UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
-			}
 
 			if ${Me.Grouped}
 			{
-
 				tmpvar:Set[1]
 				do
 				{
-						if ${Me.Group[${tmpvar}].ToActor(exists)}
-						{
-							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						{
-							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-						}
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+						UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 				}
-				while ${tmpvar:Inc}&lt;=5
+				while ${tmpvar:Inc}&lt;= ${Me.Group}
 			}
 
-
 			tmpvar:Set[1]
-
 			if ${tmpCollection.FirstKey(exists)}
 			{
 				do
 				{
-
 					UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
-
 				}
 				while ${tmpCollection.NextKey(exists)}
 			}
 		</OnLeftClick>
 	</Commandbutton>
 	<Text Name='lblBuffVim' Template='EQ2.text'>
-		<X>335</X>
+		<X>375</X>
 		<Y>172</Y>
-		<Width>150</Width>
+		<Width>105</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
-		<Text>Buff Vim (Int) On:</Text>
+		<Text>Int Buff (Vim):</Text>
 		<AutoTooltip>Shift Left click to select group members to buff Int on</AutoTooltip>
 	</Text>
 	<listbox name='lbBuffVim' Template='EQ2.Listbox'>
-		<X>310</X>
+		<X>360</X>
 		<y>190</y>
-		<width>155</width>
+		<width>105</width>
 		<height>100</height>
 		<SelectMultiple>1</SelectMultiple>
 		<Items></items>
@@ -472,53 +489,40 @@
 			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}&gt;0
 			{
 				tmpvar:Set[1]
-
 				do
 				{
 					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].GetString[${tmpvar}]}]
 				}
 				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffVim].Keys}
-
 			}
 
 			tmpvar:Set[1]
 
 			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-
 			UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
 
 			if ${Me.ToActor.Pet(exists)}
-			{
 				UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
-			}
 
 			if ${Me.Grouped}
 			{
-
 				tmpvar:Set[1]
 				do
 				{
-						if ${Me.Group[${tmpvar}].ToActor(exists)}
-						{
-							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						{
-							UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-						}
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+						UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 				}
-				while ${tmpvar:Inc}&lt;=5
+				while ${tmpvar:Inc}&lt;= ${Me.Group}
 			}
 
 			tmpvar:Set[1]
-
 			if ${tmpCollection.FirstKey(exists)}
 			{
 				do
 				{
-
 					UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
-
 				}
 				while ${tmpCollection.NextKey(exists)}
 			}
