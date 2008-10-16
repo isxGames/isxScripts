@@ -734,7 +734,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 {
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
-	;; - If the parameters of this function are altered, then the corresponding function needs to be altered in: Illusionist.iss
+	;; - If the parameters of this function are altered, then the corresponding function needs to be altered in: Illusionist.iss & Fury.iss
 	;;;;;;;
 
 	variable bool fndspell
