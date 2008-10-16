@@ -367,6 +367,38 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<checkbox Name='StrictLos' Template='EQ2.checkbox'>
+						<X>45%</X>
+						<Y>50</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Strict Los</Text>
+						<AutoTooltip>
+							Enforce Line of Sight.
+						</AutoTooltip>
+						<OnLoad>
+							if ${Script[goharvest].VariableScope.StrictLos}
+							{
+								UIElement[StrictLos@Harvest@GUITabs@GoHarvest]:SetChecked
+							}
+							else
+							{
+								UIElement[StrictLos@Harvest@GUITabs@GoHarvest]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[StrictLos@Harvest@GUITabs@GoHarvest].Checked}
+							{
+								Script[goharvest].VariableScope.StrictLos:Set[TRUE]
+								Echo Enforce Strict Line of Sight
+							}
+							else
+							{
+								Script[goharvest].VariableScope.StrictLos:Set[FALSE]
+								Echo Don't Enforce Strict Line of Sight
+							}
+						</OnLeftClick>
+					</checkbox>
 					<Commandbutton name='Avoid' Template='EQ2.Commandbutton'> 
 						<X>45%</X> 
 						<Y>30%</Y> 
