@@ -259,7 +259,9 @@ function Buff_Routine(int xAction)
     	        waitframe
     	    }
         	while (${Me.CastingSpell} || (${Math.Calc64[${Time.Timestamp}-${TimeBeforeEquip}]} <= 2))
+    	    call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID} 0 0 0 1
     	    Me.Inventory[${PrimarySlotItem}]:Equip
+    	    break
 			}
 
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
