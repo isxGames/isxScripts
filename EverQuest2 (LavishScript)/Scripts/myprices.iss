@@ -24,6 +24,7 @@ variable bool Natural
 variable bool MatchActual
 variable bool MaxPriceSet
 variable bool runautoscan
+variable bool runplace
 variable bool ItemNotStack
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
@@ -79,7 +80,7 @@ variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
 
 ; Main Script
 ;
-function main(string goscan)
+function main(string goscan, string goscan2)
 {
 #define WAITEXTPERIOD 120
 	Declare tempstring string local
@@ -149,7 +150,14 @@ function main(string goscan)
 		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
 	}
 	
-	if ${goscan.Equal["SCAN"]}
+	if ${goscan.Equal["PLACE"]} || ${goscan2.Equal["PLACE"]}
+	{
+		Pausemyprices:Set[FALSE]
+		runplace:Set[TRUE]
+		UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Stop and Quit]
+	}
+
+	if ${goscan.Equal["SCAN"]} || ${goscan2.Equal["SCAN"]}
 	{
 		Pausemyprices:Set[FALSE]
 		runautoscan:Set[TRUE]
@@ -176,7 +184,19 @@ function main(string goscan)
 
 		PauseTimer:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[PauseTimer].Text}]
 		call SaveSetting PauseTimer ${PauseTimer}
-
+		
+		; if paramater PLACE used then run place crafted items routine
+		if ${runplace} 
+		{
+			call buy item place
+			; if the scan paramater hasn't been set then don't do anything else
+			if !${runautoscan}
+			{
+				exitmyprices:Set[TRUE]
+				break
+			}
+		}
+		
 		; Start scanning the broker
 		if ${SellItems}
 		{
@@ -504,7 +524,7 @@ function main(string goscan)
 			Pausemyprices:Set[TRUE]
 		}
 		
-		if ${runautoscan}
+		if ${runautoscan} || ${runplace}
 		{
 			Exitmyprices:Set[TRUE]
 			ScanSellNonStop:Set[FALSE]
