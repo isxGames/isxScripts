@@ -888,11 +888,11 @@ function HealMe()
 	if ${Me.ToActor.Health}<85
 	{
 		if ${haveaggro} && ${Me.ToActor.InCombatMode}
-			call CastSpellRange 7 0 0 0 ${Me.ID}
+			call CastSpellRange 7 0 0 0 ${Me.ID} 0 0 0 1
 		else
 		{
 			call CastSpellRange 387
-			call CastSpellRange 4 0 0 0 ${Me.ID}
+			call CastSpellRange 4 0 0 0 ${Me.ID} 0 0 0 1
 		}
 	}
 }
@@ -913,13 +913,13 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[PC,ExactName,${MainTankPC}].ID}]
 
-    if !${Actor[${MainTankID}](exists)}
-    {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
-        MainTankExists:Set[FALSE]
-    }
-    else
-        MainTankExists:Set[TRUE]
+  if !${Actor[${MainTankID}](exists)}
+  {
+    echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+    MainTankExists:Set[FALSE]
+  }
+  else
+    MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
@@ -983,12 +983,11 @@ function CheckHeals()
   }
 
 
-	if ${PetMode} && ${grpheal}>1 && ${Me.Ability[${SpellType[16]}].IsReady} || ${EpicMode}
+	if ${PetMode} && ${grpheal}>1 && ${Me.Ability[${SpellType[16]}].IsReady} || (${EpicMode} && ${Me.InCombatMode})
 		call CastSpellRange 16
 
 	if ${grpheal}>2
 		call GroupHeal
-
 
 	;now lets heal individual groupmembers if needed
 	if ${lowest}
@@ -1050,19 +1049,22 @@ function HealMT(int MTID, int MTInMyGroup)
 		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[15]}].Range}
 		{
 			call CastSpellRange 387
-			call CastSpellRange 15
+			call CastSpellRange 15 0 0 0 ${KillTarget} 0 0 0 1
 		}
 		else
-			call CastSpellRange 7 0 0 0 ${MTID}
+			call CastSpellRange 7 0 0 0 ${MTID} 0 0 0 1
 
 		if ${Me.Ability[${SpellType[7]}].IsReady} && ${EpicMode} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[7]}].Range}
-			call CastSpellRange 7 0 0 0 ${MTID}
+			call CastSpellRange 7 0 0 0 ${MTID} 0 0 0 1
 	}
 
 	if ${Actor[${MTID}].Health}<70 && !${Actor[${MTID}].IsDead} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
 	{
 		call CastSpellRange 387
-		call CastSpellRange 1 0 0 0 ${MTID}
+		if ${Me.Ability[${SpellType[1]}].IsReady}
+			call CastSpellRange 1 0 0 0 ${MTID} 0 0 0 1
+		else
+			call CastSpellRange 4 0 0 0 ${MTID} 0 0 0 1
 	}
 }
 
@@ -1074,27 +1076,27 @@ function GroupHeal()
 	call CastSpellRange 387
 
 	if ${Me.Ability[${SpellType[10]}].IsReady}
-		call CastSpellRange 10
+		call CastSpellRange 10 0 0 0 ${KillTarget} 0 0 0 1
 	else
-		call CastSpellRange 15
+		call CastSpellRange 15 0 0 0 ${KillTarget} 0 0 0 1
 }
 
 function EmergencyHeal(int healtarget)
 {
 	;Soul Ward
-	call CastSpellRange 380 0 2 0 ${healtarget}
+	call CastSpellRange 380 0 0 0 ${healtarget} 0 0 0 1
 
 	;if we cast soulward exit emergency heal
 	if ${Me.Maintained[${SpellType[380]}](exists)}
 		return
 
 	;Avenger Death Save
-	call CastSpellRange 338 0 2 0 ${healtarget} 0 0 0 1
+	call CastSpellRange 338 0 0 0 ${healtarget} 0 0 0 1
 
 	if ${Me.Ability[${SpellType[335]}].IsReady}
-		call CastSpellRange 335 0 2 0 ${healtarget} 0 0 0 1
+		call CastSpellRange 335 0 0 0 ${healtarget} 0 0 0 1
 	else
-		call CastSpellRange 334 0 2 0 ${healtarget} 0 0 0 1
+		call CastSpellRange 334 0 0 0 ${healtarget} 0 0 0 1
 }
 
 function CureGroupMember(int gMember)

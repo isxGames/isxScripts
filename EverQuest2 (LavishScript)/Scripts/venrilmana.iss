@@ -1,8 +1,7 @@
 ;********************************************************************************
 ; Venril Power Manager
 ;
-; example: run venrilmana Pygar
-;	This will run the bot and treat the player 'Pygar' as MainAssist
+; example: run venrilmana
 ;********************************************************************************
 #macro ProcessTriggers()
 if "${QueuedCommands}"
@@ -16,17 +15,12 @@ if "${QueuedCommands}"
 #endmac
 
 
-function main(string MA)
+function main()
 {
-	if ${MA.Equal[]}
-	{
-		echo ERROR: No MainAssist set - run venrildirge <MainAssist>
-		endscript
-	}
 
 	do
 	{
-		if ${Me.Maintained[Sprint]}
+		if ${Me.Maintained[Sprint](exists)}
 			Me.Maintained[Sprint]:Cancel
 
 		call CheckDebuffs
@@ -44,7 +38,7 @@ function CheckPower()
 	if ${Me.ToActor.Power}>58
 	{
 		Me.Ability[Sprint]:Use
-		wait 5
+		wait 5 ${Me.Maintained[Sprint](exists)}
 
 		Me.Maintained[Sprint]:Cancel
 		return 1
@@ -111,7 +105,7 @@ function RefreshPower()
 	}
 
 	;conj shard
-	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Scale of Essence"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Scale of Essence"].IsReady}
 	{
 		Me.Inventory["Scale of Essence"]:Use
 		call CastPause
@@ -120,7 +114,7 @@ function RefreshPower()
 	}
 
 	;necro heart
-	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Darkness Heart"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Darkness Heart"].IsReady}
 	{
 		Me.Inventory["Darkness Heart"]:Use
 		call CastPause
@@ -129,7 +123,7 @@ function RefreshPower()
 	}
 
 	;Rare Mana Regen Potion
-	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Expert's Essence of Clarity"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Expert's Essence of Clarity"].IsReady}
 	{
 		Me.Inventory["Expert's Essence of Clarity"]:Use
 		call CastPause
@@ -138,7 +132,7 @@ function RefreshPower()
 	}
 
 	;Mana Regen Potion
-	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Dedicated Essence of Clarity"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Dedicated Essence of Clarity"].IsReady}
 	{
 		Me.Inventory["Dedicated Essence of Clarity"]:Use
 		call CastPause
@@ -147,7 +141,7 @@ function RefreshPower()
 	}
 
 	;Rare Mana Potion
-	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Expert's Essence of Power"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Expert's Essence of Power"].IsReady}
 	{
 		Me.Inventory["Expert's Essence of Power"]:Use
 		call CastPause
@@ -156,7 +150,7 @@ function RefreshPower()
 	}
 
 	;Mana Potion
-	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Dedicated Essence of Power"].IsReady} && ${Me.InCombat}
+	if ${Me.ToActor.Power}<=40 && ${Me.Inventory["Dedicated Essence of Power"].IsReady}
 	{
 		Me.Inventory["Dedicated Essence of Power"]:Use
 		call CastPause
