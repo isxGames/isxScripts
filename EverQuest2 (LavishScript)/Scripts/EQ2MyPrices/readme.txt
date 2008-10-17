@@ -79,12 +79,20 @@ or
 The script will then open the GUI , either doubleclick your market board or the closest non-agro NPC (should be the broker)
 scan your broker system and list whats on it.
 
-3. You can auto-run a scan and exit the script by passing the paramater SCAN to it.
+3. You can auto-run a scan and exit the script by passing the paramater SCAN and/or PLACE to it.
 
    run myprices SCAN   or /run myprices SCAN
  
    Script will load , scan your broker list then auto-exit.
+   
+   
+   run myprices PLACE   or /run myprices PLACE
+ 
+   Script will load , place your crafted items on the broker then auto-exit.
 
+   run myprices SCAN PLACE  or run myprices PLACE SCAN  or /run myprices PLACE SCAN or /run myprices SCAN PLACE
+ 
+   Script will load , place your crafted items on the broker , scan your broker list then auto-exit.
 
 The Sell TAB
 ============
