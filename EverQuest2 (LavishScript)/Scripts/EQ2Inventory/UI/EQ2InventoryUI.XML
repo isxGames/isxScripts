@@ -2330,7 +2330,7 @@
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellHandcrafted,0]:Save								
 								}
 					</OnLeftClick>
-					<AutoTooltip>Check to sell ALL for sale Handcrafted Items to a Merchant.</AutoTooltip>
+					<AutoTooltip>Check to sell ALL for sale HANDCRAFTED Items to a Merchant.</AutoTooltip>
 				</checkbox>
 				<checkbox Name='SellUncommon' Template='EQ2.checkbox'>
 				<X>5</X>
@@ -2354,7 +2354,7 @@
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellUncommon,0]:Save								
 								}
 					</OnLeftClick>
-					<AutoTooltip>Check to sell ALL for sale COMMON Items to a Merchant.</AutoTooltip>
+					<AutoTooltip>Check to sell ALL for sale UNCOMMON Items to a Merchant.</AutoTooltip>
 				</checkbox>
 				<CommandButton Name='Stop Vendor Items' Template='EQ2.Button'>
 					<X>10</X>
