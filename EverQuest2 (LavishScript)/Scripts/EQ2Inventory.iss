@@ -1371,6 +1371,11 @@ function SellJunk()
 		call SellHandcrafted
 	}
 	
+	if ${UIElement[SellUncommon@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	{
+		call SellUncommon
+	}
+	
 	if ${RunJunk} == 1
 	{
 		call AddSellLog "**Junk Items Sold**" FFFF00FF
@@ -1427,7 +1432,7 @@ function SellTreasured()
 			{
 				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
-				wait ${Math.Rand[30]:Inc[20]}
+				wait 15
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -1444,12 +1449,28 @@ function SellHandcrafted()
 			{
 				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
-				wait ${Math.Rand[30]:Inc[20]}
+				wait 15
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
 }
 
+function SellUncommon()
+{
+	variable int ArrayPosition=1
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 5
+	Do
+	{
+	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[UNCOMMON]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+			{
+				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
+				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+				wait 15
+			}
+	}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
+}
 function SellAdeptI()
 {
 	variable int ArrayPosition=1
