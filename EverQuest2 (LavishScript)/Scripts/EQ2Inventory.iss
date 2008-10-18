@@ -85,12 +85,25 @@ function PlaceItems()
 	wait 5
 	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
 	call AddLog "**Starting EQ2Broker v2 By Syliac**" FF00FF00
-	Actor[nokillnpc]:DoTarget
-	wait 5
-	Target:DoFace
-	wait 5
-	Target:DoubleClick
-	wait 5
+	EQ2:CreateCustomActorArray[byDist,15]
+	if ${Actor[guild,Guild World Market Broker](exists)}
+	{
+		Actor[guild,Guild World Market Broker]:DoTarget
+		wait 5
+		Target:DoFace
+		wait 5
+		Target:DoubleClick
+		wait 5
+	}
+	else
+	{
+		Actor[guild, Broker]:DoTarget
+		wait 5
+		Target:DoFace
+		wait 5
+		Target:DoubleClick
+		wait 5
+	}	
 	EQ2Execute /togglebags
 	wait 5
 	EQ2Execute /togglebags
@@ -1299,14 +1312,28 @@ function SellJunk()
 {
 	variable int KeyNum=1
 	RunJunk:Set[1]
+	
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00
-	Actor[nokillnpc]:DoTarget
-	wait 5
-	Target:DoFace
-	wait 5
-	Target:DoubleClick
-	wait 5
+	EQ2:CreateCustomActorArray[byDist,15]
+	if ${Actor[guild,Guild Commodities Exporter](exists)}
+	{
+		Actor[guild,Guild Commodities Exporter]:DoTarget
+		wait 5
+		Target:DoFace
+		wait 5
+		Target:DoubleClick
+		wait 5
+	}
+	else
+	{
+		Actor[nokillnpc]:DoTarget
+		wait 5
+		Target:DoFace
+		wait 5
+		Target:DoubleClick
+		wait 5
+	}	
 	wait 5
 	EQ2Execute /togglebags
 	wait 5
@@ -1337,6 +1364,11 @@ function SellJunk()
 	if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
 	{
 		call SellAdeptI
+	}
+	
+	if ${UIElement[SellHandcrafted@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	{
+		call SellHandcrafted
 	}
 	
 	if ${RunJunk} == 1
@@ -1392,6 +1424,23 @@ function SellTreasured()
 	Do
 	{
 	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[TREASURED]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+			{
+				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
+				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+				wait ${Math.Rand[30]:Inc[20]}
+			}
+	}
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
+}
+
+function SellHandcrafted()
+{
+	variable int ArrayPosition=1
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 5
+	Do
+	{
+	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[HANDCRAFTED]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
 			{
 				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
