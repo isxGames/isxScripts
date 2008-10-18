@@ -2308,9 +2308,33 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell ALL for sale Adept I Items to a Merchant.</AutoTooltip>
 				</checkbox>
+				<checkbox Name='SellHandcrafted' Template='EQ2.checkbox'>
+				<X>5</X>
+  			<Y>160</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+				<Text>Sell Handcrafted</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[SellHandcrafted,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellHandcrafted,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellHandcrafted,0]:Save								
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell ALL for sale Handcrafted Items to a Merchant.</AutoTooltip>
+				</checkbox>
 				<CommandButton Name='Stop Vendor Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>165</Y>
+					<Y>195</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Stop Vending Items</Text>
@@ -2319,7 +2343,7 @@
 				</CommandButton>
 				<CommandButton Name='Destroy Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>230</Y>
+					<Y>260</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Destroy Items</Text>
@@ -2328,7 +2352,7 @@
 				</CommandButton>
 				<CommandButton Name='Stop Destroy Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>295</Y>
+					<Y>325</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Stop Destroying</Text>
