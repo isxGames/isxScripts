@@ -2262,7 +2262,7 @@
 				</checkbox>
 				<checkbox Name='SellTreasured' Template='EQ2.checkbox'>
 				<X>5</X>
-  			<Y>110</Y>
+  			<Y>135</Y>
 			  <Width>150</Width>
 				<Height>20</Height>
   			<Text>Sell Treasured</Text>
@@ -2286,7 +2286,7 @@
 				</checkbox>
 				<checkbox Name='SellAdeptI' Template='EQ2.checkbox'>
 				<X>5</X>
-  			<Y>135</Y>
+  			<Y>110</Y>
 			  <Width>150</Width>
 				<Height>20</Height>
 				<Text>Sell Adept I</Text>
@@ -2321,7 +2321,7 @@
 								}
 					</OnLoad>
 					<OnLeftClick>
-						if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked}
+						if ${UIElement[SellHandcrafted@EQ2Junk@GUITabs@EQ2Inventory].Checked}
 								{
 									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellHandcrafted,1]:Save										
 								}
@@ -2332,9 +2332,33 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell ALL for sale Handcrafted Items to a Merchant.</AutoTooltip>
 				</checkbox>
+				<checkbox Name='SellUncommon' Template='EQ2.checkbox'>
+				<X>5</X>
+  			<Y>185</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+				<Text>Sell Uncommon</Text>
+  				<OnLoad>
+  					if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[SellCommon,1]} == 1
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${UIElement[SellUncommon@EQ2Junk@GUITabs@EQ2Inventory].Checked}
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellUncommon,1]:Save										
+								}
+								else
+								{
+									SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings]:Set[SellUncommon,0]:Save								
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell ALL for sale COMMON Items to a Merchant.</AutoTooltip>
+				</checkbox>
 				<CommandButton Name='Stop Vendor Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>195</Y>
+					<Y>220</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Stop Vending Items</Text>
@@ -2343,7 +2367,7 @@
 				</CommandButton>
 				<CommandButton Name='Destroy Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>260</Y>
+					<Y>285</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Destroy Items</Text>
@@ -2352,7 +2376,7 @@
 				</CommandButton>
 				<CommandButton Name='Stop Destroy Items' Template='EQ2.Button'>
 					<X>10</X>
-					<Y>325</Y>
+					<Y>350</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Stop Destroying</Text>
