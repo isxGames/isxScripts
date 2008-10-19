@@ -28,6 +28,188 @@
 		<Alignment>Left</Alignment>
 		<VerticalAlignment>Top</VerticalAlignment>
 	</template>
+	<!-- Button -->
+	<template name="EQ2.button.Texture" Filename="commonelements.dds">
+		<Left>113</Left>
+		<Right>203</Right>
+		<Top>7</Top>
+		<Bottom>32</Bottom>
+		<Border>6</Border>
+	</template>
+	<template name="EQ2.button.TexturePressed" Filename="commonelements.dds">
+		<Left>113</Left>
+		<Right>203</Right>
+		<Top>115</Top>
+		<Bottom>140</Bottom>
+		<Border>6</Border>
+	</template>
+	<template name="EQ2.button.TextureHover" Filename="commonelements.dds">
+		<Left>113</Left>
+		<Right>203</Right>
+		<Top>79</Top>
+		<Bottom>104</Bottom>
+		<Border>6</Border>
+	</template>
+	<template name="EQ2.button.Font" Template="EQ2.Font">
+		<Color>FFF9F099</Color>
+		<Name>Times New Roman</Name>
+		<Size>15</Size>
+	</template>
+	<template name="EQ2.button">
+		<BackgroundColor/>
+		<Font Template="EQ2.button.Font"/>
+		<Border>4</Border>
+		<BorderColor>FFD4D0C8</BorderColor>
+		<Texture Template="EQ2.button.Texture"/>
+		<TextureHover Template="EQ2.button.TextureHover"/>
+		<TexturePressed Template="EQ2.button.TexturePressed"/>
+	</template>
+	<template name="EQ2.commandbutton" Template="EQ2.button">
+		<Font Template="EQ2.button.Font"/>
+		<Texture Template="EQ2.button.Texture"/>
+		<TextureHover Template="EQ2.button.TextureHover"/>
+		<TexturePressed Template="EQ2.button.TexturePressed"/>
+		<Border>6</Border>
+	</template>
+	<!-- ScrollBar -->
+	<template name="EQ2.scrollbar.UpTexture" Filename="commonelements.dds">
+		<Left>430</Left>
+		<top>5</top>
+		<Right>446</Right>
+		<Bottom>23</Bottom>
+		<Border>3</Border>
+	</template>
+	<template name="EQ2.scrollbar.UpTexturePressed" Filename="commonelements.dds">
+		<Left>482</Left>
+		<top>5</top>
+		<Right>498</Right>
+		<Bottom>23</Bottom>
+		<Border>3</Border>
+	</template>
+	<template name="EQ2.scrollbar.DownTexture" Filename="commonelements.dds">
+		<Left>430</Left>
+		<top>5</top>
+		<Right>446</Right>
+		<Bottom>23</Bottom>
+		<Border>3</Border>
+	</template>
+	<template name="EQ2.scrollbar.DownTexturePressed" Filename="commonelements.dds">
+		<Left>482</Left>
+		<top>5</top>
+		<Right>498</Right>
+		<Bottom>23</Bottom>
+		<Border>3</Border>
+	</template>
+	<template name="EQ2.scrollbar.SliderTexture" Filename="commonelements.dds">
+		<Left>432</Left>
+		<top>26</top>
+		<Right>444</Right>
+		<Bottom>107</Bottom>
+		<Border>3</Border>
+	</template>
+	<template name="EQ2.scrollbar.SliderHandleTexture" Filename="commonelements.dds">
+		<Left>431</Left>
+		<top>135</top>
+		<Right>445</Right>
+		<Bottom>192</Bottom>
+		<Border>3</Border>
+	</template>
+	<template name="EQ2.scrollbar.upbutton">
+		<X>r16</X>
+		<Y>0</Y>
+		<Width>16</Width>
+		<Height>16</Height>
+		<Border>1</Border>
+		<Texture template='EQ2.scrollbar.UpTexture'></Texture>
+		<TexturePressed template='EQ2.scrollbar.UpTexturePressed'></TexturePressed>
+		<TextureHover template='EQ2.scrollbar.UpTextureHover'></TextureHover>
+	</template>
+	<template name="EQ2.scrollbar.downbutton">
+		<X>0</X>
+		<Y>0</Y>
+		<Width>16</Width>
+		<Height>16</Height>
+		<Border>1</Border>
+		<Texture template='EQ2.scrollbar.DownTexture'></Texture>
+		<TexturePressed template='EQ2.scrollbar.DownTexturePressed'></TexturePressed>
+		<TextureHover template='EQ2.scrollbar.DownTextureHover'></TextureHover>
+	</template>
+	<template name="EQ2.scrollbar.Slider">
+		<X>16</X>
+		<Y>0</Y>
+		<Width>r32</Width>
+		<Height>16</Height>
+		<Border>1</Border>
+		<Texture template='EQ2.scrollbar.SliderTexture' />
+		<HandleTexture template='EQ2.scrollbar.SliderHandleTexture' />
+	</template>
+	<template name="EQ2.scrollbar">
+		<Vertical>0</Vertical>
+		<X>0</X>
+		<Y>r16</Y>
+		<Height>16</Height>
+		<Width>100%</Width>    
+		<UpButton template='EQ2.scrollbar.upbutton' />
+		<DownButton template='EQ2.scrollbar.downbutton' />
+		<Slider template='EQ2.scrollbar.slider' />
+	</template>
+	<template name='EQ2.verticalscrollbar.upbutton'>
+		<X>0</X>
+		<Y>0</Y>
+		<Width>16</Width>
+		<Height>16</Height>
+		<Border>1</Border>
+		<Texture template='EQ2.scrollbar.UpTexture'>
+			<Orientation>0</Orientation>
+		</Texture>
+		<TexturePressed template='EQ2.scrollbar.UpTexturePressed'>
+			<Orientation>0</Orientation>
+		</TexturePressed>
+		<TextureHover template='EQ2.scrollbar.UpTextureHover'>
+			<Orientation>0</Orientation>
+		</TextureHover>
+	</template>
+	<template name='EQ2.verticalscrollbar.downbutton'>
+		<X>0</X>
+		<Y>r16</Y>
+		<Width>16</Width>
+		<Height>16</Height>
+		<Border>1</Border>
+		<Texture template='EQ2.scrollbar.DownTexture'>
+			<Orientation>2</Orientation>
+		</Texture>
+		<TexturePressed template='EQ2.scrollbar.DownTexturePressed'>
+			<Orientation>2</Orientation>
+		</TexturePressed>
+		<TextureHover template='EQ2.scrollbar.DownTextureHover'>
+			<Orientation>2</Orientation>
+		</TextureHover>
+	</template>
+	<template name='EQ2.verticalscrollbar.Slider'>
+		<X>0</X>
+		<Y>16</Y>
+		<Width>16</Width>
+		<Height>r32</Height>
+		<Vertical>1</Vertical>
+		<Border>1</Border>
+		<Texture template='EQ2.scrollbar.SliderTexture'>
+			<Orientation>3</Orientation>
+		</Texture>
+		<HandleTexture template='EQ2.scrollbar.SliderHandleTexture' />
+	</template>
+	<template name='EQ2.verticalscrollbar'>
+		<X>r16</X>
+		<Y>0</Y>
+		<Height>100%</Height>
+		<Width>16</Width>
+		<Vertical>1</Vertical>
+		<UpButton template='EQ2.verticalscrollbar.upbutton' />
+		<DownButton template='EQ2.verticalscrollbar.downbutton' />
+		<Slider template='EQ2.verticalscrollbar.slider' />
+	</template>
+	<template name="EQ2.console.ScrollBar" Template="EQ2.verticalscrollbar"/>
+	<template name="EQ2.listbox.ScrollBar" Template="EQ2.verticalscrollbar"/>
+	<template name="EQ2.contextmenu.Font" Template="EQ2.Font"/>
 	<!-- Window -->
 	<template name="EQ2.window.TitleBar.Title.Font" Template="EQ2.Font">
 		<Name>Times New Roman</Name>
@@ -63,7 +245,7 @@
 		<Height>9</Height>
 		<Texture Template="EQ2.window.TitleBar.Minimize.Texture"/>
 		<TexturePressed Template="EQ2.window.TitleBar.Minimize.TexturePressed"/>
-		<Border>3</Border>
+		<Border>0</Border>
 	</template>
 	<template name="EQ2.window.TitleBar.Maximize.Texture" Filename="windowelements.dds">
 		<Left>483</Left>
@@ -86,6 +268,7 @@
 		<Height>9</Height>
 		<Texture Template="EQ2.window.TitleBar.Maximize.Texture"/>
 		<TexturePressed Template="EQ2.window.TitleBar.Maximize.TexturePressed"/>
+		<Border>0</Border>
 	</template>
 	<template name="EQ2.window.TitleBar.Close.Texture" Filename="windowelements.dds">
 		<Left>483</Left>
@@ -108,6 +291,7 @@
 		<Height>9</Height>
 		<Texture Template="EQ2.window.TitleBar.Close.Texture"/>
 		<TexturePressed Template="EQ2.window.TitleBar.Close.TexturePressed"/>
+		<Border>0</Border>
 	</template>
 	<template name="EQ2.window.TitleBar.Texture" Filename="windowelements.dds" ColorKey="00000000">
 		<Left>16</Left>
@@ -136,6 +320,7 @@
 		<Height>r16</Height>
 		<Width>100%</Width>
 		<Texture Template="EQ2.window.Texture"/>
+		<Border>3</Border>
 	</template>
 	<template name="EQ2.window.Texture" Filename="windowelements.dds" ColorKey="00000000">
 		<Left>14</Left>
@@ -145,7 +330,7 @@
 		<Border>3</Border>
 	</template>
 	<template name="EQ2.window">
-		<Border>1</Border>
+		<Border>3</Border>
 		<Resizable>1</Resizable>
 		<CloseButton/>
 		<MinimizeButton/>
@@ -210,7 +395,6 @@
 		<Right>155</Right>
 		<Top>183</Top>
 		<Bottom>277</Bottom>
-		<Border>0</Border>
 		<Border>3</Border>
 	</template>
 	<template name="EQ2.tabcontrol.TabTexture" Filename="windowelements.dds">
@@ -247,49 +431,7 @@
 		<TabTexture Template="EQ2.tabcontrol.TabTexture"/>
 		<TabSelectedTexture Template="EQ2.tabcontrol.TabSelectedTexture"/>
 		<FrameTexture Template="EQ2.tabcontrol.FrameTexture"/>
-	</template>
-	<!-- Button -->
-	<template name="EQ2.button.Texture" Filename="commonelements.dds">
-		<Left>113</Left>
-		<Right>203</Right>
-		<Top>7</Top>
-		<Bottom>32</Bottom>
-		<Border>6</Border>
-	</template>
-	<template name="EQ2.button.TexturePressed" Filename="commonelements.dds">
-		<Left>113</Left>
-		<Right>203</Right>
-		<Top>115</Top>
-		<Bottom>140</Bottom>
-		<Border>6</Border>
-	</template>
-	<template name="EQ2.button.TextureHover" Filename="commonelements.dds">
-		<Left>113</Left>
-		<Right>203</Right>
-		<Top>79</Top>
-		<Bottom>104</Bottom>
-		<Border>6</Border>
-	</template>
-	<template name="EQ2.button.Font" Template="EQ2.Font">
-		<Color>FFF9F099</Color>
-		<Name>Times New Roman</Name>
-		<Size>15</Size>
-	</template>
-	<template name="EQ2.button">
-		<BackgroundColor/>
-		<Font Template="EQ2.button.Font"/>
-		<Border>4</Border>
-		<BorderColor>FFD4D0C8</BorderColor>
-		<Texture Template="EQ2.button.Texture"/>
-		<TextureHover Template="EQ2.button.TextureHover"/>
-		<TexturePressed Template="EQ2.button.TexturePressed"/>
-	</template>
-	<template name="EQ2.commandbutton" Template="EQ2.button">
-		<Font Template="EQ2.button.Font"/>
-		<Texture Template="EQ2.button.Texture"/>
-		<TextureHover Template="EQ2.button.TextureHover"/>
-		<TexturePressed Template="EQ2.button.TexturePressed"/>
-		<Border>6</Border>
+		<Border>3</Border>
 	</template>
 	<!-- Checkbox -->
 	<template name="EQ2.checkbox.Texture" Filename="commonelements.dds">
@@ -497,94 +639,9 @@
 		<SelectMultiple>0</SelectMultiple>
 		<Sort>None</Sort>
 		<!-- None, User, Text, Value -->
-		<Texture Template="EQ2.listbox.Texture"/>
-		<ScrollBar>EQ2.listbox.ScrollBar</ScrollBar>
+		<Texture Template="EQ2.listbox.Texture" />
+		<ScrollBar template='EQ2.listbox.ScrollBar' />
 	</template>
-	<!-- ScrollBar -->
-	<template name="EQ2.scrollbar.UpTexture" Filename="commonelements.dds">
-		<Left>430</Left>
-		<top>5</top>
-		<Right>446</Right>
-		<Bottom>23</Bottom>
-		<Border>3</Border>
-	</template>
-	<template name="EQ2.scrollbar.UpTexturePressed" Filename="commonelements.dds">
-		<Left>482</Left>
-		<top>5</top>
-		<Right>498</Right>
-		<Bottom>23</Bottom>
-		<Border>3</Border>
-	</template>
-	<template name="EQ2.scrollbar.DownTexture" Filename="commonelements.dds">
-		<Left>430</Left>
-		<top>5</top>
-		<Right>446</Right>
-		<Bottom>23</Bottom>
-		<Border>3</Border>
-	</template>
-	<template name="EQ2.scrollbar.DownTexturePressed" Filename="commonelements.dds">
-		<Left>482</Left>
-		<top>5</top>
-		<Right>498</Right>
-		<Bottom>23</Bottom>
-		<Border>3</Border>
-	</template>
-	<template name="EQ2.scrollbar.SliderTexture" Filename="commonelements.dds">
-		<Left>432</Left>
-		<top>26</top>
-		<Right>444</Right>
-		<Bottom>107</Bottom>
-		<Border>3</Border>
-	</template>
-	<template name="EQ2.scrollbar.SliderHandleTexture" Filename="commonelements.dds">
-		<Left>431</Left>
-		<top>135</top>
-		<Right>445</Right>
-		<Bottom>192</Bottom>
-		<Border>3</Border>
-	</template>
-	<template name="EQ2.scrollbar">
-		<Vertical>0</Vertical>
-		<UpTexture Template="EQ2.scrollbar.UpTexture"/>
-		<UpTexturePressed Template="EQ2.scrollbar.UpTexturePressed"/>
-		<UpTextureHover Template="EQ2.scrollbar.UpTextureHover"/>
-		<DownTexture Template="EQ2.scrollbar.DownTexture"/>
-		<DownTexturePressed Template="EQ2.scrollbar.DownTexturePressed"/>
-		<DownTextureHover Template="EQ2.scrollbar.DownTextureHover"/>
-		<SliderTexture Template="EQ2.scrollbar.SliderTexture "/>
-		<SliderHandleTexture Template="EQ2.scrollbar.SliderHandleTexture "/>
-	</template>
-	<template name="EQ2.verticalscrollbar">
-		<Vertical>1</Vertical>
-		<UpTexture Template="EQ2.scrollbar.UpTexture">
-			<Orientation>0</Orientation>
-		</UpTexture>
-		<UpTexturePressed Template="EQ2.scrollbar.UpTexturePressed">
-			<Orientation>0</Orientation>
-		</UpTexturePressed>
-		<UpTextureHover Template="EQ2.scrollbar.UpTextureHover">
-			<Orientation>0</Orientation>
-		</UpTextureHover>
-		<DownTexture Template="EQ2.scrollbar.DownTexture">
-			<Orientation>2</Orientation>
-		</DownTexture>
-		<DownTexturePressed Template="EQ2.scrollbar.DownTexturePressed">
-			<Orientation>2</Orientation>
-		</DownTexturePressed>
-		<DownTextureHover Template="EQ2.scrollbar.DownTextureHover">
-			<Orientation>2</Orientation>
-		</DownTextureHover>
-		<SliderTexture Template="EQ2.scrollbar.SliderTexture">
-			<Orientation>2</Orientation>
-		</SliderTexture>
-		<SliderHandleTexture Template="EQ2.scrollbar.SliderHandleTexture">
-			<orientation>2</orientation>
-		</SliderHandleTexture>
-	</template>
-	<template name="EQ2.combobox.ScrollBar" Template="EQ2.verticalscrollbar"/>
-	<template name="EQ2.console.ScrollBar" Template="EQ2.verticalscrollbar"/>
-	<template name="EQ2.listbox.ScrollBar" Template="EQ2.verticalscrollbar"/>
-	<template name="EQ2.contextmenu.Font" Template="EQ2.Font"/>
 	<!-- ComboBox -->
 	<template name="EQ2.combobox.Texture" Filename="commonelements.dds">
 		<Left>308</Left>
@@ -621,7 +678,6 @@
 		<ButtonTexture Template="EQ2.combobox.ButtonTexture"/>
 		<ListBox Template="EQ2.combobox.listbox"/>
 		<ButtonWidth>16</ButtonWidth>
-		<ScrollBar>EQ2.combobox.ScrollBar</ScrollBar>
 	</template>
 	<!-- Console -->
 	<!-- 
@@ -636,7 +692,7 @@
 		<BorderColor>FFFFFFFF</BorderColor>
 		<SelectionColor>FF006666</SelectionColor>
 		<Border>1</Border>
-		<ScrollBar>EQ2.console.ScrollBar</ScrollBar>
+		<ScrollBar template='EQ2.console.ScrollBar' />
 		<BackBufferSize>1000</BackBufferSize>
 	</template>
 	<!-- Frame -->
