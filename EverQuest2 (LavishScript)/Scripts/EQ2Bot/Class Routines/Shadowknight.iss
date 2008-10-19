@@ -316,7 +316,7 @@ function Buff_Routine(int xAction)
 
 
 		case Group_Buff1
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			if (!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
 		        call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 			
@@ -462,6 +462,19 @@ function Combat_Routine(int xAction)
     	if !${EQ2.HOWindowActive}
     		call CastSpellRange 303
     }
+    
+    ;; uncomment for venril fight
+    ;if (${Zone.ShortName.Find[venril]} > 0)
+    ;{
+    ;	if (${Me.ToActor.Power} <= 47)
+    ;	{
+    ;		do
+    ;		{
+    ;			waitframe
+    ;		}
+    ;		while ${Me.ToActor.Power} < 49
+    ;	}
+    ;}
     
     EQ2:CreateCustomActorArray[ByDist,10,npc]
     NumNPCs:Set[${EQ2.CustomActorArraySize}]
@@ -757,7 +770,7 @@ function Combat_Routine(int xAction)
     ;; Combat Leadership AA
 	if ${Me.Ability[${SpellType[333]}](exists)}
 	{
-	    if (${Me.Ability[${SpellType[333]}].IsReady})
+	    if (${Me.Ability[${SpellType[333]}].IsReady} && ${Zone.ShortName.Find[venril]} <= 0)
 	    {
 		    call CastSpellRange 333 0 0 0 ${Me.ID}
 		    spellsused:Inc
@@ -1232,16 +1245,6 @@ function CastSomething()
 	;echo "DEBUG:: CastSomething() called."
 
 
-	;; Combat Leadership AA	
-	if ${Me.Ability[${SpellType[333]}](exists)}
-	{
-	    if (${Me.Ability[${SpellType[333]}].IsReady})
-	    {
-		    call CastSpellRange 333 0 0 0 ${Me.ID}
-		    return
-		}
-	}   	
-
 	; shield bash
     if (${Me.Ability[${SpellType[240]}].IsReady})
     {
@@ -1261,7 +1264,15 @@ function CastSomething()
 	    return
 	}	
 	
-	
+	;; Combat Leadership AA	
+	if (${Me.Ability[${SpellType[333]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
+	{
+	    if (${Me.Ability[${SpellType[333]}].IsReady})
+	    {
+		    call CastSpellRange 333 0 0 0 ${Me.ID}
+		    return
+		}
+	}   
 	
 	
 				
