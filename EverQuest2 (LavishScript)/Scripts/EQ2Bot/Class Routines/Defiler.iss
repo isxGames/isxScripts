@@ -863,7 +863,7 @@ function HealMe()
 
 	;ME HEALS
 	; if i have summoned a defiler crystal use that to heal first
-	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombat}
 		Me.Inventory[Crystallized Spirit]:Use
 
 	if ${Me.ToActor.Health}<25
@@ -983,7 +983,7 @@ function CheckHeals()
   }
 
 
-	if ${PetMode} && ${grpheal}>1 && ${Me.Ability[${SpellType[16]}].IsReady} || (${EpicMode} && ${Me.InCombatMode})
+	if ${PetMode} && ${grpheal}>1 && ${Me.Ability[${SpellType[16]}].IsReady} || (${EpicMode} && ${Me.InCombat})
 		call CastSpellRange 16
 
 	if ${grpheal}>2
