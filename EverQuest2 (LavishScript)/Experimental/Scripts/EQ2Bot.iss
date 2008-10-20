@@ -2026,6 +2026,7 @@ function StrafeToLeft(uint TID, float destangle)
 		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
 		if ${movingforward}
+		{
 			press -release ${forward}
 			movingfoward:Set[FALSE]
 		}
