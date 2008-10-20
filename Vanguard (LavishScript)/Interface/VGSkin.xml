@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ISUI>
+	<Skin Name="VGSkin" Template="Default Skin">
+		<SkinTemplate Base="Window" Skin="VG.Window" />
+		<SkinTemplate Base="TabControl" Skin="VG.TabControl" />
+		<SkinTemplate Base="ListBox" Skin="VG.ListBox" />
+		<SkinTemplate Base="ComboBox" Skin="VG.ComboBox" />
+		<SkinTemplate Base="Button" Skin="VG.GreenButton" />
+		<SkinTemplate Base="Button" Skin="VG.RedButton" />
+		<SkinTemplate Base="Button" Skin="VG.CustomButton" />
+		<SkinTemplate Base="Button" Skin="VG.SubTitle" />
+		<SkinTemplate Base="CommandButton" Skin="VG.GreenCommandButton" />
+		<SkinTemplate Base="CommandButton" Skin="VG.RedCommandButton" />
+		<SkinTemplate Base="Checkbox" Skin="VG.Checkbox" />
+		<SkinTemplate Base="Checkbox" Skin="VG.BlueCheckbox" />
+		<SkinTemplate Base="CommandCheckbox" Skin="VG.CommandCheckbox" />
+	</Skin>
+	<!-- Fonts -->
+	<Template Name="VG.Font">
+		<Name>Times New Roman</Name>
+		<Size>14</Size>
+		<Color>FFF9F099</Color>
+	</Template>
+	<Template Name="VG.Text.Font">
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Color>FF000000</Color>
+		<Bold />
+	</Template>
+	<Template Name="VG.Text">
+		<Font Template="VG.Text.Font" />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</Template>
+	<!-- TextEntry -->
+	<Template Name="VG.TextEntry.Font" Template="VG.Font">
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Color>FFFFFFFF</Color>
+		<Bold />
+	</Template>
+	<Template Name="VG.TextEntry">
+		<Font Template="VG.TextEntry.Font" />
+		<MaxLength>256</MaxLength>
+		<SelectionColor>FF000000</SelectionColor>
+		<BackgroundColor>FF000000</BackgroundColor>
+		<BorderColor>FF575556</BorderColor>
+		<Border>1</Border>
+		<CaretInnerColor>FF006600</CaretInnerColor>
+		<CaretOuterColor>FF00CC00</CaretOuterColor>
+	</Template>
+	<!-- Window -->
+	<Template Name="VG.Window.TitleBar.Title.Font" Template="VG.Font">
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Bold />
+	</Template>
+	<Template Name="VG.Window.TitleBar.Title">
+		<X>10</X>
+		<Y>2</Y>
+		<Width>r38</Width>
+		<Height>25</Height>
+		<Alignment>Center</Alignment>
+		<Font Template="VG.Window.TitleBar.Title.Font">
+			<Color>FF100000</Color>
+		</Font>
+	</Template>
+	<Template Name="VG.Window.TitleBar.Minimize.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>615</Left>
+		<Right>634</Right>
+		<Top>574</Top>
+		<Bottom>593</Bottom>
+	</Template>
+	<Template Name="VG.Window.TitleBar.Minimize.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>635</Left>
+		<Right>654</Right>
+		<Top>574</Top>
+		<Bottom>593</Bottom>
+	</Template>
+	<Template Name="VG.Window.TitleBar.Minimize">
+		<X>r32</X>
+		<Y>2</Y>
+		<Width>12</Width>
+		<Height>12</Height>
+		<Texture Template="VG.Window.TitleBar.Minimize.Texture" />
+		<TexturePressed Template="VG.Window.TitleBar.Minimize.TexturePressed" />
+	</Template>
+	<Template Name="VG.Window.TitleBar.Close.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>615</Left>
+		<Right>634</Right>
+		<Top>554</Top>
+		<Bottom>573</Bottom>
+	</Template>
+	<Template Name="VG.Window.TitleBar.Close.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>635</Left>
+		<Right>654</Right>
+		<Top>554</Top>
+		<Bottom>573</Bottom>
+	</Template>
+	<Template Name="VG.Window.TitleBar.Close">
+		<X>r16</X>
+		<Y>2</Y>
+		<Width>12</Width>
+		<Height>12</Height>
+		<Texture Template="VG.Window.TitleBar.Close.Texture" />
+		<TexturePressed Template="VG.Window.TitleBar.Close.TexturePressed" />
+	</Template>
+	<Template Name="VG.Window.Titlebar.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga" ColorKey="00000000">
+		<Left>156</Left>
+		<Right>429</Right>
+		<Top>848</Top>
+		<Bottom>883</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.Window.TitleBar">
+		<Height>20</Height>
+		<Border>1</Border>
+		<BorderColor>FF000033</BorderColor>
+		<Width>100%</Width>
+		<BackgroundColor>FF000066</BackgroundColor>
+		<Texture Template="VG.Window.TitleBar.Texture" />
+		<Children>
+			<Text Name="Title" Template="VG.Window.TitleBar.Title" />
+			<Button Name="Close" Template="VG.Window.TitleBar.Close" />
+			<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize" />
+		</Children>
+	</Template>
+	<Template Name="VG.Window.Client">
+		<Y>16</Y>
+		<Height>r16</Height>
+		<Width>100%</Width>
+		<Texture Template="VG.Window.Texture" />
+	</Template>
+	<Template Name="VG.Window.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdBackground.bmp">
+		<Left>0</Left>
+		<Right>512</Right>
+		<Top>0</Top>
+		<Bottom>512</Bottom>
+		<Border>2</Border>
+	</Template>
+	<Template Name="VG.Window">
+		<Border>2</Border>
+		<BorderColor>FF655025</BorderColor>
+		<Resizable>0</Resizable>
+		<CloseButton />
+		<MinimizeButton />
+		<WidthResizable>0</WidthResizable>
+		<HeightResizable>0</HeightResizable>
+		<TitleBar Template="VG.Window.TitleBar" />
+		<OffsetTitleBarHeight />
+		<Client Template="VG.Window.Client" />
+		<BackgroundColor>FF000000</BackgroundColor>
+		<StorePosition>1</StorePosition>
+	</Template>
+	<!-- TabControl -->
+	<Template Name="VG.TabControl.LeftTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+		<Orientation>2</Orientation>
+	</Template>
+	<Template Name="VG.TabControl.LeftPressedTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+		<Orientation>2</Orientation>
+	</Template>
+	<Template Name="VG.TabControl.LeftHoverTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+		<Orientation>2</Orientation>
+	</Template>
+	<Template Name="VG.TabControl.RightTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+		<Orientation>0</Orientation>
+	</Template>
+	<Template Name="VG.TabControl.RightPressedTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+		<Orientation>0</Orientation>
+	</Template>
+	<Template Name="VG.TabControl.RightHoverTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+		<Orientation>0</Orientation>
+	</Template>
+	<Template Name="VG.TabControl.FrameTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>283</Left>
+		<Right>642</Right>
+		<Top>1</Top>
+		<Bottom>342</Bottom>
+		<Border>2</Border>
+	</Template>
+	<Template Name="VG.TabControl.TabTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>692</Left>
+		<Right>833</Right>
+		<Top>482</Top>
+		<Bottom>501</Bottom>
+		<Border>2</Border>
+	</Template>
+	<Template Name="VG.TabControl.TabSelectedTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>543</Left>
+		<Right>641</Right>
+		<Top>365</Top>
+		<Bottom>384</Bottom>
+		<Border>15</Border>
+	</Template>
+	<Template Name="VG.TabControl.Font" Template="VG.Font">
+		<Name>Tahoma</Name>
+		<Size>11</Size>
+		<Bold />
+		<Color>FF787878</Color>
+	</Template>
+	<Template Name="VG.TabControl">
+		<Font Template="VG.TabControl.Font" />
+		<Draggable />
+		<SelectedTextColor>FFF9F099</SelectedTextColor>
+		<TabHeight>18</TabHeight>
+		<TabBorder>3</TabBorder>
+		<FrameBackgroundColor>3</FrameBackgroundColor>
+		<FrameBorder>1</FrameBorder>
+		<FrameBorderColor>FFD4D0C8</FrameBorderColor>
+		<LeftTexture Template="VG.TabControl.LeftTexture" />
+		<LeftPressedTexture Template="VG.TabControl.LeftPressedTexture" />
+		<LeftHoverTexture Template="VG.TabControl.LeftHoverTexture" />
+		<RightTexture Template="VG.TabControl.RightTexture" />
+		<RightPressedTexture Template="VG.TabControl.RightPressedTexture" />
+		<RightHoverTexture Template="VG.TabControl.RightHoverTexture" />
+		<TabTexture Template="VG.TabControl.TabTexture" />
+		<TabSelectedTexture Template="VG.TabControl.TabSelectedTexture" />
+		<FrameTexture Template="VG.TabControl.FrameTexture" />
+	</Template>
+	<!-- ListBox -->
+	<Template Name="VG.ListBox.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.ListBox.Font" Template="VG.Font">
+		<Name>Tahoma</Name>
+		<Color>FFFFFF6E</Color>
+		<Size>14</Size>
+		<Bold />
+	</Template>
+	<Template Name="VG.ListBox">
+		<Font Template="VG.ListBox.Font" />
+		<BackgroundColor>FF000000</BackgroundColor>
+		<SelectionColor>FF000066</SelectionColor>
+		<BorderColor>FFD4D0C8</BorderColor>
+		<Border>1</Border>
+		<SelectMultiple>0</SelectMultiple>
+		<Sort>Text</Sort>
+		<!-- None, User, Text, Value -->
+		<Sort>None</Sort>
+		<Texture Template="VG.ListBox.Texture" />
+		<ScrollBar>VG.ListBox.ScrollBar</ScrollBar>
+	</Template>
+	<!-- ScrollBar -->
+	<Template Name="VG.ScrollBar.UpTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.ScrollBar.UpTexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.ScrollBar.DownTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.ScrollBar.DownTexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.ScrollBar.SliderTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.ScrollBar.SliderHandleTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.ScrollBar">
+		<Vertical>0</Vertical>
+		<UpTexture Template="VG.ScrollBar.UpTexture" />
+		<UpTexturePressed Template="VG.ScrollBar.UpTexturePressed" />
+		<UpTextureHover Template="VG.ScrollBar.UpTextureHover" />
+		<DownTexture Template="VG.ScrollBar.DownTexture" />
+		<DownTexturePressed Template="VG.ScrollBar.DownTexturePressed" />
+		<DownTextureHover Template="VG.ScrollBar.DownTextureHover" />
+		<SliderTexture Template="VG.ScrollBar.SliderTexture" />
+		<SliderHandleTexture Template="VG.ScrollBar.SliderHandleTexture" />
+	</Template>
+	<Template Name="VG.VerticalScrollBar">
+		<Vertical>1</Vertical>
+		<UpTexture Template="VG.ScrollBar.UpTexture">
+			<Orientation>0</Orientation>
+		</UpTexture>
+		<UpTexturePressed Template="VG.ScrollBar.UpTexturePressed">
+			<Orientation>0</Orientation>
+		</UpTexturePressed>
+		<UpTextureHover Template="VG.ScrollBar.UpTextureHover">
+			<Orientation>0</Orientation>
+		</UpTextureHover>
+		<DownTexture Template="VG.ScrollBar.DownTexture">
+			<Orientation>0</Orientation>
+		</DownTexture>
+		<DownTexturePressed Template="VG.ScrollBar.DownTexturePressed">
+			<Orientation>2</Orientation>
+		</DownTexturePressed>
+		<DownTextureHover Template="VG.ScrollBar.DownTextureHover">
+			<Orientation>2</Orientation>
+		</DownTextureHover>
+		<SliderTexture Template="VG.ScrollBar.SliderTexture">
+			<Orientation>2</Orientation>
+		</SliderTexture>
+		<SliderHandleTexture Template="VG.ScrollBar.SliderHandleTexture">
+			<Orientation>2</Orientation>
+		</SliderHandleTexture>
+	</Template>
+	<Template Name="VG.ComboBox.ScrollBar" Template="VG.VerticalScrollBar" />
+	<Template Name="VG.Console.ScrollBar" Template="VG.VerticalScrollBar" />
+	<Template Name="VG.ListBox.ScrollBar" Template="VG.VerticalScrollBar" />
+	<Template Name="VG.ContextMenu.Font" Template="VG.Font" />
+	<!-- ComboBox -->
+	<Template Name="VG.ComboBox.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts03.tga">
+		<Left>392</Left>
+		<Right>564</Right>
+		<Top>963</Top>
+		<Bottom>981</Bottom>
+		<Border>3</Border>
+	</Template>
+	<Template Name="VG.ComboBox.ButtonTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>242</Left>
+		<Right>265</Right>
+		<Top>206</Top>
+		<Bottom>229</Bottom>
+		<Border>2</Border>
+		<Orientation>1</Orientation>
+	</Template>
+	<Template Name="VG.ComboBox.ListBoxTexture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>640</Left>
+		<Right>674</Right>
+		<Top>771</Top>
+		<Bottom>810</Bottom>
+		<Border>2</Border>
+	</Template>
+	<Template Name="VG.ComboBox.ListBox" Template="VG.ListBox">
+		<Border>4</Border>
+		<Texture Template="VG.ComboBox.ListBoxTexture" />
+		<SelectionColor>FF000000</SelectionColor>
+	</Template>
+	<Template Name="VG.ComboBox.Font" Template="VG.ListBox.Font" />
+	<Template Name="VG.ComboBox">
+		<Font Template="VG.ComboBox.Font" />
+		<FullHeight>100</FullHeight>
+		<Border>3</Border>
+		<Texture Template="VG.ComboBox.Texture" />
+		<ButtonTexture Template="VG.ComboBox.ButtonTexture" />
+		<ListBox Template="VG.ComboBox.ListBox" />
+		<ButtonWidth>20</ButtonWidth>
+		<ScrollBar>VG.ComboBox.ScrollBar</ScrollBar>
+	</Template>
+	<!-- Green Button -->
+	<Template Name="VG.GreenButton.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>227</Top>
+		<Bottom>255</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.GreenButton.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>145</Right>
+		<Top>256</Top>
+		<Bottom>284</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.GreenButton.TextureHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>147</Left>
+		<Right>292</Right>
+		<Top>227</Top>
+		<Bottom>255</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.Button.Font" Template="Default Font">
+		<Color>FFF3CE4B</Color>
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Bold />
+	</Template>
+	<Template Name="VG.GreenButton">
+		<BackgroundColor />
+		<Font Template="VG.Button.Font" />
+		<Border>1</Border>
+		<BorderColor>FFD4D0C8</BorderColor>
+		<Texture Template="VG.GreenButton.Texture" />
+		<TextureHover Template="VG.GreenButton.TextureHover" />
+		<TexturePressed Template="VG.GreenButton.TexturePressed" />
+	</Template>
+	<!-- GreenCommandButton -->
+	<Template Name="VG.CommandButton.Font" Template="VG.Button.Font" />
+	<Template Name="VG.GreenCommandButton" Template="VG.GreenButton">
+		<Font Template="VG.Button.Font" />
+		<Texture Template="VG.GreenButton.Texture" />
+		<TextureHover Template="VG.GreenButton.TextureHover" />
+		<TexturePressed Template="VG.GreenButton.TexturePressed" />
+		<Border>1</Border>
+	</Template>
+	<!-- Red Button -->
+	<Template Name="VG.RedButton.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>0</Left>
+		<Right>146</Right>
+		<Top>547</Top>
+		<Bottom>575</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.RedButton.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>0</Left>
+		<Right>146</Right>
+		<Top>577</Top>
+		<Bottom>603</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.RedButton.TextureHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>145</Left>
+		<Right>291</Right>
+		<Top>547</Top>
+		<Bottom>575</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.Button.Font" Template="Default Font">
+		<Color>FFF3CE4B</Color>
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Bold />
+	</Template>
+	<Template Name="VG.RedButton">
+		<BackgroundColor />
+		<Font Template="VG.Button.Font" />
+		<Border>1</Border>
+		<BorderColor>FFD4D0C8</BorderColor>
+		<Texture Template="VG.RedButton.Texture" />
+		<TextureHover Template="VG.RedButton.TextureHover" />
+		<TexturePressed Template="VG.RedButton.TexturePressed" />
+	</Template>
+	<!-- RedCommandButton -->
+	<Template Name="VG.CommandButton.Font" Template="VG.Button.Font" />
+	<Template Name="VG.RedCommandButton" Template="VG.RedButton">
+		<Font Template="VG.Button.Font" />
+		<Texture Template="VG.RedButton.Texture" />
+		<TextureHover Template="VG.RedButton.TextureHover" />
+		<TexturePressed Template="VG.RedButton.TexturePressed" />
+		<Border>1</Border>
+	</Template>
+	<!-- Custom Button -->
+	<Template Name="VG.CustomButton.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>218</Right>
+		<Top>722</Top>
+		<Bottom>749</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.CustomButton.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>218</Right>
+		<Top>722</Top>
+		<Bottom>749</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.CustomButton.TextureHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts04.tga">
+		<Left>0</Left>
+		<Right>218</Right>
+		<Top>722</Top>
+		<Bottom>749</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.CustomButton.Font" Template="Default Font">
+		<Color>FFFFFFFF</Color>
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Bold />
+	</Template>
+	<Template Name="VG.CustomButton">
+		<BackgroundColor />
+		<Font Template="VG.CustomButton.Font" />
+		<Border>1</Border>
+		<BorderColor>FFD4D0C8</BorderColor>
+		<Texture Template="VG.CustomButton.Texture" />
+		<TextureHover Template="VG.CustomButton.TextureHover" />
+		<TexturePressed Template="VG.CustomButton.TexturePressed" />
+	</Template>
+	<!-- SubTitle -->
+	<Template Name="VG.SubTitle.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>156</Left>
+		<Right>542</Right>
+		<Top>812</Top>
+		<Bottom>847</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.SubTitle.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>156</Left>
+		<Right>542</Right>
+		<Top>812</Top>
+		<Bottom>847</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.SubTitle.TextureHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>156</Left>
+		<Right>542</Right>
+		<Top>812</Top>
+		<Bottom>847</Bottom>
+		<Border>1</Border>
+	</Template>
+	<Template Name="VG.SubTitle.Font" Template="Default Font">
+		<Color>FFFFFFFF</Color>
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Bold />
+	</Template>
+	<Template Name="VG.SubTitle">
+		<BackgroundColor />
+		<Font Template="VG.SubTitle.Font" />
+		<Border>1</Border>
+		<BorderColor>FFD4D0C8</BorderColor>
+		<Texture Template="VG.SubTitle.Texture" />
+		<TextureHover Template="VG.SubTitle.TextureHover" />
+		<TexturePressed Template="VG.SubTitle.TexturePressed" />
+	</Template>
+	<!-- Green Checkbox -->
+	<Template Name="VG.Checkbox.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>266</Left>
+		<Right>288</Right>
+		<Top>316</Top>
+		<Bottom>337</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.Checkbox.TextureHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>266</Left>
+		<Right>288</Right>
+		<Top>360</Top>
+		<Bottom>381</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.Checkbox.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>266</Left>
+		<Right>288</Right>
+		<Top>338</Top>
+		<Bottom>359</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.Checkbox.TextureChecked" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>289</Left>
+		<Right>311</Right>
+		<Top>206</Top>
+		<Bottom>227</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.Checkbox.TextureCheckedHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>289</Left>
+		<Right>311</Right>
+		<Top>250</Top>
+		<Bottom>271</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.Checkbox.TextureCheckedPressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts.tga">
+		<Left>289</Left>
+		<Right>311</Right>
+		<Top>228</Top>
+		<Bottom>249</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.Checkbox.Font">
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Color>FF000000</Color>
+		<Bold />
+	</Template>
+	<Template Name="VG.Checkbox">
+		<Font Template="VG.Checkbox.Font" />
+		<Texture Template="VG.Checkbox.Texture" />
+		<TextureHover Template="VG.Checkbox.TextureHover" />
+		<TexturePressed Template="VG.Checkbox.TexturePressed" />
+		<TextureChecked Template="VG.Checkbox.TextureChecked" />
+		<TextureCheckedHover Template="VG.Checkbox.TextureCheckedHover" />
+		<TextureCheckedPressed Template="VG.Checkbox.TextureCheckedPressed" />
+	</Template>
+	<Template Name="VG.CommandCheckbox" Template="VG.Checkbox">
+		<Font Template="VG.Checkbox.Font" />
+		<Texture Template="VG.Checkbox.Texture" />
+		<TextureHover Template="VG.Checkbox.TextureHover" />
+		<TexturePressed Template="VG.Checkbox.TexturePressed" />
+		<TextureChecked Template="VG.Checkbox.TextureChecked" />
+		<TextureCheckedHover Template="VG.Checkbox.TextureCheckedHover" />
+		<TextureCheckedPressed Template="VG.Checkbox.TextureCheckedPressed" />
+	</Template>
+	<!-- Blue Checkbox -->
+	<Template Name="VG.BlueCheckbox.Texture" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>689</Left>
+		<Right>706</Right>
+		<Top>298</Top>
+		<Bottom>315</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.BlueCheckbox.TextureHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>689</Left>
+		<Right>706</Right>
+		<Top>334</Top>
+		<Bottom>351</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.BlueCheckbox.TexturePressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>689</Left>
+		<Right>706</Right>
+		<Top>352</Top>
+		<Bottom>369</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.BlueCheckbox.TextureChecked" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>707</Left>
+		<Right>724</Right>
+		<Top>208</Top>
+		<Bottom>225</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.BlueCheckbox.TextureCheckedHover" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>707</Left>
+		<Right>724</Right>
+		<Top>244</Top>
+		<Bottom>261</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.BlueCheckbox.TextureCheckedPressed" Filename="E:\Games\Vanguard\VGUIAssets\Shells\Default\Textures\VgrdParts02.tga">
+		<Left>707</Left>
+		<Right>724</Right>
+		<Top>226</Top>
+		<Bottom>243</Bottom>
+		<Border>6</Border>
+	</Template>
+	<Template Name="VG.BlueCheckbox">
+		<Font Template="VG.Checkbox.Font" />
+		<Texture Template="VG.BlueCheckbox.Texture" />
+		<TextureHover Template="VG.BlueCheckbox.TextureHover" />
+		<TexturePressed Template="VG.BlueCheckbox.TexturePressed" />
+		<TextureChecked Template="VG.BlueCheckbox.TextureChecked" />
+		<TextureCheckedHover Template="VG.BlueCheckbox.TextureCheckedHover" />
+		<TextureCheckedPressed Template="VG.BlueCheckbox.TextureCheckedPressed" />
+	</Template>
+</ISUI>
