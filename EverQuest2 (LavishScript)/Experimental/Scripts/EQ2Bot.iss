@@ -1904,7 +1904,7 @@ function CheckQuadrant(uint TID, int quadrant)
 			}
 			break
 		case 3
-			if ${targetaspect}>45 &&  ${targetaspect}<135
+			if ${targetaspect}>45 && ${targetaspect}<135
 				return
 			else
 			{
@@ -1913,12 +1913,12 @@ function CheckQuadrant(uint TID, int quadrant)
 					if ${targetaspect}>45
 					{
 						echo 3rd left
-						call StrafeToLeft ${TID} 60
+						call StrafeToLeft ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
 						echo 3rd right
-						call StrafeToRight ${TID} 120
+						call StrafeToRight ${TID} 60
 					}
 				}
 				else
@@ -1926,12 +1926,12 @@ function CheckQuadrant(uint TID, int quadrant)
 					if ${targetaspect}>45
 					{
 						echo 4th right
-						call StrafeToRight ${TID} 60
+						call StrafeToRight ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
 						echo 4th left
-						call StrafeToLeft ${TID} 120
+						call StrafeToLeft ${TID} 60
 					}
 				}
 				return

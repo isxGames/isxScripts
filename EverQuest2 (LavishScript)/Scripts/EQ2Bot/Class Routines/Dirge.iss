@@ -423,8 +423,6 @@ function Combat_Routine(int xAction)
 			call CheckPosition 3 0
 		}
 	}
-	elseif ${Actor[${KillTarget}].Distance}>6
-		call CheckPosition 1 1 ${KillTarget} 0 1
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
@@ -611,7 +609,7 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<35
-				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1
+				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 1
 		}
 		while ${tempraid:Inc}<=24 && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	}
