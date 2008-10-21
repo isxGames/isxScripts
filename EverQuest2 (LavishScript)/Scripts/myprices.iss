@@ -111,25 +111,40 @@ function main(string goscan, string goscan2)
 	}
 	else
 	{
-		tempstring:Set[${Actor[name,guild hall world market broker]}]
+		tempstring:Set[${Actor[Guild,guild world market broker]}]
 		if ${tempstring.Length} >4
 		{
-			Actor[name,guild hall world market broker]:DoTarget
+			Actor[Guild,guild world market broker]:DoTarget
 			wait 5
-			Actor[name,guild hall world market broker]:DoubleClick
+			Actor[Guild,guild world market broker]:DoubleClick
 			wait 20
 			call echolog " * Scanning using Guild Hall Broker *"
 			echo " * Scanning using Guild Hall Broker *"
 		}
 		else
 		{
-			Actor[nokillnpc]:DoTarget
-			wait 5
-			Target:DoubleClick
-			wait 20
-			call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
+			tempstring:Set[${Actor[Guild,broker]}]
+			if ${tempstring.Length} >4
+			{
+				Actor[Guild,broker]:DoTarget
+				wait 5
+				Actor[Guild,broker]:DoubleClick
+				wait 20
+				call echolog " * Scanning using Broker *"
+				echo " * Scanning using Broker *"
+			}
+			else
+			{
+				Actor[nokillnpc]:DoTarget
+				wait 5
+				Target:DoubleClick
+				wait 20
+				call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
+			}
+
 		}
 	}
+
 
 	i:Set[1]
 	do
