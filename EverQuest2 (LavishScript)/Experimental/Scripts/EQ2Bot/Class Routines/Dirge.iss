@@ -68,7 +68,6 @@ function Class_Declaration()
 
 	declare JoustMode bool script 0
 
-
 	call EQ2BotLib_Init
 
 	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
