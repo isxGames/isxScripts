@@ -236,6 +236,26 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[EpicMode]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox name='Use MP Potions' Template='EQ2.Commandcheckbox'>
+		<X>10</X>
+		<Y>160</Y>
+		<Width>100</Width>
+		<Height>20</height>
+		<Text>Use Potions for Power/Health</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UsePotions]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use Potions?",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UsePotions]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use Potions?",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Use Potions?]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox name='Use Potions' Template='EQ2.Commandcheckbox'>
 		<X>10</X>
 		<Y>180</Y>

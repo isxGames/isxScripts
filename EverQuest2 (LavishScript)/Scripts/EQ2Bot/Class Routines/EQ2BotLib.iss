@@ -1,8 +1,14 @@
 ;============================================
 ;
-;EQ2BotLib version 20080513a
+;EQ2BotLib version 20081023a
 ;by karye
 ;updated by pygar
+;
+;20081023a (Pygar)
+;	Shard and UseCrystalizedSpirit functions are now depricated.  They have been replaced with CommonPower and CommonHeal functions.
+; Added Power/health potion use toggles.
+; Every class file should call CommonPower in RefreshPower and CommonHeal should be called at the end of CheckHeals or somewhere
+; in Combat Routine.
 ;
 ; 20080513a (Pygar)
 ; * Made Persistent Following an Option.  Click it to resume follow every 5 seconds.  Leave it blank to only resume follow
@@ -87,6 +93,7 @@ variable bool BDStatus=FALSE
 
 ;Potion vars
 variable bool UsePotions
+variable bool UseCurePotions
 variable bool AWarn=TRUE
 variable bool EWarn=TRUE
 variable bool NWarn=TRUE
@@ -137,6 +144,7 @@ function EQ2BotLib_Init()
 	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]
 
 	UsePotions:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Use potions for cures?,FALSE]}]
+	UseCurePotions:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Use potions for cures?,FALSE]}]
 	ArcanePotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Arcane Potion Name,NULL]}]
 	ElementalPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Elemental Potion Name,NULL]}]
 	NoxiousPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Noxious Potion Name,NULL]}]
@@ -685,11 +693,30 @@ function IsFighterOrScout(int ID)
 			return TRUE
 		default
 			return FALSE
-	}    
+	}
 }
 
-function Shard(int sPower)
+function CommonPower(int sPower)
 {
+	;Potion Checks
+	if ${UsePotions} && ${Me.Inventory[Essence of Power].IsReady} && ${Me.InCombat}
+	{
+		if ${Me.ToActor.Power}<5
+			Me.Inventory[Essence of Power]:Use
+	}
+
+	if ${UsePotions} && ${Me.Inventory[Essence of Clarity].IsReady} && ${Me.InCombat}
+	{
+		if ${Me.ToActor.Power}<5
+			Me.Inventory[Essence of Clarity]:Use
+	}
+
+	if ${Me.Inventory[ExactName,ManaStone].IsReady} && ${Me.ToActor.Power}<50
+		Me.Inventory[ExactName,ManaStone]:Use
+
+	;;;;;;;;;;;;;
+	; Shard Usage
+	;;;;;;;;;;;;;
 	if !${sPower}
 		sPower:Set[65]
 
@@ -739,7 +766,12 @@ function Shard(int sPower)
 		HeartRequested:Set[TRUE]
 		EQ2Execute /tell ${HeartGroupMember} shard please
 	}
+}
 
+function Shard(int sPower)
+{
+	;Shard is depricated - Use CommonPower
+	call CommonPower ${sPower}
 }
 
 function ToClose()
@@ -895,16 +927,20 @@ function UseItem(string Item)
 
 function UseCrystallizedSpirit(int Health)
 {
+	;UseCrystalizedSpirit is depricated.  Use CommonHeals instead.
+	call CommonHeals 60
+}
+
+function CommonHeals(int Health)
+{
 	;Use a defiler crystalized spirit if we have 2 or more group members under ${Health}
-
-
 	declare temphl int local
 	declare grpheal int local 0
 
 	grpcnt:Set[${Me.GroupCount}]
 	temphl:Set[0]
 
-	if ${Me.Inventory[Crystallized Spirit].IsReady}
+	if ${Me.Inventory[Crystallized Spirit].IsReady} && ${Me.InCombat}
 	{
 		if ${Me.ToActor.Health}>0 && ${Me.Group[${temphl}].ToActor.Health}<${Health}
 			grpheal:Inc
@@ -925,12 +961,67 @@ function UseCrystallizedSpirit(int Health)
 		}
 		while ${temphl:Inc}<=${grpcnt}
 
-
 		if ${grpheal}>=2
 			Me.Inventory[Crystallized Spirit]:Use
 	}
-}
 
+	;fury gift heal
+	if ${Me.Effect[Pact of Nature](exists)}
+	{
+		variable int MainTankID
+		if ${MainTank}
+			MainTankID:Set[${Me.ID}]
+		else
+			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
+
+		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${MainTankID}
+			    return
+			}
+		}
+		elseif !${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 75
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${Me.ID}
+			    return
+			}
+		}
+		elseif ${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 35
+		{
+		    if (${Me.Ability[${SpellType[553]}].IsReady})
+		    {
+			    call CastSpellRange 553 0 0 0 ${Me.ID}
+			    return
+			}
+		}
+	}
+
+	if ${Me.Inventory[Innoruk's Child].IsReady} && ${Me.InCombat}
+	{
+		if ${Me.ToActor.Health}<50
+			Me.Inventory[Innoruk's Child]:Use
+	}
+
+	if ${UseCurePotions} && ${Me.InCombat}
+		call CheckPotCures
+
+	if ${UsePotions} && ${Me.Inventory[Essence of Health].IsReady} && ${Me.InCombat}
+	{
+		if ${Me.ToActor.Health}<25
+			Me.Inventory[Essence of Health]:Use
+	}
+
+	if ${UsePotions} && ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.InCombat}
+	{
+		if ${Me.ToActor.Health}<25
+			Me.Inventory[Essence of Regeneration]:Use
+	}
+
+}
 
 function GetActorID(string ActorName)
 ;function returns the Actor ID from a ActorName.  It prioritzes PCs over pets and npcs
