@@ -150,25 +150,25 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Banshee]
-	SpellRange[1,1]:Set[62]
+	;Action[1]:Set[Banshee]
+	;SpellRange[1,1]:Set[62]
 
-	Action[2]:Set[ScreamOfDeath]
-	SpellRange[2,1]:Set[391]
-	SpellRange[2,2]:Set[135]
+	Action[1]:Set[ScreamOfDeath]
+	SpellRange[1,1]:Set[391]
+	SpellRange[1,2]:Set[135]
 
-	Action[3]:Set[TacticsHO]
-	SpellRange[3,1]:Set[303]
-	SpellRange[3,2]:Set[51]
-	SpellRange[3,3]:Set[150]
+	Action[2]:Set[TacticsHO]
+	SpellRange[2,1]:Set[303]
+	SpellRange[2,2]:Set[51]
+	SpellRange[2,3]:Set[150]
 
-	Action[4]:Set[Luda]
-	SpellRange[4,1]:Set[60]
+	Action[3]:Set[Luda]
+	SpellRange[3,1]:Set[60]
 
-	Action[5]:Set[Flank_Attack]
-	SpellRange[5,1]:Set[110]
+	Action[4]:Set[Flank_Attack]
+	SpellRange[4,1]:Set[110]
 
-	Action[6]:Set[Mastery]
+	Action[5]:Set[Mastery]
 
 	Action[6]:Set[Grievance]
 	SpellRange[6,1]:Set[151]
@@ -179,35 +179,35 @@ function Combat_Init()
 	Action[8]:Set[AARhythm_Blade]
 	SpellRange[8,1]:Set[397]
 
-	Action[9]:Set[Lanet]
-	SpellRange[9,1]:Set[52]
+	;Action[9]:Set[Lanet]
+	;SpellRange[9,1]:Set[52]
 
-	Action[10]:Set[AAHarmonizingShot]
-	SpellRange[10,1]:Set[386]
+	Action[9]:Set[AAHarmonizingShot]
+	SpellRange[9,1]:Set[386]
 
-	Action[11]:Set[RhymingHO]
-	SpellRange[11,1]:Set[303]
-	SpellRange[11,2]:Set[50]
-	SpellRange[11,3]:Set[110]
+	Action[10]:Set[RhymingHO]
+	SpellRange[10,1]:Set[303]
+	SpellRange[10,2]:Set[50]
+	SpellRange[10,3]:Set[110]
 
-	Action[12]:Set[AATurnstrike]
-	SpellRange[12,1]:Set[387]
+	Action[11]:Set[AATurnstrike]
+	SpellRange[11,1]:Set[387]
 
-	Action[13]:Set[Rebuff]
-	SpellRange[13,1]:Set[54]
+	;Action[13]:Set[Rebuff]
+	;SpellRange[13,1]:Set[54]
 
-	Action[14]:Set[AoE2]
-	SpellRange[14,1]:Set[63]
+	Action[12]:Set[AoE2]
+	SpellRange[12,1]:Set[63]
 
-	Action[15]:Set[Stealth_Attack]
-	SpellRange[15,1]:Set[391]
-	SpellRange[15,2]:Set[136]
+	Action[13]:Set[Stealth_Attack]
+	SpellRange[13,1]:Set[391]
+	SpellRange[13,2]:Set[136]
 
-	Action[16]:Set[Jael]
-	SpellRange[16,1]:Set[250]
+	Action[14]:Set[Jael]
+	SpellRange[14,1]:Set[250]
 
-	Action[17]:Set[Stun]
-	SpellRange[17,1]:Set[190]
+	;Action[17]:Set[Stun]
+	;SpellRange[17,1]:Set[190]
 }
 
 
@@ -327,13 +327,19 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<10
+	{
+		eq2execute auto 1
+		call CheckPosition 1 1 
+	}	
+
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 		EQ2Execute /stopfollow
 
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
-		call CastSpellRange 388 0 0 0 0 0 0 0 1 0
+		call CastSpellRange 388 0 0 0 0 0 1 0 1 0
 		wait 5
 		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
@@ -384,36 +390,44 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	call ActionChecks
+	;call ActionChecks
 
-	if ${MagNoteMode}
-		call DoMagneticNote
+	;if ${MagNoteMode}
+	;	call DoMagneticNote
 
 	if ${DebuffMode}
 	{
 		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady}
 		{
-			call CastSpellRange 55
+			call CastSpellRange 55 0 0 0 0 0 1
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 56
+			call CastSpellRange 56 0 0 0 0 0 1 
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 57
+			call CastSpellRange 57 0 0 0 0 0 1 
 			DebuffCnt:Inc
 		}
+	}
+
+	if ${Me.Ability[${SpellType[62]}].IsReady}
+	{
+		call CastSpellRange 62 0 0 0 0 0 1 0 1 0
+		wait 8
+		call CastSpellRange 151 0 0 0 0 0 1 0 1 0
 	}
 
 	;Always use Cacophony of Blades if available.
 	if ${Me.Ability[${SpellType[155]}].IsReady}
 	{
-		if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
+		if ${AnnounceMode}
 			eq2execute /gsay Caco of Blades is up!
-		call CastSpellRange 155
+		call CastSpellRange 155 0 0 0 0 0 1 0 1 0
+		wait 20
 	}
 
 	if ${RangedAttackMode}
@@ -428,8 +442,8 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${DoHOs}
-		objHeroicOp:DoHO
+	;if ${DoHOs}
+	;	objHeroicOp:DoHO
 
 	switch ${Action[${xAction}]}
 	{
@@ -437,7 +451,7 @@ function Combat_Routine(int xAction)
 		case RhymingHO
 			if !${RangedAttackMode}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1 0 2 0
+				eq2execute /useability "Lucky Break"
 				call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget} 0 0 1 0 2 0
 				wait 30 ${EQ2.HOWindowActive}
 				if !${EQ2.HOName.Equal[Bravo's Dance]}
@@ -456,21 +470,22 @@ function Combat_Routine(int xAction)
 			{
 				;check if we have the bump AA and use it to stealth us
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1
-
+				{
+					eq2execute /useability Bump
+					wait 2
+				}
 				;if we didnt bardAA "Bump" into stealth use normal stealth
 				if ${Me.ToActor.IsInvis}
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
+					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget} 0 0 1 
 				else
 				{
 					call CastSpellRange 200 0 1 1 0 0 0 1
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
+					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget} 0 0 1 
 				}
 			}
 			break
 		case AoE2
-			if ${AoEMode} && ${Mob.Count}>=2
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 			break
 		case AATurnstrike
 			if !${JoustMode} && !${RangedAttackMode}
@@ -506,7 +521,7 @@ function Combat_Routine(int xAction)
 			break
 		case Flank_Attack
 			if !${RangedAttackMode} && !${MainTank}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget} 0 0 1 0 2 0
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
 			break
 		case Rebuff
 		case Luda
@@ -665,5 +680,5 @@ function DoMagneticNote()
 function StartHO()
 {
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
-		call CastSpellRange 303
+		eq2execute /useability "Lucky Break"
 }
