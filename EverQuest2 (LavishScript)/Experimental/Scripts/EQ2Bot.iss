@@ -789,7 +789,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 		{
 			;if not ready, we can't cast it
 			if !${Me.Ability[${SpellType[${tempvar}]}].IsReady}
-				continue
+				break
 
 			;lets make sure the target doesn't already have the spell
 			if ${TargetID}
@@ -824,7 +824,8 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 			;We need to see if we're already casting and we've been given a castspellwhen directive
 			if ${Me.CastingSpell} && ${CastSpellWhen}
 			{
-				if ${CastSpellWhen}==1  ;Immediate Cast Directive!
+				;Immediate Cast Directive!
+				if ${CastSpellWhen}==1  
 					call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
 				else
 				{
@@ -936,6 +937,9 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 			Me.Ability[${spell}]:Use
 	}
 
+	if ${Me.Ability[${Spell}].CastingTime}<.8
+		return
+
 	; reducing this too much will cause problems ... 4 seems to be a sweet spot
 	wait 4 ${Me.CastingSpell}
 
@@ -997,8 +1001,10 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 			Me.Ability[${spell}]:Use
 	}
 
+	if ${Me.Ability[${Spell}].CastingTime}<.8
+		return
 	;; this is ghetto ..but required
-	wait 4
+	wait 2
 	if (!${Me.Ability[${spell}].IsQueued})
 		wait 4
 
@@ -1012,7 +1018,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		do
 		{
 			wait 2
-			Counter:Inc[2]
+			Counter:Inc[5]
 
 			if (${Counter} > ${TimeOut})
 				break
@@ -1053,7 +1059,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		do
 		{
 			wait 2
-			Counter:Inc[2]
+			Counter:Inc[5]
 
 			if (${Counter} > ${TimeOut})
 			{
@@ -1091,14 +1097,14 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 
 	wait 2
 
-	;; This will go off on really fast casting spells....Used just for debugging purposes....
-	;if !${Me.CastingSpell}
-	;{
-	;	echo "EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"
-	;	echo "EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"
-	;	echo "EQ2Bot-Debug:: EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
-	;	wait 1
-	;}
+	; This will go off on really fast casting spells....Used just for debugging purposes....
+	if !${Me.CastingSpell}
+	{
+		echo "EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"
+		echo "EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"
+		echo "EQ2Bot-Debug:: EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
+		wait 1
+	}
 
 	LastQueuedAbility:Set[${spell}]
 	CurrentAction:Set[Casting '${spell}']
