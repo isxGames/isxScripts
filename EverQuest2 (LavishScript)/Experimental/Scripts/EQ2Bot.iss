@@ -66,7 +66,7 @@ variable bool IgnoreGreyCon
 variable filepath mainpath="${LavishScript.HomeDirectory}/Scripts/"
 variable string spellfile
 variable string charfile
-variable string SpellType[400]
+variable string SpellType[600]
 variable int AssistHP
 variable string MainAssist
 variable string MainTankPC
@@ -825,7 +825,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 			if ${Me.CastingSpell} && ${CastSpellWhen}
 			{
 				;Immediate Cast Directive!
-				if ${CastSpellWhen}==1  
+				if ${CastSpellWhen}==1
 					call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
 				else
 				{
@@ -932,7 +932,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	else
 	{
 		if ${Actor[id,${TargetID}].Type.Equal[PC]}
-			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}" 
+			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}"
 		else
 			Me.Ability[${spell}]:Use
 	}
@@ -996,7 +996,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	else
 	{
 		if ${Actor[id,${TargetID}].Type.Equal[PC]}
-			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}" 
+			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}"
 		else
 			Me.Ability[${spell}]:Use
 	}
@@ -1004,7 +1004,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	if ${Me.Ability[${Spell}].CastingTime}<.8
 		return
 	;; this is ghetto ..but required
-	wait 2
+	wait 4
 	if (!${Me.Ability[${spell}].IsQueued})
 		wait 4
 

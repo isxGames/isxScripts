@@ -61,16 +61,16 @@ function Class_Declaration()
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
 	UseReaver:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseReaver,TRUE]}]
-	UseSiphonHateWhenNotMT:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSiphonHateWhenNotMT,FALSE]}]	
-	UseBattleLeadershipAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseBattleLeadershipAABuff,FALSE]}]	
-	UseFearlessMoraleAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseFearlessMoraleAABuff,FALSE]}]	
-	UseDeathMarch:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDeathMarch,FALSE]}]	
-	UseMastersRage:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseMastersRage,TRUE]}]	
+	UseSiphonHateWhenNotMT:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseSiphonHateWhenNotMT,FALSE]}]
+	UseBattleLeadershipAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseBattleLeadershipAABuff,FALSE]}]
+	UseFearlessMoraleAABuff:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseFearlessMoraleAABuff,FALSE]}]
+	UseDeathMarch:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseDeathMarch,FALSE]}]
+	UseMastersRage:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseMastersRage,TRUE]}]
 
 
 	BuffArmamentMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArmamentMember,]}]
 	BuffTacticsGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffTacticsGroupMember,]}]
-	
+
 	if ${Me.Level} < 58
 	    UIElement[UseDeathMarch@Class@EQ2Bot Tabs@EQ2 Bot]:ToggleVisible
 }
@@ -87,9 +87,9 @@ function Buff_Init()
 
    PreAction[2]:Set[Self_Buff1]
    PreSpellRange[2,1]:Set[25]
-   
+
    PreAction[3]:Set[Self_Buff2]
-   PreSpellRange[3,1]:Set[26]  
+   PreSpellRange[3,1]:Set[26]
 
    PreAction[4]:Set[Group_Buff1]
    PreSpellRange[4,1]:Set[20]
@@ -99,21 +99,21 @@ function Buff_Init()
 
    PreAction[6]:Set[Tactics_Target]
    PreSpellRange[6,1]:Set[31]
-   
+
    PreAction[7]:Set[OffensiveMode]
    PreSpellRange[7,1]:Set[290]
-   
+
    PreAction[8]:Set[DefensiveMode]
-   PreSpellRange[8,1]:Set[295]      
-   
+   PreSpellRange[8,1]:Set[295]
+
    PreAction[9]:Set[Reaver]
-   
+
    PreAction[10]:Set[SiphonHate]
-   
+
    PreAction[11]:Set[BattleLeadershipAABuff]
-   
+
    PreAction[12]:Set[FearlessMoraleAABuff]
-   
+
    PreAction[13]:Set[Bloodletter]
    PreSpellRange[13,1]:Set[331]
 
@@ -125,66 +125,66 @@ function Combat_Init()
    MobHealth[1,1]:Set[1]
    MobHealth[1,2]:Set[100]
    SpellRange[1,1]:Set[381]
-   
+
    Action[2]:Set[Taunt]
    SpellRange[2,1]:Set[160]
-   
+
    ;; For now, I want to cast PBAoE_3 early in the fight (ie, Tap Veins) as it gives health on termination
    Action[3]:Set[PBAoE_3]
    MobHealth[3,1]:Set[50]
    MobHealth[3,2]:Set[100]
-   SpellRange[3,1]:Set[98]   
-   
+   SpellRange[3,1]:Set[98]
+
    Action[4]:Set[AA_Legionnaire_Smite]
-   
+
    ;; nuke + dot
    Action[5]:Set[DDAttack_1]
    Power[5,1]:Set[5]
    Power[5,2]:Set[100]
    SpellRange[5,1]:Set[60]
-   
+
    Action[6]:Set[PBAoE_1]
    Power[6,1]:Set[10]
    Power[6,2]:Set[100]
    SpellRange[6,1]:Set[96]
-   
-   ;; Level 35 or higher   
+
+   ;; Level 35 or higher
    Action[7]:Set[PBAoE_2]
    Power[7,1]:Set[10]
    Power[7,2]:Set[100]
    SpellRange[7,1]:Set[97]
-   
+
    ;; Level 55 or higher
    Action[8]:Set[PBAoE_3]
    Power[8,1]:Set[10]
    Power[8,2]:Set[100]
-   SpellRange[8,1]:Set[98]  
-   
-    
+   SpellRange[8,1]:Set[98]
+
+
    ;; Level 65 or higher
    Action[9]:Set[PBAoE_4]
    Power[9,1]:Set[10]
    Power[9,2]:Set[100]
-   SpellRange[9,1]:Set[99]   
-   
+   SpellRange[9,1]:Set[99]
+
    Action[10]:Set[PBAoE_5]
    Power[10,1]:Set[10]
    Power[10,2]:Set[100]
-   SpellRange[10,1]:Set[95]   
-   
-   
+   SpellRange[10,1]:Set[95]
+
+
    ;; nuke + lifetap
    Action[11]:Set[DDAttack_2]
    Power[11,1]:Set[5]
    Power[11,2]:Set[100]
    SpellRange[11,1]:Set[153]
-  
-   ;; nuke + dot 
+
+   ;; nuke + dot
    Action[12]:Set[DDAttack_3]
    Power[12,1]:Set[5]
    Power[12,2]:Set[100]
    SpellRange[12,1]:Set[150]
-   
+
     ;; Nuke + **wis debuff**
    Action[13]:Set[DDAttack_4]
    Power[13,1]:Set[5]
@@ -196,27 +196,27 @@ function Combat_Init()
    Power[14,1]:Set[5]
    Power[14,2]:Set[100]
    SpellRange[14,1]:Set[61]
-   
+
    ;; "Boot" (knockdown)
    Action[15]:Set[DDAttack_6]
    Power[15,1]:Set[5]
    Power[15,2]:Set[100]
    SpellRange[15,1]:Set[151]
-   
+
    ;; Pure Nuke
    Action[16]:Set[DDAttack_7]
    Power[16,1]:Set[5]
    Power[16,2]:Set[100]
-   SpellRange[16,1]:Set[62]   
-   
+   SpellRange[16,1]:Set[62]
+
    ;; Level 40 and higher
    Action[17]:Set[DDAttack_8]
    Power[17,1]:Set[5]
    Power[17,2]:Set[100]
-   SpellRange[17,1]:Set[154]   
+   SpellRange[17,1]:Set[154]
 
    ;; NOTE:  "63" is Harm touch
-    
+
    ; Level 50+
    Action[18]:Set[Mist]
    MobHealth[18,1]:Set[10]
@@ -282,7 +282,7 @@ function Buff_Routine(int xAction)
 		    if ${OffensiveMode}
 		    {
     			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-    		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+    		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 		    }
 		    else
 		    {
@@ -295,7 +295,7 @@ function Buff_Routine(int xAction)
 		    if ${DefensiveMode}
 		    {
     			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-    		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+    		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 		    }
 		    else
 		    {
@@ -306,12 +306,12 @@ function Buff_Routine(int xAction)
 
 		case Self_Buff1
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			break
 
 		case Self_Buff2
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			break
 
 
@@ -319,11 +319,11 @@ function Buff_Routine(int xAction)
 			if (!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
 		        call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
-			
+
 		case Group_Buff2
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-		        call CastSpellRange ${PreSpellRange[${xAction},1]}	
-			break			
+		        call CastSpellRange ${PreSpellRange[${xAction},1]}
+			break
 
 
 		case Tactics_Target
@@ -339,7 +339,7 @@ function Buff_Routine(int xAction)
 				wait 2
 			}
 			break
-			
+
 		case Reaver
 		    if ${UseReaver}
 		    {
@@ -360,12 +360,12 @@ function Buff_Routine(int xAction)
 		        if ${Me.Maintained[Reaver](exists)}
 		            Me.Maintained[Reaver]:Cancel
 		    }
-			break	
-			
+			break
+
 		case SiphonHate
 		    if !${Me.Ability[Siphon Hate](exists)}
 		        break
-		        
+
 		    if (${MainTank} || ${UseSiphonHateWhenNotMT})
 		    {
     			if !${Me.Maintained[Siphon Hate](exists)}
@@ -385,9 +385,9 @@ function Buff_Routine(int xAction)
 		        if ${Me.Maintained[Siphon Hate](exists)}
 		            Me.Maintained[Siphon Hate]:Cancel
 		    }
-			break	
-			
-	    case BattleLeadershipAABuff			
+			break
+
+	    case BattleLeadershipAABuff
 		    if ${UseBattleLeadershipAABuff}
 		    {
     			if !${Me.Maintained[Battle Leadership](exists)}
@@ -408,8 +408,8 @@ function Buff_Routine(int xAction)
 		            Me.Maintained[Battle Leadership]:Cancel
 		    }
 			break
-			
-	    case FearlessMoraleAABuff			
+
+	    case FearlessMoraleAABuff
 		    if ${UseFearlessMoraleAABuff}
 		    {
     			if !${Me.Maintained[Fearless Morale](exists)}
@@ -429,18 +429,18 @@ function Buff_Routine(int xAction)
 		        if ${Me.Maintained[Fearless Morale](exists)}
 		            Me.Maintained[Fearless Morale]:Cancel
 		    }
-			break			
-			
+			break
+
 		case Bloodletter
 		    if ${Me.Level} < 80
 		        break
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 			    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
-			        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}	
+			        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			}
 			break
-			
+
 		Default
 			return BuffComplete
 	}
@@ -449,20 +449,20 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-    declare BuffTarget string local 
+    declare BuffTarget string local
     declare NumNPCs int local
 	declare spellsused int local
 	spellsused:Set[0]
-	
+
 	if ${DoHOs}
 		objHeroicOp:DoHO
-    
+
     if ${StartHO}
     {
     	if !${EQ2.HOWindowActive}
     		call CastSpellRange 303
     }
-    
+
     ;; uncomment for venril fight
     ;if (${Zone.ShortName.Find[venril]} > 0)
     ;{
@@ -475,11 +475,11 @@ function Combat_Routine(int xAction)
     ;		while ${Me.ToActor.Power} < 49
     ;	}
     ;}
-    
+
     EQ2:CreateCustomActorArray[ByDist,10,npc]
     NumNPCs:Set[${EQ2.CustomActorArraySize}]
     ;echo "DEBUG:: NumNPCs: ${NumNPCs}"
-    
+
     ; always cast when up (Disease Resist Reduction and Hate Builder (AE))  -- (AE TAUNT!)  -- NOTE:  For now, we cast this even if 'tauntmode' is off
     if ${PBAoEMode}
     {
@@ -502,27 +502,27 @@ function Combat_Routine(int xAction)
         	;; Always try to cast fast casting Combat Arts aftewards to gain aggro (if tank)
             if (${Me.Ability[${SpellType[152]}].IsReady})
             {
-                call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1   	
+                call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
                 spellsused:Inc
             }
             if (${Me.Ability[${SpellType[151]}].IsReady})
             {
-                call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1   	            
+                call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1
                 spellsused:Inc
             }
-           
+
 			; shield bash
 		    if (${Me.Ability[${SpellType[240]}].IsReady})
 		    {
 			    call CastSpellRange 240 0 0 0 ${KillTarget}
 			    spellsused:Inc
-			}	
+			}
 			; taunt
 			if (${MainTank} && ${Me.Ability[${SpellType[160]}].IsReady})
 		    {
 			    call CastSpellRange 160 0 0 0 ${KillTarget}
 			    spellsused:Inc
-			}	
+			}
 
         }
         else
@@ -543,7 +543,7 @@ function Combat_Routine(int xAction)
         		    spellsused:Inc
         		}
         	}
-        } 
+        }
     }
     if ${NumNPCs} > 3
     {
@@ -557,7 +557,7 @@ function Combat_Routine(int xAction)
         		    call CastSpellRange 312 0 0 0 ${KillTarget} 0 0 0 1
         		    spellsused:Inc
         		}
-            } 
+            }
         }
         ;; AE Life Tap
         ;waitframe
@@ -565,7 +565,7 @@ function Combat_Routine(int xAction)
         {
     	    if (${Me.Ability[${SpellType[98]}].IsReady})
     	    {
-    		    call CastSpellRange 98 0 0 0 ${KillTarget} 0 0 0 1  
+    		    call CastSpellRange 98 0 0 0 ${KillTarget} 0 0 0 1
     		    spellsused:Inc
     		}
     	}
@@ -576,18 +576,18 @@ function Combat_Routine(int xAction)
         	{
         	    if ${MainTank}
         	    {
-            	    call CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1 
+            	    call CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1
             	    spellsused:Inc
             	}
         	    else
         	    {
-            	    call CastSpellRange 7 0 0 0 ${Actor[pc,${MainTankPC}].ID} 0 0 0 1 
+            	    call CastSpellRange 7 0 0 0 ${Actor[pc,${MainTankPC}].ID} 0 0 0 1
             	    spellsused:Inc
             	}
             }
         }
     }
-    
+
 
     ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
     if ${Me.Level} >= 50 && ${PBAoEMode}
@@ -596,7 +596,7 @@ function Combat_Routine(int xAction)
 	    {
     	    if (${Actor[${KillTarget}].Health} > 70 || ${Actor[${KillTarget}].IsEpic})
     	    {
-	            CurrentAction:Set[Combat :: Mist]    	        
+	            CurrentAction:Set[Combat :: Mist]
     	        if !${Me.Maintained[${SpellType[55]}](exists)}
     	        {
         	        if (${Me.Ability[${SpellType[55]}].IsReady})
@@ -606,9 +606,9 @@ function Combat_Routine(int xAction)
         		    }
             	}
         	}
-        }  
-	}      
-    
+        }
+	}
+
 	;; Draw Strength (Always cast this when it is ready!)
 	if (!${Actor[${KillTarget}].IsSolo} || ${NumNPCs} > 1)
 	{
@@ -622,39 +622,39 @@ function Combat_Routine(int xAction)
         		    call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
         		    spellsused:Inc
         		}
-        	}   
-        } 
+        	}
+        }
     }
-    
+
     ;;;;;
-  	;;; Quick Spells for aggro  
+  	;;; Quick Spells for aggro
 	; shield bash
     if (${Me.Ability[${SpellType[240]}].IsReady})
     {
 	    call CastSpellRange 240 0 0 0 ${KillTarget}
 	    spellsused:Inc
-	}	
+	}
 	; taunt
 	if (${MainTank} && ${Me.Ability[${SpellType[160]}].IsReady})
     {
 	    call CastSpellRange 160 0 0 0 ${KillTarget}
 	    spellsused:Inc
-	}	
+	}
 	; kick
 	if (${Me.Ability[${SpellType[151]}].IsReady})
     {
 	    call CastSpellRange 151 0 0 0 ${KillTarget}
 	    spellsused:Inc
-	}	
+	}
 	;;
 	;;;;
-	
+
     ;; Death March
     if (${UseDeathMarch})
     {
     	if (${Me.Level} >= 58 && !${Actor[${KillTarget}].ConColor.Equal[Grey]})
     	{
-            CurrentAction:Set[Combat :: Death March]	    
+            CurrentAction:Set[Combat :: Death March]
         	if !${Me.Maintained[${SpellType[312]}](exists)}
         	{
         	    if (${Me.Ability[${SpellType[312]}].IsReady})
@@ -662,10 +662,10 @@ function Combat_Routine(int xAction)
         		    call CastSpellRange 312 0 0 0 ${KillTarget} 0 0 0 1
         		    spellsused:Inc
         		}
-            } 
+            }
         }
     }
-    
+
     ;; Cast 5-Proc Damage Shield every time it is ready (And as long as we are fighting non-solo mobs)
     CurrentAction:Set[Combat :: Checking 'Damage Shield']
     if !${Actor[${KillTarget}].IsSolo}
@@ -685,28 +685,28 @@ function Combat_Routine(int xAction)
                 		    ;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
                 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
                 			{
-                			    call CastSpellRange 7 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1 
+                			    call CastSpellRange 7 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
                 			    spellsused:Inc
                 			}
                 			else
                 			    echo "ERROR: Damage Shield proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
-                        }     
+                        }
                         ;; If set to "no one" we assume they do not want to use this spell.
                 	}
                 }
             }
-        }   
-    } 
-       
-	;call UseCrystallizedSpirit 60
+        }
+    }
+
+	call CommonHeals 60
 
     call CheckGroupOrRaidAggro
     spellsused:Inc[${Return}]
-    
+
     call CheckPower
-    
-    call CheckHeals
-    
+
+    ;call CheckHeals
+
     ; If Kerran, use Physical Mitigation Debuff on Epic Mobs or Heroics that are yellow/orange/red cons
     if ${Me.Race.Equal[Kerran]}
     {
@@ -722,8 +722,8 @@ function Combat_Routine(int xAction)
 				    waitframe
 				}
 				while ${Me.CastingSpell}
-				wait 1						
-			} 
+				wait 1
+			}
         }
         elseif ${Actor[${KillTarget}].IsHeroic}
         {
@@ -739,13 +739,13 @@ function Combat_Routine(int xAction)
     				    waitframe
     				}
     				while ${Me.CastingSpell}
-    				wait 1						
-    			} 
+    				wait 1
+    			}
             }
         }
     }
-    
-    
+
+
     if ${UseMastersRage}
     {
 	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
@@ -762,11 +762,11 @@ function Combat_Routine(int xAction)
     			    waitframe
     			}
     			while ${Me.CastingSpell}
-    			wait 1						
+    			wait 1
     		}
     	}
     }
-    
+
     ;; Combat Leadership AA
 	if ${Me.Ability[${SpellType[333]}](exists)}
 	{
@@ -775,15 +775,15 @@ function Combat_Routine(int xAction)
 		    call CastSpellRange 333 0 0 0 ${Me.ID}
 		    spellsused:Inc
 		}
-	}       
+	}
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
-	
+
 	switch ${Action[${xAction}]}
 	{
 	    case Placeholder
 	        break
-	        
+
 		case Taunt
 			if ${TauntMode}
 			{
@@ -794,7 +794,7 @@ function Combat_Routine(int xAction)
     			}
 			}
 			break
-			
+
         case DDAttack_1
         case DDAttack_2
         case DDAttack_3
@@ -813,14 +813,14 @@ function Combat_Routine(int xAction)
     			}
 			}
 			break
-			
-			
+
+
         case PBAoE_1
             if (${PBAoEMode})
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
-                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    EQ2:CreateCustomActorArray[byDist,5,npc]
                     if ${EQ2.CustomActorArraySize} < 2
                         break
                 }
@@ -834,14 +834,14 @@ function Combat_Routine(int xAction)
         			}
     			}
     		}
-			break	
-			        
+			break
+
         case PBAoE_2
             if (${PBAoEMode} && ${Me.Level} >= 35)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
-                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    EQ2:CreateCustomActorArray[byDist,5,npc]
                     if ${EQ2.CustomActorArraySize} < 2
                         break
                 }
@@ -855,8 +855,8 @@ function Combat_Routine(int xAction)
         			}
     			}
     		}
-			break			
-			
+			break
+
 		case AA_Legionnaire_Smite
 		    if ${Me.Level} > 50
 		        break
@@ -864,21 +864,21 @@ function Combat_Routine(int xAction)
 		    {
     			if ${Me.Ability["Legionnaire's Smite"].IsReady}
     			{
-    			    call CastSpellRange 332 0 0 0 ${KillTarget} 0 0 0 1		
+    			    call CastSpellRange 332 0 0 0 ${KillTarget} 0 0 0 1
     			    spellsused:Inc
     			}
-    		}    
+    		}
     		break
-        
+
         case PBAoE_3
             if (${PBAoEMode} && ${Me.Level} >= 55)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
-                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    EQ2:CreateCustomActorArray[byDist,5,npc]
                     if ${EQ2.CustomActorArraySize} < 2
                         break
-                }                
+                }
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
                 {
@@ -890,16 +890,16 @@ function Combat_Routine(int xAction)
     			}
 			}
 			break
-        
+
         case PBAoE_4
             if (${PBAoEMode} && ${Actor[${KillTarget}].EncounterSize} > 1 && ${Me.Level} >= 65)
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
-                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    EQ2:CreateCustomActorArray[byDist,5,npc]
                     if ${EQ2.CustomActorArraySize} < 2
                         break
-                }                    
+                }
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
                 {
@@ -910,17 +910,17 @@ function Combat_Routine(int xAction)
         			}
     			}
 			}
-			break  
+			break
 
         case PBAoE_5
             if (${PBAoEMode})
             {
                 if ${Actor[${KillTarget}].IsSolo}
                 {
-                    EQ2:CreateCustomActorArray[byDist,5,npc]   
+                    EQ2:CreateCustomActorArray[byDist,5,npc]
                     if ${EQ2.CustomActorArraySize} < 2
                         break
-                }                    
+                }
                 call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
                 if ${Return.Equal[OK]}
                 {
@@ -931,8 +931,8 @@ function Combat_Routine(int xAction)
         			}
     			}
 			}
-			break  
-		
+			break
+
 		case Shield_Attack
 			If ${Me.Equipment[Secondary].Type.Equal[Shield]}
 			{
@@ -956,7 +956,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-			
+
 		case Pet
 		    if (${PetMode})
 		    {
@@ -969,12 +969,12 @@ function Combat_Routine(int xAction)
 			}
 			;; "Pet" is the last thing in the routine ...so, return CombatComplete
 			if (${spellsused} < 1)
-				call CastSomething				
-			return CombatComplete		
-			
+				call CastSomething
+			return CombatComplete
+
 		default
 			if (${spellsused} < 1)
-				call CastSomething		
+				call CastSomething
 			return CombatComplete
 	}
 }
@@ -994,23 +994,23 @@ function CheckGroupOrRaidAggro()
     declare NumNPCs int local
     declare MobTargetID int local
 
-    
+
     if !${Me.Ability[${SpellType[270]}].IsReady} && !${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Ability[${SpellType[160]}].IsReady}
         return 0
-        
-    
+
+
 	variable int Counter = 1
 
     ;; This is now created in the Combat_Routine() each time it is called (and Combat_Routine() is the only function that calls THIS function)
-	;EQ2:CreateCustomActorArray[byDist,10,npc]   
+	;EQ2:CreateCustomActorArray[byDist,10,npc]
     NumNPCs:Set[${EQ2.CustomActorArraySize}]
-    
+
 	do
 	{
 	    ;; For now, do not do anything automatically when we are not maintank
 	    if (!${MainTank})
 	        continue
-	        
+
 	    if (!${CustomActor[${Counter}].IsSolo} || ${NumNPCs} > 2)
 	    {
 	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
@@ -1025,7 +1025,7 @@ function CheckGroupOrRaidAggro()
         	                call IsFighterOrScout ${MobTargetID}
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
-        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
+        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
             	                if ${Actor[${MobTargetID}].Health} < 65
             	                {
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
@@ -1033,46 +1033,46 @@ function CheckGroupOrRaidAggro()
                 	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                }    
+                	                }
                 	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
                 	                {
                 	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                }       	                
-            	                }        	                
+                	                }
+            	                }
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
-            	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1     	                    
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
             	                    return 1
-            	                }  
+            	                }
             	                if ${Me.Ability[${SpellType[160]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
-            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1      	                    
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
             	                    return 1
-            	                }            	                          
+            	                }
             	                if !${Me.Maintained[${SpellType[240]}](exists)}
             	                {
                 	                if ${Me.Ability[${SpellType[240]}].IsReady}
                 	                {
                 	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
                 	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                }          	                
+                	                }
                 	            }
                 	        }
         	                return 0
         	            }
-    	            }    
+    	            }
 	            }
 	            else
 	            {
@@ -1085,7 +1085,7 @@ function CheckGroupOrRaidAggro()
         	                call IsFighterOrScout ${MobTargetID}
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
-        	                    echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"        	                
+        	                    echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
             	                if ${Actor[${MobTargetID}].Health} < 65
             	                {
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
@@ -1093,41 +1093,41 @@ function CheckGroupOrRaidAggro()
                 	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                }    
+                	                }
                 	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
                 	                {
                 	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                }       	                
-            	                }        	                
+                	                }
+            	                }
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
-            	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1     	                    
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
             	                    return 1
-            	                }  
+            	                }
             	                if ${Me.Ability[${SpellType[160]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
-            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1      	                    
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
+            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
             	                    return 1
-            	                }            	                          
+            	                }
             	                if !${Me.Maintained[${SpellType[240]}](exists)}
             	                {
                 	                if ${Me.Ability[${SpellType[240]}].IsReady}
                 	                {
                 	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
                 	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}" 
+                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                }          	                
+                	                }
                 	            }
                 	        }
         	                return 0
@@ -1138,7 +1138,7 @@ function CheckGroupOrRaidAggro()
 	    }
 	}
 	while ${Counter:Inc}<=${EQ2.CustomActorArraySize}
-	
+
 	return 0
 }
 
@@ -1147,22 +1147,22 @@ function FeignDeath()
     if ${Me.Ability[${SpellType[330]}].IsReady}
     {
         CurrentAction:Set[Casting Feign Death!]
-        call CastSpellRange 330 0 0 0 ${Me.ToActor.ID} 0 0 0 1 
+        call CastSpellRange 330 0 0 0 ${Me.ToActor.ID} 0 0 0 1
     }
 }
 
 function HarmTouch()
 {
     ;; Cast Harmtouch on current KillTarget
-    
+
     if ${Me.Ability[${SpellType[63]}].IsReady}
     {
         CurrentAction:Set[Combat :: Casting Harm Touch!]
-	    call CastSpellRange 63 0 0 0 ${KillTarget} 0 0 0 1    
+	    call CastSpellRange 63 0 0 0 ${KillTarget} 0 0 0 1
 	}
-    
+
 }
-   
+
 function Have_Aggro()
 {
 }
@@ -1191,40 +1191,8 @@ function Cancel_Root()
 }
 
 function CheckHeals()
-{	
-	if ${Me.Effect[Pact of Nature](exists)}
-	{
-		variable int MainTankID
-		if ${MainTank}
-			MainTankID:Set[${Me.ID}]
-		else
-			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
-				
-		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
-		{
-		    if (${Me.Ability[${SpellType[553]}].IsReady})
-		    {
-			    call CastSpellRange 553 0 0 0 ${MainTankID}
-			    return
-			}	
-		}
-		elseif !${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 75
-		{
-		    if (${Me.Ability[${SpellType[553]}].IsReady})
-		    {
-			    call CastSpellRange 553 0 0 0 ${Me.ID}
-			    return
-			}	
-		}
-		elseif ${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 35
-		{
-		    if (${Me.Ability[${SpellType[553]}].IsReady})
-		    {
-			    call CastSpellRange 553 0 0 0 ${Me.ID}
-			    return
-			}
-		}
-	}
+{
+	;this was moved to CommonHeals in EQ2BotLib
 }
 
 function CheckPower()
@@ -1233,7 +1201,7 @@ function CheckPower()
     {
 	    if (${Me.Ability[${SpellType[81]}].IsReady})
 		    call CastSpellRange 81 0 0 0 ${KillTarget} 0 0 0 1
-    }   
+    }
 }
 
 function CastSomething()
@@ -1250,21 +1218,21 @@ function CastSomething()
     {
 	    call CastSpellRange 240 0 0 0 ${KillTarget}
 	    return
-	}	
+	}
 	; taunt
 	if (${MainTank} && ${Me.Ability[${SpellType[160]}].IsReady})
     {
 	    call CastSpellRange 160 0 0 0 ${KillTarget}
 	    return
-	}	
+	}
 	; kick
 	if (${Me.Ability[${SpellType[151]}].IsReady})
     {
 	    call CastSpellRange 151 0 0 0 ${KillTarget}
 	    return
-	}	
-	
-	;; Combat Leadership AA	
+	}
+
+	;; Combat Leadership AA
 	if (${Me.Ability[${SpellType[333]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
 	{
 	    if (${Me.Ability[${SpellType[333]}].IsReady})
@@ -1272,10 +1240,10 @@ function CastSomething()
 		    call CastSpellRange 333 0 0 0 ${Me.ID}
 		    return
 		}
-	}   
-	
-	
-				
+	}
+
+
+
     if ${PBAoEMode}
     {
         if ${MainTank}
@@ -1297,17 +1265,17 @@ function CastSomething()
         	;; Always try to cast fast casting Combat Arts aftewards to gain aggro (if tank)
             if (${Me.Ability[${SpellType[152]}].IsReady})
             {
-                call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1   	
+                call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
                 return
             }
             if (${Me.Ability[${SpellType[151]}].IsReady})
             {
-                call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1   	 
+                call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1
                 return
             }
 	        if (${Me.Ability[${SpellType[98]}].IsReady})
 	        {
-	    		call CastSpellRange 98 0 0 0 ${KillTarget} 0 0 0 1                             
+	    		call CastSpellRange 98 0 0 0 ${KillTarget} 0 0 0 1
 	    		return
 	    	}
         }
@@ -1329,44 +1297,44 @@ function CastSomething()
         		    return
         		}
         	}
-        	
+
             if (${Me.Ability[${SpellType[152]}].IsReady})
             {
-                call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1   	
+                call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
                 return
             }
             if (${Me.Ability[${SpellType[151]}].IsReady})
             {
-                call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1   	 
+                call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1
                 return
             }
 	        if (${Me.Ability[${SpellType[98]}].IsReady})
 	        {
-	    		call CastSpellRange 98 0 0 0 ${KillTarget} 0 0 0 1                             
+	    		call CastSpellRange 98 0 0 0 ${KillTarget} 0 0 0 1
 	    		return
 	    	}
-        } 
+        }
     }
     else
     {
         if (${Me.Ability[${SpellType[152]}].IsReady})
         {
-            call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1   	
+            call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
             return
         }
         if (${Me.Ability[${SpellType[151]}].IsReady})
         {
-            call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1   	 
+            call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1
             return
         }
 	}
-	
-	
+
+
 	; pet
 	if (${Me.Ability[${SpellType[45]}].IsReady})
     {
 	    call CastSpellRange 45 0 0 0 ${KillTarget}
 	    return
-	}	
-	
+	}
+
 }
