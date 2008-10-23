@@ -931,7 +931,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	else
 	{
 		if ${Actor[id,${TargetID}].Type.Equal[PC]}
-			eq2execute /useabilityonplayer ${spell} ${Actor[id,${TargetID}].Name}
+			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}" 
 		else
 			Me.Ability[${spell}]:Use
 	}
@@ -992,7 +992,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	else
 	{
 		if ${Actor[id,${TargetID}].Type.Equal[PC]}
-			eq2execute /useabilityonplayer ${spell} ${Actor[id,${TargetID}].Name}
+			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}" 
 		else
 			Me.Ability[${spell}]:Use
 	}
