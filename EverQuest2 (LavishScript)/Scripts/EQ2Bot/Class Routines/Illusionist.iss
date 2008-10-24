@@ -1609,7 +1609,6 @@ function RefreshPower()
 
 function CheckHeals()
 {
-	
 	if !${DPSMode} && !${UltraDPSMode}
 	{
 		call UseCrystallizedSpirit 60
