@@ -937,9 +937,6 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 			Me.Ability[${spell}]:Use
 	}
 
-	if ${Me.Ability[${Spell}].CastingTime}<.8
-		return
-
 	; reducing this too much will cause problems ... 4 seems to be a sweet spot
 	wait 4 ${Me.CastingSpell}
 
@@ -1001,12 +998,14 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 			Me.Ability[${spell}]:Use
 	}
 
-	if ${Me.Ability[${Spell}].CastingTime}<.8
-		return
+
 	;; this is ghetto ..but required
 	wait 4
 	if (!${Me.Ability[${spell}].IsQueued})
 		wait 4
+
+	if ${Me.Ability[${Spell}].CastingTime}<.8
+		return
 
 
 	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
