@@ -869,8 +869,14 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if ${Actor[${MainTankPC}].Health}==-99 && ${Actor[${MainTankPC}](exists)} && ${CombatRez}
-		call 300 301 0 0 ${Actor[${MainTankPC}].ID} 1
+	variable int MainTankID
+	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
+	
+  	if (${Actor[${MainTankID}](exists)} && ${CombatRez})
+  	{
+    	if (${Actor[${MainTankID}].IsDead})
+			call CastSpellRange 300 301 1 0 ${MainTankID} 1
+	}
 }
 
 function CureMe()

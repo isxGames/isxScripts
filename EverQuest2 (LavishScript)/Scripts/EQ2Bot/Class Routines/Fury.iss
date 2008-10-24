@@ -1745,7 +1745,7 @@ function MA_Dead()
 	
   	if (${Actor[${MainTankID}](exists)} && ${CombatRez})
   	{
-    	if (${Actor[${MainTankID}].IsDead} || ${Actor[${MainTankID}].Health} < 0)
+    	if (${Actor[${MainTankID}].IsDead})
 			call CastSpellRange 300 303 1 0 ${MainTankID} 1
 	}
 }
