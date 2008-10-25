@@ -5,6 +5,9 @@
 ;;; (http://creativecommons.org/licenses/by-nc-nd/3.0/us/)
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
+#ifndef _EQ2Nav_Lib_
+#define _EQ2Nav_Lib_
+
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavMapper_Lib.iss
 #include ${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavAggressionHandler.iss
 
@@ -1094,3 +1097,5 @@ objectdef EQ2Nav
 	    return ${This.MeMoving}
 	}
 }
+
+#endif /* _EQ2Nav_Lib_ */

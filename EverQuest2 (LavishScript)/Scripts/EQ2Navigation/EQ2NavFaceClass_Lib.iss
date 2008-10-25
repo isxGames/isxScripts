@@ -8,6 +8,8 @@
 ;;;; Note:  It appears as though with EQ2 this class is unecessary.  Even if you 'face' instantly, it appears
 ;;;;        to others that you are still turning slowly.  However, this file will remain here in case anyone
 ;;;;        wishes to use it and/or for learning purposes.
+#ifndef _EQ2FaceClass_
+#define _EQ2FaceClass_
 
 objectdef EQ2FaceClass
 {
@@ -227,3 +229,4 @@ objectdef EQ2FaceClass
     	return ${Math.Abs[${This.Signed_Angle_2D}]}
     }
 }
+#endif /* _EQ2FaceClass_ */
