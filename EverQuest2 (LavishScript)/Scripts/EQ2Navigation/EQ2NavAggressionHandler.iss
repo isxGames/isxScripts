@@ -22,6 +22,7 @@
 ; ----------------
 ; v2.1.02
 
+#ifndef _MobCheck_
 #define _MobCheck_
 
 ;Instantiate the object
@@ -189,3 +190,4 @@ objectdef MobCheck
 		}
 	}
 }
+#endif /* _MobCheck_ */

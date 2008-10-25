@@ -7,6 +7,9 @@
 ;;; All "Dynamic" region creation and concepts are originally from CyberTech (cybertech@gmail.com)
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
+#ifndef _EQ2NavMapper_
+#define _EQ2NavMapper_
+
 objectdef EQ2Mapper
 {
     ;;;; If FALSE, then 'xml' file is the output.  Scripts can modify this if desired.
@@ -548,6 +551,7 @@ objectdef EQ2Mapper
 }
 
 
+
 objectdef EQ2Topography
 {
 	variable point3f TempLoc
@@ -616,3 +620,5 @@ objectdef EQ2Topography
 		return FALSE
 	}
 }
+
+#endif /* _EQ2NavMapper_ */
