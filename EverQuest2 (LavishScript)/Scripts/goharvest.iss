@@ -466,8 +466,8 @@ objectdef GoHarvestBot
 	{
 		; Load the UI Parts
 		;
-		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
-		ui -reload "${ConfigPath}GoHarvestUI.xml"
+		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/EQ2.xml"
+		ui -reload -skin eq2 "${ConfigPath}GoHarvestUI.xml"
 		return
 	}
 	method SetBadNode(string badnodeid)

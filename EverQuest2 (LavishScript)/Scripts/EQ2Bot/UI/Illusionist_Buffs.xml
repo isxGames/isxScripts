@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='BuffEmpathicSoothing' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffEmpathicSoothing'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffEmpathicSoothing]}</Data>
 	</Commandcheckbox>	
-	<Commandcheckbox Name='BuffEmpathicAura' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffEmpathicAura'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffEmpathicAura]}</Data>
 	</Commandcheckbox>	
-	<Commandcheckbox Name='BuffPowerRegen' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffPowerRegen'>
 		<X>10</X>
 		<Y>50</Y>
 		<Width>30</Width>
@@ -60,7 +60,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffPowerRegen]}</Data>
 	</Commandcheckbox>			
-	<Commandcheckbox Name='BuffAspect' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffAspect'>
 		<X>10</X>
 		<Y>70</Y>
 		<Width>30</Width>
@@ -80,7 +80,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffAspect]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffRune' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffRune'>
 		<X>10</X>
 		<Y>90</Y>
 		<Width>30</Width>
@@ -100,7 +100,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffRune]}</Data>
 	</Commandcheckbox>	
-	<Text Name='lblBuffPrismOn' Template='EQ2.text'>
+	<Text Name='lblBuffPrismOn'>
 		<X>10</X>
 		<Y>278</Y>
 		<Width>35%</Width>
@@ -109,7 +109,7 @@
 		<Text>Cast "Prismatic" proc on:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffPrismOn' Template='EQ2.Combobox'>
+	<combobox name='cbBuffPrismOn'>
 		<x>156</x>
 		<y>275</y>
 		<Width>100</width>
@@ -177,7 +177,7 @@
 			This:Sort
 		</OnLeftClick>
 	</combobox>	
-	<Text Name='lblBuffIllusory_Arm' Template='EQ2.text'>
+	<Text Name='lblBuffIllusory_Arm'>
 		<X>155</X>
 		<Y>100</Y>
 		<Width>30%</Width>
@@ -186,7 +186,7 @@
 		<Text>Buff Illusionary Arm:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffIllusory_Arm' Template='EQ2.Combobox'>
+	<combobox name='cbBuffIllusory_Arm'>
 		<x>155</x>
 		<y>120</y>
 		<Width>100</width>
@@ -236,7 +236,7 @@
 			This:Sort
 		</OnLeftClick>
 	</combobox>
-	<Text Name='lblBuffTime_Compression' Template='EQ2.text'>
+	<Text Name='lblBuffTime_Compression'>
 		<X>155</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -245,7 +245,7 @@
 		<Text>Buff Time Compression:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffTime_Compression' Template='EQ2.Combobox'>
+	<combobox name='cbBuffTime_Compression'>
 		<x>155</x>
 		<y>70</y>
 		<Width>100</width>
@@ -295,7 +295,7 @@
 			This:Sort
 		</OnLeftClick>
 	</combobox>	
-	<Commandbutton name='RefreshDPS' Template='EQ2.Commandbutton'>
+	<Commandbutton name='RefreshDPS'>
 		<X>275</X>
 		<Y>10</Y>
 		<Width>20</Width>
@@ -358,7 +358,7 @@
 			UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot]:Sort
 		</OnLeftClick>
 	</Commandbutton>
-	<Text Name='lblBuffDPS' Template='EQ2.text'>
+	<Text Name='lblBuffDPS'>
 		<X>300</X>
 		<Y>10</Y>
 		<Width>150</Width>
@@ -367,7 +367,7 @@
 		<Text>Buff haste on:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff haste on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffDPS' Template='EQ2.Listbox'>
+	<listbox name='lbBuffDPS'>
 		<x>300</x>
 		<y>30</y>
 		<width>150</width>
@@ -462,7 +462,7 @@
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>
-	<Commandbutton name='RefreshCasterDPS' Template='EQ2.Commandbutton'>
+	<Commandbutton name='RefreshCasterDPS'>
 		<X>275</X>
 		<Y>150</Y>
 		<Width>20</Width>
@@ -498,7 +498,8 @@
 			    do
 			    {
 			        if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
-			            continue
+			            continue
+
 					if ${Me.Raid[${tmpvar}].ToActor(exists)}
 					{
 						UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
@@ -541,7 +542,7 @@
 			UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot]:Sort
 		</OnLeftClick>
 	</Commandbutton>	
-	<Text Name='lblBuffCasterDPS' Template='EQ2.text'>
+	<Text Name='lblBuffCasterDPS'>
 		<X>300</X>
 		<Y>150</Y>
 		<Width>150</Width>
@@ -550,7 +551,7 @@
 		<Text>Buff caster proc spell on:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff caster proc spell on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffCasterDPS' Template='EQ2.Listbox'>
+	<listbox name='lbBuffCasterDPS'>
 		<x>300</x>
 		<y>170</y>
 		<width>150</width>

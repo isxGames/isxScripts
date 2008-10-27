@@ -21,15 +21,15 @@
 		<Size>16</Size>
 		<Color>FFF9F099</Color>
 	</Template>
-	<template name='EQ2.text.Font' Template='EQ2.Font' />
+	<template name='EQ2.text.Font' />
 	<template name='EQ2.text'>
-		<Font Template='EQ2.text.Font' />
+		<Font />
 		<Wrap>0</Wrap>
 		<Alignment>Left</Alignment>
 		<VerticalAlignment>Top</VerticalAlignment>
 	</template>
 	<!-- Window -->
-	<template name='EQ2.window.TitleBar.Title.Font' Template='EQ2.Font'>
+	<template name='EQ2.window.TitleBar.Title.Font'>
 		<Name>Times New Roman</Name>
 		<Size>16</Size>
 		<Color>FFF9F099</Color>
@@ -40,7 +40,7 @@
 		<Y>2</Y>
 		<Width>r38</Width>
 		<Height>12</Height>
-		<Font Template='EQ2.window.TitleBar.Title.Font' />
+		<Font />
 	</template>
 	<template name='EQ2.window.TitleBar.Minimize.Texture' Filename='windowelements.dds'>
 		<Left>483</Left>
@@ -59,8 +59,8 @@
 		<Y>5</Y>
 		<Width>9</Width>
 		<Height>9</Height>
-		<Texture Template='EQ2.window.TitleBar.Minimize.Texture' />
-		<TexturePressed Template='EQ2.window.TitleBar.Minimize.TexturePressed' />
+		<Texture />
+		<TexturePressed />
 	</template>
 	<template name='EQ2.window.TitleBar.Maximize.Texture' Filename='windowelements.dds'>
 		<Left>483</Left>
@@ -79,8 +79,8 @@
 		<Y>5</Y>
 		<Width>9</Width>
 		<Height>9</Height>
-		<Texture Template='EQ2.window.TitleBar.Maximize.Texture' />
-		<TexturePressed Template='EQ2.window.TitleBar.Maximize.TexturePressed' />
+		<Texture />
+		<TexturePressed />
 	</template>
 	<template name='EQ2.window.TitleBar.Close.Texture' Filename='windowelements.dds'>
 		<Left>483</Left>
@@ -99,8 +99,8 @@
 		<Y>5</Y>
 		<Width>9</Width>
 		<Height>9</Height>
-		<Texture Template='EQ2.window.TitleBar.Close.Texture' />
-		<TexturePressed Template='EQ2.window.TitleBar.Close.TexturePressed' />
+		<Texture />
+		<TexturePressed />
 	</template>
 	<template name='EQ2.window.TitleBar.Texture' Filename='windowelements.dds' ColorKey='00000000'>
 		<Left>16</Left>
@@ -114,12 +114,12 @@
 		<Height>16</Height>
 		<Width>98%</Width>
 		<Border>0</Border>
-		<Texture Template='EQ2.window.TitleBar.Texture' />
+		<Texture />
 		<Children>
-			<text Name='Title' template='EQ2.window.TitleBar.title' />
-			<button Name='Close' template='EQ2.window.TitleBar.Close'></button>
-			<button Name='Minimize' template='EQ2.window.TitleBar.Minimize' />
-			<button Name='Maximize' template='EQ2.window.TitleBar.Maximize' />
+			<text Name='Title' />
+			<button Name='Close'></button>
+			<button Name='Minimize' />
+			<button Name='Maximize' />
 		</Children>
 	</template>
 	<template name='EQ2.window.Client'>
@@ -127,7 +127,7 @@
 		<x>0</x>
 		<Height>r16</Height>
 		<Width>100%</Width>
-		<Texture Template='EQ2.window.Texture' />
+		<Texture />
 	</template>
 	<template name='EQ2.window.Texture' Filename='windowelements.dds' ColorKey='00000000'>
 		<Left>14</Left>
@@ -142,9 +142,9 @@
 		<MinimizeButton />
 		<WidthResizable>1</WidthResizable>
 		<HeightResizable>1</HeightResizable>
-		<TitleBar template='EQ2.window.TitleBar' />
+		<TitleBar />
 		<OffsetTitleBarHeight />
-		<Client template='EQ2.window.Client' />
+		<Client />
 		<StorePosition>1</StorePosition>
 	</template>
 	<!-- TabControl -->
@@ -211,26 +211,26 @@
 		<Bottom>941</Bottom>
 		<Border>0</Border>
 	</template>
-	<template name='EQ2.tabcontrol.Font' Template='EQ2.Font'>
+	<template name='EQ2.tabcontrol.Font'>
 		<Name>Times New Roman</Name>
 		<Bold />
 		<Size>14</Size>
 	</template>
 	<template name='EQ2.tabcontrol'>
-		<Font Template='EQ2.tabcontrol.Font' />
+		<Font />
 		<Draggable />
 		<SelectedTextColor>FFF9F099</SelectedTextColor>
 		<TabHeight>20</TabHeight>
 		<TabBorder>3</TabBorder>
-		<LeftTexture Template='EQ2.tabcontrol.LeftTexture' />
-		<LeftPressedTexture Template='EQ2.tabcontrol.LeftPressedTexture' />
-		<LeftHoverTexture Template='EQ2.tabcontrol.LeftHoverTexture' />
-		<RightTexture Template='EQ2.tabcontrol.RightTexture' />
-		<RightPressedTexture Template='EQ2.tabcontrol.RightPressedTexture' />
-		<RightHoverTexture Template='EQ2.tabcontrol.RightHoverTexture' />
-		<TabTexture Template='EQ2.tabcontrol.TabTexture' />
-		<TabSelectedTexture Template='EQ2.tabcontrol.TabSelectedTexture' />
-		<FrameTexture Template='EQ2.tabcontrol.FrameTexture' />
+		<LeftTexture />
+		<LeftPressedTexture />
+		<LeftHoverTexture />
+		<RightTexture />
+		<RightPressedTexture />
+		<RightHoverTexture />
+		<TabTexture />
+		<TabSelectedTexture />
+		<FrameTexture />
 	</template>
 	<!-- Button -->
 	<template name='EQ2.button.Texture' Filename='commonelements.dds'>
@@ -251,25 +251,25 @@
 		<Top>79</Top>
 		<Bottom>104</Bottom>
 	</template>
-	<template name='EQ2.button.Font' Template='EQ2.Font'>
+	<template name='EQ2.button.Font'>
 		<Color>FFF9F099</Color>
 		<Name>Times New Roman</Name>
 		<Size>15</Size>
 	</template>
 	<template name='EQ2.button'>
 		<BackgroundColor></BackgroundColor>
-		<Font Template='EQ2.button.Font' />
+		<Font />
 		<Border>4</Border>
 		<BorderColor>FFD4D0C8</BorderColor>
-		<Texture Template='EQ2.button.Texture' />
-		<TextureHover Template='EQ2.button.TextureHover' />
-		<TexturePressed Template='EQ2.button.TexturePressed' />
+		<Texture />
+		<TextureHover />
+		<TexturePressed />
 	</template>
-	<template name='EQ2.commandbutton' Template='EQ2.button'>
-		<Font Template='EQ2.button.Font' />
-		<Texture Template='EQ2.button.Texture' />
-		<TextureHover Template='EQ2.button.TextureHover' />
-		<TexturePressed Template='EQ2.button.TexturePressed' />
+	<template name='EQ2.commandbutton'>
+		<Font />
+		<Texture />
+		<TextureHover />
+		<TexturePressed />
 	</template>
 	<!-- Checkbox -->
 	<template name='EQ2.checkbox.Texture' Filename='commonelements.dds'>
@@ -308,27 +308,27 @@
 		<Right>259</Right>
 		<Bottom>309</Bottom>
 	</template>
-	<template name='EQ2.checkbox.Font' Template='EQ2.Font'>
+	<template name='EQ2.checkbox.Font'>
 		<Name>Times New Roman</Name>
 		<Size>16</Size>
 	</template>
 	<template name='EQ2.checkbox'>
-		<Font Template='EQ2.checkbox.Font' />
-		<Texture Template='EQ2.checkbox.Texture' />
-		<TextureHover Template='EQ2.checkbox.TextureHover' />
-		<TexturePressed Template='EQ2.checkbox.TexturePressed' />
-		<TextureChecked Template='EQ2.checkbox.TextureChecked' />
-		<TextureCheckedHover Template='EQ2.checkbox.TextureCheckedHover' />
-		<TextureCheckedPressed Template='EQ2.checkbox.TextureCheckedPressed' />
+		<Font />
+		<Texture />
+		<TextureHover />
+		<TexturePressed />
+		<TextureChecked />
+		<TextureCheckedHover />
+		<TextureCheckedPressed />
 	</template>
-	<template name='EQ2.commandcheckbox' Template='EQ2.checkbox'>
-		<Font Template='EQ2.checkbox.Font' />
-		<Texture Template='EQ2.checkbox.Texture' />
-		<TextureHover Template='EQ2.checkbox.TextureHover' />
-		<TexturePressed Template='EQ2.checkbox.TexturePressed' />
-		<TextureChecked Template='EQ2.checkbox.TextureChecked' />
-		<TextureCheckedHover Template='EQ2.checkbox.TextureCheckedHover' />
-		<TextureCheckedPressed Template='EQ2.checkbox.TextureCheckedPressed' />
+	<template name='EQ2.commandcheckbox'>
+		<Font />
+		<Texture />
+		<TextureHover />
+		<TexturePressed />
+		<TextureChecked />
+		<TextureCheckedHover />
+		<TextureCheckedPressed />
 	</template>
 	<!-- Slider -->
 	<template name='EQ2.slider.Texture' filename='commonelements.dds'>
@@ -348,22 +348,22 @@
 		<Range>100</Range>
 		<!-- Causes sliders to default to 0-100. Changing this is not recommended -->
 		<Border>0</Border>
-		<Texture Template='EQ2.slider.Texture' />
-		<HandleTexture Template='EQ2.slider.HandleTexture' />
+		<Texture />
+		<HandleTexture />
 	</template>
-	<template name='EQ2.verticalslider' Template='EQ2.slider'>
+	<template name='EQ2.verticalslider'>
 		<Vertical>1</Vertical>
-		<Texture Template='EQ2.slider.Texture'>
+		<Texture>
 			<Orientation>3</Orientation>
 		</Texture>
-		<HandleTexture Template='EQ2.slider.HandleTexture'>
+		<HandleTexture>
 			<Orientation>3</Orientation>
 		</HandleTexture>
 	</template>
 	<!-- TextEntry -->
-	<template name='EQ2.textentry.Font' Template='EQ2.Font' />
+	<template name='EQ2.textentry.Font' />
 	<template name='EQ2.textentry'>
-		<Font Template='EQ2.textentry.Font' />
+		<Font />
 		<MaxLength>256</MaxLength>
 		<SelectionColor>FF0000ff</SelectionColor>
 		<BackgroundColor>FF000000</BackgroundColor>
@@ -373,7 +373,7 @@
 		<CaretOuterColor>FFFFFFFF</CaretOuterColor>
 	</template>
 	<!-- CommandEntry -->
-	<template name='EQ2.commandentry' Template='EQ2.textentry'>
+	<template name='EQ2.commandentry'>
 		<CommandHistory>50</CommandHistory>
 	</template>
 	<!-- Gauge -->
@@ -394,42 +394,42 @@
 		<Width>100%</Width>
 		<Repeat>5</Repeat>
 		<Border>2</Border>
-		<Texture Template='EQ2.gaugefiller.Texture' />
+		<Texture />
 	</template>
 	<template name='EQ2.gauge'>
 		<Vertical>0</Vertical>
 		<Border>2</Border>
 		<Range>1</Range>
 		<!-- Causes gauges to default to 0.0-1.0. Changing this is not recommended -->
-		<Texture Template='EQ2.gauge.Texture' />
-		<Filler Template='EQ2.gaugefiller' />
+		<Texture />
+		<Filler />
 	</template>
-	<template name='EQ2.verticalgauge' Template='EQ2.gauge'>
+	<template name='EQ2.verticalgauge'>
 		<Vertical>1</Vertical>
-		<Texture Template='EQ2.gauge.Texture'>
+		<Texture>
 			<Orientation>3</Orientation>
 		</Texture>
-		<Filler Template='EQ2.gaugefiller'>
-			<Texture Template='EQ2.gaugefiller.Texture'>
+		<Filler>
+			<Texture>
 				<Orientation>3</Orientation>
 			</Texture>
 		</Filler>
 	</template>
 	<!-- VariableGauge -->
-	<template name='EQ2.variablegauge.Texture' Template='EQ2.gauge.Texture' />
-	<template name='EQ2.variablegaugefiller.Texture' Template='EQ2.gaugefiller.Texture' />
+	<template name='EQ2.variablegauge.Texture' />
+	<template name='EQ2.variablegaugefiller.Texture' />
 	<template name='EQ2.variablegauge'>
 		<Vertical>0</Vertical>
 		<Border>0</Border>
 		<Range>1</Range>
 		<!-- Causes variablegauges to default to 0.0-1.0. Changing this is not recommended -->
-		<Texture Template='EQ2.variablegauge.Texture' />
+		<Texture />
 		<Data></Data>
 		<Offset>0</Offset>
 		<Filler>
 			<Height>100%</Height>
 			<Width>100%</Width>
-			<Texture Template='EQ2.variablegaugefiller.Texture' />
+			<Texture />
 		</Filler>
 	</template>
 	<template name='EQ2.verticalvariablegauge'>
@@ -437,7 +437,7 @@
 		<Border>0</Border>
 		<Range>1</Range>
 		<!-- Causes variablegauges to default to 0.0-1.0. Changing this is not recommended -->
-		<Texture Template='EQ2.variablegauge.Texture'>
+		<Texture>
 			<Orientation>3</Orientation>
 		</Texture>
 		<Data></Data>
@@ -445,7 +445,7 @@
 		<Filler>
 			<Height>100%</Height>
 			<Width>100%</Width>
-			<Texture Template='EQ2.variablegaugefiller.Texture'>
+			<Texture>
 				<Orientation>3</Orientation>
 			</Texture>
 		</Filler>
@@ -472,19 +472,19 @@
 		<Bottom>501</Bottom>
 		<border>3</border>
 	</template>
-	<template name='EQ2.combobox.ListBox' Template='EQ2.listbox'>
+	<template name='EQ2.combobox.ListBox'>
 		<Border>1</Border>
-		<Texture Template='EQ2.combobox.ListBoxTexture' />
+		<Texture />
 		<SelectionColor>FF000000</SelectionColor>
 	</template>
-	<template name='EQ2.combobox.Font' Template='EQ2.Font' />
+	<template name='EQ2.combobox.Font' />
 	<template name='EQ2.combobox'>
-		<Font Template='EQ2.combobox.Font' />
+		<Font />
 		<FullHeight>100</FullHeight>
 		<Border>4</Border>
-		<Texture Template='EQ2.combobox.Texture' />
-		<ButtonTexture Template='EQ2.combobox.ButtonTexture' />
-		<ListBox Template='EQ2.combobox.listbox' />
+		<Texture />
+		<ButtonTexture />
+		<ListBox />
 		<ButtonWidth>16</ButtonWidth>
 		<ScrollBar>EQ2.combobox.ScrollBar</ScrollBar>
 	</template>
@@ -496,9 +496,9 @@
 		<Bottom>501</Bottom>
 		<border>3</border>
 	</template>
-	<template name='EQ2.listbox.Font' Template='EQ2.Font' />
+	<template name='EQ2.listbox.Font' />
 	<template name='EQ2.listbox'>
-		<Font Template='EQ2.listbox.Font' />
+		<Font />
 		<BackgroundColor>FF000000</BackgroundColor>
 		<SelectionColor>FF000066</SelectionColor>
 		<BorderColor>FFD4D0C8</BorderColor>
@@ -506,7 +506,7 @@
 		<SelectMultiple>0</SelectMultiple>
 		<Sort>None</Sort>
 		<!-- None, User, Text, Value -->
-		<Texture Template='EQ2.listbox.Texture' />
+		<Texture />
 		<ScrollBar>EQ2.listbox.ScrollBar</ScrollBar>
 	</template>
 	<!-- ScrollBar -->
@@ -548,46 +548,46 @@
 	</template>
 	<template name='EQ2.scrollbar'>
 		<Vertical>0</Vertical>
-		<UpTexture Template='EQ2.scrollbar.UpTexture' />
-		<UpTexturePressed Template='EQ2.scrollbar.UpTexturePressed' />
-		<UpTextureHover Template='EQ2.scrollbar.UpTextureHover' />
-		<DownTexture Template='EQ2.scrollbar.DownTexture' />
-		<DownTexturePressed Template='EQ2.scrollbar.DownTexturePressed' />
-		<DownTextureHover Template='EQ2.scrollbar.DownTextureHover' />
-		<SliderTexture Template='EQ2.scrollbar.SliderTexture ' />
-		<SliderHandleTexture Template='EQ2.scrollbar.SliderHandleTexture ' />
+		<UpTexture />
+		<UpTexturePressed />
+		<UpTextureHover />
+		<DownTexture />
+		<DownTexturePressed />
+		<DownTextureHover />
+		<SliderTexture />
+		<SliderHandleTexture />
 	</template>
 	<template name='EQ2.verticalscrollbar'>
 		<Vertical>1</Vertical>
-		<UpTexture Template='EQ2.scrollbar.UpTexture'>
+		<UpTexture>
 			<Orientation>0</Orientation>
 		</UpTexture>
-		<UpTexturePressed Template='EQ2.scrollbar.UpTexturePressed'>
+		<UpTexturePressed>
 			<Orientation>0</Orientation>
 		</UpTexturePressed>
-		<UpTextureHover Template='EQ2.scrollbar.UpTextureHover'>
+		<UpTextureHover>
 			<Orientation>0</Orientation>
 		</UpTextureHover>
-		<DownTexture Template='EQ2.scrollbar.DownTexture'>
+		<DownTexture>
 			<Orientation>2</Orientation>
 		</DownTexture>
-		<DownTexturePressed Template='EQ2.scrollbar.DownTexturePressed'>
+		<DownTexturePressed>
 			<Orientation>2</Orientation>
 		</DownTexturePressed>
-		<DownTextureHover Template='EQ2.scrollbar.DownTextureHover'>
+		<DownTextureHover>
 			<Orientation>2</Orientation>
 		</DownTextureHover>
-		<SliderTexture Template='EQ2.scrollbar.SliderTexture'>
+		<SliderTexture>
 			<Orientation>2</Orientation>
 		</SliderTexture>
-		<SliderHandleTexture Template='EQ2.scrollbar.SliderHandleTexture'>
+		<SliderHandleTexture>
 			<orientation>2</orientation>
 		</SliderHandleTexture>
 	</template>
-	<template name='EQ2.combobox.ScrollBar' Template='EQ2.verticalscrollbar' />
-	<template name='EQ2.console.ScrollBar' Template='EQ2.verticalscrollbar' />
-	<template name='EQ2.listbox.ScrollBar' Template='EQ2.verticalscrollbar' />
-	<template name='EQ2.contextmenu.Font' Template='EQ2.Font' />
+	<template name='EQ2.combobox.ScrollBar' />
+	<template name='EQ2.console.ScrollBar' />
+	<template name='EQ2.listbox.ScrollBar' />
+	<template name='EQ2.contextmenu.Font' />
 	<!-- Console -->
 	<!-- 
 	Console requires a fixed font, and will automatically use a fixed font even if you specify 
@@ -595,7 +595,7 @@
 	-->
 	<template name='EQ2.console.Font' Template='Default Fixed Font' />
 	<template name='EQ2.console'>
-		<Font Template='EQ2.console.Font' />
+		<Font />
 		<BackgroundColor>FF000033</BackgroundColor>
 		<ScrollbackColor>FF330000</ScrollbackColor>
 		<BorderColor>FFFFFFFF</BorderColor>
@@ -612,6 +612,6 @@
 		<BackgroundColor>00000000</BackgroundColor>
 		<!-- no default background. -->
 		<BorderColor>FFFFFFFF</BorderColor>
-		<Texture Template='EQ2.frame.Texture' />
+		<Texture />
 	</template>
 </ISUI>

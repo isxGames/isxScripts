@@ -6,14 +6,14 @@
     		<BorderColor>FF000033</BorderColor>
     		<Width>r6</Width>
 		<Height>17</Height>
-		<Texture Template='EQ2.window.TitleBar.Texture' />
+		<Texture />
 		<Children>
-			<Text Name='Title' template='EQ2.window.TitleBar.title' />
-			<Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
+			<Text Name='Title' />
+			<Button Name='Minimize'>
 			</Button>
-			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
+			<Button Name='Maximize'>
 			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
+			<commandbutton name='Custom Close Button'>
 				<Command>Script[gear]:End</Command>
 			</commandbutton>
 		</Children>
@@ -25,7 +25,7 @@
 		<MinimizeButton />
 		<TitleBar template='My.window.TitleBar' />
 		<OffsetTitleBarHeight />
-		<Client template='EQ2.window.Client' />
+		<Client />
 		<StorePosition>1</StorePosition>
 	</template>
 	<Window Name='gearmain' Template='My.window'>
@@ -84,7 +84,7 @@
 				</Font>
 				<Text>your list.</Text> 
 			</Text>
-			<Combobox Name='Gear List' Template='EQ2.combobox'>
+			<Combobox Name='Gear List'>
 				<X>10</X> 
 				<Y>80</Y> 
 				<Width>90%</Width> 
@@ -97,7 +97,7 @@
 					<Color>FFFFFFFF</Color>
 				</Font>
 			</Combobox>
-			<Commandbutton name='equip' Template='EQ2.button'> 
+			<Commandbutton name='equip'> 
 				<X>10</X> 
 				<Y>105</Y> 
 				<Width>160</Width> 
@@ -107,7 +107,7 @@
 					Script[gear]:QueueCommand[call gearchange]
 				</OnLeftClick>
 			</Commandbutton> 
-			<Commandbutton name='Create' Template='EQ2.button'> 
+			<Commandbutton name='Create'> 
 				<X>10</X> 
 				<Y>130</Y> 
 				<Width>160</Width> 
@@ -117,7 +117,7 @@
 					Script[gear]:QueueCommand[call createlist]
 				</OnLeftClick>
 			</Commandbutton> 
-			<Commandbutton name='Update' Template='EQ2.button'> 
+			<Commandbutton name='Update'> 
 				<X>10</X> 
 				<Y>155</Y> 
 				<Width>160</Width> 
@@ -127,7 +127,7 @@
 					Script[gear]:QueueCommand[call updategear]
 				</OnLeftClick>
 			</Commandbutton> 
-			<Commandbutton name='destroy' Template='EQ2.button'> 
+			<Commandbutton name='destroy'> 
 				<X>10</X> 
 				<Y>180</Y> 
 				<Width>160</Width> 

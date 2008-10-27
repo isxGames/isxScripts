@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='Makepet' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Makepet'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>10</Y>
@@ -24,7 +24,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Makepet]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='SummonImpOfRo' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='SummonImpOfRo'>
 		<X>10</X>
 		<Y>70</Y>
 		<Width>30</Width>
@@ -44,7 +44,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString["Summon Imp of Ro"]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseTouchofEmpathy' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseTouchofEmpathy'>
 		<X>10</X>
 		<Y>90</Y>
 		<Width>30</Width>
@@ -65,7 +65,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseTouchOfEmpathy]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseIlluminate' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseIlluminate'>
 		<X>10</X>
 		<Y>110</Y>
 		<Width>30</Width>
@@ -86,7 +86,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseIlluminate]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseDoppleganger' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseDoppleganger'>
 		<X>10</X>
 		<Y>130</Y>
 		<Width>30</Width>
@@ -107,7 +107,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseDoppleganger]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseRunedGuardItem' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseRunedGuardItem'>
 		<X>10</X>
 		<Y>150</Y>
 		<Width>30</Width>
@@ -128,7 +128,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseRunedGuardItem]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseBlinkMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseBlinkMode'>
 		<X>10</X>
 		<Y>170</Y>
 		<Width>30</Width>
@@ -150,7 +150,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BlinkMode]}</Data>
 	</Commandcheckbox>
 
-	<Commandcheckbox Name='Mezz' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Mezz'>
 		<Visible>1</Visible>
 		<X>240</X>
 		<Y>10</Y>
@@ -172,7 +172,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Mezz Mode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='StartHO'>
 		<Visible>1</Visible>
 		<X>240</X>
 		<Y>30</Y>
@@ -194,7 +194,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
 	</Commandcheckbox>
 
-	<Commandcheckbox Name='DPSMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DPSMode'>
 		<X>240</X>
 		<Y>70</Y>
 		<Width>30</Width>
@@ -214,7 +214,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[DPSMode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UltraDPSMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UltraDPSMode'>
 		<X>240</X>
 		<Y>90</Y>
 		<Width>30</Width>

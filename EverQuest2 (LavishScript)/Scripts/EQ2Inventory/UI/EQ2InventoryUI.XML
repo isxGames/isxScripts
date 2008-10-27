@@ -1,67 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
-	<template name='My.window.TitleBar'>
-    <Border>1</Border>
-		<x>3</x>
-    <BorderColor>FF3300FF</BorderColor>
-    <Width>r6</Width>
-		<Height>26</Height>
-		<Texture Template='EQ2.window.TitleBar.Texture' />
-		<Children>
-			<Text Name='Title' template='EQ2.window.TitleBar.title' />
-			<Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
-			</Button>
-			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
-			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-				<Command>Script[EQ2Inventory]:End</Command>
-			</commandbutton>
-		</Children>
-	</template>
-	<template name='My.window'>
-		<Border>1</Border>
-		<Resizable>0</Resizable>
-		<CloseButton />
-		<MinimizeButton />
-		<MaximizeButton />
-		<TitleBar template='My.window.TitleBar' />
- 		<OffsetTitleBarHeight />
-		<Client template='EQ2.window.Client' />
-		<StorePosition>1</StorePosition>
-	</template>
 	<!-- Main Window -->
-	<Window Name='EQ2Inventory' template='My.window'>
+	<Window Name='EQ2Inventory'>
 	<X>50</X>
 	<Y>100</Y>
 	<Width>540</Width>
 	<Height>500</Height>
-	<Client Template='EQ2.Window.Client'>
-		<Y>20</Y>
-	</Client>
-	<StorePosition>1</StorePosition>
-	<Title>EQ2Inventory Manager</Title>
-	<TitleBar Template='EQ2.Window.TitleBar'>
-		<X>0</X>
-		<Y>0</Y>
-		<Width>100%</Width>
-		<Height>20</Height>
+	  <TitleBar template='window.Titlebar'>
 		<Children>
-			<Text Name='Title' Template='EQ2.Window.TitleBar.Title' />
-			<Button Name='Minimize' Template='EQ2.Window.TitleBar.Minimize'>
-				<X>r35</X>
-				<Width>14</Width>
-				<Height>14</Height>
-			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-				<X>r17</X>
-				<Width>14</Width>
-				<Height>14</Height>
-				<Command>Script[EQ2Inventory]:End</Command>
-			</commandbutton>
+		  <Text Name='Title' Template='window.Titlebar.Title' />
+		  <Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		  <Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		  <commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>Script[EQ2Inventory]:End</Command>
+		  </commandbutton>
 		</Children>
-	</TitleBar>
+	  </TitleBar>
+	  <StorePosition>1</StorePosition>
+	<Title>EQ2Inventory Manager</Title>
 	<Children>
-		<Text name='StatusText' Template='EQ2.text'>
+		<Text name='StatusText'>
 			<X>15</X>
 			<Y>1%</Y>
 			<Width>485</Width>
@@ -71,14 +29,14 @@
 				<Color>FF11CCFF</Color>
 			</Font>
 		</Text>
-		<Tabcontrol Name='GUITabs' Template='EQ2.Tabcontrol'>
+		<Tabcontrol Name='GUITabs'>
 			<X>1</X>
 			<Y>5</Y>
 			<Height>99%</Height>
 			<Width>100%</Width>
 			<Tabs>
 				<Tab Name='EQ2Broker'>
-					<CommandButton Name='Place Items' Template='EQ2.Button'>
+					<CommandButton Name='Place Items'>
 					<X>20</X>
 					<Y>15</Y>
 					<Width>90</Width>
@@ -87,7 +45,7 @@
 					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call PlaceItems]</Command>
 				</CommandButton>
-				<checkbox Name='RunMyPrices' Template='EQ2.checkbox'>
+				<checkbox Name='RunMyPrices'>
     			<X>5</X>
     			<Y>90</Y>
     			<Width>100</Width>
@@ -110,7 +68,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-				<checkbox Name='ScanRares' Template='EQ2.checkbox'>
+				<checkbox Name='ScanRares'>
     			<X>5</X>
     			<Y>115</Y>
     			<Width>100</Width>
@@ -133,7 +91,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanHarvests' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanHarvests'>
     			<X>5</X>
     			<Y>140</Y>
     			<Width>100</Width>
@@ -156,7 +114,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanCollections' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanCollections'>
     			<X>5</X>
     			<Y>165</Y>
     			<Width>100</Width>
@@ -179,7 +137,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    						<checkbox Name='ScanTradeskills' Template='EQ2.checkbox'>
+    						<checkbox Name='ScanTradeskills'>
     			<X>5</X>
     			<Y>190</Y>
     			<Width>100</Width>
@@ -202,7 +160,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanSpellBooks' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanSpellBooks'>
     			<X>5</X>
     			<Y>215</Y>
     			<Width>100</Width>
@@ -225,7 +183,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanLoreAndLegend' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanLoreAndLegend'>
     			<X>5</X>
     			<Y>240</Y>
     			<Width>100</Width>
@@ -248,7 +206,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanStatus' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanStatus'>
     			<X>5</X>
     			<Y>265</Y>
     			<Width>100</Width>
@@ -271,7 +229,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='ScanFertilizer' Template='EQ2.checkbox'>
+    		<checkbox Name='ScanFertilizer'>
     			<X>5</X>
     			<Y>290</Y>
     			<Width>100</Width>
@@ -294,7 +252,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-				<checkbox Name='ScanCustom' Template='EQ2.checkbox'>
+				<checkbox Name='ScanCustom'>
     			<X>5</X>
     			<Y>315</Y>
     			<Width>100</Width>
@@ -317,7 +275,7 @@
 								}
 					</OnLeftClick>
     		</checkbox> 
-    		<CommandButton Name='Stop Broker' Template='EQ2.Button'>
+    		<CommandButton Name='Stop Broker'>
 					<X>20</X>
 					<Y>345</Y>
 					<Width>90</Width>
@@ -326,7 +284,7 @@
 					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
 					<Command>Script[EQ2Inventory].Variable[RunBroker]:Set[0]</Command>
 				</CommandButton>   		
-    		<listbox Name='ItemList' Template='EQ2.listbox'>
+    		<listbox Name='ItemList'>
 					<X>140</X>
 					<Y>15</Y>
 					<Width>390</Width>
@@ -338,7 +296,7 @@
 					<SelectMultiple>0</SelectMultiple>
 					<Sort>None</Sort>
 				</listbox>
-				<Commandbutton name='Clearlog' Template='EQ2.Commandbutton'> 
+				<Commandbutton name='Clearlog'> 
 					<X>340</X> 
 					<Y>440</Y> 
 					<Width>100</Width> 
@@ -353,21 +311,21 @@
 				</Commandbutton>
 			</Tab>
 			<Tab Name='EQ2Broker Setup'>
-				<Text Name='BookText' Template='EQ2.Text'>
+				<Text Name='BookText'>
 					<X>5</X>
 					<Y>10</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
 					<Text>Add tradeskill books to broker for:</Text>
 				</Text>
-				<Text Name='CraftBoxText' Template='EQ2.Text'>
+				<Text Name='CraftBoxText'>
 					<X>255</X>
 					<Y>10</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='CraftBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='CraftBoxNumber'>
           <x>290</x>
           <y>5</y>
           <width>35</width>
@@ -387,7 +345,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}]:Select
           </OnLoad>
      		</combobox>
-				<checkbox Name='Alchemist' Template='EQ2.checkbox'>
+				<checkbox Name='Alchemist'>
 				<X>5</X>
   			<Y>24</Y>
   			<Width>100</Width>
@@ -410,7 +368,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<checkbox Name='Armorer' Template='EQ2.checkbox'>
+				<checkbox Name='Armorer'>
     			<X>105</X>
     			<Y>25</Y>
     			<Width>100</Width>
@@ -433,7 +391,7 @@
 								}
 					</OnLeftClick>
     		</checkbox>
-    		<checkbox Name='Carpenter' Template='EQ2.checkbox'>
+    		<checkbox Name='Carpenter'>
 				<X>205</X>
   			<Y>25</Y>
 			  <Width>100</Width>
@@ -456,7 +414,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Jeweler' Template='EQ2.checkbox'>
+    		<checkbox Name='Jeweler'>
 				<X>305</X>
   			<Y>25</Y>
 			  <Width>100</Width>
@@ -479,7 +437,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Sage' Template='EQ2.checkbox'>
+    		<checkbox Name='Sage'>
 				<X>5</X>
   			<Y>40</Y>
 			  <Width>100</Width>
@@ -502,7 +460,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Tailor' Template='EQ2.checkbox'>
+    		<checkbox Name='Tailor'>
 				<X>105</X>
   			<Y>40</Y>
 			  <Width>100</Width>
@@ -525,7 +483,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<checkbox Name='Weaponsmith' Template='EQ2.checkbox'>
+				<checkbox Name='Weaponsmith'>
 				<X>205</X>
   			<Y>40</Y>
 			  <Width>100</Width>
@@ -548,7 +506,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Woodworker' Template='EQ2.checkbox'>
+    		<checkbox Name='Woodworker'>
 				<X>305</X>
   			<Y>40</Y>
 			  <Width>100</Width>
@@ -571,7 +529,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Craftsman' Template='EQ2.checkbox'>
+    		<checkbox Name='Craftsman'>
 				<X>5</X>
   			<Y>55</Y>
 			  <Width>100</Width>
@@ -594,7 +552,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Outfitter' Template='EQ2.checkbox'>
+    		<checkbox Name='Outfitter'>
 				<X>105</X>
   			<Y>55</Y>
 			  <Width>100</Width>
@@ -617,7 +575,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-    		<checkbox Name='Scholar' Template='EQ2.checkbox'>
+    		<checkbox Name='Scholar'>
 				<X>205</X>
   			<Y>55</Y>
 			  <Width>100</Width>
@@ -640,21 +598,21 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<Text Name='ClassText' Template='EQ2.Text'>
+				<Text Name='ClassText'>
 					<X>5</X>
 					<Y>80</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
 					<Text>Add class (Adept I) books to broker for:</Text>
 				</Text>
-				<Text Name='ClassBoxText' Template='EQ2.Text'>
+				<Text Name='ClassBoxText'>
 					<X>255</X>
 					<Y>80</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='ClassBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='ClassBoxNumber'>
           <x>290</x>
           <y>75</y>
           <width>35</width>
@@ -674,7 +632,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}]:Select
           </OnLoad>
      </combobox>
-    		<checkbox Name='Assassin' Template='EQ2.checkbox'>
+    		<checkbox Name='Assassin'>
 				<X>5</X>
   			<Y>95</Y>
 			  <Width>100</Width>
@@ -697,7 +655,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-    		<checkbox Name='Berserker' Template='EQ2.checkbox'>
+    		<checkbox Name='Berserker'>
 				<X>105</X>
   			<Y>95</Y>
 			  <Width>100</Width>
@@ -720,7 +678,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Brigand' Template='EQ2.checkbox'>
+    		<checkbox Name='Brigand'>
 				<X>205</X>
   			<Y>95</Y>
 			  <Width>100</Width>
@@ -743,7 +701,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Bruiser' Template='EQ2.checkbox'>
+    		<checkbox Name='Bruiser'>
 				<X>305</X>
   			<Y>95</Y>
 			  <Width>100</Width>
@@ -766,7 +724,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Coercer' Template='EQ2.checkbox'>
+    		<checkbox Name='Coercer'>
 				<X>5</X>
   			<Y>110</Y>
 			  <Width>100</Width>
@@ -789,7 +747,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='Conjuror' Template='EQ2.checkbox'>
+				<checkbox Name='Conjuror'>
 				<X>105</X>
   			<Y>110</Y>
 			  <Width>100</Width>
@@ -812,7 +770,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>				
-    		<checkbox Name='Defiler' Template='EQ2.checkbox'>
+    		<checkbox Name='Defiler'>
 				<X>205</X>
   			<Y>110</Y>
 			  <Width>100</Width>
@@ -835,7 +793,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Dirge' Template='EQ2.checkbox'>
+    		<checkbox Name='Dirge'>
 				<X>305</X>
   			<Y>110</Y>
 			  <Width>100</Width>
@@ -858,7 +816,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Fury' Template='EQ2.checkbox'>
+    		<checkbox Name='Fury'>
 				<X>5</X>
   			<Y>125</Y>
 			  <Width>100</Width>
@@ -881,7 +839,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Guardian' Template='EQ2.checkbox'>
+    		<checkbox Name='Guardian'>
 				<X>105</X>
   			<Y>125</Y>
 			  <Width>100</Width>
@@ -904,7 +862,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Illusionist' Template='EQ2.checkbox'>
+    		<checkbox Name='Illusionist'>
 				<X>205</X>
   			<Y>125</Y>
 			  <Width>100</Width>
@@ -927,7 +885,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>												
-    		<checkbox Name='Inquisitor' Template='EQ2.checkbox'>
+    		<checkbox Name='Inquisitor'>
 				<X>305</X>
   			<Y>125</Y>
 			  <Width>100</Width>
@@ -950,7 +908,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Monk' Template='EQ2.checkbox'>
+    		<checkbox Name='Monk'>
 				<X>5</X>
   			<Y>140</Y>
 			  <Width>100</Width>
@@ -973,7 +931,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Mystic' Template='EQ2.checkbox'>
+    		<checkbox Name='Mystic'>
 				<X>105</X>
   			<Y>140</Y>
 			  <Width>100</Width>
@@ -996,7 +954,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Necromancer' Template='EQ2.checkbox'>
+    		<checkbox Name='Necromancer'>
 				<X>205</X>
   			<Y>140</Y>
 			  <Width>100</Width>
@@ -1019,7 +977,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Paladin' Template='EQ2.checkbox'>
+    		<checkbox Name='Paladin'>
 				<X>305</X>
   			<Y>140</Y>
 			  <Width>100</Width>
@@ -1042,7 +1000,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Ranger' Template='EQ2.checkbox'>
+    		<checkbox Name='Ranger'>
 				<X>5</X>
   			<Y>155</Y>
 			  <Width>100</Width>
@@ -1065,7 +1023,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Shadowknight' Template='EQ2.checkbox'>
+    		<checkbox Name='Shadowknight'>
 				<X>105</X>
   			<Y>155</Y>
 			  <Width>100</Width>
@@ -1088,7 +1046,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Swashbuckler' Template='EQ2.checkbox'>
+    		<checkbox Name='Swashbuckler'>
 				<X>205</X>
   			<Y>155</Y>
 			  <Width>100</Width>
@@ -1111,7 +1069,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Templar' Template='EQ2.checkbox'>
+    		<checkbox Name='Templar'>
 				<X>305</X>
   			<Y>155</Y>
 			  <Width>100</Width>
@@ -1134,7 +1092,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Troubador' Template='EQ2.checkbox'>
+    		<checkbox Name='Troubador'>
 				<X>5</X>
   			<Y>170</Y>
 			  <Width>100</Width>
@@ -1157,7 +1115,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Warden' Template='EQ2.checkbox'>
+    		<checkbox Name='Warden'>
 				<X>105</X>
   			<Y>170</Y>
 			  <Width>100</Width>
@@ -1180,7 +1138,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Warlock' Template='EQ2.checkbox'>
+    		<checkbox Name='Warlock'>
 				<X>205</X>
   			<Y>170</Y>
 			  <Width>100</Width>
@@ -1203,7 +1161,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-    		<checkbox Name='Wizard' Template='EQ2.checkbox'>
+    		<checkbox Name='Wizard'>
 				<X>305</X>
   			<Y>170</Y>
 			  <Width>100</Width>
@@ -1226,7 +1184,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<checkbox Name='Collections' Template='EQ2.checkbox'>
+				<checkbox Name='Collections'>
 				<X>5</X>
   			<Y>200</Y>
 			  <Width>150</Width>
@@ -1249,14 +1207,14 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<Text Name='CollectionsBoxText' Template='EQ2.Text'>
+				<Text Name='CollectionsBoxText'>
 					<X>120</X>
 					<Y>202</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='CollectionsBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='CollectionsBoxNumber'>
           <x>155</x>
           <y>197</y>
           <width>35</width>
@@ -1276,7 +1234,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}]:Select
           </OnLoad>
      		</combobox>	
-     		<checkbox Name='LoreAndLegend' Template='EQ2.checkbox'>
+     		<checkbox Name='LoreAndLegend'>
 				<X>5</X>
   			<Y>220</Y>
 			  <Width>150</Width>
@@ -1299,14 +1257,14 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<Text Name='LoreAndLegendBoxText' Template='EQ2.Text'>
+				<Text Name='LoreAndLegendBoxText'>
 					<X>160</X>
 					<Y>222</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='LoreAndLegendBox' Template='EQ2.Combobox'>
+    		<combobox name='LoreAndLegendBox'>
           <x>195</x>
           <y>217</y>
           <width>35</width>
@@ -1326,7 +1284,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegendBox]}]:Select
           </OnLoad>
      		</combobox>	
-     		<checkbox Name='CustomItems' Template='EQ2.checkbox'>
+     		<checkbox Name='CustomItems'>
 				<X>235</X>
   			<Y>220</Y>
 			  <Width>150</Width>
@@ -1349,14 +1307,14 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<Text Name='CustomItemsBoxText' Template='EQ2.Text'>
+				<Text Name='CustomItemsBoxText'>
 					<X>370</X>
 					<Y>222</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='CustomItemsBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='CustomItemsBoxNumber'>
           <x>405</x>
           <y>217</y>
           <width>35</width>
@@ -1376,21 +1334,21 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}]:Select
           </OnLoad>
      		</combobox>																																																																																																						
-				<Text Name='AddHarvestText' Template='EQ2.Text'>
+				<Text Name='AddHarvestText'>
 					<X>5</X>
 					<Y>245</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
 					<Text>Add Common Harvest items to broker:</Text>
 				</Text>
-				<Text Name='CHarvestBoxText' Template='EQ2.Text'>
+				<Text Name='CHarvestBoxText'>
 					<X>235</X>
 					<Y>245</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='CHarvetsBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='CHarvetsBoxNumber'>
           <x>270</x>
           <y>240</y>
           <width>35</width>
@@ -1410,7 +1368,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}]:Select
           </OnLoad>
      		</combobox>	
-     		<checkbox Name='DeleteMeat' Template='EQ2.checkbox'>
+     		<checkbox Name='DeleteMeat'>
 				<X>325</X>
   			<Y>242</Y>
 			  <Width>50</Width>
@@ -1433,7 +1391,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<checkbox Name='CHarvestT1' Template='EQ2.checkbox'>
+				<checkbox Name='CHarvestT1'>
 				<X>5</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1456,7 +1414,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	     			
-				<checkbox Name='CHarvestT2' Template='EQ2.checkbox'>
+				<checkbox Name='CHarvestT2'>
 				<X>65</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1479,7 +1437,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>				
-				<checkbox Name='CHarvestT3' Template='EQ2.checkbox'>
+				<checkbox Name='CHarvestT3'>
 				<X>125</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1502,7 +1460,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='CHarvestT4' Template='EQ2.checkbox'>
+				<checkbox Name='CHarvestT4'>
 				<X>185</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1525,7 +1483,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='CHarvestT5' Template='EQ2.checkbox'>
+				<checkbox Name='CHarvestT5'>
 				<X>245</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1548,7 +1506,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='CHarvestT6' Template='EQ2.checkbox'>
+				<checkbox Name='CHarvestT6'>
 				<X>305</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1571,7 +1529,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-			  <checkbox Name='CHarvestT7' Template='EQ2.checkbox'>
+			  <checkbox Name='CHarvestT7'>
 				<X>365</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1594,7 +1552,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<checkbox Name='CHarvestT8' Template='EQ2.checkbox'>
+				<checkbox Name='CHarvestT8'>
 				<X>425</X>
   			<Y>265</Y>
 			  <Width>50</Width>
@@ -1617,21 +1575,21 @@
 								}
 					</OnLeftClick>
 				</checkbox>		
-				<Text Name='AddRareHarvestText' Template='EQ2.Text'>
+				<Text Name='AddRareHarvestText'>
 					<X>5</X>
 					<Y>300</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
 					<Text>Add Rare Harvest items to broker:</Text>
 				</Text>
-				<Text Name='RHarvestBoxText' Template='EQ2.Text'>
+				<Text Name='RHarvestBoxText'>
 					<X>225</X>
 					<Y>300</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='RHarvestBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='RHarvestBoxNumber'>
           <x>260</x>
           <y>295</y>
           <width>35</width>
@@ -1651,7 +1609,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}]:Select
           </OnLoad>
      		</combobox>	
-				<checkbox Name='RHarvestT1' Template='EQ2.checkbox'>
+				<checkbox Name='RHarvestT1'>
 				<X>5</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1674,7 +1632,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	     			
-				<checkbox Name='RHarvestT2' Template='EQ2.checkbox'>
+				<checkbox Name='RHarvestT2'>
 				<X>65</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1697,7 +1655,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>				
-				<checkbox Name='RHarvestT3' Template='EQ2.checkbox'>
+				<checkbox Name='RHarvestT3'>
 				<X>125</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1720,7 +1678,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='RHarvestT4' Template='EQ2.checkbox'>
+				<checkbox Name='RHarvestT4'>
 				<X>185</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1743,7 +1701,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='RHarvestT5' Template='EQ2.checkbox'>
+				<checkbox Name='RHarvestT5'>
 				<X>245</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1766,7 +1724,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='RHarvestT6' Template='EQ2.checkbox'>
+				<checkbox Name='RHarvestT6'>
 				<X>305</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1789,7 +1747,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='RHarvestT7' Template='EQ2.checkbox'>
+				<checkbox Name='RHarvestT7'>
 				<X>365</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1812,7 +1770,7 @@
 								}
 					</OnLeftClick>
 					</checkbox>				
-					<checkbox Name='RHarvestT8' Template='EQ2.checkbox'>
+					<checkbox Name='RHarvestT8'>
 				<X>425</X>
   			<Y>320</Y>
 			  <Width>50</Width>
@@ -1835,21 +1793,21 @@
 								}
 					</OnLeftClick>
 					</checkbox>
-				<Text Name='AddStatusText' Template='EQ2.Text'>
+				<Text Name='AddStatusText'>
 					<X>5</X>
 					<Y>355</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
 					<Text>Add status items to broker:</Text>
 				</Text>
-				<Text Name='StatusItemBoxText' Template='EQ2.Text'>
+				<Text Name='StatusItemBoxText'>
 					<X>235</X>
 					<Y>355</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='StatusItemBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='StatusItemBoxNumber'>
           <x>270</x>
           <y>350</y>
           <width>35</width>
@@ -1869,7 +1827,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}]:Select
           </OnLoad>
      		</combobox>	
-				<checkbox Name='StatusItemT1' Template='EQ2.checkbox'>
+				<checkbox Name='StatusItemT1'>
 				<X>5</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -1892,7 +1850,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	     			
-				<checkbox Name='StatusItemT2' Template='EQ2.checkbox'>
+				<checkbox Name='StatusItemT2'>
 				<X>65</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -1915,7 +1873,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>				
-				<checkbox Name='StatusItemT3' Template='EQ2.checkbox'>
+				<checkbox Name='StatusItemT3'>
 				<X>125</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -1938,7 +1896,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='StatusItemT4' Template='EQ2.checkbox'>
+				<checkbox Name='StatusItemT4'>
 				<X>185</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -1961,7 +1919,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='StatusItemT5' Template='EQ2.checkbox'>
+				<checkbox Name='StatusItemT5'>
 				<X>245</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -1984,7 +1942,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='StatusItemT6' Template='EQ2.checkbox'>
+				<checkbox Name='StatusItemT6'>
 				<X>305</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -2007,7 +1965,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-			  <checkbox Name='StatusItemT7' Template='EQ2.checkbox'>
+			  <checkbox Name='StatusItemT7'>
 				<X>365</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -2030,7 +1988,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<checkbox Name='StatusItemT8' Template='EQ2.checkbox'>
+				<checkbox Name='StatusItemT8'>
 				<X>425</X>
   			<Y>375</Y>
 			  <Width>50</Width>
@@ -2053,21 +2011,21 @@
 								}
 					</OnLeftClick>
 				</checkbox>							
-				<Text Name='AddFertilizerText' Template='EQ2.Text'>
+				<Text Name='AddFertilizerText'>
 					<X>5</X>
 					<Y>410</Y>
 					<Width>250</Width> 
 					<Height>20</Height>
 					<Text>Add fertilizer items to broker:</Text>
 				</Text>
-				<Text Name='FertilizerItemBoxText' Template='EQ2.Text'>
+				<Text Name='FertilizerItemBoxText'>
 					<X>235</X>
 					<Y>410</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Box #:</Text>
 				</Text>
-    		<combobox name='FertilizerItemBoxNumber' Template='EQ2.Combobox'>
+    		<combobox name='FertilizerItemBoxNumber'>
           <x>270</x>
           <y>405</y>
           <width>35</width>
@@ -2087,7 +2045,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}]:Select
           </OnLoad>
      		</combobox>	
-				<checkbox Name='FertT1' Template='EQ2.checkbox'>
+				<checkbox Name='FertT1'>
 				<X>5</X>
   			<Y>430</Y>
 			  <Width>50</Width>
@@ -2110,7 +2068,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	     			
-				<checkbox Name='FertT2' Template='EQ2.checkbox'>
+				<checkbox Name='FertT2'>
 				<X>65</X>
   			<Y>430</Y>
 			  <Width>50</Width>
@@ -2133,7 +2091,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>				
-				<checkbox Name='FertT3' Template='EQ2.checkbox'>
+				<checkbox Name='FertT3'>
 				<X>125</X>
   			<Y>430</Y>
 			  <Width>50</Width>
@@ -2156,7 +2114,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='FertT4' Template='EQ2.checkbox'>
+				<checkbox Name='FertT4'>
 				<X>185</X>
   			<Y>430</Y>
 			  <Width>50</Width>
@@ -2179,7 +2137,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<checkbox Name='FertT5' Template='EQ2.checkbox'>
+				<checkbox Name='FertT5'>
 				<X>245</X>
   			<Y>430</Y>
 			  <Width>50</Width>
@@ -2202,7 +2160,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-			  <checkbox Name='FertT7' Template='EQ2.checkbox'>
+			  <checkbox Name='FertT7'>
 				<X>305</X>
   			<Y>430</Y>
 			  <Width>50</Width>
@@ -2227,7 +2185,7 @@
 				</checkbox>
 			</Tab>
 			<Tab Name='EQ2Junk'>
-				<CommandButton Name='Vendor Items' Template='EQ2.Button'>
+				<CommandButton Name='Vendor Items'>
 					<X>10</X>
 					<Y>25</Y>
 					<Width>110</Width>
@@ -2236,7 +2194,7 @@
 					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call VendorType]</Command>
 				</CommandButton>
-				<checkbox Name='StatusMerchant' Template='EQ2.checkbox'>
+				<checkbox Name='StatusMerchant'>
 				<X>5</X>
   			<Y>85</Y>
 			  <Width>150</Width>
@@ -2260,7 +2218,7 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell Status Items to a Status Merchant.</AutoTooltip>
 				</checkbox>
-				<checkbox Name='SellTreasured' Template='EQ2.checkbox'>
+				<checkbox Name='SellTreasured'>
 				<X>5</X>
   			<Y>135</Y>
 			  <Width>150</Width>
@@ -2284,7 +2242,7 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell ALL for sale TREASURED Items to a Merchant.</AutoTooltip>
 				</checkbox>
-				<checkbox Name='SellAdeptI' Template='EQ2.checkbox'>
+				<checkbox Name='SellAdeptI'>
 				<X>5</X>
   			<Y>110</Y>
 			  <Width>150</Width>
@@ -2308,7 +2266,7 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell ALL for sale Adept I Items to a Merchant.</AutoTooltip>
 				</checkbox>
-				<checkbox Name='SellHandcrafted' Template='EQ2.checkbox'>
+				<checkbox Name='SellHandcrafted'>
 				<X>5</X>
   			<Y>160</Y>
 			  <Width>150</Width>
@@ -2332,7 +2290,7 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell ALL for sale HANDCRAFTED Items to a Merchant.</AutoTooltip>
 				</checkbox>
-				<checkbox Name='SellUncommon' Template='EQ2.checkbox'>
+				<checkbox Name='SellUncommon'>
 				<X>5</X>
   			<Y>185</Y>
 			  <Width>150</Width>
@@ -2356,7 +2314,7 @@
 					</OnLeftClick>
 					<AutoTooltip>Check to sell ALL for sale UNCOMMON Items to a Merchant.</AutoTooltip>
 				</checkbox>
-				<CommandButton Name='Stop Vendor Items' Template='EQ2.Button'>
+				<CommandButton Name='Stop Vendor Items'>
 					<X>10</X>
 					<Y>220</Y>
 					<Width>110</Width>
@@ -2365,7 +2323,7 @@
 					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
 					<Command>Script[EQ2Inventory].Variable[RunJunk]:Set[0]</Command>
 				</CommandButton>
-				<CommandButton Name='Destroy Items' Template='EQ2.Button'>
+				<CommandButton Name='Destroy Items'>
 					<X>10</X>
 					<Y>285</Y>
 					<Width>110</Width>
@@ -2374,7 +2332,7 @@
 					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call DestroyItems]</Command>
 				</CommandButton>
-				<CommandButton Name='Stop Destroy Items' Template='EQ2.Button'>
+				<CommandButton Name='Stop Destroy Items'>
 					<X>10</X>
 					<Y>350</Y>
 					<Width>110</Width>
@@ -2383,7 +2341,7 @@
 					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
 					<Command>Script[EQ2Inventory].Variable[RunDestroy]:Set[0]</Command>
 				</CommandButton>
-				<listbox Name='SellItemList' Template='EQ2.listbox'>
+				<listbox Name='SellItemList'>
 					<X>140</X>
 					<Y>15</Y>
 					<Width>390</Width>
@@ -2397,7 +2355,7 @@
 					</OnSelect>
 					<Sort></Sort>
 				</listbox>
-				<Commandbutton name='ClearSelllog' Template='EQ2.Commandbutton'> 
+				<Commandbutton name='ClearSelllog'> 
 					<X>340</X> 
 					<Y>440</Y> 
 					<Width>100</Width> 
@@ -2412,7 +2370,7 @@
 				</Commandbutton>
 			</Tab>	
 			<Tab Name='EQ2Depot'>
-    		<CommandButton Name='PlaceInDepot' Template='EQ2.Button'>
+    		<CommandButton Name='PlaceInDepot'>
 					<X>10</X>
 					<Y>25</Y>
 					<Width>110</Width>
@@ -2421,7 +2379,7 @@
 					<AutoTooltip>Places Items in Harvest Depot</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddToDepot]</Command>
 				</CommandButton>
-				<CommandButton Name='PauseDepot' Template='EQ2.Button'>
+				<CommandButton Name='PauseDepot'>
 					<X>10</X>
 					<Y>95</Y>
 					<Width>110</Width>
@@ -2430,7 +2388,7 @@
 					<AutoTooltip>Stops Placing Items in Harvest Depot</AutoTooltip>
 					<Command>Script[EQ2Inventory].Variable[RunDepot]:Set[0]</Command>
 				</CommandButton>
-    		<listbox Name='DepotItemList' Template='EQ2.listbox'>
+    		<listbox Name='DepotItemList'>
 					<X>140</X>
 					<Y>15</Y>
 					<Width>390</Width>
@@ -2442,7 +2400,7 @@
 					<SelectMultiple>0</SelectMultiple>
 					<Sort></Sort>
 				</listbox>
-				<Commandbutton name='Clearlog' Template='EQ2.Commandbutton'> 
+				<Commandbutton name='Clearlog'> 
 					<X>340</X> 
 					<Y>440</Y> 
 					<Width>100</Width> 
@@ -2457,7 +2415,7 @@
 				</Commandbutton>
 			</Tab>
 			<Tab Name='EQ2Hirelings'>	
-				<CommandButton Name='StartHirelings' Template='EQ2.Button'>
+				<CommandButton Name='StartHirelings'>
 					<X>10</X>
 					<Y>10</Y>
 					<Width>110</Width>
@@ -2466,7 +2424,7 @@
 					<AutoTooltip>Starts Hirelings Bot</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call EQ2Hirelings]</Command>
 				</CommandButton>
-				<CommandButton Name='StopHirelings' Template='EQ2.Button'>
+				<CommandButton Name='StopHirelings'>
 					<X>130</X>
 					<Y>10</Y>
 					<Width>110</Width>
@@ -2475,7 +2433,7 @@
 					<AutoTooltip>Stops Hirelings Bot</AutoTooltip>
 					<Command>Script[EQ2Inventory].Variable[RunHirelings]:Set[0]</Command>
 				</CommandButton>
-				<Text Name='Status Text' Template='EQ2.text'>
+				<Text Name='Status Text'>
 					<X>10</X>
 					<Y>70</Y>
 					<Width>40</Width>
@@ -2483,7 +2441,7 @@
 					<Alignment>Left</Alignment>
 					<Text>Status:</Text>
 				</Text>
-				<Text Name='StatusText' Template='EQ2.text'>
+				<Text Name='StatusText'>
 					<X>55</X>
 					<Y>70</Y>
 					<Width>90%</Width>
@@ -2491,7 +2449,7 @@
 					<Alignment>Left</Alignment>
 					<Text></Text>
 				</Text>
-				<Text Name='Trip Text' Template='EQ2.text'>
+				<Text Name='Trip Text'>
 					<X>270</X>
 					<Y>70</Y>
 					<Width>80</Width>
@@ -2499,7 +2457,7 @@
 					<Alignment>Left</Alignment>
 					<Text>Trips Made:</Text>
 				</Text>
-				<Text Name='TripText' Template='EQ2.text'>
+				<Text Name='TripText'>
 					<X>345</X>
 					<Y>70</Y>
 					<Width>90%</Width>
@@ -2507,7 +2465,7 @@
 					<Alignment>Left</Alignment>
 					<Text>0</Text>
 				</Text>
-				<checkbox Name='GathererHireling' Template='EQ2.checkbox'>
+				<checkbox Name='GathererHireling'>
 					<X>10</X>
   				<Y>95</Y>
 			  	<Width>60</Width>
@@ -2530,14 +2488,14 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<Text Name='GathererTierText' Template='EQ2.Text'>
+				<Text Name='GathererTierText'>
 					<X>135</X>
 					<Y>98</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Tier:</Text>
 				</Text>
-    		<combobox name='GathererTierNumber' Template='EQ2.Combobox'>
+    		<combobox name='GathererTierNumber'>
           <x>165</x>
           <y>95</y>
           <width>35</width>
@@ -2559,7 +2517,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererTierNumber]}]:Select
           </OnLoad>
      		</combobox>	
-			<checkbox Name='HunterHireling' Template='EQ2.checkbox'>
+			<checkbox Name='HunterHireling'>
 				<X>10</X>
   			<Y>117</Y>
 			  <Width>60</Width>
@@ -2582,14 +2540,14 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<Text Name='HunterTierText' Template='EQ2.Text'>
+				<Text Name='HunterTierText'>
 					<X>135</X>
 					<Y>120</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Tier:</Text>
 				</Text>
-    		<combobox name='HunterTierNumber' Template='EQ2.Combobox'>
+    		<combobox name='HunterTierNumber'>
           <x>165</x>
           <y>117</y>
           <width>35</width>
@@ -2611,7 +2569,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterTierNumber]}]:Select
           </OnLoad>
      		</combobox>	
-			<checkbox Name='MinerHireling' Template='EQ2.checkbox'>
+			<checkbox Name='MinerHireling'>
 				<X>10</X>
   			<Y>140</Y>
 			  <Width>60</Width>
@@ -2634,14 +2592,14 @@
 								}
 					</OnLeftClick>
 				</checkbox>	
-				<Text Name='MinerTierText' Template='EQ2.Text'>
+				<Text Name='MinerTierText'>
 					<X>135</X>
 					<Y>143</Y>
 					<Width>30</Width> 
 					<Height>20</Height>
 					<Text>Tier:</Text>
 				</Text>
-    		<combobox name='MinerTierNumber' Template='EQ2.Combobox'>
+    		<combobox name='MinerTierNumber'>
           <x>165</x>
           <y>140</y>
           <width>35</width>
@@ -2663,7 +2621,7 @@
           			This.Item[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerTierNumber]}]:Select
           </OnLoad>
      		</combobox>	
-			<Text Name='Waittime' Template='EQ2.text'>
+			<Text Name='Waittime'>
 				<X>15</X>
 				<Y>165</Y>
 				<Width>90%</Width>
@@ -2672,7 +2630,7 @@
 				<Wrap />
 				<Text>Wait Time:</Text>
 			</Text>
-			<Text Name='WaittimeText' Template='EQ2.text'>
+			<Text Name='WaittimeText'>
 				<X>80</X>
 				<Y>165</Y>
 				<Width>90%</Width>
@@ -2681,7 +2639,7 @@
 				<Wrap />
 				<Text></Text>
 			</Text>
-			<Text Name='Runtime' Template='EQ2.text'>
+			<Text Name='Runtime'>
 				<X>15</X>
 				<Y>185</Y>
 				<Width>90%</Width>
@@ -2690,7 +2648,7 @@
 				<Wrap />
 				<Text>Runtime:</Text>
 			</Text>
-			<Text Name='RuntimeText' Template='EQ2.text'>
+			<Text Name='RuntimeText'>
 				<X>70</X>
 				<Y>185</Y>
 				<Width>90%</Width>
@@ -2699,7 +2657,7 @@
 				<Wrap />
 				<Text></text>
 			</Text>
-			<checkbox Name='UseHarvestDepot' Template='EQ2.checkbox'>
+			<checkbox Name='UseHarvestDepot'>
 				<X>10</X>
   			<Y>205</Y>
 			  <Width>90%</Width>
@@ -2724,7 +2682,7 @@
 				</checkbox>	
 			</Tab>		
 			<Tab Name='Add Items'>
-    		<CommandButton Name='Inventory List' Template='EQ2.Button'>
+    		<CommandButton Name='Inventory List'>
 					<X>10</X>
 					<Y>25</Y>
 					<Width>110</Width>
@@ -2733,7 +2691,7 @@
 					<AutoTooltip>Outputs Current Inventory to Log Window</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call InvList]</Command>
 				</CommandButton>
-				<checkbox Name='Examine' Template='EQ2.checkbox'>
+				<checkbox Name='Examine'>
 				<X>5</X>
   			<Y>85</Y>
 			  <Width>150</Width>
@@ -2756,7 +2714,7 @@
 								}
 					</OnLeftClick>
 				</checkbox>
-				<CommandButton Name='Vendor Items Add' Template='EQ2.Button'>
+				<CommandButton Name='Vendor Items Add'>
 					<X>10</X>
 					<Y>115</Y>
 					<Width>110</Width>
@@ -2765,7 +2723,7 @@
 					<AutoTooltip>Adds The selected Item to the Vendor Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddJunk]</Command>
 				</CommandButton>
-				<CommandButton Name='Destroy Items Add' Template='EQ2.Button'>
+				<CommandButton Name='Destroy Items Add'>
 					<X>10</X>
 					<Y>160</Y>
 					<Width>110</Width>
@@ -2774,7 +2732,7 @@
 					<AutoTooltip>Adds The selected Item to the Destroy List</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddDestroy]</Command>
 				</CommandButton>
-				<CommandButton Name='Custom Items Add' Template='EQ2.Button'>
+				<CommandButton Name='Custom Items Add'>
 					<X>10</X>
 					<Y>205</Y>
 					<Width>110</Width>
@@ -2783,7 +2741,7 @@
 					<AutoTooltip>Adds The selected Item to the Custom List</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddCustom]</Command>
 				</CommandButton>
-				<CommandButton Name='Depot Items Add' Template='EQ2.Button'>
+				<CommandButton Name='Depot Items Add'>
 					<X>10</X>
 					<Y>250</Y>
 					<Width>110</Width>
@@ -2792,7 +2750,7 @@
 					<AutoTooltip>Adds The selected Item to the Supply Depot List</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddDepot]</Command>
 				</CommandButton>
-    		<listbox Name='AddItemList' Template='EQ2.listbox'>
+    		<listbox Name='AddItemList'>
 					<X>140</X>
 					<Y>15</Y>
 					<Width>390</Width>
@@ -2812,7 +2770,7 @@
 					</OnLeftClick>
 					<Sort>Text</Sort>
 				</listbox>
-				<Commandbutton name='Clearlog' Template='EQ2.Commandbutton'> 
+				<Commandbutton name='Clearlog'> 
 					<X>340</X> 
 					<Y>440</Y> 
 					<Width>100</Width> 
@@ -2827,7 +2785,7 @@
 				</Commandbutton>
 			</Tab>	
 			<Tab Name='Remove Items'>
-    		<CommandButton Name='Vendor Items List' Template='EQ2.Button'>
+    		<CommandButton Name='Vendor Items List'>
 					<X>10</X>
 					<Y>25</Y>
 					<Width>115</Width>
@@ -2836,7 +2794,7 @@
 					<AutoTooltip>Outputs the Vendor List to Log Window</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call JunkList]</Command>
 				</CommandButton>
-				<CommandButton Name='Vendor Items Remove' Template='EQ2.Button'>
+				<CommandButton Name='Vendor Items Remove'>
 					<X>10</X>
 					<Y>65</Y>
 					<Width>115</Width>
@@ -2845,7 +2803,7 @@
 					<AutoTooltip>Removes The selected Item from the Vendor Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveJunk]</Command>
 				</CommandButton>
-				<CommandButton Name='Destroy Items List' Template='EQ2.Button'>
+				<CommandButton Name='Destroy Items List'>
 					<X>10</X>
 					<Y>125</Y>
 					<Width>115</Width>
@@ -2854,7 +2812,7 @@
 					<AutoTooltip>Outputs the Destroy List to Log Window</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call DestroyList]</Command>
 				</CommandButton>
-				<CommandButton Name='Destroy Items Remove' Template='EQ2.Button'>
+				<CommandButton Name='Destroy Items Remove'>
 					<X>10</X>
 					<Y>165</Y>
 					<Width>115</Width>
@@ -2863,7 +2821,7 @@
 					<AutoTooltip>Removes The selected Item from the Destroy Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveDestroy]</Command>
 				</CommandButton> 
-				<CommandButton Name='Custom Items List' Template='EQ2.Button'>
+				<CommandButton Name='Custom Items List'>
 					<X>10</X>
 					<Y>225</Y>
 					<Width>115</Width>
@@ -2872,7 +2830,7 @@
 					<AutoTooltip>Outputs the Custom List to Log Window</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call CustomList]</Command>
 				</CommandButton>
-				<CommandButton Name='Custom Items Remove' Template='EQ2.Button'>
+				<CommandButton Name='Custom Items Remove'>
 					<X>10</X>
 					<Y>265</Y>
 					<Width>115</Width>
@@ -2881,7 +2839,7 @@
 					<AutoTooltip>Removes The selected Item from the Custom Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveCustom]</Command>
 				</CommandButton> 
-				<CommandButton Name='Depot Items List' Template='EQ2.Button'>
+				<CommandButton Name='Depot Items List'>
 					<X>10</X>
 					<Y>325</Y>
 					<Width>115</Width>
@@ -2890,7 +2848,7 @@
 					<AutoTooltip>Outputs the Depot List to Log Window</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call DepotList]</Command>
 				</CommandButton> 
-				<CommandButton Name='Depot Items Remove' Template='EQ2.Button'>
+				<CommandButton Name='Depot Items Remove'>
 					<X>10</X>
 					<Y>365</Y>
 					<Width>115</Width>
@@ -2899,7 +2857,7 @@
 					<AutoTooltip>Removes The selected Item from the Sepot Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveDepot]</Command>
 				</CommandButton> 		
-    		<listbox Name='RemoveItemList' Template='EQ2.listbox'>
+    		<listbox Name='RemoveItemList'>
 					<X>140</X>
 					<Y>15</Y>
 					<Width>390</Width>
@@ -2911,7 +2869,7 @@
 					<SelectMultiple>0</SelectMultiple>
 					<Sort>Text</Sort>
 				</listbox>
-				<Commandbutton name='Clearlog' Template='EQ2.Commandbutton'> 
+				<Commandbutton name='Clearlog'> 
 					<X>340</X> 
 					<Y>440</Y> 
 					<Width>100</Width> 

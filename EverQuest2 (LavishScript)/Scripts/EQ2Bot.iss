@@ -4134,8 +4134,8 @@ objectdef EQ2BotObj
 
 	method Init_UI()
 	{
-		ui -reload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
-		ui -reload -skin eq2skin "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
+		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
+		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
 	}
 
 	member:float ConvertAngle(float angle)

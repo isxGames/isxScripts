@@ -23,8 +23,8 @@ function main()
 	wait 10
 	EQ2Execute /toggletradeskills
 	;Intialize the UI
-	ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
-	ui -reload "${UIPath}EQ2RecipeInfoGUI.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/EQ2.xml"
+	ui -reload -skin eq2 "${UIPath}EQ2RecipeInfoGUI.xml"
 	;Loop that does not end so that more than one batch may be run
 	while 1
 	{

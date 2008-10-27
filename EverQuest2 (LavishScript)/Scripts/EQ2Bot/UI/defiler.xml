@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='OffenseMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='OffenseMode'>
 		<X>5%</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Deubff NPCs' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Deubff NPCs'>
 		<X>5%</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Debuff Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='AoEMode'>
 		<X>5%</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -60,7 +60,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='CureMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='CureMode'>
 		<X>5%</X>
 		<Y>70</Y>
 		<Width>30%</Width>
@@ -80,7 +80,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Cure Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Maelstrom' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Maelstrom'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>90</Y>
@@ -101,7 +101,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Maelstrom Mode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='CombatRez'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>110</Y>
@@ -122,7 +122,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Combat Rez]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='PreWardMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PreWardMode'>
 		<X>200</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -143,7 +143,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepWardUp]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffNoxious' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffNoxious'>
 		<X>200</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -164,7 +164,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffNoxious]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffMitigation' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffMitigation'>
 		<X>200</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -185,7 +185,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffMitigation]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffStrength' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffStrength'>
 		<X>200</X>
 		<Y>70</Y>
 		<Width>30%</Width>
@@ -206,7 +206,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffStrength]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffWaterBreathing' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffWaterBreathing'>
 		<X>200</X>
 		<Y>90</Y>
 		<Width>30%</Width>
@@ -227,7 +227,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffWaterBreathing]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='StartHO'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>110</Y>
@@ -248,7 +248,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UsePets' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UsePets'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>130</Y>
@@ -269,7 +269,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Pets]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblBuffProcGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffProcGroupMember'>
 		<X>375</X>
 		<Y>10</Y>
 		<Width>20%</Width>
@@ -278,7 +278,7 @@
 		<Text>Buff DoT Proc:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffProcGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffProcGroupMember'>
 		<x>375</x>
 		<y>30</y>
 		<Width>100</width>
@@ -320,7 +320,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Text Name='lblBuffHorrorGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffHorrorGroupMember'>
 		<X>375</X>
 		<Y>60</Y>
 		<Width>20%</Width>
@@ -329,7 +329,7 @@
 		<Text>Buff Slow Proc:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffHorrorGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffHorrorGroupMember'>
 		<x>375</x>
 		<y>80</y>
 		<Width>100</width>
@@ -371,7 +371,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Text Name='lblBuffAlacrityGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffAlacrityGroupMember'>
 		<X>375</X>
 		<Y>100</Y>
 		<Width>20%</Width>
@@ -380,7 +380,7 @@
 		<Text>Buff Alacrity On:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffAlacrityGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffAlacrityGroupMember'>
 		<x>375</x>
 		<y>120</y>
 		<Width>100</width>
@@ -417,7 +417,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Commandbutton name='RefreshPower' Template='EQ2.Commandbutton'>
+	<Commandbutton name='RefreshPower'>
 		<X>300</X>
 		<Y>160</Y>
 		<Width>20</Width>
@@ -485,7 +485,7 @@
 			}
 		</OnLeftClick>
 	</Commandbutton>
-	<Text Name='lblBuffPower' Template='EQ2.text'>
+	<Text Name='lblBuffPower'>
 		<X>325</X>
 		<Y>160</Y>
 		<Width>150</Width>
@@ -494,7 +494,7 @@
 		<Text>Buff Power On:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff Power on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffPower' Template='EQ2.Listbox'>
+	<listbox name='lbBuffPower'>
 		<x>325</x>
 		<y>180</y>
 		<width>150</width>

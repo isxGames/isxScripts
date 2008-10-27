@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
-<Window Name='RecipeInfo' Template='EQ2.window'>
+<Window Name='RecipeInfo'>
 	<X>50</X>
 	<Y>50</Y>
 	<Width>430</Width>
 	<Height>420</Height>
 	<Title>Recipe Info</Title>
-	<TitleBar Template='EQ2.Window.TitleBar'>
+	<TitleBar>
 		<X>0</X>
 		<Y>0</Y>
 		<Width>100%</Width>
 		<Height>20</Height>
 		<Children>
-			<Text Name='Title' Template='EQ2.Window.TitleBar.Title' />
-			<Button Name='Minimize' Template='EQ2.Window.TitleBar.Minimize'>
+			<Text Name='Title' />
+			<Button Name='Minimize'>
 				<X>r35</X>
 				<Width>14</Width>
 				<Height>14</Height>
 			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
+			<commandbutton name='Custom Close Button'>
 				<X>r17</X>
 				<Width>14</Width>
 				<Height>14</Height>
@@ -27,7 +27,7 @@
 		</Children>
 	</TitleBar>
 	<Children>
-		<Text name='TotalRecipes' Template='EQ2.text'>
+		<Text name='TotalRecipes'>
 			<X>20</X>
 			<Y>10</Y>
 			<Width>75%</Width>
@@ -42,7 +42,7 @@
 			<Height>420</Height>
 			<Visible>1</Visible>
 			<Children>
-    		<Text name='InfoText1' Template='EQ2.text'>
+    		<Text name='InfoText1'>
        		<X>5%</X>
        		<Y>40</Y>
        		<Width>75%</Width>
@@ -51,7 +51,7 @@
        		<Text>Include only these types:</Text>
        		<AutoTooltip>If Nothing Selected, Will List All Recipes</AutoTooltip>
        	</Text>
-       	<checkbox Name='PresetCheckBox' Template='EQ2.checkbox'>
+       	<checkbox Name='PresetCheckBox'>
        		<X>7%</X>
        		<Y>54</Y>
        		<Width>20%</Width>
@@ -63,7 +63,7 @@
 					</OnLeftClick>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-				<combobox name='Preset Combobox' Template='EQ2.Combobox'>
+				<combobox name='Preset Combobox'>
 					<X>70%</X>
 					<Y>54</Y>
 					<Width>25%</Width>
@@ -77,7 +77,7 @@
 						This.Item[1]:Select
 					</OnLoad>
 				</combobox>
-       	<checkbox Name='CustomCheckBox' Template='EQ2.checkbox'>
+       	<checkbox Name='CustomCheckBox'>
        		<X>7%</X>
        		<Y>74</Y>
        		<Width>20%</Width>
@@ -89,7 +89,7 @@
 					</OnLeftClick>
        		<AutoTooltip>Search is not case sensitive</AutoTooltip>
        	</checkbox>
-       	<Textentry Name='CustomText' Template='EQ2.textentry'>
+       	<Textentry Name='CustomText'>
      			<X>70%</X>
      			<Y>77</Y>
      			<Width>25%</Width>
@@ -97,7 +97,7 @@
      			<MaxLength>128</MaxLength>
      			<OnLoad>This:SetText[gloves]</OnLoad>
        	</Textentry>
-       	<checkbox Name='PrimaryComponentCheckbox' Template='EQ2.checkbox'>
+       	<checkbox Name='PrimaryComponentCheckbox'>
        		<X>7%</X>
        		<Y>94</Y>
        		<Width>20%</Width>
@@ -109,7 +109,7 @@
 					</OnLeftClick>
        		<AutoTooltip>Search is not case sensitive and will be EXTREMELY SLOW</AutoTooltip>
        	</checkbox>
-       	<Textentry Name='PrimaryComponentText' Template='EQ2.textentry'>
+       	<Textentry Name='PrimaryComponentText'>
       			<X>70%</X>
       			<Y>96</Y>
       			<Width>25%</Width>
@@ -117,7 +117,7 @@
       			<MaxLength>128</MaxLength>
       			<OnLoad>This:SetText[tussah root]</OnLoad>
        	</Textentry>
-    		<Text Name='InfoText2' Template='EQ2.text'>
+    		<Text Name='InfoText2'>
        		<X>5%</X>
        		<Y>136</Y>
        		<Width>75%</Width>
@@ -125,7 +125,7 @@
        		<Alignment>Left</Alignment>
        		<Text>Include The Following Information:</Text>
        	</Text>
-       	<checkbox Name='Level' Template='EQ2.checkbox'>
+       	<checkbox Name='Level'>
        		<X>7%</X>
        		<Y>152</Y>
        		<Width>30%</Width>
@@ -133,42 +133,42 @@
        		<Text>Level</Text>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-       	<checkbox Name='Description' Template='EQ2.checkbox'>
+       	<checkbox Name='Description'>
        		<X>7%</X>
        		<Y>172</Y>
        		<Width>30%</Width>
        		<Height>20</Height>
        		<Text>Description</Text>
        	</checkbox>
-       	<checkbox Name='Device' Template='EQ2.checkbox'>
+       	<checkbox Name='Device'>
        		<X>7%</X>
        		<Y>192</Y>
        		<Width>30%</Width>
        		<Height>20</Height>
        		<Text>Device</Text>
        	</checkbox>
-       	<checkbox Name='RecipeBook' Template='EQ2.checkbox'>
+       	<checkbox Name='RecipeBook'>
        		<X>7%</X>
        		<Y>212</Y>
        		<Width>30%</Width>
        		<Height>20</Height>
        		<Text>Recipe Book</Text>
        	</checkbox>
-       	<checkbox Name='Technique' Template='EQ2.checkbox'>
+       	<checkbox Name='Technique'>
        		<X>7%</X>
        		<Y>232</Y>
        		<Width>30%</Width>
        		<Height>20</Height>
        		<Text>Technique</Text>
        	</checkbox>
-       	<checkbox Name='Knowledge' Template='EQ2.checkbox'>
+       	<checkbox Name='Knowledge'>
        		<X>7%</X>
        		<Y>252</Y>
        		<Width>30%</Width>
        		<Height>20</Height>
        		<Text>Knowledge</Text>
        	</checkbox>
-       	<checkbox Name='PrimaryComponent' Template='EQ2.checkbox'>
+       	<checkbox Name='PrimaryComponent'>
        		<X>50%</X>
        		<Y>152</Y>
        		<Width>50%</Width>
@@ -176,7 +176,7 @@
        		<Text>PrimaryComponent</Text>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-       	<checkbox Name='BuildComponent1' Template='EQ2.checkbox'>
+       	<checkbox Name='BuildComponent1'>
        		<X>50%</X>
        		<Y>172</Y>
        		<Width>50%</Width>
@@ -184,7 +184,7 @@
        		<Text>Build Component 1</Text>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-       	<checkbox Name='BuildComponent2' Template='EQ2.checkbox'>
+       	<checkbox Name='BuildComponent2'>
        		<X>50%</X>
        		<Y>192</Y>
        		<Width>50%</Width>
@@ -192,7 +192,7 @@
        		<Text>Build Component 2</Text>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-       	<checkbox Name='BuildComponent3' Template='EQ2.checkbox'>
+       	<checkbox Name='BuildComponent3'>
        		<X>50%</X>
        		<Y>212</Y>
        		<Width>50%</Width>
@@ -200,7 +200,7 @@
        		<Text>Build Component 3</Text>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-       	<checkbox Name='BuildComponent4' Template='EQ2.checkbox'>
+       	<checkbox Name='BuildComponent4'>
        		<X>50%</X>
        		<Y>232</Y>
        		<Width>50%</Width>
@@ -208,7 +208,7 @@
        		<Text>Build Component 4</Text>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-       	<checkbox Name='Fuel' Template='EQ2.checkbox'>
+       	<checkbox Name='Fuel'>
        		<X>50%</X>
        		<Y>252</Y>
        		<Width>50%</Width>
@@ -216,7 +216,7 @@
        		<Text>Fuel</Text>
        		<OnLoad>This:SetChecked[True]</OnLoad>
        	</checkbox>
-       	<Text Name='MinLevel' Template='EQ2.text'>
+       	<Text Name='MinLevel'>
      			<X>5%</X>
      			<Y>280</Y>
      			<Width>70%</Width>
@@ -224,7 +224,7 @@
      			<Alignment>Left</Alignment>
      			<Text>Minimum recipe level</Text>
        	</Text>
-       	<Textentry Name='RiMinLevel' Template='EQ2.textentry'>
+       	<Textentry Name='RiMinLevel'>
      			<X>90%</X>
      			<Y>280</Y>
      			<Width>5%</Width>
@@ -232,7 +232,7 @@
      			<MaxLength>3</MaxLength>
      			<OnLoad>This:SetText[20]</OnLoad>
        	</Textentry>
-       	<Text Name='MaxLevel' Template='EQ2.text'>
+       	<Text Name='MaxLevel'>
      			<X>5%</X>
      			<Y>300</Y>
      			<Width>70%</Width>
@@ -240,7 +240,7 @@
      			<Alignment>Left</Alignment>
      			<Text>Maximum recipe level</Text>
        	</Text>
-       	<Textentry Name='RiMaxLevel' Template='EQ2.textentry'>
+       	<Textentry Name='RiMaxLevel'>
      			<X>90%</X>
      			<Y>300</Y>
      			<Width>5%</Width>
@@ -248,7 +248,7 @@
      			<MaxLength>3</MaxLength>
      			<OnLoad>This:SetText[70]</OnLoad>
        	</Textentry>
-       	<Text Name='FileText' Template='EQ2.text'>
+       	<Text Name='FileText'>
      			<X>5%</X>
      			<Y>320</Y>
      			<Width>70%</Width>
@@ -256,7 +256,7 @@
      			<Alignment>Left</Alignment>
      			<Text>Output File</Text>
        	</Text>
-       	<Textentry Name='FileName' Template='EQ2.textentry'>
+       	<Textentry Name='FileName'>
      			<X>45%</X>
      			<Y>320</Y>
      			<Width>50%</Width>
@@ -264,14 +264,14 @@
      			<MaxLength>80</MaxLength>
      			<OnLoad>This:SetText[${Script[EQ2RecipeInfo].VariableScope.FileName}]</OnLoad>
        	</Textentry>
-       	<checkbox Name='Append' Template='EQ2.checkbox'>
+       	<checkbox Name='Append'>
        		<X>7%</X>
        		<Y>340</Y>
        		<Width>80%</Width>
        		<Height>20</Height>
        		<Text>Append To Existing File</Text>
        	</checkbox>
-       	<Text Name='Done' Template='EQ2.text'>
+       	<Text Name='Done'>
 				<X>10%</X>
 				<Y>360</Y>
 				<Width>80%</Width>
@@ -283,7 +283,7 @@
 				<Text>Processed ${Script[EQ2RecipeInfo].VariableScope.RecipeCount} Recipes</Text>
 				<Visible>0</Visible>
 				</Text>
-				<Commandbutton name='Start' Template='EQ2.Commandbutton'> 
+				<Commandbutton name='Start'> 
 					<X>10%</X> 
 					<Y>378</Y> 
 					<Width>80%</Width> 
@@ -304,7 +304,7 @@
 			<Height>210</Height>
 			<Visible>0</Visible>
 			<Children>
-				<Text Name='Credit' Template='EQ2.text'>
+				<Text Name='Credit'>
 					<X>5%</X>
 					<Y>40%</Y>
 					<Width>90%</Width>
@@ -316,7 +316,7 @@
 					<Text>Brought to you by southrngurl and cr4zyb4rd</Text>
 					<AutoTooltip>Grats! You found the Easter-egg! FOAD</AutoTooltip>
 				</Text>
-		 		<Text Name='TotalFound' Template='EQ2.text'>
+		 		<Text Name='TotalFound'>
 					<X>5%</X>
 					<Y>140</Y>
 					<Width>70%</Width>
@@ -324,7 +324,7 @@
 					<Alignment>Left</Alignment>
 					<Text>Total Matching Recipes: ${Script[EQ2RecipeInfo].VariableScope.RecipeCount}</Text>
 				</Text>
-				<Text Name='Wait' Template='EQ2.text'>
+				<Text Name='Wait'>
 					<X>5%</X>
 					<Y>160</Y>
 					<Width>70%</Width>
