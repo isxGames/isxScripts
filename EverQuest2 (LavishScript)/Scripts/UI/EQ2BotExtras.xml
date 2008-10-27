@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='AutoFollow' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='AutoFollow'>
 		<X>5</X>
 		<Y>10</Y>
 		<Width>40</Width>
@@ -21,7 +21,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Auto Follow Mode]}</Data>
 	</Commandcheckbox>
-	<combobox name='AutoFollowee' Template='EQ2.Combobox'>
+	<combobox name='AutoFollowee'>
 		<x>150</x>
 		<y>10</y>
 		<Width>70</width>
@@ -50,7 +50,7 @@
 				while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='WarnTank' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='WarnTank'>
 		<X>5</X>
 		<Y>30</Y>
 		<Width>40</Width>
@@ -71,7 +71,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Shard' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Shard'>
 		<Visible>1</Visible>
 		<X>5</X>
 		<Y>50</Y>
@@ -93,7 +93,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Shard Mode]}</Data>
 	</Commandcheckbox>
-	<combobox name='ShardGroupMember' Template='EQ2.Combobox'>
+	<combobox name='ShardGroupMember'>
 		<x>150</x>
 		<y>50</y>
 		<Width>70</width>
@@ -136,7 +136,7 @@
 			}
 		</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='DoHOs' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DoHOs'>
 		<X>5</X>
 		<Y>70</Y>
 		<Width>40</Width>
@@ -157,7 +157,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[DoHOs]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='PetGuard' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PetGuard'>
 		<X>5</X>
 		<Y>90</Y>
 		<Width>40</Width>

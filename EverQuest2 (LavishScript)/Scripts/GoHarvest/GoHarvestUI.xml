@@ -1,76 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
-	<template name='My.window.TitleBar'>
-    		<Border>1</Border>
-		<x>3</x>
-    		<BorderColor>FF3300FF</BorderColor>
-    		<Width>r6</Width>
-		<Height>26</Height>
-		<Texture Template='EQ2.window.TitleBar.Texture' />
-		<Children>
-			<Text Name='Title' template='EQ2.window.TitleBar.title' />
-			<Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
-			</Button>
-			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
-			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-				<Command>Script[goharvest]:End</Command>
-			</commandbutton>
-		</Children>
-	</template>
-	<template name='My.window'>
-		<Border>1</Border>
-		<Resizable>0</Resizable>
-		<CloseButton />
-		<MinimizeButton />
-		<MaximizeButton />
-		<TitleBar template='My.window.TitleBar' />
- 		<OffsetTitleBarHeight />
-		<Client template='EQ2.window.Client' />
-		<StorePosition>1</StorePosition>
-	</template>
 	<!-- Main Window -->
-	<Window Name='GoHarvest' template='My.window'>
+	<Window Name='GoHarvest'>
 	<X>5%</X>
 	<Y>10%</Y>
 	<Width>200</Width>
 	<Height>300</Height>
-	<Client Template='EQ2.Window.Client'>
-		<Y>20</Y>
-	</Client>
 	<StorePosition>1</StorePosition>
 	<Title>GoHarvest</Title>
-	<TitleBar Template='EQ2.Window.TitleBar'>
-		<X>0</X>
-		<Y>0</Y>
-		<Width>100%</Width>
-		<Height>20</Height>
+	  <TitleBar template='window.Titlebar'>
 		<Children>
-			<Text Name='Title' Template='EQ2.Window.TitleBar.Title' />
-			<Button Name='Minimize' Template='EQ2.Window.TitleBar.Minimize'>
-				<X>r35</X>
-				<Width>14</Width>
-				<Height>14</Height>
-			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-				<X>r17</X>
-				<Width>14</Width>
-				<Height>14</Height>
-				<Command>Script[goharvest]:End</Command>
-			</commandbutton>
+		  <Text Name='Title' Template='window.Titlebar.Title' />
+		  <Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		  <Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		  <commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>Script[GoHarvest]:End</Command>
+		  </commandbutton>
 		</Children>
-	</TitleBar>
-	<Children>
-		<Tabcontrol Name='GUITabs' Template='EQ2.Tabcontrol'>
-			<X>1%</X>
-			<Y>1%</Y>
-			<Height>98%</Height>
-			<Width>98%</Width>
-			<Tabs>
-				<Tab Name='Harvest'>
-					<Text name='GoHarvest Options' Template='EQ2.text'>
-						<X>5%</X>
-						<Y>10</Y>
+	  </TitleBar>
+	  <Children>
+		<Tabcontrol Name='GUITabs'>
+		  <X>1%</X>
+		  <Y>1%</Y>
+		  <Height>98%</Height>
+		  <Width>98%</Width>
+		  <Tabs>
+			<Tab Name='Harvest'>
+			  <Text name='GoHarvest Options'>
+				<X>5%</X>
+				<Y>10</Y>
 						<Width>80%</Width>
 						<Height>20</Height>
 						<Alignment>Left</Alignment>
@@ -79,7 +37,7 @@
 						</Font>
 						<Text>GoHarvest Options:</Text>
 					</Text>
-					<Text Name='AreaText' Template='EQ2.Text'>
+					<Text Name='AreaText'>
 						<X>25</X>
 						<Y>30</Y>
 						<Width>150</Width> 
@@ -87,7 +45,7 @@
 						<Text>Area to Scan :</Text>
 					</Text>
 
-					<Textentry Name='ScanArea' Template='EQ2.Textentry'>
+					<Textentry Name='ScanArea'>
 						<X>130</X>
 						<Y>30</Y>
 						<Width>40</Width> 
@@ -97,7 +55,7 @@
 							UIElement[ScanArea@Harvest@GUITabs@GoHarvest]:SetText[150]
 						</OnLoad>
 					</Textentry>
-					<checkbox Name='Ore' Template='EQ2.checkbox'>
+					<checkbox Name='Ore'>
 						<X>5%</X>
 						<Y>50</Y>
 						<Width>20%</Width>
@@ -127,7 +85,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Gems' Template='EQ2.checkbox'>
+					<checkbox Name='Gems'>
 						<X>5%</X>
 						<Y>70</Y>
 						<Width>20%</Width>
@@ -157,7 +115,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Wood' Template='EQ2.checkbox'>
+					<checkbox Name='Wood'>
 						<X>5%</X>
 						<Y>90</Y>
 						<Width>20%</Width>
@@ -187,7 +145,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Root' Template='EQ2.checkbox'>
+					<checkbox Name='Root'>
 						<X>5%</X>
 						<Y>110</Y>
 						<Width>20%</Width>
@@ -217,7 +175,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Den' Template='EQ2.checkbox'>
+					<checkbox Name='Den'>
 						<X>5%</X>
 						<Y>130</Y>
 						<Width>20%</Width>
@@ -247,7 +205,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Plant' Template='EQ2.checkbox'>
+					<checkbox Name='Plant'>
 						<X>5%</X>
 						<Y>150</Y>
 						<Width>20%</Width>
@@ -277,7 +235,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Fish' Template='EQ2.checkbox'>
+					<checkbox Name='Fish'>
 						<X>5%</X>
 						<Y>170</Y>
 						<Width>20%</Width>
@@ -307,7 +265,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Shinies' Template='EQ2.checkbox'>
+					<checkbox Name='Shinies'>
 						<X>5%</X>
 						<Y>190</Y>
 						<Width>20%</Width>
@@ -337,7 +295,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Pages' Template='EQ2.checkbox'>
+					<checkbox Name='Pages'>
 						<X>5%</X>
 						<Y>210</Y>
 						<Width>20%</Width>
@@ -367,7 +325,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='StrictLos' Template='EQ2.checkbox'>
+					<checkbox Name='StrictLos'>
 						<X>45%</X>
 						<Y>50</Y>
 						<Width>20%</Width>
@@ -399,7 +357,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<Commandbutton name='Avoid' Template='EQ2.Commandbutton'> 
+					<Commandbutton name='Avoid'> 
 						<X>45%</X> 
 						<Y>30%</Y> 
 						<Width>45%</Width> 
@@ -423,7 +381,7 @@
 							Mark area 2 x 2 as avoid
 						</AutoTooltip>
 					</Commandbutton>
-					<Commandbutton name='Start Harvesting' Template='EQ2.Commandbutton'> 
+					<Commandbutton name='Start Harvesting'> 
 						<X>20%</X> 
 						<Y>90%</Y> 
 						<Width>25%</Width> 
@@ -445,7 +403,7 @@
 							Start or pause GoHarvest
 						</AutoTooltip>
 					</Commandbutton>
-					<Commandbutton name='Exit GoHarvest' Template='EQ2.Commandbutton'> 
+					<Commandbutton name='Exit GoHarvest'> 
 						<X>60%</X> 
 						<Y>90%</Y> 
 						<Width>25%</Width> 

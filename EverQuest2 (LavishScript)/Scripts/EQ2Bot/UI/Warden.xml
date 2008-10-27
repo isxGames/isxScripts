@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='OffenseMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='OffenseMode'>
 		<X>5%</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseCAs' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseCAs'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>30</Y>
@@ -41,7 +41,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseCAs]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='AoEMode'>
 		<X>5%</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -61,7 +61,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='CureMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='CureMode'>
 		<X>5%</X>
 		<Y>70</Y>
 		<Width>30%</Width>
@@ -81,7 +81,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Cure Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='GenesisMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='GenesisMode'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>90</Y>
@@ -102,7 +102,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Genesis]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='MeleeMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='MeleeMode'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>110</Y>
@@ -123,7 +123,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Melee]}</Data>
 	</Commandcheckbox>
-	<Text name='lblShiftForm' Template='EQ2.text'>
+	<Text name='lblShiftForm'>
 	  <x>5%</x>
 	  <y>130</y>
 	  <Height>20</Height>
@@ -131,7 +131,7 @@
 		<Alignment>Left</Alignment>
 		<Text>ShapeShift:</Text>
 	</Text>
-	<combobox Name='ShiftForm' Template='EQ2.Combobox'>
+	<combobox Name='ShiftForm'>
 		<X>20%</X>
 		<Y>130</Y>
 		<Width>80</Width>
@@ -152,7 +152,7 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[ShiftForm,${This.SelectedItem.Value}]:Save</OnSelect>
 		<OnLeftClick></OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='InfusionMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='InfusionMode'>
 		<Visible>1</Visible>
 		<X>5%</X>
 		<Y>150</Y>
@@ -173,7 +173,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[InfusionMode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffThorns' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffThorns'>
 		<X>190</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -194,7 +194,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Thorns]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffBoon' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffBoon'>
 		<X>190</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -215,7 +215,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffBoon]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='CombatRez' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='CombatRez'>
 		<X>190</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -235,7 +235,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Combat Rez]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='StartHO'>
 		<Visible>1</Visible>
 		<X>190</X>
 		<Y>70</Y>
@@ -256,7 +256,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblBuffBatGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffBatGroupMember'>
 		<X>350</X>
 		<Y>10</Y>
 		<Width>25%</Width>
@@ -265,7 +265,7 @@
 		<Text>Buff Spirit of Bat:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffBatGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffBatGroupMember'>
 		<x>350</x>
 		<y>25</y>
 		<Width>100</width>
@@ -307,7 +307,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 		</combobox>
-	<Text Name='lblBuffInstinctGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffInstinctGroupMember'>
 		<X>350</X>
 		<Y>50</Y>
 		<Width>25%</Width>
@@ -316,7 +316,7 @@
 		<Text>Buff Instinct:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffInstinctGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffInstinctGroupMember'>
 		<x>350</x>
 		<y>65</y>
 		<Width>100</width>
@@ -358,7 +358,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Text Name='lblBuffSporesGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffSporesGroupMember'>
 		<X>350</X>
 		<Y>90</Y>
 		<Width>20%</Width>
@@ -367,7 +367,7 @@
 		<Text>Buff Spores:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffSporesGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffSporesGroupMember'>
 		<x>350</x>
 		<y>105</y>
 		<Width>100</width>
@@ -409,7 +409,7 @@
 			while ${tmpvar:Inc}&lt;=5
 			</OnLeftClick>
 	</combobox>
-	<Text Name='lblBuffVigorGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffVigorGroupMember'>
 		<X>350</X>
 		<Y>130</Y>
 		<Width>25%</Width>
@@ -418,7 +418,7 @@
 		<Text>Buff Vigor:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffVigorGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffVigorGroupMember'>
 		<x>350</x>
 		<y>145</y>
 		<Width>100</width>
@@ -460,7 +460,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='PreReactiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PreReactiveMode'>
 		<X>350</X>
 		<Y>170</Y>
 		<Width>30%</Width>
@@ -481,7 +481,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepReactiveUp]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='ChainHOTMT' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='ChainHOTMT'>
 		<X>350</X>
 		<Y>190</Y>
 		<Width>30%</Width>
@@ -502,7 +502,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepMTHOTUp]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='ChainHoTGroup' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='ChainHoTGroup'>
 		<X>350</X>
 		<Y>210</Y>
 		<Width>30%</Width>
@@ -523,7 +523,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[KeepGroupHOTUp]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseRaidHeals' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseRaidHeals'>
 		<Visible>1</Visible>
 		<X>350</X>
 		<Y>230</Y>
@@ -545,7 +545,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Raid Heals]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UsePets' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UsePets'>
 		<Visible>1</Visible>
 		<X>350</X>
 		<Y>250</Y>

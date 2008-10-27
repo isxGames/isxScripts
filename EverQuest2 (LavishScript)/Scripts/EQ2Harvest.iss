@@ -918,8 +918,8 @@ objectdef EQ2HarvestBot
 
 	method LoadUI()
 	{
-		ui -reload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
-		ui -reload "${UIPath}HarvestGUI.xml"
+		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/EQ2.xml"
+		ui -reload -skin eq2 "${UIPath}HarvestGUI.xml"
 		call InjectPatherTab "EQ2Harvest Tabs@Harvest" "${NavigationPath}"
 	}
 

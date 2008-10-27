@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='OffenseMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='OffenseMode'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -21,7 +21,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='DebuffMitMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DebuffMitMode'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -42,7 +42,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Mit Debuff Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='DebuffMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DebuffMode'>
 		<X>10</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -63,7 +63,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Debuff Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='NamedDebuffMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='NamedDebuffMode'>
 		<X>10</X>
 		<Y>70</Y>
 		<Width>30%</Width>
@@ -84,7 +84,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Named Debuff Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='AoEMode'>
 		<X>10</X>
 		<Y>90</Y>
 		<Width>30%</Width>
@@ -105,7 +105,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Mezz' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Mezz'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>110</Y>
@@ -127,7 +127,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Mezz Mode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Charm' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Charm'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>130</Y>
@@ -151,7 +151,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Charm]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BowAttackMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BowAttackMode'>
 		<X>10</X>
 		<Y>150</Y>
 		<Width>30%</Width>
@@ -172,7 +172,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Bow Attack Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='RangedAttackMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='RangedAttackMode'>
 		<X>10</X>
 		<Y>170</Y>
 		<Width>30%</Width>
@@ -193,7 +193,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='JoustMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='JoustMode'>
 		<X>5%</X>
 		<Y>190</Y>
 		<Width>30%</Width>
@@ -213,7 +213,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Listen to Joust Calls]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Defense' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Defense'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>10</Y>
@@ -234,7 +234,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Defense]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Power' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Power'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>30</Y>
@@ -257,7 +257,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Power]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Arcane' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Arcane'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>50</Y>
@@ -280,7 +280,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Arcane]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Elemental' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Elemental'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>70</Y>
@@ -303,7 +303,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Elemental]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Haste' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Haste'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>90</Y>
@@ -326,7 +326,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Haste]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Health' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Health'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>110</Y>
@@ -349,7 +349,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Health]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Reflection' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Reflection'>
 		<Visible>1</Visible>
 		<X>200</X>
 		<Y>130</Y>
@@ -372,7 +372,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Reflection]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Aria' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Aria'>
 		<Visible>1</Visible>
 		<X>350</X>
 		<Y>10</Y>
@@ -395,7 +395,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Aria]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Stamina' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Stamina'>
 		<Visible>1</Visible>
 		<X>350</X>
 		<Y>30</Y>
@@ -418,7 +418,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Stamina]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Casting' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Casting'>
 		<Visible>1</Visible>
 		<X>350</X>
 		<Y>50</Y>
@@ -441,7 +441,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Casting]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Hate' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Hate'>
 		<Visible>1</Visible>
 		<X>350</X>
 		<Y>70</Y>
@@ -464,7 +464,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Hate]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Buff Self' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Buff Self'>
 		<Visible>1</Visible>
 		<X>350</X>
 		<Y>90</Y>
@@ -487,7 +487,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Self]}</Data>
 	</Commandcheckbox>
-	<Commandbutton name='RefreshJesterCap' Template='EQ2.Commandbutton'>
+	<Commandbutton name='RefreshJesterCap'>
 		<X>275</X>
 		<Y>150</Y>
 		<Width>20</Width>
@@ -567,7 +567,7 @@
 			}
 		</OnLeftClick>
 	</Commandbutton>
-	<Text Name='lblBuffJesterCap' Template='EQ2.text'>
+	<Text Name='lblBuffJesterCap'>
 		<X>300</X>
 		<Y>150</Y>
 		<Width>150</Width>
@@ -576,7 +576,7 @@
 		<Text>Cycle Jester Cap On:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff Jester Cap on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffJesterCap' Template='EQ2.Listbox'>
+	<listbox name='lbBuffJesterCap'>
 		<x>300</x>
 		<y>170</y>
 		<width>150</width>

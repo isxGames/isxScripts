@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='OffensiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='OffensiveMode'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseOffensiveStance]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='DefensiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DefensiveMode'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseDefensiveStance]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseDeathMarch' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseDeathMarch'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>50</Y>
@@ -62,7 +62,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseDeathMarch]}</Data>
 	</Commandcheckbox>	
 	
-	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PBAoEMode'>
 		<X>10</X>
 		<Y>100</Y>
 		<Width>30%</Width>
@@ -82,7 +82,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Taunt Mode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Taunt Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>120</Y>
@@ -105,7 +105,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Taunt Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='StartHO'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>140</Y>
@@ -126,7 +126,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UsePets' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UsePets'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>160</Y>
@@ -147,7 +147,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Pets]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseMastersRage' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseMastersRage'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>180</Y>
@@ -169,7 +169,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseMastersRage]}</Data>
 	</Commandcheckbox>	
-	<Commandcheckbox Name='UseReaver' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseReaver'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>200</Y>
@@ -190,7 +190,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseReaver]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseSiphonHateWhenNotMT' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseSiphonHateWhenNotMT'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>220</Y>
@@ -211,7 +211,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseSiphonHateWhenNotMT]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseBattleLeadershipAABuff' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseBattleLeadershipAABuff'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>240</Y>
@@ -232,7 +232,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseBattleLeadershipAABuff]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='UseFearlessMoraleAABuff' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UseFearlessMoraleAABuff'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>260</Y>
@@ -254,7 +254,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseFearlessMoraleAABuff]}</Data>
 	</Commandcheckbox>
 	
-	<Text Name='lblBuffArmamentMember' Template='EQ2.text'>
+	<Text Name='lblBuffArmamentMember'>
 		<X>65%</X>
 		<Y>10</Y>
 		<Width>20%</Width>
@@ -263,7 +263,7 @@
 		<Text>Buff Armament:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffArmamentGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffArmamentGroupMember'>
 		<x>65%</x>
 		<y>30</y>
 		<Width>100</width>
@@ -327,7 +327,7 @@
 			}
 		</OnLeftClick>
 	</combobox>
-    <Text Name='lblBuffTacticsGroupMember' Template='EQ2.text'>
+    <Text Name='lblBuffTacticsGroupMember'>
 		<X>65%</X>
 		<Y>60</Y>
 		<Width>20%</Width>
@@ -336,7 +336,7 @@
 		<Text>Buff Tactics:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffTacticsGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffTacticsGroupMember'>
 		<x>65%</x>
 		<y>80</y>
 		<Width>100</width>
@@ -399,7 +399,7 @@
 			}
 		</OnLeftClick>
     </combobox>
-    <Text Name='lblBuffDSGroupMember' Template='EQ2.text'>
+    <Text Name='lblBuffDSGroupMember'>
 		<X>65%</X>
 		<Y>110</Y>
 		<Width>40%</Width>
@@ -408,7 +408,7 @@
 		<Text>Buff 5-Proc. Dmg. Shld.:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffDSGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffDSGroupMember'>
 		<x>65%</x>
 		<y>130</y>
 		<Width>100</width>

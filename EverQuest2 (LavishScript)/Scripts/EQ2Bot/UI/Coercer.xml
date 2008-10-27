@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='AoEMode'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PBAoEMode'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffSeeInvis' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffSeeInvis'>
 		<X>10</X>
 		<Y>50</Y>
 		<Width>30</Width>
@@ -60,7 +60,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff See Invis]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='ccbBuffHate' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='ccbBuffHate'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>70</Y>
@@ -82,7 +82,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHate]}</Data>
 	</Commandcheckbox>
-	<combobox name='cbBuffHateGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffHateGroupMember'>
 		<x>100</x>
 		<y>70</y>
 		<Width>100</width>
@@ -124,7 +124,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='cbBuffHeal' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='cbBuffHeal'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>90</Y>
@@ -146,7 +146,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffCoerciveHealing]}</Data>
 	</Commandcheckbox>
-	<combobox name='cbBuffHealGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffHealGroupMember'>
 		<x>100</x>
 		<y>90</y>
 		<Width>100</width>
@@ -178,7 +178,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='BuffInstigation' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffInstigation'>
 		<X>10</X>
 		<Y>110</Y>
 		<Width>30</Width>
@@ -198,7 +198,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffInstigation]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffSignet' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffSignet'>
 		<X>10</X>
 		<Y>130</Y>
 		<Width>30</Width>
@@ -218,7 +218,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSignet]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Mezz' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Mezz'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>150</Y>
@@ -240,7 +240,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Mezz Mode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Charm' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Charm'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>170</Y>
@@ -264,7 +264,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Charm]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='DPSMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DPSMode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>190</Y>
@@ -288,7 +288,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[DPSMode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='TSMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='TSMode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>230</Y>
@@ -312,7 +312,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseTS]}</Data>
 	</Commandcheckbox>
-	<Commandbutton Name='RefreshDPS' Template='EQ2.Commandbutton'>
+	<Commandbutton Name='RefreshDPS'>
 		<X>275</X>
 		<Y>10</Y>
 		<Width>20</Width>
@@ -380,7 +380,7 @@
 			}
 		</OnLeftClick>
 	</Commandbutton>
-	<Text Name='lblBuffDPS' Template='EQ2.text'>
+	<Text Name='lblBuffDPS'>
 		<X>300</X>
 		<Y>10</Y>
 		<Width>150</Width>
@@ -389,7 +389,7 @@
 		<Text>Buff DPS On:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff DPS on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffDPS' Template='EQ2.Listbox'>
+	<listbox name='lbBuffDPS'>
 		<x>300</x>
 		<y>30</y>
 		<width>150</width>
@@ -486,7 +486,7 @@
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>
-	<Commandbutton name='RefreshAntiHate' Template='EQ2.Commandbutton'>
+	<Commandbutton name='RefreshAntiHate'>
 		<X>275</X>
 		<Y>150</Y>
 		<Width>20</Width>
@@ -566,7 +566,7 @@
 			}
 		</OnLeftClick>
 	</Commandbutton>
-	<Text Name='lblBuffAntiHate' Template='EQ2.text'>
+	<Text Name='lblBuffAntiHate'>
 		<X>300</X>
 		<Y>150</Y>
 		<Width>150</Width>
@@ -575,7 +575,7 @@
 		<Text>Buff Anti Hate On:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff Anti Hate on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffAntiHate' Template='EQ2.Listbox'>
+	<listbox name='lbBuffAntiHate'>
 		<x>300</x>
 		<y>170</y>
 		<width>150</width>

@@ -6,14 +6,14 @@
     		<BorderColor>FF000033</BorderColor>
     		<Width>r6</Width>
 		<Height>26</Height>
-		<Texture Template='EQ2.window.TitleBar.Texture' />
+		<Texture />
 		<Children>
-			<Text Name='Title' template='EQ2.window.TitleBar.title' />
-			<Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
+			<Text Name='Title' />
+			<Button Name='Minimize'>
 			</Button>
-			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
+			<Button Name='Maximize'>
 			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
+			<commandbutton name='Custom Close Button'>
 				<Command>Script[EQ2BotCommander]:End</Command>
 			</commandbutton>
 		</Children>
@@ -25,7 +25,7 @@
 		<MinimizeButton />
 		<TitleBar template='My.window.TitleBar' />
 		<OffsetTitleBarHeight />
-		<Client template='EQ2.window.Client' />
+		<Client />
 		<StorePosition>1</StorePosition>
 	</template>
 	<Window name='EQ2Bot Commander' Template='My.Window'>
@@ -43,7 +43,7 @@
 			This:SetFocus
 		</OnLeftClick>
 		<Children>
-			<CommandButton Name='Follow' Template='EQ2.Button'>
+			<CommandButton Name='Follow'>
 				<X>5%</X>
 				<Y>20</Y>
 				<Width>40</Width>
@@ -52,7 +52,7 @@
 				<AutoTooltip>Tell all bots to follow</AutoTooltip>
 				<Command>Relay all Script[EQ2Bot]:ExecuteAtom[AutoFollowTank]</Command>
 			</CommandButton>
-			<CommandButton Name='Stop' Template='EQ2.Button'>
+			<CommandButton Name='Stop'>
 				<X>5%</X>
 				<Y>60</Y>
 				<Width>40</Width>
@@ -61,7 +61,7 @@
 				<AutoTooltip>Tell all bots to stop</AutoTooltip>
 				<Command>Relay all Script[EQ2Bot]:ExecuteAtom[StopAutoFollowing]</Command>
 			</CommandButton>
-			<CommandButton Name='RunEQ2Bot' Template='EQ2.Button'>
+			<CommandButton Name='RunEQ2Bot'>
 				<X>5%</X>
 				<Y>100</Y>
 				<Width>40</Width>
@@ -70,7 +70,7 @@
 				<AutoTooltip>Run EQ2Bot.iss on all computers</AutoTooltip>
 				<Command>Relay all RunScript EQ2Bot</Command>
 			</CommandButton>
-			<CommandButton Name='StartEQ2Bot' Template='EQ2.Button'>
+			<CommandButton Name='StartEQ2Bot'>
 				<X>5%</X>
 				<Y>140</Y>
 				<Width>40</Width>
@@ -79,7 +79,7 @@
 				<AutoTooltip>Start EQ2Bot on all computers</AutoTooltip>
 				<Command>Relay all Script[EQ2Bot]:ExecuteAtom[StartEQ2Bot]</Command>
 			</CommandButton>
-			<CommandButton Name='CloseEQ2Bot' Template='EQ2.Button'>
+			<CommandButton Name='CloseEQ2Bot'>
 				<X>5%</X>
 				<Y>180</Y>
 				<Width>40</Width>

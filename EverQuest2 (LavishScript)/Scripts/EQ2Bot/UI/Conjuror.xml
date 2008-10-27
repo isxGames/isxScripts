@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='AoEMode'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PBAoEMode'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffDamageShield' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffDamageShield'>
 		<X>10</X>
 		<Y>50</Y>
 		<Width>30</Width>
@@ -60,7 +60,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Damage Shield]}</Data>
 	</Commandcheckbox>
-	<combobox name='cbBuffDamageShieldGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffDamageShieldGroupMember'>
 		<x>150</x>
 		<y>50</y>
 		<Width>100</width>
@@ -119,7 +119,7 @@
 			}
 		</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='BuffSeeInvis' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffSeeInvis'>
 		<X>10</X>
 		<Y>70</Y>
 		<Width>30</Width>
@@ -139,7 +139,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff See Invis]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffEscutcheon' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffEscutcheon'>
 		<X>10</X>
 		<Y>90</Y>
 		<Width>30</Width>
@@ -159,7 +159,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffEscutcheon]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='BuffSeal' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='BuffSeal'>
 		<X>10</X>
 		<Y>110</Y>
 		<Width>30</Width>
@@ -179,7 +179,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSeal]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblPetType' Template='EQ2.text'>
+	<Text Name='lblPetType'>
 		<X>10</X>
 		<Y>130</Y>
 		<Width>20</Width>
@@ -187,7 +187,7 @@
 		<Alignment>Left</Alignment>
 		<Text>Pet:</Text>
 	</Text>
-	<combobox name='cbPetType' Template='EQ2.Combobox'>
+	<combobox name='cbPetType'>
 		<x>35</x>
 		<y>130</y>
 		<width>100</width>
@@ -205,7 +205,7 @@
 		<OnLoad>This.Item[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Pet Type]}]:Select
 		</OnLoad>
 	</combobox>
-	<Commandcheckbox Name='UsePets' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='UsePets'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>150</Y>
@@ -226,7 +226,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Pets]}</Data>
 	</Commandcheckbox>
-	<Commandbutton name='RefreshEmberSeed' Template='EQ2.Commandbutton'>
+	<Commandbutton name='RefreshEmberSeed'>
 		<X>275</X>
 		<Y>10</Y>
 		<Width>20</Width>
@@ -294,7 +294,7 @@
 			}
 		</OnLeftClick>
 	</Commandbutton>
-	<Text Name='lblBuffEmberSeed' Template='EQ2.text'>
+	<Text Name='lblBuffEmberSeed'>
 		<X>300</X>
 		<Y>10</Y>
 		<Width>150</Width>
@@ -303,7 +303,7 @@
 		<Text>Buff EmberSeed On:</Text>
 		<AutoTooltip>Shift Left click to select group members to buff EmberSeed on</AutoTooltip>
 	</Text>
-	<listbox name='lbBuffEmberSeed' Template='EQ2.Listbox'>
+	<listbox name='lbBuffEmberSeed'>
 		<x>300</x>
 		<y>30</y>
 		<width>150</width>

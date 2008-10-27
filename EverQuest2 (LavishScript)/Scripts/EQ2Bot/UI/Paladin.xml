@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='Start_HO' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Start_HO'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start_HO]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Use Consencrate' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Use Consencrate'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use_Consecrate]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Taunt Mode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Taunt Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>50</Y>
@@ -63,7 +63,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Taunt Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Healer Mode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Healer Mode'>
 		<X>180</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -83,7 +83,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[HealerMode]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblMainWeapon' Template='EQ2.text'>
+	<Text Name='lblMainWeapon'>
 		<X>5%</X>
 		<Y>130</Y>
 		<Width>20%</Width>
@@ -92,7 +92,7 @@
 		<Text>Main Hand:</Text>
 		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
 	</Text>
-	<combobox name='cbMainWeapon' Template='EQ2.Combobox'>
+	<combobox name='cbMainWeapon'>
 		<x>150</x>
 		<y>130</y>
 		<width>30%</width>
@@ -130,7 +130,7 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[MainWeapon,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
-	<Text Name='lblOffHand' Template='EQ2.text'>
+	<Text Name='lblOffHand'>
 		<X>5%</X>
 		<Y>150</Y>
 		<Width>20%</Width>
@@ -139,7 +139,7 @@
 		<Text>Off Hand:</Text>
 		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
 	</Text>
-	<combobox name='cbOffHand' Template='EQ2.Combobox'>
+	<combobox name='cbOffHand'>
 		<x>150</x>
 		<y>150</y>
 		<width>30%</width>
@@ -177,7 +177,7 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OffHand,${This.SelectedItem.Text}]:Save
 		</OnSelect>
 	</combobox>
-	<Text Name='lblBuffProcGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffProcGroupMember'>
 		<X>375</X>
 		<Y>10</Y>
 		<Width>20%</Width>
@@ -186,7 +186,7 @@
 		<Text>Buff Protect:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox name='cbBuffProcGroupMember' Template='EQ2.Combobox'>
+	<combobox name='cbBuffProcGroupMember'>
 		<x>375</x>
 		<y>30</y>
 		<Width>100</width>
@@ -227,7 +227,7 @@
 			while ${tmpvar:Inc}&lt;=5
 		</OnLeftClick>
 	</combobox>
-	<Text Name='lblSecondary_Assist' Template='EQ2.text'>
+	<Text Name='lblSecondary_Assist'>
 		<X>375</X>
 		<Y>50</Y>
 		<Width>20%</Width>
@@ -236,7 +236,7 @@
 		<Text>Buff Armament:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
-	<combobox Name='cbSecondary_Assist' Template='EQ2.combobox'>
+	<combobox Name='cbSecondary_Assist'>
 		<x>375</x>
 		<y>70</y>
 		<Width>100</width>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='OffensiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='OffensiveMode'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='DefensiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DefensiveMode'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Defensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='MezMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='MezMode'>
 		<X>10</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -60,7 +60,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use MezMode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PBAoEMode'>
 		<X>10</X>
 		<Y>70</Y>
 		<Width>30%</Width>
@@ -80,7 +80,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Full Auto Mode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Full Auto Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>90</Y>
@@ -101,7 +101,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Full Auto Mode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Taunt Mode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Taunt Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>110</Y>
@@ -124,7 +124,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Taunt Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='cbDragoonsCyclone' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='cbDragoonsCyclone'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>130</Y>
@@ -147,7 +147,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Dragoons Cyclone]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblMainWeapon' Template='EQ2.text'>
+	<Text Name='lblMainWeapon'>
 		<X>10</X>
 		<Y>150</Y>
 		<Width>20%</Width>
@@ -156,7 +156,7 @@
 		<Text>Main Hand:</Text>
 		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
 	</Text>
-	<combobox name='cbMainWeapon' Template='EQ2.Combobox'>
+	<combobox name='cbMainWeapon'>
 		<x>100</x>
 		<y>150</y>
 		<width>30%</width>
@@ -193,7 +193,7 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[Main,"${This.SelectedItem.Text}"]:Save
 		</OnSelect>
 	</combobox>
-	<Text Name='lblOffHand' Template='EQ2.text'>
+	<Text Name='lblOffHand'>
 		<X>10</X>
 		<Y>170</Y>
 		<Width>20%</Width>
@@ -202,7 +202,7 @@
 		<Text>Off Hand:</Text>
 		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
 	</Text>
-	<combobox name='cbOffHand' Template='EQ2.Combobox'>
+	<combobox name='cbOffHand'>
 		<x>100</x>
 		<y>170</y>
 		<width>30%</width>
@@ -240,7 +240,7 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[OffHand,"${This.SelectedItem.Text}"]:Save
 		</OnSelect>
 	</combobox>
-	<Text Name='lblTowerShield' Template='EQ2.text'>
+	<Text Name='lblTowerShield'>
 		<X>10</X>
 		<Y>250</Y>
 		<Width>20%</Width>
@@ -249,7 +249,7 @@
 		<Text>TowerShield for Tower of Stone:</Text>
 		<AutoTooltip>TowerShield to use during required spells</AutoTooltip>
 	</Text>
-	<combobox name='cbTowerShield' Template='EQ2.Combobox'>
+	<combobox name='cbTowerShield'>
 		<x>100</x>
 		<y>250</y>
 		<width>30%</width>
@@ -287,7 +287,7 @@
 			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[TowerShield,"${This.SelectedItem.Text}"]:Save
 		</OnSelect>
 	</combobox>
-	<Text Name='lblBuffAvoidanceGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffAvoidanceGroupMember'>
 			<X>375</X>
 			<Y>10</Y>
 			<Width>20%</Width>
@@ -296,7 +296,7 @@
 			<Text>Buff Avoidance:</Text>
 			<AutoTooltip></AutoTooltip>
 		</Text>
-		<combobox name='cbBuffAvoidanceGroupMember' Template='EQ2.Combobox'>
+		<combobox name='cbBuffAvoidanceGroupMember'>
 			<x>375</x>
 			<y>30</y>
 			<Width>100</width>
@@ -334,7 +334,7 @@
 				while ${tmpvar:Inc}&lt;=5
 			</OnLeftClick>
 		</combobox>
-	<Text Name='lblBuffSentinelGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffSentinelGroupMember'>
 			<X>375</X>
 			<Y>60</Y>
 			<Width>20%</Width>
@@ -343,7 +343,7 @@
 			<Text>Buff Sentinel Intercept:</Text>
 			<AutoTooltip></AutoTooltip>
 		</Text>
-		<combobox name='cbBuffSentinelGroupMember' Template='EQ2.Combobox'>
+		<combobox name='cbBuffSentinelGroupMember'>
 			<x>375</x>
 			<y>80</y>
 			<Width>100</width>
@@ -381,7 +381,7 @@
 				while ${tmpvar:Inc}&lt;=5
 			</OnLeftClick>
 	</combobox>
-	<Text Name='lblBuffDeagroGroupMember' Template='EQ2.text'>
+	<Text Name='lblBuffDeagroGroupMember'>
 			<X>375</X>
 			<Y>100</Y>
 			<Width>20%</Width>
@@ -390,7 +390,7 @@
 			<Text>Buff Agro Reducer on:</Text>
 			<AutoTooltip></AutoTooltip>
 		</Text>
-		<combobox name='cbBuffDeagroGroupMember' Template='EQ2.Combobox'>
+		<combobox name='cbBuffDeagroGroupMember'>
 			<x>375</x>
 			<y>120</y>
 			<Width>100</width>
@@ -428,7 +428,7 @@
 				while ${tmpvar:Inc}&lt;=5
 			</OnLeftClick>
 	</combobox>
-	<Commandcheckbox Name='StartHO' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='StartHO'>
 		<Visible>1</Visible>
 		<X>375</X>
 		<Y>140</Y>

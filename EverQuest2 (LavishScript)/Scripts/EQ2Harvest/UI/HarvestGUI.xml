@@ -6,14 +6,14 @@
     		<BorderColor>FF000033</BorderColor>
     		<Width>r6</Width>
 		<Height>26</Height>
-		<Texture Template='EQ2.window.TitleBar.Texture' />
+		<Texture />
 		<Children>
-			<Text Name='Title' template='EQ2.window.TitleBar.title' />
-			<Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
+			<Text Name='Title' />
+			<Button Name='Minimize'>
 			</Button>
-			<Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
+			<Button Name='Maximize'>
 			</Button>
-			<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
+			<commandbutton name='Custom Close Button'>
 				<Command>Script[EQ2Harvest]:End</Command>
 			</commandbutton>
 		</Children>
@@ -26,55 +26,42 @@
 		<MaximizeButton />
 		<TitleBar template='My.window.TitleBar' />
  		<OffsetTitleBarHeight />
-		<Client template='EQ2.window.Client' />
+		<Client />
 		<StorePosition>1</StorePosition>
 	</template>
 
 	<!-- Main LGUI -->
-	<Window Name='Harvest' template='My.window'>
-		<FadeDelay>0</FadeDelay>
+	<Window Name='Harvest'>
+	  <FadeDelay>0</FadeDelay>
 		<FadeDuration>200</FadeDuration>
 		<FadeAlpha>0</FadeAlpha>
 		<X>5</X>
 		<Y>10</Y>
 		<Width>430</Width>
 		<Height>420</Height>
-		<Client Template='EQ2.Window.Client'>
-			<Y>20</Y>
-		</Client>
 		<StorePosition>1</StorePosition>
 		<Title>Automatic Harvest Bot</Title>
-		<TitleBar Template='EQ2.Window.TitleBar'>
-			<X>0</X>
-			<Y>0</Y>
-			<Width>100%</Width>
-			<Height>20</Height>
-			<Children>
-				<Text Name='Title' Template='EQ2.Window.TitleBar.Title' />
-				<Button Name='Minimize' Template='EQ2.Window.TitleBar.Minimize'>
-					<X>r35</X>
-					<Width>14</Width>
-					<Height>14</Height>
-				</Button>
-				<commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-					<X>r17</X>
-					<Width>14</Width>
-					<Height>14</Height>
-					<Command>Script[EQ2Harvest]:End</Command>
-				</commandbutton>
-			</Children>
-		</TitleBar>
+	  <TitleBar template='window.Titlebar'>
 		<Children>
-			<Tabcontrol Name='EQ2Harvest Tabs' Template='EQ2.Tabcontrol'>
-				<X>1%</X>
-				<Y>1%</Y>
-				<Height>98%</Height>
-				<Width>98%</Width>
-				<Tabs>
-					<Tab Name='Main'>
-						<Text name='Destination Text' Template='EQ2.text'>
-							<X>5%</X>
-							<Y>10</Y>
+		  <Text Name='Title' Template='window.Titlebar.Title' />
+		  <Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		  <Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		  <commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>Script[EQ2Harvest]:End</Command>
+		  </commandbutton>
+		</Children>
+	  </TitleBar>
+	  <Children>
+		<Tabcontrol Name='EQ2Harvest Tabs'>
+		  <X>1%</X>
+		  <Y>1%</Y>
+		  <Height>98%</Height>
+		  <Width>98%</Width>
+		  <Tabs>
+			<Tab Name='Main'>
+			  <Text name='Destination Text'>
+				<X>5%</X>
+				<Y>10</Y>
 							<Width>80%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
@@ -83,7 +70,7 @@
 							</Font>
 							<Text>Current Destination:</Text>
 						</Text>
-						<Text name='Destination' Template='EQ2.text'>
+						<Text name='Destination'>
 							<X>45%</X>
 							<Y>10</Y>
 							<Width>50%</Width>
@@ -95,7 +82,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.FinishPoint}</Text>
 						</Text>
-						<Text name='Target Text' Template='EQ2.text'>
+						<Text name='Target Text'>
 							<X>5%</X>
 							<Y>30</Y>
 							<Width>50%</Width>
@@ -106,7 +93,7 @@
 							</Font>
 							<Text>Action:</Text>
 						</Text>
-						<Text name='Target Action' Template='EQ2.text'>
+						<Text name='Target Action'>
 							<X>19%</X>
 							<Y>30</Y>
 							<Width>100%</Width>
@@ -117,7 +104,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].Variable[CurrentAction]}</Text>
 						</Text>
-						<checkbox Name='Ore' Template='EQ2.checkbox'>
+						<checkbox Name='Ore'>
 							<X>5%</X>
 							<Y>50</Y>
 							<Width>20%</Width>
@@ -141,7 +128,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Ore,${Script[EQ2Harvest].VariableScope.HarvestNode[1]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text name='Ore Stat' Template='EQ2.text'>
+						<Text name='Ore Stat'>
 							<X>33%</X>
 							<Y>54</Y>
 							<Width>40</Width>
@@ -153,7 +140,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[1]}</Text>
 						</Text>
-						<Text Name='Ore Status' Template='EQ2.text'>
+						<Text Name='Ore Status'>
 							<X>45%</X>
 							<Y>51</Y>
 							<Width>30%</Width>
@@ -161,7 +148,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[1]</OnLoad>
 						</Text>
-						<Commandbutton name='Ore Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Ore Keep'> 
 							<X>66%</X> 
 							<Y>50</Y> 
 							<Width>13%</Width> 
@@ -171,7 +158,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 1]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Ore Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Ore Destroy'> 
 							<X>81%</X> 
 							<Y>50</Y> 
 							<Width>15%</Width> 
@@ -181,7 +168,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[1]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Stone' Template='EQ2.checkbox'>
+						<checkbox Name='Stone'>
 							<X>5%</X>
 							<Y>70</Y>
 							<Width>20%</Width>
@@ -205,7 +192,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Stone,${Script[EQ2Harvest].VariableScope.HarvestNode[2]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Stone Stat' Template='EQ2.text'>
+						<Text Name='Stone Stat'>
 							<X>33%</X>
 							<Y>74</Y>
 							<Width>40</Width>
@@ -217,7 +204,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[2]}</Text>
 						</Text>
-						<Text Name='Stone Status' Template='EQ2.text'>
+						<Text Name='Stone Status'>
 							<X>45%</X>
 							<Y>71</Y>
 							<Width>30%</Width>
@@ -225,7 +212,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[2]</OnLoad>
 						</Text>
-						<Commandbutton name='Stone Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Stone Keep'> 
 							<X>66%</X> 
 							<Y>70</Y> 
 							<Width>13%</Width> 
@@ -235,7 +222,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 2]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Stone Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Stone Destroy'> 
 							<X>81%</X> 
 							<Y>70</Y> 
 							<Width>15%</Width> 
@@ -245,7 +232,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[2]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Wood' Template='EQ2.checkbox'>
+						<checkbox Name='Wood'>
 							<X>5%</X>
 							<Y>90</Y>
 							<Width>20%</Width>
@@ -269,7 +256,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Wood,${Script[EQ2Harvest].VariableScope.HarvestNode[3]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Wood Stat' Template='EQ2.text'>
+						<Text Name='Wood Stat'>
 							<X>33%</X>
 							<Y>94</Y>
 							<Width>40</Width>
@@ -281,7 +268,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[3]}</Text>
 						</Text>
-						<Text Name='Wood Status' Template='EQ2.text'>
+						<Text Name='Wood Status'>
 							<X>45%</X>
 							<Y>91</Y>
 							<Width>30%</Width>
@@ -289,7 +276,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[3]</OnLoad>
 						</Text>
-						<Commandbutton name='Wood Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Wood Keep'> 
 							<X>66%</X> 
 							<Y>90</Y> 
 							<Width>13%</Width> 
@@ -299,7 +286,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 3]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Wood Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Wood Destroy'> 
 							<X>81%</X> 
 							<Y>90</Y> 
 							<Width>15%</Width> 
@@ -309,7 +296,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[3]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Roots' Template='EQ2.checkbox'>
+						<checkbox Name='Roots'>
 							<X>5%</X>
 							<Y>110</Y>
 							<Width>20%</Width>
@@ -333,7 +320,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Roots,${Script[EQ2Harvest].VariableScope.HarvestNode[4]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Roots Stat' Template='EQ2.text'>
+						<Text Name='Roots Stat'>
 							<X>33%</X>
 							<Y>114</Y>
 							<Width>40</Width>
@@ -345,7 +332,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[4]}</Text>
 						</Text>
-						<Text Name='Roots Status' Template='EQ2.text'>
+						<Text Name='Roots Status'>
 							<X>45%</X>
 							<Y>111</Y>
 							<Width>30%</Width>
@@ -353,7 +340,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[4]</OnLoad>
 						</Text>
-						<Commandbutton name='Roots Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Roots Keep'> 
 							<X>66%</X> 
 							<Y>110</Y> 
 							<Width>13%</Width> 
@@ -363,7 +350,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 4]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Roots Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Roots Destroy'> 
 							<X>81%</X> 
 							<Y>110</Y> 
 							<Width>15%</Width> 
@@ -373,7 +360,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[4]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Pelts' Template='EQ2.checkbox'>
+						<checkbox Name='Pelts'>
 							<X>5%</X>
 							<Y>130</Y>
 							<Width>20%</Width>
@@ -397,7 +384,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Pelts,${Script[EQ2Harvest].VariableScope.HarvestNode[5]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Pelts Stat' Template='EQ2.text'>
+						<Text Name='Pelts Stat'>
 							<X>33%</X>
 							<Y>134</Y>
 							<Width>40</Width>
@@ -409,7 +396,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[5]}</Text>
 						</Text>
-						<Text Name='Pelts Status' Template='EQ2.text'>
+						<Text Name='Pelts Status'>
 							<X>45%</X>
 							<Y>131</Y>
 							<Width>30%</Width>
@@ -417,7 +404,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[5]</OnLoad>
 						</Text>
-						<Commandbutton name='Pelts Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Pelts Keep'> 
 							<X>66%</X> 
 							<Y>130</Y> 
 							<Width>13%</Width> 
@@ -427,7 +414,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 5]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Pelts Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Pelts Destroy'> 
 							<X>81%</X> 
 							<Y>130</Y> 
 							<Width>15%</Width> 
@@ -437,7 +424,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[5]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Shrubs' Template='EQ2.checkbox'>
+						<checkbox Name='Shrubs'>
 							<X>5%</X>
 							<Y>150</Y>
 							<Width>20%</Width>
@@ -461,7 +448,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Shrubs,${Script[EQ2Harvest].VariableScope.HarvestNode[6]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text name='Shrubs Stat' Template='EQ2.text'>
+						<Text name='Shrubs Stat'>
 							<X>33%</X>
 							<Y>154</Y>
 							<Width>40</Width>
@@ -473,7 +460,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[6]}</Text>
 						</Text>
-						<Text Name='Shrubs Status' Template='EQ2.text'>
+						<Text Name='Shrubs Status'>
 							<X>45%</X>
 							<Y>151</Y>
 							<Width>30%</Width>
@@ -481,7 +468,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[6]</OnLoad>
 						</Text>
-						<Commandbutton name='Shrubs Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Shrubs Keep'> 
 							<X>66%</X> 
 							<Y>150</Y> 
 							<Width>13%</Width> 
@@ -491,7 +478,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 6]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Shrubs Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Shrubs Destroy'> 
 							<X>81%</X> 
 							<Y>150</Y> 
 							<Width>15%</Width> 
@@ -501,7 +488,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[6]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Fish' Template='EQ2.checkbox'>
+						<checkbox Name='Fish'>
 							<X>5%</X>
 							<Y>170</Y>
 							<Width>20%</Width>
@@ -525,7 +512,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Fish,${Script[EQ2Harvest].VariableScope.HarvestNode[7]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Fish Stat' Template='EQ2.text'>
+						<Text Name='Fish Stat'>
 							<X>33%</X>
 							<Y>174</Y>
 							<Width>40</Width>
@@ -537,7 +524,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[7]}</Text>
 						</Text>
-						<Text Name='Fish Status' Template='EQ2.text'>
+						<Text Name='Fish Status'>
 							<X>45%</X>
 							<Y>171</Y>
 							<Width>30%</Width>
@@ -545,7 +532,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[7]</OnLoad>
 						</Text>
-						<Commandbutton name='Fish Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Fish Keep'> 
 							<X>66%</X> 
 							<Y>170</Y> 
 							<Width>13%</Width> 
@@ -555,7 +542,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 7]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Fish Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Fish Destroy'> 
 							<X>81%</X> 
 							<Y>170</Y> 
 							<Width>15%</Width> 
@@ -565,7 +552,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[7]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Collectibles(?)' Template='EQ2.checkbox'>
+						<checkbox Name='Collectibles(?)'>
 							<X>5%</X>
 							<Y>190</Y>
 							<Width>20%</Width>
@@ -589,7 +576,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Collectibles(?),${Script[EQ2Harvest].VariableScope.HarvestNode[8]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Collectibles(?) Stat' Template='EQ2.text'>
+						<Text Name='Collectibles(?) Stat'>
 							<X>33%</X>
 							<Y>194</Y>
 							<Width>40</Width>
@@ -601,7 +588,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[8]}</Text>
 						</Text>
-						<Text Name='Collectibles(?) Status' Template='EQ2.text'>
+						<Text Name='Collectibles(?) Status'>
 							<X>45%</X>
 							<Y>191</Y>
 							<Width>30%</Width>
@@ -609,7 +596,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[8]</OnLoad>
 						</Text>
-						<Commandbutton name='Collectibles(?) Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Collectibles(?) Keep'> 
 							<X>66%</X> 
 							<Y>190</Y> 
 							<Width>13%</Width> 
@@ -619,7 +606,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 8]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Collectibles(?) Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Collectibles(?) Destroy'> 
 							<X>81%</X> 
 							<Y>190</Y> 
 							<Width>15%</Width> 
@@ -629,7 +616,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[8]
 							</OnLeftClick>
 						</Commandbutton>
-						<checkbox Name='Collectibles(!)' Template='EQ2.checkbox'>
+						<checkbox Name='Collectibles(!)'>
 							<X>5%</X>
 							<Y>210</Y>
 							<Width>20%</Width>
@@ -653,7 +640,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[What Nodes to Harvest?]:Set[Collectibles(!),${Script[EQ2Harvest].VariableScope.HarvestNode[9]}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Collectibles(!) Stat' Template='EQ2.text'>
+						<Text Name='Collectibles(!) Stat'>
 							<X>33%</X>
 							<Y>214</Y>
 							<Width>40</Width>
@@ -665,7 +652,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.HarvestStat[9]}</Text>
 						</Text>
-						<Text Name='Collectibles(!) Status' Template='EQ2.text'>
+						<Text Name='Collectibles(!) Status'>
 							<X>45%</X>
 							<Y>211</Y>
 							<Width>30%</Width>
@@ -673,7 +660,7 @@
 							<Alignment>Left</Alignment>
 							<OnLoad>Script[EQ2Harvest].VariableScope.Harvest:CheckStatus[9]</OnLoad>
 						</Text>
-						<Commandbutton name='Collectibles(!) Keep' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Collectibles(!) Keep'> 
 							<X>66%</X> 
 							<Y>210</Y> 
 							<Width>13%</Width> 
@@ -683,7 +670,7 @@
 								Script[EQ2Harvest]:QueueCommand[call UpdateKeep 9]
 							</OnLeftClick>
 						</Commandbutton>
-						<Commandbutton name='Collectibles(!) Destroy' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Collectibles(!) Destroy'> 
 							<X>81%</X> 
 							<Y>210</Y> 
 							<Width>15%</Width> 
@@ -693,7 +680,7 @@
 								Script[EQ2Harvest].VariableScope.Harvest:UpdateDestroy[9]
 							</OnLeftClick>
 						</Commandbutton>
-						<Text Name='Total Text' Template='EQ2.text'>
+						<Text Name='Total Text'>
 							<X>9%</X>
 							<Y>241</Y>
 							<Width>30%</Width>
@@ -703,7 +690,7 @@
 								Total resources harvested by the bot
 							</AutoTooltip>
 						</Text>
-						<Text Name='Total Stat' Template='EQ2.text'>
+						<Text Name='Total Stat'>
 							<X>33%</X>
 							<Y>244</Y>
 							<Width>40</Width>
@@ -715,7 +702,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.TotalStat}</Text>
 						</Text>
-						<Text Name='Batch Count' Template='EQ2.text'>
+						<Text Name='Batch Count'>
 							<X>45%</X>
 							<Y>244</Y>
 							<Width>55%</Width>
@@ -727,7 +714,7 @@
 								before extras are destroyed (see options)
 							</AutoTooltip>
 						</Text>
-						<checkbox Name='DestroyMeat' Template='EQ2.checkbox'>
+						<checkbox Name='DestroyMeat'>
 							<X>45%</X>
 							<Y>264</Y>
 							<Width>20%</Width>
@@ -755,7 +742,7 @@
 								in the name will be destroyed regardless of the settings above
 							</AutoTooltip>
 						</checkbox>
-						<Text Name='Imbue Text' Template='EQ2.text'>
+						<Text Name='Imbue Text'>
 							<X>9%</X>
 							<Y>261</Y>
 							<Width>30%</Width>
@@ -765,7 +752,7 @@
 								Total imbue stones harvested by the bot
 							</AutoTooltip>
 						</Text>
-						<Text Name='Imbue Stat' Template='EQ2.text'>
+						<Text Name='Imbue Stat'>
 							<X>33%</X>
 							<Y>264</Y>
 							<Width>40</Width>
@@ -777,7 +764,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.ImbueStat}</Text>
 						</Text>
-						<Text Name='Rare Text' Template='EQ2.text'>
+						<Text Name='Rare Text'>
 							<X>9%</X>
 							<Y>281</Y>
 							<Width>30%</Width>
@@ -787,7 +774,7 @@
 								Total rare resources harvested by the bot
 							</AutoTooltip>
 						</Text>
-						<Text Name='Rare Stat' Template='EQ2.text'>
+						<Text Name='Rare Stat'>
 							<X>33%</X>
 							<Y>284</Y>
 							<Width>40</Width>
@@ -799,7 +786,7 @@
 							</Font>
 							<Text>${Script[EQ2Harvest].VariableScope.RareStat}</Text>
 						</Text>
-						<Text Name='Time Elapsed Text' Template='EQ2.text'>
+						<Text Name='Time Elapsed Text'>
 							<X>30%</X>
 							<Y>300</Y>
 							<Width>60%</Width>
@@ -811,7 +798,7 @@
 							</AutoTooltip>
 
 						</Text>
-						<Text Name='Time Elapsed' Template='EQ2.text'>
+						<Text Name='Time Elapsed'>
 							<X>50%</X>
 							<Y>302</Y>
 							<Height>20</Height>
@@ -823,7 +810,7 @@
 							</Font>
 							<Text>${If[${Script[EQ2Harvest].VariableScope.StartTimer},${Math.Calc[(${Time.Timestamp}-${Script[EQ2Harvest].VariableScope.StartTimer})/60].Int},0]}</Text>
 						</Text>
-						<Text Name='Time Remaining Text' Template='EQ2.text'>
+						<Text Name='Time Remaining Text'>
 							<X>20%</X>
 							<Y>320</Y>
 							<Width>80%</Width>
@@ -834,7 +821,7 @@
 							</Font>
 							<Text>${If[${Script[EQ2Harvest].VariableScope.StartHarvest}&amp;&amp;${Script[EQ2Harvest].VariableScope.TimerOn},Harvesting will end in ${Math.Calc[1+${Script[EQ2Harvest].VariableScope.HarvestTime}-(${Time.Timestamp}-${Script[EQ2Harvest].VariableScope.StartTimer})/60].Int} minutes,]}</Text>
 						</Text>
-						<Commandbutton name='Quit Harvest' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Quit Harvest'> 
 							<X>27%</X> 
 							<Y>345</Y> 
 							<Width>15%</Width> 
@@ -847,7 +834,7 @@
 								Close this window and end the script
 							</AutoTooltip>
 						</Commandbutton>
-						<Commandbutton name='Start Harvest' Template='EQ2.Commandbutton'> 
+						<Commandbutton name='Start Harvest'> 
 							<X>50%</X> 
 							<Y>345</Y> 
 							<Width>25%</Width> 
@@ -875,7 +862,7 @@
 						</Commandbutton>
 					</Tab>
 					<Tab Name='Options'>
-						<Text Name='Zone Text' Template='EQ2.text'>
+						<Text Name='Zone Text'>
 							<X>5%</X>
 							<Y>10</Y>
 							<Width>100%</Width>
@@ -886,14 +873,14 @@
 							</Font>
 							<Text>Current Zone: ${Zone.Name}</Text>
 						</Text>
-						<Text Name='Start Location Text' Template='EQ2.text'>
+						<Text Name='Start Location Text'>
 							<X>5%</X>
 							<Y>25</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>* Starting Location:</Text>
 						</Text>
-						<combobox name='Start Location' Template='EQ2.Combobox'>
+						<combobox name='Start Location'>
 							<X>32%</X>
 							<Y>25</Y>
 							<Width>63%</Width>
@@ -908,14 +895,14 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Starting Point,${This.SelectedItem.Text}]:Save
 							</OnSelect>
 						</combobox>
-						<Text Name='Finish Location Text' Template='EQ2.text'>
+						<Text Name='Finish Location Text'>
 							<X>5%</X>
 							<Y>45</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>* Finish Location:</Text>
 						</Text>
-						<combobox name='Finish Location' Template='EQ2.Combobox'>
+						<combobox name='Finish Location'>
 							<X>32%</X>
 							<Y>45</Y>
 							<Width>63%</Width>
@@ -930,7 +917,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[${Zone.ShortName}]:Set[Finishing Point,${This.SelectedItem.Text}]:Save
 							</OnSelect>
 						</combobox>
-						<Text Name='Path Route Text' Template='EQ2.text'>
+						<Text Name='Path Route Text'>
 							<X>5%</X>
 							<Y>65</Y>
 							<Width>25%</Width>
@@ -938,7 +925,7 @@
 							<Alignment>Left</Alignment>
 							<Text>* Pathing Route:</Text>
 						</Text>
-						<checkbox Name='Path Route 1' Template='EQ2.checkbox'>
+						<checkbox Name='Path Route 1'>
 							<X>28%</X>
 							<Y>63</Y>
 							<Width>20%</Width>
@@ -958,7 +945,7 @@
 								Script[EQ2Harvest].VariableScope.PathRoute:Set[1]
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name='Path Route 2' Template='EQ2.checkbox'>
+						<checkbox Name='Path Route 2'>
 							<X>46%</X>
 							<Y>63</Y>
 							<Width>20%</Width>
@@ -978,7 +965,7 @@
 								Script[EQ2Harvest].VariableScope.PathRoute:Set[2]
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name='Path Route 3' Template='EQ2.checkbox'>
+						<checkbox Name='Path Route 3'>
 							<X>69%</X>
 							<Y>63</Y>
 							<Width>20%</Width>
@@ -998,7 +985,7 @@
 								Script[EQ2Harvest].VariableScope.PathRoute:Set[3]
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Roaming Text' Template='EQ2.text'>
+						<Text Name='Roaming Text'>
 							<X>5%</X>
 							<Y>85</Y>
 							<Width>30%</Width>
@@ -1010,7 +997,7 @@
 								bot to attempt to harvest it.
 							</AutoTooltip>
 						</Text>
-						<Textentry Name='Roaming Range' Template='EQ2.textentry'>
+						<Textentry Name='Roaming Range'>
 							<X>66%</X>
 							<Y>85</Y>
 							<Width>8%</Width>
@@ -1023,7 +1010,7 @@
 								Script[EQ2Harvest].Variable[MaxRoaming]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<Text Name='Roam Out Text' Template='EQ2.text'>
+						<Text Name='Roam Out Text'>
 							<X>5%</X>
 							<Y>105</Y>
 							<Width>80%</Width>
@@ -1036,7 +1023,7 @@
 								you're already there")
 							</AutoTooltip>
 						</Text>
-						<Textentry Name='External Roaming Value' Template='EQ2.textentry'>
+						<Textentry Name='External Roaming Value'>
 							<X>66%</X>
 							<Y>105</Y>
 							<Width>8%</Width>
@@ -1049,7 +1036,7 @@
 								Script[EQ2Harvest].Variable[HarvestClose]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<Text Name='Filter Y Text' Template='EQ2.text'>
+						<Text Name='Filter Y Text'>
 							<X>5%</X>
 							<Y>125</Y>
 							<Width>80%</Width>
@@ -1061,7 +1048,7 @@
 								axis from the bot will not be harvested
 							</AutoTooltip>
 						</Text>
-						<Textentry Name='Filter Y Value' Template='EQ2.textentry'>
+						<Textentry Name='Filter Y Value'>
 							<X>66%</X>
 							<Y>125</Y>
 							<Width>8%</Width>
@@ -1074,7 +1061,7 @@
 								Script[EQ2Harvest].Variable[FilterY]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<checkbox Name='Harvest Timer Check' Template='EQ2.checkbox'>
+						<checkbox Name='Harvest Timer Check'>
 							<X>5%</X>
 							<Y>150</Y>
 							<Width>20%</Width>
@@ -1102,7 +1089,7 @@
 								end after the time specified has elapsed
 							</AutoTooltip>
 						</checkbox>
-						<Textentry Name='Harvest Timer' Template='EQ2.textentry'>
+						<Textentry Name='Harvest Timer'>
 							<X>37%</X>
 							<Y>152</Y>
 							<Width>10%</Width>
@@ -1115,7 +1102,7 @@
 								Script[EQ2Harvest].Variable[HarvestTime]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<Text Name='Quit Text' Template='EQ2.text'>
+						<Text Name='Quit Text'>
 							<X>5%</X>
 							<Y>170</Y>
 							<Width>50%</Width>
@@ -1127,7 +1114,7 @@
 								or just end the script when the harvest timer elapses.
 							</AutoTooltip>
 						</Text>
-						<checkbox Name='End Script Option' Template='EQ2.checkbox'>
+						<checkbox Name='End Script Option'>
 							<X>51%</X>
 							<Y>168</Y>
 							<Width>20%</Width>
@@ -1146,7 +1133,7 @@
 								Script[EQ2Harvest].VariableScope.HowtoQuit:Set[0]
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name='Camp Desktop Option' Template='EQ2.checkbox'>
+						<checkbox Name='Camp Desktop Option'>
 							<X>71%</X>
 							<Y>168</Y>
 							<Width>20%</Width>
@@ -1165,7 +1152,7 @@
 								Script[EQ2Harvest].VariableScope.HowtoQuit:Set[1]
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Destroy Batch Text' Template='EQ2.text'>
+						<Text Name='Destroy Batch Text'>
 							<X>5%</X>
 							<Y>200</Y>
 							<Width>68%</Width>
@@ -1177,7 +1164,7 @@
 								several seconds with full bags)
 							</AutoTooltip>
 						</Text>
-						<Textentry Name='Destroy Batch' Template='EQ2.textentry'>
+						<Textentry Name='Destroy Batch'>
 							<X>75%</X>
 							<Y>199</Y>
 							<Width>10%</Width>
@@ -1190,7 +1177,7 @@
 								Script[EQ2Harvest].Variable[DestroyBatch]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<Checkbox name='Fade' Template='EQ2.checkbox'>
+						<Checkbox name='Fade'>
 							<X>5%</X>
 							<Y>230</Y>
 							<Width>20%</Width>
@@ -1209,7 +1196,7 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Fade Window?,${This.Checked}]:Save
 							</OnLeftClick>
 						</Checkbox>
-						<checkbox Name='Intruder Detect' Template='EQ2.checkbox'>
+						<checkbox Name='Intruder Detect'>
 							<X>5%</X>
 							<Y>260</Y>
 							<Width>20%</Width>
@@ -1233,14 +1220,14 @@
 								SettingXML[Scripts/EQ2Harvest/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to detect for BOT POLICE following YOU?,${Script[EQ2Harvest].VariableScope.IntruderDetect}]:Save
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Intruder Action Text' Template='EQ2.text'>
+						<Text Name='Intruder Action Text'>
 							<X>5%</X>
 							<Y>280</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
 							<Text>* If Intruder detected:</Text>
 						</Text>
-						<checkbox Name='Stand There' Template='EQ2.checkbox'>
+						<checkbox Name='Stand There'>
 							<X>35%</X>
 							<Y>278</Y>
 							<Width>20%</Width>
@@ -1259,7 +1246,7 @@
 								Script[EQ2Harvest].VariableScope.IntruderAction:Set[0]
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name='Keep Moving' Template='EQ2.checkbox'>
+						<checkbox Name='Keep Moving'>
 							<X>58%</X>
 							<Y>278</Y>
 							<Width>20%</Width>
@@ -1278,7 +1265,7 @@
 								Script[EQ2Harvest].VariableScope.IntruderAction:Set[1]
 							</OnLeftClick>
 						</checkbox>
-						<Text Name='Node Delay Text' Template='EQ2.text'>
+						<Text Name='Node Delay Text'>
 							<X>5%</X>
 							<Y>320</Y>
 							<Width>90%</Width>
@@ -1291,7 +1278,7 @@
 								less "bot-like")
 							</AutoTooltip>
 						</Text>
-						<Textentry Name='Node Delay' Template='EQ2.textentry'>
+						<Textentry Name='Node Delay'>
 							<X>66%</X>
 							<Y>320</Y>
 							<Width>10%</Width>
@@ -1304,7 +1291,7 @@
 								Script[EQ2Harvest].Variable[NodeDelay]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
-						<checkbox Name='Sprint Between Nodes' Template='EQ2.checkbox'>
+						<checkbox Name='Sprint Between Nodes'>
 							<X>5%</X>
 							<Y>340</Y>
 							<Width>20%</Width>

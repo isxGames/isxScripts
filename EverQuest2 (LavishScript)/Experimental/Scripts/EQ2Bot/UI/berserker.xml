@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='OffensiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='OffensiveMode'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30%</Width>
@@ -20,7 +20,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='DefensiveMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='DefensiveMode'>
 		<X>10</X>
 		<Y>30</Y>
 		<Width>30%</Width>
@@ -40,7 +40,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Defensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='MezMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='MezMode'>
 		<X>10</X>
 		<Y>50</Y>
 		<Width>30%</Width>
@@ -60,7 +60,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use MezMode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='AoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='AoEMode'>
 		<X>10</X>
 		<Y>70</Y>
 		<Width>30%</Width>
@@ -80,7 +80,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='PBAoEMode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='PBAoEMode'>
 		<X>10</X>
 		<Y>90</Y>
 		<Width>30%</Width>
@@ -100,7 +100,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Full Auto Mode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Full Auto Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>110</Y>
@@ -121,7 +121,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Full Auto Mode]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='Taunt Mode' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='Taunt Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>130</Y>
@@ -144,7 +144,7 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Taunt Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='cbDragoonsCyclone' Template='EQ2.Commandcheckbox'>
+	<Commandcheckbox Name='cbDragoonsCyclone'>
 		<Visible>1</Visible>
 		<X>10</X>
 		<Y>150</Y>

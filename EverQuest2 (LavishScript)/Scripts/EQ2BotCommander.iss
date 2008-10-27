@@ -23,8 +23,8 @@ function main()
 	Uplink RemoteUplink -Connect ${uplink2}
 	Uplink RemoteUplink -Connect ${uplink3}
 	
-	ui -reload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
-	ui -reload -skin eq2skin "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2BotCommander.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
+	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2BotCommander.xml"
 	
 	  do
 	  {

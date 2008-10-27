@@ -1,85 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
-  <template name='My.window.TitleBar'>
-    <Border>1</Border>
-    <x>3</x>
-    <BorderColor>FF000033</BorderColor>
-    <Width>r6</Width>
-    <Height>26</Height>
-    <Texture Template='EQ2.window.TitleBar.Texture' />
-    <Children>
-      <Text Name='Title' template='EQ2.window.TitleBar.title' />
-      <Button Name='Minimize' template='EQ2.window.TitleBar.Minimize'>
-      </Button>
-      <Button Name='Maximize' template='EQ2.window.TitleBar.Maximize'>
-      </Button>
-      <commandbutton name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-        <Command>Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:End</Command>
-      </commandbutton>
-    </Children>
-  </template>
-  <template name='My.window'>
-    <Border>1</Border>
-    <Resizable>1</Resizable>
-    <CloseButton />
-    <MinimizeButton />
-    <MaximizeButton />
-    <TitleBar template='My.window.TitleBar' />
-    <OffsetTitleBarHeight />
-    <Client template='EQ2.window.Client' />
-    <StorePosition>1</StorePosition>
-  </template>
-
   <!-- Main LGUI -->
-  <Window Name='CraftTest' template='My.window'>
+  <Window Name='CraftTest'>
     <X>100</X>
     <Y>100</Y>
     <Width>400</Width>
     <Height>90</Height>
     <StorePosition>1</StorePosition>
-    <Client Template='EQ2.Window.Client'>
-      <Y>20</Y>
-    </Client>
     <Title>Craft Path Tester</Title>
-    <TitleBar Template='EQ2.Window.TitleBar'>
-      <X>0</X>
-      <Y>0</Y>
-      <Width>100%</Width>
-      <Height>20</Height>
-      <Children>
-        <Text Name='Title' Template='EQ2.Window.TitleBar.Title' />
-        <Button Name='Minimize' Template='EQ2.Window.TitleBar.Minimize'>
-          <X>r35</X>
-          <Width>14</Width>
-          <Height>14</Height>
-        </Button>
-        <Button name='Custom Close Button' Template='EQ2.Window.TitleBar.Close'>
-          <X>r17</X>
-          <Width>14</Width>
-          <Height>14</Height>
-          <OnLeftClick>
-            Script[CraftPathTester]:End
-            timedcommand 0 "ui -unload scripts/EQ2Craft/UI/CraftPath.xml"
-          </OnLeftClick>
-        </Button>
-      </Children>
-    </TitleBar>
-    <Children>
-      <Text Name='Status' Template='EQ2.Text'>
+	<TitleBar template='window.Titlebar'>
+	  <Children>
+		<Text Name='Title' Template='window.Titlebar.Title' />
+		<Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		<Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		<Button name='Custom Close Button' Template='window.Titlebar.Close'>
+		  <OnLeftClick>
+			Script[CraftPathTester]:End
+			timedcommand 0 "ui -unload scripts/EQ2Craft/UI/CraftPath.xml"
+		  </OnLeftClick>
+		</Button>
+	  </Children>
+	</TitleBar>
+	<Children>
+	  <Text Name='Status'>
         <X>5%</X>
         <Y>3</Y>
         <Width>90%</Width>
         <Height>20</Height>
         <Text>${Script[CraftPathTester].Variable[CurrentStatus]}</Text>
       </Text>
-      <Textentry Name='MoveTo' Template='EQ2.Textentry'>
+      <Textentry Name='MoveTo'>
         <X>20</X>
         <Y>25</Y>
         <Width>r40</Width>
         <Height>20</Height>
         <Text></Text>
       </Textentry>
-      <Button Name='MoveToButton' Template='EQ2.Button'>
+      <Button Name='MoveToButton'>
         <X>105</X>
         <Y>50</Y>
         <Width>90</Width>
@@ -92,7 +49,7 @@
           }
         </OnLeftClick>
       </Button>
-      <Button Name='RunFull' Template='EQ2.Button'>
+      <Button Name='RunFull'>
         <X>20</X>
         <Y>50</Y>
         <Width>80</Width>
