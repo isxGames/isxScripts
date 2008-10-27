@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.52 - Fixed progressively long delays when processing recipes. Craft will now process the 
+        inventory only after processing the queue and failed recipes.
+
 v8.51 - Craft will now move you to within 3m of tradeskill desks in a guildhall
       - New option added: "disable guild notifications entirely (while crafting)"
       
