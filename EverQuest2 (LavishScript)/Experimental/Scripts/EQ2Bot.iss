@@ -983,6 +983,12 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		return
 	}
 
+	if ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
+	{
+		target ${TargetID}
+		wait 10 ${Target.ID}==${TargetID}
+	}
+
 	;echo "EQ2Bot-Debug:: Queueing '${spell}'"
 	CurrentAction:Set[Queueing '${spell}']
 
