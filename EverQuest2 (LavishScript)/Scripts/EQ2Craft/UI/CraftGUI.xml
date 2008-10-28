@@ -77,9 +77,6 @@
               <Name>Times New Roman</Name>
               <Size>19</Size>
             </Font>
-            <FrameTexture>
-              <Top>184</Top>
-            </FrameTexture>
             <TabHeight>27</TabHeight>
             <TabBorder>3</TabBorder>
             <Height>r50</Height>
