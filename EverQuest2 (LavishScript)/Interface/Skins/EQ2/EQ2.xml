@@ -357,7 +357,9 @@
 	<BorderColor>FFF9F099</BorderColor>
   </Template>
   <Template name='EQ2Skin.frame.Texture' Template='frame.Texture' />
-  <Template name='EQ2Skin.frame' Template='frame' />
+  <Template name='EQ2Skin.frame' Template='frame'>
+	<BorderColor>00000000</BorderColor>
+  </Template>
   <Template name='EQ2Skin.gauge.Texture' Filename='&filepath;/EQ2Gauge.png'>
 	<Left>0</Left>
 	<Right>200</Right>
@@ -489,10 +491,10 @@
   <Template name='EQ2Skin.tabcontrol.LeftButton' Template='tabcontrol.LeftButton' />
   <Template name='EQ2Skin.tabcontrol.RightButton' Template='tabcontrol.RightButton' />
   <Template name='EQ2Skin.tabcontrol.FrameTexture' Filename='&filepath;/windowelements.dds'>
-	<Left>62</Left>
-	<Right>155</Right>
-	<Top>183</Top>
-	<Bottom>277</Bottom>
+	<Left>16</Left>
+	<Right>463</Right>
+	<Top>955</Top>
+	<Bottom>1002</Bottom>
 	<Border>3</Border>
   </Template>
   <Template name='EQ2Skin.tabcontrol.TabTexture' Filename='&filepath;/windowelements.dds'>
@@ -516,6 +518,9 @@
 	<SelectedTextColor>FFF9F099</SelectedTextColor>
 	<TabHeight>20</TabHeight>
 	<FrameBorder>3</FrameBorder>
+	<FrameTexture Template='EQ2Skin.Tabcontrol.FrameTexture' />
+	<FrameBackgroundColor>00000000</FrameBackgroundColor>
+	<FrameBorderColor>00000000</FrameBorderColor>
   </Template>
   <Template name='EQ2Skin.text.Font' Template='EQ2Skin.Default Font' />
   <Template name='EQ2Skin.text' Template='text' />
@@ -543,9 +548,9 @@
   <Template name='EQ2Skin.window.Texture' Filename='&filepath;/windowelements.dds' ColorKey='FF000000'>
 	<Left>17</Left>
 	<Right>414</Right>
-	<Top>530</Top>
-	<Bottom>893</Bottom>
-	<Border>3</Border>
+	<Top>526</Top>
+	<Bottom>898</Bottom>
+	<Border>6</Border>
   </Template>
   <Template name='EQ2Skin.window.TitleBar.Texture' Filename='&filepath;/windowelements.dds' ColorKey='FF000000'>
 	<Left>17</Left>
@@ -629,6 +634,7 @@
   </Template>
   <Template name='EQ2Skin.window.Client' Template='window.Client'>
 	<Texture Template='EQ2Skin.window.Texture' />
+	<Border>3</Border>
   </Template>
   <Template name='EQ2Skin.window' Template='window'>
 	<Border>0</Border>
@@ -648,22 +654,42 @@
   <Template name='EQ2Skin.horizontalwindow.TitleBar' Template='horizontalwindow.TitleBar' />
   <Template name='EQ2Skin.horizontalwindow.Client' Template='horizontalwindow.Client' />
   <Template name='EQ2Skin.horizontalwindow' Template='horizontalwindow' />
-  <Template name='EQ2Skin.messagebox.OKTexture' Template='messagebox.OKTexture' />
-  <Template name='EQ2Skin.messagebox.OKTexturePressed' Template='messagebox.OKTexturePressed' />
-  <Template name='EQ2Skin.messagebox.YesTexture' Template='messagebox.YesTexture' />
-  <Template name='EQ2Skin.messagebox.YesTexturePressed' Template='messagebox.YesTexturePressed' />
-  <Template name='EQ2Skin.messagebox.NoTexture' Template='messagebox.NoTexture' />
-  <Template name='EQ2Skin.messagebox.NoTexturePressed' Template='messagebox.NoTexturePressed' />
-  <Template name='EQ2Skin.messagebox.CancelTexture' Template='messagebox.CancelTexture' />
-  <Template name='EQ2Skin.messagebox.CancelTexturePressed' Template='messagebox.CancelTexturePressed' />
+  <Template name='EQ2Skin.messagebox.OKTexture' Template='EQ2Skin.button.Texture' />
+  <Template name='EQ2Skin.messagebox.OKTexturePressed' Template='EQ2Skin.button.TexturePressed' />
+  <Template name='EQ2Skin.messagebox.YesTexture' Template='EQ2Skin.button.Texture' />
+  <Template name='EQ2Skin.messagebox.YesTexturePressed' Template='EQ2Skin.button.TexturePressed' />
+  <Template name='EQ2Skin.messagebox.NoTexture' Template='EQ2Skin.button.Texture' />
+  <Template name='EQ2Skin.messagebox.NoTexturePressed' Template='EQ2Skin.button.TexturePressed' />
+  <Template name='EQ2Skin.messagebox.CancelTexture' Template='EQ2Skin.button.Texture' />
+  <Template name='EQ2Skin.messagebox.CancelTexturePressed' Template='EQ2Skin.button.TexturePressed' />
   <Template name='EQ2Skin.messagebox.Font' Template='EQ2Skin.Default Font' />
-  <Template name='EQ2Skin.messagebox' Template='messagebox' />
-  <Template name='EQ2Skin.scriptinputbox.OKTexture' Template='scriptinputbox.OKTexture' />
-  <Template name='EQ2Skin.scriptinputbox.OKTexturePressed' Template='scriptinputbox.OKTexturePressed' />
-  <Template name='EQ2Skin.scriptinputbox.CancelTexture' Template='scriptinputbox.CancelTexture' />
-  <Template name='EQ2Skin.scriptinputbox.CancelTexturePressed' Template='scriptinputbox.CancelTexturePressed' />
+  <template name='EQ2Skin.messagebox' Template='EQ2Skin.window'>
+	<Font Template='EQ2Skin.messagebox.Font' />
+	<CloseButton>0</CloseButton>
+	<MinimizeButton>0</MinimizeButton>
+	<OKColor>FFFFFFFF</OKColor>
+	<CancelColor>FFFFFFFF</CancelColor>
+	<YesColor>FFFFFFFF</YesColor>
+	<NoColor>FFFFFFFF</NoColor>
+	<OKTexture Template='EQ2Skin.messagebox.OKTexture' />
+	<OKTexturePressed Template='EQ2Skin.messagebox.OKTexturePressed' />
+	<OKTextureHover Template='EQ2Skin.messagebox.OKTextureHover' />
+	<CancelTexture Template='EQ2Skin.messagebox.CancelTexture' />
+	<CancelTexturePressed Template='EQ2Skin.messagebox.CancelTexturePressed' />
+	<CancelTextureHover Template='EQ2Skin.messagebox.CancelTextureHover' />
+	<YesTexture Template='EQ2Skin.messagebox.YesTexture' />
+	<YesTexturePressed Template='EQ2Skin.messagebox.YesTexturePressed' />
+	<YesTextureHover Template='EQ2Skin.messagebox.YesTextureHover' />
+	<NoTexture Template='EQ2Skin.messagebox.NoTexture' />
+	<NoTexturePressed Template='EQ2Skin.messagebox.NoTexturePressed' />
+	<NoTextureHover Template='EQ2Skin.messagebox.NoTextureHover' />
+  </template>
+  <Template name='EQ2Skin.scriptinputbox.OKTexture' Template='EQ2Skin.messagebox.OKTexture' />
+  <Template name='EQ2Skin.scriptinputbox.OKTexturePressed' Template='EQ2Skin.messagebox.OKTexturePressed' />
+  <Template name='EQ2Skin.scriptinputbox.CancelTexture' Template='EQ2Skin.messagebox.CancelTexture' />
+  <Template name='EQ2Skin.scriptinputbox.CancelTexturePressed' Template='EQ2Skin.messagebox.CancelTexturePressed' />
   <Template name='EQ2Skin.scriptinputbox.Font' Template='EQ2Skin.Default Font' />
-  <Template name='EQ2Skin.scriptinputbox' Template='scriptinputbox' />
+  <Template name='EQ2Skin.scriptinputbox' Template='EQ2Skin.messagebox' />
   <Template name='EQ2Skin.textedit.VerticalScrollBar' Template='textedit.VerticalScrollBar' />
   <Template name='EQ2Skin.textedit.HorizontalScrollBar' Template='textedit.HorizontalScrollBar' />
   <Template name='EQ2Skin.contextmenu.Font' Template='EQ2Skin.Default Font' />
