@@ -3444,7 +3444,6 @@ function StartBot()
 
 	if ${CloseUI}
 	{
-		ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 		ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
 	}
 	else
@@ -5189,7 +5188,6 @@ function atexit()
 	CurrentTask:Set[FALSE]
 	call Class_Shutdown
 
-	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
 
 	DeleteVariable CurrentTask

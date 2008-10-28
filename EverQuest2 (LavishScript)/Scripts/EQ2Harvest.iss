@@ -1165,7 +1165,6 @@ atom atexit()
 	announce "Cleaning up Inventory before exiting..." 5 4
 	call CheckInventory 10 "CleanUpOnExit"    
     
-	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${UIPath}HarvestGUI.xml"
 
 	SettingXML[${ConfigFile}]:Unload

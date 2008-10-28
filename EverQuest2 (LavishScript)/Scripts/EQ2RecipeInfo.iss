@@ -127,6 +127,5 @@ function HandleMember(int i, string myMember)
 }
 atom atexit()
 {
-	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${UIPath}EQ2RecipeInfoGUI.xml"
 }

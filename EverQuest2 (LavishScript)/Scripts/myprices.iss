@@ -2447,7 +2447,6 @@ atom atexit()
 		return
 	}
 	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
-	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
 	LavishSettings[newcraft]:Clear
 	LavishSettings[myprices]:Clear
