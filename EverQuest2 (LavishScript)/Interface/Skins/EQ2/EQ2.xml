@@ -246,15 +246,23 @@
   </Template>
   <Template name='EQ2Skin.scrollbar.upbutton' Template='scrollbar.upbutton'>
 	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
   </Template>
   <Template name='EQ2Skin.scrollbar.downbutton' Template='scrollbar.downbutton'>
 	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
   </Template>
   <Template name='EQ2Skin.scrollbar.Slider' Template='scrollbar.Slider'>
 	<Border>1</Border>
+	<X>12</X>
+	<Width>r24</Width>
+	<Height>12</Height>
   </Template>
   <Template name='EQ2Skin.scrollbar' Template='scrollbar'>
 	<Border>1</Border>
+	<Height>12</Height>
   </Template>
   <Template name='EQ2Skin.verticalscrollbar.UpTexture' Template='scrollbar.UpTexture' />
   <Template name='EQ2Skin.verticalscrollbar.UpTexturePressed' Template='scrollbar.UpTexturePressed' />
@@ -264,6 +272,8 @@
   <Template name='EQ2Skin.verticalscrollbar.SliderHandleTexture' Template='scrollbar.SliderHandleTexture' />
   <Template name='EQ2Skin.verticalscrollbar.upbutton' Template='verticalscrollbar.upbutton'>
 	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
 	<Texture Template='scrollbar.UpTexture'>
 	  <Orientation>0</Orientation>
 	</Texture>
@@ -276,6 +286,9 @@
   </Template>
   <Template name='EQ2Skin.verticalscrollbar.downbutton' Template='verticalscrollbar.downbutton'>
 	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
+	<Y>r10</Y>
 	<Texture Template='scrollbar.DownTexture'>
 	  <Orientation>2</Orientation>
 	</Texture>
@@ -288,11 +301,17 @@
   </Template>
   <Template name='EQ2Skin.verticalscrollbar.Slider' Template='verticalscrollbar.Slider'>
 	<Border>1</Border>
+	<Y>12</Y>
+	<Height>r24</Height>
+	<Width>12</Width>
 	<Texture Template='scrollbar.SliderTexture'>
 	  <Orientation>3</Orientation>
 	</Texture>
   </Template>
-  <Template name='EQ2Skin.verticalscrollbar' Template='verticalscrollbar' />
+	<Template name='EQ2Skin.verticalscrollbar' Template='verticalscrollbar'>
+	  <X>r12</X>
+	  <Width>12</Width>
+	</Template>
   <Template name='EQ2Skin.checkbox.Texture' Filename='&filepath;/commonelements.dds'>
 	<Left>243</Left>
 	<Right>259</Right>
@@ -392,7 +411,7 @@
 	<Border>6</Border>
   </Template>
   <Template name='EQ2Skin.listbox.Font' Template='EQ2Skin.Default Font' />
-  <Template name='EQ2Skin.listbox.ScrollBar' Template='listbox.ScrollBar' />
+  <Template name='EQ2Skin.listbox.ScrollBar' Template='EQ2Skin.verticalscrollbar' />
   <Template name='EQ2Skin.listbox' Template='listbox' />
   <Template name='EQ2Skin.combobox.Texture' Filename='&filepath;/commonelements.dds'>
 	<Left>308</Left>
@@ -423,6 +442,10 @@
   <Template name='EQ2Skin.combobox' Template='combobox'>
 	<Texture Template='combobox.Texture' />
 	<Border>4</Border>
+	<ButtonWidth>16</ButtonWidth>
+	<ListBox Texture='EQ2Skin.combobox.ListBox'>
+
+	</ListBox>
   </Template>
   <Template name='EQ2Skin.map' Template='map' />
   <Template name='EQ2Skin.mapblip.font' Template='EQ2Skin.Default Font' />
@@ -452,6 +475,7 @@
 	<Top>194</Top>
 	<Bottom>214</Bottom>
 	<Border>3</Border>
+	<Orientation>2</Orientation>
   </Template>
   <Template name='EQ2Skin.tabcontrol.LeftPressedTexture' Filename='&filepath;/commonelements.dds'>
 	<Left>263</Left>
@@ -459,6 +483,7 @@
 	<Top>194</Top>
 	<Bottom>214</Bottom>
 	<Border>3</Border>
+	<Orientation>2</Orientation>
   </Template>
   <Template name='EQ2Skin.tabcontrol.LeftHoverTexture' Filename='&filepath;/commonelements.dds'>
 	<Left>263</Left>
@@ -466,6 +491,7 @@
 	<Top>194</Top>
 	<Bottom>214</Bottom>
 	<Border>3</Border>
+	<Orientation>2</Orientation>
   </Template>
   <Template name='EQ2Skin.tabcontrol.RightTexture' Filename='&filepath;/commonelements.dds'>
 	<Left>263</Left>
@@ -690,8 +716,8 @@
   <Template name='EQ2Skin.scriptinputbox.CancelTexturePressed' Template='EQ2Skin.messagebox.CancelTexturePressed' />
   <Template name='EQ2Skin.scriptinputbox.Font' Template='EQ2Skin.Default Font' />
   <Template name='EQ2Skin.scriptinputbox' Template='EQ2Skin.messagebox' />
-  <Template name='EQ2Skin.textedit.VerticalScrollBar' Template='textedit.VerticalScrollBar' />
-  <Template name='EQ2Skin.textedit.HorizontalScrollBar' Template='textedit.HorizontalScrollBar' />
+  <Template name='EQ2Skin.textedit.VerticalScrollBar' Template='EQ2Skin.verticalscrollbar' />
+  <Template name='EQ2Skin.textedit.HorizontalScrollBar' Template='EQ2Skin.scrollbar' />
   <Template name='EQ2Skin.contextmenu.Font' Template='EQ2Skin.Default Font' />
   <Template name='EQ2Skin.contextmenu' Template='contextmenu' />
   <Template name='EQ2Skin.textedit.Font' Template='EQ2Skin.Default Font' />
