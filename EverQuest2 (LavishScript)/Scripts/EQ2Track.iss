@@ -358,7 +358,6 @@ atom(script) RemoveActorByID(int ID)
 function atexit()
 {
 
-	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Track/UI/EQ2Track.xml"
 
 }

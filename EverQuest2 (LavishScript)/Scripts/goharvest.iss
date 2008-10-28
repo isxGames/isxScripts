@@ -549,7 +549,6 @@ atom atexit()
 	{
 		return
 	}
-	ui -unload "${LavishScript.HomeDirectory}/Interface/EQ2Skin.xml"
 	ui -unload "${ConfigPath}GoHarvestUI.xml"
 	
 	call SavePaths
