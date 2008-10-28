@@ -46,7 +46,6 @@ function atexit()
 	Uplink RemoteUplink -Disconnect ${uplink2}
 	Uplink RemoteUplink -Disconnect ${uplink3}
 	
-	ui -unload "${LavishScript.HomeDirectory}/Interface/eq2skin.xml"
 	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2BotCommander.xml"
 
 }
