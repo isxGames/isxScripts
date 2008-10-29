@@ -349,5 +349,13 @@
 		<Setting Name="Raw Succulent Petal">Raw Succulent Petal</Setting>
 		<Setting Name="Cockatrice Meat">Cockatrice Meat</Setting>
 		<Setting Name="Gold Cluster">Gold Cluster</Setting>
+		<Setting Name="Drachnid Meat">Drachnid Meat</Setting>
+		<Setting Name="Cream Cheese">cream cheese</Setting>
+		<Setting Name="Brute Meat">Brute Flesh</Setting>
+		<Setting Name="Devourer Meat">Drachnid Meat</Setting>
+		<Setting Name="Raw Mantrap Root">Mantrap Root</Setting>
+		<Setting Name="Reflective Smoldering Shard">Reflective Smoldering Shard</Setting>
+		<Setting Name="Lead Cluster">Lead Cluster</Setting>
+		<Setting Name="Hornet Meat">Hornet Meat</Setting>
 	</Set>
 </InnerSpaceSettings>
