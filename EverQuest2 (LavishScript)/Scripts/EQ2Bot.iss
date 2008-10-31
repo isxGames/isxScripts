@@ -190,6 +190,7 @@ variable bool UseCustomRoutines=FALSE
 variable int gRtnCtr=1
 variable string GainedXPString
 variable string LastQueuedAbility
+variable bool CheckingBuffsOnce
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -475,13 +476,22 @@ function main()
 				;;;;;;;;;
 				;;;;; Call the buff routine from the class file
 				;;;;;;;;;
-				call Buff_Routine ${gRtnCtr}
-				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+				if !${Me.ToActor.IsDead}
 				{
-					; end after this round
+					call Buff_Routine ${gRtnCtr}
+					if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+					{
+						; end after this round
+						gRtnCtr:Set[40]
+						if !${Me.InCombat}
+							CurrentAction:Set["Idle..."]
+						break
+					}
+				}
+				else
+				{
 					gRtnCtr:Set[40]
-					if !${Me.InCombat}
-						CurrentAction:Set["Idle..."]
+					CurrentAction:Set["Dead..."]
 					break
 				}
 
@@ -3556,9 +3566,11 @@ function CheckBuffsOnce()
 	;;; This should only be called while in combat.
 	;;;
 	variable int i
+	CheckingBuffsOnce:Set[TRUE]
 
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 	CurrentAction:Set["Checking Buffs Once..."]
+	;echo "EQ2Bot::Debug:: Checking Buffs Once..."
 	
 	if ${Me.CastingSpell}
 	{
@@ -3574,12 +3586,16 @@ function CheckBuffsOnce()
 	i:Set[1]
 	do
 	{
+		;echo "TEST: ${i}"
 		;;;;;;;;;
 		;;;;; Call the buff routine from the class file
 		;;;;;;;;;
 		call Buff_Routine ${i}
 		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+		{
+			i:Set[40]
 			break
+		}
 		call ProcessTriggers
 	}
 	while ${i:Inc}<=40
@@ -3591,7 +3607,10 @@ function CheckBuffsOnce()
 		{
 			call Custom__Buff_Routine ${i}
 			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+			{
+				i:Set[40]
 				break
+			}
 		}
 		while ${i:Inc} <= 40
 	}
@@ -3601,6 +3620,7 @@ function CheckBuffsOnce()
 	elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	CurrentAction:Set["Waiting..."]
+	CheckingBuffsOnce:Set[FALSE]
 	return
 }
 
