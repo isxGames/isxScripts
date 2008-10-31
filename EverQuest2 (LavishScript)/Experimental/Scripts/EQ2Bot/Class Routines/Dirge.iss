@@ -339,7 +339,7 @@ function Combat_Routine(int xAction)
 
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
-		call CastSpellRange 388 0 0 0 0 0 1 0 1 0
+		call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 1 0 1 0
 		wait 5
 		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
@@ -369,7 +369,7 @@ function Combat_Routine(int xAction)
 			{
 				if ${AnnounceMode}
 					eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
-				call CastSpellRange 388 0 0 0 0 0 0 0 1 0
+				call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 0 1 0
 			}
 			elseif ${Me.Ability[${SpellType[387]}].IsReady}
 				call CastSpellRange 387 0 1 0 ${KillTarget} 0 0 0 0 1 0
@@ -399,26 +399,26 @@ function Combat_Routine(int xAction)
 	{
 		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady}
 		{
-			call CastSpellRange 55 0 0 0 0 0 1
+			call CastSpellRange 55 0 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 56 0 0 0 0 0 1 
+			call CastSpellRange 56 0 0 ${KillTarget} 0 0 1 
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 57 0 0 0 0 0 1 
+			call CastSpellRange 57 0 0 ${KillTarget} 0 0 1 
 			DebuffCnt:Inc
 		}
 	}
 
 	if ${Me.Ability[${SpellType[62]}].IsReady}
 	{
-		call CastSpellRange 62 0 0 0 0 0 1 0 1 0
+		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1 0 1 0
 		wait 8
-		call CastSpellRange 151 0 0 0 0 0 1 0 1 0
+		call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 1 0 1 0
 	}
 
 	;Always use Cacophony of Blades if available.
@@ -426,7 +426,7 @@ function Combat_Routine(int xAction)
 	{
 		if ${AnnounceMode}
 			eq2execute /gsay Caco of Blades is up!
-		call CastSpellRange 155 0 0 0 0 0 1 0 1 0
+		call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1 0 1 0
 		wait 20
 	}
 
@@ -442,8 +442,8 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	;if ${DoHOs}
-	;	objHeroicOp:DoHO
+	if ${DoHOs}
+		objHeroicOp:DoHO
 
 	switch ${Action[${xAction}]}
 	{
@@ -615,9 +615,9 @@ function CheckHeals()
 	;Res Fallen Groupmembers only if in range
 	do
 	{
-		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
+		if ${Me.Group[${tempgrp}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 		{
-			call CastSpellRange 300 301 2 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 2 0
+			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 2 0
 			;short wait for accept
 			wait 10
 		}
@@ -630,7 +630,7 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<35
-				call CastSpellRange 300 301 2 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 2 0
+				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 2 0
 		}
 		while ${tempraid:Inc}<=24 && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	}
