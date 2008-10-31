@@ -135,7 +135,7 @@
 		<Setting Name="61,20">Gallantry</Setting>
 		<Setting Name="62,312">Supplicating Fate</Setting>
 		<Setting Name="63,52">Involuntary Restoration</Setting>
-		<Setting Name="64,55">Sign of Fraility</Setting>
+		<Setting Name="64,55">Sign of Frailty</Setting>
 		<Setting Name="65,70">Warring Axiom</Setting>
 		<Setting Name="65,230">Unswerving Hammer</Setting>
 		<Setting Name="66,50">Spurn</Setting>
@@ -146,7 +146,7 @@
 		<Setting Name="69,180">Complacency</Setting>
 		<Setting Name="69,316">Forgiving Salvation</Setting>
 		<Setting Name="70,10">Word of Reparation</Setting>
-		<Setting Name="70,220">Cure: Devoted Resolve</setting>
+		<Setting Name="70,220">Devoted Resolve</setting>
 		<Setting Name="70,15">Dire Intercession</setting>
 		<Setting Name="70,9">Focused Intercession</setting>
 		<Setting Name="70,10">Word of Reparation</setting>
