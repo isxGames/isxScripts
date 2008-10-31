@@ -891,6 +891,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 
 function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
+	echo CastSpellNow ${spell}
 	variable int Counter
 
 	if !${Me.InCombat}
@@ -917,7 +918,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	if !${Me.Ability[${spell}].IsReady}
 		return
 
-	if ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
+	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
 	{
 		target ${TargetID}
 		wait 10 ${Target.ID}==${TargetID}
@@ -936,7 +937,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 		else
 			Me.Ability[${spell}]:Use
 	}
-
+	wait 4
 	; reducing this too much will cause problems ... 4 seems to be a sweet spot
 	wait 4 ${Me.CastingSpell}
 
@@ -951,6 +952,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 
 function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
+	echo CastSpell ${spell}
 	variable int Counter
 	variable float TimeOut
 
@@ -983,7 +985,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		return
 	}
 
-	if ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
+	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
 	{
 		target ${TargetID}
 		wait 10 ${Target.ID}==${TargetID}
