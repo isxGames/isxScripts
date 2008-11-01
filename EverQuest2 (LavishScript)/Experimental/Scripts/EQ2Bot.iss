@@ -1012,7 +1012,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	if (!${Me.Ability[${spell}].IsQueued})
 		wait 4
 
-	if ${Me.Ability[${Spell}].CastingTime}<.8
+	if ${Me.Ability[${spell}].CastingTime}<.8
 		return
 
 
