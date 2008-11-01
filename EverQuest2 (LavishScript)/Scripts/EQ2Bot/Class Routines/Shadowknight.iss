@@ -47,6 +47,7 @@ function Class_Declaration()
 	declare UseFearlessMoraleAABuff bool script FALSE
 	declare UseDeathMarch bool script FALSE
 	declare UseMastersRage bool script TRUE
+	declare HasMythical bool script FALSE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -73,6 +74,9 @@ function Class_Declaration()
 
 	if ${Me.Level} < 58
 	    UIElement[UseDeathMarch@Class@EQ2Bot Tabs@EQ2 Bot]:ToggleVisible
+	    
+	if ${Me.Equipment[Sedition, Sword of the Bloodmoon](exists)}
+		HasMythical:Set[TRUE]
 }
 
 function Class_Shutdown()
@@ -1028,6 +1032,19 @@ function CheckGroupOrRaidAggro()
         	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
             	                if ${Actor[${MobTargetID}].Health} < 65
             	                {
+            	                	if (${HasMythical})
+            	                	{
+            	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
+            	                		{
+            	                			announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
+                	                    	echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
+            	                			CustomActor[${Counter}]:DoTarget
+            	                			wait 2
+            	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
+            	                			wait 5
+            	                			return 1
+            	                		}
+            	                	}
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
                 	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
@@ -1045,6 +1062,17 @@ function CheckGroupOrRaidAggro()
                 	                    return 1
                 	                }
             	                }
+        	                	if (${HasMythical})
+        	                	{
+        	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
+        	                		{
+        	                			CustomActor[${Counter}]:DoTarget
+        	                			wait 2
+        	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
+        	                			wait 5
+        	                			return 1
+        	                		}
+        	                	}            	                
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
@@ -1085,9 +1113,22 @@ function CheckGroupOrRaidAggro()
         	                call IsFighterOrScout ${MobTargetID}
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
-        	                    echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
+        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
             	                if ${Actor[${MobTargetID}].Health} < 65
             	                {
+            	                	if (${HasMythical})
+            	                	{
+            	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
+            	                		{
+            	                			announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
+                	                    	echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
+            	                			CustomActor[${Counter}]:DoTarget
+            	                			wait 2
+            	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
+            	                			wait 5
+            	                			return 1
+            	                		}
+            	                	}            	                	
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
                 	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
@@ -1105,6 +1146,20 @@ function CheckGroupOrRaidAggro()
                 	                    return 1
                 	                }
             	                }
+        	                	if (${HasMythical})
+        	                	{
+        	                		echo "TEST2"
+        	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
+        	                		{
+        	                			announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
+                	                    echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
+        	                			CustomActor[${Counter}]:DoTarget
+        	                			wait 2
+        	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
+        	                			wait 5
+        	                			return 1
+        	                		}
+        	                	}
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
