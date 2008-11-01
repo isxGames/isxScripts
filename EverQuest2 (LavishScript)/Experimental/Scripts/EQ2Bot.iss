@@ -891,7 +891,7 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 
 function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
-	echo CastSpellNow ${spell}
+	;echo CastSpellNow ${spell}
 	variable int Counter
 
 	if !${Me.InCombat}
@@ -952,19 +952,21 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 
 function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving)
 {
-	echo CastSpell ${spell}
+	;echo CastSpell ${spell}
 	variable int Counter
 	variable float TimeOut
 
 	;echo "EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"
 	;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
 	;echo "EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"
+	;echo "EQ2Bot-Debug:: ------------------------------------------------"
 
 	call ProcessTriggers
 
 	;return if trying to cast currently queued ability
 	if (${Me.InCombat} && ${spell.Equal[${LastQueuedAbility}]} && ${Me.CastingSpell})
 	{
+		;echo "EQ2Bot-Debug:: spell == LastQueuedAbility && Me.CastingSpell && Me.InCombat --> Returning"
 		LastQueuedAbility:Set[]
 		return
 	}
@@ -980,13 +982,14 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	;return if we are moving and this spell requires no movement
 	if ${Me.IsMoving} && !${castwhilemoving}
 	{
-		echo "EQ2Bot-Debug:: Me.IsMoving is ${Me.IsMoving} and this spell should not be cast while moving."
+		;echo "EQ2Bot-Debug:: Me.IsMoving is ${Me.IsMoving} and this spell should not be cast while moving."
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
 
 	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
-	{
+	{ 
+		;echo "EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[id,TargetID].Type.Equal[PC] --> Returning"
 		target ${TargetID}
 		wait 10 ${Target.ID}==${TargetID}
 	}
@@ -1012,8 +1015,16 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	if (!${Me.Ability[${spell}].IsQueued})
 		wait 4
 
-	if ${Me.Ability[${spell}].CastingTime}<.8
+	if (${Me.Ability[${spell}].CastingTime} < .6)
+	{
+		;echo "EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[${spell}].CastingTime}) --> Returning"
+		LastQueuedAbility:Set[${spell}]
 		return
+	}
+		
+	;echo "EQ2Bot-Debug:: Queuing: ${spell}"	
+	;echo "EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"
+	;echo "EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
 
 
 	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
@@ -1036,6 +1047,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 				if !${Return}
 				{
 					CurrentAction:Set[]
+					LastQueuedAbility:Set[${spell}]
 					return
 				}
 			}
@@ -1107,9 +1119,9 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	; This will go off on really fast casting spells....Used just for debugging purposes....
 	if !${Me.CastingSpell}
 	{
-		echo "EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"
-		echo "EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"
-		echo "EQ2Bot-Debug:: EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
+		;echo "EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"
+		;echo "EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"
+		;echo "EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
 		wait 1
 	}
 
