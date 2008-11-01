@@ -327,10 +327,17 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
-	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<10
+	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<15
+	{
+		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 0 0 1 0
+		eq2execute auto 1
+		call CheckPosition 1 1 ${KillTarget}
+	}
+
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15
 	{
 		eq2execute auto 1
-		call CheckPosition 1 1 
+		call CheckPosition 1 1 ${KillTarget}
 	}	
 
 	AutoFollowingMA:Set[FALSE]
@@ -466,22 +473,78 @@ function Combat_Routine(int xAction)
 			}
 			break
 		case Stealth_Attack
-		case ScreamOfDeath
-			if !${RangedAttackMode} && (${Me.Ability[${SpellRange[200]}].IsReady} || ${Me.Ability[${SpellRange[391]}].IsReady}) && !${MainTank}
+			if !${RangedAttackMode} && (${Me.Ability[${SpellType[200]}].IsReady} || ${Me.Ability[${SpellType[391]}].IsReady}) && !${MainTank}
 			{
-				;check if we have the bump AA and use it to stealth us
-				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
+				if ${Me.Ability[${SpellType[136]}].TimeUntilReady}<.1
 				{
-					eq2execute /useability Bump
-					wait 2
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}		
+				
+					;	check if we have the bump AA and use it to stealth us
+					if ${Me.Ability[${SpellType[391]}].IsReady}
+					{
+						call CastSpellRange 391 0 1 1 ${KillTarget} 0 0 1 0 1
+						call CheckPosition 1 1 ${KillTarget}
+						eq2execute /useability ${SpellType[136]}
+						wait 4
+					}
+					elseif ${Me.ToActor.IsInvis}
+					{
+						eq2execute /useability ${SpellType[136]}
+						wait 4
+					}
+					else
+					{
+						call CastSpellRange 200 0 1 1 ${KillTarget} 0 0 1 0 1
+						wait 5
+						eq2execute /useability ${SpellType[136]}
+						wait 4
+					}
+
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}						
 				}
-				;if we didnt bardAA "Bump" into stealth use normal stealth
-				if ${Me.ToActor.IsInvis}
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget} 0 0 1 
-				else
+			}
+			break
+		case ScreamOfDeath
+			if !${RangedAttackMode} && (${Me.Ability[${SpellType[200]}].IsReady} || ${Me.Ability[${SpellType[391]}].IsReady}) && !${MainTank}
+			{
+				if ${Me.Ability[${SpellType[135]}].TimeUntilReady}<.1
 				{
-					call CastSpellRange 200 0 1 1 0 0 0 1
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget} 0 0 1 
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}		
+				
+					;	check if we have the bump AA and use it to stealth us
+					if ${Me.Ability[${SpellType[391]}].IsReady}
+					{
+						call CastSpellRange 391 0 1 1 ${KillTarget} 0 0 1 0 1
+						call CheckPosition 1 1 ${KillTarget}
+						eq2execute /useability ${SpellType[135]}
+						wait 4
+					}
+					elseif ${Me.ToActor.IsInvis}
+					{
+						eq2execute /useability ${SpellType[135]}
+						wait 4
+					}
+					else
+					{
+						call CastSpellRange 200 0 1 1 ${KillTarget} 0 0 1 0 1
+						wait 5
+						eq2execute /useability ${SpellType[135]}
+						wait 4
+					}
+
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}						
 				}
 			}
 			break
