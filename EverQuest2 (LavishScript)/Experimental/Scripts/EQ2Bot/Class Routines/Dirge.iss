@@ -425,7 +425,8 @@ function Combat_Routine(int xAction)
 	if ${Me.Ability[${SpellType[155]}].IsReady}
 	{
 		if ${AnnounceMode}
-			eq2execute /gsay Caco of Blades is up!
+			eq2execute /raidsay Caco of Blades is up!
+			eq2execute /g Caco of Blades is up!
 		call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1 0 1 0
 		wait 20
 	}
@@ -617,7 +618,7 @@ function CheckHeals()
 	{
 		if ${Me.Group[${tempgrp}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 		{
-			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 2 0
+			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 1 0
 			;short wait for accept
 			wait 10
 		}
@@ -630,7 +631,7 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<35
-				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 2 0
+				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 1 0
 		}
 		while ${tempraid:Inc}<=24 && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	}

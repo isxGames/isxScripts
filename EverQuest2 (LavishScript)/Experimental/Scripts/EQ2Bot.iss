@@ -2282,7 +2282,7 @@ function Pull(string npcclass)
 		}
 	}
 
-	EQ2:CreateCustomActorArray[byDist,${ScanRange}]
+	EQ2:CreateCustomActorArray[npc,byDist,${ScanRange}]
 	do
 	{
 		ThisActorID:Set[${CustomActor[${tcount}].ID}]
@@ -3337,7 +3337,7 @@ function CheckMTAggro()
 
 	newtarget:Set[${Target.ID}]
 
-	EQ2:CreateCustomActorArray[byDist,15,npc]
+	EQ2:CreateCustomActorArray[npc,byDist,15]
 	do
 	{
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
@@ -3370,7 +3370,7 @@ function ScanAdds()
 	if !${NoAutoMovement} || !${MainTank}
 			return
 
-	EQ2:CreateCustomActorArray[byDist,20]
+	EQ2:CreateCustomActorArray[npc,byDist,20]
 	do
 	{
 		; Check if there is an add approaching us and move away from it accordingly
@@ -4189,7 +4189,7 @@ objectdef ActorCheck
 			return 0
 		}
 
-		EQ2:CreateCustomActorArray[byDist,15]
+		EQ2:CreateCustomActorArray[npc,byDist,15]
 		do
 		{
 			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
@@ -4213,7 +4213,7 @@ objectdef ActorCheck
 			return FALSE
 		}
 
-		EQ2:CreateCustomActorArray[byDist,${iEngageDistance}]
+		EQ2:CreateCustomActorArray[npc,byDist,${iEngageDistance}]
 		;echo "DEBUG: Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."
 		do
 		{
@@ -4511,7 +4511,7 @@ objectdef EQ2BotObj
 
 		PullCount:Set[${LNavRegionGroup[Pull].RegionsWithin[PullRegions,200,${Me.X},${Me.Z},${Me.Y}]}]
 
-		EQ2:CreateCustomActorArray[byDist]
+		EQ2:CreateCustomActorArray[npc,byDist]
 
 		while ${tempvar:Inc}<=${PullCount}
 		{
