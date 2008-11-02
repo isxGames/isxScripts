@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13 :  released 4th October 2008
+; Version 0.13b :  released 1st November 2008
 ;
 ; Declare Variables
 ;
@@ -37,6 +37,7 @@ variable string MyPriceS
 variable string MinBasePriceS
 variable string SellLoc
 variable string SellCon
+variable string CurrentChar
 
 variable int i
 variable int j
@@ -74,6 +75,7 @@ variable settingsetref General
 
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
 variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/XML/"
+variable filepath BackupPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/Backup/"
 variable filepath MyPricesUIPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/UI/"
 variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
 
@@ -83,7 +85,6 @@ variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
 function main(string goscan, string goscan2)
 {
 #define WAITEXTPERIOD 120
-	Declare tempstring string local
 	call AddLog "Verifying ISXEQ2 is loaded and ready" FF11CCFF
 	wait WAITEXTPERIOD ${ISXEQ2.IsReady}
 	if !${ISXEQ2.IsReady}
@@ -95,76 +96,18 @@ function main(string goscan, string goscan2)
 	variable int loopcount=0
 
 	ISXEQ2:ResetInternalVendingSystem
-
+	CurrentChar:Set[${Me.Name}]
 	MyPrices:loadsettings
+	; backup the current settings file on script load
+	LavishSettings[myprices]:Export[${BackupPath}${Me.Name}_MyPrices.XML]
+
 	MyPrices:LoadUI
 	MyPrices:InitTriggersAndEvents
-
-	tempstring:Set[${Actor[name,a market bulletin board]}]
-	if ${tempstring.Length} >4
-	{
-		Actor[name,a market bulletin board]:DoubleClick
-		wait 20
-		Actor[${Me}]:DoTarget
-		wait 20
-		call echolog " * Scanning using Room Board *"
-	}
-	else
-	{
-		tempstring:Set[${Actor[Guild,guild world market broker]}]
-		if ${tempstring.Length} >4
-		{
-			Actor[Guild,guild world market broker]:DoTarget
-			wait 5
-			Actor[Guild,guild world market broker]:DoubleClick
-			wait 20
-			call echolog " * Scanning using Guild Hall Broker *"
-			echo " * Scanning using Guild Hall Broker *"
-		}
-		else
-		{
-			tempstring:Set[${Actor[Guild,broker]}]
-			if ${tempstring.Length} >4
-			{
-				Actor[Guild,broker]:DoTarget
-				wait 5
-				Actor[Guild,broker]:DoubleClick
-				wait 20
-				call echolog " * Scanning using Broker *"
-				echo " * Scanning using Broker *"
-			}
-			else
-			{
-				Actor[nokillnpc]:DoTarget
-				wait 5
-				Target:DoubleClick
-				wait 20
-				call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
-			}
-
-		}
-	}
-
-
-	i:Set[1]
-	do
-	{
-		if !(${Me.Vending[${i}](exists)})
-		{
-			UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
-
-		}
-	}
-	while ${i:Inc} <= 6
 	
-	call AddLog "Running MyPrices Version 0.12i : released 17th October 2008" FF11FFCC
-	call LoadList
-
-	if ${ScanSellNonStop}
-	{
-		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
-	}
+	call AddLog "Running MyPrices Version 0.13b : released 1st November 2008" FF11FFCC
 	
+	call StartUp	
+
 	if ${goscan.Equal["PLACE"]} || ${goscan2.Equal["PLACE"]}
 	{
 		Pausemyprices:Set[FALSE]
@@ -184,6 +127,12 @@ function main(string goscan, string goscan2)
 		; wait for the GUI Start Scanning button to be pressed
 		do
 		{
+			if !${Me.Name.Equal[${CurrentChar}]}
+			{
+				
+				Echo Character changed , exiting script
+				Script:End
+			}
 			ExecuteQueued
 			Waitframe
 			; exit if the Stop and Quit Button is Pressed
@@ -1968,7 +1917,7 @@ function deletebuyinfo(int ItemID)
 
 	; save the new information
 	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
-
+	
 	UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Deleting ${itemname}]
 
 	; re-scan and display the new buy list
@@ -2430,6 +2379,76 @@ function ChooseNextItem(int numitems)
 	return ${rnumber}
 }
 
+function StartUp()
+{
+	Declare tempstring string local
+
+	tempstring:Set[${Actor[name,a market bulletin board]}]
+	if ${tempstring.Length} >4
+	{
+		Actor[name,a market bulletin board]:DoubleClick
+		wait 20
+		Actor[${Me}]:DoTarget
+		wait 20
+		call echolog " * Scanning using Room Board *"
+	}
+	else
+	{
+		tempstring:Set[${Actor[Guild,guild world market broker]}]
+		if ${tempstring.Length} >4
+		{
+			Actor[Guild,guild world market broker]:DoTarget
+			wait 5
+			Actor[Guild,guild world market broker]:DoubleClick
+			wait 20
+			call echolog " * Scanning using Guild Hall Broker *"
+			echo " * Scanning using Guild Hall Broker *"
+		}
+		else
+		{
+			tempstring:Set[${Actor[Guild,broker]}]
+			if ${tempstring.Length} >4
+			{
+				Actor[Guild,broker]:DoTarget
+				wait 5
+				Actor[Guild,broker]:DoubleClick
+				wait 20
+				call echolog " * Scanning using Broker *"
+				echo " * Scanning using Broker *"
+			}
+			else
+			{
+				Actor[nokillnpc]:DoTarget
+				wait 5
+				Target:DoubleClick
+				wait 20
+				call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
+			}
+
+		}
+	}
+	
+	
+	i:Set[1]
+	do
+	{
+		if !(${Me.Vending[${i}](exists)})
+		{
+			UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
+
+		}
+	}
+	while ${i:Inc} <= 6
+	
+	call LoadList
+
+	if ${ScanSellNonStop}
+	{
+		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
+	}
+}
+
+
 function echolog(string logline)
 {
 	if ${Logging}
@@ -2446,7 +2465,7 @@ atom atexit()
 	{
 		return
 	}
-	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
+	LavishSettings[myprices]:Export[${XMLPath}${CurrentChar}_MyPrices.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
 	LavishSettings[newcraft]:Clear
 	LavishSettings[myprices]:Clear
