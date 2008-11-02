@@ -1684,7 +1684,7 @@ function GetinFront()
 }
 
 
-function CheckPosition(int rangetype, int quadrant, uint TID=${Actor[${KillTarget}].ID},int AbilityID, bool castwhilemoving)
+function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int AbilityID, bool castwhilemoving)
 {
 	; rangetype (1=close, 2=max range, 3=bow shooting)
 	; quadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
@@ -3338,7 +3338,7 @@ function CheckMTAggro()
 
 	newtarget:Set[${Target.ID}]
 
-	EQ2:CreateCustomActorArray[npc,byDist,15]
+	EQ2:CreateCustomActorArray[byDist,15,npc]
 	do
 	{
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
