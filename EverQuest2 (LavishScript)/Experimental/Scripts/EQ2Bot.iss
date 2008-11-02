@@ -3319,7 +3319,7 @@ function InventoryFull(string Line)
 
 function CheckMTAggro()
 {
-	variable int tcount=2
+	variable int tcount=1
 	variable int tempvar
 	variable int newtarget
 
