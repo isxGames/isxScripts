@@ -1,6 +1,11 @@
 ;*****************************************************
-;Dirge.iss 20080104a
+;Dirge.iss 20081022a
 ;by Pygar & Kayre
+;
+;20081022a
+; Updated for experimental eq2bot spell casting changes
+; Should move to rez targets when needed now
+; Should be smarter about casting while moving
 ;
 ;20080104a
 ; Added support for IsDead member
@@ -37,9 +42,9 @@
 
 function Class_Declaration()
 {
-  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20080408
-  ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20080408
+	;;;;
 
 	declare OffenseMode bool script 0
 	declare DebuffMode bool script 0
@@ -62,7 +67,6 @@ function Class_Declaration()
 	declare BuffTarget string script
 
 	declare JoustMode bool script 0
-
 
 	call EQ2BotLib_Init
 
@@ -146,25 +150,25 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Banshee]
-	SpellRange[1,1]:Set[62]
+	;Action[1]:Set[Banshee]
+	;SpellRange[1,1]:Set[62]
 
-	Action[2]:Set[ScreamOfDeath]
-	SpellRange[2,1]:Set[391]
-	SpellRange[2,2]:Set[135]
+	Action[1]:Set[ScreamOfDeath]
+	SpellRange[1,1]:Set[391]
+	SpellRange[1,2]:Set[135]
 
-	Action[3]:Set[TacticsHO]
-	SpellRange[3,1]:Set[303]
-	SpellRange[3,2]:Set[51]
-	SpellRange[3,3]:Set[150]
+	Action[2]:Set[TacticsHO]
+	SpellRange[2,1]:Set[303]
+	SpellRange[2,2]:Set[51]
+	SpellRange[2,3]:Set[150]
 
-	Action[4]:Set[Luda]
-	SpellRange[4,1]:Set[60]
+	Action[3]:Set[Luda]
+	SpellRange[3,1]:Set[60]
 
-	Action[5]:Set[Flank_Attack]
-	SpellRange[5,1]:Set[110]
+	Action[4]:Set[Flank_Attack]
+	SpellRange[4,1]:Set[110]
 
-	Action[6]:Set[Mastery]
+	Action[5]:Set[Mastery]
 
 	Action[6]:Set[Grievance]
 	SpellRange[6,1]:Set[151]
@@ -175,35 +179,35 @@ function Combat_Init()
 	Action[8]:Set[AARhythm_Blade]
 	SpellRange[8,1]:Set[397]
 
-	Action[9]:Set[Lanet]
-	SpellRange[9,1]:Set[52]
+	;Action[9]:Set[Lanet]
+	;SpellRange[9,1]:Set[52]
 
-	Action[10]:Set[AAHarmonizingShot]
-	SpellRange[10,1]:Set[386]
+	Action[9]:Set[AAHarmonizingShot]
+	SpellRange[9,1]:Set[386]
 
-	Action[11]:Set[RhymingHO]
-	SpellRange[11,1]:Set[303]
-	SpellRange[11,2]:Set[50]
-	SpellRange[11,3]:Set[110]
+	Action[10]:Set[RhymingHO]
+	SpellRange[10,1]:Set[303]
+	SpellRange[10,2]:Set[50]
+	SpellRange[10,3]:Set[110]
 
-	Action[12]:Set[AATurnstrike]
-	SpellRange[12,1]:Set[387]
+	Action[11]:Set[AATurnstrike]
+	SpellRange[11,1]:Set[387]
 
-	Action[13]:Set[Rebuff]
-	SpellRange[13,1]:Set[54]
+	;Action[13]:Set[Rebuff]
+	;SpellRange[13,1]:Set[54]
 
-	Action[14]:Set[AoE2]
-	SpellRange[14,1]:Set[63]
+	Action[12]:Set[AoE2]
+	SpellRange[12,1]:Set[63]
 
-	Action[15]:Set[Stealth_Attack]
-	SpellRange[15,1]:Set[391]
-	SpellRange[15,2]:Set[136]
+	Action[13]:Set[Stealth_Attack]
+	SpellRange[13,1]:Set[391]
+	SpellRange[13,2]:Set[136]
 
-	Action[16]:Set[Jael]
-	SpellRange[16,1]:Set[250]
+	Action[14]:Set[Jael]
+	SpellRange[14,1]:Set[250]
 
-	Action[17]:Set[Stun]
-	SpellRange[17,1]:Set[190]
+	;Action[17]:Set[Stun]
+	;SpellRange[17,1]:Set[190]
 }
 
 
@@ -220,7 +224,7 @@ function Buff_Routine(int xAction)
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-	    ExecuteAtom AutoFollowTank
+			ExecuteAtom AutoFollowTank
 		wait 5
 	}
 
@@ -245,43 +249,43 @@ function Buff_Routine(int xAction)
 			break
 		case Buff_Power
 			if ${BuffPower}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Noxious
 			if ${BuffNoxious}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_DPS
 			if ${BuffDPS}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_StoneSkin
 			if ${BuffStoneSkin}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Tombs
 			if ${BuffTombs}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Agility
 			if ${BuffAgility}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Melee
 			if ${BuffMelee}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
@@ -293,14 +297,14 @@ function Buff_Routine(int xAction)
 			if ${BuffHate}
 			{
 				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 0 0 0 2 0
 			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Self
 			if ${BuffSelf}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
@@ -310,7 +314,7 @@ function Buff_Routine(int xAction)
 		case Buff_AADontKillTheMessenger
 		case Buff_AAFortissimo
 		case Selos
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			break
 		Default
 			return Buff Complete
@@ -323,13 +327,26 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
+	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<15
+	{
+		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 0 0 1 0
+		eq2execute auto 1
+		call CheckPosition 1 1 ${KillTarget}
+	}
+
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15
+	{
+		eq2execute auto 1
+		call CheckPosition 1 1 ${KillTarget}
+	}	
+
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 		EQ2Execute /stopfollow
 
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
-		call CastSpellRange 388
+		call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 1 0 1 0
 		wait 5
 		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
@@ -347,7 +364,7 @@ function Combat_Routine(int xAction)
 			EQ2Execute /toggleautoattack
 
 			;if we're too far from killtarget, move in
-			if ${Actor[${KillTarget}].Distance}>2
+			if ${Actor[${KillTarget}].Distance}>10
 				call CheckPosition 1 1
 		}
 		elseif ${JoustStatus}==1 && ${RangedAttackMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
@@ -359,10 +376,10 @@ function Combat_Routine(int xAction)
 			{
 				if ${AnnounceMode}
 					eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
-				call CastSpellRange 388
+				call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 0 1 0
 			}
 			elseif ${Me.Ability[${SpellType[387]}].IsReady}
-				call CastSpellRange 387 0 1 0 ${KillTarget}
+				call CastSpellRange 387 0 1 0 ${KillTarget} 0 0 0 0 1 0
 			else
 			{
 				RangedAttackMode:Set[1]
@@ -380,36 +397,45 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	call ActionChecks
+	;call ActionChecks
 
-	if ${MagNoteMode}
-		call DoMagneticNote
+	;if ${MagNoteMode}
+	;	call DoMagneticNote
 
 	if ${DebuffMode}
 	{
 		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady}
 		{
-			call CastSpellRange 55
+			call CastSpellRange 55 0 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 56
+			call CastSpellRange 56 0 0 ${KillTarget} 0 0 1 
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 57
+			call CastSpellRange 57 0 0 ${KillTarget} 0 0 1 
 			DebuffCnt:Inc
 		}
+	}
+
+	if ${Me.Ability[${SpellType[62]}].IsReady}
+	{
+		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1 0 1 0
+		wait 8
+		call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 1 0 1 0
 	}
 
 	;Always use Cacophony of Blades if available.
 	if ${Me.Ability[${SpellType[155]}].IsReady}
 	{
-		if ${AnnounceMode} && ${Me.Maintained[${SpellType[155]}](exists)}
-			eq2execute /gsay Caco of Blades is up!
-		call CastSpellRange 155
+		if ${AnnounceMode}
+			eq2execute /raidsay Caco of Blades is up!
+			eq2execute /g Caco of Blades is up!
+		call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1 0 1 0
+		wait 20
 	}
 
 	if ${RangedAttackMode}
@@ -433,44 +459,101 @@ function Combat_Routine(int xAction)
 		case RhymingHO
 			if !${RangedAttackMode}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
+				eq2execute /useability "Lucky Break"
+				call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget} 0 0 1 0 2 0
 				wait 30 ${EQ2.HOWindowActive}
 				if !${EQ2.HOName.Equal[Bravo's Dance]}
 				{
 					if ${Me.Ability[${SpellType[180]}].IsReady}
-						call CastSpellRange 180 0 1 0 ${KillTarget}
+						call CastSpellRange 180 0 1 0 ${KillTarget} 0 0 1 0 2 0
 					elseif ${Me.Ability[${SpellType[55]}].IsReady}
-						call CastSpellRange 55 0 1 0 ${KillTarget}
+						call CastSpellRange 55 0 1 0 ${KillTarget} 0 0 1 0 2 0
 				}
-				call CastSpellRange ${SpellRange[${xAction},3]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},3]} 0 1 0 ${KillTarget} 0 0 1 0 2 0
 			}
 			break
 		case Stealth_Attack
-		case ScreamOfDeath
-			if !${RangedAttackMode} && ${Me.Ability[Shroud].IsReady} && ${Me.Ability[Scream of Death].IsReady} && !${MainTank}
+			if !${RangedAttackMode} && (${Me.Ability[${SpellType[200]}].IsReady} || ${Me.Ability[${SpellType[391]}].IsReady}) && !${MainTank}
 			{
-				;check if we have the bump AA and use it to stealth us
-				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
-
-				;if we didnt bardAA "Bump" into stealth use normal stealth
-				if ${Me.ToActor.IsInvis}
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
-				else
+				if ${Me.Ability[${SpellType[136]}].TimeUntilReady}<.1
 				{
-					call CastSpellRange 200
-					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 1 ${KillTarget}
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}		
+				
+					;	check if we have the bump AA and use it to stealth us
+					if ${Me.Ability[${SpellType[391]}].IsReady}
+					{
+						call CastSpellRange 391 0 1 1 ${KillTarget} 0 0 1 0 1
+						call CheckPosition 1 1 ${KillTarget}
+						eq2execute /useability ${SpellType[136]}
+						wait 4
+					}
+					elseif ${Me.ToActor.IsInvis}
+					{
+						eq2execute /useability ${SpellType[136]}
+						wait 4
+					}
+					else
+					{
+						call CastSpellRange 200 0 1 1 ${KillTarget} 0 0 1 0 1
+						wait 5
+						eq2execute /useability ${SpellType[136]}
+						wait 4
+					}
+
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}						
+				}
+			}
+			break
+		case ScreamOfDeath
+			if !${RangedAttackMode} && (${Me.Ability[${SpellType[200]}].IsReady} || ${Me.Ability[${SpellType[391]}].IsReady}) && !${MainTank}
+			{
+				if ${Me.Ability[${SpellType[135]}].TimeUntilReady}<.1
+				{
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}		
+				
+					;	check if we have the bump AA and use it to stealth us
+					if ${Me.Ability[${SpellType[391]}].IsReady}
+					{
+						call CastSpellRange 391 0 1 1 ${KillTarget} 0 0 1 0 1
+						call CheckPosition 1 1 ${KillTarget}
+						eq2execute /useability ${SpellType[135]}
+						wait 4
+					}
+					elseif ${Me.ToActor.IsInvis}
+					{
+						eq2execute /useability ${SpellType[135]}
+						wait 4
+					}
+					else
+					{
+						call CastSpellRange 200 0 1 1 ${KillTarget} 0 0 1 0 1
+						wait 5
+						eq2execute /useability ${SpellType[135]}
+						wait 4
+					}
+
+					while ${Me.CastingSpell}
+					{
+						wait 2
+					}						
 				}
 			}
 			break
 		case AoE2
-			if ${AoEMode} && ${Mob.Count}>=2
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]} 0 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 			break
 		case AATurnstrike
-			if !${JoustMode} && !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+			if !${JoustMode} && !${RangedAttackMode}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			break
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID} && !${RangedAttackMode}
@@ -486,32 +569,32 @@ function Combat_Routine(int xAction)
 		case AAHarmonizingShot
 		case Jael
 			if ${BowAttacksMode}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget} 0 0 1 0 2 0
 			break
 		case AARhythm_Blade
 		case Grievance
 		case WailOfTheDead
 		case Tarven
 			if !${RangedAttackMode}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			break
 
 		case Banshee
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 			call StartHO
 			break
 		case Flank_Attack
 			if !${RangedAttackMode} && !${MainTank}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
 			break
 		case Rebuff
 		case Luda
 		case Lanet
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 			break
 		case Stun
 			if !${RangedAttackMode} && !${Target.IsEpic}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			break
 		default
 			return CombatComplete
@@ -543,12 +626,12 @@ function Have_Aggro(int agroid)
 	if ${agroid}==${KillTarget}
 	{
 		;evade
-		call CastSpellRange 180 0 0 0 ${agroid}
+		call CastSpellRange 180 0 0 0 ${agroid} 0 0 1
 	}
 	else
 	{
 		;fear it off since its an add
-		call CastSpellRange 352 0 0 0 ${agroid}
+		call CastSpellRange 352 0 0 0 ${agroid} 0 0 1
 	}
 
 }
@@ -588,9 +671,7 @@ function CheckHeals()
 		if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && !${haveaggro} && !${MainTank} && ${Me.Group[${temphl}].ToActor.Distance}<=20 && ${Me.Ability[${SpellType[1]}].IsReady}
 		{
 			EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
-			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID}
-			Target ${KillTarget}
-
+			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1 0 2 0
 		}
 	}
 	while ${temphl:Inc}<${grpcnt}
@@ -598,8 +679,12 @@ function CheckHeals()
 	;Res Fallen Groupmembers only if in range
 	do
 	{
-		if ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Ability[${SpellType[300]}].IsReady}
-			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1
+		if ${Me.Group[${tempgrp}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
+		{
+			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 1 0
+			;short wait for accept
+			wait 10
+		}
 	}
 	while ${tempgrp:Inc}<${grpcnt}
 
@@ -609,7 +694,7 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<35
-				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 1
+				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 1 0
 		}
 		while ${tempraid:Inc}<=24 && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	}
@@ -648,7 +733,7 @@ function DoMagneticNote()
 
 			if ${Mob.Target[${CustomActor[${tcount}].ID}]}
 			{
-				call CastSpellRange 383 0 0 0 ${Actor[${MainTankPC}].ID}
+				call CastSpellRange 383 0 0 0 ${Actor[${MainTankPC}].ID} 0 0 0 0 1 0
 				return
 			}
 		}
@@ -659,5 +744,5 @@ function DoMagneticNote()
 function StartHO()
 {
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
-		call CastSpellRange 303
+		eq2execute /useability "Lucky Break"
 }

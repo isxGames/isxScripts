@@ -40,9 +40,29 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Defensive Spells]}</Data>
 	</Commandcheckbox>
-	<Commandcheckbox Name='AoEMode'>
+	<Commandcheckbox Name='MezMode'>
 		<X>10</X>
 		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Enable Mez Friendly Mode</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[MezMode]:Set[TRUE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use MezMode",TRUE]:Save
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[MezMode]:Set[FALSE]
+				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use MezMode",FALSE]:Save
+			}
+		</OnLeftClick>
+		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use MezMode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='AoEMode'>
+		<X>10</X>
+		<Y>70</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Enable AoE Mode</Text>
@@ -62,7 +82,7 @@
 	</Commandcheckbox>
 	<Commandcheckbox Name='PBAoEMode'>
 		<X>10</X>
-		<Y>70</Y>
+		<Y>90</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Enable PBAoE Mode</Text>
@@ -83,7 +103,7 @@
 	<Commandcheckbox Name='Full Auto Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>90</Y>
+		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Full Auto Mode:</Text>
@@ -104,7 +124,7 @@
 	<Commandcheckbox Name='Taunt Mode'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>110</Y>
+		<Y>130</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Taunt Mode:</Text>
@@ -127,7 +147,7 @@
 	<Commandcheckbox Name='cbDragoonsCyclone'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>130</Y>
+		<Y>150</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Buff Dragoon's Cyclone:</Text>

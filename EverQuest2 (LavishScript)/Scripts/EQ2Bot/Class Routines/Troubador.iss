@@ -231,11 +231,8 @@ function PostCombat_Init()
 
 function Buff_Routine(int xAction)
 {
-
 	call ActionChecks
-
 	call CheckHeals
-
 	ExecuteAtom CheckStuck
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
@@ -409,18 +406,29 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+
 	declare tempvar int local
 	declare DebuffCnt int  0
+	declare range int 0
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
-	{
 		EQ2Execute /stopfollow
-	}
+
+	if ${RangedAttackMode}
+		range:Set[2]
+	elseif ${BowAttacksMode}
+		range:Set[3]
+
+		
+	if ${Actor[ID,${KillTarget}].Distance}>5 && !${Me.RangedAutoAttackOn}
+		EQ2Execute /auto 2
+	elseif ${Actor[ID,${KillTarget}].Distance}<5 && !${Me.AutoAttackOn}
+		EQ2Execute /auto 1
 
 	if ${JoustMode}
 	{
-		if ${JoustStatus}==0 && ${RangedAttackMode}==1
+		if ${JoustStatus}==0 && ${RangedAttackMode}
 		{
 			;We've changed to in from an out status.
 			RangedAttackMode:Set[0]
@@ -459,7 +467,7 @@ function Combat_Routine(int xAction)
 				;if we're not at our healer, lets move to him
 				call FindHealer
 
-				echo Healer - ${return}
+				;echo Healer - ${return}
 				if ${Actor[${Return}].Distance}>2
 				{
 					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
@@ -482,24 +490,17 @@ function Combat_Routine(int xAction)
 	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${DoHOs}
-	{
 		call CastSpellRange 303
-	}
 
 	if ${MezzMode}
-	{
 		call Mezmerise_Targets
-	}
 
 	if ${Charm}
-	{
 		call DoCharm
-	}
 
 	call PetAttack
 
-	if !${Me.IsMoving}
-		call DoJesterCap
+	call DoJesterCap
 
 	call CheckHeals
 
@@ -513,7 +514,7 @@ function Combat_Routine(int xAction)
 	{
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 57 0 2 0 ${KillTarget} 0 0 1
+			call CastSpellRange 57 0 ${range} 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && !${RangedAttackMode} && ${DebuffCnt}<1
@@ -527,17 +528,17 @@ function Combat_Routine(int xAction)
 	{
 		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 55 0 2 0 ${KillTarget} 0 0 1
+			call CastSpellRange 55 0 ${range} 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 56 0 2 0 ${KillTarget} 0 0 1
+			call CastSpellRange 56 0 ${range} 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[58]}](exists)} && ${Me.Ability[${SpellType[58]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 56 0 2 0 ${KillTarget} 0 0 0
+			call CastSpellRange 56 0 ${range} 0 ${KillTarget} 0 0 0
 			DebuffCnt:Inc
 		}
 	}
@@ -547,7 +548,7 @@ function Combat_Routine(int xAction)
 	; PoTM
 	if !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 	{
-		call CastSpellRange 155 0 2 0 ${KillTarget} 0 0 0
+		call CastSpellRange 155 0 ${range} 0 ${KillTarget} 0 0 0
 		return
 	}
 
@@ -556,7 +557,7 @@ function Combat_Routine(int xAction)
 		; AoE+Dot
 		if !${Me.Maintained[${SpellType[91]}](exists)} && ${Me.Ability[${SpellType[91]}].IsReady}
 		{
-			call CastSpellRange 91 0 2 0 ${KillTarget} 0 0 1
+			call CastSpellRange 91 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 
@@ -584,52 +585,59 @@ function Combat_Routine(int xAction)
 		; Long casting AoE - Good for setting off proc gear
 		if ${Me.Ability[${SpellType[92]}].IsReady}
 		{
-			call CastSpellRange 92 0 2 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; Long Cast Nuke - Good for setting off proc gear - Mainstay of your damage
-		if ${Me.Ability[${SpellType[61]}].IsReady} && ${Actor[id, ${KillTarget}].Distance}<=${Me.Ability[${SpellType[61]}].Range}
-		{
-			call CastSpellRange 61 0 2 0 ${KillTarget} 0 0 1
+			call CastSpellRange 92 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 
 		; Stealth Attack Combo
 		; Check if we have the bump AA and use it to stealth us, if we do not, skip it entirely
-		if ${Me.Ability[${SpellType[391]}](exists)} && ${Me.Ability[${SpellType[391]}].IsReady} && !${RangedAttackMode}
+		echo stealth check
+		if ${Me.Ability[${SpellType[391]}](exists)} && ${Me.Ability[${SpellType[391]}].IsReady} && ${Me.Ability[${SpellType[130]}].TimeUntilReady}<.1 && !${RangedAttackMode}
 		{
+			echo use stealth
+			while ${Me.CastingSpell}
+			{
+				wait 2
+			}			
 			call CastSpellRange 391 0 1 1 ${KillTarget}
-			wait 3
 			call CastSpellRange 130 0 1 1 ${KillTarget}
 			return
 		}
 
+
+		; Long Cast Nuke - Good for setting off proc gear - Mainstay of your damage
+		if ${Me.Ability[${SpellType[61]}].IsReady} && ${Actor[id, ${KillTarget}].Distance}<=${Me.Ability[${SpellType[61]}].Range}
+		{
+			call CastSpellRange 61 0 ${range} 0 ${KillTarget} 0 0 1
+			return
+		}
+
+
 		; Fast Cast Nuke
 		if ${Me.Ability[${SpellType[60]}].IsReady}
 		{
-			call CastSpellRange 60 0 2 0 ${KillTarget} 0 0 1
+			call CastSpellRange 60 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 
 		; De-agro if not MainTank
 		if ${Me.Ability[${SpellType[180]}].IsReady} && !${MainTank}
 		{
-			call CastSpellRange 180 0 2 0 ${KillTarget} 0 0 0
+			call CastSpellRange 180 0 ${range} 0 ${KillTarget} 0 0 0
 			return
 		}
 
 		; Low Damage Power Tap
 		if ${Me.Ability[${SpellType[62]}].IsReady}
 		{
-			call CastSpellRange 62 0 2 0 ${KillTarget} 0 0 0
+			call CastSpellRange 62 0 ${range} 0 ${KillTarget} 0 0 0
 			return
 		}
 
 		; Moderate Melee Attack
 		if ${Me.Ability[${SpellType[151]}].IsReady} && !${RangedAttackMode}
 		{
-			call CastSpellRange 151 0 2 0 ${KillTarget} 0 0 1
+			call CastSpellRange 151 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 	}
@@ -657,16 +665,15 @@ function Combat_Routine(int xAction)
 
 		case AAHarmonizing_Shot
 		case Bow_Attack
+			
 			if ${BowAttacksMode}
 			{
-				if ${Target.Distance}>35
+				call CheckPosition 0 3 ${KillTarget}
+				while ${Me.CastingSpell}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
+					wait 2
 				}
-				else
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget} 0 0 1 0 2 0
 			}
 			break
 
@@ -777,7 +784,7 @@ function Mezmerise_Targets()
 	grpcnt:Set[${Me.GroupCount}]
 
 
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:CreateCustomActorArray[npc,byDist,15]
 
 	do
 	{
@@ -841,7 +848,7 @@ function DoCharm()
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:CreateCustomActorArray[npc,byDist,15]
 
 	do
 	{
