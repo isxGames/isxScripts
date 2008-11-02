@@ -178,12 +178,14 @@ objectdef EQ2Nav
 
 	method Output(string Text)
 	{
-	    echo "EQ2Nav:: ${Text}"
+		if ${Verbose} || !${Verbose(exists)}
+			echo "EQ2Nav:: ${Text}"
 	}
 	
 	method Debug(string Text)
 	{
-	    echo "EQ2Nav-Debug:: ${Text}"
+		if ${Debug} || !${Debug(exists)}
+			echo "EQ2Nav-Debug:: ${Text}"
 	}	
 
 	method ClearPath()
