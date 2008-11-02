@@ -257,9 +257,9 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 
-		case No_Conc_Group_Buff
 		case AA_Unabate
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 
 		case Pet_Buff
