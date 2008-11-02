@@ -391,7 +391,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 }
