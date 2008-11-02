@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.2a Updated: 04/25/08 by Pygar
+; EQ2Bot.iss Version 2.7.3a Updated: 11/03/08 by Pygar
 ;
 ; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
@@ -2283,7 +2283,7 @@ function Pull(string npcclass)
 		}
 	}
 
-	EQ2:CreateCustomActorArray[byDist,${ScanRange}]
+	EQ2:CreateCustomActorArray[byDist,${ScanRange},npc]
 	do
 	{
 		ThisActorID:Set[${CustomActor[${tcount}].ID}]
@@ -3371,7 +3371,7 @@ function ScanAdds()
 	if !${NoAutoMovement} || !${MainTank}
 			return
 
-	EQ2:CreateCustomActorArray[byDist,20]
+	EQ2:CreateCustomActorArray[byDist,20,npc]
 	do
 	{
 		; Check if there is an add approaching us and move away from it accordingly
@@ -4190,7 +4190,7 @@ objectdef ActorCheck
 			return 0
 		}
 
-		EQ2:CreateCustomActorArray[byDist,15]
+		EQ2:CreateCustomActorArray[byDist,15,npc]
 		do
 		{
 			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
@@ -4214,7 +4214,7 @@ objectdef ActorCheck
 			return FALSE
 		}
 
-		EQ2:CreateCustomActorArray[byDist,${iEngageDistance}]
+		EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
 		;echo "DEBUG: Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."
 		do
 		{
