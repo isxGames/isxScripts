@@ -28,6 +28,7 @@ function Class_Declaration()
 	declare TauntMode bool Script TRUE
 	declare FullAutoMode bool Script FALSE
 	declare DragoonsCycloneMode bool Script FALSE
+	declare MezMode bool Script FALSE
 
 	call EQ2BotLib_Init
 
@@ -36,6 +37,7 @@ function Class_Declaration()
 	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
 	OffensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
 	DragoonsCycloneMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Dragoons Cyclone,FALSE]}]
+	MezMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use MezMode,FALSE]}]
 
 	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
@@ -448,16 +450,26 @@ function Lost_Aggro(int mobid)
 	{
 		if ${TauntMode}
 		{
-			KillTarget:Set[${mobid}]
-			;intercept damage on the person now with agro
-			call CastSpellRange 270 0 1 0 ${mobid}
-			;try and taunt the mob back
-			call CastSpellRange 160 161 1 0 ${mobid}
+			if !${MezMode} && ${Actor${mobid}].Target.ID}!=${Me.ID}
+			{
+				KillTarget:Set[${mobid}]
+				target ${mobid}
+			}
+
+			if ${Actor[${KillTarget}].Target.ID}!=${Me.ID} && ${Me.Ability[${SpellType[270]}].IsReady}
+			{
+				call CastSpellRange 270 0 1 0 ${Actor[${KillTarget}].ID}
+			}
+
+			if ${Me.Ability[${SpellType[160]}].IsReady}
+			{
+				call CastSpellRange 160 161 1 0 ${Actor[${KillTarget}].ID}
+			}
 
 			;use rescue if new agro target is under 65 health
-			if ${Me.ToActor.Target.Target.Health}<65
+			if ${Me.ToActor.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange 320 0 0 0 ${mobid}
+				call CastSpellRange 320 0 1 0 ${mobid}
 			}
 		}
 	}

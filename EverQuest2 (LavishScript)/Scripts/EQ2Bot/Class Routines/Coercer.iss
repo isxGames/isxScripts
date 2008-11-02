@@ -53,8 +53,6 @@ function Class_Declaration()
 	declare DPSMode bool script 1
 	declare TSMode bool script 1
 	declare StartHO bool script 1
-	declare BuffRegen bool script 1
-
 
 	declare CharmTarget int script
 
@@ -73,13 +71,9 @@ function Class_Declaration()
 	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
 	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
 	TSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTS,FALSE]}]
-	BuffRegen:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffRegen,FALSE]}]
+
 	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
 	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
-}
-
-function Class_Shutdown()
-{
 }
 
 function Buff_Init()
@@ -153,11 +147,11 @@ function Buff_Routine(int xAction)
 
 		case AAEmpathic_Aura
 		case Clarity
-		    if ${BuffRegen}
-		    {
-    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-	    			call CastSpellRange ${PreSpellRange[${xAction},1]}
-	    	}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+				wait 20
+			}
 			break
 		case Signet
 			if ${BuffSignet}
@@ -176,7 +170,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${BuffHate} && ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${BuffHate} && ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.UsedConc}<5
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -406,12 +400,6 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 50 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
-	;;;; Cataclysmic Mind
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
-	{
-		call CastSpellRange 72 0 0 0 ${Me.ID}
-		spellsused:Inc
-	}
 	;;;; Hostage
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
 	{
@@ -428,6 +416,12 @@ function Combat_Routine(int xAction)
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
 	{
 		call CastSpellRange 391 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Cataclysmic Mind
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+	{
+		call CastSpellRange 72 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Daze
@@ -512,6 +506,7 @@ function Post_Combat_Routine(int xAction)
 
 function Have_Aggro()
 {
+
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
@@ -551,53 +546,44 @@ function RefreshPower()
 	declare tempvar int local
 	declare MemberLowestPower int local
 
-
-	call Shard 40
+	if ${ShardMode}
+		call Shard 45
 
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50 && !${Me.InCombat}
-	{
 		call CastSpellRange 309
-	}
 
 	;Transference Line in Combat
-	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<30
-	{
+	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<45
 		call CastSpellRange 309
-	}
 
 	;Mana Flow the lowest group member
 	tempvar:Set[1]
 	MemberLowestPower:Set[0]
 	do
 	{
-		if ${Me.Group[${tempvar}].ToActor.Power}<60 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+		if ${Me.Group[${tempvar}].ToActor.Power}<45 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
 		{
 			if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
-			{
 				MemberLowestPower:Set[${tempvar}]
-			}
 		}
 
 	}
 	while ${tempvar:Inc}<${Me.GroupCount}
 
-	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<45 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 	{
-		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ID}
+		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 	}
 
 	;Channel if group member is below 20 and we are in combat
-	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<20 && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
-	{
+	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<40 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 		call CastSpellRange 310
-	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power}<25 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
-	{
+	if ${Actor[${MainTankPC}].Power}<40 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 		call CastSpellRange 354
-	}
+
 }
 
 function CheckHeals()
@@ -606,7 +592,10 @@ function CheckHeals()
 	call UseCrystallizedSpirit 60
 
 	if ${BuffManaward} && ${Me.InCombat}
+	{
 		call CastSpellRange 378
+	}
+
 }
 
 function Mezmerise_Targets()
@@ -614,70 +603,70 @@ function Mezmerise_Targets()
 	declare tcount int local 1
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
-	declare Counter int local
-	declare alreadymezed bool local FALSE
-	declare mezduration float local 0
 
+	grpcnt:Set[${Me.GroupCount}]
 	EQ2:CreateCustomActorArray[byDist,20]
 
 	do
 	{
-		alreadymezed:Set[FALSE]
-
-		if ${CustomActor[${tcount}].Name.Equal[an undertaker supplicant]} && ${CustomActor[${tcount}].CanTurn}
-			call CastSpellRange 352 353 0 0 ${CustomActor[${tcount}].ID} 1 5
-
-		if ${Mob.AggroGroup[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
+		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
-			if ${Me.AutoAttackOn}
-				eq2execute /toggleautoattack
-
 			;if its the kill target skip it
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[pc,exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
+			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
 				continue
 
-			;if the actor can't turn and isrooted lets ignore it, perhaps it is already mezed or parked
-			if !${CustomActor[${tcount}].CanTurn} && ${CustomActor[${tcount}].IsRooted}
-				alreadymezed:Set[TRUE]
+			tempvar:Set[1]
+			aggrogrp:Set[FALSE]
 
-			Counter:Set[0]
-			mezduration:Set[0]
-			;lets see if it is already mez'd
-			do
+			;check if its agro on a group member or group member's pet
+			if ${grpcnt}>1
 			{
-				;find single target mez
-				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[352]}]}
+				do
 				{
-					;check if this mez is on current target
-					if ${Me.Maintained[${Counter}].Target.ID}==${CustomActor[${tcount}].ID}
+					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
 					{
-						alreadymezed:Set[TRUE]
-						mezduration:Set[${Me.Maintained[${Counter}].Duration}]
+						aggrogrp:Set[TRUE]
+						break
 					}
 				}
+				while ${tempvar:Inc}<=${grpcnt}
 			}
-			while ${Counter:Inc}<=${Me.CountMaintained}
 
-			if ${alreadymezed} && ${mezduration}<8 && ${mezduration}>0 && ${Actor[${MainAssist}].Target.ID}!=${CustomActor[${tcount}].ID}
+			;check if its agro on a raid member or raid member's pet
+			if ${Me.InRaid}
 			{
-				if ${Actor[pc,exactname,${MainTankPC}].Target.ID}!=${CustomActor[${tcount}].ID}
+				do
 				{
-					if ${Me.Ability[${SpellType[352]}].IsReady}
+					if ${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[$tempvar}].Name}].ID}  || (${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
 					{
-						call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 5
+						aggrogrp:Set[TRUE]
+						break
 					}
 				}
+				while ${tempvar:Inc}<=24
 			}
+			;check if its agro on me
+			if ${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${CustomActor[${tcount}].Target.IsMyPet}
+				aggrogrp:Set[TRUE]
 
-			if ${alreadymezed}
-				continue
+			if ${aggrogrp}
+			{
+				if ${Me.AutoAttackOn}
+					eq2execute /toggleautoattack
 
-			if ${Me.Ability[${SpellType[352]}].IsReady}
-				call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 5
-			elseif ${Me.Ability[${SpellType[353]}].IsReady}
-				call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
-			elseif ${Me.Ability[${SpellType[92]}].IsReady}
-				call CastSpellRange 92 0 0 0 ${CustomActor[${tcount}].ID} 0 5
+				if ${Me.RangedAutoAttackOn}
+					eq2execute /togglerangedattack
+
+				;try to AE mezz first and check if its not single target mezzed
+				if !${CustomActor[${tcount}].Effect[${SpellType[352]}](exists)}
+					call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
+
+				;if the actor is not AE Mezzed then single target Mezz
+				if !${CustomActor[${tcount}].Effect[${SpellType}[353]](exists)}
+					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 10
+
+				aggrogrp:Set[FALSE]
+			}
 		}
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
@@ -705,6 +694,8 @@ function DoCharm()
 	if ${Me.Maintained[${SpellType[351]}](exists)} || ${Me.UsedConc}>2
 		return
 
+	grpcnt:Set[${Me.GroupCount}]
+
 	EQ2:CreateCustomActorArray[byDist,15]
 
 	do
@@ -716,7 +707,7 @@ function DoCharm()
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
-			if ${Me.GroupCount} > 1
+			if ${grpcnt}>1
 			{
 				do
 				{
@@ -726,7 +717,7 @@ function DoCharm()
 						break
 					}
 				}
-				while ${tempvar:Inc} <= ${Me.GroupCount}
+				while ${tempvar:Inc}<=${grpcnt}
 			}
 
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
@@ -760,6 +751,8 @@ function DoAmnesia()
 
 	tempvar:Set[1]
 
+	grpcnt:Set[${Me.GroupCount}]
+
 	EQ2:CreateCustomActorArray[byDist,35]
 
 	do
@@ -771,7 +764,7 @@ function DoAmnesia()
 
 			tempvar:Set[1]
 			aggrogrp:Set[FALSE]
-			if ${Me.GroupCount} > 1
+			if ${grpcnt}>1
 			{
 				do
 				{
@@ -787,7 +780,7 @@ function DoAmnesia()
 						}
 					}
 				}
-				while ${tempvar:Inc} <= ${Me.GroupCount}
+				while ${tempvar:Inc}<=${grpcnt}
 			}
 
 			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}  && !${MainTank}
@@ -799,7 +792,7 @@ function DoAmnesia()
 				if ${Me.Ability[${SpellType[376]}].IsReady}
 					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
 				elseif ${Me.Ability[${SpellType[384]}].IsReady}
-					call CastSpellRange 384 0 0 0 ${KillTarget}
+					call CastSpellRange 382 0 0 0 ${KillTarget}
 				else
 					call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
 				return
