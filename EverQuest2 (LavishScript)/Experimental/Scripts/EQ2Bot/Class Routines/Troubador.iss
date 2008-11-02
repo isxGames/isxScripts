@@ -419,6 +419,7 @@ function Combat_Routine(int xAction)
 		range:Set[2]
 	elseif ${BowAttacksMode}
 		range:Set[3]
+
 		
 	if ${Actor[ID,${KillTarget}].Distance}>5 && !${Me.RangedAutoAttackOn}
 		EQ2Execute /auto 2
