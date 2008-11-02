@@ -420,10 +420,9 @@ function Combat_Routine(int xAction)
 	elseif ${BowAttacksMode}
 		range:Set[3]
 
-		
-	if ${Actor[ID,${KillTarget}].Distance}>5 && !${Me.RangedAutoAttackOn}
+	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${Me.RangedAutoAttackOn}
 		EQ2Execute /auto 2
-	elseif ${Actor[ID,${KillTarget}].Distance}<5 && !${Me.AutoAttackOn}
+	elseif ${Actor[ID,${KillTarget}].Distance}<${Position.GetMeleeMaxRange[${TID}]} && !${Me.AutoAttackOn}
 		EQ2Execute /auto 1
 
 	if ${JoustMode}
@@ -435,7 +434,7 @@ function Combat_Routine(int xAction)
 			EQ2Execute /toggleautoattack
 
 			;if we're too far from killtarget, move in
-			if ${Actor[${KillTarget}].Distance}>2
+			if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]}
 			{
 				call CheckPosition 1 1
 				wait 15
@@ -504,7 +503,7 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 
-	if ${Actor[ID,${KillTarget}].Distance}>5 && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA,Z, Target.X, Target.Z]}<=8
+	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA,Z, Target.X, Target.Z]}<=8
 	{
 		call CheckPosition 1 1
 		if !${Me.AutoAttackOn}
@@ -668,12 +667,12 @@ function Combat_Routine(int xAction)
 			
 			if ${BowAttacksMode}
 			{
-				call CheckPosition 0 3 ${KillTarget}
+				call CheckPosition 3 0 ${KillTarget}
 				while ${Me.CastingSpell}
 				{
 					wait 2
 				}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget} 0 0 1 0 2 0
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget} 0 0 1 0 1 0
 			}
 			break
 
@@ -784,7 +783,7 @@ function Mezmerise_Targets()
 	grpcnt:Set[${Me.GroupCount}]
 
 
-	EQ2:CreateCustomActorArray[npc,byDist,15]
+	EQ2:CreateCustomActorArray[byDist,15,npc]
 
 	do
 	{
@@ -890,13 +889,7 @@ function DoCharm()
 
 function Cure()
 {
-	if !${Swapping} || ${Me.Equipment[LWrist].Name.Equals[${PosionCureItem}]}
-	{
-		OriginalItem:Set[${Me.Equipment[LWrist].Name}]
-		ItemToBeEquipped:Set[${PosionCureItem}]
-		call Swap
-		Me.Equipment[${PosionCureItem}]:Use
-	}
+
 }
 
 function DoJesterCap()
@@ -907,7 +900,7 @@ function DoJesterCap()
 
 		if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 		{
-			if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<25
+			if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<{Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156}].Range}]}
 			{
 				;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
 				if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
