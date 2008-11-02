@@ -1030,7 +1030,7 @@ function CheckGroupOrRaidAggro()
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
         	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
-            	                if ${Actor[${MobTargetID}].Health} < 65
+            	                if ${Actor[${MobTargetID}].Health} < 85
             	                {
             	                	if (${HasMythical})
             	                	{
@@ -1061,18 +1061,7 @@ function CheckGroupOrRaidAggro()
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
                 	                }
-            	                }
-        	                	if (${HasMythical})
-        	                	{
-        	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
-        	                		{
-        	                			CustomActor[${Counter}]:DoTarget
-        	                			wait 2
-        	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
-        	                			wait 5
-        	                			return 1
-        	                		}
-        	                	}            	                
+            	                }         	                
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
@@ -1114,7 +1103,7 @@ function CheckGroupOrRaidAggro()
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
         	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
-            	                if ${Actor[${MobTargetID}].Health} < 65
+            	                if ${Actor[${MobTargetID}].Health} < 80
             	                {
             	                	if (${HasMythical})
             	                	{
@@ -1146,20 +1135,6 @@ function CheckGroupOrRaidAggro()
                 	                    return 1
                 	                }
             	                }
-        	                	if (${HasMythical})
-        	                	{
-        	                		echo "TEST2"
-        	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
-        	                		{
-        	                			announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
-                	                    echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
-        	                			CustomActor[${Counter}]:DoTarget
-        	                			wait 2
-        	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
-        	                			wait 5
-        	                			return 1
-        	                		}
-        	                	}
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
