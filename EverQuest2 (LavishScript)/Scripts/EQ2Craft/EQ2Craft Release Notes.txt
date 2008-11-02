@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.53 - Changed writ recipe detection code. This should allow for a much smaller CustomWrits
+        file.
+
 v8.52 - Fixed progressively long delays when processing recipes. Craft will now process the 
         inventory only after processing the queue and failed recipes.
 

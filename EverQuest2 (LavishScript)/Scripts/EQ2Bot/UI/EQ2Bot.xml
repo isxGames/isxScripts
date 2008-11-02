@@ -853,7 +853,7 @@
 							<Y>10</Y>
 							<Width>30%</Width>
 							<Height>20</Height>
-							<Text>Assist and Switch Targets at 30% HP</Text>
+							<Text>Assist and Switch Targets until 30% HP</Text>
 							<OnLoad>
 								if ${Script[EQ2Bot].Variable[AutoSwitch]}
 								{

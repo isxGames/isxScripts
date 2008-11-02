@@ -974,7 +974,7 @@ function CheckHeals()
   }
 
 
-	if ${PetMode} && ${grpheal}>1 && ${Me.Ability[${SpellType[16]}].IsReady} || (${EpicMode} && ${Me.InCombatMode})
+	if ${PetMode} && ${grpheal}>1 && ${Me.Ability[${SpellType[16]}].IsReady} || (${EpicMode} && ${Me.InCombat})
 		call CastSpellRange 16
 
 	if ${grpheal}>2
