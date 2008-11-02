@@ -1,4 +1,4 @@
-MyPrices - Version 0.13
+MyPrices - Version 0.13b
 
 For update details see the bottom of this file.
 
@@ -403,6 +403,17 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13b
+-------------
+
+1. When you run the script it now loads the current settings and stores a backup of the file in a backup folder.
+2. When it notices the character name has changed ( you leave the script running and do /camp newchar or even just camp
+   with the script still running ) it saves the previous characters info and exits.
+   
+I tried saving the old characters info and loading up the new characters data with the script still being available 
+, but there were too many pitfalls and it's just as easy to re-run the script again.
+
 
 Version 0.13
 ------------
