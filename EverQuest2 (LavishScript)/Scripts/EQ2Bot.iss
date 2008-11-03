@@ -749,8 +749,11 @@ function CheckManaStone()
 	usemanastone:Set[FALSE]
 }
 
-function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, int CastSpellWhen, bool IgnoreIsReady)
+function CastSpellRange(... Args)
 {
+	;; This format still works.
+	;; function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, int CastSpellWhen, bool IgnoreIsReady)
+
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;; - If the parameters of this function are altered, then the corresponding function needs to be altered in: Illusionist.iss
@@ -762,9 +765,86 @@ function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetI
 	;;		2 = Cast When Current Queue Complete
 	;;;;;;;
 
+	variable int start=-99
+	variable int finish=0
+	variable int xvar1=0
+	variable int xvar2=0
+	variable int TargetID=0
+	variable int notall=0
+	variable int refreshtimer=0
+	variable bool castwhilemoving=0
+	variable bool IgnoreMaintained=0
+	variable int CastSpellWhen=0
+	variable bool IgnoreIsReady=0
+
+	variable int count=0
+	variable int test=${Args[1]}
+	if ${test}>0
+	{
+		switch ${Args.Size}
+		{
+			case 11
+				IgnoreIsReady:Set[${Args[11]}]
+			case 10
+				CastSpellWhen:Set[${Args[10]}]
+			case 9
+				IgnoreMaintained:Set[${Args[9]}]
+			case 8
+				castwhilemoving:Set[${Args[8]}]
+			case 7
+				refreshtimer:Set[${Args[7]}]
+			case 6
+				notall:Set[${Args[6]}]
+			case 5
+				TargetID:Set[${Args[5]}]
+			case 4
+				xvar2:Set[${Args[4]}]
+			case 3
+				xvar1:Set[${Args[3]}]
+			case 2
+				finish:Set[${Args[2]}]
+			case 1
+				start:Set[${Args[1]}]
+				break
+			case 0
+				return
+		}
+	}
+	else
+	{
+		while ${count:Inc}<=${Args.Size}
+		{
+			if ${Args[${count}].Token[1,=].Equal[start]}
+				start:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[finish]}
+				finish:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[range]}
+				xvar1:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[quadrant]}
+				xvar2:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[TargetID]}
+				TargetID:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[notall]}
+				notall:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[refreshtimer]}
+				refreshtimer:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[castwhilemoving]}
+				castwhilemoving:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[IgnoreMaintained]}
+				IgnoreMaintained:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[CastSpellWhen]}
+				CastSpellWhen:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[IgnoreIsReady]}
+				IgnoreIsReady:Set[${Args[${count}].Token[2,=]}]
+		}
+		if ${start}==-99
+			return
+	}
+
 	variable bool fndspell
-	variable int tempvar=${start}
+	variable int tempvar
 	variable int originaltarget
+	tempvar:Set[${start}]
 
 	;echo "DEBUG: CastSpellRange(${tempvar}::${SpellType[${tempvar}]})"
 
