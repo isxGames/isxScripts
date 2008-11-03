@@ -812,7 +812,6 @@ function CastSpellRange(... Args)
 	}
 	else
 	{
-	echo PRE:  ${Args.Expand}
 		while ${count:Inc}<=${Args.Size}
 		{
 			if ${Args[${count}].Token[1,=].Equal[start]}
@@ -840,7 +839,6 @@ function CastSpellRange(... Args)
 		}
 		if ${start}==-99
 			return
-	echo POST: ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving(int)} ${IgnoreMaintained(int)} ${CastSpellWhen} ${IgnoreIsReady(int)}
 	}
 
 	variable bool fndspell
