@@ -2244,7 +2244,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 
 function Pull(string npcclass)
 {
-	variable int tcount=2
+	variable int tcount=1
 	variable int tempvar
 	variable bool aggrogrp=FALSE
 	variable int ThisActorID
@@ -3319,7 +3319,7 @@ function InventoryFull(string Line)
 
 function CheckMTAggro()
 {
-	variable int tcount=2
+	variable int tcount=1
 	variable int tempvar
 	variable int newtarget
 
@@ -3364,7 +3364,7 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-		variable int tcount=2
+		variable int tcount=1
 	variable float X
 	variable float Z
 
@@ -4182,7 +4182,7 @@ objectdef ActorCheck
 	;returns count of mobs engaged in combat near you.  Includes mobs not engaged to other pcs/groups
 	member:int Count()
 	{
-		variable int tcount=2
+		variable int tcount=1
 		variable int mobcount
 
 		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
@@ -4206,7 +4206,7 @@ objectdef ActorCheck
 	;returns true if you, group, raidmember, or pets have agro from mob in range
 	member:bool Detect(int iEngageDistance=${ScanRange})
 	{
-		variable int tcount=2
+		variable int tcount=1
 
 		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !(${Actor[NamedNPC,range,${iEngageDistance}](exists)} && !${IgnoreNamed})
 		{
@@ -4311,7 +4311,7 @@ objectdef ActorCheck
 
 	method CheckMYAggro()
 	{
-		variable int tcount=2
+		variable int tcount=1
 		haveaggro:Set[FALSE]
 		variable int ActorID
 
