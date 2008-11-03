@@ -482,16 +482,25 @@ function main()
 					}
 				}
 
-				;;;;;;;;;
-				;;;;; Call the buff routine from the class file
-				;;;;;;;;;
-				call Buff_Routine ${gRtnCtr}
-				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+				if !${Me.ToActor.IsDead}
 				{
-					; end after this round
+					;;;;;;;;;
+					;;;;; Call the buff routine from the class file
+					;;;;;;;;;
+					call Buff_Routine ${gRtnCtr}
+					if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+					{
+						; end after this round
+						gRtnCtr:Set[40]
+						if !${Me.InCombat}
+							CurrentAction:Set["Idle..."]
+						break
+					}
+				}
+				else
+				{
 					gRtnCtr:Set[40]
-					if !${Me.InCombat}
-						CurrentAction:Set["Idle..."]
+					CurrentAction:Set["Dead..."]
 					break
 				}
 
@@ -3911,29 +3920,32 @@ function CheckBuffsOnce()
 		CurrentAction:Set["Checking Buffs Once..."]
 	}
 
-	i:Set[1]
-	do
-	{
-		;;;;;;;;;
-		;;;;; Call the buff routine from the class file
-		;;;;;;;;;
-		call Buff_Routine ${i}
-		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
-			break
-		call ProcessTriggers
-	}
-	while ${i:Inc}<=40
-
-	if (${UseCustomRoutines})
+	if !${Me.ToActor.IsDead}
 	{
 		i:Set[1]
 		do
 		{
-			call Custom__Buff_Routine ${i}
+			;;;;;;;;;
+			;;;;; Call the buff routine from the class file
+			;;;;;;;;;
+			call Buff_Routine ${i}
 			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 				break
+			call ProcessTriggers
 		}
-		while ${i:Inc} <= 40
+		while ${i:Inc}<=40
+	
+		if (${UseCustomRoutines})
+		{
+			i:Set[1]
+			do
+			{
+				call Custom__Buff_Routine ${i}
+				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+					break
+			}
+			while ${i:Inc} <= 40
+		}
 	}
 
 	if ${MainTank}

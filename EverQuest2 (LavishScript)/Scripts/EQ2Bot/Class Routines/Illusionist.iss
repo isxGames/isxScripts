@@ -70,6 +70,7 @@ function Class_Declaration()
 	declare BuffEmpathicSoothing bool script FALSE
 	declare UseIlluminate bool script FALSE
 	declare BlinkMode bool script FALSE
+	declare HaveMythical bool script FALSE
 	declare LastSpellCast int script 0
 
 
@@ -95,6 +96,9 @@ function Class_Declaration()
 	NoEQ2BotStance:Set[TRUE]
 
 	Event[EQ2_FinishedZoning]:AttachAtom[Illusionist_FinishedZoning]
+	
+	if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]}) || (${Me.Inventory[Mirage Star](exists)} && ${Me.Inventory[Mirage Star].Tier.Equal[MYTHICAL]})
+		HaveMythical:Set[TRUE]
 }
 
 function Class_Shutdown()
@@ -338,7 +342,7 @@ function Buff_Routine(int xAction)
 			tempvar:Set[1]
 	
 			;; If we have mythical, just cast on self since it is a group buff
-			if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]}) || (${Me.Inventory[Mirage Star](exists)} && ${Me.Inventory[Mirage Star].Tier.Equal[MYTHICAL]})
+			if (${HaveMythical})
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID} 0 0 1 0 0
@@ -737,19 +741,24 @@ function Combat_Routine(int xAction)
 
 	if ${AutoMelee} && !${NoAutoMovement}
 	{
-		if ${Actor[${KillTarget}].Distance} > 3.5
+		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
 		{
-			switch ${Actor[${KillTarget}].ConColor}
+			if ${Actor[${KillTarget}].IsEpic}
+				call CheckPosition 1 1 ${KillTarget}
+			else
 			{
-				case Green
-				case Grey
-				echo "DEBUG:: Calling CheckPosition(1 0)"
-				call CheckPosition 1 0
-				break
-				Default
-				echo "DEBUG:: Calling CheckPosition(1 1)"
-				call CheckPosition 1 1
-				break
+				switch ${Actor[${KillTarget}].ConColor}
+				{
+					case Green
+					case Grey
+					echo "DEBUG:: Calling CheckPosition(1 0)"
+					call CheckPosition 1 0 ${KillTarget}
+					break
+					Default
+					echo "DEBUG:: Calling CheckPosition(1 1)"
+					call CheckPosition 1 1 ${KillTarget}
+					break
+				}
 			}
 		}
 	}
