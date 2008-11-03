@@ -205,10 +205,34 @@
 		<OnLoad>This.Item[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Pet Type]}]:Select
 		</OnLoad>
 	</combobox>
+	<Text Name='lblStanceType'>
+		<X>10</X>
+		<Y>150</Y>
+		<Width>20</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Stance:</Text>
+	</Text>
+	<combobox name='cbStanceType'>
+		<x>35</x>
+		<y>150</y>
+		<width>100</width>
+		<height>20</height>
+		<items>
+			<Item Value='1'>Defensive</Item>
+			<Item Value='0'>Offensive</Item>
+		</items>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PetDefStance]:Set[${This.SelectedItem.ID}]
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["PetDefStance",${This.SelectedItem.ID}]:Save
+		</OnSelect>
+		<OnLoad>This.Item[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[PetDefStance]}]:Select
+		</OnLoad>
+	</combobox>
 	<Commandcheckbox Name='UsePets'>
 		<Visible>1</Visible>
 		<X>10</X>
-		<Y>150</Y>
+		<Y>170</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Pets</Text>

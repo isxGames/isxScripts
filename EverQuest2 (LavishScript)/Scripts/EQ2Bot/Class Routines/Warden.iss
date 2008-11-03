@@ -248,6 +248,7 @@ function Buff_Routine(int xAction)
 	{
 		if (${Me.GroupCount} > 1)
 			call CastSpell "Favor of the Phoenix"
+		call CastSpellRange 31
 		InitialBuffsDone:Set[TRUE]
 	}
 
@@ -262,6 +263,12 @@ function Buff_Routine(int xAction)
 	{
     ExecuteAtom AutoFollowTank
 		wait 5
+	}
+
+	;cancel Duststorm if up
+	if ${Me.Maintained[${SpellType[365]}](exists)} && !${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+	{
+		Me.Maintained[${SpellType[365]}]:Cancel
 	}
 
 	if ${Me.ToActor.Power}>85
@@ -553,13 +560,6 @@ function Post_Combat_Routine(int xAction)
 	{
 		Me.Maintained[${SpellType[9]}]:Cancel
 	}
-
-	;cancel Duststorm if up
-	if ${Me.Maintained[${SpellType[365]}](exists)}
-	{
-		Me.Maintained[${SpellType[365]}]:Cancel
-	}
-
 
 	switch ${PostAction[${xAction}]}
 	{
