@@ -214,6 +214,7 @@
 			This:ClearItems
 			tmpvar:Set[1]
 			This:AddItem["No one"]
+			This:AddItem[${Me.Name}:Me]
 			if ${Me.Pet(exists)}
 			{
 				This:AddItem[${Me.Pet.Name}:${Me.Pet.Type}]
