@@ -554,6 +554,9 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
+	if ${Me.Maintained[Shroud](exists)}
+		Me.Maintained[Shroud]:Cancel
+
 	switch ${PostAction[${xAction}]}
 	{
 		case Slip

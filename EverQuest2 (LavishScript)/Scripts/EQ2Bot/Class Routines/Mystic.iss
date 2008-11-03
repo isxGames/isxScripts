@@ -315,7 +315,10 @@ function Buff_Routine(int xAction)
 			break
 		case BuffStrength
 			if ${BuffStrength}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
@@ -871,7 +874,7 @@ function MA_Dead()
 {
 	variable int MainTankID
 	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
-	
+
   	if (${Actor[${MainTankID}](exists)} && ${CombatRez})
   	{
     	if (${Actor[${MainTankID}].IsDead})

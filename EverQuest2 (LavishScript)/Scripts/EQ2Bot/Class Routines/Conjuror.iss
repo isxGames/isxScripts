@@ -38,6 +38,7 @@ function Class_Declaration()
 	declare BuffEscutcheon bool script FALSE
 	declare BuffCabalistCover bool script TRUE
 	declare PetMode bool script 1
+	declare PetDefStance bool script 1
 
 	declare ShardQueue queue:string script
 	declare ShardRequestTimer int script ${Time.Timestamp}
@@ -53,6 +54,7 @@ function Class_Declaration()
 	BuffEscutcheon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEscutcheon,,FALSE]}]
 	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
 	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
+	PetDefStance:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[PetDefStance,TRUE]}]
 
 	switch ${SpellType[360]}
 	{
@@ -87,35 +89,35 @@ function Buff_Init()
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
 
-	PreAction[4]:Set[Pet_Buff]
-	PreSpellRange[4,1]:Set[45]
+	PreAction[3]:Set[Pet_Buff]
+	PreSpellRange[3,1]:Set[45]
 
-	PreAction[5]:Set[Tank_Buff]
-	PreSpellRange[5,1]:Set[40]
+	PreAction[4]:Set[Tank_Buff]
+	PreSpellRange[4,1]:Set[40]
 
-	PreAction[6]:Set[Melee_Buff]
-	PreSpellRange[6,1]:Set[35]
+	PreAction[5]:Set[Melee_Buff]
+	PreSpellRange[5,1]:Set[35]
 
-	PreAction[7]:Set[SeeInvis]
-	PreSpellRange[7,1]:Set[30]
+	PreAction[6]:Set[SeeInvis]
+	PreSpellRange[6,1]:Set[30]
 
-	PreAction[8]:Set[Buff_Shards]
-	PreSpellRange[8,1]:Set[360]
+	PreAction[7]:Set[Buff_Shards]
+	PreSpellRange[7,1]:Set[360]
 
-	PreAction[9]:Set[AA_Minions_Warding]
-	PreSpellRange[9,1]:Set[385]
+	PreAction[8]:Set[AA_Minions_Warding]
+	PreSpellRange[8,1]:Set[385]
 
-	PreAction[10]:Set[Seal]
-	PreSpellRange[10,1]:Set[20]
+	PreAction[9]:Set[Seal]
+	PreSpellRange[9,1]:Set[20]
 
-	PreAction[11]:Set[Escutcheon]
-	PreSpellRange[11,1]:Set[21]
+	PreAction[10]:Set[Escutcheon]
+	PreSpellRange[10,1]:Set[21]
 
-	PreAction[12]:Set[AA_Bubble]
-	PreSpellRange[12,1]:Set[377]
+	PreAction[11]:Set[AA_Bubble]
+	PreSpellRange[11,1]:Set[377]
 
-	PreAction[13]:Set[AA_Unabate]
-	PreSpellRange[13,1]:Set[376]
+	PreAction[12]:Set[AA_Unabate]
+	PreSpellRange[12,1]:Set[376]
 }
 
 function Combat_Init()
@@ -214,7 +216,7 @@ function Buff_Routine(int xAction)
 
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
-	    ExecuteAtom AutoFollowTank
+		ExecuteAtom AutoFollowTank
 		wait 5
 	}
 
@@ -457,7 +459,6 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 60 0 0 0 ${KillTarget}
 	}
 
-
 	switch ${Action[${xAction}]}
 	{
 		case Special_Pet2
@@ -541,7 +542,7 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		Default
-			return Combat Complete
+			return CombatComplete
 			break
 	}
 
@@ -817,6 +818,11 @@ function SummonPet()
 				break
 		}
 		BuffCabalistCover:Set[TRUE]
+
+		if ${PetDefStance}
+			call CastSpellRange 295
+		else
+			call CastSpellRange 290
 	}
 }
 

@@ -1078,7 +1078,7 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	}
 
 	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
-	{ 
+	{
 		;echo "EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[id,TargetID].Type.Equal[PC] --> Returning"
 		target ${TargetID}
 		wait 10 ${Target.ID}==${TargetID}
@@ -1111,8 +1111,8 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
-		
-	;echo "EQ2Bot-Debug:: Queuing: ${spell}"	
+
+	;echo "EQ2Bot-Debug:: Queuing: ${spell}"
 	;echo "EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"
 	;echo "EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
 
@@ -1233,7 +1233,7 @@ function Combat()
 
 	if !${Actor[${KillTarget}](exists)}
 		return
-		
+
 	if ${Me.ToActor.IsDead}
 		return
 
@@ -1286,7 +1286,7 @@ function Combat()
 
 		if ${Actor[${KillTarget}].IsDead}
 			break
-			
+
 		if ${Me.ToActor.IsDead}
 			break
 
@@ -1791,6 +1791,8 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	variable point3f destpoint
 	variable point3f destminpoint
 	variable point3f destmaxpoint
+	variable int xTimer
+	xTimer:Set[${Script.RunningTime}]
 
 	if ${NoAutoMovement} && ${Me.ToActor.InCombatMode}
 	{
@@ -1971,36 +1973,53 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	;
 	if ${AutoMelee} && ${Actor[${TID}].Distance}<15 && ${Actor[${TID}].Distance}>${maxrange}
 	{
+		xTimer:Set[${Script.RunningTime}]
+		Actor[${TID}]:DoFace
+		press -hold ${forward}
 		do
 		{
 			Actor[${TID}]:DoFace
-			press ${forward}
 			wait 1
 		}
-		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}>${maxrange}
+		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}>${maxrange} && ((${Script.RunningTime}-${xTimer}) < 5000)
+		press -release ${forward}
 	}
 
-	if ${rangetype}>1 && ${Actor[${TID}].Distance}<${minrange}
+	if !${AutoMelee} && ${rangetype}>1 && ${Actor[${TID}].Distance}<${minrange}
 	{
+		xTimer:Set[${Script.RunningTime}]
+		Actor[${TID}]:DoFace
+		press -hold ${backward}
 		do
 		{
 			Actor[${TID}]:DoFace
-			press ${backward}
 			wait 1
 		}
-		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}<${minrange}
+		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}<${minrange} && ((${Script.RunningTime}-${xTimer}) < 5000)
+
+		press -release ${backward}
 	}
 
-	if ${rangetype}>1 && ${Actor[${TID}].Distance}>${maxrange}
+	if !${AutoMelee} && ${rangetype}>1 && ${Actor[${TID}].Distance}>${maxrange}
 	{
+		xTimer:Set[${Script.RunningTime}]
+		Actor[${TID}]:DoFace
+		press -hold ${forward}
 		do
 		{
 			Actor[${TID}]:DoFace
-			press ${forward}
 			wait 1
 		}
-		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}>${maxrange}
+		while ${Actor[${TID}](exists)} && ${Actor[${TID}].Distance}>${maxrange} && ((${Script.RunningTime}-${xTimer}) < 5000)
+
+		press -release ${forward}
 	}
+
+	;extra release calls just in case something ended unexpectedly
+	press -release ${forward}
+	press -release ${backward}
+	press -release ${straferight}
+	press -release ${strafeleft}
 }
 
 function CheckQuadrant(uint TID, int quadrant)
@@ -4020,7 +4039,7 @@ function CheckBuffsOnce()
 			call ProcessTriggers
 		}
 		while ${i:Inc}<=40
-	
+
 		if (${UseCustomRoutines})
 		{
 			i:Set[1]
