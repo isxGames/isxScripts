@@ -478,7 +478,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${BuffTarget.Token[1,:].Equal[${Me.Name}]})
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
 			}
 			break
