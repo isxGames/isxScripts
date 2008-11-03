@@ -1153,6 +1153,9 @@ function Combat()
 
 	if !${Actor[${KillTarget}](exists)}
 		return
+		
+	if ${Me.ToActor.IsDead}
+		return
 
 	FollowTask:Set[2]
 	; Make sure we are still not moving when we enter combat
@@ -1201,8 +1204,11 @@ function Combat()
 		if !${Actor[${KillTarget}](exists)}
 			break
 
-			if ${Actor[${KillTarget}].IsDead}
-					break
+		if ${Actor[${KillTarget}].IsDead}
+			break
+			
+		if ${Me.ToActor.IsDead}
+			break
 
 		do
 		{
