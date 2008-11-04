@@ -12,6 +12,7 @@
 		<Setting Name="4,20">Minor Auspice</Setting>
 		<Setting Name="5,30">Runic Mark</Setting>
 		<Setting Name="5,303">Divine Providence</Setting>
+		<Setting Name="5,304">Master's Smite</Setting>
 		<Setting Name="6,0">Summon Food and Water</Setting>
 		<Setting Name="6,210">Cure</Setting>
 		<Setting Name="7,51">Enfeeble</Setting>
@@ -66,6 +67,8 @@
 		<Setting Name="19,30">Runic Symbol</Setting>
 		<Setting Name="19,7">Ghostly Ward</Setting>
 		<Setting Name="20,25">Ursine Elder</Setting>
+		<Setting Name="20,18">Bounty of the Virtuous</Setting>
+		<Setting Name="20,19">Udor's Spirit of the Hawk</Setting>
 		<Setting Name="21,51">Delusion</Setting>
 		<Setting Name="22,300">Path of the Grey</Setting>
 		<Setting Name="22,4">Replenishment</Setting>
@@ -81,6 +84,7 @@
 		<Setting Name="29,17">Prophetic Guard</Setting>
 		<Setting Name="29,4">Spiritual Replenishment</Setting>
 		<Setting Name="30,31">Umbral Fortitude</Setting>
+                <Setting Name="30,34">Form of the Builder</Setting>
 		<Setting Name="30,20">Omen</Setting>
 		<Setting Name="31,80">Touch of the Grey</Setting>
 		<Setting Name="32,90">Anger of the Ancients</Setting>
@@ -92,13 +96,16 @@
 		<Setting Name="35,53">Umbral Trap</Setting>
 		<Setting Name="35,0">Theft of Vitality</Setting>
 		<Setting Name="35,51">Fallacy</Setting>
-		<Setting Name="36,301">Fields of the Grey</Setting>
+		<Setting Name="35,56">Sacred Shield</Setting>
+		<Setting Name="35,57">Slithering Form of the Serpent</Setting>
+		<Setting Name="36,300">Fields of the Grey</Setting>
 		<Setting Name="37,81">Icy Flames</Setting>
 		<Setting Name="38,50">Howling Haze</Setting>
 		<Setting Name="39,82">Pox</Setting>
 		<Setting Name="39,52">Mourning Soul</Setting>
 		<Setting Name="40,54">Howl of the Ancients</Setting>
 		<Setting Name="40,7">Ancestral Aegis</Setting>
+		<Setting Name="40,58">Haero's Aura of Awareness</Setting>
 		<Setting Name="41,180">Accordant Spirits</Setting>
 		<Setting Name="41,338">Eidolic Savior</Setting>
 		<Setting Name="42,220">Cure: Fading Spirit</Setting>
@@ -110,6 +117,7 @@
 		<Setting Name="44,20">Prophecy</Setting>
 		<Setting Name="45,80">Ire of the Grey</Setting>
 		<Setting Name="45,16">Shadowy Attendant</Setting>
+		<Setting Name="45,85">Form of the Great Stag</Setting>
 		<Setting Name="46,90">Fury of the Ancients</Setting>
 		<Setting Name="46,32">Spirit of the Elephant</Setting>
 		<Setting Name="46,1">Enlightened Healing</Setting>
@@ -120,6 +128,7 @@
 		<Setting Name="49,55">Dreadful Lethargy</Setting>
 		<Setting Name="49,51">Chimerik</Setting>
 		<Setting Name="50,300">Recall of the Grey</Setting>
+		<Setting Name="50,319">Talisman of the Spiritist</Setting>
 		<Setting Name="50,317">Oberon</Setting>
 		<Setting Name="51,81">Arctic Flames</Setting>
 		<Setting Name="52,50">Weeping Haze</Setting>
@@ -130,8 +139,10 @@
 		<Setting Name="54,7">Sacred Aegis</Setting>
 		<Setting Name="55,83">Slothful Spirit</Setting>
 		<Setting Name="55,338">Umbral Savior</Setting>
+		<Setting Name="55,180">Harmonious Spirits</Setting>
 		<Setting Name="56,220">Cure: Gasping Spirit</Setting>
 		<Setting Name="56,15">Umbral Sacrament</Setting>
+		<Setting Name="56,10">Transcendent Grace</Setting>
 		<Setting Name="57,17">Prophetic Aegis</Setting>
 		<Setting Name="57,4">Rejuvenating Rite</Setting>
 		<Setting Name="58,31">Umbral Mettle</Setting>
@@ -149,6 +160,7 @@
 		<Setting Name="64,51">Eidolon</Setting>
 		<Setting Name="65,81">Glacial Flames</Setting>
 		<Setting Name="65,21">Bolster</Setting>
+		<Setting Name="65,84">Scroll of Fire Seeds</Setting>
 		<Setting Name="66,50">Shrieking Haze</Setting>
 		<Setting Name="67,82">Plague</Setting>
 		<Setting Name="67,52">Lamenting Soul</Setting>
@@ -181,9 +193,11 @@
 		<Setting Name="78,82">Epidemic</setting>
 		<Setting Name="79,54">Echoes of the Ancients</setting>
 		<Setting Name="79,180">Spirits</setting>
+		<Setting Name="79,15">Umbral Warding</setting>	
 		<Setting Name="80,338">Ancestral Savior</setting>
-		<Setting Name="80,999">Ancestral Sentry</setting>
+		<Setting Name="80,318">Ancestral Sentry</setting>
 		<Setting Name="80,10">Transcendent Aid</setting>
+		<Setting Name="80,317">Oberon Obstruction</setting>
 	</Set>
 </InnerSpaceSettings>
 
