@@ -1168,5 +1168,11 @@ function MA_Dead()
 
 function Cancel_Root()
 {
+}
 
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
 }

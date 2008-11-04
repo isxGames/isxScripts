@@ -72,6 +72,7 @@ function Class_Declaration()
 	declare BlinkMode bool script FALSE
 	declare HaveMythical bool script FALSE
 	declare LastSpellCast int script 0
+	declare InPostDeathRoutine bool script FALSE
 
 
 	BuffAspect:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAspect,FALSE]}]
@@ -229,58 +230,61 @@ function Buff_Routine(int xAction)
 	;echo "Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"
 	;CurrentAction:Set[Buff Routine :: ${PreAction[${xAction}]} (${xAction})]
 
-	call CheckHeals
-	call RefreshPower
-	call CheckSKFD
-
-	ExecuteAtom CheckStuck
-
-	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+	if !${InPostDeathRoutine}
 	{
-		ExecuteAtom AutoFollowTank
-		wait 5
-	}
-
-	;; Prismatic Proc
-	;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
-	if !${MainTank} || ${AutoMelee}
-	{
-		if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
+		call CheckHeals
+		call RefreshPower
+		call CheckSKFD
+	
+		ExecuteAtom CheckStuck
+	
+		if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 		{
-			if ${Actor[${MainTankPC},exactname].InCombatMode}
+			ExecuteAtom AutoFollowTank
+			wait 5
+		}
+	
+		;; Prismatic Proc
+		;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
+		if !${MainTank} || ${AutoMelee}
+		{
+			if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
 			{
-				if ${Me.Ability[${SpellType[72]}].IsReady}
+				if ${Actor[${MainTankPC},exactname].InCombatMode}
 				{
-					BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-					if !${BuffTarget.Equal["No one"]}
+					if ${Me.Ability[${SpellType[72]}].IsReady}
 					{
-						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+						BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+						if !${BuffTarget.Equal["No one"]}
+						{
+							if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+							{
+								;echo "DEBUG:: Casting ''Prismatic'"
+								call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+								LastSpellCast:Set[72]
+								return
+							}
+							else
+								echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+						}
+						else
 						{
 							;echo "DEBUG:: Casting ''Prismatic'"
-							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+							call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
 							LastSpellCast:Set[72]
 							return
 						}
-						else
-							echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
-					}
-					else
-					{
-						;echo "DEBUG:: Casting ''Prismatic'"
-						call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
-						LastSpellCast:Set[72]
-						return
 					}
 				}
 			}
 		}
 	}
-
+	
 	switch ${PreAction[${xAction}]}
 	{
 		case Self_Buff
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID} 0 0 1 0 0
+				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID} 0 0 1 0 0
 			break
 	
 		case Clarity
@@ -516,6 +520,7 @@ function Buff_Routine(int xAction)
 					call CastSpell "Summon: Imp of Ro"
 			}
 			break
+			
 		default
 			return BuffComplete
 	}
@@ -1820,4 +1825,47 @@ function CheckSKFD()
 atom(script) Illusionist_FinishedZoning(string TimeInSeconds)
 {
 
+}
+
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	InPostDeathRoutine:Set[TRUE]
+	
+	;; Auto-Follow
+	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+	{
+		ExecuteAtom AutoFollowTank
+		wait 5
+	}
+	
+	;;;;;;;;;;;;;;;
+	;; Do Buffs before anything else
+	i:Set[1]
+	do
+	{
+		call Buff_Routine ${i}
+		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+			break
+		call ProcessTriggers
+		wait 2
+	}
+	while ${i:Inc}<=40
+
+	if (${UseCustomRoutines})
+	{
+		i:Set[1]
+		do
+		{
+			call Custom__Buff_Routine ${i}
+			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+				break
+		}
+		while ${i:Inc} <= 40
+	}
+	;;
+	;;;;;;;;;;;;;;;
+	
+	InPostDeathRoutine:Set[FALSE]
+	return
 }

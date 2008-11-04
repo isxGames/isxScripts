@@ -1794,3 +1794,10 @@ function CheckSKFD()
     call RemoveSKFD "Fury::CheckSKFD"
     return
 }
+
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
+}
