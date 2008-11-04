@@ -746,3 +746,10 @@ function StartHO()
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 		eq2execute /useability "Lucky Break"
 }
+
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
+}

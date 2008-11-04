@@ -927,3 +927,10 @@ function CureGroupMember(int gMember)
 	}
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].ToActor(exists)}
 }
+
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
+}

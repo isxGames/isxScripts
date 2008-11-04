@@ -570,21 +570,18 @@ function Lost_Aggro()
 
 function MA_Lost_Aggro()
 {
-
 }
 
 function MA_Dead()
 {
-
 }
 
 function Cancel_Root()
 {
-
 }
+
 function CheckHeals()
 {
-
 }
 
 function ActionChecks()
@@ -595,5 +592,12 @@ function ActionChecks()
 	{
 		call Shard
 	}
+}
+
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
 }
 

@@ -1211,3 +1211,9 @@ function Fanaticism()
 	}
 }
 
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
+}

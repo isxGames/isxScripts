@@ -267,8 +267,10 @@ function main()
 	;;;
 	if (${Me.Level} < 80)
 		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
-	else
+	elseif ${Me.TotalEarnedAPs} < 140
 		GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+	else
+		GainedXPString:Set[Gained XP:  N/A]
 	;;;
 	;;;;;;;;;;;;;;;;;
 
@@ -332,7 +334,7 @@ function main()
 		;;;
 		if (${Me.Level} < 80)
 			GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
-		else
+		elseif ${Me.TotalEarnedAPs} < 140
 			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
 		;;;
 		;;;;;;;;;;;;;;;;;
@@ -342,7 +344,7 @@ function main()
 			KillTarget:Set[]
 			do
 			{
-				wait 10
+				wait 5
 			}
 			while ${EQ2.Zoning}
 
@@ -356,17 +358,41 @@ function main()
 			KillTarget:Set[]
 			do
 			{
-				wait 10
+				wait 5
+				call ProcessTriggers
 			}
 			while !${StartBot}
 		}
-
-		if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
+		
+		if ${Me.ToActor.IsDead}
 		{
-			if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+			KillTarget:Set[]
+			CurrentAction:Set[Dead -- Waiting...]		
+			do
 			{
-				Me.Inventory[ExactName,ManaStone]:Use
-				mstimer:Set[${Time.Timestamp}]
+				wait 2
+				call ProcessTriggers
+			}
+			while ${Me.ToActor.IsDead} || ${EQ2.Zoning}
+			
+			wait 15
+			if ${AutoFollowingMA(exists)}
+				AutoFollowingMA:Set[FALSE]
+			CurrentAction:Set[Performing PostDeath Routine...]	
+			;; call PostDeathRoutine(), which exists in each class file
+			call PostDeathRoutine
+			CurrentAction:Set[Idle...]	
+		}
+
+		if (${usemanastone})
+		{
+			if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)}
+			{
+				if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+				{
+					Me.Inventory[ExactName,ManaStone]:Use
+					mstimer:Set[${Time.Timestamp}]
+				}
 			}
 		}
 
@@ -530,7 +556,6 @@ function main()
 					}
 
 					call Custom__Buff_Routine ${gRtnCtr}
-
 					if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 					{
 						gRtnCtr:Set[40]
@@ -3262,7 +3287,7 @@ function ProcessTriggers()
 
 function IamDead(string Line)
 {
-	variable int deathtimer=${Time.Timestamp}
+	variable uint deathtimer=${Time.Timestamp}
 	KillTarget:Set[]
 	grpcnt:Set[${Me.GroupCount}]
 	tempgrp:Set[1]
@@ -3272,108 +3297,130 @@ function IamDead(string Line)
 	CurrentAction:Set["You have been killed"]
 	echo "You have been killed"
 
-	if ${Me.GroupCount}==1 && ${WipeRevive}
+	if ${WipeRevive}
 	{
-		echo no group, resetting
-		EQ2Execute "select_junction 0"
-		do
+		if ${Me.GroupCount} == 1
 		{
-			waitframe
-		}
-		while ${EQ2.Zoning}
-		KillTarget:Set[]
-		wait 300
-	}
-	elseif ${WipeRevive}
-	{
-		do
-		{
-			wipe:Set[1]
-			wipegroup:Set[0]
+			echo "IamDead():: no group, resetting"
+			EQ2Execute "select_junction 0"
 			do
 			{
-				if ${Me.Group[${wipegroup}](exists)} && ${Me.Group[${wipegroup}].ToActor.IsDead}
-				{
-					wipe:Inc
-					echo ${Me.Group[${wipegroup}]} has died.
-					echo "There are now" ${wipe} "dead group members. (" ${grpcnt} " Total)"
-				}
-				wait 10
+				waitframe
 			}
-			while ${wipegroup:Inc}<=${Me.GroupCount}
-
-			if ${wipe}==${grpcnt}
+			while ${EQ2.Zoning}
+			KillTarget:Set[]
+			wait 15
+			if ${AutoFollowingMA(exists)}
+				AutoFollowingMA:Set[FALSE]
+			CurrentAction:Set[Performing PostDeath Routine...]	
+			;; call PostDeathRoutine(), which exists in each class file
+			call PostDeathRoutine
+			CurrentAction:Set[Idle...]	
+			return
+		}
+		else
+		{
+			do
 			{
-				CurrentAction:Set["Everyone is dead, waiting 10 seconds to revive"]
-				echo "Everyone is dead, waiting 10 seconds to revive"
-				GroupWiped:Set[TRUE]
-				wait 100
-				EQ2Execute "select_junction 0"
+				wipe:Set[1]
+				wipegroup:Set[0]
 				do
 				{
-						waitframe
-				}
-				while ${EQ2.Zoning}
-				KillTarget:Set[]
-				wait 100
-				echo "reloading config"
-				EQ2Bot:Init_Config
-				wait 50
-				if ${MainTank} && ( ${PathType}==3 || ${PathType}==2 )
-				{
-					echo "I am Main Tank, moving to START"
-					wait 500
-					call MovetoWP ${Navigation.World[${Zone.ShortName}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}
-					wait 50
-				}
-				else
-				{
-					EQ2Execute "/follow ${MainTankPC}"
-				}
-
-				echo Waiting for group to reform
-				together:Set[1]
-				do
-				{
-					tempgrp:Set[1]
-					do
+					if ${Me.Group[${wipegroup}](exists)} && ${Me.Group[${wipegroup}].ToActor.IsDead}
 					{
-						if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Distance}<25
-						{
-							echo ${Me.Group[${tempgrp}]} "has arrived"
-							together:Inc
-							echo "There are now " ${together} " ready group members (" ${grpcnt} " Total)"
-						}
+						wipe:Inc
+						echo ${Me.Group[${wipegroup}]} has died.
+						echo "There are now" ${wipe} "dead group members. (" ${grpcnt} " Total)"
 					}
-					while ${tempgrp:Inc}<=${grpcnt}
 					wait 10
 				}
-				while ${together}<${grpcnt}
-				echo "Everyone is here"
-				if ${MainTank}
+				while ${wipegroup:Inc}<=${Me.GroupCount}
+	
+				if ${wipe}==${grpcnt}
 				{
-					CurrentAction:Set["I am Main Tank, waiting 60 seconds for group buffing"]
-					echo "I am Main Tank, waiting 60 seconds for group buffing"
-					wait 600
-				}
-				else
-				{
-					echo "Not Main Tank, restarting in 5 seconds"
+					CurrentAction:Set["Everyone is dead, waiting 10 seconds to revive"]
+					echo "Everyone is dead, waiting 10 seconds to revive"
+					GroupWiped:Set[TRUE]
+					wait 100
+					EQ2Execute "select_junction 0"
+					do
+					{
+						waitframe
+					}
+					while ${EQ2.Zoning}
+					KillTarget:Set[]
+					wait 100
+					echo "reloading config"
+					EQ2Bot:Init_Config
 					wait 50
+					if ${MainTank} && ( ${PathType}==3 || ${PathType}==2 )
+					{
+						echo "I am Main Tank, moving to START"
+						wait 500
+						call MovetoWP ${Navigation.World[${Zone.ShortName}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}
+						wait 50
+					}
+					else
+					{
+						EQ2Execute "/follow ${MainTankPC}"
+					}
+	
+					echo Waiting for group to reform
+					together:Set[1]
+					do
+					{
+						tempgrp:Set[1]
+						do
+						{
+							if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.Distance}<25
+							{
+								echo ${Me.Group[${tempgrp}]} "has arrived"
+								together:Inc
+								echo "There are now " ${together} " ready group members (" ${grpcnt} " Total)"
+							}
+						}
+						while ${tempgrp:Inc}<=${grpcnt}
+						wait 10
+					}
+					while ${together}<${grpcnt}
+					echo "Everyone is here"
+					if ${MainTank}
+					{
+						CurrentAction:Set["I am Main Tank, waiting 60 seconds for group buffing"]
+						echo "I am Main Tank, waiting 60 seconds for group buffing"
+						wait 600
+					}
+					else
+					{
+						echo "Not Main Tank, restarting in 5 seconds"
+						wait 50
+					}
 				}
 			}
+			while ${Me.ToActor.IsDead}
+			echo "Ready to continue fighting!"
 		}
-		while ${Me.ToActor.IsDead}
-		echo "Ready to continue fighting!"
 	}
 	else
 	{
+		KillTarget:Set[]
+		CurrentAction:Set["You have been killed..."]		
 		do
 		{
+			wait 2
+			call ProcessTriggers
 			if ${Math.Calc64[${Time.Timestamp}-${deathtimer}]}>5000
-				Exit
+				Exit			
 		}
-		while ${Me.ToActor.IsDead}
+		while ${Me.ToActor.IsDead} || ${EQ2.Zoning}
+		
+		wait 15
+		if ${AutoFollowingMA(exists)}
+			AutoFollowingMA:Set[FALSE]
+		CurrentAction:Set[Performing PostDeath Routine...]	
+		;; call PostDeathRoutine(), which exists in each class file
+		call PostDeathRoutine
+		CurrentAction:Set[Idle...]	
 	}
 }
 
@@ -4037,6 +4084,7 @@ function CheckBuffsOnce()
 			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 				break
 			call ProcessTriggers
+			wait 2
 		}
 		while ${i:Inc}<=40
 

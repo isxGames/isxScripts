@@ -824,3 +824,10 @@ function DestroyThoughtstones()
 	}
 	while ${Counter:Inc}<=${Me.CustomInventoryArraySize}
 }
+
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
+}

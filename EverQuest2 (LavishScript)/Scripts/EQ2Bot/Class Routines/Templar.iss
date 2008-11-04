@@ -1081,3 +1081,10 @@ function CheckReactives()
 			call CastSpellRange 2
 	}
 }
+
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	
+	return
+}

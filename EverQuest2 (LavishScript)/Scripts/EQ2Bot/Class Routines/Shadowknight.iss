@@ -48,6 +48,7 @@ function Class_Declaration()
 	declare UseDeathMarch bool script FALSE
 	declare UseMastersRage bool script TRUE
 	declare HasMythical bool script FALSE
+	declare InPostDeathRoutine bool script FALSE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -111,12 +112,16 @@ function Buff_Init()
    PreSpellRange[8,1]:Set[295]
 
    PreAction[9]:Set[Reaver]
+   PreSpellRange[9,1]:Set[334]
 
    PreAction[10]:Set[SiphonHate]
+   PreSpellRange[10,1]:Set[335]
 
    PreAction[11]:Set[BattleLeadershipAABuff]
+   PreSpellRange[11,1]:Set[336]
 
    PreAction[12]:Set[FearlessMoraleAABuff]
+   PreSpellRange[12,1]:Set[337]
 
    PreAction[13]:Set[Bloodletter]
    PreSpellRange[13,1]:Set[331]
@@ -254,17 +259,18 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-	if ${ShardMode}
+	if !${InPostDeathRoutine}
 	{
-		call Shard
+		if ${ShardMode}
+			call Shard
+	
+		if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+		{
+		    ExecuteAtom AutoFollowTank
+			wait 5
+		}
 	}
-
-	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
-	{
-	    ExecuteAtom AutoFollowTank
-		wait 5
-	}
-
+	
 	switch ${PreAction[${xAction}]}
 	{
 
@@ -347,17 +353,8 @@ function Buff_Routine(int xAction)
 		case Reaver
 		    if ${UseReaver}
 		    {
-    			if !${Me.Maintained[Reaver](exists)}
-    		    {
-    		        Me.Ability[Reaver]:Use
-    		        wait 1
-    		        do
-    		        {
-    		            waitframe
-    		        }
-    		        while ${Me.CastingSpell}
-    		        wait 1
-    		    }
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+			        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 		    }
 		    else
 		    {
@@ -374,14 +371,8 @@ function Buff_Routine(int xAction)
 		    {
     			if !${Me.Maintained[Siphon Hate](exists)}
     		    {
-    		        Me.Ability[Siphon Hate]:Use
-    		        wait 1
-    		        do
-    		        {
-    		            waitframe
-    		        }
-    		        while ${Me.CastingSpell}
-    		        wait 1
+				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
     		    }
     		}
 		    else
@@ -396,14 +387,8 @@ function Buff_Routine(int xAction)
 		    {
     			if !${Me.Maintained[Battle Leadership](exists)}
     		    {
-    		        Me.Ability[Battle Leadership]:Use
-    		        wait 1
-    		        do
-    		        {
-    		            waitframe
-    		        }
-    		        while ${Me.CastingSpell}
-    		        wait 1
+				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
     		    }
 		    }
 		    else
@@ -418,14 +403,8 @@ function Buff_Routine(int xAction)
 		    {
     			if !${Me.Maintained[Fearless Morale](exists)}
     		    {
-    		        Me.Ability[Fearless Morale]:Use
-    		        wait 1
-    		        do
-    		        {
-    		            waitframe
-    		        }
-    		        while ${Me.CastingSpell}
-    		        wait 1
+				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
     		    }
 		    }
 		    else
@@ -1366,5 +1345,41 @@ function CastSomething()
 	    call CastSpellRange 45 0 0 0 ${KillTarget}
 	    return
 	}
+}
 
+function PostDeathRoutine()
+{	
+	;; This function is called after a character has either revived or been rezzed
+	variable int i
+	InPostDeathRoutine:Set[TRUE]
+	
+	;;;;;;;;;;;;;;;
+	;; Do Buffs before anything else
+	i:Set[1]
+	do
+	{
+		call Buff_Routine ${i}
+		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+			break
+		call ProcessTriggers
+		wait 2
+	}
+	while ${i:Inc}<=40
+
+	if (${UseCustomRoutines})
+	{
+		i:Set[1]
+		do
+		{
+			call Custom__Buff_Routine ${i}
+			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+				break
+		}
+		while ${i:Inc} <= 40
+	}
+	;;
+	;;;;;;;;;;;;;;;
+	
+	InPostDeathRoutine:Set[FALSE]
+	return
 }
