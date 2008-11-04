@@ -1478,7 +1478,7 @@ function Post_Combat_Routine(int xAction)
 	}
 }
 
-function Have_Aggro(int aggroid)
+function Have_Aggro()
 {
 	if ${Actor[${aggroid}].Name.Find["Master P"]}
 		return
