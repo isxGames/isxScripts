@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v8.54 - Fixed T8 scholar writ processing.
+
 v8.53 - Changed writ recipe detection code. This should allow for a much smaller CustomWrits
         file.
       - Fixed guild privacy not getting re-set after completing one writ and starting the next.
