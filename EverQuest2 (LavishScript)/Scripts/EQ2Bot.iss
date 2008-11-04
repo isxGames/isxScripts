@@ -928,10 +928,15 @@ function CastSpellRange(... Args)
 				{
 					; if no range is passed, lets make sure we're not out of range and adjust
 					if !${xvar1} && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].Range}]}
+					{
+						echo DEBUG::CastSpellRange - Out of Range detected, moving to max cast range to target.
 						call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
+					}
 					elseif ${xvar1} || ${xvar2}
+					{
+						echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar}
 						call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
-
+					}
 					if ${Target(exists)}
 						originaltarget:Set[${Target.ID}]
 				}
@@ -1817,6 +1822,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	variable point3f destmaxpoint
 	variable int xTimer
 	xTimer:Set[${Script.RunningTime}]
+
 
 	if ${NoAutoMovement} && ${Me.ToActor.InCombatMode}
 	{
@@ -3517,12 +3523,14 @@ function CheckMTAggro()
 
 function ScanAdds()
 {
-		variable int tcount=1
+	return
+	;This needs to be redone completely.
+	variable int tcount=1
 	variable float X
 	variable float Z
 
 	if !${NoAutoMovement} || !${MainTank}
-			return
+
 
 	EQ2:CreateCustomActorArray[byDist,20,npc]
 	do
