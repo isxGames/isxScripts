@@ -1503,7 +1503,7 @@
                 <Height>62</Height>
                 <Font>
                   <Name>terminal</Name>
-                  <Size>10</Size>
+                  <Size>11</Size>
                 </Font>
                 <Texture />
                 <SelectMultiple>1</SelectMultiple>
@@ -1527,7 +1527,7 @@
                 <Height>60</Height>
                 <Font>
                   <Name>terminal</Name>
-                  <Size>10</Size>
+                  <Size>11</Size>
                 </Font>
                 <SelectMultiple>1</SelectMultiple>
                 <Texture />
@@ -1548,7 +1548,7 @@
                 <Height>60</Height>
                 <Font>
                   <Name>terminal</Name>
-                  <Size>10</Size>
+                  <Size>11</Size>
                 </Font>
                 <SelectMultiple>1</SelectMultiple>
                 <Texture />
@@ -1569,7 +1569,7 @@
                 <Height>115</Height>
                 <Font>
                   <Name>terminal</Name>
-                  <Size>10</Size>
+                  <Size>11</Size>
                 </Font>
                 <SelectMultiple>1</SelectMultiple>
                 <Texture />
