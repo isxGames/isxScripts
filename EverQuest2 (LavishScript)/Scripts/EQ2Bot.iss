@@ -927,7 +927,7 @@ function CastSpellRange(... Args)
 				if !${fndspell}
 				{
 					; if no range is passed, lets make sure we're not out of range and adjust
-					if !${xvar1} && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}
+					if !${xvar1} && ${Me.Ability[${SpellType[${tempvar}]}].MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}
 					{
 						echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}, Ability = ${tempvar}
 						call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
