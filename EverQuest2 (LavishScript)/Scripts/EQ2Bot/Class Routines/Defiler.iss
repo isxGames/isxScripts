@@ -148,89 +148,57 @@ function Combat_Init()
 	Action[3]:Set[AARabies]
 	SpellRange[3,1]:Set[352]
 
-	Action[4]:Set[Proc_Ward]
-	MobHealth[4,1]:Set[1]
-	MobHealth[4,2]:Set[100]
-	Power[4,1]:Set[1]
-	Power[4,2]:Set[100]
-	SpellRange[4,1]:Set[322]
+	Action[4]:Set[Mastery]
 
-	Action[5]:Set[Malaise]
+	Action[5]:Set[Fuliginous_Sphere]
 	MobHealth[5,1]:Set[1]
 	MobHealth[5,2]:Set[100]
 	Power[5,1]:Set[1]
 	Power[5,2]:Set[100]
-	SpellRange[5,1]:Set[71]
+	SpellRange[5,1]:Set[51]
 
-	Action[6]:Set[Imprecation]
+	Action[6]:Set[Proc_Ward]
 	MobHealth[6,1]:Set[1]
 	MobHealth[6,2]:Set[100]
-	Power[6,1]:Set[60]
+	Power[6,1]:Set[1]
 	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[80]
+	SpellRange[6,1]:Set[322]
 
-	Action[7]:Set[AA_Hexation]
+	Action[7]:Set[Malaise]
 	MobHealth[7,1]:Set[1]
 	MobHealth[7,2]:Set[100]
-	Power[7,1]:Set[20]
+	Power[7,1]:Set[1]
 	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[382]
+	SpellRange[7,1]:Set[71]
 
-	Action[8]:Set[TheftOfVitality]
+	Action[8]:Set[Curse]
 	MobHealth[8,1]:Set[1]
 	MobHealth[8,2]:Set[100]
-	Power[8,1]:Set[20]
+	Power[8,1]:Set[1]
 	Power[8,2]:Set[100]
-	SpellRange[8,1]:Set[55]
+	SpellRange[8,1]:Set[384]
 
-	Action[9]:Set[Mastery]
-	SpellRange[9,1]:Set[360]
-	SpellRange[9,2]:Set[379]
+	Action[9]:Set[Imprecation]
+	MobHealth[9,1]:Set[1]
+	MobHealth[9,2]:Set[100]
+	Power[9,1]:Set[60]
+	Power[9,2]:Set[100]
+	SpellRange[9,1]:Set[80]
 
-	Action[10]:Set[UmbralTrap]
+	Action[10]:Set[TheftOfVitality]
 	MobHealth[10,1]:Set[1]
 	MobHealth[10,2]:Set[100]
-	SpellRange[10,1]:Set[54]
+	Power[10,1]:Set[20]
+	Power[10,2]:Set[100]
+	SpellRange[10,1]:Set[55]
 
-	Action[11]:Set[Fuliginous_Sphere]
-	MobHealth[11,1]:Set[1]
-	MobHealth[11,2]:Set[100]
-	Power[11,1]:Set[1]
-	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[51]
+	Action[11]:Set[ThermalShocker]
 
-	Action[12]:Set[Curse]
+	Action[12]:Set[AA_CripplingBash]
 	MobHealth[12,1]:Set[1]
 	MobHealth[12,2]:Set[100]
-	Power[12,1]:Set[1]
-	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[50]
+	SpellRange[12,1]:Set[393]
 
-	Action[13]:Set[Loathsome_Seal]
-	MobHealth[13,1]:Set[1]
-	MobHealth[13,2]:Set[100]
-	Power[13,1]:Set[1]
-	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[53]
-
-	Action[14]:Set[Repulsion]
-	MobHealth[14,1]:Set[1]
-	MobHealth[14,2]:Set[100]
-	Power[14,1]:Set[1]
-	Power[14,2]:Set[100]
-	SpellRange[14,1]:Set[52]
-
-	Action[15]:Set[ThermalShocker]
-
-	Action[16]:Set[AA_CripplingBash]
-	MobHealth[16,1]:Set[1]
-	MobHealth[16,2]:Set[100]
-	SpellRange[16,1]:Set[393]
-
-	Action[17]:Set[UmbralTrap]
-	MobHealth[17,1]:Set[1]
-	MobHealth[17,2]:Set[100]
-	SpellRange[17,1]:Set[54]
 }
 
 function PostCombat_Init()
@@ -408,7 +376,11 @@ function Combat_Routine(int xAction)
 	declare BuffTarget string local
 	declare spellsused int local
 
-	spellsused:Set[0]
+	if ${EpicMode}
+		spellsused:Set[0]
+	else
+		spellsused:Set[1]
+
 	AutoFollowingMA:Set[FALSE]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -434,7 +406,20 @@ function Combat_Routine(int xAction)
 	call CheckGroupHealth 60
 	if ${Return} && ${DebuffMode} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsHeroic})
 	{
-		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)}
+
+		if ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}
+		{
+			call CastSpellRange 50 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[382]}].IsReady} && !${Me.Maintained[${SpellType[382]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 382 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${spellsused}<2
 		{
 			call CastSpellRange 52 0 0 0 ${KillTarget}
 			spellsused:Inc
@@ -443,6 +428,12 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[53]}].IsReady} && !${Me.Maintained[${SpellType[53]}](exists)} && ${spellsused}<2
 		{
 			call CastSpellRange 53 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		if ${Me.Ability[${SpellType[54]}].IsReady} && !${Me.Maintained[${SpellType[54]}](exists)} && ${spellsused}<2
+		{
+			call CastSpellRange 54 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
@@ -455,12 +446,6 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${spellsused}<2 && ${OffenseMode}
 		{
 			call CastSpellRange 51 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-
-		if ${Me.Ability[${SpellType[54]}].IsReady} && !${Me.Maintained[${SpellType[54]}](exists)} && ${spellsused}<2
-		{
-			call CastSpellRange 54 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 	}
@@ -1147,8 +1132,8 @@ function CheckWards()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }
