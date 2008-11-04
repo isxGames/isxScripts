@@ -1,40 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<template name='My.window.TitleBar'>
-    		<Border>1</Border>
-		<x>3</x>
-    		<BorderColor>FF000033</BorderColor>
-    		<Width>r6</Width>
-		<Height>26</Height>
-		<Texture />
-		<Children>
-			<Text Name='Title' />
-			<Button Name='Minimize'>
-			</Button>
-			<Button Name='Maximize'>
-			</Button>
-			<commandbutton name='Custom Close Button'>
 				<Command>Script[EQ2BotCommander]:End</Command>
-			</commandbutton>
-		</Children>
-	</template>
-	<template name='My.window'>
-		<Border>1</Border>
-		<Resizable>1</Resizable>
-		<CloseButton />
-		<MinimizeButton />
-		<TitleBar template='My.window.TitleBar' />
-		<OffsetTitleBarHeight />
-		<Client />
-		<StorePosition>1</StorePosition>
-	</template>
-	<Window name='EQ2Bot Commander' Template='My.Window'>
+	<Window name='EQ2Bot Commander'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>60</Width>
 		<Height>400</Height>
 		<StorePosition>1</StorePosition>
 		<Title>EQ2Bot Commander</Title>
+	  <TitleBar template='window.Titlebar'>
+		<Children>
+		  <Text Name='Title' Template='window.Titlebar.Title' />
+		  <Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		  <Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		  <commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>Script[EQ2BotCommander]:End</Command>
+		  </commandbutton>
+		</Children>
+	  </TitleBar>
 		<OnLoad>
 		</OnLoad>
 		<OnUnload>
