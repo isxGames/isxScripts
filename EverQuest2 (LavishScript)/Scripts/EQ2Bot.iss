@@ -363,25 +363,25 @@ function main()
 			}
 			while !${StartBot}
 		}
-		
+
 		if ${Me.ToActor.IsDead}
 		{
 			KillTarget:Set[]
-			CurrentAction:Set[Dead -- Waiting...]		
+			CurrentAction:Set[Dead -- Waiting...]
 			do
 			{
 				wait 2
 				call ProcessTriggers
 			}
 			while ${Me.ToActor.IsDead} || ${EQ2.Zoning}
-			
+
 			wait 15
 			if ${AutoFollowingMA(exists)}
 				AutoFollowingMA:Set[FALSE]
-			CurrentAction:Set[Performing PostDeath Routine...]	
+			CurrentAction:Set[Performing PostDeath Routine...]
 			;; call PostDeathRoutine(), which exists in each class file
 			call PostDeathRoutine
-			CurrentAction:Set[Idle...]	
+			CurrentAction:Set[Idle...]
 		}
 
 		if (${usemanastone})
@@ -926,7 +926,10 @@ function CastSpellRange(... Args)
 
 				if !${fndspell}
 				{
-					if ${xvar1} || ${xvar2}
+					; if no range is passed, lets make sure we're not out of range and adjust
+					if !${xvar1} && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].Range}]}
+						call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
+					elseif ${xvar1} || ${xvar2}
 						call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
 
 					if ${Target(exists)}
@@ -1052,14 +1055,14 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 		else
 			Me.Ability[${spell}]:Use
 	}
-	wait 4
+	;wait 4
 	; reducing this too much will cause problems ... 4 seems to be a sweet spot
 	wait 4 ${Me.CastingSpell}
 
 	;removed queuing, this is CASTNOW function, we want the thing to really cast!
 	while ${Me.CastingSpell}
 	{
-		wait 2
+		wait 1
 	}
 
 	return SUCCESS
@@ -1271,16 +1274,14 @@ function Combat()
 		wait 20 !${Me.IsMoving}
 	}
 
-	if !${Target(exists)}
-	{
-		target ${KillTarget}
-		wait 2
-		if ${MainTank} && !${Target(exists)}
-			return
-	}
+	target ${KillTarget}
+	wait 2
 
-	if ${Target.ID}!=${Me.ID} && ${Target(exists)}
+	if ${MainTank}
 		face ${Target.X} ${Target.Z}
+
+	if ${MainTank} && !${Target(exists)}
+		return
 
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	do
@@ -1296,13 +1297,11 @@ function Combat()
 		if ${ContinueCombat}
 		{
 			ContinueCombat:Set[FALSE]
-			if !${Target(exists)}
-			{
-				target ${KillTarget}
-				wait 1
-				face ${Target.X} ${Target.Z}
-			}
-			elseif ${Target.ID}!=${Me.ID}
+
+			target ${KillTarget}
+			wait 1
+
+			if ${MainTank}
 				face ${Target.X} ${Target.Z}
 		}
 
@@ -1591,7 +1590,7 @@ function Combat()
 			{
 				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 				Actor[${KillTarget}]:DoTarget
-				Actor[${KillTarget}]:DoFace
+				;Actor[${KillTarget}]:DoFace
 				ContinueCombat:Set[TRUE]
 				continue
 			}
@@ -2624,7 +2623,6 @@ function Pull(string npcclass)
 				}
 				else
 				{
-					face
 					CurrentAction:Set[Sending Pet in for attack...]
 					;echo "EQ2Bot-Pull():: Sending Pet in for attack..."
 					variable int StartTime = ${Script.RunningTime}
@@ -2680,7 +2678,7 @@ function Pull(string npcclass)
 										KillTarget:Set[${AggroMob}]
 										target ${AggroMob}
 										wait 1
-										face
+										face ${KillTarget}
 										wait 1
 										eq2execute /pet attack
 										return ${AggroMob}
@@ -2746,8 +2744,6 @@ function Pull(string npcclass)
 										KillTarget:Set[${AggroMob}]
 										target ${AggroMob}
 										wait 1
-										face
-										wait 1
 										eq2execute /pet attack
 										return ${AggroMob}
 									}
@@ -2759,8 +2755,6 @@ function Pull(string npcclass)
 
 					if ${Target(exists)}
 					{
-						face
-						wait 1
 						eq2execute /pet attack
 						CurrentAction:Set["${Target} in camp -- starting combat."]
 						echo "EQ2Bot-Pull():: ${Target} in camp -- starting combat."
@@ -2791,8 +2785,6 @@ function Pull(string npcclass)
 					call FastMove ${Target.X} ${Target.Z} ${MARange}
 			}
 
-			if ${Target(exists)} && !${pulling} && (${Me.ID}!=${Target.ID})
-				face ${Target.X} ${Target.Z}
 			if ${Target(exists)}
 			{
 				KillTarget:Set[${Target.ID}]
@@ -3312,10 +3304,10 @@ function IamDead(string Line)
 			wait 15
 			if ${AutoFollowingMA(exists)}
 				AutoFollowingMA:Set[FALSE]
-			CurrentAction:Set[Performing PostDeath Routine...]	
+			CurrentAction:Set[Performing PostDeath Routine...]
 			;; call PostDeathRoutine(), which exists in each class file
 			call PostDeathRoutine
-			CurrentAction:Set[Idle...]	
+			CurrentAction:Set[Idle...]
 			return
 		}
 		else
@@ -3335,7 +3327,7 @@ function IamDead(string Line)
 					wait 10
 				}
 				while ${wipegroup:Inc}<=${Me.GroupCount}
-	
+
 				if ${wipe}==${grpcnt}
 				{
 					CurrentAction:Set["Everyone is dead, waiting 10 seconds to revive"]
@@ -3364,7 +3356,7 @@ function IamDead(string Line)
 					{
 						EQ2Execute "/follow ${MainTankPC}"
 					}
-	
+
 					echo Waiting for group to reform
 					together:Set[1]
 					do
@@ -3404,23 +3396,23 @@ function IamDead(string Line)
 	else
 	{
 		KillTarget:Set[]
-		CurrentAction:Set["You have been killed..."]		
+		CurrentAction:Set["You have been killed..."]
 		do
 		{
 			wait 2
 			call ProcessTriggers
 			if ${Math.Calc64[${Time.Timestamp}-${deathtimer}]}>5000
-				Exit			
+				Exit
 		}
 		while ${Me.ToActor.IsDead} || ${EQ2.Zoning}
-		
+
 		wait 15
 		if ${AutoFollowingMA(exists)}
 			AutoFollowingMA:Set[FALSE]
-		CurrentAction:Set[Performing PostDeath Routine...]	
+		CurrentAction:Set[Performing PostDeath Routine...]
 		;; call PostDeathRoutine(), which exists in each class file
 		call PostDeathRoutine
-		CurrentAction:Set[Idle...]	
+		CurrentAction:Set[Idle...]
 	}
 }
 
