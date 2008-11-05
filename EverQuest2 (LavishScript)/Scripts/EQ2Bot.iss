@@ -192,6 +192,7 @@ variable int gRtnCtr=1
 variable string GainedXPString
 variable string LastQueuedAbility
 variable int LastCastTarget
+variable int OORThreshold
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -927,10 +928,14 @@ function CastSpellRange(... Args)
 				if !${fndspell}
 				{
 					; if no range is passed, lets make sure we're not out of range and adjust
-					if !${xvar1} && ${Me.Ability[${SpellType[${tempvar}]}].MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]} && ${Actor[${TargetID}].Distance}<${ScanRange}
+					if !${xvar1} && ${Me.Ability[${SpellType[${tempvar}]}].MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}
 					{
-						echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}, Ability = ${tempvar}
-						call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
+						;lets not move beyond defined threshold
+						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}]}<${OORThreshold}
+						{
+							echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}, Ability = ${tempvar}
+							call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
+						}
 					}
 					elseif ${xvar1} || ${xvar2}
 					{
@@ -4577,6 +4582,7 @@ objectdef EQ2BotObj
 		IgnoreGreyCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Grey Con Mobs?,TRUE]}]
 		PullNonAggro:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Pull Non Aggro Mobs?,TRUE]}]
 		AssistHP:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Assist and Engage in combat at what Health?,96]}]
+		OORThreshold:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Out of Range Reaction Distance,25]}]
 		Following:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Are we following someone?,FALSE]}]
 		PathType:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What Path Type (0-4)?,0]}]
 		CloseUI:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Close the UI after starting EQ2Bot?,FALSE]}]

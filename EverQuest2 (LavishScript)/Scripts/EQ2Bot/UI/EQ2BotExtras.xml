@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
 	<Commandcheckbox Name='CombatFollow'>
-		<X>5</X>
+		<X>5%</X>
 		<Y>10</Y>
 		<Width>40</Width>
 		<Height>20</Height>
@@ -22,7 +22,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[CombatFollow]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='WarnTank'>
-		<X>5</X>
+		<X>5%</X>
 		<Y>30</Y>
 		<Width>40</Width>
 		<Height>20</Height>
@@ -42,9 +42,32 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me]}</Data>
 	</Commandcheckbox>
+	<Text Name='lblOORThreshold'>
+		<X>55%</X>
+		<Y>10</Y>
+		<Width>40%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Out of Range Reaction Distance:</Text>
+		<AutoTooltip>When a spell is called and you are out of range of target, the distance to consider safe to move to max cast range.
+		if movement is a concern make this 0 to prevent any movement and remain out of cast range.</AutoTooltip>
+	</Text>
+	<Slider Name='sldOORThreshold'>
+		<X>60%</X>
+		<Y>30</Y>
+		<Width>35%</Width>
+		<Border>0</Border>
+		<Height>20</Height>
+		<Range>75</Range>
+		<OnLoad>This:SetValue[${Script[EQ2Bot].Variable[OORThreshold]}]</OnLoad>
+		<OnChange>
+			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Out of Range Reaction Distance,${This.Value}]:Save
+			Script[EQ2Bot].Variable[OORThreshold]:Set[${This.Value}]
+		</OnChange>
+	</Slider>
 	<Commandcheckbox Name='Shard'>
 		<Visible>1</Visible>
-		<X>5</X>
+		<X>5%</X>
 		<Y>50</Y>
 		<Width>80</Width>
 		<Height>20</Height>
@@ -109,7 +132,7 @@
 	</combobox>
 	<Commandcheckbox Name='Heart'>
 		<Visible>1</Visible>
-		<X>5</X>
+		<X>5%</X>
 		<Y>70</Y>
 		<Width>80</Width>
 		<Height>20</Height>
@@ -173,7 +196,7 @@
 		</OnLeftClick>
 	</combobox>
 	<Commandcheckbox Name='DoHOs'>
-		<X>5</X>
+		<X>5%</X>
 		<Y>90</Y>
 		<Width>40</Width>
 		<Height>20</Height>
@@ -194,7 +217,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[DoHOs]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='PetGuard'>
-		<X>5</X>
+		<X>5%</X>
 		<Y>110</Y>
 		<Width>40</Width>
 		<Height>20</Height>
@@ -216,7 +239,7 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[PetGuard]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='EpicMode'>
-		<X>5</X>
+		<X>5%</X>
 		<Y>130</Y>
 		<Width>40</Width>
 		<Height>20</Height>
@@ -237,8 +260,8 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[EpicMode]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox name='Use MP Potions'>
-		<X>10</X>
-		<Y>160</Y>
+		<X>5%</X>
+		<Y>150</Y>
 		<Width>100</Width>
 		<Height>20</height>
 		<Text>Use Potions for Power/Health</Text>
@@ -257,8 +280,8 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Use Potions?]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox name='Use Potions'>
-		<X>10</X>
-		<Y>180</Y>
+		<X>5%</X>
+		<Y>170</Y>
 		<Width>100</Width>
 		<Height>20</height>
 		<Text>Use Potions for cures</Text>
@@ -277,8 +300,8 @@
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Use potions for cures?]}</Data>
 	</Commandcheckbox>
 	<Text Name='lblArcane'>
-		<X>10</X>
-		<Y>215</Y>
+		<X>5%</X>
+		<Y>190</Y>
 		<Width>50</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -287,7 +310,7 @@
 	</Text>
 	<combobox name='cbArcane'>
 		<x>75</x>
-		<y>210</y>
+		<y>190</y>
 		<width>40%</width>
 		<height>20</height>
 		<AutoTooltip>Potion to use for Arcane</AutoTooltip>
@@ -325,8 +348,8 @@
 		</OnSelect>
 	</combobox>
 	<Text Name='lblElemental'>
-		<X>10</X>
-		<Y>235</Y>
+		<X>5%</X>
+		<Y>210</Y>
 		<Width>50</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -335,7 +358,7 @@
 	</Text>
 	<combobox name='cbElemental'>
 		<x>75</x>
-		<y>230</y>
+		<y>210</y>
 		<width>40%</width>
 		<height>20</height>
 		<AutoTooltip>Potion to use for Elemental</AutoTooltip>
@@ -373,8 +396,8 @@
 		</OnSelect>
 	</combobox>
 	<Text Name='lblNoxious'>
-		<X>10</X>
-		<Y>255</Y>
+		<X>5%</X>
+		<Y>230</Y>
 		<Width>50</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -383,7 +406,7 @@
 	</Text>
 	<combobox name='cbNoxious'>
 		<x>75</x>
-		<y>250</y>
+		<y>230</y>
 		<width>40%</width>
 		<height>20</height>
 		<AutoTooltip>Potion to use for Noxious</AutoTooltip>
@@ -421,8 +444,8 @@
 		</OnSelect>
 	</combobox>
 	<Text Name='lblTrauma'>
-		<X>10</X>
-		<Y>275</Y>
+		<X>5%</X>
+		<Y>250</Y>
 		<Width>50</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
@@ -431,7 +454,7 @@
 	</Text>
 	<combobox name='cbTrauma'>
 		<x>75</x>
-		<y>270</y>
+		<y>250</y>
 		<width>40%</width>
 		<height>20</height>
 		<AutoTooltip>Potion to use for Trauma</AutoTooltip>
