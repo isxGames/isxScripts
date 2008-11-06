@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v8.55 - Fixed <T8 scholar writ processing.
+
 v8.54 - Fixed T8 scholar writ processing.
       - Fixed Provisioner writ processing. Note that all previously entered CustomWrits for
         provisioner will need to be fixed as they come up. Our parsed text is different than
