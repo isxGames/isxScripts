@@ -327,14 +327,14 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
-	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<15
+	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<15 && !${MaintTank} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 	{
 		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 0 0 1 0
 		eq2execute auto 1
 		call CheckPosition 1 1 ${KillTarget}
 	}
 
-	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15 && !${MaintTank} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 	{
 		eq2execute auto 1
 		call CheckPosition 1 1 ${KillTarget}
@@ -584,7 +584,7 @@ function Combat_Routine(int xAction)
 			call StartHO
 			break
 		case Flank_Attack
-			if !${RangedAttackMode} && !${MainTank}
+			if !${RangedAttackMode} && !${MainTank} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
 			break
 		case Rebuff
