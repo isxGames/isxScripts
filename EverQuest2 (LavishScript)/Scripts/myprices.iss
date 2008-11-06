@@ -2428,7 +2428,11 @@ function StartUp()
 		}
 	}
 	
-	
+	EQ2Execute /togglebags
+	wait 10
+	EQ2Execute /togglebags
+	wait 10
+
 	i:Set[1]
 	do
 	{
