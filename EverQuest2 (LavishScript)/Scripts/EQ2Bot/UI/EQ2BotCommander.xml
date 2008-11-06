@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-				<Command>Script[EQ2BotCommander]:End</Command>
 	<Window name='EQ2Bot Commander'>
 		<X>10</X>
 		<Y>10</Y>
