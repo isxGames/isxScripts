@@ -42,29 +42,6 @@
 		</OnLeftClick>
 		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me]}</Data>
 	</Commandcheckbox>
-	<Text Name='lblOORThreshold'>
-		<X>55%</X>
-		<Y>10</Y>
-		<Width>40%</Width>
-		<Height>20</Height>
-		<Alignment>Left</Alignment>
-		<Text>Out of Range Reaction Distance:</Text>
-		<AutoTooltip>When a spell is called and you are out of range of target, the distance to consider safe to move to max cast range.
-		if movement is a concern make this 0 to prevent any movement and remain out of cast range.</AutoTooltip>
-	</Text>
-	<Slider Name='sldOORThreshold'>
-		<X>60%</X>
-		<Y>30</Y>
-		<Width>35%</Width>
-		<Border>0</Border>
-		<Height>20</Height>
-		<Range>75</Range>
-		<OnLoad>This:SetValue[${Script[EQ2Bot].Variable[OORThreshold]}]</OnLoad>
-		<OnChange>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Out of Range Reaction Distance,${This.Value}]:Save
-			Script[EQ2Bot].Variable[OORThreshold]:Set[${This.Value}]
-		</OnChange>
-	</Slider>
 	<Commandcheckbox Name='Shard'>
 		<Visible>1</Visible>
 		<X>5%</X>
