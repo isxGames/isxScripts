@@ -649,7 +649,7 @@ function Post_Combat_Routine(int xAction)
 	}
 }
 
-function Have_Aggro(int aggroid)
+function Have_Aggro()
 {
 
 	if !${TellTank} && ${WarnTankWhenAggro}
