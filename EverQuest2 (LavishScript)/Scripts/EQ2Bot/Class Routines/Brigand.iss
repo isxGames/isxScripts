@@ -191,7 +191,7 @@ function Buff_Routine(int xAction)
 			break
 
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 
@@ -218,7 +218,7 @@ function Combat_Routine(int xAction)
 
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
-		call CastSpellRange 130 0 1 0 ${KillTarget}
+		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 		call CastSpellRange 303
@@ -227,9 +227,9 @@ function Combat_Routine(int xAction)
 	if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health}>80) || (${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}>5)
 	{
 		if ${Me.Ability[${SpellType[155]}].IsReady}
-			call CastSpellRange 155 0 1 0 ${KillTarget} 0 0 1
+			call CastSpellRange 155 0 1 0 ${KillTarget} 0 0 0 0 1
 		if ${Me.Ability[${SpellType[156]}].IsReady}
-			call CastSpellRange 156 0 1 0 ${KillTarget} 0 0 1
+			call CastSpellRange 156 0 1 0 ${KillTarget} 0 0 0 0 1
 	}
 
 	;;; AoE Checks
@@ -237,78 +237,78 @@ function Combat_Routine(int xAction)
 	{
 		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[90]}].IsReady}
 		{
-			call CastSpellRange 78 0 1 0 ${KillTarget}
+			call CastSpellRange 78 0 1 0 ${KillTarget} 0 0 0 0 1
 			spellsused:Inc
 		}
 
 		if ${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady}
 		{
-			call CastSpellRange 95 0 1 0 ${KillTarget}
-			call CastSpellRange 319 0 1 0 ${KillTarget}
+			call CastSpellRange 95 0 1 0 ${KillTarget} 0 0 0 0 1
+			call CastSpellRange 319 0 1 0 ${KillTarget} 0 0 0 0 1
 			spellsused:Inc
 		}
 	}
 
 	if ${MainTank}
 	{
-		call CastSpellRange 385 0 1 0 ${KillTarget}
+		call CastSpellRange 385 0 1 0 ${KillTarget} 0 0 0 0 1
 		if ${Me.Maintained[${SpellType[385]}](exists)}
-			call CastSpellRange 101 0 1 0 ${KillTarget}
+			call CastSpellRange 101 0 1 0 ${KillTarget} 0 0 0 0 1
 
-		call CastSpellRange 152 0 1 0 ${KillTarget}
-
-		if ${Me.Maintained[${SpellType[152]}](exists)} || ${Me.Maintained[${SpellType[385]}](exists)}
-			call CastSpellRange 102 0 1 0 ${KillTarget}
+		call CastSpellRange 152 0 1 0 ${KillTarget} 0 0 0 0 1
 
 		if ${Me.Maintained[${SpellType[152]}](exists)} || ${Me.Maintained[${SpellType[385]}](exists)}
-			call CastSpellRange 100 0 1 0 ${KillTarget}
+			call CastSpellRange 102 0 1 0 ${KillTarget} 0 0 0 0 1
 
 		if ${Me.Maintained[${SpellType[152]}](exists)} || ${Me.Maintained[${SpellType[385]}](exists)}
-			call CastSpellRange 319 0 1 0 ${KillTarget}
+			call CastSpellRange 100 0 1 0 ${KillTarget} 0 0 0 0 1
 
-		call CastSpellRange 160 0 1 0 ${KillTarget}
+		if ${Me.Maintained[${SpellType[152]}](exists)} || ${Me.Maintained[${SpellType[385]}](exists)}
+			call CastSpellRange 319 0 1 0 ${KillTarget} 0 0 0 0 1
+
+		call CastSpellRange 160 0 1 0 ${KillTarget} 0 0 0 0 1
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[130]}].IsReady} && ${Me.Ability[${SpellType[201]}].IsReady}
 	{
-		call CastSpellRange 201 0 1 0 ${KillTarget}
-		call CastSpellRange 130 0 1 0 ${KillTarget}
+		call CastSpellRange 201 0 1 0 ${KillTarget} 0 0 0 0 1
+		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[50]}].IsReady}
 	{
-		call CastSpellRange 50 0 1 0 ${KillTarget}
+		call CastSpellRange 50 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[154]}].IsReady} && !${MainTank}
 	{
-		call CastSpellRange 154 0 1 0 ${KillTarget}
+		call CastSpellRange 154 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady}
 	{
-		call CastSpellRange 382 0 1 0 ${KillTarget}
+		call CastSpellRange 382 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[100]}].IsReady} && !${MainTank}
 	{
-		call CastSpellRange 100 0 1 1 ${KillTarget}
+		call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[102]}].IsReady} && !${MainTank}
 	{
-		call CastSpellRange 102 0 1 1 ${KillTarget}
+		call CastSpellRange 102 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[101]}].IsReady} && !${MainTank}
 	{
-		call CastSpellRange 101 0 1 1 ${KillTarget}
+		call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
@@ -317,102 +317,103 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)}
 		{
 			Target ${KillTarget}
-			call CheckPosition 1 1
+			call CheckPosition 1 1 ${KillTarget}
 			Me.Ability[Sinister Strike]:Use
+			wait 4
 		}
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady}
 	{
-		call CastSpellRange 151 0 1 0 ${KillTarget}
+		call CastSpellRange 151 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[319]}].IsReady}
 	{
-		call CastSpellRange 319 0 1 0 ${KillTarget}
+		call CastSpellRange 319 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[185]}].IsReady}
 	{
-		call CastSpellRange 185 0 1 0 ${KillTarget}
+		call CastSpellRange 185 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[150]}].IsReady}
 	{
-		call CastSpellRange 150 0 1 0 ${KillTarget}
+		call CastSpellRange 150 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[110]}].IsReady}
 	{
-		call CastSpellRange 110 0 1 1 ${KillTarget}
+		call CastSpellRange 110 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[103]}].IsReady}
 	{
-		call CastSpellRange 103 0 1 1 ${KillTarget}
+		call CastSpellRange 103 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${PetMode} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[386]}].IsReady}
 	{
-		call CastSpellRange 386 0 1 0 ${KillTarget}
+		call CastSpellRange 386 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[111]}].IsReady}
 	{
-		call CastSpellRange 111 0 1 1 ${KillTarget}
+		call CastSpellRange 111 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[152]}].IsReady}
 	{
-		call CastSpellRange 152 0 1 0 ${KillTarget}
+		call CastSpellRange 152 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[153]}].IsReady}
 	{
-		call CastSpellRange 153 0 1 0 ${KillTarget}
+		call CastSpellRange 153 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[381]}].IsReady}
 	{
-		call CastSpellRange 381 0 1 0 ${KillTarget}
+		call CastSpellRange 381 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[385]}].IsReady}
 	{
-		call CastSpellRange 385 0 1 0 ${KillTarget}
+		call CastSpellRange 385 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[120]}].IsReady}
 	{
 		if ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
-			call CastSpellRange 120 0 1 3 ${KillTarget}
+			call CastSpellRange 120 0 1 3 ${KillTarget} 0 0 0 0 1
 		else
-			call CastSpellRange 120 0 1 2 ${KillTarget}
+			call CastSpellRange 120 0 1 2 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[76]}].IsReady}
 	{
-		call CastSpellRange 76 0 1 0 ${KillTarget}
+		call CastSpellRange 76 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[386]}].IsReady}
 	{
-		call CastSpellRange 386 0 1 0 ${KillTarget}
-		call CastSpellRange 130 0 1 0 ${KillTarget}
+		call CastSpellRange 386 0 1 0 ${KillTarget} 0 0 0 0 1
+		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 	if ${DoHOs}
@@ -447,23 +448,23 @@ function Have_Aggro(int agroid)
 	if ${OffenseMode} && ${Me.Ability[${SpellType[387]}].IsReady} && ${agroid}>0
 	{
 		;Trickery
-		call CastSpellRange 387 0 1 0 ${agroid} 0 0 1
+		call CastSpellRange 387 0 1 0 ${agroid} 0 0 0 0 1
 	}
 	elseif ${agroid}>0
 	{
 		if ${Me.Ability[${SpellType[185]}].IsReady}
 		{
 			;agro dump
-			call CastSpellRange 185 0 1 0 ${agroid} 0 0 1
+			call CastSpellRange 185 0 1 0 ${agroid} 0 0 0 0 1
 		}
 		elseif ${Me.Ability[${SpellType[387]}].IsReady}
 		{
 			;feign
-			call CastSpellRange 387 0 1 0 ${agroid} 0 0 1
+			call CastSpellRange 387 0 1 0 ${agroid} 0 0 0 0 1
 		}
 		else
 		{
-			call CastSpellRange 181 0 1 0 ${agroid} 0 0 1
+			call CastSpellRange 181 0 1 0 ${agroid} 0 0 0 0 1
 		}
 
 	}
@@ -483,25 +484,25 @@ function Lost_Aggro(int mobid)
 
 			if ${Actor${mobid}].Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange 100 0 1 1 ${aggroid} 0 0 1
+				call CastSpellRange 100 0 1 1 ${aggroid} 0 0 0 0 1
 			}
 
 			if ${Actor${mobid}].Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange 101 0 1 1 ${aggroid} 0 0 1
+				call CastSpellRange 101 0 1 1 ${aggroid} 0 0 0 0 1
 			}
 
 			if ${Actor${mobid}].Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange 102 0 1 1 ${aggroid} 0 0 1
+				call CastSpellRange 102 0 1 1 ${aggroid} 0 0 0 0 1
 			}
 
 			if ${Actor${mobid}].Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange 103 0 1 1 ${aggroid} 0 0 1
+				call CastSpellRange 103 0 1 1 ${aggroid} 0 0 0 0 1
 			}
 
-			call CastSpellRange 160 0 1 0 ${aggroid} 0 0 1
+			call CastSpellRange 160 0 1 0 ${aggroid} 0 0 0 0 1
 		}
 	}
 
@@ -513,7 +514,7 @@ function MA_Lost_Aggro()
 	;if tank lost agro, and I don't have agro, save the warlocks ass
 	if ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 	{
-		call CastSpellRange 270 0 1 0 ${KillTarget} 0 0 1
+		call CastSpellRange 270 0 1 0 ${KillTarget} 0 0 0 0 1
 	}
 }
 
@@ -540,8 +541,8 @@ function ActionChecks()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }

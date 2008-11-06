@@ -1962,9 +1962,11 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	;
 	if ${Actor[${TID}].Distance}<${maxrange} && ${Actor[${TID}].Distance}>${minrange}
 	{
-		echo DEBUG:: CheckPosition Already Close to target, Checking Quadrant
-		call CheckQuadrant ${TID} ${quadrant}
-
+		if ${quadrant}
+		{
+			echo DEBUG:: CheckPosition Already Close to target, Checking Quadrant
+			call CheckQuadrant ${TID} ${quadrant}
+		}
 		;verify distance and return
 		if ${Actor[${TID}].Distance}<${maxrange} && ${Actor[${TID}].Distance}>${minrange}
 			return ${Return}
@@ -2001,7 +2003,8 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	;
 	;check quadrant due to fastmove precision
 	;
-	call CheckQuadrant ${TID} ${quadrant}
+	if ${quadrant}
+		call CheckQuadrant ${TID} ${quadrant}
 
 	;
 	;Final Positioning Tweaks
@@ -2072,7 +2075,7 @@ function CheckQuadrant(uint TID, int quadrant)
 			return
 			break
 		case 1
-			if ${targetaspect}>0 &&  ${targetaspect}<45
+			if ${targetaspect}>0 && ${targetaspect}<45
 				return
 			else
 			{
@@ -2090,7 +2093,7 @@ function CheckQuadrant(uint TID, int quadrant)
 			}
 			break
 		case 2
-			if ${targetaspect}>135 &&  ${targetaspect}<=180
+			if ${targetaspect}>135 && ${targetaspect}<=180
 				return
 			else
 			{
@@ -2142,7 +2145,7 @@ function CheckQuadrant(uint TID, int quadrant)
 			}
 			break
 		case 4
-			if ${targetaspect}>0 &&  ${targetaspect}<135
+			if ${targetaspect}>0 && ${targetaspect}<135
 				return
 			else
 			{
@@ -2160,7 +2163,7 @@ function CheckQuadrant(uint TID, int quadrant)
 			}
 			break
 		case 5
-			if ${targetaspect}>45 &&  ${targetaspect}<180
+			if ${targetaspect}>45 && ${targetaspect}<180
 				return
 			else
 			{
@@ -2219,7 +2222,7 @@ function StrafeToLeft(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			waitframe
+			wait 2
 
 			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
 			{
@@ -2253,7 +2256,7 @@ function StrafeToLeft(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			waitframe
+			wait 2
 
 			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
 			{
@@ -2271,6 +2274,7 @@ function StrafeToLeft(uint TID, float destangle)
 	}
 
 	press -release ${strafeleft}
+	press -release ${forward}
 	Actor[${TID}]:DoFace
 }
 
@@ -2311,7 +2315,7 @@ function StrafeToRight(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			waitframe
+			wait 2
 
 			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
 			{
@@ -2340,7 +2344,7 @@ function StrafeToRight(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			waitframe
+			wait 2
 
 			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
 			{
@@ -2358,6 +2362,7 @@ function StrafeToRight(uint TID, float destangle)
 	}
 
 	press -release ${straferight}
+	press -release ${forward}
 	Actor[${TID}]:DoFace
 }
 
