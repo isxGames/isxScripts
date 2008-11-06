@@ -291,7 +291,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 
@@ -327,41 +327,29 @@ function Combat_Routine(int xAction)
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 	{
-		call CastSpellRange 130 0 1 1 ${KillTarget} 0 0 1
+		call CastSpellRange 130 0 1 1 ${KillTarget} 0 0 0 0 1
 	}
 
 	;use best debuffs on target if epic
 	if ${Actor[${KillTarget}].IsEpic}
 	{
 		if ${Me.Ability[${SpellType[150]}].IsReady}
-		{
-			call CastSpellRange 150 0 0 1 ${KillTarget} 0 0 1
-		}
+			call CastSpellRange 150 0 0 1 ${KillTarget} 0 0 0 0 1
 
 		if ${Me.Ability[${SpellType[191]}].IsReady}
-		{
-			call CastSpellRange 191 0 1 1 ${KillTarget} 0 0 1
-		}
+			call CastSpellRange 191 0 1 1 ${KillTarget} 0 0 0 0 1
 
 		if ${Me.Ability[${SpellType[381]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
-		{
-			call CastSpellRange 381 0 1 1 ${KillTarget} 0 0 1
-		}
+			call CastSpellRange 381 0 1 1 ${KillTarget} 0 0 0 0 1
 
 		if ${Me.Ability[${SpellType[382]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
-		{
-			call CastSpellRange 382 0 1 1 ${KillTarget} 0 0 1
-		}
+			call CastSpellRange 382 0 1 1 ${KillTarget} 0 0 0 0 1
 
 		if ${Me.Ability[${SpellType[386]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
-		{
-			call CastSpellRange 386 0 1 1 ${KillTarget} 0 0 1
-		}
+			call CastSpellRange 386 0 1 1 ${KillTarget} 0 0 0 0 1
 
 		if ${Me.Ability[${SpellType[101]}].IsReady} && ${Target.Target.ID}!=${Me.ID}
-		{
-			call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 1
-		}
+			call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 0 0 1
 	}
 
 	;if Named or Epic and over 60% health, use dps buffs
@@ -373,9 +361,9 @@ function Combat_Routine(int xAction)
 			call CheckPosition 1 1
 			if ${Me.Ability[${SpellType[155]}].IsReady} || ${Me.Ability[${SpellType[157]}].IsReady}
 			{
-				call CastSpellRange 155 158 1 0 ${KillTarget} 0 0 1
-				call CastSpellRange 151 0 1 0 ${KillTarget} 0 0 1
-				call CastSpellRange 153 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange 155 158 1 0 ${KillTarget} 0 0 0 0 1
+				call CastSpellRange 151 0 1 0 ${KillTarget} 0 0 0 0 1
+				call CastSpellRange 153 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 		}
 	}
@@ -388,13 +376,13 @@ function Combat_Routine(int xAction)
 		case Melee_Attack4
 		case Melee_Attack5
 		case Melee_Attack6
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			break
 		case AoE1
 		case AoE2
 			if ${AoEMode} && ${Mob.Count}>=2
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			break
 		case Snare
@@ -403,7 +391,7 @@ function Combat_Routine(int xAction)
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
 				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 0 1
 				}
 			}
 			break
@@ -411,11 +399,11 @@ function Combat_Routine(int xAction)
 		case Rear_Attack2
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			elseif ${Target.Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 0 0 1
 			}
 			break
 		case Mastery
@@ -424,28 +412,29 @@ function Combat_Routine(int xAction)
 				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 				{
 					Target ${KillTarget}
-					call CheckPosition 1 1
+					call CheckPosition 1 1 ${KillTarget}
 					Me.Ability[Sinister Strike]:Use
+					wait 4
 				}
 			}
 			break
 		case AA_WalkthePlank
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			break
 		case AA_Torporous
 		case AA_Traumatic
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			break
 		case AA_BootDagger
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			break
 
@@ -454,60 +443,60 @@ function Combat_Routine(int xAction)
 			;check valid rear position
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			;check right flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			;check left flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			elseif ${Target.Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget} 0 0 0 0 1
 			}
 		case Debuff1
 		case Debuff2
 		case Taunt
 			if ${TankMode}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 0 1
 			}
 			break
 		case Front_Attack
 			;check right flank
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			;check left flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			;check front
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			elseif ${Target.Target.ID}!=${Me.ID}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget} 0 0 0 0 1
 			}
 			else
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 2 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 2 ${KillTarget} 0 0 0 0 1
 			}
 			break
 
 		case Stun
 			if !${Target.IsEpic}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
 			}
 			break
 		default
@@ -538,18 +527,18 @@ function Have_Aggro()
 	if ${OffenseMode} && ${Me.Ability[${SpellType[388]}].IsReady} && ${agroid}>0
 	{
 		;Feign
-		call CastSpellRange 388 0 1 0 ${agroid} 0 0 1
+		call CastSpellRange 388 0 1 0 ${agroid} 0 0 0 0 1
 	}
 	elseif ${agroid}>0
 	{
 		if ${Me.Ability[${SpellType[185]}].IsReady}
 		{
 			;agro dump
-			call CastSpellRange 185 0 1 0 ${agroid} 0 0 1
+			call CastSpellRange 185 0 1 0 ${agroid} 0 0 0 0 1
 		}
 		else
 		{
-			call CastSpellRange 181 0 1 0 ${agroid} 0 0 1
+			call CastSpellRange 181 0 1 0 ${agroid} 0 0 0 0 1
 		}
 
 	}
@@ -561,8 +550,8 @@ function Lost_Aggro()
 	{
 		if ${TankMode}
 		{
-			call CastSpellRange 100 101 1 1 ${KillTarget} 0 0 1
-			call CastSpellRange 160 0 1 0 ${KillTarget} 0 0 1
+			call CastSpellRange 100 101 1 1 ${KillTarget} 0 0 0 0 1
+			call CastSpellRange 160 0 1 0 ${KillTarget} 0 0 0 0 1
 		}
 	}
 
@@ -595,9 +584,9 @@ function ActionChecks()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }
 
