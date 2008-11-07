@@ -1371,6 +1371,21 @@ function LoadList()
 
 	i:Set[1]
 	j:Set[1]
+	
+	; open boxes to refresh broker list data
+	do
+	{
+		if ${Me.Vending[${i}](exists)}
+		{
+					labelname:Set[${Me.Vending[${i}].Consignment[1]}]
+					waitframe
+		}
+	}
+	while ${i:Inc} <= 6
+
+	i:Set[1]
+	
+	; scan boxes and add items into the list	
 	numitems:Set[0]
 	do
 	{
@@ -1413,6 +1428,7 @@ function LoadList()
 					}
 				}
 				while ${j:Inc} <= ${Me.Vending[${i}].NumItems}
+				waitframe
 			}
 			j:Set[1]
 		}
