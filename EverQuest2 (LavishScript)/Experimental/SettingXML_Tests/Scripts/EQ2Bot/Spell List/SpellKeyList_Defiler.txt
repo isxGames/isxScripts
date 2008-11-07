@@ -1,7 +1,0 @@
- * Uniqiue Spells/Skills for the Defiler *
-
-320 - Single Target Instant Ward.
-321 - Group AoE Instant Ward.
-322 - Curse of Shielding (Proc Ward).
-323 - An impairment that has a chance at dealing disease damage when Target is healed. Also creates a Soul Essence.
-324 - Cast on Ally which will prevent them from dying.
