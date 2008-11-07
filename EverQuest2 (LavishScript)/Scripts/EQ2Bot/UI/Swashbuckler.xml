@@ -10,15 +10,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[OffenseMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Offensive Spells",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Offensive Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[OffenseMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Offensive Spells",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Offensive Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Offensive Spells]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='HurricaneMode'>
 		<X>5%</X>
@@ -30,15 +32,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[HurricaneMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Hurricane",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Use Hurricane",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[HurricaneMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Use Hurricane",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Use Hurricane",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Use Hurricane]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Use Hurricane]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='AoEMode'>
 		<X>5%</X>
@@ -50,15 +54,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='SnareMode'>
 		<X>5%</X>
@@ -70,15 +76,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[SnareMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Snares",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Snares",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[SnareMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast Snares",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Snares",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast Snares]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Snares]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='TankMode'>
 		<X>5%</X>
@@ -90,15 +98,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[TankMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Try to Tank",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Try to Tank",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[TankMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Try to Tank",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Try to Tank",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Try to Tank]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Try to Tank]}</Data>
 	</Commandcheckbox>
 	<Text Name='lblBuffHateGroupMember'>
 		<X>5%</X>
@@ -117,38 +127,14 @@
 		<AutoTooltip>The Group Member to Hate Buff</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHateGroupMember]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHateGroupMember]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffHateGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffHateGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
-			declare tmpvar int
-
-			This:ClearItems
-			tmpvar:Set[1]
-			This:AddItem[""]
-			if ${Me.ToActor.Pet(exists)}
-			{
-				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-			}
-			do
-			{
-				if ${Me.Grouped}
-				{
-					if ${Me.Group[${tmpvar}].ToActor(exists)}
-					{
-						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-					}
-					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-					{
-						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-					}
-
-				}
-
-			}
-			while ${tmpvar:Inc}&lt;=5
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffHateGroupMember,0,0,0]
 		</OnLeftClick>
 	</combobox>
 
@@ -162,15 +148,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[BuffLunge]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff Lunge Reversal",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[BuffLunge]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff Lunge Reversal",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff Lunge Reversal",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff Lunge Reversal]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff Lunge Reversal]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='MaintainPoison'>
 		<X>5%</X>
@@ -182,15 +170,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[MaintainPoison]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["MaintainPoison",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[MaintainPoison]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["MaintainPoison",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["MaintainPoison",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[MaintainPoison]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MaintainPoison]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='StartHO'>
 		<Visible>1</Visible>
@@ -203,14 +193,16 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[StartHO]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start HOs",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[StartHO]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Start HOs",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start HOs",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Start HOs]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Start HOs]}</Data>
 	</Commandcheckbox>
 </ISUI>

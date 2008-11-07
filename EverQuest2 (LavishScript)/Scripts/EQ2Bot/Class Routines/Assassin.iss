@@ -79,21 +79,21 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	UseRangeMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Range Arts,FALSE]}]
-	BuffShadowsGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffShadowsGroupMember,]}]
-	BuffPoisonGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPoisonGroupMember,]}]
-	SurroundingAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Surrounding Attacks,FALSE]}]
-	MaintainPoison:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MaintainPoison,FALSE]}]
-	CloakMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Stealth After Combat,FALSE]}]
+	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	UseRangeMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Range Arts,FALSE]}]
+	BuffShadowsGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffShadowsGroupMember,]}]
+	BuffPoisonGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffPoisonGroupMember,]}]
+	SurroundingAttacksMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Surrounding Attacks,FALSE]}]
+	MaintainPoison:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MaintainPoison,FALSE]}]
+	CloakMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Stealth After Combat,FALSE]}]
 
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["MainWeapon",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OffHand,]}]
-	WeaponRapier:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Rapier",""]}]
-	WeaponSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Sword",""]}]
-	WeaponDagger:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Dagger",""]}]
-	WeaponSpear:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Spear",""]}]
+	WeaponMain:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["MainWeapon",""]}]
+	OffHand:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[OffHand,]}]
+	WeaponRapier:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Rapier",""]}]
+	WeaponSword:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Sword",""]}]
+	WeaponDagger:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Dagger",""]}]
+	WeaponSpear:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Spear",""]}]
 
 	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE

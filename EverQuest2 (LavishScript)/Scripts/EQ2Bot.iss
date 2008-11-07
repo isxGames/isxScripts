@@ -193,6 +193,10 @@ variable string GainedXPString
 variable string LastQueuedAbility
 variable int LastCastTarget
 variable int OORThreshold
+
+variable settingsetref CharacterSet
+variable settingsetref SpellSet
+
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
@@ -263,13 +267,15 @@ function main()
 	echo "---------"
 	echo "* Initializing EQ2Bot..."
 
+	EQ2Bot:Init_Settings
+
 	;;;;;;;;;;;;;;;;;
 	;;;; Set strings used in UI
 	;;;
 	if (${Me.Level} < 80)
-		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${CharacterSet.FindSet[Temporary Settings]:AddSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 	elseif ${Me.TotalEarnedAPs} < 140
-		GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+		GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 	else
 		GainedXPString:Set[Gained XP:  N/A]
 	;;;
@@ -334,9 +340,9 @@ function main()
 		;;;; EVERY frame.  By moving things here, we can reduce the number of times things are called, increasing efficiency (when desired.)
 		;;;
 		if (${Me.Level} < 80)
-			GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+			GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 		elseif ${Me.TotalEarnedAPs} < 140
-			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)].Precision[2]} / hr)]
+			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 		;;;
 		;;;;;;;;;;;;;;;;;
 
@@ -721,16 +727,16 @@ function main()
 		{
 			if ${Me.Level} > ${StartLevel} && !${CloseUI}
 			{
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartXP",${Me.Exp}]:Save
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartTime",${Time.Timestamp}]:Save
+				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartXP",${Me.Exp}]
+				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 			}
 		}
 		else
 		{
 			if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
 			{
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartAPXP",${Me.APExp}]:Save
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartTime",${Time.Timestamp}]:Save
+				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Me.APExp}]
+				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 			}
 		}
 
@@ -3480,9 +3486,6 @@ function InventoryFull(string Line)
 	;EQ2UIPage[Inventory,Loot].Child[button,Loot.WindowFrame.Close]:LeftClick
 
 	LootMethod:Set[Decline]
-
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[LootMethod,Accept]:Save
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Loot Corpses and open Treasure Chests?,FALSE]:Save
 }
 
 
@@ -3949,9 +3952,9 @@ function StartBot()
 	variable int tempvar1
 	variable int tempvar2
 
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartXP",${Me.Exp}]:Save
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartAPXP",${Me.APExp}]:Save
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings]:Set["StartTime",${Time.Timestamp}]:Save
+	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartXP",${Me.Exp}]
+	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Me.APExp}]
+	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 
 	if ${CloseUI}
 	{
@@ -4517,87 +4520,181 @@ objectdef ActorCheck
 
 objectdef EQ2BotObj
 {
+	
+	method Init_Settings()
+	{
+		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
+		spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.SubClass}.xml]
+		LavishSettings:AddSet[EQ2Bot]
+		LavishSettings[EQ2Bot]:Clear
+		LavishSettings[EQ2Bot]:AddSet[Spells]
+		LavishSettings[EQ2Bot].FindSet[Spells]:Import[${spellfile}]
+		LavishSettings[EQ2Bot]:AddSet[Character]
+		LavishSettings[EQ2Bot].FindSet[Character]:Import[${charfile}]
+		LavishSettings[EQ2Bot]:AddSet[Temporary Settings]
+		SpellSet:Set[${LavishSettings[EQ2Bot].FindSet[Spells]}]
+		CharacterSet:Set[${LavishSettings[EQ2Bot].FindSet[Character]}]
+		CharacterSet:AddSet[Temporary Settings]
+		
+		
+		This:Init_Character
+		
+	}
+	
+	method RefreshList(string ListFQN, string SettingSet, bool IncludeMe=1, bool IncludePets=1, bool IncludeRaid=0)
+	{
+		variable int tmpvar
+		variable iterator iter
+		if ${UIElement[${ListFQN}].Type.Find[listbox]}
+			CharacterSet.FindSet[${Me.SubClass}].FindSet[${SettingSet}]:GetSettingIterator[iter]
+
+		tmpvar:Set[1]
+
+		UIElement[${ListFQN}]:ClearItems
+
+		if ${UIElement[${ListFQN}].Type.Find[combobox]}
+		{
+			UIElement[${ListFQN}]:AddItem[No One]
+			;UIElement[${ListFQN}].ItemByValue[No One]:Select
+		}
+
+		if ${IncludeMe}
+			UIElement[${ListFQN}]:AddItem[${Me.Name}:${Me.ToActor.Type}]
+
+		if ${Me.ToActor.Pet(exists)} && ${IncludePets}
+		{
+			UIElement[${ListFQN}]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
+		}
+
+		if ${Me.Raid} > 0 && ${IncludeRaid}
+		{
+		tmpvar:Set[1]
+		do
+		{
+			if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
+				continue
+
+				if ${Me.Raid[${tmpvar}].ToActor(exists)}
+					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+				if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+			}
+			while ${tmpvar:Inc} < ${Me.Raid}
+		}
+		elseif ${Me.Group} > 1
+		{
+
+			tmpvar:Set[1]
+			do
+			{
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+			}
+			while ${tmpvar:Inc} < ${Me.Group}
+		}
+
+		if ${UIElement[${ListFQN}].Type.Find[combobox]}
+		{
+			;UIElement[${ListFQN}].ItemByValue[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SettingSet]}]:Select
+		}
+		elseif ${iter:First(exists)}
+		{
+			do
+			{
+				UIElement[${ListFQN}].ItemByText[${iter.Value}]:Select
+			}
+			while ${iter:Next(exists)}
+		}
+	}
+	
+	method Save_Settings()
+	{
+		LavishSettings[EQ2Bot].FindSet[Character]:Export[${charfile}]
+	}
 
 	method Init_Character()
 	{
 		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
-
+		CharacterSet:AddSet[General Settings]
+		CharacterSet:AddSet[${Me.SubClass}]
+		
 		switch ${Me.Archetype}
 		{
 			case scout
-				AutoMelee:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Melee,TRUE]}]
+				AutoMelee:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Melee,TRUE]}]
 				EngageDistance:Set[9]
 				break
 
 			case fighter
-				AutoMelee:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Melee,TRUE]}]
+				AutoMelee:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Melee,TRUE]}]
 				EngageDistance:Set[9]
 				break
 
 			case priest
-				AutoMelee:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Melee,FALSE]}]
+				AutoMelee:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Melee,FALSE]}]
 				EngageDistance:Set[35]
 				break
 
 			case mage
-				AutoMelee:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Melee,FALSE]}]
+				AutoMelee:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Melee,FALSE]}]
 				EngageDistance:Set[35]
 				break
 		}
 
-		MainTank:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Tank?,FALSE]}]
-		MainAssistMe:Set[${SettingXML[${charfile}].Set[General Settings].GetString[I am the Main Assist?,FALSE]}]
+		MainTank:Set[${CharacterSet.FindSet[General Settings].FindSetting[I am the Main Tank?,FALSE]}]
+		MainAssistMe:Set[${CharacterSet.FindSet[General Settings].FindSetting[I am the Main Assist?,FALSE]}]
 
 		if ${MainTank}
-			SettingXML[${charfile}].Set[General Settings]:Set[Who is the Main Tank?,${Me.Name}]:Save
-
+			CharacterSet.FindSet[General Settings]:AddSetting[Who is the Main Tank?,${Me.Name}]
 		if ${MainAssistMe}
-			SettingXML[${charfile}].Set[General Settings]:Set[Who is the Main Assist?,${Me.Name}]:Save
+			CharacterSet.FindSet[General Settings]:AddSetting[Who is the Main Assist?,${Me.Name}]
 
-		MainAssist:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who is the Main Assist?,${Me.Name}]}]
-		MainTankPC:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Who is the Main Tank?,${Me.Name}]}]
-		AutoSwitch:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Switch Targets when Main Assist Switches?,TRUE]}]
-		AutoLoot:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Loot Corpses and open Treasure Chests?,FALSE]}]
-		LootAll:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Accept Loot Automatically?,TRUE]}]
-		LootMethod:Set[${SettingXML[${charfile}].Set[General Settings].GetString[LootMethod,Accept]}]
-		AutoPull:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Auto Pull,FALSE]}]
-		PullOnlySoloMobs:Set[${SettingXML[${charfile}].Set[General Settings].GetString[PullOnlySoloMobs,FALSE]}]
-		PullSpell:Set[${SettingXML[${charfile}].Set[General Settings].GetString[What to use when PULLING?,SPELL]}]
-		PullRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to PULL from?,15]}]
-		PullWithBow:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Pull with Bow (Ranged Attack)?,FALSE]}]
-		ScanRange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to SCAN for Mobs?,20]}]
+		MainAssist:Set[${CharacterSet.FindSet[General Settings].FindSetting[Who is the Main Assist?,${Me.Name}]}]
+		MainTankPC:Set[${CharacterSet.FindSet[General Settings].FindSetting[Who is the Main Tank?,${Me.Name}]}]
+		AutoSwitch:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Switch Targets when Main Assist Switches?,TRUE]}]
+		AutoLoot:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Loot Corpses and open Treasure Chests?,FALSE]}]
+		LootAll:Set[${CharacterSet.FindSet[General Settings].FindSetting[Accept Loot Automatically?,TRUE]}]
+		LootMethod:Set[${CharacterSet.FindSet[General Settings].FindSetting[LootMethod,Accept]}]
+		AutoPull:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Pull,FALSE]}]
+		PullOnlySoloMobs:Set[${CharacterSet.FindSet[General Settings].FindSetting[PullOnlySoloMobs,FALSE]}]
+		PullSpell:Set[${CharacterSet.FindSet[General Settings].FindSetting[What to use when PULLING?,SPELL]}]
+		PullRange:Set[${CharacterSet.FindSet[General Settings].FindSetting[What RANGE to PULL from?,15]}]
+		PullWithBow:Set[${CharacterSet.FindSet[General Settings].FindSetting[Pull with Bow (Ranged Attack)?,FALSE]}]
+		ScanRange:Set[${CharacterSet.FindSet[General Settings].FindSetting[What RANGE to SCAN for Mobs?,20]}]
 		if ${ScanRange} > 50
 		{
 				echo "WARNING:  Your 'Maximum Scan Range' is currently set to ${ScanRange}, which is a fairly high number."
 				echo "          If this works for you, great; however, be advised that it might result in a loss of FPS in"
 				echo "          particular zones or situations."
 		}
-		MARange:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What RANGE to Engage from Main Assist?,15]}]
-		PowerCheck:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Minimum Power the puller will pull at?,80]}]
-		HealthCheck:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Minimum Health the puller will pull at?,90]}]
-		IgnoreEpic:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Epic Encounters?,TRUE]}]
-		IgnoreNamed:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Named Encounters?,TRUE]}]
-		IgnoreHeroic:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Heroic Encounters?,FALSE]}]
-		IgnoreRedCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Red Con Mobs?,TRUE]}]
-		IgnoreOrangeCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Orange Con Mobs?,TRUE]}]
-		IgnoreYellowCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Yellow Con Mobs?,FALSE]}]
-		IgnoreWhiteCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore White Con Mobs?,FALSE]}]
-		IgnoreBlueCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Blue Con Mobs?,FALSE]}]
-		IgnoreGreenCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Green Con Mobs?,FALSE]}]
-		IgnoreGreyCon:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Ignore Grey Con Mobs?,TRUE]}]
-		PullNonAggro:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Pull Non Aggro Mobs?,TRUE]}]
-		AssistHP:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Assist and Engage in combat at what Health?,96]}]
-		OORThreshold:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Out of Range Reaction Distance,25]}]
-		Following:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Are we following someone?,FALSE]}]
-		PathType:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[What Path Type (0-4)?,0]}]
-		CloseUI:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Close the UI after starting EQ2Bot?,FALSE]}]
-		MasterSession:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Master IS Session,Master.is1]}]
-		CheckPriestPower:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Check if Priest has Power in the Group?,TRUE]}]
-		WipeRevive:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Revive on Group Wipe?,FALSE]}]
-		BoxWidth:Set[${SettingXML[${charfile}].Set[General Settings].GetInt[Navigation: Size of Box?,4]}]
-		LoreConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot Lore Items?,TRUE]}]
-		NoTradeConfirm:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to Loot NoTrade Items?,FALSE]}]
-		LootPrevCollectedShineys:Set[${SettingXML[${charfile}].Set[General Settings].GetString[Do you want to loot previously collected shineys?,FALSE]}]
+		MARange:Set[${CharacterSet.FindSet[General Settings].FindSetting[What RANGE to Engage from Main Assist?,15]}]
+		PowerCheck:Set[${CharacterSet.FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?,80]}]
+		HealthCheck:Set[${CharacterSet.FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?,90]}]
+		IgnoreEpic:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Epic Encounters?,TRUE]}]
+		IgnoreNamed:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Named Encounters?,TRUE]}]
+		IgnoreHeroic:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Heroic Encounters?,FALSE]}]
+		IgnoreRedCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Red Con Mobs?,TRUE]}]
+		IgnoreOrangeCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Orange Con Mobs?,TRUE]}]
+		IgnoreYellowCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Yellow Con Mobs?,FALSE]}]
+		IgnoreWhiteCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore White Con Mobs?,FALSE]}]
+		IgnoreBlueCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Blue Con Mobs?,FALSE]}]
+		IgnoreGreenCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Green Con Mobs?,FALSE]}]
+		IgnoreGreyCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Grey Con Mobs?,TRUE]}]
+		PullNonAggro:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Pull Non Aggro Mobs?,TRUE]}]
+		AssistHP:Set[${CharacterSet.FindSet[General Settings].FindSetting[Assist and Engage in combat at what Health?,96]}]
+		OORThreshold:Set[${CharacterSet.FindSet[General Settings].FindSetting[Out of Range Reaction Distance,25]}]
+		Following:Set[${CharacterSet.FindSet[General Settings].FindSetting[Are we following someone?,FALSE]}]
+		PathType:Set[${CharacterSet.FindSet[General Settings].FindSetting[What Path Type (0-4)?,0]}]
+		CloseUI:Set[${CharacterSet.FindSet[General Settings].FindSetting[Close the UI after starting EQ2Bot?,FALSE]}]
+		MasterSession:Set[${CharacterSet.FindSet[General Settings].FindSetting[Master IS Session,Master.is1]}]
+		CheckPriestPower:Set[${CharacterSet.FindSet[General Settings].FindSetting[Check if Priest has Power in the Group?,TRUE]}]
+		WipeRevive:Set[${CharacterSet.FindSet[General Settings].FindSetting[Revive on Group Wipe?,FALSE]}]
+		BoxWidth:Set[${CharacterSet.FindSet[General Settings].FindSetting[Navigation: Size of Box?,4]}]
+		LoreConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot Lore Items?,TRUE]}]
+		NoTradeConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot NoTrade Items?,FALSE]}]
+		LootPrevCollectedShineys:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to loot previously collected shineys?,FALSE]}]
 
 		if ${PullWithBow}
 		{
@@ -4606,13 +4703,12 @@ objectdef EQ2BotObj
 			else
 				PullRange:Set[25]
 		}
-
-		SettingXML[${charfile}]:Save
+		This:Save_Settings
 	}
 
 	method Init_Config()
 	{
-		spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.SubClass}.xml]
+		This:Init_Settings
 	}
 
 	method Init_Events()
@@ -4990,29 +5086,39 @@ function CheckAbilities(string class)
 	variable int tempvar=1
 	variable string spellname
 	variable int MissingAbilitiesCount
-
-	keycount:Set[${SettingXML[${spellfile}].Set[${class}].Keys}]
-	do
+	variable iterator SpellIterator
+	SpellSet.FindSet[${class}]:GetSettingIterator[SpellIterator]
+	
+	if ${SpellIterator:First(exists)}
 	{
-		tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
-
-		templvl:Set[${Arg[1,${tempnme}]}]
-
-		if ${templvl} > ${Me.Level}
-			continue
-
-		spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
-
-		;echo "DEBUG-CheckAbilities: spellname: ${spellname} -- tempnme: ${tempnme} -- templvl: ${templvl}  (Me.Level: ${Me.Level})"
-		if (${spellname.Length})
+		do
 		{
-			if !${Me.Ability[${spellname}](exists)}
+			tempnme:Set["${SpellIterator.Key}"]
+
+			templvl:Set[${Arg[1,${tempnme}]}]
+
+			if ${templvl} > ${Me.Level}
+				continue
+
+			spellname:Set[${SpellIterator.Value}]
+
+			;echo "DEBUG-CheckAbilities: spellname: ${spellname} -- tempnme: ${tempnme} -- templvl: ${templvl}  (Me.Level: ${Me.Level})"
+			if (${spellname.Length})
 			{
-				; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
-				if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+				if !${Me.Ability[${spellname}](exists)}
 				{
-					echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-					MissingAbilitiesCount:Inc
+					; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
+					if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					{
+						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+						MissingAbilitiesCount:Inc
+					}
+					else
+					{
+						;echo "DEBUG: tempnme: ${tempnme}"
+						;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+						SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
+					}
 				}
 				else
 				{
@@ -5021,16 +5127,10 @@ function CheckAbilities(string class)
 					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 				}
 			}
-			else
-			{
-				;echo "DEBUG: tempnme: ${tempnme}"
-				;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
-				SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
-			}
 		}
+		while ${SpellIterator:Next(exists)}
 	}
-	while ${tempvar:Inc}<=${keycount}
-
+	
 	if (${MissingAbilitiesCount} > 3 && ${Me.Level} >= 10)
 	{
 		echo "------------"
@@ -5042,35 +5142,38 @@ function CheckAbilities(string class)
 		MissingAbilitiesCount:Set[0]
 		tempvar:Set[1]
 
-		do
+		if ${SpellIterator:First(exists)}
 		{
-			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
-
-			templvl:Set[${Arg[1,${tempnme}]}]
-
-			if ${templvl} > ${Me.Level}
-				continue
-
-			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
-			if (${spellname.Length})
+			do
 			{
-				if !${Me.Ability[${spellname}](exists)}
+				tempnme:Set["${SpellIterator.Key}"]
+
+				templvl:Set[${Arg[1,${tempnme}]}]
+
+				if ${templvl} > ${Me.Level}
+					continue
+
+				spellname:Set[${SpellIterator.Value}]
+				if (${spellname.Length})
 				{
-					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-					; By this point the list should be accurate
-					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					if !${Me.Ability[${spellname}](exists)}
 					{
-						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-						MissingAbilitiesCount:Inc
+						; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+						; By this point the list should be accurate
+						if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+						{
+							echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+							MissingAbilitiesCount:Inc
+						}
+						else
+							SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 					}
 					else
 						SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 				}
-				else
-					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 			}
+			while ${SpellIterator:Next(exists)}
 		}
-		while ${tempvar:Inc}<=${keycount}
 	}
 	else
 	{
@@ -5089,35 +5192,38 @@ function CheckAbilities(string class)
 		MissingAbilitiesCount:Set[0]
 		tempvar:Set[1]
 
-		do
+		if ${SpellIterator:First(exists)}
 		{
-			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
-
-			templvl:Set[${Arg[1,${tempnme}]}]
-
-			if ${templvl} > ${Me.Level}
-				continue
-
-			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
-			if (${spellname.Length})
+			do
 			{
-				if !${Me.Ability[${spellname}](exists)}
+				tempnme:Set["${SpellIterator.Key}"]
+
+				templvl:Set[${Arg[1,${tempnme}]}]
+
+				if ${templvl} > ${Me.Level}
+					continue
+
+				spellname:Set[${SpellIterator.Value}]
+				if (${spellname.Length})
 				{
-					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-					; By this point the list should be accurate
-					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					if !${Me.Ability[${spellname}](exists)}
 					{
-						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-						MissingAbilitiesCount:Inc
+						; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+						; By this point the list should be accurate
+						if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+						{
+							echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+							MissingAbilitiesCount:Inc
+						}
+						else
+							SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 					}
 					else
 						SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 				}
-				else
-					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 			}
+			while ${SpellIterator:Next(exists)}
 		}
-		while ${tempvar:Inc}<=${keycount}
 	}
 	else
 	{
@@ -5136,35 +5242,38 @@ function CheckAbilities(string class)
 		MissingAbilitiesCount:Set[0]
 		tempvar:Set[1]
 
-		do
+		if ${SpellIterator:First(exists)}
 		{
-			tempnme:Set["${SettingXML[${spellfile}].Set[${class}].Key[${tempvar}]}"]
-
-			templvl:Set[${Arg[1,${tempnme}]}]
-
-			if ${templvl} > ${Me.Level}
-				continue
-
-			spellname:Set[${SettingXML[${spellfile}].Set[${class}].GetString["${tempnme}"]}]
-			if (${spellname.Length})
+			do
 			{
-				if !${Me.Ability[${spellname}](exists)}
+				tempnme:Set["${SpellIterator.Key}"]
+
+				templvl:Set[${Arg[1,${tempnme}]}]
+
+				if ${templvl} > ${Me.Level}
+					continue
+
+				spellname:Set[${SpellIterator.Value}]
+				if (${spellname.Length})
 				{
-					; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
-					; By this point the list should be accurate
-					if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					if !${Me.Ability[${spellname}](exists)}
 					{
-						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
-						MissingAbilitiesCount:Inc
+						; This will avoid spamming with AA abilities (and besides, do we really care if we are missing an ability under level 10 or 20 levels below us?)
+						; By this point the list should be accurate
+						if (${templvl} > 10 && (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+						{
+							echo "Missing Ability: '${spellname}' (Level: ${templvl})"
+							MissingAbilitiesCount:Inc
+						}
+						else
+							SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 					}
 					else
 						SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 				}
-				else
-					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 			}
+			while ${SpellIterator:Next(exists)}
 		}
-		while ${tempvar:Inc}<=${keycount}
 
 		if ${MissingAbilitiesCount} > 6
 			echo "It appears that are missing more than 6 abilities for this character. If this is not an error, please ignore this message (and buy your skills!) -- otherwise, please restart EQ2Bot."
@@ -5719,6 +5828,6 @@ function atexit()
 	press -release ${strafeleft}
 	press -release ${straferight}
 
-	SettingXML[${charfile}]:Unload
-	SettingXML[${spellfile}]:Unload
+	LavishSettings[EQ2Bot]:Remove
+
 }

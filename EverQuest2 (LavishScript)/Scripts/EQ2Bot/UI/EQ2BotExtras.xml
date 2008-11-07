@@ -11,15 +11,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[CombatFollow]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["CombatFollow",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["CombatFollow",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[CombatFollow]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["CombatFollow",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["CombatFollow",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[CombatFollow]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[CombatFollow]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='WarnTank'>
 		<X>5%</X>
@@ -32,15 +34,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[WarnTankWhenAggro]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Warn tank when I have a mob on me",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Warn tank when I have a mob on me",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[WarnTankWhenAggro]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Warn tank when I have a mob on me",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Warn tank when I have a mob on me",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Warn tank when I have a mob on me]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='Shard'>
 		<Visible>1</Visible>
@@ -54,15 +58,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[ShardMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Shard Mode",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Shard Mode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[ShardMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Shard Mode",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Shard Mode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Shard Mode]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Shard Mode]}</Data>
 	</Commandcheckbox>
 	<combobox name='ShardGroupMember'>
 		<x>155</x>
@@ -72,12 +78,13 @@
 		<AutoTooltip>The Group Member to request shards from</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Shard Group Member]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Shard Group Member]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Shard Group Member]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Shard Group Member]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ShardGroupMember]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Shard Group Member,${This.SelectedItem.Text}]:Save</OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[Shard Group Member,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
 			declare tmpvar int
 
@@ -119,15 +126,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[HeartMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Heart Mode",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Heart Mode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[ShardMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Heart Mode",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Heart Mode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Heart Mode]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Heart Mode]}</Data>
 	</Commandcheckbox>
 	<combobox name='HeartGroupMember'>
 		<x>155</x>
@@ -137,12 +146,13 @@
 		<AutoTooltip>The Group Member to request Hearts from</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Heart Group Member]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Heart Group Member]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Heart Group Member]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Heart Group Member]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[HeartGroupMember]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Heart Group Member,${This.SelectedItem.Text}]:Save</OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[Heart Group Member,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
 			declare tmpvar int
 
@@ -183,15 +193,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[DoHOs]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["DoHOs",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["DoHOs",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[DoHOs]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["DoHOs",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["DoHOs",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[DoHOs]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[DoHOs]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='PetGuard'>
 		<X>5%</X>
@@ -204,16 +216,18 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[PetGuard]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["PetGuard",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["PetGuard",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[PetGuard]:Set[FALSE]
 				EQ2Execute /pet backoff
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["PetGuard",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["PetGuard",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[PetGuard]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[PetGuard]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='EpicMode'>
 		<X>5%</X>
@@ -226,15 +240,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[EpicMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["EpicMode",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["EpicMode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[EpicMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["EpicMode",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["EpicMode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[EpicMode]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[EpicMode]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox name='Use MP Potions'>
 		<X>5%</X>
@@ -246,15 +262,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[UsePotions]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use Potions?",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use Potions?",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[UsePotions]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use Potions?",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use Potions?",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Use Potions?]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Use Potions?]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox name='Use Potions'>
 		<X>5%</X>
@@ -266,15 +284,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[UseCurePotions]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use potions for cures?",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use potions for cures?",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[UseCurePotions]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Use potions for cures?",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use potions for cures?",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Use potions for cures?]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Use potions for cures?]}</Data>
 	</Commandcheckbox>
 	<Text Name='lblArcane'>
 		<X>5%</X>
@@ -316,12 +336,13 @@
 			while ${Counter:Inc}&lt;=22
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Arcane Potion Name]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Arcane Potion Name]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Arcane Potion Name]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Arcane Potion Name]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ArcanePotion]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Arcane Potion Name,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[Arcane Potion Name,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblElemental'>
@@ -364,12 +385,13 @@
 			while ${Counter:Inc}&lt;=22
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Elemental Potion Name]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Elemental Potion Name]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Elemental Potion Name]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Elemental Potion Name]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ElementalPotion]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Elemental Potion Name,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[Elemental Potion Name,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblNoxious'>
@@ -412,12 +434,13 @@
 			while ${Counter:Inc}&lt;=22
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Noxious Potion Name]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Noxious Potion Name]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Noxious Potion Name]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Noxious Potion Name]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[NoxiousPotion]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Noxious Potion Name,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[Noxious Potion Name,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblTrauma'>
@@ -460,12 +483,13 @@
 			while ${Counter:Inc}&lt;=22
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Trauma Potion Name]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Trauma Potion Name]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Trauma Potion Name]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Trauma Potion Name]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[TraumaPotion]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[Trauma Potion Name,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[Trauma Potion Name,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 `</ISUI>

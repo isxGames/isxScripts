@@ -47,18 +47,18 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
-	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
-	DoTMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast DoT Spells,TRUE]}]
-	BuffVielShield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Veil Shield,FALSE]}]
-	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
-	BuffBoon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffBoon,,FALSE]}]
-	BuffPact:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffPact,FALSE]}]
-	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
-	CastCures:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Cures,TRUE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
-	FocusMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Focused Casting,TRUE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
+	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
+	DoTMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast DoT Spells,TRUE]}]
+	BuffVielShield:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Veil Shield,FALSE]}]
+	BuffSeeInvis:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff See Invis,TRUE]}]
+	BuffBoon:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBoon,,FALSE]}]
+	BuffPact:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffPact,FALSE]}]
+	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
+	CastCures:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Cures,TRUE]}]
+	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
+	FocusMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Focused Casting,TRUE]}]
 }
 
 function Class_Shutdown()

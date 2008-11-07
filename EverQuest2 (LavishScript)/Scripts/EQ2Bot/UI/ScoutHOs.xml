@@ -27,12 +27,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCoin1]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCoin1]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCoin1]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCoin1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutCoin1]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutCoin1,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutCoin1,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutCoin2'>
@@ -62,12 +62,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCoin2]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCoin2]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCoin2]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCoin2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutCoin2]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutCoin2,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutCoin2,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutCloak1'>
@@ -97,12 +97,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak1]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak1]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCloak1]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCloak1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutCloak1]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutCloak1,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutCloak1,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutCloak2'>
@@ -132,12 +132,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak2]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak2]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCloak2]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCloak2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutCloak2]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutCloak2,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutCloak2,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutDagger1'>
@@ -167,12 +167,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutDagger1]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutDagger1]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutDagger1]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutDagger1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutDagger1]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutDagger1,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutDagger1,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutDagger2'>
@@ -202,12 +202,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutDagger2]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutDagger2]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutDagger2]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutDagger2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutDagger2]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutDagger2,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutDagger2,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutMask1'>
@@ -237,12 +237,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask1]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask1]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutMask1]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutMask1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutMask1]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutMask1,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutMask1,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutMask2'>
@@ -272,12 +272,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask2]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask2]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutMask2]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutMask2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutMask2]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutMask2,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutMask2,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutBow1'>
@@ -307,12 +307,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow1]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow1]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutBow1]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutBow1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutBow1]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutBow1,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutBow1,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 	<Text Name='lblScoutBow2'>
@@ -342,12 +342,12 @@
 			while ${Counter:Inc}&lt;=${Me.NumAbilities}
 		</OnLeftClick>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow2]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow2]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutBow2]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutBow2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[ScoutBow2]:Set[${This.SelectedItem.Text}]
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].Set[HeroicOp]:Set[ScoutBow2,${This.SelectedItem.Text}]:Save
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[ScoutBow2,${This.SelectedItem.Text}]
 		</OnSelect>
 	</combobox>
 </ISUI>

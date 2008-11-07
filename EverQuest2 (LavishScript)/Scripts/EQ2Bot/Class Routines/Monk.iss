@@ -35,18 +35,18 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	StanceType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Stance Type,1]}]
-	FullAutoMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Full Auto Mode,FALSE]}]
-	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Taunt Spells,TRUE]}]
-	DefensiveMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Defensive Spells,TRUE]}]
-	CraneTwirlMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Crane Twirl,FALSE]}]
-	BuffProtectGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProtectGroupMember,]}]
-	BuffAltruismMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAltruismMember,]}]
-	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
-	ThrownAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Thrown Attack Spells,FALSE]}]
+	StanceType:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Stance Type,1]}]
+	FullAutoMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Full Auto Mode,FALSE]}]
+	TauntMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Taunt Spells,TRUE]}]
+	DefensiveMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Defensive Spells,TRUE]}]
+	CraneTwirlMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Crane Twirl,FALSE]}]
+	BuffProtectGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProtectGroupMember,]}]
+	BuffAltruismMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAltruismMember,]}]
+	RangedAttackMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Ranged Attacks Only,FALSE]}]
+	ThrownAttacksMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Thrown Attack Spells,FALSE]}]
 
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
 }
 
 function Class_Shutdown()

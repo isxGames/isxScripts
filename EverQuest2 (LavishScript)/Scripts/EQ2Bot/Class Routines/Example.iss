@@ -29,7 +29,7 @@ function Class_Declaration()
 	call EQ2BotLib_Init
 
 	;Load Values from Class UI Tab HEre
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 
 }
 

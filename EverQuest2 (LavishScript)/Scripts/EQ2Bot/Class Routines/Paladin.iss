@@ -38,22 +38,22 @@ function Class_Declaration()
 	call EQ2BotLib_Init
 
 	;XML setup for Weapons
-	WeaponMain:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Main",""]}]
-	OffHand:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["OffHand",""]}]
-	OneHandedSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[OneHandedSword,]}]
-	TwoHandedSword:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[TwoHandedSword,]}]
-	Shield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Shield,]}]
-	Axe:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Axe,]}]
+	WeaponMain:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Main",""]}]
+	OffHand:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["OffHand",""]}]
+	OneHandedSword:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[OneHandedSword,]}]
+	TwoHandedSword:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[TwoHandedSword,]}]
+	Shield:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Shield,]}]
+	Axe:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Axe,]}]
 
 
 	;XML Setup for clickbox options
-	TauntMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Taunt Mode,TRUE]}]
-	HealerMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[HealerMode,FALSE]}]
-	Start_HO:Set{${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start_HO,FALSE]}]
-	Use_Consecrate:Set{${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use_Consecrate,FALSE]}]
+	TauntMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Taunt Mode,TRUE]}]
+	HealerMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[HealerMode,FALSE]}]
+	Start_HO:Set{${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start_HO,FALSE]}]
+	Use_Consecrate:Set{${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use_Consecrate,FALSE]}]
 
-	BuffProcGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProcGroupMember,]}]
-	Secondary_Assist:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Secondary Assist,]}]
+	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
+	Secondary_Assist:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Secondary Assist,]}]
 }
 
 function Class_Shutdown()

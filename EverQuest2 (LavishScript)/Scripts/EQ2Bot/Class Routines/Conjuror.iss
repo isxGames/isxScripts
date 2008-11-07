@@ -46,15 +46,15 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	PetType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Pet Type,3]}]
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
-	BuffDamageShield:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Damage Shield,FALSE]}]
-	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
-	BuffEscutcheon:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffEscutcheon,,FALSE]}]
-	BuffSeal:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSeal,FALSE]}]
-	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
-	PetDefStance:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[PetDefStance,TRUE]}]
+	PetType:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Pet Type,3]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
+	BuffDamageShield:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Damage Shield,FALSE]}]
+	BuffSeeInvis:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff See Invis,TRUE]}]
+	BuffEscutcheon:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffEscutcheon,,FALSE]}]
+	BuffSeal:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSeal,FALSE]}]
+	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
+	PetDefStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PetDefStance,TRUE]}]
 
 	switch ${SpellType[360]}
 	{

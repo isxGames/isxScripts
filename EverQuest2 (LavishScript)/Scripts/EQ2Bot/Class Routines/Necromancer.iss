@@ -73,20 +73,20 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	PetType:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Pet Type,3]}]
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
-	LifeburnMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Lifeburn,FALSE]}]
-	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cures,FALSE]}]
-	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
-	BuffMark:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMark,FALSE]}]
-	BuffFavor:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffFavor,FALSE]}]
-	PetMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Pets,TRUE]}]
-	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Debuffs,FALSE]}]
-	HealMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Heal Others,FALSE]}]
-	Undead_Army:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Undead_Army, TRUE]}
-	Auto_Res:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Auto Res, TRUE]}
+	PetType:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Pet Type,3]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
+	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
+	LifeburnMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Lifeburn,FALSE]}]
+	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cures,FALSE]}]
+	BuffSeeInvis:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff See Invis,TRUE]}]
+	BuffMark:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffMark,FALSE]}]
+	BuffFavor:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffFavor,FALSE]}]
+	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
+	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Debuffs,FALSE]}]
+	HealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Heal Others,FALSE]}]
+	Undead_Army:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Undead_Army, TRUE]}
+	Auto_Res:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Auto Res, TRUE]}
 
 	switch ${SpellType[360]}
 	{

@@ -75,31 +75,31 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
-	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
-	DebuffMitMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Mit Debuff Spells,TRUE]}]
-	FullDebuffNamedMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Named Debuff Spells,TRUE]}]
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
-	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
-	BowAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Bow Attack Spells,FALSE]}]
-	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
-	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
+	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,TRUE]}]
+	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
+	DebuffMitMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Mit Debuff Spells,TRUE]}]
+	FullDebuffNamedMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Named Debuff Spells,TRUE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
+	Charm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Charm,FALSE]}]
+	BowAttacksMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Bow Attack Spells,FALSE]}]
+	RangedAttackMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Ranged Attacks Only,FALSE]}]
+	JoustMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Listen to Joust Calls,FALSE]}]
 
-	BuffDefense:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Defense","FALSE"]}]
-	BuffPower:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Power","FALSE"]}]
-	BuffArcane:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Arcane","FALSE"]}]
-	BuffElemental:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Elemental","FALSE"]}]
-	BuffHaste:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Haste","FALSE"]}]
-	BuffHealth:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Health","FALSE"]}]
-	BuffReflection:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Reflection","FALSE"]}]
-	BuffAria:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Aria","FALSE"]}]
-	BuffStamina:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Stamina","FALSE"]}]
-	BuffCasting:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Casting","FALSE"]}]
-	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Hate","FALSE"]}]
-	BuffSelf:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Self","FALSE"]}]
+	BuffDefense:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Defense","FALSE"]}]
+	BuffPower:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Power","FALSE"]}]
+	BuffArcane:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Arcane","FALSE"]}]
+	BuffElemental:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Elemental","FALSE"]}]
+	BuffHaste:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Haste","FALSE"]}]
+	BuffHealth:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Health","FALSE"]}]
+	BuffReflection:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Reflection","FALSE"]}]
+	BuffAria:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Aria","FALSE"]}]
+	BuffStamina:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Stamina","FALSE"]}]
+	BuffCasting:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Casting","FALSE"]}]
+	BuffHate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Hate","FALSE"]}]
+	BuffSelf:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Self","FALSE"]}]
 
-	PosionCureItem:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Poison Cure Item","Antivenom Hypo Bracer"]}]
+	PosionCureItem:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Poison Cure Item","Antivenom Hypo Bracer"]}]
 
 	BuffJesterCap:GetIterator[BuffJesterCapIterator]
 }
@@ -711,8 +711,8 @@ function Post_Combat_Routine(int xAction)
 	}
 
 	;reset rangedattack in case it was modified by joust call.
-	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
-	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
+	JoustMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Listen to Joust Calls,FALSE]}]
+	RangedAttackMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Ranged Attacks Only,FALSE]}]
 
 	switch ${PostAction[${xAction}]}
 	{

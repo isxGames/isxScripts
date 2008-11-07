@@ -10,15 +10,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast AoE Spells",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast AoE Spells]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='PBAoEMode'>
 		<X>10</X>
@@ -30,15 +32,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[PBAoEMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast PBAoE Spells",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[PBAoEMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Cast PBAoE Spells",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Cast PBAoE Spells]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='BuffSeeInvis'>
 		<X>10</X>
@@ -50,15 +54,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[BuffSeeInvis]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff See Invis",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff See Invis",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[BuffSeeInvis]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Buff See Invis",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff See Invis",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Buff See Invis]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff See Invis]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='ccbBuffHate'>
 		<Visible>1</Visible>
@@ -72,15 +78,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[BuffHate]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffHate",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffHate",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[BuffHate]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffHate",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffHate",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHate]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHate]}</Data>
 	</Commandcheckbox>
 	<combobox name='cbBuffHateGroupMember'>
 		<x>100</x>
@@ -90,38 +98,14 @@
 		<AutoTooltip>The Group Member to Hate Buff</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHateGroupMember]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffHateGroupMember]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffHateGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffHateGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
-			declare tmpvar int
-
-			This:ClearItems
-			tmpvar:Set[1]
-			This:AddItem[${Me.Name}:${Me.ToActor.Type}]
-			if ${Me.ToActor.Pet(exists)}
-			{
-				This:AddItem[${Me.ToActor.Pet.Name}:${Me.ToActor.Pet.Type}]
-			}
-			do
-			{
-				if ${Me.Grouped}
-				{
-					if ${Me.Group[${tmpvar}].ToActor(exists)}
-					{
-						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-					}
-					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})  &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-					{
-						This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type}]
-					}
-
-				}
-
-			}
-			while ${tmpvar:Inc}&lt;=5
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffHateGroupMember,0,1,0]
 		</OnLeftClick>
 	</combobox>
 	<Commandcheckbox Name='cbBuffHeal'>
@@ -136,15 +120,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[BuffCoerciveHealing]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffCoerciveHealing",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffCoerciveHealing",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[BuffCoerciveHealing]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffCoerciveHealing",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffCoerciveHealing",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffCoerciveHealing]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealing]}</Data>
 	</Commandcheckbox>
 	<combobox name='cbBuffHealGroupMember'>
 		<x>100</x>
@@ -154,28 +140,14 @@
 		<AutoTooltip>The Group Member to Heal Buff</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffCoerciveHealingGroupMember]}]
-			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffCoerciveHealingGroupMember]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealingGroupMember]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealingGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set[BuffCoerciveHealingGroupMember,${This.SelectedItem.Text}]:Save</OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffCoerciveHealingGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
-			declare tmpvar int
-
-			This:ClearItems
-			tmpvar:Set[1]
-
-			do
-			{
-				if ${Me.Grouped}
-				{
-					if ${Me.Group[${tmpvar}].ToActor(exists)}
-					{
-						This:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-					}
-				}
-			}
-			while ${tmpvar:Inc}&lt;=5
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffCoerciveHealingGroupMember,0,1,0]
 		</OnLeftClick>
 	</combobox>
 	<Commandcheckbox Name='BuffInstigation'>
@@ -188,15 +160,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[BuffInstigation]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffInstigation",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffInstigation",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[BuffInstigation]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffInstigation",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffInstigation",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffInstigation]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffInstigation]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='BuffSignet'>
 		<X>10</X>
@@ -208,15 +182,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[BuffSignet]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffSignet",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffSignet",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[BuffSignet]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["BuffSignet",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffSignet",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[BuffSignet]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffSignet]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='Mezz'>
 		<Visible>1</Visible>
@@ -230,15 +206,17 @@
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[MezzMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Mezz Mode",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Mezz Mode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[MezzMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Mezz Mode",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Mezz Mode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Mezz Mode]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Mezz Mode]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='Charm'>
 		<Visible>1</Visible>
@@ -253,16 +231,18 @@
 			{
 
 				Script[EQ2Bot].Variable[Charm]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Charm",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Charm",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 
 				Script[EQ2Bot].Variable[Charm]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["Charm",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Charm",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[Charm]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Charm]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='DPSMode'>
 		<Visible>1</Visible>
@@ -277,16 +257,18 @@
 			{
 
 				Script[EQ2Bot].Variable[DPSMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["DPSMode",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["DPSMode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 
 				Script[EQ2Bot].Variable[DPSMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["DPSMode",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["DPSMode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[DPSMode]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[DPSMode]}</Data>
 	</Commandcheckbox>
 	<Commandcheckbox Name='TSMode'>
 		<Visible>1</Visible>
@@ -301,16 +283,18 @@
 			{
 
 				Script[EQ2Bot].Variable[TSMode]:Set[TRUE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseTS",TRUE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseTS",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 
 				Script[EQ2Bot].Variable[TSMode]:Set[FALSE]
-				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}]:Set["UseTS",FALSE]:Save
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseTS",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].GetString[UseTS]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseTS]}</Data>
 	</Commandcheckbox>
 	<Commandbutton Name='RefreshDPS'>
 		<X>275</X>
@@ -320,64 +304,7 @@
 		<Text></Text>
 		<AutoTooltip>Refresh</AutoTooltip>
 		<OnLeftClick>
-			declare tmpvar int
-			declare tmpCollection collection:string
-
-			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].Keys}&gt;0
-			{
-				tmpvar:Set[1]
-
-				do
-				{
-					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].GetString[${tmpvar}]}]
-				}
-				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].Keys}
-
-			}
-
-			tmpvar:Set[1]
-
-			UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-
-
-			UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
-
-			if ${Me.ToActor.Pet(exists)}
-			{
-				UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
-			}
-
-			if ${Me.Grouped}
-			{
-
-				tmpvar:Set[1]
-				do
-				{
-						if ${Me.Group[${tmpvar}].ToActor(exists)}
-						{
-							UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						{
-							UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-						}
-				}
-				while ${tmpvar:Inc}&lt;=5
-			}
-
-
-			tmpvar:Set[1]
-
-			if ${tmpCollection.FirstKey(exists)}
-			{
-				do
-				{
-
-					UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
-
-				}
-				while ${tmpCollection.NextKey(exists)}
-			}
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffDPS@${This.Parent.FullName},BuffDPS,1,1,0]
 		</OnLeftClick>
 	</Commandbutton>
 	<Text Name='lblBuffDPS'>
@@ -397,92 +324,39 @@
 		<SelectMultiple>1</SelectMultiple>
 		<Items></items>
 		<OnLoad>
-			declare tmpvar int
-			declare tmpCollection collection:string
-
-			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].Keys}&gt;0
-			{
-				tmpvar:Set[1]
-
-				do
-				{
-					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].GetString[${tmpvar}]}]
-				}
-				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS].Keys}
-
-			}
-
-			tmpvar:Set[1]
-
-			UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-
-			UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
-
-			if ${Me.ToActor.Pet(exists)}
-			{
-				UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
-			}
-
-			if ${Me.Grouped}
-			{
-
-				tmpvar:Set[1]
-				do
-				{
-						if ${Me.Group[${tmpvar}].ToActor(exists)}
-						{
-							UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-						}
-						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						{
-							UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-						}
-				}
-				while ${tmpvar:Inc}&lt;=5
-			}
-
-			tmpvar:Set[1]
-
-			if ${tmpCollection.FirstKey(exists)}
-			{
-				do
-				{
-
-					UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
-
-				}
-				while ${tmpCollection.NextKey(exists)}
-			}
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffDPS,1,1,0]
 		</OnLoad>
 		<OnSelect>
-			declare tmpvar int
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS]:Clear
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS]:Save
+		  declare tmpvar int
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffDPS]
+LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:Clear
 
-			tmpvar:Set[1]
-			if ${This.SelectedItems}&gt;0
-			{
-				do
-				{
-					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
-				}
-				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-			}
+		  tmpvar:Set[1]
+		  if ${This.SelectedItems}&gt;0
+		  {
+		  do
+		  {
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+		  }
+		  while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+		  }
+		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnDeselect>
-			declare tmpvar int
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS]:Clear
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS]:Save
+		  declare tmpvar int
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffDPS]
+LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:Clear
 
-			tmpvar:Set[1]
-			if ${This.SelectedItems}&gt;0
-			{
-				do
-				{
-					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffDPS]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
-				}
-				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-			}
+		  tmpvar:Set[1]
+		  if ${This.SelectedItems}&gt;0
+		  {
+		  do
+		  {
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+		  }
+		  while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+		  }
+		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>
@@ -494,76 +368,7 @@
 		<Text></Text>
 		<AutoTooltip>Refresh</AutoTooltip>
 		<OnLeftClick>
-			declare tmpvar int
-			declare tmpCollection collection:string
-
-			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate].Keys}&gt;0
-			{
-				tmpvar:Set[1]
-
-				do
-				{
-					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate].GetString[${tmpvar}]}]
-				}
-				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate].Keys}
-
-			}
-
-			tmpvar:Set[1]
-
-			UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-
-			if ${Me.InRaid}
-			{
-				do
-				{
-					if ${Me.Raid[${tmpvar}](exists)}
-					{
-						UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}]
-					}
-				}
-				while ${tmpvar:Inc}&lt;=24
-			}
-			else
-			{
-				UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
-
-				if ${Me.ToActor.Pet(exists)}
-				{
-					UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
-				}
-
-				if ${Me.Grouped}
-				{
-
-					tmpvar:Set[1]
-					do
-					{
-							if ${Me.Group[${tmpvar}].ToActor(exists)}
-							{
-								UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-							}
-							if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-							{
-								UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-							}
-					}
-					while ${tmpvar:Inc}&lt;=5
-				}
-			}
-
-			tmpvar:Set[1]
-
-			if ${tmpCollection.FirstKey(exists)}
-			{
-				do
-				{
-
-					UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
-
-				}
-				while ${tmpCollection.NextKey(exists)}
-			}
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffAntiHate@${This.Parent.FullName},BuffAntiHate,1,1,1]
 		</OnLeftClick>
 	</Commandbutton>
 	<Text Name='lblBuffAntiHate'>
@@ -583,106 +388,39 @@
 		<SelectMultiple>1</SelectMultiple>
 		<Items></items>
 		<OnLoad>
-			declare tmpvar int
-			declare tmpCollection collection:string
-
-			if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate].Keys}&gt;0
-			{
-				tmpvar:Set[1]
-
-				do
-				{
-					tmpCollection:Set["${tmpvar}",${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate].GetString[${tmpvar}]}]
-				}
-				while ${tmpvar:Inc}&lt;=${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate].Keys}
-
-			}
-
-			tmpvar:Set[1]
-
-			UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-
-			if ${Me.InRaid}
-			{
-				do
-				{
-					if ${Me.Raid[${tmpvar}](exists)}
-					{
-						UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Raid[${tmpvar}].Name}]
-					}
-				}
-				while ${tmpvar:Inc}&lt;=24
-			}
-			else
-			{
-				UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Name}:${Me.ToActor.Type}]
-
-				if ${Me.ToActor.Pet(exists)}
-				{
-					UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.ToActor.Pet}:${Me.ToActor.Pet.Type}, FF0000FF]
-				}
-
-				if ${Me.Grouped}
-				{
-
-					tmpvar:Set[1]
-					do
-					{
-							if ${Me.Group[${tmpvar}].ToActor(exists)}
-							{
-								UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-							}
-							if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) &amp;&amp; ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-							{
-								UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-							}
-					}
-					while ${tmpvar:Inc}&lt;=5
-				}
-			}
-
-			tmpvar:Set[1]
-
-			if ${tmpCollection.FirstKey(exists)}
-			{
-				do
-				{
-
-					UIElement[lbBuffAntiHate@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${tmpCollection.CurrentValue}]:Select
-
-				}
-				while ${tmpCollection.NextKey(exists)}
-			}
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffAntiHate,1,1,1]
 		</OnLoad>
 		<OnSelect>
-			declare tmpvar int
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate]:Clear
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate]:Save
+		  declare tmpvar int
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffAntiHate]
+LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAntiHate]:Clear
 
-			tmpvar:Set[1]
-			if ${This.SelectedItems}&gt;0
-			{
-				do
-				{
-					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
-				}
-				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-			}
+		  tmpvar:Set[1]
+		  if ${This.SelectedItems}&gt;0
+		  {
+		  do
+		  {
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAntiHate]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+		  }
+		  while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+		  }
+		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnDeselect>
-			declare tmpvar int
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate]:Clear
-			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate]:Save
+		  declare tmpvar int
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffAntiHate]
+LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAntiHate]:Clear
 
-			tmpvar:Set[1]
-			if ${This.SelectedItems}&gt;0
-			{
-				do
-				{
-					SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[${Me.SubClass}].Set[BuffAntiHate]:Set[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]:Save
-				}
-				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-			}
+		  tmpvar:Set[1]
+		  if ${This.SelectedItems}&gt;0
+		  {
+		  do
+		  {
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAntiHate]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+		  }
+		  while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+		  }
+		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>

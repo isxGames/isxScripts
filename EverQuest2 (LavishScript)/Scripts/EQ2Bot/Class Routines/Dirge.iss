@@ -70,25 +70,25 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
-	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	BowAttacksMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Bow Attack Spells,FALSE]}]
-	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
-	AnnounceMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Announce Cacophony,TRUE]}]
-	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
-	MagNoteMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MagNoteMode,TRUE]}]
+	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,TRUE]}]
+	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	BowAttacksMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Bow Attack Spells,FALSE]}]
+	RangedAttackMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Ranged Attacks Only,FALSE]}]
+	AnnounceMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Announce Cacophony,TRUE]}]
+	JoustMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Listen to Joust Calls,FALSE]}]
+	MagNoteMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MagNoteMode,TRUE]}]
 
-	BuffParry:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Parry","FALSE"]}]
-	BuffPower:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Power","FALSE"]}]
-	BuffNoxious:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Noxious","FALSE"]}]
-	BuffDPS:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff DPS","FALSE"]}]
-	BuffStoneSkin:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff StoneSkin","FALSE"]}]
-	BuffTombs:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Tombs","FALSE"]}]
-	BuffAgility:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Agility","FALSE"]}]
-	BuffMelee:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Melee","FALSE"]}]
-	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Hate","FALSE"]}]
-	BuffSelf:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString["Buff Self","FALSE"]}]
+	BuffParry:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Parry","FALSE"]}]
+	BuffPower:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Power","FALSE"]}]
+	BuffNoxious:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Noxious","FALSE"]}]
+	BuffDPS:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff DPS","FALSE"]}]
+	BuffStoneSkin:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff StoneSkin","FALSE"]}]
+	BuffTombs:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Tombs","FALSE"]}]
+	BuffAgility:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Agility","FALSE"]}]
+	BuffMelee:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Melee","FALSE"]}]
+	BuffHate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Hate","FALSE"]}]
+	BuffSelf:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Self","FALSE"]}]
 
 }
 
@@ -327,14 +327,14 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
-	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<15 && !${MaintTank} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
+	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<15
 	{
 		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 0 0 1 0
 		eq2execute auto 1
 		call CheckPosition 1 1 ${KillTarget}
 	}
 
-	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15 && !${MaintTank} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15
 	{
 		eq2execute auto 1
 		call CheckPosition 1 1 ${KillTarget}
@@ -584,7 +584,7 @@ function Combat_Routine(int xAction)
 			call StartHO
 			break
 		case Flank_Attack
-			if !${RangedAttackMode} && !${MainTank} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
+			if !${RangedAttackMode} && !${MainTank}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
 			break
 		case Rebuff
@@ -609,8 +609,8 @@ function Post_Combat_Routine(int xAction)
 		Me.Maintained[Shroud]:Cancel
 
 	;reset rangedattack in case it was modified by joust call.
-	JoustMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Listen to Joust Calls,FALSE]}]
-	RangedAttackMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Ranged Attacks Only,FALSE]}]
+	JoustMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Listen to Joust Calls,FALSE]}]
+	RangedAttackMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Ranged Attacks Only,FALSE]}]
 
 	switch ${PostAction[${xAction}]}
 	{

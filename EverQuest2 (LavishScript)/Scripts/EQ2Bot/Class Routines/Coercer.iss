@@ -58,22 +58,22 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	PBAoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast PBAoE Spells,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
-	BuffSeeInvis:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff See Invis,TRUE]}]
-	BuffHateGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHateGroupMember,]}]
-	BuffHate:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHate,FALSE]}]
-	BuffInstigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffInstigation,,FALSE]}]
-	BuffSignet:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffSignet,FALSE]}]
-	BuffCoerciveHealing:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealing,FALSE]}]
-	BuffCoerciveHealingGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffCoerciveHealingGroupMember,]}]
-	BuffManaward:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffManaward,FALSE]}]
-	DPSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[DPSMode,FALSE]}]
-	TSMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[UseTS,FALSE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
+	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
+	BuffSeeInvis:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff See Invis,TRUE]}]
+	BuffHateGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember,]}]
+	BuffHate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffHate,FALSE]}]
+	BuffInstigation:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffInstigation,,FALSE]}]
+	BuffSignet:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSignet,FALSE]}]
+	BuffCoerciveHealing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealing,FALSE]}]
+	BuffCoerciveHealingGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealingGroupMember,]}]
+	BuffManaward:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffManaward,FALSE]}]
+	DPSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[DPSMode,FALSE]}]
+	TSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseTS,FALSE]}]
 
-	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
-	Charm:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Charm,FALSE]}]
+	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
+	Charm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Charm,FALSE]}]
 }
 
 function Buff_Init()
