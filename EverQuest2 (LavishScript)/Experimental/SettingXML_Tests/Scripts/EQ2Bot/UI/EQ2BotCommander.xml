@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<Window name='EQ2Bot Commander'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>60</Width>
+		<Height>400</Height>
+		<StorePosition>1</StorePosition>
+		<Title>EQ2Bot Commander</Title>
+	  <TitleBar template='window.Titlebar'>
+		<Children>
+		  <Text Name='Title' Template='window.Titlebar.Title' />
+		  <Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		  <Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		  <commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>Script[EQ2BotCommander]:End</Command>
+		  </commandbutton>
+		</Children>
+	  </TitleBar>
+		<OnLoad>
+		</OnLoad>
+		<OnUnload>
+		</OnUnload>
+		<OnLeftClick>
+			This:SetFocus
+		</OnLeftClick>
+		<Children>
+			<CommandButton Name='Follow'>
+				<X>5%</X>
+				<Y>20</Y>
+				<Width>40</Width>
+				<Height>30</Height>
+				<Text>Follow</Text>
+				<AutoTooltip>Tell all bots to follow</AutoTooltip>
+				<Command>Relay all Script[EQ2Bot]:ExecuteAtom[AutoFollowTank]</Command>
+			</CommandButton>
+			<CommandButton Name='Stop'>
+				<X>5%</X>
+				<Y>60</Y>
+				<Width>40</Width>
+				<Height>30</Height>
+				<Text>Stop</Text>
+				<AutoTooltip>Tell all bots to stop</AutoTooltip>
+				<Command>Relay all Script[EQ2Bot]:ExecuteAtom[StopAutoFollowing]</Command>
+			</CommandButton>
+			<CommandButton Name='RunEQ2Bot'>
+				<X>5%</X>
+				<Y>100</Y>
+				<Width>40</Width>
+				<Height>30</Height>
+				<Text>Run</Text>
+				<AutoTooltip>Run EQ2Bot.iss on all computers</AutoTooltip>
+				<Command>Relay all RunScript EQ2Bot</Command>
+			</CommandButton>
+			<CommandButton Name='StartEQ2Bot'>
+				<X>5%</X>
+				<Y>140</Y>
+				<Width>40</Width>
+				<Height>30</Height>
+				<Text>Start</Text>
+				<AutoTooltip>Start EQ2Bot on all computers</AutoTooltip>
+				<Command>Relay all Script[EQ2Bot]:ExecuteAtom[StartEQ2Bot]</Command>
+			</CommandButton>
+			<CommandButton Name='CloseEQ2Bot'>
+				<X>5%</X>
+				<Y>180</Y>
+				<Width>40</Width>
+				<Height>30</Height>
+				<Text>Close</Text>
+				<AutoTooltip>Close EQ2bot.iss on all computers</AutoTooltip>
+				<Command>Relay all Script[EQ2Bot]:End</Command>
+			</CommandButton>
+		</Children>
+	</Window>
+</ISUI>
