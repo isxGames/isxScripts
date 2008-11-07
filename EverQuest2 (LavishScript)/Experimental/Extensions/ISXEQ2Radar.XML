@@ -81,6 +81,72 @@ Radar Testing
 		<Bottom>48</Bottom>
 		<Right>16</Right>
 	</template>
+	<template name='khakidot'>
+		<Top>32</Top>
+		<Left>16</Left>
+		<Bottom>48</Bottom>
+		<Right>32</Right>
+	</template>
+	<template name='aquadot'>
+		<Top>32</Top>
+		<Left>32</Left>
+		<Bottom>48</Bottom>
+		<Right>48</Right>
+	</template>
+	<template name='rosedot'>
+		<Top>32</Top>
+		<Left>48</Left>
+		<Bottom>48</Bottom>
+		<Right>64</Right>
+	</template>
+	<template name='lightaquadot'>
+		<Top>32</Top>
+		<Left>64</Left>
+		<Bottom>48</Bottom>
+		<Right>80</Right>
+	</template>
+	<template name='darkorangedot'>
+		<Top>32</Top>
+		<Left>80</Left>
+		<Bottom>48</Bottom>
+		<Right>96</Right>
+	</template>
+	<template name='brightpurpledot'>
+		<Top>48</Top>
+		<Left>0</Left>
+		<Bottom>64</Bottom>
+		<Right>16</Right>
+	</template>
+	<template name='brightgreendot'>
+		<Top>48</Top>
+		<Left>16</Left>
+		<Bottom>64</Bottom>
+		<Right>32</Right>
+	</template>
+	<template name='brightyellowdot'>
+		<Top>48</Top>
+		<Left>32</Left>
+		<Bottom>64</Bottom>
+		<Right>48</Right>
+	</template>
+	<template name='brightorangedot'>
+		<Top>48</Top>
+		<Left>48</Left>
+		<Bottom>64</Bottom>
+		<Right>64</Right>
+	</template>
+	<template name='brightbluedot'>
+		<Top>48</Top>
+		<Left>64</Left>
+		<Bottom>64</Bottom>
+		<Right>80</Right>
+	</template>
+	<template name='brightpinkdot'>
+		<Top>48</Top>
+		<Left>80</Left>
+		<Bottom>64</Bottom>
+		<Right>96</Right>
+	</template>
 
 	<template Name='radar'>
 		<Font template='Default Font' />
@@ -94,18 +160,20 @@ Radar Testing
 	<template Name='eq2radar' Template='radar'>
 		<BlipTypes>
 			<BlipType Name='Me' Filename='ISXEQ2Radar.png' ColorKey='0' template='lightbluedot' />
-			<BlipType Name='Tradeskill Unit' Filename='ISXEQ2Radar.png' ColorKey='0' template='browndot' />
+			<BlipType Name='PC' Filename='ISXEQ2Radar.png' ColorKey='0' template='lightgreendot' />
 			<BlipType Name='NPC' Filename='ISXEQ2Radar.png' ColorKey='0' template='yellowdot' />
 			<BlipType Name='AggroNPC' Filename='ISXEQ2Radar.png' ColorKey='0' template='reddot' />
-			<BlipType Name='PC' Filename='ISXEQ2Radar.png' ColorKey='0' template='lightgreendot' />
+			<BlipType Name='NamedNPC' filename='ISXEQ2Radar.png' ColorKey='0' template='orangedot' />
+			<BlipType Name='NoKill NPC' Filename='ISXEQ2Radar.png' ColorKey='0' template='whitedot' />
 			<BlipType Name='Special' Filename='ISXEQ2Radar.png' ColorKey='0' template='pinkdot' />
 			<BlipType Name='Resource' Filename='ISXEQ2Radar.png' ColorKey='0' template='darkgreendot' />
-			<BlipType Name='NoKill NPC' Filename='ISXEQ2Radar.png' ColorKey='0' template='whitedot' />
+			<BlipType Name='Tradeskill Unit' Filename='ISXEQ2Radar.png' ColorKey='0' template='browndot' />
+			<BlipType Name='Door' filename='ISXEQ2Radar.png' ColorKey='0' template='brightbluedot' />
 			<BlipType Name='Corpse' Filename='ISXEQ2Radar.png' ColorKey='0' template='graydot' />
 			<BlipType Name='Pet' Filename='ISXEQ2Radar.png' ColorKey='0' template='darkpurpledot' />
 			<BlipType Name='MyPet' Filename='ISXEQ2Radar.png' ColorKey='0' template='darkbluedot' />
-			<BlipType Name='NamedNPC' filename='ISXEQ2Radar.png' ColorKey='0' template='orangedot' />
 			<BlipType Name='Chest' filename='ISXEQ2Radar.png' ColorKey='0' template='lightpurpledot' />
+			<BlipType Name='Unknown' filename='ISXEQ2Radar.png' ColorKey='0' template='brightyellowdot' />
 		</BlipTypes>
 	</template>
 	<template Name="Black Font" template="Default Font">
@@ -293,6 +361,8 @@ Radar Testing
 				<ShowMyPet>1</ShowMyPet>
 				<ShowNamedNPCs>1</ShowNamedNPCs>
 				<ShowChests>1</ShowChests>
+				<ShowDoors>1</ShowDoors>
+				<ShowUnknown>1</ShowUnknown>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -316,6 +386,8 @@ Radar Testing
 				<ShowPets>0</ShowPets>
 				<ShowMyPet>0</ShowMyPet>
 				<ShowNamedNPCs>1</ShowNamedNPCs>
+				<ShowDoors>0</ShowDoors>
+				<ShowUnknown>0</ShowUnknown>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -339,6 +411,8 @@ Radar Testing
 				<ShowPets>0</ShowPets>
 				<ShowMyPet>0</ShowMyPet>
 				<ShowNamedNPCs>1</ShowNamedNPCs>
+				<ShowDoors>0</ShowDoors>
+				<ShowUnknown>0</ShowUnknown>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -362,6 +436,8 @@ Radar Testing
 				<ShowPets>0</ShowPets>
 				<ShowMyPet>0</ShowMyPet>
 				<ShowNamedNPCs>0</ShowNamedNPCs>
+				<ShowDoors>1</ShowDoors>
+				<ShowUnknown>1</ShowUnknown>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -381,7 +457,7 @@ Radar Testing
 		<X>0</X>
 		<Y>0</Y>
 		<Width>310</Width>
-		<Height>306</Height>
+		<Height>326</Height>
 		<Border>0</Border>
 		<Visible>0</Visible>
 		<Title>Radar ${rwActiveRadar} Configuration</Title>
@@ -487,6 +563,19 @@ Radar Testing
 								Radar[radar${rwActiveRadar}]:FilterChests
 							</OnLeftClick>
 						</commandCheckbox>
+						<commandCheckbox name="FilterUnknown">
+							<Alpha>10</Alpha>
+							<X>5</X>
+							<Y>145</Y>
+							<Width>145</Width>
+							<Height>18</Height>
+							<Font Template="Black Font" />
+							<Text>Show Unknown</Text>
+							<Data>${Radar[radar${rwActiveRadar}].ShowingUnknowns}</Data>
+							<OnLeftClick>
+								Radar[radar${rwActiveRadar}]:FilterUnknowns
+							</OnLeftClick>
+						</commandCheckbox>
 
 						<commandCheckbox name="FilterSpecials">
 						  <Alpha>10</Alpha>
@@ -554,8 +643,8 @@ Radar Testing
 							</OnLeftClick>
 						</commandCheckbox>
 						<commandCheckbox name="FilterPets">
-						  <Alpha>10</Alpha>
-						  <X>140</X>
+							<Alpha>10</Alpha>
+							<X>140</X>
 							<Y>105</Y>
 							<Width>145</Width>
 							<Height>18</Height>
@@ -566,10 +655,23 @@ Radar Testing
 								Radar[radar${rwActiveRadar}]:FilterPets
 							</OnLeftClick>
 						</commandCheckbox>
+						<Checkbox name="FilterDoors">
+							<Alpha>10</Alpha>
+							<X>140</X>
+							<Y>125</Y>
+							<Width>145</Width>
+							<Height>18</Height>
+							<Font Template="Black Font" />
+							<Text>Show Doors</Text>
+							<Data>${Radar[radar${rwActiveRadar}].ShowingDoors}</Data>
+							<OnLeftClick>
+								Radar[radar${rwActiveRadar}]:FilterDoors
+							</OnLeftClick>
+						</Checkbox>
 						<Text Name="CustomFiltersText">
 						  <Alpha>10</Alpha>
 						  <X>5</X>
-							<Y>145</Y>
+							<Y>165</Y>
 							<Width>150</Width>
 							<Height>18</Height>
 							<Font Template="Black Font" />
@@ -578,7 +680,7 @@ Radar Testing
 						<TextEntry Name="FilterEntry">
 						  <Alpha>10</Alpha>
 						  <X>5</X>
-							<Y>165</Y>
+							<Y>185</Y>
 							<Width>200</Width>
 							<Height>18</Height>
 							<MaxLength>100</MaxLength>
@@ -587,7 +689,7 @@ Radar Testing
 						<Listbox Name="FilterList">
 						  <Alpha>10</Alpha>
 						  <X>5</X>
-							<Y>185</Y>
+							<Y>205</Y>
 							<Width>200</Width>
 							<Height>68</Height>
 							<SelectMultiple>0</SelectMultiple>
@@ -597,7 +699,7 @@ Radar Testing
 						<Button Name="AddTarget">
 						  <Alpha>10</Alpha>
 						  <X>215</X>
-							<Y>145</Y>
+							<Y>165</Y>
 							<Width>75</Width>
 							<Height>18</Height>
 							<Text>Add Tgt</Text>
@@ -612,7 +714,7 @@ Radar Testing
 						<Button Name="Add">
 						  <Alpha>10</Alpha>
 						  <X>215</X>
-							<Y>165</Y>
+							<Y>185</Y>
 							<Width>75</Width>
 							<Height>18</Height>
 							<Text>Add</Text>
@@ -628,7 +730,7 @@ Radar Testing
 						<Button Name="Remove">
 						  <Alpha>10</Alpha>
 						  <X>215</X>
-							<Y>185</Y>
+							<Y>205</Y>
 							<Width>75</Width>
 							<Height>18</Height>
 							<Text>Remove</Text>
@@ -643,7 +745,7 @@ Radar Testing
 						<Button Name="Clear">
 						  <Alpha>10</Alpha>
 						  <X>215</X>
-							<Y>205</Y>
+							<Y>225</Y>
 							<Width>75</Width>
 							<Height>18</Height>
 							<Text>Clear</Text>
@@ -661,7 +763,7 @@ Radar Testing
 						<Button Name="Refresh">
 						  <Alpha>10</Alpha>
 						  <X>215</X>
-							<Y>225</Y>
+							<Y>245</Y>
 							<Width>75</Width>
 							<Height>18</Height>
 							<Text>Refresh</Text>
