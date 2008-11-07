@@ -129,6 +129,8 @@ function EQ2BotLib_Init()
 {
 
 	;INI Settings
+	CharacterSet:AddSet[EQ2BotExtras]
+	
 	AutoFollowMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode,FALSE]}]
 	NoAutoMovement:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovement,FALSE]}]
 	CombatFollow:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[CombatFollow,FALSE]}]
@@ -323,7 +325,6 @@ function PopulateMezSpells()
 	;; Coercer Mez Spells
 	;;;;;
 	tempvar:Set[1]
-	LavishSettings[EQ2Bot]:AddSet[OtherSpells]
 	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${mainpath}EQ2Bot/Spell List/Coercer.xml]
 	LavishSettings[EQ2Bot].FindSet[OtherSpells].FindSet[Coercer]:GetSettingIterator[SpellIterator]
 	if ${SpellIterator:First(exists)}
@@ -878,7 +879,9 @@ atom SaveEquipmentSet(string EquipmentSetName)
 {
 	variable int tempvar=1
 	variable string EquipmentItem
-
+	CharacterSet.FindSet[EQ2BotExtras]:AddSet[Equipment]
+	CharacterSet.FindSet[EQ2BotExtras:AddSet[${EquipmentSetName}]
+	
 	Do
 	{
 		if !${Me.Equipment[${tempvar}].Name.Equal[NULL]}
@@ -1379,7 +1382,7 @@ objectdef HeroicOp
 
 	method Initialize()
 	{
-
+		CharacterSet.FindSet[EQ2BotExtras]:AddSet[HeroicOp]
 		switch ${Me.Archetype}
 		{
 			case fighter

@@ -4531,8 +4531,10 @@ objectdef EQ2BotObj
 		LavishSettings[EQ2Bot].FindSet[Spells]:Import[${spellfile}]
 		LavishSettings[EQ2Bot]:AddSet[Character]
 		LavishSettings[EQ2Bot].FindSet[Character]:Import[${charfile}]
+		LavishSettings[EQ2Bot]:AddSet[Temporary Settings]
 		SpellSet:Set[${LavishSettings[EQ2Bot].FindSet[Spells]}]
 		CharacterSet:Set[${LavishSettings[EQ2Bot].FindSet[Character]}]
+		CharacterSet:AddSet[Temporary Settings]
 		
 		
 		This:Init_Character
@@ -4615,7 +4617,9 @@ objectdef EQ2BotObj
 	method Init_Character()
 	{
 		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
-
+		CharacterSet:AddSet[General Settings]
+		CharacterSet:AddSet[${Me.Subclass}]
+		
 		switch ${Me.Archetype}
 		{
 			case scout
