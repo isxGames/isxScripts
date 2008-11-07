@@ -604,7 +604,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		</OnLoad>
 		<OnSelect>
 		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffRedoubt]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffRedoubt]
 LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffRedoubt]:Clear
 
 		  tmpvar:Set[1]
@@ -620,7 +620,7 @@ LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffRe
 		</OnSelect>
 		<OnDeselect>
 		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffRedoubt]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffRedoubt]
 LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffRedoubt]:Clear
 
 		  tmpvar:Set[1]
