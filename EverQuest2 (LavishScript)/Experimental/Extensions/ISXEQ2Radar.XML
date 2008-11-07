@@ -362,7 +362,8 @@ Radar Testing
 				<ShowNamedNPCs>1</ShowNamedNPCs>
 				<ShowChests>1</ShowChests>
 				<ShowDoors>1</ShowDoors>
-				<ShowUnknown>1</ShowUnknown>
+				<ShowUnknowns>1</ShowUnknowns>
+				<ColorizeLabels>1</ColorizeLabels>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -387,7 +388,8 @@ Radar Testing
 				<ShowMyPet>0</ShowMyPet>
 				<ShowNamedNPCs>1</ShowNamedNPCs>
 				<ShowDoors>0</ShowDoors>
-				<ShowUnknown>0</ShowUnknown>
+				<ShowUnknowns>0</ShowUnknowns>
+				<ColorizeLabels>1</ColorizeLabels>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -412,7 +414,8 @@ Radar Testing
 				<ShowMyPet>0</ShowMyPet>
 				<ShowNamedNPCs>1</ShowNamedNPCs>
 				<ShowDoors>0</ShowDoors>
-				<ShowUnknown>0</ShowUnknown>
+				<ShowUnknowns>0</ShowUnknowns>
+				<ColorizeLabels>1</ColorizeLabels>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -437,7 +440,8 @@ Radar Testing
 				<ShowMyPet>0</ShowMyPet>
 				<ShowNamedNPCs>0</ShowNamedNPCs>
 				<ShowDoors>1</ShowDoors>
-				<ShowUnknown>1</ShowUnknown>
+				<ShowUnknowns>1</ShowUnknowns>
+				<ColorizeLabels>1</ColorizeLabels>
 				<Children>
 					<tooltip Name='Radar Tooltip'></tooltip>
 				</Children>
@@ -655,7 +659,7 @@ Radar Testing
 								Radar[radar${rwActiveRadar}]:FilterPets
 							</OnLeftClick>
 						</commandCheckbox>
-						<Checkbox name="FilterDoors">
+						<commandCheckbox name="FilterDoors">
 							<Alpha>10</Alpha>
 							<X>140</X>
 							<Y>125</Y>
@@ -667,7 +671,21 @@ Radar Testing
 							<OnLeftClick>
 								Radar[radar${rwActiveRadar}]:FilterDoors
 							</OnLeftClick>
-						</Checkbox>
+						</commandCheckbox>
+						<commandCheckbox name="Label Color">
+							<Alpha>10</Alpha>
+							<X>140</X>
+							<Y>145</Y>
+							<Width>145</Width>
+							<Height>18</Height>
+							<Font Template="Black Font" />
+							<Text>Label Concolor</Text>
+							<Data>${Radar[radar${rwActiveRadar}].ColorizingLabels}</Data>
+							<OnLeftClick>
+								Radar[radar${rwActiveRadar}]:ColorizeLabels
+							</OnLeftClick>
+						</commandCheckbox>
+
 						<Text Name="CustomFiltersText">
 						  <Alpha>10</Alpha>
 						  <X>5</X>
