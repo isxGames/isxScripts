@@ -4618,7 +4618,7 @@ objectdef EQ2BotObj
 	{
 		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
 		CharacterSet:AddSet[General Settings]
-		CharacterSet:AddSet[${Me.Subclass}]
+		CharacterSet:AddSet[${Me.SubClass}]
 		
 		switch ${Me.Archetype}
 		{
