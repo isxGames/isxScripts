@@ -328,7 +328,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLoad>
 		<OnSelect>
 		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffDPS]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffDPS]
 LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:Clear
 
 		  tmpvar:Set[1]
@@ -344,7 +344,7 @@ LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDP
 		</OnSelect>
 		<OnDeselect>
 		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffDPS]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffDPS]
 LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:Clear
 
 		  tmpvar:Set[1]
@@ -392,7 +392,7 @@ LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDP
 		</OnLoad>
 		<OnSelect>
 		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffAntiHate]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffAntiHate]
 LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAntiHate]:Clear
 
 		  tmpvar:Set[1]
@@ -408,7 +408,7 @@ LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAn
 		</OnSelect>
 		<OnDeselect>
 		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}:AddSet[BuffAntiHate]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffAntiHate]
 LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAntiHate]:Clear
 
 		  tmpvar:Set[1]
