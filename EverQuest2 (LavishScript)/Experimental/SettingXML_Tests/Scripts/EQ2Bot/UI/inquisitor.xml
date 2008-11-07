@@ -406,32 +406,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
         </OnSelect>
         <OnLeftClick>
-          declare tmpvar int
-
-          This:ClearItems
-          tmpvar:Set[1]
-          This:AddItem[${Me.Name}]
-          if ${Me.ToActor.Pet(exists)}
-          {
-          This:AddItem[${Me.ToActor.Pet.Name}]
-          }
-          do
-          {
-          if ${Me.Grouped}
-          {
-          if ${Me.Group[${tmpvar}].Name(exists)}
-          {
-          This:AddItem[${Me.Group[${tmpvar}].Name}]
-          }
-          if ${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}
-          {
-          This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}]
-          }
-
-          }
-
-          }
-          while ${tmpvar:Inc}&lt;=5
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffAuraGroupMember,1,1,0]
         </OnLeftClick>
       </combobox>
       <Text Name='lblBuffShieldAllyGroupMember'>
@@ -460,33 +435,8 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
         </OnSelect>
         <OnLeftClick>
-          declare tmpvar int
-
-          This:ClearItems
-          tmpvar:Set[1]
-          This:AddItem[${Me.Name}]
-          if ${Me.ToActor.Pet(exists)}
-          {
-          This:AddItem[${Me.ToActor.Pet.Name}]
-          }
-          do
-          {
-          if ${Me.Grouped}
-          {
-          if ${Me.Group[${tmpvar}].Name(exists)}
-          {
-          This:AddItem[${Me.Group[${tmpvar}].Name}]
-          }
-          if ${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}
-          {
-          This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}]
-          }
-
-          }
-
-          }
-          while ${tmpvar:Inc}&lt;=5
-        </OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffShieldAllyGroupMember,0,1,0]
+		</OnLeftClick>
       </combobox>
       <Text Name='lblBuffDPS'>
         <X>325</X>
