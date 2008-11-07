@@ -880,7 +880,7 @@ atom SaveEquipmentSet(string EquipmentSetName)
 	variable int tempvar=1
 	variable string EquipmentItem
 	CharacterSet.FindSet[EQ2BotExtras]:AddSet[Equipment]
-	CharacterSet.FindSet[EQ2BotExtras:AddSet[${EquipmentSetName}]
+	CharacterSet.FindSet[EQ2BotExtras]:AddSet[${EquipmentSetName}]
 	
 	Do
 	{
