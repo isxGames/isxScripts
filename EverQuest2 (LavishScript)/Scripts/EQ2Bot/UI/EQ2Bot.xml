@@ -33,13 +33,13 @@
 					UIElement[Title@TitleBar@EQ2 Bot]:SetText[Target: ${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name}]
 					break
 				case 20
-					UIElement[Title@TitleBar@EQ2 Bot]:SetText[GainedXP: ${Math.Calc[(${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[EQ2Bot].Variable[StartLevel]})*100)]}]
+					UIElement[Title@TitleBar@EQ2 Bot]:SetText[GainedXP: ${Math.Calc[(${Me.Exp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[EQ2Bot].Variable[StartLevel]})*100)]}]
 					break
 				case 30
-					UIElement[Title@TitleBar@EQ2 Bot]:SetText[XPRate: ${Math.Calc[((${Me.Exp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetFloat[StartXP]})+((${Me.Level}-${Script[EQ2Bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/3600)]} / hr]
+					UIElement[Title@TitleBar@EQ2 Bot]:SetText[XPRate: ${Math.Calc[((${Me.Exp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[EQ2Bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartTime]})/3600)]} / hr]
 					break
 				case 40
-					UIElement[Title@TitleBar@EQ2 Bot]:SetText[Runtime: ${Math.Calc[(${Time.Timestamp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/60]}]
+					UIElement[Title@TitleBar@EQ2 Bot]:SetText[Runtime: ${Math.Calc[(${Time.Timestamp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartTime]})/60]}]
 					break
 				case 50
 					UIElement[Title@TitleBar@EQ2 Bot]:SetText[EQ2Bot]
@@ -94,19 +94,23 @@
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,frame]:Hide
 									Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									Script[EQ2Bot].Variable[MainTankPC]:Set[${Me.Name}]
 									Script[EQ2Bot].Variable[OriginalMT]:Set[${Me.Name}]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${Me.Name}]:Save										
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${Me.Name}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings										
 								}
 								else
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,frame]:Show
 									Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									Script[EQ2Bot].Variable[MainTankPC]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
 									Script[EQ2Bot].Variable[OriginalMT]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]:Save									
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -143,17 +147,20 @@
 									<OnSelect>
 									    if ${UIElement[MainTank@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
 									    {
-    									    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,TRUE]:Save
+    									    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
 									    }
 									    else
 									    {
-									        SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Tank?,FALSE]:Save
+									        LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
 									    }
 										Script[EQ2Bot].Variable[MainTankPC]:Set[${This.SelectedItem.Text}]
 										Script[EQ2Bot].Variable[OriginalMT]:Set[${This.SelectedItem.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Tank?,${This.SelectedItem.Text}]:Save
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									</OnSelect>
 									<OnLeftClick>
 										declare tmpvar int
@@ -272,24 +279,28 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								if ${UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
-								{
-									UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
-									Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,TRUE]:Save
-									Script[EQ2Bot].Variable[MainAssist]:Set[${Me.Name}]
-									Script[EQ2Bot].Variable[OriginalMA]:Set[${Me.Name}]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${Me.Name}]:Save											
-								}
-								else
-								{
-									UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Show
-									Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
-									Script[EQ2Bot].Variable[MainAssist]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
-									Script[EQ2Bot].Variable[OriginalMA]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]:Save											
-								}
+							  if ${UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
+							  {
+							  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
+							  Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
+							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,TRUE]
+							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+							  Script[EQ2Bot].Variable[MainAssist]:Set[${Me.Name}]
+							  Script[EQ2Bot].Variable[OriginalMA]:Set[${Me.Name}]
+							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${Me.Name}]
+							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+							  }
+							  else
+							  {
+							  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Show
+							  Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
+							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,FALSE]
+							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+							  Script[EQ2Bot].Variable[MainAssist]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+							  Script[EQ2Bot].Variable[OriginalMA]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+							  }
 							</OnLeftClick>
 							<AutoTooltip>Check the box to set yourself as MA</AutoTooltip>
 						</checkbox>
@@ -326,17 +337,20 @@
 									<OnSelect>
 									    if ${UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
 									    {
-    									    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,TRUE]:Save
+    									    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
 									    }
 									    else
 									    {
-    									    SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[I am the Main Assist?,FALSE]:Save
+    									    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 									    }									
 										Script[EQ2Bot].Variable[MainAssist]:Set[${This.SelectedItem.Text}]
 										Script[EQ2Bot].Variable[OriginalMA]:Set[${This.SelectedItem.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Who is the Main Assist?,${This.SelectedItem.Text}]:Save</OnSelect>
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 									<OnLeftClick>
 										declare tmpvar int
 										This:ClearItems
@@ -395,8 +409,9 @@
 									<MaxLength>3</MaxLength>
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[AssistHP]}]</OnLoad>
 									<OnChange>
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Assist and Engage in combat at what Health?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Assist and Engage in combat at what Health?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Assist and Engage in combat at what Health?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Assist and Engage in combat at what Health?]}]
 										Script[EQ2Bot].Variable[AssistHP]:Set[${This.Text}]
 									</OnChange>
 								</Textentry>
@@ -437,15 +452,17 @@
                             			if ${This.Checked}
                             			{
                             				Script[EQ2Bot].Variable[AutoFollowMode]:Set[TRUE]
-                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
+                            				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                             			}
                             			else
                             			{
                             				Script[EQ2Bot].Variable[AutoFollowMode]:Set[FALSE]
-                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",FALSE]:Save
+                            				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                             			}
                             		</OnLeftClick>
-                            		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[Auto Follow Mode]}</Data>
+                            		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode]}</Data>
                             	</Commandcheckbox>
                             	<combobox name='AutoFollowee'>
                             		<x>28%</x>
@@ -455,15 +472,16 @@
                             		<AutoTooltip>The Group Member to auto follow</AutoTooltip>
                             		<Items></items>
                             		<OnLoad>
-                            		    if ${Actor[exactname,${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}](exists)}
+                            		    if ${Actor[exactname,${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}](exists)}
                             		    {
-                                			This:AddItem[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]
-                                			This.ItemByValue[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[AutoFollowee]}]:Select
+                                			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}]
+                                			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}]:Select
                                 		}
                             		</OnLoad>
                             		<OnSelect>
                             			Script[EQ2Bot].Variable[AutoFollowee]:Set[${This.SelectedItem.Text}]
-                            			SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set[AutoFollowee,${This.SelectedItem.Text}]:Save</OnSelect>
+                            			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[AutoFollowee,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
                             		<OnLeftClick>
                             			declare tmpvar int
                             
@@ -500,15 +518,17 @@
                             			if ${This.Checked}
                             			{
                             				Script[EQ2Bot].Variable[NoAutoMovement]:Set[TRUE]
-                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["NoAutoMovement",TRUE]:Save
+                            				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["NoAutoMovement",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                             			}
                             			else
                             			{
                             				Script[EQ2Bot].Variable[NoAutoMovement]:Set[FALSE]
-                            				SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["NoAutoMovement",FALSE]:Save
+                            				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["NoAutoMovement",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                             			}
                             		</OnLeftClick>
-                            		<Data>${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras].GetString[NoAutoMovement]}</Data>
+                            		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[NoAutoMovement]}</Data>
                             	</Commandcheckbox>
 						    </Children>
 				        </Frame>
@@ -545,7 +565,8 @@
 										{
 											UIElement[EQ2 Bot].FindUsableChild[Following Frame,frame]:Show
 											Script[EQ2Bot].Variable[PathType]:Set[0]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What Path Type (0-4)?,0]:Save
+											LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What Path Type (0-4)?,0]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 											UIElement[Minimum@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Camp@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Dungeon Crawl@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
@@ -570,7 +591,8 @@
 										{
 											UIElement[EQ2 Bot].FindUsableChild[Following Frame,frame]:Hide
 											Script[EQ2Bot].Variable[PathType]:Set[1]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What Path Type (0-4)?,1]:Save
+											LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What Path Type (0-4)?,1]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 											UIElement[Manual@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Camp@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Dungeon Crawl@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
@@ -600,7 +622,8 @@
 										{
 											UIElement[EQ2 Bot].FindUsableChild[Following Frame,frame]:Hide
 											Script[EQ2Bot].Variable[PathType]:Set[2]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What Path Type (0-4)?,2]:Save
+											LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What Path Type (0-4)?,2]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 											UIElement[Manual@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Minimum@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Dungeon Crawl@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
@@ -630,7 +653,8 @@
 										{
 											UIElement[EQ2 Bot].FindUsableChild[Following Frame,frame]:Hide
 											Script[EQ2Bot].Variable[PathType]:Set[3]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What Path Type (0-4)?,3]:Save
+											LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What Path Type (0-4)?,3]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 											UIElement[Manual@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Minimum@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Camp@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
@@ -660,7 +684,8 @@
 										{
 											UIElement[EQ2 Bot].FindUsableChild[Following Frame,frame]:Hide
 											Script[EQ2Bot].Variable[PathType]:Set[4]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What Path Type (0-4)?,4]:Save
+											LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What Path Type (0-4)?,4]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 											UIElement[Manual@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Minimum@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Camp@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
@@ -690,8 +715,9 @@
 									<MaxLength>4</MaxLength>
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[ScanRange]}]</OnLoad>
 									<OnChange>
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What RANGE to SCAN for Mobs?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to SCAN for Mobs?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to SCAN for Mobs?]}]
 										Script[EQ2Bot].Variable[ScanRange]:Set[${This.Text}]
 									</OnChange>
 								</Textentry>
@@ -712,8 +738,9 @@
 									<MaxLength>4</MaxLength>
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[MARange]}]</OnLoad>
 									<OnChange>
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[What RANGE to Engage from Main Assist?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to Engage from Main Assist?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to Engage from Main Assist?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to Engage from Main Assist?]}]
 										Script[EQ2Bot].Variable[MARange]:Set[${This.Text}]
 									</OnChange>
 								</Textentry>
@@ -783,7 +810,7 @@
 									<Height>10</Height>
 									<Alignment>Left</Alignment>
 									<Wrap />
-									<Text>Runtime: ${Math.Calc[(${Time.Timestamp}-${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[Temporary Settings].GetInt[StartTime]})/60].Precision[2]} min.</Text>
+									<Text>Runtime: ${Math.Calc[(${Time.Timestamp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartTime]})/60].Precision[2]} min.</Text>
 								</Text>
 							</Children>
 						</Frame>
@@ -864,12 +891,14 @@
 								if ${UIElement[AutoSwitch@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[AutoSwitch]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Switch Targets when Main Assist Switches?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Switch Targets when Main Assist Switches?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[AutoSwitch]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Switch Targets when Main Assist Switches?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Switch Targets when Main Assist Switches?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -889,12 +918,14 @@
 								if ${UIElement[AutoMelee@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[AutoMelee]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Melee,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Melee,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[AutoMelee]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Melee,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Melee,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -914,12 +945,14 @@
 								if ${UIElement[IgnoreEpic@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreEpic]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Epic Encounters?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Epic Encounters?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreEpic]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Epic Encounters?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Epic Encounters?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -939,12 +972,14 @@
 								if ${UIElement[IgnoreNamed@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreNamed]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Named Encounters?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Named Encounters?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreNamed]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Named Encounters?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Named Encounters?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -964,12 +999,14 @@
 								if ${UIElement[IgnoreHeroic@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreHeroic]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Heroic Encounters?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Heroic Encounters?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreHeroic]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Heroic Encounters?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Heroic Encounters?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -989,12 +1026,14 @@
 								if ${UIElement[IgnoreGreyCon@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreGreyCon]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Grey Con Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Grey Con Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreGreyCon]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Grey Con Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Grey Con Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1014,12 +1053,14 @@
 								if ${UIElement[IgnoreRedCon@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreRedCon]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Red Con Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Red Con Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreRedCon]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Red Con Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Red Con Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1039,12 +1080,14 @@
 								if ${UIElement[IgnoreGreenCon@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreGreenCon]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Green Con Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Green Con Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreGreenCon]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Green Con Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Green Con Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1064,12 +1107,14 @@
 								if ${UIElement[IgnoreOrangeCon@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreRedCon]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Orange Con Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Orange Con Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreOrangeCon]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Orange Con Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Orange Con Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1089,12 +1134,14 @@
 								if ${UIElement[IgnoreBlueCon@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreBlueCon]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Blue Con Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Blue Con Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreBlueCon]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Blue Con Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Blue Con Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1114,12 +1161,14 @@
 								if ${UIElement[IgnoreYellowCon@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreRedCon]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Yellow Con Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Yellow Con Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreYellowCon]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore Yellow Con Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Yellow Con Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1139,12 +1188,14 @@
 								if ${UIElement[IgnoreWhiteCon@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[IgnoreWhiteCon]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore White Con Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore White Con Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[IgnoreWhiteCon]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Ignore White Con Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore White Con Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1164,12 +1215,14 @@
 								if ${UIElement[PullNonAggro@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[PullNonAggro]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Pull Non Aggro Mobs?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Pull Non Aggro Mobs?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[PullNonAggro]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Pull Non Aggro Mobs?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Pull Non Aggro Mobs?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1189,12 +1242,14 @@
 								if ${UIElement[AutoLoot@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[AutoLoot]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Loot Corpses and open Treasure Chests?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Loot Corpses and open Treasure Chests?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[AutoLoot]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Loot Corpses and open Treasure Chests?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Loot Corpses and open Treasure Chests?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1214,12 +1269,14 @@
 								if ${UIElement[Priest Power@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[CheckPriestPower]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Check if Priest has Power in the Group?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Check if Priest has Power in the Group?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[CheckPriestPower]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Check if Priest has Power in the Group?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Check if Priest has Power in the Group?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1243,11 +1300,12 @@
 								<Item Value='3'>Idle</Item>
 							</items>
 							<OnLoad>
-								This.ItemByText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[LootMethod]}]:Select
+								This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[LootMethod]}]:Select
 							</OnLoad>
 							<OnSelect>
 								Script[EQ2Bot].Variable[LootMethod]:Set[${This.SelectedItem.Text}]
-								SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[LootMethod,${This.SelectedItem.Text}]:Save</OnSelect>
+								LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[LootMethod,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 							<OnLeftClick></OnLeftClick>
 						</combobox>
 						<checkbox Name='Lore Confirmation'>
@@ -1266,12 +1324,14 @@
 								if ${UIElement[Lore Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[LoreConfirm]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot Lore Items?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Loot Lore Items?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[LoreConfirm]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot Lore Items?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Loot Lore Items?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1291,12 +1351,14 @@
 								if ${UIElement[NoTrade Confirmation@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[NoTradeConfirm]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot NoTrade Items?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Loot NoTrade Items?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[NoTradeConfirm]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to Loot NoTrade Items?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Loot NoTrade Items?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1316,12 +1378,14 @@
 								if ${UIElement[Loot Previously Collected Shineys@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[LootPrevCollectedShineys]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to loot previously collected shineys?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to loot previously collected shineys?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[LootPrevCollectedShineys]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Do you want to loot previously collected shineys?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to loot previously collected shineys?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1345,12 +1409,13 @@
 							<Height>20</Height>
 							<Range>75</Range>
 							<OnLoad>
-								Script[EQ2Bot].VariableScope.OORThreshold:Set[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:GetInt[Out of Range Reaction Distance]}
-								This:SetValue[${Script[EQ2Bot].Variable[OORThreshold]}]
+							  Script[EQ2Bot].VariableScope.OORThreshold:Set[LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Out of Range Reaction Distance]}
+							  This:SetValue[${Script[EQ2Bot].Variable[OORThreshold]}]
 							</OnLoad>
 							<OnChange>
-								SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Out of Range Reaction Distance,${This.Value}]:Save
-								Script[EQ2Bot].Variable[OORThreshold]:Set[${This.Value}]
+							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Out of Range Reaction Distance,${This.Value}]
+							  Script[EQ2Bot].Variable[OORThreshold]:Set[${This.Value}]
+							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							</OnChange>
 						</Slider>
 						<checkbox Name='AutoPull'>
@@ -1402,7 +1467,8 @@
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Show
 									Script[EQ2Bot].Variable[AutoPull]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Pull,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Pull,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									if ${Script[EQ2Bot].Variable[PullType].Equal[Bow Pull]}
 									{
 										UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Show
@@ -1435,7 +1501,8 @@
 									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
 									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 									Script[EQ2Bot].Variable[AutoPull]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Auto Pull,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Auto Pull,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1446,7 +1513,7 @@
 							<Height>20</Height>
 							<Width>95%</Width>
 							<OnLoad>
-								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Auto Pull]}
+								if ${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Auto Pull]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Show
 								}
@@ -1480,7 +1547,7 @@
 										<Item Value='PullWithSpell'>Spell or CA Pull</Item>
 									</items>
 									<OnLoad>
-										This.ItemByText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType]}]:Select
+										This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[PullType]}]:Select
 										if ${This.SelectedItem.Text.Equal[Bow Pull]}
 										{
 											UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Show
@@ -1533,7 +1600,8 @@
 											UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Hide		
 										}
 										Script[EQ2Bot].Variable[PullType]:Set[${This.SelectedItem.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[PullType,${This.SelectedItem.Text}]:Save</OnSelect>
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[PullType,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 									<OnLeftClick></OnLeftClick>
 								</combobox>
 							</Children>
@@ -1545,7 +1613,7 @@
 							<Height>40</Height>
 							<Width>95%</Width>
 							<OnLoad>
-								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Auto Pull]}
+								if ${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Auto Pull]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Show
 								}
@@ -1556,7 +1624,7 @@
 									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
 									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 								}
-								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType].Equal[Bow Pull]}
+								if ${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[PullType].String.Equal[Bow Pull]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Bow Pull Frame,frame]:Show
 								}
@@ -1584,8 +1652,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PullRange]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What RANGE to PULL from?",${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to PULL from?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting["What RANGE to PULL from?",${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to PULL from?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='PowerCheck Text'>
@@ -1606,8 +1675,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PowerCheck]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Power the puller will pull at?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Power the puller will pull at?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Power the puller will pull at?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='HealthCheck Text1'>
@@ -1628,8 +1698,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealthCheck]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Health the puller will pull at?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Health the puller will pull at?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Health the puller will pull at?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='HealthCheck Text2'>
@@ -1649,7 +1720,7 @@
 							<Height>40</Height>
 							<Width>95%</Width>
 							<OnLoad>
-								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Auto Pull]}
+								if ${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Auto Pull]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Show
 								}
@@ -1660,7 +1731,7 @@
 									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
 									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 								}							
-								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType].Equal[Pet Pull]}
+								if ${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[PullType].String.Equal[Pet Pull]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Show
 								}
@@ -1688,8 +1759,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PullRange]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What RANGE to PULL from?",${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to PULL from?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting["What RANGE to PULL from?",${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to PULL from?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='PowerCheck Text'>
@@ -1710,8 +1782,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PowerCheck]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Power the puller will pull at?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Power the puller will pull at?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Power the puller will pull at?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='HealthCheck Text1'>
@@ -1732,8 +1805,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealthCheck]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Health the puller will pull at?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Health the puller will pull at?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Health the puller will pull at?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='HealthCheck Text2'>
@@ -1753,7 +1827,7 @@
 							<Height>40</Height>
 							<Width>95%</Width>
 							<OnLoad>
-								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[Auto Pull]}
+								if ${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Auto Pull]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Pull Frame,frame]:Show
 								}
@@ -1764,7 +1838,7 @@
 									UIElement[EQ2 Bot].FindUsableChild[Pet Pull Frame,frame]:Hide
 									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Hide
 								}							
-								if ${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[PullType].Equal[Spell or CA Pull]}
+								if ${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[PullType].String.Equal[Spell or CA Pull]}
 								{
 									UIElement[EQ2 Bot].FindUsableChild[Spell Pull Frame,frame]:Show
 								}
@@ -1801,12 +1875,13 @@
 										if ${Me.Ability[${UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}](exists)}
 										{
 											Script[EQ2Bot].Variable[PullSpell]:Set[${UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}]
-											SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What to use when PULLING?",${UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}]:Save
-											UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[What to use when PULLING?]}]
+											LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting["What to use when PULLING?",${UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Text}]
+											UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What to use when PULLING?]}]
+											Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 										}
 										else
 										{
-											UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetString[What to use when PULLING?]}]
+											UIElement[PullSpell@Spell Pull Frame@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot]:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What to use when PULLING?]}]
 										}
 									</OnLeftClick>
 								</Commandbutton>
@@ -1828,8 +1903,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PullRange]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set["What RANGE to PULL from?",${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[What RANGE to PULL from?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting["What RANGE to PULL from?",${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to PULL from?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='PowerCheck Text'>
@@ -1850,8 +1926,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[PowerCheck]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Power the puller will pull at?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Power the puller will pull at?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Power the puller will pull at?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='HealthCheck Text1'>
@@ -1872,8 +1949,9 @@
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[HealthCheck]}]</OnLoad>
 									<OnChange>
 										Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
-										SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Minimum Health the puller will pull at?,${This.Text}]:Save
-										This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Minimum Health the puller will pull at?]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Health the puller will pull at?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?]}]
 									</OnChange>
 								</Textentry>
 								<Text Name='HealthCheck Text2'>
@@ -1902,12 +1980,14 @@
 								if ${UIElement[Close UI@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[CloseUI]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Close the UI after starting EQ2Bot?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Close the UI after starting EQ2Bot?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[CloseUI]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Close the UI after starting EQ2Bot?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Close the UI after starting EQ2Bot?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -1927,12 +2007,14 @@
 								if ${UIElement[WipeRevive@EQ2Bot Options@EQ2Bot Tabs@EQ2 Bot].Checked}
 								{
 									Script[EQ2Bot].Variable[WipeRevive]:Set[TRUE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Revive on Group Wipe?,TRUE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Revive on Group Wipe?,TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
 									Script[EQ2Bot].Variable[WipeRevive]:Set[FALSE]
-									SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Revive on Group Wipe?,FALSE]:Save
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Revive on Group Wipe?,FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -2213,8 +2295,9 @@
 							<MaxLength>3</MaxLength>
 							<OnLoad>This:SetText[${Script[EQ2Bot].Variable[BoxWidth]}]</OnLoad>
 							<OnChange>
-								SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings]:Set[Navigation: Size of Box?,${This.Text}]:Save
-								This:SetText[${SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[General Settings].GetInt[Navigation: Size of Box?]}]
+								LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Navigation: Size of Box?,${This.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+								This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Navigation: Size of Box?]}]
 								Script[EQ2Bot].Variable[BoxWidth]:Set[${This.Text}]
 							</OnChange>
 						</Textentry>

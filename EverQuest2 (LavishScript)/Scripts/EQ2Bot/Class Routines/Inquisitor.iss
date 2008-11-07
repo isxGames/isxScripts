@@ -63,24 +63,24 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,FALSE]}]
-	DebuffMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Debuff Spells,TRUE]}]
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	CureMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Cure Spells,FALSE]}]
-	ConvertMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Convert Mode,FALSE]}]
-	YaulpMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Yaulp Mode,FALSE]}]
-	FanaticismMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Fanaticism Mode,FALSE]}]
-	KeepReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepReactiveUp,FALSE]}]
-	KeepGroupReactiveUp:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[KeepGroupReactiveUp,FALSE]}]
-	MezzMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Mezz Mode,FALSE]}]
-	BattleClericMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BattleCleric Mode,FALSE]}]
-	InquisitionMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Inquisition Mode,FALSE]}]
+	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
+	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
+	ConvertMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Convert Mode,FALSE]}]
+	YaulpMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Yaulp Mode,FALSE]}]
+	FanaticismMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Fanaticism Mode,FALSE]}]
+	KeepReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepReactiveUp,FALSE]}]
+	KeepGroupReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepGroupReactiveUp,FALSE]}]
+	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
+	BattleClericMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BattleCleric Mode,FALSE]}]
+	InquisitionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Inquisition Mode,FALSE]}]
 
-	BuffArcane:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffArcane,TRUE]}]
-	BuffMitigation:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffMitigation,TRUE]}]
-	BuffProc:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffProc,TRUE]}]
-	BuffAuraGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffAuraGroupMember,]}]
-	BuffShieldAllyGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffShieldAllyGroupMember,]}]
+	BuffArcane:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffArcane,TRUE]}]
+	BuffMitigation:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffMitigation,TRUE]}]
+	BuffProc:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProc,TRUE]}]
+	BuffAuraGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAuraGroupMember,]}]
+	BuffShieldAllyGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffShieldAllyGroupMember,]}]
 }
 
 function Class_Shutdown()

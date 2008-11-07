@@ -129,26 +129,28 @@ function EQ2BotLib_Init()
 {
 
 	;INI Settings
-	AutoFollowMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Auto Follow Mode,FALSE]}]
-	NoAutoMovement:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[NoAutoMovement,FALSE]}]
-	CombatFollow:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[CombatFollow,FALSE]}]
-	EpicMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[EpicMode,FALSE]}]
-	AutoFollowee:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[AutoFollowee,""]}]
-	WarnTankWhenAggro:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Warn tank when I have a mob on me,FALSE]}]
-	ShardMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Mode,FALSE]}]
-	ShardGroupMember:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Shard Group Member,""]}]
-	HeartMode:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Heart Mode,FALSE]}]
-	HeartGroupMember:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Heart Group Member,""]}]
-	DoHOs:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[DoHOs,FALSE]}]
-	RelaySession:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[RelaySession,""]}]
-	ForwardGuildChat:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[ForwardGuildChat,FALSE]}]
+	CharacterSet:AddSet[EQ2BotExtras]
+	
+	AutoFollowMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode,FALSE]}]
+	NoAutoMovement:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovement,FALSE]}]
+	CombatFollow:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[CombatFollow,FALSE]}]
+	EpicMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[EpicMode,FALSE]}]
+	AutoFollowee:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[AutoFollowee,""]}]
+	WarnTankWhenAggro:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Warn tank when I have a mob on me,FALSE]}]
+	ShardMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Shard Mode,FALSE]}]
+	ShardGroupMember:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Shard Group Member,""]}]
+	HeartMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Heart Mode,FALSE]}]
+	HeartGroupMember:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Heart Group Member,""]}]
+	DoHOs:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[DoHOs,FALSE]}]
+	RelaySession:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[RelaySession,""]}]
+	ForwardGuildChat:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[ForwardGuildChat,FALSE]}]
 
-	UsePotions:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Use potions for cures?,FALSE]}]
-	UseCurePotions:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Use potions for cures?,FALSE]}]
-	ArcanePotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Arcane Potion Name,NULL]}]
-	ElementalPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Elemental Potion Name,NULL]}]
-	NoxiousPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Noxious Potion Name,NULL]}]
-	TraumaPotion:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].GetString[Trauma Potion Name,NULL]}]
+	UsePotions:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Use potions for cures?,FALSE]}]
+	UseCurePotions:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Use potions for cures?,FALSE]}]
+	ArcanePotion:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Arcane Potion Name,NULL]}]
+	ElementalPotion:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Elemental Potion Name,NULL]}]
+	NoxiousPotion:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Noxious Potion Name,NULL]}]
+	TraumaPotion:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Trauma Potion Name,NULL]}]
 
 	;Triggers
 	AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
@@ -231,36 +233,40 @@ function PopulateSKFDSpells()
 	variable string tempnme
 	variable int tempvar=1
 	variable string SpellName
-
+	variable iterator SpellIterator
+	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Shadowknight FD Spells
 	;;;;;
-	spellfile:Set[${mainpath}EQ2Bot/Spell List/Shadowknight.xml]
-	keycount:Set[${SettingXML[${spellfile}].Set[Shadowknight].Keys}]
-	do
+	LavishSettings[EQ2Bot]:AddSet[OtherSpells]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${mainpath}EQ2Bot/Spell List/Shadowknight.xml]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells].FindSet[Shadowknight]:GetSettingIterator[SpellIterator]
+	if ${SpellIterator:First(exists)}
 	{
-		tempnme:Set["${SettingXML[${spellfile}].Set[Shadowknight].Key[${tempvar}]}"]
+		do
+		{
+			tempnme:Set["${SpellIterator.Key}"]
 
-		iLevel:Set[${Arg[1,${tempnme}]}]
-		iType:Set[${Arg[2,${tempnme}]}]
-		SpellName:Set[${SettingXML[${spellfile}].Set[Shadowknight].GetString["${tempnme}"]}]
+			iLevel:Set[${Arg[1,${tempnme}]}]
+			iType:Set[${Arg[2,${tempnme}]}]
+			SpellName:Set[${SpellIterator.Value}]
 
-		;echo "Debug: Processing Shadowknight Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+			;echo "Debug: Processing Shadowknight Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
 
-        switch ${iType}
-        {
-            case 330
-                ;echo "DEBUG: Shadowknight Spell '${SpellName}' (Level: ${iLevel} was added to the SKFDSpells collection"
-                SKFDSpells:Set[${SpellName},${iLevel}]
-                break
+			switch ${iType}
+			{
+				case 330
+					;echo "DEBUG: Shadowknight Spell '${SpellName}' (Level: ${iLevel} was added to the SKFDSpells collection"
+					SKFDSpells:Set[${SpellName},${iLevel}]
+					break
 
-            Default
-                break
-        }
+				Default
+					break
+			}
 
-
+		}
+		while ${SpellIterator:Next(exists)}
 	}
-	while ${tempvar:Inc} <= ${keycount}
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -278,35 +284,39 @@ function PopulateMezSpells()
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Illusionist Mez Spells
 	;;;;;
-	spellfile:Set[${mainpath}EQ2Bot/Spell List/Illusionist.xml]
-	keycount:Set[${SettingXML[${spellfile}].Set[Illusionist].Keys}]
-	do
+	LavishSettings[EQ2Bot]:AddSet[OtherSpells]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${mainpath}EQ2Bot/Spell List/Illusionist.xml]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells].FindSet[Illusionist]:GetSettingIterator[SpellIterator]
+	if ${SpellIterator:First(exists)}
 	{
-		tempnme:Set["${SettingXML[${spellfile}].Set[Illusionist].Key[${tempvar}]}"]
+		do
+		{
+			tempnme:Set["${SpellIterator.Key}"]
 
-		iLevel:Set[${Arg[1,${tempnme}]}]
-		iType:Set[${Arg[2,${tempnme}]}]
-		SpellName:Set[${SettingXML[${spellfile}].Set[Illusionist].GetString["${tempnme}"]}]
+			iLevel:Set[${Arg[1,${tempnme}]}]
+			iType:Set[${Arg[2,${tempnme}]}]
+			SpellName:Set[${SpellIterator.Value}]
 
-		;echo "Debug: Processing Illusionist Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+			;echo "Debug: Processing Illusionist Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
 
-        switch ${iType}
-        {
-            case 92
-            case 352
-            case 353
-            case 356
-                ;echo "DEBUG: Illusionist Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
-                MezSpells:Set[${SpellName},${iLevel}]
-                break
+			switch ${iType}
+			{
+				case 92
+				case 352
+				case 353
+				case 356
+					;echo "DEBUG: Illusionist Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
+					MezSpells:Set[${SpellName},${iLevel}]
+					break
 
-            Default
-                break
-        }
+				Default
+					break
+			}
 
 
+		}
+		while ${SpellIterator:Next(exists)}
 	}
-	while ${tempvar:Inc} <= ${keycount}
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -315,34 +325,37 @@ function PopulateMezSpells()
 	;; Coercer Mez Spells
 	;;;;;
 	tempvar:Set[1]
-	spellfile:Set[${mainpath}EQ2Bot/Spell List/Coercer.xml]
-	keycount:Set[${SettingXML[${spellfile}].Set[Coercer].Keys}]
-	do
+	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${mainpath}EQ2Bot/Spell List/Coercer.xml]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells].FindSet[Coercer]:GetSettingIterator[SpellIterator]
+	if ${SpellIterator:First(exists)}
 	{
-		tempnme:Set["${SettingXML[${spellfile}].Set[Coercer].Key[${tempvar}]}"]
+		do
+		{
+			tempnme:Set["${SpellIterator.Key}"]
 
-		iLevel:Set[${Arg[1,${tempnme}]}]
-		iType:Set[${Arg[2,${tempnme}]}]
-		SpellName:Set[${SettingXML[${spellfile}].Set[Coercer].GetString["${tempnme}"]}]
+			iLevel:Set[${Arg[1,${tempnme}]}]
+			iType:Set[${Arg[2,${tempnme}]}]
+			SpellName:Set[${SpellIterator.Value}]
 
-		;echo "Debug: Processing Coercer Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+			;echo "Debug: Processing Coercer Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
 
-        switch ${iType}
-        {
-            case 351
-            case 352
-            case 353
-                ;echo "DEBUG: Coercer Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
-                MezSpells:Set[${SpellName},${iLevel}]
-                break
+			switch ${iType}
+			{
+				case 351
+				case 352
+				case 353
+					;echo "DEBUG: Coercer Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
+					MezSpells:Set[${SpellName},${iLevel}]
+					break
 
-            Default
-                break
-        }
+				Default
+					break
+			}
 
 
+		}
+		while ${tempvar:Inc} <= ${keycount}
 	}
-	while ${tempvar:Inc} <= ${keycount}
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -468,7 +481,8 @@ atom AutoFollowTank()
 	{
 	  	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 
-		SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",TRUE]:Save
+		CharacterSet.FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",TRUE]
+		CharacterSet:Export[Scripts/EQ2Bot/Character Config/${Me.Name}.xml]
 
 		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
 		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
@@ -528,7 +542,8 @@ atom StopAutoFollowing()
 	AutoFollowingMA:Set[FALSE]
 	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetUnChecked
 
-	SettingXML[Scripts/EQ2Bot/Character Config/${Me.Name}.xml].Set[EQ2BotExtras]:Set["Auto Follow Mode",FALSE]:Save
+	CharacterSet.FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",FALSE]
+	CharacterSet:Export[Scripts/EQ2Bot/Character Config/${Me.Name}.xml]
 
 	EQ2Execute /stopfollow
 }
@@ -864,16 +879,18 @@ atom SaveEquipmentSet(string EquipmentSetName)
 {
 	variable int tempvar=1
 	variable string EquipmentItem
-
+	CharacterSet.FindSet[EQ2BotExtras]:AddSet[Equipment]
+	CharacterSet.FindSet[EQ2BotExtras]:AddSet[${EquipmentSetName}]
+	
 	Do
 	{
 		if !${Me.Equipment[${tempvar}].Name.Equal[NULL]}
 		{
-			SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}]:Set[${tempvar},${Me.Equipment[${tempvar}].Name}]
+			CharacterSet.FindSet[EQ2BotExtras].FindSet[Equipment].FindSet[${EquipmentSetName}]:AddSetting[${tempvar},${Me.Equipment[${tempvar}].Name}]
 		}
 	}
 	while ${tempvar:Inc} <=22
-	SettingXML[${charfile}]:Save
+	CharacterSet:Export[${charfile}]
 
 
 }
@@ -900,9 +917,9 @@ atom LoadEquipmentSet(string EquipmentSetName)
 	{
 		Do
 		{
-			if ${Me.Equipment[${tempvar}].Name.NotEqual[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}].GetString[${tempvar}]}]} || !${Me.Equipment[${tempvar}](exists)}
+			if ${Me.Equipment[${tempvar}].Name.NotEqual[${CharacterSet.FindSet[EQ2BotExtras].FindSet[Equipment].FindSet[${EquipmentSetName}].FindSetting[${tempvar}]}]} || !${Me.Equipment[${tempvar}](exists)}
 			{
-				Me.Inventory[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[Equipment].Set[${EquipmentSetName}].GetString[${tempvar}]}]:Equip
+				Me.Inventory[${CharacterSet.FindSet[EQ2BotExtras].FindSet[Equipment].FindSet[${EquipmentSetName}].FindSetting[${tempvar}]}]:Equip
 			}
 		}
 		while ${tempvar:Inc} <=22
@@ -1365,59 +1382,59 @@ objectdef HeroicOp
 
 	method Initialize()
 	{
-
+		CharacterSet.FindSet[EQ2BotExtras]:AddSet[HeroicOp]
 		switch ${Me.Archetype}
 		{
 			case fighter
-				FighterSword1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterSword1,""]}]
-				FighterSword2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterSword2,""]}]
-				FighterHorn1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterHorn1,""]}]
-				FighterHorn2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterHorn2,""]}]
-				FighterBoot1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterBoot1,""]}]
-				FighterBoot2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterBoot2,""]}]
-				FighterArm1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterArm1,""]}]
-				FighterArm2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterArm2,""]}]
-				FighterFist1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterFist1,""]}]
-				FighterFist2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[FighterFist1,""]}]
+				FighterSword1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterSword1,""]}]
+				FighterSword2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterSword2,""]}]
+				FighterHorn1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterHorn1,""]}]
+				FighterHorn2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterHorn2,""]}]
+				FighterBoot1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterBoot1,""]}]
+				FighterBoot2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterBoot2,""]}]
+				FighterArm1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm1,""]}]
+				FighterArm2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm2,""]}]
+				FighterFist1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist1,""]}]
+				FighterFist2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist1,""]}]
 				break
 
 			case scout
-				ScoutCoin1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCoin1,""]}]
-				ScoutCoin2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCoin2,""]}]
-				ScoutDagger1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutDagger1,""]}]
-				ScoutDagger2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutDagger2,""]}]
-				ScoutCloak1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak1,""]}]
-				ScoutCloak2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutCloak2,""]}]
-				ScoutMask1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask1,""]}]
-				ScoutMask2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutMask2,""]}]
-				ScoutBow1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow1,""]}]
-				ScoutBow2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[ScoutBow2,""]}]
+				ScoutCoin1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCoin1,""]}]
+				ScoutCoin2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCoin2,""]}]
+				ScoutDagger1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutDagger1,""]}]
+				ScoutDagger2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutDagger2,""]}]
+				ScoutCloak1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCloak1,""]}]
+				ScoutCloak2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutCloak2,""]}]
+				ScoutMask1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutMask1,""]}]
+				ScoutMask2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutMask2,""]}]
+				ScoutBow1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutBow1,""]}]
+				ScoutBow2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[ScoutBow2,""]}]
 				break
 
 			case mage
-				This.MageStar1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageStar1,""]}]
-				This.MageStar2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageStar2,""]}]
-				This.MageLightning1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageLightning1,""]}]
-				This.MageLightning2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageLightning2,""]}]
-				This.MageFlame1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageFlame1,""]}]
-				This.MageFlame2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageFlame2,""]}]
-				This.MageStaff1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageStaff1,""]}]
-				This.MageStaff2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageStaff2,""]}]
-				This.MageWand1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageWand1,""]}]
-				This.MageWand2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[MageWand2,""]}]
+				This.MageStar1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageStar1,""]}]
+				This.MageStar2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageStar2,""]}]
+				This.MageLightning1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageLightning1,""]}]
+				This.MageLightning2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageLightning2,""]}]
+				This.MageFlame1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageFlame1,""]}]
+				This.MageFlame2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageFlame2,""]}]
+				This.MageStaff1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageStaff1,""]}]
+				This.MageStaff2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageStaff2,""]}]
+				This.MageWand1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageWand1,""]}]
+				This.MageWand2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[MageWand2,""]}]
 				break
 
 			case priest
-				PriestHammer1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestHammer1,""]}]
-				PriestHammer2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestHammer2,""]}]
-				PriestChalice1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestChalice1,""]}]
-				PriestChalice2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestChalice2,""]}]
-				PriestMoon1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestMoon1,""]}]
-				PriestMoon2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestMoon2,""]}]
-				PriestEye1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestEye1,""]}]
-				PriestEye2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestEye2,""]}]
-				PriestHolySymbol1:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestHolySymbol1,""]}]
-				PriestHolySymbol2:Set[${SettingXML[${charfile}].Set[EQ2BotExtras].Set[HeroicOp].GetString[PriestHolySymbol2,""]}]
+				PriestHammer1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer1,""]}]
+				PriestHammer2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer2,""]}]
+				PriestChalice1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice1,""]}]
+				PriestChalice2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice2,""]}]
+				PriestMoon1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon1,""]}]
+				PriestMoon2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon2,""]}]
+				PriestEye1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye1,""]}]
+				PriestEye2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye2,""]}]
+				PriestHolySymbol1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol1,""]}]
+				PriestHolySymbol2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol2,""]}]
 				break
 
 			case default

@@ -60,15 +60,15 @@ function Class_Declaration()
 
 	call EQ2BotLib_Init
 
-	OffenseMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Offensive Spells,TRUE]}]
-	AoEMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast AoE Spells,FALSE]}]
-	SnareMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Cast Snares,FALSE]}]
-	TankMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Try to Tank,FALSE]}]
-	BuffHateGroupMember:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[BuffHateGroupMember,]}]
-	HurricaneMode:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Use Hurricane,TRUE]}]
-	BuffLunge:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Buff Lunge Reversal,FALSE]}]
-	MaintainPoison:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[MaintainPoison,FALSE]}]
-	StartHO:Set[${SettingXML[${charfile}].Set[${Me.SubClass}].GetString[Start HOs,FALSE]}]
+	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,TRUE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
+	SnareMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Snares,FALSE]}]
+	TankMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Try to Tank,FALSE]}]
+	BuffHateGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember,]}]
+	HurricaneMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Hurricane,TRUE]}]
+	BuffLunge:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Lunge Reversal,FALSE]}]
+	MaintainPoison:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MaintainPoison,FALSE]}]
+	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
 }
 
 function Class_Shutdown()
