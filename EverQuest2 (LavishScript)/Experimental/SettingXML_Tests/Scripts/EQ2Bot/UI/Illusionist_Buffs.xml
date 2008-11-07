@@ -215,7 +215,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffTime_Compression,${This.SelectedItem.Text}]
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
-		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTime_Compression,1,1,0]
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTime_Compression,0,1,0]
 		</OnLeftClick>
 	</combobox>	
 	<Commandbutton name='RefreshDPS'>
