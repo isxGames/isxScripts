@@ -386,7 +386,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
         <Width>20%</Width>
         <Height>20</Height>
         <Alignment>Left</Alignment>
-        <Text>Buff Aura:</Text>
+        <Text>Buff Inquest:</Text>
         <AutoTooltip></AutoTooltip>
       </Text>
       <combobox name='cbBuffAuraGroupMember'>
@@ -394,7 +394,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
         <y>27</y>
         <Width>100</Width>
         <Height>20</Height>
-        <AutoTooltip>The Group Member to Aura on</AutoTooltip>
+        <AutoTooltip>The Group Member to buff Inquest on</AutoTooltip>
         <Items></Items>
         <OnLoad>
           This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAuraGroupMember]}]
