@@ -32,7 +32,9 @@
 		<Setting Name="10,396">Nullifying Staff</Setting>
 		<Setting Name="10,397">Shrink Servant</Setting>
 		<Setting Name="10,398">Spellblade\'s Counter</Setting>
-		<Setting Mame="10,399">Counterblade</Setting>
+		<Setting Name="10,399">Counterblade</Setting>
+		<Setting Name="10,384">Bewilderment</Setting>
+		<Setting Name="10,383">Peace of Mind</Setting>
 		<Setting Name="11,61">Headache</Setting>
 		<Setting Name="12,60">Phantasmal Jolt</Setting>
 		<Setting Name="12,20">Rune of Thought</Setting>

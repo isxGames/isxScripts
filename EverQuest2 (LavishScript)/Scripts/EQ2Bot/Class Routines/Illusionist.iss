@@ -638,24 +638,32 @@ function Combat_Routine(int xAction)
 
 
 	;; Aggro Control...
-	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
+	if (${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
 	{
-		if ${Me.Ability["Phase"].IsReady}
+	    if ${Me.Ability[${SpellType[384]}].IsReady}
+	    {
+	        announce "I have aggro...\n\\#FF6E6EUsing Bewilderment!" 3 1
+	        call CastSpellRange 384 0 0 0 ${aggroid} 0 0 0 1
+	    }
+		elseif (${Me.ToActor.Health} < 70)
 		{
-			echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
-			call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
-			LastSpellCast:Set[357]
-			return
-		}
-		elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
-		{
-			echo "DEBUG:: Casting 'Blink'!"
-			call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
-			LastSpellCast:Set[358]
-			return
+			if ${Me.Ability["Phase"].IsReady}
+			{
+				echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
+				call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
+				LastSpellCast:Set[357]
+				return
+			}
+			elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
+			{
+				echo "DEBUG:: Casting 'Blink'!"
+				call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
+				LastSpellCast:Set[358]
+				return
+			}
 		}
 	}
-
+	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;; Check for "Runed Guard of the Sel'Nok" ;;;;
 	if (${UseRunedGuardItem})
@@ -814,6 +822,14 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[23]
+		spellsused:Inc
+	}
+
+	;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
+	if (${Me.Ability[${SpellType[383]}].IsReady})
+	{
+		call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
+		LastSpellCast:Set[383]
 		spellsused:Inc
 	}
 
@@ -1487,6 +1503,16 @@ function Have_Aggro()
 {
 	if ${Actor[${aggroid}].Name.Find["Master P"]}
 		return
+		
+	;; Use this whenver we have aggro...regardless
+    if ${Me.Ability[${SpellType[384]}].IsReady}
+    {
+        announce "I have aggro...\n\\#FF6E6EUsing Bewilderment!" 3 1
+        call CastSpellRange 384 0 0 0 ${aggroid} 0 0 0 1
+        return
+    }
+		
+		
 
 	;; Aggro Control...
 	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
