@@ -834,9 +834,12 @@ function PetAttack()
 	;echo "Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"
 
 	if !${Actor[${KillTarget}](exists)}
+	{
+		echo no killtarget for pet
 		return
-
-	if ${Me.Pet.Target.ID} != ${KillTarget}
+	}
+	
+	if ${Me.Pet.Target.ID} != ${KillTarget} && !${Me.Pet.InCombat} && ${Actor[${KillTarget}].Distance}<${AssistHP}
 	{
 		if ${Me.Pet.Target(exists)}
 		{
