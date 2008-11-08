@@ -315,18 +315,18 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case BuffAura
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffAuraGroupMember}]}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffAuraGroupMember.Token[1,:]}]}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffAuraGroupMember}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffAuraGroupMember}].ID}
+			if ${Actor[${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}].ID}
 			break
 		case BuffShieldAlly
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffShieldAllyGroupMember}]}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}]}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffShieldAllyGroupMember}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffShieldAllyGroupMember}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}].ID}
 			break
 		case BuffArcane
 			if ${BuffArcane}
