@@ -25,8 +25,6 @@
 		<!--KoS AA Abilities -->
 		<Setting Name="10,360">Summon Spirit Companion</Setting>
 		<Setting Name="10,361">Leg Bite</Setting>
-		<Setting Name="10,362">Aura of Haste</Setting>
-		<Setting Name="10,363">Aura of Warding</Setting>
 		<Setting Name="10,364">Spiritual Foresight</Setting>
 		<Setting Name="10,367">Infective Bites</Setting>
 		<Setting Name="10,368">Coagulate</Setting>

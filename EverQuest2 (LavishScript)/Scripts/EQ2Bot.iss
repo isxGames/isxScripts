@@ -1442,7 +1442,8 @@ function Combat()
 						elseif ${Actor[${KillTarget}].Target.ID}==${Me.ID}
 						{
 							;we have aggro, move to the maintank
-							call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
+							if !${NoAutoMovement}
+								call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
 							wait 2
 							do
 							{
