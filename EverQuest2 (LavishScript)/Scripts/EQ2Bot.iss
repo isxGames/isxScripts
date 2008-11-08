@@ -5132,7 +5132,7 @@ function CheckAbilities(string class)
 		while ${SpellIterator:Next(exists)}
 	}
 	
-	if (${MissingAbilitiesCount} > 3 && ${Me.Level} >= 10)
+	if (${MissingAbilitiesCount} > 0 && ${Me.Level} >= 10)
 	{
 		echo "------------"
 		echo "You appear to be missing abilities.  Checking knowledge book and searching again..."
