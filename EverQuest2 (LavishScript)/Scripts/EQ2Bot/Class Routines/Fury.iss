@@ -212,44 +212,49 @@ function Combat_Init()
 	Power[5,1]:Set[30]
 	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[51]
-
-	Action[6]:Set[Proc]
-	Power[6,1]:Set[40]
+	
+	Action[6]:Set[AANuke]
+	Power[6,1]:Set[30]
 	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[157]
+	SpellRange[6,1]:Set[379]
 
-	Action[7]:Set[Mastery]
+	Action[7]:Set[Proc]
+	Power[7,1]:Set[40]
+	Power[7,2]:Set[100]
+	SpellRange[7,1]:Set[157]
 
-	Action[8]:Set[DoT]
-	Power[8,1]:Set[30]
-	Power[8,2]:Set[100]
-	SpellRange[8,1]:Set[70]
+	Action[8]:Set[Mastery]
 
-    Action[9]:Set[Feast]
+	Action[9]:Set[DoT]
 	Power[9,1]:Set[30]
 	Power[9,2]:Set[100]
-	SpellRange[9,1]:Set[312]
-	FeastAction:Set[9]
+	SpellRange[9,1]:Set[70]
 
-	Action[10]:Set[Storms]
-	Power[10,1]:Set[40]
+    Action[10]:Set[Feast]
+	Power[10,1]:Set[30]
 	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[96]
+	SpellRange[10,1]:Set[312]
+	FeastAction:Set[10]
 
-	Action[11]:Set[AA_Thunderspike]
+	Action[11]:Set[Storms]
 	Power[11,1]:Set[40]
 	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[383]
+	SpellRange[11,1]:Set[96]
 
-	Action[12]:Set[AA_Primordial_Strike]
+	Action[12]:Set[AA_Thunderspike]
 	Power[12,1]:Set[40]
 	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[382]
+	SpellRange[12,1]:Set[383]
 
-	Action[13]:Set[AA_Nature_Blade]
+	Action[13]:Set[AA_Primordial_Strike]
 	Power[13,1]:Set[40]
 	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[381]
+	SpellRange[13,1]:Set[382]
+
+	Action[14]:Set[AA_Nature_Blade]
+	Power[14,1]:Set[40]
+	Power[14,2]:Set[100]
+	SpellRange[14,1]:Set[381]
 
 }
 
@@ -770,6 +775,20 @@ function Combat_Routine(int xAction)
 			}
 			break
 
+		case AANuke
+		    ;if ${UseFastOffensiveSpellsOnly}
+		    ;    break
+			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+			if ${Return.Equal[OK]}
+			{
+				call CheckForMez "Fury AANuke"
+				if ${Return.Equal[FALSE]}
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				else
+					call ReacquireTargetFromMA
+			}
+			break
+
 		case AA_Thunderspike
 			if (${MeleeAAAttacksMode} && ${Actor[${KillTarget}].Distance} <= 5)
 			{
@@ -978,7 +997,17 @@ function Post_Combat_Routine(int xAction)
     			{
     				if (${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead})
     				{
-    					if ${Me.Ability[${SpellType[300]}].IsReady}
+    					if (${Me.InRaid} && ${Me.Ability[${SpellType[380]}].IsReady})
+    					{
+    						call CastSpellRange 380 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						wait 5
+    						do
+    						{
+    							waitframe
+    						}
+    						while ${Me.CastingSpell}
+    					}
+    					elseif ${Me.Ability[${SpellType[300]}].IsReady}
     					{
     						call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
     						wait 5

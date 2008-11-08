@@ -5108,8 +5108,8 @@ function CheckAbilities(string class)
 			{
 				if !${Me.Ability[${spellname}](exists)}
 				{
-					; We are only concerned about abilities that are AAs (ie, level 10) and abilities greater than 20 levels below us
-					if (${templvl} == 10 || (${templvl} >= ${Math.Calc[${Me.Level}-15]}))
+					; We are only concerned about abilities that are greater than 15 levels below us
+					if (${templvl} >= ${Math.Calc[${Me.Level}-15]})
 					{
 						echo "Missing Ability: '${spellname}' (Level: ${templvl})"
 						MissingAbilitiesCount:Inc
