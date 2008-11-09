@@ -330,6 +330,7 @@ function Buff_Routine(int xAction)
 						wait 1
 						if (${Me.Ability[${SpellType[382]}].IsReady})
 							call CastSpellRange 382 0 0 0 ${Me.Pet.ID} 0 0 0 1
+					}
 				}
 			}
 			break
@@ -342,9 +343,7 @@ function Buff_Routine(int xAction)
 			if (${HaveMythical})
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				{
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID} 0 0 1 0 0
-				}
 				break
 			}
 	
