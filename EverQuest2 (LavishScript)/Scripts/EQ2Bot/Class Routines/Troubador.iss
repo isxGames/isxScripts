@@ -900,7 +900,7 @@ function DoJesterCap()
 
 		if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 		{
-			if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<{Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156]}].Range}]}
+			if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156]}].Range}]}
 			{
 				;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
 				if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
