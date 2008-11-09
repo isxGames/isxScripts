@@ -119,9 +119,9 @@
 		<Setting Name="61,190">Backlash</Setting>
 		<Setting Name="61,21">Ardent Belief</Setting>
 		<Setting Name="62,387">Celestial Touch</Setting>
-                <Setting Name="63,91">Holy Circle</Setting>
+		<Setting Name="63,91">Holy Circle</Setting>
 		<Setting Name="64,170">Righteousness</Setting>
-		<Setting Name="64,04">Pious Aid</Setting>
+		<Setting Name="64,04">Fervent Aid</Setting>
 		<Setting Name="65,20">Call to Duty</Setting>
 		<Setting Name="66,26">Blessing of the Reverent</Setting>
 		<Setting Name="66,25">Righteous Demonstration</Setting>
@@ -134,5 +134,31 @@
 		<Setting Name="70,92">Brimstone</Setting>
 		<Setting Name="70,150">Devout Strike</Setting>
 		<Setting Name="70,90">Relentless Conviction</Setting>
+		<Setting Name="71,245">Cleave Faith</Setting>
+		<Setting Name="71,151">Faith Strike</Setting>
+		<Setting Name="72,160">Clarion</Setting>
+		<Setting Name="72,295">Stance: Bayle\'s Stance</Setting>
+		<Setting Name="72,10">Prayer of Amelioration</Setting>
+		<Setting Name="73,21">Bayle\'s Leadership</Setting>
+		<Setting Name="73,290">Stance: Wrath Stance</Setting>
+		<Setting Name="73,386">Donation of Armament</Setting>
+		<Setting Name="74,190">Penitent Kick</Setting>
+		<Setting Name="74,95">Consecration</Setting>
+		<Setting Name="74,387">Holy Touch</Setting>
+		<Setting Name="75,91">Circular Smite</Setting>
+		<Setting Name="76,170">Excoriation</Setting>
+		<Setting Name="76,04">Holy Aid</Setting>
+		<Setting Name="76,20">Call to Redemption</Setting>
+		<Setting Name="77,26">Blessing of the Paladin</Setting>
+		<Setting Name="77,25">Righteous Weapon</Setting>
+		<Setting Name="77,152">Break Will</Setting>
+		<Setting Name="78,01">Sacrament of Bayle</Setting>
+		<Setting Name="78,60">Refusal of Atonement</Setting>
+		<Setting Name="79,155">Prayer</Setting>
+		<Setting Name="79,61">Judgement</Setting>
+		<Setting Name="79,191">Heroic Dash</Setting>
+		<Setting Name="80,92">Verdict</Setting>
+		<Setting Name="80,150">Holy Strike</Setting>
+		<Setting Name="80,90">Circle of Conviction</Setting>
 	</Set>
 </InnerSpaceSettings>
