@@ -839,7 +839,7 @@ function PetAttack()
 		return
 	}
 	
-	if ${Me.Pet.Target.ID} != ${KillTarget} && !${Me.Pet.InCombat} && ${Actor[${KillTarget}].Distance}<${AssistHP}
+	if ${Me.Pet.Target.ID} != ${KillTarget} && !${Me.Pet.InCombatMode} && ${Actor[${KillTarget}].Distance}<${AssistHP}
 	{
 		if ${Me.Pet.Target(exists)}
 		{
