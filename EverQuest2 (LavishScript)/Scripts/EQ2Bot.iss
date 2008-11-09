@@ -4560,6 +4560,10 @@ objectdef EQ2BotObj
 				while ${iter:Next(exists)}
 			}
 		}
+		else
+		{
+			PreviousSelection:Insert[${UIElement[${ListFQN}].SelectedItem.Text}]
+		}
 		
 		tmpvar:Set[1]
 
@@ -4610,7 +4614,7 @@ objectdef EQ2BotObj
 
 		if ${UIElement[${ListFQN}].Type.Find[combobox]}
 		{
-			;UIElement[${ListFQN}].ItemByValue[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SettingSet]}]:Select
+			UIElement[${ListFQN}]:SetSelection[${UIElement[${ListFQN}].ItemByText[${PreviousSelection[1]}].ID}
 		}
 		else
 		{
