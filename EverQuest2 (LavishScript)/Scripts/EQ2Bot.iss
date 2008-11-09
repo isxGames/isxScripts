@@ -808,7 +808,9 @@ function CastSpellRange(... Args)
 	variable bool IgnoreMaintained=0
 	variable int CastSpellWhen=0
 	variable bool IgnoreIsReady=0
-
+	variable uint AbilityID=0
+	variable string AbilityName
+	
 	variable int count=0
 	variable int test=${Args[1]}
 	if ${test}>0
@@ -839,7 +841,7 @@ function CastSpellRange(... Args)
 				start:Set[${Args[1]}]
 				break
 			case 0
-				return
+				return -1
 		}
 	}
 	else
@@ -868,15 +870,30 @@ function CastSpellRange(... Args)
 				CastSpellWhen:Set[${Args[${count}].Token[2,=]}]
 			elseif ${Args[${count}].Token[1,=].Equal[IgnoreIsReady]}
 				IgnoreIsReady:Set[${Args[${count}].Token[2,=]}]
+			elseif ${Args[${count}].Token[1,=].Equal[AbilityID]}
+				AbilityID:Set[${Args[${count}].Token[2,=]}]				
 		}
 		if ${start}==-99
-			return
+			return -1
+			
+		if (${start} > 0 && ${AbilityID} > 0)
+		{
+			echo "DEBUG:: CastSpellRange() -- BAD SYNTAX:  You must use *either* 'start' or 'AbilityID', not both!"
+			return -1
+		}
 	}
 
 	variable bool fndspell
 	variable int tempvar
 	variable int originaltarget
 	tempvar:Set[${start}]
+
+	if ${tempvar} <= 0 && ${AbilityID} <= 0
+	{
+		echo "DEBUG:: CastSpellRange() -- BAD SYNTAX:  'start' or 'AbilityID' must be greater than zero."
+		return -1
+	}
+	
 
 	;echo "DEBUG: CastSpellRange(${tempvar}::${SpellType[${tempvar}]})"
 
@@ -893,7 +910,7 @@ function CastSpellRange(... Args)
 		return -1
 
 	;if a target was specified, and we can't find it, lets not try to cast
-	if ${TargetID}>0 && !${Actor[id,${TargetID}](exists)}
+	if ${TargetID}>0 && !${Actor[${TargetID}](exists)}
 		return -1
 
 	;if casting on killtarget, lets make sure it is still valid and find new one if needed
@@ -907,11 +924,25 @@ function CastSpellRange(... Args)
 
 	do
 	{
-		if ${SpellType[${tempvar}].Length}
+		if ${tempvar} > 0
+		{
+			AbilityName:Set[${SpellType[${tempvar}]}]
+			AbilityID:Set[${Me.Ability[${AbilityName}].ID}]
+		}
+		else
+			AbilityName:Set[${Me.Ability[id,${AbilityID}].Name}]
+		
+		;; This should never happen..but just in case...
+		if ${AbilityID} <= 0
+			AbilityID:Set[${Me.Ability[${AbilityName}].ID}]
+			
+		;echo "DEBUG:: CastSpellRange() -- AbilityID: ${AbilityID} -- AbilityName: ${AbilityName}"
+			
+		if ${AbilityName.Length}
 		{
 			;if not ready, we can't cast it
-			if !${Me.Ability[${SpellType[${tempvar}]}].IsReady}
-				break
+			if !${IgnoreIsReady} && !${Me.Ability[id,${AbilityID}].IsReady}
+				break	
 
 			;lets make sure the target doesn't already have the spell
 			if ${TargetID}
@@ -922,7 +953,7 @@ function CastSpellRange(... Args)
 					tempgrp:Set[1]
 					do
 					{
-						if ${Me.Maintained[${tempgrp}].Name.Equal[${SpellType[${tempvar}]}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${TargetID} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
+						if ${Me.Maintained[${tempgrp}].Name.Equal[${AbilityName}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${TargetID} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
 						{
 							fndspell:Set[TRUE]
 							break
@@ -934,12 +965,12 @@ function CastSpellRange(... Args)
 				if !${fndspell}
 				{
 					; if no range is passed, lets make sure we're not out of range and adjust
-					if !${xvar1} && ${Me.Ability[${SpellType[${tempvar}]}].MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}
+					if !${xvar1} && ${Me.Ability[id,${AbilityID}].MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}
 					{
 						;lets not move beyond defined threshold
-						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}]}<${OORThreshold}
+						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}]}<${OORThreshold}
 						{
-							echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[${SpellType[${tempvar}]}].MaxRange}]}, Ability = ${tempvar}
+							echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
 							call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
 						}
 					}
@@ -960,7 +991,7 @@ function CastSpellRange(... Args)
 			{
 				;Immediate Cast Directive!
 				if ${CastSpellWhen}==1
-					call CastSpellNOW "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
+					call CastSpellNOW "${AbilityName}" ${AbilityID} ${TargetID} ${castwhilemoving}
 				else
 				{
 					;lets wait for current cast to end
@@ -969,13 +1000,13 @@ function CastSpellRange(... Args)
 						wait 2
 					}
 					; now cast
-					call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
+					call CastSpell "${AbilityName}" ${AbilityID} ${TargetID} ${castwhilemoving}
 				}
 			}
 			else
 			{
 				;if we're casting the same spell that was already queued, we need to wait till it finishes
-				if ${SpellType[${tempvar}].Equal[${LastQueuedAbility}]} && ${Me.CastingSpell}
+				if ${AbilityName.Equal[${LastQueuedAbility}]} && ${Me.CastingSpell}
 				{
 					;lets wait for current cast to end
 					while ${Me.CastingSpell}
@@ -983,11 +1014,11 @@ function CastSpellRange(... Args)
 						wait 2
 					}
 					; now cast
-					call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
+					call CastSpell "${AbilityName}" ${AbilityID} ${TargetID} ${castwhilemoving}
 				}
 				;if current spell target is the same as last spell target, we can queue otherwise wait till complete
 				elseif ${TargetID}==${LastCastTarget}
-					call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
+					call CastSpell "${AbilityName}" ${AbilityID} ${TargetID} ${castwhilemoving}
 				else
 				{
 					;lets wait for current cast to end
@@ -996,7 +1027,7 @@ function CastSpellRange(... Args)
 						wait 2
 					}
 					; now cast
-					call CastSpell "${SpellType[${tempvar}]}" ${tempvar} ${TargetID} ${castwhilemoving}
+					call CastSpell "${AbilityName}" ${AbilityID} ${TargetID} ${castwhilemoving}
 				}
 			}
 
@@ -1014,12 +1045,12 @@ function CastSpellRange(... Args)
 		}
 
 		if !${finish}
-			return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+			return ${Me.Ability[id,${AbilityID}].TimeUntilReady}
 
 	}
 	while ${tempvar:Inc}<=${finish}
 
-	return ${Me.Ability[${SpellType[${tempvar}]}].TimeUntilReady}
+	return ${Me.Ability[id,${AbilityID}].TimeUntilReady}
 }
 
 
@@ -1049,10 +1080,10 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 		while ${Me.CastingSpell}
 	}
 
-	if !${Me.Ability[${spell}].IsReady}
+	if !${Me.Ability[id,${spellid}].IsReady}
 		return
 
-	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
+	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
 	{
 		target ${TargetID}
 		wait 10 ${Target.ID}==${TargetID}
@@ -1063,13 +1094,16 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	;; Disallow some abilities that are named the same as crafting abilities.
 	;; 1. Agitate (CraftingID: 601887089 -- Fury Spell ID: 1287322154)
 	if (${Me.Ability[${spell}].ID} == 601887089)
+	{
+		spellid:Set[1287322154]
 		Me.Ability[id,1287322154]:Use
+	}
 	else
 	{
-		if ${Actor[id,${TargetID}].Type.Equal[PC]}
-			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}"
+		if ${Actor[${TargetID}].Type.Equal[PC]}
+			eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
 		else
-			Me.Ability[${spell}]:Use
+			Me.Ability[id,${spellid}]:Use
 	}
 	;wait 4
 	; reducing this too much will cause problems ... 4 seems to be a sweet spot
@@ -1084,7 +1118,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	return SUCCESS
 }
 
-function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving)
+function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemoving)
 {
 	;echo CastSpell ${spell}
 	variable int Counter
@@ -1121,9 +1155,9 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 		return
 	}
 
-	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[id,${TargetID}].Type.Equal[PC]}
+	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
 	{
-		;echo "EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[id,TargetID].Type.Equal[PC] --> Returning"
+		;echo "EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[TargetID].Type.Equal[PC] --> Returning"
 		target ${TargetID}
 		wait 10 ${Target.ID}==${TargetID}
 	}
@@ -1134,24 +1168,27 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	;; Disallow some abilities that are named the same as crafting abilities.
 	;; 1. Agitate (CraftingID: 601887089 -- Fury Spell ID: 1287322154)
 	if (${Me.Ability[${spell}].ID} == 601887089)
+	{
+		spellid:Set[1287322154]
 		Me.Ability[id,1287322154]:Use
+	}
 	else
 	{
-		if ${Actor[id,${TargetID}].Type.Equal[PC]}
-			eq2execute /useabilityonplayer ${Actor[id,${TargetID}].Name} "${spell}"
+		if ${Actor[${TargetID}].Type.Equal[PC]}
+			eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
 		else
-			Me.Ability[${spell}]:Use
+			Me.Ability[id,${spellid}]:Use
 	}
 
 
 	;; this is ghetto ..but required
 	wait 4
-	if (!${Me.Ability[${spell}].IsQueued})
+	if (!${Me.Ability[id,${spellid}].IsQueued})
 		wait 4
 
-	if (${Me.Ability[${spell}].CastingTime} < .6)
+	if (${Me.Ability[id,${spellid}].CastingTime} < .6)
 	{
-		;echo "EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[${spell}].CastingTime}) --> Returning"
+		;echo "EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
@@ -1204,48 +1241,52 @@ function CastSpell(string spell, int spellid, int TargetID, bool castwhilemoving
 	}
 
 	Counter:Set[0]
-	if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+	if (!${LastQueuedAbility.Equal[${spell}]})
 	{
-		;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast"
-		CurrentAction:Set[---Waiting for ${spell} to cast]
-		TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
-		do
+		if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
 		{
-			wait 2
-			Counter:Inc[5]
-
-			if (${Counter} > ${TimeOut})
+			;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast"
+			CurrentAction:Set[---Waiting for ${spell} to cast]
+			TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
+			;echo "DEBUG:: TimeOut: ${TimeOut}"
+			do
 			{
-				Me.Ability[${spell}]:Use
-				break
-			}
-
-			if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
-			{
-				call VerifyTarget ${TargetID}
-				if !${Return}
+				wait 2
+				Counter:Inc[2]
+	
+				if (${Counter} > ${Math.Calc[${TimeOut}+2]})
 				{
+					Me.Ability[id,${spellid}]:Use
+					break
+				}
+	
+				if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
+				{
+					call VerifyTarget ${TargetID}
+					if !${Return}
+					{
+						CurrentAction:Set[]
+						return
+					}
+				}
+	
+				if ${Counter} >= 50 && ${Me.InCombat}
+				{
+					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
 					CurrentAction:Set[]
 					return
 				}
+				elseif !${Me.InCombat} && ${Counter} > 100
+				{
+					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+					CurrentAction:Set[]
+					return
+				}
+				;echo "EQ2Bot-Debug:: Waiting..."
+				CurrentAction:Set[---Waiting for ${spell} to cast]
 			}
-
-			if ${Counter} >= 50 && ${Me.InCombat}
-			{
-				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
-				CurrentAction:Set[]
-				return
-			}
-			elseif !${Me.InCombat} && ${Counter} > 100
-			{
-				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
-				CurrentAction:Set[]
-				return
-			}
-			;echo "EQ2Bot-Debug:: Waiting..."
-			CurrentAction:Set[---Waiting for ${spell} to cast]
+			while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
 		}
-		while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
 	}
 
 	wait 2
