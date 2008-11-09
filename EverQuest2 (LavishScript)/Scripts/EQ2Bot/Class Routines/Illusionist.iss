@@ -73,6 +73,8 @@ function Class_Declaration()
 	declare HaveMythical bool script FALSE
 	declare LastSpellCast int script 0
 	declare InPostDeathRoutine bool script FALSE
+	declare IllyCasterBuffsOn collection:int script
+	declare IllyDPSBuffsOn collection:int script
 
 
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
@@ -383,6 +385,17 @@ function Buff_Routine(int xAction)
 				}
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
+			
+			Counter:Set[1]
+			IllyDPSBuffsOn:Clear
+			do
+			{
+				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
+				{
+					IllyDPSBuffsOn:Set[${Me.Maintained[${Counter}].Target.Name},${Me.Maintained[${Counter}].Target.ID}]
+				}
+			}	
+			while ${Counter:Inc} <= ${Me.CountMaintained}
 	
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
@@ -396,7 +409,12 @@ function Buff_Routine(int xAction)
 						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 						{
 							if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
-								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+							{
+								if (!${IllyDPSBuffsOn.Element[${BuffTarget.Token[1,:]}](exists)})
+								{
+									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+								}
+							}
 						}
 					}
 				}
@@ -407,6 +425,7 @@ function Buff_Routine(int xAction)
 		case Caster_Buff
 			Counter:Set[1]
 			tempvar:Set[1]
+			IllyCasterBuffsOn:Clear
 	
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
@@ -432,7 +451,7 @@ function Buff_Routine(int xAction)
 						;we went through the buff collection and had no match for this maintaned target so cancel it
 						if !${BuffMember.Equal[OK]}
 						{
-							;we went through the buff collection and had no match for this maintaned target so cancel it
+							;we went through the buff collection and had no match for this maintained target so cancel it
 							Me.Maintained[${Counter}]:Cancel
 						}
 					}
@@ -444,6 +463,17 @@ function Buff_Routine(int xAction)
 				}
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
+			
+			Counter:Set[1]
+			IllyCasterBuffsOn:Clear
+			do
+			{
+				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
+				{
+					IllyCasterBuffsOn:Set[${Me.Maintained[${Counter}].Target.Name},${Me.Maintained[${Counter}].Target.ID}]
+				}
+			}	
+			while ${Counter:Inc} <= ${Me.CountMaintained}
 	
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
@@ -457,7 +487,12 @@ function Buff_Routine(int xAction)
 						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 						{
 							if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
-								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+							{
+								if (!${IllyCasterBuffsOn.Element[${BuffTarget.Token[1,:]}](exists)})
+								{
+									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+								}
+							}
 						}
 					}
 				}
@@ -646,10 +681,11 @@ function Combat_Routine(int xAction)
 	;; Aggro Control...
 	if (${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
 	{
-	    if ${Me.Ability[${SpellType[384]}].IsReady}
+	    if ${Me.Ability[id,3903537279].IsReady}
 	    {
 	        announce "I have aggro...\n\\#FF6E6EUsing Bewilderment!" 3 1
-	        call CastSpellRange 384 0 0 0 ${aggroid} 0 0 0 1
+	        call CastSpellRange AbilityID=3903537279 TargetID=${aggroid} IgnoreMaintained=1
+	        return
 	    }
 		elseif (${Me.ToActor.Health} < 70)
 		{
@@ -1510,16 +1546,15 @@ function Have_Aggro()
 	if ${Actor[${aggroid}].Name.Find["Master P"]}
 		return
 		
-	;; Use this whenver we have aggro...regardless
-    if ${Me.Ability[${SpellType[384]}].IsReady}
+	;; Use this whenver we have aggro...regardless  (de-aggro "Bewilderment")
+    if ${Me.Ability[id,3903537279].IsReady}
     {
         announce "I have aggro...\n\\#FF6E6EUsing Bewilderment!" 3 1
-        call CastSpellRange 384 0 0 0 ${aggroid} 0 0 0 1
+        call CastSpellRange AbilityID=3903537279 TargetID=${aggroid} IgnoreMaintained=1
         return
     }
 		
 		
-
 	;; Aggro Control...
 	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
 	{
