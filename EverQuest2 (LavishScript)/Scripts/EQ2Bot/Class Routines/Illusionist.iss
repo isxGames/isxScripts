@@ -320,23 +320,16 @@ function Buff_Routine(int xAction)
 			break
 	
 		case MakePet
-			if ${Makepet} && ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3
+			if ${Makepet}
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if (${HaveMythical} || ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3)
 				{
-					call CastSpellRange ${PreSpellRange[${xAction},1]}
-					wait 1
-					;; Shrink pets...
-					if ${Me.Ability["Shrink Servant"].IsReady}
+					if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 					{
-						Me.Ability["Shrink Servant"]:Use
-						do
-						{
-							waitframe
-						}
-						while ${Me.CastingSpell}
+						call CastSpellRange ${PreSpellRange[${xAction},1]}
 						wait 1
-					}
+						if (${Me.Ability[${SpellType[382]}].IsReady})
+							call CastSpellRange 382 0 0 0 ${Me.Pet.ID} 0 0 0 1
 				}
 			}
 			break
@@ -349,7 +342,9 @@ function Buff_Routine(int xAction)
 			if (${HaveMythical})
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				{
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID} 0 0 1 0 0
+				}
 				break
 			}
 	
@@ -400,7 +395,10 @@ function Buff_Routine(int xAction)
 					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
 						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
-							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+						{
+							if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+						}
 					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
@@ -458,7 +456,10 @@ function Buff_Routine(int xAction)
 					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
 						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
-							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+						{
+							if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+						}
 					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
@@ -474,7 +475,10 @@ function Buff_Routine(int xAction)
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
 				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+				{
+					if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+				}
 			}
 			break
 	
@@ -487,7 +491,10 @@ function Buff_Routine(int xAction)
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
 				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${BuffTarget.Token[1,:].Equal[${Me.Name}]})
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+				{
+					if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+				}
 			}
 			break
 	
