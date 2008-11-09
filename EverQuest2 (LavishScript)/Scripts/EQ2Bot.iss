@@ -4546,9 +4546,21 @@ objectdef EQ2BotObj
 	{
 		variable int tmpvar
 		variable iterator iter
-		if ${UIElement[${ListFQN}].Type.Find[listbox]}
+		variable index:string PreviousSelection
+		
+		if !${UIElement[${ListFQN}].Type.Find[combobox]}
+		{
 			CharacterSet.FindSet[${Me.SubClass}].FindSet[${SettingSet}]:GetSettingIterator[iter]
-
+			if ${iter:First(exists)}
+			{
+				do
+				{
+					PreviousSelection:Insert[${iter.Value}]
+				}
+				while ${iter:Next(exists)}
+			}
+		}
+		
 		tmpvar:Set[1]
 
 		UIElement[${ListFQN}]:ClearItems
@@ -4600,13 +4612,14 @@ objectdef EQ2BotObj
 		{
 			;UIElement[${ListFQN}].ItemByValue[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SettingSet]}]:Select
 		}
-		elseif ${iter:First(exists)}
+		else
 		{
-			do
+			tmpvar:Set[1]
+			while ${PreviousSelection[${tmpvar}](exists)}
 			{
-				UIElement[${ListFQN}].ItemByText[${iter.Value}]:Select
+				UIElement[${ListFQN}].ItemByText[${PreviousSelection[${tmpvar}]}]:Select
+				tmpvar:Inc
 			}
-			while ${iter:Next(exists)}
 		}
 	}
 	

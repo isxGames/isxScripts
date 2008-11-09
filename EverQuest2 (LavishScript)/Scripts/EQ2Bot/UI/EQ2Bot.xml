@@ -148,13 +148,11 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									    if ${UIElement[MainTank@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
 									    {
     									    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
 									    }
 									    else
 									    {
 									        LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
 									    }
 										Script[EQ2Bot].Variable[MainTankPC]:Set[${This.SelectedItem.Text}]
@@ -284,23 +282,20 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
 							  Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
 							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,TRUE]
-							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							  Script[EQ2Bot].Variable[MainAssist]:Set[${Me.Name}]
 							  Script[EQ2Bot].Variable[OriginalMA]:Set[${Me.Name}]
 							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${Me.Name}]
-							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							  }
 							  else
 							  {
 							  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Show
 							  Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,FALSE]
-							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							  Script[EQ2Bot].Variable[MainAssist]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
 							  Script[EQ2Bot].Variable[OriginalMA]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
 							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
-							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							  }
+							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							</OnLeftClick>
 							<AutoTooltip>Check the box to set yourself as MA</AutoTooltip>
 						</checkbox>
@@ -338,13 +333,11 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									    if ${UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
 									    {
     									    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
 									    }
 									    else
 									    {
     									    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 									    }									
 										Script[EQ2Bot].Variable[MainAssist]:Set[${This.SelectedItem.Text}]
