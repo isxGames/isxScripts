@@ -76,6 +76,10 @@ function Class_Declaration()
 	Charm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Charm,FALSE]}]
 }
 
+function Class_Shutdown()
+{
+}
+
 function Buff_Init()
 {
 	PreAction[1]:Set[Self_Buff]
