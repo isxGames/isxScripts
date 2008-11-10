@@ -472,7 +472,7 @@ function Combat_Routine(int xAction)
 
     EQ2:CreateCustomActorArray[ByDist,10,npc]
     NumNPCs:Set[${EQ2.CustomActorArraySize}]
-    ;echo "DEBUG:: NumNPCs: ${NumNPCs}"
+    ;Debug:Echo["NumNPCs: ${NumNPCs}"]
 
     ; always cast when up (Disease Resist Reduction and Hate Builder (AE))  -- (AE TAUNT!)  -- NOTE:  For now, we cast this even if 'tauntmode' is off
     if ${PBAoEMode}
@@ -676,7 +676,7 @@ function Combat_Routine(int xAction)
                 		if !${BuffTarget.Equal["No one"]}
                 		{
                 		    CurrentAction:Set[Combat :: Casting 'Damage Shield']
-                		    ;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
+                		    ;Debug:Echo["${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"]
                 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
                 			{
                 			    call CastSpellRange 7 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
@@ -1019,7 +1019,7 @@ function CheckGroupOrRaidAggro()
         	                call IsFighterOrScout ${MobTargetID}
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
-        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
+        	                    ;Debug:Echo["Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"]
             	                if ${Actor[${MobTargetID}].Health} < 85
             	                {
             	                	if (${HasMythical})
@@ -1100,7 +1100,7 @@ function CheckGroupOrRaidAggro()
         	                call IsFighterOrScout ${MobTargetID}
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
-        	                    ;echo "DEBUG:: Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"
+        	                    ;Debug:Echo["Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"]
             	                if ${Actor[${MobTargetID}].Health} < 80
             	                {
             	                	if (${HasMythical})
@@ -1245,8 +1245,8 @@ function CastSomething()
 	;; If this function is called, it is because we went through teh combat routine without casting any spells.
 	;; This function is intended to cast SOMETHING in order to keep "Perputuality" going.
 
-	;echo "DEBUG:: ---"
-	;echo "DEBUG:: CastSomething() called."
+	;Debug:Echo["---"]
+	;Debug:Echo["CastSomething() called."]
 
 
 	; shield bash

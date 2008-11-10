@@ -755,7 +755,7 @@ function CheckHeals()
   		;echo Debug: We need to heal ${raidlowest}
   		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 90 && !${Me.Raid[${raidlowest}].ToActor.IsDead} && ${Me.Raid[${raidlowest}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
   		{
-  			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
+  			;Debug:Echo["Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"]
   			if ${Me.Ability[${SpellType[4]}].IsReady}
   				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
   			elseif ${Me.Ability[${SpellType[1]}].IsReady}

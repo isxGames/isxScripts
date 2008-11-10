@@ -193,7 +193,6 @@ variable string GainedXPString
 variable string LastQueuedAbility
 variable int LastCastTarget
 variable int OORThreshold
-variable bool CheckingBuffsOnce
 
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
@@ -244,6 +243,8 @@ variable int PathType
 	#include "${LavishScript.HomeDirectory}/Scripts/PositionUtils.iss"
 #endif
 
+#include Debug.iss
+
 function main()
 {
 	variable int tempvar
@@ -253,6 +254,8 @@ function main()
 	variable bool MobDetected
 	declare LastWindow string script
 
+	Debug:Enable
+	
 	if !${ISXEQ2.IsReady}
 	{
 		echo ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!
@@ -335,7 +338,7 @@ function main()
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	do
 	{
-		;echo "Main Loop: Test-${Time.Timestamp}"
+		;Debug:Echo["Main Loop: Test-${Time.Timestamp}"]
 		;;;;;;;;;;;;;;;;;
 		;;;; Set strings used in UI.  They are set here in order to make for custom strings based upon level, etc.  Also, any ${} called in the UI is accessed
 		;;;; EVERY frame.  By moving things here, we can reduce the number of times things are called, increasing efficiency (when desired.)
@@ -410,7 +413,7 @@ function main()
 		gRtnCtr:Set[1]
 		do
 		{
-			;echo "Pre-Combat Routines Loop: Test - ${gRtnCtr}"
+			;Debug:Echo["Pre-Combat Routines Loop: Test - ${gRtnCtr}"]
 
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
@@ -446,10 +449,10 @@ function main()
 									call Combat
 							}
 							;else
-								;echo "DEBUG: if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"
+								;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
 						}
 						;else
-							;echo "DEBUG: if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"
+							;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
 					}
 					else
 						KillTarget:Set[0]
@@ -585,7 +588,7 @@ function main()
 
 		if ${AutoPull} && !${Me.InCombat}
 		{
-			;echo "AutoPull Loop: Test-${Time.Timestamp}"
+			;Debug:Echo["AutoPull Loop: Test-${Time.Timestamp}"]
 			if ${PathType}==2 && (${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
 			{
 				PullPoint:SetRegion[${EQ2Bot.ScanWaypoints}]
@@ -631,9 +634,9 @@ function main()
 								wait 10
 								if ${Mob.Target[${Target.ID}]}
 								{
-									;echo "DEBUG:: Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
+									;Debug:Echo[": Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"]
 									call Combat
-									;echo "DEBUG:: Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"
+									;Debug:Echo[": Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"]
 								}
 							}
 						}
@@ -642,7 +645,7 @@ function main()
 					{
 						if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.InCombatMode} && ${Target.Distance}<8
 						{
-							;echo "Calling Combat(2) within AutoPull Loop: Test-${Time.Timestamp}"
+							;Debug:Echo["Calling Combat(2) within AutoPull Loop: Test-${Time.Timestamp}"]
 							call Combat
 						}
 						else
@@ -654,7 +657,7 @@ function main()
 								if ${Mob.ValidActor[${AggroNPC}]}
 								{
 									target ${AggroNPC}
-									;echo "Calling Combat(3) within AutoPull Loop: Test-${Time.Timestamp}"
+									;Debug:Echo["Calling Combat(3) within AutoPull Loop: Test-${Time.Timestamp}"]
 									call Combat
 								}
 							}
@@ -666,7 +669,7 @@ function main()
 									call Pull any
 									if ${engagetarget}
 									{
-										;echo "Calling Combat(4) within AutoPull Loop: Test-${Time.Timestamp}"
+										;Debug:Echo["Calling Combat(4) within AutoPull Loop: Test-${Time.Timestamp}"]
 										call Combat
 									}
 								}
@@ -679,14 +682,14 @@ function main()
 							call Pull any
 							if ${engagetarget}
 							{
-								;echo "Calling Combat(5) within AutoPull Loop: Test-${Time.Timestamp}"
+								;Debug:Echo["Calling Combat(5) within AutoPull Loop: Test-${Time.Timestamp}"]
 								call Combat
 							}
 						}
 					}
 				}
 			}
-		;echo "END AutoPull Loop: Test-${Time.Timestamp}"
+		;Debug:Echo["END AutoPull Loop: Test-${Time.Timestamp}"]
 		}
 		call ProcessTriggers
 
@@ -879,7 +882,7 @@ function CastSpellRange(... Args)
 			
 		if (${start} > 0 && ${AbilityID} > 0)
 		{
-			echo "DEBUG:: CastSpellRange() -- BAD SYNTAX:  You must use *either* 'start' or 'AbilityID', not both!"
+			Debug:Echo["CastSpellRange() -- BAD SYNTAX:  You must use *either* 'start' or 'AbilityID', not both!"]
 			return -1
 		}
 	}
@@ -891,12 +894,12 @@ function CastSpellRange(... Args)
 
 	if ${tempvar} <= 0 && ${AbilityID} <= 0
 	{
-		echo "DEBUG:: CastSpellRange() -- BAD SYNTAX:  'start' or 'AbilityID' must be greater than zero."
+		Debug:Echo["CastSpellRange() -- BAD SYNTAX:  'start' or 'AbilityID' must be greater than zero."]
 		return -1
 	}
 	
 
-	;echo "DEBUG: CastSpellRange(${tempvar}::${SpellType[${tempvar}]})"
+	;Debug:Echo["CastSpellRange(${tempvar}::${SpellType[${tempvar}]})"]
 
 	;if out of combat and invis, lets not break it
 	if !${Me.InCombat}
@@ -937,7 +940,7 @@ function CastSpellRange(... Args)
 		if ${AbilityID} <= 0
 			AbilityID:Set[${Me.Ability[${AbilityName}].ID}]
 			
-		;echo "DEBUG:: CastSpellRange() -- AbilityID: ${AbilityID} -- AbilityName: ${AbilityName}"
+		;Debug:Echo["CastSpellRange() -- AbilityID: ${AbilityID} -- AbilityName: ${AbilityName}"]
 			
 		if ${AbilityName.Length}
 		{
@@ -1060,9 +1063,6 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	;echo CastSpellNow ${spell}
 	variable int Counter
 
-	if !${spellid}
-		spellid:Set[${Me.Ability[${spell}].ID}]
-
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpellNOW()"
@@ -1131,17 +1131,17 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	if !${spellid}
 		spellid:Set[${Me.Ability[${spell}].ID}]
 
-	;echo "EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"
-	;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
-	;echo "EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"
-	;echo "EQ2Bot-Debug:: ------------------------------------------------"
+	;Debug:Echo["EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"]
+	;Debug:Echo["EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"]
+	;Debug:Echo["EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"]
+	;Debug:Echo["EQ2Bot-Debug:: ------------------------------------------------"]
 
 	call ProcessTriggers
 
 	;return if trying to cast currently queued ability
 	if (${Me.InCombat} && ${spell.Equal[${LastQueuedAbility}]} && ${Me.CastingSpell})
 	{
-		;echo "EQ2Bot-Debug:: spell == LastQueuedAbility && Me.CastingSpell && Me.InCombat --> Returning"
+		;Debug:Echo["EQ2Bot-Debug:: spell == LastQueuedAbility && Me.CastingSpell && Me.InCombat --> Returning"]
 		LastQueuedAbility:Set[]
 		return
 	}
@@ -1157,19 +1157,19 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	;return if we are moving and this spell requires no movement
 	if ${Me.IsMoving} && !${castwhilemoving}
 	{
-		;echo "EQ2Bot-Debug:: Me.IsMoving is ${Me.IsMoving} and this spell should not be cast while moving."
+		;Debug:Echo["EQ2Bot-Debug:: Me.IsMoving is ${Me.IsMoving} and this spell should not be cast while moving."]
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
 
 	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
 	{
-		;echo "EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[TargetID].Type.Equal[PC] --> Returning"
-		target ${TargetID}
+		;Debug:Echo["EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[TargetID].Type.Equal[PC] --> Returning"]
+		Actor[${TargetID}]:DoTarget
 		wait 10 ${Target.ID}==${TargetID}
 	}
 
-	;echo "EQ2Bot-Debug:: Queueing '${spell}'"
+	;Debug:Echo["EQ2Bot-Debug:: Queueing '${spell}'"]
 	CurrentAction:Set[Queueing '${spell}']
 
 	;; Disallow some abilities that are named the same as crafting abilities.
@@ -1195,47 +1195,20 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 
 	if (${Me.Ability[id,${spellid}].CastingTime} < .6)
 	{
-		;echo "EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"
+		;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"]
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
-	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7)
-	{
-		;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
-		;; more than 7 seconds to cast.
-		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
-		{
-			do
-			{
-				CurrentAction:Set["Waiting for '${LastQueuedAbility}' to finish casting..."]
-				waitframe
-			}
-			while ${Me.CastingSpell}
-			wait 5
-		}		
-		
-		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
-		{
-			do
-			{
-				CurrentAction:Set[Casting '${spell}']
-				waitframe
-			}
-			while ${Me.CastingSpell}
-			wait 2
-			return
-		}
-	}
 
-	;echo "EQ2Bot-Debug:: Queuing: ${spell}"
-	;echo "EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"
-	;echo "EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
+	;Debug:Echo["EQ2Bot-Debug:: Queuing: ${spell}"]
+	;Debug:Echo["EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"]
+	;Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"]
 
 
 	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
 	{
 		Counter:Set[0]
-		;echo "EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting..."
+		;Debug:Echo["EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting..."]
 		CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting...]
 		TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
 		do
@@ -1269,7 +1242,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 				CurrentAction:Set[]
 				return
 			}
-			;echo "EQ2Bot-Debug:: Waiting..."
+			;Debug:Echo["EQ2Bot-Debug:: Waiting..."]
 		}
 		while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
 	}
@@ -1279,10 +1252,10 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	{
 		if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
 		{
-			;echo "EQ2Bot-Debug:: ---Waiting for ${spell} to cast"
+			;Debug:Echo["EQ2Bot-Debug:: ---Waiting for ${spell} to cast"]
 			CurrentAction:Set[---Waiting for ${spell} to cast]
 			TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
-			;echo "DEBUG:: TimeOut: ${TimeOut}"
+			;Debug:Echo["TimeOut: ${TimeOut}"]
 			do
 			{
 				wait 2
@@ -1316,7 +1289,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 					CurrentAction:Set[]
 					return
 				}
-				;echo "EQ2Bot-Debug:: Waiting..."
+				;Debug:Echo["EQ2Bot-Debug:: Waiting..."]
 				CurrentAction:Set[---Waiting for ${spell} to cast]
 			}
 			while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
@@ -1328,16 +1301,16 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	; This will go off on really fast casting spells....Used just for debugging purposes....
 	if !${Me.CastingSpell}
 	{
-		;echo "EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"
-		;echo "EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"
-		;echo "EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"
+		;Debug:Echo["EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"]
+		;Debug:Echo["EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"]
+		;Debug:Echo["EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"]
 		wait 1
 	}
 
 	LastQueuedAbility:Set[${spell}]
 	CurrentAction:Set[Casting '${spell}']
-	;echo "EQ2Bot-Debug:: Casting Spell -- END CastSpell()"
-	;echo "EQ2Bot-Debug:: --------------"
+	;Debug:Echo["EQ2Bot-Debug:: Casting Spell -- END CastSpell()"]
+	;Debug:Echo["EQ2Bot-Debug:: --------------"]
 
 	return SUCCESS
 }
@@ -1756,7 +1729,7 @@ function Combat()
 
 	if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
 	{
-		;echo "DEBUG: Calling CheckLootNoMove()"
+		;Debug:Echo["Calling CheckLootNoMove()"]
 		call CheckLootNoMove
 	}
 
@@ -2471,7 +2444,7 @@ function CheckCondition(string xType, int xvar1, int xvar2)
 				return "OK"
 			else
 			{
-				;echo "DEBUG: Not Casting Spell due to my health being too low!"
+				;Debug:Echo["Not Casting Spell due to my health being too low!"]
 				return "FAIL"
 			}
 			break
@@ -2514,7 +2487,7 @@ function Pull(string npcclass)
 		TempDoNotPullListTimer:Set[${Time.Timestamp}]
 		if ${TempDoNotPullList.Used} > 0
 		{
-			echo "DEBUG: Clearing TempDoNotPullList (5 minute mark)"
+			Debug:Echo["Clearing TempDoNotPullList (5 minute mark)"]
 			TempDoNotPullList:Clear
 		}
 	}
@@ -2527,7 +2500,7 @@ function Pull(string npcclass)
 
 		if (${TempDoNotPullList.Element[${ThisActorID}](exists)} && ${Actor[${ThisActorID}].Target.ID}!=${Me.ID})
 		{
-			;echo "DEBUG: Actor (ID: ${actorid}) is in the TempDoNotPullList -- skipping..."
+			;Debug:Echo["Actor (ID: ${actorid}) is in the TempDoNotPullList -- skipping..."]
 			continue
 		}
 
@@ -2536,7 +2509,7 @@ function Pull(string npcclass)
 
 		if (${DoNotPullList.Element[${ThisActorID}](exists)})
 		{
-			echo "DEBUG: ${CustomActor[${tcount}]} (ID: ${ThisActorID}) is in the DoNotPullList -- skipping..."
+			Debug:Echo["${CustomActor[${tcount}]} (ID: ${ThisActorID}) is in the DoNotPullList -- skipping..."]
 			continue
 		}
 
@@ -2576,20 +2549,20 @@ function Pull(string npcclass)
 				continue
 
 			;;; Note: I do not know what the fuck ${pulling} is used for or about (Amadeus)
-			;echo "DEBUG: PathType: ${PathType} - PullRange: ${PullRange} - pulling: ${pulling} - ScanRange: ${ScanRange}"
+			;Debug:Echo["PathType: ${PathType} - PullRange: ${PullRange} - pulling: ${pulling} - ScanRange: ${ScanRange}"]
 			if (${PathType}==4)
 			{
 				if (${PullType.Equal[Spell or CA Pull]})
 				{
 					if ${Target.Distance} > ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
 					{
-						;echo "DEBUG: Moving within range for your pull spell or combat art..."
+						;Debug:Echo["Moving within range for your pull spell or combat art..."]
 						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
 					}
 					;; Check again....stupid moving mobs...
 					if ${Target.Distance} > ${Me.Ability[${PullSpell}].Range}
 					{
-						;echo "DEBUG: Moving within range for your pull spell or combat art..."
+						;Debug:Echo["Moving within range for your pull spell or combat art..."]
 						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-2]}
 					}
 				}
@@ -2597,19 +2570,19 @@ function Pull(string npcclass)
 				{
 					if ${Target.Distance} > ${Me.Equipment[ranged].Range}
 					{
-						;echo "DEBUG: Moving within range for your bow..."
+						;Debug:Echo["Moving within range for your bow..."]
 						call FastMove ${Target.X} ${Target.Z} ${Me.Equipment[ranged].Range}
 					}
 				}
 			}
 			if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
 			{
-				;echo "DEBUG: Moving within Range..."
+				;Debug:Echo["Moving within Range..."]
 				call FastMove ${Target.X} ${Target.Z} ${PullRange}
 			}
 			elseif ${PathType}==1 && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
 			{
-				;echo "DEBUG: Moving within Range..."
+				;Debug:Echo["Moving within Range..."]
 				call FastMove ${Target.X} ${Target.Z} ${PullRange}
 			}
 
@@ -2618,7 +2591,7 @@ function Pull(string npcclass)
 			if (${PathType} > 0 && !${PullType.Equal[Pet Pull]})
 			{
 				CurrentAction:Set["Checking LOS/Collision..."]
-				;echo "DEUBG: Checking LOS/Collision"
+				;Debug:Echo["Checking LOS/Collision"]
 				if ${Target.CheckCollision}
 				{
 					if (!${Me.TargetLOS})
@@ -2646,10 +2619,10 @@ function Pull(string npcclass)
 								waitframe
 								if !${Me.TargetLOS} && ${Target.CheckCollision}
 								{
-									echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"
+									Debug:Echo["Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"]
 									TempDoNotPullList:Set[${Target.ID},${Target.Name}]
 
-									echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+									Debug:Echo["TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."]
 									continue
 								}
 							}
@@ -2664,7 +2637,7 @@ function Pull(string npcclass)
 				wait 20 !${Me.IsMoving}
 			}
 
-			;echo "DEUBG: Pulling! (PullType: ${PullType})"
+			;Debug:Echo["Pulling! (PullType: ${PullType})"]
 			if ${PullType.Equal[Bow Pull]} && ${Target.Distance}>6
 			{
 				CurrentAction:Set[Pulling ${Target} (with bow)]
@@ -2711,10 +2684,10 @@ function Pull(string npcclass)
 				{
 					echo "EQ2Bot-Pull():: Not allowed to use pet to attack this target"
 					wait 1
-					echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"
+					Debug:Echo["Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"]
 					TempDoNotPullList:Set[${Target.ID},${Target.Name}]
 
-					echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+					Debug:Echo["TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."]
 					eq2execute /pet backoff
 					eq2execute target_none
 					continue
@@ -2722,7 +2695,7 @@ function Pull(string npcclass)
 				else
 				{
 					CurrentAction:Set[Sending Pet in for attack...]
-					;echo "EQ2Bot-Pull():: Sending Pet in for attack..."
+					;Debug:Echo["EQ2Bot-Pull():: Sending Pet in for attack..."]
 					variable int StartTime = ${Script.RunningTime}
 					do
 					{
@@ -2731,10 +2704,10 @@ function Pull(string npcclass)
 							echo "EQ2Bot-Pull():: Pet did not finish a pull within 20 seconds....moving on."
 							eq2execute /pet backoff
 							wait 1
-							echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (Timeout while pulling)"
+							Debug:Echo["Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (Timeout while pulling)"]
 							TempDoNotPullList:Set[${Target.ID},${Target.Name}]
 
-							echo "DEBUG: TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."
+							Debug:Echo["TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."]
 							eq2execute target_none
 							bContinue:Set[TRUE]
 							CurrentAction:Set["Timeout while pulling -- moving on..."]
@@ -2742,7 +2715,7 @@ function Pull(string npcclass)
 						}
 						Wait 5
 						CurrentAction:Set["Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"]
-						;echo "EQ2Bot-Pull():: Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"
+						;Debug:Echo["EQ2Bot-Pull():: Waiting for Pet (${Me.Pet.Distance.Precision[1]}m)"]
 
 						if !(${Target(exists)})
 						{
@@ -2826,7 +2799,7 @@ function Pull(string npcclass)
 						}
 						wait 5
 						CurrentAction:Set["Waiting for ${Target} (${Target.Distance.Precision[1]}m)"]
-						;echo "EQ2Bot-Pull():: Waiting for ${Target} (${Target.Distance.Precision[1]}m)"
+						;Debug:Echo["EQ2Bot-Pull():: Waiting for ${Target} (${Target.Distance.Precision[1]}m)"]
 
 						if ${MainTank}
 						{
@@ -2868,7 +2841,7 @@ function Pull(string npcclass)
 
 			call CastSpell "${PullSpell}"
 			CurrentAction:Set["${Target} pulled using ${PullSpell}"]
-			;echo "DEBUG: Pulled...waiting for mob to come within range"
+			;Debug:Echo["Pulled...waiting for mob to come within range"]
 			do
 			{
 				waitframe
@@ -2913,7 +2886,7 @@ function CheckLootNoMove()
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
 		{
-			;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
+			;Debug:Echo["Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"]
 			continue
 		}
 
@@ -2946,7 +2919,7 @@ function CheckLootNoMove()
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
 			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
-			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"
+			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"]
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 1
@@ -2976,7 +2949,7 @@ function CheckLoot()
 		;Check if already looted
 		if (${ActorsLooted.Element[${CustomActor[${tcount}].ID}](exists)})
 		{
-			;echo "Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"
+			;Debug:Echo["Sorry, I've already looted this actor... (${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name})"]
 			continue
 		}
 
@@ -2988,11 +2961,11 @@ function CheckLoot()
 			{
 				if (${AutoFollowMode})
 				{
-					;echo "DEBUG: Stopping Autofollow..."
+					;Debug:Echo["Stopping Autofollow..."]
 					EQ2Execute /stopfollow
 					wait 2
 				}
-				;echo "DEBUG: Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"
+				;Debug:Echo["Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"]
 				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
 				;ECHO "DEBUG: FastMove() returned '${Return}'"
 				wait 2
@@ -3001,7 +2974,7 @@ function CheckLoot()
 					waitframe
 				}
 				while (${IsMoving} || ${Me.IsMoving})
-				;echo "DEBUG: Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"
+				;Debug:Echo["Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"]
 			}
 			switch ${Me.SubClass}
 			{
@@ -3031,12 +3004,12 @@ function CheckLoot()
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
 			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
-			echo "DEBUG: Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"
+			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"]
 			if (${CustomActor[${tcount}].Distance} > 10)
 			{
 				if (${AutoFollowMode})
 				{
-					;echo "DEBUG: Stopping Autofollow..."
+					;Debug:Echo["Stopping Autofollow..."]
 					EQ2Execute /stopfollow
 					wait 2
 				}
@@ -3075,7 +3048,7 @@ function FastMove(float X, float Z, int range)
 	;;; to Turn off autofollow:
 	;;  if (${AutoFollowMode})
 	;;  {
-	;;      echo "DEBUG: Stopping Autofollow..."
+	;;      Debug:Echo["Stopping Autofollow..."]
 	;;	    EQ2Execute /stopfollow
 	;;	    wait 2
 	;;  }
@@ -3118,7 +3091,7 @@ function FastMove(float X, float Z, int range)
 
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${MoveToRange} && ${PathType}!=4
 	{
-			;echo "DEBUG:: In FastMove() -- Math.Distance[${Me.X},${Me.Z},${X},${Z}] > MoveToRange == ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${MoveToRange}"
+			;Debug:Echo["In FastMove() -- Math.Distance[${Me.X},${Me.Z},${X},${Z}] > MoveToRange == ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${MoveToRange}"]
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC2"
 	}
@@ -3136,11 +3109,11 @@ function FastMove(float X, float Z, int range)
 		wait 1
 		press -hold ${forward}
 
-		;echo "DEBUG: Moving....  (WhoFollowing: ${Me.ToActor.WhoFollowing})"
+		;Debug:Echo["Moving....  (WhoFollowing: ${Me.ToActor.WhoFollowing})"]
 	}
 
 	xTimer:Set[${Script.RunningTime}]
-	;echo "DEBUG: xTimer set to ${xTimer}"
+	;Debug:Echo["xTimer set to ${xTimer}"]
 
 	do
 	{
@@ -3165,8 +3138,8 @@ function FastMove(float X, float Z, int range)
 				if ${Math.Calc[${SavDist}-${xDist}]} > 0.8
 					continue
 
-				;echo "DEBUG: Script.RunningTime (${Script.RunningTime}) - xTimer (${xTimer}) is greater than 500 -- returning STUCK  (WhoFollowing: ${Me.ToActor.WhoFollowing})"
-				;echo "DEBUG: Using Math.Calc64 value is ${Math.Calc64[${Script.RunningTime}-${xTimer}]}"
+				;Debug:Echo["Script.RunningTime (${Script.RunningTime}) - xTimer (${xTimer}) is greater than 500 -- returning STUCK  (WhoFollowing: ${Me.ToActor.WhoFollowing})"]
+				;Debug:Echo["Using Math.Calc64 value is ${Math.Calc64[${Script.RunningTime}-${xTimer}]}"]
 
 				isstuck:Set[TRUE]
 				if !${pulling}
@@ -3659,15 +3632,15 @@ atom(script) EQ2_onIncomingText(string Text)
 		;; Make sure the list does not get too big
 		if (${DoNotPullList.Used} > 100)
 		{
-				;echo "DEBUG: DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."
+				;Debug:Echo["DoNotPullList too big (${DoNotPullList.Used} elements) -- Clearing..."]
 				DoNotPullList:Clear
 		}
 		if ${Target.ID}
 		{
-			echo "DEBUG: Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"
+			Debug:Echo["Adding (${Target.ID},${Target.Name}) to the DoNotPullList (unabled to attack it)"]
 			DoNotPullList:Set[${Target.ID},${Target.Name}]
 
-			echo "DEBUG: DoNotPullList now has ${DoNotPullList.Used} actors in it."
+			Debug:Echo["DoNotPullList now has ${DoNotPullList.Used} actors in it."]
 		}
 	}
 	elseif (${Text.Find[This attack cannot be used on this type of creature]} > 0)
@@ -3675,16 +3648,16 @@ atom(script) EQ2_onIncomingText(string Text)
 		;; Make sure the list does not get too big
 		if (${InvalidMasteryTargets.Used} > 100)
 		{
-			;echo "DEBUG: InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."
+			;Debug:Echo["InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."]
 			InvalidMasteryTargets:Clear
 		}
 
 		if ${Actor[${KillTarget}](exists)}
 		{
-			;echo "DEBUG: Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"
+			;Debug:Echo["Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"]
 			InvalidMasteryTargets:Set[${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}]
 
-			;echo "DEBUG: InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."
+			;Debug:Echo["InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."]
 		}
 	}
 	elseif (${Text.Find[Move closer!]} > 0)
@@ -3698,7 +3671,7 @@ atom(script) EQ2_onIncomingText(string Text)
 
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
 {
-		;echo "DEBUG:  ChatType: ${ChatType} -- Speaker: ${Speaker} -- Target: ${sTarget} -- ChannelName: ${ChannelName} -- Message: ${Message}"
+		;Debug:Echo[" ChatType: ${ChatType} -- Speaker: ${Speaker} -- Target: ${sTarget} -- ChannelName: ${ChannelName} -- Message: ${Message}"]
 
 	if (${Message.Find[Invis us please]} > 0)
 	{
@@ -3721,9 +3694,9 @@ atom(script) LootWDw(string ID)
 		if ${PauseBot} || !${StartBot}
 				return
 
-		echo "DEBUG:: LootWDw(${ID}) -- (LastWindow: ${LastWindow})"
-		echo "DEBUG:: LootWindow.Type: ${LootWindow[${ID}].Type}"
-		echo "DEBUG:: LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"
+		Debug:Echo["LootWDw(${ID}) -- (LastWindow: ${LastWindow})"]
+		Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
+		Debug:Echo["LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"]
 
 	declare i int local
 	variable int tmpcnt=1
@@ -3778,7 +3751,7 @@ atom(script) LootWDw(string ID)
 								; If we are running EQ2Harvest, then we will collect everything.
 								if !${Script[EQ2harvest](exists)}
 								{
-									echo "DEBUG: Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"
+									Debug:Echo["Item marked as collectible and I've already collected it -- declining! (${LootWindow[${ID}].Item[${tmpcnt}].Name})"]
 									deccnt:Inc
 								}
 						}
@@ -3927,11 +3900,11 @@ function SetNewKillTarget()
 		if ${Target(exists)} && ${Target.Type.Find[NPC]}
 		{
 			KillTarget:Set[${Target.ID}]
-			echo "DEBUG:: KillTarget now set to '${Target}' (ID: ${Target.ID})"
+			Debug:Echo["KillTarget now set to '${Target}' (ID: ${Target.ID})"]
 		}
 		else
 		{
-			echo "DEBUG:: SetNewKillTarget() FAILED -- Target invalid."
+			Debug:Echo["SetNewKillTarget() FAILED -- Target invalid."]
 			return FAILED
 		}
 
@@ -3954,34 +3927,34 @@ function ReacquireKillTargetFromMA()
 						if ${Actor[${NextKillTarget}].Type.Find[NPC]} && !${Actor[${NextKillTarget}].IsDead}
 						{
 							KillTarget:Set[${NextKillTarget}]
-							echo "DEBUG:: KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[${KillTarget}]} (ID: ${KillTarget})"
+							Debug:Echo["KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[${KillTarget}]} (ID: ${KillTarget})"]
 							return OK
 					}
 					else
 					{
-							echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist's target was not valid]"
+							Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target was not valid]"]
 							return FAILED
 					}
 			}
 				else
 				{
-						echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist's target ID was zero]"
+						Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target ID was zero]"]
 						return FAILED
 				}
 		}
 		else
 		{
-				;echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"
+				;Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"]
 				return FAILED
 		}
 	}
 	else
 	{
-			echo "DEBUG:: ReacquireKillTargetFromMA() FAILED [MainAssist doesn't exist!]"
+			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist doesn't exist!]"]
 			return FAILED
 	}
 
-	echo "DEBUG:: ReacquireKillTargetFromMA() FAILED"
+	Debug:Echo["ReacquireKillTargetFromMA() FAILED"]
 	return FAILED
 }
 
@@ -4149,7 +4122,6 @@ function CheckBuffsOnce()
 
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 	CurrentAction:Set["Checking Buffs Once..."]
-	CheckingBuffsOnce:Set[TRUE]
 
 	if ${Me.CastingSpell}
 	{
@@ -4196,7 +4168,6 @@ function CheckBuffsOnce()
 	elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	CurrentAction:Set["Waiting..."]
-	CheckingBuffsOnce:Set[FALSE]
 	return
 }
 
@@ -4270,7 +4241,7 @@ objectdef ActorCheck
 		;checks if mob is too far above or below us
 		if ${Me.Y}+10<${Actor[${actorid}].Y} || ${Me.Y}-10>${Actor[${actorid}].Y}
 		{
-			;echo "DEBUG: Actor (ID: ${actorid} is too far above or below me"
+			;Debug:Echo["Actor (ID: ${actorid} is too far above or below me"]
 			return FALSE
 		}
 
@@ -4286,7 +4257,7 @@ objectdef ActorCheck
 		;actor is a charmed pet, ignore it
 		if ${This.FriendlyPet[${actorid}]}
 		{
-			;echo "DEBUG: Actor (ID: ${actorid} is a friendly pet ...ignoring"
+			;Debug:Echo["Actor (ID: ${actorid} is a friendly pet ...ignoring"]
 			return FALSE
 		}
 
@@ -4294,13 +4265,13 @@ objectdef ActorCheck
 		{
 				if !${Me.TargetLOS}
 				{
-						;echo "EQ2Bot-ValidActor():: No line of sight to ${Target}."
+						;Debug:Echo["EQ2Bot-ValidActor():: No line of sight to ${Target}."]
 						return FALSE
 				}
 
 				if ${Target.Distance} > ${MARange}
 				{
-						;echo "EQ2Bot-ValidActor():: ${Target} is not within MARange (${MARange})"
+						;Debug:Echo["EQ2Bot-ValidActor():: ${Target} is not within MARange (${MARange})"]
 						return FALSE
 				}
 			}
@@ -4466,12 +4437,12 @@ objectdef ActorCheck
 
 		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !(${Actor[NamedNPC,range,${iEngageDistance}](exists)} && !${IgnoreNamed})
 		{
-			;echo "DEBUG: No NPCs within a range of ${iEngageDistance}m"
+			;Debug:Echo["No NPCs within a range of ${iEngageDistance}m"]
 			return FALSE
 		}
 
 		EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
-		;echo "DEBUG: Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."
+		;Debug:Echo["Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."]
 		do
 		{
 			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode} && !${CustomActor[${tcount}].IsDead}
@@ -4486,7 +4457,7 @@ objectdef ActorCheck
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 
-		;echo "DEBUG: No NPC was found within ${iEngageDistance} meters that was aggro to you or anyone in your group."
+		;Debug:Echo["No NPC was found within ${iEngageDistance} meters that was aggro to you or anyone in your group."]
 		return FALSE
 	}
 
@@ -4662,34 +4633,31 @@ objectdef EQ2BotObj
 
 		if ${Me.Raid} > 0 && ${IncludeRaid}
 		{
-			tmpvar:Set[1]
-			do
-			{
-				if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
-					continue
-	
+		tmpvar:Set[1]
+		do
+		{
+			if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
+				continue
+
 				if ${Me.Raid[${tmpvar}].ToActor(exists)}
-				{
 					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
-					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
-						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-				}
+				if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 			}
-			while ${tmpvar:Inc} <= ${Me.Raid}
+			while ${tmpvar:Inc} < ${Me.Raid}
 		}
 		elseif ${Me.Group} > 1
 		{
+
 			tmpvar:Set[1]
 			do
 			{
-				if ${Me.Group[${tmpvar}].ToActor(exists)}
-				{
-					UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					if ${Me.Group[${tmpvar}].ToActor(exists)}
+						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
 					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-				}
 			}
-			while ${tmpvar:Inc} <= ${Me.Group}
+			while ${tmpvar:Inc} < ${Me.Group}
 		}
 
 		if ${UIElement[${ListFQN}].Type.Find[combobox]}
@@ -5200,7 +5168,7 @@ function CheckAbilities(string class)
 
 			spellname:Set[${SpellIterator.Value}]
 
-			;echo "DEBUG-CheckAbilities: spellname: ${spellname} -- tempnme: ${tempnme} -- templvl: ${templvl}  (Me.Level: ${Me.Level})"
+			;Debug:Echo["DEBUG-CheckAbilities: spellname: ${spellname} -- tempnme: ${tempnme} -- templvl: ${templvl}  (Me.Level: ${Me.Level})"]
 			if (${spellname.Length})
 			{
 				if !${Me.Ability[${spellname}](exists)}
@@ -5213,15 +5181,15 @@ function CheckAbilities(string class)
 					}
 					else
 					{
-						;echo "DEBUG: tempnme: ${tempnme}"
-						;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+						;Debug:Echo["tempnme: ${tempnme}"]
+						;Debug:Echo["Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"]
 						SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 					}
 				}
 				else
 				{
-					;echo "DEBUG: tempnme: ${tempnme}"
-					;echo "DEBUG: Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"
+					;Debug:Echo["tempnme: ${tempnme}"]
+					;Debug:Echo["Setting SpellType[${Arg[2,${tempnme}]}] to '${spellname}'"]
 					SpellType[${Arg[2,${tempnme}]}]:Set[${spellname}]
 				}
 			}
@@ -5411,7 +5379,7 @@ objectdef Navigation
 		else
 		{
 			LavishNav.Tree:AddChild[universe,${Zone.Name},-unique]
-			;echo "DEBUG(Navigation): New Zone Created!"
+			;Debug:Echo["DEBUG(Navigation): New Zone Created!"]
 			UIElement[Clear Path@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 			UIElement[Move Start@Navigation@EQ2Bot Tabs@EQ2 Bot]:Hide
 		}
@@ -5858,7 +5826,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		if ${PauseBot} || !${StartBot}
 				return
 
-		echo "DEBUG:: EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"
+		Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"]
 
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{

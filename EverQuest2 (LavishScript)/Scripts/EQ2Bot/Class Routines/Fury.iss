@@ -711,14 +711,14 @@ function Combat_Routine(int xAction)
 
 	if (${VortexMode})
 	{
-		;echo "DEBUG: Checking Energy Vortex..."
+		;Debug:Echo["Checking Energy Vortex..."]
 		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
 		{
-			;echo "DEBUG: SpellType[385]: ${SpellType[385]}"
-			;echo "DEBUG: Energy Vortex -- Target is not solo...check"
+			;Debug:Echo["SpellType[385]: ${SpellType[385]}"]
+			;Debug:Echo["Energy Vortex -- Target is not solo...check"]
 			if ${Me.Ability[${SpellType[385]}].IsReady}
 			{
-				;echo "DEBUG: Energy Vortex -- Ability (${Me.Ability[${SpellType[385]}]})' is ready...check"
+				;Debug:Echo["Energy Vortex -- Ability (${Me.Ability[${SpellType[385]}]})' is ready...check"]
 				switch ${Target.ConColor}
 				{
 					case Red
@@ -744,8 +744,8 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	;echo "DEBUG: Combat_Routine() -- Action: ${Action[${xAction}]} (xAction: ${xAction})"
-	;echo "DEBUG: Combat_Routine() -- MainAssist: ${MainAssist}"
+	;Debug:Echo["Combat_Routine() -- Action: ${Action[${xAction}]} (xAction: ${xAction})"]
+	;Debug:Echo["Combat_Routine() -- MainAssist: ${MainAssist}"]
 
 	if !${OffenseMode}
 	{
@@ -1053,7 +1053,7 @@ function Post_Combat_Routine(int xAction)
     		}
 			break
 		case CheckForCures
-			;echo "DEBUG: Checking if Cures are needed post combat..."
+			;Debug:Echo["Checking if Cures are needed post combat..."]
 			if ${Me.ToActor.InCombatMode}
     			call CheckCures 1
     		else
@@ -1209,7 +1209,7 @@ function CheckHeals()
     				{
     			        lowestset:Set[TRUE]
     					lowest:Set[${temphl}]
-    					;echo "DEBUG:: CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"
+    					;Debug:Echo["CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"]
     				}
     			}
 
@@ -1244,12 +1244,12 @@ function CheckHeals()
 	;now lets heal individual groupmembers if needed
 	if ${lowestset}
 	{
-	    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest at ${Me.Group[${lowest}].ToActor.Health}"
+	    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest at ${Me.Group[${lowest}].ToActor.Health}"]
 		call UseCrystallizedSpirit 60
 
 		if ${Me.Group[${lowest}].ToActor.Health}<60 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
 		{
-		    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
+		    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 		    if ${Me.Ability[${SpellType[2]}].IsReady}
 				call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
 		}
@@ -1258,17 +1258,17 @@ function CheckHeals()
 		{
 			if ${Me.Ability[${SpellType[7]}].IsReady}
 			{
-			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
+			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 				call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ID}
 			}
 			elseif ${Me.Ability[${SpellType[1]}].IsReady}
 			{
-			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
+			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
 			}
 			elseif ${Me.Ability[${SpellType[4]}].IsReady}
 			{
-			    ;echo "DEBUG:: ${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"
+			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
 			}
 		}
@@ -1299,7 +1299,7 @@ function CheckHeals()
 	      {
       		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead} && ${Me.Raid[${raidlowest}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
       		{
-      			;echo "Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"
+      			;Debug:Echo["Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"]
       			if ${Me.Ability[${SpellType[4]}].IsReady}
       				call CastSpellRange 4 0 0 0 ${Me.Raid[${raidlowest}].ID}
       			elseif ${Me.Ability[${SpellType[1]}].IsReady}
@@ -1447,7 +1447,7 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
 
-	;echo "DEBUG:: CureGroupMember(${gMember})"
+	;Debug:Echo["CureGroupMember(${gMember})"]
 
 	if !${Me.Group[${gMember}].ToActor(exists)} || ${Me.Group[${gMember}].ToActor.IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].ToActor.Health} < 0 || ${Me.Group[${gMember}].ToActor.Distance}>=${Me.Ability[${SpellType[210]}].Range}
 		return
@@ -1456,7 +1456,7 @@ function CureGroupMember(int gMember)
 	{
 		if (${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0)
 		{
-		    ;echo "DEBUG:: Curing ${Me.Group[${gMember}]}"
+		    ;Debug:Echo["Curing ${Me.Group[${gMember}]}"]
 			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 			wait 2
 		}
@@ -1512,7 +1512,7 @@ function CheckCures(int InCombat=1)
 			if ${Me.Noxious}>0 || ${Me.Elemental}>0
 				grpcure:Inc
 		}
-		;echo "DEBUG:: CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"
+		;Debug:Echo["CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"]
 
 		;loop group members, and check for group curable afflictions
 		do
@@ -1526,7 +1526,7 @@ function CheckCures(int InCombat=1)
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 
-		;echo "DEBUG:: CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"
+		;Debug:Echo["CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"]
 
         if ${EpicMode}
         {
@@ -1623,7 +1623,7 @@ function FindAfflicted()
 	}
 	while ${temphl:Inc} <= ${Me.GroupCount}
 
-    ;echo "DEBUG:: FindAfflicted() returning ${mostafflicted}"
+    ;Debug:Echo["FindAfflicted() returning ${mostafflicted}"]
 
 	if ${mostafflicted}>0
 		return ${mostafflicted}

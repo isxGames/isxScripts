@@ -220,7 +220,7 @@ function PopulateInvisSpells()
     InvisSpells:Set["Wind Walk",24]
     InvisSpells:Set["Totem of the Chameleon",15]
 
-    ;echo "DEBUG: ${InvisSpells.Used} spells were added to the InvisSpells collection."
+    ;Debug:Echo["${InvisSpells.Used} spells were added to the InvisSpells collection."]
 
     return ${InvisSpells.Used}
 }
@@ -251,12 +251,12 @@ function PopulateSKFDSpells()
 			iType:Set[${Arg[2,${tempnme}]}]
 			SpellName:Set[${SpellIterator.Value}]
 
-			;echo "Debug: Processing Shadowknight Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+			;Debug:Echo["Debug: Processing Shadowknight Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"]
 
 			switch ${iType}
 			{
 				case 330
-					;echo "DEBUG: Shadowknight Spell '${SpellName}' (Level: ${iLevel} was added to the SKFDSpells collection"
+					;Debug:Echo["Shadowknight Spell '${SpellName}' (Level: ${iLevel} was added to the SKFDSpells collection"]
 					SKFDSpells:Set[${SpellName},${iLevel}]
 					break
 
@@ -297,7 +297,7 @@ function PopulateMezSpells()
 			iType:Set[${Arg[2,${tempnme}]}]
 			SpellName:Set[${SpellIterator.Value}]
 
-			;echo "Debug: Processing Illusionist Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+			;Debug:Echo["Debug: Processing Illusionist Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"]
 
 			switch ${iType}
 			{
@@ -305,7 +305,7 @@ function PopulateMezSpells()
 				case 352
 				case 353
 				case 356
-					;echo "DEBUG: Illusionist Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
+					;Debug:Echo["Illusionist Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"]
 					MezSpells:Set[${SpellName},${iLevel}]
 					break
 
@@ -337,14 +337,14 @@ function PopulateMezSpells()
 			iType:Set[${Arg[2,${tempnme}]}]
 			SpellName:Set[${SpellIterator.Value}]
 
-			;echo "Debug: Processing Coercer Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"
+			;Debug:Echo["Debug: Processing Coercer Spell '${SpellName}' (Level: ${iLevel} - Type: ${iType})"]
 
 			switch ${iType}
 			{
 				case 351
 				case 352
 				case 353
-					;echo "DEBUG: Coercer Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"
+					;Debug:Echo["Coercer Spell '${SpellName}' (Level: ${iLevel} was added to the MezSpells collection"]
 					MezSpells:Set[${SpellName},${iLevel}]
 					break
 
@@ -359,7 +359,7 @@ function PopulateMezSpells()
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    ;echo "DEBUG: ${MezSpells.Used} spells were added to the MezSpells collection."
+    ;Debug:Echo["${MezSpells.Used} spells were added to the MezSpells collection."]
 
     return ${MezSpells.Used}
 }
@@ -372,7 +372,7 @@ function AmIInvis(string param1)
     {
         if (${InvisSpells.Element[${Me.Maintained[${i}].Name}](exists)})
         {
-            echo "DEBUG: I am invisible (therefore I will not cast spells.)  (Called By: ${param1})"
+            Debug:Echo["I am invisible (therefore I will not cast spells.)  (Called By: ${param1})"]
             return TRUE
         }
 
@@ -391,7 +391,7 @@ function RemoveSKFD(string parm1)
     {
         if (${SKFDSpells.Element[${Me.Effect[${i}].Name}](exists)})
         {
-            echo "DEBUG: I am feigning death due to a Shadowknight...cancelling.  (Called By: ${param1})"
+            Debug:Echo["I am feigning death due to a Shadowknight...cancelling.  (Called By: ${param1})"]
             Me.Effect[${i}]:Cancel
         }
     }
@@ -415,10 +415,10 @@ function CheckForMez(string param1)
     {
         do
         {
-            ;echo "DEBUG: Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"
+            ;Debug:Echo["Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"]
             if (${MezSpells.Element[${Target.Effect[${i}].Name}](exists)})
             {
-                ;echo "DEBUG: ${Target} is Mezzed!  (Called By: ${param1})"
+                ;Debug:Echo["${Target} is Mezzed!  (Called By: ${param1})"]
                 return TRUE
             }
         }
@@ -444,7 +444,7 @@ function CheckForStun()
     {
         do
         {
-            ;echo "DEBUG: Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"
+            ;Debug:Echo["Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"]
             if (${MezSpells.Element[${Target.Effect[${i}].Name}](exists)})
                 return FALSE
         }
@@ -456,7 +456,7 @@ function CheckForStun()
 
 function ReacquireTargetFromMA()
 {
-    ;echo "DEBUG (ReacquireTargetFromMA): Old Target: ${Target}"
+    ;Debug:Echo["DEBUG (ReacquireTargetFromMA): Old Target: ${Target}"]
     if (${Actor[Exactname,${MainAssist}](exists)})
     {
         target ${MainAssist}
@@ -465,13 +465,13 @@ function ReacquireTargetFromMA()
 	    {
 			KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
 			target ${KillTarget}
-			;echo "DEBUG (ReacquireTargetFromMA): New Target Acquired: ${Target}"
+			;Debug:Echo["DEBUG (ReacquireTargetFromMA): New Target Acquired: ${Target}"]
 			return TRUE
 		}
     }
 
     target ${MainAssist}
-    echo "DEBUG: (ReacquireTargetFromMA): MA has no target right now..."
+    Debug:Echo["(ReacquireTargetFromMA): MA has no target right now..."]
     return FALSE
 }
 
@@ -484,16 +484,16 @@ atom AutoFollowTank()
 		CharacterSet.FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",TRUE]
 		CharacterSet:Export[Scripts/EQ2Bot/Character Config/${Me.Name}.xml]
 
-		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"
-		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"
-		;echo "DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"
+		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"]
+		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"]
+		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"]
 
-		;echo "DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"
-		;echo "DEBUG-AutoFollowTank(): Time Now: ${Time.Timestamp}"
-		;echo "DEBUG-AutoFollowTank(): TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"
+		;Debug:Echo["DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"]
+		;Debug:Echo["DEBUG-AutoFollowTank(): Time Now: ${Time.Timestamp}"]
+		;Debug:Echo["DEBUG-AutoFollowTank(): TimeLookingFor: ${Math.Calc64[${AutoFollowLastSetTime}+5]}"]
 		if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
 		{
-			;echo "DEBUG-AutoFollowTank(): Following...."
+			;Debug:Echo["DEBUG-AutoFollowTank(): Following...."]
 			if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})
 			{
 				if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
@@ -512,25 +512,25 @@ atom AutoFollowTank()
 						else
 						{
 							AutoFollowingMA:Set[FALSE]
-							;echo "DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"
+							;Debug:Echo["DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"]
 						}
 					}
 					else
 					{
-						;echo "DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"
+						;Debug:Echo["DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"]
 						AutoFollowingMA:Set[FALSE]
 					}
 				}
 				else
 				{
 					AutoFollowingMA:Set[FALSE]
-					;echo "DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."
+					;Debug:Echo["DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."]
 				}
 			}
 			else
 			{
 			    AutoFollowingMA:Set[FALSE]
-			    ;echo "DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."
+			    ;Debug:Echo["DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."]
 			}
     	}
 	}
@@ -831,7 +831,7 @@ function CheckGroupHealth(int MinHealth)
 
 function PetAttack()
 {
-	;echo "Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"
+	;Debug:Echo["Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"]
 
 	if !${Actor[${KillTarget}](exists)}
 	{
