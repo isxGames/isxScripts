@@ -260,7 +260,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	variable int temp
 
-	if !${InPostDeathRoutine}
+	if (!${InPostDeathRoutine} || !${CheckingBuffsOnce})
 	{
 		if ${ShardMode}
 			call Shard
