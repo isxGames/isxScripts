@@ -11,8 +11,9 @@
 ;;	METHODS:
 ;;		Enable
 ;;		Disable
-;;		Echo[Arguments]		Echos a debug line with timestamp to the console.
-;;		Log[Arguments]		Logs a line in a log file matching the script name in the script dir.
+;;		Echo[Arguments]					Echos a debug line with timestamp to the console.
+;;		Log[Arguments]					Logs a line in a log file matching the script name in the script dir.
+;;		SetFilename[string Filename]	Sets output filename used by Log method.
 ;;
 ;;	Example Script:
 ;;	
@@ -45,6 +46,11 @@ objectdef debug
 		This:IsEnabled:Set[FALSE]
 	}
 	
+	method SetFilename(string Filename)
+	{
+		This.File:Set[${Filename}]
+	}
+	
 	method Echo(... Args)
 	{
 		if ${This.Enabled}
@@ -57,16 +63,18 @@ objectdef debug
 	{
 		if ${This.Enabled}
 		{
-			redirect -append "${Script.CurrentDirectory}/${Script.Filename}.txt" "echo ${Time.Year}${Time.Month.LeadingZeroes[2]}${Time.Day.LeadingZeroes[2]} ${Time.Time24} DEBUG: ${Args.Expand.EscapeQuotes}"
+			redirect -append "${This.File}" "echo ${Time.Year}${Time.Month.LeadingZeroes[2]}${Time.Day.LeadingZeroes[2]} ${Time.Time24} DEBUG: ${Args.Expand.EscapeQuotes}"
 		}
 	}
 	
 	method Initialize()
 	{
 		This.IsEnabled:Set[FALSE]
+		This.File:Set["${Script.CurrentDirectory}/${Script.Filename}.txt"]
 	}
 	
 	variable bool IsEnabled
+	variable string File
 }
 
 variable debug Debug
