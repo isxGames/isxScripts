@@ -90,7 +90,8 @@ function Class_Declaration()
 	declare FeastAction int script 9
 	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
-
+	
+	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
 	declare BuffSavageryGroupMember string script
 	declare BuffSpirit bool script FALSE
@@ -271,6 +272,7 @@ function Buff_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
+	declare ActorID uint local
 	variable int temp
 
     if !${Actor[pc,${MainTankPC},exactname].InCombatMode}
@@ -286,7 +288,7 @@ function Buff_Routine(int xAction)
 	if !${InitialBuffsDone}
 	{
 		if (${Me.GroupCount} > 1)
-			call CastSpell "Favor of the Phoenix"
+			call CastSpell "Favor of the Phoenix" ${Me.Ability["Favor of the Phoenix"].ID} 1 1
 		InitialBuffsDone:Set[TRUE]
 	}
 
@@ -368,6 +370,7 @@ function Buff_Routine(int xAction)
 		case BuffVim
 			Counter:Set[1]
 			tempvar:Set[1]
+			VimBuffsOn:Clear
 
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
@@ -386,6 +389,7 @@ function Buff_Routine(int xAction)
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 							{
+								VimBuffsOn:Set[${Me.Maintained[${Counter}].Target.ID},${Me.Maintained[${Counter}].Target.Name}]
 								BuffMember:Set[OK]
 								break
 							}
@@ -415,9 +419,36 @@ function Buff_Routine(int xAction)
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-					if ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)} || ${Actor[exactname,${BuffTarget.Token[1,:]}].ID}==${Me.ID}
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+						ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+						if ${Actor[${ActorID}].Type.Equal[PC]}
+						{
+							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
+							{
+								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+								{
+									if (!${VimBuffsOn.Element[${ActorID}](exists)})
+									{
+										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
+									}
+									;else
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already Vim buffed!"]													
+								}
+							}
+						}
+						else
+						{
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							{
+								if (!${VimBuffsOn.Element[${ActorID}](exists)})
+								{
+									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
+								}
+								;else
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already Vim buffed!"]				
+							}	
+						}
 					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
@@ -459,7 +490,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${BuffTarget.Token[2,:].Equal[Me]}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 			elseif ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
@@ -1791,16 +1822,7 @@ function HandleGroupWiped()
 
 	;assume that someone used a feather
 	if (${Me.GroupCount} > 1)
-	{
-		Me.Ability[Favor of the Phoenix]:Use
-		do
-		{
-			waitframe
-		}
-		while ${Me.CastingSpell}
-		wait 1
-	}
-
+		call CastSpell "Favor of the Phoenix" ${Me.Ability["Favor of the Phoenix"].ID} 1 1
 	return OK
 }
 
