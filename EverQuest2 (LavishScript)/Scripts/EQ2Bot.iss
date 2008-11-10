@@ -193,6 +193,7 @@ variable string GainedXPString
 variable string LastQueuedAbility
 variable int LastCastTarget
 variable int OORThreshold
+variable bool CheckingBuffsOnce
 
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
@@ -1063,6 +1064,9 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	;echo CastSpellNow ${spell}
 	variable int Counter
 
+	if !${spellid}
+		spellid:Set[${Me.Ability[${spell}].ID}]
+
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpellNOW()"
@@ -1199,7 +1203,34 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
-
+	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7)
+	{
+		;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
+		;; more than 7 seconds to cast.
+		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+		{
+			do
+			{
+				CurrentAction:Set["Waiting for '${LastQueuedAbility}' to finish casting..."]
+				waitframe
+			}
+			while ${Me.CastingSpell}
+			wait 5
+		}		
+		
+		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+		{
+			do
+			{
+				CurrentAction:Set[Casting '${spell}']
+				waitframe
+			}
+			while ${Me.CastingSpell}
+			wait 2
+			return
+		}
+	}
+	
 	;Debug:Echo["EQ2Bot-Debug:: Queuing: ${spell}"]
 	;Debug:Echo["EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"]
 	;Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"]
@@ -4119,7 +4150,8 @@ function CheckBuffsOnce()
 	;;; This should only be called while in combat.
 	;;;
 	variable int i
-
+	CheckingBuffsOnce:Set[TRUE]
+	
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 	CurrentAction:Set["Checking Buffs Once..."]
 
@@ -4168,6 +4200,7 @@ function CheckBuffsOnce()
 	elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	CurrentAction:Set["Waiting..."]
+	CheckingBuffsOnce:Set[FALSE]
 	return
 }
 
@@ -4633,31 +4666,34 @@ objectdef EQ2BotObj
 
 		if ${Me.Raid} > 0 && ${IncludeRaid}
 		{
-		tmpvar:Set[1]
-		do
-		{
-			if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
-				continue
-
-				if ${Me.Raid[${tmpvar}].ToActor(exists)}
-					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
-				if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
-					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-			}
-			while ${tmpvar:Inc} < ${Me.Raid}
-		}
-		elseif ${Me.Group} > 1
-		{
-
 			tmpvar:Set[1]
 			do
 			{
-					if ${Me.Group[${tmpvar}].ToActor(exists)}
-						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+				if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
+					continue
+
+				if ${Me.Raid[${tmpvar}].ToActor(exists)}
+				{
+					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+				}
+			}
+			while ${tmpvar:Inc} <= ${Me.Raid}
+		}
+		elseif ${Me.Group} > 1
+		{
+			tmpvar:Set[1]
+			do
+			{
+				if ${Me.Group[${tmpvar}].ToActor(exists)}
+				{
+					UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
 					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+				}		
 			}
-			while ${tmpvar:Inc} < ${Me.Group}
+			while ${tmpvar:Inc} <= ${Me.Group}
 		}
 
 		if ${UIElement[${ListFQN}].Type.Find[combobox]}
