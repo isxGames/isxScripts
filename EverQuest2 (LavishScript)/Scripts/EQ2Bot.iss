@@ -1123,6 +1123,9 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	;echo CastSpell ${spell}
 	variable int Counter
 	variable float TimeOut
+	
+	if !${spellid}
+		spellid:Set[${Me.Ability[${spell}].ID}]
 
 	;echo "EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"
 	;echo "EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"
