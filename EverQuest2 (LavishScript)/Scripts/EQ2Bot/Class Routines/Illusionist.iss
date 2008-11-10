@@ -75,6 +75,7 @@ function Class_Declaration()
 	declare InPostDeathRoutine bool script FALSE
 	declare IllyCasterBuffsOn collection:int script
 	declare IllyDPSBuffsOn collection:int script
+	declare MakePetWhileInCombat bool script TRUE
 
 
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
@@ -95,6 +96,7 @@ function Class_Declaration()
 	BuffEmpathicSoothing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffEmpathicSoothing,FALSE]}]
 	UseIlluminate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseIlluminate,FALSE]}]
 	BlinkMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BlinkMode,FALSE]}]
+	MakePetWhileInCombat:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MakePetWhileInCombat,TRUE]}]
 
 	NoEQ2BotStance:Set[TRUE]
 
@@ -324,6 +326,9 @@ function Buff_Routine(int xAction)
 		case MakePet
 			if ${Makepet}
 			{
+				if (!${MakePetWhileInCombat} && ${Me.ToActor.InCombatMode})
+					break
+				
 				if (${HaveMythical} || ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3)
 				{
 					if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
@@ -1659,7 +1664,8 @@ function RefreshPower()
 				{
 					if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
 					{
-						MemberLowestPower:Set[${tempvar}]
+						if !${Me.Group[${MemberLowestPower}].ToActor.IsDead}
+							MemberLowestPower:Set[${tempvar}]
 					}
 				}
 			}
