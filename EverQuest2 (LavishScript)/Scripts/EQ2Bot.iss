@@ -1195,6 +1195,33 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
+	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7)
+	{
+		;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
+		;; more than 7 seconds to cast.
+		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+		{
+			do
+			{
+				CurrentAction:Set["Waiting for '${LastQueuedAbility}' to finish casting..."]
+				waitframe
+			}
+			while ${Me.CastingSpell}
+			wait 5
+		}		
+		
+		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+		{
+			do
+			{
+				CurrentAction:Set[Casting '${spell}']
+				waitframe
+			}
+			while ${Me.CastingSpell}
+			wait 2
+			return
+		}
+	}
 
 	;echo "EQ2Bot-Debug:: Queuing: ${spell}"
 	;echo "EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"
