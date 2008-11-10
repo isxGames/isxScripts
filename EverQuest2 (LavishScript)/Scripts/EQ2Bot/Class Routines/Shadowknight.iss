@@ -258,6 +258,7 @@ function Buff_Routine(int xAction)
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
+	declare ActorID uint local
 	variable int temp
 
 	if (!${InPostDeathRoutine} || !${CheckingBuffsOnce})
@@ -277,15 +278,52 @@ function Buff_Routine(int xAction)
 
 		case Armament_Target
 			BuffTarget:Set[${UIElement[cbBuffArmamentGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				}
+				else
+					break
 			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 1
-				wait 2
+				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+				if ${Actor[${ActorID}].Type.Equal[PC]}
+				{
+					if ${Me.InRaid}
+					{
+						if (${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
+						{
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							{
+								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
+								wait 2
+							}
+						}
+					}
+					else
+					{
+						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+						{
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							{
+								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
+								wait 2
+							}
+						}	
+					}
+				}
+				else
+				{
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+					{
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
+						wait 2
+					}
+				}	
 			}
 			break
 
@@ -338,16 +376,53 @@ function Buff_Routine(int xAction)
 
 
 		case Tactics_Target
-			BuffTarget:Set[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			BuffTarget:Set[${UIElement[cbBuffArmamentGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				}
+				else
+					break
 			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			{
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 1
-				wait 2
+				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+				if ${Actor[${ActorID}].Type.Equal[PC]}
+				{
+					if ${Me.InRaid}
+					{
+						if (${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
+						{
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							{
+								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
+								wait 2
+							}
+						}
+					}
+					else
+					{
+						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+						{
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							{
+								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
+								wait 2
+							}
+						}	
+					}
+				}
+				else
+				{
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+					{
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
+						wait 2
+					}
+				}	
 			}
 			break
 

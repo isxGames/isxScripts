@@ -403,9 +403,9 @@ function Buff_Routine(int xAction)
 					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
 						ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
-						if ${Actor[${ActorID}].Type.Equal[PC]}
+						if ${Actor[${ActorID}].Type.Equal[PC]} 
 						{
-							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
+							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 							{
 								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
 								{
@@ -414,7 +414,7 @@ function Buff_Routine(int xAction)
 										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 									}
 									;else
-									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"													
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"]													
 								}
 							}
 						}
@@ -427,7 +427,7 @@ function Buff_Routine(int xAction)
 									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 								}
 								;else
-								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"				
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"]				
 							}	
 						}
 					}
@@ -500,7 +500,7 @@ function Buff_Routine(int xAction)
 										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 									}
 									;else
-									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"									
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"]									
 								}
 							}
 						}
@@ -513,7 +513,7 @@ function Buff_Routine(int xAction)
 									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 								}
 								;else
-								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"	
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"]	
 							}	
 						}
 					}

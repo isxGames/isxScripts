@@ -1126,7 +1126,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	return SUCCESS
 }
 
-function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemoving)
+function CastSpell(string spell, uint spellid=0, int TargetID=0, bool castwhilemoving=0, bool WaitWhileCasting=0)
 {
 	;echo CastSpell ${spell}
 	variable int Counter
@@ -1203,7 +1203,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
-	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7)
+	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
 	{
 		;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 		;; more than 7 seconds to cast.
