@@ -4659,31 +4659,34 @@ objectdef EQ2BotObj
 
 		if ${Me.Raid} > 0 && ${IncludeRaid}
 		{
-		tmpvar:Set[1]
-		do
-		{
-			if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
-				continue
-
-				if ${Me.Raid[${tmpvar}].ToActor(exists)}
-					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
-				if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
-					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-			}
-			while ${tmpvar:Inc} < ${Me.Raid}
-		}
-		elseif ${Me.Group} > 1
-		{
-
 			tmpvar:Set[1]
 			do
 			{
-					if ${Me.Group[${tmpvar}].ToActor(exists)}
-						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+				if (${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]})
+					continue
+	
+				if ${Me.Raid[${tmpvar}].ToActor(exists)}
+				{
+					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+				}
+			}
+			while ${tmpvar:Inc} <= ${Me.Raid}
+		}
+		elseif ${Me.Group} > 1
+		{
+			tmpvar:Set[1]
+			do
+			{
+				if ${Me.Group[${tmpvar}].ToActor(exists)}
+				{
+					UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
 					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+				}
 			}
-			while ${tmpvar:Inc} < ${Me.Group}
+			while ${tmpvar:Inc} <= ${Me.Group}
 		}
 
 		if ${UIElement[${ListFQN}].Type.Find[combobox]}
