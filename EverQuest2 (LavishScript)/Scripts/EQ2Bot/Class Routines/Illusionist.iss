@@ -232,7 +232,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 	declare ActorID uint local
 
-	;echo "Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"
+	;Debug:Echo["Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"]
 	;CurrentAction:Set[Buff Routine :: ${PreAction[${xAction}]} (${xAction})]
 
 	if (!${InPostDeathRoutine} && !${CheckingBuffsOnce})
@@ -264,7 +264,7 @@ function Buff_Routine(int xAction)
 						{
 							if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 							{
-								;echo "DEBUG:: Casting ''Prismatic'"
+								;Debug:Echo["Casting ''Prismatic'"]
 								call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 								LastSpellCast:Set[72]
 								return
@@ -274,7 +274,7 @@ function Buff_Routine(int xAction)
 						}
 						else
 						{
-							;echo "DEBUG:: Casting ''Prismatic'"
+							;Debug:Echo["Casting ''Prismatic'"]
 							call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
 							LastSpellCast:Set[72]
 							return
@@ -329,8 +329,8 @@ function Buff_Routine(int xAction)
 			{
 				if (!${MakePetWhileInCombat} && ${Me.ToActor.InCombatMode})
 					break
-				
-				if (${HaveMythical} || ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3)
+				; needs to be equipped for the pet conc thing.
+				if (${HaveMythical} && ${Me.Equipment[Mirage Star](exists)}) || (${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3)
 				{
 					if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 					{
@@ -414,7 +414,7 @@ function Buff_Routine(int xAction)
 										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 									}
 									;else
-									;	echo "DEBUG:: ${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"													
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"													
 								}
 							}
 						}
@@ -427,7 +427,7 @@ function Buff_Routine(int xAction)
 									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 								}
 								;else
-								;	echo "DEBUG:: ${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"				
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"				
 							}	
 						}
 					}
@@ -500,7 +500,7 @@ function Buff_Routine(int xAction)
 										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 									}
 									;else
-									;	echo "DEBUG:: ${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"									
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"									
 								}
 							}
 						}
@@ -513,7 +513,7 @@ function Buff_Routine(int xAction)
 									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 								}
 								;else
-								;	echo "DEBUG:: ${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"	
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"	
 							}	
 						}
 					}
@@ -528,11 +528,16 @@ function Buff_Routine(int xAction)
 				break
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
 			{
 				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
 				{
 					if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+				}
+				else
+				{
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
 				}
 			}
@@ -544,11 +549,16 @@ function Buff_Routine(int xAction)
 				break
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
 			{
-				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${BuffTarget.Token[1,:].Equal[${Me.Name}]})
+				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
 				{
 					if (${Me.Group[${BuffTarget.Token[1,:]}].ToActor.Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
+				}
+				else
+				{
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 1 0 0
 				}
 			}
@@ -606,7 +616,7 @@ function CheckCastBeam()
 	}
 	elseif (${LastSpellCast} != 60)
 	{
-		;echo "EQ2Bot-Debug:: LastSpellCast: ${LastSpellCast}"
+		;Debug:Echo["EQ2Bot-Debug:: LastSpellCast: ${LastSpellCast}"]
 		if (${Me.Ability[${SpellType[60]}].TimeUntilReady} <= 1)	
 		{		
 			LastSpellCast:Set[60]
@@ -653,7 +663,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 					BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 					if !${BuffTarget.Equal["No one"]}
 					{
-						;echo "DEBUG: ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"
+						;Debug:Echo["${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"]
 						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 						{
 							LastSpellCast:Set[72]
@@ -739,14 +749,14 @@ function Combat_Routine(int xAction)
 		{
 			if ${Me.Ability["Phase"].IsReady}
 			{
-				echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
+				Debug:Echo["Casting 'Phase' on ${Actor[${KillTarget}].Name}!"]
 				call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
 				LastSpellCast:Set[357]
 				spellsused:Inc
 			}
 			elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
 			{
-				echo "DEBUG:: Casting 'Blink'!"
+				Debug:Echo["Casting 'Blink'!"]
 				call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
 				LastSpellCast:Set[358]
 				spellsused:Inc
@@ -856,11 +866,11 @@ function Combat_Routine(int xAction)
 				{
 					case Green
 					case Grey
-						echo "DEBUG:: Calling CheckPosition(1 0)"
+						Debug:Echo["Calling CheckPosition(1 0)"]
 						call CheckPosition 1 0 ${KillTarget}
 						break
 					Default
-						echo "DEBUG:: Calling CheckPosition(1 1)"
+						Debug:Echo["Calling CheckPosition(1 1)"]
 						call CheckPosition 1 1 ${KillTarget}
 						break
 				}
@@ -1036,7 +1046,7 @@ function Combat_Routine(int xAction)
 
 	if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
 	{
-		;echo "DEBUG: Checking Doppleganger..."
+		;Debug:Echo["Checking Doppleganger..."]
 		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
 		{
 			if ${Me.Ability[Doppleganger].IsReady}
@@ -1201,7 +1211,7 @@ function Combat_Routine(int xAction)
 		LastSpellCast:Set[210]
 	}	
 
-	;echo "DEBUG:: Entering Switch (${Action[${xAction}]})"
+	;Debug:Echo["Entering Switch (${Action[${xAction}]})"]
 	switch ${Action[${xAction}]}
 	{
 		;; Straight Nukes
@@ -1237,10 +1247,10 @@ function Combat_Routine(int xAction)
 	
 		;; Single Target DoTs
 		case MindDoT
-			;echo "DEBUG::  ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"
+			;Debug:Echo[" ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"]
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
 			{
-				;echo "DEBUG:: Health of Target: ${Actor[${KillTarget}].Health}
+				;Debug:Echo["Health of Target: ${Actor[${KillTarget}].Health}
 				break
 			}
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
@@ -1250,7 +1260,7 @@ function Combat_Routine(int xAction)
 	
 				;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 				;{
-					;echo "DEBUG:: Casting ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]})"
+					;Debug:Echo["Casting ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]})"]
 					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
 					spellsused:Inc
 					if (${Me.Ability[${SpellType[80]}].IsReady})
@@ -1264,7 +1274,7 @@ function Combat_Routine(int xAction)
 				;}
 			}
 			;else
-				;   echo "DEBUG:: ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."
+				;   Debug:Echo["${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) isn't ready..."]
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
@@ -1451,7 +1461,7 @@ function Combat_Routine(int xAction)
 	}
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
-	;echo "DEBUG:: Exiting Switch (${Action[${xAction}]}) (spellsused: ${spellsused})"
+	;Debug:Echo["Exiting Switch (${Action[${xAction}]}) (spellsused: ${spellsused})"]
 }
 
 function CastSomething()
@@ -1459,8 +1469,8 @@ function CastSomething()
 	;; If this function is called, it is because we went through teh combat routine without casting any spells.
 	;; This function is intended to cast SOMETHING in order to keep "Perputuality" going.
 
-	;echo "DEBUG:: ---"
-	;echo "DEBUG:: CastSomething() called."
+	;Debug:Echo["---"]
+	;Debug:Echo["CastSomething() called."]
 
 	call VerifyTarget
 	if !${Return}
@@ -1485,7 +1495,7 @@ function CastSomething()
 					{
 						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 						{
-							;echo "DEBUG:: Casting ''Prismatic'"
+							;Debug:Echo["Casting ''Prismatic'"]
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 							LastSpellCast:Set[72]
 							call CheckCastBeam
@@ -1496,7 +1506,7 @@ function CastSomething()
 					}
 					else
 					{
-						;echo "DEBUG:: Casting ''Prismatic'"
+						;Debug:Echo["Casting ''Prismatic'"]
 						call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
 						LastSpellCast:Set[72]
 						call CheckCastBeam
@@ -1509,7 +1519,7 @@ function CastSomething()
 
 	if (${Me.Ability[${SpellType[80]}].IsReady})
 	{
-		;echo "DEBUG:: Casting 'Fast Casting DoT'"
+		;Debug:Echo["Casting 'Fast Casting DoT'"]
 		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[80]
 		return
@@ -1517,7 +1527,7 @@ function CastSomething()
 
 	if (${Me.Ability[${SpellType[70]}].IsReady})
 	{
-		;echo "DEBUG:: Casting 'Mind DoT'"
+		;Debug:Echo["Casting 'Mind DoT'"]
 		call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[70]
 		return
@@ -1528,7 +1538,7 @@ function CastSomething()
 	;contruct
 	if (${Me.Ability[${SpellType[51]}].IsReady})
 	{
-		;echo "DEBUG:: Casting 'Construct'"
+		;Debug:Echo["Casting 'Construct'"]
 		call _CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
 		return
 	}
@@ -1538,7 +1548,7 @@ function CastSomething()
 	{
 		if (${Me.Ability[Spellblade's Counter].IsReady})
 		{
-			;echo "DEBUG:: Casting 'Melee AA Ability'"
+			;Debug:Echo["Casting 'Melee AA Ability'"]
 			Actor[${KillTarget}]:DoTarget
 			call CastSpell "Spellblade's Counter" 395 ${KillTargeT} 0
 			return
@@ -1548,7 +1558,7 @@ function CastSomething()
 	; fast-casting encounter stun
 	if (${Me.Ability[${SpellType[191]}].IsReady})
 	{
-		;echo "DEBUG:: Casting 'Encounter Stun'"
+		;Debug:Echo["Casting 'Encounter Stun'"]
 		call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[191]
 		return
@@ -1557,7 +1567,7 @@ function CastSomething()
 	; melee debuff
 	if (${Me.Ability[${SpellType[50]}].IsReady})
 	{
-		;echo "DEBUG:: Casting 'Melee Debuff'"
+		;Debug:Echo["Casting 'Melee Debuff'"]
 		call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[50]
 		return
@@ -1566,7 +1576,7 @@ function CastSomething()
 	; extract mana
 	if (${Me.Ability[${SpellType[309]}].IsReady})
 	{
-		;echo "DEBUG:: Casting 'Mana Recovery'"
+		;Debug:Echo["Casting 'Mana Recovery'"]
 		call CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[309]
 		return
@@ -1575,7 +1585,7 @@ function CastSomething()
 	; root
 	if (${Me.Ability[${SpellType[230]}].IsReady})
 	{
-		;echo "DEBUG:: Casting 'Root'"
+		;Debug:Echo["Casting 'Root'"]
 		call CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[230]
 		return
@@ -1618,7 +1628,7 @@ function Have_Aggro()
 	{
 		if ${Me.Ability["Phase"].IsReady}
 		{
-			echo "DEBUG:: Casting 'Phase' on ${Actor[${KillTarget}].Name}!"
+			Debug:Echo["Casting 'Phase' on ${Actor[${KillTarget}].Name}!"]
 			call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
 			LastSpellCast:Set[357]
 			call CheckCastBeam
@@ -1626,7 +1636,7 @@ function Have_Aggro()
 		}
 		elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
 		{
-			echo "DEBUG:: Casting 'Blink'!"
+			Debug:Echo["Casting 'Blink'!"]
 			call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
 			LastSpellCast:Set[358]
 			call CheckCastBeam
