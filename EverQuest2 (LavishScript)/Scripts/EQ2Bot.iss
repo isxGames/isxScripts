@@ -193,6 +193,7 @@ variable string GainedXPString
 variable string LastQueuedAbility
 variable int LastCastTarget
 variable int OORThreshold
+variable bool CheckingBuffsOnce
 
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
@@ -4148,6 +4149,7 @@ function CheckBuffsOnce()
 
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 	CurrentAction:Set["Checking Buffs Once..."]
+	CheckingBuffsOnce:Set[TRUE]
 
 	if ${Me.CastingSpell}
 	{
@@ -4194,6 +4196,7 @@ function CheckBuffsOnce()
 	elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	CurrentAction:Set["Waiting..."]
+	CheckingBuffsOnce:Set[FALSE]
 	return
 }
 
