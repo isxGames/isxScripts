@@ -1059,6 +1059,9 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	;echo CastSpellNow ${spell}
 	variable int Counter
 
+	if !${spellid}
+		spellid:Set[${Me.Ability[${spell}].ID}]
+
 	if !${Me.InCombat}
 	{
 		call AmIInvis "CastSpellNOW()"
