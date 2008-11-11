@@ -350,13 +350,11 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 0 0 1 0
 		eq2execute auto 1
-		call CheckPosition 1 1 ${KillTarget}
 	}
 
 	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15
 	{
 		eq2execute auto 1
-		call CheckPosition 1 1 ${KillTarget}
 	}	
 
 	AutoFollowingMA:Set[FALSE]
@@ -442,9 +440,8 @@ function Combat_Routine(int xAction)
 
 	if ${Me.Ability[${SpellType[62]}].IsReady}
 	{
-		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1 0 1 0
-		wait 8
-		call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 1 0 1 0
+		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1 0 
+		call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0 1 0
 	}
 
 	;Always use Cacophony of Blades if available.
