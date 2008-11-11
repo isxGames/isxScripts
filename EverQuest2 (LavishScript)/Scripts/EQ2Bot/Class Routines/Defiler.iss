@@ -57,7 +57,8 @@ function Class_Declaration()
 	declare BuffProcGroupMember string script
 	declare BuffHorrorGroupMember string script
 	declare BuffAlacrityGroupMember string script
-
+	declare CureTargetList collection:string script
+	declare CurseTargetList collection:string script
 	declare EquipmentChangeTimer int script
 
 	call EQ2BotLib_Init
@@ -79,6 +80,12 @@ function Class_Declaration()
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
 	BuffHorrorGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffHorrorGroupMember,]}]
 	BuffAlacrityGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAlacrityGroupMember,]}]
+
+	;Enable Cure Triggers
+	ISXEQ2:EnableAfflictionEvents
+	Event[EQ2_onRaidMemberAfflicted]:AttachAtom[EQ2_onRaidMemberAfflicted]
+	Event[EQ2_onMeAfflicted]:AttachAtom[EQ2_onMeAfflicted]
+	Event[EQ2_onGroupAfflicted]:AttachAtom[EQ2_onGroupAfflicted]
 }
 
 function Pulse()
@@ -491,7 +498,7 @@ function Combat_Routine(int xAction)
 	;Cast Alacrity if available
 	if ${Me.Ability[${SpellType[398]}].IsReady}
 	{
-		BuffTarget:Set[${UIElement[BuffAlacrityGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+		BuffTarget:Set[${UIElement[cbBuffAlacrityGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			call CastSpellRange 398 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
@@ -1156,4 +1163,59 @@ function PostDeathRoutine()
 	;; This function is called after a character has either revived or been rezzed
 
 	return
+}
+
+atom(script) EQ2_onMeAfflicted(int Trauma, int Arcane, int Noxious, int Elemental, int Cursed)
+{
+	if ${Cursed}
+		eq2execute /useabilityonplayer ${Me.ToActor.Name} Cure Curse
+
+	if ${Trauma} || ${Arcane} || ${Noxious} || ${Elemental}
+	{
+		if !${CureTargetList.Element[${Me.ID}](exists)}
+			CureTargetList:Set[${Me.ID},${Me.Name}]
+	}
+	Script[EQ2Bot].QueueCommand[call CollectionCures]
+}
+
+atom(script) EQ2_onGroupAfflicted(uint Afflicted_Actor, int Trauma, int Arcane, int Noxious, int Elemental, int Cursed)
+{
+	if ${Cursed} && !${CureTargetList.Element[${Afflicted_Actor}](exists)}
+		CurseTargetList:Set[${Afflicted_Actor},${Actor[${Afflicted_Actor}].Name}]
+
+	if ${Trauma} || ${Arcane} || ${Noxious} || ${Elemental}
+	{
+		if !${CureTargetList.Element[${Afflicted_Actor}](exists)}
+			CureTargetList:Set[${Afflicted_Actor},${Actor[${Afflicted_Actor}].Name}]
+	}
+	Script[EQ2Bot].QueueCommand[call CollectionCures]
+}
+
+atom(script) EQ2_onRaidWindowAppeared()
+{
+	if ${Cursed} && !${CureTargetList.Element[${Afflicted_Actor}](exists)}
+		CurseTargetList:Set[${Afflicted_Actor},${Actor[${Afflicted_Actor}].Name}]
+
+	if ${Trauma} || ${Arcane} || ${Noxious} || ${Elemental}
+	{
+		if !${CureTargetList.Element[${Afflicted_Actor}](exists)}
+			CureTargetList:Set[${Afflicted_Actor},${Actor[${Afflicted_Actor}].Name}]
+	}
+	Script[EQ2Bot].QueueCommand[call CollectionCures]
+}
+
+function CollectionCures()
+{
+	declare CureCnt int 0
+
+	if !${CureTargetList.Used}
+		return
+
+	do
+	{
+		if ${Actor[].}
+	}
+	while ${CureTargetList.NextKey(exists)}
+
+
 }

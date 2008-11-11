@@ -264,7 +264,7 @@ function main()
 	variable int AggroMob
 
 	Debug:Enable
-	
+
 	if !${ISXEQ2.IsReady}
 	{
 		echo ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!
@@ -415,9 +415,9 @@ function main()
 				}
 			}
 		}
-		
+
 		call Pulse
-		
+
 		;;;;
 		;; Only do the Buff Routines Loop every x second(s)
 		;;;;
@@ -431,14 +431,14 @@ function main()
 			{
 				ExecuteAtom AutoFollowTank
 				wait 5
-			}	
-			ExecuteAtom CheckStuck			
-			
+			}
+			ExecuteAtom CheckStuck
+
 			gRtnCtr:Set[1]
 			do
 			{
 				;Debug:Echo["Pre-Combat Routines Loop: Test - ${gRtnCtr}"]
-	
+
 				; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 				if ${PathType}==3 && !${AutoPull}
 				{
@@ -447,19 +447,19 @@ function main()
 						target ${Actor[ExactName,${MainAssist}]}
 						wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
 					}
-	
+
 					; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
 					if !${Me.TargetLOS} && ${Target.Distance}>10
 						call MovetoMaster
 					elseif ${Target.Distance}>10
 						call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
 				}
-	
+
 				if !${MainTank}
 				{
 					if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
 						KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
-	
+
 					; Add additional check to see if Mob is in Camp OR MainTank is within designated range
 					if ${KillTarget}
 					{
@@ -482,7 +482,7 @@ function main()
 							KillTarget:Set[0]
 					}
 				}
-	
+
 				;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
 				if ${PathType}==4 && ${MainTank}
 				{
@@ -493,7 +493,7 @@ function main()
 							call Combat
 					}
 				}
-	
+
 				MobDetected:Set[${Mob.Detect}]
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;;
@@ -528,7 +528,7 @@ function main()
 				}
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	
+
 				if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 				{
 					if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
@@ -562,14 +562,14 @@ function main()
 						CurrentAction:Set["Dead..."]
 						break
 					}
-	
+
 					;disable autoattack if not in combat
 					if (${Me.AutoAttackOn} && !${Mob.Detect})
 						EQ2Execute /toggleautoattack
 				}
 			}
 			while ${gRtnCtr:Inc}<=40
-			
+
 			if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
 				if (${UseCustomRoutines})
@@ -587,7 +587,7 @@ function main()
 								break
 							}
 						}
-	
+
 						call Custom__Buff_Routine ${gRtnCtr}
 						if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 						{
@@ -600,7 +600,7 @@ function main()
 					while ${gRtnCtr:Inc} <= 40
 				}
 			}
-			
+
 			BuffRoutinesTimer:Set[${Script.RunningTime}]
 			OutOfCombatRoutinesTimer:Set[${Script.RunningTime}]
 		}
@@ -610,14 +610,14 @@ function main()
 			;;;;;;;;;;;;;;
 			;;; Pre-Combat Routines  (NO Buff Loop)
 			;;;;;;;;;;;;;;
-			
+
 			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 			{
 				ExecuteAtom AutoFollowTank
 				wait 5
-			}	
-			ExecuteAtom CheckStuck	
-			
+			}
+			ExecuteAtom CheckStuck
+
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
@@ -722,15 +722,15 @@ function main()
 				;disable autoattack if not in combat
 				if (${Me.AutoAttackOn} && !${Mob.Detect})
 					EQ2Execute /toggleautoattack
-			}	
-			
+			}
+
 			;; Misc. Checks
 			if (${Actor[ExactName,${MainAssist}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[exactname,${OriginalMA}].IsDead})
 				EQ2Bot:MainAssist_Dead
-	
+
 			if (${Actor[exactname,${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,${OriginalMT}].IsDead})
 				EQ2Bot:MainTank_Dead
-				
+
 			OutOfCombatRoutinesTimer:Set[${Script.RunningTime}]
 		}
 		;;;;;;;;;;;;;;
@@ -968,7 +968,7 @@ function CastSpellRange(... Args)
 	variable bool IgnoreIsReady=0
 	variable uint AbilityID=0
 	variable string AbilityName
-	
+
 	variable int count=0
 	variable int test=${Args[1]}
 	if ${test}>0
@@ -1029,11 +1029,11 @@ function CastSpellRange(... Args)
 			elseif ${Args[${count}].Token[1,=].Equal[IgnoreIsReady]}
 				IgnoreIsReady:Set[${Args[${count}].Token[2,=]}]
 			elseif ${Args[${count}].Token[1,=].Equal[AbilityID]}
-				AbilityID:Set[${Args[${count}].Token[2,=]}]				
+				AbilityID:Set[${Args[${count}].Token[2,=]}]
 		}
 		if ${start}==-99
 			return -1
-			
+
 		if (${start} > 0 && ${AbilityID} > 0)
 		{
 			Debug:Echo["CastSpellRange() -- BAD SYNTAX:  You must use *either* 'start' or 'AbilityID', not both!"]
@@ -1051,7 +1051,7 @@ function CastSpellRange(... Args)
 		Debug:Echo["CastSpellRange() -- BAD SYNTAX:  'start' or 'AbilityID' must be greater than zero."]
 		return -1
 	}
-	
+
 
 	;Debug:Echo["CastSpellRange(${tempvar}::${SpellType[${tempvar}]})"]
 
@@ -1089,18 +1089,18 @@ function CastSpellRange(... Args)
 		}
 		else
 			AbilityName:Set[${Me.Ability[id,${AbilityID}].Name}]
-		
+
 		;; This should never happen..but just in case...
 		if ${AbilityID} <= 0
 			AbilityID:Set[${Me.Ability[${AbilityName}].ID}]
-			
+
 		;Debug:Echo["CastSpellRange() -- AbilityID: ${AbilityID} -- AbilityName: ${AbilityName}"]
-			
+
 		if ${AbilityName.Length}
 		{
 			;if not ready, we can't cast it
 			if !${IgnoreIsReady} && !${Me.Ability[id,${AbilityID}].IsReady}
-				break	
+				break
 
 			;lets make sure the target doesn't already have the spell
 			if ${TargetID}
@@ -1289,7 +1289,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	;Debug:Echo["EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"]
 	;Debug:Echo["EQ2Bot-Debug:: castwhilemoving: ${castwhilemoving} - WaitWhileCasting: ${WaitWhileCasting}"]
 	;Debug:Echo["EQ2Bot-Debug:: ------------------------------------------------"]
-	
+
 	if !${spellid}
 		spellid:Set[${Me.Ability[${spell}].ID}]
 
@@ -1371,8 +1371,8 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 			}
 			while ${Me.CastingSpell}
 			wait 5
-		}		
-		
+		}
+
 		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
 		{
 			do
@@ -1385,7 +1385,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 			return
 		}
 	}
-	
+
 	;Debug:Echo["EQ2Bot-Debug:: Queuing: ${spell}"]
 	;Debug:Echo["EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"]
 	;Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"]
@@ -1446,13 +1446,13 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 			{
 				wait 2
 				Counter:Inc[2]
-	
+
 				if (${Counter} > ${Math.Calc[${TimeOut}+2]})
 				{
 					Me.Ability[id,${spellid}]:Use
 					break
 				}
-	
+
 				if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
 				{
 					call VerifyTarget ${TargetID}
@@ -1462,7 +1462,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 						return
 					}
 				}
-	
+
 				if ${Counter} >= 50 && ${Me.InCombat}
 				{
 					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
@@ -2118,7 +2118,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			}
 			else
 			{
-				minrange:Set[19]
+				minrange:Set[4]
 				maxrange:Set[${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[${AbilityID}]}].MaxRange}]}]
 			}
 			break
@@ -2205,7 +2205,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	{
 		if ${quadrant}
 		{
-			echo DEBUG:: CheckPosition Already Close to target, Checking Quadrant
+			;echo DEBUG:: CheckPosition Already Close to target, Checking Quadrant
 			call CheckQuadrant ${TID} ${quadrant}
 		}
 		;verify distance and return
@@ -2230,15 +2230,15 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	;if melee is on we'll face the target if its killtarget
 	if ${Actor[${TID}](exists)} && ${Actor[${KillTarget}].ID}==${TID} && ${Me.AutoAttackOn}
 	{
-		echo DEBUG::CheckPosition - Facing KillTarget
+		;echo DEBUG::CheckPosition - Facing KillTarget
 		face ${Actor[${TID}].X} ${Actor[${TID}].Z}
 	}
 
 
-	echo DEBUG::CheckPostion - Checking stuck state :: ${isstuck}
+	;echo DEBUG::CheckPostion - Checking stuck state :: ${isstuck}
 	if !${isstuck}
 	{
-		echo DEBUG::CheckPosition - Currently not stuck, attempting FastMove to destination
+		;echo DEBUG::CheckPosition - Currently not stuck, attempting FastMove to destination
 		call FastMove ${destpoint.X} ${destpoint.Z} 2
 	}
 	;
@@ -2317,17 +2317,20 @@ function CheckQuadrant(uint TID, int quadrant)
 			break
 		case 1
 			if ${targetaspect}>0 && ${targetaspect}<45
+			{
+				Debug:Echo[CheckQuadrant - Checking Rear and we are Rear]
 				return
+			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					echo 1st left ${TID} 40
+					;Debug:Echo[1st left ${TID} 40]
 					call StrafeToLeft ${TID} 40
 				}
 				else
 				{
-					echo 1st right ${TID} 40
+					;Debug:Echo[ 1st right ${TID} 40]
 					call StrafeToRight ${TID} 40
 				}
 				return
@@ -2340,12 +2343,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					echo 2nd right
+					;Debug:Echo[ 2nd right]
 					call StrafeToRight ${TID} 150
 				}
 				else
 				{
-					echo 2nd left
+					;Debug:Echo[ 2nd left]
 					call StrafeToLeft ${TID} 150
 				}
 				return
@@ -2360,12 +2363,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						echo 3rd left
+						;Debug:Echo[ 3rd right]
 						call StrafeToLeft ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						echo 3rd right
+						;Debug:Echo[ 3rd left]
 						call StrafeToRight ${TID} 60
 					}
 				}
@@ -2373,12 +2376,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						echo 4th right
+						;Debug:Echo[  4th right]
 						call StrafeToRight ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						echo 4th left
+						;Debug:Echo[  4th left]
 						call StrafeToLeft ${TID} 60
 					}
 				}
@@ -2392,12 +2395,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					echo 5th right
+					;Debug:Echo[  5th right]
 					call StrafeToRight ${TID} 120
 				}
 				else
 				{
-					echo 5th left
+					;Debug:Echo[  5th left]
 					call StrafeToLeft ${TID} 120
 				}
 				return
@@ -2410,12 +2413,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					echo 6th left
+					;Debug:Echo[  6th left]
 					call StrafeToLeft ${TID} 65
 				}
 				else
 				{
-					echo 6th right
+					;Debug:Echo[  6th right]
 					call StrafeToRight ${TID} 65
 				}
 				return
@@ -2455,7 +2458,8 @@ function StrafeToLeft(uint TID, float destangle)
 	{
 		do
 		{
-			echo DEBUG:: Strafing to LEFT from RIGHT Side
+			Debug:Echo[Strafing to LEFT from RIGHT Side]
+			Debug:Echo[${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -2463,15 +2467,15 @@ function StrafeToLeft(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			wait 2
+			wait 1
 
-			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+1]}
 			{
 				press -hold ${forward}
 				movingforward:Set[TRUE]
 			}
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+		while ${Actor[${TID}](exists)} && !${Actor[${TID}].IsDead} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
 		if ${movingforward}
 		{
@@ -2481,7 +2485,7 @@ function StrafeToLeft(uint TID, float destangle)
 
 		if ${Position.Angle[${TID}]}>${destangle}
 		{
-			echo DEBUG:: Stuck While Strafing
+			Debug:Echo[Stuck While Strafing Left]
 			isstuck:Set[TRUE]
 		}
 	}
@@ -2489,7 +2493,8 @@ function StrafeToLeft(uint TID, float destangle)
 	{
 		do
 		{
-			echo DEBUG:: Strafing to LEFT from LEFT Side
+			Debug:Echo[ Strafing to LEFT from LEFT Side]
+			Debug:Echo[ ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -2497,19 +2502,19 @@ function StrafeToLeft(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			wait 2
+			wait 1
 
-			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+1]}
 			{
 				press -hold ${forward}
 				movingforward:Set[TRUE]
 			}
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+		while ${Actor[${TID}](exists)} && !${Actor[${TID}].IsDead} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
 		if ${Position.Angle[${TID}]}<${destangle}
 		{
-			echo DEBUG:: Stuck While Strafing
+			Debug:Echo[Stuck While Strafing Left]
 			isstuck:Set[TRUE]
 		}
 	}
@@ -2548,7 +2553,8 @@ function StrafeToRight(uint TID, float destangle)
 	{
 		do
 		{
-			echo DEBUG:: Strafing to RIGHT from RIGHT Side
+			Debug:Echo[ Strafing to RIGHT from RIGHT Side]
+			Debug:Echo[ ${TID} ${Actor[${TID}].Name} ${Position.Angle[${TID}]}<${destangle}]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -2556,20 +2562,20 @@ function StrafeToRight(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			wait 2
+			wait 1
 
-			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+1]}
 			{
 				press -hold ${forward}
 				movingforward:Set[TRUE]
 			}
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+		while ${Actor[${TID}](exists)} && !${Actor[${TID}].IsDead} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
 
 		if ${Position.Angle[${TID}]}<${destangle}
 		{
-			echo DEBUG:: Stuck While Strafing
+			Debug:Echo[ Stuck While Strafing Right]
 			isstuck:Set[TRUE]
 		}
 	}
@@ -2577,7 +2583,8 @@ function StrafeToRight(uint TID, float destangle)
 	{
 		do
 		{
-			echo DEBUG:: Strafing to RIGHT from LEFT Side
+			Debug:Echo[ Strafing to RIGHT from LEFT Side]
+			Debug:Echo[ ${TID} ${Actor[${TID}].Name} ${Position.Angle[${TID}]}>${destangle}]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -2585,19 +2592,19 @@ function StrafeToRight(uint TID, float destangle)
 			}
 
 			Actor[${TID}]:DoFace
-			wait 2
+			wait 1
 
-			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+3]}
+			if ${Actor[${TID}].Distance}>${Math.Calc64[${startdistance}+1]}
 			{
 				press -hold ${forward}
 				movingforward:Set[TRUE]
 			}
 		}
-		while ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
+		while ${Actor[${TID}](exists)} && !${Actor[${TID}].IsDead} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)
 
 		if ${Position.Angle[${TID}]}>${destangle}
 		{
-			echo DEBUG:: Stuck While Strafing
+			Debug:Echo[ DEBUG:: Stuck While Strafing Right]
 			isstuck:Set[TRUE]
 		}
 	}
@@ -4306,7 +4313,7 @@ function CheckBuffsOnce()
 	;;;
 	variable int i
 	CheckingBuffsOnce:Set[TRUE]
-	
+
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 	CurrentAction:Set["Checking Buffs Once..."]
 
@@ -4757,7 +4764,7 @@ objectdef ActorCheck
 
 objectdef EQ2BotObj
 {
-	
+
 	method Init_Settings()
 	{
 		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
@@ -4772,18 +4779,18 @@ objectdef EQ2BotObj
 		SpellSet:Set[${LavishSettings[EQ2Bot].FindSet[Spells]}]
 		CharacterSet:Set[${LavishSettings[EQ2Bot].FindSet[Character]}]
 		CharacterSet:AddSet[Temporary Settings]
-		
-		
+
+
 		This:Init_Character
-		
+
 	}
-	
+
 	method RefreshList(string ListFQN, string SettingSet, bool IncludeMe=1, bool IncludePets=1, bool IncludeRaid=0)
 	{
 		variable int tmpvar
 		variable iterator iter
 		variable index:string PreviousSelection
-		
+
 		if !${UIElement[${ListFQN}].Type.Find[combobox]}
 		{
 			CharacterSet.FindSet[${Me.SubClass}].FindSet[${SettingSet}]:GetSettingIterator[iter]
@@ -4800,7 +4807,7 @@ objectdef EQ2BotObj
 		{
 			PreviousSelection:Insert[${UIElement[${ListFQN}].SelectedItem.Text}]
 		}
-		
+
 		tmpvar:Set[1]
 
 		UIElement[${ListFQN}]:ClearItems
@@ -4846,7 +4853,7 @@ objectdef EQ2BotObj
 					UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
 					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-				}		
+				}
 			}
 			while ${tmpvar:Inc} <= ${Me.Group}
 		}
@@ -4865,7 +4872,7 @@ objectdef EQ2BotObj
 			}
 		}
 	}
-	
+
 	method Save_Settings()
 	{
 		LavishSettings[EQ2Bot].FindSet[Character]:Export[${charfile}]
@@ -4876,7 +4883,7 @@ objectdef EQ2BotObj
 		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
 		CharacterSet:AddSet[General Settings]
 		CharacterSet:AddSet[${Me.SubClass}]
-		
+
 		switch ${Me.Archetype}
 		{
 			case scout
@@ -4952,7 +4959,7 @@ objectdef EQ2BotObj
 		LoreConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot Lore Items?,TRUE]}]
 		NoTradeConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot NoTrade Items?,FALSE]}]
 		LootPrevCollectedShineys:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to loot previously collected shineys?,FALSE]}]
-		
+
 		BuffRoutinesTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[BuffRoutinesTimerInterval,4000]}]
 		OutOfCombatRoutinesTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[OutOfCombatRoutinesTimerInterval,1000]}]
 		AggroDetectionTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[AggroDetectionTimerInterval,500]}]
@@ -5349,7 +5356,7 @@ function CheckAbilities(string class)
 	variable int MissingAbilitiesCount
 	variable iterator SpellIterator
 	SpellSet.FindSet[${class}]:GetSettingIterator[SpellIterator]
-	
+
 	if ${SpellIterator:First(exists)}
 	{
 		do
@@ -5391,7 +5398,7 @@ function CheckAbilities(string class)
 		}
 		while ${SpellIterator:Next(exists)}
 	}
-	
+
 	if (${MissingAbilitiesCount} > 0 && ${Me.Level} >= 10)
 	{
 		echo "------------"
@@ -5624,7 +5631,7 @@ objectdef Navigation
 	{
 		if !${StartNav} && !${StartBot}
 			return
-		
+
 		variable index:lnavregionref CampRegions
 		variable index:lnavregionref PullRegions
 		variable index:lnavregionref StartRegion
