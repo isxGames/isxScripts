@@ -46,8 +46,8 @@ function Class_Declaration()
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffGloryGroupMember string script
 	declare BuffBennedictionGroupMember string script
-  declare BuffPraetorateGroupMember string script
-  declare BuffShieldAllyGroupMember string script
+  	declare BuffPraetorateGroupMember string script
+  	declare BuffShieldAllyGroupMember string script
 	declare HolyShieldGroupMember string script
 	declare ManaCureGroupMember string script
 	declare tempMH string script
@@ -81,6 +81,25 @@ function Class_Declaration()
 	BuffShieldAllyGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffShieldAllyGroupMember,]}]
 	HolyShieldGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[HolyShieldGroupMember,]}]
 	ManaCureGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ManaCureGroupMember,]}]
+}
+
+function Pulse()
+{
+	;;;;;;;;;;;;
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'AggroDetectionTimerInterval' is 
+	;;        provided to assist with this.  An example is provided.
+	;
+	;			if (${Script.RunningTime} <= ${Math.Calc64[${AggroDetectionTimerInterval}+2000})
+	;			{
+	;				Debug:Echo["Anything within this bracket will be called every two seconds.
+	;			}
+	;;;;;;;;;;;;
+
+
+
+	
+	; Do not remove/change
+	AggroDetectionTimerInterval:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()

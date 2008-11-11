@@ -62,7 +62,25 @@ function Class_Declaration()
 	BuffWaterBreathing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffWaterBreathing,FALSE]}]
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
 	BuffAvatarGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAvatarGroupMember,]}]
+}
 
+function Pulse()
+{
+	;;;;;;;;;;;;
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'AggroDetectionTimerInterval' is 
+	;;        provided to assist with this.  An example is provided.
+	;
+	;			if (${Script.RunningTime} <= ${Math.Calc64[${AggroDetectionTimerInterval}+2000})
+	;			{
+	;				Debug:Echo["Anything within this bracket will be called every two seconds.
+	;			}
+	;;;;;;;;;;;;
+
+
+
+	
+	; Do not remove/change
+	AggroDetectionTimerInterval:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()
