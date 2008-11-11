@@ -194,6 +194,13 @@ variable string LastQueuedAbility
 variable int LastCastTarget
 variable int OORThreshold
 variable bool CheckingBuffsOnce
+variable uint BuffRoutinesTimer = ${Script.RunningTime}
+variable int BuffRoutinesTimerInterval = 4000
+variable uint OutOfCombatRoutinesTimer = ${Script.RunningTime}
+variable int OutOfCombatRoutinesTimerInterval = 1000
+variable uint AggroTimer = ${Script.RunningTime}
+variable int AggroTimerInterval = 500
+variable uint ClassPulseTimer = ${Script.RunningTime}
 
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
