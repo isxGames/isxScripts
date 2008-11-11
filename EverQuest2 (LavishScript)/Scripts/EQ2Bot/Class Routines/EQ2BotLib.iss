@@ -871,10 +871,16 @@ function RelayGuildMessage(string line, string Sender, string Message)
 
 atom CheckStuck()
 {
-	if ${Actor[${Me.ToActor.WhoFollowing}].Distance}>25 && (${Math.Calc64[${Time.Timestamp} - ${StuckWarningTime}]}>=10)  && ${Actor[${Me.ToActor.WhoFollowing}](exists)}
+	if (${AutoFollowMode})
 	{
-		relay ${RelaySession} EQ2Echo ${Me.Name} IS STUCK
-		StuckWarningTime:Set[${Time.Timestamp}]
+		if (${Actor[${Me.ToActor.WhoFollowing}](exists)})
+		{
+			if ${Actor[${Me.ToActor.WhoFollowing}].Distance}>25 && (${Math.Calc64[${Time.Timestamp} - ${StuckWarningTime}]}>=10)
+			{
+				relay ${RelaySession} EQ2Echo ${Me.Name} IS STUCK
+				StuckWarningTime:Set[${Time.Timestamp}]
+			}
+		}
 	}
 }
 
