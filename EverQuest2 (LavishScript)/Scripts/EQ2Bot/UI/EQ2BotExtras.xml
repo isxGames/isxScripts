@@ -241,17 +241,49 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[EpicMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["EpicMode",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[EpicMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["EpicMode",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[EpicMode]}</Data>
 	</Commandcheckbox>
+	<Text Name='BuffRoutinesTimerText'>
+		<X>60%</X>
+		<Y>130</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Routine every:</Text>
+	</Text>
+	<Textentry Name='BuffRoutinesTimerInterval'>
+		<X>83%</X>
+		<Y>128</Y>
+		<Width>10%</Width>
+		<Height>15</Height>
+		<Color>FFDDBB00</Color>
+		<MaxLength>5</MaxLength>
+		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[BuffRoutinesTimerInterval]}]</OnLoad>
+		<OnChange>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[BuffRoutinesTimerInterval,${This.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[BuffRoutinesTimerInterval]}]
+			Script[EQ2Bot].Variable[BuffRoutinesTimerInterval]:Set[${This.Text}]
+			echo "EQ2Bot Debug :: BuffRoutinesTimerInterval now set to ${Script[EQ2Bot].Variable[BuffRoutinesTimerInterval]} ms"
+		</OnChange>
+	</Textentry>
+	<Text Name='BuffRoutinesTimerText2'>
+		<X>94%</X>
+		<Y>130</Y>
+		<Width>6%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>ms</Text>
+	</Text>
 	<Commandcheckbox name='Use MP Potions'>
 		<X>5%</X>
 		<Y>150</Y>
@@ -263,17 +295,49 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[UsePotions]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use Potions?",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[UsePotions]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use Potions?",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Use Potions?]}</Data>
 	</Commandcheckbox>
+	<Text Name='OutOfCombatRoutinesTimerIntervalText'>
+		<X>60%</X>
+		<Y>150</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>O.O.C Routine every:</Text>
+	</Text>
+	<Textentry Name='OutOfCombatRoutinesTimerInterval'>
+		<X>83%</X>
+		<Y>148</Y>
+		<Width>10%</Width>
+		<Height>15</Height>
+		<Color>FFDDBB00</Color>
+		<MaxLength>5</MaxLength>
+		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[OutOfCombatRoutinesTimerInterval]}]</OnLoad>
+		<OnChange>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[OutOfCombatRoutinesTimerInterval,${This.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[OutOfCombatRoutinesTimerInterval]}]
+			Script[EQ2Bot].Variable[OutOfCombatRoutinesTimerInterval]:Set[${This.Text}]
+			echo "EQ2Bot Debug :: OutOfCombatRoutinesTimerInterval now set to ${Script[EQ2Bot].Variable[OutOfCombatRoutinesTimerInterval]} ms"
+		</OnChange>
+	</Textentry>
+	<Text Name='OutOfCombatRoutinesTimerIntervalText2'>
+		<X>94%</X>
+		<Y>150</Y>
+		<Width>6%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>ms</Text>
+	</Text>
 	<Commandcheckbox name='Use Potions'>
 		<X>5%</X>
 		<Y>170</Y>
@@ -285,17 +349,49 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[UseCurePotions]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use potions for cures?",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[UseCurePotions]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Use potions for cures?",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Use potions for cures?]}</Data>
 	</Commandcheckbox>
+	<Text Name='AggroDetectionTimerIntervalText'>
+		<X>60%</X>
+		<Y>170</Y>
+		<Width>25%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Aggro Detect every:</Text>
+	</Text>
+	<Textentry Name='AggroDetectionTimerInterval'>
+		<X>83%</X>
+		<Y>168</Y>
+		<Width>10%</Width>
+		<Height>15</Height>
+		<Color>FFDDBB00</Color>
+		<MaxLength>5</MaxLength>
+		<OnLoad>This:SetText[${Script[EQ2Bot].Variable[AggroDetectionTimerInterval]}]</OnLoad>
+		<OnChange>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[AggroDetectionTimerInterval,${This.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[AggroDetectionTimerInterval]}]
+			Script[EQ2Bot].Variable[AggroDetectionTimerInterval]:Set[${This.Text}]
+			echo "EQ2Bot Debug :: AggroDetectionTimerInterval now set to ${Script[EQ2Bot].Variable[AggroDetectionTimerInterval]} ms"
+		</OnChange>
+	</Textentry>
+	<Text Name='AggroDetectionTimerIntervalText2'>
+		<X>94%</X>
+		<Y>170</Y>
+		<Width>6%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>ms</Text>
+	</Text>
 	<Text Name='lblArcane'>
 		<X>5%</X>
 		<Y>190</Y>

@@ -403,7 +403,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[AssistHP]}]</OnLoad>
 									<OnChange>
 										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Assist and Engage in combat at what Health?,${This.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Assist and Engage in combat at what Health?]}]
 										Script[EQ2Bot].Variable[AssistHP]:Set[${This.Text}]
 									</OnChange>

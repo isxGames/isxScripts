@@ -38,15 +38,16 @@ function Pulse()
 	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
 	;;        provided to assist with this.  An example is provided.
 	;
-	;			if (${Script.RunningTime} <= ${Math.Calc64[${ClassPulseTimer}+2000})
+	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}
+	;			}         
+	;
+	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
+	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
 
-
-	
 	; Do not remove/change
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -97,7 +98,6 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
-	;Function Library Calls
 	;This is an eq2botlib function to reset your equiped gear to the default config from when you started the bot
 	call WeaponChange
 
@@ -106,14 +106,6 @@ function Buff_Routine(int xAction)
 	{
 		call Shard
 	}
-
-	;This is an eq2botlib atomic function that will resume following your designated target if you are not currently in follow mode
-	if ${AutoFollowMode}
-	{
-		ExecuteAtom AutoFollowTank
-	}
-
-
 
 	;Preform Buff Actions
 	switch ${PreAction[${xAction}]}

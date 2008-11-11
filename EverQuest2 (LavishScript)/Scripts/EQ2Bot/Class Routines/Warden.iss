@@ -109,14 +109,26 @@ function Pulse()
 	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
 	;;        provided to assist with this.  An example is provided.
 	;
-	;			if (${Script.RunningTime} <= ${Math.Calc64[${ClassPulseTimer}+2000})
+	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
 	;			}         
+	;
+	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
+	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-
-
+	;; check this at least every 0.5 seconds
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	{
+		call CheckHeals
+		
+		;cancel Duststorm if up
+		if ${Me.Maintained[${SpellType[365]}](exists)} && !${Actor[pc,exactname,${MainTankPC}].InCombatMode}
+		{
+			Me.Maintained[${SpellType[365]}]:Cancel
+		}
+	}
 	
 	; Do not remove/change
 	ClassPulseTimer:Set[${Script.RunningTime}]
@@ -266,23 +278,14 @@ function Buff_Routine(int xAction)
 	if !${InitialBuffsDone}
 	{
 		if (${Me.GroupCount} > 1)
-			call CastSpell "Favor of the Phoenix"
-		call CastSpellRange 31
+			call CastSpell "Favor of the Phoenix" ${Me.Ability["Favor of the Phoenix"].ID} 0 1 1
 		InitialBuffsDone:Set[TRUE]
 	}
-
-	ExecuteAtom CheckStuck
 
 	if ${ShardMode}
 		call Shard
 
 	call CheckHeals
-
-	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
-	{
-    ExecuteAtom AutoFollowTank
-		wait 5
-	}
 
 	;cancel Duststorm if up
 	if ${Me.Maintained[${SpellType[365]}](exists)} && !${Actor[pc,exactname,${MainTankPC}].InCombatMode}
@@ -1154,15 +1157,11 @@ function HandleGroupWiped()
 	;;; There was a full group wipe and now we are rebuffing
 
 	;assume that someone used a feather
-	if (${Me.GroupCount} > 1)
+	if !${InitialBuffsDone}
 	{
-		Me.Ability[Favor of the Phoenix]:Use
-		do
-		{
-			waitframe
-		}
-		while ${Me.CastingSpell}
-		wait 1
+		if (${Me.GroupCount} > 1)
+			call CastSpell "Favor of the Phoenix" ${Me.Ability["Favor of the Phoenix"].ID} 0 1 1
+		InitialBuffsDone:Set[TRUE]
 	}
 
 	return OK

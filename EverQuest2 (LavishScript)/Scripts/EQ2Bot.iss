@@ -194,13 +194,13 @@ variable string LastQueuedAbility
 variable int LastCastTarget
 variable int OORThreshold
 variable bool CheckingBuffsOnce
-variable uint BuffRoutinesTimer = ${Script.RunningTime}
-variable int BuffRoutinesTimerInterval = 4000
-variable uint OutOfCombatRoutinesTimer = ${Script.RunningTime}
+variable uint BuffRoutinesTimer = 0
+variable int BuffRoutinesTimerInterval = 5000
+variable uint OutOfCombatRoutinesTimer = 0
 variable int OutOfCombatRoutinesTimerInterval = 1000
-variable uint AggroTimer = ${Script.RunningTime}
-variable int AggroTimerInterval = 500
-variable uint ClassPulseTimer = ${Script.RunningTime}
+variable uint AggroDetectionTimer = 0
+variable int AggroDetectionTimerInterval = 500
+variable uint ClassPulseTimer = 0
 
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
@@ -261,6 +261,7 @@ function main()
 	variable string tempnme
 	variable bool MobDetected
 	declare LastWindow string script
+	variable int AggroMob
 
 	Debug:Enable
 	
@@ -414,15 +415,209 @@ function main()
 				}
 			}
 		}
-
-		;;;;;;;;;;;;;;
-		;;; Pre-Combat Routines Loop (ie, Buff Routine, etc.)
-		;;;;;;;;;;;;;;
-		gRtnCtr:Set[1]
-		do
+		
+		call Pulse
+		
+		;;;;
+		;; Only do the Buff Routines Loop every x second(s)
+		;;;;
+		if (${BuffRoutinesTimer} == 0 || ${Script.RunningTime} >= ${Math.Calc64[${BuffRoutinesTimer}+${BuffRoutinesTimerInterval}]})
 		{
-			;Debug:Echo["Pre-Combat Routines Loop: Test - ${gRtnCtr}"]
-
+			;Debug:Echo["${Script.RunningTime} -- Performing Buff & Out-of-Combat Routines"]
+			;;;;;;;;;;;;;;
+			;;; Pre-Combat Routines Loop (ie, Buff Routine, etc.)
+			;;;;;;;;;;;;;;
+			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+			{
+				ExecuteAtom AutoFollowTank
+				wait 5
+			}	
+			ExecuteAtom CheckStuck			
+			
+			gRtnCtr:Set[1]
+			do
+			{
+				;Debug:Echo["Pre-Combat Routines Loop: Test - ${gRtnCtr}"]
+	
+				; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
+				if ${PathType}==3 && !${AutoPull}
+				{
+					if ${Actor[ExactName,${MainAssist}](exists)}
+					{
+						target ${Actor[ExactName,${MainAssist}]}
+						wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
+					}
+	
+					; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
+					if !${Me.TargetLOS} && ${Target.Distance}>10
+						call MovetoMaster
+					elseif ${Target.Distance}>10
+						call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
+				}
+	
+				if !${MainTank}
+				{
+					if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+						KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+	
+					; Add additional check to see if Mob is in Camp OR MainTank is within designated range
+					if ${KillTarget}
+					{
+						if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
+						{
+							if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+							{
+								if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
+								{
+									if ${Mob.Target[${KillTarget}]}
+										call Combat
+								}
+								;else
+									;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
+							}
+							;else
+								;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
+						}
+						else
+							KillTarget:Set[0]
+					}
+				}
+	
+				;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
+				if ${PathType}==4 && ${MainTank}
+				{
+					if ${Me.InCombat} && ${Mob.Detect}
+					{
+						call Pull any
+						if ${engagetarget}
+							call Combat
+					}
+				}
+	
+				MobDetected:Set[${Mob.Detect}]
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;;
+				;this should force the tank to react to any aggro, regardless
+				if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
+				{
+					do
+					{
+						if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
+						{
+							KillTarget:Set[${Target.ID}]
+							call Combat
+						}
+						else
+						{
+							AggroMob:Set[${Mob.NearestAggro}]
+							if ${AggroMob} > 0
+							{
+								if ${KillTarget} != ${AggroMob}
+								{
+									CurrentAction:Set["Targetting Nearest Aggro Mob"]
+									echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+									KillTarget:Set[${AggroMob}]
+								}
+								target ${AggroMob}
+								call Combat
+							}
+						}
+						MobDetected:Set[${Mob.Detect}]
+					}
+					while ${MobDetected}
+				}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+				if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
+				{
+					if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
+					{
+						if ${Mob.Target[${KillTarget}]}
+						{
+							gRtnCtr:Set[40]
+							if !${Me.InCombat}
+								CurrentAction:Set["Idle..."]
+							break
+						}
+					}
+					if !${Me.ToActor.IsDead}
+					{
+						;;;;;;;;;
+						;;;;; Call the buff routine from the class file
+						;;;;;;;;;
+						call Buff_Routine ${gRtnCtr}
+						if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+						{
+							; end after this round
+							gRtnCtr:Set[40]
+							if !${Me.InCombat}
+								CurrentAction:Set["Idle..."]
+							break
+						}
+					}
+					else
+					{
+						gRtnCtr:Set[40]
+						CurrentAction:Set["Dead..."]
+						break
+					}
+	
+					;disable autoattack if not in combat
+					if (${Me.AutoAttackOn} && !${Mob.Detect})
+						EQ2Execute /toggleautoattack
+				}
+			}
+			while ${gRtnCtr:Inc}<=40
+			
+			if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
+			{
+				if (${UseCustomRoutines})
+				{
+					gRtnCtr:Set[1]
+					do
+					{
+						if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
+						{
+							if ${Mob.Target[${KillTarget}]}
+							{
+								gRtnCtr:Set[40]
+								if !${Me.InCombat}
+									CurrentAction:Set["Idle..."]
+								break
+							}
+						}
+	
+						call Custom__Buff_Routine ${gRtnCtr}
+						if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+						{
+							gRtnCtr:Set[40]
+							if !${Me.InCombat}
+								CurrentAction:Set["Idle..."]
+							break
+						}
+					}
+					while ${gRtnCtr:Inc} <= 40
+				}
+			}
+			
+			BuffRoutinesTimer:Set[${Script.RunningTime}]
+			OutOfCombatRoutinesTimer:Set[${Script.RunningTime}]
+		}
+		elseif (${Script.RunningTime} >= ${Math.Calc64[${OutOfCombatRoutinesTimer}+${OutOfCombatRoutinesTimerInterval}]})
+		{
+			;Debug:Echo["${Script.RunningTime} -- Performing Out-of-Combat Routines"]
+			;;;;;;;;;;;;;;
+			;;; Pre-Combat Routines  (NO Buff Loop)
+			;;;;;;;;;;;;;;
+			
+			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+			{
+				ExecuteAtom AutoFollowTank
+				wait 5
+			}	
+			ExecuteAtom CheckStuck	
+			
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
@@ -493,7 +688,6 @@ function main()
 					}
 					else
 					{
-						variable int AggroMob
 						AggroMob:Set[${Mob.NearestAggro}]
 						if ${AggroMob} > 0
 						{
@@ -520,71 +714,24 @@ function main()
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
-						gRtnCtr:Set[40]
 						if !${Me.InCombat}
 							CurrentAction:Set["Idle..."]
-						break
 					}
-				}
-
-				if !${Me.ToActor.IsDead}
-				{
-					;;;;;;;;;
-					;;;;; Call the buff routine from the class file
-					;;;;;;;;;
-					call Buff_Routine ${gRtnCtr}
-					if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
-					{
-						; end after this round
-						gRtnCtr:Set[40]
-						if !${Me.InCombat}
-							CurrentAction:Set["Idle..."]
-						break
-					}
-				}
-				else
-				{
-					gRtnCtr:Set[40]
-					CurrentAction:Set["Dead..."]
-					break
 				}
 
 				;disable autoattack if not in combat
 				if (${Me.AutoAttackOn} && !${Mob.Detect})
 					EQ2Execute /toggleautoattack
-			}
-		}
-		while ${gRtnCtr:Inc}<=40
-
-		if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
-		{
-			if (${UseCustomRoutines})
-			{
-				gRtnCtr:Set[1]
-				do
-				{
-					if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
-					{
-						if ${Mob.Target[${KillTarget}]}
-						{
-							gRtnCtr:Set[40]
-							if !${Me.InCombat}
-								CurrentAction:Set["Idle..."]
-							break
-						}
-					}
-
-					call Custom__Buff_Routine ${gRtnCtr}
-					if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
-					{
-						gRtnCtr:Set[40]
-						if !${Me.InCombat}
-							CurrentAction:Set["Idle..."]
-						break
-					}
-				}
-				while ${gRtnCtr:Inc} <= 40
-			}
+			}	
+			
+			;; Misc. Checks
+			if (${Actor[ExactName,${MainAssist}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[exactname,${OriginalMA}].IsDead})
+				EQ2Bot:MainAssist_Dead
+	
+			if (${Actor[exactname,${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,${OriginalMT}].IsDead})
+				EQ2Bot:MainTank_Dead
+				
+			OutOfCombatRoutinesTimer:Set[${Script.RunningTime}]
 		}
 		;;;;;;;;;;;;;;
 		;;; END Pre-Combat Routines Loop (ie, Buff Routine, etc.)
@@ -701,38 +848,43 @@ function main()
 		}
 		call ProcessTriggers
 
-		MobDetected:Set[${Mob.Detect}]
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		;;;; This is repeated here for instances where the MT is the same as the MA
-		;;
-		if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
+		if (${Script.RunningTime} >= ${Math.Calc64[${AggroDetectionTimer}+${AggroDetectionTimerInterval}]})
 		{
-			do
+			;Debug:Echo["${Script.RunningTime} -- Performing Aggro Detection Routines"]
+			MobDetected:Set[${Mob.Detect}]
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;;;; This is repeated here for instances where the MT is the same as the MA
+			;;
+			if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
 			{
-				if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
+				do
 				{
-					KillTarget:Set[${Target.ID}]
-					call Combat
-				}
-				else
-				{
-					variable int AgressiveNPC
-					AgressiveNPC:Set[${Mob.NearestAggro}]
-					if ${AgressiveNPC} > 0
+					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
 					{
-						CurrentAction:Set["Targetting Nearest Aggro Mob"]
-						echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-						KillTarget:Set[${AgressiveNPC}]
-						target ${AgressiveNPC}
+						KillTarget:Set[${Target.ID}]
 						call Combat
 					}
+					else
+					{
+						variable int AgressiveNPC
+						AgressiveNPC:Set[${Mob.NearestAggro}]
+						if ${AgressiveNPC} > 0
+						{
+							CurrentAction:Set["Targetting Nearest Aggro Mob"]
+							echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+							KillTarget:Set[${AgressiveNPC}]
+							target ${AgressiveNPC}
+							call Combat
+						}
+					}
+					MobDetected:Set[${Mob.Detect}]
 				}
-				MobDetected:Set[${Mob.Detect}]
+				while ${MobDetected}
 			}
-			while ${MobDetected}
+			AggroDetectionTimer:Set[${Script.RunningTime}]
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		}
-		;;
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 		; Check if we have leveled and reset XP Calculations in UI
 		if ${Me.Level} < 80
@@ -743,7 +895,7 @@ function main()
 				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 			}
 		}
-		else
+		elseif ${Me.TotalEarnedAPs} < 140
 		{
 			if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
 			{
@@ -761,12 +913,6 @@ function main()
 			call PostCombat_Init
 			StartLevel:Set[${Me.Level}]
 		}
-
-		if (${Actor[ExactName,${MainAssist}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[exactname,${OriginalMA}].IsDead})
-			EQ2Bot:MainAssist_Dead
-
-		if (${Actor[exactname,${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,${OriginalMT}].IsDead})
-			EQ2Bot:MainTank_Dead
 
 		call ProcessTriggers
 	}
@@ -1133,19 +1279,20 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	return SUCCESS
 }
 
-function CastSpell(string spell, uint spellid=0, int TargetID=0, bool castwhilemoving=0, bool WaitWhileCasting=0)
+function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemoving, bool WaitWhileCasting)
 {
 	;echo CastSpell ${spell}
 	variable int Counter
 	variable float TimeOut
+	;Debug:Echo["EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${TargetID},${castwhilemoving},${WaitWhileCasting})"]
+	;Debug:Echo["EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"]
+	;Debug:Echo["EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"]
+	;Debug:Echo["EQ2Bot-Debug:: castwhilemoving: ${castwhilemoving} - WaitWhileCasting: ${WaitWhileCasting}"]
+	;Debug:Echo["EQ2Bot-Debug:: ------------------------------------------------"]
 	
 	if !${spellid}
 		spellid:Set[${Me.Ability[${spell}].ID}]
 
-	;Debug:Echo["EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${castwhilemoving})"]
-	;Debug:Echo["EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"]
-	;Debug:Echo["EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"]
-	;Debug:Echo["EQ2Bot-Debug:: ------------------------------------------------"]
 
 	call ProcessTriggers
 
@@ -1212,6 +1359,7 @@ function CastSpell(string spell, uint spellid=0, int TargetID=0, bool castwhilem
 	}
 	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
 	{
+		wait 4
 		;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 		;; more than 7 seconds to cast.
 		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
@@ -4804,6 +4952,10 @@ objectdef EQ2BotObj
 		LoreConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot Lore Items?,TRUE]}]
 		NoTradeConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot NoTrade Items?,FALSE]}]
 		LootPrevCollectedShineys:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to loot previously collected shineys?,FALSE]}]
+		
+		BuffRoutinesTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[BuffRoutinesTimerInterval,4000]}]
+		OutOfCombatRoutinesTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[OutOfCombatRoutinesTimerInterval,1000]}]
+		AggroDetectionTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[AggroDetectionTimerInterval,500]}]
 
 		if ${PullWithBow}
 		{
@@ -5470,6 +5622,9 @@ objectdef Navigation
 
 	method UpdateNavGUI()
 	{
+		if !${StartNav} && !${StartBot}
+			return
+		
 		variable index:lnavregionref CampRegions
 		variable index:lnavregionref PullRegions
 		variable index:lnavregionref StartRegion

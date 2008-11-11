@@ -86,15 +86,16 @@ function Pulse()
 	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
 	;;        provided to assist with this.  An example is provided.
 	;
-	;			if (${Script.RunningTime} <= ${Math.Calc64[${ClassPulseTimer}+2000})
+	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
 	;			}         
+	;
+	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
+	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
 
-
-	
 	; Do not remove/change
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -284,12 +285,6 @@ function Buff_Routine(int xAction)
 	{
 		if ${ShardMode}
 			call Shard
-	
-		if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
-		{
-		    ExecuteAtom AutoFollowTank
-			wait 5
-		}
 	}
 	
 	switch ${PreAction[${xAction}]}
@@ -395,7 +390,7 @@ function Buff_Routine(int xAction)
 
 
 		case Tactics_Target
-			BuffTarget:Set[${UIElement[cbBuffArmamentGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			BuffTarget:Set[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
