@@ -128,6 +128,7 @@ function Pulse()
 
 function Class_Shutdown()
 {
+
 }
 
 function Buff_Init()
@@ -323,7 +324,7 @@ function Buff_Routine(int xAction)
 			if ${BuffHate}
 			{
 				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 0 0 0 2 0
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2
 			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -362,7 +363,7 @@ function Combat_Routine(int xAction)
 	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15
 	{
 		eq2execute auto 1
-	}	
+	}
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -435,12 +436,12 @@ function Combat_Routine(int xAction)
 		}
 		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 56 0 0 ${KillTarget} 0 0 1 
+			call CastSpellRange 56 0 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
 		}
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
 		{
-			call CastSpellRange 57 0 0 ${KillTarget} 0 0 1 
+			call CastSpellRange 57 0 0 ${KillTarget} 0 0 1
 			DebuffCnt:Inc
 		}
 	}
@@ -503,8 +504,8 @@ function Combat_Routine(int xAction)
 					while ${Me.CastingSpell}
 					{
 						wait 2
-					}		
-				
+					}
+
 					;	check if we have the bump AA and use it to stealth us
 					if ${Me.Ability[${SpellType[391]}].IsReady}
 					{
@@ -529,7 +530,7 @@ function Combat_Routine(int xAction)
 					while ${Me.CastingSpell}
 					{
 						wait 2
-					}						
+					}
 				}
 			}
 			break
@@ -541,8 +542,8 @@ function Combat_Routine(int xAction)
 					while ${Me.CastingSpell}
 					{
 						wait 2
-					}		
-				
+					}
+
 					;	check if we have the bump AA and use it to stealth us
 					if ${Me.Ability[${SpellType[391]}].IsReady}
 					{
@@ -567,7 +568,7 @@ function Combat_Routine(int xAction)
 					while ${Me.CastingSpell}
 					{
 						wait 2
-					}						
+					}
 				}
 			}
 			break
@@ -771,8 +772,8 @@ function StartHO()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }
