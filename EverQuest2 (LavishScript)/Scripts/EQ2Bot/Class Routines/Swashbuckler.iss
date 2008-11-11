@@ -31,9 +31,9 @@ function Class_Declaration()
 	declare OffenseMode bool script 1
 	declare AoEMode bool script 0
 	declare SnareMode bool script 0
-  declare TankMode bool script 0
-  declare AnnounceMode bool script 0
-  declare BuffLunge bool script 0
+  	declare TankMode bool script 0
+  	declare AnnounceMode bool script 0
+  	declare BuffLunge bool script 0
 	declare MaintainPoison bool script 1
 	declare DebuffPoisonShort string script
 	declare DammagePoisonShort string script
@@ -69,6 +69,25 @@ function Class_Declaration()
 	BuffLunge:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Lunge Reversal,FALSE]}]
 	MaintainPoison:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MaintainPoison,FALSE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
+}
+
+function Pulse()
+{
+	;;;;;;;;;;;;
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'AggroDetectionTimerInterval' is 
+	;;        provided to assist with this.  An example is provided.
+	;
+	;			if (${Script.RunningTime} <= ${Math.Calc64[${AggroDetectionTimerInterval}+2000})
+	;			{
+	;				Debug:Echo["Anything within this bracket will be called every two seconds.
+	;			}
+	;;;;;;;;;;;;
+
+
+
+	
+	; Do not remove/change
+	AggroDetectionTimerInterval:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()
