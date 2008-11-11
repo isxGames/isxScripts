@@ -1211,11 +1211,4 @@ function CollectionCures()
 	if !${CureTargetList.Used}
 		return
 
-	do
-	{
-		if ${Actor[].}
-	}
-	while ${CureTargetList.NextKey(exists)}
-
-
 }
