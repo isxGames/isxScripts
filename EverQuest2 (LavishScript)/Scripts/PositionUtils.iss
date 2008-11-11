@@ -15,11 +15,12 @@ objectdef EQ2Position
 	; 90 == Directly beside (either side)
 	member:float Angle(uint ActorID)
 	{
+		variable float Retval
 		variable float Heading=${Actor[${ActorID}].Heading}
 		variable float HeadingTo=${Actor[${ActorID}].HeadingTo}
-		Returning:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
-		Returning:Set[${Math.Acos[${RetVal}]}]
-		return
+		Retval:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
+		Retval:Set[${Math.Acos[${Retval}]}]
+		return ${Retval}
 	}
 
 	; Returns which side of the Actor I am on, Left or Right.
