@@ -1,4 +1,4 @@
-MyPrices - Version 0.13b
+MyPrices - Version 0.13c
 
 For update details see the bottom of this file.
 
@@ -320,6 +320,8 @@ Type the name of the item in the name box (case doesn't matter , spelling does)
 
 Click the 'Name only' box.
 
+Click if the item you are buying is a harvestable item or not. (alters the stacksize the script buys)
+
 Enter the number of that item you want the script to buy
 
 Enter the PP , Gold , Silver and Copper you are willing to pay for EACH item into the relevant boxes.
@@ -330,9 +332,11 @@ Press Save to add the item to the list.
 2) Partial name with filters (e.g. (adept i) )
 -----------------------------
 
-this option is Useful for Muters.
+this option is Useful for Transmuters.
 
-Enter a partial name in the name box 
+Enter a partial name in the name box or leave it blank.
+
+Click if you want the script to filter Attunable items only.
 
 Enter the number of items you want the script to buy
 
@@ -381,6 +385,8 @@ The Future
 
 Plans for developing this script are the following:
 
+Add an option to Auto-transmute newly bought items after the buy routine has completed, (need to add a check for full bags as well).
+
 Currently the auto-buy option takes the sellers base price (minus commission) as the price to pay when listing items,
 as soon as ISXEQ2 has the option I intend that the script will take the 'actual' cost shown on the broker into consideration
 before listing them. (it DOESN'T buy items over your set price - only lists them).
@@ -403,6 +409,11 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13c
+-------------
+
+Extra tickbox filter added to the buy tab , Attuneable only , filters the list so only attuneable items will be listed/bought.
 
 Version 0.13b
 -------------

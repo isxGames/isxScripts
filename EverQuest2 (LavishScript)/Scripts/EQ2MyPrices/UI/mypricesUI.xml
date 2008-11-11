@@ -1089,7 +1089,7 @@
 						<Text>Name</Text>
 					</Text>
 					<checkbox Name='Harvest'>
-						<X>160</X>
+						<X>90</X>
 						<Y>325</Y>
 						<Width>100</Width>
 						<Height>20</Height>
@@ -1106,7 +1106,7 @@
 						<Text>Number</Text>
 					</Text>
 					<checkbox Name='BuyNameOnly'>
-						<X>280</X>
+						<X>190</X>
 						<Y>325</Y>
 						<Width>100</Width>
 						<Height>20</Height>
@@ -1131,6 +1131,16 @@
 						</OnLeftClick>
 						<AutoTooltip>
 							Match name Only (exact match)
+						</AutoTooltip>
+					</checkbox>
+					<checkbox Name='BuyAttuneOnly'>
+						<X>295</X>
+						<Y>325</Y>
+						<Width>100</Width>
+						<Height>20</Height>
+						<Text>Attuneable Only</Text>
+						<AutoTooltip>
+							Atunnable Items only
 						</AutoTooltip>
 					</checkbox>
 					<Textentry Name='BuyName'>
