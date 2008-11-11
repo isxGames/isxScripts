@@ -52,6 +52,7 @@ variable int BuyNumber
 variable int PauseTimer
 variable int WaitTimer
 variable int StopWaiting
+variable int InventorySlotsFree=${Me.InventorySlotsFree}
 
 variable float MyBasePrice
 variable float MerchPrice
@@ -103,6 +104,8 @@ function main(string goscan, string goscan2)
 
 	MyPrices:LoadUI
 	MyPrices:InitTriggersAndEvents
+	
+	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	
 	call AddLog "Running MyPrices Version 0.13c : released 11th November 2008" FF11FFCC
 	
@@ -928,6 +931,12 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 		; Scan the broker list one by one buying the items until the end of the list is reached or all the Number wanted have been bought
 		do
 		{
+			if ${InventorySlotsFree}<=0
+			{
+				Echo Out of Inventory Space!
+				Break
+			}
+			
 			Vendor:GotoSearchPage[${CurrentPage}]
 			wait 5
 			do
@@ -982,6 +991,13 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 							wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${BrokerNumber}
 							wait 5
 							
+							if ${InventorySlotsFree}<=0
+							{
+								Echo Out of Inventory Space!
+								Break
+								StopSearch:Set[TRUE]
+							}
+
 							; if unable to buy the required stack due to stack limitations then change to buying singles
 							
 							if ${Vendor.Item[${CurrentItem}].Quantity} == ${BrokerNumber} && ${Vendor.Item[${CurrentItem}].Quantity} != 0
@@ -996,6 +1012,14 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 									wait 5
 									ExecuteQueued
 									Waitframe
+
+									if ${InventorySlotsFree}<=0
+									{
+										Echo Out of Inventory Space!
+										Break
+										StopSearch:Set[TRUE]
+									}
+
 									if ${Exitmyprices} || ${Pausemyprices}
 									{
 										break
@@ -2422,7 +2446,8 @@ function ChooseNextItem(int numitems)
 function StartUp()
 {
 	Declare tempstring string local
-
+	Declare i int local
+	
 	tempstring:Set[${Actor[name,a market bulletin board]}]
 	if ${tempstring.Length} >4
 	{
@@ -2492,6 +2517,11 @@ function StartUp()
 	}
 }
 
+atom(script) EQ2_onInventoryUpdate()
+{
+	InventorySlotsFree:Set[${Me.InventorySlotsFree}]
+	Echo Character now has ${InventorySlotsFree} Slots free in bags
+}
 
 function echolog(string logline)
 {
