@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13b :  released 1st November 2008
+; Version 0.13c :  released 11th November 2008
 ;
 ; Declare Variables
 ;
@@ -104,7 +104,7 @@ function main(string goscan, string goscan2)
 	MyPrices:LoadUI
 	MyPrices:InitTriggersAndEvents
 	
-	call AddLog "Running MyPrices Version 0.13b : released 1st November 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.13c : released 11th November 2008" FF11FFCC
 	
 	call StartUp	
 
@@ -661,6 +661,7 @@ function buy(string tabname, string action)
 	Declare Harvest bool local
 	Declare Recipe string local
 
+	Declare BuyAttuneOnly bool local
 	Declare BuyNameOnly bool local
 	Declare startlevel int local
 	Declare endlevel int local
@@ -736,6 +737,9 @@ function buy(string tabname, string action)
 								Case Harvest
 									Harvest:Set[${BuyNameIterator.Value}]
 									break
+								Case BuyAttuneOnly
+									BuyAttuneOnly:Set[${BuyNameIterator.Value}]
+									break
 								Case CraftItem
 									CraftItem:Set[${BuyNameIterator.Value}]
 									break
@@ -772,7 +776,7 @@ function buy(string tabname, string action)
 						if ${BuyNumber} > 0 && ${tabname.Equal["Buy"]}
 						{
 							Call CheckFocus
-							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
+							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${BuyAttuneOnly} ${startlevel} ${endlevel} ${tier}
 							; Pause or quit pressed then exit the routine
 							ExecuteQueued
 							Waitframe
@@ -878,9 +882,9 @@ function addtocraft(string itemname, int Makemore)
 	call echolog "<end> : addtocraft"
 }
 
-function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, bool BuyNameOnly, int startlevel, int endlevel, int tier)
+function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, bool BuyNameOnly, bool BuyAttuneOnly, int startlevel, int endlevel, int tier)
 {
-	call echolog "-> BuyItems ${BuyName} ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}"
+	call echolog "-> BuyItems ${BuyName} ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${BuyAttuneOnly} ${startlevel} ${endlevel} ${tier}"
 
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
@@ -909,8 +913,8 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 	}
 	else
 	{
-		call echolog "<BuyItems> call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${Math.Calc[${BuyPrice} * 100]}"
-		call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${Math.Calc[${BuyPrice} * 100]}
+		call echolog "<BuyItems> call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${Math.Calc[${BuyPrice} * 100]} ${BuyAttuneOnly}"
+		call searchbrokerlist "${BuyName}" ${startlevel} ${endlevel} ${tier} ${Math.Calc[${BuyPrice} * 100]} ${BuyAttuneOnly}
 	}
 
 	Call echolog "<BuyItems> Call BrokerSearch ${BuyName}"
@@ -1052,7 +1056,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 
 		; now we've bought all that are available , save the number we've still got left to buy
-		call Saveitem Buy "${BuyName}" ${BuyPrice} 0 ${BuyNumber} ${Harvest} ${BuyNameOnly} ${startlevel} ${endlevel} ${tier}
+		call Saveitem Buy "${BuyName}" ${BuyPrice} 0 ${BuyNumber} ${Harvest} ${BuyNameOnly} ${BuyAttuneableOnly} ${startlevel} ${endlevel} ${tier}
 	}
 	call echolog "<end> : BuyItems"
 }
@@ -1176,7 +1180,7 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 		else
 		{
 			
-			call searchbrokerlist "${LBoxString}" ${startlevel} ${endlevel} ${tier} ${cost}
+			call searchbrokerlist "${LBoxString}" ${startlevel} ${endlevel} ${tier} ${cost} ${UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices].Checked}
 		}
 	}
 	else
@@ -1188,16 +1192,17 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 }
 
 
-function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int tier, float cost)
+function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int tier, float cost, bool BuyAttuneOnly)
 {
 
-	call echolog "-> searchbrokerlist ${LBoxString} , ${startlevel} , ${endlevel} , ${tier} , ${cost}"
+	call echolog "-> searchbrokerlist ${LBoxString} , ${startlevel} , ${endlevel} , ${tier} , ${cost} ${BuyAttuneOnly}"
 
 	Declare namesearch string local
 	Declare startsearch string local
 	Declare endsearch string local
 	Declare tiersearch string local
 	Declare costsearch string local
+	Declare attunesearch string local
 
 	if !${LBoxString.Left[6].Equal[NoName]}
 	{
@@ -1210,6 +1215,10 @@ function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int t
 	if ${endlevel}>0
 	{
 		endsearch:Set["MaxLevel ${endlevel}"]
+	}
+	if ${BuyAttuneOnly}
+	{
+		attunesearch:Set["-Type Attuneable"]
 	}
 	if ${tier}>0
 	{
@@ -1246,11 +1255,11 @@ function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int t
 
 	if ${namesearch.Length}>0
 	{
-		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} Sort ByPriceAsc
+		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${attunesearch} Sort ByPriceAsc
 	}
 	else
 	{
-		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} Sort ByPriceAsc
+		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${attunesearch} Sort ByPriceAsc
 	}
 	
 	call echolog "<- searchbrokerlist
@@ -1514,9 +1523,9 @@ function pricefromstring()
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, int startlevel, int endlevel, int tier, int boxnumber, string Recipe)
+function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, bool attuneable, int startlevel, int endlevel, int tier, int boxnumber, string Recipe)
 {
-	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${startlevel} ${endlevel} ${tier} ${Recipe}"
+	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${attuneable} ${startlevel} ${endlevel} ${tier} ${Recipe}"
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
 	{
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
@@ -1602,6 +1611,10 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 			Item:AddSetting[StartLevel,${startlevel}]
 			Item:AddSetting[EndLevel,${endlevel}]
 			Item:AddSetting[Tier,${tier}]
+		}
+		if ${attuneable}
+		{
+			Item:AddSetting[BuyAttuneOnly,TRUE]
 		}
 	}
 
@@ -1871,7 +1884,7 @@ function savebuyinfo()
 	else
 	{
 		UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Saving Information]
-		call Saveitem Buy "${itemname}" ${Money} 0 ${itemnumber} ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked} ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked} ${startlevel} ${endlevel} ${tier}
+		call Saveitem Buy "${itemname}" ${Money} 0 ${itemnumber} ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked} ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked} ${UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices].Checked} ${startlevel} ${endlevel} ${tier}
 		call buy Buy init
 	}
 	call echolog "<end> : savebuyinfo"
@@ -1914,7 +1927,7 @@ function savecraftinfo()
 	{
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
 	; Parameters : Craft , Itemname , Stackszie , Number , <Bool> Craftitem, <Bool> nameonly,startlevel,endlevel,tier, Boxnumber, Recipe Name
-		call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
+		call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
 	}
 	call echolog "<end> : savecraftinfo"
 }
@@ -1958,6 +1971,7 @@ function ShowBuyPrices(int ItemID)
 	Declare endlevel int local
 	Declare tier int local
 	Declare nameonly bool local
+	Declare attuneonly bool local
 	
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[ItemList].Item[${ItemID}]}]
 
@@ -1989,6 +2003,7 @@ function ShowBuyPrices(int ItemID)
 
 	Harvest:Set[${BuyItem.FindSetting[Harvest]}]
 	nameonly:Set[${BuyItem.FindSetting[BuyNameOnly]}]
+	attuneonly:Set[${BuyItem.FindSetting[BuyAttuneOnly]}]
 
 	if ${Harvest}
 	{
@@ -1998,6 +2013,15 @@ function ShowBuyPrices(int ItemID)
 	{
 		UIElement[Harvest@Buy@GUITabs@MyPrices]:UnsetChecked
 	}
+	if ${attuneonly}
+	{
+		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:SetChecked
+	}
+	else
+	{
+		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:UnsetChecked
+	}
+
 	if ${nameonly}
 	{
 		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:SetChecked
@@ -2414,7 +2438,7 @@ function StartUp()
 		if ${tempstring.Length} >4
 		{
 			Actor[Guild,guild world market broker]:DoTarget
-			wait 5
+			wait 10
 			Actor[Guild,guild world market broker]:DoubleClick
 			wait 20
 			call echolog " * Scanning using Guild Hall Broker *"
@@ -2426,7 +2450,7 @@ function StartUp()
 			if ${tempstring.Length} >4
 			{
 				Actor[Guild,broker]:DoTarget
-				wait 5
+				wait 10
 				Actor[Guild,broker]:DoubleClick
 				wait 20
 				call echolog " * Scanning using Broker *"
@@ -2435,7 +2459,7 @@ function StartUp()
 			else
 			{
 				Actor[nokillnpc]:DoTarget
-				wait 5
+				wait 10
 				Target:DoubleClick
 				wait 20
 				call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
