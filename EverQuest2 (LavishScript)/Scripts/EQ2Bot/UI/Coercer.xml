@@ -293,6 +293,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	</OnLoad>
 	<OnSelect>
 	  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffSpellProc,${This.SelectedItem.Text}]
+	  Script[EQ2Bot].VariableScope.BuffSpellProc:Set[${This.SelectedItem.Text}]
 	  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	</OnSelect>
 	<OnLeftClick>
