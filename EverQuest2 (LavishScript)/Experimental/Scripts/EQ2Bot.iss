@@ -467,7 +467,7 @@ function main()
 					if ${Actor[${MainAssistID}](exists)}
 					{
 						target ${Actor[${MainAssistID}]}
-						wait 10 ${Target.ID}==${Actor[${MainAssistID}].ID}
+						wait 10 ${Target.ID}==${MainAssistID}
 					}
 
 					; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
@@ -1724,7 +1724,7 @@ function Combat()
 						{
 							;we have aggro, move to the maintank
 							if !${NoAutoMovement}
-								call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankIC}].Z} 1
+								call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 1
 							wait 2
 							do
 							{
@@ -1742,11 +1742,11 @@ function Combat()
 								call CheckPosition 1 1 ${KillTarget} 0 0
 						}
 					}
-					elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[${MainTankIC}].Distance}>40
+					elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[${MainTankID}].Distance}>40
 					{
 						if !${NoAutoMovement}
 						{
-							call FastMove ${Actor[${MainTankIC}].X} ${Actor[${MainTankIC}].Z} 25
+							call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 25
 							wait 2
 							do
 							{
@@ -1813,7 +1813,7 @@ function Combat()
 							break
 						}
 
-						if ${Actor[${MainTankIC}].IsDead}
+						if ${Actor[${MainTankID}].IsDead}
 						{
 							EQ2Bot:MainTank_Dead
 							break
@@ -2095,11 +2095,8 @@ function GetinFront()
 	}
 	else
 	{
-		variable uint MainTankPCID
-		MainTankPCID:Set[${Actor[pc,${MainTankIC}].ID}]
-
-		X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].X}]}]
-		Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].Z}]}]
+		X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${MainTankID}].Heading}]}+${Actor[${MainTankID}].X}]}]
+		Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${MainTankID}].Heading}]}+${Actor[${MainTankID}].Z}]}]
 	}
 	call FastMove ${X} ${Z} 3
 	if ${Return.Equal[STUCK]}
@@ -4321,8 +4318,8 @@ function StartBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
-		if ${Actor[${MainTankIC}].InCombatMode}
-				UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	if ${Actor[${MainTankID}].InCombatMode}
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	StartBot:Set[TRUE]
 }
 
@@ -4421,7 +4418,7 @@ function CheckBuffsOnce()
 
 	if ${MainTank}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
-	elseif ${Actor[${MainTankIC}].InCombatMode}
+	elseif ${Actor[${MainTankID}].InCombatMode}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	CurrentAction:Set["Waiting..."]
 	CheckingBuffsOnce:Set[FALSE]
