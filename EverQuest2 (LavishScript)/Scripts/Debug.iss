@@ -19,6 +19,8 @@
 ;;		SetPrefix[string]               Sets string to prefix all echo and log output with. Default "DEBUG: "
 ;;		TimestampEcho[bool]             Enables or disables timestamps in echos. Default TRUE
 ;;		TimestampLog[bool]              Enables or disables timestamps in logs. Default TRUE
+;;      SetEchoAlsoLogs[bool]			If true, then any calls to :Echo will call :Log as well
+;;      ClearLog                        Clears the log file entirely
 ;;
 ;;	Example Script:
 ;;	
@@ -81,11 +83,27 @@ objectdef debug
 		This.Prefix:Set[${Prefix}]
 	}
 	
+	method SetEchoAlsoLogs(bool Setting)
+	{
+		This.EchoAlsoLogs:Set[${Setting}]
+	}	
+	
+	method ClearLog()
+	{
+		if ${This.Enabled}
+		{
+			redirect "${This.File}" ""
+		}
+	}
+	
 	method Echo(... Args)
 	{
 		if ${This.Enabled}
 		{
 			echo ${If[${This.Timestamp_Echo},${Time.Time24}]} ${This.Prefix}${Args.Expand}
+			
+			if ${This.EchoAlsoLogs}
+				redirect -append "${This.File}" echo ${If[${This.Timestamp_Log},${Time.Year}${Time.Month.LeadingZeroes[2]}${Time.Day.LeadingZeroes[2]} ${Time.Time24}]} ${This.Prefix}${Args.Expand}
 		}
 	}
 	
@@ -93,7 +111,7 @@ objectdef debug
 	{
 		if ${This.Enabled}
 		{
-			redirect -append "${This.File}" "echo ${If[${This.Timestamp_Log},${Time.Year}${Time.Month.LeadingZeroes[2]}${Time.Day.LeadingZeroes[2]} ${Time.Time24}]} ${This.Prefix}${Args.Expand}"
+			redirect -append "${This.File}" echo ${If[${This.Timestamp_Log},${Time.Year}${Time.Month.LeadingZeroes[2]}${Time.Day.LeadingZeroes[2]} ${Time.Time24}]} ${This.Prefix}${Args.Expand}
 		}
 	}
 	
@@ -109,6 +127,7 @@ objectdef debug
 	variable bool IsEnabled
 	variable bool Timestamp_Echo
 	variable bool Timestamp_Log
+	variable bool EchoAlsoLogs
 	variable string Prefix
 	variable string File
 }
