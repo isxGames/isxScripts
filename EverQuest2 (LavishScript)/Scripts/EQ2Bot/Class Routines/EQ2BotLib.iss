@@ -457,13 +457,13 @@ function CheckForStun()
 function ReacquireTargetFromMA()
 {
     ;Debug:Echo["DEBUG (ReacquireTargetFromMA): Old Target: ${Target}"]
-    if (${Actor[Exactname,${MainAssist}](exists)})
+    if (${Actor[${MainAssistID}](exists)})
     {
         target ${MainAssist}
         wait 2
-        if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+        if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
 	    {
-			KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+			KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 			target ${KillTarget}
 			;Debug:Echo["DEBUG (ReacquireTargetFromMA): New Target Acquired: ${Target}"]
 			return TRUE
@@ -829,13 +829,32 @@ function CheckGroupHealth(int MinHealth)
 	Return TRUE
 }
 
-function PetAttack()
+function PetAttack(bool NoChecks=0)
 {
 	;Debug:Echo["Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"]
 
+	if ${NoChecks}
+	{
+		if ${Me.Pet.Target(exists)}
+		{
+			EQ2Execute /pet backoff
+			wait 2
+		}
+		target ${KillTarget}
+		wait 1
+		EQ2Execute /pet attack
+		wait 30 (${Me.Pet.Target.ID} != ${KillTarget})
+		if ${PetGuard}
+		{
+			EQ2Execute /pet preserve_self
+			EQ2Execute /pet preserve_master
+		}	
+		return
+	}
+
 	if !${Actor[${KillTarget}](exists)}
 	{
-		echo no killtarget for pet
+		;echo no killtarget for pet
 		return
 	}
 	
@@ -994,12 +1013,6 @@ function CommonHeals(int Health)
 	;fury gift heal
 	if ${Me.Effect[Pact of Nature](exists)}
 	{
-		variable int MainTankID
-		if ${MainTank}
-			MainTankID:Set[${Me.ID}]
-		else
-			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
-
 		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
 		{
 		    if (${Me.Ability[${SpellType[553]}].IsReady})
@@ -1096,8 +1109,7 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 	while ${counter:Inc}<=${Me.GroupCount}
 
 	;check mt health
-	call GetActorID ${MainTankPC}
-	if ${Return} && ${Actor[${Return}].Health}<${MTHealth}
+	if ${Actor[${MainTankID}].Health}<${MTHealth}
 		return FALSE
 
 	;check my health
