@@ -78,6 +78,7 @@ variable string OriginalMA
 variable string OriginalMT
 variable bool AutoSwitch
 variable bool AutoMelee
+variable int AutoMeleeQuadrant=4
 variable bool AutoPull
 variable bool PullOnlySoloMobs
 variable bool AutoLoot
@@ -1705,22 +1706,10 @@ function Combat()
 
 					if ${AutoMelee} && !${MainTank} && !${NoAutoMovement}
 					{
-						;check valid rear position
-						if ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<5
-						{
-							;we're behind and in range
-						}
-						;check right flank
-						elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<5
-						{
-							;we're right flank and in range
-						}
-						;check left flank
-						elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<5
-						{
-							;we're left flank and in range
-						}
-						elseif ${Actor[${KillTarget}].Target.ID}==${Me.ID}
+						; AutoMeleeQuadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
+						; Defaults to 4 -- Class files can set this however they like.
+
+						if ${Actor[${KillTarget}].Target.ID}==${Me.ID}
 						{
 							;we have aggro, move to the maintank
 							if !${NoAutoMovement}
@@ -1736,10 +1725,10 @@ function Combat()
 						else
 						{
 							;call CheckPosition 1 ${Target.IsEpic} ${KillTarget} 0 0
-							if ${MainTank}
-								call CheckPosition 1 0 ${KillTarget} 0 1
+							if ${Actor[${KillTarget}].IsEpic}
+								call CheckPosition 1 1 ${KillTarget} 0 1
 							else
-								call CheckPosition 1 1 ${KillTarget} 0 0
+								call CheckPosition 1 ${AutoMeleeQuadrant} ${KillTarget} 0 1
 						}
 					}
 					elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[${MainTankID}].Distance}>40
