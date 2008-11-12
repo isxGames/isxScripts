@@ -133,6 +133,8 @@ function Class_Declaration()
 	SpamHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamHealMode,]}]
 
 	NoEQ2BotStance:Set[TRUE]
+	
+	Event[EQ2_FinishedZoning]:AttachAtom[Fury_FinishedZoning]
 }
 
 function Pulse()
@@ -167,54 +169,56 @@ function Pulse()
 
 function Class_Shutdown()
 {
+	Event[EQ2_FinishedZoning]:DetachAtom[Fury_FinishedZoning]
 }
 
 function Buff_Init()
 {
+	PreAction[1]:Set[DoCheckRezzes]
 
-	PreAction[1]:Set[BuffThorns]
-	PreSpellRange[1,1]:Set[40]
+	PreAction[2]:Set[BuffThorns]
+	PreSpellRange[2,1]:Set[40]
 
-	PreAction[2]:Set[Self_Buff]
-	PreSpellRange[2,1]:Set[25]
+	PreAction[3]:Set[Self_Buff]
+	PreSpellRange[3,1]:Set[25]
 
-	PreAction[3]:Set[BuffEel]
-	PreSpellRange[3,1]:Set[280]
+	PreAction[4]:Set[BuffEel]
+	PreSpellRange[4,1]:Set[280]
 
-	PreAction[4]:Set[BuffVim]
-	PreSpellRange[4,1]:Set[36]
+	PreAction[5]:Set[BuffVim]
+	PreSpellRange[5,1]:Set[36]
 
-	PreAction[5]:Set[BuffSpirit]
-	PreSpellRange[5,1]:Set[21]
+	PreAction[6]:Set[BuffSpirit]
+	PreSpellRange[6,1]:Set[21]
 
-	PreAction[6]:Set[BuffHunt]
-	PreSpellRange[6,1]:Set[20]
+	PreAction[7]:Set[BuffHunt]
+	PreSpellRange[7,1]:Set[20]
 
-	PreAction[7]:Set[BuffMask]
-	PreSpellRange[7,1]:Set[23]
+	PreAction[8]:Set[BuffMask]
+	PreSpellRange[8,1]:Set[23]
 
 	;PreAction[x]:Set[SOW]
 	;PreSpellRange[x,1]:Set[31]
 
-	PreAction[8]:Set[BuffBat]
-	PreSpellRange[8,1]:Set[35]
+	PreAction[9]:Set[BuffBat]
+	PreSpellRange[9,1]:Set[35]
 
-	PreAction[9]:Set[BuffSavagery]
-	PreSpellRange[9,1]:Set[38]
+	PreAction[10]:Set[BuffSavagery]
+	PreSpellRange[10,1]:Set[38]
 
-	PreAction[10]:Set[AA_Rebirth]
-	PreSpellRange[10,1]:Set[390]
+	PreAction[11]:Set[AA_Rebirth]
+	PreSpellRange[11,1]:Set[390]
 
-	PreAction[11]:Set[AA_Infusion]
-	PreSpellRange[11,1]:Set[391]
+	PreAction[12]:Set[AA_Infusion]
+	PreSpellRange[12,1]:Set[391]
 
-	PreAction[12]:Set[AA_Shapeshift]
-	PreSpellRange[12,1]:Set[396]
-	PreSpellRange[12,2]:Set[397]
-	PreSpellRange[12,3]:Set[398]
+	PreAction[13]:Set[AA_Shapeshift]
+	PreSpellRange[13,1]:Set[396]
+	PreSpellRange[13,2]:Set[397]
+	PreSpellRange[13,3]:Set[398]
 
-	PreAction[13]:Set[BuffPactOfNature]
-	PreSpellRange[13,1]:Set[399]
+	PreAction[14]:Set[BuffPactOfNature]
+	PreSpellRange[14,1]:Set[399]
 }
 
 function Combat_Init()
@@ -336,6 +340,10 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
+		case DoCheckRezzes
+			call CheckRezzes
+			break
+			
 		case BuffThorns
 			if ${MainTank} || (${BuffThorns} && ${Actor[exactname,${MainTankPC}](exists)})
 			{
@@ -1874,4 +1882,85 @@ function PostDeathRoutine()
 	;; This function is called after a character has either revived or been rezzed
 
 	return
+}
+
+atom(script) Fury_FinishedZoning(string TimeInSeconds)
+{
+	if ${KillTarget} && ${Actor[${KillTarget}](exists)}
+	{
+		if !${Actor[${KillTarget}].InCombatMode}
+			KillTarget:Set[0]
+	}
+}
+
+function CheckRezzes()
+{
+	variable int tempgrp
+	
+	if ${Me.ToActor.InCombatMode} && !${CombatRez}
+		return
+		
+	if ${Me.GroupCount}	<= 1
+		return
+	
+
+	tempgrp:Set[1]
+	do
+	{
+		if (${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead})
+		{
+			if (${Me.InRaid} && ${Me.Ability[${SpellType[380]}].IsReady})
+			{
+				call CastSpellRange 380 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+				wait 5
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+			}
+			elseif ${Me.Ability[${SpellType[300]}].IsReady}
+			{
+				call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+				wait 5
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+			}
+			elseif ${Me.Ability[${SpellType[301]}].IsReady}
+			{
+				call CastSpellRange 301 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+				wait 5
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+			}
+			elseif ${Me.Ability[${SpellType[302]}].IsReady}
+			{
+				call CastSpellRange 302 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+				wait 5
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+			}
+			else
+			{
+				call CastSpellRange 303 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+				wait 5
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+			}
+		}
+	}
+	while ${tempgrp:Inc}<=${Me.GroupCount}	
+	
 }

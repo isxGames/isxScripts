@@ -78,6 +78,8 @@ function Class_Declaration()
 	    
 	if ${Me.Equipment[Sedition, Sword of the Bloodmoon](exists)}
 		HasMythical:Set[TRUE]
+		
+	Event[EQ2_FinishedZoning]:AttachAtom[Shadowknight_FinishedZoning]
 }
 
 function Pulse()
@@ -102,6 +104,7 @@ function Pulse()
 
 function Class_Shutdown()
 {
+	Event[EQ2_FinishedZoning]:DetachAtom[Shadowknight_FinishedZoning]
 }
 
 
@@ -664,7 +667,7 @@ function Combat_Routine(int xAction)
             	}
         	    else
         	    {
-            	    call CastSpellRange 7 0 0 0 ${Actor[pc,${MainTankPC}].ID} 0 0 0 1
+            	    call CastSpellRange 7 0 0 0 ${MainTankID} 0 0 0 1
             	    spellsused:Inc
             	}
             }
@@ -1470,32 +1473,45 @@ function PostDeathRoutine()
 	InPostDeathRoutine:Set[TRUE]
 	
 	;;;;;;;;;;;;;;;
-	;; Do Buffs before anything else
-	i:Set[1]
-	do
-	{
-		call Buff_Routine ${i}
-		if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
-			break
-		call ProcessTriggers
-		wait 2
-	}
-	while ${i:Inc}<=40
-
-	if (${UseCustomRoutines})
+	;; Do Buffs before anything else if NOT MainTank
+	if !${MainTank}
 	{
 		i:Set[1]
 		do
 		{
-			call Custom__Buff_Routine ${i}
+			call Buff_Routine ${i}
 			if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 				break
+			call ProcessTriggers
+			wait 2
 		}
-		while ${i:Inc} <= 40
+		while ${i:Inc}<=40
+	
+		if (${UseCustomRoutines})
+		{
+			i:Set[1]
+			do
+			{
+				call Custom__Buff_Routine ${i}
+				if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
+					break
+			}
+			while ${i:Inc} <= 40
+		}
+		;;
+		;;;;;;;;;;;;;;;
 	}
-	;;
-	;;;;;;;;;;;;;;;
+	;; TODO:  Otherwise jsut do our really fast casting buffs!  (ie, stance, etc.)
 	
 	InPostDeathRoutine:Set[FALSE]
 	return
+}
+
+atom(script) Shadowknight_FinishedZoning(string TimeInSeconds)
+{
+	if ${KillTarget} && ${Actor[${KillTarget}](exists)}
+	{
+		if !${Actor[${KillTarget}].InCombatMode}
+			KillTarget:Set[0]
+	}
 }

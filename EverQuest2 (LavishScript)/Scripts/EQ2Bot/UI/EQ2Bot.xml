@@ -95,19 +95,21 @@
 									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,frame]:Hide
 									Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
 									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									Script[EQ2Bot].Variable[MainTankPC]:Set[${Me.Name}]
+									Script[EQ2Bot].Variable[MainTankID]:Set[${Me.ID}]
 									Script[EQ2Bot].Variable[OriginalMT]:Set[${Me.Name}]
 									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${Me.Name}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings										
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings										
 								}
 								else
 								{
 									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,frame]:Show
 									Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
 									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									Script[EQ2Bot].Variable[MainTankPC]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
+									Script[EQ2Bot].Variable[MainTankID]:Set[${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}].ID}]
 									Script[EQ2Bot].Variable[OriginalMT]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
 									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
 									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
@@ -156,9 +158,10 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
 									    }
 										Script[EQ2Bot].Variable[MainTankPC]:Set[${This.SelectedItem.Text}]
+										Script[EQ2Bot].Variable[MainTankID]:Set[${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}].ID}]
 										Script[EQ2Bot].Variable[OriginalMT]:Set[${This.SelectedItem.Text}]
 										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${This.SelectedItem.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									</OnSelect>
 									<OnLeftClick>
 										declare tmpvar int
@@ -279,21 +282,23 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							<OnLeftClick>
 							  if ${UIElement[MainAssist@Main@EQ2Bot Tabs@EQ2 Bot].Checked}
 							  {
-							  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
-							  Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
-							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,TRUE]
-							  Script[EQ2Bot].Variable[MainAssist]:Set[${Me.Name}]
-							  Script[EQ2Bot].Variable[OriginalMA]:Set[${Me.Name}]
-							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${Me.Name}]
+								  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Hide
+								  Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
+								  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,TRUE]
+								  Script[EQ2Bot].Variable[MainAssist]:Set[${Me.Name}]
+								  Script[EQ2Bot].Variable[MainAssistID]:Set[${Me.ID}]
+								  Script[EQ2Bot].Variable[OriginalMA]:Set[${Me.Name}]
+								  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${Me.Name}]
 							  }
 							  else
 							  {
-							  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Show
-							  Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
-							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,FALSE]
-							  Script[EQ2Bot].Variable[MainAssist]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
-							  Script[EQ2Bot].Variable[OriginalMA]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
-							  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+								  UIElement[EQ2 Bot].FindUsableChild[MainAssist Frame,frame]:Show
+								  Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
+								  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,FALSE]
+								  Script[EQ2Bot].Variable[MainAssist]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+								  Script[EQ2Bot].Variable[MainAssistID]:Set[${Actor[exactname,${Script[EQ2Bot].Variable[MainAssist]}].ID}]
+								  Script[EQ2Bot].Variable[OriginalMA]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
+								  LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${UIElement[EQ2 Bot].FindUsableChild[MainAssist,combobox].SelectedItem.Text}]
 							  }
 							  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							</OnLeftClick>
@@ -341,9 +346,10 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 									        Script[EQ2Bot].Variable[MainAssistMe]:Set[FALSE]
 									    }									
 										Script[EQ2Bot].Variable[MainAssist]:Set[${This.SelectedItem.Text}]
+										Script[EQ2Bot].Variable[MainAssistID]:Set[${Actor[exactname,${Script[EQ2Bot].Variable[MainAssist]}].ID}]
 										Script[EQ2Bot].Variable[OriginalMA]:Set[${This.SelectedItem.Text}]
 										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Assist?,${This.SelectedItem.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+										Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 									<OnLeftClick>
 										declare tmpvar int
 										This:ClearItems

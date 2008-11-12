@@ -134,7 +134,7 @@ function Pulse()
 		{
 			if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
 			{
-				if ${Actor[${MainTankPC},exactname].InCombatMode}
+				if ${Actor[${MainTankID}].InCombatMode}
 				{
 					if ${Me.Ability[${SpellType[72]}].IsReady}
 					{
@@ -154,7 +154,7 @@ function Pulse()
 						else
 						{
 							;Debug:Echo["Casting ''Prismatic'"]
-							call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
+							call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 							LastSpellCast:Set[72]
 							return
 						}
@@ -311,7 +311,7 @@ function Buff_Routine(int xAction)
 		{
 			if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
 			{
-				if ${Actor[${MainTankPC},exactname].InCombatMode}
+				if ${Actor[${MainTankID}].InCombatMode}
 				{
 					if ${Me.Ability[${SpellType[72]}].IsReady}
 					{
@@ -331,7 +331,7 @@ function Buff_Routine(int xAction)
 						else
 						{
 							;Debug:Echo["Casting ''Prismatic'"]
-							call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
+							call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 							LastSpellCast:Set[72]
 							return
 						}
@@ -740,7 +740,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 					else
 					{
 						LastSpellCast:Set[72]
-						call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1 0
+						call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1 0
 						call CheckCastBeam
 					}
 				}
@@ -791,8 +791,6 @@ function Combat_Routine(int xAction)
 	declare BuffTarget string local
 	declare spellsused int local
 	spellsused:Set[0]
-	declare MainTankID uint local
-	MainTankID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]
 
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 		return CombatComplete
@@ -901,9 +899,12 @@ function Combat_Routine(int xAction)
 	if ${MezzMode}
 		call Mezmerise_Targets
 
-	if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
-		call PetAttack
-
+	if ${Me.Pet(exists)}
+	{
+		if (${Me.Pet.Target.ID} != ${KillTarget} || !${Me.Pet.InCombatMode})
+			call PetAttack 1
+	}
+	
 	call CheckHeals
 
 	if ${ShardMode}
@@ -1571,7 +1572,7 @@ function CastSomething()
 					else
 					{
 						;Debug:Echo["Casting ''Prismatic'"]
-						call CastSpellRange 72 0 0 0 ${Actor[${MainTankPC},exactname].ID} 0 0 0 1
+						call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 						LastSpellCast:Set[72]
 						call CheckCastBeam
 						return
@@ -1811,7 +1812,7 @@ function RefreshPower()
 	;Mana Cloak the group if the Main Tank is low on power
 	if ${Me.InCombat} && ${Me.Group[${MainTankPC}](exists)}
 	{
-		if ${Actor[pc,${MainTankPC},exactname].Power} < 20 && ${Actor[pc,${MainTankPC},exactname].Distance}<50  && ${Actor[pc,${MainTankPC},exactname].InCombatMode}
+		if ${Actor[${MainTankID}].Power} < 20 && ${Actor[${MainTankID}].Distance}<50  && ${Actor[${MainTankID}].InCombatMode}
 		{
 			call CastSpellRange 354
 			LastSpellCast:Set[354]
@@ -1864,12 +1865,6 @@ function CheckHeals()
 	;;
 	if ${Me.Effect[Pact of Nature](exists)}
 	{
-		variable int MainTankID
-		if ${MainTank}
-			MainTankID:Set[${Me.ID}]
-		else
-			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
-		
 		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
 		{
 		    if (${Me.Ability[${SpellType[553]}].IsReady})
@@ -1915,7 +1910,7 @@ function Mezmerise_Targets()
 			;if its the kill target skip it
 			if (${CustomActor[${tcount}].ID} == ${KillTarget})
 			    continue
-			if ${Actor[exactname,${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[exactname,${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
+			if ${Actor[${MainAssistID}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankID}].Target.ID}==${CustomActor[${tcount}].ID}
 				continue
 
 			tempvar:Set[1]
@@ -2009,10 +2004,10 @@ function CheckSKFD()
 	if !${Me.ToActor.IsFD}
 		return
 
-	if !${Actor[exactname,${MainTankPC}](exists)}
+	if !${Actor[${MainTankID}](exists)}
 		return
 
-	if ${Actor[exactname,${MainTankPC}].IsDead}
+	if ${Actor[${MainTankID}].IsDead}
 		return
 
 	if ${Me.ToActor.Health} < 20
@@ -2024,7 +2019,11 @@ function CheckSKFD()
 
 atom(script) Illusionist_FinishedZoning(string TimeInSeconds)
 {
-
+	if ${KillTarget} && ${Actor[${KillTarget}](exists)}
+	{
+		if !${Actor[${KillTarget}].InCombatMode}
+			KillTarget:Set[0]
+	}
 }
 
 function PostDeathRoutine()

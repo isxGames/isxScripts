@@ -70,7 +70,9 @@ variable string charfile
 variable string SpellType[600]
 variable int AssistHP
 variable string MainAssist
+variable uint MainAssistID
 variable string MainTankPC
+variable uint MainTankID
 variable bool MainAssistMe=FALSE
 variable string OriginalMA
 variable string OriginalMT
@@ -356,6 +358,8 @@ function main()
 			GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 		elseif ${Me.TotalEarnedAPs} < 140
 			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
+		else
+			GainedXPString:Set[Gained XP:  N/A]		
 		;;;
 		;;;;;;;;;;;;;;;;;
 
@@ -434,6 +438,26 @@ function main()
 			}
 			ExecuteAtom CheckStuck
 
+			;;;;;;
+			;; Make sure that MainAssistID and/or MainTankID are still valid (ie, IDs sometimes change on zoning...)
+			if !${Actor[${MainTankID}](exists)}
+			{
+				if ${Actor[exactname,${MainTank}](exists)}
+				{
+					MainTankID:Set[${Actor[exactname,${MainTank}].ID}]
+				}
+			}
+			if !${Actor[${MainAssistID}](exists)}
+			{
+				if ${Actor[exactname,${MainAssist}](exists)}
+				{
+					MainAssistID:Set[${Actor[exactname,${MainAssist}].ID}]
+				}
+			}
+			;;
+			;;;;;
+
+
 			gRtnCtr:Set[1]
 			do
 			{
@@ -442,23 +466,23 @@ function main()
 				; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 				if ${PathType}==3 && !${AutoPull}
 				{
-					if ${Actor[ExactName,${MainAssist}](exists)}
+					if ${Actor[${MainAssistID}](exists)}
 					{
-						target ${Actor[ExactName,${MainAssist}]}
-						wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
+						target ${Actor[${MainAssistID}]}
+						wait 10 ${Target.ID}==${MainAssistID}
 					}
 
 					; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
 					if !${Me.TargetLOS} && ${Target.Distance}>10
 						call MovetoMaster
 					elseif ${Target.Distance}>10
-						call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
+						call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
 				}
 
 				if !${MainTank}
 				{
-					if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
-						KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+					if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
+						KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 
 					; Add additional check to see if Mob is in Camp OR MainTank is within designated range
 					if ${KillTarget}
@@ -467,7 +491,7 @@ function main()
 						{
 							if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
 							{
-								if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
+								if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance}<${MARange})
 								{
 									if ${Mob.Target[${KillTarget}]}
 										call Combat
@@ -617,27 +641,46 @@ function main()
 				wait 5
 			}
 			ExecuteAtom CheckStuck
-
+			
+			;;;;;;
+			;; Make sure that MainAssistID and/or MainTankID are still valid (ie, IDs sometimes change on zoning...)
+			if !${Actor[${MainTankID}](exists)}
+			{
+				if ${Actor[exactname,${MainTank}](exists)}
+				{
+					MainTankID:Set[${Actor[exactname,${MainTank}].ID}]
+				}
+			}
+			if !${Actor[${MainAssistID}](exists)}
+			{
+				if ${Actor[exactname,${MainAssist}](exists)}
+				{
+					MainAssistID:Set[${Actor[exactname,${MainAssist}].ID}]
+				}
+			}
+			;;
+			;;;;;
+			
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
-				if ${Actor[ExactName,${MainAssist}](exists)}
+				if ${Actor[${MainAssistID}](exists)}
 				{
-					target ${Actor[ExactName,${MainAssist}]}
-					wait 10 ${Target.ID}==${Actor[ExactName,${MainAssist}].ID}
+					target ${Actor[${MainAssistID}]}
+					wait 10 ${Target.ID}==${Actor[${MainAssistID}].ID}
 				}
 
 				; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
 				if !${Me.TargetLOS} && ${Target.Distance}>10
 					call MovetoMaster
 				elseif ${Target.Distance}>10
-					call FastMove ${Actor[ExactName,${MainAssist}].X} ${Actor[ExactName,${MainAssist}].Z} ${Math.Rand[3]:Inc[3]}
+					call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
 			}
 
 			if !${MainTank}
 			{
-				if (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
-					KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+				if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
+					KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 
 				; Add additional check to see if Mob is in Camp OR MainTank is within designated range
 				if ${KillTarget}
@@ -646,7 +689,7 @@ function main()
 					{
 						if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
 						{
-							if (${Mob.Detect} || ${Actor[ExactName,${MainAssist}].Distance}<${MARange})
+							if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance}<${MARange})
 							{
 								if ${Mob.Target[${KillTarget}]}
 									call Combat
@@ -725,10 +768,10 @@ function main()
 			}
 
 			;; Misc. Checks
-			if (${Actor[ExactName,${MainAssist}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[exactname,${OriginalMA}].IsDead})
+			if (${Actor[${MainAssistID}].IsDead} && !${MainTank}) || (${MainAssist.NotEqual[${OriginalMA}]} && ${Actor[exactname,${OriginalMA}].IsDead})
 				EQ2Bot:MainAssist_Dead
 
-			if (${Actor[exactname,${MainTankPC}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,${OriginalMT}].IsDead})
+			if (${Actor[${MainTankID}].IsDead} && !${MainTank}) || (${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,${OriginalMT}].IsDead})
 				EQ2Bot:MainTank_Dead
 
 			OutOfCombatRoutinesTimer:Set[${Script.RunningTime}]
@@ -1555,18 +1598,19 @@ function Combat()
 				face ${Target.X} ${Target.Z}
 		}
 
-		if !${Actor[${KillTarget}](exists)}
+		if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead}
+		{
+			EQ2Execute /target_none
+			KillTarget:Set[0]
 			break
-
-		if ${Actor[${KillTarget}].IsDead}
-			break
+		}
 
 		if ${Me.ToActor.IsDead}
-			break
+			return
 
 		do
 		{
-			;these checks should be done before calling combat, once called, combat should insue, regardless.
+			;Hmmm....
 			if !${Actor[${KillTarget}].InCombatMode}
 				break
 
@@ -1579,7 +1623,11 @@ function Combat()
 			}
 
 			if !${Actor[${KillTarget}](exists)}
+			{
+				EQ2Execute /target_none
+				KillTarget:Set[0]
 				break
+			}
 
 			;face ${Target.X} ${Target.Y} ${Target.Z}
 
@@ -1611,24 +1659,24 @@ function Combat()
 					{
 						Mob:CheckMYAggro
 
-						if ${Actor[ExactName,${MainAssist}].IsDead}
+						if ${Actor[${MainAssistID}].IsDead}
 						{
 							EQ2Bot:MainAssist_Dead
 							break
 						}
 
-						if ${Actor[exactname,${MainTankPC}].IsDead}
+						if ${Actor[${MainTankID}].IsDead}
 						{
 							EQ2Bot:MainTank_Dead
 							break
 						}
 
-							if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
-							{
-								call Have_Aggro
-								if ${UseCustomRoutines}
-										call Custom__Have_Aggro
-							}
+						if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+						{
+							call Have_Aggro
+							if ${UseCustomRoutines}
+								call Custom__Have_Aggro
+						}
 					}
 
 					do
@@ -1650,9 +1698,10 @@ function Combat()
 						gRtnCtr:Set[40]
 					}
 
-					if ${Actor[${KillTarget}].IsDead}
+					if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead}
 					{
 						EQ2Execute /target_none
+						KillTarget:Set[0]
 						break
 					}
 
@@ -1677,7 +1726,7 @@ function Combat()
 						{
 							;we have aggro, move to the maintank
 							if !${NoAutoMovement}
-								call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 1
+								call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 1
 							wait 2
 							do
 							{
@@ -1690,24 +1739,24 @@ function Combat()
 						{
 							;call CheckPosition 1 ${Target.IsEpic} ${KillTarget} 0 0
 							if ${MainTank}
-									call CheckPosition 1 0 ${KillTarget} 0 1
+								call CheckPosition 1 0 ${KillTarget} 0 1
 							else
-									call CheckPosition 1 1 ${KillTarget} 0 0
+								call CheckPosition 1 1 ${KillTarget} 0 0
 						}
 					}
-					elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[exactname,${MainTankPC}].Distance}>40
+					elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[${MainTankID}].Distance}>40
 					{
-							if !${NoAutoMovement}
+						if !${NoAutoMovement}
+						{
+							call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 25
+							wait 2
+							do
 							{
-								call FastMove ${Actor[exactname,${MainTankPC}].X} ${Actor[exactname,${MainTankPC}].Z} 25
-								wait 2
-								do
-								{
-									waitframe
-									call ProcessTriggers
-								}
-								while (${IsMoving} || ${Me.IsMoving})
+								waitframe
+								call ProcessTriggers
 							}
+							while (${IsMoving} || ${Me.IsMoving})
+						}
 					}
 
 					if ${Me.ToActor.Power}<55 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
@@ -1719,10 +1768,10 @@ function Combat()
 						}
 					}
 
-					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
 					{
 						variable int ActorID
-						ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+						ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
 						if ${Mob.ValidActor[${ActorID}]}
 						{
 							KillTarget:Set[${ActorID}]
@@ -1760,20 +1809,20 @@ function Combat()
 					{
 						Mob:CheckMYAggro
 
-						if ${Actor[ExactName,${MainAssist}].IsDead}
+						if ${Actor[${MainAssistID}].IsDead}
 						{
 							EQ2Bot:MainAssist_Dead
 							break
 						}
 
-						if ${Actor[exactname,${MainTankPC}].IsDead}
+						if ${Actor[${MainTankID}].IsDead}
 						{
 							EQ2Bot:MainTank_Dead
 							break
 						}
 
-							if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
-									call Custom__Have_Aggro
+						if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+							call Custom__Have_Aggro
 					}
 
 					call Custom__Combat_Routine ${gRtnCtr}
@@ -1793,15 +1842,16 @@ function Combat()
 						}
 					}
 
-					if ${Actor[${KillTarget}].IsDead}
+					if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead}
 					{
 						EQ2Execute /target_none
+						KillTarget:Set[0]
 						break
 					}
 
-					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[ExactName,${MainAssist}].Target.Type.Equal[NPC]} || ${Actor[ExactName,${MainAssist}].Target.Type.Equal[NamedNPC]}) && ${Actor[ExactName,${MainAssist}].Target.InCombatMode}
+					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
 					{
-						ActorID:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+						ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
 						if ${Mob.ValidActor[${ActorID}]}
 						{
 							KillTarget:Set[${ActorID}]
@@ -1818,9 +1868,17 @@ function Combat()
 			if !${CurrentTask}
 				Script:End
 
-						if ${Actor[${KillTarget}].IsDead}
-								break
-
+			if !${Actor[${KillTarget}](exists)}
+			{
+				EQ2Execute /target_none
+				KillTarget:Set[0]
+				break
+			}
+			if ${Me.ToActor.IsDead}
+			{
+				EQ2Execute /target_none
+				break
+			}
 			call ProcessTriggers
 		}
 		while (!${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]})
@@ -1832,14 +1890,14 @@ function Combat()
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Target New Mob (if applicable)
 		;;
-		if !${MainTank} && ${Actor[ExactName,${MainAssist}](exists)}
+		if !${MainTank} && ${Actor[${MainAssistID}](exists)}
 		{
 			if ${Mob.Detect}
-				wait 50 ${Actor[ExactName,${MainAssist}].Target(exists)}
+				wait 50 ${Actor[${MainAssistID}].Target(exists)}
 
-			if ${Actor[ExactName,${MainAssist}].Target(exists)} && ${Mob.ValidActor[${Actor[ExactName,${MainAssist}].Target.ID}]}
+			if ${Actor[${MainAssistID}].Target(exists)} && ${Mob.ValidActor[${Actor[${MainAssistID}].Target.ID}]}
 			{
-				KillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
+				KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 				Actor[${KillTarget}]:DoTarget
 				;Actor[${KillTarget}]:DoFace
 				ContinueCombat:Set[TRUE]
@@ -1868,6 +1926,12 @@ function Combat()
 					ContinueCombat:Set[TRUE]
 				}
 			}
+		}
+	
+		if ${Me.ToActor.IsDead}
+		{
+			EQ2Execute /target_none
+			break
 		}
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2026,19 +2090,16 @@ function GetinFront()
 	variable float Z
 
 	;; if you are not the tank, then you should assume the tank is already in front of the mob and move to the TANK instead of the KillTarget
-		if ${MainTank}
-		{
-			X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].X}]}]
-			Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].Z}]}]
-		}
-		else
-		{
-				variable uint MainTankPCID
-				MainTankPCID:Set[${Actor[pc,exactname,${MainTankPC}].ID}]
-
-			X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].X}]}]
-			Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${MainTankPCID}].Heading}]}+${Actor[${MainTankPCID}].Z}]}]
-		}
+	if ${MainTank}
+	{
+		X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].X}]}]
+		Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${KillTarget}].Heading}]}+${Actor[${KillTarget}].Z}]}]
+	}
+	else
+	{
+		X:Set[${Math.Calc[-3*${Math.Sin[${Actor[${MainTankID}].Heading}]}+${Actor[${MainTankID}].X}]}]
+		Z:Set[${Math.Calc[-3*${Math.Cos[${Actor[${MainTankID}].Heading}]}+${Actor[${MainTankID}].Z}]}]
+	}
 	call FastMove ${X} ${Z} 3
 	if ${Return.Equal[STUCK]}
 	{
@@ -2446,7 +2507,7 @@ function StrafeToLeft(uint TID, float destangle)
 		;set stuckstate to off
 		isstuck:Set[FALSE]
 		;attempt move
-		call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 4
+		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 4
 		;if move to tank also returned stuck, we really stuck
 		if ${isstuck}
 			return STUCK
@@ -2540,7 +2601,7 @@ function StrafeToRight(uint TID, float destangle)
 		isstuck:Set[FALSE]
 
 		;attempt move to tank
-		call FastMove ${Actor[${MainTankPC}].X} ${Actor[${MainTankPC}].Z} 4
+		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 4
 
 		;if move to tank also returned stuck, we really stuck
 		if ${isstuck}
@@ -3510,7 +3571,7 @@ function MovetoWP(lnavregionref destination)
 
 function MovetoMaster()
 {
-	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[ExactName,${MainAssist}].X},${Actor[ExactName,${MainAssist}].Z},${Actor[ExactName,${MainAssist}].Y}].FQN}]}
+	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[${MainAssistID}].X},${Actor[${MainAssistID}].Z},${Actor[${MainAssistID}].Y}].FQN}]}
 	{
 		CurrentAction:Set[Moving Closer to Main Aasist]
 		movingtowp:Set[TRUE]
@@ -4106,45 +4167,45 @@ function SetNewKillTarget()
 
 function ReacquireKillTargetFromMA()
 {
-		variable int NextKillTarget
+	variable int NextKillTarget
 	CurrentAction:Set[Reacquiring KillTarget from ${MainAssist} in 0.5 seconds...]
 	wait 5
 
-	if ${Actor[ExactName,${MainAssist}](exists)}
+	if ${Actor[${MainAssistID}](exists)}
 	{
-		if ${Actor[ExactName,${MainAssist}].Target(exists)}
+		if ${Actor[${MainAssistID}].Target(exists)}
 		{
-				NextKillTarget:Set[${Actor[ExactName,${MainAssist}].Target.ID}]
-				if (${NextKillTarget})
+			NextKillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
+			if (${NextKillTarget})
+			{
+				if ${Actor[${NextKillTarget}].Type.Find[NPC]} && !${Actor[${NextKillTarget}].IsDead}
 				{
-						if ${Actor[${NextKillTarget}].Type.Find[NPC]} && !${Actor[${NextKillTarget}].IsDead}
-						{
-							KillTarget:Set[${NextKillTarget}]
-							Debug:Echo["KillTarget now set to ${Actor[ExactName,${MainAssist}]}'s target: ${Actor[${KillTarget}]} (ID: ${KillTarget})"]
-							return OK
-					}
-					else
-					{
-							Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target was not valid]"]
-							return FAILED
-					}
-			}
+					KillTarget:Set[${NextKillTarget}]
+					Debug:Echo["KillTarget now set to ${Actor[${MainAssistID}]}'s target: ${Actor[${KillTarget}]} (ID: ${KillTarget})"]
+					return OK
+				}
 				else
 				{
-						Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target ID was zero]"]
-						return FAILED
+					Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target was not valid]"]
+					return FAILED
 				}
+			}
+			else
+			{
+				Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target ID was zero]"]
+				return FAILED
+			}
 		}
 		else
 		{
-				;Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"]
-				return FAILED
+			;Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"]
+			return FAILED
 		}
 	}
 	else
 	{
-			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist doesn't exist!]"]
-			return FAILED
+		Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist doesn't exist!]"]
+		return FAILED
 	}
 
 	Debug:Echo["ReacquireKillTargetFromMA() FAILED"]
@@ -4155,35 +4216,35 @@ function VerifyTarget(int TargetID=0)
 {
 		if !${TargetID}
 		{
-				if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
-				{
-					if ${MainAssist.Equal[${Me.Name}]}
-						return FALSE
+			if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
+			{
+				if ${MainAssist.Equal[${Me.Name}]}
+					return FALSE
 
-						call ReacquireKillTargetFromMA
-					if ${Return.Equal[FAILED]}
-						{
-							KillTarget:Set[0]
-							return FALSE
-						}
+				call ReacquireKillTargetFromMA
+				if ${Return.Equal[FAILED]}
+				{
+					KillTarget:Set[0]
+					return FALSE
 				}
+			}
 		}
 		else
 		{
 			if (${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead})
 			{
-					if ${MainAssist.Equal[${Me.Name}]}
-						return FALSE
-
-						call ReacquireKillTargetFromMA
-					if ${Return.Equal[FAILED]}
-						{
-							KillTarget:Set[0]
-							return FALSE
-						}
-				}
-				elseif (!${Actor[${TargetID}](exists)} || ${Actor[${TargetID}].IsDead})
+				if ${MainAssist.Equal[${Me.Name}]}
 					return FALSE
+
+				call ReacquireKillTargetFromMA
+				if ${Return.Equal[FAILED]}
+				{
+					KillTarget:Set[0]
+					return FALSE
+				}
+			}
+			elseif (!${Actor[${TargetID}](exists)} || ${Actor[${TargetID}].IsDead})
+				return FALSE
 		}
 
 		return TRUE
@@ -4259,8 +4320,8 @@ function StartBot()
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
-		if ${Actor[exactname,${MainTankPC}].InCombatMode}
-				UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
+	if ${Actor[${MainTankID}].InCombatMode}
+		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	StartBot:Set[TRUE]
 }
 
@@ -4359,7 +4420,7 @@ function CheckBuffsOnce()
 
 	if ${MainTank}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
-	elseif ${Actor[exactname,${MainTankPC}].InCombatMode}
+	elseif ${Actor[${MainTankID}].InCombatMode}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 	CurrentAction:Set["Waiting..."]
 	CheckingBuffsOnce:Set[FALSE]
@@ -4916,7 +4977,9 @@ objectdef EQ2BotObj
 			CharacterSet.FindSet[General Settings]:AddSetting[Who is the Main Assist?,${Me.Name}]
 
 		MainAssist:Set[${CharacterSet.FindSet[General Settings].FindSetting[Who is the Main Assist?,${Me.Name}]}]
+		MainAssistID:Set[${Actor[exactname,${MainAssist}].ID}]
 		MainTankPC:Set[${CharacterSet.FindSet[General Settings].FindSetting[Who is the Main Tank?,${Me.Name}]}]
+		MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
 		AutoSwitch:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Switch Targets when Main Assist Switches?,TRUE]}]
 		AutoLoot:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Loot Corpses and open Treasure Chests?,FALSE]}]
 		LootAll:Set[${CharacterSet.FindSet[General Settings].FindSetting[Accept Loot Automatically?,TRUE]}]
@@ -5114,6 +5177,7 @@ objectdef EQ2BotObj
 		if !${Actor[${OriginalMA}].IsDead} && ${Actor[${OriginalMA}](exists)}
 		{
 			MainAssist:Set[${OriginalMA}]
+			MainAssistID:Set[${Actor[exactname,${MainAssist}].ID}]
 			KillTarget:Set[]
 			Echo Switching back to the original MainAssist ${MainAssist}
 			return
@@ -5121,6 +5185,7 @@ objectdef EQ2BotObj
 		else
 		{
 			MainAssist:Set[${MainTankPC}]
+			MainAssistID:Set[${Actor[exactname,${MainAssist}].ID}]
 		}
 	}
 
@@ -5132,6 +5197,7 @@ objectdef EQ2BotObj
 		{
 			MainTank:Set[FALSE]
 			MainTankPC:Set[${OriginalMT}]
+			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
 			KillTarget:Set[]
 			Echo Switching back to the original MainTank ${MainTankPC}
 			return
@@ -5142,6 +5208,7 @@ objectdef EQ2BotObj
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
 			MainTankPC:Set[${Me.Name}]
+			MainTankID:Set[${Me.ID}]
 		}
 
 		grpcnt:Set[${Me.GroupCount}]
@@ -5163,6 +5230,7 @@ objectdef EQ2BotObj
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
 						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankID:Set[${Me.Group[${tempgrp}].ID}]
 					}
 			}
 		}
@@ -5186,6 +5254,7 @@ objectdef EQ2BotObj
 							highesthp:Set[${Me.Raid[${tempgrp}].MaxHitPoints}]
 							MainTank:Set[FALSE]
 							MainTankPC:Set[${Me.Raid[${tempgrp}].Name}]
+							MainTankID:Set[${Me.Raid[${tempgrp}].ID}]
 						}
 				}
 			}
@@ -5203,6 +5272,7 @@ objectdef EQ2BotObj
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
 			MainTankPC:Set[${Me.Name}]
+			MainTankID:Set[${Me.ID}]
 		}
 
 		tempgrp:Set[1]
@@ -5221,6 +5291,7 @@ objectdef EQ2BotObj
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
 						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankID:Set[${Me.Group[${tempgrp}].ID}]
 					}
 			}
 		}
@@ -5237,6 +5308,7 @@ objectdef EQ2BotObj
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
 			MainTankPC:Set[${Me.Name}]
+			MainTankID:Set[${Me.ID}]
 		}
 
 		tempgrp:Set[1]
@@ -5255,6 +5327,7 @@ objectdef EQ2BotObj
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
 						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankID:Set[${Me.Group[${tempgrp}].ID}]
 					}
 			}
 		}
@@ -5271,6 +5344,7 @@ objectdef EQ2BotObj
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
 			MainTankPC:Set[${Me.Name}]
+			MainTankID:SEt[${Me.ID}]
 		}
 
 		tempgrp:Set[1]
@@ -5289,6 +5363,7 @@ objectdef EQ2BotObj
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]
 						MainTank:Set[FALSE]
 						MainTankPC:Set[${Me.Group[${tempgrp}].Name}]
+						MainTankID:Set[${Me.Group[${tempgrp}].ID}]
 					}
 			}
 		}
@@ -6028,15 +6103,19 @@ atom ExcludePOI()
 
 atom(script) EQ2_onChoiceWindowAppeared()
 {
-		if ${PauseBot} || !${StartBot}
-				return
+	if ${PauseBot} || !${StartBot}
+		return
 
-		Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"]
+	Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"]
 
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{
 		ChoiceWindow:DoChoice1
-		;KillTarget:Set[]
+		if ${KillTarget} && ${Actor[${KillTarget}](exists)}
+		{
+			if !${Actor[${KillTarget}].InCombatMode}
+				KillTarget:Set[0]
+		}
 		InitialBuffsDone:Set[0]
 		return
 	}
