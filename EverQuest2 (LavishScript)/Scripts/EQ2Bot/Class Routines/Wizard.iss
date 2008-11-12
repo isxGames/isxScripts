@@ -316,6 +316,13 @@ function Buff_Routine(int xAction)
 		case SeeInvis
 			if ${BuffSeeInvis}
 			{
+				; If group see invis (Snow-Filled Steps) is available, use that.
+				if ${Me.Ability[${SpellType[354]}](exists)}
+				{
+					if ${Me.Ability[${SpellType[354]}].IsReady}
+						call CastSpellRange 354
+					break
+				}
 				;buff myself first
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ToActor.ID}
 
