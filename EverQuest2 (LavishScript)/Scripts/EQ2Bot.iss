@@ -359,7 +359,7 @@ function main()
 		elseif ${Me.TotalEarnedAPs} < 140
 			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 		else
-			GainedXPString:Set[Gained XP:  N/A]		
+			GainedXPString:Set[Gained XP:  N/A]
 		;;;
 		;;;;;;;;;;;;;;;;;
 
@@ -641,7 +641,7 @@ function main()
 				wait 5
 			}
 			ExecuteAtom CheckStuck
-			
+
 			;;;;;;
 			;; Make sure that MainAssistID and/or MainTankID are still valid (ie, IDs sometimes change on zoning...)
 			if !${Actor[${MainTankID}](exists)}
@@ -660,7 +660,7 @@ function main()
 			}
 			;;
 			;;;;;
-			
+
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
@@ -1278,7 +1278,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	{
 		do
 		{
-			press ESC
+			eq2execute /cancel_spellcast
 			wait 3
 		}
 		while ${Me.CastingSpell}
@@ -1927,7 +1927,7 @@ function Combat()
 				}
 			}
 		}
-	
+
 		if ${Me.ToActor.IsDead}
 		{
 			EQ2Execute /target_none
