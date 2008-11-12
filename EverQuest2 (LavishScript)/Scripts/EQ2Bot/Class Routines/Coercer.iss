@@ -50,6 +50,7 @@ function Class_Declaration()
 	declare BuffHateGroupMember string script
 	declare BuffCoerciveHealingGroupMember string script
 	declare BuffManaward bool script
+	declare BuffSpellProc string stript
 	declare DPSMode bool script 1
 	declare TSMode bool script 1
 	declare StartHO bool script 1
@@ -69,9 +70,9 @@ function Class_Declaration()
 	BuffCoerciveHealing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealing,FALSE]}]
 	BuffCoerciveHealingGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealingGroupMember,]}]
 	BuffManaward:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffManaward,FALSE]}]
+	BuffSpellProc:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSpellProc,No One]}]
 	DPSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[DPSMode,FALSE]}]
 	TSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseTS,FALSE]}]
-
 	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
 	Charm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Charm,FALSE]}]
 }
@@ -442,8 +443,11 @@ function Combat_Routine(int xAction)
 	;;;; Cataclysmic Mind
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
 	{
-		call CastSpellRange 72 0 0 0 ${KillTarget}
-		spellsused:Inc
+		if !${BuffSpellProc.Equal[No One]}
+		{
+			call CastSpellRange 72 0 0 0 ${Actor[${BuffSpellProc.Token[2,:]},${BuffSpellProc.Token[1,:]}].ID}
+			spellsused:Inc
+		}
 	}
 	;;;; Daze
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)}
