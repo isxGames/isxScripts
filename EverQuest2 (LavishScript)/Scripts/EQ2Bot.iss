@@ -517,7 +517,7 @@ function main()
 							call Combat
 					}
 				}
-
+				
 				MobDetected:Set[${Mob.Detect}]
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;;
@@ -925,6 +925,28 @@ function main()
 				while ${MobDetected}
 			}
 			AggroDetectionTimer:Set[${Script.RunningTime}]
+			
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; pvp / duels
+			;;
+			;; TO DO:
+			;; To work, we need to change CastSpell() so that when pvp, it uses "Ability[]:Use" rather
+			;; than /useabilityonplayer (which only works for beneficial abilities).  Otherwise, uncommenting
+			;; this WILL make pvp combat work.  
+			;if ${MainTank} && ${Target(exists)}
+			;{
+			;	if ${Target.Type.Equal[PC]}
+			;	{
+			;		if ${Target.InCombatMode} && ${Me.ToActor.InCombatMode} && ${Target.Target.ID} == ${Me.ID}
+			;		{
+			;			KillTarget:Set[${Target.ID}]
+			;			call Combat 1
+			;		}
+			;	}
+			;}
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			
 			;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		}
@@ -1544,7 +1566,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	return SUCCESS
 }
 
-function Combat()
+function Combat(bool PVP=0)
 {
 	variable int tempvar
 	variable bool ContinueCombat
@@ -1631,7 +1653,7 @@ function Combat()
 
 			;face ${Target.X} ${Target.Y} ${Target.Z}
 
-			if (${Mob.ValidActor[${KillTarget}]})
+			if (${Mob.ValidActor[${KillTarget}]} || ${PVP})
 			{
 				gRtnCtr:Set[1]
 				do
@@ -1881,7 +1903,7 @@ function Combat()
 			}
 			call ProcessTriggers
 		}
-		while (!${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]})
+		while ((!${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]}) || ${PVP})
 		;;; END LOOP DEALING WITH CURRENT TARGET ;;;;;;
 
 		disablebehind:Set[FALSE]
@@ -1895,7 +1917,7 @@ function Combat()
 			if ${Mob.Detect}
 				wait 50 ${Actor[${MainAssistID}].Target(exists)}
 
-			if ${Actor[${MainAssistID}].Target(exists)} && ${Mob.ValidActor[${Actor[${MainAssistID}].Target.ID}]}
+			if ((${Actor[${MainAssistID}].Target(exists)} && ${Mob.ValidActor[${Actor[${MainAssistID}].Target.ID}]}) || ${PVP})
 			{
 				KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 				Actor[${KillTarget}]:DoTarget
