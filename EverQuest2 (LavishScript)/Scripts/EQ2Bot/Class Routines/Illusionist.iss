@@ -1804,7 +1804,7 @@ function RefreshPower()
 			{
 				call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 				if ${SpamSpells} 
-					Custom:Spam[Mana Flow]
+					Custom:Spam[Mana Flow,${Me.Group[${MemberLowestPower}].ToActor.ID}]
 				LastSpellCast:Set[360]
 				if ${Me.InCombat}
 					call CheckCastBeam
