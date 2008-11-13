@@ -146,9 +146,12 @@ function Buff_Init()
    PreAction[12]:Set[Bloodletter]
    PreSpellRange[12,1]:Set[331]
    
+   PreAction[13]:Set[AuraOfLeadershipAABuff]
+   PreSpellRange[13,1]:Set[341]
+   
    ; Removed in TSO
-   PreAction[13]:Set[SiphonHate]
-   PreSpellRange[13,1]:Set[335]  
+   PreAction[14]:Set[SiphonHate]
+   PreSpellRange[14,1]:Set[335]  
 
 }
 
@@ -506,7 +509,18 @@ function Buff_Routine(int xAction)
 		            Me.Maintained[Fearless Morale]:Cancel
 		    }
 			break
-
+			
+		case AuraOfLeadershipAABuff
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[Fearless Morale](exists)}
+			    {
+				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+			    }
+			}
+		    break
+		    
 		case Bloodletter
 		    if ${Me.Level} < 80
 		        break
@@ -854,14 +868,15 @@ function Combat_Routine(int xAction)
     }
 
     ;; Combat Leadership AA
-	if ${Me.Ability[${SpellType[333]}](exists)}
-	{
-	    if (${Me.Ability[${SpellType[333]}].IsReady} && ${Zone.ShortName.Find[venril]} <= 0)
-	    {
-		    call CastSpellRange 333 0 0 0 ${Me.ID}
-		    spellsused:Inc
-		}
-	}
+    ;; NOTE:  Removing this for now -- I do not think it is worth the effort...
+	;if ${Me.Ability[${SpellType[333]}](exists)}
+	;{
+	;    if (${Me.Ability[${SpellType[333]}].IsReady} && ${Zone.ShortName.Find[venril]} <= 0)
+	;    {
+	;	    call CastSpellRange 333 0 0 0 ${Me.ID}
+	;	    spellsused:Inc
+	;	}
+	;}
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
 
@@ -1361,14 +1376,15 @@ function CastSomething()
 	}
 
 	;; Combat Leadership AA
-	if (${Me.Ability[${SpellType[333]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
-	{
-	    if (${Me.Ability[${SpellType[333]}].IsReady})
-	    {
-		    call CastSpellRange 333 0 0 0 ${Me.ID}
-		    return
-		}
-	}
+	;; NOTE:  Removing for now ..I do not think it is worth the effort
+	;if (${Me.Ability[${SpellType[333]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
+	;{
+	;    if (${Me.Ability[${SpellType[333]}].IsReady})
+	;    {
+	;	    call CastSpellRange 333 0 0 0 ${Me.ID}
+	;	    return
+	;	}
+	;}
 
 
 
