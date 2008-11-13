@@ -77,6 +77,7 @@ function Class_Declaration()
 	declare IllyDPSBuffsOn collection:string script
 	declare MakePetWhileInCombat bool script TRUE
 	declare SpamSpells bool script FALSE
+	declare Custom custom_overrides script
 
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
@@ -97,7 +98,7 @@ function Class_Declaration()
 	UseIlluminate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseIlluminate,FALSE]}]
 	BlinkMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BlinkMode,FALSE]}]
 	MakePetWhileInCombat:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MakePetWhileInCombat,TRUE]}]
-	SpamSpells:Set[${CharacterSet.FindSet[${Me.Subclass}].FindSetting[SpamSpells,FALSE]}]
+	SpamSpells:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamSpells,FALSE]}]
 
 	NoEQ2BotStance:Set[TRUE]
 
@@ -2078,6 +2079,4 @@ objectdef custom_overrides
 	{
 	}
 }
-
-variable custom_overrides Custom
 
