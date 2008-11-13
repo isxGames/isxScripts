@@ -76,7 +76,7 @@ function Class_Declaration()
 	declare IllyCasterBuffsOn collection:string script
 	declare IllyDPSBuffsOn collection:string script
 	declare MakePetWhileInCombat bool script TRUE
-
+	declare SpamSpells bool script FALSE
 
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
@@ -97,6 +97,7 @@ function Class_Declaration()
 	UseIlluminate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseIlluminate,FALSE]}]
 	BlinkMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BlinkMode,FALSE]}]
 	MakePetWhileInCombat:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MakePetWhileInCombat,TRUE]}]
+	SpamSpells:Set[${CharacterSet.FindSet[${Me.Subclass}].FindSetting[SpamSpells,FALSE]}]
 
 	NoEQ2BotStance:Set[TRUE]
 
@@ -1802,6 +1803,8 @@ function RefreshPower()
 			if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<60 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>30 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
 			{
 				call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+				if ${SpamSpells} 
+					Custom:Spam[Mana Flow]
 				LastSpellCast:Set[360]
 				if ${Me.InCombat}
 					call CheckCastBeam
@@ -2068,3 +2071,13 @@ function PostDeathRoutine()
 	InPostDeathRoutine:Set[FALSE]
 	return
 }
+
+objectdef custom_overrides
+{
+	method Spam()
+	{
+	}
+}
+
+variable custom_overrides Custom
+

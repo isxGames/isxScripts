@@ -825,7 +825,7 @@ function CheckHeals()
 
     if !${Actor[${MainTankID}](exists)}
     {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+        ;Debug:Echo["EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"]
         MainTankExists:Set[FALSE]
     }
     else
