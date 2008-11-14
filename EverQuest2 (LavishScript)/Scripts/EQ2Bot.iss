@@ -242,8 +242,6 @@ variable bool NoEligibleTarget
 variable int PathType
 
 
-
-
 #if ${ISXEQ2(exists)} && ${ISXEQ2.IsReady}
 	#include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
 	#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.iss
