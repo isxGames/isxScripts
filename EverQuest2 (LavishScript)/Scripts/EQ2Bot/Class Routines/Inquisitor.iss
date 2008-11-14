@@ -86,13 +86,13 @@ function Class_Declaration()
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -102,7 +102,7 @@ function Pulse()
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		call CheckHeals
-	
+
 		if ${Me.ToActor.Power}>85 && ${KeepReactiveUp}
 			call CheckReactives
 	}
@@ -262,14 +262,6 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	variable int temp
-
-	if ${ShardMode}
-		call Shard
-
-	call CheckHeals
-
-	if ${Me.ToActor.Power}>85 && ${KeepReactiveUp}
-		call CheckReactives
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -1232,8 +1224,8 @@ function Fanaticism()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }
