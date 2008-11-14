@@ -2519,13 +2519,13 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 5 Right Side Strafing to 150]
-					call StrafeToRight ${TID} 150
+					Debug:Echo[Quadrant 5 Right Side Strafing to 105]
+					call StrafeToRight ${TID} 105
 				}
 				else
 				{
-					Debug:Echo[Quadrant 5 Left Side Strafing to 150]
-					call StrafeToLeft ${TID} 150
+					Debug:Echo[Quadrant 5 Left Side Strafing to 105]
+					call StrafeToLeft ${TID} 105
 				}
 				return
 			}
