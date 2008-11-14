@@ -68,7 +68,7 @@ variable(script) bool AltsAsMains
 ;;;      -StatsOnly         (Produce statistis only -- no raid snapshot is taken.)
 ;;;      -SnapshotOnly      (Take raid snapshot only -- no stats are spewed.)
 ;;;      Date=xx/xx/xxxx    (Forces the script to utilize the given date as the date of the raid.)
-;;;      -AltsAsMains       (When used, the script will treat all characters as mains.)
+;;;      -AltsAsMains       (When used, the script will treat all characters as mains when creating statistics.)
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
