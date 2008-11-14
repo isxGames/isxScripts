@@ -8,12 +8,15 @@ variable(script) settingsetref pAlts
 variable(script) collection:uint CurMembers		
 variable(script) collection:uint TotalMembers
 variable(script) collection:string Alts
+variable(script) collection:string AltCreditCheck
 variable(script) index:string Sitters	
 variable(script) uint RaidCount								
 variable(script) string RaidName
 variable(script) string sFileName
+variable(script) string RaidDate
 variable(script) bool StatsOnly
 variable(script) bool SSOnly
+variable(script) bool AltsAsMains
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,9 +43,9 @@ variable(script) bool SSOnly
 ;;; if you wish to call your current raid "Korsha" and Amadeus, Pygar,
 ;;; and Valerian are sitting out, then you would use the following command in
 ;;; the console window:
-;;;      > run EQ2RaidAttendance Raid="Korsha" Amadeus Pygar Valerian
-;;; The script will run, call the raid "Korsha" and count Amadeus Pygar and Valerian
-;;; as being "in" the raid.
+;;;      > run EQ2RaidAttendance "Raid=Korsha [Overking Only]" Amadeus Pygar Valerian
+;;; The script will run, call the raid "Korsha [Overking Only]" and count Amadeus 
+;;; Pygar and Valerian as being IN the raid.
 ;;;
 ;;; NOTES: To take further snapshots it is not necessary to indicate the 'sitters' again
 ;;; (unless there are new 'sitters'.)  Once someone is counted as in the raid, they
@@ -64,6 +67,8 @@ variable(script) bool SSOnly
 ;;; of the ones above:
 ;;;      -StatsOnly         (Produce statistis only -- no raid snapshot is taken.)
 ;;;      -SnapshotOnly      (Take raid snapshot only -- no stats are spewed.)
+;;;      Date=xx/xx/xxxx    (Forces the script to utilize the given date as the date of the raid.)
+;;;      -AltsAsMains       (When used, the script will treat all characters as mains.)
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -94,8 +99,12 @@ function main(... Args)
 	{
 		if ${Args[${count}].Token[1,=].Equal[Raid]}
 			RaidNameSuffix:Set[${Args[${count}].Token[2,=]}]		
+		elseif ${Args[${count}].Token[1,=].Equal[Date]}
+			RaidDate:Set[${Args[${count}].Token[2,=]}]				
 		elseif ${Args[${count}].Find[-StatsOnly]}
 			StatsOnly:Set[TRUE]
+		elseif (${Args[${count}].Find[-AltsAsMains]} || ${Args[${count}].Find[-IgnoreAlts]})
+			AltsAsMains:Set[TRUE]		
 		elseif (${Args[${count}].Find[-SnapshotOnly]} || ${Args[${count}].Find[-SSOnly]})
 			SSOnly:Set[TRUE]
 		elseif ${Args[${count}].Find[=]}
@@ -112,10 +121,13 @@ function main(... Args)
 		    Debug:Echo["-- ${Args[${count}]} is sitting out today"]
 		}
 	}
+	
+	if (${RaidDate.Length} <= 0)
+		RaidDate:Set[${Time.Date}]
 	if (${RaidNameSuffix.Length} > 0)
-	    RaidName:Set["${Time.Date} (${RaidNameSuffix})"]
+	    RaidName:Set["${RaidDate} (${RaidNameSuffix})"]
     else
-        RaidName:Set["${Time.Date}"]
+        RaidName:Set["${RaidDate}"]
     Debug:Echo["-- Today's Raid will be named '${RaidName}'"]
     Debug:Echo["- Initialization complete."]
     Debug:Echo["-"]
@@ -165,44 +177,30 @@ function ImportXML()
 	;;;;;
 	
 	;;;;;
-	;; Get Total Number of Raids tracked
-	pRaids:GetSetIterator[RIterator]
-	if ${RIterator:First(exists)}
-	{
-		do
-		{
-			RaidCount:Inc
-		}
-		while ${RIterator:Next(exists)}
-	}
-	Debug:Echo["- There are ${RaidCount} raid(s) currently being tracked."]
-	Debug:Echo["-"]
-	;;
-	;;;;;
-	
-	;;;;;
 	;;; Alts
-	Debug:Echo["- Loading alt <-> main information..."]
-	pAlts:GetSetIterator[AIterator]
-	if ${AIterator:First(exists)}
+	if !${AltsAsMains}
 	{
-		do
+		Debug:Echo["- Loading alt <-> main information..."]
+		pAlts:GetSetIterator[AIterator]
+		if ${AIterator:First(exists)}
 		{
-			AltName:Set[${AIterator.Key}]
-			MainName:Set[${pAlts.FindSet[${AltName}].FindSetting[Main]}]
-			
-			Debug:Echo["-- ${AltName} == ${MainName}"]
-			Alts:Set[${AltName},${MainName}]
+			do
+			{
+				AltName:Set[${AIterator.Key}]
+				MainName:Set[${pAlts.FindSet[${AltName}].FindSetting[Main]}]
+				
+				Debug:Echo["-- ${AltName} == ${MainName}"]
+				Alts:Set[${AltName},${MainName}]
+			}
+			while ${AIterator:Next(exists)}
+			Debug:Echo["- There are ${Alts.Used} alt characters being tracked."]
 		}
-		while ${AIterator:Next(exists)}
-		Debug:Echo["- There are ${Alts.Used} alt characters being tracked."]
+		else
+			Debug:Echo["- There are no alt characters currently being tracked."]
+		Debug:Echo["-"]
 	}
-	else
-		Debug:Echo["- There are no alt characters currently being tracked."]
-	Debug:Echo["-"]
 	;;;
 	;;;;;
-	
 	
 	
 	;;;;;
@@ -228,12 +226,37 @@ function ImportXML()
 	}
 	else
 	{
-		Debug:Echo["-- No Entry exists as yet for today's raid.  This will be the first snapshot today."]
-		pRaids:AddSet["${RaidName}"]
-		pTodaysRaid:Set[${pRaids.FindSet["${RaidName}"]}]
+		if (${StatsOnly})
+			Debug:Echo["-- No Entry exists as yet for today's raid."]
+		else
+		{
+			Debug:Echo["-- No Entry exists as yet for today's raid.  This will be the first snapshot today."]
+			pRaids:AddSet["${RaidName}"]
+			pTodaysRaid:Set[${pRaids.FindSet["${RaidName}"]}]
+		}
 	}
 	;;
 	;;;;;
+	
+	;;;;;
+	;; Get Total Number of Raids tracked
+	pRaids:GetSetIterator[RIterator]
+	if ${RIterator:First(exists)}
+	{
+		do
+		{
+			;Debug:Echo["+ ${RIterator.Key}"]
+			RaidCount:Inc
+		}
+		while ${RIterator:Next(exists)}
+	}
+	Debug:Echo["-"]
+	Debug:Echo["- There are ${RaidCount} raid(s) currently being tracked."]
+	if ${StatsOnly}
+		Debug:Echo["-"]
+	;;
+	;;;;;
+	
 	
 	;;;;;
 	;;;
@@ -364,6 +387,8 @@ function GenerateStats()
 			pRaids.FindSet[${RIterator.Key}]:GetSetIterator[RMIterator]
 			if ${RMIterator:First(exists)}
 			{
+				AltCreditCheck:Clear
+				Debug:Echo["--"]
 				Debug:Echo["-- ${RIterator.Key}"]
 				do
 				{
@@ -385,15 +410,28 @@ function GenerateStats()
 						
 						if (${TotalMembers.Element[${MainName}](exists)})
 						{
-							PlayerRaidCount:Set[${TotalMembers.Element[${MainName}]}]
-							
-							TotalMembers:Set[${MainName},${Math.Calc[${PlayerRaidCount}+1].Precision[0]}]
-							Debug:Echo["---- Adding to ${MainName}'s total"]
+							if (!${AltCreditCheck.Element[${MainName}](exists)})
+							{
+								PlayerRaidCount:Set[${TotalMembers.Element[${MainName}]}]
+								
+								TotalMembers:Set[${MainName},${Math.Calc[${PlayerRaidCount}+1].Precision[0]}]
+								
+								Debug:Echo["---- Adding to ${MainName}'s total (${Math.Calc[${PlayerRaidCount}+1].Precision[0]})"]
+								AltCreditCheck:Set[${MainName},${RMIterator.Key}]
+							}
+							else
+								Debug:Echo["---- ${MainName} already given credit for one alt this raid."]
 						}
 						else
 						{
-							TotalMembers:Set[${MainName},1]
-							Debug:Echo["---- Adding to ${MainName}'s total"]
+							if (!${AltCreditCheck.Element[${MainName}](exists)})
+							{
+								TotalMembers:Set[${MainName},1]
+								Debug:Echo["---- Adding to ${MainName}'s total (1)"]
+								AltCreditCheck:Set[${MainName},${RMIterator.Key}]
+							}
+							else
+								Debug:Echo["---- ${MainName} already given credit for one alt this raid."]
 						}									
 					}
 					else
@@ -403,12 +441,12 @@ function GenerateStats()
 							PlayerRaidCount:Set[${TotalMembers.Element[${RMIterator.Key}]}]
 							
 							TotalMembers:Set[${RMIterator.Key},${Math.Calc[${PlayerRaidCount}+1].Precision[0]}]
-							Debug:Echo["--- ${RMIterator.Key}"]
+							Debug:Echo["--- ${RMIterator.Key} (${Math.Calc[${PlayerRaidCount}+1].Precision[0]})"]
 						}
 						else
 						{
 							TotalMembers:Set[${RMIterator.Key},1]
-							Debug:Echo["--- ${RMIterator.Key}"]
+							Debug:Echo["--- ${RMIterator.Key} (1)"]
 						}
 					}
 				}
@@ -418,11 +456,12 @@ function GenerateStats()
 		while ${RIterator:Next(exists)}
 	}
 	Debug:Echo["-"]
-	Debug:Echo["There are currently ${TotalMembers.Used} people being tracked."]
+	Debug:Echo["- A total of ${TotalMembers.Used} people are being tracked overall."]
 	Debug:Echo["-"]
 	;;
 	;;;;;	
 	
+	Debug:Echo["-"]
 	Debug:Echo["- Player attendance so far..."]
 	TotalMembers:GetIterator[SIterator]
 	if ${SIterator:First(exists)}
