@@ -491,7 +491,7 @@ function Combat_Routine(int xAction)
 	;Cast Alacrity if available
 	if ${Me.Ability[${SpellType[398]}].IsReady}
 	{
-		BuffTarget:Set[${UIElement[BuffAlacrityGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+		BuffTarget:Set[${UIElement[cbBuffAlacrityGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			call CastSpellRange 398 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0

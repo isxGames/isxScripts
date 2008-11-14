@@ -2419,12 +2419,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 1 Right Side Strafing to 5]
+					Debug:Echo[Quadrant 1 Right Side Strafing to 30]
 					call StrafeToLeft ${TID} 30
 				}
 				else
 				{
-					Debug:Echo[Quadrant 1 Right Side Strafing to 5]
+					Debug:Echo[Quadrant 1 Right Side Strafing to 30]
 					call StrafeToRight ${TID} 30
 				}
 				return
@@ -2440,12 +2440,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 2 Right Side Strafing to 170]
+					Debug:Echo[Quadrant 2 Right Side Strafing to 150]
 					call StrafeToRight ${TID} 150
 				}
 				else
 				{
-					Debug:Echo[Quadrant 2 Left Side Strafing to 170]
+					Debug:Echo[Quadrant 2 Left Side Strafing to 150]
 					call StrafeToLeft ${TID} 150
 				}
 				return
@@ -2498,12 +2498,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 4 Right Side Strafing to 5]
+					Debug:Echo[Quadrant 4 Right Side Strafing to 80]
 					call StrafeToLeft ${TID} 80
 				}
 				else
 				{
-					Debug:Echo[Quadrant 4 Right Side Strafing to 5]
+					Debug:Echo[Quadrant 4 Right Side Strafing to 80]
 					call StrafeToRight ${TID} 80
 				}
 				return
@@ -2519,13 +2519,13 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 5 Right Side Strafing to 170]
-					call StrafeToLeft ${TID} 150
+					Debug:Echo[Quadrant 5 Right Side Strafing to 150]
+					call StrafeToRight ${TID} 150
 				}
 				else
 				{
-					Debug:Echo[Quadrant 5 Left Side Strafing to 170]
-					call StrafeToRight ${TID} 150
+					Debug:Echo[Quadrant 5 Left Side Strafing to 150]
+					call StrafeToLeft ${TID} 150
 				}
 				return
 			}
@@ -2543,6 +2543,7 @@ function StrafeToLeft(uint TID, float destangle)
 	xTimer:Set[${Script.RunningTime}]
 	variable int movingforward
 	variable int startdistance
+	variable int lastange
 
 	startdistance:Set[${Actor[${TID}].Distance}]
 
@@ -2564,6 +2565,7 @@ function StrafeToLeft(uint TID, float destangle)
 	{
 		do
 		{
+			lastange:Set[${Position.Angle[${TID}]}]
 			Debug:Echo[Strafing to LEFT from RIGHT Side]
 			Debug:Echo[${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
@@ -2599,6 +2601,7 @@ function StrafeToLeft(uint TID, float destangle)
 	{
 		do
 		{
+			lastange:Set[${Position.Angle[${TID}]}]
 			Debug:Echo[ Strafing to LEFT from LEFT Side]
 			Debug:Echo[ ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
