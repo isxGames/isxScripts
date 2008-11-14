@@ -527,7 +527,7 @@ function main()
 							call Combat
 					}
 				}
-				
+
 				MobDetected:Set[${Mob.Detect}]
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;;
@@ -935,14 +935,14 @@ function main()
 				while ${MobDetected}
 			}
 			AggroDetectionTimer:Set[${Script.RunningTime}]
-			
+
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; pvp / duels
 			;;
 			;; TO DO:
 			;; To work, we need to change CastSpell() so that when pvp, it uses "Ability[]:Use" rather
 			;; than /useabilityonplayer (which only works for beneficial abilities).  Otherwise, uncommenting
-			;; this WILL make pvp combat work.  
+			;; this WILL make pvp combat work.
 			;if ${MainTank} && ${Target(exists)}
 			;{
 			;	if ${Target.Type.Equal[PC]}
@@ -956,7 +956,7 @@ function main()
 			;}
 			;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			
+
 			;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		}
@@ -2440,12 +2440,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					;Debug:Echo[Quadrant 2 Right Side Strafing to 170]
+					Debug:Echo[Quadrant 2 Right Side Strafing to 170]
 					call StrafeToRight ${TID} 170
 				}
 				else
 				{
-					;Debug:Echo[Quadrant 2 Left Side Strafing to 170]
+					Debug:Echo[Quadrant 2 Left Side Strafing to 170]
 					call StrafeToLeft ${TID} 170
 				}
 				return
@@ -2463,12 +2463,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						;Debug:Echo[Quadrant 3 Right Side Strafing to 120]
+						Debug:Echo[Quadrant 3 Right Side Strafing to 120]
 						call StrafeToLeft ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						;Debug:Echo[Quadrant 3 Right Side Strafing to 60]
+						Debug:Echo[Quadrant 3 Right Side Strafing to 60]
 						call StrafeToRight ${TID} 60
 					}
 				}
@@ -2476,12 +2476,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						;Debug:Echo[Quadrant 3 Left Side Strafing to 120]
+						Debug:Echo[Quadrant 3 Left Side Strafing to 120]
 						call StrafeToRight ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						;Debug:Echo[Quadrant 3 Left Side Strafing to 60]
+						Debug:Echo[Quadrant 3 Left Side Strafing to 60]
 						call StrafeToLeft ${TID} 60
 					}
 				}
@@ -2498,12 +2498,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					;Debug:Echo[Quadrant 4 Right Side Strafing to 5]
+					Debug:Echo[Quadrant 4 Right Side Strafing to 5]
 					call StrafeToLeft ${TID} 5
 				}
 				else
 				{
-					;Debug:Echo[Quadrant 4 Left Side Strafing to 5]
+					Debug:Echo[Quadrant 4 Right Side Strafing to 5]
 					call StrafeToRight ${TID} 5
 				}
 				return
@@ -2519,12 +2519,12 @@ function CheckQuadrant(uint TID, int quadrant)
 			{
 				if ${side.Equal[right]}
 				{
-					;Debug:Echo[Quadrant 5 Right Side Strafing to 170]
+					Debug:Echo[Quadrant 5 Right Side Strafing to 170]
 					call StrafeToLeft ${TID} 170
 				}
 				else
 				{
-					;Debug:Echo[Quadrant 5 Left Side Strafing to 170]
+					Debug:Echo[Quadrant 5 Left Side Strafing to 170]
 					call StrafeToRight ${TID} 170
 				}
 				return
