@@ -2249,10 +2249,10 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			destangle:Set[90]
 			break
 		case 4
-			destangle:Set[120]
+			destangle:Set[180]
 			break
 		case 5
-			destangle:Set[60]
+			destangle:Set[0]
 			break
 	}
 
@@ -2396,6 +2396,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 
 function CheckQuadrant(uint TID, int quadrant)
 {
+	; quadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
 	variable string side
 	variable float targetaspect
 
@@ -2411,57 +2412,63 @@ function CheckQuadrant(uint TID, int quadrant)
 		case 1
 			if ${targetaspect}>0 && ${targetaspect}<45
 			{
-				Debug:Echo[CheckQuadrant - Checking Rear and we are Rear]
+				Debug:Echo[CheckQuadrant - Checking Rear and we are Rear - ${targetaspect}]
 				return
 			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					;Debug:Echo[1st left ${TID} 40]
-					call StrafeToLeft ${TID} 40
+					Debug:Echo[Quadrant 1 Right Side Strafing to 5]
+					call StrafeToLeft ${TID} 5
 				}
 				else
 				{
-					;Debug:Echo[ 1st right ${TID} 40]
-					call StrafeToRight ${TID} 40
+					Debug:Echo[Quadrant 1 Right Side Strafing to 5]
+					call StrafeToRight ${TID} 5
 				}
 				return
 			}
 			break
 		case 2
 			if ${targetaspect}>135 && ${targetaspect}<=180
+			{
+				Debug:Echo[CheckQuadrant - Checking Front and we are Front - ${targetaspect}]
 				return
+			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					;Debug:Echo[ 2nd right]
-					call StrafeToRight ${TID} 150
+					;Debug:Echo[Quadrant 2 Right Side Strafing to 170]
+					call StrafeToRight ${TID} 170
 				}
 				else
 				{
-					;Debug:Echo[ 2nd left]
-					call StrafeToLeft ${TID} 150
+					;Debug:Echo[Quadrant 2 Left Side Strafing to 170]
+					call StrafeToLeft ${TID} 170
 				}
 				return
 			}
 			break
 		case 3
 			if ${targetaspect}>45 && ${targetaspect}<135
+			{
+				Debug:Echo[CheckQuadrant - Checking Flank and we are Flank - ${targetaspect}]
 				return
+			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
 					if ${targetaspect}>45
 					{
-						;Debug:Echo[ 3rd right]
+						;Debug:Echo[Quadrant 3 Right Side Strafing to 120]
 						call StrafeToLeft ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						;Debug:Echo[ 3rd left]
+						;Debug:Echo[Quadrant 3 Right Side Strafing to 60]
 						call StrafeToRight ${TID} 60
 					}
 				}
@@ -2469,12 +2476,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						;Debug:Echo[  4th right]
+						;Debug:Echo[Quadrant 3 Left Side Strafing to 120]
 						call StrafeToRight ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						;Debug:Echo[  4th left]
+						;Debug:Echo[Quadrant 3 Left Side Strafing to 60]
 						call StrafeToLeft ${TID} 60
 					}
 				}
@@ -2483,36 +2490,42 @@ function CheckQuadrant(uint TID, int quadrant)
 			break
 		case 4
 			if ${targetaspect}>0 && ${targetaspect}<135
+			{
+				Debug:Echo[CheckQuadrant - Checking Rear or Flank and we are GOOD - ${targetaspect}]
 				return
+			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					;Debug:Echo[  5th right]
-					call StrafeToRight ${TID} 120
+					;Debug:Echo[Quadrant 4 Right Side Strafing to 5]
+					call StrafeToLeft ${TID} 5
 				}
 				else
 				{
-					;Debug:Echo[  5th left]
-					call StrafeToLeft ${TID} 120
+					;Debug:Echo[Quadrant 4 Left Side Strafing to 5]
+					call StrafeToRight ${TID} 5
 				}
 				return
 			}
 			break
 		case 5
 			if ${targetaspect}>45 && ${targetaspect}<180
+			{
+				Debug:Echo[CheckQuadrant - Checking Front or Flank and we are GOOD - ${targetaspect}]
 				return
+			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					;Debug:Echo[  6th left]
-					call StrafeToLeft ${TID} 65
+					;Debug:Echo[Quadrant 5 Right Side Strafing to 170]
+					call StrafeToLeft ${TID} 170
 				}
 				else
 				{
-					;Debug:Echo[  6th right]
-					call StrafeToRight ${TID} 65
+					;Debug:Echo[Quadrant 5 Left Side Strafing to 170]
+					call StrafeToRight ${TID} 170
 				}
 				return
 			}

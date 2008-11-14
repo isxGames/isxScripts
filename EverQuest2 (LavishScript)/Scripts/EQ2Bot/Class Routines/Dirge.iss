@@ -95,13 +95,13 @@ function Class_Declaration()
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -121,6 +121,9 @@ function Pulse()
 			}
 		}
 	}
+
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
+		call ActionChecks
 
 	; Do not remove/change
 	ClassPulseTimer:Set[${Script.RunningTime}]
@@ -253,18 +256,6 @@ function PostCombat_Init()
 
 function Buff_Routine(int xAction)
 {
-	Call ActionChecks
-
-	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
-	{
-		call CastSpellRange 388
-		wait 5
-		if ${Me.Maintained[${SpellType[388]}](exists)}
-		{
-			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
-			BDStatus:Set[0]
-		}
-	}
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -354,13 +345,13 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
-	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<15
+	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<25
 	{
 		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 0 0 1 0
 		eq2execute auto 1
 	}
 
-	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<15
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<10
 	{
 		eq2execute auto 1
 	}
@@ -448,16 +439,18 @@ function Combat_Routine(int xAction)
 
 	if ${Me.Ability[${SpellType[62]}].IsReady}
 	{
-		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1 0 
-		call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0 1 0
+		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1 0
+		call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
 	}
 
 	;Always use Cacophony of Blades if available.
 	if ${Me.Ability[${SpellType[155]}].IsReady}
 	{
 		if ${AnnounceMode}
+		{
 			eq2execute /raidsay Caco of Blades is up!
 			eq2execute /g Caco of Blades is up!
+		}
 		call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1 0 1 0
 		wait 20
 	}

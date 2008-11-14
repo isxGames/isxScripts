@@ -107,13 +107,13 @@ function Class_Declaration()
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -133,7 +133,7 @@ function Pulse()
 			}
 		}
 	}
-	
+
 	; Do not remove/change
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -531,7 +531,7 @@ function Combat_Routine(int xAction)
 
 	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA,Z, Target.X, Target.Z]}<=8
 	{
-		call CheckPosition 1 1
+		call CheckPosition 1 1 ${KillTarget}
 		if !${Me.AutoAttackOn}
 			EQ2Execute /auto 1
 	}
@@ -623,7 +623,7 @@ function Combat_Routine(int xAction)
 			while ${Me.CastingSpell}
 			{
 				wait 2
-			}			
+			}
 			call CastSpellRange 391 0 1 1 ${KillTarget}
 			call CastSpellRange 130 0 1 1 ${KillTarget}
 			return
@@ -690,7 +690,7 @@ function Combat_Routine(int xAction)
 
 		case AAHarmonizing_Shot
 		case Bow_Attack
-			
+
 			if ${BowAttacksMode}
 			{
 				call CheckPosition 3 0 ${KillTarget}
@@ -962,8 +962,8 @@ function DoJesterCap()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }

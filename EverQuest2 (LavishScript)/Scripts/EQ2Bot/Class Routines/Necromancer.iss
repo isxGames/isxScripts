@@ -113,13 +113,13 @@ function Class_Declaration()
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -134,11 +134,11 @@ function Pulse()
 			call SummonPet
 			waitframe
 		}
-	
+
 		call RefreshPower
 		call AnswerShardRequest
 	}
-	
+
 	; Do not remove/change
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -272,21 +272,17 @@ function PostCombat_Init()
 function Buff_Routine(int xAction)
 {
 
-	call CheckHeals
 	declare tempvar int local
 	declare Counter int local
 	declare BuffMember string local
 	declare BuffTarget string local
-	
+
 	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 		waitframe
 	}
-
-	call RefreshPower
-	call AnswerShardRequest
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -1074,8 +1070,8 @@ function CheckEssense()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }
