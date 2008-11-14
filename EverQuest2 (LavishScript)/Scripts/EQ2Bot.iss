@@ -2420,12 +2420,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				if ${side.Equal[right]}
 				{
 					Debug:Echo[Quadrant 1 Right Side Strafing to 5]
-					call StrafeToLeft ${TID} 5
+					call StrafeToLeft ${TID} 30
 				}
 				else
 				{
 					Debug:Echo[Quadrant 1 Right Side Strafing to 5]
-					call StrafeToRight ${TID} 5
+					call StrafeToRight ${TID} 30
 				}
 				return
 			}
@@ -2499,12 +2499,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				if ${side.Equal[right]}
 				{
 					Debug:Echo[Quadrant 4 Right Side Strafing to 5]
-					call StrafeToLeft ${TID} 5
+					call StrafeToLeft ${TID} 80
 				}
 				else
 				{
 					Debug:Echo[Quadrant 4 Right Side Strafing to 5]
-					call StrafeToRight ${TID} 5
+					call StrafeToRight ${TID} 80
 				}
 				return
 			}
