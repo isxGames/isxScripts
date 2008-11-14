@@ -285,7 +285,7 @@ function TakeSnapShot()
 				Counter:Inc
 			}
 		}
-		while ${i:Inc} < ${Me.Raid}
+		while ${i:Inc} <= ${Me.Raid}
 	}
 	Debug:Echo["-- ${Counter} people were found as a part of your *current* raid force."]
 	
