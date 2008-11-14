@@ -255,7 +255,9 @@ function TakeSnapShot()
 	variable int PlayerSSCount
 	variable int SSCount
 	variable int i 
+	variable int Counter
 	i:Set[1]
+	Counter:Set[0]
 	
 	Debug:Echo["-"]
 	Debug:Echo["- Taking a Snapshot of today's raid..."]
@@ -267,20 +269,25 @@ function TakeSnapShot()
 	{
 		do
 		{
-			if (${CurMembers.Element[${Me.Raid[${i}].Name}](exists)})
+			if ${Me.Raid[${i}](exists)}
 			{
-				SSCount:Set[${CurMembers.Element[${Me.Raid[${i}].Name}]}]
-				CurMembers:Set[${Me.Raid[${i}].Name},${Math.Calc[${SSCount}+1].Precision[0]}]
-				Debug:Echo["-- ${Me.Raid[${i}].Name} already exists in database for today's raid.  (${Math.Calc[${SSCount}+1].Precision[0]})"]
-			}
-			else
-			{
-				CurMembers:Set[${Me.Raid[${i}].Name},1]
-				Debug:Echo["-- ${Me.Raid[${i}].Name} added to database for today's raid.  (1)"]
+				if (${CurMembers.Element[${Me.Raid[${i}].Name}](exists)})
+				{
+					SSCount:Set[${CurMembers.Element[${Me.Raid[${i}].Name}]}]
+					CurMembers:Set[${Me.Raid[${i}].Name},${Math.Calc[${SSCount}+1].Precision[0]}]
+					Debug:Echo["--- ${Me.Raid[${i}].Name} already exists in database for today's raid.  (${Math.Calc[${SSCount}+1].Precision[0]})"]
+				}
+				else
+				{
+					CurMembers:Set[${Me.Raid[${i}].Name},1]
+					Debug:Echo["--- ${Me.Raid[${i}].Name} added to database for today's raid.  (1)"]
+				}
+				Counter:Inc
 			}
 		}
 		while ${i:Inc} < ${Me.Raid}
 	}
+	Debug:Echo["-- ${Counter} people were found as a part of your *current* raid force."]
 	
 	;;;;
 	;; Now, the people that are sitting out
@@ -296,19 +303,19 @@ function TakeSnapShot()
 			{
 				SSCount:Set[${CurMembers.Element[${PlayerName}]}]
 				CurMembers:Set[${PlayerName},${Math.Calc[${SSCount}+1].Precision[0]}]
-				Debug:Echo["-- ${PlayerName} already exists in database for today's raid.  (${Math.Calc[${SSCount}+1].Precision[0]})"]
+				Debug:Echo["--- ${PlayerName} already exists in database for today's raid.  (${Math.Calc[${SSCount}+1].Precision[0]})"]
 			}
 			else
 			{
 				CurMembers:Set[${PlayerName},1]
-				Debug:Echo["-- ${PlayerName} added to database for today's raid.  (1)"]
+				Debug:Echo["--- ${PlayerName} added to database for today's raid.  (1)"]
 			}
 		}	
 		while ${SIterator:Next(exists)}
 	}	
 	
 	
-	Debug:Echo["- Snapshot complete -- ${CurMembers.Used} raid members are now being counted as a part of this raid."]
+	Debug:Echo["- Snapshot complete :: ${CurMembers.Used} raid members are now being counted as a part of this raid."]
 	
 	;;;
 	;; Now write add the raid info to xml
