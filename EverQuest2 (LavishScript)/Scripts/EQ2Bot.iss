@@ -267,10 +267,20 @@ function main()
 
 	Debug:Enable
 
-	if !${ISXEQ2.IsReady}
+	if !${ISXEQ2(exists)}
 	{
-		echo ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!
-		Script:End
+		Debug:Echo["ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!"]
+		return
+	}
+	elseif !${ISXEQ2.IsReady}
+	{
+		Debug:Echo["ISXEQ2 is not yet ready -- you must wait until the authentication and patching sequences have completed before running EQ2Bot."]
+		return
+	}
+	elseif ${EQ2.Zoning}
+	{
+		Debug:Echo["You cannot start EQ2Bot while zoning.  Wait until you have finished zoning, and then try again."]
+		return
 	}
 
 	Turbo 50
