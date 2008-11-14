@@ -241,8 +241,13 @@ variable bool NoEligibleTarget
 ;===========================================================
 variable int PathType
 
-#include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
-#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.iss
+
+
+
+#if ${ISXEQ2(exists)} && ${ISXEQ2.IsReady}
+	#include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
+	#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.iss
+#endif
 
 #ifndef _moveto_
 	#include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
@@ -6208,6 +6213,10 @@ function AddPOI()
 function atexit()
 {
 	Echo Ending EQ2Bot!
+	
+	if (!${ISXEQ2(exists)} || !${ISXEQ2.IsReady})
+		return
+	
 	CurrentTask:Set[FALSE]
 	call Class_Shutdown
 
