@@ -364,8 +364,7 @@ function main()
 	{
 		if !${ISXEQ2(exists)}
 			call ExtensionUnloadedExitScript
-		
-		
+			
 		;Debug:Echo["Main Loop: Test-${Time.Timestamp}"]
 		;;;;;;;;;;;;;;;;;
 		;;;; Set strings used in UI.  They are set here in order to make for custom strings based upon level, etc.  Also, any ${} called in the UI is accessed
@@ -6214,7 +6213,6 @@ function AddPOI()
 
 function ExtensionUnloadedExitScript()
 {
-	
 	CurrentTask:Set[FALSE]
 	call Class_Shutdown
 
@@ -6234,6 +6232,7 @@ function ExtensionUnloadedExitScript()
 	press -release ${straferight}
 
 	LavishSettings[EQ2Bot]:Remove
+	Script:End
 }
 	
 	
