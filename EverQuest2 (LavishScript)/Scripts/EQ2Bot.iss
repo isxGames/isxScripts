@@ -362,6 +362,10 @@ function main()
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	do
 	{
+		if !${ISXEQ2(exists)}
+			call ExtensionUnloadedExitScript
+		
+		
 		;Debug:Echo["Main Loop: Test-${Time.Timestamp}"]
 		;;;;;;;;;;;;;;;;;
 		;;;; Set strings used in UI.  They are set here in order to make for custom strings based upon level, etc.  Also, any ${} called in the UI is accessed
@@ -6208,6 +6212,32 @@ function AddPOI()
 	}
 }
 
+function ExtensionUnloadedExitScript()
+{
+	
+	CurrentTask:Set[FALSE]
+	call Class_Shutdown
+
+	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
+
+	DeleteVariable CurrentTask
+
+	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
+	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
+	;Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
+	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
+	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
+
+	press -release ${forward}
+	press -release ${backward}
+	press -release ${strafeleft}
+	press -release ${straferight}
+
+	LavishSettings[EQ2Bot]:Remove
+}
+	
+	
+
 function atexit()
 {
 	Echo Ending EQ2Bot!
@@ -6234,5 +6264,4 @@ function atexit()
 	press -release ${straferight}
 
 	LavishSettings[EQ2Bot]:Remove
-
 }
