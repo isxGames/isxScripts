@@ -964,6 +964,11 @@ function main()
 			;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+			{
+				ExecuteAtom AutoFollowTank
+				wait 5
+			}
 			;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		}
@@ -1572,7 +1577,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 		;Debug:Echo["EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"]
 		;Debug:Echo["EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"]
 		;Debug:Echo["EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"]
-		wait 1
+		wait 2
 	}
 
 	LastQueuedAbility:Set[${spell}]
