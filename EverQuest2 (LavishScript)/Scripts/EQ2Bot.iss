@@ -4098,7 +4098,7 @@ atom(script) LootWDw(string ID)
 			break
 		case Need Before Greed
 			if ${deccnt}
-				LootWindow:${ID}]:DeclineNBG
+				LootWindow[${ID}]:DeclineNBG
 			else
 				LootWindow[${ID}]:SelectGreed
 			break
