@@ -2283,7 +2283,7 @@ function placeitem(string itemname, int box)
 	Declare nospace bool local
 	nospace:Set[FALSE]
 	storebox:Set[0]
-		
+
 	Me:CreateCustomInventoryArray[nonbankonly]
 
 	call numinventoryitems "${itemname}"
@@ -2493,11 +2493,6 @@ function StartUp()
 		}
 	}
 	
-	EQ2Execute /togglebags
-	wait 10
-	EQ2Execute /togglebags
-	wait 10
-
 	i:Set[1]
 	do
 	{
@@ -2515,6 +2510,18 @@ function StartUp()
 	{
 		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
 	}
+}
+
+function togglebags()
+{
+	EQ2Execute /togglebags
+	wait 10
+	EQ2Execute /togglebags
+	wait 10
+	EQ2Execute /togglebags
+	wait 10
+	EQ2Execute /togglebags
+	wait 10
 }
 
 atom(script) EQ2_onInventoryUpdate()
