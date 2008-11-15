@@ -5404,7 +5404,7 @@ objectdef EQ2BotObj
 			highesthp:Set[${Me.MaxHealth}]
 			MainTank:Set[TRUE]
 			MainTankPC:Set[${Me.Name}]
-			MainTankID:SEt[${Me.ID}]
+			MainTankID:Set[${Me.ID}]
 		}
 
 		tempgrp:Set[1]
