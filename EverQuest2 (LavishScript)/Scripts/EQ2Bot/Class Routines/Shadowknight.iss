@@ -1376,15 +1376,14 @@ function CastSomething()
 	}
 
 	;; Combat Leadership AA
-	;; NOTE:  Removing for now ..I do not think it is worth the effort
-	;if (${Me.Ability[${SpellType[333]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
-	;{
-	;    if (${Me.Ability[${SpellType[333]}].IsReady})
-	;    {
-	;	    call CastSpellRange 333 0 0 0 ${Me.ID}
-	;	    return
-	;	}
-	;}
+	if (${Me.Ability[${SpellType[333]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
+	{
+	    if (${Me.Ability[${SpellType[333]}].IsReady})
+	    {
+		    call CastSpellRange 333 0 0 0 ${Me.ID}
+		    return
+		}
+	}
 
 
 
