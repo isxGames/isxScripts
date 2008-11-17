@@ -129,7 +129,10 @@ function Pulse()
 		call CheckHeals
 		call RefreshPower
 		call CheckSKFD
-	
+
+		if ${MezzMode}
+			call Mezmerise_Targets
+
 		;; Prismatic Proc
 		;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
 		if !${MainTank} || ${AutoMelee}
@@ -1204,7 +1207,7 @@ function Combat_Routine(int xAction)
 	;; If we have the skill 'Nullifying Staff' and the mob is within range
 	if ${Me.Ability[${SpellType[396]}](exists)}
 	{
-		if (${Actor[${KillTarget}].Distance} < 5)
+		if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].MaxRange}]})
 		{
 			if (${Me.Ability[${SpellType[396]}].IsReady})
 			{
@@ -1904,25 +1907,28 @@ function CheckHeals()
 
 objectdef _meztargets
 {
-	variable bool IsAoeMezzed
-	variable bool IsShortMezzed
-	variable bool IsLongMezzed
-	variable bool IsMyMez
-	variable bool NeedRemez
+	variable bool IsAoeMezzed=0
+	variable bool IsShortMezzed=0
+	variable bool IsLongMezzed=0
+	variable bool IsMyMez=0
+	variable bool NeedRemez=0
 	
 	member:bool IsMezzed()
 	{
-		Returning:Set[${This.IsAoeMezzed} || ${This.IsShortMezzed} || ${This.IsLongMezzed}]
-		return
+		if ${This.IsAoeMezzed} || ${This.IsShortMezzed} || ${This.IsLongMezzed}
+			return TRUE
+		return FALSE
+	}
+	
+	member:bool IsMultiMezzed()
+	{
+		if ${Math.Calc[${This.IsAoeMezzed} + ${This.IsShortMezzed} + ${This.IsLongMezzed} - 1]}>0
+			return TRUE
+		return FALSE
 	}
 	
 	method Initialize()
 	{
-		This.IsAoeMezzed:Set[0]
-		This.IsShortMezzed:Set[0]
-		This.IsLongMezzed:Set[0]
-		This.NeedRemez:Set[0]
-		This.IsMyMez:Set[0]
 	}
 }
 
@@ -1930,6 +1936,7 @@ function Mezmerise_Targets()
 {
 	variable collection:_meztargets MezzTargets
 	variable int Counter=1
+	variable uint bufftgt
 	declare tcount int local 1
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
@@ -1941,44 +1948,74 @@ function Mezmerise_Targets()
 	;loop through all our maintained spells looking for mezzes
 	do
 	{
+		bufftgt:Set[${Me.Maintained[${Counter}].Target.ID}]
 		;check if the maintained buff is a mez
 		if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[353]}]} /* AE Mez */
 		{
-			MezzTargets:Set[${Me.Maintained[${Counter}].Target.ID},0]
-			MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].IsAoeMezzed:Set[TRUE]
-			MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].IsMyMez:Set[TRUE]
+			if !${MezzTargets.Element[${bufftgt}](exists)}
+				MezzTargets:Set[${bufftgt},""]
+			MezzTargets.Element[${bufftgt}].IsAoeMezzed:Set[TRUE]
+			MezzTargets.Element[${bufftgt}].IsMyMez:Set[TRUE]
 			if ${Me.Maintained[${Counter}].Duration} <=5
-				MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].NeedRemez:Set[TRUE]
+			{
+				;check for multiple mezzes -- no need to remez if we've already hit him twice.
+				if ${MezzTargets.Element[${bufftgt}].IsMultiMezzed}
+					MezzTargets.Element[${bufftgt}].NeedRemez:Set[FALSE]
+				else
+					MezzTargets.Element[${bufftgt}].NeedRemez:Set[TRUE]
+			}
 		}
 		if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[352]}]} /* Long Mez */
 		{
-			MezzTargets:Set[${Me.Maintained[${Counter}].Target.ID},0]
-			MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].IsLongMezzed:Set[TRUE]
-			MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].IsMyMez:Set[TRUE]
+			if !${MezzTargets.Element[${bufftgt}](exists)}
+				MezzTargets:Set[${bufftgt},""]
+			MezzTargets.Element[${bufftgt}].IsLongMezzed:Set[TRUE]
+			MezzTargets.Element[${bufftgt}].IsMyMez:Set[TRUE]
 			if ${Me.Maintained[${Counter}].Duration} <=5
-				MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].NeedRemez:Set[TRUE]
+			{
+				;check for multiple mezzes -- no need to remez if we've already hit him twice.
+				if ${MezzTargets.Element[${bufftgt}].IsMultiMezzed}
+					MezzTargets.Element[${bufftgt}].NeedRemez:Set[FALSE]
+				else
+					MezzTargets.Element[${bufftgt}].NeedRemez:Set[TRUE]
+			}
 		}
 		if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[92]}]} /* Short Mez */
 		{
-			MezzTargets:Set[${Me.Maintained[${Counter}].Target.ID},0]
-			MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].IsShortMezzed:Set[TRUE]
-			MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].IsMyMez:Set[TRUE]
+			if !${MezzTargets.Element[${bufftgt}](exists)}
+				MezzTargets:Set[${bufftgt},""]
+			MezzTargets.Element[${bufftgt}].IsShortMezzed:Set[TRUE]
+			MezzTargets.Element[${bufftgt}].IsMyMez:Set[TRUE]
 			if ${Me.Maintained[${Counter}].Duration} <=5
-				MezzTargets.Element[${Me.Maintained[${Counter}].Target.ID}].NeedRemez:Set[TRUE]
+			{
+				;check for multiple mezzes -- no need to remez if we've already hit him twice.
+				if ${MezzTargets.Element[${bufftgt}].IsMultiMezzed}
+					MezzTargets.Element[${bufftgt}].NeedRemez:Set[FALSE]
+				else
+					MezzTargets.Element[${bufftgt}].NeedRemez:Set[TRUE]
+			}
 		}
 	}
 	while ${Counter:Inc}<=${Me.CountMaintained}
+
 
 	EQ2:CreateCustomActorArray[byDist,${ScanRange},npc]
 
 	do
 	{
+		if ${CustomActor[${tcount}].Type.Equal[NoKillNPC]}
+			continue
+			
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 			;if its the kill target skip it
 			if (${CustomActor[${tcount}].ID} == ${KillTarget})
 			    continue
 			if ${Actor[${MainAssistID}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankID}].Target.ID}==${CustomActor[${tcount}].ID}
+				continue
+
+			;if it's an epic, skip it
+			if ${CustomActor[${tcount}].IsEpic}
 				continue
 
 			tempvar:Set[1]
@@ -2023,7 +2060,8 @@ function Mezmerise_Targets()
 
 			if ${aggrogrp}
 			{
-				MezzTargets:Set[${CustomActor[${tcount}].ID},0]
+				if !${MezzTargets.Element[${CustomActor[${tcount}].ID}](exists)}
+					MezzTargets:Set[${CustomActor[${tcount}].ID},""]
 				if ${MezzTargets.Element[${CustomActor[${tcount}].ID}].IsMezzed}
 					continue
 			}
@@ -2038,6 +2076,14 @@ function Mezmerise_Targets()
 		; Need to loop through checking for remezzes first
 		do
 		{
+/*			Debug:Echo[MEZ TARGETS FOR ${Actor[${MezzTargets.CurrentKey}].ID}]
+			Debug:Echo[IsAoE: ${MezzTargets.CurrentValue.IsAoeMezzed}]
+			Debug:Echo[IsShort: ${MezzTargets.CurrentValue.IsShortMezzed}]
+			Debug:Echo[IsLong: ${MezzTargets.CurrentValue.IsLongMezzed}]
+			Debug:Echo[NeedRemez: ${MezzTargets.CurrentValue.NeedRemez}]
+			Debug:Echo[IsMezzed: ${MezzTargets.CurrentValue.IsMezzed}]
+			Debug:Echo[IsMultiMezzed: ${MezzTargets.CurrentValue.IsMultiMezzed}]
+*/
 			if ${MezzTargets.CurrentValue.NeedRemez}
 			{
 				if ${Me.AutoAttackOn}
@@ -2048,21 +2094,21 @@ function Mezmerise_Targets()
 
 				if ${Me.Ability[${SpellType[352]}].IsReady}
 				{
-					call CastSpellRange start=352 TargetID=${MezzTargets.CurrentKey}
+					call CastSpellRange start=352 TargetID=${MezzTargets.CurrentKey} IgnoreMaintained=1
 					LastSpellCast:Set[352]
 					MezzTargets.CurrentValue.NeedRemez:Set[FALSE]
 					MezzTargets.CurrentValue.IsLongMezzed:Set[TRUE]
 				}
 				elseif ${Me.Ability[${SpellType[353]}].IsReady}
 				{
-					call CastSpellRange start=353 TargetID=${MezzTargets.CurrentKey}
+					call CastSpellRange start=353 TargetID=${MezzTargets.CurrentKey} IgnoreMaintained=1
 					LastSpellCast:Set[353]
 					MezzTargets.CurrentValue.NeedRemez:Set[FALSE]
 					MezzTargets.CurrentValue.IsAoeMezzed:Set[TRUE]
 				}
 				elseif ${Me.Ability[${SpellType[92]}].IsReady}
 				{
-					call CastSpellRange start=92 TargetID=${MezzTargets.CurrentKey}
+					call CastSpellRange start=92 TargetID=${MezzTargets.CurrentKey} IgnoreMaintained=1
 					LastSpellCast:Set[92]
 					MezzTargets.CurrentValue.NeedRemez:Set[FALSE]
 					MezzTargets.CurrentValue.IsShortMezzed:Set[TRUE]
@@ -2084,12 +2130,12 @@ function Mezmerise_Targets()
 				eq2execute /togglerangedattack
 
 			Actor[${MezzTargets.CurrentKey]:DoTarget
-			wait 10 ${Target.ID}==${MezzTargets.CurrentKey]
+			wait 10 ${Target.ID}==${MezzTargets.CurrentKey}
 			
 			call CheckForMez
 			if ${Return}
 				continue
-			
+
 			if ${Me.Ability[${SpellType[353]}].IsReady} /* AoE mez first */
 			{
 				call CastSpellRange start=353 TargetID=${MezzTargets.CurrentKey}
