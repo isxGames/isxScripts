@@ -1934,6 +1934,10 @@ function Mezmerise_Targets()
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
+	; if we don't have a mez spell ready, no sense wasting time.
+	if !${Me.Ability[${SpellType[353]}].IsReady} && !${Me.Ability[${SpellType[352]}].IsReady} && !${Me.Ability[${SpellType[92]}].IsReady}
+		return
+
 	;loop through all our maintained spells looking for mezzes
 	do
 	{
