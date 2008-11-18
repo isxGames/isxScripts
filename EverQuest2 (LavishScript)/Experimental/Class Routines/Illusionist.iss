@@ -2158,7 +2158,7 @@ function Mezmerise_Targets()
 	if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health}>1
 	{
 		Target ${KillTarget}
-		wait 20 ${Me.ToActor.Target.ID}==${KillTarget}
+		wait 20 ${Target.ID}==${KillTarget}
 	}
 	else
 	{
