@@ -167,12 +167,11 @@ function Pulse()
 				}
 			}
 		}
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
 	;;
 	;;;;;;;;;;;;;;;;;;;
-
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()
@@ -1000,13 +999,15 @@ function Combat_Routine(int xAction)
 		LastSpellCast:Set[23]
 		spellsused:Inc
 	}
-
-	;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
-	if (${Me.Ability[${SpellType[383]}].IsReady})
+	else
 	{
-		call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
-		LastSpellCast:Set[383]
-		spellsused:Inc
+		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
+		if (${Me.Ability[${SpellType[383]}].IsReady})
+		{
+			call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
+			LastSpellCast:Set[383]
+			spellsused:Inc
+		}
 	}
 
 	call VerifyTarget
