@@ -105,11 +105,10 @@ function Pulse()
 		call CheckHeals
 		call RefreshPower
 		call AnswerShardRequest
+		
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-
-	
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 function Class_Shutdown()
 {

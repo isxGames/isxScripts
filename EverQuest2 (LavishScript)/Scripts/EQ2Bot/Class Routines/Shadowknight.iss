@@ -98,8 +98,8 @@ function Pulse()
 	;;;;;;;;;;;;
 
 
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
+	;; This has to be set WITHIN any 'if' block that uses the timer.
+	;ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()
@@ -1071,13 +1071,17 @@ function Combat_Routine(int xAction)
 			;; "Pet" is the last thing in the routine ...so, return CombatComplete
 			if (${spellsused} < 1)
 				call CastSomething
+			CurrentAction:Set[Combat :: CombatComplete]
 			return CombatComplete
 
 		default
 			if (${spellsused} < 1)
 				call CastSomething
+			CurrentAction:Set[Combat :: CombatComplete]
 			return CombatComplete
 	}
+	
+	CurrentAction:Set["Leaving Combat_Routine(${xAction})"]]
 }
 
 function Post_Combat_Routine(int xAction)

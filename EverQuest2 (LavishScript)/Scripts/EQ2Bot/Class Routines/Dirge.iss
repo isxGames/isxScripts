@@ -120,13 +120,18 @@ function Pulse()
 				BDStatus:Set[0]
 			}
 		}
-	}
 
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
+	}
+	
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer2}+1000]})
+	{
 		call ActionChecks
 
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer2:Set[${Script.RunningTime}]
+	}
 }
 
 function Class_Shutdown()

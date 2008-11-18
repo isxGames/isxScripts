@@ -132,10 +132,10 @@ function Pulse()
 				BDStatus:Set[0]
 			}
 		}
-	}
 
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
+	}
 }
 
 function Class_Shutdown()

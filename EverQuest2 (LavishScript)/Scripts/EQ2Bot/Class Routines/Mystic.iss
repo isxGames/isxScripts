@@ -90,11 +90,9 @@ function Pulse()
 			call CastSpellRange 15
 			call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
+		;; This has to be set within any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-
-
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()
