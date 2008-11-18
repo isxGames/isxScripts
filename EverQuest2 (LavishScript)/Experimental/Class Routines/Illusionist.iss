@@ -2129,7 +2129,7 @@ function Mezmerise_Targets()
 			if ${Me.RangedAutoAttackOn}
 				eq2execute /togglerangedattack
 
-			Actor[${MezzTargets.CurrentKey]:DoTarget
+			Actor[${MezzTargets.CurrentKey}]:DoTarget
 			wait 10 ${Target.ID}==${MezzTargets.CurrentKey}
 			
 			call CheckForMez
@@ -2163,6 +2163,7 @@ function Mezmerise_Targets()
 	else
 	{
 		EQ2Execute /target_none
+		wait 20 !${Target(exists)}
 		KillTarget:Set[]
 	}
 }
