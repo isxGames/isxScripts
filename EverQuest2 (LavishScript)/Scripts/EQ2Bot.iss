@@ -203,6 +203,9 @@ variable int OutOfCombatRoutinesTimerInterval = 1000
 variable uint AggroDetectionTimer = 0
 variable int AggroDetectionTimerInterval = 500
 variable uint ClassPulseTimer = 0
+variable uint ClassPulseTimer2 = 0
+variable uint ClassPulseTimer3 = 0
+variable uint ClassPulseTimer4 = 0
 
 variable settingsetref CharacterSet
 variable settingsetref SpellSet

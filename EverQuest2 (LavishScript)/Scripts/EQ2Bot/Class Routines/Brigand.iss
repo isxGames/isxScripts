@@ -32,9 +32,9 @@
 
 function Class_Declaration()
 {
-  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20080408
-  ;;;;
+    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20080408
+	;;;;
 
 	declare OffenseMode bool script 1
 	declare DebuffMode bool script 0
@@ -47,7 +47,7 @@ function Class_Declaration()
 	declare UtilityPoisonShort string script
 	declare StartHO bool script 1
 	declare PetMode bool script 1
-  declare TankMode bool script 0
+  	declare TankMode bool script 0
 
 	;POISON DECLERATIONS
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
@@ -88,7 +88,7 @@ function Pulse()
 
 
 	
-	; Do not remove/change
+	;; This has to be set WITHIN any 'if' block that uses the timer.
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 

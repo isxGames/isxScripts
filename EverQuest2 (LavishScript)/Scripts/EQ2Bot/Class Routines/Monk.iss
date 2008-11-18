@@ -68,11 +68,9 @@ function Pulse()
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		call CheckHeals
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-
-
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()

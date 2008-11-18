@@ -105,10 +105,10 @@ function Pulse()
 
 		if ${Me.ToActor.Power}>85 && ${KeepReactiveUp}
 			call CheckReactives
+			
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()

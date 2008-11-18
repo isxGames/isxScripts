@@ -96,17 +96,17 @@ function Pulse()
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		call CheckHeals
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
 
-	if ${MezzMode} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
+	if ${MezzMode} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer2}+2000]})
 	{
 		CurrentAction:Set[Out of Combat Checking Mezzes]
 		call Mezmerise_Targets
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer2:Set[${Script.RunningTime}]
 	}
-
-
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()

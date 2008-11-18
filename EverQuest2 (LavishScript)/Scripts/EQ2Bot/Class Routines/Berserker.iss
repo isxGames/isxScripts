@@ -60,7 +60,7 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	
-	; Do not remove/change
+	;; This has to be set WITHIN any 'if' block that uses the timer.
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 

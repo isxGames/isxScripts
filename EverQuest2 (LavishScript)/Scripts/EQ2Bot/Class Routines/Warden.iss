@@ -128,10 +128,10 @@ function Pulse()
 		{
 			Me.Maintained[${SpellType[365]}]:Cancel
 		}
+		
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-	
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()

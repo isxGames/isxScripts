@@ -110,11 +110,10 @@ function Pulse()
 			if ${KeepGroupReactiveUp}
 				call CastSpellRange 15
 		}
+		
+		;; This has to be set WITHIN any 'if' block that uses the timer.
+		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-
-
-	; Do not remove/change
-	ClassPulseTimer:Set[${Script.RunningTime}]
 }
 
 function Class_Shutdown()
