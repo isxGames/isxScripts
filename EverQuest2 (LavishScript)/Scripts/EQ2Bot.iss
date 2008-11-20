@@ -1044,8 +1044,6 @@ function CastSpellRange(... Args)
 	;;		1 = Cast Immediately
 	;;		2 = Cast When Current Queue Complete
 	;;;;;;;
-		
-	Debug:Echo["TEST"]
 
 	variable int start=-99
 	variable int finish=0
@@ -1185,7 +1183,7 @@ function CastSpellRange(... Args)
 		if ${AbilityID} <= 0
 			AbilityID:Set[${Me.Ability[${AbilityName}].ID}]
 
-		Debug:Echo["CastSpellRange() -- AbilityID: ${AbilityID} -- AbilityName: ${AbilityName}"]
+		;Debug:Echo["CastSpellRange() -- AbilityID: ${AbilityID} -- AbilityName: ${AbilityName}"]
 
 		if ${AbilityName.Length}
 		{
