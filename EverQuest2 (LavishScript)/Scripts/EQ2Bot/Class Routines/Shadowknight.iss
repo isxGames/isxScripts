@@ -42,7 +42,6 @@ function Class_Declaration()
 	declare StartHO bool script 1
 	declare PetMode bool script 1
 	declare UseReaver bool script TRUE
-	declare UseSiphonHateWhenNotMT bool script FALSE
 	declare UseBattleLeadershipAABuff bool script FALSE
 	declare UseFearlessMoraleAABuff bool script FALSE
 	declare UseDeathMarch bool script FALSE
@@ -63,7 +62,6 @@ function Class_Declaration()
 	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
 	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
 	UseReaver:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseReaver,TRUE]}]
-	UseSiphonHateWhenNotMT:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseSiphonHateWhenNotMT,FALSE]}]
 	UseBattleLeadershipAABuff:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseBattleLeadershipAABuff,FALSE]}]
 	UseFearlessMoraleAABuff:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseFearlessMoraleAABuff,FALSE]}]
 	UseDeathMarch:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseDeathMarch,FALSE]}]
@@ -148,11 +146,6 @@ function Buff_Init()
    
    PreAction[13]:Set[AuraOfLeadershipAABuff]
    PreSpellRange[13,1]:Set[341]
-   
-   ; Removed in TSO
-   PreAction[14]:Set[SiphonHate]
-   PreSpellRange[14,1]:Set[335]  
-
 }
 
 function Combat_Init()
@@ -456,25 +449,6 @@ function Buff_Routine(int xAction)
 		    {
 		        if ${Me.Maintained[Reaver](exists)}
 		            Me.Maintained[Reaver]:Cancel
-		    }
-			break
-
-		case SiphonHate
-		    if !${Me.Ability[Siphon Hate](exists)}
-		        break
-
-		    if (${MainTank} || ${UseSiphonHateWhenNotMT})
-		    {
-    			if !${Me.Maintained[Siphon Hate](exists)}
-    		    {
-				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
-				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
-    		    }
-    		}
-		    else
-		    {
-		        if ${Me.Maintained[Siphon Hate](exists)}
-		            Me.Maintained[Siphon Hate]:Cancel
 		    }
 			break
 

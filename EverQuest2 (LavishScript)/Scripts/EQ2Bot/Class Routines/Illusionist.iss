@@ -671,7 +671,7 @@ function CheckCastBeam()
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 		LastSpellCast:Set[210]
-	}			
+	}		
 	
 	;; Cast Beam if it is ready
 	if (${Me.Ability[${SpellType[60]}].IsReady})
@@ -991,6 +991,14 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1
 		LastSpellCast:Set[23]
 		spellsused:Inc
+		
+		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
+		if (${Me.Ability[${SpellType[383]}].IsReady})
+		{
+			call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
+			LastSpellCast:Set[383]
+			spellsused:Inc
+		}		
 	}
 	else
 	{
@@ -1278,6 +1286,18 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 		LastSpellCast:Set[210]
 	}	
+	
+	;; if target is epic, cast bewilderment every time it is up.
+	if ${Actor[${KillTarget}].IsEpic}
+	{
+	    if ${Me.Ability[id,3903537279].IsReady}
+	    {
+	        call CastSpellRange AbilityID=3903537279 TargetID=${aggroid} IgnoreMaintained=1
+	        spellsused:Inc
+	        call CheckCastBeam
+	    }
+	}
+	
 
 	;Debug:Echo["Entering Switch (${Action[${xAction}]})"]
 	switch ${Action[${xAction}]}
