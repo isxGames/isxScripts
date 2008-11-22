@@ -206,6 +206,7 @@ variable uint ClassPulseTimer = 0
 variable uint ClassPulseTimer2 = 0
 variable uint ClassPulseTimer3 = 0
 variable uint ClassPulseTimer4 = 0
+variable bool IsReady = FALSE
 
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
@@ -336,6 +337,7 @@ function main()
 	echo "...Initialization Complete."
 	echo "* EQ2Bot Ready!"
 	echo "---------"
+	IsReady:Set[TRUE]
 	CurrentAction:Set["Idle..."]
 
 	do
