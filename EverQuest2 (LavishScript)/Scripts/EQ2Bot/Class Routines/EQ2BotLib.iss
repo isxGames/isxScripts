@@ -785,7 +785,7 @@ function CommonPower(int sPower)
 
 function Shard(int sPower)
 {
-	;Shard is depricated - Use CommonPower
+	;Shard is deprecated - Use CommonPower
 	call CommonPower ${sPower}
 }
 
@@ -970,10 +970,10 @@ function UseItem(string Item)
 		;}
 }
 
-function UseCrystallizedSpirit(int Health)
+function UseCrystallizedSpirit(int Health=60)
 {
 	;UseCrystalizedSpirit is depricated.  Use CommonHeals instead.
-	call CommonHeals 60
+	call CommonHeals ${Health}
 }
 
 function CommonHeals(int Health)

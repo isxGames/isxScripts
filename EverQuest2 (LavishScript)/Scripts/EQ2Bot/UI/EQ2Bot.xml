@@ -1408,7 +1408,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							<Height>20</Height>
 							<Range>75</Range>
 							<OnLoad>
-							  Script[EQ2Bot].VariableScope.OORThreshold:Set[LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Out of Range Reaction Distance]}
+							  Script[EQ2Bot].VariableScope.OORThreshold:Set[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Out of Range Reaction Distance]}]
 							  This:SetValue[${Script[EQ2Bot].Variable[OORThreshold]}]
 							</OnLoad>
 							<OnChange>

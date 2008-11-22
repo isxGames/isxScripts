@@ -213,8 +213,30 @@
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BlinkMode]}</Data>
 	</Commandcheckbox>
+  <Text Name='lblManaFlowThreshold'>
+	<X>30</X>
+	<Y>210</Y>
+	<Width>35%</Width>
+	<Height>20</Height>
+	<Alignment>Left</Alignment>
+	<Text>Mana Flow Threshold: ${Script[EQ2Bot].VariableScope.ManaFlowThreshold}</Text>
+	<AutoTooltip>Mana Flow groupmembers when their power drops below this.</AutoTooltip>
+  </Text>
+  <Slider Name='sldManaFlowThreshold'>
+	<X>30</X>
+	<Y>225</Y>
+	<Width>35%</Width>
+	<Border>0</Border>
+	<Height>20</Height>
+	<Range>90</Range>
+	<OnChange>
+	  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[ManaFlowThreshold,${This.Value}]
+	  Script[EQ2Bot].Variable[ManaFlowThreshold]:Set[${This.Value}]
+	  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+	</OnChange>
+  </Slider>
 
-	<Commandcheckbox Name='Mezz'>
+  <Commandcheckbox Name='Mezz'>
 		<Visible>1</Visible>
 		<X>240</X>
 		<Y>10</Y>
