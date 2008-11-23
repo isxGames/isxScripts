@@ -189,7 +189,7 @@
 		<Setting Name="Minor Hardened Metal">3</Setting>
 		<Setting Name="Hardened Metal">3</Setting>
 		<Setting Name="Extensive Hardened Metal">3</Setting>
-		<Setting Name="Weak annealing">3</Setting>
+		<Setting Name="Weak annealling">3</Setting>
 		<Setting Name="Severe weak annealing">3</Setting>
 		<Setting Name="Weaponsmith's Insight">3</Setting>
 		<Setting Name="Flawless Hardening">1</Setting>
