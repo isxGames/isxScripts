@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.57 - Fixed error in recipe processing
+        More tweaks to CraftLite code
+
 v8.56 - More scholar writ tweaks
 
 v8.55 - Fixed <T8 scholar writ processing.
