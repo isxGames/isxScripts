@@ -22,6 +22,7 @@
 		<Setting Name="Alchemist's Insight">3</Setting>
 		<Setting Name="Flawless Reaction">3</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
+		<Setting Name="Far Seas Innovation">3</Setting>
 	</Set>
 	<Set Name="Apothecary">
 		<Setting Name="Minor Negative Result">1</Setting>
@@ -56,6 +57,7 @@
 		<Setting Name="Sage's Insight">1</Setting>
 		<Setting Name="Flawless Scribing">3</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
+		<Setting Name="Far Seas Innovation">3</Setting>
 	</Set>
 	<Set Name="Craftsmanship">
 		<Setting Name="Minor Loose Joint">1</Setting>
@@ -79,6 +81,7 @@
 		<Setting Name="Craftsman's Insight">2</Setting>
 		<Setting Name="Flawless Jointing">1</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
+		<Setting Name="Far Seas Innovation">3</Setting>
 	</Set>
 	<Set Name="Culinary">
 		<Setting Name="Minor Heat Spike">1</Setting>
@@ -102,6 +105,7 @@
 		<Setting Name="Provisioner's Insight">3</Setting>
 		<Setting Name="Flawless Seasoning">2</Setting>
 		<Setting Name="Favor of Innovation">1</Setting>
+		<Setting Name="Far Seas Innovation">1</Setting>
 	</Set>
 	<Set Name="Heavy Armoring">
 		<Setting Name="Flawless Strikes">1</Setting>
@@ -126,6 +130,7 @@
 		<Setting Name="Armorer's Insight">3</Setting>
 		<Setting Name="Flawless Strikes">1</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
+		<Setting Name="Far Seas Innovation">3</Setting>
 	</Set>
 	<Set Name="Light Armoring">
 		<Setting Name="Negligible Loose Material">1</Setting>
@@ -148,6 +153,7 @@
 		<Setting Name="Severe knotted thread">3</Setting>
 		<Setting Name="Tailor's Insight">1</Setting>
 		<Setting Name="Favor of Innovation">2</Setting>
+		<Setting Name="Far Seas Innovation">2</Setting>
 		<Setting Name="Flawless Dexterity">2</Setting>
 	</Set>
 	<Set Name="Runecraft">
@@ -171,6 +177,7 @@
 		<Setting Name="Severe uneven cut">3</Setting>
 		<Setting Name="Jeweler's Insight">2</Setting>
 		<Setting Name="Flawless Faceting">3</Setting>
+		<Setting Name="Far Seas Innovation">1</Setting>
 	</Set>
 	<Set Name="Weaponry">
 		<Setting Name="Water Quench">1</Setting>
@@ -193,7 +200,8 @@
 		<Setting Name="Severe weak annealing">3</Setting>
 		<Setting Name="Weaponsmith's Insight">3</Setting>
 		<Setting Name="Flawless Hardening">1</Setting>
-    <Setting Name="Favor of Innovation">2</Setting>
+		<Setting Name="Favor of Innovation">2</Setting>
+		<Setting Name="Far Seas Innovation">2</Setting>
 	</Set>
 	<Set Name="Woodworking">
 		<Setting Name="Minor Knot">1</Setting>
@@ -217,6 +225,7 @@
 		<Setting Name="Woodworker's Insight">2</Setting>
 		<Setting Name="Flawless Cuts">1</Setting>
 		<Setting Name="Favor of Innovation">2</Setting>
+		<Setting Name="Far Seas Innovation">2</Setting>
 	</Set>
 	<Set Name="Geocraft">
 		<Setting Name="Dense Material">1</Setting>
