@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.58 - Fixed error with saving recipe favorite lists.
+      - Hopefully fixed guild hall targetting of non-Elaborate tables.
+
 v8.57 - Fixed error in recipe processing
         More tweaks to CraftLite code
 
