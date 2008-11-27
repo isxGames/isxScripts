@@ -4237,6 +4237,12 @@ function ReacquireKillTargetFromMA()
 
 	if ${Actor[${MainAssistID}](exists)}
 	{
+		if !${Actor[${MainAssistID}].InCombatMode}
+		{
+			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist is no longer in combat mode]"]
+			return FAILED
+		}
+		
 		if ${Actor[${MainAssistID}].Target(exists)}
 		{
 			NextKillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
