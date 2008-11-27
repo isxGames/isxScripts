@@ -225,7 +225,7 @@
 		<Setting Name="Woodworker's Insight">2</Setting>
 		<Setting Name="Flawless Cuts">1</Setting>
 		<Setting Name="Favor of Innovation">2</Setting>
-		<Setting Name="Far Seas Innovation">2</Setting>
+		<Setting Name="Far Seas Innovation">3</Setting>
 	</Set>
 	<Set Name="Geocraft">
 		<Setting Name="Dense Material">1</Setting>
