@@ -227,7 +227,6 @@ variable int CampCount
 variable int PullCount
 variable lnavregionref PullPoint
 variable bool CampNav=TRUE
-variable bool NoMovement=FALSE
 variable int RegionCount
 variable bool IsFinish
 variable string POIList[50]
@@ -1753,48 +1752,47 @@ function Combat(bool PVP=0)
 						break
 					}
 
-					if ${AutoMelee} && !${MainTank} && !${NoAutoMovement}
+					if !${NoAutoMovement}
 					{
-						;check valid rear position
-						if ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<5
+						if ${AutoMelee} && !${MainTank}
 						{
-							;we're behind and in range
-						}
-						;check right flank
-						elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<5
-						{
-							;we're right flank and in range
-						}
-						;check left flank
-						elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<5
-						{
-							;we're left flank and in range
-						}
-						elseif ${Actor[${KillTarget}].Target.ID}==${Me.ID}
-						{
-							;we have aggro, move to the maintank
-							if !${NoAutoMovement}
-								call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 1
-							wait 2
-							do
+							;check valid rear position
+							if ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<65) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>305 || ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-305)) && ${Actor[${KillTarget}].Distance}<5
 							{
-								waitframe
-								call ProcessTriggers
+								;we're behind and in range
 							}
-							while (${IsMoving} || ${Me.IsMoving})
-						}
-						else
-						{
-							;call CheckPosition 1 ${Target.IsEpic} ${KillTarget} 0 0
-							if ${MainTank}
-								call CheckPosition 1 0 ${KillTarget} 0 1
+							;check right flank
+							elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-295)) && ${Actor[${KillTarget}].Distance}<5
+							{
+								;we're right flank and in range
+							}
+							;check left flank
+							elseif ((${Math.Calc64[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Actor[${KillTarget}].Heading}-${Me.Heading}]}<295)) && ${Actor[${KillTarget}].Distance}<5
+							{
+								;we're left flank and in range
+							}
+							elseif ${Actor[${KillTarget}].Target.ID}==${Me.ID}
+							{
+								;we have aggro, move to the maintank
+								call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 1
+								wait 2
+								do
+								{
+									waitframe
+									call ProcessTriggers
+								}
+								while (${IsMoving} || ${Me.IsMoving})
+							}
 							else
-								call CheckPosition 1 1 ${KillTarget} 0 0
+							{
+								;call CheckPosition 1 ${Target.IsEpic} ${KillTarget} 0 0
+								if ${MainTank}
+									call CheckPosition 1 0 ${KillTarget} 0 1
+								else
+									call CheckPosition 1 1 ${KillTarget} 0 0
+							}
 						}
-					}
-					elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[${MainTankID}].Distance}>40
-					{
-						if !${NoAutoMovement}
+						elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[${MainTankID}].Distance}>40
 						{
 							call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 25
 							wait 2
@@ -2171,7 +2169,6 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	variable float minrange
 	variable float maxrange
 	variable float destangle
-	variable uint MainTankPCID
 	variable point3f destpoint
 	variable point3f destminpoint
 	variable point3f destmaxpoint
@@ -2179,17 +2176,20 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	xTimer:Set[${Script.RunningTime}]
 
 
-	if ${NoAutoMovement} && ${Me.ToActor.InCombatMode}
+	if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
 	{
-		echo DEBUG:: CheckPosition - NoAutoMovement
-		return
+		if ${NoAutoMovement}
+		{
+			Debug:Echo["CheckPosition() :: NoAutoMovement ON"]
+			return
+		}		
+		if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
+		{
+			Debug:Echo["CheckPosition() :: In combat, but current KillTarget does not exist and/or is dead."]
+			return
+		}
 	}
-	if !${Actor[${KillTarget}](exists)} && ${NoMovement}
-	{
-		echo DEBUG:: CheckPosition - NoMovement
-		return
-	}
-
+	
 	;lets wait if we're currently casting and we don't want to interupt
 	if ${Me.CastingSpell} && !${MainTank} && !${castwhilemoving}
 	{
@@ -2280,7 +2280,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			{
 				do
 				{
-						waitframe
+					waitframe
 				}
 				while ${Me.CastingSpell}
 			}
@@ -2418,6 +2418,18 @@ function CheckQuadrant(uint TID, int quadrant)
 
 	side:Set[${Position.Side[${TID}]}]
 	targetaspect:Set[${Position.Angle[${TID}]}]
+	
+	;; CheckQuadrant() should only be called in combat, so 'in combat' checks should not be necessary
+	if ${NoAutoMovement}
+	{
+		Debug:Echo["CheckQuadrant() :: NoAutoMovement ON"]
+		return
+	}		
+	if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
+	{
+		Debug:Echo["CheckQuadrant() :: Current Target does not exist and/or is dead."]
+		return
+	}	
 
 	;we're in range, lets verify quadrant in case fudge factor placed us on wrong side.
 	switch ${quadrant}
@@ -3381,6 +3393,7 @@ function FastMove(float X, float Z, int range)
 	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
 	variable int xTimer
 	variable int MoveToRange
+	variable bool IgnoreInCombatChecks
 
 	if ${ScanRange} > 75
 		MoveToRange:Set[${ScanRange}]
@@ -3388,19 +3401,30 @@ function FastMove(float X, float Z, int range)
 		MoveToRange:Set[75]
 
 	IsMoving:Set[TRUE]
-
-	if !${Actor[${KillTarget}](exists)} && !${islooting} && !${movingtowp} && !${movinghome} && ${Me.InCombat}
+	
+	if (${islooting} || ${movingtowp} || ${movinghome})
+		IgnoreInCombatChecks:Set[TRUE]
+	else
+		IgnoreInCombatChecks:Set[FALSE]
+	
+	if (!${IgnoreInCombatChecks})
 	{
-		IsMoving:Set[FALSE]
-		return "TARGETDEAD"
+		if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
+		{
+			if ${NoAutoMovement}
+			{
+				Debug:Echo["FastMove() :: NoAutoMovement ON"]
+				IsMoving:Set[FALSE]
+				return "NOAUTOMOVEMENT"
+			}			
+			if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
+			{
+				IsMoving:Set[FALSE]
+				return "TARGETDEAD"
+			}
+		}
 	}
-
-	if ${NoMovement}
-	{
-		IsMoving:Set[FALSE]
-		return "NOMOVEMENT"
-	}
-
+	
 	if !${X} || !${Z}
 	{
 		IsMoving:Set[FALSE]
@@ -3409,7 +3433,7 @@ function FastMove(float X, float Z, int range)
 
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${MoveToRange} && ${PathType}!=4
 	{
-			;Debug:Echo["In FastMove() -- Math.Distance[${Me.X},${Me.Z},${X},${Z}] > MoveToRange == ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${MoveToRange}"]
+		;Debug:Echo["In FastMove() -- Math.Distance[${Me.X},${Me.Z},${X},${Z}] > MoveToRange == ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${MoveToRange}"]
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC2"
 	}
