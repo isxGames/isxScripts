@@ -398,7 +398,7 @@ function Buff_Routine(int xAction)
 					if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]}
-						wait 1
+						wait 2
 						if (${Me.Ability[${SpellType[382]}].IsReady})
 							call CastSpellRange 382 0 0 0 ${Me.Pet.ID} 0 0 0 1
 					}

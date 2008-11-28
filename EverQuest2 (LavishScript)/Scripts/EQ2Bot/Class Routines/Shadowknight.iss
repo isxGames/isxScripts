@@ -201,68 +201,73 @@ function Combat_Init()
    Power[10,2]:Set[100]
    SpellRange[10,1]:Set[95]
 
-
-   ;; nuke + lifetap
-   Action[11]:Set[DDAttack_2]
+   ; Mana Tap + Dmg Nuke/Dot
+   Action[11]:Set[ManaTap]
    Power[11,1]:Set[5]
    Power[11,2]:Set[100]
-   SpellRange[11,1]:Set[153]
+   SpellRange[11,1]:Set[81]
 
-   ;; nuke + dot
-   Action[12]:Set[DDAttack_3]
+   ;; nuke + lifetap
+   Action[12]:Set[DDAttack_2]
    Power[12,1]:Set[5]
    Power[12,2]:Set[100]
-   SpellRange[12,1]:Set[150]
+   SpellRange[12,1]:Set[153]
 
-    ;; Nuke + **wis debuff**
-   Action[13]:Set[DDAttack_4]
+   ;; nuke + dot
+   Action[13]:Set[DDAttack_3]
    Power[13,1]:Set[5]
    Power[13,2]:Set[100]
-   SpellRange[13,1]:Set[152]
+   SpellRange[13,1]:Set[150]
 
-   ;; Nuke + damage on termination
-   Action[14]:Set[DDAttack_5]
+    ;; Nuke + **wis debuff**
+   Action[14]:Set[DDAttack_4]
    Power[14,1]:Set[5]
    Power[14,2]:Set[100]
-   SpellRange[14,1]:Set[61]
+   SpellRange[14,1]:Set[152]
 
-   ;; "Boot" (knockdown)
-   Action[15]:Set[DDAttack_6]
+   ;; Nuke + damage on termination
+   Action[15]:Set[DDAttack_5]
    Power[15,1]:Set[5]
    Power[15,2]:Set[100]
-   SpellRange[15,1]:Set[151]
+   SpellRange[15,1]:Set[61]
 
-   ;; Pure Nuke
-   Action[16]:Set[DDAttack_7]
+   ;; "Boot" (knockdown)
+   Action[16]:Set[DDAttack_6]
    Power[16,1]:Set[5]
    Power[16,2]:Set[100]
-   SpellRange[16,1]:Set[62]
+   SpellRange[16,1]:Set[151]
 
-   ;; Level 40 and higher
-   Action[17]:Set[DDAttack_8]
+   ;; Pure Nuke
+   Action[17]:Set[DDAttack_7]
    Power[17,1]:Set[5]
    Power[17,2]:Set[100]
-   SpellRange[17,1]:Set[154]
+   SpellRange[17,1]:Set[62]
+
+   ;; Level 40 and higher
+   Action[18]:Set[DDAttack_8]
+   Power[18,1]:Set[5]
+   Power[18,2]:Set[100]
+   SpellRange[18,1]:Set[154]
 
    ;; NOTE:  "63" is Harm touch
 
    ; Level 50+
-   Action[18]:Set[Mist]
-   MobHealth[18,1]:Set[10]
-   MobHealth[18,2]:Set[100]
-   Power[18,1]:Set[20]
-   Power[18,2]:Set[100]
-   SpellRange[18,1]:Set[55]
-
-   Action[19]:Set[Shield_Attack]
-   Power[19,1]:Set[5]
+   Action[19]:Set[Mist]
+   MobHealth[19,1]:Set[10]
+   MobHealth[19,2]:Set[100]
+   Power[19,1]:Set[20]
    Power[19,2]:Set[100]
-   SpellRange[19,1]:Set[240]
+   SpellRange[19,1]:Set[55]
 
-   Action[20]:Set[Pet]
-   MobHealth[20,1]:Set[50]
-   MobHealth[20,2]:Set[100]
-   SpellRange[20,1]:Set[45]
+   Action[20]:Set[Shield_Attack]
+   Power[20,1]:Set[5]
+   Power[20,2]:Set[100]
+   SpellRange[20,1]:Set[240]
+   
+   Action[21]:Set[Pet]
+   MobHealth[21,1]:Set[50]
+   MobHealth[21,2]:Set[100]
+   SpellRange[21,1]:Set[45]
 
 }
 
@@ -878,6 +883,7 @@ function Combat_Routine(int xAction)
         case DDAttack_6
         case DDAttack_7
         case DDAttack_8
+        case ManaTap
             call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
             if ${Return.Equal[OK]}
             {
@@ -1318,11 +1324,6 @@ function CheckHeals()
 
 function CheckPower()
 {
-    if ${Me.ToActor.Power} < 50
-    {
-	    if (${Me.Ability[${SpellType[81]}].IsReady})
-		    call CastSpellRange 81 0 0 0 ${KillTarget} 0 0 0 1
-    }
 }
 
 function CastSomething()
