@@ -130,7 +130,7 @@
 		<Setting Name="Armorer's Insight">3</Setting>
 		<Setting Name="Flawless Strikes">1</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
-		<Setting Name="Far Seas Innovation">3</Setting>
+		<Setting Name="Far Seas Innovation">1</Setting>
 	</Set>
 	<Set Name="Light Armoring">
 		<Setting Name="Negligible Loose Material">1</Setting>
