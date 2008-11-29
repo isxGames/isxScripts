@@ -193,6 +193,14 @@
 							<Alignment>Center</Alignment>
 							<Text>EQ2 Port by SuperNoob</Text>
 						</text>
+						<text name='Maintained by'>
+							<X>0</X>
+							<Y>45</Y>
+							<Width>300</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Text>Currently maintained by Valerian</Text>
+						</text>
 						<text name='About Thanks To'>
 							<X>0</X>
 							<Y>70</Y>

@@ -1,5 +1,9 @@
 /* -----------------------------------------------------------------------------------
- * EQ2AFKAlarm.iss, Version 1.02 09-May-2007 Created: By SuperNoob
+ * EQ2AFKAlarm.iss, Version 1.1 29-Nov-2008 
+ *
+ * Currently maintained by Valerian
+ *
+ * Orignal port to EQ2 by SuperNoob
  * 
  * *Major* swipe from the AFKAlarm system developed for WoW, kudos to
  * - Original Author: BobTest, Jackalo
@@ -48,8 +52,8 @@ function main(string argv)
 	declare	EQ2AFKAlarm_version_devel	bool	script	FALSE
 
 	declare EQ2AFKAlarm_version_major	int	script	1
-	declare EQ2AFKAlarm_version_minor	int	script	0
-	declare EQ2AFKAlarm_version_rev	int	script	1
+	declare EQ2AFKAlarm_version_minor	int	script	1
+	declare EQ2AFKAlarm_version_rev	int	script	0
 	declare EQ2AFKAlarm_version	string	script	${EQ2AFKAlarm_version_major}.${EQ2AFKAlarm_version_minor}.${EQ2AFKAlarm_version_rev}
 
 	declare AFKAlarmTimer	int	script	0
@@ -152,7 +156,8 @@ function DebugSound()
 function MySays(string Line, string speaker, string message)
 {
 	
-	if ${TriggerSays}
+	if ${TriggerSays} && ${Actor[pc,exactname,${speaker}](exists)}
+
 	{
 		CountSays:Inc[1]
 
