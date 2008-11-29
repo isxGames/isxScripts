@@ -1,0 +1,8 @@
+== Version History ==
+
+=== 11/29/2008 - v1.1 ===
+* New TTS module available -- Available from the SVN.
+* Various minor tweaks to make everything actually work.
+
+=== 07/07/2005 - v1.0 ===
+* initial Port to EQ2
