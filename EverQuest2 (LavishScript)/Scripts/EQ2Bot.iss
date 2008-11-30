@@ -440,6 +440,12 @@ function main()
 				{
 					Me.Inventory[ExactName,ManaStone]:Use
 					mstimer:Set[${Time.Timestamp}]
+					wait 2
+					do
+					{
+						waitframe
+					}
+					while ${Me.CastingSpell}
 				}
 			}
 		}
@@ -513,18 +519,24 @@ function main()
 					{
 						if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
 						{
-							if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+							if (${Actor[${KillTarget}].Health} <= ${AssistHP} && !${Actor[${KillTarget}].IsDead})
 							{
-								if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance}<${MARange})
+								if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance} < ${MARange})
 								{
 									if ${Mob.Target[${KillTarget}]}
 										call Combat
 								}
-								;else
+								else
+								{
+									KillTarget:Set[0]
 									;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
+								}
 							}
-							;else
+							else
+							{
+								KillTarget:Set[0]
 								;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
+							}
 						}
 						else
 							KillTarget:Set[0]
@@ -534,7 +546,7 @@ function main()
 				;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
 				if ${PathType}==4 && ${MainTank}
 				{
-					if ${Me.InCombat} && ${Mob.Detect}
+					if ${Me.ToActor.InCombatMode} && ${Mob.Detect}
 					{
 						call Pull any
 						if ${engagetarget}
@@ -577,14 +589,14 @@ function main()
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-				if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
+				if !${MobDetected} || (${MainTank} && ${Me.Group}!=1) || ${KillTarget}
 				{
-					if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
+					if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health} <= ${AssistHP} && ${Actor[${KillTarget}].Distance} <= 35
 					{
 						if ${Mob.Target[${KillTarget}]}
 						{
 							gRtnCtr:Set[40]
-							if !${Me.InCombat}
+							if !${Me.ToActor.InCombatMode}
 								CurrentAction:Set["Idle..."]
 							break
 						}
@@ -599,7 +611,7 @@ function main()
 						{
 							; end after this round
 							gRtnCtr:Set[40]
-							if !${Me.InCombat}
+							if !${Me.ToActor.InCombatMode}
 								CurrentAction:Set["Idle..."]
 							break
 						}
@@ -612,8 +624,16 @@ function main()
 					}
 
 					;disable autoattack if not in combat
-					if (${Me.AutoAttackOn} && !${Mob.Detect})
-						EQ2Execute /toggleautoattack
+					if ${MainTank}
+					{
+						if (${Me.AutoAttackOn} && !${Mob.Detect})
+							EQ2Execute /toggleautoattack
+					}
+					else
+					{
+						if !${Actor[${MainTankID}].InCombatMode} && ${Me.AutoAttackOn}
+							EQ2Execute /toggleautoattack
+					}	
 				}
 			}
 			while ${gRtnCtr:Inc}<=40
@@ -625,12 +645,12 @@ function main()
 					gRtnCtr:Set[1]
 					do
 					{
-						if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
+						if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health} <= ${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget}].Distance} <= 35
 						{
 							if ${Mob.Target[${KillTarget}]}
 							{
 								gRtnCtr:Set[40]
-								if !${Me.InCombat}
+								if !${Me.ToActor.InCombatMode}
 									CurrentAction:Set["Idle..."]
 								break
 							}
@@ -640,7 +660,7 @@ function main()
 						if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 						{
 							gRtnCtr:Set[40]
-							if !${Me.InCombat}
+							if !${Me.ToActor.InCombatMode}
 								CurrentAction:Set["Idle..."]
 							break
 						}
@@ -691,7 +711,7 @@ function main()
 				if ${Actor[${MainAssistID}](exists)}
 				{
 					target ${Actor[${MainAssistID}]}
-					wait 10 ${Target.ID}==${Actor[${MainAssistID}].ID}
+					wait 10 ${Target.ID}==${MainAssistID}
 				}
 
 				; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
@@ -718,11 +738,17 @@ function main()
 								if ${Mob.Target[${KillTarget}]}
 									call Combat
 							}
-							;else
+							else
+							{
+								KillTarget:Set[0]
 								;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
+							}
 						}
-						;else
+						else
+						{
+							KillTarget:Set[0]
 							;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
+						}
 					}
 					else
 						KillTarget:Set[0]
@@ -732,7 +758,7 @@ function main()
 			;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
 			if ${PathType}==4 && ${MainTank}
 			{
-				if ${Me.InCombat} && ${Mob.Detect}
+				if ${Me.ToActor.InCombatMode} && ${Mob.Detect}
 				{
 					call Pull any
 					if ${engagetarget}
@@ -777,18 +803,26 @@ function main()
 
 			if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
-				if ${KillTarget} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget},radius,35](exists)}
+				if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget}].Distance} <= 35
 				{
 					if ${Mob.Target[${KillTarget}]}
 					{
-						if !${Me.InCombat}
+						if !${Me.ToActor.InCombatMode}
 							CurrentAction:Set["Idle..."]
 					}
 				}
 
 				;disable autoattack if not in combat
-				if (${Me.AutoAttackOn} && !${Mob.Detect})
-					EQ2Execute /toggleautoattack
+				if ${MainTank}
+				{
+					if (${Me.AutoAttackOn} && !${Mob.Detect})
+						EQ2Execute /toggleautoattack
+				}
+				else
+				{
+					if !${Actor[${MainTankID}].InCombatMode} && ${Me.AutoAttackOn}
+						EQ2Execute /toggleautoattack
+				}	
 			}
 
 			;; Misc. Checks
@@ -808,7 +842,7 @@ function main()
 		if ${AutoLoot}
 			call CheckLoot
 
-		if ${AutoPull} && !${Me.InCombat}
+		if ${AutoPull} && !${Me.ToActor.InCombatMode}
 		{
 			;Debug:Echo["AutoPull Loop: Test-${Time.Timestamp}"]
 			if ${PathType}==2 && (${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
@@ -846,7 +880,7 @@ function main()
 			{
 				if (${Me.ToActor.Power}>=${PowerCheck} && ${Me.ToActor.Health}>=${HealthCheck})
 				{
-					if ${PathType}==4 && !${Me.InCombat}
+					if ${PathType}==4 && !${Me.ToActor.InCombatMode}
 					{
 						if ${EQ2Bot.PriestPower}
 						{
@@ -989,14 +1023,15 @@ function main()
 				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 			}
 		}
-		elseif ${Me.TotalEarnedAPs} < 200
-		{
-			if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
-			{
-				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Me.APExp}]
-				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
-			}
-		}
+		;;;; This is not proper logic...does not seem to work correctly if you ding AA...TO DO:  Redo.
+		;elseif ${Me.TotalEarnedAPs} < 200
+		;{
+		;	if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
+		;	{
+		;		CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Me.APExp}]
+		;		CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
+		;	}
+		;}
 
 		; Check if we have leveled and reload spells
 		if ${Me.Level}>${StartLevel} && ${Me.Level}<80
@@ -1016,7 +1051,7 @@ function main()
 function CheckManaStone()
 {
 	variable int tempvar
-	Me.Equipment[Exactname,"Manastone"]:UnEquip
+	;Me.Equipment[Exactname,"Manastone"]:UnEquip
 
 	Me:CreateCustomInventoryArray[nonbankonly]
 
@@ -1149,7 +1184,7 @@ function CastSpellRange(... Args)
 	;Debug:Echo["CastSpellRange(${tempvar}::${SpellType[${tempvar}]})"]
 
 	;if out of combat and invis, lets not break it
-	if !${Me.InCombat}
+	if !${Me.ToActor.InCombatMode}
 	{
 		call AmIInvis "CastSpellRange()"
 		if ${Return.Equal[TRUE]}
@@ -1313,7 +1348,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	if !${spellid}
 		spellid:Set[${Me.Ability[${spell}].ID}]
 
-	if !${Me.InCombat}
+	if !${Me.ToActor.InCombatMode}
 	{
 		call AmIInvis "CastSpellNOW()"
 		if ${Return.Equal[TRUE]}
@@ -1390,15 +1425,15 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	call ProcessTriggers
 
 	;return if trying to cast currently queued ability
-	if (${Me.InCombat} && ${spell.Equal[${LastQueuedAbility}]} && ${Me.CastingSpell})
+	if (${Me.ToActor.InCombatMode} && ${spell.Equal[${LastQueuedAbility}]} && ${Me.CastingSpell})
 	{
-		;Debug:Echo["EQ2Bot-Debug:: spell == LastQueuedAbility && Me.CastingSpell && Me.InCombat --> Returning"]
+		;Debug:Echo["EQ2Bot-Debug:: spell == LastQueuedAbility && Me.CastingSpell && Me.ToActor.InCombatMode --> Returning"]
 		LastQueuedAbility:Set[]
 		return
 	}
 
 	;return if invis and not in combat - we don't want to break invis out of combat
-	if !${Me.InCombat}
+	if !${Me.ToActor.InCombatMode}
 	{
 		call AmIInvis "CastSpell()"
 		if ${Return.Equal[TRUE]}
@@ -1509,13 +1544,13 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 				}
 			}
 
-			if ${Counter} >= 50 && ${Me.InCombat}
+			if ${Counter} >= 50 && ${Me.ToActor.InCombatMode}
 			{
 				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
 				CurrentAction:Set[]
 				return
 			}
-			elseif !${Me.InCombat} && ${Counter} > 100
+			elseif !${Me.ToActor.InCombatMode} && ${Counter} > 100
 			{
 				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
 				CurrentAction:Set[]
@@ -1556,13 +1591,13 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 					}
 				}
 
-				if ${Counter} >= 50 && ${Me.InCombat}
+				if ${Counter} >= 50 && ${Me.ToActor.InCombatMode}
 				{
 					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
 					CurrentAction:Set[]
 					return
 				}
-				elseif !${Me.InCombat} && ${Counter} > 100
+				elseif !${Me.ToActor.InCombatMode} && ${Counter} > 100
 				{
 					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
 					CurrentAction:Set[]
@@ -1743,7 +1778,7 @@ function Combat(bool PVP=0)
 					if ${Return.Equal[CombatComplete]}
 					{
 						isstuck:Set[FALSE]
-						if !${Me.InCombat}
+						if !${Me.ToActor.InCombatMode}
 							CurrentAction:Set["Idle..."]
 						gRtnCtr:Set[40]
 					}
@@ -1814,6 +1849,12 @@ function Combat(bool PVP=0)
 						{
 							Me.Inventory[ExactName,ManaStone]:Use
 							mstimer:Set[${Time.Timestamp}]
+							wait 2
+							do
+							{
+								waitframe
+							}
+							while ${Me.CastingSpell}							
 						}
 					}
 
@@ -1877,7 +1918,7 @@ function Combat(bool PVP=0)
 					call Custom__Combat_Routine ${gRtnCtr}
 					if ${Return.Equal[CombatComplete]}
 					{
-						if !${Me.InCombat}
+						if !${Me.ToActor.InCombatMode}
 							CurrentAction:Set["Idle..."]
 						gRtnCtr:Set[40]
 					}
@@ -1888,6 +1929,12 @@ function Combat(bool PVP=0)
 						{
 							Me.Inventory[ExactName,ManaStone]:Use
 							mstimer:Set[${Time.Timestamp}]
+							wait 2
+							do
+							{
+								waitframe
+							}
+							while ${Me.CastingSpell}
 						}
 					}
 
@@ -1986,7 +2033,7 @@ function Combat(bool PVP=0)
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		call ProcessTriggers
 	}
-	while ${Me.InCombat} || ${ContinueCombat}
+	while ${Me.ToActor.InCombatMode} || ${ContinueCombat}
 
 	UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Hide
 
@@ -1999,7 +2046,7 @@ function Combat(bool PVP=0)
 		call Post_Combat_Routine ${gRtnCtr}
 		if ${Return.Equal[PostCombatRoutineComplete]}
 		{
-			if !${Me.InCombat}
+			if !${Me.ToActor.InCombatMode}
 				CurrentAction:Set["Idle..."]
 			gRtnCtr:Set[20]
 		}
@@ -2014,7 +2061,7 @@ function Combat(bool PVP=0)
 			call Custom__Post_Combat_Routine ${gRtnCtr}
 			if ${Return.Equal[PostCombatRoutineComplete]}
 			{
-				if !${Me.InCombat}
+				if !${Me.ToActor.InCombatMode}
 					CurrentAction:Set["Idle..."]
 				gRtnCtr:Set[20]
 			}
@@ -2277,7 +2324,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 
 	if ${PathType}==2
 	{
-		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>5 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<10 && ${Me.InCombat} && !${lostaggro}
+		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>5 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<10 && ${Me.ToActor.InCombatMode} && !${lostaggro}
 		{
 			if ${Me.CastingSpell} && !${MainTank} && !${castwhilemoving}
 			{
@@ -2800,7 +2847,7 @@ function Pull(string npcclass)
 		return 0
 
 	;; If we are already in combat...why are we pulling? Cause sometimes we pull nearest mob when group member enters combat?
-	if (${Me.InCombat})
+	if (${Me.ToActor.InCombatMode})
 		return 0
 
 	if !${Actor[NPC,range,${ScanRange}](exists)} && !(${Actor[NamedNPC,range,${ScanRange}](exists)} && !${IgnoreNamed})
@@ -2853,10 +2900,10 @@ function Pull(string npcclass)
 
 			if !${CustomActor[${tcount}].IsAggro}
 			{
-				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && !${Me.InCombat} && (${Me.ToActor.Power}<75 || ${Me.ToActor.Health}<90) && !${CustomActor[${tcount}].InCombatMode}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && !${Me.ToActor.InCombatMode} && (${Me.ToActor.Power}<75 || ${Me.ToActor.Health}<90) && !${CustomActor[${tcount}].InCombatMode}
 					continue
 
-				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && ${Me.InCombat} && !${CustomActor[${tcount}].InCombatMode}
+				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && ${Me.ToActor.InCombatMode} && !${CustomActor[${tcount}].InCombatMode}
 					continue
 
 				if !${aggrogrp} && ${ThisActorTargetID}!=${Me.ID} && !${PullNonAggro}
@@ -2990,13 +3037,13 @@ function Pull(string npcclass)
 					}
 					else
 					{
-						if ${Me.InCombat}
+						if ${Me.ToActor.InCombatMode}
 							EQ2Execute /togglerangedattack
 						continue
 					}
 				}
 
-				if ${Me.InCombat}
+				if ${Me.ToActor.InCombatMode}
 					EQ2Execute /togglerangedattack
 
 				continue
@@ -4147,7 +4194,7 @@ atom(script) LootWDw(string ID)
 
 function CantSeeTarget(string Line)
 {
-	if (${haveaggro} || ${MainTank}) && ${Me.InCombat}
+	if (${haveaggro} || ${MainTank}) && ${Me.ToActor.InCombatMode}
 	{
 		if ${Target.Target.ID}==${Me.ID}
 		{
@@ -4446,7 +4493,7 @@ function ResumeBot()
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
 	StartBot:Set[TRUE]
-	if ${Me.InCombat}
+	if ${Me.ToActor.InCombatMode}
 		UIElement[EQ2 Bot].FindUsableChild[Check Buffs,commandbutton]:Show
 }
 
