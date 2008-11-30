@@ -113,6 +113,8 @@ function Class_Declaration()
 
 function Pulse()
 {
+	declare BuffTarget string local	
+	
 	;;;;;;;;;;;;
 	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
 	;;        provided to assist with this.  An example is provided.
@@ -157,7 +159,7 @@ function Pulse()
 								return
 							}
 							else
-								echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+								echo "ERROR2: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}),exactname]}, does not exist!"
 						}
 						else
 						{
@@ -333,7 +335,7 @@ function Buff_Routine(int xAction)
 								return
 							}
 							else
-								echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+								echo "ERROR3: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
 						}
 						else
 						{
@@ -709,10 +711,11 @@ function CheckCastBeam()
 
 function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
+	declare BuffTarget string local	
+	
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
-	declare BuffTarget string local
 
 	if ${MezzMode}
 		call Mezmerise_Targets
@@ -746,7 +749,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 							call CheckCastBeam
 						}
 						else
-							echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+							echo "ERROR4: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
 					}
 					else
 					{
@@ -801,13 +804,52 @@ function Combat_Routine(int xAction)
 {
 	declare BuffTarget string local
 	declare spellsused int local
+	declare FightingEpicMob bool local
+	declare FightingHeroicMob bool local
+	declare DoShortTermBuffs bool local
 	spellsused:Set[0]
-
+	
+	
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 		return CombatComplete
 
 	if ${InPostDeathRoutine} || ${CheckingBuffsOnce}
 		return
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;; Set some local variables... ;;;;
+	if ${Actor[${KillTarget}].IsEpic}
+		FightingEpicMob:Set[TRUE]
+	elseif ${Actor[${KillTarget}].IsHeroic}
+		FightingHeroicMob:Set[TRUE]
+		
+	
+	if ${FightingEpicMob}
+	{
+		if (${Actor[${KillTarget}].Health} > 20)
+			DoShortTermBuffs:Set[TRUE]
+		else
+			DoShortTermBuffs:Set[FALSE]
+	}
+	elseif ${FightingHeroicMob}
+	{
+		if (${Actor[${KillTarget}].Health} > 50)
+			DoShortTermBuffs:Set[TRUE]
+		else
+			DoShortTermBuffs:Set[FALSE]
+	}
+	else
+	{
+		if ${Actor[${KillTarget}].Health} > 75
+			DoShortTermBuffs:Set[TRUE]
+		else
+			DoShortTermBuffs:Set[FALSE]
+	}
+	;echo "TEST: FightingEpicMob: ${FightingEpicMob} -- FightingHeroicMob: ${FightingHeroicMob} -- DoShortTermBuffs: ${DoShortTermBuffs}"
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+	
 
 	;; Aggro Control...
 	if (${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
@@ -931,7 +973,7 @@ function Combat_Routine(int xAction)
 	{
 		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
 		{
-			if ${Actor[${KillTarget}].IsEpic}
+			if ${FightingEpicMob}
 				call CheckPosition 1 1 ${KillTarget}
 			else
 			{
@@ -952,7 +994,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Illuminate
-	if ${UseIlluminate}
+	if ${DoShortTermBuffs} && ${UseIlluminate}
 	{
 		if ${Me.Ability[${SpellType[387]}](exists)}
 		{
@@ -973,7 +1015,7 @@ function Combat_Routine(int xAction)
 	FlushQueued Mezmerise_Targets
 
 	;; Chronosiphoning (Always cast this when it is ready!
-	if ${Me.Ability[${SpellType[385]}](exists)}
+	if ${DoShortTermBuffs} && ${Me.Ability[${SpellType[385]}](exists)}
 	{
 		if (${Me.Ability[${SpellType[385]}].IsReady})
 		{
@@ -992,20 +1034,24 @@ function Combat_Routine(int xAction)
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
 
-	;; Short Duration Buff .. adds INT, Focus, Disruption, etc. (cast any time it's ready)
-	if (${Me.Ability[${SpellType[23]}].IsReady})
+	if ${DoShortTermBuffs}
 	{
-		call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1
-		LastSpellCast:Set[23]
-		spellsused:Inc
-	}
-
-	;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
-	if (${Me.Ability[${SpellType[383]}].IsReady})
-	{
-		call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
-		LastSpellCast:Set[383]
-		spellsused:Inc
+		;; Short Duration Buff .. adds INT, Focus, Disruption, etc. (cast any time it's ready)
+		if (${Me.Ability[${SpellType[23]}].IsReady})
+		{
+			call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1
+			LastSpellCast:Set[23]
+			spellsused:Inc
+		}
+	
+		if ${Actor[${KillTarget}].Health}
+		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
+		if (${Me.Ability[${SpellType[383]}].IsReady})
+		{
+			call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
+			LastSpellCast:Set[383]
+			spellsused:Inc
+		}
 	}
 
 	call VerifyTarget
@@ -1142,7 +1188,7 @@ function Combat_Routine(int xAction)
 					}
 					break
 				default
-					if (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed})
+					if (${FightingEpicMob} || ${Actor[${KillTarget}].IsNamed})
 					{
 						echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
 						eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
@@ -1233,7 +1279,7 @@ function Combat_Routine(int xAction)
 	;; Melee Debuff -- only for Epic mobs for now
 	if ${Me.ToActor.Power} > 40
 	{
-		if ${Actor[${KillTarget}].IsEpic}
+		if ${FightingEpicMob}
 		{
 			if ${Me.Ability[${SpellType[50]}](exists)}
 			{
@@ -1255,7 +1301,7 @@ function Combat_Routine(int xAction)
 	FlushQueued Mezmerise_Targets
 
 	;; If Target is Epic, be sure that the Daze Debuff is being used as often as possible, but only once we have casted our initial spells.)  (This is the slow casting Nuke.)
-	if ${Actor[${KillTarget}].IsEpic}
+	if ${FightingEpicMob}
 	{
 		if ${Me.Ability[${SpellType[61]}](exists)}
 		{
@@ -1457,7 +1503,7 @@ function Combat_Routine(int xAction)
 		case Savante
 			if ${Me.ToActor.Power} > 50
 				break
-			if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed}
+			if ${FightingEpicMob} && ${Actor[${KillTarget}].IsNamed}
 			{
 				if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 				{
@@ -1500,13 +1546,13 @@ function Combat_Routine(int xAction)
 					call CastSomething
 				return CombatComplete
 			}
-			elseif ${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} < 50
+			elseif ${FightingHeroicMob} && ${Actor[${KillTarget}].Health} < 50
 			{
 				if ${spellsused} < 1 && !${MezzMode}
 					call CastSomething
 				return CombatComplete
 			}
-			elseif ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health} < 15
+			elseif ${FightingEpicMob} && ${Actor[${KillTarget}].Health} < 15
 			{
 				if ${spellsused} < 1 && !${MezzMode}
 					call CastSomething
@@ -1546,6 +1592,8 @@ function Combat_Routine(int xAction)
 
 function CastSomething()
 {
+	declare BuffTarget string local	
+	
 	;; If this function is called, it is because we went through teh combat routine without casting any spells.
 	;; This function is intended to cast SOMETHING in order to keep "Perputuality" going.
 
@@ -1582,7 +1630,7 @@ function CastSomething()
 							return
 						}
 						else
-							echo "ERROR: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
+							echo "ERROR1: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
 					}
 					else
 					{
