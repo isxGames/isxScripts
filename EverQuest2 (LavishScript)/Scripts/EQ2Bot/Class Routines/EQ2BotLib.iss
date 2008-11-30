@@ -1174,7 +1174,7 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 		do
 		{
 			;check groupmates health
-			if (${Me.Group[${counter}].ToActor(exists) && !${Me.Group[${counter}].ToActor.IsDead})
+			if (${Me.Group[${counter}].ToActor(exists)} && !${Me.Group[${counter}].ToActor.IsDead})
 			{
 				if (${Me.Group[${counter}].ToActor.Health} < ${GroupHealth})
 					return FALSE
