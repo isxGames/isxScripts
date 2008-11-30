@@ -100,7 +100,8 @@ function main(string argv)
 	declare PlayersIgnored index:string script
 	declare PlayersIgnoredTime index:int script
 	declare AFKTriggerSettings string script "EQ2AFKAlarm/Data/afktriggers.xml"
-
+	declare AFKTriggers settingsetref script
+	
 	declare Logging		bool	script	FALSE
 
 	declare ConfigFile	string	script	"EQ2AFKAlarm/Data/Config.xml"
@@ -113,7 +114,9 @@ function main(string argv)
 	ui -reload -skin eq2 "EQ2AFKAlarm/Interface/EQ2AFKAlarmUI.xml"
 
 	call config_load
-
+	LavishSettings:AddSet[AFKTriggers]
+	AFKTriggers:Set[${LavishSettings[AFKTriggers]}]
+	
 	AddTrigger MySays	"@speaker@ says, \"@what@\""
 	AddTrigger MyTells	"@speaker@ tells you, \"@what@\""
 	AddTrigger MyGroup	"@speaker@ says to the group, \"@what@\""
@@ -153,6 +156,32 @@ function DebugSound()
 	call PlaySound "${SoundfilePhaser}"
 }
 
+function CheckTriggers(string Message, string Speaker, int MsgType)
+{
+	variable iterator Iter
+	
+	AFKTriggers:Clear
+	AFKTriggers:AddSet[Keywords]
+	AFKTriggers:Import[${AFKTriggerSettings}]
+	
+	AFKTriggers.FindSet[Keywords]:GetSetIterator[Iter]
+	
+	if ${Iter:First(exists)}
+	{
+		do
+		{
+			if ${Message.Find[${Iter.Value.FindSetting[Word]}]}
+			{
+				call AFKAlarmAction MESSAGE_TYPE_SAY ${Speaker} ${Iter.Key}
+				return TRUE
+			}
+		}
+		while ${Iter:Next(exists)}
+	}
+	return FALSE
+
+}
+
 function MySays(string Line, string speaker, string message)
 {
 	
@@ -162,63 +191,45 @@ function MySays(string Line, string speaker, string message)
 		CountSays:Inc[1]
 
 		call ConsoleEcho "[${speaker}] [Says] ${message}"
-		declare Count int local 1
-		SettingXML[${AFKTriggerSettings}]:Unload
-		do
-		{
-			if ${message.Find[${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Count}].GetString[Word]}]}
-			{
-				call AFKAlarmAction MESSAGE_TYPE_SAY ${speaker} ${Count}
-				return
-			}
-		}
-		while ${Count:Inc}<=${SettingXML[${AFKTriggerSettings}].Set[Keywords].Sets}
+
+		call CheckTriggers "${message.EscapeQuotes}" "${speaker.EscapeQuotes}" MESSAGE_TYPE_SAY
+		if ${Return}
+			return
 		
-	  if ${TTS.IsReady} && ${TTSSays} 
-	  {
-		  Speak ${message}
+		if ${TTS.IsReady} && ${TTSSays} 
+		{
+			Speak ${message}
 		}
 		else
 		{
 			;Say does not match any defined triggers, so just play a sound
-		  ; to do --  if it was a Player character?
-		  call PlaySound "${SoundfilePhaser}"
+			call PlaySound "${SoundfilePhaser}"
 		}
 	}
 }
 
 function MyTells(string Line, string speaker, string message)
 {
-  if ${String[${speaker}].Equal[${Me.Name}]} && IGNORE_MY_CONVO
+	if ${String[${speaker}].Equal[${Me.Name}]} && IGNORE_MY_CONVO
 		return
 
 	if ${TriggerTells}
 	{
 		CountTells:Inc[1]
 		call ConsoleEcho "[${speaker}] [Tells] ${message}"
-		declare Count int local 1
 
-		SettingXML[${AFKTriggerSettings}]:Unload
-
-		do
-		{
-			if ${message.Find[${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Count}].GetString[Word]}]}
-			{
-				echo Found match to ${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Count}].GetString[Word]}
-				call AFKAlarmAction MESSAGE_TYPE_TELL ${speaker} ${Count}
-				return
-			}
-		}
-		while ${Count:Inc}<=${SettingXML[${AFKTriggerSettings}].Set[Keywords].Sets}
+		call CheckTriggers "${message.EscapeQuotes}" "${speaker.EscapeQuotes}" MESSAGE_TYPE_TELL
+		if ${Return}
+			return
 		
 		if ${TTS.IsReady} && ${TTSTells} 
-	  {
-		  Speak ${message}
+		{
+			Speak ${message}
 		}
 		else
 		{
-		  ;Tell does not match any defined triggers, so just play a sound.
-		  call PlaySound "${SoundfilePhaser}"
+			;Tell does not match any defined triggers, so just play a sound.
+			call PlaySound "${SoundfilePhaser}"
 		}
 	}
 }
@@ -235,26 +246,18 @@ function MyGroup(string Line, string speaker, string message)
 	{
 		CountGroup:Inc[1]
 
-		declare Count int local 1
-		SettingXML[${AFKTriggerSettings}]:Unload
-		do
-		{
-			if ${message.Find[${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Count}].GetString[Word]}]}
-			{
-				call AFKAlarmAction MESSAGE_TYPE_GROUP ${speaker} ${Count}
-				return
-			}
-		}
-		while ${Count:Inc}<=${SettingXML[${AFKTriggerSettings}].Set[Keywords].Sets}
+		call CheckTriggers "${message.EscapeQuotes}" "${speaker.EscapeQuotes}" MESSAGE_TYPE_GROUP
+		if ${Return}
+			return
 		
 		if ${TTS.IsReady} && ${TTSGroup} 
-	  {
-		  Speak ${message}
+		{
+			Speak ${message}
 		}
 		else
 		{
-		  ;Does not match any defined key word triggers, so just play a sound.
-		  call PlaySound "${SoundfileDing}"
+			;Does not match any defined key word triggers, so just play a sound.
+			call PlaySound "${SoundfileDing}"
 		}
 	}
 }
@@ -268,32 +271,24 @@ function MyRaid(string Line, string speaker, string message)
 	{
 		CountRaid:Inc[1]
 
-		if ${message.Find[${Me.Name}]} 		
+		if ${message.Find[${Me.Name}]}
 		{
-  		call ConsoleEcho "[${speaker}] [Raid] ${message}"
+		call ConsoleEcho "[${speaker}] [Raid] ${message}"
 			call PlaySound "${SoundfileChimes}"
 		}
 
-		declare Count int local 1
-		SettingXML[${AFKTriggerSettings}]:Unload
-		do
-		{
-			if ${message.Find[${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Count}].GetString[Word]}]}
-			{
-				call AFKAlarmAction MESSAGE_TYPE_RAID ${speaker} ${Count}
-				return
-			}
-		}
-		while ${Count:Inc}<=${SettingXML[${AFKTriggerSettings}].Set[Keywords].Sets}
+		call CheckTriggers "${message.EscapeQuotes}" "${speaker.EscapeQuotes}" MESSAGE_TYPE_RAID
+		if ${Return}
+			return
 
 		if ${TTS.IsReady} && ${TTSRaid} 
-	  {
-		  Speak ${message}
+		{
+			Speak ${message}
 		}
 		else
 		{
-		  ;Does not match any defined key word triggers, so just play a sound.
-		  call PlaySound "${SoundfileDing}"
+			;Does not match any defined key word triggers, so just play a sound.
+			call PlaySound "${SoundfileDing}"
 		}
 	}
 }
@@ -307,32 +302,24 @@ function MyGuild(string Line, string speaker, string message)
 	{
 		CountGuild:Inc[1]
 		
-		if ${message.Find[${Me.Name}]} 		
+		if ${message.Find[${Me.Name}]}
 		{
-  		call ConsoleEcho "[${speaker}] [Guild] ${message}"
+			call ConsoleEcho "[${speaker}] [Guild] ${message}"
 			call PlaySound "${SoundfileChimes}"
 		}
 		
-		declare Count int local 1
-		SettingXML[${AFKTriggerSettings}]:Unload
-		do
-		{
-			if ${message.Find[${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Count}].GetString[Word]}]}
-			{
-				call AFKAlarmAction MESSAGE_TYPE_GUILD ${speaker} ${Count}
-				return
-			}
-		}
-		while ${Count:Inc}<=${SettingXML[${AFKTriggerSettings}].Set[Keywords].Sets}
+		call CheckTriggers "${message.EscapeQuotes}" "${speaker.EscapeQuotes}" MESSAGE_TYPE_GUILD
+		if ${Return}
+			return
 
 		if ${TTS.IsReady} && ${TTSGuild} 
-	  {
-		  Speak ${message}
+		{
+			Speak ${message}
 		}
 		else
 		{
-		  ;Does not match any defined key word triggers, so just play a sound.
-		  call PlaySound "${SoundfileDing}"
+			;Does not match any defined key word triggers, so just play a sound.
+			call PlaySound "${SoundfileDing}"
 		}
 	}
 }
@@ -348,26 +335,18 @@ function MyOfficer(string Line, string speaker, string message)
 	{
 		CountOfficer:Inc[1]
 
-		declare Count int local 1
-		SettingXML[${AFKTriggerSettings}]:Unload
-		do
-		{
-			if ${message.Find[${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Count}].GetString[Word]}]}
-			{
-				call AFKAlarmAction MESSAGE_TYPE_OFFICER ${speaker} ${Count}
-				return
-			}
-		}
-		while ${Count:Inc}<=${SettingXML[${AFKTriggerSettings}].Set[Keywords].Sets}
+		call CheckTriggers "${message.EscapeQuotes}" "${speaker.EscapeQuotes}" MESSAGE_TYPE_OFFICER
+		if ${Return}
+			return
 
 		if ${TTS.IsReady} && ${TTSOfficer} 
-	  {
-		  Speak ${message}
+		{
+			Speak ${message}
 		}
 		else
 		{
-		  ;Does not match any defined key word triggers, so just play a sound.
-		  call PlaySound "${SoundfileDing}"
+			;Does not match any defined key word triggers, so just play a sound.
+			call PlaySound "${SoundfileDing}"
 		}
 	}
 }
@@ -376,7 +355,7 @@ function MyOfficer(string Line, string speaker, string message)
 function AFKAlarmAction(int MessageType, string Speaker, int Key)
 {
 
-	declare SecurityLevel int local ${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Key}].GetInt[SecurityLevel]}
+	declare SecurityLevel int local ${AFKTriggers.FindSet[Keywords].FindSet[${Key}].FindSetting[SecurityLevel].Int}
 	echo Security Level: ${SecurityLevel}
 
 	switch ${SecurityLevel}
@@ -409,7 +388,7 @@ function SecurityLevelTwo(int MessageType, string Speaker, int Key)
 {
 	; this is for auto response based on text found in the message
 	;
-	declare Response string local ${SettingXML[${AFKTriggerSettings}].Set[Keywords].Set[${Key}].GetString[Response]}
+	declare Response string local ${AFKTriggers.FindSet[Keywords].FindSet[${Key}].FindSetting[Response]}
 	declare TypingPause int local ${Math.Calc[${Math.Rand[100]}+50]}
 
 	call IsNotIgnored ${Speaker}
@@ -422,7 +401,7 @@ function SecurityLevelTwo(int MessageType, string Speaker, int Key)
 		echo Waiting ${TypingPause} to type response.
 		wait ${TypingPause}
 		
-    ; this is for future to perhaps have auto responses to key word phrases
+	; this is for future to perhaps have auto responses to key word phrases
 		echo ${Response}
 	}
 }
@@ -430,7 +409,7 @@ function SecurityLevelTwo(int MessageType, string Speaker, int Key)
 function SecurityLevelThree(int MessageType, string Speaker, int Key)
 {
 	; normal operation, play a sound.
-  call PlaySound "${SoundfilePhaser}"
+	call PlaySound "${SoundfilePhaser}"
 }
 
 function SecurityLevelFour(int MessageType, string Speaker, int Key)
@@ -486,6 +465,8 @@ function atexit()
 
 	call config_save
 
+	LavishSettings[eq2afkalarm]:Remove
+	
 	RemoveTrigger MySays
 	RemoveTrigger MyTells
 	RemoveTrigger MyGroup
