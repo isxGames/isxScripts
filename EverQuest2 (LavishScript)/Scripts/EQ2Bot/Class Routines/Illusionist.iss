@@ -78,7 +78,8 @@ function Class_Declaration()
 	declare MakePetWhileInCombat bool script TRUE
 	declare SpamSpells bool script FALSE
 	declare Custom custom_overrides script
-	declare ManaFlowThreshold int script 80
+	declare ManaFlowThreshold int script 60
+	declare CureMode bool script FALSE
 
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
@@ -100,8 +101,9 @@ function Class_Declaration()
 	BlinkMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BlinkMode,FALSE]}]
 	MakePetWhileInCombat:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MakePetWhileInCombat,TRUE]}]
 	SpamSpells:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamSpells,FALSE]}]
-	ManaFlowThreshold:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ManaFlowThreshold,80]}]
+	ManaFlowThreshold:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ManaFlowThreshold,60]}]
 	UIElement[EQ2 Bot].FindUsableChild[sldManaFlowThreshold,slider]:SetValue[${ManaFlowThreshold}]
+	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureMode,FALSE]}]
 	
 	NoEQ2BotStance:Set[TRUE]
 
@@ -941,7 +943,7 @@ function Combat_Routine(int xAction)
 
 	if ${StartHO}
 	{
-		if !${EQ2.HOWindowActive} && ${Me.InCombat}
+		if !${EQ2.HOWindowActive} && ${Me.ToActor.InCombatMode}
 		{
 			call CastSpellRange 303
 			LastSpellCast:Set[303]
@@ -1328,6 +1330,8 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 		LastSpellCast:Set[210]
+		spellsused:Inc
+		call CheckCastBeam
 	}	
 
 	; AA Bewilderment -- Use whenever it's up. It casts fast anyway.
@@ -1828,7 +1832,7 @@ function RefreshPower()
 	}
 
 	;Transference line out of Combat
-	if ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<80 && !${Me.InCombat}
+	if ${Me.ToActor.Health}>30 && ${Me.ToActor.Power}<80 && !${Me.ToActor.InCombatMode}
 	{
 		call CastSpellRange 309
 		LastSpellCast:Set[309]
@@ -1837,13 +1841,12 @@ function RefreshPower()
 	{
 		call CastSpellRange 309
 		LastSpellCast:Set[309]
-		if ${Me.InCombat}
+		if ${Me.ToActor.InCombatMode}
 			call CheckCastBeam
 	}
 
 	if ${Me.Group} > 1 && ${ManaFlowThreshold} > 0
 	{
-
 		if ${Me.ToActor.Power} > 45
 		{
 			;Mana Flow the lowest group member
@@ -1860,22 +1863,25 @@ function RefreshPower()
 					}
 				}
 			}
-			while ${tempvar:Inc}<${Me.GroupCount}
+			while ${tempvar:Inc} < ${Me.GroupCount}
 
-			if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<${ManaFlowThreshold} && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30  && ${Me.ToActor.Health}>30 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+			if (${Me.Group[${MemberLowestPower}].ToActor(exists)})
 			{
-				if ${SpamSpells} && ${Me.Ability[${SpellType[360]}].IsReady}
-					Custom:Spam[Mana Flow,${Me.Group[${MemberLowestPower}].ToActor.ID}]
-				call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
-				LastSpellCast:Set[360]
-				if ${Me.InCombat}
-					call CheckCastBeam
+				if (${Me.Group[${MemberLowestPower}].ToActor.Power} < ${ManaFlowThreshold} && ${Me.Group[${MemberLowestPower}].ToActor.Distance} < 30  && ${Me.ToActor.Health} > 30)
+				{
+					if ${SpamSpells} && ${Me.Ability[${SpellType[360]}].IsReady}
+						Custom:Spam[Mana Flow,${Me.Group[${MemberLowestPower}].ToActor.ID}]
+					call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+					LastSpellCast:Set[360]
+					if ${Me.ToActor.InCombatMode}
+						call CheckCastBeam
+				}
 			}
 		}
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Me.InCombat} && ${Me.Group[${MainTankPC}](exists)}
+	if ${Me.ToActor.InCombatMode} && ${Me.Group[${MainTankPC}](exists)}
 	{
 		if ${Actor[${MainTankID}].Power} < 20 && ${Actor[${MainTankID}].Distance}<50  && ${Actor[${MainTankID}].InCombatMode}
 		{
@@ -1890,106 +1896,53 @@ function RefreshPower()
 function CheckHeals()
 {
 	variable int temphl=1
-	
-	if !${DPSMode} && !${UltraDPSMode}
+	variable bool DoCures
+	if ${CureMode} || ${EpicMode}
+		DoCures:Set[TRUE]
+	elseif !${DPSMode} && !${UltraDPSMode} 
+		DoCures:Set[TRUE]
+	else
+		DoCures:Set[FALSE]
+		
+	if !${UltraDPSMode}
 	{
-		call CommonHeals 60
+		; This routine will use 'Crystallized Spirits', the Fury 'Pact of Nature' ability (if applicable), etc...
+		call CommonHeals 60		
+	}
 	
-		; Cure Arcane Me
+	if (${DoCures})
+	{
+		;;;;;;;;;;;;;
+		;; Cure Arcane
 		if ${Me.Arcane}>=1
 		{
 			call CastSpellRange 210 0 0 0 ${Me.ID}
 			LastSpellCast:Set[210]
 			
-			if ${Actor[${KillTarget}](exists)}
+			if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
 				Target ${KillTarget}
 		}
-	
-		if ${grpcnt} > 1
+		if ${Me.Group} > 1
 		{
 			do
 			{
-				; Cure Arcane
-				if ${Me.Group[${temphl}].ToActor(exists)}
+				;;;;;;;;;;;;;
+				;; Cure Arcane
+				if (${Me.Group[${temphl}].ToActor(exists)} && !${Me.Group[${temph1}].ToActor.IsDead})
 				{
 					if ${Me.Group[${temphl}].Arcane} >= 1
 					{
 						call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
 						LastSpellCast:Set[210]
+						wait 1
 	
-						if ${Actor[${KillTarget}](exists)}
+						if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
 							Target ${KillTarget}
 					}
 				}
 			}
-			while ${temphl:Inc} <= ${Me.GroupCount}
+			while ${temphl:Inc} <= ${Me.Group}
 		}
-	}
-	else
-	{
-		if ${EpicMode}
-		{
-			; Cure Arcane Me
-			if ${Me.Arcane}>=1
-			{
-				call CastSpellRange 210 0 0 0 ${Me.ID}
-				LastSpellCast:Set[210]
-				
-				if ${Actor[${KillTarget}](exists)}
-					Target ${KillTarget}
-			}
-		
-			if ${grpcnt} > 1
-			{
-				do
-				{
-					; Cure Arcane
-					if ${Me.Group[${temphl}].ToActor(exists)}
-					{
-						if ${Me.Group[${temphl}].Arcane} >= 1
-						{
-							call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
-							LastSpellCast:Set[210]
-		
-							if ${Actor[${KillTarget}](exists)}
-								Target ${KillTarget}
-						}
-					}
-				}
-				while ${temphl:Inc} <= ${Me.GroupCount}
-			}
-		}
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		;;
-		if ${Me.Effect[Pact of Nature](exists)}
-		{
-			if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
-			{
-				if (${Me.Ability[${SpellType[553]}].IsReady})
-				{
-					call CastSpellRange 553 0 0 0 ${MainTankID}
-					return
-				}	
-			}
-			elseif !${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 75
-			{
-				if (${Me.Ability[${SpellType[553]}].IsReady})
-				{
-					call CastSpellRange 553 0 0 0 ${MainTankID}
-					return
-				}	
-			}
-			elseif ${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 35
-			{
-				if (${Me.Ability[${SpellType[553]}].IsReady})
-				{
-					call CastSpellRange 553 0 0 0 ${MainTankID}
-					return
-				}
-			}
-		}
-		;;
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	}
 }
 

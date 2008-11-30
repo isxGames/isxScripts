@@ -477,7 +477,7 @@ function ReacquireTargetFromMA()
 
 atom AutoFollowTank()
 {
-	if !${Me.InCombat}
+	if !${Me.ToActor.InCombatMode}
 	{
 	  	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 
@@ -714,20 +714,44 @@ function IsFighterOrScout(int ID)
 function CommonPower(int sPower)
 {
 	;Potion Checks
-	if ${UsePotions} && ${Me.Inventory[Essence of Power].IsReady} && ${Me.InCombat}
+	if ${UsePotions} && ${Me.Inventory[Essence of Power].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Power}<5
+		{
 			Me.Inventory[Essence of Power]:Use
+			wait 2
+			do
+			{
+				waitframe
+			}
+			while ${Me.CastingSpell}
+		}			
 	}
 
-	if ${UsePotions} && ${Me.Inventory[Essence of Clarity].IsReady} && ${Me.InCombat}
+	if ${UsePotions} && ${Me.Inventory[Essence of Clarity].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Power}<5
+		{
 			Me.Inventory[Essence of Clarity]:Use
+			wait 2
+			do
+			{
+				waitframe
+			}
+			while ${Me.CastingSpell}
+		}
 	}
 
-	if ${Me.Inventory[ExactName,ManaStone].IsReady} && ${Me.ToActor.Power}<50
+	if ${Me.Inventory[ExactName,ManaStone].IsReady} && !${Me.Inventory[ExactName,ManaStone].InBank} && ${Me.ToActor.Power}<50
+	{
 		Me.Inventory[ExactName,ManaStone]:Use
+		wait 2
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}
+	}		
 
 	;;;;;;;;;;;;;
 	; Shard Usage
@@ -758,9 +782,15 @@ function CommonPower(int sPower)
 	elseif ${Me.Inventory["Darkness Heart"](exists)}
 		HeartTypeL:Set[Darkness Heart]
 
-	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${ShardTypeL}].IsReady} && ${Me.InCombat}
+	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${ShardTypeL}].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		Me.Inventory[${ShardTypeL}]:Use
+		wait 2
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}
 		ShardRequested:Set[FALSE]
 	}
 
@@ -770,9 +800,15 @@ function CommonPower(int sPower)
 		EQ2Execute /tell ${ShardGroupMember} shard please
 	}
 
-	if ${HeartTypeL.NotEqual[NOHEART]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${HeartTypeL}].IsReady} && ${Me.InCombat}
+	if ${HeartTypeL.NotEqual[NOHEART]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${HeartTypeL}].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		Me.Inventory[${HeartTypeL}]:Use
+		wait 2
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}		
 		HeartRequested:Set[FALSE]
 	}
 
@@ -807,7 +843,7 @@ function CheckGroupHealth(int MinHealth)
 	if ${Me.ToActor.Health} < ${MinHealth}
 		Return FALSE
 
-	if ${Me.GroupCount} <= 1
+	if ${Me.Group} <= 1
 		return TRUE
 
 	do
@@ -824,7 +860,7 @@ function CheckGroupHealth(int MinHealth)
 		}
 
 	}
-	while ${counter:Inc}<=${Me.GroupCount}
+	while ${counter:Inc}<=${Me.Group}
 
 	Return TRUE
 }
@@ -832,6 +868,12 @@ function CheckGroupHealth(int MinHealth)
 function PetAttack(bool NoChecks=0)
 {
 	;Debug:Echo["Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"]
+
+	if !${Me.Pet(exists)}
+		return
+		
+	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
+		return
 
 	if ${NoChecks}
 	{
@@ -852,13 +894,7 @@ function PetAttack(bool NoChecks=0)
 		return
 	}
 
-	if !${Actor[${KillTarget}](exists)}
-	{
-		;echo no killtarget for pet
-		return
-	}
-	
-	if ${Me.Pet.Target.ID} != ${KillTarget} && !${Me.Pet.InCombatMode} && ${Actor[${KillTarget}].Distance}<${AssistHP}
+	if ${Me.Pet.Target.ID} != ${KillTarget} && ${Actor[${KillTarget}].Distance}<${AssistHP}
 	{
 		if ${Me.Pet.Target(exists)}
 		{
@@ -927,7 +963,7 @@ atom GetNaked()
 {
 	variable int tempvar=1
 
-	if !${Me.InCombat}
+	if !${Me.ToActor.InCombatMode}
 	{
 		Do
 		{
@@ -941,7 +977,7 @@ atom LoadEquipmentSet(string EquipmentSetName)
 {
 	variable int tempvar=1
 
-	if !${Me.InCombat}
+	if !${Me.ToActor.InCombatMode}
 	{
 		Do
 		{
@@ -956,18 +992,27 @@ atom LoadEquipmentSet(string EquipmentSetName)
 
 function UseItem(string Item)
 {
-		;if we have the item equiped and its ready well use it
-		if ${Me.Equipment[ExactName,"${Item}"].IsReady}
+	;if we have the item equiped and its ready well use it
+	if ${Me.Equipment[ExactName,"${Item}"].IsReady}
+	{
+		Me.Equipment[ExactName,"${Item}"]:Use
+		wait 2
+		do
 		{
-			Me.Equipment[ExactName,"${Item}"]:Use
+			waitframe
 		}
-		;we can no longer swap equipment in combat...
-		;else lets check if its in our inventory and swap it in to use if ready and were not swaping any other items.
-		;elseif ${Me.Inventory[ExactName,"${Item}"].IsReady} && ${Math.Calc64[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-		;{
-		;	Me.Inventory[ExactName,"${Item}"]:Equip
-		;	Me.Equipment["${Item}"]:Use
-		;}
+		while ${Me.CastingSpell}
+	}
+	elseif ${Me.Inventory[ExactName,"${Item}"].IsReady} && !${Me.Inventory[ExactName,"${Item}"].InBank}
+	{
+		Me.Inventory[ExactName,"${Item}"]:Use
+		wait 2
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}
+	}	
 }
 
 function UseCrystallizedSpirit(int Health=60)
@@ -982,10 +1027,10 @@ function CommonHeals(int Health)
 	declare temphl int local
 	declare grpheal int local 0
 
-	grpcnt:Set[${Me.GroupCount}]
+	grpcnt:Set[${Me.Group}]
 	temphl:Set[0]
 
-	if ${Me.Inventory[Crystallized Spirit].IsReady} && ${Me.InCombat}
+	if ${Me.Inventory[Crystallized Spirit].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Health}>0 && ${Me.Group[${temphl}].ToActor.Health}<${Health}
 			grpheal:Inc
@@ -1007,7 +1052,15 @@ function CommonHeals(int Health)
 		while ${temphl:Inc}<=${grpcnt}
 
 		if ${grpheal}>=2
+		{
 			Me.Inventory[Crystallized Spirit]:Use
+			wait 2
+			do
+			{
+				waitframe
+			}
+			while ${Me.CastingSpell}
+		}
 	}
 
 	;fury gift heal
@@ -1039,25 +1092,49 @@ function CommonHeals(int Health)
 		}
 	}
 
-	if ${Me.Inventory[Innoruk's Child].IsReady} && ${Me.InCombat}
+	if ${Me.Inventory[Innoruk's Child].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Health}<50
+		{
 			Me.Inventory[Innoruk's Child]:Use
+			wait 2
+			do
+			{
+				waitframe
+			}
+			while ${Me.CastingSpell}
+		}
 	}
 
-	if ${UseCurePotions} && ${Me.InCombat}
+	if ${UseCurePotions} && ${Me.ToActor.InCombatMode}
 		call CheckPotCures
 
-	if ${UsePotions} && ${Me.Inventory[Essence of Health].IsReady} && ${Me.InCombat}
+	if ${UsePotions} && ${Me.Inventory[Essence of Health].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Health}<25
+		{
 			Me.Inventory[Essence of Health]:Use
+			wait 2
+			do
+			{
+				waitframe
+			}
+			while ${Me.CastingSpell}
+		}			
 	}
 
-	if ${UsePotions} && ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.InCombat}
+	if ${UsePotions} && ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Health}<25
+		{
 			Me.Inventory[Essence of Regeneration]:Use
+			wait 2
+			do
+			{
+				waitframe
+			}
+			while ${Me.CastingSpell}	
+		}		
 	}
 
 }
@@ -1092,28 +1169,36 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 {
 	declare counter int local 1
 
-	do
+	if ${Me.Group} > 1
 	{
-		;check groupmates health
-		if ${Me.Group[${counter}].ToActor.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Health}>0
-			return FALSE
-
-		;check health of summoner pets
-		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
+		do
 		{
-			if ${Me.Group[${counter}].ToActor.Pet.Health}<${GroupHealth} && ${Me.Group[${counter}].ToActor.Pet.Health}>0
-				return FALSE
+			;check groupmates health
+			if (${Me.Group[${counter}].ToActor(exists) && !${Me.Group[${counter}].ToActor.IsDead})
+			{
+				if (${Me.Group[${counter}].ToActor.Health} < ${GroupHealth})
+					return FALSE
+		
+				;check health of summoner pets .. TO DO -- why do we care about these on epic/raid fights?
+				if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
+				{
+					if (${Me.Group[${counter}].ToActor.Pet(exists)} && !${Me.Group[${counter}].ToActor.Pet.IsDead})
+					{
+						if ${Me.Group[${counter}].ToActor.Pet.Health} < ${GroupHealth}
+							return FALSE
+					}
+				}
+			}
 		}
-
+		while ${counter:Inc}<=${Me.Group}
 	}
-	while ${counter:Inc}<=${Me.GroupCount}
 
 	;check mt health
-	if ${Actor[${MainTankID}].Health}<${MTHealth}
+	if ${Actor[${MainTankID}].Health} < ${MTHealth}
 		return FALSE
 
 	;check my health
-	if ${Me.ToActor.Health}<${MyHealth}
+	if ${Me.ToActor.Health} < ${MyHealth}
 		return FALSE
 
 	return TRUE
@@ -1128,9 +1213,9 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 		case 26
 		case 15
 		case 16
-			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.ToActor.InCombatMode}
 				JoustStatus:Set[1]
-			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombat}
+			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.ToActor.InCombatMode}
 				JoustStatus:Set[0]
 			elseif ${Message.Find[${BDTrigger}]}
 				BDStatus:Set[1]
@@ -1163,26 +1248,26 @@ function FindHealer()
 
 	do
 	{
-		switch ${Me.GroupMember[${tempgrp}].Class}
+		switch ${Me.Group[${tempgrp}].Class}
 		{
 			case templar
 			case fury
 			case mystic
 			case defiler
-				healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
+				healer:Set[${Me.Group[${tempgrp}].ToActor.ID}]
 				break
 			case warden
 			case inquisitor
 				;don't trust priests that have melee configs unless no other priest is available
 				if ${healer}==${Me.ID}
-					healer:Set[${Me.GroupMember[${tempgrp}].ToActor.ID}]
+					healer:Set[${Me.Group[${tempgrp}].ToActor.ID}]
 				break
-			Default
+			default
 				break
 		}
 
 	}
-	while ${tempgrp:Inc}<=${Me.GroupCount}
+	while ${tempgrp:Inc}<=${Me.Group}
 
     if (${Me.InRaid})
     {
@@ -1298,20 +1383,15 @@ function CheckPotCures()
 
 function CastPotion(string Item)
 {
-  ; Do not cast if we are moving or if the potion is not ready
-	if ${Me.IsMoving} || !${Me.Inventory[ExactName,"${Item}"].IsReady}
+  	; Do not cast if we are moving, or if the potion is not ready, or if the first potion returned is in the bank
+	if ${Me.IsMoving} || !${Me.Inventory[ExactName,"${Item}"].IsReady} || ${Me.Inventory[ExactName,"${Item}"].InBank}
 	{
 		return
 	}
 
-  ; Use the potion
+  	; Use the potion
 	Me.Inventory[ExactName,"${Item}"]:Use
-
-	;if spells are being interupted do to movement
-	;increase the wait below slightly. Default=2
 	wait 2
-
-  ; wait until we have finished casting
 	do
 	{
 		waitframe
