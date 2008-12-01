@@ -727,18 +727,18 @@ function CheckNonDps(... Args)
 	{
 		if ${KillTarget} && !${Actor[${KillTarget}].IsEpic}
 		{
-			if ${Me.Ability[${SpellType[190]}].IsReady}
+			if ${Me.Ability[${SpellType[190]}].IsReady} && ${Me.Maintained[${SpellType[191]}].Target.ID} != ${KillTarget}
 			{
 				if ${Me.Maintained[${SpellType[190]}].Target.ID} != ${KillTarget}
 				{
-					CastSpellRange TargetID=${KillTarget} start=190 ignoremaintained=1
+					call CastSpellRange TargetID=${KillTarget} start=190 ignoremaintained=1
 				}
 			}
-			elseif ${Me.Ability[${SpellType[191]}].IsReady}
+			elseif ${Me.Ability[${SpellType[191]}].IsReady} && ${Me.Maintained[${SpellType[190]}].Target.ID} != ${KillTarget}
 			{
 				if ${Me.Maintained[${SpellType[191]}].Target.ID} != ${KillTarget}
 				{
-					CastSpellRange TargetID=${KillTarget} start=191 ignoremaintained=1
+					call CastSpellRange TargetID=${KillTarget} start=191 ignoremaintained=1
 				}
 			}
 		}
@@ -754,8 +754,6 @@ function CheckNonDps(... Args)
 
 function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
-	declare BuffTarget string local	
-	
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
