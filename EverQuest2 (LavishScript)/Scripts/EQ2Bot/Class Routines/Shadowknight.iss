@@ -40,7 +40,6 @@ function Class_Declaration()
 	declare TauntMode bool Script TRUE
 	declare FullAutoMode bool Script FALSE
 	declare StartHO bool script 1
-	declare PetMode bool script 1
 	declare UseReaver bool script TRUE
 	declare UseBattleLeadershipAABuff bool script FALSE
 	declare UseFearlessMoraleAABuff bool script FALSE
@@ -59,8 +58,7 @@ function Class_Declaration()
 	DefensiveMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseDefensiveStance,TRUE]}]
 	OffensiveMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseOffensiveStance,FALSE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
-	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
-	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
+	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]33
 	UseReaver:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseReaver,TRUE]}]
 	UseBattleLeadershipAABuff:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseBattleLeadershipAABuff,FALSE]}]
 	UseFearlessMoraleAABuff:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseFearlessMoraleAABuff,FALSE]}]
@@ -263,11 +261,6 @@ function Combat_Init()
    Power[20,1]:Set[5]
    Power[20,2]:Set[100]
    SpellRange[20,1]:Set[240]
-   
-   Action[21]:Set[Pet]
-   MobHealth[21,1]:Set[50]
-   MobHealth[21,2]:Set[100]
-   SpellRange[21,1]:Set[45]
 
 }
 
@@ -1038,22 +1031,6 @@ function Combat_Routine(int xAction)
 			}
 			break
 
-		case Pet
-		    if (${PetMode})
-		    {
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
-					spellsused:Inc
-				}
-			}
-			;; "Pet" is the last thing in the routine ...so, return CombatComplete
-			if (${spellsused} < 1)
-				call CastSomething
-			CurrentAction:Set[Combat :: CombatComplete]
-			return CombatComplete
-
 		default
 			if (${spellsused} < 1)
 				call CastSomething
@@ -1449,14 +1426,6 @@ function CastSomething()
             call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1
             return
         }
-	}
-
-
-	; pet
-	if (${Me.Ability[${SpellType[45]}].IsReady})
-    {
-	    call CastSpellRange 45 0 0 0 ${KillTarget}
-	    return
 	}
 }
 
