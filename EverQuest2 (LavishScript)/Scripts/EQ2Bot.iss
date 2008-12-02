@@ -633,7 +633,7 @@ function main()
 					{
 						if !${Actor[${MainTankID}].InCombatMode} && ${Me.AutoAttackOn}
 							EQ2Execute /toggleautoattack
-					}	
+					}
 				}
 			}
 			while ${gRtnCtr:Inc}<=40
@@ -822,7 +822,7 @@ function main()
 				{
 					if !${Actor[${MainTankID}].InCombatMode} && ${Me.AutoAttackOn}
 						EQ2Execute /toggleautoattack
-				}	
+				}
 			}
 
 			;; Misc. Checks
@@ -1167,7 +1167,7 @@ function CastSpellRange(... Args)
 			return -1
 		}
 	}
-	
+
 
 	variable bool fndspell
 	variable int tempvar
@@ -1854,7 +1854,7 @@ function Combat(bool PVP=0)
 							{
 								waitframe
 							}
-							while ${Me.CastingSpell}							
+							while ${Me.CastingSpell}
 						}
 					}
 
@@ -2232,14 +2232,14 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 		{
 			Debug:Echo["CheckPosition() :: NoAutoMovement ON"]
 			return
-		}		
+		}
 		if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
 		{
 			Debug:Echo["CheckPosition() :: In combat, but current KillTarget does not exist and/or is dead."]
 			return
 		}
 	}
-	
+
 	;lets wait if we're currently casting and we don't want to interupt
 	if ${Me.CastingSpell} && !${MainTank} && !${castwhilemoving}
 	{
@@ -2468,18 +2468,18 @@ function CheckQuadrant(uint TID, int quadrant)
 
 	side:Set[${Position.Side[${TID}]}]
 	targetaspect:Set[${Position.Angle[${TID}]}]
-	
+
 	;; CheckQuadrant() should only be called in combat, so 'in combat' checks should not be necessary
 	if ${NoAutoMovement}
 	{
 		Debug:Echo["CheckQuadrant() :: NoAutoMovement ON"]
 		return
-	}		
+	}
 	if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
 	{
 		Debug:Echo["CheckQuadrant() :: Current Target does not exist and/or is dead."]
 		return
-	}	
+	}
 
 	;we're in range, lets verify quadrant in case fudge factor placed us on wrong side.
 	switch ${quadrant}
@@ -2502,7 +2502,7 @@ function CheckQuadrant(uint TID, int quadrant)
 				}
 				else
 				{
-					Debug:Echo[Quadrant 1 Right Side Strafing to 30]
+					Debug:Echo[Quadrant 1 Left Side Strafing to 30]
 					call StrafeToRight ${TID} 30
 				}
 				return
@@ -3451,12 +3451,12 @@ function FastMove(float X, float Z, int range)
 		MoveToRange:Set[75]
 
 	IsMoving:Set[TRUE]
-	
+
 	if (${islooting} || ${movingtowp} || ${movinghome})
 		IgnoreInCombatChecks:Set[TRUE]
 	else
 		IgnoreInCombatChecks:Set[FALSE]
-	
+
 	if (!${IgnoreInCombatChecks})
 	{
 		if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
@@ -3466,7 +3466,7 @@ function FastMove(float X, float Z, int range)
 				Debug:Echo["FastMove() :: NoAutoMovement ON"]
 				IsMoving:Set[FALSE]
 				return "NOAUTOMOVEMENT"
-			}			
+			}
 			if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
 			{
 				IsMoving:Set[FALSE]
@@ -3474,7 +3474,7 @@ function FastMove(float X, float Z, int range)
 			}
 		}
 	}
-	
+
 	if !${X} || !${Z}
 	{
 		IsMoving:Set[FALSE]
@@ -4316,7 +4316,7 @@ function ReacquireKillTargetFromMA()
 			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist is no longer in combat mode]"]
 			return FAILED
 		}
-		
+
 		if ${Actor[${MainAssistID}].Target(exists)}
 		{
 			NextKillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
@@ -6304,10 +6304,10 @@ function AddPOI()
 function atexit()
 {
 	Echo Ending EQ2Bot!
-	
+
 	if ${NoAtExit}
 		return
-	
+
 	CurrentTask:Set[FALSE]
 	call Class_Shutdown
 
