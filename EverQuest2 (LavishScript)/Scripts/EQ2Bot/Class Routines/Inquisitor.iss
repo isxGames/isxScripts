@@ -105,7 +105,7 @@ function Pulse()
 
 		if ${Me.ToActor.Power}>85 && ${KeepReactiveUp}
 			call CheckReactives
-			
+
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
@@ -197,54 +197,57 @@ function Combat_Init()
 	Power[8,2]:Set[100]
 	SpellRange[8,1]:Set[71]
 
-	Action[9]:Set[AoE]
-	MobHealth[9,1]:Set[1]
-	MobHealth[9,2]:Set[100]
-	Power[9,1]:Set[30]
-	Power[9,2]:Set[100]
-	SpellRange[9,1]:Set[90]
+	Action[9]:Set[AA_SkullCrack]
+	SpellRange[9,1]:Set[387]
 
-	Action[10]:Set[Proc]
-	MobHealth[10,1]:Set[40]
+	Action[10]:Set[AoE]
+	MobHealth[10,1]:Set[1]
 	MobHealth[10,2]:Set[100]
-	Power[10,1]:Set[40]
+	Power[10,1]:Set[30]
 	Power[10,2]:Set[100]
+	SpellRange[10,1]:Set[90]
+
+	Action[11]:Set[Proc]
+	MobHealth[11,1]:Set[40]
+	MobHealth[11,2]:Set[100]
+	Power[11,1]:Set[40]
+	Power[11,2]:Set[100]
 	SpellRange[10,1]:Set[337]
 
-	Action[11]:Set[SymbolOfCorruption]
-	MobHealth[11,1]:Set[10]
-	MobHealth[11,2]:Set[100]
-	Power[11,1]:Set[30]
-	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[57]
-
-	Action[12]:Set[Stifle]
-	MobHealth[12,1]:Set[1]
+	Action[12]:Set[SymbolOfCorruption]
+	MobHealth[12,1]:Set[10]
 	MobHealth[12,2]:Set[100]
 	Power[12,1]:Set[30]
 	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[260]
+	SpellRange[12,1]:Set[57]
 
-	Action[13]:Set[Counterattack]
-	MobHealth[13,1]:Set[40]
+	Action[13]:Set[Stifle]
+	MobHealth[13,1]:Set[1]
 	MobHealth[13,2]:Set[100]
-	Power[13,1]:Set[40]
+	Power[13,1]:Set[30]
 	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[336]
+	SpellRange[13,1]:Set[260]
 
-	Action[14]:Set[AA_DivineCastigation]
-	MobHealth[14,1]:Set[1]
+	Action[14]:Set[Counterattack]
+	MobHealth[14,1]:Set[40]
 	MobHealth[14,2]:Set[100]
-	Power[14,1]:Set[30]
+	Power[14,1]:Set[40]
 	Power[14,2]:Set[100]
-	SpellRange[14,1]:Set[395]
+	SpellRange[14,1]:Set[336]
 
-	Action[15]:Set[PreKill]
-	MobHealth[15,1]:Set[5]
-	MobHealth[15,2]:Set[15]
+	Action[15]:Set[AA_DivineCastigation]
+	MobHealth[15,1]:Set[1]
+	MobHealth[15,2]:Set[100]
 	Power[15,1]:Set[30]
 	Power[15,2]:Set[100]
-	SpellRange[15,1]:Set[312]
+	SpellRange[15,1]:Set[395]
+
+	Action[16]:Set[PreKill]
+	MobHealth[16,1]:Set[5]
+	MobHealth[16,2]:Set[15]
+	Power[16,1]:Set[30]
+	Power[16,2]:Set[100]
+	SpellRange[16,1]:Set[312]
 }
 
 function PostCombat_Init()
@@ -399,168 +402,174 @@ function Combat_Routine(int xAction)
 		call Shard
 
 	;echo BattleClericMode is ${BattleClericMode}
-		if ${BattleClericMode}
-			call CheckPosition 1 0
+	if ${BattleClericMode}
+		call CheckPosition 1 0 ${KillTarget}
 
-		switch ${Action[${xAction}]}
-		{
-			case TheftOfVitality
-			case Forced_Obedience
-			case Debase
-			case Convict
-			case Maladroit
-				if ${DebuffMode}
+	switch ${Action[${xAction}]}
+	{
+		case TheftOfVitality
+		case Forced_Obedience
+		case Debase
+		case Convict
+		case Maladroit
+			if ${DebuffMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+			}
+			break
+		case Counterattack
+		case Proc
+			if ${OffenseMode} && ${Mob.Count}>1
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+			}
+			break
+		case Absolving_Flames
+			if ${OffenseMode} || ${DebuffMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
+						;Check for Battle Cleric Strike of Flames
+						if ${Me.Ability[${SpellType[381]}](exists)} && ${BattleClericMode}
+							call CastSpellRange 381 0 1 0 ${KillTarget}
+						else
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
-				break
-			case Counterattack
-			case Proc
-				if ${OffenseMode} && ${Mob.Count}>1
+			}
+			break
+		case Affliction
+			if ${OffenseMode} || ${DebuffMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
+						;Check for Battle Cleric Writhing Strike
+						if ${Me.Ability[${SpellType[382]}](exists)} && ${BattleClericMode}
+							call CastSpellRange 382 0 1 0 ${KillTarget}
+						else
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
-				break
-			case Absolving_Flames
-				if ${OffenseMode} || ${DebuffMode}
+			}
+			break
+		case AA_SkullCrack
+			if (${OffenseMode} || ${DebuffMode}) && ${BattleClericMode}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+			}
+			break
+		case Stifle
+			if ${OffenseMode} || ${DebuffMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							;Check for Battle Cleric Strike of Flames
-							if ${Me.Ability[${SpellType[381]}](exists)} && ${BattleClericMode}
-								call CastSpellRange 381 0 1 0 ${KillTarget}
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
-				}
-				break
-			case Affliction
-				if ${OffenseMode} || ${DebuffMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							;Check for Battle Cleric Writhing Strike
-							if ${Me.Ability[${SpellType[382]}](exists)} && ${BattleClericMode}
-								call CastSpellRange 382 0 1 0 ${KillTarget}
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
-				}
-				break
-			case Stifle
-				if ${OffenseMode} || ${DebuffMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							;Check for Battle Cleric Invocation Strike
-							if ${Me.Ability[${SpellType[383]}](exists)} && ${BattleClericMode}
-								call CastSpellRange 383 0 1 0 ${KillTarget}
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
-				}
-				break
-			case SymbolOfCorruption
-				if ${OffenseMode} || ${DebuffMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							;Check for Battle Cleric Strike of Corruption
-							if ${Me.Ability[${SpellType[379]}](exists)} && ${BattleClericMode}
-								call CastSpellRange 379 0 1 0 ${KillTarget}
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
-				}
-				break
-			case AoE
-				if ${AoEMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							;Check for Battle Cleric Litany Circle
-							if ${Me.Ability[${SpellType[380]}](exists)} && ${BattleClericMode}
-								call CastSpellRange 380 0 1 0 ${KillTarget}
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
-				}
-				break
-			case PreKill
-				if ${AoEMode} && ${Mob.Count}>1
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
+						;Check for Battle Cleric Invocation Strike
+						if ${Me.Ability[${SpellType[383]}](exists)} && ${BattleClericMode}
+							call CastSpellRange 383 0 1 0 ${KillTarget}
+						else
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
-				break
-			case AA_DivineCastigation
-				if ${OffenseMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			}
+			break
+		case SymbolOfCorruption
+			if ${OffenseMode} || ${DebuffMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
 					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
+						;Check for Battle Cleric Strike of Corruption
+						if ${Me.Ability[${SpellType[379]}](exists)} && ${BattleClericMode}
+							call CastSpellRange 379 0 1 0 ${KillTarget}
+						else
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
-				break
-			case Mastery
-				if ${OffenseMode} || ${DebuffMode}
+			}
+			break
+		case AoE
+			if ${AoEMode}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
 				{
-					if ${Me.Ability[Master's Smite].IsReady}
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
 					{
-						Target ${KillTarget}
-						Me.Ability[Master's Smite]:Use
+						;Check for Battle Cleric Litany Circle
+						if ${Me.Ability[${SpellType[380]}](exists)} && ${BattleClericMode}
+							call CastSpellRange 380 0 1 0 ${KillTarget}
+						else
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
 				}
-				break
-			default
-				return CombatComplete
-				break
-		}
+			}
+			break
+		case PreKill
+			if ${AoEMode} && ${Mob.Count}>1
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+			}
+			break
+		case AA_DivineCastigation
+			if ${OffenseMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+			}
+			break
+		case Mastery
+			if ${OffenseMode} || ${DebuffMode}
+			{
+				if ${Me.Ability[Master's Smite].IsReady}
+				{
+					Target ${KillTarget}
+					Me.Ability[Master's Smite]:Use
+				}
+			}
+			break
+		default
+			return CombatComplete
+			break
+	}
 }
 
 function Post_Combat_Routine(int xAction)
