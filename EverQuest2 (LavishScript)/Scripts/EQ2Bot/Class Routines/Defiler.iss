@@ -104,7 +104,7 @@ function Pulse()
 
 		if ${Me.ToActor.Power}>85 && ${KeepWardUp}
 			call CheckWards
-			
+
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
