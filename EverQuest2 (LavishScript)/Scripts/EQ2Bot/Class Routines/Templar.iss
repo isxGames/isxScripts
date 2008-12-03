@@ -42,12 +42,11 @@ function Class_Declaration()
 	declare BuffSymbol bool script
 	declare RaidHealMode bool script
 
-
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffGloryGroupMember string script
 	declare BuffBennedictionGroupMember string script
-  	declare BuffPraetorateGroupMember string script
-  	declare BuffShieldAllyGroupMember string script
+	declare BuffPraetorateGroupMember string script
+ 	declare BuffShieldAllyGroupMember string script
 	declare HolyShieldGroupMember string script
 	declare ManaCureGroupMember string script
 	declare tempMH string script
@@ -110,7 +109,7 @@ function Pulse()
 			if ${KeepGroupReactiveUp}
 				call CastSpellRange 15
 		}
-		
+
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
@@ -490,10 +489,23 @@ function Combat_Routine(int xAction)
 		Me.Maintained[${SpellType[9]}]:Cancel
 	}
 
+	call RefreshPower
+
+	if ${ShardMode}
+		call Shard
+
 	;Before we do our Action, check to make sure our group doesnt need healing
 	call CheckGroupHealth 50
 	if ${Return}
 	{
+
+		call CheckGroupHealth 60
+		if ${DoHOs} && ${Return}
+			objHeroicOp:DoHO
+
+		if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+			call CastSpellRange 333
+
 		if ${MeleeMode} && ${Actor[${KillTaget}].Distance}>4
 			call CheckPosition 1 ${Actor[${KillTarget}].IsEpic}
 
@@ -565,17 +577,6 @@ function Combat_Routine(int xAction)
 				break
 		}
 
-		call CheckGroupHealth 60
-		if ${DoHOs} && ${Return}
-			objHeroicOp:DoHO
-
-		if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-			call CastSpellRange 333
-
-		call RefreshPower
-
-		if ${ShardMode}
-			call Shard
 	}
 }
 
@@ -826,13 +827,13 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
 
-    if !${Actor[${MainTankID}](exists)}
-    {
-        echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
-        MainTankExists:Set[FALSE]
-    }
-    else
-        MainTankExists:Set[TRUE]
+  if !${Actor[${MainTankID}](exists)}
+  {
+	  echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+    MainTankExists:Set[FALSE]
+  }
+  else
+  	MainTankExists:Set[TRUE]
 
 
 	;curses cause heals to do damage and must be cleared off healer
@@ -842,13 +843,12 @@ function CheckHeals()
 	;Res the MT if they are dead
 	if (${MainTankExists})
 	{
-    	if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
-    		call CastSpellRange 300 0 1 1 ${MainTankID}
+    if (!${Me.ToActor.InCombatMode} || ${CombatRez}) && ${Actor[${MainTankID}].IsDead}
+    	call CastSpellRange 300 0 1 1 ${MainTankID}
 
-    	if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
-    		call CastSpellRange 4 0 0 0 ${MainTankID}
-    }
-
+    if ${Actor[${MainTankID}].Health}<50 && ${Me.Ability[${SpellType[4]}].IsReady}
+    	call CastSpellRange 4 0 0 0 ${MainTankID}
+  }
 
 	call CheckReactives
 

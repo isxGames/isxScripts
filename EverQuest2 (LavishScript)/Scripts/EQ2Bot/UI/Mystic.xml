@@ -180,6 +180,52 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MeleeMode]}</Data>
 	</Commandcheckbox>
+  <Commandcheckbox Name='BuffImmunities'>
+		<X>5%</X>
+		<Y>170</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Immunities</Text>
+		<AutoTooltip>Toggles use of Immunities Ability.</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffImmunities]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffImmunities",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffImmunities]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffImmunities",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffImmunities]}</Data>
+	</Commandcheckbox>
+  <Commandcheckbox Name='BuffCoagulate'>
+		<X>5%</X>
+		<Y>170</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Coagulate</Text>
+		<AutoTooltip>Toggles use of Coagulate Ability.</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[BuffCoagulate]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffCoagulate",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[BuffCoagulate]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffCoagulate",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffCoagulate]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox Name='BuffMitigation'>
 		<X>175</X>
 		<Y>30</Y>
@@ -319,6 +365,33 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Use Pets]}</Data>
 	</Commandcheckbox>
+	<Text Name='lblBuffAncestryGroupMember'>
+		<X>175</X>
+		<Y>150</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Ancestry:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffAncestryGroupMember'>
+		<X>175</X>
+		<y>170</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Buff Ancestryr</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAncestryGroupMember]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAncestryGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffAncestryGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffAncestryGroupMember,0,1,0]
+		</OnLeftClick>
+	</combobox>
 	<Text Name='lblBuffAvatarGroupMember'>
 		<X>340</X>
 		<Y>10</Y>

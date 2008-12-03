@@ -39,6 +39,9 @@ function Class_Declaration()
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffProcGroupMember string script
 	declare BuffAvatarGroupMember string script
+	declare BuffAncestryGroupMember string script
+	declare BuffImmunities bool script TRUE
+	declare BuffCoagulate bool script TRUE
 
 	call EQ2BotLib_Init
 
@@ -59,9 +62,12 @@ function Class_Declaration()
 	BuffNoxious:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffNoxious,TRUE]}]
 	BuffMitigation:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffMitigation,TRUE]}]
 	BuffStrength:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffStrength,TRUE]}]
+	BuffImmunities:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffImmunities,TRUE]}]
+	BuffCoagulate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoagulate,TRUE]}]
 	BuffWaterBreathing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffWaterBreathing,FALSE]}]
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
 	BuffAvatarGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAvatarGroupMember,]}]
+	BuffAncestryGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAncestryGroupMember,]}]
 }
 
 function Pulse()
@@ -156,6 +162,9 @@ function Buff_Init()
 
 	PreAction[18]:Set[AA_WeaponMastery]
 	PreSpellRange[18,1]:Set[380]
+
+	PreAction[19]:Set[BuffAncestry]
+	PreSpellRange[19,1]:Set[378]
 
 }
 
@@ -309,10 +318,14 @@ function Buff_Routine(int xAction)
 
 		case Self_Buff
 		case AA_WeaponMastery
-		case AA_Coagulate
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
-
+		case AA_Coagulate
+		if ${BuffCoagulate}
+			call CastSpellRange ${PreSpellRange[${xAction},1]}
+		else
+			Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			break
 		case BuffNoxious
 			if ${BuffNoxious}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
@@ -354,6 +367,20 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			break
+		case BuffAncestry
+			BuffTarget:Set[${UIElement[cbBuffAncestryGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			{
+				;break of pc is out of your group
+				if ${BuffTarget.Token[2,:].Equal[PC]} && !${Me.Group[${Actor[id,${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}].Name}](exists)}
+					break
+
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			}
+			break
 		case Resurrection
 			temp:Set[1]
 			do
@@ -364,6 +391,11 @@ function Buff_Routine(int xAction)
 			while ${temp:Inc}<${Me.GroupCount}
 			break
 		case AA_Immunities
+			if ${BuffImmunities}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			else
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			break
 		case AA_AuraOfHaste
 			if !${Me.ToActor.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.ToActor.Pet(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
