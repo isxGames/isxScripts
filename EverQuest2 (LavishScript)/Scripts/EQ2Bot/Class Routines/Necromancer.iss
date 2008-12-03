@@ -57,6 +57,7 @@ function Class_Declaration()
 	declare PBAoEMode bool script FALSE
 	declare BuffSeeInvis bool script TRUE
 	declare BuffFavor bool script FALSE
+	declare BuffLich bool script TRUE
 	declare BuffMark bool script FALSE
 	declare BuffCabalistCover bool script TRUE
 	declare LifeburnMode bool script TRUE
@@ -82,6 +83,7 @@ function Class_Declaration()
 	BuffSeeInvis:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff See Invis,TRUE]}]
 	BuffMark:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffMark,FALSE]}]
 	BuffFavor:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffFavor,FALSE]}]
+	BuffLich:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffLich,TRUE]}]
 	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Debuffs,FALSE]}]
 	HealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Heal Others,FALSE]}]
@@ -154,7 +156,6 @@ function Buff_Init()
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
 	PreSpellRange[2,2]:Set[26]
-	PreSpellRange[2,3]:Set[27]
 
 	PreAction[3]:Set[Pet_Buff]
 	PreSpellRange[3,1]:Set[45]
@@ -171,6 +172,9 @@ function Buff_Init()
 
 	PreAction[7]:Set[Mark]
 	PreSpellRange[7,1]:Set[21]
+
+	PreAction[8]:Set[Lich]
+	PreSpellRange[8,1]:Set[27]
 }
 
 function Combat_Init()
@@ -294,10 +298,20 @@ function Buff_Routine(int xAction)
 			break
 
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]}
+			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 		case Favor
 			if ${BuffFavor}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			else
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+			break
+		case Lich
+			if ${BuffLich}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -372,6 +386,8 @@ function Combat_Routine(int xAction)
 		call PetAttack
 	}
 
+	call CommonHeals
+	call CommonPower
 	if ${UsePotions}
 	{
 		call CheckCures
@@ -629,7 +645,7 @@ function Post_Combat_Routine(int xAction)
 function Have_Aggro(int aggroid)
 {
 
-	if ${Me.InCombat} && (${Me.ToActor.Health}<70 || ${Actor[${aggroid}].IsEpic})
+	if ${Me.ToActor.InCombatMode} && (${Me.ToActor.Health}<70 || ${Actor[${aggroid}].IsEpic})
 	{
 		call CastSpellRange 349
 		wait 10
@@ -637,7 +653,7 @@ function Have_Aggro(int aggroid)
 
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
-		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
+		eq2execute /tell ${MainTankPC}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
 

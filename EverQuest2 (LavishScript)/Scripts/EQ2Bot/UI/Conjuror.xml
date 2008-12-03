@@ -197,7 +197,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnSelect>
 			Script[EQ2Bot].Variable[PetDefStance]:Set[${This.SelectedItem.ID}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["PetDefStance",${This.SelectedItem.ID}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnLoad>This.Item[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetDefStance]}]:Select
 		</OnLoad>
