@@ -746,6 +746,7 @@ function FindAfflicted()
 function CureMe()
 {
 	declare AffCnt int 0
+	declare CureCnt int 0
 
 	;check if we are not in control, and use control cure if needed
 	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
@@ -755,26 +756,29 @@ function CureMe()
 		return
 
 	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
-	while ${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
+	while ${CureCnt:Inc}<4 && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0)
 	{
 		if ${Me.Arcane}>0
 		{
 			AffCnt:Set[${Me.Arcane}]
-			call CastSpellRange 210 0 0 0 ${Me.ID}
+			call CastSpellRange 210 0 0 0 ${Me.ID} 0 0 0 0 1 0
 			wait 2
 
 			;if we tried to cure and it failed to work, we might be charmed, use control cure
 			if ${Me.Arcane}==${AffCnt}
-				call CastSpellRange 222
+				call CastSpellRange 222 0 0 0 ${KillTarget} 0 0 0 0 1 0
 		}
 
-		if  ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
+		if ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0
 		{
-			call CastSpellRange 210 0 0 0 ${Me.ID}
+			call CastSpellRange 210 0 0 0 ${Me.ID} 0 0 0 0 1 0
 			wait 2
 		}
+
+		if ${Me.ToActor.Health}<30 && ${EpicMode}
+			call HealMe
 	}
 
 }
