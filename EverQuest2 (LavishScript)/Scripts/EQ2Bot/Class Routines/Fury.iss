@@ -90,6 +90,7 @@ function Class_Declaration()
 	declare FeastAction int script 9
 	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
+	declare UseWrathOfNature bool script 0
 	
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
@@ -121,6 +122,7 @@ function Class_Declaration()
 	RaidHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Raid Heals,FALSE]}]
 	UseFastOffensiveSpellsOnly:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseFastOffensiveSpellsOnly,FALSE]}]
 	UseBallLightning:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseBallLightning,FALSE]}]
+	UseWrathOfNature:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseWrathOfNature,FALSE]}]
 
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
 	BuffSavageryGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSavageryGroupMember,]}]
@@ -837,8 +839,8 @@ function Combat_Routine(int xAction)
 			break
 
 		case AANuke
-		    ;if ${UseFastOffensiveSpellsOnly}
-		    ;    break
+		    if !${UseWrathOfNature}
+		        break
 			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
