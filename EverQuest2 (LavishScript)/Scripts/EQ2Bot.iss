@@ -3219,7 +3219,7 @@ function Pull(string npcclass)
 			}
 			;;;; Otherwise, Using "PullSpell" ;;;;;;;;;;;;;
 
-			call CastSpell "${PullSpell}"
+			call CastSpellNow "${PullSpell}"
 			CurrentAction:Set["${Target} pulled using ${PullSpell}"]
 			;Debug:Echo["Pulled...waiting for mob to come within range"]
 			do
@@ -4639,11 +4639,12 @@ objectdef ActorCheck
 		}
 
 		;checks if mob is too far above or below us
-		if ${Me.Y}+10<${Actor[${actorid}].Y} || ${Me.Y}-10>${Actor[${actorid}].Y}
-		{
-			;Debug:Echo["Actor (ID: ${actorid} is too far above or below me"]
-			return FALSE
-		}
+		;LEAVE THIS SHIT OUT!!! - PYGAR
+		;if ${Me.Y}+10<${Actor[${actorid}].Y} || ${Me.Y}-10>${Actor[${actorid}].Y}
+		;{
+		;	;Debug:Echo["Actor (ID: ${actorid} is too far above or below me"]
+		;	return FALSE
+		;}
 
 		if ${Actor[${actorid}].IsLocked}
 			return FALSE
