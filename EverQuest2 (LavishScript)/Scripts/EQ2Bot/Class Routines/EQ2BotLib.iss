@@ -122,6 +122,7 @@ variable int AutoFollowLastSetTime
 
 ;misc
 variable bool EpicMode=FALSE
+variable bool NoAutoMovementInCombat
 variable bool NoAutoMovement
 variable bool DoCallCheckPosition=FALSE
 
@@ -133,6 +134,7 @@ function EQ2BotLib_Init()
 	
 	AutoFollowMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode,FALSE]}]
 	NoAutoMovement:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovement,FALSE]}]
+	NoAutoMovementInCombat:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovementInCombat,FALSE]}]
 	CombatFollow:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[CombatFollow,FALSE]}]
 	EpicMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[EpicMode,FALSE]}]
 	AutoFollowee:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[AutoFollowee,""]}]
