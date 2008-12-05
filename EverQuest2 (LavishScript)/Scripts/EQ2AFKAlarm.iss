@@ -25,7 +25,7 @@
  * 
  */
 
-
+#include Debug.iss
 #include EQ2AFKAlarm/Include/Config.iss
 #include EQ2AFKAlarm/Include/Console_and_Logging.iss
 #define MESSAGE_TYPE_SAY 1
@@ -40,7 +40,8 @@
 
 function main(string argv)
 {
-
+	Debug:Enable
+	
 	echo EQ2AFKAlarm starting...
 	#include "eq2checkext.iss"
 
@@ -108,6 +109,10 @@ function main(string argv)
 
 	declare LogFile		file	script	"EQ2AFKAlarm/Data/${Me}/Logs/${Time.Year}-${Time.Month}-${Time.Day}_${Time.Time24.Replace[:,REMOVE]}.txt"
 
+	declare Log debug script
+	Log:SetFilename[${LogFile}]
+	Log:SetPrefix[""]
+
 	call CheckForConfigFolders
 
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/EQ2.xml"
@@ -143,6 +148,34 @@ function main(string argv)
 	while (1)
 }
 
+objectdef eq2string
+{
+	member:string CleanLinks(string TheString)
+	{
+		variable int count=0
+		;Debug:Log["TheString = ${TheString.Replace[\",""].Escape}"]
+		variable string PreLink
+		variable string LinkText
+		variable string Remain
+		Returning:Set["${TheString.Replace[\",""].Escape}"]
+		;Debug:Log["Returning = ${Returning.Escape}"]
+		while ${Returning.Find["\\a"]}
+		{
+			PreLink:Set["${Returning.Left[${Math.Calc[${Returning.Find["\\a"]}-1]}].Escape}"]
+			LinkText:Set["${Returning.Right[-${Returning.Find["\\a"]}].Token[2,:].Token[1,/]}"]
+			Remain:Set["${Returning.Right[-${Math.Calc[${Returning.Find["/a"]}+1]}].Escape}"]
+			;Debug:Log["${LinkText.Escape} | ${Remain.Escape}"]
+			Returning:Set["${If[${PreLink.NotEqual[NULL]},"${PreLink.Escape}",""].Escape}${LinkText}${If[${Remain.Length},"${Remain.Escape}",""].Escape}"]
+			;Debug:Log["Returning:Set[\"${PreLink}\" \"${LinkText}\" \"${If[${Remain.NotEqual[NULL]} && ${Remain.Length},"${Remain.Escape}",""].Escape}\"]"]
+			;echo ${Returning}
+			;Debug:Log[${Returning.Escape}]
+			if ${count:Inc}>30
+				break
+		}
+		return
+	}
+}
+variable eq2string EQ2String
 
 function PlaySound(string Filename=DefaultSound)  
 {  
@@ -172,7 +205,7 @@ function CheckTriggers(string Message, string Speaker, int MsgType)
 		{
 			if ${Message.Find[${Iter.Value.FindSetting[Word]}]}
 			{
-				call AFKAlarmAction MESSAGE_TYPE_SAY ${Speaker} ${Iter.Key}
+				call AFKAlarmAction ${MsgType} ${Speaker} ${Iter.Key}
 				return TRUE
 			}
 		}
@@ -198,7 +231,7 @@ function MySays(string Line, string speaker, string message)
 		
 		if ${TTS.IsReady} && ${TTSSays} 
 		{
-			Speak ${message}
+			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
 		}
 		else
 		{
@@ -224,7 +257,8 @@ function MyTells(string Line, string speaker, string message)
 		
 		if ${TTS.IsReady} && ${TTSTells} 
 		{
-			Speak ${message}
+			;Debug:Log["Calling CleanLinks = ${Line.Escape}"]
+			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
 		}
 		else
 		{
@@ -252,7 +286,7 @@ function MyGroup(string Line, string speaker, string message)
 		
 		if ${TTS.IsReady} && ${TTSGroup} 
 		{
-			Speak ${message}
+			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
 		}
 		else
 		{
@@ -283,7 +317,7 @@ function MyRaid(string Line, string speaker, string message)
 
 		if ${TTS.IsReady} && ${TTSRaid} 
 		{
-			Speak ${message}
+			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
 		}
 		else
 		{
@@ -314,7 +348,7 @@ function MyGuild(string Line, string speaker, string message)
 
 		if ${TTS.IsReady} && ${TTSGuild} 
 		{
-			Speak ${message}
+			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
 		}
 		else
 		{
@@ -341,7 +375,7 @@ function MyOfficer(string Line, string speaker, string message)
 
 		if ${TTS.IsReady} && ${TTSOfficer} 
 		{
-			Speak ${message}
+			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
 		}
 		else
 		{

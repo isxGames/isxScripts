@@ -5,17 +5,14 @@ function ConsoleEcho(string textString)
 {
 	UIElement[Output@EQ2AFKAlarm Console]:Echo["[${Time.Time24}] ${textString.Escape}"]
 
-	if ${Logging}
-	{
-		LogFile:Open
-		LogFile:SeekEnd[0]
-		LogFile:Write["[${Time.Time24}] ${textString.Escape}\n"]
-		LogFile:Close
-	}
+	Log:Log["${textString.Escape}"]
+
 }
 function LogToFile(string textString)
 {
 	/* Temporarily Defunct pending bug */
+	/* Using new debug object. */
+	Log:Log["${TextString.Escape}"]
 }
 
 function CheckForConfigFolders()

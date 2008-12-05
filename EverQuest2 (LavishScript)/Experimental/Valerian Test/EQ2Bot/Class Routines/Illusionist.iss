@@ -106,27 +106,27 @@ function Class_Declaration()
 	UIElement[EQ2 Bot].FindUsableChild[sldManaFlowThreshold,slider]:SetValue[${ManaFlowThreshold}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureMode,FALSE]}]
 	StunMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[StunMode,FALSE]}]
-	
+
 	NoEQ2BotStance:Set[TRUE]
 
 	Event[EQ2_FinishedZoning]:AttachAtom[Illusionist_FinishedZoning]
-	
+
 	if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]})
 		HaveMythical:Set[TRUE]
 }
 
 function Pulse()
 {
-	declare BuffTarget string local	
-	
+	declare BuffTarget string local
+
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -319,7 +319,7 @@ function Buff_Routine(int xAction)
 		call CheckHeals
 		call RefreshPower
 		call CheckSKFD
-	
+
 		;; Prismatic Proc
 		;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
 		if !${MainTank} || ${AutoMelee}
@@ -355,14 +355,14 @@ function Buff_Routine(int xAction)
 			}
 		}
 	}
-	
+
 	switch ${PreAction[${xAction}]}
 	{
 		case Self_Buff
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID} 0 0 1 0 0
 			break
-	
+
 		case Clarity
 			if ${BuffPowerRegen}
 			{
@@ -370,7 +370,7 @@ function Buff_Routine(int xAction)
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID} 0 0 1 0 0
 			}
 			break
-	
+
 		case Rune
 			if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
 				break
@@ -382,7 +382,7 @@ function Buff_Routine(int xAction)
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
-	
+
 		case Aspect
 			if ${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} < 1
 				break
@@ -394,7 +394,7 @@ function Buff_Routine(int xAction)
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
-	
+
 		case MakePet
 			if ${Makepet}
 			{
@@ -413,11 +413,11 @@ function Buff_Routine(int xAction)
 				}
 			}
 			break
-	
+
 		case Melee_Buff
 			Counter:Set[1]
 			tempvar:Set[1]
-	
+
 			;; If we have mythical, just cast on self since it is a group buff
 			if (${HaveMythical})
 			{
@@ -425,7 +425,7 @@ function Buff_Routine(int xAction)
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID} 0 0 1 0 0
 				break
 			}
-	
+
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
 			{
@@ -463,7 +463,7 @@ function Buff_Routine(int xAction)
 				}
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
-			
+
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
 			if ${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
@@ -474,7 +474,7 @@ function Buff_Routine(int xAction)
 					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
 						ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
-						if ${Actor[${ActorID}].Type.Equal[PC]} 
+						if ${Actor[${ActorID}].Type.Equal[PC]}
 						{
 							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 							{
@@ -485,7 +485,7 @@ function Buff_Routine(int xAction)
 										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 									}
 									;else
-									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"]													
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"]
 								}
 							}
 						}
@@ -498,20 +498,20 @@ function Buff_Routine(int xAction)
 									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 								}
 								;else
-								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"]				
-							}	
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already MeleeDPS buffed!"]
+							}
 						}
 					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
 			break
-	
+
 		case Caster_Buff
 			Counter:Set[1]
 			tempvar:Set[1]
 			IllyCasterBuffsOn:Clear
-	
+
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
 			{
@@ -549,7 +549,7 @@ function Buff_Routine(int xAction)
 				}
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
-			
+
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
 			if ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
@@ -571,7 +571,7 @@ function Buff_Routine(int xAction)
 										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 									}
 									;else
-									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"]									
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"]
 								}
 							}
 						}
@@ -584,15 +584,15 @@ function Buff_Routine(int xAction)
 									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 								}
 								;else
-								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"]	
-							}	
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already CasterDPS buffed!"]
+							}
 						}
 					}
 				}
 				while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
 			break
-	
+
 		case AA_Time_Compression
 			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${BuffTarget.Equal["No one"]}
@@ -617,7 +617,7 @@ function Buff_Routine(int xAction)
 				}
 			}
 			break
-	
+
 		case AA_Illusory_Arm
 			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${BuffTarget.Equal["No one"]}
@@ -642,7 +642,7 @@ function Buff_Routine(int xAction)
 				}
 			}
 			break
-	
+
 		case AA_Empathic_Aura
 			if ${BuffEmpathicAura}
 			{
@@ -653,7 +653,7 @@ function Buff_Routine(int xAction)
 				}
 			}
 			break
-	
+
 		case AA_Empathic_Soothing
 			if ${BuffEmpathicSoothing}
 			{
@@ -664,7 +664,7 @@ function Buff_Routine(int xAction)
 				}
 			}
 			break
-	
+
 		case SummonImpOfRoBuff
 			if (${SummonImpOfRo})
 			{
@@ -672,7 +672,7 @@ function Buff_Routine(int xAction)
 					call CastSpell "Summon: Imp of Ro"
 			}
 			break
-			
+
 		default
 			return BuffComplete
 	}
@@ -685,8 +685,8 @@ function CheckCastBeam()
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 		LastSpellCast:Set[210]
-	}		
-	
+	}
+
 	;; Cast Beam if it is ready
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
@@ -696,20 +696,20 @@ function CheckCastBeam()
 	elseif (${LastSpellCast} != 60)
 	{
 		;Debug:Echo["EQ2Bot-Debug:: LastSpellCast: ${LastSpellCast}"]
-		if (${Me.Ability[${SpellType[60]}].TimeUntilReady} <= 1)	
-		{		
+		if (${Me.Ability[${SpellType[60]}].TimeUntilReady} <= 1)
+		{
 			LastSpellCast:Set[60]
 			call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1 0 1
 		}
 	}
-	
+
 	; Cure Arcane
 	if ${Me.Arcane}>=1
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 		LastSpellCast:Set[210]
-	}	
-	
+	}
+
 	call ProcessTriggers
 }
 
@@ -721,7 +721,7 @@ function CheckNonDps(... Args)
 	; Check mezzmode
 	if ${MezzMode}
 		call Mezmerise_Targets
-		
+
 	; Check stunmode
 	if ${StunMode} && !${DPSMode}
 	{
@@ -743,7 +743,7 @@ function CheckNonDps(... Args)
 			}
 		}
 	}
-	
+
 	; check heals/cures
 	call CheckHeals
 
@@ -754,10 +754,11 @@ function CheckNonDps(... Args)
 
 function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
+	declare BuffTarget string local
+
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
-	declare BuffTarget string local
 
 	if ${MezzMode}
 		call Mezmerise_Targets
@@ -765,7 +766,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	call VerifyTarget ${TargetID}
 	if !${Return}
 		return -1
-	
+
 
 	call CheckCastBeam
 
@@ -828,7 +829,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 			call CheckPosition 1 1
 		DoCallCheckPosition:Set[FALSE]
 	}
-	
+
 
 	LastSpellCast:Set[${start}]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
@@ -838,7 +839,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 		LastSpellCast:Set[210]
-	}		
+	}
 	return ${Return}
 }
 
@@ -850,8 +851,9 @@ function Combat_Routine(int xAction)
 	declare FightingHeroicMob bool local
 	declare DoShortTermBuffs bool local
 	spellsused:Set[0]
-	
-	
+
+
+
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
 		return CombatComplete
 
@@ -864,8 +866,8 @@ function Combat_Routine(int xAction)
 		FightingEpicMob:Set[TRUE]
 	elseif ${Actor[${KillTarget}].IsHeroic}
 		FightingHeroicMob:Set[TRUE]
-		
-	
+
+
 	if ${FightingEpicMob}
 	{
 		if (${Actor[${KillTarget}].Health} > 20)
@@ -890,8 +892,8 @@ function Combat_Routine(int xAction)
 	;echo "TEST: FightingEpicMob: ${FightingEpicMob} -- FightingHeroicMob: ${FightingHeroicMob} -- DoShortTermBuffs: ${DoShortTermBuffs}"
 	;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	
-	
+
+
 
 	;; Aggro Control...
 	if (${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
@@ -920,7 +922,7 @@ function Combat_Routine(int xAction)
 			}
 		}
 	}
-	
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;; Check for "Runed Guard of the Sel'Nok" ;;;;
 	if (${UseRunedGuardItem})
@@ -998,7 +1000,7 @@ function Combat_Routine(int xAction)
 		if (${Me.Pet.Target.ID} != ${KillTarget} || !${Me.Pet.InCombatMode})
 			call PetAttack 1
 	}
-	
+
 	call CheckHeals
 
 	if !${UltraDPSMode}
@@ -1084,7 +1086,7 @@ function Combat_Routine(int xAction)
 			LastSpellCast:Set[23]
 			spellsused:Inc
 		}
-	
+
 		if ${Actor[${KillTarget}].Health}
 		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
 		if (${Me.Ability[${SpellType[383]}].IsReady})
@@ -1367,7 +1369,7 @@ function Combat_Routine(int xAction)
 		LastSpellCast:Set[210]
 		spellsused:Inc
 		call CheckCastBeam
-	}	
+	}
 
 	; AA Bewilderment -- Use whenever it's up. It casts fast anyway.
 	if ${Me.Ability[id,3903537279].IsReady}
@@ -1396,7 +1398,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		case NukeDaze
 			if (${Me.Ability[${SpellType[61]}].IsReady})
 			{
@@ -1409,7 +1411,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		;; Single Target DoTs
 		case MindDoT
 			;Debug:Echo[" ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]}) called"]
@@ -1422,7 +1424,7 @@ function Combat_Routine(int xAction)
 			{
 				;;; For now, let's try casting this every time it's ready. More testing needed to see if this is
 				;;; detrimental to dps and/or power usage
-	
+
 				;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
 				;{
 					;Debug:Echo["Casting ${SpellType[${SpellRange[${xAction},1]}]} (${SpellRange[${xAction},1]})"]
@@ -1443,7 +1445,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		;; Group Encounter DoTs
 		case Shower
 		case Ego
@@ -1460,7 +1462,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		case Master_Strike
 			if (${Me.Ability[${SpellType[60]}].IsReady})
 			{
@@ -1477,7 +1479,7 @@ function Combat_Routine(int xAction)
 			if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
 				break
 			;;;;;;;;;;;
-	
+
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
@@ -1497,7 +1499,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		case Constructs
 			if ${UltraDPSMode}
 			{
@@ -1515,7 +1517,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		case AEStun
 		case Stun
 			if ${UltraDPSMode}
@@ -1538,7 +1540,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		case Savante
 			if ${Me.ToActor.Power} > 50
 				break
@@ -1553,7 +1555,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		case Gaze
 			if ${Me.ToActor.Power} > 50
 			{
@@ -1605,7 +1607,7 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
-	
+
 		default
 			if (${Me.Ability[${SpellType[60]}].IsReady})
 			{
@@ -1631,8 +1633,8 @@ function Combat_Routine(int xAction)
 
 function CastSomething()
 {
-	declare BuffTarget string local	
-	
+	declare BuffTarget string local
+
 	;; If this function is called, it is because we went through teh combat routine without casting any spells.
 	;; This function is intended to cast SOMETHING in order to keep "Perputuality" going.
 
@@ -1642,8 +1644,8 @@ function CastSomething()
 	call VerifyTarget
 	if !${Return}
 		return
-		
-	call CheckCastBeam		
+
+	call CheckCastBeam
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;; Things we should be checking EVERY time
@@ -1780,7 +1782,7 @@ function Have_Aggro()
 {
 	if ${Actor[${aggroid}].Name.Find["Master P"]}
 		return
-		
+
 	;; Use this whenver we have aggro...regardless  (de-aggro "Bewilderment")
 ;    if ${Me.Ability[id,3903537279].IsReady}
 ;    {
@@ -1788,8 +1790,8 @@ function Have_Aggro()
 ;        call CastSpellRange AbilityID=3903537279 TargetID=${aggroid} IgnoreMaintained=1
 ;        return
 ;    }
-		
-		
+
+
 	;; Aggro Control...
 	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
 	{
@@ -1853,7 +1855,7 @@ function RefreshPower()
 	declare MemberLowestPower int local
 
 	call CommonPower
-	
+
 	;Spiritise Censer
 	if ${Me.Level} < 75
 	{
@@ -1934,11 +1936,11 @@ function CheckHeals()
 	variable bool DoCures
 	if ${CureMode} || ${EpicMode}
 		DoCures:Set[TRUE]
-	elseif !${DPSMode} && !${UltraDPSMode} 
+	elseif !${DPSMode} && !${UltraDPSMode}
 		DoCures:Set[TRUE]
 	else
 		DoCures:Set[FALSE]
-		
+
 	if !${UltraDPSMode} || ${EpicMode}
 	{
 		; This routine will use 'Crystallized Spirits', the Fury 'Pact of Nature' ability (if applicable), etc...
@@ -1946,7 +1948,7 @@ function CheckHeals()
 		; for groupmates who need it -- especially since common cure potions are same as old rares.
 		call CommonHeals 60
 	}
-	
+
 	if (${DoCures})
 	{
 		;;;;;;;;;;;;;
@@ -1955,7 +1957,7 @@ function CheckHeals()
 		{
 			call CastSpellRange 210 0 0 0 ${Me.ID}
 			LastSpellCast:Set[210]
-			
+
 			if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
 				Target ${KillTarget}
 		}
@@ -1972,7 +1974,7 @@ function CheckHeals()
 						call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
 						LastSpellCast:Set[210]
 						wait 1
-	
+
 						if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
 							Target ${KillTarget}
 					}
@@ -1990,21 +1992,21 @@ objectdef _meztargets
 	variable bool IsLongMezzed=0
 	variable bool IsMyMez=0
 	variable bool NeedRemez=0
-	
+
 	member:bool IsMezzed()
 	{
 		if ${This.IsAoeMezzed} || ${This.IsShortMezzed} || ${This.IsLongMezzed}
 			return TRUE
 		return FALSE
 	}
-	
+
 	member:bool IsMultiMezzed()
 	{
 		if ${Math.Calc[${This.IsAoeMezzed} + ${This.IsShortMezzed} + ${This.IsLongMezzed} - 1]}>0
 			return TRUE
 		return FALSE
 	}
-	
+
 	method Initialize()
 	{
 	}
@@ -2019,9 +2021,9 @@ function Mezmerise_Targets()
 	declare tcount int local 1
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
-	
+
 	originaltarget:Set[${Target.ID}]
-	
+
 	; if we don't have a mez spell ready, no sense wasting time.
 	if !${Me.Ability[${SpellType[353]}].IsReady} && !${Me.Ability[${SpellType[352]}].IsReady} && !${Me.Ability[${SpellType[92]}].IsReady}
 		return
@@ -2086,7 +2088,7 @@ function Mezmerise_Targets()
 	{
 		if ${CustomActor[${tcount}].Type.Equal[NoKillNPC]}
 			continue
-			
+
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 			;if its the kill target skip it
@@ -2212,7 +2214,7 @@ function Mezmerise_Targets()
 
 			Actor[${MezzTargets.CurrentKey}]:DoTarget
 			wait 10 ${Target.ID}==${MezzTargets.CurrentKey}
-			
+
 			call CheckForMez
 			if ${Return}
 				continue
@@ -2280,17 +2282,19 @@ atom(script) Illusionist_FinishedZoning(string TimeInSeconds)
 }
 
 function PostDeathRoutine()
-{	
+{
+	variable int i
+
 	;; This function is called after a character has either revived or been rezzed
 	InPostDeathRoutine:Set[TRUE]
-	
+
 	;; Auto-Follow
 	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 	{
 		ExecuteAtom AutoFollowTank
 		wait 5
 	}
-	
+
 	;;;;;;;;;;;;;;;
 	;; Do Buffs before anything else
 	i:Set[1]
@@ -2317,7 +2321,7 @@ function PostDeathRoutine()
 	}
 	;;
 	;;;;;;;;;;;;;;;
-	
+
 	InPostDeathRoutine:Set[FALSE]
 	return
 }

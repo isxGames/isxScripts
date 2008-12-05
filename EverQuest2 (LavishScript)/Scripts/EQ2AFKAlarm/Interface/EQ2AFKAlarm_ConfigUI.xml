@@ -162,9 +162,9 @@
 							<Width>100</Width>
 							<Height>20</Height>
 							<Text> -> Log To File</Text>
-							<Command>noop ${Script[EQ2AFKAlarm].Variable[Logging]:Set[TRUE]}</Command>
-							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[Logging]:Set[FALSE]}</CommandChecked>
-							<Data>${Script[EQ2AFKAlarm].Variable[Logging]}</Data>
+							<Command>Script[EQ2AFKAlarm].VariableScope.Log:Enable</Command>
+							<CommandChecked>Script[EQ2AFKAlarm].VariableScope.Log:Disable</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].VariableScope.Log.Enabled}</Data>
 						</commandcheckbox>
 
 						<commandbutton name='Test Sound'>
