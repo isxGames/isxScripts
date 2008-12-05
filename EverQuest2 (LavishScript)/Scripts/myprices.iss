@@ -2459,12 +2459,12 @@ function StartUp()
 	}
 	else
 	{
-		tempstring:Set[${Actor[Guild,guild world market broker]}]
-		if ${tempstring.Length} >4
+		tempstring:Set[${Actor[Guild,Guild World Market Broker]}]
+		if !${tempstring.Equal[NULL]}
 		{
-			Actor[Guild,guild world market broker]:DoTarget
+			Actor[Guild,Guild World Market Broker]:DoTarget
 			wait 10
-			Actor[Guild,guild world market broker]:DoubleClick
+			Actor[Guild,Guild World Market Broker]:DoubleClick
 			wait 20
 			call echolog " * Scanning using Guild Hall Broker *"
 			echo " * Scanning using Guild Hall Broker *"
@@ -2472,7 +2472,7 @@ function StartUp()
 		else
 		{
 			tempstring:Set[${Actor[Guild,broker]}]
-			if ${tempstring.Length} >4
+			if !${tempstring.Equal[NULL]}
 			{
 				Actor[Guild,broker]:DoTarget
 				wait 10
