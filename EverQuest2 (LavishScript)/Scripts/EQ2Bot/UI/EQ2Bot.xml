@@ -506,7 +506,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 							<OnLoad>
 							</OnLoad>
 							<Children>
-                            	<Commandcheckbox Name='NoAutoMovement'>
+                            	<Commandcheckbox Name='NoAutoMovementInCombat'>
                             		<X>5%</X>
                             		<Y>13</Y>
                             		<Width>40</Width>
@@ -516,19 +516,42 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
                             		<OnLeftClick>
                             			if ${This.Checked}
                             			{
+                            				Script[EQ2Bot].Variable[NoAutoMovementInCombat]:Set[TRUE]
+                            				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["NoAutoMovementInCombat",TRUE]
+											Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                            			}
+                            			else
+                            			{
+                            				Script[EQ2Bot].Variable[NoAutoMovementInCombat]:Set[FALSE]
+                            				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["NoAutoMovementInCombat",FALSE]
+											Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                            			}
+                            		</OnLeftClick>
+                            		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[NoAutoMovementInCombat]}</Data>
+                            	</Commandcheckbox>                        
+                            	<Commandcheckbox Name='NoAutoMovement'>
+                            		<X>5%</X>
+                            		<Y>33</Y>
+                            		<Width>40</Width>
+                            		<Height>20</Height>
+                            		<Text>No auto movement whatsoever</Text>
+                            		<AutoTooltip>Select to have the bot do NO 'auto' movement whatsoever</AutoTooltip>
+                            		<OnLeftClick>
+                            			if ${This.Checked}
+                            			{
                             				Script[EQ2Bot].Variable[NoAutoMovement]:Set[TRUE]
                             				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["NoAutoMovement",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+											Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                             			}
                             			else
                             			{
                             				Script[EQ2Bot].Variable[NoAutoMovement]:Set[FALSE]
                             				LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["NoAutoMovement",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+											Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                             			}
                             		</OnLeftClick>
                             		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[NoAutoMovement]}</Data>
-                            	</Commandcheckbox>
+                            	</Commandcheckbox>                            	
 						    </Children>
 				        </Frame>
 						<Frame Name='Pathing Frame'>
@@ -541,11 +564,11 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 							<Children>
 								<Text Name='Combat Pathing Text'>
 									<X>30%</X>
-									<Y>1</Y>
+									<Y>9</Y>
 									<Width>95%</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
-									<Text>--==: Combat Pathing Selection :==--</Text>
+									<Text>== Combat Pathing Selection ==</Text>
 								</Text>
 								<checkbox Name='Manual'>
 									<X>5%</X>
@@ -565,7 +588,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 											UIElement[EQ2 Bot].FindUsableChild[Following Frame,frame]:Show
 											Script[EQ2Bot].Variable[PathType]:Set[0]
 											LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What Path Type (0-4)?,0]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+											Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 											UIElement[Minimum@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Camp@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 											UIElement[Dungeon Crawl@Pathing Frame@Main@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked

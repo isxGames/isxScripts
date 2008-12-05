@@ -1645,7 +1645,7 @@ function Combat(bool PVP=0)
 
 	FollowTask:Set[2]
 	; Make sure we are still not moving when we enter combat
-	if ${Me.IsMoving}
+	if (${Me.IsMoving} && !${NoAutoMovement})
 	{
 		press -release ${forward}
 		press -release ${backward}
@@ -1790,7 +1790,7 @@ function Combat(bool PVP=0)
 						break
 					}
 
-					if !${NoAutoMovement}
+					if !${NoAutoMovementInCombat} || !${NoAutoMovement}
 					{
 						if ${AutoMelee} && !${MainTank}
 						{
@@ -2079,19 +2079,22 @@ function Combat(bool PVP=0)
 		call CheckLootNoMove
 	}
 
-	if ${PathType}==1 && !${NoAutoMovement}
+	if ${PathType} == 1
 	{
-		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>4
+		if (!${NoAutoMovementInCombat} || ${NoAutoMovement})
 		{
-			movinghome:Set[TRUE]
-			wait ${Math.Rand[10]} ${Mob.Detect}
-			call FastMove ${HomeX} ${HomeZ} 4
-			do
+			if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>4
 			{
-				waitframe
+				movinghome:Set[TRUE]
+				wait ${Math.Rand[10]} ${Mob.Detect}
+				call FastMove ${HomeX} ${HomeZ} 4
+				do
+				{
+					waitframe
+				}
+				while (${IsMoving} || ${Me.IsMoving})
+				face ${Math.Rand[45]:Inc[315]}
 			}
-			while (${IsMoving} || ${Me.IsMoving})
-			face ${Math.Rand[45]:Inc[315]}
 		}
 	}
 
@@ -2101,23 +2104,26 @@ function Combat(bool PVP=0)
 	if ${MainTankPC.NotEqual[${OriginalMT}]} && !${MainTank}
 		EQ2Bot:MainTank_Dead
 
-	if ${PathType}==4 && !${NoAutoMovement}
+	if ${PathType} == 4
 	{
-		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>${ScanRange}
+		if (!${NoAutoMovementInCombat} || !${NoAutoMovement})
 		{
-			face ${HomeX} ${HomeZ}
-			wait ${Math.Rand[10]} ${Mob.Detect}
-
-			tempvar:Set[${Math.Rand[30]:Dec[15]}]
-			WPX:Set[${Math.Calc[${tempvar}*${Math.Cos[${Me.Heading}]}-20*${Math.Sin[${Me.Heading}]}+${Me.X}]}]
-			WPZ:Set[${Math.Calc[-20*${Math.Cos[${Me.Heading}]}+${tempvar}*${Math.Sin[${Me.Heading}]}+${Me.Z}]}]
-
-			call FastMove ${WPX} ${WPZ} 4
-			do
+			if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>${ScanRange}
 			{
-				waitframe
+				face ${HomeX} ${HomeZ}
+				wait ${Math.Rand[10]} ${Mob.Detect}
+	
+				tempvar:Set[${Math.Rand[30]:Dec[15]}]
+				WPX:Set[${Math.Calc[${tempvar}*${Math.Cos[${Me.Heading}]}-20*${Math.Sin[${Me.Heading}]}+${Me.X}]}]
+				WPZ:Set[${Math.Calc[-20*${Math.Cos[${Me.Heading}]}+${tempvar}*${Math.Sin[${Me.Heading}]}+${Me.Z}]}]
+	
+				call FastMove ${WPX} ${WPZ} 4
+				do
+				{
+					waitframe
+				}
+				while (${IsMoving} || ${Me.IsMoving})
 			}
-			while (${IsMoving} || ${Me.IsMoving})
 		}
 	}
 }
@@ -2224,13 +2230,18 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	variable point3f destmaxpoint
 	variable int xTimer
 	xTimer:Set[${Script.RunningTime}]
-
+	
+	if ${NoAutoMovement}
+	{
+		Debug:Echo["CheckPosition() :: NoAutoMovement ON"]
+		return
+	}
 
 	if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
 	{
-		if ${NoAutoMovement}
+		if ${NoAutoMovementInCombat}
 		{
-			Debug:Echo["CheckPosition() :: NoAutoMovement ON"]
+			Debug:Echo["CheckPosition() :: NoAutoMovementInCombat ON"]
 			return
 		}
 		if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
@@ -2469,10 +2480,16 @@ function CheckQuadrant(uint TID, int quadrant)
 	side:Set[${Position.Side[${TID}]}]
 	targetaspect:Set[${Position.Angle[${TID}]}]
 
-	;; CheckQuadrant() should only be called in combat, so 'in combat' checks should not be necessary
 	if ${NoAutoMovement}
 	{
 		Debug:Echo["CheckQuadrant() :: NoAutoMovement ON"]
+		return
+	}
+
+	;; CheckQuadrant() should only be called in combat, so 'in combat' checks should not be necessary
+	if ${NoAutoMovementInCombat}
+	{
+		Debug:Echo["CheckQuadrant() :: NoAutoMovementInCombat ON"]
 		return
 	}
 	if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
@@ -2623,6 +2640,26 @@ function StrafeToLeft(uint TID, float destangle)
 	variable int startdistance
 	variable int lastange
 
+	if ${NoAutoMovement}
+	{
+		Debug:Echo["StrafeToLeft() :: NoAutoMovement ON"]
+		return
+	}
+
+	if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
+	{
+		if ${NoAutoMovementInCombat}
+		{
+			Debug:Echo["StrafeToLeft() :: NoAutoMovementInCombat ON"]
+			return
+		}
+		if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
+		{
+			Debug:Echo["StrafeToLeft() :: In combat, but current KillTarget does not exist and/or is dead."]
+			return
+		}
+	}
+
 	startdistance:Set[${Actor[${TID}].Distance}]
 
 	;if we're stuck lets try moving to MT first.
@@ -2717,6 +2754,26 @@ function StrafeToRight(uint TID, float destangle)
 	xTimer:Set[${Script.RunningTime}]
 	variable int movingforward
 	variable int startdistance
+
+	if ${NoAutoMovement}
+	{
+		Debug:Echo["StrafeToRight() :: NoAutoMovement ON"]
+		return
+	}
+
+	if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
+	{
+		if ${NoAutoMovementInCombat}
+		{
+			Debug:Echo["StrafeToRight() :: NoAutoMovementInCombat ON"]
+			return
+		}
+		if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
+		{
+			Debug:Echo["StrafeToRight() :: In combat, but current KillTarget does not exist and/or is dead."]
+			return
+		}
+	}
 
 	startdistance:Set[${Actor[${TID}].Distance}]
 
@@ -3011,7 +3068,7 @@ function Pull(string npcclass)
 				}
 			}
 
-			if ${Me.IsMoving}
+			if (${Me.IsMoving} && !${NoAutoMovement})
 			{
 				press -release ${forward}
 				wait 20 !${Me.IsMoving}
@@ -3444,7 +3501,13 @@ function FastMove(float X, float Z, int range)
 	variable int xTimer
 	variable int MoveToRange
 	variable bool IgnoreInCombatChecks
-
+	
+	if ${NoAutoMovement}
+	{
+		Debug:Echo["FastMove() :: NoAutoMovement ON"]
+		return "NOAUTOMOVEMENT"
+	}
+	
 	if ${ScanRange} > 75
 		MoveToRange:Set[${ScanRange}]
 	else
@@ -3461,11 +3524,11 @@ function FastMove(float X, float Z, int range)
 	{
 		if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
 		{
-			if ${NoAutoMovement}
+			if ${NoAutoMovementInCombat}
 			{
-				Debug:Echo["FastMove() :: NoAutoMovement ON"]
+				Debug:Echo["FastMove() :: NoAutoMovementInCombat ON"]
 				IsMoving:Set[FALSE]
-				return "NOAUTOMOVEMENT"
+				return "NOAUTOMOVEMENTINCOMBAT"
 			}
 			if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
 			{
@@ -3709,6 +3772,10 @@ function MovetoWP(lnavregionref destination)
 
 function MovetoMaster()
 {
+	if ${NoAutoMovement}
+		return
+	
+	
 	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[${MainAssistID}].X},${Actor[${MainAssistID}].Z},${Actor[${MainAssistID}].Y}].FQN}]}
 	{
 		CurrentAction:Set[Moving Closer to Main Aasist]
@@ -3983,8 +4050,8 @@ function ScanAdds()
 	variable float X
 	variable float Z
 
-	if !${NoAutoMovement} || !${MainTank}
-
+	if ${NoAutoMovementInCombat} || !${MainTank} || ${NoAutoMovement}
+		return
 
 	EQ2:CreateCustomActorArray[byDist,20,npc]
 	do
@@ -4194,6 +4261,26 @@ atom(script) LootWDw(string ID)
 
 function CantSeeTarget(string Line)
 {
+	if ${NoAutoMovement}
+	{
+		Debug:Echo["CantSeeTarget() :: NoAutoMovement ON"]
+		return
+	}
+
+	if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
+	{
+		if ${NoAutoMovementInCombat}
+		{
+			Debug:Echo["CantSeeTarget() :: NoAutoMovementInCombat ON"]
+			return
+		}
+		if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
+		{
+			Debug:Echo["CantSeeTarget() :: In combat, but current KillTarget does not exist and/or is dead."]
+			return
+		}
+	}	
+	
 	if (${haveaggro} || ${MainTank}) && ${Me.ToActor.InCombatMode}
 	{
 		if ${Target.Target.ID}==${Me.ID}
@@ -6035,6 +6122,9 @@ function AddPullRegion()
 
 function MoveToGroup(string gname)
 {
+	if ${NoAutoMovement}
+		return
+	
 	if !${LNavRegionGroup[${gname}].Contains[${EQ2Nav.CurrentRegion}]} && ${LNavRegionGroup[${gname}].Contains[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}]}]}
 	{
 		movingtowp:Set[TRUE]
