@@ -19,8 +19,8 @@
 ;;		SetPrefix[string]               Sets string to prefix all echo and log output with. Default "DEBUG: "
 ;;		TimestampEcho[bool]             Enables or disables timestamps in echos. Default TRUE
 ;;		TimestampLog[bool]              Enables or disables timestamps in logs. Default TRUE
-;;      SetEchoAlsoLogs[bool]			If true, then any calls to :Echo will call :Log as well
-;;      ClearLog                        Clears the log file entirely
+;;		SetEchoAlsoLogs[bool]           If true, then any calls to :Echo will call :Log as well
+;;		ClearLog                        Clears the log file entirely
 ;;
 ;;	Example Script:
 ;;	
@@ -60,7 +60,7 @@ objectdef debug
 	
 	method Disable()
 	{
-		This:IsEnabled:Set[FALSE]
+		This.IsEnabled:Set[FALSE]
 	}
 	
 	method SetFilename(string Filename)
@@ -103,7 +103,7 @@ objectdef debug
 			echo ${If[${This.Timestamp_Echo},${Time.Time24}]} ${This.Prefix}${Args.Expand}
 			
 			if ${This.EchoAlsoLogs}
-				redirect -append "${This.File}" echo ${If[${This.Timestamp_Log},${Time.Year}${Time.Month.LeadingZeroes[2]}${Time.Day.LeadingZeroes[2]} ${Time.Time24}]} ${This.Prefix}${Args.Expand}
+				This:Log[${Args.ExpandComma}]
 		}
 	}
 	
@@ -118,8 +118,8 @@ objectdef debug
 	method Initialize()
 	{
 		This.IsEnabled:Set[FALSE]
-		This.TimestampEcho:Set[TRUE]
-		This.TimestampLog:Set[TRUE]
+		This.Timestamp_Echo:Set[TRUE]
+		This.Timestamp_Log:Set[TRUE]
 		This.Prefix:Set["DEBUG: "]
 		This.File:Set["${Script.CurrentDirectory}/${Script.Filename}.txt"]
 	}

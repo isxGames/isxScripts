@@ -19,7 +19,7 @@ function config_load()
 		Settings:Clear
 	}
 
-	Logging:Set[${Settings.FindSetting[Logging,TRUE]}]
+	Log.IsEnabled:Set[${Settings.FindSetting[Logging,TRUE]}]
 	TriggerSays:Set[${Settings.FindSetting[TriggerSays,FALSE]}]
 	TriggerTells:Set[${Settings.FindSetting[TriggerTells,FALSE]}]
 	TriggerGroup:Set[${Settings.FindSetting[TriggerGroup,FALSE]}]
@@ -40,7 +40,7 @@ function config_save()
 {
 	Settings:AddSetting[Script_Version,${EQ2AFKAlarm_version}]
 
-	Settings:AddSetting[Logging,${Logging}]
+	Settings:AddSetting[Logging,${Log.Enabled}]
 	Settings:AddSetting[TriggerSays,${TriggerSays}]
 	Settings:AddSetting[TriggerTells,${TriggerTells}]
 	Settings:AddSetting[TriggerGroup,${TriggerGroup}]
