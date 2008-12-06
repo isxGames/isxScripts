@@ -117,8 +117,7 @@ namespace ISXEVE_Bot_Framework
 
         public void Save()
         {
-
-            using (FileStream fs = new FileStream(String.Format("{0}\\{1}.xml", FilePath, this.UserName), FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(String.Format("{0}\\{1}.xml", FilePath, this.UserName), FileMode.Create))
             {
                 XmlSerializer xs = new XmlSerializer(typeof(Settings));
                 Logging.OnLogMessage(this, "Settings.Save(): Saving settings for account " + this.UserName);
