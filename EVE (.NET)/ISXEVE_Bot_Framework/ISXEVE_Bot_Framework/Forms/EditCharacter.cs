@@ -93,9 +93,13 @@ namespace ISXEVE_Bot_Framework.Forms
                         MessageBox.Show("Cannot add the same ID twice");
                         return;
                     }
-                }
+                } 
                 temp.Characters.Add(tcs);
                 comboBox_characters.Items.Add(tcs.Identifier);
+                if (comboBox_characters.Items.Count == 1)
+                    comboBox_characters.SelectedIndex = 0;
+                if (comboBox_defaultCharacter.SelectedIndex == 1)
+                    comboBox_defaultCharacter.SelectedIndex = 0;
                 comboBox_defaultCharacter.Items.Add(tcs.Identifier);
             }
         }
@@ -167,14 +171,26 @@ namespace ISXEVE_Bot_Framework.Forms
                 return;
             }
 
-            Logging.OnLogMessage(this, "EditCharacter(): Removing character: " + comboBox_characters.SelectedItem.ToString());
             /* Remove the character from the list */
-            temp.Characters.Remove(new CharacterSettings(comboBox_characters.SelectedItem.ToString()));
+            for (int x = 0; x < temp.Characters.Count; x++)
+            {
+                if (temp.Characters[x].Identifier == comboBox_characters.SelectedItem.ToString())
+                {
+                    Logging.OnLogMessage(this, "EditCharacter(): Removing character: " + comboBox_characters.SelectedItem.ToString());
+                    temp.Characters.Remove(temp.Characters[x]);
+                    break;
+                }
+            }
 
             /* Remove the character from the two lists */
             /* Temporarily detach events */
             detachEventTargets();
 
+            /* Clear text on comboboxes */
+            comboBox_characters.Text = String.Empty;
+            if (comboBox_defaultCharacter.SelectedItem.ToString() == comboBox_characters.SelectedItem.ToString())
+                comboBox_defaultCharacter.Text = String.Empty;
+            
             /* If this was the default, make sure it isn't */
             if (temp.DefaultCharIdentifier == comboBox_characters.SelectedItem.ToString())
                 temp.DefaultCharIdentifier = string.Empty;
@@ -182,9 +198,20 @@ namespace ISXEVE_Bot_Framework.Forms
             /* Do the removal */
             comboBox_defaultCharacter.Items.Remove(comboBox_characters.SelectedItem.ToString());
             comboBox_characters.Items.Remove(comboBox_characters.SelectedItem.ToString());
+            textBox_identifier.Text = String.Empty;
+            textBox_charName.Text = String.Empty;
+            textBox_charId.Text = String.Empty;
+            comboBox_characters.Text = String.Empty;
 
             /* Re-attach the events */
             attachEventTargets();
+
+            /* Check for possible characters to switch to */
+            if (comboBox_characters.Items.Count > 0)
+            {
+                comboBox_characters.SelectedIndex = 0;
+                comboBox_defaultCharacter.SelectedIndex = 0;
+            }
         }
 
         private void textBox_charName_TextChanged(object sender, EventArgs e)

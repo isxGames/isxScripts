@@ -84,7 +84,6 @@
             // 
             // groupBox_characterSettings
             // 
-            this.groupBox_characterSettings.Controls.Add(this.textBox_identifier);
             this.groupBox_characterSettings.Controls.Add(this.textBox_charName);
             this.groupBox_characterSettings.Controls.Add(this.textBox_charId);
             this.groupBox_characterSettings.Location = new System.Drawing.Point(12, 92);
@@ -96,7 +95,7 @@
             // 
             // textBox_identifier
             // 
-            this.textBox_identifier.Location = new System.Drawing.Point(400, 19);
+            this.textBox_identifier.Location = new System.Drawing.Point(127, 67);
             this.textBox_identifier.Name = "textBox_identifier";
             this.textBox_identifier.Size = new System.Drawing.Size(100, 20);
             this.textBox_identifier.TabIndex = 2;
@@ -104,7 +103,7 @@
             // 
             // textBox_charName
             // 
-            this.textBox_charName.Location = new System.Drawing.Point(203, 19);
+            this.textBox_charName.Location = new System.Drawing.Point(6, 45);
             this.textBox_charName.Name = "textBox_charName";
             this.textBox_charName.Size = new System.Drawing.Size(100, 20);
             this.textBox_charName.TabIndex = 1;
@@ -133,7 +132,7 @@
             // comboBox_characters
             // 
             this.comboBox_characters.FormattingEnabled = true;
-            this.comboBox_characters.Location = new System.Drawing.Point(194, 65);
+            this.comboBox_characters.Location = new System.Drawing.Point(259, 67);
             this.comboBox_characters.Name = "comboBox_characters";
             this.comboBox_characters.Size = new System.Drawing.Size(121, 21);
             this.comboBox_characters.TabIndex = 3;
@@ -141,7 +140,7 @@
             // 
             // button_removeCharacter
             // 
-            this.button_removeCharacter.Location = new System.Drawing.Point(414, 65);
+            this.button_removeCharacter.Location = new System.Drawing.Point(412, 65);
             this.button_removeCharacter.Name = "button_removeCharacter";
             this.button_removeCharacter.Size = new System.Drawing.Size(104, 23);
             this.button_removeCharacter.TabIndex = 4;
@@ -154,6 +153,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(530, 264);
+            this.Controls.Add(this.textBox_identifier);
             this.Controls.Add(this.button_removeCharacter);
             this.Controls.Add(this.comboBox_characters);
             this.Controls.Add(this.button_addCharacter);
@@ -166,6 +166,7 @@
             this.groupBox_characterSettings.ResumeLayout(false);
             this.groupBox_characterSettings.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

@@ -24,6 +24,9 @@ namespace ISXEVE_Bot_Framework.Forms
             /* Temporarily detach event */
             listBox_accounts.SelectedIndexChanged -= new EventHandler(listBox_accounts_SelectedIndexChanged);
 
+            /* Clear the listbox */
+            listBox_accounts.Items.Clear();
+
             /* Populate accounts list box */
             foreach (string s in Directory.GetFiles(Settings.FilePath + "\\"))
                 listBox_accounts.Items.Add(s);
@@ -83,6 +86,10 @@ namespace ISXEVE_Bot_Framework.Forms
 
         void listBox_accounts_SelectedIndexChanged(object sender, EventArgs e)
         {
+            /* Make sure we selected something */
+            if (listBox_accounts.SelectedItem == null)
+                return;
+
             /* Clear any existing items in the listbox */
             listBox_characters.Items.Clear();
             /* Use a filestream and XML deserializer to load Settings for an account */

@@ -77,9 +77,7 @@ namespace ISXEVE_Bot_Framework
                         login.SetUsername(Settings.ActiveSettings.UserName);
                         login.SetPassword(Settings.ActiveSettings.PassWord);
                         login.Connect();
-                        sleepTimer = 20000;
-                        /* 10 seconds was too short, trying 15. */
-                        /* 15 also shaved it very close on my decent laptop. Bumping it to 20. */
+                        sleepTimer = 1;
                     }
 
                     /* If login was not valid, we should either be at charselect or ingame. */
@@ -132,8 +130,9 @@ namespace ISXEVE_Bot_Framework
                 /* Either wait one frame or a specified length of time, whichever is longer. */
                 if (sleepTimer > 0)
                 {
-                    Logging.OnLogMessage(_logIn, "DoLogIn(): Sleeping " + sleepTimer.ToString() + "ms.");
-                    Thread.Sleep(sleepTimer);
+                    Logging.OnLogMessage(_logIn, "DoLogIn(): Sleeping until Login is null or invalid.");
+                    while (!LavishScriptAPI.LavishScriptObject.IsNullOrInvalid(login))
+                        Thread.Sleep(0);
                 }
                 else if (sleepTimer == 0)
                 {
