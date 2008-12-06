@@ -80,6 +80,7 @@ function Class_Declaration()
 	declare Custom custom_overrides script
 	declare ManaFlowThreshold int script 60
 	declare CureMode bool script FALSE
+	declare StunMode bool script FALSE
 
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
@@ -104,12 +105,13 @@ function Class_Declaration()
 	ManaFlowThreshold:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ManaFlowThreshold,60]}]
 	UIElement[EQ2 Bot].FindUsableChild[sldManaFlowThreshold,slider]:SetValue[${ManaFlowThreshold}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureMode,FALSE]}]
+	StunMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[StunMode,FALSE]}]
 
 	NoEQ2BotStance:Set[TRUE]
 
 	Event[EQ2_FinishedZoning]:AttachAtom[Illusionist_FinishedZoning]
 
-	if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]}) || (${Me.Inventory[Mirage Star](exists)} && ${Me.Inventory[Mirage Star].Tier.Equal[MYTHICAL]})
+	if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]})
 		HaveMythical:Set[TRUE]
 }
 
@@ -133,12 +135,14 @@ function Pulse()
 	;; check this at least every 0.5 seconds
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
-		call CheckHeals
-		call RefreshPower
+		call CheckNonDps
 		call CheckSKFD
 
-		if ${MezzMode}
-			call Mezmerise_Targets
+
+		if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]})
+			HaveMythical:Set[TRUE]
+		else
+			HaveMythical:Set[FALSE]
 
 		;; Prismatic Proc
 		;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
@@ -709,7 +713,44 @@ function CheckCastBeam()
 	call ProcessTriggers
 }
 
+/* This function will be called between every spell or spell group when
+   not in DPS or UltraDPS mode. */
 
+function CheckNonDps(... Args)
+{
+	; Check mezzmode
+	if ${MezzMode}
+		call Mezmerise_Targets
+
+	; Check stunmode
+	if ${StunMode} && !${DPSMode}
+	{
+		if ${KillTarget} && !${Actor[${KillTarget}].IsEpic}
+		{
+			if ${Me.Ability[${SpellType[190]}].IsReady} && ${Me.Maintained[${SpellType[191]}].Target.ID} != ${KillTarget}
+			{
+				if ${Me.Maintained[${SpellType[190]}].Target.ID} != ${KillTarget}
+				{
+					call CastSpellRange TargetID=${KillTarget} start=190 ignoremaintained=1
+				}
+			}
+			elseif ${Me.Ability[${SpellType[191]}].IsReady} && ${Me.Maintained[${SpellType[190]}].Target.ID} != ${KillTarget}
+			{
+				if ${Me.Maintained[${SpellType[191]}].Target.ID} != ${KillTarget}
+				{
+					call CastSpellRange TargetID=${KillTarget} start=191 ignoremaintained=1
+				}
+			}
+		}
+	}
+
+	; check heals/cures
+	call CheckHeals
+
+	; check power
+	if !${UltraDPSMode}
+		call RefreshPower
+}
 
 function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
@@ -810,6 +851,7 @@ function Combat_Routine(int xAction)
 	declare FightingHeroicMob bool local
 	declare DoShortTermBuffs bool local
 	spellsused:Set[0]
+
 
 
 	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
@@ -951,8 +993,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; TO DO (Revamp)
-	if ${MezzMode}
-		call Mezmerise_Targets
+	call CheckNonDps
 
 	if ${Me.Pet(exists)}
 	{
@@ -1071,8 +1112,7 @@ function Combat_Routine(int xAction)
 		call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 		spellsused:Inc
 
-		if ${MezzMode}
-			call Mezmerise_Targets
+		call CheckNonDps
 
 		call VerifyTarget
 		if !${Return}
@@ -1126,8 +1166,7 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${MezzMode}
-			call Mezmerise_Targets
+		call CheckNonDps
 
 		call VerifyTarget
 		if !${Return}
@@ -1158,8 +1197,7 @@ function Combat_Routine(int xAction)
 			return CombatComplete
 	}
 
-	if ${MezzMode}
-		call Mezmerise_Targets
+	call CheckNonDps
 
 	call VerifyTarget
 	if !${Return}
@@ -1317,8 +1355,7 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${MezzMode}
-		call Mezmerise_Targets
+	call CheckNonDps
 
 	call VerifyTarget
 	if !${Return}
@@ -1904,9 +1941,11 @@ function CheckHeals()
 	else
 		DoCures:Set[FALSE]
 
-	if !${UltraDPSMode}
+	if !${UltraDPSMode} || ${EpicMode}
 	{
 		; This routine will use 'Crystallized Spirits', the Fury 'Pact of Nature' ability (if applicable), etc...
+		; CommonHeals also uses cure potions, if required and enabled. Would rather use potions and save cure arcane
+		; for groupmates who need it -- especially since common cure potions are same as old rares.
 		call CommonHeals 60
 	}
 
