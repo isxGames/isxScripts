@@ -721,7 +721,7 @@ function CheckNonDps(... Args)
 	; Check mezzmode
 	if ${MezzMode}
 		call Mezmerise_Targets
-
+		
 	; AA Bewilderment -- Use whenever it's up. It casts fast anyway.
 	if ${Me.Ability[id,3903537279].IsReady}
 	{
@@ -735,6 +735,13 @@ function CheckNonDps(... Args)
 		}
 	}
 
+	if ${KillTarget} > 0
+	{
+		call VerifyTarget
+		if !${Return}
+			return	
+	}
+		
 	; Check stunmode
 	if ${StunMode} && !${DPSMode}
 	{
@@ -1392,15 +1399,15 @@ function Combat_Routine(int xAction)
 	{
 		;; Straight Nukes
 		case Silence
-			;; This spell is just too slow to cast and typically does about 40 dps over an entire fight ..it is just not worth it.
-			;if !${DPSMode} && !${UltraDPSMode}
-			;{
+			;; This spell is definately not worth it for epic fights.  They are immune to the silence and the dps from it is crap
+			if !${FightingEpicMob}
+			{
 				if (${Me.Ability[${SpellType[260]}].IsReady})
 				{
 					call _CastSpellRange 260 0 0 0 ${KillTarget} 0 0 0 1
 					spellsused:Inc
 				}
-			;}
+			}
 			call VerifyTarget
 			if !${Return}
 				return CombatComplete
