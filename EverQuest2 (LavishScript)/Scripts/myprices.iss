@@ -178,8 +178,9 @@ function main(string goscan, string goscan2)
 			{
 				Call CheckFocus
 				currentitem:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}]
+				
 				; test here
-				EQ2UIPage[Inventory,Market].Child[page,MainPage.TabPages.SellPage]:HighlightRow[${currentpos}]
+				; EQ2UIPage[Inventory,Market].Child[page,MainPage.TabPages.SellPage]:HighlightRow[${currentpos}]
 				; container number
 				i:Set[${itemprice[${currentpos}]}]
 
@@ -1298,6 +1299,7 @@ function BrokerSearch(string lookup, bool BuyNameOnly)
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
 	Declare stopsearch bool FALSE local
+	Declare TempSearch string local
 	wait 5
 	; check if broker has any listed to compare with your item
 	if !${BuyNameOnly}
@@ -1321,8 +1323,9 @@ function BrokerSearch(string lookup, bool BuyNameOnly)
 			CurrentItem:Set[1]
 			do
 			{
+				TempSearch:Set[${Vendor.Broker[${CurrentItem}]}]
 				; check that the items name being looked at is an exact match and not just a partial match
-				if ${lookup.Equal[${Vendor.Broker[${CurrentItem}]}]}
+				if ${lookup.Equal["${TempSearch}"]}
 				{
 					; if checkbox set to ignore broker fee when matching prices
 					if ${MatchActual}
@@ -2527,7 +2530,6 @@ function togglebags()
 atom(script) EQ2_onInventoryUpdate()
 {
 	InventorySlotsFree:Set[${Me.InventorySlotsFree}]
-	Echo Character now has ${InventorySlotsFree} Slots free in bags
 }
 
 function echolog(string logline)
