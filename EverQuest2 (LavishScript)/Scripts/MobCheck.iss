@@ -9,9 +9,9 @@
 ;						 action state vs you and your group or raid.
 ;
 ; Members:
-;			AggroGroup 	- Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
-;		  Count 		 	- returns count of mobs engaged in combat near you.  Includes mobs engaged to
-;								 	 	other pcs/groups
+;			AggroGroup	- Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
+;			Count			- returns count of mobs engaged in combat near you.  Includes mobs engaged to
+;										other pcs/groups
 ;			Detect			-	returns true if you, group, raidmember, or pets have agro from mob in range
 ;			Target			-	Returns true if the Actor passed is agro and targeting you,group, or raid
 ;
@@ -24,12 +24,10 @@
 
 #define _MobCheck_
 
-;Instantiate the object
-variable MobCheck MobCheck
 variable int EncounterMatrix[20,20]
 variable int AggroMatrix[100]
 
-objectdef MobCheck
+objectdef mobcheck
 {
 	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
 	member:bool AggroGroup(int actorid)
@@ -189,3 +187,6 @@ objectdef MobCheck
 		}
 	}
 }
+
+;Instantiate the object
+variable mobcheck MobCheck

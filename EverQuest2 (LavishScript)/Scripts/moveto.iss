@@ -58,6 +58,16 @@
 ; v1.0 - * Initial Release
 ;-----------------------------------------------------------------------------------------------
 
+; PROVIDES:
+; MobCheck.iss include
+; #defines for movement keys.
+;
+; function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, int StopOnAggro)
+; function CheckMovingAggro()
+; function Obstacle(int delay)
+; function StopRunning()
+; function StartRunning()
+
 
 
 #define _moveto_
