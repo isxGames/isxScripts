@@ -722,6 +722,19 @@ function CheckNonDps(... Args)
 	if ${MezzMode}
 		call Mezmerise_Targets
 
+	; AA Bewilderment -- Use whenever it's up. It casts fast anyway.
+	if ${Me.Ability[id,3903537279].IsReady}
+	{
+		if ${KillTarget}>0
+		{
+			if ${Me.IsHated} && ${Actor[${MainTankID}].InCombatMode}
+			{
+				call CastSpellRange AbilityID=3903537279 TargetID=${KillTarget} IgnoreMaintained=1
+				spellsused:Inc
+			}
+		}
+	}
+
 	; Check stunmode
 	if ${StunMode} && !${DPSMode}
 	{
@@ -1372,11 +1385,7 @@ function Combat_Routine(int xAction)
 	}
 
 	; AA Bewilderment -- Use whenever it's up. It casts fast anyway.
-	if ${Me.Ability[id,3903537279].IsReady}
-	{
-		call CastSpellRange AbilityID=3903537279 TargetID=${KillTarget} IgnoreMaintained=1
-		spellsused:Inc
-	}
+	; Moved to CheckNonDps function.
 
 	;Debug:Echo["Entering Switch (${Action[${xAction}]})"]
 	switch ${Action[${xAction}]}
