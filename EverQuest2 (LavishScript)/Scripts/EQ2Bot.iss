@@ -254,8 +254,11 @@ variable int PathType
 	#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.iss
 #endif
 
-#ifndef _moveto_
-	#include ${LavishScript.HomeDirectory}/Scripts/moveto.iss
+/* do we really need this? I don't find any reference to the mobcheck object in this script. */
+/* (note) This was included from moveto.iss, and this include replaces that include. */
+/* (note) This may actually be used by eq2botlib.iss, in which case the include should be moved there. */
+#ifndef _MobCheck_
+	#include "${LavishScript.HomeDirectory}/Scripts/MobCheck.iss"
 #endif
 
 #ifndef _PositionUtils_
