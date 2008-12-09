@@ -475,9 +475,9 @@ function main()
 			;; Make sure that MainAssistID and/or MainTankID are still valid (ie, IDs sometimes change on zoning...)
 			if !${Actor[${MainTankID}](exists)}
 			{
-				if ${Actor[exactname,${MainTank}](exists)}
+				if ${Actor[exactname,${MainTankPC}](exists)}
 				{
-					MainTankID:Set[${Actor[exactname,${MainTank}].ID}]
+					MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
 				}
 			}
 			if !${Actor[${MainAssistID}](exists)}
@@ -693,9 +693,9 @@ function main()
 			;; Make sure that MainAssistID and/or MainTankID are still valid (ie, IDs sometimes change on zoning...)
 			if !${Actor[${MainTankID}](exists)}
 			{
-				if ${Actor[exactname,${MainTank}](exists)}
+				if ${Actor[exactname,${MainTankPC}](exists)}
 				{
-					MainTankID:Set[${Actor[exactname,${MainTank}].ID}]
+					MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
 				}
 			}
 			if !${Actor[${MainAssistID}](exists)}
