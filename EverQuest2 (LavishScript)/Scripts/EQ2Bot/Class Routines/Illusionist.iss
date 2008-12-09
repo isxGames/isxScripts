@@ -123,6 +123,9 @@ function Pulse()
 	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
+	;; Note:  If you need to pulse on more than one interval (e.g. some things every half second, other things every 4 seconds) you will
+	;         need to create another variable similar to ClassPulseTimer for your other timers.
+	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
@@ -135,7 +138,18 @@ function Pulse()
 	;; check this at least every 0.5 seconds
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
-		call CheckNonDps
+
+		; Check mezzmode
+		if ${MezzMode}
+			call Mezmerise_Targets
+
+		; check heals/cures
+		call CheckHeals
+
+		; check power
+		if !${UltraDPSMode}
+			call RefreshPower
+
 		call CheckSKFD
 
 
@@ -721,11 +735,11 @@ function CheckNonDps(... Args)
 	; Check mezzmode
 	if ${MezzMode}
 		call Mezmerise_Targets
-		
+
 	; AA Bewilderment -- Use whenever it's up. It casts fast anyway.
 	if ${Me.Ability[id,3903537279].IsReady}
 	{
-		if ${KillTarget}>0
+		if ${KillTarget}
 		{
 			if ${Me.IsHated} && ${Actor[${MainTankID}].InCombatMode}
 			{
@@ -735,13 +749,13 @@ function CheckNonDps(... Args)
 		}
 	}
 
-	if ${KillTarget} > 0
+	if ${KillTarget}
 	{
 		call VerifyTarget
 		if !${Return}
-			return	
+			return
 	}
-		
+
 	; Check stunmode
 	if ${StunMode} && !${DPSMode}
 	{
