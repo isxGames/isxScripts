@@ -219,6 +219,36 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Use Pets]}</Data>
 	</Commandcheckbox>
+	<Text name='lblPetSelect'>
+	  <x>10</x>
+	  <y>190</y>
+	  <Height>20</Height>
+		<Width>80</Width>
+		<Alignment>Left</Alignment>
+		<Text>Pet Type:</Text>
+	</Text>
+	<combobox Name='PetSelect'>
+		<X>30</X>
+		<Y>190</Y>
+		<Width>65</Width>
+		<Height>20</Height>
+		<AutoTooltip>Select Pet Form</AutoTooltip>
+		<Items>
+		  <Item Value='0'>None</Item>
+			<Item Value='1'>Tome</Item>
+			<Item Value='2'>Gargoyle</Item>
+			<Item Value='3'>Drake</Item>
+		</items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetSelect]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetSelect]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[ShiftForm]:Set[${This.SelectedItem.Value}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[ShiftForm,${This.SelectedItem.Value}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick></OnLeftClick>
+	</combobox>
 	<Commandbutton name='RefreshRadianceProc'>
 		<X>275</X>
 		<Y>10</Y>

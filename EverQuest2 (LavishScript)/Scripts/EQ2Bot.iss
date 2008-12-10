@@ -3279,7 +3279,7 @@ function Pull(string npcclass)
 			}
 			;;;; Otherwise, Using "PullSpell" ;;;;;;;;;;;;;
 
-			call CastSpellNow "${PullSpell}"
+			call CastSpellNOW "${PullSpell}"
 			CurrentAction:Set["${Target} pulled using ${PullSpell}"]
 			;Debug:Echo["Pulled...waiting for mob to come within range"]
 			do

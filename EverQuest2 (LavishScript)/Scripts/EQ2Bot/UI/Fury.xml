@@ -111,7 +111,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MeleeAAAttacksMode]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='AoEMode'>
 		<X>5%</X>
 		<Y>110</Y>
@@ -203,7 +203,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseFastOffensiveSpellsOnly]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='UseWrathOfNature'>
 		<Visible>1</Visible>
 		<X>5%</X>
@@ -313,7 +313,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<Height>20</Height>
 		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
 		<Items>
-		    <Item Value='0'>None</Item>
+		  <Item Value='0'>None</Item>
 			<Item Value='1'>Wolf</Item>
 			<Item Value='2'>Tiger</Item>
 			<Item Value='3'>Treant</Item>
@@ -328,7 +328,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick></OnLeftClick>
 	</combobox>
-	
+
 	<Text Name='lblPactOfNatureGroupMember'>
 		<X>36%</X>
 		<Y>280</Y>
@@ -341,7 +341,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLoad>
 			if ${Me.Ability[Pact of Nature](exists)}
 				This:ToggleVisible
-		</OnLoad>		
+		</OnLoad>
 	</Text>
 	<combobox name='PactOfNature'>
 		<X>55%</X>
@@ -364,7 +364,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},PactOfNature,0,0,0]
 		</OnLeftClick>
 	</combobox>
-	
+
 	<Text Name='lblBuffBatGroupMember'>
 		<X>335</X>
 		<Y>90</Y>
@@ -713,7 +713,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[InfusionMode]}</Data>
 	</Commandcheckbox>
-	
+
 	<Commandcheckbox Name='CombatRez'>
 		<Visible>1</Visible>
 		<X>180</X>
