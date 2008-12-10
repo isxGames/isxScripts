@@ -38,7 +38,7 @@ function Class_Declaration()
 	declare BuffEscutcheon bool script FALSE
 	declare BuffCabalistCover bool script TRUE
 	declare PetMode bool script 1
-	declare PetDefStance bool script 1
+	declare PetDefStance INT script 1
 
 	declare ShardQueue queue:string script
 	declare ShardRequestTimer int script ${Time.Timestamp}
@@ -54,7 +54,7 @@ function Class_Declaration()
 	BuffEscutcheon:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffEscutcheon,,FALSE]}]
 	BuffSeal:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSeal,FALSE]}]
 	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
-	PetDefStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PetDefStance,TRUE]}]
+	PetDefStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PetDefStance,1]}]
 
 	switch ${SpellType[360]}
 	{
