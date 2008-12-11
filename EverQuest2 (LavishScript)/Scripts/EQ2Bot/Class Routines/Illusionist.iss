@@ -431,7 +431,7 @@ function Buff_Routine(int xAction)
 		case Melee_Buff
 			Counter:Set[1]
 			tempvar:Set[1]
-
+																													
 			;; If we have mythical, just cast on self since it is a group buff
 			if (${HaveMythical})
 			{
@@ -611,9 +611,16 @@ function Buff_Routine(int xAction)
 		case AA_Time_Compression
 			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${BuffTarget.Equal["No one"]}
+			{
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				break
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			}
+			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				wait 2
+			}
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
 			{
 				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
@@ -636,9 +643,16 @@ function Buff_Routine(int xAction)
 		case AA_Illusory_Arm
 			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if ${BuffTarget.Equal["No one"]}
+			{
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				break
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			}
+			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				wait 2
+			}
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
 			{
 				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
