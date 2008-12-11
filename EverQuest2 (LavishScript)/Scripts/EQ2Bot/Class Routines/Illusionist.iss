@@ -435,7 +435,8 @@ function Buff_Routine(int xAction)
 			;; If we have mythical, just cast on self since it is a group buff
 			if (${HaveMythical})
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				;; ONLY if we have someone selected. Mythical Illy vs Mythical Illy sucks.
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${UIElement[lbBuffDPS@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID} 0 0 1 0 0
 				break
 			}
