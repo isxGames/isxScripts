@@ -431,7 +431,7 @@ function Buff_Routine(int xAction)
 		case Melee_Buff
 			Counter:Set[1]
 			tempvar:Set[1]
-																													
+
 			;; If we have mythical, just cast on self since it is a group buff
 			if (${HaveMythical})
 			{
@@ -1135,8 +1135,8 @@ function Combat_Routine(int xAction)
 			LastSpellCast:Set[23]
 			spellsused:Inc
 		}
-		
-		call CheckCastBeam	
+
+		call CheckCastBeam
 
 		if ${Actor[${KillTarget}].Health}
 		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
@@ -1151,8 +1151,8 @@ function Combat_Routine(int xAction)
 	call VerifyTarget
 	if !${Return}
 		return CombatComplete
-		
-	call CheckCastBeam	
+
+	call CheckCastBeam
 
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
