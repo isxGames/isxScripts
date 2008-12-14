@@ -223,8 +223,8 @@ Radar Testing
 				<X>0</X>
 				<Y>0</Y>
 				<Width>300</Width>
-				<Height>46</Height>
-				<Alpha>2.5</Alpha>
+				<Height>66</Height>
+				<Alpha>100</Alpha>
 				<FadeDelay>0</FadeDelay>
 				<FadeDuration>200</FadeDuration>
 				<FadeAlpha>0</FadeAlpha>
@@ -279,11 +279,30 @@ Radar Testing
 					</Slider>
 					<Text Name="zoomminus">
 						<X>137</X>
-						<Y>28</Y>
+						<Y>25</Y>
 						<Height>18</Height>
 						<Width>20</Width>
 						<Text>-</Text>
 					</Text>
+					<Text name="AlphaLabel">
+						<X>5</X>
+						<Y>47</Y>
+						<Width>50</Width>
+						<Height>18</Height>
+						<Text>Bkg</Text>
+					</Text>
+					<Slider name="BackgroundAlpha">
+						<X>52</X>
+						<Y>45</Y>
+						<Width>85</Width>
+						<Height>18</Height>
+						<Range>99</Range>
+						<OnChange>
+							UIElement[Client@Radar Window]:SetAlpha[${Math.Calc[${This.Value} / 100 + 0.01]}]
+							echo ${Math.Calc[${This.Value} / 100 + 0.01]} ${UIElement[Client@Radar Window].Alpha} ${This.AbsoluteAlpha}
+						</OnChange>
+						<OnLoad>This:SetValue[${Math.Calc[${UIElement[Client@Radar Window].Alpha} * 100]}]</OnLoad>
+					</Slider>
 					<Text Name='zoom value' Template='EQ2.text'>
 						<X>80%</X>
 						<Y>26</Y>
@@ -340,12 +359,12 @@ Radar Testing
 						</OnLeftClick>
 					</TabControl>
 				</Children>
--			</frame>
+			</frame>
 			<eq2radar Name='radar1'>
 				<X>0</X>
 				<Y>20</Y>
-			  <Alpha>2.5</Alpha>
-			  <Width>100%</Width>
+				<Alpha>200</Alpha>
+				<Width>100%</Width>
 				<Height>r20</Height>
 				<Visible>1</Visible>
 				<ShowMe>1</ShowMe>
@@ -371,7 +390,7 @@ Radar Testing
 			<eq2radar Name='radar2'>
 				<X>0</X>
 				<Y>20</Y>
-			  <Alpha>2.5</Alpha>
+			  <Alpha>200</Alpha>
 			  <Width>100%</Width>
 				<Height>r20</Height>
 				<Visible>0</Visible>
@@ -397,7 +416,7 @@ Radar Testing
 			<eq2radar Name='radar3'>
 				<X>0</X>
 				<Y>20</Y>
-			  <Alpha>2.5</Alpha>
+			  <Alpha>200</Alpha>
 			  <Width>100%</Width>
 				<Height>r20</Height>
 				<Visible>0</Visible>
@@ -423,7 +442,7 @@ Radar Testing
 			<eq2radar Name='radar4'>
 				<X>0</X>
 				<Y>20</Y>
-			  <Alpha>2.5</Alpha>
+			  <Alpha>200</Alpha>
 			  <Width>100%</Width>
 				<Height>r20</Height>
 				<Visible>0</Visible>
@@ -435,7 +454,7 @@ Radar Testing
 				<ShowSpecials>1</ShowSpecials>
 				<ShowResources>0</ShowResources>
 				<ShowNoKillNPCs>1</ShowNoKillNPCs>
-				<ShowCorpses>0</ShowCorpses
+				<ShowCorpses>0</ShowCorpses>
 				<ShowPets>0</ShowPets>
 				<ShowMyPet>0</ShowMyPet>
 				<ShowNamedNPCs>0</ShowNamedNPCs>
