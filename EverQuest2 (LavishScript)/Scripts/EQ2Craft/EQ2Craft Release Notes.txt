@@ -1,5 +1,10 @@
 Revision History ||
 ===================
+v8.59 - Precision path writers rejoice! Craft will no longer try to stand on top of writ givers,
+        wholesalers, or brokers. It will now stop within 3 meters of the point set in the
+        navigation, and NOT try to adjust after that. Extra tight precision is still in effect
+        for tradeskill devices.
+
 v8.58 - Fixed error with saving recipe favorite lists.
       - Hopefully fixed guild hall targetting of non-Elaborate tables.
 
