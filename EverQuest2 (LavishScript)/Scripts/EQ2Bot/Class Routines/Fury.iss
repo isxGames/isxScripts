@@ -91,6 +91,7 @@ function Class_Declaration()
 	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
 	declare UseWrathOfNature bool script 0
+	declare UseMythicalOn string script 
 	
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
@@ -123,6 +124,7 @@ function Class_Declaration()
 	UseFastOffensiveSpellsOnly:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseFastOffensiveSpellsOnly,FALSE]}]
 	UseBallLightning:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseBallLightning,FALSE]}]
 	UseWrathOfNature:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseWrathOfNature,FALSE]}]
+	UseMythicalOn:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseMythicalOn,"No One"]}]
 
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
 	BuffSavageryGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSavageryGroupMember,]}]
@@ -221,6 +223,8 @@ function Buff_Init()
 
 	PreAction[14]:Set[BuffPactOfNature]
 	PreSpellRange[14,1]:Set[399]
+	
+	PreAction[15]:Set[BuffMythical]
 }
 
 function Combat_Init()
@@ -513,28 +517,71 @@ function Buff_Routine(int xAction)
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				break
-		case BuffBat
-			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				
+		case BuffMythical
+			BuffTarget:Set[${UIElement[cbUseMythicalOn@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			
+			if ${BuffTarget.Equal[No One]}
 				break
 
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Me.Maintained["Wrath's Blessing"].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+				break
+			else
+				Me.Maintained["Wrath's Blessing"]:Cancel
+
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			{
+				if ${Me.CastingSpell}
+				{
+					do
+					{
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					wait 2
+				}
+				
+				if !${Me.Equipment[Wrath of Nature].IsReady}
+					break
+				
+				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
+				{
+					Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}]:DoTarget
+					wait 2
+					Me.Equipment[Wrath of Nature]:Use
+					wait 2
+					do
+					{
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					wait 1	
+				}
+			}
+			break
+				
+		case BuffBat
+			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				break
+			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${BuffTarget.Token[2,:].Equal[Me]}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-			elseif ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
+			elseif ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
 		case BuffSavagery
 			BuffTarget:Set[${UIElement[cbBuffSavageryGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				break
 
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+				break
+			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 
 			break
@@ -543,13 +590,13 @@ function Buff_Routine(int xAction)
 				break
 
 			BuffTarget:Set[${UIElement[PactOfNature@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				break
 
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+				break
+			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 
 			break
@@ -835,7 +882,7 @@ function Combat_Routine(int xAction)
 					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				else
 					call ReacquireTargetFromMA
-			}
+			}		
 			break
 
 		case AANuke
@@ -846,9 +893,10 @@ function Combat_Routine(int xAction)
 			{
 				call CheckForMez "Fury AANuke"
 				if ${Return.Equal[FALSE]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}				
 				else
 					call ReacquireTargetFromMA
+			
 			}
 			break
 
