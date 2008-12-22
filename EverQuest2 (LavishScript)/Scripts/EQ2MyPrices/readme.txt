@@ -410,6 +410,11 @@ The more feedback I get the better I know which direction to take this and the f
 Revisions
 =========
 
+Version 0.13d
+-------------
+
+Added option 'Take Coin' , unticking this will stop the script take the coin from the broker when scanning your boxes.
+
 Version 0.13c
 -------------
 
