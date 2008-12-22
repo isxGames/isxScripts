@@ -335,7 +335,6 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-
 					<checkbox Name='ActualPrice'>
 						<X>5%</X>
 						<Y>230</Y>
@@ -368,52 +367,77 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<checkbox Name='TakeCoin'>
+						<X>5%</X>
+						<Y>250</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Take Coin</Text>
+						<AutoTooltip>
+							Take Coin From Broker boxes.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.TakeCoin}
+						{
+							UIElement[TakeCoin@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[TakeCoin@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[TakeCoin@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting TakeCoin TRUE]
+								Script[myprices].VariableScope.TakeCoin:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting TakeCoin FALSE]
+								Script[myprices].VariableScope.TakeCoin:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
 					
 					<Text Name='Normal'>
 						<X>5%</X>
-						<Y>250</Y>
+						<Y>270</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Black : Not Changed</Text>
 					</Text>
-					<Text Name='Green'>
-						<X>5%</X>
-						<Y>265</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Green : Matched Price</Text>
-					</Text>
 					<Text Name='Red'>
 						<X>5%</X>
-						<Y>280</Y>
+						<Y>285</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Red : Unable to match</Text>
 					</Text>
 					<Text Name='Blue'>
 						<X>5%</X>
-						<Y>295</Y>
+						<Y>300</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Blue : New Item Listed</Text>
 					</Text>
 					<Text Name='Orange'>
 						<X>5%</X>
-						<Y>310</Y>
+						<Y>315</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Orange : Item Sold</Text>
 					</Text>
 					<Text Name='Yellow'>
 						<X>5%</X>
-						<Y>325</Y>
+						<Y>330</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Yellow : Craft Flagged</Text>
 					</Text>
 					<Text Name='PauseTimerText'>
 						<X>25</X>
-						<Y>345</Y>
+						<Y>350</Y>
 						<Width>150</Width> 
 						<Height>15</Height>
 						<Text>Delay in Minutes :</Text>
@@ -421,7 +445,7 @@
 
 					<Textentry Name='PauseTimer'>
 						<X>140</X>
-						<Y>345</Y>
+						<Y>350</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
@@ -431,7 +455,7 @@
 					</Textentry>
 					<Commandbutton name='Craft'>
 						<X>5%</X>
-						<Y>365</Y>
+						<Y>370</Y>
 						<Width>100</Width>
 						<Height>20</Height>
 						<Text>Craft List</Text>
@@ -445,7 +469,7 @@
 					</Commandbutton>
 					<Commandbutton name='Place'>
 						<X>5%</X>
-						<Y>390</Y>
+						<Y>395</Y>
 						<Width>100</Width>
 						<Height>20</Height>
 						<Text>Place Items</Text>

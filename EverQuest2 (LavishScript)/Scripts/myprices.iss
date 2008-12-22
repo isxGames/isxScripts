@@ -1,13 +1,14 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13c :  released 11th November 2008
+; Version 0.13d :  released 22nd December 2008
 ;
 ; Declare Variables
 ;
 variable BrokerBot MyPrices
 variable bool MatchLowPrice
 variable bool IncreasePrice
+variable bool TakeCoin=FALSE
 variable bool Exitmyprices=FALSE
 variable bool Pausemyprices=TRUE
 variable bool MerchantMatch
@@ -107,7 +108,8 @@ function main(string goscan, string goscan2)
 	
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	
-	call AddLog "Running MyPrices Version 0.13c : released 11th November 2008" FF11FFCC
+	call AddLog "Running MyPrices Version 0.13d : released 22nd December 2008" FF11FFCC
+	call EchoLog "Version 0.13d : 22nd December 2008"
 	
 	call StartUp	
 
@@ -190,7 +192,7 @@ function main(string goscan, string goscan2)
 				SellLoc:Set[${Me.Vending[${i}].Market}]
 				SellCon:Set[${Me.Vending[${i}]}]
 
-				if ${Me.Vending[${i}].CurrentCoin} > 0
+				if ${Me.Vending[${i}].CurrentCoin} > 0 && ${TakeCoin}
 				{
 					Me.Vending[${i}]:TakeCoin
 				}
@@ -1427,7 +1429,7 @@ function LoadList()
 	{
 		if (${Me.Vending[${i}](exists)})  && ${box[${i}]}
 		{
-			if ${Me.Vending[${i}].CurrentCoin} > 0
+			if ${Me.Vending[${i}].CurrentCoin} > 0 && ${TakeCoin}
 			{
 				Me.Vending[${i}]:TakeCoin
 				wait 10
@@ -2244,6 +2246,7 @@ objectdef BrokerBot
 		PauseTimer:Set[${General.FindSetting[PauseTimer]}]
 		Craft:Set[${General.FindSetting[Craft]}]
 		MatchActual:Set[${General.FindSetting[ActualPrice]}]
+		TakeCoin:Set[${General.FindSetting[TakeCoin]}]
 		box[1]:Set[${General.FindSetting[box1]}]
 		box[2]:Set[${General.FindSetting[box2]}]
 		box[3]:Set[${General.FindSetting[box3]}]
@@ -2262,6 +2265,8 @@ objectdef BrokerBot
 		call echolog "SellItems is  ${SellItems}"
 		call echolog "PauseTimer is ${PauseTimer}"
 		call echolog "Craft is ${Craft}"
+		call echolog "MatchActual is ${MatchActual}"
+		call echolog "TakeCoin is ${TakeCoin}"
 		call echolog "box[1] is ${box[1]}"
 		call echolog "box[2] is ${box[2]}"
 		call echolog "box[3] is ${box[3]}"
