@@ -1138,7 +1138,6 @@ function Combat_Routine(int xAction)
 
 		call CheckCastBeam
 
-		if ${Actor[${KillTarget}].Health}
 		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
 		if (${Me.Ability[${SpellType[383]}].IsReady})
 		{
