@@ -109,7 +109,7 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	
 	call AddLog "Running MyPrices Version 0.13d : released 22nd December 2008" FF11FFCC
-	call EchoLog "Version 0.13d : 22nd December 2008"
+	call echolog "Version 0.13d : 22nd December 2008"
 	
 	call StartUp	
 
