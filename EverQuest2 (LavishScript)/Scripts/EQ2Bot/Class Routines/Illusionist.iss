@@ -812,24 +812,25 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 
 	if ${DoCallCheckPosition}
 	{
+		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+		
 		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 		{
 			if ${MainTank}
 				call CheckPosition 1 0
 			else
 			{
-				TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-				Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
 				if (${TankToTargetDistance} <= 7.5)
 					call CheckPosition 1 1
 			}
 		}
-		else
-		{
+		elseif (${TankToTargetDistance} > 20)
+		{	
 			if ${Actor[${MainTankID}](exists)}
 			{
 				Debug:Echo["Out of Range :: Moving to within 20m of tank"]
-				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Y} 20 1 1
+				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 20 1 1
 			}
 		}
 		DoCallCheckPosition:Set[FALSE]
