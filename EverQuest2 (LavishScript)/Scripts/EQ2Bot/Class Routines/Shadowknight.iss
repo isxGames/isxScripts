@@ -514,6 +514,7 @@ function Combat_Routine(int xAction)
     declare BuffTarget string local
     declare NumNPCs int local
 	declare spellsused int local
+	declare TankToTargetDistance float local
 	spellsused:Set[0]
 
 	if ${DoHOs}
@@ -524,6 +525,37 @@ function Combat_Routine(int xAction)
     	if !${EQ2.HOWindowActive}
     		call CastSpellRange 303
     }
+    
+    
+	if !${NoAutoMovementInCombat} && !${NoAutoMovement} && ${AutoMelee}
+	{
+		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
+		{
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
+			
+			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
+			{
+				if ${FightingEpicMob}
+					call CheckPosition 1 1 ${KillTarget}
+				else
+				{
+					switch ${Actor[${KillTarget}].ConColor}
+					{
+						case Green
+						case Grey
+							Debug:Echo["Calling CheckPosition(1 0)"]
+							call CheckPosition 1 0 ${KillTarget}
+							break
+						Default
+							Debug:Echo["Calling CheckPosition(1 1)"]
+							call CheckPosition 1 1 ${KillTarget}
+							break
+					}
+				}
+			}
+		}
+	}    
 
     ;; uncomment for venril fight
     ;if (${Zone.ShortName.Find[venril]} > 0)

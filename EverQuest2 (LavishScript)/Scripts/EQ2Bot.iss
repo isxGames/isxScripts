@@ -3489,7 +3489,7 @@ function CheckLoot()
 	islooting:Set[FALSE]
 }
 
-function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement)
+function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool IgnoreNoAutoMovementInCombat)
 {
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;; NOTE -- If you are calling this you will need to ensure that the character is not using AutoFollowMode (and/or turn it off appropriately)
@@ -3537,7 +3537,7 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement)
 	{
 		if (${Me.ToActor.InCombatMode} || ${Actor[${MainTankID}].InCombatMode})
 		{
-			if ${NoAutoMovementInCombat}
+			if ${NoAutoMovementInCombat} && !${IgnoreNoAutoMovementInCombat}
 			{
 				Debug:Echo["FastMove() :: NoAutoMovementInCombat ON"]
 				IsMoving:Set[FALSE]
