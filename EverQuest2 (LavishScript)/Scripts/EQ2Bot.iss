@@ -1636,6 +1636,7 @@ function Combat(bool PVP=0)
 {
 	variable int tempvar
 	variable bool ContinueCombat
+	variable float TankToTargetDistance
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
@@ -1830,7 +1831,12 @@ function Combat(bool PVP=0)
 								if ${MainTank}
 									call CheckPosition 1 0 ${KillTarget} 0 1
 								else
-									call CheckPosition 1 1 ${KillTarget} 0 0
+								{
+									TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+									;echo "Combat()-DEBUG:: TankToTargetDistance: ${TankToTargetDistance}"
+									if (${TankToTargetDistance} <= 7.5)									
+										call CheckPosition 1 1 ${KillTarget} 0 0
+								}
 							}
 						}
 						elseif ${Actor[${KillTarget}].Distance}>40 || ${Actor[${MainTankID}].Distance}>40
@@ -2684,8 +2690,8 @@ function StrafeToLeft(uint TID, float destangle)
 		do
 		{
 			lastange:Set[${Position.Angle[${TID}]}]
-			Debug:Echo[Strafing to LEFT from RIGHT Side]
-			Debug:Echo[${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
+			;Debug:Echo[Strafing to LEFT from RIGHT Side]
+			;Debug:Echo[${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}>${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -2720,8 +2726,8 @@ function StrafeToLeft(uint TID, float destangle)
 		do
 		{
 			lastange:Set[${Position.Angle[${TID}]}]
-			Debug:Echo[ Strafing to LEFT from LEFT Side]
-			Debug:Echo[ ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
+			;Debug:Echo[ Strafing to LEFT from LEFT Side]
+			;Debug:Echo[ ${Actor[${TID}](exists)} && ${Position.Angle[${TID}]}<${destangle} && ((${Script.RunningTime}-${xTimer}) < 5000)]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -2800,8 +2806,8 @@ function StrafeToRight(uint TID, float destangle)
 	{
 		do
 		{
-			Debug:Echo[ Strafing to RIGHT from RIGHT Side]
-			Debug:Echo[ ${TID} ${Actor[${TID}].Name} ${Position.Angle[${TID}]}<${destangle}]
+			;Debug:Echo[ Strafing to RIGHT from RIGHT Side]
+			;Debug:Echo[ ${TID} ${Actor[${TID}].Name} ${Position.Angle[${TID}]}<${destangle}]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -2830,8 +2836,8 @@ function StrafeToRight(uint TID, float destangle)
 	{
 		do
 		{
-			Debug:Echo[ Strafing to RIGHT from LEFT Side]
-			Debug:Echo[ ${TID} ${Actor[${TID}].Name} ${Position.Angle[${TID}]}>${destangle}]
+			;Debug:Echo[ Strafing to RIGHT from LEFT Side]
+			;Debug:Echo[ ${TID} ${Actor[${TID}].Name} ${Position.Angle[${TID}]}>${destangle}]
 			if ${movingforward} && ${Actor[${TID}].Distance}<${startdistance}
 			{
 				press -release ${forward}
@@ -3375,6 +3381,10 @@ function CheckLoot()
 {
 	variable int tcount=2
 	variable int tmptimer
+	
+	;; NOTE:  This function really should only be called when 'out of combat'.  Therefore, it is ok to move with
+	;;        FastMove(), even if the user has selected NoAutoMovmement (since we assume they would want the character
+	;;        to override that setting and move to corpses/chests when they checked the "Loot Corpses/Chests" box. 
 
 	if (!${AutoLoot})
 		return
@@ -3406,7 +3416,7 @@ function CheckLoot()
 					wait 2
 				}
 				;Debug:Echo["Moving to ${CustomActor[${tcount}].X}, ${CustomActor[${tcount}].Z}  (Currently at ${Me.X}, ${Me.Z})"]
-				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2
+				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 2 1
 				;ECHO "DEBUG: FastMove() returned '${Return}'"
 				wait 2
 				do
@@ -3453,7 +3463,7 @@ function CheckLoot()
 					EQ2Execute /stopfollow
 					wait 2
 				}
-				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 8
+				call FastMove ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 8 1
 				do
 				{
 					waitframe
@@ -3479,7 +3489,7 @@ function CheckLoot()
 	islooting:Set[FALSE]
 }
 
-function FastMove(float X, float Z, int range)
+function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement)
 {
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;; NOTE -- If you are calling this you will need to ensure that the character is not using AutoFollowMode (and/or turn it off appropriately)
@@ -3505,7 +3515,7 @@ function FastMove(float X, float Z, int range)
 	variable int MoveToRange
 	variable bool IgnoreInCombatChecks
 	
-	if ${NoAutoMovement}
+	if (${NoAutoMovement} && !${IgnoreNoAutoMovement})
 	{
 		Debug:Echo["FastMove() :: NoAutoMovement ON"]
 		return "NOAUTOMOVEMENT"

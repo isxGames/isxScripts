@@ -804,6 +804,7 @@ function CheckNonDps(... Args)
 function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
 	declare BuffTarget string local
+	variable float TankToTargetDistance
 
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
@@ -875,7 +876,12 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 		if ${MainTank}
 			call CheckPosition 1 0
 		else
-			call CheckPosition 1 1
+		{
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+			if (${TankToTargetDistance} <= 7.5)
+				call CheckPosition 1 1
+		}
 		DoCallCheckPosition:Set[FALSE]
 	}
 
@@ -899,6 +905,7 @@ function Combat_Routine(int xAction)
 	declare FightingEpicMob bool local
 	declare FightingHeroicMob bool local
 	declare DoShortTermBuffs bool local
+	declare TankToTargetDistance float local
 	spellsused:Set[0]
 
 
@@ -1065,21 +1072,27 @@ function Combat_Routine(int xAction)
 	{
 		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
 		{
-			if ${FightingEpicMob}
-				call CheckPosition 1 1 ${KillTarget}
-			else
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
+			
+			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
 			{
-				switch ${Actor[${KillTarget}].ConColor}
+				if ${FightingEpicMob}
+					call CheckPosition 1 1 ${KillTarget}
+				else
 				{
-					case Green
-					case Grey
-						Debug:Echo["Calling CheckPosition(1 0)"]
-						call CheckPosition 1 0 ${KillTarget}
-						break
-					Default
-						Debug:Echo["Calling CheckPosition(1 1)"]
-						call CheckPosition 1 1 ${KillTarget}
-						break
+					switch ${Actor[${KillTarget}].ConColor}
+					{
+						case Green
+						case Grey
+							Debug:Echo["Calling CheckPosition(1 0)"]
+							call CheckPosition 1 0 ${KillTarget}
+							break
+						Default
+							Debug:Echo["Calling CheckPosition(1 1)"]
+							call CheckPosition 1 1 ${KillTarget}
+							break
+					}
 				}
 			}
 		}
