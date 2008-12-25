@@ -623,7 +623,8 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 
 function Combat_Routine(int xAction)
 {
-	declare DebuffCnt int  0
+	declare DebuffCnt int local
+	declare TankToTargetDistance float local
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
@@ -631,7 +632,31 @@ function Combat_Routine(int xAction)
 		AutoFollowingMA:Set[FALSE]
 		wait 3
 	}
-
+	
+	if ${DoCallCheckPosition}
+	{
+		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+		{
+			if ${MainTank}
+				call CheckPosition 1 0
+			else
+			{
+				TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+				Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+				if (${TankToTargetDistance} <= 7.5)
+					call CheckPosition 1 1
+			}
+		}
+		else
+		{
+			if ${Actor[${MainTankID}](exists)}
+			{
+				Debug:Echo["Out of Range :: Moving to within 20m of tank"]
+				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Y} 20 1 1
+			}
+		}
+		DoCallCheckPosition:Set[FALSE]
+	}
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; IF "Cast Offensive Spells" is NOT checked
@@ -660,6 +685,7 @@ function Combat_Routine(int xAction)
 
 
     	;maintain debuffs
+    	DebuffCnt:Set[0]
     	if (${DebuffMode})
     	{
     		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
@@ -818,6 +844,38 @@ function Combat_Routine(int xAction)
         		call CheckCures
     	}
 	}
+	
+	
+	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+	{
+		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
+		{
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
+			
+			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
+			{
+				if ${FightingEpicMob}
+					call CheckPosition 1 1 ${KillTarget}
+				else
+				{
+					switch ${Actor[${KillTarget}].ConColor}
+					{
+						case Green
+						case Grey
+							Debug:Echo["Calling CheckPosition(1 0)"]
+							call CheckPosition 1 0 ${KillTarget}
+							break
+						Default
+							Debug:Echo["Calling CheckPosition(1 1)"]
+							call CheckPosition 1 1 ${KillTarget}
+							break
+					}
+				}
+			}
+		}
+	}
+	
 
 	if (${VortexMode})
 	{
@@ -1232,7 +1290,7 @@ function CheckHeals()
 	declare lowest int local 0
 	declare raidlowest int local 1
 	declare PetToHeal int local 0
-	declare MainTankID int local 0
+	;declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 	declare MainTankExists bool local 1
 	declare lowestset bool local FALSE
@@ -1243,10 +1301,37 @@ function CheckHeals()
 	declare cGroupMemberClass string local 0
 	declare cGroupMemberIsDead bool local FALSE
 
-	if ${Me.Name.Equal[${MainTankPC}]} || ${MainTank}
-		MainTankID:Set[${Me.ID}]
-	else
-		MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
+	;if ${Me.Name.Equal[${MainTankPC}]} || ${MainTank}
+	;	MainTankID:Set[${Me.ID}]
+	;else
+	;	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
+
+
+	if ${DoCallCheckPosition}
+	{
+		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+		{
+			if ${MainTank}
+				call CheckPosition 1 0
+			else
+			{
+				TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+				Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+				if (${TankToTargetDistance} <= 7.5)
+					call CheckPosition 1 1
+			}
+		}
+		else
+		{
+			if ${Actor[${MainTankID}](exists)}
+			{
+				Debug:Echo["Out of Range :: Moving to within 20m of tank"]
+				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Y} 20 1 1
+			}
+		}
+		DoCallCheckPosition:Set[FALSE]
+	}
+
 
     if !${Actor[${MainTankID}](exists)}
     {
@@ -1608,6 +1693,31 @@ function CheckCures(int InCombat=1)
                 return
         }
     }
+
+	if ${DoCallCheckPosition}
+	{
+		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+		{
+			if ${MainTank}
+				call CheckPosition 1 0
+			else
+			{
+				TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+				Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+				if (${TankToTargetDistance} <= 7.5)
+					call CheckPosition 1 1
+			}
+		}
+		else
+		{
+			if ${Actor[${MainTankID}](exists)}
+			{
+				Debug:Echo["Out of Range :: Moving to within 20m of tank"]
+				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Y} 20 1 1
+			}
+		}
+		DoCallCheckPosition:Set[FALSE]
+	}
 
 	declare temphl int local 1
 	declare grpcure int local 0

@@ -810,6 +810,31 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
 
+	if ${DoCallCheckPosition}
+	{
+		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+		{
+			if ${MainTank}
+				call CheckPosition 1 0
+			else
+			{
+				TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+				Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+				if (${TankToTargetDistance} <= 7.5)
+					call CheckPosition 1 1
+			}
+		}
+		else
+		{
+			if ${Actor[${MainTankID}](exists)}
+			{
+				Debug:Echo["Out of Range :: Moving to within 20m of tank"]
+				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Y} 20 1 1
+			}
+		}
+		DoCallCheckPosition:Set[FALSE]
+	}
+
 	if ${MezzMode}
 		call Mezmerise_Targets
 
@@ -817,9 +842,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	if !${Return}
 		return -1
 
-
 	call CheckCastBeam
-
 
 	;; Prismatic Proc
 	;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
@@ -870,21 +893,6 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	call VerifyTarget ${TargetID}
 	if !${Return}
 		return -1
-
-	if ${AutoMelee} && ${DoCallCheckPosition}
-	{
-		if ${MainTank}
-			call CheckPosition 1 0
-		else
-		{
-			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-			Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-			if (${TankToTargetDistance} <= 7.5)
-				call CheckPosition 1 1
-		}
-		DoCallCheckPosition:Set[FALSE]
-	}
-
 
 	LastSpellCast:Set[${start}]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
@@ -1068,36 +1076,6 @@ function Combat_Routine(int xAction)
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
 
-	if ${AutoMelee} && !${NoAutoMovement}
-	{
-		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
-		{
-			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
-			
-			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
-			{
-				if ${FightingEpicMob}
-					call CheckPosition 1 1 ${KillTarget}
-				else
-				{
-					switch ${Actor[${KillTarget}].ConColor}
-					{
-						case Green
-						case Grey
-							Debug:Echo["Calling CheckPosition(1 0)"]
-							call CheckPosition 1 0 ${KillTarget}
-							break
-						Default
-							Debug:Echo["Calling CheckPosition(1 1)"]
-							call CheckPosition 1 1 ${KillTarget}
-							break
-					}
-				}
-			}
-		}
-	}
-
 	;; Illuminate
 	if ${DoShortTermBuffs} && ${UseIlluminate}
 	{
@@ -1168,6 +1146,38 @@ function Combat_Routine(int xAction)
 
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
+	
+	
+	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+	{
+		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
+		{
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
+			
+			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
+			{
+				if ${FightingEpicMob}
+					call CheckPosition 1 1 ${KillTarget}
+				else
+				{
+					switch ${Actor[${KillTarget}].ConColor}
+					{
+						case Green
+						case Grey
+							Debug:Echo["Calling CheckPosition(1 0)"]
+							call CheckPosition 1 0 ${KillTarget}
+							break
+						Default
+							Debug:Echo["Calling CheckPosition(1 1)"]
+							call CheckPosition 1 1 ${KillTarget}
+							break
+					}
+				}
+			}
+		}
+	}
+	
 
 	; Mental DOT and arcane resistance debuff (fast casting - "Despair") ...cast every time it's ready!
 	;;; The rest of this block is basically to insure that all DoTs are loaded and things are primed at the
