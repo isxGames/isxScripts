@@ -535,25 +535,7 @@ function Combat_Routine(int xAction)
 			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
 			
 			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
-			{
-				if ${FightingEpicMob}
-					call CheckPosition 1 1 ${KillTarget}
-				else
-				{
-					switch ${Actor[${KillTarget}].ConColor}
-					{
-						case Green
-						case Grey
-							Debug:Echo["Calling CheckPosition(1 0)"]
-							call CheckPosition 1 0 ${KillTarget}
-							break
-						Default
-							Debug:Echo["Calling CheckPosition(1 1)"]
-							call CheckPosition 1 1 ${KillTarget}
-							break
-					}
-				}
-			}
+				call CheckPosition 1 0 ${KillTarget}
 		}
 	}    
 

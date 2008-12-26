@@ -822,7 +822,12 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 			else
 			{
 				if (${TankToTargetDistance} <= 7.5)
-					call CheckPosition 1 1
+				{
+					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+						call CheckPosition 1 1
+					else
+						call CheckPosition 1 0
+				}
 			}
 		}
 		elseif (${TankToTargetDistance} > 20)
@@ -1158,23 +1163,10 @@ function Combat_Routine(int xAction)
 			
 			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
 			{
-				if ${FightingEpicMob}
+				if ${FightingEpicMob} || ${Actor[${KillTarget}].IsNamed}
 					call CheckPosition 1 1 ${KillTarget}
 				else
-				{
-					switch ${Actor[${KillTarget}].ConColor}
-					{
-						case Green
-						case Grey
-							Debug:Echo["Calling CheckPosition(1 0)"]
-							call CheckPosition 1 0 ${KillTarget}
-							break
-						Default
-							Debug:Echo["Calling CheckPosition(1 1)"]
-							call CheckPosition 1 1 ${KillTarget}
-							break
-					}
-				}
+					call CheckPosition 1 0 ${KillTarget}	
 			}
 		}
 	}

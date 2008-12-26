@@ -1827,15 +1827,19 @@ function Combat(bool PVP=0)
 							}
 							else
 							{
-								;call CheckPosition 1 ${Target.IsEpic} ${KillTarget} 0 0
 								if ${MainTank}
 									call CheckPosition 1 0 ${KillTarget} 0 1
 								else
 								{
 									TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
 									;echo "Combat()-DEBUG:: TankToTargetDistance: ${TankToTargetDistance}"
-									if (${TankToTargetDistance} <= 7.5)									
-										call CheckPosition 1 1 ${KillTarget} 0 0
+									if (${TankToTargetDistance} <= 7.5)
+									{
+										if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+											call CheckPosition 1 1 ${KillTarget} 0 0
+										else
+											call CheckPosition 1 0 ${KillTarget} 0 0
+									}
 								}
 							}
 						}
@@ -2230,6 +2234,8 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 {
 	; rangetype (1=close, 2=max range, 3=bow shooting)
 	; quadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
+
+	Debug:Echo["CheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving})"]
 
 	variable float minrange
 	variable float maxrange
