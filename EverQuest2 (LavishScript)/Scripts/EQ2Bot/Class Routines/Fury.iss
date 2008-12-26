@@ -645,7 +645,12 @@ function Combat_Routine(int xAction)
 			else
 			{
 				if (${TankToTargetDistance} <= 7.5)
-					call CheckPosition 1 1
+				{
+					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+						call CheckPosition 1 1
+					else
+						call CheckPosition 1 0
+				}
 			}
 		}
 		elseif (${TankToTargetDistance} > 15)
@@ -1320,7 +1325,12 @@ function CheckHeals()
 			else
 			{
 				if (${TankToTargetDistance} <= 7.5)
-					call CheckPosition 1 1
+				{
+					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+						call CheckPosition 1 1
+					else
+						call CheckPosition 1 0
+				}
 			}
 		}
 		elseif (${TankToTargetDistance} > 15)
@@ -1708,7 +1718,12 @@ function CheckCures(int InCombat=1)
 			else
 			{
 				if (${TankToTargetDistance} <= 7.5)
-					call CheckPosition 1 1
+				{
+					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+						call CheckPosition 1 1
+					else
+						call CheckPosition 1 0
+				}
 			}
 		}
 		elseif (${TankToTargetDistance} > 15)
