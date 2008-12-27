@@ -105,4 +105,12 @@
 		<Setting Name="2 2">Shape</Setting>
 		<Setting Name="2 3">Permeate</Setting>
 	</Set>
+	<Set Name="Weaving">
+		<Setting Name="1 1">Stitch</Setting>
+		<Setting Name="1 2">Braid</Setting>
+		<Setting Name="1 3">Cure</Setting>
+		<Setting Name="2 1">Seam</Setting>
+		<Setting Name="2 2">Entwine</Setting>
+		<Setting Name="2 3">Preserve</Setting>
+	</Set>
 </InnerSpaceSettings>
