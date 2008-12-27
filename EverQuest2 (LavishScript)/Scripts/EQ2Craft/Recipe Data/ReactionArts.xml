@@ -238,4 +238,16 @@
 		<Setting Name="Minor Dull Luster">3</Setting>
 		<Setting Name="Major Dull Luster">3</Setting>
 	</Set>
+	<Set Name="Weaving">
+		<Setting Name="Minor Rip">1</Setting>
+		<Setting Name="Ripped">1</Setting>
+		<Setting Name="Rip">1</Setting>
+		<Setting Name="Major Rip">1</Setting>
+		<Setting Name="Minor Loose Weave">2</Setting>
+		<Setting Name="Loose Weave">2</Setting>
+		<Setting Name="Major Loose Weave">2</Setting>
+		<Setting Name="Minor Weak Material">3</Setting>
+		<Setting Name="Weak Material">3</Setting>
+		<Setting Name="Major Weak Material">3</Setting>
+	</Set>
 </InnerSpaceSettings>
