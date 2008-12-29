@@ -15,7 +15,6 @@ variable(script) bool FoundThem
 variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
 
-
 ;; INCLUDE FUNCTION LIBRARY
 #include "EVESalvageLibrary.iss"
 
