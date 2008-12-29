@@ -13,18 +13,9 @@
 		<y>10</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==12
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[12,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice1]}]
@@ -33,6 +24,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestChalice1]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestChalice1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestChalice2'>
@@ -48,18 +40,9 @@
 		<y>30</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==12
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[12,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice2]}]
@@ -68,6 +51,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestChalice2]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestChalice2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestHammer1'>
@@ -83,18 +67,9 @@
 		<y>50</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==14
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[14,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer1]}]
@@ -103,6 +78,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHammer1]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHammer1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestHammer2'>
@@ -118,18 +94,9 @@
 		<y>70</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==14
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[14,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer2]}]
@@ -138,6 +105,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHammer2]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHammer2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestEye1'>
@@ -153,18 +121,9 @@
 		<y>90</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==15
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[15,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye1]}]
@@ -173,6 +132,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestEye1]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestEye1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestEye2'>
@@ -188,18 +148,9 @@
 		<y>110</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==15
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[15,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye2]}]
@@ -208,6 +159,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestEye2]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestEye2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestMoon1'>
@@ -223,18 +175,9 @@
 		<y>130</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==16
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[16,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon1]}]
@@ -243,6 +186,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestMoon1]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestMoon1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestMoon2'>
@@ -258,18 +202,9 @@
 		<y>150</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==16
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[16,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon2]}]
@@ -278,6 +213,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestMoon2]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestMoon2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestHolySymbol1'>
@@ -293,18 +229,9 @@
 		<y>170</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==13
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[13,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol1]}]
@@ -313,6 +240,7 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHolySymbol1]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHolySymbol1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblPriestHolySymbol2'>
@@ -328,18 +256,9 @@
 		<y>190</y>
 		<width>240</width>
 		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
-			This:ClearItems
-			do
-			{
-				if ${Me.Ability[${Counter}].HOIconID}==13
-				{
-					This:AddItem[${Me.Ability[${Counter}].Name}]
-				}
-			}
-			while ${Counter:Inc}&lt;=${Me.NumAbilities}
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[13,${This.FullName}]
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol2]}]
@@ -348,6 +267,15 @@
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHolySymbol2]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHolySymbol2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
+	<Checkbox name='LimitToHighest'>
+		<X>20</X>
+		<Y>220</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Limit to highest level spells only.</Text>
+		<AutoToolTip>When checked, limits the listboxes to the highest level ability for each ability icon.</AutoToolTip>
+	</Checkbox>
 </ISUI>

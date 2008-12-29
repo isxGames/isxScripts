@@ -1435,6 +1435,20 @@ function CastPotion(string Item)
 ;TODO: Prioritize HOs?
 ;*************************************************************
 
+objectdef SpellIcon
+{
+	variable string Name
+	variable int Icon
+	variable int Level
+	
+	method Initialize(string Nm, int Icn, int Lvl)
+	{
+		Name:Set[${Nm}]
+		Icon:Set[${Icn}]
+		Level:Set[${Lvl}]
+	}
+}
+
 objectdef HeroicOp
 {
 	variable string ScoutCoin1
@@ -1482,6 +1496,64 @@ objectdef HeroicOp
 	variable string PriestEye2
 
 	variable string charfile="${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.xml"
+
+	method PopulateCB(int HoIconID, string ElementFQN)
+	{
+		echo ${HoIconID} ${ElementFQN}
+		variable int Counter=1
+		variable int iter=1
+		variable index:SpellIcon Spl
+		variable bool Found=FALSE
+		variable int IconID
+
+		UIElement[${ElementFQN}]:ClearItems
+
+		if ${UIElement[EQ2 Bot].FindUsableChild[LimitToHighest,checkbox].Checked}
+		{
+			do
+			{
+				Found:Set[FALSE]
+				if ${Me.Ability[${Counter}].HOIconID}==${HoIconID}
+				{
+					IconID:Set[${Me.Ability[${Counter}].MainIconID}${Me.Ability[${Counter}].BackDropIconID.LeadingZeroes[4]}]
+					for ( iter:Set[1] ; ${iter} <= ${Spl.Used} ; iter:Inc )
+					{
+						if (${Spl[${iter}].Icon} == ${IconID})
+						{
+							if ${Me.Ability[${Counter}].Class[1].Level} > ${Spl[${iter}].Level}
+							{
+								Spl[${iter}].Name:Set[${Me.Ability[${Counter}].Name}]
+								Spl[${iter}].Icon:Set[${IconID}]
+								Spl[${iter}].Level:Set[${Me.Ability[${Counter}].Class[1].Level}]
+							}
+							Found:Set[TRUE]
+							break
+						}
+					}
+					if !${Found}
+						Spl:Insert[${Me.Ability[${Counter}].Name},${Me.Ability[${Counter}].MainIconID}${Me.Ability[${Counter}].BackDropIconID.LeadingZeroes[4]},${Me.Ability[${Counter}].Class[1].Level}]
+				}
+			}
+			while ${Counter:Inc}<=${Me.NumAbilities}
+			
+			for ( iter:Set[1] ; ${iter} <= ${Spl.Used} ; iter:Inc )
+			{
+				UIElement[${ElementFQN}]:AddItem[${Spl[${iter}].Name},${Spl[${iter}].Icon}${Spl[${iter}].Level.LeadingZeroes[2]}]
+			}
+		}
+		else
+		{
+			do
+			{
+				if ${Me.Ability[${Counter}].HOIconID}==${HoIconID}
+				{
+					UIElement[${ElementFQN}]:AddItem[${Me.Ability[${Counter}].Name},"${Me.Ability[${Counter}].MainIconID.LeadingZeroes[4]}${Me.Ability[${Counter}].BackDropIconID.LeadingZeroes[4]}${Me.Ability[${Counter}].Class[1].Level.LeadingZeroes[2]}"]
+				}
+			}
+			while ${Counter:Inc}<=${Me.NumAbilities}
+		}
+		UIElement[${ElementFQN}]:Sort
+	}
 
 	method Initialize()
 	{
