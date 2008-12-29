@@ -1499,7 +1499,6 @@ objectdef HeroicOp
 
 	method PopulateCB(int HoIconID, string ElementFQN)
 	{
-		echo ${HoIconID} ${ElementFQN}
 		variable int Counter=1
 		variable int iter=1
 		variable index:SpellIcon Spl
