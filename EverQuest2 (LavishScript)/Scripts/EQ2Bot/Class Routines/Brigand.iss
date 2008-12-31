@@ -220,13 +220,16 @@ function Combat_Routine(int xAction)
 	else
 		spellthreshold:Set[3]
 
-
-	if !${Me.AutoAttackOn}
-		EQ2Execute /toggleautoattack
-
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
 		EQ2Execute /stopfollow
+
+	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<25
+	{
+		call CastSpellRange 250 0 0 0 ${KillTarget}
+		call CheckPosition 1 0 ${KillTarget}
+		eq2execute auto 1
+	}
 
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
@@ -306,19 +309,19 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}
 
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[100]}].IsReady} && !${MainTank}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[100]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CastSpellRange 100 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[102]}].IsReady} && !${MainTank}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[102]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CastSpellRange 102 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[101]}].IsReady} && !${MainTank}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[101]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CastSpellRange 101 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
@@ -326,7 +329,7 @@ function Combat_Routine(int xAction)
 
 	if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
 	{
-		if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)}
+		if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 		{
 			Target ${KillTarget}
 			call CheckPosition 1 1 ${KillTarget}
@@ -365,7 +368,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}
 
-	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[103]}].IsReady}
+	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[103]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CastSpellRange 103 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
@@ -377,7 +380,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}
 
-	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[111]}].IsReady}
+	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[111]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CastSpellRange 111 0 1 1 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
@@ -407,7 +410,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}
 
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[120]}].IsReady}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[120]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		if ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 			call CastSpellRange 120 0 1 3 ${KillTarget} 0 0 0 0 1
