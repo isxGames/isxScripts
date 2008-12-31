@@ -608,7 +608,7 @@ function PlaceCollection()
 
 function PlaceTradeskillBooks()
 {
-	ItemType:Set[Recipe Book]
+	ItemType:Set[Item]
 	NameFilter1:Set[Advanced]
 	NameFilter2:Set[Enigma]
 	NameFilter3:Set[Ancient]
@@ -674,7 +674,7 @@ function PlaceTradeskillBooks()
 
 function PlaceSpellBooks()
 {
-	ItemType:Set[Spell Scroll]
+	ItemType:Set[Item]
 	NameFilter1:Set[Adept I)]
 	NameFilter2:Set[Master I)]
 	NameFilter3:Set[Adept I)]
@@ -1430,9 +1430,15 @@ function SellTreasured()
 	{
 	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[TREASURED]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
 			{
-				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
-				wait 15
+				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				{
+					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					{
+						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
+						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						wait 15
+					}
+				}	
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -1447,9 +1453,15 @@ function SellHandcrafted()
 	{
 	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[HANDCRAFTED]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
 			{
-				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
-				wait 15
+				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				{
+					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					{
+						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
+						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						wait 15
+					}	
+				}	
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -1464,9 +1476,15 @@ function SellUncommon()
 	{
 	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[UNCOMMON]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
 			{
-				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
-				wait 15
+				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				{
+					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					{
+						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
+						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						wait 15
+					}
+				}		
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -1479,11 +1497,17 @@ function SellAdeptI()
 
 	Do
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Type.Equal[Spell Scroll]} && ${Me.CustomInventory[${ArrayPosition}].Name.Find[Adept I)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk} == 1
+		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[Adept I)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk} == 1
 			{
-				call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-				Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell
-				wait ${Math.Rand[30]:Inc[20]}
+				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				{
+					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					{
+						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
+						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell
+						wait ${Math.Rand[30]:Inc[20]}
+					}	
+				}	
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -1811,7 +1835,13 @@ function CreateInventorylist()
 
 	Do
 	{
-	  	call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
+		if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+		{
+			if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+			{
+	  		call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
+			}  
+	  }	
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
