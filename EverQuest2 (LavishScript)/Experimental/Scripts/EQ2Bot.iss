@@ -10,6 +10,7 @@
 ;;; /EQ2Bot/Class Routines ONLY here
 ;;; The spell list and GUI files for each class should be handled within the initialization of each class file.
 ;;; The main script, EQ2BotLib, and the primary GUI files are included in the isxeq2 patcher.
+
 variable int Latest_AssassinVersion = 0
 variable int Latest_BerserkerVersion = 0
 variable int Latest_BrigandVersion = 0
