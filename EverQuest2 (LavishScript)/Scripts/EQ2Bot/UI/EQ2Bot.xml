@@ -732,15 +732,15 @@
 									</OnLeftClick>
 								</checkbox>
 								<Text Name='ScanRange Text'>
-									<X>20%</X>
+									<X>20</X>
 									<Y>121</Y>
-									<Width>95%</Width>
+									<Width>50%</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
-									<Text>Maximum Scan Range for Camp, DC or AH: </Text>
+									<Text>Maximum Scan Range for AH: </Text>
 								</Text>
 								<Textentry Name='ScanRange'>
-									<X>78%</X>
+									<X>90%</X>
 									<Y>121</Y>
 									<Width>7%</Width>
 									<Height>15</Height>
@@ -748,22 +748,61 @@
 									<MaxLength>4</MaxLength>
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[ScanRange]}]</OnLoad>
 									<OnChange>
-										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${This.Text}]
+										variable int Value
+										Value:Set[${This.Text}]
+										if ${Value} &gt;= 50
+										UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[45]
+										elseif ${Value} &lt;=5
+										UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[1]
+										else
+										UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[${Math.Calc[${Value} - 5]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${Value}]
 										Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to SCAN for Mobs?]}]
-										Script[EQ2Bot].Variable[ScanRange]:Set[${This.Text}]
+										Script[EQ2Bot].Variable[ScanRange]:Set[${Value}]
 									</OnChange>
 								</Textentry>
+								<Slider Name='ScanRange Slider'>
+									<X>51%</X>
+									<Y>118</Y>
+									<Width>35%</Width>
+									<Height>20</Height>
+									<Range>45</Range>
+									<OnLoad>
+										variable int Range
+										Range:Set[${Script[EQ2Bot].VariableScope.ScanRange}]
+										if ${Range} &gt;= 50
+										{
+										This:SetValue[45]
+										}
+										elseif ${Range} &lt;=5
+										{
+										This:SetValue[1]
+										}
+										else
+										{
+										This:SetValue[${Math.Calc[${Range} - 5]}]
+										}
+									</OnLoad>
+									<OnChange>
+										variable int Value
+										Value:Set[${This.Value} + 5]
+										UIElement[EQ2 Bot].FindUsableChild[ScanRange,textentry]:SetText[${Value}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${Value}]
+										Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										Script[EQ2Bot].Variable[ScanRange]:Set[${Value}]
+									</OnChange>
+								</Slider>
 								<Text Name='MARange Text'>
-									<X>21%</X>
+									<X>20</X>
 									<Y>145</Y>
-									<Width>95%</Width>
+									<Width>50%</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
 									<Text>Maximum Engage Range from Main Assist: </Text>
 								</Text>
 								<Textentry Name='MARange'>
-									<X>78%</X>
+									<X>90%</X>
 									<Y>145</Y>
 									<Width>7%</Width>
 									<Height>15</Height>
@@ -771,12 +810,51 @@
 									<MaxLength>4</MaxLength>
 									<OnLoad>This:SetText[${Script[EQ2Bot].Variable[MARange]}]</OnLoad>
 									<OnChange>
-										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to Engage from Main Assist?,${This.Text}]
+										variable int Value
+										Value:Set[${This.Text}]
+										if ${Value} &gt;= 50
+										UIElement[EQ2 Bot].FindUsableChild[MARange Slider,slider]:SetValue[45]
+										elseif ${Value} &lt;=5
+										UIElement[EQ2 Bot].FindUsableChild[MARange Slider,slider]:SetValue[1]
+										else
+										UIElement[EQ2 Bot].FindUsableChild[MARange Slider,slider]:SetValue[${Math.Calc[${Value} - 5]}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to Engage from Main Assist?,${Value}]
 										Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 										This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to Engage from Main Assist?]}]
-										Script[EQ2Bot].Variable[MARange]:Set[${This.Text}]
+										Script[EQ2Bot].Variable[MARange]:Set[${Value}]
 									</OnChange>
 								</Textentry>
+								<Slider Name='MARange Slider'>
+									<X>51%</X>
+									<Y>141</Y>
+									<Width>35%</Width>
+									<Height>20</Height>
+									<Range>45</Range>
+									<OnLoad>
+										variable int Range
+										Range:Set[${Script[EQ2Bot].VariableScope.MARange}]
+										if ${Range} &gt;= 50
+										{
+										This:SetValue[45]
+										}
+										elseif ${Range} &lt;=5
+										{
+										This:SetValue[1]
+										}
+										else
+										{
+										This:SetValue[${Math.Calc[${Range} - 5]}]
+										}
+									</OnLoad>
+									<OnChange>
+										variable int Value
+										Value:Set[${This.Value} + 5]
+										UIElement[EQ2 Bot].FindUsableChild[MARange,textentry]:SetText[${Value}]
+										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to Engage from Main Assist?,${Value}]
+										Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+										Script[EQ2Bot].Variable[MARange]:Set[${Value}]
+									</OnChange>
+								</Slider>
 							</Children>
 						</Frame>
 						<Frame Name='Combat Frame'>
