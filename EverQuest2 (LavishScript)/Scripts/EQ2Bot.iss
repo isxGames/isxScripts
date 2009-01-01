@@ -242,8 +242,8 @@ variable bool NoAtExit
 ; Define the PathType
 ; 0 = Manual Movement
 ; 1 = Minimum Movement - Home Point Set
-; 2 = Camp - Follow Small Nav Path with multiple Pull Points
-; 3 = Dungeon Crawl - Follow Nav Path: Start to Finish
+; 2 = <REMOVED> Camp - Follow Small Nav Path with multiple Pull Points
+; 3 = <REMOVED> Dungeon Crawl - Follow Nav Path: Start to Finish
 ; 4 = Auto Hunting - Pull nearby Mobs within a Maximum Range
 ;===========================================================
 variable int PathType
@@ -496,6 +496,7 @@ function main()
 			{
 				;Debug:Echo["Pre-Combat Routines Loop: Test - ${gRtnCtr}"]
 
+				/* Dungeon Crawl <REMOVED>
 				; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 				if ${PathType}==3 && !${AutoPull}
 				{
@@ -511,7 +512,7 @@ function main()
 					elseif ${Target.Distance}>10
 						call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
 				}
-
+				*/
 				if !${MainTank}
 				{
 					if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
@@ -708,6 +709,7 @@ function main()
 			;;
 			;;;;;
 
+			/* Dungeon Crawl <REMOVED>
 			; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
 			if ${PathType}==3 && !${AutoPull}
 			{
@@ -723,7 +725,7 @@ function main()
 				elseif ${Target.Distance}>10
 					call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
 			}
-
+		*/
 			if !${MainTank}
 			{
 				if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
@@ -847,6 +849,7 @@ function main()
 
 		if ${AutoPull} && !${Me.ToActor.InCombatMode}
 		{
+			/* Camp mode and Dungeon Crawl <REMOVED>
 			;Debug:Echo["AutoPull Loop: Test-${Time.Timestamp}"]
 			if ${PathType}==2 && (${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.ToActor.Power}>${PowerCheck} && ${Me.ToActor.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
 			{
@@ -878,7 +881,7 @@ function main()
 
 				EQ2Execute /target_none
 			}
-
+		*/
 			if ${Mob.Detect} || ${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}
 			{
 				if (${Me.ToActor.Power}>=${PowerCheck} && ${Me.ToActor.Health}>=${HealthCheck})
@@ -2347,7 +2350,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			destangle:Set[0]
 			break
 	}
-
+	/* Camp mode <REMOVED>
 	if ${PathType}==2
 	{
 		if ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>5 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}<10 && ${Me.ToActor.InCombatMode} && !${lostaggro}
@@ -2365,6 +2368,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			return
 		}
 	}
+	*/
 
 	;
 	; ok which point is closer our min range or max range, will vary depending on our vector to mob
@@ -3027,7 +3031,10 @@ function Pull(string npcclass)
 					}
 				}
 			}
+			/* NOTE: PathType 2 and 3 are <REMOVED>
 			if ((${PathType}==2 || ${PathType}==3 && ${pulling}) || ${PathType}==4) && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
+			*/
+			if (${PathType}==4) && ${Target.Distance}>${PullRange} && ${Target.Distance}<${ScanRange}
 			{
 				;Debug:Echo["Moving within Range..."]
 				call FastMove ${Target.X} ${Target.Z} ${PullRange}
@@ -3300,7 +3307,7 @@ function Pull(string npcclass)
 			}
 			while ${Target.Distance}>${MARange} && ${Target.Target.ID}==${Me.ID}
 
-			if ${Target.Distance} > 5 && !${pulling} && ${PathType}!=2
+			if ${Target.Distance} > 5 && !${pulling} /* Camp mode <REMOVED> && ${PathType}!=2 */
 			{
 				if ${AutoMelee}
 					call FastMove ${Target.X} ${Target.Z} 5
@@ -3644,7 +3651,7 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool I
 	IsMoving:Set[FALSE]
 	return "SUCCESS"
 }
-
+/* <REMOVED> MovetoWP and MoveToMaster
 function MovetoWP(lnavregionref destination)
 {
 	variable index:lnavregionref CheckRegion
@@ -3817,6 +3824,7 @@ function MovetoMaster()
 		movetowp:Set[FALSE]
 	}
 }
+*/
 
 function ProcessTriggers()
 {
@@ -3894,12 +3902,14 @@ function IamDead(string Line)
 					echo "reloading config"
 					EQ2Bot:Init_Config
 					wait 50
-					if ${MainTank} && ( ${PathType}==3 || ${PathType}==2 )
+					
+					if ${MainTank} /* Camp and Dungeon Crawl <REMOVED> && ( ${PathType}==3 || ${PathType}==2 ) */
 					{
-						echo "I am Main Tank, moving to START"
+					/*	echo "I am Main Tank, moving to START"
 						wait 500
 						call MovetoWP ${Navigation.World[${Zone.ShortName}].NearestPoint[${Me.X},${Me.Y},${Me.Z}]}
-						wait 50
+						wait 50 
+					*/
 					}
 					else
 					{
@@ -4022,8 +4032,9 @@ function CheckMTAggro()
 	variable int tempvar
 	variable int newtarget
 
-	; If PathType is 2 make sure we are not to far away from home point first
-	if ${PathType}==2 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>8
+	
+	; If PathType is 1 make sure we are not to far away from home point first
+	if ${PathType}==1 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>8
 	{
 		call FastMove ${HomeX} ${HomeZ} 4
 		if ${Actor[${KillTarget}](exists)} && (${Me.ID}!=${KillTarget})
@@ -4537,8 +4548,6 @@ function StartBot()
 
 	switch ${PathType}
 	{
-		case 0
-			break
 
 		case 1
 			HomeX:Set[${Me.X}]
@@ -4546,11 +4555,15 @@ function StartBot()
 			break
 
 		case 2
+			/* <REMOVED>
 			HomeX:Set[${Me.X}]
 			HomeZ:Set[${Me.Z}]
 			break
-
+			*/
 		case 3
+			/* <REMOVED> break */
+			PathType:Set[0]
+		case 0
 			break
 
 		case 4
@@ -5265,6 +5278,8 @@ objectdef EQ2BotObj
 		OORThreshold:Set[${CharacterSet.FindSet[General Settings].FindSetting[Out of Range Reaction Distance,25]}]
 		Following:Set[${CharacterSet.FindSet[General Settings].FindSetting[Are we following someone?,FALSE]}]
 		PathType:Set[${CharacterSet.FindSet[General Settings].FindSetting[What Path Type (0-4)?,0]}]
+		if ${PathType} == 2 || ${PathType} == 3
+			PathType:Set[0]
 		CloseUI:Set[${CharacterSet.FindSet[General Settings].FindSetting[Close the UI after starting EQ2Bot?,FALSE]}]
 		MasterSession:Set[${CharacterSet.FindSet[General Settings].FindSetting[Master IS Session,Master.is1]}]
 		CheckPriestPower:Set[${CharacterSet.FindSet[General Settings].FindSetting[Check if Priest has Power in the Group?,TRUE]}]
