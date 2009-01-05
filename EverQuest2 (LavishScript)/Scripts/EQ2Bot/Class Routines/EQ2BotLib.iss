@@ -190,7 +190,9 @@ function EQ2BotLib_Init()
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[7]:Move[4]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[8]:Move[5]
 
+	echo Loading Class UI Tab...
 	ui -load -parent "Class@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/UI/${Me.SubClass}.xml"
+	echo Loading Extras UI Tab...
 	ui -load -parent "Extras@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/UI/EQ2BotExtras.xml"
 
 	ExecuteAtom SaveEquipmentSet "Default"
@@ -1633,6 +1635,7 @@ objectdef HeroicOp
 
 		UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[6]:Move[3]
 
+		echo Loading HO Tab...
 		ui -load -parent "HOs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/${Me.Archetype}HOs.xml"
 	}
 

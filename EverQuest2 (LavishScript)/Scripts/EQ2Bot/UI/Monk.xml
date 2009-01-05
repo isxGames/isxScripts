@@ -11,13 +11,13 @@
 			{
 				Script[EQ2Bot].Variable[OffensiveMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Offensive Spells",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[OffensiveMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Offensive Spells",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells]}</Data>
@@ -33,13 +33,13 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[DefensiveMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Defensive Spells",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[DefensiveMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Defensive Spells",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Defensive Spells]}</Data>
@@ -55,13 +55,13 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells]}</Data>
@@ -77,13 +77,13 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[PBAoEMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[PBAoEMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells]}</Data>
@@ -100,13 +100,13 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[FullAutoMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Full Auto Mode",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[FullAutoMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Full Auto Mode",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Full Auto Mode]}</Data>
@@ -124,14 +124,14 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 
 				Script[EQ2Bot].Variable[TauntMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Taunt Spells",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 
 				Script[EQ2Bot].Variable[TauntMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Taunt Spells",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Taunt Spells]}</Data>
@@ -149,14 +149,14 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 
 				Script[EQ2Bot].Variable[CraneTwirlMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff Crane Twirl",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 
 				Script[EQ2Bot].Variable[CraneTwirlMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff Crane Twirl",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff Crane Twirl]}</Data>
@@ -182,7 +182,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnSelect>
 			Script[EQ2Bot].Variable[StanceType]:Set[${This.SelectedItem.ID}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Stance Type",${This.SelectedItem.ID}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnLoad>This.Item[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Stance Type]}]:Select
 		</OnLoad>
@@ -205,7 +205,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			declare Counter int
 			Counter:Set[1]
 			This:ClearItems
-			This:AddItem
 			Me:CreateCustomInventoryArray[nonbankonly]
 			do
 			{
@@ -232,7 +231,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnSelect>
 			Script[EQ2Bot].Variable[WeaponMain]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Main,"${This.SelectedItem.Text}"]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblOffHand'>
@@ -254,7 +253,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			declare Counter int
 			Counter:Set[1]
 			This:ClearItems
-			This:AddItem
 			Me:CreateCustomInventoryArray[nonbankonly]
 			do
 			{
@@ -328,7 +326,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnSelect>
 			Script[EQ2Bot].Variable[WeaponStaff]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Staff,"${This.SelectedItem.Text}"]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblFists'>
@@ -352,7 +350,8 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			Me:CreateCustomInventoryArray[nonbankonly]
 			do
 			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Fists]}				{
+				if ${Me.CustomInventory[${Counter}].SubType.Equal[Fists]}
+				{
 					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
 				}
 			}
@@ -374,7 +373,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnSelect>
 			Script[EQ2Bot].Variable[WeaponFists]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Fists,"${This.SelectedItem.Text}"]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Text Name='lblTwoHandedStaff'>
@@ -422,7 +421,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnSelect>
 			Script[EQ2Bot].Variable[TwoHandedStaff]:Set[${This.SelectedItem.Text}]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[TwoHandedStaff,${This.SelectedItem.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 	</combobox>
 	<Commandcheckbox Name='ThrownAttackMode'>
@@ -438,13 +437,13 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[ThrownAttacksMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Thrown Attack Spells",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[ThrownAttacksMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Thrown Attack Spells",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Thrown Attack Spells]}</Data>
@@ -462,13 +461,13 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			{
 				Script[EQ2Bot].Variable[RangedAttackMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Use Ranged Attacks Only",TRUE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[RangedAttackMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Use Ranged Attacks Only",FALSE]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Use Ranged Attacks Only]}</Data>
@@ -495,7 +494,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffProtectGroupMember,${This.SelectedItem.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
 		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffProtectGroupMember,0,1,1]
 		</OnLeftClick>
@@ -522,7 +521,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffAltruismMember,${This.SelectedItem.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
 		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffAltruismMember,0,1,1]
 		</OnLeftClick>

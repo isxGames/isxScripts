@@ -33,6 +33,7 @@ function Class_Declaration()
 	;Script:EnableDebugLogging[c:/Monk.txt]
 	;DebugSpew echo +++++++ Start Monk+++++++
 
+	echo Initializing EQ2BotLib...
 	call EQ2BotLib_Init
 
 	StanceType:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Stance Type,1]}]
