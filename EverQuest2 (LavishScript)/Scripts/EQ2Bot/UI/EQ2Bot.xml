@@ -84,7 +84,7 @@
 							<Height>20</Height>
 							<Text>Main Tank:</Text>
 							<OnLoad>
-								if ${Script[EQ2Bot].Variable[MainTank]}
+								if ${Script[EQ2Bot].VariableScope.MainTank}
 								{
 								This:SetChecked
 								}
@@ -92,27 +92,27 @@
 							<OnLeftClick>
 								if ${This.Checked}
 								{
-								UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,Frame]:Hide
-								Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
-								LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,TRUE]
-								Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-								Script[EQ2Bot].Variable[MainTankPC]:Set[${Me.Name}]
-								Script[EQ2Bot].Variable[MainTankID]:Set[${Me.ID}]
-								Script[EQ2Bot].Variable[OriginalMT]:Set[${Me.Name}]
-								LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${Me.Name}]
-								Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,Frame]:Hide
+									Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,TRUE]
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+									Script[EQ2Bot].Variable[MainTankPC]:Set[${Me.Name}]
+									Script[EQ2Bot].Variable[MainTankID]:Set[${Me.ID}]
+									Script[EQ2Bot].Variable[OriginalMT]:Set[${Me.Name}]
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${Me.Name}]
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 								else
 								{
-								UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,Frame]:Show
-								Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
-								LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,FALSE]
-								Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-								Script[EQ2Bot].Variable[MainTankPC]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
-								Script[EQ2Bot].Variable[MainTankID]:Set[${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}].ID}]
-								Script[EQ2Bot].Variable[OriginalMT]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
-								LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
-								Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+									UIElement[EQ2 Bot].FindUsableChild[MainTank Frame,Frame]:Show
+									Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,FALSE]
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+									Script[EQ2Bot].Variable[MainTankPC]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
+									Script[EQ2Bot].Variable[MainTankID]:Set[${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}].ID}]
+									Script[EQ2Bot].Variable[OriginalMT]:Set[${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
+									LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Who is the Main Tank?,${UIElement[EQ2 Bot].FindUsableChild[MainTank,combobox].SelectedItem.Text}]
+									Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -122,7 +122,7 @@
 							<Height>20</Height>
 							<Width>95%</Width>
 							<OnLoad>
-								if ${Script[EQ2Bot].Variable[MainTank]}
+								if ${Script[EQ2Bot].VariableScope.MainTank}
 								{
 								This:Hide
 								}
@@ -152,7 +152,7 @@
 										}
 									</OnLoad>
 									<OnSelect>
-										if ${This.Checked}
+										if ${UIElement[EQ2 Bot].FindUsableChild[MainTank,checkbox].Checked}
 										{
 										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Tank?,TRUE]
 										Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
@@ -345,7 +345,7 @@
 										}
 									</OnLoad>
 									<OnSelect>
-										if ${This.Checked}
+										if ${UIElement[EQ2 Bot].FindUsableChild[MainAssist,checkbox].Checked}
 										{
 										LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[I am the Main Assist?,TRUE]
 										Script[EQ2Bot].Variable[MainAssistMe]:Set[TRUE]
