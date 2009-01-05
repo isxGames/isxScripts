@@ -184,8 +184,18 @@ objectdef EQ2Nav
 	
 	method Debug(string Text)
 	{
-		if ${Debug} || !${Debug(exists)}
-			echo "EQ2Nav-Debug:: ${Text}"
+		if ${Debug(exists)} && ${Debug(type).Name.Equal[bool]}
+		{
+			if ${Debug}
+			{
+				echo "EQ2Nav-Debug:: ${Text}"
+			}
+		}
+		elseif ${Debug(exists)} && ${Debug(type).Name.Equal[debug]}
+			if ${Debug.Enabled}
+				Debug:Echo["${Text}"]
+			
+			
 	}	
 
 	method ClearPath()
