@@ -2125,11 +2125,11 @@ function Combat(bool PVP=0)
 			{
 				face ${HomeX} ${HomeZ}
 				wait ${Math.Rand[10]} ${Mob.Detect}
-	
+
 				tempvar:Set[${Math.Rand[30]:Dec[15]}]
 				WPX:Set[${Math.Calc[${tempvar}*${Math.Cos[${Me.Heading}]}-20*${Math.Sin[${Me.Heading}]}+${Me.X}]}]
 				WPZ:Set[${Math.Calc[-20*${Math.Cos[${Me.Heading}]}+${tempvar}*${Math.Sin[${Me.Heading}]}+${Me.Z}]}]
-	
+
 				call FastMove ${WPX} ${WPZ} 4
 				do
 				{
@@ -2245,7 +2245,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	variable point3f destmaxpoint
 	variable int xTimer
 	xTimer:Set[${Script.RunningTime}]
-	
+
 	if ${NoAutoMovement}
 	{
 		Debug:Echo["CheckPosition() :: NoAutoMovement ON"]
@@ -3290,8 +3290,16 @@ function Pull(string npcclass)
 				}
 			}
 			;;;; Otherwise, Using "PullSpell" ;;;;;;;;;;;;;
+			CurrentAction:Set["Pulling ${Target.Name} with ${PullSpell}"]
+			Me.Ability[${PullSpell}]:Use
+			CurrentAction:Set["Waiting ${Math.Calc64[${Me.Ability[${PullSpell}].CastingTime}*10]} for spell to cast"]
+			wait ${Math.Calc64[${Me.Ability[${PullSpell}].CastingTime}*10]}
 
-			call CastSpellNOW "${PullSpell}"
+			while ${Me.CastingSpell}
+			{
+				wait 1
+			}
+
 			CurrentAction:Set["${Target} pulled using ${PullSpell}"]
 			;Debug:Echo["Pulled...waiting for mob to come within range"]
 			do
@@ -3387,10 +3395,10 @@ function CheckLoot()
 {
 	variable int tcount=2
 	variable int tmptimer
-	
+
 	;; NOTE:  This function really should only be called when 'out of combat'.  Therefore, it is ok to move with
 	;;        FastMove(), even if the user has selected NoAutoMovmement (since we assume they would want the character
-	;;        to override that setting and move to corpses/chests when they checked the "Loot Corpses/Chests" box. 
+	;;        to override that setting and move to corpses/chests when they checked the "Loot Corpses/Chests" box.
 
 	if (!${AutoLoot})
 		return
@@ -3520,13 +3528,13 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool I
 	variable int xTimer
 	variable int MoveToRange
 	variable bool IgnoreInCombatChecks
-	
+
 	if (${NoAutoMovement} && !${IgnoreNoAutoMovement})
 	{
 		Debug:Echo["FastMove() :: NoAutoMovement ON"]
 		return "NOAUTOMOVEMENT"
 	}
-	
+
 	if ${ScanRange} > 75
 		MoveToRange:Set[${ScanRange}]
 	else
@@ -3793,8 +3801,8 @@ function MovetoMaster()
 {
 	if ${NoAutoMovement}
 		return
-	
-	
+
+
 	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[${MainAssistID}].X},${Actor[${MainAssistID}].Z},${Actor[${MainAssistID}].Y}].FQN}]}
 	{
 		CurrentAction:Set[Moving Closer to Main Aasist]
@@ -4298,8 +4306,8 @@ function CantSeeTarget(string Line)
 			Debug:Echo["CantSeeTarget() :: In combat, but current KillTarget does not exist and/or is dead."]
 			return
 		}
-	}	
-	
+	}
+
 	if (${haveaggro} || ${MainTank}) && ${Me.ToActor.InCombatMode}
 	{
 		if ${Target.Target.ID}==${Me.ID}
@@ -6143,7 +6151,7 @@ function MoveToGroup(string gname)
 {
 	if ${NoAutoMovement}
 		return
-	
+
 	if !${LNavRegionGroup[${gname}].Contains[${EQ2Nav.CurrentRegion}]} && ${LNavRegionGroup[${gname}].Contains[${EQ2Nav.FindClosestRegion[${Me.X},${Me.Z},${Me.Y}]}]}
 	{
 		movingtowp:Set[TRUE]
