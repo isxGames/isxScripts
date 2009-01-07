@@ -1055,7 +1055,14 @@ function CheckReactives()
 
 function EmergencyHeal(int healtarget)
 {
-	call CastSpellRange 338 0 0 0 ${healtarget}
+	if ${Me.Ability[${SpellType[401]}].IsReady}
+	{
+		call CastSpellRange 401 0 0 0 ${healtarget}
+	}
+	else
+	{
+		call CastSpellRange 338 0 0 0 ${healtarget}
+	}
 
 	if ${Me.Ability[${SpellType[335]}].IsReady}
 		call CastSpellRange 335 0 0 0 ${healtarget}

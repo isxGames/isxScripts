@@ -1004,7 +1004,11 @@ function GroupHeal()
 
 function EmergencyHeal(int healtarget)
 {
-	if ${Me.Ability[${SpellType[11]}].IsReady} && ${MTinMyGroup}
+	if ${Me.Ability[${SpellType[401]}].IsReady}
+	{
+		call CastSpellRange 401 0 0 0 ${healtarget}
+	}
+	elseif ${Me.Ability[${SpellType[11]}].IsReady} && ${MTinMyGroup}
 	{
 		call CastSpellRange 11
 		call CastSpellRange 16
