@@ -131,7 +131,7 @@ function EQ2BotLib_Init()
 
 	;INI Settings
 	CharacterSet:AddSet[EQ2BotExtras]
-	
+
 	AutoFollowMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode,FALSE]}]
 	NoAutoMovement:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovement,FALSE]}]
 	NoAutoMovementInCombat:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovementInCombat,FALSE]}]
@@ -238,7 +238,7 @@ function PopulateSKFDSpells()
 	variable int tempvar=1
 	variable string SpellName
 	variable iterator SpellIterator
-	
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Shadowknight FD Spells
 	;;;;;
@@ -503,10 +503,11 @@ atom AutoFollowTank()
 				if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
 				{
 					;When an actor is on a griffon-like transport, their speed is always "1"
-					if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
-					{
-						 if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
-						 {
+					;Pygar: We can't do this, people can have '1' speed from Shadows AA now...
+					;if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
+					;{
+						if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
+						{
 							squelch face ${AutoFollowee}
 							eq2execute /follow ${AutoFollowee}
 							AutoFollowLastSetTime:Set[${Time.Timestamp}]
@@ -518,12 +519,12 @@ atom AutoFollowTank()
 							AutoFollowingMA:Set[FALSE]
 							;Debug:Echo["DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"]
 						}
-					}
-					else
-					{
-						;Debug:Echo["DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"]
-						AutoFollowingMA:Set[FALSE]
-					}
+					;}
+					;else
+					;{
+					;	;Debug:Echo["DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"]
+					;	AutoFollowingMA:Set[FALSE]
+					;}
 				}
 				else
 				{
@@ -729,7 +730,7 @@ function CommonPower(int sPower)
 				waitframe
 			}
 			while ${Me.CastingSpell}
-		}			
+		}
 	}
 
 	if ${UsePotions} && ${Me.Inventory[Essence of Clarity].IsReady} && ${Me.ToActor.InCombatMode}
@@ -755,7 +756,7 @@ function CommonPower(int sPower)
 			waitframe
 		}
 		while ${Me.CastingSpell}
-	}		
+	}
 
 	;;;;;;;;;;;;;
 	; Shard Usage
@@ -812,7 +813,7 @@ function CommonPower(int sPower)
 		{
 			waitframe
 		}
-		while ${Me.CastingSpell}		
+		while ${Me.CastingSpell}
 		HeartRequested:Set[FALSE]
 	}
 
@@ -875,7 +876,7 @@ function PetAttack(bool NoChecks=0)
 
 	if !${Me.Pet(exists)}
 		return
-		
+
 	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
 		return
 
@@ -894,7 +895,7 @@ function PetAttack(bool NoChecks=0)
 		{
 			EQ2Execute /pet preserve_self
 			EQ2Execute /pet preserve_master
-		}	
+		}
 		return
 	}
 
@@ -949,7 +950,7 @@ atom SaveEquipmentSet(string EquipmentSetName)
 	variable string EquipmentItem
 	CharacterSet.FindSet[EQ2BotExtras]:AddSet[Equipment]
 	CharacterSet.FindSet[EQ2BotExtras]:AddSet[${EquipmentSetName}]
-	
+
 	Do
 	{
 		if !${Me.Equipment[${tempvar}].Name.Equal[NULL]}
@@ -1016,7 +1017,7 @@ function UseItem(string Item)
 			waitframe
 		}
 		while ${Me.CastingSpell}
-	}	
+	}
 }
 
 function UseCrystallizedSpirit(int Health=60)
@@ -1124,7 +1125,7 @@ function CommonHeals(int Health)
 				waitframe
 			}
 			while ${Me.CastingSpell}
-		}			
+		}
 	}
 
 	if ${UsePotions} && ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.ToActor.InCombatMode}
@@ -1137,8 +1138,8 @@ function CommonHeals(int Health)
 			{
 				waitframe
 			}
-			while ${Me.CastingSpell}	
-		}		
+			while ${Me.CastingSpell}
+		}
 	}
 
 }
@@ -1182,7 +1183,7 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 			{
 				if (${Me.Group[${counter}].ToActor.Health} < ${GroupHealth})
 					return FALSE
-		
+
 				;check health of summoner pets .. TO DO -- why do we care about these on epic/raid fights?
 				if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
 				{
@@ -1442,7 +1443,7 @@ objectdef SpellIcon
 	variable string Name
 	variable int Icon
 	variable int Level
-	
+
 	method Initialize(string Nm, int Icn, int Lvl)
 	{
 		Name:Set[${Nm}]
@@ -1536,7 +1537,7 @@ objectdef HeroicOp
 				}
 			}
 			while ${Counter:Inc}<=${Me.NumAbilities}
-			
+
 			for ( iter:Set[1] ; ${iter} <= ${Spl.Used} ; iter:Inc )
 			{
 				UIElement[${ElementFQN}]:AddItem[${Spl[${iter}].Name},${Spl[${iter}].Icon}${Spl[${iter}].Level.LeadingZeroes[2]}]
