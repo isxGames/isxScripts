@@ -250,4 +250,15 @@
 		<Setting Name="Weak Material">3</Setting>
 		<Setting Name="Major Weak Material">3</Setting>
 	</Set>
+	<Set Name="Timbercraft">
+		<Setting Name="Minor Blemished">1</Setting>
+		<Setting Name="Blemished">1</Setting>
+		<Setting Name="Major Blemished">1</Setting>
+		<Setting Name="Minor Knotted Wood">2</Setting>
+		<Setting Name="Knotted Wood">2</Setting>
+		<Setting Name="Major Knotted Wood">2</Setting>
+		<Setting Name="Minor Splintered">3</Setting>
+		<Setting Name="Splintered">3</Setting>
+		<Setting Name="Major Splintered">3</Setting>
+	</Set>
 </InnerSpaceSettings>
