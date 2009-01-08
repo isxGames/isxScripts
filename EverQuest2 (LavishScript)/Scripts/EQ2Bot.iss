@@ -1375,10 +1375,14 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	if !${Me.Ability[id,${spellid}].IsReady}
 		return
 
-	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
+	if !${Actor[${TargetID}].Type.Equal[Me]}
 	{
-		target ${TargetID}
-		wait 10 ${Target.ID}==${TargetID}
+		if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
+		{
+			;Debug:Echo["EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[TargetID].Type.Equal[PC] --> Returning"]
+			Actor[${TargetID}]:DoTarget
+			wait 10 ${Target.ID}==${TargetID}
+		}
 	}
 
 	CurrentAction:Set[Casting NOW '${spell}']
@@ -1392,7 +1396,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	}
 	else
 	{
-		if ${Actor[${TargetID}].Type.Equal[PC]}
+		if ${Actor[${TargetID}].Type.Equal[PC]} || ${Actor[${TargetID}].Type.Equal[Me]}
 			eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
 		else
 			Me.Ability[id,${spellid}]:Use
@@ -1451,11 +1455,14 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 		return
 	}
 
-	if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
+	if !${Actor[${TargetID}].Type.Equal[Me]}
 	{
-		;Debug:Echo["EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[TargetID].Type.Equal[PC] --> Returning"]
-		Actor[${TargetID}]:DoTarget
-		wait 10 ${Target.ID}==${TargetID}
+		if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
+		{
+			;Debug:Echo["EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[TargetID].Type.Equal[PC] --> Returning"]
+			Actor[${TargetID}]:DoTarget
+			wait 10 ${Target.ID}==${TargetID}
+		}
 	}
 
 	;Debug:Echo["EQ2Bot-Debug:: Queueing '${spell}'"]
@@ -1470,7 +1477,7 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 	}
 	else
 	{
-		if ${Actor[${TargetID}].Type.Equal[PC]}
+		if ${Actor[${TargetID}].Type.Equal[PC]} || ${Actor[${TargetID}].Type.Equal[Me]}
 			eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
 		else
 			Me.Ability[id,${spellid}]:Use
