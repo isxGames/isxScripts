@@ -270,36 +270,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[DPSMode]}</Data>
 	</Commandcheckbox>
-  <Text Name='SpellProcLabel'>
-	<Visible>1</Visible>
-	<X>10</X>
-	<Y>210</Y>
-	<Width>80</Width>
-	<Height>20</Height>
-	<Text>Buff Spell Proc:</Text>
-	<AutoTooltip>The group or raidmember to cast 3-proc buff on.</AutoTooltip>
-  </Text>
-  <combobox name='cbBuffSpellProc'>
-	<x>100</x>
-	<y>210</y>
-	<Width>100</Width>
-	<Height>20</Height>
-	<AutoTooltip>The group or raidmember to cast 3-proc buff on.</AutoTooltip>
-	<Items>
-	</Items>
-	<OnLoad>
-	  This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffSpellProc]}]
-	  This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffSpellProc]}]:Select
-	</OnLoad>
-	<OnSelect>
-	  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffSpellProc,${This.SelectedItem.Text}]
-	  Script[EQ2Bot].VariableScope.BuffSpellProc:Set[${This.SelectedItem.Text}]
-	  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-	</OnSelect>
-	<OnLeftClick>
-	  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffSpellProc,1,1,1]
-	</OnLeftClick>
-  </combobox>
   <Commandcheckbox Name='TSMode'>
 		<Visible>1</Visible>
 		<X>10</X>
