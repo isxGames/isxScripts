@@ -25,7 +25,7 @@ function main()
 					wait 1
 				}
 			}
-			while ${count:Inc}<${Me.CountEffects[detrimental]}
+			while ${count:Inc}<=${Me.CountEffects[detrimental]}
 		}
 		wait 5
 		if (${examineTimer} < ${Math.Calc64[${Time.Timestamp}-300]})

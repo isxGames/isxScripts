@@ -2,7 +2,7 @@
 ;shadow.iss
 ;by pygar
 ;usage: run shadow <actorName> <distance>
-;example: run shadow pygar 1
+;example: run shadow pygar 3
 ;
 ;Description:
 ;Designed to be run in partner with other scripts to force a bot to stay within x range of
@@ -17,7 +17,6 @@
 ;===================================================
 variable string forward=w
 variable int FollowTask
-variable string sTarget
 #define QUIT f7
 
 function main(string ShadowTarget, float srange)
@@ -25,14 +24,16 @@ function main(string ShadowTarget, float srange)
 	squelch bind quit "QUIT" "FollowTask:Set[0]"
 	FollowTask:Set[1]
 	sTarget:Set[ShadowTarget]
-	Script[EQ2Bot].Variable[NoMovement]:Set[TRUE]
+
 	do
 	{
 		while ${Actor[${ShadowTarget}](exists)} && !${Actor[${ShadowTarget}].IsDead}
 		{
 			if ${Actor[${ShadowTarget}].Distance}>${srange}
 			{
-				call FastMove ${Actor[${ShadowTarget}].X} ${Actor[${ShadowTarget}].Z} ${srange}
+				Script[EQ2Bot]:Pause
+				call FastMove ${Actor[pc,exactname,${ShadowTarget}].ID} ${srange}
+				Script[EQ2Bot]:Resume
 			}
 			waitframe
 		}
@@ -41,28 +42,25 @@ function main(string ShadowTarget, float srange)
 	while ${FollowTask}
 }
 
-function FastMove(float X, float Z, float range)
+function FastMove(uint sTarget, float range)
 {
 	variable float xDist
-	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
+	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${Actor[${sTarget}].X},${Actor[${sTarget}].Z}]}
 	variable int xTimer
 
-	if ${range}<1
-		range:Set[1]
+	if ${range}<3
+		range:Set[3]
 
-	if !${X} || !${Z}
+	if ${Math.Distance[${Me.X},${Me.Z},${Actor[${sTarget}].X},${Actor[${sTarget}].Z}]}>85
 		return "INVALIDLOC"
 
-	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>35
-		return "INVALIDLOC"
-
-	face ${X} ${Z}
+	face ${Actor[${sTarget}].X} ${Actor[${sTarget}].Z}]}
 	press -hold ${forward}
 	xTimer:Set[${Script.RunningTime}]
 
 	while ${Math.Distance[${Me.X},${Me.Z},${Actor[${sTarget}].X},${Actor[${sTarget}].Z}]}>${range}
 	{
-		xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
+		xDist:Set[${Math.Distance[${Me.X},${Me.Z},${Actor[${sTarget}].X},${Actor[${sTarget}].Z}]}]
 
 		if ${Math.Calc[${SavDist}-${xDist}]}<0.8
 		{
@@ -80,7 +78,7 @@ function FastMove(float X, float Z, float range)
 			SavDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
 		}
 
-		face ${X} ${Z}
+		face ${Actor[${sTarget}].X} ${Actor[${sTarget}].Z}]}
 	}
 
 
