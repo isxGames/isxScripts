@@ -113,4 +113,12 @@
 		<Setting Name="2 2">Entwine</Setting>
 		<Setting Name="2 3">Preserve</Setting>
 	</Set>
+	<Set name="Timbercraft">
+		<Setting Name="1 1">Varnish</Setting>
+		<Setting Name="1 2">Whittle</Setting>
+		<Setting Name="1 3">Scour</Setting>
+		<Setting Name="2 1">Stain</Setting>
+		<Setting Name="2 2">Carve</Setting>
+		<Setting Name="2 3">Sand</Setting>
+	</Set>
 </InnerSpaceSettings>
