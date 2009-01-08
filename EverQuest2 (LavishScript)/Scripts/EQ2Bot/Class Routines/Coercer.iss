@@ -50,7 +50,6 @@ function Class_Declaration()
 	declare BuffHateGroupMember string script
 	declare BuffCoerciveHealingGroupMember string script
 	declare BuffManaward bool script
-	declare BuffSpellProc string stript
 	declare DPSMode bool script 1
 	declare TSMode bool script 1
 	declare StartHO bool script 1
@@ -70,7 +69,6 @@ function Class_Declaration()
 	BuffCoerciveHealing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealing,FALSE]}]
 	BuffCoerciveHealingGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealingGroupMember,]}]
 	BuffManaward:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffManaward,FALSE]}]
-	BuffSpellProc:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSpellProc,No One]}]
 	DPSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[DPSMode,FALSE]}]
 	TSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseTS,FALSE]}]
 	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
@@ -106,6 +104,15 @@ function Pulse()
 		call Mezmerise_Targets
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer2:Set[${Script.RunningTime}]
+	}
+
+	if ${MezzMode} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer2}+5000]})
+	{
+		;;;; Cataclysmic Mind
+		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)} && ${Actor[${MainTank}].Target.Type.Equal[npc]}
+		{
+			eq2execute /useabilityonplayer ${Me.ToActor.Name} ${SpellType[72]}
+		}
 	}
 }
 
@@ -390,6 +397,20 @@ function Combat_Routine(int xAction)
 		spellthreshold:Set[5]
 	}
 
+	;;; Screw spell loops, priority casting
+	;;;; Chronosiphon
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady}
+	{
+		call CastSpellRange 382 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Cataclysmic Mind
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+	{
+			eq2execute /useabilityonplayer ${Me.ToActor.Name} ${SpellType[72]}
+			spellsused:Inc
+	}
+
 	;;; AoE Checks
 	if ${Mob.Count}>1
 	{
@@ -410,13 +431,7 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	;;; Screw spell loops, priority casting
-	;;;; Chronosiphon
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady}
-	{
-		call CastSpellRange 382 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
+
 	;;;; Tashani
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[377]}].IsReady}
 	{
@@ -446,15 +461,6 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 391 0 0 0 ${KillTarget}
 		spellsused:Inc
-	}
-	;;;; Cataclysmic Mind
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
-	{
-		if !${BuffSpellProc.Equal[No One]}
-		{
-			call CastSpellRange 72 0 0 0 ${Actor[${BuffSpellProc.Token[2,:]},${BuffSpellProc.Token[1,:]}].ID}
-			spellsused:Inc
-		}
 	}
 	;;;; Daze
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)}
