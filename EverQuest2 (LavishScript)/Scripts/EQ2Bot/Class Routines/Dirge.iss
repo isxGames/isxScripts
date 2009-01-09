@@ -124,7 +124,7 @@ function Pulse()
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-	
+
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer2}+1000]})
 	{
 		call ActionChecks
@@ -350,15 +350,23 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
-	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<25
+	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[${AbilityID}]}].MaxRange}]}
 	{
-		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 0 0 1 0
-		eq2execute auto 1
+		eq2execute /useability ${SpellType[250]}
+		eq2execute /auto 2
+
+		if ${Me.Ability[${SpellType[62]}].IsReady}
+		{
+			eq2execute /useability ${SpellType[62]}
+			call CheckPosition 1 1 ${KillTarget} 151 1
+			call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
+		}
+
 	}
 
-	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<10
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}=<${Position.GetMeleeMaxRange[${KillTarget}]}
 	{
-		eq2execute auto 1
+		eq2execute /auto 1
 	}
 
 	AutoFollowingMA:Set[FALSE]
@@ -418,10 +426,22 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	;call ActionChecks
+	call ActionChecks
 
-	;if ${MagNoteMode}
-	;	call DoMagneticNote
+	if ${MagNoteMode}
+		call DoMagneticNote
+
+	;Always use Cacophony of Blades if available.
+	if ${Me.Ability[${SpellType[155]}].IsReady}
+	{
+		if ${AnnounceMode}
+		{
+			eq2execute /raidsay Caco of Blades is up!
+			eq2execute /g Caco of Blades is up!
+		}
+		call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1 0 1 0
+		wait 20
+	}
 
 	if ${DebuffMode}
 	{
@@ -448,17 +468,6 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
 	}
 
-	;Always use Cacophony of Blades if available.
-	if ${Me.Ability[${SpellType[155]}].IsReady}
-	{
-		if ${AnnounceMode}
-		{
-			eq2execute /raidsay Caco of Blades is up!
-			eq2execute /g Caco of Blades is up!
-		}
-		call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1 0 1 0
-		wait 20
-	}
 
 	if ${RangedAttackMode}
 	{
@@ -583,7 +592,7 @@ function Combat_Routine(int xAction)
 				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 				{
 					Target ${KillTarget}
-					call CheckPosition 1 1
+					call CheckPosition 1 1 ${KillTarget}
 					Me.Ability[Sinister Strike]:Use
 				}
 			}

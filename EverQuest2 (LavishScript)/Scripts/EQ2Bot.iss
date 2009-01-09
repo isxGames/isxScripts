@@ -1401,9 +1401,9 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 		else
 			Me.Ability[id,${spellid}]:Use
 	}
-	;wait 4
+	wait 2
 	; reducing this too much will cause problems ... 4 seems to be a sweet spot
-	wait 4 ${Me.CastingSpell}
+	wait 2 ${Me.CastingSpell}
 
 	;removed queuing, this is CASTNOW function, we want the thing to really cast!
 	while ${Me.CastingSpell}
