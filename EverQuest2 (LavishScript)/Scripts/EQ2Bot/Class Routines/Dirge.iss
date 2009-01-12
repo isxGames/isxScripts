@@ -350,7 +350,7 @@ function Combat_Routine(int xAction)
 {
 	declare DebuffCnt int  0
 
-	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[${AbilityID}]}].MaxRange}]}
+	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].MaxRange}]}
 	{
 		eq2execute /useability ${SpellType[250]}
 		eq2execute /auto 2
@@ -361,10 +361,9 @@ function Combat_Routine(int xAction)
 			call CheckPosition 1 1 ${KillTarget} 151 1
 			call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
 		}
-
 	}
 
-	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}=<${Position.GetMeleeMaxRange[${KillTarget}]}
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<=${Position.GetMeleeMaxRange[${KillTarget}]}
 	{
 		eq2execute /auto 1
 	}
