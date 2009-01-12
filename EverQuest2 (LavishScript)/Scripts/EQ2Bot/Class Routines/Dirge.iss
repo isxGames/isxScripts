@@ -358,8 +358,9 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[62]}].IsReady}
 		{
 			eq2execute /useability ${SpellType[62]}
-			call CheckPosition 1 1 ${KillTarget} 151 1
-			call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
+			call CheckPosition 1 0 ${KillTarget} 151 1
+			if (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+				call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
 		}
 	}
 
@@ -392,7 +393,7 @@ function Combat_Routine(int xAction)
 			EQ2Execute /toggleautoattack
 
 			;if we're too far from killtarget, move in
-			if ${Actor[${KillTarget}].Distance}>10
+			if ${Actor[${KillTarget}].Distance}>10 && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 				call CheckPosition 1 1
 		}
 		elseif ${JoustStatus}==1 && ${RangedAttackMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
@@ -464,7 +465,8 @@ function Combat_Routine(int xAction)
 	if ${Me.Ability[${SpellType[62]}].IsReady}
 	{
 		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1 0
-		call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
+		if (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+			call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
 	}
 
 
@@ -513,7 +515,7 @@ function Combat_Routine(int xAction)
 					}
 
 					;	check if we have the bump AA and use it to stealth us
-					if ${Me.Ability[${SpellType[391]}].IsReady}
+					if ${Me.Ability[${SpellType[391]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 					{
 						call CastSpellRange 391 0 1 1 ${KillTarget} 0 0 1 0 1
 						call CheckPosition 1 1 ${KillTarget}
@@ -525,7 +527,7 @@ function Combat_Routine(int xAction)
 						eq2execute /useability ${SpellType[136]}
 						wait 4
 					}
-					else
+					elseif (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 					{
 						call CastSpellRange 200 0 1 1 ${KillTarget} 0 0 1 0 1
 						wait 5
@@ -551,7 +553,7 @@ function Combat_Routine(int xAction)
 					}
 
 					;	check if we have the bump AA and use it to stealth us
-					if ${Me.Ability[${SpellType[391]}].IsReady}
+					if ${Me.Ability[${SpellType[391]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 					{
 						call CastSpellRange 391 0 1 1 ${KillTarget} 0 0 1 0 1
 						call CheckPosition 1 1 ${KillTarget}
@@ -563,7 +565,7 @@ function Combat_Routine(int xAction)
 						eq2execute /useability ${SpellType[135]}
 						wait 4
 					}
-					else
+					elseif (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 					{
 						call CastSpellRange 200 0 1 1 ${KillTarget} 0 0 1 0 1
 						wait 5
@@ -588,7 +590,7 @@ function Combat_Routine(int xAction)
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID} && !${RangedAttackMode}
 			{
-				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 				{
 					Target ${KillTarget}
 					call CheckPosition 1 1 ${KillTarget}
@@ -614,7 +616,7 @@ function Combat_Routine(int xAction)
 			call StartHO
 			break
 		case Flank_Attack
-			if !${RangedAttackMode} && !${MainTank}
+			if !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
 			break
 		case Rebuff
