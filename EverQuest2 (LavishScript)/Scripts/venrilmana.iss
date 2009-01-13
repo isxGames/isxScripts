@@ -14,14 +14,28 @@ if "${QueuedCommands}"
 }
 #endmac
 
+variable int BotOn
 
 function main()
 {
+	BotOn:Set[1]
 
 	do
 	{
 		if ${Me.Maintained[Sprint](exists)}
 			Me.Maintained[Sprint]:Cancel
+
+		if ${Me.ToActor.Power}<40 && ${BotOn}
+		{
+			Script[EQ2Bot]:Pause
+			BotOn:Set[0]
+		}
+
+		if ${Me.ToActor.Power}>43 && !${BotOn}
+		{
+			Script[EQ2Bot]:Resume
+			BotOn:Set[1]
+		}
 
 		call CheckDebuffs
 		call CheckPower
@@ -60,21 +74,29 @@ function CheckDebuffs()
 {
 	Me:InitializeEffects
 
-	if ${Me.IsAfflicted} && ${Me.Noxious}>0 && ${Me.Effect[detrimental,Toxic](exists)}
+	if ${Me.IsAfflicted} && ${Me.Noxious}>0 && ${Me.Effect[detrimental,Toxic Infusion](exists)}
 	{
 		Me.Inventory["Expert's Noxious Remedy"]:Use
 		call CastPause
 	}
 
-	if ${Me.Effect[detrimental,Sacrifice](exists)}
+	if ${Me.Effect[detrimental,Mana Sacrifice](exists)}
 	{
 		call CancelMaintained
+		Script[EQ2Bot]:Pause
+		BotOn:Set[0]
 
-		while ${Me.Effect[detrimental,Sacrifice](exists)}
+		while ${Me.Effect[detrimental,Mana Sacrifice](exists)}
 		{
 			waitframe
 			if ${Me.ToActor.Power}>60
 				press 1
+		}
+
+		if ${Me.ToActor.Power)>43
+		{
+			Script[EQ2Bot]:Resume
+			BotOn:Set[1]
 		}
 
 		return 1
