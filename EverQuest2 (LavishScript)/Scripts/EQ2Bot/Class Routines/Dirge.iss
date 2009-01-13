@@ -43,7 +43,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20080408
+	declare ClassFileVersion int script 20090112
 	;;;;
 
 	declare OffenseMode bool script 0
@@ -193,8 +193,6 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	;Action[1]:Set[Banshee]
-	;SpellRange[1,1]:Set[62]
 
 	Action[1]:Set[ScreamOfDeath]
 	SpellRange[1,1]:Set[391]
@@ -222,9 +220,6 @@ function Combat_Init()
 	Action[8]:Set[AARhythm_Blade]
 	SpellRange[8,1]:Set[397]
 
-	;Action[9]:Set[Lanet]
-	;SpellRange[9,1]:Set[52]
-
 	Action[9]:Set[AAHarmonizingShot]
 	SpellRange[9,1]:Set[386]
 
@@ -236,9 +231,6 @@ function Combat_Init()
 	Action[11]:Set[AATurnstrike]
 	SpellRange[11,1]:Set[387]
 
-	;Action[13]:Set[Rebuff]
-	;SpellRange[13,1]:Set[54]
-
 	Action[12]:Set[AoE2]
 	SpellRange[12,1]:Set[63]
 
@@ -249,8 +241,6 @@ function Combat_Init()
 	Action[14]:Set[Jael]
 	SpellRange[14,1]:Set[250]
 
-	;Action[17]:Set[Stun]
-	;SpellRange[17,1]:Set[190]
 }
 
 
@@ -365,9 +355,7 @@ function Combat_Routine(int xAction)
 	}
 
 	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<=${Position.GetMeleeMaxRange[${KillTarget}]}
-	{
 		eq2execute /auto 1
-	}
 
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
@@ -419,9 +407,7 @@ function Combat_Routine(int xAction)
 
 				echo Healer - ${return}
 				if ${Actor[${return}].Distance}>2
-				{
 					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
-				}
 			}
 		}
 	}
@@ -606,27 +592,15 @@ function Combat_Routine(int xAction)
 		case AARhythm_Blade
 		case Grievance
 		case WailOfTheDead
-		case Tarven
 			if !${RangedAttackMode}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			break
-
-		case Banshee
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-			call StartHO
 			break
 		case Flank_Attack
 			if !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
 			break
-		case Rebuff
 		case Luda
-		case Lanet
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-			break
-		case Stun
-			if !${RangedAttackMode} && !${Target.IsEpic}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			break
 		default
 			return CombatComplete
@@ -687,9 +661,9 @@ function Cancel_Root()
 {
 
 }
+
 function CheckHeals()
 {
-
 	declare temphl int local 1
 	declare tempgrp int local 1
 	declare tempraid int local 1
@@ -732,8 +706,6 @@ function CheckHeals()
 	}
 }
 
-
-
 function ActionChecks()
 {
 
@@ -753,7 +725,7 @@ function DoMagneticNote()
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	EQ2:CreateCustomActorArray[byDist,35]
+	EQ2:CreateCustomActorArray[byDist,${ScanRange},npc]
 
 	do
 	{
@@ -782,6 +754,5 @@ function StartHO()
 function PostDeathRoutine()
 {
 	;; This function is called after a character has either revived or been rezzed
-
 	return
 }

@@ -41,17 +41,19 @@ function CheckDebuff()
 {
 	Me:InitializeEffects
 
-	if ${Me.Effect[detrimental,Mana](exists)} && !${NotifyMana}
+	if ${Me.Effect[detrimental,Mana Sacrafice](exists)} && !${NotifyMana}
 	{
 		HUD -add ManaSac 400,360 "DEBUFFED!!! MANA SACRAFICE!!!"
 		HUDSet ManaSac -c FF0000
 		NotifyMana:Set[1]
+		Script[EQ2Bot]:Pause
 	}
 
-	if !${Me.Effect[detrimental,Mana](exists)} && ${NotifyMana}
+	if !${Me.Effect[detrimental,Mana Sacrafice](exists)} && ${NotifyMana}
 	{
 		HUD -remove ManaSac
 		NotifyMana:Set[0]
+		Script[EQ2Bot]:Resume
 	}
 }
 
