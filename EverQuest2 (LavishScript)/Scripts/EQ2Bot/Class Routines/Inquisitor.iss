@@ -36,8 +36,6 @@ function Class_Declaration()
 	;UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
 	;ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/UI/${Me.SubClass}_Buffs.xml"
 
-
-
 	declare OffenseMode bool script
 	declare DebuffMode bool script
 	declare AoEMode bool script
@@ -176,78 +174,81 @@ function Combat_Init()
 
 	Action[5]:Set[Mastery]
 
-	Action[6]:Set[TheftOfVitality]
-	MobHealth[6,1]:Set[1]
-	MobHealth[6,2]:Set[100]
-	Power[6,1]:Set[20]
-	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[56]
+	Action[6]:Set[AA_HammerSmite]
+	SpellRange[6,1]:Set[391]
 
-	Action[7]:Set[Absolving_Flames]
-	MobHealth[7,1]:Set[20]
+	Action[7]:Set[TheftOfVitality]
+	MobHealth[7,1]:Set[1]
 	MobHealth[7,2]:Set[100]
-	Power[7,1]:Set[40]
+	Power[7,1]:Set[20]
 	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[70]
+	SpellRange[7,1]:Set[56]
 
-	Action[8]:Set[Affliction]
+	Action[8]:Set[Absolving_Flames]
 	MobHealth[8,1]:Set[20]
 	MobHealth[8,2]:Set[100]
 	Power[8,1]:Set[40]
 	Power[8,2]:Set[100]
-	SpellRange[8,1]:Set[71]
+	SpellRange[8,1]:Set[70]
 
-	Action[9]:Set[AA_SkullCrack]
-	SpellRange[9,1]:Set[387]
+	Action[9]:Set[Affliction]
+	MobHealth[9,1]:Set[20]
+	MobHealth[9,2]:Set[100]
+	Power[9,1]:Set[40]
+	Power[9,2]:Set[100]
+	SpellRange[9,1]:Set[71]
 
-	Action[10]:Set[AoE]
-	MobHealth[10,1]:Set[1]
-	MobHealth[10,2]:Set[100]
-	Power[10,1]:Set[30]
-	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[90]
+	Action[10]:Set[AA_SkullCrack]
+	SpellRange[10,1]:Set[387]
 
-	Action[11]:Set[Proc]
-	MobHealth[11,1]:Set[40]
+	Action[11]:Set[AoE]
+	MobHealth[11,1]:Set[1]
 	MobHealth[11,2]:Set[100]
-	Power[11,1]:Set[40]
+	Power[11,1]:Set[30]
 	Power[11,2]:Set[100]
-	SpellRange[10,1]:Set[337]
+	SpellRange[11,1]:Set[90]
 
-	Action[12]:Set[SymbolOfCorruption]
-	MobHealth[12,1]:Set[10]
+	Action[12]:Set[Proc]
+	MobHealth[12,1]:Set[40]
 	MobHealth[12,2]:Set[100]
-	Power[12,1]:Set[30]
+	Power[12,1]:Set[40]
 	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[57]
+	SpellRange[12,1]:Set[337]
 
-	Action[13]:Set[Stifle]
-	MobHealth[13,1]:Set[1]
+	Action[13]:Set[SymbolOfCorruption]
+	MobHealth[13,1]:Set[10]
 	MobHealth[13,2]:Set[100]
 	Power[13,1]:Set[30]
 	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[260]
+	SpellRange[13,1]:Set[57]
 
-	Action[14]:Set[Counterattack]
-	MobHealth[14,1]:Set[40]
+	Action[14]:Set[Stifle]
+	MobHealth[14,1]:Set[1]
 	MobHealth[14,2]:Set[100]
-	Power[14,1]:Set[40]
+	Power[14,1]:Set[30]
 	Power[14,2]:Set[100]
-	SpellRange[14,1]:Set[336]
+	SpellRange[14,1]:Set[260]
 
-	Action[15]:Set[AA_DivineCastigation]
-	MobHealth[15,1]:Set[1]
+	Action[15]:Set[Counterattack]
+	MobHealth[15,1]:Set[40]
 	MobHealth[15,2]:Set[100]
-	Power[15,1]:Set[30]
+	Power[15,1]:Set[40]
 	Power[15,2]:Set[100]
-	SpellRange[15,1]:Set[395]
+	SpellRange[15,1]:Set[336]
 
-	Action[16]:Set[PreKill]
-	MobHealth[16,1]:Set[5]
-	MobHealth[16,2]:Set[15]
+	Action[16]:Set[AA_DivineCastigation]
+	MobHealth[16,1]:Set[1]
+	MobHealth[16,2]:Set[100]
 	Power[16,1]:Set[30]
 	Power[16,2]:Set[100]
-	SpellRange[16,1]:Set[312]
+	SpellRange[16,1]:Set[395]
+
+	Action[17]:Set[PreKill]
+	MobHealth[17,1]:Set[5]
+	MobHealth[17,2]:Set[15]
+	Power[17,1]:Set[30]
+	Power[17,2]:Set[100]
+	SpellRange[17,1]:Set[312]
 }
 
 function PostCombat_Init()
@@ -288,7 +289,7 @@ function Buff_Routine(int xAction)
 
 							BuffTarget:Set[${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItem[${tempvar}].Text}]
 
-							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[exactname,${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 							{
 								BuffMember:Set[OK]
 								break
@@ -318,7 +319,7 @@ function Buff_Routine(int xAction)
 				do
 				{
 					BuffTarget:Set[${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItem[${Counter}].Text}]
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				}
 				while ${Counter:Inc}<=${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}
 			}
@@ -334,14 +335,14 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}].ID}
 			break
 		case BuffShieldAlly
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffShieldAllyGroupMember.Token[1,:]}]}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
 			if ${Actor[${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}].ID}
 			break
 		case BuffArcane
 			if ${BuffArcane}
@@ -473,6 +474,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		case AA_SkullCrack
+		case AA_HammerSmite
 			if (${OffenseMode} || ${DebuffMode}) && ${BattleClericMode}
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
