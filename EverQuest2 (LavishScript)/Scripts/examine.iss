@@ -28,7 +28,7 @@ function main()
 			while ${count:Inc}<=${Me.CountEffects[detrimental]}
 		}
 		wait 5
-		if (${examineTimer} < ${Math.Calc64[${Time.Timestamp}-300]})
+		if (${examineTimer}<${Math.Calc64[${Time.Timestamp}-300]})
 		{
 			examineTimer:Set[${Time.Timestamp}]
 			if ${RecentDebuffs.Used} > 0
