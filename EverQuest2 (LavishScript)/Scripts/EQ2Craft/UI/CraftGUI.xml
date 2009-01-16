@@ -120,29 +120,27 @@
                   <Height>23</Height>
                   <FullHeight>250%</FullHeight>
                   <ButtonWidth>20</ButtonWidth>
-                  <!--	<Font>
-										<Name>terminal</Name>
-										<Size>18</Size>
+                  <!--	<Font Template='Default Font'>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
                 </Combobox>
                 <Text name='Sort Order'>
                   <X>18</X>
-                  <Y>35</Y>
+                  <Y>30</Y>
                   <Width>150</Width>
                   <Height>20</Height>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Sort Order:</Text>
                 </Text>
                 <Checkbox Name='Sort Name'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>110</X>
                   <Y>30</Y>
@@ -160,10 +158,10 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Checkbox Name='Sort Level'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>200</X>
                   <Y>30</Y>
@@ -189,16 +187,14 @@
                   <Color>FFDDBB00</Color>
                 </Textentry>
                 <Text Name='Dash Label'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>340</X>
-                  <Y>35</Y>
+                  <Y>31</Y>
                   <Width>10</Width>
                   <Height>20</Height>
-                  <Text>-</Text>
+                  <Text>---</Text>
                 </Text>
                 <Textentry Name='Level Max'>
                   <X>360</X>
@@ -217,13 +213,13 @@
                   <Color>FFDDBB00</Color>
                 </Textentry>
                 <Text Name='Quantity Label'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>18</X>
-                  <Y>63</Y>
+                  <Y>58</Y>
                   <Width>100</Width>
                   <Height>20</Height>
                   <Text>Quantity:</Text>
@@ -258,22 +254,22 @@
                   </OnLeftClick>
                 </Commandbutton>
                 <Text Name='Filter Label'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>5%</X>
-                  <Y>95</Y>
+                  <Y>90</Y>
                   <Width>95%</Width>
                   <Height>20</Height>
                   <Text>Filters:</Text>
                 </Text>
                 <Checkbox Name='Standard Filter'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>20%</X>
                   <Y>90</Y>
@@ -306,10 +302,10 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Checkbox Name='Imbued Filter'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>42%</X>
                   <Y>90</Y>
@@ -342,10 +338,10 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Checkbox Name='Rare Filter'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>60%</X>
                   <Y>90</Y>
@@ -379,10 +375,10 @@
                 </Checkbox>
                 <Checkbox Name='Secondary Tradeskill'>
                   <Visible>0</Visible>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>75%</X>
                   <Y>90</Y>
@@ -414,22 +410,20 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Text Name='Quality Level'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>5%</X>
-                  <Y>120</Y>
+                  <Y>115</Y>
                   <Width>150</Width>
                   <Height>20</Height>
                   <Color>FFDDBB00</Color>
                   <Text>Quality Level:</Text>
                 </Text>
                 <Commandcheckbox Name='Quality 1'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>35%</X>
@@ -442,9 +436,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality1]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Quality 2'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>50%</X>
@@ -457,9 +449,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality2]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Quality 3'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>65%</X>
@@ -472,9 +462,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality3]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Quality 4'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>80%</X>
@@ -488,10 +476,10 @@
                 </Commandcheckbox>
                 <Text Name='Gauge Label'>
                   <Visible>0</Visible>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>30%</X>
                   <Y>140</Y>
@@ -533,9 +521,7 @@
                 </Commandbutton>
                 <Commandcheckbox Name='Save List'>
                   <Visible>0</Visible>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>180</X>
@@ -549,10 +535,10 @@
                 </Commandcheckbox>
                 <Text Name='Resume Label'>
                   <Visible>0</Visible>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
-                    <Color>FF22FF22</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FF22FF22</Color>
                   </Font>
                   <X>25</X>
                   <Y>170</Y>
@@ -569,9 +555,7 @@
                   <Height>23</Height>
                   <FullHeight>250%</FullHeight>
                   <ButtonWidth>20</ButtonWidth>
-                  <!--	<Font>
-										<Name>terminal</Name>
-										<Size>14</Size>
+                  <!--	<Font Template='Default Font'>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
                 </Combobox>
@@ -587,12 +571,10 @@
                 </Commandbutton>
                 <Text Name='Remove Title'>
                   <X>100</X>
-                  <Y>40</Y>
+                  <Y>35</Y>
                   <Width>350</Width>
                   <Height>20</Height>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Remove selected Recipes from the queue</Text>
@@ -609,15 +591,13 @@
                 </Commandbutton>
                 <Text Name='Add Level Title'>
                   <X>100</X>
-                  <Y>65</Y>
+                  <Y>60</Y>
                   <Width>350</Width>
                   <Height>20</Height>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
-                  <Text>Add ALL Level      Recipes X Qty:</Text>
+                  <Text>Add ALL Level             Recipes X Qty:</Text>
                 </Text>
                 <Textentry Name='Qty Level Value'>
                   <X>300</X>
@@ -690,9 +670,7 @@
                 </Commandbutton>
                 <Text Name='Gauge List Label'>
                   <Visible>0</Visible>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>12</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>30%</X>
@@ -713,22 +691,20 @@
               </Tab>
               <Tab Name='Options'>
                 <Commandcheckbox Name='Power Check'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
                   <Y>20</Y>
                   <Width>100</Width>
                   <Height>20</Height>
-                  <Text>Wait for Power to Regenerate to:       % before crafting Recipe</Text>
+                  <Text>Wait for Power to Regenerate to:              % before crafting Recipe</Text>
                   <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WaitforPower]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
                   <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WaitforPower]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WaitforPower]}</Data>
                 </Commandcheckbox>
                 <Textentry Name='Power Regen'>
-                  <X>225</X>
+                  <X>190</X>
                   <Y>20</Y>
                   <Width>35</Width>
                   <Height>20</Height>
@@ -736,9 +712,7 @@
                   <Color>FFDDBB00</Color>
                 </Textentry>
                 <Commandcheckbox Name='Current Table'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -751,22 +725,20 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Camp Out'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
                   <Y>60</Y>
                   <Width>100</Width>
                   <Height>20</Height>
-                  <Text>Camp out if this craft session has exceeded           mins</Text>
+                  <Text>Camp out if this craft session has exceeded                   mins</Text>
                   <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampOut]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
                   <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampOut]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampOut]}</Data>
                 </Commandcheckbox>
                 <Textentry Name='Camp Timer'>
-                  <X>300</X>
+                  <X>240</X>
                   <Y>60</Y>
                   <Width>45</Width>
                   <Height>20</Height>
@@ -780,9 +752,7 @@
                   </OnChange>
                 </Textentry>
                 <Commandcheckbox Name='Show All Lists'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -795,9 +765,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Prompt Resume'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -810,9 +778,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='BuyCommon'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -825,9 +791,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='BuyFuel'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -840,22 +804,20 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='BuyHarvest'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
                   <Y>160</Y>
                   <Width>150</Width>
                   <Height>20</Height>
-                  <Text>Buy ALL Harvests from Broker to a MAX PRICE:         (Silver)</Text>
+                  <Text>Buy ALL Harvests from Broker to a MAX PRICE:                  (Silver)</Text>
                   <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
                   <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]}</Data>
                 </Commandcheckbox>
                 <Textentry Name='Max Buy Price'>
-                  <X>298</X>
+                  <X>280</X>
                   <Y>157</Y>
                   <Width>45</Width>
                   <Height>20</Height>
@@ -869,9 +831,7 @@
                   </OnChange>
                 </Textentry>
                 <Commandcheckbox name='Auto Transmute'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -884,9 +844,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoTransmute]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox name='Stop Crafting At Secondary Max Level'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -899,9 +857,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Save Recipe List Range'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -914,9 +870,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RecipeListRange]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='GuildPrivacy'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -929,9 +883,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacy]}</Data>
                 </Commandcheckbox>
 								<Commandcheckbox Name='DeclineInvites'>
-									<Font>
-										<Name>terminal</Name>
-										<Size>10</Size>
+									<Font Template='Default Font'>
 										<Color>FFEBDEAA</Color>
 									</Font>
 									<X>10</X>
@@ -947,9 +899,7 @@
 									<Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].VariableScope.DeclineInvites}</Data>
 								</Commandcheckbox>
 								<Text Name='MovementKeysLabel'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>10</X>
@@ -959,9 +909,7 @@
                   <Text>Movement Keys:</Text>
                 </Text>
                 <Text Name='AutoRunKeyLabel'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
@@ -972,7 +920,7 @@
                 </Text>
                 <Textentry Name='TEAutoRunKey'>
                   <X>25%</X>
-                  <Y>290</Y>
+                  <Y>300</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
@@ -986,9 +934,7 @@
                   </OnChange>
                 </Textentry>
                 <Text Name='BackupKeyLabel'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
@@ -999,7 +945,7 @@
                 </Text>
                 <Textentry Name='TEBackwardKey'>
                   <X>25%</X>
-                  <Y>310</Y>
+                  <Y>320</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
@@ -1013,9 +959,7 @@
                   </OnChange>
                 </Textentry>
                 <Text Name='StrafeRightKeyLabel'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
@@ -1026,7 +970,7 @@
                 </Text>
                 <Textentry Name='TEStrafeRightKey'>
                   <X>25%</X>
-                  <Y>330</Y>
+                  <Y>340</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
@@ -1040,9 +984,7 @@
                   </OnChange>
                 </Textentry>
                 <Text Name='StrafeLeftKeyLabel'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>20</X>
@@ -1053,7 +995,7 @@
                 </Text>
                 <Textentry Name='TEStrafeLeftKey'>
                   <X>25%</X>
-                  <Y>350</Y>
+                  <Y>360</Y>
                   <Width>20%</Width>
                   <Height>20</Height>
                   <MaxLength>20</MaxLength>
@@ -1078,15 +1020,13 @@
                       <Y>5</Y>
                       <Width>100%</Width>
                       <Height>20</Height>
-                      <Font>
-                        <Name>terminal</Name>
-                        <Size>10</Size>
+                      <Font Template='Default Font'>
                         <Color>FFEBDEAA</Color>
                       </Font>
-                      <Text>Time to wait between combines:       seconds</Text>
+                      <Text>Time to wait between combines:               seconds</Text>
                     </Text>
                     <Textentry Name='Craft Delay'>
-                      <X>205</X>
+                      <X>180</X>
                       <Y>0</Y>
                       <Width>35</Width>
                       <Height>20</Height>
@@ -1104,9 +1044,7 @@
                       <Y>27</Y>
                       <Width>100%</Width>
                       <Height>20</Height>
-                      <Font>
-                        <Name>terminal</Name>
-                        <Size>10</Size>
+                      <Font Template='Default Font'>
                         <Color>FFEBDEAA</Color>
                       </Font>
                       <Visible>FALSE</Visible>
@@ -1133,9 +1071,7 @@
                       <Width>100%</Width>
                       <Height>20</Height>
                       <Alignment>Center</Alignment>
-                      <Font>
-                        <Name>terminal</Name>
-                        <Size>10</Size>
+                      <Font Template='Default Font'>
                         <Color>FFEBDEAA</Color>
                       </Font>
                       <Alignment>Center</Alignment>
@@ -1146,12 +1082,11 @@
                       <Y>70</Y>
                       <Width>100%</Width>
                       <Height>20</Height>
-                      <Font>
-                        <Name>terminal</Name>
-                        <Size>10</Size>
-                        <Color>FFEBDEAA</Color>
+                      <Font Template='Default Font'>
+												<Size>17</Size>
+												<Color>FFEBDEAA</Color>
                       </Font>
-                      <Text>* Standard Quality 1:       %   * Rare Quality 1:       %</Text>
+                      <Text>* Standard Quality 1:            %   * Rare Quality 1:           %</Text>
                       <AutoTooltip>Will cast progress + durability if DUR is below this.</AutoTooltip>
                     </Text>
                     <Textentry Name='Standard Quality1'>
@@ -1175,12 +1110,11 @@
                       <Y>100</Y>
                       <Width>100%</Width>
                       <Height>20</Height>
-                      <Font>
-                        <Name>terminal</Name>
-                        <Size>10</Size>
-                        <Color>FFEBDEAA</Color>
+                      <Font Template='Default Font'>
+												<Size>17</Size>
+												<Color>FFEBDEAA</Color>
                       </Font>
-                      <Text>* Standard Quality 2:       %   * Rare Quality 2:       %</Text>
+                      <Text>* Standard Quality 2:            %   * Rare Quality 2:           %</Text>
                       <AutoTooltip>Will cast pure durability if DUR is below this.</AutoTooltip>
                     </Text>
                     <Textentry Name='Standard Quality2'>
@@ -1204,13 +1138,12 @@
                       <Y>130</Y>
                       <Width>100%</Width>
                       <Height>20</Height>
-                      <Font>
-                        <Name>terminal</Name>
-                        <Size>10</Size>
-                        <Color>FFEBDEAA</Color>
+                      <Font Template='Default Font'>
+												<Size>17</Size>
+												<Color>FFEBDEAA</Color>
                       </Font>
                       <!--	<Text>* Standard Quality 3:       %   * Rare Quality 3:       %</text> -->
-                      <Text>  * Standard Power 3:       %     * Rare Power 3:       %</Text>
+                      <Text> * Standard Power 3:            %    * Rare Power 3:           %</Text>
                       <AutoTooltip>Will spam power-consuming buff if power is above this.</AutoTooltip>
                     </Text>
                     <Textentry Name='Standard Quality3'>
@@ -1234,9 +1167,7 @@
 								<Y>160</Y>
 								<Width>100%</Width>
 								<Height>20</Height>
-								<Font>
-									<Name>terminal</Name>
-									<Size>10</Size>
+								<Font Template='Default Font'>
 									<Color>FFEBDEAA</Color>
 								</Font>
 								<Text>* Standard Quality 4:       %   * Rare Quality 4:       %</Text>
@@ -1282,19 +1213,20 @@
               </Tab>
               <Tab Name='Writs'>
                 <Text Name='Writ Count Label'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
-                  <X>10</X>
-                  <Y>20</Y>
+                  <X>30</X>
+                  <Y>15</Y>
                   <Width>500</Width>
                   <Height>20</Height>
                   <Text>Writ Count:</Text>
-                </Text>
+									<AutoTooltip>Number of writs to complete before stopping. Max: 5</AutoTooltip>
+								</Text>
                 <Textentry Name='Writ Count'>
-                  <X>80</X>
+                  <X>130</X>
                   <Y>10</Y>
                   <Width>35</Width>
                   <Height>20</Height>
@@ -1306,11 +1238,10 @@
                     Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]:Set[${This.Text}]
                     LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
                   </OnChange>
-                </Textentry>
-                <Text Name='Writ Qty Label'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+									<AutoTooltip>Number of writs to complete before stopping. Max: 5</AutoTooltip>
+								</Textentry>
+                <!-- <Text Name='Writ Qty Label'>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>135</X>
@@ -1332,21 +1263,22 @@
                     Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritQty]:Set[${This.Text}]
                     LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
                   </OnChange>
-                </Textentry>
+                </Textentry> -->
                 <Text Name='Tier Label'>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
-                    <Color>FFEBDEAA</Color>
+                  <Font Template='Default Font'>
+										<Bold />
+										<Size>18</Size>
+										<Color>FFEBDEAA</Color>
                   </Font>
-                  <X>242</X>
-                  <Y>20</Y>
+                  <X>200</X>
+                  <Y>15</Y>
                   <Width>500</Width>
                   <Height>20</Height>
                   <Text>Choice:</Text>
-                </Text>
+									<AutoTooltip>Conversation choice for writ selection, starting with 1 at the top.</AutoTooltip>
+								</Text>
                 <Textentry Name='Tier'>
-                  <X>285</X>
+                  <X>280</X>
                   <Y>10</Y>
                   <Width>35</Width>
                   <Height>20</Height>
@@ -1358,7 +1290,8 @@
                     Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Tier]:Set[${This.Text}]
                     LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
                   </OnChange>
-                </Textentry>
+									<AutoTooltip>Conversation choice for writ selection, starting with 1 at the top.</AutoTooltip>
+								</Textentry>
                 <Commandbutton Name='Create Work Order'>
                   <X>60</X>
                   <Y>40</Y>
@@ -1389,9 +1322,7 @@
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>11</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Automatic Crafting Bot v${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]}</Text>
@@ -1402,9 +1333,7 @@
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>11</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Originally by Blazer</Text>
@@ -1415,35 +1344,42 @@
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>11</Size>
+                  <Font Template='Default Font'>
                     <Color>FFFFFF00</Color>
                   </Font>
                   <Text>ISXEQ2 was created by Amadeus</Text>
                 </Text>
+								<Text Name='Contributors'>
+									<X>10%</X>
+									<Y>60</Y>
+									<Width>80%</Width>
+									<Height>80</Height>
+									<Alignment>Center</Alignment>
+									<Wrap />
+									<Text>Over the years, Craft has been maintained by:
+									Blazer
+									Hendrix
+									Amadeus
+									Valerian</Text>
+								</Text>
                 <Text Name='About 2'>
                   <X>0</X>
-                  <Y>60</Y>
+                  <Y>150</Y>
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>11</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>For more Information Please see</Text>
                 </Text>
                 <Text Name='About 3'>
                   <X>0</X>
-                  <Y>75</Y>
+                  <Y>165</Y>
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font>
-                    <Name>terminal</Name>
-                    <Size>10</Size>
+                  <Font Template='Default Font'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>http://www.isxGames.com/forums</Text>
@@ -1644,9 +1580,7 @@
       </Commandbutton>
       <Checkbox Name='Camp Now'>
         <visible>0</visible>
-        <Font>
-          <Name>terminal</Name>
-          <Size>10</Size>
+        <Font Template='Default Font'>
           <Color>FFEBDEAA</Color>
         </Font>
         <X>85</X>
