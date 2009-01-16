@@ -482,7 +482,7 @@
 										<Color>FFEBDEAA</Color>
                   </Font>
                   <X>30%</X>
-                  <Y>140</Y>
+                  <Y>135</Y>
                   <Width>500</Width>
                   <Height>20</Height>
                   <Text>Currently Processing Recipe..</Text>
