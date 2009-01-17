@@ -1,5 +1,14 @@
 Revision History ||
 ===================
+v8.6  - Changed all "terminal" fonts in the GUI to default skinned font. Adjusted all text using
+        that font to fit with the UI elements.
+      - Removed initial blank lines from listboxes. This was annoying some people, and is not
+        needed with the default font anyway.
+      - Tweaked UI update code. Resources, Vendor bought components, Fuel, and Crafted components
+        listboxes will no longer rebuild unless the number of items in the listbox changes. They
+        will continue to update quantites on the fly. -- Please report any issues with the Queue
+        (loading, saving, submitting, etc) on the forums.
+
 v8.59 - Precision path writers rejoice! Craft will no longer try to stand on top of writ givers,
         wholesalers, or brokers. It will now stop within 3 meters of the point set in the
         navigation, and NOT try to adjust after that. Extra tight precision is still in effect

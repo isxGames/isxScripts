@@ -1407,10 +1407,10 @@
                 <Y>25</Y>
                 <Width>415</Width>
                 <Height>r5</Height>
-                <Font>
-                  <Name>terminal</Name>
-                  <Size>12</Size>
-                </Font>
+								<Font Template='Default Font'>
+									<Size>18</Size>
+									<Bold />
+								</Font>
                 <Texture />
                 <SelectMultiple>1</SelectMultiple>
                 <Sort>Text</Sort>
@@ -1436,10 +1436,8 @@
                 <X>0</X>
                 <Y>16</Y>
                 <Width>83%</Width>
-                <Height>62</Height>
-                <Font>
-                  <Name>terminal</Name>
-                  <Size>11</Size>
+                <Height>65</Height>
+                <Font Template='Default Font'>
                 </Font>
                 <Texture />
                 <SelectMultiple>1</SelectMultiple>
@@ -1450,9 +1448,9 @@
               </Listbox>
               <Button Name='Vendor Bought Title'>
                 <X>0</X>
-                <Y>77</Y>
+                <Y>80</Y>
                 <Width>83%</Width>
-                <Height>20</Height>
+                <Height>18</Height>
                 <TextColor>FFEECC00</TextColor>
                 <Text>VENDOR BOUGHT COMPONENTS</Text>
               </Button>
@@ -1460,10 +1458,8 @@
                 <X>0</X>
                 <Y>96</Y>
                 <Width>83%</Width>
-                <Height>60</Height>
-                <Font>
-                  <Name>terminal</Name>
-                  <Size>11</Size>
+                <Height>65</Height>
+                <Font Template='Default Font'>
                 </Font>
                 <SelectMultiple>1</SelectMultiple>
                 <Texture />
@@ -1471,9 +1467,9 @@
               </Listbox>
               <Button Name='Fuel Title'>
                 <X>0</X>
-                <Y>154</Y>
+                <Y>160</Y>
                 <Width>83%</Width>
-                <Height>20</Height>
+                <Height>18</Height>
                 <TextColor>FFEECC00</TextColor>
                 <Text>FUEL COMPONENTS</Text>
               </Button>
@@ -1481,10 +1477,8 @@
                 <X>0</X>
                 <Y>175</Y>
                 <Width>83%</Width>
-                <Height>60</Height>
-                <Font>
-                  <Name>terminal</Name>
-                  <Size>11</Size>
+                <Height>65</Height>
+                <Font Template='Default Font'>
                 </Font>
                 <SelectMultiple>1</SelectMultiple>
                 <Texture />
@@ -1492,9 +1486,9 @@
               </Listbox>
               <Button Name='Crafted Title'>
                 <X>0</X>
-                <Y>234</Y>
+                <Y>238</Y>
                 <Width>83%</Width>
-                <Height>20</Height>
+                <Height>18</Height>
                 <TextColor>FFEECC00</TextColor>
                 <Text>CRAFTED COMPONENTS</Text>
               </Button>
@@ -1503,9 +1497,7 @@
                 <Y>253</Y>
                 <Width>83%</Width>
                 <Height>115</Height>
-                <Font>
-                  <Name>terminal</Name>
-                  <Size>11</Size>
+                <Font Template='Default Font'>
                 </Font>
                 <SelectMultiple>1</SelectMultiple>
                 <Texture />
@@ -1535,9 +1527,7 @@
             <Y>78</Y>
             <Width>386</Width>
             <Height>550</Height>
-            <Font>
-              <Name>terminal</Name>
-              <Size>11</Size>
+            <Font Template='Default Font'>
             </Font>
             <SelectMultiple>1</SelectMultiple>
             <Texture />
