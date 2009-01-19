@@ -553,7 +553,7 @@
                   <Y>10</Y>
                   <Width>65%</Width>
                   <Height>23</Height>
-                  <FullHeight>250%</FullHeight>
+                  <FullHeight>120</FullHeight>
                   <ButtonWidth>20</ButtonWidth>
                   <!--	<Font Template='Default Font'>
 										<Color>FFEBDEAA</Color>
