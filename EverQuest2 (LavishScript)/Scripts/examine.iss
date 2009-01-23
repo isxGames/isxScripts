@@ -17,7 +17,7 @@ function main()
 			count:Set[0]
 			do
 			{
-				if !${RecentDebuffs.Element[${Me.Effect[detrimental,${count}].Name}]}
+				if !${RecentDebuffs.Element[${Me.Effect[detrimental,${count}].Name}](exists)}
 				{
 					Me.Effect[detrimental,${count}]:Examine
 					RecentDebuffs:Set[${Me.Effect[detrimental,${count}].Name},${Me.Effect[detrimental,${count}].Description}]

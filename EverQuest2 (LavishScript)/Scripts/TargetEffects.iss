@@ -16,7 +16,7 @@ function main()
 			count:Set[0]
 			do
 			{
-				if !${RecentDebuffs.Element[${Target.Effect[${count}].Name}]}
+				if !${RecentDebuffs.Element[${Target.Effect[${count}].Name}](exists)}
 				{
 					echo ${Target.Effect[${count}].Name} - ${Target.Effect[${count}].Description}
 					Actor[${Target.ID}].Effect[${count}]:Examine
