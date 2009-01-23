@@ -218,17 +218,17 @@ function CheckMovingAggro()
 
 		do
 		{
-			echo waiting 1 second in moveto
+			;echo waiting 1 second in moveto
 			wait 10
 		}
-		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
+		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90 || ${Me.ToActor.InCombatMode}
 
 		Echo Scanning Loot in moveto
 		EQ2:CreateCustomActorArray[byDist,15]
 
 		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
 		{
-			echo Loot Nearby, waiting 5 seconds...
+			;echo Loot Nearby, waiting 5 seconds...
 			wait 50
 		}
 
@@ -250,9 +250,9 @@ function Obstacle(int delay)
 	if ${delay}>0
 	{
 		;backup a little
-        press -release MOVEFORWARD		
+        press -release MOVEFORWARD
         wait 1
-		press -hold MOVEBACKWARD		
+		press -hold MOVEBACKWARD
 		wait ${Math.Calc64[${BackupTime}*${delay}]}
         press -release MOVEBACKWARD
 
@@ -262,20 +262,20 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-                press -hold STRAFELEFT			    
+                press -hold STRAFELEFT
 				call StartRunning
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFELEFT	
+                press -release STRAFELEFT
 				call StopRunning
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-                press -hold STRAFERIGHT	
+                press -hold STRAFERIGHT
 				call StartRunning
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFERIGHT	
+                press -release STRAFERIGHT
 				call StopRunning
 				wait 2
 			}
@@ -286,17 +286,17 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-                press -hold STRAFELEFT	
+                press -hold STRAFELEFT
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFELEFT	
+                press -release STRAFELEFT
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-                press -hold STRAFERIGHT	
+                press -hold STRAFERIGHT
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFERIGHT	
+                press -release STRAFERIGHT
 				wait 2
 			}
 		}
@@ -347,14 +347,14 @@ function StartRunning()
 {
     variable int Count
     Count:Set[0]
-    
+
 	if !${Me.IsMoving}
 	{
 		do
 		{
 		    if ${Count} > 20
 		    {
-		        ;; we must be stuck....   
+		        ;; we must be stuck....
 		        press MOVEBACKWARD
 		        press -hold MOVEBACKWARD
 		        wait 5
