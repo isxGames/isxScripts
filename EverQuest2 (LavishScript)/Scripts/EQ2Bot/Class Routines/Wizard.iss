@@ -40,6 +40,7 @@ function Class_Declaration()
 	declare CastCures bool script FALSE
 	declare PetMode bool script TRUE
 	declare StartHO bool script FALSE
+	declare PetForm int script 1
 
 	call EQ2BotLib_Init
 
@@ -52,19 +53,20 @@ function Class_Declaration()
 	BuffAmplify:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAmplify,,FALSE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
 	BuffSeal:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSeal,FALSE]}]
+	PetForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PetForm,]}]
 
 }
 
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -75,7 +77,7 @@ function Pulse()
 	{
 		call CheckHeals
 		call RefreshPower
-		
+
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
@@ -109,6 +111,11 @@ function Buff_Init()
 
 	PreAction[7]:Set[AA_Ward_Sages]
 	PreSpellRange[7,1]:Set[386]
+
+	PreAction[8]:Set[AA_Pet]
+	PreSpellRange[8,1]:Set[382]
+	PreSpellRange[8,2]:Set[383]
+	PreSpellRange[8,3]:Set[384]
 }
 
 function Combat_Init()
@@ -338,11 +345,11 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case AA_Ward_Sages
-			if ${Me.Ability[${SpellType[355]}].IsReady}
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
-
+			break
 		Default
 			return Buff Complete
 			break
@@ -600,8 +607,8 @@ function CheckHeals()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }

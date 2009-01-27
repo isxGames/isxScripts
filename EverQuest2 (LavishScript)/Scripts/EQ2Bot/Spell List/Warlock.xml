@@ -19,6 +19,9 @@
 		<Setting Name="10,181">Interference</Setting>
 		<Setting Name="10,72">Emanate</Setting>
 		<Setting Name="10,71">Suffocation</Setting>
+		<Setting Name="10,382">Summon: Animated Tome</Setting>
+		<Setting Name="10,383">Summon: Drake</Setting>
+		<Setting Name="10,384">Summon: Gargoyle</Setting>
 		<Setting Name="10,385">Freehand Sorcery</Setting>
 		<Setting Name="10,386">Ward of Sages</Setting>
 		<Setting Name="10,387">Focused Casting</Setting>
@@ -33,7 +36,7 @@
 		<Setting Name="10,396">Ambidexterous Casting</Setting>
 		<Setting Name="10,397">Static Discharge</Setting>
 		<Setting Name="10,398">Catalyst</Setting>
-		<Setting Name="11,31">Venomous Grasp</Setting>
+		<Setting Name="11,31">Venemous Grasp</Setting>
 		<Setting Name="12,63">Corrosive Bolt</Setting>
 		<Setting Name="12,20">Spellbinding Pact</Setting>
 		<Setting Name="13,57">Shorten Breath</Setting>
@@ -165,7 +168,7 @@
 		<Setting Name="77,71">Vacuum Chamber</Setting>
 		<Setting Name="78,56">Curse of Luclin</Setting>
 		<Setting Name="78,231">Dead Grasp</Setting>
-		<Setting Name="78,31">Grasp of Bertoxulous</Setting>
+		<Setting Name="78,31">Grasp of Bertoxxulous</Setting>
 		<Setting Name="78,96">Upheaval</Setting>
 		<Setting Name="79,20">Mage\'s Pact</Setting>
 		<Setting Name="79,57">Vacuum Field</Setting>

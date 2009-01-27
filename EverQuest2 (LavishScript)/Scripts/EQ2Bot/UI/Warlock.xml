@@ -269,6 +269,36 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Use Focused Casting]}</Data>
 	</Commandcheckbox>
+	<Text name='lblPetForm'>
+	  <x>55%</x>
+	  <y>10</y>
+	  <Height>20</Height>
+		<Width>80</Width>
+		<Alignment>Left</Alignment>
+		<Text>AA Pet:</Text>
+	</Text>
+	<combobox Name='PetForm'>
+		<X>20%</X>
+		<Y>275</Y>
+		<Width>65</Width>
+		<Height>20</Height>
+		<AutoTooltip>Select Pet Form</AutoTooltip>
+		<Items>
+		  <Item Value='0'>None</Item>
+			<Item Value='1'>Tome</Item>
+			<Item Value='2'>Drake</Item>
+			<Item Value='3'>Gargoyle</Item>
+		</items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetForm]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetForm]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PetForm]:Set[${This.SelectedItem.Value}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[PetForm,${This.SelectedItem.Value}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick></OnLeftClick>
+	</combobox>
 	<combobox name='cbBuffVielShieldGroupMember'>
 		<x>150</x>
 		<y>50</y>
