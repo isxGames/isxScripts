@@ -1406,6 +1406,41 @@ function CastPotion(string Item)
 	return SUCCESS
 }
 
+function SummonDietyPet()
+{
+	variable string DietyPet[13]
+	variable string dcount
+
+	DietyPet[1]:Set[Summon: Elemental of Karana]
+	DietyPet[2]:Set[Summon: Beloved of Bristlebane]
+	DietyPet[3]:Set[Summon: Rodcet Nife's Healing Companion]
+	DietyPet[4]:Set[Summon: Imp of Ro]
+	DietyPet[5]:Set[Summon: Pariah of Bertoxxulous]
+	DietyPet[6]:Set[Summon: Servant of Thule]
+	DietyPet[7]:Set[Summon: The Tribunal's Bailiff]
+	DietyPet[8]:Set[Summon: Underfoot Attendant]
+	DietyPet[9]:Set[Summon: Warrior of Zek]
+	DietyPet[10]:Set[Summon: Peaceful Visage]
+	DietyPet[11]:Set[Summon: Friend of Growth]
+	DietyPet[12]:Set[Summon: Minion of Hate]
+	DietyPet[13]:Set[Valiant Beast]
+
+	while ${dcount:Inc}<=${DietyPet.Size}
+	{
+		if ${Me.Ability[${DietyPet[${dcount}]}].IsReady}
+		{
+			Me.Ability[${DietyPet[${dcount}]}]:Use
+
+			wait 4
+			while ${Me.IsCasting}
+			{
+				wait 2
+			}
+
+			return Complete
+		}
+	}
+}
 
 ;*************************************************************
 ;EQ2HOlib

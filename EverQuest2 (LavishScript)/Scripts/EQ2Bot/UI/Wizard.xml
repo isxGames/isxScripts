@@ -227,7 +227,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<Alignment>Left</Alignment>
 		<Text>Pet Type:</Text>
 	</Text>
-	<combobox Name='PetSelect'>
+	<combobox Name='PetForm'>
 		<X>30</X>
 		<Y>190</Y>
 		<Width>65</Width>
@@ -236,16 +236,16 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<Items>
 		  <Item Value='0'>None</Item>
 			<Item Value='1'>Tome</Item>
-			<Item Value='2'>Gargoyle</Item>
-			<Item Value='3'>Drake</Item>
+			<Item Value='2'>Drake</Item>
+			<Item Value='3'>Gargoyle</Item>
 		</items>
 		<OnLoad>
-			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetSelect]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetSelect]}]:Select
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetForm]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetForm]}]:Select
 		</OnLoad>
 		<OnSelect>
-			Script[EQ2Bot].Variable[ShiftForm]:Set[${This.SelectedItem.Value}]
-			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[ShiftForm,${This.SelectedItem.Value}]
+			Script[EQ2Bot].Variable[PetForm]:Set[${This.SelectedItem.Value}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[PetForm,${This.SelectedItem.Value}]
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick></OnLeftClick>
 	</combobox>

@@ -41,6 +41,7 @@ function Class_Declaration()
 	declare CastCures bool script FALSE
 	declare StartHO bool script FALSE
 	declare FocusMode bool script TRUE
+	declare PetForm int script 1
 
 	;Custom Equipment
 	declare PoisonCureItem string script
@@ -59,24 +60,26 @@ function Class_Declaration()
 	CastCures:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Cures,TRUE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
 	FocusMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Focused Casting,TRUE]}]
+	PetForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PetForm,]}]
+
 }
 
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	
+
 	;; This has to be set WITHIN any 'if' block that uses the timer.
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -107,6 +110,17 @@ function Buff_Init()
 
 	PreAction[6]:Set[SeeInvis]
 	PreSpellRange[6,1]:Set[30]
+
+	PreAction[7]:Set[AA_Ward_Sages]
+	PreSpellRange[7,1]:Set[386]
+
+	PreAction[8]:Set[AA_Pet]
+	PreSpellRange[8,1]:Set[382]
+	PreSpellRange[8,2]:Set[383]
+	PreSpellRange[8,3]:Set[384]
+
+	PreAction[9]:Set[DietyPet]
+
 }
 
 function Combat_Init()
@@ -371,7 +385,23 @@ function Buff_Routine(int xAction)
 				while ${tempvar:Inc}<${Me.GroupCount}
 			}
 			break
+		case AA_Ward_Sages
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			break
 
+		case AA_Pet
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${PetForm}]}
+			}
+			break
+		case DietyPet
+			call SummonDietyPet
+			break
 		Default
 			return Buff Complete
 			break
@@ -384,8 +414,18 @@ function Combat_Routine(int xAction)
 	declare debuffused int local 0
 	declare pricast int local 0
 
-
 	AutoFollowingMA:Set[FALSE]
+	if ${Me.ToActor.WhoFollowing(exists)}
+		EQ2Execute /stopfollow
+
+	if ${DoHOs}
+		objHeroicOp:DoHO
+
+	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat}
+		call CastSpellRange 303
+
+	if ${CastCures}
+		call CheckHeals
 
 	;Actions 8-17 are for encounters only, we want to skip them if solo mobs.
 	if ${xAction}>7 && ${Mob.Count}==1 && ${Target.EncounterSize}==1
@@ -398,26 +438,6 @@ function Combat_Routine(int xAction)
 		{
 			return Combat Complete
 		}
-	}
-
-	if ${Me.ToActor.WhoFollowing(exists)}
-	{
-		EQ2Execute /stopfollow
-	}
-
-	if ${DoHOs}
-	{
-		objHeroicOp:DoHO
-	}
-
-	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat}
-	{
-		call CastSpellRange 303
-	}
-
-	if ${CastCures}
-	{
-		call CheckHeals
 	}
 
 	if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
@@ -790,8 +810,8 @@ function CheckHeals()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }

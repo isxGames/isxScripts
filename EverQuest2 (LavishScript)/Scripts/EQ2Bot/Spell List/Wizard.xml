@@ -19,6 +19,9 @@
 		<Setting Name="10,71">Blaze</Setting>
 		<Setting Name="10,72">Scorch</Setting>
 		<Setting Name="10,180">Tongue Twist</Setting>
+		<Setting Name="10,382">Summon: Animated Tome</Setting>
+		<Setting Name="10,383">Summon: Drake</Setting>
+		<Setting Name="10,384">Summon: Gargoyle</Setting>
 		<Setting Name="10,385">Freehand Sorcery</Setting>
 		<Setting Name="10,386">Ward of Sages</Setting>
 		<Setting Name="10,387">Fireshape</Setting>
@@ -30,9 +33,6 @@
 		<Setting Name="10,393">Concussive Blasts</Setting>
 		<Setting Name="10,394">Manaburn</Setting>
 		<Setting Name="10,395">Spell Reach</Setting>
-		<Setting Name="10,396">Tome</Setting>
-		<Setting Name="10,397">Gargoyle</Setting>
-		<Setting Name="10,398">Drake</Setting>
 		<Setting Name="11,31">Burning Radiance</Setting>
 		<Setting Name="12,63">Plasma Burst</Setting>
 		<Setting Name="12,20">Vivid Seal</Setting>
