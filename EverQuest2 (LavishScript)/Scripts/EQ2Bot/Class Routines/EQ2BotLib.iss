@@ -1432,7 +1432,7 @@ function SummonDietyPet()
 			Me.Ability[${DietyPet[${dcount}]}]:Use
 
 			wait 4
-			while ${Me.IsCasting}
+			while ${Me.CastingSpell}
 			{
 				wait 2
 			}
