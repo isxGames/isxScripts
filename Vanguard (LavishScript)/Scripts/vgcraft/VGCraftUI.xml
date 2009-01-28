@@ -2377,10 +2377,10 @@
 
 				</Tabs>
 			</TabControl>
-
+				
 			<Commandbutton Name='RunButton' Template='VG.GreenCommandButton'>
 				<visible>1</visible>
-				<X>15%</X>
+				<X>5%</X>
 				<Y>295</Y>
 				<Width>80</Width> 
 				<Height>30</Height>
@@ -2418,7 +2418,7 @@
 
 			<Commandbutton Name='QuitButton' Template='VG.RedCommandButton'>
 				<visible>1</visible>
-				<X>55%</X> 
+				<X>30%</X> 
 				<Y>295</Y> 
 				<Width>65</Width> 
 				<Height>30</Height>
@@ -2428,6 +2428,19 @@
 					StopBot
 				</OnLeftClick>
 			</Commandbutton>
+			
+			<Commandbutton Name='ConsolidateInventoryButton' Template='VG.RedCommandButton'>
+				<visible>1</visible>
+				<X>55%</X> 
+				<Y>295</Y> 
+				<Width>90</Width> 
+				<Height>30</Height>
+				<BackgroundColor>FFCC0000</BackgroundColor>
+				<Text>Consolidate Inv.</Text>
+				<OnLeftClick>
+					Script[VGCraftBot]:QueueCommand[call ConsolidateInventory]
+				</OnLeftClick>
+			</Commandbutton>			
 
 			<commandbutton name='ButtonHUD' Template='VG.GreenCommandButton'>
 				<visible>1</visible>

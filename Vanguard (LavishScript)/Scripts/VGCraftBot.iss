@@ -2872,6 +2872,22 @@ function main(int testParam)
 		Event[VG_onReceivedTradeInvitation]:AttachAtom[VGCB_onReceivedTradeInvitation]
 
 
+		;;;;;;
+		;; Suggested by Zandros123
+		variable int i = 1
+		do
+		{
+			if ${Me.Inventory[${i}].CurrentEquipSlot.Equal[Crafting Container]}
+			{
+				sUtilPouch:Set[${Me.Inventory[${i}].Name}]
+				break
+			}
+			
+		}
+		while ${i:Inc} <= ${Me.Inventory}
+		;;
+		;;;;;;
+		
 		; Move the Window to last saved position
 		UIElement[CraftBot]:SetX[${windowX}]
 		UIElement[CraftBot]:SetY[${windowY}]
@@ -3042,4 +3058,38 @@ function atexit()
 
 	;Send a final message telling the user that the script has ended
 	call DebugOut "VG:Craft Assist has stopped" 
+}
+
+function ConsolidateInventory()
+{
+	variable int itemIndexA = 0
+	variable int itemIndexB = 1
+	
+	call DebugOut "VG: ConsolidateInventory Called"
+	
+	while (${itemIndexA:Inc} <= ${Me.Inventory})
+	{
+		if (${Me.Inventory[${itemIndexA}].Description.Find[Crafting:]} > 0)
+		{
+			do
+	 		{
+	 			if (${Me.Inventory[${itemIndexB:Inc}].Description.Find[Crafting:]} > 0)
+	 			{
+	 				;echo "'${Me.Inventory[${itemIndexA}].Name}' (${Me.Inventory[${itemIndexA}].ID}) vs '${Me.Inventory[${itemIndexB}].Name}' (${Me.Inventory[${itemIndexB}].ID})"
+	 				if (${Me.Inventory[${itemIndexA}].ID} == ${Me.Inventory[${itemIndexB}].ID})
+			 		{
+						echo "Consolidating stacks of ${Me.Inventory[${itemIndexA}]} (${Me.Inventory[${itemIndexB}]})"
+						Me.Inventory[${itemIndexB}]:StackWith[${Me.Inventory[${itemIndexA}].Index}]
+						itemIndexB:Inc
+			 		}
+		 			else
+		 				itemIndexB:Inc
+		 		}
+		 		else
+		 			itemIndexB:Inc
+	 		}
+	 		while (${itemIndexB} <= ${Me.Inventory})
+	 		itemIndexB:Set[1]
+	 	}
+	}
 }
