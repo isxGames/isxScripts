@@ -477,7 +477,6 @@
 							Put your crafted items on the broker.
 						</AutoTooltip>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call togglebags]
 							Script[myprices]:QueueCommand[call buy item place]
 						</OnLeftClick>
 					</Commandbutton>
