@@ -1,4 +1,4 @@
-MyPrices - Version 0.13c
+MyPrices - Version 0.13e
 
 For update details see the bottom of this file.
 
@@ -409,6 +409,14 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+Version 0.13e
+-------------
+
+Updated the script so it now 'should' work with items that have commas in the name.
+Script will now auto-skip attuned items when using thre 'place' button.
+
+Info : I'm still waiting on leveling a transmuter before starting the auto-mute option when buying items.
+
 
 Version 0.13d
 -------------
