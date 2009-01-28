@@ -746,12 +746,20 @@ function:bool FindAction2(int testProgress, int testQuality, bool useItem, bool 
 
 			newName:Set[${Refining.Stage.Step[${currentStep}].AvailAction[${substep}].Name}]
 
-			if !${actionStore.FindSet[${newName}](exists)}
-			{
+			if !${actionStore.FindSet[${newName}](exists)} && !${newName.Equal[NULL]} && !${Me.IsLooting}
+            {
 				call DebugOut "VG:ERROR: ${newName} not in the actionStore, adding it"
 				call addRecipeToActionStore
 			}
-
+            elseif ${newName.Equal[NULL]} && ${Me.IsLooting}
+   			{
+				cState:Set[CS_LOOT]
+				call resetCounts
+				statRecipeDone:Inc
+			 	UIElement[TotalRecipe@CHUD]:SetText[${statRecipeDone}]
+				UIElement[FailedRecipe@CHUD]:SetText[${statRecipeFailed}]
+			}
+			
 			;call MyOutput "VG:Testing ActionName: ${newName}"
 
 			iCost:Set[${actionStore.FindSet[${newName}].FindSetting[ActionPointCost,1]}]
@@ -1113,11 +1121,19 @@ function:int FindWorkStep(bool doLowQual, bool doLowProg)
 
 				newName:Set[${Refining.Stage.Step[${tstep}].AvailAction[${substep}].Name}]
 
-				if !${actionStore.FindSet[${newName}](exists)}
+				if !${actionStore.FindSet[${newName}](exists)} && !${newName.Equal[NULL]} && !${Me.IsLooting}
 				{
 					call DebugOut "VG:ERROR: ${newName} not in the actionStore, adding it"
 					call addRecipeToActionStore
 				}
+				elseif ${newName.Equal[NULL]} && ${Me.IsLooting}
+				{
+	                cState:Set[CS_LOOT]
+	                call resetCounts
+	                statRecipeDone:Inc
+	                UIElement[TotalRecipe@CHUD]:SetText[${statRecipeDone}]
+	                UIElement[FailedRecipe@CHUD]:SetText[${statRecipeFailed}]
+	         	}
 
 				;call MyOutput "VG:FWS: Testing ActionName: ${newName}"
 

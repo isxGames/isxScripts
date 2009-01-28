@@ -2315,12 +2315,14 @@ function DoLoot()
 
 	if ${doRecipeOnly}
 		recipeRepeatNumDone:Inc
+		
+	wait 10 ${Me.IsLooting}
 
 	if ${Loot.NumItems}
 	{
-		wait 5
+		wait 2
 		Loot:LootAll
-		wait 5
+		wait 10
 	}
 }
 
