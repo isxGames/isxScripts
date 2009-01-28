@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13d :  released 22nd December 2008
+; Version 0.13e :  released 28th January 2009
 ;
 ; Declare Variables
 ;
@@ -108,8 +108,8 @@ function main(string goscan, string goscan2)
 	
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	
-	call AddLog "Running MyPrices Version 0.13d : released 22nd December 2008" FF11FFCC
-	call echolog "Version 0.13d : 22nd December 2008"
+	call AddLog "Running MyPrices Version 0.13e :  released 28th January 2009" FF11FFCC
+	call echolog "Version 0.13e :  released 28th January 2009"
 	
 	call StartUp	
 
@@ -179,10 +179,8 @@ function main(string goscan, string goscan2)
 			do
 			{
 				Call CheckFocus
-				currentitem:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}]
+				currentitem:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}"]
 				
-				; test here
-				; EQ2UIPage[Inventory,Market].Child[page,MainPage.TabPages.SellPage]:HighlightRow[${currentpos}]
 				; container number
 				i:Set[${itemprice[${currentpos}]}]
 
@@ -212,6 +210,7 @@ function main(string goscan, string goscan2)
 
 				; Find where the Item is stored in the container
 				call FindItem ${i} "${currentitem}"
+
 				j:Set[${Return}]
 
 				; If item was found in the container still
@@ -559,7 +558,7 @@ function FindItem(int i, string itemname)
 	j:Set[1]
 	do
 	{
-		ConName:Set[${Me.Vending[${i}].Consignment[${j}]}]
+		ConName:Set["${Me.Vending[${i}].Consignment[${j}]}"]
 		if ${ConName.Equal["${itemname}"]}
 		{
 			Position:Set[${j}]
@@ -1325,7 +1324,7 @@ function BrokerSearch(string lookup, bool BuyNameOnly)
 			CurrentItem:Set[1]
 			do
 			{
-				TempSearch:Set[${Vendor.Broker[${CurrentItem}]}]
+				TempSearch:Set["${Vendor.Broker[${CurrentItem}]}"]
 				; check that the items name being looked at is an exact match and not just a partial match
 				if ${lookup.Equal["${TempSearch}"]}
 				{
@@ -1415,8 +1414,8 @@ function LoadList()
 	{
 		if ${Me.Vending[${i}](exists)}
 		{
-					labelname:Set[${Me.Vending[${i}].Consignment[1]}]
-					waitframe
+			labelname:Set[${Me.Vending[${i}].Consignment[1]}]
+			waitframe
 		}
 	}
 	while ${i:Inc} <= 6
@@ -1440,10 +1439,10 @@ function LoadList()
 				{
 					call CheckFocus
 					numitems:Inc
-					labelname:Set[${Me.Vending[${i}].Consignment[${j}]}]
+					labelname:Set["${Me.Vending[${i}].Consignment[${j}]}"]
 					waitframe
 					; add the item name onto the sell tab list
-					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem[${labelname}]
+					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem["${labelname}"]
 
 					; if the item is flagged as a craft item then add the total number on the broker
 
@@ -2370,7 +2369,7 @@ function placeitems(string itemname, int box, int numitems)
 		do
 		{
 			; if an item in your inventory matches the crafted item from your crafted item list
-			if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
+			if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]} && !${Me.CustomInventory[${xvar}].Attuned}
 			{
 				; check current used capacity
 				lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
@@ -2518,18 +2517,6 @@ function StartUp()
 	{
 		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
 	}
-}
-
-function togglebags()
-{
-	EQ2Execute /togglebags
-	wait 10
-	EQ2Execute /togglebags
-	wait 10
-	EQ2Execute /togglebags
-	wait 10
-	EQ2Execute /togglebags
-	wait 10
 }
 
 atom(script) EQ2_onInventoryUpdate()
