@@ -221,7 +221,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	</Commandcheckbox>
 	<Text name='lblPetSelect'>
 	  <x>10</x>
-	  <y>190</y>
+	  <y>210</y>
 	  <Height>20</Height>
 		<Width>80</Width>
 		<Alignment>Left</Alignment>
@@ -229,7 +229,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	</Text>
 	<combobox Name='PetForm'>
 		<X>30</X>
-		<Y>190</Y>
+		<Y>210</Y>
 		<Width>65</Width>
 		<Height>20</Height>
 		<AutoTooltip>Select Pet Form</AutoTooltip>
@@ -240,7 +240,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			<Item Value='3'>Gargoyle</Item>
 		</items>
 		<OnLoad>
-			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetForm]}]
 			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetForm]}]:Select
 		</OnLoad>
 		<OnSelect>

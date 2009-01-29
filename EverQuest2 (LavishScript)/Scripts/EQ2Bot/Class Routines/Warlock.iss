@@ -119,7 +119,7 @@ function Buff_Init()
 	PreSpellRange[8,2]:Set[383]
 	PreSpellRange[8,3]:Set[384]
 
-	PreAction[9]:Set[DietyPet]
+	PreAction[9]:Set[DeityPet]
 
 }
 
@@ -135,9 +135,6 @@ function Combat_Init()
 
 	Action[3]:Set[Void]
 	SpellRange[3,1]:Set[50]
-
-	Action[4]:Set[AoE_Debuff3]
-	SpellRange[4,1]:Set[55]
 
 	Action[5]:Set[Combat_Buff]
 	MobHealth[5,1]:Set[50]
@@ -399,8 +396,8 @@ function Buff_Routine(int xAction)
 					call CastSpellRange ${PreSpellRange[${xAction},${PetForm}]}
 			}
 			break
-		case DietyPet
-			call SummonDietyPet
+		case DeityPet
+			call SummonDeityPet
 			break
 		Default
 			return Buff Complete
@@ -421,241 +418,214 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat}
-		call CastSpellRange 303
+	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat} && ${Me.Ability[${SpellType[303]}].IsReady}
+		Me.Ability[${SpellType[303]}]:Use
 
 	if ${CastCures}
 		call CheckHeals
 
-	;Actions 8-17 are for encounters only, we want to skip them if solo mobs.
-	if ${xAction}>7 && ${Mob.Count}==1 && ${Target.EncounterSize}==1
-	{
-		xAction:Inc[10]
-	}
-	else
-	{
-		if ${xAction}>18
-		{
-			return Combat Complete
-		}
-	}
-
-	if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
-	{
-		call CastSpellRange 387 0 0 0 ${KillTarget}
-	}
-
-	;Ice if solo  or ^^^ and between 30 and 80.
-	if ((${Actor[${KillTarget}].Difficulty}<3) || (${Actor[${KillTarget}].Difficulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<80))
-	{
-		;Encounter Priority
-		if ${Actor[${KillTarget}].EncounterSize}>1 && ${Mob.Count}>1
-		{
-			if ${Me.Ability[${SpellType[97]}].IsReady}
-			{
-				call CastSpellRange 97 0 0 0 ${KillTarget}
-				pricast:Inc
-			}
-			if ${Me.Ability[${SpellType[330]}].IsReady}
-			{
-				call CastSpellRange 330 0 0 0 ${KillTarget}
-				pricast:Inc
-			}
-			if ${Me.Ability[${SpellType[91]}].IsReady} && ${pricast}<2
-			{
-				call CastSpellRange 385
-				call CastSpellRange 91 0 0 0 ${KillTarget}
-				pricast:Inc
-			}
-			if ${Me.Ability[${SpellType[92]}].IsReady} && ${pricast}<2
-			{
-				call CastSpellRange 385
-				call CastSpellRange 92 0 0 0 ${KillTarget}
-				pricast:Inc
-			}
-		}
-		else
-		{
-			if ${Me.Ability[${SpellType[61]}].IsReady}
-			{
-				call CastSpellRange 61 0 0 0 ${KillTarget}
-				pricast:Inc
-			}
-			if ${Me.Ability[${SpellType[63]}].IsReady}
-			{
-				call CastSpellRange 385
-				call CastSpellRange 63 0 0 0 ${KillTarget}
-				pricast:Inc
-			}
-			if ${Me.Ability[${SpellType[62]}].IsReady} && ${pricast}<2
-			{
-				call CastSpellRange 62 0 0 0 ${KillTarget}
-				pricast:Inc
-			}
-		}
-	}
-
 	call UseCrystallizedSpirit 60
-	call RefreshPower
 
+	;---- Debuffs if they are selected ----
 	if ${DebuffMode}
 	{
 		if ${Me.Ability[${SpellType[57]}].IsReady} && !${Me.Maintained[${SpellType[57]}](exists)}
 		{
 			call CastSpellRange 57 0 0 0 ${KillTarget}
 			debuffused:Inc
+			pricast:Inc
 		}
-
-		if ${Me.Ability[${SpellType[50]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[50]}](exists)}
-		{
-			call CastSpellRange 50 0 0 0 ${KillTarget}
-			debuffused:Inc
-		}
-
 		if ${Me.Ability[${SpellType[51]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[51]}](exists)}
 		{
 			call CastSpellRange 51 0 0 0 ${KillTarget}
 			debuffused:Inc
+			pricast:Inc
 		}
 
 		if ${Me.Ability[${SpellType[52]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[52]}](exists)}
 		{
 			call CastSpellRange 52 0 0 0 ${KillTarget}
 			debuffused:Inc
+			pricast:Inc
+		}
+		if ${Me.Ability[${SpellType[389]}].IsReady} && !${Me.Maintained[${SpellType[389]}](exists)}
+		{
+			call CastSpellRange 389 0 0 0 ${KillTarget}
+			pricast:Inc
 		}
 	}
 
-	if ${DotMode} && ${xAction}>17
+
+	;---- Short Term Buffs ----
+	if ${Me.Ability[${SpellType[330]}].IsReady}
 	{
-		if ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
+		call CastSpellRange 330 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+
+
+	;---- Heroic or better Short Term Buffs
+	if ${Actor[${KillTarget}].Difficulty}>=3
+	{
+		;--- Focused Casting AA
+		if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
+			Me.Ability[${SpellType[387]}]:Use
+
+		;--- Fury of Innoruk
+		if ${Me.Ability[${SpellType[450]}].IsReady}
+			Me.Ability[${SpellType[450]}]:Use
+
+		if ${Me.Ability[${SpellType[55]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[55]}](exists)}
+		{
+			call CastSpellRange 55 0 0 0 ${KillTarget}
+			pricast:Inc
+		}
+	}
+
+	if ${pricast}>=3
+		return
+
+	;---- DPS Utility Spells ----
+	;-------- Aura of Void
+	if ${Me.Ability[${SpellType[50]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[50]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 55 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Nullify
+	if ${Me.Ability[${SpellType[181]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[181]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 181 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+
+	if ${pricast}>=3
+		return
+
+	;---- PBAoE's
+	if ${PBAoEMode} && ${Mob.Count}>1
+	{
+		;-------- Upheaval
+		if ${PBAoEMode} && ${Me.Ability[${SpellType[96]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[96]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		{
+			call CastSpellRange 96 0 0 0 ${KillTarget}
+			pricast:Inc
+		}
+		;-------- Acid Storm
+		if ${PBAoEMode} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[97]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[97]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		{
+			call CastSpellRange 97 0 0 0 ${KillTarget}
+			pricast:Inc
+		}
+		;-------- Cataclysm
+		if ${PBAoEMode} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[95]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[95]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		{
+			call CastSpellRange 95 0 0 0 ${KillTarget}
+			pricast:Inc
+		}
+		;-------- Static Discharge
+		if ${PBAoEMode} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[397]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[397]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		{
+			call CastSpellRange 397 0 0 0 ${KillTarget}
+			pricast:Inc
+		}
+	}
+
+	if ${pricast}>=3
+		return
+
+	;---- Single Target Dots If enabled
+	if ${DotMode}
+	{
+		;-------- Netherbeast
+		if ${Me.Ability[${SpellType[324]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[324]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		{
+			call CastSpellRange 324 0 0 0 ${KillTarget}
+			pricast:Inc
+		}
+		;-------- Blood Infestation
+		if ${Me.Ability[${SpellType[70]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[70]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 70 0 0 0 ${KillTarget}
-			dotused:Inc
+			pricast:Inc
 		}
-
-		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && !${dotused}
-		{
-			call CastSpellRange 71 0 0 0 ${KillTarget}
-			dotused:Inc
-		}
-
-		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && !${dotused}
+		;-------- Acid
+		if ${Me.Ability[${SpellType[72]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[72]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 72 0 0 0 ${KillTarget}
-			dotused:Inc
+			pricast:Inc
 		}
 	}
 
-	switch ${Action[${xAction}]}
+	if ${pricast}>=3
+		return
+
+	;---- Standard Spell order
+	;-------- Armegeddon
+	if ${pricast}<3 && ${Me.Ability[${SpellType[94]}].IsReady} && !${Me.Maintained[${SpellType[94]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
-
-		case Special_Pet
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && ${PetMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case AoE_PB
-		case AoE_PB2
-			if ${PBAoEMode} && ${Mob.Count}>1
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-
-		case Nuke1
-			if ${Me.Ability[${SpellType[385]}].IsReady}
-			{
-				call CastSpellRange 385
-			}
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-		case DoT1
-		case DoT2
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-		case Void
-		case Nuke2
-		case Nuke3
-		case Nuke4
-		case AoE_Debuff1
-		case AoE_Debuff3
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-
-		case Nullify
-		case Caress
-		case AoE_Concussive
-		case AoE_Debuff2
-			if ${AoEMode} && ${Mob.Count}>1 && ${Target.EncounterSize}>1
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case AoE_DoT
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 4
-			}
-			break
-
-		case Combat_Buff
-		case Apoc
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 4
-			}
-			break
-
-		case AoE_Nuke1
-			if ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
-			{
-				if ${Me.Ability[${SpellType[385]}].IsReady}
-				{
-					call CastSpellRange 385
-				}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case AoE_Nuke2
-			if ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case Master_Strike
-	    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-	    ;;;;;;;;;;
-	    if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
-	        break
-	    ;;;;;;;;;;;
-			if ${Me.Ability[Master's Smite].IsReady}
-			{
-				Me.Ability[Master's Smite]:Use
-			}
-			break
-
-		case Concussive
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-
-		case Root
-		case AoE_Root
-			break
-		Default
-			return CombatComplete
-			break
+		call CastSpellRange 94 0 0 0 ${KillTarget}
+		pricast:Inc
 	}
+	;-------- Absolution
+	if ${pricast}<3 && ${Me.Ability[${SpellType[91]}].IsReady} && !${Me.Maintained[${SpellType[91]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 91 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Concussive
+	if ${pricast}<3 && ${Me.Ability[${SpellType[393]}].IsReady} && !${Me.Maintained[${SpellType[393]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 393 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Radiation
+	if ${pricast}<3 && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 92 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Plaguebringer
+	if ${pricast}<3 && ${Me.Ability[${SpellType[401]}].IsReady} && !${Me.Maintained[${SpellType[401]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 401 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Flames of Velious
+	if ${pricast}<3 && ${Me.Ability[${SpellType[64]}].IsReady} && !${Me.Maintained[${SpellType[64]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 64 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Distortion
+	if ${pricast}<3 && ${Me.Ability[${SpellType[61]}].IsReady} && !${Me.Maintained[${SpellType[61]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 61 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Encase
+	if ${pricast}<3 && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 62 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Thunderclap
+	if ${pricast}<3 && ${Me.Ability[${SpellType[402]}].IsReady} && !${Me.Maintained[${SpellType[402]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 402 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+	;-------- Dissolve
+	if ${pricast}<3 && ${Me.Ability[${SpellType[402]}].IsReady} && !${Me.Maintained[${SpellType[402]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 402 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
+
+	if ${pricast}>=3
+		return
+
+	call RefreshPower
 
 }
 
@@ -665,7 +635,6 @@ function Post_Combat_Routine(int xAction)
 
 	if ${Me.Maintained[${SpellType[387]}](exists)}
 		Me.Maintained[${SpellType[387]}]:Cancel
-
 
 	switch ${PostAction[${xAction}]}
 	{
@@ -693,6 +662,7 @@ function Have_Aggro()
 	if ${Me.Ability[${SpellRange[328]}].IsReady}
 	{
 		call CastSpellRange 328 0 0 0 ${Actor[${aggroid}].ID}
+		return
 	}
 
 	if ${Me.Ability[${SpellRange[181]}].IsReady}
@@ -748,25 +718,12 @@ function RefreshPower()
 	if ${ShardMode}
 		call Shard
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<45
-	{
-		call UseItem "Spiritise Censer"
-	}
+	if ${Me.InCombat} && ${Me.ToActor.Power}<60
+		call CastSpellRange 56 0 0 0 ${KillTarget}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<20
-	{
-		call UseItem "Dracomancer Gloves"
-	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-	{
-		call UseItem "Stein of the Everling Lord"
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-	{
+	if ${Me.InCombat} && ${Me.ToActor.Power}<5
 		call CastSpellRange 309
-	}
 
 	;This should be cast on ally?
 	;if ${Me.InCombat} && ${Me.ToActor.Power}<15

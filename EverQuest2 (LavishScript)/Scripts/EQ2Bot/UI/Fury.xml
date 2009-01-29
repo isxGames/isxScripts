@@ -203,7 +203,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseWrathOfNature]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='UseFastOffensiveSpellsOnly'>
 		<Visible>1</Visible>
 		<X>5%</X>
@@ -227,7 +227,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseFastOffensiveSpellsOnly]}</Data>
-	</Commandcheckbox>	
+	</Commandcheckbox>
 	<Commandcheckbox Name='UseRingOfFire'>
 		<Visible>1</Visible>
 		<X>5%</X>
@@ -787,6 +787,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnLeftClick>
 		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},UseMythicalOn,0,0,1]
 		</OnLeftClick>
-	</combobox>	
-	
+	</combobox>
+
 </ISUI>

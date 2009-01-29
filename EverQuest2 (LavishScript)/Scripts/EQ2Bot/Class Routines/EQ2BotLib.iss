@@ -1406,30 +1406,30 @@ function CastPotion(string Item)
 	return SUCCESS
 }
 
-function SummonDietyPet()
+function SummonDeityPet()
 {
-	variable string DietyPet[13]
-	variable string dcount
+	variable string DeityPet[13]
+	variable int dcount
 
-	DietyPet[1]:Set[Summon: Elemental of Karana]
-	DietyPet[2]:Set[Summon: Beloved of Bristlebane]
-	DietyPet[3]:Set[Summon: Rodcet Nife's Healing Companion]
-	DietyPet[4]:Set[Summon: Imp of Ro]
-	DietyPet[5]:Set[Summon: Pariah of Bertoxxulous]
-	DietyPet[6]:Set[Summon: Servant of Thule]
-	DietyPet[7]:Set[Summon: The Tribunal's Bailiff]
-	DietyPet[8]:Set[Summon: Underfoot Attendant]
-	DietyPet[9]:Set[Summon: Warrior of Zek]
-	DietyPet[10]:Set[Summon: Peaceful Visage]
-	DietyPet[11]:Set[Summon: Friend of Growth]
-	DietyPet[12]:Set[Summon: Minion of Hate]
-	DietyPet[13]:Set[Valiant Beast]
+	DeityPet[1]:Set[Summon: Elemental of Karana]
+	DeityPet[2]:Set[Summon: Beloved of Bristlebane]
+	DeityPet[3]:Set[Summon: Rodcet Nife's Healing Companion]
+	DeityPet[4]:Set[Summon: Imp of Ro]
+	DeityPet[5]:Set[Summon: Pariah of Bertoxxulous]
+	DeityPet[6]:Set[Summon: Servant of Thule]
+	DeityPet[7]:Set[Summon: The Tribunal's Bailiff]
+	DeityPet[8]:Set[Summon: Underfoot Attendant]
+	DeityPet[9]:Set[Summon: Warrior of Zek]
+	DeityPet[10]:Set[Summon: Peaceful Visage]
+	DeityPet[11]:Set[Summon: Friend of Growth]
+	DeityPet[12]:Set[Summon: Minion of Hate]
+	DeityPet[13]:Set[Valiant Beast]
 
-	while ${dcount:Inc}<=${DietyPet.Size}
+	while ${dcount:Inc}<=${DeityPet.Size}
 	{
-		if ${Me.Ability[${DietyPet[${dcount}]}].IsReady}
+		if ${Me.Ability[${DeityPet[${dcount}]}].IsReady}
 		{
-			Me.Ability[${DietyPet[${dcount}]}]:Use
+			Me.Ability[${DeityPet[${dcount}]}]:Use
 
 			wait 4
 			while ${Me.CastingSpell}
