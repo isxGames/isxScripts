@@ -91,8 +91,8 @@ function Class_Declaration()
 	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
 	declare UseWrathOfNature bool script 0
-	declare UseMythicalOn string script 
-	
+	declare UseMythicalOn string script
+
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
 	declare BuffSavageryGroupMember string script
@@ -137,20 +137,20 @@ function Class_Declaration()
 	SpamHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamHealMode,]}]
 
 	NoEQ2BotStance:Set[TRUE]
-	
+
 	Event[EQ2_FinishedZoning]:AttachAtom[Fury_FinishedZoning]
 }
 
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -162,10 +162,10 @@ function Pulse()
 		call CheckHeals
 		if ${CureMode}
     		call CheckCures
-    		
+
 		if ${Me.ToActor.Power}>85
 			call CheckHOTs
-			
+
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
@@ -223,7 +223,7 @@ function Buff_Init()
 
 	PreAction[14]:Set[BuffPactOfNature]
 	PreSpellRange[14,1]:Set[399]
-	
+
 	PreAction[15]:Set[BuffMythical]
 }
 
@@ -253,7 +253,7 @@ function Combat_Init()
 	Power[5,1]:Set[30]
 	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[51]
-	
+
 	Action[6]:Set[AANuke]
 	Power[6,1]:Set[30]
 	Power[6,2]:Set[100]
@@ -349,7 +349,7 @@ function Buff_Routine(int xAction)
 		case DoCheckRezzes
 			call CheckRezzes
 			break
-			
+
 		case BuffThorns
 			if ${MainTank} || (${BuffThorns} && ${Actor[exactname,${MainTankPC}](exists)})
 			{
@@ -469,7 +469,7 @@ function Buff_Routine(int xAction)
 										call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 									}
 									;else
-									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already Vim buffed!"]													
+									;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already Vim buffed!"]
 								}
 							}
 						}
@@ -482,8 +482,8 @@ function Buff_Routine(int xAction)
 									call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 								}
 								;else
-								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already Vim buffed!"]				
-							}	
+								;	Debug:Echo["${Actor[${ActorID}]}(${Actor[${ActorID}].Type}) already Vim buffed!"]
+							}
 						}
 					}
 				}
@@ -517,10 +517,10 @@ function Buff_Routine(int xAction)
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				break
-				
+
 		case BuffMythical
 			BuffTarget:Set[${UIElement[cbUseMythicalOn@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			
+
 			if ${BuffTarget.Equal[No One]}
 				break
 
@@ -540,10 +540,10 @@ function Buff_Routine(int xAction)
 					while ${Me.CastingSpell}
 					wait 2
 				}
-				
+
 				if !${Me.Equipment[Wrath of Nature].IsReady}
 					break
-				
+
 				if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
 				{
 					Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}]:DoTarget
@@ -555,11 +555,11 @@ function Buff_Routine(int xAction)
 						waitframe
 					}
 					while ${Me.CastingSpell}
-					wait 1	
+					wait 1
 				}
 			}
 			break
-				
+
 		case BuffBat
 			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
@@ -632,12 +632,12 @@ function Combat_Routine(int xAction)
 		AutoFollowingMA:Set[FALSE]
 		wait 3
 	}
-	
+
 	if ${DoCallCheckPosition}
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
 		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-		
+
 		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 		{
 			if ${MainTank}
@@ -654,7 +654,7 @@ function Combat_Routine(int xAction)
 			}
 		}
 		elseif (${TankToTargetDistance} > 15)
-		{	
+		{
 			if ${Actor[${MainTankID}](exists)}
 			{
 				Debug:Echo["Out of Range :: Moving to within 15m of tank"]
@@ -850,15 +850,15 @@ function Combat_Routine(int xAction)
         		call CheckCures
     	}
 	}
-	
-	
+
+
 	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 	{
 		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
 		{
 			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
-			
+			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]
+
 			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
 			{
 				if ${FightingEpicMob}
@@ -881,7 +881,7 @@ function Combat_Routine(int xAction)
 			}
 		}
 	}
-	
+
 
 	if (${VortexMode})
 	{
@@ -946,7 +946,7 @@ function Combat_Routine(int xAction)
 					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				else
 					call ReacquireTargetFromMA
-			}		
+			}
 			break
 
 		case AANuke
@@ -957,10 +957,10 @@ function Combat_Routine(int xAction)
 			{
 				call CheckForMez "Fury AANuke"
 				if ${Return.Equal[FALSE]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}				
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				else
 					call ReacquireTargetFromMA
-			
+
 			}
 			break
 
@@ -1317,7 +1317,7 @@ function CheckHeals()
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
 		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-		
+
 		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 		{
 			if ${MainTank}
@@ -1334,7 +1334,7 @@ function CheckHeals()
 			}
 		}
 		elseif (${TankToTargetDistance} > 15)
-		{	
+		{
 			if ${Actor[${MainTankID}](exists)}
 			{
 				Debug:Echo["Out of Range :: Moving to within 15m of tank"]
@@ -1710,7 +1710,7 @@ function CheckCures(int InCombat=1)
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
 		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-		
+
 		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 		{
 			if ${MainTank}
@@ -1727,7 +1727,7 @@ function CheckCures(int InCombat=1)
 			}
 		}
 		elseif (${TankToTargetDistance} > 15)
-		{	
+		{
 			if ${Actor[${MainTankID}](exists)}
 			{
 				Debug:Echo["Out of Range :: Moving to within 15m of tank"]
@@ -2074,13 +2074,13 @@ atom(script) Fury_FinishedZoning(string TimeInSeconds)
 function CheckRezzes()
 {
 	variable int tempgrp
-	
+
 	if ${Me.ToActor.InCombatMode} && !${CombatRez}
 		return
-		
+
 	if ${Me.GroupCount}	<= 1
 		return
-	
+
 
 	tempgrp:Set[1]
 	do
@@ -2139,6 +2139,6 @@ function CheckRezzes()
 			}
 		}
 	}
-	while ${tempgrp:Inc}<=${Me.GroupCount}	
-	
+	while ${tempgrp:Inc}<=${Me.GroupCount}
+
 }

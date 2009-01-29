@@ -26,9 +26,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20080408
+	;;;;
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -116,6 +116,8 @@ function Buff_Init()
 	PreSpellRange[8,1]:Set[382]
 	PreSpellRange[8,2]:Set[383]
 	PreSpellRange[8,3]:Set[384]
+
+	PreAction[9]:Set[DeityPet]
 }
 
 function Combat_Init()
@@ -349,6 +351,16 @@ function Buff_Routine(int xAction)
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
+			break
+		case AA_Pet
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${PetForm}]}
+			}
+			break
+		case DeityPet
+			call SummonDeityPet
 			break
 		Default
 			return Buff Complete

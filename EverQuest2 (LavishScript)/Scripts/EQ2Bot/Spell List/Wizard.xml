@@ -19,9 +19,9 @@
 		<Setting Name="10,71">Blaze</Setting>
 		<Setting Name="10,72">Scorch</Setting>
 		<Setting Name="10,180">Tongue Twist</Setting>
-		<Setting Name="10,382">Summon: Animated Tome</Setting>
-		<Setting Name="10,383">Summon: Drake</Setting>
-		<Setting Name="10,384">Summon: Gargoyle</Setting>
+		<Setting Name="10,382">Summon Animated Tome</Setting>
+		<Setting Name="10,383">Summon Drake</Setting>
+		<Setting Name="10,384">Summon Gargoyle</Setting>
 		<Setting Name="10,385">Freehand Sorcery</Setting>
 		<Setting Name="10,386">Ward of Sages</Setting>
 		<Setting Name="10,387">Fireshape</Setting>

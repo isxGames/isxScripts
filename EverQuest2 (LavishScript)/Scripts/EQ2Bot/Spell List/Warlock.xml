@@ -19,9 +19,9 @@
 		<Setting Name="10,181">Interference</Setting>
 		<Setting Name="10,72">Emanate</Setting>
 		<Setting Name="10,71">Suffocation</Setting>
-		<Setting Name="10,382">Summon: Animated Tome</Setting>
-		<Setting Name="10,383">Summon: Drake</Setting>
-		<Setting Name="10,384">Summon: Gargoyle</Setting>
+		<Setting Name="10,382">Summon Animated Tome</Setting>
+		<Setting Name="10,383">Summon Drake</Setting>
+		<Setting Name="10,384">Summon Gargoyle</Setting>
 		<Setting Name="10,385">Freehand Sorcery</Setting>
 		<Setting Name="10,386">Ward of Sages</Setting>
 		<Setting Name="10,387">Focused Casting</Setting>
@@ -36,6 +36,9 @@
 		<Setting Name="10,396">Ambidexterous Casting</Setting>
 		<Setting Name="10,397">Static Discharge</Setting>
 		<Setting Name="10,398">Catalyst</Setting>
+		<Setting Name="10,401">Plaguebringer</Setting>
+		<Setting Name="10,402">Plaguebringer</Setting>
+		<Setting Name="10,450">Fury of Innoruk</Setting>
 		<Setting Name="11,31">Venemous Grasp</Setting>
 		<Setting Name="12,63">Corrosive Bolt</Setting>
 		<Setting Name="12,20">Spellbinding Pact</Setting>
@@ -137,7 +140,7 @@
 		<Setting Name="66,56">Phantom Pillaging</Setting>
 		<Setting Name="66,181">Vulian Nullification</Setting>
 		<Setting Name="66,71">War Pyre</Setting>
-		<Setting Name="67,56">Curse of Isolation</Setting>
+		<Setting Name="67,52">Curse of Isolation</Setting>
 		<Setting Name="67,31">Malignant Grasp</Setting>
 		<Setting Name="68,20">Seal of Dismal Logic</Setting>
 		<Setting Name="68,231">Spectral Grasp</Setting>
@@ -166,7 +169,7 @@
 		<Setting Name="77,181">Nullify</Setting>
 		<Setting Name="77,56">Pillaging</Setting>
 		<Setting Name="77,71">Vacuum Chamber</Setting>
-		<Setting Name="78,56">Curse of Luclin</Setting>
+		<Setting Name="78,52">Curse of Luclin</Setting>
 		<Setting Name="78,231">Dead Grasp</Setting>
 		<Setting Name="78,31">Grasp of Bertoxxulous</Setting>
 		<Setting Name="78,96">Upheaval</Setting>
