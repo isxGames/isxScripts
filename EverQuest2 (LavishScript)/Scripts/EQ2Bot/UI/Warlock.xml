@@ -210,13 +210,13 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[DotMode]:Set[TRUE]
+				Script[EQ2Bot].Variable[DoTMode]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast DoT Spells",TRUE]
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[DotMode]:Set[FALSE]
+				Script[EQ2Bot].Variable[DoTMode]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast DoT Spells",FALSE]
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
