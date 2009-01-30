@@ -435,14 +435,14 @@ function Combat_Routine(int xAction)
 			debuffused:Inc
 			pricast:Inc
 		}
-		if ${Me.Ability[${SpellType[51]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[51]}](exists)}
+		if !${debuffused} && ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)}
 		{
 			call CastSpellRange 51 0 0 0 ${KillTarget}
 			debuffused:Inc
 			pricast:Inc
 		}
 
-		if ${Me.Ability[${SpellType[52]}].IsReady} && !${debuffused} && !${Me.Maintained[${SpellType[52]}](exists)}
+		if !${debuffused} && ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)}
 		{
 			call CastSpellRange 52 0 0 0 ${KillTarget}
 			debuffused:Inc
@@ -489,7 +489,7 @@ function Combat_Routine(int xAction)
 	;-------- Aura of Void
 	if ${Me.Ability[${SpellType[50]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[50]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
-		call CastSpellRange 55 0 0 0 ${KillTarget}
+		call CastSpellRange 50 0 0 0 ${KillTarget}
 		pricast:Inc
 	}
 	;-------- Nullify
@@ -506,25 +506,25 @@ function Combat_Routine(int xAction)
 	if ${PBAoEMode} && ${Mob.Count}>1
 	{
 		;-------- Upheaval
-		if ${PBAoEMode} && ${Me.Ability[${SpellType[96]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[96]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${PBAoEMode} && ${pricast}<3 && ${Me.Ability[${SpellType[96]}].IsReady} && !${Me.Maintained[${SpellType[96]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 96 0 0 0 ${KillTarget}
 			pricast:Inc
 		}
 		;-------- Acid Storm
-		if ${PBAoEMode} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[97]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[97]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${PBAoEMode} && ${pricast}<3 && ${Mob.Count}>1 && ${Me.Ability[${SpellType[97]}].IsReady} && !${Me.Maintained[${SpellType[97]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 97 0 0 0 ${KillTarget}
 			pricast:Inc
 		}
 		;-------- Cataclysm
-		if ${PBAoEMode} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[95]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[95]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${PBAoEMode} && ${pricast}<3 && ${Mob.Count}>1 && ${Me.Ability[${SpellType[95]}].IsReady} && !${Me.Maintained[${SpellType[95]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 95 0 0 0 ${KillTarget}
 			pricast:Inc
 		}
 		;-------- Static Discharge
-		if ${PBAoEMode} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[397]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[397]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${PBAoEMode} && ${pricast}<3 && ${Mob.Count}>1 && ${Me.Ability[${SpellType[397]}].IsReady} && !${Me.Maintained[${SpellType[397]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 397 0 0 0 ${KillTarget}
 			pricast:Inc
@@ -538,19 +538,19 @@ function Combat_Routine(int xAction)
 	if ${DoTMode}
 	{
 		;-------- Netherbeast
-		if ${Me.Ability[${SpellType[324]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[324]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${pricast}<3 && ${Me.Ability[${SpellType[324]}].IsReady} && !${Me.Maintained[${SpellType[324]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 324 0 0 0 ${KillTarget}
 			pricast:Inc
 		}
 		;-------- Blood Infestation
-		if ${Me.Ability[${SpellType[70]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[70]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${pricast}<3 && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 70 0 0 0 ${KillTarget}
 			pricast:Inc
 		}
 		;-------- Acid
-		if ${Me.Ability[${SpellType[72]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[72]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${pricast}<3 && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 72 0 0 0 ${KillTarget}
 			pricast:Inc
