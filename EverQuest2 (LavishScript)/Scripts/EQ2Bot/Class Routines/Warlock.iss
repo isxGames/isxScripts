@@ -535,7 +535,7 @@ function Combat_Routine(int xAction)
 		return
 
 	;---- Single Target Dots If enabled
-	if ${DotMode}
+	if ${DoTMode}
 	{
 		;-------- Netherbeast
 		if ${Me.Ability[${SpellType[324]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[324]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
@@ -622,9 +622,9 @@ function Combat_Routine(int xAction)
 		pricast:Inc
 	}
 	;-------- Dissolve
-	if ${pricast}<3 && ${Me.Ability[${SpellType[402]}].IsReady} && !${Me.Maintained[${SpellType[402]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	if ${pricast}<3 && ${Me.Ability[${SpellType[63]}].IsReady} && !${Me.Maintained[${SpellType[63]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
-		call CastSpellRange 402 0 0 0 ${KillTarget}
+		call CastSpellRange 63 0 0 0 ${KillTarget}
 		pricast:Inc
 	}
 
