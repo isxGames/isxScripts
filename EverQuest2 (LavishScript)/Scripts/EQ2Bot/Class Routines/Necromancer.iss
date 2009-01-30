@@ -386,12 +386,8 @@ function Combat_Routine(int xAction)
 		call PetAttack
 	}
 
-	call CommonHeals
-	call CommonPower
-	if ${UsePotions}
-	{
-		call CheckCures
-	}
+	if ${Me.Ability[${SpellType[450]}].IsReady}
+		Me.Ability[${SpellType[450]}]:Use
 
 	;maintain dots if target is heroic, or greater
 	if ${Actor[${KillTarget}].IsEpic} || (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].IsNamed})
@@ -409,6 +405,11 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)} && ${Mob.Count}>1 && ${Target.EncounterSize}>1 && ${AoEMode} && ${spellsused}<3
 		{
 			call CastSpellRange 90 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		if ${Me.Ability[${SpellType[401]}].IsReady} && !${Me.Maintained[${SpellType[401]}](exists)} && ${spellsused}<3
+		{
+			call CastSpellRange 401 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 		if ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && ${spellsused}<3
@@ -438,6 +439,13 @@ function Combat_Routine(int xAction)
 		}
 	}
 	;pets
+
+	call CommonHeals
+	call CommonPower
+	if ${UsePotions}
+	{
+		call CheckCures
+	}
 
 	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}

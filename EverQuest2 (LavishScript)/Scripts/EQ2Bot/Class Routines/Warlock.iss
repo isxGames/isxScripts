@@ -603,6 +603,12 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 61 0 0 0 ${KillTarget}
 		pricast:Inc
 	}
+	;-------- Bewilderment
+	if ${pricast}<3 && ${Me.Ability[${SpellType[403]}].IsReady} && !${Me.Maintained[${SpellType[403]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 403 0 0 0 ${KillTarget}
+		pricast:Inc
+	}
 	;-------- Encase
 	if ${pricast}<3 && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{

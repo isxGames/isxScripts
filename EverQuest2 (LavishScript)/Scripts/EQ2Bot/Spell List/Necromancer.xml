@@ -26,7 +26,6 @@
     <Setting Name="10,376">Minion\'s Zeal</Setting>
     <Setting Name="10,377">Shadowstep</Setting>
     <Setting Name="10,380">Shockwave</Setting>
-    <Setting Name="10,96">Implode</Setting>
     <Setting Name="10,390">Blood Pact</Setting>
     <Setting Name="10,391">Minion\'s Barrier</Setting>
     <Setting Name="10,392">Minion\'s Uproar</Setting>
@@ -39,6 +38,9 @@
     <Setting Name="10,387">Arcane Minion</Setting>
     <Setting Name="10,388">Empower Servant</Setting>
     <Setting Name="10,398">Possess Minion</Setting>
+    <Setting Name="10,401">Bewilderment</Setting>
+    <Setting Name="10,450">Dark Envy</Setting>
+    <Setting Name="10,96">Implode</Setting>
     <Setting Name="10,71">Dark Coil</Setting>
     <Setting Name="11,290">Aggression</Setting>
     <Setting Name="12,21">Mark of the Dead</Setting>
