@@ -4,6 +4,27 @@
 ; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
 ;
+/* 	These can't be used during preprocessing (#includes, etc), not even if #defined -
+	they are instantiated here for use inside functions, and to keep an easy list of paths.
+
+	Note that Script.CurrentDirectory is NOT initialized during preprocessing, so we can't use that
+	during #includes to get to the right path.  This means we're limited to loading the Script.Filename,
+	which in most cases will be eq2bot (from run eq2bot/eq2bot).  Hopefully Lax will fix this in a future
+	innerspace build, and if so, all paths of the form:
+		${LavishScript.HomeDirectory}/Scripts/${Script.Filename}
+	should be updated to
+		${Script.CurrentDirectory}
+
+	Which will enable side-by-side installation of dev and stable branches (scripts/eq2bot and scripts/eq2botdev)
+
+	-- CyberTech
+*/
+variable string PATH_EQ2COMMON = "${LavishScript.HomeDirectory}/Scripts/EQ2Common"
+variable string PATH_CLASS_ROUTINES = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines"
+variable string PATH_CHARACTER_CONFIG = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config"
+variable string PATH_UI = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/UI"
+variable string PATH_SPELL_LIST = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Spell List"
+;
 ;===================================================
 ;===        Version Checking             ====
 ;===================================================
@@ -37,7 +58,7 @@ variable int Latest_WizardVersion = 0
 ;===================================================
 ;===        Keyboard Configuration              ====
 ;===================================================
-#includeoptional ${LavishScript.HomeDirectory}/Scripts/MovementKeys.iss
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Common/MovementKeys.iss
 #ifndef _MOVE_KEYS_
 variable string forward=w
 variable string backward=s
@@ -67,7 +88,6 @@ variable bool IgnoreWhiteCon
 variable bool IgnoreBlueCon
 variable bool IgnoreGreenCon
 variable bool IgnoreGreyCon
-variable filepath mainpath="${LavishScript.HomeDirectory}/Scripts/"
 variable string spellfile
 variable string charfile
 variable string SpellType[600]
@@ -217,7 +237,7 @@ variable settingsetref SpellSet
 ;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
-variable filepath ConfigPath = "${LavishScript.CurrentDirectory}/Scripts/EQ2Bot/Navigational Paths/"
+variable filepath ConfigPath = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Navigational Paths/"
 variable Navigation EQ2Nav
 variable lnavregionref Region
 variable string	CurrentRegion
@@ -250,20 +270,20 @@ variable int PathType
 
 
 #if ${ISXEQ2(exists)} && ${ISXEQ2.IsReady}
-	#include ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/${Me.SubClass}.iss
-	#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.iss
+	#include ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}.iss
+	#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config/${Me.Name}.iss
 #endif
 
 /* do we really need this? I don't find any reference to the mobcheck object in this script. */
 /* (note) This was included from moveto.iss, and this include replaces that include. */
 /* (note) This may actually be used by eq2botlib.iss, in which case the include should be moved there. */
 #ifndef _MobCheck_
-	#include "${LavishScript.HomeDirectory}/Scripts/MobCheck.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/MobCheck.iss"
 #endif
 
 #ifndef _PositionUtils_
 	#define _IncludePositionUtils_
-	#include "${LavishScript.HomeDirectory}/Scripts/PositionUtils.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/PositionUtils.iss"
 #endif
 
 #include Debug.iss
@@ -4526,7 +4546,7 @@ function StartBot()
 
 	if ${CloseUI}
 	{
-		ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
+		ui -unload "${PATH_UI}/eq2bot.xml"
 	}
 	else
 	{
@@ -5094,8 +5114,8 @@ objectdef EQ2BotObj
 
 	method Init_Settings()
 	{
-		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
-		spellfile:Set[${mainpath}EQ2Bot/Spell List/${Me.SubClass}.xml]
+		charfile:Set[${PATH_CHARACTER_CONFIG}/${Me.Name}.xml]
+		spellfile:Set[${PATH_SPELL_LIST}/${Me.SubClass}.xml]
 		LavishSettings:AddSet[EQ2Bot]
 		LavishSettings[EQ2Bot]:Clear
 		LavishSettings[EQ2Bot]:AddSet[Spells]
@@ -5207,7 +5227,7 @@ objectdef EQ2BotObj
 
 	method Init_Character()
 	{
-		charfile:Set[${mainpath}EQ2Bot/Character Config/${Me.Name}.xml]
+		charfile:Set[${PATH_CHARACTER_CONFIG}/${Me.Name}.xml]
 		CharacterSet:AddSet[General Settings]
 		CharacterSet:AddSet[${Me.SubClass}]
 
@@ -5343,7 +5363,7 @@ objectdef EQ2BotObj
 	method Init_UI()
 	{
 		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
+		ui -reload -skin eq2 "${PATH_UI}/eq2bot.xml"
 	}
 
 	member:float ConvertAngle(float angle)
@@ -6436,7 +6456,7 @@ function atexit()
 	CurrentTask:Set[FALSE]
 	call Class_Shutdown
 
-	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/eq2bot.xml"
+	ui -unload "${PATH_UI}/eq2bot.xml"
 
 	DeleteVariable CurrentTask
 

@@ -1226,7 +1226,7 @@ function InitConfig()
 	squelch bind quit ${endkey} "checkend:Set[1]"
 
 	; This sets the co-ordinates for where the HUD will be displayed.
-	; You can move the mouse to where you want the HUD to be, and just 'echo $[Mouse.X} ${Mouse.Y}' on the console
+	; You can move the mouse to where you want the HUD to be, and just 'echo ${Mouse.X} ${Mouse.Y}' on the console
 	; to get the coordinates.
 	HudX:Set[${SettingXML[${configfile}].Set[General Settings].GetInt["Hud Display at X Co-ordinate",5]}]
 	HudY:Set[${SettingXML[${configfile}].Set[General Settings].GetInt["Hud Display at Y Co-ordinate",55]}]

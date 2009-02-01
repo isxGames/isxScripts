@@ -38,7 +38,7 @@
 
 
 #ifndef _Eq2Botlib_
-	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/EQ2BotLib.iss"
 #endif
 
 
@@ -52,7 +52,7 @@ function Class_Declaration()
 
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Buffs]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
-	ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/UI/${Me.SubClass}_Buffs.xml"
+	ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}_Buffs.xml"
 
 	declare MezzMode bool script FALSE
 	declare Makepet bool script FALSE
@@ -814,7 +814,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
 		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-		
+
 		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 		{
 			if ${MainTank}
@@ -831,7 +831,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 			}
 		}
 		elseif (${TankToTargetDistance} > 20)
-		{	
+		{
 			if ${Actor[${MainTankID}](exists)}
 			{
 				Debug:Echo["Out of Range :: Moving to within 20m of tank"]
@@ -1152,25 +1152,25 @@ function Combat_Routine(int xAction)
 
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
-	
-	
+
+
 	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 	{
 		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
 		{
 			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
-			
+			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]
+
 			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
 			{
 				if ${FightingEpicMob} || ${Actor[${KillTarget}].IsNamed}
 					call CheckPosition 1 1 ${KillTarget}
 				else
-					call CheckPosition 1 0 ${KillTarget}	
+					call CheckPosition 1 0 ${KillTarget}
 			}
 		}
 	}
-	
+
 
 	; Mental DOT and arcane resistance debuff (fast casting - "Despair") ...cast every time it's ready!
 	;;; The rest of this block is basically to insure that all DoTs are loaded and things are primed at the
@@ -2173,7 +2173,7 @@ function Mezmerise_Targets()
 			{
 				do
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Raid[$tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ToActor.Pet.ID}
+					if ${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ToActor.Pet.ID}
 					{
 						aggrogrp:Set[TRUE]
 						break

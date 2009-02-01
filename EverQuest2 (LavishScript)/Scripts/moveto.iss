@@ -73,7 +73,7 @@
 #define _moveto_
 
 #ifndef _MobCheck_
-	#include "${LavishScript.HomeDirectory}/Scripts/MobCheck.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/MobCheck.iss"
 #endif
 
 #define AUTORUN "num lock"

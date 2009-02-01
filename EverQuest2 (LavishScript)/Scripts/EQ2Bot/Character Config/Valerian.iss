@@ -38,14 +38,14 @@ function Custom__Initialization()
 /*
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[${Me.Name}]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[${Me.Name}]:Move[1]
-	ui -load -parent "${Me.Name}@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/Character Config/${Me.Name}_UI.xml"
+	ui -load -parent "${Me.Name}@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_CHARACTER_CONFIG}/${Me.Name}_UI.xml"
 */
 
 
 	/* This is required to override the Illusionist's Custom variable/object type for Spam. */
 	deletevariable Custom
 	declarevariable Custom my_overrides script
-	
+
 }
 
 function Custom__Buff_Init()
@@ -53,7 +53,7 @@ function Custom__Buff_Init()
 	_PreAction[1]:Set[Hover]
 	_PreAction[2]:Set[Spellshield]
 	_PreSpellRange[2,1]:Set[361]
-	
+
 }
 
 function Custom__Combat_Init()
@@ -65,7 +65,7 @@ function Custom__PostCombat_Init()
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; From this point forward, the same system should work almost exactly as it does with the Class Files 
+;; From this point forward, the same system should work almost exactly as it does with the Class Files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 function Custom__Buff_Routine(int xAction)
 {
@@ -78,7 +78,7 @@ function Custom__Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${_PreSpellRange[${xAction},1]}]}](exists)}
 				call CastSpellRange start=${_PreSpellRange[${xAction}]} TargetID=${Me.ID} castwhilemoving=1
 			break
-		
+
 		default
 			return Buff Complete
 			break

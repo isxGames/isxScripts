@@ -191,9 +191,9 @@ function EQ2BotLib_Init()
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[8]:Move[5]
 
 	echo Loading Class UI Tab...
-	ui -load -parent "Class@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/UI/${Me.SubClass}.xml"
+	ui -load -parent "Class@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}.xml"
 	echo Loading Extras UI Tab...
-	ui -load -parent "Extras@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/UI/EQ2BotExtras.xml"
+	ui -load -parent "Extras@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/EQ2BotExtras.xml"
 
 	ExecuteAtom SaveEquipmentSet "Default"
 
@@ -243,7 +243,7 @@ function PopulateSKFDSpells()
 	;; Shadowknight FD Spells
 	;;;;;
 	LavishSettings[EQ2Bot]:AddSet[OtherSpells]
-	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${mainpath}EQ2Bot/Spell List/Shadowknight.xml]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${PATH_SPELL_LIST}/Shadowknight.xml]
 	LavishSettings[EQ2Bot].FindSet[OtherSpells].FindSet[Shadowknight]:GetSettingIterator[SpellIterator]
 	if ${SpellIterator:First(exists)}
 	{
@@ -289,7 +289,7 @@ function PopulateMezSpells()
 	;; Illusionist Mez Spells
 	;;;;;
 	LavishSettings[EQ2Bot]:AddSet[OtherSpells]
-	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${mainpath}EQ2Bot/Spell List/Illusionist.xml]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${PATH_SPELL_LIST}/Illusionist.xml]
 	LavishSettings[EQ2Bot].FindSet[OtherSpells].FindSet[Illusionist]:GetSettingIterator[SpellIterator]
 	if ${SpellIterator:First(exists)}
 	{
@@ -329,7 +329,7 @@ function PopulateMezSpells()
 	;; Coercer Mez Spells
 	;;;;;
 	tempvar:Set[1]
-	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${mainpath}EQ2Bot/Spell List/Coercer.xml]
+	LavishSettings[EQ2Bot].FindSet[OtherSpells]:Import[${PATH_SPELL_LIST}/Coercer.xml]
 	LavishSettings[EQ2Bot].FindSet[OtherSpells].FindSet[Coercer]:GetSettingIterator[SpellIterator]
 	if ${SpellIterator:First(exists)}
 	{
@@ -486,7 +486,7 @@ atom AutoFollowTank()
 	  	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 
 		CharacterSet.FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",TRUE]
-		CharacterSet:Export[Scripts/EQ2Bot/Character Config/${Me.Name}.xml]
+		CharacterSet:Export[${PATH_CHARACTER_CONFIG}/${Me.Name}.xml]
 
 		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"]
 		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"]
@@ -548,7 +548,7 @@ atom StopAutoFollowing()
 	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetUnChecked
 
 	CharacterSet.FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",FALSE]
-	CharacterSet:Export[Scripts/EQ2Bot/Character Config/${Me.Name}.xml]
+	CharacterSet:Export[${PATH_CHARACTER_CONFIG}/${Me.Name}.xml]
 
 	EQ2Execute /stopfollow
 }
@@ -1533,7 +1533,7 @@ objectdef HeroicOp
 	variable string PriestEye1
 	variable string PriestEye2
 
-	variable string charfile="${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/${Me.Name}.xml"
+	variable string charfile="${PATH_CHARACTER_CONFIG}/${Me.Name}.xml"
 
 	method PopulateCB(int HoIconID, string ElementFQN)
 	{
@@ -1672,7 +1672,7 @@ objectdef HeroicOp
 		UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[6]:Move[3]
 
 		echo Loading HO Tab...
-		ui -load -parent "HOs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/${Me.Archetype}HOs.xml"
+		ui -load -parent "HOs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.Archetype}HOs.xml"
 	}
 
 	method DoHO()

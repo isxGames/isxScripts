@@ -23,7 +23,7 @@
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
-	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/EQ2BotLib.iss"
 #endif
 
 function Class_Declaration()
@@ -34,7 +34,7 @@ function Class_Declaration()
 
 	;UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Buffs]
 	;UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
-	;ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "EQ2Bot/UI/${Me.SubClass}_Buffs.xml"
+	;ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}_Buffs.xml"
 
 	declare OffenseMode bool script
 	declare DebuffMode bool script

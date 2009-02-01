@@ -45,7 +45,7 @@
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
-	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Class Routines/EQ2BotLib.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/EQ2BotLib.iss"
 #endif
 
 function Class_Declaration()
