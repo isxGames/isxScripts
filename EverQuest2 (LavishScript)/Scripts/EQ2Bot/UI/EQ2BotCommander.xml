@@ -50,7 +50,7 @@
 				<Height>30</Height>
 				<Text>Run</Text>
 				<AutoTooltip>Run EQ2Bot.iss on all computers</AutoTooltip>
-				<Command>Relay all RunScript EQ2Bot</Command>
+				<Command>Relay all RunScript EQ2Bot/EQ2Bot</Command>
 			</CommandButton>
 			<CommandButton Name='StartEQ2Bot'>
 				<X>5%</X>
