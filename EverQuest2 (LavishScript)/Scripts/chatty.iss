@@ -1,6 +1,6 @@
 variable string myname
-declare InsultTimer int script
-declare ChuckTimer int script
+variable int InsultTimer
+variable int ChuckTimer
 variable string respondSpeaker
 variable string respondTimer
 variable string AssHat
