@@ -1,4 +1,4 @@
-MyPrices - Version 0.13e
+MyPrices - Version 0.13f
 
 For update details see the bottom of this file.
 
@@ -409,6 +409,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13f
+-------------
+
+If you change the value in the 'Current Price' boxes and hit save , it now changes your broker price for that item.
+
 Version 0.13e
 -------------
 

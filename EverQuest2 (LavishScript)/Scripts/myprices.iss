@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13e :  released 28th January 2009
+; Version 0.13f :  released 1st February 2009
 ;
 ; Declare Variables
 ;
@@ -54,6 +54,7 @@ variable int PauseTimer
 variable int WaitTimer
 variable int StopWaiting
 variable int InventorySlotsFree=${Me.InventorySlotsFree}
+variable int ClickID
 
 variable float MyBasePrice
 variable float MerchPrice
@@ -108,8 +109,8 @@ function main(string goscan, string goscan2)
 	
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	
-	call AddLog "Running MyPrices Version 0.13e :  released 28th January 2009" FF11FFCC
-	call echolog "Version 0.13e :  released 28th January 2009"
+	call AddLog "Running MyPrices Version 0.13f :  released 1st February 2009" FF11FFCC
+	call echolog "Version 0.13f :  released 1st February 2009"
 	
 	call StartUp	
 
@@ -1521,33 +1522,62 @@ function pricefromstring()
 		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MinCopperPrice].Text}]
 
 		; calclulate the value in silver
-		Platina:Set[${Math.Calc[${Platina}*10000]}]
-		Gold:Set[${Math.Calc[${Gold}*100]}]
-		Copper:Set[${Math.Calc[${Copper}/100]}]
-		Money:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
+		Money:Set[${Return}]
 		
-		Platina:Set[0]
-		Gold:Set[0]
-		Silver:Set[0]
-		Copper:Set[0]
-		
+		; Read the values held in the GUI boxes
 		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxPlatPrice].Text}]
 		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxGoldPrice].Text}]
 		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxSilverPrice].Text}]
 		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[MaxCopperPrice].Text}]
 
 		; calclulate the value in silver
-		Platina:Set[${Math.Calc[${Platina}*10000]}]
-		Gold:Set[${Math.Calc[${Gold}*100]}]
-		Copper:Set[${Math.Calc[${Copper}/100]}]
-		MaxMoney:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
+		MaxMoney:Set[${Return}]
 
 		; Save the new value in your settings file
 		call Saveitem Sell "${itemname}" ${Money} ${MaxMoney} 0 ${UIElement[CraftItem@Sell@GUITabs@MyPrices].Checked}
+		
+		; Read the values held in the GUI boxes
+		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[PlatPrice].Text}]
+		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[GoldPrice].Text}]
+		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[SilverPrice].Text}]
+		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[CopperPrice].Text}]
+
+		; calclulate the value in silver
+		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
+		MaxMoney:Set[${Return}]
+		
+		; Find where the Item is stored in the container
+		call FindItem ${itemprice[${ClickID}]} "${itemname}"
+		j:Set[${Return}]
+		; set the current price
+		if ${j} > -1
+		{
+			call SetItemPrice ${itemprice[${ClickID}]} ${j} ${MaxMoney}
+			call ClickBrokerSearch Sell ${ClickID}
+		}
 	}
 	call echolog "<end> : pricefromstring"
 }
 
+function calcsilver(int plat, int gold, int silver, float copper)
+{
+	Declare Platina int local
+	Declare Gold int local
+	Declare Silver int local
+	Declare Copper float local
+	Declare SMoney float local
+	
+	Platina:Set[${Math.Calc[${plat}*10000]}]
+	Gold:Set[${Math.Calc[${gold}*100]}]
+	Copper:Set[${Math.Calc[${copper}/100]}]
+	SMoney:Set[${Math.Calc[${Platina}+${Gold}+${silver}+${Copper}]}]
+	
+	Echo SMoney is ${SMoney}
+
+	Return ${SMoney} 
+}
 
 ; routine to save/update items and prices
 
