@@ -810,6 +810,7 @@
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
+							Script[myprices].VariableScope.ClickID:Set[${ID}]
 							Script[myprices]:QueueCommand[call FillMinPrice ${ID}]
 							Script[myprices]:QueueCommand[call ClickBrokerSearch Sell ${ID}]
 						</OnSelect>
