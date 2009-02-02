@@ -77,10 +77,10 @@ variable settingsetref Item
 variable settingsetref General
 
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
-variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/XML/"
-variable filepath BackupPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/Backup/"
-variable filepath MyPricesUIPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/UI/"
-variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/EQ2MyPrices/"
+variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/XML/"
+variable filepath BackupPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/Backup/"
+variable filepath MyPricesUIPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/UI/"
+variable filepath LogPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/"
 
 
 ; Main Script
