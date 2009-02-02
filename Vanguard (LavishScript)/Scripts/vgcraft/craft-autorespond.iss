@@ -2,11 +2,11 @@
 	Alarm and Auto-response code
 */
 	
-#define ALARMSOUND	"${Script.CurrentDirectory}/vgcraft/sounds/alarm.wav"
-#define DETECTSOUND	"${Script.CurrentDirectory}/vgcraft/sounds/detect.wav"
-#define TELLSOUND		"${Script.CurrentDirectory}/vgcraft/sounds/tell.wav"
-#define LEVELSOUND	"${Script.CurrentDirectory}/vgcraft/sounds/level.wav"
-#define WARNSOUND		"${Script.CurrentDirectory}/vgcraft/sounds/warning.wav"
+#define ALARMSOUND		"${Script.CurrentDirectory}/sounds/alarm.wav"
+#define DETECTSOUND		"${Script.CurrentDirectory}/sounds/detect.wav"
+#define TELLSOUND		"${Script.CurrentDirectory}/sounds/tell.wav"
+#define LEVELSOUND		"${Script.CurrentDirectory}/sounds/level.wav"
+#define WARNSOUND		"${Script.CurrentDirectory}/sounds/warning.wav"
 
 #define CHATCOOL 600
 

@@ -107,7 +107,7 @@
 					<X>r17</X>
 					<Width>16</Width>
 					<Height>16</Height>
-					<OnLeftClick>endscript VGCraftBot</OnLeftClick>
+					<OnLeftClick>endscript VGCraft</OnLeftClick>
 				</CommandButton>
 			</Children>
 		</TitleBar>
@@ -141,13 +141,13 @@
 							<Height>15</Height>
 							<Text>Difficult</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doDiffWO}
+								if ${Script[VGCraft].VariableScope.doDiffWO}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doDiffWO:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doDiffWO:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='DoMod' Template='VG.GreenCheckbox'>
@@ -158,13 +158,13 @@
 							<Height>15</Height>
 							<Text>Moderate</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doModWO}
+								if ${Script[VGCraft].VariableScope.doModWO}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doModWO:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doModWO:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='DoEasy' Template='VG.GreenCheckbox'>
@@ -175,13 +175,13 @@
 							<Height>15</Height>
 							<Text>Easy</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doEasyWO}
+								if ${Script[VGCraft].VariableScope.doEasyWO}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doEasyWO:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doEasyWO:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='DoVeryEasy' Template='VG.GreenCheckbox'>
@@ -192,13 +192,13 @@
 							<Height>15</Height>
 							<Text>Very Easy</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doVeryEasyWO}
+								if ${Script[VGCraft].VariableScope.doVeryEasyWO}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doVeryEasyWO:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doVeryEasyWO:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='DoTrivial' Template='VG.GreenCheckbox'>
@@ -209,13 +209,13 @@
 							<Height>15</Height>
 							<Text>Trivial</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doTrivWO}
+								if ${Script[VGCraft].VariableScope.doTrivWO}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doTrivWO:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doTrivWO:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='DoAnyWO' Template='VG.BlueCheckbox'>
@@ -225,7 +225,7 @@
 							<Height>15</Height>
 							<Text>All</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doAnyWO}
+								if ${Script[VGCraft].VariableScope.doAnyWO}
 								{
 									This:SetChecked
 								}
@@ -241,7 +241,7 @@
 							<OnLeftClick>
 								if ${This.Checked}
 								{
-									Script[VGCraftBot].VariableScope.doAnyWO:Set[TRUE]
+									Script[VGCraft].VariableScope.doAnyWO:Set[TRUE]
 									UIElement[DoDiff@Setup@Craft Main@CraftBot]:Hide
 									UIElement[DoMod@Setup@Craft Main@CraftBot]:Hide
 									UIElement[DoEasy@Setup@Craft Main@CraftBot]:Hide
@@ -250,7 +250,7 @@
 								}
 								else
 								{
-									Script[VGCraftBot].VariableScope.doAnyWO:Set[FALSE]
+									Script[VGCraft].VariableScope.doAnyWO:Set[FALSE]
 									UIElement[DoDiff@Setup@Craft Main@CraftBot]:Show
 									UIElement[DoMod@Setup@Craft Main@CraftBot]:Show
 									UIElement[DoEasy@Setup@Craft Main@CraftBot]:Show
@@ -275,13 +275,13 @@
 							<Height>15</Height>
 							<Text>Single</Text>
 							<OnLoad>
-								if (${Script[VGCraftBot].VariableScope.doSingles})
+								if (${Script[VGCraft].VariableScope.doSingles})
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doSingles:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doSingles:Set[${This.Checked}]
 							</OnLeftClick>
 						</CheckBox>
 						<CheckBox Name='SetWOCheck' Template='VG.CheckBox'>
@@ -291,13 +291,13 @@
 							<Height>15</Height>
 							<Text>Set</Text>
 							<OnLoad>
-								if (${Script[VGCraftBot].VariableScope.doSets})
+								if (${Script[VGCraft].VariableScope.doSets})
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doSets:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doSets:Set[${This.Checked}]
 							</OnLeftClick>
 						</CheckBox>
 						<CheckBox Name='BatchWOCheck' Template='VG.CheckBox'>
@@ -307,13 +307,13 @@
 							<Height>15</Height>
 							<Text>Batch</Text>
 							<OnLoad>
-								if (${Script[VGCraftBot].VariableScope.doBatches})
+								if (${Script[VGCraft].VariableScope.doBatches})
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doBatches:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doBatches:Set[${This.Checked}]
 							</OnLeftClick>
 						</CheckBox>
 
@@ -442,12 +442,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.apLimit2k}]
+										This:SetText[${Script[VGCraft].VariableScope.apLimit2k}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.apLimit2k:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.apLimit2k:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[APLimitSlider2k@Frame2k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -460,11 +460,11 @@
 									<Height>20</Height>
 									<Range>100</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.apLimit2k}]
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit2k}]
 										UIElement[APLimitText2k@Frame2k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.apLimit2k:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.apLimit2k:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[APLimitText2k@Frame2k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -497,12 +497,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.apLimit25k}]
+										This:SetText[${Script[VGCraft].VariableScope.apLimit25k}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.apLimit25k:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.apLimit25k:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[APLimitSlider25k@Frame25k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -514,11 +514,11 @@
 									<Height>20</Height>
 									<Range>100</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.apLimit25k}]
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit25k}]
 										UIElement[APLimitText25k@Frame25k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.apLimit25k:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.apLimit25k:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[APLimitText25k@Frame25k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -551,12 +551,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.apLimit3k}]
+										This:SetText[${Script[VGCraft].VariableScope.apLimit3k}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.apLimit3k:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.apLimit3k:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[APLimitSlider3k@Frame3k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -568,11 +568,11 @@
 									<Height>20</Height>
 									<Range>100</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.apLimit3k}]
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit3k}]
 										UIElement[APLimitText3k@Frame3k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.apLimit3k:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.apLimit3k:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[APLimitText3k@Frame3k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -605,12 +605,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.apLimit35k}]
+										This:SetText[${Script[VGCraft].VariableScope.apLimit35k}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.apLimit35k:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.apLimit35k:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[APLimitSlider35k@Frame35k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -622,11 +622,11 @@
 									<Height>20</Height>
 									<Range>100</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.apLimit35k}]
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit35k}]
 										UIElement[APLimitText35k@Frame35k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.apLimit35k:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.apLimit35k:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[APLimitText35k@Frame35k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -656,14 +656,14 @@
 							<Height>15</Height>
 							<Text>Utility</Text>
 							<OnLoad>
-								if (${Script[VGCraftBot].VariableScope.preferUtility})
+								if (${Script[VGCraft].VariableScope.preferUtility})
 								{
 									This:SetChecked
 									UIElement[ToolCheck@Setup@Craft Main@CraftBot]:UnsetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.preferUtility:Set[TRUE]
+								Script[VGCraft].VariableScope.preferUtility:Set[TRUE]
 								UIElement[ToolCheck@Setup@Craft Main@CraftBot]:UnsetChecked
 							</OnLeftClick>
 						</CheckBox>
@@ -674,14 +674,14 @@
 							<Height>15</Height>
 							<Text>Tools</Text>
 							<OnLoad>
-								if (!${Script[VGCraftBot].VariableScope.preferUtility})
+								if (!${Script[VGCraft].VariableScope.preferUtility})
 								{
 									This:SetChecked
 									UIElement[UtilityCheck@Setup@Craft Main@CraftBot]:UnsetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.preferUtility:Set[FALSE]
+								Script[VGCraft].VariableScope.preferUtility:Set[FALSE]
 								UIElement[UtilityCheck@Setup@Craft Main@CraftBot]:UnsetChecked
 							</OnLeftClick>
 						</CheckBox>
@@ -812,12 +812,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.minQVEasy}]
+										This:SetText[${Script[VGCraft].VariableScope.minQVEasy}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.minQVEasy:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.minQVEasy:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[QualSliderVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -829,11 +829,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.minQVEasy}]
+										This:SetValue[${Script[VGCraft].VariableScope.minQVEasy}]
 										UIElement[MinQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.minQVEasy:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.minQVEasy:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MinQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -856,12 +856,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.maxQVEasy}]
+										This:SetText[${Script[VGCraft].VariableScope.maxQVEasy}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.maxQVEasy:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.maxQVEasy:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[MaxQSliderVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -873,11 +873,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.maxQVEasy}]
+										This:SetValue[${Script[VGCraft].VariableScope.maxQVEasy}]
 										UIElement[MaxQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.maxQVEasy:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.maxQVEasy:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MaxQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -910,12 +910,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.minQEasy}]
+										This:SetText[${Script[VGCraft].VariableScope.minQEasy}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.minQEasy:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.minQEasy:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[QualSliderEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -927,11 +927,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.minQEasy}]
+										This:SetValue[${Script[VGCraft].VariableScope.minQEasy}]
 										UIElement[MinQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.minQEasy:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.minQEasy:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MinQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -954,12 +954,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.maxQEasy}]
+										This:SetText[${Script[VGCraft].VariableScope.maxQEasy}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.maxQEasy:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.maxQEasy:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[MaxQSliderEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -971,11 +971,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.maxQEasy}]
+										This:SetValue[${Script[VGCraft].VariableScope.maxQEasy}]
 										UIElement[MaxQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.maxQEasy:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.maxQEasy:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MaxQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -1008,12 +1008,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.minQMod}]
+										This:SetText[${Script[VGCraft].VariableScope.minQMod}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.minQMod:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.minQMod:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[QualSliderMod@FrameMod@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -1025,11 +1025,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.minQMod}]
+										This:SetValue[${Script[VGCraft].VariableScope.minQMod}]
 										UIElement[MinQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.minQMod:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.minQMod:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MinQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -1052,12 +1052,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.maxQMod}]
+										This:SetText[${Script[VGCraft].VariableScope.maxQMod}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.maxQMod:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.maxQMod:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[MaxQSliderMod@FrameMod@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -1069,11 +1069,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.maxQMod}]
+										This:SetValue[${Script[VGCraft].VariableScope.maxQMod}]
 										UIElement[MaxQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.maxQMod:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.maxQMod:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MaxQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -1106,12 +1106,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.minQDiff}]
+										This:SetText[${Script[VGCraft].VariableScope.minQDiff}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.minQDiff:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.minQDiff:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[QualSliderDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -1123,11 +1123,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.minQDiff}]
+										This:SetValue[${Script[VGCraft].VariableScope.minQDiff}]
 										UIElement[MinQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.minQDiff:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.minQDiff:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MinQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -1150,12 +1150,12 @@
 									<BorderColor>FF948974</BorderColor>
 									<Border>0</Border>
 									<OnLoad>
-										This:SetText[${Script[VGCraftBot].VariableScope.maxQDiff}]
+										This:SetText[${Script[VGCraft].VariableScope.maxQDiff}]
 									</OnLoad>
 									<OnChange>
 										if ${This.Text.Length} > 0
 										{
-											Script[VGCraftBot].VariableScope.maxQDiff:Set[${Math.Calc[${This.Text}].Int}]
+											Script[VGCraft].VariableScope.maxQDiff:Set[${Math.Calc[${This.Text}].Int}]
 											UIElement[MaxQSliderDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 										}
 									</OnChange>
@@ -1167,11 +1167,11 @@
 									<Height>20</Height>
 									<Range>1000</Range>
 									<OnLoad>
-										This:SetValue[${Script[VGCraftBot].VariableScope.maxQDiff}]
+										This:SetValue[${Script[VGCraft].VariableScope.maxQDiff}]
 										UIElement[MaxQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnLoad>
 									<OnChange>
-										Script[VGCraftBot].VariableScope.maxQDiff:Set[${Math.Calc[${This.Value}].Int}]
+										Script[VGCraft].VariableScope.maxQDiff:Set[${Math.Calc[${This.Value}].Int}]
 										UIElement[MaxQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
 									</OnChange>
 								</Slider>
@@ -1205,7 +1205,7 @@
 									<Width>180</Width>
 									<Height>20</Height>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cFinishingStation}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cFinishingStation}]</OnRender> 
 								</Text>
 								<Commandbutton Name='FWO Button' Template='VG.GreenButton'>
 									<X>15</X> 
@@ -1224,7 +1224,7 @@
 									<Height>20</Height>
 									<Color>FFEBDEAA</Color>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cFinishingWorkNPC}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cFinishingWorkNPC}]</OnRender> 
 								</Text>
 								<Commandbutton Name='FSupply Button' Template='VG.GreenButton'>
 									<X>15</X> 
@@ -1243,7 +1243,7 @@
 									<Height>20</Height>
 									<Color>FFEBDEAA</Color>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cFinishingSupplyNPC}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cFinishingSupplyNPC}]</OnRender> 
 								</Text>
 								<Commandbutton Name='FRepair Button' Template='VG.GreenButton'>
 									<X>15</X> 
@@ -1262,7 +1262,7 @@
 									<Height>20</Height>
 									<Color>FFEBDEAA</Color>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cRepairNPC}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRepairNPC}]</OnRender> 
 								</Text>
 							</Children>
 						</Frame>
@@ -1290,7 +1290,7 @@
 									<Width>180</Width>
 									<Height>20</Height>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cRefiningStation}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRefiningStation}]</OnRender> 
 								</Text>
 								<Commandbutton Name='RWO Button' Template='VG.GreenButton'>
 									<X>15</X> 
@@ -1309,7 +1309,7 @@
 									<Height>20</Height>
 									<Color>FFEBDEAA</Color>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cRefiningWorkNPC}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRefiningWorkNPC}]</OnRender> 
 								</Text>
 								<Commandbutton Name='RSupply Button' Template='VG.GreenButton'>
 									<X>15</X> 
@@ -1328,7 +1328,7 @@
 									<Height>20</Height>
 									<Color>FFEBDEAA</Color>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cRefiningSupplyNPC}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRefiningSupplyNPC}]</OnRender> 
 								</Text>
 								<Commandbutton Name='RRepair Button' Template='VG.GreenButton'>
 									<X>15</X> 
@@ -1347,7 +1347,7 @@
 									<Height>20</Height>
 									<Color>FFEBDEAA</Color>
 									<Text>NONE</Text>
-									<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.cRepairNPC}]</OnRender> 
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRepairNPC}]</OnRender> 
 								</Text>
 							</Children>
 						</Frame>
@@ -1369,7 +1369,7 @@
 							<Width>10</Width> 
 							<Height>10</Height>
 							<OnLoad>
-								if !${Script[VGCraftBot].VariableScope.doRefining}
+								if !${Script[VGCraft].VariableScope.doRefining}
 								{
 									This:SetChecked
 									setupFinishing
@@ -1379,7 +1379,7 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doRefining:Set[FALSE]
+								Script[VGCraft].VariableScope.doRefining:Set[FALSE]
 								setupFinishing
 								UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Show
 								UIElement[RefiningCheck@Move@Craft Main@CraftBot]:UnsetChecked
@@ -1405,7 +1405,7 @@
 							<Width>10</Width> 
 							<Height>10</Height>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doRefining}
+								if ${Script[VGCraft].VariableScope.doRefining}
 								{
 									This:SetChecked
 									setupRefining
@@ -1415,7 +1415,7 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doRefining:Set[TRUE]
+								Script[VGCraft].VariableScope.doRefining:Set[TRUE]
 								setupRefining
 								UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Show
 								UIElement[FinishingCheck@Move@Craft Main@CraftBot]:UnsetChecked
@@ -1458,7 +1458,7 @@
 							<Text>Path Precision</Text>
 							<Alignment>Left</Alignment>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.movePrecision:Set[${UIElement[PrecEntry@Move@Craft Main@CraftBot].Text}]
+								Script[VGCraft].VariableScope.movePrecision:Set[${UIElement[PrecEntry@Move@Craft Main@CraftBot].Text}]
 							</OnLeftClick>
 						</CommandButton>
 						<Textentry Name="PrecEntry" Template="VG.TextEntry">
@@ -1469,10 +1469,10 @@
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.movePrecision}]
+								This:SetText[${Script[VGCraft].VariableScope.movePrecision}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.movePrecision:Set[${This.Text}]
+								Script[VGCraft].VariableScope.movePrecision:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 
@@ -1485,7 +1485,7 @@
 							<Text>Target Precision</Text>
 							<Alignment>Left</Alignment>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.objPrecision:Set[${UIElement[ObjPrecEntry@Move@Craft Main@CraftBot].Text}]
+								Script[VGCraft].VariableScope.objPrecision:Set[${UIElement[ObjPrecEntry@Move@Craft Main@CraftBot].Text}]
 							</OnLeftClick>
 						</CommandButton>
 						<Textentry Name="ObjPrecEntry" Template="VG.TextEntry">
@@ -1496,10 +1496,10 @@
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.objPrecision}]
+								This:SetText[${Script[VGCraft].VariableScope.objPrecision}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.objPrecision:Set[${This.Text}]
+								Script[VGCraft].VariableScope.objPrecision:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 
@@ -1512,7 +1512,7 @@
 							<Text>Max WO NPC Dist</Text>
 							<Alignment>Left</Alignment>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.maxWorkDist:Set[${UIElement[MaxWorkEntry@Move@Craft Main@CraftBot].Text}]
+								Script[VGCraft].VariableScope.maxWorkDist:Set[${UIElement[MaxWorkEntry@Move@Craft Main@CraftBot].Text}]
 							</OnLeftClick>
 						</CommandButton>
 						<Textentry Name="MaxWorkEntry" Template="VG.TextEntry">
@@ -1523,10 +1523,10 @@
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.maxWorkDist}]
+								This:SetText[${Script[VGCraft].VariableScope.maxWorkDist}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.maxWorkDist:Set[${This.Text}]
+								Script[VGCraft].VariableScope.maxWorkDist:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 
@@ -1538,13 +1538,13 @@
 							<Height>15</Height>
 							<Text>Use Slow Turn</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doSlowTurn}
+								if ${Script[VGCraft].VariableScope.doSlowTurn}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doSlowTurn:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doSlowTurn:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Exact Path' Template='VG.checkbox'>
@@ -1555,13 +1555,13 @@
 							<Height>15</Height>
 							<Text>Only use defined Locations</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doExactPath}
+								if ${Script[VGCraft].VariableScope.doExactPath}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doExactPath:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doExactPath:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 
@@ -1573,7 +1573,7 @@
 							<Height>15</Height>
 							<Text>Mapping Mode</Text>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.isMapping:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.isMapping:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 
@@ -1587,13 +1587,13 @@
 							<Height>20</Height>
 							<Text>Full Automatic (Bot Mode)</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.fullAuto}
+								if ${Script[VGCraft].VariableScope.fullAuto}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.fullAuto:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.fullAuto:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='DoComp' Template='VG.checkbox'>
@@ -1604,13 +1604,13 @@
 							<Height>15</Height>
 							<Text>Fix Complications while crafting</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doComplications}
+								if ${Script[VGCraft].VariableScope.doComplications}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doComplications:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doComplications:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Load Extra' Template='VG.checkbox'>
@@ -1621,13 +1621,13 @@
 							<Height>15</Height>
 							<Text>Load Extra Ingredients at Table Setup</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doExtraIngredients}
+								if ${Script[VGCraft].VariableScope.doExtraIngredients}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doExtraIngredients:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doExtraIngredients:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Hard First' Template='VG.checkbox'>
@@ -1638,13 +1638,13 @@
 							<Height>15</Height>
 							<Text>Get harder Work Orders first</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doHardFirst}
+								if ${Script[VGCraft].VariableScope.doHardFirst}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doHardFirst:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doHardFirst:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Auto Switch' Template='VG.Checkbox'>
@@ -1654,13 +1654,13 @@
 							<Height>15</Height>
 							<Text>Auto Switch Between Work Order NPC's</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.autoSwitchCrafting}
+								if ${Script[VGCraft].VariableScope.autoSwitchCrafting}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.autoSwitchCrafting:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.autoSwitchCrafting:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Open Packs' Template='VG.Checkbox'>
@@ -1670,13 +1670,13 @@
 							<Height>15</Height>
 							<Text>Auto Open Reward Supply Packs</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doOpenPacks}
+								if ${Script[VGCraft].VariableScope.doOpenPacks}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doOpenPacks:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doOpenPacks:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Do Repairs' Template='VG.Checkbox'>
@@ -1686,13 +1686,13 @@
 							<Height>15</Height>
 							<Text>Auto Repair Gear</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doRepair}
+								if ${Script[VGCraft].VariableScope.doRepair}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doRepair:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doRepair:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Faction Grind' Template='VG.Checkbox'>
@@ -1702,13 +1702,13 @@
 							<Height>15</Height>
 							<Text>Faction GRIND mode</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doFactionGrind}
+								if ${Script[VGCraft].VariableScope.doFactionGrind}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doFactionGrind:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doFactionGrind:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 
@@ -1720,13 +1720,13 @@
 							<Height>15</Height>
 							<Text>Pause to allow Craft Table Setup</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doPauseRecipe}
+								if ${Script[VGCraft].VariableScope.doPauseRecipe}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doPauseRecipe:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doPauseRecipe:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Console Output' Template='VG.BlueCheckbox'>
@@ -1736,13 +1736,13 @@
 							<Height>15</Height>
 							<Text>Only Output Text to IS Console</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doConsoleOut}
+								if ${Script[VGCraft].VariableScope.doConsoleOut}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doConsoleOut:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doConsoleOut:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='DebugOutput' Template='VG.BlueCheckbox'>
@@ -1752,13 +1752,13 @@
 							<Height>15</Height>
 							<Text>Display debug text in Chat window</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.debug}
+								if ${Script[VGCraft].VariableScope.debug}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.debug:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.debug:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 					</Tab>
@@ -1842,7 +1842,7 @@
 							<Height>20</Height>
 							<Text>Repeat Recipe # of Times:</Text>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doRecipeOnly:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doRecipeOnly:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<Textentry Name="Repeat" Template="VG.TextEntry">
@@ -1852,10 +1852,10 @@
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.recipeRepeatNum}]
+								This:SetText[${Script[VGCraft].VariableScope.recipeRepeatNum}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.recipeRepeatNum:Set[${This.Text}]
+								Script[VGCraft].VariableScope.recipeRepeatNum:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 
@@ -1865,7 +1865,7 @@
 							<Width>80%</Width>
 							<Height>20</Height>
 							<OnSelect>
-								Script[VGCraftBot].VariableScope.recipeName:Set[${This.SelectedItem.Text}]
+								Script[VGCraft].VariableScope.recipeName:Set[${This.SelectedItem.Text}]
 							</OnSelect>
 						</ComboBox>
 
@@ -1876,13 +1876,13 @@
 							<Height>10</Height>
 							<Text></Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doStep1Action}
+								if ${Script[VGCraft].VariableScope.doStep1Action}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doStep1Action:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doStep1Action:Set[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
 						<Text Name='Step1Text' Template='VG.BoldText'>
@@ -1900,10 +1900,10 @@
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.recipeStep1Action}]
+								This:SetText[${Script[VGCraft].VariableScope.recipeStep1Action}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.recipeStep1Action:Set[${This.Text}]
+								Script[VGCraft].VariableScope.recipeStep1Action:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 
@@ -1914,13 +1914,13 @@
 							<Height>10</Height>
 							<Text></Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doStep2Action}
+								if ${Script[VGCraft].VariableScope.doStep2Action}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doStep2Action:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doStep2Action:Set[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
 						<Text Name='Step2Text' Template='VG.BoldText'>
@@ -1938,10 +1938,10 @@
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.recipeStep2Action}]
+								This:SetText[${Script[VGCraft].VariableScope.recipeStep2Action}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.recipeStep2Action:Set[${This.Text}]
+								Script[VGCraft].VariableScope.recipeStep2Action:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
 
@@ -1952,13 +1952,13 @@
 							<Height>15</Height>
 							<Text>Check for Required Ingredients</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doRecipeMatCheck}
+								if ${Script[VGCraft].VariableScope.doRecipeMatCheck}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doRecipeMatCheck:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doRecipeMatCheck:Set[${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
 
@@ -1969,7 +1969,7 @@
 							<Height>20</Height>
 							<Text>Set Station</Text>
 							<OnLeftClick>
-								Script[VGCraftBot]:QueueCommand[call SetRecipeStation]
+								Script[VGCraft]:QueueCommand[call SetRecipeStation]
 							</OnLeftClick>
 						</Commandbutton>
 						<Text Name='RecipeStationText' Template='VG.BoldText'>
@@ -1978,7 +1978,7 @@
 							<Width>180</Width> 
 							<Height>20</Height>
 							<Text>Recipe Station: NONE</Text>
-							<OnRender>This:SetText[${Script[VGCraftBot].VariableScope.recipeStation}]</OnRender> 
+							<OnRender>This:SetText[${Script[VGCraft].VariableScope.recipeStation}]</OnRender> 
 						</Text>
 
 						<Text Name='APLimitRecipe' Template='VG.BoldText'>
@@ -2000,12 +2000,12 @@
 							<BorderColor>FF948974</BorderColor>
 							<Border>0</Border>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.apLimitRecipe}]
+								This:SetText[${Script[VGCraft].VariableScope.apLimitRecipe}]
 							</OnLoad>
 							<OnChange>
 								if ${This.Text.Length} > 0
 								{
-									Script[VGCraftBot].VariableScope.apLimitRecipe:Set[${Math.Calc[${This.Text}].Int}]
+									Script[VGCraft].VariableScope.apLimitRecipe:Set[${Math.Calc[${This.Text}].Int}]
 									UIElement[APLimitSliderRecipeRecipe@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 								}
 							</OnChange>
@@ -2017,11 +2017,11 @@
 							<Height>20</Height>
 							<Range>100</Range>
 							<OnLoad>
-								This:SetValue[${Script[VGCraftBot].VariableScope.apLimitRecipe}]
+								This:SetValue[${Script[VGCraft].VariableScope.apLimitRecipe}]
 								UIElement[APLimitTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.apLimitRecipe:Set[${Math.Calc[${This.Value}].Int}]
+								Script[VGCraft].VariableScope.apLimitRecipe:Set[${Math.Calc[${This.Value}].Int}]
 								UIElement[APLimitTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
 							</OnChange>
 						</Slider>
@@ -2045,12 +2045,12 @@
 							<BorderColor>FF948974</BorderColor>
 							<Border>0</Border>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.minQRecipe}]
+								This:SetText[${Script[VGCraft].VariableScope.minQRecipe}]
 							</OnLoad>
 							<OnChange>
 								if ${This.Text.Length} > 0
 								{
-									Script[VGCraftBot].VariableScope.minQRecipe:Set[${Math.Calc[${This.Text}].Int}]
+									Script[VGCraft].VariableScope.minQRecipe:Set[${Math.Calc[${This.Text}].Int}]
 									UIElement[QualSliderRecipe@Recipe@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 								}
 							</OnChange>
@@ -2062,11 +2062,11 @@
 							<Height>20</Height>
 							<Range>1000</Range>
 							<OnLoad>
-								This:SetValue[${Script[VGCraftBot].VariableScope.minQRecipe}]
+								This:SetValue[${Script[VGCraft].VariableScope.minQRecipe}]
 								UIElement[MinQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.minQRecipe:Set[${Math.Calc[${This.Value}].Int}]
+								Script[VGCraft].VariableScope.minQRecipe:Set[${Math.Calc[${This.Value}].Int}]
 								UIElement[MinQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
 							</OnChange>
 						</Slider>
@@ -2090,12 +2090,12 @@
 							<BorderColor>FF948974</BorderColor>
 							<Border>0</Border>
 							<OnLoad>
-								This:SetText[${Script[VGCraftBot].VariableScope.maxQRecipe}]
+								This:SetText[${Script[VGCraft].VariableScope.maxQRecipe}]
 							</OnLoad>
 							<OnChange>
 								if ${This.Text.Length} > 0
 								{
-									Script[VGCraftBot].VariableScope.maxQRecipe:Set[${Math.Calc[${This.Text}].Int}]
+									Script[VGCraft].VariableScope.maxQRecipe:Set[${Math.Calc[${This.Text}].Int}]
 									UIElement[MaxQSliderRecipe@Recipe@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
 								}
 							</OnChange>
@@ -2107,11 +2107,11 @@
 							<Height>20</Height>
 							<Range>1000</Range>
 							<OnLoad>
-								This:SetValue[${Script[VGCraftBot].VariableScope.maxQRecipe}]
+								This:SetValue[${Script[VGCraft].VariableScope.maxQRecipe}]
 								UIElement[MaxQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
 							</OnLoad>
 							<OnChange>
-								Script[VGCraftBot].VariableScope.maxQRecipe:Set[${Math.Calc[${This.Value}].Int}]
+								Script[VGCraft].VariableScope.maxQRecipe:Set[${Math.Calc[${This.Value}].Int}]
 								UIElement[MaxQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
 							</OnChange>
 						</Slider>
@@ -2128,7 +2128,7 @@
 							<Height>15</Height>
 							<Text>GM Alarm</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doGMAlarm}
+								if ${Script[VGCraft].VariableScope.doGMAlarm}
 								{
 									This:SetChecked
 								}
@@ -2136,12 +2136,12 @@
 							<OnLeftClick>
 								if ${This.Checked}
 								{
-									Script[VGCraftBot].VariableScope.doGMAlarm:Set[TRUE]
-									Script[VGCraftBot]:QueueCommand[call testGMAlarm]
+									Script[VGCraft].VariableScope.doGMAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testGMAlarm]
 								}
 								else
 								{
-									Script[VGCraftBot].VariableScope.doGMAlarm:Set[FALSE]
+									Script[VGCraft].VariableScope.doGMAlarm:Set[FALSE]
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -2152,13 +2152,13 @@
 							<Height>15</Height>
 							<Text>Auto-respond to GMs</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doGMRespond}
+								if ${Script[VGCraft].VariableScope.doGMRespond}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doGMRespond:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doGMRespond:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='GM Detect' Template='VG.Checkbox'>
@@ -2169,7 +2169,7 @@
 							<Height>15</Height>
 							<Text>GM Detected Alarm</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doDetectGM}
+								if ${Script[VGCraft].VariableScope.doDetectGM}
 								{
 									This:SetChecked
 								}
@@ -2177,12 +2177,12 @@
 							<OnLeftClick>
 								if ${This.Checked}
 								{
-									Script[VGCraftBot].VariableScope.doDetectGM:Set[TRUE]
-									Script[VGCraftBot]:QueueCommand[call testGMDetect]
+									Script[VGCraft].VariableScope.doDetectGM:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testGMDetect]
 								}
 								else
 								{
-									Script[VGCraftBot].VariableScope.doDetectGM:Set[FALSE]
+									Script[VGCraft].VariableScope.doDetectGM:Set[FALSE]
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -2194,7 +2194,7 @@
 							<Height>15</Height>
 							<Text>Tells Alarm</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doTellAlarm}
+								if ${Script[VGCraft].VariableScope.doTellAlarm}
 								{
 									This:SetChecked
 								}
@@ -2202,12 +2202,12 @@
 							<OnLeftClick>
 								if ${This.Checked}
 								{
-									Script[VGCraftBot].VariableScope.doTellAlarm:Set[TRUE]
-									Script[VGCraftBot]:QueueCommand[call testTellAlarm]
+									Script[VGCraft].VariableScope.doTellAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testTellAlarm]
 								}
 								else
 								{
-									Script[VGCraftBot].VariableScope.doTellAlarm:Set[FALSE]
+									Script[VGCraft].VariableScope.doTellAlarm:Set[FALSE]
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -2219,13 +2219,13 @@
 							<Height>15</Height>
 							<Text>Auto-respond to Players</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doPlayerRespond}
+								if ${Script[VGCraft].VariableScope.doPlayerRespond}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-									Script[VGCraftBot].VariableScope.doPlayerRespond:Set[${This.Checked}]
+									Script[VGCraft].VariableScope.doPlayerRespond:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='Say Alarm' Template='VG.Checkbox'>
@@ -2236,7 +2236,7 @@
 							<Height>15</Height>
 							<Text>Say/Emote Alarm with your Name in it</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doSayAlarm}
+								if ${Script[VGCraft].VariableScope.doSayAlarm}
 								{
 									This:SetChecked
 								}
@@ -2244,12 +2244,12 @@
 							<OnLeftClick>
 								if ${This.Checked}
 								{
-									Script[VGCraftBot].VariableScope.doSayAlarm:Set[TRUE]
-									Script[VGCraftBot]:QueueCommand[call testTellAlarm]
+									Script[VGCraft].VariableScope.doSayAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testTellAlarm]
 								}
 								else
 								{
-									Script[VGCraftBot].VariableScope.doSayAlarm:Set[FALSE]
+									Script[VGCraft].VariableScope.doSayAlarm:Set[FALSE]
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -2261,7 +2261,7 @@
 							<Height>15</Height>
 							<Text>Level Up Notice</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doLevelAlarm}
+								if ${Script[VGCraft].VariableScope.doLevelAlarm}
 								{
 									This:SetChecked
 								}
@@ -2269,12 +2269,12 @@
 							<OnLeftClick>
 								if ${This.Checked}
 								{
-									Script[VGCraftBot].VariableScope.doLevelAlarm:Set[TRUE]
-									Script[VGCraftBot]:QueueCommand[call testLevelAlarm]
+									Script[VGCraft].VariableScope.doLevelAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testLevelAlarm]
 								}
 								else
 								{
-									Script[VGCraftBot].VariableScope.doLevelAlarm:Set[FALSE]
+									Script[VGCraft].VariableScope.doLevelAlarm:Set[FALSE]
 								}
 							</OnLeftClick>
 						</checkbox>
@@ -2286,13 +2286,13 @@
 							<Height>15</Height>
 							<Text>Stop Script on Server Down/Reboot Notice</Text>
 							<OnLoad>
-								if ${Script[VGCraftBot].VariableScope.doServerDown}
+								if ${Script[VGCraft].VariableScope.doServerDown}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VGCraftBot].VariableScope.doServerDown:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.doServerDown:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 
@@ -2332,7 +2332,7 @@
 							<Font Template="VG.Window.TitleBar.Title.Font">
 								<Size>15</Size>
 							</Font>
-							<Text>Ver ${Script[VGCraftBot].VariableScope.VERSION}</Text>
+							<Text>Ver ${Script[VGCraft].VariableScope.VERSION}</Text>
 						</Text>
 						<Text Name='About 1'>
 							<X>0</X>
@@ -2398,7 +2398,7 @@
 						This:SetText[Pause]
 						UIElement[HUDPause@CHUD]:SetText[pause]
 						ResumeBot
-						if ${Script[VGCraftBot].VariableScope.doRefining}
+						if ${Script[VGCraft].VariableScope.doRefining}
 							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Refining"]
 						else
 							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Finishing"]
@@ -2406,9 +2406,9 @@
 					elseif ${This.Text.Equal[Start]}
 					{
 						This:SetText[Pause]
-						Script[VGCraftBot]:QueueCommand[call Start]
+						Script[VGCraft]:QueueCommand[call Start]
 						UIElement[HUDPause@CHUD]:Show
-						if ${Script[VGCraftBot].VariableScope.doRefining}
+						if ${Script[VGCraft].VariableScope.doRefining}
 							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Refining"]
 						else
 							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Finishing"]
@@ -2438,7 +2438,7 @@
 				<BackgroundColor>FFCC0000</BackgroundColor>
 				<Text>Consolidate Inv.</Text>
 				<OnLeftClick>
-					Script[VGCraftBot]:QueueCommand[call ConsolidateInventory]
+					Script[VGCraft]:QueueCommand[call ConsolidateInventory]
 				</OnLeftClick>
 			</Commandbutton>			
 
@@ -2652,7 +2652,7 @@
 						{
 							This:SetText[pause]
 							ResumeBot
-							if ${Script[VGCraftBot].VariableScope.doRefining}
+							if ${Script[VGCraft].VariableScope.doRefining}
 							{
 								UIElement[Title@TitleBar@CHUD]:SetText["CHUD - Refining"]
 								UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Refining"]

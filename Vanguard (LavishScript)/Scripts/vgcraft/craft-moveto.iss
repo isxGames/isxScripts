@@ -2,7 +2,7 @@
 
                NOTE -=-=- WARNING -_-_- WARNING -=-=- NOTE
 
-  This code is no longer generic. It depends on Variables that are set in VGCraftBot
+  This code is no longer generic. It depends on Variables that are set in VGCraft
 
           DO NOT USE THIS CODE IN YOUR OWN SCRIPT... get the original!
 
