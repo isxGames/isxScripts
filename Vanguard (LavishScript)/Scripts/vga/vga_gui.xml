@@ -277,11 +277,11 @@
                             <OnChange>
                               if ${This.Text.Length} > 0
                               {
-                              Script[vga].VariableScope.MoveToTargetPct:Set[${Math.Calc[${This.Text}].Int}]
+                              	Script[vga].VariableScope.MoveToTargetPct:Set[${Math.Calc[${This.Text}].Int}]
                               }
                             </OnChange>
                           </Textentry>
-			<checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
+							<checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>13</X>
                             <Y>140</Y>
@@ -289,9 +289,9 @@
                             <Height>20</Height>
                             <Text>Slow Attacks</Text>
                             <OnLoad>
-                              if ${Script[vga].VariableScope.doMoveToTarget}
+                              if ${Script[vga].VariableScope.doSlowAttacks}
                               {
-                              This:SetChecked
+                              	This:SetChecked
                               }
                             </OnLoad>
                             <OnLeftClick>
