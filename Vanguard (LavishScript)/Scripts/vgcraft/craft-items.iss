@@ -259,16 +259,21 @@ function:bool SupplyNeeded(bool atStation)
 		variable int minCount
 		do
 		{
-			invIndex:Set[0]
+			invIndex:Set[1]
 			minCount:Set[0]
-			while ${Me.Inventory[${invIndex:Inc}].Name(exists)}
+			;call DebugOut "Checking through inventory for '${woRecipeFuel.CurrentKey}'"
+			do
 			{
+				;call DebugOut "${invIndex} - ${Me.Inventory[${invIndex:Inc}].Name}..."
 				if ${Me.Inventory[${invIndex}].Name.Find[${woRecipeFuel.CurrentKey}]} && ${Me.Inventory[${invIndex}].MiscDescription.Find[Small crafting utilities]}
 				{
 					woRecipeFuel.CurrentValue:Dec[${Me.Inventory[${invIndex}].Quantity}]
 					minCount:Inc[${Me.Inventory[${invIndex}].Quantity}]
+					;call DebugOut "-- MATCH(${invIndex}):  woRecipeFuel.CurrentValue now ${woRecipeFuel.CurrentValue} (decreased it by ${Me.Inventory[${invIndex}].Quantity}"
+					;call DebugOut "-- MATCH(${invIndex}): minCount now ${minCount}"  
 				}
 			}
+			while ${invIndex:Inc} <= ${Me.Inventory}
 
 			; If we are at the Station and have more than 25, don't worry, be happy now!
 			if ${atStation} && (${minCount} > 25)
@@ -369,9 +374,9 @@ function:bool RecipeSupplyNeeded()
 
 		do
 		{
-			invIndex:Set[0]
+			invIndex:Set[1]
 			minCount:Set[0]
-			while ${Me.Inventory[${invIndex:Inc}].Name(exists)}
+			do
 			{
 				if ${Me.Inventory[${invIndex}].Name.Find[${woRecipeFuel.CurrentKey}]} && ${Me.Inventory[${invIndex}].MiscDescription.Find[Small crafting utilities]}
 				{
@@ -379,6 +384,7 @@ function:bool RecipeSupplyNeeded()
 					minCount:Inc[${Me.Inventory[${invIndex}].Quantity}]
 				}
 			}
+			while ${invIndex:Inc} <= ${Me.Inventory}
 
 			; If we are at the Station and have more than 25, don't worry, be happy now!
 			if (${minCount} > 25)
