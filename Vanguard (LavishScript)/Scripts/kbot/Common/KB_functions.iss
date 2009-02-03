@@ -141,9 +141,7 @@ function:bool Necropsy()
 		while ${GV[bool,LootIsLooting]}
 		
 		if !${doGetMinions} && !${doGetEnergy}
-		{
 			LastCorpseID:Set[${Me.Target.ID}]
-		}
 	}
 	return TRUE
 }
