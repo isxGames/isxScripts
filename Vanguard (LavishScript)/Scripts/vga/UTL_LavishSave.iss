@@ -197,6 +197,8 @@ UtilitySR:AddSetting[doDebug,${doDebug}]
 UtilitySR:AddSetting[doParser,${doParser}]
 UtilitySR:AddSetting[doActionLog,${doActionLog}]
 UtilitySR:AddSetting[doSell,${doSell}]
+UtilitySR:AddSetting[DoLoot,${DoLoot}]
+
 
 ;===================================================
 ;===                  Spells Save               ====

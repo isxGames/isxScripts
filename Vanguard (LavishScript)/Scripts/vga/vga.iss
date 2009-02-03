@@ -199,6 +199,7 @@ function downtimefunction()
 	call followpawn
 	call assistpawn
 	call BuffUp
+	call loot
 	return
 }
 ;===================================================

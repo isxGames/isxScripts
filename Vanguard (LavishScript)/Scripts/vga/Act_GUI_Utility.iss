@@ -7,7 +7,36 @@ function PauseScript()
 		while ${Me.HealthPct} == 0
 			wait 1
 }
+;********************************************
+function loot()
+{
+	if ${DoLoot} && ${Group.Count} < 7
+	{
+	variable int iCount
 
+	; We are still in combat!
+	if ${Me.InCombat} || ${Me.Encounter} > 0
+	{
+		return 
+	}
+	wait 5
+	iCount:Set[1]
+	; Cycle through all the Pawns and find some corpses to Loot and Skin
+	do
+	{
+		if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance} < 10 && ${Pawn[${iCount}].ContainsLoot}
+			{
+			Pawn[${iCount}]:Target
+			wait 5
+			call movetoobject ${Pawn[${Me.Target}].ID} 4 0
+			VGExecute "/lootall"
+			waitframe
+			VGExecute "/cleartargets"
+			}
+	}	
+	while ${iCount:Inc} < ${VG.PawnCount}
+	}
+}
 ;********************************************
 function executeability(string x_ability, string x_type, string CP)
 {
@@ -285,21 +314,21 @@ atom ParseLog(string aText)
 {
 	if ${doParser}
 	{
-	UIElement[DebugList@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
+	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
 	}
 }
 atom actionlog(string aText) 
 {
 	if ${doActionLog}
 	{
-	UIElement[DebugList@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
+	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
 	}
 }
 atom debuglog(string aText) 
 {
 	if ${doDeBug}
 	{
-	UIElement[DebugList@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
+	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
 	}
 }
 
@@ -340,14 +369,14 @@ variable BuffTimer BuffTimer
 ;*********************************
 atom cleardebug()
 {
-	UIElement[DebugList@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
+	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
 	if ${ParseCount}<7
 	{
 	ParseCount:Inc
 	}
 	if ${ParseCount}>6
 	{
-	UIElement[ParseList@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
+	UIElement[ParseList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
 	ParseCount:Set[0]
 	}
 	

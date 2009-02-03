@@ -25,8 +25,8 @@
 		<StorePosition>1</StorePosition>
 		<Title>Vanguard Assist Bot</Title>
 		<TitleBarTextColor>FFFFFFFF</TitleBarTextColor>
-		<X>20</X>
-		<Y>20</Y>
+		<X>0</X>
+		<Y>0</Y>
 		<Width>400</Width>
 		<Height>640</Height>
 		<StorePosition>1</StorePosition>
@@ -69,6 +69,27 @@
         <TabBorder>2</TabBorder>
         <Height>99%</Height>
         <Width>99%</Width>
+					<OnSelect>
+						switch ${This.SelectedTab}
+						{
+							Case Main
+								UIElement[VGA_gui]:SetWidth[320]
+								UIElement[VGA_gui]:SetHeight[250]
+								break
+							Case Healer
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+							Case Combat
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+							Case Triggers
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+						}
+					</OnSelect>
         <Tabs>
           <!--Top Level Main Tab-->
           <Tab name='Main'>
@@ -90,6 +111,31 @@
                   <TabBorder>2</TabBorder>
                   <Height>99%</Height>
                   <Width>99%</Width>
+					<OnSelect>
+						switch ${This.SelectedTab}
+						{
+							Case MainT
+								UIElement[VGA_gui]:SetWidth[320]
+								UIElement[VGA_gui]:SetHeight[250]
+								break
+							Case BuffWatch
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+							Case Sell
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+							Case Logs
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+							Case Mobs
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+						}
+					</OnSelect>
                   <Tabs>
                     <!--2nd Level MainMain Tab-->
                     <Tab name='MainT'>
@@ -101,33 +147,33 @@
                           <Button Name="assistButton" Template="VG.GreenButton">
                             <X>10</X>
                             <Y>15</Y>
-                            <Width>180</Width>
+                            <Width>100</Width>
                             <Height>20</Height>
                             <Text></Text>
                             <Alignment>Center</Alignment>
-                            <Onload>This:SetText[Set Your Assist]</Onload>
+                            <Onload>This:SetText[Set Assist]</Onload>
                             <OnLeftClick>
                               Script[vga].VariableScope.assistpawn:Set[${Me.DTarget.Name}]
-                              This:SetText[Assisting: ${Me.DTarget.Name}]
+                              This:SetText[Assist: ${Me.DTarget.Name}]
                             </OnLeftClick>
                           </Button>
                           <Button Name="followButton" Template="VG.GreenButton">
-                            <X>195</X>
-                            <Y>15</Y>
-                            <Width>180</Width>
+                            <X>10</X>
+                            <Y>35</Y>
+                            <Width>100</Width>
                             <Height>20</Height>
                             <Text></Text>
                             <Alignment>Center</Alignment>
-                            <Onload>This:SetText[Set Your Follow]</Onload>
+                            <Onload>This:SetText[Set Follow]</Onload>
                             <OnLeftClick>
                               Script[vga].VariableScope.followpawn:Set[${Me.DTarget.Name}]
-                              This:SetText[Following: ${Me.DTarget.Name}]
+                              This:SetText[Follow: ${Me.DTarget.Name}]
                             </OnLeftClick>
                           </Button>
                           <Button Name="RepairSell" Template="VG.RedButton">
-                            <X>195</X>
-                            <Y>37</Y>
-                            <Width>180</Width>
+                            <X>10</X>
+                            <Y>55</Y>
+                            <Width>100</Width>
                             <Height>19</Height>
                             <Text>Repair/Sell</Text>
                             <Alignment>Center</Alignment>
@@ -137,8 +183,8 @@
                           </Button>
                           <checkbox Name='doassistcheck' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>13</X>
-                            <Y>36</Y>
+                            <X>130</X>
+                            <Y>15</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Assist</Text>
@@ -154,8 +200,8 @@
                           </checkbox>
                           <checkbox Name='dofollowcheck' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>13</X>
-                            <Y>58</Y>
+                            <X>130</X>
+                            <Y>35</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Follow</Text>
@@ -170,17 +216,17 @@
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtfollowdistance' Template='VG.BoldText'>
-                            <X>122</X>
-                            <Y>60</Y>
+                            <X>258</X>
+                            <Y>35</Y>
                             <Width>100</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Dist</Text>
                           </Text>
                           <Textentry Name='followdistance' Template='VG.TextEntry'>
-                            <X>100</X>
-                            <Y>58</Y>
-                            <Width>20</Width>
+                            <X>230</X>
+                            <Y>35</Y>
+                            <Width>26</Width>
                             <Height>19</Height>
                             <Color>FFDDBB00</Color>
                             <SelectionColor>FF000000</SelectionColor>
@@ -196,8 +242,8 @@
                             </OnChange>
                           </Textentry>
 			 <Textentry Name='AssistBattlePcttxt' Template='VG.TextEntry'>
-                            <X>100</X>
-                            <Y>36</Y>
+                            <X>230</X>
+                            <Y>16</Y>
                             <Width>26</Width>
                             <Height>19</Height>
                             <Color>FFDDBB00</Color>
@@ -214,8 +260,8 @@
                             </OnChange>
                           </Textentry>
                           <Text Name='txtAssistBattle' Template='VG.BoldText'>
-                            <X>130</X>
-                            <Y>37</Y>
+                            <X>258</X>
+                            <Y>18</Y>
                             <Width>150</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
@@ -223,8 +269,8 @@
                           </Text>
 			<checkbox Name='doMoveToTarget' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>13</X>
-                            <Y>98</Y>
+                            <X>130</X>
+                            <Y>55</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Move To Target</Text>
@@ -240,8 +286,8 @@
                           </checkbox>
 			<checkbox Name='doFaceTarget' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>13</X>
-                            <Y>120</Y>
+                            <X>130</X>
+                            <Y>75</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Face Target</Text>
@@ -256,17 +302,19 @@
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtMoveToTargetPct' Template='VG.BoldText'>
-                            <X>142</X>
-                            <Y>100</Y>
+                            <X>258</X>
+                            <visible>0</visible>
+                            <Y>55</Y>
                             <Width>100</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Pct</Text>
                           </Text>
                           <Textentry Name='MoveToTargetPct' Template='VG.TextEntry'>
-                            <X>120</X>
-                            <Y>98</Y>
-                            <Width>20</Width>
+                            <visible>0</visible>
+                            <X>230</X>
+                            <Y>55</Y>
+                            <Width>26</Width>
                             <Height>19</Height>
                             <Color>FFDDBB00</Color>
                             <SelectionColor>FF000000</SelectionColor>
@@ -277,21 +325,21 @@
                             <OnChange>
                               if ${This.Text.Length} > 0
                               {
-                              	Script[vga].VariableScope.MoveToTargetPct:Set[${Math.Calc[${This.Text}].Int}]
+                              Script[vga].VariableScope.MoveToTargetPct:Set[${Math.Calc[${This.Text}].Int}]
                               }
                             </OnChange>
                           </Textentry>
-							<checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
+			<checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>13</X>
-                            <Y>140</Y>
+                            <X>130</X>
+                            <Y>95</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Slow Attacks</Text>
                             <OnLoad>
                               if ${Script[vga].VariableScope.doSlowAttacks}
                               {
-                              	This:SetChecked
+                              This:SetChecked
                               }
                             </OnLoad>
                             <OnLeftClick>
@@ -299,17 +347,17 @@
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtSlowAttacksPct' Template='VG.BoldText'>
-                            <X>142</X>
-                            <Y>142</Y>
+                            <X>258</X>
+                            <Y>95</Y>
                             <Width>100</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>.1sec</Text>
                           </Text>
                           <Textentry Name='SlowAttacksPct' Template='VG.TextEntry'>
-                            <X>110</X>
-                            <Y>140</Y>
-                            <Width>30</Width>
+                            <X>230</X>
+                            <Y>95</Y>
+                            <Width>26</Width>
                             <Height>19</Height>
                             <Color>FFDDBB00</Color>
                             <SelectionColor>FF000000</SelectionColor>
@@ -325,17 +373,25 @@
                             </OnChange>
                           </Textentry>
 			   <Text Name='txtSlowHealsPct' Template='VG.BoldText'>
-                            <X>13</X>
-                            <Y>162</Y>
+                            <X>130</X>
+                            <Y>115</Y>
                             <Width>120</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
-                            <Text>Slow Heals 100th Sec.</Text>
+                            <Text>Slow Heals</Text>
+                          </Text>
+                          <Text Name='txtSlowHealstxt+' Template='VG.BoldText'>
+                            <X>258</X>
+                            <Y>115</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>.001sec</Text>
                           </Text>
                           <Textentry Name='SlowHealsPct' Template='VG.TextEntry'>
-                            <X>110</X>
-                            <Y>180</Y>
-                            <Width>30</Width>
+                            <X>230</X>
+                            <Y>115</Y>
+                            <Width>26</Width>
                             <Height>19</Height>
                             <Color>FFDDBB00</Color>
                             <SelectionColor>FF000000</SelectionColor>
@@ -350,28 +406,26 @@
                               }
                             </OnChange>
                           </Textentry>
-                          <Text Name='LastMobAttacked' Template='VG.BoldText'>
+			<checkbox Name='doLoot' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>195</X>
-                            <Y>56</Y>
-                            <Width>150</Width>
+                            <X>130</X>
+                            <Y>135</Y>
+                            <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Mob Parse</Text>
-                          </Text>
-			  <Listbox Name="ParseList" Template="VG.ListBox">
-                          <X>195</X>
-                          <Y>86</Y>
-                          <Width>190</Width>
-                          <Height>90</Height>
-                          <Sort>None</Sort>
-                          <OnLoad>
-                          </OnLoad>
-                          <OnRightClick>
-                          </OnRightClick>
-                        </Listbox>
+                            <Text>Loot Corpses</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoLoot}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoLoot:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">
-                            <X>275</X>
-                            <Y>500</Y>
+                            <X>13</X>
+                            <Y>85%</Y>
                             <Width>100</Width>
                             <Height>19</Height>
                             <Text>Quit</Text>
@@ -381,8 +435,8 @@
                             </OnLeftClick>
                           </Button>
                           <Button Name="PauseBtn" Template="VG.RedButton">
-                            <X>165</X>
-                            <Y>500</Y>
+                            <X>125</X>
+                            <Y>85%</Y>
                             <Width>100</Width>
                             <Height>19</Height>
                             <Text>Pause</Text>
@@ -400,79 +454,6 @@
 				}
                             </OnLeftClick>
                           </Button>
-                          <checkbox Name='doDeBug' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>13</X>
-                            <Y>500</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>Debug</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.doDeBug}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.doDeBug:Set[${This.Checked}]
-                            </OnLeftClick>
-                          </checkbox>
-                          <checkbox Name='doActionLog' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>75</X>
-                            <Y>500</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>ActionLog</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.doActionLog}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.doActionLog:Set[${This.Checked}]
-                            </OnLeftClick>
-                          </checkbox>
-                          <checkbox Name='doParser' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>13</X>
-                            <Y>520</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>Parser</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.doParser}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.doParser:Set[${This.Checked}]
-                            </OnLeftClick>
-                          </checkbox>
-                          <Button Name="ClearDebug" Template="VG.RedButton">
-                            <X>275</X>
-                            <Y>190</Y>
-                            <Width>100</Width>
-                            <Height>19</Height>
-                            <Text>Clear Log</Text>
-                            <Alignment>Center</Alignment>
-                            <OnLeftClick>
-                              Script[vga]:ExecuteAtom[cleardebug]
-                            </OnLeftClick>
-                          </Button>
-                        <Listbox Name="DebugList" Template="VG.ListBox">
-                          <X>10</X>
-                          <Y>210</Y>
-                          <Width>95%</Width>
-                          <Height>285</Height>
-                          <Sort>None</Sort>
-                          <OnLoad>
-                          </OnLoad>
-                          <OnRightClick>
-                          </OnRightClick>
-                        </Listbox>
                       </Children>
                       </Frame>
                     </Tab>
@@ -938,6 +919,116 @@
                             </OnRightClick>
                           </Listbox>
 			</Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainLogs Tab-->
+                    <Tab name='Logs'>
+                      <Frame name='LogsCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children>
+                          <Text Name='txtParseList' Template='VG.BoldText'>
+                            <X>13</X>
+                            <Y>15</Y>
+                            <Width>45%</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Parse Summary</Text>
+                          </Text>
+  			  <Listbox Name="ParseList" Template="VG.ListBox">
+                          <X>13</X>
+                          <Y>35</Y>
+                          <Width>95%</Width>
+                          <Height>130</Height>
+                          <Sort>None</Sort>
+                          <OnLoad>
+                          </OnLoad>
+                          <OnRightClick>
+                          </OnRightClick>
+			  </Listbox>
+                          <checkbox Name='doDeBug' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>500</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Debug</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doDeBug}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doDeBug:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='doActionLog' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>75</X>
+                            <Y>500</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>ActionLog</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doActionLog}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doActionLog:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='doParser' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>520</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Parser</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doParser}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doParser:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <Button Name="ClearDebug" Template="VG.RedButton">
+                            <X>275</X>
+                            <Y>190</Y>
+                            <Width>100</Width>
+                            <Height>19</Height>
+                            <Text>Clear Log</Text>
+                            <Alignment>Center</Alignment>
+                            <OnLeftClick>
+                              Script[vga]:ExecuteAtom[cleardebug]
+                            </OnLeftClick>
+                          </Button>
+                          <Text Name='txtDebugList' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>190</Y>
+                            <Width>45%</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Log</Text>
+                          </Text>
+                         <Listbox Name="DebugList" Template="VG.ListBox">
+                          <X>10</X>
+                          <Y>210</Y>
+                          <Width>95%</Width>
+                          <Height>285</Height>
+                          <Sort>None</Sort>
+                          <OnLoad>
+                          </OnLoad>
+                          <OnRightClick>
+                          </OnRightClick>
+                        </Listbox>
+                      </Children>
                       </Frame>
                     </Tab>
                   </Tabs>
@@ -7462,6 +7553,123 @@
                     </Tab>
                   </Tabs>
                 </TabControl>
+              </Children>
+            </Frame>
+          </Tab>   
+         <!--Top Level Class Tab-->
+          <Tab name='Class'>
+            <Frame name='ClassFrm'>
+              <Height>100%</Height>
+              <Width>100%</Width>
+              <Texture></Texture>
+              <Children>
+                      <Frame name='shamanfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children>
+			</Children>
+                      </Frame>
+                      <Frame name='clericfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+			<Visible>0</Visible>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='bloodmagefrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+			<Visible>0</Visible>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='disciplefrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+			<Visible>0</Visible>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='paladinfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='warriorfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children>
+			</Children>
+                      </Frame>
+                      <Frame name='dreadknightfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='monkfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='roguefrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='rangerfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='bardfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='sorcererfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='necromancerfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='druidtfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                      <Frame name='psionicistfrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+			<Visible>0</Visible>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
               </Children>
             </Frame>
           </Tab>   

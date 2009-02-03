@@ -16,12 +16,11 @@ function Repair()
   startmoney:Inc[${Math.Calc[${Me.Gold}*100*100]}]
   startmoney:Inc[${Math.Calc[${Me.Platinum}*100*100*100]}]
   Merchant:Begin[Repair]
-  wait 5
+  wait 2
 
   do
   {
       Merchant.RepairItem[${i}]:Repair
-      wait 5
   }
   while (${i:Inc} <= ${Merchant.NumItemsForRepair})
   variable int finishmoney
@@ -55,34 +54,12 @@ function Sell()
   startmoney:Inc[${Math.Calc[${Me.Gold}*100*100]}]
   startmoney:Inc[${Math.Calc[${Me.Platinum}*100*100*100]}]
   Merchant:Begin[BuySell]
-  wait 5
+  wait 2
 
   ; Loop through the inventory, incrementing "i" by one each time until
   ; Me.Inventory[i] isn't valid anymore
-  do 
-  {
-    if ${Me.Inventory[${i}].Keyword2.Find[Cash]}
-     {
-         ; If it does, then sell it
-         Me.Inventory[${i}]:Sell[${Me.Inventory[${i}].Quantity}]
-      }
-    i:Inc
-  }
-  while ${Me.Inventory[${i}].ID(exists)}
-  i:Set[1]
-  do 
-  {
-    if ${Me.Inventory[${i}].Keyword2.Find[Cash]}
-     {
-         ; If it does, then sell it
-         Me.Inventory[${i}]:Sell[${Me.Inventory[${i}].Quantity}]
-      }
-      i:Inc
-  }
-  while ${Me.Inventory[${i}].ID(exists)} 
-  i:Set[1]
-  do 
-  {
+  do
+{
     if ${doSell}
      {
 	variable iterator Iterator
