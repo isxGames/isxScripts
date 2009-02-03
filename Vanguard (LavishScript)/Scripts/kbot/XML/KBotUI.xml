@@ -1,0 +1,2652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+
+	<!-- Font -->
+	<Template Name='VG.Font'>
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+
+	<!-- Text -->
+	<template name='VG.Text.Font' Template='VG.Font' />
+	<template name='VG.Text'>
+		<Font Template='VG.Text.Font' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name='VG.BoldText'>
+		<Font Template='VG.BoldFont' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+
+	<!-- Main Window -->
+  <Window name='KBot' Template='VG.window'>
+    <X>${Script[KBot].VariableScope.windowX}</X>
+    <Y>${Script[KBot].VariableScope.windowY}</Y>
+    <Title>KBot UI</Title>
+    <TitleBarTextColor>FFFFFFFF</TitleBarTextColor>
+    <Width>290</Width>
+    <Height>300</Height>
+    <Client Template="VG.Window.Client" />
+    <StorePosition>1</StorePosition>
+    <TitleBar template='VG.window.TitleBar'>
+      <X>0</X>
+      <Y>0</Y>
+      <Width>99%</Width>
+      <Height>20</Height>
+      <Children>
+        <text Name='Title' template='VG.Window.TitleBar.title' />
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+        <commandbutton name='Custom Close Button' template='VG.Window.TitleBar.Close'>
+          <Command>ui -unload "&filename;";endscript Kbot</Command>
+        </commandbutton>
+      </Children>
+    </TitleBar>
+
+    <Children>
+      <TabControl name='KBot' Template='VG.Tabcontrol'>
+				<X>0</X>
+				<Y>3</Y>
+				<Font>
+					<Name>Times New Roman</Name>
+					<Size>18</Size>
+				</Font>
+				<TabHeight>23</TabHeight>
+				<TabBorder>2</TabBorder>
+				<Height>99%</Height>
+				<Width>99%</Width>
+
+      <Tabs>
+
+        <Tab name='Main'>
+
+					<Frame name='MainFrame'>
+						<Height>100%</Height>
+						<Width>100%</Width>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Texture></Texture>
+			
+						<Children>
+		
+							<TabControl name='MainTabs' Template='VG.TabControl'>
+								<X>0</X>
+								<Y>2</Y>
+								<Font>
+									<Name>Times New Roman</Name>
+									<Size>16</Size>
+								</Font>
+								<TabHeight>22</TabHeight>
+								<TabBorder>2</TabBorder>
+								<Height>99%</Height>
+								<Width>99%</Width>
+		
+				 	     <Tabs>
+				
+								<Tab name='Start'>
+
+									<button name='Port' Template='VG.GreenButton'>
+										<X>30</X>
+										<Y>20</Y>
+										<Width>75</Width>
+										<Height>20</Height>
+										<AutoTooltip>Open Port</AutoTooltip>
+										<Text>Port UI</Text>
+										<OnLeftClick>				
+											Script[KBot]:ExecuteAtom[Port]
+										</OnLeftClick>
+									</button>
+				
+									<button name='ReturnToTS' Template='VG.GreenButton'>
+										<X>125</X>
+										<Y>20</Y>
+										<Width>110</Width>
+										<Height>20</Height>
+										<AutoTooltip>Port to TombStone</AutoTooltip>
+										<Text>Port TombStone</Text>
+										<OnLeftClick>				
+											Script[KBot]:ExecuteAtom[ReturnToTombStone]
+										</OnLeftClick>
+									</button>
+									
+									<button name='Sprint' Template='VG.GreenButton'>
+										<X>30</X>
+										<Y>50</Y>
+										<Width>75</Width>
+										<Height>20</Height>
+										<AutoTooltip>Toggle Sprint</AutoTooltip>
+										<Text>Sprint</Text>
+										<OnLeftClick>				
+											Script[KBot]:ExecuteAtom[Sprint]
+										</OnLeftClick>
+									</button>
+				
+									<button name='Afterburner' Template='VG.GreenButton'>
+										<X>125</X>
+										<Y>50</Y>
+										<Width>85</Width>
+										<Height>20</Height>
+										<AutoTooltip>Use@UrOwnRisk</AutoTooltip>
+										<Text>Afterburner</Text>
+										<OnLeftClick>				
+											Script[KBot]:ExecuteAtom[Afterburner]
+										</OnLeftClick>
+									</button>
+									
+									<Button Name='RunButton' Template='VG.GreenButton'>
+										<X>35</X>
+										<Y>100</Y>
+										<Width>75</Width> 
+										<Height>30</Height>
+										<Text>Start</Text>
+										<OnLeftClick>
+											if ${This.Text.Equal[Pause]}
+											{
+												This:SetText[Resume]
+												UIElement[Title@TitleBar@KBot]:SetText["KBot -- PAUSED"]
+												Script[KBot].VariableScope.isPaused:Set[TRUE]
+												Script[KBot]:QueueCommand[call Pause]
+											}
+											elseif ${This.Text.Equal[Resume]}
+											{
+												This:SetText[Pause]
+												Script[KBot].VariableScope.isPaused:Set[FALSE]
+												UIElement[Title@TitleBar@KBot]:SetText["KBot -- Killing"]
+											}
+											elseif ${This.Text.Equal[Start]}
+											{
+												This:SetText[Pause]
+												Script[KBot]:QueueCommand[call Start]
+												UIElement[Title@TitleBar@KBot]:SetText["KBot -- Killing"]
+											}
+										</OnLeftClick>
+									</Button>
+				
+									<button name='Quit' Template='VG.RedButton'>
+										<X>150</X>
+										<Y>100</Y>
+										<Width>75</Width>
+										<Height>30</Height>
+										<AutoTooltip>Quit the script</AutoTooltip>
+										<Text>Quit</Text>
+										<OnLeftClick>
+											Echo Stopping...				
+										  Script[KBot].VariableScope.isRunning:Set[FALSE]
+											Script[KBot]:ExecuteAtom[Stop]
+										</OnLeftClick>
+									</button>	
+<!--
+									<Checkbox name='AutoMap Checkbox' Template='VG.Checkbox'>
+										<X>20</X>
+										<Y>165</Y>
+										<Width>20</Width>
+										<Height>23</Height>
+										<Text>AutoMap</Text>
+										<OnLeftClick>
+											Script[KBot].VariableScope.autoMapOn:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+-->
+
+									<button name='SetWaypoint' Template='VG.GreenButton'>
+										<X>25%</X>
+										<Y>165</Y>
+										<Width>110</Width>
+										<Height>20</Height>
+										<AutoTooltip>Click here to set Waypoints</AutoTooltip>
+										<Text>Add Waypoint</Text>
+										<OnLeftClick>
+											Script[KBot]:ExecuteAtom[AddWaypoint]
+										</OnLeftClick>
+									</button>
+
+									<Checkbox name='Debug Checkbox' Template='VG.Checkbox'>
+										<X>20</X>
+										<Y>210</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Debug Mode</Text>
+										<OnLeftClick>
+											Script[KBot].VariableScope.Verbose:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+
+									<button name='ClearWaypoints' Template='VG.RedButton'>
+										<X>145</X>
+										<Y>210</Y>
+										<Width>110</Width>
+										<Height>15</Height>
+										<AutoTooltip>Clear All Waypoints</AutoTooltip>
+										<Text>Clear Waypoints</Text>
+										<OnLeftClick>
+											Script[KBot]:ExecuteAtom[ClearWaypoints]
+										</OnLeftClick>
+									</button>
+
+								</Tab>
+
+								<Tab name='Options'>
+								
+									<Checkbox name='TotallyAFK Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Totally AFK</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doTotallyAFK}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doTotallyAFK:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									
+									<Checkbox name='QuitOnDeath Checkbox' Template='VG.Checkbox'>
+										<X>120</X>
+										<Y>15</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Quit on Death</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doQuitOnDeath}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doQuitOnDeath:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+<!--
+									<Checkbox name='Loot Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>35</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Loot Corpses</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doLootCorpses}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doLootCorpses:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+-->
+
+									<Checkbox name='Skin Mobs Checkbox' Template='VG.Checkbox'>
+										<X>120</X>
+										<Y>35</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Skin Mobs</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doSkinMobs}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doSkinMobs:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+<!--
+									<Checkbox name='Good Loot Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>55</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Only Loot Weapons and Armors</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.onlyGoodLoot}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.onlyGoodLoot:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+-->
+									<Checkbox name='Load Arrows Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>100</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Auto Load Arrows</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doLoadArrows}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doLoadArrows:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+
+									<Checkbox name='Random WP Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>120</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<AutoTooltip>Follow them in Order or do Random?</AutoTooltip>
+										<Text>Move to Random Waypoints</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doRandomWP}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doRandomWP:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+
+									<Checkbox name='Sprint Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>160</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<AutoTooltip>From 1 to 100 % of Spring speed to use</AutoTooltip>
+										<Text>Maintain Max Sprint Speed</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doSprintSpeed}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doSprintSpeed:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='SprintSpeed' Template='VG.TextEntry'>
+										<X>195</X>
+										<Y>159</Y>
+										<Width>25</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.maxSprintSpeed}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.maxSprintSpeed:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<!-- begin add by cj -->
+									<Checkbox name='Loot Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>180</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Loot Corpses</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doLootCorpses}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doLootCorpses:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='LootDistance' Template='VG.TextEntry'>
+										<X>195</X>
+										<Y>180</Y>
+										<Width>25</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.maxLootDistance}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.maxLootDistance:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+								<!-- end add by cj -->
+
+								</Tab>
+
+								<Tab name="Mobs">
+
+									<Text Name='MobLeveLText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>10</Y>
+										<Width>100%</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<AutoTooltip>Number to add or Subtract from your level</AutoTooltip>
+										<Text>Mob Level Difference to Attack</Text>
+									</Text>
+
+									<Text Name='minLevelText' Template='VG.BoldText'>
+										<X>50</X>
+										<Y>30</Y>
+										<Width>150</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Min mob level: ${Math.Calc[${Me.Level} - ${Script[KBot].VariableScope.modMinLevel}].Int}</Text>
+									</Text>
+									<Textentry Name='MinLevelT' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>30</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<AutoTooltip>Number to Subtract from your level</AutoTooltip>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.modMinLevel}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.modMinLevel:Set[${Math.Calc[${This.Text}].Int}]
+												UIElement[minLevelText@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:SetText[Min mob level: ${Math.Calc[${Me.Level} - ${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='maxLevelText' Template='VG.BoldText'>
+										<X>50</X>
+										<Y>50</Y>
+										<Width>150</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Max mob level: ${Math.Calc[${Me.Level} + ${Script[KBot].VariableScope.modMaxLevel}].Int}</Text>
+									</Text>
+									<Textentry Name='MaxLevelT' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>50</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<AutoTooltip>Number to Add to your level</AutoTooltip>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.modMaxLevel}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.modMaxLevel:Set[${Math.Calc[${This.Text}].Int}]
+												UIElement[maxLevelText@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:SetText[Max mob level: ${Math.Calc[${Me.Level} + ${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='ConCheckText' Template='VG.BoldText'>
+										<X>50</X>
+										<Y>70</Y>
+										<Width>180</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Max DOT/Con Mob Check</Text>
+									</Text>
+									<Textentry Name='ConCheckT' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>70</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<AutoTooltip>Number to Add to your level</AutoTooltip>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.ConCheck}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.ConCheck:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Checkbox name='CheckAdds' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>90</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Check for Adds</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doAddChecking}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doAddChecking:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+
+									<Checkbox name='TargetAll' Template='VG.BlueCheckbox'>
+										<X>15</X>
+										<Y>115</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Target All Mobs</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doNonAgroMobs}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doNonAgroMobs:Set[TRUE]
+												UIElement[TargetListed@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:UnsetChecked
+											}
+											else
+											{
+												Script[KBot].VariableScope.doNonAgroMobs:Set[FALSE]
+												UIElement[TargetListed@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:SetChecked
+											}
+										</OnLeftClick>
+									</Checkbox>
+
+									<Checkbox name='TargetListed' Template='VG.BlueCheckbox'>
+										<X>135</X>
+										<Y>115</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Only Listed Mobs</Text>
+										<OnLoad>
+											if !${Script[KBot].VariableScope.doNonAgroMobs}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doNonAgroMobs:Set[FALSE]
+												UIElement[TargetAll@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:UnsetChecked
+											}
+											else
+											{
+												Script[KBot].VariableScope.doNonAgroMobs:Set[TRUE]
+												UIElement[TargetAll@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:SetChecked
+											}
+										</OnLeftClick>
+									</Checkbox>
+
+									<Text Name='MobText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>138</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Mobs</Text>
+									</Text>
+									<ComboBox Name="MobCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>135</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnLeftClick>
+											BuildMobList
+										</OnLeftClick>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddMobList "${This.SelectedItem.Text}"
+												UIElement[MobList@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="MobList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>158</Y>
+										<Width>90%</Width>
+										<Height>70</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveMobList "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+
+								</Tab>
+
+								<Tab name="Harvest">
+
+									<Checkbox name='Harvest Checkbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Find and Harvest Resources</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doHarvest}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doHarvest:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='HarvestText' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>42</Y>
+										<Width>160</Width>
+										<Height>20</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+									</Textentry>
+									<Button Name="AddHarvestButton" Template="VG.GreenButton">
+										<X>185</X>
+										<Y>40</Y>
+										<Width>40</Width>
+										<Height>25</Height>
+										<Text>Add</Text>
+										<Alignment>Center</Alignment>
+										<OnLeftClick>
+											echo "Adding: ${UIElement[HarvestText@Harvest@MainTabs@MainFrame@Main@KBot@KBot].Text}"
+											AddHarvestList "${UIElement[HarvestText@Harvest@MainTabs@MainFrame@Main@KBot@KBot].Text}"
+											UIElement[HarvestList@Harvest@MainTabs@MainFrame@Main@KBot@KBot]:AddItem[${UIElement[HarvestText@Harvest@MainTabs@MainFrame@Main@KBot@KBot].Text}]
+											UIElement[HarvestText@Harvest@MainTabs@MainFrame@Main@KBot@KBot]:SetText[]
+										</OnLeftClick>
+									</Button>
+									<Listbox Name="HarvestList" Template="VG.ListBox">
+										<X>15</X>
+										<Y>70</Y>
+										<Width>90%</Width>
+										<Height>140</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveHarvestList "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+
+
+								</Tab>
+
+								</Tabs>
+
+		      		</TabControl>
+		
+						</Children>
+					</Frame>
+
+				</Tab>
+		
+				<Tab name='Combat'>
+		
+					<Frame name='CombatFrame'>
+						<Height>100%</Height>
+						<Width>100%</Width>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Texture></Texture>
+			
+						<Children>
+		
+							<TabControl name='CombatTabs' Template='VG.TabControl'>
+								<X>0</X>
+								<Y>2</Y>
+								<Font>
+									<Name>Times New Roman</Name>
+									<Size>16</Size>
+								</Font>
+								<TabHeight>22</TabHeight>
+								<TabBorder>2</TabBorder>
+								<Height>99%</Height>
+								<Width>99%</Width>
+		
+				 	     <Tabs>
+
+								<Tab name='Setup'>
+
+									<Text Name='MeleeRangeText' Template='VG.BoldText'>
+										<X>55</X>
+										<Y>15</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<AutoTooltip>Distance at which to use Melee Attacks</AutoTooltip>
+										<Text>Melee Combat Distance</Text>
+									</Text>
+									<Textentry Name='MeleeRange' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>14</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.maxMeleeRange}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.maxMeleeRange:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='PullRangeText' Template='VG.BoldText'>
+										<X>55</X>
+										<Y>35</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<AutoTooltip>How close to get before using Pull attack</AutoTooltip>
+										<Text>Pull Attack Distance</Text>
+									</Text>
+									<Textentry Name='PullRange' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>34</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.maxPullRange}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.maxPullRange:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='RangedText' Template='VG.BoldText'>
+										<X>55</X>
+										<Y>55</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<AutoTooltip>Will switch to Melee if closer than this</AutoTooltip>
+										<Text>Min Ranged Attack Distance</Text>
+									</Text>
+									<Textentry Name='RangedDistance' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>54</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.minRangedDistance}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.minRangedDistance:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='AllowedRoamingText' Template='VG.BoldText'>
+										<X>55</X>
+										<Y>85</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<AutoTooltip>How far off path to find mobs</AutoTooltip>
+										<Text>Allowed Roaming Distance</Text>
+									</Text>
+									<Textentry Name='AllowedRoamingDistance' Template='VG.TextEntry'>
+										<X>15</X>
+										<Y>84</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.maxRoamingDistance}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.maxRoamingDistance:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+								</Tab>
+				
+								<Tab name='Attacks'>
+								
+									<Text Name='MeleeText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>8</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Melee</Text>
+									</Text>
+									<ComboBox Name="MeleeCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>5</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddMeleeAttack "${This.SelectedItem.Text}"
+												UIElement[MeleeList@Attacks@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="MeleeList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>28</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveMeleeAttack "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+									<Text Name='NukeText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>83</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Spells</Text>
+									</Text>
+									<ComboBox Name="NukeCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>80</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddNukeAttack "${This.SelectedItem.Text}"
+												UIElement[NukeList@Attacks@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="NukeList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>103</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveNukeAttack "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+									<Text Name='DotText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>158</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>DoT's</Text>
+									</Text>
+									<ComboBox Name="DotCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>155</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddDotAttack "${This.SelectedItem.Text}"
+												UIElement[DotList@Attacks@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="DotList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>178</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveDotAttack "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+								</Tab>
+				
+								<Tab name='Pull'>
+
+									<Checkbox name='PullCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>10</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Use Pull Attack</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.usePullAttack}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.usePullAttack:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<ComboBox Name="PullCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>25</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.pullAttack:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									<Checkbox name='UseRangedCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>52</Y>
+										<Width>150</Width>
+										<Height>15</Height>
+										<Text>Use Ranged Attacks when possible</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.useRangedAttack}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.useRangedAttack:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+
+									<Text Name='RangedText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>75</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Ranged</Text>
+									</Text>
+									<ComboBox Name="RangedCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>72</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddRangedAttack "${This.SelectedItem.Text}"
+												UIElement[RangedList@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="RangedList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>94</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveRangedAttack "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+
+									<Checkbox name='FinishCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>152</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Use Finishing Attack</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.useFinishAttack}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.useFinishAttack:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<ComboBox Name="FinishCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>167</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.finishAttack:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									<Checkbox name='SnareCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>192</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Use Snare</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.useSnareAttack}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.useSnareAttack:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<ComboBox Name="SnareCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>207</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.snareAttack:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+								</Tab>
+				
+								<Tab name='Chains'>
+				
+									<Text Name='ChainText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>8</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Chains</Text>
+									</Text>
+									<ComboBox Name="ChainCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>5</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddChain "${This.SelectedItem.Text}"
+												UIElement[ChainList@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="ChainList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>28</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveChain "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+									<Text Name='CounterText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>83</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Counters</Text>
+									</Text>
+									<ComboBox Name="CounterCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>80</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddCounter "${This.SelectedItem.Text}"
+												UIElement[CounterList@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="CounterList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>103</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveCounter "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+									<Text Name='RescueText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>158</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Rescues</Text>
+									</Text>
+									<ComboBox Name="RescueCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>155</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddRescue "${This.SelectedItem.Text}"
+												UIElement[RescueList@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="RescueList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>178</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveRescue "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+								</Tab>
+				
+				        </Tabs>
+		      		</TabControl>
+		
+						</Children>
+					</Frame>
+
+				</Tab>
+
+				<Tab name='Setting'>
+
+					<Frame name='SettingFrame'>
+						<Height>100%</Height>
+						<Width>100%</Width>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Texture></Texture>
+			
+						<Children>
+		
+							<TabControl name='SettingTabs' Template='VG.TabControl'>
+								<X>0</X>
+								<Y>2</Y>
+								<Font>
+									<Name>Times New Roman</Name>
+									<Size>16</Size>
+								</Font>
+								<TabHeight>22</TabHeight>
+								<TabBorder>2</TabBorder>
+								<Height>99%</Height>
+								<Width>99%</Width>
+		
+								<Tabs>
+
+
+								<Tab name='Buffs'>
+				
+									<Text Name='BuffText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>8</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Buffs</Text>
+									</Text>
+									<ComboBox Name="BuffCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>5</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddBuff "${This.SelectedItem.Text}"
+												UIElement[BuffList@Buffs@SettingTabs@SettingFrame@Setting@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="BuffList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>28</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveBuff "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+									<Text Name='CombatBuffText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>83</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Combat</Text>
+									</Text>
+									<ComboBox Name="CombatBuffCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>80</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddCombatBuff "${This.SelectedItem.Text}"
+												UIElement[CombatBuffList@Buffs@SettingTabs@SettingFrame@Setting@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="CombatBuffList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>103</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveCombatBuff "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+									<Text Name='ToggleBuffText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>158</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Toggled</Text>
+									</Text>
+									<ComboBox Name="ToggleBuffCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>155</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddToggleBuff "${This.SelectedItem.Text}"
+												UIElement[ToggleBuffList@Buffs@SettingTabs@SettingFrame@Setting@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="ToggleBuffList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>178</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveToggleBuff "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+				
+								</Tab>
+
+								<Tab name='Heal'>
+				
+									<Checkbox name='SmallHealCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Use Small Heal at % Health</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.useSmallHeal}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.useSmallHeal:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='SmallHealPctText' Template='VG.TextEntry'>
+										<X>195</X>
+										<Y>14</Y>
+										<Width>30</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.smallHealPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.smallHealPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+									<ComboBox Name="SmallHealCombo" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>35</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.smallHeal:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+				
+									<Checkbox name='BigHealCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>65</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Use Big Heal at % Health</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.useBigHeal}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.useBigHeal:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='BigHealPctText' Template='VG.TextEntry'>
+										<X>195</X>
+										<Y>64</Y>
+										<Width>30</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.bigHealPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.bigHealPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+									<ComboBox Name="BigHealCombo" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>85</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.bigHeal:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+				
+									<Checkbox name='FastHealCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>120</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Use Fast Heal at % Health</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.useFastHeal}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.useFastHeal:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='FastHealPctText' Template='VG.TextEntry'>
+										<X>195</X>
+										<Y>119</Y>
+										<Width>30</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.fastHealPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.fastHealPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+									<ComboBox Name="FastHealCombo" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>140</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.fastHeal:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									<Text Name='RestHealthText' Template='VG.BoldText'>
+										<X>25</X>
+										<Y>170</Y>
+										<Width>150</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Rest until Health at %</Text>
+									</Text>
+									<Textentry Name='RestHealthPct' Template='VG.TextEntry'>
+										<X>165</X>
+										<Y>170</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.restHealthPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.restHealthPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='RestEnduranceText' Template='VG.BoldText'>
+										<X>25</X>
+										<Y>190</Y>
+										<Width>150</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Rest until Endur at %</Text>
+									</Text>
+									<Textentry Name='RestEndurancePct' Template='VG.TextEntry'>
+										<X>165</X>
+										<Y>190</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.restEndurancePct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.restEndurancePct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='RestEnergyText' Template='VG.BoldText'>
+										<X>25</X>
+										<Y>210</Y>
+										<Width>150</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Rest until Energy at %</Text>
+									</Text>
+									<Textentry Name='RestEnergyPct' Template='VG.TextEntry'>
+										<X>165</X>
+										<Y>210</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.restEnergyPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.restEnergyPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+								</Tab>
+
+								<Tab name='Rest'>
+
+									<Checkbox name='SitCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Sit when resting</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doSitToRegen}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doSitToRegen:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+
+									<Checkbox name='UseFoodCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>35</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Use Food if below Health %</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doUseFood}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doUseFood:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='FoodPct' Template='VG.TextEntry'>
+										<X>195</X>
+										<Y>35</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.restFoodPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.restFoodPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<ComboBox Name="FoodCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>55</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnLeftClick>
+											BuildFoodList
+										</OnLeftClick>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddFood "${This.SelectedItem.Text}"
+												UIElement[FoodList@Rest@SettingTabs@SettingFrame@Setting@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="FoodList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>78</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemoveFood "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+
+									<Checkbox name='UseMeditationCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>135</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Use Meditation when Resting</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doUseMeditation}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doUseMeditation:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<ComboBox Name="MeditationCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>155</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.meditationSpell:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+								</Tab>
+
+
+								<Tab name='Forms'>
+
+									<checkbox Name='UseForms' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>140</Width>
+										<Height>15</Height>
+										<AutoTooltip>Select which Form to stay in</AutoTooltip>
+										<Text>Maintain Form:</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doUseForms}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doUseForms:Set[TRUE]
+												Script[KBot].VariableScope.doUseCombatForms:Set[FALSE]
+												UIElement[CombatForms@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:UnsetChecked
+											}
+											else
+											{
+												Script[KBot].VariableScope.doUseForms:Set[FALSE]
+											}
+										</OnLeftClick>
+									</checkbox>
+									<ComboBox Name="FormCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>30</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												Script[KBot].VariableScope.formName:Set["${This.SelectedItem.Text}"]
+											}
+										</OnSelect>
+									</ComboBox>
+
+									<checkbox Name='CombatForms' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>60</Y>
+										<Width>140</Width>
+										<Height>15</Height>
+										<AutoTooltip>Change Forms based on Health in Combat</AutoTooltip>
+										<Text>Change Forms based on Health %</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doUseCombatForms}
+											{
+												This:SetChecked
+												Script[KBot].VariableScope.doUseForms:Set[FALSE]
+												UIElement[UseForms@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:UnsetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doUseCombatForms:Set[TRUE]
+												Script[KBot].VariableScope.doUseForms:Set[FALSE]
+												UIElement[UseForms@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:UnsetChecked
+											}
+											else
+											{
+												Script[KBot].VariableScope.doUseCombatForms:Set[FALSE]
+											}
+										</OnLeftClick>
+									</checkbox>
+
+									<Text Name='AttackFormText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>85</Y>
+										<Width>150</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Attack Form:</Text>
+									</Text>
+									<ComboBox Name="AttackFormCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>100</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												Script[KBot].VariableScope.attackFormName:Set["${This.SelectedItem.Text}"]
+											}
+										</OnSelect>
+									</ComboBox>
+
+									<Text Name='DeffenseFormText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>125</Y>
+										<Width>195</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Defensive Form below Health % </Text>
+									</Text>
+									<Textentry Name='changeFormPctText' Template='VG.TextEntry'>
+										<X>215</X>
+										<Y>125</Y>
+										<Width>30</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.changeFormPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.changeFormPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+									<ComboBox Name="DeffenseFormCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>145</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												Script[KBot].VariableScope.defenseFormName:Set["${This.SelectedItem.Text}"]
+											}
+										</OnSelect>
+									</ComboBox>
+
+									<Text Name='NeutralFormText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>180</Y>
+										<Width>190</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Neutral Form when Resting:</Text>
+									</Text>
+									<ComboBox Name="NeutralFormCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>195</Y>
+										<Width>80%</Width>
+										<Height>20</Height>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												Script[KBot].VariableScope.neutralFormName:Set["${This.SelectedItem.Text}"]
+											}
+										</OnSelect>
+									</ComboBox>
+
+								</Tab>
+
+
+								</Tabs>
+
+		      		</TabControl>
+		
+						</Children>
+					</Frame>
+
+				</Tab>
+
+				<Tab name='Extra'>
+
+					<Frame name='ExtraFrame'>
+						<Height>100%</Height>
+						<Width>100%</Width>
+						<BackgroundColor>FF000000</BackgroundColor>
+						<Texture></Texture>
+			
+						<Children>
+		
+							<TabControl name='ExtraTabs' Template='VG.TabControl'>
+								<X>0</X>
+								<Y>2</Y>
+								<Font>
+									<Name>Times New Roman</Name>
+									<Size>16</Size>
+								</Font>
+								<TabHeight>22</TabHeight>
+								<TabBorder>2</TabBorder>
+								<Height>99%</Height>
+								<Width>99%</Width>
+		
+								<Tabs>
+
+								<Tab name="Safe">
+
+									<Checkbox name='PortSafeCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Port to Safety at % Health</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.usePortSafe}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.usePortSafe:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='SafePortPct' Template='VG.TextEntry'>
+										<X>190</X>
+										<Y>15</Y>
+										<Width>20</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.safePortPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.safePortPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+
+									<Text Name='SetSafeText' Template='VG.BoldText'>
+										<X>25</X>
+										<Y>40</Y>
+										<Width>150</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Set Safe Port Location</Text>
+									</Text>
+									<button name='Port' Template='VG.GreenButton'>
+										<X>185</X>
+										<Y>35</Y>
+										<Width>40</Width>
+										<Height>20</Height>
+										<AutoTooltip>Set Safe Teleport Location for emergency landing!</AutoTooltip>
+										<Text>SET</Text>
+										<OnLeftClick>
+											VGLoc[KB- ${Me.Chunk} -Safe]:Delete
+											ISXVG:AddLoc[KB- ${Me.Chunk} -Safe]
+										</OnLeftClick>
+									</button>
+
+									<checkbox Name='GM Alarm' Template='VG.Checkbox'>
+										<X>20</X>
+										<Y>70</Y>
+										<Width>80%</Width>
+										<Height>15</Height>
+										<Text>GM Alarm</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doGMAlarm}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doGMAlarm:Set[TRUE]
+												Script[KBot]:QueueCommand[call testGMAlarm]
+											}
+											else
+											{
+												Script[KBot].VariableScope.doGMAlarm:Set[FALSE]
+											}
+										</OnLeftClick>
+									</checkbox>
+									<checkbox Name='GM Respond' Template='VG.BlueCheckbox'>
+										<X>30</X>
+										<Y>90</Y>
+										<Width>80%</Width>
+										<Height>15</Height>
+										<Text>Auto-respond to GMs</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doGMRespond}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+												Script[KBot].VariableScope.doGMRespond:Set[${This.Checked}]
+										</OnLeftClick>
+									</checkbox>
+									<checkbox Name='GM Detect' Template='VG.Checkbox'>
+										<visible>1</visible>
+										<X>20</X>
+										<Y>110</Y>
+										<Width>80%</Width>
+										<Height>15</Height>
+										<Text>GM Detected Alarm</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doDetectGM}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doDetectGM:Set[TRUE]
+												Script[KBot]:QueueCommand[call testGMDetect]
+											}
+											else
+											{
+												Script[KBot].VariableScope.doDetectGM:Set[FALSE]
+											}
+										</OnLeftClick>
+									</checkbox>
+									<checkbox Name='Tell Alarm' Template='VG.Checkbox'>
+										<visible>1</visible>
+										<X>20</X>
+										<Y>135</Y>
+										<Width>80%</Width>
+										<Height>15</Height>
+										<Text>Tells Alarm</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doTellAlarm}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doTellAlarm:Set[TRUE]
+												Script[KBot]:QueueCommand[call testTellAlarm]
+											}
+											else
+											{
+												Script[KBot].VariableScope.doTellAlarm:Set[FALSE]
+											}
+										</OnLeftClick>
+									</checkbox>
+									<checkbox Name='Player Respond' Template='VG.BlueCheckbox'>
+										<visible>1</visible>
+										<X>30</X>
+										<Y>155</Y>
+										<Width>80%</Width>
+										<Height>15</Height>
+										<Text>Auto-respond to Players</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doPlayerRespond}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+												Script[KBot].VariableScope.doPlayerRespond:Set[${This.Checked}]
+										</OnLeftClick>
+									</checkbox>
+									<checkbox Name='Say Alarm' Template='VG.Checkbox'>
+										<visible>1</visible>
+										<X>20</X>
+										<Y>175</Y>
+										<Width>80%</Width>
+										<Height>15</Height>
+										<Text>Say/Emote Alarm with your Name in it</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doSayAlarm}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doSayAlarm:Set[TRUE]
+												Script[KBot]:QueueCommand[call testTellAlarm]
+											}
+											else
+											{
+												Script[KBot].VariableScope.doSayAlarm:Set[FALSE]
+											}
+										</OnLeftClick>
+									</checkbox>
+									<checkbox Name='Level Alarm' Template='VG.Checkbox'>
+										<visible>1</visible>
+										<X>20</X>
+										<Y>195</Y>
+										<Width>80%</Width>
+										<Height>15</Height>
+										<Text>Level Up Notice</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doLevelAlarm}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											if ${This.Checked}
+											{
+												Script[KBot].VariableScope.doLevelAlarm:Set[TRUE]
+												Script[KBot]:QueueCommand[call testLevelAlarm]
+											}
+											else
+											{
+												Script[KBot].VariableScope.doLevelAlarm:Set[FALSE]
+											}
+										</OnLeftClick>
+									</checkbox>
+
+								</Tab>
+
+								<Tab name="Pets">
+
+									<Checkbox name='PetCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Always Summon pet</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doSummonPet}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doSummonPet:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<ComboBox Name="PetCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>35</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.summonPetSpell:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									<Checkbox name='PetHealCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>60</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Heal Pet at % Health</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.usePetHeal}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.usePetHeal:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='PetHealPctText' Template='VG.TextEntry'>
+										<X>165</X>
+										<Y>59</Y>
+										<Width>30</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.petHealPct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.petHealPct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+									<ComboBox Name="PetHealCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>80</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.petHeal:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									<Text Name='PetAttackText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>115</Y>
+										<Width>50</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Attacks</Text>
+									</Text>
+									<ComboBox Name="PetAttackCombo" Template="VG.ComboBox">
+										<X>65</X>
+										<Y>115</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											if ${This.SelectedItem.Text(exists)}
+											{
+												AddPetAttack "${This.SelectedItem.Text}"
+												UIElement[PetAttackList@Pets@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:AddItem[${This.SelectedItem.Text}]
+											}
+										</OnSelect>
+									</ComboBox>
+									<Listbox Name="PetAttackList" Template="VG.ListBox">
+										<X>5%</X>
+										<Y>138</Y>
+										<Width>90%</Width>
+										<Height>50</Height>
+										<AutoSort>TRUE</AutoSort>
+										<Sort>User</Sort>
+										<OnRightClick>
+											RemovePetAttack "${This.SelectedItem}"
+											This.SelectedItem:Remove
+										</OnRightClick>
+									</Listbox>
+
+								</Tab>
+
+								<Tab name="Class">
+
+								<Frame name='Bard'>
+									<Height>100%</Height>
+									<Width>100%</Width>
+									<Visible>0</Visible>
+			
+									<Children>
+
+									<Text Name='BardCombatSongText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>2</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Combat Song:</Text>
+									</Text>
+									<ComboBox Name="BardCombatSong" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>14</Y>
+										<Width>90%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.BardCombatSong:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<Text Name='PrimaryWeaponText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>33</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Primary Weapon:</Text>
+									</Text>
+									<ComboBox Name="PrimaryWeapon" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>45</Y>
+										<Width>90%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.PrimaryWeapon:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<Text Name='SecondaryWeaponText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>64</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Secondary Weapon/Shield/Dagger:</Text>
+									</Text>
+									<ComboBox Name="SecondaryWeapon" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>76</Y>
+										<Width>90%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.SecondaryWeapon:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									<Text Name='BardRestSongText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>98</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Rest Song:</Text>
+									</Text>
+									<ComboBox Name="BardRestSong" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>110</Y>
+										<Width>90%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.BardRestSong:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<Text Name='BardRestInstrumentText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>129</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Rest Instrument:</Text>
+									</Text>
+									<ComboBox Name="BardRestInstrument" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>141</Y>
+										<Width>90%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.BardRestInstrument:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									<Text Name='BardTravelSongText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>163</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Travel Song:</Text>
+									</Text>
+									<ComboBox Name="BardTravelSong" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>175</Y>
+										<Width>90%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.BardTravelSong:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<Text Name='BardTravelInstrumentText' Template='VG.BoldText'>
+										<X>15</X>
+										<Y>194</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>Travel Instrument:</Text>
+									</Text>
+									<ComboBox Name="BardTravelInstrument" Template="VG.ComboBox">
+										<X>15</X>
+										<Y>206</Y>
+										<Width>90%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.BardTravelInstrument:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+								</Children>
+								</Frame>
+
+
+								<Frame name='DK'>
+									<Height>100%</Height>
+									<Width>100%</Width>
+									<Visible>0</Visible>
+			
+									<Children>
+
+									<Checkbox name='DKComboCheckbox' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>10</Y>
+										<Width>100</Width>
+										<Height>15</Height>
+										<Text>Use This Combo Attack Sequence</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.useDKCombo}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.useDKCombo:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+
+									<ComboBox Name="DKCombo1" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>30</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.DKCombo1:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<ComboBox Name="DKCombo2" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>55</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.DKCombo2:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+
+									</Children>
+								</Frame>
+
+								<Frame name='Ranger'>
+									<Height>100%</Height>
+									<Width>100%</Width>
+									<Visible>0</Visible>
+			
+									<Children>
+
+										<Checkbox name='Forage Checkbox' Template='VG.Checkbox'>
+											<X>15</X>
+											<Y>20</Y>
+											<Width>100</Width>
+											<Height>15</Height>
+											<Text>Forage for Items (Ranger Only)</Text>
+											<OnLoad>
+												if ${Script[KBot].VariableScope.doForage}
+												{
+													This:SetChecked
+												}
+											</OnLoad>
+											<OnLeftClick>
+												Script[KBot].VariableScope.doForage:Set[${This.Checked}]
+											</OnLeftClick>
+										</Checkbox>
+										<Checkbox Name='AssembleArrows' Template='VG.Checkbox'>
+											<X>15</X>
+											<Y>45</Y>
+											<Width>140</Width>
+											<Height>15</Height>
+											<AutoTooltip>Click to enable Arrow Assembly</AutoTooltip>
+											<Text>Assemble Arrows</Text>
+											<OnLoad>
+												if ${Script[KBot].VariableScope.doArrowAssemble}
+												{
+													This:SetChecked
+												}
+											</OnLoad>
+											<OnLeftClick>
+												Script[KBot].VariableScope.doArrowAssemble:Set[${This.Checked}]
+											</OnLeftClick>
+										</Checkbox>
+
+									</Children>
+								</Frame>
+
+<!-- begin add by cj -->
+								<Frame name='Necro'>
+									<Height>100%</Height>
+									<Width>100%</Width>
+									<Visible>0</Visible>
+			
+									<Children>
+
+									<Checkbox name='doNecropsy' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>15</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Necropsy Corpse</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doNecropsy}
+											{
+												This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doNecropsy:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<ComboBox Name="doNecropsyCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>35</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.necropsyAbility:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<Checkbox name='doGetMinions' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>57</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Get Minions</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doGetMinions}
+											{
+													This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doGetMinions:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Text Name='Minion1' Template='VG.CheckBox'>
+										<X>15</X>
+										<Y>77</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>#1</Text>
+									</Text>
+									<ComboBox Name="doGetMinionsCombo1" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>75</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.minionAbility1:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<Text Name='Minion2' Template='VG.CheckBox'>
+										<X>15</X>
+										<Y>97</Y>
+										<Width>200</Width>
+										<Height>20</Height>
+										<Alignment>Left</Alignment>
+										<Text>#2</Text>
+									</Text>
+									<ComboBox Name="doGetMinionsCombo2" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>95</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.minionAbility2:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									<Checkbox name='doGetEnergy' Template='VG.Checkbox'>
+										<X>15</X>
+										<Y>117</Y>
+										<Width>120</Width>
+										<Height>15</Height>
+										<Text>Get Energy At Percent</Text>
+										<OnLoad>
+											if ${Script[KBot].VariableScope.doGetEnergy}
+											{
+													This:SetChecked
+											}
+										</OnLoad>
+										<OnLeftClick>
+											Script[KBot].VariableScope.doGetEnergy:Set[${This.Checked}]
+										</OnLeftClick>
+									</Checkbox>
+									<Textentry Name='VilePercent' Template='VG.TextEntry'>
+										<X>200</X>
+										<Y>117</Y>
+										<Width>25</Width>
+										<Height>15</Height>
+										<Color>FFDDBB00</Color>
+										<SelectionColor>FF000000</SelectionColor>
+										<Border>0</Border>
+										<OnLoad>
+											This:SetText[${Script[KBot].VariableScope.vilePct}]
+										</OnLoad>
+										<OnChange>
+											if ${This.Text.Length} > 0
+											{
+												Script[KBot].VariableScope.vilePct:Set[${Math.Calc[${This.Text}].Int}]
+											}
+										</OnChange>
+									</Textentry>
+									<ComboBox Name="doGetEnergyCombo" Template="VG.ComboBox">
+										<X>35</X>
+										<Y>135</Y>
+										<Width>70%</Width>
+										<Height>20</Height>
+										<OnLoad>
+											This:AddItem[NONE]
+										</OnLoad>
+										<OnSelect>
+											Script[KBot].VariableScope.vileAbility:Set[${This.SelectedItem.Text}]
+										</OnSelect>
+									</ComboBox>
+									</Children>
+								</Frame>
+							</Tab>
+<!-- end add by cj -->
+								</Tabs>
+
+		      		</TabControl>
+		
+						</Children>
+					</Frame>
+
+				</Tab>
+
+
+        </Tabs>
+
+      </TabControl>
+
+    </Children>
+
+  </Window>
+</ISUI>
