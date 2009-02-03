@@ -290,11 +290,11 @@ function main(string Version)
 
 		if ( ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]} > 120 )
  		{
-				call DebugIt "NOTICE: Idle for more than 2 minutes, kickstart!"
-				echo "Timeout: ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]}"
-				cState:Set[KB_MOVE]
+			call DebugIt "NOTICE: Idle for more than 2 minutes, kickstart!"
+			echo "Timeout: ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]}"
+			cState:Set[KB_MOVE]
 
-				tTimeOut:Set[${Time.Timestamp}]
+			tTimeOut:Set[${Time.Timestamp}]
 		}
 
 	}
@@ -306,9 +306,7 @@ function main(string Version)
 	call bNavi.StopMoving
 
 	if ${Script[ForestRun](exists)}
-	{
 		endscript forestrun
-	}
 
 	VG:ExecBinding[movebackward,release]
 	VG:ExecBinding[moveforward,release]
@@ -1084,37 +1082,35 @@ function:bool Roaming(bool moveNow)
 ; ***********************
 function Downtime()
 {
-   call DebugIt "Starting Downtime Routine"
+	call DebugIt "Starting Downtime Routine"
 
-   call DoEvents
+   	call DoEvents
 
-   VG:ExecBinding[movebackward,release]
-   VG:ExecBinding[moveforward,release]
+   	VG:ExecBinding[movebackward,release]
+   	VG:ExecBinding[moveforward,release]
 
 	if ${Me.InCombat}
 	{
-			call DebugIt ". Downtime: InCombat is TRUE"
-      return FALSE
+		call DebugIt ". Downtime: InCombat is TRUE"
+      	return FALSE
 	}
 
 	call AvoidAdds ${MobAgroRange}
 	if ${Return.Equal[AGGROADD]}
 	{
-      call Manage_Adds
+		call Manage_Adds
 	}
 
 	call UseMeditation
 
 	if ${DoWeHaveMeddingHeal} && ${Me.HealthPct} < ${restHealthPct} && ${Me.Ability[${MeddingHeal}].IsReady}
 	{
-      ;Health is low, heal up
-      Me.Ability[${MeddingHeal}]:Use
-      call AvoidAdds  ${MobAgroRange}
-      if ${Return.Equal[AGGROADD]}
-			{
-         call Manage_Adds
-			}
-			call MeCasting
+	  	;Health is low, heal up
+	  	Me.Ability[${MeddingHeal}]:Use
+	  	call AvoidAdds  ${MobAgroRange}
+	  	if ${Return.Equal[AGGROADD]}
+	     	call Manage_Adds
+		call MeCasting
 	}
 
 	if ${doUseFood}
@@ -1132,7 +1128,6 @@ function Downtime()
 
 
 	return FALSE
-
 }
 
 
@@ -1155,55 +1150,51 @@ function:bool Pull()
 
 	if !${Me.Target(exists)}
 	{
-			call DebugIt ". Pull: No Target to fight!"
-			return FALSE
+		call DebugIt ". Pull: No Target to fight!"
+		return FALSE
 	}
 
 	call AvoidAdds ${MobAgroRange}
 	if ${Return.Equal[AGGROADD]}
-	{
 		call Manage_Adds
-	}
 
 	VG:ExecBinding[movebackward,release]
 	VG:ExecBinding[moveforward,release]
 
 	if !${Me.Target(exists)}
-	{
-      return FALSE
-	}
+		return FALSE
 
 	if ${doAddChecking} && ${Me.Target(exists)}
 	{
 		call CheckForAdds ${MobAgroRange}
 		if ${Return}
 		{
-         call DebugIt ". Pull:  -- Mobs within ${MobAgroRange}m of Target Pull --  Aborting Pull --"
-         ;GUIDBlacklist:Set[${Me.Target.ID}]
-         PullAttempts:Inc
-         VGExecute /cleartarget
-         return FALSE
+	         call DebugIt ". Pull:  -- Mobs within ${MobAgroRange}m of Target Pull --  Aborting Pull --"
+	         ;GUIDBlacklist:Set[${Me.Target.ID}]
+	         PullAttempts:Inc
+	         VGExecute /cleartarget
+	         return FALSE
 		}
 
 		call CheckForAddsInPath
 		if ${Return}
 		{
-         call DebugIt ". Pull: --  Mobs to close to Target -- Aborting Pull --"
-         ;GUIDBlacklist:Set[${Me.Target.ID}]
-         PullAttempts:Inc
-         VGExecute /cleartarget
-         return FALSE
+	         call DebugIt ". Pull: --  Mobs to close to Target -- Aborting Pull --"
+	         ;GUIDBlacklist:Set[${Me.Target.ID}]
+	         PullAttempts:Inc
+	         VGExecute /cleartarget
+	         return FALSE
 		}
 	}
 
 	call CheckForPlayers ${PlayerAgroRange}
 	if ${Return}
 	{
-      call DebugIt ". Pull:  Another Player too close to this mob."
-      ;GUIDBlacklist:Set[${Me.Target.ID}]
-      PullAttempts:Inc
-      VGExecute /cleartarget
-      return FALSE
+		call DebugIt ". Pull:  Another Player too close to this mob."
+		;GUIDBlacklist:Set[${Me.Target.ID}]
+		PullAttempts:Inc
+		VGExecute /cleartarget
+		return FALSE
 	}
 
 /*
@@ -1261,14 +1252,10 @@ function:bool Pull()
 			return FALSE
 		}
 		else
-		{
 			call DebugIt ". Pull:  Tag done (TRUE)"
-		}
 	}
 	else
-	{
 		call DebugIt ". Pull: No Line of Sight to target"
-	}
 
 	;call ValidTarget
  	;if !${Return}
