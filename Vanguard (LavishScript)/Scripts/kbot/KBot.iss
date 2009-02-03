@@ -34,8 +34,6 @@ variable string Current_Version	= 4.00
 ;DEBUG ECHOING -Set this to TRUE if you wish to see the debuging echo's
 variable bool Verbose = FALSE
 
-; New Xeon Var's
-
 variable bool doTotallyAFK
 variable bool doQuitOnDeath
 variable bool doHarvest
@@ -77,9 +75,7 @@ variable int maxPullRange
 variable int minRangedDistance
 variable int maxRoamingDistance
 variable int maxSprintSpeed
-; begin add by cj
 variable int maxLootDistance
-; end add by cj
 
 variable string pullAttack
 variable string finishAttack
@@ -116,7 +112,6 @@ variable bool useDKCombo
 variable string DKCombo1
 variable string DKCombo2
 
-;begin add spud
 variable string BardCombatSong
 variable string BardRestSong
 variable string BardTravelSong
@@ -124,9 +119,8 @@ variable string PrimaryWeapon
 variable string SecondaryWeapon
 variable string BardTravelInstrument
 variable string BardRestInstrument
-;end add spud
 
-; begin add by cj
+
 variable bool doNecropsy
 variable bool doGetMinions
 variable bool doGetEnergy
@@ -137,7 +131,6 @@ variable string minionAbility1
 variable string minionAbility2
 /*  Yes this is suppose to be NONE */
 variable string lastMinion = "NONE"
-; end add by cj
 
 /* Lists */
 variable collection:int64 MobBlackList
@@ -145,12 +138,10 @@ variable collection:int64 CorpseBlackList
 variable collection:int64 CorpseList
 variable collection:int64 HarvestBlackList
 variable collection:int64 HarvestList
-; begin add by cj
 variable collection:int64 NecropsyBlackList
 variable collection:int64 NecropsyList
 variable collection:int64 getManaorMinionBlackList
 variable collection:int64 getManaorMinionList
-; end add by cj
 
 /* TargetID's */
 variable int64 cTargetID
@@ -536,11 +527,7 @@ function CheckState()
 			
 		case KB_NECROPSY
 			if ${Me.Class.Equal[Necromancer]}
-			{
 				call Necropsy
-				while !${Return}
-					wait 1
-			}
 			cState:Set[KB_CORPSECHECK]
 			break
 		
