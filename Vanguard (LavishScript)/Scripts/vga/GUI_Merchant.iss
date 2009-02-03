@@ -43,7 +43,16 @@ function PopulateSellLists()
 
 	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 	{
+		if ${Me.Inventory[${i}].Flags.Find[No Sell]} > 0
+		{
+		}
+		elseif ${Me.Inventory[${i}].Flags.Find[Quest]} > 0
+		{
+		}
+		else
+		{
 		UIElement[SellCombo@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+		}
 	}
 }
 

@@ -84,6 +84,7 @@ variable bool healrefresh = TRUE
 variable string assistpawn 
 variable string followpawn
 variable bool doassistpawn
+variable bool DoHideShowLog
 variable bool dofollowpawn
 variable int followpawndist
 variable int MoveToTargetPct

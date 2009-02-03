@@ -52,35 +52,80 @@ variable ClassRole ClassRole
 function MeClassCrashWorkAround()
 {	
 	if ${Me.Class.Equal[Warrior]}
+		{
 		MyClass:Set["Warrior"]
+		UIElement[warriorfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Paladin]}
+		{
 		MyClass:Set["Paladin"]
+		UIElement[paladinfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Dread Knight]}
+		{
 		MyClass:Set["Dread Knight"]
+		UIElement[dreadknightfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Blood Mage]}
+		{
 		MyClass:Set["Blood Mage"]
+		UIElement[bloodmagefrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Cleric]}
+		{
 		MyClass:Set["Cleric"]
+		UIElement[clericfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Disciple]}
+		{
 		MyClass:Set["Disciple"]
+		UIElement[disciplefrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Shaman]}
+		{
 		MyClass:Set["Shaman"]
+		UIElement[shamanfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Ranger]}
+		{
 		MyClass:Set["Ranger"]
+		UIElement[rangerfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Rogue]}
+		{
 		MyClass:Set["Rogue"]
+		UIElement[roguefrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Monk]}
+		{
 		MyClass:Set["Monk"]
+		UIElement[monkfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Bard]}
+		{
 		MyClass:Set["Bard"]
+		UIElement[bardfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Sorcerer]}
+		{
 		MyClass:Set["Sorcerer"]
+		UIElement[sorcererfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Necromancer]}
+		{
 		MyClass:Set["Necromancer"]
+		UIElement[necromancerfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Psionicist]}
+		{
 		MyClass:Set["Psionicist"]
+		UIElement[psionicistfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 	if ${Me.Class.Equal[Druid]}
+		{
 		MyClass:Set["Druid"]
+		UIElement[druidfrm@ClassFrm@Class@ABot@vga_gui]:Show
+		}
 
 }
 

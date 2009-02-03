@@ -19,7 +19,7 @@ objectdef fight
 			}
 
 		}
-	If ${Group.Count} > 1 && (${Me.Target(exists)} && ${Me.TargetHealth} < ${AssistBattlePct} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}) || (${Me.TargetHealth} < ${AssistBattlePct} && ${Pawn[${Me}].CombatState} == 1)
+	If ${Group.Count} > 1 && (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}) || (${Me.TargetHealth} < ${AssistBattlePct} && ${Pawn[${Me}].CombatState} == 1) && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}
 		{
 		if ${lastattack.Equal[${Me.Target.ID}]}
 			{
