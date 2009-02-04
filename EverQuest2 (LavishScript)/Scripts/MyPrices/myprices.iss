@@ -645,6 +645,10 @@ function checkstock()
 
 	CraftItemList:AddSet[_myprices]
 
+	CraftList:Set[${CraftItemList.FindSet[myprices]}]
+
+	CraftItemList[myprices]:Clear
+
 	CraftList:Set[${CraftItemList.FindSet[_myprices]}]
 
 	CraftItemList[_myprices]:Clear
