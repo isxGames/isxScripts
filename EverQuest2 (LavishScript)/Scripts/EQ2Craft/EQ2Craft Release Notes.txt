@@ -1,5 +1,10 @@
 Revision History ||
 ===================
+v8.61 - Fixed numerous bugs with the component quantity counting. This was a major rewrite of a
+        large block of code. Please report any further bugs with quantity counting on the ISXEQ2
+        bug tracker.
+      - Updated to use the EQ2Common folder for included utilities.
+
 v8.6  - Changed all "terminal" fonts in the GUI to default skinned font. Adjusted all text using
         that font to fit with the UI elements.
       - Removed initial blank lines from listboxes. This was annoying some people, and is not

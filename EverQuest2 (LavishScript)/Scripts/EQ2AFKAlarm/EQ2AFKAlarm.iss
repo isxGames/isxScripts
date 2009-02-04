@@ -25,7 +25,7 @@
  * 
  */
 
-#include Debug.iss
+#include EQ2Common/Debug.iss
 #include EQ2AFKAlarm/Include/Config.iss
 #include EQ2AFKAlarm/Include/Console_and_Logging.iss
 #define MESSAGE_TYPE_SAY 1
