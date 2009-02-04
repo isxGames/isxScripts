@@ -13,10 +13,9 @@ function openLootPacks()
 		{
 			call DebugOut "VG: Opening: ${Me.Inventory[${iCount}].Name}"
 			Me.Inventory[${iCount}]:Use
-			iCount:Set[0]
-			wait 5
+			wait 10
 			call DoLoot
-			wait 5
+			wait 10
 		}
 	}
 	while ${iCount:Inc} <= ${Me.Inventory}
