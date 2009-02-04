@@ -1,4 +1,4 @@
-#include Debug.iss
+#include EQ2Common/Debug.iss
 
 variable(script) settingsetref pOverallStats
 variable(script) settingsetref pRaids

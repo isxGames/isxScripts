@@ -286,7 +286,7 @@ variable int PathType
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/PositionUtils.iss"
 #endif
 
-#include Debug.iss
+#include EQ2Common/Debug.iss
 
 function main()
 {
