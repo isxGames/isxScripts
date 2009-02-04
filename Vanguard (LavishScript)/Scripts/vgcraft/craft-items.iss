@@ -3,11 +3,11 @@
 /* Open up all the loot packs in preparation to selling */
 function openLootPacks()
 {
-	variable int iCount = 0
+	variable int iCount = 1
 
 	call DebugOut "VG: openLootPacks called"
 
-	while ( ${Me.Inventory[${iCount:Inc}].Name(exists)} )
+	do
 	{
 		if ( ${Me.Inventory[${iCount}].Name.Equal[Supply Pack]} || ${Me.Inventory[${iCount}].Name.Equal[Supply Pouch]} || ${Me.Inventory[${iCount}].Name.Equal[Supply Kit]} )
 		{
@@ -19,6 +19,7 @@ function openLootPacks()
 			wait 5
 		}
 	}
+	while ${iCount:Inc} <= ${Me.Inventory}
 
 }
 

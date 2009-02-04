@@ -1709,7 +1709,7 @@ function CheckState()
 			break
 
 		case CS_ORDER_FINISH
-				/*  Finish/turn in old Work Orders */
+			/*  Finish/turn in old Work Orders */
 			UIElement[State@CHUD]:SetText["Turn in Work Orders"]
 
 			; Check to see if we have any to turn in
@@ -1731,7 +1731,7 @@ function CheckState()
 			break
 
 		case CS_ORDER_DONE      
-				/*  Completed Finished Orders, time to loot!  */
+			/*  Completed Finished Orders, time to loot!  */
 			UIElement[State@CHUD]:SetText["Work Order Rewards"]
 
 			call DoLoot
@@ -1753,7 +1753,7 @@ function CheckState()
 			break
 
 		case CS_SUPPLY
-				/* Talking to Item/Resupply Vendor */
+			/* Talking to Item/Resupply Vendor */
 			UIElement[State@CHUD]:SetText["Supply NPC"]
 			moveDetector:Set[FALSE]
 
