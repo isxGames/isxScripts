@@ -1885,7 +1885,7 @@ function CheckState()
 			break
 
 		case CS_MOVE            
-				/* Moving to Target */
+			/* Moving to Target */
 			UIElement[State@CHUD]:SetText["Move"]
 			moveDetector:Set[FALSE]
 
@@ -1918,16 +1918,61 @@ function CheckState()
 			}
 
 			break
+			
+			
+		case CS_MOVE_TOTARGET          
+			/* Moving to Target */
+			UIElement[State@CHUD]:SetText["Move"]
+			moveDetector:Set[FALSE]
+
+			if !${fullAuto}
+			{
+				; No BOTS!
+				cState:Set[CS_WAIT]
+				return
+			}
+
+			if ${doExactPath}
+			{
+				; path to user set points
+				cState:Set[CS_MOVE_UPATH]
+			}
+			else
+			{
+				; First, see if we can find a target to Path to
+				if ${Me.Target(exists)}
+				{
+					; Found a Target, path to it
+					cState:Set[CS_MOVE_TPATH]
+				}
+				else
+				{
+					; No target, path to user set points
+					cState:Set[CS_MOVE_UPATH]
+				}
+			}
+
+			break			
 
 		case CS_MOVE_TPATH
-				/*  Found a Target, so LavishNav path to it */
+			/*  Found a Target, so LavishNav path to it */
 			UIElement[State@CHUD]:SetText["Move to ${cTarget}"]
 
 			; Increment a failsafe counter
 			movePathCount:Inc
 
-			call MoveTargetPath "${cTarget}"
+			; We should already have a target we are moving to...so why not use it's ID?
+			;call MoveTargetPath "${cTarget}"
+			;;; ..but..just in case...
+			if !${Me.Target(exists)}
+			{
+				Pawn[exactname,${cTarget}]:Target
+				wait 5
+			}
+			
+			call MoveTargetPath "${Me.Target.Name}" ${Me.Target.ID}
 			sReturn:Set[${Return}]
+			call DebugOut "MoveTargetPath returned '${sReturn}'"
 
 			if ${sReturn.Equal[END]}
 			{
@@ -2019,7 +2064,7 @@ function CheckState()
 			break
 
 		case CS_MOVE_FIND     
-				/*  Find a Target in range */
+			/*  Find a Target in range */
 			UIElement[State@CHUD]:SetText["Targeting ${cTarget}"]
 
 			call TargetCloseObject
@@ -2081,7 +2126,7 @@ function CheckState()
 			break
 
 		case CS_MOVE_TARGWAIT
-				/*  Waiting for Roving Taskmaster to return */
+			/*  Waiting for Roving Taskmaster to return */
 			UIElement[State@CHUD]:SetText["Waiting for ${cTarget}"]
 
 			call DebugOut "VG: CS.MOVE_TARGWAIT"
