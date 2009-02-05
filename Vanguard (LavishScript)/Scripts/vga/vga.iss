@@ -437,7 +437,7 @@ function loadxmls()
 	LavishSettings[VGA]:AddSet[MobDeBuffT1]
 	LavishSettings[VGA]:AddSet[BuffT1]
 	LavishSettings[VGA]:AddSet[AbilReadyT1]
-
+	LavishSettings[VGA]:AddSet[Class]
 
 	LavishSettings[VGA_Mobs]:AddSet[Ice]
 	LavishSettings[VGA_Mobs]:AddSet[Fire]

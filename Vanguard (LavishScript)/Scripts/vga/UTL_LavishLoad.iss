@@ -361,4 +361,12 @@ LastPrimaryT1:Set[${Triggers.FindSetting[LastPrimaryT1,${LastPrimaryT1}]}]
 LastSecondaryT1:Set[${Triggers.FindSetting[LastSecondaryT1,${LastSecondaryT1}]}]
 LastStanceT1:Set[${Triggers.FindSetting[LastStanceT1,${LastStanceT1}]}]
 
+
+Class:Set[${LavishSettings[VGA].FindSet[Class]}]
+PrimaryWeapon:Set[${Class.FindSetting[PrimaryWeapon,${PrimaryWeapon}]}]
+SecondaryWeapon:Set[${Class.FindSetting[SecondaryWeapon,${SecondaryWeapon}]}]
+FightSong:Set[${Class.FindSetting[FightSong,${FightSong}]}]
+RunSong:Set[${Class.FindSetting[FightSong,${RunSong}]}]
+Drum:Set[${Class.FindSetting[Drum,${Drum}]}]
+
 }

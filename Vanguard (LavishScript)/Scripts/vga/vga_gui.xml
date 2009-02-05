@@ -7640,7 +7640,125 @@
                         <Width>100%</Width>
 			<Visible>0</Visible>
                         <Texture></Texture>
-                        <Children></Children>
+                        <Children>
+                          <Text Name='txtprim' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>15</Y>
+                            <Width>80</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Combat Mode</Text>
+                          </Text>
+                          <Text Name='txtprm' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>35</Y>
+                            <Width>80</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Primary Hand Weapon</Text>
+                          </Text>
+                          <ComboBox Name="cmbSWPrimaryWeapon" Template="VG.ComboBox">
+                            <X>190</X>
+                            <Y>35</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.PrimaryWeapon:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+                          <Text Name='txtsec' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>55</Y>
+                            <Width>80</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Secondary Hand Weapon</Text>
+                          </Text>
+                          <ComboBox Name="cmbSWSecondaryWeapon" Template="VG.ComboBox">
+                            <X>190</X>
+                            <Y>55</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.SecondaryWeapon:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+                          <Text Name='txtfightsong' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>75</Y>
+                            <Width>80</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Fight Song</Text>
+                          </Text>
+                          <ComboBox Name="cmbSWFightSong" Template="VG.ComboBox">
+                            <X>190</X>
+                            <Y>75</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.FightSong:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+                          <Text Name='txtnocombat' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>115</Y>
+                            <Width>80</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Out of Combat</Text>
+                          </Text>
+                          <Text Name='txtnonfightsong' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>135</Y>
+                            <Width>120</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Drum</Text>
+                          </Text>
+                          <ComboBox Name="cmbSWDrum" Template="VG.ComboBox">
+                            <X>190</X>
+                            <Y>135</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.Drum:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+                          <Text Name='txtfightsong' Template='VG.BoldText'>
+                            <X>10</X>
+                            <Y>155</Y>
+                            <Width>80</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Out of Combat Song</Text>
+                          </Text>
+                          <ComboBox Name="cmbSWRunSong" Template="VG.ComboBox">
+                            <X>190</X>
+                            <Y>155</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.RunSong:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+
+			</Children>
                       </Frame>
                       <Frame name='sorcererfrm'>
                         <Height>100%</Height>
