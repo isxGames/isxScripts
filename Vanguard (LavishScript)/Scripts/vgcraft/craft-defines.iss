@@ -40,21 +40,22 @@
 #define  CS_MOVE_UPATH      52  /*  Move along a user defined path */
 #define  CS_MOVE_FIND       53  /*  Find a valid Target to move to */
 #define  CS_MOVE_TARGET     54  /*  Get target and start moving! */
-#define  CS_MOVE_WAIT       55  /*  Waiting for movement to finish */
-#define  CS_MOVE_TARGWAIT   56  /*  Waiting target to Return */
-#define  CS_MOVE_LOS        57  /*  Waiting for Line Of Sight to NPC */
-#define  CS_MOVE_MAP        58  /*  Get back on the MAP */
-#define  CS_MOVE_DONE       59  /*  All done moving */
-#define  CS_ORDER           60  /* Talking to Work Order NPC */
-#define  CS_ORDER_TARGET    61  /*  Target and Talk to Work Order NPC */
-#define  CS_ORDER_GET       62  /*  Getting new Work Orders */
-#define  CS_ORDER_FINISH    63  /*  Finish old Work Orders */
-#define  CS_ORDER_DONE      64  /*  Done with Order, collect loot!  */
-#define  CS_ORDER_ABANDON   65  /*  Abandon this order! */
-#define  CS_SUPPLY          70  /* Talking to Item/Resupply Vendor */
-#define  CS_SUPPLY_BUY      71  /*  Buying supplies */
-#define  CS_SUPPLY_SELL     72  /*  Sell any loot */
-#define  CS_SUPPLY_SORT     73  /*  Moving supplies around inventory */
-#define  CS_SUPPLY_WAIT     74  /*  Buy/Sell wait state */
-#define  CS_REPAIR          80  /*  Repair Equipment */
+#define  CS_MOVE_TOTARGET   55  /*  Move to current target */
+#define  CS_MOVE_WAIT       56  /*  Waiting for movement to finish */
+#define  CS_MOVE_TARGWAIT   57  /*  Waiting target to Return */
+#define  CS_MOVE_LOS        58  /*  Waiting for Line Of Sight to NPC */
+#define  CS_MOVE_MAP        59  /*  Get back on the MAP */
+#define  CS_MOVE_DONE       60  /*  All done moving */
+#define  CS_ORDER           70  /* Talking to Work Order NPC */
+#define  CS_ORDER_TARGET    71  /*  Target and Talk to Work Order NPC */
+#define  CS_ORDER_GET       72  /*  Getting new Work Orders */
+#define  CS_ORDER_FINISH    73  /*  Finish old Work Orders */
+#define  CS_ORDER_DONE      74  /*  Done with Order, collect loot!  */
+#define  CS_ORDER_ABANDON   75  /*  Abandon this order! */
+#define  CS_SUPPLY          80  /* Talking to Item/Resupply Vendor */
+#define  CS_SUPPLY_BUY      81  /*  Buying supplies */
+#define  CS_SUPPLY_SELL     82  /*  Sell any loot */
+#define  CS_SUPPLY_SORT     83  /*  Moving supplies around inventory */
+#define  CS_SUPPLY_WAIT     84  /*  Buy/Sell wait state */
+#define  CS_REPAIR          90  /*  Repair Equipment */
 

@@ -753,6 +753,179 @@ objectdef  bnav
 		}
 
 	}
+	
+	function:string MovetoTargetID(int64 aTargetID, bool checkMoved)
+	{
+		variable string CPname
+		variable float WPX
+		variable float WPY
+		variable int iCheck
+		variable string tName
+		variable astarpathfinder aPathFinder
+		variable dijkstrapathfinder dPathFinder
+
+		bpathindex:Set[1]
+
+		call DebugOut "bNav: X: ${Pawn[id,${aTargetID}].X} Y: ${Pawn[id,${aTargetID}].Y} Z: ${Pawn[id,${aTargetID}].Z}"
+
+		call This.FindClosestPoint ${Pawn[id,${aTargetID}].X} ${Pawn[id,${aTargetID}].Y} ${Pawn[id,${aTargetID}].Z}
+		tName:Set[${Return}]
+
+		call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
+		CPname:Set[${Return}]
+
+		call DebugOut "bNav: Names: ${CPname} :: ${tName}"
+
+		;if ${This.CurrentRegionID.Equal[${LNavRegion[${Me.Chunk}].BestContainer[${Pawn[id,${aTargetID}].X}, ${Pawn[id,${aTargetID}].Y}, ${Pawn[id,${aTargetID}].Z}]}]}
+		;{
+		;	;call FastMove ${Pawn[id,${aTargetID}].X} ${Pawn[id,${aTargetID}].Y} ${movePrecision}
+		;	call DebugOut "bNav:MovetoTargetName In region quick hop"
+		;	return "END"
+		;}
+
+		; Check to see if we are NOT in a mapped area
+		if !${This.IsMapped[${Me.Location}]}
+		{
+			; Hmm, we need to get back on the map first
+			return "NO MAP"
+		}
+
+		mypath:Clear
+
+		call FindPath "${CPname}" "${tName}"
+
+		if !${Return}
+			return "NO PATH"
+
+
+		iCheck:Set[${Math.Calc[${mypath.Hops} * 0.8].Int}]
+
+		call DebugOut "bNav:MovetoTargetName: Found Path to ${LNavRegion[${tName}].FQN} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].FQN}"
+
+;		if ${mypath.Hops}>0 && ${mypath.Hops}<5
+;		{
+;			call DebugOut "bNav:MovetoTargetName: Short path, just end it!"
+;			return "END"
+;		}
+
+		if ${mypath.Hops} > 0
+		{
+			WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
+			WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
+
+			;Turn to face the desired loc
+			if ${doSlowTurn}
+				call faceloc ${WPX} ${WPY} 15 1
+			else
+				Face ${WPX} ${WPY}
+
+			do
+			{
+				; Move to next Waypoint
+				WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
+				WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
+
+				; See if this box has a DOOR tag
+				;if ${mypath.Region[${bpathindex}].ChildCount} > 0 || ${mypath.Region[${bpathindex}].Custom.Find[DOOR]}
+				if ${mypath.Region[${bpathindex}].Custom[DOOR](exists)}
+				{
+					call DebugOut "bNav: Found a Door in ${mypath.Region[${bpathindex}].Name}"
+					VG:ExecBinding[UseDoorEtc]
+				}
+
+				call FastMove ${WPX} ${WPY} ${movePrecision}
+
+				if ${Return.Equal["STUCK"]}
+				{
+					;CurrentConnection:SetConnection[${mypath.Connection[${bpathindex}]}]
+					;call DebugOut "bNav: Removing Connection ${mypath.Connection[${bpathindex}]}"
+					;CurrentConnection:Remove
+
+					call FastMove ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.X} ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.Y} 100
+					call DebugOut "bNav: FastMove return: ${Return}"
+
+					mypath:Clear
+					;CurrentConnection:Clear
+
+					call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
+					CPname:Set[${Return}]
+
+					call FindPath "${CPname}" "${tName}"
+
+					;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
+
+					call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
+
+					if ${mypath.Hops} > 0
+					{
+						call DebugOut "bNav: Found new path to ${tName} with ${mypath.Hops} hops."
+						bpathindex:Set[1]
+					}
+					else
+					{
+						VG:ExecBinding[moveforward,release]
+						LastRegion:Set[${CurrentRegion}]
+						CurrentRegion:Set[${LNavRegion[${This.CurrentRegionID}].Name}]
+
+						return "STUCK"
+					}
+				}
+				elseif ${checkMoved} && (${bpathindex} > ${iCheck}) && (${bpathindex} > 10)
+				{
+					; if most of the way through path, then check to see if the Target has moved
+					; This is for Moving NPC's and slow running Toons
+
+					variable string newName
+
+					call This.FindClosestPoint ${Pawn[id,${aTargetID}].X} ${Pawn[id,${aTargetID}].Y} ${Pawn[id,${aTargetID}].Z}
+					newName:Set[${Return}]
+
+					if !${newName.Equal[${tName}]}
+					{
+						call DebugOut "bNav: Target Moved! Recomputing path :: ${newName} :: ${tName}"
+
+						call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
+						CPname:Set[${Return}]
+
+						mypath:Clear
+
+						call FindPath "${CPname}" "${newName}"
+
+						if !${Return}
+							return "NO PATH"
+
+						;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${newName}].FQN},mypath]
+
+						call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
+
+						if ${mypath.Hops} > 0
+						{
+							call DebugOut "bNav: Found new path to ${newName} with ${mypath.Hops} hops."
+							bpathindex:Set[1]
+							iCheck:Set[${Math.Calc[${mypath.Hops} * 0.8].Int}]
+						}
+						else
+						{
+							VG:ExecBinding[moveforward,release]
+
+							return "NO PATH"
+						}
+
+					}
+				}
+			}
+			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving}
+
+			VG:ExecBinding[moveforward,release]
+
+			return "END"
+		}
+		else
+		{
+			return "NO PATH"
+		}
+
+	}	
 
 	function:string MovetoXYZ(int iX, int iY, int iZ)
 	{
@@ -904,7 +1077,7 @@ objectdef  bnav
 			if ${Math.Calc[${SavDist} - ${xDist}]} < 60
 			{
 				;VG:ExecBinding[UseDoorEtc]
-				if ${Math.Calc[${Time.Timestamp} - ${xTimer}]} > 1
+				if ${Math.Calc64[${Time.Timestamp} - ${xTimer}]} > 1
 				{
 					VG:ExecBinding[moveforward,release]
 					call DebugOut "bNav: STUCK"

@@ -202,6 +202,11 @@ function:bool TargetCloseObject()
 /* Use the move.iss functions to move to the target */
 function MoveToTarget()
 {
+	variable float xDist
+	variable float SavDist = ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}
+	variable int xTimer
+	variable int FullTimer	
+
 	; Start Moving!
 
 	if ( ${cTargetID} == 0 )
@@ -244,13 +249,57 @@ function MoveToTarget()
 		{
 			call DebugOut "VG:MoveToTarget: cWorkNPC CheckCollision returned TRUE"
 			cState:Set[CS_MOVE_TARGWAIT]
+			return
 		}
 		else
 		{
 			call ErrorOut "VG:MoveToTarget: CheckCollision to Target returned true!"
-			cState:Set[CS_MOVE]
+			call ErrorOut "VG:MoveToTarget: Trying to move around it...."
+			face
+			VG:ExecBinding[movebackward]
+			wait 5
+			VG:ExecBinding[movebackward,release]
+			wait 2
+			VG:ExecBinding[strafeLeft]
+			wait 5
+			VG:ExecBinding[strafeLeft,release]
+			
+			if ${VG.CheckCollision[${Me.Target.X},${Me.Target.Y},${Me.Z}](exists)}
+			{
+				VG:ExecBinding[movebackward]
+				wait 5
+				VG:ExecBinding[movebackward,release]
+				wait 2
+				VG:ExecBinding[strafeRight]
+				wait 5
+				VG:ExecBinding[strafeRight,release]
+			}
+			
+			if ${VG.CheckCollision[${Me.Target.X},${Me.Target.Y},${Me.Z}](exists)}
+			{
+				call ErrorOut "VG:MoveToTarget: There is still a collision... let's see if we've targeted the wrong thing..."
+				variable index:pawn Pawns
+				variable int i = 1
+				variable int PawnsCount = 0
+				PawnsCount:Set[${VG.GetPawns[Pawns,${Me.Target.Name}]}]
+				;echo Populating Pawns List:: ${PawnsCount} pawns total
+				do
+				{
+					if !${VG.CheckCollision[${Pawns.Get[${i}].X},${Pawns.Get[${i}].Y},${Me.Z}](exists)}
+					{
+						press esc
+						wait 2
+						;echo "*** ${Pawns.Get[${i}]} -- ${Pawns.Get[${i}].Distance}"
+						Pawns.Get[${i}]:Target
+						wait 10
+						cState:Set[CS_MOVE_TOTARGET]
+						return
+					}
+					;echo "${i}. ${Pawns.Get[${i}].Name} - ${Pawns.Get[${i}].CheckCollision(exists)}"
+				}
+				while ${i:Inc} <= ${PawnsCount}
+			}	
 		}
-		return
 	}
 
 
@@ -285,7 +334,7 @@ function MoveToTarget()
 	cState:Set[CS_MOVE_DONE]
 	isMoving:Set[FALSE]
 
-	call DebugOut "VG: State to CS.MOVE_DONE"
+	call DebugOut "VG: State to CS_MOVE_DONE"
 }
 
 /* *************************************************************************** */
@@ -341,23 +390,23 @@ function:bool FindMoveTarget()
 }
 
 /* Use LavishNav path to get to a Target */
-function:string MoveTargetPath(string aTarget)
+function:string MoveTargetPath(string aTarget, int64 aTargetID)
 {
 	variable string sTest = "NO"
 
 	if ${cTarget.Equal[${cWorkNPC}]}
-		call DebugOut "VG:MoveTargetPath called: ${aTarget} :: ${Pawn[exactname,npc,${aTarget}].ID}"
+		call DebugOut "VG:MoveTargetPath called: ${aTarget} :: ${aTargetID}"
 	else
-		call DebugOut "VG:MoveTargetPath called: ${aTarget} :: ${Pawn[exactname,${aTarget}].ID}"
+		call DebugOut "VG:MoveTargetPath called: ${aTarget} :: ${aTargetID}"
 
-	if !${Pawn[exactname,${aTarget}](exists)}
+	if !${Pawn[id,${aTargetID}](exists)}
 	{
 		return "NO TARGET"
 	}
 
-	if ${Pawn[exactname,${aTarget}](exists)} && (${Pawn[exactname,${aTarget}].Distance} <= ${objPrecision}) && (${Pawn[exactname,${aTarget}].Distance} > 0)
+	if ${Pawn[id,${aTargetID}](exists)} && (${Pawn[id,${aTargetID}].Distance} <= ${objPrecision}) && (${Pawn[id,${aTargetID}].Distance} > 0)
 	{
-		call DebugOut "VG:MoveTargetPath: already close! :: ${Pawn[${Target}].Distance}"
+		call DebugOut "VG:MoveTargetPath: already close! :: ${Pawn[id,${aTargetID}].Distance}"
 		return "END"
 	}
 
@@ -366,9 +415,9 @@ function:string MoveTargetPath(string aTarget)
 	while !${sTest.Equal[END]}
 	{
 		if ${aTarget.Equal[${cWorkNPC}]}
-			call navi.MovetoTargetName "${aTarget}" TRUE
+			call navi.MovetoTargetID "${aTargetID}" TRUE
 		else
-			call navi.MovetoTargetName "${aTarget}" FALSE
+			call navi.MovetoTargetID "${aTargetID}" FALSE
 
 		sTest:Set[${Return}]
 
