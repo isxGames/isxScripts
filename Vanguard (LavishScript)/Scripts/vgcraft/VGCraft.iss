@@ -3097,11 +3097,12 @@ function atexit()
 
 	VG:ExecBinding[moveforward,release]
 
-	ui -unload "${UIFile}"
-	ui -unload "${UISkin}"
-
 	; Save off the config stuff
 	call SaveConfig	
+
+
+	ui -unload "${UIFile}"
+	ui -unload "${UISkin}"
 
 	setPath:Set[0]
 	setSaleItems:Set[0]
