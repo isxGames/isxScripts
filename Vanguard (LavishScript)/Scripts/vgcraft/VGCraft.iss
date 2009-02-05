@@ -3065,7 +3065,7 @@ function atexit()
 	variable int totalXP
 
 	totalXP:Set[${Me.CraftXP} - ${startCraftXP}]
-	totalTime:Set[${Math.Calc64[(${Script[VGCraft].RunningTime}/1000/60/60)%60].Int.LeadingZeroes[2]}:${Math.Calc64[(${Script[VGCraft].RunningTime}/1000/60)%60].Int.LeadingZeroes[2]}:${Math.Calc64[(${Script[VGCraft].RunningTime}/1000)%60].Int.LeadingZeroes[2]}]
+	totalTime:Set[${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000)%60].Int.LeadingZeroes[2]}]
 
 	call ScreenOut "VG:Total Crafting XP gained: ${totalXP} in ${totalTime}"
 
@@ -3100,15 +3100,15 @@ function atexit()
 	ui -unload "${UIFile}"
 	ui -unload "${UISkin}"
 
+	; Save off the config stuff
+	call SaveConfig	
+
 	setPath:Set[0]
 	setSaleItems:Set[0]
 	setExtraItems:Set[0]
 	setConfig:Set[0]
 	LavishSettings[VGCraft]:Clear
 	
-	; Save off the config stuff
-	call SaveConfig	
-
 	;Send a final message telling the user that the script has ended
 	call DebugOut "VGCraft has ended" 
 }
