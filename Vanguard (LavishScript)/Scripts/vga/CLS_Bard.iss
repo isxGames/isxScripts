@@ -5,27 +5,27 @@ function BardSong()
 	{
 	If ${fight.ShouldIAttack}
 		{
-     	 	If !${Me.Inventory[Bone Saw].CurrentEquipSlot.Equal[Primary Hand]}
+     	 	If !${Me.Inventory[${PrimaryWeapon}].CurrentEquipSlot.Equal[Primary Hand]}
        		{
-        	Me.Inventory[Bone Saw]:Equip[Primary Hand]
+        	Me.Inventory[${PrimaryWeapon}]:Equip[Primary Hand]
         	Waitframe
         	}
-      		If !${Me.Inventory[Djarn's Longsword of Accuracy].CurrentEquipSlot.Equal[Secondary Hand]}
+      		If !${Me.Inventory[${SecondaryWeapon}].CurrentEquipSlot.Equal[Secondary Hand]}
         	{
-         	Me.Inventory[Djarn's Longsword of Accuracy]:Equip[Secondary Hand]
+         	Me.Inventory[${SecondaryWeapon}]:Equip[Secondary Hand]
          	Waitframe
         	}
-		Songs[DPS]:Perform
+		Songs[${FightSong}]:Perform
 		}
 	If !${fight.ShouldIAttack}
 		{
-		If ${Me.Inventory[Drum of Separation].CurrentEquipSlot.Equal[None]}
+		If ${Me.Inventory[${Drum}].CurrentEquipSlot.Equal[None]}
              	{
                	Wait 10
-               	Me.Inventory[Drum of Separation]:Equip
+               	Me.Inventory[${Drum}]:Equip
 		wait 3
 		}
-   		Songs[Run]:Perform
+   		Songs[${RunSong}]:Perform
 		}
 	}
 }

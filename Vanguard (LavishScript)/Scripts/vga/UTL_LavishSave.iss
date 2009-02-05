@@ -296,5 +296,10 @@ Triggers:AddSetting[LastPrimaryT1,${LastPrimaryT1}]
 Triggers:AddSetting[LastSecondaryT1,${LastSecondaryT1}]
 Triggers:AddSetting[LastStanceT1,${LastStanceT1}]
 
+Class:AddSetting[PrimaryWeapon,${PrimaryWeapon}]
+Class:AddSetting[SecondaryWeapon,${SecondaryWeapon}]
+Class:AddSetting[FightSong,${FightSong}]
+Class:AddSetting[RunSong,${RunSong}]
+Class:AddSetting[Drum,${Drum}]
 
 }

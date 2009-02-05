@@ -71,15 +71,19 @@ function counteringfunct()
 function clickiesfunct()
 {
 	if ${doClickies}
-		{
+	{
 		variable iterator Iterator
 		Clickies:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
-			{
-			Me.Inventory[${Interator.Key}]:Use
-			Iterator:Next
-			}
+		{
+			if ${Me.Inventory[${Iterator.Key}].IsReady}
+				{
+				waitframe
+				Me.Inventory[${Iterator.Key}]:Use
+				}
+		Iterator:Next
 		}
+	}
 }
 ;********************************************
 function dispellfunct()

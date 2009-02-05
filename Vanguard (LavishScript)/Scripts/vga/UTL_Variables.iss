@@ -207,4 +207,14 @@ variable string LastPrimaryT1
 variable string LastSecondaryT1
 variable string LastStanceT1
 
+;===================================================
+;===                 Bard Variables             ====
+;===================================================
+variable string PrimaryWeapon
+variable string SecondaryWeapon
+variable string FightSong
+variable string RunSong
+variable string Drum
+
+
 
