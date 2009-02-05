@@ -298,6 +298,16 @@ function MoveToTarget()
 					;echo "${i}. ${Pawns.Get[${i}].Name} - ${Pawns.Get[${i}].CheckCollision(exists)}"
 				}
 				while ${i:Inc} <= ${PawnsCount}
+				GlobalPanicAttack:Inc
+				
+				if ${GlobalPanicAttack} > 4
+				{
+					;; Otherwise, we have a major problem ...and should shut down...
+					call ErrorOut "VG:MoveToTarget:  Couldn't find any thing within range that is collision free -- the path file for this area should probably be redone more carefully."
+					call DebugOut "VG:MoveToTarget:  Couldn't find any thing within range that is collision free -- the path file for this area should probably be redone more carefully."
+					endscript VGCraft
+					return
+				}
 			}	
 		}
 	}
