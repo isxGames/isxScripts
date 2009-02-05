@@ -313,6 +313,8 @@ variable int tempXP = 0
 variable int tempXPHour = 0
 variable int lastCraftXP = 0
 
+variable int GlobalPanicAttack = 0
+
 
 
 /* -------------------- Event Handlers ---------------------- */
@@ -3040,13 +3042,14 @@ function main(int testParam)
 		}
 		while ( ${isRunning} )
 
+	;;; This is all in atexit()
 	; Save off the config stuff
-	call SaveConfig
+	;call SaveConfig
 
-	call ScreenOut "VG:Total Copper Spent: ${statSpentCopper}"
-	call ScreenOut "VG:Total Copper Made: ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"
-	call ScreenOut "VG:Total Recipes Done: ${statRecipeDone}"
-	call ScreenOut "VG:Failed Recipes: ${statRecipeFailed}"
+	;call ScreenOut "VG:Total Copper Spent: ${statSpentCopper}"
+	;call ScreenOut "VG:Total Copper Made: ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"
+	;call ScreenOut "VG:Total Recipes Done: ${statRecipeDone}"
+	;call ScreenOut "VG:Failed Recipes: ${statRecipeFailed}"
 }
 
 function atexit() 
@@ -3062,7 +3065,7 @@ function atexit()
 	variable int totalXP
 
 	totalXP:Set[${Me.CraftXP} - ${startCraftXP}]
-	totalTime:Set[${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000)%60].Int.LeadingZeroes[2]}]
+	totalTime:Set[${Math.Calc64[(${Script[VGCraft].RunningTime}/1000/60/60)%60].Int.LeadingZeroes[2]}:${Math.Calc64[(${Script[VGCraft].RunningTime}/1000/60)%60].Int.LeadingZeroes[2]}:${Math.Calc64[(${Script[VGCraft].RunningTime}/1000)%60].Int.LeadingZeroes[2]}]
 
 	call ScreenOut "VG:Total Crafting XP gained: ${totalXP} in ${totalTime}"
 
@@ -3102,9 +3105,12 @@ function atexit()
 	setExtraItems:Set[0]
 	setConfig:Set[0]
 	LavishSettings[VGCraft]:Clear
+	
+	; Save off the config stuff
+	call SaveConfig	
 
 	;Send a final message telling the user that the script has ended
-	call DebugOut "VG:Craft Assist has stopped" 
+	call DebugOut "VGCraft has ended" 
 }
 
 function ConsolidateInventory()
