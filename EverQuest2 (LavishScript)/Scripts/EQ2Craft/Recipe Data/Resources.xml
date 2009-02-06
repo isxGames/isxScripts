@@ -43,6 +43,8 @@
 		<Setting Name="Cracked Stone Hand Axe">Cracked Stone Hand Axe</Setting>
 		<Setting Name="Dough">Dough</Setting>
 		<Setting Name="Ductile Loam">Ductile Loam</Setting>
+		<Setting Name="Electrum Cluster">Electrum Cluster</Setting>
+		<Setting Name="Elephant Meat">Elephant Meat</Setting>
 		<Setting Name="Enchanted Linen of the Weavemaster">Enchanted Linen of the Weavemaster</Setting>
 		<Setting Name="Flickering Dust">Flickering Dust</Setting>
 		<Setting Name="Fused Loam">Fused Loam</Setting>
@@ -102,8 +104,8 @@
 		<Setting Name="Raw Copper">Copper Cluster</Setting>
 		<Setting Name="Raw Copper cluster">Copper Cluster</Setting>
 		<Setting Name="Raw Coral">Rough Coral</Setting>
-		<Setting Name="Raw Crab">Crab Meat</Setting>
-		<Setting Name="Raw Crab Meat">Crab Meat</Setting>
+		<Setting Name="Raw Crab">Raw Crab Meat</Setting>
+		<Setting Name="Raw Crab Meat">Raw Crab Meat</Setting>
 		<Setting Name="Raw Crayfish">Thicket Crayfish</Setting>
 		<Setting Name="Raw Cucumber">Cucumber</Setting>
 		<Setting Name="Raw Cuirboilli Leather">Cuirboilli Leather Pelt</Setting>
@@ -126,6 +128,7 @@
 		<Setting Name="Raw Etched Leather">Etched Leather Pelt</Setting>
 		<Setting Name="Raw Everfrost Ice Bean">Everfrost Ice Bean</Setting>
 		<Setting Name="Raw Fayberry">Fayberry</Setting>
+		<Setting Name="Fayberry">Fayberry</Setting>
 		<Setting Name="Raw Feyiron">Feyiron Cluster</Setting>
 		<Setting Name="Raw Feyrion">Feyiron Cluster</Setting>
 		<Setting Name="Raw Feysteel">Feysteel Cluster</Setting>
@@ -182,6 +185,7 @@
 		<Setting Name="Raw Pu-erh Tea Leaf">Pu-erh Tea Leaf</Setting>
 		<Setting Name="Raw Ravasect Meat">Ravasect Meat</Setting>
 		<Setting Name="Raw Rawhide Leather">Rawhide Leather Pelt</Setting>
+		<Setting Name="Raw Rawhide Pelt">Rawhide Leather Pelt</Setting>
 		<Setting Name="Raw Rhodium">Rhodium Cluster</Setting>
 		<Setting Name="Raw Roots">Root</Setting>
 		<Setting Name="Raw Root">Root</Setting>
@@ -389,5 +393,9 @@
 		<Setting Name="Reflective Smoldering Shard">Reflective Smoldering Shard</Setting>
 		<Setting Name="Lead Cluster">Lead Cluster</Setting>
 		<Setting Name="Hornet Meat">Hornet Meat</Setting>
+		<Setting Name="Hidebound Pelt">Hidebound Pelt</Setting>
+		<Setting Name="Vulrich Meat">Vulrich Meat</Setting>
+		<Setting Name="Glimmering Material">Glimmering Material</Setting>
+		<Setting name="Glimmering Materials">Glimmering Material</Setting>
 	</Set>
 </InnerSpaceSettings>
