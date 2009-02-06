@@ -98,17 +98,17 @@ function:bool checkabilitytocast(string aName)
 		debuglog "Not Enough Jin for ${aName}"
 		return FALSE
 		}
-	if ${Me.Ability[${aName}].VirtuePointsCost} > ${Me.Stat[Adventuring,VirtuePoints]} 
+	if ${Me.Ability[${aName}].VirtuePointsCost} > ${Me.Stat[Adventuring,Virtue Points]} 
 		{
 		debuglog "Not Enough Virtue for ${aName}"
 		return FALSE
 		}
-	if ${Me.Ability[${aName}].PhenomenaPointsCost} > ${Me.Stat[Adventuring,PhenomenaPoints]} 
+	if ${Me.Ability[${aName}].PhenomenaPointsCost} > ${Me.Stat[Adventuring,Phenomena Points]} 
 		{
 		debuglog "Not Enough Phenomena for ${aName}"
 		return FALSE
 		}
-	if ${Me.Ability[${aName}].SpecialPointsCost} > ${Me.Stat[Adventuring,SpecialPoints]} 
+	if ${Me.Ability[${aName}].SpecialPointsCost} > ${Me.Stat[Adventuring,Special Points]} 
 		{
 		debuglog "Not Enough Special for ${aName}"
 		return FALSE
