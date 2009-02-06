@@ -1693,7 +1693,7 @@ objectdef HeroicOp
 
 
 
-		if ${EQ2.HOWheelState}==0 || ${EQ2.HOWheelState}==1 || ${EQ2.HOWheelState}==6
+		if ${EQ2.HOWheelState}==0 || ${EQ2.HOWheelState}==4 || ${EQ2.HOWheelState}==6
 		;State 0 = First wheel after HO intiation
 		{
 			switch ${This.LastManipulatorArchetype}
@@ -1950,7 +1950,7 @@ objectdef HeroicOp
 			}
 
 		}
-		elseif ${EQ2.HOWheelState}==5 || ${EQ2.HOWheelState}==4 || ${EQ2.HOWheelState}==2
+		elseif ${EQ2.HOWheelState}==5 || ${EQ2.HOWheelState}==1 || ${EQ2.HOWheelState}==2
 
 
 		{
