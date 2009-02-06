@@ -7644,7 +7644,7 @@
                           <Text Name='txtprim' Template='VG.BoldText'>
                             <X>10</X>
                             <Y>15</Y>
-                            <Width>80</Width>
+                            <Width>180</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Combat Mode</Text>
@@ -7652,7 +7652,7 @@
                           <Text Name='txtprm' Template='VG.BoldText'>
                             <X>10</X>
                             <Y>35</Y>
-                            <Width>80</Width>
+                            <Width>180</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Primary Hand Weapon</Text>
@@ -7672,7 +7672,7 @@
                           <Text Name='txtsec' Template='VG.BoldText'>
                             <X>10</X>
                             <Y>55</Y>
-                            <Width>80</Width>
+                            <Width>180</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Secondary Hand Weapon</Text>
@@ -7692,7 +7692,7 @@
                           <Text Name='txtfightsong' Template='VG.BoldText'>
                             <X>10</X>
                             <Y>75</Y>
-                            <Width>80</Width>
+                            <Width>180</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Fight Song</Text>
@@ -7712,7 +7712,7 @@
                           <Text Name='txtnocombat' Template='VG.BoldText'>
                             <X>10</X>
                             <Y>115</Y>
-                            <Width>80</Width>
+                            <Width>180</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Out of Combat</Text>
@@ -7737,10 +7737,10 @@
 				Script[vga].VariableScope.Drum:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
-                          <Text Name='txtfightsong' Template='VG.BoldText'>
+                          <Text Name='txtnofightsong' Template='VG.BoldText'>
                             <X>10</X>
                             <Y>155</Y>
-                            <Width>80</Width>
+                            <Width>180</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
                             <Text>Out of Combat Song</Text>

@@ -118,6 +118,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/scripts/vga/ACT_BuffWatch.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/ACT_Merchant.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/GUI_Merchant.iss"
+#include "${Script.CurrentDirectory}/scripts/vga/GUI_Bard.iss"
 
 ;===================================================
 ;===               Main Routine               ====
@@ -158,6 +159,7 @@ function main()
 	call PopulateAbilitiesLists
 	call PopulateBuffLists
 	call PopulateSellLists
+	call PopulateBardLists
 	;===================================================
 	;===               Bug WorkArounds              ====
 	;===================================================
@@ -193,7 +195,6 @@ function main()
 ;===================================================
 function downtimefunction()
 {
-	call ToggleAutoAttack
 	call Healcheck
 	call ClassSpecificDowntime
 	call followpawn
@@ -255,28 +256,8 @@ function combatfunction()
 function PreCombatLoopFunction()
 {
  	call CheckPosition
-	call ToggleAutoAttack
 	call EmergencyActions
 	call Healcheck
-	return
-}
-;===================================================
-;===             Toggle AutoAttack              ====
-;===================================================
-function ToggleAutoAttack()
-{
-	if !${fight.ShouldIAttack}
-		{
-		if ${Me.Ability[Auto Attack].Toggled}
-			Me.Ability[Auto Attack]:Use
-		}
-	if ${fight.ShouldIAttack}
-		{
-		if !${MyClass.Equal[Rogue]} && !${Me.Ability[Auto Attack].Toggled} && ${Pawn[${Me.Target}].Distance} < 5 && !${Me.Inventory[${Me.Inventory[CurrentEquipSlot,Primary Hand]}].Type.Equal[Focus Item]}
-			Me.Ability[Auto Attack]:Use
-		if ${Me.Inventory[${Me.Inventory[CurrentEquipSlot,Primary Hand]}].Type.Equal[Focus Item]} && ${Me.Ability[Auto Attack].Toggled}
-			Me.Ability[Auto Attack]:Use
-		}
 	return
 }
 ;===================================================
