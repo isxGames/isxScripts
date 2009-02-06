@@ -13,19 +13,42 @@ function main()
 		{
 			Actor[Drusella]:InitializeEffects
 
+			Echo EQ2Drusella - Waiting for Actor Effects to initialize on Drusella
+
+			while ${ISXEQ2.InitializingActorEffects}
+			{
+				wait 5
+			}
+
+			Echo EQ2Drusella - Actor Effects Initialized
+
 			if ${Actor[Drusella].Effect[Drusella's Necromantic Aura](exists)}
 			{
-				Echo - Drusella is protected!
+				Echo EQ2Drusella - Drusella is protected!
 				Script[EQ2Bot]:Pause
+				Echo EQ2Drusella - Eq2bot paused
+
+				if ${Me.Pet(exists)
+					EQ2Execute /pet backoff
 
 				do
 				{
+					Echo EQ2Drusella - Waiting for her Aura to fade...
 					Actor[Drusella]:InitializeEffects
-					wait 5
+
+					Echo EQ2Drusella - Waiting for Actor Effects to initialize on Drusella
+
+					while ${ISXEQ2.InitializingActorEffects}
+					{
+						wait 5
+					}
+
+					wait 2
 				}
 				while ${Actor[Drusella].Effect[Drusella's Necromantic Aura](exists)}
 
 				Script[EQ2Bot]:Resume
+				Echo EQ2Drusella - Eq2bot Resumed
 			}
 
 		}
