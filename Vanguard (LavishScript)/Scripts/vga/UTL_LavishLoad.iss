@@ -366,7 +366,7 @@ Class:Set[${LavishSettings[VGA].FindSet[Class]}]
 PrimaryWeapon:Set[${Class.FindSetting[PrimaryWeapon,${PrimaryWeapon}]}]
 SecondaryWeapon:Set[${Class.FindSetting[SecondaryWeapon,${SecondaryWeapon}]}]
 FightSong:Set[${Class.FindSetting[FightSong,${FightSong}]}]
-RunSong:Set[${Class.FindSetting[FightSong,${RunSong}]}]
+RunSong:Set[${Class.FindSetting[RunSong,${RunSong}]}]
 Drum:Set[${Class.FindSetting[Drum,${Drum}]}]
 
 }
