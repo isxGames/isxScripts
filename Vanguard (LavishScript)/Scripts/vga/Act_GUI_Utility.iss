@@ -10,16 +10,9 @@ function PauseScript()
 ;********************************************
 function loot()
 {
-	if ${DoLoot} && ${Group.Count} < 7
+	if ${DoLoot} && ${Group.Count} < 7 && (!${Me.InCombat} || ${Me.Encounter} > 0)
 	{
 	variable int iCount
-
-	; We are still in combat!
-	if ${Me.InCombat} || ${Me.Encounter} > 0
-	{
-		return 
-	}
-	wait 5
 	iCount:Set[1]
 	; Cycle through all the Pawns and find some corpses to Loot and Skin
 	do
