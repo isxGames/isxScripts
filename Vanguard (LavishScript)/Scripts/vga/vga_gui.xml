@@ -445,7 +445,7 @@
                               }
                             </OnLoad>
                             <OnLeftClick>
-                              Script[vga].VariableScope.DoCountersASAPt:Set[${This.Checked}]
+                              Script[vga].VariableScope.DoCountersASAP:Set[${This.Checked}]
                             </OnLeftClick>
                           </checkbox>
 			<checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
