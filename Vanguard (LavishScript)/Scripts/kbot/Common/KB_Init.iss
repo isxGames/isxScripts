@@ -22,6 +22,9 @@
 #define KB_HARVESTCHECK				32
 #define KB_HARVEST					33
 #define KB_SKIN						34
+#define KB_NECROPSY					35
+#define KB_GETENERGY				36
+#define KB_GETMINIONS				37
 
 #define KB_MOVE						41
 #define KB_LEASH					42
