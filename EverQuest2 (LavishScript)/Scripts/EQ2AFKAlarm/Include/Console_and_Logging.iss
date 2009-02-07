@@ -23,8 +23,8 @@ function CheckForConfigFolders()
 }
 function CheckForRealmFolder()
 {
-	declare DataDir    filepath local "${Script.CurrentDirectory}/EQ2AFKAlarm/Data"
-	declare PathToTest filepath local "${Script.CurrentDirectory}/EQ2AFKAlarm/Data"
+	declare DataDir    filepath local "${Script.CurrentDirectory}/Data"
+	declare PathToTest filepath local "${Script.CurrentDirectory}/Data"
 
 	if ${PathToTest.PathExists}
 	{
@@ -37,8 +37,8 @@ function CheckForRealmFolder()
 }
 function CheckForCharFolder()
 {
-	declare RealmDir   filepath local "${Script.CurrentDirectory}/EQ2AFKAlarm/Data"
-	declare PathToTest filepath local "${Script.CurrentDirectory}/EQ2AFKAlarm/Data/${Me}"
+	declare RealmDir   filepath local "${Script.CurrentDirectory}/Data"
+	declare PathToTest filepath local "${Script.CurrentDirectory}/Data/${Me}"
 
 	if ${PathToTest.PathExists}
 	{
@@ -51,8 +51,8 @@ function CheckForCharFolder()
 }
 function CheckForLogFolder()
 {
-	declare CharDir    filepath local "${Script.CurrentDirectory}/EQ2AFKAlarm/Data/${Me}"
-	declare PathToTest filepath local "${Script.CurrentDirectory}/EQ2AFKAlarm/Data/${Me}/Logs"
+	declare CharDir    filepath local "${Script.CurrentDirectory}/Data/${Me}"
+	declare PathToTest filepath local "${Script.CurrentDirectory}/Data/${Me}/Logs"
 
 	if ${PathToTest.PathExists}
 	{

@@ -494,8 +494,8 @@ function IsNotIgnored(string Speaker)
 
 function atexit()
 {
-	ui -unload EQ2AFKAlarm/Interface/EQ2AFKAlarmUI.xml
-	ui -unload EQ2AFKAlarm/Interface/EQ2AFKAlarm_ConfigUI.xml
+	ui -unload "${Script.CurrentDirectory}/Interface/EQ2AFKAlarmUI.xml"
+	ui -unload "${Script.CurrentDirectory}/Interface/EQ2AFKAlarm_ConfigUI.xml"
 
 	call config_save
 
