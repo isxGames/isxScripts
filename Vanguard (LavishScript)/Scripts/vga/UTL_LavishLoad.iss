@@ -202,6 +202,8 @@ doDebug:Set[${UtilitySR.FindSetting[doDebug]}]
 doActionLog:Set[${UtilitySR.FindSetting[doActionLog]}]
 doSell:Set[${UtilitySR.FindSetting[doSell]}]
 Sell:Set[${LavishSettings[VGA_General].FindSet[Sell]}]
+DoChainsASAP:Set[${UtilitySR.FindSetting[DoChainsASAP,TRUE]}]
+DoCountersASAP:Set[${UtilitySR.FindSetting[DoCountersASAP,TRUE]}]
 ;===================================================
 ;===                  Spells Load               ====
 ;===================================================
