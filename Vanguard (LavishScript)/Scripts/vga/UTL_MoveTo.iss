@@ -56,7 +56,7 @@ function moveto(float X, float Y, float Precision, bool checkCollision)
 			SavY:Set[${Me.Y}]
 			SavZ:Set[${Me.Z}]
 		}
-		while (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} > ${Precision}) && ${Pawn[${Me}].CombatState} == 0 && (${LavishScript.RunningTime} < ${BailOut})
+		while (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} > ${Precision}) && ${Me.ToPawn.CombatState} == 0 && (${LavishScript.RunningTime} < ${BailOut})
 		; need ${Me.IsDead} or something
 		
 		;Made it to our target loc
@@ -184,7 +184,7 @@ function movetoobject(string ObjectID, float MaxDist, float MinDist)
 		}
 		
 	}
-	while (${Pawn[id,${ObjectID}].Distance} > ${MaxDist} || ${Pawn[id,${ObjectID}].Distance} < ${MinDist}) && ${LavishScript.RunningTime} < ${BailOut} && ${Pawn[${Me}].CombatState} == 0
+	while (${Pawn[id,${ObjectID}].Distance} > ${MaxDist} || ${Pawn[id,${ObjectID}].Distance} < ${MinDist}) && ${LavishScript.RunningTime} < ${BailOut} && ${Me.ToPawn.CombatState} == 0
 
 	VG:ExecBinding[moveforward,release]
 	VG:ExecBinding[movebackward,release]
@@ -205,7 +205,7 @@ function:bool AvoidCollision(float inX, float inY, float inZ)
 		VG:ExecBinding[StrafeRight]
 		wait 5
 	}
-	while ${VG.CheckCollision[${inX},${inY},${inZ}](exists)} && ${LavishScript.RunningTime} < ${BailOut} && ${Pawn[${Me}].CombatState} == 0
+	while ${VG.CheckCollision[${inX},${inY},${inZ}](exists)} && ${LavishScript.RunningTime} < ${BailOut} && ${Me.ToPawn.CombatState} == 0
 
 	VG:ExecBinding[StrafeRight,release]
 
@@ -218,7 +218,7 @@ function:bool AvoidCollision(float inX, float inY, float inZ)
 		VG:ExecBinding[StrafeLeft]
 		wait 5
 	}
-	while ${VG.CheckCollision[${inX},${inY},${inZ}](exists)} && ${LavishScript.RunningTime} < ${BailOut} && ${Pawn[${Me}].CombatState} == 0
+	while ${VG.CheckCollision[${inX},${inY},${inZ}](exists)} && ${LavishScript.RunningTime} < ${BailOut} && ${Me.ToPawn.CombatState} == 0
 
 	VG:ExecBinding[StrafeLeft,release]
 
