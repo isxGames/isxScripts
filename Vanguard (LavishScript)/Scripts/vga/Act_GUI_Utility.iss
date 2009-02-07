@@ -33,36 +33,92 @@ function loot()
 ;********************************************
 function executeability(string x_ability, string x_type, string CP)
 {
+	variable int64 CurrentTargetID
+	
+	;; Auto Counter...
+	if ${DoCountersASAP} && ${CounterReactionReady}
+	{
+		if (${Time.Timestamp} <= ${CounterReactionTimer})
+		{
+			CurrentTargetID:Set[${Me.Target.ID}]
+			if ${Me.Target.ID} != ${CounterReactionPawnID}
+			{
+				Pawn[id,${CounterReactionPawnID}]:Target
+				wait 2
+			}
+			if ${Me.Ability[id,${CounterReactionAbilityID}].IsReady}
+			{
+				echo "VGA: Casting Counterspell '${Me.Ability[id,${CounterReactionAbilityID}].Name}'!"
+				Me.Ability[id,${CounterReactionAbilityID}]:Use
+				wait 3
+			}
+			if ${Me.Target.ID} != ${CurrentTargetID}
+			{
+				Pawn[id,${CurrentTargetID}]:Target
+				wait 2
+			}
+		}
+		CounterReactionReady:Set[FALSE]
+	}
+	
+	;; Auto Chains
+	if ${DoChainsASAP} && ${ChainReactionReady}
+	{
+		if (${Time.Timestamp} <= ${ChainReactionTimer})
+		{
+			CurrentTargetID:Set[${Me.Target.ID}]
+			if ${Me.Target.ID} != ${ChainReactionPawnID}
+			{
+				Pawn[id,${ChainReactionPawnID}]:Target
+				wait 2
+			}
+			if ${Me.Ability[id,${ChainReactionAbilityID}].IsReady}
+			{
+				echo "VGA: Casting Chain '${Me.Ability[id,${ChainReactionAbilityID}].Name}'!"
+				Me.Ability[id,${ChainReactionAbilityID}]:Use
+				wait 3
+			}
+			if ${Me.Target.ID} != ${CurrentTargetID}
+			{
+				Pawn[id,${CurrentTargetID}]:Target
+				wait 2
+			}
+		}
+		ChainReactionReady:Set[FALSE]
+	}
+	
+	
 	call mobresist "${x_ability}"
 	if ${Return}
 	{
-	debuglog "Casting ${x_ability}"
-	if ${Me.Ability[${x_ability}].IsReady}
-	{
-		Me.Ability[${x_ability}]:Use
-		if ${x_type.Equal[Heal]}
+		debuglog "Casting ${x_ability}"
+		if ${Me.Ability[${x_ability}].IsReady}
+		{
+			Me.Ability[${x_ability}]:Use
+			if ${x_type.Equal[Heal]}
 			{
-			actionlog "${x_ability} ${Me.DTarget}"
-			call MeCasting ${CP}
-			return
+				actionlog "${x_ability} ${Me.DTarget}"
+				call MeCasting ${CP}
+				return
 			}
-		if ${x_type.Equal[attack]}
+			if ${x_type.Equal[attack]}
 			{
-			actionlog "${x_ability} ${Me.Target}"
-			call MeCasting ${CP}
-			return
+				actionlog "${x_ability} ${Me.Target}"
+				call MeCasting ${CP}
+				return
 			}
-		if ${x_type.Equal[buff]}
+			if ${x_type.Equal[buff]}
 			{
-			actionlog "${x_ability} ${Me.DTarget} BUFF"
-			call MeCasting ${CP}
-			return
+				actionlog "${x_ability} ${Me.DTarget} BUFF"
+				call MeCasting ${CP}
+				return
 			}	
-	}
-	if !${Me.Ability[${x_ability}].IsReady} 
-		debuglog "${Me.Ability[${x_ability}]} Not Ready ${Me.Ability[${x_ability}].TimeRemaining} Sec."
+		}
+		if !${Me.Ability[${x_ability}].IsReady} 
+			debuglog "${Me.Ability[${x_ability}]} Not Ready ${Me.Ability[${x_ability}].TimeRemaining} Sec."
 		return 
 	}
+	
 	return
 
 }
@@ -72,45 +128,45 @@ function:bool checkabilitytocast(string aName)
 {
 	debuglog "Checking ${aName}"
 	if ${Me.Ability[${abilString}].EnergyCost(exists)} && ${Me.Ability[${abilString}].EnergyCost} == 0 && ${Me.Ability[${abilString}].EnduranceCost(exists)} && ${Me.Ability[${abilString}].EnduranceCost} == 0
-		{
+	{
 		debuglog "Has No Ability Cost DO IT "
 		return TRUE
-		}
+	}
 	if ${Me.Ability[${aName}].EnergyCost} > ${Me.Energy}
-		{
+	{
 		debuglog "Not Enough Energy for ${aName}"
 		return FALSE
-		}
+	}
 	if ${Me.Ability[${aName}].EnduranceCost} > ${Me.Endurance} 
-		{
+	{
 		debuglog "Not Enough Endurance for ${aName}"
 		return FALSE
-		}	
+	}	
 	if ${Me.Ability[${aName}].JinCost} > ${Me.Stat[Adventuring,Jin]} 
-		{
+	{
 		debuglog "Not Enough Jin for ${aName}"
 		return FALSE
-		}
+	}
 	if ${Me.Ability[${aName}].VirtuePointsCost} > ${Me.Stat[Adventuring,Virtue Points]} 
-		{
+	{
 		debuglog "Not Enough Virtue for ${aName}"
 		return FALSE
-		}
+	}
 	if ${Me.Ability[${aName}].PhenomenaPointsCost} > ${Me.Stat[Adventuring,Phenomena Points]} 
-		{
+	{
 		debuglog "Not Enough Phenomena for ${aName}"
 		return FALSE
-		}
+	}
 	if ${Me.Ability[${aName}].SpecialPointsCost} > ${Me.Stat[Adventuring,Special Points]} 
-		{
+	{
 		debuglog "Not Enough Special for ${aName}"
 		return FALSE
-		}
+	}
 	if ${Me.Ability[${aName}].TimeRemaining} > 0
-		{
+	{
 		debuglog "TimeRemaining Must wait ${Me.Ability[${aName}].TimeRemaining} "
 		return FALSE
-		}
+	}
 
 	debuglog "Whatever Do IT"
 	return TRUE
@@ -307,21 +363,21 @@ atom ParseLog(string aText)
 {
 	if ${doParser}
 	{
-	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
+		UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
 	}
 }
 atom actionlog(string aText) 
 {
 	if ${doActionLog}
 	{
-	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
+		UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
 	}
 }
 atom debuglog(string aText) 
 {
 	if ${doDeBug}
 	{
-	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
+		UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
 	}
 }
 

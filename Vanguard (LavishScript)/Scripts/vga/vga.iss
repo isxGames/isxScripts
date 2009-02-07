@@ -167,7 +167,7 @@ function main()
 	;===================================================
 	;===               Main Loop                    ====
 	;===================================================
-   	Do
+   	do
    	{
 		;-------------------------------------------
 		;*****************Pause*********************
@@ -183,11 +183,18 @@ function main()
 		;********Run Fight/Downtime Stuff***********
 		;-------------------------------------------
 		if !${fight.ShouldIAttack}
-			call downtimefunction
+		{
+			; Only run "downtimefunction" a max of once per second -- this helps with performance.  The "1" could be be a variable added to the UI if desired...
+			if (${Math.Calc[${Math.Calc[${Script.RunningTime}-${LastDowntimeCall}]}/1000]} > 1)
+			{
+				LastDowntimeCall:Set[${Script.RunningTime}]
+				call downtimefunction
+			}
+		}
 		if ${fight.ShouldIAttack}
 			call combatfunction
    	}
-   	While ${Me(exists)}
+   	while ${Me(exists)}
 }
 
 ;===================================================
@@ -231,7 +238,7 @@ function combatfunction()
 	if ${newattack}
 		call OpeningSpellSequence
 	elseif !${newattack}
-		{
+	{
 		call DotSpells
 		call DotMelee
 		call DebuffSpells
@@ -240,7 +247,7 @@ function combatfunction()
 		call CombatMeleeSequence
 		call AOESpell
 		call AOEMelee
-		}
+	}
 
 	;-------------------------------------------
 	;**********Fighting PostLoopCall************

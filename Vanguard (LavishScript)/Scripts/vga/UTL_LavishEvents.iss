@@ -1,15 +1,16 @@
 function LavishEventLoad()
 {
-	LavishScript:RegisterEvent[VG_OnIncomingCombatText]
+	;LavishScript:RegisterEvent[VG_OnIncomingCombatText]
 	Event[VG_OnIncomingCombatText]:AttachAtom[VG_OnIncomingCombatText]
-	LavishScript:RegisterEvent[VG_onGroupMemberAdded]
+	;LavishScript:RegisterEvent[VG_onGroupMemberAdded]
 	Event[VG_onGroupMemberAdded]:AttachAtom[NeedBuffs]
-	LavishScript:RegisterEvent[VG_onGroupMemberDeath]
+	;LavishScript:RegisterEvent[VG_onGroupMemberDeath]
 	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
-	LavishScript:RegisterEvent[VG_onPawnStatusChange]
+	;LavishScript:RegisterEvent[VG_onPawnStatusChange]
 	Event[VG_onPawnStatusChange]:AttachAtom[VG_onPawnStatusChange]
-;	LavishScript:RegisterEvent[VG_onItemCanUseUpdated]
-;	Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
+	;LavishScript:RegisterEvent[VG_onItemCanUseUpdated]
+	Event[VG_onCombatReaction]:AttachAtom[VG_onCombatReaction]
+	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }
 /*atom VG_onItemCanUseUpdated(string ItemName, int ItemID, string IsNowReady)
 {
@@ -61,9 +62,9 @@ atom VG_OnIncomingCombatText(string aText, int aType)
 {
 	if ${doParser}
 	{
-	if ${aType} == 26 && !${aText.Find[damage to You]}
+		if ${aType} == 26 && !${aText.Find[damage to You]}
 		{
-		call Parser "${aText}"
+			call Parser "${aText}"
 		}
 	}
 }
@@ -124,6 +125,30 @@ function TextSplitter(string aText)
 	elseif ${aText.Find[damage shield]}
 		{
 		ParseAbility:Set["Damage Shield"]
-		ParseDamage:Set[${aText.Mid[${aText.Find[for]},${aText.Length}].Token[2,r].Token[1,d]}]
+		ParseDamage:Set[${aText.Mid[${aText.Find[for]}	,${aText.Length}].Token[2,r].Token[1,d]}]
 		}
+}
+
+
+
+atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTimer) 
+{
+	;echo "VG_onCombatReaction(${aType},${iPawnID} (${Pawn[id,${iPawnID}].Name}),${iAbilityID} (${Me.Ability[id,${iAbilityID}].Name}),${fTimer})"
+	
+	if ${aType.Equal[Counter]}
+	{
+		CounterReactionReady:Set[TRUE]
+		CounterReactionTimer:Set[${Math.Calc64[${Time.Timestamp}+${fTimer}]}]
+		CounterReactionPawnID:Set[${iPawnID}]
+		CounterReactionAbilityID:Set[${iAbilityID}]
+		return
+	}
+	elseif ${aType.Equal[Chain]}
+	{
+		ChainReactionReady:Set[TRUE]
+		ChainReactionTimer:Set[${Math.Calc64[${Time.Timestamp}+${fTimer}]}]
+		ChainReactionPawnID:Set[${iPawnID}]
+		ChainReactionAbilityID:Set[${iAbilityID}]
+		return		
+	}
 }

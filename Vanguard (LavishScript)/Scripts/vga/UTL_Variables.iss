@@ -110,6 +110,7 @@ variable int ParseDamage
 variable int DamageDone
 variable int ParseCount = 0
 variable bool doSell
+variable uint LastDowntimeCall = 0
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
@@ -170,8 +171,24 @@ variable string CounterSpell2
 variable bool doPause
 variable bool doSlowAttacks
 variable int SlowAttacks
+
 ;===================================================
-;===                 Triggers Variables           ====
+;===             Combat Reaction Variables     ====
+;===================================================
+variable bool DoCountersASAP = TRUE
+variable bool DoChainsASAP = TRUE
+
+variable bool CounterReactionReady = FALSE
+variable float64 CounterReactionTimer
+variable int64 CounterReactionPawnID
+variable uint CounterReactionAbilityID
+variable bool ChainReactionReady = FALSE
+variable float64 ChainReactionTimer
+variable int64 ChainReactionPawnID
+variable uint ChainReactionAbilityID
+
+;===================================================
+;===                 Triggers Variables        ====
 ;===================================================
 
 variable string doTrigger1

@@ -21,27 +21,26 @@ function solobuff()
 		if !${Me.Effect[${anIter.Key}](exists)} && ${Me.Effect[${anIter.Key}].TimeRemaining} <= 60
 		{
 			if ${Me.Ability[${LazyBuff}](exists)}
-				{
+			{
 				debuglog "Buffing with Lazy ${anIter.Key}"
 				Pawn[Me]:Target
 				call checkabilitytocast "${LazyBuff}"	
 				if ${Return} && ${Me.Ability[${LazyBuff}].IsReady}
-					{
-					
-					call executeability "${LazyBuff}" "buff" "Neither"
-					}
-				}
-			if !${Me.Ability[${LazyBuff}](exists)}
 				{
+					call executeability "${LazyBuff}" "buff" "Neither"
+				}
+			}
+			if !${Me.Ability[${LazyBuff}](exists)}
+			{
 				debuglog "Buffing with ${anIter.Key}"
 				Pawn[Me]:Target
 				call checkabilitytocast "${anIter.Key}"	
 				if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
-					{
+				{
 					debuglog "Ready to Buff ${anIter.Key}"
 					call executeability "${anIter.Key}" "buff" "Neither"
-					}
 				}
+			}
 		}
 		anIter:Next
 	}
