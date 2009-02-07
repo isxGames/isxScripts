@@ -192,7 +192,9 @@ function main()
 			}
 		}
 		if ${fight.ShouldIAttack}
+		{
 			call combatfunction
+		}
    	}
    	while ${Me(exists)}
 }

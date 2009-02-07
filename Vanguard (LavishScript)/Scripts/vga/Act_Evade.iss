@@ -51,7 +51,7 @@ function checkinvoln2()
 ;********************************************
 function checkevade1()
 {
-	if ${doEvade1} && ${Pawn[${Me}].Name.Equal[${Me.TargetOfTarget}]}
+	if ${doEvade1} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
 		{
 		variable iterator Iterator
 		Evade1:GetSettingIterator[Iterator]
@@ -72,7 +72,7 @@ function checkevade1()
 ;********************************************
 function checkevade2()
 {
-	if ${doEvade2} && ${Pawn[${Me}].Name.Equal[${Me.TargetOfTarget}]}
+	if ${doEvade2} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
 		{
 		variable iterator Iterator
 		Evade2:GetSettingIterator[Iterator]

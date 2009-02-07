@@ -2,7 +2,7 @@ objectdef fight
 {
 	member:bool ShouldIAttack()
 	{
-		if ${Group.Count} < 2 && ${Pawn[${Me}].CombatState} == 1 && ${Me.Target(exists)} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead} && ${Pawn[${Me.Target}].HaveLineOfSightTo}
+		if ${Group.Count} < 2 && ${Me.ToPawn.CombatState} == 1 && ${Me.Target(exists)} && ${Me.TargetHealth} > 0 && !${Me.Target.IsDead} && ${Me.Target.HaveLineOfSightTo}
 		{
 			if ${lastattack.Equal[${Me.Target.ID}]}
 			{
@@ -19,7 +19,7 @@ objectdef fight
 			}
 
 		}
-		if ${Group.Count} > 1 && (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}) || (${Me.TargetHealth} < ${AssistBattlePct} && ${Pawn[${Me}].CombatState} == 1) && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}
+		if ${Group.Count} > 1 && (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.TargetHealth} > 0 && !${Me.Target.IsDead}) || (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.ToPawn.CombatState} == 1) && ${Me.TargetHealth} > 0 && !${Me.Target.IsDead}
 		{
 			if ${lastattack.Equal[${Me.Target.ID}]}
 			{

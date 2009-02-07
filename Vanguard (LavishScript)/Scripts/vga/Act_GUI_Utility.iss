@@ -2,7 +2,7 @@ function PauseScript()
 {
 		while ${doPause}
 			wait 1
-		while ${Pawn[Me].IsDead}
+		while ${Me.ToPawn.IsDead}
 			wait 1
 		while ${Me.HealthPct} == 0
 			wait 1
@@ -21,7 +21,7 @@ function loot()
 			{
 			Pawn[${iCount}]:Target
 			wait 5
-			call movetoobject ${Pawn[${Me.Target}].ID} 4 0
+			call movetoobject ${Me.Target.ID} 4 0
 			VGExecute "/lootall"
 			waitframe
 			VGExecute "/cleartargets"
@@ -214,7 +214,7 @@ function facemob()
 function TooClose()
 {
 	call facemob
-	if ${Pawn[{Me.Target}].Distance} < 1 && ${Pawn[{Me.Target}](exists)}
+	if ${Me.Target(exists)} && ${Me.Target.Distance} < 1
 		{
 		VG:ExecBinding[movebackward]
 		wait 1
@@ -228,9 +228,9 @@ function followpawn()
 {
 	if ${dofollowpawn}
 	{
-	if ${Pawn[${followpawn}].Distance} > ${followpawndist} && ${Pawn[${followpawn}].Distance} < 50 && ${Pawn[${followpawn}](exists)}
+	if ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50 && ${Pawn[exactname,${followpawn}](exists)}
 		{
-		call movetoobject ${Pawn[${followpawn}].ID} ${followpawndist} 0
+		call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
 		}
 	}
 	return
@@ -306,10 +306,10 @@ function MoveToTarget()
 	{
 		call facemob
 		call assistpawn
-		if ${fight.ShouldIAttack} && ${Pawn[${Me.Target}].Distance} > 4
+		if ${fight.ShouldIAttack} && ${Me.Target.Distance} > 4
 		{
 			actionlog "Moving to Melee"
-			call movetoobject ${Pawn[${Me.Target}].ID} 4 1
+			call movetoobject ${Me.Target.ID} 4 1
 			call TooClose
 			return
 		}
