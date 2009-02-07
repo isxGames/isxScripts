@@ -158,7 +158,7 @@ variable time tTimeOut
 variable time tStartTime
 
 /* Some Statistic Variables */
-variable float timeCheck = 0
+variable float timeCheck = 1
 variable int startXP = 0
 variable int lastXP = 0
 variable int tempXP = 0
@@ -348,8 +348,8 @@ function SetState()
 	if ( ${Me.XP} > ${lastXP} )
 	{
 		lastXP:Set[${Me.XP}]
-		timeCheck:Set[${Math.Calc64[${Script[KBot].RunningTime}/1000/60/60]}]
-		tempXPHour:Set[${Math.Calc64[(${Me.XP} - ${startXP}) / ${timeCheck}]}]
+		timeCheck:Set[${Math.Calc[${Script.RunningTime}/1000/60/60]}]
+		tempXPHour:Set[${Math.Calc[(${Me.XP} - ${startXP}) / ${timeCheck}]}]
 		UIElement[Title@TitleBar@KBot]:SetText["KBot -- Killing -- ${tempXPHour} XP/Hr"]
 	}
 
@@ -3279,7 +3279,7 @@ atom(script) KBot_onIncomingText(string aText, string ChannelNumber, string Chan
 {
 
 	; Send it off to the auto-response code for processsing
-	call AutoRespond "${Text}" "${ChannelNumber}"
+	call AutoRespond "${aText}" "${ChannelNumber}"
 
 	if ${aText.Find[You have slain]}
 		call DebugIt "OnIncomingText: ${aText}"
