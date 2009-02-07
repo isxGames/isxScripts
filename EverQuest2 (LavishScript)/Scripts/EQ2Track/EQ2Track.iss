@@ -116,9 +116,9 @@ function main()
 	LavishSettings[EQ2Track].FindSet[Users]:AddSet[${Me.Name}]
 	User:Set[${LavishSettings[EQ2Track].FindSet[Users].FindSet[${Me.Name}]}]
 	User:AddSet[ReverseFilters]
-	User:Import["${LavishScript.HomeDirectory}/Scripts/EQ2Track/Character Config/${Me.Name}_Settings.xml"]
+	User:Import["${Script.CurrentDirectory}/Character Config/${Me.Name}_Settings.xml"]
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
-	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Track/UI/EQ2Track.xml"
+	ui -reload -skin eq2 "${Script.CurrentDirectory}/UI/EQ2Track.xml"
 
 /*	variable bool TrackAggro
 	;variable string ReverseFilter[20]
@@ -187,7 +187,7 @@ function main()
 			UIElement[TrackItems@EQ2 Track]:Sort[TrackSort]
 			User.FindSetting[SortMethod]:Set[${SortMethod}]
 			User.FindSetting[ReverseSort]:Set[${ReverseSort}]
-			User:Export["${LavishScript.HomeDirectory}/Scripts/EQ2Track/Character Config/${Me.Name}_Settings.xml"]
+			User:Export["${Script.CurrentDirectory}/Character Config/${Me.Name}_Settings.xml"]
 			SortChanged:Set[FALSE]
 		}
 	}
@@ -234,7 +234,7 @@ atom(script) UpdateSettings()
 		}
 		while ${NumReverseFilters} < ${UIElement[FiltersList@EQ2 Track].Items}
 	}
-	User:Export["${LavishScript.HomeDirectory}/Scripts/EQ2Track/Character Config/${Me.Name}_Settings.xml"]
+	User:Export["${Script.CurrentDirectory}/Character Config/${Me.Name}_Settings.xml"]
 
 }
 
@@ -358,7 +358,7 @@ atom(script) RemoveActorByID(int ID)
 function atexit()
 {
 
-	ui -unload "${LavishScript.HomeDirectory}/Scripts/EQ2Track/UI/EQ2Track.xml"
+	ui -unload "${Script.CurrentDirectory}/UI/EQ2Track.xml"
 
 }
 
