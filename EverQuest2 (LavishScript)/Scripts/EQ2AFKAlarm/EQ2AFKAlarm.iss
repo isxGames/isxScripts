@@ -25,9 +25,9 @@
  * 
  */
 
-#include EQ2Common/Debug.iss
-#include EQ2AFKAlarm/Include/Config.iss
-#include EQ2AFKAlarm/Include/Console_and_Logging.iss
+#include ${LavishScript.HomeDirectory}/Scripts/EQ2Common/Debug.iss
+#include Include/Config.iss
+#include Include/Console_and_Logging.iss
 #define MESSAGE_TYPE_SAY 1
 #define MESSAGE_TYPE_TELL 2
 #define MESSAGE_TYPE_GUILD 3
@@ -87,11 +87,11 @@ function main(string argv)
 	declare CountGuild	int	script	0
 	declare CountOfficer	int	script	0
 	
-	declare SoundfileChimes	string	script	"${LavishScript.CurrentDirectory}/Scripts/EQ2AFKAlarm/Sounds/chatalarm.wav"
-	declare SoundfileChord	string	script	"${LavishScript.CurrentDirectory}/Scripts/EQ2AFKAlarm/Sounds/disarm.wav"
-	declare SoundfileDing	string	script	"${LavishScript.CurrentDirectory}/Scripts/EQ2AFKAlarm/Sounds/ping.wav"
-	declare SoundfileNotify	string	script	"${LavishScript.CurrentDirectory}/Scripts/EQ2AFKAlarm/Sounds/intercom.wav"
-	declare SoundfilePhaser string script "${LavishScript.CurrentDirectory}/Scripts/EQ2AFKAlarm/Sounds/PHASER.wav"
+	declare SoundfileChimes	string	script	"${Script.CurrentDirectory}/Sounds/chatalarm.wav"
+	declare SoundfileChord	string	script	"${Script.CurrentDirectory}/Sounds/disarm.wav"
+	declare SoundfileDing	string	script	"${Script.CurrentDirectory}/Sounds/ping.wav"
+	declare SoundfileNotify	string	script	"${Script.CurrentDirectory}/Sounds/intercom.wav"
+	declare SoundfilePhaser string script "${Script.CurrentDirectory}/Sounds/PHASER.wav"
 
 	declare DefaultSound	string	script	SoundFileDing
 	declare DefaultLoudSound string script SoundfilePhaser
@@ -100,14 +100,14 @@ function main(string argv)
 
 	declare PlayersIgnored index:string script
 	declare PlayersIgnoredTime index:int script
-	declare AFKTriggerSettings string script "EQ2AFKAlarm/Data/afktriggers.xml"
+	declare AFKTriggerSettings string script "${Script.CurrentDirectory}/Data/afktriggers.xml"
 	declare AFKTriggers settingsetref script
 	
 	declare Logging		bool	script	FALSE
 
-	declare ConfigFile	string	script	"EQ2AFKAlarm/Data/Config.xml"
+	declare ConfigFile	string	script	"${Script.CurrentDirectory}/Data/Config.xml"
 
-	declare LogFile		file	script	"EQ2AFKAlarm/Data/${Me}/Logs/${Time.Year}-${Time.Month}-${Time.Day}_${Time.Time24.Replace[:,REMOVE]}.txt"
+	declare LogFile		file	script	"${Script.CurrentDirectory}/Data/${Me}/Logs/${Time.Year}-${Time.Month}-${Time.Day}_${Time.Time24.Replace[:,REMOVE]}.txt"
 
 	declare Log debug script
 	Log:SetFilename[${LogFile}]
@@ -116,7 +116,7 @@ function main(string argv)
 	call CheckForConfigFolders
 
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/EQ2.xml"
-	ui -reload -skin eq2 "EQ2AFKAlarm/Interface/EQ2AFKAlarmUI.xml"
+	ui -reload -skin eq2 "${Script.CurrentDirectory}/Interface/EQ2AFKAlarmUI.xml"
 
 	call config_load
 	LavishSettings:AddSet[AFKTriggers]
