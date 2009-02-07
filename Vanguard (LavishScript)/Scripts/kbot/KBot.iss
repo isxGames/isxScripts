@@ -2121,7 +2121,7 @@ function:bool SafePortCheck()
 				call DebugIt " -- Emergency Health Port -- ENERGIZE! "
 				VGLoc[KB- ${Me.Chunk} -Safe]:Port
 				justPorted:Set[TRUE]
-				cState:Set[KB_HEAs]
+				cState:Set[KB_HEAL]
 				call CombatHeal
 				call BuffUp
 				call ToggleBuffs
