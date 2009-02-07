@@ -134,7 +134,7 @@ function main()
 	if !${ISXVG.IsReady}
 	{
 		echo "[${Time}] --> Unable to load ISXVG, exiting script"
-		endscript *
+		endscript vga
 	}
 	;===================================================
 	;===               Function Loads               ====
