@@ -861,7 +861,7 @@ objectdef EQ2Nav
         		    echo "{Math.Distance[{Me.ToActor.Loc},{This.CheckX},{This.CheckY},{This.CheckZ}]}: ${Math.Distance[${Me.ToActor.Loc},${This.CheckX},${This.CheckY},${This.CheckZ}]}"
         		    This:Debug["We must be stuck...handling."]
         		    This:StopRunning
-        	    	run "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavObstacleHandler.iss" "${This.AUTORUN}" "${This.MOVEFORWARD}" "${This.MOVEBACKWARD}" "${This.STRAFELEFT}" "${This.STRAFERIGHT}" "${This.BackupTime}" "${This.StrafeTime}"
+        	    	runscript "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavObstacleHandler.iss" "${This.AUTORUN}" "${This.MOVEFORWARD}" "${This.MOVEBACKWARD}" "${This.STRAFELEFT}" "${This.STRAFERIGHT}" "${This.BackupTime}" "${This.StrafeTime}"
         	    	This.CheckLocPassCount:Set[0]
         		    return  
         		}
@@ -1034,7 +1034,7 @@ objectdef EQ2Nav
 			        {
             		    This:Debug["We must be stuck...handling. (NotMovingPassCount: ${This.NotMovingPassCount})"]
             		    This:StopRunning
-            	    	run "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavObstacleHandler.iss" "${This.AUTORUN}" "${This.MOVEFORWARD}" "${This.MOVEBACKWARD}" "${This.STRAFELEFT}" "${This.STRAFERIGHT}" "${This.BackupTime}" "${This.StrafeTime}"
+            	    	runscript "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavObstacleHandler.iss" "${This.AUTORUN}" "${This.MOVEFORWARD}" "${This.MOVEBACKWARD}" "${This.STRAFELEFT}" "${This.STRAFERIGHT}" "${This.BackupTime}" "${This.StrafeTime}"
             	    	This.NotMovingPassCount:Set[0]
             		    return  			        
 			        }
