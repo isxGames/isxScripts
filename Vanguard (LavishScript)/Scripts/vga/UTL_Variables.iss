@@ -111,6 +111,7 @@ variable int DamageDone
 variable int ParseCount = 0
 variable bool doSell
 variable uint LastDowntimeCall = 0
+variable bool DoLoot
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================

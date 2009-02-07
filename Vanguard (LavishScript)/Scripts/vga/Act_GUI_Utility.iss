@@ -8,7 +8,7 @@ function PauseScript()
 			wait 1
 }
 ;********************************************
-function loot()
+function lootit()
 {
 	if ${DoLoot} && ${Group.Count} < 7 && (!${Me.InCombat} || ${Me.Encounter} > 0)
 	{
