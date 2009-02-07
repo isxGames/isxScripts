@@ -73,8 +73,8 @@
 						switch ${This.SelectedTab}
 						{
 							Case Main
-								UIElement[VGA_gui]:SetWidth[320]
-								UIElement[VGA_gui]:SetHeight[250]
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[350]
 								break
 							Case Healer
 								UIElement[VGA_gui]:SetWidth[400]
@@ -85,6 +85,10 @@
 								UIElement[VGA_gui]:SetHeight[640]
 								break
 							Case Triggers
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+							Case Class
 								UIElement[VGA_gui]:SetWidth[400]
 								UIElement[VGA_gui]:SetHeight[640]
 								break
@@ -115,8 +119,8 @@
 						switch ${This.SelectedTab}
 						{
 							Case MainT
-								UIElement[VGA_gui]:SetWidth[320]
-								UIElement[VGA_gui]:SetHeight[250]
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[350]
 								break
 							Case BuffWatch
 								UIElement[VGA_gui]:SetWidth[400]
@@ -131,6 +135,10 @@
 								UIElement[VGA_gui]:SetHeight[640]
 								break
 							Case Mobs
+								UIElement[VGA_gui]:SetWidth[400]
+								UIElement[VGA_gui]:SetHeight[640]
+								break
+							Case Class
 								UIElement[VGA_gui]:SetWidth[400]
 								UIElement[VGA_gui]:SetHeight[640]
 								break
@@ -421,6 +429,40 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoLoot:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>130</X>
+                            <Y>155</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Counters</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoCountersASAP}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoCountersASAPt:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>130</X>
+                            <Y>175</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Chains</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoChainsASAP}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoChainsASAP:Set[${This.Checked}]
                             </OnLeftClick>
                           </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">

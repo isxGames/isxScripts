@@ -175,8 +175,8 @@ variable int SlowAttacks
 ;===================================================
 ;===             Combat Reaction Variables     ====
 ;===================================================
-variable bool DoCountersASAP = TRUE
-variable bool DoChainsASAP = TRUE
+variable bool DoCountersASAP 
+variable bool DoChainsASAP 
 
 variable bool CounterReactionReady = FALSE
 variable float64 CounterReactionTimer
