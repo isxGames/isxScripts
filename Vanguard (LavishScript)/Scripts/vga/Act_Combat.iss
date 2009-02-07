@@ -41,6 +41,16 @@ objectdef fight
 }
 
 variable fight fight
+;*************************************************************
+function SendInPets()
+{
+
+ if ${Me.HavePet} && ${fight.ShouldIAttack}
+        {
+          VGExecute /pet attack
+          VGExecute /minion attack
+	}
+}
 
 ;*************************************************************
 function OpeningSpellSequence()

@@ -233,6 +233,7 @@ function combatfunction()
 	;-------------------------------------------
 	call PreCombatLoopFunction
 	call ClassSpecificPreCombat
+	call SendInPets
 
 	;-------------------------------------------
 	;************Main Combat Loop***************
