@@ -2,40 +2,40 @@ objectdef fight
 {
 	member:bool ShouldIAttack()
 	{
-	If ${Group.Count} < 2 && ${Pawn[${Me}].CombatState} == 1 && ${Me.Target(exists)} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead} && ${Pawn[${Me.Target}].HaveLineOfSightTo}
+		if ${Group.Count} < 2 && ${Pawn[${Me}].CombatState} == 1 && ${Me.Target(exists)} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead} && ${Pawn[${Me.Target}].HaveLineOfSightTo}
 		{
-		if ${lastattack.Equal[${Me.Target.ID}]}
+			if ${lastattack.Equal[${Me.Target.ID}]}
 			{
-			return TRUE
+				return TRUE
 			}
-		if !${lastattack.Equal[${Me.Target.ID}]}
+			if !${lastattack.Equal[${Me.Target.ID}]}
 			{
-			newattack:Set[TRUE]
-			StartAttackTime:Set[${Script.RunningTime}]
-			DamageDone:Set[0]
-			lastattack:Set[${Me.Target.ID}]
-			debuglog "I Should Attack"
-			return TRUE
+				newattack:Set[TRUE]
+				StartAttackTime:Set[${Script.RunningTime}]
+				DamageDone:Set[0]
+				lastattack:Set[${Me.Target.ID}]
+				debuglog "I Should Attack"
+				return TRUE
 			}
 
 		}
-	If ${Group.Count} > 1 && (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}) || (${Me.TargetHealth} < ${AssistBattlePct} && ${Pawn[${Me}].CombatState} == 1) && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}
+		if ${Group.Count} > 1 && (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}) || (${Me.TargetHealth} < ${AssistBattlePct} && ${Pawn[${Me}].CombatState} == 1) && ${Me.TargetHealth} > 0 && !${Pawn[${Me.Target}].IsDead}
 		{
-		if ${lastattack.Equal[${Me.Target.ID}]}
+			if ${lastattack.Equal[${Me.Target.ID}]}
 			{
-			return TRUE
+				return TRUE
 			}
-		if !${lastattack.Equal[${Me.Target.ID}]}
+			if !${lastattack.Equal[${Me.Target.ID}]}
 			{
-			newattack:Set[TRUE]
-			lastattack:Set[${Me.Target.ID}]
-			StartAttackTime:Set[${Script.RunningTime}]
-			DamageDone:Set[0]
-			debuglog "I Should Attack"
-			return TRUE
+				newattack:Set[TRUE]
+				lastattack:Set[${Me.Target.ID}]
+				StartAttackTime:Set[${Script.RunningTime}]
+				DamageDone:Set[0]
+				debuglog "I Should Attack"
+				return TRUE
 			}
 		}
-	return FALSE
+		return FALSE
 	}
 
 }
@@ -79,20 +79,20 @@ function OpeningSpellSequence()
 			}
 	}
 	if !${doOpeningSeqSpell} && ${newattack}
-		{
+	{
 		if ${doOpeningSeqMelee} && ${newattack}
-			{
+		{
 			call OpeningMeleeSequence
 			return
-			}
+		}
 		elseif !${doOpeningSeqMelee} && ${newattack}
-			{
+		{
 			newattack:Set[FALSE]
 			cleardebug
 			actionlog "No Opening SEQ.  Main Combat"
 			return
-			}
 		}
+	}
 }
 
 ;*************************************************************
@@ -111,10 +111,9 @@ function CombatSpellSequence()
 			call CheckPosition
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack}
-				{
+			{
 				call executeability "${Iterator.Value}" "attack" "Both"
-
-				}
+			}
 			Iterator:Next
 			if !${fight.ShouldIAttack} 
 			return
@@ -259,13 +258,12 @@ function CombatMeleeSequence()
 			call CheckPosition
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack}
-				{
+			{
 				call executeability "${Iterator.Value}" "attack" "Both"
-
-				}
+			}
 			Iterator:Next
 			if !${fight.ShouldIAttack} 
-			return
+				return
 		}
 	}
 	return
@@ -395,23 +393,23 @@ function functBuffCrits()
 	debuglog "Running Buff Crits"
 	if ${doBuffCrits} && ${fight.ShouldIAttack}
 	{
-	call CheckPosition
-	variable iterator anIter
-	BuffCrits:GetSettingIterator[anIter]
-	anIter:First
+		call CheckPosition
+		variable iterator anIter
+		BuffCrits:GetSettingIterator[anIter]
+		anIter:First
 
-	while ( ${anIter.Key(exists)} )
-	{
-	call CheckPosition
-	call checkabilitytocast "${anIter.Value}"
-	if ${Return} && !${Me.Effect[${anIter.Value}](exists)} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack}
+		while ( ${anIter.Key(exists)} )
 		{
-		call executeability "${anIter.Value}" "attack" "Both"
+			call CheckPosition
+			call checkabilitytocast "${anIter.Value}"
+			if ${Return} && !${Me.Effect[${anIter.Value}](exists)} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack}
+			{
+				call executeability "${anIter.Value}" "attack" "Both"
+			}
+			anIter:Next
+			if !${fight.ShouldIAttack} 
+				return
 		}
-	anIter:Next
-	if !${fight.ShouldIAttack} 
-	return
-	}
 	}
 	return
 }
@@ -421,23 +419,23 @@ function functDotCrits()
 	debuglog "Running Dot Crits"
 	if ${doDotCrits} && ${fight.ShouldIAttack}
 	{
-	call CheckPosition
-	variable iterator anIter
-	DotCrits:GetSettingIterator[anIter]
-	anIter:First
-
-	while ( ${anIter.Key(exists)} )
-	{
-	call CheckPosition
-	call checkabilitytocast "${anIter.Value}"
-	if ${Return} && !${Me.TargetDebuff[${anIter.Value}](exists)} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack}
+		call CheckPosition
+		variable iterator anIter
+		DotCrits:GetSettingIterator[anIter]
+		anIter:First
+	
+		while ( ${anIter.Key(exists)} )
 		{
-		call executeability "${anIter.Value}" "attack" "Both"
+			call CheckPosition
+			call checkabilitytocast "${anIter.Value}"
+			if ${Return} && !${Me.TargetDebuff[${anIter.Value}](exists)} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack}
+			{
+				call executeability "${anIter.Value}" "attack" "Both"
+			}
+			anIter:Next
+			if !${fight.ShouldIAttack} 
+				return
 		}
-	anIter:Next
-	if !${fight.ShouldIAttack} 
-	return
-	}
 	}
 	return
 }
@@ -447,34 +445,35 @@ function counterattack()
 	debuglog "Running Counter Attacks"
 	if ${doCounterAttack} && ${fight.ShouldIAttack}
 	{
-	call CheckPosition
-	variable iterator anIter
-	CounterAttack:GetSettingIterator[anIter]
-	anIter:First
+		call CheckPosition
+		variable iterator anIter
+		CounterAttack:GetSettingIterator[anIter]
+		anIter:First
 
-	while ( ${anIter.Key(exists)} )
-	{
-	call CheckPosition
-	call checkabilitytocast "${anIter.Value}"
-	if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} 
+		while ( ${anIter.Key(exists)} )
 		{
-		if ${Me.Effect[${anIter.Value}](exists)}
+			call CheckPosition
+			call checkabilitytocast "${anIter.Value}"
+			if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} 
 			{
-			anIter:Next
+				if ${Me.Effect[${anIter.Value}](exists)}
+				{
+					anIter:Next
+				}
+				if ${Me.TargetDebuff[${anIter.Value}](exists)}
+				{
+					anIter:Next
+				}
+				call checkabilitytocast "${anIter.Value}"
+				if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack} && ${Me.Ability[${anIter.Value}].TriggeredCountdown} == 0
+					call executeability "${anIter.Value}" "counter" "Both"
 			}
-		if ${Me.TargetDebuff[${anIter.Value}](exists)}
-			{
 			anIter:Next
-			}
-		call checkabilitytocast "${anIter.Value}"
-		if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack} && ${Me.Ability[${anIter.Value}].TriggeredCountdown} == 0
-			call executeability "${anIter.Value}" "counter" "Both"
+			if !${fight.ShouldIAttack} 
+			return
 		}
-	anIter:Next
-	if !${fight.ShouldIAttack} 
-	return
 	}
-	}
+	
 	return
 }
 ;*************************************************************
@@ -483,23 +482,23 @@ function functCombatCrits()
 	debuglog "Running Combat Crits"
 	if ${doCombatCrits} && ${fight.ShouldIAttack}
 	{
-	call CheckPosition
-	variable iterator anIter
-	CombatCrits:GetSettingIterator[anIter]
-	anIter:First
+		call CheckPosition
+		variable iterator anIter
+		CombatCrits:GetSettingIterator[anIter]
+		anIter:First
 
-	while ( ${anIter.Key(exists)} )
-	{
-	call CheckPosition
-	call checkabilitytocast "${anIter.Value}"
-	if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack}
+		while ( ${anIter.Key(exists)} )
 		{
-		call executeability "${anIter.Value}" "attack" "Both"
+			call CheckPosition
+			call checkabilitytocast "${anIter.Value}"
+			if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack}
+			{
+				call executeability "${anIter.Value}" "attack" "Both"
+			}
+			anIter:Next
+			if !${fight.ShouldIAttack} 
+				return
 		}
-	anIter:Next
-	if !${fight.ShouldIAttack} 
-	return
-	}
 	}
 	return
 }

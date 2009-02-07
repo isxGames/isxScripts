@@ -2,19 +2,19 @@ function:bool mobresist(string x_ability)
 {
 	variable iterator Iterator
 	If ${MobResists.Fire}
-		{
+	{
 		FireA:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
 		{
 			if ${x_ability.Equal[${Iterator.Key}]}
-				{
+			{
 				debuglog "NO FIRE!!!"
 				return FALSE
-				}
-		Iterator:Next
+			}
+			Iterator:Next
 		}
-		}
+	}
 
 	If ${MobResists.Ice} 
 		{

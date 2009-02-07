@@ -6,7 +6,6 @@ atom(global) AddCounter(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		LavishSettings[VGA].FindSet[Counter]:AddSetting[${aName}, ${aName}]
-
 	}
 	else
 	{
