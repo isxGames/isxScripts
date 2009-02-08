@@ -1,15 +1,16 @@
 function LavishEventLoad()
 {
-	;LavishScript:RegisterEvent[VG_OnIncomingCombatText]
 	Event[VG_OnIncomingCombatText]:AttachAtom[VG_OnIncomingCombatText]
-	;LavishScript:RegisterEvent[VG_onGroupMemberAdded]
-	Event[VG_onGroupMemberAdded]:AttachAtom[NeedBuffs]
-	;LavishScript:RegisterEvent[VG_onGroupMemberDeath]
-	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
-	;LavishScript:RegisterEvent[VG_onPawnStatusChange]
 	Event[VG_onPawnStatusChange]:AttachAtom[VG_onPawnStatusChange]
-	;LavishScript:RegisterEvent[VG_onItemCanUseUpdated]
 	Event[VG_onCombatReaction]:AttachAtom[VG_onCombatReaction]
+	Event[VG_onGroupMemberCountChange]:AttachAtom[VG_onGroupMemberCountChange]
+	Event[VG_onGroupDisbanded]:AttachAtom[VG_onGroupDisbanded]
+	Event[VG_onGroupFormed]:AttachAtom[VG_onGroupFormed]
+	Event[VG_onGroupBooted]:AttachAtom[VG_onGroupBooted]
+	Event[VG_onGroupMemberAdded]:AttachAtom[NeedBuffs]
+	Event[VG_onGroupMemberBooted]:AttachAtom[VG_onGroupMemberBooted]
+	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
+	
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }
 /*atom VG_onItemCanUseUpdated(string ItemName, int ItemID, string IsNowReady)
@@ -151,4 +152,53 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 		ChainReactionAbilityID:Set[${iAbilityID}]
 		return		
 	}
+}
+
+function PopulateGroupMemberNames()
+{
+	variable int i = 2
+	
+	;; First, always make 'Me' first
+	GrpMemberNames[1]:Set[${Me.FName}]
+
+	do
+	{
+		if ${Group[${i}](exists)}
+		{
+			if !${Group[${i}].Name.Equal[${Me.FName}]}
+			{
+				GrpMemberNames[${i}]:Set[${Group[${i}].Name}]
+				echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${i}]}"
+			}
+		}
+		else
+			GrpMemberNames[${i}]:Set[Empty]
+	}
+	while ${i:Inc} <= 24
+	
+}
+
+atom VG_onGroupMemberCountChange()
+{
+	call PopulateGroupMemberNames
+}
+
+atom VG_onGroupDisbanded()
+{
+	call PopulateGroupMemberNames
+}
+
+atom VG_onGroupFormed()
+{
+	call PopulateGroupMemberNames
+}
+
+atom VG_onGroupBooted()
+{
+	call PopulateGroupMemberNames	
+}
+
+atom VG_onGroupMemberBooted()
+{
+	call PopulateGroupMemberNames	
 }
