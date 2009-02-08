@@ -155,6 +155,7 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 function PopulateGroupMemberNames()
 {
 	variable int i = 2
+	variable int j = 2
 	
 	;; Always make 'Me' first
 	GrpMemberNames[1]:Set[${Me.FName}]
@@ -165,18 +166,18 @@ function PopulateGroupMemberNames()
 		{
 			if !${Group[${i}].Name.Equal[${Me.FName}]}
 			{
-				GrpMemberNames[${i}]:Set[${Group[${i}].Name}]
+				GrpMemberNames[${j}]:Set[${Group[${i}].Name}]
 				;echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${i}]}"
-				i:Inc
+				j:Inc
 			}
 		}
 		else
 		{
-			GrpMemberNames[${i}]:Set[Empty]
-			i:Inc
+			GrpMemberNames[${j}]:Set[Empty]
+			j:Inc
 		}
 	}
-	while ${i} <= 24
+	while ${i:Inc} <= 24
 	
 }
 
