@@ -74,7 +74,7 @@
 						{
 							Case Main
 								UIElement[VGA_gui]:SetWidth[400]
-								UIElement[VGA_gui]:SetHeight[350]
+								UIElement[VGA_gui]:SetHeight[640]
 								break
 							Case Healer
 								UIElement[VGA_gui]:SetWidth[400]
@@ -120,7 +120,7 @@
 						{
 							Case MainT
 								UIElement[VGA_gui]:SetWidth[400]
-								UIElement[VGA_gui]:SetHeight[350]
+								UIElement[VGA_gui]:SetHeight[640]
 								break
 							Case BuffWatch
 								UIElement[VGA_gui]:SetWidth[400]
@@ -155,7 +155,7 @@
                           <Button Name="assistButton" Template="VG.GreenButton">
                             <X>10</X>
                             <Y>15</Y>
-                            <Width>100</Width>
+                            <Width>150</Width>
                             <Height>20</Height>
                             <Text></Text>
                             <Alignment>Center</Alignment>
@@ -168,7 +168,7 @@
                           <Button Name="followButton" Template="VG.GreenButton">
                             <X>10</X>
                             <Y>35</Y>
-                            <Width>100</Width>
+                            <Width>150</Width>
                             <Height>20</Height>
                             <Text></Text>
                             <Alignment>Center</Alignment>
@@ -181,7 +181,7 @@
                           <Button Name="TankButton" Template="VG.GreenButton">
                             <X>10</X>
                             <Y>55</Y>
-                            <Width>100</Width>
+                            <Width>150</Width>
                             <Height>20</Height>
                             <Text></Text>
                             <Alignment>Center</Alignment>
@@ -194,7 +194,7 @@
                           <Button Name="RepairSell" Template="VG.RedButton">
                             <X>10</X>
                             <Y>75</Y>
-                            <Width>100</Width>
+                            <Width>150</Width>
                             <Height>19</Height>
                             <Text>Repair/Sell</Text>
                             <Alignment>Center</Alignment>
@@ -204,7 +204,7 @@
                           </Button>
                           <checkbox Name='doassistcheck' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>15</Y>
                             <Width>15</Width>
                             <Height>20</Height>
@@ -221,7 +221,7 @@
                           </checkbox>
                           <checkbox Name='dofollowcheck' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>35</Y>
                             <Width>15</Width>
                             <Height>20</Height>
@@ -237,7 +237,7 @@
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtfollowdistance' Template='VG.BoldText'>
-                            <X>258</X>
+                            <X>308</X>
                             <Y>35</Y>
                             <Width>100</Width>
                             <Height>20</Height>
@@ -245,7 +245,7 @@
                             <Text>Dist</Text>
                           </Text>
                           <Textentry Name='followdistance' Template='VG.TextEntry'>
-                            <X>230</X>
+                            <X>280</X>
                             <Y>35</Y>
                             <Width>26</Width>
                             <Height>19</Height>
@@ -263,7 +263,7 @@
                             </OnChange>
                           </Textentry>
 			 <Textentry Name='AssistBattlePcttxt' Template='VG.TextEntry'>
-                            <X>230</X>
+                            <X>280</X>
                             <Y>16</Y>
                             <Width>26</Width>
                             <Height>19</Height>
@@ -281,7 +281,7 @@
                             </OnChange>
                           </Textentry>
                           <Text Name='txtAssistBattle' Template='VG.BoldText'>
-                            <X>258</X>
+                            <X>308</X>
                             <Y>18</Y>
                             <Width>150</Width>
                             <Height>20</Height>
@@ -290,7 +290,7 @@
                           </Text>
 			<checkbox Name='doMoveToTarget' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>55</Y>
                             <Width>15</Width>
                             <Height>20</Height>
@@ -307,7 +307,7 @@
                           </checkbox>
 			<checkbox Name='doFaceTarget' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>75</Y>
                             <Width>15</Width>
                             <Height>20</Height>
@@ -323,7 +323,7 @@
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtMoveToTargetPct' Template='VG.BoldText'>
-                            <X>258</X>
+                            <X>308</X>
                             <visible>0</visible>
                             <Y>55</Y>
                             <Width>100</Width>
@@ -333,7 +333,7 @@
                           </Text>
                           <Textentry Name='MoveToTargetPct' Template='VG.TextEntry'>
                             <visible>0</visible>
-                            <X>230</X>
+                            <X>280</X>
                             <Y>55</Y>
                             <Width>26</Width>
                             <Height>19</Height>
@@ -352,7 +352,7 @@
                           </Textentry>
 			<checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>95</Y>
                             <Width>15</Width>
                             <Height>20</Height>
@@ -368,7 +368,7 @@
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtSlowAttacksPct' Template='VG.BoldText'>
-                            <X>258</X>
+                            <X>308</X>
                             <Y>95</Y>
                             <Width>100</Width>
                             <Height>20</Height>
@@ -376,7 +376,7 @@
                             <Text>.1sec</Text>
                           </Text>
                           <Textentry Name='SlowAttacksPct' Template='VG.TextEntry'>
-                            <X>230</X>
+                            <X>280</X>
                             <Y>95</Y>
                             <Width>26</Width>
                             <Height>19</Height>
@@ -394,7 +394,7 @@
                             </OnChange>
                           </Textentry>
 			   <Text Name='txtSlowHealsPct' Template='VG.BoldText'>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>115</Y>
                             <Width>120</Width>
                             <Height>20</Height>
@@ -402,7 +402,7 @@
                             <Text>Slow Heals</Text>
                           </Text>
                           <Text Name='txtSlowHealstxt+' Template='VG.BoldText'>
-                            <X>258</X>
+                            <X>308</X>
                             <Y>115</Y>
                             <Width>100</Width>
                             <Height>20</Height>
@@ -410,7 +410,7 @@
                             <Text>.001sec</Text>
                           </Text>
                           <Textentry Name='SlowHealsPct' Template='VG.TextEntry'>
-                            <X>230</X>
+                            <X>280</X>
                             <Y>115</Y>
                             <Width>26</Width>
                             <Height>19</Height>
@@ -429,7 +429,7 @@
                           </Textentry>
 			<checkbox Name='doLoot' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>135</Y>
                             <Width>15</Width>
                             <Height>20</Height>
@@ -446,7 +446,7 @@
                           </checkbox>
 			<checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>155</Y>
                             <Width>15</Width>
                             <Height>20</Height>
@@ -463,7 +463,7 @@
                           </checkbox>
 			<checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>130</X>
+                            <X>180</X>
                             <Y>175</Y>
                             <Width>15</Width>
                             <Height>20</Height>

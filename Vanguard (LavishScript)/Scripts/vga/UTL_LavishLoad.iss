@@ -1,4 +1,85 @@
 ;===================================================
+;===               Load XML Data                ====
+;===================================================
+function loadxmls()
+{
+	LavishSettings[VGA]:Clear
+	LavishSettings[VGA_Mobs]:Clear
+	LavishSettings[VGA_General]:Clear
+	LavishSettings:AddSet[VGA]
+	LavishSettings:AddSet[VGA_Mobs]
+	LavishSettings:AddSet[VGA_General]
+
+	LavishSettings[VGA]:AddSet[Healers]
+	LavishSettings[VGA]:AddSet[Utility]
+	LavishSettings[VGA]:AddSet[OpeningSpellSequence]
+	LavishSettings[VGA]:AddSet[CombatSpellSequence]
+	LavishSettings[VGA]:AddSet[AOESpell]
+	LavishSettings[VGA]:AddSet[DotSpell]
+	LavishSettings[VGA]:AddSet[DebuffSpell]
+	LavishSettings[VGA]:AddSet[Spell]
+	LavishSettings[VGA]:AddSet[OpeningMeleeSequence]
+	LavishSettings[VGA]:AddSet[CombatMeleeSequence]
+	LavishSettings[VGA]:AddSet[AOEMelee]
+	LavishSettings[VGA]:AddSet[DotMelee]
+	LavishSettings[VGA]:AddSet[DebuffMelee]
+	LavishSettings[VGA]:AddSet[Melee]
+	LavishSettings[VGA]:AddSet[AOECrits]
+	LavishSettings[VGA]:AddSet[DotCrits]
+	LavishSettings[VGA]:AddSet[BuffCrits]
+	LavishSettings[VGA]:AddSet[CombatCrits]
+	LavishSettings[VGA]:AddSet[Clickies]
+	LavishSettings[VGA]:AddSet[Counter]
+	LavishSettings[VGA]:AddSet[Dispell]
+	LavishSettings[VGA]:AddSet[StancePush]
+	LavishSettings[VGA]:AddSet[TurnOffAttack]
+	LavishSettings[VGA]:AddSet[Crits]
+	LavishSettings[VGA]:AddSet[CounterAttack]
+	LavishSettings[VGA]:AddSet[Evade]
+	LavishSettings[VGA]:AddSet[Evade1]
+	LavishSettings[VGA]:AddSet[Evade2]
+	LavishSettings[VGA]:AddSet[Buff]
+	LavishSettings[VGA]:AddSet[IceA]
+	LavishSettings[VGA]:AddSet[FireA]
+	LavishSettings[VGA]:AddSet[SpiritualA]
+	LavishSettings[VGA]:AddSet[PhysicalA]
+	LavishSettings[VGA]:AddSet[ArcaneA]
+	LavishSettings[VGA]:AddSet[Triggers]
+	LavishSettings[VGA]:AddSet[UseAbilT1]
+	LavishSettings[VGA]:AddSet[UseItemsT1]
+	LavishSettings[VGA]:AddSet[MobDeBuffT1]
+	LavishSettings[VGA]:AddSet[BuffT1]
+	LavishSettings[VGA]:AddSet[AbilReadyT1]
+	LavishSettings[VGA]:AddSet[Class]
+	LavishSettings[VGA]:AddSet[Rescue]
+	LavishSettings[VGA]:AddSet[ForceRescue]
+
+	LavishSettings[VGA_Mobs]:AddSet[Ice]
+	LavishSettings[VGA_Mobs]:AddSet[Fire]
+	LavishSettings[VGA_Mobs]:AddSet[Spiritual]
+	LavishSettings[VGA_Mobs]:AddSet[Physical]
+	LavishSettings[VGA_Mobs]:AddSet[Arcane]
+
+	LavishSettings[VGA_General]:AddSet[BW]
+	LavishSettings[VGA_General]:AddSet[DBW]
+	LavishSettings[VGA_General]:AddSet[TBW]
+	LavishSettings[VGA_General]:AddSet[Sell]	
+
+	LavishSettings[VGA]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
+	LavishSettings[VGA_Mobs]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
+	LavishSettings[VGA_General]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_General.xml]
+
+	call LoadUtility
+	call LoadSpells
+	call LoadCrits
+	call LoadCombatMain
+	call LoadMelee
+	call LoadEvade
+	call LoadMobs
+	call LoadAbilities
+	call LavishLoad
+}
+;===================================================
 ;===               Healer Lavish Load           ====
 ;===================================================
 function LavishLoad()
