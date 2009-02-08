@@ -19,7 +19,23 @@ objectdef fight
 			}
 
 		}
-		elseif ${Group.Count} > 1 && (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.TargetHealth} > 0 && !${Me.Target.IsDead}) || (${Me.TargetHealth} < ${AssistBattlePct} && ${Me.ToPawn.CombatState} == 1) && ${Me.TargetHealth} > 0 && !${Me.Target.IsDead}
+		elseif ${Group.Count} > 1 && ${Me.TargetHealth} < ${AssistBattlePct} && !${Me.Target.IsDead}
+		{
+			if ${lastattack.Equal[${Me.Target.ID}]}
+			{
+				return TRUE
+			}
+			if !${lastattack.Equal[${Me.Target.ID}]}
+			{
+				newattack:Set[TRUE]
+				lastattack:Set[${Me.Target.ID}]
+				StartAttackTime:Set[${Script.RunningTime}]
+				DamageDone:Set[0]
+				debuglog "I Should Attack"
+				return TRUE
+			}
+		}
+		elseif ${Group.Count} > 1 && ${${tankpawn}.Equal[${Me}]} && ${Me.ToPawn.CombatState} == 1 && !${Me.Target.IsDead}
 		{
 			if ${lastattack.Equal[${Me.Target.ID}]}
 			{
