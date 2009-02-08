@@ -1,4 +1,75 @@
+;********************************************
+/* Add item to the Rescue list */
+;********************************************
+atom(global) AddRescue(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[VGA].FindSet[Rescue]:AddSetting[${aName}, ${aName}]
+	}
+	else
+	{
+		return
+	}
+}
+atom(global) RemoveRescue(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		Rescue.FindSetting[${aName}]:Remove
+	}
+	else
+	{
+	}
+}
 
+atom(global) BuildRescue()
+{
+	variable iterator Iterator
+	Rescue:GetSettingIterator[Iterator]
+	UIElement[RescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[RescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+}  
+;********************************************
+/* Add item to the ForceRescue list */
+;********************************************
+atom(global) AddForceRescue(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[VGA].FindSet[ForceRescue]:AddSetting[${aName}, ${aName}]
+	}
+	else
+	{
+		return
+	}
+}
+atom(global) RemoveForceRescue(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		ForceRescue.FindSetting[${aName}]:Remove
+	}
+	else
+	{
+	}
+}
+
+atom(global) BuildForceRescue()
+{
+	variable iterator Iterator
+	ForceRescue:GetSettingIterator[Iterator]
+	UIElement[ForceRescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[ForceRescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+}  
 
 
 ;********************************************
@@ -30,10 +101,10 @@ atom(global) BuildEvade1()
 {
 	variable iterator Iterator
 	Evade1:GetSettingIterator[Iterator]
-	UIElement[Evade1List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	UIElement[Evade1List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
 	while ( ${Iterator.Key(exists)} )
 	{
-		UIElement[Evade1List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		UIElement[Evade1List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
 }  
@@ -66,10 +137,10 @@ atom(global) BuildEvade2()
 {
 	variable iterator Iterator
 	Evade2:GetSettingIterator[Iterator]
-	UIElement[Evade2List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	UIElement[Evade2List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
 	while ( ${Iterator.Key(exists)} )
 	{
-		UIElement[Evade2List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		UIElement[Evade2List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
 }  
@@ -80,45 +151,68 @@ function PopulateEvadeLists()
 
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
-			UIElement[Evade1Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[Evade2Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[Involn1Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[Involn2Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[FDCombo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[Evade1Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[Evade2Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[Involn1Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[Involn2Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[FDCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[RescueCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[ForceRescueCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[pushagroCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
 	variable iterator Iterator
 	Evade1:GetSettingIterator[Iterator]
-	UIElement[Evade1List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	UIElement[Evade1List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
 	while ( ${Iterator.Key(exists)} )
 	{
-		UIElement[Evade1List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		UIElement[Evade1List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
 	Evade2:GetSettingIterator[Iterator]
-	UIElement[Evade2List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	UIElement[Evade2List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
 	while ( ${Iterator.Key(exists)} )
 	{
-		UIElement[Evade2List@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		UIElement[Evade2List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+	Rescue:GetSettingIterator[Iterator]
+	UIElement[RescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[RescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+	ForceRescue:GetSettingIterator[Iterator]
+	UIElement[ForceRescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[ForceRescueList@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
 	variable int rCount
 	rCount:Set[0]
-	while ${rCount:Inc} <= ${UIElement[Involn1Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
+	while ${rCount:Inc} <= ${UIElement[Involn1Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
-		if ${UIElement[Involn1Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${Involn1}]}
-			UIElement[Involn1Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		if ${UIElement[Involn1Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${Involn1}]}
+			UIElement[Involn1Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
-	while ${rCount:Inc} <= ${UIElement[Involn2Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
+	while ${rCount:Inc} <= ${UIElement[Involn2Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
-		if ${UIElement[Involn2Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${Involn2}]}
-			UIElement[Involn2Combo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		if ${UIElement[Involn2Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${Involn2}]}
+			UIElement[Involn2Combo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
-	while ${rCount:Inc} <= ${UIElement[FDCombo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
+	while ${rCount:Inc} <= ${UIElement[FDCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
-		if ${UIElement[FDCombo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${FD}]}
-			UIElement[FDCombo@EvadeCFrm@Evade@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		if ${UIElement[FDCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${FD}]}
+			UIElement[FDCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[pushagroCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
+	{
+		if ${UIElement[pushagroCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${agropush}]}
+			UIElement[pushagroCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 
 }

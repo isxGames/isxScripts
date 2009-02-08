@@ -243,6 +243,9 @@ Evade:AddSetting[Involn2Pct,${Involn2Pct}]
 Evade:AddSetting[FD,${FD}]
 Evade:AddSetting[Involn1,${Involn1}]
 Evade:AddSetting[Involn2,${Involn2}]
+Evade:AddSetting[doRescue,${doRescue}]
+Evade:AddSetting[doPushAgro,${doPushAgro}]
+Evade:AddSetting[agropush,${agropush}]
 
 ;===================================================
 ;===                  Crits Save                ====

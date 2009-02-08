@@ -52,6 +52,8 @@ variable settingsetref BuffT1
 variable settingsetref AbilReadyT1
 variable settingsetref Sell
 variable settingsetref Class
+variable settingsetref Rescue
+variable settingsetref ForceRescue
 
 ;===================================================
 ;===               Heal Variables               ====
@@ -82,6 +84,7 @@ variable bool healrefresh = TRUE
 ;===               Main VGA Variables           ====
 ;===================================================
 
+variable string tankpawn
 variable string assistpawn 
 variable string followpawn
 variable bool doassistpawn
@@ -145,6 +148,9 @@ variable int FDPct
 variable string Involn1
 variable string Involn2
 variable string FD
+variable bool doRescue
+variable bool doPushAgro
+variable string agropush
 
 ;===================================================
 ;===                 Melee Variables            ====

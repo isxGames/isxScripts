@@ -313,6 +313,8 @@ function EmergencyActions()
 	;-------------------------------------------
 	;*******Check If I Need to Evade************
 	;-------------------------------------------
+	call pushagrototank
+	call rescue
 	call checkFD
 	call checkinvoln1
 	call checkinvoln2
@@ -429,6 +431,8 @@ function loadxmls()
 	LavishSettings[VGA]:AddSet[BuffT1]
 	LavishSettings[VGA]:AddSet[AbilReadyT1]
 	LavishSettings[VGA]:AddSet[Class]
+	LavishSettings[VGA]:AddSet[Rescue]
+	LavishSettings[VGA]:AddSet[ForceRescue]
 
 	LavishSettings[VGA_Mobs]:AddSet[Ice]
 	LavishSettings[VGA_Mobs]:AddSet[Fire]

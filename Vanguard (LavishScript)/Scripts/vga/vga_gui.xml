@@ -178,9 +178,22 @@
                               This:SetText[Follow: ${Me.DTarget.Name}]
                             </OnLeftClick>
                           </Button>
-                          <Button Name="RepairSell" Template="VG.RedButton">
+                          <Button Name="TankButton" Template="VG.GreenButton">
                             <X>10</X>
                             <Y>55</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Text></Text>
+                            <Alignment>Center</Alignment>
+                            <Onload>This:SetText[Set Tank]</Onload>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.tankpawn:Set[${Me.DTarget.Name}]
+                              This:SetText[tankw: ${Me.DTarget.Name}]
+                            </OnLeftClick>
+                          </Button>
+                          <Button Name="RepairSell" Template="VG.RedButton">
+                            <X>10</X>
+                            <Y>75</Y>
                             <Width>100</Width>
                             <Height>19</Height>
                             <Text>Repair/Sell</Text>
@@ -6373,9 +6386,9 @@
 			</Children>
                       </Frame>
                     </Tab>
-                    <!--2nd Level MainEvade Tab-->
-                    <Tab name='Evade'>
-                      <Frame name='EvadeCFrm'>
+                    <!--2nd Level MainAgro Tab-->
+                    <Tab name='Agro'>
+                      <Frame name='AgroCFrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
                         <Texture></Texture>
@@ -6643,6 +6656,132 @@
 				Script[vga].VariableScope.FD:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
+                        <checkbox Name='doPushAgro' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>300</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Push Agro to (Tank) when Mob Not on (Tank)</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doPushAgro}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doPushAgro:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <ComboBox Name="pushagroCombo" Template="VG.ComboBox">
+                            <X>35</X>
+                            <Y>320</Y>
+                            <Width>90%</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.agropush:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+                          <checkbox Name='doRescue' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>340</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Rescue When Mob Not On (Tank)</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRescue}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRescue:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtRescue' Template='VG.BoldText'>
+                            <X>33</X>
+                            <Y>360</Y>
+                            <Width>150</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Non-Force Target Seq.</Text>
+                          </Text>
+                          <ComboBox Name="RescueCombo" Template="VG.ComboBox">
+                            <X>185</X>
+                            <Y>360</Y>
+                            <Width>200</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+                              if ${This.SelectedItem.Text(exists)}
+                              {
+                              AddRescue "${This.SelectedItem.Text}"
+                              BuildRescue
+                              }
+                            </OnSelect>
+                          </ComboBox>
+                          <Listbox Name="RescueList" Template="VG.ListBox">
+                            <X>33</X>
+                            <Y>380</Y>
+                            <Width>90%</Width>
+                            <Height>80</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <Sort>User</Sort>
+                            <OnLoad>
+                              BuildRescue
+                            </OnLoad>
+                            <OnRightClick>
+                              RemoveRescue "${This.SelectedItem}"
+                              This.SelectedItem:Remove
+                              BuildRescue
+                            </OnRightClick>
+			  </Listbox>
+                          <Text Name='txtForceRescue' Template='VG.BoldText'>
+                            <X>33</X>
+                            <Y>470</Y>
+                            <Width>150</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Force Target Seq.</Text>
+                          </Text>
+                          <ComboBox Name="ForceRescueCombo" Template="VG.ComboBox">
+                            <X>185</X>
+                            <Y>470</Y>
+                            <Width>200</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+                              if ${This.SelectedItem.Text(exists)}
+                              {
+                              AddForceRescue "${This.SelectedItem.Text}"
+                              BuildForceRescue
+                              }
+                            </OnSelect>
+                          </ComboBox>
+                          <Listbox Name="ForceRescueList" Template="VG.ListBox">
+                            <X>33</X>
+                            <Y>490</Y>
+                            <Width>90%</Width>
+                            <Height>80</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <Sort>User</Sort>
+                            <OnLoad>
+                              BuildForceRescue
+                            </OnLoad>
+                            <OnRightClick>
+                              RemoveForceRescue "${This.SelectedItem}"
+                              This.SelectedItem:Remove
+                              BuildForceRescue
+                            </OnRightClick>
+                          </Listbox>
 			</Children>
                       </Frame>
                     </Tab>

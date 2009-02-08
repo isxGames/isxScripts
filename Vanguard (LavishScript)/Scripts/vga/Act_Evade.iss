@@ -49,6 +49,67 @@ function checkinvoln2()
 	return
 } 
 ;********************************************
+function pushagrototank()
+{
+	if ${doPushAgro} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+		{
+		Pawn[${tankpawn}]:Target
+		waitframe
+		call checkabilitytocast "${agropush}"
+		if ${Return} && ${Me.Ability[${agropush}].IsReady} && ${fight.ShouldIAttack}
+			call executeability "${Iterator.Value}" "evade" "Neither"
+		}
+	return	
+}
+;********************************************
+function rescue()
+{
+	if ${doRescue} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+	{
+		Pawn[${Me.TargetOfTarget}]:Target
+		waitframe
+		variable iterator Iterator
+		Rescue:GetSettingIterator[Iterator]
+		while ( ${Iterator.Key(exists)} )
+			{
+			call checkabilitytocast "${Iterator.Value}"
+			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+				{	
+				call executeability "${Iterator.Value}" "evade" "Neither"
+				}
+			if !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+				Pawn[${Me.TargetOfTarget}]:Target
+				Iterator:Next
+			if ${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+				Return
+			}
+		if !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+		{
+		Pawn[${Me.TargetOfTarget}]:Target
+		waitframe
+		If !${Me.TargetBuff.Equal[Immunity: Force Target](exists)}
+		{
+		variable iterator Iterator
+		ForceRescue:GetSettingIterator[Iterator]
+		while ( ${Iterator.Key(exists)} )
+			{
+			call checkabilitytocast "${Iterator.Value}"
+			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+				{	
+				call executeability "${Iterator.Value}" "evade" "Neither"
+				}
+			if !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+				Pawn[${Me.TargetOfTarget}]:Target
+				Iterator:Next
+			if ${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+				Return
+			}
+		}
+		}
+	}
+	return	
+}
+;********************************************
 function checkevade1()
 {
 	if ${doEvade1} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
