@@ -272,79 +272,79 @@ function Healcheck()
 ;**********************************************
 function checkinstantheal()
 {
+	variable int icnt = 1
+	
 	if ${ClassRole.healer}
 	{
-	If ${Me.HealthPct} < ${fhpctgrp[1]} && ${Me.HealthPct} > 0 && ${Group.Count} < 2 && ${HealTimer.TimeLeft} == 0 && ${Group[${icnt}].Distance} < 25
-			{ 
+		if ${Group.Count} < 2 && ${Me.HealthPct} < ${fhpctgrp[1]} && ${Me.HealthPct} > 0 && ${HealTimer.TimeLeft} == 0
+		{ 
 			VGexecute /stopcasting
-			Pawn[Me]:Target
+			Me.ToPawn:Target
 			waitframe
 			call checkabilitytocast "${InstantHeal}"
 			if ${Return}
-				{
-				call executeability "${InstantHeal}" "Heal" "Neither"
-				return
-				}
-			call checkabilitytocast "${InstantGroupHeal}"
-			if ${Return}
-				{
-				call executeability "${InstantGroupHeal}" "Heal" "Neither"
-				return
-				}
-			return
-			}
-
-	if ${Group.Count} > 1 && ${HealTimer.TimeLeft} == 0 && ${Group[${icnt}].Distance} < 25
-	{
-	waitframe
-	variable int icnt
-
-	If ${healneeds.GroupInstantHealNum} > 1 && ${GroupStatus.AOEBuffClose}
-	{
-		VGexecute /stopcasting
-		Group[1].ToPawn:Target
-		waitframe
-			call checkabilitytocast "${InstantGroupHeal}"
-			if ${Return}
-				{
-				call executeability "${InstantGroupHeal}" "Heal" "Neither"
-				return
-				}
-			call checkabilitytocast "${InstantHeal}"
-			if ${Return}
-				{
-				call executeability "${InstantHeal}" "Heal" "Neither"
-				return
-				}
-		return
-	}
-
-
-	icnt:Set[1]
-	do
-	{
-	If ${hgrp[${icnt}]} && ${Group[${icnt}].Health} < ${fhpctgrp[${icnt}]} && ${Group[${icnt}].Health} > 0 && ${Group[${icnt}].Distance} < 25
 			{
-			VGexecute /stopcasting
-			Group[${icnt}].ToPawn:Target
-			waitframe
-			call checkabilitytocast "${InstantHeal}"
-			if ${Return}
-				{
 				call executeability "${InstantHeal}" "Heal" "Neither"
 				return
-				}
+			}
 			call checkabilitytocast "${InstantGroupHeal}"
 			if ${Return}
-				{
+			{
 				call executeability "${InstantGroupHeal}" "Heal" "Neither"
 				return
-				}
-			return
 			}
-	} 
-	while ${icnt:Inc} <= ${Group.Count}
-	}
+			return
+		}
+		elseif ${Group.Count} > 1 && ${HealTimer.TimeLeft} == 0
+		{
+			waitframe
+		
+			if ${healneeds.GroupInstantHealNum} > 1 && ${GroupStatus.AOEBuffClose}
+			{
+				VGexecute /stopcasting
+				Me.ToPawn:Target
+				waitframe
+				call checkabilitytocast "${InstantGroupHeal}"
+				if ${Return}
+				{
+					call executeability "${InstantGroupHeal}" "Heal" "Neither"
+					return
+				}
+				call checkabilitytocast "${InstantHeal}"
+				if ${Return}
+				{
+					call executeability "${InstantHeal}" "Heal" "Neither"
+					return
+				}
+				return
+			}
+
+
+			icnt:Set[1]
+			do
+			{
+				If ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${fhpctgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} > 0 && ${Group[${GrpMemberNames[${icnt}]}].Distance} < 25
+				{
+					VGexecute /stopcasting
+					Group[${GrpMemberNames[${icnt}]}].ToPawn:Target
+					waitframe
+					call checkabilitytocast "${InstantHeal}"
+					if ${Return}
+					{
+						call executeability "${InstantHeal}" "Heal" "Neither"
+						return
+					}
+					call checkabilitytocast "${InstantGroupHeal}"
+					if ${Return}
+					{
+						call executeability "${InstantGroupHeal}" "Heal" "Neither"
+						return
+					}
+					return
+				}
+			} 
+			while ${icnt:Inc} <= ${Group.Count}
+		}
 	}
 }
 
@@ -353,32 +353,40 @@ objectdef HealNeeds
 {
 	member:int GroupInstantHealNum()
 	{
-	variable int icnt = 1
-	variable int needint = 0
-	do
-	{
-	If ${hgrp[${icnt}]} && ${Group[${icnt}].Health} < ${gihpctgrp[${icnt}]}
+		variable int icnt = 1
+		variable int needint = 0
+		
+		if !${Group(exists)}
+			return 0
+			
+		do
+		{
+			if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${gihpctgrp[${icnt}]}
 			{
-			needint:Inc
+				needint:Inc
 			}
-	} 
-	while ${icnt:Inc} <= ${Group.Count}
-	return ${needint}
+		} 
+		while ${icnt:Inc} <= ${Group.Count}
+		return ${needint}
 	}
 
 	member:int GroupHealNum()
 	{
-	variable int icnt = 1
-	variable int needint = 0
-	do
-	{
-	If ${hgrp[${icnt}]} && ${Group[${icnt}].Health} < ${ghpctgrp[${icnt}]}
+		variable int icnt = 1
+		variable int needint = 0
+		
+		if !${Group(exists)}
+			return 0
+					
+		do
+		{
+			if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${ghpctgrp[${icnt}]}
 			{
-			needint:Inc
+				needint:Inc
 			}
-	} 
-	while ${icnt:Inc} <= ${Group.Count}
-	return ${needint}
+		} 
+		while ${icnt:Inc} <= ${Group.Count}
+		return ${needint}
 	}
 }
 variable HealNeeds healneeds
