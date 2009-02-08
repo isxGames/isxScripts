@@ -305,16 +305,6 @@ function MoveToTarget()
 	}
 	return
 }
-;=================================================
-function LoadUtility()
-{
-
-}
-;=================================================
-function SaveUtility()
-{
-
-}
 
 
 
