@@ -11,7 +11,7 @@ function Healcheck()
 			if ${Me.HealthPct} < ${fhpctgrp[1]} && ${Me.HealthPct} > 0
 			{
 				healrefresh:Set[FALSE]
-				Pawn[Me]:Target
+				Me.ToPawn:Target
 				waitframe
 				call checkabilitytocast "${InstantHeal}"
 				if ${Return}
@@ -36,7 +36,7 @@ function Healcheck()
 			if ${Me.HealthPct} < ${hpctgrp[1]} && ${Me.HealthPct} > 0
 			{
 				healrefresh:Set[FALSE]
-				Pawn[Me]:Target
+				Me.ToPawn:Target
 				waitframe
 				call checkabilitytocast "${SmallHeal}"
 				if ${Return}
@@ -61,7 +61,7 @@ function Healcheck()
 			if ${Me.HealthPct} < ${bhpctgrp[1]} && ${Me.HealthPct} > 0
 			{
 				healrefresh:Set[FALSE]
-				Pawn[Me]:Target
+				Me.ToPawn:Target
 				call checkabilitytocast "${BigHeal}"
 				if ${Return}
 				{
@@ -85,7 +85,7 @@ function Healcheck()
 			if ${Me.HealthPct} < ${hhpctgrp[1]} && ${Me.HealthPct} > 0
 			{
 				healrefresh:Set[FALSE]
-				Pawn[Me]:Target
+				Me.ToPawn:Target
 				waitframe
 				call checkabilitytocast "${HotHeal}"
 				if ${Return}
@@ -105,7 +105,7 @@ function Healcheck()
 			if ${healneeds.GroupInstantHealNum} > 1 && ${GroupStatus.AOEBuffClose}
 			{
 				healrefresh:Set[FALSE]
-				Group[1].ToPawn:Target
+				Me.ToPawn:Target
 				waitframe
 				call checkabilitytocast "${InstantGroupHeal}"
 				if ${Return}
@@ -123,13 +123,13 @@ function Healcheck()
 			}
 
 
-			icnt:Set[2]
+			icnt:Set[1]
 			do
 			{
 				if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${fhpctgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} > 0 && ${Group[${GrpMemberNames[${icnt}]}].Distance} < 25
 				{
 					healrefresh:Set[FALSE]
-					Group[${icnt}].ToPawn:Target
+					Group[${GrpMemberNames[${icnt}]}].ToPawn:Target
 					waitframe
 					call checkabilitytocast "${InstantHeal}"
 					if ${Return}
@@ -157,7 +157,7 @@ function Healcheck()
 			if ${healneeds.GroupHealNum} > 1 && ${healrefresh} && ${GroupStatus.AOEBuffClose}
 			{
 				healrefresh:Set[FALSE]
-				Group[1].ToPawn:Target
+				Me.ToPawn:Target
 				waitframe
 				call checkabilitytocast "${GroupHeal}"
 				if ${Return}
@@ -174,13 +174,13 @@ function Healcheck()
 				return
 			}
 
-			icnt:Set[2]
+			icnt:Set[1]
 			do
 			{
 				if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${hpctgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} > 0 && ${Group[${GrpMemberNames[${icnt}]}].Distance} < 25
 				{
 					healrefresh:Set[FALSE]
-					Group[${icnt}].ToPawn:Target
+					Group[${GrpMemberNames[${icnt}]}].ToPawn:Target
 					waitframe
 					call checkabilitytocast "${SmallHeal}"
 					if ${Return}
@@ -205,13 +205,13 @@ function Healcheck()
 			} 
 			while ${icnt:Inc} <= ${Group.Count}
 	
-			icnt:Set[2]
+			icnt:Set[1]
 			do
 			{
 				if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${bhpctgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} > 0 && ${Group[${GrpMemberNames[${icnt}]}].Distance} < 25
 				{
 					healrefresh:Set[FALSE]
-					Group[${icnt}].ToPawn:Target
+					Group[${GrpMemberNames[${icnt}]}].ToPawn:Target
 					waitframe
 					call checkabilitytocast "${BigHeal}"
 					if ${Return}
@@ -236,13 +236,13 @@ function Healcheck()
 			} 
 			while ${icnt:Inc} <= ${Group.Count}
 		
-			icnt:Set[2]
+			icnt:Set[1]
 			do
 			{
 				if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${hhpctgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} > 0 && ${Group[${GrpMemberNames[${icnt}]}].Distance} < 25
 				{
 					healrefresh:Set[FALSE]
-					Group[${icnt}].ToPawn:Target
+					Group[${GrpMemberNames[${icnt}]}].ToPawn:Target
 					waitframe
 					call checkabilitytocast "${HotHeal}"
 					if ${Return}
