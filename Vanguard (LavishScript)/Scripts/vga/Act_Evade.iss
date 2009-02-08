@@ -51,7 +51,7 @@ function checkinvoln2()
 ;********************************************
 function pushagrototank()
 {
-	if ${doPushAgro} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+	if ${doPushAgro} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 		{
 		Pawn[${tankpawn}]:Target
 		waitframe
@@ -64,7 +64,9 @@ function pushagrototank()
 ;********************************************
 function rescue()
 {
-	if ${doRescue} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+	if ${pawn[${tankpawn}](exists)}
+	{
+	if ${doRescue} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 	{
 		Pawn[${Me.TargetOfTarget}]:Target
 		waitframe
@@ -106,6 +108,7 @@ function rescue()
 			}
 		}
 		}
+	}
 	}
 	return	
 }
