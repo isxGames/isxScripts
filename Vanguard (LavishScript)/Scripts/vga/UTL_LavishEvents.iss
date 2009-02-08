@@ -154,7 +154,7 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 
 function PopulateGroupMemberNames()
 {
-	variable int i = 2
+	variable int i = 1
 	variable int j = 2
 	
 	;; Always make 'Me' first
