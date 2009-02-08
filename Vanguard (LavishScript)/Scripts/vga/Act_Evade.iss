@@ -89,14 +89,14 @@ function rescue()
 		waitframe
 		If !${Me.TargetBuff.Equal[Immunity: Force Target](exists)}
 		{
-		variable iterator Iterator
-		ForceRescue:GetSettingIterator[Iterator]
-		while ( ${Iterator.Key(exists)} )
+		variable iterator FRIterator
+		ForceRescue:GetSettingIterator[FRIterator]
+		while ( ${FRIterator.Key(exists)} )
 			{
-			call checkabilitytocast "${Iterator.Value}"
-			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+			call checkabilitytocast "${FRIterator.Value}"
+			if ${Return} && ${Me.Ability[${FRIterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
 				{	
-				call executeability "${Iterator.Value}" "evade" "Neither"
+				call executeability "${FRIterator.Value}" "evade" "Neither"
 				}
 			if !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
 				Pawn[${Me.TargetOfTarget}]:Target
