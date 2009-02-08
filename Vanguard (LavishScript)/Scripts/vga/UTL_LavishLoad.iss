@@ -69,7 +69,6 @@ function loadxmls()
 	LavishSettings[VGA_Mobs]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
 	LavishSettings[VGA_General]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_General.xml]
 
-	call LoadUtility
 	call LoadSpells
 	call LoadCrits
 	call LoadCombatMain

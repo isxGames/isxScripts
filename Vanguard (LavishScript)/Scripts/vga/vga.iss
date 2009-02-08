@@ -406,7 +406,6 @@ atom atexit()
    
    VG:ExecBinding[moveforward,release]
    VG:ExecBinding[movebackward,release]
-   call SaveUtility
    call SaveSpells
    call SaveCrits
    call SaveCombatMain
