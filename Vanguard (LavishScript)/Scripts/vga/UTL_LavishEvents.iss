@@ -44,7 +44,7 @@ atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 	IDPawn:Set[${PawnID}]
 	;echo "Pawn Status Change ${ChangeType}, ${PawnID}, ${Me.Target.ID}"
 	if ${IDPawn.Equal[${Me.Target.ID}]} && ${ChangeType.Equal[NowDead]}
-		{
+	{
 		EndAttackTime:Set[${Script.RunningTime}]
 
 		variable int TimeFought
@@ -56,8 +56,7 @@ atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 		ParseLog " "
 		UIElement[ParseList@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem["DPS: ${Math.Calc[${DamageDone}/${Math.Calc[${TimeFought}/1000]}].Round} | Dmg: ${DamageDone}"]
 		ParseCount:Inc
-
-		}
+	}
 }
 atom VG_OnIncomingCombatText(string aText, int aType)
 {
@@ -125,8 +124,8 @@ function TextSplitter(string aText)
 		}
 	elseif ${aText.Find[damage shield]}
 		{
-		ParseAbility:Set["Damage Shield"]
-		ParseDamage:Set[${aText.Mid[${aText.Find[for]}	,${aText.Length}].Token[2,r].Token[1,d]}]
+			ParseAbility:Set["Damage Shield"]
+			ParseDamage:Set[${aText.Mid[${aText.Find[for]}	,${aText.Length}].Token[2,r].Token[1,d]}]
 		}
 }
 
@@ -158,7 +157,7 @@ function PopulateGroupMemberNames()
 {
 	variable int i = 2
 	
-	;; First, always make 'Me' first
+	;; Always make 'Me' first
 	GrpMemberNames[1]:Set[${Me.FName}]
 
 	do
@@ -168,7 +167,7 @@ function PopulateGroupMemberNames()
 			if !${Group[${i}].Name.Equal[${Me.FName}]}
 			{
 				GrpMemberNames[${i}]:Set[${Group[${i}].Name}]
-				echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${i}]}"
+				;echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${i}]}"
 			}
 		}
 		else

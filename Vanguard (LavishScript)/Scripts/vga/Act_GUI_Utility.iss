@@ -1,33 +1,31 @@
 function PauseScript()
 {
-		while ${doPause}
-			wait 1
-		while ${Me.ToPawn.IsDead}
-			wait 1
-		while ${Me.HealthPct} == 0
-			wait 1
+	while (${doPause} || ${Me.ToPawn.IsDead} || ${Me.HealthPct} == 0)
+	{
+		waitframe
+	}
 }
 ;********************************************
 function lootit()
 {
 	if ${DoLoot} && ${Group.Count} < 7 && (!${Me.InCombat} || ${Me.Encounter} > 0)
 	{
-	variable int iCount
-	iCount:Set[1]
-	; Cycle through all the Pawns and find some corpses to Loot and Skin
-	do
-	{
-		if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance} < 10 && ${Pawn[${iCount}].ContainsLoot}
+		variable int iCount
+		iCount:Set[1]
+		; Cycle through all the Pawns and find some corpses to Loot and Skin
+		do
+		{
+			if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance} < 10 && ${Pawn[${iCount}].ContainsLoot}
 			{
-			Pawn[${iCount}]:Target
-			wait 5
-			call movetoobject ${Me.Target.ID} 4 0
-			VGExecute "/lootall"
-			waitframe
-			VGExecute "/cleartargets"
+				Pawn[${iCount}]:Target
+				wait 5
+				call movetoobject ${Me.Target.ID} 4 0
+				VGExecute "/lootall"
+				waitframe
+				VGExecute "/cleartargets"
 			}
-	}	
-	while ${iCount:Inc} < ${VG.PawnCount}
+		}	
+		while ${iCount:Inc} <= ${VG.PawnCount}
 	}
 }
 ;********************************************
@@ -189,9 +187,9 @@ function assistpawn()
 {
 	if ${doassistpawn} 
 	{
-	if ${Pawn[${assistpawn}].Distance} < 50 && ${Pawn[${assistpawn}](exists)}
+		if ${Pawn[exactname,${assistpawn}].Distance} < 50 && ${Pawn[exactname,${assistpawn}](exists)}
 		{
-		VGExecute /assist ${assistpawn}
+			VGExecute /assist ${assistpawn}
 		}
 	}
 	return
@@ -201,10 +199,10 @@ function facemob()
 {
 	if ${doFaceTarget}
 	{
-	call assistpawn
-	if ${Me.Target.ID(exists)}
+		call assistpawn
+		if ${Me.Target.ID(exists)}
 		{
-		face ${Me.Target.X} ${Me.Target.Y}
+			face ${Me.Target.X} ${Me.Target.Y}
 		}
 	}
 	return
@@ -215,12 +213,12 @@ function TooClose()
 {
 	call facemob
 	if ${Me.Target(exists)} && ${Me.Target.Distance} < 1
-		{
+	{
 		VG:ExecBinding[movebackward]
-		wait 1
+		wait 2
 		VG:ExecBinding[movebackward,release]
 		return
-		}
+	}
 	return
 }
 ;********************************************     
@@ -228,9 +226,9 @@ function followpawn()
 {
 	if ${dofollowpawn}
 	{
-	if ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50 && ${Pawn[exactname,${followpawn}](exists)}
+		if ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50 && ${Pawn[exactname,${followpawn}](exists)}
 		{
-		call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
 		}
 	}
 	return
@@ -240,14 +238,14 @@ function followpawn()
 ; **  Pause Routines **
 ; *********************
 function Pause(float delay)
-  {
-   Declare DelayTimer int local ${Math.Calc[${LavishScript.RunningTime}+(1000*${delay})]}
+{
+	declare DelayTimer int local ${Math.Calc[${LavishScript.RunningTime}+(1000*${delay})]}
 
-   While ${LavishScript.RunningTime}<${DelayTimer}
-     {
-      Waitframe 
-     }
-  }
+   	while ${LavishScript.RunningTime}<${DelayTimer}
+ 	{
+		waitframe 
+	}
+}
 ; ***********************************************
 function MeCasting(string CP)
 {
@@ -255,32 +253,23 @@ function MeCasting(string CP)
 	debuglog "Waiting After Cast"
 	;Sub to wait till casting is complete before running the next command
 	while ${Me.IsCasting}
+	{
+		if ${CP.Equal[While]} || ${CP.Equal[Both]}
 		{
-			if ${CP.Equal[While]} || ${CP.Equal[Both]}
-				{
-				call EmergencyActions
-				wait 1
-				}
-			elseif ${CP.Equal[Neither]} || ${CP.Equal[Post]}
-				{
-				wait 1
-				}
+			call EmergencyActions
 		}
-
-	while "${VG.InGlobalRecovery}"
-	{
-		wait 1
+		elseif ${CP.Equal[Neither]} || ${CP.Equal[Post]}
+		{
+		}
+		
+		waitframe
 	}
 
-	while ${Me.ToPawn.IsStunned}
+	while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
 	{
-		wait 1
+		waitframe
 	}
 
-	while !${Me.Ability[Torch].IsReady}
-	{
-		wait 1
-	}
 
 	if ${Me.Target.IsDead} || ${Me.TargetHealth} == 0
 	{
@@ -293,9 +282,9 @@ function MeCasting(string CP)
 		wait ${SlowAttacks}
 	debuglog "Done Waiting, Continue Fighting"
 	if ${CP.Equal[Both]} || ${CP.Equal[Post]}
-		{
+	{
 		call PostCastingActions
-		}
+	}
 	return
 }
 
@@ -335,18 +324,18 @@ function SaveUtility()
 ; ******************
 objectdef Timer
 {
-  variable uint EndTime
- 
-  method Set(uint Milliseconds)
-  {
-     EndTime:Set[${Milliseconds}+${Script.RunningTime}]
-  }
-  member:uint TimeLeft()
-  {
-     If ${Script.RunningTime}>=${EndTime}
-        Return 0
-     Return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
-  }
+	variable uint EndTime
+	
+	method Set(uint Milliseconds)
+	{
+	 	EndTime:Set[${Milliseconds}+${Script.RunningTime}]
+	}
+	member:uint TimeLeft()
+	{
+	 	if ${Script.RunningTime}>=${EndTime}
+	    	return 0
+	 	return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
+	}
 } 
 
 variable Timer Timer
@@ -384,35 +373,35 @@ atom debuglog(string aText)
 
 objectdef HealTimer
 {
-  variable uint EndTime
- 
-  method Set(uint Milliseconds)
-  {
-     EndTime:Set[${Milliseconds}+${Script.RunningTime}]
-  }
-  member:uint TimeLeft()
-  {
-     If ${Script.RunningTime}>=${EndTime}
-        Return 0
-     Return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
-  }
+	variable uint EndTime
+	
+	method Set(uint Milliseconds)
+	{
+	 	EndTime:Set[${Milliseconds}+${Script.RunningTime}]
+	}
+	member:uint TimeLeft()
+	{
+	 	if ${Script.RunningTime}>=${EndTime}
+	    	return 0
+	 	return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
+	}
 } 
 variable HealTimer HealTimer
 
 objectdef BuffTimer
 {
-  variable uint EndTime
- 
-  method Set(uint Milliseconds)
-  {
-     EndTime:Set[${Milliseconds}+${Script.RunningTime}]
-  }
-  member:uint TimeLeft()
-  {
-     If ${Script.RunningTime}>=${EndTime}
-        Return 0
-     Return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
-  }
+	variable uint EndTime
+	
+	method Set(uint Milliseconds)
+	{
+	 	EndTime:Set[${Milliseconds}+${Script.RunningTime}]
+	}
+	member:uint TimeLeft()
+	{
+	 	if ${Script.RunningTime}>=${EndTime}
+	    	return 0
+	 	return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
+	}
 } 
 variable BuffTimer BuffTimer
 ;*********************************
@@ -421,13 +410,11 @@ atom cleardebug()
 	UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
 	if ${ParseCount}<7
 	{
-	ParseCount:Inc
+		ParseCount:Inc
 	}
 	if ${ParseCount}>6
 	{
-	UIElement[ParseList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
-	ParseCount:Set[0]
+		UIElement[ParseList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
+		ParseCount:Set[0]
 	}
-	
-	
 }
