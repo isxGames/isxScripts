@@ -56,6 +56,11 @@ variable settingsetref Rescue
 variable settingsetref ForceRescue
 
 ;===================================================
+;===               Group Member Names, etc      ====
+;===================================================
+variable(global) string GrpMemberNames[24]
+
+;===================================================
 ;===               Heal Variables               ====
 ;===================================================
 

@@ -160,6 +160,7 @@ function main()
 	call PopulateBuffLists
 	call PopulateSellLists
 	call PopulateBardLists
+	call PopulateGroupMemberNames
 	;===================================================
 	;===               Bug WorkArounds              ====
 	;===================================================

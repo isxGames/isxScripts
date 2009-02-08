@@ -88,7 +88,23 @@ function groupbuff()
 }
 function BuffButton(int aGroupNumber)
 {
-	Group[${aGroupNumber}].ToPawn:Target
+	;; 1 is always "Me"
+	;; Otherwise, convert number to name based on what we are using in the UI
+
+	variable string GroupMemberName
+	
+	if (${aGroupNumber} == 1)
+		GroupMemberName:Set[${Me.FName}]
+	else
+		GroupMemberName:Set[${GrpMemberNames[${aGroupNumber}]}]
+	
+	if !${Group[${GroupMemberName}](exists)}
+	{
+		debuglog "BuffButton(${aGroupNumber}) - Group Member doesn't seem to exist..."
+		return
+	}
+	
+	Group[${GroupMemberName}].ToPawn:Target
 	variable iterator anIter
 
 	Buff:GetSettingIterator[anIter]
@@ -96,27 +112,44 @@ function BuffButton(int aGroupNumber)
 
 	while ( ${anIter.Key(exists)} )
 	{
-			if ${Me.Ability[${LazyBuff}](exists)}
-				{
-				call checkabilitytocast "${LazyBuff}"	
-				if ${Return} && ${Me.Ability[${LazyBuff}].IsReady}
-					{
-					call executeability "${LazyBuff}" "buff" "Neither"
-					}
-				}
-			if !${Me.Ability[${LazyBuff}](exists)}
-				{
-				call checkabilitytocast "${anIter.Key}"	
-				if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
-					{
-					call executeability "${anIter.Key}" "buff" "Neither"
-					}
-				}
+		if ${Me.Ability[${LazyBuff}](exists)}
+		{
+			call checkabilitytocast "${LazyBuff}"	
+			if ${Return} && ${Me.Ability[${LazyBuff}].IsReady}
+			{
+				call executeability "${LazyBuff}" "buff" "Neither"
+			}
+		}
+		if !${Me.Ability[${LazyBuff}](exists)}
+		{
+			call checkabilitytocast "${anIter.Key}"	
+			if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
+			{
+				call executeability "${anIter.Key}" "buff" "Neither"
+			}
+		}
 		anIter:Next
 	}
 }
 atom(global) StoneButton(int aGroupNumber)
 {
-	Group[${aGroupNumber}].ToPawn:Target
+	;; 1 is always "Me"
+	;; Otherwise, convert number to name based on what we are using in the UI
+
+	variable string GroupMemberName
+	
+	if (${aGroupNumber} == 1)
+		GroupMemberName:Set[${Me.FName}]
+	else
+		GroupMemberName:Set[${GrpMemberNames[${aGroupNumber}]}]
+	
+	if !${Group[${GroupMemberName}](exists)}
+	{
+		debuglog "BuffButton(${aGroupNumber}) - Group Member doesn't seem to exist..."
+		return
+	}
+	
+	
+	Group[${GroupMemberName}].ToPawn:Target
 	Me.Ability[${ResStone}]:Use
 }

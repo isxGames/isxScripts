@@ -1178,7 +1178,7 @@
                             <OnLoad>
                               if ${Script[vga].VariableScope.hgrp[1]}
                               {
-                              This:SetChecked
+                              	This:SetChecked
                               }
                             </OnLoad>
                             <OnLeftClick>
@@ -1191,10 +1191,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[1 ${Group[1]}]
+                            	This:SetText[1 ${GrpMemberNames[1]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[1 ${Group[1]}]
+                            	This:SetText[1 ${GrpMemberNames[1]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp1' Template='VG.TextEntry'>
@@ -1211,7 +1211,7 @@
                             <OnChange>
                               if ${This.Text.Length} > 0
                               {
-                              Script[vga].VariableScope.fhpctgrp[1]:Set[${Math.Calc[${This.Text}].Int}]
+                             	Script[vga].VariableScope.fhpctgrp[1]:Set[${Math.Calc[${This.Text}].Int}]
                               }
                             </OnChange>
                           </Textentry>
@@ -1229,7 +1229,7 @@
                             <OnChange>
                               if ${This.Text.Length} > 0
                               {
-                              Script[vga].VariableScope.hpctgrp[1]:Set[${Math.Calc[${This.Text}].Int}]
+                              	Script[vga].VariableScope.hpctgrp[1]:Set[${Math.Calc[${This.Text}].Int}]
                               }
                             </OnChange>
                           </Textentry>
@@ -1337,7 +1337,7 @@
                             <OnLoad>
                               if ${Script[vga].VariableScope.hgrp[2]}
                               {
-                              This:SetChecked
+                              	This:SetChecked
                               }
                             </OnLoad>
                             <OnLeftClick>
@@ -1350,10 +1350,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[2 ${Group[2]}]
+                              This:SetText[2 ${GrpMemberNames[2]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[2 ${Group[2]}]
+                              This:SetText[2 ${GrpMemberNames[2]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp2' Template='VG.TextEntry'>
@@ -1509,10 +1509,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[3 ${Group[3]}]
+                              This:SetText[3 ${GrpMemberNames[3]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[3 ${Group[3]}]
+                              This:SetText[3 ${GrpMemberNames[3]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp3' Template='VG.TextEntry'>
@@ -1668,10 +1668,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[4 ${Group[4]}]
+                              This:SetText[4 ${GrpMemberNames4]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[4 ${Group[4]}]
+                              This:SetText[4 ${GrpMemberNames[4]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp4' Template='VG.TextEntry'>
@@ -1827,10 +1827,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[5 ${Group[5]}]
+                              This:SetText[5 ${GrpMemberNames[5]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[5 ${Group[5]}]
+                              This:SetText[5 ${GrpMemberNames[5]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp5' Template='VG.TextEntry'>
@@ -1986,10 +1986,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[6 ${Group[6]}]
+                              This:SetText[6 ${GrpMemberNames[6]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[6 ${Group[6]}]
+                              This:SetText[6 ${GrpMemberNames[6]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp6' Template='VG.TextEntry'>
@@ -2145,10 +2145,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[7 ${Group[7]}]
+                              This:SetText[7 ${GrpMemberNames[7]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[7 ${Group[7]}]
+                              This:SetText[7 ${GrpMemberNames[7]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp7' Template='VG.TextEntry'>
@@ -2304,10 +2304,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[8 ${Group[8]}]
+                              This:SetText[8 ${GrpMemberNames[8]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[8 ${Group[8]}]
+                              This:SetText[8 ${GrpMemberNames[8]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp8' Template='VG.TextEntry'>
@@ -2463,10 +2463,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[9 ${Group[9]}]
+                              This:SetText[9 ${GrpMemberNames[9]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[9 ${Group[9]}]
+                              This:SetText[9 ${GrpMemberNames[9]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp9' Template='VG.TextEntry'>
@@ -2622,10 +2622,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[10 ${Group[10]}]
+                              This:SetText[10 ${GrpMemberNames[10]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[10 ${Group[10]}]
+                              This:SetText[10 ${GrpMemberNames[10]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp10' Template='VG.TextEntry'>
@@ -2781,10 +2781,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[11 ${Group[11]}]
+                              This:SetText[11 ${GrpMemberNames[11]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[11 ${Group[11]}]
+                              This:SetText[11 ${GrpMemberNames[11]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp11' Template='VG.TextEntry'>
@@ -2940,10 +2940,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[12 ${Group[12]}]
+                              This:SetText[12 ${GrpMemberNames[12]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[12 ${Group[12]}]
+                              This:SetText[12 ${GrpMemberNames[12]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp12' Template='VG.TextEntry'>
@@ -3099,10 +3099,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[13 ${Group[13]}]
+                              This:SetText[13 ${GrpMemberNames[13]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[13 ${Group[13]}]
+                              This:SetText[13 ${GrpMemberNames[13]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp13' Template='VG.TextEntry'>
@@ -3258,10 +3258,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[14 ${Group[14]}]
+                              This:SetText[14 ${GrpMemberNames[14]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[14 ${Group[14]}]
+                              This:SetText[14 ${GrpMemberNames[14]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp14' Template='VG.TextEntry'>
@@ -3417,10 +3417,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[15 ${Group[15]}]
+                              This:SetText[15 ${GrpMemberNames[15]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[15 ${Group[15]}]
+                              This:SetText[15 ${GrpMemberNames[15]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp15' Template='VG.TextEntry'>
@@ -3576,10 +3576,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[16 ${Group[16]}]
+                              This:SetText[16 ${GrpMemberNames[16]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[16 ${Group[16]}]
+                              This:SetText[16 ${GrpMemberNames[16]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp16' Template='VG.TextEntry'>
@@ -3735,10 +3735,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[17 ${Group[17]}]
+                              This:SetText[17 ${GrpMemberNames[17]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[17 ${Group[17]}]
+                              This:SetText[17 ${GrpMemberNames[17]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp17' Template='VG.TextEntry'>
@@ -3894,10 +3894,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[18 ${Group[18]}]
+                              This:SetText[18 ${GrpMemberNames[18]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[18 ${Group[18]}]
+                              This:SetText[18 ${GrpMemberNames[18]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp18' Template='VG.TextEntry'>
@@ -4053,10 +4053,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[19 ${Group[19]}]
+                              This:SetText[19 ${GrpMemberNames[19]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[19 ${Group[19]}]
+                              This:SetText[19 ${GrpMemberNames[19]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp19' Template='VG.TextEntry'>
@@ -4212,10 +4212,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[20 ${Group[20]}]
+                              This:SetText[20 ${GrpMemberNames[20]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[20 ${Group[20]}]
+                              This:SetText[20 ${GrpMemberNames[20]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp20' Template='VG.TextEntry'>
@@ -4371,10 +4371,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[21 ${Group[21]}]
+                              This:SetText[21 ${GrpMemberNames[21]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[21 ${Group[21]}]
+                              This:SetText[21 ${GrpMemberNames[21]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp21' Template='VG.TextEntry'>
@@ -4530,10 +4530,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[22 ${Group[22]}]
+                              This:SetText[22 ${GrpMemberNames[22]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[22 ${Group[22]}]
+                              This:SetText[22 ${GrpMemberNames[22]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp22' Template='VG.TextEntry'>
@@ -4689,10 +4689,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[23 ${Group[23]}]
+                              This:SetText[23 ${GrpMemberNames[23]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[23 ${Group[23]}]
+                              This:SetText[23 ${GrpMemberNames[23]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp23' Template='VG.TextEntry'>
@@ -4848,10 +4848,10 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[24 ${Group[24]}]
+                              This:SetText[24 ${GrpMemberNames[24]}]
                             </OnLoad>
                             <OnRender>
-                              This:SetText[24 ${Group[24]}]
+                              This:SetText[24 ${GrpMemberNames[24]}]
                             </OnRender>
                           </Text>
                           <Textentry Name='fhpctgrp24' Template='VG.TextEntry'>
