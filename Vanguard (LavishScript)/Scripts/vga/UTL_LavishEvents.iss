@@ -167,7 +167,7 @@ function PopulateGroupMemberNames()
 			if !${Group[${i}].Name.Equal[${Me.FName}]}
 			{
 				GrpMemberNames[${j}]:Set[${Group[${i}].Name}]
-				;echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${i}]}"
+				;echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${j}]}"
 				j:Inc
 			}
 		}
