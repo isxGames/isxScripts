@@ -167,12 +167,16 @@ function PopulateGroupMemberNames()
 			{
 				GrpMemberNames[${i}]:Set[${Group[${i}].Name}]
 				;echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${i}]}"
+				i:Inc
 			}
 		}
 		else
+		{
 			GrpMemberNames[${i}]:Set[Empty]
+			i:Inc
+		}
 	}
-	while ${i:Inc} <= 24
+	while ${i} <= 24
 	
 }
 
