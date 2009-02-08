@@ -259,7 +259,12 @@ doDebuffMelee:Set[${Melee.FindSetting[doDebuffMelee]}]
 Evade1:Set[${LavishSettings[VGA].FindSet[Evade1]}]
 Evade2:Set[${LavishSettings[VGA].FindSet[Evade2]}]
 Evade:Set[${LavishSettings[VGA].FindSet[Evade]}]
+Rescue:Set[${LavishSettings[VGA].FindSet[Rescue]}]
+ForceRescue:Set[${LavishSettings[VGA].FindSet[ForceRescue]}]
 
+agropush:Set[${Evade.FindSetting[agropush]}]
+doPushAgro:Set[${Evade.FindSetting[doPushAgro]}]
+doRescue:Set[${Evade.FindSetting[doRescue]}]
 doInvoln1:Set[${Evade.FindSetting[doInvoln1]}]
 doInvoln2:Set[${Evade.FindSetting[doInvoln2]}]
 doEvade1:Set[${Evade.FindSetting[doEvade1]}]
@@ -271,6 +276,7 @@ Involn2Pct:Set[${Evade.FindSetting[Involn2Pct]}]
 FD:Set[${Evade.FindSetting[FD]}]
 Involn1:Set[${Evade.FindSetting[Involn1]}]
 Involn2:Set[${Evade.FindSetting[Involn2]}]
+HealerSR:Set[${LavishSettings[VGA].FindSet[Healers]}]
 
 ;===================================================
 ;===                  Crits Load                ====
