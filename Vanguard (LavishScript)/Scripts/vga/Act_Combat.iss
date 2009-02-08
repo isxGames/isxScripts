@@ -35,22 +35,6 @@ objectdef fight
 				return TRUE
 			}
 		}
-		elseif ${Group.Count} > 1 && ${${tankpawn}.Equal[${Me}]} && ${Me.ToPawn.CombatState} == 1 && !${Me.Target.IsDead} && !${Me.Target.Type.Equal[Corpse]}
-		{
-			if ${lastattack.Equal[${Me.Target.ID}]}
-			{
-				return TRUE
-			}
-			if !${lastattack.Equal[${Me.Target.ID}]}
-			{
-				newattack:Set[TRUE]
-				lastattack:Set[${Me.Target.ID}]
-				StartAttackTime:Set[${Script.RunningTime}]
-				DamageDone:Set[0]
-				debuglog "I Should Attack"
-				return TRUE
-			}
-		}
 		return FALSE
 	}
 
