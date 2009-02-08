@@ -254,10 +254,16 @@ function Healcheck()
 				}
 			} 
 			while ${icnt:Inc} <= ${Group.Count}
+			
+			
+			;; Why is this here and not in the PostCastingActions() function?  It won't get called when a heal is cast anyway
+			;; since all of the 'executability' calls above are followed by a "return"...
 			if ${MyClass.Equal[Shaman]}
 			{
 				call shamanmana
 			}
+			
+			
 			return
 		}
 	}
