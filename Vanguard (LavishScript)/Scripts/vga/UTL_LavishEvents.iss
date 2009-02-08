@@ -78,55 +78,54 @@ function Parser(string aText)
 function TextSplitter(string aText)
 {
 	if ${aText.Find[Asaya's Scorn]}
-		{
+	{
 		ParseAbility:Set[Asaya's Scorn]
 		ParseDamage:Set[0]
-		}
+	}
 	if ${aText.Find[<blue>You wipe]}
-		{
+	{
 		ParseAbility:Set[Memory Wipe]
 		ParseDamage:Set[0]
-		}
+	}
 	if ${aText.Find[You exploit]}
-		{
+	{
 		ParseAbility:Set[Exploit Bonus]
 		ParseDamage:Set[0]
-		}
+	}
 	if ${aText.Find[Critical Hit]}
-		{
+	{
 		ParseAbility:Set[Critical Hit]
-			if ${aText.Find[additional <highlight>]}
-				{
-				ParseDamage:Set[${aText.Mid[${aText.Find[an additional <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
-				}
+		if ${aText.Find[additional <highlight>]}
+		{
+			ParseDamage:Set[${aText.Mid[${aText.Find[an additional <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
 		}
+	}
 	if ${aText.Find[Epic]}
-		{
+	{
 		ParseAbility:Set[Critical Hit]
-			if ${aText.Find[additional <highlight>]}
-				{
-				ParseDamage:Set[${aText.Mid[${aText.Find[an additional <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
-				}
+		if ${aText.Find[additional <highlight>]}
+		{
+			ParseDamage:Set[${aText.Mid[${aText.Find[an additional <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
+		}
 		}
 			
 	if ${aText.Find[</color> deals]} || ${aText.Find[</color> hits]}
-		{
+	{
 		ParseAbility:Set[${aText.Token[2,">"].Token[1,"<"]}]
-			if ${aText.Find[for <highlight>]}
-				{
-				ParseDamage:Set[${aText.Mid[${aText.Find[for <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
-				}
-			if ${aText.Find[deals <highlight>]}
-				{
-				ParseDamage:Set[${aText.Mid[${aText.Find[deals <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
-				}
-
-		}
-	elseif ${aText.Find[damage shield]}
+		if ${aText.Find[for <highlight>]}
 		{
-			ParseAbility:Set["Damage Shield"]
-			ParseDamage:Set[${aText.Mid[${aText.Find[for]}	,${aText.Length}].Token[2,r].Token[1,d]}]
+			ParseDamage:Set[${aText.Mid[${aText.Find[for <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
 		}
+		if ${aText.Find[deals <highlight>]}
+		{
+			ParseDamage:Set[${aText.Mid[${aText.Find[deals <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
+		}
+	}
+	elseif ${aText.Find[damage shield]}
+	{
+		ParseAbility:Set["Damage Shield"]
+		ParseDamage:Set[${aText.Mid[${aText.Find[for]}	,${aText.Length}].Token[2,r].Token[1,d]}]
+	}
 }
 
 
