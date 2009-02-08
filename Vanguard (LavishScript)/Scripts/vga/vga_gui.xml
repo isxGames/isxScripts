@@ -1668,7 +1668,7 @@
                             <Width>80</Width>
                             <Height>19</Height>
                             <OnLoad>
-                              This:SetText[4 ${GrpMemberNames4]}]
+                              This:SetText[4 ${GrpMemberNames[4]}]
                             </OnLoad>
                             <OnRender>
                               This:SetText[4 ${GrpMemberNames[4]}]
