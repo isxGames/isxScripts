@@ -5,13 +5,13 @@ function openLootPacks()
 {
 	variable int iCount = 1
 
-	call DebugOut "VG: openLootPacks called"
+	call DebugOut "VGCraft:: openLootPacks called"
 
 	do
 	{
 		if ( ${Me.Inventory[${iCount}].Name.Equal[Supply Pack]} || ${Me.Inventory[${iCount}].Name.Equal[Supply Pouch]} || ${Me.Inventory[${iCount}].Name.Equal[Supply Kit]} )
 		{
-			call DebugOut "VG: Opening: ${Me.Inventory[${iCount}].Name}"
+			call DebugOut "VGCraft:: Opening: ${Me.Inventory[${iCount}].Name}"
 			Me.Inventory[${iCount}]:Use
 			wait 10
 			call DoLoot
@@ -28,13 +28,13 @@ function SellLoot()
 	variable int iCount = 0
 	variable iterator Iterator
 
-	call DebugOut "VG: SellLoot called"
+	call DebugOut "VGCraft:: SellLoot called"
 
 	setSaleItems:GetSettingIterator[Iterator]
 
 	if ( !${Iterator:First(exists)} )
 	{
-		call DebugOut "VG: Nothing to sell"
+		call DebugOut "VGCraft:: Nothing to sell"
 		return
 	}
 
@@ -60,7 +60,7 @@ function SellLoot()
 function BuySupplies()
 {
 	variable int lCount
-	call DebugOut "VG: BuySupplies called"
+	call DebugOut "VGCraft:: BuySupplies called"
 
 	call AddExtraIngredients
 
@@ -84,8 +84,8 @@ function BuySupplies()
 					; Just ran out of space!
 					if ( ${Me.InventorySlotsOpen} < 2 )
 					{
-						call ErrorOut "VG: NOTICE: Out of pack space (${Me.InventorySlotsOpen})"
-						call DebugOut "VG: NOTICE: Out of pack space (${Me.InventorySlotsOpen})"
+						call ErrorOut "VGCraft:: NOTICE: Out of pack space (${Me.InventorySlotsOpen})"
+						call DebugOut "VGCraft:: NOTICE: Out of pack space (${Me.InventorySlotsOpen})"
 						return
 					}
 
@@ -104,7 +104,7 @@ function BuySupplies()
 /* Add Extra Ingredients to the fuel requirements ... used to fix Complications */
 function AddExtraIngredients()
 {
-	call DebugOut "VG: AddExtraIngredients called"
+	call DebugOut "VGCraft:: AddExtraIngredients called"
 
 	variable int lCount=0
 	variable int CurrentFuel
@@ -155,7 +155,7 @@ function:bool SupplyNeeded(bool atStation)
 	woRecipeNeeds:Clear
 	woRecipeFuel:Clear
 
-	call DebugOut "VG: Called SupplyNeeded"
+	call DebugOut "VGCraft:: Called SupplyNeeded"
 
 	; Check each unfinished Work Order -- find the Fuel requirements and increment
 	; the recipe fuel that we need by one stack per uncompleted work order
@@ -178,7 +178,7 @@ function:bool SupplyNeeded(bool atStation)
 					Count:Inc
 					if ${Count} > 5000
 					{
-						call MyOutput "VG: SN: Waited too long for work order 'requested items' to populate ... giving up..."
+						call MyOutput "VGCraft:: SN: Waited too long for work order 'requested items' to populate ... giving up..."
 						break
 					}
 				}
@@ -189,7 +189,7 @@ function:bool SupplyNeeded(bool atStation)
 			{
 				if !${Refining.Recipe["${TaskMaster[Crafting].CurrentWorkOrder[${woCount}].RequestedItems.Left[-1].Right[-2]}"](exists)}
 				{
-					call DebugOut "VG: SN: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}].RequestedItems.Left[-1].Right[-2]}'"
+					call DebugOut "VGCraft:: SN: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}].RequestedItems.Left[-1].Right[-2]}'"
 					BadRecipes:Add["${TaskMaster[Crafting].CurrentWorkOrder[${woCount}]}"]
 					continue
 				}
@@ -200,7 +200,7 @@ function:bool SupplyNeeded(bool atStation)
 			{
 				if !${Refining.Recipe["${TaskMaster[Crafting].CurrentWorkOrder[${woCount}].RequestedItems.Right[-2]}"](exists)}
 				{
-					call DebugOut "VG: SN: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}].RequestedItems.Right[-2]}'"
+					call DebugOut "VGCraft:: SN: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${woCount}].RequestedItems.Right[-2]}'"
 					BadRecipes:Add["${TaskMaster[Crafting].CurrentWorkOrder[${woCount}]}"]
 					continue
 				}
@@ -285,7 +285,7 @@ function:bool SupplyNeeded(bool atStation)
 				supplyNeeded:Set[TRUE]
 				; ...if we need to buy, then buy 50 Extra... less time running back and forth
 				woRecipeFuel.CurrentValue:Inc[${Math.Calc[${woRecipeFuel.CurrentValue} + 50]}]
-				call DebugOut "VG: SupplyNeeded should buy : ${woRecipeFuel.CurrentKey} @ ${woRecipeFuel.CurrentValue}"
+				call DebugOut "VGCraft:: SupplyNeeded should buy : ${woRecipeFuel.CurrentKey} @ ${woRecipeFuel.CurrentValue}"
 			}
 		}
 		while ${woRecipeFuel.NextKey(exists)}
@@ -306,14 +306,14 @@ function:bool RecipeSupplyNeeded()
 	woRecipeNeeds:Clear
 	woRecipeFuel:Clear
 
-	call DebugOut "VG: Called RecipeSupplyNeeded"
+	call DebugOut "VGCraft:: Called RecipeSupplyNeeded"
 
 	; Check the Recipe -- find the Fuel requirements and increment fuel that we need by one stack
 	supplyLineCount:Set[1]
 	fuelNeeded:Set[TRUE]
 	isFound:Set[FALSE]
 
-	call DebugOut "VG: Desc: ${Refining.Recipe[${recipeName}].Description}"
+	call DebugOut "VGCraft:: Desc: ${Refining.Recipe[${recipeName}].Description}"
 
 	; Don't care how many we have, so return FALSE
 	if !${doRecipeMatCheck}
@@ -322,7 +322,7 @@ function:bool RecipeSupplyNeeded()
 	do
 	{
 		supplyLineCount:Inc
-		call DebugOut "VG: Desc: ${supplyLineCount} :: ${Refining.Recipe[${recipeName}].Description.Token[${supplyLineCount},"\n"]}"
+		call DebugOut "VGCraft:: Desc: ${supplyLineCount} :: ${Refining.Recipe[${recipeName}].Description.Token[${supplyLineCount},"\n"]}"
 
 		if !${Refining.Recipe[${recipeName}].Description.Token[${supplyLineCount},"\n"](exists)}
 			return FALSE
@@ -336,7 +336,7 @@ function:bool RecipeSupplyNeeded()
 	}
 	while !${isFound}
 
-	call DebugOut "VG: Desc: ${Refining.Recipe[${recipeName}].Description.Token[${supplyLineCount},"\n"]}"
+	call DebugOut "VGCraft:: Desc: ${Refining.Recipe[${recipeName}].Description.Token[${supplyLineCount},"\n"]}"
 
 	while ${fuelNeeded}
 	{
@@ -396,7 +396,7 @@ function:bool RecipeSupplyNeeded()
 				supplyNeeded:Set[TRUE]
 				; ...buying two extra Fuel items -- just because
 				woRecipeFuel.CurrentValue:Inc[50]
-				call ScreenOut "VG: SupplyNeeded: ${woRecipeFuel.CurrentKey} @ ${woRecipeFuel.CurrentValue}"
+				call ScreenOut "VGCraft:: SupplyNeeded: ${woRecipeFuel.CurrentKey} @ ${woRecipeFuel.CurrentValue}"
 			}
 		}
 		while ${woRecipeFuel.NextKey(exists)}
@@ -418,13 +418,13 @@ function MoveCraftSupplies()
 
 	; This will take the last item added to your inventory and move it to the Pouch
 
-	call DebugOut "VG: Move: ${Me.Inventory[${Me.Inventory}].Name}"
-	;call DebugOut "VG: Move: ${Me.Inventory[${Me.Inventory}].MiscDescription}"
+	call DebugOut "VGCraft:: Move: ${Me.Inventory[${Me.Inventory}].Name}"
+	;call DebugOut "VGCraft:: Move: ${Me.Inventory[${Me.Inventory}].MiscDescription}"
 
 	if ( ${Me.Inventory[${Me.Inventory}].MiscDescription.Find[Small crafting utilities]} )
 	{
 		Me.Inventory[${Me.Inventory}]:PutInContainer[${UtilityPouchIndex}]
-		call DebugOut "VG: MOVING ${Me.Inventory[${Me.Inventory}].Name} to Container Index: ${UtilityPouchIndex}"
+		call DebugOut "VGCraft:: MOVING ${Me.Inventory[${Me.Inventory}].Name} to Container Index: ${UtilityPouchIndex}"
 		wait 5
 	}
 
@@ -442,7 +442,7 @@ function CleanUpInventory()
 
 	; This will take the last item added to your inventory and move it to the Pouch
 
-	call DebugOut "VG: CleanUpInventory Called"
+	call DebugOut "VGCraft:: CleanUpInventory Called"
 
 	do
 	{
@@ -454,7 +454,7 @@ function CleanUpInventory()
 					{
 						if ${Me.Inventory[${i}].Name.Find[${woRecipeFuel.CurrentKey}]}
 						{
-							call DebugOut "VG:  Move Utility: ${Me.Inventory[${i}].Name}"
+							call DebugOut "VGCraft::  Move Utility: ${Me.Inventory[${i}].Name}"
 		 		 		  Me.Inventory[${i}]:PutInContainer[${UtilityPouchIndex}]
     		 		  wait 5
 						}
@@ -473,7 +473,7 @@ function RepairItems()
 {
 	variable int i = 1
 
-	call DebugOut "VG: RepairItems Called"
+	call DebugOut "VGCraft:: RepairItems Called"
 
 	Merchant:Begin[Repair]
 	wait 5
@@ -494,7 +494,7 @@ function:bool RepairNeeded()
 	variable int iCount = 1
 	variable int iDamaged = 70
 
-	Call DebugOut "VG: Determining if items need repairing"
+	Call DebugOut "VGCraft:: Determining if items need repairing"
 
 	do
 	{

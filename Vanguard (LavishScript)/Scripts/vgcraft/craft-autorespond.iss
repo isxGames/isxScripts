@@ -118,28 +118,28 @@ function testNameForGM(string aName)
 	{
 		call GMAlarm
 		isGMDetected:Set[TRUE]
-		call DebugOut "VG: ALARM! Crimson Fellowship detected"
+		call DebugOut "VGCraft:: ALARM! Crimson Fellowship detected"
 	}
 
 	if ${aName.Find[GM-]}
 	{
 		call GMAlarm
 		isGMDetected:Set[TRUE]
-		call DebugOut "VG: ALARM! GM- detected"
+		call DebugOut "VGCraft:: ALARM! GM- detected"
 	}
 
 	if ${aName.Find[Zodero]} || ${aName.Find[Tyathera]} || ${aName.Find[Zwee]} || ${aName.Find[Tiara]} || ${aName.Find[Nethe]} || ${aName.Find[Volson]} || ${aName.Find[Daegarmo]} || ${aName.Find[Kardoras]} || ${aName.Find[Akila]} || ${aName.Find[Vizu]}
 	{
 		call GMAlarm
 		isGMDetected:Set[TRUE]
-		call DebugOut "VG: ALARM! Name match detected"
+		call DebugOut "VGCraft:: ALARM! Name match detected"
 	}
 
 	if ${aName.Find[Knight]} || ${aName.Find[Lady]} || ${aName.Find[Squire]}
 	{
 		call GMAlarm
 		isGMDetected:Set[TRUE]
-		call DebugOut "VG: ALARM! Knight detected detected"
+		call DebugOut "VGCraft:: ALARM! Knight detected detected"
 	}
 }
 
@@ -248,7 +248,7 @@ function testPawn(string aName)
 		{
 			call GMDetect
 			TimedCommand 60 "call GMDetect"
-			call DebugOut "VG: ALARM! Crimson Fellowship detected"
+			call DebugOut "VGCraft:: ALARM! Crimson Fellowship detected"
 		}
 }
 
@@ -402,8 +402,10 @@ function GMAlarm()
 
 		isGMDetected:Set[TRUE]
 
-		call ScreenOut "VG: -=+ GM detected +=- +++ now PAUSED ++++ "
-		call DebugOut "VG: -=+ GM detected +=- +++ now PAUSED ++++ "
+		call ScreenOut "VGCraft:: -=+ GM detected +=- +++ now PAUSED ++++ "
+		call DebugOut "VGCraft:: -=+ GM detected +=- +++ now PAUSED ++++ "
+		
+		call IRCSpew " -=+ GM detected +=- +++ now PAUSED ++++ "
 
 		call PlaySound ALARMSOUND
 		call PlaySound ALARMSOUND
@@ -419,8 +421,9 @@ function GMDetect()
 {
 	if ${doDetectGM}
 	{
-		call ScreenOut "VG: CAUTION: ===== Detected a GM!  ====="
-		call DebugOut "VG: CAUTION: ===== Detected a GM!  ====="
+		call ScreenOut "VGCraft:: CAUTION: ===== Detected a GM!  ====="
+		call DebugOut "VGCraft:: CAUTION: ===== Detected a GM!  ====="
+		call IRCSpew " CAUTION: ===== Detected a GM!  ====="
 		isGMDetected:Set[TRUE]
 		call PlaySound DETECTSOUND
 	}
@@ -435,20 +438,20 @@ function TellAlarm()
 {
 	if ${doTellAlarm}
 	{
-		call DebugOut "VG: tellAlarm"
+		call DebugOut "VGCraft:: tellAlarm"
 		call PlaySound TELLSOUND
 	}
 }
 
 function testTellAlarm()
 {
-		call DebugOut "VG: tellAlarm"
+		call DebugOut "VGCraft:: tellAlarm"
 		call PlaySound TELLSOUND
 }
 
 function WarnAlarm()
 {
-	call DebugOut "VG: WarnAlarm"
+	call DebugOut "VGCraft:: WarnAlarm"
 	call PlaySound WARNSOUND
 }
 
@@ -456,7 +459,7 @@ function LevelAlarm()
 {
 	if ${doLevelAlarm}
 	{
-		call DebugOut "VG: levelAlarm"
+		call DebugOut "VGCraft:: levelAlarm"
 		call PlaySound LEVELSOUND
 	}
 }

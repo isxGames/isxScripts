@@ -14,7 +14,7 @@
 	This script has been written, rewritten, and contributed to by many people.
 	Most notably by Fippy, scubaski, and don'tdoit.  Not possible without Lax and Amadeus.  <3
 	Get Innerspace: www.lavishsoft.com
-	Get ISXVG: www.isxgames.com
+	Get ISXVGCraft:: www.isxgames.com
 	Feel free to use and redistribute in a non-commercial manner as long as you keep the above (and add to them when necessary) in place.
 	If you remember working on this (from wowhunter days or before), let me know and i'll change my credits lines.
 */

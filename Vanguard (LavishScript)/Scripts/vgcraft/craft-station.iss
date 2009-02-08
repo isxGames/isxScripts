@@ -10,7 +10,7 @@ function:bool StationRecipeSelect()
 
 	if ${doRecipeOnly}
 	{
-		call DebugOut "VG: RecipeOnly: StationRecipeSelect called: ${recipeName} :: ${Refining.RecipeCount} "
+		call DebugOut "VGCraft:: RecipeOnly: StationRecipeSelect called: ${recipeName} :: ${Refining.RecipeCount} "
 
 		if ${Refining.Recipe[${recipeName}](exists)}
 		{
@@ -21,13 +21,13 @@ function:bool StationRecipeSelect()
 		else
 		{
 			; Recipe does not exist. VG sometimes doesn't register you have these for some wierd reason
-			call ErrorOut "VG: ERROR: Recipe does not exist! BAD VG! :: ${recipeName}"
-			call ErrorOut "VG: ERROR: Try Selecting table first to force a refresh"
+			call ErrorOut "VGCraft:: ERROR: Recipe does not exist! BAD VG! :: ${recipeName}"
+			call ErrorOut "VGCraft:: ERROR: Try Selecting table first to force a refresh"
 			return FALSE
 		}
 	}
 
-	call DebugOut "VG: StationRecipeSelect called: ${TaskMaster[Crafting].CurrentWorkOrder} :: ${Refining.RecipeCount} "
+	call DebugOut "VGCraft:: StationRecipeSelect called: ${TaskMaster[Crafting].CurrentWorkOrder} :: ${Refining.RecipeCount} "
 
 	wait 10
 
@@ -50,7 +50,7 @@ function:bool StationRecipeSelect()
 					Count:Inc
 					if ${Count} > 5000
 					{
-						call MyOutput "VG: SRS: Waited too long for work order 'requested items' to populate ... giving up..."
+						call MyOutput "VGCraft:: SRS: Waited too long for work order 'requested items' to populate ... giving up..."
 						break
 					}
 				}
@@ -61,7 +61,7 @@ function:bool StationRecipeSelect()
 			{
 				if !${Refining.Recipe["${TaskMaster[Crafting].CurrentWorkOrder[${rCount}].RequestedItems.Left[-1].Right[-2]}"](exists)}
 				{
-					call DebugOut "VG: SRS: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}].RequestedItems.Left[-1].Right[-2]}'"
+					call DebugOut "VGCraft:: SRS: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}].RequestedItems.Left[-1].Right[-2]}'"
 					BadRecipes:Add["${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}"]
 					continue
 				}
@@ -72,7 +72,7 @@ function:bool StationRecipeSelect()
 			{
 				if !${Refining.Recipe["${TaskMaster[Crafting].CurrentWorkOrder[${rCount}].RequestedItems.Right[-2]}"](exists)}
 				{
-					call DebugOut "VG: SRS: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}].RequestedItems.Right[-2]}'"
+					call DebugOut "VGCraft:: SRS: There is no refining recipe for '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}' OR '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}].RequestedItems.Right[-2]}'"
 					BadRecipes:Add["${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}"]
 					continue
 				}
@@ -87,7 +87,7 @@ function:bool StationRecipeSelect()
 		if !${Refining.Recipe["${RecipeName}"].IsWorkOrder}
 		{
 			; We only do Work Orders!
-			call DebugOut "VG: SRS: not a work order: ${Refining.Recipe[${RecipeName}].Name}"
+			call DebugOut "VGCraft:: SRS: not a work order: ${Refining.Recipe[${RecipeName}].Name}"
 			continue
 		}
 
@@ -106,7 +106,7 @@ function:bool StationRecipeSelect()
 		if ${Refining.Recipe["${RecipeName}"].NumUses} < 1
 		{
 			; We only do Work Orders!
-			call DebugOut "VG: SRS: We have finished doing: ${Refining.Recipe[${RecipeName}].Name}"
+			call DebugOut "VGCraft:: SRS: We have finished doing: ${Refining.Recipe[${RecipeName}].Name}"
 			continue
 		}
 
@@ -138,7 +138,7 @@ function TableRemovePersonals()
 	while (${tableIndex} > 0)
 	{
 
-		;call DebugOut "VG: item: ${Refining.Table[${tableIndex}].Name}"
+		;call DebugOut "VGCraft:: item: ${Refining.Table[${tableIndex}].Name}"
 
 		isFound:Set[FALSE]
 
@@ -146,29 +146,29 @@ function TableRemovePersonals()
 		{
 			do
 			{
-				;call DebugOut "VG: CurrentKey: ${woRecipeFuel.CurrentKey}"
+				;call DebugOut "VGCraft:: CurrentKey: ${woRecipeFuel.CurrentKey}"
 
 				if ( ${Refining.Table[${tableIndex}].Name.Find[${woRecipeFuel.CurrentKey}]} && ${Refining.Table[${tableIndex}].Name(exists)} )
 				{
-					;call DebugOut "VG: found: ${Refining.Table[${tableIndex}].Name}"
+					;call DebugOut "VGCraft:: found: ${Refining.Table[${tableIndex}].Name}"
 					isFound:Set[TRUE]
 					break
 				}
 			}
 			while ${woRecipeFuel.NextKey(exists)}
 
-			call DebugOut "VG: ${Me.Inventory[${Refining.Table[${tableIndex}].Name}].MiscDescription}"
+			call DebugOut "VGCraft:: ${Me.Inventory[${Refining.Table[${tableIndex}].Name}].MiscDescription}"
 			if !${isFound} && ${Refining.Table[${tableIndex}].Name(exists)}
 			{
 				if ${Me.Inventory[${Refining.Table[${tableIndex}].Name}].MiscDescription.Find[Small crafting utilities]}
 				{
 					;Small crafting utilities
-					call DebugOut "VG: Not found but OK: ${Me.Inventory[${Refining.Table[${tableIndex}].Name}].Type} :: ${Refining.Table[${tableIndex}].Name}"
+					call DebugOut "VGCraft:: Not found but OK: ${Me.Inventory[${Refining.Table[${tableIndex}].Name}].Type} :: ${Refining.Table[${tableIndex}].Name}"
 				}
 				elseif
 				{
 				; We found an Item that is not on the list, remove it!
-				call DebugOut "VG: Removing from table: ${Refining.Table[${tableIndex}].Name}"
+				call DebugOut "VGCraft:: Removing from table: ${Refining.Table[${tableIndex}].Name}"
 				Refining.Table[${tableIndex}]:RemoveFromTable
 				}
 			}
@@ -190,12 +190,12 @@ function TableAddExtra()
 	{
 		do
 		{
-			call MyOutput "VG: AddExtra testing: ${extraIter.Key}"
+			call MyOutput "VGCraft:: AddExtra testing: ${extraIter.Key}"
 
 			call IsItemOnTable "${extraIter.Key}"
 			if ${Return}
 			{
-				call MyOutput "VG: AddExtra already on table: ${extraIter.Key}"
+				call MyOutput "VGCraft:: AddExtra already on table: ${extraIter.Key}"
 				continue
 			}
 
@@ -204,7 +204,7 @@ function TableAddExtra()
 			{
 				if ( ${Me.Inventory[${itemIndex}].Name.Find[${extraIter.Key}]} && (${Me.Inventory[${itemIndex}].Quantity} >= 10) )
 				{
-					call MyOutput "VG: AddExtra adding: ${Me.Inventory[${itemIndex}].Name}"
+					call MyOutput "VGCraft:: AddExtra adding: ${Me.Inventory[${itemIndex}].Name}"
 					Me.Inventory[${itemIndex}]:AddToCraftingTable
 					wait 2
 					break
@@ -266,7 +266,7 @@ function:bool TableFuelLow()
 		{
 			if ( ${fuel.Equal[${Refining.Table[${count}].Name}]} )
 			{
-				;call MyOutput "VG: Fuel on Table :: ${fuel} :: ${Refining.Table[${count}].Quantity}"
+				;call MyOutput "VGCraft:: Fuel on Table :: ${fuel} :: ${Refining.Table[${count}].Quantity}"
 				fuelCount:Inc[${Refining.Table[${count}].Quantity}]
 			}
 		}

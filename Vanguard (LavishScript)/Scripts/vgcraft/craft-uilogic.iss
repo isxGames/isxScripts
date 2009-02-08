@@ -8,7 +8,7 @@ function SetDebug()
 
 atom(global) PauseBot()
 {
-	call ScreenOut "VG: CraftBot Paused"
+	call ScreenOut "VGCraft:: CraftBot Paused"
 	echo "CraftBot Paused"
 	isPaused:Set[TRUE]
 	isMoving:Set[FALSE]
@@ -31,7 +31,7 @@ atom(global) PauseBot()
 
 atom(global) ResumeBot()
 {
-	call ScreenOut "VG: CraftBot Resumed"
+	call ScreenOut "VGCraft:: CraftBot Resumed"
 	echo "CraftBot Resumed"
 	isPaused:Set[FALSE]
 	movePathCount:Set[0]
@@ -64,18 +64,18 @@ function Start()
 
 	;if ${isMapping}
 	;{
-	;	call ScreenOut "VG: Finish Mapping first!"
+	;	call ScreenOut "VGCraft:: Finish Mapping first!"
 	;	return
 	;}
 
-	call ScreenOut "VG: CraftBot Starting"
+	call ScreenOut "VGCraft:: CraftBot Starting"
 	echo "Starting CraftBot"
 
 	call DebugOut "Station: ${cStation}"
 	call DebugOut "WO NPC: ${cWorkNPC}"
 	call DebugOut "Supplier: ${cSupplyNPC}"
 
-	call DebugOut "VG: Current WO Count: ${TaskMaster[Crafting].CurrentWorkOrderCount}"
+	call DebugOut "VGCraft:: Current WO Count: ${TaskMaster[Crafting].CurrentWorkOrderCount}"
 
 	VGExecute "/cleartargets"
 
@@ -97,7 +97,7 @@ function Start()
 		cTarget:Set[${cStation}]
 		nextDest:Set[${destStation}]
 		cState:Set[CS_MOVE]
-		call DebugOut "VG: Moving to Crafting Station :: ${cTarget}"
+		call DebugOut "VGCraft:: Moving to Crafting Station :: ${cTarget}"
 	}
 	else
 	{
@@ -123,7 +123,7 @@ function Start()
 
 atom(global) StopBot()
 {
-	call ScreenOut "VG: CraftBot Stopped"
+	call ScreenOut "VGCraft:: CraftBot Stopped"
 	echo "Stopping CraftBot"
 	isRunning:Set[FALSE]
 	isMoving:Set[FALSE]
@@ -241,6 +241,22 @@ function InitConfig()
 
 	windowX:Set[${setConfig.FindSetting[windowX, 10]}]
 	windowY:Set[${setConfig.FindSetting[windowY, 10]}]
+	
+	UseIRC:Set[${setConfig.FindSetting[UseIRC,FALSE]}]
+	IRCServer:Set[${setConfig.FindSetting[IRCServer,""]}]
+	IRCNick:Set[${setConfig.FindSetting[IRCNick,""]}]
+	bIRCChannel:Set[${setConfig.FindSetting[bIRCChannel,FALSE]}]
+	IRCChannel:Set[${setConfig.FindSetting[IRCChannel,""]}]
+	bUseIRCMaster:Set[${setConfig.FindSetting[bUseIRCMaster,FALSE]}]
+	IRCMaster:Set[${setConfig.FindSetting[IRCMaster,""]}]
+	IRCAcceptMasterCommands:Set[${setConfig.FindSetting[IRCAcceptMasterCommands,TRUE]}]
+	IRCSpewToMasterPM:Set[${setConfig.FindSetting[IRCSpewToMasterPM,FALSE]}]
+	IRCSpewToChannel:Set[${setConfig.FindSetting[IRCSpewToChannel,FALSE]}]
+	IRCSpewExtraDebugText:Set[${setConfig.FindSetting[IRCSpewExtraDebugText,FALSE]}]
+	bUseNickservIdentify:Set[${setConfig.FindSetting[bUseNickservIdentify,FALSE]}]
+	NickservIdentifyPasswd:Set[${setConfig.FindSetting[NickservIdentifyPasswd,""]}]
+	bUseChannelKey:Set[${setConfig.FindSetting[bUseChannelKey,FALSE]}]
+	ChannelKey:Set[${setConfig.FindSetting[ChannelKey,""]}]
 
 	moveFileName:Set[${setConfig.FindSetting[moveFileName]}]
 
@@ -282,7 +298,7 @@ function InitConfig()
 /* Save user config to a file */
 function SaveConfig()
 {
-	echo "VG: Saving Config Settings"
+	echo "VGCraft:: Saving Config Settings"
 
 	setConfig:AddSetting[getWOrder, ${getWOrder}]
 
@@ -361,7 +377,23 @@ function SaveConfig()
 
 	setConfig:AddSetting[windowX, ${UIElement[CraftBot].X}]
 	setConfig:AddSetting[windowY, ${UIElement[CraftBot].Y}]
-
+	
+	setConfig:AddSetting[UseIRC, ${UseIRC}]
+	setConfig:AddSetting[IRCServer, ${IRCServer}]
+	setConfig:AddSetting[IRCNick, ${IRCNick}]
+	setConfig:AddSetting[bIRCChannel, ${bIRCChannel}]
+	setConfig:AddSetting[IRCChannel, ${IRCChannel}]
+	setConfig:AddSetting[bUseIRCMaster, ${bUseIRCMaster}]
+	setConfig:AddSetting[IRCMaster, ${IRCMaster}]
+	setConfig:AddSetting[IRCAcceptMasterCommands, ${IRCAcceptMasterCommands}]
+	setConfig:AddSetting[IRCSpewToMasterPM, ${IRCSpewToMasterPM}]
+	setConfig:AddSetting[IRCSpewToChannel, ${IRCSpewToChannel}]
+	setConfig:AddSetting[IRCSpewExtraDebugText, ${IRCSpewExtraDebugText}]
+	setConfig:AddSetting[bUseNickservIdentify, ${bUseNickservIdentify}]
+	setConfig:AddSetting[NickservIdentifyPasswd, ${NickservIdentifyPasswd}]
+	setConfig:AddSetting[bUseChannelKey, ${bUseChannelKey}]
+	setConfig:AddSetting[ChannelKey, ${ChannelKey}]
+	
 	setPath.FindSet[${Me.Chunk}]:AddSetting[cRefiningStation, ${cRefiningStation}]
 	setPath.FindSet[${Me.Chunk}]:AddSetting[cRefiningWorkNPC, ${cRefiningWorkNPC}]
 	setPath.FindSet[${Me.Chunk}]:AddSetting[cRefiningSupplyNPC, ${cRefiningSupplyNPC}]
@@ -471,19 +503,19 @@ atom(global) SetRefiningStation()
 
 			setPath.FindSet[${Me.Chunk}]:AddSetting[RefiningStationLoc, "${Me.Location}"]
 
-			call ScreenOut "VG: Refining Station set: ${Me.Target.Name}"
+			call ScreenOut "VGCraft:: Refining Station set: ${Me.Target.Name}"
 
 			;call AddNamedPoint "${cRefiningStation}"
 
 		}
 		else
 		{
-			call ScreenOut "VG: Select a Crafting Station first!"
+			call ScreenOut "VGCraft:: Select a Crafting Station first!"
 		}
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Crafting Station first!"
+		call ScreenOut "VGCraft:: Select a Crafting Station first!"
 	}
 }
 
@@ -499,19 +531,19 @@ atom(global) SetFinishingStation()
 
 			setPath.FindSet[${Me.Chunk}]:AddSetting[FinishingStationLoc, "${Me.Location}"]
 
-			call ScreenOut "VG: Finishing Station set: ${Me.Target.Name}"
+			call ScreenOut "VGCraft:: Finishing Station set: ${Me.Target.Name}"
 
 			;call AddNamedPoint "${cFinishingStation}"
 
 		}
 		else
 		{
-			call ScreenOut "VG: Select a Crafting Station first!"
+			call ScreenOut "VGCraft:: Select a Crafting Station first!"
 		}
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Crafting Station first!"
+		call ScreenOut "VGCraft:: Select a Crafting Station first!"
 	}
 }
 
@@ -520,7 +552,7 @@ atom(global) SetWOSearch()
 {
 		call AddNamedPoint "${woNPCSearch}"
 
-		call ScreenOut "VG: Adding WO NPC search spot"
+		call ScreenOut "VGCraft:: Adding WO NPC search spot"
 }
 
 /* Used from the UI to select a Work Order NPC */
@@ -534,14 +566,14 @@ atom(global) SetRefiningWorkNPC()
 
 		setPath.FindSet[${Me.Chunk}]:AddSetting[RefiningWorkLoc, "${Me.Location}"]
 
-		call ScreenOut "VG: Refining NPC set: ${Me.Target.Name}"
+		call ScreenOut "VGCraft:: Refining NPC set: ${Me.Target.Name}"
 
 		;call AddNamedPoint "${cRefiningWorkNPC}"
 
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Work Order NPC first!"
+		call ScreenOut "VGCraft:: Select a Work Order NPC first!"
 	}
 }
 
@@ -556,14 +588,14 @@ atom(global) SetFinishingWorkNPC()
 
 		setPath.FindSet[${Me.Chunk}]:AddSetting[FinishingWorkLoc, "${Me.Location}"]
 
-		call ScreenOut "VG: Finishing NPC set: ${Me.Target.Name}"
+		call ScreenOut "VGCraft:: Finishing NPC set: ${Me.Target.Name}"
 
 		;call AddNamedPoint "${cFinishingWorkNPC}"
 
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Work Order NPC first!"
+		call ScreenOut "VGCraft:: Select a Work Order NPC first!"
 	}
 }
 
@@ -577,13 +609,13 @@ atom(global) SetRefiningSupplyNPC()
 
 		setPath.FindSet[${Me.Chunk}]:AddSetting[RefiningSupplyLoc, "${Me.Location}"]
 
-		call ScreenOut "VG: Supply NPC set: ${Me.Target.Name}"
+		call ScreenOut "VGCraft:: Supply NPC set: ${Me.Target.Name}"
 
 		;call AddNamedPoint "${cRefiningSupplyNPC}"
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Merchant first!"
+		call ScreenOut "VGCraft:: Select a Merchant first!"
 	}
 }
 
@@ -597,13 +629,13 @@ atom(global) SetFinishingSupplyNPC()
 
 		setPath.FindSet[${Me.Chunk}]:AddSetting[FinishingSupplyLoc, "${Me.Location}"]
 
-		call ScreenOut "VG: Supply NPC set: ${Me.Target.Name}"
+		call ScreenOut "VGCraft:: Supply NPC set: ${Me.Target.Name}"
 
 		;call AddNamedPoint "${cFinishingSupplyNPC}"
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Merchant first!"
+		call ScreenOut "VGCraft:: Select a Merchant first!"
 	}
 }
 
@@ -618,20 +650,20 @@ atom(global) SetRepairNPC()
 
 		setPath.FindSet[${Me.Chunk}]:AddSetting[RepairLoc, "${Me.Location}"]
 
-		call ScreenOut "VG: Repair NPC set: ${Me.Target.Name}"
+		call ScreenOut "VGCraft:: Repair NPC set: ${Me.Target.Name}"
 
 		;call AddNamedPoint "${cRepairNPC}"
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Repair Merchant first!"
+		call ScreenOut "VGCraft:: Select a Repair Merchant first!"
 	}
 }
 
 /* Add a DOOR tag to the current Region */
 atom(global) AddDoor()
 {
-	call ScreenOut "VG: Adding Door point"
+	call ScreenOut "VGCraft:: Adding Door point"
 
 	pointcount:Inc
 
@@ -656,11 +688,11 @@ atom(global) AddSellItem(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		setSaleItems:AddSetting[${aName}, ${aName}]
-		call DebugOut "VG: setSaleItems: ${setSaleItems.FindSetting[${aName}]}"
+		call DebugOut "VGCraft:: setSaleItems: ${setSaleItems.FindSetting[${aName}]}"
 	}
 	else
 	{
-		call DebugOut "VG: AddSellitem: ${aName} is zero length!"
+		call DebugOut "VGCraft:: AddSellitem: ${aName} is zero length!"
 	}
 }
 
@@ -669,11 +701,11 @@ atom(global) RemoveSellItem(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		setSaleItems.FindSetting[${aName}]:Remove
-		call DebugOut "VG: RemoveSellItem: ${aName}"
+		call DebugOut "VGCraft:: RemoveSellItem: ${aName}"
 	}
 	else
 	{
-		call DebugOut "VG: RemoveSellitem: ${aName} is zero length!"
+		call DebugOut "VGCraft:: RemoveSellitem: ${aName} is zero length!"
 	}
 }
 
@@ -699,11 +731,11 @@ atom(global) AddExtraItem(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		setExtraItems:AddSetting[${aName}, ${aName}]
-		call DebugOut "VG: setExtraItems: ${setExtraItems.FindSetting[${aName}]}"
+		call DebugOut "VGCraft:: setExtraItems: ${setExtraItems.FindSetting[${aName}]}"
 	}
 	else
 	{
-		call DebugOut "VG: AddExtraItem: ${aName} is zero length!"
+		call DebugOut "VGCraft:: AddExtraItem: ${aName} is zero length!"
 	}
 }
 
@@ -712,11 +744,11 @@ atom(global) RemoveExtraItem(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		setExtraItems.FindSetting[${aName}]:Remove
-		call DebugOut "VG: RemoveExtraItem: ${aName}"
+		call DebugOut "VGCraft:: RemoveExtraItem: ${aName}"
 	}
 	else
 	{
-		call DebugOut "VG: RemoveExtraItem: ${aName} is zero length!"
+		call DebugOut "VGCraft:: RemoveExtraItem: ${aName} is zero length!"
 	}
 }
 
@@ -772,15 +804,15 @@ function SetRecipeStation()
 		if ${Me.Target.Type.Find[Crafting]}
 		{
 			recipeStation:Set[${Me.Target.Name}]
-			call ScreenOut "VG: Recipe Crafting Station set: ${Me.Target.Name}"
+			call ScreenOut "VGCraft:: Recipe Crafting Station set: ${Me.Target.Name}"
 		}
 		else
 		{
-			call ScreenOut "VG: Select a Crafting Station first!"
+			call ScreenOut "VGCraft:: Select a Crafting Station first!"
 		}
 	}
 	else
 	{
-		call ScreenOut "VG: Select a Crafting Station first!"
+		call ScreenOut "VGCraft:: Select a Crafting Station first!"
 	}
 }

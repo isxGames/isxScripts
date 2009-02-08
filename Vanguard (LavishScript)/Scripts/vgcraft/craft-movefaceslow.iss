@@ -90,7 +90,7 @@ function faceslow(float facX, float facY, float Rt, float Lt, int iFacTimeOut)
 	Face ${facX} ${facY}
 
 	if (${Math.Calc[${Time.Timestamp} - ${bailOut.Timestamp}]} > ${iFacTimeOut})
-		call DebugOut "VG: faceslow timeout!"
+		call DebugOut "VGCraft:: faceslow timeout!"
 }
 
 function Angle(float angX, float angY)

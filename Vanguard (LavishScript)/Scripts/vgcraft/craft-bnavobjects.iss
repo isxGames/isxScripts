@@ -161,7 +161,7 @@ objectdef  bnav
 		
 		if ${VG.CheckCollision[${From}, ${To}](exists)} || ${VG.CheckCollision[${To}, ${From}](exists)}
 		{
-			call DebugOut "VG: CheckCollision ${VG.CheckCollision[${To}, ${From}].Location} = TRUE"
+			call DebugOut "VGCraft:: CheckCollision ${VG.CheckCollision[${To}, ${From}].Location} = TRUE"
 			return TRUE
 		}
 		return FALSE

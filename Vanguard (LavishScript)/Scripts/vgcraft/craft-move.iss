@@ -22,7 +22,7 @@ function:bool TargetSupplyNPC()
 	}
 	else
 	{
-		call ErrorOut "VG: Can not target Supply NPC: ${cSupplyNPC}"
+		call ErrorOut "VGCraft:: Can not target Supply NPC: ${cSupplyNPC}"
 	}
 
 	return FALSE
@@ -53,7 +53,7 @@ function:bool TargetOrderNPC()
 	}
 	else
 	{
-		call ErrorOut "VG: Can not Target Work Order NPC: ${cWorkNPC}"
+		call ErrorOut "VGCraft:: Can not Target Work Order NPC: ${cWorkNPC}"
 	}
 
 	return FALSE
@@ -67,14 +67,14 @@ function:bool TargetStation()
 		if ( !${recipeStation(exists)} || ${recipeStation.Equal[NONE]} )
 		{
 			; They did not set the station with the UI button
-			call ErrorOut "VG: ERROR: No Recipe Crafting Station Set"
+			call ErrorOut "VGCraft:: ERROR: No Recipe Crafting Station Set"
 			return FALSE
 		}
 	}
 	elseif ( !${cStation(exists)} || ${cStation.Equal[NONE]} )
 	{
 		; They did not set the station with the UI button
-		call ErrorOut "VG: ERROR: No Crafting Station Set"
+		call ErrorOut "VGCraft:: ERROR: No Crafting Station Set"
 		return FALSE
 	}
 
@@ -107,7 +107,7 @@ function:bool TargetStation()
 	if ${Me.Target.Distance} > ${objPrecision}
 	{
 		; Nope, no good
-		call ErrorOut "VG: Too far from station: ${cStation} :: ${Me.Target.Distance}"
+		call ErrorOut "VGCraft:: Too far from station: ${cStation} :: ${Me.Target.Distance}"
 		farAwayError:Set[TRUE]
 		return FALSE
 	}
@@ -126,7 +126,7 @@ function:bool TargetLOS()
 
 	if !${Me.Target(exists)}
 	{
-		call DebugOut "VG: No TARGET set in TargetLOS"
+		call DebugOut "VGCraft:: No TARGET set in TargetLOS"
 		isMoving:Set[FALSE]
 		return FALSE
 	}
@@ -211,7 +211,7 @@ function MoveToTarget()
 
 	if ( ${cTargetID} == 0 )
 	{
-		call ErrorOut "VG: Missing move target ID"
+		call ErrorOut "VGCraft:: Missing move target ID"
 		call FindMoveTarget
 		if !${Return}
 			return
@@ -313,7 +313,7 @@ function MoveToTarget()
 	}
 
 
-	call DebugOut "VG: Moving to Found Target: ${cTargetID}"
+	call DebugOut "VGCraft:: Moving to Found Target: ${cTargetID}"
 
 	; Set wait STATE
 	cState:Set[CS_MOVE_WAIT]
@@ -322,7 +322,7 @@ function MoveToTarget()
 	; Path got us close, let's finish off the move
 	if ${farAwayError}
 	{
-		call DebugOut "VG: Too far away, get closer!"
+		call DebugOut "VGCraft:: Too far away, get closer!"
 		isMoving:Set[TRUE]
 		call moveToTargetedObject ${cTargetID} 1 0 FALSE
 	}
@@ -344,7 +344,7 @@ function MoveToTarget()
 	cState:Set[CS_MOVE_DONE]
 	isMoving:Set[FALSE]
 
-	call DebugOut "VG: State to CS_MOVE_DONE"
+	call DebugOut "VGCraft:: State to CS_MOVE_DONE"
 }
 
 /* *************************************************************************** */
@@ -352,7 +352,7 @@ function MoveToTarget()
 /* Get back onto a mapped square that also has connections to somewhere else */
 function:bool MoveToMap()
 {
-	call ErrorOut "VG: Error: Not on MAP, MoveToMap called"
+	call ErrorOut "VGCraft:: Error: Not on MAP, MoveToMap called"
 	if !${isMapping}
 		isMapping:Set[TRUE]
 
@@ -374,7 +374,7 @@ function:bool FindMoveTarget()
 	{
 		if ( ${Pawn[exactname,${cTarget}](exists)} )
 		{
-			call DebugOut "VG: FindMoveTarget: Pawn:Target(exists): ${Pawn[${cTarget}].Name}"
+			call DebugOut "VGCraft:: FindMoveTarget: Pawn:Target(exists): ${Pawn[${cTarget}].Name}"
 
 			if ${cTarget.Equal[${cStation}]}
 				cTargetID:Set[${Pawn[exactname,${cTarget}].ID}]
@@ -480,38 +480,38 @@ function:string MoveAlongPath()
 	; ${cWorkNPC}
 	; ${cSupplyNPC}
 
-	call DebugOut "VG: MoveAlongPath called"
+	call DebugOut "VGCraft:: MoveAlongPath called"
 
 	wait 5
 
 	; Where are we going?
 	if ${nextDest.Equal[${destStation}]}
 	{
-		call DebugOut "VG: Move to Crafting Station: ${cStation} "
+		call DebugOut "VGCraft:: Move to Crafting Station: ${cStation} "
 		cTarget:Set[${cStation}]
 		cTargetLoc:Set[${stationLoc}]
 	}
 	elseif ${nextDest.Equal[${destWorkSearch}]}
 	{
-		call DebugOut "VG: Move to WO NPC Search spot: ${woNPCSearch} "
+		call DebugOut "VGCraft:: Move to WO NPC Search spot: ${woNPCSearch} "
 		cTarget:Set[${woNPCSearch}]
 		cTargetLoc:Set[${workLoc}]
 	}
 	elseif ${nextDest.Equal[${destWork}]}
 	{
-		call DebugOut "VG: Move to WO NPC: ${cWorkNPC} "
+		call DebugOut "VGCraft:: Move to WO NPC: ${cWorkNPC} "
 		cTarget:Set[${cWorkNPC}]
 		cTargetLoc:Set[${workLoc}]
 	}
 	elseif ${nextDest.Equal[${destSupply}]}
 	{
-		call DebugOut "VG: Move to Supply NPC: ${cSupplyNPC} "
+		call DebugOut "VGCraft:: Move to Supply NPC: ${cSupplyNPC} "
 		cTarget:Set[${cSupplyNPC}]
 		cTargetLoc:Set[${supplyLoc}]
 	}
 	elseif ${nextDest.Equal[${destRepair}]}
 	{
-		call DebugOut "VG: Move to Repair NPC: ${cRepairNPC} "
+		call DebugOut "VGCraft:: Move to Repair NPC: ${cRepairNPC} "
 		cTarget:Set[${cRepairNPC}]
 		cTargetLoc:Set[${repairLoc}]
 	}
@@ -564,7 +564,7 @@ function MoveDone()
 	; ${cWorkNPC}
 	; ${cSupplyNPC}
 
-	call DebugOut "VG: MoveDone called :: Distance: ${Me.Target.Distance}"
+	call DebugOut "VGCraft:: MoveDone called :: Distance: ${Me.Target.Distance}"
 
 	isMoving:Set[FALSE]
 
@@ -572,7 +572,7 @@ function MoveDone()
 
 	if ( ${Me.Target.Distance} > 5 )
 	{
-		call DebugOut "VG: Not close enough to target (${Me.Target.Distance}), move again"
+		call DebugOut "VGCraft:: Not close enough to target (${Me.Target.Distance}), move again"
 		; Hmmm, we are not close enough to our target -- Try again!
 		cState:Set[CS_MOVE]
 		return
@@ -580,7 +580,7 @@ function MoveDone()
 
 	if ${nextDest.Equal[${destStation}]}
 	{
-		call DebugOut "VG: at Station, start working"
+		call DebugOut "VGCraft:: at Station, start working"
 		cTarget:Set[${cStation}]
 
 		; Start Working at the Crafting Station
@@ -588,7 +588,7 @@ function MoveDone()
 	}
 	elseif ${nextDest.Equal[${destWorkSearch}]}
 	{
-		call DebugOut "VG: at WO NPC Search Spot, look for NPC"
+		call DebugOut "VGCraft:: at WO NPC Search Spot, look for NPC"
 
 		; Set our new Target
 		cTarget:Set[${cWorkNPC}]
@@ -599,7 +599,7 @@ function MoveDone()
 	}
 	elseif ${nextDest.Equal[${destWork}]}
 	{
-		call DebugOut "VG: at WO NPC, get some"
+		call DebugOut "VGCraft:: at WO NPC, get some"
 		cTarget:Set[${cWorkNPC}]
 
 		; Work Orders, Turn in Old and get New
@@ -607,7 +607,7 @@ function MoveDone()
 	}
 	elseif ${nextDest.Equal[${destSupply}]}
 	{
-		call DebugOut "VG: at Supply NPC, buy/sell"
+		call DebugOut "VGCraft:: at Supply NPC, buy/sell"
 		cTarget:Set[${cSupplyNPC}]
 
 		; Stock UP!
@@ -615,7 +615,7 @@ function MoveDone()
 	}
 	elseif ${nextDest.Equal[${destRepair}]}
 	{
-		Call DebugOut "VG: at Repair NPC, repairing items"
+		Call DebugOut "VGCraft:: at Repair NPC, repairing items"
 		cTarget:Set[${cRepairNPC}]
 
 		; Repairitems

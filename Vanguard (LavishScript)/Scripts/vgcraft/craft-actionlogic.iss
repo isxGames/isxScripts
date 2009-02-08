@@ -95,16 +95,16 @@ function:bool ChooseAction()
 
 	if ${inCorrection} && !${lastCorrection.Equal[NONE]}
 	{
-		call DebugOut "VG: correction ${lastCorrection} cost ${lastAPDiff} AP"
-		call StatsOut "VG:      correction ${lastCorrection} cost ${lastAPDiff} AP"
+		call DebugOut "VGCraft:: correction ${lastCorrection} cost ${lastAPDiff} AP"
+		call StatsOut "VGCraft::      correction ${lastCorrection} cost ${lastAPDiff} AP"
 	}
 	elseif !${currentActionName.Equal[NONE]}
 	{
-		call DebugOut "VG: action ${currentActionName} cost ${lastAPDiff} AP"
-		call DebugOut "VG: ${currentActionName} with progress ${fLastProgDiff.Int}%"
-		;call DebugOut "VG: setting fLastProgress: ${fLastProgress} :: ${fCheckProgress}"
-		call StatsOut "VG:      action ${currentActionName} cost ${lastAPDiff} AP"
-		call StatsOut "VG:      ${currentActionName} with progress ${fLastProgDiff.Int}%"
+		call DebugOut "VGCraft:: action ${currentActionName} cost ${lastAPDiff} AP"
+		call DebugOut "VGCraft:: ${currentActionName} with progress ${fLastProgDiff.Int}%"
+		;call DebugOut "VGCraft:: setting fLastProgress: ${fLastProgress} :: ${fCheckProgress}"
+		call StatsOut "VGCraft:: action ${currentActionName} cost ${lastAPDiff} AP"
+		call StatsOut "VGCraft:: ${currentActionName} with progress ${fLastProgDiff.Int}%"
 	}
 
 
@@ -116,7 +116,10 @@ function:bool ChooseAction()
 	if (${apLeft} <= 0)
 		apLeft:Set[1]
 
-	apPercent:Set[${Math.Calc[(${apLeft} / ${Refining.OrigActionPointsAvail}) * 100]}]
+	if (${Refining.OrigActionPointsAvail} > 0)
+		apPercent:Set[${Math.Calc[(${apLeft} / ${Refining.OrigActionPointsAvail}) * 100]}]
+	else
+		apPercent:Set[0]
 
 	testProgress:Set[1]
 	testQuality:Set[0]
@@ -128,11 +131,11 @@ function:bool ChooseAction()
 	call StepsRemaining
 	stepsLeft:Set[${Return}]
 
-	;call DebugOut "VG:   ---  AP left ${apLeft}  ---"
+	;call DebugOut "VGCraft::   ---  AP left ${apLeft}  ---"
 
 	if ${GV[bool,CraftingCatalystAvailable]}
 	{
-		call DebugOut "VG: Catalyst Step! using it now"
+		call DebugOut "VGCraft:: Catalyst Step! using it now"
 		cState:Set[CS_ACTION_WAIT]
 		VGExecute "/craftingaddsecondary"
 		return TRUE
@@ -327,25 +330,25 @@ function:bool ChooseAction()
 	; Set the Limits based on the Difficulty of this recipe
 	if ${aDiff.Equal[Very Easy]} || ${aDiff.Equal[Trivial]}
 	{
-		;call DebugOut "VG: minQVEasy: ${aDiff}"
+		;call DebugOut "VGCraft:: minQVEasy: ${aDiff}"
 		userMinQ:Set[${minQVEasy}]
 		userMaxQ:Set[${maxQVEasy}]
 	}
 	elseif ${aDiff.Equal[Easy]}
 	{
-		;call DebugOut "VG: minQEasy: ${aDiff}"
+		;call DebugOut "VGCraft:: minQEasy: ${aDiff}"
 		userMinQ:Set[${minQEasy}]
 		userMaxQ:Set[${maxQEasy}]
 	}
 	elseif ${aDiff.Equal[Moderate]}
 	{
-		;call DebugOut "VG: minQMod: ${aDiff}"
+		;call DebugOut "VGCraft:: minQMod: ${aDiff}"
 		userMinQ:Set[${minQMod}]
 		userMaxQ:Set[${maxQMod}]
 	}
 	elseif ${aDiff.Equal[Difficult]}
 	{
-		;call DebugOut "VG: minQDiff: ${aDiff}"
+		;call DebugOut "VGCraft:: minQDiff: ${aDiff}"
 		userMinQ:Set[${minQDiff}]
 		userMaxQ:Set[${maxQDiff}]
 	}
@@ -355,7 +358,7 @@ function:bool ChooseAction()
 	;
 	if ${doRecipeOnly}
 	{
-		;call DebugOut "VG: doRecipeOnly: TRUE"
+		;call DebugOut "VGCraft:: doRecipeOnly: TRUE"
 		userMinQ:Set[${minQRecipe}]
 		userMaxQ:Set[${maxQRecipe}]
 		userAPLimit:Set[${apLimitRecipe}]
@@ -445,8 +448,8 @@ function:bool ChooseAction()
 	}
 
 
-	;call DebugOut "VG: == APLimit == vs currAPRatio: ${userAPLimit} vs ${currentAPRatio}"
-	;call DebugOut "VG: == MaxQ == vs Qual: ${userMaxQ} vs ${Refining.Quality} "
+	;call DebugOut "VGCraft:: == APLimit == vs currAPRatio: ${userAPLimit} vs ${currentAPRatio}"
+	;call DebugOut "VGCraft:: == MaxQ == vs Qual: ${userMaxQ} vs ${Refining.Quality} "
 
 	; If we ran out of AP last action, try to find a lower cost one
 	if ( ${ooAPCheck} )
@@ -809,7 +812,7 @@ function:bool FindAction2(int testProgress, int testQuality, bool useItem, bool 
 					testAvgQual:Set[${avgQual}]
 					testNumUsed:Set[${numUsed}]
 
-					;call DebugOut "VG:  ===  LowCost Selecting: ${newName}"
+					;call DebugOut "VGCraft::  ===  LowCost Selecting: ${newName}"
 				}
 
 				continue
@@ -830,7 +833,7 @@ function:bool FindAction2(int testProgress, int testQuality, bool useItem, bool 
 					testAvgQual:Set[${avgQual}]
 					testNumUsed:Set[${numUsed}]
 
-					;call DebugOut "VG:  ===  High cost Selecting: ${newName}"
+					;call DebugOut "VGCraft::  ===  High cost Selecting: ${newName}"
 				}
 
 				continue
@@ -847,7 +850,7 @@ function:bool FindAction2(int testProgress, int testQuality, bool useItem, bool 
 			;	testAvgProg:Set[${avgProg}]
 			;	testAvgQual:Set[${avgQual}]
 			;	testNumUsed:Set[${numUsed}]
-			;	call DebugOut "VG:  ===  Forcing unused Action: ${newName}"
+			;	call DebugOut "VGCraft::  ===  Forcing unused Action: ${newName}"
 			;	break
 			;}
 
@@ -855,7 +858,7 @@ function:bool FindAction2(int testProgress, int testQuality, bool useItem, bool 
 			{
 				;This action LOSES Quality, so make it "cost" more
 				iCost:Inc[${Math.Calc[200 * ${qualLoss}]}]
-				call MyOutput "VG: Lose Qual: ${newName} :: ${iCost}"
+				call MyOutput "VGCraft:: Lose Qual: ${newName} :: ${iCost}"
 			}
 
 			; Test to see if the last action for this Step would put us over the Greyed out mark
@@ -863,7 +866,7 @@ function:bool FindAction2(int testProgress, int testQuality, bool useItem, bool 
 			if ${Return}
 			{
 				; This step would put us over our Progress %, so make it "cost" more
-				;call MyOutput "VG: Over Progress: ${newName}"
+				;call MyOutput "VGCraft:: Over Progress: ${newName}"
 				iCost:Inc[50]
 			}
 
@@ -1009,7 +1012,7 @@ function:int FindWorkStep(bool doLowQual, bool doLowProg)
 	call StepsRemaining
 	stepsLeft:Set[${Return}]
 
-	call DebugOut "VG: FindWorkStep called:  Q: ${doLowQual}  P: ${doLowProg}"
+	call DebugOut "VGCraft:: FindWorkStep called:  Q: ${doLowQual}  P: ${doLowProg}"
 
 	; Stage 1, Check to see if the user has Specified an Action #
 	if ${doRecipeOnly} && (${Refining.Stage.Index} == 1)
@@ -1218,7 +1221,7 @@ function updateActionStoreQuality(string aName, int iDiff)
 	variable int iCount
 	variable float avgQual
 
-	call MyOutput "VG: updateASQuality: ${iDiff} :: ${aName}"
+	call MyOutput "VGCraft:: updateASQuality: ${iDiff} :: ${aName}"
 
 	if ${actionStore.FindSet[${aName}](exists)}
 	{
@@ -1241,12 +1244,12 @@ function updateActionStoreQuality(string aName, int iDiff)
 		{
 			actionStore.FindSet[${aName}].FindSetting[NumUsed]:Set[${iCount:Inc}]
 			actionStore.FindSet[${aName}].FindSetting[AvgQual]:Set[${avgQual}]
-			call MyOutput "VG: updateASQuality added: ${avgQual} :: ${aName}"
+			call MyOutput "VGCraft:: updateASQuality added: ${avgQual} :: ${aName}"
 		}
 	}
 	else
 	{
-		call DebugOut "VG: ERROR: Can't find in actionStore: ${aName}"
+		call DebugOut "VGCraft:: ERROR: Can't find in actionStore: ${aName}"
 	}
 }
 
@@ -1256,7 +1259,7 @@ function updateActionStoreProgress(string aName, int iDiff)
 	variable int iCount
 	variable float avgProg
 
-	;call MyOutput "VG: updateASProgress: ${iDiff} :: ${aName}"
+	;call MyOutput "VGCraft:: updateASProgress: ${iDiff} :: ${aName}"
 
 	if ${actionStore.FindSet[${aName}](exists)}
 	{
@@ -1278,12 +1281,12 @@ function updateActionStoreProgress(string aName, int iDiff)
 		{
 			actionStore.FindSet[${aName}].FindSetting[NumUsed]:Set[${iCount:Inc}]
 			actionStore.FindSet[${aName}].FindSetting[AvgProg]:Set[${avgProg}]
-			;call MyOutput "VG: updateASProgress added: ${avgProg} :: ${aName}"
+			;call MyOutput "VGCraft:: updateASProgress added: ${avgProg} :: ${aName}"
 		}
 	}
 	else
 	{
-		call DebugOut "VG: ERROR: Can't find in actionStore: ${aName}"
+		call DebugOut "VGCraft:: ERROR: Can't find in actionStore: ${aName}"
 	}
 }
 
@@ -1397,15 +1400,15 @@ function:bool CheckOverProgress(string aName)
 		stepProg:Set[${StepProgress.Element[${aName}]}]
 		avgProg:Set[${actionStore.FindSet[${aName}].FindSetting[AvgProg]}]
 
-		;call DebugOut "VG: stepProg: ${stepProg}"
-		;call DebugOut "VG: StepProgress: ${StepProgress.Element[${aName}]} :: ${Refining.CurrentRecipe.ProgressBarPct}"
+		;call DebugOut "VGCraft:: stepProg: ${stepProg}"
+		;call DebugOut "VGCraft:: StepProgress: ${StepProgress.Element[${aName}]} :: ${Refining.CurrentRecipe.ProgressBarPct}"
 
 		; There could be 3 steps in a stage, so that would be 33% instead of 50%
 		if ( ${Refining.Stage.StepCount} > 2 )
 		{
 			if ((${avgProg} + ${stepProg}) > 40)
 			{
-				;call DebugOut "VG: Would be over 34% with ${aName}"
+				;call DebugOut "VGCraft:: Would be over 34% with ${aName}"
 				return TRUE
 			}
 		}
@@ -1413,7 +1416,7 @@ function:bool CheckOverProgress(string aName)
 		{
 			if ((${avgProg} + ${stepProg}) > 60)
 			{
-				;call DebugOut "VG: Would be over 50% with ${aName}"
+				;call DebugOut "VGCraft:: Would be over 50% with ${aName}"
 				return TRUE
 			}
 		}
@@ -1672,11 +1675,11 @@ function:bool ChangeToolBelts(string aTool)
 
 	variable int itemIndex = 0
 
-	call DebugOut "VG: Looking for tool: ${aTool}"
+	call DebugOut "VGCraft:: Looking for tool: ${aTool}"
 
 	if ( (${aTool.Length} == 0) || ${aTool.Equal[NULL]} )
 	{
-		call DebugOut "VG: ChangeTool called with zero or null value: ${aTool}"
+		call DebugOut "VGCraft:: ChangeTool called with zero or null value: ${aTool}"
 		return FALSE
 	}
 
@@ -1684,7 +1687,7 @@ function:bool ChangeToolBelts(string aTool)
 	{
 		if ( ${Me.Inventory[${itemIndex}].Name.Find[${aTool}]} && ${Me.Inventory[${itemIndex}].Type.Equal[Crafting Tool]} && ${Me.Inventory[${itemIndex}].InContainer.Name.Find[Toolbelt]} )
 		{
-			call DebugOut "VG: Switching to tool belt: ${Me.Inventory[${itemIndex}].InContainer.Name}"
+			call DebugOut "VGCraft:: Switching to tool belt: ${Me.Inventory[${itemIndex}].InContainer.Name}"
 			Me.Inventory[${Me.Inventory[${itemIndex}].InContainer.Index}]:UseAsCraftingToolbelt
 			return TRUE
 		}
@@ -1693,7 +1696,7 @@ function:bool ChangeToolBelts(string aTool)
 /*
 	if ( ${Me.Inventory[${aTool}](exists)} && ${Me.Inventory[${aTool}].InContainer.Name.Find[Toolbelt]})
 	{
-		call DebugOut "VG: Switching to tool belt: ${Me.Inventory[${aTool}].InContainer.Name}"
+		call DebugOut "VGCraft:: Switching to tool belt: ${Me.Inventory[${aTool}].InContainer.Name}"
 		Refining:ChangeToolbelt[${Me.Inventory[${aTool}].InContainer.ID}]
 		return TRUE
 	}
@@ -1836,7 +1839,7 @@ function:bool FindCorrection()
 	actionTypeBonus:Set[0]
 	actionProgressBonus:Set[0]
 
-	;call DebugOut "VG: Find Corrections" 
+	;call DebugOut "VGCraft:: Find Corrections" 
 	call DebugOut "Corrections Found: ${Refining.CorrectionsCount}"
 
 	; Start with the highest (latest one to appear) Correction
@@ -1911,7 +1914,7 @@ function:bool FindCorrection()
 
 			if ${Refining.Correction[${tstep}].AvailAction[${substep}].Description.Find[Reduction: Complete]}
 			{
-				call DebugOut "VG: -- COMPLICATION COMPLETE REDUCTION --"
+				call DebugOut "VGCraft:: -- COMPLICATION COMPLETE REDUCTION --"
 				actionTypeBonus:Set[8]
 				actionProgressBonus:Set[8]
 			}
@@ -1985,7 +1988,7 @@ function:bool FindCorrection()
 	else
 	{
 		call DebugOut "VG:No usable Correction action found" 
-		call DebugOut "VG: Ignoring Complication!"
+		call DebugOut "VGCraft:: Ignoring Complication!"
 		call IgnoreComplication
 		doFixRetry:Set[FALSE]
 		cState:Set[CS_ACTION]
