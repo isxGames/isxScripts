@@ -9,8 +9,9 @@
 #include ./vgcraft/craft-station.iss
 #include ./vgcraft/craft-uilogic.iss
 #include ./vgcraft/craft-workorder.iss
+#include ./vgcraft/craft-IRCLib.iss
 
-variable float VERSION = 1.11
+variable float VGCraft_VERSION = 2.0
 
 
 /*
@@ -259,6 +260,23 @@ variable string BadRecipeName
 variable string UIFile = "${LavishScript.CurrentDirectory}/scripts/vgcraft/VGCraftUI.xml"
 variable string UISkin = "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 
+/* IRC */
+variable bool UseIRC
+variable string IRCServer
+variable string IRCNick
+variable bool bIRCChannel
+variable string IRCChannel
+variable bool bUseIRCMaster
+variable string IRCMaster
+variable bool IRCAcceptMasterCommands
+variable bool IRCSpewToMasterPM
+variable bool IRCSpewToChannel
+variable bool IRCSpewExtraDebugText
+variable bool bUseNickservIdentify
+variable string NickservIdentifyPasswd
+variable bool bUseChannelKey
+variable string ChannelKey
+
 /* object defined in craft-bnavobjects.iss */
 variable bnav navi
 variable string CurrentChunk
@@ -322,7 +340,7 @@ variable int GlobalPanicAttack = 0
 /* Detect Script auto-updated files */
 atom(script) VGC_onUpdatedFile(string FilePathPlusName)
 {
-	echo "VG: Updated file ${FilePathPlusName}"
+	echo "VGCraft:: Updated file ${FilePathPlusName}"
 	autoUpdateFile:Set[TRUE]
 }
 atom(script) VGC_onUpdateError(string ErrorName)
@@ -331,13 +349,13 @@ atom(script) VGC_onUpdateError(string ErrorName)
 }
 atom(script) VGC_onUpdateComplete()
 {
-	echo "VG: Updated of VGCraft all done!"
+	echo "VGCraft:: Updated of VGCraft all done!"
 	autoUpdateDone:Set[TRUE]
 }
 
 atom(script) VGCB_onReceivedTradeInvitation(string PCName)
 {
-	call DebugOut "VG: TradeInvitation with ${PCName} :: TS: ${Trade.State}"
+	call DebugOut "VGCraft:: TradeInvitation with ${PCName} :: TS: ${Trade.State}"
 
 	if ${isPaused} || !${isRunning}
 		return
@@ -369,13 +387,13 @@ atom(script) VGCB_onConnectionStateChange(string NewConnectionState)
 	;IN_CHARACTER_CUSTOMIZATION
 	;IN_GAME
 
-	call MyOutput "VG: Connection State: ${NewConnectionState}"
+	call MyOutput "VGCraft:: Connection State: ${NewConnectionState}"
 
 	if ( ${NewConnectionState.Equal[AT_CHARACTER_SELECT]} )
 	{
 		; Hmm, how did we get here?
 		call MyOutput " ========================================LOGOUT=================================="
-		call MyOutput "VG:                            Error, character logged out!"
+		call MyOutput "VGCraft::                            Error, character logged out!"
 		call MyOutput " ========================================LOGOUT=================================="
 		isRunning:Set[FALSE]
 		;EndScript
@@ -503,7 +521,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	if ( ${ChannelNumber.Equal[17]} )
 		return
 
-	call MyOutput "VG: (${ChannelNumber}):(${ChannelName}) :: ${Text}"
+	call MyOutput "VGCraft:: (${ChannelNumber}):(${ChannelName}) :: ${Text}"
 
 	if ${Text.Find[You have moved too far from the crafting station]}
 	{
@@ -520,7 +538,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	if ${Text.Find[You do not have enough items selected to continue crafting]}
 	{
 		; Damn SOE has a bug in their recipes
-		call DebugOut "VG: Added to badRecipe list: ${BadRecipeName}"
+		call DebugOut "VGCraft:: Added to badRecipe list: ${BadRecipeName}"
 		BadRecipes:Add["${BadRecipeName}"]
 		cState:Set[CS_STATION]
 		Refining:End
@@ -531,7 +549,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	if ${Text.Find[You don't have all the materials required for that recipe]}
 	{
 		; Damn SOE has a bug in their recipes
-		call DebugOut "VG: Added to badRecipe list: ${BadRecipeName}"
+		call DebugOut "VGCraft:: Added to badRecipe list: ${BadRecipeName}"
 		BadRecipes:Add["${BadRecipeName}"]
 		cState:Set[CS_STATION]
 		Refining:End
@@ -587,6 +605,22 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 			call MyOutput "ACTION_WAIT: Trying to kickstart Action Sequence"
 			cState:Set[CS_ACTION]
 		}
+		
+		tTimeOut:Set[${Time.Timestamp}]
+		call DebugOut "VGCraft:: Arg! Out of Sequence action try"
+
+		if (${Refining.Stage.Index} == 4)
+		{
+			call DebugOut "VG:Warning: Setting KickStart TRUE" 
+			doKickStart:Set[TRUE]
+			fLastProgress:Set[${Refining.CurrentRecipe.ProgressBarPct}]
+		}
+		else
+		{
+			; For now just set OoAP, as it will work the same way
+			cState:Set[CS_ACTION_OOAP]
+			pState:Set[CS_ACTION_OOAP]
+		}		
 	}
 	elseif ( ${Text.Find[New complication:]} )
 	{
@@ -602,7 +636,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 		if ( ${cState} == CS_COMPLICATE_WAIT )
 		{
 			; We cleared up the Complication, yeah!
-			call DebugOut "VG: Complication Cleared"
+			call DebugOut "VGCraft:: Complication Cleared"
 			doFixRetry:Set[FALSE]
 
 			; ok, back to the action!
@@ -628,14 +662,14 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 		}
 		else
 		{
-			call ErrorOut "VG: Out Of Materials!"
+			call ErrorOut "VGCraft:: Out Of Materials!"
 			cState:Set[CS_ACTION_OOM]
 		}
 	}
 	elseif ( ${Text.Find[You do not have enough action points]} )
 	{
 		tTimeOut:Set[${Time.Timestamp}]
-		call DebugOut "VG: Arg! Ran out of Action Points"
+		call DebugOut "VGCraft:: Arg! Ran out of Action Points"
 
 		cState:Set[CS_ACTION_OOAP]
 		pState:Set[CS_ACTION_OOAP]
@@ -644,7 +678,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	elseif ( ${Text.Find[You may not do that action now]} )
 	{
 		tTimeOut:Set[${Time.Timestamp}]
-		call DebugOut "VG: Arg! Out of Sequence action try"
+		call DebugOut "VGCraft:: Arg! Out of Sequence action try"
 
 		if (${Refining.Stage.Index} == 4)
 		{
@@ -663,7 +697,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	elseif ( ${Text.Find[You may not execute actions outside of the correct recipe section]} )
 	{
 		tTimeOut:Set[${Time.Timestamp}]
-		call DebugOut "VG: Arg! Out of Sequence action try"
+		call DebugOut "VGCraft:: Arg! Out of Sequence action try"
 
 		; For now just set OoAP, as it will work the same way
 		cState:Set[CS_ACTION_OOAP]
@@ -673,7 +707,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	elseif ( ${Text.Find[Your crafting session ends]} )
 	{
 		tTimeOut:Set[${Time.Timestamp}]
-		call StatsOut "VG:      Quality: ${lastQuality}"
+		call StatsOut "VGCraft::      Quality: ${lastQuality}"
 		call StatsOut "===================== ${Refining.CurrentRecipe.Name} Finished ======================"
 		call MyOutput "===================== ${Refining.CurrentRecipe.Name} Finished ======================"
 
@@ -774,7 +808,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	elseif ( ${Text.Find[You are too far away to request work]} )
 	{
 		; Damn NPC moved!
-		call ErrorOut "VG: Work Order NPC moved!" 
+		call ErrorOut "VGCraft:: Work Order NPC moved!" 
 		cTarget:Set[${cWorkNPC}]
 		nextDest:Set[${destWork}]
 		cState:Set[CS_MOVE]
@@ -784,7 +818,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 	elseif ( ${Text.Find[You must select a recipe before crafting]} )
 	{
 		; Action Sequence got messed up, let's restart
-		call ErrorOut "VG: Out of sequence somehow, starting over!"
+		call ErrorOut "VGCraft:: Out of sequence somehow, starting over!"
 		cState:Set[CS_STATION]
 	}
 	elseif ( ${Text.Find[You need more items to complete that work order]} )
@@ -900,7 +934,7 @@ function CheckState()
 				recipeRepeatNumDone:Set[0]
 				cState:Set[CS_STATION]
 				PauseBot
-				call ScreenOut "VG: All done with Recipe ${recipeName}"
+				call ScreenOut "VGCraft:: All done with Recipe ${recipeName}"
 				return
 			}
 
@@ -912,7 +946,7 @@ function CheckState()
 
 				moveDetector:Set[TRUE]
 
-				wait 3
+				wait 5
 				cState:Set[CS_STATION_RECIPE]
 				lastAP:Set[0]
 			}
@@ -930,7 +964,7 @@ function CheckState()
 				{
 					moveDetector:Set[FALSE]
 					cState:Set[CS_WAIT]
-					call ErrorOut "VG: Could not target crafting station!"
+					call ErrorOut "VGCraft:: Could not target crafting station!"
 				}
 			}
 			break
@@ -953,7 +987,7 @@ function CheckState()
 						wait 10
 	
 						; looks like we need more supplies...
-						call DebugOut "VG: Now moving to Supply NPC: ${cSupplyNPC}"
+						call DebugOut "VGCraft:: Now moving to Supply NPC: ${cSupplyNPC}"
 						cTarget:Set[${cSupplyNPC}]
 						nextDest:Set[${destSupply}]
 						moveDetector:Set[FALSE]
@@ -962,7 +996,7 @@ function CheckState()
 					}
 					else
 					{
-						call ScreenOut "VG: WARNING, Out of ingredients!"
+						call ScreenOut "VGCraft:: WARNING, Out of ingredients!"
 						cState:Set[CS_STATION]
 						moveDetector:Set[FALSE]
 						Refining:End
@@ -988,7 +1022,7 @@ function CheckState()
 							wait 10
 	
 							; looks like we need more supplies...
-							call DebugOut "VG: Now moving to Supply NPC: ${cSupplyNPC}"
+							call DebugOut "VGCraft:: Now moving to Supply NPC: ${cSupplyNPC}"
 							cTarget:Set[${cSupplyNPC}]
 							nextDest:Set[${destSupply}]
 							moveDetector:Set[FALSE]
@@ -997,7 +1031,7 @@ function CheckState()
 						}
 						else
 						{
-							call ScreenOut "VG: WARNING, Out of supplies!"
+							call ScreenOut "VGCraft:: WARNING, Out of supplies!"
 							cState:Set[CS_STATION]
 							Refining:End
 							PauseBot
@@ -1006,24 +1040,24 @@ function CheckState()
 					}
 					else
 					{
-						call DebugOut "VG: Found a recipe to use, now do table setup" 
+						call DebugOut "VGCraft:: Found a recipe to use, now do table setup" 
 						cState:Set[CS_STATION_SETUP]
 					}
 				}
 				else
 				{
-					call DebugOut "VG: Found a recipe to use, now do table setup" 
+					call DebugOut "VGCraft:: Found a recipe to use, now do table setup" 
 					cState:Set[CS_STATION_SETUP]
 				}
 			}
 			else
 			{
-				call DebugOut "VG: No usable recipes found!"
+				call DebugOut "VGCraft:: No usable recipes found!"
 				if ( ${fullAuto} )
 				{
 					Refining:End
 					wait 10
-					call DebugOut "VG: Moving to Work Order NPC: ${cWorkNPC}"
+					call DebugOut "VGCraft:: Moving to Work Order NPC: ${cWorkNPC}"
 					cTarget:Set[${cWorkNPC}]
 					nextDest:Set[${destWork}]
 					moveDetector:Set[FALSE]
@@ -1050,12 +1084,12 @@ function CheckState()
 
 			if !${Refining(exists)}
 			{
-				call ErrorOut "VG: ERROR: No recipe selected!"
+				call ErrorOut "VGCraft:: ERROR: No recipe selected!"
 				if ( ${fullAuto} )
 				{
 					Refining:End
 					wait 10
-					call DebugOut "VG: Moving to Work Order NPC: ${cWorkNPC}"
+					call DebugOut "VGCraft:: Moving to Work Order NPC: ${cWorkNPC}"
 					cTarget:Set[${cWorkNPC}]
 					nextDest:Set[${destWork}]
 					moveDetector:Set[FALSE]
@@ -1109,7 +1143,7 @@ function CheckState()
 				/*  Waiting to begin recipe */
 			UIElement[State@CHUD]:SetText["Start Recipe"]
 
-			call DebugOut "VG: === Refining:Start ==="
+			call DebugOut "VGCraft:: === Refining:Start ==="
 
 			if !${doPauseRecipe}
 			{
@@ -1141,12 +1175,12 @@ function CheckState()
 
 			if ${doRecipeOnly}
 			{
-				call ScreenOut "VG: Recipe: ${Refining.CurrentRecipe.Name}"
+				call ScreenOut "VGCraft:: Recipe: ${Refining.CurrentRecipe.Name}"
 			}
 			else
 			{
-				call ScreenOut "VG: Recipe: ${CurrentRecipeName} :: ${Refining.OrigActionPointsAvail} :: ${Refining.CurrentRecipe.StepCount}"
-				call StatsOut "VG: Recipe: ${CurrentRecipeName} :: ${Refining.OrigActionPointsAvail} :: ${Refining.CurrentRecipe.StepCount}"
+				call ScreenOut "VGCraft:: Recipe: ${CurrentRecipeName} :: ${Refining.OrigActionPointsAvail} :: ${Refining.CurrentRecipe.StepCount}"
+				call StatsOut "VGCraft:: Recipe: ${CurrentRecipeName} :: ${Refining.OrigActionPointsAvail} :: ${Refining.CurrentRecipe.StepCount}"
 			}
 
 			movePathCount:Set[0]
@@ -1162,7 +1196,7 @@ function CheckState()
 
 			if !${Refining(exists)}
 			{
-				call ErrorOut "VG: ERROR: No recipe selected!"
+				call ErrorOut "VGCraft:: ERROR: No recipe selected!"
 				cState:Set[CS_STATION_IWAIT]
 			}
 
@@ -1174,7 +1208,7 @@ function CheckState()
 
 			if !${Refining(exists)}
 			{
-				call ErrorOut "VG: ERROR: No recipe selected!"
+				call ErrorOut "VGCraft:: ERROR: No recipe selected!"
 				cState:Set[CS_STATION_IWAIT]
 			}
 
@@ -1198,7 +1232,7 @@ function CheckState()
 				{
 					UIElement[Action@CHUD]:SetText["(Fix) ${lastCorrection}"]
 
-					call MyOutput "VG: in corrective action"
+					call MyOutput "VGCraft:: in corrective action"
 
 					wait 3
 
@@ -1235,7 +1269,7 @@ function CheckState()
 				if ${ooAPCheck}
 				{
 					; Ran out of Action Points and could not find a low cost action
-					call DebugOut "VG: ChooseAction: Can't find low cost action and ooAPCheck TRUE" 
+					call DebugOut "VGCraft:: ChooseAction: Can't find low cost action and ooAPCheck TRUE" 
 					cState:Set[CS_ACTION_OOAP]
 					return
 				}
@@ -1245,15 +1279,15 @@ function CheckState()
 					if ${iKickStep} > 10
 					{
 						; We ran out of AP, but have no way to know that!
-						call DebugOut "VG: KICKSTART and out of AP!"
+						call DebugOut "VGCraft:: KICKSTART and out of AP!"
 
 						ooAPCheck:Set[TRUE]
 						cState:Set[CS_ACTION_OOAP]
 
 					}
 
-					call DebugOut "VG: cState got retry KICKSTART return from ChooseAction" 
-					call DebugOut "VG: Starting the whole action KICKSTART tree over again"
+					call DebugOut "VGCraft:: cState got retry KICKSTART return from ChooseAction" 
+					call DebugOut "VGCraft:: Starting the whole action KICKSTART tree over again"
 
 					iKickStep:Inc
 
@@ -1268,7 +1302,7 @@ function CheckState()
 				else
 				{
 					; Ran out of Action Points and could not find a low cost action
-					call DebugOut "VG: ChooseAction: Can't find low cost action and ooAPCheck TRUE" 
+					call DebugOut "VGCraft:: ChooseAction: Can't find low cost action and ooAPCheck TRUE" 
 					cState:Set[CS_ACTION_OOAP]
 				}
 
@@ -1296,7 +1330,7 @@ function CheckState()
 			}
 			else
 			{
-				call DebugOut "VG: CS.ACTION_KICK: doKickStart is False, return to action" 
+				call DebugOut "VGCraft:: CS.ACTION_KICK: doKickStart is False, return to action" 
 				cState:Set[CS_ACTION]
 			}
 
@@ -1308,7 +1342,7 @@ function CheckState()
 
 			if ( ${missingItem.Equal[NONE]} )
 			{
-				call DebugOut "VG: Wanted to change toolbelts, but missingItem == NONE"
+				call DebugOut "VGCraft:: Wanted to change toolbelts, but missingItem == NONE"
 				cState:Set[CS_ACTION]
 				return
 			}
@@ -1319,10 +1353,10 @@ function CheckState()
 				wait 3
 
 				; Found and switched belt
-				call DebugOut "VG: Found and switched belt"
+				call DebugOut "VGCraft:: Found and switched belt"
 				missingItem:Set[NONE]
 
-				call DebugOut "VG: Was Changing Tool Belts :: back to holdState: ${holdState}"
+				call DebugOut "VGCraft:: Was Changing Tool Belts :: back to holdState: ${holdState}"
 
 				cState:Set[${holdState}]
 
@@ -1348,7 +1382,7 @@ function CheckState()
 			else
 			{
 				; Could not find that item in a tool belt
-				call DebugOut "VG: FAILED to Change Tool Belts :: holdState: ${holdState}"
+				call DebugOut "VGCraft:: FAILED to Change Tool Belts :: holdState: ${holdState}"
 
 				cState:Set[${holdState}]
 
@@ -1399,7 +1433,7 @@ function CheckState()
 
 				call StatsOut "===================== ${Refining.CurrentRecipe.Name} Ended Early: Out of AP! ======================"
 				call MyOutput "===================== ${Refining.CurrentRecipe.Name} Ended Early: Out of AP! ======================"
-				call DebugOut "VG: Arg! Ran out of action points!"
+				call DebugOut "VGCraft:: Arg! Ran out of action points!"
 
 				Refining:Cancel
 				call resetCounts
@@ -1429,7 +1463,7 @@ function CheckState()
 
 			call StatsOut "===================== ${Refining.CurrentRecipe.Name} Ended Early: Out of Materials! ======================"
 			call MyOutput "===================== ${Refining.CurrentRecipe.Name} Ended Early: Out of Materials! ======================"
-			call DebugOut "VG: Arg! Ran out of Materials!"
+			call DebugOut "VGCraft:: Arg! Ran out of Materials!"
 
 			Refining:Cancel
 			call resetCounts
@@ -1490,14 +1524,14 @@ function CheckState()
 			if ( ${doFixRetry} )
 			{
 				; We've already tried once, so Ignore and move on
-				call DebugOut "VG: Ignoring Complication!"
+				call DebugOut "VGCraft:: Ignoring Complication!"
 				call IgnoreComplication
 				doFixRetry:Set[FALSE]
 				cState:Set[CS_ACTION]
 			}
 			else
 			{
-				call DebugOut "VG: Ignoring Correction: ${lastCorrection}"
+				call DebugOut "VGCraft:: Ignoring Correction: ${lastCorrection}"
 				call IgnoreFix "${lastCorrection}"
 
 				wait 5
@@ -1555,7 +1589,7 @@ function CheckState()
 				call TargetLOS
 				if ( ${Return} )
 				{
-					call DebugOut "VG: Not able to target Work Order NPC, back to moving"
+					call DebugOut "VGCraft:: Not able to target Work Order NPC, back to moving"
 					wait 10
 
 					cTarget:Set[${cSupplyNPC}]
@@ -1564,7 +1598,7 @@ function CheckState()
 				}
 				else
 				{
-					call DebugOut "VG: Not able to target Work Order NPC, wait for 30 seconds"
+					call DebugOut "VGCraft:: Not able to target Work Order NPC, wait for 30 seconds"
 					cState:Set[CS_MOVE_LOS]
 				}
 			}
@@ -1636,7 +1670,7 @@ function CheckState()
 					if ( ${Return} )
 					{
 						; Next Target will be Supply Buy/Sell NPC
-						call DebugOut "VG: Now moving to Supply NPC: ${cSupplyNPC}"
+						call DebugOut "VGCraft:: Now moving to Supply NPC: ${cSupplyNPC}"
 						cTarget:Set[${cSupplyNPC}]
 						nextDest:Set[${destSupply}]
 					}
@@ -1662,7 +1696,7 @@ function CheckState()
 							; We are currently doing Refining, so check and see if we can switch to Finishing
 							if !${cFinishingStation.Equal[NONE]} && !${cFinishingWorkNPC.Equal[NONE]}
 							{
-								call ErrorOut "VG: No more Refining Work Orders, switching to Finishing"
+								call ErrorOut "VGCraft:: No more Refining Work Orders, switching to Finishing"
 								UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Show
 								UIElement[RefiningCheck@Move@Craft Main@CraftBot]:UnsetChecked
 								UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Hide
@@ -1674,7 +1708,7 @@ function CheckState()
 							}
 							else
 							{
-								call ErrorOut "VG: No Work Orders available from ${cWorkNPC}, going to sleep"
+								call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep"
 								cState:Set[CS_WAIT]
 							}
 						}
@@ -1683,7 +1717,7 @@ function CheckState()
 							; We are currently Finishing, switch to Refining
 							if !${cRefiningStation.Equal[NONE]} && !${cRefiningWorkNPC.Equal[NONE]}
 							{
-								call ErrorOut "VG: No more Finishing Work Orders, switching to Refining"
+								call ErrorOut "VGCraft:: No more Finishing Work Orders, switching to Refining"
 								UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Show
 								UIElement[FinishingCheck@Move@Craft Main@CraftBot]:UnsetChecked
 								UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Hide
@@ -1695,14 +1729,14 @@ function CheckState()
 							}
 							else
 							{
-								call ErrorOut "VG: No Work Orders available from ${cWorkNPC}, going to sleep"
+								call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep"
 								cState:Set[CS_WAIT]
 							}
 						}
 					}
 					else
 					{
-						call ErrorOut "VG: No Work Orders available from ${cWorkNPC}, going to sleep"
+						call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep"
 						cState:Set[CS_WAIT]
 					}
 				}
@@ -1775,7 +1809,7 @@ function CheckState()
 
 
 			UIElement[State@CHUD]:SetText["Targeting Supply NPC"]
-			call DebugOut "VG: Targeting Supply NPC"
+			call DebugOut "VGCraft:: Targeting Supply NPC"
 
 			call TargetSupplyNPC
 			if ( ${Return} )
@@ -1788,8 +1822,8 @@ function CheckState()
 				call TargetLOS
 				if ( ${Return} )
 				{
-					call DebugOut "VG: Not able to target Supply NPC, back to moving"
-					call DebugOut "VG: No Supply NPC, moving back to Craft Station: ${cStation}"
+					call DebugOut "VGCraft:: Not able to target Supply NPC, back to moving"
+					call DebugOut "VGCraft:: No Supply NPC, moving back to Craft Station: ${cStation}"
 					cTarget:Set[${cStation}]
 					nextDest:Set[${destStation}]
 					wait 10
@@ -1797,7 +1831,7 @@ function CheckState()
 				}
 				else
 				{
-					call DebugOut "VG: Not able to target Supply NPC, wait for 30 seconds"
+					call DebugOut "VGCraft:: Not able to target Supply NPC, wait for 30 seconds"
 					cState:Set[CS_MOVE_LOS]
 				}
 			}
@@ -1813,7 +1847,7 @@ function CheckState()
 			; Just ran out of space!
 			if ( ${Me.InventorySlotsOpen} < 2 )
 			{
-				call ErrorOut "VG: NOTICE: Out of pack space! (${Me.InventorySlotsOpen})"
+				call ErrorOut "VGCraft:: NOTICE: Out of pack space! (${Me.InventorySlotsOpen})"
 			;	cState:Set[CS_WAIT]
 			;	pState:Set[CS_WAIT]
 			;	return
@@ -1842,7 +1876,7 @@ function CheckState()
 				call RepairNeeded
 				if ${Return} && !${cRepairNPC.Equal[NONE]}
 				{
-					call DebugOut "VG: Done Buy/sell. Need to repair items, will move to Repair NPC"
+					call DebugOut "VGCraft:: Done Buy/sell. Need to repair items, will move to Repair NPC"
 					cTarget:Set[${cRepairNPC}]
 					nextDest:Set[${destRepair}]
 					cState:Set[CS_MOVE]
@@ -1850,7 +1884,7 @@ function CheckState()
 				}
 			}
 
-			call DebugOut "VG: Done Sell/Buy, moving back to Craft Station"
+			call DebugOut "VGCraft:: Done Sell/Buy, moving back to Craft Station"
 
 			cTarget:Set[${cStation}]
 			nextDest:Set[${destStation}]
@@ -1878,7 +1912,7 @@ function CheckState()
 			cState:Set[CS_SUPPLY_WAIT]
 
 			Call RepairItems
-			Call DebugOut "VG: Done repairing items, heading to craft station"
+			Call DebugOut "VGCraft:: Done repairing items, heading to craft station"
 
 			cTarget:Set[${cStation}]
 			nextDest:Set[${destStation}]
@@ -1984,33 +2018,33 @@ function CheckState()
 			elseif ${sReturn.Equal[NO MAP]}
 			{
 				; Get back on the MAP!
-				call DebugOut "VG: Off the MAP"
+				call DebugOut "VGCraft:: Off the MAP"
 				cState:Set[CS_MOVE_MAP]
 			}
 			elseif ${sReturn.Equal[NO PATH]}
 			{
 			;	; Failed to find a path with LavishNav, PAUSE
 			;	PauseBot
-			;	call ErrorOut "VG: ERROR: No Path to ${cTarget}, pausing"
+			;	call ErrorOut "VGCraft:: ERROR: No Path to ${cTarget}, pausing"
 			;	cState:Set[CS_WAIT]
 				cState:Set[CS_MOVE_MAP]
 			}
 			elseif ${sReturn.Equal[STUCK]}
 			{
 				; Got stuck trying to move to Target with LavishNav
-				call DebugOut "VG: We got STUCK while moveing to ${cTarget}, start over"
+				call DebugOut "VGCraft:: We got STUCK while moveing to ${cTarget}, start over"
 				cState:Set[CS_MOVE]
 			}
 			else
 			{
 				; Failed to move along path
-				call DebugOut "VG: Failed to move along TARGET path, try the target direct"
+				call DebugOut "VGCraft:: Failed to move along TARGET path, try the target direct"
 				cState:Set[CS_MOVE_FIND]
 			}
 
 			if ${movePathCount} > 6
 			{
-				call ErrorOut "VG: Stuck in a path loop! Pausing"
+				call ErrorOut "VGCraft:: Stuck in a path loop! Pausing"
 				PauseBot
 				cState:Set[CS_WAIT]
 			}
@@ -2038,27 +2072,27 @@ function CheckState()
 			elseif ${sReturn.Equal[NO PATH]}
 			{
 				; Failed to move to user defined point, that is BAD!
-				;call ErrorOut "VG: ERROR: No Path found, pausing"
+				;call ErrorOut "VGCraft:: ERROR: No Path found, pausing"
 				;PauseBot
-				call DebugOut "VG: MOVE_UPATH: No Path found, try MOVE_TPATH"
+				call DebugOut "VGCraft:: MOVE_UPATH: No Path found, try MOVE_TPATH"
 				cState:Set[CS_MOVE_TPATH]
 			}
 			elseif ${sReturn.Equal[STUCK]}
 			{
 				; Got stuck trying to move with LavishNav
-				call DebugOut "VG: We got STUCK while moving with UPATH, start over"
+				call DebugOut "VGCraft:: We got STUCK while moving with UPATH, start over"
 				cState:Set[CS_MOVE]
 			}
 			else
 			{
 				; Failed to move along path
-				call DebugOut "VG: Failed to move along defined path, try the target direct"
+				call DebugOut "VGCraft:: Failed to move along defined path, try the target direct"
 				cState:Set[CS_MOVE_FIND]
 			}
 
 			if ${movePathCount} > 6
 			{
-				call ErrorOut "VG: Stuck in a path loop! Pausing"
+				call ErrorOut "VGCraft:: Stuck in a path loop! Pausing"
 				PauseBot
 				cState:Set[CS_WAIT]
 			}
@@ -2073,7 +2107,7 @@ function CheckState()
 			if ( ${Return} )
 			{
 				; Found a target, get moving!
-				call DebugOut "VG: Moving to Found Target"
+				call DebugOut "VGCraft:: Moving to Found Target"
 				cState:Set[CS_MOVE_TARGET]
 			}
 			else
@@ -2105,7 +2139,7 @@ function CheckState()
 			call MoveToMap
 			if !${Return}
 			{
-				call ErrorOut "VG: Could not move back to Mapped area"
+				call ErrorOut "VGCraft:: Could not move back to Mapped area"
 				PauseBot
 				cState:Set[CS_WAIT]
 				return
@@ -2131,7 +2165,7 @@ function CheckState()
 			/*  Waiting for Roving Taskmaster to return */
 			UIElement[State@CHUD]:SetText["Waiting for ${cTarget}"]
 
-			call DebugOut "VG: CS.MOVE_TARGWAIT"
+			call DebugOut "VGCraft:: CS.MOVE_TARGWAIT"
 
 			call DebugOut "VG:Waiting 20 seconds for NPC ${cTarget} to return"
 			wait 200
@@ -2145,7 +2179,7 @@ function CheckState()
 				/*  Waiting for Line Of Sight to NPC */
 			UIElement[State@CHUD]:SetText["No LOS ${cTarget}"]
 
-			call DebugOut "VG: CS.MOVE_LOS"
+			call DebugOut "VGCraft:: CS.MOVE_LOS"
 
 			if ( ${iLOSCount} > 10 )
 			{
@@ -2185,20 +2219,20 @@ function CheckState()
 
 			if (${doTestMove})
 			{
-				call DebugOut "VG: doTestMove MOVE_DONE, waiting 2 secs"
+				call DebugOut "VGCraft:: doTestMove MOVE_DONE, waiting 2 secs"
 				wait 20
 
 				cState:Set[CS_MOVE]
 
 				if ${nextDest.Equal[${destStation}]}
 				{
-					call DebugOut "VG: at Station, move to WO Search"
+					call DebugOut "VGCraft:: at Station, move to WO Search"
 					cTarget:Set[${cWorkNPC}]
 					nextDest:Set[${destWork}]
 				}
 				elseif ${nextDest.Equal[${destWorkSearch}]}
 				{
-					call DebugOut "VG: at WO NPC Search Spot, look for NPC"
+					call DebugOut "VGCraft:: at WO NPC Search Spot, look for NPC"
 
 					cTarget:Set[${cWorkNPC}]
 					nextDest:Set[${destWork}]
@@ -2206,13 +2240,13 @@ function CheckState()
 				}
 				elseif ${nextDest.Equal[${destWork}]}
 				{
-					call DebugOut "VG: at WO NPC, get some"
+					call DebugOut "VGCraft:: at WO NPC, get some"
 					cTarget:Set[${cSupplyNPC}]
 					nextDest:Set[${destSupply}]
 				}
 				elseif ${nextDest.Equal[${destSupply}]}
 				{
-					call DebugOut "VG: at Supply NPC, buy/sell"
+					call DebugOut "VGCraft:: at Supply NPC, buy/sell"
 					cTarget:Set[${cStation}]
 					nextDest:Set[${destStation}]
 				}
@@ -2291,7 +2325,7 @@ function allowedAPSetup()
 	;	allowedStepAP:Set[400]
 
 
-	call DebugOut "VG: allowedStepAP: ${allowedStepAP}"
+	call DebugOut "VGCraft:: allowedStepAP: ${allowedStepAP}"
 	
 
 		variable int stageAP
@@ -2315,7 +2349,7 @@ function allowedAPSetup()
 			allowedStageAP:Set[${Math.Calc[${stepCount} * ${allowedStepAP}]}]
 		}
 
-		call DebugOut "VG: Stage: ${Refining.Stage.Index} :: allowedAP: ${allowedStageAP}"
+		call DebugOut "VGCraft:: Stage: ${Refining.Stage.Index} :: allowedAP: ${allowedStageAP}"
 
 }
 
@@ -2358,7 +2392,7 @@ function resetCounts()
 function DoLoot()
 {
 	; Should probably check to see if we have a Loot window open
-	call DebugOut "VG: DoLoot called"
+	call DebugOut "VGCraft:: DoLoot called"
 
 	if ${doRecipeOnly}
 		recipeRepeatNumDone:Inc
@@ -2643,11 +2677,12 @@ function updateHUD()
 
 
 /* Output Debug messages to the IG chat window */
-function DebugOut(string Message)
+function DebugOut(string Message, bool SpewToIRC=FALSE)
 {
 	if ( ${debug} )
 	{
-		call ScreenOut "${Message}"
+		;call ScreenOut "${Message}"
+		echo ${Message}
 	}
 	else
 	{
@@ -2663,30 +2698,40 @@ function SetOutputFile(string Filename)
 }
 
 /* Output message to a file */
-function MyOutput(string Message)
+function MyOutput(string Message, bool SpewToIRC=FALSE)
 {
 	redirect -append "${OutputFile}" echo "${Time}::${Message}"
+	
+	if ${SpewToIRC}
+		call IRCSpew "${Message}"
 }
 
 /* Output message to the stats file */
-function StatsOut(string Message)
+function StatsOut(string Message, bool SpewToIRC=FALSE)
 {
 	redirect -append "${StatsFile}" echo "${Time}::${Message}"
+	
+	if ${SpewToIRC}
+		call IRCSpew "${Message}"	
 }
 
 /* Output message to the Conversation Log */
-function TellsOut(string Message)
+function TellsOut(string Message, bool SpewToIRC=FALSE)
 {
 	redirect -append "${TellsFile}" echo "${Time}:: ${Message}"
+	
+	call IRCSpew "TELL SENT at ${Time}:: ${Message}"	
 }
 
 /* Output an error message to screen and debug file */
 function ErrorOut(string Message)
 {
-	call ScreenOut "${Message}"
+	call ScreenOut "*ERROR* - ${Message}"
+	
+	call IRCSpew "*ERROR* - ${Message}"
 }
 
-function ScreenOut(string Message)
+function ScreenOut(string Message, bool SpewToIRC=FALSE)
 {
 	call MyOutput "${Message}"
 
@@ -2694,6 +2739,9 @@ function ScreenOut(string Message)
 		echo "${Message}"
 	else
 		VGEcho "${Message}" > screen
+		
+	if ${SpewToIRC}
+		call IRCSpew "${Message}"
 }
 
 
@@ -2709,19 +2757,12 @@ function main(int testParam)
 	variable filepath currentPath = "${Script.CurrentDirectory}"
 	variable string noUpdateFile = VGCraft.iss.nopatch
 
-	if ( !${ISXVG.IsReady(exists)} )
+	ext -require isxvg
+	wait 100 ${ISXVG.IsReady}
+	if !${ISXVG.IsReady}
 	{
-		ext isxvg
-	}
-
-	if ( !${ISXVG.IsReady} )
-	{
-		echo "VGC: ISXVG Not loaded or updating... Waiting..."
-
-		while !${ISXVG.IsReady}
-			wait 10
-
-		echo "VGC: ISXVG done updating... will now continue"
+		echo "[${Time}] --> Unable to load ISXVG, exiting script"
+		endscript vgcraft
 	}
 
 	autoUpdateFile:Set[FALSE]
@@ -2737,27 +2778,27 @@ function main(int testParam)
 
 	if ( ${currentPath.FileExists[${noUpdateFile}]} )
 	{
-		echo "VG: Development setup, no auto-update"
+		echo "VGCraft:: Development setup, no auto-update"
 	}
 	/*
 	else
 	{
 		if ( ${testParam} == 1 )
-			VERSION:Set[0]
+			VGCraft_VERSION:Set[0]
 
 		tTimeOut:Set[${Time.Timestamp}]
 
 		if ( ${testParam} == -1 )
 		{
 			; Run the auto-update patcher for Development Tree
-			echo "VG: Running patch checker for Updates"
-			dotnet VGCraftBot isxGamesPatcher VGCraft ${VERSION} http://www.reality.net/svn/vanguard/VGCraft-devtree.xml
+			echo "VGCraft:: Running patch checker for Updates"
+			dotnet VGCraftBot isxGamesPatcher VGCraft ${VGCraft_VERSION} http://www.reality.net/svn/vanguard/VGCraft-devtree.xml
 		}
 		else
 		{
 			; Run the auto-update patcher for Release tree
-			echo "VG: Running patch checker for Updates"
-			dotnet VGCraftBot isxGamesPatcher VGCraft ${VERSION} http://www.reality.net/svn/vanguard/release/VGCraft-manifest.xml
+			echo "VGCraft:: Running patch checker for Updates"
+			dotnet VGCraftBot isxGamesPatcher VGCraft ${VGCraft_VERSION} http://www.reality.net/svn/vanguard/release/VGCraft-manifest.xml
 		}
 
 		while !${autoUpdateDone}
@@ -2765,7 +2806,7 @@ function main(int testParam)
 			wait 10
 			if ( ${Math.Calc[${Time.Timestamp} - ${tTimeOut.Timestamp}]} > 120 )
 	 		{
-				echo "VG: Taking longer than 120 seconds for update, exiting"
+				echo "VGCraft:: Taking longer than 120 seconds for update, exiting"
 				autoUpdateDone:Set[TRUE]
 				return
 			}
@@ -2811,7 +2852,7 @@ function main(int testParam)
 	variable filepath SkinPath = "${LavishScript.CurrentDirectory}/Interface/"
 	if !${SkinPath.FileExists[VGSkin.xml]}
 	{
-		echo "VG: Creating VGSkin file"
+		echo "VGCraft:: Creating VGSkin file"
 		dotnet VGSkin "${Script.CurrentDirectory}/VGSkin.exe"
 		while !${SkinPath.FileExists[VGSkin.xml]}
 			wait 10
@@ -2822,8 +2863,8 @@ function main(int testParam)
 	; Make sure we can get the name of the toon
 	if ( ${Me.FName.Equal[NULL]} || ${Me.FName.Length} <= 0 )
 	{
-		VGEcho "VG: ERROR, can't get Toon Name! (${Me.FName})" > screen
-		echo "VG: ERROR, can't get Toon Name! (${Me.FName})"
+		VGEcho "VGCraft:: ERROR, can't get Toon Name! (${Me.FName})" > screen
+		echo "VGCraft:: ERROR, can't get Toon Name! (${Me.FName})"
 		return
 	}
 	else
@@ -2847,11 +2888,11 @@ function main(int testParam)
 		{
 			; autoRespond file found
 			isAutoRespondLoaded:Set[TRUE]
-			echo "VG: ====== Auto-response Activated ===="
+			echo "VGCraft:: ====== Auto-response Activated ===="
 		}
 		else
 		{
-			echo "VG: No Auto-Respond file found (would be loacated at: ${fSavePath.AbsolutePath}autorespond.xml) -- No auto response will be used."
+			echo "VGCraft:: No Auto-Respond file found (would be loacated at: ${fSavePath.AbsolutePath}autorespond.xml) -- No auto response will be used."
 		}
 
 
@@ -2863,8 +2904,8 @@ function main(int testParam)
 		call InitConfig
 
 		;Tell the user that the script has initialized and is running!
-		call DebugOut "VG:Crafting Assistant started -- version ${VERSION}"
-		echo "VG:Crafting Assistant started -- version ${VERSION}"
+		call DebugOut "VG:Crafting Assistant started -- version ${VGCraft_VERSION}"
+		echo "VG:Crafting Assistant started -- version ${VGCraft_VERSION}"
 
 		; Load up the UI panel
 		ui -reload "${UISkin}"
@@ -2946,101 +2987,105 @@ function main(int testParam)
 		nextDest:Set[${destStation}]
 	}
 
-
-		do 
+	;; IRC ;;
+	if ${UseIRC}
+	{
+		call ConnectToIRC	
+	}
+	
+	do 
+	{
+		if ${QueuedCommands}
+			ExecuteQueued
+		else
+			WaitFrame
+	
+		if ${isMapping}
 		{
-
-			if ${QueuedCommands}
-				ExecuteQueued
-			else
-				WaitFrame
-
-			if ${isMapping}
-			{
-				navi:AutoBox
-				navi:ConnectOnMove
-			}
-
-			if ( ${Me.CraftXP} > ${lastCraftXP} )
-			{
-				tempXP:Set[${Me.CraftXP} - ${lastCraftXP}]
-
-				timeCheck:Set[${Math.Calc[${Script[VGCraft].RunningTime}/1000/60/60]}]
-
-				;call DebugOut "VG: time: ${timeCheck} : ${tempXP}"
-
-				temp:Set[${Me.CraftXP} - ${startCraftXP}]
-				tempXPHour:Set[${Math.Calc[${temp} / ${timeCheck}]}]
-
-				lastCraftXP:Set[${Me.CraftXP}]
-
-				UIElement[LastXP@CHUD]:SetText[${tempXP}]
-				UIElement[XPHour@CHUD]:SetText[${tempXPHour}]
-
-				;call ScreenOut "VG: You gained ${tempXP} XP (${tempXPHour}/Hour)"
-				call StatsOut "VG:       You gained ${tempXP} XP    --  (${tempXPHour}/Hour)"
-			}
-
-			if !${CurrentChunk.Equal[${Me.Chunk}]}
-			{
-				; OMG! They killed Kenny!
-				; Or we have changed chunks... wacky
-				fixChunkChange
-			}
-
-			; Update the HUD
-			call updateHUD
-
-			if ( ${isPaused} || !${hasStarted} )
-			{
-				wait 1
-				tTimeOut:Set[${Time.Timestamp}]
-				continue
-			}
-
-			; Check to see if a high Priority State was set by an error
-			if ( ${pState} )
-			{
-				call DebugOut "VG: High Priority State Change:pState: ${pState} :: ${cState}"
-				cState:Set[${pState}]
-				pState:Set[0]
-			}
-
-			; Check what state of crafting we are in
-			if ( ${cState} == CS_WAIT )
-			{
-				wait 5
-			}
-			else
-			{
-				if ( !${fullAuto} && (${cState} >= CS_MOVE) )
-					cState:Set[CS_WAIT]
-				else
-					call CheckState
-			}
-
-			if ( ${Math.Calc[${Time.Timestamp} - ${tTimeOut.Timestamp}]} > 300 )
-	 		{
-				isMoving:Set[FALSE]
-
-				if ( ${fullAuto} )
-				{
-					call DebugOut "VG: NOTICE: Idle for more than 5 minutes, kickstart!"
-					echo "Timeout: ${Math.Calc[${Time.Timestamp} - ${tTimeOut.Timestamp}]}"
-
-					Refining:Cancel
-					call resetCounts
-					wait 10
-
-					cTarget:Set[${cStation}]
-					nextDest:Set[${destStation}]
-					cState:Set[CS_MOVE]
-				}
-
-				tTimeOut:Set[${Time.Timestamp}]
-			}
+			navi:AutoBox
+			navi:ConnectOnMove
 		}
-		while ( ${isRunning} )
+	
+		if ( ${Me.CraftXP} > ${lastCraftXP} )
+		{
+			tempXP:Set[${Me.CraftXP} - ${lastCraftXP}]
+	
+			timeCheck:Set[${Math.Calc[${Script[VGCraft].RunningTime}/1000/60/60]}]
+	
+			;call DebugOut "VGCraft:: time: ${timeCheck} : ${tempXP}"
+	
+			temp:Set[${Me.CraftXP} - ${startCraftXP}]
+			tempXPHour:Set[${Math.Calc[${temp} / ${timeCheck}]}]
+	
+			lastCraftXP:Set[${Me.CraftXP}]
+	
+			UIElement[LastXP@CHUD]:SetText[${tempXP}]
+			UIElement[XPHour@CHUD]:SetText[${tempXPHour}]
+	
+			;call ScreenOut "VGCraft:: You gained ${tempXP} XP (${tempXPHour}/Hour)"
+			call StatsOut "VGCraft::       You gained ${tempXP} XP    --  (${tempXPHour}/Hour)"
+		}
+	
+		if !${CurrentChunk.Equal[${Me.Chunk}]}
+		{
+			; OMG! They killed Kenny!
+			; Or we have changed chunks... wacky
+			fixChunkChange
+		}
+	
+		; Update the HUD
+		call updateHUD
+	
+		if ( ${isPaused} || !${hasStarted} )
+		{
+			wait 1
+			tTimeOut:Set[${Time.Timestamp}]
+			continue
+		}
+	
+		; Check to see if a high Priority State was set by an error
+		if ( ${pState} )
+		{
+			call DebugOut "VGCraft:: High Priority State Change:pState: ${pState} :: ${cState}"
+			cState:Set[${pState}]
+			pState:Set[0]
+		}
+	
+		; Check what state of crafting we are in
+		if ( ${cState} == CS_WAIT )
+		{
+			wait 5
+		}
+		else
+		{
+			if ( !${fullAuto} && (${cState} >= CS_MOVE) )
+				cState:Set[CS_WAIT]
+			else
+				call CheckState
+		}
+	
+		if ( ${Math.Calc[${Time.Timestamp} - ${tTimeOut.Timestamp}]} > 300 )
+		{
+			isMoving:Set[FALSE]
+	
+			if ( ${fullAuto} )
+			{
+				call DebugOut "VGCraft:: NOTICE: Idle for more than 5 minutes, kickstart!"
+				echo "Timeout: ${Math.Calc[${Time.Timestamp} - ${tTimeOut.Timestamp}]}"
+	
+				Refining:Cancel
+				call resetCounts
+				wait 10
+	
+				cTarget:Set[${cStation}]
+				nextDest:Set[${destStation}]
+				cState:Set[CS_MOVE]
+			}
+	
+			tTimeOut:Set[${Time.Timestamp}]
+		}
+	}
+	while ( ${isRunning} )
 
 	;;; This is all in atexit()
 	; Save off the config stuff
@@ -3080,6 +3125,25 @@ function atexit()
 	call MyOutput "Sucessful Work Orders: ${statWODone}"
 	call MyOutput "Failed Work Orders: ${statWOAbandon}"
 	call MyOutput "================================================="
+	
+	
+	;;; IRC ;;;
+	if ${UseIRC}
+	{
+		call IRCSpew "================================================="
+		call IRCSpew "CraftingLevel : ${Me.CraftingLevel}"
+		call IRCSpew "XP: ${Me.CraftXP}   XP%: ${Me.CraftXPPct}"
+		call IRCSpew "Crafting XP gained: ${totalXP} in ${totalTime}"
+		call IRCSpew "Total Copper Spent: ${statSpentCopper}"
+		call IRCSpew "Total Copper Made: ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"
+		call IRCSpew "Total Recipes Done: ${statRecipeDone}"
+		call IRCSpew "Failed Recipes: ${statRecipeFailed}"
+		call IRCSpew "Sucessful Work Orders: ${statWODone}"
+		call IRCSpew "Failed Work Orders: ${statWOAbandon}"
+		call IRCSpew "================================================="
+		
+		call IRC_Shutdown
+	}
 
 	;Remove the event listeners
 	Event[VG_OnIncomingText]:DetachAtom[VGCB_OnIncomingText]
@@ -3114,12 +3178,63 @@ function atexit()
 	call DebugOut "VGCraft has ended" 
 }
 
+function ConnectToIRC()
+{
+	if ${bUseNickservIdentify}
+		call IRC_Init "${IRCServer}" "${IRCNick}" "${NickservIdentifyPasswd}"
+	else
+		call IRC_Init "${IRCServer}" "${IRCNick}"
+		
+		
+	if ${IRCUser["${IRCNick}"](exists)}
+		return
+
+	call IRC_Connect
+	
+	if ${bIRCChannel}
+	{
+		variable int Counter = 0
+		if !${NickserIdentifySuccessful}
+		{
+			echo "VGCraft:: Waiting for Nickserv to register before joining channels..."
+			do
+			{
+				waitframe
+				Counter:Inc
+				if ${Counter} > 300
+				{
+					echo "VGCraft:: Gave up waiting on nickserv..."
+					break
+				}
+			}
+			while !${NickserIdentifySuccessful}
+		}
+		
+		if ${bUseChannelKey}
+			call IRC_JoinChannel "${IRCChannel}" "${ChannelKey}"
+		else
+			call IRC_JoinChannel "${IRCChannel}"
+	}
+	
+	call IRCSpew "VGCraft v. ${VGCraft_VERSION.Precision[2]} is connected and ready!"	
+}
+
+function IRCSpew(string aMessage)
+{
+	if ${bUseIRCMaster} && ${IRCSpewToMasterPM}
+		call IRC_SendPM "${IRCMaster}" "[VGCraft ${Time}] [${Me.FName}] ${aMessage}"
+		
+	if ${IRCSpewToChannel} && ${bIRCChannel}
+		call IRC_SendPM "${IRCChannel}" "[VGCraft ${Time}] ${aMessage}"
+	
+}
+
 function ConsolidateInventory()
 {
 	variable int itemIndexA = 0
 	variable int itemIndexB = 1
 	
-	call DebugOut "VG: ConsolidateInventory Called"
+	call DebugOut "VGCraft:: ConsolidateInventory Called"
 	
 	while (${itemIndexA:Inc} <= ${Me.Inventory})
 	{

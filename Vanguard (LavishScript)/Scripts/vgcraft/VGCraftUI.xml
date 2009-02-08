@@ -2119,6 +2119,308 @@
 
 
 					</Tab>
+					
+					<Tab Name='IRC'>
+
+						<checkbox Name='UseIRC' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>10</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Connect To IRC</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.UseIRC}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.UseIRC:Set[${This.Checked}]
+							</OnLeftClick>
+							<AutoTooltip>Select to have VGCraft connect to IRC on startup.</AutoTooltip>
+						</checkbox>
+						
+						<Text Name='lbIRCServer' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>32</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Server:</Text>
+						</Text>
+						<Textentry Name="IRCServer" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>30</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCServer}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCServer:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						<Text Name='lbIRCNick' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>52</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Nick:</Text>
+						</Text>
+						<Textentry Name="IRCNick" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>50</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCNick}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCNick:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						
+						<Checkbox Name='bUseNickservIdentify' Template='VG.Checkbox'>
+							<X>45</X>
+							<Y>73</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bUseNickservIdentify}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bUseNickservIdentify:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbNickservIdentifyPasswd' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>60</X> 
+							<Y>72</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Nickserv Passwd:</Text>
+						</Text>
+						<Textentry Name="NickservIdentifyPasswd" Template="VG.TextEntry">
+							<X>165</X>
+							<Y>70</Y>
+							<Width>100</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.NickservIdentifyPasswd}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.NickservIdentifyPasswd:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						
+						<Checkbox Name='bIRCChannel' Template='VG.Checkbox'>
+							<X>25</X>
+							<Y>93</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bIRCChannel}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bIRCChannel:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbIRCChannel' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>92</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Join Channel:</Text>
+						</Text>
+						<Textentry Name="IRCChannel" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>90</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCChannel}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCChannel:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						<Checkbox Name='bUseChannelKey' Template='VG.Checkbox'>
+							<X>45</X>
+							<Y>113</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bUseChannelKey}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bUseChannelKey:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbChannelKey' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>60</X> 
+							<Y>112</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Channel Key:</Text>
+						</Text>
+						<Textentry Name="ChannelKey" Template="VG.TextEntry">
+							<X>165</X>
+							<Y>110</Y>
+							<Width>100</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.ChannelKey}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.ChannelKey:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						
+						<Checkbox Name='bUseIRCMaster' Template='VG.Checkbox'>
+							<X>25</X>
+							<Y>133</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bUseIRCMaster}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bUseIRCMaster:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbIRCMaster' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>132</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>IRC Master:</Text>
+						</Text>
+						<Textentry Name="IRCMaster" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>130</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCMaster}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCMaster:Set[${This.Text}]
+							</OnChange>
+						</Textentry>	
+						
+						<Text Name='lbOptions' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>20</X> 
+							<Y>155</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Options:</Text>
+						</Text>
+						<checkbox Name='IRCAcceptMasterCommands' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>170</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Accept Commands from IRC Master</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCAcceptMasterCommands}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCAcceptMasterCommands:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='IRCSpewToMasterPM' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>190</Y>
+							<Width>240</Width>
+							<Height>20</Height>
+							<Text>Spew Text to IRC Master as PM</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCSpewToMasterPM}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCSpewToMasterPM:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>			
+						<checkbox Name='IRCSpewToChannel' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>210</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Spew Text to Channel</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCSpewToChannel}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCSpewToChannel:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>			
+						<checkbox Name='IRCSpewExtraDebugText' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>230</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Spew extra Debug Text</text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCSpewExtraDebugText}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCSpewExtraDebugText:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>	
+						
+						<Commandbutton Name='Connect Now' Template='VG.GreenButton'>
+							<X>240</X> 
+							<Y>230</Y> 
+							<Width>90</Width> 
+							<Height>20</Height>
+							<Text>Connect Now</Text>
+							<OnLeftClick>
+								Script[VGCraft]:QueueCommand[call ConnectToIRC]
+							</OnLeftClick>
+							<AutoTooltip>Click to connect NOW.  Otherwise, the script will connect on startup if 'Connect to IRC' is selected.</AutoTooltip>
+						</Commandbutton>
+						
+
+					</Tab>					
 
 					<Tab Name='Alarms'>
 						<checkbox Name='GM Alarm' Template='VG.Checkbox'>
@@ -2310,7 +2612,7 @@
 								<Size>16</Size>
 								<Bold />
 							</Font>
-							<Text>Craft Bot</Text>
+							<Text>VGCraft</Text>
 						</Text>
 						<Text Name='About By' Template='VG.Text'>
 							<X>0</X>
@@ -2332,7 +2634,7 @@
 							<Font Template="VG.Window.TitleBar.Title.Font">
 								<Size>15</Size>
 							</Font>
-							<Text>Ver ${Script[VGCraft].VariableScope.VERSION}</Text>
+							<Text>Ver ${Script[VGCraft].VariableScope.VGCraft_VERSION}</Text>
 						</Text>
 						<Text Name='About 1'>
 							<X>0</X>
@@ -2371,7 +2673,7 @@
 								<Size>10</Size>
 								<Color>FFEBDEAA</Color>
 							</Font>
-							<Text>http://vg.isxgames.com/wiki</Text>
+							<Text>http://www.isxgames.com/forums</Text>
 						</Text>
 					</Tab>
 

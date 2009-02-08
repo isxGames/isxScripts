@@ -3,11 +3,11 @@
 /* Fill up on some new work orders! */
 function:bool GetWorkOrder(bool getAny, int countType)
 {
-	call DebugOut "VG: GetWorkOrder called :: ${getAny}"
+	call DebugOut "VGCraft:: GetWorkOrder called :: ${getAny}"
 
 	if ( ${TaskMaster[Crafting].InTransaction} && (${TaskMaster[Crafting].AvailWorkOrderCount} >= 1) )
 	{
-		call DebugOut "VG: GetWorkOrder called :: ${TaskMaster[Crafting].AvailWorkOrderCount}"
+		call DebugOut "VGCraft:: GetWorkOrder called :: ${TaskMaster[Crafting].AvailWorkOrderCount}"
 
 		variable int iCount = 0
 		variable bool allDone = FALSE
@@ -28,7 +28,7 @@ function:bool GetWorkOrder(bool getAny, int countType)
 
 			if ( (${iCount} < 1) || (${iCount} > ${TaskMaster[Crafting].AvailWorkOrderCount}) )
 			{
-				call MyOutput "VG: All done checking for Work Orders :: ${iCount}"
+				call MyOutput "VGCraft:: All done checking for Work Orders :: ${iCount}"
 				return FALSE
 			}
 
@@ -60,10 +60,10 @@ function:bool ChooseWorkOrder(int iCount, bool findAny, int woCount)
 	sDiff:Set[${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Difficulty}]
 	sReqSkill:Set[${TaskMaster[Crafting].AvailWorkOrder[${iCount}].RequiredSkill}]
 
-	call MyOutput "VG: GetWorkOrder: diff: ${sDiff}  :: Skill: ${sReqSkill} :: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
+	call MyOutput "VGCraft:: GetWorkOrder: diff: ${sDiff}  :: Skill: ${sReqSkill} :: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
 
 	if ( ${doAnyWO} )
-		call MyOutput "VG: ChooseWorkOrder: doAnyWO TRUE"
+		call MyOutput "VGCraft:: ChooseWorkOrder: doAnyWO TRUE"
 	elseif ( ${sDiff.Equal[Difficult]} && !${doDiffWO} )
 		return FALSE
 	elseif ( ${sDiff.Equal[Moderate]} && !${doModWO} )
@@ -126,7 +126,7 @@ function:bool ChooseWorkOrder(int iCount, bool findAny, int woCount)
 
 		if ${findAny}
 		{
-			call MyOutput "VG: ChooseWorkOrder: findAny TRUE"
+			call MyOutput "VGCraft:: ChooseWorkOrder: findAny TRUE"
 			call DebugOut "VG:Selected: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
 			WorkOrderSelected:Set[${TaskMaster[Crafting].AvailWorkOrder[${iCount}]}]
 			TaskMaster[Crafting].AvailWorkOrder[${iCount}]:Select
@@ -158,7 +158,7 @@ function:bool ChooseWorkOrder(int iCount, bool findAny, int woCount)
 	}
 	else
 	{
-		call MyOutput "VG: Not high enough skill for that work order"
+		call MyOutput "VGCraft:: Not high enough skill for that work order"
 	}
 
 	return FALSE
@@ -177,7 +177,7 @@ function:bool FinishWorkOrder()
 	if ( ${TaskMaster[Crafting].CurrentWorkOrderCount} >= 1 )
 	{
 		call DebugOut "VG:Complete WO[1]: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name} "
-		call StatsOut "VG:   Trying to Complete WO: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name} "
+		call StatsOut "VGCraft::   Trying to Complete WO: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name} "
 
 		; Just Select and Complete the first one in the list
 		TaskMaster[Crafting].CurrentWorkOrder[1]:Complete
@@ -195,7 +195,7 @@ function AbandonWorkOrder()
 
 	if ( ${TaskMaster[Crafting].CurrentWorkOrderCount} >= 1 )
 	{
-		call StatsOut "VG:   Abandoned WO: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name} "
+		call StatsOut "VGCraft::   Abandoned WO: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name} "
 
 		; Just Select and Abandon the first one in the list
 		TaskMaster[Crafting].CurrentWorkOrder[1]:Abandon
