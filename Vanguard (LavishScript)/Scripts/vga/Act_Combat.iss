@@ -2,7 +2,7 @@ objectdef fight
 {
 	member:bool ShouldIAttack()
 	{
-		if ${Group.Count} < 2 && ${Me.Target(exists)} && ${Me.TargetHealth} > 0 && !${Me.Target.IsDead} && ${Me.Target.HaveLineOfSightTo} && ${Me.ToPawn.CombatState} == 1
+		if ${Group.Count} < 2 && ${Me.Target(exists)} && ${Me.TargetHealth} > 0 && !${Me.Target.IsDead} && ${Me.Target.HaveLineOfSightTo} && ${Me.ToPawn.CombatState} == 1 && !${Me.Target.Type.Equal[Corpse]}
 		{
 			if ${lastattack.Equal[${Me.Target.ID}]}
 			{
@@ -19,7 +19,7 @@ objectdef fight
 			}
 
 		}
-		elseif ${Group.Count} > 1 && ${Me.TargetHealth} < ${AssistBattlePct} && !${Me.Target.IsDead}
+		elseif ${Group.Count} > 1 && ${Me.TargetHealth} < ${AssistBattlePct} && !${Me.Target.IsDead} && !${Me.Target.Type.Equal[Corpse]}
 		{
 			if ${lastattack.Equal[${Me.Target.ID}]}
 			{
@@ -35,7 +35,7 @@ objectdef fight
 				return TRUE
 			}
 		}
-		elseif ${Group.Count} > 1 && ${${tankpawn}.Equal[${Me}]} && ${Me.ToPawn.CombatState} == 1 && !${Me.Target.IsDead}
+		elseif ${Group.Count} > 1 && ${${tankpawn}.Equal[${Me}]} && ${Me.ToPawn.CombatState} == 1 && !${Me.Target.IsDead} && !${Me.Target.Type.Equal[Corpse]}
 		{
 			if ${lastattack.Equal[${Me.Target.ID}]}
 			{
