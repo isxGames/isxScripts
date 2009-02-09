@@ -64,46 +64,58 @@ function pushagrototank()
 ;********************************************
 function rescue()
 {
-	if ${pawn[${tankpawn}](exists)}
+	if ${Pawn[${tankpawn}](exists)}
 	{
-	if ${doRescue} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
+	echo "I Exist as the tank"
+	if ${doRescue} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 	{
+		echo "Rescue ${doRescue} Mob on ${Me.TargetOfTarget} I should fight ${fight.ShouldIAttack} "
 		Pawn[${Me.TargetOfTarget}]:Target
 		waitframe
+		echo "My DTarget is ${Me.DTarget}"
 		variable iterator Iterator
 		Rescue:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
 			{
 			call checkabilitytocast "${Iterator.Value}"
-			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 				{	
 				call executeability "${Iterator.Value}" "evade" "Neither"
+				echo "Rescueing ${Me.DTarget} with ${Iterator.Value}"
 				}
-			if !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+			if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 				Pawn[${Me.TargetOfTarget}]:Target
+				echo "${Me.DTarget} is still agro} going to Next Ability"
 				Iterator:Next
-			if ${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+			if ${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
+				echo "Mob is on Me ${Me.TargetOfTarget}"
 				Return
 			}
-		if !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+		if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 		{
+		echo "Non Force Abilities didnt work.. doing force target"
 		Pawn[${Me.TargetOfTarget}]:Target
 		waitframe
-		If !${Me.TargetBuff.Equal[Immunity: Force Target](exists)}
+		echo "Targeted on ${Me.TargetOfTarget}"
+		If !${Me.TargetBuff["Immunity: Force Target"](exists)}
 		{
+		echo "Mob is not immuned to Force Target"
 		variable iterator FRIterator
 		ForceRescue:GetSettingIterator[FRIterator]
 		while ( ${FRIterator.Key(exists)} )
 			{
 			call checkabilitytocast "${FRIterator.Value}"
-			if ${Return} && ${Me.Ability[${FRIterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+			if ${Return} && ${Me.Ability[${FRIterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 				{	
 				call executeability "${FRIterator.Value}" "evade" "Neither"
+				echo "Forcing Mob to Target me with ${FRIterator.Value}"
 				}
-			if !${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+			if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 				Pawn[${Me.TargetOfTarget}]:Target
+				echo "FOrce Target FAILED? Jesus Man"
 				Iterator:Next
-			if ${${tankpawn}.Equal[${Me.TargetOfTarget}]}
+			if ${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
+				echo "Ok I have agro"
 				Return
 			}
 		}
