@@ -111,6 +111,12 @@ function executeability(string x_ability, string x_type, string CP)
 				call MeCasting ${CP}
 				return
 			}	
+			if ${x_type.Equal[evade]}
+			{
+				actionlog "${x_ability} ${Me.DTarget} EVADE"
+				call MeCasting ${CP}
+				return
+			}	
 		}
 		if !${Me.Ability[${x_ability}].IsReady} 
 			debuglog "${Me.Ability[${x_ability}]} Not Ready ${Me.Ability[${x_ability}].TimeRemaining} Sec."

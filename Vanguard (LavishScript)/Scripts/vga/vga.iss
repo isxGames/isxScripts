@@ -367,8 +367,7 @@ function EmergencyActions()
 	;-------------------------------------------
 	;*******Check If I Need to Evade************
 	;-------------------------------------------
-	call pushagrototank
-	call rescue
+
 	call checkFD
 	call checkinvoln1
 	call checkinvoln2
@@ -399,6 +398,8 @@ function PostCastingActions()
 	UpdateTempBuffWatch
 	call EmergencyActions
 	call Healcheck
+	call pushagrototank
+	call rescue
 	;-------------------------------------------
 	;********Check If I Can Critical************
 	;-------------------------------------------
