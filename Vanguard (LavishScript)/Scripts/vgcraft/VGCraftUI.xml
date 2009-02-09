@@ -2122,20 +2122,20 @@
 					
 					<Tab Name='IRC'>
 
-						<checkbox Name='UseIRC' Template='VG.BlueCheckbox'>
+						<checkbox Name='AutoConnectToIRC' Template='VG.BlueCheckbox'>
 							<X>20</X>
 							<Y>10</Y>
 							<Width>140</Width>
 							<Height>20</Height>
-							<Text>Connect To IRC</Text>
+							<Text>Connect To IRC on startup</Text>
 							<OnLoad>
-								if ${Script[VGCraft].VariableScope.UseIRC}
+								if ${Script[VGCraft].VariableScope.AutoConnectToIRC}
 								{
 									This:SetChecked
 								}
 							</OnLoad>							
 							<OnLeftClick>
-								Script[VGCraft].VariableScope.UseIRC:Set[${This.Checked}]
+								Script[VGCraft].VariableScope.AutoConnectToIRC:Set[${This.Checked}]
 							</OnLeftClick>
 							<AutoTooltip>Select to have VGCraft connect to IRC on startup.</AutoTooltip>
 						</checkbox>
