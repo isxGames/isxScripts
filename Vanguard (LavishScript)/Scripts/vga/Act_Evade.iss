@@ -51,13 +51,15 @@ function checkinvoln2()
 ;********************************************
 function pushagrototank()
 {
-	if ${doPushAgro} && !${${tankpawn}.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
+	if ${doPushAgro} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 		{
 		Pawn[${tankpawn}]:Target
 		waitframe
 		call checkabilitytocast "${agropush}"
 		if ${Return} && ${Me.Ability[${agropush}].IsReady} && ${fight.ShouldIAttack}
-			call executeability "${Iterator.Value}" "evade" "Neither"
+			{
+			call executeability "${Iterator.Value}" "evade" "Post"
+			}
 		}
 	return	
 }
@@ -66,9 +68,8 @@ function rescue()
 {
 	if ${Pawn[${tankpawn}](exists)}
 	{
-	echo "I Exist as the tank"
 	if ${doRescue} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
-	{
+		{
 		echo "Rescue ${doRescue} Mob on ${Me.TargetOfTarget} I should fight ${fight.ShouldIAttack} "
 		Pawn[${Me.TargetOfTarget}]:Target
 		waitframe
@@ -77,52 +78,65 @@ function rescue()
 		Rescue:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
 			{
+			echo "Checking ability to cast ${Iterator.Key}"
 			call checkabilitytocast "${Iterator.Value}"
+			echo "Ability to cast  ${Iterator.Key} was ${Return} and it isREADY ${Me.Ability[${Iterator.Value}].IsReady}"
 			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 				{	
-				call executeability "${Iterator.Value}" "evade" "Neither"
+				call executeability "${Iterator.Value}" "evade" "Post"
 				echo "Rescueing ${Me.DTarget} with ${Iterator.Value}"
 				}
 			if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
+				{
 				Pawn[${Me.TargetOfTarget}]:Target
-				echo "${Me.DTarget} is still agro} going to Next Ability"
+				echo "${Me.DTarget} is still agro going to Next Ability"
 				Iterator:Next
+				}
 			if ${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
+				{
 				echo "Mob is on Me ${Me.TargetOfTarget}"
-				Return
+				return
+				}
 			}
 		if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
-		{
-		echo "Non Force Abilities didnt work.. doing force target"
-		Pawn[${Me.TargetOfTarget}]:Target
-		waitframe
-		echo "Targeted on ${Me.TargetOfTarget}"
-		If !${Me.TargetBuff["Immunity: Force Target"](exists)}
-		{
-		echo "Mob is not immuned to Force Target"
-		variable iterator FRIterator
-		ForceRescue:GetSettingIterator[FRIterator]
-		while ( ${FRIterator.Key(exists)} )
 			{
-			call checkabilitytocast "${FRIterator.Value}"
-			if ${Return} && ${Me.Ability[${FRIterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
-				{	
-				call executeability "${FRIterator.Value}" "evade" "Neither"
-				echo "Forcing Mob to Target me with ${FRIterator.Value}"
+			echo "Non Force Abilities didnt work.. doing force target"
+			Pawn[${Me.TargetOfTarget}]:Target
+			waitframe
+			echo "Targeted on ${Me.TargetOfTarget}"
+			If !${Me.TargetBuff["Immunity: Force Target"](exists)}
+				{
+				echo "Mob is not immuned to Force Target"
+				variable iterator FTIterator
+				ForceRescue:GetSettingIterator[FTIterator]
+				while ( ${FTIterator.Key(exists)} )
+					{
+					call checkabilitytocast "${FTIterator.Value}"
+					if ${Return} && ${Me.Ability[${FTIterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
+						{
+						call executeability "${FTIterator.Value}" "evade" "Post"
+						echo "Forcing Mob to Target me with ${FTIterator.Value}"
+						}
+					if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
+						{
+						Pawn[${Me.TargetOfTarget}]:Target
+						echo "FOrce Target FAILED? Jesus Man"
+						FTIterator:Next
+						}
+					if ${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
+						{
+						echo "Ok I have agro"
+						return
+						}
+					}
+
 				}
-			if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
-				Pawn[${Me.TargetOfTarget}]:Target
-				echo "FOrce Target FAILED? Jesus Man"
-				Iterator:Next
-			if ${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
-				echo "Ok I have agro"
-				Return
+
 			}
-		}
+
 		}
 	}
-	}
-	return	
+	return
 }
 ;********************************************
 function checkevade1()
