@@ -246,5 +246,7 @@ variable string FightSong
 variable string RunSong
 variable string Drum
 
-
-
+;===================================================
+;===                 Blood Mage Variables       ====
+;===================================================
+variable string BMHealthToEnergySpell

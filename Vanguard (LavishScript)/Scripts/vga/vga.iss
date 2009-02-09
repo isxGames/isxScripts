@@ -139,6 +139,8 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/scripts/vga/CLS_Sorcerer.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/CLS_Bard.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/GUI_Bard.iss"
+#include "${Script.CurrentDirectory}/scripts/vga/CLS_BloodMage.iss"
+#include "${Script.CurrentDirectory}/scripts/vga/GUI_BloodMage.iss"
 
 ;===================================================
 ;===               Main Routine               ====
@@ -180,6 +182,7 @@ function main()
 	call PopulateBuffLists
 	call PopulateSellLists
 	call PopulateBardLists
+	call PopulateBMLists
 	call PopulateGroupMemberNames
 	;===================================================
 	;===               Bug WorkArounds              ====
@@ -238,10 +241,18 @@ function downtimefunction()
 ;===================================================
 function ClassSpecificDowntime()
 {
-	if ${MyClass.Equal[Shaman]}
-		call shamanmana
-	if ${MyClass.Equal[Bard]}
-		call BardSong
+	switch ${Me.Class}
+	{
+		case Bard
+			call BardSong
+			break
+		
+		case Blood Mage
+			call BM_CheckEnergy
+			call BM_DownTime
+			break
+	}
+	
 	return
 }
 ;===================================================
@@ -296,10 +307,20 @@ function PreCombatLoopFunction()
 ;===================================================
 function ClassSpecificPreCombat()
 {
-	if ${MyClass.Equal[Shaman]}
-		call shamanmana
-	if ${MyClass.Equal[Bard]}
-		call BardSong
+	switch ${Me.Class}
+	{
+		case Bard
+			call BardSong
+			break
+			
+		case Blood Mage
+			break
+			
+		case Shaman
+			call shamanmana
+	
+	}
+	
 	return
 }
 ;===================================================
@@ -314,6 +335,15 @@ function PostCombatLoopFunction()
 ;===================================================
 function ClassSpecificPostCombat()
 {
+	switch ${Me.Class}
+	{
+		case Bard
+			break
+		
+		case Blood Mage
+			break
+	}	
+	
 	return
 }
 ;===================================================
@@ -389,38 +419,47 @@ function PostCastingActions()
 ;===================================================
 function ClassSpecificPostCasting()
 {
-	if ${MyClass.Equal[Shaman]}
-		{
-		call shamanmana
-		}
-	if ${MyClass.Equal[Sorcerer]}
-		{
-		call SorcererMana
-		}
+	switch ${Me.Class}
+	{
+		case Blood Mage
+			call BM_CheckEnergy
+			break
+		
+		case Shaman
+			call shamanmana
+			break
+			
+		case Sorcerer
+			call SorcererMana
+			break
+	}
+	
 	return
 }
 
 ;********************************************
 atom atexit()
 {
-   
-   VG:ExecBinding[moveforward,release]
-   VG:ExecBinding[movebackward,release]
-   call SaveSpells
-   call SaveCrits
-   call SaveCombatMain
-   call SaveMelee
-   call SaveEvade
-   call SaveMobs
-   call SaveAbilities
-   call LavishSave
-   Event[VG_OnIncomingCombatText]:DetachAtom[VG_OnIncomingCombatText]
-   Event[VG_onGroupMemberAdded]:DetachAtom[NeedBuffs]
-   Event[VG_onGroupMemberDeath]:DetachAtom[NeedBuffs]
-   LavishSettings[VGA]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
-   LavishSettings[VGA_Mobs]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
-   LavishSettings[VGA_General]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_General.xml]
-   ui -unload "${Script.CurrentDirectory}/vga_gui.xml"
-   endscript vga.iss
-	
+	VG:ExecBinding[moveforward,release]
+	VG:ExecBinding[movebackward,release]
+	call SaveSpells
+	call SaveCrits
+	call SaveCombatMain
+	call SaveMelee
+	call SaveEvade
+	call SaveMobs
+	call SaveAbilities
+	call LavishSave
+	Event[VG_OnIncomingCombatText]:DetachAtom[VG_OnIncomingCombatText]
+	Event[VG_onGroupMemberAdded]:DetachAtom[NeedBuffs]
+	Event[VG_onGroupMemberDeath]:DetachAtom[NeedBuffs]
+	Event[VG_onPawnStatusChange]:DetachAtom[VG_onPawnStatusChange]
+	Event[VG_onCombatReaction]:DetachAtom[VG_onCombatReaction]
+	Event[VG_onGroupMemberCountChange]:DetachAtom[VG_onGroupMemberCountChange]
+	Event[VG_onGroupDisbanded]:DetachAtom[VG_onGroupDisbanded]
+	Event[VG_onGroupFormed]:DetachAtom[VG_onGroupFormed]
+	Event[VG_onGroupBooted]:DetachAtom[VG_onGroupBooted]
+	Event[VG_onGroupMemberBooted]:DetachAtom[VG_onGroupMemberBooted]
+	ui -unload "${Script.CurrentDirectory}/vga_gui.xml"
+	endscript vga
 }
