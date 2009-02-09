@@ -537,7 +537,7 @@
                   <Visible>0</Visible>
                   <Font Template='Default Font'>
 										<Bold />
-										<Size>18</Size>
+										<Size>16</Size>
 										<Color>FF22FF22</Color>
                   </Font>
                   <X>25</X>
