@@ -220,13 +220,4 @@ function PopulateMobLists()
 		Iterator:Next
 	}
 }
-;=================================================
-function LoadMobs()
-{
 
-
-}
-;=================================================
-function SaveMobs()
-{
-}

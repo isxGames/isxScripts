@@ -443,13 +443,6 @@ atom atexit()
 {
 	VG:ExecBinding[moveforward,release]
 	VG:ExecBinding[movebackward,release]
-	call SaveSpells
-	call SaveCrits
-	call SaveCombatMain
-	call SaveMelee
-	call SaveEvade
-	call SaveMobs
-	call SaveAbilities
 	call LavishSave
 	Event[VG_OnIncomingCombatText]:DetachAtom[VG_OnIncomingCombatText]
 	Event[VG_onGroupMemberAdded]:DetachAtom[NeedBuffs]
