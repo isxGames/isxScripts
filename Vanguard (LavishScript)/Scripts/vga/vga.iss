@@ -318,6 +318,7 @@ function ClassSpecificPreCombat()
 			
 		case Shaman
 			call shamanmana
+			break
 	
 	}
 	
