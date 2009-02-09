@@ -580,7 +580,7 @@ function MoveDone()
 
 	if ${nextDest.Equal[${destStation}]}
 	{
-		call DebugOut "VGCraft:: at Station, start working"
+		call DebugOut "VGCraft:: at Station, start working" 1
 		cTarget:Set[${cStation}]
 
 		; Start Working at the Crafting Station

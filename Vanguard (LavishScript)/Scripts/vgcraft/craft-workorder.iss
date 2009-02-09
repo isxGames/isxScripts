@@ -8,6 +8,7 @@ function:bool GetWorkOrder(bool getAny, int countType)
 	if ( ${TaskMaster[Crafting].InTransaction} && (${TaskMaster[Crafting].AvailWorkOrderCount} >= 1) )
 	{
 		call DebugOut "VGCraft:: GetWorkOrder called :: ${TaskMaster[Crafting].AvailWorkOrderCount}"
+		call IRCSpew "Getting Work Orders ... ${TaskMaster[Crafting].AvailWorkOrderCount} available."
 
 		variable int iCount = 0
 		variable bool allDone = FALSE
@@ -79,12 +80,12 @@ function:bool ChooseWorkOrder(int iCount, bool findAny, int woCount)
 	call SkillCheck "${sReqSkill}"
 	if ( ${Return} )
 	{
-		call MyOutput "VG:WO:name: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
-		;call MyOutput "VG:WO:desc: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Description}"
-		;call MyOutput "VG:WO:issue: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].IssuedBy}"
-		call MyOutput "VG:WO:Diff: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Difficulty}"
-		call MyOutput "VG:WO:skill: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].RequiredSkill}"
-		call MyOutput "VG:WO:ReqItems: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].RequestedItems.Left[1]}"
+		call MyOutput "VGCraft::WO:name: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
+		;call MyOutput "VGCraft:::WO:desc: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Description}"
+		;call MyOutput "VGCraft::WO:issue: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].IssuedBy}"
+		call MyOutput "VGCraft::WO:Diff: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Difficulty}"
+		call MyOutput "VGCraft::WO:skill: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].RequiredSkill}"
+		call MyOutput "VGCraft::WO:ReqItems: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].RequestedItems.Left[1]}"
 
 		if ${BadRecipes.Contains["${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"]}
 		{
@@ -94,7 +95,8 @@ function:bool ChooseWorkOrder(int iCount, bool findAny, int woCount)
 
 		if ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].RequestedItems(exists)} && (${TaskMaster[Crafting].AvailWorkOrder[${iCount}].RequestedItems.Left[1]} == ${woCount})
 		{
-			call DebugOut "VG:Selected: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
+			call DebugOut "VGCraft::Selected: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
+			call IRCSpew "Seleting Work Order: '${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}'"
 			WorkOrderSelected:Set[${TaskMaster[Crafting].AvailWorkOrder[${iCount}]}]
 			TaskMaster[Crafting].AvailWorkOrder[${iCount}]:Select
 			wait 5
@@ -127,7 +129,8 @@ function:bool ChooseWorkOrder(int iCount, bool findAny, int woCount)
 		if ${findAny}
 		{
 			call MyOutput "VGCraft:: ChooseWorkOrder: findAny TRUE"
-			call DebugOut "VG:Selected: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
+			call DebugOut "VGCraft::Selected: ${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}"
+			call IRCSpew "Seleting Work Order: '${TaskMaster[Crafting].AvailWorkOrder[${iCount}].Name}'"
 			WorkOrderSelected:Set[${TaskMaster[Crafting].AvailWorkOrder[${iCount}]}]
 			TaskMaster[Crafting].AvailWorkOrder[${iCount}]:Select
 			wait 5
@@ -178,6 +181,7 @@ function:bool FinishWorkOrder()
 	{
 		call DebugOut "VG:Complete WO[1]: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name} "
 		call StatsOut "VGCraft::   Trying to Complete WO: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name} "
+		call IRCSpew "Work Order (${TaskMaster[Crafting].CurrentWorkOrder[1].Name}) Complete!"
 
 		; Just Select and Complete the first one in the list
 		TaskMaster[Crafting].CurrentWorkOrder[1]:Complete
@@ -192,6 +196,7 @@ function:bool FinishWorkOrder()
 function AbandonWorkOrder()
 {
 	call DebugOut "VG:AbandonWorkOrder called:: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name}"
+	call IRCSpew "Abandoning Work Order: ${TaskMaster[Crafting].CurrentWorkOrder[1].Name}"
 
 	if ( ${TaskMaster[Crafting].CurrentWorkOrderCount} >= 1 )
 	{

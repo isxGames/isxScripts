@@ -266,7 +266,19 @@ atom(script) IRC_ReceivedPrivateMsg(string User, string From, string To, string 
 	
 	; NOTE: ${User} should always be the same as ${To} in this instance.  However, it is
 	;       included for continuity's sake.
-	  
+	
+	if !${bUseIRCMaster}
+		return
+		
+	if ${From.Find[${IRCMaster}]}
+	{
+		if ${Message.Find[Stats]}
+			call SpewStatsToIRC
+		if ${Message.Find[Shutdown]}
+			endscript vgcraft
+		else
+			vgexecute "${Message}"		
+	}
 }
 
 atom(script) IRC_ReceivedEmote(string User, string From, string To, string Message)

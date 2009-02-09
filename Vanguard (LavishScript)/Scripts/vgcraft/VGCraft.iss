@@ -261,7 +261,7 @@ variable string UIFile = "${LavishScript.CurrentDirectory}/scripts/vgcraft/VGCra
 variable string UISkin = "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 
 /* IRC */
-variable bool UseIRC
+variable bool AutoConnectToIRC
 variable string IRCServer
 variable string IRCNick
 variable bool bIRCChannel
@@ -533,7 +533,46 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 			return
 		}
 	}
-
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;; IRC ;;;;;;;;;;;;;;;;;;;;;;;;
+	; ChannelNumber: 15 (tells)
+	if ${ChannelNumber.Equal[15]}
+	{
+		if ${bUseIRCMaster}
+			call IRCSpew "${IRCMaster}, I just received a TELL --> ${Text}"
+		else
+			call IRCSpew "I just received a TELL --> ${Text}"
+	}	
+	; Someone is saying my name!
+	if ${Text.Find[${Me.FName}]}
+	{
+		;; ignore these channels
+		if !${ChannelNumber.Equal[38]}
+		{
+			if ${IRCUser["${IRCNick}"](exists)}
+			{
+				if ${bUseIRCMaster}
+				{
+					call IRCSpew "${IRCMaster}, Someone just mentioned my name!! (Channel: ${ChannelName}, ${ChannelNumber})"
+					call IRC_SendPM "${IRCMaster}" "[VGCraft ${Time}] Someone just mentioned my name --> ${Text} (Channel: ${ChannelName}, ${ChannelNumber})"
+				}
+				else
+					call IRCSpew "Someone just mentioned my name!! (Channel: ${ChannelName}, ${ChannelNumber})"
+			}
+		}
+	}
+	; ChannelNumber: 19
+	if (${Text.Find[Your Crafting level is now]})
+	{
+		call IRCSpew "DING!  I am now level ${Me.Level}"
+	}
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+	
+	
+	
 	; ChannelNumber: 78
 	if ${Text.Find[You do not have enough items selected to continue crafting]}
 	{
@@ -710,6 +749,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 		call StatsOut "VGCraft::      Quality: ${lastQuality}"
 		call StatsOut "===================== ${Refining.CurrentRecipe.Name} Finished ======================"
 		call MyOutput "===================== ${Refining.CurrentRecipe.Name} Finished ======================"
+		call IRCSpew "--- ${Refining.CurrentRecipe.Name} Finished ---"
 
 		if ( (${cState} >= CS_WAIT) && (${cState} < CS_MOVE) )
 		{ 
@@ -890,7 +930,6 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 			call WarnAlarm
 		}
 	}
-
 
 }
 
@@ -1143,7 +1182,7 @@ function CheckState()
 				/*  Waiting to begin recipe */
 			UIElement[State@CHUD]:SetText["Start Recipe"]
 
-			call DebugOut "VGCraft:: === Refining:Start ==="
+			call DebugOut "VGCraft:: === Refining:Start ===" 1
 
 			if !${doPauseRecipe}
 			{
@@ -1176,11 +1215,13 @@ function CheckState()
 			if ${doRecipeOnly}
 			{
 				call ScreenOut "VGCraft:: Recipe: ${Refining.CurrentRecipe.Name}"
+				call IRCSpew "Starting Recipe: ${Refining.CurrentRecipe.Name}"
 			}
 			else
 			{
 				call ScreenOut "VGCraft:: Recipe: ${CurrentRecipeName} :: ${Refining.OrigActionPointsAvail} :: ${Refining.CurrentRecipe.StepCount}"
 				call StatsOut "VGCraft:: Recipe: ${CurrentRecipeName} :: ${Refining.OrigActionPointsAvail} :: ${Refining.CurrentRecipe.StepCount}"
+				call IRCSpew "Starting Recipe: ${CurrentRecipeName}"
 			}
 
 			movePathCount:Set[0]
@@ -2904,8 +2945,8 @@ function main(int testParam)
 		call InitConfig
 
 		;Tell the user that the script has initialized and is running!
-		call DebugOut "VG:Crafting Assistant started -- version ${VGCraft_VERSION}"
-		echo "VG:Crafting Assistant started -- version ${VGCraft_VERSION}"
+		call DebugOut "VGCraft:: Crafting Assistant started -- version ${VGCraft_VERSION.Precision[2]}"
+		echo "VGCraft:: Crafting Assistant started -- version ${VGCraft_VERSION.Precision[2]}"
 
 		; Load up the UI panel
 		ui -reload "${UISkin}"
@@ -2988,7 +3029,7 @@ function main(int testParam)
 	}
 
 	;; IRC ;;
-	if ${UseIRC}
+	if ${AutoConnectToIRC}
 	{
 		call ConnectToIRC	
 	}
@@ -3097,6 +3138,30 @@ function main(int testParam)
 	;call ScreenOut "VG:Failed Recipes: ${statRecipeFailed}"
 }
 
+function SpewStatsToIRC()
+{
+	variable string totalTime
+	variable int totalXP
+
+	totalXP:Set[${Me.CraftXP} - ${startCraftXP}]
+	totalTime:Set[${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000)%60].Int.LeadingZeroes[2]}]
+	
+	call IRCSpew "================================================="
+	call IRCSpew "CraftingLevel : ${Me.CraftingLevel}"
+	call IRCSpew "XP: ${Me.CraftXP}   XP%: ${Me.CraftXPPct}"
+	call IRCSpew "Crafting XP gained: ${totalXP} in ${totalTime}"
+	call IRCSpew "Factions:  Qalian Artisans: ${Me.Faction[Qalian Artisans].Value} - Thestra Artisans: ${Me.Faction[Thestra Artisans].Value} - Kojan Artisans: ${Me.Faction[Kojan Artisans].Value}"
+	call IRCSpew "Total Copper Spent: ${statSpentCopper}"
+	call IRCSpew "Total Copper Made: ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"
+	call IRCSpew "Total Recipes Done: ${statRecipeDone}"
+	call IRCSpew "Failed Recipes: ${statRecipeFailed}"
+	call IRCSpew "Sucessful Work Orders: ${statWODone}"
+	call IRCSpew "Failed Work Orders: ${statWOAbandon}"
+	call IRCSpew "================================================="
+		
+	return
+}	
+
 function atexit() 
 {
 	; If ISXEVG isn't loaded, then no reason to run this script.
@@ -3106,7 +3171,6 @@ function atexit()
 	}
 
 	variable string totalTime
-
 	variable int totalXP
 
 	totalXP:Set[${Me.CraftXP} - ${startCraftXP}]
@@ -3118,6 +3182,7 @@ function atexit()
 	call MyOutput "CraftingLevel : ${Me.CraftingLevel}"
 	call MyOutput "XP: ${Me.CraftXP}   XP%: ${Me.CraftXPPct}"
 	call MyOutput "Crafting XP gained: ${totalXP} in ${totalTime}"
+	call MyOutput "Factions:  Qalian Artisans: ${Me.Faction[Qalian Artisans].Value} - Thestra Artisans: ${Me.Faction[Thestra Artisans].Value} - Kojan Artisans: ${Me.Faction[Kojan Artisans].Value}"
 	call MyOutput "Total Copper Spent: ${statSpentCopper}"
 	call MyOutput "Total Copper Made: ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"
 	call MyOutput "Total Recipes Done: ${statRecipeDone}"
@@ -3128,21 +3193,12 @@ function atexit()
 	
 	
 	;;; IRC ;;;
-	if ${UseIRC}
+	if ${IRCUser["${IRCNick}"](exists)}
 	{
-		call IRCSpew "================================================="
-		call IRCSpew "CraftingLevel : ${Me.CraftingLevel}"
-		call IRCSpew "XP: ${Me.CraftXP}   XP%: ${Me.CraftXPPct}"
-		call IRCSpew "Crafting XP gained: ${totalXP} in ${totalTime}"
-		call IRCSpew "Total Copper Spent: ${statSpentCopper}"
-		call IRCSpew "Total Copper Made: ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"
-		call IRCSpew "Total Recipes Done: ${statRecipeDone}"
-		call IRCSpew "Failed Recipes: ${statRecipeFailed}"
-		call IRCSpew "Sucessful Work Orders: ${statWODone}"
-		call IRCSpew "Failed Work Orders: ${statWOAbandon}"
-		call IRCSpew "================================================="
-		
+		call SpewStatsToIRC
+		call IRCSpew "--- Ending VGCraft ---"
 		call IRC_Shutdown
+		
 	}
 
 	;Remove the event listeners
@@ -3221,6 +3277,9 @@ function ConnectToIRC()
 
 function IRCSpew(string aMessage)
 {
+	if !${IRCUser["${IRCNick}"](exists)}
+		return
+		
 	if ${bUseIRCMaster} && ${IRCSpewToMasterPM}
 		call IRC_SendPM "${IRCMaster}" "[VGCraft ${Time}] [${Me.FName}] ${aMessage}"
 		

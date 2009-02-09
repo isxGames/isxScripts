@@ -68,11 +68,11 @@ function Start()
 	;	return
 	;}
 
-	call ScreenOut "VGCraft:: CraftBot Starting"
+	call ScreenOut "VGCraft:: CraftBot Starting" 1
 	echo "Starting CraftBot"
 
-	call DebugOut "Station: ${cStation}"
-	call DebugOut "WO NPC: ${cWorkNPC}"
+	call DebugOut "Station: ${cStation}" 
+	call DebugOut "WO NPC: ${cWorkNPC}" 
 	call DebugOut "Supplier: ${cSupplyNPC}"
 
 	call DebugOut "VGCraft:: Current WO Count: ${TaskMaster[Crafting].CurrentWorkOrderCount}"
@@ -242,7 +242,7 @@ function InitConfig()
 	windowX:Set[${setConfig.FindSetting[windowX, 10]}]
 	windowY:Set[${setConfig.FindSetting[windowY, 10]}]
 	
-	UseIRC:Set[${setConfig.FindSetting[UseIRC,FALSE]}]
+	AutoConnectToIRC:Set[${setConfig.FindSetting[AutoConnectToIRC,FALSE]}]
 	IRCServer:Set[${setConfig.FindSetting[IRCServer,""]}]
 	IRCNick:Set[${setConfig.FindSetting[IRCNick,""]}]
 	bIRCChannel:Set[${setConfig.FindSetting[bIRCChannel,FALSE]}]
@@ -378,7 +378,7 @@ function SaveConfig()
 	setConfig:AddSetting[windowX, ${UIElement[CraftBot].X}]
 	setConfig:AddSetting[windowY, ${UIElement[CraftBot].Y}]
 	
-	setConfig:AddSetting[UseIRC, ${UseIRC}]
+	setConfig:AddSetting[AutoConnectToIRC, ${AutoConnectToIRC}]
 	setConfig:AddSetting[IRCServer, ${IRCServer}]
 	setConfig:AddSetting[IRCNick, ${IRCNick}]
 	setConfig:AddSetting[bIRCChannel, ${bIRCChannel}]
