@@ -128,9 +128,11 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/scripts/vga/GUI_Abilities.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/Act_Interupt.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/GUI_Spells.iss"
+#include "${Script.CurrentDirectory}/scripts/vga/Act_Crits.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/GUI_Criticals.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/GUI_Evade.iss"
 #include "${Script.CurrentDirectory}/scripts/vga/Act_Evade.iss"
+
 
 ;-------------------------------------------
 ;**********Class-Tab Scripts***************
