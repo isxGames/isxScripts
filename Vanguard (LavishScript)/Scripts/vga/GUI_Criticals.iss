@@ -231,14 +231,3 @@ function PopulateCritsLists()
 		Iterator:Next
 	}
 }
-;=================================================
-function LoadCrits()
-{
-
-
-}
-;=================================================
-function SaveCrits()
-{
-
-}

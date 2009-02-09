@@ -242,14 +242,4 @@ function PopulateMeleeLists()
 		Iterator:Next
 	}
 }
-;=================================================
-function LoadMelee()
-{
 
-
-}
-;=================================================
-function SaveMelee()
-{
-
-}

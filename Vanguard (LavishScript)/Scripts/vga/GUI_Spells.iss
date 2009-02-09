@@ -246,13 +246,4 @@ function PopulateSpellLists()
 		Iterator:Next
 	}
 }
-;=================================================
-function LoadSpells()
-{
 
-}
-;=================================================
-function SaveSpells()
-{
-
-}

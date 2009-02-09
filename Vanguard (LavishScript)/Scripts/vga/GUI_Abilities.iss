@@ -229,13 +229,4 @@ function PopulateAbilitiesLists()
 		Iterator:Next
 	}
 }
-;=================================================
-function LoadAbilities()
-{
 
-
-}
-;=================================================
-function SaveAbilities()
-{
-}

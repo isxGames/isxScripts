@@ -255,13 +255,4 @@ function PopulateCombatMainLists()
 		}
 	}
 }
-;=================================================
-function LoadCombatMain()
-{
 
-}
-;=================================================
-function SaveCombatMain()
-{
-
-}

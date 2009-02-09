@@ -50,6 +50,7 @@ function solobuff()
 
 function groupbuff()
 {
+  wait 20
 	variable iterator anIter
 
 	Buff:GetSettingIterator[anIter]
