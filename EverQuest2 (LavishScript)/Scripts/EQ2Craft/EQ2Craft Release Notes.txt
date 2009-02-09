@@ -1,5 +1,8 @@
 Revision History ||
 ===================
+v8.62 - Stopped the crazy exiting bot when out of money. Craft will now wait the same as when
+        buying harvests from the broker and unable to buy enough. (Resume Crafting button)
+
 v8.61 - Fixed numerous bugs with the component quantity counting. This was a major rewrite of a
         large block of code. Please report any further bugs with quantity counting on the ISXEQ2
         bug tracker.
