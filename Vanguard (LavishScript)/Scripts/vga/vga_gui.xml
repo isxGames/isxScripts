@@ -7747,79 +7747,100 @@
                       <Frame name='shamanfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children>
-			</Children>
+						</Children>
                       </Frame>
                       <Frame name='clericfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
                         <Texture></Texture>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Children></Children>
                       </Frame>
                       <Frame name='bloodmagefrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
                         <Texture></Texture>
-			<Visible>0</Visible>
-                        <Children></Children>
+						<Visible>0</Visible>
+                        <children>
+                         <Text Name='lbHealthToEnergySpell' Template='VG.BoldText'>
+                            <X>15</X>
+                            <Y>20</Y>
+                            <Width>180</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Health to Energy Spell:</Text>
+                          </Text>
+                          <ComboBox Name="cmbHealthToEnergySpell" Template="VG.ComboBox">
+                            <X>190</X>
+                            <Y>18</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+								Script[vga].VariableScope.BMHealthToEnergySpell:Set[${This.SelectedItem.Text}]
+								Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnSelect>
+                          </ComboBox>
+                        </Children>
                       </Frame>
                       <Frame name='disciplefrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
                         <Texture></Texture>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Children></Children>
                       </Frame>
                       <Frame name='paladinfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='warriorfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
-                        <Children>
-			</Children>
+                        <Children></Children>
                       </Frame>
                       <Frame name='dreadknightfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='monkfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='roguefrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='rangerfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='bardfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children>
                           <Text Name='txtprim' Template='VG.BoldText'>
@@ -7847,7 +7868,7 @@
                               This:AddItem[NONE]
                             </OnLoad>
                             <OnSelect>
-				Script[vga].VariableScope.PrimaryWeapon:Set[${This.SelectedItem.Text}]
+								Script[vga].VariableScope.PrimaryWeapon:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
                           <Text Name='txtsec' Template='VG.BoldText'>
@@ -7867,7 +7888,7 @@
                               This:AddItem[NONE]
                             </OnLoad>
                             <OnSelect>
-				Script[vga].VariableScope.SecondaryWeapon:Set[${This.SelectedItem.Text}]
+								Script[vga].VariableScope.SecondaryWeapon:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
                           <Text Name='txtfightsong' Template='VG.BoldText'>
@@ -7887,7 +7908,7 @@
                               This:AddItem[NONE]
                             </OnLoad>
                             <OnSelect>
-				Script[vga].VariableScope.FightSong:Set[${This.SelectedItem.Text}]
+								Script[vga].VariableScope.FightSong:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
                           <Text Name='txtnocombat' Template='VG.BoldText'>
@@ -7915,7 +7936,7 @@
                               This:AddItem[NONE]
                             </OnLoad>
                             <OnSelect>
-				Script[vga].VariableScope.Drum:Set[${This.SelectedItem.Text}]
+								Script[vga].VariableScope.Drum:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
                           <Text Name='txtnofightsong' Template='VG.BoldText'>
@@ -7935,37 +7956,36 @@
                               This:AddItem[NONE]
                             </OnLoad>
                             <OnSelect>
-				Script[vga].VariableScope.RunSong:Set[${This.SelectedItem.Text}]
+								Script[vga].VariableScope.RunSong:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
-
-			</Children>
+					  </Children>
                       </Frame>
                       <Frame name='sorcererfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='necromancerfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='druidtfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
                       <Frame name='psionicistfrm'>
                         <Height>100%</Height>
                         <Width>100%</Width>
-			<Visible>0</Visible>
+						<Visible>0</Visible>
                         <Texture></Texture>
                         <Children></Children>
                       </Frame>
