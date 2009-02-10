@@ -9,7 +9,11 @@ function PopulateBMLists()
 		if (${Me.Ability[${i}].Name.Find[Mental Transmutation]})
 			UIElement[cmbHealthToEnergySpell@bloodmagefrm@ClassFrm@Class@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
-
+	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
+	{
+		if (${Me.Ability[${i}].Name.Find[Scarlet Ritual]})
+			UIElement[cmbBMBloodUnionDumpDPSSpell@bloodmagefrm@ClassFrm@Class@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+	}
 
 
 	;;; Select Proper Item in Combo Boxes ;;;
@@ -19,5 +23,10 @@ function PopulateBMLists()
 		if ${UIElement[cmbHealthToEnergySpell@bloodmagefrm@ClassFrm@Class@ABot@vga_gui].Item[${rCount}].Text.Equal[${BMHealthToEnergySpell}]}
 			UIElement[cmbHealthToEnergySpell@bloodmagefrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
 	}
-	
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[cmbBMBloodUnionDumpDPSSpell@bloodmagefrm@ClassFrm@Class@ABot@vga_gui].Items}
+	{
+		if ${UIElement[cmbBMBloodUnionDumpDPSSpell@bloodmagefrm@ClassFrm@Class@ABot@vga_gui].Item[${rCount}].Text.Equal[${BMBloodUnionDumpDPSSpell}]}
+			UIElement[cmbBMBloodUnionDumpDPSSpell@bloodmagefrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
+	}
 }

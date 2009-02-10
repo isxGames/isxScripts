@@ -313,6 +313,7 @@ function LavishSave()
 			
 		case Blood Mage
 			Class:AddSetting[BMHealthToEnergySpell,${BMHealthToEnergySpell}]	
+			Class:AddSetting[BMBloodUnionDumpDPSSpell,${BMBloodUnionDumpDPSSpell}]	
 			break
 	}
 	

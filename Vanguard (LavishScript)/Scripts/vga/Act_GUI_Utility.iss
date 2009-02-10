@@ -32,6 +32,7 @@ function lootit()
 function executeability(string x_ability, string x_type, string CP)
 {
 	variable int64 CurrentTargetID
+	variable bool DoIt = FALSE
 	
 	;; Auto Counter...
 	if ${DoCountersASAP} && ${CounterReactionReady}
@@ -86,39 +87,80 @@ function executeability(string x_ability, string x_type, string CP)
 	}
 	
 	
-	call mobresist "${x_ability}"
-	if ${Return}
+	switch ${x_type}
+	{
+		case Heal
+			DoIt:Set[TRUE]
+			break
+			
+		case attack		
+			call mobresist "${x_ability}"
+			if ${Return}
+				DoIt:Set[TRUE]
+
+		case buff
+			DoIt:Set[TRUE]
+			break
+			
+		case evade
+			call mobresist "${x_ability}"
+			if ${Return}
+				DoIt:Set[TRUE]
+			break
+			
+		case utility
+			DoIt:Set[TRUE]
+			break
+			
+		case NoCheck
+			DoIt:Set[TRUE]
+			break
+			
+		default
+			DoIt:Set[TRUE]
+			break
+	}
+
+	if ${DoIt}
 	{
 		debuglog "Casting ${x_ability}"
 		if ${Me.Ability[${x_ability}].IsReady}
 		{
 			Me.Ability[${x_ability}]:Use
-			if ${x_type.Equal[Heal]}
+			
+			switch ${x_type}
 			{
-				actionlog "${x_ability} ${Me.DTarget}"
-				call MeCasting ${CP}
-				return
-			}
-			if ${x_type.Equal[attack]}
-			{
-				actionlog "${x_ability} ${Me.Target}"
-				call MeCasting ${CP}
-				return
-			}
-			if ${x_type.Equal[buff]}
-			{
-				actionlog "${x_ability} ${Me.DTarget} BUFF"
-				call MeCasting ${CP}
-				return
-			}	
-			if ${x_type.Equal[evade]}
-			{
-				actionlog "${x_ability} ${Me.DTarget} EVADE"
-				call MeCasting ${CP}
-				return
-			}	
+				case Heal
+					actionlog "${x_ability} ${Me.DTarget}"
+					call MeCasting ${CP}
+					return
+					
+				case attack		
+					actionlog "${x_ability} ${Me.Target}"
+					call MeCasting ${CP}
+					return
+		
+				case buff
+					actionlog "${x_ability} ${Me.DTarget} BUFF"
+					call MeCasting ${CP}
+					return
+					
+				case evade
+					actionlog "${x_ability} ${Me.DTarget} EVADE"
+					call MeCasting ${CP}
+					return
+				
+				case utility
+					actionlog "${x_ability} ${Me.DTarget} UTILITY"
+					call MeCasting ${CP}
+					return
+					
+				default
+					call MeCasting ${CP}
+					return
+			}			
 		}
-		if !${Me.Ability[${x_ability}].IsReady} 
+		else
 			debuglog "${Me.Ability[${x_ability}]} Not Ready ${Me.Ability[${x_ability}].TimeRemaining} Sec."
 		return 
 	}

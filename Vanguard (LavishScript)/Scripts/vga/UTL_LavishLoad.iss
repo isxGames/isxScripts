@@ -456,6 +456,7 @@ function LavishLoad()
 			
 		case Blood Mage
 			BMHealthToEnergySpell:Set[${Class.FindSetting[BMHealthToEnergySpell,${BMHealthToEnergySpell}]}]
+			BMBloodUnionDumpDPSSpell:Set[${Class.FindSetting[BMBloodUnionDumpDPSSpell,${BMBloodUnionDumpDPSSpell}]}]
 			break
 	}
 	

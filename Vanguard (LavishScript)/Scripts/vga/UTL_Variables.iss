@@ -250,3 +250,4 @@ variable string Drum
 ;===                 Blood Mage Variables       ====
 ;===================================================
 variable string BMHealthToEnergySpell
+variable string BMBloodUnionDumpDPSSpell
