@@ -426,6 +426,7 @@ function ClassSpecificPostCasting()
 	switch ${Me.Class}
 	{
 		case Blood Mage
+			call BM_CheckBloodUnion
 			call BM_CheckEnergy
 			break
 		

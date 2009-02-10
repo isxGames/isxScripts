@@ -7774,7 +7774,7 @@
                             <Text>Health to Energy Spell:</Text>
                           </Text>
                           <ComboBox Name="cmbHealthToEnergySpell" Template="VG.ComboBox">
-                            <X>190</X>
+                            <X>200</X>
                             <Y>18</Y>
                             <Width>190</Width>
                             <Height>20</Height>
@@ -7783,6 +7783,28 @@
                             </OnLoad>
                             <OnSelect>
 								Script[vga].VariableScope.BMHealthToEnergySpell:Set[${This.SelectedItem.Text}]
+								Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnSelect>
+                          </ComboBox>
+                          
+                         <Text Name='lbBMBloodUnionDumpDPSSpell' Template='VG.BoldText'>
+                            <X>15</X>
+                            <Y>40</Y>
+                            <Width>180</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>DPS Blood Union Dump Spell:</Text>
+                          </Text>
+                          <ComboBox Name="cmbBMBloodUnionDumpDPSSpell" Template="VG.ComboBox">
+                            <X>200</X>
+                            <Y>38</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+								Script[vga].VariableScope.BMBloodUnionDumpDPSSpell:Set[${This.SelectedItem.Text}]
 								Script[VGA]:QueueCommand[call LavishSave]	
                             </OnSelect>
                           </ComboBox>
