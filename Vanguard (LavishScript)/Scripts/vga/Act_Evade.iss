@@ -74,7 +74,7 @@ function rescue()
 		VGExecute "/assistoffensive"
 		if ${Me.DTarget.Distance} > 4
 			call movetoobject ${Me.DTarget.ID} 4 0
-		call CheckPosition
+		face ${Me.Target.X} ${Me.Target.Y}
 		waitframe
 		;echo "My DTarget is ${Me.DTarget}"
 		variable iterator Iterator
