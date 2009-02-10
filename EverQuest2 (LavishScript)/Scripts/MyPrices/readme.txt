@@ -411,7 +411,9 @@ Version 0.13g
 
 Added auto-transmute option under buy tab.
 
-Items bought using that filter will be automatically transmuted and the reculting powders/etc put in your bags.
+Items bought using that filter will be automatically transmuted and the resulting powders/etc put in your bags.
+
+Removed a few Echo debug lines
 
 Version 0.13f
 -------------

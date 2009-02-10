@@ -747,6 +747,9 @@ function buy(string tabname, string action)
 						CraftItem:Set[FALSE]
 						Harvest:Set[FALSE]
 						CraftRecipe:Set[NULL]
+						AutoTransmute:Set[FALSE]
+						BuyAttuneOnly:Set[FALSE]
+						BuyNameOnly:Set[FALSE]
 						do
 						{
 							Switch "${BuyNameIterator.Key}"

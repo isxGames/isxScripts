@@ -1179,12 +1179,6 @@
 						<AutoTooltip>
 							Transmute Items when bought
 						</AutoTooltip>
-						<OnLeftClick>
-							if ${UIElement[Transmute@Buy@GUITabs@MyPrices].Checked}
-							{
-								UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:SetChecked
-							}
-						</OnLeftClick>
 					</checkbox>
 					<Textentry Name='BuyName'>
 						<X>25</X>
