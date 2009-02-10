@@ -53,12 +53,12 @@ function pushagrototank()
 {
 	if ${doPushAgro} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 		{
-		VGExecute "/assistoffensive"
+		VGExecute /targetauto ${tankpawn}
 		waitframe
 		call checkabilitytocast "${agropush}"
 		if ${Return} && ${Me.Ability[${agropush}].IsReady} && ${fight.ShouldIAttack}
 			{
-			call executeability "${Iterator.Value}" "evade" "Post"
+			call executeability "${agropush}" "evade" "Post"
 			}
 		}
 	return	
@@ -139,6 +139,7 @@ function rescue()
 
 		}
 	}
+	VGExecute /targetauto ${tankpawn}
 	return
 }
 ;********************************************
