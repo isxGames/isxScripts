@@ -239,6 +239,16 @@ function CheckPosition()
 	call assistpawn
 	call facemob
 	call MoveToTarget
+	call targettank
+}
+;********************************************
+function targettank()
+{
+		if ${Pawn[exactname,${tankpawn}].Distance} < 50 && ${Pawn[exactname,${tankpawn}](exists)} && !${Me.FName.Equal[${tankpawn}]}
+		{
+			VGExecute /targetauto ${tankpawn}
+		}
+	return
 }
 ;********************************************
 function assistpawn()
