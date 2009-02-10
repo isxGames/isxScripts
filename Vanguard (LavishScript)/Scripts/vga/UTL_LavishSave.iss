@@ -314,6 +314,9 @@ function LavishSave()
 		case Blood Mage
 			Class:AddSetting[BMHealthToEnergySpell,${BMHealthToEnergySpell}]	
 			Class:AddSetting[BMBloodUnionDumpDPSSpell,${BMBloodUnionDumpDPSSpell}]	
+			Class:AddSetting[BMSingleTargetLifeTap1,${BMSingleTargetLifeTap1}]	
+			Class:AddSetting[BMSingleTargetLifeTap2,${BMSingleTargetLifeTap2}]	
+			Class:AddSetting[BMBloodUnionSingleTargetHOT,${BMBloodUnionSingleTargetHOT}]	
 			break
 	}
 	

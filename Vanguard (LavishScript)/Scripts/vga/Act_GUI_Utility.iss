@@ -155,6 +155,11 @@ function executeability(string x_ability, string x_type, string CP)
 					call MeCasting ${CP}
 					return
 					
+				case Lifetap
+					actionlog "${x_ability} ${Me.DTarget} LIFETAP"
+					call MeCasting ${CP}
+					return
+							
 				default
 					call MeCasting ${CP}
 					return
@@ -210,7 +215,12 @@ function:bool checkabilitytocast(string aName)
 	}
 	if ${Me.Ability[${aName}].TimeRemaining} > 0
 	{
-		debuglog "TimeRemaining Must wait ${Me.Ability[${aName}].TimeRemaining} "
+		debuglog "TimeRemaining Must wait ${Me.Ability[${aName}].TimeRemaining}"
+		return FALSE
+	}
+	if !${Me.Ability[${aName}].IsReady}
+	{
+		debuglog "'${aName}' is not ready!"
 		return FALSE
 	}
 
