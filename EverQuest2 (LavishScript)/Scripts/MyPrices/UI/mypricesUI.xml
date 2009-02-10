@@ -463,6 +463,7 @@
 							Create recipe list for Craft.
 						</AutoTooltip>
 						<OnLeftClick>
+							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Making List**"]
 							Script[myprices]:QueueCommand[call LoadList]
 							Script[myprices]:QueueCommand[call checkstock]
 						</OnLeftClick>
@@ -477,6 +478,7 @@
 							Put your crafted items on the broker.
 						</AutoTooltip>
 						<OnLeftClick>
+							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Placing Items**"]
 							Script[myprices]:QueueCommand[call buy item place]
 						</OnLeftClick>
 					</Commandbutton>
@@ -1114,7 +1116,7 @@
 						<Text>Name</Text>
 					</Text>
 					<checkbox Name='Harvest'>
-						<X>90</X>
+						<X>40</X>
 						<Y>325</Y>
 						<Width>100</Width>
 						<Height>20</Height>
@@ -1131,7 +1133,7 @@
 						<Text>Number</Text>
 					</Text>
 					<checkbox Name='BuyNameOnly'>
-						<X>190</X>
+						<X>110</X>
 						<Y>325</Y>
 						<Width>100</Width>
 						<Height>20</Height>
@@ -1159,7 +1161,7 @@
 						</AutoTooltip>
 					</checkbox>
 					<checkbox Name='BuyAttuneOnly'>
-						<X>295</X>
+						<X>195</X>
 						<Y>325</Y>
 						<Width>100</Width>
 						<Height>20</Height>
@@ -1167,6 +1169,22 @@
 						<AutoTooltip>
 							Atunnable Items only
 						</AutoTooltip>
+					</checkbox>
+					<checkbox Name='Transmute'>
+						<X>315</X>
+						<Y>325</Y>
+						<Width>100</Width>
+						<Height>20</Height>
+						<Text>Auto Transmute</Text>
+						<AutoTooltip>
+							Transmute Items when bought
+						</AutoTooltip>
+						<OnLeftClick>
+							if ${UIElement[Transmute@Buy@GUITabs@MyPrices].Checked}
+							{
+								UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:SetChecked
+							}
+						</OnLeftClick>
 					</checkbox>
 					<Textentry Name='BuyName'>
 						<X>25</X>

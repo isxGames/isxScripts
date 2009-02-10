@@ -1,4 +1,4 @@
-MyPrices - Version 0.13f
+MyPrices - Version 0.13g
 
 For update details see the bottom of this file.
 
@@ -349,7 +349,7 @@ Enter the PP , Gold , Silver and Copper you are willing to pay for EACH item int
 
 Press Save to add the item to the list.
 
-
+If you click the transmute option for this entry then the scrip wil transmute anything bought and accept the results.
 
 To test your filters click on the entry in the list  box the script will do a broker search.
  (helps to make sure you have the correct spelling)
@@ -386,14 +386,9 @@ The Future
 
 Plans for developing this script are the following:
 
-Add an option to Auto-transmute newly bought items after the buy routine has completed, (need to add a check for full bags as well).
-
 Currently the auto-buy option takes the sellers base price (minus commission) as the price to pay when listing items,
 as soon as ISXEQ2 has the option I intend that the script will take the 'actual' cost shown on the broker into consideration
 before listing them. (it DOESN'T buy items over your set price - only lists them).
-
-To round the script off , coding that by clicking on an item in your list , altering it's value in the price boxes and pressing
-a 'Set' button will change the price of that item on the broker.
 
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
 by more efficient code as I re-code parts of it.
@@ -410,6 +405,13 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13g
+-------------
+
+Added auto-transmute option under buy tab.
+
+Items bought using that filter will be automatically transmuted and the reculting powders/etc put in your bags.
 
 Version 0.13f
 -------------
