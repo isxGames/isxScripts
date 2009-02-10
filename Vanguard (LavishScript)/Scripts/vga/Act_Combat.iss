@@ -19,7 +19,7 @@ objectdef fight
 			}
 
 		}
-		elseif ${Group.Count} > 1 && ${Me.TargetHealth} < ${AssistBattlePct} && !${Me.Target.IsDead} && !${Me.Target.Type.Equal[Corpse]} && ${Me.TargetHealth} > 0
+		elseif ${Group.Count} > 1 && ${Me.TargetHealth} <= ${AssistBattlePct} && !${Me.Target.IsDead} && !${Me.Target.Type.Equal[Corpse]} && ${Me.TargetHealth} > 0
 		{
 			if ${lastattack.Equal[${Me.Target.ID}]}
 			{

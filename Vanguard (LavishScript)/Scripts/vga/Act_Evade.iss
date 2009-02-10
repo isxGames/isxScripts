@@ -51,7 +51,7 @@ function checkinvoln2()
 ;********************************************
 function pushagrototank()
 {
-	if ${doPushAgro} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
+	if ${doPushAgro} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}  && ${Group.Count} > 1
 		{
 		VGExecute /targetauto ${tankpawn}
 		waitframe
@@ -66,7 +66,7 @@ function pushagrototank()
 ;********************************************
 function rescue()
 {
-	if ${Pawn[${tankpawn}](exists)}
+	if ${Pawn[${tankpawn}](exists)} && ${Group.Count} > 1
 	{
 	if ${doRescue} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 		{
@@ -139,7 +139,8 @@ function rescue()
 
 		}
 	}
-	VGExecute /targetauto ${tankpawn}
+	if !${Me.FName.Equal[${tankpawn}]}
+		VGExecute /targetauto ${tankpawn}
 	return
 }
 ;********************************************
