@@ -251,3 +251,6 @@ variable string Drum
 ;===================================================
 variable string BMHealthToEnergySpell
 variable string BMBloodUnionDumpDPSSpell
+variable string BMSingleTargetLifeTap1
+variable string BMSingleTargetLifeTap2
+variable string BMBloodUnionSingleTargetHOT

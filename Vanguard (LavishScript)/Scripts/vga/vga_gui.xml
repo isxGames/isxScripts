@@ -7786,7 +7786,6 @@
 								Script[VGA]:QueueCommand[call LavishSave]	
                             </OnSelect>
                           </ComboBox>
-                          
                          <Text Name='lbBMBloodUnionDumpDPSSpell' Template='VG.BoldText'>
                             <X>15</X>
                             <Y>40</Y>
@@ -7808,6 +7807,76 @@
 								Script[VGA]:QueueCommand[call LavishSave]	
                             </OnSelect>
                           </ComboBox>
+                          
+                         <Text Name='lbBMSingleTargetLifeTap1' Template='VG.BoldText'>
+                            <X>15</X>
+                            <Y>60</Y>
+                            <Width>180</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <AutoTooltip>This spell will be used to regain health if it is available.</AutoTooltip>
+                            <Text>Primary Sgl Tgt Life Tap:</Text>
+                          </Text>
+                          <ComboBox Name="cmbBMSingleTargetLifeTap1" Template="VG.ComboBox">
+                            <X>200</X>
+                            <Y>58</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+								Script[vga].VariableScope.BMSingleTargetLifeTap1:Set[${This.SelectedItem.Text}]
+								Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnSelect>
+                          </ComboBox>
+                          
+                         <Text Name='lbBMSingleTargetLifeTap2' Template='VG.BoldText'>
+                            <X>15</X>
+                            <Y>80</Y>
+                            <Width>180</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <AutoTooltip>This spell will be used to regain health if your primary single target life tap is not available.</AutoTooltip>
+                            <Text>Secondary Sgl Tgt Life Tap:</Text>
+                          </Text>
+                          <ComboBox Name="cmbBMSingleTargetLifeTap2" Template="VG.ComboBox">
+                            <X>200</X>
+                            <Y>78</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+								Script[vga].VariableScope.BMSingleTargetLifeTap2:Set[${This.SelectedItem.Text}]
+								Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnSelect>
+                          </ComboBox>             
+                          
+                         <Text Name='lbBMBloodUnionSingleTargetHOT' Template='VG.BoldText'>
+                            <X>15</X>
+                            <Y>100</Y>
+                            <Width>180</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <AutoTooltip>Your instant cast blood union based HOT.</AutoTooltip>
+                            <Text>Blood Union Instant Heal:</Text>
+                          </Text>
+                          <ComboBox Name="cmbBMBloodUnionSingleTargetHOT" Template="VG.ComboBox">
+                            <X>200</X>
+                            <Y>98</Y>
+                            <Width>190</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+								Script[vga].VariableScope.BMBloodUnionSingleTargetHOT:Set[${This.SelectedItem.Text}]
+								Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnSelect>
+                          </ComboBox>                                           
+                          
                         </Children>
                       </Frame>
                       <Frame name='disciplefrm'>
