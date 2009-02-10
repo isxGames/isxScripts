@@ -53,7 +53,7 @@ function pushagrototank()
 {
 	if ${doPushAgro} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 		{
-		Pawn[${tankpawn}]:Target
+		VGExecute "/assistoffensive"
 		waitframe
 		call checkabilitytocast "${agropush}"
 		if ${Return} && ${Me.Ability[${agropush}].IsReady} && ${fight.ShouldIAttack}
@@ -71,7 +71,10 @@ function rescue()
 	if ${doRescue} && !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}
 		{
 		;echo "Rescue ${doRescue} Mob on ${Me.TargetOfTarget} I should fight ${fight.ShouldIAttack} "
-		Pawn[${Me.TargetOfTarget}]:Target
+		VGExecute "/assistoffensive"
+		if ${Me.DTarget.Distance} > 4
+			call movetoobject ${Me.DTarget.ID} 4 0
+		call CheckPosition
 		waitframe
 		;echo "My DTarget is ${Me.DTarget}"
 		variable iterator Iterator
@@ -88,7 +91,7 @@ function rescue()
 				}
 			if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 				{
-				Pawn[${Me.TargetOfTarget}]:Target
+				GroupMember[${Me.TargetOfTarget}]:Target
 				;echo "${Me.DTarget} is still agro going to Next Ability"
 				Iterator:Next
 				}
@@ -101,7 +104,7 @@ function rescue()
 		if !${Pawn[${tankpawn}].Name.Equal[${Me.TargetOfTarget}]}
 			{
 			;echo "Non Force Abilities didnt work.. doing force target"
-			Pawn[${Me.TargetOfTarget}]:Target
+			VGExecute "/assistoffensive"
 			waitframe
 			;echo "Targeted on ${Me.TargetOfTarget}"
 			If !${Me.TargetBuff["Immunity: Force Target"](exists)}
