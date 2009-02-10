@@ -760,7 +760,7 @@
                   <Width>100</Width>
                   <Height>20</Height>
                   <Text>Show entire Shopping List</Text>
-                  <Command>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+                  <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
                   <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]}</Data>
                 </Commandcheckbox>
