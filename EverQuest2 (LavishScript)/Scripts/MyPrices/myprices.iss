@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13f :  released 3rd February 2009
+; Version 0.13g :  released 10rd February 2009
 ;
 ; Declare Variables
 ;
@@ -110,8 +110,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices Version 0.13f :  released 3rd February 2009" FF11FFCC
-	call echolog "Version 0.13f :  released 3rd February 2009"
+	call AddLog "Running MyPrices 0.13g :  released 10rd February 2009" FF11FFCC
+	call echolog "0.13g :  released 10rd February 2009"
 	
 	call StartUp	
 
@@ -1606,8 +1606,6 @@ function calcsilver(int plat, int gold, int silver, float copper)
 	Copper:Set[${Math.Calc[${copper}/100]}]
 	SMoney:Set[${Math.Calc[${Platina}+${Gold}+${silver}+${Copper}]}]
 	
-	Echo SMoney is ${SMoney}
-
 	Return ${SMoney} 
 }
 
@@ -2528,7 +2526,6 @@ function ChooseNextItem(int numitems)
 function GoTransmute(string itemname)
 {
 	
-	Echo Transmute ${itemname}
 	Declare numitems int local
 	Declare xvar int local 1
 
@@ -2545,7 +2542,6 @@ function GoTransmute(string itemname)
 			; if an item in your inventory matches the name of the item
 			if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]} && !${Me.CustomInventory[${xvar}].Attuned}
 			{
-					Echo Transmuting ${itemname}
 					Me.CustomInventory[${xvar}]:Transmute
 					wait 200 ${RewardWindow(exists)}
 					RewardWindow:Receive
