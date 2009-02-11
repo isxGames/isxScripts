@@ -8074,10 +8074,10 @@
                           <Text Name='txtnonfightsong' Template='VG.BoldText'>
                             <X>10</X>
                             <Y>135</Y>
-                            <Width>120</Width>
+                            <Width>180</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
-                            <Text>Drum</Text>
+                            <Text>NonCombat Instrument</Text>
                           </Text>
                           <ComboBox Name="cmbSWDrum" Template="VG.ComboBox">
                             <X>190</X>
