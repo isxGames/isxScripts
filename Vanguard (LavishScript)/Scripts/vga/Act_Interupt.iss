@@ -80,6 +80,8 @@ function clickiesfunct()
 				{
 				waitframe
 				Me.Inventory[${Iterator.Key}]:Use
+				waitframe
+				Me.Inventory[${Iterator.Key}]:Use
 				}
 		Iterator:Next
 		}
