@@ -92,57 +92,57 @@ I should Attack							|
 ;-------------------------------------------
 ;************Utilities Scripts**************
 ;-------------------------------------------
-#include "${Script.CurrentDirectory}/scripts/vga/UTL_MoveTo.iss"
-;#include "${Script.CurrentDirectory}/scripts/vga/UTL_faceslow.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/UTL_Objects.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/UTL_Variables.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/UTL_LavishLoad.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/UTL_LavishSave.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/UTL_LavishEvents.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/Act_GUI_Utility.iss"
+#include "${Script.CurrentDirectory}/UTL_MoveTo.iss"
+;#include "${Script.CurrentDirectory}/UTL_faceslow.iss"
+#include "${Script.CurrentDirectory}/UTL_Objects.iss"
+#include "${Script.CurrentDirectory}/UTL_Variables.iss"
+#include "${Script.CurrentDirectory}/UTL_LavishLoad.iss"
+#include "${Script.CurrentDirectory}/UTL_LavishSave.iss"
+#include "${Script.CurrentDirectory}/UTL_LavishEvents.iss"
+#include "${Script.CurrentDirectory}/Act_GUI_Utility.iss"
 
 ;-------------------------------------------
 ;************Main-Tab Scripts***************
 ;-------------------------------------------
-#include "${Script.CurrentDirectory}/scripts/vga/ACT_BuffWatch.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_BuffWatch.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/ACT_Merchant.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Merchant.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/Act_Mob.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Mobs.iss"
+#include "${Script.CurrentDirectory}/ACT_BuffWatch.iss"
+#include "${Script.CurrentDirectory}/GUI_BuffWatch.iss"
+#include "${Script.CurrentDirectory}/ACT_Merchant.iss"
+#include "${Script.CurrentDirectory}/GUI_Merchant.iss"
+#include "${Script.CurrentDirectory}/Act_Mob.iss"
+#include "${Script.CurrentDirectory}/GUI_Mobs.iss"
 
 ;-------------------------------------------
 ;**********Healer-Tab Scripts***************
 ;-------------------------------------------
 
-#include "${Script.CurrentDirectory}/scripts/vga/Act_Healing.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Healing.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/Act_Buff.iss"
+#include "${Script.CurrentDirectory}/Act_Healing.iss"
+#include "${Script.CurrentDirectory}/GUI_Healing.iss"
+#include "${Script.CurrentDirectory}/Act_Buff.iss"
 
 ;-------------------------------------------
 ;**********Combat-Tab Scripts***************
 ;-------------------------------------------
-#include "${Script.CurrentDirectory}/scripts/vga/Act_Combat.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Combat_Main.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Melee.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Abilities.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/Act_Interupt.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Spells.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/Act_Crits.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Criticals.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Evade.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/Act_Evade.iss"
+#include "${Script.CurrentDirectory}/Act_Combat.iss"
+#include "${Script.CurrentDirectory}/GUI_Combat_Main.iss"
+#include "${Script.CurrentDirectory}/GUI_Melee.iss"
+#include "${Script.CurrentDirectory}/GUI_Abilities.iss"
+#include "${Script.CurrentDirectory}/Act_Interupt.iss"
+#include "${Script.CurrentDirectory}/GUI_Spells.iss"
+#include "${Script.CurrentDirectory}/Act_Crits.iss"
+#include "${Script.CurrentDirectory}/GUI_Criticals.iss"
+#include "${Script.CurrentDirectory}/GUI_Evade.iss"
+#include "${Script.CurrentDirectory}/Act_Evade.iss"
 
 
 ;-------------------------------------------
 ;**********Class-Tab Scripts***************
 ;-------------------------------------------
-#include "${Script.CurrentDirectory}/scripts/vga/CLS_Shaman.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/CLS_Sorcerer.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/CLS_Bard.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_Bard.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/CLS_BloodMage.iss"
-#include "${Script.CurrentDirectory}/scripts/vga/GUI_BloodMage.iss"
+#include "${Script.CurrentDirectory}/CLS_Shaman.iss"
+#include "${Script.CurrentDirectory}/CLS_Sorcerer.iss"
+#include "${Script.CurrentDirectory}/CLS_Bard.iss"
+#include "${Script.CurrentDirectory}/GUI_Bard.iss"
+#include "${Script.CurrentDirectory}/CLS_BloodMage.iss"
+#include "${Script.CurrentDirectory}/GUI_BloodMage.iss"
 
 ;===================================================
 ;===               Main Routine               ====
