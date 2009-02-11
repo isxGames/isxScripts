@@ -5890,7 +5890,7 @@
                             <Y>450</Y>
                             <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Debuff Spells</Text>
+                            <Text>Debuff/Dot Spells</Text>
                             <OnLoad>
                               if ${Script[vga].VariableScope.doDebuffSpell}
                               {
@@ -6145,7 +6145,7 @@
                             <Y>450</Y>
                             <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Debuff Melees</Text>
+                            <Text>Debuff/Dot Melees</Text>
                             <OnLoad>
                               if ${Script[vga].VariableScope.doDebuffMelee}
                               {
