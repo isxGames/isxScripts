@@ -181,7 +181,10 @@ function LavishSave()
 	HealerSR:AddSetting[bhpctgrp22,${bhpctgrp[22]}]
 	HealerSR:AddSetting[bhpctgrp23,${bhpctgrp[23]}]
 	HealerSR:AddSetting[bhpctgrp24,${bhpctgrp[24]}]
-	
+	HealerSR:AddSetting[doCombatStance,${doCombatStance}]	
+	HealerSR:AddSetting[doNonCombatStance,${doNonCombatStance}]	
+	HealerSR:AddSetting[CombatStance,${CombatStance}]	
+	HealerSR:AddSetting[NonCombatStance,${NonCombatStance}]		
 	;===================================================
 	;===                  Utility Save              ====
 	;===================================================

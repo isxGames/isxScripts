@@ -256,6 +256,10 @@ function LavishLoad()
 	bhpctgrp[22]:Set[${HealerSR.FindSetting[bhpctgrp22]}]
 	bhpctgrp[23]:Set[${HealerSR.FindSetting[bhpctgrp23]}]
 	bhpctgrp[24]:Set[${HealerSR.FindSetting[bhpctgrp24]}]
+	doCombatStance:Set[${HealerSR.FindSetting[doCombatStance]}]
+	doNonCombatStance:Set[${HealerSR.FindSetting[doNonCombatStance]}]
+	CombatStance:Set[${HealerSR.FindSetting[CombatStance]}]
+	NonCombatStance:Set[${HealerSR.FindSetting[NonCombatStance]}]
 	
 	;===================================================
 	;===                  Utility Load              ====

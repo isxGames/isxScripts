@@ -5239,6 +5239,67 @@
                               Script[vga].VariableScope.CombatRes:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
+                          <checkbox Name='doCombatStance' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>15</X>
+                            <Y>350</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Combat Form</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doCombatStance}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doCombatStance:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <ComboBox Name="CombatStanceCombo" Template="VG.ComboBox">
+                            <X>150</X>
+                            <Y>350</Y>
+                            <Width>60%</Width>
+                            <Height>20</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+                              Script[vga].VariableScope.CombatStance:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+                          <checkbox Name='doNonCombatStance' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>15</X>
+                            <Y>370</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Non-Combat Form</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doNonCombatStance}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doNonCombatStance:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <ComboBox Name="NonCombatStanceCombo" Template="VG.ComboBox">
+                            <X>150</X>
+                            <Y>370</Y>
+                            <Width>60%</Width>
+                            <Height>20</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+                              Script[vga].VariableScope.NonCombatStance:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
+
                         </Children>
                       </Frame>
                     </Tab>

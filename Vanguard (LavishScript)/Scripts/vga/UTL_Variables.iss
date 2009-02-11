@@ -85,6 +85,11 @@ variable string NonCombatRes
 
 variable bool healrefresh = TRUE
 
+variable bool doCombatStance
+variable bool doNonCombatStance
+variable string CombatStance
+variable string NonCombatStance
+
 ;===================================================
 ;===               Main VGA Variables           ====
 ;===================================================
