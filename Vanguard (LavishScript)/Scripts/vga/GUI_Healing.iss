@@ -20,6 +20,11 @@ function PopulateHealLists()
 			UIElement[grouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			}
 	}
+	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
+	{
+		UIElement[CombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Form[${i}].Name}]
+		UIElement[NonCombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Form[${i}].Name}]
+	}
 	variable int rCount
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[LazyBuffCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
@@ -80,6 +85,18 @@ function PopulateHealLists()
 	{
 		if ${UIElement[grouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${GroupHeal}]} 
 			UIElement[grouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[CombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[CombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${CombatStance}]}
+			UIElement[CombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[NonCombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[NonCombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${NonCombatStance}]} 
+			UIElement[NonCombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 
 }

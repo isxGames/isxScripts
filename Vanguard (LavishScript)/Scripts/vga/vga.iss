@@ -236,6 +236,7 @@ function downtimefunction()
 	call assistpawn
 	call BuffUp
 	call lootit
+	call changeformstance
 	return
 }
 ;===================================================
@@ -299,6 +300,7 @@ function combatfunction()
 ;===================================================
 function PreCombatLoopFunction()
 {
+	call changeformstance
  	call CheckPosition
 	call EmergencyActions
 	call Healcheck

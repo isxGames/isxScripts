@@ -378,7 +378,18 @@ function checkinstantheal()
 		}
 	}
 }
-
+;******************************Change forms/Stances***********************
+function changeformstance()
+{
+	if ${fight.IShouldAttack} && ${doCombatStance} && !${Me.Effect[{CombatStance}](exists)}
+		{
+		Me.Form[${CombatStance}]:ChangeTo
+		}
+	if !${fight.IShouldAttack} && ${doNonCombatStance} && !${Me.Effect[{NonCombatStance}](exists)}
+		{
+		Me.Form[${NonCombatStance}]:ChangeTo
+		}	
+}
 ;******************************HealNeeds***********************
 objectdef HealNeeds
 {
