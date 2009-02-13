@@ -3,25 +3,25 @@
 ;===================================================
 function LoadSettings()
 {
-	echo "[${Time}] --> Loading Fishing Settings"
+	echo "[${Time}] --> Loading VGFish Settings"
 
 	;-------------------------------------------
 	; 1st - Declare Variables
 	;-------------------------------------------
 	declare	setConfig		settingsetref 	script
 	declare	SetCombo		settingsetref 	script
-	declare	General			settingsetref 	script
+	declare	General		settingsetref 	script
 	declare	itConfig		iterator		script
-	declare	itCombo			iterator		script
+	declare	itCombo		iterator		script
 	declare	itGeneral		iterator		script
-	declare TimerRecast		int 			script 	${Math.Calc[${LavishScript.RunningTime}]}
-	declare TimerTroll		int 			script 	${Math.Calc[${LavishScript.RunningTime}]}
+	declare 	TimerRecast		int 			script 	${Math.Calc[${LavishScript.RunningTime}]}
+	declare 	TimerTroll		int 			script 	${Math.Calc[${LavishScript.RunningTime}]}
 
 
 	;-------------------------------------------
 	; 2nd - Clear our LavishSettings
 	;-------------------------------------------
-	LavishSettings[VGFishing]:Clear
+	LavishSettings[VGFish]:Clear
 	setConfig:Clear
 	SetCombo:Clear
 	setGeneral:Clear
@@ -29,22 +29,22 @@ function LoadSettings()
 	;-------------------------------------------
 	; 3rd - Set our LavishSettings
 	;-------------------------------------------
-	LavishSettings:AddSet[VGFishing]
-	LavishSettings[VGFishing]:AddSet[Config]
-	LavishSettings[VGFishing]:AddSet[Combo]
-	LavishSettings[VGFishing]:AddSet[General]
+	LavishSettings:AddSet[VGFish]
+	LavishSettings[VGFish]:AddSet[Config]
+	LavishSettings[VGFish]:AddSet[Combo]
+	LavishSettings[VGFish]:AddSet[General]
 
 	;-------------------------------------------
 	; 4th - Import our saved file
 	;-------------------------------------------
-	LavishSettings[VGFishing]:Import[${LavishScript.CurrentDirectory}/scripts/VGFish/Save/${Me.FName}.xml]
+	LavishSettings[VGFish]:Import[${LavishScript.CurrentDirectory}/scripts/VGFish/Save/${Me.FName}.xml]
 
 	;-------------------------------------------
 	; 5th - Define SetRefs
 	;-------------------------------------------
-	setConfig:Set[${LavishSettings[VGFishing].FindSet[Config].GUID}]
-	SetCombo:Set[${LavishSettings[VGFishing].FindSet[Combo].GUID}]
-	General:Set[${LavishSettings[VGFishing].FindSet[General].GUID}]
+	setConfig:Set[${LavishSettings[VGFish].FindSet[Config].GUID}]
+	SetCombo:Set[${LavishSettings[VGFish].FindSet[Combo].GUID}]
+	General:Set[${LavishSettings[VGFish].FindSet[General].GUID}]
 
 	;-------------------------------------------
 	; Clear our UI ListBoxes and ObjDef: Fishes
@@ -80,7 +80,8 @@ function LoadSettings()
 	DoCastLine:Set[${General.FindSetting[DoCastLine,FALSE]}]
 	DoShortenCast:Set[${General.FindSetting[DoShortenCast,TRUE]}]
 	DoTrollLine:Set[${General.FindSetting[DoTrollLine,TRUE]}]
-	DoReleaseUnknown:Set[${General.FindSetting[DoReleaseUnknown,TRUE]}]
+	DoReleaseNone:Set[${General.FindSetting[DoReleaseNone,TRUE]}]
+	DoReleaseUnknown:Set[${General.FindSetting[DoReleaseUnknown,FALSE]}]
 	DoAutoBait:Set[${General.FindSetting[DoAutoBait,FALSE]}]
 	DoFishingPole:Set[${General.FindSetting[DoFishingPole,FALSE]}]
 	DoDebug:Set[${General.FindSetting[DoDebug,FALSE]}]
@@ -103,7 +104,12 @@ function LoadSettings()
 	FishMoveDistance:Set[${General.FindSetting[FishMoveDistance,2]}]
 	FishingPole:Set[${General.FindSetting[FishingPole,Old Fishing Pole, Help]}]
 	TriggerDistanceOveride:Set[${General.FindSetting[TriggerDistanceOveride,2]}]
-
+	DoReleaseNone:Set[${General.FindSetting[DoReleaseNone,TRUE]}]
+	DoReleaseKnown:Set[${General.FindSetting[DoReleaseKnown,FALSE]}]
+	ComboSetA:Set[${General.FindSetting[ComboSetA,TRUE]}]
+	ComboSetB:Set[${General.FindSetting[ComboSetB,FALSE]}]
+	ComboSetC:Set[${General.FindSetting[ComboSetC,FALSE]}]
+	ComboSetD:Set[${General.FindSetting[ComboSetD,FALSE]}]
 
 	
 	;*********************End MMOAddict***********************
@@ -123,7 +129,7 @@ function LoadXML()
 	{
 		if !${Fishes[${i}].Name.Equal[Empty]}
 		{
-			UIElement[FishListBox@Combo@FishTabs@Fishing]:AddItem["${Fishes[${i}].Name}"]
+			UIElement[FishListBox@Combo@FishTabs@VGFish]:AddItem["${Fishes[${i}].Name}"]
 		}
 	}
 
@@ -133,28 +139,28 @@ function LoadXML()
 	variable int rCount
 	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 	{
-		UIElement[BaitComboBox@Options@FishTabs@Fishing]:AddItem[${Me.Inventory[${i}].Name}]
-		UIElement[FishingPoleComboBox@Options@FishTabs@Fishing]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[BaitComboBox@Options@FishTabs@VGFish]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[FishingPoleComboBox@Options@FishTabs@VGFish]:AddItem[${Me.Inventory[${i}].Name}]
 	}
 
 	;-------------------------------------------
 	; Select Bait - MMOAddict
 	;-------------------------------------------
 	rCount:Set[0]
-	while ${rCount:Inc} <= ${UIElement[BaitComboBox@Options@FishTabs@Fishing].Items}
+	while ${rCount:Inc} <= ${UIElement[BaitComboBox@Options@FishTabs@VGFish].Items}
 	{
-		if ${UIElement[BaitComboBox@Options@FishTabs@Fishing].Item[${rCount}].Text.Equal[${Bait}]}
-		UIElement[BaitComboBox@Options@FishTabs@Fishing]:SelectItem[${rCount}]
+		if ${UIElement[BaitComboBox@Options@FishTabs@VGFish].Item[${rCount}].Text.Equal[${Bait}]}
+		UIElement[BaitComboBox@Options@FishTabs@VGFish]:SelectItem[${rCount}]
 	}
 
 	;-------------------------------------------
 	; Select FishingPole - MMOAddict
 	;-------------------------------------------
 	rCount:Set[0]
-	while ${rCount:Inc} <= ${UIElement[FishingPoleComboBox@Options@FishTabs@Fishing].Items}
+	while ${rCount:Inc} <= ${UIElement[FishingPoleComboBox@Options@FishTabs@VGFish].Items}
 	{
-		if ${UIElement[FishingPoleComboBox@Options@FishTabs@Fishing].Item[${rCount}].Text.Equal[${FishingPole}]}
-		UIElement[FishingPoleComboBox@Options@FishTabs@Fishing]:SelectItem[${rCount}]
+		if ${UIElement[FishingPoleComboBox@Options@FishTabs@VGFish].Item[${rCount}].Text.Equal[${FishingPole}]}
+		UIElement[FishingPoleComboBox@Options@FishTabs@VGFish]:SelectItem[${rCount}]
 	}
 }
 
@@ -209,6 +215,14 @@ function SaveSettings()
 	General:AddSetting[FishMoveDistance,${FishMoveDistance}]
 	General:AddSetting[FishingPole,${FishingPole}]
 	;*********************End MMOAddict***********************
+	;*********************Add BSS*****************************
+	General:AddSetting[DoReleaseNone,${DoReleaseNone}]
+	General:AddSetting[DoReleaseKnown,${DoReleaseKnown}]
+	General:AddSetting[ComboSetA,${ComboSetA}]
+	General:AddSetting[ComboSetB,${ComboSetB}]
+	General:AddSetting[ComboSetC,${ComboSetC}]
+	General:AddSetting[ComboSetD,${ComboSetD}]
+	;*********************End BSS*****************************
 	General:AddSetting[DoTriggerDistance,${DoTriggerDistance}]
 	General:AddSetting[DoFishHeading,${DoFishHeading}]
 	General:AddSetting[DoLogFishMovement,${DoLogFishMovement}]
@@ -235,7 +249,7 @@ function SaveSettings()
 	;-------------------------------------------
 	; Export our LavishSettings
 	;-------------------------------------------
-	LavishSettings[VGFishing]:Export[${LavishScript.CurrentDirectory}/scripts/VGFish/Save/${Me.FName}.xml]
+	LavishSettings[VGFish]:Export[${LavishScript.CurrentDirectory}/scripts/VGFish/Save/${Me.FName}.xml]
 }
 
 
@@ -288,4 +302,5 @@ function:int FindFirstAvailableFishSlot()
 	while (${i} < 51)
 	return 0
 }
+
 

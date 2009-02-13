@@ -13,7 +13,7 @@ function mainPaused()
 		;-------------------------------------------
 		actionlog "Paused"
 		Command:Set["Paused"]
-		UIElement[Run Button@Main@FishTabs@Fishing]:SetText[Paused]
+		UIElement[Run Button@Main@FishTabs@VGFish]:SetText[Paused]
 
 		;-------------------------------------------
 		; Sit and wait
@@ -37,3 +37,4 @@ function mainPaused()
 		TimerRecast:Set[0]
 	}
 }
+

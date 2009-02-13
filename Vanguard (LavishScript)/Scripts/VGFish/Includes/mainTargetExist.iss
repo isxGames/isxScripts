@@ -66,7 +66,7 @@ function mainTargetExist()
 	;-------------------------------------------
 	; First, Release Unknown or Fish - MMOAddict & Zanadros
 	;-------------------------------------------
-	If ${DoReleaseUnknown} && ((${Me.Target.Name.Equal[Unknown]} && ${Pawn[${Me.Target}].Name.Equal[Unknown]}) || (${Me.Target.Name.Equal[Fish]} && ${Pawn[${Me.Target}].Name.Equal[Fish]}))
+	If ((${DoReleaseUnknown} && ${Me.Target.Name.Equal[Unknown]} && ${Pawn[${Me.Target}].Name.Equal[Unknown]}) || (${DoReleaseKnown} && (!(${Me.Target.Name.Equal[Unknown]} && ${Pawn[${Me.Target}].Name.Equal[Unknown]})) || (${Me.Target.Name.Equal[Fish]} && ${Pawn[${Me.Target}].Name.Equal[Fish]}))
 	{
 		;-------------------------------------------
 		; 1st, Must wait long enough for Fish to change name
@@ -76,9 +76,11 @@ function mainTargetExist()
 		;-------------------------------------------
 		; 2nd, If FishName is still Fish or Unknown then clear targets
 		;-------------------------------------------
-		if (${Me.Target.Name.Equal[Fish]} && ${Pawn[${Me.Target}].Name.Equal[Fish]}) || (${Me.Target.Name.Equal[Unknown]} && ${Pawn[${Me.Target}].Name.Equal[Unknown]})
+		if ((${DoReleaseUnknown} && ${Me.Target.Name.Equal[Unknown]} && ${Pawn[${Me.Target}].Name.Equal[Unknown]}) || (${DoReleaseKnown} && (!(${Me.Target.Name.Equal[Unknown]} && ${Pawn[${Me.Target}].Name.Equal[Unknown]})) || (${Me.Target.Name.Equal[Fish]} && ${Pawn[${Me.Target}].Name.Equal[Fish]}))
 		{
 			actionlog "Released ${Me.Target.Name}"
+			actionlog "Release Unknown ${DoReleaseUnknown}"
+			actionlog "Release Known ${DoReleaseKnown}"
 
 			;-------------------------------------------
 			; 1st, Lets clear our target
@@ -675,4 +677,5 @@ function PlaySound(string Filename)
 {
 	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
 }
+
 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<ISUI>
-		<Window Name='Fishing' Template='VG.Window'>
+		<Window Name='VGFish' Template='VG.Window'>
 			<StorePosition>1</StorePosition>
 			<X>14</X>
 			<Y>226</Y>
 			<Height>80</Height>
 			<Width>160</Width>
 			<Client Template="VG.Window.Client" />
-			<Title>   Fishing Assist Bot</Title>
+			<Title>   VGFish - Fishing Assist Bot</Title>
 			<TitleBar Template="VG.Window.TitleBar">
 				<X>0</X>
 				<Y>0</Y>
@@ -46,28 +46,28 @@
 						switch ${This.SelectedTab}
 						{
 							Case Main
-								UIElement[Fishing]:SetWidth[160]
-								UIElement[Fishing]:SetHeight[80]
+								UIElement[VGFish]:SetWidth[160]
+								UIElement[VGFish]:SetHeight[80]
 								break
 							Case Combo
-								UIElement[Fishing]:SetWidth[340]
-								UIElement[Fishing]:SetHeight[300]
+								UIElement[VGFish]:SetWidth[340]
+								UIElement[VGFish]:SetHeight[300]
 								break
 							Case Options
-								UIElement[Fishing]:SetWidth[340]
-								UIElement[Fishing]:SetHeight[300]
+								UIElement[VGFish]:SetWidth[340]
+								UIElement[VGFish]:SetHeight[300]
 								break
 							Case Logs
-								UIElement[Fishing]:SetWidth[420]
-								UIElement[Fishing]:SetHeight[600]
+								UIElement[VGFish]:SetWidth[420]
+								UIElement[VGFish]:SetHeight[600]
 								break
 							Case Debug
-								UIElement[Fishing]:SetWidth[340]
-								UIElement[Fishing]:SetHeight[300]
+								UIElement[VGFish]:SetWidth[340]
+								UIElement[VGFish]:SetHeight[300]
 								break
 							Case About
-								UIElement[Fishing]:SetWidth[340]
-								UIElement[Fishing]:SetHeight[300]
+								UIElement[VGFish]:SetWidth[340]
+								UIElement[VGFish]:SetHeight[300]
 								break
 						}
 					</OnSelect>
@@ -156,16 +156,53 @@
 								ClearFishList
 							</OnLeftClick>
 						</CommandButton>
+						<checkbox Name='ComboSetA' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>62%</Y>
+							<Width>15</Width>
+							<Height>20</Height>
+							<Text>Combo Set A</Text>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								if ${Script[VGFish].VariableScope.ComboSetA}
+								{
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:SetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[TRUE]
+									Script[VGFish].VariableScope.ComboSetB:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetC:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetD:Set[FALSE]
+								}
+							</OnLoad>
+							<OnLeftClick>
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:SetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[TRUE]
+									Script[VGFish].VariableScope.ComboSetB:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetC:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetD:Set[FALSE]
+									Script[VGFish].VariableScope.ComboPh1:Set[u]
+									Script[VGFish].VariableScope.ComboPh2:Set[r]
+									Script[VGFish].VariableScope.ComboPh3:Set[d]
+									Script[VGFish].VariableScope.ComboPh4:Set[l]
+									PopulateFishList
+							</OnLeftClick>
+						</checkbox>
 						<Text Name='FishNameText' Template='VG.BoldText'>
 							<visible>1</visible>
-							<X>10%</X>
+							<X>40%</X>
 							<Y>63%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
 							<Text>Fish Name:</Text>
 						</Text>
 						<Textentry Name="FishName" Template="VG.TextEntry">
-							<X>33%</X>
+							<X>63%</X>
 							<Y>62%</Y>
 							<Width>35%</Width>
 							<Height>18</Height>
@@ -177,16 +214,53 @@
 								Script[VGFish].VariableScope.FishName:Set[${This.Text}]
 							</OnChange>
 						</Textentry>
+						<checkbox Name='ComboSetB' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>69%</Y>
+							<Width>15</Width>
+							<Height>20</Height>
+							<Text>Combo Set B</Text>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								if ${Script[VGFish].VariableScope.ComboSetB}
+								{
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:SetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetB:Set[TRUE]
+									Script[VGFish].VariableScope.ComboSetC:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetD:Set[FALSE]
+								}
+							</OnLoad>
+							<OnLeftClick>
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:SetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetB:Set[TRUE]
+									Script[VGFish].VariableScope.ComboSetC:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetD:Set[FALSE]
+									Script[VGFish].VariableScope.ComboPh1:Set[r]
+									Script[VGFish].VariableScope.ComboPh2:Set[d]
+									Script[VGFish].VariableScope.ComboPh3:Set[l]
+									Script[VGFish].VariableScope.ComboPh4:Set[u]
+									PopulateFishList
+							</OnLeftClick>
+						</checkbox>
 						<Text Name='Combo1Text' Template='VG.BoldText'>
 							<visible>1</visible>
-							<X>10%</X>
+							<X>40%</X>
 							<Y>69%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
 							<Text>Combo #1:</Text>
 						</Text>
 						<Textentry Name="Combo1" Template="VG.TextEntry">
-							<X>33%</X>
+							<X>63%</X>
 							<Y>68%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
@@ -206,16 +280,53 @@
 								}
 							</OnChange>
 						</Textentry>
+						<checkbox Name='ComboSetC' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>76%</Y>
+							<Width>15</Width>
+							<Height>20</Height>
+							<Text>Combo Set C</Text>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								if ${Script[VGFish].VariableScope.ComboSetC}
+								{
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:SetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetB:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetC:Set[TRUE]
+									Script[VGFish].VariableScope.ComboSetD:Set[FALSE]
+								}
+							</OnLoad>
+							<OnLeftClick>
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:SetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetB:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetC:Set[TRUE]
+									Script[VGFish].VariableScope.ComboSetD:Set[FALSE]
+									Script[VGFish].VariableScope.ComboPh1:Set[d]
+									Script[VGFish].VariableScope.ComboPh2:Set[l]
+									Script[VGFish].VariableScope.ComboPh3:Set[u]
+									Script[VGFish].VariableScope.ComboPh4:Set[r]
+									PopulateFishList
+							</OnLeftClick>
+						</checkbox>
 						<Text Name='Combo2Text' Template='VG.BoldText'>
 							<visible>1</visible>
-							<X>10%</X>
+							<X>40%</X>
 							<Y>76%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
 							<Text>Combo #2:</Text>
 						</Text>
 						<Textentry Name="Combo2" Template="VG.TextEntry">
-							<X>33%</X>
+							<X>63%</X>
 							<Y>75%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
@@ -235,16 +346,53 @@
 								}
 							</OnChange>
 						</Textentry>
+						<checkbox Name='ComboSetD' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>83%</Y>
+							<Width>15</Width>
+							<Height>20</Height>
+							<Text>Combo Set D</Text>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								if ${Script[VGFish].VariableScope.ComboSetD}
+								{
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:SetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetB:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetC:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetD:Set[TRUE]
+								}
+							</OnLoad>
+							<OnLeftClick>
+									UIElement[ComboSetA@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetB@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetC@combo@FishTabs@VGFish]:UnsetChecked
+									UIElement[ComboSetD@combo@FishTabs@VGFish]:SetChecked
+									Script[VGFish].VariableScope.ComboSetA:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetB:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetC:Set[FALSE]
+									Script[VGFish].VariableScope.ComboSetD:Set[TRUE]
+									Script[VGFish].VariableScope.ComboPh1:Set[l]
+									Script[VGFish].VariableScope.ComboPh2:Set[u]
+									Script[VGFish].VariableScope.ComboPh3:Set[r]
+									Script[VGFish].VariableScope.ComboPh4:Set[d]
+									PopulateFishList
+							</OnLeftClick>
+						</checkbox>
 						<Text Name='Combo3Text' Template='VG.BoldText'>
 							<visible>1</visible>
-							<X>10%</X>
+							<X>40%</X>
 							<Y>83%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
 							<Text>Combo #3:</Text>
 						</Text>
 						<Textentry Name="Combo3" Template="VG.TextEntry">
-							<X>33%</X>
+							<X>63%</X>
 							<Y>82%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
@@ -266,14 +414,14 @@
 						</Textentry>
 						<Text Name='Combo4Text' Template='VG.BoldText'>
 							<visible>1</visible>
-							<X>10%</X>
+							<X>40%</X>
 							<Y>90%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
 							<Text>Combo #4:</Text>
 						</Text>
 						<Textentry Name="Combo4" Template="VG.TextEntry">
-							<X>33%</X>
+							<X>63%</X>
 							<Y>89%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
@@ -298,7 +446,7 @@
 						<checkbox Name='chkDoCastLine' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>5%</X>
-							<Y>4%</Y>
+							<Y>3%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Color>FFDDBB00</Color>
@@ -311,13 +459,13 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoCastLine:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoCastLine:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='chkDoShortenCast' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>10%</X>
-							<Y>14%</Y>
+							<Y>13%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Text>Recast Time by total seconds</Text>
@@ -329,13 +477,13 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoShortenCast:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoShortenCast:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<Text Name='ShortenCastDelayText' Template='VG.BoldText'>
 							<visible>0</visible>
 							<X>77%</X>
-							<Y>14%</Y>
+							<Y>13%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
 							<Text>Delay</Text>
@@ -343,7 +491,7 @@
 						</Text>
 						<Textentry Name="ShortenCastDelay" Template="VG.TextEntry">
 							<X>65%</X>
-							<Y>14%</Y>
+							<Y>13%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
@@ -361,7 +509,7 @@
 						<checkbox Name='chkDoTrollLine' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>10%</X>
-							<Y>24%</Y>
+							<Y>23%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Text>Troll Line</Text>
@@ -373,13 +521,13 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoTrollLine:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoTrollLine:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<Text Name='TrollLineTimesText' Template='VG.BoldText'>
 							<visible>1</visible>
 							<X>46%</X>
-							<Y>24%</Y>
+							<Y>23%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
 							<Text>Times</Text>
@@ -387,7 +535,7 @@
 						</Text>
 						<Textentry Name="TrollLineTimes" Template="VG.TextEntry">
 							<X>35%</X>
-							<Y>24%</Y>
+							<Y>23%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
@@ -404,15 +552,15 @@
 						<Text Name='TrollLineWaitTimeText' Template='VG.BoldText'>
 							<visible>1</visible>
 							<X>76%</X>
-							<Y>24%</Y>
+							<Y>23%</Y>
 							<Width>140</Width>
 							<Height>20</Height>
-							<Text>Wiat Seconds</Text>
+							<Text>Wait Secs</Text>
 							<Color>FFDDBB00</Color>
 						</Text>
 						<Textentry Name="TrollLineWaitTime" Template="VG.TextEntry">
 							<X>65%</X>
-							<Y>24%</Y>
+							<Y>23%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
@@ -426,28 +574,103 @@
 								}
 							</OnChange>
 						</Textentry>
-						<checkbox Name='chkDoReleaseUnknown' Template='VG.GreenCheckbox'>
+						<Text Name='ReleaseTxt' Template="VG.BoldText">
 							<visible>1</visible>
 							<X>4%</X>
-							<Y>34%</Y>
+							<Y>36%</Y>
+							<Width>240</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<Text>Select what to release:</text>
+						</Text>
+						<checkbox Name='chkDoReleaseNone' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>10%</X>
+							<Y>43%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
-							<Text>Release Unknown Fish</Text>
+							<Text>Nothing</Text>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								if ${Script[VGFish].VariableScope.DoReleaseNone}
+								{
+									UIElement[chkDoReleaseNone@options@FishTabs@VGFish]:SetChecked
+									UIElement[chkDoReleaseUnknown@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseKnown@options@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.DoReleaseNone:Set[TRUE]
+									Script[VGFish].VariableScope.DoReleaseUnknown:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseKnown:Set[FALSE]
+								}
+							</OnLoad>
+							<OnLeftClick>
+									UIElement[chkDoReleaseNone@options@FishTabs@VGFish]:SetChecked
+									UIElement[chkDoReleaseUnknown@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseKnown@options@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.DoReleaseNone:Set[TRUE]
+									Script[VGFish].VariableScope.DoReleaseUnknown:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseKnown:Set[FALSE]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='chkDoReleaseUnknown' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>35%</X>
+							<Y>43%</Y>
+							<Width>15</Width>
+							<Height>20</Height>
+							<Text>Unknown</Text>
 							<Color>FFDDBB00</Color>
 							<OnLoad>
 								if ${Script[VGFish].VariableScope.DoReleaseUnknown}
 								{
-									This:SetChecked
+									UIElement[chkDoReleaseNone@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseUnknown@options@FishTabs@VGFish]:SetChecked
+									UIElement[chkDoReleaseKnown@options@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.DoReleaseNone:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseUnknown:Set[TRUE]
+									Script[VGFish].VariableScope.DoReleaseKnown:Set[FALSE]
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoReleaseUnknown:Set[${This.Checked}]
+									UIElement[chkDoReleaseNone@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseUnknown@options@FishTabs@VGFish]:SetChecked
+									UIElement[chkDoReleaseKnown@options@FishTabs@VGFish]:UnsetChecked
+									Script[VGFish].VariableScope.DoReleaseNone:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseUnknown:Set[TRUE]
+									Script[VGFish].VariableScope.DoReleaseKnown:Set[FALSE]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='chkDoReleaseKnown' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>65%</X>
+							<Y>43%</Y>
+							<Width>15</Width>
+							<Height>20</Height>
+							<Text>Fish</Text>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								if ${Script[VGFish].VariableScope.DoReleaseKnown}
+								{
+									UIElement[chkDoReleaseNone@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseUnknown@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseKnown@options@FishTabs@VGFish]:SetChecked
+									Script[VGFish].VariableScope.DoReleaseNone:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseUnknown:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseKnown:Set[TRUE]
+								}
+							</OnLoad>
+							<OnLeftClick>
+									UIElement[chkDoReleaseNone@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseUnknown@options@FishTabs@VGFish]:UnsetChecked
+									UIElement[chkDoReleaseKnown@options@FishTabs@VGFish]:SetChecked
+									Script[VGFish].VariableScope.DoReleaseNone:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseUnknown:Set[FALSE]
+									Script[VGFish].VariableScope.DoReleaseKnown:Set[TRUE]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='chkDoAutoBait' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>4%</X>
-							<Y>44%</Y>
+							<Y>53%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Text>Auto Bait</Text>
@@ -459,12 +682,12 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoAutoBait:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoAutoBait:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<ComboBox Name="BaitComboBox" Template="VG.ComboBox">
 							<X>30%</X>
-							<Y>44%</Y>
+							<Y>53%</Y>
 							<Width>65%</Width>
 							<Height>19</Height>
 							<Color>FFDDBB00</Color>
@@ -472,13 +695,13 @@
 								This:AddItem[NONE]
 							</OnLoad>
 							<OnSelect>
-								Script[Fishing].VariableScope.Bait:Set[${This.SelectedItem.Text}]
+								Script[VGFish].VariableScope.Bait:Set[${This.SelectedItem.Text}]
 							</OnSelect>
 						</ComboBox>
 						<checkbox Name='chkDoFishingPole' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>4%</X>
-							<Y>54%</Y>
+							<Y>63%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Text>Equip Pole</Text>
@@ -490,12 +713,12 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoFishingPole:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoFishingPole:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<ComboBox Name="FishingPoleComboBox" Template="VG.ComboBox">
 							<X>30%</X>
-							<Y>54%</Y>
+							<Y>63%</Y>
 							<Width>65%</Width>
 							<Height>19</Height>
 							<Color>FFDDBB00</Color>
@@ -503,13 +726,13 @@
 								This:AddItem[NONE]
 							</OnLoad>
 							<OnSelect>
-								Script[Fishing].VariableScope.FishingPole:Set[${This.SelectedItem.Text}]
+								Script[VGFish].VariableScope.FishingPole:Set[${This.SelectedItem.Text}]
 							</OnSelect>
 						</ComboBox>
 						<checkbox Name='chkDoTriggerDistance' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>4%</X>
-							<Y>64%</Y>
+							<Y>73%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Text>Overide Detect Fish Move Distance by</Text>
@@ -521,13 +744,13 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoTriggerDistance:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoTriggerDistance:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<Textentry Name="TriggerDistanceOveride" Template="VG.TextEntry">
 							<visible>1</visible>
 							<X>77%</X>
-							<Y>64%</Y>
+							<Y>73%</Y>
 							<Width>10%</Width>
 							<Height>18</Height>
 							<Color>FFDDBB00</Color>
@@ -544,7 +767,7 @@
 						<checkbox Name='chkDoFindFish' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>4%</X>
-							<Y>74%</Y>
+							<Y>83%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Color>FFDDBB00</Color>
@@ -557,13 +780,13 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoFindFish:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoFindFish:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='chkDoFishHeading' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>4%</X>
-							<Y>84%</Y>
+							<Y>93%</Y>
 							<Width>15</Width>
 							<Height>20</Height>
 							<Color>FFDDBB00</Color>
@@ -576,7 +799,7 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoFishHeading:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoFishHeading:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 					</Tab>
@@ -596,7 +819,7 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoDebug:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoDebug:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='chkDoLogFishMovement' Template='VG.GreenCheckbox'>
@@ -614,7 +837,7 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[Fishing].VariableScope.DoLogFishMovement:Set[${This.Checked}]
+								Script[VGFish].VariableScope.DoLogFishMovement:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<Button Name="ClearLog" Template="VG.RedButton">
@@ -720,32 +943,32 @@
 							<Alignment>Center</Alignment>
 							<Font Template="VG.Window.TitleBar.Title.Font">
 								<Name>terminal</Name>
-								<Size>16</Size>
+								<Size>18</Size>
 								<Bold />
 							</Font>
-							<Text>Fishing Assist Bot</Text>
+							<Text>VGFish</Text>
 						</Text>
 						<Text Name='About By' Template='VG.Text'>
 							<X>0</X>
-							<Y>20%</Y>
+							<Y>22%</Y>
 							<Width>100%</Width>
 							<Height>20</Height>
 							<Alignment>Center</Alignment>
 							<Font Template="VG.Window.TitleBar.Title.Font">
 								<Size>15</Size>
 							</Font>
-							<Text>by Zandros123</Text>
+							<Text>by Zandros</Text>
 						</Text>
 						<Text Name='About Ver' Template='VG.Text'>
 							<X>0</X>
-							<Y>30%</Y>
+							<Y>32%</Y>
 							<Width>100%</Width>
 							<Height>20</Height>
 							<Alignment>Center</Alignment>
 							<Font Template="VG.Window.TitleBar.Title.Font">
 								<Size>15</Size>
 							</Font>
-							<Text>Version 1.9</Text>
+							<Text>Version 2.0</Text>
 						</Text>
 						<Text Name='About1'>
 							<X>0</X>
@@ -762,7 +985,7 @@
 						</Text>
 						<Text Name='About2'>
 							<X>0</X>
-							<Y>55%</Y>
+							<Y>60%</Y>
 							<Width>100%</Width>
 							<Height>20</Height>
 							<Alignment>Center</Alignment>
@@ -771,7 +994,7 @@
 								<Size>14</Size>
 								<Color>FF000040</Color>
 							</Font>
-							<Text>MMOAddict</Text>
+							<Text>MMOAddict and BackseatScripter</Text>
 						</Text>
 					</Tab>
 
