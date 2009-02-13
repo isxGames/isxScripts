@@ -6,6 +6,230 @@ atom(global) FishEnd()
 	isRunning:Set[FALSE]
 }
 
+;------------------------------------------
+; Populate Fishlist and Combos by ComboSet
+;------------------------------------------
+
+atom(global) PopulateFishList()
+{
+		FishName:Set[Albacore Tuna]
+		Combo1:Set[${ComboPh1}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+
+		FishName:Set[Black Bullhead]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh2}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Black Sea Bass]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh3}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh1}]
+		AddFishToList
+
+		FishName:Set[Blacktail Redhorse]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh1}]
+		AddFishToList
+
+		FishName:Set[Blue Catfish]
+		Combo1:Set[${ComboPh2}]
+		Combo2:Set[${ComboPh1}]
+		Combo3:Set[${ComboPh1}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Bluefin Tuna]
+		Combo1:Set[${ComboPh2}]
+		Combo2:Set[${ComboPh2}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Bluegill]
+		Combo1:Set[${ComboPh2}]
+		Combo2:Set[${ComboPh1}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+
+		FishName:Set[Bonefish]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Bowfin]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh3}]
+		Combo4:Set[${ComboPh1}]
+		AddFishToList
+
+		FishName:Set[Cod]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh3}]
+		Combo3:Set[${ComboPh2}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+
+		FishName:Set[Dolphinfish]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh1}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Eel]
+		Combo1:Set[${ComboPh2}]
+		Combo2:Set[${ComboPh1}]
+		Combo3:Set[${ComboPh3}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+
+		FishName:Set[Haddock]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh3}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+
+		FishName:Set[Halibut]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh3}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Jellyfish]
+		Combo1:Set[${ComboPh2}]
+		Combo2:Set[${ComboPh2}]
+		Combo3:Set[${ComboPh3}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Kelp Bass]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh1}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh1}]
+		AddFishToList
+
+		FishName:Set[King Salmon]
+		Combo1:Set[${ComboPh2}]
+		Combo2:Set[${ComboPh1}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Largemouth Bass]
+		Combo1:Set[${ComboPh2}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Mackerel]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh2}]
+		Combo4:Set[${ComboPh1}]
+		AddFishToList
+
+		FishName:Set[Pigfish]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Pinfish]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Pike]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh3}]
+		Combo3:Set[${ComboPh3}]
+		Combo4:Set[${ComboPh1}]
+		AddFishToList
+
+		FishName:Set[Rainbow Trout]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+
+		FishName:Set[Red Snapper]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh3}]
+		Combo3:Set[${ComboPh1}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Rock Grouper]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh3}]
+		Combo3:Set[${ComboPh2}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Smallmouth Bass]
+		Combo1:Set[${ComboPh1}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh3}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Squid]
+		Combo1:Set[${ComboPh1}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh2}]
+		AddFishToList
+
+		FishName:Set[Tautog]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Walleye]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh4}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
+		FishName:Set[Yellowfin Tuna]
+		Combo1:Set[${ComboPh1}]
+		Combo2:Set[${ComboPh4}]
+		Combo3:Set[${ComboPh1}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+
+		FishName:Set[Yellowtail Rockfish]
+		Combo1:Set[${ComboPh3}]
+		Combo2:Set[${ComboPh2}]
+		Combo3:Set[${ComboPh3}]
+		Combo4:Set[${ComboPh3}]
+		AddFishToList
+}
+
 ;-------------------------------------------
 ; Add the Fish to our UI and ObjDef: Fishes
 ;-------------------------------------------
@@ -32,19 +256,19 @@ atom(global) AddFishToList()
 	i:Set[1]
 	do
 	{
-		if ${UIElement[FishListBox@Combo@FishTabs@Fishing].Item[${i}].Text.Equal[${FishName}]}
+		if ${UIElement[FishListBox@Combo@FishTabs@VGFish].Item[${i}].Text.Equal[${FishName}]}
 		{
-			UIElement[FishListBox@Combo@FishTabs@Fishing]:RemoveItem[${i}]
+			UIElement[FishListBox@Combo@FishTabs@VGFish]:RemoveItem[${i}]
 			break
 		}
 		i:Inc
 	}
-	while (${UIElement[FishListBox@Combo@FishTabs@Fishing].Item[${i}](exists)})
+	while (${UIElement[FishListBox@Combo@FishTabs@VGFish].Item[${i}](exists)})
 
 	;-------------------------------------------
 	; Add entry to FishListBox
 	;-------------------------------------------
-	UIElement[FishListBox@Combo@FishTabs@Fishing]:AddItem[${FishName}]
+	UIElement[FishListBox@Combo@FishTabs@VGFish]:AddItem[${FishName}]
 
 	;-------------------------------------------
 	; Store entry into our ObjDef: Fishes
@@ -68,7 +292,7 @@ atom(global) RemoveFishFromList()
 	i:Set[1]
 	do
 	{
-		if (${Fishes[${i}].Name.Equal[${UIElement[FishListBox@Combo@FishTabs@Fishing].SelectedItem}]})
+		if (${Fishes[${i}].Name.Equal[${UIElement[FishListBox@Combo@FishTabs@VGFish].SelectedItem}]})
 		{
 			Fishes[${i}]:Clear
 			break
@@ -81,22 +305,22 @@ atom(global) RemoveFishFromList()
 	; Remove entry from FishListBox
 	;-------------------------------------------
 	i:Set[1]
-	if (${UIElement[FishListBox@Combo@FishTabs@Fishing].Items} == 1)
+	if (${UIElement[FishListBox@Combo@FishTabs@VGFish].Items} == 1)
 	{
-		UIElement[FishListBox@Combo@FishTabs@Fishing]:ClearItems
+		UIElement[FishListBox@Combo@FishTabs@VGFish]:ClearItems
 	}
 	else
 	{
 		do
 		{
-			if ${UIElement[FishListBox@Combo@FishTabs@Fishing].Item[${i}].Text.Equal[${UIElement[FishListBox@Combo@FishTabs@Fishing].SelectedItem}]}
+			if ${UIElement[FishListBox@Combo@FishTabs@VGFish].Item[${i}].Text.Equal[${UIElement[FishListBox@Combo@FishTabs@VGFish].SelectedItem}]}
 			{
-				UIElement[FishListBox@Combo@FishTabs@Fishing]:RemoveItem[${i}]
+				UIElement[FishListBox@Combo@FishTabs@VGFish]:RemoveItem[${i}]
 				break
 			}
 			i:Inc
 		}
-		while (${UIElement[FishListBox@Combo@FishTabs@Fishing].Item[${i}](exists)})
+		while (${UIElement[FishListBox@Combo@FishTabs@VGFish].Item[${i}](exists)})
 	}
 }
 
@@ -120,7 +344,7 @@ atom(global) ClearFishList()
 	;-------------------------------------------
 	; Clear entries in our FishListBox
 	;-------------------------------------------
-	UIElement[FishListBox@Combo@FishTabs@Fishing]:ClearItems
+	UIElement[FishListBox@Combo@FishTabs@VGFish]:ClearItems
 }
 
 ;-------------------------------------------
@@ -131,9 +355,9 @@ atom(global) UpdateInput()
 	;-------------------------------------------
 	; This is called every time a fish is selected in our FishListBox
 	;-------------------------------------------
-	if (${UIElement[FishListBox@Combo@FishTabs@Fishing].SelectedItem(exists)})
+	if (${UIElement[FishListBox@Combo@FishTabs@VGFish].SelectedItem(exists)})
 	{
-		call FindNameInFishList "${UIElement[FishListBox@Combo@FishTabs@Fishing].SelectedItem}"
+		call FindNameInFishList "${UIElement[FishListBox@Combo@FishTabs@VGFish].SelectedItem}"
 		;-------------------------------------------
 		; Update our input variables
 		;-------------------------------------------
@@ -147,11 +371,11 @@ atom(global) UpdateInput()
 		;-------------------------------------------
 		; Update our input display in UI
 		;-------------------------------------------
-		UIElement[FishName@Combo@FishTabs@Fishing]:SetText[${Fishes[${Return}].Name}]
-		UIElement[Combo1@Combo@FishTabs@Fishing]:SetText[${Fishes[${Return}].Combo1}]
-		UIElement[Combo2@Combo@FishTabs@Fishing]:SetText[${Fishes[${Return}].Combo2}]
-		UIElement[Combo3@Combo@FishTabs@Fishing]:SetText[${Fishes[${Return}].Combo3}]
-		UIElement[Combo4@Combo@FishTabs@Fishing]:SetText[${Fishes[${Return}].Combo4}]
+		UIElement[FishName@Combo@FishTabs@VGFish]:SetText[${Fishes[${Return}].Name}]
+		UIElement[Combo1@Combo@FishTabs@VGFish]:SetText[${Fishes[${Return}].Combo1}]
+		UIElement[Combo2@Combo@FishTabs@VGFish]:SetText[${Fishes[${Return}].Combo2}]
+		UIElement[Combo3@Combo@FishTabs@VGFish]:SetText[${Fishes[${Return}].Combo3}]
+		UIElement[Combo4@Combo@FishTabs@VGFish]:SetText[${Fishes[${Return}].Combo4}]
 	}
 }
 
@@ -165,16 +389,16 @@ atom(global) savelog()
 	;-------------------------------------------
 	variable int i
 	i:Set[1]
-	if (${UIElement[DebugListBox@Logs@FishTabs@Fishing].Items} > 0)
+	if (${UIElement[DebugListBox@Logs@FishTabs@VGFish].Items} > 0)
 	{
 		actionlog "Log saved to ${Me.FName}-Log.txt"
 		actionlog "------------------------------------"
 		do
 		{
-			Redirect -append "${LavishScript.CurrentDirectory}/scripts/Fishing/Save/${Me.FName}-Log.txt" echo "${UIElement[DebugListBox@Logs@FishTabs@Fishing].Item[${i}]}"
+			Redirect -append "${LavishScript.CurrentDirectory}/scripts/VGFish/Save/${Me.FName}-Log.txt" echo "${UIElement[DebugListBox@Logs@FishTabs@VGFish].Item[${i}]}"
 			i:Inc
 		}
-		while (${UIElement[DebugListBox@Logs@FishTabs@Fishing].Item[${i}](exists)})
+		while (${UIElement[DebugListBox@Logs@FishTabs@VGFish].Item[${i}](exists)})
 	}
 	;-------------------------------------------
 	; Clear the log
@@ -186,8 +410,8 @@ atom(global) savelog()
 ;-------------------------------------------
 atom(global) clearlog()
 {
-	UIElement[DebugListBox@Logs@FishTabs@Fishing]:ClearItems
-	UIElement[DebugListBox@Logs@FishTabs@Fishing]:AddItem[" "]
+	UIElement[DebugListBox@Logs@FishTabs@VGFish]:ClearItems
+	UIElement[DebugListBox@Logs@FishTabs@VGFish]:AddItem[" "]
 }
 
 ;-------------------------------------------
@@ -195,7 +419,7 @@ atom(global) clearlog()
 ;-------------------------------------------
 atom(global) actionlog(string aText)
 {
-	UIElement[DebugListBox@Logs@FishTabs@Fishing]:AddItem[${Time} -- ${aText}]
+	UIElement[DebugListBox@Logs@FishTabs@VGFish]:AddItem[${Time} -- ${aText}]
 }
 
 ;-------------------------------------------
@@ -205,7 +429,7 @@ atom(global) movelog(string aText)
 {
 	if ${DoLogFishMovement}
 	{
-		UIElement[DebugListBox@Logs@FishTabs@Fishing]:AddItem[${Time} -- ${aText}]
+		UIElement[DebugListBox@Logs@FishTabs@VGFish]:AddItem[${Time} -- ${aText}]
 	}
 }
 
@@ -216,7 +440,8 @@ atom(global) debuglog(string aText)
 {
 	if ${DoDebug}
 	{
-		UIElement[DebugListBox@Logs@FishTabs@Fishing]:AddItem[${Time} -- ${aText}]
+		UIElement[DebugListBox@Logs@FishTabs@VGFish]:AddItem[${Time} -- ${aText}]
 	}
 }
+
 

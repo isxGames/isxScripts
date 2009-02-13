@@ -1,7 +1,8 @@
 ;---------------------------------------------------
-; VGFish.iss Version 1.9  Created: 12/18/08 by Zandros123
+; VGFish.iss Version 2.0  Created: 12/18/08 by Zandros123
 ;
 ;VERSIONS:
+; 2.0 -- Updated to include all of BackseatScripters ComboSets and new facing routine (02/13/09)
 ; 1.9a - Small patch to to correct minor issue with saving (01/19/08)
 ; 1.9 -- Special requests and new movement detection routines (12/30/08)
 ; 1.8 -- Reorganized and cleaned up the code (12/25/08)
@@ -62,7 +63,7 @@
 ;===               Defines                      ====
 ;===================================================
 ;
-#define ALARM "${Script.CurrentDirectory}/VGFish/Sounds/ping.wav"
+#define ALARM "${LavishScript.CurrentDirectory}/scripts/VGFish/Sounds/ping.wav"
 ;
 ;===================================================
 ;===              Variables                     ====
@@ -165,6 +166,19 @@ variable int RightMinAngle
 variable int RightMaxAngle
 variable int FishMoveDistance
 
+;**********Add BSS************
+variable bool DoReleaseNone
+variable bool DoReleaseKnown
+variable bool ComboSetA
+variable bool ComboSetB
+variable bool ComboSetC
+variable bool ComboSetD
+variable string ComboPh1
+variable string ComboPh2
+variable string ComboPh3
+variable string ComboPh4
+
+
 ;===================================================
 ;===         Executed at end of program         ====
 ;===================================================
@@ -196,7 +210,6 @@ function atexit()
 	; UnLoad the UI panel
 	;-------------------------------------------
 	ui -unload "${Script.CurrentDirectory}/VGFish.xml"
-	ui -unload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 
 	;-------------------------------------------
 	; Announce we have ended
@@ -318,4 +331,5 @@ function main()
 ;===    G L O B A L   A T O M S   B E L O W     ====
 ;===================================================
 ;===================================================
+
 

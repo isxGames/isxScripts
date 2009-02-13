@@ -16,106 +16,141 @@ v1.1 - Tweaked to work smoother by Zandros
 v1.0 - initial release
 */
 
-variable bool AngDebug = FALSE
-variable float Dist
-variable int Angle
-variable int StartAngle
-variable float AbsAngle /* Absolute angle of mob starting from North */
-variable float MobRise /* Find absolute (x,y) values of mob with our location considered (0,0) */
-variable float MobRun
-variable int Quadrant /* quadrant relative to our location with us facing "north" :: either 1,2,3,4,0 for origin*/
-variable float maxRight
-variable float maxLeft
-variable float mobX
-variable float mobY
+/* Toggle this on or off in your scripts */
+variable bool DoFaceSlow = TRUE
 
 function:bool facemob(int64 MobID,float precision)
 {
+	;-------------------------------------------
+	; return if we do not want to face slowly
+	;-------------------------------------------
+	if !${DoFaceSlow}
+		return FALSE
+
+	variable float mobX
+	variable float mobY
+	variable float maxLeft
+	variable float maxRight
+
+	;-------------------------------------------
+	; Always double-check our variables
+	;-------------------------------------------
+	if ${precision}>180
+	precision:Set[180]
 	if ${Pawn[id,${MobID}](exists)}
 	{
 		mobX:Set[${Pawn[id,${MobID}].X}]
 		mobY:Set[${Pawn[id,${MobID}].Y}]
 	}
-	maxRight:Set[${Math.Calc[180-${precision}]}]
 	maxLeft:Set[${Math.Calc[180+${precision}]}]
-	call faceslow ${mobX} ${mobY} ${maxRight} ${maxLeft} 3
+	maxRight:Set[${Math.Calc[180-${precision}]}]
+
+	;-------------------------------------------
+	; Lets start turning slowly
+	;-------------------------------------------
+	call faceslow ${mobX} ${mobY} ${maxRight} ${maxLeft}
 	if ${Return}
 	return TRUE
 	return FALSE
 }
 
-function:bool faceloc(float locX, float locY, float precision, int faceTimeOut)
+function:bool faceloc(float locX, float locY, float precision)
 {
-	maxRight:Set[${Math.Calc[180-${precision}]}]
+	;-------------------------------------------
+	; return if we do not want to face slowly
+	;-------------------------------------------
+	if !${DoFaceSlow}
+		return FALSE
+
+	variable float maxLeft
+	variable float maxRight
+
+	;-------------------------------------------
+	; Always double-check our variables
+	;-------------------------------------------
+	if ${precision}>180
+	precision:Set[180]
 	maxLeft:Set[${Math.Calc[180+${precision}]}]
+	maxRight:Set[${Math.Calc[180-${precision}]}]
 
-	;vgecho "VG:faceloc: locX: ${locX}  facY: ${locY}  maxR: ${maxRight}  maxL: ${maxLeft}  :: ${faceTimeOut}"
-
-	call faceslow ${locX} ${locY} ${maxRight} ${maxLeft} ${faceTimeOut}
+	;-------------------------------------------
+	; Lets start turning slowly
+	;-------------------------------------------
+	call faceslow ${locX} ${locY} ${maxRight} ${maxLeft}
 	if ${Return}
 	return TRUE
 	return FALSE
 }
 
-function:bool faceslow(float facX, float facY, float Rt, float Lt, int iFacTimeOut)
+function:bool faceslow(float facX, float facY, float Rt, float Lt)
 {
-	;set BailOut timer (5 seconds)
-	variable time bailOut
+	variable int bailOut
+	variable float AbsAngle
 
-	;bailOut:Set[${Math.Calc[${Time.Timestamp} + ${iFacTimeOut}]}]
-	bailOut:Set[${Time.Timestamp}]
+	;-------------------------------------------
+	; Always double-check our variables
+	;-------------------------------------------
+	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(1500)]}]
 
-	;vgecho "VG:FaceSlow: facX: ${facX}  facY: ${facY}  Rt: ${Rt}  Lt: ${Lt}  :: ${bailOut.Timestamp} :: ${Time.Timestamp}"
-
+	;-------------------------------------------
+	; Modified:  Only turn if we are not within our LT/RT angle
+	;-------------------------------------------
 	call Angle ${facX} ${facY}
+	AbsAngle:Set[${Return}]
 	if (${AbsAngle} > ${Lt} || ${AbsAngle} < ${Rt})
 	{
+		;-------------------------------------------
+		; Modified:  Get direction and start turning to within 10 degrees of target
+		;-------------------------------------------
+		call Angle ${facX} ${facY}
+		AbsAngle:Set[${Return}]
+		if (${AbsAngle} <= 360 && ${AbsAngle} > 190)
+		{
+			vgecho "VG: FaceSlow - Turn Left"
+			VG:ExecBinding[turnright,release]
+			VG:ExecBinding[turnleft]
+		}
+		if (${AbsAngle} >= 0 && ${AbsAngle} < 170)
+		{
+			vgecho "VG: FaceSlow - Turn Right"
+			VG:ExecBinding[turnleft,release]
+			VG:ExecBinding[turnright]
+		}
 
-		do
+		;-------------------------------------------
+		; Modified:  Keep turning until we reached within 10 degrees of target or bailout timer runs out (1.5 sec)
+		;-------------------------------------------
+		while (${AbsAngle}>190 || ${AbsAngle}<170)  && (${LavishScript.RunningTime}<${bailOut})
 		{
 			call Angle ${facX} ${facY}
-
-			if ${AngDebug}
-			{
-				;vgecho "Angle: ${Angle}, AbsAngle: ${AbsAngle}, Rt: ${Rt},  Lt: ${Lt}"
-			}
-			if (${AbsAngle} <= 360 && ${AbsAngle} > 190)
-			{
-				;vgecho "Turn Left"
-				VG:ExecBinding[turnright,release]
-				VG:ExecBinding[turnleft]
-				;VG:ExecBinding[moveforward,release]
-			}
-			if (${AbsAngle} >= 0 && ${AbsAngle} < 170)
-			{
-				;vgecho "Turn Right"
-				VG:ExecBinding[turnleft,release]
-				VG:ExecBinding[turnright]
-				;VG:ExecBinding[moveforward,release]
-			}
-			;waitframe
+			AbsAngle:Set[${Return}]
 		}
-		while (${AbsAngle} > 190 || ${AbsAngle} < 170)
-		;while (${AbsAngle} > ${Lt} || ${AbsAngle} < ${Rt}) && (${Math.Calc[${Time.Timestamp} - ${bailOut.Timestamp}]} < ${iFacTimeOut})
 
+		;-------------------------------------------
+		; Stop all turning!
+		;-------------------------------------------
 		VG:ExecBinding[turnleft,release]
 		VG:ExecBinding[turnright,release]
 
-		; Make sure we are facing the right way
-		Face ${facX} ${facY}
-
+		;-------------------------------------------
+		; Return Successful
+		;-------------------------------------------
+		if ${LavishScript.RunningTime}>${bailOut}
+			vgecho "VG: FaceSlow - BailedOut Timer Exceeded"
 		return TRUE
 	}
-
 	return FALSE
-
-
-	;if (${Math.Calc[${Time.Timestamp} - ${bailOut.Timestamp}]} > ${iFacTimeOut})
-	;	vgecho "VG: faceslow timeout!"
 }
 
-function Angle(float angX, float angY)
+function:float Angle(float angX, float angY)
 {
+	variable int Angle
+	variable float Dist
+	variable float AbsAngle /* Absolute angle of mob starting from North */
+	variable float MobRise /* Find absolute (x,y) values of mob with our location considered (0,0) */
+	variable float MobRun
+	variable int Quadrant /* quadrant relative to our location with us facing "north" :: either 1,2,3,4,0 for origin*/
+
 	Dist:Set[${Math.Distance[${Me.X},${Me.Y},${angX},${angY}]}]
 	if ( ${Dist} <= 0 )
 	Dist:Set[1]
@@ -143,29 +178,10 @@ function Angle(float angX, float angY)
 	{
 		Quadrant:Set[0]
 	}
-
 	if (${Quadrant} == 2 || ${Quadrant} == 3)
 	{
 		Angle:Set[${Math.Calc[360 - ${Angle}]}]
 	}
-
 	AbsAngle:Set[${Math.Calc[(${Me.Heading} + ${Angle}) % 360]}]
+	return ${AbsAngle}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

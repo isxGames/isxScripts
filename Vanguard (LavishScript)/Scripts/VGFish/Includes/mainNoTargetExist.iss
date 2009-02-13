@@ -244,3 +244,4 @@ function FindUsFish()
 	while ${iCount:Inc} < ${VG.PawnCount}
 	return 0
 }
+
