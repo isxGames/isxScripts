@@ -92,13 +92,13 @@ function rescue()
 				{
 					GroupMember[${Me.TargetOfTarget}]:Target
 					;echo "${Me.DTarget} is still agro going to Next Ability"
-					Iterator:Next
 				}
 				if ${tankpawn.Equal[${Me.TargetOfTarget}]}
 				{
 					;echo "Mob is on Me ${Me.TargetOfTarget}"
 					return
 				}
+				Iterator:Next
 			}
 			if !${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
@@ -123,13 +123,13 @@ function rescue()
 						{
 							Pawn[${Me.TargetOfTarget}]:Target
 							;echo "FOrce Target FAILED? Jesus Man"
-							FTIterator:Next
 						}
 						if ${tankpawn.Equal[${Me.TargetOfTarget}]}
 						{
 							;echo "Ok I have agro"
 							return
 						}
+						FTIterator:Next
 					}
 
 				}
