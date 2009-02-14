@@ -96,6 +96,13 @@ atom(global) PopulateFishList()
 		Combo4:Set[${ComboPh3}]
 		AddFishToList
 
+		FishName:Set[Giant Sea Bass]
+		Combo1:Set[${ComboPh4}]
+		Combo2:Set[${ComboPh2}]
+		Combo3:Set[${ComboPh3}]
+		Combo4:Set[${ComboPh4}]
+		AddFishToList
+
 		FishName:Set[Haddock]
 		Combo1:Set[${ComboPh3}]
 		Combo2:Set[${ComboPh3}]
