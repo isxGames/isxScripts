@@ -100,8 +100,10 @@ function executeability(string x_ability, string x_type, string CP)
 		case attack		
 			call mobresist "${x_ability}"
 			if ${Return}
+			    {
 				DoIt:Set[TRUE]
-
+          }
+      break
 		case buff
 			DoIt:Set[TRUE]
 			break
@@ -109,7 +111,9 @@ function executeability(string x_ability, string x_type, string CP)
 		case evade
 			call mobresist "${x_ability}"
 			if ${Return}
+			  {
 				DoIt:Set[TRUE]
+				}
 			break
 			
 		case utility
@@ -121,7 +125,7 @@ function executeability(string x_ability, string x_type, string CP)
 			break
 			
 		default
-			DoIt:Set[TRUE]
+			DoIt:Set[FALSE]
 			break
 	}
 
