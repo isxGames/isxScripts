@@ -151,15 +151,38 @@
                         <Height>100%</Height>
                         <Width>100%</Width>
                         <Texture></Texture>
-                        <Children>
-                          <Button Name="assistButton" Template="VG.GreenButton">
+                        <children>
+                          <Button Name="TankButton" Template="VG.GreenButton">
                             <X>10</X>
                             <Y>15</Y>
                             <Width>150</Width>
                             <Height>20</Height>
                             <Text></Text>
                             <Alignment>Center</Alignment>
-                            <Onload>This:SetText[Set Assist]</Onload>
+                            <Onload>
+                            	if !${Group(exists)}
+                            		This:SetText[Tank: ${Me.FName}]
+                            	else
+	                            	This:SetText[Set Tank]
+                            </Onload>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.tankpawn:Set[${Me.DTarget.Name}]
+                              This:SetText[Tank: ${Me.DTarget.Name}]
+                            </OnLeftClick>
+                          </Button>
+                          <Button Name="assistButton" Template="VG.GreenButton">
+                            <X>10</X>
+                            <Y>35</Y>
+                            <Width>150</Width>
+                            <Height>20</Height>
+                            <Text></Text>
+                            <Alignment>Center</Alignment>
+                            <Onload>
+                            	if !${Group(exists)}
+                            		This:SetText[Assist: ${Me.FName}]
+                            	else
+	                            	This:SetText[Set Assist]
+                            </Onload>
                             <OnLeftClick>
                               Script[vga].VariableScope.assistpawn:Set[${Me.DTarget.Name}]
                               This:SetText[Assist: ${Me.DTarget.Name}]
@@ -167,7 +190,7 @@
                           </Button>
                           <Button Name="followButton" Template="VG.GreenButton">
                             <X>10</X>
-                            <Y>35</Y>
+                            <Y>55</Y>
                             <Width>150</Width>
                             <Height>20</Height>
                             <Text></Text>
@@ -176,19 +199,6 @@
                             <OnLeftClick>
                               Script[vga].VariableScope.followpawn:Set[${Me.DTarget.Name}]
                               This:SetText[Follow: ${Me.DTarget.Name}]
-                            </OnLeftClick>
-                          </Button>
-                          <Button Name="TankButton" Template="VG.GreenButton">
-                            <X>10</X>
-                            <Y>55</Y>
-                            <Width>150</Width>
-                            <Height>20</Height>
-                            <Text></Text>
-                            <Alignment>Center</Alignment>
-                            <Onload>This:SetText[Set Tank]</Onload>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.tankpawn:Set[${Me.DTarget.Name}]
-                              This:SetText[tankw: ${Me.DTarget.Name}]
                             </OnLeftClick>
                           </Button>
                           <Button Name="RepairSell" Template="VG.RedButton">
