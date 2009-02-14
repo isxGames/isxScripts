@@ -190,6 +190,18 @@ function main()
 	;===               Bug WorkArounds              ====
 	;===================================================
 	call MeClassCrashWorkAround
+	
+	;===================================================
+	;===               Misc.                        ====
+	;===================================================
+	if !${Group(exists)}
+	{
+		; if we are not in a group, go ahead and set MT and MA to "me"
+		; TODO:  Possibly pause the script (if we are grouped) until the player sets a tank/assist?
+		tankpawn:Set[${Me.FName}]
+		assistpawn:Set[${Me.FName}]
+	}	
+		
 	;===================================================
 	;===               Main Loop                    ====
 	;===================================================
