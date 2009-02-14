@@ -12,24 +12,27 @@ function lootit()
 	if !${Pawn[Corpse](exists)}
 		return
 	
-	if ${DoLoot} && ${Group.Count} < 7 && (!${Me.InCombat} || ${Me.Encounter} > 0)
+	if (${DoLoot} && ${Group.Count} < 7)
 	{
-		variable int iCount
-		iCount:Set[1]
-		; Cycle through all the Pawns and find some corpses to Loot and Skin
-		do
+		if (!${Me.InCombat} || ${Me.Encounter} == 0)
 		{
-			if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance} < 10 && ${Pawn[${iCount}].ContainsLoot}
+			variable int iCount
+			iCount:Set[1]
+			; Cycle through all the Pawns and find some corpses to Loot and Skin
+			do
 			{
-				Pawn[${iCount}]:Target
-				wait 5
-				call movetoobject ${Me.Target.ID} 4 0
-				VGExecute "/lootall"
-				waitframe
-				VGExecute "/cleartargets"
-			}
-		}	
-		while ${iCount:Inc} <= ${VG.PawnCount}
+				if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance} < 10 && ${Pawn[${iCount}].ContainsLoot}
+				{
+					Pawn[${iCount}]:Target
+					wait 5
+					call movetoobject ${Me.Target.ID} 4 0
+					VGExecute "/lootall"
+					waitframe
+					VGExecute "/cleartargets"
+				}
+			}	
+			while ${iCount:Inc} <= ${VG.PawnCount}
+		}
 	}
 }
 ;********************************************
@@ -100,10 +103,11 @@ function executeability(string x_ability, string x_type, string CP)
 		case attack		
 			call mobresist "${x_ability}"
 			if ${Return}
-			    {
+			{
 				DoIt:Set[TRUE]
-          }
-      break
+          	}
+      		break
+      		
 		case buff
 			DoIt:Set[TRUE]
 			break
@@ -111,9 +115,9 @@ function executeability(string x_ability, string x_type, string CP)
 		case evade
 			call mobresist "${x_ability}"
 			if ${Return}
-			  {
+			{
 				DoIt:Set[TRUE]
-				}
+			}
 			break
 			
 		case utility
