@@ -17,8 +17,16 @@ function solobuff()
 	while ( ${anIter.Key(exists)} )
 	{
 		debuglog "Checking ${anIter.Key} Buff"
+		
+		; If the buff has a time remaining of < zero, then it is a perm buff and we can forget about it.
+		if (${Me.Effect[${anIter.Key}](exists)} && ${Me.Effect[${anIter.Key}].TimeRemaining} < 0)
+		{
+			anIter:Next
+			continue
+		}
+		
 		;If our buff is gone, or has less than 60 seconds, rebuff
-		if !${Me.Effect[${anIter.Key}](exists)} && ${Me.Effect[${anIter.Key}].TimeRemaining} <= 60
+		if !${Me.Effect[${anIter.Key}](exists)} || ${Me.Effect[${anIter.Key}].TimeRemaining} <= 60
 		{
 			if ${Me.Ability[${LazyBuff}](exists)}
 			{
@@ -50,7 +58,7 @@ function solobuff()
 
 function groupbuff()
 {
-  wait 20
+ 	wait 10
 	variable iterator anIter
 
 	Buff:GetSettingIterator[anIter]
@@ -58,35 +66,41 @@ function groupbuff()
 
 	while ( ${anIter.Key(exists)} )
 	{
+		; If the buff has a time remaining of < zero, then it is a perm buff and we can forget about it.
+		if (${Me.Effect[${anIter.Key}](exists)} && ${Me.Effect[${anIter.Key}].TimeRemaining} < 0)
+		{
+			anIter:Next
+			continue
+		}
+		
 		;If our buff is gone, or has less than 60 seconds, rebuff
-		if !${Me.Effect[${anIter.Key}](exists)} && ${Me.Effect[${anIter.Key}].TimeRemaining} <= 60
+		if !${Me.Effect[${anIter.Key}](exists)} || ${Me.Effect[${anIter.Key}].TimeRemaining} <= 60
 		{
 			if ${Me.Ability[${LazyBuff}](exists)}
-				{
-				Pawn[Me]:Target
+			{
+				Me.ToPawn:Target
 				call checkabilitytocast "${LazyBuff}"	
 				if ${Return} && ${Me.Ability[${LazyBuff}].IsReady}
-					{
-					call executeability "${LazyBuff}" "buff" "Neither"
-					}
-				}
-			if !${Me.Ability[${LazyBuff}](exists)}
 				{
-				Pawn[Me]:Target
+					call executeability "${LazyBuff}" "buff" "Neither"
+				}
+			}
+			if !${Me.Ability[${LazyBuff}](exists)}
+			{
+				Me.ToPawn:Target
 				call checkabilitytocast "${anIter.Key}"	
 				if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
-					{
+				{
 					call executeability "${anIter.Key}" "buff" "Neither"
-					}
 				}
+			}
 		}
 		anIter:Next
 	}
 	GroupNeedsBuffs:Set[FALSE]
-	Return
-
-
+	return
 }
+
 function BuffButton(int aGroupNumber)
 {
 	;; 1 is always "Me"

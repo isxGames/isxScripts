@@ -31,8 +31,10 @@ function Healcheck()
 		{
 			waitframe
 
-			;; Note:  [1] is always "Me"
+			if ${Me.HealthPct} > 90
+				return
 
+			;; Note:  [1] is always "Me"
 			if ${Me.HealthPct} < ${bhpctgrp[1]} && ${Me.HealthPct} > 0
 			{
 				healrefresh:Set[FALSE]
