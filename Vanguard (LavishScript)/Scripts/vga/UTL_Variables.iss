@@ -89,6 +89,8 @@ variable bool doCombatStance
 variable bool doNonCombatStance
 variable string CombatStance
 variable string NonCombatStance
+variable string ClickieForce
+variable string doClickieForce
 
 ;===================================================
 ;===               Main VGA Variables           ====
