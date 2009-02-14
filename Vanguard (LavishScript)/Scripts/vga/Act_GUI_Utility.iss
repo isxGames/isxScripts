@@ -8,6 +8,10 @@ function PauseScript()
 ;********************************************
 function lootit()
 {
+	;; if there are no corpses around...then why bother.
+	if !${Pawn[Corpse](exists)}
+		return
+	
 	if ${DoLoot} && ${Group.Count} < 7 && (!${Me.InCombat} || ${Me.Encounter} > 0)
 	{
 		variable int iCount
@@ -244,10 +248,10 @@ function CheckPosition()
 ;********************************************
 function targettank()
 {
-		if ${Pawn[exactname,${tankpawn}].Distance} < 50 && ${Pawn[exactname,${tankpawn}](exists)} && !${Me.FName.Equal[${tankpawn}]}
-		{
-			VGExecute /targetauto ${tankpawn}
-		}
+	if (${Pawn[exactname,${tankpawn}](exists)} && !${Me.FName.Equal[${tankpawn}]} && ${Pawn[exactname,${tankpawn}].Distance} < 50)
+	{
+		VGExecute /targetauto ${tankpawn}
+	}
 	return
 }
 ;********************************************
@@ -255,7 +259,7 @@ function assistpawn()
 {
 	if ${doassistpawn} 
 	{
-		if ${Pawn[exactname,${assistpawn}].Distance} < 50 && ${Pawn[exactname,${assistpawn}](exists)}
+		if (${Pawn[exactname,${assistpawn}](exists)} && ${Pawn[exactname,${assistpawn}].CombatState} != 0 && ${Pawn[exactname,${assistpawn}].Distance} < 50)
 		{
 			VGExecute /assist ${assistpawn}
 		}
@@ -294,7 +298,7 @@ function followpawn()
 {
 	if ${dofollowpawn}
 	{
-		if ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50 && ${Pawn[exactname,${followpawn}](exists)}
+		if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50)
 		{
 			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
 		}
