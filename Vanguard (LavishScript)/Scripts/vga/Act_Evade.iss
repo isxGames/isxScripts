@@ -100,6 +100,13 @@ function rescue()
 				}
 				Iterator:Next
 			}
+			if !${tankpawn.Equal[${Me.TargetOfTarget}]} && {doClickieForce} &&  if ${Me.Inventory[${ClickieForce}].IsReady}
+			{
+				waitframe
+				Me.Inventory[${ClickieForce}]:Use
+				waitframe
+				Me.Inventory[${ClickieForce}]:Use
+      }			
 			if !${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
 				;echo "Non Force Abilities didnt work.. doing force target"
