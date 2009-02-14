@@ -6841,7 +6841,7 @@
                             <X>33</X>
                             <Y>490</Y>
                             <Width>90%</Width>
-                            <Height>80</Height>
+                            <Height>40</Height>
                             <AutoSort>TRUE</AutoSort>
                             <Sort>User</Sort>
                             <OnLoad>
@@ -6853,6 +6853,35 @@
                               BuildForceRescue
                             </OnRightClick>
                           </Listbox>
+                        <checkbox Name='doClickieForce' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>535</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Use Clickie To Force Agro</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doClickieForce}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doClickieForce:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <ComboBox Name="ClickieForceCombo" Template="VG.ComboBox">
+                            <X>200</X>
+                            <Y>535</Y>
+                            <Width>180</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.ClickieForce:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
 			</Children>
                       </Frame>
                     </Tab>

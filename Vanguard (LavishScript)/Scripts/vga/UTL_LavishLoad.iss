@@ -260,7 +260,8 @@ function LavishLoad()
 	doNonCombatStance:Set[${HealerSR.FindSetting[doNonCombatStance]}]
 	CombatStance:Set[${HealerSR.FindSetting[CombatStance]}]
 	NonCombatStance:Set[${HealerSR.FindSetting[NonCombatStance]}]
-	
+	ClickieForce:Set[${HealerSR.FindSetting[ClickieForce]}]	
+  doClickieForce:Set[${HealerSR.FindSetting[doClickieForce]}]	
 	;===================================================
 	;===                  Utility Load              ====
 	;===================================================

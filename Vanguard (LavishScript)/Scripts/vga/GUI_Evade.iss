@@ -160,6 +160,12 @@ function PopulateEvadeLists()
 			UIElement[ForceRescueCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[pushagroCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
+	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+	{
+
+		UIElement[ClickieForceCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+	}
+
 	variable iterator Iterator
 	Evade1:GetSettingIterator[Iterator]
 	UIElement[Evade1List@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
@@ -213,6 +219,12 @@ function PopulateEvadeLists()
 	{
 		if ${UIElement[pushagroCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${agropush}]}
 			UIElement[pushagroCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+		rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[ClickieForceCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
+	{
+		if ${UIElement[ClickieForceCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${ClickieForce}]}
+			UIElement[ClickieForceCombo@AgroCFrm@Agro@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 
 }
