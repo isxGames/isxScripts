@@ -200,11 +200,12 @@ variable bool DoChainsASAP
 variable bool CounterReactionReady = FALSE
 variable float64 CounterReactionTimer
 variable int64 CounterReactionPawnID
-variable uint CounterReactionAbilityID
+variable index:uint CounterReactionAbilities
+
+variable index:uint ChainReactionAbilities
 variable bool ChainReactionReady = FALSE
 variable float64 ChainReactionTimer
 variable int64 ChainReactionPawnID
-variable uint ChainReactionAbilityID
 
 ;===================================================
 ;===                 Triggers Variables        ====
