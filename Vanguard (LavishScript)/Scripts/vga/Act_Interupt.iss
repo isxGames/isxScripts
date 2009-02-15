@@ -13,26 +13,26 @@ function TurnOffAttackfunct()
 		variable iterator Iterator
 		TurnOffAttack:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
+		{
+			if ${Me.TargetBuff[${Iterator.Key}](exists)}
 			{
-				if ${Me.TargetBuff[${Iterator.Key}](exists)}
-				{
 				if ${Me.IsCasting}
-					{
+				{
 					vgexecute /stopcasting
-					}
+				}
 				if ${Me.Ability[Auto Attack].Toggled}
 					Me.Ability[Auto Attack]:Use
 				if ${Me.Ability[{FD}](exists)}
 					Me.Ability[${FD}]:Use
 				while ${Me.TargetBuff[${Iterator.Key}](exists)}
-					{
+				{
 					wait 5
 					if ${ClassRole.healer}
 						call Healcheck
-					}
 				}
-			Iterator:Next
 			}
+			Iterator:Next
+		}
 	}
 } 
 ;********************************************
@@ -47,24 +47,24 @@ function counteringfunct()
 		variable iterator Iterator
 		Counter:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
+		{
+			if ${Me.TargetCasting.Find[${Iterator.Key}]}
 			{
-				if ${Me.TargetCasting.Find[${Iterator.Key}]}
-				{
 				if ${Me.IsCasting}
-					{
+				{
 					vgexecute /stopcasting
-					}
-				if ${Me.Ability[${counterspell1}].IsReady}
-					{
-					call executeability "${CounterSpell1}" "attack" "Neither"
-					}
-				elseif ${Me.Ability[${counterspell2}].IsReady}
-					{
-					call executeability "${CounterSpell2}" "attack" "Neither"
-					}
 				}
-			Iterator:Next
+				if ${Me.Ability[${counterspell1}].IsReady}
+				{
+					call executeability "${CounterSpell1}" "attack" "Neither"
+				}
+				elseif ${Me.Ability[${counterspell2}].IsReady}
+				{
+					call executeability "${CounterSpell2}" "attack" "Neither"
+				}
 			}
+			Iterator:Next
+		}
 	}
 }
 ;********************************************
