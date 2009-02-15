@@ -71,7 +71,7 @@ function mainTargetExist()
 		;-------------------------------------------
 		; 1st, Must wait long enough for Fish to change name
 		;-------------------------------------------
-		wait 30 (!${Me.Target.Name.Equal[Fish]} && !${Pawn[${Me.Target}].Name.Equal[Fish]})
+		wait 30 !${Me.Target.Name.Equal[Fish]}
 
 		;-------------------------------------------
 		; 2nd, If FishName is still Fish or Unknown then clear targets

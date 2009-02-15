@@ -241,7 +241,7 @@ function FindUsFish()
 			return ${Pawn[${iCount}].Distance}
 		}
 	}
-	while ${iCount:Inc} < ${VG.PawnCount}
+	while ${iCount:Inc} <= ${VG.PawnCount}
 	return 0
 }
 
