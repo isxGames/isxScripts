@@ -2,7 +2,7 @@
 ; VGFish.iss Version 2.0  Created: 12/18/08 by Zandros123
 ;
 ;VERSIONS:
-; 2.0 -- Updated to include all of BackseatScripters ComboSets and new facing routine (02/13/09)
+; 2.0 -- Updated to include all of Sckary and BackseatScripters ComboSets, and new facing routine (02/13/09)
 ; 1.9a - Small patch to to correct minor issue with saving (01/19/08)
 ; 1.9 -- Special requests and new movement detection routines (12/30/08)
 ; 1.8 -- Reorganized and cleaned up the code (12/25/08)
