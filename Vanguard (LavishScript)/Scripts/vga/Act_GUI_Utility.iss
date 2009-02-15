@@ -90,7 +90,6 @@ function executeability(string x_ability, string x_type, string CP)
 			}
 
 			ChainReactionAbilities:GetIterator[iAbs]
-			echo "TEST: ${ChainReactionAbilities.Used}"
 			if ${iAbs:First(exists)}
 			do
 			{				
