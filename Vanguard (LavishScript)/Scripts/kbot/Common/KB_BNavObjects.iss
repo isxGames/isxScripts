@@ -3,8 +3,8 @@
 /* Written by Bohika */
 
 
-variable filepath VGPathsDir = "${Script.CurrentDirectory}/vgpaths"
-variable string OutputFile = "${Script.CurrentDirectory}/vgpaths/move_debug.log"
+variable filepath sVGPathsDir = "${Script.CurrentDirectory}/vgpaths"
+variable string sOutputFile = "${Script.CurrentDirectory}/vgpaths/move_debug.log"
 
 objectdef  bnav
 {
@@ -25,15 +25,15 @@ variable int stuckCounter
 		Event[VG_onHitObstacle]:AttachAtom[Bump]
 		LavishNav:Clear
 
-		mkdir "${VGPathsDir}"
+		mkdir "${sVGPathsDir}"
 
 		isMoving:Set[FALSE]
 
 		;Look for zone file and load it, else create a new once
-		if ${VGPathsDir.FileExists[${Me.Chunk}.xml]}
+		if ${sVGPathsDir.FileExists[${Me.Chunk}.xml]}
 		{
-			LavishNav.Tree:Import[${VGPathsDir}/${Me.Chunk}.xml]
-			call DebugOut "bNav: Loaded ${VGPathsDir}/${Me.Chunk}.xml with ${LNavRegion[${Me.Chunk}].ChildCount} children"
+			LavishNav.Tree:Import[${sVGPathsDir}/${Me.Chunk}.xml]
+			call DebugOut "bNav: Loaded ${sVGPathsDir}/${Me.Chunk}.xml with ${LNavRegion[${Me.Chunk}].ChildCount} children"
 			;call DebugOut "bNav: CurrentRegion: ${CurrentRegion} :: ${This.CurrentRegionID}"
 		}
 		else
@@ -68,12 +68,12 @@ variable int stuckCounter
 	
 	method SavePaths()
 	{
-		LNavRegion[${Me.Chunk}]:Export[${VGPathsDir}/${Me.Chunk}.xml]
+		LNavRegion[${Me.Chunk}]:Export[${sVGPathsDir}/${Me.Chunk}.xml]
 		;LNavRegion[${Me.Chunk}]:Remove
 
 		;if ${lso}
 		;{
-		;	LNavRegion[${Me.Chunk}]:Export[-lso,${VGPathsDir}${Me.Chunk}.lso]
+		;	LNavRegion[${Me.Chunk}]:Export[-lso,${sVGPathsDir}${Me.Chunk}.lso]
 		;	LNavRegion[${Me.Chunk}]:Remove
 		;	echo Exported to LSO
 		;}
@@ -83,10 +83,10 @@ variable int stuckCounter
 	method LoadPaths()
 	{
 		;Look for zone file and load it, else create a new once
-		if ${VGPathsDir.FileExists[${Me.Chunk}.xml]}
+		if ${sVGPathsDir.FileExists[${Me.Chunk}.xml]}
 		{
-			LavishNav.Tree:Import[${VGPathsDir}/${Me.Chunk}.xml]
-			call DebugOut "bNav: Loaded ${VGPathsDir}/${Me.Chunk}.xml with ${LNavRegion[${Me.Chunk}].ChildCount} children"
+			LavishNav.Tree:Import[${sVGPathsDir}/${Me.Chunk}.xml]
+			call DebugOut "bNav: Loaded ${sVGPathsDir}/${Me.Chunk}.xml with ${LNavRegion[${Me.Chunk}].ChildCount} children"
 		}
 		else
 		{
@@ -98,7 +98,7 @@ variable int stuckCounter
 
 	function DebugOut(string aText)
 	{
-		redirect -append "${OutputFile}" echo "${Time}:: ${aText}"
+		redirect -append "${sOutputFile}" echo "${Time}:: ${aText}"
 	}
 
 
