@@ -10,12 +10,12 @@ function LoadSettings()
 	;-------------------------------------------
 	declare	setConfig		settingsetref 	script
 	declare	SetCombo		settingsetref 	script
-	declare	General		settingsetref 	script
+	declare	General			settingsetref 	script
 	declare	itConfig		iterator		script
-	declare	itCombo		iterator		script
+	declare	itCombo			iterator		script
 	declare	itGeneral		iterator		script
-	declare 	TimerRecast		int 			script 	${Math.Calc[${LavishScript.RunningTime}]}
-	declare 	TimerTroll		int 			script 	${Math.Calc[${LavishScript.RunningTime}]}
+	declare TimerRecast		int 			script 	${LavishScript.RunningTime}
+	declare TimerTroll		int 			script 	${LavishScript.RunningTime}
 
 
 	;-------------------------------------------
@@ -150,7 +150,7 @@ function LoadXML()
 	while ${rCount:Inc} <= ${UIElement[BaitComboBox@Options@FishTabs@VGFish].Items}
 	{
 		if ${UIElement[BaitComboBox@Options@FishTabs@VGFish].Item[${rCount}].Text.Equal[${Bait}]}
-		UIElement[BaitComboBox@Options@FishTabs@VGFish]:SelectItem[${rCount}]
+			UIElement[BaitComboBox@Options@FishTabs@VGFish]:SelectItem[${rCount}]
 	}
 
 	;-------------------------------------------
@@ -160,7 +160,7 @@ function LoadXML()
 	while ${rCount:Inc} <= ${UIElement[FishingPoleComboBox@Options@FishTabs@VGFish].Items}
 	{
 		if ${UIElement[FishingPoleComboBox@Options@FishTabs@VGFish].Item[${rCount}].Text.Equal[${FishingPole}]}
-		UIElement[FishingPoleComboBox@Options@FishTabs@VGFish]:SelectItem[${rCount}]
+			UIElement[FishingPoleComboBox@Options@FishTabs@VGFish]:SelectItem[${rCount}]
 	}
 }
 
