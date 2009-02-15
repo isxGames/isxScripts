@@ -4,9 +4,9 @@
 	
 #define ALARMSOUND	"${Script.CurrentDirectory}/sounds/alarm.wav"
 #define DETECTSOUND	"${Script.CurrentDirectory}/sounds/detect.wav"
-#define TELLSOUND		"${Script.CurrentDirectory}/sounds/tell.wav"
+#define TELLSOUND	"${Script.CurrentDirectory}/sounds/tell.wav"
 #define LEVELSOUND	"${Script.CurrentDirectory}/sounds/level.wav"
-#define WARNSOUND		"${Script.CurrentDirectory}/sounds/warning.wav"
+#define WARNSOUND	"${Script.CurrentDirectory}/sounds/warning.wav"
 
 #define CHATCOOL 600
 
@@ -17,11 +17,11 @@ variable time ChatAlarmTimer
 
 variable bool monName = TRUE			;for say
 variable bool monTell = TRUE			;15
-variable bool monTransport = TRUE	;18 
+variable bool monTransport = TRUE		;18 
 variable bool monLevel = TRUE			;19
 variable bool monSay = TRUE				;3
 variable bool monShout = TRUE			;4
-variable bool monPCEmote = TRUE		;5
+variable bool monPCEmote = TRUE			;5
 variable bool monBC = TRUE				;39 (serverwide) & 77 (localserver)
 
 
@@ -466,6 +466,16 @@ function PlaySound(string Filename)
 	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
 }
 
+function TellsOut(string aText)
+{
+	variable string TellsFile = "${Script.CurrentDirectory}/save/${Me.FName}_tells.log"
+		
+	if ${Verbose}
+	{
+		echo ${aText}
+	}
+	redirect -append "${TellsFile}" echo "${Time}:: ${aText}"
+}
 
 ;function Squelch()
 ;{
