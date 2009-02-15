@@ -40,6 +40,7 @@ function executeability(string x_ability, string x_type, string CP)
 {
 	variable int64 CurrentTargetID
 	variable bool DoIt = FALSE
+	variable iterator iAbs
 	
 	;; Auto Counter...
 	if ${DoCountersASAP} && ${CounterReactionReady}
@@ -52,12 +53,21 @@ function executeability(string x_ability, string x_type, string CP)
 				Pawn[id,${CounterReactionPawnID}]:Target
 				wait 2
 			}
-			if ${Me.Ability[id,${CounterReactionAbilityID}].IsReady}
-			{
-				echo "VGA: Casting Counterspell '${Me.Ability[id,${CounterReactionAbilityID}].Name}'!"
-				Me.Ability[id,${CounterReactionAbilityID}]:Use
-				wait 3
+			
+			CounterReactionAbilities:GetIterator[iAbs]
+			if ${iAbs:First(exists)}
+			do
+			{				
+				if ${Me.Ability[id,${iAbs.Value}].IsReady}
+				{
+					echo "executeability()-Debug: Casting Counter '${Me.Ability[id,${iAbs.Value}].Name}'! (Total abilities available for counter: ${CounterReactionAbilities.Used})"
+					Me.Ability[id,${iAbs.Value}]:Use
+					CounterReactionAbilities:Clear
+					wait 3
+				}
 			}
+			while ${iAbs:Next(exists)}
+			
 			if ${Me.Target.ID} != ${CurrentTargetID}
 			{
 				Pawn[id,${CurrentTargetID}]:Target
@@ -78,12 +88,22 @@ function executeability(string x_ability, string x_type, string CP)
 				Pawn[id,${ChainReactionPawnID}]:Target
 				wait 2
 			}
-			if ${Me.Ability[id,${ChainReactionAbilityID}].IsReady}
-			{
-				echo "VGA: Casting Chain '${Me.Ability[id,${ChainReactionAbilityID}].Name}'!"
-				Me.Ability[id,${ChainReactionAbilityID}]:Use
-				wait 3
+
+			ChainReactionAbilities:GetIterator[iAbs]
+			echo "TEST: ${ChainReactionAbilities.Used}"
+			if ${iAbs:First(exists)}
+			do
+			{				
+				if ${Me.Ability[id,${iAbs.Value}].IsReady}
+				{
+					echo "executeability()-Debug: Casting Chain '${Me.Ability[id,${iAbs.Value}].Name}'! (Total abilities available for chain: ${ChainReactionAbilities.Used})"
+					Me.Ability[id,${iAbs.Value}]:Use
+					ChainReactionAbilities:Clear
+					wait 3
+				}
 			}
+			while ${iAbs:Next(exists)}
+			
 			if ${Me.Target.ID} != ${CurrentTargetID}
 			{
 				Pawn[id,${CurrentTargetID}]:Target

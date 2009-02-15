@@ -139,7 +139,7 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 		CounterReactionReady:Set[TRUE]
 		CounterReactionTimer:Set[${Math.Calc64[${Time.Timestamp}+${fTimer}]}]
 		CounterReactionPawnID:Set[${iPawnID}]
-		CounterReactionAbilityID:Set[${iAbilityID}]
+		CounterReactionAbilities:Insert[${iAbilityID}]
 		return
 	}
 	elseif ${aType.Equal[Chain]}
@@ -147,7 +147,7 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 		ChainReactionReady:Set[TRUE]
 		ChainReactionTimer:Set[${Math.Calc64[${Time.Timestamp}+${fTimer}]}]
 		ChainReactionPawnID:Set[${iPawnID}]
-		ChainReactionAbilityID:Set[${iAbilityID}]
+		ChainReactionAbilities:Insert[${iAbilityID}]
 		return		
 	}
 }
