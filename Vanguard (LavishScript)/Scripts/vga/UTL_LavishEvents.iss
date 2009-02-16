@@ -1,6 +1,7 @@
 function LavishEventLoad()
 {
 	Event[VG_OnIncomingCombatText]:AttachAtom[VG_OnIncomingCombatText]
+	Event[VG_OnIncomingText]:AttachAtom[VG_OnIncomingText]
 	Event[VG_onPawnStatusChange]:AttachAtom[VG_onPawnStatusChange]
 	Event[VG_onCombatReaction]:AttachAtom[VG_onCombatReaction]
 	Event[VG_onGroupMemberCountChange]:AttachAtom[VG_onGroupMemberCountChange]
@@ -13,31 +14,14 @@ function LavishEventLoad()
 	
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }
-/*atom VG_onItemCanUseUpdated(string ItemName, int ItemID, string IsNowReady)
+atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
-	;If ${fight.ShouldIAttack}
-	;{
-	echo "${ItemName} Updated"
-	if ${doClickies}
-		{
-		variable iterator Iterator
-		Clickies:GetSettingIterator[Iterator]
-		while ( ${Iterator.Key(exists)} )
-			{
-			echo "Checking ${Iterator.Key} against ${ItemName} which ${IsNowReady}"
-			if ${Me.Inventory[${Iterator.Key}].Equal[${ItemName}]} && ${IsNowReady}
-			{
-				Me.Inventory[${Iterator.Key}]:Use
-				actionlog "Using Item ${Iterator.Key}"
-				Iterator:Next
-			}
-			if !${Me.Inventory[${Iterator.Key}].Equal[${ItemName}]} || !${IsNowReady}
-				Iterator:Next
-			}
-		}
-	;}
+  if ${ChannelNumber.Equal[8]} &&  ${Text.Find[Assist me]}
+    {
+      VGExecute /TargetNextNPC
+    }
 }
-*/
+
 atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 {
 	variable string IDPawn
