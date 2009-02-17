@@ -17,7 +17,7 @@ function main()
 
 			while ${ISXEQ2.InitializingActorEffects}
 			{
-				wait 5
+				wait 2
 			}
 
 			Echo EQ2Drusella - Actor Effects Initialized
@@ -40,10 +40,10 @@ function main()
 
 					while ${ISXEQ2.InitializingActorEffects}
 					{
-						wait 5
+						wait 2
 					}
 
-					wait 2
+					wait 5
 				}
 				while ${Actor[Drusella].Effect[Drusella's Necromantic Aura](exists)}
 

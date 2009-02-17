@@ -53,7 +53,7 @@ objectdef EQ2Position
 		Returning.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
 		return
 	}
-	
+
 	; and this member will return a point in 3d space at any angle of attack from the
 	; Actor passed to it, predicting that Actor's position based on their current speed
 	; and direction, and the time argument passed to this function.
@@ -95,6 +95,27 @@ objectdef EQ2Position
 		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
 		CARange:Set[${Math.Calc[${CARange}*${PercentMod}]}]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${CARange}]}
+	}
+
+	member:point3f FindDestPoint(uint ActorID, float minrange, float maxrange, float destangle)
+	{
+		variable float myspeed
+		variable point3f destpoint
+		variable point3f destminpoint
+		variable point3f destmaxpoint
+		;
+		; ok which point is closer our min range or max range, will vary depending on our vector to mob
+		;
+		myspeed:Set[${Math.Calc[${Actor[${ActorID}].Distance2D}/${Me.Speed}]}]
+		destminpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${minrange}]}]
+		destmaxpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${maxrange}]}]
+
+		if ${Math.Distance[${Me.ToActor.Loc},${destminpoint}]}<${Math.Distance[${Me.ToActor.Loc},${destmaxpoint}]}
+			destpoint:Set[${destminpoint}]
+		else
+			destpoint:Set[${destmaxpoint}]
+
+		return ${destpoint}
 	}
 }
 

@@ -21,8 +21,7 @@ variable int FollowTask
 
 function main(string ShadowTarget, float srange)
 {
-	squelch bind quit "QUIT" "FollowTask:Set[0]"
-	FollowTask:Set[1]
+	squelch bind quit "QUIT" 	FollowTask:Set[1]
 	sTarget:Set[ShadowTarget]
 
 	do

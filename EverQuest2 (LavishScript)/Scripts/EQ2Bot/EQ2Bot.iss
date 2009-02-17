@@ -230,7 +230,8 @@ variable uint ClassPulseTimer2 = 0
 variable uint ClassPulseTimer3 = 0
 variable uint ClassPulseTimer4 = 0
 variable bool IsReady = FALSE
-
+variable bool NoAutoMovementInCombat
+variable bool NoAutoMovement
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
 
@@ -2271,11 +2272,19 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	variable point3f destminpoint
 	variable point3f destmaxpoint
 	variable int xTimer
+	variable int MoveCount
 	xTimer:Set[${Script.RunningTime}]
 
 	if ${NoAutoMovement}
 	{
 		Debug:Echo["CheckPosition() :: NoAutoMovement ON"]
+		return
+	}
+
+	;if we can't move, we can't move
+	if ${Me.ToActor.Speed}<1 || ${Me.ToActor.IsRooted}
+	{
+		Debug:Echo["CheckPosition() :: We are rooted or have 0 movement speed."]
 		return
 	}
 
@@ -2286,11 +2295,12 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			Debug:Echo["CheckPosition() :: NoAutoMovementInCombat ON"]
 			return
 		}
-		if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
-		{
-			Debug:Echo["CheckPosition() :: In combat, but current KillTarget does not exist and/or is dead."]
-			return
-		}
+		;Bad idea, what if we are checking position to cast in combat rez?
+		;if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
+		;{
+		;	Debug:Echo["CheckPosition() :: In combat, but current Target does not exist and/or is dead."]
+		;	return
+		;}
 	}
 
 	;lets wait if we're currently casting and we don't want to interupt
@@ -2309,23 +2319,23 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 		case 0
 			if ${AutoMelee}
 			{
-				minrange:Set[.5]
+				minrange:Set[.1]
 				maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			}
 			else
 			{
-				minrange:Set[.5]
+				minrange:Set[.1]
 				maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			}
 			break
 		case 1
-			minrange:Set[.5]
+			minrange:Set[.1]
 			maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			break
 		case 2
 			if ${AutoMelee}
 			{
-				minrange:Set[.5]
+				minrange:Set[.1]
 				maxrange:Set[${Position.GetMeleeMaxRange[${TID}]}]
 			}
 			else
@@ -2393,27 +2403,24 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 		}
 	}
 
+
 	;
 	; ok which point is closer our min range or max range, will vary depending on our vector to mob
+	; we now use Position object for this
 	;
-	destminpoint:Set[${Position.PointAtAngle[${TID},${destangle},${minrange}]}]
-	destmaxpoint:Set[${Position.PointAtAngle[${TID},${destangle},${maxrange}]}]
+	destpoint:Set[${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]
 
-	if ${Math.Distance[${Me.ToActor.Loc},${destminpoint}]}<${Math.Distance[${Me.ToActor.Loc},${destmaxpoint}]}
-		destpoint:Set[${destminpoint}]
-	else
-		destpoint:Set[${destmaxpoint}]
 
 	;
 	;if distance over 75, its probably not safe to fastmove
 	;
 	if ${Math.Distance[${Me.ToActor.Loc},${destpoint}]}>75
-		return TOFARAWAY
+		return TOOFARAWAY
 
 	;
 	; if we're as close as we need to be lets just strafe
 	;
-	if ${Actor[${TID}].Distance}<${maxrange} && ${Actor[${TID}].Distance}>${minrange}
+	if ${Actor[${TID}].Distance2D}<${maxrange} && ${Actor[${TID}].Distance2D}>${minrange}
 	{
 		if ${quadrant}
 		{
@@ -2421,7 +2428,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			call CheckQuadrant ${TID} ${quadrant}
 		}
 		;verify distance and return
-		if ${Actor[${TID}].Distance}<${maxrange} && ${Actor[${TID}].Distance}>${minrange}
+		if ${Actor[${TID}].Distance2D}<${maxrange} && ${Actor[${TID}].Distance2D}>${minrange}
 			return ${Return}
 	}
 
@@ -2440,19 +2447,27 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	;
 
 	;if melee is on we'll face the target if its killtarget
-	if ${Actor[${TID}](exists)} && ${Actor[${KillTarget}].ID}==${TID} && ${Me.AutoAttackOn}
+	if ${Actor[${TID}](exists)} && ${KillTarget}==${TID} && ${Me.AutoAttackOn}
 	{
 		;echo DEBUG::CheckPosition - Facing KillTarget
 		face ${Actor[${TID}].X} ${Actor[${TID}].Z}
 	}
 
 
-	;echo DEBUG::CheckPostion - Checking stuck state :: ${isstuck}
-	if !${isstuck}
+	;we'll loop over movement checks until we are there, or we've looped 3 times.
+	do
 	{
+		;lets check if our destination has changed significantly, if so update it
+		if ${Math.Distance[${destpoint},${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]}>4
+			destpoint:Set[${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]
+
 		;echo DEBUG::CheckPosition - Currently not stuck, attempting FastMove to destination
 		call FastMove ${destpoint.X} ${destpoint.Z} 2
+
 	}
+	while ${MoveCount:Inc}<4 && !${isstuck} && (${Actor[${TID}].Distance2D}<${maxrange} && ${Actor[${TID}].Distance2D}>${minrange})
+
+
 	;
 	;check quadrant due to fastmove precision
 	;
@@ -5126,7 +5141,6 @@ objectdef EQ2BotObj
 		SpellSet:Set[${LavishSettings[EQ2Bot].FindSet[Spells]}]
 		CharacterSet:Set[${LavishSettings[EQ2Bot].FindSet[Character]}]
 		CharacterSet:AddSet[Temporary Settings]
-
 
 		This:Init_Character
 

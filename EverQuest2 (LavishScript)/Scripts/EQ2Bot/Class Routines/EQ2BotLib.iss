@@ -122,8 +122,6 @@ variable int AutoFollowLastSetTime
 
 ;misc
 variable bool EpicMode=FALSE
-variable bool NoAutoMovementInCombat
-variable bool NoAutoMovement
 variable bool DoCallCheckPosition=FALSE
 
 function EQ2BotLib_Init()
