@@ -37,9 +37,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+  declare ClassFileVersion int script 20080408
+  ;;;;
 
 	declare OffenseMode bool script 1
 	declare DebuffMode bool script 0
@@ -921,44 +921,50 @@ function Cure()
 function DoJesterCap()
 {
 	variable string JCActor=${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${BuffJesterCapMember}].Text}
-	if ${Me.Ability[${SpellType[156]}].IsReady}
-	{
 
-		if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+	if !${Me.Ability[${SpellType[156]}].IsReady}
+		return
+
+	if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}==0
+		return
+
+	if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156]}].Range}]}
+	{
+		;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
+		if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
 		{
-			if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156]}].Range}]}
+			EQ2Execute /useabilityonplayer ${JCActor.Token[1,:]} ${SpellType[156]}
+			wait 5
+
+			while ${Me.CastingSpell}
 			{
-				;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
-				if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
-				{
-					call CastSpellRange 156 0 0 0 ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].ID}
-					if ${Return} != -1 && ${Me.Maintained[${SpellType[156]}](exists)}
-					{
-						eq2execute /tell ${JCActor.Token[1,:]} "You've been J-Capped!"
-						;if we successfully cast Jester Cap, Add/Update the collection with the current timestamp
-						BuffJesterCapTimers:Set[${JCActor}, ${Time.Timestamp}]
-						BuffJesterCapMember:Inc
-					}
-				}
-				else
-				{
-					;they still have immunity so advance to next
-					BuffJesterCapMember:Inc
-				}
+				wait 1
 			}
-			else
+
+			if ${Me.Maintained[${SpellType[156]}](exists)}
 			{
-				;they are further than jester cap range so advance to next
+				eq2execute /tell ${JCActor.Token[1,:]} "You've been J-Capped!"
+				;if we successfully cast Jester Cap, Add/Update the collection with the current timestamp
+				BuffJesterCapTimers:Set[${JCActor}, ${Time.Timestamp}]
 				BuffJesterCapMember:Inc
 			}
-			;we have gone through everyone in the list so start back at the begining
-			if ${BuffJesterCapMember}>${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
-			{
-				BuffJesterCapMember:Set[1]
-			}
 		}
-
+		else
+		{
+			;they still have immunity so advance to next
+			BuffJesterCapMember:Inc
+		}
 	}
+	else
+	{
+		;they are further than jester cap range so advance to next
+		BuffJesterCapMember:Inc
+	}
+
+	;we have gone through everyone in the list so start back at the begining
+	if ${BuffJesterCapMember}>${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+		BuffJesterCapMember:Set[1]
+
 }
 
 function PostDeathRoutine()
