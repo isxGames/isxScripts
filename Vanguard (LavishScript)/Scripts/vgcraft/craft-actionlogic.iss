@@ -131,7 +131,9 @@ function:bool ChooseAction()
 	call StepsRemaining
 	stepsLeft:Set[${Return}]
 
-	;call DebugOut "VGCraft::   ---  AP left ${apLeft}  ---"
+	call DebugOut "VGCraft::   ---  AP left ${apLeft}  ---"
+	call DebugOut "VGCraft::   --- TotalStepsRemaining: ${totalStepsLeft}  ---"
+	call DebugOut "VGCraft::   --- StepsRemaining: ${stepsLeft} ---"
 
 	if ${GV[bool,CraftingCatalystAvailable]}
 	{
@@ -154,6 +156,7 @@ function:bool ChooseAction()
 		if ${Return}
 		{
 			; CheckComplication has set the correct cState, so let main handle it
+			call DebugOut "VGCraft -- CheckComplication() returned ${Return} -- returning TRUE from ChooseAction()"
 			inCorrection:Set[TRUE]
 			return TRUE
 		}
