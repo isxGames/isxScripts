@@ -239,41 +239,9 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='SellItems'>
-						<X>5%</X>
-						<Y>170</Y>
-						<Width>20%</Width>
-						<Height>20</Height>
-						<Text>Scan Sales</Text>
-						<AutoTooltip>
-							Check the prices of your items for sale.
-						</AutoTooltip>
-						<OnLoad>
-						if ${Script[myprices].VariableScope.SellItems}
-						{
-							UIElement[SellItems@Sell@GUITabs@MyPrices]:SetChecked
-						}
-						else
-						{
-							UIElement[SellItems@Sell@GUITabs@MyPrices]:UnsetChecked
-						}
-						</OnLoad>
-						<OnLeftClick>
-							if ${UIElement[SellItems@Sell@GUITabs@MyPrices].Checked}
-							{
-								Script[myprices]:QueueCommand[call SaveSetting SellItems TRUE]
-								Script[myprices].VariableScope.SellItems:Set[TRUE]
-							}
-							else
-							{
-								Script[myprices]:QueueCommand[call SaveSetting SellItems FALSE]
-								Script[myprices].VariableScope.SellItems:Set[FALSE]
-							}
-						</OnLeftClick>
-					</checkbox>
 					<checkbox Name='Logging'>
 						<X>5%</X>
-						<Y>190</Y>
+						<Y>170</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Logging</Text>
@@ -305,7 +273,7 @@
 					</checkbox>
 					<checkbox Name='Natural'>
 						<X>5%</X>
-						<Y>210</Y>
+						<Y>190</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Natural Scan</Text>
@@ -337,7 +305,7 @@
 					</checkbox>
 					<checkbox Name='ActualPrice'>
 						<X>5%</X>
-						<Y>230</Y>
+						<Y>210</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Match Without Broker %</Text>
@@ -369,7 +337,7 @@
 					</checkbox>
 					<checkbox Name='TakeCoin'>
 						<X>5%</X>
-						<Y>250</Y>
+						<Y>230</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
 						<Text>Take Coin</Text>
@@ -804,11 +772,58 @@
 						</OnLeftClick>
 					</checkbox>
 					
+					<Commandbutton name='Rescan'>
+						<X>85%</X>
+						<Y>1%</Y>
+						<Width>50</Width>
+						<Height>15</Height>
+						<Text>ReScan</Text>
+						<AutoTooltip>
+							Rescan the Your Broker boxes
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</Commandbutton>
+ 
+					<checkbox Name='SellItems'>
+						<X>45%</X>
+						<Y>1%</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Scan Sales</Text>
+						<AutoTooltip>
+							Check the prices of your items for sale.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.SellItems}
+						{
+							UIElement[SellItems@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[SellItems@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[SellItems@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting SellItems TRUE]
+								Script[myprices].VariableScope.SellItems:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting SellItems FALSE]
+								Script[myprices].VariableScope.SellItems:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+
 					<listbox Name='ItemList'>
 						<X>45%</X>
-						<Y>2%</Y>
+						<Y>4%</Y>
 						<Width>52%</Width>
-						<Height>62%</Height>
+						<Height>60%</Height>
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>

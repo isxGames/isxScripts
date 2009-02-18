@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13g :  released 10rd February 2009
+; Version 0.13i :  released 18th February 2009
 ;
 ; Declare Variables
 ;
@@ -110,8 +110,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices 0.13g :  released 10rd February 2009" FF11FFCC
-	call echolog "0.13g :  released 10rd February 2009"
+	call AddLog "Running MyPrices 0.13i :  released 18th February 2009" FF11FFCC
+	call echolog "0.13i :  released 18th February 2009"
 	
 	call StartUp	
 
@@ -144,13 +144,16 @@ function main(string goscan, string goscan2)
 				Echo Character changed , exiting script
 				Script:End
 			}
-			ExecuteQueued
-			Waitframe
+			
+			if !${QueuedCommands}
+				WaitFrame
+			else
+				ExecuteQueued
+				Waitframe
+				
 			; exit if the Stop and Quit Button is Pressed
 			if ${Exitmyprices}
-			{
 				Script:End
-			}
 		}
 		While ${Pausemyprices}
 
@@ -166,12 +169,11 @@ function main(string goscan, string goscan2)
 		if ${runplace} 
 		{
 			call buy item place
+			
 			; if the scan paramater hasn't been set then don't do anything else
 			if !${runautoscan}
-			{
 				exitmyprices:Set[TRUE]
 				break
-			}
 		}
 		
 		; Start scanning the broker
@@ -199,22 +201,15 @@ function main(string goscan, string goscan2)
 				SellCon:Set[${Me.Vending[${i}]}]
 
 				if ${Me.Vending[${i}].CurrentCoin} > 0 && ${TakeCoin}
-				{
 					Me.Vending[${i}]:TakeCoin
-				}
 
 				if ${SellLoc.Equal["Haven"]}
-				{
 					Commission:Set[40]
-				}
 				else
-				{
 					Commission:Set[20]
-				}
+
 				if ${SellCon.Equal["Veteran's Display Case"]} || ${SellCon.Equal["Veteranen-Vitrine"]}
-				{
 					Commission:Set[${Math.Calc[${Commission}/2]}]
-				}
 
 				; Find where the Item is stored in the container
 				call FindItem ${i} "${currentitem}"
@@ -233,6 +228,7 @@ function main(string goscan, string goscan2)
 					{
 						ItemUnlisted:Set[TRUE]
 					}
+					
 					if !${ItemUnlisted} || ${SetUnlistedPrices}
 					{
 						; Calclulate the price someone would pay with commission
@@ -295,13 +291,10 @@ function main(string goscan, string goscan2)
 								else
 								{
 									if ${MatchActual}
-									{
 										MinBasePrice:Set[${MinPrice}]
-									}
 									else
-									{
 										MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
-									}
+
 									; if the flag to ignore copper is set and the price is > 1 gold
 									if ${IgnoreCopper} && ${MinBasePrice} > 100
 									{
@@ -359,6 +352,7 @@ function main(string goscan, string goscan2)
 										; otherwise inform/change value to match
 										call StringFromPrice ${MinBasePrice}
 										call AddLog "${currentitem} :  Price to match is ${Return}" FF00FF00
+
 										If ${MatchLowPrice}
 										{
 											call SetColour ${currentpos} FF00FF00
@@ -435,7 +429,7 @@ function main(string goscan, string goscan2)
 							}
 
 							; Re-List item for sale
-								call ReListItem ${i} "${currentitem}"
+							call ReListItem ${i} "${currentitem}"
 
 						}
 						else
@@ -455,9 +449,7 @@ function main(string goscan, string goscan2)
 								; if if no match or max price was found and the item was STILL listed for sale before
 								; then re-list it
 								if !${ItemUnlisted}
-								{
 									call ReListItem ${i} "${currentitem}"
-								}
 							}
 						}
 						; if the Quit Button on the UI has been pressed then exit
@@ -494,21 +486,15 @@ function main(string goscan, string goscan2)
 		}
 		; Script starts to scan for items to buy if flagged.
 		if ${BuyItems} && ${Pausemyprices} == FALSE
-		{
 			call buy Buy scan
-		}
 
 		if !${ScanSellNonStop}
-		{
 			UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Start Scanning]
 			Pausemyprices:Set[TRUE]
-		}
 		
 		if ${runautoscan} || ${runplace}
-		{
 			Exitmyprices:Set[TRUE]
 			ScanSellNonStop:Set[FALSE]
-		}
 
 		if ${ScanSellNonStop} && ${PauseTimer} > 0
 		{
@@ -570,6 +556,7 @@ function FindItem(int i, string itemname)
 	do
 	{
 		ConName:Set["${Me.Vending[${i}].Consignment[${j}]}"]
+		
 		if ${ConName.Equal["${itemname}"]}
 		{
 			Position:Set[${j}]
@@ -610,10 +597,9 @@ function ReListItem(int i, string itemname)
 					j:Set[${Return}]
 				}
 				while !${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+
 				if ${loopcount} == 10
-				{
 					call AddLog "*** ERROR - unable to mark ${itemname} as listed for sale" FFFF0000
-				}
 			}
 			else
 			{
@@ -628,10 +614,9 @@ function ReListItem(int i, string itemname)
 					j:Set[${Return}]
 				}
 				while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+
 				if ${loopcount} == 10
-				{
 					call AddLog "*** ERROR - unable to mark ${itemname} as Unlisted" FFFF0000
-				}
 			}
 		}
 	}
@@ -692,18 +677,12 @@ function buy(string tabname, string action)
 	Declare box int local
 	
 	if ${tabname.Equal["Buy"]}
-	{
 		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
-	}
 	else
-	{
 		BuyList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	}
 
 	if ${action.Equal["init"]}
-	{
 		UIElement[ItemList@${tabname}@GUITabs@MyPrices]:ClearItems
-	}
 
 	variable iterator BuyIterator
 	variable iterator NameIterator
@@ -735,9 +714,7 @@ function buy(string tabname, string action)
 				; scan = check the broker list one by one - do buy and various workhorse routines
 
 				if ${action.Equal["init"]} && ${tabname.Equal["Buy"]}
-				{
 					UIElement[ItemList@Buy@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
-				}
 				else
 				{
 					; read the Settings in the Sub-Set
@@ -807,20 +784,21 @@ function buy(string tabname, string action)
 							Call CheckFocus
 							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${BuyAttuneOnly} ${AutoTransmute} ${startlevel} ${endlevel} ${tier}
 							; Pause or quit pressed then exit the routine
-							ExecuteQueued
-							Waitframe
+							
+							if !${QueuedCommands}
+								WaitFrame
+							else
+								ExecuteQueued
+								Waitframe
+								
 							if ${Exitmyprices} || ${Pausemyprices}
-							{
 								Return
-							}
 						}
 						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
 						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
 						{
 							if ${CraftItem}
-							{
 								UIElement[ItemList@Craft@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
-							}
 						}
 						elseif ${action.Equal["place"]}
 						{
@@ -834,9 +812,7 @@ function buy(string tabname, string action)
 						{
 							; if the item is marked as a craft one then check if the Minimum broker total has been reached
 							if ${CraftItem}
-							{
 								call checktotals "${BuyIterator.Key}" ${CraftStack} ${CraftMinTotal} "${CraftRecipe}"
-							}
 						}
 					}
 				}
@@ -867,31 +843,22 @@ function checktotals(string itemname, int stacksize, int minlimit, string Recipe
 	CraftList:Set[${LavishSettings[craft].FindSet[CraftItem]}]
 
 	if ${CraftList.FindSetting[${itemname}](exists)}
-	{
 		Totals:Set[${CraftList.FindSetting[${itemname}]}]
-
-	}
 	else
-	{
 		Totals:Set[0]
-	}
 	
 	if ${Totals} < ${minlimit}
-		{
-			Makemore:Set[${Math.Calc[(${minlimit}-${Totals})/${stacksize}]}]
-		}
+		Makemore:Set[${Math.Calc[(${minlimit}-${Totals})/${stacksize}]}]
+
 	if ${Makemore}>0
 		{
 			call AddLog "you need to make ${Makemore} more stacks of ${itemname}" FFCCFFCC
+
 			; if an alternative recipe name is there then use that otherwise use the item name
 			if ${Recipe.Equal[NULL]} || ${Recipe.Length} == 0
-			{
 				call addtocraft "${itemname}" ${Makemore}
-			}
 			else
-			{
 				call addtocraft "${Recipe}" ${Makemore}
-			}
 		}
 	call echolog "<end> : checktotals "
 }
@@ -992,10 +959,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 						BrokerNumber:Set[${Vendor.Broker[${CurrentItem}].Quantity}]
 
 						if ${BrokerNumber} == 0
-						{
 							break
-						}
-						
 
 						; if the broker entry being looked at shows more items than we want then buy what we want
 						if ${BrokerNumber} > ${BuyNumber}
@@ -1016,6 +980,16 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 							StackBuySize:Set[${Return}]
 							OldCash:Set[${MyCash}]
 
+							; make sure you don't already have an item and it's lore
+							call checklore "${Vendor.Item[${CurrentItem}].Name}"
+								
+							; if the item is lore and you already have it then stop and move on
+							if ${Return}
+							{
+								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE and you already have one
+								Break
+							}
+
 							Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
 
 							wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${BrokerNumber}
@@ -1035,6 +1009,16 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 							
 							if ${Vendor.Item[${CurrentItem}].Quantity} == ${BrokerNumber} && ${Vendor.Item[${CurrentItem}].Quantity} != 0
 							{
+								; make sure you don't already have an item and it's lore
+								call checklore "${Vendor.Item[${CurrentItem}].Name}"
+								
+								; if the item is lore and you already have it then stop and move on
+								if ${Return}
+								{
+									Echo ${Vendor.Item[${CurrentItem}].Name} is LORE and you already have one
+									Break
+								}
+
 								; Number on broker not changed ( Buy Singles )
 								do
 								{
@@ -1046,9 +1030,11 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 									
 									if ${AutoTransmute}
 										Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
-
-									ExecuteQueued
-									Waitframe
+									
+									if !${QueuedCommands}
+										WaitFrame
+									else
+										ExecuteQueued
 
 									if ${InventorySlotsFree}<=0
 									{
@@ -1058,9 +1044,7 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 									}
 
 									if ${Exitmyprices} || ${Pausemyprices}
-									{
 										break
-									}
 								}
 								while ${StackBuySize:Dec} >= 0 && ${Vendor.Item[${CurrentItem}].Quantity} != 0
 			
@@ -1082,12 +1066,14 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 							break
 						}
 						
-						ExecuteQueued
-						Waitframe
+						if !${QueuedCommands}
+							WaitFrame
+						else
+							ExecuteQueued
+							WaitFrame
+
 						if ${Exitmyprices} || ${Pausemyprices}
-						{
 							break
-						}
 
 					}
 					While ${BrokerNumber} > 0 && ${BuyNumber} > 0
@@ -1096,23 +1082,27 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 				{
 					break
 				}
-				
-				ExecuteQueued
-				WaitFrame
+
+				if !${QueuedCommands}
+					WaitFrame
+				else
+					ExecuteQueued
+					WaitFrame
+
 				if ${Exitmyprices} || ${Pausemyprices}
-				{
 					break
-				}
 			}
 			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 			CurrentItem:Set[1]
 			
-			ExecuteQueued
-			Waitframe
+			if !${QueuedCommands}
+				WaitFrame
+			else
+				ExecuteQueued
+				WaitFrame
+
 			if ${Exitmyprices} || ${Pausemyprices}
-			{
 				break
-			}
 		}
 		; keep going till all items listed have been scanned and bought or you have reached your limit
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${BuyNumber} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
@@ -1143,10 +1133,10 @@ function checkbought(float BrokerPrice, float OldCash, float NewCash)
 	If ${Diff} > 1
 	{
 		DiffInt:Set[${Diff}]
+
 		If ${Math.Calc[${Diff}-${DiffInt}]} > 0.5
-		{
 			DiffInt:Inc
-		}
+
 		call echolog "<- checkbought ${DiffInt}"
 		return ${DiffInt}
 	}
@@ -1175,18 +1165,12 @@ function checkcash(float Buyprice, int Buynumber, bool Harvest)
 	; if set limit based on harvest or non-harvest
 
 	if ${Harvest}
-	{
 		MaxNumber:Set[200]
-	}
 	else
-	{
 		MaxNumber:Set[100]
-	}
 
 	if ${Buynumber} > ${MaxNumber}
-	{
 		Buynumber:Set[${MaxNumber}]
-	}
 
 	if ${Math.Calc[(${Buyprice}*${Buynumber})]} > ${MyCash}
 	{
@@ -1235,15 +1219,9 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 		cost:Set[${Math.Calc[${cost}+${cp}]}]
 
 		if ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked}
-		{
 			call searchbrokerlist "${LBoxString}" 0 0 0  ${cost}
-			; broker Name "${LBoxString}" Sort ByPriceAsc MaxLevel 999
-		}
 		else
-		{
-			
 			call searchbrokerlist "${LBoxString}" ${startlevel} ${endlevel} ${tier} ${cost} ${UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices].Checked}
-		}
 	}
 	else
 	{
@@ -1267,21 +1245,17 @@ function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int t
 	Declare attunesearch string local
 
 	if !${LBoxString.Left[6].Equal[NoName]}
-	{
 		namesearch:Set[Name "${LBoxString}"]
-	}
+
 	if ${startlevel}>0
-	{
 		startsearch:Set["MinLevel ${startlevel}"]
-	}
+
 	if ${endlevel}>0
-	{
 		endsearch:Set["MaxLevel ${endlevel}"]
-	}
+
 	if ${BuyAttuneOnly}
-	{
 		attunesearch:Set["-Type Attuneable"]
-	}
+
 	if ${tier}>0
 	{
 		Switch "${tier}"
@@ -1316,13 +1290,9 @@ function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int t
 	costsearch:Set["MaxPrice ${cost}"]
 
 	if ${namesearch.Length}>0
-	{
 		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${attunesearch} Sort ByPriceAsc
-	}
 	else
-	{
 		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${attunesearch} Sort ByPriceAsc
-	}
 	
 	call echolog "<- searchbrokerlist
 }	
@@ -1341,14 +1311,12 @@ function BrokerSearch(string lookup, bool BuyNameOnly)
 	; check if broker has any listed to compare with your item
 	if !${BuyNameOnly}
 	{
+
 		if ${Vendor.NumItemsForSale} >0
-		{
 			Return TRUE
-		}
 		else
-		{
 			Return FALSE
-		}
+
 	}
 	
 	if ${Vendor.NumItemsForSale} >0
@@ -1617,14 +1585,12 @@ function calcsilver(int plat, int gold, int silver, float copper)
 function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, bool attuneable, bool autotransmute, int startlevel, int endlevel, int tier, int boxnumber, string Recipe)
 {
 	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${attuneable} ${autotransmute} ${startlevel} ${endlevel} ${tier} ${Recipe}"
+
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
-	{
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	}
 	Else
-	{
 		ItemList:Set[${LavishSettings[myprices].FindSet[Buy]}]
-	}
+
 
 	ItemList:AddSet[${ItemName}]
 
@@ -1637,13 +1603,11 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 
 		Item:AddSetting[${Saveset},${Money}]
 		if ${UIElement[MinPrice@Sell@GUITabs@MyPrices].Checked}
-		{
 			Item:AddSetting[MinSalePrice,TRUE]
-		}
 		else
-		{
 			Item:AddSetting[MinSalePrice,FALSE]
-		}
+
+
 		if ${UIElement[MaxPrice@Sell@GUITabs@MyPrices].Checked}
 		{
 			Item:AddSetting[MaxSalePrice,TRUE]
@@ -1653,27 +1617,23 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 		{
 			Item:AddSetting[MaxSalePrice,FALSE]
 		}
+
 		if ${flagged}
-		{
 			Item:AddSetting[CraftItem,TRUE]
-		}
 		else
-		{
 			Item:AddSetting[CraftItem,FALSE]
-		}
+
 	}
 	elseif ${Saveset.Equal["Craft"]}
 	{
 		Item:AddSetting[Stack,${Money}]
 		Item:AddSetting[Stock,${Number}]
+
 		if ${Recipe.Length} == 0
-		{
 			Item:AddSetting[Recipe,${ItemName}]
-		}
 		else
-		{
 			Item:AddSetting[Recipe,${Recipe}]
-		}
+
 		Item:AddSetting[CraftItem,TRUE]
 		Item:AddSetting[Box,${boxnumber}]
 	}
@@ -1684,18 +1644,14 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 
 		Item:AddSetting[BuyNumber,${Number}]
 		Item:AddSetting[BuyPrice,${Money}]
+
 		if ${flagged}
-		{
 			Item:AddSetting[Harvest,TRUE]
-		}
 		else
-		{
 			Item:AddSetting[Harvest,FALSE]
-		}
+
 		if ${nameonly}
-		{
 			Item:AddSetting[Buynameonly,TRUE]
-		}
 		else
 		{
 			Item:AddSetting[BuyNameOnly,FALSE]
@@ -1714,7 +1670,6 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
 	call echolog "<end> : Saveitem"
 }
-
 
 ; routine to update the myprices settings
 
@@ -1796,13 +1751,9 @@ function FillMinPrice(int ItemID)
 		CraftItem:Set[${Item.FindSetting[CraftItem]}]
 
 		if ${CraftItem}
-		{
 			UIElement[CraftItem@Sell@GUITabs@MyPrices]:SetChecked
-		}
 		else
-		{
 			UIElement[CraftItem@Sell@GUITabs@MyPrices]:UnsetChecked
-		}
 
 		if !${Item.FindSetting[MinSalePrice]}
 		{
@@ -1951,9 +1902,7 @@ function savebuyinfo()
 	tier:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[tier].Selection}]
 	
 	if ${itemname.Length} == 0 && !${UIElement[BuyNameOnly@Sell@GUITabs@MyPrices].Checked}
-	{
 		itemname:Set["NoName S: ${startlevel} E: ${endlevel} T : ${tier}"]
-	}
 
 	; calclulate the value in silver
 	Platina:Set[${Math.Calc[${Platina}*10000]}]
@@ -2101,30 +2050,19 @@ function ShowBuyPrices(int ItemID)
 	autotransmute:Set[${BuyItem.FindSetting[AutoTransmute]}]
 
 	if ${Harvest}
-	{
 		UIElement[Harvest@Buy@GUITabs@MyPrices]:SetChecked
-	}
 	else
-	{
 		UIElement[Harvest@Buy@GUITabs@MyPrices]:UnsetChecked
-	}
+
 	if ${attuneonly}
-	{
 		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:SetChecked
-	}
 	else
-	{
 		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:UnsetChecked
-	}
 
 	if ${autotransmute}
-	{
 		UIElement[Transmute@Buy@GUITabs@MyPrices]:SetChecked
-	}
 	else
-	{
 		UIElement[Transmute@Buy@GUITabs@MyPrices]:UnsetChecked
-	}
 
 	if ${nameonly}
 	{
@@ -2172,15 +2110,12 @@ function ShowCraftInfo(int ItemID)
 	BoxNumber:Set[${CraftItemList.FindSetting[Box]}]
 
 	UIElement[CraftName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
+
 	if !${Recipe.Equal[NULL]}
-	{
 		UIElement[RecipeName@Craft@GUITabs@MyPrices]:SetText[${Recipe}]
-	}
 	else
-	{
 		UIElement[RecipeName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
 
-	}
 	UIElement[CraftStack@Craft@GUITabs@MyPrices]:SetText[${Stack}]
 	UIElement[CraftNumber@Craft@GUITabs@MyPrices]:SetText[${Stock}]
 	UIElement[BoxNumber@Craft@GUITabs@MyPrices]:SetText[${BoxNumber}]
@@ -2205,9 +2140,7 @@ function Unselectcraft(int ItemID)
 	else
 	{
 		CraftList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	
 		CraftItemList:Set[${CraftList.FindSet["${LBoxString}"]}]
-	
 		CraftItemList:AddSetting[CraftItem,FALSE]
 		
 		; save the new information
@@ -2368,7 +2301,9 @@ function placeitem(string itemname, int box)
 	storebox:Set[0]
 
 	Me:CreateCustomInventoryArray[nonbankonly]
-
+	
+	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
+	
 	call numinventoryitems "${itemname}"
 	numitems:Set[${Return}]
 
@@ -2376,9 +2311,8 @@ function placeitem(string itemname, int box)
 	if ${numitems} > 0
 	{
 		if ${box} > 0
-		{
 			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
-		}
+
 		if ${box} > 0 && ${space} > 0
 		{
 			call placeitems "${itemname}" ${box} ${numitems}
@@ -2479,9 +2413,7 @@ function numinventoryitems(string itemname)
 	do
 	{
 		if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
-		{
 			numitems:Inc
-		}
 	}
 	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	return ${numitems}
@@ -2496,10 +2428,10 @@ function boxwithmostspace()
 	do
 	{
 		space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+
 		if ${space} > ${max}
-		{
 			max:Set[${i}]
-		}
+
 	}
 	while ${i:Inc} <= 6
 	return ${max}
@@ -2553,6 +2485,34 @@ function GoTransmute(string itemname)
 		}
 		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	}
+}
+
+
+function checklore(string itemname)
+{
+	
+	Declare numitems int local
+	Declare xvar int local 1
+
+	Me:CreateCustomInventoryArray[nonbankonly]
+	
+	call numinventoryitems "${itemname}"
+	numitems:Set[${Return}]
+	
+	; if the item is in your bags
+	if ${numitems} > 0
+	{
+		do
+		{
+
+			; if an item in your inventory matches the name of the item
+			if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]} && ${Me.CustomInventory[${xvar}].Lore}
+				Return TRUE
+
+		}
+		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
+	}
+	Return FALSE
 }
 
 function StartUp()
@@ -2609,10 +2569,7 @@ function StartUp()
 	do
 	{
 		if !(${Me.Vending[${i}](exists)})
-		{
 			UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
-
-		}
 	}
 	while ${i:Inc} <= 6
 	
@@ -2632,9 +2589,7 @@ atom(script) EQ2_onInventoryUpdate()
 function echolog(string logline)
 {
 	if ${Logging}
-	{
 		Redirect -append "${LogPath}myprices.log" Echo "${logline}"
-	}
 }
 
 
@@ -2642,9 +2597,8 @@ function echolog(string logline)
 atom atexit()
 {
 	if !${ISXEQ2.IsReady}
-	{
 		return
-	}
+
 	LavishSettings[myprices]:Export[${XMLPath}${CurrentChar}_MyPrices.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
 	LavishSettings[newcraft]:Clear

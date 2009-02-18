@@ -1,4 +1,4 @@
-MyPrices - Version 0.13g
+MyPrices - Version 0.13i
 
 For update details see the bottom of this file.
 
@@ -405,6 +405,10 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13h-i
+---------------
+Small improvements in code , lore check when buying items and tidied the UI up a bit.
 
 Version 0.13g
 -------------
