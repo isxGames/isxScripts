@@ -187,27 +187,58 @@ atom(global) BuildAbilReadyT1()
 function PopulateTriggersLists()
 {
 	variable int i
-	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[cmbCritT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[AbilReadyT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[BuffT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[MobDeBuffT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[cmbMobBuffT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[cmbSwapStanceT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[cmbSwitchSongsT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[cmbSWPrimaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[cmbSWSecondaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[UseItemsT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-	UIElement[MobUseAbilT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:ClearItems
-
 	for (i:Set[1] ; ${i}<=${Me.Effect.Count} ; i:Inc)
 	{
 		if ${Me.Effect[${i}].IsVisibleOnUI}
 			{
-			UIElement[BWCombo@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
-			UIElement[DBWCombo@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
-			UIElement[TBWCombo@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
+			UIElement[BuffT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
 			}
 	}
+	for (i:Set[1] ; ${i}<=${Me.TargetBuff} ; i:Inc)
+	{
+			UIElement[cmbMobBuffT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.TargetBuff[${i}].Name}]
+	}
+	for (i:Set[1] ; ${i}<=${Me.TargetDebuff} ; i:Inc)
+	{
+			UIElement[MobDeBuffT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.TargetDebuff[${i}].Name}]
+	}
+	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
+	{
+			UIElement[cmbCritT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[AbilReadyT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[MobUseAbilT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]			
+	}
+	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
+	{
+	     UIElement[cmbSwapStanceT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Form[${i}].Name}]	
+	}
+	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+	{
+    UIElement[cmbSWPrimaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+    UIElement[cmbSWSecondaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+    UIElement[UseItemsT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+
+	}
+	for (i:Set[1] ; ${i} <= ${Songs} ; i:Inc)
+	{
+		UIElement[cmbSwitchSongsT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Songs[${i}].Name}]
+	}
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Afflicted]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Armor Chink]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Bleeding]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Blindness]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Burning]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Chilled]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Dazed]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Enraged]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Flesh Rend]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Inflamed]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Lethargic]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Mental Lapse]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Mesmerized]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Shaken]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Soul Wracked]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Staggered]
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Vulnerable]				
 }
 

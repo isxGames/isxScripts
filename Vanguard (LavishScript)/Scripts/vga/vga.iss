@@ -144,6 +144,11 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/CLS_BloodMage.iss"
 #include "${Script.CurrentDirectory}/GUI_BloodMage.iss"
 
+;-------------------------------------------
+;************Triggers Scripts***************
+;-------------------------------------------
+#include "${Script.CurrentDirectory}/GUI_Triggers.iss"
+
 ;===================================================
 ;===               Main Routine               ====
 ;===================================================
@@ -186,6 +191,7 @@ function main()
 	call PopulateBardLists
 	call PopulateBMLists
 	call PopulateGroupMemberNames
+	call PopulateTriggersLists
 	;===================================================
 	;===               Bug WorkArounds              ====
 	;===================================================

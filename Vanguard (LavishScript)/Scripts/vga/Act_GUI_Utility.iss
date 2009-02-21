@@ -36,6 +36,16 @@ function lootit()
 	}
 }
 ;********************************************
+function shouldimount()
+{
+	if ${doMount} && !${Pawn[${Me}].IsMounted} && ${Pawn[${followpawn}].IsMounted} && !${Me.InCombat}
+	{
+	Me.Inventory[${Me.Inventory[CurrentEquipSlot,Mount]}]:Use
+	call MeCasting Neither
+	wait 3
+	}
+}
+;********************************************
 function executeability(string x_ability, string x_type, string CP)
 {
 	variable int64 CurrentTargetID

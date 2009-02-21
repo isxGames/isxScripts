@@ -488,6 +488,23 @@
                               Script[vga].VariableScope.DoChainsASAP:Set[${This.Checked}]
                             </OnLeftClick>
                           </checkbox>
+			<checkbox Name='DoMountbl' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>180</X>
+                            <Y>195</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Mount</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.Domount}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.Domount:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">
                             <X>13</X>
                             <Y>85%</Y>
@@ -7153,7 +7170,7 @@
                             <Width>95%</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
-                            <Text>-----------------------------------------------------------------------------</Text>
+                            <Text>-----------------When the Conditions below are TRUE-----------------------------</Text>
                           </Text>
                           <checkbox Name='doWeaknessT1' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
@@ -7578,7 +7595,7 @@
                             <Width>95%</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>
-                            <Text>-----------------------------------------------------------------------------</Text>
+                            <Text>----------------------THEN Do the Actions Below-----------------------------------</Text>
                           </Text>
                           <checkbox Name='doSwapStanceT1' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
