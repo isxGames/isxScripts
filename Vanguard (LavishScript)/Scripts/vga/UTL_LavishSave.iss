@@ -205,7 +205,7 @@ function LavishSave()
 	UtilitySR:AddSetting[DoLoot,${DoLoot}]
 	UtilitySR:AddSetting[DoCountersASAP,${DoCountersASAP}]
 	UtilitySR:AddSetting[DoChainsASAP,${DoChainsASAP}]
-	
+	UtilitySR:AddSetting[Domount,${Domount}]	
 	
 	;===================================================
 	;===                  Spells Save               ====
