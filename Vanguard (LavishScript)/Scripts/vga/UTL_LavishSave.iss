@@ -186,6 +186,9 @@ function LavishSave()
 	HealerSR:AddSetting[CombatStance,${CombatStance}]	
 	HealerSR:AddSetting[NonCombatStance,${NonCombatStance}]	
   HealerSR:AddSetting[ClickieForce,${ClickieForce}]	
+  HealerSR:AddSetting[doRestoreSpecial,${doRestoreSpecial}]	
+  HealerSR:AddSetting[RestoreSpecial,${RestoreSpecial}]	
+  HealerSR:AddSetting[RestoreSpecialint,${RestoreSpecialint}]	
   HealerSR:AddSetting[doClickieForce,${doClickieForce}]	
 	;===================================================
 	;===                  Utility Save              ====

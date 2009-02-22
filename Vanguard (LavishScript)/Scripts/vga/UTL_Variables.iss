@@ -91,6 +91,9 @@ variable string CombatStance
 variable string NonCombatStance
 variable string ClickieForce
 variable string doClickieForce
+variable string RestoreSpecial
+variable bool doRestoreSpecial
+variable int RestoreSpecialint
 
 ;===================================================
 ;===               Main VGA Variables           ====

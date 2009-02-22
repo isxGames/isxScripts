@@ -262,6 +262,9 @@ function LavishLoad()
 	NonCombatStance:Set[${HealerSR.FindSetting[NonCombatStance]}]
 	ClickieForce:Set[${HealerSR.FindSetting[ClickieForce]}]	
   doClickieForce:Set[${HealerSR.FindSetting[doClickieForce]}]	
+  doRestoreSpecial:Set[${HealerSR.FindSetting[doRestoreSpecial]}]	
+  RestoreSpecialint:Set[${HealerSR.FindSetting[RestoreSpecialint]}]	
+  RestoreSpecial:Set[${HealerSR.FindSetting[RestoreSpecial]}]	
 	;===================================================
 	;===                  Utility Load              ====
 	;===================================================

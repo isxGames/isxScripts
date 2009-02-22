@@ -255,6 +255,7 @@ function downtimefunction()
 	call BuffUp
 	call lootit
 	call changeformstance
+	call restorespecialpoints
 	return
 }
 ;===================================================
@@ -292,8 +293,10 @@ function combatfunction()
 	;************Main Combat Loop***************
 	;-------------------------------------------
 	if ${newattack}
+	  {
 		call changeformstance
 		call OpeningSpellSequence
+		}
 	elseif !${newattack}
 	{
 		call KillingBlowAbility
