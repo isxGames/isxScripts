@@ -174,6 +174,8 @@ variable bool doCombatSeqMelee
 variable bool doAOEMelee
 variable bool doDotMelee
 variable bool doDebuffMelee
+variable bool doKillingBlow
+variable string KillingBlow
 
 ;===================================================
 ;===                 Spells Variables           ====

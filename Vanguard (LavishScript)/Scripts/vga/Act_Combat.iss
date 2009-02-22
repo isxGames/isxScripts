@@ -257,6 +257,23 @@ function DotSpells()
 	return
 }
 ;*************************************************************
+function KillingBlowAbility()
+{
+		if ${doKillingBlow}
+		  {
+		  if ${Me.TargetHealth} < 15
+		    {
+		      call checkabilitytocast "${KillingBlow}"	
+				  if ${Return}
+				  {
+					debuglog "Should Cast ${KillingBlow}"
+					call executeability "${KillingBlow}" "attack" "Both"
+				  }
+				}
+			}
+	Return
+}
+;*************************************************************
 function OpeningMeleeSequence()
 {
 	variable iterator Iterator

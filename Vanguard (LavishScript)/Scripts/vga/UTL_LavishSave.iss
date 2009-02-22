@@ -233,7 +233,8 @@ function LavishSave()
 	Melee:AddSetting[doAOEMelee,${doAOEMelee}]
 	Melee:AddSetting[doDotMelee,${doDotMelee}]
 	Melee:AddSetting[doDebuffMelee,${doDebuffMelee}]
-	
+	Melee:AddSetting[doKillingBlow,${doKillingBlow}]
+	Melee:AddSetting[KillingBlow,${KillingBlow}]	
 	;===================================================
 	;===                  Evade Save                ====
 	;===================================================
