@@ -292,10 +292,12 @@ function combatfunction()
 	;************Main Combat Loop***************
 	;-------------------------------------------
 	if ${newattack}
+		call changeformstance
 		call OpeningSpellSequence
 	elseif !${newattack}
 	{
-		call DotSpells
+		call KillingBlowAbility
+    call DotSpells
 		call DotMelee
 		call DebuffSpells
 		call DebuffMelee
@@ -318,7 +320,6 @@ function combatfunction()
 ;===================================================
 function PreCombatLoopFunction()
 {
-	call changeformstance
  	call CheckPosition
 	call EmergencyActions
 	call Healcheck

@@ -332,7 +332,8 @@ function LavishLoad()
 	doAOEMelee:Set[${Melee.FindSetting[doAOEMelee]}]
 	doDotMelee:Set[${Melee.FindSetting[doDotMelee]}]
 	doDebuffMelee:Set[${Melee.FindSetting[doDebuffMelee]}]
-	
+	doKillingBlow:Set[${Melee.FindSetting[doKillingBlow]}]
+	KillingBlow:Set[${Melee.FindSetting[KillingBlow]}]	
 	;===================================================
 	;===                  Evade Load                ====
 	;===================================================

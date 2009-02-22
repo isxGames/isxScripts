@@ -6203,7 +6203,7 @@
                             <X>13</X>
                             <Y>476</Y>
                             <Width>95%</Width>
-                            <Height>80</Height>
+                            <Height>60</Height>
                             <AutoSort>TRUE</AutoSort>
                             <Sort>User</Sort>
                             <OnLoad>
@@ -6215,6 +6215,35 @@
                               BuildDebuffMelee
                             </OnRightClick>
                           </Listbox>
+                          <checkbox Name='doKillingBlowchk' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>540</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Killing Blow (15%)</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doKillingBlow}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doKillingBlow:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <ComboBox Name="cmbKillingBlow" Template="VG.ComboBox">
+                            <X>145</X>
+                            <Y>540</Y>
+                            <Width>240</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+				Script[vga].VariableScope.KillingBlow:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
                         </Children>
 
                       </Frame>
@@ -7153,7 +7182,7 @@
                             <Y>10</Y>
                             <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Use Trigger 1 (TRIGGERS ARE NOT WORKING YET)</Text>
+                            <Text>Do Trigger</Text>
                             <OnLoad>
                               if ${Script[vga].VariableScope.doTrigger1}
                               {
@@ -7537,61 +7566,9 @@
                               }
                             </OnChange>
                           </Textentry>
-
-                          <checkbox Name='doLoseAgroT1' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>10</X>
-                            <Y>330</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>You Lose Agro</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.doLoseAgroT1}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.doLoseAgroT1:Set[${This.Checked}]
-                            </OnLeftClick>
-                          </checkbox>
-                          <checkbox Name='doGainAgroT1' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>200</X>
-                            <Y>330</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>You Gain Agro</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.doGainAgroT1}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.doGainAgroT1:Set[${This.Checked}]
-                            </OnLeftClick>
-                          </checkbox>
-                          <checkbox Name='doOtherAgroT1' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>10</X>
-                            <Y>350</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>Agro Is Not On A Tank Class</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.doOtherAgroT1}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.doOtherAgroT1:Set[${This.Checked}]
-                            </OnLeftClick>
-                          </checkbox>
-                          <Text Name='txt---' Template='VG.BoldText'>
+                           <Text Name='txt---' Template='VG.BoldText'>
                             <X>13</X>
-                            <Y>370</Y>
+                            <Y>365</Y>
                             <Width>95%</Width>
                             <Height>20</Height>
                             <Alignment>Left</Alignment>

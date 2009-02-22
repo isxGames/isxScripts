@@ -204,6 +204,7 @@ function PopulateMeleeLists()
 			UIElement[AOEMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[DotMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[DebuffMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
 	variable iterator Iterator
 	OpeningMeleeSequence:GetSettingIterator[Iterator]
@@ -240,6 +241,13 @@ function PopulateMeleeLists()
 	{
 		UIElement[CombatMeleeSequenceList@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
+	}
+	variable int rCount
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
+	{
+		if ${UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${KillingBlow}]}
+			UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 }
 
