@@ -5326,7 +5326,54 @@
                               Script[vga].VariableScope.NonCombatStance:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
-
+                          <checkbox Name='doRestoreSpecial' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>15</X>
+                            <Y>390</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Restore Special Points below</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRestoreSpecial}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRestoreSpecial:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <Textentry Name='RestoreSpecialtxt' Template='VG.TextEntry'>
+                            <X>193</X>
+                            <Y>390</Y>
+                            <Width>28</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RestoreSpecialint}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RestoreSpecialint:Set[${Math.Calc[${This.Text}].Int}]
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <ComboBox Name="RestoreSpecialCombo" Template="VG.ComboBox">
+                            <X>230</X>
+                            <Y>390</Y>
+                            <Width>155</Width>
+                            <Height>20</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+                              Script[vga].VariableScope.RestoreSpecial:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
                         </Children>
                       </Frame>
                     </Tab>

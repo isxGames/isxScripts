@@ -36,6 +36,19 @@ function lootit()
 	}
 }
 ;********************************************
+function restorespecialpoints()
+{
+	if ${doRestoreSpecial}
+	{
+    if ${Me.Stat[Adventuring,Virtue Points](exists)} && ${Me.Stat[Adventuring,Virtue Points]} < ${RestoreSpecialint} && ${Me.Ability[${RestoreSpecial}].IsReady}
+          	call executeability "${RestoreSpecial}" "heal" "neither"
+    if ${Me.Stat[Adventuring,Phenomena Points](exists)} && ${Me.Stat[Adventuring,Phenomena Points]} < ${RestoreSpecialint} && ${Me.Ability[${RestoreSpecial}].IsReady}
+          	call executeability "${RestoreSpecial}" "heal" "neither"
+    if ${Me.Stat[Adventuring,Special Points](exists)} && ${Me.Stat[Adventuring,Special Points]} < ${RestoreSpecialint} && ${Me.Ability[${RestoreSpecial}].IsReady}
+          	call executeability "${RestoreSpecial}" "heal" "neither"
+	}
+}
+;********************************************
 function shouldimount()
 {
 	if ${doMount} && !${Pawn[${Me}].IsMounted} && ${Pawn[${followpawn}].IsMounted} && !${Me.InCombat}
