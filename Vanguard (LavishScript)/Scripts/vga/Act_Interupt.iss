@@ -42,7 +42,7 @@ function counteringfunct()
 	{
 		actionlog "Mob is Casting ${Me.TargetCasting}"
 	}
-	If !${Me.TargetCasting.Equal[None]} && ${doCounter} && ${ClassRole.caster}
+	If !${Me.TargetCasting.Equal[None]} && ${doCounter}
 	{
 		variable iterator Iterator
 		Counter:GetSettingIterator[Iterator]
