@@ -100,7 +100,6 @@ objectdef EQ2Position
 	member:point3f FindDestPoint(uint ActorID, float minrange, float maxrange, float destangle)
 	{
 		variable float myspeed
-		variable point3f destpoint
 		variable point3f destminpoint
 		variable point3f destmaxpoint
 		;
@@ -110,12 +109,20 @@ objectdef EQ2Position
 		destminpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${minrange}]}]
 		destmaxpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${maxrange}]}]
 
+		Returning.Y:Set[${Actor[${ActorID}].Y}]
+				
 		if ${Math.Distance[${Me.ToActor.Loc},${destminpoint}]}<${Math.Distance[${Me.ToActor.Loc},${destmaxpoint}]}
-			destpoint:Set[${destminpoint}]
+		{
+			Returning.X:Set[${destminpoint.X}]
+			Returning.Z:Set[${destminpoint.Z}]
+		}
 		else
-			destpoint:Set[${destmaxpoint}]
-
-		return ${destpoint}
+		{
+			Returning.X:Set[${destmaxpoint.X}]
+			Returning.Z:Set[${destmaxpoint.Z}]
+		}
+		
+		return
 	}
 }
 
