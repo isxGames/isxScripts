@@ -2282,7 +2282,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	}
 
 	;if we can't move, we can't move
-	if ${Me.ToActor.Speed}<1 || ${Me.ToActor.IsRooted}
+	if ${Me.ToActor.Speed}<-50 || ${Me.ToActor.IsRooted}
 	{
 		Debug:Echo["CheckPosition() :: We are rooted or have 0 movement speed."]
 		return
