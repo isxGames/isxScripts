@@ -455,5 +455,25 @@ function DotMelee()
 	}
 	return
 }
-
+;*************************************************************
+function ToggleOffCombatBuffSpells()
+{
+	variable iterator Iterator
+	
+	debuglog "Running ToggleOffCombatBuffSpells Spell Sequence"
+	if !${Me.InCombat}
+	{
+			DotSpell:GetSettingIterator[Iterator]
+			Iterator:First
+			while ( ${Iterator.Key(exists)} )
+			{
+				if ${Me.Ability[${Iterator.Value}].Toggled}
+				{
+					Me.Ability[${Iterator.Value}]:Use
+				}
+			Iterator:Next
+			}
+	}
+	return
+}
 
