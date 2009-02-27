@@ -256,6 +256,7 @@ function downtimefunction()
 	call lootit
 	call changeformstance
 	call restorespecialpoints
+	call ToggleOffCombatBuffSpells
 	return
 }
 ;===================================================
