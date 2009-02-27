@@ -105,7 +105,7 @@ objectdef EQ2Position
 		;
 		; ok which point is closer our min range or max range, will vary depending on our vector to mob
 		;
-		myspeed:Set[${Math.Calc[${Actor[${ActorID}].Distance2D}/${Me.ToActor.Speed}]}]
+		myspeed:Set[${Math.Calc[${Actor[${ActorID}].Distance2D}/10+${Me.ToActor.Speed}]}]
 		destminpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${minrange}]}]
 		destmaxpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${maxrange}]}]
 
