@@ -49,6 +49,15 @@ function restorespecialpoints()
 	}
 }
 ;********************************************
+function ShiftingImage()
+{
+	if ${DoShiftingImage}
+	{
+		if !${Me.Effect[${ShiftingImage}](exists)} && ${Me.Inventory[Wand of Shifting Images].IsReady}
+			Me.Inventory[Wand of Shifting Images]:Use
+	}
+}
+;********************************************
 function shouldimount()
 {
 	if ${doMount} && !${Pawn[${Me}].IsMounted} && ${Pawn[${followpawn}].IsMounted} && !${Me.InCombat}

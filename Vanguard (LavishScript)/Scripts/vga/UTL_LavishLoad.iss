@@ -286,6 +286,9 @@ function LavishLoad()
 	DoChainsASAP:Set[${UtilitySR.FindSetting[DoChainsASAP,TRUE]}]
 	DoCountersASAP:Set[${UtilitySR.FindSetting[DoCountersASAP,TRUE]}]
 	Domount:Set[${UtilitySR.FindSetting[Domount,TRUE]}]
+	DoShiftingImage:Set[${UtilitySR.FindSetting[DoShiftingImage,TRUE]}]
+	ShiftingImage:Set[${UtilitySR.FindSetting[ShiftingImage,TRUE]}]
+
 	
 	;===================================================
 	;===                  Spells Load               ====
