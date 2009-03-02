@@ -674,7 +674,7 @@ function CheckHeals()
 	do
 	{
 		;oration of sacrifice heal
-		if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && !${haveaggro} && !${MainTank} && ${Me.Group[${temphl}].ToActor.Distance}<=20 && ${Me.Ability[${SpellType[1]}].IsReady}
+		if !${MainTank} && ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && ${Me.Group[${temphl}].ToActor.Distance}<=20
 		{
 			EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
 			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1 0 2 0
@@ -724,6 +724,9 @@ function DoMagneticNote()
 	tempvar:Set[1]
 
 	grpcnt:Set[${Me.GroupCount}]
+
+	if !${Me.Ability[${SpellType[383]}].IsReady}
+		return
 
 	EQ2:CreateCustomActorArray[byDist,${ScanRange},npc]
 
