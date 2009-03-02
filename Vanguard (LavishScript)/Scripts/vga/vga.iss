@@ -257,6 +257,7 @@ function downtimefunction()
 	call changeformstance
 	call restorespecialpoints
 	call ToggleOffCombatBuffSpells
+	call ShiftingImage
 	return
 }
 ;===================================================

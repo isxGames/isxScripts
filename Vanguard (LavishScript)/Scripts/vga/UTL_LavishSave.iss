@@ -208,7 +208,9 @@ function LavishSave()
 	UtilitySR:AddSetting[DoLoot,${DoLoot}]
 	UtilitySR:AddSetting[DoCountersASAP,${DoCountersASAP}]
 	UtilitySR:AddSetting[DoChainsASAP,${DoChainsASAP}]
-	UtilitySR:AddSetting[Domount,${Domount}]	
+	UtilitySR:AddSetting[Domount,${Domount}]
+	UtilitySR:AddSetting[DoShiftingImage,${DoShiftingImage}]
+	UtilitySR:AddSetting[ShiftingImage,${ShiftingImage}]	
 	
 	;===================================================
 	;===                  Spells Save               ====

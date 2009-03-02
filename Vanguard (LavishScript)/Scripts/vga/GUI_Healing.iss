@@ -27,8 +27,27 @@ function PopulateHealLists()
 		UIElement[CombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Form[${i}].Name}]
 		UIElement[NonCombatStanceCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Form[${i}].Name}]
 	}
+	
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Gooey Syndrome]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Ankle Biter]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Worse Than Fleas]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Yetibacca]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Dry Irritating Bones]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Overgrown Rodent]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Man's Best Friend]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Rocky Machine]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[False Knowledge]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Roach]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Feline Ferocity]
+	UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[Angry Outcomes]
 
 	variable int rCount
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${ShiftingImage}]}
+			UIElement[ShiftingImageCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[LazyBuffCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
 	{

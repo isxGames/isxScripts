@@ -5374,6 +5374,36 @@
                               Script[vga].VariableScope.RestoreSpecial:Set[${This.SelectedItem.Text}]
                             </OnSelect>
                           </ComboBox>
+                          <checkbox Name='DoShiftingImage' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>15</X>
+                            <Y>410</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>ShiftImage Wand</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoShiftingImage}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoShiftingImage:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+                          <ComboBox Name="ShiftingImageCombo" Template="VG.ComboBox">
+                            <X>150</X>
+                            <Y>410</Y>
+                            <Width>60%</Width>
+                            <Height>20</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+                              Script[vga].VariableScope.ShiftingImage:Set[${This.SelectedItem.Text}]
+                            </OnSelect>
+                          </ComboBox>
                         </Children>
                       </Frame>
                     </Tab>

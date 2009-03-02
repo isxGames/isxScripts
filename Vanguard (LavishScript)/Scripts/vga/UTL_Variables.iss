@@ -131,6 +131,8 @@ variable bool doSell
 variable uint LastDowntimeCall = 0
 variable bool DoLoot
 variable bool Domount
+variable bool DoShiftingImage
+variable string ShiftingImage
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
