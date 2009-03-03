@@ -425,7 +425,8 @@ After a while your data file will become clogged with old entries for items you 
 
 Press the 'Compact' button and these will be removed. (mine went from 210k to 18k in size)
 
-The script will not remove any Crafted Flagged items or any items with a Minimum or Maximum Sale Price set from your data file
+The script will not remove any items currently on the broker Crafted Flagged items or any items with a Minimum or Maximum Sale Price set
+from your data file
 
 
 Version 0.13h-i
