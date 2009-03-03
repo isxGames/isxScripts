@@ -1,4 +1,4 @@
-MyPrices - Version 0.13i
+MyPrices - Version 0.13j
 
 For update details see the bottom of this file.
 
@@ -381,6 +381,16 @@ main page.
 Press the Save button.
 
 
+The Admin TAB
+=============
+
+After a while your data file will become clogged with old entries for items you have previously sold.
+
+Press the 'Compact' button and these will be removed. (mine went from 210k to 18k in size)
+
+The script will not remove any Crafted Flagged items or any items with a Minimum or Maximum Sale Price set from your data file
+.
+
 The Future
 ==========
 
@@ -405,6 +415,18 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13j
+-------------
+
+Added the Admin TAB
+
+After a while your data file will become clogged with old entries for items you have previously sold.
+
+Press the 'Compact' button and these will be removed. (mine went from 210k to 18k in size)
+
+The script will not remove any Crafted Flagged items or any items with a Minimum or Maximum Sale Price set from your data file
+
 
 Version 0.13h-i
 ---------------

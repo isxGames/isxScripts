@@ -1471,6 +1471,31 @@
 						</AutoTooltip>
 					</Commandbutton>
 				</Tab>
+				<Tab Name='Admin'>
+					<Text name='Errortext'>
+						<X>5%</X>
+						<Y>30</Y>
+						<Width>80%</Width>
+						<Height>20</Height>
+						<Alignment>Left</Alignment>
+						<Font>
+							<Color>FFFFFFE5</Color>
+						</Font>
+					</Text>
+					<Commandbutton name='Compact'> 
+						<X>5%</X> 
+						<Y>50</Y> 
+						<Width>100</Width> 
+						<Height>15</Height>
+						<Text>Compress Sale List</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call buy Sell compact]
+						</OnLeftClick>
+						<AutoTooltip>
+							Remove un-needed entries in saved sales list
+						</AutoTooltip>
+					</Commandbutton>
+				</Tab>
 				<Tab Name='Log'>
 					<listbox Name='ItemList'>
 						<X>5%</X>
