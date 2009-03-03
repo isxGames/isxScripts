@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13i :  released 18th February 2009
+; Version 0.13j :  released 3rd March 2009
 ;
 ; Declare Variables
 ;
@@ -110,8 +110,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices 0.13i :  released 18th February 2009" FF11FFCC
-	call echolog "0.13i :  released 18th February 2009"
+	call AddLog "Running MyPrices 0.13j :  released 3rd March 2009" FF11FFCC
+	call echolog "Running MyPrices 0.13j :  released 3rd March 2009"
 	
 	call StartUp	
 
@@ -659,6 +659,10 @@ function buy(string tabname, string action)
 {
 	
 	call echolog "-> buy Tab : ${tabname} Action : ${action}"
+
+	if ${action.Equal["compact"]}
+		UIElement[Errortext@Admin@GUITabs@MyPrices]:SetText[" ** Compacting - please wait **"]
+
 	; Read data from the Item Set
 	;
 	Declare CraftItem bool local
@@ -668,13 +672,19 @@ function buy(string tabname, string action)
 	Declare Harvest bool local
 	Declare Recipe string local
 
+	Declare MinSalePrice bool local
+	Declare MaxSalePrice bool local
+
 	Declare AutoTransmute bool local
 	Declare BuyAttuneOnly bool local
 	Declare BuyNameOnly bool local
+	
 	Declare startlevel int local
 	Declare endlevel int local
 	Declare tier int local
 	Declare box int local
+	Declare i int local
+	Declare j int local
 	
 	if ${tabname.Equal["Buy"]}
 		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
@@ -706,12 +716,15 @@ function buy(string tabname, string action)
 			{
 				; Get the reference for the Sub-Set
 				BuyName:Set[${BuyList.FindSet[${BuyIterator.Key}]}]
+
 				; Create an Index of all the data in that Sub-set
 				BuyName:GetSettingIterator[BuyNameIterator]
+
 				; run the various options (Scan / update price etc based on the parameter passed to the routine
 				;
 				; init = build up the list of items on the buy tab
 				; scan = check the broker list one by one - do buy and various workhorse routines
+				; clean = remove items from the data if they are not in the vendor boxes and aren't crafted
 
 				if ${action.Equal["init"]} && ${tabname.Equal["Buy"]}
 					UIElement[ItemList@Buy@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
@@ -727,6 +740,8 @@ function buy(string tabname, string action)
 						AutoTransmute:Set[FALSE]
 						BuyAttuneOnly:Set[FALSE]
 						BuyNameOnly:Set[FALSE]
+						MinSalePrice:Set[FALSE]
+						MaxSalePrice:Set[FALSE]
 						do
 						{
 							Switch "${BuyNameIterator.Key}"
@@ -773,6 +788,12 @@ function buy(string tabname, string action)
 								Case Box
 									box:Set[${BuyNameIterator.Value}]
 									break
+								Case MinSalePrice
+									MinSalePrice:Set[${BuyNameIterator.Value}]
+									break
+								Case MaxSalePrice
+									MaxSalePrice:Set[${BuyNameIterator.Value}]
+									break
 							}
 						}
 						while ${BuyNameIterator:Next(exists)}
@@ -794,7 +815,6 @@ function buy(string tabname, string action)
 							if ${Exitmyprices} || ${Pausemyprices}
 								Return
 						}
-						; Or if the paramaters are Craft and init then scan and place the entries in the craft tab
 						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
 						{
 							if ${CraftItem}
@@ -813,6 +833,32 @@ function buy(string tabname, string action)
 							; if the item is marked as a craft one then check if the Minimum broker total has been reached
 							if ${CraftItem}
 								call checktotals "${BuyIterator.Key}" ${CraftStack} ${CraftMinTotal} "${CraftRecipe}"
+								
+						}
+						elseif ${action.Equal["compact"]} && ${tabname.Equal["Sell"]}
+						{
+							if !${CraftItem} && !${MinSalePrice} && !${MaxSalePrice}
+							{
+								; check broker boxes for item being read, if not on broker then clear that entry.
+								i:Set[1]
+								do
+								{
+									if ${Me.Vending[${i}](exists)} 
+									{			
+										call FindItem ${i} "${BuyIterator.Key}"
+										waitframe
+										j:Set[${Return}]								
+										if ${j} > -1
+										{
+											break
+										}
+									}
+								}
+								while ${i:Inc} <= 6
+								if ${j} < 0
+									BuyList.FindSet["${BuyIterator.Key}"]:Clear
+									waitframe
+							}
 						}
 					}
 				}
@@ -826,8 +872,13 @@ function buy(string tabname, string action)
 
 	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" ** Finished **"]
 
+	if ${action.Equal["compact"]}
+		UIElement[Errortext@Admin@GUITabs@MyPrices]:SetText[" ** Finished **"]
+
+
 	call echolog "<end> : buy"
 }
+
 
 ; check to see if we need to make more craftable items to refil our broker stocks
 function checktotals(string itemname, int stacksize, int minlimit, string Recipe)
@@ -2598,6 +2649,9 @@ atom atexit()
 {
 	if !${ISXEQ2.IsReady}
 		return
+
+	Event[EQ2_onInventoryUpdate]:DetachAtom[EQ2_onInventoryUpdate]
+	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
 
 	LavishSettings[myprices]:Export[${XMLPath}${CurrentChar}_MyPrices.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
