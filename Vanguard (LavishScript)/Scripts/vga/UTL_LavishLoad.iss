@@ -285,10 +285,10 @@ function LavishLoad()
 	Sell:Set[${LavishSettings[VGA_General].FindSet[Sell]}]
 	DoChainsASAP:Set[${UtilitySR.FindSetting[DoChainsASAP,TRUE]}]
 	DoCountersASAP:Set[${UtilitySR.FindSetting[DoCountersASAP,TRUE]}]
-	Domount:Set[${UtilitySR.FindSetting[Domount,TRUE]}]
-	DoShiftingImage:Set[${UtilitySR.FindSetting[DoShiftingImage,TRUE]}]
+	Domount:Set[${UtilitySR.FindSetting[Domount,FALSE]}]
+	DoShiftingImage:Set[${UtilitySR.FindSetting[DoShiftingImage,FALSE]}]
 	ShiftingImage:Set[${UtilitySR.FindSetting[ShiftingImage,TRUE]}]
-
+	DoAutoAcceptGroupInvite:Set[${UtilitySR.FindSetting[DoAutoAcceptGroupInvite,TRUE]}]
 	
 	;===================================================
 	;===                  Spells Load               ====

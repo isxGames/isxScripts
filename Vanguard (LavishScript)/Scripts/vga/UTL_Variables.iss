@@ -133,6 +133,7 @@ variable bool DoLoot
 variable bool Domount
 variable bool DoShiftingImage
 variable string ShiftingImage
+variable bool DoAutoAcceptGroupInvite
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
