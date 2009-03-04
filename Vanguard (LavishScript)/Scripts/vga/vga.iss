@@ -258,6 +258,7 @@ function downtimefunction()
 	call restorespecialpoints
 	call ToggleOffCombatBuffSpells
 	call ShiftingImage
+	call groupup
 	return
 }
 ;===================================================

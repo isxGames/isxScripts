@@ -6,6 +6,15 @@ function PauseScript()
 	}
 }
 ;********************************************
+function groupup()
+{
+	if ${Me.GroupInvitePending}
+	{
+	vgexecute /groupacceptinvite
+	}
+
+} 
+;********************************************
 function lootit()
 {
 	;; if there are no corpses around...then why bother.

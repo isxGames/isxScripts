@@ -211,6 +211,7 @@ function LavishSave()
 	UtilitySR:AddSetting[Domount,${Domount}]
 	UtilitySR:AddSetting[DoShiftingImage,${DoShiftingImage}]
 	UtilitySR:AddSetting[ShiftingImage,${ShiftingImage}]	
+	UtilitySR:AddSetting[DoAutoAcceptGroupInvite,${DoAutoAcceptGroupInvite}]
 	
 	;===================================================
 	;===                  Spells Save               ====
