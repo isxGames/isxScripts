@@ -309,11 +309,11 @@ namespace EQ2GlassCannon
 				{
 					/// FIRST BLOOD: Extreme AE opportunities should receive top priority,
 					/// and never subordinate to boilerplate cast orders.
-					if (m_bUseGreenAEs && (iEncounterSize >= 6) && CastAbility(m_iGreenColdAEAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenColdAEAbilityID, 6))
 						return true;
-					if (m_bUseBlueAEs && CastPBAEAbility(m_iBlueHeatAEAbilityID, 7))
+					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 7))
 						return true;
-					if (m_bUseGreenAEs && (iEncounterSize >= 8) && CastAbility(m_iGreenMagicAEAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 8))
 						return true;
 
 					/// Deaggros.
@@ -406,14 +406,14 @@ namespace EQ2GlassCannon
 					}
 
 					/// AE time!!
-					if (m_bUseGreenAEs && (iEncounterSize >= 3) && CastAbility(m_iGreenColdAEAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenColdAEAbilityID, 3))
 						return true;
-					if (m_bUseBlueAEs && CastPBAEAbility(m_iBlueHeatAEAbilityID, 4))
+					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 4))
 						return true;
-					if (m_bUseGreenAEs && (iEncounterSize >= 5) && CastAbility(m_iGreenMagicAEAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 5))
 						return true;
 
-					if (m_bUseBlueAEs && bDumbfiresAdvised && (fDistance <= 7.0f) && !IsAbilityMaintained(m_iForgeOfRoAbilityID) && CastAbility(m_iForgeOfRoAbilityID))
+					if (bDumbfiresAdvised && !IsAbilityMaintained(m_iForgeOfRoAbilityID) && CastBlueOffensiveAbility(m_iForgeOfRoAbilityID, 1))
 						return true;
 
 					if (CastAbility(m_iSurgingTempestAbilityID))
@@ -423,11 +423,11 @@ namespace EQ2GlassCannon
 						return true;
 
 					/// AE time!!
-					if (m_bUseGreenAEs && (iEncounterSize >= 2) && CastAbility(m_iGreenColdAEAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenColdAEAbilityID, 2))
 						return true;
-					if (m_bUseBlueAEs && CastPBAEAbility(m_iBlueHeatAEAbilityID, 3))
+					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 3))
 						return true;
-					if (m_bUseGreenAEs && (iEncounterSize >= 4) && CastAbility(m_iGreenMagicAEAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 4))
 						return true;
 
 					if (CastAbility(m_iHailStormAbilityID))
@@ -439,12 +439,11 @@ namespace EQ2GlassCannon
 
 					if (CastAbility(m_iIceCometAbilityID))
 						return true;
-
-					if (CastAbility(m_iBewildermentAbilityID))
-						return true;
 				}
 
-				/// Thunderclap is uninterruptable; can be cast while running.
+				/// Uninterruptable; can be cast while running.
+				if (CastAbility(m_iBewildermentAbilityID))
+					return true;
 				if (CastAbility(m_iThunderclapAbilityID))
 					return true;
 
@@ -479,9 +478,9 @@ namespace EQ2GlassCannon
 						return true;
 
 					/// AE spells for when every single other thing is exhausted (very rare).
-					if (m_bUseBlueAEs && CastPBAEAbility(m_iBlueHeatAEAbilityID, 1))
+					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 1))
 						return true;
-					if (m_bUseGreenAEs && CastAbility(m_iGreenMagicAEAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 1))
 						return true;
 				}
 			}

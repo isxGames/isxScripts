@@ -25,11 +25,19 @@ namespace EQ2GlassCannon
 		public string m_strBotKillswitchSubphrase = "stop dps";
 		public string m_strProcessKillswitchSubphrase = "beddy-bye!!";
 		public string m_strDoNothingSubphrase = "afk";
+		public string m_strNeutralPositionSubphrase = "neutral";
 		public string m_strAutoFollowSubphrase = "come";
 		public string m_strStayInPlaceSubphrase = "stay here";
 		public string m_strShadowMeSubphrase = "shadow me";
+		public string m_strForwardDashSubphrase = "charge";
 		public string m_strClearGroupMaintainedSubphrase = "redo group buffs";
 		public string m_strMentorSubphrase = "mentor";
+		public string m_strRepairSubphrase = "repair";
+		public string m_strSpawnWatchSubphrase = "watch for";
+		public string m_strSpawnWatchSMTPAccount = string.Empty;
+		public int m_iSpawnWatchSMTPPort = 25;
+		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
+		public string m_strSpawnWatchFromAddress = string.Empty;
 		public float m_fStayInPlaceTolerance = 1.5f;
 		public int m_iCheckBuffsInterval = 500;
 		public bool m_bUseRanged = false;
@@ -57,9 +65,12 @@ namespace EQ2GlassCannon
 		public enum PositioningStance
 		{
 			DoNothing,
+			NeutralPosition,
 			AutoFollow,
 			StayInPlace,
 			ShadowMe,
+			ForwardDash,
+			SpawnWatch,
 		}
 
 		public class Point3D
@@ -93,6 +104,8 @@ namespace EQ2GlassCannon
 		public int m_iAbilitiesFound = 0;
 		public PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
 		public Point3D m_ptStayLocation = new Point3D();
+		public bool m_bSpawnWatchTargetAnnounced = false;
+		public string m_strSpawnWatchTarget = string.Empty;
 
 		public Dictionary<string, int> m_KnowledgeBookNameToIndexMap = new Dictionary<string, int>();
 		public Dictionary<int, string> m_KnowledgeBookIndexToNameMap = new Dictionary<int, string>();
@@ -159,11 +172,19 @@ namespace EQ2GlassCannon
 			TransferINICaselessString(eTransferType, "General.BotKillswitchSubphrase", ref m_strBotKillswitchSubphrase);
 			TransferINICaselessString(eTransferType, "General.ProcessKillswitchSubphrase", ref m_strProcessKillswitchSubphrase);
 			TransferINICaselessString(eTransferType, "General.DoNothingSubphrase", ref m_strDoNothingSubphrase);
+			TransferINICaselessString(eTransferType, "General.NeutralPositionSubphrase", ref m_strNeutralPositionSubphrase);
 			TransferINICaselessString(eTransferType, "General.AutoFollowSubphrase", ref m_strAutoFollowSubphrase);
 			TransferINICaselessString(eTransferType, "General.StayInPlaceSubphrase", ref m_strStayInPlaceSubphrase);
 			TransferINICaselessString(eTransferType, "General.ShadowMeSubphrase", ref m_strShadowMeSubphrase);
+			TransferINICaselessString(eTransferType, "General.ForwardDashSubphrase", ref m_strForwardDashSubphrase);
 			TransferINICaselessString(eTransferType, "General.ClearGroupMaintainedSubphrase", ref m_strClearGroupMaintainedSubphrase);
 			TransferINICaselessString(eTransferType, "General.MentorSubphrase", ref m_strMentorSubphrase);
+			TransferINICaselessString(eTransferType, "General.RepairSubphrase", ref m_strRepairSubphrase);
+			TransferINICaselessString(eTransferType, "General.SpawnWatchSubphrase", ref m_strSpawnWatchSubphrase);
+			TransferINICaselessString(eTransferType, "General.SpawnWatchSMTPAccount", ref m_strSpawnWatchSMTPAccount);
+			TransferINIInteger(eTransferType, "General.SpawnWatchSMTPPort", ref m_iSpawnWatchSMTPPort);
+			TransferINIStringList(eTransferType, "General.SpawnWatchToAddresses", m_astrSpawnWatchToAddressList);
+			TransferINICaselessString(eTransferType, "General.SpawnWatchFromAddress", ref m_strSpawnWatchFromAddress);
 			TransferINIInteger(eTransferType, "General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
 			TransferINIBool(eTransferType, "General.UseRanged", ref m_bUseRanged);
 			TransferINIBool(eTransferType, "General.UseGreenAEs", ref m_bUseGreenAEs);
@@ -437,6 +458,24 @@ namespace EQ2GlassCannon
 
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 				return true;
+			else if (m_ePositioningStance == PositioningStance.SpawnWatch)
+			{
+				foreach (Actor ThisActor in EnumCustomActors())
+				{
+					if (ThisActor.Name == m_strSpawnWatchTarget && 
+						Program.SendEMail(
+							m_strSpawnWatchSMTPAccount, m_iSpawnWatchSMTPPort,
+							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
+							"From " + Me.Name,
+							m_strSpawnWatchTarget + " just spawned!"))
+					{
+						Program.Log("Spawn Watch target \"{0}\" found, and listeners notified!", m_strSpawnWatchTarget);
+						m_ePositioningStance = PositioningStance.DoNothing;
+						return true;
+					}
+				}
+				return true;
+			}
 
 			m_GroupMemberDictionary.Clear();
 			foreach (GroupMember ThisMember in EnumGroupMembers())
@@ -575,7 +614,8 @@ namespace EQ2GlassCannon
 		/// <returns>true if handled by a base implementation, and if no further processing should be permitted.</returns>
 		public virtual bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
 		{
-			string strLowerCaseMessage = strMessage.ToLower();
+			string strTrimmedMessage = strMessage.Trim();
+			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
 			if (string.Compare(strFrom, m_strCommandingPlayer, true) == 0)
 			{
@@ -624,6 +664,12 @@ namespace EQ2GlassCannon
 					ChangePositioningStance(PositioningStance.DoNothing);
 				}
 
+				else if (strLowerCaseMessage.Contains(m_strNeutralPositionSubphrase))
+				{
+					Program.Log("Neutral Position command (\"{0}\") received.", m_strNeutralPositionSubphrase);
+					ChangePositioningStance(PositioningStance.NeutralPosition);
+				}
+
 				else if (strLowerCaseMessage.Contains(m_strStayInPlaceSubphrase))
 				{
 					Program.Log("Stay In Place command (\"{0}\") received.", m_strStayInPlaceSubphrase);
@@ -634,6 +680,12 @@ namespace EQ2GlassCannon
 				{
 					Program.Log("Shadow Me command (\"{0}\") received.", m_strShadowMeSubphrase);
 					ChangePositioningStance(PositioningStance.ShadowMe);
+				}
+
+				else if (strLowerCaseMessage.Contains(m_strForwardDashSubphrase))
+				{
+					Program.Log("Forward Dash command (\"{0}\") received.", m_strForwardDashSubphrase);
+					ChangePositioningStance(PositioningStance.ForwardDash);
 				}
 
 				else if (strLowerCaseMessage.Contains(m_strAutoFollowSubphrase))
@@ -676,6 +728,31 @@ namespace EQ2GlassCannon
 					}
 				}
 
+				else if (strLowerCaseMessage.Contains(m_strRepairSubphrase))
+				{
+					if (CommandingPlayerActor != null)
+					{
+						Actor MenderTargetActor = CommandingPlayerActor.Target();
+						if (MenderTargetActor.IsValid && MenderTargetActor.Type == "NoKill NPC")
+						{
+							Program.RunCommand("/apply_verb {0} repair", MenderTargetActor.ID);
+							Program.RunCommand("/mender_repair_all");
+							return true;
+						}
+					}
+				}
+
+				else if (strLowerCaseMessage.StartsWith(m_strSpawnWatchSubphrase))
+				{
+					Program.Log("Spawn Watch command (\"{0}\") received.", m_strSpawnWatchSubphrase);
+					m_bSpawnWatchTargetAnnounced = false;
+
+					m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchSubphrase.Length).Trim();
+					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
+
+					ChangePositioningStance(PositioningStance.SpawnWatch);
+				}
+
 				else
 				{
 					Program.Log("No command detected in commanding player chat.");
@@ -683,6 +760,15 @@ namespace EQ2GlassCannon
 			}
 
 			return false;
+		}
+
+		/************************************************************************************/
+		public virtual void OnZoning()
+		{
+			if (m_ePositioningStance == PositioningStance.ForwardDash)
+				ChangePositioningStance(PositioningStance.AutoFollow);
+
+			return;
 		}
 
 		/************************************************************************************/
@@ -754,12 +840,15 @@ namespace EQ2GlassCannon
 
 			/// Disqualify by range.
 			Actor MyTargetActor = MeActor.Target();
-			double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
-			if (fDistance < ThisAbility.MinRange || ThisAbility.MaxRange < fDistance)
+			if (MyTargetActor.IsValid)
 			{
-				Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.000} actual)",
-					ThisAbility.Name, MyTargetActor.Name, ThisAbility.MinRange, ThisAbility.MaxRange, fDistance);
-				return false;
+				double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
+				if (fDistance < ThisAbility.MinRange || ThisAbility.MaxRange < fDistance)
+				{
+					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.000} actual)",
+						ThisAbility.Name, MyTargetActor.Name, ThisAbility.MinRange, ThisAbility.MaxRange, fDistance);
+					return false;
+				}
 			}
 
 			Program.Log("Casting {0}...", ThisAbility.Name);
@@ -770,7 +859,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CastPBAEAbility(int iAbilityID, int iMinimumVictimCheckCount)
+		public bool CastBlueOffensiveAbility(int iAbilityID, int iMinimumVictimCheckCount)
 		{
 			if (!m_bUseBlueAEs || iAbilityID < 1)
 				return false;
@@ -810,6 +899,56 @@ namespace EQ2GlassCannon
 			}
 
 			Program.Log("Casting {0} (as PBAE against {1} possible targets within {2:0}m radius)...", ThisAbility.Name, iValidVictimCount, ThisAbility.EffectRadius);
+			if (ThisAbility.Use())
+				return true;
+
+			return false;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// I don't know the exact range mechanics behind green AE's, so this is some fudge work.
+		/// </summary>
+		public bool CastGreenOffensiveAbility(int iAbilityID, int iMinimumVictimCheckCount)
+		{
+			if (!m_bUseGreenAEs || iAbilityID < 1 || m_OffensiveTargetActor == null)
+				return false;
+
+			Ability ThisAbility = Me.Ability(iAbilityID);
+
+			/// We won't muck around with spell queuing and add needless complexity;
+			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
+			if (!ThisAbility.IsReady)
+				return false;
+
+			if (ThisAbility.IsQueued)
+				return true;
+
+			int iValidVictimCount = 0;
+			if (m_DetectedAbilityTargetCountCache.ContainsKey(iAbilityID))
+				iValidVictimCount = m_DetectedAbilityTargetCountCache[iAbilityID];
+			else
+			{
+				foreach (Actor ThisActor in EnumCustomActors("byDist", ThisAbility.MaxRange.ToString(), "npc"))
+				{
+					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead && m_OffensiveTargetActor.IsInSameEncounter(ThisActor.ID))
+						iValidVictimCount++;
+				}
+
+				m_DetectedAbilityTargetCountCache.Add(iAbilityID, iValidVictimCount);
+			}
+
+			/// Check that the minimum number of potential victims is within the blast radius before proceeding.
+			if (iValidVictimCount < iMinimumVictimCheckCount)
+				return false;
+
+			if (Me.Power < ThisAbility.PowerCost)
+			{
+				Program.Log("Not enough power to cast {0}!", ThisAbility.Name);
+				return false;
+			}
+
+			Program.Log("Casting {0} (as encounter AE against {1} possible targets within {2:0}m radius)...", ThisAbility.Name, iValidVictimCount, ThisAbility.MaxRange);
 			if (ThisAbility.Use())
 				return true;
 
@@ -1142,7 +1281,8 @@ namespace EQ2GlassCannon
 		{
 			Actor CommandingPlayerActor = GetNonPetActor(m_strCommandingPlayer);
 
-			if (m_ePositioningStance == PositioningStance.ShadowMe || m_ePositioningStance == PositioningStance.StayInPlace)
+			/// Deactivate the existing stance.
+			if (m_ePositioningStance == PositioningStance.ShadowMe || m_ePositioningStance == PositioningStance.StayInPlace || m_ePositioningStance == PositioningStance.ForwardDash)
 			{
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -release W");
 			}
@@ -1150,6 +1290,10 @@ namespace EQ2GlassCannon
 			if (eNewStance == PositioningStance.DoNothing)
 			{
 				m_ePositioningStance = PositioningStance.DoNothing;
+			}
+			else if (eNewStance == PositioningStance.NeutralPosition)
+			{
+				m_ePositioningStance = PositioningStance.NeutralPosition;
 			}
 			else if (eNewStance == PositioningStance.StayInPlace)
 			{
@@ -1168,11 +1312,21 @@ namespace EQ2GlassCannon
 					CheckPositioningStance();
 				}
 			}
+			else if (eNewStance == PositioningStance.ForwardDash)
+			{
+				m_ePositioningStance = PositioningStance.ForwardDash;
+				CheckPositioningStance();
+			}
 			else if (eNewStance == PositioningStance.AutoFollow)
 			{
 				m_ePositioningStance = PositioningStance.AutoFollow;
 				CheckPositioningStance();
 			}
+			else if (eNewStance == PositioningStance.SpawnWatch)
+			{
+				m_ePositioningStance = PositioningStance.SpawnWatch;
+			}
+
 
 			return;
 		}
@@ -1202,9 +1356,9 @@ namespace EQ2GlassCannon
 				}
 
 				Actor AutoFollowActor = m_GroupMemberDictionary[m_strAutoFollowTarget].ToActor();
-				if (AutoFollowActor.IsDead)
+				if (!AutoFollowActor.IsValid || AutoFollowActor.IsDead)
 				{
-					Program.Log("Can't autofollow on {0} (player is dead).", m_strAutoFollowTarget);
+					Program.Log("Can't autofollow on {0} (player is dead or invalid).", m_strAutoFollowTarget);
 					return false;
 				}
 
@@ -1276,8 +1430,12 @@ namespace EQ2GlassCannon
 						LavishScriptAPI.LavishScript.ExecuteCommand("press -release W");
 					}
 				}
+			}
 
-				//Me.Face();
+			else if (m_ePositioningStance == PositioningStance.ForwardDash)
+			{
+				LavishScriptAPI.LavishScript.ExecuteCommand("press -hold W");
+				return false;
 			}
 
 			return false;
@@ -1433,7 +1591,7 @@ namespace EQ2GlassCannon
 				return false;
 
 			bool bEveryoneDead = true;
-			foreach (GroupMember ThisMember in EnumGroupMembers())
+			foreach (GroupMember ThisMember in m_FriendDictionary.Values)
 			{
 				Actor ThisActor = ThisMember.ToActor();
 				if (ThisActor.IsValid && !ThisActor.IsDead)
@@ -1442,6 +1600,8 @@ namespace EQ2GlassCannon
 					break;
 				}
 			}
+
+			/// If everyone in the party is dead, the fight is completely over.
 			if (bEveryoneDead)
 			{
 				m_iOffensiveTargetID = -1;

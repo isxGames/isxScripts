@@ -60,7 +60,7 @@ namespace EQ2GlassCannon
 		public int m_iSinglePowerDrainAttackAbilityID = -1;
 		public int m_iSingleMentalAttackPairAbilityID = -1;
 		public int m_iSingleMezAbilityID = -1;
-		public int m_iGreenInterruptAbilityID = -1;
+		public int m_iGreenInterruptNukeAbilityID = -1;
 		public int m_iGreenInstantKnockdownAbilityID = -1;
 		#endregion
 
@@ -277,7 +277,7 @@ namespace EQ2GlassCannon
 				"Reverie",
 				"Peaceful Melody");
 
-			m_iGreenInterruptAbilityID = SelectHighestAbilityID(
+			m_iGreenInterruptNukeAbilityID = SelectHighestAbilityID(
 				"Alin's Keening Lamentation",
 				"Alin's Melodic Refrain",
 				"Alin's Coruscating Concord",
@@ -408,9 +408,9 @@ namespace EQ2GlassCannon
 				}
 
 				/// AE interrupt nuke.
-				if (m_bUseGreenAEs && (m_bSpamCrowdControl || (iEncounterSize > 2 && IsBeneficialEffectPresent(m_iMaestroAbilityID))))
+				if (m_bSpamCrowdControl || IsBeneficialEffectPresent(m_iMaestroAbilityID))
 				{
-					if (CastAbility(m_iGreenInterruptAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
 						return true;
 				}
 
@@ -437,6 +437,9 @@ namespace EQ2GlassCannon
 				if (CastAbility(m_iGreenSTRAGIDebuffAbilityID))
 					return true;
 
+				if (CastAbility(m_iLoreAndLegendAbilityID))
+					return true;
+
 				if (CastAbility(m_iSingleDefenseDebuffAbilityID))
 					return true;
 
@@ -451,10 +454,9 @@ namespace EQ2GlassCannon
 				if (IsAbilityReady(m_iSingleINTDebuffAbilityID) && !IsAbilityMaintained(m_iSingleINTDebuffAbilityID) && CastAbility(m_iShroudAbilityID))
 					return true;
 
-				if (CastAbility(m_iLoreAndLegendAbilityID))
-					return true;
+				/*********************************
+				From here on out, it's dps spells.
 
-				/*
 				Evasive Maneuvers = 4077.2
 				Ceremonial Blade = 3245.7
 				Reverberating Shrill = 2016.1
@@ -462,7 +464,10 @@ namespace EQ2GlassCannon
 				Draining Incursion = 1448.9
 				Tap Essence = 1310.2
 				Thunderous Overture = 907.3
-				*/
+				*********************************/
+
+				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 3))
+					return true;
 
 				if (CastAbility(m_iEvasiveManeuversAbilityID))
 					return true;
@@ -484,6 +489,14 @@ namespace EQ2GlassCannon
 					return true;
 
 				if (CastAbility(m_iSingleShortRangeNukeAbilityID))
+					return true;
+
+				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
+					return true;
+
+
+				/// Nuke of last resort.
+				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 1))
 					return true;
 			}
 

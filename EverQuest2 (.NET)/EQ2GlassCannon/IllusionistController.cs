@@ -387,9 +387,9 @@ namespace EQ2GlassCannon
 					}
 
 					/// Extreme AE opportunities should receive top priority, and never subordinate to boilerplate cast orders.
-					if (m_bUseGreenAEs && (iEncounterSize >= 3) && CastAbility(m_iGreenShowerAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenShowerAbilityID, 3))
 						return true;
-					if (m_bUseGreenAEs && (iEncounterSize >= 4) && CastAbility(m_iStormAbilityID))
+					if (CastGreenOffensiveAbility(m_iStormAbilityID, 4))
 						return true;
 
 					if (!IsAbilityMaintained(m_iPrismaticAbilityID) && CastAbility(m_iPrismaticAbilityID, m_strPrismaticTarget, true))
@@ -418,7 +418,7 @@ namespace EQ2GlassCannon
 					if (!IsAbilityMaintained(m_iUnresistableNukeAbilityID) && CastAbility(m_iUnresistableNukeAbilityID))
 						return true;
 
-					if (m_bUseGreenAEs && CastAbility(m_iGreenShowerAbilityID))
+					if (CastGreenOffensiveAbility(m_iGreenShowerAbilityID, 1))
 						return true;
 
 					if (CastAbility(m_iBewildermentAbilityID))
@@ -439,7 +439,7 @@ namespace EQ2GlassCannon
 					if (CastAbility(m_iMeleeDebuffAbilityID))
 						return true;
 
-					if (m_bUseGreenAEs && CastAbility(m_iStormAbilityID))
+					if (CastGreenOffensiveAbility(m_iStormAbilityID, 1))
 						return true;
 				}
 

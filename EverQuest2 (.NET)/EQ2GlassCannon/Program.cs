@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using EQ2.ISXEQ2;
-using LavishVMAPI;
-using InnerSpaceAPI;
-using LavishScriptAPI;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-
+using EQ2.ISXEQ2;
+using InnerSpaceAPI;
+using LavishScriptAPI;
+using LavishVMAPI;
+using System.Net.Mail;
 
 namespace EQ2GlassCannon
 {
 	public static class Program
 	{
 		public static Extension s_Extension = null;
-		public static PlayerController s_Controller = null;
 		private static EQ2.ISXEQ2.ISXEQ2 s_ISXEQ2 = null;
 		private static EQ2.ISXEQ2.EQ2 s_EQ2 = null;
 		private static Character s_Me = null;
 		private static Actor s_MeActor = null;
 		private static EQ2Event s_eq2event = null;
+		public static PlayerController s_Controller = null;
 		public static bool s_bContinueBot = true;
 		private static long s_lFrameCount = 0;
 		public static string s_strINIFolderPath = string.Empty;
@@ -34,6 +34,21 @@ namespace EQ2GlassCannon
 		public static EQ2.ISXEQ2.EQ2 EQ2 { get { return s_EQ2; } }
 		public static Character Me { get { return s_Me; } }
 		public static Actor MeActor { get { return s_MeActor; } }
+
+		/************************************************************************************/
+		/// <summary>
+		/// Make sure to call this every time you grab a frame lock.
+		/// </summary>
+		public static void UpdateGlobals()
+		{
+			/// These become invalid from frame to frame.
+			s_ISXEQ2 = s_Extension.ISXEQ2();
+			s_EQ2 = s_Extension.EQ2();
+			s_Me = s_Extension.Me();
+			s_MeActor = s_Me.ToActor();
+
+			return;
+		}
 
 		/************************************************************************************/
 		public static long FrameCount
@@ -169,22 +184,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		/// <summary>
-		/// Make sure to call this every time you grab a frame lock.
-		/// </summary>
-		public static void UpdateGlobals()
-		{
-			/// These become invalid from frame to frame.
-			s_ISXEQ2 = s_Extension.ISXEQ2();
-			s_EQ2 = s_Extension.EQ2();
-			s_Me = s_Extension.Me();
-			s_MeActor = s_Me.ToActor();
-
-			return;
-		}
-
-		/************************************************************************************/
-		public static void Main()
+		private static void Main()
 		{
 			try
 			{
@@ -231,7 +231,7 @@ namespace EQ2GlassCannon
 					s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
 					s_eq2event.QuestOffered += new EventHandler<LSEventArgs>(OnQuestOffered_EventHandler);
 
-					s_Extension.ISXEQ2().SetActorEventsRange(50.0f);
+					s_ISXEQ2.SetActorEventsRange(50.0f);
 				}
 
 				/// Ensure that the INI path exists firstly.
@@ -245,6 +245,7 @@ namespace EQ2GlassCannon
 
 				string strLastClass = string.Empty;
 				bool bRefreshKnowledgeBook = false;
+				bool bFirstZoningFrame = true;
 
 				do
 				{
@@ -253,8 +254,20 @@ namespace EQ2GlassCannon
 					{
 						UpdateGlobals();
 
+						/// Call the controller if we zone.
 						if (EQ2.Zoning)
+						{
+							if (bFirstZoningFrame)
+							{
+								Program.Log("Zoning...");
+								bFirstZoningFrame = false;
+								if (s_Controller != null)
+									s_Controller.OnZoning();
+							}
 							continue;
+						}
+						else
+							bFirstZoningFrame = true;
 
 						/// Yay for lazy!
 						if (EQ2.PendingQuestName != "None")
@@ -295,9 +308,16 @@ namespace EQ2GlassCannon
 							s_strCurrentINIFilePath = Path.Combine(s_strINIFolderPath, strFileName);
 
 							if (File.Exists(s_strCurrentINIFilePath))
+							{
 								LoadINIFile();
-
-							s_Controller.ReadINISettings();
+								s_Controller.ReadINISettings();
+							}
+							else
+							{
+								/// First-time save.
+								s_Controller.WriteINISettings();
+								SaveINIFile();
+							}
 
 							SetWindowText(string.Format("{0} ({1})", Me.Name, Me.SubClass));
 						}
@@ -360,10 +380,6 @@ namespace EQ2GlassCannon
 				Program.Log("Unhandled .NET exception:" + e.Message);
 				Program.Log(e.TargetSite.ToString()); /// TODO: Extract and display the LINE that threw the exception!!!
 				Program.Log(e.StackTrace.ToString());
-
-				/// They say this is a collection of KeyValuePair's but of what I have no idea...
-				foreach (object objThisTag in e.Data)
-					Program.Log("DATA[{0}] = {1}", objThisTag, "?");
 			}
 
 			finally
@@ -547,6 +563,26 @@ namespace EQ2GlassCannon
 				LavishVMAPI.Frame.Wait(false);
 
 			return;
+		}
+
+		/************************************************************************************/
+		public static bool SendEMail(string strAccount, int iPort, string strFromAddress, List<string> astrToAddressList, string strSubject, string strMessage)
+		{
+			try
+			{
+				SmtpClient ThisClient = new SmtpClient(strAccount, iPort);
+
+				foreach (string strThisToAddress in astrToAddressList)
+				{
+					ThisClient.Send(strFromAddress, strThisToAddress, strSubject, strMessage);
+				}
+			}
+			catch
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }
