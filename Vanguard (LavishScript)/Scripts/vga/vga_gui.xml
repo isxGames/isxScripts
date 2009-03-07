@@ -8606,7 +8606,163 @@
                       </Frame>
               </Children>
             </Frame>
-          </Tab>   
+          </Tab> 
+         <!--Top Level Interaction Tab-->
+          <Tab name='Interaction'>
+            <Frame name='InteractionFrm'>
+              <Height>100%</Height>
+              <Width>100%</Width>
+              <BackgroundColor>FF000000</BackgroundColor>
+              <Texture></Texture>
+              <Children>
+                <!--SubCaster tab control-->
+                <TabControl name='InteractionSubTab' Template='VG.Tabcontrol'>
+                  <X>0</X>
+                  <Y>3</Y>
+                  <Font>
+                    <Name>Arial</Name>
+                    <Size>14</Size>
+                  </Font>
+                  <TabHeight>18</TabHeight>
+                  <TabBorder>2</TabBorder>
+                  <Height>99%</Height>
+                  <Width>99%</Width>
+                  <Tabs>
+                    <!--2nd Level Friends Tab-->
+                    <Tab name='Friends'>
+                      <Frame name='FriendsCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level Requests Tab-->
+                    <Tab name='Requests'>
+                      <Frame name='RequestCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children>
+			<checkbox Name='doRequestBuffs1' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>10</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Rebuffs</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRequestBuffs[1]}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRequestBuffs[1]:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtRequestBuff1' Template='VG.BoldText'>
+                            <X>125</X>
+                            <Y>13</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Missing Buff</Text>
+                          </Text>
+                          <ComboBox Name="cmbRequestBuffs1" Template="VG.ComboBox">
+                            <X>200</X>
+                            <Y>10</Y>
+                            <Width>180</Width>
+                            <Height>20</Height>
+                            <OnLoad>
+                              This:AddItem[NONE]
+                            </OnLoad>
+                            <OnSelect>
+			      Script[vga].VariableScope.RequestBuffs[1]:Set[${This.SelectedItem.Text}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnSelect>
+                          </ComboBox>
+                          <Text Name='txtRequestBuffPlayer1' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>30</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='RequestBuffPlayer1' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>30</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestBuffPlayer[1]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuffPlayer[1]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellRequestBuffPlayer1' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>32</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellRequestBuffPlayer1' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>30</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellRequestBuffPlayer[1]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellRequestBuffPlayer[1]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+			</Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level Reactions Tab-->
+                    <Tab name='Reactions'>
+                      <Frame name='ReactionsCTab'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level Reply Tab-->
+                    <Tab name='Reply'>
+                      <Frame name='ReplyCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                  </Tabs>
+                </TabControl>
+              </Children>
+            </Frame>
+          </Tab>  
       </Tabs>
       </TabControl>	
   </Children>
