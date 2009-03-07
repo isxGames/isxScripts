@@ -38,12 +38,9 @@ function TurnOffAttackfunct()
 ;********************************************
 function counteringfunct()
 {
-	If !${Me.TargetCasting.Equal[None]}
-	{
-		actionlog "Mob is Casting ${Me.TargetCasting}"
-	}
 	If !${Me.TargetCasting.Equal[None]} && ${doCounter}
 	{
+		actionlog "Mob is Casting ${Me.TargetCasting}"		
 		variable iterator Iterator
 		Counter:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
