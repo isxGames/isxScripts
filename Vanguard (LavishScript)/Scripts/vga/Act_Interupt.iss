@@ -51,6 +51,10 @@ function counteringfunct()
 				{
 					vgexecute /stopcasting
 				}
+				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+				{
+				waitframe
+				}
 				if ${Me.Ability[${counterspell1}].IsReady}
 				{
 					call executeability "${CounterSpell1}" "attack" "Neither"
@@ -100,6 +104,10 @@ function dispellfunct()
 			{
 				while ${Me.TargetBuff[${buffint}].Name.Find[${Iterator.Key}]}
 				{
+					while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+					{
+					waitframe
+					}
 					while !${Me.Ability[${DispellSpell}].IsReady}
 						wait 1
 					if ${Me.Ability[${DispellSpell}].IsReady}
@@ -126,6 +134,10 @@ function StancePushfunct()
 			{
 				while ${Me.TargetBuff[${Iterator.Key}](exists)}
 				{
+				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+				{
+				waitframe
+				}
 				if ${Me.Ability[${PushStanceSpell}].IsReady}
 					call executeability "${PushStanceSpell}" "attack" "Neither"
 				}
