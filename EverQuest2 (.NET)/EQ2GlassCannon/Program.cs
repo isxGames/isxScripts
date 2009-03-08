@@ -566,11 +566,22 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public static bool SendEMail(string strAccount, int iPort, string strFromAddress, List<string> astrToAddressList, string strSubject, string strMessage)
+		public static bool SendEMail(
+			string strServer,
+			int iPort,
+			string strAccount,
+			string strPassword,
+			string strFromAddress,
+			List<string> astrToAddressList,
+			string strSubject,
+			string strMessage)
 		{
 			try
 			{
-				SmtpClient ThisClient = new SmtpClient(strAccount, iPort);
+				SmtpClient ThisClient = new SmtpClient(strServer, iPort);
+
+				if (!string.IsNullOrEmpty(strAccount) || !string.IsNullOrEmpty(strPassword))
+					ThisClient.Credentials = new System.Net.NetworkCredential(strAccount, strPassword);
 
 				foreach (string strThisToAddress in astrToAddressList)
 				{

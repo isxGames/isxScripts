@@ -34,8 +34,10 @@ namespace EQ2GlassCannon
 		public string m_strMentorSubphrase = "mentor";
 		public string m_strRepairSubphrase = "repair";
 		public string m_strSpawnWatchSubphrase = "watch for";
-		public string m_strSpawnWatchSMTPAccount = string.Empty;
+		public string m_strSpawnWatchSMTPServer = string.Empty;
 		public int m_iSpawnWatchSMTPPort = 25;
+		public string m_strSpawnWatchSMTPAccount = string.Empty;
+		public string m_strSpawnWatchSMTPPassword = string.Empty;
 		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
 		public string m_strSpawnWatchFromAddress = string.Empty;
 		public float m_fStayInPlaceTolerance = 1.5f;
@@ -181,8 +183,10 @@ namespace EQ2GlassCannon
 			TransferINICaselessString(eTransferType, "General.MentorSubphrase", ref m_strMentorSubphrase);
 			TransferINICaselessString(eTransferType, "General.RepairSubphrase", ref m_strRepairSubphrase);
 			TransferINICaselessString(eTransferType, "General.SpawnWatchSubphrase", ref m_strSpawnWatchSubphrase);
-			TransferINICaselessString(eTransferType, "General.SpawnWatchSMTPAccount", ref m_strSpawnWatchSMTPAccount);
+			TransferINIString(eTransferType, "General.SpawnWatchSMTPServer", ref m_strSpawnWatchSMTPServer);
 			TransferINIInteger(eTransferType, "General.SpawnWatchSMTPPort", ref m_iSpawnWatchSMTPPort);
+			TransferINIString(eTransferType, "General.SpawnWatchSMTPAccount", ref m_strSpawnWatchSMTPAccount);
+			TransferINIString(eTransferType, "General.SpawnWatchSMTPPassword", ref m_strSpawnWatchSMTPPassword);
 			TransferINIStringList(eTransferType, "General.SpawnWatchToAddresses", m_astrSpawnWatchToAddressList);
 			TransferINICaselessString(eTransferType, "General.SpawnWatchFromAddress", ref m_strSpawnWatchFromAddress);
 			TransferINIInteger(eTransferType, "General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
@@ -464,7 +468,8 @@ namespace EQ2GlassCannon
 				{
 					if (ThisActor.Name == m_strSpawnWatchTarget && 
 						Program.SendEMail(
-							m_strSpawnWatchSMTPAccount, m_iSpawnWatchSMTPPort,
+							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
+							m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
 							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
 							"From " + Me.Name,
 							m_strSpawnWatchTarget + " just spawned!"))
