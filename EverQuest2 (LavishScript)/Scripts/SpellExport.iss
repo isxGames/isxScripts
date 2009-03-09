@@ -197,8 +197,7 @@ function main(string Args)
 		echo All abilities came up as NULL. Re-run script
 		return
 	}
-	if ${NULLsSkipped}>0
-		echo Skipped ${NULLsSkipped} NULLs. Open your spell book and go through it one page at a time then re-run script.
+ 
 	LavishSettings[SpellInformation]:Export["${ConfigFile}"]
 	LavishSettings[SpellInformation]:Clear
 	echo Save completed to file: ${ConfigFile}	
