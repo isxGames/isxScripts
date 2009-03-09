@@ -1,6 +1,6 @@
 /************************************************
 **Created by HotShot**
-*Verison 1.00*
+*Verison 1.03*
 *Date: 03/08/09
  
  
@@ -10,6 +10,11 @@ run SpellExport		**Exports ALL spells, including Tradeskills/Abilities/Spells/Co
 		NT	**No Tradeskill abilities
 		TO	**Tradeskill abilities only
 		Settings**Exports using Settings instead of Attributes **DO NOT USE**
+ 
+Verison 1.02 updates:
+Changed int to int64
+Changed from GetAbilities (used int) to NumAbilities
+Added repeat for NULL abilities
 **/
  
 function main(string Args)
@@ -33,34 +38,27 @@ function main(string Args)
 	variable settingsetref setSpell
 	setSpell:Set[${LavishSettings[SpellInformation].FindSet[${Me.SubClass}]}]
  
-	variable index:ability SpellStorage
-	echo Counting Spells in spell book... ${Me.GetAbilities[SpellStorage]}
+	;variable index:ability SpellStorage
+	echo Counting Spells in spell book... ${Me.NumAbilities}
  
 	variable int SpellCounter=0
-	variable int CurrentSpellID
+	variable int64 CurrentSpellID
 	variable string CurrentSpellName
 	variable int NULLsSkipped=0
 	variable string WhatToReturn
 	variable int aa
-	variable int LastSpellID=0
+	variable int64 LastSpellID=0
  
-	while ${SpellCounter:Inc}<=${SpellStorage.Used}
+	while ${SpellCounter:Inc}<=${Me.NumAbilities}
 	{
-		CurrentSpellID:Set[${SpellStorage[${SpellCounter}]}]
-		if ${LastSpellID}==${CurrentSpellID}
-		{
-			;Seems 50% of the abilities are NULL/same spell ID
-			NULLsSkipped:Inc
-			continue
-		}
- 
+		CurrentSpellID:Set[${Me.Ability[${SpellCounter}].ID}]
 		LastSpellID:Set[${CurrentSpellID}]
  
-		;Reason the wait is here, because SpellBookType invokes a server, whereas the above does not.
 		;Avoid spamming the server... Only 1 spell per second
 		wait 10
  
 		CurrentSpellName:Set[${Me.Ability[id,${CurrentSpellID}].Name}]
+ 
 		if ${Args.Find[NT]} && ${Me.Ability[id,${CurrentSpellID}].SpellBookType}==3
 		{
 			echo Skipping Tradeskill ability: ${CurrentSpellName} - ID: ${CurrentSpellID}
@@ -73,13 +71,14 @@ function main(string Args)
 			continue
 		}
  
-		if ${CurrentSpellName.Equal[NULL]}
+		if ${CurrentSpellName.Equal[NULL]} || !${Me.Ability[id,${CurrentSpellID}](exists)}
 		{
 			NULLsSkipped:Inc
-			;echo Skipping NULL Ability: #${SpellCounter}/${SpellStorage.Used}... Coming up as:${CurrentSpellName} - ID: ${CurrentSpellID}
+			echo Repeating NULL Ability: #${SpellCounter}/${Me.NumAbilities}... Coming up as:${CurrentSpellName} - ID: ${CurrentSpellID}
+			SpellCounter:Dec
 			continue
 		}
-		echo Adding Ability#: ${SpellCounter}/${SpellStorage.Used}... ${CurrentSpellName} - ID: ${CurrentSpellID}
+		echo Adding Ability#: ${SpellCounter}/${Me.NumAbilities}... ${CurrentSpellName} - ID: ${CurrentSpellID}
  
 		if !${Args.Find[Settings]}
 		{
@@ -193,12 +192,13 @@ function main(string Args)
 			;setSpell.FindSet[${CurrentSpellName}]:AddSetting[,${Me.Ability[id,${CurrentSpellID}].}]
 		}
 	}
-	if ${NULLsSkipped}==${SpellStorage.Used}
+	if ${NULLsSkipped}==${Me.NumAbilities}
 	{
 		echo All abilities came up as NULL. Re-run script
 		return
 	}
-	echo Skipped ${NULLsSkipped} NULLs. There will always be NULLs.
+	if ${NULLsSkipped}>0
+		echo Skipped ${NULLsSkipped} NULLs. Open your spell book and go through it one page at a time then re-run script.
 	LavishSettings[SpellInformation]:Export["${ConfigFile}"]
 	LavishSettings[SpellInformation]:Clear
 	echo Save completed to file: ${ConfigFile}	
