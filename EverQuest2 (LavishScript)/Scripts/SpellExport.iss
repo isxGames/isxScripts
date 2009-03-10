@@ -63,6 +63,7 @@ function main(string Args)
 		LastSpellID:Set[${CurrentSpellID}]
 
 		;Avoid spamming the server... Only 1 spell per second
+		Me.Ability[${CurrentSpellID}]:Examine
 		wait 10
 
 		CurrentSpellName:Set[${Me.Ability[id,${CurrentSpellID}].Name}]
@@ -206,6 +207,7 @@ function main(string Args)
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Range,${Me.Ability[id,${CurrentSpellID}].Range}]
 			;setSpell.FindSet[${CurrentSpellName}]:AddSetting[,${Me.Ability[id,${CurrentSpellID}].}]
 		}
+		press esc
 	}
 	if ${NULLsSkipped}==${Me.NumAbilities}
 	{
