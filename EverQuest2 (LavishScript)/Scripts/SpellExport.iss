@@ -2,51 +2,53 @@
 **Created by HotShot**
 *Verison 1.04*
 *Date: 03/08/09
- 
- 
+
+
 **Commands**
 run SpellExport		**Exports ALL spells, including Tradeskills/Abilities/Spells/Combat Arts
 	Args:	HELP	**Displays these options
 		NT	**No Tradeskill abilities
 		TO	**Tradeskill abilities only
+		NP  **No Passive Abilities
 		Settings**Exports using Settings instead of Attributes **DO NOT USE**
- 
+
 Verison 1.04 updates:
 Removed the NULLsCounter since it repeats for NULLs. Was giving wrong error messages.
- 
+
 Verison 1.03 updates:
 Removed NULL message when some NULLS were missed
- 
+
 Verison 1.02 updates:
 Changed int to int64
 Changed from GetAbilities (used int) to NumAbilities
 Added repeat for NULL abilities
 **/
- 
+
 function main(string Args)
 {
 	if ${Args.Find[help]}
 	{
 		echo **Commands**
 		echo run SpellExport		**Exports ALL spells, including Tradeskills/Abilities/Spells/Combat Arts
-		echo	Args:	NT	**No Tradeskill abilities
-		echo		TO	**Tradeskill abilities only
-		echo		Settings**Exports using Settings instead of Attributes **DO NOT USE**
+		echo  Args:	NT	**No Tradeskill abilities
+		echo    TO	**Tradeskill abilities only
+		echo    NP  **No Passive Abilities
+		echo    Settings**Exports using Settings instead of Attributes **DO NOT USE**
 		return
 	}
- 
+
 	variable string ConfigFile="${Script.CurrentDirectory}/${Me.SubClass}_SpellExport.xml"
- 
+
 	;Clear then Load LavishSettings to make sure it's clean.
 	LavishSettings[SpellInformation]:Clear
 	LavishSettings:AddSet[SpellInformation]
 	LavishSettings[SpellInformation]:AddSet[${Me.SubClass}]
 	variable settingsetref setSpell
 	setSpell:Set[${LavishSettings[SpellInformation].FindSet[${Me.SubClass}]}]
- 
+
 	;variable index:ability SpellStorage
 	echo Counting Spells in spell book... ${Me.NumAbilities}
- 
+
 	variable int SpellCounter=0
 	variable int64 CurrentSpellID
 	variable string CurrentSpellName
@@ -54,29 +56,35 @@ function main(string Args)
 	variable string WhatToReturn
 	variable int aa
 	variable int64 LastSpellID=0
- 
+
 	while ${SpellCounter:Inc}<=${Me.NumAbilities}
 	{
 		CurrentSpellID:Set[${Me.Ability[${SpellCounter}].ID}]
 		LastSpellID:Set[${CurrentSpellID}]
- 
+
 		;Avoid spamming the server... Only 1 spell per second
 		wait 10
- 
+
 		CurrentSpellName:Set[${Me.Ability[id,${CurrentSpellID}].Name}]
- 
+
 		if ${Args.Find[NT]} && ${Me.Ability[id,${CurrentSpellID}].SpellBookType}==3
 		{
 			echo Skipping Tradeskill ability: ${CurrentSpellName} - ID: ${CurrentSpellID}
 			continue
 		}
- 
+
+		if ${Args.Find[NP]} && ${Me.Ability[id,${CurrentSpellID}].SpellBookType}==4
+		{
+			echo Skipping Tradeskill ability: ${CurrentSpellName} - ID: ${CurrentSpellID}
+			continue
+		}
+
 		if ${Args.Find[TO]} && ${Me.Ability[id,${CurrentSpellID}].SpellBookType}!=3
 		{
 			echo Skipping non-Tradeskill ability: ${CurrentSpellName} - ID: ${CurrentSpellID}
 			continue
 		}
- 
+
 		if ${CurrentSpellName.Equal[NULL]} || !${Me.Ability[id,${CurrentSpellID}](exists)}
 		{
 			;Removing NULLsSkipper because it repeats until it finds the spell
@@ -86,7 +94,7 @@ function main(string Args)
 			continue
 		}
 		echo Adding Ability#: ${SpellCounter}/${Me.NumAbilities}... ${CurrentSpellName} - ID: ${CurrentSpellID}
- 
+
 		if !${Args.Find[Settings]}
 		{
 			setSpell:AddSetting[${CurrentSpellName},${CurrentSpellName}]
@@ -101,7 +109,7 @@ function main(string Args)
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[RecastTime,${Me.Ability[id,${CurrentSpellID}].RecastTime}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[MaxDuration,${Me.Ability[id,${CurrentSpellID}].MaxDuration}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[NumClasses,${Me.Ability[id,${CurrentSpellID}].NumClasses}]
- 
+
 			aa:Set[0]
 			WhatToReturn:Set[]
 			while ${aa:Inc}<=${Me.Ability[id,${CurrentSpellID}].NumEffects}
@@ -123,7 +131,7 @@ function main(string Args)
 			}
 			;Adding a new line which can be read by scripts instead of cycling the descriptions. If it doesn't exist, it means there are none of the restrictions from above
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[DescRestrictions,${WhatToReturn}]
- 
+
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Class,${Me.Ability[id,${CurrentSpellID}].Class}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[NumEffects,${Me.Ability[id,${CurrentSpellID}].NumEffects}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[BackDropIconID,${Me.Ability[id,${CurrentSpellID}].BackDropIconID}]
@@ -140,7 +148,7 @@ function main(string Args)
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[MaxRange,${Me.Ability[id,${CurrentSpellID}].MaxRange}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Range,${Me.Ability[id,${CurrentSpellID}].Range}]
 			;setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[]
- 
+
 		}
 		elseif ${Args.Find[Settings]}
 		{
@@ -182,7 +190,7 @@ function main(string Args)
 			}
 			;Adding a new line which can be read by scripts instead of cycling the descriptions. If it doesn't exist, it means there are none of the restrictions from above
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[DescRestrictions,${WhatToReturn}]
- 
+
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[BackDropIconID,${Me.Ability[id,${CurrentSpellID}].BackDropIconID}]
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[HealthCostPerTick,${Me.Ability[id,${CurrentSpellID}].HealthCostPerTick}]
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[PowerCostPerTick,${Me.Ability[id,${CurrentSpellID}].PowerCostPerTick}]
@@ -204,8 +212,8 @@ function main(string Args)
 		echo All abilities came up as NULL. Re-run script
 		return
 	}
- 
+
 	LavishSettings[SpellInformation]:Export["${ConfigFile}"]
 	LavishSettings[SpellInformation]:Clear
-	echo Save completed to file: ${ConfigFile}	
+	echo Save completed to file: ${ConfigFile}
 }

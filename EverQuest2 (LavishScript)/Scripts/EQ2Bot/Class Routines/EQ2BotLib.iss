@@ -195,11 +195,6 @@ function EQ2BotLib_Init()
 
 	ExecuteAtom SaveEquipmentSet "Default"
 
-	if ${Session.NotEqual[${Me.Name}]}
-	{
-		uplink name ${Me.Name}
-	}
-
 	call PopulateMezSpells
 	call PopulateInvisSpells
 	call PopulateSKFDSpells
