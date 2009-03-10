@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13j :  released 3rd March 2009
+; Version 0.13j :  released 10th March 2009
 ;
 ; Declare Variables
 ;
@@ -110,8 +110,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices 0.13j :  released 3rd March 2009" FF11FFCC
-	call echolog "Running MyPrices 0.13j :  released 3rd March 2009"
+	call AddLog "Running MyPrices 0.13j :  released 10th March 2009" FF11FFCC
+	call echolog "Running MyPrices 0.13j :  released 10th March 2009"
 	
 	call StartUp	
 
@@ -252,10 +252,12 @@ function main(string goscan, string goscan2)
 							while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 						}
 						call SetColour ${currentpos} FF0B0301
+						
 						; check to see if the items minimum price should be used or not
-						Call CheckMinPriceSet "${currentitem}"
+						Call CheckPriceSet MinSalePrice "${currentitem}"
 						MinPriceSet:Set[${Return}]
-						Call CheckMaxPriceSet "${currentitem}"
+						
+						Call CheckPriceSet  MaxSalePrice "${currentitem}"
 						MaxPriceSet:Set[${Return}]
 
 						broker Name "${currentitem}" Sort ByPriceAsc MaxLevel 999
@@ -271,11 +273,11 @@ function main(string goscan, string goscan2)
 							MinPrice:Set[${Return}]
 
 							; check if the item has a MaxPrice
-							call checkmaxitem "${currentitem}"
+							call checkitem MaxPrice "${currentitem}"
 							MaxSalePrice:Set[${Return}]
 
 							; check if the item is in the myprices settings file
-							call checkitem "${currentitem}"
+							call checkitem Sell "${currentitem}"
 							MinSalePrice:Set[${Return}]
 
 							; if a stored Sale price was found then carry on
@@ -441,7 +443,7 @@ function main(string goscan, string goscan2)
 								call FindItem ${i} "${currentitem}"
 								j:Set[${Return}]
 								; Read the maximum price you will allow and set it to that price								
-								call checkmaxitem "${currentitem}"
+								call checkitem MaxPrice "${currentitem}"
 								call SetItemPrice ${i} ${j} ${Return}
 							}
 							else
@@ -1408,17 +1410,17 @@ function BrokerSearch(string lookup, bool BuyNameOnly)
 }
 
 
-function checkitem(string name)
+function checkitem(string checktype, string name)
 {
-	call echolog "-> checkitem : ${name}"
+	call echolog "-> checkitem : ${checktype} ${name}"
 	; keep a reference directly to the Item set.
 	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 	Item:Set[${ItemList.FindSet[${name}]}]
 
-	if ${Item.FindSetting[Sell](exists)}
+	if ${Item.FindSetting[${checktype}](exists)}
 	{
-		call echolog "<- checkitem : ${Item.FindSetting[Sell]}"
-		return ${Item.FindSetting[Sell]}
+		call echolog "<- checkitem : ${Item.FindSetting[${checktype}]}"
+		return ${Item.FindSetting[${checktype}]}
 	}
 	else
 	{
@@ -1427,24 +1429,6 @@ function checkitem(string name)
 	}
 }
 
-function checkmaxitem(string name)
-{
-	call echolog "-> checkmaxitem : ${name}"
-	; keep a reference directly to the Item set.
-	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	Item:Set[${ItemList.FindSet[${name}]}]
-
-	if ${Item.FindSetting[MaxPrice](exists)}
-	{
-		call echolog "<- checkmaxitem : ${Item.FindSetting[MaxPrice]}"
-		return ${Item.FindSetting[MaxPrice]}
-	}
-	else
-	{
-		call echolog "<- checkmaxitem : -1"
-		return -1
-	}
-}
 
 function LoadList()
 {
@@ -1456,8 +1440,6 @@ function LoadList()
 	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
 	Declare labelname string local
-	Declare Money float local
-
 
 	UIElement[ItemList@Sell@GUITabs@MyPrices]:ClearItems
 
@@ -1506,13 +1488,12 @@ function LoadList()
 						call SetColour ${numitems} FFFFFF00
 						call addtotals "${labelname}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
 					}
-					; store the item name
+					; store the items box number
 					itemprice[${numitems}]:Set[${i}]
 					; check to see if it already has a minimum price set
-					call checkitem "${labelname}"
-					Money:Set[${Return}]
+					call checkitem Sell "${labelname}"
 					; If no value is returned then add the price to the settings file
-					if ${Money} == -1
+					if ${Return} == -1
 					{
 						call SetColour ${numitems} FF0000FF
 						call AddLog "Item Missing from Settings File,  Adding : ${labelname}" FF00CCFF
@@ -1617,18 +1598,7 @@ function pricefromstring()
 
 function calcsilver(int plat, int gold, int silver, float copper)
 {
-	Declare Platina int local
-	Declare Gold int local
-	Declare Silver int local
-	Declare Copper float local
-	Declare SMoney float local
-	
-	Platina:Set[${Math.Calc[${plat}*10000]}]
-	Gold:Set[${Math.Calc[${gold}*100]}]
-	Copper:Set[${Math.Calc[${copper}/100]}]
-	SMoney:Set[${Math.Calc[${Platina}+${Gold}+${silver}+${Copper}]}]
-	
-	Return ${SMoney} 
+	Return ${Math.Calc[${Math.Calc[${plat}*10000]}+${Math.Calc[${gold}*100]}+${silver}+${Math.Calc[${copper}/100]}]}
 }
 
 ; routine to save/update items and prices
@@ -1898,9 +1868,9 @@ function FillMinPrice(int ItemID)
 	call echolog "<end> : FillMinPrice"
 }
 
-function CheckMinPriceSet(string itemname)
+function CheckPriceSet(string minmax, string itemname)
 {
-	call echolog "-> CheckMinPriceSet ${itemname}"
+	call echolog "-> ${minmax} ${itemname}"
 	LavishSettings:AddSet[myprices]
 	LavishSettings[myprices]:AddSet[General]
 	LavishSettings[myprices]:AddSet[Item]
@@ -1909,23 +1879,8 @@ function CheckMinPriceSet(string itemname)
 	ItemList:AddSet[${itemName}]
 
 	Item:Set[${ItemList.FindSet[${itemname}]}]
-	call echolog "<- CheckMinPriceSet ${Item.FindSetting[MinSalePrice]}"
-	return ${Item.FindSetting[MinSalePrice]}
-}
-
-function CheckMaxPriceSet(string itemname)
-{
-	call echolog "-> CheckMaxPriceSet ${itemname}"
-	LavishSettings:AddSet[myprices]
-	LavishSettings[myprices]:AddSet[General]
-	LavishSettings[myprices]:AddSet[Item]
-
-	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	ItemList:AddSet[${itemName}]
-
-	Item:Set[${ItemList.FindSet[${itemname}]}]
-	call echolog "<- CheckMaxPriceSet ${Item.FindSetting[MaxSalePrice]}"
-	return ${Item.FindSetting[MaxSalePrice]}
+	call echolog "<- ${minmax} ${Item.FindSetting[minmax]}"
+	return ${Item.FindSetting[${minmax}]}
 }
 
 function savebuyinfo()
@@ -2019,7 +1974,7 @@ function savecraftinfo()
 	else
 	{
 		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
-	; Parameters : Craft , Itemname , Stackszie , Number , <Bool> Craftitem, <Bool> nameonly,<bool>, attune only <bool>, transmute startlevel,endlevel,tier, Boxnumber, Recipe Name
+	; Parameters : Craft , Itemname , Stacksize , Number , <Bool> Craftitem, <Bool> nameonly,<bool>, attune only <bool>, transmute startlevel,endlevel,tier, Boxnumber, Recipe Name
 		call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
 	}
 	call echolog "<end> : savecraftinfo"
@@ -2234,10 +2189,10 @@ function SetItemPrice(int i, int j, float price, bool UL)
 	{
 		call FindItem ${i} "${currentitem}"
 		j:Set[${Return}]
+
 		if ${j} != -1
-		{
 			Me.Vending[${i}].Consignment[${j}]:Unlist
-		}
+
 	}
 	wait 10
 	if ${Logging}
@@ -2421,7 +2376,6 @@ function placeitems(string itemname, int box, int numitems)
 	; attempts to place the items in the defined box
 	Declare xvar int local 1
 	Declare lasttotal int local
-	Declare errorcount int local 0
 	Declare space int local
 	if ${numitems} >0
 	{
@@ -2434,17 +2388,15 @@ function placeitems(string itemname, int box, int numitems)
 			{
 				; check current used capacity
 				lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+
 				; place the item into the consignment system , grouping it with similar items
 				Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment[${itemname}].SerialNumber}]
 
 				; make the script wait till the box total has changed (item was added)
-				; skips to the next item if nothing changes within 100 frames (one of the items was unplaceable)
-				errorcount:Set[0]
-				do
-				{
-					waitframe
-				}
-				while ${Me.Vending[${box}].UsedCapacity} == ${lasttotal} && ${errorcount:Inc} < 100
+				; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
+
+				wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+				
 				space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
 				numitems:Dec
 			}
