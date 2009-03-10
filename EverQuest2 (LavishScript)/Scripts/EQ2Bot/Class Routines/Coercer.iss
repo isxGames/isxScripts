@@ -595,28 +595,31 @@ function RefreshPower()
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<45
 		call CastSpellRange 309
 
-	;Mana Flow the lowest group member
-	tempvar:Set[1]
-	MemberLowestPower:Set[0]
-	do
+	if ${Me.Group}
 	{
-		if ${Me.Group[${tempvar}].ToActor.Power}<45 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+		;Mana Flow the lowest group member
+		tempvar:Set[1]
+		MemberLowestPower:Set[0]
+		do
 		{
-			if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
-				MemberLowestPower:Set[${tempvar}]
+			if ${Me.Group[${tempvar}].ToActor.Power}<45 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+			{
+				if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
+					MemberLowestPower:Set[${tempvar}]
+			}
+
+		}
+		while ${tempvar:Inc}<${Me.GroupCount}
+
+		if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<45 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+		{
+			call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 		}
 
+		;Channel if group member is below 20 and we are in combat
+		if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<40 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+			call CastSpellRange 310
 	}
-	while ${tempvar:Inc}<${Me.GroupCount}
-
-	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<45 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
-	{
-		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
-	}
-
-	;Channel if group member is below 20 and we are in combat
-	if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<40 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
-		call CastSpellRange 310
 
 	;Mana Cloak the group if the Main Tank is low on power
 	if ${Actor[${MainTankPC}].Power}<40 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
