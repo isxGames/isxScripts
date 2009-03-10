@@ -1,6 +1,6 @@
 /************************************************
 **Created by HotShot**
-*Verison 1.03*
+*Verison 1.04*
 *Date: 03/08/09
  
  
@@ -10,6 +10,12 @@ run SpellExport		**Exports ALL spells, including Tradeskills/Abilities/Spells/Co
 		NT	**No Tradeskill abilities
 		TO	**Tradeskill abilities only
 		Settings**Exports using Settings instead of Attributes **DO NOT USE**
+ 
+Verison 1.04 updates:
+Removed the NULLsCounter since it repeats for NULLs. Was giving wrong error messages.
+ 
+Verison 1.03 updates:
+Removed NULL message when some NULLS were missed
  
 Verison 1.02 updates:
 Changed int to int64
@@ -73,7 +79,8 @@ function main(string Args)
  
 		if ${CurrentSpellName.Equal[NULL]} || !${Me.Ability[id,${CurrentSpellID}](exists)}
 		{
-			NULLsSkipped:Inc
+			;Removing NULLsSkipper because it repeats until it finds the spell
+			;NULLsSkipped:Inc
 			echo Repeating NULL Ability: #${SpellCounter}/${Me.NumAbilities}... Coming up as:${CurrentSpellName} - ID: ${CurrentSpellID}
 			SpellCounter:Dec
 			continue
