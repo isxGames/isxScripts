@@ -45,17 +45,17 @@ function main()
 		{
 			ExecuteQueued
 			waitframe
+
 			If ${Mapping}
-			{
 				call AutoBox 2
-			}
+
 		}
 		while ${pauseharvest}
 		scan:Set[${UIElement[GoHarvest].FindChild[GUITabs].FindChild[Harvest].FindChild[ScanArea].Text}]
+
 		if ${scan} <0 || ${scan} > 300
-		{
 			scan:Set[150]
-		}
+
 		Echo Scanning ${scan} units
 		call startharvest ${scan}
 	}
@@ -130,10 +130,10 @@ function checknodename(int tempvar, string actorname)
 	variable string match
 	harvesttype:Set[${LavishSettings[goharvest].FindSet[${tempvar}]}]
 	match:Set[${harvesttype.FindSetting[${actorname}]}]
+
 	if !${match.Equal[NULL]}
-	{
 		 Return TRUE
-	}
+
 	Return FALSE
 }
 
@@ -146,17 +146,15 @@ function harvestnode()
 		{
 			call checkPC ${HID}
 			if ${Return}
-			{
 				return STUCK
-			}
 
 			if ${Math.Distance[${Actor[${HID}].X},${Me.X}]} <= 4 && ${Math.Distance[${Actor[${HID}].Z},${Me.Z}]} <=4
 			{
 				call checkPC
+
 				if ${Return}
-				{
 					Return STUCK
-				}
+
 				Actor[${HID}]:DoTarget
 				wait 5
 				call hitnode ${HID}
@@ -189,9 +187,7 @@ function harvestnode()
 				{
 					call checkPC
 					if ${Return}
-					{
 						Return
-					}
 					
 ;					echo Distance to node is ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]}
 					 if ${Math.Distance[${Actor[${HID}].Y},${Me.Y}]} > 5
@@ -226,10 +222,10 @@ function hitnode(float HID)
 		waitframe
 		Target:DoubleClick
 		wait 20
+		
 		if ${BadNode}
-		{
 			return STUCK
-		}
+		
 		while ${Me.CastingSpell}
 		waitframe
 	}
@@ -360,9 +356,7 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 								; check nobody at that node
 								call checkPC ${HID}
 								if ${Return}
-								{
 									return STUCK
-								}
 	
 								Echo Moving to ${CX},${CZ} via ${px},${pz}
 								call moveto ${px} ${pz} 2 0 3 1
@@ -370,18 +364,15 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 								
 								; check still nobody at that node
 								call checkPC ${HID}
+
 								if ${Return}
-								{
 									return STUCK
-								}
+
 								if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
-								{
 								    	call moveto ${CX} ${CZ} 3 0 3 1
-								}
 								else
-								{
 									call moveto ${CX} ${CZ} 4 0 3 1
-								}
+
 								Return THERE
 							}
 						}
@@ -410,9 +401,7 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 			; if both > and < angles from node are blocked then no point looking further along those routes
 			; exit loop and increase angles
 			if ${HBlocked[1]} && ${HBlocked[2]} 
-			{
 				break
-			}
 		}
 		
 		; Expand the length of the lines being checked
