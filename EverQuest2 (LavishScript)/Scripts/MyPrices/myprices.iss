@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13j :  released 10th March 2009
+; Version 0.13j :  released 12th March 2009
 ;
 ; Declare Variables
 ;
@@ -110,8 +110,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices 0.13j :  released 10th March 2009" FF11FFCC
-	call echolog "Running MyPrices 0.13j :  released 10th March 2009"
+	call AddLog "Running MyPrices 0.13j :  released 12th March 2009" FF11FFCC
+	call echolog "Running MyPrices 0.13j :  released 12th March 2009"
 	
 	call StartUp	
 
