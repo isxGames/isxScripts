@@ -424,8 +424,8 @@
 					<Commandbutton name='Craft'>
 						<X>5%</X>
 						<Y>370</Y>
-						<Width>100</Width>
-						<Height>20</Height>
+						<Width>80</Width>
+						<Height>18</Height>
 						<Text>Craft List</Text>
 						<AutoTooltip>
 							Create recipe list for Craft.
@@ -436,11 +436,26 @@
 							Script[myprices]:QueueCommand[call checkstock]
 						</OnLeftClick>
 					</Commandbutton>
+					<Commandbutton name='RunCraft'>
+						<X>23%</X>
+						<Y>370</Y>
+						<Width>90</Width>
+						<Height>18</Height>
+						<Text>Craft _myprices</Text>
+						<AutoTooltip>
+							Run Craft _myprices and Exit script
+						</AutoTooltip>
+						<OnLeftClick>
+							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" Running Craft "]
+							craft _myprices
+							Script[myprices].VariableScope.Exitmyprices:Set[TRUE]
+						</OnLeftClick>
+					</Commandbutton>
 					<Commandbutton name='Place'>
 						<X>5%</X>
 						<Y>395</Y>
-						<Width>100</Width>
-						<Height>20</Height>
+						<Width>80</Width>
+						<Height>18</Height>
 						<Text>Place Items</Text>
 						<AutoTooltip>
 							Put your crafted items on the broker.
