@@ -267,7 +267,13 @@ namespace EQ2GlassCannon
 							continue;
 						}
 						else
-							bFirstZoningFrame = true;
+						{
+							if (!bFirstZoningFrame)
+							{
+								Program.Log("Done zoning.");
+								bFirstZoningFrame = true;
+							}
+						}
 
 						/// Yay for lazy!
 						if (EQ2.PendingQuestName != "None")
@@ -298,8 +304,9 @@ namespace EQ2GlassCannon
 								case "wizard": s_Controller = new WizardController(); break;
 								default:
 								{
-									Program.Log("Unrecognized or unsupported subclass type: " + Me.SubClass);
-									return;
+									Program.Log("Unrecognized or unsupported subclass type: {0}. Will use generic controller.", Me.SubClass);
+									s_Controller = new PlayerController();
+									break;
 								}
 							}
 
@@ -331,9 +338,9 @@ namespace EQ2GlassCannon
 							s_Controller.DoNextAction();
 
 						/// Only check for camping or AFK every 5th frame.
-						if ((s_lFrameCount % 5) == 0 && (Me.IsCamping || Me.IsAFK))
+						if ((s_lFrameCount % 5) == 0 && (Me.IsCamping))
 						{
-							Program.Log("Camping or AFK detected; aborting bot!");
+							Program.Log("Camping detected; aborting bot!");
 							s_bContinueBot = false;
 						}
 					}

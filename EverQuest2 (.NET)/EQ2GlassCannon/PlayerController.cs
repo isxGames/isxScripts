@@ -40,6 +40,7 @@ namespace EQ2GlassCannon
 		public string m_strSpawnWatchSMTPPassword = string.Empty;
 		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
 		public string m_strSpawnWatchFromAddress = string.Empty;
+		public string m_strSpawnWatchAlertCommand = string.Empty;
 		public float m_fStayInPlaceTolerance = 1.5f;
 		public int m_iCheckBuffsInterval = 500;
 		public bool m_bUseRanged = false;
@@ -187,8 +188,10 @@ namespace EQ2GlassCannon
 			TransferINIInteger(eTransferType, "General.SpawnWatchSMTPPort", ref m_iSpawnWatchSMTPPort);
 			TransferINIString(eTransferType, "General.SpawnWatchSMTPAccount", ref m_strSpawnWatchSMTPAccount);
 			TransferINIString(eTransferType, "General.SpawnWatchSMTPPassword", ref m_strSpawnWatchSMTPPassword);
+			TransferINIString(eTransferType, "General.SpawnWatchGuildChatAlert", ref m_strSpawnWatchSMTPPassword);
 			TransferINIStringList(eTransferType, "General.SpawnWatchToAddresses", m_astrSpawnWatchToAddressList);
 			TransferINICaselessString(eTransferType, "General.SpawnWatchFromAddress", ref m_strSpawnWatchFromAddress);
+			TransferINIString(eTransferType, "General.SpawnWatchAlertCommand", ref m_strSpawnWatchAlertCommand);
 			TransferINIInteger(eTransferType, "General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
 			TransferINIBool(eTransferType, "General.UseRanged", ref m_bUseRanged);
 			TransferINIBool(eTransferType, "General.UseGreenAEs", ref m_bUseGreenAEs);
@@ -466,15 +469,40 @@ namespace EQ2GlassCannon
 			{
 				foreach (Actor ThisActor in EnumCustomActors())
 				{
-					if (ThisActor.Name == m_strSpawnWatchTarget && 
-						Program.SendEMail(
-							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
-							m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
-							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
-							"From " + Me.Name,
-							m_strSpawnWatchTarget + " just spawned!"))
+					string strThisActorName = ThisActor.Name.Trim().ToLower();
+					if (strThisActorName == m_strSpawnWatchTarget)
 					{
-						Program.Log("Spawn Watch target \"{0}\" found, and listeners notified!", m_strSpawnWatchTarget);
+						Program.Log("Spawn Watch target \"{0}\" found!", ThisActor.Name);
+
+						if (!string.IsNullOrEmpty(m_strSpawnWatchSMTPServer) && (m_astrSpawnWatchToAddressList.Count > 0))
+						{
+							Program.Log("Attempting to send Spawn Watch e-mails...");
+
+							if (Program.SendEMail(
+								m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
+								m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
+								m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
+								"From " + Me.Name,
+								ThisActor.Name + " just spawned!"))
+							{
+								Program.Log("Spawn Watch e-mails successfully sent.");
+							}
+							else
+							{
+								Program.Log("Not all Spawn Watch e-mails could be sent!");
+							}
+						}
+
+						try
+						{
+							Program.RunCommand(m_strSpawnWatchAlertCommand, m_strSpawnWatchTarget);
+						}
+						catch
+						{
+							Program.Log("Error in Spawn Watch alert command format.");
+						}
+
+						Program.Log("Reverting back to AFK mode. You will need to send another command to resume Spawn Watch.");
 						m_ePositioningStance = PositioningStance.DoNothing;
 						return true;
 					}
@@ -752,7 +780,7 @@ namespace EQ2GlassCannon
 					Program.Log("Spawn Watch command (\"{0}\") received.", m_strSpawnWatchSubphrase);
 					m_bSpawnWatchTargetAnnounced = false;
 
-					m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchSubphrase.Length).Trim();
+					m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchSubphrase.Length).ToLower().Trim();
 					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
 
 					ChangePositioningStance(PositioningStance.SpawnWatch);
