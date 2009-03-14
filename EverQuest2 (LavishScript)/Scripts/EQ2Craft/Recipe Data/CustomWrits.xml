@@ -3,6 +3,7 @@
 <InnerSpaceSettings>
 	<Set Name="Custom Writ Names">
 		<Setting Name="Everfrost Iced Coffee">Everfrost Coffee</Setting>
+		<Setting Name="Iced Everfrost Coffee">Everfrost Coffee</Setting>
 		<setting Name="Abaster Eggs">Alabaster Eggs</Setting>
 		<Setting Name="Antonican ornate end table">an Antonican ornate end table</Setting>
 		<Setting Name="Apprentice IV: Conjurors Signet">Conjuror's Signet (Apprentice)</Setting>
