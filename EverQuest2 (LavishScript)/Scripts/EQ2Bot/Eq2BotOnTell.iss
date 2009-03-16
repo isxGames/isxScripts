@@ -52,8 +52,15 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
       case 28
 				if ${Message.Find[${SpellTrigger}]}
 				{
-					Debug:Echo["call CastSpellRange ${Message.Mid[${Math.Calc[${SpellTrigger.Length}+1]},3]} 0 0 0 ${Target.ID}"]
-					Script[EQ2Bot]:QueueCommand[call CastSpellRange ${Message.Mid[${Math.Calc[${SpellTrigger.Length}+1]},3]} 0 0 0 ${Target.ID}]
+					if ${Script[Eq2bot](exists)} && ${Mesage.Token[2," "].Length}<3
+					{
+						Debug:Echo["call CastSpellRange ${Message.Mid[${Math.Calc[${SpellTrigger.Length}+1]},3]} 0 0 0 ${Target.ID}"]
+						Script[EQ2Bot]:QueueCommand[call CastSpellRange ${Message.Mid[${Math.Calc[${SpellTrigger.Length}+1]},3]} 0 0 0 ${Target.ID}]
+					}
+					else
+					{
+						Me.Ability[${Message.Mid[${Math.Calc[${SpellTrigger.Length}+1]},${Math.Calc[${Message.Length}-${SpellTrigger.Length}]}]}]:Use
+					}
 				}
       case default
           break
