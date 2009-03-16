@@ -338,6 +338,9 @@ namespace EQ2GlassCannon
 				if (CheckSingleTargetBuffs(m_iMeleeHealProcBuffAbilityID, m_astrMeleeHealProcTargets, true, false))
 					return true;
 
+				if (CheckToggleBuff(m_iYaulpAbilityID, m_bBuffYaulp))
+					return true;
+
 				if (CheckGroupWaterBreathingBuff())
 					return true;
 
