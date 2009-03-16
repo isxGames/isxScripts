@@ -37,7 +37,7 @@ function main()
 function Init_Triggers()
 {
 	;**** Set this to whatever Command you want to be the cast command. ****
-	SpelTrigger:Set[Cast]
+	SpellTrigger:Set[Cast]
 
 	Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
 }
@@ -67,4 +67,9 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
           break
     }
   }
+}
+
+function atexit()
+{
+	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 }
