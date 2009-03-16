@@ -52,7 +52,7 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
       case 28
 				if ${Message.Find[${SpellTrigger}]}
 				{
-					if ${Script[Eq2bot](exists)} && ${Mesage.Token[2," "].Length}<3
+					if ${Script[Eq2bot](exists)} && ${Mesage.Token[2," "].Length}<4
 					{
 						Debug:Echo["call CastSpellRange ${Mesage.Token[2," "]} 0 0 0 ${Target.ID}"]
 						Script[EQ2Bot]:QueueCommand[call CastSpellRange ${Mesage.Token[2," "]} 0 0 0 ${Target.ID}]
