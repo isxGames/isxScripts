@@ -54,11 +54,12 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 				{
 					if ${Script[Eq2bot](exists)} && ${Mesage.Token[2," "].Length}<4
 					{
-						Debug:Echo["call CastSpellRange ${Mesage.Token[2," "]} 0 0 0 ${Target.ID}"]
+						Debug:Echo["EQ2botOnTell: call CastSpellRange ${Mesage.Token[2," "]} 0 0 0 ${Target.ID}"]
 						Script[EQ2Bot]:QueueCommand[call CastSpellRange ${Mesage.Token[2," "]} 0 0 0 ${Target.ID}]
 					}
 					else
 					{
+						Debug:Echo["EQ2botOnTell: Me.Ability[${Mesage.Token[2," "]}]:Use"]
 						Me.Ability[${Mesage.Token[2," "]}]:Use
 					}
 				}
