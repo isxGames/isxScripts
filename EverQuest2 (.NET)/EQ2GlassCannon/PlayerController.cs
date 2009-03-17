@@ -8,6 +8,7 @@ using System.Drawing;
 using EQ2.ISXEQ2;
 using InnerSpaceAPI;
 using LavishVMAPI;
+using System.IO;
 
 namespace EQ2GlassCannon
 {
@@ -17,6 +18,7 @@ namespace EQ2GlassCannon
 
 		#region INI settings
 		public bool m_bWriteBackINI = true;
+		public string m_strCustomTellTriggerFile = string.Empty;
 		public string m_strReloadINISubphrase = "rebuff me pls";
 		public string m_strMainTank = string.Empty;
 		public string m_strAutoFollowTarget = string.Empty;
@@ -65,6 +67,7 @@ namespace EQ2GlassCannon
 		public int m_iFeatherfallAbilityID = -1;
 		public int m_iHalfElfMitigationDebuffAbilityID = -1;
 
+		/************************************************************************************/
 		public enum PositioningStance
 		{
 			DoNothing,
@@ -76,6 +79,7 @@ namespace EQ2GlassCannon
 			SpawnWatch,
 		}
 
+		/************************************************************************************/
 		public class Point3D
 		{
 			public float X = 0.0f;
@@ -96,6 +100,13 @@ namespace EQ2GlassCannon
 			}
 		}
 
+		/************************************************************************************/
+		public class CustomTellTrigger
+		{
+			public string m_strSubstring = string.Empty;
+			public List<string> m_astrCommands = new List<string>();
+		}
+
 		public bool m_bContinueBot = true;
 		public bool m_bCheckBuffsNow = true;
 		public bool m_bIHaveAggro = false;
@@ -109,6 +120,7 @@ namespace EQ2GlassCannon
 		public Point3D m_ptStayLocation = new Point3D();
 		public bool m_bSpawnWatchTargetAnnounced = false;
 		public string m_strSpawnWatchTarget = string.Empty;
+		public List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
 
 		public Dictionary<string, int> m_KnowledgeBookNameToIndexMap = new Dictionary<string, int>();
 		public Dictionary<int, string> m_KnowledgeBookIndexToNameMap = new Dictionary<int, string>();
@@ -167,6 +179,7 @@ namespace EQ2GlassCannon
 		public virtual void TransferINISettings(TransferType eTransferType)
 		{
 			TransferINIBool(eTransferType, "General.WriteBackINI", ref m_bWriteBackINI);
+			TransferINIString(eTransferType, "General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
 			TransferINIString(eTransferType, "General.ReloadINISubphrase", ref m_strReloadINISubphrase);
 			TransferINIString(eTransferType, "General.MainTank", ref m_strMainTank);
 			TransferINIString(eTransferType, "General.AutoFollowTarget", ref m_strAutoFollowTarget);
@@ -224,6 +237,45 @@ namespace EQ2GlassCannon
 		public void ReadINISettings()
 		{
 			TransferINISettings(PlayerController.TransferType.Read);
+
+			m_aCustomTellTriggerList.Clear();
+
+			/// Load the custom tell trigger list.
+			try
+			{
+				string strInputFile = Path.Combine(Program.s_strINIFolderPath, m_strCustomTellTriggerFile);
+
+				if (File.Exists(strInputFile))
+				{
+					using (CsvFileReader ThisReader = new CsvFileReader(strInputFile))
+					{
+						while (ThisReader.ReadLine())
+						{
+							CustomTellTrigger NewTrigger = new CustomTellTrigger();
+							NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
+
+							/// Keep reading commands until there are no more.
+							try
+							{
+								while (true)
+									NewTrigger.m_astrCommands.Add(ThisReader.ReadNextValue());
+							}
+							catch (IndexOutOfRangeException)
+							{
+								/// This exception is harmless and expected.
+							}
+
+							if (!string.IsNullOrEmpty(NewTrigger.m_strSubstring) && (NewTrigger.m_astrCommands.Count > 0))
+								m_aCustomTellTriggerList.Add(NewTrigger);
+						}
+					}
+				}
+			}
+			catch
+			{
+				Program.Log("Generic exception while parsing custom tell trigger file.");
+			}
+
 			return;
 		}
 
@@ -788,6 +840,16 @@ namespace EQ2GlassCannon
 
 				else
 				{
+					foreach (CustomTellTrigger ThisTrigger in m_aCustomTellTriggerList)
+					{
+						if (strLowerCaseMessage.Contains(ThisTrigger.m_strSubstring))
+						{
+							foreach (string strThisCommand in ThisTrigger.m_astrCommands)
+								Program.RunCommand(strThisCommand, m_strCommandingPlayer);
+							return true;
+						}
+					}
+
 					Program.Log("No command detected in commanding player chat.");
 				}
 			}

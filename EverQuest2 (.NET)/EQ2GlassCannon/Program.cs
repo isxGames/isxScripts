@@ -536,17 +536,24 @@ namespace EQ2GlassCannon
 		/// <param name="strCommand"></param>
 		public static void RunCommand(string strCommand, params object[] aobjParams)
 		{
-			string strFinalCommand = string.Empty;
-
-			if (aobjParams.Length == 0)
-				strFinalCommand += string.Format("{0}", strCommand);
-			else
-				strFinalCommand += string.Format(strCommand, aobjParams);
-
-			using (new FrameLock(true))
+			try
 			{
-				s_Extension.EQ2Execute(strFinalCommand);
+				string strFinalCommand = string.Empty;
+
+				if (aobjParams.Length == 0)
+					strFinalCommand += string.Format("{0}", strCommand);
+				else
+					strFinalCommand += string.Format(strCommand, aobjParams);
+
+				using (new FrameLock(true))
+				{
+					s_Extension.EQ2Execute(strFinalCommand);
+				}
 			}
+			catch
+			{
+			}
+
 			return;
 		}
 
