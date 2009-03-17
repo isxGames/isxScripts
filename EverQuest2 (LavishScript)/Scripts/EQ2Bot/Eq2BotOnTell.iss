@@ -25,6 +25,8 @@ function main()
 
 	Debug:Enable
   call Init_Triggers
+	
+	Echo EQ2BotOnTell Started
 
   do
   {
@@ -59,8 +61,8 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 					}
 					else
 					{
-						Debug:Echo["EQ2botOnTell: Me.Ability[${Message.Token[2," "]}]:Use"]
-						Me.Ability[${Message.Token[2," "]}]:Use
+						Debug:Echo["EQ2botOnTell: Me.Ability[${Message.Mid[${Math.Calc[${SpellTrigger.Length}+1]},${Message.Length}]}]:Use"]
+						Me.Ability[${Message.Mid[${Math.Calc[${SpellTrigger.Length}+1]},${Message.Length}]}]:Use
 					}
 				}
       case default
@@ -72,4 +74,7 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 function atexit()
 {
 	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
+	
+	Echo EQ2BotOnTell Ended
 }
+
