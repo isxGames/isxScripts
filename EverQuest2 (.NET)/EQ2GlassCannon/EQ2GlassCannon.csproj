@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="BardController.cs" />
     <Compile Include="ClericController.cs" />
+    <Compile Include="CsvStreams.cs" />
     <Compile Include="EnchanterController.cs" />
     <Compile Include="IllusionistController.cs" />
     <Compile Include="MageController.cs" />
