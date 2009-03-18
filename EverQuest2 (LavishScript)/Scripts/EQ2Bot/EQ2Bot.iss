@@ -863,7 +863,7 @@ function main()
 		;;;;;;;;;;;;;;
 
 
-		if ${AutoLoot}
+		if ${AutoLoot}  && ${Me.ToActor.Health}>=${HealthCheck}
 			call CheckLoot
 
 		if ${AutoPull} && !${Me.ToActor.InCombatMode}
@@ -2114,11 +2114,9 @@ function Combat(bool PVP=0)
 		EQ2Execute /toggleautoattack
 
 
-	if ${AutoLoot} && ${Me.ToActor.Health} >= (${HealthCheck}-10)
-	{
-		;Debug:Echo["Calling CheckLootNoMove()"]
-		call CheckLootNoMove
-	}
+
+	;Debug:Echo["Calling CheckLootNoMove()"]
+	call CheckLootNoMove
 
 	if ${PathType} == 1
 	{
@@ -3378,9 +3376,6 @@ function CheckLootNoMove()
 	variable int tcount=2
 	variable int tmptimer
 
-	if (!${AutoLoot})
-		return
-
 	EQ2:CreateCustomActorArray[byDist,9]
 
 	do
@@ -3392,33 +3387,7 @@ function CheckLootNoMove()
 			continue
 		}
 
-		if ${CustomActor[${tcount}].Type.Equal[chest]}
-		{
-			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLootNoMove()] -- Distance: ${CustomActor[${tcount}].Distance}"
-			if (${CustomActor[${tcount}].Distance} > 4)
-				continue
-
-			switch ${Me.SubClass}
-			{
-				case dirge
-				case troubador
-				case swashbuckler
-				case brigand
-				case ranger
-				case assassin
-					;Echo "DEBUG: disarming trap on ${CustomActor[${tcount}].ID}"
-					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
-					wait 2
-					break
-				case default
-					break
-			}
-			Actor[Chest]:DoubleClick
-			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
-			wait 1
-			call ProcessTriggers
-		}
-		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
+		if ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
 			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
 			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"]
@@ -3446,9 +3415,10 @@ function CheckLoot()
 		return
 
 	islooting:Set[TRUE]
-	;think this is legacy, removing
-	;wait 10
-	EQ2:CreateCustomActorArray[byDist,25]
+	if ${NoAutoMovement}
+		EQ2:CreateCustomActorArray[byDist,${ScanRange}]
+	else
+		EQ2:CreateCustomActorArray[byDist,9}]
 
 	do
 	{
