@@ -547,7 +547,7 @@ namespace EQ2GlassCannon
 
 						try
 						{
-							Program.RunCommand(m_strSpawnWatchAlertCommand, m_strSpawnWatchTarget);
+							Program.RunCommand(m_strSpawnWatchAlertCommand, m_strCommandingPlayer, m_strSpawnWatchTarget);
 						}
 						catch
 						{
