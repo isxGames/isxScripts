@@ -4,7 +4,7 @@
   <Window Name='Craft Selection'>
     <X>100</X>
     <Y>100</Y>
-    <Width>700</Width>
+    <Width>420</Width>
     <Height>420</Height>
     <StorePosition>1</StorePosition>
     <Title>Automatic Crafting Bot</Title>
@@ -13,7 +13,7 @@
         <Text Name='Title' Template='window.Titlebar.Title' />
         <Button Name='Minimize' Template='window.Titlebar.Minimize' />
         <Button Name='CraftLite'>
-          <X>340</X>
+          <X>50%</X>
           <Y>0</Y>
           <Width>70</Width>
           <Height>14</Height>
@@ -67,7 +67,7 @@
         <X>10</X>
         <Y>28</Y>
         <Height>r-13</Height>
-        <Width>100%</Width>
+        <Width>r20</Width>
         <Visible>1</Visible>
         <Children>
           <Tabcontrol Name='Craft Main'>
@@ -75,12 +75,12 @@
             <Y>0</Y>
             <Font>
               <Name>Times New Roman</Name>
-              <Size>19</Size>
+              <Size>15</Size>
             </Font>
             <TabHeight>27</TabHeight>
             <TabBorder>3</TabBorder>
             <Height>r50</Height>
-            <Width>413</Width>
+            <Width>100%</Width>
             <OnLeftClick>
               if ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Queue]}
               {
@@ -120,7 +120,7 @@
                   <Height>23</Height>
                   <FullHeight>250%</FullHeight>
                   <ButtonWidth>20</ButtonWidth>
-                  <!--	<Font Template='Default Font'>
+                  <!--	<Font Template='Tahoma'>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
                 </Combobox>
@@ -129,7 +129,7 @@
                   <Y>30</Y>
                   <Width>150</Width>
                   <Height>20</Height>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -137,7 +137,7 @@
                   <Text>Sort Order:</Text>
                 </Text>
                 <Checkbox Name='Sort Name'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -158,7 +158,7 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Checkbox Name='Sort Level'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -187,7 +187,7 @@
                   <Color>FFDDBB00</Color>
                 </Textentry>
                 <Text Name='Dash Label'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>340</X>
@@ -213,7 +213,7 @@
                   <Color>FFDDBB00</Color>
                 </Textentry>
                 <Text Name='Quantity Label'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -254,7 +254,7 @@
                   </OnLeftClick>
                 </Commandbutton>
                 <Text Name='Filter Label'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -266,7 +266,7 @@
                   <Text>Filters:</Text>
                 </Text>
                 <Checkbox Name='Standard Filter'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -302,7 +302,7 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Checkbox Name='Imbued Filter'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -338,7 +338,7 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Checkbox Name='Rare Filter'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -375,7 +375,7 @@
                 </Checkbox>
                 <Checkbox Name='Secondary Tradeskill'>
                   <Visible>0</Visible>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -410,7 +410,7 @@
                   </OnLeftClick>
                 </Checkbox>
                 <Text Name='Quality Level'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -423,7 +423,7 @@
                   <Text>Quality Level:</Text>
                 </Text>
                 <Commandcheckbox Name='Quality 1'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>35%</X>
@@ -436,7 +436,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality1]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Quality 2'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>50%</X>
@@ -449,7 +449,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality2]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Quality 3'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>65%</X>
@@ -462,7 +462,7 @@
                   <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[Quality3]}</Data>
                 </Commandcheckbox>
                 <Commandcheckbox Name='Quality 4'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>80%</X>
@@ -476,7 +476,7 @@
                 </Commandcheckbox>
                 <Text Name='Gauge Label'>
                   <Visible>0</Visible>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -521,7 +521,7 @@
                 </Commandbutton>
                 <Commandcheckbox Name='Save List'>
                   <Visible>0</Visible>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>180</X>
@@ -535,7 +535,7 @@
                 </Commandcheckbox>
                 <Text Name='Resume Label'>
                   <Visible>0</Visible>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>16</Size>
                     <Color>FF22FF22</Color>
@@ -555,7 +555,7 @@
                   <Height>23</Height>
                   <FullHeight>120</FullHeight>
                   <ButtonWidth>20</ButtonWidth>
-                  <!--	<Font Template='Default Font'>
+                  <!--	<Font Template='Tahoma'>
 										<Color>FFEBDEAA</Color>
 									</Font> -->
                 </Combobox>
@@ -574,7 +574,7 @@
                   <Y>35</Y>
                   <Width>350</Width>
                   <Height>20</Height>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Remove selected Recipes from the queue</Text>
@@ -594,7 +594,7 @@
                   <Y>60</Y>
                   <Width>350</Width>
                   <Height>20</Height>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Add ALL Level             Recipes X Qty:</Text>
@@ -670,7 +670,7 @@
                 </Commandbutton>
                 <Text Name='Gauge List Label'>
                   <Visible>0</Visible>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>30%</X>
@@ -688,6 +688,39 @@
                   <Width>200</Width>
                   <Height>15</Height>
                 </VariableGauge>
+
+
+                <Frame Name='Crafting List Frame'>
+                  <X>0</X>
+                  <Y>135</Y>
+                  <Height>170</Height>
+                  <Width>400</Width>
+                  <Visible>0</Visible>
+                  <Children>
+                    <Button Name='Craft Title'>
+                      <X>0</X>
+                      <Y>0</Y>
+                      <Width>100%</Width>
+                      <Height>30</Height>
+                      <TextColor>FFEECC00</TextColor>
+                      <Text>Current list of Recipes in Queue</Text>
+                    </Button>
+                    <Listbox Name='Craft List'>
+                      <X>0</X>
+                      <Y>25</Y>
+                      <Width>100%</Width>
+                      <Height>r5</Height>
+                      <Font Template='Tahoma'>
+                        <Size>18</Size>
+                        <Bold />
+                      </Font>
+                      <Texture />
+                      <SelectMultiple>1</SelectMultiple>
+                      <Sort>Text</Sort>
+                    </Listbox>
+                  </Children>
+                </Frame>
+
               </Tab>
               <Tab Name='Options'>
                 <Tabcontrol Name='SubOptions'>
@@ -698,7 +731,7 @@
                   <Tabs>
                     <Tab Name='General Options'>
                       <Commandcheckbox Name='Power Check'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -719,7 +752,7 @@
                         <Color>FFDDBB00</Color>
                       </Textentry>
                       <Commandcheckbox Name='Current Table'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -732,7 +765,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='Camp Out'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -759,7 +792,7 @@
                         </OnChange>
                       </Textentry>
                       <Commandcheckbox Name='Show All Lists'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -772,7 +805,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='Prompt Resume'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -785,7 +818,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='BuyCommon'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -798,7 +831,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='BuyFuel'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -811,7 +844,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='BuyHarvest'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -838,7 +871,7 @@
                         </OnChange>
                       </Textentry>
                       <Commandcheckbox name='Auto Transmute'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -851,7 +884,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoTransmute]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox name='Stop Crafting At Secondary Max Level'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -864,7 +897,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StopCraftingAtSecondaryMaxLevel]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='Save Recipe List Range'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -877,7 +910,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[RecipeListRange]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='GuildPrivacy'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -890,7 +923,7 @@
                         <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[GuildPrivacy]}</Data>
                       </Commandcheckbox>
                       <Commandcheckbox Name='DeclineInvites'>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
@@ -910,7 +943,7 @@
                         <Y>282</Y>
                         <Width>100%</Width>
                         <Height>20</Height>
-                        <Font Template='Default Font'>
+                        <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <Text>Time to wait between combines:               seconds</Text>
@@ -939,7 +972,7 @@
                         <Height>r10</Height>
                         <Children>
                           <Text Name='MovementKeysLabel'>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Color>FFEBDEAA</Color>
                             </Font>
                             <X>10</X>
@@ -949,7 +982,7 @@
                             <Text>Movement Keys:</Text>
                           </Text>
                           <Text Name='AutoRunKeyLabel'>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Color>FFEBDEAA</Color>
                             </Font>
                             <X>20</X>
@@ -974,7 +1007,7 @@
                             </OnChange>
                           </Textentry>
                           <Text Name='BackupKeyLabel'>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Color>FFEBDEAA</Color>
                             </Font>
                             <X>20</X>
@@ -999,7 +1032,7 @@
                             </OnChange>
                           </Textentry>
                           <Text Name='StrafeRightKeyLabel'>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Color>FFEBDEAA</Color>
                             </Font>
                             <X>20</X>
@@ -1024,7 +1057,7 @@
                             </OnChange>
                           </Textentry>
                           <Text Name='StrafeLeftKeyLabel'>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Color>FFEBDEAA</Color>
                             </Font>
                             <X>20</X>
@@ -1063,7 +1096,7 @@
                             <Y>27</Y>
                             <Width>100%</Width>
                             <Height>20</Height>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Color>FFEBDEAA</Color>
                             </Font>
                             <Visible>FALSE</Visible>
@@ -1090,7 +1123,7 @@
                             <Width>100%</Width>
                             <Height>20</Height>
                             <Alignment>Center</Alignment>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Color>FFEBDEAA</Color>
                             </Font>
                             <Alignment>Center</Alignment>
@@ -1101,7 +1134,7 @@
                             <Y>70</Y>
                             <Width>100%</Width>
                             <Height>20</Height>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Size>17</Size>
                               <Color>FFEBDEAA</Color>
                             </Font>
@@ -1129,7 +1162,7 @@
                             <Y>100</Y>
                             <Width>100%</Width>
                             <Height>20</Height>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Size>17</Size>
                               <Color>FFEBDEAA</Color>
                             </Font>
@@ -1157,7 +1190,7 @@
                             <Y>130</Y>
                             <Width>100%</Width>
                             <Height>20</Height>
-                            <Font Template='Default Font'>
+                            <Font Template='Tahoma'>
                               <Size>17</Size>
                               <Color>FFEBDEAA</Color>
                             </Font>
@@ -1210,7 +1243,7 @@
               </Tab>
               <Tab Name='Writs'>
                 <Text Name='Writ Count Label'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -1238,7 +1271,7 @@
                   <AutoTooltip>Number of writs to complete before stopping. Max: 5</AutoTooltip>
                 </Textentry>
                 <!-- <Text Name='Writ Qty Label'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <X>135</X>
@@ -1262,7 +1295,7 @@
                   </OnChange>
                 </Textentry> -->
                 <Text Name='Tier Label'>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Bold />
                     <Size>18</Size>
                     <Color>FFEBDEAA</Color>
@@ -1312,6 +1345,96 @@
                   </OnLeftClick>
                 </Commandbutton>
               </Tab>
+              <Tab Name='Shopping'>
+                <Frame Name='Harvest Frame'>
+                  <X>10</X>
+                  <Y>10</Y>
+                  <Height>r10</Height>
+                  <Width>r20</Width>
+                  <Visible>0</Visible>
+                  <Children>
+                    <Button Name='Harvest Title'>
+                      <X>0</X>
+                      <Y>0</Y>
+                      <Width>100%</Width>
+                      <Height>15</Height>
+                      <TextColor>FFEECC00</TextColor>
+                      <Text>RAW HARVESTED RESOURCES</Text>
+                    </Button>
+                    <Listbox Name='Harvest Resource List'>
+                      <X>0</X>
+                      <Y>16</Y>
+                      <Width>100%</Width>
+                      <Height>65</Height>
+                      <Font Template='Tahoma'>
+                      </Font>
+                      <Texture />
+                      <SelectMultiple>1</SelectMultiple>
+                      <OnSelect>
+                        broker Name "${This.Item[${ID}].Text.Token[1,|]}" Sort ByPriceAsc MinTier Handcrafted MaxTier Treasured
+                      </OnSelect>
+                      <Sort>Text</Sort>
+                    </Listbox>
+                    <Button Name='Vendor Bought Title'>
+                      <X>0</X>
+                      <Y>80</Y>
+                      <Width>100%</Width>
+                      <Height>15</Height>
+                      <TextColor>FFEECC00</TextColor>
+                      <Text>VENDOR BOUGHT COMPONENTS</Text>
+                    </Button>
+                    <Listbox Name='Vendor Bought List'>
+                      <X>0</X>
+                      <Y>96</Y>
+                      <Width>100%</Width>
+                      <Height>35</Height>
+                      <Font Template='Tahoma'>
+                      </Font>
+                      <SelectMultiple>1</SelectMultiple>
+                      <Texture />
+                      <Sort>Text</Sort>
+                    </Listbox>
+                    <Button Name='Fuel Title'>
+                      <X>0</X>
+                      <Y>130</Y>
+                      <Width>100%</Width>
+                      <Height>15</Height>
+                      <TextColor>FFEECC00</TextColor>
+                      <Text>FUEL COMPONENTS</Text>
+                    </Button>
+                    <Listbox Name='Fuel List'>
+                      <X>0</X>
+                      <Y>145</Y>
+                      <Width>100%</Width>
+                      <Height>60</Height>
+                      <Font Template='Tahoma'>
+                      </Font>
+                      <SelectMultiple>1</SelectMultiple>
+                      <Texture />
+                      <Sort>Text</Sort>
+                    </Listbox>
+                    <Button Name='Crafted Title'>
+                      <X>0</X>
+                      <Y>205</Y>
+                      <Width>100%</Width>
+                      <Height>15</Height>
+                      <TextColor>FFEECC00</TextColor>
+                      <Text>CRAFTED COMPONENTS</Text>
+                    </Button>
+                    <Listbox Name='Crafted List'>
+                      <X>0</X>
+                      <Y>220</Y>
+                      <Width>100%</Width>
+                      <Height>100</Height>
+                      <Font Template='Tahoma'>
+                      </Font>
+                      <SelectMultiple>1</SelectMultiple>
+                      <Texture />
+                      <Sort>Text</Sort>
+                    </Listbox>
+                  </Children>
+                </Frame>
+              </Tab>
               <Tab Name='About'>
                 <Text Name='Craft About Title'>
                   <X>0</X>
@@ -1319,7 +1442,7 @@
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Automatic Crafting Bot v${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]}</Text>
@@ -1330,7 +1453,7 @@
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>Originally by Blazer</Text>
@@ -1341,7 +1464,7 @@
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFFFFF00</Color>
                   </Font>
                   <Text>ISXEQ2 was created by Amadeus</Text>
@@ -1350,7 +1473,7 @@
                   <X>10%</X>
                   <Y>60</Y>
                   <Width>80%</Width>
-                  <Height>80</Height>
+                  <Height>100</Height>
                   <Alignment>Center</Alignment>
                   <Wrap />
                   <Text>
@@ -1363,160 +1486,43 @@
                 </Text>
                 <Text Name='About 2'>
                   <X>0</X>
-                  <Y>150</Y>
+                  <Y>170</Y>
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>For more Information Please see</Text>
                 </Text>
                 <Text Name='About 3'>
                   <X>0</X>
-                  <Y>165</Y>
+                  <Y>185</Y>
                   <Width>100%</Width>
                   <Height>15</Height>
                   <Alignment>Center</Alignment>
-                  <Font Template='Default Font'>
+                  <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
                   </Font>
                   <Text>http://www.isxGames.com/forums</Text>
                 </Text>
               </Tab>
+
             </Tabs>
           </Tabcontrol>
-          <Frame Name='Crafting List Frame'>
-            <X>420</X>
-            <Y>0</Y>
-            <Height>340</Height>
-            <Width>260</Width>
-            <Visible>0</Visible>
-            <Children>
-              <Button Name='Craft Title'>
-                <X>0</X>
-                <Y>0</Y>
-                <Width>100%</Width>
-                <Height>30</Height>
-                <TextColor>FFEECC00</TextColor>
-                <Text>Current list of Recipes in Queue</Text>
-              </Button>
-              <Listbox Name='Craft List'>
-                <X>0</X>
-                <Y>25</Y>
-                <Width>100%</Width>
-                <Height>r5</Height>
-                <Font Template='Default Font'>
-                  <Size>18</Size>
-                  <Bold />
-                </Font>
-                <Texture />
-                <SelectMultiple>1</SelectMultiple>
-                <Sort>Text</Sort>
-              </Listbox>
-            </Children>
-          </Frame>
-          <Frame Name='Harvest Frame'>
-            <X>420</X>
-            <Y>0</Y>
-            <Height>340</Height>
-            <Width>260</Width>
-            <Visible>0</Visible>
-            <Children>
-              <Button Name='Harvest Title'>
-                <X>0</X>
-                <Y>0</Y>
-                <Width>100%</Width>
-                <Height>20</Height>
-                <TextColor>FFEECC00</TextColor>
-                <Text>RAW HARVESTED RESOURCES</Text>
-              </Button>
-              <Listbox Name='Harvest Resource List'>
-                <X>0</X>
-                <Y>16</Y>
-                <Width>100%</Width>
-                <Height>65</Height>
-                <Font Template='Default Font'>
-                </Font>
-                <Texture />
-                <SelectMultiple>1</SelectMultiple>
-                <OnSelect>
-                  broker Name "${This.Item[${ID}].Text.Token[1,|]}" Sort ByPriceAsc MinTier Handcrafted MaxTier Treasured
-                </OnSelect>
-                <Sort>Text</Sort>
-              </Listbox>
-              <Button Name='Vendor Bought Title'>
-                <X>0</X>
-                <Y>80</Y>
-                <Width>100%</Width>
-                <Height>18</Height>
-                <TextColor>FFEECC00</TextColor>
-                <Text>VENDOR BOUGHT COMPONENTS</Text>
-              </Button>
-              <Listbox Name='Vendor Bought List'>
-                <X>0</X>
-                <Y>96</Y>
-                <Width>100%</Width>
-                <Height>65</Height>
-                <Font Template='Default Font'>
-                </Font>
-                <SelectMultiple>1</SelectMultiple>
-                <Texture />
-                <Sort>Text</Sort>
-              </Listbox>
-              <Button Name='Fuel Title'>
-                <X>0</X>
-                <Y>160</Y>
-                <Width>100%</Width>
-                <Height>18</Height>
-                <TextColor>FFEECC00</TextColor>
-                <Text>FUEL COMPONENTS</Text>
-              </Button>
-              <Listbox Name='Fuel List'>
-                <X>0</X>
-                <Y>175</Y>
-                <Width>100%</Width>
-                <Height>65</Height>
-                <Font Template='Default Font'>
-                </Font>
-                <SelectMultiple>1</SelectMultiple>
-                <Texture />
-                <Sort>Text</Sort>
-              </Listbox>
-              <Button Name='Crafted Title'>
-                <X>0</X>
-                <Y>238</Y>
-                <Width>100%</Width>
-                <Height>18</Height>
-                <TextColor>FFEECC00</TextColor>
-                <Text>CRAFTED COMPONENTS</Text>
-              </Button>
-              <Listbox Name='Crafted List'>
-                <X>0</X>
-                <Y>253</Y>
-                <Width>100%</Width>
-                <Height>115</Height>
-                <Font Template='Default Font'>
-                </Font>
-                <SelectMultiple>1</SelectMultiple>
-                <Texture />
-                <Sort>Text</Sort>
-              </Listbox>
-            </Children>
-          </Frame>
         </Children>
       </Frame>
       <Frame Name='Crafting Frame'>
         <X>0</X>
         <Y>0</Y>
-        <Height>300</Height>
-        <Width>500</Width>
+        <Height>r10</Height>
+        <Width>100%</Width>
         <Visible>0</Visible>
         <Children>
           <Button Name='Process Title'>
             <X>20</X>
             <Y>55</Y>
-            <Width>386</Width>
+            <Width>r40</Width>
             <Height>30</Height>
             <TextColor>FFEECC00</TextColor>
             <Text>Current Crafting Progress List</Text>
@@ -1524,77 +1530,85 @@
           <Listbox Name='Process List'>
             <X>20</X>
             <Y>78</Y>
-            <Width>386</Width>
-            <Height>r-13</Height>
-            <Font Template='Default Font'>
+            <Width>r40</Width>
+            <Height>r120</Height>
+            <Font Template='Tahoma'>
             </Font>
             <SelectMultiple>1</SelectMultiple>
             <Texture />
             <Sort>None</Sort>
           </Listbox>
+          <Commandbutton Name='Quit Button'>
+            <visible>1</visible>
+            <X>20</X>
+            <Y>24</Y>
+            <Width>65</Width>
+            <Height>20</Height>
+            <Text>Quit</Text>
+            <OnLeftClick>
+              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[endcraft]:Set[TRUE]
+              UIElement[Craft Selection].FindUsableChild[Quit Button,commandbutton]:Hide
+              UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:Hide
+            </OnLeftClick>
+          </Commandbutton>
+          <Commandbutton Name='Pause Button'>
+            <visible>1</visible>
+            <X>r85</X>
+            <Y>24</Y>
+            <Width>65</Width>
+            <Height>20</Height>
+            <Text>Pause</Text>
+            <OnLeftClick>
+              if !${thisbuttonpaused}
+              {
+              thisbuttonpaused:Set[1]
+              UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Resume]
+              }
+              else
+              {
+              thisbuttonpaused:Set[0]
+              UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Pause]
+              }
+            </OnLeftClick>
+          </Commandbutton>
+          <Checkbox Name='Camp Now'>
+            <visible>1</visible>
+            <Font Template='Tahoma'>
+              <Color>FFEBDEAA</Color>
+            </Font>
+            <X>96</X>
+            <Y>24</Y>
+            <Width>150</Width>
+            <Height>20</Height>
+            <Text>Camp out after Craft Session is complete</Text>
+            <OnLoad>
+              if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]}
+              {
+              UIElement[Camp Now@Craft Selection]:SetChecked
+              }
+            </OnLoad>
+            <OnLeftClick>
+              if ${UIElement[Camp Now@Craft Selection].Checked}
+              {
+              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[TRUE]
+              }
+              else
+              {
+              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[FALSE]
+              }
+              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
+            </OnLeftClick>
+          </Checkbox>
+          <Text Name='Writs Remaining'>
+            <X>10</X>
+            <Y>r30</Y>
+            <Width>r20</Width>
+            <Height>20</Height>
+            <Alignment>Center</Alignment>
+            <Text></Text>
+          </Text>
         </Children>
       </Frame>
-      <Commandbutton Name='Quit Button'>
-        <visible>0</visible>
-        <X>440</X>
-        <Y>20</Y>
-        <Width>130</Width>
-        <Height>30</Height>
-        <Text>Quit</Text>
-        <OnLeftClick>
-          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[endcraft]:Set[TRUE]
-          UIElement[Craft Selection].FindUsableChild[Quit Button,commandbutton]:Hide
-          UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:Hide
-        </OnLeftClick>
-      </Commandbutton>
-      <Commandbutton Name='Pause Button'>
-        <visible>0</visible>
-        <X>440</X>
-        <Y>60</Y>
-        <Width>130</Width>
-        <Height>30</Height>
-        <Text>Pause</Text>
-        <OnLeftClick>
-          if !${thisbuttonpaused}
-          {
-          thisbuttonpaused:Set[1]
-          UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Resume]
-          }
-          else
-          {
-          thisbuttonpaused:Set[0]
-          UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:SetText[Pause]
-          }
-        </OnLeftClick>
-      </Commandbutton>
-      <Checkbox Name='Camp Now'>
-        <visible>0</visible>
-        <Font Template='Default Font'>
-          <Color>FFEBDEAA</Color>
-        </Font>
-        <X>85</X>
-        <Y>24</Y>
-        <Width>150</Width>
-        <Height>20</Height>
-        <Text>Camp out after Craft Session is complete</Text>
-        <OnLoad>
-          if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]}
-          {
-          UIElement[Camp Now@Craft Selection]:SetChecked
-          }
-        </OnLoad>
-        <OnLeftClick>
-          if ${UIElement[Camp Now@Craft Selection].Checked}
-          {
-          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[TRUE]
-          }
-          else
-          {
-          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CampNow]:Set[FALSE]
-          }
-          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
-        </OnLeftClick>
-      </Checkbox>
     </Children>
   </Window>
 </ISUI>
