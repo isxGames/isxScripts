@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13j :  released 12th March 2009
+; Version 0.13k :  released 30th March 2009
 ;
 ; Declare Variables
 ;
@@ -110,8 +110,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices 0.13j :  released 12th March 2009" FF11FFCC
-	call echolog "Running MyPrices 0.13j :  released 12th March 2009"
+	call AddLog "Running MyPrices 0.13k :  released 30th March 2009" FF11FFCC
+	call echolog "Running MyPrices 0.13k :  released 30th March 2009"
 	
 	call StartUp	
 
@@ -834,7 +834,12 @@ function buy(string tabname, string action)
 						{
 							; if the item is marked as a craft one then check if the Minimum broker total has been reached
 							if ${CraftItem}
+							{
+								call numinventoryitems "${BuyIterator.Key}" TRUE
+								call addtotals "${BuyIterator.Key}" ${Return}
+
 								call checktotals "${BuyIterator.Key}" ${CraftStack} ${CraftMinTotal} "${CraftRecipe}"
+							}
 								
 						}
 						elseif ${action.Equal["compact"]} && ${tabname.Equal["Sell"]}
@@ -1016,15 +1021,10 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 
 						; if the broker entry being looked at shows more items than we want then buy what we want
 						if ${BrokerNumber} > ${BuyNumber}
-						{
 							TryBuy:Set[${BuyNumber}]
-						}
 						else
-						{
-							; otherwise buy whats there
-
 							TryBuy:Set[${BrokerNumber}]
-						}
+
 						; check you can afford to buy the items
 						call checkcash ${BrokerPrice} ${TryBuy} ${Harvest}
 						; buy what you can afford
@@ -1435,7 +1435,11 @@ function LoadList()
 	call echolog "<start> : Loadlist"
 	; clear all totals held in the craft set
 	LavishSettings[craft]:Clear
-
+	waitframe
+	
+	Me:CreateCustomInventoryArray[nonbankonly]
+	wait 5
+	
 	; keep a reference directly to the Item set.
 	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
@@ -1482,7 +1486,6 @@ function LoadList()
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem["${labelname}"]
 
 					; if the item is flagged as a craft item then add the total number on the broker
-
 					if ${ItemList.FindSet[${labelname}].FindSetting[CraftItem]}
 					{
 						call SetColour ${numitems} FFFFFF00
@@ -2310,7 +2313,7 @@ function placeitem(string itemname, int box)
 	
 	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
 	
-	call numinventoryitems "${itemname}"
+	call numinventoryitems "${itemname}" FALSE
 	numitems:Set[${Return}]
 
 	; if there are items to be placed
@@ -2407,16 +2410,23 @@ function placeitems(string itemname, int box, int numitems)
 	return ${numitems}
 }
 
-function numinventoryitems(string itemname)
+function numinventoryitems(string itemname, bool num)
 {
-	; returns the number of stacks of items in your inventory
+	
+	; returns the number of stacks/number of items in your inventory , num TRUE = total , FALSE = stacks
+	
 	Declare xvar int local 1
 	Declare numitems int local 0
 	
 	do
 	{
 		if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
-			numitems:Inc
+		{
+			if ${num}
+				numitems:Inc[${Me.CustomInventory[${xvar}].Quantity}]
+			else
+				numitems:Inc
+		}
 	}
 	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	return ${numitems}
@@ -2469,7 +2479,7 @@ function GoTransmute(string itemname)
 
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
-	call numinventoryitems "${itemname}"
+	call numinventoryitems "${itemname}" FALSE
 	numitems:Set[${Return}]
 	
 	; if the item is in your bags
@@ -2499,7 +2509,7 @@ function checklore(string itemname)
 
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
-	call numinventoryitems "${itemname}"
+	call numinventoryitems "${itemname}" FALSE
 	numitems:Set[${Return}]
 	
 	; if the item is in your bags

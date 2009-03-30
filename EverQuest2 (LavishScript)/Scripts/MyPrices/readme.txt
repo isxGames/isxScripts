@@ -1,4 +1,4 @@
-MyPrices - Version 0.13j
+MyPrices 0.13k :  released 30th March 2009
 
 For update details see the bottom of this file.
 
@@ -415,6 +415,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13k
+-------------
+
+The craft list creation routine also now scans your inventory for items , so if you get interupted, re-scan
+to make the list and any pre-made items in your inventory will be deducted from your craft recipe list totals.
 
 Version 0.13j
 -------------
