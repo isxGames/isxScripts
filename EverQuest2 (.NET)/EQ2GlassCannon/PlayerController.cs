@@ -35,14 +35,6 @@ namespace EQ2GlassCannon
 		public string m_strClearGroupMaintainedSubphrase = "redo group buffs";
 		public string m_strMentorSubphrase = "mentor";
 		public string m_strRepairSubphrase = "repair";
-		public string m_strSpawnWatchSubphrase = "watch for";
-		public string m_strSpawnWatchSMTPServer = string.Empty;
-		public int m_iSpawnWatchSMTPPort = 25;
-		public string m_strSpawnWatchSMTPAccount = string.Empty;
-		public string m_strSpawnWatchSMTPPassword = string.Empty;
-		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
-		public string m_strSpawnWatchFromAddress = string.Empty;
-		public string m_strSpawnWatchAlertCommand = string.Empty;
 		public float m_fStayInPlaceTolerance = 1.5f;
 		public int m_iCheckBuffsInterval = 500;
 		public bool m_bUseRanged = false;
@@ -60,6 +52,17 @@ namespace EQ2GlassCannon
 		public bool m_bUsePet = true;
 		public bool m_bSummonPetDuringCombat = false;
 		public int m_iFrameSkip = 2;
+
+		public string m_strSpawnWatchSubphrase = "watch for";
+		public string m_strSpawnWatchSMTPServer = string.Empty;
+		public int m_iSpawnWatchSMTPPort = 25;
+		public string m_strSpawnWatchSMTPAccount = string.Empty;
+		public string m_strSpawnWatchSMTPPassword = string.Empty;
+		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
+		public string m_strSpawnWatchFromAddress = string.Empty;
+		public string m_strSpawnWatchAlertCommand = string.Empty;
+		public string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
+		public float m_fSpawnWatchDespawnTimeoutMinutes = 5.0f;
 		#endregion
 
 		public int m_iLoreAndLegendAbilityID = -1;
@@ -77,6 +80,7 @@ namespace EQ2GlassCannon
 			ShadowMe,
 			ForwardDash,
 			SpawnWatch,
+			DespawnWatch,
 		}
 
 		/************************************************************************************/
@@ -120,6 +124,7 @@ namespace EQ2GlassCannon
 		public Point3D m_ptStayLocation = new Point3D();
 		public bool m_bSpawnWatchTargetAnnounced = false;
 		public string m_strSpawnWatchTarget = string.Empty;
+		public DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
 		public List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
 
 		public Dictionary<string, int> m_KnowledgeBookNameToIndexMap = new Dictionary<string, int>();
@@ -196,15 +201,6 @@ namespace EQ2GlassCannon
 			TransferINICaselessString(eTransferType, "General.ClearGroupMaintainedSubphrase", ref m_strClearGroupMaintainedSubphrase);
 			TransferINICaselessString(eTransferType, "General.MentorSubphrase", ref m_strMentorSubphrase);
 			TransferINICaselessString(eTransferType, "General.RepairSubphrase", ref m_strRepairSubphrase);
-			TransferINICaselessString(eTransferType, "General.SpawnWatchSubphrase", ref m_strSpawnWatchSubphrase);
-			TransferINIString(eTransferType, "General.SpawnWatchSMTPServer", ref m_strSpawnWatchSMTPServer);
-			TransferINIInteger(eTransferType, "General.SpawnWatchSMTPPort", ref m_iSpawnWatchSMTPPort);
-			TransferINIString(eTransferType, "General.SpawnWatchSMTPAccount", ref m_strSpawnWatchSMTPAccount);
-			TransferINIString(eTransferType, "General.SpawnWatchSMTPPassword", ref m_strSpawnWatchSMTPPassword);
-			TransferINIString(eTransferType, "General.SpawnWatchGuildChatAlert", ref m_strSpawnWatchSMTPPassword);
-			TransferINIStringList(eTransferType, "General.SpawnWatchToAddresses", m_astrSpawnWatchToAddressList);
-			TransferINICaselessString(eTransferType, "General.SpawnWatchFromAddress", ref m_strSpawnWatchFromAddress);
-			TransferINIString(eTransferType, "General.SpawnWatchAlertCommand", ref m_strSpawnWatchAlertCommand);
 			TransferINIInteger(eTransferType, "General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
 			TransferINIBool(eTransferType, "General.UseRanged", ref m_bUseRanged);
 			TransferINIBool(eTransferType, "General.UseGreenAEs", ref m_bUseGreenAEs);
@@ -222,6 +218,18 @@ namespace EQ2GlassCannon
 			TransferINIBool(eTransferType, "General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
 			TransferINIInteger(eTransferType, "General.FrameSkip", ref m_iFrameSkip);
 			TransferINIFloat(eTransferType, "General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
+
+			/// Spawn Watch values.
+			TransferINICaselessString(eTransferType, "General.SpawnWatchSubphrase", ref m_strSpawnWatchSubphrase);
+			TransferINIString(eTransferType, "General.SpawnWatchSMTPServer", ref m_strSpawnWatchSMTPServer);
+			TransferINIInteger(eTransferType, "General.SpawnWatchSMTPPort", ref m_iSpawnWatchSMTPPort);
+			TransferINIString(eTransferType, "General.SpawnWatchSMTPAccount", ref m_strSpawnWatchSMTPAccount);
+			TransferINIString(eTransferType, "General.SpawnWatchSMTPPassword", ref m_strSpawnWatchSMTPPassword);
+			TransferINIStringList(eTransferType, "General.SpawnWatchToAddresses", m_astrSpawnWatchToAddressList);
+			TransferINICaselessString(eTransferType, "General.SpawnWatchFromAddress", ref m_strSpawnWatchFromAddress);
+			TransferINIString(eTransferType, "General.SpawnWatchAlertCommand", ref m_strSpawnWatchAlertCommand);
+			TransferINICaselessString(eTransferType, "SpawnWatch.DespawnSubphrase", ref m_strSpawnWatchDespawnSubphrase);
+			TransferINIFloat(eTransferType, "SpawnWatch.DespawnTimeoutMinutes", ref m_fSpawnWatchDespawnTimeoutMinutes);
 
 			if (eTransferType == TransferType.Read)
 			{
@@ -517,50 +525,6 @@ namespace EQ2GlassCannon
 
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 				return true;
-			else if (m_ePositioningStance == PositioningStance.SpawnWatch)
-			{
-				foreach (Actor ThisActor in EnumCustomActors())
-				{
-					string strThisActorName = ThisActor.Name.Trim().ToLower();
-					if (strThisActorName == m_strSpawnWatchTarget)
-					{
-						Program.Log("Spawn Watch target \"{0}\" found!", ThisActor.Name);
-
-						if (!string.IsNullOrEmpty(m_strSpawnWatchSMTPServer) && (m_astrSpawnWatchToAddressList.Count > 0))
-						{
-							Program.Log("Attempting to send Spawn Watch e-mails...");
-
-							if (Program.SendEMail(
-								m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
-								m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
-								m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
-								"From " + Me.Name,
-								ThisActor.Name + " just spawned!"))
-							{
-								Program.Log("Spawn Watch e-mails successfully sent.");
-							}
-							else
-							{
-								Program.Log("Not all Spawn Watch e-mails could be sent!");
-							}
-						}
-
-						try
-						{
-							Program.RunCommand(m_strSpawnWatchAlertCommand, m_strCommandingPlayer, m_strSpawnWatchTarget);
-						}
-						catch
-						{
-							Program.Log("Error in Spawn Watch alert command format.");
-						}
-
-						Program.Log("Reverting back to AFK mode. You will need to send another command to resume Spawn Watch.");
-						m_ePositioningStance = PositioningStance.DoNothing;
-						return true;
-					}
-				}
-				return true;
-			}
 
 			m_GroupMemberDictionary.Clear();
 			foreach (GroupMember ThisMember in EnumGroupMembers())
@@ -836,6 +800,17 @@ namespace EQ2GlassCannon
 					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
 
 					ChangePositioningStance(PositioningStance.SpawnWatch);
+				}
+
+				else if (strLowerCaseMessage.StartsWith(m_strSpawnWatchDespawnSubphrase))
+				{
+					Program.Log("De-spawn Watch command (\"{0}\") received.", m_strSpawnWatchDespawnSubphrase);
+					m_bSpawnWatchTargetAnnounced = false;
+
+					m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchDespawnSubphrase.Length).ToLower().Trim();
+					Program.Log("Bot will now wait for the absence of actor \"{0}\" for {0:0.0} consecutive minute(s).", m_strSpawnWatchTarget, m_fSpawnWatchDespawnTimeoutMinutes);
+
+					ChangePositioningStance(PositioningStance.DespawnWatch);
 				}
 
 				else
@@ -1417,11 +1392,19 @@ namespace EQ2GlassCannon
 				m_ePositioningStance = PositioningStance.AutoFollow;
 				CheckPositioningStance();
 			}
+
 			else if (eNewStance == PositioningStance.SpawnWatch)
 			{
 				m_ePositioningStance = PositioningStance.SpawnWatch;
+				m_bSpawnWatchTargetAnnounced = false;
 			}
 
+			else if (eNewStance == PositioningStance.DespawnWatch)
+			{
+				m_ePositioningStance = PositioningStance.DespawnWatch;
+				m_bSpawnWatchTargetAnnounced = false;
+				m_SpawnWatchDespawnStartTime = DateTime.Now;
+			}
 
 			return;
 		}
@@ -1433,12 +1416,12 @@ namespace EQ2GlassCannon
 		/// <returns>true if an autofollow command was sent.</returns>
 		public bool CheckPositioningStance()
 		{
-			if (MeActor.IsDead)
-				return false;
-
 			/// Traditional client autofollow.
 			if (m_ePositioningStance == PositioningStance.AutoFollow)
 			{
+				if (MeActor.IsDead)
+					return false;
+
 				/// We'll deal with this after LU51.
 				if (MeActor.IsClimbing || string.IsNullOrEmpty(m_strAutoFollowTarget))
 					return false;
@@ -1488,6 +1471,9 @@ namespace EQ2GlassCannon
 			/// These stances are grouped together because both of them involve direct autofollow.
 			else if (m_ePositioningStance == PositioningStance.StayInPlace || m_ePositioningStance == PositioningStance.ShadowMe)
 			{
+				if (MeActor.IsDead)
+					return false;
+
 				/// Firstly, no matter where we are, stop autofollowing.
 				if (!string.IsNullOrEmpty(MeActor.WhoFollowing))
 				{
@@ -1529,8 +1515,109 @@ namespace EQ2GlassCannon
 
 			else if (m_ePositioningStance == PositioningStance.ForwardDash)
 			{
+				if (MeActor.IsDead)
+					return false;
+
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -hold W");
 				return false;
+			}
+
+			else if (m_ePositioningStance == PositioningStance.SpawnWatch)
+			{
+				string strActualFoundName = null;
+				foreach (Actor ThisActor in EnumCustomActors())
+				{
+					string strThisActorName = ThisActor.Name.Trim().ToLower();
+					if (strThisActorName == m_strSpawnWatchTarget)
+					{
+						strActualFoundName = ThisActor.Name;
+						break;
+					}
+				}
+
+				if (!string.IsNullOrEmpty(strActualFoundName))
+				{
+					Program.Log("Spawn Watch target \"{0}\" found!", strActualFoundName);
+
+					if (!string.IsNullOrEmpty(m_strSpawnWatchSMTPServer) && (m_astrSpawnWatchToAddressList.Count > 0))
+					{
+						Program.Log("Attempting to send Spawn Watch e-mails...");
+
+						if (Program.SendEMail(
+							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
+							m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
+							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
+							"From " + Me.Name,
+							strActualFoundName + " just spawned!"))
+						{
+							Program.Log("Spawn Watch e-mails successfully sent.");
+						}
+						else
+						{
+							Program.Log("Not all Spawn Watch e-mails could be sent!");
+						}
+					}
+
+					try
+					{
+						Program.RunCommand(m_strSpawnWatchAlertCommand, m_strCommandingPlayer, m_strSpawnWatchTarget);
+					}
+					catch
+					{
+						Program.Log("Error in Spawn Watch alert command format.");
+					}
+
+					Program.Log("Now entering De-spawn Watch mode.");
+					ChangePositioningStance(PositioningStance.DespawnWatch);
+				}
+				return true;
+			}
+
+			else if (m_ePositioningStance == PositioningStance.DespawnWatch)
+			{
+				foreach (Actor ThisActor in EnumCustomActors())
+				{
+					string strThisActorName = ThisActor.Name.Trim().ToLower();
+					if ((strThisActorName == m_strSpawnWatchTarget) && !ThisActor.IsDead)
+					{
+#if DEBUG
+						double fDistance = GetActorDistance2D(MeActor, ThisActor);
+						Program.Log("Distance to {0}: {1:0.000}", ThisActor.Name, fDistance);
+#endif
+						/// Reset the clock if we see a single living actor with the search name.
+						m_SpawnWatchDespawnStartTime = DateTime.Now;
+						return true;
+					}
+				}
+
+				/// Actor despawned!
+				if ((m_SpawnWatchDespawnStartTime + TimeSpan.FromMinutes(m_fSpawnWatchDespawnTimeoutMinutes)) < DateTime.Now)
+				{
+					Program.Log("De-spawn Watch target \"{0}\" dead or no longer found after timeout!", m_strSpawnWatchTarget);
+
+					if (!string.IsNullOrEmpty(m_strSpawnWatchSMTPServer) && (m_astrSpawnWatchToAddressList.Count > 0))
+					{
+						Program.Log("Attempting to send De-spawn Watch e-mails...");
+
+						if (Program.SendEMail(
+							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
+							m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
+							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
+							"From " + Me.Name,
+							m_strSpawnWatchTarget + " just despawned!"))
+						{
+							Program.Log("De-spawn Watch e-mails successfully sent.");
+						}
+						else
+						{
+							Program.Log("Not all De-spawn Watch e-mails could be sent!");
+						}
+					}
+
+					ChangePositioningStance(PositioningStance.DoNothing);
+				}
+
+				return true;
 			}
 
 			return false;
