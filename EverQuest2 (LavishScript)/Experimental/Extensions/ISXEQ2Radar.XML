@@ -299,7 +299,6 @@ Radar Testing
 						<Range>99</Range>
 						<OnChange>
 							UIElement[Client@Radar Window]:SetAlpha[${Math.Calc[${This.Value} / 100 + 0.01]}]
-							echo ${Math.Calc[${This.Value} / 100 + 0.01]} ${UIElement[Client@Radar Window].Alpha} ${This.AbsoluteAlpha}
 						</OnChange>
 						<OnLoad>This:SetValue[${Math.Calc[${UIElement[Client@Radar Window].Alpha} * 100]}]</OnLoad>
 					</Slider>
