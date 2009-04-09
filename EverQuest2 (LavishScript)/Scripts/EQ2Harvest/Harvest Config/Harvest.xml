@@ -260,6 +260,15 @@
 		<Setting Name="6">flowering shrubbery</Setting>
 		<Setting Name="7">school of tiger barbs</Setting>
 	</set>
+	<Set Name="exp03_rgn_loping_plains">
+		<Setting Name="1">protruding vein</Setting>
+		<Setting Name="2">murky geode</Setting>
+		<Setting Name="3">slate lumber</Setting>
+		<Setting Name="4">lanky root</Setting>
+		<Setting Name="5">beast den</Setting>
+		<Setting Name="6">scraggy bush</Setting>
+		<Setting Name="7">churning school</Setting>
+	</set>
 	<Set Name="Harvest Enhancer">
 		<Setting Name="0,1">Elm Pick</Setting>
 		<Setting Name="0,2">Elm Trap</Setting>
