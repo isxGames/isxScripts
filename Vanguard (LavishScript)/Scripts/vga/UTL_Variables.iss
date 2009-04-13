@@ -134,6 +134,8 @@ variable bool Domount
 variable bool DoShiftingImage
 variable string ShiftingImage
 variable bool DoAutoAcceptGroupInvite
+variable bool DoLooseTarget
+variable int AssistEncounter
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================

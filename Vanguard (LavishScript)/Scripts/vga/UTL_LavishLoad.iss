@@ -289,6 +289,8 @@ function LavishLoad()
 	DoShiftingImage:Set[${UtilitySR.FindSetting[DoShiftingImage,FALSE]}]
 	ShiftingImage:Set[${UtilitySR.FindSetting[ShiftingImage,TRUE]}]
 	DoAutoAcceptGroupInvite:Set[${UtilitySR.FindSetting[DoAutoAcceptGroupInvite,TRUE]}]
+	DoLooseTarget:Set[${UtilitySR.FindSetting[DoLooseTarget,${DoLooseTarget}]}]
+	AssistEncounter:Set[${UtilitySR.FindSetting[AssistEncounter,${AssistEncounter}]}]
 	
 	;===================================================
 	;===                  Spells Load               ====

@@ -329,7 +329,23 @@ function assistpawn()
 	{
 		if (${Pawn[exactname,${assistpawn}](exists)} && ${Pawn[exactname,${assistpawn}].CombatState} != 0 && ${Pawn[exactname,${assistpawn}].Distance} < 50)
 		{
+			call LooseTarget
 			VGExecute /assist ${assistpawn}
+		}
+	}
+	return
+}
+;********************************************
+function LooseTarget()
+{
+	if ${DoLooseTarget} 
+	{
+		if ${Me.Target(exists)} && ${Me.TargetHealth} < 2 && !${Me.Target.IsDead}
+		{
+			AssistEncounter:Set[Me.Target.ID]
+			VGExecute /cleartarget
+			while ${Me.Encounter.ID[${AssistEncounter}](exists)} && !${Me.Target(exists)}
+				wait 1
 		}
 	}
 	return

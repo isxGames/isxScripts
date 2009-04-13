@@ -212,7 +212,8 @@ function LavishSave()
 	UtilitySR:AddSetting[DoShiftingImage,${DoShiftingImage}]
 	UtilitySR:AddSetting[ShiftingImage,${ShiftingImage}]	
 	UtilitySR:AddSetting[DoAutoAcceptGroupInvite,${DoAutoAcceptGroupInvite}]
-	
+	UtilitySR:AddSetting[DoLooseTarget,${DoLooseTarget}]
+	UtilitySR:AddSetting[AssistEncounter,${AssistEncounter}]	
 	;===================================================
 	;===                  Spells Save               ====
 	;===================================================
