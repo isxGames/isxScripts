@@ -8688,19 +8688,25 @@
                             <Alignment>Left</Alignment>
                             <Text>Missing Buff</Text>
                           </Text>
-                          <ComboBox Name="cmbRequestBuffs1" Template="VG.ComboBox">
-                            <X>200</X>
+                          <Textentry Name='RequestBuff1' Template='VG.TextEntry'>
+                            <X>68</X>
                             <Y>10</Y>
-                            <Width>180</Width>
-                            <Height>20</Height>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
                             <OnLoad>
-                              This:AddItem[NONE]
+                              This:SetText[${Script[vga].VariableScope.RequestBuff[1]}]
                             </OnLoad>
-                            <OnSelect>
-			      Script[vga].VariableScope.RequestBuffs[1]:Set[${This.SelectedItem.Text}]
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuff[1]:Set[${This.Text}]]
 			      Script[VGA]:QueueCommand[call LavishSave]	
-                            </OnSelect>
-                          </ComboBox>
+                              }
+                            </OnChange>
+                          </Textentry>
                           <Text Name='txtRequestBuffPlayer1' Template='VG.BoldText'>
                             <X>32</X>
                             <Y>30</Y>
@@ -8755,6 +8761,788 @@
                               }
                             </OnChange>
                           </Textentry>
+			<checkbox Name='doRequestBuffs2' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>60</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Rebuffs</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRequestBuffs[2]}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRequestBuffs[2]:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtRequestBuff2' Template='VG.BoldText'>
+                            <X>125</X>
+                            <Y>63</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Missing Buff</Text>
+                          </Text>
+                          <Textentry Name='RequestBuff2' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>60</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestBuff[2]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuff[2]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtRequestBuffPlayer2' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>80</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='RequestBuffPlayer2' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>80</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestBuffPlayer[2]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuffPlayer[2]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellRequestBuffPlayer2' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>82</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellRequestBuffPlayer2' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>80</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellRequestBuffPlayer[2]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellRequestBuffPlayer[2]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+			<checkbox Name='doRequestBuffs3' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>110</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Rebuffs</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRequestBuffs[3]}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRequestBuffs[3]:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtRequestBuff3' Template='VG.BoldText'>
+                            <X>125</X>
+                            <Y>113</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Missing Buff</Text>
+                          </Text>
+                          <Textentry Name='RequestBuff3' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>110</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestBuff[32]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuff[3]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtRequestBuffPlayer3' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>130</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='RequestBuffPlayer3' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>130</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestBuffPlayer[3]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuffPlayer[3]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellRequestBuffPlayer3' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>132</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellRequestBuffPlayer3' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>130</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellRequestBuffPlayer[3]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellRequestBuffPlayer[3]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+			<checkbox Name='doRequestBuffs4' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>160</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Rebuffs</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRequestBuffs[4]}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRequestBuffs[4]:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtRequestBuff4' Template='VG.BoldText'>
+                            <X>125</X>
+                            <Y>163</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Missing Buff</Text>
+                          </Text>
+                          <Textentry Name='RequestBuff4' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>160</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestBuff[4]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuff[4]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtRequestBuffPlayer4' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>180</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='RequestBuffPlayer4' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>180</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestBuffPlayer[4]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestBuffPlayer[4]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellRequestBuffPlayer4' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>182</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellRequestBuffPlayer4' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>180</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellRequestBuffPlayer[4]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellRequestBuffPlayer[4]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+			<checkbox Name='doRequestItems1' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>210</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Items</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRequestItems[1]}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRequestItems[1]:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtRequestItems1' Template='VG.BoldText'>
+                            <X>125</X>
+                            <Y>213</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Missing Item</Text>
+                          </Text>
+                          <Textentry Name='RequestItems1' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>210</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestItems[1]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestItems[1]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtRequestItemsPlayer1' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>230</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='RequestItemsPlayer1' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>230</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestItemsPlayer[1]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestItemsPlayer[1]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellRequestItemsPlayer1' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>232</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellRequestItemsPlayer1' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>230</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellRequestItemsPlayer[1]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellRequestItemsPlayer[1]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+			<checkbox Name='doRequestItems2' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>260</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Items</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doRequestItems[2]}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doRequestItems[2]:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtRequestItems2' Template='VG.BoldText'>
+                            <X>125</X>
+                            <Y>263</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Missing Item</Text>
+                          </Text>
+                          <Textentry Name='RequestItems2' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>260</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestItems[2]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestItems[2]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtRequestItemsPlayer2' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>280</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='RequestItemsPlayer2' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>280</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.RequestItemsPlayer[2]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.RequestItemsPlayer[2]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellRequestItemsPlayer2' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>282</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellRequestItemsPlayer2' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>280</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellRequestItemsPlayer[2]}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellRequestItemsPlayer[2]:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                         <checkbox Name='DoRequestCurePoison' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>310</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Poison Cure</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoRequestCurePoison}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoRequestCurePoison:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Textentry Name="RequestCurePoisonEntry" Template="VG.TextEntry">
+                            <X>150</X>
+                            <Y>310</Y>
+                            <Width>165</Width>
+                            <Height>18</Height>
+                            <Color>FFDDBB00</Color>
+                          </Textentry>
+                          <CommandButton Name="RequestCurePoisonCmd" Template="VG.GreenCommandButton">
+                            <X>320</X>
+                            <Y>310</Y>
+                            <Width>50</Width>
+                            <Height>25</Height>
+                            <Text>Add</Text>
+                            <Alignment>Center</Alignment>
+                            <OnLeftClick>
+                              ;AddRequestCurePoison "${UIElement[RequestCurePoisonEntry@RequestsCFrm@RequestsMain@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui].Text}"
+                              ;BuildRequestCurePoison
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </CommandButton>
+                          <Listbox Name="RequestCurePoisonList" Template="VG.ListBox">
+                            <X>13</X>
+                            <Y>330</Y>
+                            <Width>95%</Width>
+                            <Height>60</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <Sort>User</Sort>
+                            <OnLoad>
+                              ;BuildRequestCurePoison
+                            </OnLoad>
+                            <OnRightClick>
+                              ;RemoveRequestCurePoison "${This.SelectedItem}"
+                              This.SelectedItem:Remove
+                              ;BuildRequestCurePoison
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnRightClick>
+                          </Listbox>
+                          <Text Name='txtCurePoisonPlayer' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>395</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='CurePoisonPlayerentry' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>395</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.CurePoisonPlayer}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.CurePoisonPlayer:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellCurePoisonPlayer' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>397</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellCurePoisonPlayer' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>395</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellCurePoisonPlayer}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellCurePoisonPlayer:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                         <checkbox Name='DoRequestCureDisease' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>420</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Request Disease Cure</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoRequestCureDisease}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoRequestCureDisease:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                          <Textentry Name="RequestCureDiseaseEntry" Template="VG.TextEntry">
+                            <X>150</X>
+                            <Y>420</Y>
+                            <Width>165</Width>
+                            <Height>18</Height>
+                            <Color>FFDDBB00</Color>
+                          </Textentry>
+                          <CommandButton Name="RequestCureDiseaseCmd" Template="VG.GreenCommandButton">
+                            <X>320</X>
+                            <Y>420</Y>
+                            <Width>50</Width>
+                            <Height>25</Height>
+                            <Text>Add</Text>
+                            <Alignment>Center</Alignment>
+                            <OnLeftClick>
+                              ;AddRequestCureDisease "${UIElement[RequestCureDiseaseEntry@RequestsCFrm@RequestsMain@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui].Text}"
+                              ;BuildRequestCureDisease
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </CommandButton>
+                          <Listbox Name="RequestCureDiseaseList" Template="VG.ListBox">
+                            <X>13</X>
+                            <Y>440</Y>
+                            <Width>95%</Width>
+                            <Height>60</Height>
+                            <AutoSort>TRUE</AutoSort>
+                            <Sort>User</Sort>
+                            <OnLoad>
+                              ;BuildRequestCureDisease
+                            </OnLoad>
+                            <OnRightClick>
+                              ;RemoveRequestCureDisease "${This.SelectedItem}"
+                              This.SelectedItem:Remove
+                              ;BuildRequestCureDisease
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnRightClick>
+                          </Listbox>
+                          <Text Name='txtCureDiseasePlayer' Template='VG.BoldText'>
+                            <X>32</X>
+                            <Y>505</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Player</Text>
+                          </Text>
+                          <Textentry Name='CureDiseasePlayerentry' Template='VG.TextEntry'>
+                            <X>68</X>
+                            <Y>505</Y>
+                            <Width>102</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.CureDiseasePlayer}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.CureDiseasePlayer:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellCureDiseasePlayer' Template='VG.BoldText'>
+                            <X>177</X>
+                            <Y>507</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Tell</Text>
+                          </Text>
+                          <Textentry Name='TellCureDiseasePlayer' Template='VG.TextEntry'>
+                            <X>200</X>
+                            <Y>505</Y>
+                            <Width>180</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellCureDiseasePlayer}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellCureDiseasePlayer:Set[${This.Text}]]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <Text Name='txtTellMinutes' Template='VG.BoldText'>
+                            <X>13</X>
+                            <Y>530</Y>
+                            <Width>200</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Repeat Delay in Minutes</Text>
+                          </Text>
+                          <Textentry Name='TellMinutesPct' Template='VG.TextEntry'>
+                            <X>160</X>
+                            <Y>530</Y>
+                            <Width>26</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.TellMinutes}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.TellMinutes:Set[${Math.Calc[${This.Text}].Int}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <checkbox Name='doTellRequestOutofBattle' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>550</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Only Request Out of Battle</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoTellRequestOutofBattle}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoTellRequestOutofBattle:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
+                           <Text Name='txt-------' Template='VG.BoldText'>
+                            <X>13</X>
+                            <Y>520</Y>
+                            <Width>95%</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>----------------------------------------------------------------------------</Text>
+                          </Text>
+                           <Text Name='txt----' Template='VG.BoldText'>
+                            <X>13</X>
+                            <Y>300</Y>
+                            <Width>95%</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>----------------------------------------------------------------------------</Text>
+                          </Text>
+                           <Text Name='txt-----' Template='VG.BoldText'>
+                            <X>13</X>
+                            <Y>200</Y>
+                            <Width>95%</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>------------------------------------------------------------------------------------</Text>
+                          </Text>
 			</Children>
                       </Frame>
                     </Tab>
