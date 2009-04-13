@@ -541,6 +541,24 @@
 			      Script[VGA]:QueueCommand[call LavishSave]	
                             </OnLeftClick>
                           </checkbox>
+			<checkbox Name='DoLooseTarget' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>180</X>
+                            <Y>235</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Loose Target for Plat Coins</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoLooseTarget}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoLooseTarget:Set[${This.Checked}]
+			      Script[VGA]:QueueCommand[call LavishSave]	
+                            </OnLeftClick>
+                          </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">
                             <X>13</X>
                             <Y>85%</Y>

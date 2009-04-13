@@ -326,6 +326,7 @@ function combatfunction()
 ;===================================================
 function PreCombatLoopFunction()
 {
+	call LooseTarget
  	call CheckPosition
 	call EmergencyActions
 	call Healcheck
@@ -425,8 +426,10 @@ function PostCastingActions()
 	UpdateTempBuffWatch
 	call EmergencyActions
 	call Healcheck
+	call LooseTarget
 	call pushagrototank
 	call rescue
+
 	;-------------------------------------------
 	;********Check If I Can Critical************
 	;-------------------------------------------
