@@ -108,6 +108,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/GUI_BuffWatch.iss"
 #include "${Script.CurrentDirectory}/ACT_Merchant.iss"
 #include "${Script.CurrentDirectory}/GUI_Merchant.iss"
+#include "${Script.CurrentDirectory}/GUI_Trash.iss"
 #include "${Script.CurrentDirectory}/Act_Mob.iss"
 #include "${Script.CurrentDirectory}/GUI_Mobs.iss"
 
@@ -440,7 +441,7 @@ function PostCastingActions()
 	;-------------------------------------------
 	;****Check If I Need to use my Counter******
 	;-------------------------------------------
-	call counterattack
+	call functCounterAttacks
 	;-------------------------------------------
 	;****Check for Class Specific Post**********
 	;-------------------------------------------

@@ -15,6 +15,34 @@ function groupup()
 
 } 
 ;********************************************
+function Trash()
+{
+  variable int i = 1
+
+  ; Loop through the inventory, incrementing "i" by one each time until
+  ; Me.Inventory[i] isn't valid anymore
+
+  do
+{
+    if ${doTrash}
+     {
+	variable iterator Iterator
+	Trash:GetSettingIterator[Iterator]
+	Iterator:First
+	while ( ${Iterator.Key(exists)} )
+	{
+        if ${Me.Inventory[${i}].Name.Equal[${Iterator.Key}]}
+        {
+             Me.Inventory[${i}]:Delete
+        }
+        Iterator:Next
+	}
+      }
+      i:Inc
+  }
+  while ${Me.Inventory[${i}].ID(exists)} 
+}
+;********************************************
 function lootit()
 {
 	;; if there are no corpses around...then why bother.
@@ -32,6 +60,9 @@ function lootit()
 			{
 				if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance} < 10 && ${Pawn[${iCount}].ContainsLoot}
 				{
+					;First clear inventory of any trash items
+					call Trash
+
 					Pawn[${iCount}]:Target
 					wait 5
 					call movetoobject ${Me.Target.ID} 4 0
@@ -167,6 +198,14 @@ function executeability(string x_ability, string x_type, string CP)
 				DoIt:Set[TRUE]
           	}
       		break
+
+		case counter		
+			call mobresist "${x_ability}"
+			if ${Return}
+			{
+				DoIt:Set[TRUE]
+	          	}
+      			break
       		
 		case buff
 			DoIt:Set[TRUE]
@@ -208,6 +247,11 @@ function executeability(string x_ability, string x_type, string CP)
 					return
 					
 				case attack		
+					actionlog "${x_ability} ${Me.Target}"
+					call MeCasting ${CP}
+					return
+		
+				case counter		
 					actionlog "${x_ability} ${Me.Target}"
 					call MeCasting ${CP}
 					return

@@ -205,6 +205,7 @@ function LavishSave()
 	UtilitySR:AddSetting[doParser,${doParser}]
 	UtilitySR:AddSetting[doActionLog,${doActionLog}]
 	UtilitySR:AddSetting[doSell,${doSell}]
+	UtilitySR:AddSetting[doTrash,${doTrash}]
 	UtilitySR:AddSetting[DoLoot,${DoLoot}]
 	UtilitySR:AddSetting[DoCountersASAP,${DoCountersASAP}]
 	UtilitySR:AddSetting[DoChainsASAP,${DoChainsASAP}]

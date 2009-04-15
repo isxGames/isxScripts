@@ -51,6 +51,7 @@ variable settingsetref MobDeBuffT1
 variable settingsetref BuffT1
 variable settingsetref AbilReadyT1
 variable settingsetref Sell
+variable settingsetref Trash
 variable settingsetref Class
 variable settingsetref Rescue
 variable settingsetref ForceRescue

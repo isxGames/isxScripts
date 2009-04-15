@@ -15,12 +15,15 @@ function Repair()
   startmoney:Inc[${Math.Calc[${Me.Silver}*100]}]
   startmoney:Inc[${Math.Calc[${Me.Gold}*100*100]}]
   startmoney:Inc[${Math.Calc[${Me.Platinum}*100*100*100]}]
-  Merchant:Begin[Repair]
-  wait 2
 
+
+  Merchant:Begin[Repair]
+  wait 5
+		
   do
   {
       Merchant.RepairItem[${i}]:Repair
+    wait 5
   }
   while (${i:Inc} <= ${Merchant.NumItemsForRepair})
   variable int finishmoney
