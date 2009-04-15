@@ -64,6 +64,7 @@ function loadxmls()
 	LavishSettings[VGA_General]:AddSet[DBW]
 	LavishSettings[VGA_General]:AddSet[TBW]
 	LavishSettings[VGA_General]:AddSet[Sell]	
+	LavishSettings[VGA_General]:AddSet[Trash]	
 
 	LavishSettings[VGA]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
 	LavishSettings[VGA_Mobs]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
@@ -282,7 +283,9 @@ function LavishLoad()
 	doDebug:Set[${UtilitySR.FindSetting[doDebug]}]
 	doActionLog:Set[${UtilitySR.FindSetting[doActionLog]}]
 	doSell:Set[${UtilitySR.FindSetting[doSell]}]
+	doTrash:Set[${UtilitySR.FindSetting[doTrash]}]
 	Sell:Set[${LavishSettings[VGA_General].FindSet[Sell]}]
+	Trash:Set[${LavishSettings[VGA_General].FindSet[Trash]}]
 	DoChainsASAP:Set[${UtilitySR.FindSetting[DoChainsASAP,TRUE]}]
 	DoCountersASAP:Set[${UtilitySR.FindSetting[DoCountersASAP,TRUE]}]
 	Domount:Set[${UtilitySR.FindSetting[Domount,FALSE]}]

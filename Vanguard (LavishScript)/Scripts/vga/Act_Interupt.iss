@@ -55,11 +55,11 @@ function counteringfunct()
 				{
 				waitframe
 				}
-				if ${Me.Ability[${counterspell1}].IsReady}
+				if ${Me.Ability[${CounterSpell1}].IsReady}
 				{
 					call executeability "${CounterSpell1}" "attack" "Neither"
 				}
-				elseif ${Me.Ability[${counterspell2}].IsReady}
+				elseif ${Me.Ability[${CounterSpell2}].IsReady}
 				{
 					call executeability "${CounterSpell2}" "attack" "Neither"
 				}
@@ -94,29 +94,21 @@ function dispellfunct()
 	
 	if ${doDispell} && ${Me.TargetBuff} > 0
 	{
-		variable int buffint
-		buffint:Set[0]
-		while ( ${buffint} < ${Me.TargetBuff} )
+		variable iterator Iterator
+		Dispell:GetSettingIterator[Iterator]
+		while ( ${Iterator.Key(exists)} )
 		{
-			variable iterator Iterator
-			Dispell:GetSettingIterator[Iterator]
-			while ( ${Iterator.Key(exists)} )
+			while ${Me.TargetBuff[${Iterator.Key}](exists)}
 			{
-				while ${Me.TargetBuff[${buffint}].Name.Find[${Iterator.Key}]}
-				{
-					while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
-					{
-					waitframe
-					}
-					while !${Me.Ability[${DispellSpell}].IsReady}
-						wait 1
-					if ${Me.Ability[${DispellSpell}].IsReady}
-						call executeability "${DispellSpell}" "attack" "Neither"
-				}
-			Iterator:Next
+				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+				    wait 1
+				while !${Me.Ability[${DispellSpell}].IsReady}
+					wait 1
+				if ${Me.Ability[${DispellSpell}].IsReady}
+					call executeability "${DispellSpell}" "attack" "Neither"
 			}
+			Iterator:Next
 
-		buffint:Inc
 		}
 		
 	}

@@ -151,7 +151,7 @@ function AOESpell()
 	variable iterator Iterator	
 	
 	debuglog "Running AOESpell"
-	if !${newattack} && ${doAOESpell} && ${fight.ShouldIAttack} 
+	if !${newattack} && ${doAOESpell} && ${fight.ShouldIAttack} && (${Me.Encounter} > 1)
 	{
 		call TooClose
 		AOESpell:GetSettingIterator[Iterator]
@@ -350,7 +350,7 @@ function AOEMelee()
 	variable iterator Iterator
 	
 	debuglog "Running AOEMelee"
-	if !${newattack} && ${doAOEMelee} && ${fight.ShouldIAttack} 
+	if !${newattack} && ${doAOEMelee} && ${fight.ShouldIAttack} && (${Me.Encounter} > 1)
 	{
 		call CheckPosition
 		AOEMelee:GetSettingIterator[Iterator]

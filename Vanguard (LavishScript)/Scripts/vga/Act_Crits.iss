@@ -101,7 +101,7 @@ function functDotCrits()
 ;*************************************************************
 
 ;; Amadeus ssys "This function has some odd logic in it..."
-function counterattack()
+function functCounterAttacks()
 {
 	variable iterator anIter
 	
@@ -127,7 +127,7 @@ function counterattack()
 					anIter:Next
 				}
 				call checkabilitytocast "${anIter.Value}"
-				if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} && ${fight.ShouldIAttack} && ${Me.Ability[${anIter.Value}].TriggeredCountdown} == 0
+				if ${Return} 
 					call executeability "${anIter.Value}" "counter" "Both"
 			}
 			anIter:Next
