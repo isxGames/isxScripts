@@ -1,9 +1,12 @@
 ;*************************************************************
 ;Conjuror.iss
-;version 20070725a
+;version 20090415a
 ;various fixes
 ;by karye
 ;updated by pygar
+;
+;20090415a
+; Removed Cabilist Cover
 ;
 ;20070725a
 ; Updated for new AA changes
