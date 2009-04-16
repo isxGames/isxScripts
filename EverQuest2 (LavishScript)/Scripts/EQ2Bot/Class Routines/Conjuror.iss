@@ -116,9 +116,6 @@ function Class_Shutdown()
 
 function Buff_Init()
 {
-	PreAction[1]:Set[AA_Cabalists_Cover]
-	PreSpellRange[1,1]:Set[384]
-
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
 
