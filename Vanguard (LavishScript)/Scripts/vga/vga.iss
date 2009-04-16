@@ -260,6 +260,7 @@ function downtimefunction()
 	call ToggleOffCombatBuffSpells
 	call ShiftingImage
 	call groupup
+	call Trash
 	return
 }
 ;===================================================

@@ -17,30 +17,22 @@ function groupup()
 ;********************************************
 function Trash()
 {
-  variable int i = 1
 
-  ; Loop through the inventory, incrementing "i" by one each time until
-  ; Me.Inventory[i] isn't valid anymore
-
-  do
-{
-    if ${doTrash}
+    if ${doTrash} && !${Me.InCombat}
      {
-	variable iterator Iterator
-	Trash:GetSettingIterator[Iterator]
-	Iterator:First
-	while ( ${Iterator.Key(exists)} )
-	{
-        if ${Me.Inventory[${i}].Name.Equal[${Iterator.Key}]}
-        {
-             Me.Inventory[${i}]:Delete
-        }
+	   variable iterator Iterator
+	   Trash:GetSettingIterator[Iterator]
+	   Iterator:First
+	     while ( ${Iterator.Key(exists)} )
+	     {
+        if ${Me.Inventory[ExactName,${Iterator.Key}](exists)}
+              {
+             Me.Inventory[ExactName,${Iterator.Key}]:Delete[ExactName,${Iterator.Key}.Quantity]
+              }
         Iterator:Next
-	}
+	     }
       }
-      i:Inc
-  }
-  while ${Me.Inventory[${i}].ID(exists)} 
+
 }
 ;********************************************
 function lootit()
