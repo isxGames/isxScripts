@@ -1,5 +1,6 @@
 function merchant()
 {
+  call Trash
   call Repair
   call Sell
 }
@@ -63,7 +64,7 @@ function Sell()
   ; Me.Inventory[i] isn't valid anymore
   do
 {
-    if ${doSell}
+    if ${doSell} && !${Me.InCombat}
      {
 	variable iterator Iterator
 	Sell:GetSettingIterator[Iterator]
