@@ -1,6 +1,6 @@
 /* KBot
 
- * Version v4 -- February 2, 2009
+ * Version v4 -- February 2, 2009 
 
  * Credits:
  * 	Created by Kram (Melee Mods by Denthan)
