@@ -49,6 +49,16 @@
           }
         </OnLeftClick>
       </Button>
+<Button Name='CurrentRegion'>
+<X>200</X>
+<Y>50</Y>
+<Width>90</Width>
+<Height>20</Height>
+<Text>Echo Current</Text>
+<OnLeftClick>
+echo ${Script[CraftPathTester].VariableScope.Nav.NearestRegion[${Me.ToActor.Loc}].FQN}
+</OnLeftClick>
+</Button>
       <Button Name='RunFull'>
         <X>20</X>
         <Y>50</Y>
