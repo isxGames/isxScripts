@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v8.64 - Minor change to help eliminate the "out of range" issues.
+
 v8.63 - Added support for new UI element to display writs remaining in Crafting frame
       - Updated Craft UI to have a smaller footprint. Nuprecon provided much of this rearrangement
         of UI code. Thanks Nuprecon!
