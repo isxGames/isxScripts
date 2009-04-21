@@ -29,6 +29,7 @@ variable string NameFilter3
 
 variable int RunBroker
 variable int RunDepot
+variable int NewItem
 variable int RunHirelings
 variable int RunJunk
 variable int RunDestroy
@@ -60,8 +61,8 @@ function main()
 	
 	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
 	wait 5
-	
-  while 1
+
+	while 1
   {
     while ${QueuedCommands}
       ExecuteQueued
@@ -1516,6 +1517,7 @@ function SellAdeptI()
 function AddToDepot()
 {
 	variable int KeyNum=1
+	Event[EQ2_onIncomingText]:AttachAtom[GetText]
 	RunDepot:Set[1]
 	wait 5
 	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
@@ -1528,15 +1530,23 @@ function AddToDepot()
 		Do
 		{
 			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
-	  	{
+			{
 	  		call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
-	  		Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
+			Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
+				
+				if ${NewItem} == 1
+				{		
+					call AddOverDepotLog "---Slot ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]} Full!!---" FFFF0000
+					KeyNum:Inc
+					
+				}
 			}
+			NewItem:Set[0]
 		}
 		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)} && ${RunDepot} == 1
 	}
-	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Keys}
+	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Keys} && ${RunDepot} == 1
 	
 	if ${RunDepot} == 1
 	{
@@ -1553,7 +1563,13 @@ function AddToDepot()
 	}
 }
 
-				
+atom GetText(string DepotItemFull)
+{
+	if ${DepotItemFull.Find["This container cannot hold any more of this item."]}
+		{
+				NewItem:Set[1]
+		}
+}				
 
 
 function JunkList()
@@ -1859,6 +1875,11 @@ function AddSellLog(string textline, string colour)
 }
 
 function AddDepotLog(string textline, string colour)
+{
+	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
+}
+function AddOverDepotLog(string textline, string colour)
 {
 	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
 	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
