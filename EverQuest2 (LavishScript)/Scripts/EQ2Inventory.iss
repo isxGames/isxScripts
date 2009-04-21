@@ -29,7 +29,7 @@ variable string NameFilter3
 
 variable int RunBroker
 variable int RunDepot
-variable int NewItem
+variable int SlotFull
 variable int SkipItem
 variable int RunHirelings
 variable int RunJunk
@@ -1523,6 +1523,8 @@ function AddToDepot()
 	variable int KeyNum=1
 	Event[EQ2_onIncomingText]:AttachAtom[GetText]
 	RunDepot:Set[1]
+	SkipItem:Set[0]
+	SlotFull:Set[0]
 	wait 5
 	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
 	Me:CreateCustomInventoryArray[nonbankonly]
@@ -1533,27 +1535,35 @@ function AddToDepot()
 	{
 		Do
 		{
+			if ${SkipItem} == 1
+				{
+					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
+					KeyNum:Inc	
+					SkipItem:Set[0]
+				}
+			
 			if ${Me.CustomInventory[ExactName,${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
 			{
-	  		call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
-			Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
+				call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
+				Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
 				
-				if ${NewItem} == 1
-				{		
-					call AddOverDepotLog "---Slot ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]} Full!!---" FFFF0000
-					KeyNum:Inc	
-				}
+				if ${SlotFull} == 1
+					{		
+						call AddDepotLog "---Slot ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]} Max QTY!!---" FFFF0000
+						KeyNum:Inc	
+						SlotFull:Set[0]
+					}
 				if ${SkipItem} == 1
 				{
-					call AddOverDepotLog "---Skipping [${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}] will not add to depot properly!!---" FFFF0000
+					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
 					KeyNum:Inc	
+					SkipItem:Set[0]
 				}
 			}
-			NewItem:Set[0]
-			SkipItem:Set[0]
 		}
 		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)} && ${RunDepot} == 1
+		
 	}
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Keys} && ${RunDepot} == 1
 	
@@ -1576,7 +1586,7 @@ atom GetText(string DepotItemFull)
 {
 	if ${DepotItemFull.Find["This container cannot hold any more of this item."]}
 		{
-				NewItem:Set[1]
+				SlotFull:Set[1]
 		}
 }				
 
