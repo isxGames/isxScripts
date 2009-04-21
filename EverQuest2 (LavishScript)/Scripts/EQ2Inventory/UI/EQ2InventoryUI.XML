@@ -2375,13 +2375,22 @@
 					<Y>25</Y>
 					<Width>110</Width>
 					<Height>55</Height>
-					<Text>Place Depot Items</Text>
+					<Text>Start EQ2Depot</Text>
 					<AutoTooltip>Places Items in Harvest Depot</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddToDepot]</Command>
 				</CommandButton>
-				<CommandButton Name='PauseDepot'>
+				<CommandButton Name='SkipDepot'>
 					<X>10</X>
 					<Y>95</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Skip Depot Item</Text>
+					<AutoTooltip>Skips Placing an Item in Harvest Depot</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[SkipItem]:Set[1]</Command>
+				</CommandButton>
+				<CommandButton Name='StopDepot'>
+					<X>10</X>
+					<Y>165</Y>
 					<Width>110</Width>
 					<Height>55</Height>
 					<Text>Stop EQ2Depot</Text>
