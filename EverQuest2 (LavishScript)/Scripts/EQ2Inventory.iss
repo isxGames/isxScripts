@@ -30,6 +30,7 @@ variable string NameFilter3
 variable int RunBroker
 variable int RunDepot
 variable int NewItem
+variable int SkipItem
 variable int RunHirelings
 variable int RunJunk
 variable int RunDestroy
@@ -76,12 +77,12 @@ function PlaceItems()
 	TSBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CraftBoxNumber]}]
  	SBBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ClassSpellBox]}]
 	CLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CollectionsBox]}]
-  CHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}]
-  RHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}]
-  LLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegendBox]}]
-  FertBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}]
-  StatBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}]
-  CustBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}]
+	CHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CHarvestBox]}]
+	RHBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[RHarvestBox]}]
+	LLBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[LoreAndLegendBox]}]
+	FertBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[FertilizerItemBox]}]
+	StatBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[StatusItemBox]}]
+	CustBox:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[CustomItemsBox]}]
 	RunBroker:Set[1]
 	wait 5
 	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
@@ -123,6 +124,9 @@ function PlaceItems()
 
 	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceCollection
+		
+	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+		call PlaceCollection	
 
 	if ${UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceTradeskillBooks
@@ -601,7 +605,7 @@ function PlaceCollection()
 					Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${CLBox},${Me.Vending[${CLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 					wait ${Math.Rand[30]:Inc[20]}
 				}
-				while ${Me.CustomInventory[${ArrayPosition}].Name(exists)}	
+				while ${Me.CustomInventory[${ArrayPosition}].Name(exists)} && ${Me.CustomInventory[${ArrayPosition}].Name.Length}>4	
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
@@ -1538,11 +1542,16 @@ function AddToDepot()
 				if ${NewItem} == 1
 				{		
 					call AddOverDepotLog "---Slot ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]} Full!!---" FFFF0000
-					KeyNum:Inc
-					
+					KeyNum:Inc	
+				}
+				if ${SkipItem} == 1
+				{
+					call AddOverDepotLog "---Skipping [${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}] will not add to depot properly!!---" FFFF0000
+					KeyNum:Inc	
 				}
 			}
 			NewItem:Set[0]
+			SkipItem:Set[0]
 		}
 		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)} && ${RunDepot} == 1
 	}
@@ -1855,7 +1864,7 @@ function CreateInventorylist()
 		{
 			if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
 			{
-	  		call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
+	  		call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name} Collection?:${Me.CustomInventory[${ArrayPosition}].IsCollectible} Already?:${Me.CustomInventory[${ArrayPosition}].AlreadyCollected}"
 			}  
 	  }	
 	}
