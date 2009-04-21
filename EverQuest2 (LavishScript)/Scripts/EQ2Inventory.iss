@@ -1864,7 +1864,7 @@ function CreateInventorylist()
 		{
 			if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
 			{
-	  		call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name} Collection?:${Me.CustomInventory[${ArrayPosition}].IsCollectible} Already?:${Me.CustomInventory[${ArrayPosition}].AlreadyCollected}"
+	  		call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
 			}  
 	  }	
 	}
