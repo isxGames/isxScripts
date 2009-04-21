@@ -1872,9 +1872,10 @@ function CreateInventorylist()
 	{
 		if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 		{
-			if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+			if !${Me.CustomInventory[${ArrayPosition}].IsContainer} 
 			{
-	  		call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
+				if ${Me.CustomInventory[${ArrayPosition}].InInventory}
+					call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
 			}  
 	  }	
 	}
