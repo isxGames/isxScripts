@@ -1,6 +1,6 @@
 Revision History ||
 ===================
-v8.65 - Added -load commandline switch. Craft now has the following usage:
+v8.65 - Added -load and -start commandline switches. Craft now has the following usage:
         Craft [-debug] [-verbose] [-load <Recipe Queue>] [-start]
         Craft [<Recipe Queue>]
         
