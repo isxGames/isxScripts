@@ -1,5 +1,20 @@
 Revision History ||
 ===================
+v8.65 - Added -load commandline switch. Craft now has the following usage:
+        Craft [-debug] [-verbose] [-load <Recipe Queue>] [-start]
+        Craft [<Recipe Queue>]
+        
+        -debug                 Enables debug output to console and file
+        -verbose               Shows some text in EQ2 chat window instead of console
+        -load <Recipe Queue>   Loads and processes the specified saved favorite list, but does
+                               not begin crafting. Allows you to go shopping before starting the
+                               queue.
+		-start                 If a recipe queue has been loaded with -load, this will begin
+		                       crafting after processing the recipe queue.
+                               
+        <Recipe Queue>         Must be the only argument in this syntax. Loads queue, processes,
+                               and begins crafting.
+        
 v8.64 - Minor change to help eliminate the "out of range" issues.
 
 v8.63 - Added support for new UI element to display writs remaining in Crafting frame
