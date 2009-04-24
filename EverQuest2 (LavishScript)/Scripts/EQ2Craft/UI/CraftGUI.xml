@@ -546,6 +546,25 @@
                   <Height>20</Height>
                   <Text>Not all HARVESTS have been bought. Click Resume Crafting.</Text>
                 </Text>
+                <Button Name='Crafted Title'>
+                  <X>10</X>
+                  <Y>175</Y>
+                  <Width>r20</Width>
+                  <Height>15</Height>
+                  <TextColor>FFEECC00</TextColor>
+                  <Text>RECIPE QUEUE</Text>
+                </Button>
+                <Listbox Name='Crafted List'>
+                  <X>10</X>
+                  <Y>190</Y>
+                  <Width>r20</Width>
+                  <Height>140</Height>
+                  <Font Template='Tahoma'>
+                  </Font>
+                  <SelectMultiple>1</SelectMultiple>
+                  <Texture />
+                  <Sort>Text</Sort>
+                </Listbox>
               </Tab>
               <Tab Name='Queue'>
                 <Combobox Name='Favourites List'>
@@ -751,25 +770,12 @@
                         <MaxLength>4</MaxLength>
                         <Color>FFDDBB00</Color>
                       </Textentry>
-                      <Commandcheckbox Name='Current Table'>
-                        <Font Template='Tahoma'>
-                          <Color>FFEBDEAA</Color>
-                        </Font>
-                        <X>10</X>
-                        <Y>40</Y>
-                        <Width>100</Width>
-                        <Height>20</Height>
-                        <Text>Use the current TARGETTED Station ONLY</Text>
-                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]}</Data>
-                      </Commandcheckbox>
                       <Commandcheckbox Name='Camp Out'>
                         <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
-                        <Y>60</Y>
+                        <Y>40</Y>
                         <Width>100</Width>
                         <Height>20</Height>
                         <Text>Camp out if this craft session has exceeded                   mins</Text>
@@ -779,7 +785,7 @@
                       </Commandcheckbox>
                       <Textentry Name='Camp Timer'>
                         <X>240</X>
-                        <Y>60</Y>
+                        <Y>40</Y>
                         <Width>45</Width>
                         <Height>20</Height>
                         <MaxLength>4</MaxLength>
@@ -791,91 +797,12 @@
                           LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
                         </OnChange>
                       </Textentry>
-                      <Commandcheckbox Name='Show All Lists'>
-                        <Font Template='Tahoma'>
-                          <Color>FFEBDEAA</Color>
-                        </Font>
-                        <X>10</X>
-                        <Y>80</Y>
-                        <Width>100</Width>
-                        <Height>20</Height>
-                        <Text>Show entire Shopping List</Text>
-                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]}</Data>
-                      </Commandcheckbox>
-                      <Commandcheckbox Name='Prompt Resume'>
-                        <Font Template='Tahoma'>
-                          <Color>FFEBDEAA</Color>
-                        </Font>
-                        <X>10</X>
-                        <Y>100</Y>
-                        <Width>100</Width>
-                        <Height>20</Height>
-                        <Text>Prompt 'Resume Crafting' when buying Harvests</Text>
-                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]}</Data>
-                      </Commandcheckbox>
-                      <Commandcheckbox Name='BuyCommon'>
-                        <Font Template='Tahoma'>
-                          <Color>FFEBDEAA</Color>
-                        </Font>
-                        <X>10</X>
-                        <Y>120</Y>
-                        <Width>150</Width>
-                        <Height>20</Height>
-                        <Text>Buy ALL Vendor bought COMMON components automatically.</Text>
-                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]}</Data>
-                      </Commandcheckbox>
-                      <Commandcheckbox Name='BuyFuel'>
-                        <Font Template='Tahoma'>
-                          <Color>FFEBDEAA</Color>
-                        </Font>
-                        <X>10</X>
-                        <Y>140</Y>
-                        <Width>150</Width>
-                        <Height>20</Height>
-                        <Text>Buy ALL FUEL components automatically.</Text>
-                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]}</Data>
-                      </Commandcheckbox>
-                      <Commandcheckbox Name='BuyHarvest'>
-                        <Font Template='Tahoma'>
-                          <Color>FFEBDEAA</Color>
-                        </Font>
-                        <X>10</X>
-                        <Y>160</Y>
-                        <Width>150</Width>
-                        <Height>20</Height>
-                        <Text>Buy ALL Harvests from Broker to a MAX PRICE:                  (Silver)</Text>
-                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
-                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]}</Data>
-                      </Commandcheckbox>
-                      <Textentry Name='Max Buy Price'>
-                        <X>280</X>
-                        <Y>157</Y>
-                        <Width>45</Width>
-                        <Height>20</Height>
-                        <MaxLength>5</MaxLength>
-                        <Color>FFDDBB00</Color>
-                        <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]}]</OnLoad>
-                        <OnChange>
-                          LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Specify the MAXIMUM price for purchasing Resources]:Set[${This.Text}]
-                          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]:Set[${This.Text}]
-                          LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                        </OnChange>
-                      </Textentry>
                       <Commandcheckbox name='Auto Transmute'>
                         <Font Template='Tahoma'>
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
-                        <Y>180</Y>
+                        <Y>60</Y>
                         <Width>150</Width>
                         <Height>20</Height>
                         <Text>Automatically Transmute Master Crafted Items after Creation</Text>
@@ -888,7 +815,7 @@
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
-                        <Y>200</Y>
+                        <Y>80</Y>
                         <Width>150</Width>
                         <Height>20</Height>
                         <Text>Stop crafting when secondary tradeskill achieves maximum level</Text>
@@ -901,7 +828,7 @@
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
-                        <Y>220</Y>
+                        <Y>100</Y>
                         <Width>100</Width>
                         <Height>20</Height>
                         <Text>Save recipe list range</Text>
@@ -914,7 +841,7 @@
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
-                        <Y>240</Y>
+                        <Y>120</Y>
                         <Width>100</Width>
                         <Height>20</Height>
                         <Text>Disable guild notifications while crafting writs</Text>
@@ -927,7 +854,7 @@
                           <Color>FFEBDEAA</Color>
                         </Font>
                         <X>10</X>
-                        <Y>260</Y>
+                        <Y>140</Y>
                         <Width>100</Width>
                         <Height>20</Height>
                         <Text>Ignore Duels, Trades, and Groups when craft script is running</Text>
@@ -940,7 +867,7 @@
                       </Commandcheckbox>
                       <Text Name='Craft Delay Text'>
                         <X>30</X>
-                        <Y>282</Y>
+                        <Y>162</Y>
                         <Width>100%</Width>
                         <Height>20</Height>
                         <Font Template='Tahoma'>
@@ -950,7 +877,7 @@
                       </Text>
                       <Textentry Name='Craft Delay'>
                         <X>190</X>
-                        <Y>282</Y>
+                        <Y>162</Y>
                         <Width>35</Width>
                         <Height>20</Height>
                         <MaxLength>4</MaxLength>
@@ -959,6 +886,104 @@
                         <OnChange>
                           LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Time to wait between combines?]:Set[${This.Text}]
                           Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftDelay]:Set[${This.Text}]
+                          LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                        </OnChange>
+                      </Textentry>
+                      <Commandcheckbox Name='Craft TTS'>
+                        <X>10</X>
+                        <Y>180</Y>
+                        <Width>100</Width>
+                        <Height>20</Height>
+                        <Text>Enable TTS</Text>
+                        <Autotooltip>
+                          Enables Text to Speech support.
+                          Requires LSMTTS.dll, available separately in the Modules folder of SVN.
+                        </Autotooltip>
+                        <OnLeftClick>
+                          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].VariableScope.EnableTTS:Set[${This.Checked}]
+                          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]
+                        </OnLeftClick>
+                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].VariableScope.EnableTTS}</Data>
+                      </Commandcheckbox>
+
+                    </Tab>
+                    <Tab Name='Shopping'>
+                      <Commandcheckbox Name='Show All Lists'>
+                        <Font Template='Tahoma'>
+                          <Color>FFEBDEAA</Color>
+                        </Font>
+                        <X>10</X>
+                        <Y>20</Y>
+                        <Width>100</Width>
+                        <Height>20</Height>
+                        <Text>Show entire Shopping List</Text>
+                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[ShowAllLists]}</Data>
+                      </Commandcheckbox>
+                      <Commandcheckbox Name='Prompt Resume'>
+                        <Font Template='Tahoma'>
+                          <Color>FFEBDEAA</Color>
+                        </Font>
+                        <X>10</X>
+                        <Y>40</Y>
+                        <Width>100</Width>
+                        <Height>20</Height>
+                        <Text>Prompt 'Resume Crafting' when buying Harvests</Text>
+                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[PromptResume]}</Data>
+                      </Commandcheckbox>
+                      <Commandcheckbox Name='BuyCommon'>
+                        <Font Template='Tahoma'>
+                          <Color>FFEBDEAA</Color>
+                        </Font>
+                        <X>10</X>
+                        <Y>60</Y>
+                        <Width>150</Width>
+                        <Height>20</Height>
+                        <Text>Buy ALL Vendor bought COMMON components automatically.</Text>
+                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyCommon]}</Data>
+                      </Commandcheckbox>
+                      <Commandcheckbox Name='BuyFuel'>
+                        <Font Template='Tahoma'>
+                          <Color>FFEBDEAA</Color>
+                        </Font>
+                        <X>10</X>
+                        <Y>80</Y>
+                        <Width>150</Width>
+                        <Height>20</Height>
+                        <Text>Buy ALL FUEL components automatically.</Text>
+                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyFuel]}</Data>
+                      </Commandcheckbox>
+                      <Commandcheckbox Name='BuyHarvest'>
+                        <Font Template='Tahoma'>
+                          <Color>FFEBDEAA</Color>
+                        </Font>
+                        <X>10</X>
+                        <Y>100</Y>
+                        <Width>150</Width>
+                        <Height>20</Height>
+                        <Text>Buy ALL Harvests from Broker to a MAX PRICE:                  (Silver)</Text>
+                        <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+                        <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+                        <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BuyHarvest]}</Data>
+                      </Commandcheckbox>
+                      <Textentry Name='Max Buy Price'>
+                        <X>280</X>
+                        <Y>97</Y>
+                        <Width>45</Width>
+                        <Height>20</Height>
+                        <MaxLength>5</MaxLength>
+                        <Color>FFDDBB00</Color>
+                        <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]}]</OnLoad>
+                        <OnChange>
+                          LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Specify the MAXIMUM price for purchasing Resources]:Set[${This.Text}]
+                          Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[MaxBuyPrice]:Set[${This.Text}]
                           LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
                         </OnChange>
                       </Textentry>
@@ -1081,6 +1106,20 @@
                               Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
                             </OnChange>
                           </Textentry>
+                          <Commandcheckbox Name='Current Table'>
+                            <Font Template='Tahoma'>
+                              <Color>FFEBDEAA</Color>
+                            </Font>
+                            <X>10</X>
+                            <Y>110</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Text>Use the current TARGETTED Station ONLY (No movement)</Text>
+                            <Command>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]:Set[TRUE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</Command>
+                            <CommandChecked>noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]:Set[FALSE]} noop ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+                            <Data>${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CurrentStation]}</Data>
+                          </Commandcheckbox>
+
                         </Children>
                       </Frame>
                     </Tab>
@@ -1365,7 +1404,7 @@
                       <X>0</X>
                       <Y>16</Y>
                       <Width>100%</Width>
-                      <Height>65</Height>
+                      <Height>88</Height>
                       <Font Template='Tahoma'>
                       </Font>
                       <Texture />
@@ -1377,7 +1416,7 @@
                     </Listbox>
                     <Button Name='Vendor Bought Title'>
                       <X>0</X>
-                      <Y>80</Y>
+                      <Y>106</Y>
                       <Width>100%</Width>
                       <Height>15</Height>
                       <TextColor>FFEECC00</TextColor>
@@ -1385,9 +1424,9 @@
                     </Button>
                     <Listbox Name='Vendor Bought List'>
                       <X>0</X>
-                      <Y>96</Y>
+                      <Y>122</Y>
                       <Width>100%</Width>
-                      <Height>35</Height>
+                      <Height>88</Height>
                       <Font Template='Tahoma'>
                       </Font>
                       <SelectMultiple>1</SelectMultiple>
@@ -1396,7 +1435,7 @@
                     </Listbox>
                     <Button Name='Fuel Title'>
                       <X>0</X>
-                      <Y>130</Y>
+                      <Y>212</Y>
                       <Width>100%</Width>
                       <Height>15</Height>
                       <TextColor>FFEECC00</TextColor>
@@ -1404,34 +1443,16 @@
                     </Button>
                     <Listbox Name='Fuel List'>
                       <X>0</X>
-                      <Y>145</Y>
+                      <Y>228</Y>
                       <Width>100%</Width>
-                      <Height>60</Height>
+                      <Height>88</Height>
                       <Font Template='Tahoma'>
                       </Font>
                       <SelectMultiple>1</SelectMultiple>
                       <Texture />
                       <Sort>Text</Sort>
                     </Listbox>
-                    <Button Name='Crafted Title'>
-                      <X>0</X>
-                      <Y>205</Y>
-                      <Width>100%</Width>
-                      <Height>15</Height>
-                      <TextColor>FFEECC00</TextColor>
-                      <Text>CRAFTED COMPONENTS</Text>
-                    </Button>
-                    <Listbox Name='Crafted List'>
-                      <X>0</X>
-                      <Y>220</Y>
-                      <Width>100%</Width>
-                      <Height>100</Height>
-                      <Font Template='Tahoma'>
-                      </Font>
-                      <SelectMultiple>1</SelectMultiple>
-                      <Texture />
-                      <Sort>Text</Sort>
-                    </Listbox>
+
                   </Children>
                 </Frame>
               </Tab>
@@ -1477,11 +1498,11 @@
                   <Alignment>Center</Alignment>
                   <Wrap />
                   <Text>
-                    Over the years, Craft has been maintained by:
-                    Blazer
-                    Hendrix
-                    Amadeus
-                    Valerian
+Over the years, Craft has been maintained by:
+Blazer
+Hendrix
+Amadeus
+Valerian
                   </Text>
                 </Text>
                 <Text Name='About 2'>
