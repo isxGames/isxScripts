@@ -234,7 +234,7 @@
     			<Y>290</Y>
     			<Width>100</Width>
 	    		<Height>20</Height>
-  	  		<Text>Scan Fertailizers</Text>
+  	  		<Text>Scan Fertilizer</Text>
   	  		<OnLoad>
   	  			if ${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[General Settings].GetString[ScanFertilizer,1]} == 1
 								{
