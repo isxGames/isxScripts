@@ -4536,16 +4536,13 @@ function StartBot()
 		;ui -unload "${PATH_UI}/eq2bot.xml"
 		UIElement[EQ2 Bot]:Hide
 	}
-	else
-	{
-		UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
-		UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
-		UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
-		UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
-		UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
-		UIElement[EQ2 Bot].FindUsableChild[Set KillTarget,commandbutton]:Show
-		UIElement[EQ2 Bot].FindUsableChild[Reacquire KillTarget,commandbutton]:Show
-	}
+	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
+	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Set KillTarget,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Reacquire KillTarget,commandbutton]:Show
 
 		;; Any subclass that can "Feign Death" can be added here; however, be sure that you add a "function FeignDeath()"
 		;; to the class file (see Shadowknight.iss class file for example)
