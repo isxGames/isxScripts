@@ -85,7 +85,7 @@
               if ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Queue]}
               {
               UIElement[Craft Selection].FindUsableChild[Harvest Frame,frame]:Hide:SetZOrder[notalwaysontop]:SetZOrder[movedown]
-              UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Show:SetZOrder[alwaysontop]:SetZOrder[movetop]
+              UIElement[Craft Selection].FindUsableChild[Crafting List Frame,frame]:Show:SetZOrder[notalwaysontop]:SetZOrder[movetop]
               }
               elseif ${UIElement[Craft Selection].FindUsableChild[Craft Main,tabcontrol].SelectedTab.Name.Equal[Options]}
               {
@@ -567,10 +567,36 @@
                 </Listbox>
               </Tab>
               <Tab Name='Queue'>
-                <Combobox Name='Favourites List'>
+                <Combobox Name='Queue Class'>
                   <X>100</X>
                   <Y>10</Y>
-                  <Width>65%</Width>
+                  <Width>80</Width>
+                  <Height>23</Height>
+                  <Fullheight>185</Fullheight>
+                  <ButtonWidth>20</ButtonWidth>
+                  <OnLoad>This.ItemByText[ALL]:Select
+                  This.ItemByText[${Me.TSSubClass}]:Select
+                  </OnLoad>
+                  <OnSelect>
+                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].VariableScope.Craft:PopulateFavorites[${This.SelectedItem.Text}]
+                  </OnSelect>
+                  <Items>
+                    <Item Value='1'>ALL</Item>
+                    <Item Value='2'>Alchemist</Item>
+                    <Item Value='3'>Armorer</Item>
+                    <Item Value='4'>Carpenter</Item>
+                    <Item Value='5'>Jeweler</Item>
+                    <Item Value='6'>Provisioner</Item>
+                    <Item Value='7'>Sage</Item>
+                    <Item Value='8'>Tailor</Item>
+                    <Item Value='9'>Weaponsmith</Item>
+                    <Item Value='10'>Woodworker</Item>
+                  </Items>
+                </Combobox>
+                <Combobox Name='Favourites List'>
+                  <X>185</X>
+                  <Y>10</Y>
+                  <Width>200</Width>
                   <Height>23</Height>
                   <FullHeight>120</FullHeight>
                   <ButtonWidth>20</ButtonWidth>
