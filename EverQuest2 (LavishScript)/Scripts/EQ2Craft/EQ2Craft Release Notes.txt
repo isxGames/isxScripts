@@ -1,5 +1,22 @@
 Revision History ||
 ===================
+v8.7  - Tweaked commandline switches slightly. <Recipe Queue> in the second syntax is no longer
+        required to be alone. This means you can use -debug and still include a recipe queue to
+        get the original behavior.
+      - Moved recipe favorite lists out of the Character Config xml file. All recipe favorite
+        lists are self-contained in their own simple xml settings files, within the (NEW) Queues
+        subfolder.
+      - Craft will auto-populate the favorites list with the recipe queues from your class. You
+        may select a different class, or the "ALL" selection to view other recipe favorites in
+        your Queues folder.
+      - When saving a recipe queue, craft will automatically prefix the filename with your
+        tradeskill subclass.
+      - Text to Speech support is now available. This will require the LSMTTS Lavishscript Module
+        (available on the SVN) to function correctly. This option will default to OFF, and is
+        currently set up to only announce when you encounter a rare reaction (Innovation) or when
+        your craft session is complete.
+
+
 v8.65 - Added -load and -start commandline switches. Craft now has the following usage:
         Craft [-debug] [-verbose] [-load <Recipe Queue>] [-start]
         Craft [<Recipe Queue>]
@@ -9,12 +26,12 @@ v8.65 - Added -load and -start commandline switches. Craft now has the following
         -load <Recipe Queue>   Loads and processes the specified saved favorite list, but does
                                not begin crafting. Allows you to go shopping before starting the
                                queue.
-		-start                 If a recipe queue has been loaded with -load, this will begin
-		                       crafting after processing the recipe queue.
+        -start                 If a recipe queue has been loaded with -load, this will begin
+                               crafting after processing the recipe queue.
                                
         <Recipe Queue>         Must be the only argument in this syntax. Loads queue, processes,
                                and begins crafting.
-        
+
 v8.64 - Minor change to help eliminate the "out of range" issues.
 
 v8.63 - Added support for new UI element to display writs remaining in Crafting frame
