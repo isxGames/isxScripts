@@ -4531,7 +4531,10 @@ function StartBot()
 
 	if ${CloseUI}
 	{
-		ui -unload "${PATH_UI}/eq2bot.xml"
+		;This is stupid. Hide it, that will eliminate crashes when loading tabs etc.
+		;Also possibility of setting up a keybind to show window again if needed.
+		;ui -unload "${PATH_UI}/eq2bot.xml"
+		UIElement[EQ2 Bot]:Hide
 	}
 	else
 	{
