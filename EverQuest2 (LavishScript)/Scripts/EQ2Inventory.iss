@@ -1562,7 +1562,7 @@ function AddToDepot()
 				}
 			}
 		}
-		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)} && ${RunDepot} == 1
+		while ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}](exists)} && ${Me.CustomInventory[${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Name.Length}>4 && ${RunDepot} == 1
 		
 	}
 	while ${KeyNum:Inc} <= ${SettingXML[./EQ2Inventory/ScriptConfig/SupplyDepotList.xml].Set[Supplys].Keys} && ${RunDepot} == 1
@@ -2028,7 +2028,7 @@ function ShutDown()
 	{
 		call AddLog "*****Starting MyPrices*****" FFEECC00
 		wait 5
-		run myprices.iss
+		run myprices/myprices.iss
 		Wait 125
 
 		UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[Start Scanning]:LeftClick
