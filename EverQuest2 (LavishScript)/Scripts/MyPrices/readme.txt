@@ -1,4 +1,4 @@
-MyPrices 0.13k :  released 30th March 2009
+MyPrices 0.13l :  released 27th April 2009
 
 For update details see the bottom of this file.
 
@@ -415,6 +415,10 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+Version 0.13l
+-------------
+
+Updated script to create the new craft recipe lists.
 
 Version 0.13k
 -------------

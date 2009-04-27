@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13k :  released 30th March 2009
+; Version 0.13l :  released 27th April 2009
 ;
 ; Declare Variables
 ;
@@ -77,6 +77,7 @@ variable settingsetref Item
 variable settingsetref General
 
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
+variable filepath NewCraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Queues/"
 variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/XML/"
 variable filepath BackupPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/Backup/"
 variable filepath MyPricesUIPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/UI/"
@@ -110,8 +111,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices 0.13k :  released 30th March 2009" FF11FFCC
-	call echolog "Running MyPrices 0.13k :  released 30th March 2009"
+	call AddLog "Running MyPrices 0.13l :  released 27th April 2009" FF11FFCC
+	call echolog "Running MyPrices 0.13l :  released 27th April 2009"
 	
 	call StartUp	
 
@@ -634,21 +635,9 @@ function checkstock()
 {
 	call echolog "<start> : checkstock"
 
+	; NEW craft list
+
 	LavishSettings[newcraft]:Clear
-
-	LavishSettings[newcraft]:Import[${CraftPath}${Me.Name}.xml]
-
-	CraftItemList:Set[${LavishSettings[newcraft].FindSet[Recipe Favourites]}]
-
-	CraftItemList:AddSet[_myprices]
-
-	CraftList:Set[${CraftItemList.FindSet[myprices]}]
-
-	CraftItemList[myprices]:Clear
-
-	CraftList:Set[${CraftItemList.FindSet[_myprices]}]
-
-	CraftItemList[_myprices]:Clear
 
 	call buy Craft scan
 
@@ -881,6 +870,8 @@ function buy(string tabname, string action)
 
 	if ${action.Equal["compact"]}
 		UIElement[Errortext@Admin@GUITabs@MyPrices]:SetText[" ** Finished **"]
+	elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
+		LavishSettings[newcraft]:Export[${NewCraftPath}${Me.TSSubClass}-_myprices.xml]
 
 
 	call echolog "<end> : buy"
@@ -914,30 +905,13 @@ function checktotals(string itemname, int stacksize, int minlimit, string Recipe
 
 			; if an alternative recipe name is there then use that otherwise use the item name
 			if ${Recipe.Equal[NULL]} || ${Recipe.Length} == 0
-				call addtocraft "${itemname}" ${Makemore}
+				LavishSettings[newcraft]:AddSetting["${itemname}",${Makemore}]
 			else
-				call addtocraft "${Recipe}" ${Makemore}
+				LavishSettings[newcraft]:AddSetting["${Recipe}",${Makemore}]
 		}
 	call echolog "<end> : checktotals "
 }
 
-; update the user file from craft to include a favourite called myprices
-; this set will contain all the items that have a totals shortfall
-function addtocraft(string itemname, int Makemore)
-{
-	call echolog "-> addtocraft ${itemname} ${Makemore}"
-
-	CraftItemList:Set[${LavishSettings[newcraft].FindSet[Recipe Favourites]}]
-
-	CraftItemList:AddSet[_myprices]
-
-	CraftList:Set[${CraftItemList.FindSet[_myprices]}]
-
-	CraftList:AddSetting[${itemname},${Makemore}]
-
-	LavishSettings[newcraft]:Export[${CraftPath}${Me.Name}.xml]
-	call echolog "<end> : addtocraft"
-}
 
 function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, bool BuyNameOnly, bool BuyAttuneOnly, bool AutoTransmute, int startlevel, int endlevel, int tier)
 {
