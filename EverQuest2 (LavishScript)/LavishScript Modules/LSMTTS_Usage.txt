@@ -1,0 +1,16 @@
+TLO: TTS and Speech - both return speech datatype.
+
+speech datatype MEMBERS:
+	Volume 	(int type)	
+	Rate 	(int type)	
+	IsReady (bool type)
+	Skip		Skips the current speech call.
+	Skip[int]	Skips <int> number of sentences in the current speech call.
+
+speech datatype METHODS:
+	SetVolume[int]	
+	SetRate[int]	
+	Speak[string]	
+
+COMMAND: Speak <text>
+
