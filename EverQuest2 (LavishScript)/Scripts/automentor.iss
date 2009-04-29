@@ -17,7 +17,7 @@ function main(string mtarget)
 {
 	variable int GrpCount
 	variable bool AutoLowest = FALSE
-	if ${mtarget.Length} == 0 /* No target specified, go into auto-lowest mode */
+	if ${mtarget.Length} == 0 || ${mtarget.Equal[NULL]} /* No target specified, go into auto-lowest mode */
 	{
 		AutoLowest:Set[TRUE]
 	}
@@ -32,6 +32,7 @@ function main(string mtarget)
 			{
 				Echo [${Time}] automentor:  mentoring ${mtarget}
 				EQ2Execute apply_verb ${Actor[pc,exactname,${mtarget}].ID} mentor
+				Mentored:Set[${mtarget}]
 			}
 		}
 		else
@@ -94,5 +95,15 @@ function main(string mtarget)
 
 function atexit()
 {
+	if ${Me.Level} != ${Me.EffectiveLevel} /* We're still mentored. Attempt to unmentor */
+	{
+		if ${Actor[pc,exactname,${Mentored}](exists)}
+		{
+			eq2execute /apply_verb ${Actor[pc,exactname,${Mentored}].ID} stop mentoring
+			Echo [${Time}] automentor:  Unmentoring ${Mentored}
+		}
+		/* If our current mentored target is unavailable to unmentor (different zone?) we can't do anything.*/
+	}
+
 	Echo [${Time}] automentor: unloaded
 }
