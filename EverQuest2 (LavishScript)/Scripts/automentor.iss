@@ -34,6 +34,8 @@ function main(string mtarget)
 				EQ2Execute apply_verb ${Actor[pc,exactname,${mtarget}].ID} mentor
 				Mentored:Set[${mtarget}]
 			}
+			;Echo [${Time}] automentor: sleeping ${Math.Calc64[${scantime}/10]}s
+			wait ${scantime}
 		}
 		else
 		{
