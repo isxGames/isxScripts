@@ -1,4 +1,4 @@
-MyPrices 0.13l :  released 27th April 2009
+MyPrices 0.13m :  released 1st April 2009
 
 For update details see the bottom of this file.
 
@@ -24,10 +24,7 @@ This is a limitation of SoE's broker system and I cannot work around it.
 
 Listing the same item seperately in 2 or more DIFFERENT containers will not cause this problem.
 
-2) Items with Commas in the name may have problems in the buying and selling parts of the script due to the fact Innerspace
-currently reads the name in the UI box upto the comma then assumes the next part of the text is another item.
-
-3) The buy routine currently doesn't take commission into it's calculations when listing items , so if you set it up to buy
+2) The buy routine currently doesn't take commission into it's calculations when listing items , so if you set it up to buy
 and item at 1g , it will SHOW items being sold than 1g 20s and 1g 40s (based on different broker commission rates)
 it DOES NOT however buy items over your set maximum price.
 
@@ -67,16 +64,14 @@ you have left for sale on the broker.
 Running This Script
 -------------------
 
-1.
-Open the Innerspace command line Window (`)
-Type run myprices
+1.Open the Innerspace command line Window (`) and Type run myprices
 
 or
 
 2. type /run myprices in your EQ2 chat window.
 
 
-The script will then open the GUI , either doubleclick your market board or the closest non-agro NPC (should be the broker)
+The script will then open the GUI , either doubleclick your market board or the closest broker (guild hall or otherwise)
 scan your broker system and list whats on it.
 
 3. You can auto-run a scan and exit the script by passing the paramater SCAN and/or PLACE to it.
@@ -191,6 +186,9 @@ Craft List
 Clicking on this will make myprices scan your broker list , compare whats there with the values you set under the craft tab
 and add how many of what items you need to make to replenish your broker stocks to your craft script favourites list.
 
+If you set a bags options to be 'Contents are not for sale' then that bag will be ignored by the script when you
+use 'Craft List'.
+
 Next time you run craft you can choose '_myprices' from the list under the Advanced Tab , Press Load and then the Submit Queue button
 and you can then start crafting what you need.
 
@@ -217,6 +215,10 @@ or
     the box with the enough space to fit ALL those items in your inventory.
 4.  If no box has enough space to fit all of those items it distributes them between the boxes (filling boxes with the most space first).
 5.  it stops when you have no more space left anywhere.
+
+
+If you set a bags options to be 'Contents are not for sale' then that bag will be ignored by the script when you
+use 'place items'.
 
 
 The Sell TAB
@@ -415,6 +417,12 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+Version 0.13m
+-------------
+
+Updated script to to ignore any items in bags who have the 'Items are not for sale' flag set , ths affects the 'Place Items'
+and 'Craft List' features.
+
 Version 0.13l
 -------------
 

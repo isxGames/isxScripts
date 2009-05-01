@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13l :  released 27th April 2009
+; Version 0.13m :  released 1st May 2009
 ;
 ; Declare Variables
 ;
@@ -111,8 +111,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running MyPrices 0.13l :  released 27th April 2009" FF11FFCC
-	call echolog "Running MyPrices 0.13l :  released 27th April 2009"
+	call AddLog "Running Version 0.13m :  released 1st May 2009" FF11FFCC
+	call echolog "Running Version 0.13m :  released 1st May 2009"
 	
 	call StartUp	
 
@@ -2361,7 +2361,7 @@ function placeitems(string itemname, int box, int numitems)
 		do
 		{
 			; if an item in your inventory matches the crafted item from your crafted item list
-			if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]} && !${Me.CustomInventory[${xvar}].Attuned}
+			if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]} && !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
 			{
 				; check current used capacity
 				lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
@@ -2394,8 +2394,9 @@ function numinventoryitems(string itemname, bool num)
 	
 	do
 	{
-		if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]}
+		if ${Me.CustomInventory[${xvar}].Name.Equal[${itemname}]} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
 		{
+
 			if ${num}
 				numitems:Inc[${Me.CustomInventory[${xvar}].Quantity}]
 			else
