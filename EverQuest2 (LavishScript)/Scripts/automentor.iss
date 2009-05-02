@@ -49,7 +49,7 @@ function main(string mtarget)
 			LowestLevel:Set[100] /* For future expansion */
 			for (GrpCount:Set[1] ; ${GrpCount} < ${Me.GroupCount} ; GrpCount:Inc)
 			{
-				if ${Me.Group[${GrpCount}].ZoneName.NotEqual[${Zone.Name}]}
+				if ${Me.Group[${GrpCount}].ZoneName.NotEqual["${Zone.Name}"]}
 					continue
 
 				if ${Me.Group[${GrpCount}].Level} < ${LowestLevel}
