@@ -171,7 +171,7 @@ function EQ2BotLib_Init()
 	;HOs
 	if ${DoHOs}
 	{
-		objHeroicOp:Intialize
+		objHeroicOp:Initialize
 		objHeroicOp:LoadUI
 	}
 
@@ -1600,7 +1600,7 @@ objectdef HeroicOp
 				FighterArm1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm1,""]}]
 				FighterArm2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm2,""]}]
 				FighterFist1:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist1,""]}]
-				FighterFist2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist1,""]}]
+				FighterFist2:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist2,""]}]
 				break
 
 			case scout
