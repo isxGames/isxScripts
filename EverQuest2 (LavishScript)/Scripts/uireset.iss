@@ -10,4 +10,6 @@ function main()
 		UIElement[Harvest]:Reset
 	if ${UIElement[EQ2 Track](exists)}
 		UIElement[EQ2 Track]:Reset
+	if ${UIElement[EQ2AFKAlarm](exists)}
+		UIElement[EQ2AFKAlarm]:Reset
 }
