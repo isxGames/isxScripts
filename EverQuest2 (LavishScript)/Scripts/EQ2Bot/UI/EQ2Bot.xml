@@ -2193,8 +2193,8 @@
 								This:UnsetChecked
 							</OnLoad>
 							<OnLeftClick>
-								UIElement[Dungeon Crawl@Navigation@EQ2Bot Tabs@EQ2 Bot]:SetChecked
-								This:UnsetChecked
+								This:SetChecked
+								UIElement[Camp@Navigation@EQ2Bot Tabs@EQ2 Bot]:UnsetChecked
 								Script[EQ2Bot].Variable[CampNav]:Set[FALSE]
 								Script[EQ2Bot]:ExecuteAtom[CheckFinish]
 							</OnLeftClick>
