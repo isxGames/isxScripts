@@ -3415,10 +3415,10 @@ function CheckLoot()
 		return
 
 	islooting:Set[TRUE]
-	if ${NoAutoMovement}
-		EQ2:CreateCustomActorArray[byDist,${ScanRange}]
-	else
+	if ${NoAutoMovement} /* We will still move to loot distance of chests within 9m. This should be OK with everyone. */
 		EQ2:CreateCustomActorArray[byDist,9}]
+	else /* Allow auto movement */
+		EQ2:CreateCustomActorArray[byDist,${ScanRange}]
 
 	do
 	{
