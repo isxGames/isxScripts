@@ -104,6 +104,7 @@ variable bool AutoMelee
 variable bool AutoPull
 variable bool PullOnlySoloMobs
 variable bool AutoLoot
+variable bool LootCorpses
 variable bool LootAll
 variable int KillTarget
 variable string Follow
@@ -3376,6 +3377,9 @@ function CheckLootNoMove()
 	variable int tcount=2
 	variable int tmptimer
 
+	if !${LootCorpses}
+		return
+
 	EQ2:CreateCustomActorArray[byDist,9]
 
 	do
@@ -3477,7 +3481,7 @@ function CheckLoot()
 			}
 			call ProcessTriggers
 		}
-		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]}
+		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]} && ${LootCorpses}
 		{
 			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
 			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"]
@@ -5252,6 +5256,7 @@ objectdef EQ2BotObj
 		MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
 		AutoSwitch:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Switch Targets when Main Assist Switches?,TRUE]}]
 		AutoLoot:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Loot Corpses and open Treasure Chests?,FALSE]}]
+		LootCorpses:Set[${CharacterSet.FindSet[General Settings].FindSetting[Loot Corpses?,TRUE]}]
 		LootAll:Set[${CharacterSet.FindSet[General Settings].FindSetting[Accept Loot Automatically?,TRUE]}]
 		LootMethod:Set[${CharacterSet.FindSet[General Settings].FindSetting[LootMethod,Accept]}]
 		AutoPull:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Pull,FALSE]}]
