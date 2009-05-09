@@ -345,6 +345,7 @@ atom(script) NeedBuffs()
 function CheckPosition()
 {
 	call assistpawn
+	call DoFollowInCombat
 	call facemob
 	call MoveToTarget
 	call targettank
@@ -385,6 +386,30 @@ function LooseTarget()
 		}
 	}
 	return
+}
+;********************************************
+function DoFollowInCombat()
+{
+	if ${DoFollowInCombat}
+	{
+		call assistpawn
+		if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 10 && ${Pawn[exactname,${followpawn}].Distance} < 5
+		{
+			face ${Me.Target.X} ${Me.Target.Y}
+			call movetoobject ${Me.Target.ID} ${followpawndist} 0
+		}
+		if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
+		{
+			face ${Me.Target.X} ${Me.Target.Y}
+		}
+		if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 25
+		{
+			face ${Pawn[exactname,${assistpawn}].X} ${Pawn[exactname,${assistpawn}].Y}
+			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+		}
+	}
+	return
+
 }
 ;********************************************
 function facemob()

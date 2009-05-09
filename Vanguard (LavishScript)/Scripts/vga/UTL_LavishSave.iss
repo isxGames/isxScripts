@@ -215,6 +215,8 @@ function LavishSave()
 	UtilitySR:AddSetting[DoAutoAcceptGroupInvite,${DoAutoAcceptGroupInvite}]
 	UtilitySR:AddSetting[DoLooseTarget,${DoLooseTarget}]
 	UtilitySR:AddSetting[AssistEncounter,${AssistEncounter}]	
+	UtilitySR:AddSetting[DoFollowInCombat,${DoFollowInCombat}]	
+
 	;===================================================
 	;===                  Spells Save               ====
 	;===================================================
