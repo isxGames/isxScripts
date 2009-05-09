@@ -138,6 +138,7 @@ variable bool DoAutoAcceptGroupInvite
 variable bool DoLooseTarget
 variable int AssistEncounter
 variable bool doTrash
+variable bool DoFollowInCombat
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================

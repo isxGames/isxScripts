@@ -294,6 +294,7 @@ function LavishLoad()
 	DoAutoAcceptGroupInvite:Set[${UtilitySR.FindSetting[DoAutoAcceptGroupInvite,TRUE]}]
 	DoLooseTarget:Set[${UtilitySR.FindSetting[DoLooseTarget,${DoLooseTarget}]}]
 	AssistEncounter:Set[${UtilitySR.FindSetting[AssistEncounter,${AssistEncounter}]}]
+	DoFollowInCombat:Set[${UtilitySR.FindSetting[DoFollowInCombat,${DoFollowInCombat}]}]
 	
 	;===================================================
 	;===                  Spells Load               ====

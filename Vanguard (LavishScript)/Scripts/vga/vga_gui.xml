@@ -563,6 +563,24 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+                          <checkbox Name='DoFollowInCombat' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>180</X>
+                            <Y>255</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Follow Friend In Combat</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoFollowInCombat}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoFollowInCombat:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">
                             <X>13</X>
                             <Y>85%</Y>
@@ -1123,7 +1141,7 @@
                   <OnLeftClick>
                     AddTrash "${UIElement[TrashEntry@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui].Text}"
                     BuildTrash
-                    UIElement[TrashEntry@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetText[]
+                    UIElement[UIElement[MarketCombo@MarketCFrm@Market@VG@VGMarket]:ClearItems
                     Script[VGA]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </CommandButton>
