@@ -316,6 +316,43 @@ function LavishSave()
 	Triggers:AddSetting[LastPrimaryT1,${LastPrimaryT1}]
 	Triggers:AddSetting[LastSecondaryT1,${LastSecondaryT1}]
 	Triggers:AddSetting[LastStanceT1,${LastStanceT1}]
+	;===================================================
+	;===              Interaction Save              ====
+	;===================================================
+Interaction:AddSetting[doRequestBuffs1,${doRequestBuffs[1]}]
+Interaction:AddSetting[RequestBuff1,${RequestBuff[1]}]
+Interaction:AddSetting[RequestBuffPlayer1,${RequestBuffPlayer[1]}]
+Interaction:AddSetting[TellRequestBuffPlayer1,${TellRequestBuffPlayer[1]}]
+Interaction:AddSetting[doRequestBuffs2,${doRequestBuffs[2]}]
+Interaction:AddSetting[RequestBuff2,${RequestBuff[2]}]
+Interaction:AddSetting[RequestBuffPlayer2,${RequestBuffPlayer[2]}]
+Interaction:AddSetting[TellRequestBuffPlayer2,${TellRequestBuffPlayer[2]}]
+Interaction:AddSetting[doRequestBuffs3,${doRequestBuffs[3]}]
+Interaction:AddSetting[RequestBuff3,${RequestBuff[3]}]
+Interaction:AddSetting[RequestBuffPlayer3,${RequestBuffPlayer[3]}]
+Interaction:AddSetting[TellRequestBuffPlayer3,${TellRequestBuffPlayer[3]}]
+Interaction:AddSetting[doRequestBuffs4,${doRequestBuffs[4]}]
+Interaction:AddSetting[RequestBuff4,${RequestBuff[4]}]
+Interaction:AddSetting[RequestBuffPlayer4,${RequestBuffPlayer[4]}]
+Interaction:AddSetting[TellRequestBuffPlayer4,${TellRequestBuffPlayer[4]}]
+Interaction:AddSetting[doRequestItems1,${doRequestItems[1]}]
+Interaction:AddSetting[RequestItems1,${RequestItems[1]}]
+Interaction:AddSetting[RequestItemsPlayer1,${RequestItemsPlayer[1]}]
+Interaction:AddSetting[TellRequestItemsPlayer1,${TellRequestItemsPlayer[1]}]
+Interaction:AddSetting[doRequestItems2,${doRequestItems[2]}]
+Interaction:AddSetting[RequestItems2,${RequestItems[2]}]
+Interaction:AddSetting[RequestItemsPlayer2,${RequestItemsPlayer[2]}]
+Interaction:AddSetting[TellRequestItemsPlayer2,${TellRequestItemsPlayer[2]}]
+Interaction:AddSetting[DoStopFollow,${DoStopFollow}]
+Interaction:AddSetting[StopFollowtxt,${StopFollowtxt}]
+Interaction:AddSetting[DoStartFollow,${DoStartFollow}]
+Interaction:AddSetting[StartFollowtxt,${StartFollowtxt}]
+Interaction:AddSetting[DoKillLevitate,${DoKillLevitate}]
+Interaction:AddSetting[KillingLevitate,${KillingLevitate}]
+Interaction:AddSetting[DoReassistTank,${DoReassistTank}]
+Interaction:AddSetting[ReassistingTank,${ReassistingTank}]
+
+
 	
 	switch ${Me.Class}
 	{
