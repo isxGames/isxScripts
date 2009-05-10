@@ -55,6 +55,8 @@ variable settingsetref Trash
 variable settingsetref Class
 variable settingsetref Rescue
 variable settingsetref ForceRescue
+variable settingsetref Interaction
+
 
 ;===================================================
 ;===               Group Member Names, etc      ====
@@ -276,3 +278,24 @@ variable string BMBloodUnionDumpDPSSpell
 variable string BMSingleTargetLifeTap1
 variable string BMSingleTargetLifeTap2
 variable string BMBloodUnionSingleTargetHOT
+
+;===================================================
+;===               Interaction Variables        ====
+;===================================================
+variable bool doRequestBuffs[4] 
+variable string RequestBuff[4]
+variable string RequestBuffPlayer[4]
+variable string TellRequestBuffPlayer[4]
+variable bool doRequestItems[2]
+variable string RequestItems[2]
+variable string RequestItemsPlayer[2]
+variable string TellRequestItemsPlayer[2]
+variable bool DoStopFollow
+variable string StopFollowtxt
+variable bool DoStartFollow
+variable string StartFollowtxt
+variable bool DoKillLevitate
+variable string KillingLevitate
+variable bool DoReassistTank
+variable string ReassistingTank
+

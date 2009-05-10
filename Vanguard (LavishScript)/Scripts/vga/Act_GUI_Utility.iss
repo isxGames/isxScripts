@@ -393,7 +393,7 @@ function DoFollowInCombat()
 	if ${DoFollowInCombat}
 	{
 		call assistpawn
-		if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 10 && ${Pawn[exactname,${followpawn}].Distance} < 5
+		if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 7 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
 			face ${Me.Target.X} ${Me.Target.Y}
 			call movetoobject ${Me.Target.ID} ${followpawndist} 0

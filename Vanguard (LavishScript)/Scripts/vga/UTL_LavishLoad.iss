@@ -53,6 +53,7 @@ function loadxmls()
 	LavishSettings[VGA]:AddSet[Class]
 	LavishSettings[VGA]:AddSet[Rescue]
 	LavishSettings[VGA]:AddSet[ForceRescue]
+	LavishSettings[VGA]:AddSet[Interaction]
 
 	LavishSettings[VGA_Mobs]:AddSet[Ice]
 	LavishSettings[VGA_Mobs]:AddSet[Fire]
@@ -461,7 +462,43 @@ function LavishLoad()
 	LastPrimaryT1:Set[${Triggers.FindSetting[LastPrimaryT1,${LastPrimaryT1}]}]
 	LastSecondaryT1:Set[${Triggers.FindSetting[LastSecondaryT1,${LastSecondaryT1}]}]
 	LastStanceT1:Set[${Triggers.FindSetting[LastStanceT1,${LastStanceT1}]}]
-	
+
+	;===================================================
+	;===            Interactions   Load             ====
+	;===================================================
+doRequestBuffs[1]:Set[${Interaction.FindSetting[doRequestBuff1]}]
+RequestBuff[1]:Set[${Interaction.FindSetting[RequestBuff1]}]
+RequestBuffPlayer[1]:Set[${Interaction.FindSetting[RequestBuffPlayer1]}]
+TellRequestBuffPlayer[1]:Set[${Interaction.FindSetting[TellRequestBuffPlayer1]}]
+doRequestBuffs[2]:Set[${Interaction.FindSetting[doRequestBuffs2]}]
+RequestBuff[2]:Set[${Interaction.FindSetting[RequestBuff2]}]
+RequestBuffPlayer[2]:Set[${Interaction.FindSetting[RequestBuffPlayer2]}]
+TellRequestBuffPlayer[2]:Set[${Interaction.FindSetting[TellRequestBuffPlayer2]}]
+doRequestBuffs[3]:Set[${Interaction.FindSetting[doRequestBuffs3]}]
+RequestBuff[3]:Set[${Interaction.FindSetting[RequestBuff3]}]
+RequestBuffPlayer[3]:Set[${Interaction.FindSetting[RequestBuffPlayer3]}]
+TellRequestBuffPlayer[3]:Set[${Interaction.FindSetting[TellRequestBuffPlayer3]}]
+doRequestBuffs[4]:Set[${Interaction.FindSetting[doRequestBuffs4]}]
+RequestBuff[4]:Set[${Interaction.FindSetting[RequestBuff4]}]
+RequestBuffPlayer[4]:Set[${Interaction.FindSetting[RequestBuffPlayer4]}]
+TellRequestBuffPlayer[4]:Set[${Interaction.FindSetting[TellRequestBuffPlayer4]}]
+doRequestItems[1]:Set[${Interaction.FindSetting[doRequestItems1]}]
+RequestItems[1]:Set[${Interaction.FindSetting[RequestItems1]}]
+RequestItemsPlayer[1]:Set[${Interaction.FindSetting[RequestItemsPlayer1]}]
+TellRequestItemsPlayer[1]:Set[${Interaction.FindSetting[TellRequestItemsPlayer1]}]
+doRequestItems[2]:Set[${Interaction.FindSetting[doRequestItems2]}]
+RequestItems[2]:Set[${Interaction.FindSetting[RequestItems2]}]
+RequestItemsPlayer[2]:Set[${Interaction.FindSetting[RequestItemsPlayer2]}]
+TellRequestItemsPlayer[2]:Set[${Interaction.FindSetting[TellRequestItemsPlayer2]}]
+DoStopFollow:Set[${Interaction.FindSetting[DoStopFollow,${DoStopFollow}]}]
+StopFollowtxt:Set[${Interaction.FindSetting[StopFollowtxt,${StopFollowtxt}]}]
+DoStartFollow:Set[${Interaction.FindSetting[DoStartFollow,${DoStartFollow}]}]
+StartFollowtxt:Set[${Interaction.FindSetting[StartFollowtxt,${StartFollowtxt}]}]
+DoKillLevitate:Set[${Interaction.FindSetting[DoKillLevitate,${DoKillLevitate}]}]
+KillingLevitate:Set[${Interaction.FindSetting[KillingLevitate,${KillingLevitate}]}]
+DoReassistTank:Set[${Interaction.FindSetting[DoReassistTank,${DoReassistTank}]}]
+ReassistingTank:Set[${Interaction.FindSetting[ReassistingTank,${ReassistingTank}]}]
+
 	
 	Class:Set[${LavishSettings[VGA].FindSet[Class]}]
 	switch ${Me.Class}
