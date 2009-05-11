@@ -74,6 +74,7 @@ function Class_Declaration()
 	declare mezTarget1 int script
 	declare mezTarget2 int script
 	declare CharmTarget int script
+	declare BuffTarget string script
 
 	call EQ2BotLib_Init
 
@@ -205,10 +206,10 @@ function Buff_Init()
 	PreSpellRange[19,1]:Set[398]
 
 	PreAction[20]:Set[Buff_AADexSonata]
-	PreSpellRange[20,1]:Set[XXX]
+	PreSpellRange[20,1]:Set[403]
 
-	PreAction[20]:Set[Buff_AAUpTempo]
-	PreSpellRange[20,1]:Set[402]
+	PreAction[21]:Set[Buff_AAUpTempo]
+	PreSpellRange[21,1]:Set[402]
 }
 
 function Combat_Init()
@@ -266,6 +267,8 @@ function Combat_Init()
 	Action[17]:Set[AAHarmonizing_Shot]
 	SpellRange[17,1]:Set[386]
 
+	Action[18]:Set[Evasive]
+	SpellRange[18,1]:Set[405]
 }
 
 
@@ -292,137 +295,93 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
+		case Buff_AAUpTempo
+			BuffTarget:Set[${UIElement[cbBuff_AAUpTempo@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2
+
+			break
+		case Buff_AADexSonata
+			if ${BuffDexSonata}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			else
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			break
 		case Buff_Defense
 			if ${BuffDefense}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Buff_Power
 			if ${BuffPower}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Arcane
 			if ${BuffArcane}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Elemental
 			if ${BuffElemental}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Haste
 			if ${BuffHaste}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Health
 			if ${BuffHealth}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Reflection
 			if ${BuffReflection}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Aria
 			if ${BuffAria}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Stamina
 			if ${BuffStamina}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Casting
 			if ${BuffCasting}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Hate
 			if ${BuffHate}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_Self
 			if ${BuffSelf}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		case Buff_AAAllegro
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -598,7 +557,7 @@ function Combat_Routine(int xAction)
 		}
 
 		; Master Strike
-		if ${Me.Ability[Sinister Strike].IsReady} && !${RangedAttackMode} && !${InvalidMasteryTargets.Element[${Target.ID}](exists)}
+		if ${Me.Ability[Sinister Strike].IsReady} && !${RangedAttackMode} && !${InvalidMasteryTargets.Element[${Target.ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 		{
 			Target ${KillTarget}
 			call CheckPosition 1 1
@@ -612,7 +571,7 @@ function Combat_Routine(int xAction)
 		}
 
 		; Flank debuff
-		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode}
+		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 		{
 			call CastSpellRange 110 0 1 1 ${KillTarget} 0 0 1
 			;return
@@ -628,7 +587,7 @@ function Combat_Routine(int xAction)
 		; Stealth Attack Combo
 		; Check if we have the bump AA and use it to stealth us, if we do not, skip it entirely
 		echo stealth check
-		if ${Me.Ability[${SpellType[391]}](exists)} && ${Me.Ability[${SpellType[391]}].IsReady} && ${Me.Ability[${SpellType[130]}].TimeUntilReady}<.1 && !${RangedAttackMode}
+		if ${Me.Ability[${SpellType[391]}](exists)} && ${Me.Ability[${SpellType[391]}].IsReady} && ${Me.Ability[${SpellType[130]}].TimeUntilReady}<.1 && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 		{
 			echo use stealth
 			while ${Me.CastingSpell}
@@ -656,9 +615,9 @@ function Combat_Routine(int xAction)
 		}
 
 		; Evasive Maneuvers
-		if ${Me.Ability[${SpellType[401]}].IsReady}
+		if ${Me.Ability[${SpellType[405]}].IsReady} && !${MainTank}
 		{
-			call CastSpellRange 401 0 ${range} 0 ${KillTarget} 0 0 1
+			call CastSpellRange 405 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 
@@ -705,7 +664,7 @@ function Combat_Routine(int xAction)
 		case AAHarmonizing_Shot
 		case Bow_Attack
 
-			if ${BowAttacksMode}
+			if ${BowAttacksMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 			{
 				call CheckPosition 3 0 ${KillTarget}
 				while ${Me.CastingSpell}
@@ -937,6 +896,9 @@ function DoJesterCap()
 	variable string JCActor=${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${BuffJesterCapMember}].Text}
 
 	if !${Me.Ability[${SpellType[156]}].IsReady}
+		return
+
+	if ${Me.Maintained[${SpellType[156]}](exists)}
 		return
 
 	if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}==0
