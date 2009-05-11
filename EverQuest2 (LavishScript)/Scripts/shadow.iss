@@ -31,7 +31,7 @@ function main(string ShadowTarget, float srange)
 			if ${Actor[${ShadowTarget}].Distance}>${srange}
 			{
 				Script[EQ2Bot]:Pause
-				call FastMove ${Actor[pc,exactname,${ShadowTarget}].ID} ${srange}
+				call FastMove ${Actor[${ShadowTarget}].ID} ${srange}
 				Script[EQ2Bot]:Resume
 			}
 			waitframe
