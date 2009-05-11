@@ -35,6 +35,9 @@
 		<Setting Name="10,396">Heroic Storytelling</Setting>
 		<Setting Name="10,397">Rhythm Blade</Setting>
 		<Setting Name="10,398">Fortissimo</Setting>
+		<Setting Name="10,403">Dexterous Sonata</Setting>
+		<Setting Name="10,402">Battle Cry</Setting>
+		<Setting Name="10,405">Evasive Maneuvers</Setting>
 		<Setting Name="11,150">Diseased Blade</Setting>
 		<Setting Name="12,60">Piercing Shriek</Setting>
 		<Setting Name="13,21">Bria\'s Stirring Ballad</Setting>
@@ -183,7 +186,7 @@
     <Setting Name="79,31">Death\'s Edge</Setting>
     <Setting Name="79,21">Power Ballad</Setting>
     <Setting Name="80,62">Cry of the Banshee</Setting>
-    <Setting Name="80,">Gravitas</Setting>
+    <Setting Name="80,156">Gravitas</Setting>
     <Setting Name="80,152">Howl of Death</Setting>
     <Setting Name="80,24">Riana's Indignant Sustain</Setting>
 	</Set>
