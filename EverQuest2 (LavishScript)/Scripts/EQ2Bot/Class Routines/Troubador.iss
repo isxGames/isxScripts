@@ -62,8 +62,10 @@ function Class_Declaration()
 	declare BuffCasting bool script FALSE
 	declare BuffHate bool script FALSE
 	declare BuffSelf bool script FALSE
-
+	declare BuffDKTM bool script FALSE
+	declare BuffDexSonata bool script FALSE
 	declare Charm bool script FALSE
+
 	;Initialized by UI
 	declare BuffJesterCapTimers collection:int script
 	declare BuffJesterCapIterator iterator script
@@ -98,9 +100,10 @@ function Class_Declaration()
 	BuffCasting:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Casting","FALSE"]}]
 	BuffHate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Hate","FALSE"]}]
 	BuffSelf:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Self","FALSE"]}]
+	BuffDKTM:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff DKTM","FALSE"]}]
+	BuffDexSonata:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff DexSonata","FALSE"]}]
 
 	PosionCureItem:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Poison Cure Item","Antivenom Hypo Bracer"]}]
-
 	BuffJesterCap:GetIterator[BuffJesterCapIterator]
 }
 
@@ -144,60 +147,68 @@ function Class_Shutdown()
 
 function Buff_Init()
 {
-	PreAction[1]:Set[Buff_Defense]
-	PreSpellRange[1,1]:Set[20]
+	PreAction[1]:Set[Buff_AAAllegro]
+	PreSpellRange[1,1]:Set[390]
 
-	PreAction[2]:Set[Buff_Power]
-	PreSpellRange[2,1]:Set[21]
+	PreAction[2]:Set[Buff_Defense]
+	PreSpellRange[2,1]:Set[20]
 
-	PreAction[3]:Set[Buff_Arcane]
-	PreSpellRange[3,1]:Set[22]
+	PreAction[3]:Set[Buff_Power]
+	PreSpellRange[3,1]:Set[21]
 
-	PreAction[4]:Set[Buff_Elemental]
-	PreSpellRange[4,1]:Set[23]
+	PreAction[4]:Set[Buff_Arcane]
+	PreSpellRange[4,1]:Set[22]
 
-	PreAction[5]:Set[Buff_Haste]
-	PreSpellRange[5,1]:Set[24]
+	PreAction[5]:Set[Buff_Elemental]
+	PreSpellRange[5,1]:Set[23]
 
-	PreAction[6]:Set[Buff_Health]
-	PreSpellRange[6,1]:Set[25]
+	PreAction[6]:Set[Buff_Haste]
+	PreSpellRange[6,1]:Set[24]
 
-	PreAction[7]:Set[Buff_Reflection]
-	PreSpellRange[7,1]:Set[26]
+	PreAction[7]:Set[Buff_Health]
+	PreSpellRange[7,1]:Set[25]
 
-	PreAction[8]:Set[Buff_Aria]
-	PreSpellRange[8,1]:Set[27]
+	PreAction[8]:Set[Buff_Reflection]
+	PreSpellRange[8,1]:Set[26]
 
-	PreAction[9]:Set[Buff_Stamina]
-	PreSpellRange[9,1]:Set[28]
+	PreAction[9]:Set[Buff_Aria]
+	PreSpellRange[9,1]:Set[27]
 
-	PreAction[10]:Set[Buff_Casting]
-	PreSpellRange[10,1]:Set[29]
+	PreAction[10]:Set[Buff_Stamina]
+	PreSpellRange[10,1]:Set[28]
 
-	PreAction[11]:Set[Buff_Hate]
-	PreSpellRange[11,1]:Set[30]
+	PreAction[11]:Set[Buff_Casting]
+	PreSpellRange[11,1]:Set[29]
 
-	PreAction[12]:Set[Buff_Self]
-	PreSpellRange[12,1]:Set[31]
+	PreAction[12]:Set[Buff_Hate]
+	PreSpellRange[12,1]:Set[30]
 
-	PreAction[13]:Set[Buff_AAAllegro]
-	PreSpellRange[13,1]:Set[390]
+	PreAction[13]:Set[Buff_Self]
+	PreSpellRange[13,1]:Set[31]
 
-	PreAction[14]:Set[Buff_AADontKillTheMessenger]
-	PreSpellRange[14,1]:Set[395]
+	PreAction[14]:Set[Buff_AAUbeatTempo]
+	PreSpellRange[14,1]:Set[XXX]
 
-	PreAction[15]:Set[Buff_AAHarmonization]
-	PreSpellRange[15,1]:Set[383]
+	PreAction[15]:Set[Buff_AADontKillTheMessenger]
+	PreSpellRange[15,1]:Set[395]
 
-	PreAction[16]:Set[Buff_AAResonance]
-	PreSpellRange[16,1]:Set[382]
+	PreAction[16]:Set[Buff_AAHarmonization]
+	PreSpellRange[16,1]:Set[383]
 
-	PreAction[17]:Set[Selos]
-	PreSpellRange[17,1]:Set[381]
+	PreAction[17]:Set[Buff_AAResonance]
+	PreSpellRange[17,1]:Set[382]
 
-	PreAction[18]:Set[Buff_AAFortissimo]
-	PreSpellRange[18,1]:Set[398]
+	PreAction[18]:Set[Selos]
+	PreSpellRange[18,1]:Set[381]
 
+	PreAction[19]:Set[Buff_AAFortissimo]
+	PreSpellRange[19,1]:Set[398]
+
+	PreAction[20]:Set[Buff_AADexSonata]
+	PreSpellRange[20,1]:Set[XXX]
+
+	PreAction[20]:Set[Buff_AAUpTempo]
+	PreSpellRange[20,1]:Set[402]
 }
 
 function Combat_Init()
@@ -432,7 +443,6 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-
 	declare tempvar int local
 	declare DebuffCnt int  0
 	declare range int 0
@@ -446,9 +456,9 @@ function Combat_Routine(int xAction)
 	elseif ${BowAttacksMode}
 		range:Set[3]
 
-	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${Me.RangedAutoAttackOn}
+	if ${Actor[ID,${KillTarget}].Distance2D}>${Position.GetMeleeMaxRange[${TID}]} && !${Me.RangedAutoAttackOn}
 		EQ2Execute /auto 2
-	elseif ${Actor[ID,${KillTarget}].Distance}<${Position.GetMeleeMaxRange[${TID}]} && !${Me.AutoAttackOn}
+	elseif ${Actor[ID,${KillTarget}].Distance2D}<${Position.GetMeleeMaxRange[${TID}]} && !${Me.AutoAttackOn}
 		EQ2Execute /auto 1
 
 	if ${JoustMode}
@@ -465,7 +475,6 @@ function Combat_Routine(int xAction)
 				call CheckPosition 1 1
 				wait 15
 			}
-
 		}
 		elseif ${JoustStatus}==1 && ${RangedAttackMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
 		{
@@ -481,9 +490,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			elseif ${Me.Ability[${SpellType[387]}].IsReady}
-			{
 				call CastSpellRange 387 0 1 0 ${KillTarget}
-			}
 			else
 			{
 				RangedAttackMode:Set[1]
@@ -498,7 +505,6 @@ function Combat_Routine(int xAction)
 					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
 					wait 15
 				}
-
 			}
 		}
 	}
@@ -577,6 +583,11 @@ function Combat_Routine(int xAction)
 		return
 	}
 
+	if ${DoHOs}
+	{
+		objHeroicOp:DoHO
+	}
+
 	if ${OffenseMode}
 	{
 		; AoE+Dot
@@ -637,11 +648,17 @@ function Combat_Routine(int xAction)
 			return
 		}
 
-
 		; Fast Cast Nuke
 		if ${Me.Ability[${SpellType[60]}].IsReady}
 		{
 			call CastSpellRange 60 0 ${range} 0 ${KillTarget} 0 0 1
+			return
+		}
+
+		; Evasive Maneuvers
+		if ${Me.Ability[${SpellType[401]}].IsReady}
+		{
+			call CastSpellRange 401 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 
@@ -667,10 +684,7 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${DoHOs}
-	{
-		objHeroicOp:DoHO
-	}
+
 
 	switch ${Action[${xAction}]}
 	{
@@ -928,6 +942,28 @@ function DoJesterCap()
 	if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}==0
 		return
 
+	Me:InitializeEffects
+
+	while ${Me.InitializingEffects}
+	{
+		wait 2
+	}
+
+	;don't jcap if potm is up
+	if ${Me.Effect[beneficial,${SpellType[155]}]}
+	{
+		if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${Me.Name}]}]}>120
+		{
+			EQ2Execute /useabilityonplayer ${Me.Name} ${SpellType[156]}
+			wait 5
+
+			while ${Me.CastingSpell}
+				wait 1
+		}
+
+		return
+	}
+
 	if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156]}].Range}]}
 	{
 		;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
@@ -937,9 +973,7 @@ function DoJesterCap()
 			wait 5
 
 			while ${Me.CastingSpell}
-			{
 				wait 1
-			}
 
 			if ${Me.Maintained[${SpellType[156]}](exists)}
 			{
