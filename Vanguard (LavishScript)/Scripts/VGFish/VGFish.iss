@@ -2,6 +2,7 @@
 ; VGFish.iss Version 2.0  Created: 12/18/08 by Zandros123
 ;
 ;VERSIONS:
+; 2.1 -- Patched to catch movement, adjusted some timers, and get back on boat if drowning (05/11/09)
 ; 2.0 -- Updated to include all of Sckary and BackseatScripters ComboSets, and new facing routine (02/13/09)
 ; 1.9a - Small patch to to correct minor issue with saving (01/19/08)
 ; 1.9 -- Special requests and new movement detection routines (12/30/08)
@@ -56,6 +57,7 @@
 #include "${LavishScript.CurrentDirectory}/scripts/VGFish/Includes/mainPause.iss"
 #include "${LavishScript.CurrentDirectory}/scripts/VGFish/Includes/mainNoTargetExist.iss"
 #include "${LavishScript.CurrentDirectory}/scripts/VGFish/Includes/mainTargetExist.iss"
+#include "${LavishScript.CurrentDirectory}/scripts/VGFish/Includes/mainDrowning.iss"
 #include "${LavishScript.CurrentDirectory}/scripts/VGFish/Includes/atoms.iss"
 #include "${LavishScript.CurrentDirectory}/scripts/VGFish/Includes/faceslow.iss"
 ;
@@ -69,15 +71,15 @@
 ;===              Variables                     ====
 ;===================================================
 ;
-;variable string UP=w
-;variable string DOWN=s
-;variable string LEFT=a
-;variable string RIGHT=d
+variable string UP=w
+variable string DOWN=s
+variable string LEFT=a
+variable string RIGHT=d
 ;
-variable string UP="Up"
-variable string DOWN="Down"
-variable string LEFT="Left"
-variable string RIGHT="Right"
+;variable string UP="Up"
+;variable string DOWN="Down"
+;variable string LEFT="Left"
+;variable string RIGHT="Right"
 ;
 variable string Command = Paused
 variable bool isRunning = TRUE
@@ -277,10 +279,11 @@ function main()
 	;-------------------------------------------
 	; Heart of the program where everything happens
 	;
-	; Only 3 things we check for:
+	; Only 4 things we check for:
 	; 1) Pause
 	; 2) No Target
 	; 3) Target Exist 
+	; 4) Drowning
 	;-------------------------------------------
 
 	while ${isRunning}
@@ -299,6 +302,11 @@ function main()
 		; Have a Target?
 		;-------------------------------------------
 		call mainTargetExist
+
+		;-------------------------------------------
+		; Drowning?
+		;-------------------------------------------
+		call mainDrowning
 	}
 }
 

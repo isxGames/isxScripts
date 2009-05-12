@@ -968,7 +968,7 @@
 							<Font Template="VG.Window.TitleBar.Title.Font">
 								<Size>15</Size>
 							</Font>
-							<Text>Version 2.0</Text>
+							<Text>Version 2.1</Text>
 						</Text>
 						<Text Name='About1'>
 							<X>0</X>

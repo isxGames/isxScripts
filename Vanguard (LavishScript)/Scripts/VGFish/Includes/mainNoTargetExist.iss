@@ -93,7 +93,12 @@ function mainNoTargetExist()
 		debuglog "Wait time is ${Distance}ms"
 
 		VGExecute /fishing
+
+		; Wait long enough for VG to think we're fishing
+		wait 7
 		waitframe
+
+		; let's drop the line near the fish
 		wait ${Distance} (${Paused} || !${isRunning})
 		VGExecute /fishing
 		wait 20 (${Paused} || !${isRunning})
@@ -115,7 +120,7 @@ function mainNoTargetExist()
 		;-------------------------------------------
 		; Beer break until we catch something or finished drinking our beer
 		;-------------------------------------------
-		while !${Me.Target(exists)} && !${Paused} && ${isRunning} && !${DoTrollLine} && ${LavishScript.RunningTime} < ${TimerRecast}
+		while !${Me.Target(exists)} && !${Paused} && ${isRunning} && !${DoTrollLine} && ${LavishScript.RunningTime} < ${TimerRecast} && !${Me.Drowning}
 		{
 		}
 
@@ -124,11 +129,13 @@ function mainNoTargetExist()
 		;-------------------------------------------
 		if ${DoTrollLine} && ${TrollLineTimes}>0 && ${TrollLineWaitTime}>0 && ${LavishScript.RunningTime}<${TimerRecast}
 		{
-
 			;-------------------------------------------
 			; First, lets set our variables and Timer
 			;-------------------------------------------
+
 			variable int i
+			variable float X
+			variable float Y
 			variable int trollint
 			trollint:Set[1]
 
@@ -146,16 +153,30 @@ function mainNoTargetExist()
 				;-------------------------------------------
 				; Second, Wait till Timer is up or Target exists
 				;-------------------------------------------
-				While ${LavishScript.RunningTime}<${TimerTroll} && !${Me.Target(exists)} && !${Paused} && ${isRunning}
+				While ${LavishScript.RunningTime}<${TimerTroll} && !${Me.Target(exists)} && !${Paused} && ${isRunning} && !${Me.Drowning}
 				{
 				}
 
 				;-------------------------------------------
 				; Third, Lets bring that line in a little closer to us!
 				;-------------------------------------------
+
+				; Store our current location
+				X:Set[${Me.X}]
+				Y:Set[${Me.Y}]
+
 				press -hold "${DOWN}"
-				wait 7
+				wait 10 ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} > 1 
+				;wait 10 (${Me.X}!=${X} || ${Me.Y}!=${Y})
 				press -release "${DOWN}"
+
+				; Check and see if we moved
+				if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} > 1
+				{
+					actionlog "WE MOVED - RESETTING"
+					vgecho "WE MOVED (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}m) - RESETTING"
+					trollint:Set[${TrollLineTimes}]
+				}
 
 				;-------------------------------------------
 				; Fourth, Increase Troll Line attempts
