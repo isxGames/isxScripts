@@ -1,5 +1,5 @@
 ;---------------------------------------------------
-; VGFish.iss Version 2.0  Created: 12/18/08 by Zandros123
+; VGFish.iss Version 2.1  Created: 12/18/08 by Zandros123
 ;
 ;VERSIONS:
 ; 2.1 -- Patched to catch movement, adjusted some timers, and get back on boat if drowning (05/11/09)
