@@ -120,7 +120,7 @@ function mainNoTargetExist()
 		;-------------------------------------------
 		; Beer break until we catch something or finished drinking our beer
 		;-------------------------------------------
-		while !${Me.Target(exists)} && !${Paused} && ${isRunning} && !${DoTrollLine} && ${LavishScript.RunningTime} < ${TimerRecast} && !${Me.Drowning}
+		while !${Me.Target(exists)} && !${Paused} && ${isRunning} && !${DoTrollLine} && ${LavishScript.RunningTime} < ${TimerRecast} && !${Me.IsDrowning}
 		{
 		}
 
@@ -153,7 +153,7 @@ function mainNoTargetExist()
 				;-------------------------------------------
 				; Second, Wait till Timer is up or Target exists
 				;-------------------------------------------
-				While ${LavishScript.RunningTime}<${TimerTroll} && !${Me.Target(exists)} && !${Paused} && ${isRunning} && !${Me.Drowning}
+				While ${LavishScript.RunningTime}<${TimerTroll} && !${Me.Target(exists)} && !${Paused} && ${isRunning} && !${Me.IsDrowning}
 				{
 				}
 
