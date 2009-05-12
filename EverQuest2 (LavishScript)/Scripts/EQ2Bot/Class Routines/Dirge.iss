@@ -197,10 +197,10 @@ function Buff_Init()
 	PreSpellRange[16,1]:Set[398]
 
 	PreAction[17]:Set[Buff_AABattleCry]
-	PreSpellRange[17,1]:Set[398]
+	PreSpellRange[17,1]:Set[402]
 
 	PreAction[18]:Set[Buff_AASonata]
-	PreSpellRange[18,1]:Set[398]
+	PreSpellRange[18,1]:Set[403]
 }
 
 function Combat_Init()
