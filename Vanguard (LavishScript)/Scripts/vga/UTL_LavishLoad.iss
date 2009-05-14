@@ -53,7 +53,7 @@ function loadxmls()
 	LavishSettings[VGA]:AddSet[Class]
 	LavishSettings[VGA]:AddSet[Rescue]
 	LavishSettings[VGA]:AddSet[ForceRescue]
-	LavishSettings[VGA]:AddSet[Interaction]
+  LavishSettings[VGA]:AddSet[Interaction]
 
 	LavishSettings[VGA_Mobs]:AddSet[Ice]
 	LavishSettings[VGA_Mobs]:AddSet[Fire]
@@ -66,6 +66,7 @@ function loadxmls()
 	LavishSettings[VGA_General]:AddSet[TBW]
 	LavishSettings[VGA_General]:AddSet[Sell]	
 	LavishSettings[VGA_General]:AddSet[Trash]	
+
 
 	LavishSettings[VGA]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
 	LavishSettings[VGA_Mobs]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
