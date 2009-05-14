@@ -8782,7 +8782,7 @@
                       <OnChange>
                         if ${This.Text.Length} > 0
                         {
-                        Script[vga].VariableScope.StopFollowtxt:Set[${This.Text}]]
+                        Script[vga].VariableScope.StopFollowtxt:Set[${This.Text}]
                         Script[VGA]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
@@ -8819,7 +8819,7 @@
                       <OnChange>
                         if ${This.Text.Length} > 0
                         {
-                        Script[vga].VariableScope.StartFollowtxt:Set[${This.Text}]]
+                        Script[vga].VariableScope.StartFollowtxt:Set[${This.Text}]
                         Script[VGA]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
@@ -8856,7 +8856,7 @@
                       <OnChange>
                         if ${This.Text.Length} > 0
                         {
-                        Script[vga].VariableScope.KillingLevitate:Set[${This.Text}]]
+                        Script[vga].VariableScope.KillingLevitate:Set[${This.Text}]
                         Script[VGA]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
@@ -8893,7 +8893,7 @@
                       <OnChange>
                         if ${This.Text.Length} > 0
                         {
-                        Script[vga].VariableScope.ReassistingTank:Set[${This.Text}]]
+                        Script[vga].VariableScope.ReassistingTank:Set[${This.Text}]
                         Script[VGA]:QueueCommand[call LavishSave]
                         }
                       </OnChange>

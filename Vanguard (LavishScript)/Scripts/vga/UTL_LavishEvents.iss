@@ -24,13 +24,17 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
       if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
       {
         VGExecute /TargetNextNPC
+        
       }
     }
     if ${DoKillLevitate}
     {
       if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${KillingLevitate}]}
       {
-
+	Me.Effect[Gift of Alcipus]:Remove
+	Me.Effect[Death March]:Remove
+	Me.Effect[Briel's Trill of the Clouds]:Remove
+	Me.Effect[Boon of Alcipus]:Remove
       }
     }
     if ${DoStartFollow}
@@ -38,6 +42,7 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
       if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]}
       {
                 dofollowpawn:Set[TRUE]
+		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
       }
     }
     if ${DoStopFollow}
@@ -45,6 +50,7 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
       if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]}
       {
                 dofollowpawn:Set[FALSE]
+		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
       }
     }
 }
