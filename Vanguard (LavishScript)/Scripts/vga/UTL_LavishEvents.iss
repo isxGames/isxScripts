@@ -14,11 +14,38 @@ function LavishEventLoad()
 	
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }
+;===================================================
+;===                 Interactions               ====
+;===================================================
 atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
-  if ${ChannelNumber.Equal[8]} &&  ${Text.Find[Assist me]}
+  if ${DoReassistTank}
     {
-      VGExecute /TargetNextNPC
+      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
+      {
+        VGExecute /TargetNextNPC
+      }
+    }
+    if ${DoKillLevitate}
+    {
+      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${KillingLevitate}]}
+      {
+
+      }
+    }
+    if ${DoStartFollow}
+    {
+      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]}
+      {
+                dofollowpawn:Set[TRUE]
+      }
+    }
+    if ${DoStopFollow}
+    {
+      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]}
+      {
+                dofollowpawn:Set[FALSE]
+      }
     }
 }
 
