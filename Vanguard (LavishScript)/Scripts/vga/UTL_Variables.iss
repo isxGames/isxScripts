@@ -55,8 +55,7 @@ variable settingsetref Trash
 variable settingsetref Class
 variable settingsetref Rescue
 variable settingsetref ForceRescue
-variable settingsetref Interaction
-
+variable settingsetref Interactions
 
 ;===================================================
 ;===               Group Member Names, etc      ====
