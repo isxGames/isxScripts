@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13m :  released 1st May 2009
+; Version 0.13n :  released 15th May 2009
 ;
 ; Declare Variables
 ;
@@ -101,18 +101,26 @@ function main(string goscan, string goscan2)
 
 	ISXEQ2:ResetInternalVendingSystem
 	CurrentChar:Set[${Me.Name}]
+
+	; temporary entries to update filename to include server name also
+	rename "${XMLPath}${Me.Name}_MyPrices.XML" "${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML"
+	wait 20
+	rm "${BackupPath}${Me.Name}_MyPrices.XML"
+	wait 20
+
 	MyPrices:loadsettings
 	; backup the current settings file on script load
-	LavishSettings[myprices]:Export[${BackupPath}${Me.Name}_MyPrices.XML]
-
+	
+	LavishSettings[myprices]:Export[${BackupPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
+	
 	MyPrices:LoadUI
 	MyPrices:InitTriggersAndEvents
 	
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running Version 0.13m :  released 1st May 2009" FF11FFCC
-	call echolog "Running Version 0.13m :  released 1st May 2009"
+	call AddLog "Running Version 0.13n :  released 15th May 2009" FF11FFCC
+	call echolog "Running Version 0.13n :  released 15th May 2009"
 	
 	call StartUp	
 
@@ -191,7 +199,6 @@ function main(string goscan, string goscan2)
 			{
 				Call CheckFocus
 				currentitem:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}"]
-				
 				; container number
 				i:Set[${itemprice[${currentpos}]}]
 
@@ -1665,7 +1672,7 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 			Item:AddSetting[AutoTransmute,TRUE]
 	}
 
-	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
+	LavishSettings[myprices]:Export[${EQ2.ServerName}_${XMLPath}${Me.Name}_MyPrices.XML]
 	call echolog "<end> : Saveitem"
 }
 
@@ -1970,7 +1977,7 @@ function deletebuyinfo(int ItemID)
 	BuyList.FindSet["${itemname}"]:Remove
 
 	; save the new information
-	LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
+	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
 	
 	UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Deleting ${itemname}]
 
@@ -2127,7 +2134,7 @@ function Unselectcraft(int ItemID)
 		CraftItemList:AddSetting[CraftItem,FALSE]
 		
 		; save the new information
-		LavishSettings[myprices]:Export[${XMLPath}${Me.Name}_MyPrices.XML]
+		LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
 	}
 	call echolog " <end> : Unselectcraft"
 }
@@ -2222,7 +2229,8 @@ objectdef BrokerBot
 		LavishSettings[craft]:Clear
 
 		;Load settings from that characters file
-		LavishSettings[myprices]:Import[${XMLPath}${Me.Name}_MyPrices.XML]
+		
+		LavishSettings[myprices]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
 
 		General:Set[${LavishSettings[myprices].FindSet[General]}]
 		Logging:Set[${General.FindSetting[Logging]}]
@@ -2590,7 +2598,7 @@ atom atexit()
 	Event[EQ2_onInventoryUpdate]:DetachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
 
-	LavishSettings[myprices]:Export[${XMLPath}${CurrentChar}_MyPrices.XML]
+	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
 	LavishSettings[newcraft]:Clear
 	LavishSettings[myprices]:Clear
