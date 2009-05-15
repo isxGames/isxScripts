@@ -1,4 +1,4 @@
-MyPrices 0.13m :  released 1st April 2009
+MyPrices 0.13n :  released 15th May 2009
 
 For update details see the bottom of this file.
 
@@ -417,6 +417,10 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+Version 0.13n
+-------------
+Added Server name to the characters settings XML file to allow for people running 2 characters with the same name on diffrent servers.
+
 Version 0.13m
 -------------
 
