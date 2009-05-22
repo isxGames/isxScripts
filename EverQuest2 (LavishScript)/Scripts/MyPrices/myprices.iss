@@ -102,12 +102,6 @@ function main(string goscan, string goscan2)
 	ISXEQ2:ResetInternalVendingSystem
 	CurrentChar:Set[${Me.Name}]
 
-	; temporary entries to update filename to include server name also
-	rename "${XMLPath}${Me.Name}_MyPrices.XML" "${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML"
-	wait 20
-	rm "${BackupPath}${Me.Name}_MyPrices.XML"
-	wait 20
-
 	MyPrices:loadsettings
 	; backup the current settings file on script load
 	
