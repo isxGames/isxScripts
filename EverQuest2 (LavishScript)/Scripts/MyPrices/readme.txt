@@ -419,7 +419,7 @@ Revisions
 =========
 Version 0.13n
 -------------
-Added Server name to the characters settings XML file to allow for people running 2 characters with the same name on diffrent servers.
+Added Server name to the characters settings XML file to allow for people running 2 characters with the same name on different servers.
 
 Version 0.13m
 -------------
