@@ -49,8 +49,9 @@ objectdef EQ2Nav
     variable float gPrecision = 2
     variable float DestinationPrecision = 5
     variable int SkipNavTime = 50
-    variable bool SmartDestinationDetection = true
+    variable bool SmartDestinationDetection = TRUE
     variable int DirectMovingToTimer = 250
+    variable bool IgnoreAggro = FALSE
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -142,6 +143,7 @@ objectdef EQ2Nav
 		This.StrafeTime:Set[10]
 		This.BackupTime:Set[10]
 		This.LootNearby:Set[FALSE]
+		This.IgnoreAggro:Set[FALSE]
 		This.AggroDetected:Set[FALSE]
 		This.AggroDetectionTimer:Set[0]
 		This.NotMovingPassCount:Set[0]
@@ -296,6 +298,9 @@ objectdef EQ2Nav
 	{
 	    ;This:Debug["Checking for aggro..."]
     	;Stop Moving and pause if we have aggro
+    	if ${This.IgnoreAggro}
+    		return
+
     	if ${MobCheck.Detect}
     	{
     		This:Output["Agression Detected"]
@@ -784,7 +789,7 @@ objectdef EQ2Nav
 		
 		;;;
 		;; Check for Aggression every 3 seconds or so
-		variable bool PreviousAggro 
+		variable bool PreviousAggro
 		PreviousAggro:Set[${AggroDetected}]
 		if (${Math.Calc64[${Time.Timestamp}-${AggroDetectionTimer}]} > 3)
 		   This:CheckAggro
