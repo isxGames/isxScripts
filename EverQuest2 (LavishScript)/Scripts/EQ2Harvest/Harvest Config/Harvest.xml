@@ -269,6 +269,15 @@
 		<Setting Name="6">scraggy bush</Setting>
 		<Setting Name="7">churning school</Setting>
 	</set>
+	<Set Name="darklight_wood">
+		<Setting Name="1">heavy stone</Setting>
+		<Setting Name="2">unearthed ore</Setting>
+		<Setting Name="3">felled wood</Setting>
+		<Setting Name="4">knotted roots</Setting>
+		<Setting Name="5">creature den</Setting>
+		<Setting Name="6">natural garden</Setting>
+		<Setting Name="7">smoldering trout</Setting>
+	</set>	
 	<Set Name="Harvest Enhancer">
 		<Setting Name="0,1">Elm Pick</Setting>
 		<Setting Name="0,2">Elm Trap</Setting>
