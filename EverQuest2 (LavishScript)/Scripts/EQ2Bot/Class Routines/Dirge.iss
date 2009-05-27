@@ -67,9 +67,9 @@ function Class_Declaration()
 	declare BuffTarget string script
 
 	;Initialized by UI
-	declare BuffGravitasCapTimers collection:int script
-	declare BuffGravitasCapIterator iterator script
-	declare BuffGravitasCapMember int script 1
+	declare BuffGravitasTimers collection:int script
+	declare BuffGravitasIterator iterator script
+	declare BuffGravitasMember int script 1
 
 	declare JoustMode bool script 0
 
