@@ -1,17 +1,3 @@
-atom(script) EQ2_CastingStarted()
-{
-	  ; This event is fired every time that the player begins to cast a spell/ability
-	  
-	  echo Beginning to cast '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}'
-}
-
-atom(script) EQ2_CastingEnded()
-{
-	  ; This event is fired every time that the player ends the spell casting process
-	  
-	  echo Finished casting '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}'	  
-}
-
 atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string ActorType)
 {
 	  ; This event is fired every time that an Actor Spawns.
@@ -39,8 +25,6 @@ function main()
 	  ;Initialize/Attach the event Atoms that we defined previously
 		Event[EQ2_ActorSpawned]:AttachAtom[EQ2_ActorSpawned]
     Event[EQ2_ActorDespawned]:AttachAtom[EQ2_ActorDespawned]	
-    Event[EQ2_CastingStarted]:AttachAtom[EQ2_CastingStarted]
-    Event[EQ2_CastingEnded]:AttachAtom[EQ2_CastingEnded]
         
 		;Tell the user that the script has initialized and is running!
 		echo ISXEQ2 Events Sample Script ACTIVE
@@ -57,8 +41,6 @@ function main()
 	  ;We're done with the script, so let's detach all of the event atoms
 		Event[EQ2_ActorSpawned]:DetachAtom[EQ2_ActorSpawned]
     Event[EQ2_ActorDespawned]:DetachAtom[EQ2_ActorDespawned]	
-    Event[EQ2_CastingStarted]:DetachAtom[EQ2_CastingStarted]
-    Event[EQ2_CastingEnded]:DetachAtom[EQ2_CastingEnded]
 
     
     ;Send a final message telling the user that the script has ended
