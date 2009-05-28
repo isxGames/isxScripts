@@ -53,6 +53,31 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
       }
     }
+    if ${doAutoSell}
+    {
+      if ${ChannelNumber.Equal[0]} &&  ${Text.Find[You sell]}
+      {
+	variable string FindSell
+	FindSell:Set[${Text.Mid[9,${Math.Calc[${Text.Length}-9]}]}]
+	if ( ${FindSell.Length} > 1 )
+	{
+		LavishSettings[VGA_General].FindSet[Sell]:AddSetting[${FindSell}, ${FindSell}]
+
+	}
+	else
+	{
+		return
+	}
+	variable iterator Iterator
+	Sell:GetSettingIterator[Iterator]
+	UIElement[SellList@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[SellList@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+      }
+    }
 }
 
 atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)

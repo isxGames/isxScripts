@@ -140,6 +140,7 @@ variable bool DoLooseTarget
 variable int AssistEncounter
 variable bool doTrash
 variable bool DoFollowInCombat
+variable bool doAutoSell
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
