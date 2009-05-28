@@ -1062,6 +1062,24 @@
                     Script[VGA]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
+                <checkbox Name='doautoSellchk' Template='VG.BlueCheckbox'>
+                  <visible>4</visible>
+                  <X>13</X>
+                  <Y>33</Y>
+                  <Width>15</Width>
+                  <Height>20</Height>
+                  <Text>Auto Add to Sell List when you Manually Sell</Text>
+                  <OnLoad>
+                    if ${Script[vga].VariableScope.doAutoSell}
+                    {
+                    This:SetChecked
+                    }
+                  </OnLoad>
+                  <OnLeftClick>
+                    Script[vga].VariableScope.doAutoSell:Set[${This.Checked}]
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </checkbox>
                 <ComboBox Name="SellCombo" Template="VG.ComboBox">
                   <X>145</X>
                   <Y>15</Y>
@@ -1081,8 +1099,8 @@
                 </ComboBox>
                 <Listbox Name="SellList" Template="VG.ListBox">
                   <X>13</X>
-                  <Y>36</Y>
-                  <Width>95%</Width>
+                  <Y>56</Y>
+                  <Width>85%</Width>
                   <Height>500</Height>
                   <AutoSort>TRUE</AutoSort>
                   <Sort>Text</Sort>
