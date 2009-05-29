@@ -184,7 +184,7 @@ function main(string mode)
 	}
 	while ${PathRoute}<=3 && ${ISXEQ2(exists)}
 
-	announce "Cleaning up Inventory before exiting..." 5 4
+	;ANNOUNCE IS BROKEN announce "Cleaning up Inventory before exiting..." 5 4
 	call CheckInventory 10 "CleanUpOnExit"
 
 	Script:End
@@ -410,7 +410,7 @@ function CheckTimer()
 			timed 100 EQ2Execute /camp desktop
 		}
 
-		announce "Timer expired. Cleaning up inventory before exiting..." 5 4
+		;ANNOUNCE IS BROKEN announce "Timer expired. Cleaning up inventory before exiting..." 5 4
 		call CheckInventory 10 "CleanUpOnExit"
 
 		Script:End
@@ -427,7 +427,7 @@ function InventoryFull(string Line)
 		timed 100 EQ2Execute /camp desktop
 	}
 
-	announce "Cleaning up Inventory before exiting..." 5 4
+	;ANNOUNCE IS BROKEN announce "Cleaning up Inventory before exiting..." 5 4
 	call CheckInventory 10 "CleanUpOnExit"
 
 	Script:End
@@ -1100,7 +1100,7 @@ objectdef EQ2HarvestBot
 
 atom atexit()
 {
-	announce "Cleaning up Inventory before exiting..." 5 4
+	;ANNOUNCE IS BROKEN announce "Cleaning up Inventory before exiting..." 5 4
 	call CheckInventory 10 "CleanUpOnExit"    
     
 	ui -unload "${UIPath}HarvestGUI.xml"

@@ -114,7 +114,7 @@ function main()
 			RecipeCount:Inc
 		}
 		redirect -append ${FileName} echo Total Matching Recipes Found ${RecipeCount}\n
-		announce "Pizza Ready!" 3 3
+		;ANNOUNCE IS BROKEN announce "Pizza Ready!" 3 3
 		UIElement[RecipeSelector@RecipeInfo]:ToggleVisible
 		UIElement[Progress@RecipeInfo]:ToggleVisible
 		UIElement[Done@RecipeSelector@RecipeInfo]:Show			

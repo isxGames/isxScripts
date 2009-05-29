@@ -21,7 +21,7 @@ function addjunk(string junkname)
 {
 	SettingXML["./XML/sellall.xml"].Set[Vendor Junk]:Set["${junkname}",Sell]
 
-	announce "\\#FF6E6EProtected item { ${junkname} } Added" 1 2
+	;ANNOUNCE IS BROKEN announce "\\#FF6E6EProtected item { ${junkname} } Added" 1 2
 
 	SettingXML["./XML/sellall.xml"]:Save
 }
@@ -39,7 +39,7 @@ function sellshit()
 	Target:DoubleClick
 	wait 1	
 
-	announce "making inventory array" 1 1
+	;ANNOUNCE IS BROKEN announce "making inventory array" 1 1
 	Me:CreateCustomInventoryArray[nonbankonly]
 
 	do
@@ -79,7 +79,7 @@ function sellshit()
 	while "${tempvar2:Inc}<=${Me.CustomInventoryArraySize}"
 	;check next item in inventory
 
-	announce "\You have sold Junk" 1 2
+	;ANNOUNCE IS BROKEN announce "\You have sold Junk" 1 2
 	press ESC
 	press ESC
 	press ESC

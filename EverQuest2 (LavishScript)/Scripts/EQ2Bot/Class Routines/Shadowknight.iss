@@ -556,7 +556,7 @@ function Combat_Routine(int xAction)
 	{
 	    if ${Me.Ability[${SpellType[339]}].IsReady}
 	    {
-	        announce "I am either frozen, rooted, stunned or charmed...\n\\#FF6E6EUsing Aura of the Crusader!" 3 1
+	        ;ANNOUNCE IS BROKEN announce "I am either frozen, rooted, stunned or charmed...\n\\#FF6E6EUsing Aura of the Crusader!" 3 1
 	        call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
 	    }
 	}    
@@ -1108,7 +1108,7 @@ function CheckGroupOrRaidAggro()
             	                	{
             	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
             	                		{
-            	                			announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
+            	                			;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
                 	                    	echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
             	                			CustomActor[${Counter}]:DoTarget
             	                			wait 2
@@ -1119,7 +1119,7 @@ function CheckGroupOrRaidAggro()
             	                	}
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
-                	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
+                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -1127,7 +1127,7 @@ function CheckGroupOrRaidAggro()
                 	                }
                 	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
                 	                {
-                	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ESneering!" 3 1
+                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ESneering!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -1135,7 +1135,7 @@ function CheckGroupOrRaidAggro()
                 	                }                	                
                 	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
                 	                {
-                	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
+                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -1189,7 +1189,7 @@ function CheckGroupOrRaidAggro()
             	                	{
             	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
             	                		{
-            	                			announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
+            	                			;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
                 	                    	echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
             	                			CustomActor[${Counter}]:DoTarget
             	                			wait 2
@@ -1200,7 +1200,7 @@ function CheckGroupOrRaidAggro()
             	                	}            	                	
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
-                	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
+                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -1208,7 +1208,7 @@ function CheckGroupOrRaidAggro()
                 	                }
                 	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
                 	                {
-                	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ESneering!" 3 1
+                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ESneering!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -1216,7 +1216,7 @@ function CheckGroupOrRaidAggro()
                 	                } 
                 	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
                 	                {
-                	                    announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
+                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"

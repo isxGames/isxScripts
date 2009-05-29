@@ -183,7 +183,7 @@ function main(string mode, int parm2)
 				CurrentTask:Set[0]
 				pointcount:Inc
 				call addpoint ${Zone.ShortName}_${pointcount}
-				announce "\\#FF6E6ENavigational Point Added" 1 2
+				;ANNOUNCE IS BROKEN announce "\\#FF6E6ENavigational Point Added" 1 2
 				break
 			case 2
 				CurrentTask:Set[0]
@@ -192,13 +192,13 @@ function main(string mode, int parm2)
 				{
 					pointcount:Inc
 					call addpoint "${UserInput}" 1
-					announce "\\#FF6E6ENavigational Point Added" 1 2
+					;ANNOUNCE IS BROKEN announce "\\#FF6E6ENavigational Point Added" 1 2
 				}
 				break
 			case 3
 				CurrentTask:Set[0]
 				call SaveNavPoints
-				announce "Navigational Points have been Saved" 1 3
+				;ANNOUNCE IS BROKEN announce "Navigational Points have been Saved" 1 3
 				break
 			case 4
 				CurrentTask:Set[0]
@@ -255,7 +255,7 @@ function main(string mode, int parm2)
 				pointcount:Inc
 				CurrentCamp:Inc
 				call addpoint "Camp ${CurrentCamp}"
-				announce "\\#FF6E6ENavigational Point Added" 1 2
+				;ANNOUNCE IS BROKEN announce "\\#FF6E6ENavigational Point Added" 1 2
 				break
 
 			case 8
@@ -263,7 +263,7 @@ function main(string mode, int parm2)
 				pointcount:Inc
 				CurrentPull:Inc
 				call addpoint "Pull ${CurrentPull}"
-				announce "\\#FF6E6ENavigational Point Added" 1 2
+				;ANNOUNCE IS BROKEN announce "\\#FF6E6ENavigational Point Added" 1 2
 				break
 
 			case 9

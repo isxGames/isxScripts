@@ -247,7 +247,7 @@ function main(... Args)
 			case 5
 				CurrentTask:Set[0]
 				Mapper:Save
-				announce "Navigational Points have been Saved" 1 3
+				;ANNOUNCE IS BROKEN announce "Navigational Points have been Saved" 1 3
 				break
 				
 			case 6
