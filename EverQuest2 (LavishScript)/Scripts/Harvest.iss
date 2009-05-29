@@ -902,7 +902,7 @@ function checkinventory(int dnode, string dname)
 		{
 			if "!${dname.Equal[CleanUpOnExit]}"
 			{
-				announce "Cleaning up Inventory..." 5 4
+				;ANNOUNCE IS BROKEN announce "Cleaning up Inventory..." 5 4
 			}
 
 			wait 20
@@ -1104,7 +1104,7 @@ function atexit()
 	totaldestroy:Set[${destroybatch}]
 	destroynode[10]:Set[0]
 
-	announce "Cleaning up Inventory before exiting..." 5 4
+	;ANNOUNCE IS BROKEN announce "Cleaning up Inventory before exiting..." 5 4
 	call checkinventory 10 "CleanUpOnExit"
 
 	if !${resetconf}

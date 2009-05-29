@@ -2022,7 +2022,7 @@ function ShutDown()
 	press ESC
 	press ESC
 	call AddLog "**Ending EQ2Broker**" FF00FF00
-	announce "\Broker Items Placed" 1 2
+	;ANNOUNCE IS BROKEN announce "\Broker Items Placed" 1 2
 
 	if ${UIElement[RunMyPrices@EQ2Broker@GUITabs@EQ2Inventory].Checked}
 	{

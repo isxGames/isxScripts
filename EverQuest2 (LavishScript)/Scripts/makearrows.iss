@@ -79,7 +79,7 @@ function main()
             elseif ${stwarn}
             		{
             			hudset makearrow -t "Makeshift Arrows Ready. Will cast when not in stealth"
-            			announce "Makeshift Arrows Ready\nWill cast when not in stealth!" 3 2
+            			;ANNOUNCE IS BROKEN announce "Makeshift Arrows Ready\nWill cast when not in stealth!" 3 2
             			stwarn:Set[0]
             		}
          }
