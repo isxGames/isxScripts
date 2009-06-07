@@ -141,6 +141,7 @@ variable int AssistEncounter
 variable bool doTrash
 variable bool DoFollowInCombat
 variable bool doAutoSell
+variable bool doHarvest
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================

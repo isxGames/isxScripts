@@ -261,6 +261,7 @@ function downtimefunction()
 	call ShiftingImage
 	call groupup
 	call Trash
+	call Harvest
 	return
 }
 ;===================================================

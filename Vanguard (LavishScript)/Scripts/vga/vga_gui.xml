@@ -581,6 +581,24 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+                          <checkbox Name='DoHarvest' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>180</X>
+                            <Y>275</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Assist with Harvesting</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doHarvest}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doHarvest:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">
                             <X>13</X>
                             <Y>85%</Y>

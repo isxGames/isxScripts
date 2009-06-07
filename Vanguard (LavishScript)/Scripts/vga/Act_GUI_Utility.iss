@@ -34,6 +34,31 @@ function Trash()
       }
 
 }
+
+;********************************************
+function Harvest()
+{
+    if ${doHarvest}
+	{
+	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<5 && ${Me.ToPawn.CombatState}==0"
+		{
+		VGExecute /autoattack
+		wait 10
+		}
+	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<10 && ${Me.Target.Distance}>5 && ${Me.ToPawn.CombatState}==0"
+		{
+		call movetoobject ${Me.Target.ID} ${FollowDist} 0
+		VGExecute /autoattack
+		wait 10
+		}	
+	if ${Me.Ability[Auto Attack].Toggled}
+		{
+		VGExecute /autoattack
+		wait 10
+		}
+	}		
+}
+
 ;********************************************
 function lootit()
 {
