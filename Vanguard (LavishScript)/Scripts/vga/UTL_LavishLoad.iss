@@ -299,6 +299,7 @@ function LavishLoad()
 	AssistEncounter:Set[${UtilitySR.FindSetting[AssistEncounter,${AssistEncounter}]}]
 	DoFollowInCombat:Set[${UtilitySR.FindSetting[DoFollowInCombat,${DoFollowInCombat}]}]
 	doAutoSell:Set[${UtilitySR.FindSetting[doAutoSell,${doAutoSell}]}]
+	doHarvest:Set[${UtilitySR.FindSetting[doHarvest,${doHarvest}]}]
 	
 	;===================================================
 	;===                  Spells Load               ====
