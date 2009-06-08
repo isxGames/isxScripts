@@ -1,4 +1,4 @@
-MyPrices 0.13n :  released 15th May 2009
+Version 0.13o :  released 8th June 2009
 
 For update details see the bottom of this file.
 
@@ -279,8 +279,8 @@ the following will happen.
 
 The script scans for the lowest price for each item currently on the broker.
 
-1. If a minimum price for that item was set and the lowest price is LOWER then your minimum price the minimum price is used.
-2. If a minimum price for that item was set and the lowest price is HIGHER then your minimum price the lowest price is matched.
+1. If a minimum price for that item was previously set and the lowest price is LOWER then your minimum price the minimum price is used.
+2. If a minimum price for that item was previously set and the lowest price is HIGHER then your minimum price the lowest price is matched.
 4. If the item has a maximum price set and the lowest broker price is HIGHER than this then the price is set to your maximum price.
 3. If the item does not have a minimum price or maximum price set then the item price is matched with the lowest price on the broker.
 
@@ -361,6 +361,12 @@ not 100 like other stacks of items.)
 
 Selecting an item in the listbox and pressing delete removes it from the list.
 
+Buying Errors
+-------------
+
+If the script gets an error when it tries to buy a stack of an item , it will immediatelly start buying single items until that stack on
+the broker has been bought then continue onto the next item on the broker using the 100/200 limit once again.
+
 
 The Craft TAB
 =============
@@ -398,10 +404,6 @@ The Future
 
 Plans for developing this script are the following:
 
-Currently the auto-buy option takes the sellers base price (minus commission) as the price to pay when listing items,
-as soon as ISXEQ2 has the option I intend that the script will take the 'actual' cost shown on the broker into consideration
-before listing them. (it DOESN'T buy items over your set price - only lists them).
-
 Continue to condense the script , for ease of initial coding I've used longer ways of doing some parts , these will be replaced
 by more efficient code as I re-code parts of it.
 
@@ -417,6 +419,10 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+Version 0.13o
+-------------
+Fixed problem with auto-loop and Delay timer not functioning
+
 Version 0.13n
 -------------
 Added Server name to the characters settings XML file to allow for people running 2 characters with the same name on different servers.
@@ -437,6 +443,7 @@ Version 0.13k
 
 The craft list creation routine also now scans your inventory for items , so if you get interupted, re-scan
 to make the list and any pre-made items in your inventory will be deducted from your craft recipe list totals.
+(items in bags marked for no-sale are ignored)
 
 Version 0.13j
 -------------

@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13n :  released 15th May 2009
+; Version 0.13o :  released 8th June 2009
 ;
 ; Declare Variables
 ;
@@ -113,8 +113,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running Version 0.13n :  released 15th May 2009" FF11FFCC
-	call echolog "Running Version 0.13n :  released 15th May 2009"
+	call AddLog "Running VVersion 0.13o :  released 8th June 2009" FF11FFCC
+	call echolog "Running Version 0.13o :  released 8th June 2009"
 	
 	call StartUp	
 
@@ -497,11 +497,15 @@ function main(string goscan, string goscan2)
 			Pausemyprices:Set[TRUE]
 		
 		if ${runautoscan} || ${runplace}
+			{
 			Exitmyprices:Set[TRUE]
 			ScanSellNonStop:Set[FALSE]
+			}
+
 
 		if ${ScanSellNonStop} && ${PauseTimer} > 0
 		{
+			Pausemyprices:Set[FALSE]
 			if ${Natural}
 			{
 				WaitTimer:Set[${Math.Calc[600*${PauseTimer}]}]
@@ -512,11 +516,13 @@ function main(string goscan, string goscan2)
 				; Reduce / Increase time by the random %
 				WaitTimer:Set[${Math.Calc[(${PauseTimer}*600)+${WaitTimer}]}]
 				call AddLog "Pausing for ${Math.Calc[${WaitTimer}/600]} minutes " FF0033EE
+				UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Pause ${Math.Calc[${WaitTimer}/600]} Mins"]
 			}
 			else
 			{
 				call AddLog "Pausing for ${PauseTimer} minutes " FF0033EE
 				WaitTimer:Set[${Math.Calc[600*${PauseTimer}]}]
+				UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Pause ${PauseTimer} Mins"]
 			}
 			wait ${WaitTimer} ${StopWaiting}
 			StopWaiting:Set[0]
