@@ -66,6 +66,18 @@ variable string strafeleft=q
 variable string straferight=e
 #endif /* _MOVE_KEYS_ */
 ;===================================================
+;===           Constant Declarations            ====
+;===================================================
+#define RANGE_CLOSE 1
+#define RANGE_MAX 2
+#define RANGE_RANGED 3
+#define QUADRANT_ANY 0
+#define QUADRANT_BEHIND 1
+#define QUADRANT_FRONT 2
+#define QUADRANT_FLANK 3
+#define QUADRANT_BEHIND_FLANK 4
+#define QUADRANT_FRONT_FLANK 5
+;===================================================
 ;===           Custom Variables                 ====
 ;===================================================
 variable int quickwait=1
@@ -2255,7 +2267,6 @@ function GetinFront()
 	;removing cause this seems stupid
 	;wait 4
 }
-
 
 function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int AbilityID, bool castwhilemoving)
 {
