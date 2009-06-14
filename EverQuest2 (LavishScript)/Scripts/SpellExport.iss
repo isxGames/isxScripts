@@ -1,7 +1,7 @@
 /************************************************
 **Created by HotShot**
-*Verison 1.04*
-*Date: 03/08/09
+*Verison 1.08*
+*Date: 05/11/09
 
 
 **Commands**
@@ -9,8 +9,22 @@ run SpellExport		**Exports ALL spells, including Tradeskills/Abilities/Spells/Co
 	Args:	HELP	**Displays these options
 		NT	**No Tradeskill abilities
 		TO	**Tradeskill abilities only
-		NP  **No Passive Abilities
+		NP  	**No Passive Abilities
+		ADD	**Adds to the existing file
+	 	NEW	**Creates a new file
 		Settings**Exports using Settings instead of Attributes **DO NOT USE**
+
+Verison 1.08 updates:
+Added "ADD" and "NEW". If "ADD" is an option, it will open the existing file, load it, then update any spells then save it. This will allow easy adding of spells if you respec or have more than 1 of a class.
+Added No Args will now use the predefined "default" of: NT NP ADD
+
+
+Verison 1.06 updates:
+Removed Examine and esc - since it wasn't doing anything
+
+Verison 1.05 updates:
+Pygar added NP for no passive abilities
+Added Examine to avoid NULLs
 
 Verison 1.04 updates:
 Removed the NULLsCounter since it repeats for NULLs. Was giving wrong error messages.
@@ -26,6 +40,11 @@ Added repeat for NULL abilities
 
 function main(string Args)
 {
+	if ${Args.Length}==0
+	{
+		echo Using default settings: NT NP ADD (No Tradeskill, No Passive, Add to existing file). Use "Run SpellExport help" for more options
+		Args:Set[NT NP ADD]
+	}
 	if ${Args.Find[help]}
 	{
 		echo **Commands**
@@ -33,15 +52,27 @@ function main(string Args)
 		echo  Args:	NT	**No Tradeskill abilities
 		echo    TO	**Tradeskill abilities only
 		echo    NP  **No Passive Abilities
+		echo 	ADD	**Adds to the existing file
+		echo 	NEW	**Creates a new file
 		echo    Settings**Exports using Settings instead of Attributes **DO NOT USE**
+		echo	***Defaults are: NT NP ADD***
 		return
 	}
 
-	variable string ConfigFile="${Script.CurrentDirectory}/${Me.SubClass}_SpellExport.xml"
+	;variable string ConfigFile="${Script.CurrentDirectory}/${Me.SubClass}_SpellExport.xml"
+	variable string ConfigFile="${Script.CurrentDirectory}/eq2_spell_lists/${Me.SubClass}_SpellExport.xml"
 
 	;Clear then Load LavishSettings to make sure it's clean.
 	LavishSettings[SpellInformation]:Clear
 	LavishSettings:AddSet[SpellInformation]
+
+
+	;If we are to ADD to the existing file instead of create a new one - load the information
+	if ${Args.Find[ADD]}
+	{
+		LavishSettings[SpellInformation]:Import[${ConfigFile}]
+	}
+
 	LavishSettings[SpellInformation]:AddSet[${Me.SubClass}]
 	variable settingsetref setSpell
 	setSpell:Set[${LavishSettings[SpellInformation].FindSet[${Me.SubClass}]}]
@@ -63,8 +94,8 @@ function main(string Args)
 		LastSpellID:Set[${CurrentSpellID}]
 
 		;Avoid spamming the server... Only 1 spell per second
-		Me.Ability[${CurrentSpellID}]:Examine
-		wait 10
+		;Me.Ability[${CurrentSpellID}]:Examine
+		wait 7.5
 
 		CurrentSpellName:Set[${Me.Ability[id,${CurrentSpellID}].Name}]
 
@@ -76,7 +107,7 @@ function main(string Args)
 
 		if ${Args.Find[NP]} && ${Me.Ability[id,${CurrentSpellID}].SpellBookType}==4
 		{
-			echo Skipping Tradeskill ability: ${CurrentSpellName} - ID: ${CurrentSpellID}
+			echo Skipping Passive ability: ${CurrentSpellName} - ID: ${CurrentSpellID}
 			continue
 		}
 
@@ -88,8 +119,6 @@ function main(string Args)
 
 		if ${CurrentSpellName.Equal[NULL]} || !${Me.Ability[id,${CurrentSpellID}](exists)}
 		{
-			;Removing NULLsSkipper because it repeats until it finds the spell
-			;NULLsSkipped:Inc
 			echo Repeating NULL Ability: #${SpellCounter}/${Me.NumAbilities}... Coming up as:${CurrentSpellName} - ID: ${CurrentSpellID}
 			SpellCounter:Dec
 			continue
@@ -207,7 +236,7 @@ function main(string Args)
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Range,${Me.Ability[id,${CurrentSpellID}].Range}]
 			;setSpell.FindSet[${CurrentSpellName}]:AddSetting[,${Me.Ability[id,${CurrentSpellID}].}]
 		}
-		press esc
+		;press esc
 	}
 	if ${NULLsSkipped}==${Me.NumAbilities}
 	{
