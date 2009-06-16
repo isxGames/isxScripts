@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Coercer.iss
-;version 20080515a
+;version 20090616a
 ;by Pygar
+;
+;20090616a
+;	Update for TSO AA and GU52
 ;
 ;20080515a Pygar
 ; * Complete retuning for class revamp.
@@ -36,7 +39,7 @@
 function Class_Declaration()
 {
   ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20080515
+  declare ClassFileVersion int script 20090616
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -395,13 +398,22 @@ function Combat_Routine(int xAction)
 		CurrentAction:Set[Combat Checking Cures]
 		call CheckHeals
 		spellthreshold:Set[5]
+		call CastSpellRange 503 0 0 0 ${KillTarget}
 	}
+
+
 
 	;;; Screw spell loops, priority casting
 	;;;; Chronosiphon
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady}
 	{
 		call CastSpellRange 382 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; Intellectual Remedy
+	if ${Me.Ability[${SpellType[503]}].IsReady} && ${Actor[pc,exactname,${MainTankPC}].Health}<50 && ${Actor[${KillTarget}].Health}>10
+	{
+		call CastSpellRange 503 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Cataclysmic Mind
@@ -414,17 +426,17 @@ function Combat_Routine(int xAction)
 	;;; AoE Checks
 	if ${Mob.Count}>1
 	{
-		if ${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady}
+		if ${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 95 0 1 0 ${KillTarget}
 			spellsused:Inc
 		}
-		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[90]}].IsReady}
+		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[90]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 90 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
-		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[91]}].IsReady}
+		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[91]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 		{
 			call CastSpellRange 91 0 0 0 ${KillTarget}
 			spellsused:Inc
@@ -433,61 +445,82 @@ function Combat_Routine(int xAction)
 
 
 	;;;; Tashani
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[377]}].IsReady}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[377]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 377 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Mental Debuff
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 50 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Hostage
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 71 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Lash
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 92 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; PuppetMaster
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 391 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
+	;;;; Piece of Mind
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[501]}].IsReady} && !${Me.Maintained[${SpellType[501]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		Me:InitializeEffects
+
+		while ${Me.InitializingEffects}
+			wait 2
+
+		;don't PoM if PoM is up
+		if !${Me.Effect[beneficial,${SpellType[501]}](exists)}
+		{
+			call CastSpellRange 501 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}
+	;;;; Bewilderment
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[500]}].IsReady} && !${Me.Maintained[${SpellType[500]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		call CastSpellRange 500 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
 	;;;; Daze
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 260 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Despair
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 80 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Anguish
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 70 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Nuke
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Master Strike
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
 		;;;;;;;;;;
@@ -499,23 +532,23 @@ function Combat_Routine(int xAction)
 		}
 	}
 	;;;; Stun
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[190]}].IsReady} && !${Me.Maintained[${SpellType[190]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[190]}].IsReady} && !${Me.Maintained[${SpellType[190]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 190 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Sunbolt
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 62 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 
 
-	if ${DoHOs}
+	if ${DoHOs} && ${Mob.CheckActor[${KillTarget}]}
 		objHeroicOp:DoHO
 
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO} && ${Mob.CheckActor[${KillTarget}]}
 		call CastSpellRange 303
 
 	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
