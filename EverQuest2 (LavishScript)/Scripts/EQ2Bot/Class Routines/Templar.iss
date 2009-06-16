@@ -26,6 +26,7 @@ function Class_Declaration()
 	declare DebuffMode bool script 0
  	declare AoEMode bool script 0
  	declare CureMode bool script 0
+	declare CurseMode bool script 1
  	declare FocusedMode bool script 0
  	declare PreHealMode bool script 0
 	declare KeepReactiveUp bool script 0
@@ -41,6 +42,7 @@ function Class_Declaration()
 	declare BuffCourage bool script
 	declare BuffSymbol bool script
 	declare RaidHealMode bool script
+	declare Stance int script 1
 
 	declare BuffWaterBreathing bool script FALSE
 	declare BuffGloryGroupMember string script
@@ -57,6 +59,7 @@ function Class_Declaration()
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
+	CurseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Curse Spells,FALSE]}]
 	FocusedMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Focused Mode,FALSE]}]
 	PreHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PreHeal Mode,FALSE]}]
 	KeepReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepReactiveUp,FALSE]}]
@@ -72,6 +75,7 @@ function Class_Declaration()
 	BuffCourage:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCourage,FALSE]}]
 	BuffSymbol:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSymbol,FALSE]}]
 	RaidHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[RaidHealMode,FALSE]}]
+	Stance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Stance,]}]
 
 	BuffWaterBreathing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffWaterBreathing,FALSE]}]
 	BuffGloryGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffGloryGroupMember,]}]
@@ -150,6 +154,10 @@ function Buff_Init()
 
 	PreAction[10]:Set[BuffSymbol]
 	PreSpellRange[10,1]:Set[21]
+
+	PreAction[11]:Set[AA_Stance]
+	PreSpellRange[11,1]:Set[501]
+	PreSpellRange[11,2]:Set[502]
 }
 
 function Combat_Init()
@@ -342,7 +350,13 @@ function Buff_Routine(int xAction)
 				}
 			}
 			break
-
+		case AA_Stance
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${Stance}]}
+			}
+			break
 		case BuffCourage
 			if ${BuffCourage}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
@@ -755,7 +769,7 @@ function CureMe()
 	if !${Me.IsAfflicted}
 		return
 
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	while ${CureCnt:Inc}<4 && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0)
@@ -785,7 +799,7 @@ function CureMe()
 
 function HealMe()
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;ME HEALS
@@ -841,7 +855,7 @@ function CheckHeals()
 
 
 	;curses cause heals to do damage and must be cleared off healer
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;Res the MT if they are dead
@@ -938,7 +952,12 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
-				call CastSpellRange 300 301 1 0 ${Me.Group[${temphl}].ID} 1
+			{
+				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
+					call CastSpellRange 500 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+				else
+					call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
@@ -946,11 +965,26 @@ function CheckHeals()
 
 function HealMT(int MainTankID, int MTInMyGroup)
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;MAINTANK EMERGENCY HEAL
 	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+		call EmergencyHeal ${MainTankID}
+
+	if ${Actor[${MainTankID}].Health}<50 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && !${Me.Equipment[The Impact of the Sacrosanct].IsReady}
+	{
+		Actor[${MainTankID}]:DoTarget
+		wait 2
+		Me.Equipment[The Impact of the Sacrosanct]:Use
+		wait 2
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}
+		wait 1
+	}
 		call EmergencyHeal ${MainTankID}
 
 	;MAINTANK HEALS
@@ -993,7 +1027,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 
 function GroupHeal()
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	if ${Me.Ability[${SpellType[10]}].IsReady}

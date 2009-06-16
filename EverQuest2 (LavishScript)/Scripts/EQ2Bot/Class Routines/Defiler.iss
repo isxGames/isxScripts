@@ -1038,6 +1038,7 @@ function CheckHeals()
 					call CastSpellRange 500 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
 				else
 					call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 	}

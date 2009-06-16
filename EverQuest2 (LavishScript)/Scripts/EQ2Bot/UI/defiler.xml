@@ -156,16 +156,16 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Curse Spells]}</Data>
 	</Commandcheckbox>
-	<Text name='lblShiftForm'>
+	<Text name='lblStance'>
 	  <x>5%</x>
-	  <y>280</y>
+	  <y>130</y>
 	  <Height>20</Height>
 		<Width>80</Width>
 		<Alignment>Left</Alignment>
-		<Text>ShapeShift:</Text>
+		<Text>Select Stance:</Text>
 	</Text>
 	<combobox Name='Stance'>
-		<X>5%</X>
+		<X>20%</X>
 		<Y>130</Y>
 		<Width>65</Width>
 		<Height>20</Height>
