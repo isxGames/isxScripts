@@ -495,29 +495,11 @@ atom AutoFollowTank()
 			{
 				if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
 				{
-					;When an actor is on a griffon-like transport, their speed is always "1"
-					;Pygar: We can't do this, people can have '1' speed from Shadows AA now...
-					;if (${Actor[pc,${AutoFollowee}].Speed} != 1 && ${Me.ToActor.Speed} != 1)
-					;{
-						if (!${Me.ToActor.IsClimbing} && !${Actor[pc,${AutoFollowee}].IsClimbing})
-						{
-							squelch face ${AutoFollowee}
-							eq2execute /follow ${AutoFollowee}
-							AutoFollowLastSetTime:Set[${Time.Timestamp}]
-							AutoFollowingMA:Set[TRUE]
-							AutoFollowMode:Set[TRUE]
-						}
-						else
-						{
-							AutoFollowingMA:Set[FALSE]
-							;Debug:Echo["DEBUG-AutoFollowTank(): Either I or the 'AutoFollowee' is currently climbing a wall!"]
-						}
-					;}
-					;else
-					;{
-					;	;Debug:Echo["DEBUG-AutoFollowTank(): Either I am, or the 'AutoFollowee' is, currently on a fast moving transport mount!"]
-					;	AutoFollowingMA:Set[FALSE]
-					;}
+					;squelch face ${AutoFollowee}
+					eq2execute /follow ${AutoFollowee}
+					AutoFollowLastSetTime:Set[${Time.Timestamp}]
+					AutoFollowingMA:Set[TRUE]
+					AutoFollowMode:Set[TRUE]
 				}
 				else
 				{
@@ -530,7 +512,7 @@ atom AutoFollowTank()
 			    AutoFollowingMA:Set[FALSE]
 			    ;Debug:Echo["DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."]
 			}
-    	}
+   	}
 	}
 }
 

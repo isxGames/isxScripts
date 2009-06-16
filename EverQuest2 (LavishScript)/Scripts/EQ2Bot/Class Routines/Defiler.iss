@@ -1,8 +1,11 @@
 ;*************************************************************
 ;Defiler.iss
-;version 20080513a
+;version 20090616a
 ;by karye
 ;updated by pygar
+;
+;20090616a
+; TSO AA updates and GU52
 ;
 ;20080513a
 ; * Complete re-write of all heal and curing logic.  Cures will be greatly prioritized durring epic battles.
@@ -37,18 +40,20 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20080513
+	declare ClassFileVersion int script 20090616
 	;;;;
 
 	declare OffenseMode bool script 0
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
 	declare CureMode bool script 0
+	declare CurseMode bool script 1
 	declare MaelstromMode bool script 0
 	declare KeepWardUp bool script
 	declare PetMode bool script 1
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
+	declare Stance int script 1
 
 	declare BuffNoxious bool script FALSE
 	declare BuffMitigation bool script FALSE
@@ -66,11 +71,13 @@ function Class_Declaration()
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
+	CurseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Curse Spells,FALSE]}]
 	CombatRez:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Combat Rez,FALSE]}]
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
 	KeepWardUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepWardUp,FALSE]}]
 	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
 	MaelstromMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Maelstrom Mode,FALSE]}]
+	Stance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Stance,]}]
 
 	BuffNoxious:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffNoxious,TRUE]}]
 	BuffStrength:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffStrength,TRUE]}]
@@ -163,6 +170,10 @@ function Buff_Init()
 
 	PreAction[15]:Set[BuffWaterBreathing]
 	PreSpellRange[15,1]:Set[280]
+
+	PreAction[16]:Set[AA_Stance]
+	PreSpellRange[16,1]:Set[503]
+	PreSpellRange[16,2]:Set[502]
 
 }
 
@@ -317,7 +328,13 @@ function Buff_Routine(int xAction)
 			if ${PetMode} && !${Me.InCombat}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
-
+		case AA_Stance
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${Stance}]}
+			}
+			break
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
@@ -707,7 +724,7 @@ function CheckCures()
 	declare grpcure int local 0
 	declare Affcnt int local 0
 
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;check for group cures, if it is ready and we are in a large enough group
@@ -825,7 +842,7 @@ function CureMe()
 	if !${Me.IsAfflicted}
 		return
 
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	while ${CureCnt:Inc}<4 && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0)
@@ -854,7 +871,7 @@ function CureMe()
 
 function HealMe()
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;ME HEALS
@@ -918,7 +935,7 @@ function CheckHeals()
     MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;Res the MT if they are dead
@@ -1016,7 +1033,11 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
-				call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+			{
+				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
+					call CastSpellRange 500 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+				else
+					call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
@@ -1024,7 +1045,7 @@ function CheckHeals()
 
 function HealMT(int MTID, int MTInMyGroup)
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;DeathWard Check
@@ -1066,7 +1087,7 @@ function HealMT(int MTID, int MTInMyGroup)
 
 function GroupHeal()
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 2 0
 
 	call CastSpellRange 387
