@@ -32,12 +32,12 @@ variable string PATH_SPELL_LIST = "${LavishScript.HomeDirectory}/Scripts/${Scrip
 ;;; The spell list and GUI files for each class should be handled within the initialization of each class file.
 ;;; The main script, EQ2BotLib, and the primary GUI files are included in the isxeq2 patcher.
 variable int Latest_AssassinVersion = 0
-variable int Latest_BerserkerVersion = 0
+variable int Latest_BerserkerVersion = 20090616
 variable int Latest_BrigandVersion = 0
 variable int Latest_BruiserVersion = 0
-variable int Latest_CoercerVersion = 0
+variable int Latest_CoercerVersion = 20090616
 variable int Latest_ConjurerVersion = 0
-variable int Latest_DefilerVersion = 0
+variable int Latest_DefilerVersion = 20090616
 variable int Latest_DirgeVersion = 0
 variable int Latest_FuryVersion = 20081013
 variable int Latest_GuardianVersion = 20090616
@@ -49,7 +49,7 @@ variable int Latest_NecromancerVersion = 0
 variable int Latest_PaladinVersion = 0
 variable int Latest_RangerVersion = 0
 variable int Latest_ShadownightVersion = 0
-variable int Latest_SwashbucklerVersion = 0
+variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 0
 variable int Latest_TroubadorVersion = 0
 variable int Latest_WardenVersion = 0
