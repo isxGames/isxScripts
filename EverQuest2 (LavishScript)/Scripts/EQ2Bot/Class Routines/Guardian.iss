@@ -71,19 +71,19 @@ function Class_Declaration()
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	
+
 	;; This has to be set WITHIN any 'if' block that uses the timer.
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -369,6 +369,12 @@ function Combat_Routine(int xAction)
 		}
 	}
 
+	if ${Me.Ability[${SpellType[501]}].IsReady}
+		call CastSpellRange 501 0 1 0 ${KillTarget}
+
+	if ${Me.Ability[${SpellType[503]}].IsReady}
+		call CastSpellRange 503 0 1 0 ${KillTarget}
+
 	;echo in combat
 	if ${FullAutoMode}
 	{
@@ -514,6 +520,14 @@ function Lost_Aggro(int mobid)
 				{
 					call CastSpellRange 321 0 1 0 ${Actor[${KillTarget}].ID}
 				}
+				elseif ${Me.Ability[${SpellType[500]}].IsReady}
+				{
+					call CastSpellRange 500 0 1 0 ${Actor[${KillTarget}].ID}
+				}
+				elseif ${Me.Ability[${SpellType[502]}].IsReady}
+				{
+					call CastSpellRange 502 0 1 0 ${Actor[${KillTarget}].ID}
+				}
 				else
 				{
 					call CastSpellRange 160 161 1 0 ${Actor[${KillTarget}].ID}
@@ -613,8 +627,8 @@ function CheckHeals()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }
