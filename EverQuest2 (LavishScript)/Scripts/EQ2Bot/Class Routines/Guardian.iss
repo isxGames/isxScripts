@@ -1,7 +1,10 @@
 ;*************************************************************
-;Guardian.iss 20071127a
+;Guardian.iss 20090616a
 ;version
 ;by Pygar
+;
+;20090616a
+; Updated for TSO / GU52
 ;
 ;20071127a
 ; Major Optimizations
@@ -26,7 +29,7 @@
 function Class_Declaration()
 {
   ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20080408
+  declare ClassFileVersion int script 20090616
   ;;;;
 
 	declare PBAoEMode bool script FALSE
@@ -228,9 +231,7 @@ function Buff_Routine(int xAction)
 	variable int temp
 
 	if ${ShardMode}
-	{
 		call Shard
-	}
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -249,23 +250,17 @@ function Buff_Routine(int xAction)
 
 		case Offensive_Stance
 			if ${OffensiveMode} && ${PreSpellRange[${xAction},1](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
 
 		case Deffensive_Stance
 			if ${DefensiveMode} && ${PreSpellRange[${xAction},1](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
 
 		case AA_Buckler
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
 
 		case Self_Buff
@@ -277,13 +272,9 @@ function Buff_Routine(int xAction)
 			break
 		case AA_DragoonsCyclone
 			if ${DragoonsCycloneMode}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Sentinel_Target
 			BuffTarget:Set[${UIElement[cbBuffSentinelGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -292,14 +283,11 @@ function Buff_Routine(int xAction)
 				break
 
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			}
+
 			break
 		case Deagro_Target
 			BuffTarget:Set[${UIElement[cbBuffDeagroGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -308,59 +296,42 @@ function Buff_Routine(int xAction)
 				break
 
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			}
 			break
 		Default
 			return Buff Complete
 			break
 	}
-
 }
 
 function Combat_Routine(int xAction)
 {
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
 		call CastSpellRange 303
-	}
 
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
 	call CheckHeals
 
 	if ${Me.Ability[${SpellType[156]}].IsReady} && ${Me.ToActor.Health}<60
-	{
 		call CastSpellRange 156
-	}
 
 	if ${Me.Ability[${SpellType[172]}].IsReady} && ${Me.ToActor.Health}<50
-	{
 		call CastSpellRange 172
-	}
 
 	if ${Me.Ability[${SpellType[155]}].IsReady} && ${Me.ToActor.Health}<40
-	{
 		call CastSpellRange 155
-	}
 
 	if ${Me.ToActor.Health}<20
 	{
 		if ${Me.Equipment[2].Name.Equal[${TowerShield}]}
-		{
 			call CastSpellRange 322 0 1 0 ${KillTarget}
-		}
 		elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
 		{
 			Me.Inventory[${TowerShield}]:Equip
@@ -389,26 +360,20 @@ function Combat_Routine(int xAction)
 				{
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 					if ${Return.Equal[OK]}
-					{
 						call CastSpellRange ${SpellRange[${xAction},1]}
-					}
 				}
 				break
 
 			case Taunt2
 			case Taunt1
 				if ${TauntMode}
-					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-					}
 				break
 
 			case AoE_Taunt1
 			case AoE_Taunt2
 				if ${TauntMode} && ${Mob.Count}>1
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-				}
 				break
 
 			case AoE1
@@ -417,9 +382,7 @@ function Combat_Routine(int xAction)
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
-					{
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-					}
 				}
 				break
 			case Melee_Attack1
@@ -427,9 +390,7 @@ function Combat_Routine(int xAction)
 			case Melee_Attack3
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-				}
 				break
 
 			case Charge
@@ -445,18 +406,14 @@ function Combat_Routine(int xAction)
 				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					if ${Me.Ability[${SpellType[${SpellRange[${xAction},2]}]}].IsReady}
-					{
 						call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget} 0 0 1
-					}
 				}
 				break
 
 
 			case ThermalShocker
 				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
-				{
 					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
-				}
 				break
 			case default
 				return Combat Complete
@@ -475,15 +432,11 @@ function Post_Combat_Routine(int xAction)
 
 		case Cancel_Root
 			 if ${Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}](exists)}
-			 {
 			    Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
-			 }
 			break
 		case AA_BindWound
 			if ${Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${PostSpellRange[${xAction},1]}
-			}
 			break
 		default
 			return PostCombatRoutineComplete
@@ -509,35 +462,23 @@ function Lost_Aggro(int mobid)
 			}
 
 			if ${Actor[${KillTarget}].Target.ID}!=${Me.ID} && ${Me.Ability[${SpellType[270]}].IsReady}
-			{
 				call CastSpellRange 270 0 1 0 ${Actor[${KillTarget}].ID}
-			}
 
 			;Use Reinforcement to get back to top of agro tree else use taunts
 			if ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 			{
 				if ${Me.Ability[${SpellType[321]}].IsReady}
-				{
 					call CastSpellRange 321 0 1 0 ${Actor[${KillTarget}].ID}
-				}
 				elseif ${Me.Ability[${SpellType[500]}].IsReady}
-				{
 					call CastSpellRange 500 0 1 0 ${Actor[${KillTarget}].ID}
-				}
 				elseif ${Me.Ability[${SpellType[502]}].IsReady}
-				{
 					call CastSpellRange 502 0 1 0 ${Actor[${KillTarget}].ID}
-				}
 				else
-				{
 					call CastSpellRange 160 161 1 0 ${Actor[${KillTarget}].ID}
-				}
 
 				;use rescue if new agro target is under 65 health
 				if ${Me.ToActor.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
-				{
 					call CastSpellRange 320 0 1 0 ${mobid}
-				}
 			}
 		}
 	}
@@ -585,20 +526,14 @@ function CheckHeals()
 				if ${Me.Group[${temphl}].ToActor.Health} < 100 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor(exists)}
 				{
 					if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
-					{
 						lowest:Set[${temphl}]
-					}
 				}
 
 				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<60
-				{
 					grpheal:Inc
-				}
 
 				if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
-				{
 					MTinMyGroup:Set[TRUE]
-				}
 			}
 
 		}
@@ -615,13 +550,9 @@ function CheckHeals()
 	if ${grpheal}>1
 	{
 		if ${Me.Ability[${SpellType[316]}].IsReady}
-		{
 			call CastSpellRange 316
-		}
 		if ${Me.Ability[${SpellType[271]}].IsReady}
-		{
 			call CastSpellRange 271
-		}
 	}
 
 }

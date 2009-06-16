@@ -1,6 +1,9 @@
 ;*****************************************************
-;Swashbuckler.iss 20070822a
+;Swashbuckler.iss 20090616a
 ;by Pygar
+;
+;20090616a
+; Updated for TSO and GU52
 ;
 ;20070822a
 ; Removed Weapon Swaps
@@ -25,15 +28,15 @@
 function Class_Declaration()
 {
   ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20080408
+  declare ClassFileVersion int script 20090616
   ;;;;
 
 	declare OffenseMode bool script 1
 	declare AoEMode bool script 0
 	declare SnareMode bool script 0
-  	declare TankMode bool script 0
-  	declare AnnounceMode bool script 0
-  	declare BuffLunge bool script 0
+	declare TankMode bool script 0
+	declare AnnounceMode bool script 0
+	declare BuffLunge bool script 0
 	declare MaintainPoison bool script 1
 	declare DebuffPoisonShort string script
 	declare DammagePoisonShort string script
@@ -44,16 +47,8 @@ function Class_Declaration()
 	;POISON DECLERATIONS
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
 	;The SHORT name is the name of the poison buff icon
-	if !${Me.InRaid}
-	{
-		DammagePoisonShort:Set[caustic poison]
-		UtilityPoisonShort:Set[turgor]
-	}
-	else
-	{
-		DammagePoisonShort:Set[hemotoxin]
-		UtilityPoisonShort:Set[ignorant bliss]
-	}
+	DammagePoisonShort:Set[caustic poison]
+	UtilityPoisonShort:Set[turgor]
 	DebuffPoisonShort:Set[enfeebling poison]
 
 	NoEQ2BotStance:Set[1]
@@ -74,19 +69,19 @@ function Class_Declaration()
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	
+
 	;; This has to be set WITHIN any 'if' block that uses the timer.
 	;ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -227,9 +222,7 @@ function Buff_Routine(int xAction)
 			break
 		case Offensive_Stance
 			if (${OffenseMode} || !${TankMode}) && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
 
 		case Avoid
@@ -239,45 +232,31 @@ function Buff_Routine(int xAction)
 				wait 30
 			}
 			if !${OffenseMode}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Deffensive_Stance
 			if (${TankMode} && !${OffenseMode}) && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
 		case Poisons
 			if ${MaintainPoison}
 			{
 				Me:CreateCustomInventoryArray[nonbankonly]
 				if !${Me.Maintained[${DammagePoisonShort}](exists)} && ${Me.CustomInventory[${DammagePoisonShort}](exists)}
-				{
 					Me.CustomInventory[${DammagePoisonShort}]:Use
-				}
 
 				if !${Me.Maintained[${DebuffPoisonShort}](exists)} && ${Me.CustomInventory[${DebuffPoisonShort}](exists)}
-				{
 					Me.CustomInventory[${DebuffPoisonShort}]:Use
-				}
 
 				if !${Me.Maintained[${UtilityPoisonShort}](exists)} && ${Me.CustomInventory[${UtilityPoisonShort}](exists)}
-				{
 					Me.CustomInventory[${UtilityPoisonShort}]:Use
-				}
 			}
 			break
 		case AA_Lunge_Reversal
 			if ${BuffLunge}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Hurricane
 			if ${HurricaneMode} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
@@ -286,21 +265,15 @@ function Buff_Routine(int xAction)
 				wait 30
 			}
 			elseif !${HurricaneMode}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case BuffHate
 			BuffTarget:Set[${UIElement[cbBuffHateGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			}
 			break
 		Default
 			return Buff Complete
@@ -313,34 +286,23 @@ function Combat_Routine(int xAction)
 {
 	AutoFollowingMA:Set[FALSE]
 	if ${Me.ToActor.WhoFollowing(exists)}
-	{
 		EQ2Execute /stopfollow
-	}
 
 	if !${Me.AutoAttackOn}
-	{
 		EQ2Execute /toggleautoattack
-	}
 
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
 		call CastSpellRange 303
-	}
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
 
 	Call ActionChecks
 
-
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
-	{
 		call CastSpellRange 130 0 1 1 ${KillTarget} 0 0 0 0 1
-	}
 
 	;use best debuffs on target if epic
 	if ${Actor[${KillTarget}].IsEpic}
@@ -393,30 +355,22 @@ function Combat_Routine(int xAction)
 		case AoE1
 		case AoE2
 			if ${AoEMode} && ${Mob.Count}>=2
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			break
 		case Snare
 			if ${SnareMode}
 			{
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 0 1
-				}
 			}
 			break
 		case Rear_Attack1
 		case Rear_Attack2
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			elseif ${Target.Target.ID}!=${Me.ID}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 0 0 1
-			}
 			break
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
@@ -432,84 +386,50 @@ function Combat_Routine(int xAction)
 			break
 		case AA_WalkthePlank
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			break
 		case AA_Torporous
 		case AA_Traumatic
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			break
 		case AA_BootDagger
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			break
 
 		case Flank_Attack1
 		case Flank_Attack2
-			;check valid rear position
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
-			;check right flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
-			;check left flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			elseif ${Target.Target.ID}!=${Me.ID}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget} 0 0 0 0 1
-			}
 		case Debuff1
 		case Debuff2
 		case Taunt
 			if ${TankMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 0 1
-			}
 			break
 		case Front_Attack
-			;check right flank
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-295)
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
-			;check left flank
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}<-65 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}>-145) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>215 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<295)
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
-			;check front
 			elseif (${Math.Calc[${Target.Heading}-${Me.Heading}]}>125 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<235) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-235 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-125)
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			elseif ${Target.Target.ID}!=${Me.ID}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 3 ${KillTarget} 0 0 0 0 1
-			}
 			else
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 2 ${KillTarget} 0 0 0 0 1
-			}
 			break
 
 		case Stun
 			if !${Target.IsEpic}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
-			}
 			break
 		default
 			return CombatComplete
@@ -520,9 +440,7 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
 	if ${Me.Maintained[Stealth](exists)}
-	{
 		Me.Maintained[Stealth]:Cancel
-	}
 
 	switch ${PostAction[${xAction}]}
 	{
@@ -549,9 +467,7 @@ function Have_Aggro()
 			call CastSpellRange 185 0 1 0 ${agroid} 0 0 0 0 1
 		}
 		else
-		{
 			call CastSpellRange 181 0 1 0 ${agroid} 0 0 0 0 1
-		}
 
 	}
 }
@@ -590,9 +506,7 @@ function ActionChecks()
 	call UseCrystallizedSpirit 60
 
 	if ${ShardMode}
-	{
 		call Shard
-	}
 }
 
 function PostDeathRoutine()
