@@ -205,7 +205,6 @@ function Buff_Init()
 
 function Combat_Init()
 {
-
 	Action[1]:Set[ScreamOfDeath]
 	SpellRange[1,1]:Set[391]
 	SpellRange[1,2]:Set[135]
@@ -342,7 +341,6 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2
-
 			break
 		case Buff_Self
 			if ${BuffSelf}
