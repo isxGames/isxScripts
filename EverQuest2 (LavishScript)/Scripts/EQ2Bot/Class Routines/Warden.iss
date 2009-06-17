@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Warden.iss
-;version 20070725a
+;version 20090617a
 ; by Pygar
+;
+;20090617a
+;  Updates for TSO AA and GU 52 Spell Lists
 ;
 ;20070725a
 ; Updates for AA weapon requirement changes
@@ -51,12 +54,13 @@
 function Class_Declaration()
 {
   ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20080408
+  declare ClassFileVersion int script 20090617
   ;;;;
 
 	declare OffenseMode bool script
 	declare AoEMode bool script
 	declare CureMode bool script
+	declare CurseMode bool script 1
 	declare GenesisMode bool script
 	declare InfusionMode bool script
 	declare KeepReactiveUp bool script
@@ -69,7 +73,9 @@ function Class_Declaration()
 	declare KeepMTHOTUp bool script 0
 	declare KeepGroupHOTUp bool script 0
 	declare RaidHealMode bool script 1
-    declare ShiftForm int script 1
+	declare ShiftForm int script 1
+	declare LitanyStance int script 1
+	declare WardenStance int script 1
 
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
@@ -82,6 +88,7 @@ function Class_Declaration()
 	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
+	CurseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Curse Spells,FALSE]}]
 	GenesisMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Genesis,FALSE]}]
 	InfusionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[InfusionMode,FALSE]}]
 	KeepReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepReactiveUp,FALSE]}]
@@ -95,6 +102,8 @@ function Class_Declaration()
 	KeepGroupHOTUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepGroupHOTUp,FALSE]}]
 	RaidHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Raid Heals,TRUE]}]
 	ShiftForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ShiftForm,]}]
+	LitanyStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[LitanyStance,]}]
+	WardenStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[WardenStance,]}]
 
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
 	BuffInstinctGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffInstinctGroupMember,]}]
@@ -183,6 +192,16 @@ function Buff_Init()
 	PreSpellRange[13,1]:Set[396]
 	PreSpellRange[13,2]:Set[397]
 	PreSpellRange[13,3]:Set[398]
+
+	PreAction[13]:Set[AA_Litany]
+	PreSpellRange[13,1]:Set[507]
+	PreSpellRange[13,2]:Set[508]
+	PreSpellRange[13,3]:Set[509]
+
+	PreAction[13]:Set[AA_WardenStance]
+	PreSpellRange[13,1]:Set[505]
+	PreSpellRange[13,2]:Set[506]
+
 }
 
 function Combat_Init()
@@ -252,6 +271,27 @@ function Combat_Init()
 	Power[10,2]:Set[100]
 	SpellRange[10,1]:Set[382]
 
+	Action[11]:Set[AA_Wrath_of_Nature]
+	MobHealth[11,1]:Set[1]
+	MobHealth[11,2]:Set[100]
+	Power[11,1]:Set[40]
+	Power[11,2]:Set[100]
+	SpellRange[11,1]:Set[504]
+
+	Action[12]:Set[AA_Serene_Symbol]
+	MobHealth[12,1]:Set[1]
+	MobHealth[12,2]:Set[100]
+	Power[12,1]:Set[40]
+	Power[12,2]:Set[100]
+	SpellRange[12,1]:Set[502]
+
+	Action[13]:Set[SoW]
+	MobHealth[13,1]:Set[1]
+	MobHealth[13,2]:Set[100]
+	Power[13,1]:Set[40]
+	Power[13,2]:Set[100]
+	SpellRange[13,1]:Set[31]
+
 }
 
 function PostCombat_Init()
@@ -306,6 +346,20 @@ function Buff_Routine(int xAction)
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			call CastSpellRange ${PreSpellRange[${xAction},2]}
+			break
+		case AA_WardenStance
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${WardenStance}]}
+			}
+			break
+		case AA_Litany
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${LitanyStance}]}
+			}
 			break
 		case AA_Shapeshift
 			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
@@ -460,6 +514,7 @@ function Combat_Routine(int xAction)
 				}
 				break
 			case AoE
+			case AA_Wrath_of_Nature
 				if ${OffenseMode} && ${AoEMode} && ${Mob.Count}>=2
 				{
 					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
@@ -556,7 +611,13 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-
+			case AA_Serene_Symbol
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				break
+			case SoW
+				if ${InfusionMode}
+					call CastSpellRange 31
+				break
 			Default
 				return CombatComplete
 				break
@@ -661,8 +722,12 @@ function CheckHeals()
 		MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
+
+	;stun check
+	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
+		call CastSpellRange 501
 
 	;Res the MT if they are dead
 	if (${MainTankExists})
@@ -807,7 +872,7 @@ function CheckHeals()
 
 function HealMe()
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
@@ -853,7 +918,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		return
 	}
 
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;MAINTANK EMERGENCY HEAL
@@ -919,7 +984,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 
 function GroupHeal()
 {
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	if ${Me.Ability[${SpellType[10]}].IsReady}
@@ -970,7 +1035,7 @@ function CureMe()
 	if !${Me.IsAfflicted}
 		return
 
-	if ${Me.Cursed}
+	if ${Me.Cursed} && ${CurseMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<5
