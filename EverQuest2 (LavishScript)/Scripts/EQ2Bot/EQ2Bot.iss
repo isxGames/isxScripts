@@ -52,7 +52,7 @@ variable int Latest_ShadownightVersion = 0
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
 variable int Latest_TroubadorVersion = 0
-variable int Latest_WardenVersion = 0
+variable int Latest_WardenVersion = 20090617
 variable int Latest_WarlockVersion = 0
 variable int Latest_WizardVersion = 0
 ;===================================================

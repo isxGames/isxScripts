@@ -89,10 +89,32 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='CurseMode'>
+		<X>5%</X>
+		<Y>90</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Cast Cures</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[CurseMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Curse Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[CurseMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Curse Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Curse Spells]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox Name='GenesisMode'>
 		<Visible>1</Visible>
 		<X>5%</X>
-		<Y>90</Y>
+		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Cast Genesis</Text>
@@ -115,7 +137,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	<Commandcheckbox Name='MeleeMode'>
 		<Visible>1</Visible>
 		<X>5%</X>
-		<Y>110</Y>
+		<Y>130</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Use Melee AA Attacks</Text>
@@ -137,7 +159,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	</Commandcheckbox>
 	<Text name='lblShiftForm'>
 	  <x>5%</x>
-	  <y>130</y>
+	  <y>150</y>
 	  <Height>20</Height>
 		<Width>80</Width>
 		<Alignment>Left</Alignment>
@@ -145,7 +167,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	</Text>
 	<combobox Name='ShiftForm'>
 		<X>20%</X>
-		<Y>130</Y>
+		<Y>150</Y>
 		<Width>80</Width>
 		<Height>20</Height>
 		<AutoTooltip>Select ShapeShift Form</AutoTooltip>
@@ -165,10 +187,69 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick></OnLeftClick>
 	</combobox>
+	<Text name='lblLitanyStance'>
+	  <x>5%</x>
+	  <y>170</y>
+	  <Height>20</Height>
+		<Width>80</Width>
+		<Alignment>Left</Alignment>
+		<Text>Litany of Combat:</Text>
+	</Text>
+	<combobox Name='LitanyStance'>
+		<X>20%</X>
+		<Y>170</Y>
+		<Width>80</Width>
+		<Height>20</Height>
+		<AutoTooltip>Select the Litany of Combat Bonus to use</AutoTooltip>
+		<Items>
+		  <Item Value='0'>None</Item>
+			<Item Value='1'>Casting</Item>
+			<Item Value='2'>Melee</Item>
+			<Item Value='3'>Pet</Item>
+		</items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[LitanyStance]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[LitanyStance]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[LitanyStance]:Set[${This.SelectedItem.Value}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[LitanyStance,${This.SelectedItem.Value}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick></OnLeftClick>
+	</combobox>
+	<Text name='lblWardenStance'>
+	  <x>5%</x>
+	  <y>190</y>
+	  <Height>20</Height>
+		<Width>80</Width>
+		<Alignment>Left</Alignment>
+		<Text>TSO Heal Stance:</Text>
+	</Text>
+	<combobox Name='WardenStance'>
+		<X>20%</X>
+		<Y>190</Y>
+		<Width>80</Width>
+		<Height>20</Height>
+		<AutoTooltip>Select the TSO end-line Bonus to use</AutoTooltip>
+		<Items>
+		  <Item Value='0'>None</Item>
+			<Item Value='1'>Melee</Item>
+			<Item Value='2'>Heals</Item>
+		</items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[WardenStance]}]
+			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[WardenStance]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[WardenStance]:Set[${This.SelectedItem.Value}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[LitanyStance,${This.SelectedItem.Value}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick></OnLeftClick>
+	</combobox>
 	<Commandcheckbox Name='InfusionMode'>
 		<Visible>1</Visible>
 		<X>5%</X>
-		<Y>150</Y>
+		<Y>210</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Buff Infusion</Text>
