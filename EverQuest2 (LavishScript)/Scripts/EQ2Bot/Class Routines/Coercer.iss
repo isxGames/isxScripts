@@ -401,7 +401,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 503 0 0 0 ${KillTarget}
 	}
 
-
+	call ComonHeals 70
 
 	;;; Screw spell loops, priority casting
 	;;;; Chronosiphon
@@ -663,12 +663,10 @@ function RefreshPower()
 function CheckHeals()
 {
 
-	call UseCrystallizedSpirit 60
+	call CommonHeals 70
 
 	if ${BuffManaward} && ${Me.InCombat}
-	{
 		call CastSpellRange 378
-	}
 
 }
 

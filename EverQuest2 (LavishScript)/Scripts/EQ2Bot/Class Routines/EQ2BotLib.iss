@@ -1044,30 +1044,48 @@ function CommonHeals(int Health)
 	}
 
 	;fury gift heal
-	if ${Me.Effect[Pact of Nature](exists)}
+	if ${Me.Ability[Salve].IsReady}
 	{
 		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
 		{
-		    if (${Me.Ability[${SpellType[553]}].IsReady})
-		    {
-			    call CastSpellRange 553 0 0 0 ${MainTankID}
-			    return
+	    if (${Me.Ability[Salve].IsReady})
+	    {
+		    eq2execute /useabilityonplayer ${Actor[${MainTankID}].Name} Salve
+				wait 2
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+		    return
 			}
 		}
 		elseif !${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 75
 		{
-		    if (${Me.Ability[${SpellType[553]}].IsReady})
-		    {
-			    call CastSpellRange 553 0 0 0 ${Me.ID}
-			    return
+	    if (${Me.Ability[Salve].IsReady})
+	    {
+		    eq2execute /useabilityonplayer ${Actor[${MainTankID}].Name} Salve
+				wait 2
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+		    return
 			}
 		}
 		elseif ${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 35
 		{
-		    if (${Me.Ability[${SpellType[553]}].IsReady})
-		    {
-			    call CastSpellRange 553 0 0 0 ${Me.ID}
-			    return
+	    if (${Me.Ability[Salve].IsReady})
+	    {
+		    eq2execute /useabilityonplayer ${Me.Name} Salve
+				wait 2
+				do
+				{
+					waitframe
+				}
+				while ${Me.CastingSpell}
+		    return
 			}
 		}
 	}
@@ -1089,7 +1107,7 @@ function CommonHeals(int Health)
 	if ${UseCurePotions} && ${Me.ToActor.InCombatMode}
 		call CheckPotCures
 
-	if ${UsePotions} && ${Me.Inventory[Essence of Health].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Essence of Health].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Health}<25
 		{
@@ -1103,7 +1121,7 @@ function CommonHeals(int Health)
 		}
 	}
 
-	if ${UsePotions} && ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.ToActor.InCombatMode}
 	{
 		if ${Me.ToActor.Health}<25
 		{
@@ -1119,8 +1137,8 @@ function CommonHeals(int Health)
 
 }
 
-function GetActorID(string ActorName)
 ;function returns the Actor ID from a ActorName.  It prioritzes PCs over pets and npcs
+function GetActorID(string ActorName)
 {
 	variable int ActorID=0
 	variable int Counter=1

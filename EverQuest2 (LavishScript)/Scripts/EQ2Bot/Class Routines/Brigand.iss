@@ -1,6 +1,10 @@
 ;*****************************************************
-;Brigand.iss 20070822a
+;Brigand.iss 20090618a
 ;by Pygar
+;
+;20090618a
+; Updated for TSO AA and GU52 Spell Changes
+;
 ;
 ;20070822a
 ; Fixed some typo's in spell list
@@ -32,8 +36,8 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20080408
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20090618
 	;;;;
 
 	declare OffenseMode bool script 1
@@ -47,7 +51,8 @@ function Class_Declaration()
 	declare UtilityPoisonShort string script
 	declare StartHO bool script 1
 	declare PetMode bool script 1
-  	declare TankMode bool script 0
+	declare TankMode bool script 0
+	declare BuffGuildGroupMember string script
 
 	;POISON DECLERATIONS
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
@@ -57,7 +62,6 @@ function Class_Declaration()
 	UtilityPoisonShort:Set[ignorant bliss]
 
 	NoEQ2BotStance:Set[1]
-
 	call EQ2BotLib_Init
 
 	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,TRUE]}]
@@ -69,25 +73,26 @@ function Class_Declaration()
 	MaintainPoison:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MaintainPoison,FALSE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
 	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
+	BuffGuildGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffGuildGroupMember,]}]
 }
 
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
 
-	
+
 	;; This has to be set WITHIN any 'if' block that uses the timer.
 	ClassPulseTimer:Set[${Script.RunningTime}]
 }
@@ -125,7 +130,6 @@ function Buff_Init()
 function Combat_Init()
 {
 
-
 }
 
 function PostCombat_Init()
@@ -149,11 +153,8 @@ function Buff_Routine(int xAction)
 			break
 		case Offensive_Stance
 			if (${OffenseMode} || !${TankMode}) && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
-
 		case Confound
 			if ${OffenseMode} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
@@ -161,47 +162,32 @@ function Buff_Routine(int xAction)
 				wait 33
 			}
 			if !${OffenseMode}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Deffensive_Stance
 			if (${TankMode} && !${OffenseMode}) && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			break
 		case Poisons
 			if ${MaintainPoison}
 			{
 				Me:CreateCustomInventoryArray[nonbankonly]
 				if !${Me.Maintained[${DammagePoisonShort}](exists)} && ${Me.CustomInventory[${DammagePoisonShort}](exists)}
-				{
 					Me.CustomInventory[${DammagePoisonShort}]:Use
-				}
 
 				if !${Me.Maintained[${DebuffPoisonShort}](exists)} && ${Me.CustomInventory[${DebuffPoisonShort}](exists)}
-				{
 					Me.CustomInventory[${DebuffPoisonShort}]:Use
-				}
 
 				if !${Me.Maintained[${UtilityPoisonShort}](exists)} && ${Me.CustomInventory[${UtilityPoisonShort}](exists)}
-				{
 					Me.CustomInventory[${UtilityPoisonShort}]:Use
-				}
 			}
 			break
 		case AA_Lunge_Reversal
 			if ${BuffLunge}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-
 		Default
 			return Buff Complete
 			break
@@ -224,12 +210,22 @@ function Combat_Routine(int xAction)
 	if ${Me.ToActor.WhoFollowing(exists)}
 		EQ2Execute /stopfollow
 
-	if ${Actor[${KillTarget}].Distance}>4 && ${Actor[${KillTarget}].Distance}<25
+	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].MaxRange}]}
 	{
-		call CastSpellRange 250 0 0 0 ${KillTarget}
-		call CheckPosition 1 0 ${KillTarget}
-		eq2execute auto 1
+		eq2execute /useability ${SpellType[250]}
+		eq2execute /auto 2
+
+		if ${Me.Ability[${SpellType[62]}].IsReady}
+		{
+			eq2execute /useability ${SpellType[62]}
+			call CheckPosition 1 0 ${KillTarget} 151 1
+			if (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+				call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
+		}
 	}
+
+	if !${RangedAttackMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<=${Position.GetMeleeMaxRange[${KillTarget}]}
+		eq2execute /auto 1
 
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
@@ -246,6 +242,9 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[156]}].IsReady}
 			call CastSpellRange 156 0 1 0 ${KillTarget} 0 0 0 0 1
 	}
+
+	if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}<8
+		call CastSpellRange 503 0 1 0 ${KillTarget} 0 0 0 0 1
 
 	;;; AoE Checks
 	if ${Mob.Count}>1
@@ -284,10 +283,34 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 160 0 1 0 ${KillTarget} 0 0 0 0 1
 	}
 
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[130]}].IsReady} && ${Me.Ability[${SpellType[201]}].IsReady}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[130]}].IsReady} && ${Me.Ability[${SpellType[390]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	{
+		call CastSpellRange 390 0 1 0 ${KillTarget} 0 0 0 0 1
+		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
+		spellsused:Inc
+	}
+	esleif ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[130]}].IsReady} && ${Me.Ability[${SpellType[185]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	{
+		call CastSpellRange 185 0 1 0 ${KillTarget} 0 0 0 0 1
+		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
+		spellsused:Inc
+	}
+	elseif ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[130]}].IsReady} && ${Me.Ability[${SpellType[201]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CastSpellRange 201 0 1 0 ${KillTarget} 0 0 0 0 1
 		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
+		spellsused:Inc
+	}
+
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[501]}].IsReady}
+	{
+		call CastSpellRange 501 0 1 0 ${KillTarget} 0 0 0 0 1
+		spellsused:Inc
+	}
+
+	if !${MainTank} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[500]}].IsReady}
+	{
+		call CastSpellRange 500 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
@@ -306,6 +329,12 @@ function Combat_Routine(int xAction)
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady}
 	{
 		call CastSpellRange 382 0 1 0 ${KillTarget} 0 0 0 0 1
+		spellsused:Inc
+	}
+
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[502]}].IsReady}
+	{
+		call CastSpellRange 502 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
 
@@ -337,6 +366,8 @@ function Combat_Routine(int xAction)
 			wait 4
 		}
 	}
+
+	call CommonHeals 70
 
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady}
 	{
@@ -549,7 +580,7 @@ function CheckHeals()
 
 function ActionChecks()
 {
-	call UseCrystallizedSpirit 60
+	call CommonHeals 70
 
 	if ${ShardMode}
 		call Shard

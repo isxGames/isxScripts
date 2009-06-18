@@ -298,7 +298,7 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-	Call ActionChecks
+	call ActionChecks
 
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
@@ -503,7 +503,7 @@ function CheckHeals()
 
 function ActionChecks()
 {
-	call UseCrystallizedSpirit 60
+	call CommonHeals 60
 
 	if ${ShardMode}
 		call Shard

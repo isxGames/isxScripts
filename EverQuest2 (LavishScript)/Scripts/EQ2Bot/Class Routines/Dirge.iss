@@ -763,6 +763,8 @@ function ActionChecks()
 		call DoGravitas
 
 	call CheckHeals
+
+	call CommonHeals 70
 }
 
 function DoMagneticNote()
