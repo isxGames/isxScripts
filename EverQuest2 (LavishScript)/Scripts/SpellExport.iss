@@ -177,6 +177,9 @@ function main(string Args)
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[MinRange,${Me.Ability[id,${CurrentSpellID}].MinRange}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[MaxRange,${Me.Ability[id,${CurrentSpellID}].MaxRange}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Range,${Me.Ability[id,${CurrentSpellID}].Range}]
+			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Tier,${Me.Ability[id,${CurrentSpellID}].Tier}]
+			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Level,${Me.Ability[id,${CurrentSpellID}].Class[1].Level}]
+			
 			;setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[]
 
 		}
@@ -234,6 +237,9 @@ function main(string Args)
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[MinRange,${Me.Ability[id,${CurrentSpellID}].MinRange}]
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[MaxRange,${Me.Ability[id,${CurrentSpellID}].MaxRange}]
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Range,${Me.Ability[id,${CurrentSpellID}].Range}]
+			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Tier,${Me.Ability[id,${CurrentSpellID}].Tier}]
+			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Level,${Me.Ability[id,${CurrentSpellID}].Class[1].Level}]
+			
 			;setSpell.FindSet[${CurrentSpellName}]:AddSetting[,${Me.Ability[id,${CurrentSpellID}].}]
 		}
 		;press esc
