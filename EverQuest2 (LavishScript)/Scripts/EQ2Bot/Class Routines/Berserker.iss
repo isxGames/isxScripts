@@ -277,7 +277,7 @@ function Combat_Routine(int xAction)
 	;echo in combat
 	if ${FullAutoMode}
 	{
-		call UseCrystallizedSpirit 60
+		call CommonHeals 70
 		;AA Gut Roar
 		if ${AoEMode}
 			call CastSpellRange 392

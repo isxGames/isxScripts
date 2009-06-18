@@ -33,7 +33,7 @@ variable string PATH_SPELL_LIST = "${LavishScript.HomeDirectory}/Scripts/${Scrip
 ;;; The main script, EQ2BotLib, and the primary GUI files are included in the isxeq2 patcher.
 variable int Latest_AssassinVersion = 0
 variable int Latest_BerserkerVersion = 20090616
-variable int Latest_BrigandVersion = 0
+variable int Latest_BrigandVersion = 20090618
 variable int Latest_BruiserVersion = 0
 variable int Latest_CoercerVersion = 20090616
 variable int Latest_ConjurerVersion = 0
