@@ -289,7 +289,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
 		spellsused:Inc
 	}
-	esleif ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[130]}].IsReady} && ${Me.Ability[${SpellType[185]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	elseif ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[130]}].IsReady} && ${Me.Ability[${SpellType[185]}].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CastSpellRange 185 0 1 0 ${KillTarget} 0 0 0 0 1
 		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
