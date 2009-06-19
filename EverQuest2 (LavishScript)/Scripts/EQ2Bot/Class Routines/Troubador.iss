@@ -1,7 +1,12 @@
 ;*****************************************************
-;Troubador.iss 20070905a
+;Troubador.iss 20090619a
 ;by Karye
 ;updated by Pygar
+;
+;20090619a
+; Updated for TSO aa and GU52
+; Some other misc jcap logic tweaking
+;
 ;
 ;20080426a (Zeek)
 ; Reworked combat code to improve overall DPS
@@ -188,7 +193,7 @@ function Buff_Init()
 	PreSpellRange[13,1]:Set[31]
 
 	PreAction[14]:Set[Buff_AAUbeatTempo]
-	PreSpellRange[14,1]:Set[XXX]
+	PreSpellRange[14,1]:Set[402]
 
 	PreAction[15]:Set[Buff_AADontKillTheMessenger]
 	PreSpellRange[15,1]:Set[395]
@@ -208,8 +213,6 @@ function Buff_Init()
 	PreAction[20]:Set[Buff_AADexSonata]
 	PreSpellRange[20,1]:Set[403]
 
-	PreAction[21]:Set[Buff_AAUpTempo]
-	PreSpellRange[21,1]:Set[402]
 }
 
 function Combat_Init()
@@ -252,23 +255,26 @@ function Combat_Init()
 	Action[12]:Set[Melee_Attack2]
 	SpellRange[12,1]:Set[152]
 
-	Action[13]:Set[Nuke2]
-	SpellRange[13,1]:Set[61]
+	Action[13]:Set[Evasive]
+	SpellRange[13,1]:Set[401]
 
-	Action[14]:Set[AARhythm_Blade]
-	SpellRange[14,1]:Set[397]
+	Action[14]:Set[Nuke2]
+	SpellRange[14,1]:Set[61]
 
-	Action[15]:Set[Stun]
-	SpellRange[15,1]:Set[190]
+	Action[15]:Set[AARhythm_Blade]
+	SpellRange[15,1]:Set[397]
 
-	Action[16]:Set[Debuff2]
-	SpellRange[16,1]:Set[50]
+	Action[16]:Set[Stun]
+	SpellRange[16,1]:Set[190]
 
-	Action[17]:Set[AAHarmonizing_Shot]
-	SpellRange[17,1]:Set[386]
+	Action[17]:Set[Debuff2]
+	SpellRange[17,1]:Set[50]
 
-	Action[18]:Set[Evasive]
-	SpellRange[18,1]:Set[405]
+	Action[18]:Set[AAHarmonizing_Shot]
+	SpellRange[18,1]:Set[386]
+
+	Action[19]:Set[AAMessenger]
+	SpellRange[19,1]:Set[505]
 }
 
 
@@ -494,7 +500,7 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 
-	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA,Z, Target.X, Target.Z]}<=8
+	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA.Z, Target.X, Target.Z]}<=8  && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		call CheckPosition 1 1 ${KillTarget}
 		if !${Me.AutoAttackOn}
@@ -543,9 +549,7 @@ function Combat_Routine(int xAction)
 	}
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
 
 	if ${OffenseMode}
 	{
@@ -615,9 +619,9 @@ function Combat_Routine(int xAction)
 		}
 
 		; Evasive Maneuvers
-		if ${Me.Ability[${SpellType[405]}].IsReady} && !${MainTank}
+		if ${Me.Ability[${SpellType[401]}].IsReady} && !${MainTank}
 		{
-			call CastSpellRange 405 0 ${range} 0 ${KillTarget} 0 0 1
+			call CastSpellRange 401 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 
@@ -643,8 +647,6 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-
-
 	switch ${Action[${xAction}]}
 	{
 		case AATurnstrike
@@ -663,7 +665,7 @@ function Combat_Routine(int xAction)
 
 		case AAHarmonizing_Shot
 		case Bow_Attack
-
+		case AAMessenger
 			if ${BowAttacksMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 			{
 				call CheckPosition 3 0 ${KillTarget}
@@ -911,18 +913,18 @@ function DoJesterCap()
 		wait 2
 	}
 
-	;don't jcap if potm is up
-	if ${Me.Effect[beneficial,${SpellType[155]}]}
+	;if I don't have potm on me, and it is ready, and I can be jcapped, jcap myself and cast potm
+	if !${Me.Effect[beneficial,${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady}
 	{
 		if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${Me.Name}]}]}>120
 		{
-			EQ2Execute /useabilityonplayer ${Me.Name} ${SpellType[156]}
-			wait 5
+			call CastSpellRange 156 0 0 0 ${Me.ID}
 
-			while ${Me.CastingSpell}
-				wait 1
+			BuffJesterCapTimers:Set[${Me.Name}, ${Time.Timestamp}]
+			BuffJesterCapMember:Inc
+
+			call CastSpellRange 155 0 0 0 ${Me.ID}
 		}
-
 		return
 	}
 
