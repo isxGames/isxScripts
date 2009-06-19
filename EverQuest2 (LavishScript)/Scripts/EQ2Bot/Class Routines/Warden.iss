@@ -248,7 +248,7 @@ function Combat_Init()
 	MobHealth[7,2]:Set[100]
 	Power[7,1]:Set[30]
 	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[329]
+	SpellRange[7,1]:Set[332]
 
 	Action[8]:Set[AA_Thunderspike]
 	MobHealth[8,1]:Set[1]

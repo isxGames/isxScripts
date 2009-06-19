@@ -343,6 +343,7 @@ function Combat_Routine(int xAction)
 	if ${Me.Ability[${SpellType[501]}].IsReady}
 		call CastSpellRange 501 0 1 0 ${KillTarget}
 
+	;sentinel strike
 	if ${Me.Ability[${SpellType[503]}].IsReady}
 		call CastSpellRange 503 0 1 0 ${KillTarget}
 
@@ -366,6 +367,8 @@ function Combat_Routine(int xAction)
 
 			case Taunt2
 			case Taunt1
+				if ${Me.Ability[${SpellType[506]}].IsReady}
+					call CastSpellRange 506 0 1 0 ${KillTarget} 0 0 1
 				if ${TauntMode}
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 				break
@@ -409,8 +412,6 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget} 0 0 1
 				}
 				break
-
-
 			case ThermalShocker
 				if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
 					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
