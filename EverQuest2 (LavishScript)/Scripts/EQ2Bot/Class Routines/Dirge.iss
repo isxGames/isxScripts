@@ -1,6 +1,10 @@
 ;*****************************************************
-;Dirge.iss 20081022a
-;by Pygar & Kayre
+;Dirge.iss 20090618a
+;by Pygar
+;
+;20090618a
+; Updated for GU52
+; CommonHeals added
 ;
 ;20081022a
 ; Updated for experimental eq2bot spell casting changes
@@ -43,7 +47,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20090112
+	declare ClassFileVersion int script 20090618
 	;;;;
 
 	declare OffenseMode bool script 0
