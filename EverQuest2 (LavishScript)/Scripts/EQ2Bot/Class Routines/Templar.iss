@@ -985,7 +985,6 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		while ${Me.CastingSpell}
 		wait 1
 	}
-		call EmergencyHeal ${MainTankID}
 
 	;MAINTANK HEALS
 	if ${Actor[${MainTankID}].Health}<60 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
