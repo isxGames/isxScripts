@@ -401,7 +401,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 503 0 0 0 ${KillTarget}
 	}
 
-	call ComonHeals 70
+	call CommonHeals 70
 
 	;;; Screw spell loops, priority casting
 	;;;; Chronosiphon
