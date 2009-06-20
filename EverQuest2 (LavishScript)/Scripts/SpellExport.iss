@@ -1,7 +1,7 @@
 /************************************************
 **Created by HotShot**
-*Verison 1.08*
-*Date: 05/11/09
+*Verison 1.09*
+*Date: 06/20/09
 
 
 **Commands**
@@ -13,6 +13,10 @@ run SpellExport		**Exports ALL spells, including Tradeskills/Abilities/Spells/Co
 		ADD	**Adds to the existing file
 	 	NEW	**Creates a new file
 		Settings**Exports using Settings instead of Attributes **DO NOT USE**
+
+Verison 1.09 updates:
+Added Tier and Level to the export
+Creates the directory if it doesn't exist
 
 Verison 1.08 updates:
 Added "ADD" and "NEW". If "ADD" is an option, it will open the existing file, load it, then update any spells then save it. This will allow easy adding of spells if you respec or have more than 1 of a class.
@@ -59,6 +63,8 @@ function main(string Args)
 		return
 	}
 
+	;Create Directory if it doesn't exist
+	mkdir eq2_spell_lists
 	;variable string ConfigFile="${Script.CurrentDirectory}/${Me.SubClass}_SpellExport.xml"
 	variable string ConfigFile="${Script.CurrentDirectory}/eq2_spell_lists/${Me.SubClass}_SpellExport.xml"
 
@@ -179,7 +185,6 @@ function main(string Args)
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Range,${Me.Ability[id,${CurrentSpellID}].Range}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Tier,${Me.Ability[id,${CurrentSpellID}].Tier}]
 			setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[Level,${Me.Ability[id,${CurrentSpellID}].Class[1].Level}]
-			
 			;setSpell.FindSetting[${CurrentSpellName}]:AddAttribute[]
 
 		}
@@ -239,7 +244,6 @@ function main(string Args)
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Range,${Me.Ability[id,${CurrentSpellID}].Range}]
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Tier,${Me.Ability[id,${CurrentSpellID}].Tier}]
 			setSpell.FindSet[${CurrentSpellName}]:AddSetting[Level,${Me.Ability[id,${CurrentSpellID}].Class[1].Level}]
-			
 			;setSpell.FindSet[${CurrentSpellName}]:AddSetting[,${Me.Ability[id,${CurrentSpellID}].}]
 		}
 		;press esc
