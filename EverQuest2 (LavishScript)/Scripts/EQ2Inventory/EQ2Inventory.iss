@@ -680,9 +680,9 @@ function PlaceTradeskillBooks()
 function PlaceSpellBooks()
 {
 	ItemType:Set[Item]
-	NameFilter1:Set[Adept I)]
-	NameFilter2:Set[Master I)]
-	NameFilter3:Set[Adept I)]
+	NameFilter1:Set[(Adept)]
+	NameFilter2:Set[(Master)]
+	NameFilter3:Set[(Expert)]
 	UseBox:Set[${SBBox}]
 		call AddLog "**Checking Spell Books**" FFFF00FF
 
@@ -1502,7 +1502,7 @@ function SellAdeptI()
 
 	Do
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[Adept I)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk} == 1
+		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[(Adept)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk} == 1
 			{
 				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 				{
@@ -1535,6 +1535,7 @@ function AddToDepot()
 	{
 		Do
 		{
+			echo DEBUG EQ2Depot Item Name: ${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]} 
 			if ${SkipItem} == 1
 				{
 					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
@@ -2022,7 +2023,7 @@ function ShutDown()
 	press ESC
 	press ESC
 	call AddLog "**Ending EQ2Broker**" FF00FF00
-	;ANNOUNCE IS BROKEN announce "\Broker Items Placed" 1 2
+	announce "\Broker Items Placed" 1 2
 
 	if ${UIElement[RunMyPrices@EQ2Broker@GUITabs@EQ2Inventory].Checked}
 	{
