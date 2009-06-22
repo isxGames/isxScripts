@@ -128,7 +128,6 @@ function Buff_Init()
 
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
-	PreSpellRange[2,2]:Set[26]
 
 	PreAction[3]:Set[BuffProc]
 	PreSpellRange[3,1]:Set[41]
@@ -143,37 +142,34 @@ function Buff_Init()
 	PreAction[6]:Set[SpiritCompanion]
 	PreSpellRange[6,1]:Set[385]
 
-	PreAction[7]:Set[SpecialVision]
-	PreSpellRange[7,1]:Set[314]
+	PreAction[7]:Set[AA_Immunities]
+	PreSpellRange[7,1]:Set[383]
 
-	PreAction[8]:Set[AA_Immunities]
-	PreSpellRange[8,1]:Set[383]
+	PreAction[8]:Set[AA_RitualisticAggression]
+	PreSpellRange[8,1]:Set[396]
+	PreSpellRange[8,2]:Set[397]
 
-	PreAction[9]:Set[AA_RitualisticAggression]
-	PreSpellRange[9,1]:Set[396]
-	PreSpellRange[9,2]:Set[397]
+	PreAction[9]:Set[AA_InfectiveBites]
+	PreSpellRange[9,1]:Set[394]
 
-	PreAction[10]:Set[AA_InfectiveBites]
-	PreSpellRange[10,1]:Set[394]
+	PreAction[10]:Set[AA_Coagulate]
+	PreSpellRange[10,1]:Set[395]
 
-	PreAction[11]:Set[AA_Coagulate]
-	PreSpellRange[11,1]:Set[395]
+	PreAction[11]:Set[BuffHorror]
+	PreSpellRange[11,1]:Set[40]
 
-	PreAction[12]:Set[BuffHorror]
-	PreSpellRange[12,1]:Set[40]
+	PreAction[12]:Set[BuffMitigation]
+	PreSpellRange[12,1]:Set[21]
 
-	PreAction[13]:Set[BuffMitigation]
-	PreSpellRange[13,1]:Set[21]
+	PreAction[13]:Set[BuffStrength]
+	PreSpellRange[13,1]:Set[20]
 
-	PreAction[14]:Set[BuffStrength]
-	PreSpellRange[14,1]:Set[20]
+	PreAction[14]:Set[BuffWaterBreathing]
+	PreSpellRange[14,1]:Set[280]
 
-	PreAction[15]:Set[BuffWaterBreathing]
-	PreSpellRange[15,1]:Set[280]
-
-	PreAction[16]:Set[AA_Stance]
-	PreSpellRange[16,1]:Set[503]
-	PreSpellRange[16,2]:Set[502]
+	PreAction[15]:Set[AA_Stance]
+	PreSpellRange[15,1]:Set[503]
+	PreSpellRange[15,2]:Set[502]
 
 }
 
@@ -336,9 +332,8 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
+			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
-
 		case BuffNoxious
 			if ${BuffNoxious}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
