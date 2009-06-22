@@ -51,10 +51,10 @@ variable int Latest_RangerVersion = 0
 variable int Latest_ShadownightVersion = 0
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
-variable int Latest_TroubadorVersion = 0
+variable int Latest_TroubadorVersion = 20090619
 variable int Latest_WardenVersion = 20090617
 variable int Latest_WarlockVersion = 20090622
-variable int Latest_WizardVersion = 0
+variable int Latest_WizardVersion = 20090622
 ;===================================================
 ;===        Keyboard Configuration              ====
 ;===================================================
