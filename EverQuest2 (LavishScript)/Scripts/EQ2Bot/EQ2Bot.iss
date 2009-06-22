@@ -43,7 +43,7 @@ variable int Latest_FuryVersion = 20081013
 variable int Latest_GuardianVersion = 20090616
 variable int Latest_IllusionistVersion = 20090622
 variable int Latest_InquisitorVersion = 20090622
-variable int Latest_MonkVersion = 0
+variable int Latest_MonkVersion = 20090622
 variable int Latest_MysticVersion = 0
 variable int Latest_NecromancerVersion = 0
 variable int Latest_PaladinVersion = 0
@@ -53,7 +53,7 @@ variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
 variable int Latest_TroubadorVersion = 0
 variable int Latest_WardenVersion = 20090617
-variable int Latest_WarlockVersion = 0
+variable int Latest_WarlockVersion = 20090622
 variable int Latest_WizardVersion = 0
 ;===================================================
 ;===        Keyboard Configuration              ====
