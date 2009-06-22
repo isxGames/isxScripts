@@ -406,6 +406,7 @@ function LavishLoad()
 	doStancePush:Set[${SpellSR.FindSetting[doStancePush]}]
 	doTurnOffAttack:Set[${SpellSR.FindSetting[doTurnOffAttack]}]
 	doCounter:Set[${SpellSR.FindSetting[doCounter]}]
+	doFurious:Set[${SpellSR.FindSetting[doFurious]}]
 	
 	;===================================================
 	;===              Abilities Load                ====
