@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Wizard.iss
-;version 20070921a
+;version 20090622a
 ;by Pygar
+;
+;20090622
+;	Updated for TSO and GU52
 ;
 ;20070921a
 ; New casting Order for better dps
@@ -27,10 +30,12 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20080408
+	declare ClassFileVersion int script 20090622
 	;;;;
 
 	declare AoEMode bool script FALSE
+	declare RaysMode bool script FALSE
+	declare PreBuffShield bool script FALSE
 	declare PBAoEMode bool script FALSE
 	declare BuffAccordShield bool script FALSE
 	declare BuffSeeInvis bool script TRUE
@@ -47,6 +52,8 @@ function Class_Declaration()
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
 	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
+	RaysMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Rays,TRUE]}]
+	PreBuffShield:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PreBuffShield,TRUE]}]
 	CastCures:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Cures,TRUE]}]
 	BuffAccordShield:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Accord Shield,FALSE]}]
 	BuffSeeInvis:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff See Invis,TRUE]}]
@@ -72,9 +79,12 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+7000]}) && !${Me.IsMoving}
 	{
+		if ${PreBuffShield}
+			call CastSpellRange 355 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
+
 		call CheckHeals
 		call RefreshPower
 
@@ -122,86 +132,7 @@ function Buff_Init()
 
 function Combat_Init()
 {
-
-	Action[1]:Set[AoE_Nuke2]
-	SpellRange[1,1]:Set[91]
-
-	Action[2]:Set[AoE_Nuke3]
-	SpellRange[2,1]:Set[92]
-
-	Action[3]:Set[AoE_PB3]
-	SpellRange[3,1]:Set[96]
-
-	Action[4]:Set[AoE_PB1]
-	SpellRange[4,1]:Set[94]
-
-	Action[5]:Set[AoE_PB2]
-	SpellRange[5,1]:Set[95]
-
-	Action[6]:Set[Combat_DS]
-	MobHealth[6,1]:Set[30]
-	MobHealth[6,2]:Set[100]
-	SpellRange[6,1]:Set[355]
-
-	Action[7]:Set[Dot1]
-	MobHealth[7,1]:Set[20]
-	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[70]
-
-	Action[8]:Set[Dot4]
-	MobHealth[8,1]:Set[20]
-	MobHealth[8,2]:Set[100]
-	SpellRange[8,1]:Set[73]
-
-	Action[9]:Set[Nuke4]
-	SpellRange[9,1]:Set[63]
-
-	Action[10]:Set[Dot3]
-	MobHealth[10,1]:Set[20]
-	MobHealth[10,2]:Set[100]
-	SpellRange[10,1]:Set[72]
-
-	Action[11]:Set[Special_Pet]
-	MobHealth[11,1]:Set[50]
-	MobHealth[11,2]:Set[100]
-	SpellRange[11,1]:Set[324]
-
-	Action[12]:Set[Nuke4]
-	SpellRange[12,1]:Set[63]
-
-	Action[13]:Set[Stun1]
-	SpellRange[13,1]:Set[181]
-
-	Action[14]:Set[Nuke1]
-	SpellRange[14,1]:Set[60]
-
-	Action[15]:Set[Master_Strike]
-
-	Action[15]:Set[Nuke4]
-	SpellRange[15,1]:Set[63]
-
-	Action[16]:Set[Nuke3]
-	SpellRange[16,1]:Set[62]
-
-	Action[17]:Set[Stun2]
-	SpellRange[17,1]:Set[180]
-
-	Action[18]:Set[Nuke2]
-	SpellRange[18,1]:Set[61]
-
-	Action[19]:Set[Dot2]
-	MobHealth[19,1]:Set[20]
-	MobHealth[19,2]:Set[100]
-	SpellRange[19,1]:Set[71]
-
-	Action[20]:Set[Nuke4]
-	SpellRange[20,1]:Set[63]
-
-	Action[21]:Set[AoE_Nuke1]
-	SpellRange[21,1]:Set[90]
-
-	Action[22]:Set[Debuff2]
-	SpellRange[22,1]:Set[50]
+ ;scratched for priority casting
 
 }
 
@@ -370,127 +301,193 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	declare spellsused int local
+	declare shapesused int local
+	declare spellthreshold int local
 
-	AutoFollowingMA:Set[FALSE]
+	spellsused:Set[0]
+	shapeused:Set[0]
+	spellthreshold:Set[3]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
 	}
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
 		call CastSpellRange 303
-	}
 
 	if ${CureMode}
-	{
 		call CheckHeals
-	}
+
 	call RefreshPower
 	call UseCrystallizedSpirit 60
 
-	;Ice Nova if solo and over 50% or ^^^ and between 30 and 80.
-	if ((${Actor[${KillTarget}].Difficulty}<3 && ${Actor[${KillTarget}].Health}>50) || (${Actor[${KillTarget}].Difficulty}==3 && ${Actor[${KillTarget}].Health}>30 && ${Actor[${KillTarget}].Health}<80)) && ${Me.Ability[${SpellType[60]}].IsReady}
+	;Use Protofire
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[324]}].IsReady}
+	{
+		call CastSpellRange 324 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Use Furnace
+	if ${spellsused}<=${spellthreshold} && ${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady}
+	{
+		call CastSpellRange 95 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Use FireShape if chain available
+	if ${Me.Ability[${SpellType[387]}].IsReady} && ${Me.Ability[${SpellType[361]}].IsReady} && !${Me.Maintained[${SpellType[388]}](exists)}
+	{
+		call CastSpellRange 387
+		call CastSpellRange 361
+		shapeused:Set[1]
+	}
+
+	;Use Iceshape if Fireshape wasn't used and chain available
+	if !${shapeused} && ${Me.Ability[${SpellType[388]}].IsReady} && ${Me.Ability[${SpellType[360]}].IsReady} && !${Me.Maintained[${SpellType[387]}](exists)}
+	{
+		call CastSpellRange 387
+		call CastSpellRange 360
+		shapeused:Set[1]
+	}
+
+	;Ice Spears
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[73]}].IsReady} && !${Me.Maintained[${SpellType[73]}](exists)}
+	{
+		call CastSpellRange 73 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	if ${AoEMode} && ${Mob.Count}>2
+	{
+		;Solar Wind
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[91]}].IsReady}
+		{
+			call CastSpellRange 91 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		;Exothermicity
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[96]}].IsReady}
+		{
+			call CastSpellRange 96 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		;Storm of Lightning
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady}
+		{
+			call CastSpellRange 92 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}
+
+	;Surging Tempest
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
+	{
+		call CastSpellRange 70 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;fusion
+	if ${PBAoEMode} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[94]}].IsReady}
 	{
 		if ${Me.Ability[${SpellType[385]}].IsReady}
-		{
 			call CastSpellRange 385
-		}
+		call CastSpellRange 94 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Ice Nova
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		if ${Me.Ability[${SpellType[385]}].IsReady}
+			call CastSpellRange 385
 		call CastSpellRange 60 0 0 0 ${KillTarget}
+		spellsused:Inc
 	}
 
-	;maintain combat buffs
-	if ${Me.Ability[${SpellType[360]}].IsReady}
+	;Bewilderment
+	if ${PBAoEMode} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady}
 	{
-		call CastSpellRange 360
+		call CastSpellRange 505 0 0 0 ${KillTarget}
+		spellsused:Inc
 	}
-	if ${Me.Ability[${SpellType[361]}].IsReady}
+
+	;;;; Master Strike
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
-		call CastSpellRange 361
+		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+		;;;;;;;;;;
+		if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
+		{
+			Target ${KillTarget}
+			Me.Ability[Master's Strike]:Use
+			spellsused:Inc
+		}
 	}
 
-
-	switch ${Action[${xAction}]}
+	;Rays
+	if ${RaysMode} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[500]}].IsReady}
 	{
-
-		case Special_Pet
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]} && ${PetMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-		case AoE_PB1
-		case AoE_PB2
-		case AoE_PB3
-			if ${PBAoEMode} && ${Mob.Count}>2
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-
-			}
-			break
-		case Debuff1
-		case Debuff2
-			if ${DebuffMode} && ${PBAoEMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-		case AoE_Nuke1
-		case AoE_Nuke2
-		case AoE_Nuke3
-			if ${AoEMode} && ${Mob.Count}>2
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case Master_Strike
-			if ${Me.Ability[Master's Smite].IsReady}
-			{
-				Target ${KillTarget}
-				Me.Ability[Master's Smite]:Use
-			}
-		case Dot1
-		case Dot2
-		case Dot3
-		case Dot4
-			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},3]} 0 0 ${KillTarget}
-			}
-			break
-		case Combat_DS
-		case Nuke2
-		case Nuke4
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-		case Nuke3
-		case Nuke1
-			if ${Me.Ability[${SpellType[385]}].IsReady}
-			{
-				call CastSpellRange 385
-			}
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-		case Stun1
-		case Stun2
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			break
-		case Root
-			break
-		Default
-			return Combat Complete
-			break
+		call CastSpellRange 500 0 0 0 ${KillTarget}
+		spellsused:Inc
 	}
 
+	;Hailstorm
+	if ${PBAoEMode} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[508]}].IsReady}
+	{
+		if ${Me.Ability[${SpellType[385]}].IsReady}
+			call CastSpellRange 385
+		call CastSpellRange 508 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Ball of Lava
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady}
+	{
+		call CastSpellRange 62 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Thunderclap
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[506]}].IsReady}
+	{
+		call CastSpellRange 506 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Immolation
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
+	{
+		call CastSpellRange 71 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Magma Chamber
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[181]}].IsReady} && !${Me.Maintained[${SpellType[181]}](exists)}
+	{
+		call CastSpellRange 181 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Solar Flare
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[63]}].IsReady}
+	{
+		call CastSpellRange 63 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
+	;Ro's Coil
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
+	{
+		call CastSpellRange 72 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
 }
 
 function Post_Combat_Routine(int xAction)
