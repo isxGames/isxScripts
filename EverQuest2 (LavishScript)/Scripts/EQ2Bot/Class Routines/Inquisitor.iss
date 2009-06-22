@@ -127,7 +127,6 @@ function Buff_Init()
 
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
-	PreSpellRange[2,2]:Set[26]
 
 	PreAction[3]:Set[BuffAura]
 	PreSpellRange[3,1]:Set[40]
@@ -342,9 +341,9 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case AA_Stance
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},${Stance}]}]}](exists)})
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},${Stance}]}]}](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},${Stance}]}
 			}
 			break

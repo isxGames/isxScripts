@@ -404,7 +404,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
       </Commandcheckbox>
 			<Text name='lblStance'>
 			  <x>5%</x>
-			  <y>150</y>
+			  <y>130</y>
 			  <Height>20</Height>
 				<Width>80</Width>
 				<Alignment>Left</Alignment>
@@ -412,7 +412,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			</Text>
 			<combobox Name='Stance'>
 				<X>20%</X>
-				<Y>150</Y>
+				<Y>130</Y>
 				<Width>65</Width>
 				<Height>20</Height>
 				<AutoTooltip>Select Stance</AutoTooltip>

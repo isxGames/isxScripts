@@ -1,4 +1,7 @@
-;Monk.iss 20070725a (Pygar)
+;Monk.iss 20090622a (Pygar)
+;
+;20090622
+;	Updated for TSO and GU52
 ;
 ;20070725a (Pygar)
 ; Update for AA requirement changes
@@ -13,9 +16,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20080408
+	;;;;
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -254,36 +257,31 @@ function Combat_Routine(int xAction)
 	AutoFollowingMA:Set[FALSE]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
-	{
 		EQ2Execute /stopfollow
-	}
 
 	call CheckHeals
 
 	if ${DoHOs}
-	{
-
 		objHeroicOp:DoHO
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
-	{
 		call CastSpellRange 303
-	}
+
+	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[503]}].IsReady}
+		call CastSpellRange 503
+
+	if ${Me.ToActor.Health}<70 && ${Me.Ability[${SpellType[505]}].IsReady}
+		call CastSpellRange 505
 
 	;Always keep Thundering Hand Buffed
 	call CastSpellRange 155 0 0 0 0 0 0 1
 
 	;Always try for the AA Combination
 	if !${RangedAttackMode} && ${Me.Ability[${SpellType[389]}].IsReady}
-	{
 		call CastSpellRange 389 0 1 0 ${KillTarget} 0 0 1
-	}
 
 	if ${ShardMode}
-	{
 		call Shard
-	}
 
 	;always keep AA Berserk up
 	call CastSpellRange 393
@@ -425,6 +423,9 @@ function Lost_Aggro(int mobid)
 	{
 		if ${TauntMode} && !${RangedAttacksMode}
 		{
+			if ${Actor[${KillTarget}].Target.ID}!=${Me.ID} && ${Me.Ability[${SpellType[321]}].IsReady}
+				call CastSpellRange 321 0 1 0 ${Actor[${KillTarget}].ID}
+
 			;use rescue if new agro target is under 65 health
 			if ${Me.ToActor.Target.Target.Health}<65
 			{
