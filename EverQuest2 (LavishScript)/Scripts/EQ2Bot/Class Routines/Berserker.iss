@@ -332,6 +332,12 @@ function Combat_Routine(int xAction)
 			case PBAoE1
 			case PBAoE2
 			case PBAoE3
+				if ${TauntMode} && ${Me.Ability[${SpellType[505]}].IsReady}
+					call CastSpellRange 505
+
+				if !${TauntMode} && ${Me.Ability[${SpellType[506]}].IsReady}
+					call CastSpellRange 506
+
 				if ${PBAoEMode} && ${Mob.Count}>1
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
