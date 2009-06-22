@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Shadowknight.iss
-;version 20070130a
+;version 20090622a
 ;by Pygar
+;
+;20090622
+;	Updated for TSO and GU52 Spell Lists
 ;
 ;20070130a
 ;Fixed range checks on taunts
@@ -30,9 +33,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20090622
+	;;;;
 
 	declare PBAoEMode bool script FALSE
 	declare OffensiveMode bool script TRUE
@@ -71,23 +74,23 @@ function Class_Declaration()
 
 	if ${Me.Level} < 58
 	    UIElement[UseDeathMarch@Class@EQ2Bot Tabs@EQ2 Bot]:ToggleVisible
-	    
+
 	if ${Me.Equipment[Sedition, Sword of the Bloodmoon](exists)}
 		HasMythical:Set[TRUE]
-		
+
 	Event[EQ2_FinishedZoning]:AttachAtom[Shadowknight_FinishedZoning]
 }
 
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -141,7 +144,7 @@ function Buff_Init()
 
    PreAction[12]:Set[Bloodletter]
    PreSpellRange[12,1]:Set[331]
-   
+
    PreAction[13]:Set[AuraOfLeadershipAABuff]
    PreSpellRange[13,1]:Set[341]
 }
@@ -283,7 +286,7 @@ function Buff_Routine(int xAction)
 		if ${ShardMode}
 			call Shard
 	}
-	
+
 	switch ${PreAction[${xAction}]}
 	{
 
@@ -324,7 +327,7 @@ function Buff_Routine(int xAction)
 								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
 								wait 2
 							}
-						}	
+						}
 					}
 				}
 				else
@@ -334,7 +337,7 @@ function Buff_Routine(int xAction)
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
 						wait 2
 					}
-				}	
+				}
 			}
 			break
 
@@ -423,7 +426,7 @@ function Buff_Routine(int xAction)
 								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
 								wait 2
 							}
-						}	
+						}
 					}
 				}
 				else
@@ -433,7 +436,7 @@ function Buff_Routine(int xAction)
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
 						wait 2
 					}
-				}	
+				}
 			}
 			break
 
@@ -481,7 +484,7 @@ function Buff_Routine(int xAction)
 		            Me.Maintained[Fearless Morale]:Cancel
 		    }
 			break
-			
+
 		case AuraOfLeadershipAABuff
 			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 			{
@@ -492,7 +495,7 @@ function Buff_Routine(int xAction)
 			    }
 			}
 		    break
-		    
+
 		case Bloodletter
 		    if ${Me.Level} < 80
 		        break
@@ -525,19 +528,19 @@ function Combat_Routine(int xAction)
     	if !${EQ2.HOWindowActive}
     		call CastSpellRange 303
     }
-    
-    
+
+
 	if !${NoAutoMovementInCombat} && !${NoAutoMovement} && ${AutoMelee}
 	{
 		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
 		{
 			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]			
-			
+			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]
+
 			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
 				call CheckPosition 1 0 ${KillTarget}
 		}
-	}    
+	}
 
     ;; uncomment for venril fight
     ;if (${Zone.ShortName.Find[venril]} > 0)
@@ -551,7 +554,7 @@ function Combat_Routine(int xAction)
     ;		while ${Me.ToActor.Power} < 49
     ;	}
     ;}
-    
+
 	if (${Me.ToActor.IsRooted} || !${Me.ToActor.CanTurn})
 	{
 	    if ${Me.Ability[${SpellType[339]}].IsReady}
@@ -559,8 +562,13 @@ function Combat_Routine(int xAction)
 	        ;ANNOUNCE IS BROKEN announce "I am either frozen, rooted, stunned or charmed...\n\\#FF6E6EUsing Aura of the Crusader!" 3 1
 	        call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
 	    }
-	}    
-    
+	}
+
+	if ${Me.ToActor.Health}<25 && ${Me.Ability[${SpellType[502]}].IsReady}
+		call CastSpellRange 502
+
+	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[507]}].IsReady}
+		call CastSpellRange 507
 
     EQ2:CreateCustomActorArray[ByDist,10,npc]
     NumNPCs:Set[${EQ2.CustomActorArraySize}]
@@ -603,6 +611,13 @@ function Combat_Routine(int xAction)
 			    call CastSpellRange 240 0 0 0 ${KillTarget}
 			    spellsused:Inc
 			}
+			;hammer ground stun
+			if !${Actor[${KillTarget}].IsEpic}
+			{
+		    call CastSpellRange 505 0 0 0 ${KillTarget}
+		    spellsused:Inc
+			}
+
 			; taunt
 			if (${MainTank} && ${Me.Ability[${SpellType[160]}].IsReady})
 		    {
@@ -694,6 +709,10 @@ function Combat_Routine(int xAction)
         	}
         }
 	}
+
+	;Essence Siphon
+	if ${Me.Ability[${SpellType[503]}].IsReady}
+		call CastSpellRange 503 0 0 0 ${KillTarget}
 
 	;; Draw Strength (Always cast this when it is ready!)
 	if (!${Actor[${KillTarget}].IsSolo} || ${NumNPCs} > 1)
@@ -1051,7 +1070,7 @@ function Combat_Routine(int xAction)
 			CurrentAction:Set[Combat :: CombatComplete]
 			return CombatComplete
 	}
-	
+
 	CurrentAction:Set["Leaving Combat_Routine(${xAction})"]]
 }
 
@@ -1132,7 +1151,7 @@ function CheckGroupOrRaidAggro()
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                }                	                
+                	                }
                 	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
                 	                {
                 	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
@@ -1141,7 +1160,7 @@ function CheckGroupOrRaidAggro()
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
                 	                }
-            	                }         	                
+            	                }
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
             	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
@@ -1197,7 +1216,7 @@ function CheckGroupOrRaidAggro()
             	                			wait 5
             	                			return 1
             	                		}
-            	                	}            	                	
+            	                	}
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
                 	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
@@ -1213,7 +1232,7 @@ function CheckGroupOrRaidAggro()
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
-                	                } 
+                	                }
                 	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
                 	                {
                 	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
@@ -1444,11 +1463,11 @@ function CastSomething()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
 	variable int i
 	InPostDeathRoutine:Set[TRUE]
-	
+
 	;;;;;;;;;;;;;;;
 	;; Do Buffs before anything else if NOT MainTank
 	if !${MainTank}
@@ -1463,7 +1482,7 @@ function PostDeathRoutine()
 			wait 2
 		}
 		while ${i:Inc}<=40
-	
+
 		if (${UseCustomRoutines})
 		{
 			i:Set[1]
@@ -1479,7 +1498,7 @@ function PostDeathRoutine()
 		;;;;;;;;;;;;;;;
 	}
 	;; TODO:  Otherwise jsut do our really fast casting buffs!  (ie, stance, etc.)
-	
+
 	InPostDeathRoutine:Set[FALSE]
 	return
 }
