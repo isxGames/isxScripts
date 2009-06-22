@@ -147,10 +147,12 @@ variable bool doHarvest
 ;===================================================
 
 variable bool doTurnOffAttack
+variable bool doFurious
 variable bool doDispell
 variable bool doStancePush
 variable bool doClickies
 variable bool doCounter
+variable bool mobisfurious
 
 ;===================================================
 ;===               Critical Variables           ====

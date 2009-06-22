@@ -33,7 +33,35 @@ function TurnOffAttackfunct()
 			}
 			Iterator:Next
 		}
+	return
 	}
+	if ${doFurious}
+	{
+	if ${mobisfurious}
+		{
+		if ${Me.IsCasting}
+			{
+			vgexecute /stopcasting
+			}
+		if ${Me.Ability[Auto Attack].Toggled}
+			{
+			Me.Ability[Auto Attack]:Use
+			}
+		wait 10	
+		if ${ClassRole.healer}
+			{
+			call Healcheck
+			}
+		wait 10
+		while ${Me.TargetBuff[Furious}](exists)}
+			{
+			wait 5
+			if ${ClassRole.healer}
+				call Healcheck
+			}		
+		}
+	}
+
 } 
 ;********************************************
 function counteringfunct()

@@ -78,6 +78,22 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	}
       }
     }
+    if ${doFurious}
+	{
+	if ${Text.Find[${Me.Target} becomes FURIOUS]}
+		{
+		mobisfurious:Set[TRUE]
+		}
+	if ${Text.Find[no longer FURIOUS]}
+		{
+		mobisfurious:Set[FALSE]
+		}
+	if ${Text.Find[slain]}
+		{
+		mobisfurious:Set[FALSE]
+		}
+	}	
+
 }
 
 atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)

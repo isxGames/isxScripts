@@ -282,6 +282,7 @@ function LavishSave()
 	SpellSR:AddSetting[doStancePush,${doStancePush}]
 	SpellSR:AddSetting[doTurnOffAttack,${doTurnOffAttack}]
 	SpellSR:AddSetting[doCounter,${doCounter}]
+	SpellSR:AddSetting[doFurious,${doFurious}]
 	;===================================================
 	;===               Triggers Save                ====
 	;===================================================
