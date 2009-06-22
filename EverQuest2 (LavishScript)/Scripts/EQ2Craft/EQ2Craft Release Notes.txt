@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v8.8  - Fixed spell writs to work with GU52 changes.
+
 v8.7  - Tweaked commandline switches slightly. <Recipe Queue> in the second syntax is no longer
         required to be alone. This means you can use -debug and still include a recipe queue to
         get the original behavior.
