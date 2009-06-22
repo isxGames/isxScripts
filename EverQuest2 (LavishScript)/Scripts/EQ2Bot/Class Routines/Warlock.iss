@@ -1,7 +1,10 @@
 ;*************************************************************
 ;Warlock.iss
-;version 20080415a
+;version 20090622a
 ;by Pygar
+;
+;20090622
+;	Updated for TSO and GU52
 ;
 ;20080415a
 ; DPS Tweaks
@@ -24,9 +27,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20090622
+	;;;;
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -472,8 +475,8 @@ function Combat_Routine(int xAction)
 			Me.Ability[${SpellType[387]}]:Use
 
 		;--- Fury of Innoruk
-		if ${Me.Ability[${SpellType[450]}].IsReady}
-			Me.Ability[${SpellType[450]}]:Use
+		if ${Me.Ability[${SpellType[Fury of Innoruuk]}].IsReady}
+			Me.Ability[${SpellType[Fury of Innoruuk]}]:Use
 
 		if ${Me.Ability[${SpellType[55]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[55]}](exists)}
 		{
