@@ -1,6 +1,9 @@
 ;*****************************************************
-;Assassin.iss  20070725a
+;Assassin.iss  20090622a
 ;by Pygar
+;
+;20090622
+; Updated for GU52
 ;
 ; - changes made by CyberTF
 ; - corrected spell numbers for evade, shadows and AA apply poison
@@ -14,6 +17,7 @@
 ; - added Zek_Pet to buff routine (if u are not worshipping Zek as an assassin, let me know and i'll work in other pets)
 ; - added missing code for finishing Blow and added mob health check to it
 ; - fixed UI  XML file to properly set the MaintainPoison variable (was setting TankMode ??)
+;
 ;
 ;20070725a
 ;	Did an old version make it to svn?
@@ -52,9 +56,9 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20090622
+	;;;;
 
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
@@ -159,6 +163,8 @@ function Buff_Init()
 	PreAction[10]:Set[Focus]
 	PreSpellRange[10,1]:Set[27]
 
+	PreAction[11]:Set[Mastery]
+	PreSpellRange[11,1]:Set[507]
 }
 
 function Combat_Init()
@@ -280,6 +286,7 @@ function Buff_Routine(int xAction)
 		case Pathfinding
 		case Focus
 		case Villany
+		case Mastery
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 
@@ -386,6 +393,22 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 388 0 1 1 ${KillTarget} 0 0 0 0 1
 	}
 
+	;Evasive if up
+	if ${Me.Ability[${SpellType[501]}].IsReady}
+		call CastSpellRange 501 0 1 0 ${KillTarget} 0 0 0 0 1
+
+	;Exacting if up
+	if ${Me.Ability[${SpellType[502]}].IsReady}
+		call CastSpellRange 502 0 1 0 ${KillTarget} 0 0 0 0 1
+
+	;Enfeeblement if up
+	if ${Me.Ability[${SpellType[503]}].IsReady}
+		call CastSpellRange 503 0 1 0 ${KillTarget} 0 0 0 0 1
+
+	;Nightshade if up
+	if ${Me.Ability[${SpellType[506]}].IsReady}
+		call CastSpellRange 506 0 1 0 ${KillTarget} 0 0 0 0 1
+
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 	{
 		call CastSpellRange 303
@@ -458,6 +481,8 @@ function Combat_Routine(int xAction)
 				}
 				call CastSpellRange ${SpellRange[${xAction},2]} ${SpellRange[${xAction},6]} 1 1 ${KillTarget} 0 0 0 0 1
 			}
+			if ${Me.Ability[${SpellType[500]}].IsReady}
+				call CastSpellRange 500 0 0 0 ${KillTarget}
 			break
 
 		case Stalk
