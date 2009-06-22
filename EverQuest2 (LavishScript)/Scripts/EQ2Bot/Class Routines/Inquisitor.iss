@@ -1,6 +1,9 @@
 ;*************************************************************
 ;Inquisitor.iss
-;version 20070725a (Pygar)
+;version 20090622a (Pygar)
+;
+;20090622
+;	Update for TSO AA and GU 52 spell changes
 ;
 ;20070725a (Pygar)
 ; Minor changes for AA adjustments in game
@@ -29,7 +32,7 @@
 function Class_Declaration()
 {
   ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20080408
+  declare ClassFileVersion int script 20090622
   ;;;;
 
 	;UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Buffs]
@@ -40,6 +43,7 @@ function Class_Declaration()
 	declare DebuffMode bool script
 	declare AoEMode bool script
 	declare CureMode bool script
+	declare CurseMode bool script
 	declare ConvertMode bool script
 	declare YaulpMode bool script
 	declare FanaticismMode bool script
@@ -49,6 +53,7 @@ function Class_Declaration()
 	declare MezzMode bool script
 	declare BattleClericMode bool Script
 	declare InquisitionMode bool script
+	declare Stance int script 1
 
 	declare BuffArcane bool script FALSE
 	declare BuffMitigation bool script FALSE
@@ -65,6 +70,7 @@ function Class_Declaration()
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
+	CurseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cusre Spells,FALSE]}]
 	ConvertMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Convert Mode,FALSE]}]
 	YaulpMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Yaulp Mode,FALSE]}]
 	FanaticismMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Fanaticism Mode,FALSE]}]
@@ -73,6 +79,7 @@ function Class_Declaration()
 	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
 	BattleClericMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BattleCleric Mode,FALSE]}]
 	InquisitionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Inquisition Mode,FALSE]}]
+	Stance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Stance,]}]
 
 	BuffArcane:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffArcane,TRUE]}]
 	BuffMitigation:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffMitigation,TRUE]}]
@@ -140,6 +147,10 @@ function Buff_Init()
 
 	PreAction[8]:Set[BuffProc]
 	PreSpellRange[8,1]:Set[22]
+
+	PreAction[9]:Set[AA_Stance]
+	PreSpellRange[9,1]:Set[508]
+	PreSpellRange[9,2]:Set[507]
 }
 
 function Combat_Init()
@@ -329,6 +340,13 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			break
+		case AA_Stance
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${Stance}]}
+			}
 			break
 		case BuffAura
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffAuraGroupMember.Token[1,:]}]}
@@ -526,8 +544,8 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[OK]}
 					{
 						;Check for Battle Cleric Litany Circle
-						if ${Me.Ability[${SpellType[380]}](exists)} && ${BattleClericMode}
-							call CastSpellRange 380 0 1 0 ${KillTarget}
+						if ${Me.Ability[${SpellType[505]}](exists)} && ${BattleClericMode}
+							call CastSpellRange 505 0 1 0 ${KillTarget}
 						else
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
@@ -936,7 +954,12 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
-				call CastSpellRange 300 301 1 0 ${Me.Group[${temphl}].ID} 1
+			{
+				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
+					call CastSpellRange 506 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+				else
+					call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 	}
