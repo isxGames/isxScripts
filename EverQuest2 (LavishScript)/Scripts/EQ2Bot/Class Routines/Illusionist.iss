@@ -1,7 +1,11 @@
 ;*************************************************************
 ;Illusionist.iss
-;version 20081013
+;version 20090622a
 ;by pygar
+;
+;20090622a
+; Minor tweaks for TSO and GU 52
+; Addded Destructive Rampage and Dispel Magic
 ;
 ;20080730a (Amadeus)
 ; * So many changes over the past few months it is not even funny
@@ -308,6 +312,12 @@ function Combat_Init()
 	MobHealth[11,1]:Set[1]
 	MobHealth[11,2]:Set[40]
 	SpellRange[11,1]:Set[90]
+
+	;; Dispel debuff
+	Action[12]:Set[Dispel]
+	MobHealth[11,1]:Set[1]
+	MobHealth[11,2]:Set[100]
+	SpellRange[11,1]:Set[363]
 
 }
 
@@ -1142,6 +1152,14 @@ function Combat_Routine(int xAction)
 			LastSpellCast:Set[383]
 			spellsused:Inc
 		}
+
+		;; Short Duration Buff .. adds proc to group members for 20 seconds (Destructive Rampage)
+		if (${Me.Ability[${SpellType[503]}].IsReady})
+		{
+			call CastSpellRange 503 0 0 0 ${KillTarget} 0 0 0 1
+			LastSpellCast:Set[503]
+			spellsused:Inc
+		}
 	}
 
 	call VerifyTarget
@@ -1620,6 +1638,12 @@ function Combat_Routine(int xAction)
 			FlushQueued Mezmerise_Targets
 			break
 
+		case Dispel
+			if !${UltraDPSMode}
+			{
+				call _CastSpellRange ${SpellRange[${xAction},1]}
+				spellsused:Inc
+			}
 		case Gaze
 			if ${Me.ToActor.Power} > 50
 			{
@@ -1783,7 +1807,7 @@ function CastSomething()
 		{
 			;Debug:Echo["Casting 'Melee AA Ability'"]
 			Actor[${KillTarget}]:DoTarget
-			call CastSpell "Spellblade's Counter" 395 ${KillTargeT} 0
+			call CastSpell "Spellblade's Counter" 398 ${KillTargeT} 0
 			return
 		}
 	}
