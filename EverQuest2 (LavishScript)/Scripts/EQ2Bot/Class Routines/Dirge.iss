@@ -55,6 +55,7 @@ function Class_Declaration()
 	declare AoEMode bool script 0
 	declare BowAttacksMode bool script 0
 	declare RangedAttackMode bool script 0
+	declare BuffSonata bool script 0
 	declare AnnounceMode bool script 1
 	declare MagNoteMode bool script 1
 
