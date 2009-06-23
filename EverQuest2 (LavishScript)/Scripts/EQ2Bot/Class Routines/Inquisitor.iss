@@ -276,6 +276,16 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	variable int temp
+	
+	; Pass out feathers on initial script startup
+if !${InitialBuffsDone}
+{
+	if (${Me.GroupCount} > 1)
+	{
+		call CastSpellRange 339
+		InitialBuffsDone:Set[TRUE]
+  }
+}
 
 	switch ${PreAction[${xAction}]}
 	{
