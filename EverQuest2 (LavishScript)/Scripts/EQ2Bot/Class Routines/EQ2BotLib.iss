@@ -744,23 +744,9 @@ function CommonPower(int sPower)
 
 	if ${Me.Inventory["Shard of Essence"](exists)}
 		ShardTypeL:Set[Shard of Essence]
-	elseif ${Me.Inventory["Sliver of Essence"](exists)}
-		ShardTypeL:Set[Sliver of Essence]
-	elseif ${Me.Inventory["Scintilla of Essence"](exists)}
-		ShardTypeL:Set[Scintilla of Essence]
-	elseif ${Me.Inventory["Scale of Essence"](exists)}
-		ShardTypeL:Set[Scale of Essence]
 
-	if ${Me.Inventory["Splintered Heart"](exists)}
-		HeartTypeL:Set[Splintered Heart]
-	elseif ${Me.Inventory["Dark Heart"](exists)}
+	if ${Me.Inventory["Dark Heart"](exists)}
 		HeartTypeL:Set[Dark Heart]
-	elseif ${Me.Inventory["Sacrificial Heart"](exists)}
-		HeartTypeL:Set[Sacrificial Heart]
-	elseif ${Me.Inventory["Ruinous Heart"](exists)}
-		HeartTypeL:Set[Ruinous Heart]
-	elseif ${Me.Inventory["Darkness Heart"](exists)}
-		HeartTypeL:Set[Darkness Heart]
 
 	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${ShardTypeL}].IsReady} && ${Me.ToActor.InCombatMode}
 	{

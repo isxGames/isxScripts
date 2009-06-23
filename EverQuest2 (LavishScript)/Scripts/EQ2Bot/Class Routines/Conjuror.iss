@@ -119,6 +119,9 @@ function Class_Shutdown()
 
 function Buff_Init()
 {
+	PreAction[1]:Set[AA_Unabate]
+	PreSpellRange[1,1]:Set[376]
+
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
 
@@ -149,8 +152,6 @@ function Buff_Init()
 	PreAction[11]:Set[AA_Bubble]
 	PreSpellRange[11,1]:Set[377]
 
-	PreAction[12]:Set[AA_Unabate]
-	PreSpellRange[12,1]:Set[376]
 }
 
 function Combat_Init()
@@ -218,6 +219,10 @@ function Combat_Init()
 	MobHealth[16,2]:Set[100]
 	SpellRange[16,1]:Set[331]
 
+	Action[17]:Set[Bewilderment]
+	MobHealth[17,1]:Set[1]
+	MobHealth[17,2]:Set[90]
+	SpellRange[17,1]:Set[501]
 }
 
 function PostCombat_Init()
@@ -236,9 +241,14 @@ function Buff_Routine(int xAction)
 
 	;check if we have a pet or a hydromancy not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
-	{
 		call SummonPet
-		waitframe
+
+	; Pass out feathers on initial script startup
+	if !${InitialBuffsDone}
+	{
+		if (${Me.GroupCount} > 1)
+			call CastSpellRange 402
+		InitialBuffsDone:Set[TRUE]
 	}
 
 	call CheckHeals
@@ -251,7 +261,6 @@ function Buff_Routine(int xAction)
 		case AA_Cabalists_Cover
 			if ${BuffCabalistCover} && !${Me.Maintained[${SpellType[379]}](exists)}
 			{
-
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 				BuffCabalistCover:Set[FALSE]
 			}
@@ -262,23 +271,15 @@ function Buff_Routine(int xAction)
 			break
 		case Seal
 			if ${BuffSeal}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Escutcheon
 			if ${BuffEscutcheon}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Group_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
@@ -292,29 +293,20 @@ function Buff_Routine(int xAction)
 		case Pet_Buff
 		case AA_Bubble
 			if ${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-			}
 			break
 		case Tank_Buff
 			BuffTarget:Set[${UIElement[cbBuffDamageShieldGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 
 			if ${BuffDamageShield}
 			{
-
 				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-				{
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-				}
 			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Melee_Buff
 			Counter:Set[1]
@@ -389,9 +381,7 @@ function Buff_Routine(int xAction)
 				do
 				{
 					if ${Me.Group[${tempvar}].ToActor.Distance}<15
-					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
-					}
 
 				}
 				while ${tempvar:Inc}<${Me.GroupCount}
@@ -400,22 +390,10 @@ function Buff_Routine(int xAction)
 
 		case Buff_Shards
 			if !${Me.Inventory[${ShardType}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-			}
 
 			if ${Me.Inventory["Shard of Essence"](exists)}
-			{
 				ShardType:Set[Shard of Essence]
-			}
-			elseif ${Me.Inventory["Sliver of Essence"](exists)}
-			{
-				ShardType:Set[Sliver of Essence]
-			}
-			elseif  ${Me.Inventory["Scintilla of Essence"](exists)}
-			{
-				ShardType:Set[Scintilla of Essence]
-			}
 			break
 		Default
 			return Buff Complete
@@ -431,31 +409,21 @@ function Combat_Routine(int xAction)
 	AutoFollowingMA:Set[FALSE]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
-	{
 		EQ2Execute /stopfollow
-	}
 
 	;check if we have a pet or a hydromancy not up
 	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
-	{
 		call SummonPet
-	}
 
 	if ${Me.ToActor.Pet(exists)} && ${PetMode}
-	{
 		call PetAttack
-	}
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
 
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
-	{
 		call CastSpellRange 303
-	}
 
 	call CheckHeals
 	call RefreshPower
@@ -463,26 +431,18 @@ function Combat_Routine(int xAction)
 
 	;keep blazing Avatar up at all times
 	if ${Me.ToActor.Pet(exists)}
-	{
 		call CastSpellRange 71
-	}
 
 	;keep distracting strike up if we have a scout pet
 	if ${Me.Maintained[${SpellType[355]}](exists)}
-	{
 		call CastSpellRange 383
-	}
 
 	;keep  Magic Leash up if we have a mage pet
 	if ${Me.Maintained[${SpellType[356]}](exists)}
-	{
 		call CastSpellRange 397
-	}
 
 	if ${Me.Ability[${SpellType[60]}].IsReady}
-	{
 		call CastSpellRange 60 0 0 0 ${KillTarget}
-	}
 
 	switch ${Action[${xAction}]}
 	{
@@ -491,54 +451,40 @@ function Combat_Routine(int xAction)
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
 			}
 			break
-
+		case Bewilderment
 		case converge
 		case Special_Pet3
 		case Special_Pet1
 		case AA_Animated_Dagger
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if (${Return.Equal[OK]} || ${Actor[${KillTarget}].IsEpic}) && ${PetMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
 
 		case Plane_Shift
 			if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			break
 
 		case AoE_PB
 			if ${PBAoEMode} && ${Mob.Count}>1
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-
-			}
 			break
 
 		case Combat_Buff
 		case AoE1
 			if ${AoEMode} && (${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)})
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-
-			}
 			break
 
 		case AoE2
 			if ${AoEMode}
 			{
 				if ${Mob.Count}>1
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
 			}
 			break
 
@@ -546,9 +492,7 @@ function Combat_Routine(int xAction)
 		case Nuke
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
 		case Blazing_Avatar
 			call CastSpellRange ${PostSpellRange[${xAction},1]}
@@ -583,9 +527,7 @@ function Post_Combat_Routine(int xAction)
 		case AA_Possessed_Minion
 			;check if we are possessed minion and cancel
 			if ${Me.Race.Equal[Unknown]}
-			{
 				Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		default
 			return PostCombatRoutineComplete
@@ -633,36 +575,15 @@ function RefreshPower()
 
 	;Blazing Vigor line out of Combat
 	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.Pet.IsAggro}
-	{
-			call CastSpellRange 309
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<45
-	{
-		call UseItem "Spiritise Censer"
-	}
+		call CastSpellRange 309
 
 	;Conjuror Shard
 	if ${Me.Power}<40 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
-	{
 		Me.Inventory[${ShardType}]:Use
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<20
-	{
-		call UseItem "Dracomancer Gloves"
-	}
 
 	;Blazing Vigor Line in Combat
 	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<20
-	{
 			call CastSpellRange 309
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-	{
-		call UseItem "Stein of the Everling Lord"
-	}
 
 }
 
@@ -674,77 +595,21 @@ function CheckHeals()
 
 	; Cure Arcane Me
 	if ${Me.Arcane}>=1
-	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 
-		if ${Actor[${KillTarget}](exists)}
-		{
-			Target ${KillTarget}
-		}
-	}
+	if ${Me.Elemental}>=1
+		call CastSpellRange 506 0 0 0 ${Me.ID}
+
 	;================================
 	;= Animist Transference Check
 	;================================
 	;Check ME first,
 	if ${Me.ToActor.Health}<60
 	{
-		call CastSpellRange 396 0 0 0 ${Me.ToActor.ID}
+		call CastSpellRange 396 0 0 0 ${Me.ID}
 		;stoneskins AA
 		call CastSpellRange 378
-
-		if ${Actor[${KillTarget}](exists)}
-		{
-			Target ${KillTarget}
-		}
 	}
-
-;	do
-;	{
-;			; Cure Arcane
-;			if ${Me.Group[${temphl}].Arcane}>=1 && ${Me.Group[${temphl}].ToActor(exists)}
-;			{
-;				call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
-;
-;				if ${Actor[${KillTarget}](exists)}
-;				{
-;					Target ${KillTarget}
-;				}
-;			}
-;
-;			;Check Group members
-;			;if ${Me.Group[${temphl}].ToActor.Health}<50 && ${Me.Group[${temphl}].ToActor.Health}>-99 && && ${Me.Group[${temphl}].ToActor(exists)}
-;			{
-;				call CastSpellRange 396 0 0 0 ${Me.Group[${temphl}].ToActor.ID}
-;
-;				;Stoneskins AA
-;				call CastSpellRange 378
-;
-;				EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
-;
-;				if ${Actor[${KillTarget}](exists)}
-;				{
-;					Target ${KillTarget}
-;				}
-;
-;			}
-;
-;			;================================
-;			;= Expiation Check
-;			;================================
-;			call IsHealer ${Me.Group[${temphl}].ID}
-;
-;			if (${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>0)  || (${Return} && ${Me.Group[${temphl}].ToActor.Power}<30 && ${Me.Group[${temphl}].ToActor.Power}>0) && ${Me.Group[${temphl}].ToActor.InCombatMode} && ${Me.Group[${temphl}].ToActor(exists)} && ${PetMode}
-;			{
-;				;TODO Add check for Intervention
-;				;Cast AA Animist Bond so damage from expiation is to power not the pets health
-;				call CastSpellRange 382
-;				;Cast Expiation
-;				call CastSpellRange 361
-;				call SummonPet
-;
-;			}
-;	}
-;	while ${temphl:Inc}<${grpcnt}
 
 	;================================
 	;= Pet Heals                    =
@@ -752,26 +617,18 @@ function CheckHeals()
 
 	;Animist Bond AA check
 	if  ${Me.ToActor.Pet.Health}<50 && ${Me.ToActor.Pet.Power}>30 && ${Me.ToActor.Pet(exists)}
-	{
 		call CastSpellRange 382
-	}
 
 	if ${Me.ToActor.Pet.Health}<70 && ${Me.ToActor.Pet(exists)}
-	{
 		call CastSpellRange 1
-	}
 
 	if ${Me.ToActor.Pet.Health}<40 && ${Me.ToActor.Pet(exists)}
-	{
 		call CastSpellRange 4
-	}
 
 	if ${Me.ToActor.Pet.Health}<30 && ${Me.ToActor.Pet(exists)}
-	{
 		call CastSpellRange 47
-	}
 
-	call UseCrystallizedSpirit 60
+	call CommonHeals 70
 
 }
 
@@ -779,9 +636,7 @@ function CheckHeals()
 function QueueShardRequest(string line, string sender)
 {
 	if ${Actor[${sender}](exists)}
-	{
 		ShardQueue:Queue[${sender}]
-	}
 }
 
 function AnswerShardRequest()
@@ -797,9 +652,7 @@ function AnswerShardRequest()
 			}
 
 			if ${Return}
-			{
 				ShardQueue:Dequeue
-			}
 		}
 	}
 
@@ -808,9 +661,7 @@ function AnswerShardRequest()
 function DequeueShardRequest(string line)
 {
 	if ${ShardQueue.Peek(exists)}
-	{
 		ShardQueue:Dequeue
-	}
 }
 
 function SummonPet()
