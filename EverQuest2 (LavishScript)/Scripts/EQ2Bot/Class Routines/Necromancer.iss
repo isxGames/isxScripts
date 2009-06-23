@@ -69,8 +69,8 @@ function Class_Declaration()
 	declare ShardRequestTimer int script ${Time.Timestamp}
 	declare ShardType string script
 
-    declare Undead_Army bool script TRUE
-    declare Auto_Res bool script TRUE
+	declare Undead_Army bool script TRUE
+	declare Auto_Res bool script TRUE
 
 	call EQ2BotLib_Init
 
@@ -92,20 +92,8 @@ function Class_Declaration()
 
 	switch ${SpellType[360]}
 	{
-		case Splintered Heart
-			ShardType:Set["Splintered Heart"]
-			break
 		case Dark Heart
 			ShardType:Set["Dark Heart"]
-			break
-		case Sacrificial Heart
-			ShardType:Set["Sacrificial Heart"]
-			break
-		case Ruinous Heart
-			ShardType:Set["Ruinous Heart"]
-			break
-		case Darkness Heart
-			ShardType:Set["Darkness Heart"]
 			break
 		case Default
 			break
@@ -252,7 +240,7 @@ function Combat_Init()
 
 	Action[17]:Set[DrawingSouls]
 	SpellRange[17,1]:Set[310]
-	SpellRange[17,2]:Set[318]
+	SpellRange[17,2]:Set[315]
 
 	Action[18]:Set[AA_Lifeburn]
 	SpellRange[18,1]:Set[375]
@@ -287,6 +275,15 @@ function Buff_Routine(int xAction)
 		waitframe
 	}
 
+	; Pass out feathers on initial script startup
+	if !${InitialBuffsDone}
+	{
+		if (${Me.GroupCount} > 1)
+			call CastSpellRange 361
+		InitialBuffsDone:Set[TRUE]
+	}
+
+
 	switch ${PreAction[${xAction}]}
 	{
 		case AA_Cabalists_Cover
@@ -302,40 +299,26 @@ function Buff_Routine(int xAction)
 			break
 		case Favor
 			if ${BuffFavor}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Lich
 			if ${BuffLich}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case Mark
 			if ${BuffMark}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 
 		case Pet_Buff
 			if ${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[395]}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
-			}
 			break
 		case SeeInvis
 			if ${BuffSeeInvis}
@@ -348,19 +331,14 @@ function Buff_Routine(int xAction)
 				do
 				{
 					if ${Me.Group[${tempvar}].ToActor.Distance}<15
-					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
-					}
-
 				}
 				while ${tempvar:Inc}<${Me.GroupCount}
 			}
 			break
 		case Buff_Shards
 			if !${Me.Inventory[${ShardType}](exists)}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-			}
 			break
 		Default
 			return BuffComplete
@@ -377,14 +355,10 @@ function Combat_Routine(int xAction)
 	AutoFollowingMA:Set[FALSE]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
-	{
 		EQ2Execute /stopfollow
-	}
 
 	if ${Me.ToActor.Pet(exists)}
-	{
 		call PetAttack
-	}
 
 	if ${Me.Ability[${SpellType[450]}].IsReady}
 		Me.Ability[${SpellType[450]}]:Use
@@ -443,48 +417,34 @@ function Combat_Routine(int xAction)
 	call CommonHeals
 	call CommonPower
 	if ${UsePotions}
-	{
 		call CheckCures
-	}
 
 	;check if we have a pet or a ooze not up
 	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
-	{
 		call SummonPet
-	}
 
 	call CheckHeals
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
-	{
 		call CastSpellRange 303
-	}
 
 	call RefreshPower
 	call AnswerShardRequest
 
 	;Keep Consumption Up
 	if ${Me.ToActor.Pet(exists)}
-	{
 		call CastSpellRange 351
-	}
 
 	;keep distracting strike up if we have a scout pet
 	if ${Me.Maintained[${SpellType[355]}](exists)}
-	{
 		call CastSpellRange 375
-	}
 
 	;keep  Magic Leash up if we have a mage pet
 	if ${Me.Maintained[${SpellType[356]}](exists)}
-	{
 		call CastSpellRange 385
-	}
 
 	switch ${Action[${xAction}]}
 	{
@@ -494,114 +454,74 @@ function Combat_Routine(int xAction)
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
 			}
 			break
-
 		case Stench_Pet
 			if ${AoEMode} && ${PetMode}
 			{
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 				if ${Return.Equal[OK]}
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-
-				}
 			}
 			break
-
 		case Bat_Pet
 		case Rat_Pet
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} && ${PetMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
-
 		case UndeadTide
 			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.ToActor.Pet(exists)} && ${PetMode} && ${Undead_Army}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			break
-
 		case AA_Lifeburn
 			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.ToActor.Pet(exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${LifeburnMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			break
-
 		case Cloud
 			if ${PBAoEMode} && ${Mob.Count}>1
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
 			break
-
 		case Shockwave
 			if ${AoEMode} && ${Me.ToActor.Pet(exists)}  && ${Me.Maintained[${SpellType[357]}](exists)}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
-
 		case AoE
 			if ${AoEMode}
 			{
 				if ${Mob.Count}>1
-				{
 					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				}
 			}
 			break
-
 		case DrawingSouls
 			call CheckEssense
 			if ${Return.Equal[STACKFOUND]}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
-			}
 			break
-
 		case Debuff1
 		case Debuff2
 		case Debuff3
 			if ${DebuffMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			break
-
 		case Dot2
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} && !${Actor[${KillTarget}].IsEpic} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
-
 		case Dot1
 		case Dot3
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
-
 		case AA_Magic_Leash
 		case AA_Animist_Bond
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
 			if ${Return.Equal[OK]} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
 			break
-
 		case Master_Strike
 			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 			{
@@ -609,14 +529,10 @@ function Combat_Routine(int xAction)
 				Me.Ability[Master's Strike]:Use
 			}
 			break
-
 		case ThermalShocker
 			if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
-			{
 				Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
-			}
 			break
-
 		Default
 			return CombatComplete
 			break
@@ -638,9 +554,7 @@ function Post_Combat_Routine(int xAction)
 		case AA_Possessed_Minion
 			;check if we are possessed minion and cancel
 			if ${Me.Race.Equal[Unknown]}
-			{
 				Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		default
 			return PostCombatRoutineComplete
@@ -697,47 +611,22 @@ function RefreshPower()
 {
 
 	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.Pet.IsAggro}
-	{
 		call CastSpellRange 326
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<45
-	{
-		call UseItem "Spiritise Censer"
-	}
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<80 && ${Me.Health}>80 && !${Me.ToActor.Pet.IsAggro}
-	{
 		call CastSpellRange 325
-	}
 
 	;Necro Heart
 	if ${Me.ToActor.Power}<80 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
-	{
 		Me.Inventory[${ShardType}]:Use
-	}
-
-	if ${Me.InCombat} && ${Me.ToActor.Power}<20
-	{
-		call UseItem "Dracomancer Gloves"
-	}
 
 	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<20
-	{
 		call CastSpellRange 326
-	}
 
 	if ${Me.InCombat} && ${Me.ToActor.Power}<45 && ${Me.Health}>20
-	{
 		call CastSpellRange 325
-	}
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<15
-	{
-		call UseItem "Stein of the Everling Lord"
-	}
-
-	call Shard
+	call Shard 60
 }
 
 function CheckHeals()
