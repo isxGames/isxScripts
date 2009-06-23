@@ -80,9 +80,9 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
     }
     if ${doFurious}
 	{
-	if ${Text.Find[${Me.Target} becomes FURIOUS]}
+	if ${Text.Find[becomes FURIOUS]}
 		{
-		mobisfurious:Set[TRUE]
+		mobisfurious:Set[FALSE]
 		}
 	if ${Text.Find[no longer FURIOUS]}
 		{

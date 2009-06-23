@@ -33,7 +33,6 @@ function TurnOffAttackfunct()
 			}
 			Iterator:Next
 		}
-	return
 	}
 	if ${doFurious}
 	{

@@ -44,7 +44,7 @@ variable fight fight
 ;*************************************************************
 function SendInPets()
 {
-	if ${Me.HavePet} && ${fight.ShouldIAttack}
+	if ${Me.HavePet} && ${fight.ShouldIAttack} || ${Me.HaveMinion} && ${fight.ShouldIAttack}
 	{
 		VGExecute /pet attack
 		VGExecute /minion attack
