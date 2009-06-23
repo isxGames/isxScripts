@@ -5,9 +5,9 @@
 ; this script is the suck, someone port monk please (pygar)
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20090623
+	;;;;
 
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
@@ -42,13 +42,13 @@ function Class_Declaration()
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
@@ -156,6 +156,9 @@ function Combat_Init()
 	Action[20]:Set[AAEvade]
 	SpellRange[20,1]:Set[390]
 
+	Action[21]:Set[Bruising]
+	SpellRange[21,1]:Set[402]
+
 }
 
 function PostCombat_Init()
@@ -218,27 +221,42 @@ function Combat_Routine(int xAction)
 	AutoFollowingMA:Set[FALSE]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
-	{
 		EQ2Execute /stopfollow
-	}
 
-	call CheckHeals
+	;check if we are not in control, and use control cure if needed
+	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
+		call CastSpellRange 403
+
+	call CommonHeals 70
 
 	if ${DoHOs}
-	{
-
 		objHeroicOp:DoHO
-	}
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
-	{
 		call CastSpellRange 303
-	}
 
 	if ${ShardMode}
-	{
 		call Shard
-	}
+
+	;stoneskin
+	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[502]}].IsReady}
+		call CastSpellRange 502
+
+	;magic stoneskin
+	if ${Me.ToActor.Health}<40 && ${Me.Ability[${SpellType[401]}].IsReady}
+		call CastSpellRange 401
+
+	;parry
+	if ${Me.ToActor.Health}<30 && ${Me.Ability[${SpellType[503]}].IsReady}
+		call CastSpellRange 503
+
+	;dev fist
+	if !${MainTank} && ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}<4
+		call CastSpellRange 405
+	elseif !${MainTank} && !${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}<40
+		call CastSpellRange 405
+
+
 
 	switch ${Action[${xAction}]}
 	{
@@ -248,116 +266,77 @@ function Combat_Routine(int xAction)
 		case AoE_Taunt
 		case Taunt
 			if ${TauntMode} && !${RangedAttacksMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
 			break
-
 		case Self_Heal
 			if ${Me.ToActor.Health}<50
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			break
-
 		case Cure_Trauma
 			if ${Me.Trauma}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			break
-
 		case DoT
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			break
-
+		case Bruising
 		case Stun
 			call CastSpellRange ${SpellRange[${xAction},1]}
 			break
-
 		case Melee_Attack
 			if !${EQ2.HOWindowActive} && ${Me.InCombat}
-			{
 				call CastSpellRange 303
-			}
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			break
-
 		case High_Attack
 			if ${Me.ToActor.Health}>60
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			break
-
 		case AoE_All
 		case AoE
 			if ${Mob.Count}>2
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
-			}
 			break
-
 		case Combat_Defense
 			if !${lostaggro}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]}
-			}
 			elseif ${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-			{
 				Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 		case AAEagleSpin
 			if !${RangedAttackMode} && ${Me.GroupCount}<=1
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
 			break
 		case AAEvade
 			if !${RangedAttackMode} && !${MainTank}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
 			break
 		case AACraneFlock
 			if ${PBAoEMode} && ${Mob.Count}>2 && !${RangedAttackMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
 			break
 		case AAPressurePoint
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
 			break
 		case AAChi
 			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}<60 && !${RangedAttackMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 0 0 0 1
-			}
 			break
 		case AABatonFlurry
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${RangedAttackMode}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
 			break
 		case AACraneSweep
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${RangedAttackMode}  && ${PBAoEMode} && ${Mob.Count}>2
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
 			break
 		case AAMantisStar
 			if ${ThrownAttacksMode} && !${MainTank}
-			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
-			}
 			break
 		Default
-			xAction:Set[20]
+			return Combat Complete
 			break
 	}
 }
@@ -407,23 +386,23 @@ function Lost_Aggro(int mobid)
 
 		call CastSpellRange 170 171
 
-		if ${Me.Ability[${SpellType[160]}].IsReady}
+		if ${Me.Ability[${SpellType[400]}].IsReady}
 		{
-			call CastSpellRange 160 0 0 0 ${mobid}
+			call CastSpellRange 400 0 0 0 ${mobid}
 		}
-		elseif ${Me.Ability[${SpellType[270]}].IsReady}
+		elseif ${Me.Ability[${SpellType[404]}].IsReady}
 		{
-			call CastSpellRange 270 0 0 0 ${mobid}
+			call CastSpellRange 404 0 0 0 ${mobid}
 		}
-		elseif ${Me.Ability[${SpellType[110]}].IsReady}
+		elseif ${Me.Ability[${SpellType[500]}].IsReady}
 		{
-			call CastSpellRange 110 0 1 3 ${mobid}
+			call CastSpellRange 500 0 0 0 ${mobid}
 		}
-		elseif ${Me.Ability[${SpellType[320]}].IsReady}
+		elseif ${Me.Ability[${SpellType[505]}].IsReady}
 		{
-			call CastSpellRange 320 0 0 0 ${mobid}
+			call CastSpellRange 505 0 0 0 ${mobid}
 		}
-		elseif ${Me.Ability[${SpellType[390]}].IsReady}
+		elseif ${Me.Ability[${SpellType[323]}].IsReady}
 		{
 			call CastSpellRange 323 0 0 0 ${mobid}
 		}
@@ -541,8 +520,8 @@ function ApplyStance()
 }
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }
