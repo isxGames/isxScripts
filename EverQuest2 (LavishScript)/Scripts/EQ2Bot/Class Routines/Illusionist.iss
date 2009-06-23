@@ -315,9 +315,9 @@ function Combat_Init()
 
 	;; Dispel debuff
 	Action[12]:Set[Dispel]
-	MobHealth[11,1]:Set[1]
-	MobHealth[11,2]:Set[100]
-	SpellRange[11,1]:Set[363]
+	MobHealth[12,1]:Set[1]
+	MobHealth[12,2]:Set[100]
+	SpellRange[12,1]:Set[363]
 
 }
 
