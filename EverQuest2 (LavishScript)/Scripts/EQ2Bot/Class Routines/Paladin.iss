@@ -1,10 +1,12 @@
 ;*************************************************************
 ;Paladin.iss
-;version 20061201
-;by Ownagejoo using all of Kayres Great scripts
+;version 20090623
 ;
+;20090623 (pygar)
+;	Updated for GU52
 ;
-;
+;20061201
+;	by Ownagejoo using all of Kayres Great scripts
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -13,38 +15,20 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+	declare ClassFileVersion int script 20090623
+	;;;;
 
 	declare TauntMode bool script TRUE
 	declare HealerMode bool script FALSE
+	declare AoEMode bool script FALSE
 	declare Start_HO bool script FALSE
 
 	declare BuffProcGroupMember string script
 	declare Secondary_Assist string script
-
-	;Custom Equipment
-	declare WeaponMain string script
-	declare OffHand string script
-	declare OneHandedSword string script
-	declare TwoHandedSword string script
-	declare Shield string script
-	declare Axe string script
-
-	declare EquipmentChangeTimer int script
-
+	declare BuffAmendsGroupMember string script
 
 	call EQ2BotLib_Init
-
-	;XML setup for Weapons
-	WeaponMain:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Main",""]}]
-	OffHand:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["OffHand",""]}]
-	OneHandedSword:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[OneHandedSword,]}]
-	TwoHandedSword:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[TwoHandedSword,]}]
-	Shield:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Shield,]}]
-	Axe:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Axe,]}]
-
 
 	;XML Setup for clickbox options
 	TauntMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Taunt Mode,TRUE]}]
@@ -53,24 +37,31 @@ function Class_Declaration()
 	Use_Consecrate:Set{${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use_Consecrate,FALSE]}]
 
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
+	BuffAmendsGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAmendsGroupMember,]}]
 	Secondary_Assist:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Secondary Assist,]}]
 }
 
 function Pulse()
 {
 	;;;;;;;;;;;;
-	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is 
+	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
 	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
-	;			}         
+	;			}
 	;
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
+	if ${Me.Ability[${SpellType[155]}].IsReady}(${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
+	{
+		Debug:Echo["Casting PreWard"]
+		call CastSpellRange 155 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
+		ClassPulseTimer:Set[${Script.RunningTime}]
+	}
 
 	;; This has to be set WITHIN any 'if' block that uses the timer.
 	;ClassPulseTimer:Set[${Script.RunningTime}]
@@ -95,6 +86,21 @@ function Buff_Init()
 
 		 PreAction[4]:Set[SA_Buff]
 		 PreSpellRange[4,1]:Set[386]
+
+		 PreAction[5]:Set[AA_Leadership]
+		 PreSpellRange[5,1]:Set[506]
+
+		 PreAction[6]:Set[AA_Aura_Leadership]
+		 PreSpellRange[6,1]:Set[507]
+
+		 PreAction[7]:Set[AA_Fearless]
+		 PreSpellRange[7,1]:Set[508]
+
+		 PreAction[8]:Set[AA_Trample]
+		 PreSpellRange[8,1]:Set[510]
+
+		 PreAction[9]:Set[Amends]
+		 PreSpellRange[9,1]:Set[35]
 }
 
 function Combat_Init()
@@ -108,7 +114,6 @@ function Combat_Init()
 
 		 Action[3]:Set[Combat_Buff]
 		 SpellRange[3,1]:Set[155]
-		 SpellRange[3,2]:Set[156]
 
 		 Action[4]:Set[AoE_Taunt]
 		 SpellRange[4,1]:Set[170]
@@ -155,6 +160,24 @@ function Combat_Init()
 
 		 Action[12]:Set[AA_SwiftAxe]
 		 SpellRange[12,1]:Set[389]
+
+		 Action[13]:Set[AA_LegionSmite]
+		 SpellRange[13,1]:Set[501]
+
+		 Action[14]:Set[AA_Joust]
+		 SpellRange[14,1]:Set[509]
+
+		 Action[15]:Set[AA_Lance]
+		 SpellRange[15,1]:Set[511]
+
+		 Action[16]:Set[AA_Smite_Evil]
+		 SpellRange[16,1]:Set[515]
+
+		 Action[17]:Set[AA_Doom_Judgement]
+		 SpellRange[17,1]:Set[522]
+
+		 Action[18]:Set[AA_Hammer_Ground]
+		 SpellRange[18,1]:Set[524]
 }
 
 function PostCombat_Init()
@@ -167,14 +190,20 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
-	call WeaponChange
-
 	if ${ShardMode}
 		call Shard
 
 	switch ${PreAction[${xAction}]}
 	{
+		case Amends
+			BuffTarget:Set[${UIElement[cbBuffAmendsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			break
 		case Protect_Target
 			BuffTarget:Set[${UIElement[cbBuffProcGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
@@ -184,8 +213,13 @@ function Buff_Routine(int xAction)
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
-
-
+		case AA_Trample
+		case AA_Fearless
+		case AA_Aura_Leadership
+		case AA_Leadership
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]IsReady} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			break
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
@@ -222,9 +256,16 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	AutoFollowingMA:Set[FALSE]
-	
+
 	if ${Me.ToActor.WhoFollowing(exists)}
 		EQ2Execute /stopfollow
+
+	call CommonHeals 70
+
+	call MeHeals
+
+	if ${HealerMode}
+		call CheckHeals
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
@@ -233,63 +274,42 @@ function Combat_Routine(int xAction)
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${Start_HO}
 		call CastSpellRange 303
 
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-		Me.Inventory[${WeaponMain}]:Equip
+	;group proc buff, always use if avail
+	if ${Me.Ability[${SpellType[505]}].IsReady}
+		call CastSpellRange 505 0 0 0 ${KillTarget}
+
+	;Spell / CA Stoneskin  use if avail
+	if ${Me.Ability[${SpellType[512]}].IsReady}
+		call CastSpellRange 512 0 0 0 ${KillTarget}
+
+	;use Castigate or Aura Self Cure
+	if ${Me.Afflicted}
+	{
+		if ${AoEMode} && ${Me.Ability[${SpellType[523]}].IsReady}
+			call CastSpellRange 523
+		elseif ${Me.Ability[${SpellType[517]}].IsReady}
+			call CastSpellRange 517
+	}
+
+	;use block
+	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[518]}].IsReady}
+		call CastSpellRange 518
+
+	;use cry if tank
+	if ${TauntMode} && ${Me.Ability[${SpellType[519]}].IsReady}
+		call CastSpellRange 519
+
+	;use block
+	if ${Me.ToActor.Health}<20 && ${Me.Ability[${SpellType[521]}].IsReady}
+		call CastSpellRange 521
 
 	switch ${Action[${xAction}]}
 	{
 		case Stun
-			if ${Me.ToActor.Health}<60
-			{
-				if ${Me.Equipment[secondary].Type.Equal[Shield]}
-				{
-					call CastSpellRange 191
-					call CastSpellRange 190
-					if ${HealerMode}
-			     	    call CheckHeals
-			     	else
-			     	    call MeHeals
-				}
-				else
-				{
-				    call CastSpellRange 190
-					if ${HealerMode}
-			     		call CheckHeals
-			    	else
-			     	    call MeHeals
-				}
-			}
-			else
-			{
-				if ${Me.Equipment[secondary].Type.Equal[Shield]}
-				{
-					call CastSpellRange 191
-					call CastSpellRange 190
-				}
-				else
-					call CastSpellRange 190
-			}
-            break
-            
 		case Taunt
 			if ${MainTank} && ${TauntMode}
 			    call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			break
-
-		case Combat_Buff
-			if ${MainTank}
-			{
-                if ${Target(exists)} && ${Target.Health}>5
-		        {
-			        call CastSpellRange 155
-			        if ${HealerMode}
-			     	    call CheckHeals
-			        else
-				        call MeHeals
-			    }
-		    }
-			break
-
 		case AoE_Taunt
 		    if ${MainTank} && ${TauntMode}
 			{
@@ -297,7 +317,17 @@ function Combat_Routine(int xAction)
 				    call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			}
 			break
-
+		case AoE_All
+		case AA_Hammer_Ground
+		case AA_Doom_Judgement
+		case AA_Smite_Evil
+			if ${AoEMode}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			break
+		case Combat_Buff
+		case AA_Lance
+		case AA_Joust
+		case AA_LegionSmite
 		case AA_SwiftAxe
 			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
@@ -314,15 +344,6 @@ function Combat_Routine(int xAction)
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
                     call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
-			}
-			break
-
-		case AoE_All
-			if ${Mob.Count}>2
-			{
-			   call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-			   if ${Return.Equal[OK]}
-			        call CastSpellRange ${SpellRange[${xAction},1]}
 			}
 			break
 
@@ -368,18 +389,15 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
+	if ${Me.Ability[${SpellType[525]}].IsReady}
+    call CastSpellRange 525 0 0 0 ${mobid}
+	elseif ${Me.Ability[${SpellType[516]}].IsReady}
+    call CastSpellRange 516 0 0 0 ${mobid}
+	elseif ${Me.Ability[${SpellType[161]}].IsReady}
+    call CastSpellRange 161 0 0 0 ${mobid}
+	elseif ${Me.Ability[${SpellType[526]}].IsReady}
+    call CastSpellRange 526 0 0 0 ${mobid}
 
-  if ${Target(exists)} && ${Target.Health}>5 && ${Me.ToActor.Power}>5
-  {
-		call CastSpellRange 160 161
-
-		if ${Me.Ability[${SpellType[270]}].IsReady}
-		    call CastSpellRange 270 0 0 0 ${mobid}
-		elseif ${Me.Ability[${SpellType[275]}].IsReady}
-		    call CastSpellRange 275 0 0 0 ${mobid}
-		elseif ${Me.Ability[${SpellType[320]}].IsReady}
-		    call CastSpellRange 320 0 0 0 ${mobid}
-	}
 }
 
 function MA_Lost_Aggro()
@@ -408,7 +426,6 @@ function CheckHeals()
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
 
-	hurt:Set[FALSE]
 
 	temphl:Set[1]
 	grpcure:Set[0]
@@ -440,7 +457,7 @@ function CheckHeals()
 
 	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
 		grpheal:Inc
-		
+
 	;MAINTANK EMERGENCY HEAL
 	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}].ToActor(exists)}
 		call EmergencyHeal ${Actor[${MainAssist}].ID}
@@ -448,18 +465,19 @@ function CheckHeals()
 	;ME HEALS
 	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		if ${Me.ToActor.Health}<40
+		if ${Me.ToActor.Health}<50
 		{
 			if ${haveaggro}
 				call EmergencyHeal ${Me.ID}
 			else
 			{
-				if ${Me.Ability[${SpellType[1]}].IsReady}
+				if ${Me.Ability[${SpellType[513]}].IsReady}
+					call CastSpellRange 513 0 0 0 ${Me.ID}
+				elseif ${Me.Ability[${SpellType[1]}].IsReady}
 					call CastSpellRange 1 0 0 0 ${Me.ID}
 				else
 					call CastSpellRange 4 0 0 0 ${Me.ID}
 			}
-			hurt:Set[TRUE]
 		}
 
 	}
@@ -476,37 +494,29 @@ function CheckHeals()
 
 	if ${Me.Group[${lowest}].ToActor.Health}<80 && ${Me.Group[${lowest}].ToActor(exists)}
 	{
-		if ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+		if ${Me.Ability[${SpellType[513]}].IsReady} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+			call CastSpellRange 513 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+		elseif ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
-		else
+		elseif && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
 			call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
 
-		hurt:Set[TRUE]
 	}
-
-	;PET HEALS
-	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)}
-		call CastSpellRange 4 0 0 0 ${PetToHeal}
-
 }
 
 function MeHeals()
 {
-	if ${Me.ToActor.Health}<40 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.ToActor.Health}<50
 	{
 		if ${Me.ToActor.Health}<25
-		{
-			eq2execute /group GET READY TO EVAC I AM ABOUT TO DIE
 			call EmergencyHeal ${Me.ID}
-		}
+
+		if ${Me.Ability[${SpellType[513]}].IsReady}
+			call CastSpellRange 513 0 0 0 ${Me.ID}
+		elseif ${Me.Ability[${SpellType[1]}].IsReady}
+			call CastSpellRange 1 0 0 0 ${Me.ID}
 		else
-		{
-			if ${Me.Ability[${SpellType[1]}].IsReady}
-				call CastSpellRange 1 0 0 0 ${Me.ID}
-			else
-				call CastSpellRange 4 0 0 0 ${Me.ID}
-		}
-		hurt:Set[TRUE]
+			call CastSpellRange 4 0 0 0 ${Me.ID}
 	}
 }
 
@@ -519,26 +529,10 @@ function EmergencyHeal(int healtarget)
 }
 
 
-function WeaponChange()
-{
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
-	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
-	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
-	}
-}
 
 function PostDeathRoutine()
-{	
+{
 	;; This function is called after a character has either revived or been rezzed
-	
+
 	return
 }

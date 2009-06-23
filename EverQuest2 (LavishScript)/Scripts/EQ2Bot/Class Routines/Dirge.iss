@@ -290,7 +290,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_AASonata
-			if ${BuffSonata}
+			if ${BuffSonata} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 0 2 0
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel

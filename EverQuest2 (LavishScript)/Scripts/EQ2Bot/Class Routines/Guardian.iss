@@ -479,7 +479,7 @@ function Lost_Aggro(int mobid)
 
 				;use rescue if new agro target is under 65 health
 				if ${Me.ToActor.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
-					call CastSpellRange 320 0 1 0 ${mobid}
+					call CastSpellRange 320 0 1 0 ${KillTarget}
 			}
 		}
 	}
