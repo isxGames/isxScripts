@@ -441,6 +441,15 @@ function Combat_Routine(int xAction)
 	;bolster MT
 	if !${Me.Maintained[${SpellType[21]}](exists)} && ${Me.Ability[${SpellType[21]}].IsReady}
 		call CastSpellRange 21 0 0 0 ${Actor[${MainTankPC}].ID} 1
+		
+	;Cast Alacrity if available
+	if ${Me.Ability[${SpellType[372]}].IsReady}
+	{
+		BuffTarget:Set[${UIElement[cbBuffAlacrityGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+
+		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			call CastSpellRange 372 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
+	}
 
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[360]}](exists)}
@@ -795,15 +804,22 @@ function CheckHeals()
 			call CastSpellRange 1 0 0 0 ${PetToHeal}
 	}
 
-	;Res Fallen Groupmembers only if in range
-	grpcnt:Set[${Me.GroupCount}]
-	tempgrp:Set[1]
-	do
+	;Check Rezes
+	if ${CombatRez} || !${Me.InCombat}
 	{
-		if ${Me.Group[${tempgrp}].ToActor.Health}==-99 && ${Me.Group[${tempgrp}].ToActor(exists)} && ${CombatRez}
-			call CastSpellRange 300 301 0 0 ${Me.Group[${tempgrp}].ID} 1
+		tempgrp:Set[1]
+		do
+		{
+			if ${Me.Group[${tempgrp}].ToActor(exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Group[${tempgrp}].ToActor.Distance}<=20
+			{
+				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
+					call CastSpellRange 500 0 0 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 2 0
+				else
+					call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 2 0
+			}
+		}
+		while ${tempgrp:Inc} <= ${Me.GroupCount}
 	}
-	while ${tempgrp:Inc}<${grpcnt}
 
 }
 
