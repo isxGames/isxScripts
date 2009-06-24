@@ -5189,7 +5189,7 @@ objectdef EQ2BotObj
 						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 				}
 			}
-			while ${tmpvar:Inc} <= ${Me.Raid}
+			while ${tmpvar:Inc} <= 24
 		}
 		elseif ${Me.Group} > 1
 		{
