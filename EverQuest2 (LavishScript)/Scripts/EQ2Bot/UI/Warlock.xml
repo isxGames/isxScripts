@@ -350,7 +350,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnSelect>
 		  declare tmpvar int
 		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffVenemousProc]
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].Set[BuffVenemousProc]:Clear
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffVenemousProc]:Clear
 
 		  tmpvar:Set[1]
 		  if ${This.SelectedItems}&gt;0
