@@ -23,6 +23,8 @@ function Class_Declaration()
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
 	declare CureMode bool script 0
+	declare CureCurseSelfMode bool script 0
+	declare CureCurseOthersMode bool script 0
 	declare OberonMode bool script 0
 	declare TorporMode bool script 0
 	declare KeepWardUp bool script 0
@@ -32,6 +34,7 @@ function Class_Declaration()
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
 	declare MeleeMode bool script 1
+	declare InitialBuffsDone bool script 0
 
 	declare BuffNoxious bool script FALSE
 	declare BuffMitigation bool script FALSE
@@ -42,6 +45,7 @@ function Class_Declaration()
 	declare BuffAncestryGroupMember string script
 	declare BuffImmunities bool script TRUE
 	declare BuffCoagulate bool script TRUE
+	declare CureCurseGroupMember string script
 
 	call EQ2BotLib_Init
 
@@ -49,6 +53,8 @@ function Class_Declaration()
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
+	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
+	CureCurseOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseOthersMode,FALSE]}]
 	OberonMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Oberon Mode,FALSE]}]
 	TorporMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Torpor Mode,FALSE]}]
 	KeepWardUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepWardUp,FALSE]}]
@@ -68,6 +74,7 @@ function Class_Declaration()
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
 	BuffAvatarGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAvatarGroupMember,]}]
 	BuffAncestryGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAncestryGroupMember,]}]
+	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
 }
 
 function Pulse()
@@ -175,6 +182,7 @@ function Combat_Init()
 	SpellRange[1,1]:Set[383]
 
 	Action[2]:Set[Mastery]
+	SpellRange[2,1]:Set[304]
 
 	Action[3]:Set[AARabies]
 	SpellRange[3,1]:Set[352]
@@ -221,8 +229,11 @@ function Combat_Init()
 
 	Action[11]:Set[Slothful_Spirit]
 	Power[11,1]:Set[1]
-	Power[1115,2]:Set[100]
+	Power[11,2]:Set[100]
 	SpellRange[11,1]:Set[83]
+	
+	Action[12]:Set[Debuff_Strength]
+	SpellRange[12,1]:set[51]
 
 }
 
@@ -243,6 +254,16 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	variable int temp
+	
+	; Pass out feathers on initial script startup
+	if !${InitialBuffsDone}
+	{
+		if (${Me.GroupCount} > 1)
+		{
+			call CastSpellRange 313
+			InitialBuffsDone:Set[TRUE]
+	  }
+	}
 
 	if ${ShardMode}
 		call Shard
@@ -442,13 +463,13 @@ function Combat_Routine(int xAction)
 	if !${Me.Maintained[${SpellType[21]}](exists)} && ${Me.Ability[${SpellType[21]}].IsReady}
 		call CastSpellRange 21 0 0 0 ${Actor[${MainTankPC}].ID} 1
 		
-	;Cast Alacrity if available
+		;Cast Alacrity if available
 	if ${Me.Ability[${SpellType[372]}].IsReady}
 	{
 		BuffTarget:Set[${UIElement[cbBuffAlacrityGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-			call CastSpellRange 372 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
+			call CastSpellRange 398 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
 	}
 
 	;keep Leg Bite up at all times if we have a pet
@@ -536,23 +557,32 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
+			
+		case Debuff_Strength
+			if ${Me.Ability[${SpellType[xAction]}].IsReady}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+			}
 
 		case AARabies
 			if ${AoEMode}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
+			
 		case Mastery
 			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
 			;;;;;;;;;;
 			if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-					break
-			;;;;;;;;;;;
-			if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)} && ${OffenseMode}
 			{
-				Target ${KillTarget}
-				Me.Ability[Master's Smite]:Use
+				break
+			}
+			
+			if ${Me.Ability[${SpellType[xAction]}].IsReady}
+			{
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
 			break
+			
 		case ThermalShocker
 			if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady} && ${OffenseMode}
 				Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
@@ -708,6 +738,34 @@ function CheckHeals()
 		grpcure:Inc
 
 	;CURES
+	
+	declare CureTarget string local
+	
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
+	
+	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
+	if ${CureCurseOthersEnabled}
+	{
+		CureTarget:Set[${CureCurseGroupMember}]
+
+		if  !${Me.Raid} > 0 
+			{
+				if ${Me.Group[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+			else
+			{
+					if ${Me.Raid[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+	
 	if ${grpcure}>2 && ${CureMode}
 	{
 		call CastSpellRange 220
@@ -891,6 +949,10 @@ function EmergencyHeal(int healtarget)
 		call CastSpellRange 335 0 0 0 ${healtarget}
 	elseif ${Me.Ability[${SpellType[334]}].IsReady} && (${Me.ID}==${healtarget} || ${Me.Group[${Actor[id,${healtarget}].Name}](exists)})
 		call CastSpellRange 334 0 0 0 ${healtarget}
+		
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 }
 
@@ -944,6 +1006,11 @@ function MA_Dead()
 
 function CureMe()
 {
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
+	
 	if ${Me.Arcane}>0
 	{
 		call CastSpellRange 326
