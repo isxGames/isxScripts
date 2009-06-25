@@ -1,8 +1,15 @@
 ;*************************************************************
 ;Defiler.iss
-;version 20090616a
+;version 20090625a
 ;by karye
-;updated by pygar
+;last updated by capilot
+;
+;20090625a
+;by CaPilot
+;Modifed Logic for cure curse  Two options added to UI, Cure Curse (self) and Cure Curse (others)
+;If healer has chosen to cure curse self, it will always cure itself first.  If anything is selected
+;in the dropdown for Cure Curse(others) that char will be cured first only if the healer has not been
+;cursed first.
 ;
 ;20090616a
 ; TSO AA updates and GU52
@@ -47,7 +54,8 @@ function Class_Declaration()
 	declare DebuffMode bool script 0
 	declare AoEMode bool script 0
 	declare CureMode bool script 0
-	declare CurseMode bool script 1
+	declare CureCurseSelfMode bool script 0
+	declare CureCurseOthersMode bool script 0
 	declare MaelstromMode bool script 0
 	declare KeepWardUp bool script
 	declare PetMode bool script 1
@@ -62,6 +70,8 @@ function Class_Declaration()
 	declare BuffProcGroupMember string script
 	declare BuffHorrorGroupMember string script
 	declare BuffAlacrityGroupMember string script
+	declare CureCurseGroupMember string script
+	
 
 	declare EquipmentChangeTimer int script
 
@@ -71,7 +81,8 @@ function Class_Declaration()
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
-	CurseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Curse Spells,FALSE]}]
+	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
+	CureCurseOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseOthersMode,FALSE]}]
 	CombatRez:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Combat Rez,FALSE]}]
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
 	KeepWardUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepWardUp,FALSE]}]
@@ -86,6 +97,7 @@ function Class_Declaration()
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
 	BuffHorrorGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffHorrorGroupMember,]}]
 	BuffAlacrityGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAlacrityGroupMember,]}]
+	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
 }
 
 function Pulse()
@@ -718,10 +730,34 @@ function CheckCures()
 	declare temphl int local 1
 	declare grpcure int local 0
 	declare Affcnt int local 0
-
-	if ${Me.Cursed} && ${CurseMode}
+	declare CureTarget string local
+	
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
+	
+	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
+	if ${CureCurseOthersEnabled}
+	{
+		CureTarget:Set[${CureCurseGroupMember}]
 
+		if  !${Me.Raid} > 0 
+			{
+				if ${Me.Group[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+			else
+			{
+					if ${Me.Raid[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+	}
+	
 	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
 	{
@@ -837,7 +873,7 @@ function CureMe()
 	if !${Me.IsAfflicted}
 		return
 
-	if ${Me.Cursed} && ${CurseMode}
+	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	while ${CureCnt:Inc}<4 && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0)
@@ -866,7 +902,7 @@ function CureMe()
 
 function HealMe()
 {
-	if ${Me.Cursed} && ${CurseMode}
+	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;ME HEALS
@@ -928,9 +964,9 @@ function CheckHeals()
   }
   else
     MainTankExists:Set[TRUE]
-
-	;curses cause heals to do damage and must be cleared off healer
-	if ${Me.Cursed} && ${CurseMode}
+    
+  ;curses cause heals to do damage and must be cleared off healer
+	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;Res the MT if they are dead
@@ -977,7 +1013,7 @@ function CheckHeals()
 
   if (${MainTankExists})
   {
-  	if ${Actor[${MainTankID}].Health}<90
+  	if ${Actor[${MainTankID}].Health}<100
   	{
   		if ${Me.ID}==${MainTankID}
   			call HealMe
@@ -1041,7 +1077,8 @@ function CheckHeals()
 
 function HealMT(int MTID, int MTInMyGroup)
 {
-	if ${Me.Cursed} && ${CurseMode}
+		
+	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;DeathWard Check
@@ -1057,7 +1094,7 @@ function HealMT(int MTID, int MTInMyGroup)
 
 	;MAINTANK HEALS
 	; Use Wards first, then Patch Heals
-	if ${Actor[${MTID}].Health}<90 && ${Actor[${MTID}](exists)} && !${Actor[${MTID}].IsDead}
+	if ${Actor[${MTID}].Health}<95 && ${Actor[${MTID}](exists)} && !${Actor[${MTID}].IsDead}
 	{
 		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[15]}].Range}
 		{
@@ -1071,7 +1108,7 @@ function HealMT(int MTID, int MTInMyGroup)
 			call CastSpellRange 7 0 0 0 ${MTID} 0 0 0 0 2 0
 	}
 
-	if ${Actor[${MTID}].Health}<70 && !${Actor[${MTID}].IsDead} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
+	if ${Actor[${MTID}].Health}<90 && !${Actor[${MTID}].IsDead} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
 	{
 		call CastSpellRange 387
 		if ${Me.Ability[${SpellType[1]}].IsReady}
@@ -1083,7 +1120,8 @@ function HealMT(int MTID, int MTInMyGroup)
 
 function GroupHeal()
 {
-	if ${Me.Cursed} && ${CurseMode}
+	
+	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 2 0
 
 	call CastSpellRange 387
