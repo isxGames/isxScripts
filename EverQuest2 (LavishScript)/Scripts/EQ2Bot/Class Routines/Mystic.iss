@@ -34,8 +34,7 @@ function Class_Declaration()
 	declare CombatRez bool script 1
 	declare StartHO bool script 1
 	declare MeleeMode bool script 1
-	declare InitialBuffsDone bool script 0
-
+	
 	declare BuffNoxious bool script FALSE
 	declare BuffMitigation bool script FALSE
 	declare BuffStrength bool script FALSE
