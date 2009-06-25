@@ -71,6 +71,8 @@ function Class_Declaration()
 	declare AoEMode bool script
 	declare UseRingOfFire bool script
 	declare CureMode bool script
+	declare CureCurseSelfMode bool script 0
+	declare CureCurseOthersMode bool script 0
 	declare UseStormBolt bool script
 	declare InfusionMode bool script
 	declare KeepReactiveUp bool script
@@ -87,6 +89,7 @@ function Class_Declaration()
 	declare ShiftForm int script 1
 	declare PactOfNature string script
 	declare SpamHealMode bool script 0
+	declare UseRootSpells boot script 0
 	declare FeastAction int script 9
 	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
@@ -96,6 +99,7 @@ function Class_Declaration()
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
 	declare BuffSavageryGroupMember string script
+	declare CureCurseGroupMember string script
 	declare BuffSpirit bool script FALSE
 	declare BuffHunt bool script FALSE
 	declare BuffMask bool script FALSE
@@ -109,6 +113,8 @@ function Class_Declaration()
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	UseRingOfFire:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRingOfFire,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
+	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
+	CureCurseOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseOthersMode,FALSE]}]
 	InfusionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[InfusionMode,FALSE]}]
 	UseStormBolt:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseStormBolt,FALSE]}]
 	MeleeAAAttacksMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MeleeAAAttacksMode,FALSE]}]
@@ -135,6 +141,8 @@ function Class_Declaration()
 	ShiftForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ShiftForm,]}]
 	PactOfNature:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PactOfNature,]}]
 	SpamHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamHealMode,]}]
+	UseRootSpells:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRootSpells,]}]
+	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
 
 	NoEQ2BotStance:Set[TRUE]
 
@@ -265,13 +273,14 @@ function Combat_Init()
 	SpellRange[7,1]:Set[157]
 
 	Action[8]:Set[Mastery]
+	SpellRange[8,1]:Set[509]
 
 	Action[9]:Set[DoT]
 	Power[9,1]:Set[30]
 	Power[9,2]:Set[100]
 	SpellRange[9,1]:Set[70]
 
-    Action[10]:Set[Feast]
+  Action[10]:Set[Feast]
 	Power[10,1]:Set[30]
 	Power[10,2]:Set[100]
 	SpellRange[10,1]:Set[312]
@@ -296,6 +305,11 @@ function Combat_Init()
 	Power[14,1]:Set[40]
 	Power[14,2]:Set[100]
 	SpellRange[14,1]:Set[381]
+	
+	Action[15]:Set[RootSpells]
+	SpellRange[15,1]:Set[306]
+	
+	
 
 }
 
@@ -1090,36 +1104,46 @@ function Combat_Routine(int xAction)
 			{
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					{
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					}
 			}
 			break
 
 		case Mastery
 		    if ${UseFastOffensiveSpellsOnly}
-		        break
-			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-			;;;;;;;;;;
-			if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
-					break
-			;;;;;;;;;;;
-
-			call CheckForMez "Fury Mastery"
-			if ${Return.Equal[FALSE]}
-			{
-				if ${Me.Ability[Master's Smite].IsReady}
+		    {
+			    break
+			   }
+	
+				if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
 				{
-					Target ${KillTarget}
-					Me.Ability[Master's Smite]:Use
-					do
-					{
-						waitframe
-					}
-					while ${Me.CastingSpell}
-					wait 1
+					break
 				}
+
+				call CheckForMez "Fury Mastery"
+				if ${Return.Equal[FALSE]}
+				{
+					if ${Me.Ability[${SpellType[xAction]}].IsReady}
+					{
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					}
+				}
+				else
+				{
+					call ReacquireTargetFromMA
+				}
+
+				break
+				
+		case RootSpells
+			if ${UseRootSpells}
+			{
+				if ${Me.Ability[${SpellType[xAction]}].IsReady}
+					{
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					}
 			}
-			else
-				call ReacquireTargetFromMA
 			break
 
 		case Storms
@@ -1137,7 +1161,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			break
-
+			
 		default
 			return CombatComplete
 			break
@@ -1311,7 +1335,10 @@ function CheckHeals()
 	;	MainTankID:Set[${Me.ID}]
 	;else
 	;	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
-
+	
+		; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	if ${DoCallCheckPosition}
 	{
@@ -1523,17 +1550,20 @@ function CheckHeals()
 
 	if ${EpicMode}
 		call CheckCures
-
+		
+		
 	;Check Rezes
 	if ${CombatRez} || !${Me.InCombat}
 	{
 		temphl:Set[1]
 		do
 		{
-			if ${Me.Group[${temphl}].ToActor(exists)}
+			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
 			{
-                if ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
-    			    call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1
+				if !${Me.InCombat} && ${Me.Ability[${SpellType[380]}].IsReady}
+					call CastSpellRange 380 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+				else
+					call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
@@ -1542,8 +1572,10 @@ function CheckHeals()
 
 function HealMe()
 {
-	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
 		Me.Inventory[Crystallized Spirit]:Use
@@ -1584,9 +1616,10 @@ function HealMe()
 
 function HealMT(int MainTankID, int MTInMyGroup)
 {
-	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
-
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;MAINTANK EMERGENCY HEAL
 	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
@@ -1625,8 +1658,10 @@ function HealMT(int MainTankID, int MTInMyGroup)
 
 function GroupHeal()
 {
-	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	if ${Me.Ability[${SpellType[11]}].IsReady}
 		call CastSpellRange 11
@@ -1673,6 +1708,11 @@ function CureGroupMember(int gMember)
 
 function CureMe()
 {
+	
+		; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
+	
 	declare CureCnt int local 0
 
 	if !${Me.IsAfflicted}
@@ -1696,6 +1736,8 @@ function CureMe()
 }
 
 function CheckCures(int InCombat=1)
+
+
 {
     if ${InCombat}
     {
@@ -1740,6 +1782,33 @@ function CheckCures(int InCombat=1)
 	declare temphl int local 1
 	declare grpcure int local 0
 	declare Affcnt int local 0
+	declare CureTarget string local
+	
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
+	
+	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
+	if ${CureCurseOthersEnabled}
+	{
+		CureTarget:Set[${CureCurseGroupMember}]
+
+		if  !${Me.Raid} > 0 
+			{
+				if ${Me.Group[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+			else
+			{
+					if ${Me.Raid[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+	}
 
 	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount} > 1
