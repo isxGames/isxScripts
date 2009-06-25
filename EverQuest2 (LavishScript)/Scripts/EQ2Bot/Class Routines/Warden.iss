@@ -60,7 +60,8 @@ function Class_Declaration()
 	declare OffenseMode bool script
 	declare AoEMode bool script
 	declare CureMode bool script
-	declare CurseMode bool script 1
+	declare CureCurseSelfMode bool script 0
+	declare CureCurseOthersMode bool script 0
 	declare GenesisMode bool script
 	declare InfusionMode bool script
 	declare KeepReactiveUp bool script
@@ -76,11 +77,14 @@ function Class_Declaration()
 	declare ShiftForm int script 1
 	declare LitanyStance int script 1
 	declare WardenStance int script 1
+	declare UseRoot	bool script 0
+	declare InitialBuffsDone bool script 0
 
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
 	declare BuffSporesGroupMember string script
 	declare BuffVigorGroupMember string script
+	declare CureCurseGroupMember string script
 	declare BuffBoon string script
 
 	call EQ2BotLib_Init
@@ -88,7 +92,8 @@ function Class_Declaration()
 	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
-	CurseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Curse Spells,FALSE]}]
+	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
+	CureCurseOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseOthersMode,FALSE]}]
 	GenesisMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Genesis,FALSE]}]
 	InfusionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[InfusionMode,FALSE]}]
 	KeepReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepReactiveUp,FALSE]}]
@@ -104,11 +109,13 @@ function Class_Declaration()
 	ShiftForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ShiftForm,]}]
 	LitanyStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[LitanyStance,]}]
 	WardenStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[WardenStance,]}]
+	UseRoot:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRoot,]}]
 
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
 	BuffInstinctGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffInstinctGroupMember,]}]
 	BuffSporesGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSporesGroupMember,]}]
 	BuffVigorGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffVigorGroupMember,]}]
+	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
 	BuffBoon:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBoon,FALSE]}]
 }
 
@@ -221,6 +228,7 @@ function Combat_Init()
 	SpellRange[2,1]:Set[61]
 
 	Action[3]:Set[Mastery]
+	SpellRange[3,1]:Set[511]
 
 	Action[4]:Set[AoE]
 	MobHealth[4,1]:Set[11]
@@ -291,6 +299,9 @@ function Combat_Init()
 	Power[13,1]:Set[40]
 	Power[13,2]:Set[100]
 	SpellRange[13,1]:Set[31]
+	
+	Action[14]:Set[UseRoot]
+	SpellRange[14,1]:Set[233]
 
 }
 
@@ -313,13 +324,16 @@ function Buff_Routine(int xAction)
 		Groupwiped:Set[False]
 	}
 
+
 	; Pass out feathers on initial script startup
-	if !${InitialBuffsDone}
+if !${InitialBuffsDone}
+{
+	if (${Me.GroupCount} > 1)
 	{
-		if (${Me.GroupCount} > 1)
-			call CastSpell "Favor of the Phoenix" ${Me.Ability["Favor of the Phoenix"].ID} 0 1 1
+		call CastSpellRange 313
 		InitialBuffsDone:Set[TRUE]
-	}
+  }
+}
 
 	if ${ShardMode}
 		call Shard
@@ -571,6 +585,17 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
+				
+			case UseRoot
+			
+				if ${UseRoot}
+				{
+					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					}
+				}
+				break
 
 			case Ally
 				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
@@ -600,14 +625,15 @@ function Combat_Routine(int xAction)
 				if ${OffenseMode} || ${DebuffMode}
 				{
 					;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-					;;;;;;;;;;
+					
 					if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
-							break
-					;;;;;;;;;;;
-					if ${Me.Ability[Master's Smite].IsReady}
 					{
-						Target ${KillTarget}
-						Me.Ability[Master's Smite]:Use
+							break
+					}
+
+					if ${Me.Ability[${SpellType[xAction]}].IsReady}
+					{
+						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 					}
 				}
 				break
@@ -721,9 +747,9 @@ function CheckHeals()
 	else
 		MainTankExists:Set[TRUE]
 
-	;curses cause heals to do damage and must be cleared off healer
-	if ${Me.Cursed} && ${CurseMode}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;stun check
 	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
@@ -872,8 +898,10 @@ function CheckHeals()
 
 function HealMe()
 {
-	if ${Me.Cursed} && ${CurseMode}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
 		Me.Inventory[Crystallized Spirit]:Use
@@ -918,8 +946,9 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		return
 	}
 
-	if ${Me.Cursed} && ${CurseMode}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;MAINTANK EMERGENCY HEAL
 	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
@@ -984,8 +1013,9 @@ function HealMT(int MainTankID, int MTInMyGroup)
 
 function GroupHeal()
 {
-	if ${Me.Cursed} && ${CurseMode}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	if ${Me.Ability[${SpellType[10]}].IsReady}
 		call CastSpellRange 10
@@ -1035,8 +1065,9 @@ function CureMe()
 	if !${Me.IsAfflicted}
 		return
 
-	if ${Me.Cursed} && ${CurseMode}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+		; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<5
 	{
@@ -1062,6 +1093,34 @@ function CheckCures()
 	declare temphl int local 1
 	declare grpcure int local 0
 	declare Affcnt int local 0
+	declare CureTarget string local
+	
+	
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
+	
+	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
+	if ${CureCurseOthersEnabled}
+	{
+		CureTarget:Set[${CureCurseGroupMember}]
+
+		if  !${Me.Raid} > 0 
+			{
+				if ${Me.Group[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+			else
+			{
+					if ${Me.Raid[${CureTarget.Token[1,:]}].Cursed}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+				}
+			}
+	}
+	
 
 	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
@@ -1220,12 +1279,14 @@ function HandleGroupWiped()
 {
 	;;; There was a full group wipe and now we are rebuffing
 
-	;assume that someone used a feather
+		; Pass out feathers on initial script startup
 	if !${InitialBuffsDone}
 	{
 		if (${Me.GroupCount} > 1)
-			call CastSpell "Favor of the Phoenix" ${Me.Ability["Favor of the Phoenix"].ID} 0 1 1
-		InitialBuffsDone:Set[TRUE]
+		{
+			call CastSpellRange 313
+			InitialBuffsDone:Set[TRUE]
+	  }
 	}
 
 	return OK
