@@ -409,5 +409,8 @@
 		<Setting Name="Vulrich Meat">Vulrich Meat</Setting>
 		<Setting Name="Glimmering Material">Glimmering Material</Setting>
 		<Setting name="Glimmering Materials">Glimmering Material</Setting>
+		<Setting Name="Griffon Meat">griffon meat</Setting>
+		<Setting Name="Bear Meat">bear meat</Setting>
+		<Setting Name="Raw Stonehide Pelt">Raw Stonehide Leather</Setting>
 	</Set>
 </InnerSpaceSettings>
