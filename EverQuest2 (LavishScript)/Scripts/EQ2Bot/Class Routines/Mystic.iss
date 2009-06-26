@@ -232,7 +232,7 @@ function Combat_Init()
 	SpellRange[11,1]:Set[83]
 	
 	Action[12]:Set[Debuff_Strength]
-	SpellRange[12,1]:set[51]
+	SpellRange[12,1]:Set[51]
 
 }
 
