@@ -764,6 +764,7 @@ function CheckHeals()
 					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
 				}
 			}
+	}
 	
 	if ${grpcure}>2 && ${CureMode}
 	{
