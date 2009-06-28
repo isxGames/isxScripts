@@ -78,6 +78,7 @@ function Class_Declaration()
 	declare LitanyStance int script 1
 	declare WardenStance int script 1
 	declare UseRoot	bool script 0
+	
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
 	declare BuffSporesGroupMember string script
