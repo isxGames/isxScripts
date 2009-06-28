@@ -199,14 +199,14 @@ function Buff_Init()
 	PreSpellRange[13,2]:Set[397]
 	PreSpellRange[13,3]:Set[398]
 
-	PreAction[13]:Set[AA_Litany]
-	PreSpellRange[13,1]:Set[507]
-	PreSpellRange[13,2]:Set[508]
-	PreSpellRange[13,3]:Set[509]
+	PreAction[14]:Set[AA_Litany]
+	PreSpellRange[14,1]:Set[507]
+	PreSpellRange[14,2]:Set[508]
+	PreSpellRange[14,3]:Set[509]
 
-	PreAction[13]:Set[AA_WardenStance]
-	PreSpellRange[13,1]:Set[505]
-	PreSpellRange[13,2]:Set[506]
+	PreAction[15]:Set[AA_WardenStance]
+	PreSpellRange[15,1]:Set[505]
+	PreSpellRange[15,2]:Set[506]
 
 }
 
