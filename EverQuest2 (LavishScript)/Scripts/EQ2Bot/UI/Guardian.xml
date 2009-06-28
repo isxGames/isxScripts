@@ -259,15 +259,15 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	<Text Name='lblTowerShield'>
 		<X>10</X>
 		<Y>250</Y>
-		<Width>20%</Width>
+		<Width>40%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
-		<Text>TowerShield for Tower of Stone:</Text>
+		<Text>Tower Shield for Tower of Stone:</Text>
 		<AutoTooltip>TowerShield to use during required spells</AutoTooltip>
 	</Text>
 	<combobox name='cbTowerShield'>
-		<x>100</x>
-		<y>250</y>
+		<x>175</x>
+		<y>249</y>
 		<width>30%</width>
 		<height>20</height>
 		<AutoTooltip>TowerShield to use during TowerShield required spells</AutoTooltip>
@@ -307,10 +307,10 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	<Text Name='lblBuffAvoidanceGroupMember'>
 			<X>375</X>
 			<Y>10</Y>
-			<Width>20%</Width>
+			<Width>25%</Width>
 			<Height>20</Height>
 			<Alignment>Left</Alignment>
-			<Text>Buff Avoidance:</Text>
+			<Text>Buff Never Surrender:</Text>
 			<AutoTooltip></AutoTooltip>
 		</Text>
 		<combobox name='cbBuffAvoidanceGroupMember'>
@@ -337,7 +337,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 			<Width>20%</Width>
 			<Height>20</Height>
 			<Alignment>Left</Alignment>
-			<Text>Buff Sentinel Intercept:</Text>
+			<Text>Buff Sentinel:</Text>
 			<AutoTooltip></AutoTooltip>
 		</Text>
 		<combobox name='cbBuffSentinelGroupMember'>
@@ -364,7 +364,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 			<Width>20%</Width>
 			<Height>20</Height>
 			<Alignment>Left</Alignment>
-			<Text>Buff Agro Reducer on:</Text>
+			<Text>Buff Moderate:</Text>
 			<AutoTooltip></AutoTooltip>
 		</Text>
 		<combobox name='cbBuffDeagroGroupMember'>
