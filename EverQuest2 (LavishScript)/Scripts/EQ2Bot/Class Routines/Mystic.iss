@@ -144,33 +144,14 @@ function Buff_Init()
 	PreAction[10]:Set[AA_AuraOfWarding]
 	PreSpellRange[10,1]:Set[363]
 
-	PreAction[11]:Set[SpecialVision]
-	PreSpellRange[11,1]:Set[314]
+	PreAction[11]:Set[AA_Immunities]
+	PreSpellRange[11,1]:Set[375]
 
-	PreAction[12]:Set[AA_SpiritualForesight]
-	PreSpellRange[12,1]:Set[364]
+	PreAction[12]:Set[AA_Coagulate]
+	PreSpellRange[12,1]:Set[368]
 
-	PreAction[13]:Set[AA_Immunities]
-	PreSpellRange[13,1]:Set[375]
-
-	PreAction[14]:Set[AA_RitualisticAggression]
-	PreSpellRange[14,1]:Set[370]
-	PreSpellRange[14,2]:Set[371]
-
-	PreAction[15]:Set[AA_InfectiveBites]
-	PreSpellRange[15,1]:Set[367]
-
-	PreAction[16]:Set[AA_Coagulate]
-	PreSpellRange[16,1]:Set[368]
-
-	PreAction[17]:Set[AA_Virulence]
-	PreSpellRange[17,1]:Set[374]
-
-	PreAction[18]:Set[AA_WeaponMastery]
-	PreSpellRange[18,1]:Set[380]
-
-	PreAction[19]:Set[BuffAncestry]
-	PreSpellRange[19,1]:Set[378]
+	PreAction[13]:Set[BuffAncestry]
+	PreSpellRange[13,1]:Set[378]
 
 }
 
@@ -421,10 +402,7 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case AA_SpiritualForesight
-		case AA_RitualisticAggression
 		case AA_RitualOfAbsolution
-		case AA_InfectiveBites
-		case AA_Virulence
 		case AA_AuraOfWarding
 			if ${Me.ToActor.Pet(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
