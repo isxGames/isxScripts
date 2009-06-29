@@ -295,6 +295,7 @@
 		<Setting Name="Raw Redwood">Redwood Lumber</Setting>
 		<Setting Name="Cranberry">Raw Cranberry</Setting>
 		<Setting Name="Raw Cranberry">Raw Cranberry</Setting>
+		<Setting Name="Barracuda">Barracuda</Setting>
 		<Setting Name="Barracuda Meat">Barracuda</Setting>
 		<Setting Name="Bristled Leather">Bristled Pelt</Setting>
 		<Setting Name="candy-striped staff pattern">candy-striped staff pattern</Setting>
@@ -399,12 +400,14 @@
 		<Setting Name="Gold Cluster">Gold Cluster</Setting>
 		<Setting Name="Drachnid Meat">Drachnid Meat</Setting>
 		<Setting Name="Cream Cheese">cream cheese</Setting>
+		<Setting Name="Brute Flesh">Brute Flesh</Setting>
 		<Setting Name="Brute Meat">Brute Flesh</Setting>
 		<Setting Name="Devourer Meat">Drachnid Meat</Setting>
 		<Setting Name="Raw Mantrap Root">Mantrap Root</Setting>
 		<Setting Name="Reflective Smoldering Shard">Reflective Smoldering Shard</Setting>
 		<Setting Name="Lead Cluster">Lead Cluster</Setting>
 		<Setting Name="Hornet Meat">Hornet Meat</Setting>
+		<Setting Name="hornet meat">Hornet Meat</Setting>
 		<Setting Name="Hidebound Pelt">Hidebound Pelt</Setting>
 		<Setting Name="Vulrich Meat">Vulrich Meat</Setting>
 		<Setting Name="Glimmering Material">Glimmering Material</Setting>
