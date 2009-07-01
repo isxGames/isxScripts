@@ -157,23 +157,22 @@ function Buff_Init()
 	PreSpellRange[1,1]:Set[390]
 
 	PreAction[2]:Set[Buff_Defense]
-	PreSpellRange[2,1]:Set[20]
-	PreSpellRange[2,2]:Set[31]
+	PreSpellRange[2,1]:Set[31]
 
 	PreAction[3]:Set[Buff_Power]
 	PreSpellRange[3,1]:Set[21]
 
-	PreAction[4]:Set[Buff_Arcane]
-	PreSpellRange[4,1]:Set[22]
+	PreAction[4]:Set[Buff_AADontKillTheMessenger]
+	PreSpellRange[4,1]:Set[395]
 
-	PreAction[5]:Set[Buff_Elemental]
-	PreSpellRange[5,1]:Set[23]
+	PreAction[5]:Set[Buff_AAHarmonization]
+	PreSpellRange[5,1]:Set[383]
 
-	PreAction[6]:Set[Buff_Haste]
-	PreSpellRange[6,1]:Set[24]
+	PreAction[6]:Set[Buff_AAResonance]
+	PreSpellRange[6,1]:Set[382]
 
-	PreAction[7]:Set[Buff_Health]
-	PreSpellRange[7,1]:Set[25]
+	PreAction[7]:Set[Selos]
+	PreSpellRange[7,1]:Set[381]
 
 	PreAction[8]:Set[Buff_Reflection]
 	PreSpellRange[8,1]:Set[26]
@@ -187,29 +186,35 @@ function Buff_Init()
 	PreAction[11]:Set[Buff_Casting]
 	PreSpellRange[11,1]:Set[29]
 
-	PreAction[12]:Set[Buff_Hate]
-	PreSpellRange[12,1]:Set[30]
+	PreAction[12]:Set[Buff_AAHeroicStoryTelling]
+	PreSpellRange[12,1]:Set[404]
 
-	PreAction[13]:Set[Buff_AAUbeatTempo]
-	PreSpellRange[13,1]:Set[402]
+	PreAction[13]:Set[Buff_Hate]
+	PreSpellRange[13,1]:Set[30]
 
-	PreAction[14]:Set[Buff_AADontKillTheMessenger]
-	PreSpellRange[14,1]:Set[395]
+	PreAction[14]:Set[Buff_Arcane]
+	PreSpellRange[14,1]:Set[22]
 
-	PreAction[15]:Set[Buff_AAHarmonization]
-	PreSpellRange[15,1]:Set[383]
+	PreAction[15]:Set[Buff_Elemental]
+	PreSpellRange[15,1]:Set[23]
 
-	PreAction[16]:Set[Buff_AAResonance]
-	PreSpellRange[16,1]:Set[382]
+	PreAction[16]:Set[Buff_Haste]
+	PreSpellRange[16,1]:Set[24]
 
-	PreAction[17]:Set[Selos]
-	PreSpellRange[17,1]:Set[381]
+	PreAction[17]:Set[Buff_AAFortissimo]
+	PreSpellRange[17,1]:Set[398]
 
-	PreAction[18]:Set[Buff_AAFortissimo]
-	PreSpellRange[18,1]:Set[398]
-
+	PreAction[18]:Set[Buff_Self]
+	PreSpellRange[18,1]:Set[20]
+	
 	PreAction[19]:Set[Buff_AADexSonata]
 	PreSpellRange[19,1]:Set[403]
+
+	PreAction[20]:Set[Buff_AAUpTempo]
+	PreSpellRange[20,1]:Set[402]
+
+	PreAction[21]:Set[Buff_Health]
+	PreSpellRange[21,1]:Set[25]
 
 }
 
@@ -380,17 +385,22 @@ function Buff_Routine(int xAction)
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
-		case Buff_AAAllegro
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+		case Buff_Self
+			if ${BuffSelf}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			else
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
+
+		case Buff_AAAllegro
 		case Selos
 		case Buff_AAHarmonization
 		case Buff_AAFortissimo
 		case Buff_AAResonance
 		case Buff_AADontKillTheMessenger
+		case Buff_AAHeroicStoryTelling
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
-
 		Default
 			return Buff Complete
 			break
