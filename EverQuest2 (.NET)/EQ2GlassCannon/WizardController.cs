@@ -36,10 +36,10 @@ namespace EQ2GlassCannon
 		public int m_iFusionAbilityID = -1;
 		public int m_iIceCometAbilityID = -1;
 		public int m_iBallOfFireAbilityID = -1;
-		public int m_iBlazeAbilityID = -1;
+		public int m_iImmolationAbilityID = -1;
 		public int m_iSingleStunNukeAbilityID = -1;
 		public int m_iElementalDebuffAbilityID = -1;
-		public int m_iEngulfAbilityID = -1;
+		public int m_iUnresistableDotAbilityID = -1;
 		public int m_iLightningBurstAbilityID = -1;
 		public int m_iSingleDeaggroAbilityID = -1;
 
@@ -59,175 +59,34 @@ namespace EQ2GlassCannon
 		{
 			base.InitializeKnowledgeBook();
 
-			m_iSTRINTBuffAbilityID = SelectHighestAbilityID(
-				"Vivid Seal",
-				"Dazzling Seal",
-				"Hand of the Tyrant",
-				"Fist of the Tyrant",
-				"Voice of the Tyrant",
-				"Tyrant's Pact");
-
-			m_iElementalBuffAbilityID = SelectHighestAbilityID(
-				"Amplify",
-				"Amplification",
-				"Intensify",
-				"Augmentation",
-				"Fortify Elements",
-				"Consolidation");
-
+			m_iSTRINTBuffAbilityID = SelectHighestTieredAbilityID("Tyrant's Pact", 7);
+			m_iElementalBuffAbilityID = SelectHighestTieredAbilityID("Fortify Elements", 7);
 			m_iSnowFilledStepsAbilityID = SelectHighestAbilityID("Snow-filled Steps");
-
 			m_iMailOfFrostAbilityID = SelectHighestAbilityID("Mail of Frost");
-
-			m_iHateTransferAbilityID = SelectHighestAbilityID(
-				"Accord",
-				"Concurrence",
-				"Singularity",
-				"Anomalism",
-				"Converge");
-
-			/// If Flametongue were left uncommented,
-			/// then current and later tiers would always cancel it from the maintained spell list,
-			/// mistaking the active duration proc for an outdated player buff.
-			m_iFlametongueAbilityID = SelectHighestAbilityID(
-				"Burning Radiance",
-				//"Flametongue",
-				"Fiery Grandeur",
-				"Blazing Grandeur",
-				"Phoenixblade",
-				"Ro's Blade");
-
-			m_iGiftAbilityID = SelectHighestAbilityID(
-				"Frostbound Gift",
-				"Icebound Gift",
-				"Frigid Gift",
-				"Velium Gift");
-
+			m_iHateTransferAbilityID = SelectHighestTieredAbilityID("Converge", 6);
+			m_iFlametongueAbilityID = SelectHighestTieredAbilityID("Ro's Blade", 7);
+			m_iGiftAbilityID = SelectHighestTieredAbilityID("Frigid Gift", 5);
 			m_iIceshapeAbilityID = SelectHighestAbilityID("Iceshape");
-
-			m_iSurgeAbilityID = SelectHighestAbilityID(
-				"Surge of Flames",
-				"Fiery Surge",
-				"Inferno Surge",
-				"Surge of Ro");
-
+			m_iSurgeAbilityID = SelectHighestTieredAbilityID("Surge of Ro", 5);
 			m_iFireshapeAbilityID = SelectHighestAbilityID("Fireshape");
-
-			m_iColdDamageShieldAbilityID = SelectHighestAbilityID(
-				"Coldshield",
-				"Chillshield",
-				"Frostshield",
-				"Iceshield",
-				"Glacialshield");
-
-			m_iForgeOfRoAbilityID = SelectHighestAbilityID(
-				"Forge of Ro",
-				"Furnace of Ro");
-
-			m_iBlueHeatAEAbilityID = SelectHighestAbilityID(
-				"Conflagration",
-				"Pyre",
-				"Inferno",
-				"Fiery Inferno",
-				"Firestorm",
-				"Exothermicity");
-
-			m_iGreenColdAEAbilityID = SelectHighestAbilityID(
-				"Chilling Wind",
-				"Freezing Wind",
-				"Icy Wind",
-				"Glacial Wind",
-				"Solar Wind");
-
-			m_iGreenMagicAEAbilityID = SelectHighestAbilityID(
-				"Storm of Lightning",
-				"Lightning Flash",
-				"Pulsing Flash",
-				"Shocking Flash",
-				"Electrifying Flash",
-				"Electron Storm");
-
+			m_iColdDamageShieldAbilityID = SelectHighestTieredAbilityID("Iceshield", 6);
+			m_iForgeOfRoAbilityID = SelectHighestTieredAbilityID("Furnace of Ro", 3);
+			m_iBlueHeatAEAbilityID = SelectHighestTieredAbilityID("Firestorm", 7);
+			m_iGreenColdAEAbilityID = SelectHighestTieredAbilityID("Glacial Wind", 6);
+			m_iGreenMagicAEAbilityID = SelectHighestTieredAbilityID("Storm of Lightning", 7);
 			m_iRaysOfDisintegrationAbilityID = SelectHighestAbilityID("Rays of Disintegration");
-
-			m_iSurgingTempestAbilityID = SelectHighestAbilityID(
-				"Surging Tempest",
-				"Storming Tempest");
-
-			m_iProtoflameAbilityID = SelectHighestAbilityID(
-				"Protoflame",
-				"Protoferno",
-				"Protofire");
-
+			m_iSurgingTempestAbilityID = SelectHighestTieredAbilityID("Storming Tempest", 3);
+			m_iProtoflameAbilityID = SelectHighestTieredAbilityID("Protoflame", 4);
 			m_iHailStormAbilityID = SelectHighestAbilityID("Hail Storm");
-
-			m_iFusionAbilityID = SelectHighestAbilityID(
-				"Fusion",
-				"Fission");
-
-			m_iIceCometAbilityID = SelectHighestAbilityID(
-				"Ice Comet",
-				"Ice Nova",
-				"Bolt of Ice");
-
-			m_iBallOfFireAbilityID = SelectHighestAbilityID(
-				"Ball of Fire",
-				"Ball of Flames",
-				"Ball of Incineration",
-				"Ball of Lava",
-				"Ball of Magma");
-
-			m_iBlazeAbilityID = SelectHighestAbilityID(
-				"Blaze",
-				"Breath of the Tyrant",
-				"Immolation",
-				"Cremate",
-				"Irradiate",
-				"Heatwave");
-
-			m_iSingleStunNukeAbilityID = SelectHighestAbilityID(
-				"Fire Chamber",
-				"Flame Chamber",
-				"Blazing Intimidation",
-				"Paralyze",
-				"Incapacitate",
-				"Magma Chamber");
-
-			m_iElementalDebuffAbilityID = SelectHighestAbilityID(
-				"Cold Whorl",
-				"Freezing Whorl",
-				"Icy Coil",
-				"Piercing Icicles",
-				"Arctic Icicles",
-				"Rending Icicles",
-				"Ice Spears");
-
-			m_iEngulfAbilityID = SelectHighestAbilityID(
-				"Engulf",
-				"Scorch",
-				"Incinerate",
-				"Heat Stroke",
-				"Heat Convulsions",
-				"Fiery Convulsions",
-				"Ro's Coil");
-
-			m_iLightningBurstAbilityID = SelectHighestAbilityID(
-				"Lightning Burst",
-				"Lightning Shock",
-				"Plasma Burst",
-				"Plasma Strike",
-				"Word of Force",
-				"Plasmatic Pulse",
-				"Flamestrike",
-				"Sunstrike",
-				"Solar Flare");
-
-			m_iSingleDeaggroAbilityID = SelectHighestAbilityID(
-				"Tongue Twist",
-				"Benumb",
-				"Enfeeblement",
-				"Lapse",
-				"Cease",
-				"Blip");
+			m_iFusionAbilityID = SelectHighestTieredAbilityID("Fusion", 3);
+			m_iIceCometAbilityID = SelectHighestTieredAbilityID("Ice Comet", 4);
+			m_iBallOfFireAbilityID = SelectHighestTieredAbilityID("Ball of Fire", 6);
+			m_iImmolationAbilityID = SelectHighestTieredAbilityID("Immolation", 7);
+			m_iSingleStunNukeAbilityID = SelectHighestTieredAbilityID("Magma Chamber", 7);
+			m_iElementalDebuffAbilityID = SelectHighestTieredAbilityID("Ice Spears", 8);
+			m_iUnresistableDotAbilityID = SelectHighestTieredAbilityID("Incinerate", 8);
+			m_iLightningBurstAbilityID = SelectHighestTieredAbilityID("Solar Flare", 9);
+			m_iSingleDeaggroAbilityID = SelectHighestTieredAbilityID("Cease", 7);
 
 			return;
 		}
@@ -452,7 +311,7 @@ namespace EQ2GlassCannon
 					if (CastAbility(m_iBallOfFireAbilityID))
 						return true;
 
-					if (CastAbility(m_iBlazeAbilityID))
+					if (CastAbility(m_iImmolationAbilityID))
 						return true;
 
 					if (CastAbility(m_iSingleStunNukeAbilityID))
@@ -471,7 +330,7 @@ namespace EQ2GlassCannon
 					if (CastAbility(m_iElementalDebuffAbilityID))
 						return true;
 
-					if (CastAbility(m_iEngulfAbilityID))
+					if (CastAbility(m_iUnresistableDotAbilityID))
 						return true;
 
 					if (CastAbility(m_iLightningBurstAbilityID))
