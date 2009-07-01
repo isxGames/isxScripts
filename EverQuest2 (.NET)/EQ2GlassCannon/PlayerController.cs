@@ -881,6 +881,24 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		private static readonly string[] s_astrRomanNumeralSuffixes = new string[]
+		{
+			"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "I", "X", "XI"
+		};
+
+		/************************************************************************************/
+		public int SelectHighestTieredAbilityID(string strBaseAbilityName, int iMaxTierCount)
+		{
+			List<string> astrAbilityNames = new List<string>(iMaxTierCount);
+			for (int iIndex = 0; iIndex < iMaxTierCount; iIndex++)
+			{
+				astrAbilityNames.Add(strBaseAbilityName + " " + s_astrRomanNumeralSuffixes[iIndex]);
+			}
+
+			return SelectHighestAbilityID(astrAbilityNames.ToArray());
+		}
+
+		/************************************************************************************/
 		/// <summary>
 		/// Casts a hostile action.
 		/// </summary>
