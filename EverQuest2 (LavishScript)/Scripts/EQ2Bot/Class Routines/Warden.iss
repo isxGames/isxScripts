@@ -728,10 +728,7 @@ function Combat_Routine(int xAction)
 						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 						if ${Return.Equal[OK]}
 						{
-							if ${UseCAs}
-								call CastSpellRange 385 386 1 0 ${KillTarget}
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 						}
 					}
 				}
@@ -798,6 +795,14 @@ function Combat_Routine(int xAction)
 			case AA_Icefall_Strike
 			case AA_Frosbite_Slice
 			case AA_Whirl_of_Permafrost	
+				if ${UseCAs}
+				{
+					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					{
+						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+					}
+				}
+				break					
 			case UseRoot
 			
 				if ${UseRoot}
