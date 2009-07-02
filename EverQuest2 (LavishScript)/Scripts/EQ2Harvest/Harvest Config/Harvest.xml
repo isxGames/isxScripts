@@ -153,7 +153,8 @@
 		<Setting Name="5">tangled nest</Setting>
 		<Setting Name="6">withered shrubbery</Setting>
 		<Setting Name="7">school of flying fish</Setting>
-	</Set>
+		<Setting Name="7">breeze leaf foliage</Setting>
+
 	<Set Name="exp02_rgn_realm_of_night">
 		<Setting Name="1">dustworn ore</Setting>
 		<Setting Name="2">weathered geode</Setting>
