@@ -859,7 +859,8 @@ function Combat_Routine(int xAction)
 				break
 			case SoW
 				if ${InfusionMode}
-					call CastSpellRange 31
+					SOWStartTime:Set[${Time.Timestamp}]
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 				break
 			Default
 				return CombatComplete
