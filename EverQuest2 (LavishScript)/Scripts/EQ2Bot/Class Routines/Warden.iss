@@ -349,6 +349,18 @@ function Combat_Init()
 	; Undergrowth
 	Action[14]:Set[UseRoot]
 	SpellRange[14,1]:Set[233]
+	
+	; Icefall Strike
+	Action[15]:Set[AA_Icefall_Strike]
+	SpellRange[15,1]:Set[512]
+	
+	; Frostbite Slice
+	Action[16]:Set[AA_Frostbite_Slice]
+	SpellRange[16,1]:Set[513]
+	
+	; Whirl of Permafrost
+	Action[17]:Set[AA_Whirl_of_Permafrost]
+	SpellRange[17,1]:Set[514]
 
 }
 
@@ -782,7 +794,10 @@ function Combat_Routine(int xAction)
 					}
 				}
 				break
-				
+			
+			case AA_Icefall_Strike
+			case AA_Frosbite_Slice
+			case AA_Whirl_of_Permafrost	
 			case UseRoot
 			
 				if ${UseRoot}
