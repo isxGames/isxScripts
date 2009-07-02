@@ -74,10 +74,16 @@ function Class_Declaration()
 	declare KeepMTHOTUp bool script 0
 	declare KeepGroupHOTUp bool script 0
 	declare RaidHealMode bool script 1
-	declare ShiftForm int script 1
-	declare LitanyStance int script 1
-	declare WardenStance int script 1
-	declare UseRoot	bool script 0
+	declare ShiftForm int script
+	declare PreviousShiftForm int script -1
+	declare LitanyStance int script
+	declare PreviousLitanyStance int script -1
+	declare WardenStance int script
+	declare PreviousWardenStance int script -1
+	declare UseRoot	bool script
+	declare UseSOW bool script
+	declare SOWStartTime time script 
+		
 	
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
@@ -105,11 +111,12 @@ function Class_Declaration()
 	KeepMTHOTUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepMTHOTUp,FALSE]}]
 	KeepGroupHOTUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepGroupHOTUp,FALSE]}]
 	RaidHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Raid Heals,TRUE]}]
-	ShiftForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ShiftForm,]}]
-	LitanyStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[LitanyStance,]}]
-	WardenStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[WardenStance,]}]
-	UseRoot:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRoot,]}]
-
+	ShiftForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ShiftForm,1]}]
+	LitanyStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[LitanyStance,1]}]
+	WardenStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[WardenStance,1]}]
+	UseRoot:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRoot,FALSE]}]
+	UseSOW:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseSOW,FALSE]}]
+	
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
 	BuffInstinctGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffInstinctGroupMember,]}]
 	BuffSporesGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSporesGroupMember,]}]
@@ -155,63 +162,88 @@ function Class_Shutdown()
 
 function Buff_Init()
 {
+	; Thorncoat
 	PreAction[1]:Set[BuffThorns]
 	PreSpellRange[1,1]:Set[40]
 
+	; Warden of the Forest
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
-	PreSpellRange[2,2]:Set[394]
 
+	; Nereid's Boon
 	PreAction[3]:Set[BuffBoon]
 	PreSpellRange[3,1]:Set[280]
 
-	PreAction[4]:Set[BuffVigor]
+	; Aspect of the Forest
+	PreAction[4]:Set[BuffAspect]
 	PreSpellRange[4,1]:Set[36]
 
+	; Armor of Seasons
+	; Favor of the Wild 
+	; Essence of the Great Bear
 	PreAction[5]:Set[Group_Buff]
 	PreSpellRange[5,1]:Set[20]
 	PreSpellRange[5,2]:Set[21]
 	PreSpellRange[5,3]:Set[23]
 
+	; Spirit of the Wolf
 	PreAction[6]:Set[SOW]
 	PreSpellRange[6,1]:Set[31]
 
+	; Spirit of the Bat
 	PreAction[7]:Set[BuffBat]
 	PreSpellRange[7,1]:Set[35]
 
+	; Instinct
 	PreAction[8]:Set[BuffInstinct]
 	PreSpellRange[8,1]:Set[38]
 
+	; Regenerating Spores
 	PreAction[9]:Set[BuffSpores]
 	PreSpellRange[9,1]:Set[37]
 
+	; Rebirth
 	PreAction[10]:Set[AA_Rebirth]
 	PreSpellRange[10,1]:Set[380]
 
+	; Infusion
 	PreAction[11]:Set[AA_Infusion]
 	PreSpellRange[11,1]:Set[391]
 
+	; Nature Walk
 	PreAction[12]:Set[AA_Nature_Walk]
 	PreSpellRange[12,1]:Set[392]
 
+	; Shapeshift: Winter Wolf
+	; Shapeshift: Tiger
+	; Shapeshift: Treant
 	PreAction[13]:Set[AA_Shapeshift]
 	PreSpellRange[13,1]:Set[396]
 	PreSpellRange[13,2]:Set[397]
 	PreSpellRange[13,3]:Set[398]
 
+	; Casting Expertise
+	; Battle Prowess
+	; Sacred Follower
 	PreAction[14]:Set[AA_Litany]
 	PreSpellRange[14,1]:Set[507]
 	PreSpellRange[14,2]:Set[508]
 	PreSpellRange[14,3]:Set[509]
 
+	; Glacial Assault
+	; Nature's Aura
 	PreAction[15]:Set[AA_WardenStance]
 	PreSpellRange[15,1]:Set[505]
 	PreSpellRange[15,2]:Set[506]
-
+	
+	; Critical Debilitation
+	PreAction[16]:Set[AA_BuffCritMit]
+	PreSpellRange[16,1]:Set[510]
 }
 
 function Combat_Init()
 {
+	; Dawnstrike
 	Action[1]:Set[Nuke1]
 	MobHealth[1,1]:Set[1]
 	MobHealth[1,2]:Set[100]
@@ -219,6 +251,7 @@ function Combat_Init()
 	Power[1,2]:Set[100]
 	SpellRange[1,1]:Set[60]
 
+	; Icefall
 	Action[2]:Set[Nuke2]
 	MobHealth[2,1]:Set[1]
 	MobHealth[2,2]:Set[100]
@@ -226,9 +259,11 @@ function Combat_Init()
 	Power[2,2]:Set[100]
 	SpellRange[2,1]:Set[61]
 
+	; Master's Smite
 	Action[3]:Set[Mastery]
 	SpellRange[3,1]:Set[511]
 
+	; Winds of Permafrost
 	Action[4]:Set[AoE]
 	MobHealth[4,1]:Set[11]
 	MobHealth[4,2]:Set[100]
@@ -236,6 +271,7 @@ function Combat_Init()
 	Power[4,2]:Set[100]
 	SpellRange[4,1]:Set[90]
 
+	; Frostbite
 	Action[5]:Set[DoT]
 	MobHealth[5,1]:Set[1]
 	MobHealth[5,2]:Set[100]
@@ -243,6 +279,7 @@ function Combat_Init()
 	Power[5,2]:Set[100]
 	SpellRange[5,1]:Set[70]
 
+	; Healing Grove
 	Action[6]:Set[Grove]
 	MobHealth[6,1]:Set[50]
 	MobHealth[6,2]:Set[100]
@@ -250,6 +287,7 @@ function Combat_Init()
 	Power[6,2]:Set[100]
 	SpellRange[6,1]:Set[330]
 
+	; Nature's Pack
 	Action[7]:Set[Ally]
 	MobHealth[7,1]:Set[50]
 	MobHealth[7,2]:Set[100]
@@ -257,6 +295,7 @@ function Combat_Init()
 	Power[7,2]:Set[100]
 	SpellRange[7,1]:Set[332]
 
+	; Thunderspike
 	Action[8]:Set[AA_Thunderspike]
 	MobHealth[8,1]:Set[1]
 	MobHealth[8,2]:Set[100]
@@ -264,6 +303,7 @@ function Combat_Init()
 	Power[8,2]:Set[100]
 	SpellRange[8,1]:Set[383]
 
+	; Nature Blade
 	Action[9]:Set[AA_Nature_Blade]
 	MobHealth[9,1]:Set[1]
 	MobHealth[9,2]:Set[100]
@@ -271,6 +311,7 @@ function Combat_Init()
 	Power[9,2]:Set[100]
 	SpellRange[9,1]:Set[381]
 
+	; Primordial Strike
 	Action[10]:Set[AA_Primordial_Strike]
 	MobHealth[10,1]:Set[1]
 	MobHealth[10,2]:Set[100]
@@ -278,6 +319,7 @@ function Combat_Init()
 	Power[10,2]:Set[100]
 	SpellRange[10,1]:Set[382]
 
+	; Wrath of Nature
 	Action[11]:Set[AA_Wrath_of_Nature]
 	MobHealth[11,1]:Set[1]
 	MobHealth[11,2]:Set[100]
@@ -285,6 +327,7 @@ function Combat_Init()
 	Power[11,2]:Set[100]
 	SpellRange[11,1]:Set[504]
 
+	; Serene Symbol
 	Action[12]:Set[AA_Serene_Symbol]
 	MobHealth[12,1]:Set[1]
 	MobHealth[12,2]:Set[100]
@@ -292,6 +335,7 @@ function Combat_Init()
 	Power[12,2]:Set[100]
 	SpellRange[12,1]:Set[502]
 
+	; Spirit of the Wolf
 	Action[13]:Set[SoW]
 	MobHealth[13,1]:Set[1]
 	MobHealth[13,2]:Set[100]
@@ -299,6 +343,7 @@ function Combat_Init()
 	Power[13,2]:Set[100]
 	SpellRange[13,1]:Set[31]
 	
+	; Undergrowth
 	Action[14]:Set[UseRoot]
 	SpellRange[14,1]:Set[233]
 
@@ -323,13 +368,20 @@ function Buff_Routine(int xAction)
 		Groupwiped:Set[False]
 	}
 
-
 	; Pass out feathers on initial script startup
 if !${InitialBuffsDone}
 {
 	if (${Me.GroupCount} > 1)
 	{
 		call CastSpellRange 313
+		
+		; NEEDED CODE FOR SOW TIMER TO WORK
+		; NEEDS TO BE HERE BECAUSE WE ONLY WANT
+		; IT EXECUTING ONCE ON SCRIPT STARTUP
+		SOWStartTime:Set[${Time.Timestamp}]
+		SOWStartTime.Day:Dec[1]
+		SOWStartTime:Update
+
 		InitialBuffsDone:Set[TRUE]
   }
 }
@@ -356,102 +408,245 @@ if !${InitialBuffsDone}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
+
 		case Self_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
-			call CastSpellRange ${PreSpellRange[${xAction},2]}
-			break
-		case AA_WardenStance
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
-			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},${WardenStance}]}
-			}
-			break
-		case AA_Litany
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
-			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},${LitanyStance}]}
-			}
-			break
-		case AA_Shapeshift
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
-			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
-			}
-			break
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			break			
 		case BuffBoon
 			if ${BuffBoon}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
-		case BuffVigor
-			BuffTarget:Set[${UIElement[cbBuffVigorGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${Actor[exactname,${BuffTarget.Token[1,:]}].Name}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			
+		case BuffAspect
+		Counter:Set[1]
+			tempvar:Set[1]
 
-			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
+			do
+			{
+				BuffMember:Set[]
+				;check if the maintained buff is of the spell type we are buffing
+				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
+				{
+					;iterate through the members to buff
+					if ${UIElement[lbBuffVigor@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+					{
+						tempvar:Set[1]
+						do
+						{
+
+							BuffTarget:Set[${UIElement[lbBuffVigor@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+							{
+								BuffMember:Set[OK]
+								break
+							}
+						}
+						while ${tempvar:Inc}<=${UIElement[lbBuffVigor@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						;we went through the buff collection and had no match for this maintaned target so cancel it
+						if !${BuffMember.Equal[OK]}
+						{
+							;we went through the buff collection and had no match for this maintaned target so cancel it
+							Me.Maintained[${Counter}]:Cancel
+						}
+					}
+					else
+					{
+						;our buff member collection is empty so this maintained target isnt in it
+						Me.Maintained[${Counter}]:Cancel
+					}
+				}
+			}
+			while ${Counter:Inc}<=${Me.CountMaintained}
+
+			Counter:Set[1]
+			;iterate through the to be buffed Selected Items and buff them
+			if ${UIElement[lbBuffVigor@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			{
+				do
+				{
+					BuffTarget:Set[${UIElement[lbBuffVigor@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
+				}
+				while ${Counter:Inc}<=${UIElement[lbBuffVigor@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+			}
 			break
+
 		case Group_Buff
-			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]} 0 0
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},2]}
+			}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},3]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},3]}
+			}
 			break
+			
 		case SOW
-			;Me:InitializeEffects
-			;if ${Me.ToActor.NumEffects}<15 && !${Me.Effect[Spirit of the Wolf](exists)}
-			;{
-			;	call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-			;	wait 40
-			;	;buff the group
-			;	tempvar:Set[1]
-			;	do
-			;	{
-			;		if ${Me.Group[${tempvar}].ToActor.Distance}<15
-			;		{
-			;			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
-			;			wait 40
-			;		}
-			;	}
-			;	while ${tempvar:Inc}<${Me.GroupCount} && !${Me.InCombat}
-			;}
+			
+			if ${UseSOW}
+			{
+				; Only executes if the result of the current_time - SOWStartTime is < 0 (which only happens on Script Start)
+				; or current_time - SOWStartTime > 2700 (2700 seconds = 45 mins.)
+				if ${Math.Calc[${Time.Timestamp}-${SOWStartTime.Timestamp}]} < 0 || ${Math.Calc[${Time.Timestamp}-${SOWStartTime.Timestamp}]} > 2700
+				{
+					SOWStartTime:Set[${Time.Timestamp}]
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+				}
+			}
 			break
+			
 		case BuffBat
 			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
 			break
+
 		case BuffInstinct
 			BuffTarget:Set[${UIElement[cbBuffInstinctGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Actor[exactname,${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
 			break
 		case BuffSpores
 			BuffTarget:Set[${UIElement[cbBuffSporesGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Actor[exactname,${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
 			break
+		case AA_Rebirth
+		case AA_Nature_Walk
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			break
+
 		case AA_Infusion
 			if !${InfusionMode}
 			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			}
+			break
+
+		case AA_WardenStance
+			if ${PreviousWardenStance} == -1 || ${WardenStance} == 0
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}]:Cancel
+				PreviousWardenStance:Set[${WardenStance}]
 				break
 			}
-		case AA_Nature_Walk
-		case AA_Rebirth
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-
+			
+			if (${WardenStance} != 0 && (${PreviousWardenStance} != -1) && (${WardenStance} != ${PreviousWardenStance})
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},${WardenStance}]}]}](exists)})
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},${PreviousWardenStance}]}]}]:Cancel
+					call CastSpellRange ${PreSpellRange[${xAction},${WardenStance}]}
+					PreviousWardenStance:Set[${WardenStance}]	
+				}
+				break
+			}
+			
+			if (${WardenStance} == ${PreviousWardenStance})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},${WardenStance}]}]}](exists)}
+				{
+					call CastSpellRange ${PreSpellRange[${xAction},${WardenStance}]}
+				}
+				break
+			}
 			break
+			
+		case AA_Litany
+		
+			if ${PreviousLitanyStance} == -1 || ${LitanyStance} == 0
+				{
+					; User has selected NONE so turn off all Litany Spells
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}]:Cancel
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},3]}]}]:Cancel
+					PreviousLitanyStance:Set[${LitanyStance}]
+					break
+				}
+				
+				if (${LitanyStance} != 0 && (${PreviousLitanyStance} != -1) && (${LitanyStance} != ${PreviousLitanyStance})
+				{
+					if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},${LitanyStance}]}]}](exists)})
+					{
+						Me.Maintained[${SpellType[${PreSpellRange[${xAction},${PreviousLitanyStance}]}]}]:Cancel
+						call CastSpellRange ${PreSpellRange[${xAction},${LitanyStance}]}
+						PreviousLitanyStance:Set[${LitanyStance}]	
+					}
+					break
+				}
+				
+				if (${LitanyStance} == ${PreviousLitanyStance})
+				{
+					if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},${LitanyStance}]}]}](exists)}
+					{
+						call CastSpellRange ${PreSpellRange[${xAction},${LitanyStance}]}
+					}
+					break
+				}
+				break
+
+		case AA_Shapeshift
+
+			if ${PreviousShiftForm} == -1 || ${ShiftForm} == 0
+			{
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}]:Cancel
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},3]}]}]:Cancel
+				PreviousShiftForm:Set[${ShiftForm}]
+				break
+			}
+			
+			if (${ShiftForm} != 0 && (${PreviousShiftForm} != -1) && (${ShiftForm} != ${PreviousShiftForm})
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},${ShiftForm}]}]}](exists)})
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},${PreviousShiftForm}]}]}]:Cancel
+					PreviousShiftForm:Set[${ShiftForm}]	
+					call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
+				}
+				break
+			}
+			
+			if (${ShiftForm} == ${PreviousShiftForm})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},${ShiftForm}]}]}](exists)}
+				{
+					call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
+				}
+				break
+			}
+			break
+
+		case AA_BuffCritMit
+
+			BuffTarget:Set[${UIElement[cbBuffCritMitGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
+			break
+
+
 		Default
 			Return Buff Complete
 			break
