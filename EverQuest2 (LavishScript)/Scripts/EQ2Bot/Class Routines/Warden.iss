@@ -82,11 +82,13 @@ function Class_Declaration()
 	declare PreviousWardenStance int script -1
 	declare UseRoot	bool script
 	declare UseSOW bool script
-	declare SOWStartTime time script 
+	declare SOWStartTime time script
+	
 		
 	
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
+	declare BuffCritMitGroupMember string script
 	declare BuffSporesGroupMember string script
 	declare BuffVigorGroupMember string script
 	declare CureCurseGroupMember string script
@@ -118,6 +120,7 @@ function Class_Declaration()
 	UseSOW:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseSOW,FALSE]}]
 	
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
+	BuffCritMitGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCritGroupMember,]}]
 	BuffInstinctGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffInstinctGroupMember,]}]
 	BuffSporesGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSporesGroupMember,]}]
 	BuffVigorGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffVigorGroupMember,]}]
