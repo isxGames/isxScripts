@@ -83,181 +83,34 @@ namespace EQ2GlassCannon
 		{
 			base.InitializeKnowledgeBook();
 
-			m_iINTWISBuffAbilityID = SelectHighestAbilityID(
-				"Rune of Thought",
-				"Rune of Understanding",
-				"Seal of Comprehension",
-				"Seal of Ingenuity",
-				"Seal of Ascension",
-				"Seal of Invention");
-
-			m_iArcaneBuffAbilityID = SelectHighestAbilityID(
-				"Aspect of Thought",
-				"Blessing of the Prism",
-				"Mental Bulwark",
-				"Aspect of Mind",
-				"Aspect of Lucidity",
-				"Aspect of Genius");
-
-			m_iMainRegenBuffAbilityID = SelectHighestAbilityID(
-				"Scintillation",
-				"Scintillating Aura",
-				"Insight",
-				"Epiphany",
-				"Percolate");
-
-			m_iHasteBuffAbilityID = SelectHighestAbilityID(
-				"Alacrity",
-				"Celerity",
-				"Legerity",
-				"Rapidity");
-
-			m_iDynamismAbilityID = SelectHighestAbilityID(
-				"Intensity",
-				"Dynamism",
-				"Synergism",
-				"Tandem");
-
+			m_iINTWISBuffAbilityID = SelectHighestTieredAbilityID("Rune of Thought");
+			m_iArcaneBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Genius");
+			m_iMainRegenBuffAbilityID = SelectHighestTieredAbilityID("Epiphany");
+			m_iHasteBuffAbilityID = SelectHighestTieredAbilityID("Rapidity");
+			m_iDynamismAbilityID = SelectHighestTieredAbilityID("Synergism");
 			m_iTimeCompressionAbilityID = SelectHighestAbilityID("Time Compression");
-
 			m_iIllusoryArmAbilityID = SelectHighestAbilityID("Illusory Arm");
-
 			m_iSpellshieldAbilityID = SelectHighestAbilityID("Spellshield");
-
-			m_iPersonaePetAbilityID = SelectHighestAbilityID(
-				"Personae",
-				"Personae Twin",
-				"Personae Split",
-				"Personae Shift",
-				"Personae Duplicate",
-				"Personae Mirror",
-				"Personae Reflection");
-
+			m_iPersonaePetAbilityID = SelectHighestTieredAbilityID("Personae Reflection");
 			m_iDestructiveRampageAbilityID = SelectHighestAbilityID("Destructive Rampage");
-
 			m_iIlluminateAbilityID = SelectHighestAbilityID("Illuminate");
-
 			m_iSavanteAbilityID = SelectHighestAbilityID("Savante");
-
-			m_iCastingSkillBoostAbilityID = SelectHighestAbilityID(
-				"Fleeting Thoughts",
-				"Fleeting Sentiment",
-				"Transient Sentiment",
-				"Momentary Sentiment",
-				"Flash of Brilliance");
-
-			m_iConstructAbilityID = SelectHighestAbilityID(
-				"Construct of Order",
-				"Construct of Logic",
-				"Construct of Reason",
-				"Construct of Rationality");
-
-			m_iBeamAbilityID = SelectHighestAbilityID(
-				"Phantasmal Shock",
-				"Phantasmal Blast",
-				"Phantasmal Jolt",
-				"Phantasmal Ray",
-				"Phantasmal Charge",
-				"Scorching Beam",
-				"Shimmering Beam",
-				"Ultraviolet Beam");
-
-			m_iPrismaticAbilityID = SelectHighestAbilityID(
-				"Prismatic Discord",
-				"Prismatic Strife",
-				"Prismatic Havoc",
-				"Prismatic Chaos",
-				"Prismatic Adornment");
-
-			m_iDazeNukeAbilityID = SelectHighestAbilityID(
-				"Headache",
-				"Psychic Assailant",
-				"Aneurysm",
-				"Embolism",
-				"Tumor",
-				"Lesion");
-
-			m_iStifleNukeAbilityID = SelectHighestAbilityID(
-				"Overwhelming Silence",
-				"Speechless",
-				"Mind Drain",
-				"Drain Thought",
-				"Drain Consciousness");
-
-			m_iStunNukeAbilityID = SelectHighestAbilityID(
-				"Confusion",
-				"Paranoia",
-				"Uncertainty",
-				"Drain Will",
-				"Sap Will",
-				"Forsake Will",
-				"Withdrawal");
-
-			m_iArcaneDebuffNukeAbilityID = SelectHighestAbilityID(
-				"Sadness",
-				"Nightmare",
-				"Wither Hope",
-				"Devour Hope",
-				"Abolish Hope",
-				"Pessimism");
-
-			m_iUnresistableNukeAbilityID = SelectHighestAbilityID(
-				"Migraine",
-				"Greater Migraine",
-				"Lobotomy",
-				"Tormenting Visions",
-				"Lobotomize",
-				"Brainburst",
-				"Brainclot");
-
-			m_iMeleeDebuffAbilityID = SelectHighestAbilityID(
-				"Disappointment",
-				"Misfortune",
-				"Dismay",
-				"Tribulation",
-				"Daunted");
-
-			m_iGreenShowerAbilityID = SelectHighestAbilityID(
-				"Color Shower",
-				"Solar Shower",
-				"Chromatic Shower");
-
-			m_iStormAbilityID = SelectHighestAbilityID(
-				"Storm of Colors",
-				"Chromatic Storm",
-				"Cerebral Tempest",
-				"Psychotic Spectrum",
-				"Ultraviolet Storm",
-				"Gamma Storm");
-
-			m_iGreenStunAbilityID = SelectHighestAbilityID(
-				"Bewilderment",
-				"Bewildering Cascade",
-				"Stunning Array",
-				"Dazzling Array",
-				"Bedazzlement");
-
-			m_iSingleNormalMezAbilityID = SelectHighestAbilityID(
-				"Sleep",
-				"Trance",
-				"Entrance",
-				"Capture Mind",
-				"Abduct Mind",
-				"Empty Mind",
-				"Mindless");
-
-			m_iSingleFastMezAbilityID = SelectHighestAbilityID(
-				"Convincing Regalia",
-				"Brilliant Regalia",
-				"Lustrous Regalia",
-				"Regalia");
-
-			m_iGreenMezAbilityID = SelectHighestAbilityID(
-				"Phantasmal Splendor",
-				"Phantasmal Grandeur",
-				"Phantasmal Brilliance",
-				"Phantasmal Resplendance",
-				"Phantasmal Awe");
+			m_iCastingSkillBoostAbilityID = SelectHighestTieredAbilityID("Flash of Brilliance");
+			m_iConstructAbilityID = SelectHighestTieredAbilityID("Construct of Order");
+			m_iBeamAbilityID = SelectHighestTieredAbilityID("Ultraviolet Beam");
+			m_iPrismaticAbilityID = SelectHighestTieredAbilityID("Prismatic Chaos");
+			m_iDazeNukeAbilityID = SelectHighestTieredAbilityID("Aneurysm");
+			m_iStifleNukeAbilityID = SelectHighestTieredAbilityID("Speechless");
+			m_iStunNukeAbilityID = SelectHighestTieredAbilityID("Paranoia");
+			m_iArcaneDebuffNukeAbilityID = SelectHighestTieredAbilityID("Nightmare");
+			m_iUnresistableNukeAbilityID = SelectHighestTieredAbilityID("Brainburst");
+			m_iMeleeDebuffAbilityID = SelectHighestTieredAbilityID("Dismay");
+			m_iGreenShowerAbilityID = SelectHighestTieredAbilityID("Chromatic Shower");
+			m_iStormAbilityID = SelectHighestTieredAbilityID("Chromatic Storm");
+			m_iGreenStunAbilityID = SelectHighestTieredAbilityID("Bewilderment");
+			m_iSingleNormalMezAbilityID = SelectHighestTieredAbilityID("Entrance");
+			m_iSingleFastMezAbilityID = SelectHighestTieredAbilityID("Regalia");
+			m_iGreenMezAbilityID = SelectHighestTieredAbilityID("Phantasmal Awe");
 			return;
 		}
 

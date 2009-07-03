@@ -56,6 +56,7 @@ namespace EQ2GlassCannon
 		public string m_strSpawnWatchSubphrase = "watch for";
 		public string m_strSpawnWatchSMTPServer = string.Empty;
 		public int m_iSpawnWatchSMTPPort = 25;
+		public bool m_bSpawnWatchSMTPUseSSL = false;
 		public string m_strSpawnWatchSMTPAccount = string.Empty;
 		public string m_strSpawnWatchSMTPPassword = string.Empty;
 		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
@@ -220,14 +221,15 @@ namespace EQ2GlassCannon
 			TransferINIFloat(eTransferType, "General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
 
 			/// Spawn Watch values.
-			TransferINICaselessString(eTransferType, "General.SpawnWatchSubphrase", ref m_strSpawnWatchSubphrase);
-			TransferINIString(eTransferType, "General.SpawnWatchSMTPServer", ref m_strSpawnWatchSMTPServer);
-			TransferINIInteger(eTransferType, "General.SpawnWatchSMTPPort", ref m_iSpawnWatchSMTPPort);
-			TransferINIString(eTransferType, "General.SpawnWatchSMTPAccount", ref m_strSpawnWatchSMTPAccount);
-			TransferINIString(eTransferType, "General.SpawnWatchSMTPPassword", ref m_strSpawnWatchSMTPPassword);
-			TransferINIStringList(eTransferType, "General.SpawnWatchToAddresses", m_astrSpawnWatchToAddressList);
-			TransferINICaselessString(eTransferType, "General.SpawnWatchFromAddress", ref m_strSpawnWatchFromAddress);
-			TransferINIString(eTransferType, "General.SpawnWatchAlertCommand", ref m_strSpawnWatchAlertCommand);
+			TransferINICaselessString(eTransferType, "SpawnWatch.Subphrase", ref m_strSpawnWatchSubphrase);
+			TransferINIString(eTransferType, "SpawnWatch.SMTPServer", ref m_strSpawnWatchSMTPServer);
+			TransferINIInteger(eTransferType, "SpawnWatch.SMTPPort", ref m_iSpawnWatchSMTPPort);
+			TransferINIBool(eTransferType, "SpawnWatch.SMTPUseSSL", ref m_bSpawnWatchSMTPUseSSL);
+			TransferINIString(eTransferType, "SpawnWatch.SMTPAccount", ref m_strSpawnWatchSMTPAccount);
+			TransferINIString(eTransferType, "SpawnWatch.SMTPPassword", ref m_strSpawnWatchSMTPPassword);
+			TransferINIStringList(eTransferType, "SpawnWatch.ToAddresses", m_astrSpawnWatchToAddressList);
+			TransferINICaselessString(eTransferType, "SpawnWatch.FromAddress", ref m_strSpawnWatchFromAddress);
+			TransferINIString(eTransferType, "SpawnWatch.AlertCommand", ref m_strSpawnWatchAlertCommand);
 			TransferINICaselessString(eTransferType, "SpawnWatch.DespawnSubphrase", ref m_strSpawnWatchDespawnSubphrase);
 			TransferINIFloat(eTransferType, "SpawnWatch.DespawnTimeoutMinutes", ref m_fSpawnWatchDespawnTimeoutMinutes);
 
@@ -473,7 +475,7 @@ namespace EQ2GlassCannon
 							if (ThisAbility.Name != null)
 							{
 								if (m_KnowledgeBookNameToIndexMap.ContainsKey(ThisAbility.Name))
-									Program.Log("WARNING: Duplicate ability found ({0}). This could be problematic with maintained spells.", ThisAbility.Name);
+									Program.Log("WARNING: Duplicate ability \"{0}\" found. This could be problematic with maintained spells.", ThisAbility.Name);
 								else
 									m_KnowledgeBookNameToIndexMap.Add(ThisAbility.Name, iIndex);
 								m_KnowledgeBookIndexToNameMap.Add(iIndex, ThisAbility.Name);
@@ -887,13 +889,11 @@ namespace EQ2GlassCannon
 		};
 
 		/************************************************************************************/
-		public int SelectHighestTieredAbilityID(string strBaseAbilityName, int iMaxTierCount)
+		public int SelectHighestTieredAbilityID(string strBaseAbilityName)
 		{
-			List<string> astrAbilityNames = new List<string>(iMaxTierCount);
-			for (int iIndex = 0; iIndex < iMaxTierCount; iIndex++)
-			{
-				astrAbilityNames.Add(strBaseAbilityName + " " + s_astrRomanNumeralSuffixes[iIndex]);
-			}
+			List<string> astrAbilityNames = new List<string>(s_astrRomanNumeralSuffixes.Length);
+			foreach (string strRomanNumeral in s_astrRomanNumeralSuffixes)
+				astrAbilityNames.Add(strBaseAbilityName + " " + strRomanNumeral);
 
 			return SelectHighestAbilityID(astrAbilityNames.ToArray());
 		}
@@ -1563,7 +1563,7 @@ namespace EQ2GlassCannon
 
 						if (Program.SendEMail(
 							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
-							m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
+							m_bSpawnWatchSMTPUseSSL, m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
 							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
 							"From " + Me.Name,
 							strActualFoundName + " just spawned!"))
@@ -1619,6 +1619,7 @@ namespace EQ2GlassCannon
 
 						if (Program.SendEMail(
 							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
+							m_bSpawnWatchSMTPUseSSL,
 							m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
 							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
 							"From " + Me.Name,
