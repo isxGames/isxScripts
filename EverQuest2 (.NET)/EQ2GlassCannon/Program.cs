@@ -536,6 +536,9 @@ namespace EQ2GlassCannon
 		/// <param name="strCommand"></param>
 		public static void RunCommand(string strCommand, params object[] aobjParams)
 		{
+			if (string.IsNullOrEmpty(strCommand))
+				return;
+
 			try
 			{
 				string strFinalCommand = string.Empty;
@@ -583,6 +586,7 @@ namespace EQ2GlassCannon
 		public static bool SendEMail(
 			string strServer,
 			int iPort,
+			bool bUseSSLForPassword,
 			string strAccount,
 			string strPassword,
 			string strFromAddress,
@@ -594,8 +598,12 @@ namespace EQ2GlassCannon
 			{
 				SmtpClient ThisClient = new SmtpClient(strServer, iPort);
 
-				if (!string.IsNullOrEmpty(strAccount) || !string.IsNullOrEmpty(strPassword))
+				bool bUsePassword = !string.IsNullOrEmpty(strAccount) || !string.IsNullOrEmpty(strPassword);
+				if (bUsePassword)
+				{
 					ThisClient.Credentials = new System.Net.NetworkCredential(strAccount, strPassword);
+					ThisClient.EnableSsl = bUseSSLForPassword;
+				}
 
 				foreach (string strThisToAddress in astrToAddressList)
 				{
