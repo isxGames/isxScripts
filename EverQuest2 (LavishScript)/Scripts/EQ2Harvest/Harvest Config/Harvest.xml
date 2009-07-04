@@ -192,6 +192,7 @@
 		<Setting Name="7">trout fingerling</Setting>
 	</set>
 	<Set Name="qey_adv02_ruins">
+ 		<Setting Name="1">blemished ore</Setting>
 		<Setting Name="2">unearthed stones</Setting>
 		<Setting Name="3">aged arbor</Setting>
 		<Setting Name="4">damp roots</Setting>
