@@ -1,7 +1,15 @@
 ;*************************************************************
 ;Warden.iss
-;version 20090617a
+;version 20090703a
 ; by Pygar
+;
+;20090703a
+; Reworked the switch statement in combat_routine
+; Standardized the calling of CastSpellRange in all case's
+; Renamed script variable OffenseMode to SpellMode
+; Added Healer Health check before casting each item Combat_Routine switch
+; Modified most instances where group > 2 to group > 1 
+; Combined Group Water Breathing into Normal Group Buffs
 ;
 ;20090617a
 ;  Updates for TSO AA and GU 52 Spell Lists
@@ -57,7 +65,7 @@ function Class_Declaration()
   declare ClassFileVersion int script 20090617
   ;;;;
 
-	declare OffenseMode bool script
+	declare SpellMode bool script
 	declare AoEMode bool script
 	declare CureMode bool script
 	declare CureCurseSelfMode bool script 0
@@ -65,7 +73,6 @@ function Class_Declaration()
 	declare GenesisMode bool script
 	declare InfusionMode bool script
 	declare KeepReactiveUp bool script
-	declare UseCAs bool script 1
 	declare MeleeMode bool script 1
 	declare BuffThorns bool script 1
 	declare CombatRez bool script 1
@@ -83,20 +90,16 @@ function Class_Declaration()
 	declare UseRoot	bool script
 	declare UseSOW bool script
 	declare SOWStartTime time script
-	
-		
-	
 	declare BuffBatGroupMember string script
 	declare BuffInstinctGroupMember string script
 	declare BuffCritMitGroupMember string script
 	declare BuffSporesGroupMember string script
 	declare BuffVigorGroupMember string script
 	declare CureCurseGroupMember string script
-	declare BuffBoon string script
 
 	call EQ2BotLib_Init
 
-	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
+	SpellMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
 	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
@@ -104,7 +107,6 @@ function Class_Declaration()
 	GenesisMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Genesis,FALSE]}]
 	InfusionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[InfusionMode,FALSE]}]
 	KeepReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepReactiveUp,FALSE]}]
-	UseCAs:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseCAs,FALSE]}]
 	MeleeMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Melee,FALSE]}]
 	CombatRez:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Combat Rez,FALSE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
@@ -118,14 +120,13 @@ function Class_Declaration()
 	WardenStance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[WardenStance,1]}]
 	UseRoot:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRoot,FALSE]}]
 	UseSOW:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseSOW,FALSE]}]
-	
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
 	BuffCritMitGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCritGroupMember,]}]
 	BuffInstinctGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffInstinctGroupMember,]}]
 	BuffSporesGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSporesGroupMember,]}]
 	BuffVigorGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffVigorGroupMember,]}]
 	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
-	BuffBoon:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBoon,FALSE]}]
+
 }
 
 function Pulse()
@@ -173,195 +174,140 @@ function Buff_Init()
 	PreAction[2]:Set[Self_Buff]
 	PreSpellRange[2,1]:Set[25]
 
-	; Nereid's Boon
-	PreAction[3]:Set[BuffBoon]
-	PreSpellRange[3,1]:Set[280]
-
 	; Aspect of the Forest
-	PreAction[4]:Set[BuffAspect]
-	PreSpellRange[4,1]:Set[36]
+	PreAction[3]:Set[BuffAspect]
+	PreSpellRange[3,1]:Set[36]
 
 	; Armor of Seasons
 	; Favor of the Wild 
 	; Essence of the Great Bear
-	PreAction[5]:Set[Group_Buff]
-	PreSpellRange[5,1]:Set[20]
-	PreSpellRange[5,2]:Set[21]
-	PreSpellRange[5,3]:Set[23]
+	; Nereid's Boon
+	PreAction[4]:Set[Group_Buff]
+	PreSpellRange[4,1]:Set[20]
+	PreSpellRange[4,2]:Set[21]
+	PreSpellRange[4,3]:Set[23]
+	PreSpellRange[4,4]:Set[280]
 
 	; Spirit of the Wolf
-	PreAction[6]:Set[SOW]
-	PreSpellRange[6,1]:Set[31]
+	PreAction[5]:Set[SOW]
+	PreSpellRange[5,1]:Set[31]
 
 	; Spirit of the Bat
-	PreAction[7]:Set[BuffBat]
-	PreSpellRange[7,1]:Set[35]
+	PreAction[6]:Set[BuffBat]
+	PreSpellRange[6,1]:Set[35]
 
 	; Instinct
-	PreAction[8]:Set[BuffInstinct]
-	PreSpellRange[8,1]:Set[38]
+	PreAction[7]:Set[BuffInstinct]
+	PreSpellRange[7,1]:Set[38]
 
 	; Regenerating Spores
-	PreAction[9]:Set[BuffSpores]
-	PreSpellRange[9,1]:Set[37]
+	PreAction[8]:Set[BuffSpores]
+	PreSpellRange[8,1]:Set[37]
 
 	; Rebirth
-	PreAction[10]:Set[AA_Rebirth]
-	PreSpellRange[10,1]:Set[380]
+	PreAction[9]:Set[AA_Rebirth]
+	PreSpellRange[9,1]:Set[380]
 
 	; Infusion
-	PreAction[11]:Set[AA_Infusion]
-	PreSpellRange[11,1]:Set[391]
+	PreAction[10]:Set[AA_Infusion]
+	PreSpellRange[10,1]:Set[391]
 
 	; Nature Walk
-	PreAction[12]:Set[AA_Nature_Walk]
-	PreSpellRange[12,1]:Set[392]
+	PreAction[11]:Set[AA_Nature_Walk]
+	PreSpellRange[11,1]:Set[392]
 
 	; Shapeshift: Winter Wolf
 	; Shapeshift: Tiger
 	; Shapeshift: Treant
-	PreAction[13]:Set[AA_Shapeshift]
-	PreSpellRange[13,1]:Set[396]
-	PreSpellRange[13,2]:Set[397]
-	PreSpellRange[13,3]:Set[398]
+	PreAction[12]:Set[AA_Shapeshift]
+	PreSpellRange[12,1]:Set[396]
+	PreSpellRange[12,2]:Set[397]
+	PreSpellRange[12,3]:Set[398]
 
 	; Casting Expertise
 	; Battle Prowess
 	; Sacred Follower
-	PreAction[14]:Set[AA_Litany]
-	PreSpellRange[14,1]:Set[507]
-	PreSpellRange[14,2]:Set[508]
-	PreSpellRange[14,3]:Set[509]
+	PreAction[13]:Set[AA_Litany]
+	PreSpellRange[13,1]:Set[507]
+	PreSpellRange[13,2]:Set[508]
+	PreSpellRange[13,3]:Set[509]
 
 	; Glacial Assault
 	; Nature's Aura
-	PreAction[15]:Set[AA_WardenStance]
-	PreSpellRange[15,1]:Set[505]
-	PreSpellRange[15,2]:Set[506]
+	PreAction[14]:Set[AA_WardenStance]
+	PreSpellRange[14,1]:Set[505]
+	PreSpellRange[14,2]:Set[506]
 	
 	; Critical Debilitation
-	PreAction[16]:Set[AA_BuffCritMit]
-	PreSpellRange[16,1]:Set[510]
+	PreAction[15]:Set[AA_BuffCritMit]
+	PreSpellRange[15,1]:Set[510]
 }
 
 function Combat_Init()
 {
-	; Dawnstrike
-	Action[1]:Set[Nuke1]
-	MobHealth[1,1]:Set[1]
-	MobHealth[1,2]:Set[100]
-	Power[1,1]:Set[30]
-	Power[1,2]:Set[100]
-	SpellRange[1,1]:Set[60]
 
-	; Icefall
-	Action[2]:Set[Nuke2]
-	MobHealth[2,1]:Set[1]
-	MobHealth[2,2]:Set[100]
-	Power[2,1]:Set[30]
-	Power[2,2]:Set[100]
-	SpellRange[2,1]:Set[61]
-
-	; Master's Smite
-	Action[3]:Set[Mastery]
-	SpellRange[3,1]:Set[511]
-
-	; Winds of Permafrost
-	Action[4]:Set[AoE]
-	MobHealth[4,1]:Set[11]
-	MobHealth[4,2]:Set[100]
-	Power[4,1]:Set[40]
-	Power[4,2]:Set[100]
-	SpellRange[4,1]:Set[90]
-
-	; Frostbite
-	Action[5]:Set[DoT]
-	MobHealth[5,1]:Set[1]
-	MobHealth[5,2]:Set[100]
-	Power[5,1]:Set[30]
-	Power[5,2]:Set[100]
-	SpellRange[5,1]:Set[70]
-
-	; Healing Grove
-	Action[6]:Set[Grove]
-	MobHealth[6,1]:Set[50]
-	MobHealth[6,2]:Set[100]
-	Power[6,1]:Set[30]
-	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[330]
-
-	; Nature's Pack
-	Action[7]:Set[Ally]
-	MobHealth[7,1]:Set[50]
-	MobHealth[7,2]:Set[100]
-	Power[7,1]:Set[30]
-	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[332]
-
-	; Thunderspike
-	Action[8]:Set[AA_Thunderspike]
-	MobHealth[8,1]:Set[1]
-	MobHealth[8,2]:Set[100]
-	Power[8,1]:Set[40]
-	Power[8,2]:Set[100]
-	SpellRange[8,1]:Set[383]
-
-	; Nature Blade
-	Action[9]:Set[AA_Nature_Blade]
-	MobHealth[9,1]:Set[1]
-	MobHealth[9,2]:Set[100]
-	Power[9,1]:Set[40]
-	Power[9,2]:Set[100]
-	SpellRange[9,1]:Set[381]
-
-	; Primordial Strike
-	Action[10]:Set[AA_Primordial_Strike]
-	MobHealth[10,1]:Set[1]
-	MobHealth[10,2]:Set[100]
-	Power[10,1]:Set[40]
-	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[382]
-
-	; Wrath of Nature
-	Action[11]:Set[AA_Wrath_of_Nature]
-	MobHealth[11,1]:Set[1]
-	MobHealth[11,2]:Set[100]
-	Power[11,1]:Set[40]
-	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[504]
-
-	; Serene Symbol
-	Action[12]:Set[AA_Serene_Symbol]
-	MobHealth[12,1]:Set[1]
-	MobHealth[12,2]:Set[100]
-	Power[12,1]:Set[40]
-	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[502]
-
-	; Spirit of the Wolf
-	Action[13]:Set[SoW]
-	MobHealth[13,1]:Set[1]
-	MobHealth[13,2]:Set[100]
-	Power[13,1]:Set[40]
-	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[31]
+		; Serene Symbol (debuff)
+		Action[1]:Set[Serene_Symbol]
+		SpellRange[1,1]:Set[502]
 	
-	; Undergrowth
-	Action[14]:Set[UseRoot]
-	SpellRange[14,1]:Set[233]
+		; Winds of Permafrost
+		; Whirl of Permafrost
+		Action[2]:Set[W_of_Permafrost]
+		SpellRange[2,1]:Set[90]
+		SpellRange[2,2]:Set[514]
+		
+		; Wrath of Nature
+		Action[3]:Set[Wrath_of_Nature]
+		SpellRange[3,1]:Set[504]
+		
+		; Frostbite
+		; Frostbite Slice
+		Action[4]:Set[Frostbite]
+		SpellRange[4,1]:Set[70]
+		SpellRange[4,2]:Set[513]
+		
+		; Master's Smite
+		Action[5]:Set[MasterSmite]
+		SpellRange[5,1]:Set[511]
+		
+		; Nature Blade
+		Action[6]:Set[NatureBlade]
+		SpellRange[6,1]:Set[381]
+		
+		; Primordial Strike
+		Action[7]:Set[PrimordialStrike]
+		SpellRange[7,1]:Set[382]
+		
+		; Dawnstrike (spell version)
+		; Dawnstrike (melee version)
+		Action[8]:Set[Dawnstrike]
+		SpellRange[8,1]:Set[60]
+		SpellRange[8,2]:Set[515]	
+		
+		; Icefall
+		; Icefall Strike
+		Action[9]:Set[Icefall]
+		SpellRange[9,1]:Set[61]
+		SpellRange[9,2]:Set[512]
+		
+		; Thunderspike
+		Action[10]:Set[ThunderSpike]
+		SpellRange[10,1]:Set[383]
 	
-	; Icefall Strike
-	Action[15]:Set[AA_Icefall_Strike]
-	SpellRange[15,1]:Set[512]
-	
-	; Frostbite Slice
-	Action[16]:Set[AA_Frostbite_Slice]
-	SpellRange[16,1]:Set[513]
-	
-	; Whirl of Permafrost
-	Action[17]:Set[AA_Whirl_of_Permafrost]
-	SpellRange[17,1]:Set[514]
-
+		; Nature's Pack
+		Action[11]:Set[NaturePack]
+		SpellRange[11,1]:Set[332]
+		
+		; Hierophant Grasp
+		Action[12]:Set[Hiero_Grasp]
+		SpellRange[12,1]:Set[516]
+		
+		; Undergrowth
+		Action[13]:Set[Undergrowth]
+		SpellRange[13,1]:Set[233]
+		
+		; Brocks Thermal Shocker
+		Action[14]:Set[ThermalShocker]
 }
 
 function PostCombat_Init()
@@ -406,13 +352,13 @@ if !${InitialBuffsDone}
 
 	call CheckHeals
 
-	;cancel Duststorm if up
+	;cancel Sandstorm if up
 	if ${Me.Maintained[${SpellType[365]}](exists)} && !${Actor[pc,exactname,${MainTankPC}].InCombatMode}
 	{
 		Me.Maintained[${SpellType[365]}]:Cancel
 	}
 
-	if ${Me.ToActor.Power}>85
+	if ${Me.ToActor.Power}>75
 		call CheckHOTs
 
 	switch ${PreAction[${xAction}]}
@@ -428,13 +374,7 @@ if !${InitialBuffsDone}
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break			
-		case BuffBoon
-			if ${BuffBoon}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			break
-			
+
 		case BuffAspect
 		Counter:Set[1]
 			tempvar:Set[1]
@@ -504,6 +444,10 @@ if !${InitialBuffsDone}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},3]}
 			}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},4]}]}](exists)}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},4]}
+			}
 			break
 			
 		case SOW
@@ -551,10 +495,10 @@ if !${InitialBuffsDone}
 			break
 
 		case AA_Infusion
-			if !${InfusionMode}
-			{
+			if ${InfusionMode}
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
 
 		case AA_WardenStance
@@ -672,37 +616,48 @@ function Combat_Routine(int xAction)
 {
 	declare counter int local 1
 
+	; Turn off Auto Follow on the MA
 	AutoFollowingMA:Set[FALSE]
-
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
 		EQ2Execute /stopfollow
 		wait 5
 	}
 
-
+	; If we are in Cure Mode call the check cure function
 	if ${CureMode}
 		call CheckCures
 
+	; Always call the CheckHeal function on every loop of the combat_routine
 	call CheckHeals
 
-
-	if ${DoHOs} && ${OffenseMode}
+	; If we have chosen to participate in HO's and SpellMode is the set a flag to participate
+	if ${DoHOs} && ${SpellMode}
 	{
 		objHeroicOp:DoHO
 	}
 
+	; If we have chosen to be an HO starter. Go ahead and start and HO event.
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}
 	{
 		call CastSpellRange 305
 	}
 
+	; If we have any of the 3 special power replenish items go ahead and use them if available
 	call RefreshPower
 
+	; If we have enabled the use of shards from a player
+	; and we have shards, power pots, clarity pots, shards/hearts use them
+	; if we have no shards/hearts and there is a player in group/raid request them.
 	if ${ShardMode}
 		call Shard
 
-	if ${UseCAs} && ${Target.Distance}>4
+
+	; If MeleeMode is enabled and the target is > 4
+	; check to see if we are close to the mob, if not
+	; reposition, check to see if autoattack is already on
+	; if it is not turn it on.
+	if ${MeleeMode} && ${Target.Distance}>4
 	{
 		call CheckPosition 1 ${Target.IsEpic}
 		if !${Me.AutoAttackOn}
@@ -713,160 +668,106 @@ function Combat_Routine(int xAction)
 
 	;Before we do our Action, check to make sure our group doesnt need healing
 	call CheckGroupHealth 75
-	if ${Return}
+	if ${Return} && (${SpellMode} || ${MeleeMode})
 	{
-		;echo Offensive - ${OffenseMode}
+
+		; Using the array from Combat_Init run each array item through the switch statement
 		switch ${Action[${xAction}]}
 		{
-			case Nuke1
-			case Nuke2
-				if ${OffenseMode}
+			case W_of_Permafrost
+			{
+				if (${MeleeMode} && ${AoEMode}) && ${Me.Ability[${SpellType[${SpellRange[${xAction},2]}]}].IsReady}
 				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
+					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
+				}
+				elseif (${SpellMode} && ${AoEMode} && !${MeleeMode}) && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				}
+			}
+			break
+			case Hiero_Grasp
+			{
+				if ${MeleeMode} && ${AoEMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+				{
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				}
+			}
+			break
+			case Wrath_of_Nature
+			{
+				if ${SpellMode} && ${AoEMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break	
+			case Frostbite
+			case Dawnstrike
+			case Icefall
+			{
+				if ${MeleeMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+				{
+					call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget}
+				}
+				elseif ${SpellMode} && !${MeleeMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}			
+			break
+			case MasterSmite
+			{
+				if ${SpellMode} && ${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)}
+				{
+					break
+				}
+				if ${SpellMode} && ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)}
+				{
+					Target ${KillTarget}
+					call CheckPosition 1 1 ${KillTarget}
+					Me.Ability[Master's Smite]:Use
+					wait 4
 				}
 				break
-			case AoE
-			case AA_Wrath_of_Nature
-				if ${OffenseMode} && ${AoEMode} && ${Mob.Count}>=2
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							if ${UseCAs}
-								call CastSpellRange 389 0 1 0 ${KillTarget} 0 0 1
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
-
-				}
-				break
-			case AA_Thunderspike
-			case AA_Primordial_Strike
-			case AA_Nature_Blade
-				if !${MeleeMode}
-					return CombatComplete
-
-				if ${OffenseMode} && ${MeleeMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-							{
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-							}
-						}
-					}
-				}
-				break
-			case DoT
-				if ${OffenseMode}
-				{
-					call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-						if ${Return.Equal[OK]}
-						{
-							if ${UseCAs}
-								call CastSpellRange 387 0 1 0 ${KillTarget} 0 0 1
-							else
-								call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-						}
-					}
-				}
-				break
+			}
+			break
+			case NaturePack
+			{
+				if ${SpellMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break	
+			case Serene_Symbol
+			{
+				if ${SpellMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			}
+			break
+			case ThunderSpike
+			case NatureBlade
+			case PrimordialStrike
+			{
+				if ${MeleeMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+			}
+			break			
+			case Undergrowth
+			{
+				if ${UseRoot} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+			}
+			break
+			case ThermalShocker
+			{
+				if (${SpellMode} || ${MeleeMode}) && (${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)}) && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady}
+					Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use	
+			}
+			break
 			
-			case AA_Icefall_Strike
-			case AA_Frosbite_Slice
-			case AA_Whirl_of_Permafrost	
-				if ${UseCAs}
-				{
-					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-				}
-				break					
-			case UseRoot
-			
-				if ${UseRoot}
-				{
-					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-				}
-				break
-
-			case Ally
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]} && ${OffenseMode}  && ${PetMode}
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-				break
-
-			case Grove
-				call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
-				if ${Return.Equal[OK]} && ${PetMode}
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-				break
-
-			case Mastery
-				if ${OffenseMode} || ${DebuffMode}
-				{
-					;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-					
-					if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
-					{
-							break
-					}
-
-					if ${Me.Ability[${SpellType[xAction]}].IsReady}
-					{
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-				}
-				break
-			case AA_Serene_Symbol
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				break
-			case SoW
-				if ${InfusionMode}
-					SOWStartTime:Set[${Time.Timestamp}]
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-				break
 			Default
 				return CombatComplete
 				break
 		}
 	}
+	
+	; Check to be sure Heal over Times are refreshed
 	call CheckHOTs
 }
 
@@ -895,6 +796,7 @@ function Post_Combat_Routine(int xAction)
 			{
 				if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead}
 				{
+					call CastSpellRange 500 ${Me.Group[${tempgrp}].ID}
 					call CastSpellRange 300 303 0 0 ${Me.Group[${tempgrp}].ID} 1
 					wait 5
 				}
@@ -1016,7 +918,7 @@ function CheckHeals()
 	if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
 		grpheal:Inc
 
-	if ${grpheal}>2
+	if ${grpheal}>1
 		call GroupHeal
 
   if (${MainTankExists})
@@ -1215,6 +1117,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		return
 
 	call IsFighter ${Actor[${KillTarget}].Target.ID}
+	
 	if ${Actor[${MainTankID}].Health}>90 && ${return} && ${Actor[${KillTarget}].Target.ID}!=${MainTankID}
 	{
 		if ${Actor[${KillTarget}].Target.Health}<50
@@ -1250,14 +1153,26 @@ function EmergencyHeal(int healtarget, int MTInMyGroup)
 	if ${Me.Ability[${SpellType[317]}].IsReady} && ${MTInMyGroup}
 		call CastSpellRange 317 0 0 0 ${healtarget}
 	else
-		call CastSpellRange 316 0 0 0 ${healtarget}
+		call CastSpellRange 329 0 0 0 ${healtarget}
 
 	;emergency heals
 	if ${Me.Ability[${SpellType[16]}].IsReady} && ${MTInMyGroup}
 		call CastSpellRange 16 0 0 0 ${healtarget}
 	else
 		call CastSpellRange 8 0 0 0 ${healtarget}
+		
+	; Use Mythical if Available
+	if ${UseMythical}
+	{
+		if (${Me.Equipment[Bite of The Wolf](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]})
+		{
+			target ${healtarget}	
+			Me.Equipment[Bite of the Wolf]:Use
+		}
+	}
 }
+
+
 
 function CureGroupMember(int gMember)
 {
@@ -1318,7 +1233,7 @@ function CheckCures()
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 	
-	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
+	; Check if curse on the person selected in the dropdown and cure them.
 	if ${CureCurseOthersEnabled}
 	{
 		CureTarget:Set[${CureCurseGroupMember}]
@@ -1341,7 +1256,7 @@ function CheckCures()
 	
 
 	;check for group cures, if it is ready and we are in a large enough group
-	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
+	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>1
 	{
 		;check ourselves
 		if ${Me.IsAfflicted}
@@ -1363,7 +1278,7 @@ function CheckCures()
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 
-		if ${grpcure}>2
+		if ${grpcure}>1
 		{
 			call CastSpellRange 220
 
@@ -1458,7 +1373,7 @@ function CheckHOTs()
 	hot1:Set[0]
 	grphot:Set[0]
 
-	if ((${Me.InCombat} || ${Actor[pc,exactname,${MainTankPC}].InCombatMode}) && (${KeepMTHOTUp} || ${KeepGroupHOTUp})) || (${KeepReactiveUp} && ${Me.ToActor.Power}>85)
+	if ((${Me.InCombat} || ${Actor[pc,exactname,${MainTankPC}].InCombatMode}) && (${KeepMTHOTUp} || ${KeepGroupHOTUp})) || (${KeepReactiveUp} && ${Me.ToActor.Power}>75)
 	{
 		do
 		{
@@ -1503,6 +1418,14 @@ function HandleGroupWiped()
 		if (${Me.GroupCount} > 1)
 		{
 			call CastSpellRange 313
+			
+		; NEEDED CODE FOR SOW TIMER TO WORK
+		; NEEDS TO BE HERE BECAUSE WE ONLY WANT
+		; IT EXECUTING ONCE ON SCRIPT STARTUP
+		SOWStartTime:Set[${Time.Timestamp}]
+		SOWStartTime.Day:Dec[1]
+		SOWStartTime:Update
+			
 			InitialBuffsDone:Set[TRUE]
 	  }
 	}
