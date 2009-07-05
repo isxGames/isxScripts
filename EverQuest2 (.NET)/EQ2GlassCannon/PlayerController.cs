@@ -854,7 +854,7 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		/// <summary>
-		/// Each ordered element in the passed array is the next higher level ability.
+		/// Each ordered element in the passed array is the next higher level (or next higher preferred) ability.
 		/// </summary>
 		/// <param name="astrAbilityNames">List of every spell that shares the behavior and recast timer,
 		/// presorted from lowest level to highest.</param>
@@ -863,12 +863,14 @@ namespace EQ2GlassCannon
 			int iBestSpellIndex = -1;
 
 			/// Grab the highest level ability from this group.
-			/// Technically you don't even need a loop for this, just pick the last item in the array.
-			for (int iIndex = 0; iIndex < astrAbilityNames.Length; iIndex++)
+			for (int iIndex = astrAbilityNames.Length - 1; iIndex >= 0; iIndex--)
 			{
 				string strThisAbility = astrAbilityNames[iIndex];
 				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility))
+				{
 					iBestSpellIndex = m_KnowledgeBookNameToIndexMap[strThisAbility];
+					break;
+				}
 			}
 
 			/// Now associate every ability in the list with the ID of the highest-level version of it.
@@ -885,15 +887,21 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		private static readonly string[] s_astrRomanNumeralSuffixes = new string[]
 		{
-			"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "I", "X", "XI"
+			"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"
 		};
 
 		/************************************************************************************/
 		public int SelectHighestTieredAbilityID(string strBaseAbilityName)
 		{
 			List<string> astrAbilityNames = new List<string>(s_astrRomanNumeralSuffixes.Length);
-			foreach (string strRomanNumeral in s_astrRomanNumeralSuffixes)
-				astrAbilityNames.Add(strBaseAbilityName + " " + strRomanNumeral);
+			for (int iIndex = 0; iIndex < s_astrRomanNumeralSuffixes.Length; iIndex++)
+			{
+				string strRomanNumeral = s_astrRomanNumeralSuffixes[iIndex];
+
+				/// There is no roman numeral I for the first spell in the series.
+				string strFinalAbilityName = (iIndex > 0) ? string.Format("{0} {1}", strBaseAbilityName, strRomanNumeral) : strBaseAbilityName;
+				astrAbilityNames.Add(strFinalAbilityName);
+			}
 
 			return SelectHighestAbilityID(astrAbilityNames.ToArray());
 		}
