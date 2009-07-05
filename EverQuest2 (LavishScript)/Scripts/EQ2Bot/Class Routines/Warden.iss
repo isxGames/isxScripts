@@ -347,6 +347,10 @@ if !${InitialBuffsDone}
   }
 }
 
+; If we are in Cure Mode call the check cure function
+	if ${CureMode}
+		call CheckCures
+
 	if ${ShardMode}
 		call Shard
 
