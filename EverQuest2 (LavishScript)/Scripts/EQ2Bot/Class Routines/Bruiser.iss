@@ -159,6 +159,9 @@ function Combat_Init()
 	Action[21]:Set[Bruising]
 	SpellRange[21,1]:Set[402]
 
+	Action[22]:Set[Eye_Gouge]
+	SpellRange[22,1]:Set[80]
+
 }
 
 function PostCombat_Init()
@@ -264,7 +267,7 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			break
 		case AoE_Taunt
-		case Taunt
+		case Taunt1
 			if ${TauntMode} && !${RangedAttacksMode}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			break
@@ -279,6 +282,7 @@ function Combat_Routine(int xAction)
 		case DoT
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			break
+		case Eye_Gouge
 		case Bruising
 		case Stun
 			call CastSpellRange ${SpellRange[${xAction},1]}
