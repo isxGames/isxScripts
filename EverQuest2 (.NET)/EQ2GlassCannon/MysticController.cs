@@ -25,12 +25,12 @@ namespace EQ2GlassCannon
 		public int m_iSingleHealthPoolBuffAbilityID = -1;
 		public int m_iSpiritCompanionAbilityID = -1;
 		public int m_iUrsineAbilityID = -1;
-		public int m_iAvatarAbilityID = -1;
-		public int m_iAncestryAbilityID = -1;
+		public int m_iSingleStatBuffAbilityID = -1;
+		public int m_iSingleProcBuffAbilityID = -1;
 
 		public int m_iSingleWardAbilityID = -1;
 		public int m_iHealingAbilityID = -1;
-		public int m_iEnlightenedHealingAbilityID = -1;
+		public int m_iBiggerHealingAbilityID = -1;
 		public int m_iGroupWardAbilityID = -1;
 		public int m_iGroupHealingAbilityID = -1;
 		public int m_iGroupCombatRezAbilityID = -1;
@@ -69,173 +69,35 @@ namespace EQ2GlassCannon
 		{
 			base.InitializeKnowledgeBook();
 
-			m_iGeneralGroupCureAbilityID = SelectHighestAbilityID(
-				"Cure: Fading Spirit",
-				"Cure: Gasping Spirit",
-				"Ebbing Spirit");
-
-			m_iGeneralSingleDeathSaveAbilityID = SelectHighestAbilityID(
-				"Eidolic Savior",
-				"Umbral Savior",
-				"Ghastly Savior",
-				"Ancestral Savior");
-
-			m_iGroupMitigationBuffAbilityID = SelectHighestAbilityID(
-				"Runic Mark",
-				"Runic Symbol",
-				"Runic Shield",
-				"Runic Talisman",
-				"Runic Aegis",
-				"Runic Armor");
-
-			m_iGroupNoxiousBuffAbilityID = SelectHighestAbilityID(
-				"Spiritual Seal",
-				"Umbral Fortitude",
-				"Eidolic Mettle",
-				"Umbral Mettle",
-				"Ancestral Mettle");
-
-			m_iGroupSTRSTABuffAbilityID = SelectHighestAbilityID(
-				"Spirit of the Bull",
-				"Spirit of the Rhino",
-				"Spirit of the Elephant",
-				"Spirit of the Mammoth",
-				"Spirit of the Mastodon");
-
+			m_iGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Ebbing Spirit");
+			m_iGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Ancestral Savior");
+			m_iGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Runic Armor");
+			m_iGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Mettle");
+			m_iGroupSTRSTABuffAbilityID = SelectHighestTieredAbilityID("Spirit of the Mammoth");
 			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Water Spirit");
-
-			m_iSingleHealthPoolBuffAbilityID = SelectHighestAbilityID(
-				"Minor Auspice",
-				"Auspice",
-				"Omen",
-				"Prophecy",
-				"Foretelling",
-				"Premonition");
-
+			m_iSingleHealthPoolBuffAbilityID = SelectHighestTieredAbilityID("Premonition");
 			m_iSpiritCompanionAbilityID = SelectHighestAbilityID("Summon Spirit Companion");
-
-			m_iUrsineAbilityID = SelectHighestAbilityID(
-				"Ursine Elder",
-				"Ursine Oracle",
-				"Ursine Prophet",
-				"Ursine Augur",
-				"Ursine Avatar");
-
-			m_iAvatarAbilityID = SelectHighestAbilityID(
-				"Avatar",
-				"Ancient Avatar",
-				"Ancestral Avatar");
-
-			m_iAncestryAbilityID = SelectHighestAbilityID("Ancestry");
-
-			m_iSingleWardAbilityID = SelectHighestAbilityID(
-				"Spectral Ward",
-				"Ghostly Ward",
-				"Ancestral Ward",
-				"Ancestral Aegis",
-				"Sacred Aegis",
-				"Ethereal Aegis",
-				"Ancient Aegis");
-
-			m_iHealingAbilityID = SelectHighestAbilityID(
-				"Minor Aid",
-				"Aid",
-				"Totemic Aid",
-				"Replenishment",
-				"Spiritual Replenishment",
-				"Rejuvenating Chant",
-				"Rejuvenating Rite",
-				"Rejuvenation");
-
-			m_iEnlightenedHealingAbilityID = SelectHighestAbilityID(
-				"Minor Ritual",
-				"Ritual",
-				"Healing Ritual",
-				"Spiritual Healing",
-				"Enlightened Healing",
-				"Learned Healing",
-				"Ritual Healing");
-
-			m_iGroupWardAbilityID = SelectHighestAbilityID(
-				"Wards of Spirit",
-				"Wards of Shadow",
-				"Umbral Ritual",
-				"Umbral Sacrament",
-				"Umbral Liturgy",
-				"Umbral Warding");
-
-			m_iGroupHealingAbilityID = SelectHighestAbilityID(
-				"Breath of Spirits",
-				"Spiritist's Salve",
-				"Transcendent Blessing",
-				"Transcendent Grace",
-				"Transcendence",
-				"Transcendant Aid");
-
+			m_iUrsineAbilityID = SelectHighestTieredAbilityID("Ursine Avatar");
+			m_iSingleStatBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Avatar");
+			m_iSingleProcBuffAbilityID = SelectHighestAbilityID("Ancestry");
+			m_iSingleWardAbilityID = SelectHighestTieredAbilityID("Ancestral Ward");
+			m_iHealingAbilityID = SelectHighestTieredAbilityID("Rejuvenation");
+			m_iBiggerHealingAbilityID = SelectHighestTieredAbilityID("Ritual Healing");
+			m_iGroupWardAbilityID = SelectHighestTieredAbilityID("Umbral Warding");
+			m_iGroupHealingAbilityID = SelectHighestTieredAbilityID("Transcendence");
 			m_iGroupCombatRezAbilityID = SelectHighestAbilityID("Fields of the Grey");
 			m_iSingleWardedCombatRezAbilityID = SelectHighestAbilityID("Recall of the Grey");
 			m_iSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Path of the Grey");
-
-			m_iDumbfireHealPetAbilityID = SelectHighestAbilityID(
-				"Shadowy Attendant",
-				"Umbral Attendant",
-				"Lunar Attendant");
-
+			m_iDumbfireHealPetAbilityID = SelectHighestTieredAbilityID("Lunar Attendant");
 			m_iDumbfireWardPetAbilityID = SelectHighestAbilityID("Ancestral Sentry");
-
-			m_iGreenResistDebuffAbilityID = SelectHighestAbilityID(
-				"Anger of the Ancients",
-				"Fury of the Ancients",
-				"Wrath of the Ancients",
-				"Wail of the Ancients",
-				"Echoes of the Ancients");
-
-			m_iGreenHasteDebuffAbilityID = SelectHighestAbilityID(
-				"Grim Lethargy",
-				"Dreadful Lethargy",
-				"Lethargy");
-
-			m_iGreenDPSDebuffAbilityID = SelectHighestAbilityID(
-				"Umbral Trap");
-
-			m_iSingleHasteDebuffAbilityID = SelectHighestAbilityID(
-				"Haze",
-				"Wailing Haze",
-				"Keening Haze",
-				"Howling Haze",
-				"Weeping Haze",
-				"Shrieking Haze");
-
-			m_iSingleDPSDebuffAbilityID = SelectHighestAbilityID(
-				"Mourning Soul",
-				"Grieving Soul",
-				"Lamenting Soul");
-
-			m_iSingleSTRSTADebuffAbilityID = SelectHighestAbilityID(
-				"Enfeeble",
-				"Delusion",
-				"Fallacy",
-				"Chimerik",
-				"Eidolon",
-				"Deteriorate");
-
-			m_iSingleFastShadowBaneNukeAbilityID = SelectHighestAbilityID(
-				"Fever",
-				"Sickness",
-				"Miasma",
-				"Pox",
-				"Fevered Pox",
-				"Plague",
-				"Epidemic");
-
-			m_iSingleColdSnareAbilityID = SelectHighestAbilityID(
-				"Chilling Winds",
-				"Cold Wind",
-				"Grey Wind",
-				"Touch of the Grey",
-				"Ire of the Grey",
-				"Wrath of the Grey",
-				"Velium Winds");
+			m_iGreenResistDebuffAbilityID = SelectHighestTieredAbilityID("Echoes of the Ancients");
+			m_iGreenHasteDebuffAbilityID = SelectHighestTieredAbilityID("Lethargy");
+			m_iGreenDPSDebuffAbilityID = SelectHighestTieredAbilityID("Umbral Trap");
+			m_iSingleHasteDebuffAbilityID = SelectHighestTieredAbilityID("Haze");
+			m_iSingleDPSDebuffAbilityID = SelectHighestTieredAbilityID("Lamenting Soul");
+			m_iSingleSTRSTADebuffAbilityID = SelectHighestTieredAbilityID("Deteriorate");
+			m_iSingleFastShadowBaneNukeAbilityID = SelectHighestTieredAbilityID("Plague");
+			m_iSingleColdSnareAbilityID = SelectHighestTieredAbilityID("Velium Winds");
 
 			return;
 		}
@@ -339,10 +201,10 @@ namespace EQ2GlassCannon
 				if (CheckGroupWaterBreathingBuff())
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iAvatarAbilityID, m_strAvatarTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iSingleStatBuffAbilityID, m_strAvatarTarget, true, false))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iAncestryAbilityID, m_strAncestryTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iSingleProcBuffAbilityID, m_strAncestryTarget, true, false))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -461,7 +323,7 @@ namespace EQ2GlassCannon
 					if (CastAbility(m_iSingleWardAbilityID, strLowestHealthName, true))
 						return true;
 
-					if (CastAbility(m_iEnlightenedHealingAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_iBiggerHealingAbilityID, strLowestHealthName, true))
 						return true;
 
 					if (CastAbility(m_iHealingAbilityID, strLowestHealthName, true))
