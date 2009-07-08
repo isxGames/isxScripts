@@ -35,8 +35,8 @@ namespace EQ2GlassCannon
 		public int m_iGroupSTRSTABuffAbilityID = -1;
 		public int m_iGroupReflectBuffAbilityID = -1;
 		public int m_iGroupHealthRegenBuffAbilityID = -1;
-		public int m_iGroupArcaneBuffAbilityID = -1;
-		public int m_iGroupElementalBuffAbilityID = -1;
+		public int m_iRaidArcaneBuffAbilityID = -1;
+		public int m_iRaidElementalBuffAbilityID = -1;
 		public int m_iSelfAGIINTBuffAbilityID = -1;
 		public int m_iResonanceAbilityID = -1;
 		public int m_iHarmonizationAbilityID = -1;
@@ -92,202 +92,39 @@ namespace EQ2GlassCannon
 		{
 			base.InitializeKnowledgeBook();
 
-			m_iGroupCastingSkillBuffAbilityID = SelectHighestAbilityID(
-				"Magical Boon",
-				"Minstrel's Luck",
-				"Minstrel's Fortune",
-				"Swan Song",
-				"Dove Song",
-				"Song of Magic");
-
-			m_iGroupSpellProcBuffAbilityID = SelectHighestAbilityID(
-				"Aria of Excitement",
-				"Aria of Inspiration",
-				"Aria of Exaltation",
-				"Aria of Acclamation",
-				"Aria of Magic");
-
-			m_iGroupManaRegenBuffAbilityID = SelectHighestAbilityID(
-				"Bria's Stirring Ballad",
-				"Bria's Thrilling Ballad",
-				"Bria's Exalting Ballad",
-				"Bria's Glorifying Ballad",
-				"Bria's Inspiring Ballad",
-				"Power Ballad"); // Once again, Aeralik just said fuck it.
-
-			m_iGroupDefenseBuffAbilityID = SelectHighestAbilityID(
-				"Insatiable Ardor",
-				"Daelor's Luminary Ballad",
-				"Graceful Avoidance",
-				"Balletic Avoidance",
-				"Performer Avoidance");
-
-			m_iGroupHasteBuffAbilityID = SelectHighestAbilityID(
-				"Merciless Melody",
-				"Gerard's Resonant Sonata",
-				"Invigorating Opus",
-				"Exhilarating Opus",
-				"Rousing Opus",
-				"Allegretto");
-
-			m_iGroupDehateBuffAbilityID = SelectHighestAbilityID(
-				"Alin's Soothing Serenade",
-				"Alin's Calming Serenade",
-				"Alin's Tranquil Serenade",
-				"Alin's Serene Serenade");
-
-			m_iGroupSTRSTABuffAbilityID = SelectHighestAbilityID(
-				"Raxxyl's Fortitude Song",
-				"Raxxyl's Rousing Tune",
-				"Raxxyl's Energizing Harmony",
-				"Raxxyl's Vivacious Descant",
-				"Raxxyl's Brash Descant",
-				"Raxxyl's Brazen Descant",
-				"Fortifying Song");
-
+			m_iGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Song of Magic");
+			m_iGroupSpellProcBuffAbilityID = SelectHighestTieredAbilityID("Aria of Magic");
+			m_iGroupManaRegenBuffAbilityID = SelectHighestTieredAbilityID("Bria's Inspiring Ballad");
+			m_iGroupDefenseBuffAbilityID = SelectHighestTieredAbilityID("Graceful Avoidance");
+			m_iGroupHasteBuffAbilityID = SelectHighestTieredAbilityID("Allegretto");
+			m_iGroupDehateBuffAbilityID = SelectHighestTieredAbilityID("Alin's Serene Serenade");
+			m_iGroupSTRSTABuffAbilityID = SelectHighestTieredAbilityID("Raxxyl's Rousing Tune");
 			m_iGroupReflectBuffAbilityID = SelectHighestAbilityID("Requiem of Reflection");
-
-			m_iGroupHealthRegenBuffAbilityID = SelectHighestAbilityID(
-				"Quiron's Joyous Celebration",
-				"Quiron's Ecstatic Celebration",
-				"Quiron's Blissful Celebration",
-				"Rejuvenating Celebration");
-
-			m_iGroupArcaneBuffAbilityID = SelectHighestAbilityID(
-				"Arcane Chorus",
-				"Arcane Symphony",
-				"Arcane Concerto",
-				"Arcane Dissertation",
-				"Arcane Tempo");
-
-			m_iGroupElementalBuffAbilityID = SelectHighestAbilityID(
-				"Elemental Chorus",
-				"Elemental Concerto",
-				"Elemental Tempo");
-
-			m_iSelfAGIINTBuffAbilityID = SelectHighestAbilityID(
-				"Performer's Talent",
-				"Elise's Ditty",
-				"Daelis' Dance of Blades",
-				"Daelis' Jig of Blades",
-				"Daelis' Frolicking of Blades",
-				"March of Blades");
-
+			m_iGroupHealthRegenBuffAbilityID = SelectHighestTieredAbilityID("Rejuvenating Celebration");
+			m_iRaidArcaneBuffAbilityID = SelectHighestTieredAbilityID("Arcane Symphony");
+			m_iRaidElementalBuffAbilityID = SelectHighestTieredAbilityID("Elemental Concerto");
+			m_iSelfAGIINTBuffAbilityID = SelectHighestTieredAbilityID("Daelis' Dance of Blades");
 			m_iResonanceAbilityID = SelectHighestAbilityID("Resonance");
 			m_iHarmonizationAbilityID = SelectHighestAbilityID("Harmonization");
 			m_iUpbeatTempoAbilityID = SelectHighestAbilityID("Upbeat Tempo");
-
-			m_iMaestroAbilityID = SelectHighestAbilityID(
-				"Precision of the Maestro",
-				"Perfection of the Maestro");
-
+			m_iMaestroAbilityID = SelectHighestTieredAbilityID("Perfection of the Maestro");
 			m_iJestersCapAbilityID = SelectHighestAbilityID("Jester's Cap");
 			m_iCountersongDebuffAbilityID = SelectHighestAbilityID("Countersong");
-
-			m_iSingleMentalSnareDebuffAbilityID = SelectHighestAbilityID(
-				"Sybil's Slowing Chant",
-				"Sybil's Shuddering Sonnet",
-				"Guviena's Disparate Chant",
-				"Guviena's Slothful Chant",
-				"Guviena's Apathetic Chant",
-				"Depressing Chant");
-
-			m_iSingleDefenseDebuffAbilityID = SelectHighestAbilityID(
-				"Lore's Shuddering Song",
-				"Lore's Snapping Sonnet",
-				"Lore's Lurching Limerick",
-				"Lore's Magniloquent Roust",
-				"Lore's Euphistic Romp",
-				"Vexing Verses");
-
-			m_iSingleResistDebuffAbilityID = SelectHighestAbilityID(
-				"Brilliant Blade",
-				"Taffo's Brilliant Blade",
-				"Walt's Thirsting Thrust",
-				"Taffo's Dazzling Ditty",
-				"Dancing Blade",
-				"Bright Blade");
-
-			m_iSingleINTDebuffAbilityID = SelectHighestAbilityID(
-				"Night Blade",
-				"Midnight Blade",
-				"Luckblade",
-				"Clara's Midnight Cadence",
-				"Startling Shriek",
-				"Clara's Midnight Tempo",
-				"Night Strike");
-			
-			m_iGreenResistDebuffAbilityID = SelectHighestAbilityID(
-				"Zander's Choral Rebuff",
-				"Magic Rebuff",
-				"Spell Rebuff");
-			
-			m_iGreenSkillDebuffAbilityID = SelectHighestAbilityID(
-				"Demoralizing Processional",
-				"Dispirited Processional");
-
-			m_iGreenWISDebuffAbilityID = SelectHighestAbilityID(
-				"Kian's Destructive Anthem",
-				"Kian's Devastating Anthem",
-				"Kian's Catastrophic Anthem",
-				"Chaos Anthem");
-
-			m_iSingleLongRangeNukeAbilityID = SelectHighestAbilityID(
-				"Shrill",
-				"Piercing Shrill",
-				"Dissenting Shrill",
-				"Exquisite Shrill",
-				"Flawless Shrill",
-				"Perfect Shrill",
-				"Reverberating Shrill");
-
-			m_iSingleShortRangeNukeAbilityID = SelectHighestAbilityID(
-				"Eli's Thunderous Hymn",
-				"Eli's Thunderous Anthem",
-				"Eli's Thunderous Chorus",
-				"Eli's Thunderous Drumming",
-				"Thunderous Overture");
-
-			m_iSinglePowerSiphonNukeAbilityID = SelectHighestAbilityID(
-				"Swindle Essence",
-				"Purloin Essence",
-				"Pilfer Essence",
-				"Steal Essence",
-				"Tap Essence");
-
-			m_iSinglePowerDrainAttackAbilityID = SelectHighestAbilityID(
-				"Deafening Strike",
-				"Deafening Blade",
-				"Deafening Thrust",
-				"Sandra's Deafening Strike",
-				"Sandra's Befuddling Incursion",
-				"Sandra's Bewildering Incursion",
-				"Draining Incursion");
-
-			m_iSingleMentalAttackPairAbilityID = SelectHighestAbilityID(
-				"Sparkling Blade",
-				"Fulgent Blade",
-				"Elegant Blade",
-				"Courtly Blade",
-				"Noble Blade",
-				"Ceremonial Blade");
-
-			m_iSingleMezAbilityID = SelectHighestAbilityID(
-				"Lullaby",
-				"Reverie",
-				"Peaceful Melody");
-
-			m_iGreenInterruptNukeAbilityID = SelectHighestAbilityID(
-				"Alin's Keening Lamentation",
-				"Alin's Melodic Refrain",
-				"Alin's Coruscating Concord",
-				"Alin's Incandescent",
-				"Painful Lamentations");
-			
-			m_iGreenInstantKnockdownAbilityID = SelectHighestAbilityID(
-				"Breathtaking Bellow",
-				"Awesome Bellow",
-				"Mighty Bellow");
+			m_iSingleMentalSnareDebuffAbilityID = SelectHighestTieredAbilityID("Depressing Chant");
+			m_iSingleDefenseDebuffAbilityID = SelectHighestTieredAbilityID("Vexing Verses");
+			m_iSingleResistDebuffAbilityID = SelectHighestTieredAbilityID("Dancing Blade");
+			m_iSingleINTDebuffAbilityID = SelectHighestTieredAbilityID("Night Strike");
+			m_iGreenResistDebuffAbilityID = SelectHighestTieredAbilityID("Zander's Choral Rebuff");
+			m_iGreenSkillDebuffAbilityID = SelectHighestTieredAbilityID("Demoralizing Processional");
+			m_iGreenWISDebuffAbilityID = SelectHighestTieredAbilityID("Chaos Anthem");
+			m_iSingleLongRangeNukeAbilityID = SelectHighestTieredAbilityID("Perfect Shrill");
+			m_iSingleShortRangeNukeAbilityID = SelectHighestTieredAbilityID("Thunderous Overture");
+			m_iSinglePowerSiphonNukeAbilityID = SelectHighestTieredAbilityID("Tap Essence");
+			m_iSinglePowerDrainAttackAbilityID = SelectHighestTieredAbilityID("Sandra's Deafening Strike");
+			m_iSingleMentalAttackPairAbilityID = SelectHighestTieredAbilityID("Ceremonial Blade");
+			m_iSingleMezAbilityID = SelectHighestTieredAbilityID("Lullaby");
+			m_iGreenInterruptNukeAbilityID = SelectHighestTieredAbilityID("Painful Lamentations");
+			m_iGreenInstantKnockdownAbilityID = SelectHighestTieredAbilityID("Breathtaking Bellow");
 
 			return;
 		}
@@ -330,10 +167,10 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_iGroupHealthRegenBuffAbilityID, m_bBuffHealthRegen))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupArcaneBuffAbilityID, m_bBuffArcaneResistance))
+				if (CheckToggleBuff(m_iRaidArcaneBuffAbilityID, m_bBuffArcaneResistance))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupElementalBuffAbilityID, m_bBuffElementalResistance))
+				if (CheckToggleBuff(m_iRaidElementalBuffAbilityID, m_bBuffElementalResistance))
 					return true;
 
 				if (CheckToggleBuff(m_iSelfAGIINTBuffAbilityID, true))
