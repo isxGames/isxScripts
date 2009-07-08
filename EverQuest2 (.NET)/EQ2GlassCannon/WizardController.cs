@@ -94,7 +94,8 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public override bool DoNextAction()
 		{
-			base.DoNextAction();
+			if (base.DoNextAction())
+				return true;
 
 			if (Me.CastingSpell || MeActor.IsDead)
 				return true;
