@@ -19,15 +19,7 @@ namespace EQ2GlassCannon
 			m_iLoreAndLegendAbilityID = SelectHighestAbilityID("Sinister Strike");
 			m_iHOStarterAbiltyID = SelectHighestAbilityID("Lucky Break");
 			m_iShroudAbilityID = SelectHighestAbilityID("Shroud");
-
-			m_iSingleDeaggroAbilityID = SelectHighestAbilityID(
-				"Evade",
-				"Divert",
-				"Slip",
-				"Evasion",
-				"Elude",
-				"Baffle");
-
+			m_iSingleDeaggroAbilityID = SelectHighestTieredAbilityID("Evade");
 			m_iEvasiveManeuversAbilityID = SelectHighestAbilityID("Evasive Maneuvers");
 
 			return;
