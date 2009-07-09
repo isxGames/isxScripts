@@ -48,6 +48,7 @@
 		<Setting Name="Pristine Forged Feyiron Executioners Axe">Forged Feyiron Executioner's Axe</Setting>
 		<Setting Name="Pristine Forged Fulginate Executioners Axe">Forged Fulginate Executioner's Axe</Setting>
 		<Setting Name="Pristine Light Office Chair">Light Ash Office Chair</Setting>
+		<Setting Name="pristine ornate end table">an ornate end table</Setting>
 		<Setting Name="Pristine Sandcloth Blouse">Tailored Sandcloth Blouse</Setting>
 		<Setting Name="Pristine Sandcloth Cap">Tailored Sandcloth Cap</Setting>
 		<Setting Name="Pristine Sandcloth Cuffs">Tailored Sandcloth Cuffs</Setting>
@@ -56,6 +57,7 @@
 		<Setting Name="Pristine Sandcloth Robe">Tailored Sandcloth Robe</Setting>
 		<Setting Name="Pristine Sandcloth Shawl">Tailored Sandcloth Shawl</Setting>
 		<Setting Name="Pristine Sandcloth Slippers">Tailored Sandcloth Slippers</Setting>
+		<Setting Name="Pristine short militia shelf">a short militia shelf</Setting>
 		<Setting Name="Pristine Standard Ash Bookcase">Ash Bookcase</Setting>
 		<Setting Name="Pristine Stonehide Leather Backpack">Stonehide Leather Backpack</Setting>
 		<Setting Name="Pristine Stonehide Leather boots">Tailored Stonehide Leather boots</Setting>
@@ -302,6 +304,7 @@
 		<Setting Name="Pristine Tranquil Sandcloth Robe">Tailored Tranquil Sandcloth Robe</Setting>
 		<Setting Name="Pristine Tranquil Sandcloth Shawl">Tailored Tranquil Sandcloth Shawl</Setting>
 		<Setting Name="Pristine Tranquil Sandcloth Slippers">Tailored Tranquil Sandcloth Slippers</Setting>
+		<Setting Name="Pristine wooden end table">a wooden end table</Setting>
 		<Setting Name="Pristine Woven Bristled Leather Gloves">Pristine Tailored Woven Bristled Leather Gloves</Setting>
 		<Setting Name="Pristine Woven Bristled Leather Shoulder Pads">Pristine Tailored Woven Bristled Leather Shoulder Pads</Setting>
 		<Setting Name="Pristine Woven Stonehide Boots">Tailored Woven Stonehide Boots</Setting>
@@ -312,6 +315,7 @@
 		<Setting Name="Pristine Woven Stonehide Skullcap">Tailored Woven Stonehide Skullcap</Setting>
 		<Setting Name="Pristine Woven Stonehide Tunic">Tailored Woven Stonehide Tunic</Setting>
 		<Setting Name="Redwood Gaming Square Table">Square Redwood Gaming Table</Setting>
+		<Setting Name="Redwood Long Bow">Redwood Longbow</Setting>
 		<Setting Name="Rune of Elis Thunderous Anthem">Rune of Eli's Thunderous Anthem</Setting>
 		<Setting Name="Screewoggin's Surprise">Screewoggins' Surprise</Setting>
 		<Setting Name="Sever (Apprentice IV)">Essence of Sever (Apprentice)</Setting>
@@ -321,8 +325,8 @@
 		<Setting Name="Stance: Bruising(Apprentice IV)">Stance: Bruising Apprentice IV</Setting>
 		<Setting Name="Standard Ash Bookcase">Ash Bookcase</Setting>
 		<Setting Name="tailored Horned Leather Fistwraps">horned leather fistwraps</Setting>
+		<Setting Name="teak mirror">teak wall mirror</Setting>
 		<Setting Name="White Peach Cookie">White Peach Cookies</Setting>
 		<Setting Name="Wild Apple Cookie">Wild Apple Cookies</Setting>
-		<Setting Name="pristine ornate end table">an ornate end table</Setting>
 	</Set>
 </InnerSpaceSettings>

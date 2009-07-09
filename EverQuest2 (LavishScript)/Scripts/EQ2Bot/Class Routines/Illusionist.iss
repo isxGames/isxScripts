@@ -752,8 +752,8 @@ function CheckCastBeam()
 	call ProcessTriggers
 }
 
-/* This function will be called between every spell or spell group when
-   not in DPS or UltraDPS mode. */
+/* This function will be called between every spell or spell group regardless of
+   DPS or UltraDPS mode. */
 
 function CheckNonDps(... Args)
 {
