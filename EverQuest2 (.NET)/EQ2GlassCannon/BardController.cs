@@ -37,20 +37,8 @@ namespace EQ2GlassCannon
 			m_iDontKillTheMessengerAbilityID = SelectHighestAbilityID("Don't Kill the Messenger");
 			m_iDexterousSonataAbilityID = SelectHighestAbilityID("Dexterous Sonata");
 			m_iFortissimoAbilityID = SelectHighestAbilityID("Fortissimo");
-
-			m_iGroupRunSpeedBuffAbilityID = SelectHighestAbilityID(
-				"Selo's Accelerando",
-				"Selo's Rhythm of Speed",
-				"Selo's Accelerating Chorus",
-				"Selo's Speed of Sound");
-
-			m_iGreenSTRAGIDebuffAbilityID = SelectHighestAbilityID(
-				"Reproaching Discante",
-				"Discouraging Discante",
-				"Oppressive Discante",
-				"Disheartening Discante",
-				"Devigorating Discante");
-
+			m_iGroupRunSpeedBuffAbilityID = SelectHighestTieredAbilityID("Selo's Accelerando");
+			m_iGreenSTRAGIDebuffAbilityID = SelectHighestTieredAbilityID("Disheartening Descant");
 			m_iBumpAbilityID = SelectHighestAbilityID("Bump");
 			m_iRhythmBladeAbilityID = SelectHighestAbilityID("Rhythm Blade");
 			m_iTurnstrikeAbilityID = SelectHighestAbilityID("Turnstrike");
