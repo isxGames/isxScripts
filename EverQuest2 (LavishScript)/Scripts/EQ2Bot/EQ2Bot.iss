@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.3a Updated: 11/03/08 by Pygar
+; EQ2Bot.iss Version 2.7.2c Updated: 7/11/09 by CaPilot
 ;
 ; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
@@ -24,6 +24,7 @@ variable string PATH_CLASS_ROUTINES = "${LavishScript.HomeDirectory}/Scripts/${S
 variable string PATH_CHARACTER_CONFIG = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config"
 variable string PATH_UI = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/UI"
 variable string PATH_SPELL_LIST = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Spell List"
+
 ;
 ;===================================================
 ;===        Version Checking             ====
@@ -38,7 +39,7 @@ variable int Latest_BruiserVersion = 20090623
 variable int Latest_CoercerVersion = 20090616
 variable int Latest_ConjurerVersion = 20090623
 variable int Latest_DefilerVersion = 20090616
-variable int Latest_DirgeVersion = 20090618
+variable int Latest_DirgeVersion = 20090711
 variable int Latest_FuryVersion = 20081013
 variable int Latest_GuardianVersion = 20090616
 variable int Latest_IllusionistVersion = 20090622
@@ -52,7 +53,7 @@ variable int Latest_ShadownightVersion = 20090622
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
 variable int Latest_TroubadorVersion = 20090619
-variable int Latest_WardenVersion = 20090617
+variable int Latest_WardenVersion = 20090703
 variable int Latest_WarlockVersion = 20090622
 variable int Latest_WizardVersion = 20090622
 ;===================================================
@@ -249,6 +250,15 @@ variable settingsetref CharacterSet
 variable settingsetref SpellSet
 
 ;===================================================
+;===          AutoAttack Timing                 ====
+;===================================================
+variable float PrimaryDelay 
+variable float LastAutoAttack
+variable(global) float TimeUntilNextAutoAttack
+variable float RunningTimeInSeconds
+variable bool AutoAttackReady
+
+;===================================================
 ;===          Lavish Navigation                 ====
 ;===================================================
 variable filepath ConfigPath = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Navigational Paths/"
@@ -283,9 +293,11 @@ variable bool NoAtExit
 variable int PathType
 
 
+
 #if ${ISXEQ2(exists)} && ${ISXEQ2.IsReady}
 	#include ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}.iss
 	#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config/${Me.Name}.iss
+	#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}_StrRes.iss
 #endif
 
 /* do we really need this? I don't find any reference to the mobcheck object in this script. */
@@ -302,6 +314,8 @@ variable int PathType
 
 #include EQ2Common/Debug.iss
 
+
+
 function main()
 {
 	variable int tempvar
@@ -311,9 +325,12 @@ function main()
 	variable bool MobDetected
 	declare LastWindow string script
 	variable int AggroMob
-
+	
 	Debug:Enable
-
+	
+	; Added as Part of the AutoAttack Timing Code
+	LastAutoAttack:Set[${Script.RunningTime}/1000]
+	
 	if !${ISXEQ2(exists)}
 	{
 		Debug:Echo["ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!"]
@@ -334,7 +351,7 @@ function main()
 	}
 
 	Turbo 50
-
+	
 	;Script:Squelch
 	;Script:EnableProfiling
 
@@ -1083,6 +1100,24 @@ function main()
 		call ProcessTriggers
 	}
 	while ${CurrentTask}
+
+}
+
+function CalcAutoAttackTimer()
+{
+	
+	if !${AutoAttackReady}
+	{
+		PrimaryDelay:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Stats.Primary_Delay].ShortLabel}]
+		RunningTimeInSeconds:Set[${Script.RunningTime}/1000]
+		TimeUntilNextAutoAttack:Set[${PrimaryDelay}-(${RunningTimeInSeconds}-${LastAutoAttack})]
+	}
+		
+	if ${TimeUntilNextAutoAttack} < 0 && !${AutoAttackReady}
+	{
+		;echo AutoAttackReady: TRUE
+		AutoAttackReady:Set[TRUE]
+	}
 }
 
 function CheckManaStone()
@@ -1293,13 +1328,13 @@ function CastSpellRange(... Args)
 						;lets not move beyond defined threshold
 						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}]}<${OORThreshold}
 						{
-							echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
+							;echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
 							call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
 						}
 					}
 					elseif ${xvar1} || ${xvar2}
 					{
-						echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar}
+						;echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar}
 						call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
 					}
 					if ${Target(exists)}
@@ -2318,7 +2353,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	{
 		while ${Me.CastingSpell}
 		{
-			echo DEBUG::CheckPostion - waiting on spell
+			;echo DEBUG::CheckPostion - waiting on spell
 			waitframe
 		}
 	}
@@ -4140,6 +4175,20 @@ function ScanAdds()
 
 atom(script) EQ2_onIncomingText(string Text)
 {
+	; Added as part of the AutoAttack Timing Code
+	; START -------------------------------------
+	; -------------------------------------------
+	
+	if (${Text.Find[YOU hit ]} > 0 || ${Text.Find[YOU critically hit ]} > 0 || ${Text.Find[YOU double attack]} > 0 || ${Text.Find[YOU critically double attack]} > 0)
+		{	
+		;echo AutoAttackReady: FALSE
+		AutoAttackReady:Set[FALSE]
+		LastAutoAttack:Set[${Script.RunningTime}/1000]
+		}		
+		
+	; END ---------------------------------------
+	; -------------------------------------------
+	
 	if (${Text.Find[You may not order your pet to attack]} > 0)
 	{
 		;; Make sure the list does not get too big
@@ -4180,6 +4229,8 @@ atom(script) EQ2_onIncomingText(string Text)
 	}
 	elseif (${Text.Find[No Eligible Target]} > 0)
 		NoEligibleTarget:Set[TRUE]
+	
+		
 }
 
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
@@ -6469,11 +6520,12 @@ function atexit()
 	;Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
-
+	
 	press -release ${forward}
 	press -release ${backward}
 	press -release ${strafeleft}
 	press -release ${straferight}
+
 
 	LavishSettings[EQ2Bot]:Remove
 }

@@ -87,6 +87,7 @@ variable bool ForwardGuildChat
 ;chat event vars
 variable string OutTrigger
 variable string InTrigger
+variable string BDTrigger
 ;0 is in 1 is out
 variable bool JoustStatus=FALSE
 variable bool BDStatus=FALSE
@@ -123,6 +124,7 @@ variable int AutoFollowLastSetTime
 ;misc
 variable bool EpicMode=FALSE
 variable bool DoCallCheckPosition=FALSE
+variable filepath StrRes_Filepath=${PATH_UI}/
 
 function EQ2BotLib_Init()
 {
@@ -187,9 +189,22 @@ function EQ2BotLib_Init()
 	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Extras]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[7]:Move[4]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[8]:Move[5]
+	
+	
+	
 
 	echo Loading Class UI Tab...
 	ui -load -parent "Class@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}.xml"
+	
+	; Optionally Load the String Tab for those Classes that actually have strings to modify.
+	if ${StrRes_Filepath.FileExists[${Me.SubClass}_StrRes.xml]}
+	{
+			UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Strings]
+			;UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[9]
+			echo Loading Strings UI Tab...
+			ui -load -parent "Strings@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}_StrRes.xml"
+	}
+	
 	echo Loading Extras UI Tab...
 	ui -load -parent "Extras@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/EQ2BotExtras.xml"
 
@@ -1647,7 +1662,6 @@ objectdef HeroicOp
 	method LoadUI()
 	{
 		UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[HOs]
-
 		UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[6]:Move[3]
 
 		echo Loading HO Tab...
