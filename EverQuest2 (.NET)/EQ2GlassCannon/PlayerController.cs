@@ -41,6 +41,7 @@ namespace EQ2GlassCannon
 		public bool m_bUseGreenAEs = true;
 		public bool m_bUseBlueAEs = true;
 		public bool m_bAutoAttack = true;
+		public bool m_bSyncAbilitiesWithAutoAttack = false;
 		public bool m_bCastCures = true;
 		public bool m_bPrioritizeCures = true;
 		public bool m_bCureMainTank = true;
@@ -207,6 +208,7 @@ namespace EQ2GlassCannon
 			TransferINIBool(eTransferType, "General.UseGreenAEs", ref m_bUseGreenAEs);
 			TransferINIBool(eTransferType, "General.UseBlueAEs", ref m_bUseBlueAEs);
 			TransferINIBool(eTransferType, "General.AutoAttack", ref m_bAutoAttack);
+			TransferINIBool(eTransferType, "General.SyncAbilitiesWithAutoAttack", ref m_bSyncAbilitiesWithAutoAttack);
 			TransferINIBool(eTransferType, "General.CastCures", ref m_bCastCures);
 			TransferINIBool(eTransferType, "General.PrioritizeCures", ref m_bPrioritizeCures);
 			TransferINIBool(eTransferType, "General.CureMainTank", ref m_bCureMainTank);
@@ -917,15 +919,11 @@ namespace EQ2GlassCannon
 			if (iAbilityID < 1)
 				return false;
 
-			Ability ThisAbility = Me.Ability(iAbilityID);
-
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			if (!ThisAbility.IsReady)
+			Ability ThisAbility = Me.Ability(iAbilityID);
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
 				return false;
-
-			if (ThisAbility.IsQueued)
-				return true;
 
 			/// Disqualify by power cost.
 			if (Me.Power < ThisAbility.PowerCost)
@@ -960,14 +958,10 @@ namespace EQ2GlassCannon
 			if (!m_bUseBlueAEs || iAbilityID < 1)
 				return false;
 
-			Ability ThisAbility = Me.Ability(iAbilityID);
-
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			if (!ThisAbility.IsReady)
-				return false;
-
-			if (ThisAbility.IsQueued)
+			Ability ThisAbility = Me.Ability(iAbilityID);
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
 				return true;
 
 			int iValidVictimCount = 0;
@@ -1010,14 +1004,10 @@ namespace EQ2GlassCannon
 			if (!m_bUseGreenAEs || iAbilityID < 1 || m_OffensiveTargetActor == null)
 				return false;
 
-			Ability ThisAbility = Me.Ability(iAbilityID);
-
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			if (!ThisAbility.IsReady)
-				return false;
-
-			if (ThisAbility.IsQueued)
+			Ability ThisAbility = Me.Ability(iAbilityID);
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
 				return true;
 
 			int iValidVictimCount = 0;
@@ -1061,14 +1051,10 @@ namespace EQ2GlassCannon
 			if (iAbilityID < 1)
 				return false;
 
-			Ability ThisAbility = Me.Ability(iAbilityID);
-
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			if (!ThisAbility.IsReady)
-				return false;
-
-			if (ThisAbility.IsQueued)
+			Ability ThisAbility = Me.Ability(iAbilityID);
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
 				return true;
 
 			Actor SpellTargetActor = null;
@@ -1134,10 +1120,11 @@ namespace EQ2GlassCannon
 
 			foreach (int iThisAbilityID in aiMezAbilityIDs)
 			{
-				if (!IsAbilityReady(iThisAbilityID))
-					continue;
+				Ability ThisAbility = Me.Ability(iThisAbilityID);
+				if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+					return false;
 
-				float fThisAbilityRange = Me.Ability(iThisAbilityID).Range;
+				float fThisAbilityRange = ThisAbility.Range;
 
 				/// Avoid scanning subsets of a radius we already scanned in a prior iteration.
 				if (fThisAbilityRange < fHighestRangeAlreadyScanned)
@@ -1363,7 +1350,11 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool CheckToggleBuff(int iAbilityID, bool bOn)
 		{
-			CancelAbility(iAbilityID, !bOn);
+			if (iAbilityID < -1)
+				return false;
+
+			if (CancelAbility(iAbilityID, !bOn))
+				return true;
 
 			/// Target myself to remove ambiguity.
 			if (bOn && !IsAbilityMaintained(iAbilityID) && CastAbility(iAbilityID, Me.Name, true))

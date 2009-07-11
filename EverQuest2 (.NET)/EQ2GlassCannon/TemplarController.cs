@@ -73,159 +73,35 @@ namespace EQ2GlassCannon
 		{
 			base.InitializeKnowledgeBook();
 
-			m_iGroupMitigationBuffAbilityID = SelectHighestAbilityID(
-				"Courage",
-				"Daring",
-				"Bravery",
-				"Valor",
-				"Gallantry",
-				"Holy Armor");
-
+			m_iGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Holy Armor");
 			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Watery Respite");
 			m_iBlessingsAbilityID = SelectHighestAbilityID("Blessings");
 			m_iManaCureAbilityID = SelectHighestAbilityID("Mana Cure");
-
-			m_iSingleSTRWISBuffAbilityID = SelectHighestAbilityID(
-				"Protectorate",
-				"Praetorate",
-				"Divine Praetorate",
-				"Celestial Praetorate",
-				"Virtue");
-			
-			m_iSingleStoneskinBuffAbilityID = SelectHighestAbilityID(
-				"Vigilant Benediction",
-				"Unyielding Benediction");
-
-			m_iMeleeSkillBuffAbilityID = SelectHighestAbilityID(
-				"Minor Redoubt",
-				"Redoubt",
-				"Pious Redoubt",
-				"Sacred Redoubt",
-				"Holy Redoubt",
-				"Aegolism");
-
-			m_iMeleeHealProcBuffAbilityID = SelectHighestAbilityID(
-				"Glory of Combat",
-				"Glory of Battle",
-				"Glory");
-
-			m_iSingleReactiveHealAbilityID = SelectHighestAbilityID(
-				"Bestowal of Vitae",
-				"Bestowal of Vitality",
-				"Supplicant's Prayer",
-				"Greater Intercession",
-				"Grand Intercession",
-				"Glorious Intercession",
-				"Vital Intercession");
-
-			m_iHealingAbilityID = SelectHighestAbilityID(
-				"Minor Healing",
-				"Healing",
-				"Greater Healing",
-				"Ameliorate",
-				"Amelioration",
-				"Greater Amelioration",
-				"Grand Amelioration",
-				"Meliorate");
-
-			m_iArchHealingAbilityID = SelectHighestAbilityID(
-				"Minor Arch Healing",
-				"Arch Healing",
-				"Greater Arch Healing",
-				"Restoration",
-				"Greater Restoration",
-				"Grand Restoration",
-				"Arch Restoration");
-
+			m_iSingleSTRWISBuffAbilityID = SelectHighestTieredAbilityID("Virtue");
+			m_iSingleStoneskinBuffAbilityID = SelectHighestTieredAbilityID("Unyielding Benediction");
+			m_iMeleeSkillBuffAbilityID = SelectHighestTieredAbilityID("Aegolism");
+			m_iMeleeHealProcBuffAbilityID = SelectHighestTieredAbilityID("Glory");
+			m_iSingleReactiveHealAbilityID = SelectHighestTieredAbilityID("Vital Intercession");
+			m_iHealingAbilityID = SelectHighestTieredAbilityID("Meliorate");
+			m_iArchHealingAbilityID = SelectHighestTieredAbilityID("Restoration");
 			m_iSinglePowerToHealthAbilityID = SelectHighestAbilityID("Reverence");
-			m_iSingleOneHitWardAbilityID = SelectHighestAbilityID("Repent");
-
-			m_iGroupReactiveHealAbilityID = SelectHighestAbilityID(
-				"Soothing Sermon",
-				"Intercession",
-				"Crucial Intercession",
-				"Fateful Intercession",
-				"Grand Intercession",
-				"Dire Intercession",
-				"Holy Intercession");
-
-			m_iGroupHealingAbilityID = SelectHighestAbilityID(
-				"Healing Word",
-				"Healing Touch",
-				"Word of Restoration",
-				"Word of Atonement",
-				"Word of Reparation");
-
+			m_iSingleOneHitWardAbilityID = SelectHighestTieredAbilityID("Repent");
+			m_iGroupReactiveHealAbilityID = SelectHighestTieredAbilityID("Holy Intercession");
+			m_iGroupHealingAbilityID = SelectHighestTieredAbilityID("Word of Redemption");
 			m_iGroupCombatRezAbilityID = SelectHighestAbilityID("Blazon Life");
 			m_iSingleFullHealthCombatRezAbilityID = SelectHighestAbilityID("Resurrect");
 			m_iSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Battle's Reprieve");
-
-			m_iGeneralGroupCureAbilityID = SelectHighestAbilityID(
-				"Cure: Resolve",
-				"Cure: Ardent Resolve",
-				"Devoted Resolve");
-
-			m_iGeneralSingleDeathSaveAbilityID = SelectHighestAbilityID(
-				"Salvation",
-				"Faithful Salvation",
-				"Forgiving Salvation");
-
-			m_iSingleMitigationDebuffAbilityID = SelectHighestAbilityID(
-				"Rebuke",
-				"Scorn",
-				"Disgrace",
-				"Reproach",
-				"Admonishment",
-				"Reproval");
-
-			m_iSingleDivineDebuffAbilityID = SelectHighestAbilityID(
-				"Mark of Pawns",
-				"Mark of Princes",
-				"Mark of Kings",
-				"Mark of the Celestial");
-
-			m_iSingleWISDebuffAbilityID = SelectHighestAbilityID(
-				"Symbol of Corruption",
-				"Punish Corruption",
-				"Smite Corruption");
-	
-			m_iSingleReactiveTraumaCureAbilityID = SelectHighestAbilityID(
-				"Involuntary Healer",
-				"Involuntary Curate");
-
-			m_iSingleReactiveDeathHealAbilityID = SelectHighestAbilityID(
-				"Amending Fate",
-				"Redemptive Fate",
-				"Atoning Fate",
-				"Supplicating Fate",
-				"Healing Fate");
-
-			m_iSingleSmiteAbilityID = SelectHighestAbilityID(
-				"Smite",
-				"Admonishing Smite",
-				"Greater Smite",
-				"Reproving Smite",
-				"Condemning Smite",
-				"Judging Smite",
-				"Divine Smite");
-
-			m_iSingleStunAbilityID = SelectHighestAbilityID(
-				"Prostrate",
-				"Force Submission",
-				"Forced Humility",
-				"Awestruck");
-
-			m_iSingleDazeAbilityID = SelectHighestAbilityID(
-				"Sign of Pacification",
-				"Sign of Weakness",
-				"Sign of Debility",
-				"Sign of Infirmity",
-				"Sign of Frailty",
-				"Sign of Placation");
-
-			m_iHammerDumbfirePetAbilityID = SelectHighestAbilityID(
-				"Unswerving Hammer",
-				"Unflinching Hammer");
+			m_iGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Devoted Resolve");
+			m_iGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Holy Salvation");
+			m_iSingleMitigationDebuffAbilityID = SelectHighestTieredAbilityID("Rebuke");
+			m_iSingleDivineDebuffAbilityID = SelectHighestTieredAbilityID("Mark of Divinity");
+			m_iSingleWISDebuffAbilityID = SelectHighestTieredAbilityID("Smite Corruption");
+			m_iSingleReactiveTraumaCureAbilityID = SelectHighestTieredAbilityID("Involuntary Gift");
+			m_iSingleReactiveDeathHealAbilityID = SelectHighestTieredAbilityID("Healing Fate");
+			m_iSingleSmiteAbilityID = SelectHighestTieredAbilityID("Divine Smite");
+			m_iSingleStunAbilityID = SelectHighestTieredAbilityID("Awestruck");
+			m_iSingleDazeAbilityID = SelectHighestTieredAbilityID("Sign of Pacification");
+			m_iHammerDumbfirePetAbilityID = SelectHighestTieredAbilityID("Unswerving Hammer");
 
 			return;
 		}
