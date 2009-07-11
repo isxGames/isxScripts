@@ -24,6 +24,12 @@ Revision History
   * The "AutoPull" area of the UI should update/work MUCH better now.
 
 -----------------------------------------------------------------
+;2.7.2c (CaPilot)
+; * Added Code to the OnIncomingText Atom to track some hit information for autoattack timing.
+;   Added a function CalcAutoAttackTimer that get scalled prior todeterming if we have time to
+;		cast the combat art/spell.  Added initial variable setting the initial value for LastAutoAttack in the 
+;		Main function	as well as adding a list of variables used for the autoattack timing labeled AutoAttack Timing.
+;
 ;2.7.2b (Amadeus)
 ; * Major update to "Auto Hunting" mode, especially for those that use a bow or a spell/combat art.  It utilizes line of sight, collision
 ;   detection, and maintains a temporary nopull list.  It also does things a lot more sanely than before.
