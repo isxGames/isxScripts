@@ -529,7 +529,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffHateGroupMember,${This.SelectedItem.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
-		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffHateGroupMember,1,1,0]
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffHateGroupMember,1,1,0,0,0]
 		</OnLeftClick>
 	</combobox>
 	<Commandcheckbox Name='Buff Hate'>

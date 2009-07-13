@@ -1,5 +1,5 @@
 ;*****************************************************
-;Dirge.iss 20090618a
+;Dirge.iss 20090711a
 ;by CaPilot
 ;
 ;20090711a
@@ -379,17 +379,19 @@ function Buff_Routine(int xAction)
 			break
 		case Buff_Hate
 			if ${BuffHate}
-			{
-				BuffTarget:Set[${UIElement[bBuffHateGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+				{			
+				BuffTarget:Set[${UIElement[cbBuffHateGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-				{
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+	
+					if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2
 				}
-				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				else
 				{
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
+				BuffTarget:Set[${UIElement[cbBuffHateGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				}
-			}
 			break
 		case Buff_AABattleCry
 			BuffTarget:Set[${UIElement[cbBuff_AABattleCry@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]

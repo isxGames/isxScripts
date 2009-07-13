@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.2c Updated: 7/11/09 by CaPilot
+; EQ2Bot.iss Version 2.7.2d Updated: 7/13/09 by CaPilot
 ;
 ; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
@@ -5182,7 +5182,7 @@ objectdef EQ2BotObj
 
 	}
 
-	method RefreshList(string ListFQN, string SettingSet, bool IncludeMe=1, bool IncludePets=1, bool IncludeRaid=0)
+	method RefreshList(string ListFQN, string SettingSet, bool IncludeMe=1, bool IncludePets=1, bool IncludeRaid=0, bool IncludeNoOne=1)
 	{
 		variable int tmpvar
 		variable iterator iter
@@ -5211,7 +5211,9 @@ objectdef EQ2BotObj
 
 		if ${UIElement[${ListFQN}].Type.Find[combobox]}
 		{
-			UIElement[${ListFQN}]:AddItem[No One]
+			if ${IncludeNoOne}
+				UIElement[${ListFQN}]:AddItem[No One]
+			
 			;UIElement[${ListFQN}].ItemByValue[No One]:Select
 		}
 
