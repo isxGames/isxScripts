@@ -12,9 +12,9 @@ namespace EQ2GlassCannon
 		public int m_iEvasiveManeuversAbilityID = -1;
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iLoreAndLegendAbilityID = SelectHighestAbilityID("Sinister Strike");
 			m_iHOStarterAbiltyID = SelectHighestAbilityID("Lucky Break");

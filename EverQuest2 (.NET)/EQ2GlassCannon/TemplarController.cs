@@ -69,9 +69,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Holy Armor");
 			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Watery Respite");

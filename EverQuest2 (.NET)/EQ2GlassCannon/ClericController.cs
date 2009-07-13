@@ -15,9 +15,9 @@ namespace EQ2GlassCannon
 		public int m_iYaulpAbilityID = -1;
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iDivineRecoveryAbilityID = SelectHighestAbilityID("Divine Recovery");
 			m_iSkullCrackAbilityID = SelectHighestAbilityID("Skull Crack");

@@ -18,9 +18,9 @@ namespace EQ2GlassCannon
 		public int m_iAmbidexterousCastingAbilityID = -1;
 		public int m_iGeneralGreenDeaggroAbilityID = -1;
 
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iWardOfSagesAbilityID = SelectHighestAbilityID("Ward of Sages");
 

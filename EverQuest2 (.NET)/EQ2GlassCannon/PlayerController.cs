@@ -41,7 +41,7 @@ namespace EQ2GlassCannon
 		public bool m_bUseGreenAEs = true;
 		public bool m_bUseBlueAEs = true;
 		public bool m_bAutoAttack = true;
-		public bool m_bSyncAbilitiesWithAutoAttack = false;
+		public bool m_bSyncAbilitiesWithAutoAttack = false; /// Not implemented yet.
 		public bool m_bCastCures = true;
 		public bool m_bPrioritizeCures = true;
 		public bool m_bCureMainTank = true;
@@ -452,7 +452,7 @@ namespace EQ2GlassCannon
 		#endregion
 
 		/************************************************************************************/
-		public virtual void InitializeKnowledgeBook()
+		public virtual void RefreshKnowledgeBook()
 		{
 			Program.Log("Referencing Knowledge Book...");
 
@@ -703,12 +703,14 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
-				/// Reload the INI file; the rest of the code will adjust on its own.
+				/// Reload the INI file and knowledge book; the rest of the code will adjust on its own.
 				else if (strLowerCaseMessage.Contains(m_strReloadINISubphrase))
 				{
 					Program.Log("Reload INI command (\"{0}\") received.", m_strReloadINISubphrase);
 					Program.LoadINIFile();
 					TransferINISettings(TransferType.Read);
+
+					Program.s_bRefreshKnowledgeBook = true;
 				}
 
 				else if (strLowerCaseMessage.Contains(m_strDoNothingSubphrase))
@@ -922,8 +924,11 @@ namespace EQ2GlassCannon
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
 			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
 				return false;
+
+			if (ThisAbility.IsQueued)
+				return true;
 
 			/// Disqualify by power cost.
 			if (Me.Power < ThisAbility.PowerCost)
@@ -961,7 +966,10 @@ namespace EQ2GlassCannon
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
 			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+				return false;
+
+			if (ThisAbility.IsQueued)
 				return true;
 
 			int iValidVictimCount = 0;
@@ -1007,7 +1015,10 @@ namespace EQ2GlassCannon
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
 			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+				return false;
+
+			if (ThisAbility.IsQueued)
 				return true;
 
 			int iValidVictimCount = 0;
@@ -1054,7 +1065,10 @@ namespace EQ2GlassCannon
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
 			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+				return false;
+
+			if (ThisAbility.IsQueued)
 				return true;
 
 			Actor SpellTargetActor = null;
@@ -1212,7 +1226,7 @@ namespace EQ2GlassCannon
 
 			/// IsReady is false for available CA's that require stealth.
 			//return (ThisAbility.TimeUntilReady == 0.0);
-			return ThisAbility.IsReady;
+			return ThisAbility.IsValid && ThisAbility.IsReady;
 		}
 
 		/************************************************************************************/
@@ -1673,6 +1687,11 @@ namespace EQ2GlassCannon
 
 				return false;
 			}
+
+			/// If we're stealthed, then we can bail because targetting is all we need.
+			/// Otherwise the /auto commands will break stealth which we might need for some CA's.
+			if (MeActor.IsStealthed)
+				return true;
 
 			/// Turn on auto-attack if required.
 			/// End-of-combat will turn it back off automatically.

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EQ2.ISXEQ2;
 
 namespace EQ2GlassCannon
 {
@@ -19,6 +20,7 @@ namespace EQ2GlassCannon
 		public bool m_bBuffHealthRegen = false;
 		public bool m_bBuffArcaneResistance = false;
 		public bool m_bBuffElementalResistance = false;
+		public bool m_bAllowShroudForNightStrike = false;
 		public string m_strMaestroCallout = "POTM INC (32 sec) - Spam your taunts and hostile spells NOW (guaranteed +800 mental dmg proc).";
 		public string m_strUpbeatTempoTarget = string.Empty;
 		public string m_strJestersCapRequestSubstring = "JC ME";
@@ -80,6 +82,7 @@ namespace EQ2GlassCannon
 			TransferINIBool(eTransferType, "Troubador.BuffHealthRegen", ref m_bBuffHealthRegen);
 			TransferINIBool(eTransferType, "Troubador.BuffArcaneResistance", ref m_bBuffArcaneResistance);
 			TransferINIBool(eTransferType, "Troubador.BuffElementalResistance", ref m_bBuffElementalResistance);
+			TransferINIBool(eTransferType, "Troubador.AllowShroudForNightStrike", ref m_bAllowShroudForNightStrike);
 			TransferINIString(eTransferType, "Troubador.MaestroCallout", ref m_strMaestroCallout);
 			TransferINIString(eTransferType, "Troubador.UpbeatTempoTarget", ref m_strUpbeatTempoTarget);
 			TransferINIString(eTransferType, "Troubador.JestersCapRequestSubstring", ref m_strJestersCapRequestSubstring);
@@ -88,9 +91,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Song of Magic");
 			m_iGroupSpellProcBuffAbilityID = SelectHighestTieredAbilityID("Aria of Magic");
@@ -221,6 +224,7 @@ namespace EQ2GlassCannon
 					return false;
 
 				/// We put the stealth check so early on because it is so easily wasted by the wrong thing.
+				/// Troubadors only have one stealth attack.
 				if (MeActor.IsStealthed && CastAbility(m_iSingleINTDebuffAbilityID))
 					return true;
 
@@ -286,10 +290,22 @@ namespace EQ2GlassCannon
 				if (CastAbility(m_iSingleResistDebuffAbilityID))
 					return true;
 
-				/// This stealth enables the last of our debuffs.
-				/// On the very next DoNextAction(), we'll see ourselves stealthed and execute the INT debuff.
-				if (IsAbilityReady(m_iSingleINTDebuffAbilityID) && !IsAbilityMaintained(m_iSingleINTDebuffAbilityID) && CastAbility(m_iShroudAbilityID))
-					return true;
+				/// We now cast stealth to allow the use of our INT debuff, Night Strike.
+				/// On the very next DoNextAction(), we'll see ourselves stealthed and execute the debuff.
+				/// It takes some luck though. We cast stealth but the server doesn't tell us we're stealthed yet,
+				/// so we use other spells and break the stealth on accident.
+				if (!IsAbilityMaintained(m_iSingleINTDebuffAbilityID))
+				{
+					Ability DebuffAbility = Me.Ability(m_iSingleINTDebuffAbilityID);
+					if (DebuffAbility.TimeUntilReady == 0.0f) /// IsReady will always be false if not stealthed.
+					{
+						if (CastAbility(m_iBumpAbilityID))
+							return true;
+
+						if (m_bAllowShroudForNightStrike && CastAbility(m_iShroudAbilityID))
+							return true;
+					}
+				}
 
 				/*********************************
 				From here on out, it's dps spells.
