@@ -24,6 +24,10 @@ Revision History
   * The "AutoPull" area of the UI should update/work MUCH better now.
 
 -----------------------------------------------------------------
+;2.7.2d (CaPilot)
+; * Added new input parameters IncludeNoOn for RefreshList to allow the ability to not have the script to add that option if not needed.
+;		this was needed because the dropdown box for the dirge for hate buff had a No One option and there was a check box to turn the hate
+;		buff on and off having both was redundant.  So this way we can remove it from the list and still utilize the checkbox.
 ;2.7.2c (CaPilot)
 ; * Added Code to the OnIncomingText Atom to track some hit information for autoattack timing.
 ;   Added a function CalcAutoAttackTimer that get scalled prior todeterming if we have time to
