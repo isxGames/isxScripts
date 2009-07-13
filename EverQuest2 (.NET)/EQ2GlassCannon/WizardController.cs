@@ -55,9 +55,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iSTRINTBuffAbilityID = SelectHighestTieredAbilityID("Tyrant's Pact");
 			m_iElementalBuffAbilityID = SelectHighestTieredAbilityID("Fortify Elements");

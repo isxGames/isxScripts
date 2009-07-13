@@ -29,9 +29,9 @@ namespace EQ2GlassCannon
 			return;
 		}
 
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iGroupCastingSkillBuffAbilityID = SelectHighestAbilityID(
 				"Spellbinding Pact",

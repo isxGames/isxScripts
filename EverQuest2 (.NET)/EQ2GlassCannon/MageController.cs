@@ -14,9 +14,9 @@ namespace EQ2GlassCannon
 		public int m_iCureArcaneAbilityID = -1;
 		public int m_iMagisShieldingAbilityID = -1;
 
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iLoreAndLegendAbilityID = SelectHighestAbilityID("Master's Strike");
 			m_iHOStarterAbiltyID = SelectHighestAbilityID("Arcane Augur");

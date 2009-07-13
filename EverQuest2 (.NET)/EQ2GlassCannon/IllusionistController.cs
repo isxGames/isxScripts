@@ -79,9 +79,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iINTWISBuffAbilityID = SelectHighestTieredAbilityID("Rune of Thought");
 			m_iArcaneBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Genius");
@@ -169,8 +169,8 @@ namespace EQ2GlassCannon
 
 			GetOffensiveTargetActor();
 
-			/// Illusionist mezzes can be cast while in motion.
-			if (m_bUseGreenAEs)
+			/// Red illusionist mezzes can be cast while in motion.
+			if (m_bUseGreenAEs && MeActor.IsIdle)
 			{
 				if (CastNextMez(m_iSingleFastMezAbilityID, m_iSingleNormalMezAbilityID, m_iGreenMezAbilityID))
 					return true;

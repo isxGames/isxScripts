@@ -43,9 +43,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iCureAbilityID = SelectHighestAbilityID("Cure");
 			m_iCureCurseAbilityID = SelectHighestAbilityID("Cure Curse");

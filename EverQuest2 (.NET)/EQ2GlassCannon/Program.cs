@@ -23,6 +23,7 @@ namespace EQ2GlassCannon
 		private static EQ2Event s_eq2event = null;
 		public static PlayerController s_Controller = null;
 		public static bool s_bContinueBot = true;
+		public static bool s_bRefreshKnowledgeBook = false;
 		private static long s_lFrameCount = 0;
 		public static string s_strINIFolderPath = string.Empty;
 		public static string s_strCurrentINIFilePath = string.Empty;
@@ -244,7 +245,6 @@ namespace EQ2GlassCannon
 					s_strINIFolderPath = Directory.GetCurrentDirectory(); // ehhhh not the best option but w/e...
 
 				string strLastClass = string.Empty;
-				bool bRefreshKnowledgeBook = false;
 				bool bFirstZoningFrame = true;
 
 				do
@@ -292,7 +292,7 @@ namespace EQ2GlassCannon
 						{
 							Program.Log("New class found: " + Me.SubClass);
 							strLastClass = Me.SubClass;
-							bRefreshKnowledgeBook = true;
+							s_bRefreshKnowledgeBook = true;
 
 							switch (strLastClass.ToLower())
 							{
@@ -330,11 +330,14 @@ namespace EQ2GlassCannon
 						}
 
 						/// If the size of the knowledge book changes, defer a resync.
+						/// NOTE: If the user equips or unequips an ability-changing item,
+						/// the ability table will be hosed but we'll have no way of knowing to force a refresh.
 						if (Me.NumAbilities != s_Controller.m_iAbilitiesFound)
-							bRefreshKnowledgeBook = true;
+							s_bRefreshKnowledgeBook = true;
 
 						/// Only if the knowledge book is intact can we safely assume that regular actions are OK.
-						if (!bRefreshKnowledgeBook)
+						/// DoNextAction() might set s_bRefreshKnowledgeBook to true.  This is fine.
+						if (!s_bRefreshKnowledgeBook)
 							s_Controller.DoNextAction();
 
 						/// Only check for camping or AFK every 5th frame.
@@ -351,10 +354,10 @@ namespace EQ2GlassCannon
 
 					/// If we have to refresh the knowledge book, then do it outside of the main lock.
 					/// This is because we'll use frame waits and can't risk breaking cached data.
-					if (bRefreshKnowledgeBook)
+					if (s_bRefreshKnowledgeBook)
 					{
-						s_Controller.InitializeKnowledgeBook();
-						bRefreshKnowledgeBook = false;
+						s_Controller.RefreshKnowledgeBook();
+						s_bRefreshKnowledgeBook = false;
 					}
 
 					/// Skip frames as configured.
@@ -379,10 +382,8 @@ namespace EQ2GlassCannon
 			/// Things should work perfectly or not at all.
 			catch (Exception e)
 			{
-#if DEBUG
 				if (s_Controller != null)
 					Program.RunCommand("/t " + s_Controller.m_strCommandingPlayer + " oh shit lol");
-#endif
 
 				Program.Log("Unhandled .NET exception:" + e.Message);
 				Program.Log(e.TargetSite.ToString()); /// TODO: Extract and display the LINE that threw the exception!!!

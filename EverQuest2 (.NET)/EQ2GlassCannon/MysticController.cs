@@ -65,9 +65,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Ebbing Spirit");
 			m_iGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Ancestral Savior");

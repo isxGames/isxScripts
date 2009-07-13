@@ -10,9 +10,9 @@ namespace EQ2GlassCannon
 		public int m_iCoagulateAbilityID = -1;
 		public int m_iRitualOfAlacrityAbilityID = -1;
 
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iCoagulateAbilityID = SelectHighestAbilityID("Coagulate");
 			m_iRitualOfAlacrityAbilityID = SelectHighestAbilityID("Ritual");

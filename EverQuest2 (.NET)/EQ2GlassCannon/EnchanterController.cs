@@ -23,9 +23,9 @@ namespace EQ2GlassCannon
 		public int m_iBlinkAbilityID = -1;
 
 		/************************************************************************************/
-		public override void InitializeKnowledgeBook()
+		public override void RefreshKnowledgeBook()
 		{
-			base.InitializeKnowledgeBook();
+			base.RefreshKnowledgeBook();
 
 			m_iManaFlowAbilityID = SelectHighestAbilityID("Mana Flow");
 
