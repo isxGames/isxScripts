@@ -272,6 +272,9 @@ namespace EQ2GlassCannon
 							{
 								Program.Log("Done zoning.");
 								bFirstZoningFrame = true;
+
+								/// We used to not have to do this, but something changed and fucked everything up.
+								s_bRefreshKnowledgeBook = true;
 							}
 						}
 
