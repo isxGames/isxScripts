@@ -1,7 +1,7 @@
 ;*************************************************************
 ;Warden.iss
 ;version 20090703a
-; by Pygar
+; by CaPilot
 ;
 ;20090703a
 ; Reworked the switch statement in combat_routine
@@ -96,14 +96,13 @@ function Class_Declaration()
 	declare BuffSporesGroupMember string script
 	declare BuffVigorGroupMember string script
 	declare CureCurseGroupMember string script
-
+	declare SpeedCures bool script 0
+	
 	call EQ2BotLib_Init
 
 	SpellMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
-	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
-	CureCurseOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseOthersMode,FALSE]}]
 	GenesisMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Genesis,FALSE]}]
 	InfusionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[InfusionMode,FALSE]}]
 	KeepReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepReactiveUp,FALSE]}]
@@ -154,6 +153,12 @@ function Pulse()
 		{
 			Me.Maintained[${SpellType[365]}]:Cancel
 		}
+		
+		if ${SpeedCures}
+		{
+			call CheckCures
+		}
+			
 
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
@@ -335,16 +340,16 @@ if !${InitialBuffsDone}
 	if (${Me.GroupCount} > 1)
 	{
 		call CastSpellRange 313
-		
-		; NEEDED CODE FOR SOW TIMER TO WORK
+  }
+  
+  	; NEEDED CODE FOR SOW TIMER TO WORK
 		; NEEDS TO BE HERE BECAUSE WE ONLY WANT
 		; IT EXECUTING ONCE ON SCRIPT STARTUP
 		SOWStartTime:Set[${Time.Timestamp}]
 		SOWStartTime.Day:Dec[1]
 		SOWStartTime:Update
-
+		
 		InitialBuffsDone:Set[TRUE]
-  }
 }
 
 ; If we are in Cure Mode call the check cure function
@@ -1231,15 +1236,15 @@ function CheckCures()
 	declare grpcure int local 0
 	declare Affcnt int local 0
 	declare CureTarget string local
-	
-	
+
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 	
 	; Check if curse on the person selected in the dropdown and cure them.
-	if ${CureCurseOthersEnabled}
+	if ${CureCurseOthersMode}
 	{
+
 		CureTarget:Set[${CureCurseGroupMember}]
 
 		if  !${Me.Raid} > 0 
@@ -1422,16 +1427,9 @@ function HandleGroupWiped()
 		if (${Me.GroupCount} > 1)
 		{
 			call CastSpellRange 313
-			
-		; NEEDED CODE FOR SOW TIMER TO WORK
-		; NEEDS TO BE HERE BECAUSE WE ONLY WANT
-		; IT EXECUTING ONCE ON SCRIPT STARTUP
-		SOWStartTime:Set[${Time.Timestamp}]
-		SOWStartTime.Day:Dec[1]
-		SOWStartTime:Update
-			
-			InitialBuffsDone:Set[TRUE]
+  		InitialBuffsDone:Set[TRUE]
 	  }
+	  		
 	}
 
 	return OK
@@ -1461,6 +1459,13 @@ function Cancel_Root()
 function PostDeathRoutine()
 {
 	;; This function is called after a character has either revived or been rezzed
+	
+		; NEEDED CODE FOR SOW TIMER TO WORK
+		; NEEDS TO BE HERE BECAUSE WE ONLY WANT
+		; IT EXECUTING ONCE ON SCRIPT STARTUP
+		SOWStartTime:Set[${Time.Timestamp}]
+		SOWStartTime.Day:Dec[1]
+		SOWStartTime:Update
 
 	return
 }
