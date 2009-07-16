@@ -474,34 +474,57 @@ namespace EQ2GlassCannon
 						for (int iIndex = 1; iIndex <= Me.NumAbilities; iIndex++)
 						{
 							Ability ThisAbility = Me.Ability(iIndex);
-							if (ThisAbility.Name != null)
+
+							/// An ability string of null means it isn't loaded from the server yet.
+							if (ThisAbility.IsValid && !string.IsNullOrEmpty(ThisAbility.Name))
 							{
+								m_iAbilitiesFound++;
+
 								if (m_KnowledgeBookNameToIndexMap.ContainsKey(ThisAbility.Name))
-									Program.Log("WARNING: Duplicate ability \"{0}\" found. This could be problematic with maintained spells.", ThisAbility.Name);
+								{
+									Program.Log(
+										"WARNING: Duplicate ability \"{0}\" found (index {1} & {2}). This could be problematic with maintained spells.",
+										ThisAbility.Name,
+										iIndex,
+										m_KnowledgeBookNameToIndexMap[ThisAbility.Name]);
+								}
 								else
 									m_KnowledgeBookNameToIndexMap.Add(ThisAbility.Name, iIndex);
-								m_KnowledgeBookIndexToNameMap.Add(iIndex, ThisAbility.Name);
 
-								m_iAbilitiesFound++;
+								m_KnowledgeBookIndexToNameMap.Add(iIndex, ThisAbility.Name);
 							}
 						}
 
 						if (m_iAbilitiesFound < Me.NumAbilities)
-							Program.Log(string.Format("Found {0} names of {1} abilities so far.", m_iAbilitiesFound, Me.NumAbilities));
+							Program.Log("Found {0} names of {1} abilities so far.", m_iAbilitiesFound, Me.NumAbilities);
 						else
 						{
 							Program.Log("All abilities found.");
 							break;
 						}
-
 					}
 				}
 
 				/// This is black magic to force the client to reload the knowledge book.
+				Program.Log("Flashing knowledge book...");
 				Program.RunCommand("/showcombatartbook");
 				Program.FrameWait(TimeSpan.FromSeconds(3.0f));
 				Program.RunCommand("/toggleknowledge");
+				Program.Log("Done flashing knowledge book.");
 			}
+
+#if DEBUG
+			string strLogFileName = string.Format("{0}.{1} ability table debug dump.txt", Program.EQ2.ServerName, Me.Name);
+			strLogFileName = Path.Combine(Program.s_strINIFolderPath, strLogFileName);
+			using (StreamWriter OutputFile = new StreamWriter(strLogFileName, false, Encoding.UTF8))
+			{
+				foreach (KeyValuePair<int, string> ThisPair in m_KnowledgeBookIndexToNameMap)
+				{
+					string strOutput = string.Format("{0}: \"{1}\"", ThisPair.Key, ThisPair.Value);
+					OutputFile.WriteLine(strOutput);
+				}
+			}
+#endif
 
 			/// This must be done before any call to SelectHighestAbilityID().
 			m_KnowledgeBookCategoryDictionary.Clear();
@@ -924,11 +947,8 @@ namespace EQ2GlassCannon
 			/// We won't muck around with spell queuing and add needless complexity;
 			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
 			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
 				return false;
-
-			if (ThisAbility.IsQueued)
-				return true;
 
 			/// Disqualify by power cost.
 			if (Me.Power < ThisAbility.PowerCost)
@@ -968,7 +988,6 @@ namespace EQ2GlassCannon
 			Ability ThisAbility = Me.Ability(iAbilityID);
 			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
 				return false;
-
 			if (ThisAbility.IsQueued)
 				return true;
 
@@ -1017,7 +1036,6 @@ namespace EQ2GlassCannon
 			Ability ThisAbility = Me.Ability(iAbilityID);
 			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
 				return false;
-
 			if (ThisAbility.IsQueued)
 				return true;
 
@@ -1067,7 +1085,6 @@ namespace EQ2GlassCannon
 			Ability ThisAbility = Me.Ability(iAbilityID);
 			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
 				return false;
-
 			if (ThisAbility.IsQueued)
 				return true;
 
@@ -1465,9 +1482,14 @@ namespace EQ2GlassCannon
 				}
 
 				Actor AutoFollowActor = m_GroupMemberDictionary[m_strAutoFollowTarget].ToActor();
-				if (!AutoFollowActor.IsValid || AutoFollowActor.IsDead)
+				if (!AutoFollowActor.IsValid)
 				{
-					Program.Log("Can't autofollow on {0} (player is dead or invalid).", m_strAutoFollowTarget);
+					Program.Log("Can't autofollow on {0} (player actor is invalid).", m_strAutoFollowTarget);
+					return false;
+				}
+				else if (AutoFollowActor.IsDead)
+				{
+					Program.Log("Can't autofollow on {0} (player is dead).", m_strAutoFollowTarget);
 					return false;
 				}
 
@@ -1691,7 +1713,10 @@ namespace EQ2GlassCannon
 			/// If we're stealthed, then we can bail because targetting is all we need.
 			/// Otherwise the /auto commands will break stealth which we might need for some CA's.
 			if (MeActor.IsStealthed)
+			{
+				Program.Log("Player is stealthed; no action will be taken.");
 				return true;
+			}
 
 			/// Turn on auto-attack if required.
 			/// End-of-combat will turn it back off automatically.

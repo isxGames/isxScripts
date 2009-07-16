@@ -9,7 +9,7 @@ namespace EQ2GlassCannon
 	{
 		#region INI settings
 		public bool m_bBuffRegen = true;
-		public bool m_bManaFlowMainTank = true;
+		public bool m_bUseManaFlow = true;
 		public double m_fManaFlowThresholdRatio = 0.9;
 		#endregion
 
@@ -50,7 +50,7 @@ namespace EQ2GlassCannon
 			base.TransferINISettings(eTransferType);
 
 			TransferINIBool(eTransferType, "Enchanter.BuffRegen", ref m_bBuffRegen);
-			TransferINIBool(eTransferType, "Enchanter.ManaFlowMainTank", ref m_bManaFlowMainTank);
+			TransferINIBool(eTransferType, "Enchanter.UseManaFlow", ref m_bUseManaFlow);
 			TransferINIDouble(eTransferType, "Enchanter.ManaFlowThresholdRatio", ref m_fManaFlowThresholdRatio);
 
 			return;
@@ -59,6 +59,9 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool CheckManaFlow()
 		{
+			if (!m_bUseManaFlow)
+				return false;
+
 			if (!MeActor.IsIdle || !IsAbilityReady(m_iManaFlowAbilityID))
 				return false;
 
@@ -69,7 +72,7 @@ namespace EQ2GlassCannon
 
 			string strLowestPowerName = string.Empty;
 			int iLowestPowerAmount = int.MaxValue;
-			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bManaFlowMainTank))
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(true))
 			{
 				if (ThisStatus.m_bIsDead)
 					continue;

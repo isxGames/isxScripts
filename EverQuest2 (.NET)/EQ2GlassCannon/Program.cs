@@ -143,7 +143,7 @@ namespace EQ2GlassCannon
 					strInput = strInput.Trim();
 
 #if DEBUG
-					Program.Log(strInput);
+					//Program.Log(strInput);
 #endif
 
 					if (strInput.StartsWith(";"))
@@ -176,7 +176,7 @@ namespace EQ2GlassCannon
 					string strOutput = string.Format("{0}={1}", ThisItem.Key, ThisItem.Value);
 					OutputFile.WriteLine(strOutput);
 #if DEBUG
-					Program.Log(strOutput);
+					//Program.Log(strOutput);
 #endif
 				}
 			}
@@ -388,7 +388,7 @@ namespace EQ2GlassCannon
 				if (s_Controller != null)
 					Program.RunCommand("/t " + s_Controller.m_strCommandingPlayer + " oh shit lol");
 
-				Program.Log("Unhandled .NET exception:" + e.Message);
+				Program.Log("Unhandled .NET exception: " + e.Message);
 				Program.Log(e.TargetSite.ToString()); /// TODO: Extract and display the LINE that threw the exception!!!
 				Program.Log(e.StackTrace.ToString());
 			}
