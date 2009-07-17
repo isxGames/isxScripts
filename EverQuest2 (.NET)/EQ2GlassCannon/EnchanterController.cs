@@ -59,10 +59,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool CheckManaFlow()
 		{
-			if (!m_bUseManaFlow)
-				return false;
-
-			if (!MeActor.IsIdle || !IsAbilityReady(m_iManaFlowAbilityID))
+			if (!m_bUseManaFlow || !MeActor.IsIdle || !IsAbilityReady(m_iManaFlowAbilityID))
 				return false;
 
 			/// Mana Flow requires 10%; make sure we have 15%.

@@ -107,7 +107,7 @@ namespace EQ2GlassCannon
 				for (int iIndex = 0; iIndex <= 5; iIndex++)
 				{
 					GroupMember ThisMember = Me.Group(iIndex);
-					if (ThisMember != null && ThisMember.Name != null)
+					if (ThisMember != null && !string.IsNullOrEmpty(ThisMember.Name))
 						yield return ThisMember;
 				}
 			}

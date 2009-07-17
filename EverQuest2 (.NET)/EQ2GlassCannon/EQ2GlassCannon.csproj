@@ -69,6 +69,7 @@
     <Compile Include="EnchanterController.cs" />
     <Compile Include="IllusionistController.cs" />
     <Compile Include="MageController.cs" />
+    <Compile Include="MessageThread.cs" />
     <Compile Include="MysticController.cs" />
     <Compile Include="PriestController.cs" />
     <Compile Include="ScoutController.cs" />

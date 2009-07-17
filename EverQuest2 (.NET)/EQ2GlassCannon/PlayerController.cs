@@ -47,7 +47,6 @@ namespace EQ2GlassCannon
 		public bool m_bCureMainTank = true;
 		public bool m_bHealMainTank = true;
 		public bool m_bSpamHeroicOpportunity = true;
-		public bool m_bSpamCrowdControl = false;
 		public bool m_bMezAdds = false;
 		public bool m_bUseRacialBuffs = true;
 		public bool m_bUsePet = true;
@@ -214,7 +213,6 @@ namespace EQ2GlassCannon
 			TransferINIBool(eTransferType, "General.CureMainTank", ref m_bCureMainTank);
 			TransferINIBool(eTransferType, "General.HealMainTank", ref m_bHealMainTank);
 			TransferINIBool(eTransferType, "General.SpamHeroicOpportunity", ref m_bSpamHeroicOpportunity);
-			TransferINIBool(eTransferType, "General.SpamCrowdControl", ref m_bSpamCrowdControl);
 			TransferINIBool(eTransferType, "General.MezAdds", ref m_bMezAdds);
 			TransferINIBool(eTransferType, "General.UseRacialBuffs", ref m_bUseRacialBuffs);
 			TransferINIBool(eTransferType, "General.UsePet", ref m_bUsePet);
@@ -1153,7 +1151,7 @@ namespace EQ2GlassCannon
 			{
 				Ability ThisAbility = Me.Ability(iThisAbilityID);
 				if (!ThisAbility.IsValid || !ThisAbility.IsReady)
-					return false;
+					continue;
 
 				float fThisAbilityRange = ThisAbility.Range;
 
@@ -1189,6 +1187,7 @@ namespace EQ2GlassCannon
 				fHighestRangeAlreadyScanned = fThisAbilityRange;
 			}
 
+			Program.Log("No mez targets identified.");
 			return false;
 		}
 
@@ -1503,6 +1502,7 @@ namespace EQ2GlassCannon
 					{
 						if (AutoFollowActor.DoFace())
 						{
+							Program.Log("Auto-following {0}.", m_strAutoFollowTarget);
 							Program.RunCommand("/follow {0}", m_strAutoFollowTarget);
 							return true;
 						}
@@ -1947,6 +1947,17 @@ namespace EQ2GlassCannon
 				get
 				{
 					return (m_iMaximumHealth - m_iCurrentHealth);
+				}
+			}
+
+			public bool IsPriest
+			{
+				get
+				{
+					string strClass = m_Actor.Class;
+					return (strClass == "warden" || strClass == "fury" ||
+						strClass == "templar" || strClass == "inquisitor" ||
+						strClass == "mystic" || strClass == "defiler");
 				}
 			}
 		}

@@ -242,14 +242,14 @@ namespace EQ2GlassCannon
 				}
 
 				/// Instant cast interrupt/knockback.
-				if (m_bUseGreenAEs && (m_bSpamCrowdControl || IsBeneficialEffectPresent(m_iMaestroAbilityID)))
+				if (m_bUseGreenAEs && IsBeneficialEffectPresent(m_iMaestroAbilityID))
 				{
 					if (CastAbility(m_iGreenInstantKnockdownAbilityID))
 						return true;
 				}
 
 				/// AE interrupt nuke.
-				if (m_bSpamCrowdControl || IsBeneficialEffectPresent(m_iMaestroAbilityID))
+				if (IsBeneficialEffectPresent(m_iMaestroAbilityID))
 				{
 					if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
 						return true;
