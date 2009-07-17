@@ -158,7 +158,7 @@ namespace EQ2GlassCannon
 				if (MeActor.IsIdle)
 				{
 					/// Deaggros.
-					if (m_bSpamCrowdControl || m_bIHaveAggro)
+					if (m_bIHaveAggro)
 					{
 						if (CastAbility(m_iGreenDeaggroAbilityID))
 							return true;

@@ -172,7 +172,7 @@ namespace EQ2GlassCannon
 			/// Red illusionist mezzes can be cast while in motion.
 			if (m_bUseGreenAEs && MeActor.IsIdle)
 			{
-				if (CastNextMez(m_iSingleFastMezAbilityID, m_iSingleNormalMezAbilityID, m_iGreenMezAbilityID))
+				if (CastNextMez(m_iGreenMezAbilityID, m_iSingleFastMezAbilityID, m_iSingleNormalMezAbilityID))
 					return true;
 			}
 			else
@@ -199,11 +199,6 @@ namespace EQ2GlassCannon
 				{
 					/// This buffs PC cast speed and debuffs NPC cast speed. So it gets rare priority.
 					if (CastAbility(m_iChronosiphoningAbilityID))
-						return true;
-
-					/// Cast certain crowd control spells up front if the situation calls for it.
-					/// This is an emergency routine for maximum dehabilitation.
-					if (m_bSpamCrowdControl && DoNextSpamCrowdControlAction())
 						return true;
 
 					if (bTempBuffsAdvised)
@@ -297,61 +292,6 @@ namespace EQ2GlassCannon
 				}
 
 				Program.Log("DEBUG: Ran out of abilities!  Add more!");
-			}
-
-			return false;
-		}
-
-		/************************************************************************************/
-		protected bool DoNextSpamCrowdControlAction()
-		{
-			if (!IsAbilityMaintained(m_iMeleeDebuffAbilityID) && CastAbility(m_iMeleeDebuffAbilityID))
-				return true;
-			if (!IsAbilityMaintained(m_iArcaneDebuffNukeAbilityID) && CastAbility(m_iArcaneDebuffNukeAbilityID))
-				return true;
-
-			/// Crowd control spells will need to land perfectly.
-			if (!IsBeneficialEffectPresent(m_iIlluminateAbilityID) && CastAbility(m_iIlluminateAbilityID))
-			{
-				SpamSafeGroupSay(m_strIlluminateCallout);
-				return true;
-			}
-
-			if (!IsAbilityMaintained(m_iIlluminateAbilityID) && !IsBeneficialEffectPresent(m_iCastingSkillBoostAbilityID) && CastAbility(m_iCastingSkillBoostAbilityID))
-			{
-				SpamSafeGroupSay(m_strCastingSkillBoostCallout);
-				return true;
-			}
-
-			/// Stuns.
-			if (m_OffensiveTargetActor.CanTurn)
-			{
-				if (m_bUseGreenAEs && CastAbility(m_iGreenStunAbilityID))
-					return true;
-
-				if (CastAbility(m_iStunNukeAbilityID))
-					return true;
-			}
-
-			/// Dazes/nukes/interrupts.
-			else
-			{
-				if (CastAbility(m_iStifleNukeAbilityID))
-					return true;
-
-				if (m_bUseGreenAEs && !IsAbilityMaintained(m_iStifleNukeAbilityID) && CastAbility(m_iGreenShowerAbilityID))
-					return true;
-
-				if (CastAbility(m_iDazeNukeAbilityID))
-					return true;
-
-				/// Melee interrupt.
-				if (CastAbility(m_iSpellbladeCounterAbilityID))
-					return true;
-
-				/// Does interrupt on termination.
-				if (m_bUseGreenAEs && CastAbility(m_iStormAbilityID))
-					return true;
 			}
 
 			return false;

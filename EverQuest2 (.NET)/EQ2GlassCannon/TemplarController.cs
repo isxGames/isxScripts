@@ -306,15 +306,6 @@ namespace EQ2GlassCannon
 					if (!IsAbilityMaintained(m_iSingleReactiveTraumaCureAbilityID) && CastAbility(m_iSingleReactiveTraumaCureAbilityID))
 						return true;
 
-					if (m_bSpamCrowdControl && !m_OffensiveTargetActor.IsEpic)
-					{
-						if (m_OffensiveTargetActor.CanTurn && CastAbility(m_iSingleStunAbilityID))
-							return true;
-
-						if (!IsAbilityMaintained(m_iSingleStunAbilityID) && CastAbility(m_iSingleDazeAbilityID))
-							return true;
-					}
-
 					if (bTempBuffsOrDumbfiresAdvised && !IsAbilityMaintained(m_iHammerDumbfirePetAbilityID) && CastAbility(m_iHammerDumbfirePetAbilityID))
 						return true;
 
@@ -330,6 +321,8 @@ namespace EQ2GlassCannon
 
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
+					Program.Log("DEBUG INFO: DOING SINGLE HEAL");
+
 					if (CastAbility(m_iHealingAbilityID, strLowestHealthName, true))
 						return true;
 

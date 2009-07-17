@@ -65,6 +65,7 @@ namespace EQ2GlassCannon
 			m_iMailOfFrostAbilityID = SelectHighestAbilityID("Mail of Frost");
 			m_iHateTransferAbilityID = SelectHighestTieredAbilityID("Converge");
 			m_iFlametongueAbilityID = SelectHighestTieredAbilityID("Ro's Blade");
+			m_iSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Intromission");
 			m_iGiftAbilityID = SelectHighestTieredAbilityID("Frigid Gift");
 			m_iIceshapeAbilityID = SelectHighestAbilityID("Iceshape");
 			m_iSurgeAbilityID = SelectHighestTieredAbilityID("Surge of Ro");
@@ -101,6 +102,9 @@ namespace EQ2GlassCannon
 				return true;
 
 			if (AttemptCureArcane())
+				return true;
+
+			if (AttemptEmergencyPowerFeed())
 				return true;
 
 			if (m_bCheckBuffsNow)
@@ -150,21 +154,6 @@ namespace EQ2GlassCannon
 				if (CastHOStarter())
 					return true;
 
-				/// Emergency crowd control.
-				if (m_bSpamCrowdControl)
-				{
-					/// Debuff ASAP.
-					if (!IsAbilityMaintained(m_iElementalDebuffAbilityID) && CastAbility(m_iElementalDebuffAbilityID))
-						return true;
-
-					if (m_OffensiveTargetActor.CanTurn && !m_OffensiveTargetActor.IsEpic && CastAbility(m_iSingleStunNukeAbilityID))
-						return true;
-
-					/// Melee interrupt.
-					if (CastAbility(m_iAmbidexterousCastingAbilityID))
-						return true;
-				}
-
 				if (MeActor.IsIdle)
 				{
 					/// FIRST BLOOD: Extreme AE opportunities should receive top priority,
@@ -177,7 +166,7 @@ namespace EQ2GlassCannon
 						return true;
 
 					/// Deaggros.
-					if (m_bSpamCrowdControl || m_bIHaveAggro)
+					if (m_bIHaveAggro)
 					{
 						if (CastAbility(m_iSingleDeaggroAbilityID))
 							return true;
