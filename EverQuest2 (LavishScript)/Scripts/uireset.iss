@@ -12,4 +12,6 @@ function main()
 		UIElement[EQ2 Track]:Reset
 	if ${UIElement[EQ2AFKAlarm](exists)}
 		UIElement[EQ2AFKAlarm]:Reset
+	if ${UIElement[EQ2Inventory](exists)}
+		UIElement[EQ2Inventory]:Reset
 }
