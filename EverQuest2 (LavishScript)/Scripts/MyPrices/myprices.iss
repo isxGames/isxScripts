@@ -1,10 +1,14 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13o :  released 8th June 2009
+; Version 0.13p :  released 18th June 2009
 ;
 ; Declare Variables
 ;
+
+variable int brokerslots=8
+variable int brokerboxslots=1000
+
 variable BrokerBot MyPrices
 variable bool MatchLowPrice
 variable bool IncreasePrice
@@ -30,7 +34,7 @@ variable bool ItemNotStack
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
-variable bool box[6]
+variable bool box[8]
 
 variable string labelname
 variable string currentitem
@@ -857,7 +861,7 @@ function buy(string tabname, string action)
 										}
 									}
 								}
-								while ${i:Inc} <= 6
+								while ${i:Inc} <= ${brokerslots}
 								if ${j} < 0
 									BuyList.FindSet["${BuyIterator.Key}"]:Clear
 									waitframe
@@ -1413,6 +1417,7 @@ function checkitem(string checktype, string name)
 
 function LoadList()
 {
+	echo loadlist
 	call echolog "<start> : Loadlist"
 	; clear all totals held in the craft set
 	LavishSettings[craft]:Clear
@@ -1440,7 +1445,7 @@ function LoadList()
 			waitframe
 		}
 	}
-	while ${i:Inc} <= 6
+	while ${i:Inc} <= ${brokerslots}
 
 	i:Set[1]
 	
@@ -1448,6 +1453,9 @@ function LoadList()
 	numitems:Set[0]
 	do
 	{
+		echo i is ${i} out of ${brokerslots}
+		
+		echo ${Me.Vending[${i}].NumItems} in the box
 		if (${Me.Vending[${i}](exists)})  && ${box[${i}]}
 		{
 			if ${Me.Vending[${i}].CurrentCoin} > 0 && ${TakeCoin}
@@ -1463,6 +1471,9 @@ function LoadList()
 					numitems:Inc
 					labelname:Set["${Me.Vending[${i}].Consignment[${j}]}"]
 					waitframe
+					
+					echo labelname is ${labelname}
+					
 					; add the item name onto the sell tab list
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem["${labelname}"]
 
@@ -1490,7 +1501,7 @@ function LoadList()
 			j:Set[1]
 		}
 	}
-	while ${i:Inc} <= 6
+	while ${i:Inc} <= ${brokerslots}
 	call echolog "<end> : Loadlist"
 }
 
@@ -2246,13 +2257,15 @@ objectdef BrokerBot
 		Craft:Set[${General.FindSetting[Craft]}]
 		MatchActual:Set[${General.FindSetting[ActualPrice]}]
 		TakeCoin:Set[${General.FindSetting[TakeCoin]}]
-		box[1]:Set[${General.FindSetting[box1]}]
-		box[2]:Set[${General.FindSetting[box2]}]
-		box[3]:Set[${General.FindSetting[box3]}]
-		box[4]:Set[${General.FindSetting[box4]}]
-		box[5]:Set[${General.FindSetting[box5]}]
-		box[6]:Set[${General.FindSetting[box6]}]
+		
+		i:Set[1]
+		do
+		{
+			box[${i}]:Set[${General.FindSetting[box${i}]}]
+		}
+		while ${i:Inc} <= ${brokerslots}
 		Natural:Set[${General.FindSetting[Natural]}]
+		
 		call echolog "Settings being used"
 		call echolog "-------------------"
 		call echolog "MatchLowPrice is ${MatchLowPrice}"
@@ -2266,12 +2279,11 @@ objectdef BrokerBot
 		call echolog "Craft is ${Craft}"
 		call echolog "MatchActual is ${MatchActual}"
 		call echolog "TakeCoin is ${TakeCoin}"
-		call echolog "box[1] is ${box[1]}"
-		call echolog "box[2] is ${box[2]}"
-		call echolog "box[3] is ${box[3]}"
-		call echolog "box[4] is ${box[4]}"
-		call echolog "box[5] is ${box[5]}"
-		call echolog "box[6] is ${box[6]}"
+		do
+		{
+			call echolog "box[${i}] is ${box[1]}"
+		}
+		while ${i:Inc} <= ${brokerslots}
 		call echolog "Natural is ${Natural}"
 		return
 	}
@@ -2329,7 +2341,7 @@ function placeitem(string itemname, int box)
 					}
 				}
 			}
-			while ${i:Inc} <= 6 && ${numitems} > 0		
+			while ${i:Inc} <= ${brokerslots} && ${numitems} > 0		
 		}
 		;   place the rest of the items (if any) where there are spaces , boxes with most space first
 		if ${numitems} >0
@@ -2429,7 +2441,7 @@ function boxwithmostspace()
 			max:Set[${i}]
 
 	}
-	while ${i:Inc} <= 6
+	while ${i:Inc} <= ${brokerslots}
 	return ${max}
 }
 
@@ -2440,7 +2452,8 @@ function resetscanned()
 	{
 		Scanned[${lcount}]:Set[FALSE]
 	}
-	While ${lcount:Inc} <= 1000
+	While ${lcount:Inc} <= ${brokerboxslots}
+
 }
 
 function ChooseNextItem(int numitems)
@@ -2567,7 +2580,7 @@ function StartUp()
 		if !(${Me.Vending[${i}](exists)})
 			UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
 	}
-	while ${i:Inc} <= 6
+	while ${i:Inc} <= ${brokerslots}
 	
 	call LoadList
 
