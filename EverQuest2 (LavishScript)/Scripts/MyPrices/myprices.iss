@@ -1417,7 +1417,6 @@ function checkitem(string checktype, string name)
 
 function LoadList()
 {
-	echo loadlist
 	call echolog "<start> : Loadlist"
 	; clear all totals held in the craft set
 	LavishSettings[craft]:Clear
@@ -1455,7 +1454,6 @@ function LoadList()
 	{
 		echo i is ${i} out of ${brokerslots}
 		
-		echo ${Me.Vending[${i}].NumItems} in the box
 		if (${Me.Vending[${i}](exists)})  && ${box[${i}]}
 		{
 			if ${Me.Vending[${i}].CurrentCoin} > 0 && ${TakeCoin}
@@ -1471,8 +1469,6 @@ function LoadList()
 					numitems:Inc
 					labelname:Set["${Me.Vending[${i}].Consignment[${j}]}"]
 					waitframe
-					
-					echo labelname is ${labelname}
 					
 					; add the item name onto the sell tab list
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem["${labelname}"]
