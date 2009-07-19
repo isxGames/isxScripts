@@ -1045,6 +1045,72 @@
 								Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
+					<checkbox Name='7'>
+						<X>87%</X>
+						<Y>65%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 7</Text>
+						<AutoTooltip>
+							Scan Box 7
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[7]}
+						{
+							UIElement[7@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[7@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[6@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box7 TRUE]
+								Script[myprices].VariableScope.box[7]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box7 FALSE]
+								Script[myprices].VariableScope.box[7]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='8'>
+						<X>87%</X>
+						<Y>68%</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Box 8</Text>
+						<AutoTooltip>
+							Scan Box 8
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.box[8]}
+						{
+							UIElement[8@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[8@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[8@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box8 TRUE]
+								Script[myprices].VariableScope.box[8]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting box6 FALSE]
+								Script[myprices].VariableScope.box[8]:Set[FALSE]
+							}
+								Script[myprices]:QueueCommand[call LoadList]
+						</OnLeftClick>
+					</checkbox>
 					<Commandbutton name='Start Scanning'> 
 						<X>20%</X> 
 						<Y>92%</Y> 

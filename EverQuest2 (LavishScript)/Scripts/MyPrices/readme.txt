@@ -1,4 +1,4 @@
-Version 0.13o :  released 8th June 2009
+Version 0.13p :  released 18th June 2009
 
 For update details see the bottom of this file.
 
@@ -419,6 +419,15 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13p
+-------------
+
+Added some minor futureproofing to the script , 2 more broker box slot tickboxes and made it easier to expand the number or items more
+without having to delve into the code too much ready for February 2010.
+
+Don't worry about slots 7 and 8 they don't actually work right now so you'll see them appear then dissapear from the UI on start.
+
 Version 0.13o
 -------------
 Fixed problem with auto-loop and Delay timer not functioning
