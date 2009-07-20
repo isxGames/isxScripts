@@ -565,6 +565,20 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public static void ApplyVerb(int iActorID, string strVerb)
+		{
+			RunCommand("/apply_verb {0} {1}", iActorID, strVerb);
+			return;
+		}
+
+		/************************************************************************************/
+		public static void ApplyVerb(Actor ThisActor, string strVerb)
+		{
+			ApplyVerb(ThisActor.ID, strVerb);
+			return;
+		}
+
+		/************************************************************************************/
 		/// <summary>
 		/// Using Thread.Sleep() during a frame lock, locks up the client.
 		/// </summary>

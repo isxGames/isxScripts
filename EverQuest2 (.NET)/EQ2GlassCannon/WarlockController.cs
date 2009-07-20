@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* NOTE: The warlock implementation is nowhere near complete.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

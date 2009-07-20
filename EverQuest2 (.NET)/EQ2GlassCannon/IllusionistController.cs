@@ -170,7 +170,7 @@ namespace EQ2GlassCannon
 			GetOffensiveTargetActor();
 
 			/// Red illusionist mezzes can be cast while in motion.
-			if (m_bUseGreenAEs && MeActor.IsIdle)
+			if (m_bUseGreenAEs && MeActor.IsIdle) /// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
 			{
 				if (CastNextMez(m_iGreenMezAbilityID, m_iSingleFastMezAbilityID, m_iSingleNormalMezAbilityID))
 					return true;
@@ -291,9 +291,9 @@ namespace EQ2GlassCannon
 						return true;
 				}
 
-				Program.Log("DEBUG: Ran out of abilities!  Add more!");
 			}
 
+			Program.Log("Nothing left to cast!");
 			return false;
 		}
 	}

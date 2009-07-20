@@ -141,6 +141,9 @@ namespace EQ2GlassCannon
 			if (Me.CastingSpell || MeActor.IsDead)
 				return true;
 
+			if (DisarmChests())
+				return true;
+
 			if (!MeActor.IsStealthed && m_bCheckBuffsNow)
 			{
 				if (CheckToggleBuff(m_iGroupCastingSkillBuffAbilityID, m_bBuffCastingSkill))

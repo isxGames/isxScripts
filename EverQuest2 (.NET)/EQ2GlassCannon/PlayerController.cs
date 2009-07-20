@@ -15,6 +15,7 @@ namespace EQ2GlassCannon
 	public partial class PlayerController
 	{
 		public const int ABILITY_TARGET_TYPE_GROUP = 2;
+		public const string STR_NO_KILL_NPC = "NoKill NPC";
 
 		#region INI settings
 		public bool m_bWriteBackINI = true;
@@ -721,6 +722,10 @@ namespace EQ2GlassCannon
 						}
 					}
 
+					/// An assist command promotes to neutral positioning.
+					if (m_ePositioningStance == PositioningStance.DoNothing)
+						ChangePositioningStance(PositioningStance.NeutralPosition);
+
 					return true;
 				}
 
@@ -798,7 +803,7 @@ namespace EQ2GlassCannon
 					{
 						if (strLowerCaseMessage.Contains(ThisMember.Name.ToLower()) && ThisMember.ToActor().IsValid)
 						{
-							Program.RunCommand("/apply_verb {0} mentor", ThisMember.ID);
+							Program.ApplyVerb(ThisMember.ID, "mentor");
 							return true;
 						}
 					}
@@ -811,7 +816,7 @@ namespace EQ2GlassCannon
 						Actor MenderTargetActor = CommandingPlayerActor.Target();
 						if (MenderTargetActor.IsValid && MenderTargetActor.Type == "NoKill NPC")
 						{
-							Program.RunCommand("/apply_verb {0} repair", MenderTargetActor.ID);
+							Program.ApplyVerb(MenderTargetActor.ID, "repair");
 							Program.RunCommand("/mender_repair_all");
 							return true;
 						}

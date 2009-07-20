@@ -28,14 +28,8 @@ namespace EQ2GlassCannon
 			base.RefreshKnowledgeBook();
 
 			m_iManaFlowAbilityID = SelectHighestAbilityID("Mana Flow");
-
 			m_iChronosiphoningAbilityID = SelectHighestAbilityID("Chronosiphoning");
-		
-			m_iManaRegenReactiveAbilityID = SelectHighestAbilityID(
-				"Mana Cloak",
-				"Mana Cover",
-				"Mana Shroud");
-
+			m_iManaRegenReactiveAbilityID = SelectHighestTieredAbilityID("Mana Cloak");
 			m_iNullifyingStaffAbilityID = SelectHighestAbilityID("Nullifying Staff");
 			m_iSpellbladeCounterAbilityID = SelectHighestAbilityID("Spellblade's Counter");
 			m_iPeaceOfMindAbilityID = SelectHighestAbilityID("Peace of Mind");
