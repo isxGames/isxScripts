@@ -39,7 +39,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
 		{
 			base.TransferINISettings(eTransferType);
 

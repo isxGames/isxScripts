@@ -53,7 +53,7 @@ namespace EQ2GlassCannon
 		#endregion
 
 		/************************************************************************************/
-		public override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
 		{
 			base.TransferINISettings(eTransferType);
 
@@ -321,8 +321,6 @@ namespace EQ2GlassCannon
 
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					Program.Log("DEBUG INFO: DOING SINGLE HEAL");
-
 					if (CastAbility(m_iHealingAbilityID, strLowestHealthName, true))
 						return true;
 

@@ -36,6 +36,9 @@ namespace EQ2GlassCannon
 		public string m_strClearGroupMaintainedSubphrase = "redo group buffs";
 		public string m_strMentorSubphrase = "mentor";
 		public string m_strRepairSubphrase = "repair";
+		public string m_strArbitraryVerbCommandPrefix = "try this: \"";
+		public string m_strArbitraryVerbCommandSeparator = "\", \"";
+		public string m_strArbitraryVerbCommandSuffix = "\"";
 		public float m_fStayInPlaceTolerance = 1.5f;
 		public int m_iCheckBuffsInterval = 500;
 		public bool m_bUseRanged = false;
@@ -53,15 +56,9 @@ namespace EQ2GlassCannon
 		public bool m_bUsePet = true;
 		public bool m_bSummonPetDuringCombat = false;
 		public int m_iFrameSkip = 2;
-
+		public EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
 		public string m_strSpawnWatchSubphrase = "watch for";
-		public string m_strSpawnWatchSMTPServer = string.Empty;
-		public int m_iSpawnWatchSMTPPort = 25;
-		public bool m_bSpawnWatchSMTPUseSSL = false;
-		public string m_strSpawnWatchSMTPAccount = string.Empty;
-		public string m_strSpawnWatchSMTPPassword = string.Empty;
 		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
-		public string m_strSpawnWatchFromAddress = string.Empty;
 		public string m_strSpawnWatchAlertCommand = string.Empty;
 		public string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
 		public float m_fSpawnWatchDespawnTimeoutMinutes = 5.0f;
@@ -183,7 +180,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual void TransferINISettings(TransferType eTransferType)
+		protected virtual void TransferINISettings(TransferType eTransferType)
 		{
 			TransferINIBool(eTransferType, "General.WriteBackINI", ref m_bWriteBackINI);
 			TransferINIString(eTransferType, "General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
@@ -203,6 +200,9 @@ namespace EQ2GlassCannon
 			TransferINICaselessString(eTransferType, "General.ClearGroupMaintainedSubphrase", ref m_strClearGroupMaintainedSubphrase);
 			TransferINICaselessString(eTransferType, "General.MentorSubphrase", ref m_strMentorSubphrase);
 			TransferINICaselessString(eTransferType, "General.RepairSubphrase", ref m_strRepairSubphrase);
+			TransferINIString(eTransferType, "General.ArbitraryVerbCommandPrefix", ref m_strArbitraryVerbCommandPrefix);
+			TransferINIString(eTransferType, "General.ArbitraryVerbCommandSeparator", ref m_strArbitraryVerbCommandSeparator);
+			TransferINIString(eTransferType, "General.ArbitraryVerbCommandSuffix", ref m_strArbitraryVerbCommandSuffix);
 			TransferINIInteger(eTransferType, "General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
 			TransferINIBool(eTransferType, "General.UseRanged", ref m_bUseRanged);
 			TransferINIBool(eTransferType, "General.UseGreenAEs", ref m_bUseGreenAEs);
@@ -221,15 +221,17 @@ namespace EQ2GlassCannon
 			TransferINIInteger(eTransferType, "General.FrameSkip", ref m_iFrameSkip);
 			TransferINIFloat(eTransferType, "General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
 
+			/// E-mail account values.
+			TransferINIString(eTransferType, "E-Mail.SMTPServer", ref m_EmailProfile.m_strServer);
+			TransferINIInteger(eTransferType, "E-Mail.SMTPPort", ref m_EmailProfile.m_iPort);
+			TransferINIBool(eTransferType, "E-Mail.SMTPUseSSL", ref m_EmailProfile.m_bUseSSL);
+			TransferINIString(eTransferType, "E-Mail.SMTPAccount", ref m_EmailProfile.m_strAccount);
+			TransferINIString(eTransferType, "E-Mail.SMTPPassword", ref m_EmailProfile.m_strPassword);
+			TransferINICaselessString(eTransferType, "E-Mail.FromAddress", ref m_EmailProfile.m_strFromAddress);
+
 			/// Spawn Watch values.
 			TransferINICaselessString(eTransferType, "SpawnWatch.Subphrase", ref m_strSpawnWatchSubphrase);
-			TransferINIString(eTransferType, "SpawnWatch.SMTPServer", ref m_strSpawnWatchSMTPServer);
-			TransferINIInteger(eTransferType, "SpawnWatch.SMTPPort", ref m_iSpawnWatchSMTPPort);
-			TransferINIBool(eTransferType, "SpawnWatch.SMTPUseSSL", ref m_bSpawnWatchSMTPUseSSL);
-			TransferINIString(eTransferType, "SpawnWatch.SMTPAccount", ref m_strSpawnWatchSMTPAccount);
-			TransferINIString(eTransferType, "SpawnWatch.SMTPPassword", ref m_strSpawnWatchSMTPPassword);
 			TransferINIStringList(eTransferType, "SpawnWatch.ToAddresses", m_astrSpawnWatchToAddressList);
-			TransferINICaselessString(eTransferType, "SpawnWatch.FromAddress", ref m_strSpawnWatchFromAddress);
 			TransferINIString(eTransferType, "SpawnWatch.AlertCommand", ref m_strSpawnWatchAlertCommand);
 			TransferINICaselessString(eTransferType, "SpawnWatch.DespawnSubphrase", ref m_strSpawnWatchDespawnSubphrase);
 			TransferINIFloat(eTransferType, "SpawnWatch.DespawnTimeoutMinutes", ref m_fSpawnWatchDespawnTimeoutMinutes);
@@ -281,6 +283,8 @@ namespace EQ2GlassCannon
 						}
 					}
 				}
+
+				Program.s_EmailQueueThread.PostNewProfileMessage(m_EmailProfile);
 			}
 			catch
 			{
@@ -692,173 +696,223 @@ namespace EQ2GlassCannon
 			string strTrimmedMessage = strMessage.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
-			if (string.Compare(strFrom, m_strCommandingPlayer, true) == 0)
+			/// This override only deals with commands.
+			if (string.Compare(strFrom, m_strCommandingPlayer, true) != 0)
+				return false;
+
+			Actor CommandingPlayerActor = GetNonPetActor(m_strCommandingPlayer);
+
+			/// This is the assist call; direct the bot to begin combat.
+			if (strLowerCaseMessage.Contains(m_strAssistSubphrase))
 			{
-				Actor CommandingPlayerActor = GetNonPetActor(m_strCommandingPlayer);
-
-				/// This is the assist call; direct the bot to begin combat.
-				if (strLowerCaseMessage.Contains(m_strAssistSubphrase))
-				{
-					if (CommandingPlayerActor == null)
-						Program.Log("Commanding player not a valid combat assist!");
-					else
-					{
-						Actor OffensiveTargetActor = CommandingPlayerActor.Target();
-
-						/// Successful target acquisition.
-						if (OffensiveTargetActor != null && OffensiveTargetActor.IsValid && (OffensiveTargetActor.Type == "NPC" || OffensiveTargetActor.Type == "NamedNPC"))
-						{
-							m_iOffensiveTargetID = OffensiveTargetActor.ID;
-							Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
-						}
-						else
-						{
-							if (OffensiveTargetActor != null)
-								Program.Log("{0} provided an invalid offensive target ({1}, {2}, {3}).", CommandingPlayerActor.Name, OffensiveTargetActor.Name, OffensiveTargetActor.ID, OffensiveTargetActor.Type);
-
-							/// Combat is now cancelled.
-							/// Maybe the commanding player misclicked or clicked off intentionally, but it doesn't matter.
-							WithdrawFromCombat();
-						}
-					}
-
-					/// An assist command promotes to neutral positioning.
-					if (m_ePositioningStance == PositioningStance.DoNothing)
-						ChangePositioningStance(PositioningStance.NeutralPosition);
-
-					return true;
-				}
-
-				/// Reload the INI file and knowledge book; the rest of the code will adjust on its own.
-				else if (strLowerCaseMessage.Contains(m_strReloadINISubphrase))
-				{
-					Program.Log("Reload INI command (\"{0}\") received.", m_strReloadINISubphrase);
-					Program.LoadINIFile();
-					TransferINISettings(TransferType.Read);
-
-					Program.s_bRefreshKnowledgeBook = true;
-				}
-
-				else if (strLowerCaseMessage.Contains(m_strDoNothingSubphrase))
-				{
-					Program.Log("Do Nothing command (\"{0}\") received.", m_strDoNothingSubphrase);
-					ChangePositioningStance(PositioningStance.DoNothing);
-				}
-
-				else if (strLowerCaseMessage.Contains(m_strNeutralPositionSubphrase))
-				{
-					Program.Log("Neutral Position command (\"{0}\") received.", m_strNeutralPositionSubphrase);
-					ChangePositioningStance(PositioningStance.NeutralPosition);
-				}
-
-				else if (strLowerCaseMessage.Contains(m_strStayInPlaceSubphrase))
-				{
-					Program.Log("Stay In Place command (\"{0}\") received.", m_strStayInPlaceSubphrase);
-					ChangePositioningStance(PositioningStance.StayInPlace);
-				}
-
-				else if (strLowerCaseMessage.Contains(m_strShadowMeSubphrase))
-				{
-					Program.Log("Shadow Me command (\"{0}\") received.", m_strShadowMeSubphrase);
-					ChangePositioningStance(PositioningStance.ShadowMe);
-				}
-
-				else if (strLowerCaseMessage.Contains(m_strForwardDashSubphrase))
-				{
-					Program.Log("Forward Dash command (\"{0}\") received.", m_strForwardDashSubphrase);
-					ChangePositioningStance(PositioningStance.ForwardDash);
-				}
-
-				else if (strLowerCaseMessage.Contains(m_strAutoFollowSubphrase))
-				{
-					Program.Log("Autofollow command (\"{0}\") received.", m_strAutoFollowSubphrase);
-					ChangePositioningStance(PositioningStance.AutoFollow);
-				}
-
-				/// Bot killswitch.
-				else if (strLowerCaseMessage.Contains(m_strBotKillswitchSubphrase))
-				{
-					Program.Log("Bot killswitch command (\"{0}\") received.", m_strBotKillswitchSubphrase);
-					Program.s_bContinueBot = false;
-					return true;
-				}
-
-				/// Process killswitch.
-				else if (strLowerCaseMessage.Contains(m_strProcessKillswitchSubphrase))
-				{
-					Program.Log("Process killswitch command (\"{0}\") received.", m_strProcessKillswitchSubphrase);
-					Process.GetCurrentProcess().Kill();
-				}
-
-				/// Begin dropping all group buffs.
-				else if (strLowerCaseMessage.Contains(m_strClearGroupMaintainedSubphrase))
-				{
-					m_bClearGroupMaintained = true;
-				}
-
-				/// Mentor the specified group member.
-				else if (strLowerCaseMessage.Contains(m_strMentorSubphrase))
-				{
-					foreach (GroupMember ThisMember in EnumGroupMembers())
-					{
-						if (strLowerCaseMessage.Contains(ThisMember.Name.ToLower()) && ThisMember.ToActor().IsValid)
-						{
-							Program.ApplyVerb(ThisMember.ID, "mentor");
-							return true;
-						}
-					}
-				}
-
-				else if (strLowerCaseMessage.Contains(m_strRepairSubphrase))
-				{
-					if (CommandingPlayerActor != null)
-					{
-						Actor MenderTargetActor = CommandingPlayerActor.Target();
-						if (MenderTargetActor.IsValid && MenderTargetActor.Type == "NoKill NPC")
-						{
-							Program.ApplyVerb(MenderTargetActor.ID, "repair");
-							Program.RunCommand("/mender_repair_all");
-							return true;
-						}
-					}
-				}
-
-				else if (strLowerCaseMessage.StartsWith(m_strSpawnWatchSubphrase))
-				{
-					Program.Log("Spawn Watch command (\"{0}\") received.", m_strSpawnWatchSubphrase);
-					m_bSpawnWatchTargetAnnounced = false;
-
-					m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchSubphrase.Length).ToLower().Trim();
-					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
-
-					ChangePositioningStance(PositioningStance.SpawnWatch);
-				}
-
-				else if (strLowerCaseMessage.StartsWith(m_strSpawnWatchDespawnSubphrase))
-				{
-					Program.Log("De-spawn Watch command (\"{0}\") received.", m_strSpawnWatchDespawnSubphrase);
-					m_bSpawnWatchTargetAnnounced = false;
-
-					m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchDespawnSubphrase.Length).ToLower().Trim();
-					Program.Log("Bot will now wait for the absence of actor \"{0}\" for {0:0.0} consecutive minute(s).", m_strSpawnWatchTarget, m_fSpawnWatchDespawnTimeoutMinutes);
-
-					ChangePositioningStance(PositioningStance.DespawnWatch);
-				}
-
+				if (CommandingPlayerActor == null)
+					Program.Log("Commanding player not a valid combat assist!");
 				else
 				{
-					foreach (CustomTellTrigger ThisTrigger in m_aCustomTellTriggerList)
-					{
-						if (strLowerCaseMessage.Contains(ThisTrigger.m_strSubstring))
-						{
-							foreach (string strThisCommand in ThisTrigger.m_astrCommands)
-								Program.RunCommand(strThisCommand, m_strCommandingPlayer);
-							return true;
-						}
-					}
+					Actor OffensiveTargetActor = CommandingPlayerActor.Target();
 
-					Program.Log("No command detected in commanding player chat.");
+					/// Successful target acquisition.
+					if (OffensiveTargetActor != null && OffensiveTargetActor.IsValid && (OffensiveTargetActor.Type == "NPC" || OffensiveTargetActor.Type == "NamedNPC"))
+					{
+						m_iOffensiveTargetID = OffensiveTargetActor.ID;
+						Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
+					}
+					else
+					{
+						if (OffensiveTargetActor != null)
+							Program.Log("{0} provided an invalid offensive target ({1}, {2}, {3}).", CommandingPlayerActor.Name, OffensiveTargetActor.Name, OffensiveTargetActor.ID, OffensiveTargetActor.Type);
+
+						/// Combat is now cancelled.
+						/// Maybe the commanding player misclicked or clicked off intentionally, but it doesn't matter.
+						WithdrawFromCombat();
+					}
 				}
+
+				/// An assist command promotes to neutral positioning.
+				if (m_ePositioningStance == PositioningStance.DoNothing)
+					ChangePositioningStance(PositioningStance.NeutralPosition);
+
+				return true;
+			}
+
+			/// Reload the INI file and knowledge book; the rest of the code will adjust on its own.
+			else if (strLowerCaseMessage.Contains(m_strReloadINISubphrase))
+			{
+				Program.Log("Reload INI command (\"{0}\") received.", m_strReloadINISubphrase);
+				Program.LoadINIFile();
+				TransferINISettings(TransferType.Read);
+
+				Program.s_bRefreshKnowledgeBook = true;
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strDoNothingSubphrase))
+			{
+				Program.Log("Do Nothing command (\"{0}\") received.", m_strDoNothingSubphrase);
+				ChangePositioningStance(PositioningStance.DoNothing);
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strNeutralPositionSubphrase))
+			{
+				Program.Log("Neutral Position command (\"{0}\") received.", m_strNeutralPositionSubphrase);
+				ChangePositioningStance(PositioningStance.NeutralPosition);
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strStayInPlaceSubphrase))
+			{
+				Program.Log("Stay In Place command (\"{0}\") received.", m_strStayInPlaceSubphrase);
+				ChangePositioningStance(PositioningStance.StayInPlace);
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strShadowMeSubphrase))
+			{
+				Program.Log("Shadow Me command (\"{0}\") received.", m_strShadowMeSubphrase);
+				ChangePositioningStance(PositioningStance.ShadowMe);
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strForwardDashSubphrase))
+			{
+				Program.Log("Forward Dash command (\"{0}\") received.", m_strForwardDashSubphrase);
+				ChangePositioningStance(PositioningStance.ForwardDash);
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strAutoFollowSubphrase))
+			{
+				Program.Log("Autofollow command (\"{0}\") received.", m_strAutoFollowSubphrase);
+				ChangePositioningStance(PositioningStance.AutoFollow);
+			}
+
+			/// Bot killswitch.
+			else if (strLowerCaseMessage.Contains(m_strBotKillswitchSubphrase))
+			{
+				Program.Log("Bot killswitch command (\"{0}\") received.", m_strBotKillswitchSubphrase);
+				Program.s_bContinueBot = false;
+				return true;
+			}
+
+			/// Process killswitch.
+			else if (strLowerCaseMessage.Contains(m_strProcessKillswitchSubphrase))
+			{
+				Program.Log("Process killswitch command (\"{0}\") received.", m_strProcessKillswitchSubphrase);
+				Process.GetCurrentProcess().Kill();
+			}
+
+			/// Begin dropping all group buffs.
+			else if (strLowerCaseMessage.Contains(m_strClearGroupMaintainedSubphrase))
+			{
+				m_bClearGroupMaintained = true;
+			}
+
+			/// Mentor the specified group member.
+			else if (strLowerCaseMessage.Contains(m_strMentorSubphrase))
+			{
+				foreach (GroupMember ThisMember in EnumGroupMembers())
+				{
+					if (strLowerCaseMessage.Contains(ThisMember.Name.ToLower()) && ThisMember.ToActor().IsValid)
+					{
+						Program.ApplyVerb(ThisMember.ToActor(), "mentor");
+						return true;
+					}
+				}
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strRepairSubphrase))
+			{
+				if (CommandingPlayerActor != null)
+				{
+					Actor MenderTargetActor = CommandingPlayerActor.Target();
+					if (MenderTargetActor.IsValid && MenderTargetActor.Type == "NoKill NPC")
+					{
+						Program.ApplyVerb(MenderTargetActor, "repair");
+						Program.RunCommand("/mender_repair_all");
+						return true;
+					}
+				}
+			}
+
+			/// This is a very shady command to use; it's only for the daring individual.
+			/// It allows you to specify a verb upon an actor by name, choosing the actor closest to the commanding player.
+			/// It is most useful when you want all of your bots to perform a verb at the exact same time.
+			/// The command is formatted in five concatenated chunks:
+			/// Prefix ActorName Separator Verb Suffix
+			/// The INI file allows you to customize the Prefix, Separator, and Suffix to differentiate somewhat.
+			/// Using default INI settings a command string will look something like this next line:
+			/// try this: "Treasure Chest", "disarm"
+			else if (strTrimmedMessage.StartsWith(m_strArbitraryVerbCommandPrefix) && strTrimmedMessage.EndsWith(m_strArbitraryVerbCommandSuffix))
+			{
+				string strMiddleChunk = strTrimmedMessage.Substring(
+					m_strArbitraryVerbCommandPrefix.Length,
+					strTrimmedMessage.Length - m_strArbitraryVerbCommandPrefix.Length - m_strArbitraryVerbCommandSuffix.Length);
+
+				string[] astrParameters = strMiddleChunk.Split(new string[] { m_strArbitraryVerbCommandSeparator }, StringSplitOptions.None);
+				if (astrParameters.Length != 2)
+					return false;
+
+				string strActorName = astrParameters[0];
+				string strVerb = astrParameters[1];
+				Program.Log("Attempting to apply verb \"{0}\" on actor \"{1}\".", strVerb, strActorName);
+
+				/// Grab the so-named actor nearest to the commander.
+				double fNearestDistance = 50.0;
+				Actor NearestActor = null;
+				foreach (Actor ThisActor in EnumCustomActors(strActorName))
+				{
+					if (ThisActor.Name != strActorName)
+						continue;
+
+					double fThisDistance = GetActorDistance2D(CommandingPlayerActor, ThisActor);
+					if (fThisDistance < fNearestDistance)
+					{
+						fNearestDistance = fThisDistance;
+						NearestActor = ThisActor;
+					}
+				}
+
+				/// No such actor found.
+				if (NearestActor == null)
+				{
+					Program.Log("No actor found for the specified arbitrary verb.");
+					return false;
+				}
+
+				Program.ApplyVerb(NearestActor, strVerb);
+				return true;
+			}
+
+			else if (strLowerCaseMessage.StartsWith(m_strSpawnWatchSubphrase))
+			{
+				Program.Log("Spawn Watch command (\"{0}\") received.", m_strSpawnWatchSubphrase);
+				m_bSpawnWatchTargetAnnounced = false;
+
+				m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchSubphrase.Length).ToLower().Trim();
+				Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
+
+				ChangePositioningStance(PositioningStance.SpawnWatch);
+			}
+
+			else if (strLowerCaseMessage.StartsWith(m_strSpawnWatchDespawnSubphrase))
+			{
+				Program.Log("De-spawn Watch command (\"{0}\") received.", m_strSpawnWatchDespawnSubphrase);
+				m_bSpawnWatchTargetAnnounced = false;
+
+				m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchDespawnSubphrase.Length).ToLower().Trim();
+				Program.Log("Bot will now wait for the absence of actor \"{0}\" for {0:0.0} consecutive minute(s).", m_strSpawnWatchTarget, m_fSpawnWatchDespawnTimeoutMinutes);
+
+				ChangePositioningStance(PositioningStance.DespawnWatch);
+			}
+
+			else
+			{
+				foreach (CustomTellTrigger ThisTrigger in m_aCustomTellTriggerList)
+				{
+					if (strLowerCaseMessage.Contains(ThisTrigger.m_strSubstring))
+					{
+						foreach (string strThisCommand in ThisTrigger.m_astrCommands)
+							Program.RunCommand(strThisCommand, m_strCommandingPlayer);
+						return true;
+					}
+				}
+
+				Program.Log("No command detected in commanding player chat.");
 			}
 
 			return false;
@@ -903,11 +957,12 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			/// Now associate every ability in the list with the ID of the highest-level version of it.
+			/// Now associate every ability in the list (that actually exists) with the ID of the highest-level version of it.
+			/// This is important so that older versions of maintained buffs can be efficiently cancelled in favor of the highest versions of them.
 			for (int iIndex = 0; iIndex < astrAbilityNames.Length; iIndex++)
 			{
 				string strThisAbility = astrAbilityNames[iIndex];
-				if (!m_KnowledgeBookCategoryDictionary.ContainsKey(strThisAbility))
+				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility) && !m_KnowledgeBookCategoryDictionary.ContainsKey(strThisAbility))
 					m_KnowledgeBookCategoryDictionary.Add(strThisAbility, iBestSpellIndex);
 			}
 
@@ -917,7 +972,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		private static readonly string[] s_astrRomanNumeralSuffixes = new string[]
 		{
-			"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"
+			"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII"
 		};
 
 		/************************************************************************************/
@@ -1597,23 +1652,12 @@ namespace EQ2GlassCannon
 				{
 					Program.Log("Spawn Watch target \"{0}\" found!", strActualFoundName);
 
-					if (!string.IsNullOrEmpty(m_strSpawnWatchSMTPServer) && (m_astrSpawnWatchToAddressList.Count > 0))
+					if (m_astrSpawnWatchToAddressList.Count > 0)
 					{
-						Program.Log("Attempting to send Spawn Watch e-mails...");
-
-						if (Program.SendEMail(
-							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
-							m_bSpawnWatchSMTPUseSSL, m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
-							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
+						Program.s_EmailQueueThread.PostEmailMessage(
+							m_astrSpawnWatchToAddressList,
 							"From " + Me.Name,
-							strActualFoundName + " just spawned!"))
-						{
-							Program.Log("Spawn Watch e-mails successfully sent.");
-						}
-						else
-						{
-							Program.Log("Not all Spawn Watch e-mails could be sent!");
-						}
+							strActualFoundName + " just spawned!");
 					}
 
 					try
@@ -1642,7 +1686,7 @@ namespace EQ2GlassCannon
 						double fDistance = GetActorDistance2D(MeActor, ThisActor);
 						Program.Log("Distance to {0}: {1:0.000}", ThisActor.Name, fDistance);
 #endif
-						/// Reset the clock if we see a single living actor with the search name.
+						/// Reset the clock every time we see a single living actor with the search name.
 						m_SpawnWatchDespawnStartTime = DateTime.Now;
 						return true;
 					}
@@ -1653,24 +1697,12 @@ namespace EQ2GlassCannon
 				{
 					Program.Log("De-spawn Watch target \"{0}\" dead or no longer found after timeout!", m_strSpawnWatchTarget);
 
-					if (!string.IsNullOrEmpty(m_strSpawnWatchSMTPServer) && (m_astrSpawnWatchToAddressList.Count > 0))
+					if (m_astrSpawnWatchToAddressList.Count > 0)
 					{
-						Program.Log("Attempting to send De-spawn Watch e-mails...");
-
-						if (Program.SendEMail(
-							m_strSpawnWatchSMTPServer, m_iSpawnWatchSMTPPort,
-							m_bSpawnWatchSMTPUseSSL,
-							m_strSpawnWatchSMTPAccount, m_strSpawnWatchSMTPPassword,
-							m_strSpawnWatchFromAddress, m_astrSpawnWatchToAddressList,
+						Program.s_EmailQueueThread.PostEmailMessage(
+							m_astrSpawnWatchToAddressList,
 							"From " + Me.Name,
-							m_strSpawnWatchTarget + " just despawned!"))
-						{
-							Program.Log("De-spawn Watch e-mails successfully sent.");
-						}
-						else
-						{
-							Program.Log("Not all De-spawn Watch e-mails could be sent!");
-						}
+							m_strSpawnWatchTarget + " just despawned!");
 					}
 
 					ChangePositioningStance(PositioningStance.DoNothing);

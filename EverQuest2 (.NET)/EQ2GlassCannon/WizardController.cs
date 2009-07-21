@@ -44,7 +44,7 @@ namespace EQ2GlassCannon
 		public int m_iSingleDeaggroAbilityID = -1;
 
 		/************************************************************************************/
-		public override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
 		{
 			base.TransferINISettings(eTransferType);
 
@@ -298,6 +298,9 @@ namespace EQ2GlassCannon
 
 				if (MeActor.IsIdle)
 				{
+					if (CastAbility(m_iRaysOfDisintegrationAbilityID))
+						return true;
+
 					if (CastAbility(m_iBallOfFireAbilityID))
 						return true;
 
@@ -305,10 +308,6 @@ namespace EQ2GlassCannon
 						return true;
 
 					if (CastAbility(m_iSingleStunNukeAbilityID))
-						return true;
-
-					/// I haven't calculated the best place for this spell yet.
-					if (CastAbility(m_iRaysOfDisintegrationAbilityID))
 						return true;
 
 					if (CastAbility(m_iIceFlameAbilityID))
