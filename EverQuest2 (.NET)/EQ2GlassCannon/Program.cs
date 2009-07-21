@@ -9,7 +9,6 @@ using EQ2.ISXEQ2;
 using InnerSpaceAPI;
 using LavishScriptAPI;
 using LavishVMAPI;
-using System.Net.Mail;
 
 namespace EQ2GlassCannon
 {
@@ -22,6 +21,8 @@ namespace EQ2GlassCannon
 		private static Actor s_MeActor = null;
 		private static EQ2Event s_eq2event = null;
 		public static PlayerController s_Controller = null;
+		public static EmailQueueThread s_EmailQueueThread = new EmailQueueThread();
+
 		public static bool s_bContinueBot = true;
 		public static bool s_bRefreshKnowledgeBook = false;
 		private static long s_lFrameCount = 0;
@@ -189,6 +190,8 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
+				s_EmailQueueThread.Start();
+
 				Program.Log("Starting EQ2GlassCannon spellcaster bot...");
 
 				Assembly ThisAssembly = Assembly.GetExecutingAssembly();
@@ -375,10 +378,18 @@ namespace EQ2GlassCannon
 				/// Don't overwrite files that already exist unless told to; people might have special comments in place.
 				if (!File.Exists(s_strCurrentINIFilePath) || s_Controller.m_bWriteBackINI)
 				{
+					s_INISettings.Clear(); /// This eliminates cruft.
 					s_Controller.WriteINISettings();
 					if (!string.IsNullOrEmpty(s_strCurrentINIFilePath))
 						SaveINIFile();
 				}
+
+				Log("Shutting down e-mail thread...");
+				s_EmailQueueThread.PostQuitMessageAndShutdownQueue(false);
+				if (s_EmailQueueThread.WaitForTermination(TimeSpan.FromSeconds(30.0)))
+					Log("E-mail thread terminated.");
+				else
+					Log("E-mail thread timed out.");
 			}
 
 			/// I have only one try-catch frame because I don't want hidden logic bugs.
@@ -574,6 +585,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public static void ApplyVerb(Actor ThisActor, string strVerb)
 		{
+			Log("Applying verb \"{0}\" on actor \"{1}\" (ID: \"{2}\").", strVerb, ThisActor.Name, ThisActor.ID);
 			ApplyVerb(ThisActor.ID, strVerb);
 			return;
 		}
@@ -598,42 +610,6 @@ namespace EQ2GlassCannon
 				LavishVMAPI.Frame.Wait(false);
 
 			return;
-		}
-
-		/************************************************************************************/
-		public static bool SendEMail(
-			string strServer,
-			int iPort,
-			bool bUseSSLForPassword,
-			string strAccount,
-			string strPassword,
-			string strFromAddress,
-			List<string> astrToAddressList,
-			string strSubject,
-			string strMessage)
-		{
-			try
-			{
-				SmtpClient ThisClient = new SmtpClient(strServer, iPort);
-
-				bool bUsePassword = !string.IsNullOrEmpty(strAccount) || !string.IsNullOrEmpty(strPassword);
-				if (bUsePassword)
-				{
-					ThisClient.Credentials = new System.Net.NetworkCredential(strAccount, strPassword);
-					ThisClient.EnableSsl = bUseSSLForPassword;
-				}
-
-				foreach (string strThisToAddress in astrToAddressList)
-				{
-					ThisClient.Send(strFromAddress, strThisToAddress, strSubject, strMessage);
-				}
-			}
-			catch
-			{
-				return false;
-			}
-
-			return true;
 		}
 	}
 }

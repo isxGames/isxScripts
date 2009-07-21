@@ -1,5 +1,4 @@
-/* "TekMessageThread.cs"
- * Written 27 March 2007 by Joshua A. Schaeffer.
+/* "MessageThread.cs"
  *  
  * With the transition from C++/MFC to C#/.NET, I found myself wishing
  * I had a thread construct similar to Win32 threads with built-in message queues,
@@ -38,7 +37,7 @@ namespace EQ2GlassCannon
 	/// <summary>
 	/// 
 	/// </summary>
-	public abstract class TekMessageThread
+	public abstract class MessageThread
 	{
 		#region Global Bookkeeping
 
@@ -46,14 +45,14 @@ namespace EQ2GlassCannon
 		private static object s_GlobalDataLock = new object();
 
 		/// This maps managed thread ID's to TekMessageThread's.
-		private static Dictionary<int, TekMessageThread> s_ActiveThreadDictionary = new Dictionary<int, TekMessageThread>();
+		private static Dictionary<int, MessageThread> s_ActiveThreadDictionary = new Dictionary<int, MessageThread>();
 
 		/***************************************************************************/
-		public static TekMessageThread CurrentThread
+		public static MessageThread CurrentThread
 		{
 			get
 			{
-				TekMessageThread ThisMessageThread = null;
+				MessageThread ThisMessageThread = null;
 
 				lock(s_GlobalDataLock)
 				{
@@ -66,19 +65,19 @@ namespace EQ2GlassCannon
 		}
 
 		/***************************************************************************/
-		public static List<TekMessageThread> EnumThreads()
+		public static List<MessageThread> EnumThreads()
 		{
 			lock (s_GlobalDataLock)
 			{
-				List<TekMessageThread> ThreadList = new List<TekMessageThread>(s_ActiveThreadDictionary.Values.Count);
-				foreach (TekMessageThread ThisThread in s_ActiveThreadDictionary.Values)
+				List<MessageThread> ThreadList = new List<MessageThread>(s_ActiveThreadDictionary.Values.Count);
+				foreach (MessageThread ThisThread in s_ActiveThreadDictionary.Values)
 					ThreadList.Add(ThisThread);
 				return ThreadList;
 			}
 		}
 
 		/***************************************************************************/
-		public delegate void LastChanceExceptionHandlerType(TekMessageThread SourceThread, Exception e);
+		public delegate void LastChanceExceptionHandlerType(MessageThread SourceThread, Exception e);
 
 		/// The anonymous delegate initializer means I'll never have to worry about checking "null".
 		/// The downside is that this empty delegate will always be called.  But who gives a fuck anyway.
@@ -108,7 +107,7 @@ namespace EQ2GlassCannon
 		{
 			lock (s_GlobalDataLock)
 			{
-				s_LastChanceExceptionHandler(TekMessageThread.CurrentThread, e);
+				s_LastChanceExceptionHandler(MessageThread.CurrentThread, e);
 			}
 			return;
 		}
@@ -512,7 +511,7 @@ namespace EQ2GlassCannon
 		{
 			/// TODO: Make sure this thread is even active, otherwise this call will crash.
 
-			TekMessageThread CallerThread = CurrentThread;
+			MessageThread CallerThread = CurrentThread;
 
 			/// If we're calling from within the same thread...
 			if (null != CallerThread && CallerThread.ID == ID)
@@ -782,9 +781,9 @@ namespace EQ2GlassCannon
 		{
 			public int m_iTimerID = 0;
 			public System.Timers.Timer m_Timer = null;
-			public TekMessageThread m_OwnerThread = null;
+			public MessageThread m_OwnerThread = null;
 			public object m_Context = null;
-			public TimerDesc(int iNewTimerID, System.Timers.Timer NewTimer, TekMessageThread OwnerThread, object NewContext)
+			public TimerDesc(int iNewTimerID, System.Timers.Timer NewTimer, MessageThread OwnerThread, object NewContext)
 			{
 				m_iTimerID = iNewTimerID;
 				m_Timer = NewTimer;

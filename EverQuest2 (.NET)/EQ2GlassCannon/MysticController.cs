@@ -50,7 +50,7 @@ namespace EQ2GlassCannon
 		#endregion
 
 		/************************************************************************************/
-		public override void TransferINISettings(TransferType eTransferType)
+		protected override void TransferINISettings(TransferType eTransferType)
 		{
 			base.TransferINISettings(eTransferType);
 

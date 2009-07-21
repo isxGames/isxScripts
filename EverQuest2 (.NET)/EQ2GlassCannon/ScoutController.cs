@@ -15,13 +15,13 @@ namespace EQ2GlassCannon
 		public int m_iEvasiveManeuversAbilityID = -1;
 
 		/// <summary>
-		/// The int is the actor ID and the bool is whether or not we made attempt to disarm it.
+		/// The int is the actor ID and the bool is whether or not we made fair attempt to disarm it.
 		/// There is no actor test to whether or not a chest can be disarmed, so we have to cache our attempts.
 		/// </summary>
 		public Dictionary<int, bool> m_NearbyChestDictionary = new Dictionary<int, bool>();
 
 		public int m_iLastChestDisarmAttempted = -1;
-		public DateTime LastChestDisarmAttemptTime = DateTime.FromBinary(0);
+		public DateTime m_LastChestDisarmAttemptTime = DateTime.FromBinary(0);
 
 		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
@@ -38,7 +38,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
 		{
 			base.TransferINISettings(eTransferType);
 
@@ -55,15 +55,28 @@ namespace EQ2GlassCannon
 
 			if (m_iLastChestDisarmAttempted != -1)
 			{
-				if (strChatText.StartsWith("You disarm the trap on") || strChatText.StartsWith("You failed to disarm the trap on"))
+				if (strChatText.StartsWith("You disarm the trap on") ||
+					strChatText.StartsWith("You failed to disarm the trap on") ||
+					strChatText.StartsWith("You trigger the trap on"))
 				{
 					if (m_NearbyChestDictionary.ContainsKey(m_iLastChestDisarmAttempted))
 						m_NearbyChestDictionary[m_iLastChestDisarmAttempted] = true;
 					m_iLastChestDisarmAttempted = -1;
+					Program.Log("Chest disarmed or triggered. Checking for others.");
+					return true;
 				}
 			}
 
 			return false;
+		}
+
+		/************************************************************************************/
+		public override void OnZoning()
+		{
+			base.OnZoning();
+
+			m_NearbyChestDictionary.Clear();
+			return;
 		}
 
 		/************************************************************************************/
@@ -77,18 +90,25 @@ namespace EQ2GlassCannon
 			if (m_iLastChestDisarmAttempted != -1)
 			{
 				/// We need to wait a little longer.
-				if ((DateTime.Now - LastChestDisarmAttemptTime) < TimeSpan.FromSeconds(5))
+				if ((DateTime.Now - m_LastChestDisarmAttemptTime) < TimeSpan.FromSeconds(5))
 				{
 					Program.Log("Waiting for the server to respond to last chest disarm attempt before attempting more.");
 					return false;
 				}
 
-				/// Timeout. Will need to reattempt.
+				/// Timeout, write this one off.
+				/// Most likely it was already opened or disarmed.
 				else
+				{
 					m_iLastChestDisarmAttempted = -1;
+					if (m_NearbyChestDictionary.ContainsKey(m_iLastChestDisarmAttempted))
+						m_NearbyChestDictionary[m_iLastChestDisarmAttempted] = true;
+					Program.Log("Timeout on chest disarm. Won't repeat the attempt.");
+				}
 			}
 
 			/// Scan for chests in disarm range.
+			/// It's a pretty small radius, you almost have to run the scout right over the chest.
 			foreach (Actor ThisActor in EnumCustomActors("byDist", "3.5"))
 			{
 				if (!m_NearbyChestDictionary.ContainsKey(ThisActor.ID))
@@ -98,7 +118,7 @@ namespace EQ2GlassCannon
 				{
 					Program.Log("Attempting to disarm \"{0}\" (ID:{1})...", ThisActor.Name, ThisActor.ID);
 					Program.ApplyVerb(ThisActor, "disarm");
-					LastChestDisarmAttemptTime = DateTime.Now;
+					m_LastChestDisarmAttemptTime = DateTime.Now;
 					m_iLastChestDisarmAttempted = ThisActor.ID;
 					return true;
 				}
