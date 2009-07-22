@@ -77,7 +77,13 @@
     <Compile Include="ShamanController.cs" />
     <Compile Include="SorcererController.cs" />
     <Compile Include="PlayerController.cs" />
+    <Compile Include="PlayerController.CastAbility.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlayerController.Helper.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerController.IniSettings.cs">
       <DependentUpon>PlayerController.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
