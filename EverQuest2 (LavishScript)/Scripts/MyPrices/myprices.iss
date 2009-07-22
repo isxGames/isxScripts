@@ -117,7 +117,7 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running VVersion 0.13o :  released 8th June 2009" FF11FFCC
+	call AddLog "Running Version 0.13o :  released 8th June 2009" FF11FFCC
 	call echolog "Running Version 0.13o :  released 8th June 2009"
 	
 	call StartUp	
@@ -1452,7 +1452,6 @@ function LoadList()
 	numitems:Set[0]
 	do
 	{
-		echo i is ${i} out of ${brokerslots}
 		
 		if (${Me.Vending[${i}](exists)})  && ${box[${i}]}
 		{
