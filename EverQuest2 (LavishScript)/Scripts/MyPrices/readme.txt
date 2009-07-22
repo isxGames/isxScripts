@@ -184,7 +184,7 @@ Craft List
 ----------
 
 Clicking on this will make myprices scan your broker list , compare whats there with the values you set under the craft tab
-and add how many of what items you need to make to replenish your broker stocks to your craft script favourites list.
+and add how many of what items you need to make to replenish your broker stocks.
 
 If you set a bags options to be 'Contents are not for sale' then that bag will be ignored by the script when you
 use 'Craft List'.
@@ -194,6 +194,11 @@ and you can then start crafting what you need.
 
 typing /craft _myprices  in your in-game text box or just 'craft _myprices' in the innerspace command line will also start craft and
 auto-load the myprices list then start crafting automatically. 
+
+Craft _myprices
+---------------
+
+Pressing this will start up the craft script and make craft load up the _myprices crafting list automatically then exit myprices.
 
 Place Items
 -----------
@@ -423,7 +428,7 @@ Revisions
 Version 0.13p
 -------------
 
-Added some minor futureproofing to the script , 2 more broker box slot tickboxes and made it easier to expand the number or items more
+Added some minor futureproofing to the script , 2 more broker box slot tickboxes and made it easier to expand the number of items more
 without having to delve into the code too much ready for February 2010.
 
 Don't worry about slots 7 and 8 they don't actually work right now so you'll see them appear then dissapear from the UI on start.
