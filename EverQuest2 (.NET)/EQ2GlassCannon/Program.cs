@@ -186,6 +186,43 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public static void TestFrameRate(double fSeconds)
+		{
+			Program.Log("Sampling frame rate...");
+			DateTime ThrottleWaitStart = DateTime.Now;
+			int iFramesElapsed = 0;
+			while (DateTime.Now - ThrottleWaitStart < TimeSpan.FromSeconds(fSeconds))
+			{
+				LavishVMAPI.Frame.Wait(false);
+				//using (new FrameLock(true)) ;
+				iFramesElapsed++;
+			}
+			double fFramesPerSecond = (double)iFramesElapsed / (DateTime.Now - ThrottleWaitStart).TotalSeconds;
+			Program.Log("Measurement complete ({0:0.0} FPS).", fFramesPerSecond);
+			return;
+		}
+
+		/************************************************************************************/
+		public class TrustedFrameLock : IDisposable
+		{
+			public TrustedFrameLock()
+			{
+				LavishVMAPI.Frame.Wait(true);
+			}
+			public void Dispose()
+			{
+				LavishVMAPI.Frame.Unlock();
+			}
+			public static TrustedFrameLock New
+			{
+				get
+				{
+					return new TrustedFrameLock();
+				}
+			}
+		}
+
+		/************************************************************************************/
 		private static void Main()
 		{
 			try
@@ -213,15 +250,11 @@ namespace EQ2GlassCannon
 				Program.Log("Waiting for ISXEQ2 to initialize...");
 				while (true)
 				{
-					LavishVMAPI.Frame.Wait(true);
-					try
+					using (new FrameLock(true))
 					{
-						if (s_Extension.ISXEQ2().IsReady)
+						UpdateGlobals();
+						if (ISXEQ2.IsReady)
 							break;
-					}
-					finally
-					{
-						LavishVMAPI.Frame.Unlock();
 					}
 				}
 
@@ -238,6 +271,46 @@ namespace EQ2GlassCannon
 					s_ISXEQ2.SetActorEventsRange(50.0f);
 				}
 
+#if !DEBUG
+				/// This giant code chunk was a huge necessity due to the completely random lag that happens
+				/// inside the UpdateGlobals() function. A laggy launch will never free up and a free launch
+				/// will never get laggy.  Thus we veto laggy launches and tell the user to re-launch.
+				Log("Testing speed of global object acquisition. Please wait 5 seconds...");
+				DateTime SlowFrameTestStartTime = DateTime.Now;
+				int iFramesElapsed = 0;
+				int iBadFrames = 0;
+				double fTotalTimes = 0.0;
+				while (DateTime.Now - SlowFrameTestStartTime < TimeSpan.FromSeconds(5))
+				{
+					iFramesElapsed++;
+					Frame.Wait(true);
+					try
+					{
+						DateTime BeforeTime = DateTime.Now;
+						UpdateGlobals(); /// This is the line we're testing.
+						DateTime AfterTime = DateTime.Now;
+
+						double fElapsedTime = (AfterTime - BeforeTime).TotalMilliseconds;
+						fTotalTimes += fElapsedTime;
+						//Log("{0} : {1:0.0}", iFramesElapsed, fElapsedTime);
+						if (fElapsedTime > 3.0)
+							iBadFrames++;
+					}
+					finally
+					{
+						Frame.Unlock();
+					}
+				}
+				double fAverageTime = fTotalTimes / (double)iFramesElapsed;
+				double fBadFramePercentage = (double)iBadFrames / (double)iFramesElapsed * 100;
+				Log("Average time per frame lookup was {0:0} ms, with {1:0.0}% of frames ({2} / {3}) lagging out.", fAverageTime, fBadFramePercentage, iBadFrames, iFramesElapsed);
+				if (fAverageTime > 2 || fBadFramePercentage > 10)
+				{
+					Log("Aborting due to substantial frame lag. Please restart EQ2GlassCannon.");
+					return;
+				}
+#endif
+
 				/// Ensure that the INI path exists firstly.
 				string strAppDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 				strAppDataFolderPath = Path.Combine(strAppDataFolderPath, "EQ2GlassCannon");
@@ -252,7 +325,7 @@ namespace EQ2GlassCannon
 
 				do
 				{
-					LavishVMAPI.Frame.Wait(true);
+					Frame.Wait(true);
 					try
 					{
 						UpdateGlobals();
@@ -276,6 +349,8 @@ namespace EQ2GlassCannon
 								Program.Log("Done zoning.");
 								bFirstZoningFrame = true;
 
+								if (s_Controller != null)
+									s_Controller.OnZoningComplete();
 								/// We used to not have to do this, but something changed and fucked everything up.
 								s_bRefreshKnowledgeBook = true;
 							}
@@ -355,7 +430,7 @@ namespace EQ2GlassCannon
 					}
 					finally
 					{
-						LavishVMAPI.Frame.Unlock();
+						Frame.Unlock();
 					}
 
 					/// If we have to refresh the knowledge book, then do it outside of the main lock.
@@ -396,12 +471,26 @@ namespace EQ2GlassCannon
 			/// Things should work perfectly or not at all.
 			catch (Exception e)
 			{
+				StringBuilder ExceptionText = new StringBuilder();
+				ExceptionText.AppendLine("Unhandled .NET exception: " + e.Message);
+				ExceptionText.AppendLine(e.TargetSite.ToString());
+				ExceptionText.AppendLine(e.StackTrace.ToString());
+				string strExceptionText = ExceptionText.ToString();
+
+				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strCurrentINIFilePath, "ExceptionLog.txt")))
+				{
+					OutputFile.WriteLine("-----------------------------");
+					OutputFile.WriteLine(strExceptionText);
+				}
+
+				/// Nothing will appear on the screen anyway because the whole thing is locked up.
+				if (LavishVMAPI.Frame.IsLocked)
+					Process.GetCurrentProcess().Kill();
+
 				if (s_Controller != null)
 					Program.RunCommand("/t " + s_Controller.m_strCommandingPlayer + " oh shit lol");
 
-				Program.Log("Unhandled .NET exception: " + e.Message);
-				Program.Log(e.TargetSite.ToString()); /// TODO: Extract and display the LINE that threw the exception!!!
-				Program.Log(e.StackTrace.ToString());
+				Program.Log(strExceptionText); /// TODO: Extract and display the LINE that threw the exception!!!
 			}
 
 			finally
