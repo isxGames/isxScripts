@@ -6,6 +6,7 @@ using EQ2.ISXEQ2;
 
 namespace EQ2GlassCannon
 {
+	/************************************************************************************/
 	public class ScoutController : PlayerController
 	{
 		public bool m_bDisarmChests = true;
@@ -90,7 +91,7 @@ namespace EQ2GlassCannon
 			if (m_iLastChestDisarmAttempted != -1)
 			{
 				/// We need to wait a little longer.
-				if ((DateTime.Now - m_LastChestDisarmAttemptTime) < TimeSpan.FromSeconds(5))
+				if ((DateTime.Now - m_LastChestDisarmAttemptTime) < TimeSpan.FromSeconds(3))
 				{
 					Program.Log("Waiting for the server to respond to last chest disarm attempt before attempting more.");
 					return false;

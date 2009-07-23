@@ -372,7 +372,7 @@ namespace EQ2GlassCannon
 			{
 				if (m_bAutoHarvestInProgress)
 				{
-					if (strChatText.StartsWith("You gathered") ||
+					if (strChatText.StartsWith("You gather") ||
 						strChatText.StartsWith("You failed to gather anything from") ||
 						strChatText.StartsWith("You forest") ||
 						strChatText.StartsWith("You failed to forest anything from") ||
@@ -380,7 +380,7 @@ namespace EQ2GlassCannon
 						strChatText.StartsWith("You failed to trap anything from") ||
 						strChatText.StartsWith("You fish") ||
 						strChatText.StartsWith("You failed to fish anything from") ||
-						strChatText.StartsWith("You mined") ||
+						strChatText.StartsWith("You mine") ||
 						strChatText.StartsWith("You failed to mine anything from"))
 					{
 						Program.Log("Harvesting attempt complete.");

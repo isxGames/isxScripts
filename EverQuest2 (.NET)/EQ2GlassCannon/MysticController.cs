@@ -219,7 +219,7 @@ namespace EQ2GlassCannon
 				StopCheckingBuffs();
 			}
 
-			bool bOffensiveTargetEngaged = EngageOffensiveTargetActor();
+			bool bOffensiveTargetEngaged = EngagePrimaryEnemy();
 
 			if (MeActor.IsIdle)
 			{
