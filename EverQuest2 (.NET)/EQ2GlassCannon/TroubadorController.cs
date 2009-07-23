@@ -146,6 +146,10 @@ namespace EQ2GlassCannon
 
 			if (!MeActor.IsStealthed && m_bCheckBuffsNow)
 			{
+				/// Time is of the essence when rebuffing after a wipe!
+				if (!MeActor.InCombatMode && CheckToggleBuff(m_iGroupRunSpeedBuffAbilityID, true))
+					return true;
+
 				if (CheckToggleBuff(m_iGroupCastingSkillBuffAbilityID, m_bBuffCastingSkill))
 					return true;
 
@@ -223,7 +227,7 @@ namespace EQ2GlassCannon
 				if (CastNextMez(m_iSingleMezAbilityID))
 					return true;
 
-				if (!EngageOffensiveTargetActor())
+				if (!EngagePrimaryEnemy())
 					return false;
 
 				/// We put the stealth check so early on because it is so easily wasted by the wrong thing.

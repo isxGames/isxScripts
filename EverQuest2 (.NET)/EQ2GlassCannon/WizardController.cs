@@ -140,14 +140,14 @@ namespace EQ2GlassCannon
 			}
 
 			GetOffensiveTargetActor();
-			if (!EngageOffensiveTargetActor())
+			if (!EngagePrimaryEnemy())
 				return false;
 
 			if (m_OffensiveTargetActor != null)
 			{
 				/// Find the distance to the mob.  Especially important for PBAE usage.
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
-				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90) || (m_OffensiveTargetActor.Health > 95);
+				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 				int iEncounterSize = m_OffensiveTargetActor.EncounterSize;
 

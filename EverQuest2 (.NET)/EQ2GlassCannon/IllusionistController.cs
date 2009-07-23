@@ -181,14 +181,14 @@ namespace EQ2GlassCannon
 					return true;
 			}
 
-			if (!EngageOffensiveTargetActor())
+			if (!EngagePrimaryEnemy())
 				return false;
 
 			/// Decide if the offensive target is still legitimate. If so, attempt to target it.
 			if (m_OffensiveTargetActor != null && MeActor.IsIdle)
 			{
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
-				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90) || (m_OffensiveTargetActor.Health > 95);
+				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 				int iEncounterSize = m_OffensiveTargetActor.EncounterSize;
 

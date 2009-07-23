@@ -546,7 +546,7 @@ namespace EQ2GlassCannon
 
 			m_bAutoHarvestInProgress = true;
 			m_LastAutoHarvestAttemptTime = DateTime.Now;
-			Program.Log("Harvesting \"{1}\" from a distance of \"{2:0.00}\" meters...", NearestHarvestableNode.Type, NearestHarvestableNode.Name, fNearestHarvestableDistance);
+			Program.Log("Harvesting \"{1}\" from a distance of {2:0.00} meters...", NearestHarvestableNode.Type, NearestHarvestableNode.Name, fNearestHarvestableDistance);
 			return false;
 		}
 	}

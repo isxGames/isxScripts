@@ -153,7 +153,7 @@ namespace EQ2GlassCannon
 			}
 
 			GetOffensiveTargetActor();
-			if (!EngageOffensiveTargetActor())
+			if (!EngagePrimaryEnemy())
 				return false;
 
 			if (m_OffensiveTargetActor != null)
