@@ -14,7 +14,6 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
-		#region INI settings
 		public bool m_bWriteBackINI = true;
 		public string m_strCustomTellTriggerFile = string.Empty;
 		public string m_strReloadINISubphrase = "rebuff me pls";
@@ -60,9 +59,6 @@ namespace EQ2GlassCannon
 		public string m_strSpawnWatchAlertCommand = string.Empty;
 		public string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
 		public float m_fSpawnWatchDespawnTimeoutMinutes = 5.0f;
-		#endregion
-
-		#region INI file settings.
 
 		/************************************************************************************/
 		public enum TransferType
@@ -344,7 +340,5 @@ namespace EQ2GlassCannon
 				WriteINIString(strKey, fValue.ToString());
 			return;
 		}
-
-		#endregion
 	}
 }

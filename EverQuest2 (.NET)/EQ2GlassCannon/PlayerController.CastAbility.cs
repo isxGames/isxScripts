@@ -14,9 +14,68 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
+		protected bool m_bAutoHarvestInProgress = false;
+		protected DateTime m_LastAutoHarvestAttemptTime = DateTime.FromBinary(0);
+
 		/************************************************************************************/
 		/// <summary>
-		/// Casts a hostile action.
+		/// Casts an action on an arbitrary PC target using the chat command.
+		/// Preferred for all beneficial casts.
+		/// </summary>
+		public bool CastAbility(int iAbilityID, string strPlayerTarget, bool bMustBeAlive)
+		{
+			if (iAbilityID < 1)
+				return false;
+
+			/// We won't muck around with spell queuing and add needless complexity;
+			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
+			Ability ThisAbility = Me.Ability(iAbilityID);
+			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+				return false;
+			if (ThisAbility.IsQueued)
+				return true;
+
+			Actor SpellTargetActor = null;
+			if (m_FriendDictionary.ContainsKey(strPlayerTarget))
+				SpellTargetActor = m_FriendDictionary[strPlayerTarget].ToActor();
+			else if (strPlayerTarget == Me.Name)
+				SpellTargetActor = MeActor;
+			else
+				SpellTargetActor = Program.s_Extension.Actor(strPlayerTarget);
+
+			if (!SpellTargetActor.IsValid)
+			{
+				Program.Log("Target actor {0} not valid for CastAbility().", strPlayerTarget);
+				return false;
+			}
+
+			if (bMustBeAlive && SpellTargetActor.IsDead)
+				return false;
+
+			double fDistance = GetActorDistance3D(MeActor, SpellTargetActor);
+			if (fDistance > ThisAbility.Range)
+			{
+				Program.Log("Unable to cast {0} because {1} is out of range ({2} needed, {3:0.000} actual)",
+					ThisAbility.Name, SpellTargetActor.Name, ThisAbility.Range, fDistance);
+				return false;
+			}
+
+			if (Me.Power < ThisAbility.PowerCost)
+			{
+				Program.Log("Not enough power to cast {0} on {1}!", ThisAbility.Name, SpellTargetActor.Name);
+				return false;
+			}
+
+			//Program.Log("TARGET TYPE: " + ThisAbility.TargetType.ToString());
+
+			Program.Log("Casting {0} on {1}...", ThisAbility.Name, strPlayerTarget);
+			Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, ThisAbility.Name);
+			return true;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Casts an action on the player's current target.
 		/// </summary>
 		/// <param name="iAbilityID"></param>
 		/// <returns></returns>
@@ -159,62 +218,6 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		/// <summary>
-		/// Riskier (possibly slower?) version that uses the command to do the cast.
-		/// Preferred for all beneficial casts.
-		/// </summary>
-		public bool CastAbility(int iAbilityID, string strPlayerTarget, bool bMustBeAlive)
-		{
-			if (iAbilityID < 1)
-				return false;
-
-			/// We won't muck around with spell queuing and add needless complexity;
-			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
-				return false;
-			if (ThisAbility.IsQueued)
-				return true;
-
-			Actor SpellTargetActor = null;
-			if (m_FriendDictionary.ContainsKey(strPlayerTarget))
-				SpellTargetActor = m_FriendDictionary[strPlayerTarget].ToActor();
-			else if (strPlayerTarget == Me.Name)
-				SpellTargetActor = MeActor;
-			else
-				SpellTargetActor = Program.s_Extension.Actor(strPlayerTarget);
-
-			if (!SpellTargetActor.IsValid)
-			{
-				Program.Log("Target actor {0} not valid for CastAbility().", strPlayerTarget);
-				return false;
-			}
-
-			if (bMustBeAlive && SpellTargetActor.IsDead)
-				return false;
-
-			double fDistance = GetActorDistance3D(MeActor, SpellTargetActor);
-			if (fDistance > ThisAbility.Range)
-			{
-				Program.Log("Unable to cast {0} because {1} is out of range ({2} needed, {3:0.000} actual)",
-					ThisAbility.Name, SpellTargetActor.Name, ThisAbility.Range, fDistance);
-				return false;
-			}
-
-			if (Me.Power < ThisAbility.PowerCost)
-			{
-				Program.Log("Not enough power to cast {0} on {1}!", ThisAbility.Name, SpellTargetActor.Name);
-				return false;
-			}
-
-			//Program.Log("TARGET TYPE: " + ThisAbility.TargetType.ToString());
-
-			Program.Log("Casting {0} on {1}...", ThisAbility.Name, strPlayerTarget);
-			Program.RunCommand("/useabilityonplayer " + strPlayerTarget + " " + ThisAbility.Name);
-			return true;
-		}
-
-		/************************************************************************************/
-		/// <summary>
 		/// Casts the HO starter if the wheel isn't up.
 		/// </summary>
 		public bool CastHOStarter()
@@ -342,7 +345,7 @@ namespace EQ2GlassCannon
 		/// <param name="iAbilityID"></param>
 		/// <param name="bAnyVersion">true if any version of the spell should be cancelled, false if only inferior ones should be cancelled</param>
 		/// <returns>true if a maintained spell was actually found and cancelled.</returns>
-		public bool CancelAbility(int iAbilityID, bool bAnyVersion)
+		public bool CancelAbility(int iAbilityID, bool bCancelAnyVersion)
 		{
 			if (iAbilityID < 1)
 				return false;
@@ -357,7 +360,7 @@ namespace EQ2GlassCannon
 
 				if (m_KnowledgeBookCategoryDictionary.ContainsKey(strMaintainedName) && m_KnowledgeBookCategoryDictionary[strMaintainedName] == iAbilityID)
 				{
-					if (bAnyVersion || strAbilityName != strMaintainedName)
+					if (bCancelAnyVersion || strAbilityName != strMaintainedName)
 					{
 						Program.Log("Cancelling {0} from {1}...", strMaintainedName, ThisMaintained.Target().Name);
 						ThisMaintained.Cancel();
@@ -479,6 +482,71 @@ namespace EQ2GlassCannon
 			if (bOn && !IsAbilityMaintained(iAbilityID) && CastAbility(iAbilityID, Me.Name, true))
 				return true;
 
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool CheckRacialBuffs()
+		{
+			if (!m_bUseRacialBuffs)
+				return false;
+
+			if (CheckToggleBuff(m_iFeatherfallAbilityID, true))
+				return true;
+
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool AutoHarvestNearestNode()
+		{
+			if (!m_bHarvestAutomatically || Me.IsMoving || MeActor.InCombatMode || m_iOffensiveTargetID != -1)
+				return false;
+
+			/// Try to disqualify the attempt in progress if it timed out.
+			if (m_bAutoHarvestInProgress)
+			{
+				if ((DateTime.Now - m_LastAutoHarvestAttemptTime) < TimeSpan.FromSeconds(5))
+					return false;
+				else
+				{
+					Program.Log("Harvest attempt timed out.");
+					m_bAutoHarvestInProgress = false;
+				}
+			}
+
+			Actor NearestHarvestableNode = null;
+			double fNearestHarvestableDistance = 50.0f;
+
+			/// Find the nearest harvestable. 6 meters seems to be the right range.
+			foreach (Actor ThisActor in EnumCustomActors("byDist", "6"))
+			{
+				if (ThisActor.Type != "Resource")
+					continue;
+
+				double fDistance = GetActorDistance3D(MeActor, ThisActor);
+				if (fDistance < fNearestHarvestableDistance)
+				{
+					NearestHarvestableNode = ThisActor;
+					fNearestHarvestableDistance = fDistance;
+				}
+			}
+
+			if (NearestHarvestableNode == null)
+				return false;
+
+			NearestHarvestableNode.DoTarget();
+			if (!Me.TargetLOS)
+			{
+				Program.Log("No line of sight to the harvest node. Please move closer to avoid command spam.");
+				return false;
+			}
+
+			NearestHarvestableNode.DoubleClick();
+
+			m_bAutoHarvestInProgress = true;
+			m_LastAutoHarvestAttemptTime = DateTime.Now;
+			Program.Log("Harvesting \"{1}\" from a distance of \"{2:0.00}\" meters...", NearestHarvestableNode.Type, NearestHarvestableNode.Name, fNearestHarvestableDistance);
 			return false;
 		}
 	}

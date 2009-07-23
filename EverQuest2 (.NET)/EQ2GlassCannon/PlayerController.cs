@@ -22,6 +22,13 @@ namespace EQ2GlassCannon
 		public int m_iFeatherfallAbilityID = -1;
 		public int m_iHalfElfMitigationDebuffAbilityID = -1;
 
+		public int m_iCollectingAbilityID = -1;
+		public int m_iGatheringAbilityID = -1;
+		public int m_iMiningAbilityID = -1;
+		public int m_iForestingAbilityID = -1;
+		public int m_iTrappingAbilityID = -1;
+		public int m_iFishingAbilityID = -1;
+
 		/************************************************************************************/
 		public enum PositioningStance
 		{
@@ -208,6 +215,15 @@ namespace EQ2GlassCannon
 				"Falling Grace" /// Erudites.
 				);
 			m_iHalfElfMitigationDebuffAbilityID = SelectHighestAbilityID("Piercing Stab");
+
+			/// Harvesting.
+			m_iCollectingAbilityID = SelectHighestAbilityID("Collecting");
+			m_iGatheringAbilityID = SelectHighestAbilityID("Gathering");
+			m_iMiningAbilityID = SelectHighestAbilityID("Mining");
+			m_iForestingAbilityID = SelectHighestAbilityID("Foresting");
+			m_iTrappingAbilityID = SelectHighestAbilityID("Trapping");
+			m_iFishingAbilityID = SelectHighestAbilityID("Fishing");
+
 			return;
 		}
 
@@ -257,6 +273,7 @@ namespace EQ2GlassCannon
 			else
 				m_CommandingPlayerActor = null;
 
+			/// Build the maintained spell dictionary.
 			m_MaintainedNameToIndexMap.Clear();
 			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
 			{
@@ -279,6 +296,7 @@ namespace EQ2GlassCannon
 				m_bClearGroupMaintained = false;
 			}
 
+			/// Build the beneficial effect dictionary.
 			m_BeneficialEffectNameToIndexMap.Clear();
 			for (int iIndex = 1; iIndex <= Me.CountEffects; iIndex++)
 			{
@@ -307,6 +325,9 @@ namespace EQ2GlassCannon
 			if (CheckPositioningStance())
 				return true;
 
+			if (AutoHarvestNearestNode())
+				return true;
+
 			return false;
 		}
 
@@ -321,7 +342,10 @@ namespace EQ2GlassCannon
 			{
 				/// Only accept group invites from the commanding player.
 				if (!string.IsNullOrEmpty(m_strCommandingPlayer) && ThisWindow.Text.StartsWith(m_strCommandingPlayer))
+				{
+					Program.Log("Accepting invite from commanding player.");
 					Program.RunCommand("/acceptinvite");
+				}
 				else
 					Program.RunCommand("/declineinvite");
 
@@ -346,6 +370,25 @@ namespace EQ2GlassCannon
 		{
 			if (string.IsNullOrEmpty(strFrom))
 			{
+				if (m_bAutoHarvestInProgress)
+				{
+					if (strChatText.StartsWith("You gathered") ||
+						strChatText.StartsWith("You failed to gather anything from") ||
+						strChatText.StartsWith("You forest") ||
+						strChatText.StartsWith("You failed to forest anything from") ||
+						strChatText.StartsWith("You acquire") ||
+						strChatText.StartsWith("You failed to trap anything from") ||
+						strChatText.StartsWith("You fish") ||
+						strChatText.StartsWith("You failed to fish anything from") ||
+						strChatText.StartsWith("You mined") ||
+						strChatText.StartsWith("You failed to mine anything from"))
+					{
+						Program.Log("Harvesting attempt complete.");
+						m_bAutoHarvestInProgress = false;
+						return true;
+					}
+				}
+
 			}
 
 			return false;
@@ -741,9 +784,9 @@ namespace EQ2GlassCannon
 				if (MeActor.IsDead)
 					return false;
 
-				/// We'll deal with this after LU51.
+				/*/// We'll deal with this after LU51.
 				if (MeActor.IsClimbing || string.IsNullOrEmpty(m_strAutoFollowTarget))
-					return false;
+					return false;*/
 
 				/// Make sure the autofollow target is in our group.
 				if (!m_GroupMemberDictionary.ContainsKey(m_strAutoFollowTarget))
@@ -927,18 +970,6 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckRacialBuffs()
-		{
-			if (!m_bUseRacialBuffs)
-				return false;
-
-			if (CheckToggleBuff(m_iFeatherfallAbilityID, true))
-				return true;
-
-			return false;
-		}
-
-		/************************************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
@@ -1078,7 +1109,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool TargetPrimaryEnemy()
+		public bool GetOffensiveTargetActor()
 		{
 			if (m_iOffensiveTargetID == -1)
 				return false;
