@@ -504,6 +504,7 @@ namespace EQ2GlassCannon
 				return false;
 
 			/// Try to disqualify the attempt in progress if it timed out.
+			/// The correct termination of an attempt is when OnIncomingText() receives a status string.
 			if (m_bAutoHarvestInProgress)
 			{
 				if ((DateTime.Now - m_LastAutoHarvestAttemptTime) < TimeSpan.FromSeconds(5))
@@ -516,22 +517,24 @@ namespace EQ2GlassCannon
 			}
 
 			Actor NearestHarvestableNode = null;
-			double fNearestHarvestableDistance = 50.0f;
+			double fNearestHarvestableDistance = 0.0f;
 
-			/// Find the nearest harvestable. 6 meters seems to be the right range.
-			foreach (Actor ThisActor in EnumCustomActors("byDist", "6"))
+			/// Find the nearest harvestable. 5 meters seems to be the right range.
+			foreach (Actor ThisActor in EnumCustomActors("byDist", "5"))
 			{
+				/// We have to be careful, this also includes shineys that may be locked due to leader loot.
 				if (ThisActor.Type != "Resource")
 					continue;
 
 				double fDistance = GetActorDistance3D(MeActor, ThisActor);
-				if (fDistance < fNearestHarvestableDistance)
+				if (NearestHarvestableNode == null || fDistance < fNearestHarvestableDistance)
 				{
 					NearestHarvestableNode = ThisActor;
 					fNearestHarvestableDistance = fDistance;
 				}
 			}
 
+			/// No harvestable node found.
 			if (NearestHarvestableNode == null)
 				return false;
 

@@ -892,27 +892,30 @@ namespace EQ2GlassCannon
 
 			else if (m_ePositioningStance == PositioningStance.SpawnWatch)
 			{
-				string strActualFoundName = null;
+				Actor ActualFoundActor = null;
 				foreach (Actor ThisActor in EnumCustomActors())
 				{
 					string strThisActorName = ThisActor.Name.Trim().ToLower();
 					if (strThisActorName == m_strSpawnWatchTarget)
 					{
-						strActualFoundName = ThisActor.Name;
+						ActualFoundActor = ThisActor;
 						break;
 					}
 				}
 
-				if (!string.IsNullOrEmpty(strActualFoundName))
+				if (ActualFoundActor != null)
 				{
-					Program.Log("Spawn Watch target \"{0}\" found!", strActualFoundName);
+					/// This is awesomesauce right here.
+					string strCoordinates = string.Format("{0:0.00}, {1:0.00}, {2:0.00}", ActualFoundActor.X, ActualFoundActor.Y, ActualFoundActor.Z);
+					Program.RunCommand("/waypoint {0}", strCoordinates);
+					Program.Log("Spawn Watch target \"{0}\" found at ({1})! See map: a waypoint command was executed.", ActualFoundActor.Name, strCoordinates);
 
 					if (m_astrSpawnWatchToAddressList.Count > 0)
 					{
 						Program.s_EmailQueueThread.PostEmailMessage(
 							m_astrSpawnWatchToAddressList,
 							"From " + Me.Name,
-							strActualFoundName + " just spawned!");
+							ActualFoundActor.Name + " just spawned!");
 					}
 
 					try
