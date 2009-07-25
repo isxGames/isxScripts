@@ -375,93 +375,23 @@
                               }
                             </OnChange>
                           </Textentry>
-                          <checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>180</X>
-                            <Y>95</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>Slow Attacks</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.doSlowAttacks}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.doSlowAttacks:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
-                            </OnLeftClick>
-                          </checkbox>
-                          <Text Name='txtSlowAttacksPct' Template='VG.BoldText'>
-                            <X>308</X>
-                            <Y>95</Y>
-                            <Width>100</Width>
-                            <Height>20</Height>
-                            <Alignment>Left</Alignment>
-                            <Text>.1sec</Text>
-                          </Text>
-                          <Textentry Name='SlowAttacksPct' Template='VG.TextEntry'>
-                            <X>280</X>
-                            <Y>95</Y>
-                            <Width>26</Width>
-                            <Height>19</Height>
-                            <Color>FFDDBB00</Color>
-                            <SelectionColor>FF000000</SelectionColor>
-                            <Border>0</Border>
-                            <OnLoad>
-                              This:SetText[${Script[vga].VariableScope.SlowAttacks}]
-                            </OnLoad>
-                            <OnChange>
-                              if ${This.Text.Length} > 0
-                              {
-                              Script[vga].VariableScope.SlowAttacks:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
-                              }
-                            </OnChange>
-                          </Textentry>
-                          <Text Name='txtSlowHealsPct' Template='VG.BoldText'>
-                            <X>180</X>
-                            <Y>115</Y>
-                            <Width>120</Width>
-                            <Height>20</Height>
-                            <Alignment>Left</Alignment>
-                            <Text>Slow Heals</Text>
-                          </Text>
-                          <Text Name='txtSlowHealstxt+' Template='VG.BoldText'>
-                            <X>308</X>
-                            <Y>115</Y>
-                            <Width>100</Width>
-                            <Height>20</Height>
-                            <Alignment>Left</Alignment>
-                            <Text>.001sec</Text>
-                          </Text>
-                          <Textentry Name='SlowHealsPct' Template='VG.TextEntry'>
-                            <X>280</X>
-                            <Y>115</Y>
-                            <Width>26</Width>
-                            <Height>19</Height>
-                            <Color>FFDDBB00</Color>
-                            <SelectionColor>FF000000</SelectionColor>
-                            <Border>0</Border>
-                            <OnLoad>
-                              This:SetText[${Script[vga].VariableScope.SlowHeals}]
-                            </OnLoad>
-                            <OnChange>
-                              if ${This.Text.Length} > 0
-                              {
-                              Script[vga].VariableScope.SlowHeals:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
-                              }
-                            </OnChange>
-                          </Textentry>
+
+                    	<Text Name='utiltxt--' Template='VG.BoldText'>
+                      	<X>13</X>
+                      	<Y>120</Y>
+                      	<Width>95%</Width>
+                      	<Height>20</Height>
+                      	<Alignment>Left</Alignment>
+                      	<Text>-----------------Utility Switches-----------------------------</Text>
+                    	</Text>
+ 
                           <checkbox Name='doLoot' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
+                            <X>13</X>
                             <Y>135</Y>
                             <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Loot Corpses</Text>
+                            <Text>Loot Corpses (Loot all unless checked below)</Text>
                             <OnLoad>
                               if ${Script[vga].VariableScope.DoLoot}
                               {
@@ -473,46 +403,48 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
-                          <checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
+                          <checkbox Name='DoLootOnly' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
+                            <X>43</X>
                             <Y>155</Y>
                             <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Auto Counters</Text>
+                            <Text>Loot Only</Text>
                             <OnLoad>
-                              if ${Script[vga].VariableScope.DoCountersASAP}
+                              if ${Script[vga].VariableScope.DoLootOnly}
                               {
                               This:SetChecked
                               }
                             </OnLoad>
                             <OnLeftClick>
-                              Script[vga].VariableScope.DoCountersASAP:Set[${This.Checked}]
+                              Script[vga].VariableScope.DoLootOnly:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
-                          <checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
-                            <X>180</X>
-                            <Y>175</Y>
-                            <Width>15</Width>
-                            <Height>20</Height>
-                            <Text>Auto Chains</Text>
-                            <OnLoad>
-                              if ${Script[vga].VariableScope.DoChainsASAP}
-                              {
-                              This:SetChecked
-                              }
-                            </OnLoad>
-                            <OnLeftClick>
-                              Script[vga].VariableScope.DoChainsASAP:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
-                            </OnLeftClick>
-                          </checkbox>
+                   	 <Textentry Name='LootOnly' Template='VG.TextEntry'>
+                     	 <X>120</X>
+                      	<Y>155</Y>
+                      	<Width>230</Width>
+                     	<Height>19</Height>
+                      	<Color>FFDDBB00</Color>
+                      	<SelectionColor>FF000000</SelectionColor>
+                      	<Border>0</Border>
+                      	<OnLoad>
+                      	  This:SetText[${Script[vga].VariableScope.LootOnly}]
+                      	</OnLoad>
+                      	<OnChange>
+                       	 if ${This.Text.Length} > 0
+                       	 {
+                       	 Script[vga].VariableScope.LootOnly:Set[${This.Text}]
+                       	 Script[VGA]:QueueCommand[call LavishSave]
+                      	  }
+                      	</OnChange>
+                    	</Textentry>
+
                           <checkbox Name='DoMountbl' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
-                            <Y>195</Y>
+                            <X>13</X>
+                            <Y>175</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Mount</Text>
@@ -529,8 +461,8 @@
                           </checkbox>
                           <checkbox Name='DoAutoAcceptGroupInvitechk' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
-                            <Y>215</Y>
+                            <X>13</X>
+                            <Y>195</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Group</Text>
@@ -547,8 +479,8 @@
                           </checkbox>
                           <checkbox Name='DoLooseTarget' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
-                            <Y>235</Y>
+                            <X>13</X>
+                            <Y>215</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Loose Target for Plat Coins</Text>
@@ -565,8 +497,8 @@
                           </checkbox>
                           <checkbox Name='DoFollowInCombat' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
-                            <Y>255</Y>
+                            <X>13</X>
+                            <Y>235</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Follow Friend In Combat</Text>
@@ -583,8 +515,8 @@
                           </checkbox>
                           <checkbox Name='DoHarvest' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
-                            <Y>275</Y>
+                            <X>13</X>
+                            <Y>255</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Assist with Harvesting</Text>
@@ -599,10 +531,19 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+
+                    	<Text Name='combattxt--' Template='VG.BoldText'>
+                      	<X>13</X>
+                      	<Y>380</Y>
+                      	<Width>95%</Width>
+                      	<Height>20</Height>
+                      	<Alignment>Left</Alignment>
+                      	<Text>-----------------Combat Switches-----------------------------</Text>
+                    	</Text>
                           <checkbox Name='DoFurious' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
-                            <Y>295</Y>
+                            <X>13</X>
+                            <Y>400</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Turn off att. while Furious</Text>
@@ -614,6 +555,122 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doFurious:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>420</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Slow Attacks</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.doSlowAttacks}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.doSlowAttacks:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <Text Name='txtSlowAttacksPct' Template='VG.BoldText'>
+                            <X>142</X>
+                            <Y>420</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>.1sec</Text>
+                          </Text>
+                          <Textentry Name='SlowAttacksPct' Template='VG.TextEntry'>
+                            <X>110</X>
+                            <Y>420</Y>
+                            <Width>26</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.SlowAttacks}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.SlowAttacks:Set[${Math.Calc[${This.Text}].Int}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                              }
+                            </OnChange>
+                          </Textentry>
+                         <Text Name='txtSlowHealsPct' Template='VG.BoldText'>
+                            <X>33</X>
+                            <Y>440</Y>
+                            <Width>120</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>Slow Heals</Text>
+                          </Text>
+                          <Text Name='txtSlowHealstxt' Template='VG.BoldText'>
+                            <X>142</X>
+                            <Y>440</Y>
+                            <Width>100</Width>
+                            <Height>20</Height>
+                            <Alignment>Left</Alignment>
+                            <Text>.001sec</Text>
+                          </Text>
+                          <Textentry Name='SlowHealsPct' Template='VG.TextEntry'>
+                            <X>110</X>
+                            <Y>440</Y>
+                            <Width>26</Width>
+                            <Height>19</Height>
+                            <Color>FFDDBB00</Color>
+                            <SelectionColor>FF000000</SelectionColor>
+                            <Border>0</Border>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.SlowHeals}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.SlowHeals:Set[${Math.Calc[${This.Text}].Int}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                              }
+                            </OnChange>
+                          </Textentry>
+                          <checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>400</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Counters</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoCountersASAP}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoCountersASAP:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>420</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Chains</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoChainsASAP}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoChainsASAP:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>

@@ -218,6 +218,8 @@ function LavishSave()
 	UtilitySR:AddSetting[DoFollowInCombat,${DoFollowInCombat}]	
 	UtilitySR:AddSetting[doAutoSell,${doAutoSell}]
 	UtilitySR:AddSetting[doHarvest,${doHarvest}]
+	UtilitySR:AddSetting[DoLootOnly,${DoLootOnly}]
+	UtilitySR:AddSetting[LootOnly,${LootOnly}]
 
 	;===================================================
 	;===                  Spells Save               ====

@@ -83,7 +83,16 @@ function lootit()
 					Pawn[${iCount}]:Target
 					wait 5
 					call movetoobject ${Me.Target.ID} 4 0
-					VGExecute "/lootall"
+					if ${DoLootOnly}
+						{
+						Loot:BeginLooting
+						wait 4
+						Loot.Item[${LootOnly}]:Loot
+						wait 4
+						Loot:EndLooting
+						}
+					if !${DoLootOnly}
+						VGExecute /Lootall
 					waitframe
 					VGExecute "/cleartargets"
 				}
@@ -255,7 +264,9 @@ function executeability(string x_ability, string x_type, string CP)
 		if ${Me.Ability[${x_ability}].IsReady}
 		{
 			Me.Ability[${x_ability}]:Use
-			
+			;***************edited by maras**************
+				usedAbility:Set[TRUE]
+			;***************end edited by maras**************
 			switch ${x_type}
 			{
 				case Heal

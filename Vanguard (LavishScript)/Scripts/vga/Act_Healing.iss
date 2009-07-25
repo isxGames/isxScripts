@@ -54,7 +54,14 @@ function Healcheck()
 				call checkabilitytocast "${HotHeal}"
 				if ${Return}
 				{
-					call executeability "${HotHeal}" "Heal" "Neither"
+					call CanApplyHOT "${HotHeal}" 1
+					if ${Return}
+					{
+						usedAbility:Set[FALSE]
+						call executeability "${HotHeal}" "Heal" "Neither"
+						if ${usedAbility}
+							call SaveHOTTime "${HotHeal}" 1
+					}
 					return
 				}
 				return
@@ -68,7 +75,14 @@ function Healcheck()
 				call checkabilitytocast "${HotHeal}"
 				if ${Return}
 				{
-					call executeability "${HotHeal}" "Heal" "Neither"
+					call CanApplyHOT "${HotHeal}" 1
+					if ${Return}
+					{
+						usedAbility:Set[FALSE]
+						call executeability "${HotHeal}" "Heal" "Neither"
+						if ${usedAbility}
+							call SaveHOTTime "${HotHeal}" 1
+					}
 					return
 				}
 				return
@@ -197,7 +211,14 @@ function Healcheck()
 					call checkabilitytocast "${HotHeal}"
 					if ${Return}
 					{
-						call executeability "${HotHeal}" "Heal" "Neither"
+						call CanApplyHOT "${HotHeal}" ${icnt}
+						if ${Return}
+						{
+							usedAbility:Set[FALSE]
+							call executeability "${HotHeal}" "Heal" "Neither"
+							if ${usedAbility}
+								call SaveHOTTime "${HotHeal}" ${icnt}
+						}
 						return
 					}
 					return
@@ -217,7 +238,14 @@ function Healcheck()
 					call checkabilitytocast "${HotHeal}"
 					if ${Return}
 					{
-						call executeability "${HotHeal}" "Heal" "Neither"
+						call CanApplyHOT "${HotHeal}" ${icnt}
+						if ${Return}
+						{
+							usedAbility:Set[FALSE]
+							call executeability "${HotHeal}" "Heal" "Neither"
+							if ${usedAbility}
+								call SaveHOTTime "${HotHeal}" ${icnt}
+						}
 						return
 					}
 					return
@@ -435,3 +463,49 @@ objectdef HealNeeds
 }
 variable HealNeeds healneeds
  
+variable int HOTReady[24]
+variable bool usedAbility
+
+function SetupHOTTimer()
+{
+	variable int GroupNumber
+
+	if ${Me.IsGrouped}
+	{
+		for ( GroupNumber:Set[1] ; ${Group[${GroupNumber}].ID(exists)} ; GroupNumber:Inc )
+		{
+			HOTReady[${GroupNumber}]:Set[${LavishScript.RunningTime}]
+		}
+	}
+}
+
+function:bool CanApplyHOT(string HealAbility, int GroupNumber)
+{
+	;if !${Me.IsGrouped} || !${Me.Ability[${HealAbility}].IsReady}
+	;	return
+	
+	if ${LavishScript.RunningTime}<${HOTReady[${GroupNumber}]}
+		return FALSE
+		
+	return TRUE
+}
+
+function:bool SaveHOTTime(string HealAbility, int GroupNumber)
+{
+	;Me.Ability[${HealAbility}]:Use
+
+	variable int DelaySeconds
+	
+	if ${HealAbility.Find[Alleviate]}
+		DelaySeconds:Set[17]
+	elseif ${HealAbility.Find[Kiss of Heaven]}
+		DelaySeconds:Set[31]
+	else
+		DelaySeconds:Set[1]
+
+	HOTReady[${GroupNumber}]:Set[${Math.Calc[${LavishScript.RunningTime}+(1000*${DelaySeconds})]}]
+
+	wait 3
+	
+	return TRUE
+}

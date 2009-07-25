@@ -300,7 +300,8 @@ function LavishLoad()
 	DoFollowInCombat:Set[${UtilitySR.FindSetting[DoFollowInCombat,${DoFollowInCombat}]}]
 	doAutoSell:Set[${UtilitySR.FindSetting[doAutoSell,${doAutoSell}]}]
 	doHarvest:Set[${UtilitySR.FindSetting[doHarvest,${doHarvest}]}]
-	
+	DoLootOnly:Set[${UtilitySR.FindSetting[DoLootOnly,${DoLootOnly}]}]
+	LootOnly:Set[${UtilitySR.FindSetting[LootOnly,${LootOnly}]}]	
 	;===================================================
 	;===                  Spells Load               ====
 	;===================================================
