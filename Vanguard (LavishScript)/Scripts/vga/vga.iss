@@ -193,6 +193,9 @@ function main()
 	call PopulateBMLists
 	call PopulateGroupMemberNames
 	call PopulateTriggersLists
+	;***************edited by maras**************	
+	call SetupHOTTimer
+	;***************end edited by maras**************
 	;===================================================
 	;===               Bug WorkArounds              ====
 	;===================================================

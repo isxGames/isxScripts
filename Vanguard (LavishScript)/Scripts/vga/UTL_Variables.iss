@@ -142,6 +142,8 @@ variable bool doTrash
 variable bool DoFollowInCombat
 variable bool doAutoSell
 variable bool doHarvest
+variable bool DoLootOnly
+variable string LootOnly
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
