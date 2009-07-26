@@ -74,6 +74,7 @@ namespace EQ2GlassCannon
 		public bool m_bCheckBuffsNow = true;
 		public bool m_bIHaveAggro = false;
 		public bool m_bClearGroupMaintained = false;
+		public bool m_bLastShadowTargetSamplingWasNearby = false;
 		public DateTime m_LastCheckBuffsTime = DateTime.Now;
 		public int m_iOffensiveTargetID = -1;
 		public Actor m_OffensiveTargetActor = null;
@@ -741,6 +742,7 @@ namespace EQ2GlassCannon
 				if (CommandingPlayerActor != null)
 				{
 					m_ePositioningStance = PositioningStance.ShadowMe;
+					m_bLastShadowTargetSamplingWasNearby = false;
 					CheckPositioningStance();
 				}
 			}
@@ -864,18 +866,34 @@ namespace EQ2GlassCannon
 				if (!MeActor.IsClimbing && MeActor.CanTurn)
 				{
 					double fRange = GetActorDistance3D(MeActor, m_ptStayLocation);
+
+					/// If target suddenly ported from near to ridiculously far away, almost errantly, then call it off.
+					/// If the target began the stance far away and is approaching near, then allow it to continue;
+					/// in that case the commander is using shadowing to draw the character closer.
+					if (m_ePositioningStance == PositioningStance.ShadowMe)
+					{
+						bool bThisSamplingIsNearby = (fRange < 200.0f);
+						if (m_bLastShadowTargetSamplingWasNearby && !bThisSamplingIsNearby)
+						{
+							Program.RunCommand("/t {0} you ported too far away", m_strCommandingPlayer);
+							ChangePositioningStance(PositioningStance.NeutralPosition);
+							return true;
+						}
+						m_bLastShadowTargetSamplingWasNearby = bThisSamplingIsNearby;
+					}
+					
 					if (fRange > m_fStayInPlaceTolerance)
 					{
 						float fBearing = Me.HeadingTo(m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z);
 						if (Me.Face(fBearing))
 						{
-							Program.Log("Moving to stay position ({0:0.000}, {1:0.000}, {2:0.000}), {3:0.000} distance away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
+							Program.Log("Moving to stay position ({0:0.00}, {1:0.00}, {2:0.00}), {3:0.00} distance away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
 							LavishScriptAPI.LavishScript.ExecuteCommand("press -hold W");
 						}
 					}
 					else
 					{
-						//Program.Log("Settled at stay position, {0:0.000} distance away.", fRange);
+						//Program.Log("Settled at stay position, {0:0.00} distance away.", fRange);
 						LavishScriptAPI.LavishScript.ExecuteCommand("press -release W");
 					}
 				}
@@ -942,7 +960,7 @@ namespace EQ2GlassCannon
 					{
 #if DEBUG
 						double fDistance = GetActorDistance2D(MeActor, ThisActor);
-						Program.Log("Distance to {0}: {1:0.000}", ThisActor.Name, fDistance);
+						Program.Log("Distance to {0}: {1:0.00}", ThisActor.Name, fDistance);
 #endif
 						/// Reset the clock every time we see a single living actor with the search name.
 						m_SpawnWatchDespawnStartTime = DateTime.Now;

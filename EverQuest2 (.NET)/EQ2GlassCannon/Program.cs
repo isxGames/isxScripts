@@ -37,6 +37,9 @@ namespace EQ2GlassCannon
 		public static Character Me { get { return s_Me; } }
 		public static Actor MeActor { get { return s_MeActor; } }
 
+		private static Dictionary<string, DateTime> s_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
+		private static readonly TimeSpan COMMAND_THROTTLE_TIMEOUT = TimeSpan.FromSeconds(10);
+
 		/************************************************************************************/
 		/// <summary>
 		/// Make sure to call this every time you grab a frame lock.
@@ -275,7 +278,7 @@ namespace EQ2GlassCannon
 				/// This giant code chunk was a huge necessity due to the completely random lag that happens
 				/// inside the UpdateGlobals() function. A laggy launch will never free up and a free launch
 				/// will never get laggy.  Thus we veto laggy launches and tell the user to re-launch.
-				Log("Testing speed of global object acquisition. Please wait 5 seconds...");
+				Log("Testing the speed of root object lookup. Please wait 5 seconds...");
 				DateTime SlowFrameTestStartTime = DateTime.Now;
 				int iFramesElapsed = 0;
 				int iBadFrames = 0;
@@ -293,7 +296,10 @@ namespace EQ2GlassCannon
 						double fElapsedTime = (AfterTime - BeforeTime).TotalMilliseconds;
 						fTotalTimes += fElapsedTime;
 						//Log("{0} : {1:0.0}", iFramesElapsed, fElapsedTime);
-						if (fElapsedTime > 3.0)
+
+						/// A correctly functioning access to the root ISXEQ2 globals should take 0-1 milliseconds.
+						/// Anything higher is unacceptable and demonstrably wrong.
+						if (fElapsedTime > 2.0)
 							iBadFrames++;
 					}
 					finally
@@ -303,10 +309,10 @@ namespace EQ2GlassCannon
 				}
 				double fAverageTime = fTotalTimes / (double)iFramesElapsed;
 				double fBadFramePercentage = (double)iBadFrames / (double)iFramesElapsed * 100;
-				Log("Average time per frame lookup was {0:0} ms, with {1:0.0}% of frames ({2} / {3}) lagging out.", fAverageTime, fBadFramePercentage, iBadFrames, iFramesElapsed);
+				Log("Average time per object lookup was {0:0} ms, with {1:0.0}% of frames ({2} / {3}) lagging out.", fAverageTime, fBadFramePercentage, iBadFrames, iFramesElapsed);
 				if (fAverageTime > 2 || fBadFramePercentage > 10)
 				{
-					Log("Aborting due to substantial frame lag. Please restart EQ2GlassCannon.");
+					Log("Aborting due to substantial ISXEQ2 lag. Please restart EQ2GlassCannon.");
 					return;
 				}
 #endif
@@ -349,8 +355,11 @@ namespace EQ2GlassCannon
 								Program.Log("Done zoning.");
 								bFirstZoningFrame = true;
 
+								s_RecentThrottledCommandIndex.Clear();
+
 								if (s_Controller != null)
 									s_Controller.OnZoningComplete();
+
 								/// We used to not have to do this, but something changed and fucked everything up.
 								s_bRefreshKnowledgeBook = true;
 							}
@@ -360,7 +369,6 @@ namespace EQ2GlassCannon
 						if (EQ2.PendingQuestName != "None")
 						{
 							EQ2.AcceptPendingQuest();
-
 							/// TODO: Even though the quest gets accepted, the window doesn't disappear. We gotta make it disappear.
 						}
 
@@ -637,10 +645,11 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// I hate trying to remember the syntax, so I hid it behind this function.
 		/// </summary>
-		/// <param name="strCommand"></param>
-		public static void RunCommand(string strCommand, params object[] aobjParams)
+		/// <param name="bThrottled">Whether or not to prevent immediate duplicates of the same command until a certain time has passed.</param>
+		/// <param name="strFormat"></param>
+		public static void RunCommand(bool bThrottled, string strFormat, params object[] aobjParams)
 		{
-			if (string.IsNullOrEmpty(strCommand))
+			if (string.IsNullOrEmpty(strFormat))
 				return;
 
 			try
@@ -648,14 +657,24 @@ namespace EQ2GlassCannon
 				string strFinalCommand = string.Empty;
 
 				if (aobjParams.Length == 0)
-					strFinalCommand += string.Format("{0}", strCommand);
+					strFinalCommand += string.Format("{0}", strFormat);
 				else
-					strFinalCommand += string.Format(strCommand, aobjParams);
+					strFinalCommand += string.Format(strFormat, aobjParams);
+
+				if (s_RecentThrottledCommandIndex.ContainsKey(strFinalCommand))
+				{
+					if (DateTime.Now - s_RecentThrottledCommandIndex[strFinalCommand] > COMMAND_THROTTLE_TIMEOUT)
+						s_RecentThrottledCommandIndex.Remove(strFinalCommand);
+					else
+						return;
+				}
 
 				using (new FrameLock(true))
 				{
 					s_Extension.EQ2Execute(strFinalCommand);
 				}
+
+				s_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now);
 			}
 			catch
 			{
@@ -665,9 +684,16 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public static void RunCommand(string strCommand, params object[] aobjParams)
+		{
+			RunCommand(false, strCommand, aobjParams);
+			return;
+		}
+
+		/************************************************************************************/
 		public static void ApplyVerb(int iActorID, string strVerb)
 		{
-			RunCommand("/apply_verb {0} {1}", iActorID, strVerb);
+			RunCommand(true, "/apply_verb {0} {1}", iActorID, strVerb);
 			return;
 		}
 

@@ -13,20 +13,6 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
-		private static readonly TimeSpan s_ChatSpamThrottleTimeout = TimeSpan.FromSeconds(10);
-
-		/// <summary>
-		/// Records the most recent group chat strings,
-		/// so that the bot doesn't spam repeatedly and send bad hints to the server.
-		/// </summary>
-		private Dictionary<string, DateTime> m_RecentGroupChatStringIndex = new Dictionary<string, DateTime>();
-
-		/// <summary>
-		/// Records the most recent raid chat strings,
-		/// so that the bot doesn't spam repeatedly and send bad hints to the server.
-		/// </summary>
-		private Dictionary<string, DateTime> m_RecentRaidChatStringIndex = new Dictionary<string, DateTime>();
-
 		/************************************************************************************/
 		/// <summary>
 		/// This finds planar distance without regard to altitude.
@@ -159,44 +145,20 @@ namespace EQ2GlassCannon
 			return PlayerActor;
 		}
 
+
 		/************************************************************************************/
 		public void SpamSafeGroupSay(string strFormat, params object[] aobjParams)
 		{
-			if (!Me.Grouped || string.IsNullOrEmpty(strFormat))
+			if (!Me.Grouped)
 				return;
 
-			string strMessage = string.Empty;
-			try
-			{
-				if (aobjParams.Length == 0)
-					strMessage += string.Format("{0}", strFormat);
-				else
-					strMessage += string.Format(strFormat, aobjParams);
-			}
-			catch
-			{
-				return;
-			}
-
-			if (m_RecentGroupChatStringIndex.ContainsKey(strMessage))
-			{
-				if (DateTime.Now - m_RecentGroupChatStringIndex[strMessage] > s_ChatSpamThrottleTimeout)
-					m_RecentGroupChatStringIndex.Remove(strMessage);
-				else
-					return;
-			}
-
-			Program.RunCommand("/g {0}", strMessage);
-			m_RecentGroupChatStringIndex.Add(strMessage, DateTime.Now);
+			Program.RunCommand(true, "/g " + strFormat, aobjParams);
 			return;
 		}
 
 		/************************************************************************************/
 		public void SpamSafeRaidSay(string strFormat, params object[] aobjParams)
 		{
-			if (string.IsNullOrEmpty(strFormat))
-				return;
-
 			if (!Me.InRaid)
 			{
 				if (Me.Grouped)
@@ -204,29 +166,14 @@ namespace EQ2GlassCannon
 				return;
 			}
 
-			string strMessage = string.Empty;
-			try
-			{
-				if (aobjParams.Length == 0)
-					strMessage += string.Format("{0}", strFormat);
-				else
-					strMessage += string.Format(strFormat, aobjParams);
-			}
-			catch
-			{
-				return;
-			}
+			Program.RunCommand(true, "/r " + strFormat, aobjParams);
+			return;
+		}
 
-			if (m_RecentRaidChatStringIndex.ContainsKey(strMessage))
-			{
-				if (DateTime.Now - m_RecentRaidChatStringIndex[strMessage] > s_ChatSpamThrottleTimeout)
-					m_RecentRaidChatStringIndex.Remove(strMessage);
-				else
-					return;
-			}
-
-			Program.RunCommand("/r {0}", strMessage);
-			m_RecentRaidChatStringIndex.Add(strMessage, DateTime.Now);
+		/************************************************************************************/
+		public void SpamSafeTell(string strPlayerName, string strFormat, params object[] aobjParams)
+		{
+			Program.RunCommand(true, "/t " + strPlayerName + " " + strFormat, aobjParams);
 			return;
 		}
 	}
