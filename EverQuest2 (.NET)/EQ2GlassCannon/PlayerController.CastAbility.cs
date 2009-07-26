@@ -24,7 +24,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public bool CastAbility(int iAbilityID, string strPlayerTarget, bool bMustBeAlive)
 		{
-			if (iAbilityID < 1)
+			if (iAbilityID < 1 || string.IsNullOrEmpty(strPlayerTarget))
 				return false;
 
 			/// We won't muck around with spell queuing and add needless complexity;
@@ -55,7 +55,7 @@ namespace EQ2GlassCannon
 			double fDistance = GetActorDistance3D(MeActor, SpellTargetActor);
 			if (fDistance > ThisAbility.Range)
 			{
-				Program.Log("Unable to cast {0} because {1} is out of range ({2} needed, {3:0.000} actual)",
+				Program.Log("Unable to cast {0} because {1} is out of range ({2} needed, {3:0.00} actual)",
 					ThisAbility.Name, SpellTargetActor.Name, ThisAbility.Range, fDistance);
 				return false;
 			}
@@ -97,7 +97,7 @@ namespace EQ2GlassCannon
 				double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
 				if (fDistance < ThisAbility.MinRange || ThisAbility.MaxRange < fDistance)
 				{
-					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.000} actual)",
+					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
 						ThisAbility.Name, MyTargetActor.Name, ThisAbility.MinRange, ThisAbility.MaxRange, fDistance);
 					return false;
 				}
