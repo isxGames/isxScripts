@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v8.91 - Bugfix release. Craft -load really works now.
+
 v8.9  - REALLY fixed spell writs to work with GU52 changes. Jewelers and Alchemists rejoice!
 
 v8.8  - Fixed spell writs to work with GU52 changes.
