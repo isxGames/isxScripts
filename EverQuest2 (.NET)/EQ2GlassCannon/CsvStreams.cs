@@ -132,6 +132,10 @@ namespace EQ2GlassCannon
 
 			StringBuilder sb = new StringBuilder();
 
+			/// Skip past leading whitespace.
+			while (m_strCurrentLine[m_iReadIndex] == ' ')
+				m_iReadIndex++;
+
 			bool bInsideQuotes = (m_strCurrentLine[m_iReadIndex] == '\"');
 			if (bInsideQuotes)
 				m_iReadIndex++;
@@ -189,7 +193,6 @@ namespace EQ2GlassCannon
 		FINISHED:
 			string strFinalString = sb.ToString();
 			strFinalString = strFinalString.Replace("\\n", "\r\n");
-
 			return strFinalString;
 		}
 
