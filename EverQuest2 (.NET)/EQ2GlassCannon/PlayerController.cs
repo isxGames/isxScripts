@@ -14,7 +14,6 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
-		public const int ABILITY_TARGET_TYPE_GROUP = 2;
 		public const string STR_NO_KILL_NPC = "NoKill NPC";
 
 		public int m_iLoreAndLegendAbilityID = -1;
@@ -66,6 +65,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public class CustomTellTrigger
 		{
+			public List<string> m_astrSourcePlayers = new List<string>();
 			public string m_strSubstring = string.Empty;
 			public List<string> m_astrCommands = new List<string>();
 		}
@@ -320,6 +320,15 @@ namespace EQ2GlassCannon
 			if (CheckPositioningStance())
 				return true;
 
+			/// If a spellcast is in progress, there's nothing more to do.
+			if (DateTime.Now < m_NextPermissibleCastTime)
+			{
+#if DEBUG
+				Program.Log("Expecting cast to complete.");
+#endif
+				return true;
+			}
+
 			if (AutoHarvestNearestNode())
 				return true;
 
@@ -384,6 +393,11 @@ namespace EQ2GlassCannon
 					}
 				}
 
+				if (strChatText == "Interrupted!" ||
+					strChatText == "Target is not alive" ||
+					strChatText == "Can't see target" ||
+					strChatText == "Too far away")
+					m_NextPermissibleCastTime = DateTime.Now;
 			}
 
 			return false;
@@ -402,7 +416,23 @@ namespace EQ2GlassCannon
 			string strTrimmedMessage = strMessage.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
-			/// This override only deals with commands.
+			/// First check for a match against custom tell triggers.
+			/// These can be authorized from any source.
+			foreach (CustomTellTrigger ThisTrigger in m_aCustomTellTriggerList)
+			{
+				if (
+					(ThisTrigger.m_astrSourcePlayers.Count == 0 || ThisTrigger.m_astrSourcePlayers.Contains(strFrom.ToLower()))
+					&&
+					strLowerCaseMessage.Contains(ThisTrigger.m_strSubstring)
+					)
+				{
+					foreach (string strThisCommand in ThisTrigger.m_astrCommands)
+						Program.RunCommand(strThisCommand, m_strCommandingPlayer);
+					return true;
+				}
+			}
+
+			/// This override only deals with commands after this point.
 			if (string.Compare(strFrom, m_strCommandingPlayer, true) != 0)
 				return false;
 
@@ -607,19 +637,7 @@ namespace EQ2GlassCannon
 			}
 
 			else
-			{
-				foreach (CustomTellTrigger ThisTrigger in m_aCustomTellTriggerList)
-				{
-					if (strLowerCaseMessage.Contains(ThisTrigger.m_strSubstring))
-					{
-						foreach (string strThisCommand in ThisTrigger.m_astrCommands)
-							Program.RunCommand(strThisCommand, m_strCommandingPlayer);
-						return true;
-					}
-				}
-
 				Program.Log("No command detected in commanding player chat.");
-			}
 
 			return false;
 		}
@@ -780,9 +798,8 @@ namespace EQ2GlassCannon
 				if (MeActor.IsDead)
 					return false;
 
-				/*/// We'll deal with this after LU51.
-				if (MeActor.IsClimbing || string.IsNullOrEmpty(m_strAutoFollowTarget))
-					return false;*/
+				if (string.IsNullOrEmpty(m_strAutoFollowTarget))
+					return false;
 
 				/// Make sure the autofollow target is in our group.
 				if (!m_GroupMemberDictionary.ContainsKey(m_strAutoFollowTarget))
@@ -1099,6 +1116,7 @@ namespace EQ2GlassCannon
 				/// Turn it off just in case.
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
+					Program.Log("Turning off all autoattack.");
 					Program.RunCommand("/auto 0");
 					return true;
 				}
@@ -1107,6 +1125,7 @@ namespace EQ2GlassCannon
 				Actor PetActor = Me.Pet();
 				if (PetActor.IsValid && PetActor.InCombatMode)
 				{
+					Program.Log("Backing pet off.");
 					Program.RunCommand("/pet backoff");
 					return true;
 				}
@@ -1115,6 +1134,7 @@ namespace EQ2GlassCannon
 				Actor TargetActor = MeActor.Target();
 				if (TargetActor.IsValid && TargetActor.Type == "NPC")
 				{
+					Program.Log("Clearing target.");
 					Program.RunCommand("/target_none");
 					return true;
 				}
