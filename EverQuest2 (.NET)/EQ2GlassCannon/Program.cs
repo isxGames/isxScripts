@@ -37,9 +37,6 @@ namespace EQ2GlassCannon
 		public static Character Me { get { return s_Me; } }
 		public static Actor MeActor { get { return s_MeActor; } }
 
-		private static Dictionary<string, DateTime> s_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
-		private static readonly TimeSpan COMMAND_THROTTLE_TIMEOUT = TimeSpan.FromSeconds(10);
-
 		/************************************************************************************/
 		/// <summary>
 		/// Make sure to call this every time you grab a frame lock.
@@ -275,15 +272,17 @@ namespace EQ2GlassCannon
 				}
 
 #if !DEBUG
+				double fTestTime = 5.0;
+
 				/// This giant code chunk was a huge necessity due to the completely random lag that happens
 				/// inside the UpdateGlobals() function. A laggy launch will never free up and a free launch
 				/// will never get laggy.  Thus we veto laggy launches and tell the user to re-launch.
-				Log("Testing the speed of root object lookup. Please wait 5 seconds...");
+				Log("Testing the speed of root object lookup. Please wait {0:0.0} seconds...", fTestTime);
 				DateTime SlowFrameTestStartTime = DateTime.Now;
 				int iFramesElapsed = 0;
 				int iBadFrames = 0;
 				double fTotalTimes = 0.0;
-				while (DateTime.Now - SlowFrameTestStartTime < TimeSpan.FromSeconds(5))
+				while (DateTime.Now - SlowFrameTestStartTime < TimeSpan.FromSeconds(fTestTime))
 				{
 					iFramesElapsed++;
 					Frame.Wait(true);
@@ -299,7 +298,7 @@ namespace EQ2GlassCannon
 
 						/// A correctly functioning access to the root ISXEQ2 globals should take 0-1 milliseconds.
 						/// Anything higher is unacceptable and demonstrably wrong.
-						if (fElapsedTime > 2.0)
+						if (fElapsedTime > 4.0)
 							iBadFrames++;
 					}
 					finally
@@ -345,6 +344,14 @@ namespace EQ2GlassCannon
 								bFirstZoningFrame = false;
 								if (s_Controller != null)
 									s_Controller.OnZoning();
+
+								/// Now's as good a time as any!
+								Program.Log("Performing .NET garbage collection...");
+								long lMemoryBeforeGarbageCollection = GC.GetTotalMemory(false);
+								GC.Collect();
+								long lMemoryAfterGarbageCollection = GC.GetTotalMemory(true);
+								long lMemoryFreed = lMemoryBeforeGarbageCollection - lMemoryAfterGarbageCollection;
+								Program.Log("{0} bytes freed.", lMemoryFreed);
 							}
 							continue;
 						}
@@ -355,11 +362,8 @@ namespace EQ2GlassCannon
 								Program.Log("Done zoning.");
 								bFirstZoningFrame = true;
 
-								s_RecentThrottledCommandIndex.Clear();
-
 								if (s_Controller != null)
 									s_Controller.OnZoningComplete();
-
 								/// We used to not have to do this, but something changed and fucked everything up.
 								s_bRefreshKnowledgeBook = true;
 							}
@@ -369,6 +373,7 @@ namespace EQ2GlassCannon
 						if (EQ2.PendingQuestName != "None")
 						{
 							EQ2.AcceptPendingQuest();
+
 							/// TODO: Even though the quest gets accepted, the window doesn't disappear. We gotta make it disappear.
 						}
 
@@ -485,7 +490,7 @@ namespace EQ2GlassCannon
 				ExceptionText.AppendLine(e.StackTrace.ToString());
 				string strExceptionText = ExceptionText.ToString();
 
-				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strINIFolderPath, "ExceptionLog.txt")))
+				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strCurrentINIFilePath, "ExceptionLog.txt")))
 				{
 					OutputFile.WriteLine("-----------------------------");
 					OutputFile.WriteLine(strExceptionText);
@@ -642,14 +647,18 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		private static Dictionary<string, DateTime> m_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
+		private static readonly TimeSpan s_CommandThrottleTimeout = TimeSpan.FromSeconds(10);
+
+		/************************************************************************************/
 		/// <summary>
 		/// I hate trying to remember the syntax, so I hid it behind this function.
 		/// </summary>
 		/// <param name="bThrottled">Whether or not to prevent immediate duplicates of the same command until a certain time has passed.</param>
-		/// <param name="strFormat"></param>
-		public static void RunCommand(bool bThrottled, string strFormat, params object[] aobjParams)
+		/// <param name="strCommand"></param>
+		public static void RunCommand(bool bThrottled, string strCommand, params object[] aobjParams)
 		{
-			if (string.IsNullOrEmpty(strFormat))
+			if (string.IsNullOrEmpty(strCommand))
 				return;
 
 			try
@@ -657,14 +666,15 @@ namespace EQ2GlassCannon
 				string strFinalCommand = string.Empty;
 
 				if (aobjParams.Length == 0)
-					strFinalCommand += string.Format("{0}", strFormat);
+					strFinalCommand += string.Format("{0}", strCommand);
 				else
-					strFinalCommand += string.Format(strFormat, aobjParams);
+					strFinalCommand += string.Format(strCommand, aobjParams);
 
-				if (s_RecentThrottledCommandIndex.ContainsKey(strFinalCommand))
+				/// Throttle it only if the parameter says so.
+				if (bThrottled && m_RecentThrottledCommandIndex.ContainsKey(strFinalCommand))
 				{
-					if (DateTime.Now - s_RecentThrottledCommandIndex[strFinalCommand] > COMMAND_THROTTLE_TIMEOUT)
-						s_RecentThrottledCommandIndex.Remove(strFinalCommand);
+					if (DateTime.Now - m_RecentThrottledCommandIndex[strFinalCommand] > s_CommandThrottleTimeout)
+						m_RecentThrottledCommandIndex.Remove(strFinalCommand);
 					else
 						return;
 				}
@@ -674,7 +684,7 @@ namespace EQ2GlassCannon
 					s_Extension.EQ2Execute(strFinalCommand);
 				}
 
-				s_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now);
+				m_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now);
 			}
 			catch
 			{
@@ -684,6 +694,11 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// This version of RunCommand DEFAULTS TO NON-THROTTLED.
+		/// </summary>
+		/// <param name="strCommand"></param>
+		/// <param name="aobjParams"></param>
 		public static void RunCommand(string strCommand, params object[] aobjParams)
 		{
 			RunCommand(false, strCommand, aobjParams);

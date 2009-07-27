@@ -154,6 +154,8 @@ namespace EQ2GlassCannon
 						while (ThisReader.ReadLine())
 						{
 							CustomTellTrigger NewTrigger = new CustomTellTrigger();
+
+							NewTrigger.m_astrSourcePlayers.AddRange(ThisReader.ReadNextValue().ToLower().Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
 							NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
 
 							/// Keep reading commands until there are no more.
@@ -177,7 +179,8 @@ namespace EQ2GlassCannon
 			}
 			catch
 			{
-				Program.Log("Generic exception while parsing custom tell trigger file.");
+				Program.Log("Generic exception while parsing custom tell trigger file. List will be cleared and unused.");
+				m_aCustomTellTriggerList.Clear();
 			}
 
 			return;

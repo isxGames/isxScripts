@@ -13,7 +13,6 @@ namespace EQ2GlassCannon
 		public int m_iGroupCastingSkillBuffAbilityID = -1;
 		public int m_iGroupNoxiousBuffAbilityID = -1;
 		public int m_iSingleSTRINTDebuffAbilityID = -1;
-
 		public int m_iSingleBasicNukeAbilityID = -1;
 		public int m_iSinglePrimaryPoisonNukeAbilityID = -1;
 		public int m_iSingleUnresistableDOTAbilityID = -1;
@@ -161,9 +160,12 @@ namespace EQ2GlassCannon
 						return true;
 					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 1))
 						return true;
+					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 1))
+						return true;
 				}
 			}
 
+			Program.Log("Nothing left to cast.");
 			return false;
 		}
 	}
