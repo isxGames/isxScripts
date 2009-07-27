@@ -93,13 +93,6 @@ namespace EQ2GlassCannon
 		public Dictionary<string, GroupMember> m_FriendDictionary = new Dictionary<string, GroupMember>();
 
 		/// <summary>
-		/// Within a frame lock, CastPBAEAbility() might be called multiple times for the same spell.
-		/// This cache prevents the need for redundant range detection on all NPC's within the blast radius,
-		/// which can conceivably be taxing on CPU usage.
-		/// </summary>
-		public Dictionary<int, int> m_DetectedAbilityTargetCountCache = new Dictionary<int, int>();
-
-		/// <summary>
 		/// This associates all identical spells of a shared recast timer with the index of the highest level version of them.
 		/// </summary>
 		public Dictionary<string, int> m_KnowledgeBookCategoryDictionary = new Dictionary<string, int>();
@@ -321,7 +314,8 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			m_DetectedAbilityTargetCountCache.Clear();
+			m_AbilityCache.Clear();
+			m_AbilityCompatibleTargetCountCache.Clear();
 
 			if (CheckPositioningStance())
 				return true;

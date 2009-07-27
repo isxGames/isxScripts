@@ -26,98 +26,37 @@ namespace EQ2GlassCannon
 		public int m_iGreenDeaggroAbilityID = -1;
 		public int m_iBluePoisonAEAbilityID = -1;
 
+		/************************************************************************************/
 		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
 		{
 			base.TransferINISettings(eTransferType);
 			return;
 		}
 
+		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iGroupCastingSkillBuffAbilityID = SelectHighestAbilityID(
-				"Spellbinding Pact",
-				"Dark Pact",
-				"Seal of Dark Rumination",
-				"Seal of Ebon Thought");
-
-			m_iGroupNoxiousBuffAbilityID = SelectHighestAbilityID(
-				"Boon of the Shadows",
-				"Boon of the Void",
-				"Bolster Energy",
-				"Aspect of Darkness");
-
-			m_iSingleBasicNukeAbilityID = SelectHighestAbilityID(
-				"Corrosive Strike",
-				"Corrosive Blast",
-				"Corrosive Bolt",
-				"Noxious Blast",
-				"Noxious Bolt",
-				"Soul Flay");
-
-			m_iSinglePrimaryPoisonNukeAbilityID = SelectHighestAbilityID(
-				"Dark Distortion",
-				"Nil Distortion",
-				"Null Distortion");
-
-			m_iSingleUnresistableDOTAbilityID = SelectHighestAbilityID(
-				"Erupt",
-				"Emanate",
-				"Shadowy Emanations",
-				"Dark Emanations",
-				"Torment of Shadows");
-
-			m_iSingleMediumNukeDOTAbilityID = SelectHighestAbilityID(
-				"Suffocation",
-				"Suffocating Breath",
-				"Dark Pyre",
-				"Shadowed Pyre");
-
-			m_iSingleColdStunNukeAbilityID = SelectHighestAbilityID(
-				"Freeze",
-				"Flashfreeze",
-				"Deter");
-
-			m_iSingleSTRINTDebuffAbilityID = SelectHighestAbilityID(
-				"Curse of Null",
-				"Curse of Nil");
-
-			m_iGreenNoxiousDebuffAbilityID = SelectHighestAbilityID(
-				"Stop Breath",
-				"Shorten Breath",
-				"Steal Breath",
-				"Chaotic Maelstrom");
-
-			m_iGreenPoisonStunNukeAbilityID = SelectHighestAbilityID(
-				"Glass Cloud",
-				"Putrid Cloud",
-				"Grievous Blast",
-				"Dark Nebula");
-
-			m_iGreenPoisonDOTAbilityID = SelectHighestAbilityID(
-				"Devastation");
-
-			m_iGreenDiseaseNukeAbilityID = SelectHighestAbilityID(
-				"Negative Absolution",
-				"Null Absolution",
-				"Nil Absolution");
-
-			m_iGreenDeaggroAbilityID = SelectHighestAbilityID(
-				"Interference",
-				"Nullification",
-				"Vulian Interference",
-				"Vulian Intrusion");
-
-			m_iBluePoisonAEAbilityID = SelectHighestAbilityID(
-				"Poison Cloud",
-				"Suffocate",
-				"Suffocating Cloud",
-				"Abysmal Fury");
+			m_iGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Dark Pact");
+			m_iGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Darkness");
+			m_iSingleBasicNukeAbilityID = SelectHighestTieredAbilityID("Dissolve");
+			m_iSinglePrimaryPoisonNukeAbilityID = SelectHighestTieredAbilityID("Distortion");
+			m_iSingleUnresistableDOTAbilityID = SelectHighestTieredAbilityID("Poison");
+			m_iSingleMediumNukeDOTAbilityID = SelectHighestTieredAbilityID("Dark Pyre");
+			m_iSingleColdStunNukeAbilityID = SelectHighestTieredAbilityID("Encase");
+			m_iSingleSTRINTDebuffAbilityID = SelectHighestTieredAbilityID("Curse of Void");
+			m_iGreenNoxiousDebuffAbilityID = SelectHighestTieredAbilityID("Vacuum Field");
+			m_iGreenPoisonStunNukeAbilityID = SelectHighestTieredAbilityID("Dark Nebula");
+			m_iGreenPoisonDOTAbilityID = SelectHighestTieredAbilityID("Apocalypse");
+			m_iGreenDiseaseNukeAbilityID = SelectHighestTieredAbilityID("Absolution");
+			m_iGreenDeaggroAbilityID = SelectHighestTieredAbilityID("Nullify");
+			m_iBluePoisonAEAbilityID = SelectHighestTieredAbilityID("Cataclysm");
 
 			return;
 		}
 
+		/************************************************************************************/
 		public override bool DoNextAction()
 		{
 			if (base.DoNextAction())
@@ -170,22 +109,32 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
-					if (m_bUseGreenAEs && !IsAbilityMaintained(m_iGreenNoxiousDebuffAbilityID) && CastAbility(m_iGreenNoxiousDebuffAbilityID))
+					/// Resistance debuff is ALWAYS first.
+					if (m_bUseGreenAEs && !IsAbilityMaintained(m_iGreenNoxiousDebuffAbilityID) && CastGreenOffensiveAbility(m_iGreenNoxiousDebuffAbilityID, 1))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
+					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 5))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 6))
+					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 4))
+						return true;
+					if (CastGreenOffensiveAbility(m_iGreenDiseaseNukeAbilityID, 5))
+						return true;
+					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 6))
+						return true;
+
+					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 3))
 						return true;
 
 					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 2))
 						return true;
-
 					if (CastGreenOffensiveAbility(m_iGreenDiseaseNukeAbilityID, 3))
 						return true;
-
 					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 4))
+						return true;
+
+					/// We don't get concerned with single debuffs until AE potential is used up.
+					if (!IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
 						return true;
 
 					if (CastAbility(m_iSingleBasicNukeAbilityID))
@@ -206,6 +155,12 @@ namespace EQ2GlassCannon
 					if (CastAbility(m_iIceFlameAbilityID))
 						return true;
 
+					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 1))
+						return true;
+					if (CastGreenOffensiveAbility(m_iGreenDiseaseNukeAbilityID, 1))
+						return true;
+					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 1))
+						return true;
 				}
 			}
 
