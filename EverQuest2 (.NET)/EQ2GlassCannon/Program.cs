@@ -485,7 +485,7 @@ namespace EQ2GlassCannon
 				ExceptionText.AppendLine(e.StackTrace.ToString());
 				string strExceptionText = ExceptionText.ToString();
 
-				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strCurrentINIFilePath, "ExceptionLog.txt")))
+				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strINIFolderPath, "ExceptionLog.txt")))
 				{
 					OutputFile.WriteLine("-----------------------------");
 					OutputFile.WriteLine(strExceptionText);

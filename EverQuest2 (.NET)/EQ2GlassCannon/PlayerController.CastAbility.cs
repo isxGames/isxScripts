@@ -17,6 +17,104 @@ namespace EQ2GlassCannon
 		protected bool m_bAutoHarvestInProgress = false;
 		protected DateTime m_LastAutoHarvestAttemptTime = DateTime.FromBinary(0);
 
+		/// <summary>
+		/// Within a frame lock, CastPBAEAbility() might be called multiple times for the same spell.
+		/// This cache prevents the need for redundant range detection on all NPC's within the blast radius,
+		/// which can conceivably be taxing on CPU usage.
+		/// </summary>
+		public Dictionary<int, int> m_AbilityCompatibleTargetCountCache = new Dictionary<int, int>();
+
+		/************************************************************************************/
+		protected class CachedAbility
+		{
+			public string m_strName = string.Empty;
+			public bool m_bIsValid = false;
+			public bool m_bIsReady = false;
+			public bool m_bIsQueued = false;
+			public int m_iPowerCost = -1;
+			public float m_fRange = 0.0f;
+			public float m_fMinRange = 0.0f;
+			public float m_fMaxRange = 0.0f;
+			public float m_fEffectRadius = 0.0f;
+			public int m_iMaxAOETargets = -1;
+
+			public CachedAbility(Ability ThisAbility)
+			{
+				m_bIsValid = ThisAbility.IsValid;
+
+				if (m_bIsValid)
+				{
+					m_strName = ThisAbility.Name;
+					m_bIsReady = ThisAbility.IsReady;
+					m_bIsQueued = ThisAbility.IsQueued;
+					m_iPowerCost = ThisAbility.PowerCost;
+					m_fRange = ThisAbility.Range;
+					m_fMinRange = ThisAbility.MinRange;
+					m_fMaxRange = ThisAbility.MaxRange;
+					m_fEffectRadius = ThisAbility.EffectRadius;
+					m_iMaxAOETargets = ThisAbility.MaxAOETargets;
+				}
+				return;
+			}
+
+			public bool Use()
+			{
+				Program.RunCommand("/useability {0}", m_strName);
+				return true;
+			}
+
+			public bool Use(string strPlayerTarget)
+			{
+				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_strName);
+				return true;
+			}
+		}
+
+		protected Dictionary<int, CachedAbility> m_AbilityCache = new Dictionary<int, CachedAbility>();
+
+		/************************************************************************************/
+		/// <summary>
+		/// While seeing ISXEQ2 crash lately I realized the inefficiency of the layer,
+		/// which (a) has the capacity of throwing an exception on ability property access,
+		/// and (b) saves everything internally as strings.
+		/// To combat this, I have built a frame-local cache which saves binary values.
+		/// </summary>
+		/// <param name="iAbilityID"></param>
+		/// <param name="bFailIfNotReady"></param>
+		/// <returns></returns>
+		protected CachedAbility GetAbility(int iAbilityID, bool bFailIfNotReady)
+		{
+			if (iAbilityID < 1)
+				return null;
+
+			CachedAbility ThisCachedAbility = null;
+
+			if (m_AbilityCache.ContainsKey(iAbilityID))
+				ThisCachedAbility = m_AbilityCache[iAbilityID];
+			else
+			{
+				try
+				{
+					Ability ThisAbility = Me.Ability(iAbilityID);
+					ThisCachedAbility = new CachedAbility(ThisAbility);
+					m_AbilityCache.Add(iAbilityID, ThisCachedAbility);
+				}
+				catch
+				{
+					Program.Log("Exception thrown while attempting to look up ability info for \"{0}\" ({1}).", m_KnowledgeBookIndexToNameMap[iAbilityID], iAbilityID);
+					return null;
+				}
+			}
+
+			if (!ThisCachedAbility.m_bIsValid)
+				return null;
+
+			if (bFailIfNotReady && !ThisCachedAbility.m_bIsReady)
+				return null;
+
+			return ThisCachedAbility;
+		}
+
 		/************************************************************************************/
 		/// <summary>
 		/// Casts an action on an arbitrary PC target using the chat command.
@@ -24,15 +122,13 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public bool CastAbility(int iAbilityID, string strPlayerTarget, bool bMustBeAlive)
 		{
-			if (iAbilityID < 1 || string.IsNullOrEmpty(strPlayerTarget))
+			if (string.IsNullOrEmpty(strPlayerTarget))
 				return false;
 
-			/// We won't muck around with spell queuing and add needless complexity;
-			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
+			if (ThisAbility == null)
 				return false;
-			if (ThisAbility.IsQueued)
+			if (ThisAbility.m_bIsQueued)
 				return true;
 
 			Actor SpellTargetActor = null;
@@ -53,24 +149,23 @@ namespace EQ2GlassCannon
 				return false;
 
 			double fDistance = GetActorDistance3D(MeActor, SpellTargetActor);
-			if (fDistance > ThisAbility.Range)
+			if (fDistance > ThisAbility.m_fRange)
 			{
 				Program.Log("Unable to cast {0} because {1} is out of range ({2} needed, {3:0.00} actual)",
-					ThisAbility.Name, SpellTargetActor.Name, ThisAbility.Range, fDistance);
+					ThisAbility.m_strName, SpellTargetActor.Name, ThisAbility.m_fRange, fDistance);
 				return false;
 			}
 
-			if (Me.Power < ThisAbility.PowerCost)
+			if (Me.Power < ThisAbility.m_iPowerCost)
 			{
-				Program.Log("Not enough power to cast {0} on {1}!", ThisAbility.Name, SpellTargetActor.Name);
+				Program.Log("Not enough power to cast {0} on {1}!", ThisAbility.m_strName, SpellTargetActor.Name);
 				return false;
 			}
 
 			//Program.Log("TARGET TYPE: " + ThisAbility.TargetType.ToString());
 
-			Program.Log("Casting {0} on {1}...", ThisAbility.Name, strPlayerTarget);
-			Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, ThisAbility.Name);
-			return true;
+			Program.Log("Casting {0} on {1}...", ThisAbility.m_strName, strPlayerTarget);
+			return ThisAbility.Use(strPlayerTarget);
 		}
 
 		/************************************************************************************/
@@ -81,24 +176,21 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		public bool CastAbility(int iAbilityID)
 		{
-			if (iAbilityID < 1)
+			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
+			if (ThisAbility == null)
 				return false;
-
-			/// We won't muck around with spell queuing and add needless complexity;
-			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady || ThisAbility.IsQueued)
-				return false;
+			if (ThisAbility.m_bIsQueued)
+				return true;
 
 			/// Disqualify by range.
 			Actor MyTargetActor = MeActor.Target();
 			if (MyTargetActor.IsValid)
 			{
 				double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
-				if (fDistance < ThisAbility.MinRange || ThisAbility.MaxRange < fDistance)
+				if (fDistance < ThisAbility.m_fMinRange || ThisAbility.m_fMaxRange < fDistance)
 				{
 					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
-						ThisAbility.Name, MyTargetActor.Name, ThisAbility.MinRange, ThisAbility.MaxRange, fDistance);
+						ThisAbility.m_strName, MyTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
 					return false;
 				}
 			}
@@ -106,58 +198,53 @@ namespace EQ2GlassCannon
 			/// Disqualify by power cost.
 			/// Although it would be cheaper CPU to disqualify power first,
 			/// the log spam would think we were trying to cast even if we were eventually going to disqualify it anyway.
-			if (Me.Power < ThisAbility.PowerCost)
+			if (Me.Power < ThisAbility.m_iPowerCost)
 			{
-				Program.Log("Not enough power to cast {0}!", ThisAbility.Name);
+				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
 				return false;
 			}
 
-			Program.Log("Casting {0}...", ThisAbility.Name);
-			if (ThisAbility.Use())
-				return true;
-
-			return false;
+			Program.Log("Casting {0}...", ThisAbility.m_strName);
+			return ThisAbility.Use();
 		}
 
 		/************************************************************************************/
 		public bool CastBlueOffensiveAbility(int iAbilityID, int iMinimumVictimCheckCount)
 		{
-			if (!m_bUseBlueAEs || iAbilityID < 1)
+			if (!m_bUseBlueAEs)
 				return false;
 
-			/// We won't muck around with spell queuing and add needless complexity;
-			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
+			if (ThisAbility == null)
 				return false;
-			if (ThisAbility.IsQueued)
+			if (ThisAbility.m_bIsQueued)
 				return true;
 
 			int iValidVictimCount = 0;
-			if (m_DetectedAbilityTargetCountCache.ContainsKey(iAbilityID))
-				iValidVictimCount = m_DetectedAbilityTargetCountCache[iAbilityID];
+			if (m_AbilityCompatibleTargetCountCache.ContainsKey(iAbilityID))
+				iValidVictimCount = m_AbilityCompatibleTargetCountCache[iAbilityID];
 			else
 			{
-				foreach (Actor ThisActor in EnumCustomActors("byDist", ThisAbility.EffectRadius.ToString(), "npc"))
+				foreach (Actor ThisActor in EnumCustomActors("byDist", ThisAbility.m_fEffectRadius.ToString(), "npc"))
 				{
 					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead)
 						iValidVictimCount++;
 				}
 
-				m_DetectedAbilityTargetCountCache.Add(iAbilityID, iValidVictimCount);
+				m_AbilityCompatibleTargetCountCache.Add(iAbilityID, iValidVictimCount);
 			}
 
 			/// Check that the minimum number of potential victims is within the blast radius before proceeding.
 			if (iValidVictimCount < iMinimumVictimCheckCount)
 				return false;
 
-			if (Me.Power < ThisAbility.PowerCost)
+			if (Me.Power < ThisAbility.m_iPowerCost)
 			{
-				Program.Log("Not enough power to cast {0}!", ThisAbility.Name);
+				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
 				return false;
 			}
 
-			Program.Log("Casting {0} (as PBAE against {1} possible targets within {2:0}m radius)...", ThisAbility.Name, iValidVictimCount, ThisAbility.EffectRadius);
+			Program.Log("Casting {0} (as PBAE against {1} possible targets within {2:0}m radius)...", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fEffectRadius);
 			if (ThisAbility.Use())
 				return true;
 
@@ -170,23 +257,21 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public bool CastGreenOffensiveAbility(int iAbilityID, int iMinimumVictimCheckCount)
 		{
-			if (!m_bUseGreenAEs || iAbilityID < 1 || m_OffensiveTargetActor == null)
+			if (!m_bUseGreenAEs || m_OffensiveTargetActor == null)
 				return false;
 
-			/// We won't muck around with spell queuing and add needless complexity;
-			/// the latency between frames is usually smaller than the smallest recovery times (0.25 sec) anyway.
-			Ability ThisAbility = Me.Ability(iAbilityID);
-			if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
+			if (ThisAbility == null)
 				return false;
-			if (ThisAbility.IsQueued)
+			if (ThisAbility.m_bIsQueued)
 				return true;
 
 			int iValidVictimCount = 0;
-			if (m_DetectedAbilityTargetCountCache.ContainsKey(iAbilityID))
-				iValidVictimCount = m_DetectedAbilityTargetCountCache[iAbilityID];
+			if (m_AbilityCompatibleTargetCountCache.ContainsKey(iAbilityID))
+				iValidVictimCount = m_AbilityCompatibleTargetCountCache[iAbilityID];
 			else
 			{
-				foreach (Actor ThisActor in EnumCustomActors("byDist", ThisAbility.MaxRange.ToString(), "npc"))
+				foreach (Actor ThisActor in EnumCustomActors("byDist", ThisAbility.m_fMaxRange.ToString(), "npc"))
 				{
 					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead && m_OffensiveTargetActor.IsInSameEncounter(ThisActor.ID))
 						iValidVictimCount++;
@@ -196,24 +281,21 @@ namespace EQ2GlassCannon
 						break;
 				}
 
-				m_DetectedAbilityTargetCountCache.Add(iAbilityID, iValidVictimCount);
+				m_AbilityCompatibleTargetCountCache.Add(iAbilityID, iValidVictimCount);
 			}
 
 			/// Check that the minimum number of potential victims is within the blast radius before proceeding.
 			if (iValidVictimCount < iMinimumVictimCheckCount)
 				return false;
 
-			if (Me.Power < ThisAbility.PowerCost)
+			if (Me.Power < ThisAbility.m_iPowerCost)
 			{
-				Program.Log("Not enough power to cast {0}!", ThisAbility.Name);
+				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
 				return false;
 			}
 
-			Program.Log("Casting {0} (as encounter AE against {1} possible targets within {2:0}m radius)...", ThisAbility.Name, iValidVictimCount, ThisAbility.MaxRange);
-			if (ThisAbility.Use())
-				return true;
-
-			return false;
+			Program.Log("Casting {0} (as encounter AE against {1} possible targets within {2:0}m radius)...", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fMaxRange);
+			return ThisAbility.Use();
 		}
 
 		/************************************************************************************/
@@ -241,11 +323,11 @@ namespace EQ2GlassCannon
 
 			foreach (int iThisAbilityID in aiMezAbilityIDs)
 			{
-				Ability ThisAbility = Me.Ability(iThisAbilityID);
-				if (!ThisAbility.IsValid || !ThisAbility.IsReady)
+				CachedAbility ThisAbility = GetAbility(iThisAbilityID, true);
+				if (ThisAbility == null)
 					continue;
 
-				float fThisAbilityRange = ThisAbility.Range;
+				float fThisAbilityRange = ThisAbility.m_fRange;
 
 				/// Avoid scanning subsets of a radius we already scanned in a prior iteration.
 				if (fThisAbilityRange < fHighestRangeAlreadyScanned)
