@@ -233,6 +233,31 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Listen to Joust Calls]}</Data>
 	</Commandcheckbox>
+	<Commandcheckbox Name='Buff Dex Sonata'>
+		<Visible>1</Visible>
+		<X>5%</X>
+		<Y>210</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Dex Sonata:</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+
+				Script[EQ2Bot].Variable[BuffSonata]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff DexSonata",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+
+				Script[EQ2Bot].Variable[BuffSonata]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff DexSonata",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff DexSonata]}</Data>
+	</Commandcheckbox>
 	<Commandcheckbox Name='Buff Defense'>
 		<Visible>1</Visible>
 		<X>200</X>
