@@ -888,6 +888,14 @@ function main()
 
 			OutOfCombatRoutinesTimer:Set[${Script.RunningTime}]
 		}
+
+		;reset MT if it has changed
+		if ${Actor[exactname,pc,${OriginalMT}](exists)} && ${Actor[exactname,pc,${OriginalMT}].Health}>80
+		{
+			MainTankID:Set[${Actor[exactname,pc,${OriginalMT}].ID}]
+			Debug:Echo["${Script.RunningTime} -- Maintank Reset to UI Selection"]
+		}
+
 		;;;;;;;;;;;;;;
 		;;; END Pre-Combat Routines Loop (ie, Buff Routine, etc.)
 		;;;;;;;;;;;;;;
