@@ -206,7 +206,7 @@ function Buff_Init()
 
 	PreAction[18]:Set[Buff_Self]
 	PreSpellRange[18,1]:Set[20]
-	
+
 	PreAction[19]:Set[Buff_AADexSonata]
 	PreSpellRange[19,1]:Set[403]
 
