@@ -9,9 +9,9 @@ halt other scripts to prioritize healer cure casting above all other casting.
 #define QUIT f7
 
 variable string MyClass = "${Me.SubClass}"
-variable bool gCureRequest 0
-variable bool meCursed 0
-variable bool stCureRequest 0
+variable bool gCureRequest = 0
+variable bool meCursed = 0
+variable bool stCureRequest = 0
 variable string gCureType1
 variable string gCureType2
 variable string gCureName
