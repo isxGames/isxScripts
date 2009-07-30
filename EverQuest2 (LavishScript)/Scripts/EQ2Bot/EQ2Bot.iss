@@ -252,7 +252,7 @@ variable settingsetref SpellSet
 ;===================================================
 ;===          AutoAttack Timing                 ====
 ;===================================================
-variable float PrimaryDelay 
+variable float PrimaryDelay
 variable float LastAutoAttack
 variable(global) float TimeUntilNextAutoAttack
 variable float RunningTimeInSeconds
@@ -325,12 +325,12 @@ function main()
 	variable bool MobDetected
 	declare LastWindow string script
 	variable int AggroMob
-	
+
 	Debug:Enable
-	
+
 	; Added as Part of the AutoAttack Timing Code
 	LastAutoAttack:Set[${Script.RunningTime}/1000]
-	
+
 	if !${ISXEQ2(exists)}
 	{
 		Debug:Echo["ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!"]
@@ -351,7 +351,7 @@ function main()
 	}
 
 	Turbo 50
-	
+
 	;Script:Squelch
 	;Script:EnableProfiling
 
@@ -890,7 +890,7 @@ function main()
 		}
 
 		;reset MT if it has changed
-		if ${Actor[exactname,pc,${OriginalMT}](exists)} && ${Actor[exactname,pc,${OriginalMT}].Health}>80
+		if ${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,pc,${OriginalMT}](exists)} && ${Actor[exactname,pc,${OriginalMT}].Health}>80
 		{
 			MainTankID:Set[${Actor[exactname,pc,${OriginalMT}].ID}]
 			Debug:Echo["${Script.RunningTime} -- Maintank Reset to UI Selection"]
@@ -1113,14 +1113,14 @@ function main()
 
 function CalcAutoAttackTimer()
 {
-	
+
 	if !${AutoAttackReady}
 	{
 		PrimaryDelay:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Stats.Primary_Delay].ShortLabel}]
 		RunningTimeInSeconds:Set[${Script.RunningTime}/1000]
 		TimeUntilNextAutoAttack:Set[${PrimaryDelay}-(${RunningTimeInSeconds}-${LastAutoAttack})]
 	}
-		
+
 	if ${TimeUntilNextAutoAttack} < 0 && !${AutoAttackReady}
 	{
 		;echo AutoAttackReady: TRUE
@@ -4186,17 +4186,17 @@ atom(script) EQ2_onIncomingText(string Text)
 	; Added as part of the AutoAttack Timing Code
 	; START -------------------------------------
 	; -------------------------------------------
-	
+
 	if (${Text.Find[YOU hit ]} > 0 || ${Text.Find[YOU critically hit ]} > 0 || ${Text.Find[YOU double attack]} > 0 || ${Text.Find[YOU critically double attack]} > 0)
-		{	
+		{
 		;echo AutoAttackReady: FALSE
 		AutoAttackReady:Set[FALSE]
 		LastAutoAttack:Set[${Script.RunningTime}/1000]
-		}		
-		
+		}
+
 	; END ---------------------------------------
 	; -------------------------------------------
-	
+
 	if (${Text.Find[You may not order your pet to attack]} > 0)
 	{
 		;; Make sure the list does not get too big
@@ -4237,8 +4237,8 @@ atom(script) EQ2_onIncomingText(string Text)
 	}
 	elseif (${Text.Find[No Eligible Target]} > 0)
 		NoEligibleTarget:Set[TRUE]
-	
-		
+
+
 }
 
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
@@ -5221,7 +5221,7 @@ objectdef EQ2BotObj
 		{
 			if ${IncludeNoOne}
 				UIElement[${ListFQN}]:AddItem[No One]
-			
+
 			;UIElement[${ListFQN}].ItemByValue[No One]:Select
 		}
 
@@ -6530,7 +6530,7 @@ function atexit()
 	;Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
-	
+
 	press -release ${forward}
 	press -release ${backward}
 	press -release ${strafeleft}
