@@ -80,7 +80,15 @@ function CureCurse(int ActorID)
 		return
 
 	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[Cure Curse]}
-		eq2execute /cancel_spellcast
+	{
+		echo Canceling Spell Cast to Curse Cure
+		do
+		{
+			eq2execute /cancel_spellcast
+			wait 3
+		}
+		while ${Me.CastingSpell}
+	}
 
 	eq2execute /useabilityonplayer ${Actor[id,${ActorID}].Name} "Cure Curse"
 	wait 4
@@ -105,7 +113,15 @@ function gCure()
 	Script[Eq2bot]:Pause
 
 	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[${gCureName}]}
-		eq2execute /cancel_spellcast
+	{
+		echo Canceling Spell Cast to group Cure
+		do
+		{
+			eq2execute /cancel_spellcast
+			wait 3
+		}
+		while ${Me.CastingSpell}
+	}
 
 	Me.Ability[${gCureName}]:Use
 	wait 4
@@ -129,7 +145,15 @@ function inqCure()
 	Script[Eq2bot]:Pause
 
 	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[Cleansing of the Soul]}
-		eq2execute /cancel_spellcast
+	{
+		echo Canceling Spell Cast to Myth Cure
+		do
+		{
+			eq2execute /cancel_spellcast
+			wait 3
+		}
+		while ${Me.CastingSpell}
+	}
 
 	Me.Equipment[Penitent's Absolution]:Use
 	wait 4
@@ -180,8 +204,16 @@ function stCure(int ActorID)
 	if !${Actor[id,${ActorID}](exists)}
 		return
 
-	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[Cure Curse]}
-		eq2execute /cancel_spellcast
+	if ${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[Cure]}
+	{
+		echo Canceling Spell Cast to single Cure
+		do
+		{
+			eq2execute /cancel_spellcast
+			wait 3
+		}
+		while ${Me.CastingSpell}
+	}
 
 	eq2execute /useabilityonplayer ${Actor[id,${ActorID}].Name} "Cure Curse"
 	wait 4
