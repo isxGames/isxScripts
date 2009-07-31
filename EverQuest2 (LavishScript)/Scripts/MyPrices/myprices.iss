@@ -31,6 +31,9 @@ variable bool MaxPriceSet
 variable bool runautoscan
 variable bool runplace
 variable bool ItemNotStack
+variable bool CraftListMade=FALSE
+variable bool CraftItemsPlaced=FALSE
+
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
@@ -646,13 +649,15 @@ function checkstock()
 {
 	call echolog "<start> : checkstock"
 
-	; NEW craft list
+	CraftListMade:Set[FALSE]
 
 	LavishSettings[newcraft]:Clear
 
 	call buy Craft scan
 
 	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" ** Finished **"]
+
+	CraftListMade:Set[TRUE]
 
 	call echolog "<end> : checkstock"
 }
@@ -2295,6 +2300,7 @@ function placeitem(string itemname, int box)
 	Declare maxspaces int local -1
 	Declare currenttotal int local
 	Declare nospace bool local
+	CraftItemsPlaced:Set[FALSE]
 	nospace:Set[FALSE]
 	storebox:Set[0]
 
@@ -2359,6 +2365,7 @@ function placeitem(string itemname, int box)
 			while ${numitems}>0 && !${nospace}
 		}
 	}
+	CraftItemsPlaced:Set[TRUE]
 	call echolog "<end> placeitem"
 }
 
