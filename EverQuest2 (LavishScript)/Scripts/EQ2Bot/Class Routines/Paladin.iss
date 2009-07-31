@@ -56,7 +56,7 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	if ${Me.Ability[${SpellType[155]}].IsReady}(${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
+	if ${Me.Ability[${SpellType[155]}].IsReady} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
 	{
 		Debug:Echo["Casting PreWard"]
 		call CastSpellRange 155 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
@@ -217,7 +217,7 @@ function Buff_Routine(int xAction)
 		case AA_Fearless
 		case AA_Aura_Leadership
 		case AA_Leadership
-			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]IsReady} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case Self_Buff
