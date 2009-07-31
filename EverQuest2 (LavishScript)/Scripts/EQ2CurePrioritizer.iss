@@ -199,11 +199,11 @@ function stCure(int ActorID)
 
 atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eCounter, int cCounter)
 {
-	variable int tcount local 0
-	variable int acount local 0
-	variable int ncount local 0
-	variable int ecount local 0
-	variable int temph1 local 1
+	variable int tcount 0
+	variable int acount 0
+	variable int ncount 0
+	variable int ecount 0
+	variable int temph1 1
 
 	if ${gCureRequest}
 		return
@@ -340,8 +340,9 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 
 atom RaidAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eCounter, int cCounter)
 {
-	variable int temph1 local 1
-	variable int afflictedingroup local 0
+	variable int temph1 1
+	variable int afflictedingroup 0
+
 	if ${ActorID}==${Me.ID}
 		return
 
