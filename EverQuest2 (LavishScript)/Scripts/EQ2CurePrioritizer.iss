@@ -39,7 +39,7 @@ function main()
 		if ${gCureRequest}
 			ExecuteQueued gCure
 		ExecuteQueued
-		waitframe
+		wait 1
 	}
 	while 1
 }
@@ -237,6 +237,8 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 	variable(local) int ecount = 0
 	variable(local) int temph1 = 1
 
+	echo GroupAfflicted atom fired
+
 	if ${gCureRequest}
 		return
 
@@ -257,6 +259,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 				ecount:Inc
 			if ${Me.Cursed}>0 && ${Me.Ability[Cure Curse].IsAvailale}
 			{
+				echo queing curse cure
 				QueueCommand call CureCurse ${Me.ID}
 
 			}
@@ -277,7 +280,10 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 				if ${Me.Group[${temphl}].Elemental}>0
 					ecount:Inc
 				if ${Me.Group[${temphl}].Cursed}>0 && ${Me.Ability[Cure Curse].IsAvailale}
+				{
+					echo queuing curse cure
 					QueueCommand call CureCurse ${Me.Group[${temphl}].ID}
+				}
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
@@ -287,6 +293,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 			case Trauma
 				if ${tcount}>2 && ${Me.Ability[${gCureName}].IsReady}
 				{
+					echo queuing group cure
 					QueueCommand call gCure
 					gCureRequest:Set[1]
 				}
@@ -294,6 +301,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 			case Arcane
 				if ${acount}>2 && ${Me.Ability[${gCureName}].IsReady}
 				{
+					echo queuing group cure
 					QueueCommand call gCure
 					gCureRequest:Set[1]
 				}
@@ -301,6 +309,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 			case Noxious
 				if ${ncount}>2 && ${Me.Ability[${gCureName}].IsReady}
 				{
+					echo queuing group cure
 					QueueCommand call gCure
 					gCureRequest:Set[1]
 				}
@@ -308,6 +317,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 			case Elemental
 				if ${ecount}>2 && ${Me.Ability[${gCureName}].IsReady}
 				{
+					echo queuing group cure
 					QueueCommand call gCure
 					gCureRequest:Set[1]
 				}
@@ -324,6 +334,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 				case Trauma
 					if ${tcount}>2 && ${Me.Ability[${gCureName}].IsReady}
 					{
+						echo queuing group cure
 						QueueCommand call gCure
 						gCureRequest:Set[1]
 					}
@@ -331,6 +342,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 				case Arcane
 					if ${acount}>2 && ${Me.Ability[${gCureName}].IsReady}
 					{
+						echo queuing group cure
 						QueueCommand call gCure
 						gCureRequest:Set[1]
 					}
@@ -338,6 +350,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 				case Noxious
 					if ${ncount}>2 && ${Me.Ability[${gCureName}].IsReady}
 					{
+						echo queuing group cure
 						QueueCommand call gCure
 						gCureRequest:Set[1]
 					}
@@ -345,6 +358,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 				case Elemental
 					if ${ecount}>2 && ${Me.Ability[${gCureName}].IsReady}
 					{
+						echo queuing group cure
 						QueueCommand call gCure
 						gCureRequest:Set[1]
 					}
@@ -359,6 +373,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 		{
 			if ${tcount}>2 || ${acount}>2 || ${ncount}>2 || ${ecount}>2
 			{
+				echo queuing inquisitor cure
 				QueueCommand call inqCure
 				gCureRequest:Set[1]
 			}
@@ -366,14 +381,18 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 	}
 
 	if !${gCureRequest}
+	{
+		echo queuing single target cure
 		QueueCommand call stCure ${ActorID}
-
+	}
 }
 
 atom RaidAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eCounter, int cCounter)
 {
 	variable(local) int temph1 = 1
 	variable(local) int afflictedingroup = 0
+
+	echo RaidAfflicted atom fired
 
 	if ${ActorID}==${Me.ID}
 		return
@@ -393,6 +412,8 @@ atom RaidAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eC
 
 atom MeAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eCounter, int cCounter)
 {
+	echo MeAfflicted atom fired
+
 	if ${cCounter}
 	{
 		FlushQueued CureCurse
