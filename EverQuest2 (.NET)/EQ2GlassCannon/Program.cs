@@ -208,6 +208,9 @@ namespace EQ2GlassCannon
 					s_eq2event.QuestOffered += new EventHandler<LSEventArgs>(OnQuestOffered_EventHandler);
 
 					s_ISXEQ2.SetActorEventsRange(50.0f);
+
+					Log("Setting music volume to zero.");
+					RunCommand("/music_volume 0");
 				}
 
 #if !DEBUG
