@@ -54,78 +54,79 @@ namespace EQ2GlassCannon
 		public bool m_bHarvestAutomatically = false;
 		public int m_iFrameSkip = 2;
 		public EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
+		public string m_strChatWatchSubphrase = "listen for";
+		public List<string> m_astrChatWatchToAddressList = new List<string>();
+		public double m_fChatWatchAlertCooldownMinutes = 5.0f;
 		public string m_strSpawnWatchSubphrase = "watch for";
 		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
 		public string m_strSpawnWatchAlertCommand = string.Empty;
 		public string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
-		public float m_fSpawnWatchDespawnTimeoutMinutes = 5.0f;
+		public double m_fSpawnWatchDespawnTimeoutMinutes = 5.0f;
 
 		/************************************************************************************/
-		public enum TransferType
+		protected virtual void TransferINISettings(IniFile ThisFile)
 		{
-			Read,
-			Write
-		}
-
-		/************************************************************************************/
-		protected virtual void TransferINISettings(TransferType eTransferType)
-		{
-			TransferINIBool(eTransferType, "General.WriteBackINI", ref m_bWriteBackINI);
-			TransferINIString(eTransferType, "General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
-			TransferINIString(eTransferType, "General.ReloadINISubphrase", ref m_strReloadINISubphrase);
-			TransferINIString(eTransferType, "General.MainTank", ref m_strMainTank);
-			TransferINIString(eTransferType, "General.AutoFollowTarget", ref m_strAutoFollowTarget);
-			TransferINIString(eTransferType, "General.CommandingPlayer", ref m_strCommandingPlayer);
-			TransferINICaselessString(eTransferType, "General.AssistSubphrase", ref m_strAssistSubphrase);
-			TransferINICaselessString(eTransferType, "General.BotKillswitchSubphrase", ref m_strBotKillswitchSubphrase);
-			TransferINICaselessString(eTransferType, "General.ProcessKillswitchSubphrase", ref m_strProcessKillswitchSubphrase);
-			TransferINICaselessString(eTransferType, "General.DoNothingSubphrase", ref m_strDoNothingSubphrase);
-			TransferINICaselessString(eTransferType, "General.NeutralPositionSubphrase", ref m_strNeutralPositionSubphrase);
-			TransferINICaselessString(eTransferType, "General.AutoFollowSubphrase", ref m_strAutoFollowSubphrase);
-			TransferINICaselessString(eTransferType, "General.StayInPlaceSubphrase", ref m_strStayInPlaceSubphrase);
-			TransferINICaselessString(eTransferType, "General.ShadowMeSubphrase", ref m_strShadowMeSubphrase);
-			TransferINICaselessString(eTransferType, "General.ForwardDashSubphrase", ref m_strForwardDashSubphrase);
-			TransferINICaselessString(eTransferType, "General.ClearGroupMaintainedSubphrase", ref m_strClearGroupMaintainedSubphrase);
-			TransferINICaselessString(eTransferType, "General.MentorSubphrase", ref m_strMentorSubphrase);
-			TransferINICaselessString(eTransferType, "General.RepairSubphrase", ref m_strRepairSubphrase);
-			TransferINIString(eTransferType, "General.ArbitraryVerbCommandPrefix", ref m_strArbitraryVerbCommandPrefix);
-			TransferINIString(eTransferType, "General.ArbitraryVerbCommandSeparator", ref m_strArbitraryVerbCommandSeparator);
-			TransferINIString(eTransferType, "General.ArbitraryVerbCommandSuffix", ref m_strArbitraryVerbCommandSuffix);
-			TransferINIInteger(eTransferType, "General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
-			TransferINIBool(eTransferType, "General.UseRanged", ref m_bUseRanged);
-			TransferINIBool(eTransferType, "General.UseGreenAEs", ref m_bUseGreenAEs);
-			TransferINIBool(eTransferType, "General.UseBlueAEs", ref m_bUseBlueAEs);
-			TransferINIBool(eTransferType, "General.AutoAttack", ref m_bAutoAttack);
-			TransferINIBool(eTransferType, "General.SyncAbilitiesWithAutoAttack", ref m_bSyncAbilitiesWithAutoAttack);
-			TransferINIBool(eTransferType, "General.CastCures", ref m_bCastCures);
-			TransferINIBool(eTransferType, "General.PrioritizeCures", ref m_bPrioritizeCures);
-			TransferINIBool(eTransferType, "General.CureMainTank", ref m_bCureMainTank);
-			TransferINIBool(eTransferType, "General.HealMainTank", ref m_bHealMainTank);
-			TransferINIBool(eTransferType, "General.SpamHeroicOpportunity", ref m_bSpamHeroicOpportunity);
-			TransferINIBool(eTransferType, "General.MezAdds", ref m_bMezAdds);
-			TransferINIBool(eTransferType, "General.UseRacialBuffs", ref m_bUseRacialBuffs);
-			TransferINIBool(eTransferType, "General.UsePet", ref m_bUsePet);
-			TransferINIBool(eTransferType, "General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
-			TransferINIBool(eTransferType, "General.HarvestAutomatically", ref m_bHarvestAutomatically);
-			TransferINIInteger(eTransferType, "General.FrameSkip", ref m_iFrameSkip);
-			TransferINIFloat(eTransferType, "General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
+			ThisFile.TransferBool("General.WriteBackINI", ref m_bWriteBackINI);
+			ThisFile.TransferString("General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
+			ThisFile.TransferString("General.ReloadINISubphrase", ref m_strReloadINISubphrase);
+			ThisFile.TransferString("General.MainTank", ref m_strMainTank);
+			ThisFile.TransferString("General.AutoFollowTarget", ref m_strAutoFollowTarget);
+			ThisFile.TransferString("General.CommandingPlayer", ref m_strCommandingPlayer);
+			ThisFile.TransferCaselessString("General.AssistSubphrase", ref m_strAssistSubphrase);
+			ThisFile.TransferCaselessString("General.BotKillswitchSubphrase", ref m_strBotKillswitchSubphrase);
+			ThisFile.TransferCaselessString("General.ProcessKillswitchSubphrase", ref m_strProcessKillswitchSubphrase);
+			ThisFile.TransferCaselessString("General.DoNothingSubphrase", ref m_strDoNothingSubphrase);
+			ThisFile.TransferCaselessString("General.NeutralPositionSubphrase", ref m_strNeutralPositionSubphrase);
+			ThisFile.TransferCaselessString("General.AutoFollowSubphrase", ref m_strAutoFollowSubphrase);
+			ThisFile.TransferCaselessString("General.StayInPlaceSubphrase", ref m_strStayInPlaceSubphrase);
+			ThisFile.TransferCaselessString("General.ShadowMeSubphrase", ref m_strShadowMeSubphrase);
+			ThisFile.TransferCaselessString("General.ForwardDashSubphrase", ref m_strForwardDashSubphrase);
+			ThisFile.TransferCaselessString("General.ClearGroupMaintainedSubphrase", ref m_strClearGroupMaintainedSubphrase);
+			ThisFile.TransferCaselessString("General.MentorSubphrase", ref m_strMentorSubphrase);
+			ThisFile.TransferCaselessString("General.RepairSubphrase", ref m_strRepairSubphrase);
+			ThisFile.TransferString("General.ArbitraryVerbCommandPrefix", ref m_strArbitraryVerbCommandPrefix);
+			ThisFile.TransferString("General.ArbitraryVerbCommandSeparator", ref m_strArbitraryVerbCommandSeparator);
+			ThisFile.TransferString("General.ArbitraryVerbCommandSuffix", ref m_strArbitraryVerbCommandSuffix);
+			ThisFile.TransferInteger("General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
+			ThisFile.TransferBool("General.UseRanged", ref m_bUseRanged);
+			ThisFile.TransferBool("General.UseGreenAEs", ref m_bUseGreenAEs);
+			ThisFile.TransferBool("General.UseBlueAEs", ref m_bUseBlueAEs);
+			ThisFile.TransferBool("General.AutoAttack", ref m_bAutoAttack);
+			ThisFile.TransferBool("General.SyncAbilitiesWithAutoAttack", ref m_bSyncAbilitiesWithAutoAttack);
+			ThisFile.TransferBool("General.CastCures", ref m_bCastCures);
+			ThisFile.TransferBool("General.PrioritizeCures", ref m_bPrioritizeCures);
+			ThisFile.TransferBool("General.CureMainTank", ref m_bCureMainTank);
+			ThisFile.TransferBool("General.HealMainTank", ref m_bHealMainTank);
+			ThisFile.TransferBool("General.SpamHeroicOpportunity", ref m_bSpamHeroicOpportunity);
+			ThisFile.TransferBool("General.MezAdds", ref m_bMezAdds);
+			ThisFile.TransferBool("General.UseRacialBuffs", ref m_bUseRacialBuffs);
+			ThisFile.TransferBool("General.UsePet", ref m_bUsePet);
+			ThisFile.TransferBool("General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
+			ThisFile.TransferBool("General.HarvestAutomatically", ref m_bHarvestAutomatically);
+			ThisFile.TransferInteger("General.FrameSkip", ref m_iFrameSkip);
+			ThisFile.TransferFloat("General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
 
 			/// E-mail account values.
-			TransferINIString(eTransferType, "E-Mail.SMTPServer", ref m_EmailProfile.m_strServer);
-			TransferINIInteger(eTransferType, "E-Mail.SMTPPort", ref m_EmailProfile.m_iPort);
-			TransferINIBool(eTransferType, "E-Mail.SMTPUseSSL", ref m_EmailProfile.m_bUseSSL);
-			TransferINIString(eTransferType, "E-Mail.SMTPAccount", ref m_EmailProfile.m_strAccount);
-			TransferINIString(eTransferType, "E-Mail.SMTPPassword", ref m_EmailProfile.m_strPassword);
-			TransferINICaselessString(eTransferType, "E-Mail.FromAddress", ref m_EmailProfile.m_strFromAddress);
+			ThisFile.TransferString("E-Mail.SMTPServer", ref m_EmailProfile.m_strServer);
+			ThisFile.TransferInteger("E-Mail.SMTPPort", ref m_EmailProfile.m_iPort);
+			ThisFile.TransferBool("E-Mail.SMTPUseSSL", ref m_EmailProfile.m_bUseSSL);
+			ThisFile.TransferString("E-Mail.SMTPAccount", ref m_EmailProfile.m_strAccount);
+			ThisFile.TransferString("E-Mail.SMTPPassword", ref m_EmailProfile.m_strPassword);
+			ThisFile.TransferCaselessString("E-Mail.FromAddress", ref m_EmailProfile.m_strFromAddress);
+
+			/// Chat Watch values.
+			ThisFile.TransferCaselessString("ChatWatch.Subphrase", ref m_strChatWatchSubphrase);
+			ThisFile.TransferStringList("ChatWatch.ToAddresses", m_astrChatWatchToAddressList);
+			ThisFile.TransferDouble("ChatWatch.AlertCooldownMinutes", ref m_fChatWatchAlertCooldownMinutes);
 
 			/// Spawn Watch values.
-			TransferINICaselessString(eTransferType, "SpawnWatch.Subphrase", ref m_strSpawnWatchSubphrase);
-			TransferINIStringList(eTransferType, "SpawnWatch.ToAddresses", m_astrSpawnWatchToAddressList);
-			TransferINIString(eTransferType, "SpawnWatch.AlertCommand", ref m_strSpawnWatchAlertCommand);
-			TransferINICaselessString(eTransferType, "SpawnWatch.DespawnSubphrase", ref m_strSpawnWatchDespawnSubphrase);
-			TransferINIFloat(eTransferType, "SpawnWatch.DespawnTimeoutMinutes", ref m_fSpawnWatchDespawnTimeoutMinutes);
+			ThisFile.TransferCaselessString("SpawnWatch.Subphrase", ref m_strSpawnWatchSubphrase);
+			ThisFile.TransferStringList("SpawnWatch.ToAddresses", m_astrSpawnWatchToAddressList);
+			ThisFile.TransferString("SpawnWatch.AlertCommand", ref m_strSpawnWatchAlertCommand);
+			ThisFile.TransferCaselessString("SpawnWatch.DespawnSubphrase", ref m_strSpawnWatchDespawnSubphrase);
+			ThisFile.TransferDouble("SpawnWatch.DespawnTimeoutMinutes", ref m_fSpawnWatchDespawnTimeoutMinutes);
 
-			if (eTransferType == TransferType.Read)
+			if (ThisFile.Mode == IniFile.TransferMode.Read)
 			{
 				/// Fallback option to prevent an unresponsive bot.
 				if (string.IsNullOrEmpty(m_strCommandingPlayer))
@@ -138,7 +139,8 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public void ReadINISettings()
 		{
-			TransferINISettings(PlayerController.TransferType.Read);
+			IniFile NewFile = new IniFile(Program.s_strCurrentINIFilePath);
+			TransferINISettings(NewFile);
 
 			m_aCustomTellTriggerList.Clear();
 
@@ -189,158 +191,10 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public void WriteINISettings()
 		{
-			TransferINISettings(PlayerController.TransferType.Write);
-			return;
-		}
-
-		/************************************************************************************/
-		protected bool ReadINIString(string strKey, ref string strValue)
-		{
-			string strPreviousValue = strValue;
-			if (!Program.s_INISettings.TryGetValue(strKey, out strValue))
-			{
-				/// TryGetValue turns the string to null, but null strings are bad.
-				strValue = strPreviousValue;
-				return false;
-			}
-			else
-				return true;
-		}
-
-		/************************************************************************************/
-		protected void WriteINIString(string strKey, string strValue)
-		{
-			if (Program.s_INISettings.ContainsKey(strKey))
-				Program.s_INISettings[strKey] = strValue;
-			else
-				Program.s_INISettings.Add(strKey, strValue);
-			return;
-		}
-
-		/************************************************************************************/
-		public void TransferINIString(TransferType eTransferType, string strKey, ref string strValue)
-		{
-			if (eTransferType == TransferType.Read)
-				ReadINIString(strKey, ref strValue);
-			else
-				WriteINIString(strKey, strValue);
-			return;
-		}
-
-		/************************************************************************************/
-		public void TransferINICaselessString(TransferType eTransferType, string strKey, ref string strValue)
-		{
-			if (eTransferType == TransferType.Read)
-			{
-				if (ReadINIString(strKey, ref strValue))
-					strValue = strValue.ToLower();
-			}
-			else
-				WriteINIString(strKey, strValue);
-			return;
-		}
-
-		/************************************************************************************/
-		public void TransferINIStringList(TransferType eTransferType, string strKey, List<string> astrValues)
-		{
-			if (astrValues == null)
-				return;
-
-			if (eTransferType == TransferType.Read)
-			{
-				string strCombinedValue = string.Empty;
-				if (ReadINIString(strKey, ref strCombinedValue))
-				{
-					string[] astrRawValues = strCombinedValue.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-					astrValues.Clear();
-					astrValues.AddRange(astrRawValues);
-					for (int iIndex = 0; iIndex < astrValues.Count; iIndex++)
-						astrValues[iIndex] = astrValues[iIndex].Trim();
-				}
-			}
-			else
-			{
-				string strCombinedValue = string.Empty;
-				foreach (string strValue in astrValues)
-				{
-					if (!string.IsNullOrEmpty(strCombinedValue))
-						strCombinedValue += ",";
-					strCombinedValue += strValue;
-				}
-
-				WriteINIString(strKey, strCombinedValue);
-			}
-			return;
-		}
-
-		/************************************************************************************/
-		public void TransferINIBool(TransferType eTransferType, string strKey, ref bool bValue)
-		{
-			if (eTransferType == TransferType.Read)
-			{
-				string strValue = string.Empty;
-				if (ReadINIString(strKey, ref strValue))
-				{
-					strValue = strValue.ToLower();
-					bValue = (strValue == "1") || (strValue == "true") || (strValue == "yes");
-				}
-			}
-			else
-				WriteINIString(strKey, bValue ? "yes" : "no");
-			return;
-		}
-
-		/************************************************************************************/
-		public void TransferINIInteger(TransferType eTransferType, string strKey, ref int iValue)
-		{
-			if (eTransferType == TransferType.Read)
-			{
-				string strValue = string.Empty;
-				if (ReadINIString(strKey, ref strValue))
-				{
-					int iTemp;
-					if (int.TryParse(strValue, out iTemp))
-						iValue = iTemp;
-				}
-			}
-			else
-				WriteINIString(strKey, iValue.ToString());
-			return;
-		}
-
-		/************************************************************************************/
-		public void TransferINIFloat(TransferType eTransferType, string strKey, ref float fValue)
-		{
-			if (eTransferType == TransferType.Read)
-			{
-				string strValue = string.Empty;
-				if (ReadINIString(strKey, ref strValue))
-				{
-					float fTemp;
-					if (float.TryParse(strValue, out fTemp))
-						fValue = fTemp;
-				}
-			}
-			else
-				WriteINIString(strKey, fValue.ToString());
-			return;
-		}
-
-		/************************************************************************************/
-		public void TransferINIDouble(TransferType eTransferType, string strKey, ref double fValue)
-		{
-			if (eTransferType == TransferType.Read)
-			{
-				string strValue = string.Empty;
-				if (ReadINIString(strKey, ref strValue))
-				{
-					double fTemp;
-					if (double.TryParse(strValue, out fTemp))
-						fValue = fTemp;
-				}
-			}
-			else
-				WriteINIString(strKey, fValue.ToString());
+			IniFile NewFile = new IniFile();
+			TransferINISettings(NewFile);
+			if (m_bWriteBackINI)
+				NewFile.Save(Program.s_strCurrentINIFilePath);
 			return;
 		}
 	}
