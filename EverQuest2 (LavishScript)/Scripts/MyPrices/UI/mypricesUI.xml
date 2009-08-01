@@ -1438,7 +1438,7 @@
 							Script[myprices]:QueueCommand[call buy Craft Init]
 						</OnLoad>
 						<OnSelect>
-							Script[myprices]:QueueCommand[call ShowCraftInfo ${ID}]
+							Script[myprices]:QueueCommand[call ShowCraftInfo Craft ${ID}]
 							Script[myprices]:QueueCommand[call ClickBrokerSearch Craft ${ID}]
 						</OnSelect>
 					</listbox>
@@ -1530,7 +1530,7 @@
 						<Height>15</Height>
 						<Text>Unset</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call Unselectcraft ${ID}]
+							Script[myprices]:QueueCommand[call Unselectcraft Craft ${ID}]
 							Script[myprices]:QueueCommand[call buy Craft Init]
 						</OnLeftClick>
 						<AutoTooltip>
@@ -1544,13 +1544,265 @@
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call savecraftinfo]
+							Script[myprices]:QueueCommand[call savecraftinfo craft]
 							Script[myprices]:QueueCommand[call buy Craft Init]
 						</OnLeftClick>
 						<AutoTooltip>
 							Update an item
 						</AutoTooltip>
 					</Commandbutton>
+				</Tab>
+				<Tab Name='Inventory'>
+					<listbox Name='ItemList'>
+						<X>5%</X>
+						<Y>40</Y>
+						<Width>90%</Width>
+						<Height>55%</Height>
+						<Font>
+							<Name>Times New Roman</Name>
+							<Size>14</Size>
+						</Font>
+						<SelectMultiple>0</SelectMultiple>
+						<Sort>None</Sort>
+						<OnSelect>
+							UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[${ID}]
+							Script[myprices]:QueueCommand[call ShowCraftInfo Inventory ${ID}]
+							Script[myprices]:QueueCommand[call ClickBrokerSearch Inventory ${ID}]
+						</OnSelect>
+					</listbox>
+					<checkbox Name='CraftItem'>
+						<X>25</X>
+						<Y>420</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Crafted Item</Text>
+						<AutoTooltip>
+							Mark this item as a crafted item.
+						</AutoTooltip>
+					</checkbox>
+					<Commandbutton name='ClearInventory'> 
+						<X>5%</X> 
+						<Y>65%</Y> 
+						<Width>100</Width> 
+						<Height>15</Height>
+						<Text>Rescan</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call inventorylist]
+						</OnLeftClick>
+						<AutoTooltip>
+							Recscan your inventory
+						</AutoTooltip>
+					</Commandbutton>
+					<Text name='InventoryNumber'>
+						<X>5%</X>
+						<Y>20</Y>
+						<Width>10%</Width>
+						<Height>65%</Height>
+						<Text>0</Text>
+						[OnLoad]
+							UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:UnsetChecked
+						[/OnLoad]
+					</Text>
+					<Text Name='ErrorText'>
+						<X>24%</X>
+						<Y>435</Y>
+						<Width>350</Width> 
+						<Height>15</Height>
+					</Text>
+					<Text Name='CraftName'>
+						<X>25</X>
+						<Y>455</Y>
+						<Width>350</Width> 
+						<Height>20</Height>
+						<MaxLength>70</MaxLength>
+					</Text>
+					<Text Name='RecipeNameText'>
+						<X>25</X>
+						<Y>475</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Recipe Name</Text>
+					</Text>
+					<Textentry Name='RecipeName'>
+						<X>105</X>
+						<Y>475</Y>
+						<Width>310</Width> 
+						<Height>20</Height>
+					</Textentry>
+					<Text Name='CraftStackText'>
+						<X>20</X>
+						<Y>505</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Craft Stack :</Text>
+					</Text>
+					<Textentry Name='CraftStack'>
+						<X>100</X>
+						<Y>505</Y>
+						<Width>40</Width> 
+						<Height>20</Height>
+						<MaxLength>4</MaxLength>
+					</Textentry>
+					<Text Name='CraftNumberText'>
+						<X>150</X>
+						<Y>505</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Stock Limit :</Text>
+					</Text>
+					<Textentry Name='CraftNumber'>
+						<X>230</X>
+						<Y>505</Y>
+						<Width>50</Width> 
+						<Height>20</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Text Name='BoxText'>
+						<X>300</X>
+						<Y>505</Y>
+						<Width>40</Width> 
+						<Height>20</Height>
+						<Text>Box :</Text>
+					</Text>
+					<Textentry Name='BoxNumber'>
+						<X>330</X>
+						<Y>505</Y>
+						<Width>30</Width> 
+						<Height>20</Height>
+						<MaxLength>2</MaxLength>
+					</Textentry>
+					<Commandbutton name='NoCraft'> 
+						<X>390</X> 
+						<Y>505</Y> 
+						<Width>50</Width> 
+						<Height>15</Height>
+						<Text>Unset</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call Unselectcraft Inventory ${ID}]
+							Script[myprices]:QueueCommand[call buy Craft Init]
+						</OnLeftClick>
+						<AutoTooltip>
+							Unselect as a Craftable Item
+						</AutoTooltip>
+					</Commandbutton>
+					<Commandbutton name='SaveCraft'> 
+						<X>390</X> 
+						<Y>525</Y> 
+						<Width>50</Width> 
+						<Height>15</Height>
+						<Text>Save</Text>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call savecraftinfo Inventory]
+							Script[myprices]:QueueCommand[call buy Craft Init]
+						</OnLeftClick>
+						<AutoTooltip>
+							Update an item
+						</AutoTooltip>
+					</Commandbutton>
+					<button Name='1'>
+						<X>45%</X>
+						<Y>65%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 1</Text>
+						<AutoTooltip>
+							Place in Box 1
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 1 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
+					<button Name='2'>
+						<X>60%</X>
+						<Y>65%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 2</Text>
+						<AutoTooltip>
+							Place in Box 2
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 2 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
+					<button Name='3'>
+						<X>75%</X>
+						<Y>65%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 3</Text>
+						<AutoTooltip>
+							Place in Box 3
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 3 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
+					<button Name='4'>
+						<X>87%</X>
+						<Y>65%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 4</Text>
+						<AutoTooltip>
+							Place in Box 4
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 4 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
+					<button Name='5'>
+						<X>45%</X>
+						<Y>70%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 5</Text>
+						<AutoTooltip>
+							Place in Box 5
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 5 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
+					<button Name='6'>
+						<X>60%</X>
+						<Y>70%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 6</Text>
+						<AutoTooltip>
+							Place in Box 6
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 6 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
+					<button Name='7'>
+						<X>75%</X>
+						<Y>70%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 7</Text>
+						<AutoTooltip>
+							Place in Box 7
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 7 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
+					<button Name='8'>
+						<X>87%</X>
+						<Y>70%</Y>
+						<Width>50</Width>
+						<Height>20</Height>
+						<Text>Box 8</Text>
+						<AutoTooltip>
+							Place in Box 8
+						</AutoTooltip>
+						<OnLeftClick>
+							Script[myprices]:QueueCommand[call placeinventory 8 ${UIElement[MyPrices].FindChild[GUITabs].FindChild[Inventory].FindChild[InventoryNumber].Text}]
+						</OnLeftClick>
+					</button>
 				</Tab>
 				<Tab Name='Admin'>
 					<Text name='Errortext'>

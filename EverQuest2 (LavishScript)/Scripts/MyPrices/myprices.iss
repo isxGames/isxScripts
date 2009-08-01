@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13p :  released 18th June 2009
+; Version 0.13q :  released 1st August 2009
 ;
 ; Declare Variables
 ;
@@ -53,6 +53,8 @@ variable int Commission
 variable int IntMinBasePrice
 ; Array - stores container number for each item in the Listbox
 variable int itemprice[1000]
+; Array - stores inventory location number for each item in your inventory
+variable int InventoryList[1000]
 variable int numitems
 variable int currentpos
 variable int currentcount
@@ -120,8 +122,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Running Version 0.13o :  released 8th June 2009" FF11FFCC
-	call echolog "Running Version 0.13o :  released 8th June 2009"
+	call AddLog "Version 0.13q :  released 1st August 2009" FF11FFCC
+	call echolog "Version 0.13q :  released 1st August 2009"
 	
 	call StartUp	
 
@@ -260,7 +262,7 @@ function main(string goscan, string goscan2)
 							}
 							while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 						}
-						call SetColour ${currentpos} FF0B0301
+						call SetColour Sell ${currentpos} FF0B0301
 						
 						; check to see if the items minimum price should be used or not
 						Call CheckPriceSet MinSalePrice "${currentitem}"
@@ -337,7 +339,7 @@ function main(string goscan, string goscan2)
 										MinBasePrice:Set[${MerchPrice}]
 										call StringFromPrice ${MerchPrice}
 										call AddLog "${currentitem} : Merchant Would buy for  more : ${Return}" FFFF0000
-										call SetColour ${currentpos} FFFF0000
+										call SetColour Sell ${currentpos} FFFF0000
 									}
 									; **** if that price is Less than the price you are willing to sell for , don't do anything
 									if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
@@ -347,7 +349,7 @@ function main(string goscan, string goscan2)
 										call StringFromPrice ${MinSalePrice}
 										call AddLog "${currentitem} : ${MinBasePriceS} : My Lowest : ${Return}" FFFF0000
 										; Set the text in the list box line to red
-										call SetColour ${currentpos} FFFF0000
+										call SetColour Sell ${currentpos} FFFF0000
 									}
 									else
 									{
@@ -366,7 +368,7 @@ function main(string goscan, string goscan2)
 
 										If ${MatchLowPrice}
 										{
-											call SetColour ${currentpos} FF00FF00
+											call SetColour Sell ${currentpos} FF00FF00
 											Call echolog "<Main> (Match Price change)"
 											call SetItemPrice ${i} ${j} ${MinBasePrice}
 											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
@@ -377,7 +379,7 @@ function main(string goscan, string goscan2)
 								elseif ${MyPrice}<${MinPrice}
 								{
 									; Set the colour of the listbox line to green initially
-									call SetColour ${currentpos} FF00FF00
+									call SetColour Sell ${currentpos} FF00FF00
 									; if you have told the script to match higher prices or the item was unlisted
 									if ${IncreasePrice} || ${ItemUnlisted}
 									{
@@ -405,7 +407,7 @@ function main(string goscan, string goscan2)
 												Call echolog "<Main> (Unlisted Item - Min Sale price)"
 												call SetItemPrice ${i} ${j} ${MinSalePrice}
 												Call Saveitem Sell "${currentitem}" ${MinSalePrice} ${MinSalePrice}
-												call SetColour ${currentpos} FFFF0000
+												call SetColour Sell ${currentpos} FFFF0000
 											}
 											else
 											{
@@ -423,14 +425,14 @@ function main(string goscan, string goscan2)
 												{
 													Call Saveitem Sell "${currentitem}" ${MinBasePrice} ${MinBasePrice}
 												}
-												call SetColour ${currentpos} FF0000FF
+												call SetColour Sell ${currentpos} FF0000FF
 											}
 										}
 									}
 								}
 								Else
 								{
-									call SetColour ${currentpos} FF00FF00
+									call SetColour Sell ${currentpos} FF00FF00
 								}
 							}
 							else
@@ -474,7 +476,7 @@ function main(string goscan, string goscan2)
 				else
 				{
 					; Item not found in the container (sold or removed mid-scan)
-					call SetColour ${currentpos} FFC43012
+					call SetColour Sell ${currentpos} FFC43012
 				}
 				; Mark position in list as scanned
 				Scanned[${currentpos}]:Set[TRUE]
@@ -640,7 +642,7 @@ function ReListItem(int i, string itemname)
 	else
 	{
 		; item was moved or sold
-		call SetColour ${currentpos} FFC43012
+		call SetColour Sell ${currentpos} FFC43012
 	}
 	call echolog "<end> : ReListItem"
 }
@@ -1480,7 +1482,7 @@ function LoadList()
 					; if the item is flagged as a craft item then add the total number on the broker
 					if ${ItemList.FindSet[${labelname}].FindSetting[CraftItem]}
 					{
-						call SetColour ${numitems} FFFFFF00
+						call SetColour Sell ${numitems} FFFFFF00
 						call addtotals "${labelname}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
 					}
 					; store the items box number
@@ -1490,7 +1492,7 @@ function LoadList()
 					; If no value is returned then add the price to the settings file
 					if ${Return} == -1
 					{
-						call SetColour ${numitems} FF0000FF
+						call SetColour Sell ${numitems} FF0000FF
 						call AddLog "Item Missing from Settings File,  Adding : ${labelname}" FF00CCFF
 						call Saveitem Sell "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice} ${Me.Vending[${i}].Consignment[${j}].BasePrice}
 					}
@@ -1650,7 +1652,7 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 		else
 			Item:AddSetting[Recipe,${Recipe}]
 
-		Item:AddSetting[CraftItem,TRUE]
+		Item:AddSetting[CraftItem,${flagged}]
 		Item:AddSetting[Box,${boxnumber}]
 	}
 	elseif ${Saveset.Equal["Buy"]}
@@ -1699,9 +1701,9 @@ function SaveSetting(string Settingname, string Value)
 
 ; changes the color of the items in the listbox
 
-function SetColour(int position, string colour)
+function SetColour(string UITab, int position, string colour)
 {
-	UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${position}]:SetTextColor[${colour}]
+	UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[ItemList].Item[${position}]:SetTextColor[${colour}]
 	return
 }
 
@@ -1933,7 +1935,7 @@ function savebuyinfo()
 	call echolog "<end> : savebuyinfo"
 }
 
-function savecraftinfo()
+function savecraftinfo(string UITab)
 {
 	call echolog "<start> : savecraftinfo"
 	Declare CraftName string local
@@ -1942,35 +1944,45 @@ function savecraftinfo()
 	Declare CraftNumber int local
 	Declare BoxNumber int local
 
-	CraftName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftName].Text}]
-	RecipeName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[RecipeName].Text}]
-	CraftStack:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftStack].Text}]
-	CraftNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftNumber].Text}]
-	BoxNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[BoxNumber].Text}]
+	CraftName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[CraftName].Text}]
+	RecipeName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[RecipeName].Text}]
+	CraftStack:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[CraftStack].Text}]
+	CraftNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[CraftNumber].Text}]
+	BoxNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[BoxNumber].Text}]
 
 	; check information was entered in all boxes and save
 
 	if ${CraftName.Length} == 0
 	{
-		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[No item selected]
+		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[No item selected]
 	}
 	elseif ${CraftStack} <= 0
 	{
-		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Try setting a valid Craft Stack size]
+		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Try setting a valid Craft Stack size]
 	}
 	elseif ${CraftNumber} <= 0
 	{
-		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Try setting a valid Stock Limit]
+		UIElement[ErrorText@${UITab}GUITabs@MyPrices]:SetText[Try setting a valid Stock Limit]
 	}
 	elseif !${Me.Vending[${BoxNumber}](exists)} || ${BoxNumber} == 0
 	{
-		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Try setting a valid Box Number]
+		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Try setting a valid Box Number]
 	}
 	else
 	{
-		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[Saving Information]
-	; Parameters : Craft , Itemname , Stacksize , Number , <Bool> Craftitem, <Bool> nameonly,<bool>, attune only <bool>, transmute startlevel,endlevel,tier, Boxnumber, Recipe Name
-		call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
+		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Saving Information]
+	
+		if ${UITab.Equal[Inventory]} && !${UIElement[CraftItem@Inventory@GUITabs@MyPrices].Checked}
+		{
+			; Parameters : Craft , Itemname , Stacksize , Number , <Bool> Craftitem, <Bool> nameonly,<bool>, attune only <bool>, transmute startlevel,endlevel,tier, Boxnumber, Recipe Name
+			call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} FALSE TRUE TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
+		}
+		else
+		{
+
+			call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
+		}
+		
 	}
 	call echolog "<end> : savecraftinfo"
 }
@@ -2090,7 +2102,7 @@ function ShowBuyPrices(int ItemID)
 }
 
 ; Display the details of an item marked as crafted
-function ShowCraftInfo(int ItemID)
+function ShowCraftInfo(string UITab, int ItemID)
 {
 	call echolog "-> ShowCraftInfo ${ItemID}"
 	Declare LBoxString string local
@@ -2098,9 +2110,9 @@ function ShowCraftInfo(int ItemID)
 	Declare Stack int local
 	Declare Stock int local
 	Declare BoxNumber int local
-
-	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[ItemList].Item[${ItemID}]}]
-
+	
+	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[ItemList].Item[${ItemID}]}]
+	
 	CraftList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
 	CraftItemList:Set[${CraftList.FindSet["${LBoxString}"]}]
@@ -2110,33 +2122,44 @@ function ShowCraftInfo(int ItemID)
 	Stock:Set[${CraftItemList.FindSetting[Stock]}]
 	BoxNumber:Set[${CraftItemList.FindSetting[Box]}]
 
-	UIElement[CraftName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
+	UIElement[CraftName@${UITab}@GUITabs@MyPrices]:SetText[${LBoxString}]
 
 	if !${Recipe.Equal[NULL]}
-		UIElement[RecipeName@Craft@GUITabs@MyPrices]:SetText[${Recipe}]
+		UIElement[RecipeName@${UITab}@GUITabs@MyPrices]:SetText[${Recipe}]
 	else
-		UIElement[RecipeName@Craft@GUITabs@MyPrices]:SetText[${LBoxString}]
+		UIElement[RecipeName@${UITab}@GUITabs@MyPrices]:SetText[${LBoxString}]
 
-	UIElement[CraftStack@Craft@GUITabs@MyPrices]:SetText[${Stack}]
-	UIElement[CraftNumber@Craft@GUITabs@MyPrices]:SetText[${Stock}]
-	UIElement[BoxNumber@Craft@GUITabs@MyPrices]:SetText[${BoxNumber}]
+	UIElement[CraftStack@${UITab}@GUITabs@MyPrices]:SetText[${Stack}]
+	UIElement[CraftNumber@${UITab}@GUITabs@MyPrices]:SetText[${Stock}]
+	UIElement[BoxNumber@${UITab}@GUITabs@MyPrices]:SetText[${BoxNumber}]
+	
+	if ${UITab.Equal[Inventory]}
+	{
+		; HERE
+		if ${ItemList.FindSet["${LBoxString}"].FindSetting[CraftItem]}
+		{
+			UIElement[CraftItem@Inventory@GUITabs@MyPrices]:SetChecked
+		}
+		else
+		{
+			UIElement[CraftItem@Inventory@GUITabs@MyPrices]:UnsetChecked
+		}
+	}
 	call echolog " <end> : ShowCraftInfo"
 }
 
 ; Toggle an item as 'Non Craftable'
-function Unselectcraft(int ItemID)
+function Unselectcraft(string UITab, int ItemID)
 {
-	call echolog "-> Unselectcraft ${ItemID}"
+	call echolog "-> Unselectcraft ${UITab} ${ItemID}"
 
 	Declare LBoxString string local
 
-	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Craft].FindChild[CraftName].Text}]
+	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[CraftName].Text}]
 	
-	; check information was entered in all boxes and save
-
 	if ${LBoxString.Length} == 0
 	{
-		UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[No item selected]
+		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[No item selected]
 	}
 	else
 	{
@@ -2369,6 +2392,96 @@ function placeitem(string itemname, int box)
 	call echolog "<end> placeitem"
 }
 
+
+function inventorylist()
+{
+	call echolog "<start> inventorylist"
+	
+	Declare xvar int local 1
+	Declare i int local 0
+	Declare space int local 0
+	
+	do
+	{
+		if (${Me.Vending[${i}](exists)})
+		{
+			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+			if ${space} == 0
+			{
+				UIElement[${i}@Inventory@GUITabs@MyPrices]:Hide
+			}
+			else
+			{
+				UIElement[${i}@Inventory@GUITabs@MyPrices]:Show
+			}
+		}
+	}
+	while ${i:Inc} <= ${brokerslots}
+	
+	i:Set[1]
+
+	UIElement[ItemList@Inventory@GUITabs@MyPrices]:ClearItems
+	Wait 10
+	Me:CreateCustomInventoryArray[nonbankonly]
+	waitframe
+	do
+	{
+		if ${Me.CustomInventory[${xvar}].InInventory} && !${Me.CustomInventory[${xvar}].InNoSaleContainer} && !${Me.CustomInventory[${xvar}].IsInventoryContainer}
+		{
+			; && !${Me.CustomInventory[${xvar}].InNoSaleContainer} && !${Me.CustomInventory[${xvar}].InInventory} && !${Me.CustomInventory[${xvar}].IsInventoryContainer} && !${Me.CustomInventory[${xvar}].InBank} && !${Me.CustomInventory[${xvar}].InSharedBank}
+			if !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].NoTrade}
+			{
+				UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${Me.CustomInventory[${xvar}].Name}"]
+				InventoryList[${i:Inc}]:Set[${xvar}]
+				if ${ItemList.FindSet["${Me.CustomInventory[${xvar}].Name}"].FindSetting[CraftItem]}
+				{
+					call SetColour Inventory ${i} FFFFFF00
+				}
+			}
+		}
+	}
+	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
+	call echolog "<end> inventorylist"
+}
+
+
+function placeinventory(int box, int inventorynumber)
+{
+	Declare xvar int local 1
+	Declare space int local
+	Declare lasttotal int local
+
+	space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+
+
+	if ${space} > 0
+	{
+		; check current used capacity
+		lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+
+		xvar:Set[${InventoryList[${inventorynumber}]}]
+
+		; place the item into the consignment system , grouping it with similar items
+		Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
+		wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+
+		UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[0]
+		call SetColour Inventory ${inventorynumber} 00000000
+
+		space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+		
+		if ${space} == 0
+		{
+			UIElement[${box}@Inventory@GUITabs@MyPrices]:Hide
+		}
+
+	}
+	else
+	{
+		UIElement[${box}@Inventory@GUITabs@MyPrices]:Hide
+	}
+}
+
 function placeitems(string itemname, int box, int numitems)
 {
 	call echolog "<start> placeitems ${itemname} ${box} ${numitems}"
@@ -2530,6 +2643,7 @@ function StartUp()
 {
 	Declare tempstring string local
 	Declare i int local
+	Declare space int local
 	
 	tempstring:Set[${Actor[name,a market bulletin board]}]
 	if ${tempstring.Length} >4
@@ -2580,7 +2694,16 @@ function StartUp()
 	do
 	{
 		if !(${Me.Vending[${i}](exists)})
-			UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
+			{
+				UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
+				UIElement[${i}@Inventory@GUITabs@MyPrices]:Hide
+			}
+		space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+		if ${space} == 0
+			{
+				UIElement[${i}@Inventory@GUITabs@MyPrices]:Hide
+			}
+
 	}
 	while ${i:Inc} <= ${brokerslots}
 	

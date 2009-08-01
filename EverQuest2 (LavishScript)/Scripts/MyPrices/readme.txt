@@ -1,4 +1,4 @@
-Version 0.13p :  released 18th June 2009
+Version 0.13q :  released 1st August 2009
 
 For update details see the bottom of this file.
 
@@ -393,6 +393,19 @@ main page.
 
 Press the Save button.
 
+The Inventory TAB
+=================
+
+From here , you can move items from your inventory individually to your broker boxes.
+
+Press the rescan button to fill the list , press the item shown in the list and click on the numbered box button to place that item
+on the broker in that sales box.
+
+You can now also set items that you have newly crafted to be 'craft items' without having to move them to the broker first.
+
+Click on the item in the list and fill in the information at the bottom boxes , press save and that item will be marked as a craft item.
+
+Going to the Sale tab and pressing 'Place Items' will then move all those items to the broker as normal.
 
 The Admin TAB
 =============
@@ -424,6 +437,28 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.13q
+-------------
+
+
+New Tab : The Inventory TAB
+===========================
+
+From here , you can move items from your inventory individually to your broker boxes.
+
+Press the rescan button to fill the list , press the item shown in the list and click on the numbered box button to place that item
+on the broker in that sales box.
+
+You can now also set items that you have newly crafted to be 'craft items' without having to move them to the broker first.
+
+Click on the item in the list and fill in the information at the bottom boxes , press save and that item will be marked as a craft item.
+
+Going to the Sale tab and pressing 'Place Items' will then move all those items to the broker as normal.
+
+
+This is still work in progress , there are a few parts of these functions I'm not 100% happy with but it's fully working and almost there.
+
 
 Version 0.13p
 -------------
