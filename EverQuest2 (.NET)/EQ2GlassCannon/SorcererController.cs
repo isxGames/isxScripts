@@ -41,12 +41,12 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override void TransferINISettings(TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIString(eTransferType, "Sorceror.HateTransferTarget", ref m_strHateTransferTarget);
-			TransferINIBool(eTransferType, "Sorceror.UsePowerFeed", ref m_bUsePowerFeed);
+			ThisFile.TransferString("Sorceror.HateTransferTarget", ref m_strHateTransferTarget);
+			ThisFile.TransferBool("Sorceror.UsePowerFeed", ref m_bUsePowerFeed);
 
 			return;
 		}

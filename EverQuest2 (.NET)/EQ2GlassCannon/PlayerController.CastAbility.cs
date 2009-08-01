@@ -78,7 +78,7 @@ namespace EQ2GlassCannon
 				/// The "/useability" command often doesn't work for shit because it toggles queuing on and off way too fucking rapidly.
 				Program.Log("Casting {0}...", m_strName);
 				Program.RunCommand("/useability {0}", m_strName);
-				Program.RunCommand("/clearabilityqueue");
+				//Program.RunCommand("/clearabilityqueue");
 				return true;
 				//return m_OriginalAbility.Use();
 			}
@@ -93,7 +93,7 @@ namespace EQ2GlassCannon
 
 				Program.Log("Casting {0} on {1}...", m_strName, strPlayerTarget);
 				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_strName);
-				Program.RunCommand("/clearabilityqueue");
+				//Program.RunCommand("/clearabilityqueue");
 				return true;
 			}
 		}

@@ -27,17 +27,17 @@ namespace EQ2GlassCannon
 		public int m_iSpiritOfTheWolfAbilityID = -1;
 
 		/************************************************************************************/
-		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIBool(eTransferType, "Priest.CastCureCurse", ref m_bCastCureCurse);
-			TransferINIBool(eTransferType, "Priest.PrioritizeCureCurse", ref m_bPrioritizeCureCurse);
-			TransferINIBool(eTransferType, "Priest.CastDebuffs", ref m_bCastDebuffs);
-			TransferINIBool(eTransferType, "Priest.CastDamageSpells", ref m_bCastDamageSpells);
-			TransferINIString(eTransferType, "Priest.SingleRezCallout", ref m_strSingleRezCallout);
-			TransferINIString(eTransferType, "Priest.GroupRezCallout", ref m_strGroupRezCallout);
-			TransferINIBool(eTransferType, "Priest.BuffGroupWaterBreathing", ref m_bBuffGroupWaterBreathing);
+			ThisFile.TransferBool("Priest.CastCureCurse", ref m_bCastCureCurse);
+			ThisFile.TransferBool("Priest.PrioritizeCureCurse", ref m_bPrioritizeCureCurse);
+			ThisFile.TransferBool("Priest.CastDebuffs", ref m_bCastDebuffs);
+			ThisFile.TransferBool("Priest.CastDamageSpells", ref m_bCastDamageSpells);
+			ThisFile.TransferString("Priest.SingleRezCallout", ref m_strSingleRezCallout);
+			ThisFile.TransferString("Priest.GroupRezCallout", ref m_strGroupRezCallout);
+			ThisFile.TransferBool("Priest.BuffGroupWaterBreathing", ref m_bBuffGroupWaterBreathing);
 
 			return;
 		}

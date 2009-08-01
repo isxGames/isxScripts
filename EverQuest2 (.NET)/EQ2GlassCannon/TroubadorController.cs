@@ -415,7 +415,7 @@ namespace EQ2GlassCannon
 		public bool CastJestersCap()
 		{
 			if (!IsAbilityReady(m_iJestersCapAbilityID))
-			{ Program.Log("JC NOT READY!!!!!!!!!!!"); return false; }
+				return false;
 
 			while (m_JestersCapQueue.Count > 0)
 			{

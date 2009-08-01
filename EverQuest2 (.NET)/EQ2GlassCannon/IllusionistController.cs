@@ -58,23 +58,23 @@ namespace EQ2GlassCannon
 		#endregion
 
 		/************************************************************************************/
-		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIStringList(eTransferType, "Illusionist.HasteTargets", m_astrHasteTargets);
-			TransferINIStringList(eTransferType, "Illusionist.DynamismTargets", m_astrDynamismTargets);
-			TransferINIString(eTransferType, "Illusionist.PrismaticTarget", ref m_strPrismaticTarget);
-			TransferINIString(eTransferType, "Illusionist.TimeCompressionTarget", ref m_strTimeCompressionTarget);
-			TransferINIString(eTransferType, "Illusionist.IllusoryArmTarget", ref m_strIllusoryArmTarget);
-			TransferINIString(eTransferType, "Illusionist.SpellshieldTarget", ref m_strSpellshieldTarget);
-			TransferINIBool(eTransferType, "Illusionist.BuffArcaneResistance", ref m_bBuffArcaneResistance);
-			TransferINIBool(eTransferType, "Illusionist.BuffIntWis", ref m_bBuffINTWIS);
-			TransferINIString(eTransferType, "Illusionist.PeaceOfMindCallout", ref m_strPeaceOfMindCallout);
-			TransferINIString(eTransferType, "Illusionist.DestructiveRampageCallout", ref m_strDestructiveRampageCallout);
-			TransferINIString(eTransferType, "Illusionist.IlluminateCallout", ref m_strIlluminateCallout);
-			TransferINIString(eTransferType, "Illusionist.CastingSkillBoostCallout", ref m_strCastingSkillBoostCallout);
-			TransferINIString(eTransferType, "Illusionist.SavanteCallout", ref m_strSavanteCallout);
+			ThisFile.TransferStringList("Illusionist.HasteTargets", m_astrHasteTargets);
+			ThisFile.TransferStringList("Illusionist.DynamismTargets", m_astrDynamismTargets);
+			ThisFile.TransferString("Illusionist.PrismaticTarget", ref m_strPrismaticTarget);
+			ThisFile.TransferString("Illusionist.TimeCompressionTarget", ref m_strTimeCompressionTarget);
+			ThisFile.TransferString("Illusionist.IllusoryArmTarget", ref m_strIllusoryArmTarget);
+			ThisFile.TransferString("Illusionist.SpellshieldTarget", ref m_strSpellshieldTarget);
+			ThisFile.TransferBool("Illusionist.BuffArcaneResistance", ref m_bBuffArcaneResistance);
+			ThisFile.TransferBool("Illusionist.BuffIntWis", ref m_bBuffINTWIS);
+			ThisFile.TransferString("Illusionist.PeaceOfMindCallout", ref m_strPeaceOfMindCallout);
+			ThisFile.TransferString("Illusionist.DestructiveRampageCallout", ref m_strDestructiveRampageCallout);
+			ThisFile.TransferString("Illusionist.IlluminateCallout", ref m_strIlluminateCallout);
+			ThisFile.TransferString("Illusionist.CastingSkillBoostCallout", ref m_strCastingSkillBoostCallout);
+			ThisFile.TransferString("Illusionist.SavanteCallout", ref m_strSavanteCallout);
 			return;
 		}
 

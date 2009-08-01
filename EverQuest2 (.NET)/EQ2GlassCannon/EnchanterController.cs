@@ -39,13 +39,13 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIBool(eTransferType, "Enchanter.BuffRegen", ref m_bBuffRegen);
-			TransferINIBool(eTransferType, "Enchanter.UseManaFlow", ref m_bUseManaFlow);
-			TransferINIDouble(eTransferType, "Enchanter.ManaFlowThresholdRatio", ref m_fManaFlowThresholdRatio);
+			ThisFile.TransferBool("Enchanter.BuffRegen", ref m_bBuffRegen);
+			ThisFile.TransferBool("Enchanter.UseManaFlow", ref m_bUseManaFlow);
+			ThisFile.TransferDouble("Enchanter.ManaFlowThresholdRatio", ref m_fManaFlowThresholdRatio);
 
 			return;
 		}

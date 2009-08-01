@@ -28,11 +28,11 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override void TransferINISettings(TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIString(eTransferType, "Cleric.ShieldAllyTarget", ref m_strShieldAllyTarget);
+			ThisFile.TransferString("Cleric.ShieldAllyTarget", ref m_strShieldAllyTarget);
 			return;
 		}
 	}

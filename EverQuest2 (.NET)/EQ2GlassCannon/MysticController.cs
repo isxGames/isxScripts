@@ -50,17 +50,17 @@ namespace EQ2GlassCannon
 		#endregion
 
 		/************************************************************************************/
-		protected override void TransferINISettings(TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIBool(eTransferType, "Mystic.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
-			TransferINIBool(eTransferType, "Mystic.BuffNoxiousResistance", ref m_bBuffNoxiousResistance);
-			TransferINIBool(eTransferType, "Mystic.BuffSTRSTA", ref m_bBuffSTRSTA);
-			TransferINIStringList(eTransferType, "Mystic.HealthPoolTargets", m_astrHealthPoolTargets);
-			TransferINIString(eTransferType, "Mystic.AvatarTarget", ref m_strAvatarTarget);
-			TransferINIString(eTransferType, "Mystic.AncestryTarget", ref m_strAncestryTarget);
-			TransferINIString(eTransferType, "Mystic.RitualOfAlacrityTarget", ref m_strRitualOfAlacrityTarget);
+			ThisFile.TransferBool("Mystic.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
+			ThisFile.TransferBool("Mystic.BuffNoxiousResistance", ref m_bBuffNoxiousResistance);
+			ThisFile.TransferBool("Mystic.BuffSTRSTA", ref m_bBuffSTRSTA);
+			ThisFile.TransferStringList("Mystic.HealthPoolTargets", m_astrHealthPoolTargets);
+			ThisFile.TransferString("Mystic.AvatarTarget", ref m_strAvatarTarget);
+			ThisFile.TransferString("Mystic.AncestryTarget", ref m_strAncestryTarget);
+			ThisFile.TransferString("Mystic.RitualOfAlacrityTarget", ref m_strRitualOfAlacrityTarget);
 			return;
 		}
 
