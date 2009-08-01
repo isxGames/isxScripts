@@ -39,11 +39,11 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIBool(eTransferType, "Scout.DisarmChests", ref m_bDisarmChests);
+			ThisFile.TransferBool("Scout.DisarmChests", ref m_bDisarmChests);
 
 			return;
 		}

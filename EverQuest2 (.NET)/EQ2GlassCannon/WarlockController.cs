@@ -26,9 +26,9 @@ namespace EQ2GlassCannon
 		public int m_iBluePoisonAEAbilityID = -1;
 
 		/************************************************************************************/
-		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 			return;
 		}
 

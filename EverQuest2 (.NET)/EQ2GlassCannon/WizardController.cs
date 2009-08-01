@@ -44,13 +44,13 @@ namespace EQ2GlassCannon
 		public int m_iSingleDeaggroAbilityID = -1;
 
 		/************************************************************************************/
-		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIStringList(eTransferType, "Wizard.FlametongueTargets", m_astrFlametongueTargets);
-			TransferINIString(eTransferType, "Wizard.IceShieldTarget", ref m_strIceShieldTarget);
-			TransferINIString(eTransferType, "Wizard.GiftCallout", ref m_strGiftCallout);
+			ThisFile.TransferStringList("Wizard.FlametongueTargets", m_astrFlametongueTargets);
+			ThisFile.TransferString("Wizard.IceShieldTarget", ref m_strIceShieldTarget);
+			ThisFile.TransferString("Wizard.GiftCallout", ref m_strGiftCallout);
 			return;
 		}
 

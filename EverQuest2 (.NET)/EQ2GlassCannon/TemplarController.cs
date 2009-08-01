@@ -53,18 +53,18 @@ namespace EQ2GlassCannon
 		#endregion
 
 		/************************************************************************************/
-		protected override void TransferINISettings(PlayerController.TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIBool(eTransferType, "Templar.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
-			TransferINIBool(eTransferType, "Templar.BuffArcaneResistance", ref m_bBuffArcaneResistance);
-			TransferINIBool(eTransferType, "Templar.BuffYaulp", ref m_bBuffYaulp);
-			TransferINIString(eTransferType, "Templar.ManaCureTarget", ref m_strManaCureTarget);
-			TransferINIString(eTransferType, "Templar.StoneskinTarget", ref m_strStoneskinTarget);
-			TransferINIString(eTransferType, "Templar.STRWISTarget", ref m_strSTRWISTarget);
-			TransferINIStringList(eTransferType, "Templar.MeleeSkillTargets", m_astrMeleeSkillTargets);
-			TransferINIStringList(eTransferType, "Templar.MeleeHealProcTargets", m_astrMeleeHealProcTargets);
+			ThisFile.TransferBool("Templar.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
+			ThisFile.TransferBool("Templar.BuffArcaneResistance", ref m_bBuffArcaneResistance);
+			ThisFile.TransferBool("Templar.BuffYaulp", ref m_bBuffYaulp);
+			ThisFile.TransferString("Templar.ManaCureTarget", ref m_strManaCureTarget);
+			ThisFile.TransferString("Templar.StoneskinTarget", ref m_strStoneskinTarget);
+			ThisFile.TransferString("Templar.STRWISTarget", ref m_strSTRWISTarget);
+			ThisFile.TransferStringList("Templar.MeleeSkillTargets", m_astrMeleeSkillTargets);
+			ThisFile.TransferStringList("Templar.MeleeHealProcTargets", m_astrMeleeHealProcTargets);
 			return;
 		}
 
