@@ -8,6 +8,28 @@ namespace EQ2GlassCannon
 {
 	public class TroubadorController : BardController
 	{
+		public class PlayerRequest
+		{
+			public DateTime m_Timestamp = DateTime.Now;
+
+			public TimeSpan Age
+			{
+				get
+				{
+					return DateTime.Now - m_Timestamp;
+				}
+			}
+
+			public string m_strName = string.Empty;
+			public PlayerRequest(string strName)
+			{
+				m_strName = strName;
+				return;
+			}
+		}
+
+		public Queue<PlayerRequest> m_JestersCapQueue = new Queue<PlayerRequest>();
+
 		#region INI settings
 		public bool m_bBuffCastingSkill = false;
 		public bool m_bBuffSpellProc = false;
@@ -25,6 +47,7 @@ namespace EQ2GlassCannon
 		public string m_strUpbeatTempoTarget = string.Empty;
 		public string m_strJestersCapRequestSubstring = "JC ME";
 		public string m_strJestersCapCallout = "JESTER'S CAP ON >> {0} <<";
+		public double m_fJestersCapRequestTimeoutMinutes = 1.0;
 		#endregion
 
 		#region Ability ID's
@@ -67,26 +90,27 @@ namespace EQ2GlassCannon
 		#endregion
 
 		/************************************************************************************/
-		protected override void TransferINISettings(TransferType eTransferType)
+		protected override void TransferINISettings(IniFile ThisFile)
 		{
-			base.TransferINISettings(eTransferType);
+			base.TransferINISettings(ThisFile);
 
-			TransferINIBool(eTransferType, "Troubador.BuffCastingSkill", ref m_bBuffCastingSkill);
-			TransferINIBool(eTransferType, "Troubador.BuffSpellProc", ref m_bBuffSpellProc);
-			TransferINIBool(eTransferType, "Troubador.BuffManaRegen", ref m_bBuffManaRegen);
-			TransferINIBool(eTransferType, "Troubador.BuffDefense", ref m_bBuffDefense);
-			TransferINIBool(eTransferType, "Troubador.BuffHaste", ref m_bBuffHaste);
-			TransferINIBool(eTransferType, "Troubador.BuffDehate", ref m_bBuffDehate);
-			TransferINIBool(eTransferType, "Troubador.BuffSTRSTA", ref m_bBuffSTRSTA);
-			TransferINIBool(eTransferType, "Troubador.BuffReflect", ref m_bBuffReflect);
-			TransferINIBool(eTransferType, "Troubador.BuffHealthRegen", ref m_bBuffHealthRegen);
-			TransferINIBool(eTransferType, "Troubador.BuffArcaneResistance", ref m_bBuffArcaneResistance);
-			TransferINIBool(eTransferType, "Troubador.BuffElementalResistance", ref m_bBuffElementalResistance);
-			TransferINIBool(eTransferType, "Troubador.AllowShroudForNightStrike", ref m_bAllowShroudForNightStrike);
-			TransferINIString(eTransferType, "Troubador.MaestroCallout", ref m_strMaestroCallout);
-			TransferINIString(eTransferType, "Troubador.UpbeatTempoTarget", ref m_strUpbeatTempoTarget);
-			TransferINIString(eTransferType, "Troubador.JestersCapRequestSubstring", ref m_strJestersCapRequestSubstring);
-			TransferINIString(eTransferType, "Troubador.JestersCapCallout", ref m_strJestersCapCallout);
+			ThisFile.TransferBool("Troubador.BuffCastingSkill", ref m_bBuffCastingSkill);
+			ThisFile.TransferBool("Troubador.BuffSpellProc", ref m_bBuffSpellProc);
+			ThisFile.TransferBool("Troubador.BuffManaRegen", ref m_bBuffManaRegen);
+			ThisFile.TransferBool("Troubador.BuffDefense", ref m_bBuffDefense);
+			ThisFile.TransferBool("Troubador.BuffHaste", ref m_bBuffHaste);
+			ThisFile.TransferBool("Troubador.BuffDehate", ref m_bBuffDehate);
+			ThisFile.TransferBool("Troubador.BuffSTRSTA", ref m_bBuffSTRSTA);
+			ThisFile.TransferBool("Troubador.BuffReflect", ref m_bBuffReflect);
+			ThisFile.TransferBool("Troubador.BuffHealthRegen", ref m_bBuffHealthRegen);
+			ThisFile.TransferBool("Troubador.BuffArcaneResistance", ref m_bBuffArcaneResistance);
+			ThisFile.TransferBool("Troubador.BuffElementalResistance", ref m_bBuffElementalResistance);
+			ThisFile.TransferBool("Troubador.AllowShroudForNightStrike", ref m_bAllowShroudForNightStrike);
+			ThisFile.TransferString("Troubador.MaestroCallout", ref m_strMaestroCallout);
+			ThisFile.TransferString("Troubador.UpbeatTempoTarget", ref m_strUpbeatTempoTarget);
+			ThisFile.TransferCaselessString("Troubador.JestersCapRequestSubstring", ref m_strJestersCapRequestSubstring);
+			ThisFile.TransferString("Troubador.JestersCapCallout", ref m_strJestersCapCallout);
+			ThisFile.TransferDouble("Troubador.JestersCapRequestTimeoutMinutes", ref m_fJestersCapRequestTimeoutMinutes);
 			return;
 		}
 
@@ -142,6 +166,9 @@ namespace EQ2GlassCannon
 				return true;
 
 			if (DisarmChests())
+				return true;
+
+			if (CastJestersCap())
 				return true;
 
 			if (!MeActor.IsStealthed && m_bCheckBuffsNow)
@@ -358,6 +385,58 @@ namespace EQ2GlassCannon
 				/// Nuke of last resort.
 				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 1))
 					return true;
+			}
+
+			return false;
+		}
+
+		/************************************************************************************/
+		public override bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
+		{
+			if (base.OnIncomingChatText(iChannel, strFrom, strMessage))
+				return true;
+
+			string strTrimmedMessage = strMessage.Trim();
+			string strLowerCaseMessage = strTrimmedMessage.ToLower();
+
+			/// All processing will be deferred to DoNextAction().
+			if (strLowerCaseMessage.Contains(m_strJestersCapRequestSubstring))
+			{
+				PlayerRequest NewRequest = new PlayerRequest(strFrom);
+				m_JestersCapQueue.Enqueue(NewRequest);
+				Program.Log("Jester's Cap request from {0}.", strFrom);
+				return true;
+			}
+
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool CastJestersCap()
+		{
+			if (!IsAbilityReady(m_iJestersCapAbilityID))
+			{ Program.Log("JC NOT READY!!!!!!!!!!!"); return false; }
+
+			while (m_JestersCapQueue.Count > 0)
+			{
+				PlayerRequest ThisRequest = m_JestersCapQueue.Dequeue();
+				if (!m_FriendDictionary.ContainsKey(ThisRequest.m_strName))
+				{
+					Program.Log("Jester's Cap rejected on {0}; not a friend.", ThisRequest.m_strName);
+					continue;
+				}
+
+				if (ThisRequest.Age > TimeSpan.FromMinutes(m_fJestersCapRequestTimeoutMinutes))
+				{
+					Program.Log("Jester's Cap rejected on {0}; request timed out.", ThisRequest.m_strName);
+					continue;
+				}
+
+				if (!CastAbility(m_iJestersCapAbilityID, ThisRequest.m_strName, true))
+					continue;
+
+				SpamSafeRaidSay(m_strJestersCapCallout, ThisRequest.m_strName);
+				return true;
 			}
 
 			return false;
