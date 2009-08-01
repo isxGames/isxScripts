@@ -37,6 +37,7 @@ namespace EQ2GlassCannon
 			StayInPlace,
 			ShadowMe,
 			ForwardDash,
+			ChatWatch,
 			SpawnWatch,
 			DespawnWatch,
 		}
@@ -82,6 +83,8 @@ namespace EQ2GlassCannon
 		public int m_iAbilitiesFound = 0;
 		public PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
 		public Point3D m_ptStayLocation = new Point3D();
+		public string m_strChatWatchTargetText = string.Empty;
+		public DateTime m_ChatWatchNextValidAlertTime = DateTime.Now;
 		public bool m_bSpawnWatchTargetAnnounced = false;
 		public string m_strSpawnWatchTarget = string.Empty;
 		public DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
@@ -302,6 +305,12 @@ namespace EQ2GlassCannon
 				}
 			}
 
+			m_AbilityCache.Clear();
+			m_AbilityCompatibleTargetCountCache.Clear();
+
+			if (CheckPositioningStance())
+				return true;
+
 			/// Decide whether now is a good time to check buffs.
 			if (!m_bCheckBuffsNow)
 			{
@@ -313,12 +322,6 @@ namespace EQ2GlassCannon
 					m_bCheckBuffsNow = true;
 				}
 			}
-
-			m_AbilityCache.Clear();
-			m_AbilityCompatibleTargetCountCache.Clear();
-
-			if (CheckPositioningStance())
-				return true;
 
 			/// If a spellcast is in progress, there's nothing more to do.
 			if (DateTime.Now < m_NextPermissibleCastTime)
@@ -370,35 +373,46 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual bool OnIncomingText(string strFrom, string strChatText)
+		public virtual bool OnIncomingText(string strFrom, string strMessage)
 		{
-			if (string.IsNullOrEmpty(strFrom))
-			{
-				if (m_bAutoHarvestInProgress)
-				{
-					if (strChatText.StartsWith("You gather") ||
-						strChatText.StartsWith("You failed to gather anything from") ||
-						strChatText.StartsWith("You forest") ||
-						strChatText.StartsWith("You failed to forest anything from") ||
-						strChatText.StartsWith("You acquire") ||
-						strChatText.StartsWith("You failed to trap anything from") ||
-						strChatText.StartsWith("You fish") ||
-						strChatText.StartsWith("You failed to fish anything from") ||
-						strChatText.StartsWith("You mine") ||
-						strChatText.StartsWith("You failed to mine anything from"))
-					{
-						Program.Log("Harvesting attempt complete.");
-						m_bAutoHarvestInProgress = false;
-						return true;
-					}
-				}
+			string strTrimmedMessage = strMessage.Trim();
+			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
-				if (strChatText == "Interrupted!" ||
-					strChatText == "Target is not alive" ||
-					strChatText == "Can't see target" ||
-					strChatText == "Too far away")
-					m_NextPermissibleCastTime = DateTime.Now;
+			/// Chat Watch text is top priority.
+			if (m_ePositioningStance == PositioningStance.ChatWatch &&
+				strLowerCaseMessage.Contains(m_strChatWatchTargetText) &&
+				m_ChatWatchNextValidAlertTime < DateTime.Now)
+			{
+				Program.Log("Chat Watch text \"{0}\" found!", m_strChatWatchTargetText);
+				Program.s_EmailQueueThread.PostEmailMessage(m_astrChatWatchToAddressList, "Chat text spotted!", strMessage);
+				m_ChatWatchNextValidAlertTime = DateTime.Now + TimeSpan.FromMinutes(m_fChatWatchAlertCooldownMinutes);
+				/// Don't return a value; allow processing to continue because there's no need to cockblock in this case.
 			}
+
+			if (m_bAutoHarvestInProgress)
+			{
+				if (strMessage.StartsWith("You gather") ||
+					strMessage.StartsWith("You failed to gather anything from") ||
+					strMessage.StartsWith("You forest") ||
+					strMessage.StartsWith("You failed to forest anything from") ||
+					strMessage.StartsWith("You acquire") ||
+					strMessage.StartsWith("You failed to trap anything from") ||
+					strMessage.StartsWith("You fish") ||
+					strMessage.StartsWith("You failed to fish anything from") ||
+					strMessage.StartsWith("You mine") ||
+					strMessage.StartsWith("You failed to mine anything from"))
+				{
+					Program.Log("Harvesting attempt complete.");
+					m_bAutoHarvestInProgress = false;
+					return true;
+				}
+			}
+
+			if (strMessage == "Interrupted!" ||
+				strMessage == "Target is not alive" ||
+				strMessage == "Can't see target" ||
+				strMessage == "Too far away")
+				m_NextPermissibleCastTime = DateTime.Now;
 
 			return false;
 		}
@@ -475,9 +489,9 @@ namespace EQ2GlassCannon
 			else if (strLowerCaseMessage.Contains(m_strReloadINISubphrase))
 			{
 				Program.Log("Reload INI command (\"{0}\") received.", m_strReloadINISubphrase);
-				Program.LoadINIFile();
-				TransferINISettings(TransferType.Read);
+				ReadINISettings();
 
+				Program.s_EmailQueueThread.PostNewProfileMessage(m_EmailProfile);
 				Program.s_bRefreshKnowledgeBook = true;
 			}
 
@@ -612,6 +626,15 @@ namespace EQ2GlassCannon
 
 				Program.ApplyVerb(NearestActor, strVerb);
 				return true;
+			}
+
+			else if (strLowerCaseMessage.StartsWith(m_strChatWatchSubphrase))
+			{
+				Program.Log("Chat Watch command (\"{0}\") received.", m_strChatWatchSubphrase);
+				m_strChatWatchTargetText = strTrimmedMessage.Substring(m_strChatWatchSubphrase.Length).ToLower().Trim();
+				Program.Log("Bot will now scan for text \"{0}\".", m_strChatWatchTargetText);
+
+				ChangePositioningStance(PositioningStance.ChatWatch);
 			}
 
 			else if (strLowerCaseMessage.StartsWith(m_strSpawnWatchSubphrase))
@@ -769,6 +792,12 @@ namespace EQ2GlassCannon
 				CheckPositioningStance();
 			}
 
+			else if (eNewStance == PositioningStance.ChatWatch)
+			{
+				m_ePositioningStance = PositioningStance.ChatWatch;
+				m_ChatWatchNextValidAlertTime = DateTime.Now;
+			}
+
 			else if (eNewStance == PositioningStance.SpawnWatch)
 			{
 				m_ePositioningStance = PositioningStance.SpawnWatch;
@@ -917,6 +946,11 @@ namespace EQ2GlassCannon
 
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -hold W");
 				return false;
+			}
+
+			else if (m_ePositioningStance == PositioningStance.ChatWatch)
+			{
+				return true;
 			}
 
 			else if (m_ePositioningStance == PositioningStance.SpawnWatch)

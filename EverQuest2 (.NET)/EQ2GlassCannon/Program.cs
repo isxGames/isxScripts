@@ -30,8 +30,6 @@ namespace EQ2GlassCannon
 		public static string s_strCurrentINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
 
-		public static Dictionary<string, string> s_INISettings = new Dictionary<string, string>();
-
 		public static EQ2.ISXEQ2.ISXEQ2 ISXEQ2 { get { return s_ISXEQ2; } }
 		public static EQ2.ISXEQ2.EQ2 EQ2 { get { return s_EQ2; } }
 		public static Character Me { get { return s_Me; } }
@@ -123,65 +121,6 @@ namespace EQ2GlassCannon
 		public static void Log(object objParam)
 		{
 			Log("{0}", objParam);
-			return;
-		}
-
-		/************************************************************************************/
-		public static void LoadINIFile()
-		{
-			if (!File.Exists(s_strCurrentINIFilePath))
-				return;
-
-			Log("Loading INI file...");
-
-			using (StreamReader InputFile = new StreamReader(s_strCurrentINIFilePath))
-			{
-				s_INISettings.Clear();
-
-				while (!InputFile.EndOfStream)
-				{
-					string strInput = InputFile.ReadLine();
-					strInput = strInput.Trim();
-
-#if DEBUG
-					//Program.Log(strInput);
-#endif
-
-					if (strInput.StartsWith(";"))
-						continue;
-
-					int iEqualsPosition = strInput.IndexOf("=");
-					if (iEqualsPosition == -1)
-						continue;
-
-					string strKey = strInput.Substring(0, iEqualsPosition).TrimEnd();
-					string strValue = strInput.Substring(iEqualsPosition + 1).TrimStart();
-
-					if (s_INISettings.ContainsKey(strKey))
-						s_INISettings[strKey] = strValue;
-					else
-						s_INISettings.Add(strKey, strValue);
-				}
-			}
-
-			return;
-		}
-
-		/************************************************************************************/
-		public static void SaveINIFile()
-		{
-			using (StreamWriter OutputFile = new StreamWriter(s_strCurrentINIFilePath))
-			{
-				foreach (KeyValuePair<string, string> ThisItem in s_INISettings)
-				{
-					string strOutput = string.Format("{0}={1}", ThisItem.Key, ThisItem.Value);
-					OutputFile.WriteLine(strOutput);
-#if DEBUG
-					//Program.Log(strOutput);
-#endif
-				}
-			}
-
 			return;
 		}
 
@@ -410,14 +349,12 @@ namespace EQ2GlassCannon
 
 							if (File.Exists(s_strCurrentINIFilePath))
 							{
-								LoadINIFile();
 								s_Controller.ReadINISettings();
 							}
 							else
 							{
 								/// First-time save.
 								s_Controller.WriteINISettings();
-								SaveINIFile();
 							}
 
 							SetWindowText(string.Format("{0} ({1})", Me.Name, Me.SubClass));
@@ -466,10 +403,7 @@ namespace EQ2GlassCannon
 				/// Don't overwrite files that already exist unless told to; people might have special comments in place.
 				if (!File.Exists(s_strCurrentINIFilePath) || s_Controller.m_bWriteBackINI)
 				{
-					s_INISettings.Clear(); /// This eliminates cruft.
 					s_Controller.WriteINISettings();
-					if (!string.IsNullOrEmpty(s_strCurrentINIFilePath))
-						SaveINIFile();
 				}
 
 				Log("Shutting down e-mail thread...");
@@ -490,7 +424,7 @@ namespace EQ2GlassCannon
 				ExceptionText.AppendLine(e.StackTrace.ToString());
 				string strExceptionText = ExceptionText.ToString();
 
-				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strCurrentINIFilePath, "ExceptionLog.txt")))
+				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strINIFolderPath, "ExceptionLog.txt")))
 				{
 					OutputFile.WriteLine("-----------------------------");
 					OutputFile.WriteLine(strExceptionText);
@@ -579,9 +513,6 @@ namespace EQ2GlassCannon
 		{
 			string strChatText = e.Args[0];
 
-			string strPlayerSource = string.Empty;
-			string strBody = string.Empty;
-
 			try
 			{
 				if (s_Controller != null)
@@ -589,23 +520,7 @@ namespace EQ2GlassCannon
 					using (new FrameLock(true))
 					{
 						UpdateGlobals();
-
-						/// TODO: Parse this out.
-						if (strChatText.StartsWith("You tell"))
-						{
-							strPlayerSource = Me.Name;
-						}
-						else if (strChatText.StartsWith("\\aPC -1 "))
-						{
-							/// Fill with junk till we parse it out, lol.
-							strPlayerSource = Guid.NewGuid().ToString();
-						}
-						else
-						{
-							strBody = strChatText;
-						}
-
-						s_Controller.OnIncomingText(strPlayerSource, strBody);
+						s_Controller.OnIncomingText(string.Empty, strChatText);
 					}
 				}
 			}
