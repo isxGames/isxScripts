@@ -26,6 +26,7 @@ namespace EQ2GlassCannon
 		public string m_strDoNothingSubphrase = "afk";
 		public string m_strNeutralPositionSubphrase = "neutral";
 		public string m_strAutoFollowSubphrase = "come";
+		public string m_strCustomAutoFollowSubphrase = "stay close";
 		public string m_strStayInPlaceSubphrase = "stay here";
 		public string m_strShadowMeSubphrase = "shadow me";
 		public string m_strForwardDashSubphrase = "charge";
@@ -36,6 +37,7 @@ namespace EQ2GlassCannon
 		public string m_strArbitraryVerbCommandSeparator = "\", \"";
 		public string m_strArbitraryVerbCommandSuffix = "\"";
 		public float m_fStayInPlaceTolerance = 1.5f;
+		public float m_fCustomAutoFollowMinimumRange = 10.0f;
 		public int m_iCheckBuffsInterval = 500;
 		public bool m_bUseRanged = false;
 		public bool m_bUseGreenAEs = true;
@@ -78,6 +80,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferCaselessString("General.DoNothingSubphrase", ref m_strDoNothingSubphrase);
 			ThisFile.TransferCaselessString("General.NeutralPositionSubphrase", ref m_strNeutralPositionSubphrase);
 			ThisFile.TransferCaselessString("General.AutoFollowSubphrase", ref m_strAutoFollowSubphrase);
+			ThisFile.TransferCaselessString("General.CustomAutoFollowSubphrase", ref m_strCustomAutoFollowSubphrase);
 			ThisFile.TransferCaselessString("General.StayInPlaceSubphrase", ref m_strStayInPlaceSubphrase);
 			ThisFile.TransferCaselessString("General.ShadowMeSubphrase", ref m_strShadowMeSubphrase);
 			ThisFile.TransferCaselessString("General.ForwardDashSubphrase", ref m_strForwardDashSubphrase);
@@ -105,6 +108,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.HarvestAutomatically", ref m_bHarvestAutomatically);
 			ThisFile.TransferInteger("General.FrameSkip", ref m_iFrameSkip);
 			ThisFile.TransferFloat("General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
+			ThisFile.TransferFloat("General.CustomAutoFollowMinimumRange", ref m_fCustomAutoFollowMinimumRange);
 
 			/// E-mail account values.
 			ThisFile.TransferString("E-Mail.SMTPServer", ref m_EmailProfile.m_strServer);

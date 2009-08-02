@@ -16,6 +16,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		/// <summary>
 		/// This finds planar distance without regard to altitude.
+		/// In EQ2, the Y coordinate is altitude/elevation.
 		/// </summary>
 		public static double GetActorDistance2D(Actor Actor1, Actor Actor2)
 		{
@@ -23,7 +24,7 @@ namespace EQ2GlassCannon
 			double A = Actor1.X - Actor2.X;
 			A *= A;
 
-			double B = Actor1.Y - Actor2.Y;
+			double B = Actor1.Z - Actor2.Z;
 			B *= B;
 
 			return Math.Sqrt(A + B); //- Actor1.TargetRingRadius - Actor2.TargetRingRadius;
@@ -32,6 +33,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		/// <summary>
 		/// This finds planar distance without regard to altitude.
+		/// In EQ2, the Y coordinate is altitude/elevation.
 		/// </summary>
 		public static double GetActorDistance2D(Actor Actor1, Point3D ptReference)
 		{
@@ -39,7 +41,7 @@ namespace EQ2GlassCannon
 			double A = Actor1.X - ptReference.X;
 			A *= A;
 
-			double B = Actor1.Y - ptReference.Y;
+			double B = Actor1.Z - ptReference.Z;
 			B *= B;
 
 			return Math.Sqrt(A + B); //- Actor1.TargetRingRadius - Actor2.TargetRingRadius;
