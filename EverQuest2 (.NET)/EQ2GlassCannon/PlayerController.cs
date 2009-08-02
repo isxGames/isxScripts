@@ -34,8 +34,8 @@ namespace EQ2GlassCannon
 			DoNothing,
 			NeutralPosition,
 			AutoFollow,
+			CustomAutoFollow,
 			StayInPlace,
-			ShadowMe,
 			ForwardDash,
 			ChatWatch,
 			SpawnWatch,
@@ -83,6 +83,7 @@ namespace EQ2GlassCannon
 		public int m_iAbilitiesFound = 0;
 		public PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
 		public Point3D m_ptStayLocation = new Point3D();
+		public float m_fCurrentMovementTargetCoordinateTolerance = 0.0f;
 		public string m_strChatWatchTargetText = string.Empty;
 		public DateTime m_ChatWatchNextValidAlertTime = DateTime.Now;
 		public bool m_bSpawnWatchTargetAnnounced = false;
@@ -513,12 +514,6 @@ namespace EQ2GlassCannon
 				ChangePositioningStance(PositioningStance.StayInPlace);
 			}
 
-			else if (strLowerCaseMessage.Contains(m_strShadowMeSubphrase))
-			{
-				Program.Log("Shadow Me command (\"{0}\") received.", m_strShadowMeSubphrase);
-				ChangePositioningStance(PositioningStance.ShadowMe);
-			}
-
 			else if (strLowerCaseMessage.Contains(m_strForwardDashSubphrase))
 			{
 				Program.Log("Forward Dash command (\"{0}\") received.", m_strForwardDashSubphrase);
@@ -529,6 +524,20 @@ namespace EQ2GlassCannon
 			{
 				Program.Log("Autofollow command (\"{0}\") received.", m_strAutoFollowSubphrase);
 				ChangePositioningStance(PositioningStance.AutoFollow);
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strCustomAutoFollowSubphrase))
+			{
+				Program.Log("Custom Autofollow command (\"{0}\") received.", m_strCustomAutoFollowSubphrase);
+				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMinimumRange;
+				ChangePositioningStance(PositioningStance.CustomAutoFollow);
+			}
+
+			else if (strLowerCaseMessage.Contains(m_strShadowMeSubphrase))
+			{
+				Program.Log("Shadow Me command (\"{0}\") received.", m_strShadowMeSubphrase);
+				m_fCurrentMovementTargetCoordinateTolerance = m_fStayInPlaceTolerance;
+				ChangePositioningStance(PositioningStance.CustomAutoFollow);
 			}
 
 			/// Bot killswitch.
@@ -631,7 +640,7 @@ namespace EQ2GlassCannon
 			else if (strLowerCaseMessage.StartsWith(m_strChatWatchSubphrase))
 			{
 				Program.Log("Chat Watch command (\"{0}\") received.", m_strChatWatchSubphrase);
-				m_strChatWatchTargetText = strTrimmedMessage.Substring(m_strChatWatchSubphrase.Length).ToLower().Trim();
+				m_strChatWatchTargetText = strLowerCaseMessage.Substring(m_strChatWatchSubphrase.Length).ToLower().Trim();
 				Program.Log("Bot will now scan for text \"{0}\".", m_strChatWatchTargetText);
 
 				ChangePositioningStance(PositioningStance.ChatWatch);
@@ -750,7 +759,9 @@ namespace EQ2GlassCannon
 			Actor CommandingPlayerActor = GetNonPetActor(m_strCommandingPlayer);
 
 			/// Deactivate the existing stance.
-			if (m_ePositioningStance == PositioningStance.ShadowMe || m_ePositioningStance == PositioningStance.StayInPlace || m_ePositioningStance == PositioningStance.ForwardDash)
+			if (m_ePositioningStance == PositioningStance.CustomAutoFollow ||
+				m_ePositioningStance == PositioningStance.StayInPlace ||
+				m_ePositioningStance == PositioningStance.ForwardDash)
 			{
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -release W");
 			}
@@ -769,14 +780,15 @@ namespace EQ2GlassCannon
 				{
 					m_ePositioningStance = PositioningStance.StayInPlace;
 					m_ptStayLocation = new Point3D(CommandingPlayerActor);
+					m_fCurrentMovementTargetCoordinateTolerance = m_fStayInPlaceTolerance;
 					CheckPositioningStance();
 				}
 			}
-			else if (eNewStance == PositioningStance.ShadowMe)
+			else if (eNewStance == PositioningStance.CustomAutoFollow)
 			{
 				if (CommandingPlayerActor != null)
 				{
-					m_ePositioningStance = PositioningStance.ShadowMe;
+					m_ePositioningStance = PositioningStance.CustomAutoFollow;
 					m_bLastShadowTargetSamplingWasNearby = false;
 					CheckPositioningStance();
 				}
@@ -879,7 +891,7 @@ namespace EQ2GlassCannon
 			}
 
 			/// These stances are grouped together because both of them involve direct autofollow.
-			else if (m_ePositioningStance == PositioningStance.StayInPlace || m_ePositioningStance == PositioningStance.ShadowMe)
+			else if (m_ePositioningStance == PositioningStance.StayInPlace || m_ePositioningStance == PositioningStance.CustomAutoFollow)
 			{
 				if (MeActor.IsDead)
 					return false;
@@ -892,7 +904,7 @@ namespace EQ2GlassCannon
 				}
 
 				/// For shadowing, the coordinate is updated at every iteration.
-				if (m_ePositioningStance == PositioningStance.ShadowMe)
+				if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 				{
 					if (!m_FriendDictionary.ContainsKey(m_strCommandingPlayer))
 					{
@@ -910,7 +922,7 @@ namespace EQ2GlassCannon
 					/// If target suddenly ported from near to ridiculously far away, almost errantly, then call it off.
 					/// If the target began the stance far away and is approaching near, then allow it to continue;
 					/// in that case the commander is using shadowing to draw the character closer.
-					if (m_ePositioningStance == PositioningStance.ShadowMe)
+					if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 					{
 						bool bThisSamplingIsNearby = (fRange < 200.0f);
 						if (m_bLastShadowTargetSamplingWasNearby && !bThisSamplingIsNearby)
@@ -921,8 +933,8 @@ namespace EQ2GlassCannon
 						}
 						m_bLastShadowTargetSamplingWasNearby = bThisSamplingIsNearby;
 					}
-					
-					if (fRange > m_fStayInPlaceTolerance)
+
+					if (fRange > m_fCurrentMovementTargetCoordinateTolerance)
 					{
 						float fBearing = Me.HeadingTo(m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z);
 						if (Me.Face(fBearing))
@@ -1240,6 +1252,56 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public class VitalStatus
 		{
+			[Flags]
+			public enum Class
+			{
+				None = 0,
+
+				Guardian = 0x1,
+				Berserker = 0x2,
+				Paladin = 0x4,
+				Shadowknight = 0x8,
+				Monk = 0x10,
+				Bruiser = 0x20,
+				Templar = 0x40,
+				Inquisitor = 0x80,
+				Mystic = 0x100,
+				Defiler = 0x200,
+				Warden = 0x400,
+				Fury = 0x800,
+				Ranger = 0x1000,
+				Assassin = 0x2000,
+				Swashbuckler = 0x4000,
+				Brigand = 0x8000,
+				Troubador = 0x10000,
+				Dirge = 0x20000,
+				Wizard = 0x40000,
+				Warlock = 0x80000,
+				Conjuror = 0x100000,
+				Necromancer = 0x200000,
+				Illusionist = 0x400000,
+				Coercer = 0x800000,
+
+				Warrior = Guardian | Berserker,
+				Crusader = Paladin | Shadowknight,
+				Brawler = Monk | Bruiser,
+				Cleric = Templar | Inquisitor,
+				Shaman = Mystic | Defiler,
+				Druid = Warden | Fury,
+				Predator = Ranger | Assassin,
+				Rogue = Swashbuckler | Brigand,
+				Bard = Troubador | Dirge,
+				Sorceror = Wizard | Warlock,
+				Summoner = Conjuror | Necromancer,
+				Enchanter = Illusionist | Coercer,
+
+				Fighter = Warrior | Crusader | Brawler,
+				Priest = Cleric | Shaman | Druid,
+				Scout = Predator | Rogue | Bard,
+				Mage = Sorceror | Summoner | Enchanter,
+			}
+
+
 			public string m_strName = string.Empty;
 			public bool m_bIsDead = false;
 			public int m_iTrauma = 0;
