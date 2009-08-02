@@ -208,9 +208,6 @@ namespace EQ2GlassCannon
 					s_eq2event.QuestOffered += new EventHandler<LSEventArgs>(OnQuestOffered_EventHandler);
 
 					s_ISXEQ2.SetActorEventsRange(50.0f);
-
-					Log("Setting music volume to zero.");
-					RunCommand("/music_volume 0");
 				}
 
 #if !DEBUG
@@ -284,6 +281,7 @@ namespace EQ2GlassCannon
 							{
 								Program.Log("Zoning...");
 								bFirstZoningFrame = false;
+
 								if (s_Controller != null)
 									s_Controller.OnZoning();
 
@@ -306,6 +304,7 @@ namespace EQ2GlassCannon
 
 								if (s_Controller != null)
 									s_Controller.OnZoningComplete();
+
 								/// We used to not have to do this, but something changed and fucked everything up.
 								s_bRefreshKnowledgeBook = true;
 							}
@@ -361,6 +360,11 @@ namespace EQ2GlassCannon
 							}
 
 							SetWindowText(string.Format("{0} ({1})", Me.Name, Me.SubClass));
+
+							/// We could do this once at the beginning, but I've seen it not take.
+							Log("Setting music volume to zero and deactivating personal torch.");
+							RunCommand("/music_volume 0");
+							RunCommand("/r_personal_torch off");
 						}
 
 						/// If the size of the knowledge book changes, defer a resync.
