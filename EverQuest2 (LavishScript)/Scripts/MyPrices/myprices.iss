@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13q :  released 1st August 2009
+; Version 0.13q :  released 2nd August 2009
 ;
 ; Declare Variables
 ;
@@ -122,8 +122,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Version 0.13q :  released 1st August 2009" FF11FFCC
-	call echolog "Version 0.13q :  released 1st August 2009"
+	call AddLog "Version 0.13q :  released 2nd August 2009" FF11FFCC
+	call echolog "Version 0.13q :  released 2nd August 2009"
 	
 	call StartUp	
 
@@ -2432,11 +2432,11 @@ function inventorylist()
 			if !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].NoTrade}
 			{
 				UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${Me.CustomInventory[${xvar}].Name}"]
-				InventoryList[${i:Inc}]:Set[${xvar}]
 				if ${ItemList.FindSet["${Me.CustomInventory[${xvar}].Name}"].FindSetting[CraftItem]}
 				{
 					call SetColour Inventory ${i} FFFFFF00
 				}
+				InventoryList[${i:Inc}]:Set[${xvar}]
 			}
 		}
 	}

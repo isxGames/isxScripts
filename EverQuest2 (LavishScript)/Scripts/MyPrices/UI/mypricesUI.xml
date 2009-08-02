@@ -1593,6 +1593,20 @@
 							Recscan your inventory
 						</AutoTooltip>
 					</Commandbutton>
+					<Commandbutton name='Place'>
+						<X>5%</X>
+						<Y>395</Y>
+						<Width>80</Width>
+						<Height>18</Height>
+						<Text>Place Items</Text>
+						<AutoTooltip>
+							Put your crafted items on the broker.
+						</AutoTooltip>
+						<OnLeftClick>
+							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Placing Items**"]
+							Script[myprices]:QueueCommand[call buy item place]
+						</OnLeftClick>
+					</Commandbutton>
 					<Text name='InventoryNumber'>
 						<X>5%</X>
 						<Y>20</Y>
