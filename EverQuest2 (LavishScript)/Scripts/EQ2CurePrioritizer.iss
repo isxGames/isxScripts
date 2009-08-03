@@ -46,6 +46,8 @@ function main()
 
 function CureCurse(int ActorID)
 {
+	echo Function CureCure Started
+
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
 	Script[Eq2bot]:Pause
 
@@ -105,10 +107,13 @@ function CureCurse(int ActorID)
 
 	Script[Eq2bot]:Resume
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+
+	echo Function CureCure Finished
 }
 
 function gCure()
 {
+	echo Function gCure Started
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
 	Script[Eq2bot]:Pause
 
@@ -137,10 +142,14 @@ function gCure()
 
 	Script[Eq2bot]:Resume
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+
+	echo Function gCure Finished
 }
 
 function inqCure()
 {
+	echo Function inqCure Started
+
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
 	Script[Eq2bot]:Pause
 
@@ -169,11 +178,15 @@ function inqCure()
 
 	Script[Eq2bot]:Resume
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+
+	echo Function inqCure finished
 }
 
 
 function stCure(int ActorID)
 {
+	echo Function stCure Started
+
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
 	Script[Eq2bot]:Pause
 
@@ -227,6 +240,8 @@ function stCure(int ActorID)
 
 	Script[Eq2bot]:Resume
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+
+	echo Function gCure Finished
 }
 
 atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eCounter, int cCounter)
@@ -407,6 +422,7 @@ atom RaidAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eC
 	if ${afflictedingroup}
 		return
 
+	echo stCure Queued on ${ActorID}
 	QueueCommand call stCure ${ActorID}
 }
 
@@ -416,12 +432,14 @@ atom MeAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eCou
 
 	if ${cCounter}
 	{
+		echo CureCurse on Me Queued
 		FlushQueued CureCurse
 		QueueCommand call CureCurse ${Me.ID}
 	}
 
 	if ${tCounter} || ${aCounter} || ${nCounter} || ${eCounter}
 	{
+		echo stCure Queued on Me
 		QueueCommand call stCure ${Me.ID}
 	}
 }
