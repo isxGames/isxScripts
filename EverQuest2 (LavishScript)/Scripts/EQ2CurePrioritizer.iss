@@ -241,7 +241,7 @@ function stCure(int ActorID)
 	Script[Eq2bot]:Resume
 	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
 
-	echo Function gCure Finished
+	echo Function stCure Finished
 }
 
 atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int eCounter, int cCounter)
