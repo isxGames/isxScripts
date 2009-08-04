@@ -36,8 +36,8 @@ namespace EQ2GlassCannon
 		public string m_strArbitraryVerbCommandPrefix = "try this: \"";
 		public string m_strArbitraryVerbCommandSeparator = "\", \"";
 		public string m_strArbitraryVerbCommandSuffix = "\"";
-		public float m_fStayInPlaceTolerance = 1.5f;
-		public float m_fCustomAutoFollowMinimumRange = 10.0f;
+		public double m_fStayInPlaceTolerance = 1.5;
+		public double m_fCustomAutoFollowMinimumRange = 10.0;
 		public int m_iCheckBuffsInterval = 500;
 		public bool m_bUseRanged = false;
 		public bool m_bUseGreenAEs = true;
@@ -48,6 +48,7 @@ namespace EQ2GlassCannon
 		public bool m_bPrioritizeCures = true;
 		public bool m_bCureMainTank = true;
 		public bool m_bHealMainTank = true;
+		public bool m_bCastFurySalveIfGranted = true;
 		public bool m_bSpamHeroicOpportunity = true;
 		public bool m_bMezAdds = false;
 		public bool m_bUseRacialBuffs = true;
@@ -58,12 +59,12 @@ namespace EQ2GlassCannon
 		public EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
 		public string m_strChatWatchSubphrase = "listen for";
 		public List<string> m_astrChatWatchToAddressList = new List<string>();
-		public double m_fChatWatchAlertCooldownMinutes = 5.0f;
+		public double m_fChatWatchAlertCooldownMinutes = 5.0;
 		public string m_strSpawnWatchSubphrase = "watch for";
 		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
 		public string m_strSpawnWatchAlertCommand = string.Empty;
 		public string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
-		public double m_fSpawnWatchDespawnTimeoutMinutes = 5.0f;
+		public double m_fSpawnWatchDespawnTimeoutMinutes = 6.0;
 
 		/************************************************************************************/
 		protected virtual void TransferINISettings(IniFile ThisFile)
@@ -100,6 +101,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.PrioritizeCures", ref m_bPrioritizeCures);
 			ThisFile.TransferBool("General.CureMainTank", ref m_bCureMainTank);
 			ThisFile.TransferBool("General.HealMainTank", ref m_bHealMainTank);
+			ThisFile.TransferBool("General.CastFurySalveIfGranted", ref m_bCastFurySalveIfGranted);
 			ThisFile.TransferBool("General.SpamHeroicOpportunity", ref m_bSpamHeroicOpportunity);
 			ThisFile.TransferBool("General.MezAdds", ref m_bMezAdds);
 			ThisFile.TransferBool("General.UseRacialBuffs", ref m_bUseRacialBuffs);
@@ -107,8 +109,8 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
 			ThisFile.TransferBool("General.HarvestAutomatically", ref m_bHarvestAutomatically);
 			ThisFile.TransferInteger("General.FrameSkip", ref m_iFrameSkip);
-			ThisFile.TransferFloat("General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
-			ThisFile.TransferFloat("General.CustomAutoFollowMinimumRange", ref m_fCustomAutoFollowMinimumRange);
+			ThisFile.TransferDouble("General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
+			ThisFile.TransferDouble("General.CustomAutoFollowMinimumRange", ref m_fCustomAutoFollowMinimumRange);
 
 			/// E-mail account values.
 			ThisFile.TransferString("E-Mail.SMTPServer", ref m_EmailProfile.m_strServer);

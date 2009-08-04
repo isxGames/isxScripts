@@ -20,6 +20,7 @@ namespace EQ2GlassCannon
 		public int m_iHOStarterAbiltyID = -1;
 		public int m_iFeatherfallAbilityID = -1;
 		public int m_iHalfElfMitigationDebuffAbilityID = -1;
+		public int m_iFurySalveHealAbilityID = -1;
 
 		public int m_iCollectingAbilityID = -1;
 		public int m_iGatheringAbilityID = -1;
@@ -213,6 +214,7 @@ namespace EQ2GlassCannon
 				"Falling Grace" /// Erudites.
 				);
 			m_iHalfElfMitigationDebuffAbilityID = SelectHighestAbilityID("Piercing Stab");
+			m_iFurySalveHealAbilityID = SelectHighestAbilityID("Salve");
 
 			/// Harvesting.
 			m_iCollectingAbilityID = SelectHighestAbilityID("Collecting");
@@ -308,6 +310,7 @@ namespace EQ2GlassCannon
 
 			m_AbilityCache.Clear();
 			m_AbilityCompatibleTargetCountCache.Clear();
+			m_VitalStatusCache.Clear();
 
 			if (CheckPositioningStance())
 				return true;

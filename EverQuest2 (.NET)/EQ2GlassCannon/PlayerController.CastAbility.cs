@@ -36,6 +36,7 @@ namespace EQ2GlassCannon
 			public readonly bool m_bIsQueued = false;
 			public readonly float m_fCastTimeSeconds = 0.0f;
 			public readonly float m_fRecoveryTimeSeconds = 0.0f;
+			public readonly int m_iHealthCost = -1;
 			public readonly int m_iPowerCost = -1;
 			public readonly float m_fRange = 0.0f;
 			public readonly float m_fMinRange = 0.0f;
@@ -56,6 +57,7 @@ namespace EQ2GlassCannon
 					m_bIsQueued = ThisAbility.IsQueued;
 					m_fCastTimeSeconds = ThisAbility.CastingTime;
 					m_fRecoveryTimeSeconds = ThisAbility.RecoveryTime;
+					m_iHealthCost = ThisAbility.HealthCost;
 					m_iPowerCost = ThisAbility.PowerCost;
 					m_fRange = ThisAbility.Range;
 					m_fMinRange = ThisAbility.MinRange;
@@ -99,14 +101,14 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected Dictionary<int, CachedAbility> m_AbilityCache = new Dictionary<int, CachedAbility>();
+		private Dictionary<int, CachedAbility> m_AbilityCache = new Dictionary<int, CachedAbility>();
 
 		/// <summary>
 		/// Within a frame lock, encounter/PBAE attempts might be called multiple times for the same spell.
 		/// This cache prevents the need for redundant range detection on all NPC's within the blast radius,
 		/// which can conceivably be taxing on CPU usage.
 		/// </summary>
-		public Dictionary<int, int> m_AbilityCompatibleTargetCountCache = new Dictionary<int, int>();
+		private Dictionary<int, int> m_AbilityCompatibleTargetCountCache = new Dictionary<int, int>();
 
 		/************************************************************************************/
 		/// <summary>
@@ -178,6 +180,33 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="iAbilityID"></param>
+		/// <returns>true if spell exists, is usable, AND can be afforded; false otherwise.</returns>
+		public bool CanAffordAbilityCost(int iAbilityID)
+		{
+			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
+			if (ThisAbility == null)
+				return false;
+
+			if (Me.Power < ThisAbility.m_iPowerCost)
+			{
+				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
+				return false;
+			}
+
+			if (Me.Health < ThisAbility.m_iHealthCost)
+			{
+				Program.Log("Not enough health to cast {0}!", ThisAbility.m_strName);
+				return false;
+			}
+
+			return true;
+		}
+
+		/************************************************************************************/
+		/// <summary>
 		/// Casts an action on an arbitrary PC target using the chat command.
 		/// Preferred for all beneficial casts.
 		/// </summary>
@@ -215,11 +244,8 @@ namespace EQ2GlassCannon
 				return false;
 			}
 
-			if (Me.Power < ThisAbility.m_iPowerCost)
-			{
-				Program.Log("Not enough power to cast {0} on {1}!", ThisAbility.m_strName, SpellTargetActor.Name);
+			if (!CanAffordAbilityCost(iAbilityID))
 				return false;
-			}
 
 			StartCastTimers(ThisAbility);
 			return ThisAbility.Use(strPlayerTarget);
@@ -253,14 +279,8 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			/// Disqualify by power cost.
-			/// Although it would be cheaper CPU to disqualify power first,
-			/// the log spam would think we were trying to cast even if we were eventually going to disqualify it anyway.
-			if (Me.Power < ThisAbility.m_iPowerCost)
-			{
-				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
+			if (!CanAffordAbilityCost(iAbilityID))
 				return false;
-			}
 
 			StartCastTimers(ThisAbility);
 			return ThisAbility.Use();
@@ -294,11 +314,8 @@ namespace EQ2GlassCannon
 			if (iValidVictimCount < iMinimumVictimCheckCount)
 				return false;
 
-			if (Me.Power < ThisAbility.m_iPowerCost)
-			{
-				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
+			if (!CanAffordAbilityCost(iAbilityID))
 				return false;
-			}
 
 			Program.Log("{0} approved against {1} possible PBAE target(s) within {2:0}m radius.", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fEffectRadius);
 			StartCastTimers(ThisAbility);
@@ -340,11 +357,8 @@ namespace EQ2GlassCannon
 			if (iValidVictimCount < iMinimumVictimCheckCount)
 				return false;
 
-			if (Me.Power < ThisAbility.m_iPowerCost)
-			{
-				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
+			if (!CanAffordAbilityCost(iAbilityID))
 				return false;
-			}
 
 			Program.Log("{0} approved against {1} possible encounter target(s) within {2:0}m radius.", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fMaxRange);
 			StartCastTimers(ThisAbility);
@@ -685,6 +699,31 @@ namespace EQ2GlassCannon
 			m_bAutoHarvestInProgress = true;
 			m_LastAutoHarvestAttemptTime = DateTime.Now;
 			Program.Log("Harvesting \"{1}\" from a distance of {2:0.00} meters...", NearestHarvestableNode.Type, NearestHarvestableNode.Name, fNearestHarvestableDistance);
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool CastFurySalveAbility()
+		{
+			if (!m_bCastFurySalveIfGranted || !CanAffordAbilityCost(m_iFurySalveHealAbilityID))
+				return false;
+
+			string strLowestHealthName = null;
+			double fLowestHealthRatio = 1.00;
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
+			{
+				double fThisHealthRatio = ThisStatus.HealthRatio;
+				if (fThisHealthRatio < fLowestHealthRatio)
+				{
+					fLowestHealthRatio = fThisHealthRatio;
+					strLowestHealthName = ThisStatus.m_strName;
+				}
+			}
+
+			/// TODO: Really should have a sorted list, to heal the next person down the list if the higher person is OOR.
+			if (!string.IsNullOrEmpty(strLowestHealthName))
+				return CastAbility(m_iFurySalveHealAbilityID, strLowestHealthName, true);
+
 			return false;
 		}
 	}
