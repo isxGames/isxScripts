@@ -19,7 +19,6 @@ namespace EQ2GlassCannon
 		#endregion
 
 		#region Ability ID's
-		public int m_iGroupMitigationBuffAbilityID = -1;
 		public int m_iGroupNoxiousBuffAbilityID = -1;
 		public int m_iGroupSTRSTABuffAbilityID = -1;
 		public int m_iSingleHealthPoolBuffAbilityID = -1;
@@ -69,12 +68,16 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
+			/// PriestController abilities.
+			m_iShadowsDefensiveHealStance = SelectHighestAbilityID("Ritual of Protection");
+			m_iShadowsOffensiveHealStance = SelectHighestAbilityID("Ravenous Protector");
 			m_iGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Ebbing Spirit");
 			m_iGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Ancestral Savior");
+			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Water Spirit");
 			m_iGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Runic Armor");
+
 			m_iGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Mettle");
 			m_iGroupSTRSTABuffAbilityID = SelectHighestTieredAbilityID("Spirit of the Mammoth");
-			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Water Spirit");
 			m_iSingleHealthPoolBuffAbilityID = SelectHighestTieredAbilityID("Premonition");
 			m_iSpiritCompanionAbilityID = SelectHighestAbilityID("Summon Spirit Companion");
 			m_iUrsineAbilityID = SelectHighestTieredAbilityID("Ursine Avatar");
@@ -180,6 +183,9 @@ namespace EQ2GlassCannon
 			/// Do buffs only if the vital situation isn't grim.
 			if (m_bCheckBuffsNow && (fLowestHealthRatio > 0.80f))
 			{
+				if (CheckShadowsHealStanceBuffs())
+					return true;
+
 				if (CheckToggleBuff(m_iCoagulateAbilityID, true))
 					return true;
 
@@ -192,7 +198,7 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_iGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets, true, false))
+				if (CheckSingleTargetBuffs(m_iSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets))
 					return true;
 
 				if (CheckToggleBuff(m_iUrsineAbilityID, true))
@@ -201,10 +207,10 @@ namespace EQ2GlassCannon
 				if (CheckGroupWaterBreathingBuff())
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleStatBuffAbilityID, m_strAvatarTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iSingleStatBuffAbilityID, m_strAvatarTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleProcBuffAbilityID, m_strAncestryTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iSingleProcBuffAbilityID, m_strAncestryTarget))
 					return true;
 
 				if (CheckRacialBuffs())

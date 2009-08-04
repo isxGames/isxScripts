@@ -26,24 +26,29 @@ namespace EQ2GlassCannon
 
 			public enum TargetType : int
 			{
-				Unknown = -1,
+				Unknown0 = 0,
+				Unknown1 = 1,
 				Group = 2,
+				Unknown3 = 3,
 			}
 
 			public readonly string m_strName = string.Empty;
 			public readonly bool m_bIsValid = false;
 			public readonly bool m_bIsReady = false;
 			public readonly bool m_bIsQueued = false;
+			public readonly float m_fTimeUntilReady = 0.0f;
 			public readonly float m_fCastTimeSeconds = 0.0f;
 			public readonly float m_fRecoveryTimeSeconds = 0.0f;
 			public readonly int m_iHealthCost = -1;
 			public readonly int m_iPowerCost = -1;
+			public readonly int m_iConcentrationCost = -1;
 			public readonly float m_fRange = 0.0f;
 			public readonly float m_fMinRange = 0.0f;
 			public readonly float m_fMaxRange = 0.0f;
 			public readonly float m_fEffectRadius = 0.0f;
 			public readonly int m_iMaxAOETargets = -1;
-			public readonly TargetType m_eTargetType = TargetType.Unknown;
+			public readonly bool m_bAllowRaid = false;
+			public readonly TargetType m_eTargetType = TargetType.Unknown0;
 
 			public CachedAbility(Ability ThisAbility)
 			{
@@ -55,15 +60,18 @@ namespace EQ2GlassCannon
 					m_strName = ThisAbility.Name;
 					m_bIsReady = ThisAbility.IsReady;
 					m_bIsQueued = ThisAbility.IsQueued;
+					m_fTimeUntilReady = ThisAbility.TimeUntilReady;
 					m_fCastTimeSeconds = ThisAbility.CastingTime;
 					m_fRecoveryTimeSeconds = ThisAbility.RecoveryTime;
 					m_iHealthCost = ThisAbility.HealthCost;
 					m_iPowerCost = ThisAbility.PowerCost;
+					m_iConcentrationCost = ThisAbility.ConcentrationCost;
 					m_fRange = ThisAbility.Range;
 					m_fMinRange = ThisAbility.MinRange;
 					m_fMaxRange = ThisAbility.MaxRange;
 					m_fEffectRadius = ThisAbility.EffectRadius;
 					m_iMaxAOETargets = ThisAbility.MaxAOETargets;
+					m_bAllowRaid = ThisAbility.AllowRaid;
 					m_eTargetType = (TargetType)ThisAbility.TargetType;
 				}
 				return;
@@ -190,16 +198,33 @@ namespace EQ2GlassCannon
 			if (ThisAbility == null)
 				return false;
 
-			if (Me.Power < ThisAbility.m_iPowerCost)
+			if (ThisAbility.m_iPowerCost > Me.Power)
 			{
 				Program.Log("Not enough power to cast {0}!", ThisAbility.m_strName);
 				return false;
 			}
 
-			if (Me.Health < ThisAbility.m_iHealthCost)
+			/// I first check against zero to dodge the Character class value lookup.
+			/// Most abilities have no health cost and for them this check is a waste of CPU.
+			if (ThisAbility.m_iHealthCost > 0)
 			{
-				Program.Log("Not enough health to cast {0}!", ThisAbility.m_strName);
-				return false;
+				if (ThisAbility.m_iHealthCost > Me.Health)
+				{
+					Program.Log("Not enough health to cast {0}!", ThisAbility.m_strName);
+					return false;
+				}
+			}
+
+			/// I first check against zero to dodge the Character class value lookup.
+			/// Most abilities have no concentration cost and for them this check is a waste of CPU.
+			if (ThisAbility.m_iConcentrationCost > 0)
+			{
+				int iFreeSlots = (Me.MaxConc - Me.UsedConc);
+				if (ThisAbility.m_iConcentrationCost > iFreeSlots)
+				{
+					Program.Log("Not enough concentration slots to cast {0}!", ThisAbility.m_strName);
+					return false;
+				}
 			}
 
 			return true;
@@ -476,14 +501,9 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public bool IsAbilityReady(int iAbilityID)
 		{
-			if (iAbilityID < 1)
-				return false;
-
-			Ability ThisAbility = Me.Ability(iAbilityID);
-
 			/// IsReady is false for available CA's that require stealth.
 			//return (ThisAbility.TimeUntilReady == 0.0);
-			return ThisAbility.IsValid && ThisAbility.IsReady;
+			return (GetAbility(iAbilityID, true) != null);
 		}
 
 		/************************************************************************************/
@@ -494,11 +514,12 @@ namespace EQ2GlassCannon
 		/// <param name="iAbilityID"></param>
 		/// <param name="bAnyVersion">true if any version of the spell should be cancelled, false if only inferior ones should be cancelled</param>
 		/// <returns>true if a maintained spell was actually found and cancelled.</returns>
-		public bool CancelAbility(int iAbilityID, bool bCancelAnyVersion)
+		public bool CancelMaintained(int iAbilityID, bool bCancelAnyVersion)
 		{
 			if (iAbilityID < 1)
 				return false;
 
+			/// This is the name that SHOULD appear in the maintained list.
 			string strAbilityName = m_KnowledgeBookIndexToNameMap[iAbilityID];
 
 			int iCancelCount = 0;
@@ -507,7 +528,7 @@ namespace EQ2GlassCannon
 			{
 				string strMaintainedName = ThisMaintained.Name;
 
-				if (m_KnowledgeBookCategoryDictionary.ContainsKey(strMaintainedName) && m_KnowledgeBookCategoryDictionary[strMaintainedName] == iAbilityID)
+				if (m_KnowledgeBookAbilityLineDictionary.ContainsKey(strMaintainedName) && m_KnowledgeBookAbilityLineDictionary[strMaintainedName] == iAbilityID)
 				{
 					if (bCancelAnyVersion || strAbilityName != strMaintainedName)
 					{
@@ -523,27 +544,29 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		/// <summary>
-		/// 
 		/// </summary>
 		/// <param name="iAbilityID"></param>
 		/// <param name="astrRecipients"></param>
 		/// <returns>true if a buff was cast or cancelled even one single time.</returns>
-		public bool CheckSingleTargetBuffs(int iAbilityID, List<string> astrRecipients, bool bGroupTargetable, bool bRaidTargetable)
+		public bool CheckSingleTargetBuffs(int iAbilityID, List<string> astrRecipients)
 		{
-			if (iAbilityID < 0)
+			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
+			if (ThisAbility == null)
 				return false;
 
+#if DEBUG
 			/// This is a common mistake I make, initializing string lists as null instead of an allocated instance.
 			if (astrRecipients == null)
 			{
 				Program.Log("BUG: CheckSingleTargetBuffs() called with null list parameter!");
 				return false;
 			}
+#endif
 
 			bool bAnyActionTaken = false;
 
 			/// Eliminate inferior versions.
-			if (CancelAbility(iAbilityID, false))
+			if (CancelMaintained(iAbilityID, false))
 				bAnyActionTaken = true;
 
 			string strAbilityName = m_KnowledgeBookIndexToNameMap[iAbilityID];
@@ -585,16 +608,15 @@ namespace EQ2GlassCannon
 			foreach (string strThisTarget in NeedyTargetSet)
 			{
 				/// Check raid first; it's a superset of the group.
-				if (bRaidTargetable)
+				if (ThisAbility.m_bAllowRaid)
 				{
 					if (!m_FriendDictionary.ContainsKey(strThisTarget))
 					{
-						Program.Log("{0} wasn't cast on {1} (not found in raid).", strAbilityName, strThisTarget);
+						Program.Log("{0} wasn't cast on {1} (not found in group or raid).", strAbilityName, strThisTarget);
 						continue;
 					}
 				}
-
-				else if (bGroupTargetable)
+				else
 				{
 					if (!m_GroupMemberDictionary.ContainsKey(strThisTarget))
 					{
@@ -604,18 +626,21 @@ namespace EQ2GlassCannon
 				}
 
 				if (CastAbility(iAbilityID, strThisTarget, true))
+				{
 					bAnyActionTaken = true;
+					break;
+				}
 			}
 
 			return bAnyActionTaken;
 		}
 
 		/************************************************************************************/
-		public bool CheckSingleTargetBuffs(int iAbilityID, string strRecipient, bool bGroupBuff, bool bRaidBuff)
+		public bool CheckSingleTargetBuffs(int iAbilityID, string strRecipient)
 		{
 			List<string> astrSingleTargetList = new List<string>();
 			astrSingleTargetList.Add(strRecipient);
-			return CheckSingleTargetBuffs(iAbilityID, astrSingleTargetList, bGroupBuff, bRaidBuff);
+			return CheckSingleTargetBuffs(iAbilityID, astrSingleTargetList);
 		}
 
 		/************************************************************************************/
@@ -624,7 +649,7 @@ namespace EQ2GlassCannon
 			if (iAbilityID < -1)
 				return false;
 
-			if (CancelAbility(iAbilityID, !bOn))
+			if (CancelMaintained(iAbilityID, !bOn))
 				return true;
 
 			/// Target myself to remove ambiguity.
@@ -632,6 +657,39 @@ namespace EQ2GlassCannon
 				return true;
 
 			return false;
+		}
+
+		/************************************************************************************/
+		public bool CheckStanceBuff(int iOffensiveAbilityID, int iDefensiveAbilityID, StanceType eStance)
+		{
+			if (eStance != StanceType.Offensive && CancelMaintained(iOffensiveAbilityID, true))
+				return true;
+
+			if (eStance != StanceType.Defensive && CancelMaintained(iDefensiveAbilityID, true))
+				return true;
+
+			if (eStance == StanceType.Offensive && !IsAbilityMaintained(iOffensiveAbilityID) && CastAbility(iOffensiveAbilityID, Me.Name, true))
+				return true;
+
+			if (eStance == StanceType.Defensive && !IsAbilityMaintained(iDefensiveAbilityID) && CastAbility(iDefensiveAbilityID, Me.Name, true))
+				return true;
+
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool AreTempOffensiveBuffsAdvised()
+		{
+			if (m_OffensiveTargetActor == null)
+				return false;
+			else if (m_OffensiveTargetActor.IsNamed)
+				return true;
+			else if (m_OffensiveTargetActor.IsHeroic)
+				return (m_OffensiveTargetActor.Health > 90);
+			else if (m_OffensiveTargetActor.IsEpic)
+				return (m_OffensiveTargetActor.Health > 70);
+			else
+				return false;
 		}
 
 		/************************************************************************************/
@@ -647,6 +705,13 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// Harvests the nearest node while standing still.
+		/// Because we can't use CastAbility() to perform the harvest,
+		/// we fudge the range and harvest cast time.
+		/// Otherwise we'd need a table of nodes and what harvest ability they require (fuck that).
+		/// </summary>
+		/// <returns></returns>
 		public bool AutoHarvestNearestNode()
 		{
 			if (!m_bHarvestAutomatically || Me.IsMoving || MeActor.InCombatMode || m_iOffensiveTargetID != -1)
@@ -708,8 +773,9 @@ namespace EQ2GlassCannon
 			if (!m_bCastFurySalveIfGranted || !CanAffordAbilityCost(m_iFurySalveHealAbilityID))
 				return false;
 
+			/// This is very simple actually; we'll be casting it on the PC with the lowest health percentage.
 			string strLowestHealthName = null;
-			double fLowestHealthRatio = 1.00;
+			double fLowestHealthRatio = 1.0;
 			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
 			{
 				double fThisHealthRatio = ThisStatus.HealthRatio;
@@ -720,11 +786,11 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			/// TODO: Really should have a sorted list, to heal the next person down the list if the higher person is OOR.
-			if (!string.IsNullOrEmpty(strLowestHealthName))
-				return CastAbility(m_iFurySalveHealAbilityID, strLowestHealthName, true);
+			/// TODO: Really should have a sorted list, to heal the next-lowest PC if the lowest PC is OOR.
+			if (string.IsNullOrEmpty(strLowestHealthName))
+				return false;
 
-			return false;
+			return CastAbility(m_iFurySalveHealAbilityID, strLowestHealthName, true);
 		}
 	}
 }
