@@ -54,11 +54,11 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool AttemptEmergencyPowerFeed()
 		{
-			if (!m_bUsePowerFeed || !MeActor.IsIdle || !IsAbilityReady(m_iSinglePowerFeedAbilityID))
+			if (!m_bUsePowerFeed || !MeActor.IsIdle)
 				return false;
 
-			Ability ThisAbility = Me.Ability(m_iSinglePowerFeedAbilityID);
-			if (Me.Health < ThisAbility.HealthCost)
+			CachedAbility ThisAbility = GetAbility(m_iSinglePowerFeedAbilityID, true);
+			if (Me.Health < ThisAbility.m_iHealthCost)
 				return false;
 
 			string strLowestPowerName = string.Empty;
