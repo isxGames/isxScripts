@@ -71,37 +71,38 @@ namespace EQ2GlassCannon
 				Mage = Sorceror | Summoner | Enchanter,
 			}
 
-			protected static Dictionary<string, ClassType> m_ClassStringToFlagMap = new Dictionary<string, ClassType>();
+			protected readonly static Dictionary<string, ClassType> s_ClassStringToFlagMap = new Dictionary<string, ClassType>();
 
 			static VitalStatus()
 			{
-				m_ClassStringToFlagMap.Add("guardian", ClassType.Guardian);
-				m_ClassStringToFlagMap.Add("berserker", ClassType.Berserker);
-				m_ClassStringToFlagMap.Add("paladin", ClassType.Paladin);
-				m_ClassStringToFlagMap.Add("shadowknight", ClassType.Shadowknight);
-				m_ClassStringToFlagMap.Add("monk", ClassType.Monk);
-				m_ClassStringToFlagMap.Add("bruiser", ClassType.Bruiser);
-				m_ClassStringToFlagMap.Add("templar", ClassType.Templar);
-				m_ClassStringToFlagMap.Add("inquisitor", ClassType.Inquisitor);
-				m_ClassStringToFlagMap.Add("mystic", ClassType.Mystic);
-				m_ClassStringToFlagMap.Add("defiler", ClassType.Defiler);
-				m_ClassStringToFlagMap.Add("warden", ClassType.Warden);
-				m_ClassStringToFlagMap.Add("fury", ClassType.Fury);
-				m_ClassStringToFlagMap.Add("ranger", ClassType.Ranger);
-				m_ClassStringToFlagMap.Add("assassin", ClassType.Assassin);
-				m_ClassStringToFlagMap.Add("swashbuckler", ClassType.Swashbuckler);
-				m_ClassStringToFlagMap.Add("brigand", ClassType.Brigand);
-				m_ClassStringToFlagMap.Add("troubador", ClassType.Troubador);
-				m_ClassStringToFlagMap.Add("dirge", ClassType.Dirge);
-				m_ClassStringToFlagMap.Add("wizard", ClassType.Wizard);
-				m_ClassStringToFlagMap.Add("warlock", ClassType.Warlock);
-				m_ClassStringToFlagMap.Add("conjuror", ClassType.Conjuror);
-				m_ClassStringToFlagMap.Add("necromancer", ClassType.Necromancer);
-				m_ClassStringToFlagMap.Add("illusionist", ClassType.Illusionist);
-				m_ClassStringToFlagMap.Add("coercer", ClassType.Coercer);
+				s_ClassStringToFlagMap.Add("guardian", ClassType.Guardian);
+				s_ClassStringToFlagMap.Add("berserker", ClassType.Berserker);
+				s_ClassStringToFlagMap.Add("paladin", ClassType.Paladin);
+				s_ClassStringToFlagMap.Add("shadowknight", ClassType.Shadowknight);
+				s_ClassStringToFlagMap.Add("monk", ClassType.Monk);
+				s_ClassStringToFlagMap.Add("bruiser", ClassType.Bruiser);
+				s_ClassStringToFlagMap.Add("templar", ClassType.Templar);
+				s_ClassStringToFlagMap.Add("inquisitor", ClassType.Inquisitor);
+				s_ClassStringToFlagMap.Add("mystic", ClassType.Mystic);
+				s_ClassStringToFlagMap.Add("defiler", ClassType.Defiler);
+				s_ClassStringToFlagMap.Add("warden", ClassType.Warden);
+				s_ClassStringToFlagMap.Add("fury", ClassType.Fury);
+				s_ClassStringToFlagMap.Add("ranger", ClassType.Ranger);
+				s_ClassStringToFlagMap.Add("assassin", ClassType.Assassin);
+				s_ClassStringToFlagMap.Add("swashbuckler", ClassType.Swashbuckler);
+				s_ClassStringToFlagMap.Add("brigand", ClassType.Brigand);
+				s_ClassStringToFlagMap.Add("troubador", ClassType.Troubador);
+				s_ClassStringToFlagMap.Add("dirge", ClassType.Dirge);
+				s_ClassStringToFlagMap.Add("wizard", ClassType.Wizard);
+				s_ClassStringToFlagMap.Add("warlock", ClassType.Warlock);
+				s_ClassStringToFlagMap.Add("conjuror", ClassType.Conjuror);
+				s_ClassStringToFlagMap.Add("necromancer", ClassType.Necromancer);
+				s_ClassStringToFlagMap.Add("illusionist", ClassType.Illusionist);
+				s_ClassStringToFlagMap.Add("coercer", ClassType.Coercer);
 				return;
 			}
 
+			public readonly bool m_bIsValid = false;
 			public readonly string m_strName = string.Empty;
 			public readonly ClassType m_eClass = ClassType.None;
 			public readonly bool m_bIsDead = false;
@@ -119,37 +120,53 @@ namespace EQ2GlassCannon
 
 			public VitalStatus(Character SourceInfo)
 			{
-				m_Actor = SourceInfo.ToActor();
-				m_strName = SourceInfo.Name;
-				m_eClass = m_ClassStringToFlagMap[m_Actor.Class];
-				m_bIsDead = m_Actor.IsDead;
-				m_iTrauma = SourceInfo.Trauma;
-				m_iArcane = SourceInfo.Arcane;
-				m_iNoxious = SourceInfo.Noxious;
-				m_iElemental = SourceInfo.Elemental;
-				m_iCursed = SourceInfo.Cursed ? 1 : 0; /// Totally fudged and possibly inaccurate in some situations.
-				m_iCurrentHealth = SourceInfo.Health;
-				m_iMaximumHealth = SourceInfo.MaxHealth;
-				m_iCurrentPower = SourceInfo.Power;
-				m_iMaximumPower = SourceInfo.MaxPower;
+				m_bIsValid = SourceInfo.IsValid;
+				if (m_bIsValid)
+				{
+					m_Actor = SourceInfo.ToActor();
+					m_bIsValid = (m_bIsValid && m_Actor.IsValid);
+				}
+				if (m_bIsValid)
+				{
+					m_strName = SourceInfo.Name;
+					m_eClass = s_ClassStringToFlagMap[m_Actor.Class];
+					m_bIsDead = m_Actor.IsDead;
+					m_iTrauma = SourceInfo.Trauma;
+					m_iArcane = SourceInfo.Arcane;
+					m_iNoxious = SourceInfo.Noxious;
+					m_iElemental = SourceInfo.Elemental;
+					m_iCursed = SourceInfo.Cursed ? 1 : 0; /// Totally fudged and possibly inaccurate in some situations.
+					m_iCurrentHealth = SourceInfo.Health;
+					m_iMaximumHealth = SourceInfo.MaxHealth;
+					m_iCurrentPower = SourceInfo.Power;
+					m_iMaximumPower = SourceInfo.MaxPower;
+				}
 				return;
 			}
 
 			public VitalStatus(GroupMember SourceInfo)
 			{
-				m_Actor = SourceInfo.ToActor();
-				m_strName = SourceInfo.Name;
-				m_eClass = m_ClassStringToFlagMap[m_Actor.Class];
-				m_bIsDead = m_Actor.IsDead;
-				m_iTrauma = SourceInfo.Trauma;
-				m_iArcane = SourceInfo.Arcane;
-				m_iNoxious = SourceInfo.Noxious;
-				m_iElemental = SourceInfo.Elemental;
-				m_iCursed = SourceInfo.Cursed;
-				m_iCurrentHealth = SourceInfo.HitPoints;
-				m_iMaximumHealth = SourceInfo.MaxHitPoints;
-				m_iCurrentPower = SourceInfo.Power;
-				m_iMaximumPower = SourceInfo.MaxPower;
+				m_bIsValid = SourceInfo.IsValid;
+				if (m_bIsValid)
+				{
+					m_Actor = SourceInfo.ToActor();
+					m_bIsValid = (m_bIsValid && m_Actor.IsValid);
+				}
+				if (m_bIsValid)
+				{
+					m_strName = SourceInfo.Name;
+					m_eClass = s_ClassStringToFlagMap[m_Actor.Class];
+					m_bIsDead = m_Actor.IsDead;
+					m_iTrauma = SourceInfo.Trauma;
+					m_iArcane = SourceInfo.Arcane;
+					m_iNoxious = SourceInfo.Noxious;
+					m_iElemental = SourceInfo.Elemental;
+					m_iCursed = SourceInfo.Cursed;
+					m_iCurrentHealth = SourceInfo.HitPoints;
+					m_iMaximumHealth = SourceInfo.MaxHitPoints;
+					m_iCurrentPower = SourceInfo.Power;
+					m_iMaximumPower = SourceInfo.MaxPower;
+				}
 				return;
 			}
 
@@ -170,6 +187,14 @@ namespace EQ2GlassCannon
 				}
 			}
 
+			public double HealthRatio
+			{
+				get
+				{
+					return (double)m_iCurrentHealth / (double)m_iMaximumHealth;
+				}
+			}
+
 			public bool IsPriest
 			{
 				get
@@ -180,37 +205,36 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool GetVitalStatus(Character SourceInfo, ref VitalStatus ThisStatus)
-		{
-			try
-			{
-				ThisStatus = new VitalStatus(SourceInfo);
-				if (!ThisStatus.m_Actor.IsValid)
-					return false;
-				return true;
-			}
-			catch
-			{
-				Program.Log("Exception thrown while attempting to look up Character vital status info.");
-				return false;
-			}
-		}
+		private Dictionary<string, VitalStatus> m_VitalStatusCache = new Dictionary<string, VitalStatus>();
 
 		/************************************************************************************/
-		public bool GetVitalStatus(GroupMember SourceInfo, ref VitalStatus ThisStatus)
+		public bool GetVitalStatus(string strFriendName, ref VitalStatus ThisStatus)
 		{
 			try
 			{
-				ThisStatus = new VitalStatus(SourceInfo);
-				if (!ThisStatus.m_Actor.IsValid)
+				if (m_VitalStatusCache.ContainsKey(strFriendName))
+					ThisStatus = m_VitalStatusCache[strFriendName];
+				else if (strFriendName == Me.Name)
+				{
+					ThisStatus = new VitalStatus(Me);
+					m_VitalStatusCache.Add(strFriendName, ThisStatus);
+				}
+				else if (m_FriendDictionary.ContainsKey(strFriendName))
+				{
+					ThisStatus = new VitalStatus(m_FriendDictionary[strFriendName]);
+					m_VitalStatusCache.Add(strFriendName, ThisStatus);
+				}
+				else
 					return false;
-				return true;
+
+				if (ThisStatus.m_bIsValid)
+					return true;
 			}
 			catch
 			{
-				Program.Log("Exception thrown while attempting to look up GroupMember vital status info.");
-				return false;
+				Program.Log("Exception thrown while attempting to look up vital status info.");
 			}
+			return false;
 		}
 
 		/************************************************************************************/
@@ -218,22 +242,15 @@ namespace EQ2GlassCannon
 		{
 			VitalStatus ThisStatus = null;
 
-			if (bIncludeMainTank && m_FriendDictionary.ContainsKey(m_strMainTank))
-			{
-				GroupMember ThisMember = m_FriendDictionary[m_strMainTank];
-				if (GetVitalStatus(ThisMember, ref ThisStatus))
-					yield return ThisStatus;
-			}
-
-			if (GetVitalStatus(Me, ref ThisStatus))
+			if (bIncludeMainTank && GetVitalStatus(m_strMainTank, ref ThisStatus))
 				yield return ThisStatus;
 
-			foreach (GroupMember ThisMember in m_GroupMemberDictionary.Values)
+			foreach (string strThisMemberName in m_GroupMemberDictionary.Keys)
 			{
 				/// Omit everyone we already cycled through.
-				if ((ThisMember.Name != Me.Name) && (ThisMember.Name != m_strMainTank))
+				if (strThisMemberName != m_strMainTank)
 				{
-					if (GetVitalStatus(ThisMember, ref ThisStatus))
+					if (GetVitalStatus(strThisMemberName, ref ThisStatus))
 						yield return ThisStatus;
 				}
 			}
