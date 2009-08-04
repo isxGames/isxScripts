@@ -236,6 +236,29 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public void TransferEnum<T>(string strKey, ref T eValue)
+		{
+			if (m_eTransferMode == TransferMode.Read)
+			{
+				string strValue = string.Empty;
+				if (ReadString(strKey, ref strValue))
+				{
+					strValue = strValue.Trim();
+					try
+					{
+						eValue = (T)Enum.Parse(typeof(T), strValue, true);
+					}
+					catch
+					{
+					}
+				}
+			}
+			else
+				WriteString(strKey, eValue.ToString());
+			return;
+		}
+
+		/************************************************************************************/
 		public void TransferInteger(string strKey, ref int iValue)
 		{
 			if (m_eTransferMode == TransferMode.Read)

@@ -73,8 +73,12 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
+			/// PriestController abilities.
+			m_iShadowsDefensiveHealStance = SelectHighestAbilityID("Focused Prayers");
+			m_iShadowsOffensiveHealStance = SelectHighestAbilityID("Peaceful Aggression");
 			m_iGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Holy Armor");
 			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Watery Respite");
+
 			m_iBlessingsAbilityID = SelectHighestAbilityID("Blessings");
 			m_iManaCureAbilityID = SelectHighestAbilityID("Mana Cure");
 			m_iSingleSTRWISBuffAbilityID = SelectHighestTieredAbilityID("Virtue");
@@ -184,10 +188,13 @@ namespace EQ2GlassCannon
 			/// Do buffs only if the vital situation isn't grim.
 			if (m_bCheckBuffsNow && (fLowestHealthRatio > 0.80f))
 			{
+				if (CheckShadowsHealStanceBuffs())
+					return true;
+
 				if (CheckToggleBuff(m_iGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iShieldAllyAbilityID, m_strShieldAllyTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iShieldAllyAbilityID, m_strShieldAllyTarget))
 					return true;
 
 				if (CheckToggleBuff(m_iGroupArcaneBuffAbilityID, m_bBuffArcaneResistance))
@@ -199,19 +206,19 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_iGroupWaterBreathingAbilityID, m_bBuffGroupWaterBreathing))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iManaCureAbilityID, m_strManaCureTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iManaCureAbilityID, m_strManaCureTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleSTRWISBuffAbilityID, m_strSTRWISTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iSingleSTRWISBuffAbilityID, m_strSTRWISTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleStoneskinBuffAbilityID, m_strStoneskinTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iSingleStoneskinBuffAbilityID, m_strStoneskinTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iMeleeSkillBuffAbilityID, m_astrMeleeSkillTargets, true, false))
+				if (CheckSingleTargetBuffs(m_iMeleeSkillBuffAbilityID, m_astrMeleeSkillTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iMeleeHealProcBuffAbilityID, m_astrMeleeHealProcTargets, true, false))
+				if (CheckSingleTargetBuffs(m_iMeleeHealProcBuffAbilityID, m_astrMeleeHealProcTargets))
 					return true;
 
 				if (CheckToggleBuff(m_iYaulpAbilityID, m_bBuffYaulp))

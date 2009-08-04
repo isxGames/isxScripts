@@ -14,6 +14,13 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
+		public enum StanceType
+		{
+			Neither = 0,
+			Defensive = 1,
+			Offensive = 2,
+		}
+
 		public bool m_bWriteBackINI = true;
 		public string m_strCustomTellTriggerFile = string.Empty;
 		public string m_strReloadINISubphrase = "rebuff me pls";

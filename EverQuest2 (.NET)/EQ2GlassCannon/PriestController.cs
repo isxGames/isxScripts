@@ -16,6 +16,7 @@ namespace EQ2GlassCannon
 		public string m_strSingleRezCallout = "REZZING << {0} >>";
 		public string m_strGroupRezCallout = "REZZING GROUP << {0} >>";
 		public bool m_bBuffGroupWaterBreathing = true;
+		public StanceType m_eShadowsHealStance = StanceType.Neither;
 		#endregion
 
 		public int m_iCureAbilityID = -1;
@@ -23,8 +24,11 @@ namespace EQ2GlassCannon
 		public int m_iGeneralGroupCureAbilityID = -1;
 		public int m_iGeneralSingleDeathSaveAbilityID = -1;
 		public int m_iGeneralNonCombatRezAbilityID = -1;
+		public int m_iGroupMitigationBuffAbilityID = -1;
 		public int m_iGroupWaterBreathingAbilityID = -1;
 		public int m_iSpiritOfTheWolfAbilityID = -1;
+		public int m_iShadowsOffensiveHealStance = -1;
+		public int m_iShadowsDefensiveHealStance = -1;
 
 		/************************************************************************************/
 		protected override void TransferINISettings(IniFile ThisFile)
@@ -38,6 +42,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("Priest.SingleRezCallout", ref m_strSingleRezCallout);
 			ThisFile.TransferString("Priest.GroupRezCallout", ref m_strGroupRezCallout);
 			ThisFile.TransferBool("Priest.BuffGroupWaterBreathing", ref m_bBuffGroupWaterBreathing);
+			ThisFile.TransferEnum<StanceType>("Priest.ShadowsHealStance", ref m_eShadowsHealStance);
 
 			return;
 		}
@@ -177,6 +182,12 @@ namespace EQ2GlassCannon
 			}
 
 			return false;
+		}
+
+		/************************************************************************************/
+		public bool CheckShadowsHealStanceBuffs()
+		{
+			return CheckStanceBuff(m_iShadowsOffensiveHealStance, m_iShadowsDefensiveHealStance, m_eShadowsHealStance);
 		}
 
 		/************************************************************************************/
