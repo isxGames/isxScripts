@@ -24,6 +24,7 @@ namespace EQ2GlassCannon
 		public int m_iGreenDiseaseNukeAbilityID = -1;
 		public int m_iGreenDeaggroAbilityID = -1;
 		public int m_iBluePoisonAEAbilityID = -1;
+		public int m_iBlueMagicKnockbackAEAbilityID = -1;
 
 		/************************************************************************************/
 		protected override void TransferINISettings(IniFile ThisFile)
@@ -51,6 +52,7 @@ namespace EQ2GlassCannon
 			m_iGreenDiseaseNukeAbilityID = SelectHighestTieredAbilityID("Absolution");
 			m_iGreenDeaggroAbilityID = SelectHighestTieredAbilityID("Nullify");
 			m_iBluePoisonAEAbilityID = SelectHighestTieredAbilityID("Cataclysm");
+			m_iBlueMagicKnockbackAEAbilityID = SelectHighestTieredAbilityID("Rift");
 
 			return;
 		}
@@ -108,11 +110,16 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
+					if (m_OffensiveTargetActor.IsNamed && !IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
+						return true;
+
 					/// Resistance debuff is ALWAYS first.
 					if (m_bUseGreenAEs && !IsAbilityMaintained(m_iGreenNoxiousDebuffAbilityID) && CastGreenOffensiveAbility(m_iGreenNoxiousDebuffAbilityID, 1))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 5))
+					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 5))
+						return true;
+					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 7))
 						return true;
 
 					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 4))
@@ -122,7 +129,9 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 6))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 3))
+					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 4))
+						return true;
+					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 6))
 						return true;
 
 					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 2))
@@ -132,17 +141,14 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 4))
 						return true;
 
-					/// We don't get concerned with single debuffs until AE potential is used up.
-					if (!IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
+					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 3))
 						return true;
 
-					if (CastAbility(m_iSingleBasicNukeAbilityID))
+					/// We don't get concerned with single debuffs until AE potential is used up.
+					if (!m_OffensiveTargetActor.IsSolo && !IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
 						return true;
 
 					if (CastAbility(m_iSinglePrimaryPoisonNukeAbilityID))
-						return true;
-
-					if (CastAbility(m_iSingleUnresistableDOTAbilityID))
 						return true;
 
 					if (CastAbility(m_iSingleMediumNukeDOTAbilityID))
@@ -152,6 +158,12 @@ namespace EQ2GlassCannon
 						return true;
 
 					if (CastAbility(m_iIceFlameAbilityID))
+						return true;
+
+					if (CastAbility(m_iSingleBasicNukeAbilityID))
+						return true;
+
+					if (CastAbility(m_iSingleUnresistableDOTAbilityID))
 						return true;
 
 					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 1))
