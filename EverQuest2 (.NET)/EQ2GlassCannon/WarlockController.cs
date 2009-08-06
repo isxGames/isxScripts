@@ -10,8 +10,17 @@ namespace EQ2GlassCannon
 {
 	public class WarlockController : SorcererController
 	{
+		public List<string> m_astrShroudTargets = new List<string>();
+		public List<string> m_astrGraspTargets = new List<string>();
+
 		public int m_iGroupCastingSkillBuffAbilityID = -1;
 		public int m_iGroupNoxiousBuffAbilityID = -1;
+		public int m_iGiftAbilityID = -1;
+		public int m_iNetherealmAbilityID = -1;
+		public int m_iSingleDamageShieldBuffAbilityID = -1;
+		public int m_iSingleMeleeProcBuffAbilityID = -1;
+		public int m_iNullmailAbilityID = -1;
+
 		public int m_iSingleSTRINTDebuffAbilityID = -1;
 		public int m_iSingleBasicNukeAbilityID = -1;
 		public int m_iSinglePrimaryPoisonNukeAbilityID = -1;
@@ -30,6 +39,9 @@ namespace EQ2GlassCannon
 		protected override void TransferINISettings(IniFile ThisFile)
 		{
 			base.TransferINISettings(ThisFile);
+
+			ThisFile.TransferStringList("Warlock.ShroudTargets", m_astrShroudTargets);
+			ThisFile.TransferStringList("Warlock.GraspTargets", m_astrGraspTargets);
 			return;
 		}
 
@@ -38,8 +50,17 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
+			/// Buffs.
 			m_iGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Dark Pact");
 			m_iGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Darkness");
+			m_iGiftAbilityID = SelectHighestTieredAbilityID("Gift of Bertoxxulous");
+			m_iNetherealmAbilityID = SelectHighestTieredAbilityID("Netherealm");
+			m_iSingleDamageShieldBuffAbilityID = SelectHighestTieredAbilityID("Shroud of Bertoxxulous");
+			m_iSingleMeleeProcBuffAbilityID = SelectHighestTieredAbilityID("Grasp of Bertoxxulous");
+			m_iNullmailAbilityID = SelectHighestAbilityID("Nullmail");
+			m_iHateTransferAbilityID = SelectHighestTieredAbilityID("Boon of the Damned");
+
+			m_iSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Trickle");
 			m_iSingleBasicNukeAbilityID = SelectHighestTieredAbilityID("Dissolve");
 			m_iSinglePrimaryPoisonNukeAbilityID = SelectHighestTieredAbilityID("Distortion");
 			m_iSingleUnresistableDOTAbilityID = SelectHighestTieredAbilityID("Poison");
@@ -69,6 +90,9 @@ namespace EQ2GlassCannon
 			if (AttemptCureArcane())
 				return true;
 
+			if (AttemptEmergencyPowerFeed())
+				return true;
+
 			if (m_bCheckBuffsNow)
 			{
 				if (CheckToggleBuff(m_iWardOfSagesAbilityID, true))
@@ -77,13 +101,22 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_iMagisShieldingAbilityID, true))
 					return true;
 
+				if (CheckToggleBuff(m_iNullmailAbilityID, true))
+					return true;
+
 				if (CheckToggleBuff(m_iGroupCastingSkillBuffAbilityID, true))
 					return true;
 
 				if (CheckToggleBuff(m_iGroupNoxiousBuffAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iHateTransferAbilityID, m_strHateTransferTarget, true, true))
+				if (CheckSingleTargetBuffs(m_iHateTransferAbilityID, m_strHateTransferTarget))
+					return true;
+
+				if (CheckSingleTargetBuffs(m_iSingleDamageShieldBuffAbilityID, m_astrShroudTargets))
+					return true;
+
+				if (CheckSingleTargetBuffs(m_iSingleMeleeProcBuffAbilityID, m_astrGraspTargets))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -96,8 +129,30 @@ namespace EQ2GlassCannon
 			if (!EngagePrimaryEnemy())
 				return false;
 
+/* Berrbe says this is his cast order for 1 target:
+Netherealm
+Gift
+Acid storm(when mob is coming)
+acid
+Vacuum field
+Aura
+acid
+Armageddon(do it 3rd since acid/aura have fast cast and hopefully debuffs will be applied by then!)
+Distortion
+Acid again
+Absolution
+Flames
+encase
+Keep acid running/don't over cas it.
+*/
+
 			if (m_OffensiveTargetActor != null)
 			{
+				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
+
+				if (CastHOStarter())
+					return true;
+
 				if (MeActor.IsIdle)
 				{
 					/// Deaggros.
@@ -110,11 +165,20 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
-					if (m_OffensiveTargetActor.IsNamed && !IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
-						return true;
+					if (bTempBuffsAdvised)
+					{
+						if (CastAbilityOnSelf(m_iGiftAbilityID))
+							return true;
+
+						if (CastAbilityOnSelf(m_iNetherealmAbilityID))
+							return true;
+					}
 
 					/// Resistance debuff is ALWAYS first.
 					if (m_bUseGreenAEs && !IsAbilityMaintained(m_iGreenNoxiousDebuffAbilityID) && CastGreenOffensiveAbility(m_iGreenNoxiousDebuffAbilityID, 1))
+						return true;
+
+					if (m_OffensiveTargetActor.IsNamed && !IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
 						return true;
 
 					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 5))
