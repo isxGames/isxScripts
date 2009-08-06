@@ -143,19 +143,19 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_iMagisShieldingAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iDynamismAbilityID, m_astrDynamismTargets, true, true))
+				if (CheckSingleTargetBuffs(m_iDynamismAbilityID, m_astrDynamismTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iHasteBuffAbilityID, m_astrHasteTargets, true, false))
+				if (CheckSingleTargetBuffs(m_iHasteBuffAbilityID, m_astrHasteTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iTimeCompressionAbilityID, m_strTimeCompressionTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iTimeCompressionAbilityID, m_strTimeCompressionTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iIllusoryArmAbilityID, m_strIllusoryArmTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iIllusoryArmAbilityID, m_strIllusoryArmTarget))
 					return true;
 
-				if (MeActor.InCombatMode && CheckSingleTargetBuffs(m_iSpellshieldAbilityID, m_strSpellshieldTarget, true, false))
+				if (MeActor.InCombatMode && CheckSingleTargetBuffs(m_iSpellshieldAbilityID, m_strSpellshieldTarget))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -203,31 +203,32 @@ namespace EQ2GlassCannon
 
 					if (bTempBuffsAdvised)
 					{
-						if (!IsBeneficialEffectPresent(m_iPeaceOfMindAbilityID) && CastAbility(m_iPeaceOfMindAbilityID))
+						if (!IsBeneficialEffectPresent(m_iPeaceOfMindAbilityID) && CastAbilityOnSelf(m_iPeaceOfMindAbilityID))
 						{
 							SpamSafeGroupSay(m_strPeaceOfMindCallout);
 							return true;
 						}
 
-						if (!IsBeneficialEffectPresent(m_iDestructiveRampageAbilityID) && CastAbility(m_iDestructiveRampageAbilityID))
+						if (!IsBeneficialEffectPresent(m_iDestructiveRampageAbilityID) && CastAbilityOnSelf(m_iDestructiveRampageAbilityID))
 						{
 							SpamSafeGroupSay(m_strDestructiveRampageCallout);
 							return true;
 						}
 
-						if (!IsBeneficialEffectPresent(m_iIlluminateAbilityID) && CastAbility(m_iIlluminateAbilityID))
+						/// Illuminate and Flash of Brilliance are used by this bot to lower spell resist rates;
+						/// it's counterproductive almost all of the time to have them both up at once.
+						if (!IsBeneficialEffectPresent(m_iCastingSkillBoostAbilityID) && !IsBeneficialEffectPresent(m_iIlluminateAbilityID) && CastAbilityOnSelf(m_iIlluminateAbilityID))
 						{
 							SpamSafeGroupSay(m_strIlluminateCallout);
 							return true;
 						}
-
-						if (!IsBeneficialEffectPresent(m_iCastingSkillBoostAbilityID) && CastAbility(m_iCastingSkillBoostAbilityID))
+						if (!IsBeneficialEffectPresent(m_iCastingSkillBoostAbilityID) && !IsBeneficialEffectPresent(m_iIlluminateAbilityID) && CastAbilityOnSelf(m_iCastingSkillBoostAbilityID))
 						{
 							SpamSafeGroupSay(m_strCastingSkillBoostCallout);
 							return true;
 						}
 
-						if (!IsBeneficialEffectPresent(m_iSavanteAbilityID) && CastAbility(m_iSavanteAbilityID))
+						if (!IsBeneficialEffectPresent(m_iSavanteAbilityID) && CastAbilityOnSelf(m_iSavanteAbilityID))
 						{
 							SpamSafeGroupSay(m_strSavanteCallout);
 							return true;
