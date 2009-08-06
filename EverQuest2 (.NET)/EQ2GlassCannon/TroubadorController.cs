@@ -85,6 +85,7 @@ namespace EQ2GlassCannon
 		public int m_iSinglePowerDrainAttackAbilityID = -1;
 		public int m_iSingleMentalAttackPairAbilityID = -1;
 		public int m_iSingleMezAbilityID = -1;
+		public int m_iSingleRangedAttackAbilityID = -1;
 		public int m_iGreenInterruptNukeAbilityID = -1;
 		public int m_iGreenInstantKnockdownAbilityID = -1;
 		#endregion
@@ -150,6 +151,7 @@ namespace EQ2GlassCannon
 			m_iSinglePowerDrainAttackAbilityID = SelectHighestTieredAbilityID("Sandra's Deafening Strike");
 			m_iSingleMentalAttackPairAbilityID = SelectHighestTieredAbilityID("Ceremonial Blade");
 			m_iSingleMezAbilityID = SelectHighestTieredAbilityID("Lullaby");
+			m_iSingleRangedAttackAbilityID = SelectHighestTieredAbilityID("Singing Shot");
 			m_iGreenInterruptNukeAbilityID = SelectHighestTieredAbilityID("Painful Lamentations");
 			m_iGreenInstantKnockdownAbilityID = SelectHighestTieredAbilityID("Breathtaking Bellow");
 
@@ -171,7 +173,13 @@ namespace EQ2GlassCannon
 			if (CastJestersCap())
 				return true;
 
-			if (!MeActor.IsStealthed && m_bCheckBuffsNow)
+			if (m_bCheckBuffsNow && MeActor.IsStealthed && !MeActor.InCombatMode)
+			{
+				/// I'm sick and tired of Shroud lingering on after combat.
+				if (CancelMaintained(m_iShroudAbilityID, true))
+					return true;
+			}
+			else if (m_bCheckBuffsNow && !MeActor.IsStealthed)
 			{
 				/// Time is of the essence when rebuffing after a wipe!
 				if (!MeActor.InCombatMode && CheckToggleBuff(m_iGroupRunSpeedBuffAbilityID, true))
@@ -219,7 +227,7 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_iHarmonizationAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iUpbeatTempoAbilityID, m_strUpbeatTempoTarget, true, false))
+				if (CheckSingleTargetBuffs(m_iUpbeatTempoAbilityID, m_strUpbeatTempoTarget))
 					return true;
 
 				if (CheckToggleBuff(m_iAllegroAbilityID, true))
@@ -330,8 +338,8 @@ namespace EQ2GlassCannon
 				/// so we use other spells and break the stealth on accident.
 				if (!IsAbilityMaintained(m_iSingleINTDebuffAbilityID))
 				{
-					Ability DebuffAbility = Me.Ability(m_iSingleINTDebuffAbilityID);
-					if (DebuffAbility.TimeUntilReady == 0.0f) /// IsReady will always be false if not stealthed.
+					CachedAbility DebuffAbility = GetAbility(m_iSingleINTDebuffAbilityID, true);
+					if (DebuffAbility != null && DebuffAbility.m_fTimeUntilReady == 0.0) /// IsReady will always be false if not stealthed.
 					{
 						if (CastAbility(m_iBumpAbilityID))
 							return true;
@@ -378,9 +386,12 @@ namespace EQ2GlassCannon
 				if (CastAbility(m_iSingleShortRangeNukeAbilityID))
 					return true;
 
-				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
+				/// Not sure where in cast order this goes yet.
+				if (Me.RangedAutoAttackOn && CastAbility(m_iSingleRangedAttackAbilityID))
 					return true;
 
+				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
+					return true;
 
 				/// Nuke of last resort.
 				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 1))
