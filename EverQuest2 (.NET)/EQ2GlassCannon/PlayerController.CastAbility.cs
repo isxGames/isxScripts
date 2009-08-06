@@ -39,14 +39,14 @@ namespace EQ2GlassCannon
 			public readonly float m_fTimeUntilReady = 0.0f;
 			public readonly float m_fCastTimeSeconds = 0.0f;
 			public readonly float m_fRecoveryTimeSeconds = 0.0f;
-			public readonly int m_iHealthCost = -1;
-			public readonly int m_iPowerCost = -1;
-			public readonly int m_iConcentrationCost = -1;
+			public readonly int m_iHealthCost = 0;
+			public readonly int m_iPowerCost = 0;
+			public readonly int m_iConcentrationCost = 0;
 			public readonly float m_fRange = 0.0f;
 			public readonly float m_fMinRange = 0.0f;
 			public readonly float m_fMaxRange = 0.0f;
 			public readonly float m_fEffectRadius = 0.0f;
-			public readonly int m_iMaxAOETargets = -1;
+			public readonly int m_iMaxAOETargets = 1;
 			public readonly bool m_bAllowRaid = false;
 			public readonly TargetType m_eTargetType = TargetType.Unknown0;
 
@@ -222,7 +222,7 @@ namespace EQ2GlassCannon
 				int iFreeSlots = (Me.MaxConc - Me.UsedConc);
 				if (ThisAbility.m_iConcentrationCost > iFreeSlots)
 				{
-					Program.Log("Not enough concentration slots to cast {0}!", ThisAbility.m_strName);
+					Program.Log("Not enough concentration slots to cast {0}! It requires {1} free slot(s) but you have {2}.", ThisAbility.m_strName, ThisAbility.m_iConcentrationCost, iFreeSlots);
 					return false;
 				}
 			}
@@ -277,6 +277,12 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public bool CastAbilityOnSelf(int iAbilityID)
+		{
+			return CastAbility(iAbilityID, Me.Name, true);
+		}
+
+		/************************************************************************************/
 		/// <summary>
 		/// Casts a general ability, on the player's current target if applicable.
 		/// </summary>
@@ -288,19 +294,15 @@ namespace EQ2GlassCannon
 			if (ThisAbility == null)
 				return false;
 
-			/// Disqualify by range unless it's a group beneficial.
-			if (ThisAbility.m_eTargetType != CachedAbility.TargetType.Group)
+			Actor MyTargetActor = MeActor.Target();
+			if (MyTargetActor.IsValid)
 			{
-				Actor MyTargetActor = MeActor.Target();
-				if (MyTargetActor.IsValid)
+				double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
+				if (fDistance < ThisAbility.m_fMinRange || ThisAbility.m_fMaxRange < fDistance)
 				{
-					double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
-					if (fDistance < ThisAbility.m_fMinRange || ThisAbility.m_fMaxRange < fDistance)
-					{
-						Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
-							ThisAbility.m_strName, MyTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
-						return false;
-					}
+					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
+						ThisAbility.m_strName, MyTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
+					return false;
 				}
 			}
 
@@ -396,7 +398,15 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public bool CastHOStarter()
 		{
-			return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !Program.EQ2.HOWindowActive && CastAbility(m_iHOStarterAbiltyID, Me.Name, true));
+			try
+			{
+				return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !Program.EQ2.HOWindowActive && CastAbility(m_iHOStarterAbiltyID, Me.Name, true));
+			}
+			catch
+			{
+				/// Referencing EQ2.HOWindowActive is known to throw exceptions.
+				return false;
+			}
 		}
 
 		/************************************************************************************/
