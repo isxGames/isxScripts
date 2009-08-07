@@ -100,7 +100,7 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// This associates all identical spells of a shared recast timer with the index of the highest level version of them.
 		/// </summary>
-		public Dictionary<string, int> m_KnowledgeBookCategoryDictionary = new Dictionary<string, int>();
+		public Dictionary<string, int> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, int>();
 
 		/// <summary>
 		/// This dictionary has only one entry per spell regardless of how many targets the spell is actually on,
@@ -205,7 +205,7 @@ namespace EQ2GlassCannon
 #endif
 
 			/// This must be done before any call to SelectHighestAbilityID().
-			m_KnowledgeBookCategoryDictionary.Clear();
+			m_KnowledgeBookAbilityLineDictionary.Clear();
 
 			/// Racials.
 			m_iFeatherfallAbilityID = SelectHighestAbilityID(
@@ -727,8 +727,8 @@ namespace EQ2GlassCannon
 			for (int iIndex = 0; iIndex < astrAbilityNames.Length; iIndex++)
 			{
 				string strThisAbility = astrAbilityNames[iIndex];
-				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility) && !m_KnowledgeBookCategoryDictionary.ContainsKey(strThisAbility))
-					m_KnowledgeBookCategoryDictionary.Add(strThisAbility, iBestSpellIndex);
+				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility) && !m_KnowledgeBookAbilityLineDictionary.ContainsKey(strThisAbility))
+					m_KnowledgeBookAbilityLineDictionary.Add(strThisAbility, iBestSpellIndex);
 			}
 
 			return iBestSpellIndex;
@@ -1245,21 +1245,6 @@ namespace EQ2GlassCannon
 			m_bIHaveAggro = AggroWhoreActor.IsValid && (AggroWhoreActor.ID == MeActor.ID);
 
 			return true;
-		}
-
-		/************************************************************************************/
-		public bool AreTempOffensiveBuffsAdvised()
-		{
-			if (m_OffensiveTargetActor == null)
-				return false;
-			else if (m_OffensiveTargetActor.IsNamed)
-				return true;
-			else if (m_OffensiveTargetActor.IsHeroic)
-				return (m_OffensiveTargetActor.Health > 90);
-			else if (m_OffensiveTargetActor.IsEpic)
-				return (m_OffensiveTargetActor.Health > 70);
-			else
-				return false;
 		}
 	}
 }
