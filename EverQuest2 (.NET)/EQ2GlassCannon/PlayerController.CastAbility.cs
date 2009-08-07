@@ -288,7 +288,10 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="iAbilityID"></param>
 		/// <returns></returns>
-		public bool CastAbility(int iAbilityID)
+		public bool CastAbility(
+			int iAbilityID,
+			double fVulnerableRelativeHeadingRangeStart,
+			double fVulnerableRelativeHeadingRangeEnd)
 		{
 			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
 			if (ThisAbility == null)
@@ -304,6 +307,31 @@ namespace EQ2GlassCannon
 						ThisAbility.m_strName, MyTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
 					return false;
 				}
+
+				/// Test directional attack.
+				/// An unlimited attack vector is from 0 to 360 thus nullifying a need for a check.
+				if (fVulnerableRelativeHeadingRangeStart > 0.0 || fVulnerableRelativeHeadingRangeEnd < 360.0)
+				{
+					double fRelativeHeadingFrom = GetRelativeHeadingFrom(MyTargetActor);
+
+					bool bSuccess = true;
+					if (fVulnerableRelativeHeadingRangeStart < fVulnerableRelativeHeadingRangeEnd)
+					{
+						/// NOTE: This is the normal condition.
+						bSuccess = (fVulnerableRelativeHeadingRangeStart <= fRelativeHeadingFrom && fRelativeHeadingFrom <= fVulnerableRelativeHeadingRangeEnd);
+					}
+					else
+					{
+						/// NOTE: For frontal-only attacks (non-existant yet), a range of 270 start to 90 end is valid.
+						bSuccess = (fVulnerableRelativeHeadingRangeEnd > fRelativeHeadingFrom || fRelativeHeadingFrom > fVulnerableRelativeHeadingRangeStart);
+					}
+					if (!bSuccess)
+					{
+						Program.Log("Unable to cast {0} because you on the wrong attack heading ({2:0.0}-{3:0.0}° needed, {4:0.0}° actual)",
+							ThisAbility.m_strName, MyTargetActor.Name, fVulnerableRelativeHeadingRangeStart, fVulnerableRelativeHeadingRangeEnd, fRelativeHeadingFrom);
+						return false;
+					}
+				}
 			}
 
 			if (!CanAffordAbilityCost(iAbilityID))
@@ -311,6 +339,18 @@ namespace EQ2GlassCannon
 
 			StartCastTimers(ThisAbility);
 			return ThisAbility.Use();
+		}
+
+		/************************************************************************************/
+		public bool CastAbility(int iAbilityID)
+		{
+			return CastAbility(iAbilityID, 0.0, 360.0);
+		}
+
+		/************************************************************************************/
+		public bool CastAbilityFromBehind(int iAbilityID)
+		{
+			return CastAbility(iAbilityID, 120.0, 240.0);
 		}
 
 		/************************************************************************************/

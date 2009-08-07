@@ -80,6 +80,46 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// This function inverts the heading perspective,
+		/// from your heading to an actor to that actor's heading to you.
+		/// </summary>
+		/// <param name="FromActor"></param>
+		/// <returns></returns>
+		public static double GetHeadingFrom(Actor FromActor)
+		{
+			//Reference table (TO,FROM)
+			//0,180
+			//45,225
+			//90,270
+			//180,0
+			//270,90
+
+			double fHeadingFrom = (double)FromActor.HeadingTo + 180.0;
+			if (fHeadingFrom >= 360.0)
+				fHeadingFrom -= 360.0;
+
+			return fHeadingFrom;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// This function gives you the relative heading of your character from the given actor's
+		/// perspective, using 0 degrees as the reference angle being dead in front of it.
+		/// </summary>
+		/// <param name="FromActor"></param>
+		/// <returns></returns>
+		public double GetRelativeHeadingFrom(Actor FromActor)
+		{
+			double fHeadingFrom = GetHeadingFrom(FromActor);
+			double fRelativeHeading = 360.0 - (double)FromActor.Heading + fHeadingFrom;
+			if (fRelativeHeading >= 360.0)
+				fRelativeHeading -= 360.0;
+
+			return fRelativeHeading;
+		}
+
+		/************************************************************************************/
 		public IEnumerable<Maintained> EnumMaintained()
 		{
 			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
