@@ -75,25 +75,22 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public static DateTime RetrieveLinkerTimestamp(string strFilePath)
 		{
-			const int iPeHeaderOffset = 60;
-			const int iLinkerTimestampOffset = 8;
+			const int PE_HEADER_OFFSET = 60;
+			const int LINKER_TIMESTAMP_OFFSET = 8;
 
 			byte[] b = new byte[2048];
 
-			Stream s = null;
 			try
 			{
-				s = new FileStream(strFilePath, FileMode.Open, FileAccess.Read);
-				s.Read(b, 0, 2048);
+				using (Stream s = new FileStream(strFilePath, FileMode.Open, FileAccess.Read))
+					s.Read(b, 0, 2048);
 			}
 			finally
 			{
-				if (s != null)
-					s.Close();
 			}
 
-			int i = BitConverter.ToInt32(b, iPeHeaderOffset);
-			int iSecondsSince1970 = BitConverter.ToInt32(b, i + iLinkerTimestampOffset);
+			int i = BitConverter.ToInt32(b, PE_HEADER_OFFSET);
+			int iSecondsSince1970 = BitConverter.ToInt32(b, i + LINKER_TIMESTAMP_OFFSET);
 
 			DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0);
 			dt = dt.AddSeconds(iSecondsSince1970);
@@ -142,23 +139,13 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public class TrustedFrameLock : IDisposable
+		public static void ApplyGameSettings()
 		{
-			public TrustedFrameLock()
-			{
-				LavishVMAPI.Frame.Wait(true);
-			}
-			public void Dispose()
-			{
-				LavishVMAPI.Frame.Unlock();
-			}
-			public static TrustedFrameLock New
-			{
-				get
-				{
-					return new TrustedFrameLock();
-				}
-			}
+			/// We could do this once at the beginning, but I've seen it not take.
+			Log("Setting music volume to zero and deactivating personal torch.");
+			RunCommand("/music_volume 0");
+			RunCommand("/r_personal_torch off");
+			return;
 		}
 
 		/************************************************************************************/
@@ -305,9 +292,22 @@ namespace EQ2GlassCannon
 								if (s_Controller != null)
 									s_Controller.OnZoningComplete();
 
+								ApplyGameSettings();
+
 								/// We used to not have to do this, but something changed and fucked everything up.
-								s_bRefreshKnowledgeBook = true;
+								/// NOTE: We now catch exceptions during the ability caching.  This should be ok again.
+								//s_bRefreshKnowledgeBook = true;
 							}
+						}
+
+						/// A little thing I discovered while watching console spam.
+						/// EQ2 will prefix your character name if you are watching that video.
+						/// Pressing Escape kills it.
+						if (Me.Group(0).Name.StartsWith("Flythrough_"))
+						{
+							Program.Log("Zone flythrough sequence detected, attempting to cancel with the Esc key...");
+							LavishScriptAPI.LavishScript.ExecuteCommand("press esc");
+							continue;
 						}
 
 						/// Yay for lazy!
@@ -350,21 +350,13 @@ namespace EQ2GlassCannon
 							s_strCurrentINIFilePath = Path.Combine(s_strINIFolderPath, strFileName);
 
 							if (File.Exists(s_strCurrentINIFilePath))
-							{
 								s_Controller.ReadINISettings();
-							}
-							else
-							{
-								/// First-time save.
-								s_Controller.WriteINISettings();
-							}
+
+							s_Controller.WriteINISettings();
 
 							SetWindowText(string.Format("{0} ({1})", Me.Name, Me.SubClass));
 
-							/// We could do this once at the beginning, but I've seen it not take.
-							Log("Setting music volume to zero and deactivating personal torch.");
-							RunCommand("/music_volume 0");
-							RunCommand("/r_personal_torch off");
+							ApplyGameSettings();
 						}
 
 						/// If the size of the knowledge book changes, defer a resync.
