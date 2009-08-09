@@ -29,6 +29,7 @@ namespace EQ2GlassCannon
 		public int m_iSingleStoneskinBuffAbilityID = -1;
 		public int m_iMeleeSkillBuffAbilityID = -1;
 		public int m_iMeleeHealProcBuffAbilityID = -1;
+		public int m_iSanctuaryAbilityID = -1;
 
 		public int m_iSingleReactiveHealAbilityID = -1;
 		public int m_iHealingAbilityID = -1;
@@ -85,6 +86,8 @@ namespace EQ2GlassCannon
 			m_iSingleStoneskinBuffAbilityID = SelectHighestTieredAbilityID("Unyielding Benediction");
 			m_iMeleeSkillBuffAbilityID = SelectHighestTieredAbilityID("Aegolism");
 			m_iMeleeHealProcBuffAbilityID = SelectHighestTieredAbilityID("Glory");
+			m_iSanctuaryAbilityID = SelectHighestAbilityID("Sanctuary");
+
 			m_iSingleReactiveHealAbilityID = SelectHighestTieredAbilityID("Vital Intercession");
 			m_iHealingAbilityID = SelectHighestTieredAbilityID("Meliorate");
 			m_iArchHealingAbilityID = SelectHighestTieredAbilityID("Restoration");

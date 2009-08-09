@@ -65,6 +65,7 @@ namespace EQ2GlassCannon
 			m_iMailOfFrostAbilityID = SelectHighestAbilityID("Mail of Frost");
 			m_iHateTransferAbilityID = SelectHighestTieredAbilityID("Converge");
 			m_iFlametongueAbilityID = SelectHighestTieredAbilityID("Ro's Blade");
+
 			m_iSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Intromission");
 			m_iGiftAbilityID = SelectHighestTieredAbilityID("Frigid Gift");
 			m_iIceshapeAbilityID = SelectHighestAbilityID("Iceshape");
@@ -124,10 +125,10 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_iSTRINTBuffAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iFlametongueAbilityID, m_astrFlametongueTargets, true, false))
+				if (CheckSingleTargetBuffs(m_iFlametongueAbilityID, m_astrFlametongueTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iHateTransferAbilityID, m_strHateTransferTarget, true, true))
+				if (CheckSingleTargetBuffs(m_iHateTransferAbilityID, m_strHateTransferTarget))
 					return true;
 
 				if (CheckRacialBuffs())

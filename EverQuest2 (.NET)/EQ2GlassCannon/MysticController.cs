@@ -28,8 +28,9 @@ namespace EQ2GlassCannon
 		public int m_iSingleProcBuffAbilityID = -1;
 
 		public int m_iSingleWardAbilityID = -1;
-		public int m_iHealingAbilityID = -1;
-		public int m_iBiggerHealingAbilityID = -1;
+		public int m_iSingleHealingAbilityID = -1;
+		public int m_iSingleBiggerHealingAbilityID = -1;
+		public int m_iSingleStunnedWardAbilityID = -1;
 		public int m_iGroupWardAbilityID = -1;
 		public int m_iGroupHealingAbilityID = -1;
 		public int m_iGroupCombatRezAbilityID = -1;
@@ -83,9 +84,11 @@ namespace EQ2GlassCannon
 			m_iUrsineAbilityID = SelectHighestTieredAbilityID("Ursine Avatar");
 			m_iSingleStatBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Avatar");
 			m_iSingleProcBuffAbilityID = SelectHighestAbilityID("Ancestry");
+			
 			m_iSingleWardAbilityID = SelectHighestTieredAbilityID("Ancestral Ward");
-			m_iHealingAbilityID = SelectHighestTieredAbilityID("Rejuvenation");
-			m_iBiggerHealingAbilityID = SelectHighestTieredAbilityID("Ritual Healing");
+			m_iSingleHealingAbilityID = SelectHighestTieredAbilityID("Rejuvenation");
+			m_iSingleBiggerHealingAbilityID = SelectHighestTieredAbilityID("Ritual Healing");
+			m_iSingleStunnedWardAbilityID = SelectHighestTieredAbilityID("Oberon");
 			m_iGroupWardAbilityID = SelectHighestTieredAbilityID("Umbral Warding");
 			m_iGroupHealingAbilityID = SelectHighestTieredAbilityID("Transcendence");
 			m_iGroupCombatRezAbilityID = SelectHighestAbilityID("Fields of the Grey");
@@ -93,6 +96,7 @@ namespace EQ2GlassCannon
 			m_iSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Path of the Grey");
 			m_iDumbfireHealPetAbilityID = SelectHighestTieredAbilityID("Lunar Attendant");
 			m_iDumbfireWardPetAbilityID = SelectHighestAbilityID("Ancestral Sentry");
+
 			m_iGreenResistDebuffAbilityID = SelectHighestTieredAbilityID("Echoes of the Ancients");
 			m_iGreenHasteDebuffAbilityID = SelectHighestTieredAbilityID("Lethargy");
 			m_iGreenDPSDebuffAbilityID = SelectHighestTieredAbilityID("Umbral Trap");
@@ -132,39 +136,21 @@ namespace EQ2GlassCannon
 
 			double fMyPowerRatio = (double)Me.Power / (double)Me.MaxPower;
 
-			/// We'll refer to this multiple times so we might as well alias the value.
-			bool bGroupRezAvailable = IsAbilityReady(m_iGroupCombatRezAbilityID);
-
 			string strLowestHealthName = string.Empty;
 			int iLowestHealthAmount = int.MaxValue;
 			double fLowestHealthRatio = double.MaxValue;
 			int iTotalDeficientMembers = 0;
 			int iTotalDeficientMembersBelowGroupHealTolerance = 0;
-			int iTotalDeadMembers = 0;
-			string strNearestDeadName = string.Empty;
-			double fNearestDeadDistance = double.MaxValue;
 			double fNetHealthGap = 0.0f; /// The sum of everyone's gap percentages.
 
 			/// First things first, we evaluate the heal situation.
 			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
 			{
-				if (ThisStatus.m_bIsDead)
-				{
-					iTotalDeadMembers++;
-
-					/// Establish the nearest (and least risky) dead player.
-					double fDistance = GetActorDistance3D(MeActor, ThisStatus.m_Actor);
-					if (fDistance < fNearestDeadDistance)
-					{
-						strNearestDeadName = ThisStatus.m_strName;
-						fNearestDeadDistance = fDistance;
-					}
-				}
-				else if (ThisStatus.m_iCurrentHealth < ThisStatus.m_iMaximumHealth)
+				if (ThisStatus.m_iCurrentHealth < ThisStatus.m_iMaximumHealth)
 				{
 					iTotalDeficientMembers++;
 
-					double fHealthRatio = (double)ThisStatus.m_iCurrentHealth / (double)ThisStatus.m_iMaximumHealth;
+					double fHealthRatio = ThisStatus.HealthRatio;
 					if (fHealthRatio < fLowestHealthRatio)
 					{
 						strLowestHealthName = ThisStatus.m_strName;
@@ -179,6 +165,10 @@ namespace EQ2GlassCannon
 					fNetHealthGap += (1.0f - fHealthRatio) * 100.0f;
 				}
 			}
+
+			/// Prioritize rezzes when out of combat. We gotta get everyone rebuffed ASAP.
+			if (!MeActor.InCombatMode && DoArbitraryRez())
+				return true;
 
 			/// Do buffs only if the vital situation isn't grim.
 			if (m_bCheckBuffsNow && (fLowestHealthRatio > 0.80f))
@@ -240,40 +230,27 @@ namespace EQ2GlassCannon
 
 				if (MeActor.InCombatMode)
 				{
-					/// Death save.
+					/// Death save on the weakest party member.
 					if (fLowestHealthRatio < 0.10)
 					{
 						if (CastAbility(m_iGeneralSingleDeathSaveAbilityID, strLowestHealthName, true))
 							return true;
 					}
+
+					/// Emergency stun ward on the main tank.
+					VitalStatus MainTankVitalStatus = null;
+					if (GetVitalStatus(m_strMainTank, ref MainTankVitalStatus))
+					{
+						if (MainTankVitalStatus.HealthRatio < 0.05)
+						{
+							if (CastAbility(m_iSingleStunnedWardAbilityID, m_strMainTank, true))
+								return true;
+						}
+					}
 				}
 
-				/// Attempt to rez.
-				if (iTotalDeadMembers > 0)
-				{
-					/// NOTE: Group rez risky if MT is getting rezzed and is outside of group.
-					if (iTotalDeadMembers > 1 && bGroupRezAvailable)
-					{
-						if (CastAbility(m_iGroupCombatRezAbilityID, strNearestDeadName, false))
-						{
-							SpamSafeGroupSay(m_strGroupRezCallout, strNearestDeadName);
-							SpamSafeRaidSay(m_strGroupRezCallout, strNearestDeadName);
-							return true;
-						}
-					}
-					else
-					{
-						/// Single rez. It's all we can do.
-						if (CastAbility(m_iSingleWardedCombatRezAbilityID, strNearestDeadName, false) ||
-							CastAbility(m_iSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
-							(!Me.IsHated && CastAbility(m_iGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
-						{
-							SpamSafeGroupSay(m_strSingleRezCallout, strNearestDeadName);
-							SpamSafeRaidSay(m_strSingleRezCallout, strNearestDeadName);
-							return true;
-						}
-					}
-				}
+				if (DoArbitraryRez())
+					return true;
 
 				/// If vitals look acceptable for now, then we try debuffs and/or damage.
 				/// Do debuffs only if the vital situation isn't grim.
@@ -329,10 +306,10 @@ namespace EQ2GlassCannon
 					if (CastAbility(m_iSingleWardAbilityID, strLowestHealthName, true))
 						return true;
 
-					if (CastAbility(m_iBiggerHealingAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_iSingleBiggerHealingAbilityID, strLowestHealthName, true))
 						return true;
 
-					if (CastAbility(m_iHealingAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_iSingleHealingAbilityID, strLowestHealthName, true))
 						return true;
 				}
 
@@ -360,6 +337,59 @@ namespace EQ2GlassCannon
 			if (bOffensiveTargetEngaged)
 			{
 				Program.Log("DEBUG: NEED MORE TO DO");
+			}
+
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool DoArbitraryRez()
+		{
+			if (!MeActor.IsIdle)
+				return false;
+
+			int iTotalDeadMembers = 0;
+			string strNearestDeadName = string.Empty;
+			double fNearestDeadDistance = double.MaxValue;
+
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
+			{
+				if (ThisStatus.m_bIsDead)
+				{
+					iTotalDeadMembers++;
+
+					/// Establish the nearest dead player.
+					double fDistance = GetActorDistance3D(MeActor, ThisStatus.m_Actor);
+					if (fDistance < fNearestDeadDistance)
+					{
+						strNearestDeadName = ThisStatus.m_strName;
+						fNearestDeadDistance = fDistance;
+					}
+				}
+			}
+
+			/// Attempt to rez.
+			if (iTotalDeadMembers > 0)
+			{
+				/// NOTE: Group rez risky if MT is getting rezzed and is outside of group.
+				if (iTotalDeadMembers > 1 && CastAbility(m_iGroupCombatRezAbilityID, strNearestDeadName, false))
+				{
+					SpamSafeGroupSay(m_strGroupRezCallout, strNearestDeadName);
+					SpamSafeRaidSay(m_strGroupRezCallout, strNearestDeadName);
+					return true;
+				}
+				else
+				{
+					/// Single rez. It's all we can do.
+					if (CastAbility(m_iSingleWardedCombatRezAbilityID, strNearestDeadName, false) ||
+						CastAbility(m_iSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
+						(!Me.IsHated && CastAbility(m_iGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
+					{
+						SpamSafeGroupSay(m_strSingleRezCallout, strNearestDeadName);
+						SpamSafeRaidSay(m_strSingleRezCallout, strNearestDeadName);
+						return true;
+					}
+				}
 			}
 
 			return false;

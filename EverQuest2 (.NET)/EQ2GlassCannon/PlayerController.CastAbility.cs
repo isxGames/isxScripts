@@ -217,7 +217,9 @@ namespace EQ2GlassCannon
 
 			/// I first check against zero to dodge the Character class value lookup.
 			/// Most abilities have no concentration cost and for them this check is a waste of CPU.
-			if (ThisAbility.m_iConcentrationCost > 0)
+			/// NOTE: I had to comment this out for now because Mana Flow incorrectly reports a conc cost of 1.
+			/// Other spells are reporting bogus costs too.
+			/*if (ThisAbility.m_iConcentrationCost > 0)
 			{
 				int iFreeSlots = (Me.MaxConc - Me.UsedConc);
 				if (ThisAbility.m_iConcentrationCost > iFreeSlots)
@@ -225,7 +227,7 @@ namespace EQ2GlassCannon
 					Program.Log("Not enough concentration slots to cast {0}! It requires {1} free slot(s) but you have {2}.", ThisAbility.m_strName, ThisAbility.m_iConcentrationCost, iFreeSlots);
 					return false;
 				}
-			}
+			}*/
 
 			return true;
 		}
@@ -327,7 +329,7 @@ namespace EQ2GlassCannon
 					}
 					if (!bSuccess)
 					{
-						Program.Log("Unable to cast {0} because you on the wrong attack heading ({2:0.0}-{3:0.0}° needed, {4:0.0}° actual)",
+						Program.Log("Unable to cast {0} because you on the wrong attack heading ({2:0} to {3:0} degrees needed, {4:0.00} actual).",
 							ThisAbility.m_strName, MyTargetActor.Name, fVulnerableRelativeHeadingRangeStart, fVulnerableRelativeHeadingRangeEnd, fRelativeHeadingFrom);
 						return false;
 					}
@@ -351,6 +353,12 @@ namespace EQ2GlassCannon
 		public bool CastAbilityFromBehind(int iAbilityID)
 		{
 			return CastAbility(iAbilityID, 120.0, 240.0);
+		}
+
+		/************************************************************************************/
+		public bool CastAbilityFromFlankingOrBehind(int iAbilityID)
+		{
+			return CastAbility(iAbilityID, 60.0, 300.0);
 		}
 
 		/************************************************************************************/

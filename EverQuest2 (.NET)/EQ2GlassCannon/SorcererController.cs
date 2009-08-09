@@ -57,8 +57,7 @@ namespace EQ2GlassCannon
 			if (!m_bUsePowerFeed || !MeActor.IsIdle)
 				return false;
 
-			CachedAbility ThisAbility = GetAbility(m_iSinglePowerFeedAbilityID, true);
-			if (Me.Health < ThisAbility.m_iHealthCost)
+			if (!CanAffordAbilityCost(m_iSinglePowerFeedAbilityID))
 				return false;
 
 			string strLowestPowerName = string.Empty;
