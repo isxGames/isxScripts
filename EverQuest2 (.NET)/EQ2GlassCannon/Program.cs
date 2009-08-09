@@ -303,11 +303,18 @@ namespace EQ2GlassCannon
 						/// A little thing I discovered while watching console spam.
 						/// EQ2 will prefix your character name if you are watching that video.
 						/// Pressing Escape kills it.
-						if (Me.Group(0).Name.StartsWith("Flythrough_"))
+						try
 						{
-							Program.Log("Zone flythrough sequence detected, attempting to cancel with the Esc key...");
-							LavishScriptAPI.LavishScript.ExecuteCommand("press esc");
-							continue;
+							if (Me.Group(0).Name.StartsWith("Flythrough_"))
+							{
+								Program.Log("Zone flythrough sequence detected, attempting to cancel with the Esc key...");
+								LavishScriptAPI.LavishScript.ExecuteCommand("press esc");
+								continue;
+							}
+						}
+						catch
+						{
+							/// Again, this sometimes throws exceptions like a bratty child.
 						}
 
 						/// Yay for lazy!
@@ -339,7 +346,8 @@ namespace EQ2GlassCannon
 								case "wizard": s_Controller = new WizardController(); break;
 								default:
 								{
-									Program.Log("Unrecognized or unsupported subclass type: {0}. Will use generic controller.", Me.SubClass);
+									Program.Log("Unrecognized or unsupported subclass type: {0}.", Me.SubClass);
+									Program.Log("Will use generic controller without support for spells or combat arts.");
 									s_Controller = new PlayerController();
 									break;
 								}

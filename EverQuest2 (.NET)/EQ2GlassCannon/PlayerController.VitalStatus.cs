@@ -232,7 +232,7 @@ namespace EQ2GlassCannon
 			}
 			catch
 			{
-				Program.Log("Exception thrown while attempting to look up vital status info.");
+				Program.Log("Exception thrown while attempting to look up vital status info for {0}.", strFriendName);
 			}
 			return false;
 		}

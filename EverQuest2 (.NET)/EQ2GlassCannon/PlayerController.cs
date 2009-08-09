@@ -444,8 +444,12 @@ namespace EQ2GlassCannon
 					strLowerCaseMessage.Contains(ThisTrigger.m_strSubstring)
 					)
 				{
+					Program.Log("Custom trigger command received (\"{0}\").", ThisTrigger.m_strSubstring);
 					foreach (string strThisCommand in ThisTrigger.m_astrCommands)
+					{
+						Program.Log("Executing: {0}", strThisCommand);
 						Program.RunCommand(strThisCommand, m_strCommandingPlayer);
+					}
 					return true;
 				}
 			}
@@ -923,14 +927,14 @@ namespace EQ2GlassCannon
 					double fRange = GetActorDistance3D(MeActor, m_ptStayLocation);
 
 					/// If target suddenly ported from near to ridiculously far away, almost errantly, then call it off.
-					/// If the target began the stance far away and is approaching near, then allow it to continue;
-					/// in that case the commander is using shadowing to draw the character closer.
+					/// But if the target began the stance far away and is approaching near, then allow it to continue,
+					/// because in that case the commander is using shadowing to draw the character closer.
 					if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 					{
 						bool bThisSamplingIsNearby = (fRange < 200.0f);
 						if (m_bLastShadowTargetSamplingWasNearby && !bThisSamplingIsNearby)
 						{
-							Program.RunCommand("/t {0} you ported too far away", m_strCommandingPlayer);
+							Program.RunCommand("/t {0} you ported too far away", m_strCommandingPlayer); /// TODO: Make this configurable.
 							ChangePositioningStance(PositioningStance.NeutralPosition);
 							return true;
 						}

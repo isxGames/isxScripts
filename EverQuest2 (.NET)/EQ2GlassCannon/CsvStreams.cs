@@ -122,12 +122,7 @@ namespace EQ2GlassCannon
 		/**********************************************************************************/
 		public string ReadNextValue()
 		{
-			if (m_iReadIndex == m_strCurrentLine.Length)
-			{
-				m_iReadIndex++;
-				return string.Empty;
-			}
-			else if (m_iReadIndex > m_strCurrentLine.Length)
+			if (m_iReadIndex >= m_strCurrentLine.Length)
 				throw new IndexOutOfRangeException("No more CSV values to read from this line.");
 
 			StringBuilder sb = new StringBuilder();

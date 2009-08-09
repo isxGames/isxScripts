@@ -329,7 +329,7 @@ namespace EQ2GlassCannon
 				if (CastAbility(m_iHalfElfMitigationDebuffAbilityID))
 					return true;
 
-				if (CastAbilityFromBehind(m_iSingleResistDebuffAbilityID))
+				if (CastAbilityFromFlankingOrBehind(m_iSingleResistDebuffAbilityID))
 					return true;
 
 				/// We now cast stealth to allow the use of our INT debuff, Night Strike.
