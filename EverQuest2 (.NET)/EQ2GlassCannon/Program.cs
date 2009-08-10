@@ -342,7 +342,8 @@ namespace EQ2GlassCannon
 								case "mystic": s_Controller = new MysticController(); break;
 								case "templar": s_Controller = new TemplarController(); break;
 								case "troubador": s_Controller = new TroubadorController(); break;
-								case "warlock": s_Controller = new WarlockController(); break;
+								case "warden": s_Controller = new WarlockController(); break;
+								case "warlock": s_Controller = new WardenController(); break;
 								case "wizard": s_Controller = new WizardController(); break;
 								default:
 								{
