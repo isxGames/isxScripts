@@ -33,6 +33,7 @@ variable bool runplace
 variable bool ItemNotStack
 variable bool CraftListMade=FALSE
 variable bool CraftItemsPlaced=FALSE
+variable bool ItemsArePriced=FALSE
 
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
@@ -169,6 +170,8 @@ function main(string goscan, string goscan2)
 		}
 		While ${Pausemyprices}
 
+		ItemsArePriced:Set[FALSE]
+		
 		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Processing**"]
 		call echolog "Start Scanning"
 		call echolog "**************"
@@ -496,7 +499,11 @@ function main(string goscan, string goscan2)
 
 			UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" ** Finished **"]
 
+		
+			ItemsArePriced:Set[TRUE]
+
 		}
+		
 		; Script starts to scan for items to buy if flagged.
 		if ${BuyItems} && ${Pausemyprices} == FALSE
 			call buy Buy scan
