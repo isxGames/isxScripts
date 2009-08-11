@@ -2408,6 +2408,12 @@ function inventorylist()
 	Declare i int local 0
 	Declare space int local 0
 	
+	eq2execute /togglebags
+	wait 10
+	eq2execute /togglebags
+	wait 10
+	
+	
 	do
 	{
 		if (${Me.Vending[${i}](exists)})
@@ -2425,7 +2431,7 @@ function inventorylist()
 	}
 	while ${i:Inc} <= ${brokerslots}
 	
-	i:Set[1]
+	i:Set[0]
 
 	UIElement[ItemList@Inventory@GUITabs@MyPrices]:ClearItems
 	Wait 10
@@ -2435,15 +2441,15 @@ function inventorylist()
 	{
 		if ${Me.CustomInventory[${xvar}].InInventory} && !${Me.CustomInventory[${xvar}].InNoSaleContainer} && !${Me.CustomInventory[${xvar}].IsInventoryContainer}
 		{
-			; && !${Me.CustomInventory[${xvar}].InNoSaleContainer} && !${Me.CustomInventory[${xvar}].InInventory} && !${Me.CustomInventory[${xvar}].IsInventoryContainer} && !${Me.CustomInventory[${xvar}].InBank} && !${Me.CustomInventory[${xvar}].InSharedBank}
 			if !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].NoTrade}
 			{
+				
 				UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${Me.CustomInventory[${xvar}].Name}"]
+				InventoryList[${i:Inc}]:Set[${xvar}]
 				if ${ItemList.FindSet["${Me.CustomInventory[${xvar}].Name}"].FindSetting[CraftItem]}
 				{
 					call SetColour Inventory ${i} FFFFFF00
 				}
-				InventoryList[${i:Inc}]:Set[${xvar}]
 			}
 		}
 	}
@@ -2463,23 +2469,27 @@ function placeinventory(int box, int inventorynumber)
 
 	if ${space} > 0
 	{
-		; check current used capacity
-		lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
-
-		xvar:Set[${InventoryList[${inventorynumber}]}]
-
-		; place the item into the consignment system , grouping it with similar items
-		Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
-		wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
-
-		UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[0]
-		call SetColour Inventory ${inventorynumber} 00000000
-
-		space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
-		
-		if ${space} == 0
+		if ${InventoryList[${inventorynumber}]} > -1
 		{
-			UIElement[${box}@Inventory@GUITabs@MyPrices]:Hide
+			; check current used capacity
+			lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+	
+			xvar:Set[${InventoryList[${inventorynumber}]}]
+	
+			; place the item into the consignment system , grouping it with similar items
+			Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
+			wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+	
+			UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[0]
+			call SetColour Inventory ${inventorynumber} 00000000
+			InventoryList[${inventorynumber}]:Set[-1]
+	
+			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+			
+			if ${space} == 0
+			{
+				UIElement[${box}@Inventory@GUITabs@MyPrices]:Hide
+			}
 		}
 
 	}
