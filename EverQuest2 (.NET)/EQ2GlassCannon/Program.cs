@@ -14,13 +14,21 @@ namespace EQ2GlassCannon
 {
 	public static class Program
 	{
-		public static Extension s_Extension = null;
+		private static Extension s_Extension = null;
 		private static EQ2.ISXEQ2.ISXEQ2 s_ISXEQ2 = null;
 		private static EQ2.ISXEQ2.EQ2 s_EQ2 = null;
+
 		private static Character s_Me = null;
+		public static Character Me { get { return s_Me; } }
+
 		private static Actor s_MeActor = null;
+		public static Actor MeActor { get { return s_MeActor; } }
+
+		private static bool s_bIsZoning = false;
+		public static bool IsZoning { get { return s_bIsZoning; } }
+
 		private static EQ2Event s_eq2event = null;
-		public static PlayerController s_Controller = null;
+		private static PlayerController s_Controller = null;
 		public static EmailQueueThread s_EmailQueueThread = new EmailQueueThread();
 
 		public static bool s_bContinueBot = true;
@@ -30,24 +38,28 @@ namespace EQ2GlassCannon
 		public static string s_strCurrentINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
 
-		public static EQ2.ISXEQ2.ISXEQ2 ISXEQ2 { get { return s_ISXEQ2; } }
-		public static EQ2.ISXEQ2.EQ2 EQ2 { get { return s_EQ2; } }
-		public static Character Me { get { return s_Me; } }
-		public static Actor MeActor { get { return s_MeActor; } }
 
 		/************************************************************************************/
 		/// <summary>
 		/// Make sure to call this every time you grab a frame lock.
 		/// </summary>
-		public static void UpdateGlobals()
+		public static bool UpdateGlobals()
 		{
 			/// These become invalid from frame to frame.
-			s_ISXEQ2 = s_Extension.ISXEQ2();
-			s_EQ2 = s_Extension.EQ2();
-			s_Me = s_Extension.Me();
-			s_MeActor = s_Me.ToActor();
+			try
+			{
+				s_ISXEQ2 = s_Extension.ISXEQ2();
+				s_EQ2 = s_Extension.EQ2();
+				s_Me = s_Extension.Me();
+				s_MeActor = s_Me.ToActor();
+				s_bIsZoning = s_EQ2.Zoning;
+			}
+			catch
+			{
+				return false;
+			}
 
-			return;
+			return true;
 		}
 
 		/************************************************************************************/
@@ -179,7 +191,7 @@ namespace EQ2GlassCannon
 					using (new FrameLock(true))
 					{
 						UpdateGlobals();
-						if (ISXEQ2.IsReady)
+						if (s_ISXEQ2.IsReady)
 							break;
 					}
 				}
@@ -259,10 +271,11 @@ namespace EQ2GlassCannon
 					Frame.Wait(true);
 					try
 					{
-						UpdateGlobals();
+						if (!UpdateGlobals())
+							continue;
 
 						/// Call the controller if we zone.
-						if (EQ2.Zoning)
+						if (IsZoning)
 						{
 							if (bFirstZoningFrame)
 							{
@@ -318,9 +331,9 @@ namespace EQ2GlassCannon
 						}
 
 						/// Yay for lazy!
-						if (EQ2.PendingQuestName != "None")
+						if (s_EQ2.PendingQuestName != "None")
 						{
-							EQ2.AcceptPendingQuest();
+							s_EQ2.AcceptPendingQuest();
 
 							/// TODO: Even though the quest gets accepted, the window doesn't disappear. We gotta make it disappear.
 						}
@@ -342,8 +355,8 @@ namespace EQ2GlassCannon
 								case "mystic": s_Controller = new MysticController(); break;
 								case "templar": s_Controller = new TemplarController(); break;
 								case "troubador": s_Controller = new TroubadorController(); break;
-								case "warden": s_Controller = new WarlockController(); break;
-								case "warlock": s_Controller = new WardenController(); break;
+								case "warden": s_Controller = new WardenController(); break;
+								case "warlock": s_Controller = new WarlockController(); break;
 								case "wizard": s_Controller = new WizardController(); break;
 								default:
 								{
@@ -355,7 +368,7 @@ namespace EQ2GlassCannon
 							}
 
 							/// Build the name of the INI file.
-							string strFileName = string.Format("{0}.{1}.ini", EQ2.ServerName, Me.Name);
+							string strFileName = string.Format("{0}.{1}.ini", s_EQ2.ServerName, Me.Name);
 							s_strCurrentINIFilePath = Path.Combine(s_strINIFolderPath, strFileName);
 
 							if (File.Exists(s_strCurrentINIFilePath))
@@ -641,6 +654,63 @@ namespace EQ2GlassCannon
 			Log("Applying verb \"{0}\" on actor \"{1}\" (ID: \"{2}\").", strVerb, ThisActor.Name, ThisActor.ID);
 			ApplyVerb(ThisActor.ID, strVerb);
 			return;
+		}
+
+		/************************************************************************************/
+		public static IEnumerable<Actor> EnumCustomActors(params string[] astrParams)
+		{
+			s_EQ2.CreateCustomActorArray(astrParams);
+
+			for (int iIndex = 1; iIndex <= Program.s_EQ2.CustomActorArraySize; iIndex++)
+				yield return s_Extension.CustomActor(iIndex);
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Frame lock is assumed to be held before this function is called.
+		/// </summary>
+		public static Actor GetNonPetActor(string strName)
+		{
+			Actor PlayerActor = s_Extension.Actor(strName);
+
+			/// Try again if it's invalid or it's a pet.
+			if (!PlayerActor.IsValid || PlayerActor.IsAPet)
+			{
+				PlayerActor = s_Extension.Actor(strName, "notid", PlayerActor.ID.ToString());
+			}
+
+			if (!PlayerActor.IsValid || PlayerActor.IsAPet)
+				PlayerActor = null;
+
+			return PlayerActor;
+		}
+
+		/************************************************************************************/
+		public static Actor GetActor(int iActorID)
+		{
+			try
+			{
+				return s_Extension.Actor(iActorID);
+			}
+			catch
+			{
+				Log("Exception thrown when looking up actor {0}.", iActorID);
+				return null;
+			}
+		}
+
+		/************************************************************************************/
+		public static Actor GetActor(string strActorID)
+		{
+			try
+			{
+				return s_Extension.Actor(strActorID);
+			}
+			catch
+			{
+				Log("Exception thrown when looking up actor {0}.", strActorID);
+				return null;
+			}
 		}
 
 		/************************************************************************************/
