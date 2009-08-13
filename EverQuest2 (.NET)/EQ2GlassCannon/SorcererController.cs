@@ -10,6 +10,7 @@ namespace EQ2GlassCannon
 	{
 		public string m_strHateTransferTarget = string.Empty;
 		public bool m_bUsePowerFeed = true;
+		public double m_fPowerFeedThresholdRatio = 0.05;
 
 		public int m_iWardOfSagesAbilityID = -1;
 		public int m_iIceFlameAbilityID = -1;
@@ -47,6 +48,7 @@ namespace EQ2GlassCannon
 
 			ThisFile.TransferString("Sorceror.HateTransferTarget", ref m_strHateTransferTarget);
 			ThisFile.TransferBool("Sorceror.UsePowerFeed", ref m_bUsePowerFeed);
+			ThisFile.TransferDouble("Sorceror.PowerFeedThresholdRatio", ref m_fPowerFeedThresholdRatio);
 
 			return;
 		}
@@ -69,11 +71,10 @@ namespace EQ2GlassCannon
 
 				if (ThisStatus.m_iCurrentPower < ThisStatus.m_iMaximumPower)
 				{
-					double fPowerRatio = (double)ThisStatus.m_iCurrentPower / (double)ThisStatus.m_iMaximumPower;
-
 					/// Select the most vulnerable member, not the biggest power gap.
 					/// We're only interested in helping out priests.
-					if (fPowerRatio < 0.30 && ThisStatus.m_iCurrentPower < iLowestPowerAmount && ThisStatus.IsPriest)
+					/// Any threshold too high and the fucking sorceror will be powerhealing instead of dps'ing.
+					if (ThisStatus.PowerRatio < m_fPowerFeedThresholdRatio && ThisStatus.m_iCurrentPower < iLowestPowerAmount && ThisStatus.IsPriest)
 					{
 						strLowestPowerName = ThisStatus.m_strName;
 						iLowestPowerAmount = ThisStatus.m_iCurrentPower;
