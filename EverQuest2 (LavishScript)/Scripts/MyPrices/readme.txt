@@ -1,4 +1,4 @@
-Version 0.13q :  released 1st August 2009
+Version 0.14 :  released 13th August 2009
 
 For update details see the bottom of this file.
 
@@ -437,6 +437,30 @@ The more feedback I get the better I know which direction to take this and the f
 
 Revisions
 =========
+
+Version 0.14
+------------
+
+I decided enough code had been changed to up the version numbers 8)
+
+
+The method of defining where you want the crafted items automatically placed has changed fairly majorly.
+
+The Craft and Inventory tabs no longer have a text box to enter the broker box number in.
+
+Instead , for each broker box you have there is a selection Pulldown , the options are Place , Primary and Ignore.
+
+When placing an item on the broker.
+
+Primary makes the script fill up that box first , you can only have ONE primary box.
+Place makes the script fill up these boxes once the Primary box is full.
+Ignore makes the script totally ignore that box when looking at what box to fill up next with the item.
+
+Because of the major code change , you need to go into your craft Tab and re-set up all your 'Primary' boxes per item then hit save
+after setting up each items box.
+
+This partly came about because you cannot place 'Field Repair Kits' in a carpenters Furniture Sale Container , so you can now
+block off containers that you know an item will not fit in to.
 
 Version 0.13q
 -------------

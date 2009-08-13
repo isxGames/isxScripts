@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.13q :  released 2nd August 2009
+; Version 0.14 :  released 13th August 2009
 ;
 ; Declare Variables
 ;
@@ -123,8 +123,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	
-	call AddLog "Version 0.13q :  released 2nd August 2009" FF11FFCC
-	call echolog "Version 0.13q :  released 2nd August 2009"
+	call AddLog "Version 0.14 :  released 13th August 2009" FF11FFCC
+	call echolog "Version 0.14 :  released 13th August 2009"
 	
 	call StartUp	
 
@@ -698,7 +698,6 @@ function buy(string tabname, string action)
 	Declare startlevel int local
 	Declare endlevel int local
 	Declare tier int local
-	Declare box int local
 	Declare i int local
 	Declare j int local
 	
@@ -801,9 +800,6 @@ function buy(string tabname, string action)
 								Case Tier
 									tier:Set[${BuyNameIterator.Value}]
 									break
-								Case Box
-									box:Set[${BuyNameIterator.Value}]
-									break
 								Case MinSalePrice
 									MinSalePrice:Set[${BuyNameIterator.Value}]
 									break
@@ -841,7 +837,7 @@ function buy(string tabname, string action)
 							 if ${CraftItem}
 							 {
 								Call CheckFocus
-								call placeitem "${BuyIterator.Key}" ${box}
+								call placeitem "${BuyIterator.Key}"
 							 }
 						}
 						elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
@@ -1607,9 +1603,10 @@ function calcsilver(int plat, int gold, int silver, float copper)
 
 ; routine to save/update items and prices
 
-function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, bool attuneable, bool autotransmute, int startlevel, int endlevel, int tier, int boxnumber, string Recipe)
+function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, int Number, bool flagged, bool nameonly, bool attuneable, bool autotransmute, int startlevel, int endlevel, int tier, string Recipe, int box1, int box2, int box3, int box4, int box5, int box6, int box7, int box8)
 {
-	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${attuneable} ${autotransmute} ${startlevel} ${endlevel} ${tier} ${Recipe}"
+	Declare xvar int local
+	call echolog "-> Saveitem ${Saveset} ${ItemName} ${Money} ${Number} ${flagged} ${nameonly} ${attuneable} ${autotransmute} ${startlevel} ${endlevel} ${tier} ${Recipe} ${box1} ${box2} ${box3} ${box4} ${box5} ${box6} ${box7} ${box8}"
 
 	if ${Saveset.Equal["Sell"]} || ${Saveset.Equal["Craft"]}
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
@@ -1655,12 +1652,22 @@ function Saveitem(string Saveset, string ItemName, float Money, float MaxMoney, 
 		Item:AddSetting[Stock,${Number}]
 
 		if ${Recipe.Length} == 0
+		{
 			Item:AddSetting[Recipe,${ItemName}]
+		}
 		else
+		{
 			Item:AddSetting[Recipe,${Recipe}]
-
+		}
+		
 		Item:AddSetting[CraftItem,${flagged}]
-		Item:AddSetting[Box,${boxnumber}]
+		
+		xvar:Set[1]
+		do
+		{
+			Item:AddSetting[Box${xvar},${box${xvar}}]
+		}
+		while ${xvar:Inc} <= ${brokerslots}
 	}
 	elseif ${Saveset.Equal["Buy"]}
 	{
@@ -1971,10 +1978,6 @@ function savecraftinfo(string UITab)
 	{
 		UIElement[ErrorText@${UITab}GUITabs@MyPrices]:SetText[Try setting a valid Stock Limit]
 	}
-	elseif !${Me.Vending[${BoxNumber}](exists)} || ${BoxNumber} == 0
-	{
-		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Try setting a valid Box Number]
-	}
 	else
 	{
 		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Saving Information]
@@ -1982,12 +1985,12 @@ function savecraftinfo(string UITab)
 		if ${UITab.Equal[Inventory]} && !${UIElement[CraftItem@Inventory@GUITabs@MyPrices].Checked}
 		{
 			; Parameters : Craft , Itemname , Stacksize , Number , <Bool> Craftitem, <Bool> nameonly,<bool>, attune only <bool>, transmute startlevel,endlevel,tier, Boxnumber, Recipe Name
-			call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} FALSE TRUE TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
+			call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} FALSE TRUE TRUE TRUE 0 0 0 "${RecipeName}" ${UIElement[1@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[2@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[3@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[4@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[5@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[6@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[7@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[8@${UITab}@GUITabs@MyPrices].Selection} 
 		}
 		else
 		{
 
-			call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE TRUE TRUE 0 0 0 ${BoxNumber} "${RecipeName}"
+			call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE TRUE TRUE 0 0 0 "${RecipeName}" ${UIElement[1@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[2@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[3@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[4@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[5@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[6@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[7@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[8@${UITab}@GUITabs@MyPrices].Selection} 
 		}
 		
 	}
@@ -2116,7 +2119,7 @@ function ShowCraftInfo(string UITab, int ItemID)
 	Declare Recipe string local
 	Declare Stack int local
 	Declare Stock int local
-	Declare BoxNumber int local
+	Declare xvar int local 1
 	
 	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[ItemList].Item[${ItemID}]}]
 	
@@ -2127,7 +2130,6 @@ function ShowCraftInfo(string UITab, int ItemID)
 	Recipe:Set[${CraftItemList.FindSetting[Recipe]}]
 	Stack:Set[${CraftItemList.FindSetting[Stack]}]
 	Stock:Set[${CraftItemList.FindSetting[Stock]}]
-	BoxNumber:Set[${CraftItemList.FindSetting[Box]}]
 
 	UIElement[CraftName@${UITab}@GUITabs@MyPrices]:SetText[${LBoxString}]
 
@@ -2138,20 +2140,33 @@ function ShowCraftInfo(string UITab, int ItemID)
 
 	UIElement[CraftStack@${UITab}@GUITabs@MyPrices]:SetText[${Stack}]
 	UIElement[CraftNumber@${UITab}@GUITabs@MyPrices]:SetText[${Stock}]
-	UIElement[BoxNumber@${UITab}@GUITabs@MyPrices]:SetText[${BoxNumber}]
-	
+
 	if ${UITab.Equal[Inventory]}
 	{
-		; HERE
 		if ${ItemList.FindSet["${LBoxString}"].FindSetting[CraftItem]}
 		{
-			UIElement[CraftItem@Inventory@GUITabs@MyPrices]:SetChecked
+			UIElement[CraftItem@${UITab}@GUITabs@MyPrices]:SetChecked
 		}
 		else
 		{
-			UIElement[CraftItem@Inventory@GUITabs@MyPrices]:UnsetChecked
+			UIElement[CraftItem@${UITab}@GUITabs@MyPrices]:UnsetChecked
 		}
 	}
+	
+	xvar:Set[1]
+	do
+	{
+		if ${ItemList.FindSet["${LBoxString}"].FindSetting[Box${xvar}]} > 0
+		{
+			UIElement[${xvar}@${UITab}@GUITabs@MyPrices]:SetSelection[${ItemList.FindSet["${LBoxString}"].FindSetting[Box${xvar}]}]
+		}
+		else
+		{
+			UIElement[${xvar}@${UITab}@GUITabs@MyPrices]:SetSelection[1]
+		}
+	}
+	while ${xvar:Inc} <= ${brokerslots}
+
 	call echolog " <end> : ShowCraftInfo"
 }
 
@@ -2320,7 +2335,7 @@ objectdef BrokerBot
 }
 
 ;search your current broker boxes for existing stacks of items and see if theres room for more
-function placeitem(string itemname, int box)
+function placeitem(string itemname)
 {
 	call echolog "<start> placeitem ${itemname} ${box}"
 	variable int xvar
@@ -2330,9 +2345,11 @@ function placeitem(string itemname, int box)
 	Declare maxspaces int local -1
 	Declare currenttotal int local
 	Declare nospace bool local
+	Declare box int local 0
 	CraftItemsPlaced:Set[FALSE]
 	nospace:Set[FALSE]
 	storebox:Set[0]
+
 
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
@@ -2344,6 +2361,18 @@ function placeitem(string itemname, int box)
 	; if there are items to be placed
 	if ${numitems} > 0
 	{
+		
+		box:Set[0]
+		do
+		{
+			if ${ItemList.FindSet["${itemname}"].FindSetting[Box${xvar}]} == 2
+			{
+				box:Set[${xvar}]
+				break
+			}
+		}
+		while ${xvar:Inc} <= ${brokerslots}
+		
 		if ${box} > 0
 			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
 
@@ -2358,17 +2387,22 @@ function placeitem(string itemname, int box)
 			do
 			{
 				; check to see if there is are boxes with the same item in already
-				call FindItem ${i} "${itemname}"
-				if ${Return} != -1
+
+				; if that box has no been marked as a no-place box for that item
+				if ${ItemList.FindSet["${itemname}"].FindSetting[Box${xvar}]} != 3
 				{
-					; check the box has free space
-					space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
-	
-					if ${space} > 0
+					call FindItem ${i} "${itemname}"
+					if ${Return} != -1
 					{
-						; place the item into the box
-						call placeitems "${itemname}" ${i} ${numitems}
-						numitems:Set[${Return}]
+						; check the box has free space
+						space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+		
+						if ${space} > 0
+						{
+							; place the item into the box
+							call placeitems "${itemname}" ${i} ${numitems}
+							numitems:Set[${Return}]
+						}
 					}
 				}
 			}
@@ -2379,7 +2413,7 @@ function placeitem(string itemname, int box)
 		{
 			do
 			{
-				call boxwithmostspace
+				call boxwithmostspace "${itemname}"
 				i:Set[${Return}]
 				if ${i} == 0
 				{
@@ -2421,11 +2455,11 @@ function inventorylist()
 			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
 			if ${space} == 0
 			{
-				UIElement[${i}@Inventory@GUITabs@MyPrices]:Hide
+				UIElement[B${i}@Inventory@GUITabs@MyPrices]:Hide
 			}
 			else
 			{
-				UIElement[${i}@Inventory@GUITabs@MyPrices]:Show
+				UIElement[B${i}@Inventory@GUITabs@MyPrices]:Show
 			}
 		}
 	}
@@ -2488,14 +2522,14 @@ function placeinventory(int box, int inventorynumber)
 			
 			if ${space} == 0
 			{
-				UIElement[${box}@Inventory@GUITabs@MyPrices]:Hide
+				UIElement[B${box}@Inventory@GUITabs@MyPrices]:Hide
 			}
 		}
 
 	}
 	else
 	{
-		UIElement[${box}@Inventory@GUITabs@MyPrices]:Hide
+		UIElement[B${box}@Inventory@GUITabs@MyPrices]:Hide
 	}
 }
 
@@ -2559,7 +2593,7 @@ function numinventoryitems(string itemname, bool num)
 	return ${numitems}
 }
 
-function boxwithmostspace()
+function boxwithmostspace(string itemname)
 {
 	; returns the number of the vendor box with the most free space
 	Declare i int local 1
@@ -2567,11 +2601,14 @@ function boxwithmostspace()
 	Declare max int local 0
 	do
 	{
-		space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+		; if that box has not been marked as a no-place box for that item
+		if ${ItemList.FindSet["${itemname}"].FindSetting[Box${i}]} != 3
+		{
+			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
 
-		if ${space} > ${max}
-			max:Set[${i}]
-
+			if ${space} > ${max}
+				max:Set[${i}]
+		}
 	}
 	while ${i:Inc} <= ${brokerslots}
 	return ${max}
@@ -2656,6 +2693,30 @@ function checklore(string itemname)
 	Return FALSE
 }
 
+function CheckPrimary(string UITab, int boxnum, int ID)
+{
+	Declare xvar int local 1
+
+	if ${UIElement[${boxnum}@${UITab}@GUITabs@MyPrices].Selection} == 0
+		UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[${boxnum}]:SetSelection[1] 
+
+		if ${ID} == 2
+		{	
+			do
+			{
+				if ${xvar} != ${boxnum}
+				{
+					if ${UIElement[${xvar}@${UITab}@GUITabs@MyPrices].Selection} == 2
+						UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[${xvar}]:SetSelection[1] 
+				}
+	
+				if ${UIElement[${xvar}@${UITab}@GUITabs@MyPrices].Selection} == 0
+					UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[${xvar}]:SetSelection[1] 
+			}
+			while ${xvar:Inc} <= ${brokerslots}
+		}
+}
+
 function StartUp()
 {
 	Declare tempstring string local
@@ -2710,16 +2771,21 @@ function StartUp()
 	i:Set[1]
 	do
 	{
-		if !(${Me.Vending[${i}](exists)})
+		if (${Me.Vending[${i}](exists)})
+		{
+			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+			if ${space} == 0
 			{
-				UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
-				UIElement[${i}@Inventory@GUITabs@MyPrices]:Hide
+				UIElement[B${i}@Inventory@GUITabs@MyPrices]:Hide
 			}
-		space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
-		if ${space} == 0
-			{
-				UIElement[${i}@Inventory@GUITabs@MyPrices]:Hide
-			}
+		}
+		else
+		{
+			UIElement[${i}@Sell@GUITabs@MyPrices]:Hide
+			UIElement[${i}@Craft@GUITabs@MyPrices]:Hide
+			UIElement[${i}@Inventory@GUITabs@MyPrices]:Hide
+			UIElement[B${i}@Inventory@GUITabs@MyPrices]:Hide
+		}
 
 	}
 	while ${i:Inc} <= ${brokerslots}
