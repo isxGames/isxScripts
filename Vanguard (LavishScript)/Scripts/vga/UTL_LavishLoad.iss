@@ -302,6 +302,16 @@ function LavishLoad()
 	doHarvest:Set[${UtilitySR.FindSetting[doHarvest,${doHarvest}]}]
 	DoLootOnly:Set[${UtilitySR.FindSetting[DoLootOnly,${DoLootOnly}]}]
 	LootOnly:Set[${UtilitySR.FindSetting[LootOnly,${LootOnly}]}]	
+
+	DoClassDownTime:Set[${UtilitySR.FindSetting[DoClassDownTime,${DoClassDownTime}]}]
+	DoClassPreCombat:Set[${UtilitySR.FindSetting[DoClassPreCombat,${DoClassPreCombat}]}]	
+	DoClassOpener:Set[${UtilitySR.FindSetting[DoClassOpener,${DoClassOpener}]}]
+	DoClassCombat:Set[${UtilitySR.FindSetting[DoClassCombat,${DoClassCombat}]}]	
+	DoClassPostCombat:Set[${UtilitySR.FindSetting[DoClassPostCombat,${DoClassPostCombat}]}]
+	DoClassEmergency:Set[${UtilitySR.FindSetting[DoClassEmergency,${DoClassEmergency}]}]	
+	DoClassPostCasting:Set[${UtilitySR.FindSetting[DoClassPostCasting,${DoClassPostCasting}]}]
+
+
 	;===================================================
 	;===                  Spells Load               ====
 	;===================================================

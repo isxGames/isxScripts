@@ -538,7 +538,7 @@
                       	<Width>95%</Width>
                       	<Height>20</Height>
                       	<Alignment>Left</Alignment>
-                      	<Text>-----------------Combat Switches-----------------------------</Text>
+                      	<Text>-------Combat Switches----------Custom Class Routines----</Text>
                     	</Text>
                           <checkbox Name='DoFurious' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
@@ -558,6 +558,24 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+			   <checkbox Name='DoClassDownTime' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>400</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Class Downtime</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassDownTime}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassDownTime:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
                           <checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>13</X>
@@ -573,6 +591,24 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doSlowAttacks:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+			   <checkbox Name='DoClassPreCombat' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>420</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Pre Combat-Loop</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassPreCombat}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassPreCombat:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
@@ -638,10 +674,28 @@
                               }
                             </OnChange>
                           </Textentry>
-                          <checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
+			   <checkbox Name='DoClassOpener' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>400</Y>
+                            <Y>440</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Opening Combat Routine</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassOpener}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassOpener:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>460</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Counters</Text>
@@ -656,10 +710,28 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
-                          <checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
+			   <checkbox Name='DoClassCombat' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>420</Y>
+                            <Y>460</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Custom Class Combat</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassCombat}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassCombat:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>480</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Chains</Text>
@@ -674,9 +746,63 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+			   <checkbox Name='DoClassPostCombat' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>480</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Post Combat-Loop</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassPostCombat}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassPostCombat:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+			   <checkbox Name='DoClassEmergency' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>500</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Class Emergency Routine</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassEmergency}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassEmergency:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+			   <checkbox Name='DoClassPostCasting' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>520</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Post Ability Use</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassPostCasting}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassPostCasting:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">
                             <X>13</X>
-                            <Y>85%</Y>
+                            <Y>540</Y>
                             <Width>100</Width>
                             <Height>19</Height>
                             <Text>Quit</Text>
@@ -687,7 +813,7 @@
                           </Button>
                           <Button Name="PauseBtn" Template="VG.RedButton">
                             <X>125</X>
-                            <Y>85%</Y>
+                            <Y>540</Y>
                             <Width>100</Width>
                             <Height>19</Height>
                             <Text>Pause</Text>

@@ -1,5 +1,5 @@
 
-function PopulateBardLists()
+function Bard_GUI()
 {
 	variable int i
 

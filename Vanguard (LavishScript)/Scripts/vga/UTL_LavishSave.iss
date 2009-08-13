@@ -221,6 +221,14 @@ function LavishSave()
 	UtilitySR:AddSetting[DoLootOnly,${DoLootOnly}]
 	UtilitySR:AddSetting[LootOnly,${LootOnly}]
 
+	UtilitySR:AddSetting[DoClassDownTime,${DoClassDownTime}]
+	UtilitySR:AddSetting[DoClassPreCombat,${DoClassPreCombat}]
+	UtilitySR:AddSetting[DoClassOpener,${DoClassOpener}]
+	UtilitySR:AddSetting[DoClassCombat,${DoClassCombat}]
+	UtilitySR:AddSetting[DoClassPostCombat,${DoClassPostCombat}]
+	UtilitySR:AddSetting[DoClassEmergency,${DoClassEmergency}]
+	UtilitySR:AddSetting[DoClassPostCasting,${DoClassPostCasting}]
+
 	;===================================================
 	;===                  Spells Save               ====
 	;===================================================

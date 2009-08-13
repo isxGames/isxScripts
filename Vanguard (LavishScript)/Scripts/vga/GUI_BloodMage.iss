@@ -1,4 +1,4 @@
-function PopulateBMLists()
+function BloodMage_GUI()
 {
 	variable int i 
 	variable int rCount

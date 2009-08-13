@@ -1,8 +1,6 @@
 ;********************************************
-function BardSong()
+function Bard_DownTime()
 {
-	if ${Me.Class.Equal[Bard]}
-	{
 	If ${fight.ShouldIAttack} && !${Me.Effect[${Me.FName}'s Bard Song - "${FightSong}"](exists)}
 		{
      	 		If !${Me.Inventory[${PrimaryWeapon}].CurrentEquipSlot.Equal[Primary Hand]}
@@ -23,5 +21,34 @@ function BardSong()
 			wait 3
 			Songs[${RunSong}]:Perform
 		}
-	}
+}
+;********************************************
+function Bard_PreCombat()
+{
+
+}
+;********************************************
+function Bard_Opener()
+{
+
+}
+;********************************************
+function Bard_Combat()
+{
+
+}
+;********************************************
+function Bard_Emergency()
+{
+
+}
+;********************************************
+function Bard_PostCombat()
+{
+
+}
+;********************************************
+function Bard_PostCasting()
+{
+
 }

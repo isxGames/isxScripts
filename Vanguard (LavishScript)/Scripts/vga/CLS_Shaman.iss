@@ -1,5 +1,35 @@
 ;********************************************
-function shamanmana()
+function Shaman_DownTime()
+{
+
+}
+;********************************************
+function Shaman_PreCombat()
+{
+
+}
+;********************************************
+function Shaman_Opener()
+{
+
+}
+;********************************************
+function Shaman_Combat()
+{
+
+}
+;********************************************
+function Shaman_Emergency()
+{
+
+}
+;********************************************
+function Shaman_PostCombat()
+{
+
+}
+;********************************************
+function Shaman_PostCasting()
 {
 	if ${Me.EnergyPct}<70 && ${Me.HealthPct}>65 && ${Me.Ability[Ritual of Sacrifice IV].IsReady} && ${Me.ToPawn.CombatState} == 1
    		{

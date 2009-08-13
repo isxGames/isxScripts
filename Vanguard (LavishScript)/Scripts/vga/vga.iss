@@ -138,12 +138,37 @@ I should Attack							|
 ;-------------------------------------------
 ;**********Class-Tab Scripts***************
 ;-------------------------------------------
-#include "${Script.CurrentDirectory}/CLS_Shaman.iss"
-#include "${Script.CurrentDirectory}/CLS_Sorcerer.iss"
+#include "${Script.CurrentDirectory}/UTL_Class.iss"
+#include "${Script.CurrentDirectory}/CLS_DreadKnight.iss"
+#include "${Script.CurrentDirectory}/CLS_Warrior.iss"
+#include "${Script.CurrentDirectory}/CLS_Paladin.iss"
 #include "${Script.CurrentDirectory}/CLS_Bard.iss"
-#include "${Script.CurrentDirectory}/GUI_Bard.iss"
+#include "${Script.CurrentDirectory}/CLS_Monk.iss"
+#include "${Script.CurrentDirectory}/CLS_Ranger.iss"
+#include "${Script.CurrentDirectory}/CLS_Rogue.iss"
 #include "${Script.CurrentDirectory}/CLS_BloodMage.iss"
+#include "${Script.CurrentDirectory}/CLS_Cleric.iss"
+#include "${Script.CurrentDirectory}/CLS_Disciple.iss"
+#include "${Script.CurrentDirectory}/CLS_Shaman.iss"
+#include "${Script.CurrentDirectory}/CLS_Druid.iss"
+#include "${Script.CurrentDirectory}/CLS_Necromancer.iss"
+#include "${Script.CurrentDirectory}/CLS_Psionicist.iss"
+#include "${Script.CurrentDirectory}/CLS_Sorcerer.iss"
+#include "${Script.CurrentDirectory}/GUI_DreadKnight.iss"
+#include "${Script.CurrentDirectory}/GUI_Warrior.iss"
+#include "${Script.CurrentDirectory}/GUI_Paladin.iss"
+#include "${Script.CurrentDirectory}/GUI_Bard.iss"
+#include "${Script.CurrentDirectory}/GUI_Monk.iss"
+#include "${Script.CurrentDirectory}/GUI_Ranger.iss"
+#include "${Script.CurrentDirectory}/GUI_Rogue.iss"
 #include "${Script.CurrentDirectory}/GUI_BloodMage.iss"
+#include "${Script.CurrentDirectory}/GUI_Cleric.iss"
+#include "${Script.CurrentDirectory}/GUI_Disciple.iss"
+#include "${Script.CurrentDirectory}/GUI_Shaman.iss"
+#include "${Script.CurrentDirectory}/GUI_Druid.iss"
+#include "${Script.CurrentDirectory}/GUI_Necromancer.iss"
+#include "${Script.CurrentDirectory}/GUI_Psionicist.iss"
+#include "${Script.CurrentDirectory}/GUI_Sorcerer.iss"
 
 ;-------------------------------------------
 ;************Triggers Scripts***************
@@ -189,10 +214,23 @@ function main()
 	call PopulateAbilitiesLists
 	call PopulateBuffLists
 	call PopulateSellLists
-	call PopulateBardLists
-	call PopulateBMLists
 	call PopulateGroupMemberNames
 	call PopulateTriggersLists
+	call DreadKnight_GUI
+	call Warrior_GUI
+	call Paladin_GUI
+	call Bard_GUI
+	call Monk_GUI
+	call Ranger_GUI
+	call Rogue_GUI
+	call BloodMage_GUI
+	call Cleric_GUI
+	call Disciple_GUI
+	call Shaman_GUI
+	call Druid_GUI
+	call Necromancer_GUI
+	call Psionicist_GUI
+	call Sorcerer_GUI
 	;***************edited by maras**************	
 	call SetupHOTTimer
 	;***************end edited by maras**************
@@ -253,7 +291,7 @@ function main()
 function downtimefunction()
 {
 	call Healcheck
-	call ClassSpecificDowntime
+	call Class_DownTime
 	call followpawn
 	call assistpawn
 	call BuffUp
@@ -267,25 +305,7 @@ function downtimefunction()
 	call Harvest
 	return
 }
-;===================================================
-;===    Class Specific Downtime Function        ====
-;===================================================
-function ClassSpecificDowntime()
-{
-	switch ${Me.Class}
-	{
-		case Bard
-			call BardSong
-			break
-		
-		case Blood Mage
-			call BM_CheckEnergy
-			call BM_DownTime
-			break
-	}
-	
-	return
-}
+
 ;===================================================
 ;===               CombatRoutine Function       ====
 ;===================================================
@@ -295,7 +315,7 @@ function combatfunction()
 	;**********Fighting PreLoopCall*************
 	;-------------------------------------------
 	call PreCombatLoopFunction
-	call ClassSpecificPreCombat
+	call Class_PreCombat
 	call SendInPets
 
 	;-------------------------------------------
@@ -305,11 +325,13 @@ function combatfunction()
 	  {
 		call changeformstance
 		call OpeningSpellSequence
+		call Class_Opener
 		}
 	elseif !${newattack}
 	{
+		call Class_Combat
 		call KillingBlowAbility
-    call DotSpells
+    		call DotSpells
 		call DotMelee
 		call DebuffSpells
 		call DebuffMelee
@@ -323,7 +345,7 @@ function combatfunction()
 	;**********Fighting PostLoopCall************
 	;-------------------------------------------
 	call PostCombatLoopFunction
-	call ClassSpecificPostCombat	
+	call Class_PostCombat	
 
 	return
 }
@@ -338,28 +360,7 @@ function PreCombatLoopFunction()
 	call Healcheck
 	return
 }
-;===================================================
-;===     Class Specific Pre Combat Loop         ====
-;===================================================
-function ClassSpecificPreCombat()
-{
-	switch ${Me.Class}
-	{
-		case Bard
-			call BardSong
-			break
-			
-		case Blood Mage
-			break
-			
-		case Shaman
-			call shamanmana
-			break
-	
-	}
-	
-	return
-}
+
 ;===================================================
 ;===         Post Combat Loop Function          ====
 ;===================================================
@@ -367,22 +368,7 @@ function PostCombatLoopFunction()
 {
 	return
 }
-;===================================================
-;===     Class Specific Post Combat Loop        ====
-;===================================================
-function ClassSpecificPostCombat()
-{
-	switch ${Me.Class}
-	{
-		case Bard
-			break
-		
-		case Blood Mage
-			break
-	}	
-	
-	return
-}
+
 ;===================================================
 ;===             Emergency Actions              ====
 ;===================================================
@@ -420,7 +406,7 @@ function EmergencyActions()
 	;-------------------------------------------
 	call StancePushfunct
 	call clickiesfunct
-
+	call Class_Emergency
 	return
 }
 
@@ -450,30 +436,7 @@ function PostCastingActions()
 	;-------------------------------------------
 	;****Check for Class Specific Post**********
 	;-------------------------------------------
-	call ClassSpecificPostCasting
-	
-	return
-}
-;===================================================
-;===    Class Specific Post Casting Loop        ====
-;===================================================
-function ClassSpecificPostCasting()
-{
-	switch ${Me.Class}
-	{
-		case Blood Mage
-			call BM_CheckBloodUnion
-			call BM_CheckEnergy
-			break
-		
-		case Shaman
-			call shamanmana
-			break
-			
-		case Sorcerer
-			call SorcererMana
-			break
-	}
+	call Class_PostCasting
 	
 	return
 }
