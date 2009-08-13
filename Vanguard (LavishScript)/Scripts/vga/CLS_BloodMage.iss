@@ -1,7 +1,8 @@
 ;********************************************
-function BM_DownTime()
+function BloodMage_DownTime()
 {
-	;; This function should only be called outside of combat (ie, 'downtime')
+	;; This function should only be called outside of combat (ie, 'downtime')\
+	call BM_CheckEnergy
 	variable bool DoSmallHeal = FALSE
 	variable bool OkToCastSpells
 	
@@ -27,7 +28,36 @@ function BM_DownTime()
 			return
 		}	
 	}	
-	
+}
+;********************************************
+function BloodMage_PreCombat()
+{
+
+}
+;********************************************
+function BloodMage_Opener()
+{
+
+}
+;********************************************
+function BloodMage_Combat()
+{
+
+}
+;********************************************
+function BloodMage_Emergency()
+{
+
+}
+;********************************************
+function BloodMage_PostCombat()
+{
+
+}
+;********************************************
+function BloodMage_PostCasting()
+{
+
 }
 
 function BM_PreHealRoutine()

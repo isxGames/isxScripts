@@ -144,6 +144,15 @@ variable bool doAutoSell
 variable bool doHarvest
 variable bool DoLootOnly
 variable string LootOnly
+
+variable bool DoClassDownTime
+variable bool DoClassPreCombat
+variable bool DoClassOpener
+variable bool DoClassCombat
+variable bool DoClassPostCombat
+variable bool DoClassEmergency
+variable bool DoClassPostCasting
+
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
