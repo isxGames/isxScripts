@@ -4,7 +4,7 @@
 function Class_PreCombat()
 {
 	if ${DoClassPreCombat}
-	}
+	{
 	switch ${Me.Class}
 	{
 		case Dread Knight
@@ -60,7 +60,7 @@ function Class_PreCombat()
 function Class_Opener()
 {
 	if ${DoClassOpener}
-	}
+	{
 	switch ${Me.Class}
 	{
 		case Dread Knight
