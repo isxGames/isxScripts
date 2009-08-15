@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.14 :  released 13th August 2009
+; Version 0.14a :  released 15th August 2009
 ;
 ; Declare Variables
 ;
@@ -34,6 +34,7 @@ variable bool ItemNotStack
 variable bool CraftListMade=FALSE
 variable bool CraftItemsPlaced=FALSE
 variable bool ItemsArePriced=FALSE
+variable bool BadContainer=FALSE
 
 ; Array stores bool - Item scanned
 variable bool Scanned[1000]
@@ -122,9 +123,10 @@ function main(string goscan, string goscan2)
 	
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
+	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 	
-	call AddLog "Version 0.14 :  released 13th August 2009" FF11FFCC
-	call echolog "Version 0.14 :  released 13th August 2009"
+	call AddLog "Version 0.14a :  released 15th August 2009" FF11FFCC
+	call echolog "Version 0.14a :  released 15th August 2009"
 	
 	call StartUp	
 
@@ -2540,6 +2542,7 @@ function placeitems(string itemname, int box, int numitems)
 	Declare xvar int local 1
 	Declare lasttotal int local
 	Declare space int local
+	
 	if ${numitems} >0
 	{
 		space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
@@ -2559,6 +2562,46 @@ function placeitems(string itemname, int box, int numitems)
 				; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
 
 				wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+
+				; if the system reports that an item will not fit into the container chosen
+				if ${BadContainer}
+				{
+					; change the setting for that item so the container is marked as ignore
+					Item:Set[${ItemList.FindSet[${itemname}]}]
+					Item:AddSetting[Box${box},3]
+					
+					; reset the bad Container Flag
+					BadContainer:Set[FALSE]
+					
+					echo Error in container ${box} settings for ${itemname} , marking that container as bad
+					
+					; Get a new container number
+					call boxwithmostspace "${itemname}"
+					box:Set[${Return}]
+					
+					; if no container is available then stop placing that set of items
+					if ${box} == 0
+					{
+						nospace:Set[TRUE]
+						break
+					}
+					else
+					{
+						; Otherwise try and place item in the new container
+						
+						; check current used capacity
+						lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+						
+						; place the item into the consignment system , grouping it with similar items
+						Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment[${itemname}].SerialNumber}]
+						
+						; make the script wait till the box total has changed (item was added)
+						; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
+						
+						wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+
+					}
+				}
 				
 				space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
 				numitems:Dec
@@ -2820,6 +2863,7 @@ atom atexit()
 
 	Event[EQ2_onInventoryUpdate]:DetachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
+	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 
 	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
@@ -2834,4 +2878,13 @@ atom EQ2_onChoiceWindowAppeared()
 		return
 	if ${ChoiceWindow.Choice1.Find[Accept]}
 		ChoiceWindow:DoChoice1
+}
+
+atom(script) EQ2_onIncomingText(string Text)
+{
+	if ${Text.Find["That container cannot store "]} > 0 
+	{
+		BadContainer:Set[TRUE]
+	}
+	return
 }
