@@ -2790,6 +2790,8 @@ function StartUp()
 	}
 	while ${i:Inc} <= ${brokerslots}
 	
+	UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:Hide
+
 	call LoadList
 
 	if ${ScanSellNonStop}

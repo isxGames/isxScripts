@@ -1390,7 +1390,7 @@
 				               <ButtonWidth>20</ButtonWidth>
 						<Items>
 						<Item Value='1' Default='1'>All</Item>
-						<Item Value='2' Default='1'>Common</Item>
+						<Item Value='2'>Common</Item>
 						<Item Value='3'>Handcrafted</Item>
 						<Item Value='4'>Treasured</Item>
 						<Item Value='5'>Mastercrafted</Item>
@@ -1524,10 +1524,11 @@
 						</AutoTooltip>
 					</Commandbutton>
 					<combobox Name='1'>
-						<X>40%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>180</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1541,10 +1542,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='2'>
-						<X>55%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>245</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1558,10 +1560,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='3'>
-						<X>70%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>310</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1575,10 +1578,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='4'>
-						<X>85%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>375</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1592,10 +1596,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='5'>
-						<X>40%</X>
-						<Y>80%</Y>
-						<Width>65</Width>
+						<X>180</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1609,10 +1614,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='6'>
-						<X>55%</X>
-						<Y>80%</Y>
-						<Width>65</Width>
+						<X>245</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1626,10 +1632,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='7'>
-						<X>70%</X>
-						<Y>80%</Y>
-						<Width>65</Width>
+						<X>310</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1643,10 +1650,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='8'>
-						<X>85%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>375</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1693,10 +1701,11 @@
 						</OnSelect>
 					</listbox>
 					<combobox Name='1'>
-						<X>40%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>180</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1710,10 +1719,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='2'>
-						<X>55%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>245</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1727,10 +1737,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='3'>
-						<X>70%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>310</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1744,10 +1755,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='4'>
-						<X>85%</X>
-						<Y>75%</Y>
-						<Width>65</Width>
+						<X>375</X>
+						<Y>415</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1761,10 +1773,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='5'>
-						<X>40%</X>
-						<Y>80%</Y>
-						<Width>65</Width>
+						<X>180</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1778,10 +1791,11 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='6'>
-						<X>55%</X>
-						<Y>80%</Y>
-						<Width>65</Width>
+						<X>245</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1795,27 +1809,29 @@
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='7'>
-						<X>70%</X>
-						<Y>80%</Y>
-						<Width>65</Width>
+						<X>310</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
 						<Item Value='3'>Ignore</Item>
 						</Items>
 						<OnSelect> 
-							Script[myprices]:QueueCommand[call CheckPrimary Inventory 7 ${ID}]
+							Script[myprices]:QueueCommand[call CheckPrimary Craft 7 ${ID}]
 						</OnSelect>
 						<AutoTooltip>
 							Box 7
 						</AutoTooltip>
 					</combobox>
 					<combobox Name='8'>
-						<X>85%</X>
-						<Y>80%</Y>
-						<Width>65</Width>
+						<X>375</X>
+						<Y>435</Y>
+						<Width>64</Width>
 						<Height>20</Height>
+						<FullHeight>70</FullHeight>
 						<Items>
 						<Item Value='1' Default='1'>Place</Item>
 						<Item Value='2'>Primary</Item>
@@ -1871,9 +1887,6 @@
 						<Width>10%</Width>
 						<Height>65%</Height>
 						<Text>0</Text>
-						[OnLoad]
-							UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:UnsetChecked
-						[/OnLoad]
 					</Text>
 					<Text Name='ErrorText'>
 						<X>5%</X>
