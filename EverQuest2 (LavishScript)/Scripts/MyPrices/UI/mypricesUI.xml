@@ -1675,7 +1675,6 @@
 						<Text>Save</Text>
 						<OnLeftClick>
 							Script[myprices]:QueueCommand[call savecraftinfo craft]
-							Script[myprices]:QueueCommand[call buy Craft Init]
 						</OnLeftClick>
 						<AutoTooltip>
 							Update an item
