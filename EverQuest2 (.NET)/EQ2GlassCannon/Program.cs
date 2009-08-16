@@ -27,6 +27,9 @@ namespace EQ2GlassCannon
 		private static bool s_bIsZoning = false;
 		public static bool IsZoning { get { return s_bIsZoning; } }
 
+		private static bool s_bIsFlythroughVideoPlaying = false;
+		public static bool IsFlythroughVideoPlaying { get { return s_bIsFlythroughVideoPlaying; } }
+
 		private static EQ2Event s_eq2event = null;
 		private static PlayerController s_Controller = null;
 		public static EmailQueueThread s_EmailQueueThread = new EmailQueueThread();
@@ -42,21 +45,51 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		/// <summary>
 		/// Make sure to call this every time you grab a frame lock.
+		/// I've had to compensate in far too many ways for exception bullshit that gets thrown on property access.
 		/// </summary>
 		public static bool UpdateGlobals()
 		{
 			/// These become invalid from frame to frame.
 			try
 			{
-				s_ISXEQ2 = s_Extension.ISXEQ2();
-				s_EQ2 = s_Extension.EQ2();
-				s_Me = s_Extension.Me();
+				if (s_ISXEQ2 == null)
+					s_ISXEQ2 = s_Extension.ISXEQ2();
+				if (s_EQ2 == null)
+					s_EQ2 = s_Extension.EQ2();
+				if (s_Me == null)
+					s_Me = s_Extension.Me();
+
 				s_MeActor = s_Me.ToActor();
+			}
+			catch
+			{
+				Log("Exception thrown when updating global variable aliases for the frame lock.");
+				return false;
+			}
+
+			/// This is an annoying quirk. It throws an exception only during zoning.
+			try
+			{
 				s_bIsZoning = s_EQ2.Zoning;
 			}
 			catch
 			{
-				return false;
+				Log("Exception thrown when accessing EQ2.Zoning. Assuming the value to be \"true\".");
+				s_bIsZoning = true;
+			}
+
+			if (!s_bIsZoning)
+			{
+				try
+				{
+					/// A little thing I discovered while watching console spam.
+					/// EQ2 will prefix your character name if you are watching that video.
+					s_bIsFlythroughVideoPlaying = Me.Group(0).Name.StartsWith("Flythrough_");
+				}
+				catch
+				{
+					s_bIsFlythroughVideoPlaying = false;
+				}
 			}
 
 			return true;
@@ -154,9 +187,10 @@ namespace EQ2GlassCannon
 		public static void ApplyGameSettings()
 		{
 			/// We could do this once at the beginning, but I've seen it not take.
-			Log("Setting music volume to zero and deactivating personal torch.");
+			Log("Applying preferential account settings (music volume, personal torch, welcome screen).");
 			RunCommand("/music_volume 0");
 			RunCommand("/r_personal_torch off");
+			RunCommand("/cl_show_welcome_screen_on_startup off");
 			return;
 		}
 
@@ -165,9 +199,8 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-				s_EmailQueueThread.Start();
-
 				Program.Log("Starting EQ2GlassCannon spellcaster bot...");
+				s_EmailQueueThread.Start();
 
 				Assembly ThisAssembly = Assembly.GetExecutingAssembly();
 				if (ThisAssembly != null)
@@ -190,7 +223,12 @@ namespace EQ2GlassCannon
 				{
 					using (new FrameLock(true))
 					{
-						UpdateGlobals();
+						if (!UpdateGlobals())
+						{
+							Log("UpdateGlobals() failed right away. Aborting.");
+							return;
+						}
+
 						if (s_ISXEQ2.IsReady)
 							break;
 					}
@@ -198,19 +236,19 @@ namespace EQ2GlassCannon
 
 				using (new FrameLock(true))
 				{
-					UpdateGlobals();
+					if (UpdateGlobals())
+						s_ISXEQ2.SetActorEventsRange(50.0f);
+
 					s_eq2event = new EQ2Event();
 					s_eq2event.CastingEnded += new EventHandler<LSEventArgs>(OnCastingEnded_EventHandler);
 					s_eq2event.ChoiceWindowAppeared += new EventHandler<LSEventArgs>(OnChoiceWindowAppeared_EventHandler);
 					s_eq2event.IncomingChatText += new EventHandler<LSEventArgs>(OnIncomingChatText_EventHandler);
 					s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
 					s_eq2event.QuestOffered += new EventHandler<LSEventArgs>(OnQuestOffered_EventHandler);
-
-					s_ISXEQ2.SetActorEventsRange(50.0f);
 				}
 
 #if !DEBUG
-				double fTestTime = 5.0;
+				double fTestTime = 3.0;
 
 				/// This giant code chunk was a huge necessity due to the completely random lag that happens
 				/// inside the UpdateGlobals() function. A laggy launch will never free up and a free launch
@@ -306,33 +344,21 @@ namespace EQ2GlassCannon
 									s_Controller.OnZoningComplete();
 
 								ApplyGameSettings();
-
-								/// We used to not have to do this, but something changed and fucked everything up.
-								/// NOTE: We now catch exceptions during the ability caching.  This should be ok again.
-								//s_bRefreshKnowledgeBook = true;
 							}
 						}
 
-						/// A little thing I discovered while watching console spam.
-						/// EQ2 will prefix your character name if you are watching that video.
 						/// Pressing Escape kills it.
-						try
+						if (IsFlythroughVideoPlaying)
 						{
-							if (Me.Group(0).Name.StartsWith("Flythrough_"))
-							{
-								Program.Log("Zone flythrough sequence detected, attempting to cancel with the Esc key...");
-								LavishScriptAPI.LavishScript.ExecuteCommand("press esc");
-								continue;
-							}
-						}
-						catch
-						{
-							/// Again, this sometimes throws exceptions like a bratty child.
+							Program.Log("Zone flythrough sequence detected, attempting to cancel with the Esc key...");
+							LavishScriptAPI.LavishScript.ExecuteCommand("press esc");
+							continue;
 						}
 
 						/// Yay for lazy!
 						if (s_EQ2.PendingQuestName != "None")
 						{
+							Log("Automatically accepting quest \"{0}\"...", s_EQ2.PendingQuestName);
 							s_EQ2.AcceptPendingQuest();
 
 							/// TODO: Even though the quest gets accepted, the window doesn't disappear. We gotta make it disappear.
@@ -393,7 +419,7 @@ namespace EQ2GlassCannon
 							s_Controller.DoNextAction();
 
 						/// Only check for camping or AFK every 5th frame.
-						if ((s_lFrameCount % 5) == 0 && (Me.IsCamping))
+						if (s_Controller.m_bKillBotWhenCamping && (s_lFrameCount % 5) == 0 && (Me.IsCamping))
 						{
 							Program.Log("Camping detected; aborting bot!");
 							s_bContinueBot = false;
@@ -612,12 +638,19 @@ namespace EQ2GlassCannon
 					if (DateTime.Now - m_RecentThrottledCommandIndex[strFinalCommand] > s_CommandThrottleTimeout)
 						m_RecentThrottledCommandIndex.Remove(strFinalCommand);
 					else
+					{
+						Log("Throttled command blocked: {0}", strFinalCommand);
 						return;
+					}
 				}
 
 				using (new FrameLock(true))
 				{
-					s_Extension.EQ2Execute(strFinalCommand);
+					if (UpdateGlobals())
+					{
+						Log("Executing: {0}", strFinalCommand);
+						s_Extension.EQ2Execute(strFinalCommand);
+					}
 				}
 
 				m_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now);
@@ -657,11 +690,11 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public static IEnumerable<Actor> EnumCustomActors(params string[] astrParams)
+		public static IEnumerable<Actor> EnumActors(params string[] astrParams)
 		{
 			s_EQ2.CreateCustomActorArray(astrParams);
 
-			for (int iIndex = 1; iIndex <= Program.s_EQ2.CustomActorArraySize; iIndex++)
+			for (int iIndex = 1; iIndex <= s_EQ2.CustomActorArraySize; iIndex++)
 				yield return s_Extension.CustomActor(iIndex);
 		}
 
