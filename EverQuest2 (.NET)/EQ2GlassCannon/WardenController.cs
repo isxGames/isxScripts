@@ -10,16 +10,19 @@ namespace EQ2GlassCannon
 {
 	public class WardenController : DruidController
 	{
-		protected int m_iSingleElementalDebuffAbilityID = -1;
+		protected int m_iSingleElementalDebuffSpellAbilityID = -1;
+		protected int m_iSingleElementalDebuffMeleeAbilityID = -1;
 		protected int m_iSingleHeatNukeAbilityID = -1;
 		protected int m_iSingleColdNukeAbilityID = -1;
 		protected int m_iBlueMeleeColdAEAbilityID = -1;
 
+		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iSingleElementalDebuffAbilityID = SelectHighestTieredAbilityID("Frostbite");
+			m_iSingleElementalDebuffSpellAbilityID = SelectHighestTieredAbilityID("Frostbite");
+			m_iSingleElementalDebuffMeleeAbilityID = SelectHighestAbilityID("Frostbite Slice");
 			m_iSingleHeatNukeAbilityID = SelectHighestTieredAbilityID("Dawnstrike");
 			m_iSingleColdNukeAbilityID = SelectHighestTieredAbilityID("Icefall");
 			m_iBlueMeleeColdAEAbilityID = SelectHighestAbilityID("Whirl of Permafrost");
@@ -57,7 +60,7 @@ namespace EQ2GlassCannon
 
 				if (MeActor.IsIdle)
 				{
-					if (CastAbility(m_iSingleElementalDebuffAbilityID))
+					if (CastAbility(m_iSingleElementalDebuffMeleeAbilityID) || CastAbility(m_iSingleElementalDebuffSpellAbilityID))
 						return true;
 					if (CastAbility(m_iSingleColdNukeAbilityID))
 						return true;

@@ -110,7 +110,7 @@ namespace EQ2GlassCannon
 
 			/// Scan for chests in disarm range.
 			/// It's a pretty small radius, you almost have to run the scout right over the chest.
-			foreach (Actor ThisActor in EnumCustomActors("byDist", "3.5"))
+			foreach (Actor ThisActor in Program.EnumActors("byDist", "3.5"))
 			{
 				if (!m_NearbyChestDictionary.ContainsKey(ThisActor.ID))
 					m_NearbyChestDictionary.Add(ThisActor.ID, false);

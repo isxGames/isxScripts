@@ -46,6 +46,7 @@ namespace EQ2GlassCannon
 		public double m_fStayInPlaceTolerance = 1.5;
 		public double m_fCustomAutoFollowMinimumRange = 10.0;
 		public int m_iCheckBuffsInterval = 500;
+		public bool m_bKillBotWhenCamping = true;
 		public bool m_bUseRanged = false;
 		public bool m_bUseGreenAEs = true;
 		public bool m_bUseBlueAEs = true;
@@ -53,8 +54,8 @@ namespace EQ2GlassCannon
 		public bool m_bSyncAbilitiesWithAutoAttack = false; /// Not implemented yet.
 		public bool m_bCastCures = true;
 		public bool m_bPrioritizeCures = true;
-		public bool m_bCureMainTank = true;
-		public bool m_bHealMainTank = true;
+		public bool m_bCureUngroupedMainTank = true;
+		public bool m_bHealUngroupedMainTank = true;
 		public bool m_bCastFurySalveIfGranted = true;
 		public bool m_bSpamHeroicOpportunity = true;
 		public bool m_bMezAdds = false;
@@ -99,6 +100,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("General.ArbitraryVerbCommandSeparator", ref m_strArbitraryVerbCommandSeparator);
 			ThisFile.TransferString("General.ArbitraryVerbCommandSuffix", ref m_strArbitraryVerbCommandSuffix);
 			ThisFile.TransferInteger("General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
+			ThisFile.TransferBool("General.KillBotWhenCamping", ref m_bKillBotWhenCamping);
 			ThisFile.TransferBool("General.UseRanged", ref m_bUseRanged);
 			ThisFile.TransferBool("General.UseGreenAEs", ref m_bUseGreenAEs);
 			ThisFile.TransferBool("General.UseBlueAEs", ref m_bUseBlueAEs);
@@ -106,8 +108,8 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.SyncAbilitiesWithAutoAttack", ref m_bSyncAbilitiesWithAutoAttack);
 			ThisFile.TransferBool("General.CastCures", ref m_bCastCures);
 			ThisFile.TransferBool("General.PrioritizeCures", ref m_bPrioritizeCures);
-			ThisFile.TransferBool("General.CureMainTank", ref m_bCureMainTank);
-			ThisFile.TransferBool("General.HealMainTank", ref m_bHealMainTank);
+			ThisFile.TransferBool("General.CureUngroupedMainTank", ref m_bCureUngroupedMainTank);
+			ThisFile.TransferBool("General.HealUngroupedMainTank", ref m_bHealUngroupedMainTank);
 			ThisFile.TransferBool("General.CastFurySalveIfGranted", ref m_bCastFurySalveIfGranted);
 			ThisFile.TransferBool("General.SpamHeroicOpportunity", ref m_bSpamHeroicOpportunity);
 			ThisFile.TransferBool("General.MezAdds", ref m_bMezAdds);

@@ -156,6 +156,18 @@ namespace EQ2GlassCannon
 
 				if (MeActor.IsIdle)
 				{
+					/// Furnace of Ro, static pet, permanent location. Very weird beast.
+					if (m_bUseBlueAEs && !IsAbilityMaintained(m_iFurnaceOfRoAbilityID))
+					{
+						/// We're making a guesstimate that the pet's radius is 6 meters,
+						/// including margin space for any NPC's that may come into its path en route to the PC's.
+						if (m_OffensiveTargetActor.IsNamed || GetBlueOffensiveAbilityCompatibleTargetCount(m_iFurnaceOfRoAbilityID, 6.0) > 3)
+						{
+							if (CastAbility(m_iFurnaceOfRoAbilityID))
+								return true;
+						}
+					}
+
 					/// FIRST BLOOD: Extreme AE opportunities should receive top priority,
 					/// and never subordinate to boilerplate cast orders.
 					if (CastGreenOffensiveAbility(m_iGreenColdAEAbilityID, 6))
@@ -262,17 +274,6 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 5))
 						return true;
 
-					/// Furnace of Ro, static pet, permanent location. Very weird beast.
-					if (m_bUseBlueAEs && !IsAbilityMaintained(m_iFurnaceOfRoAbilityID))
-					{
-						/// We're making a guesstimate that the pet's radius is 6 meters,
-						/// including margin space for any NPC's that may come into its path en route to the PC's.
-						if (m_OffensiveTargetActor.IsNamed || GetBlueOffensiveAbilityCompatibleTargetCount(m_iFurnaceOfRoAbilityID, 6.0) > 3)
-						{
-							if (CastAbility(m_iFurnaceOfRoAbilityID))
-								return true;
-						}
-					}
 
 					if (CastAbility(m_iStormingTempestAbilityID))
 						return true;

@@ -21,7 +21,6 @@ namespace EQ2GlassCannon
 		#endregion
 
 		#region Ability ID's
-		public int m_iGroupMitigationBuffAbilityID = -1;
 		public int m_iGroupArcaneBuffAbilityID = -1;
 		public int m_iBlessingsAbilityID = -1;
 		public int m_iManaCureAbilityID = -1;
@@ -154,7 +153,7 @@ namespace EQ2GlassCannon
 			double fNetHealthGap = 0.0f; /// The sum of everyone's gap percentages.
 
 			/// First things first, we evaluate the heal situation.
-			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealUngroupedMainTank))
 			{
 				if (ThisStatus.m_bIsDead)
 				{

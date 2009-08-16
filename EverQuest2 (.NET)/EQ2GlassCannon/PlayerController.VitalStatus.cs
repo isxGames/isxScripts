@@ -195,6 +195,14 @@ namespace EQ2GlassCannon
 				}
 			}
 
+			public double PowerRatio
+			{
+				get
+				{
+					return (double)m_iCurrentPower / (double)m_iMaximumPower;
+				}
+			}
+
 			public bool IsPriest
 			{
 				get
