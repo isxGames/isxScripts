@@ -86,9 +86,8 @@ namespace EQ2GlassCannon
 				}
 
 				/// The "/useability" command often doesn't work for shit because it toggles queuing on and off way too fucking rapidly.
-				Program.Log("Casting {0}...", m_strName);
+				//Program.Log("Casting {0}...", m_strName);
 				Program.RunCommand("/useability {0}", m_strName);
-				//Program.RunCommand("/clearabilityqueue");
 				return true;
 				//return m_OriginalAbility.Use();
 			}
@@ -101,9 +100,8 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
-				Program.Log("Casting {0} on {1}...", m_strName, strPlayerTarget);
+				//Program.Log("Casting {0} on {1}...", m_strName, strPlayerTarget);
 				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_strName);
-				//Program.RunCommand("/clearabilityqueue");
 				return true;
 			}
 		}
@@ -252,9 +250,9 @@ namespace EQ2GlassCannon
 			else if (strPlayerTarget == Me.Name)
 				SpellTargetActor = MeActor;
 			else
-				SpellTargetActor = Program.s_Extension.Actor(strPlayerTarget);
+				SpellTargetActor = Program.GetActor(strPlayerTarget);
 
-			if (!SpellTargetActor.IsValid)
+			if (SpellTargetActor == null || !SpellTargetActor.IsValid)
 			{
 				Program.Log("Target actor {0} not valid for CastAbility().", strPlayerTarget);
 				return false;
@@ -362,6 +360,37 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected int GetBlueOffensiveAbilityCompatibleTargetCount(float fRadius)
+		{
+			int iValidVictimCount = 0;
+			foreach (Actor ThisActor in Program.EnumActors("byDist", fRadius.ToString(), "npc"))
+			{
+				if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead)
+					iValidVictimCount++;
+			}
+			return iValidVictimCount;
+		}
+
+		/************************************************************************************/
+		protected int GetBlueOffensiveAbilityCompatibleTargetCount(int iAbilityID)
+		{
+			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
+			if (ThisAbility == null)
+				return 0;
+
+			int iValidVictimCount = 0;
+			if (m_AbilityCompatibleTargetCountCache.ContainsKey(iAbilityID))
+				iValidVictimCount = m_AbilityCompatibleTargetCountCache[iAbilityID];
+			else
+			{
+				iValidVictimCount = GetBlueOffensiveAbilityCompatibleTargetCount(ThisAbility.m_fEffectRadius);
+				m_AbilityCompatibleTargetCountCache.Add(iAbilityID, iValidVictimCount);
+			}
+
+			return iValidVictimCount;
+		}
+
+		/************************************************************************************/
 		public bool CastBlueOffensiveAbility(int iAbilityID, int iMinimumVictimCheckCount)
 		{
 			if (!m_bUseBlueAEs)
@@ -371,21 +400,8 @@ namespace EQ2GlassCannon
 			if (ThisAbility == null)
 				return false;
 
-			int iValidVictimCount = 0;
-			if (m_AbilityCompatibleTargetCountCache.ContainsKey(iAbilityID))
-				iValidVictimCount = m_AbilityCompatibleTargetCountCache[iAbilityID];
-			else
-			{
-				foreach (Actor ThisActor in EnumCustomActors("byDist", ThisAbility.m_fEffectRadius.ToString(), "npc"))
-				{
-					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead)
-						iValidVictimCount++;
-				}
-
-				m_AbilityCompatibleTargetCountCache.Add(iAbilityID, iValidVictimCount);
-			}
-
 			/// Check that the minimum number of potential victims is within the blast radius before proceeding.
+			int iValidVictimCount = GetBlueOffensiveAbilityCompatibleTargetCount(iAbilityID);
 			if (iValidVictimCount < iMinimumVictimCheckCount)
 				return false;
 
@@ -415,7 +431,7 @@ namespace EQ2GlassCannon
 				iValidVictimCount = m_AbilityCompatibleTargetCountCache[iAbilityID];
 			else
 			{
-				foreach (Actor ThisActor in EnumCustomActors("byDist", ThisAbility.m_fMaxRange.ToString(), "npc"))
+				foreach (Actor ThisActor in Program.EnumActors("byDist", ThisAbility.m_fMaxRange.ToString(), "npc"))
 				{
 					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead && m_OffensiveTargetActor.IsInSameEncounter(ThisActor.ID))
 						iValidVictimCount++;
@@ -448,7 +464,8 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-				return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !Program.EQ2.HOWindowActive && CastAbility(m_iHOStarterAbiltyID, Me.Name, true));
+				return false;
+				//return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !Program.EQ2.HOWindowActive && CastAbility(m_iHOStarterAbiltyID, Me.Name, true));
 			}
 			catch
 			{
@@ -483,7 +500,7 @@ namespace EQ2GlassCannon
 				if (fThisAbilityRange < fHighestRangeAlreadyScanned)
 					continue;
 
-				foreach (Actor ThisActor in EnumCustomActors("byDist", fThisAbilityRange.ToString(), "npc"))
+				foreach (Actor ThisActor in Program.EnumActors("byDist", fThisAbilityRange.ToString(), "npc"))
 				{
 					if (!ThisActor.IsDead &&
 						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly.
@@ -792,7 +809,7 @@ namespace EQ2GlassCannon
 			double fNearestHarvestableDistance = 0.0f;
 
 			/// Find the nearest harvestable. 5 meters seems to be the right range.
-			foreach (Actor ThisActor in EnumCustomActors("byDist", "5"))
+			foreach (Actor ThisActor in Program.EnumActors("byDist", "5"))
 			{
 				/// We have to be careful, this also includes shineys that may be locked due to leader loot.
 				if (ThisActor.Type != "Resource")
@@ -834,7 +851,7 @@ namespace EQ2GlassCannon
 			/// This is very simple actually; we'll be casting it on the PC with the lowest health percentage.
 			string strLowestHealthName = null;
 			double fLowestHealthRatio = 1.0;
-			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealUngroupedMainTank))
 			{
 				double fThisHealthRatio = ThisStatus.HealthRatio;
 				if (fThisHealthRatio < fLowestHealthRatio)
