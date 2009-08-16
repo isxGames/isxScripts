@@ -16,6 +16,7 @@ namespace EQ2GlassCannon
 		public string m_strAvatarTarget = string.Empty;
 		public string m_strAncestryTarget = string.Empty;
 		public string m_strRitualOfAlacrityTarget = string.Empty;
+		public string m_strSpiritDanceCallout = "CASTING SPIRIT DANCE ON << {0} >>";
 		#endregion
 
 		#region Ability ID's
@@ -34,6 +35,7 @@ namespace EQ2GlassCannon
 		public int m_iGroupWardAbilityID = -1;
 		public int m_iGroupHealingAbilityID = -1;
 		public int m_iGroupCombatRezAbilityID = -1;
+		public int m_iSpiritDanceRezAbilityID = -1;
 		public int m_iSingleWardedCombatRezAbilityID = -1;
 		public int m_iSingleNormalCombatRezAbilityID = -1;
 		public int m_iDumbfireHealPetAbilityID = -1;
@@ -61,6 +63,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("Mystic.AvatarTarget", ref m_strAvatarTarget);
 			ThisFile.TransferString("Mystic.AncestryTarget", ref m_strAncestryTarget);
 			ThisFile.TransferString("Mystic.RitualOfAlacrityTarget", ref m_strRitualOfAlacrityTarget);
+			ThisFile.TransferString("Mystic.SpiritDanceCallout", ref m_strSpiritDanceCallout);
 			return;
 		}
 
@@ -92,6 +95,7 @@ namespace EQ2GlassCannon
 			m_iGroupWardAbilityID = SelectHighestTieredAbilityID("Umbral Warding");
 			m_iGroupHealingAbilityID = SelectHighestTieredAbilityID("Transcendence");
 			m_iGroupCombatRezAbilityID = SelectHighestAbilityID("Fields of the Grey");
+			m_iSpiritDanceRezAbilityID = SelectHighestAbilityID("Spirit Dance");
 			m_iSingleWardedCombatRezAbilityID = SelectHighestAbilityID("Recall of the Grey");
 			m_iSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Path of the Grey");
 			m_iDumbfireHealPetAbilityID = SelectHighestTieredAbilityID("Lunar Attendant");
@@ -131,9 +135,6 @@ namespace EQ2GlassCannon
 			/// We don't attempt offensive action until after cures/heals are dealt with.
 			GetOffensiveTargetActor();
 
-			if (CheckPositioningStance())
-				return true;
-
 			double fMyPowerRatio = (double)Me.Power / (double)Me.MaxPower;
 
 			string strLowestHealthName = string.Empty;
@@ -144,7 +145,7 @@ namespace EQ2GlassCannon
 			double fNetHealthGap = 0.0f; /// The sum of everyone's gap percentages.
 
 			/// First things first, we evaluate the heal situation.
-			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealUngroupedMainTank))
 			{
 				if (ThisStatus.m_iCurrentHealth < ThisStatus.m_iMaximumHealth)
 				{
@@ -166,8 +167,7 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			/// Prioritize rezzes when out of combat. We gotta get everyone rebuffed ASAP.
-			if (!MeActor.InCombatMode && DoArbitraryRez())
+			if (DoArbitraryRez())
 				return true;
 
 			/// Do buffs only if the vital situation isn't grim.
@@ -352,7 +352,7 @@ namespace EQ2GlassCannon
 			string strNearestDeadName = string.Empty;
 			double fNearestDeadDistance = double.MaxValue;
 
-			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealMainTank))
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealUngroupedMainTank))
 			{
 				if (ThisStatus.m_bIsDead)
 				{
@@ -372,11 +372,19 @@ namespace EQ2GlassCannon
 			if (iTotalDeadMembers > 0)
 			{
 				/// NOTE: Group rez risky if MT is getting rezzed and is outside of group.
-				if (iTotalDeadMembers > 1 && CastAbility(m_iGroupCombatRezAbilityID, strNearestDeadName, false))
+				if (iTotalDeadMembers > 1)
 				{
-					SpamSafeGroupSay(m_strGroupRezCallout, strNearestDeadName);
-					SpamSafeRaidSay(m_strGroupRezCallout, strNearestDeadName);
-					return true;
+					/// I don't really have a good Spirit Dance algorithm but I do know it is way more efficient than standard group rez.
+					if (CastAbility(m_iSpiritDanceRezAbilityID, strNearestDeadName, false))
+					{
+						SpamSafeRaidSay(m_strSpiritDanceCallout, strNearestDeadName);
+						return true;
+					}
+					if (CastAbility(m_iGroupCombatRezAbilityID, strNearestDeadName, false))
+					{
+						SpamSafeRaidSay(m_strGroupRezCallout, strNearestDeadName);
+						return true;
+					}
 				}
 				else
 				{
@@ -385,7 +393,6 @@ namespace EQ2GlassCannon
 						CastAbility(m_iSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
 						(!Me.IsHated && CastAbility(m_iGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
 					{
-						SpamSafeGroupSay(m_strSingleRezCallout, strNearestDeadName);
 						SpamSafeRaidSay(m_strSingleRezCallout, strNearestDeadName);
 						return true;
 					}
