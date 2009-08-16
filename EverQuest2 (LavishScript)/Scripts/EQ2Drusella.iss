@@ -28,7 +28,7 @@ function main()
 				Script[EQ2Bot]:Pause
 				Echo EQ2Drusella - Eq2bot paused
 
-				if ${Me.Pet(exists)
+				if ${Me.Pet(exists)}
 					EQ2Execute /pet backoff
 
 				do
