@@ -159,36 +159,6 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public IEnumerable<Actor> EnumCustomActors(params string[] astrParams)
-		{
-			Program.EQ2.CreateCustomActorArray(astrParams);
-
-			for (int iIndex = 1; iIndex <= Program.EQ2.CustomActorArraySize; iIndex++)
-				yield return Program.s_Extension.CustomActor(iIndex);
-		}
-
-		/************************************************************************************/
-		/// <summary>
-		/// Frame lock is assumed to be held before this function is called.
-		/// </summary>
-		public static Actor GetNonPetActor(string strName)
-		{
-			Actor PlayerActor = Program.s_Extension.Actor(strName);
-
-			/// Try again if it's invalid or it's a pet.
-			if (!PlayerActor.IsValid || PlayerActor.IsAPet)
-			{
-				PlayerActor = Program.s_Extension.Actor(strName, "notid", PlayerActor.ID.ToString());
-			}
-
-			if (!PlayerActor.IsValid || PlayerActor.IsAPet)
-				PlayerActor = null;
-
-			return PlayerActor;
-		}
-
-
-		/************************************************************************************/
 		public void SpamSafeGroupSay(string strFormat, params object[] aobjParams)
 		{
 			if (!Me.Grouped)
