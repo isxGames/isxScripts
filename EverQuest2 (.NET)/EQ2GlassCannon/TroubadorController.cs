@@ -301,10 +301,6 @@ namespace EQ2GlassCannon
 				if (CastAbility(m_iRhythmBladeAbilityID))
 					return true;
 
-				/// Fast stealth.
-				if (CastAbility(m_iBumpAbilityID))
-					return true;
-
 				if (CastAbility(m_iSingleMentalSnareDebuffAbilityID))
 					return true;
 
