@@ -354,19 +354,35 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// "Flanking or behind" means everything but the 120-degree arc in front.
+		/// </summary>
+		/// <param name="iAbilityID"></param>
+		/// <returns></returns>
 		public bool CastAbilityFromFlankingOrBehind(int iAbilityID)
 		{
 			return CastAbility(iAbilityID, 60.0, 300.0);
 		}
 
 		/************************************************************************************/
-		protected int GetBlueOffensiveAbilityCompatibleTargetCount(float fRadius)
+		/// <summary>
+		/// Not all PBAE-like abilities have an official radius,
+		/// so allowing this function to be exposed allows derived classes to pretend that a radius does exist,
+		/// also caching the value.
+		/// </summary>
+		protected int GetBlueOffensiveAbilityCompatibleTargetCount(int iAbilityID, double fRadiusOverride)
 		{
 			int iValidVictimCount = 0;
-			foreach (Actor ThisActor in Program.EnumActors("byDist", fRadius.ToString(), "npc"))
+			if (m_AbilityCompatibleTargetCountCache.ContainsKey(iAbilityID))
+				iValidVictimCount = m_AbilityCompatibleTargetCountCache[iAbilityID];
+			else
 			{
-				if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead)
-					iValidVictimCount++;
+				foreach (Actor ThisActor in Program.EnumActors("byDist", fRadiusOverride.ToString(), "npc"))
+				{
+					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead)
+						iValidVictimCount++;
+				}
+				m_AbilityCompatibleTargetCountCache.Add(iAbilityID, iValidVictimCount);
 			}
 			return iValidVictimCount;
 		}
@@ -378,16 +394,7 @@ namespace EQ2GlassCannon
 			if (ThisAbility == null)
 				return 0;
 
-			int iValidVictimCount = 0;
-			if (m_AbilityCompatibleTargetCountCache.ContainsKey(iAbilityID))
-				iValidVictimCount = m_AbilityCompatibleTargetCountCache[iAbilityID];
-			else
-			{
-				iValidVictimCount = GetBlueOffensiveAbilityCompatibleTargetCount(ThisAbility.m_fEffectRadius);
-				m_AbilityCompatibleTargetCountCache.Add(iAbilityID, iValidVictimCount);
-			}
-
-			return iValidVictimCount;
+			return GetBlueOffensiveAbilityCompatibleTargetCount(iAbilityID, ThisAbility.m_fEffectRadius);
 		}
 
 		/************************************************************************************/
@@ -421,6 +428,8 @@ namespace EQ2GlassCannon
 		{
 			if (!m_bUseGreenAEs || m_OffensiveTargetActor == null)
 				return false;
+
+			/// I'm tempted to pre-filter based on Actor.EncounterSize but I don't trust that value.
 
 			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
 			if (ThisAbility == null)

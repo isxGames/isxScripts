@@ -37,7 +37,7 @@ namespace EQ2GlassCannon
 			if (Me.Arcane > 0)
 				return CastAbility(m_iCureArcaneAbilityID, Me.Name, true);
 
-			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bCureMainTank))
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bCureUngroupedMainTank))
 			{
 				if (ThisStatus.m_iArcane > 0)
 				{

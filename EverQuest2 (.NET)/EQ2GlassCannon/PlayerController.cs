@@ -184,15 +184,14 @@ namespace EQ2GlassCannon
 				}
 
 				/// This is black magic to force the client to reload the knowledge book.
-				Program.Log("Flashing knowledge book...");
 				Program.RunCommand("/showcombatartbook");
+				Program.Log("Waiting for abilities to load from the server...");
 				Program.FrameWait(TimeSpan.FromSeconds(3.0f));
 				Program.RunCommand("/toggleknowledge");
-				Program.Log("Done flashing knowledge book.");
 			}
 
-#if DEBUG
-			string strLogFileName = string.Format("{0}.{1} ability table debug dump.txt", Program.EQ2.ServerName, Me.Name);
+#if DEBUG0
+			string strLogFileName = string.Format("{0}.{1} ability table debug dump.txt", Program..ServerName, Me.Name);
 			strLogFileName = Path.Combine(Program.s_strINIFolderPath, strLogFileName);
 			using (StreamWriter OutputFile = new StreamWriter(strLogFileName, false, Encoding.UTF8))
 			{
@@ -404,7 +403,8 @@ namespace EQ2GlassCannon
 					strMessage.StartsWith("You fish") ||
 					strMessage.StartsWith("You failed to fish anything from") ||
 					strMessage.StartsWith("You mine") ||
-					strMessage.StartsWith("You failed to mine anything from"))
+					strMessage.StartsWith("You failed to mine anything from") ||
+					strMessage.StartsWith("You do not have enough skill"))
 				{
 					Program.Log("Harvesting attempt complete.");
 					m_bAutoHarvestInProgress = false;
@@ -447,7 +447,6 @@ namespace EQ2GlassCannon
 					Program.Log("Custom trigger command received (\"{0}\").", ThisTrigger.m_strSubstring);
 					foreach (string strThisCommand in ThisTrigger.m_astrCommands)
 					{
-						Program.Log("Executing: {0}", strThisCommand);
 						Program.RunCommand(strThisCommand, m_strCommandingPlayer);
 					}
 					return true;
@@ -458,7 +457,7 @@ namespace EQ2GlassCannon
 			if (string.Compare(strFrom, m_strCommandingPlayer, true) != 0)
 				return false;
 
-			Actor CommandingPlayerActor = GetNonPetActor(m_strCommandingPlayer);
+			Actor CommandingPlayerActor = Program.GetNonPetActor(m_strCommandingPlayer);
 
 			/// This is the assist call; direct the bot to begin combat.
 			if (strLowerCaseMessage.Contains(m_strAssistSubphrase))
@@ -620,7 +619,7 @@ namespace EQ2GlassCannon
 				/// Grab the so-named actor nearest to the commander.
 				double fNearestDistance = 50.0;
 				Actor NearestActor = null;
-				foreach (Actor ThisActor in EnumCustomActors(strActorName))
+				foreach (Actor ThisActor in Program.EnumActors(strActorName))
 				{
 					if (ThisActor.Name != strActorName)
 						continue;
@@ -763,7 +762,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public void ChangePositioningStance(PositioningStance eNewStance)
 		{
-			Actor CommandingPlayerActor = GetNonPetActor(m_strCommandingPlayer);
+			Actor CommandingPlayerActor = Program.GetNonPetActor(m_strCommandingPlayer);
 
 			/// Deactivate the existing stance.
 			if (m_ePositioningStance == PositioningStance.CustomAutoFollow ||
@@ -878,7 +877,6 @@ namespace EQ2GlassCannon
 					{
 						if (AutoFollowActor.DoFace())
 						{
-							Program.Log("Auto-following {0}.", m_strAutoFollowTarget);
 							Program.RunCommand("/follow {0}", m_strAutoFollowTarget);
 							return true;
 						}
@@ -922,9 +920,9 @@ namespace EQ2GlassCannon
 					m_ptStayLocation = new Point3D(m_FriendDictionary[m_strCommandingPlayer].ToActor());
 				}
 
-				if (!MeActor.IsClimbing && MeActor.CanTurn)
+				if (/*!MeActor.IsClimbing &&*/ MeActor.CanTurn)
 				{
-					double fRange = GetActorDistance3D(MeActor, m_ptStayLocation);
+					double fRange = GetActorDistance2D(MeActor, m_ptStayLocation);
 
 					/// If target suddenly ported from near to ridiculously far away, almost errantly, then call it off.
 					/// But if the target began the stance far away and is approaching near, then allow it to continue,
@@ -975,7 +973,7 @@ namespace EQ2GlassCannon
 			else if (m_ePositioningStance == PositioningStance.SpawnWatch)
 			{
 				Actor ActualFoundActor = null;
-				foreach (Actor ThisActor in EnumCustomActors())
+				foreach (Actor ThisActor in Program.EnumActors())
 				{
 					string strThisActorName = ThisActor.Name.Trim().ToLower();
 					if (strThisActorName == m_strSpawnWatchTarget)
@@ -1017,7 +1015,7 @@ namespace EQ2GlassCannon
 
 			else if (m_ePositioningStance == PositioningStance.DespawnWatch)
 			{
-				foreach (Actor ThisActor in EnumCustomActors())
+				foreach (Actor ThisActor in Program.EnumActors())
 				{
 					string strThisActorName = ThisActor.Name.Trim().ToLower();
 					if ((strThisActorName == m_strSpawnWatchTarget) && !ThisActor.IsDead)
@@ -1225,7 +1223,7 @@ namespace EQ2GlassCannon
 				return false;
 			}
 
-			Actor OffensiveTargetActor = Program.s_Extension.Actor(m_iOffensiveTargetID);
+			Actor OffensiveTargetActor = Program.GetActor(m_iOffensiveTargetID);
 
 			if (OffensiveTargetActor == null ||
 				!OffensiveTargetActor.IsValid ||
