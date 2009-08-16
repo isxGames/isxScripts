@@ -26,7 +26,6 @@ variable string NameFilter3
 ;=================================
 ;Run Variables
 ;=================================
-
 variable int RunBroker
 variable int RunDepot
 variable int SlotFull
@@ -1521,6 +1520,10 @@ function SellAdeptI()
 function AddToDepot()
 {
 	variable int KeyNum=1
+	variable int FixLine
+	variable int FixLength
+	variable string TestString
+	variable string DropString
 	Event[EQ2_onIncomingText]:AttachAtom[GetText]
 	RunDepot:Set[1]
 	SkipItem:Set[0]
@@ -1535,6 +1538,20 @@ function AddToDepot()
 	{
 		Do
 		{
+			TestString:Set[${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}]
+			if ${TestString.Left[3].Equal["{n}"]}
+			{
+			DropString:Set[${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}]
+			FixLine:Set[${TestString.Find["{pl"]} - 1]
+			TestString:Set[${TestString.Left[${FixLine}]}]
+			FixLength:Set[${TestString.Length} - 3]
+			TestString:Set[${TestString.Right[${FixLength}]}]
+			}
+			else
+			{
+			DropString:Set[${Me.CustomInventory[ExactName,${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}]
+			TestString:Set[${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]]
+			}
 			echo DEBUG EQ2Depot Item Name: ${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]} 
 			if ${SkipItem} == 1
 				{
@@ -1543,9 +1560,9 @@ function AddToDepot()
 					SkipItem:Set[0]
 				}
 			
-			if ${Me.CustomInventory[ExactName,${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity} > 0
+			if ${DropString} > 0
 			{
-				call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]}"
+				call AddDepotLog "Adding ${Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}].Quantity}  ${TestString}"
 				Me.CustomInventory[${SettingXML[./ScriptConfig/SupplyDepotList.xml].Set[Supplys].Key[${KeyNum}]}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
 				
@@ -1582,6 +1599,7 @@ function AddToDepot()
 		Script[EQ2Inventory]:End
 	}
 }
+	
 
 atom GetText(string DepotItemFull)
 {
@@ -1669,117 +1687,7 @@ function DeleteMeat()
 
 function EQ2Hirelings()
 {
-	variable int GathererTier
-	variable int HunterTier
-	variable int MinerTier
-	variable int StartTime
-	variable int StopTime
-	variable int RunTime
-	variable int TripCount
-	
-	RunTime:Set[${Time.Timestamp}]
-	wait 5
-	RunHirelings:Set[1]
-	TripCount:Set[0]
-	wait 5
-	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Sending Hirelings to Harvest.]
-	wait 5
-	do
-	{
-		GathererTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererTierNumber]}]
-		HunterTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterTierNumber]}]
-		MinerTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerTierNumber]}]
-	
-		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
-		{
-			Actor[guild,"Guild Gatherer"]:DoTarget
-			wait 10
-			Actor[guild,"Guild Gatherer"]:DoubleClick
-			wait 25
-			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${GathererTier}]:LeftClick
-			wait 10
-		}
-		if ${UIElement[HunterHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
-		{
-			Actor[guild,"Guild Hunter"]:DoTarget
-			wait 10
-			Actor[guild,"Guild Hunter"]:DoubleClick
-			wait 25
-			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${HunterTier}]:LeftClick
-			wait 10
-		}
-		if ${UIElement[MinerHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
-		{
-			Actor[guild,"Guild Miner"]:DoTarget
-			wait 10
-			Actor[guild,"Guild Miner"]:DoubleClick
-			wait 25
-			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${MinerTier}]:LeftClick
-			wait 10
-		}
-		StartTime:Set[${Time.Timestamp}]
-		wait 10
-		StopTime:Set[${Math.Calc64[${StartTime}+7260]}]
-		wait 5
-		UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Waiting for Hirelings to Return.]
-		wait 5
-		do
-		{
-			UIElement[RuntimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${Math.Calc[(${Time.Timestamp}-${RunTime})/60].Precision[2]} min.]
-		 	UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${Math.Calc[(${StopTime}-${Time.Timestamp})/60].Precision[2]} min.]
-		}
-		while ${Math.Calc64[(${StopTime}-${Time.Timestamp}]} > 0 && ${RunHirelings} == 1
-		
-		if ${RunHirelings} == 0
-		{
-			UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
-			wait 5
-			Return
-		}
-		
-		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
-		{
-			Actor[guild,"Guild Gatherer"]:DoTarget
-			wait 10
-			Actor[guild,"Guild Gatherer"]:DoubleClick
-			wait 25
-			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
-			wait 10
-		}
-		if ${UIElement[HunterHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
-		{
-			Actor[guild,"Guild Hunter"]:DoTarget
-			wait 10
-			Actor[guild,"Guild Hunter"]:DoubleClick
-			wait 25
-			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
-			wait 10
-		}
-		if ${UIElement[MinerHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
-		{
-			Actor[guild,"Guild Miner"]:DoTarget
-			wait 10
-			Actor[guild,"Guild Miner"]:DoubleClick
-			wait 25
-			EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
-			wait 10
-		}
-		TripCount:Inc
-		wait 5
-		UIElement[TripText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${TripCount}]
-		
-		if ${UIElement[UseHarvestDepot@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
-		{
-			UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Adding Items to Supply Depot.]
-			wait 5
-			call AddToDepot
-		}
-		UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Sending Hirelings to Harvest.]
-		wait 5
-	}
-	while ${RunHirelings} == 1
-	wait 5
-	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
+	RunScript EQ2Inventory/SubScripts/EQ2Hirelings
 }
 
 function AddJunk()

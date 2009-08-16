@@ -100,5 +100,15 @@
 		<Setting Name="severed maple">Save</Setting>
 		<Setting Name="tanned leather pelt">Save</Setting>
 		<Setting Name="frog leg">Save</Setting>
+		<Setting Name="lion meat">Save</Setting>
+		<Setting Name="pig meat">Save</Setting>
+		<Setting Name="seafury mackerel">Save</Setting>
+		<Setting Name="smoldering material">Save</Setting>
+		<Setting Name="brute flesh">Save</Setting>
+		<Setting Name="Smoldering Dust">Save</Setting>
+		<Setting Name="magma rock fish">Save</Setting>
+		<Setting Name="flying fish">Save</Setting>
+		<Setting Name="rough topaz">Save</Setting>
+		<Setting Name="redwood lumber">Save</Setting>
 	</Set>
 </InnerSpaceSettings>
