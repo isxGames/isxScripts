@@ -88,7 +88,7 @@ namespace EQ2GlassCannon
 			int iTotalNoxiousBearers = 0;
 			int iTotalElementalBearers = 0;
 
-			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bCureMainTank))
+			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bCureUngroupedMainTank))
 			{
 				/// Example: If a group-wide effect is in place,
 				/// and then a horrible single-target effect is placed on,
