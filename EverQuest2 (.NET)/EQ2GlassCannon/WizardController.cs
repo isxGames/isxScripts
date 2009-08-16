@@ -150,7 +150,6 @@ namespace EQ2GlassCannon
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
 				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
-				int iEncounterSize = m_OffensiveTargetActor.EncounterSize;
 
 				if (CastHOStarter())
 					return true;
@@ -263,8 +262,17 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 5))
 						return true;
 
-					if (bDumbfiresAdvised && !IsAbilityMaintained(m_iFurnaceOfRoAbilityID) && CastBlueOffensiveAbility(m_iFurnaceOfRoAbilityID, 1))
-						return true;
+					/// Furnace of Ro, static pet, permanent location. Very weird beast.
+					if (m_bUseBlueAEs && !IsAbilityMaintained(m_iFurnaceOfRoAbilityID))
+					{
+						/// We're making a guesstimate that the pet's radius is 6 meters,
+						/// including margin space for any NPC's that may come into its path en route to the PC's.
+						if (m_OffensiveTargetActor.IsNamed || GetBlueOffensiveAbilityCompatibleTargetCount(m_iFurnaceOfRoAbilityID, 6.0) > 3)
+						{
+							if (CastAbility(m_iFurnaceOfRoAbilityID))
+								return true;
+						}
+					}
 
 					if (CastAbility(m_iStormingTempestAbilityID))
 						return true;
