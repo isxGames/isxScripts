@@ -344,20 +344,25 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public virtual bool OnChoiceWindowAppeared(ChoiceWindow ThisWindow)
 		{
-			Program.Log("Choice window appeared: {0}", ThisWindow.Text);
+			Program.Log("Choice window appeared: \"{0}\"", ThisWindow.Text);
 
 			/// Group invite window.
 			/// BUG: This doesn't work for some reason if the inviter is in a different zone!
-			if (ThisWindow.Text.Contains("has invited you to join a group."))
+			if (ThisWindow.Text.Contains("has invited you to join a group"))
 			{
 				/// Only accept group invites from the commanding player.
 				if (!string.IsNullOrEmpty(m_strCommandingPlayer) && ThisWindow.Text.StartsWith(m_strCommandingPlayer))
 				{
 					Program.Log("Accepting invite from commanding player.");
+					//ThisWindow.DoChoice1();
 					Program.RunCommand("/acceptinvite");
 				}
 				else
+				{
+					Program.Log("Declining invite from unauthorized player.");
+					//ThisWindow.DoChoice2();
 					Program.RunCommand("/declineinvite");
+				}
 
 				return true;
 			}
@@ -416,8 +421,23 @@ namespace EQ2GlassCannon
 				strMessage == "Target is not alive" ||
 				strMessage == "Can't see target" ||
 				strMessage == "Too far away")
+			{
 				m_NextPermissibleCastTime = DateTime.Now;
+				return true;
+			}
 
+			/// TODO: Now parse out the details.
+
+			return false;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Everything will gravitate to this function eventually.
+		/// </summary>
+		/// <returns></returns>
+		public virtual bool OnIncomingChatText(string strChannel, string strFrom, string strMessage)
+		{
 			return false;
 		}
 
