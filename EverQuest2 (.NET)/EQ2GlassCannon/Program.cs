@@ -58,8 +58,6 @@ namespace EQ2GlassCannon
 					s_EQ2 = s_Extension.EQ2();
 				if (s_Me == null)
 					s_Me = s_Extension.Me();
-
-				s_MeActor = s_Me.ToActor();
 			}
 			catch
 			{
@@ -67,19 +65,29 @@ namespace EQ2GlassCannon
 				return false;
 			}
 
-			/// This is an annoying quirk. It throws an exception only during zoning.
 			try
 			{
 				s_bIsZoning = s_EQ2.Zoning;
 			}
 			catch
 			{
+				/// This is an annoying quirk. It throws an exception only during zoning.
 				Log("Exception thrown when accessing EQ2.Zoning. Assuming the value to be \"true\".");
 				s_bIsZoning = true;
 			}
 
 			if (!s_bIsZoning)
 			{
+				try
+				{
+					s_MeActor = s_Me.ToActor();
+				}
+				catch
+				{
+					Log("Exception thrown when accessing self actor.");
+					return false;
+				}
+
 				try
 				{
 					/// A little thing I discovered while watching console spam.
@@ -120,27 +128,20 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public static DateTime RetrieveLinkerTimestamp(string strFilePath)
 		{
+			byte[] abyBuffer = new byte[2048];
+			using (Stream s = new FileStream(strFilePath, FileMode.Open, FileAccess.Read))
+				s.Read(abyBuffer, 0, 2048);
+
 			const int PE_HEADER_OFFSET = 60;
 			const int LINKER_TIMESTAMP_OFFSET = 8;
 
-			byte[] b = new byte[2048];
+			int i = BitConverter.ToInt32(abyBuffer, PE_HEADER_OFFSET);
+			int iSecondsSince1970 = BitConverter.ToInt32(abyBuffer, i + LINKER_TIMESTAMP_OFFSET);
 
-			try
-			{
-				using (Stream s = new FileStream(strFilePath, FileMode.Open, FileAccess.Read))
-					s.Read(b, 0, 2048);
-			}
-			finally
-			{
-			}
-
-			int i = BitConverter.ToInt32(b, PE_HEADER_OFFSET);
-			int iSecondsSince1970 = BitConverter.ToInt32(b, i + LINKER_TIMESTAMP_OFFSET);
-
-			DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0);
-			dt = dt.AddSeconds(iSecondsSince1970);
-			dt = dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
-			return dt;
+			DateTime LinkerTimestamp = new DateTime(1970, 1, 1, 0, 0, 0);
+			LinkerTimestamp = LinkerTimestamp.AddSeconds(iSecondsSince1970);
+			LinkerTimestamp = LinkerTimestamp.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(LinkerTimestamp).Hours);
+			return LinkerTimestamp;
 		}
 
 		/************************************************************************************/
@@ -361,7 +362,8 @@ namespace EQ2GlassCannon
 							Log("Automatically accepting quest \"{0}\"...", s_EQ2.PendingQuestName);
 							s_EQ2.AcceptPendingQuest();
 
-							/// TODO: Even though the quest gets accepted, the window doesn't disappear. We gotta make it disappear.
+							/// Stolen from "EQ2Quest.iss". The question I have: isn't AcceptPendingQuest() redundant then?
+							s_Extension.EQ2UIPage("Popup", "RewardPack").Child("button", "RewardPack.Accept").LeftClick();
 						}
 
 						unchecked { s_lFrameCount++; }
@@ -610,7 +612,7 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		private static Dictionary<string, DateTime> m_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
-		private static readonly TimeSpan s_CommandThrottleTimeout = TimeSpan.FromSeconds(10);
+		private static readonly TimeSpan s_CommandThrottleTimeout = TimeSpan.FromSeconds(5);
 
 		/************************************************************************************/
 		/// <summary>
