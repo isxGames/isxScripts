@@ -89,7 +89,8 @@ namespace EQ2GlassCannon
 
 			if (AttemptCureArcane())
 				return true;
-
+			if (UseSpellGeneratedHealItem())
+				return true;
 			if (AttemptEmergencyPowerFeed())
 				return true;
 
@@ -178,10 +179,10 @@ Keep acid running/don't over cas it.
 					if (m_bUseGreenAEs && !IsAbilityMaintained(m_iGreenNoxiousDebuffAbilityID) && CastGreenOffensiveAbility(m_iGreenNoxiousDebuffAbilityID, 1))
 						return true;
 
-					if (m_OffensiveTargetActor.IsNamed && !IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
+					if (!IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 5))
+					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 3))
 						return true;
 					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 7))
 						return true;
@@ -193,7 +194,7 @@ Keep acid running/don't over cas it.
 					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 6))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 4))
+					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 2))
 						return true;
 					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 6))
 						return true;
@@ -206,10 +207,6 @@ Keep acid running/don't over cas it.
 						return true;
 
 					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 3))
-						return true;
-
-					/// We don't get concerned with single debuffs until AE potential is used up.
-					if (!m_OffensiveTargetActor.IsSolo && !IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
 						return true;
 
 					if (CastAbility(m_iSinglePrimaryPoisonNukeAbilityID))
