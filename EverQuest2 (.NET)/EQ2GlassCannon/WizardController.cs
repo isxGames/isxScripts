@@ -104,7 +104,8 @@ namespace EQ2GlassCannon
 
 			if (AttemptCureArcane())
 				return true;
-
+			if (UseSpellGeneratedHealItem())
+				return true;
 			if (AttemptEmergencyPowerFeed())
 				return true;
 

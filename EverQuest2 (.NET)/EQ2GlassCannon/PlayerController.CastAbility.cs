@@ -16,8 +16,8 @@ namespace EQ2GlassCannon
 	{
 		protected bool m_bAutoHarvestInProgress = false;
 		protected DateTime m_LastAutoHarvestAttemptTime = DateTime.FromBinary(0);
-		protected DateTime m_LastCastTime = DateTime.Now;
-		protected DateTime m_NextPermissibleCastTime = DateTime.Now;
+		protected DateTime m_LastCastStartTime = DateTime.Now;
+		protected DateTime m_LastCastEndTime = DateTime.Now;
 
 		/************************************************************************************/
 		protected class CachedAbility
@@ -85,11 +85,8 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
-				/// The "/useability" command often doesn't work for shit because it toggles queuing on and off way too fucking rapidly.
-				//Program.Log("Casting {0}...", m_strName);
 				Program.RunCommand("/useability {0}", m_strName);
 				return true;
-				//return m_OriginalAbility.Use();
 			}
 
 			public bool Use(string strPlayerTarget)
@@ -100,7 +97,6 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
-				//Program.Log("Casting {0} on {1}...", m_strName, strPlayerTarget);
 				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_strName);
 				return true;
 			}
@@ -179,9 +175,58 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected void StartCastTimers(CachedAbility ThisAbility)
 		{
-			m_LastCastTime = DateTime.Now;
-			m_NextPermissibleCastTime = DateTime.Now + TimeSpan.FromSeconds(ThisAbility.m_fCastTimeSeconds + ThisAbility.m_fRecoveryTimeSeconds);
+			m_LastCastStartTime = DateTime.Now;
+			m_LastCastEndTime = DateTime.Now + TimeSpan.FromSeconds(ThisAbility.m_fCastTimeSeconds + ThisAbility.m_fRecoveryTimeSeconds);
 			return;
+		}
+
+		/************************************************************************************/
+		protected void StartCastTimers(Item ThisItem)
+		{
+			m_LastCastStartTime = DateTime.Now;
+			m_LastCastEndTime = DateTime.Now + TimeSpan.FromSeconds(ThisItem.CastingTime + ThisItem.RecoveryTime);
+			return;
+		}
+
+		/************************************************************************************/
+		protected void CancelCast()
+		{
+			m_LastCastEndTime = DateTime.Now;
+			Program.RunCommand("/cancel_spellcast");
+			return;
+		}
+
+		/************************************************************************************/
+		protected bool IsCasting
+		{
+			get
+			{
+				return Me.CastingSpell || (DateTime.Now < m_LastCastEndTime);
+			}
+		}
+
+		/************************************************************************************/
+		protected bool UseInventoryItem(string strItemName)
+		{
+			try
+			{
+				if (IsCasting)
+					return false;
+
+				Item ThisItem = Me.Inventory("ExactName", strItemName);
+				if (!ThisItem.IsValid || !ThisItem.IsReady || !ThisItem.IsActivatable)
+					return false;
+
+				Program.Log("Attempting to use clicky item \"{0}\" ({1}) from inventory bags...", ThisItem.Name, ThisItem.LinkID);
+				//StartCastTimers(ThisItem); /// <-- Item.CastingTime and Item.RecoveryTime throw exceptions.
+				Program.RunCommand("/use_itemvdl {0}", ThisItem.LinkID);
+				return true;
+			}
+			catch
+			{
+				Program.Log("Exception thrown when attempting to use item \"{0}\".", strItemName);
+				return false;
+			}
 		}
 
 		/************************************************************************************/
@@ -213,8 +258,8 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			/// I first check against zero to dodge the Character class value lookup.
-			/// Most abilities have no concentration cost and for them this check is a waste of CPU.
+			/// I first check against zero to dodge the Character class value lookup because most
+			/// abilities have no concentration cost and for them this check is a waste of CPU.
 			/// NOTE: I had to comment this out for now because Mana Flow incorrectly reports a conc cost of 1.
 			/// Other spells are reporting bogus costs too.
 			/*if (ThisAbility.m_iConcentrationCost > 0)
@@ -491,8 +536,7 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		public bool CastNextMez(params int[] aiMezAbilityIDs)
 		{
-			/// This action is only intended for combat, where a primary target has been already selected.
-			if (!m_bMezAdds || m_OffensiveTargetActor == null)
+			if (!m_bMezAdds)
 				return false;
 
 			float fHighestRangeAlreadyScanned = 0;
@@ -514,7 +558,7 @@ namespace EQ2GlassCannon
 					if (!ThisActor.IsDead &&
 						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly.
 						ThisActor.CanTurn &&
-						ThisActor.ID != m_OffensiveTargetActor.ID && /// It can't be our current burn mob.
+						(m_OffensiveTargetActor == null || ThisActor.ID != m_OffensiveTargetActor.ID) && /// It can't be our current burn mob.
 						ThisActor.Type != "NoKill NPC" &&
 						ThisActor.Target().IsValid &&
 						ThisActor.Target().Type == "PC") /// It has to be targetting a player; an indicator of aggro.
@@ -526,7 +570,7 @@ namespace EQ2GlassCannon
 							return true;
 						}
 
-						Program.Log("Mez target found: \"{0}\"", ThisActor.Name);
+						Program.Log("Mez target found: \"{0}\" ({1})", ThisActor.Name, ThisActor.ID);
 
 						/// Not generally our policy to do more than one server command in a frame but we make an exception here.
 						if (ThisActor.DoTarget() && CastAbility(iThisAbilityID))
@@ -673,6 +717,8 @@ namespace EQ2GlassCannon
 					if (ThisMaintained.Type == "Group" || ThisMaintained.Type == "Raid")
 						return bAnyActionTaken;
 
+					/// Because this is based off of an actor rather than just storing the target name string,
+					/// we have weird side effects like buffs being dropped on anyone who is in a different zone.
 					string strTargetName = ThisMaintained.Target().Name;
 
 					/// Remove from the list everyone who *has* the buff already.
@@ -736,7 +782,7 @@ namespace EQ2GlassCannon
 			if (CancelMaintained(iAbilityID, !bOn))
 				return true;
 
-			/// Target myself to remove ambiguity.
+			/// Cast it explicitly on myself to remove ambiguity.
 			if (bOn && !IsAbilityMaintained(iAbilityID) && CastAbility(iAbilityID, Me.Name, true))
 				return true;
 
@@ -875,6 +921,25 @@ namespace EQ2GlassCannon
 				return false;
 
 			return CastAbility(m_iFurySalveHealAbilityID, strLowestHealthName, true);
+		}
+
+		/************************************************************************************/
+		public bool UseSpellGeneratedHealItem()
+		{
+			if (!MeActor.IsIdle || IsCasting)
+				return false;
+
+			VitalStatus MyStatus = null;
+			if (!GetVitalStatus(Me.Name, ref MyStatus))
+				return false;
+
+			if (MyStatus.HealthRatio < 0.5)
+			{
+				if (UseInventoryItem("Innoruuk's Child"))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

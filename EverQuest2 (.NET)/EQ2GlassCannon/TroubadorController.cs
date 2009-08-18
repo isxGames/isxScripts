@@ -167,9 +167,10 @@ namespace EQ2GlassCannon
 			if (Me.CastingSpell || MeActor.IsDead)
 				return true;
 
+			if (UseSpellGeneratedHealItem())
+				return true;
 			if (DisarmChests())
 				return true;
-
 			if (CastJestersCap())
 				return true;
 
