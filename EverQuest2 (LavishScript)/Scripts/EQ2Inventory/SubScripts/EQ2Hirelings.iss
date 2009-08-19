@@ -15,9 +15,9 @@ function main()
 	
 	do
 	{
-		GathererTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[GathererTierNumber]}]
-		HunterTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[HunterTierNumber]}]
-		MinerTier:Set[${SettingXML[Scripts/EQ2Inventory/CharConfig/${Me.Name}.xml].Set[EQ2Hirelings].GetString[MinerTierNumber]}]
+		GathererTier:Set[${UIElement[GathererTierNumber@EQ2Hirelings@GUITabs@EQ2Inventory].SelectedItem.ID}]
+		HunterTier:Set[${UIElement[HunterTierNumber@EQ2Hirelings@GUITabs@EQ2Inventory].SelectedItem.ID}]
+		MinerTier:Set[${UIElement[MinerTierNumber@EQ2Hirelings@GUITabs@EQ2Inventory].SelectedItem.ID}]
 	
 		if ${UIElement[GathererHireling@EQ2Hirelings@GUITabs@EQ2Inventory].Checked}
 		{
@@ -55,13 +55,13 @@ function main()
 		do
 		{
 			UIElement[RuntimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${Math.Calc[(${Time.Timestamp}-${RunTime})/60].Precision[2]} min.]
-		 	UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${Math.Calc[(${StopTime}-${Time.Timestamp})/60].Precision[2]} min.]
+			UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[${Math.Calc[(${StopTime}-${Time.Timestamp})/60].Precision[2]} min.]
 			
 			if !${RunHirelings}
 			{
 				UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
 				UIElement[RuntimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[ ]
-				UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[ ]	
+				UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[ ]
 				wait 5
 				EndScript EQ2Hirelings
 			}
@@ -77,7 +77,7 @@ function main()
 		{
 			UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
 			UIElement[RuntimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[ ]
-		 	UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[ ]	
+			UIElement[WaittimeText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[ ]
 			wait 5
 			EndScript EQ2Hirelings
 		}
@@ -122,7 +122,7 @@ function main()
 		UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[Sending Hirelings to Harvest.]
 		wait 5
 	}
-	while ${RunHirelings}
+	while ${RunHirelings} && ${UIElement[EQ2Inventory](exists)}
 	wait 5
 	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
 }
