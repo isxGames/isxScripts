@@ -67,6 +67,8 @@ function main()
 	declare EQ2InvInterface _EQ2InvInterface global
 	call InitializeSettings
 
+	Event[EQ2_onIncomingText]:AttachAtom[GetText]
+
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
 	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
 	RunBroker:Set[1]
@@ -348,11 +350,11 @@ function PlaceRare()
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[RHarvestT${i},checkbox].Checked}
 		{
-			call PlaceItemsFromSet ${Harvests.FindSet[${Math.Calc[${i}*2]}].GUID}
+			call PlaceItemsFromSet ${Harvests.FindSet[${Math.Calc[${i}*2]}].GUID} ${RHBox}
 		}
 	}
 }
-function PlaceItemsFromSet(settingsetref SSR)
+function PlaceItemsFromSet(settingsetref SSR, int Container)
 {
 	variable iterator iter
 	SSR:GetSettingIterator[iter]
@@ -362,8 +364,8 @@ function PlaceItemsFromSet(settingsetref SSR)
 		{
 			if ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0
 			{
-				call AddLog "Adding ${Me.CustomInventory[${iter.Key}]].Quantity} ${iter.Key} to Broker" FF11CCFF
-				Me.CustomInventory[ExactName,${iter.Key}]:AddToConsignment[${Me.CustomInventory[${iter.Key}].Quantity},${RHBox},${Me.Vending[${RHBox}].Consignment[${iter.Key}].SerialNumber}]
+				call AddLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity} ${iter.Key} to Broker" FF11CCFF
+				Me.CustomInventory[ExactName,${iter.Key}]:AddToConsignment[${Me.CustomInventory[ExactName,${iter.Key}].Quantity},${Container},${Me.Vending[${Container}].Consignment[${iter.Key}].SerialNumber}]
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 			call CheckFocus
@@ -388,7 +390,7 @@ function PlaceHarvest()
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[CHarvestT${i},checkbox].Checked}
 		{
-			call PlaceItemsFromSet ${Harvests.FindSet[${Math.Calc[(${i}*2)-1]}].GUID}
+			call PlaceItemsFromSet ${Harvests.FindSet[${Math.Calc[(${i}*2)-1]}].GUID} ${CHBox}
 		}
 	}
 }
@@ -648,7 +650,7 @@ function PlaceStatusItems()
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[StatusItemT${i},checkbox].Checked}
 		{
-			call PlaceItemsFromSet ${StatusItems.FindSet[StatusT${i}]}
+			call PlaceItemsFromSet ${StatusItems.FindSet[StatusT${i}]} ${StatBox}
 		}
 	}
 }
@@ -667,7 +669,7 @@ function PlaceFertilizer()
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[FertT${i},checkbox].Checked}
 		{
-			call PlaceItemsFromSet ${Fertilizer.FindSet[FertT${i}]}
+			call PlaceItemsFromSet ${Fertilizer.FindSet[FertT${i}]} ${FertBox}
 		}
 	}
 }
@@ -702,7 +704,7 @@ function PlaceCustom()
 	call AddLog "**Checking Custom Items List**" FFFF00FF
 	Me:CreateCustomInventoryArray[nonbankonly]
 
-	call PlaceItemsFromSet ${CustomItems.FindSet[CustomItems].GUID}
+	call PlaceItemsFromSet ${CustomItems.FindSet[CustomItems].GUID} ${CustBox}
 }
 
 function DestroyItems()
@@ -960,12 +962,10 @@ function SellAdeptI()
 
 function AddToDepot()
 {
-	variable int KeyNum=1
 	variable int FixLine
 	variable int FixLength
 	variable string TestString
 	variable int Drop
-	Event[EQ2_onIncomingText]:AttachAtom[GetText]
 	RunDepot:Set[1]
 	SkipItem:Set[0]
 	SlotFull:Set[0]
@@ -981,39 +981,41 @@ function AddToDepot()
 	{
 		do
 		{
-			TestString:Set[${Me.CustomInventory[${iter.Key}]}]
-			if ${TestString.Left[3].Equal["{n}"]}
+			Drop:Set[1]
+			SkipItem:Set[0]
+			SlotFull:Set[0]
+			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull}
 			{
-				Drop:Set[${Me.CustomInventory[${iter.Key}].Quantity}]
-				TestString:Set[${TestString.Token[2,\}].Token[1,\{]}
-			}
-			else
-				Drop:Set[${Me.CustomInventory[ExactName,${iter.Key}].Quantity}]
+				if (${iter.Key.Length} <= 4)
+					break
 
-			echo DEBUG EQ2Depot Item Name: ${Me.CustomInventory[${iter.Key}]}
-			if ${SkipItem} == 1
+				TestString:Set[${Me.CustomInventory[${iter.Key}]}]
+				if ${TestString.Find[{n}]}
 				{
-					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
-					KeyNum:Inc
-					SkipItem:Set[0]
+					Drop:Set[${Me.CustomInventory[${iter.Key}].Quantity}]
+					TestString:Set[${TestString.Token[2,}].Token[1,{]}]
+					echo Found {n} -- TestString: ${TestString}
 				}
-			elseif ${Drop} > 0
-			{
+				else
+					Drop:Set[${Me.CustomInventory[ExactName,${iter.Key}].Quantity}]
+
+
+				if (${Drop} < 1)
+					break
+
+				echo DEBUG EQ2Depot Drop: ${Drop} Item Name: ${Me.CustomInventory[${iter.Key}]} Key: ${iter.Key}
+
 				call AddDepotLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity}  ${TestString}"
 				Me.CustomInventory[${iter.Key}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
 
 				if ${SlotFull} == 1
 					{
-						call AddDepotLog "---Slot ${Me.CustomInventory[${iter.Key}]} Max QTY!!---" FFFF0000
-						KeyNum:Inc
-						SlotFull:Set[0]
+						call AddDepotLog "---Slot ${TestString} Max QTY!!---" FFFF0000
 					}
 				if ${SkipItem} == 1
 				{
 					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
-					KeyNum:Inc
-					SkipItem:Set[0]
 				}
 			}
 		}
@@ -1148,7 +1150,7 @@ function EQ2Hirelings()
 
 function AddJunk()
 {
-	Junk.FindSet[Junk]:SetSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	noop ${Junk.FindSet[Junk].FindSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]}
 	Settings:SaveSettings[${Junk}]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
@@ -1156,7 +1158,7 @@ function AddJunk()
 
 function AddDestroy()
 {
-	Destroy.FindSet[Destroy]:SetSetting[[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	noop ${Destroy.FindSet[Destroy].FindSetting[[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]}
 	Settings:SaveSettings[${Destroy}]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
@@ -1164,7 +1166,7 @@ function AddDestroy()
 
 function AddCustom()
 {
-	Custom.FindSet[CustomItems]:SetSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]
+	noop ${Custom.FindSet[CustomItems].FindSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]}
 	Settings:SaveSettings[${Custom}]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
@@ -1172,7 +1174,7 @@ function AddCustom()
 
 function AddDepot()
 {
-	Depot.FindSet[Supplys]:SetSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Save]
+	noop ${Depot.FindSet[Supplys].FindSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Save]}
 	Settings:SaveSettings[${Depot}]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect

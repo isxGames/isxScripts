@@ -2760,12 +2760,12 @@
 					</Font>
 					<SelectMultiple>0</SelectMultiple>
 					<OnLeftDown>
-						if ${This.Checked}
-							Me.CustomInventory[${This.SelectedItem}]:Examine
+						if ${This.SelectedItems}
+							Me.Inventory[${This.SelectedItem}]:Examine
 					</OnLeftDown>
 					<OnLeftClick>
-						if ${This.Checked}
-							Me.CustomInventory[${This.SelectedItem}]:Examine
+						if ${This.SelectedItems}
+							Me.Inventory[${This.SelectedItem}]:Examine
 					</OnLeftClick>
 					<Sort>Text</Sort>
 				</listbox>
