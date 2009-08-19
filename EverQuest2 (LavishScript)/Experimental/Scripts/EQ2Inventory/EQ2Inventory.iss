@@ -50,11 +50,23 @@ variable settingsetref UserSettings
 variable settingsetref Root
 variable _Settings Settings
 ;=================================
-
+objectdef _EQ2InvInterface
+{
+	member:string GetSetting(string Setting)
+	{
+		return ${Settings.GetSetting[${Setting}]}
+	}
+	method SetSetting(string Setting, string Value)
+	{
+		Settings:SetSetting[${Setting},${Value}]
+		Settings:SaveSettings
+	}
+}
 function main()
 {
+	declare EQ2InvInterface _EQ2InvInterface global
 	call InitializeSettings
-	
+
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
 	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
 	RunBroker:Set[1]
@@ -64,7 +76,7 @@ function main()
 	RunHirelings:Set[1]
 	CloseScript:Set[0]
 	wait 1
-	
+
 	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
 	wait 5
 
@@ -92,7 +104,7 @@ function InitializeSettings()
 	Root:AddSet[Harvests]
 	Root:AddSet[StatusItems]
 	Root:AddSet[UserSettings]
-	
+
 	Junk:Set[${Root.FindSet[Junk]}]
 	Destroy:Set[${Root.FindSet[Destroy]}]
 	Custom:Set[${Root.FindSet[Custom]}]
@@ -101,7 +113,7 @@ function InitializeSettings()
 	Fertilizer:Set[${Root.FindSet[Fertilizer]}]
 	Harvests:Set[${Root.FindSet[Harvests]}]
 	StatusItems:Set[${Root.FindSet[StatusItems]}]
-	UserSettings:AddSetting[${Root.FindSet[UserSettings]}]
+	UserSettings:Set[${Root.FindSet[UserSettings]}]
 
 	; Load the static settings -- these will never be modified inside the script
 	; so never need to be exported.
@@ -109,10 +121,10 @@ function InitializeSettings()
 	Fertilizer:Import[./ScriptConfig/Fertilizer.xml]
 	Harvests:Import[./ScriptConfig/Harvests.xml]
 	StatusItems:Import[./ScriptConfig/StatusItems]
-	
+
 	UserSettings:AddSet[General Settings]
 	genset:Set[${UserSettings.FindSet[General Settings]}]
-	
+
 	; These are the setting sets we want to save. The script can modify these.
 	Settings:SetFilename[${Junk},./ScriptConfig/Junk.xml]
 	Settings:SetFilename[${Destroy},./ScriptConfig/Destroy.xml]
@@ -123,7 +135,7 @@ function InitializeSettings()
 	; this will load all the above settings.
 	Settings:LoadSettings
 
-	
+
 	; **Creating Settings**
 	; This sets up defaults for all the user settings
 	Settings:AddSetting[RunMyPrices,${genset},RunMyPrices,1]
@@ -132,6 +144,7 @@ function InitializeSettings()
 	Settings:AddSetting[ScanCollections,${genset},ScanCollections,1]
 	Settings:AddSetting[ScanTradeskills,${genset},ScanTradeskills,1]
 	Settings:AddSetting[ScanSpellBooks,${genset},ScanSpellBooks,1]
+	Settings:AddSetting[ScanLoreAndLegend,${genset},ScanLoreAndLegend,1]
 	Settings:AddSetting[ScanStatus,${genset},ScanStatus,1]
 	Settings:AddSetting[ScanFertilizer,${genset},ScanFertilizer,1]
 	Settings:AddSetting[ScanCustom,${genset},ScanCustom,1]
@@ -171,6 +184,7 @@ function InitializeSettings()
 	Settings:AddSetting[Warlock,${genset},Warlock,1]
 	Settings:AddSetting[Wizard,${genset},Wizard,1]
 	Settings:AddSetting[AddCollections,${genset},AddCollections,1]
+	Settings:AddSetting[LoreAndLegend,${genset},LoreAndLegend,1]
 	Settings:AddSetting[AddCustomItems,${genset},AddCustomItems,1]
 	Settings:AddSetting[CustomItemsBox,${genset},CustomItemsBox,1]
 	Settings:AddSetting[CHarvestBox,${genset},CHarvestBox,1]
@@ -209,15 +223,39 @@ function InitializeSettings()
 	Settings:AddSetting[FertT4,${genset},FertT4,1]
 	Settings:AddSetting[FertT5,${genset},FertT5,1]
 	Settings:AddSetting[FertT7,${genset},FertT7,1]
+	Settings:AddSetting[CraftBoxNumber,${genset},CraftBoxNumber,1]
+	Settings:AddSetting[ClassSpellBox,${genset},ClassSpellBox,1]
+	Settings:AddSetting[CollectionsBox,${genset},CollectionsBox,1]
+	Settings:AddSetting[CHarvestBox,${genset},CHarvestBox,1]
+	Settings:AddSetting[RHarvestBox,${genset},RHarvestBox,1]
+	Settings:AddSetting[LoreAndLegendBox,${genset},LoreAndLegendBox,1]
+	Settings:AddSetting[FertilizerItemBox,${genset},FertilizerItemBox,1]
+	Settings:AddSetting[StatusItemBox,${genset},StatusItemBox,1]
+	Settings:AddSetting[CustomItemsBox,${genset},CustomItemsBox,1]
+	Settings:AddSetting[StatusMerchant,${genset},StatusMerchant,0]
+	Settings:AddSetting[SellTreasured,${genset},SellTreasured,0]
+	Settings:AddSetting[SellAdeptI,${genset},SellAdeptI,0]
+	Settings:AddSetting[SellHandCrafted,${genset},SellHandCrafted,0]
+	Settings:AddSetting[SellUncommon,${genset},SellUncommon,0]
+	Settings:AddSetting[GathererHireling,${genset},GathererHireling,0]
+	Settings:AddSetting[HunterHireling,${genset},HunterHireling,0]
+	Settings:AddSetting[MinerHireling,${genset},MinerHireling,0]
+	Settings:AddSetting[GathererTierNumber,${genset},GathererTierNumber,1]
+	Settings:AddSetting[HunterTierNumber,${genset},HunterTierNumber,1]
+	Settings:AddSetting[MinerTierNumber,${genset},MinerTierNumber,1]
+	Settings:AddSetting[UseHarvestDepot,${genset},UseHarvestDepot,1]
+	Settings:AddSetting[Examine,${genset},Examine,0]
+	; Settings:AddSetting[,${genset},,0]
 
 	; **Saving Settings**
-	Settings:SaveSettings[${UserSettings}] /* no sense in saving all the lists during initialization */
+	; no sense in saving all the lists during initialization
+	Settings:SaveSettings[${UserSettings}]
 }
 
 function PlaceItems()
 {
 	TSBox:Set[${Settings.GetSetting[CraftBoxNumber]}]
- 	SBBox:Set[${Settings.GetSetting[ClassSpellBox]}]
+	SBBox:Set[${Settings.GetSetting[ClassSpellBox]}]
 	CLBox:Set[${Settings.GetSetting[CollectionsBox]}]
 	CHBox:Set[${Settings.GetSetting[CHarvestBox]}]
 	RHBox:Set[${Settings.GetSetting[RHarvestBox]}]
@@ -247,7 +285,7 @@ function PlaceItems()
 		wait 5
 		Target:DoubleClick
 		wait 5
-	}	
+	}
 	EQ2Execute /togglebags
 	wait 5
 	EQ2Execute /togglebags
@@ -266,9 +304,9 @@ function PlaceItems()
 
 	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceCollection
-		
+
 	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
-		call PlaceCollection	
+		call PlaceCollection
 
 	if ${UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceTradeskillBooks
@@ -278,7 +316,7 @@ function PlaceItems()
 
 	if ${UIElement[ScanLoreAndLegend@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceLoreAndLegend
-	
+
 	if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
 		call PlaceStatusItems
 
@@ -286,7 +324,7 @@ function PlaceItems()
 		call PlaceFertilizer
 
 	if ${UIElement[ScanCustom@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
-		call PlaceCustom	
+		call PlaceCustom
 
 	if ${RunBroker} == 1
 	{
@@ -295,15 +333,15 @@ function PlaceItems()
 	else
 	{
 		call AddLog "**EQ2Broker Canceled!**" FF00FF00
-	}		
+	}
 }
 
 function PlaceRare()
 {
 	call AddLog "**Checking Rares List**" FFFF00FF
 	variable int i
-	
-	for (i:Set[1];i<=8;i:Inc)
+
+	for (i:Set[1];${i}<=8;i:Inc)
 	{
 		call CheckFocus
 		Me:CreateCustomInventoryArray[nonbankonly]
@@ -330,7 +368,7 @@ function PlaceItemsFromSet(settingsetref SSR)
 			}
 			call CheckFocus
 		}
-		while (${iter:Next(exists))
+		while (${iter:Next(exists)})
 	}
 }
 function PlaceHarvest()
@@ -342,8 +380,8 @@ function PlaceHarvest()
 		call DeleteMeat
 
 	variable int i
-	
-	for (i:Set[1];i<=8;i:Inc)
+
+	for (i:Set[1];${i}<=8;i:Inc)
 	{
 		call CheckFocus
 		Me:CreateCustomInventoryArray[nonbankonly]
@@ -372,7 +410,7 @@ function PlaceCollection()
 					Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${CLBox},${Me.Vending[${CLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 					wait ${Math.Rand[30]:Inc[20]}
 				}
-				while ${Me.CustomInventory[${ArrayPosition}].Name(exists)} && ${Me.CustomInventory[${ArrayPosition}].Name.Length}>4	
+				while ${Me.CustomInventory[${ArrayPosition}].Name(exists)} && ${Me.CustomInventory[${ArrayPosition}].Name.Length}>4
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
@@ -583,7 +621,7 @@ function PlaceBooks()
 	wait 5
 	Do
 	{
-		
+
 		if ${Me.CustomInventory[${ArrayPosition}].Type.Equal[${ItemType}]}
 			if ${Me.CustomInventory[${ArrayPosition}].Class[1].Name.Equal[${ClassName}]}
 				if ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter1}]} || ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter2}]} || ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter3}]}
@@ -602,8 +640,8 @@ function PlaceStatusItems()
 	call AddLog "**Checking Status Items List**" FFFF00FF
 
 	variable int i
-	
-	for (i:Set[1];i<=8;i:Inc)
+
+	for (i:Set[1];${i}<=8;i:Inc)
 	{
 		call CheckFocus
 		Me:CreateCustomInventoryArray[nonbankonly]
@@ -621,8 +659,8 @@ function PlaceFertilizer()
 	call AddLog "**Checking Fertilizers List**" FFFF00FF
 
 	variable int i
-	
-	for (i:Set[1];i<=7;i:Inc)
+
+	for (i:Set[1];${i}<=7;i:Inc)
 	{
 		call CheckFocus
 		Me:CreateCustomInventoryArray[nonbankonly]
@@ -641,17 +679,18 @@ function PlaceLoreAndLegend()
 	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 5
 	call CheckFocus
-	call AddLog "**Checking Lore & Legend Items**" FFFF00FF	
+	call AddLog "**Checking Lore & Legend Items**" FFFF00FF
 	if ${UIElement[LoreAndLegend@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
 		{
 			Do
-			{	
-				if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]} 
+			{
+				if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]}
 				{
 						call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
+						echo DEBUG: Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${Me.Vending[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 						Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${Me.Vending[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 						wait ${Math.Rand[30]:Inc[20]}
-				}			
+				}
 			}
 			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker} == 1
 		}
@@ -691,7 +730,7 @@ function DestroyItems()
 		}
 		while ${iter:Next(exists)} && ${RunDestroy} == 1
 	}
-	
+
 	if ${RunDestroy} == 1
 	{
 		call AddSellLog "**Items Destroyed**" FFFF00FF
@@ -699,7 +738,7 @@ function DestroyItems()
 	else
 	{
 		call AddSellLog "**EQ2Destroy Canceled!**" FFFF00FF
-	}	
+	}
 }
 
 function VendorType()
@@ -717,7 +756,7 @@ function VendorType()
 function SellJunk()
 {
 	RunJunk:Set[1]
-	
+
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00
 	EQ2:CreateCustomActorArray[byDist,15]
@@ -738,7 +777,7 @@ function SellJunk()
 		wait 5
 		Target:DoubleClick
 		wait 5
-	}	
+	}
 	wait 5
 	EQ2Execute /togglebags
 	wait 5
@@ -771,25 +810,25 @@ function SellJunk()
 	{
 		call SellAdeptI
 	}
-	
+
 	if ${UIElement[SellHandcrafted@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
 	{
 		call SellHandcrafted
 	}
-	
+
 	if ${UIElement[SellUncommon@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
 	{
 		call SellUncommon
 	}
-	
+
 	if ${RunJunk} == 1
 	{
 		call AddSellLog "**Junk Items Sold**" FFFF00FF
 	}
-	else	
+	else
 	{
 		call AddSellLog "**EQ2Junk Canceled!**" FFFF00FF
-	}	
+	}
 	press ESC
 	press ESC
 	press ESC
@@ -813,7 +852,7 @@ function SellStatus()
 
 	Do
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]} 
+		if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]}
 		{
 			call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 			Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
@@ -844,7 +883,7 @@ function SellTreasured()
 						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 						wait 15
 					}
-				}	
+				}
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -866,8 +905,8 @@ function SellHandcrafted()
 						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 						wait 15
-					}	
-				}	
+					}
+				}
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -890,7 +929,7 @@ function SellUncommon()
 						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 						wait 15
 					}
-				}		
+				}
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -912,8 +951,8 @@ function SellAdeptI()
 						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
 						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell
 						wait ${Math.Rand[30]:Inc[20]}
-					}	
-				}	
+					}
+				}
 			}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
@@ -963,7 +1002,7 @@ function AddToDepot()
 				call AddDepotLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity}  ${TestString}"
 				Me.CustomInventory[${iter.Key}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
-				
+
 				if ${SlotFull} == 1
 					{
 						call AddDepotLog "---Slot ${Me.CustomInventory[${iter.Key}]} Max QTY!!---" FFFF0000
@@ -973,15 +1012,15 @@ function AddToDepot()
 				if ${SkipItem} == 1
 				{
 					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
-					KeyNum:Inc	
+					KeyNum:Inc
 					SkipItem:Set[0]
 				}
 			}
 		}
-		while ${iter:Next(exists) && ${RunDepot} == 1
-		
+		while ${iter:Next(exists)} && ${RunDepot} == 1
+
 	}
-	
+
 	if ${RunDepot} == 1
 	{
 		call AddDepotLog "**Items Added to Supply Depot**" FFFF00FF
@@ -989,14 +1028,14 @@ function AddToDepot()
 	else
 	{
 		call AddDepotLog "**EQ2Depot Canceled!**" FFFF00FF
-	}	
-	
+	}
+
 	if ${CloseScript} == 1
 	{
 		Script[EQ2Inventory]:End
 	}
 }
-	
+
 
 atom GetText(string DepotItemFull)
 {
@@ -1004,7 +1043,7 @@ atom GetText(string DepotItemFull)
 		{
 				SlotFull:Set[1]
 		}
-}				
+}
 
 
 function JunkList()
@@ -1190,12 +1229,12 @@ function CreateInventorylist()
 	{
 		if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 		{
-			if !${Me.CustomInventory[${ArrayPosition}].IsContainer} 
+			if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
 			{
 				if ${Me.CustomInventory[${ArrayPosition}].InInventory}
 					call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
-			}  
-	  }	
+			}
+	  }
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
