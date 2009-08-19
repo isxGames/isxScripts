@@ -73,6 +73,7 @@ objectdef _Settings
 					S:Export[${SetFilenames.CurrentValue}]
 				}
 				while ${SetFilenames.NextKey(exists)}
+			}
 		}
 	}
 	method LoadSettings(string SSR)
