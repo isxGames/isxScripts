@@ -1,5 +1,9 @@
 Revision History ||
 ===================
+v8.92 - Bugfix release. Slightly increased delay between turning in and getting new writ. This
+        will hopefully resolve some issues with craft randomly being unable to obtain a new writ
+        quest.
+
 v8.91 - Bugfix release. Craft -load really works now.
 
 v8.9  - REALLY fixed spell writs to work with GU52 changes. Jewelers and Alchemists rejoice!
