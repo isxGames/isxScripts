@@ -109,4 +109,4 @@ objectdef _Settings
 		This:SaveSettings
 	}
 }
-#endif /* __SettingManager
+#endif /* __SettingManager */
