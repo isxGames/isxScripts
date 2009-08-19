@@ -29,7 +29,7 @@ function Class_PreCombat()
 			call Rogue_PreCombat
 			break	
 		case Blood Mage
-			call BM_PreCombat
+			call BloodMagePreCombat
 			break
 		case Cleric
 			call Cleric_PreCombat
@@ -85,7 +85,7 @@ function Class_Opener()
 			call Rogue_Opener
 			break	
 		case Blood Mage
-			call BM_Opener
+			call BloodMageOpener
 			break
 		case Cleric
 			call Cleric_Opener
@@ -141,7 +141,7 @@ function Class_Combat()
 			call Rogue_Combat
 			break	
 		case Blood Mage
-			call BM_Combat
+			call BloodMageCombat
 			break
 		case Cleric
 			call Cleric_Combat
@@ -197,7 +197,7 @@ function Class_PostCombat()
 			call Rogue_PostCombat
 			break	
 		case Blood Mage
-			call BM_PostCombat
+			call BloodMagePostCombat
 			break
 		case Cleric
 			call Cleric_PostCombat
@@ -253,7 +253,7 @@ function Class_Emergency()
 			call Rogue_Emergency
 			break	
 		case Blood Mage
-			call BM_Emergency
+			call BloodMageEmergency
 			break
 		case Cleric
 			call Cleric_Emergency
@@ -309,7 +309,7 @@ function Class_PostCasting()
 			call Rogue_PostCasting
 			break	
 		case Blood Mage
-			call BM_PostCasting
+			call BloodMagePostCasting
 			break
 		case Cleric
 			call Cleric_PostCasting
@@ -366,7 +366,7 @@ function Class_DownTime()
 			call Rogue_DownTime
 			break	
 		case Blood Mage
-			call BM_DownTime
+			call BloodMageDownTime
 			break
 		case Cleric
 			call Cleric_DownTime
