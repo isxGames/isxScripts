@@ -93,6 +93,7 @@ objectdef _Settings
 					S:Import[${SetFilenames.CurrentValue}]
 				}
 				while ${SetFilenames.NextKey(exists)}
+			}
 		}
 	}
 	method AddSetting(string SettingName, settingsetref SSR, string SettingText, string DefaultValue)
