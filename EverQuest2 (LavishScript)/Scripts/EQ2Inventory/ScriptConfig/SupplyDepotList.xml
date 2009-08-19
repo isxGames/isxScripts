@@ -110,5 +110,8 @@
 		<Setting Name="flying fish">Save</Setting>
 		<Setting Name="rough topaz">Save</Setting>
 		<Setting Name="redwood lumber">Save</Setting>
+		<Setting Name="aviak meat">Save</Setting>
+		<Setting Name="ravasect meat">Save</Setting>
+		<Setting Name="scintillating material">Save</Setting>
 	</Set>
 </InnerSpaceSettings>
