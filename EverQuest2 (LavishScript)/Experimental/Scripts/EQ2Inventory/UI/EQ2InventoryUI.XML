@@ -17,7 +17,7 @@
 		</Children>
 	  </TitleBar>
 	  <StorePosition>1</StorePosition>
-	<Title>EQ2Inventory Manager</Title>
+	<Title>EQ2Inventory Manager v3</Title>
 	<Children>
 		<Text name='StatusText'>
 			<X>15</X>
@@ -272,7 +272,7 @@
 					<Height>65</Height>
 					<Text>Stop Broker</Text>
 					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[RunBroker]:Set[0]</Command>
+					<Command>Script[EQ2Inventory].Variable[RunBroker]:Set[FALSE]</Command>
 				</CommandButton>
     		<listbox Name='ItemList'>
 					<X>140</X>
@@ -2311,7 +2311,7 @@
 					<Height>55</Height>
 					<Text>Stop Vending Items</Text>
 					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[RunJunk]:Set[0]</Command>
+					<Command>Script[EQ2Inventory].Variable[RunJunk]:Set[FALSE]</Command>
 				</CommandButton>
 				<CommandButton Name='Destroy Items'>
 					<X>10</X>
@@ -2329,7 +2329,7 @@
 					<Height>55</Height>
 					<Text>Stop Destroying</Text>
 					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[RunDestroy]:Set[0]</Command>
+					<Command>Script[EQ2Inventory].Variable[RunDestroy]:Set[FLASE]</Command>
 				</CommandButton>
 				<listbox Name='SellItemList'>
 					<X>140</X>
@@ -2376,7 +2376,7 @@
 					<Height>55</Height>
 					<Text>Skip Depot Item</Text>
 					<AutoTooltip>Skips Placing an Item in Harvest Depot</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[SkipItem]:Set[1]</Command>
+					<Command>Script[EQ2Inventory].Variable[SkipItem]:Set[TRUE]</Command>
 				</CommandButton>
 				<CommandButton Name='StopDepot'>
 					<X>10</X>
@@ -2385,7 +2385,7 @@
 					<Height>55</Height>
 					<Text>Stop EQ2Depot</Text>
 					<AutoTooltip>Stops Placing Items in Harvest Depot</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[RunDepot]:Set[0]</Command>
+					<Command>Script[EQ2Inventory].Variable[RunDepot]:Set[FALSE]</Command>
 				</CommandButton>
     		<listbox Name='DepotItemList'>
 					<X>140</X>
@@ -2430,7 +2430,7 @@
 					<Height>55</Height>
 					<Text>Stop Hireling Bot</Text>
 					<AutoTooltip>Stops Hirelings Bot</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[RunHirelings]:Set[0]</Command>
+					<Command>Script[EQ2Hirelings].Variable[RunHirelings]:Set[FALSE]</Command>
 				</CommandButton>
 				<Text Name='Status Text'>
 					<X>10</X>
