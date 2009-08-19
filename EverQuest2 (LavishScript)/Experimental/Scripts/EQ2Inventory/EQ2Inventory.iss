@@ -27,14 +27,12 @@ variable string NameFilter3
 ;=================================
 ;Run Variables
 ;=================================
-variable int RunBroker
-variable int RunDepot
-variable int SlotFull
-variable int SkipItem
-variable int RunHirelings
-variable int RunJunk
-variable int RunDestroy
-variable int CloseScript
+variable bool RunBroker=TRUE
+variable bool RunDepot=TRUE
+variable bool RunJunk=TRUE
+variable bool RunDestroy=TRUE
+variable bool SlotFull=FALSE
+variable bool SkipItem=FALSE
 ;=================================
 ;Setting references
 ;=================================
@@ -71,12 +69,6 @@ function main()
 
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
 	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
-	RunBroker:Set[1]
-	RunDepot:Set[1]
-	RunJunk:Set[1]
-	RunDestroy:Set[1]
-	RunHirelings:Set[1]
-	CloseScript:Set[0]
 	wait 1
 
 	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
@@ -122,7 +114,7 @@ function InitializeSettings()
 	DeleteMeats:Import[./ScriptConfig/DeleteMeats.xml]
 	Fertilizer:Import[./ScriptConfig/Fertilizer.xml]
 	Harvests:Import[./ScriptConfig/Harvests.xml]
-	StatusItems:Import[./ScriptConfig/StatusItems]
+	StatusItems:Import[./ScriptConfig/StatusItems.xml]
 
 	UserSettings:AddSet[General Settings]
 	genset:Set[${UserSettings.FindSet[General Settings]}]
@@ -265,7 +257,7 @@ function PlaceItems()
 	FertBox:Set[${Settings.GetSetting[FertilizerItemBox]}]
 	StatBox:Set[${Settings.GetSetting[StatusItemBox]}]
 	CustBox:Set[${Settings.GetSetting[CustomItemsBox]}]
-	RunBroker:Set[1]
+	RunBroker:Set[TRUE]
 	wait 5
 	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
 	call AddLog "**Starting EQ2Broker v2 By Syliac**" FF00FF00
@@ -298,37 +290,37 @@ function PlaceItems()
 
 	call CheckFocus
 
-	if ${UIElement[ScanRares@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanRares@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceRare
 
-	if ${UIElement[ScanHarvests@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanHarvests@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceHarvest
 
-	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceCollection
 
-	if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
-		call PlaceCollection
+	;if ${UIElement[ScanCollections@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
+	;	call PlaceCollection
 
-	if ${UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanTradeskills@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceTradeskillBooks
 
-	if ${UIElement[ScanSpellBooks@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanSpellBooks@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceSpellBooks
 
-	if ${UIElement[ScanLoreAndLegend@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanLoreAndLegend@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceLoreAndLegend
 
-	if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanStatus@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceStatusItems
 
-	if ${UIElement[ScanFertilizer@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanFertilizer@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceFertilizer
 
-	if ${UIElement[ScanCustom@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker} == 1
+	if ${UIElement[ScanCustom@EQ2Broker@GUITabs@EQ2Inventory].Checked} && ${RunBroker}
 		call PlaceCustom
 
-	if ${RunBroker} == 1
+	if ${RunBroker}
 	{
 		call ShutDown
 	}
@@ -350,7 +342,7 @@ function PlaceRare()
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[RHarvestT${i},checkbox].Checked}
 		{
-			call PlaceItemsFromSet ${Harvests.FindSet[${Math.Calc[${i}*2]}].GUID} ${RHBox}
+			call PlaceItemsFromSet ${Harvests.FindSet[SRHarvestT${i}]} ${RHBox}
 		}
 	}
 }
@@ -358,7 +350,7 @@ function PlaceItemsFromSet(settingsetref SSR, int Container)
 {
 	variable iterator iter
 	SSR:GetSettingIterator[iter]
-	if (${iter:First(exists)})
+	if (${iter:First(exists)}) && ${RunBroker}
 	{
 		do
 		{
@@ -370,7 +362,7 @@ function PlaceItemsFromSet(settingsetref SSR, int Container)
 			}
 			call CheckFocus
 		}
-		while (${iter:Next(exists)})
+		while (${iter:Next(exists)}) && ${RunBroker}
 	}
 }
 function PlaceHarvest()
@@ -390,7 +382,7 @@ function PlaceHarvest()
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[CHarvestT${i},checkbox].Checked}
 		{
-			call PlaceItemsFromSet ${Harvests.FindSet[${Math.Calc[(${i}*2)-1]}].GUID} ${CHBox}
+			call PlaceItemsFromSet ${Harvests.FindSet[SCHarvestT${i}]} ${CHBox}
 		}
 	}
 }
@@ -633,7 +625,7 @@ function PlaceBooks()
 					wait ${Math.Rand[30]:Inc[20]}
 				}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker} == 1
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker}
 }
 
 function PlaceStatusItems()
@@ -694,7 +686,7 @@ function PlaceLoreAndLegend()
 						wait ${Math.Rand[30]:Inc[20]}
 				}
 			}
-			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker} == 1
+			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker}
 		}
 }
 
@@ -709,7 +701,7 @@ function PlaceCustom()
 
 function DestroyItems()
 {
-	RunDestroy:Set[1]
+	RunDestroy:Set[TRUE]
 	wait 5
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Destroy v2 By Syliac**" FF00FF00
@@ -730,10 +722,10 @@ function DestroyItems()
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 		}
-		while ${iter:Next(exists)} && ${RunDestroy} == 1
+		while ${iter:Next(exists)} && ${RunDestroy}
 	}
 
-	if ${RunDestroy} == 1
+	if ${RunDestroy}
 	{
 		call AddSellLog "**Items Destroyed**" FFFF00FF
 	}
@@ -757,7 +749,7 @@ function VendorType()
 
 function SellJunk()
 {
-	RunJunk:Set[1]
+	RunJunk:Set[TRUE]
 
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00
@@ -800,30 +792,30 @@ function SellJunk()
 				wait 15
 			}
 		}
-		while ${iter:Next(exists)} && ${RunJunk} == 1
+		while ${iter:Next(exists)} && ${RunJunk}
 	}
 
-	if ${UIElement[SellTreasured@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	if ${UIElement[SellTreasured@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk}
 	{
 		call SellTreasured
 	}
 
-	if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	if ${UIElement[SellAdeptI@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk}
 	{
 		call SellAdeptI
 	}
 
-	if ${UIElement[SellHandcrafted@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	if ${UIElement[SellHandcrafted@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk}
 	{
 		call SellHandcrafted
 	}
 
-	if ${UIElement[SellUncommon@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk} == 1
+	if ${UIElement[SellUncommon@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk}
 	{
 		call SellUncommon
 	}
 
-	if ${RunJunk} == 1
+	if ${RunJunk}
 	{
 		call AddSellLog "**Junk Items Sold**" FFFF00FF
 	}
@@ -860,7 +852,7 @@ function SellStatus()
 			Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 		}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 	call AddSellLog "**Status Items Sold to Status Vendor**" FFFF00FF
 
 	press ESC
@@ -888,7 +880,7 @@ function SellTreasured()
 				}
 			}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 
 function SellHandcrafted()
@@ -911,7 +903,7 @@ function SellHandcrafted()
 				}
 			}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 
 function SellUncommon()
@@ -934,7 +926,7 @@ function SellUncommon()
 				}
 			}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 function SellAdeptI()
 {
@@ -944,7 +936,7 @@ function SellAdeptI()
 
 	Do
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[(Adept)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk} == 1
+		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[(Adept)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk}
 			{
 				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 				{
@@ -957,18 +949,16 @@ function SellAdeptI()
 				}
 			}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk} == 1
+	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 
 function AddToDepot()
 {
-	variable int FixLine
-	variable int FixLength
 	variable string TestString
 	variable int Drop
-	RunDepot:Set[1]
-	SkipItem:Set[0]
-	SlotFull:Set[0]
+	RunDepot:Set[TRUE]
+	SkipItem:Set[FALSE]
+	SlotFull:Set[FALSE]
 	wait 5
 	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
 	Me:CreateCustomInventoryArray[nonbankonly]
@@ -982,8 +972,8 @@ function AddToDepot()
 		do
 		{
 			Drop:Set[1]
-			SkipItem:Set[0]
-			SlotFull:Set[0]
+			SkipItem:Set[FALSE]
+			SlotFull:Set[FALSE]
 			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull}
 			{
 				if (${iter.Key.Length} <= 4)
@@ -1009,32 +999,27 @@ function AddToDepot()
 				Me.CustomInventory[${iter.Key}]:AddToDepot[${Actor[depot].ID}]
 				wait ${Math.Rand[30]:Inc[20]}
 
-				if ${SlotFull} == 1
+				if ${SlotFull}
 					{
 						call AddDepotLog "---Slot ${TestString} Max QTY!!---" FFFF0000
 					}
-				if ${SkipItem} == 1
+				if ${SkipItem}
 				{
 					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
 				}
 			}
 		}
-		while ${iter:Next(exists)} && ${RunDepot} == 1
+		while ${iter:Next(exists)} && ${RunDepot}
 
 	}
 
-	if ${RunDepot} == 1
+	if ${RunDepot}
 	{
 		call AddDepotLog "**Items Added to Supply Depot**" FFFF00FF
 	}
 	else
 	{
 		call AddDepotLog "**EQ2Depot Canceled!**" FFFF00FF
-	}
-
-	if ${CloseScript} == 1
-	{
-		Script[EQ2Inventory]:End
 	}
 }
 
@@ -1043,7 +1028,7 @@ atom GetText(string DepotItemFull)
 {
 	if ${DepotItemFull.Find["This container cannot hold any more of this item."]}
 		{
-				SlotFull:Set[1]
+				SlotFull:Set[TRUE]
 		}
 }
 
@@ -1294,8 +1279,7 @@ function ShutDown()
 	press ESC
 	press ESC
 	call AddLog "**Ending EQ2Broker**" FF00FF00
-	announce "\Broker Items Placed" 1 2
-
+	
 	if ${UIElement[RunMyPrices@EQ2Broker@GUITabs@EQ2Inventory].Checked}
 	{
 		call AddLog "*****Starting MyPrices*****" FFEECC00
