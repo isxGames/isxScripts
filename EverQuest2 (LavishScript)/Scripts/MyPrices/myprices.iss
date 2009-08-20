@@ -742,6 +742,8 @@ function buy(string tabname, string action)
 				; init = build up the list of items on the buy tab
 				; scan = check the broker list one by one - do buy and various workhorse routines
 				; clean = remove items from the data if they are not in the vendor boxes and aren't crafted
+				; place =  place crafted flagged items on the broker
+				; compact = remove excess items from the datafile.
 
 				if ${action.Equal["init"]} && ${tabname.Equal["Buy"]}
 					UIElement[ItemList@Buy@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
@@ -808,6 +810,10 @@ function buy(string tabname, string action)
 								Case MaxSalePrice
 									MaxSalePrice:Set[${BuyNameIterator.Value}]
 									break
+								Case Box
+									BuyName.FindSetting[${BuyNameIterator.Key}]:Remove
+									waitframe
+									break
 							}
 						}
 						while ${BuyNameIterator:Next(exists)}
@@ -818,6 +824,7 @@ function buy(string tabname, string action)
 						{
 							Call CheckFocus
 							call BuyItems "${BuyIterator.Key}" ${BuyPrice} ${BuyNumber} ${Harvest} ${BuyNameOnly} ${BuyAttuneOnly} ${AutoTransmute} ${startlevel} ${endlevel} ${tier}
+							
 							; Pause or quit pressed then exit the routine
 							
 							if !${QueuedCommands}
@@ -836,6 +843,7 @@ function buy(string tabname, string action)
 						}
 						elseif ${action.Equal["place"]}
 						{
+							; place any items marked  as crafted on the broker
 							 if ${CraftItem}
 							 {
 								Call CheckFocus
@@ -975,10 +983,10 @@ function BuyItems(string BuyName, float BuyPrice, int BuyNumber, bool Harvest, b
 
 	; scan to make sure the item is listed and get lowest price
 	Call BrokerSearch "${BuyName}" ${BuyNameOnly}
-	
 	; if items listed on the broker
 	if ${Return} != -1
 	{
+
 		; Scan the broker list one by one buying the items until the end of the list is reached or all the Number wanted have been bought
 		do
 		{
@@ -1352,6 +1360,7 @@ function searchbrokerlist(string LBoxString, int startlevel, int endlevel, int t
 function BrokerSearch(string lookup, bool BuyNameOnly)
 {
 	call echolog "-> BrokerSearch ${lookup} ${BuyNameOnly}"
+
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
 	Declare TempMinPrice float -1 local
@@ -1361,12 +1370,10 @@ function BrokerSearch(string lookup, bool BuyNameOnly)
 	; check if broker has any listed to compare with your item
 	if !${BuyNameOnly}
 	{
-
 		if ${Vendor.NumItemsForSale} >0
 			Return TRUE
 		else
 			Return FALSE
-
 	}
 	
 	if ${Vendor.NumItemsForSale} >0
