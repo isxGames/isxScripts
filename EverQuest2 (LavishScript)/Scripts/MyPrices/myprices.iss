@@ -2809,7 +2809,7 @@ function StartUp()
 		else
 		{
 			tempstring:Set[${Actor[name,a market bulletin board]}]
-			if !${tempstring.Equal[NULL]}
+			if !${tempstring.Equal[NULL]} && ${Actor[name,a market bulletin board].Distance} <= 11
 			{
 				Actor[name,a market bulletin board]:DoubleClick
 				wait 20
