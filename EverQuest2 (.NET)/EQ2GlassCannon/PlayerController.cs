@@ -326,17 +326,15 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			/// If a spellcast is in progress, there's nothing more to do.
-			if (DateTime.Now < m_NextPermissibleCastTime)
-			{
-#if DEBUG
-				Program.Log("Expecting cast to complete.");
-#endif
-				return true;
-			}
-
 			if (AutoHarvestNearestNode())
 				return true;
+
+			/// Calculate how much time remains on the cast timer.
+			DateTime CurrentDateTime = DateTime.Now;
+			if (CurrentDateTime > m_LastCastEndTime)
+				m_CastTimeRemaining = TimeSpan.FromTicks(0);
+			else
+				m_CastTimeRemaining = m_LastCastEndTime - CurrentDateTime;
 
 			return false;
 		}
@@ -347,7 +345,6 @@ namespace EQ2GlassCannon
 			Program.Log("Choice window appeared: \"{0}\"", ThisWindow.Text);
 
 			/// Group invite window.
-			/// BUG: This doesn't work for some reason if the inviter is in a different zone!
 			if (ThisWindow.Text.Contains("has invited you to join a group"))
 			{
 				/// Only accept group invites from the commanding player.
@@ -422,7 +419,7 @@ namespace EQ2GlassCannon
 				strMessage == "Can't see target" ||
 				strMessage == "Too far away")
 			{
-				m_NextPermissibleCastTime = DateTime.Now;
+				m_LastCastEndTime = DateTime.Now;
 				return true;
 			}
 
@@ -517,8 +514,6 @@ namespace EQ2GlassCannon
 			{
 				Program.Log("Reload INI command (\"{0}\") received.", m_strReloadINISubphrase);
 				ReadINISettings();
-
-				Program.s_EmailQueueThread.PostNewProfileMessage(m_EmailProfile);
 				Program.s_bRefreshKnowledgeBook = true;
 			}
 
@@ -789,7 +784,7 @@ namespace EQ2GlassCannon
 				m_ePositioningStance == PositioningStance.StayInPlace ||
 				m_ePositioningStance == PositioningStance.ForwardDash)
 			{
-				LavishScriptAPI.LavishScript.ExecuteCommand("press -release W");
+				Program.ReleaseKey("W");
 			}
 
 			if (eNewStance == PositioningStance.DoNothing)
@@ -931,13 +926,16 @@ namespace EQ2GlassCannon
 				/// For shadowing, the coordinate is updated at every iteration.
 				if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 				{
-					if (!m_FriendDictionary.ContainsKey(m_strCommandingPlayer))
+					/// This guy doesn't need to be in group/raid. He just needs to exist.
+					/// But we give preference to the guy in group/raid to prevent griefing.
+					Actor FollowActor = m_FriendDictionary.ContainsKey(m_strCommandingPlayer) ? m_FriendDictionary[m_strCommandingPlayer].ToActor() : new Actor(m_strCommandingPlayer);
+					if (!FollowActor.IsValid)
 					{
-						LavishScriptAPI.LavishScript.ExecuteCommand("press -release W");
+						Program.ReleaseKey("W");
 						return false;
 					}
 
-					m_ptStayLocation = new Point3D(m_FriendDictionary[m_strCommandingPlayer].ToActor());
+					m_ptStayLocation = new Point3D(FollowActor);
 				}
 
 				if (/*!MeActor.IsClimbing &&*/ MeActor.CanTurn)
@@ -965,13 +963,13 @@ namespace EQ2GlassCannon
 						if (Me.Face(fBearing))
 						{
 							Program.Log("Moving to stay position ({0:0.00}, {1:0.00}, {2:0.00}), {3:0.00} distance away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
-							LavishScriptAPI.LavishScript.ExecuteCommand("press -hold W");
+							Program.PressAndHoldKey("W");
 						}
 					}
 					else
 					{
 						//Program.Log("Settled at stay position, {0:0.00} distance away.", fRange);
-						LavishScriptAPI.LavishScript.ExecuteCommand("press -release W");
+						Program.ReleaseKey("W");
 					}
 				}
 			}
@@ -981,7 +979,7 @@ namespace EQ2GlassCannon
 				if (MeActor.IsDead)
 					return false;
 
-				LavishScriptAPI.LavishScript.ExecuteCommand("press -hold W");
+				Program.PressAndHoldKey("W");
 				return false;
 			}
 
@@ -1077,7 +1075,7 @@ namespace EQ2GlassCannon
 		/// 
 		/// </summary>
 		/// <returns>true if the player was able to fully target and engage the designated opponent</returns>
-		public bool EngagePrimaryEnemy()
+		public bool EngageOffensiveTarget()
 		{
 			if (m_OffensiveTargetActor == null)
 				return false;
