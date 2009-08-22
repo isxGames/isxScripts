@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.14a :  released 15th August 2009
+; Version 0.14b :  released 21st August 2009
 ;
 ; Declare Variables
 ;
@@ -125,8 +125,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 	
-	call AddLog "Version 0.14a :  released 15th August 2009" FF11FFCC
-	call echolog "Version 0.14a :  released 15th August 2009"
+	call AddLog "Version 0.14b :  released 21st August 2009" FF11FFCC
+	call echolog "Version 0.14b :  released 21st August 2009"
 	
 	call StartUp	
 
@@ -1989,8 +1989,6 @@ function savecraftinfo(string UITab)
 	}
 	else
 	{
-		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Saving Information]
-	
 		if ${UITab.Equal[Inventory]} && !${UIElement[CraftItem@Inventory@GUITabs@MyPrices].Checked}
 		{
 			; Parameters : Craft , Itemname , Stacksize , Number , <Bool> Craftitem, <Bool> nameonly,<bool>, attune only <bool>, transmute startlevel,endlevel,tier, Boxnumber, Recipe Name
@@ -2002,6 +2000,7 @@ function savecraftinfo(string UITab)
 			call Saveitem Craft "${CraftName}" ${CraftStack} 0 ${CraftNumber} TRUE TRUE TRUE TRUE 0 0 0 "${RecipeName}" ${UIElement[1@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[2@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[3@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[4@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[5@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[6@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[7@${UITab}@GUITabs@MyPrices].Selection} ${UIElement[8@${UITab}@GUITabs@MyPrices].Selection} 
 		}
 		
+		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Saved]
 	}
 	call echolog "<end> : savecraftinfo"
 }
@@ -2167,7 +2166,13 @@ function ShowCraftInfo(string UITab, int ItemID)
 	{
 		if ${ItemList.FindSet["${LBoxString}"].FindSetting[Box${xvar}]} > 0
 		{
+			
 			UIElement[${xvar}@${UITab}@GUITabs@MyPrices]:SetSelection[${ItemList.FindSet["${LBoxString}"].FindSetting[Box${xvar}]}]
+
+			if ${ItemList.FindSet["${LBoxString}"].FindSetting[Box${xvar}]} == 2
+			{
+				UIElement[BoxNumber@${UITab}@GUITabs@MyPrices]:SetText[${xvar}]
+			}
 		}
 		else
 		{
@@ -2746,12 +2751,17 @@ function checklore(string itemname)
 function CheckPrimary(string UITab, int boxnum, int ID)
 {
 	Declare xvar int local 1
+	
+	if ${boxnum} <= ${brokerslots} && ${Me.Vending[${boxnum}](exists)}
+	{
 
-	if ${UIElement[${boxnum}@${UITab}@GUITabs@MyPrices].Selection} == 0
-		UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[${boxnum}]:SetSelection[1] 
+		if ${UIElement[${boxnum}@${UITab}@GUITabs@MyPrices].Selection} == 0
+			UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[${boxnum}]:SetSelection[1] 
 
 		if ${ID} == 2
 		{	
+			UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[${boxnum}]:SetSelection[2]
+			
 			do
 			{
 				if ${xvar} != ${boxnum}
@@ -2765,6 +2775,7 @@ function CheckPrimary(string UITab, int boxnum, int ID)
 			}
 			while ${xvar:Inc} <= ${brokerslots}
 		}
+	}
 }
 
 function StartUp()

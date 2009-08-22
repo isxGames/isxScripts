@@ -1438,6 +1438,7 @@
 							Script[myprices]:QueueCommand[call buy Craft Init]
 						</OnLoad>
 						<OnSelect>
+							UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[ ]
 							Script[myprices]:QueueCommand[call ShowCraftInfo Craft ${ID}]
 							Script[myprices]:QueueCommand[call ClickBrokerSearch Craft ${ID}]
 						</OnSelect>
@@ -1489,25 +1490,45 @@
 						<Text>Craft Stack :</Text>
 					</Text>
 					<Textentry Name='CraftStack'>
-						<X>100</X>
+						<X>85</X>
 						<Y>505</Y>
-						<Width>40</Width> 
+						<Width>30</Width> 
 						<Height>20</Height>
 						<MaxLength>4</MaxLength>
 					</Textentry>
 					<Text Name='CraftNumberText'>
-						<X>150</X>
+						<X>135</X>
 						<Y>505</Y>
 						<Width>80</Width> 
 						<Height>20</Height>
 						<Text>Stock Limit :</Text>
 					</Text>
 					<Textentry Name='CraftNumber'>
-						<X>230</X>
+						<X>200</X>
 						<Y>505</Y>
-						<Width>50</Width> 
+						<Width>45</Width> 
 						<Height>20</Height>
 						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Text Name='BoxText'>
+						<X>260</X>
+						<Y>505</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Primary Box :</Text>
+					</Text>
+					<Textentry Name='BoxNumber'>
+						<X>330</X>
+						<Y>505</Y>
+						<Width>20</Width> 
+						<Height>20</Height>
+						<MaxLength>2</MaxLength>
+						<OnChange>
+							if ${UIElement[BoxNumber@Craft@GUITabs@MyPrices].Text.Length} > 0
+							{
+								Script[myprices]:QueueCommand[call CheckPrimary Craft ${UIElement[BoxNumber@Craft@GUITabs@MyPrices].Text} 2]
+							}
+						</OnChange>
 					</Textentry>
 					<Commandbutton name='NoCraft'> 
 						<X>390</X> 
@@ -1694,6 +1715,7 @@
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
+							UIElement[ErrorText@Inventory@GUITabs@MyPrices]:SetText[ ]
 							UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[${ID}]
 							Script[myprices]:QueueCommand[call ShowCraftInfo Inventory ${ID}]
 							Script[myprices]:QueueCommand[call ClickBrokerSearch Inventory ${ID}]
@@ -1921,25 +1943,45 @@
 						<Text>Craft Stack :</Text>
 					</Text>
 					<Textentry Name='CraftStack'>
-						<X>100</X>
+						<X>85</X>
 						<Y>505</Y>
-						<Width>40</Width> 
+						<Width>30</Width> 
 						<Height>20</Height>
 						<MaxLength>4</MaxLength>
 					</Textentry>
 					<Text Name='CraftNumberText'>
-						<X>150</X>
+						<X>135</X>
 						<Y>505</Y>
 						<Width>80</Width> 
 						<Height>20</Height>
 						<Text>Stock Limit :</Text>
 					</Text>
 					<Textentry Name='CraftNumber'>
-						<X>230</X>
+						<X>200</X>
 						<Y>505</Y>
-						<Width>50</Width> 
+						<Width>45</Width> 
 						<Height>20</Height>
 						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Text Name='BoxText'>
+						<X>260</X>
+						<Y>505</Y>
+						<Width>80</Width> 
+						<Height>20</Height>
+						<Text>Primary Box :</Text>
+					</Text>
+					<Textentry Name='BoxNumber'>
+						<X>330</X>
+						<Y>505</Y>
+						<Width>20</Width> 
+						<Height>20</Height>
+						<MaxLength>2</MaxLength>
+						<OnChange>
+							if ${UIElement[BoxNumber@Inventory@GUITabs@MyPrices].Text.Length} > 0
+							{
+								Script[myprices]:QueueCommand[call CheckPrimary Inventory ${UIElement[BoxNumber@Inventory@GUITabs@MyPrices].Text} 2]
+							}
+						</OnChange>
 					</Textentry>
 					<Commandbutton name='NoCraft'> 
 						<X>390</X> 
