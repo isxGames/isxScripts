@@ -2783,49 +2783,51 @@ function StartUp()
 	Declare tempstring string local
 	Declare i int local
 	Declare space int local
-	
-	tempstring:Set[${Actor[name,a market bulletin board]}]
-	if ${tempstring.Length} >4
+
+	tempstring:Set[${Actor[Guild,Guild World Market Broker]}]
+	if !${tempstring.Equal[NULL]}
 	{
-		Actor[name,a market bulletin board]:DoubleClick
+		Actor[Guild,Guild World Market Broker]:DoTarget
+		wait 10
+		Actor[Guild,Guild World Market Broker]:DoubleClick
 		wait 20
-		Actor[${Me}]:DoTarget
-		wait 20
-		call echolog " * Scanning using Room Board *"
+		call echolog " * Scanning using Guild Hall Broker *"
+		echo " * Scanning using Guild Hall Broker *"
 	}
 	else
 	{
-		tempstring:Set[${Actor[Guild,Guild World Market Broker]}]
+		tempstring:Set[${Actor[Guild,broker]}]
 		if !${tempstring.Equal[NULL]}
 		{
-			Actor[Guild,Guild World Market Broker]:DoTarget
+			Actor[Guild,broker]:DoTarget
 			wait 10
-			Actor[Guild,Guild World Market Broker]:DoubleClick
+			Actor[Guild,broker]:DoubleClick
 			wait 20
-			call echolog " * Scanning using Guild Hall Broker *"
-			echo " * Scanning using Guild Hall Broker *"
+			call echolog " * Scanning using Broker *"
+			echo " * Scanning using Broker *"
 		}
 		else
 		{
-			tempstring:Set[${Actor[Guild,broker]}]
+			tempstring:Set[${Actor[name,a market bulletin board]}]
 			if !${tempstring.Equal[NULL]}
 			{
-				Actor[Guild,broker]:DoTarget
-				wait 10
-				Actor[Guild,broker]:DoubleClick
+				Actor[name,a market bulletin board]:DoubleClick
 				wait 20
-				call echolog " * Scanning using Broker *"
-				echo " * Scanning using Broker *"
+				Actor[${Me}]:DoTarget
+				wait 20
+				call echolog " * Scanning using Room Board *"
+				echo " * Scanning using Room Board *"
 			}
 			else
-			{
+				{
 				Actor[nokillnpc]:DoTarget
 				wait 10
 				Target:DoubleClick
 				wait 20
 				call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
-			}
+				echo " * Scanning using Nearest Non Agro NPC (Should be broker) *"
 
+				}
 		}
 	}
 	
