@@ -81,17 +81,25 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public override bool DoNextAction()
 		{
-			if (base.DoNextAction())
+			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
 
-			if (Me.CastingSpell || MeActor.IsDead)
+			GetOffensiveTargetActor();
+			bool bOffensiveTargetEngaged = EngageOffensiveTarget();
+
+			if (IsCasting)
+			{
+				if (bOffensiveTargetEngaged && CastAmbidextrousCasting())
+					return true;
+
 				return true;
+			}
 
 			if (AttemptCureArcane())
 				return true;
 			if (UseSpellGeneratedHealItem())
 				return true;
-			if (AttemptEmergencyPowerFeed())
+			if (CastEmergencyPowerFeed())
 				return true;
 
 			if (m_bCheckBuffsNow)
@@ -126,10 +134,6 @@ namespace EQ2GlassCannon
 				StopCheckingBuffs();
 			}
 
-			GetOffensiveTargetActor();
-			if (!EngagePrimaryEnemy())
-				return false;
-
 /* Berrbe says this is his cast order for 1 target:
 Netherealm
 Gift
@@ -147,7 +151,7 @@ encase
 Keep acid running/don't over cas it.
 */
 
-			if (m_OffensiveTargetActor != null)
+			if (bOffensiveTargetEngaged)
 			{
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 

@@ -96,17 +96,25 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public override bool DoNextAction()
 		{
-			if (base.DoNextAction())
+			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
 
-			if (Me.CastingSpell || MeActor.IsDead)
+			GetOffensiveTargetActor();
+			bool bOffensiveTargetEngaged = EngageOffensiveTarget();
+
+			if (IsCasting)
+			{
+				if (bOffensiveTargetEngaged && CastAmbidextrousCasting())
+					return true;
+
 				return true;
+			}
 
 			if (AttemptCureArcane())
 				return true;
 			if (UseSpellGeneratedHealItem())
 				return true;
-			if (AttemptEmergencyPowerFeed())
+			if (CastEmergencyPowerFeed())
 				return true;
 
 			if (m_bCheckBuffsNow)
@@ -141,11 +149,7 @@ namespace EQ2GlassCannon
 				StopCheckingBuffs();
 			}
 
-			GetOffensiveTargetActor();
-			if (!EngagePrimaryEnemy())
-				return false;
-
-			if (m_OffensiveTargetActor != null)
+			if (bOffensiveTargetEngaged)
 			{
 				/// Find the distance to the mob.  Especially important for PBAE usage.
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
@@ -290,7 +294,7 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 4))
 						return true;
 
-					if (CastAbility(m_iHailStormAbilityID))
+					if (m_bUseBlueAEs && CastAbility(m_iHailStormAbilityID))
 						return true;
 
 					/// Freehand Sorcery for Ice Comet.

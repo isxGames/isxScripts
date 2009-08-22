@@ -54,7 +54,29 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool AttemptEmergencyPowerFeed()
+		public bool CastAmbidextrousCasting()
+		{
+			/// Ambidextrous Casting behaves as a combat art and will turn on auto attack if used.
+			if (!m_bAutoAttack)
+				return false;
+
+			/// It fucks up our casting timer but IsCasting is resilient enough to manage.
+			CachedAbility AmbidextrousCastingAbility = GetAbility(m_iAmbidexterousCastingAbilityID, true);
+			if (AmbidextrousCastingAbility != null)
+			{
+				TimeSpan TotalCastTimeSpan = TimeSpan.FromSeconds(AmbidextrousCastingAbility.m_fCastTimeSeconds + AmbidextrousCastingAbility.m_fRecoveryTimeSeconds);
+				if (TotalCastTimeSpan > CastTimeRemaining)
+					return false;
+
+				if (CastAbility(m_iAmbidexterousCastingAbilityID))
+					return true;
+			}
+
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool CastEmergencyPowerFeed()
 		{
 			if (!m_bUsePowerFeed || !MeActor.IsIdle)
 				return false;
