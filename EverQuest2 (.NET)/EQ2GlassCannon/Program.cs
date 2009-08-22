@@ -40,12 +40,13 @@ namespace EQ2GlassCannon
 		public static string s_strINIFolderPath = string.Empty;
 		public static string s_strCurrentINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
-
+		private static SetCollection<string> s_PressedKeys = new SetCollection<string>();
 
 		/************************************************************************************/
 		/// <summary>
 		/// Make sure to call this every time you grab a frame lock.
 		/// I've had to compensate in far too many ways for exception bullshit that gets thrown on property access.
+		/// The wrapper is behaving pretty fucking sloppy and it vexes me.
 		/// </summary>
 		public static bool UpdateGlobals()
 		{
@@ -360,7 +361,7 @@ namespace EQ2GlassCannon
 						if (s_EQ2.PendingQuestName != "None")
 						{
 							Log("Automatically accepting quest \"{0}\"...", s_EQ2.PendingQuestName);
-							s_EQ2.AcceptPendingQuest();
+							//s_EQ2.AcceptPendingQuest();
 
 							/// Stolen from "EQ2Quest.iss". The question I have: isn't AcceptPendingQuest() redundant then?
 							s_Extension.EQ2UIPage("Popup", "RewardPack").Child("button", "RewardPack.Accept").LeftClick();
@@ -371,9 +372,9 @@ namespace EQ2GlassCannon
 						/// If the subclass changes (startup, betrayal, etc), resync.
 						/// The null check on SubClass is because it comes up as null when reviving.
 						/// s_Controller is guaranteed to be non-null after this block (otherwise the program would have exited).
-						if (strLastClass != Me.SubClass && Me.SubClass != null)
+						if (!string.IsNullOrEmpty(Me.SubClass) && Me.SubClass != strLastClass)
 						{
-							Program.Log("New class found: " + Me.SubClass);
+							Program.Log("New class found: \"{0}\"", Me.SubClass);
 							strLastClass = Me.SubClass;
 							s_bRefreshKnowledgeBook = true;
 
@@ -767,6 +768,34 @@ namespace EQ2GlassCannon
 			while (DateTime.Now < WaitEndTime)
 				LavishVMAPI.Frame.Wait(false);
 
+			return;
+		}
+
+		/************************************************************************************/
+		public static void PressAndHoldKey(string strKey)
+		{
+			string strIndexedKey = strKey.ToLower();
+			if (!s_PressedKeys.Contains(strIndexedKey))
+			{
+				LavishScriptAPI.LavishScript.ExecuteCommand("press -hold " + strKey);
+				s_PressedKeys.Add(strIndexedKey);
+			}
+			return;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Releases a key but only if we remember pressing it in the first place.
+		/// This prevents interference with user action.
+		/// </summary>
+		public static void ReleaseKey(string strKey)
+		{
+			string strIndexedKey = strKey.ToLower();
+			if (s_PressedKeys.Contains(strIndexedKey))
+			{
+				LavishScriptAPI.LavishScript.ExecuteCommand("press -release " + strKey);
+				s_PressedKeys.Remove(strIndexedKey);
+			}
 			return;
 		}
 	}
