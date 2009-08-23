@@ -228,6 +228,7 @@ function LavishSave()
 	UtilitySR:AddSetting[DoClassPostCombat,${DoClassPostCombat}]
 	UtilitySR:AddSetting[DoClassEmergency,${DoClassEmergency}]
 	UtilitySR:AddSetting[DoClassPostCasting,${DoClassPostCasting}]
+	UtilitySR:AddSetting[DoChargeFollow,${DoChargeFollow}]
 
 	;===================================================
 	;===                  Spells Save               ====

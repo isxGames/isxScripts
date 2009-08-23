@@ -311,7 +311,7 @@ function LavishLoad()
 	DoClassEmergency:Set[${UtilitySR.FindSetting[DoClassEmergency,${DoClassEmergency}]}]	
 	DoClassPostCasting:Set[${UtilitySR.FindSetting[DoClassPostCasting,${DoClassPostCasting}]}]
 
-
+	DoChargeFollow:Set[${UtilitySR.FindSetting[DoChargeFollow,${DoChargeFollow}]}]
 	;===================================================
 	;===                  Spells Load               ====
 	;===================================================

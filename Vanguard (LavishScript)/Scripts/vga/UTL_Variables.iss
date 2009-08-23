@@ -153,6 +153,8 @@ variable bool DoClassPostCombat
 variable bool DoClassEmergency
 variable bool DoClassPostCasting
 
+variable bool DoChargeFollow
+
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
