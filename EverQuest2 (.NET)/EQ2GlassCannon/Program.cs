@@ -192,7 +192,7 @@ namespace EQ2GlassCannon
 			Log("Applying preferential account settings (music volume, personal torch, welcome screen).");
 			RunCommand("/music_volume 0");
 			RunCommand("/r_personal_torch off");
-			RunCommand("/cl_show_welcome_screen_on_startup off");
+			RunCommand("/cl_show_welcome_screen_on_startup 0");
 			return;
 		}
 
@@ -322,10 +322,11 @@ namespace EQ2GlassCannon
 								Program.Log("Zoning...");
 								bFirstZoningFrame = false;
 
+								ReleaseAllKeys();
 								if (s_Controller != null)
 									s_Controller.OnZoning();
 
-								/// Now's as good a time as any!
+								/// Tell the garbage collector to do a full collect. Now's as good a time as any!
 								Program.Log("Performing .NET garbage collection...");
 								long lMemoryBeforeGarbageCollection = GC.GetTotalMemory(false);
 								GC.Collect();
@@ -774,9 +775,10 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public static void PressAndHoldKey(string strKey)
 		{
-			string strIndexedKey = strKey.ToLower();
+			string strIndexedKey = strKey.ToLower().Trim();
 			if (!s_PressedKeys.Contains(strIndexedKey))
 			{
+				Log("Pressing and holding keyboard key: {0}", strKey);
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -hold " + strKey);
 				s_PressedKeys.Add(strIndexedKey);
 			}
@@ -790,12 +792,24 @@ namespace EQ2GlassCannon
 		/// </summary>
 		public static void ReleaseKey(string strKey)
 		{
-			string strIndexedKey = strKey.ToLower();
+			string strIndexedKey = strKey.ToLower().Trim();
 			if (s_PressedKeys.Contains(strIndexedKey))
 			{
+				Log("Releasing keyboard key: {0}", strKey);
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -release " + strKey);
 				s_PressedKeys.Remove(strIndexedKey);
 			}
+			return;
+		}
+
+		/************************************************************************************/
+		public static void ReleaseAllKeys()
+		{
+			foreach (string strThisKey in s_PressedKeys)
+			{
+				LavishScriptAPI.LavishScript.ExecuteCommand("press -release " + strThisKey);
+			}
+			s_PressedKeys.Clear();
 			return;
 		}
 	}

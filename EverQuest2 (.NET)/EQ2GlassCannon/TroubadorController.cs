@@ -161,11 +161,13 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public override bool DoNextAction()
 		{
-			if (base.DoNextAction())
+			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
 
-			if (Me.CastingSpell || MeActor.IsDead)
+			if (IsCasting)
+			{
 				return true;
+			}
 
 			if (UseSpellGeneratedHealItem())
 				return true;
@@ -263,7 +265,7 @@ namespace EQ2GlassCannon
 				if (CastNextMez(m_iSingleMezAbilityID))
 					return true;
 
-				if (!EngagePrimaryEnemy())
+				if (!EngageOffensiveTarget())
 					return false;
 
 				/// We put the stealth check so early on because it is so easily wasted by the wrong thing.
@@ -317,7 +319,7 @@ namespace EQ2GlassCannon
 				if (CastAbility(m_iGreenSTRAGIDebuffAbilityID))
 					return true;
 
-				if (CastAbility(m_iLoreAndLegendAbilityID))
+				if (CastLoreAndLegendAbility())
 					return true;
 
 				if (CastAbility(m_iSingleDefenseDebuffAbilityID))

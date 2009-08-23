@@ -514,6 +514,7 @@ namespace EQ2GlassCannon
 			{
 				Program.Log("Reload INI command (\"{0}\") received.", m_strReloadINISubphrase);
 				ReadINISettings();
+				Program.ReleaseAllKeys(); /// If there's a bug, this will cure it. If not, no loss.
 				Program.s_bRefreshKnowledgeBook = true;
 			}
 

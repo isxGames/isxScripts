@@ -122,11 +122,13 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public override bool DoNextAction()
 		{
-			if (base.DoNextAction())
+			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
 
-			if (Me.CastingSpell || MeActor.IsDead)
+			if (IsCasting)
+			{
 				return true;
+			}
 
 			if (m_bPrioritizeCures && AttemptCures())
 				return true;
@@ -215,7 +217,7 @@ namespace EQ2GlassCannon
 				StopCheckingBuffs();
 			}
 
-			bool bOffensiveTargetEngaged = EngagePrimaryEnemy();
+			bool bOffensiveTargetEngaged = EngageOffensiveTarget();
 
 			if (MeActor.IsIdle)
 			{

@@ -60,15 +60,14 @@ namespace EQ2GlassCannon
 			if (!m_bAutoAttack)
 				return false;
 
-			/// It fucks up our casting timer but IsCasting is resilient enough to manage.
 			CachedAbility AmbidextrousCastingAbility = GetAbility(m_iAmbidexterousCastingAbilityID, true);
 			if (AmbidextrousCastingAbility != null)
 			{
-				TimeSpan TotalCastTimeSpan = TimeSpan.FromSeconds(AmbidextrousCastingAbility.m_fCastTimeSeconds + AmbidextrousCastingAbility.m_fRecoveryTimeSeconds);
-				if (TotalCastTimeSpan > CastTimeRemaining)
+				if (AmbidextrousCastingAbility.TotalCastTimeSpan > CastTimeRemaining)
 					return false;
 
-				if (CastAbility(m_iAmbidexterousCastingAbilityID))
+				/// Because we're not tracking the cast timer, this can be a bit spammy.
+				if (CastSimultaneousAbility(m_iAmbidexterousCastingAbilityID))
 					return true;
 			}
 

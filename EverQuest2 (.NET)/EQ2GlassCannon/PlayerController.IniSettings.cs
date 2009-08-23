@@ -27,6 +27,7 @@ namespace EQ2GlassCannon
 		public string m_strMainTank = string.Empty;
 		public string m_strAutoFollowTarget = string.Empty;
 		public string m_strCommandingPlayer = string.Empty;
+		public string m_strCommandChannel = string.Empty;
 		public string m_strAssistSubphrase = "assist me";
 		public string m_strBotKillswitchSubphrase = "stop dps";
 		public string m_strProcessKillswitchSubphrase = "beddy-bye!!";
@@ -54,6 +55,7 @@ namespace EQ2GlassCannon
 		public bool m_bSyncAbilitiesWithAutoAttack = false; /// Not implemented yet.
 		public bool m_bCastCures = true;
 		public bool m_bPrioritizeCures = true;
+		public bool m_bCancelCastForCures = true;
 		public bool m_bCureUngroupedMainTank = true;
 		public bool m_bHealUngroupedMainTank = true;
 		public bool m_bCastFurySalveIfGranted = true;
@@ -83,6 +85,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("General.MainTank", ref m_strMainTank);
 			ThisFile.TransferString("General.AutoFollowTarget", ref m_strAutoFollowTarget);
 			ThisFile.TransferString("General.CommandingPlayer", ref m_strCommandingPlayer);
+			ThisFile.TransferString("General.CommandChannel", ref m_strCommandChannel);
 			ThisFile.TransferCaselessString("General.AssistSubphrase", ref m_strAssistSubphrase);
 			ThisFile.TransferCaselessString("General.BotKillswitchSubphrase", ref m_strBotKillswitchSubphrase);
 			ThisFile.TransferCaselessString("General.ProcessKillswitchSubphrase", ref m_strProcessKillswitchSubphrase);
@@ -108,6 +111,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.SyncAbilitiesWithAutoAttack", ref m_bSyncAbilitiesWithAutoAttack);
 			ThisFile.TransferBool("General.CastCures", ref m_bCastCures);
 			ThisFile.TransferBool("General.PrioritizeCures", ref m_bPrioritizeCures);
+			ThisFile.TransferBool("General.CancelCastForCures", ref m_bCancelCastForCures);
 			ThisFile.TransferBool("General.CureUngroupedMainTank", ref m_bCureUngroupedMainTank);
 			ThisFile.TransferBool("General.HealUngroupedMainTank", ref m_bHealUngroupedMainTank);
 			ThisFile.TransferBool("General.CastFurySalveIfGranted", ref m_bCastFurySalveIfGranted);

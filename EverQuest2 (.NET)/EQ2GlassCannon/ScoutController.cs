@@ -81,6 +81,12 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected bool CastLoreAndLegendAbility()
+		{
+			return CastAbilityFromFlankingOrBehind(m_iLoreAndLegendAbilityID);
+		}
+
+		/************************************************************************************/
 		public bool DisarmChests()
 		{
 			/// No need to be doing this during combat.

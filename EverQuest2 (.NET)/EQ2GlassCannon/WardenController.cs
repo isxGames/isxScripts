@@ -38,11 +38,13 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public override bool DoNextAction()
 		{
-			if (base.DoNextAction())
+			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
 
-			if (Me.CastingSpell || MeActor.IsDead)
+			if (IsCasting)
+			{
 				return true;
+			}
 
 			if (m_bPrioritizeCures && AttemptCures())
 				return true;
@@ -50,10 +52,9 @@ namespace EQ2GlassCannon
 			/// Start this early just to get pet and autoattack rolling (illusionist mythical regen depends on it).
 			/// We don't attempt offensive action until after cures/heals are dealt with.
 			GetOffensiveTargetActor();
+			bool bOffensiveTargetEngaged = EngageOffensiveTarget();
 
-			bool bOffensiveTargetEngaged = EngagePrimaryEnemy();
-
-			if (m_OffensiveTargetActor != null)
+			if (bOffensiveTargetEngaged)
 			{
 				if (CastBlueOffensiveAbility(m_iBlueMeleeColdAEAbilityID, 4))
 					return true;
