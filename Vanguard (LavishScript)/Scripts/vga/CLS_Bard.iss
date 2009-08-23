@@ -21,12 +21,12 @@ function Bard_Opener()
      	 		If !${Me.Inventory[${PrimaryWeapon}].CurrentEquipSlot.Equal[Primary Hand]}
        				{
         			Me.Inventory[${PrimaryWeapon}]:Equip[Primary Hand]
-        			Waitframe
+        			wait 4
         			}
       			If !${Me.Inventory[${SecondaryWeapon}].CurrentEquipSlot.Equal[Secondary Hand]}
         			{
          			Me.Inventory[${SecondaryWeapon}]:Equip[Secondary Hand]
-         			Waitframe
+         			wait 5
         			}
 			Songs[${FightSong}]:Perform
 		}
