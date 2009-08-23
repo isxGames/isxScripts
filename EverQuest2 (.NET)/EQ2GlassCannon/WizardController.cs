@@ -161,7 +161,7 @@ namespace EQ2GlassCannon
 
 				if (MeActor.IsIdle)
 				{
-					/// Furnace of Ro, static pet, permanent location. Very weird beast.
+					/// Cast Furnace of Ro. This is a static pet, permanent location. Very weird beast.
 					if (m_bUseBlueAEs && !IsAbilityMaintained(m_iFurnaceOfRoAbilityID))
 					{
 						/// We're making a guesstimate that the pet's radius is 6 meters,
@@ -257,17 +257,22 @@ namespace EQ2GlassCannon
 						}
 					}
 
-					if (m_bUseBlueAEs && (fDistance <= 10.0f))
+					/// Cast Fusion. This deserves special consideration because it is a directional PBAE.
+					if (m_bUseBlueAEs)
 					{
-						/// Freehand Sorcery for Fusion.
-						if (IsAbilityReady(m_iFusionAbilityID) && CastAbility(m_iFreehandSorceryAbilityID, Me.Name, true))
-							return true;
-
-						if (CastAbility(m_iFusionAbilityID))
+						CachedAbility FusionAbility = GetAbility(m_iFusionAbilityID, true);
+						if (FusionAbility != null && fDistance <= FusionAbility.m_fEffectRadius)
 						{
-							/// Fusion is directional.
-							m_OffensiveTargetActor.DoFace();
-							return true;
+							/// Freehand Sorcery for Fusion.
+							if (CastAbility(m_iFreehandSorceryAbilityID, Me.Name, true))
+								return true;
+
+							if (CastAbility(m_iFusionAbilityID))
+							{
+								/// Fusion is directional.
+								m_OffensiveTargetActor.DoFace();
+								return true;
+							}
 						}
 					}
 

@@ -117,13 +117,15 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public override bool DoNextAction()
 		{
-			if (base.DoNextAction())
+			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
 
-			if (Me.CastingSpell || MeActor.IsDead)
+			if (IsCasting)
 				return true;
 
 			if (AttemptCureArcane())
+				return true;
+			if (UseSpellGeneratedHealItem())
 				return true;
 
 			if (m_bCheckBuffsNow)
@@ -181,7 +183,7 @@ namespace EQ2GlassCannon
 					return true;
 			}
 
-			if (!EngagePrimaryEnemy())
+			if (!EngageOffensiveTarget())
 				return false;
 
 			/// Decide if the offensive target is still legitimate. If so, attempt to target it.
@@ -190,14 +192,13 @@ namespace EQ2GlassCannon
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
 				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
-				int iEncounterSize = m_OffensiveTargetActor.EncounterSize;
 
 				if (CastHOStarter())
 					return true;
 
 				if (MeActor.IsIdle)
 				{
-					/// This buffs PC cast speed and debuffs NPC cast speed. So it gets rare priority.
+					/// This buffs PC cast speed and debuffs NPC cast speed. So it gets unique priority.
 					if (CastAbility(m_iChronosiphoningAbilityID))
 						return true;
 

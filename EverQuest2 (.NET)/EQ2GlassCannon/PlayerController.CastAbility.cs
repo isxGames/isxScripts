@@ -77,6 +77,17 @@ namespace EQ2GlassCannon
 				return;
 			}
 
+			/// <summary>
+			/// Cast time + recovery time.
+			/// </summary>
+			public TimeSpan TotalCastTimeSpan
+			{
+				get
+				{
+					return TimeSpan.FromSeconds(m_fCastTimeSeconds + m_fRecoveryTimeSeconds);
+				}
+			}
+
 			public bool Use()
 			{
 				if (m_bIsQueued)
@@ -175,16 +186,18 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected void StartCastTimers(CachedAbility ThisAbility)
 		{
-			m_LastCastStartTime = DateTime.Now;
-			m_LastCastEndTime = DateTime.Now + TimeSpan.FromSeconds(ThisAbility.m_fCastTimeSeconds + ThisAbility.m_fRecoveryTimeSeconds);
+			DateTime StartTime = DateTime.Now;
+			m_LastCastStartTime = StartTime;
+			m_LastCastEndTime = StartTime + TimeSpan.FromSeconds(ThisAbility.m_fCastTimeSeconds + ThisAbility.m_fRecoveryTimeSeconds);
 			return;
 		}
 
 		/************************************************************************************/
 		protected void StartCastTimers(Item ThisItem)
 		{
-			m_LastCastStartTime = DateTime.Now;
-			m_LastCastEndTime = DateTime.Now + TimeSpan.FromSeconds(ThisItem.CastingTime + ThisItem.RecoveryTime);
+			DateTime StartTime = DateTime.Now;
+			m_LastCastStartTime = StartTime;
+			m_LastCastEndTime = StartTime + TimeSpan.FromSeconds(ThisItem.CastingTime + ThisItem.RecoveryTime);
 			return;
 		}
 
@@ -194,6 +207,17 @@ namespace EQ2GlassCannon
 			m_LastCastEndTime = DateTime.Now;
 			Program.RunCommand("/cancel_spellcast");
 			return;
+		}
+
+		/************************************************************************************/
+		private TimeSpan m_CastTimeRemaining = TimeSpan.FromTicks(0);
+		protected TimeSpan CastTimeRemaining
+		{
+			get
+			{
+				/// This gets reassigned at the start of DoNextAction().
+				return m_CastTimeRemaining;
+			}
 		}
 
 		/************************************************************************************/
@@ -336,7 +360,8 @@ namespace EQ2GlassCannon
 		public bool CastAbility(
 			int iAbilityID,
 			double fVulnerableRelativeHeadingRangeStart,
-			double fVulnerableRelativeHeadingRangeEnd)
+			double fVulnerableRelativeHeadingRangeEnd,
+			bool bOverwriteExistingCastTimer)
 		{
 			CachedAbility ThisAbility = GetAbility(iAbilityID, true);
 			if (ThisAbility == null)
@@ -345,6 +370,7 @@ namespace EQ2GlassCannon
 			Actor MyTargetActor = MeActor.Target();
 			if (MyTargetActor.IsValid)
 			{
+				/// Test range.
 				double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
 				if (fDistance < ThisAbility.m_fMinRange || ThisAbility.m_fMaxRange < fDistance)
 				{
@@ -382,20 +408,27 @@ namespace EQ2GlassCannon
 			if (!CanAffordAbilityCost(iAbilityID))
 				return false;
 
-			StartCastTimers(ThisAbility);
+			if (bOverwriteExistingCastTimer)
+				StartCastTimers(ThisAbility);
 			return ThisAbility.Use();
 		}
 
 		/************************************************************************************/
 		public bool CastAbility(int iAbilityID)
 		{
-			return CastAbility(iAbilityID, 0.0, 360.0);
+			return CastAbility(iAbilityID, 0.0, 360.0, true);
+		}
+
+		/************************************************************************************/
+		public bool CastSimultaneousAbility(int iAbilityID)
+		{
+			return CastAbility(iAbilityID, 0.0, 360.0, false);
 		}
 
 		/************************************************************************************/
 		public bool CastAbilityFromBehind(int iAbilityID)
 		{
-			return CastAbility(iAbilityID, 120.0, 240.0);
+			return CastAbility(iAbilityID, 120.0, 240.0, true);
 		}
 
 		/************************************************************************************/
@@ -406,7 +439,7 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		public bool CastAbilityFromFlankingOrBehind(int iAbilityID)
 		{
-			return CastAbility(iAbilityID, 60.0, 300.0);
+			return CastAbility(iAbilityID, 60.0, 300.0, true);
 		}
 
 		/************************************************************************************/
