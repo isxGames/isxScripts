@@ -49,6 +49,10 @@ function RushTank()
 		{
 		if ${Pawn[${iCount}].Name.Equal[Poison Cloud]} && ${Pawn[${iCount}].Distance} < 10
 			{
+			if ${Me.IsCasting}
+				{
+				vgexecute /stopcasting
+				}
 			if ${Me.Class.Equal[Rogue]}
 				{
 				Me.Ability[Smoke Trick]:Use
