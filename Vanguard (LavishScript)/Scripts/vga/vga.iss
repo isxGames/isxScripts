@@ -384,6 +384,7 @@ function EmergencyActions()
 	;***Check If I Need to Turn off Attack******
 	;-------------------------------------------
 	call TurnOffAttackfunct
+	call RushTank
 	;-------------------------------------------
 	;*******Check If I Need to Evade************
 	;-------------------------------------------

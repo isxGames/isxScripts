@@ -34,6 +34,38 @@ function Trash()
       }
 
 }
+;********************************************
+function RushTank()
+{
+	if ${DoRushTank}
+	{
+	if !${Pawn[Poison Cloud](exists)}
+		return
+
+	variable int iCount
+	iCount:Set[1]
+	; Cycle through all the Pawns if there is a poison cloud
+		do
+		{
+		if ${Pawn[${iCount}].Name.Equal[Poison Cloud]} && ${Pawn[${iCount}].Distance} < 10
+			{
+			if ${Me.Class.Equal[Rogue]}
+				{
+				Me.Ability[Smoke Trick]:Use
+				wait 3
+				if ${Pawn[${iCount}].Distance} < 10
+					call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+				return	
+				}
+			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+
+			}
+		}	
+		while ${iCount:Inc} <= ${VG.PawnCount}
+	}
+	return
+	
+}
 
 ;********************************************
 function Harvest()
@@ -94,7 +126,7 @@ function lootit()
 					if !${DoLootOnly}
 						VGExecute /Lootall
 					waitframe
-					VGExecute "/cleartargets"
+					VGExecute "/cleartargets"call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
 				}
 			}	
 			while ${iCount:Inc} <= ${VG.PawnCount}
@@ -380,6 +412,7 @@ atom(script) NeedBuffs()
 ;********************************************
 function CheckPosition()
 {
+	call RushTank
 	call assistpawn
 	call DoFollowInCombat
 	call facemob
