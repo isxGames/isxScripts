@@ -11,6 +11,7 @@ function LavishEventLoad()
 	Event[VG_onGroupMemberAdded]:AttachAtom[NeedBuffs]
 	Event[VG_onGroupMemberBooted]:AttachAtom[VG_onGroupMemberBooted]
 	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
+	Event[VG_onPawnSpawned]:AttachAtom[VG_onPawnSpawned]
 	
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }
@@ -95,7 +96,13 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	}	
 
 }
-
+atom VG_onPawnSpawned(string ChangeType, int64 PawnID, string PawnName)
+{
+	if ${DoRushTank}
+	{
+	call RushTank
+	}
+}
 atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 {
 	variable string IDPawn
