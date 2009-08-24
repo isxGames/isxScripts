@@ -39,6 +39,7 @@ namespace EQ2GlassCannon
 		private static long s_lFrameCount = 0;
 		public static string s_strINIFolderPath = string.Empty;
 		public static string s_strCurrentINIFilePath = string.Empty;
+		public static string s_strSharedOverridesINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
 		private static SetCollection<string> s_PressedKeys = new SetCollection<string>();
 
@@ -242,11 +243,18 @@ namespace EQ2GlassCannon
 						s_ISXEQ2.SetActorEventsRange(50.0f);
 
 					s_eq2event = new EQ2Event();
-					s_eq2event.CastingEnded += new EventHandler<LSEventArgs>(OnCastingEnded_EventHandler);
 					s_eq2event.ChoiceWindowAppeared += new EventHandler<LSEventArgs>(OnChoiceWindowAppeared_EventHandler);
 					s_eq2event.IncomingChatText += new EventHandler<LSEventArgs>(OnIncomingChatText_EventHandler);
 					s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
-					s_eq2event.QuestOffered += new EventHandler<LSEventArgs>(OnQuestOffered_EventHandler);
+
+					Program.AddCommand(
+						"gc_changesetting",
+						"gc_exit",
+						"gc_openini",
+						"gc_openoverridesini",
+						"gc_reloadsettings",
+						"gc_stance",
+						"gc_spawnwatch");
 				}
 
 #if !DEBUG
@@ -400,6 +408,7 @@ namespace EQ2GlassCannon
 							/// Build the name of the INI file.
 							string strFileName = string.Format("{0}.{1}.ini", s_EQ2.ServerName, Me.Name);
 							s_strCurrentINIFilePath = Path.Combine(s_strINIFolderPath, strFileName);
+							s_strSharedOverridesINIFilePath = Path.Combine(s_strINIFolderPath, "SharedOverrides.ini");
 
 							if (File.Exists(s_strCurrentINIFilePath))
 								s_Controller.ReadINISettings();
@@ -469,17 +478,7 @@ namespace EQ2GlassCannon
 			/// Things should work perfectly or not at all.
 			catch (Exception e)
 			{
-				StringBuilder ExceptionText = new StringBuilder();
-				ExceptionText.AppendLine("Unhandled .NET exception: " + e.Message);
-				ExceptionText.AppendLine(e.TargetSite.ToString());
-				ExceptionText.AppendLine(e.StackTrace.ToString());
-				string strExceptionText = ExceptionText.ToString();
-
-				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strINIFolderPath, "ExceptionLog.txt")))
-				{
-					OutputFile.WriteLine("-----------------------------");
-					OutputFile.WriteLine(strExceptionText);
-				}
+				OnUnhandledException(e);
 
 				/// Nothing will appear on the screen anyway because the whole thing is locked up.
 				if (LavishVMAPI.Frame.IsLocked)
@@ -487,8 +486,6 @@ namespace EQ2GlassCannon
 
 				if (s_Controller != null)
 					Program.RunCommand("/t " + s_Controller.m_strCommandingPlayer + " oh shit lol");
-
-				Program.Log(strExceptionText); /// TODO: Extract and display the LINE that threw the exception!!!
 			}
 
 			finally
@@ -496,12 +493,6 @@ namespace EQ2GlassCannon
 				Program.Log("EQ2GlassCannon has terminated!");
 			}
 
-			return;
-		}
-
-		/************************************************************************************/
-		private static void OnCastingEnded_EventHandler(object sender, LSEventArgs e)
-		{
 			return;
 		}
 
@@ -584,13 +575,6 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		private static void OnQuestOffered_EventHandler(object sender, LSEventArgs e)
-		{
-			/// Without exception. Yes we accept all quests (if the ISXEQ2 functionality existed...does it?).
-			return;
-		}
-
-		/************************************************************************************/
 		private static void OnFrame_EventHandler(object sender, LSEventArgs e)
 		{
 			if (!string.IsNullOrEmpty(s_strNewWindowTitle))
@@ -603,6 +587,28 @@ namespace EQ2GlassCannon
 				s_strNewWindowTitle = null;
 			}
 			return;
+		}
+
+		/************************************************************************************/
+		private static int OnLavishScriptCommand(string[] astrArgs)
+		{
+			try
+			{
+
+				if (s_Controller != null)
+				{
+					List<string> astrArgList = new List<string>(astrArgs);
+					astrArgList.RemoveAt(0);
+					using (new FrameLock(true))
+						s_Controller.OnCustomCommand(astrArgs[0].ToLower(), astrArgList.ToArray());
+				}
+			}
+			catch (Exception e)
+			{
+				OnUnhandledException(e);
+			}
+
+			return 0;
 		}
 
 		/************************************************************************************/
@@ -810,6 +816,61 @@ namespace EQ2GlassCannon
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -release " + strThisKey);
 			}
 			s_PressedKeys.Clear();
+			return;
+		}
+
+		/************************************************************************************/
+		public static void AddCommand(params string[] astrCommandNames)
+		{
+			foreach (string strCommand in astrCommandNames)
+			{
+				LavishScriptAPI.LavishScript.Commands.AddCommand(strCommand, OnLavishScriptCommand);
+			}
+			return;
+		}
+
+		/************************************************************************************/
+		public static void SafeShellExecute(string strFileName)
+		{
+			Program.Log("Shell executing \"{0}\"...", strFileName);
+			ThreadPool.QueueUserWorkItem(
+				delegate(object objContext)
+				{
+					try
+					{
+						System.Diagnostics.Process p = new System.Diagnostics.Process();
+						p.StartInfo.FileName = strFileName;
+						p.StartInfo.UseShellExecute = true;
+						p.StartInfo.ErrorDialog = false;
+
+						/// This call crashes the process when run inside the main thread.
+						/// That's why we dump this act to the worker queue.
+						p.Start();
+					}
+					catch
+					{
+					}
+				}
+			);
+			return;
+		}
+
+		/************************************************************************************/
+		public static void OnUnhandledException(Exception e)
+		{
+			StringBuilder ExceptionText = new StringBuilder();
+			ExceptionText.AppendLine("Unhandled .NET exception: " + e.Message);
+			ExceptionText.AppendLine(e.TargetSite.ToString());
+			ExceptionText.AppendLine(e.StackTrace.ToString());
+			string strExceptionText = ExceptionText.ToString();
+
+			using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strINIFolderPath, "ExceptionLog.txt")))
+			{
+				OutputFile.WriteLine("-----------------------------");
+				OutputFile.WriteLine(strExceptionText);
+			}
+
+			Program.Log(strExceptionText); /// TODO: Extract and display the LINE that threw the exception!!!
 			return;
 		}
 	}

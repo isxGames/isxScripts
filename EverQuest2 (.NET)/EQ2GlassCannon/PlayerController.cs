@@ -672,10 +672,8 @@ namespace EQ2GlassCannon
 			{
 				Program.Log("Spawn Watch command (\"{0}\") received.", m_strSpawnWatchSubphrase);
 				m_bSpawnWatchTargetAnnounced = false;
-
 				m_strSpawnWatchTarget = strTrimmedMessage.Substring(m_strSpawnWatchSubphrase.Length).ToLower().Trim();
 				Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
-
 				ChangePositioningStance(PositioningStance.SpawnWatch);
 			}
 
@@ -709,6 +707,79 @@ namespace EQ2GlassCannon
 				ChangePositioningStance(PositioningStance.AutoFollow);
 
 			return;
+		}
+
+		/************************************************************************************/
+		public virtual bool OnCustomCommand(string strCommand, string[] astrParameters)
+		{
+			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
+
+			switch (strCommand)
+			{
+				case "gc_changesetting":
+				{
+					string strKey = string.Empty;
+					string strValue = string.Empty;
+
+					int iEqualsPosition = strCondensedParameters.IndexOf(" ");
+					if (iEqualsPosition == -1)
+						strKey = strCondensedParameters;
+					else
+					{
+						strKey = strCondensedParameters.Substring(0, iEqualsPosition).TrimEnd();
+						strValue = strCondensedParameters.Substring(iEqualsPosition + 1).TrimStart();
+					}
+
+					if (!string.IsNullOrEmpty(strKey))
+					{
+						Program.Log("Changing setting \"{0}\" to new value \"{1}\"...", strKey, strValue);
+
+						IniFile FakeIniFile = new IniFile();
+						FakeIniFile.WriteString(strKey, strValue);
+						FakeIniFile.Mode = IniFile.TransferMode.Read;
+						TransferINISettings(FakeIniFile);
+					}
+					return true;
+				}
+				case "gc_exit":
+				{
+					Program.Log("Exit command received!");
+					Program.s_bContinueBot = false;
+					return true;
+				}
+				case "gc_openini":
+				{
+					Program.SafeShellExecute(Program.s_strCurrentINIFilePath);
+					return true;
+				}
+				case "gc_openoverridesini":
+				{
+					Program.SafeShellExecute(Program.s_strCurrentINIFilePath);
+					return true;
+				}
+				case "gc_reloadsettings":
+				{
+					ReadINISettings();
+					Program.ReleaseAllKeys(); /// If there's a bug, this will cure it. If not, no loss.
+					Program.s_bRefreshKnowledgeBook = true;
+					return true;
+				}
+				case "gc_stance":
+				{
+					break;
+				}
+				case "gc_spawnwatch":
+				{
+					m_bSpawnWatchTargetAnnounced = false;
+					m_strSpawnWatchTarget = strCondensedParameters.ToLower().Trim();
+					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
+					ChangePositioningStance(PositioningStance.SpawnWatch);
+					break;
+				}
+				default: break;
+			}
+
+			return false;
 		}
 
 		/************************************************************************************/

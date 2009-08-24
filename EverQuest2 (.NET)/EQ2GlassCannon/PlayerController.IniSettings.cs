@@ -161,6 +161,12 @@ namespace EQ2GlassCannon
 			IniFile NewFile = new IniFile(Program.s_strCurrentINIFilePath);
 			TransferINISettings(NewFile);
 
+			if (File.Exists(Program.s_strSharedOverridesINIFilePath))
+			{
+				IniFile OverridesFile = new IniFile(Program.s_strSharedOverridesINIFilePath);
+				TransferINISettings(OverridesFile);
+			}
+
 			m_aCustomTellTriggerList.Clear();
 
 			/// Load the custom tell trigger list.
