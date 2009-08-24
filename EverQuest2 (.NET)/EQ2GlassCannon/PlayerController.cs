@@ -710,12 +710,27 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public class ActorDistanceComparer : IComparer<Actor>
+		{
+			public int Compare(Actor x, Actor y)
+			{
+				if (x.Distance > y.Distance)
+					return 1;
+				else if (x.Distance < y.Distance)
+					return -1;
+				else
+					return 0;
+			}
+		}
+
+		/************************************************************************************/
 		public virtual bool OnCustomCommand(string strCommand, string[] astrParameters)
 		{
 			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
 
 			switch (strCommand)
 			{
+				/// Arbitrarily change an INI setting on the fly.
 				case "gc_changesetting":
 				{
 					string strKey = string.Empty;
@@ -747,6 +762,70 @@ namespace EQ2GlassCannon
 					Program.s_bContinueBot = false;
 					return true;
 				}
+				case "gc_findactor":
+				{
+					if (string.IsNullOrEmpty(strCondensedParameters))
+					{
+						Program.Log("gc_findactor failed: No actor name specified!");
+						return true;
+					}
+
+					List<Actor> ActorList = new List<Actor>();
+
+					int iValidActorCount = 0;
+					int iInvalidActorCount = 0;
+					foreach (Actor ThisActor in Program.EnumActors())
+					{
+						/// We manually check the name; for some reason the custom array won't budge and just returns everything.
+						if (ThisActor.IsValid && ThisActor.Name.ToLower().Contains(strCondensedParameters.ToLower()))
+						{
+							ActorList.Add(ThisActor);
+							iValidActorCount++;
+						}
+						else
+							iInvalidActorCount++;
+					}
+
+					if (ActorList.Count == 0)
+					{
+						Program.Log("Unable to find actor \"{0}\".", strCondensedParameters);
+						return true;
+					}
+
+					ActorList.Sort(new ActorDistanceComparer());
+					while (ActorList.Count > 5)
+						ActorList.RemoveAt(ActorList.Count - 1);
+
+					/// Run the waypoint on the nearest actor.
+					Program.RunCommand("/waypoint {0}, {1}, {2}", ActorList[0].X, ActorList[0].Y, ActorList[0].Z);
+
+					FlexStringBuilder SummaryBuilder = new FlexStringBuilder();
+					SummaryBuilder.AppendLine("gc_findactor: {0} actor(s) found ({1} invalid) as \"{2}\".", iValidActorCount, iInvalidActorCount, strCondensedParameters);
+
+					foreach (Actor ThisActor in ActorList)
+					{
+						SummaryBuilder.LinePrefix = string.Empty;
+						SummaryBuilder.AppendLine("Actor \"{0}\" ({1}) found at ({2}, {3}, {4})",
+							ThisActor.Name,
+							ThisActor.ID,
+							ThisActor.X,
+							ThisActor.Y,
+							ThisActor.Z);
+						SummaryBuilder.LinePrefix = "     ";
+						SummaryBuilder.AppendLine("Distance: {0} meters", ThisActor.Distance);
+						SummaryBuilder.AppendLine("Full Name: {0} {1} {2} <{3}>", ThisActor.Name, ThisActor.LastName, ThisActor.SuffixTitle, ThisActor.Guild);
+						SummaryBuilder.AppendLine("Type: {0}", ThisActor.Type);
+						SummaryBuilder.AppendLine("Class: {0}", ThisActor.Class);
+						SummaryBuilder.AppendLine("Race: {0}", ThisActor.Race);
+						SummaryBuilder.AppendLine("Level(Effective): {0}({1})", ThisActor.Level, ThisActor.EffectiveLevel);
+						SummaryBuilder.AppendLine("Encounter Size: {0}", ThisActor.EncounterSize);
+						SummaryBuilder.AppendLine("IsLocked: {0}", ThisActor.IsLocked);
+						SummaryBuilder.AppendLine("Speed: {0}", ThisActor.Speed);
+					}
+
+					Program.Log(SummaryBuilder.ToString());
+					return true;
+				}
 				case "gc_openini":
 				{
 					Program.SafeShellExecute(Program.s_strCurrentINIFilePath);
@@ -754,7 +833,7 @@ namespace EQ2GlassCannon
 				}
 				case "gc_openoverridesini":
 				{
-					Program.SafeShellExecute(Program.s_strCurrentINIFilePath);
+					Program.SafeShellExecute(Program.s_strSharedOverridesINIFilePath);
 					return true;
 				}
 				case "gc_reloadsettings":

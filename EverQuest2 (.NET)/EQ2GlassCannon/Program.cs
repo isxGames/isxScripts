@@ -250,6 +250,7 @@ namespace EQ2GlassCannon
 					Program.AddCommand(
 						"gc_changesetting",
 						"gc_exit",
+						"gc_findactor",
 						"gc_openini",
 						"gc_openoverridesini",
 						"gc_reloadsettings",
@@ -310,6 +311,10 @@ namespace EQ2GlassCannon
 					s_strINIFolderPath = DataFolderInfo.FullName;
 				else
 					s_strINIFolderPath = Directory.GetCurrentDirectory(); // ehhhh not the best option but w/e...
+
+				s_strSharedOverridesINIFilePath = Path.Combine(s_strINIFolderPath, "SharedOverrides.ini");
+				if (!File.Exists(s_strSharedOverridesINIFilePath))
+					File.Create(s_strSharedOverridesINIFilePath).Close();
 
 				string strLastClass = string.Empty;
 				bool bFirstZoningFrame = true;
@@ -408,7 +413,6 @@ namespace EQ2GlassCannon
 							/// Build the name of the INI file.
 							string strFileName = string.Format("{0}.{1}.ini", s_EQ2.ServerName, Me.Name);
 							s_strCurrentINIFilePath = Path.Combine(s_strINIFolderPath, strFileName);
-							s_strSharedOverridesINIFilePath = Path.Combine(s_strINIFolderPath, "SharedOverrides.ini");
 
 							if (File.Exists(s_strCurrentINIFilePath))
 								s_Controller.ReadINISettings();
