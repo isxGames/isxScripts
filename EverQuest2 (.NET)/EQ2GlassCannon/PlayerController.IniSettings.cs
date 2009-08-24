@@ -67,6 +67,8 @@ namespace EQ2GlassCannon
 		public bool m_bHarvestAutomatically = false;
 		public int m_iFrameSkip = 2;
 		public EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
+		public string m_strVoiceSynthesizerProfile = "Microsoft Sam";
+		public string m_strPhoneticCharacterName = "";
 		public string m_strChatWatchSubphrase = "listen for";
 		public List<string> m_astrChatWatchToAddressList = new List<string>();
 		public double m_fChatWatchAlertCooldownMinutes = 5.0;
@@ -133,6 +135,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("E-Mail.SMTPPassword", ref m_EmailProfile.m_strPassword);
 			ThisFile.TransferCaselessString("E-Mail.FromAddress", ref m_EmailProfile.m_strFromAddress);
 
+			ThisFile.TransferString("Voice.SynthesizerProfile", ref m_strVoiceSynthesizerProfile);
+			ThisFile.TransferString("Voice.PhoneticCharacterName", ref m_strPhoneticCharacterName);
+
 			/// Chat Watch values.
 			ThisFile.TransferCaselessString("ChatWatch.Subphrase", ref m_strChatWatchSubphrase);
 			ThisFile.TransferStringList("ChatWatch.ToAddresses", m_astrChatWatchToAddressList);
@@ -150,6 +155,9 @@ namespace EQ2GlassCannon
 				/// Fallback option to prevent an unresponsive bot.
 				if (string.IsNullOrEmpty(m_strCommandingPlayer))
 					m_strCommandingPlayer = Me.Name;
+
+				if (string.IsNullOrEmpty(m_strPhoneticCharacterName))
+					m_strPhoneticCharacterName = Me.Name;
 			}
 
 			return;
