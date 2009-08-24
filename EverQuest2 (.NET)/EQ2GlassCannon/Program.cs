@@ -9,6 +9,8 @@ using EQ2.ISXEQ2;
 using InnerSpaceAPI;
 using LavishScriptAPI;
 using LavishVMAPI;
+using System.Speech.Synthesis;
+using System.Collections;
 
 namespace EQ2GlassCannon
 {
@@ -17,6 +19,7 @@ namespace EQ2GlassCannon
 		private static Extension s_Extension = null;
 		private static EQ2.ISXEQ2.ISXEQ2 s_ISXEQ2 = null;
 		private static EQ2.ISXEQ2.EQ2 s_EQ2 = null;
+		private static SpeechSynthesizer s_SpeechSynthesizer = null;
 
 		private static Character s_Me = null;
 		public static Character Me { get { return s_Me; } }
@@ -875,6 +878,52 @@ namespace EQ2GlassCannon
 			}
 
 			Program.Log(strExceptionText); /// TODO: Extract and display the LINE that threw the exception!!!
+			return;
+		}
+
+		/************************************************************************************/
+		public static void ToggleSpeechSynthesizer(bool bActivate, int iVolume, string strVoiceProfile)
+		{
+			if (bActivate)
+			{
+				if (s_SpeechSynthesizer == null)
+					s_SpeechSynthesizer = new SpeechSynthesizer();
+				s_SpeechSynthesizer.Volume = iVolume;
+
+				try
+				{
+					s_SpeechSynthesizer.SelectVoice(strVoiceProfile);
+				}
+				catch
+				{
+					/// If no voice is found, use the first installed one we find.
+					foreach (InstalledVoice ThisVoice in s_SpeechSynthesizer.GetInstalledVoices())
+					{
+						s_SpeechSynthesizer.SelectVoice(ThisVoice.VoiceInfo.Name);
+						break;
+					}
+				}
+			}
+			else
+			{
+				if (s_SpeechSynthesizer != null)
+				{
+					s_SpeechSynthesizer.Dispose();
+					s_SpeechSynthesizer = null;
+				}
+			}
+		}
+
+		/************************************************************************************/
+		public static void SayText(string strFormat, params object[] aobjParams)
+		{
+			string strOutput = string.Format(strFormat, aobjParams);
+			if (string.IsNullOrEmpty(strOutput))
+				return;
+
+			if (s_Controller != null && s_Controller.m_bUseVoiceSynthesizer && s_SpeechSynthesizer != null)
+				s_SpeechSynthesizer.SpeakAsync(string.Format(strFormat, aobjParams));
+
 			return;
 		}
 	}
