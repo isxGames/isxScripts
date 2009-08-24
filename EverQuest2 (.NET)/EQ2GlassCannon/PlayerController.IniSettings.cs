@@ -67,7 +67,9 @@ namespace EQ2GlassCannon
 		public bool m_bHarvestAutomatically = false;
 		public int m_iFrameSkip = 2;
 		public EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
-		public string m_strVoiceSynthesizerProfile = "Microsoft Sam";
+		public bool m_bUseVoiceSynthesizer = true;
+		public string m_strVoiceSynthesizerProfile = "Microsoft Anna";
+		public int m_iVoiceSynthesizerVolume = 100;
 		public string m_strPhoneticCharacterName = "";
 		public string m_strChatWatchSubphrase = "listen for";
 		public List<string> m_astrChatWatchToAddressList = new List<string>();
@@ -75,6 +77,7 @@ namespace EQ2GlassCannon
 		public string m_strSpawnWatchSubphrase = "watch for";
 		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
 		public string m_strSpawnWatchAlertCommand = string.Empty;
+		public string m_strSpawnWatchAlertSpeech = "{0} has just appeared";
 		public string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
 		public double m_fSpawnWatchDespawnTimeoutMinutes = 6.0;
 
@@ -135,7 +138,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("E-Mail.SMTPPassword", ref m_EmailProfile.m_strPassword);
 			ThisFile.TransferCaselessString("E-Mail.FromAddress", ref m_EmailProfile.m_strFromAddress);
 
+			ThisFile.TransferBool("Voice.UseSynthesizer", ref m_bUseVoiceSynthesizer);
 			ThisFile.TransferString("Voice.SynthesizerProfile", ref m_strVoiceSynthesizerProfile);
+			ThisFile.TransferInteger("Voice.SynthesizerVolume", ref m_iVoiceSynthesizerVolume);
 			ThisFile.TransferString("Voice.PhoneticCharacterName", ref m_strPhoneticCharacterName);
 
 			/// Chat Watch values.
@@ -147,18 +152,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferCaselessString("SpawnWatch.Subphrase", ref m_strSpawnWatchSubphrase);
 			ThisFile.TransferStringList("SpawnWatch.ToAddresses", m_astrSpawnWatchToAddressList);
 			ThisFile.TransferString("SpawnWatch.AlertCommand", ref m_strSpawnWatchAlertCommand);
+			ThisFile.TransferString("SpawnWatch.AlertSpeech", ref m_strSpawnWatchAlertSpeech);
 			ThisFile.TransferCaselessString("SpawnWatch.DespawnSubphrase", ref m_strSpawnWatchDespawnSubphrase);
 			ThisFile.TransferDouble("SpawnWatch.DespawnTimeoutMinutes", ref m_fSpawnWatchDespawnTimeoutMinutes);
-
-			if (ThisFile.Mode == IniFile.TransferMode.Read)
-			{
-				/// Fallback option to prevent an unresponsive bot.
-				if (string.IsNullOrEmpty(m_strCommandingPlayer))
-					m_strCommandingPlayer = Me.Name;
-
-				if (string.IsNullOrEmpty(m_strPhoneticCharacterName))
-					m_strPhoneticCharacterName = Me.Name;
-			}
 
 			return;
 		}
@@ -174,6 +170,8 @@ namespace EQ2GlassCannon
 				IniFile OverridesFile = new IniFile(Program.s_strSharedOverridesINIFilePath);
 				TransferINISettings(OverridesFile);
 			}
+
+			ApplySettings();
 
 			m_aCustomTellTriggerList.Clear();
 
@@ -228,6 +226,24 @@ namespace EQ2GlassCannon
 			TransferINISettings(NewFile);
 			if (m_bWriteBackINI)
 				NewFile.Save(Program.s_strCurrentINIFilePath);
+			return;
+		}
+
+		/************************************************************************************/
+		public void ApplySettings()
+		{
+			/// Fallback option to prevent an unresponsive bot.
+			if (string.IsNullOrEmpty(m_strCommandingPlayer))
+				m_strCommandingPlayer = Me.Name;
+
+			if (string.IsNullOrEmpty(m_strPhoneticCharacterName))
+				m_strPhoneticCharacterName = Me.Name;
+
+			Program.ToggleSpeechSynthesizer(m_bUseVoiceSynthesizer, m_iVoiceSynthesizerVolume, m_strVoiceSynthesizerProfile);
+
+			if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
+				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMinimumRange;
+
 			return;
 		}
 	}

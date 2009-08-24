@@ -753,9 +753,11 @@ namespace EQ2GlassCannon
 						FakeIniFile.WriteString(strKey, strValue);
 						FakeIniFile.Mode = IniFile.TransferMode.Read;
 						TransferINISettings(FakeIniFile);
+						ApplySettings();
 					}
 					return true;
 				}
+
 				case "gc_exit":
 				{
 					Program.Log("Exit command received!");
@@ -793,27 +795,38 @@ namespace EQ2GlassCannon
 					}
 
 					ActorList.Sort(new ActorDistanceComparer());
-					while (ActorList.Count > 5)
-						ActorList.RemoveAt(ActorList.Count - 1);
 
 					/// Run the waypoint on the nearest actor.
 					Program.RunCommand("/waypoint {0}, {1}, {2}", ActorList[0].X, ActorList[0].Y, ActorList[0].Z);
 
 					FlexStringBuilder SummaryBuilder = new FlexStringBuilder();
-					SummaryBuilder.AppendLine("gc_findactor: {0} actor(s) found ({1} invalid) as \"{2}\".", iValidActorCount, iInvalidActorCount, strCondensedParameters);
+					SummaryBuilder.AppendLine("gc_findactor: {0} actor(s) found ({1} invalid) using \"{2}\".", iValidActorCount, iInvalidActorCount, strCondensedParameters);
 
-					foreach (Actor ThisActor in ActorList)
+					for (int iIndex = 0; iIndex < ActorList.Count && iIndex < 5; iIndex++)
 					{
-						SummaryBuilder.LinePrefix = string.Empty;
-						SummaryBuilder.AppendLine("Actor \"{0}\" ({1}) found at ({2}, {3}, {4})",
+						Actor ThisActor = ActorList[iIndex];
+
+						SummaryBuilder.LinePrefix = "   ";
+						SummaryBuilder.AppendLine("{0}. \"{1}\" ({2}) found {3:0.00} meters away at ({4:0.00}, {5:0.00}, {6:0.00})",
+							iIndex + 1,
 							ThisActor.Name,
 							ThisActor.ID,
+							ThisActor.Distance,
 							ThisActor.X,
 							ThisActor.Y,
 							ThisActor.Z);
-						SummaryBuilder.LinePrefix = "     ";
-						SummaryBuilder.AppendLine("Distance: {0} meters", ThisActor.Distance);
-						SummaryBuilder.AppendLine("Full Name: {0} {1} {2} <{3}>", ThisActor.Name, ThisActor.LastName, ThisActor.SuffixTitle, ThisActor.Guild);
+						SummaryBuilder.LinePrefix = "      ";
+
+						string strFullName = ThisActor.Name;
+						if (!string.IsNullOrEmpty(ThisActor.LastName))
+							strFullName += " " + ThisActor.LastName;
+						if (!string.IsNullOrEmpty(ThisActor.SuffixTitle))
+							strFullName += " " + ThisActor.SuffixTitle;
+						if (!string.IsNullOrEmpty(ThisActor.Guild))
+							strFullName += " <" + ThisActor.Guild + ">";
+
+						SummaryBuilder.AppendLine("Full Name: {0}", strFullName);
+
 						SummaryBuilder.AppendLine("Type: {0}", ThisActor.Type);
 						SummaryBuilder.AppendLine("Class: {0}", ThisActor.Class);
 						SummaryBuilder.AppendLine("Race: {0}", ThisActor.Race);
@@ -826,16 +839,19 @@ namespace EQ2GlassCannon
 					Program.Log(SummaryBuilder.ToString());
 					return true;
 				}
+
 				case "gc_openini":
 				{
 					Program.SafeShellExecute(Program.s_strCurrentINIFilePath);
 					return true;
 				}
+
 				case "gc_openoverridesini":
 				{
 					Program.SafeShellExecute(Program.s_strSharedOverridesINIFilePath);
 					return true;
 				}
+
 				case "gc_reloadsettings":
 				{
 					ReadINISettings();
@@ -843,19 +859,20 @@ namespace EQ2GlassCannon
 					Program.s_bRefreshKnowledgeBook = true;
 					return true;
 				}
+
 				case "gc_stance":
 				{
 					break;
 				}
+
 				case "gc_spawnwatch":
 				{
 					m_bSpawnWatchTargetAnnounced = false;
 					m_strSpawnWatchTarget = strCondensedParameters.ToLower().Trim();
 					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
 					ChangePositioningStance(PositioningStance.SpawnWatch);
-					break;
+					return true;
 				}
-				default: break;
 			}
 
 			return false;
@@ -1158,6 +1175,7 @@ namespace EQ2GlassCannon
 					string strCoordinates = string.Format("{0:0.00}, {1:0.00}, {2:0.00}", ActualFoundActor.X, ActualFoundActor.Y, ActualFoundActor.Z);
 					Program.RunCommand("/waypoint {0}", strCoordinates);
 					Program.Log("Spawn Watch target \"{0}\" found at ({1})! See map: a waypoint command was executed.", ActualFoundActor.Name, strCoordinates);
+					Program.SayText(m_strSpawnWatchAlertSpeech, ActualFoundActor.Name);
 
 					if (m_astrSpawnWatchToAddressList.Count > 0)
 					{
