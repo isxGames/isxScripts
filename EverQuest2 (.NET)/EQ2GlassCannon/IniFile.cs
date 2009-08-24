@@ -35,6 +35,11 @@ namespace EQ2GlassCannon
 			{
 				return m_eTransferMode;
 			}
+			set
+			{
+				m_eTransferMode = value;
+				return;
+			}
 		}
 
 		/************************************************************************************/
@@ -43,6 +48,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// Create an empty file in Write mode.
+		/// </summary>
 		public IniFile()
 		{
 			m_eTransferMode = TransferMode.Write;
@@ -50,6 +58,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// Create a file in Read mode and loads the file.
+		/// </summary>
 		public IniFile(string strFilePath)
 		{
 			Load(strFilePath);
