@@ -70,6 +70,7 @@
     <Compile Include="DruidController.cs" />
     <Compile Include="EmailQueueThread.cs" />
     <Compile Include="EnchanterController.cs" />
+    <Compile Include="FlexStringBuilder.cs" />
     <Compile Include="IllusionistController.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="MageController.cs" />
