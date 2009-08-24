@@ -904,6 +904,8 @@ function buy(string tabname, string action)
 	elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
 		LavishSettings[newcraft]:Export[${NewCraftPath}${Me.TSSubClass}-_myprices.xml]
 
+	if ${action.Equal["place"]}
+		CraftItemsPlaced:Set[TRUE]
 
 	call echolog "<end> : buy"
 }
@@ -2443,7 +2445,6 @@ function placeitem(string itemname)
 			while ${numitems}>0 && !${nospace}
 		}
 	}
-	CraftItemsPlaced:Set[TRUE]
 	call echolog "<end> placeitem"
 }
 
@@ -2491,7 +2492,6 @@ function inventorylist()
 		{
 			if !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].NoTrade}
 			{
-				
 				UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${Me.CustomInventory[${xvar}].Name}"]
 				InventoryList[${i:Inc}]:Set[${xvar}]
 				if ${ItemList.FindSet["${Me.CustomInventory[${xvar}].Name}"].FindSetting[CraftItem]}
