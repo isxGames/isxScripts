@@ -155,6 +155,13 @@ variable bool DoClassPostCasting
 
 variable bool DoChargeFollow
 
+variable bool DoAttackPositionFront
+variable bool DoAttackPositionLeft
+variable bool DoAttackPositionRight
+variable bool DoAttackPositionBack
+variable bool DoAttackPosition
+
+
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================

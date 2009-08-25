@@ -330,8 +330,8 @@
                           </checkbox>
                           <checkbox Name='doFaceTarget' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
-                            <X>180</X>
-                            <Y>75</Y>
+                            <X>295</X>
+                            <Y>55</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Face Target</Text>
@@ -343,6 +343,96 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doFaceTarget:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoAttackPosition' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>180</X>
+                            <Y>75</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Position</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoAttackPosition}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoAttackPosition:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoAttackPositionFront' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>260</X>
+                            <Y>75</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Front</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoAttackPositionFront}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoAttackPositionFront:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoAttackPositionBack' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>260</X>
+                            <Y>115</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Back</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoAttackPositionBack}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoAttackPositionBack:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoAttackPositionLeft' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>230</X>
+                            <Y>95</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Left</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoAttackPositionLeft}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoAttackPositionLeft:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoAttackPositionRight' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>285</X>
+                            <Y>95</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Right</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoAttackPositionRight}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoAttackPositionRight:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
@@ -382,7 +472,7 @@
                       	<Width>95%</Width>
                       	<Height>20</Height>
                       	<Alignment>Left</Alignment>
-                      	<Text>-----------------Utility Switches-----------------------------</Text>
+                      	<Text>-------Utility Switches---------</Text>
                     	</Text>
  
                           <checkbox Name='doLoot' Template='VG.BlueCheckbox'>

@@ -311,6 +311,13 @@ function LavishLoad()
 	DoClassEmergency:Set[${UtilitySR.FindSetting[DoClassEmergency,${DoClassEmergency}]}]	
 	DoClassPostCasting:Set[${UtilitySR.FindSetting[DoClassPostCasting,${DoClassPostCasting}]}]
 
+	DoAttackPositionFront:Set[${UtilitySR.FindSetting[DoAttackPositionFront,${DoAttackPositionFront}]}]
+	DoAttackPositionLeft:Set[${UtilitySR.FindSetting[DoAttackPositionLeft,${DoAttackPositionLeft}]}]
+	DoAttackPositionRight:Set[${UtilitySR.FindSetting[DoAttackPositionRight,${DoAttackPositionRight}]}]
+	DoAttackPositionBack:Set[${UtilitySR.FindSetting[DoAttackPositionBack,${DoAttackPositionBack}]}]
+	oAttackPosition:Set[${UtilitySR.FindSetting[DoAttackPosition,${DoAttackPosition}]}]
+
+
 	DoChargeFollow:Set[${UtilitySR.FindSetting[DoChargeFollow,${DoChargeFollow}]}]
 	;===================================================
 	;===                  Spells Load               ====
