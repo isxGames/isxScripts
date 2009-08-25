@@ -95,6 +95,7 @@ function CheckAttackPosition()
 ;********************************************
 function SlideR(string SlideTo)
 {
+	Me:Sprint[40]
 	If ${SlideTo.Equal[Back]}
 		{
 		while ${AttackPosition.TargetAngle} > 45
@@ -139,10 +140,12 @@ function SlideR(string SlideTo)
 			}
 		VG:ExecBinding[straferight,release]
 		}
+	Me:Sprint
 }
 ;********************************************
 function OtherSide(string SlideTo)
 {
+	Me:Sprint[40]
 	If ${SlideTo.Equal[Back]}
 		{
 		face ${Me.Target.X} ${Me.Target.Y}
@@ -197,10 +200,12 @@ function OtherSide(string SlideTo)
 		VG:ExecBinding[moveforward,release]
 		face ${Me.Target.X} ${Me.Target.Y}
 		}
+	Me:Sprint
 }
 ;********************************************
 function SlideL(string SlideTo)
 {
+	Me:Sprint[40]
 	If ${SlideTo.Equal[Back]}
 		{
 		while ${AttackPosition.TargetAngle} > 45		
@@ -245,4 +250,5 @@ function SlideL(string SlideTo)
 			}
 		VG:ExecBinding[strafeleft,release]
 		}
+	Me:Sprint
 }
