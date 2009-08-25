@@ -8,7 +8,7 @@ function MoveToTarget()
 			actionlog "Moving to Melee"
 			call movetoobject ${Me.Target.ID} 4 1
 			}
-		if ${Me.Target.Distance} < 5 && ${DoAttackPosition}
+		if ${Me.Target.Distance} < 5 && ${DoAttackPosition} && ${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
 			call CheckAttackPosition
 			}
