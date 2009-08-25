@@ -148,57 +148,47 @@ function OtherSide(string SlideTo)
 	Me:Sprint[40]
 	If ${SlideTo.Equal[Back]}
 		{
-		face ${Me.Target.X} ${Me.Target.Y}
 		while ${AttackPosition.TargetAngle} > 45
 			{
-			VG:ExecBinding[moveforward]
-			wait 4
+			VG:ExecBinding[straferight]
+			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
 			}
-		VG:ExecBinding[moveforward,release]
-		face ${Me.Target.X} ${Me.Target.Y}
+		VG:ExecBinding[straferight,release]
 		}
 	If ${SlideTo.Equal[Right]}
 		{
-		face ${Me.Target.X} ${Me.Target.Y}
-		while ${AttackPosition.TargetSide.Equal[Left]}
+		while ${AttackPosition.TargetAngle} < 45 || ${AttackPosition.TargetAngle} > 135
 			{
-			VG:ExecBinding[moveforward]
-			wait 4
+			VG:ExecBinding[straferight]
+			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
 			}
-		wait 2
-		VG:ExecBinding[moveforward,release]
-		face ${Me.Target.X} ${Me.Target.Y}
+		VG:ExecBinding[straferight,release]
 		}
 	If ${SlideTo.Equal[Front]}
 		{
-		face ${Me.Target.X} ${Me.Target.Y}
-		echo need to move to front from opposite side
 		while ${AttackPosition.TargetAngle} < 135
 			{
-			VG:ExecBinding[moveforward]
-			wait 4
+			VG:ExecBinding[strafeleft]
+			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
 			}
-		VG:ExecBinding[moveforward,release]
-		face ${Me.Target.X} ${Me.Target.Y}
+		VG:ExecBinding[strafeleft,release]
 		}
 	If ${SlideTo.Equal[Left]}
 		{
-		face ${Me.Target.X} ${Me.Target.Y}
-		while ${AttackPosition.TargetSide.Equal[Right]}
+		while ${AttackPosition.TargetAngle} < 45 || ${AttackPosition.TargetAngle} > 135
 			{
-			VG:ExecBinding[moveforward]
-			wait 4
+			VG:ExecBinding[strafeleft]
+			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
 			}
-		VG:ExecBinding[moveforward,release]
-		face ${Me.Target.X} ${Me.Target.Y}
+		VG:ExecBinding[strafeleft,release]
 		}
 	Me:Sprint
 }
