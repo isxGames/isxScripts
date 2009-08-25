@@ -33,48 +33,31 @@ function CheckAttackPosition()
 			{
 			echo Move front ${AttackPosition.TargetAngle}
 			if ${AttackPosition.TargetAngle} < 45
-				{
-				call OtherSide Front
-				}
-			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}		
-				{
 				call SlideL Front
-				}
+			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}		
+				call SlideL Front
 			if ${AttackPosition.TargetAngle} > 135
 				return
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}	
-				{ 
 				call SlideR Front
-				}
 			}
 		if ${DoAttackPositionLeft}
 			{
 			if ${AttackPosition.TargetAngle} < 45
-				{ 
-				echo slider to left
 				call SlideL Left
-				}
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}
-				{ 
 				return
-				}
 			if ${AttackPosition.TargetAngle} > 135
-				{ 
-				echo slide left to left
 				call SlideR Left
-				}
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}	
-				{ 
-				echo otherside to left
-				call OtherSide Left
-				}
+				call SlideR Left
 			}
 		if ${DoAttackPositionRight}
 			{
 			if ${AttackPosition.TargetAngle} < 45
 				call SlideR Right
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}
-				call OtherSide Right
+				call SlideL Right
 			if ${AttackPosition.TargetAngle} > 135
 				call SlideL Right
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}	
@@ -87,7 +70,7 @@ function CheckAttackPosition()
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}
 				call SlideR Back
 			if ${AttackPosition.TargetAngle} > 135
-				call OtherSide Back
+				call SlideL Back
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}
 				call SlideL Back
 			}
@@ -142,56 +125,7 @@ function SlideR(string SlideTo)
 		}
 	Me:Sprint
 }
-;********************************************
-function OtherSide(string SlideTo)
-{
-	Me:Sprint[40]
-	If ${SlideTo.Equal[Back]}
-		{
-		while ${AttackPosition.TargetAngle} > 45
-			{
-			VG:ExecBinding[straferight]
-			wait 1
-			face ${Me.Target.X} ${Me.Target.Y}
-			wait 1
-			}
-		VG:ExecBinding[straferight,release]
-		}
-	If ${SlideTo.Equal[Right]}
-		{
-		while ${AttackPosition.TargetAngle} < 45 || ${AttackPosition.TargetAngle} > 135
-			{
-			VG:ExecBinding[straferight]
-			wait 1
-			face ${Me.Target.X} ${Me.Target.Y}
-			wait 1
-			}
-		VG:ExecBinding[straferight,release]
-		}
-	If ${SlideTo.Equal[Front]}
-		{
-		while ${AttackPosition.TargetAngle} < 135
-			{
-			VG:ExecBinding[strafeleft]
-			wait 1
-			face ${Me.Target.X} ${Me.Target.Y}
-			wait 1
-			}
-		VG:ExecBinding[strafeleft,release]
-		}
-	If ${SlideTo.Equal[Left]}
-		{
-		while ${AttackPosition.TargetAngle} < 45 || ${AttackPosition.TargetAngle} > 135
-			{
-			VG:ExecBinding[strafeleft]
-			wait 1
-			face ${Me.Target.X} ${Me.Target.Y}
-			wait 1
-			}
-		VG:ExecBinding[strafeleft,release]
-		}
-	Me:Sprint
-}
+
 ;********************************************
 function SlideL(string SlideTo)
 {
