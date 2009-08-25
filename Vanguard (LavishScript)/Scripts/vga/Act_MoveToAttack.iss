@@ -78,7 +78,7 @@ function CheckAttackPosition()
 ;********************************************
 function SlideR(string SlideTo)
 {
-	Me:Sprint[40]
+	Me:Sprint[30]
 	If ${SlideTo.Equal[Back]}
 		{
 		while ${AttackPosition.TargetAngle} > 45
@@ -129,7 +129,7 @@ function SlideR(string SlideTo)
 ;********************************************
 function SlideL(string SlideTo)
 {
-	Me:Sprint[40]
+	Me:Sprint[30]
 	If ${SlideTo.Equal[Back]}
 		{
 		while ${AttackPosition.TargetAngle} > 45		
