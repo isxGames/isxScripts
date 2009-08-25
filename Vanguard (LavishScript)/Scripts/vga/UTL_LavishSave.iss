@@ -230,6 +230,15 @@ function LavishSave()
 	UtilitySR:AddSetting[DoClassPostCasting,${DoClassPostCasting}]
 	UtilitySR:AddSetting[DoChargeFollow,${DoChargeFollow}]
 
+	UtilitySR:AddSetting[DoAttackPositionFront,${DoAttackPositionFront}]
+	UtilitySR:AddSetting[DoAttackPositionLeft,${DoAttackPositionLeft}]
+	UtilitySR:AddSetting[DoAttackPositionRight,${DoAttackPositionRight}]
+	UtilitySR:AddSetting[DoAttackPositionBack,${DoAttackPositionBack}]
+	UtilitySR:AddSetting[DoAttackPosition,${DoAttackPosition}]
+
+
+
+
 	;===================================================
 	;===                  Spells Save               ====
 	;===================================================

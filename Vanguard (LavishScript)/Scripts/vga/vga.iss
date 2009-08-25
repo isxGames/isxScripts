@@ -100,6 +100,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/UTL_LavishSave.iss"
 #include "${Script.CurrentDirectory}/UTL_LavishEvents.iss"
 #include "${Script.CurrentDirectory}/Act_GUI_Utility.iss"
+#include "${Script.CurrentDirectory}/Act_MoveToAttack.iss"
 
 ;-------------------------------------------
 ;************Main-Tab Scripts***************

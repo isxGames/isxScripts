@@ -578,26 +578,6 @@ function MeCasting(string CP)
 	return
 }
 
-;********************************************
-function MoveToTarget()
-{
-	if ${doMoveToTarget}
-	{
-		call facemob
-		call assistpawn
-		if ${fight.ShouldIAttack} && ${Me.Target.Distance} > 4
-		{
-			actionlog "Moving to Melee"
-			call movetoobject ${Me.Target.ID} 4 1
-			call TooClose
-			return
-		}
-	}
-	return
-}
-
-
-
 
 ; ******************
 ; ** Timer Object **

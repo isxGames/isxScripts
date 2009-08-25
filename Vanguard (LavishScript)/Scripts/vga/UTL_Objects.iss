@@ -167,6 +167,95 @@ objectdef GroupStatus
 
 variable GroupStatus GroupStatus
 
+objectdef AttackPosition
+{
+	; Returns angle 0-180 degrees:
+	; 0 == Behind
+	; 180 == In front
+	; 90 == Directly beside (either side)
+	member:float Angle(int64 ActorID)
+	{
+		variable float Retval
+		variable float Heading=${Pawn[ID,${ActorID}].Heading}
+		variable float HeadingTo=${Pawn[ID,${ActorID}].HeadingTo}
+		Retval:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
+		Retval:Set[${Math.Acos[${Retval}]}]
+		return ${Retval}
+	}
+	member:float TargetAngle()
+	{
+		variable float Retval
+		variable float Heading=${Pawn[${Me.Target}].Heading}
+		variable float HeadingTo=${Pawn[${Me.Target}].HeadingTo}
+		Retval:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
+		Retval:Set[${Math.Acos[${Retval}]}]
+		return ${Retval}
+	}
+	; Returns which side of the Actor I am on, Left or Right.
+	member:string TargetSide(int64 ActorID)
+	{
+		variable float Side
+		variable float Heading=${Pawn[${Me.Target}].Heading}
+		variable float HeadingTo=${Pawn[${Me.Target}].HeadingTo}
+		Side:Set[${Math.Calc[${Math.Cos[${Heading}+90]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}+90]} * ${Math.Sin[${HeadingTo}]}]}]
+		if ${Side}>0
+			return Left
+		else
+			return Right
+	}
+	; Returns which side of the Actor I am on, Left or Right.
+	member:string Side(int64 ActorID)
+	{
+		variable float Side
+		variable float Heading=${Pawn[ID,${ActorID}].Heading}
+		variable float HeadingTo=${Pawn[ID,${ActorID}].HeadingTo}
+		Side:Set[${Math.Calc[${Math.Cos[${Heading}+90]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}+90]} * ${Math.Sin[${HeadingTo}]}]}]
+		if ${Side}>0
+			return Left
+		else
+			return Right
+	}
+
+	; This member will return a point in 3d space at any angle of attack from the
+	; Actor passed to it. The returned point will be on the same side as the player's
+	; current position, or directly behind/in front of the Actor. Angle should be
+	; 0 to 180 (or -0 to -180 if you wish to get a point on the opposite side.)
+	member:point3f PointAtAngle(int64 ActorID, float Angle, float Distance = 3)
+	{
+		variable float Heading=${Pawn[${ActorID}].Heading}
+		Returning.Y:Set[${Pawn[${ActorID}].Y}]
+
+		if ${This.Side[${ActorID}].Equal[Right]}
+		{
+			Angle:Set[-(${Angle})]
+		}
+		Returning.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Pawn[${ActorID}].X}]
+		Returning.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Pawn[${ActorID}].Z}]
+		return
+	}
+	
+	; and this member will return a point in 3d space at any angle of attack from the
+	; Actor passed to it, predicting that Actor's position based on their current speed
+	; and direction, and the time argument passed to this function.
+	member:point3f PredictPointAtAngle(int64 ActorID, float Angle, float Seconds=1, float Distance=3)
+	{
+		variable point3f Velocity
+
+		Velocity:Set[${Pawn[${ActorID}].Velocity}]
+
+		Returning:Set[${This.PointAtAngle[${ActorID},${Angle},${Distance}]}]
+
+		Returning.X:Inc[${Velocity.X}*${Seconds}]
+		Returning.Y:Inc[${Velocity.Y}*${Seconds}]
+		Returning.Z:Inc[${Velocity.Z}*${Seconds}]
+		return
+	}
+
+}
+
+variable AttackPosition AttackPosition
+
+
 objectdef MobResists
 {
 	member:bool Fire()
