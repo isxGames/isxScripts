@@ -315,7 +315,7 @@ function LavishLoad()
 	DoAttackPositionLeft:Set[${UtilitySR.FindSetting[DoAttackPositionLeft,${DoAttackPositionLeft}]}]
 	DoAttackPositionRight:Set[${UtilitySR.FindSetting[DoAttackPositionRight,${DoAttackPositionRight}]}]
 	DoAttackPositionBack:Set[${UtilitySR.FindSetting[DoAttackPositionBack,${DoAttackPositionBack}]}]
-	oAttackPosition:Set[${UtilitySR.FindSetting[DoAttackPosition,${DoAttackPosition}]}]
+	DoAttackPosition:Set[${UtilitySR.FindSetting[DoAttackPosition,${DoAttackPosition}]}]
 
 
 	DoChargeFollow:Set[${UtilitySR.FindSetting[DoChargeFollow,${DoChargeFollow}]}]
