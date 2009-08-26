@@ -974,5 +974,29 @@ namespace EQ2GlassCannon
 
 			return false;
 		}
+
+		/************************************************************************************/
+		public bool UseDeaggroItems()
+		{
+			if (MeActor.IsIdle)
+			{
+				if (UseInventoryItem("Behavioral Modificatinator Stereopticon"))
+					return true;
+			}
+
+			return false;
+		}
+
+		/************************************************************************************/
+		public bool UseOffensiveItems()
+		{
+			if (MeActor.IsIdle)
+			{
+				if (UseInventoryItem("Brock's Thermal Shocker"))
+					return true;
+			}
+
+			return false;
+		}
 	}
 }

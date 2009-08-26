@@ -242,6 +242,12 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_iStormAbilityID, 4))
 						return true;
 
+					if (m_bIHaveAggro)
+					{
+						if (UseDeaggroItems())
+							return true;
+					}
+
 					if (!IsAbilityMaintained(m_iPrismaticAbilityID) && CastAbility(m_iPrismaticAbilityID, m_strPrismaticTarget, true))
 						return true;
 
@@ -287,6 +293,9 @@ namespace EQ2GlassCannon
 						return true;
 
 					if (CastAbility(m_iMeleeDebuffAbilityID))
+						return true;
+
+					if (UseOffensiveItems())
 						return true;
 
 					if (CastGreenOffensiveAbility(m_iStormAbilityID, 1))
