@@ -190,6 +190,9 @@ namespace EQ2GlassCannon
 
 						if (CastAbility(m_iGeneralGreenDeaggroAbilityID))
 							return true;
+
+						if (UseDeaggroItems())
+							return true;
 					}
 
 					/// We attempt this in two places:
@@ -343,6 +346,9 @@ namespace EQ2GlassCannon
 						return true;
 
 					if (CastAbility(m_iLightningBurstAbilityID))
+						return true;
+
+					if (UseOffensiveItems())
 						return true;
 
 					/// AE spells for when every single other thing is exhausted (very rare).

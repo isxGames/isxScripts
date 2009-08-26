@@ -273,6 +273,18 @@ namespace EQ2GlassCannon
 				if (MeActor.IsStealthed && CastAbility(m_iSingleINTDebuffAbilityID))
 					return true;
 
+				if (m_bIHaveAggro)
+				{
+					if (CastAbility(m_iEvasiveManeuversAbilityID))
+						return true;
+
+					if (CastAbility(m_iSingleDeaggroAbilityID))
+						return true;
+
+					if (UseDeaggroItems())
+						return true;
+				}
+
 				if (CastHOStarter())
 					return true;
 
@@ -390,6 +402,9 @@ namespace EQ2GlassCannon
 					return true;
 
 				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
+					return true;
+
+				if (UseOffensiveItems())
 					return true;
 
 				/// Nuke of last resort.
