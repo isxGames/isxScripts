@@ -32,7 +32,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public enum PositioningStance
 		{
-			DoNothing,
+			DoNothing = 0,
 			NeutralPosition,
 			AutoFollow,
 			CustomAutoFollow,
@@ -41,6 +41,22 @@ namespace EQ2GlassCannon
 			ChatWatch,
 			SpawnWatch,
 			DespawnWatch,
+		}
+
+		/************************************************************************************/
+		public enum ChatChannel : int
+		{
+			Unknown = 0,
+			Say,
+			Tell,
+			Named,
+			Auction,
+			OutOfCharacter,
+			Shout,
+			Raid,
+			Group,
+			Guild,
+			Officer,
 		}
 
 		/************************************************************************************/
@@ -94,6 +110,7 @@ namespace EQ2GlassCannon
 
 		public Dictionary<string, int> m_KnowledgeBookNameToIndexMap = new Dictionary<string, int>();
 		public Dictionary<int, string> m_KnowledgeBookIndexToNameMap = new Dictionary<int, string>();
+		public Dictionary<uint, int> m_KnowledgeBookIDToIndexMap = new Dictionary<uint, int>();
 		public Dictionary<string, GroupMember> m_GroupMemberDictionary = new Dictionary<string, GroupMember>();
 		public Dictionary<string, GroupMember> m_FriendDictionary = new Dictionary<string, GroupMember>();
 
@@ -138,8 +155,10 @@ namespace EQ2GlassCannon
 			{
 				m_KnowledgeBookNameToIndexMap.Clear();
 				m_KnowledgeBookIndexToNameMap.Clear();
+				m_KnowledgeBookIDToIndexMap.Clear();
 
-				using (new FrameLock(true))
+				Frame.Wait(true);
+				try
 				{
 					Program.UpdateGlobals();
 
@@ -169,6 +188,12 @@ namespace EQ2GlassCannon
 								else
 									m_KnowledgeBookNameToIndexMap.Add(ThisAbility.Name, iIndex);
 
+								if (m_KnowledgeBookIDToIndexMap.ContainsKey(ThisAbility.ID))
+								{
+								}
+								else
+									m_KnowledgeBookIDToIndexMap.Add(ThisAbility.ID, iIndex);
+
 								m_KnowledgeBookIndexToNameMap.Add(iIndex, ThisAbility.Name);
 							}
 						}
@@ -178,9 +203,33 @@ namespace EQ2GlassCannon
 						else
 						{
 							Program.Log("All abilities found.");
+#if DEBUG
+							/// Now dump it all to a file.
+							string strLogFileName = string.Format("{0}.{1} ability table debug dump.csv", Program.ServerName, Me.Name);
+							strLogFileName = Path.Combine(Program.s_strINIFolderPath, strLogFileName);
+							using (CsvFileWriter OutputFile = new CsvFileWriter(strLogFileName, false))
+							{
+								for (int iIndex = 1; iIndex <= Me.NumAbilities; iIndex++)
+								{
+									Ability ThisAbility = Me.Ability(iIndex);
+									OutputFile.WriteNextValue(iIndex);
+									OutputFile.WriteNextValue(ThisAbility.ID);
+									OutputFile.WriteNextValue(ThisAbility.Name);
+									OutputFile.WriteLine();
+								}
+							}
+#endif
 							break;
 						}
 					}
+				}
+				catch
+				{
+					Program.Log("Exception thrown while looking up ability data.");
+				}
+				finally
+				{
+					Frame.Unlock();
 				}
 
 				/// This is black magic to force the client to reload the knowledge book.
@@ -189,19 +238,6 @@ namespace EQ2GlassCannon
 				Program.FrameWait(TimeSpan.FromSeconds(3.0f));
 				Program.RunCommand("/toggleknowledge");
 			}
-
-#if DEBUG0
-			string strLogFileName = string.Format("{0}.{1} ability table debug dump.txt", Program..ServerName, Me.Name);
-			strLogFileName = Path.Combine(Program.s_strINIFolderPath, strLogFileName);
-			using (StreamWriter OutputFile = new StreamWriter(strLogFileName, false, Encoding.UTF8))
-			{
-				foreach (KeyValuePair<int, string> ThisPair in m_KnowledgeBookIndexToNameMap)
-				{
-					string strOutput = string.Format("{0}: \"{1}\"", ThisPair.Key, ThisPair.Value);
-					OutputFile.WriteLine(strOutput);
-				}
-			}
-#endif
 
 			/// This must be done before any call to SelectHighestAbilityID().
 			m_KnowledgeBookAbilityLineDictionary.Clear();
@@ -227,6 +263,70 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected int SelectAbilityID(uint uiAbilityID)
+		{
+			if (m_KnowledgeBookIDToIndexMap.ContainsKey(uiAbilityID))
+				return m_KnowledgeBookIDToIndexMap[uiAbilityID];
+			else
+				return -1;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Each ordered element in the passed array is the next higher level (or next higher preferred) ability.
+		/// </summary>
+		/// <param name="astrAbilityNames">List of every spell that shares the behavior and recast timer,
+		/// presorted by the caller from lowest level to highest.</param>
+		public int SelectHighestAbilityID(params string[] astrAbilityNames)
+		{
+			int iBestSpellIndex = -1;
+
+			/// Grab the highest level ability from this group.
+			for (int iIndex = astrAbilityNames.Length - 1; iIndex >= 0; iIndex--)
+			{
+				string strThisAbility = astrAbilityNames[iIndex];
+				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility))
+				{
+					iBestSpellIndex = m_KnowledgeBookNameToIndexMap[strThisAbility];
+					break;
+				}
+			}
+
+			/// Now associate every ability in the list (that actually exists) with the ID of the highest-level version of it.
+			/// This is important so that older versions of maintained buffs can be efficiently cancelled in favor of the highest versions of them.
+			for (int iIndex = 0; iIndex < astrAbilityNames.Length; iIndex++)
+			{
+				string strThisAbility = astrAbilityNames[iIndex];
+				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility) && !m_KnowledgeBookAbilityLineDictionary.ContainsKey(strThisAbility))
+					m_KnowledgeBookAbilityLineDictionary.Add(strThisAbility, iBestSpellIndex);
+			}
+
+			return iBestSpellIndex;
+		}
+
+		/************************************************************************************/
+		private static readonly string[] s_astrRomanNumeralSuffixes = new string[]
+		{
+			"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII"
+		};
+
+		/************************************************************************************/
+		public int SelectHighestTieredAbilityID(string strBaseAbilityName)
+		{
+			List<string> astrAbilityNames = new List<string>(s_astrRomanNumeralSuffixes.Length);
+			for (int iIndex = 0; iIndex < s_astrRomanNumeralSuffixes.Length; iIndex++)
+			{
+				string strRomanNumeral = s_astrRomanNumeralSuffixes[iIndex];
+
+				/// There is no roman numeral I for the first spell in the series.
+				string strFinalAbilityName = (iIndex > 0) ? string.Format("{0} {1}", strBaseAbilityName, strRomanNumeral) : strBaseAbilityName;
+				astrAbilityNames.Add(strFinalAbilityName);
+			}
+
+			return SelectHighestAbilityID(astrAbilityNames.ToArray());
+		}
+
+		/************************************************************************************/
 		/// <summary>
 		/// The base function caches certain lookup data.
 		/// </summary>
@@ -238,6 +338,17 @@ namespace EQ2GlassCannon
 
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 				return true;
+
+			/// If we have been commanded to redo group buffs, then cancel one per frame.
+			if (m_bClearGroupMaintained)
+			{
+				foreach (Maintained ThisMaintained in EnumMaintained())
+				{
+					if (ThisMaintained.Type == "Group")
+						return ThisMaintained.Cancel();
+				}
+				m_bClearGroupMaintained = false;
+			}
 
 			m_GroupMemberDictionary.Clear();
 			foreach (GroupMember ThisMember in EnumGroupMembers())
@@ -256,17 +367,10 @@ namespace EQ2GlassCannon
 			}
 
 			/// Define the commanding player actor object.
-			if (m_GroupMemberDictionary.ContainsKey(m_strCommandingPlayer))
+			if (m_FriendDictionary.ContainsKey(m_strCommandingPlayer))
 			{
-				m_CommandingPlayerActor = m_GroupMemberDictionary[m_strCommandingPlayer].ToActor();
-				if (m_CommandingPlayerActor.IsValid)
-				{
-					/// If commanding player is AFK, then DON'T DO SHIT.
-					/// NOTE: I can't get this to work yet.
-					if (m_CommandingPlayerActor.IsAFK)
-						return true;
-				}
-				else
+				m_CommandingPlayerActor = m_FriendDictionary[m_strCommandingPlayer].ToActor();
+				if (!m_CommandingPlayerActor.IsValid)
 					m_CommandingPlayerActor = null;
 			}
 			else
@@ -282,17 +386,6 @@ namespace EQ2GlassCannon
 					if (!m_MaintainedNameToIndexMap.ContainsKey(strName))
 						m_MaintainedNameToIndexMap.Add(strName, iIndex);
 				}
-			}
-
-			/// If we have been commanded to redo group buffs, then cancel one per frame.
-			if (m_bClearGroupMaintained)
-			{
-				foreach (Maintained ThisMaintained in EnumMaintained())
-				{
-					if (ThisMaintained.Type == "Group")
-						return ThisMaintained.Cancel();
-				}
-				m_bClearGroupMaintained = false;
 			}
 
 			/// Build the beneficial effect dictionary.
@@ -342,7 +435,13 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public virtual bool OnChoiceWindowAppeared(ChoiceWindow ThisWindow)
 		{
-			Program.Log("Choice window appeared: \"{0}\"", ThisWindow.Text);
+			if (m_ePositioningStance == PositioningStance.DoNothing)
+			{
+				Program.Log("Character is in do-nothing stance; ignoring choice window.");
+				return false;
+			}
+
+			Program.Log("Choice window appeared: \"{0}\".", ThisWindow.Text);
 
 			/// Group invite window.
 			if (ThisWindow.Text.Contains("has invited you to join a group"))
@@ -364,6 +463,13 @@ namespace EQ2GlassCannon
 				return true;
 			}
 
+			/// Zone timer reset window.
+			else if (ThisWindow.Text.Contains("Are you sure you want to reset your zone timer for "))
+			{
+				ThisWindow.DoChoice1();
+				return true;
+			}
+
 			/// Rez window (could be port too, gotta be careful).
 			/// "* would like to cast '*' on you. Do you accept?"
 			/// TODO: Only accept if person is in group/raid.
@@ -374,6 +480,36 @@ namespace EQ2GlassCannon
 				return true;
 			}
 
+			return false;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// This function is not yet complete.
+		/// </summary>
+		public virtual bool OnRewardWindowAppeared(RewardWindow ThisWindow)
+		{
+			if (m_ePositioningStance == PositioningStance.DoNothing)
+			{
+				Program.Log("Character is in do-nothing stance; ignoring reward window.");
+				return false;
+			}
+
+			//Program.Log("Reward window appeared: \"{0}\".", ThisWindow.);
+
+			EQ2UIPage ThisPage = ThisWindow.ToEQ2UIPage;
+			Program.Log("Accepting reward...");
+			ThisWindow.Receive();
+			return false;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Everything will gravitate to this function eventually, after I learn how to use regular expressions.
+		/// </summary>
+		/// <returns>true if the implementation took ownership of the text and further processing should cease.</returns>
+		public virtual bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
+		{
 			return false;
 		}
 
@@ -425,16 +561,6 @@ namespace EQ2GlassCannon
 
 			/// TODO: Now parse out the details.
 
-			return false;
-		}
-
-		/************************************************************************************/
-		/// <summary>
-		/// Everything will gravitate to this function eventually.
-		/// </summary>
-		/// <returns></returns>
-		public virtual bool OnIncomingChatText(string strChannel, string strFrom, string strMessage)
-		{
 			return false;
 		}
 
@@ -724,7 +850,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual bool OnCustomCommand(string strCommand, string[] astrParameters)
+		public virtual bool OnCustomSlashCommand(string strCommand, string[] astrParameters)
 		{
 			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
 
@@ -764,6 +890,7 @@ namespace EQ2GlassCannon
 					Program.s_bContinueBot = false;
 					return true;
 				}
+
 				case "gc_findactor":
 				{
 					if (string.IsNullOrEmpty(strCondensedParameters))
@@ -885,61 +1012,6 @@ namespace EQ2GlassCannon
 			m_LastCheckBuffsTime = DateTime.Now;
 			Program.Log("Finished checking buffs.");
 			return;
-		}
-
-		/************************************************************************************/
-		/// <summary>
-		/// Each ordered element in the passed array is the next higher level (or next higher preferred) ability.
-		/// </summary>
-		/// <param name="astrAbilityNames">List of every spell that shares the behavior and recast timer,
-		/// presorted from lowest level to highest.</param>
-		public int SelectHighestAbilityID(params string[] astrAbilityNames)
-		{
-			int iBestSpellIndex = -1;
-
-			/// Grab the highest level ability from this group.
-			for (int iIndex = astrAbilityNames.Length - 1; iIndex >= 0; iIndex--)
-			{
-				string strThisAbility = astrAbilityNames[iIndex];
-				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility))
-				{
-					iBestSpellIndex = m_KnowledgeBookNameToIndexMap[strThisAbility];
-					break;
-				}
-			}
-
-			/// Now associate every ability in the list (that actually exists) with the ID of the highest-level version of it.
-			/// This is important so that older versions of maintained buffs can be efficiently cancelled in favor of the highest versions of them.
-			for (int iIndex = 0; iIndex < astrAbilityNames.Length; iIndex++)
-			{
-				string strThisAbility = astrAbilityNames[iIndex];
-				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility) && !m_KnowledgeBookAbilityLineDictionary.ContainsKey(strThisAbility))
-					m_KnowledgeBookAbilityLineDictionary.Add(strThisAbility, iBestSpellIndex);
-			}
-
-			return iBestSpellIndex;
-		}
-
-		/************************************************************************************/
-		private static readonly string[] s_astrRomanNumeralSuffixes = new string[]
-		{
-			"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII"
-		};
-
-		/************************************************************************************/
-		public int SelectHighestTieredAbilityID(string strBaseAbilityName)
-		{
-			List<string> astrAbilityNames = new List<string>(s_astrRomanNumeralSuffixes.Length);
-			for (int iIndex = 0; iIndex < s_astrRomanNumeralSuffixes.Length; iIndex++)
-			{
-				string strRomanNumeral = s_astrRomanNumeralSuffixes[iIndex];
-
-				/// There is no roman numeral I for the first spell in the series.
-				string strFinalAbilityName = (iIndex > 0) ? string.Format("{0} {1}", strBaseAbilityName, strRomanNumeral) : strBaseAbilityName;
-				astrAbilityNames.Add(strFinalAbilityName);
-			}
-
-			return SelectHighestAbilityID(astrAbilityNames.ToArray());
 		}
 
 		/************************************************************************************/

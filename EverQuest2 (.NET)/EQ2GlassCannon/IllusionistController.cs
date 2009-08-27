@@ -251,6 +251,9 @@ namespace EQ2GlassCannon
 					if (!IsAbilityMaintained(m_iPrismaticAbilityID) && CastAbility(m_iPrismaticAbilityID, m_strPrismaticTarget, true))
 						return true;
 
+					if (CastAbility(m_iBewildermentAbilityID))
+						return true;
+
 					if (CastAbility(m_iBeamAbilityID))
 						return true;
 
@@ -275,9 +278,6 @@ namespace EQ2GlassCannon
 						return true;
 
 					if (CastGreenOffensiveAbility(m_iGreenShowerAbilityID, 1))
-						return true;
-
-					if (CastAbility(m_iBewildermentAbilityID))
 						return true;
 
 					if (CastAbility(m_iDazeNukeAbilityID))

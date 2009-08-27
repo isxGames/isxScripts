@@ -14,13 +14,18 @@ namespace EQ2GlassCannon
 		public int m_iCureArcaneAbilityID = -1;
 		public int m_iMagisShieldingAbilityID = -1;
 
+		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
 			m_iLoreAndLegendAbilityID = SelectHighestAbilityID("Master's Strike");
 			m_iHOStarterAbiltyID = SelectHighestAbilityID("Arcane Augur");
-			m_iBewildermentAbilityID = SelectHighestAbilityID("Bewilderment");
+
+			/// Bewilderment shares the same name as the level 16 illusionist stun, so we can't do a name lookup.
+			//m_iBewildermentAbilityID = SelectHighestAbilityID("Bewilderment");
+			m_iBewildermentAbilityID = SelectAbilityID(3903537279);
+
 			m_iCureArcaneAbilityID = SelectHighestAbilityID("Cure Arcane");
 			m_iMagisShieldingAbilityID = SelectHighestAbilityID("Magi's Shielding");
 
