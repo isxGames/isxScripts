@@ -367,41 +367,47 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					
 					<Text Name='Normal'>
 						<X>5%</X>
-						<Y>270</Y>
+						<Y>255</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Black : Not Changed</Text>
 					</Text>
 					<Text Name='Red'>
 						<X>5%</X>
-						<Y>285</Y>
+						<Y>270</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Red : Unable to match</Text>
 					</Text>
 					<Text Name='Blue'>
 						<X>5%</X>
-						<Y>300</Y>
+						<Y>285</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Blue : New Item Listed</Text>
 					</Text>
 					<Text Name='Orange'>
 						<X>5%</X>
-						<Y>315</Y>
+						<Y>300</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Orange : Item Sold</Text>
 					</Text>
 					<Text Name='Yellow'>
 						<X>5%</X>
-						<Y>330</Y>
+						<Y>315</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Yellow : Craft Flagged</Text>
+					</Text>
+					<Text Name='Purple'>
+						<X>5%</X>
+						<Y>330</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Purple : Unpriced</Text>
 					</Text>
 					<Text Name='PauseTimerText'>
 						<X>25</X>
@@ -467,6 +473,12 @@
 					</Commandbutton>
 					<Text Name='Itemname'>
 						<X>25</X>
+						<Y>415</Y>
+						<Width>44%</Width> 
+						<Height>15</Height>
+					</Text>
+					<Text Name='ItemNumber'>
+						<X>300</X>
 						<Y>415</Y>
 						<Width>44%</Width> 
 						<Height>15</Height>

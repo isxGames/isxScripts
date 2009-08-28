@@ -1497,8 +1497,9 @@ function LoadList()
 					if ${ItemList.FindSet[${labelname}].FindSetting[CraftItem]}
 					{
 						call SetColour Sell ${numitems} FFFFFF00
-						call addtotals "${labelname}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
 					}
+					; keep a total of how many items there are
+					call addtotals "${labelname}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
 					; store the items box number
 					itemprice[${numitems}]:Set[${i}]
 					; check to see if it already has a minimum price set
@@ -1510,6 +1511,11 @@ function LoadList()
 						call AddLog "Item Missing from Settings File,  Adding : ${labelname}" FF00CCFF
 						call Saveitem Sell "${labelname}" ${Me.Vending[${i}].Consignment[${j}].BasePrice} ${Me.Vending[${i}].Consignment[${j}].BasePrice}
 					}
+					
+					; Item sold before but currently unlisted
+					if !${Me.Vending[${i}].Consignment[${j}].IsListed}
+						call SetColour Sell ${numitems} FF990099
+
 				}
 				while ${j:Inc} <= ${Me.Vending[${i}].NumItems}
 				waitframe
@@ -1883,8 +1889,16 @@ function FillMinPrice(int ItemID)
 		UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetText[${Gold}]
 		UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetText[${Silver}]
 		UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
-		
 
+		; Scan how many items there are and put in this box
+		if ${CraftList.FindSetting["${LBoxString}"](exists)}
+		{
+			UIElement[ItemNumber@Sell@GUITabs@MyPrices]:SetText[${CraftList.FindSetting["${LBoxString}"]} Units]
+		}
+		else
+		{
+			UIElement[ItemNumber@Sell@GUITabs@MyPrices]:SetText[ ]
+		}
 	}
 
 	call echolog "<end> : FillMinPrice"
