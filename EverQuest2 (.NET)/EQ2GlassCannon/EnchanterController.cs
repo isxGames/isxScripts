@@ -13,27 +13,27 @@ namespace EQ2GlassCannon
 		public double m_fManaFlowThresholdRatio = 0.9;
 		#endregion
 
-		public int m_iMainRegenBuffAbilityID = -1;
-		public int m_iManaFlowAbilityID = -1;
-		public int m_iChronosiphoningAbilityID = -1;
-		public int m_iManaRegenReactiveAbilityID = -1;
-		public int m_iNullifyingStaffAbilityID = -1;
-		public int m_iSpellbladeCounterAbilityID = -1;
-		public int m_iPeaceOfMindAbilityID = -1;
-		public int m_iBlinkAbilityID = -1;
+		protected uint m_uiMainRegenBuffAbilityID = 0;
+		protected uint m_uiManaFlowAbilityID = 0;
+		protected uint m_uiChronosiphoningAbilityID = 0;
+		protected uint m_uiManaRegenReactiveAbilityID = 0;
+		protected uint m_uiNullifyingStaffAbilityID = 0;
+		protected uint m_uiSpellbladeCounterAbilityID = 0;
+		protected uint m_uiPeaceOfMindAbilityID = 0;
+		protected uint m_uiBlinkAbilityID = 0;
 
 		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iManaFlowAbilityID = SelectHighestAbilityID("Mana Flow");
-			m_iChronosiphoningAbilityID = SelectHighestAbilityID("Chronosiphoning");
-			m_iManaRegenReactiveAbilityID = SelectHighestTieredAbilityID("Mana Cloak");
-			m_iNullifyingStaffAbilityID = SelectHighestAbilityID("Nullifying Staff");
-			m_iSpellbladeCounterAbilityID = SelectHighestAbilityID("Spellblade's Counter");
-			m_iPeaceOfMindAbilityID = SelectHighestAbilityID("Peace of Mind");
-			m_iBlinkAbilityID = SelectHighestAbilityID("Blink");
+			m_uiManaFlowAbilityID = SelectHighestAbilityID("Mana Flow");
+			m_uiChronosiphoningAbilityID = SelectHighestAbilityID("Chronosiphoning");
+			m_uiManaRegenReactiveAbilityID = SelectHighestTieredAbilityID("Mana Cloak");
+			m_uiNullifyingStaffAbilityID = SelectHighestAbilityID("Nullifying Staff");
+			m_uiSpellbladeCounterAbilityID = SelectHighestAbilityID("Spellblade's Counter");
+			m_uiPeaceOfMindAbilityID = SelectHighestAbilityID("Peace of Mind");
+			m_uiBlinkAbilityID = SelectHighestAbilityID("Blink");
 
 			return;
 		}
@@ -53,7 +53,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool CheckManaFlow()
 		{
-			if (!m_bUseManaFlow || !MeActor.IsIdle || !IsAbilityReady(m_iManaFlowAbilityID))
+			if (!m_bUseManaFlow || !MeActor.IsIdle || !IsAbilityReady(m_uiManaFlowAbilityID))
 				return false;
 
 			/// Mana Flow requires 10%; make sure we have 15%.
@@ -83,7 +83,7 @@ namespace EQ2GlassCannon
 
 			if (!string.IsNullOrEmpty(strLowestPowerName))
 			{
-				if (CastAbility(m_iManaFlowAbilityID, strLowestPowerName, true))
+				if (CastAbility(m_uiManaFlowAbilityID, strLowestPowerName, true))
 					return true;
 			}
 

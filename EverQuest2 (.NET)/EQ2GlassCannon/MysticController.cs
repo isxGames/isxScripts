@@ -20,35 +20,35 @@ namespace EQ2GlassCannon
 		#endregion
 
 		#region Ability ID's
-		public int m_iGroupNoxiousBuffAbilityID = -1;
-		public int m_iGroupSTRSTABuffAbilityID = -1;
-		public int m_iSingleHealthPoolBuffAbilityID = -1;
-		public int m_iSpiritCompanionAbilityID = -1;
-		public int m_iUrsineAbilityID = -1;
-		public int m_iSingleStatBuffAbilityID = -1;
-		public int m_iSingleProcBuffAbilityID = -1;
+		protected uint m_uiGroupNoxiousBuffAbilityID = 0;
+		protected uint m_uiGroupSTRSTABuffAbilityID = 0;
+		protected uint m_uiSingleHealthPoolBuffAbilityID = 0;
+		protected uint m_uiSpiritCompanionAbilityID = 0;
+		protected uint m_uiUrsineAbilityID = 0;
+		protected uint m_uiSingleStatBuffAbilityID = 0;
+		protected uint m_uiSingleProcBuffAbilityID = 0;
 
-		public int m_iSingleWardAbilityID = -1;
-		public int m_iSingleHealingAbilityID = -1;
-		public int m_iSingleBiggerHealingAbilityID = -1;
-		public int m_iSingleStunnedWardAbilityID = -1;
-		public int m_iGroupWardAbilityID = -1;
-		public int m_iGroupHealingAbilityID = -1;
-		public int m_iGroupCombatRezAbilityID = -1;
-		public int m_iSpiritDanceRezAbilityID = -1;
-		public int m_iSingleWardedCombatRezAbilityID = -1;
-		public int m_iSingleNormalCombatRezAbilityID = -1;
-		public int m_iDumbfireHealPetAbilityID = -1;
-		public int m_iDumbfireWardPetAbilityID = -1;
+		protected uint m_uiSingleWardAbilityID = 0;
+		protected uint m_uiSingleHealingAbilityID = 0;
+		protected uint m_uiSingleBiggerHealingAbilityID = 0;
+		protected uint m_uiSingleStunnedWardAbilityID = 0;
+		protected uint m_uiGroupWardAbilityID = 0;
+		protected uint m_uiGroupHealingAbilityID = 0;
+		protected uint m_uiGroupCombatRezAbilityID = 0;
+		protected uint m_uiSpiritDanceRezAbilityID = 0;
+		protected uint m_uiSingleWardedCombatRezAbilityID = 0;
+		protected uint m_uiSingleNormalCombatRezAbilityID = 0;
+		protected uint m_uiDumbfireHealPetAbilityID = 0;
+		protected uint m_uiDumbfireWardPetAbilityID = 0;
 
-		public int m_iGreenResistDebuffAbilityID = -1;
-		public int m_iGreenHasteDebuffAbilityID = -1;
-		public int m_iGreenDPSDebuffAbilityID = -1;
-		public int m_iSingleHasteDebuffAbilityID = -1;
-		public int m_iSingleDPSDebuffAbilityID = -1;
-		public int m_iSingleSTRSTADebuffAbilityID = -1;
-		public int m_iSingleFastShadowBaneNukeAbilityID = -1;
-		public int m_iSingleColdSnareAbilityID = -1;
+		protected uint m_uiGreenResistDebuffAbilityID = 0;
+		protected uint m_uiGreenHasteDebuffAbilityID = 0;
+		protected uint m_uiGreenDPSDebuffAbilityID = 0;
+		protected uint m_uiSingleHasteDebuffAbilityID = 0;
+		protected uint m_uiSingleDPSDebuffAbilityID = 0;
+		protected uint m_uiSingleSTRSTADebuffAbilityID = 0;
+		protected uint m_uiSingleFastShadowBaneNukeAbilityID = 0;
+		protected uint m_uiSingleColdSnareAbilityID = 0;
 		#endregion
 
 		/************************************************************************************/
@@ -73,42 +73,42 @@ namespace EQ2GlassCannon
 			base.RefreshKnowledgeBook();
 
 			/// PriestController abilities.
-			m_iShadowsDefensiveHealStance = SelectHighestAbilityID("Ritual of Protection");
-			m_iShadowsOffensiveHealStance = SelectHighestAbilityID("Ravenous Protector");
-			m_iGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Ebbing Spirit");
-			m_iGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Ancestral Savior");
-			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Water Spirit");
-			m_iGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Runic Armor");
+			m_uiShadowsDefensiveHealStance = SelectHighestAbilityID("Ritual of Protection");
+			m_uiShadowsOffensiveHealStance = SelectHighestAbilityID("Ravenous Protector");
+			m_uiGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Ebbing Spirit");
+			m_uiGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Ancestral Savior");
+			m_uiGroupWaterBreathingAbilityID = SelectHighestAbilityID("Water Spirit");
+			m_uiGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Runic Armor");
 
-			m_iGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Mettle");
-			m_iGroupSTRSTABuffAbilityID = SelectHighestTieredAbilityID("Spirit of the Mammoth");
-			m_iSingleHealthPoolBuffAbilityID = SelectHighestTieredAbilityID("Premonition");
-			m_iSpiritCompanionAbilityID = SelectHighestAbilityID("Summon Spirit Companion");
-			m_iUrsineAbilityID = SelectHighestTieredAbilityID("Ursine Avatar");
-			m_iSingleStatBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Avatar");
-			m_iSingleProcBuffAbilityID = SelectHighestAbilityID("Ancestry");
+			m_uiGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Mettle");
+			m_uiGroupSTRSTABuffAbilityID = SelectHighestTieredAbilityID("Spirit of the Mammoth");
+			m_uiSingleHealthPoolBuffAbilityID = SelectHighestTieredAbilityID("Premonition");
+			m_uiSpiritCompanionAbilityID = SelectHighestAbilityID("Summon Spirit Companion");
+			m_uiUrsineAbilityID = SelectHighestTieredAbilityID("Ursine Avatar");
+			m_uiSingleStatBuffAbilityID = SelectHighestTieredAbilityID("Ancestral Avatar");
+			m_uiSingleProcBuffAbilityID = SelectHighestAbilityID("Ancestry");
 			
-			m_iSingleWardAbilityID = SelectHighestTieredAbilityID("Ancestral Ward");
-			m_iSingleHealingAbilityID = SelectHighestTieredAbilityID("Rejuvenation");
-			m_iSingleBiggerHealingAbilityID = SelectHighestTieredAbilityID("Ritual Healing");
-			m_iSingleStunnedWardAbilityID = SelectHighestTieredAbilityID("Oberon");
-			m_iGroupWardAbilityID = SelectHighestTieredAbilityID("Umbral Warding");
-			m_iGroupHealingAbilityID = SelectHighestTieredAbilityID("Transcendence");
-			m_iGroupCombatRezAbilityID = SelectHighestAbilityID("Fields of the Grey");
-			m_iSpiritDanceRezAbilityID = SelectHighestAbilityID("Spirit Dance");
-			m_iSingleWardedCombatRezAbilityID = SelectHighestAbilityID("Recall of the Grey");
-			m_iSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Path of the Grey");
-			m_iDumbfireHealPetAbilityID = SelectHighestTieredAbilityID("Lunar Attendant");
-			m_iDumbfireWardPetAbilityID = SelectHighestAbilityID("Ancestral Sentry");
+			m_uiSingleWardAbilityID = SelectHighestTieredAbilityID("Ancestral Ward");
+			m_uiSingleHealingAbilityID = SelectHighestTieredAbilityID("Rejuvenation");
+			m_uiSingleBiggerHealingAbilityID = SelectHighestTieredAbilityID("Ritual Healing");
+			m_uiSingleStunnedWardAbilityID = SelectHighestTieredAbilityID("Oberon");
+			m_uiGroupWardAbilityID = SelectHighestTieredAbilityID("Umbral Warding");
+			m_uiGroupHealingAbilityID = SelectHighestTieredAbilityID("Transcendence");
+			m_uiGroupCombatRezAbilityID = SelectHighestAbilityID("Fields of the Grey");
+			m_uiSpiritDanceRezAbilityID = SelectHighestAbilityID("Spirit Dance");
+			m_uiSingleWardedCombatRezAbilityID = SelectHighestAbilityID("Recall of the Grey");
+			m_uiSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Path of the Grey");
+			m_uiDumbfireHealPetAbilityID = SelectHighestTieredAbilityID("Lunar Attendant");
+			m_uiDumbfireWardPetAbilityID = SelectHighestAbilityID("Ancestral Sentry");
 
-			m_iGreenResistDebuffAbilityID = SelectHighestTieredAbilityID("Echoes of the Ancients");
-			m_iGreenHasteDebuffAbilityID = SelectHighestTieredAbilityID("Lethargy");
-			m_iGreenDPSDebuffAbilityID = SelectHighestTieredAbilityID("Umbral Trap");
-			m_iSingleHasteDebuffAbilityID = SelectHighestTieredAbilityID("Haze");
-			m_iSingleDPSDebuffAbilityID = SelectHighestTieredAbilityID("Lamenting Soul");
-			m_iSingleSTRSTADebuffAbilityID = SelectHighestTieredAbilityID("Deteriorate");
-			m_iSingleFastShadowBaneNukeAbilityID = SelectHighestTieredAbilityID("Plague");
-			m_iSingleColdSnareAbilityID = SelectHighestTieredAbilityID("Velium Winds");
+			m_uiGreenResistDebuffAbilityID = SelectHighestTieredAbilityID("Echoes of the Ancients");
+			m_uiGreenHasteDebuffAbilityID = SelectHighestTieredAbilityID("Lethargy");
+			m_uiGreenDPSDebuffAbilityID = SelectHighestTieredAbilityID("Umbral Trap");
+			m_uiSingleHasteDebuffAbilityID = SelectHighestTieredAbilityID("Haze");
+			m_uiSingleDPSDebuffAbilityID = SelectHighestTieredAbilityID("Lamenting Soul");
+			m_uiSingleSTRSTADebuffAbilityID = SelectHighestTieredAbilityID("Deteriorate");
+			m_uiSingleFastShadowBaneNukeAbilityID = SelectHighestTieredAbilityID("Plague");
+			m_uiSingleColdSnareAbilityID = SelectHighestTieredAbilityID("Velium Winds");
 
 			return;
 		}
@@ -178,31 +178,31 @@ namespace EQ2GlassCannon
 				if (CheckShadowsHealStanceBuffs())
 					return true;
 
-				if (CheckToggleBuff(m_iCoagulateAbilityID, true))
+				if (CheckToggleBuff(m_uiCoagulateAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
+				if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupNoxiousBuffAbilityID, m_bBuffNoxiousResistance))
+				if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, m_bBuffNoxiousResistance))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
+				if (CheckToggleBuff(m_uiGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets))
+				if (CheckSingleTargetBuffs(m_uiSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets))
 					return true;
 
-				if (CheckToggleBuff(m_iUrsineAbilityID, true))
+				if (CheckToggleBuff(m_uiUrsineAbilityID, true))
 					return true;
 
 				if (CheckGroupWaterBreathingBuff())
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleStatBuffAbilityID, m_strAvatarTarget))
+				if (CheckSingleTargetBuffs(m_uiSingleStatBuffAbilityID, m_strAvatarTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleProcBuffAbilityID, m_strAncestryTarget))
+				if (CheckSingleTargetBuffs(m_uiSingleProcBuffAbilityID, m_strAncestryTarget))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -211,7 +211,7 @@ namespace EQ2GlassCannon
 				if (CheckSpiritOfTheWolf())
 					return true;
 
-				if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_iSpiritCompanionAbilityID, m_bUsePet))
+				if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiSpiritCompanionAbilityID, m_bUsePet))
 					return true;
 
 				StopCheckingBuffs();
@@ -226,7 +226,7 @@ namespace EQ2GlassCannon
 					/// If Illusionist epic regen is up, do our fastest nuke to try and reap the benefit.
 					/// Ideally it would be a lowest-tier spell because we know this nuke doesn't do shit for dps considering the power it uses,
 					/// but we're not set up for that.
-					if ((fMyPowerRatio < 0.10) && IsIllusionistSoothingMindActive() && CastAbility(m_iSingleFastShadowBaneNukeAbilityID))
+					if ((fMyPowerRatio < 0.10) && IsIllusionistSoothingMindActive() && CastAbility(m_uiSingleFastShadowBaneNukeAbilityID))
 						return true;
 				}
 
@@ -235,7 +235,7 @@ namespace EQ2GlassCannon
 					/// Death save on the weakest party member.
 					if (fLowestHealthRatio < 0.10)
 					{
-						if (CastAbility(m_iGeneralSingleDeathSaveAbilityID, strLowestHealthName, true))
+						if (CastAbility(m_uiGeneralSingleDeathSaveAbilityID, strLowestHealthName, true))
 							return true;
 					}
 
@@ -245,7 +245,7 @@ namespace EQ2GlassCannon
 					{
 						if (MainTankVitalStatus.HealthRatio < 0.05)
 						{
-							if (CastAbility(m_iSingleStunnedWardAbilityID, m_strMainTank, true))
+							if (CastAbility(m_uiSingleStunnedWardAbilityID, m_strMainTank, true))
 								return true;
 						}
 					}
@@ -258,25 +258,25 @@ namespace EQ2GlassCannon
 				/// Do debuffs only if the vital situation isn't grim.
 				if (bOffensiveTargetEngaged && (fLowestHealthRatio > 0.90f))
 				{
-					if (CastAbility(m_iLoreAndLegendAbilityID))
+					if (CastAbility(m_uiLoreAndLegendAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iGreenResistDebuffAbilityID) && CastAbility(m_iGreenResistDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiGreenResistDebuffAbilityID) && CastAbility(m_uiGreenResistDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iGreenHasteDebuffAbilityID) && CastAbility(m_iGreenHasteDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiGreenHasteDebuffAbilityID) && CastAbility(m_uiGreenHasteDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleHasteDebuffAbilityID) && CastAbility(m_iSingleHasteDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleHasteDebuffAbilityID) && CastAbility(m_uiSingleHasteDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iGreenDPSDebuffAbilityID) && CastAbility(m_iGreenDPSDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiGreenDPSDebuffAbilityID) && CastAbility(m_uiGreenDPSDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleDPSDebuffAbilityID) && CastAbility(m_iSingleDPSDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleDPSDebuffAbilityID) && CastAbility(m_uiSingleDPSDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleSTRSTADebuffAbilityID) && CastAbility(m_iSingleSTRSTADebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleSTRSTADebuffAbilityID) && CastAbility(m_uiSingleSTRSTADebuffAbilityID))
 						return true;
 
 					bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
@@ -285,10 +285,10 @@ namespace EQ2GlassCannon
 					{
 						/// Ritual would be a total waste if DR were on the group.
 						/// Right now we use it at any time during combat, but we may refine this later.
-						if (!IsClericDivineRecoveryActive() && CastAbility(m_iRitualOfAlacrityAbilityID, m_strRitualOfAlacrityTarget, true))
+						if (!IsClericDivineRecoveryActive() && CastAbility(m_uiRitualOfAlacrityAbilityID, m_strRitualOfAlacrityTarget, true))
 							return true;
 
-						if (CastAbility(m_iDumbfireWardPetAbilityID, Me.Name, true))
+						if (CastAbility(m_uiDumbfireWardPetAbilityID, Me.Name, true))
 							return true;
 					}
 				}
@@ -296,39 +296,39 @@ namespace EQ2GlassCannon
 				/// General dps requires 95% or higher. Sorry!
 				if (m_OffensiveTargetActor != null && (fLowestHealthRatio > 0.95f))
 				{
-					if (CastAbility(m_iSingleColdSnareAbilityID))
+					if (CastAbility(m_uiSingleColdSnareAbilityID))
 						return true;
 				}
 
-				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 40.0f) && CastAbility(m_iGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 40.0f) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 					return true;
 
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					if (CastAbility(m_iSingleWardAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_uiSingleWardAbilityID, strLowestHealthName, true))
 						return true;
 
-					if (CastAbility(m_iSingleBiggerHealingAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_uiSingleBiggerHealingAbilityID, strLowestHealthName, true))
 						return true;
 
-					if (CastAbility(m_iSingleHealingAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_uiSingleHealingAbilityID, strLowestHealthName, true))
 						return true;
 				}
 
 				/// Keep the group ward up.
-				if ((Me.IsHated || MeActor.InCombatMode) && !IsAbilityMaintained(m_iGroupWardAbilityID) && CastAbility(m_iGroupWardAbilityID, Me.Name, true))
+				if ((Me.IsHated || MeActor.InCombatMode) && !IsAbilityMaintained(m_uiGroupWardAbilityID) && CastAbility(m_uiGroupWardAbilityID, Me.Name, true))
 					return true;
 
-				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 20.0f) && CastAbility(m_iGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 20.0f) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 					return true;
 
-				if ((Me.IsHated || MeActor.InCombatMode) && CastAbility(m_iDumbfireHealPetAbilityID, Me.Name, true))
+				if ((Me.IsHated || MeActor.InCombatMode) && CastAbility(m_uiDumbfireHealPetAbilityID, Me.Name, true))
 					return true;
 
 				/// If anyone at all is missing health, do a group heal, because this is all that's left.
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					if (CastAbility(m_iGroupHealingAbilityID, Me.Name, true))
+					if (CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 						return true;
 				}
 
@@ -377,12 +377,12 @@ namespace EQ2GlassCannon
 				if (iTotalDeadMembers > 1)
 				{
 					/// I don't really have a good Spirit Dance algorithm but I do know it is way more efficient than standard group rez.
-					if (CastAbility(m_iSpiritDanceRezAbilityID, strNearestDeadName, false))
+					if (CastAbility(m_uiSpiritDanceRezAbilityID, strNearestDeadName, false))
 					{
 						SpamSafeRaidSay(m_strSpiritDanceCallout, strNearestDeadName);
 						return true;
 					}
-					if (CastAbility(m_iGroupCombatRezAbilityID, strNearestDeadName, false))
+					if (CastAbility(m_uiGroupCombatRezAbilityID, strNearestDeadName, false))
 					{
 						SpamSafeRaidSay(m_strGroupRezCallout, strNearestDeadName);
 						return true;
@@ -391,9 +391,9 @@ namespace EQ2GlassCannon
 				else
 				{
 					/// Single rez. It's all we can do.
-					if (CastAbility(m_iSingleWardedCombatRezAbilityID, strNearestDeadName, false) ||
-						CastAbility(m_iSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
-						(!Me.IsHated && CastAbility(m_iGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
+					if (CastAbility(m_uiSingleWardedCombatRezAbilityID, strNearestDeadName, false) ||
+						CastAbility(m_uiSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
+						(!Me.IsHated && CastAbility(m_uiGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
 					{
 						SpamSafeRaidSay(m_strSingleRezCallout, strNearestDeadName);
 						return true;

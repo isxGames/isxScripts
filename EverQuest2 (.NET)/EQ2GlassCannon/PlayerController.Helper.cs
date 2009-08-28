@@ -159,12 +159,19 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public IEnumerable<Ability> EnumAbilities()
+		{
+			for (int iIndex = 1; iIndex <= Me.NumAbilities; iIndex++)
+				yield return Me.Ability(iIndex);
+		}
+
+		/************************************************************************************/
 		public void SpamSafeGroupSay(string strFormat, params object[] aobjParams)
 		{
 			if (!Me.Grouped)
 				return;
 
-			Program.RunCommand(true, "/g " + strFormat, aobjParams);
+			Program.RunCommand(5, "/g " + strFormat, aobjParams);
 			return;
 		}
 
@@ -178,14 +185,14 @@ namespace EQ2GlassCannon
 				return;
 			}
 
-			Program.RunCommand(true, "/r " + strFormat, aobjParams);
+			Program.RunCommand(5, "/r " + strFormat, aobjParams);
 			return;
 		}
 
 		/************************************************************************************/
 		public void SpamSafeTell(string strPlayerName, string strFormat, params object[] aobjParams)
 		{
-			Program.RunCommand(true, "/t " + strPlayerName + " " + strFormat, aobjParams);
+			Program.RunCommand(5, "/t " + strPlayerName + " " + strFormat, aobjParams);
 			return;
 		}
 	}

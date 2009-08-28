@@ -19,6 +19,9 @@ namespace EQ2GlassCannon
 		private static Extension s_Extension = null;
 		private static EQ2.ISXEQ2.ISXEQ2 s_ISXEQ2 = null;
 		private static EQ2.ISXEQ2.EQ2 s_EQ2 = null;
+		private static EQ2Event s_eq2event = null;
+		public static string ServerName { get { return s_EQ2.ServerName; } }
+
 		private static SpeechSynthesizer s_SpeechSynthesizer = null;
 
 		private static Character s_Me = null;
@@ -33,10 +36,8 @@ namespace EQ2GlassCannon
 		private static bool s_bIsFlythroughVideoPlaying = false;
 		public static bool IsFlythroughVideoPlaying { get { return s_bIsFlythroughVideoPlaying; } }
 
-		private static EQ2Event s_eq2event = null;
 		private static PlayerController s_Controller = null;
 		public static EmailQueueThread s_EmailQueueThread = new EmailQueueThread();
-
 		public static bool s_bContinueBot = true;
 		public static bool s_bRefreshKnowledgeBook = false;
 		private static long s_lFrameCount = 0;
@@ -45,6 +46,7 @@ namespace EQ2GlassCannon
 		public static string s_strSharedOverridesINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
 		private static SetCollection<string> s_PressedKeys = new SetCollection<string>();
+		private static Dictionary<string, DateTime> m_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
 
 		/************************************************************************************/
 		/// <summary>
@@ -180,7 +182,7 @@ namespace EQ2GlassCannon
 			int iFramesElapsed = 0;
 			while (DateTime.Now - ThrottleWaitStart < TimeSpan.FromSeconds(fSeconds))
 			{
-				LavishVMAPI.Frame.Wait(false);
+				Frame.Wait(false);
 				//using (new FrameLock(true)) ;
 				iFramesElapsed++;
 			}
@@ -247,6 +249,7 @@ namespace EQ2GlassCannon
 
 					s_eq2event = new EQ2Event();
 					s_eq2event.ChoiceWindowAppeared += new EventHandler<LSEventArgs>(OnChoiceWindowAppeared_EventHandler);
+					s_eq2event.RewardWindowAppeared += new EventHandler<LSEventArgs>(OnRewardWindowAppeared_EventHandler);
 					s_eq2event.IncomingChatText += new EventHandler<LSEventArgs>(OnIncomingChatText_EventHandler);
 					s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
 
@@ -262,7 +265,7 @@ namespace EQ2GlassCannon
 				}
 
 #if !DEBUG
-				double fTestTime = 3.0;
+				double fTestTime = 2.0;
 
 				/// This giant code chunk was a huge necessity due to the completely random lag that happens
 				/// inside the UpdateGlobals() function. A laggy launch will never free up and a free launch
@@ -375,13 +378,22 @@ namespace EQ2GlassCannon
 						}
 
 						/// Yay for lazy!
-						if (s_EQ2.PendingQuestName != "None")
+						if (!string.IsNullOrEmpty(s_EQ2.PendingQuestName) && s_EQ2.PendingQuestName != "None")
 						{
-							Log("Automatically accepting quest \"{0}\"...", s_EQ2.PendingQuestName);
-							//s_EQ2.AcceptPendingQuest();
+							Log("Quest offered: \"{0}\".", s_EQ2.PendingQuestName);
 
 							/// Stolen from "EQ2Quest.iss". The question I have: isn't AcceptPendingQuest() redundant then?
-							s_Extension.EQ2UIPage("Popup", "RewardPack").Child("button", "RewardPack.Accept").LeftClick();
+							EQ2UIPage QuestPage = s_Extension.EQ2UIPage("Popup", "RewardPack");
+							if (QuestPage.IsValid)
+							{
+								EQ2UIElement QuestAcceptButton = QuestPage.Child("button", "RewardPack.Accept");
+								if (QuestAcceptButton.IsValid)
+								{
+									Log("Automatically accepting quest \"{0}\"...", s_EQ2.PendingQuestName);
+									s_EQ2.AcceptPendingQuest();
+									QuestAcceptButton.LeftClick();
+								}
+							}
 						}
 
 						unchecked { s_lFrameCount++; }
@@ -414,7 +426,7 @@ namespace EQ2GlassCannon
 							}
 
 							/// Build the name of the INI file.
-							string strFileName = string.Format("{0}.{1}.ini", s_EQ2.ServerName, Me.Name);
+							string strFileName = string.Format("{0}.{1}.ini", ServerName, Me.Name);
 							s_strCurrentINIFilePath = Path.Combine(s_strINIFolderPath, strFileName);
 
 							if (File.Exists(s_strCurrentINIFilePath))
@@ -461,7 +473,7 @@ namespace EQ2GlassCannon
 					/// Skip frames as configured.
 					for (int iIndex = 0; iIndex < s_Controller.m_iFrameSkip; iIndex++)
 					{
-						LavishVMAPI.Frame.Wait(false);
+						Frame.Wait(false);
 						unchecked { s_lFrameCount++; }
 					}
 				}
@@ -514,6 +526,28 @@ namespace EQ2GlassCannon
 					{
 						UpdateGlobals();
 						s_Controller.OnChoiceWindowAppeared(s_Extension.ChoiceWindow());
+					}
+				}
+			}
+			catch
+			{
+				/// Do nothing. But at least the bot doesn't crash!
+			}
+
+			return;
+		}
+
+		/************************************************************************************/
+		private static void OnRewardWindowAppeared_EventHandler(object sender, LSEventArgs e)
+		{
+			try
+			{
+				if (s_Controller != null)
+				{
+					using (new FrameLock(true))
+					{
+						UpdateGlobals();
+						s_Controller.OnRewardWindowAppeared(s_Extension.RewardWindow());
 					}
 				}
 			}
@@ -607,7 +641,7 @@ namespace EQ2GlassCannon
 					List<string> astrArgList = new List<string>(astrArgs);
 					astrArgList.RemoveAt(0);
 					using (new FrameLock(true))
-						s_Controller.OnCustomCommand(astrArgs[0].ToLower(), astrArgList.ToArray());
+						s_Controller.OnCustomSlashCommand(astrArgs[0].ToLower(), astrArgList.ToArray());
 				}
 			}
 			catch (Exception e)
@@ -626,16 +660,12 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		private static Dictionary<string, DateTime> m_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
-		private static readonly TimeSpan s_CommandThrottleTimeout = TimeSpan.FromSeconds(5);
-
-		/************************************************************************************/
 		/// <summary>
 		/// I hate trying to remember the syntax, so I hid it behind this function.
 		/// </summary>
 		/// <param name="bThrottled">Whether or not to prevent immediate duplicates of the same command until a certain time has passed.</param>
 		/// <param name="strCommand"></param>
-		public static void RunCommand(bool bThrottled, string strCommand, params object[] aobjParams)
+		public static void RunCommand(double fBlockageSeconds, string strCommand, params object[] aobjParams)
 		{
 			if (string.IsNullOrEmpty(strCommand))
 				return;
@@ -650,9 +680,9 @@ namespace EQ2GlassCannon
 					strFinalCommand += string.Format(strCommand, aobjParams);
 
 				/// Throttle it only if the parameter says so.
-				if (bThrottled && m_RecentThrottledCommandIndex.ContainsKey(strFinalCommand))
+				if (fBlockageSeconds > 0.0 && m_RecentThrottledCommandIndex.ContainsKey(strFinalCommand))
 				{
-					if (DateTime.Now - m_RecentThrottledCommandIndex[strFinalCommand] > s_CommandThrottleTimeout)
+					if (DateTime.Now > m_RecentThrottledCommandIndex[strFinalCommand])
 						m_RecentThrottledCommandIndex.Remove(strFinalCommand);
 					else
 					{
@@ -670,7 +700,7 @@ namespace EQ2GlassCannon
 					}
 				}
 
-				m_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now);
+				m_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now + TimeSpan.FromSeconds(fBlockageSeconds));
 			}
 			catch
 			{
@@ -687,14 +717,14 @@ namespace EQ2GlassCannon
 		/// <param name="aobjParams"></param>
 		public static void RunCommand(string strCommand, params object[] aobjParams)
 		{
-			RunCommand(false, strCommand, aobjParams);
+			RunCommand(0, strCommand, aobjParams);
 			return;
 		}
 
 		/************************************************************************************/
 		public static void ApplyVerb(int iActorID, string strVerb)
 		{
-			RunCommand(true, "/apply_verb {0} {1}", iActorID, strVerb);
+			RunCommand(5, "/apply_verb {0} {1}", iActorID, strVerb);
 			return;
 		}
 
@@ -780,7 +810,7 @@ namespace EQ2GlassCannon
 			DateTime WaitEndTime = DateTime.Now + ThisTimeSpan;
 
 			while (DateTime.Now < WaitEndTime)
-				LavishVMAPI.Frame.Wait(false);
+				Frame.Wait(false);
 
 			return;
 		}
@@ -839,23 +869,32 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public static void SafeShellExecute(string strFileName)
 		{
-			Program.Log("Shell executing \"{0}\"...", strFileName);
 			ThreadPool.QueueUserWorkItem(
 				delegate(object objContext)
 				{
 					try
 					{
-						System.Diagnostics.Process p = new System.Diagnostics.Process();
-						p.StartInfo.FileName = strFileName;
-						p.StartInfo.UseShellExecute = true;
-						p.StartInfo.ErrorDialog = false;
+						if (File.Exists(strFileName))
+						{
+							Program.Log("Shell executing \"{0}\"...", strFileName);
 
-						/// This call crashes the process when run inside the main thread.
-						/// That's why we dump this act to the worker queue.
-						p.Start();
+							Process p = new System.Diagnostics.Process();
+							p.StartInfo.FileName = strFileName;
+							p.StartInfo.UseShellExecute = true;
+							p.StartInfo.ErrorDialog = false;
+
+							/// This call crashes the process when run inside the main thread.
+							/// That's why we dump this act to the worker queue.
+							p.Start();
+						}
+						else
+						{
+							Program.Log("Shell execute error: Cannot find file \"{0}\".", strFileName);
+						}
 					}
-					catch
+					catch (Exception e)
 					{
+						OnUnhandledException(e);
 					}
 				}
 			);
@@ -871,7 +910,7 @@ namespace EQ2GlassCannon
 			ExceptionText.AppendLine(e.StackTrace.ToString());
 			string strExceptionText = ExceptionText.ToString();
 
-			using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strINIFolderPath, "ExceptionLog.txt")))
+			using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strINIFolderPath, "ExceptionLog.txt"), true))
 			{
 				OutputFile.WriteLine("-----------------------------");
 				OutputFile.WriteLine(strExceptionText);

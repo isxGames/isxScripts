@@ -21,35 +21,35 @@ namespace EQ2GlassCannon
 		#endregion
 
 		#region Ability ID's
-		public int m_iGroupArcaneBuffAbilityID = -1;
-		public int m_iBlessingsAbilityID = -1;
-		public int m_iManaCureAbilityID = -1;
-		public int m_iSingleSTRWISBuffAbilityID = -1;
-		public int m_iSingleStoneskinBuffAbilityID = -1;
-		public int m_iMeleeSkillBuffAbilityID = -1;
-		public int m_iMeleeHealProcBuffAbilityID = -1;
-		public int m_iSanctuaryAbilityID = -1;
+		protected uint m_uiGroupArcaneBuffAbilityID = 0;
+		protected uint m_uiBlessingsAbilityID = 0;
+		protected uint m_uiManaCureAbilityID = 0;
+		protected uint m_uiSingleSTRWISBuffAbilityID = 0;
+		protected uint m_uiSingleStoneskinBuffAbilityID = 0;
+		protected uint m_uiMeleeSkillBuffAbilityID = 0;
+		protected uint m_uiMeleeHealProcBuffAbilityID = 0;
+		protected uint m_uiSanctuaryAbilityID = 0;
 
-		public int m_iSingleReactiveHealAbilityID = -1;
-		public int m_iHealingAbilityID = -1;
-		public int m_iArchHealingAbilityID = -1;
-		public int m_iSinglePowerToHealthAbilityID = -1;
-		public int m_iSingleOneHitWardAbilityID = -1;
-		public int m_iGroupReactiveHealAbilityID = -1;
-		public int m_iGroupHealingAbilityID = -1;
-		public int m_iGroupCombatRezAbilityID = -1;
-		public int m_iSingleFullHealthCombatRezAbilityID = -1;
-		public int m_iSingleNormalCombatRezAbilityID = -1;
+		protected uint m_uiSingleReactiveHealAbilityID = 0;
+		protected uint m_uiHealingAbilityID = 0;
+		protected uint m_uiArchHealingAbilityID = 0;
+		protected uint m_uiSinglePowerToHealthAbilityID = 0;
+		protected uint m_uiSingleOneHitWardAbilityID = 0;
+		protected uint m_uiGroupReactiveHealAbilityID = 0;
+		protected uint m_uiGroupHealingAbilityID = 0;
+		protected uint m_uiGroupCombatRezAbilityID = 0;
+		protected uint m_uiSingleFullHealthCombatRezAbilityID = 0;
+		protected uint m_uiSingleNormalCombatRezAbilityID = 0;
 
-		public int m_iSingleMitigationDebuffAbilityID = -1;
-		public int m_iSingleDivineDebuffAbilityID = -1;
-		public int m_iSingleWISDebuffAbilityID = -1;
-		public int m_iSingleReactiveTraumaCureAbilityID = -1;
-		public int m_iSingleReactiveDeathHealAbilityID = -1;
-		public int m_iSingleSmiteAbilityID = -1;
-		public int m_iSingleStunAbilityID = -1;
-		public int m_iSingleDazeAbilityID = -1;
-		public int m_iHammerDumbfirePetAbilityID = -1;
+		protected uint m_uiSingleMitigationDebuffAbilityID = 0;
+		protected uint m_uiSingleDivineDebuffAbilityID = 0;
+		protected uint m_uiSingleWISDebuffAbilityID = 0;
+		protected uint m_uiSingleReactiveTraumaCureAbilityID = 0;
+		protected uint m_uiSingleReactiveDeathHealAbilityID = 0;
+		protected uint m_uiSingleSmiteAbilityID = 0;
+		protected uint m_uiSingleStunAbilityID = 0;
+		protected uint m_uiSingleDazeAbilityID = 0;
+		protected uint m_uiHammerDumbfirePetAbilityID = 0;
 		#endregion
 
 		/************************************************************************************/
@@ -74,40 +74,40 @@ namespace EQ2GlassCannon
 			base.RefreshKnowledgeBook();
 
 			/// PriestController abilities.
-			m_iShadowsDefensiveHealStance = SelectHighestAbilityID("Focused Prayers");
-			m_iShadowsOffensiveHealStance = SelectHighestAbilityID("Peaceful Aggression");
-			m_iGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Holy Armor");
-			m_iGroupWaterBreathingAbilityID = SelectHighestAbilityID("Watery Respite");
+			m_uiShadowsDefensiveHealStance = SelectHighestAbilityID("Focused Prayers");
+			m_uiShadowsOffensiveHealStance = SelectHighestAbilityID("Peaceful Aggression");
+			m_uiGroupMitigationBuffAbilityID = SelectHighestTieredAbilityID("Holy Armor");
+			m_uiGroupWaterBreathingAbilityID = SelectHighestAbilityID("Watery Respite");
 
-			m_iBlessingsAbilityID = SelectHighestAbilityID("Blessings");
-			m_iManaCureAbilityID = SelectHighestAbilityID("Mana Cure");
-			m_iSingleSTRWISBuffAbilityID = SelectHighestTieredAbilityID("Virtue");
-			m_iSingleStoneskinBuffAbilityID = SelectHighestTieredAbilityID("Unyielding Benediction");
-			m_iMeleeSkillBuffAbilityID = SelectHighestTieredAbilityID("Aegolism");
-			m_iMeleeHealProcBuffAbilityID = SelectHighestTieredAbilityID("Glory");
-			m_iSanctuaryAbilityID = SelectHighestAbilityID("Sanctuary");
+			m_uiBlessingsAbilityID = SelectHighestAbilityID("Blessings");
+			m_uiManaCureAbilityID = SelectHighestAbilityID("Mana Cure");
+			m_uiSingleSTRWISBuffAbilityID = SelectHighestTieredAbilityID("Virtue");
+			m_uiSingleStoneskinBuffAbilityID = SelectHighestTieredAbilityID("Unyielding Benediction");
+			m_uiMeleeSkillBuffAbilityID = SelectHighestTieredAbilityID("Aegolism");
+			m_uiMeleeHealProcBuffAbilityID = SelectHighestTieredAbilityID("Glory");
+			m_uiSanctuaryAbilityID = SelectHighestAbilityID("Sanctuary");
 
-			m_iSingleReactiveHealAbilityID = SelectHighestTieredAbilityID("Vital Intercession");
-			m_iHealingAbilityID = SelectHighestTieredAbilityID("Meliorate");
-			m_iArchHealingAbilityID = SelectHighestTieredAbilityID("Restoration");
-			m_iSinglePowerToHealthAbilityID = SelectHighestAbilityID("Reverence");
-			m_iSingleOneHitWardAbilityID = SelectHighestTieredAbilityID("Repent");
-			m_iGroupReactiveHealAbilityID = SelectHighestTieredAbilityID("Holy Intercession");
-			m_iGroupHealingAbilityID = SelectHighestTieredAbilityID("Word of Redemption");
-			m_iGroupCombatRezAbilityID = SelectHighestAbilityID("Blazon Life");
-			m_iSingleFullHealthCombatRezAbilityID = SelectHighestAbilityID("Resurrect");
-			m_iSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Battle's Reprieve");
-			m_iGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Devoted Resolve");
-			m_iGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Holy Salvation");
-			m_iSingleMitigationDebuffAbilityID = SelectHighestTieredAbilityID("Rebuke");
-			m_iSingleDivineDebuffAbilityID = SelectHighestTieredAbilityID("Mark of Divinity");
-			m_iSingleWISDebuffAbilityID = SelectHighestTieredAbilityID("Smite Corruption");
-			m_iSingleReactiveTraumaCureAbilityID = SelectHighestTieredAbilityID("Involuntary Gift");
-			m_iSingleReactiveDeathHealAbilityID = SelectHighestTieredAbilityID("Healing Fate");
-			m_iSingleSmiteAbilityID = SelectHighestTieredAbilityID("Divine Smite");
-			m_iSingleStunAbilityID = SelectHighestTieredAbilityID("Awestruck");
-			m_iSingleDazeAbilityID = SelectHighestTieredAbilityID("Sign of Pacification");
-			m_iHammerDumbfirePetAbilityID = SelectHighestTieredAbilityID("Unswerving Hammer");
+			m_uiSingleReactiveHealAbilityID = SelectHighestTieredAbilityID("Vital Intercession");
+			m_uiHealingAbilityID = SelectHighestTieredAbilityID("Meliorate");
+			m_uiArchHealingAbilityID = SelectHighestTieredAbilityID("Restoration");
+			m_uiSinglePowerToHealthAbilityID = SelectHighestAbilityID("Reverence");
+			m_uiSingleOneHitWardAbilityID = SelectHighestTieredAbilityID("Repent");
+			m_uiGroupReactiveHealAbilityID = SelectHighestTieredAbilityID("Holy Intercession");
+			m_uiGroupHealingAbilityID = SelectHighestTieredAbilityID("Word of Redemption");
+			m_uiGroupCombatRezAbilityID = SelectHighestAbilityID("Blazon Life");
+			m_uiSingleFullHealthCombatRezAbilityID = SelectHighestAbilityID("Resurrect");
+			m_uiSingleNormalCombatRezAbilityID = SelectHighestAbilityID("Battle's Reprieve");
+			m_uiGeneralGroupCureAbilityID = SelectHighestTieredAbilityID("Devoted Resolve");
+			m_uiGeneralSingleDeathSaveAbilityID = SelectHighestTieredAbilityID("Holy Salvation");
+			m_uiSingleMitigationDebuffAbilityID = SelectHighestTieredAbilityID("Rebuke");
+			m_uiSingleDivineDebuffAbilityID = SelectHighestTieredAbilityID("Mark of Divinity");
+			m_uiSingleWISDebuffAbilityID = SelectHighestTieredAbilityID("Smite Corruption");
+			m_uiSingleReactiveTraumaCureAbilityID = SelectHighestTieredAbilityID("Involuntary Gift");
+			m_uiSingleReactiveDeathHealAbilityID = SelectHighestTieredAbilityID("Healing Fate");
+			m_uiSingleSmiteAbilityID = SelectHighestTieredAbilityID("Divine Smite");
+			m_uiSingleStunAbilityID = SelectHighestTieredAbilityID("Awestruck");
+			m_uiSingleDazeAbilityID = SelectHighestTieredAbilityID("Sign of Pacification");
+			m_uiHammerDumbfirePetAbilityID = SelectHighestTieredAbilityID("Unswerving Hammer");
 
 			return;
 		}
@@ -142,7 +142,7 @@ namespace EQ2GlassCannon
 			double fMyPowerRatio = (double)Me.Power / (double)Me.MaxPower;
 
 			/// We'll refer to this multiple times so we might as well alias the value.
-			bool bGroupRezAvailable = IsAbilityReady(m_iGroupCombatRezAbilityID);
+			bool bGroupRezAvailable = IsAbilityReady(m_uiGroupCombatRezAbilityID);
 
 			string strLowestHealthName = string.Empty;
 			int iLowestHealthAmount = int.MaxValue;
@@ -195,37 +195,37 @@ namespace EQ2GlassCannon
 				if (CheckShadowsHealStanceBuffs())
 					return true;
 
-				if (CheckToggleBuff(m_iGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
+				if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iShieldAllyAbilityID, m_strShieldAllyTarget))
+				if (CheckSingleTargetBuffs(m_uiShieldAllyAbilityID, m_strShieldAllyTarget))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupArcaneBuffAbilityID, m_bBuffArcaneResistance))
+				if (CheckToggleBuff(m_uiGroupArcaneBuffAbilityID, m_bBuffArcaneResistance))
 					return true;
 
-				if (CheckToggleBuff(m_iBlessingsAbilityID, true))
+				if (CheckToggleBuff(m_uiBlessingsAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupWaterBreathingAbilityID, m_bBuffGroupWaterBreathing))
+				if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, m_bBuffGroupWaterBreathing))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iManaCureAbilityID, m_strManaCureTarget))
+				if (CheckSingleTargetBuffs(m_uiManaCureAbilityID, m_strManaCureTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleSTRWISBuffAbilityID, m_strSTRWISTarget))
+				if (CheckSingleTargetBuffs(m_uiSingleSTRWISBuffAbilityID, m_strSTRWISTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleStoneskinBuffAbilityID, m_strStoneskinTarget))
+				if (CheckSingleTargetBuffs(m_uiSingleStoneskinBuffAbilityID, m_strStoneskinTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iMeleeSkillBuffAbilityID, m_astrMeleeSkillTargets))
+				if (CheckSingleTargetBuffs(m_uiMeleeSkillBuffAbilityID, m_astrMeleeSkillTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iMeleeHealProcBuffAbilityID, m_astrMeleeHealProcTargets))
+				if (CheckSingleTargetBuffs(m_uiMeleeHealProcBuffAbilityID, m_astrMeleeHealProcTargets))
 					return true;
 
-				if (CheckToggleBuff(m_iYaulpAbilityID, m_bBuffYaulp))
+				if (CheckToggleBuff(m_uiYaulpAbilityID, m_bBuffYaulp))
 					return true;
 
 				if (CheckGroupWaterBreathingBuff())
@@ -249,7 +249,7 @@ namespace EQ2GlassCannon
 					/// If Illusionist epic regen is up, do our fastest nuke to try and reap the benefit.
 					/// Ideally it would be a lowest-tier spell because we know this nuke doesn't do shit for dps considering the power it uses,
 					/// but we're not set up for that.
-					if ((fMyPowerRatio < 0.20) && IsIllusionistSoothingMindActive() && CastAbility(m_iSingleSmiteAbilityID))
+					if ((fMyPowerRatio < 0.20) && IsIllusionistSoothingMindActive() && CastAbility(m_uiSingleSmiteAbilityID))
 						return true;
 				}
 
@@ -258,7 +258,7 @@ namespace EQ2GlassCannon
 					/// Death save.
 					if (fLowestHealthRatio < 0.10)
 					{
-						if (CastAbility(m_iGeneralSingleDeathSaveAbilityID, strLowestHealthName, true))
+						if (CastAbility(m_uiGeneralSingleDeathSaveAbilityID, strLowestHealthName, true))
 							return true;
 					}
 				}
@@ -269,9 +269,8 @@ namespace EQ2GlassCannon
 					/// NOTE: Group rez risky if MT is getting rezzed and is outside of group.
 					if (iTotalDeadMembers > 1 && bGroupRezAvailable)
 					{
-						if (CastAbility(m_iGroupCombatRezAbilityID, strNearestDeadName, false))
+						if (CastAbility(m_uiGroupCombatRezAbilityID, strNearestDeadName, false))
 						{
-							SpamSafeGroupSay(m_strGroupRezCallout, strNearestDeadName);
 							SpamSafeRaidSay(m_strGroupRezCallout, strNearestDeadName);
 							return true;
 						}
@@ -279,11 +278,10 @@ namespace EQ2GlassCannon
 					else
 					{
 						/// Single rez. It's all we can do.
-						if (CastAbility(m_iSingleFullHealthCombatRezAbilityID, strNearestDeadName, false) ||
-							CastAbility(m_iSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
-							(!Me.IsHated && CastAbility(m_iGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
+						if (CastAbility(m_uiSingleFullHealthCombatRezAbilityID, strNearestDeadName, false) ||
+							CastAbility(m_uiSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
+							(!Me.IsHated && CastAbility(m_uiGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
 						{
-							SpamSafeGroupSay(m_strSingleRezCallout, strNearestDeadName);
 							SpamSafeRaidSay(m_strSingleRezCallout, strNearestDeadName);
 							return true;
 						}
@@ -296,63 +294,63 @@ namespace EQ2GlassCannon
 				/// Do debuffs only if the vital situation isn't grim.
 				if (bOffensiveTargetEngaged && (fLowestHealthRatio > 0.90))
 				{
-					if (bTempBuffsOrDumbfiresAdvised && CastAbility(m_iDivineRecoveryAbilityID, Me.Name, true))
+					if (bTempBuffsOrDumbfiresAdvised && CastAbility(m_uiDivineRecoveryAbilityID, Me.Name, true))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleMitigationDebuffAbilityID) && CastAbility(m_iSingleMitigationDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleMitigationDebuffAbilityID) && CastAbility(m_uiSingleMitigationDebuffAbilityID))
 						return true;
 
-					if (CastAbility(m_iSkullCrackAbilityID))
+					if (CastAbility(m_uiSkullCrackAbilityID))
 						return true;
 
-					if (CastAbility(m_iLoreAndLegendAbilityID))
+					if (CastAbility(m_uiLoreAndLegendAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleDivineDebuffAbilityID) && CastAbility(m_iSingleDivineDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleDivineDebuffAbilityID) && CastAbility(m_uiSingleDivineDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleWISDebuffAbilityID) && CastAbility(m_iSingleWISDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleWISDebuffAbilityID) && CastAbility(m_uiSingleWISDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleReactiveTraumaCureAbilityID) && CastAbility(m_iSingleReactiveTraumaCureAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleReactiveTraumaCureAbilityID) && CastAbility(m_uiSingleReactiveTraumaCureAbilityID))
 						return true;
 
-					if (bTempBuffsOrDumbfiresAdvised && !IsAbilityMaintained(m_iHammerDumbfirePetAbilityID) && CastAbility(m_iHammerDumbfirePetAbilityID))
+					if (bTempBuffsOrDumbfiresAdvised && !IsAbilityMaintained(m_uiHammerDumbfirePetAbilityID) && CastAbility(m_uiHammerDumbfirePetAbilityID))
 						return true;
 
-					if (!m_OffensiveTargetActor.IsEpic && !IsAbilityMaintained(m_iSingleReactiveDeathHealAbilityID) && CastAbility(m_iSingleReactiveDeathHealAbilityID))
+					if (!m_OffensiveTargetActor.IsEpic && !IsAbilityMaintained(m_uiSingleReactiveDeathHealAbilityID) && CastAbility(m_uiSingleReactiveDeathHealAbilityID))
 						return true;
 				}
 
-				if (iTotalDeficientMembersBelowGroupHealTolerance > 1 && CastAbility(m_iGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembersBelowGroupHealTolerance > 1 && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 					return true;
 
-				if (MeActor.InCombatMode && CastAbility(m_iSingleOneHitWardAbilityID, m_strMainTank, true))
+				if (MeActor.InCombatMode && CastAbility(m_uiSingleOneHitWardAbilityID, m_strMainTank, true))
 					return true;
 
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					if (CastAbility(m_iHealingAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_uiHealingAbilityID, strLowestHealthName, true))
 						return true;
 
-					if (CastAbility(m_iArchHealingAbilityID, strLowestHealthName, true))
+					if (CastAbility(m_uiArchHealingAbilityID, strLowestHealthName, true))
 						return true;
 				}
 
 				/// This needs to be kept up on the MT.
-				if (MeActor.InCombatMode && CastAbility(m_iSingleReactiveHealAbilityID, m_strMainTank, true))
+				if (MeActor.InCombatMode && CastAbility(m_uiSingleReactiveHealAbilityID, m_strMainTank, true))
 					return true;
 
-				if (MeActor.InCombatMode && !IsAbilityMaintained(m_iGroupReactiveHealAbilityID) && CastAbility(m_iGroupReactiveHealAbilityID, Me.Name, true))
+				if (MeActor.InCombatMode && !IsAbilityMaintained(m_uiGroupReactiveHealAbilityID) && CastAbility(m_uiGroupReactiveHealAbilityID, Me.Name, true))
 					return true;
 
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					if (MeActor.InCombatMode && CastAbility(m_iSinglePowerToHealthAbilityID, strLowestHealthName, true))
+					if (MeActor.InCombatMode && CastAbility(m_uiSinglePowerToHealthAbilityID, strLowestHealthName, true))
 						return true;
 				}
 
-				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 30.0) && CastAbility(m_iGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 30.0) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 					return true;
 
 				/// (fill this spot with any other spells)
@@ -360,7 +358,7 @@ namespace EQ2GlassCannon
 				/// If anyone at all is missing health, do a group heal, because this is all that's left.
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					if (CastAbility(m_iGroupHealingAbilityID, Me.Name, true))
+					if (CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 						return true;
 				}
 

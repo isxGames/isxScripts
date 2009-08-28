@@ -10,22 +10,22 @@ namespace EQ2GlassCannon
 {
 	public class WardenController : DruidController
 	{
-		protected int m_iSingleElementalDebuffSpellAbilityID = -1;
-		protected int m_iSingleElementalDebuffMeleeAbilityID = -1;
-		protected int m_iSingleHeatNukeAbilityID = -1;
-		protected int m_iSingleColdNukeAbilityID = -1;
-		protected int m_iBlueMeleeColdAEAbilityID = -1;
+		protected uint m_uiSingleElementalDebuffSpellAbilityID = 0;
+		protected uint m_uiSingleElementalDebuffMeleeAbilityID = 0;
+		protected uint m_uiSingleHeatNukeAbilityID = 0;
+		protected uint m_uiSingleColdNukeAbilityID = 0;
+		protected uint m_uiBlueMeleeColdAEAbilityID = 0;
 
 		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iSingleElementalDebuffSpellAbilityID = SelectHighestTieredAbilityID("Frostbite");
-			m_iSingleElementalDebuffMeleeAbilityID = SelectHighestAbilityID("Frostbite Slice");
-			m_iSingleHeatNukeAbilityID = SelectHighestTieredAbilityID("Dawnstrike");
-			m_iSingleColdNukeAbilityID = SelectHighestTieredAbilityID("Icefall");
-			m_iBlueMeleeColdAEAbilityID = SelectHighestAbilityID("Whirl of Permafrost");
+			m_uiSingleElementalDebuffSpellAbilityID = SelectHighestTieredAbilityID("Frostbite");
+			m_uiSingleElementalDebuffMeleeAbilityID = SelectHighestAbilityID("Frostbite Slice");
+			m_uiSingleHeatNukeAbilityID = SelectHighestTieredAbilityID("Dawnstrike");
+			m_uiSingleColdNukeAbilityID = SelectHighestTieredAbilityID("Icefall");
+			m_uiBlueMeleeColdAEAbilityID = SelectHighestAbilityID("Whirl of Permafrost");
 			return;
 		}
 
@@ -56,16 +56,16 @@ namespace EQ2GlassCannon
 
 			if (bOffensiveTargetEngaged)
 			{
-				if (CastBlueOffensiveAbility(m_iBlueMeleeColdAEAbilityID, 4))
+				if (CastBlueOffensiveAbility(m_uiBlueMeleeColdAEAbilityID, 4))
 					return true;
 
 				if (MeActor.IsIdle)
 				{
-					if (CastAbility(m_iSingleElementalDebuffMeleeAbilityID) || CastAbility(m_iSingleElementalDebuffSpellAbilityID))
+					if (CastAbility(m_uiSingleElementalDebuffMeleeAbilityID) || CastAbility(m_uiSingleElementalDebuffSpellAbilityID))
 						return true;
-					if (CastAbility(m_iSingleColdNukeAbilityID))
+					if (CastAbility(m_uiSingleColdNukeAbilityID))
 						return true;
-					if (CastAbility(m_iSingleHeatNukeAbilityID))
+					if (CastAbility(m_uiSingleHeatNukeAbilityID))
 						return true;
 				}
 			}

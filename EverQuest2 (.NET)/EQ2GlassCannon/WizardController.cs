@@ -14,34 +14,34 @@ namespace EQ2GlassCannon
 		public string m_strIceShieldTarget = string.Empty;
 		public string m_strGiftCallout = string.Empty;
 
-		public int m_iSTRINTBuffAbilityID = -1;
-		public int m_iElementalBuffAbilityID = -1;
-		public int m_iSnowFilledStepsAbilityID = -1;
-		public int m_iMailOfFrostAbilityID = -1;
-		public int m_iFlametongueAbilityID = -1;
-		public int m_iGiftAbilityID = -1;
-		public int m_iIceshapeAbilityID = -1;
-		public int m_iSurgeAbilityID = -1;
-		public int m_iFireshapeAbilityID = -1;
+		public uint m_uiSTRINTBuffAbilityID = 0;
+		public uint m_uiElementalBuffAbilityID = 0;
+		public uint m_uiSnowFilledStepsAbilityID = 0;
+		public uint m_uiMailOfFrostAbilityID = 0;
+		public uint m_uiFlametongueAbilityID = 0;
+		public uint m_uiGiftAbilityID = 0;
+		public uint m_uiIceshapeAbilityID = 0;
+		public uint m_uiSurgeAbilityID = 0;
+		public uint m_uiFireshapeAbilityID = 0;
 
-		public int m_iColdDamageShieldAbilityID = -1;
-		public int m_iFurnaceOfRoAbilityID = -1;
-		public int m_iBlueHeatAEAbilityID = -1;
-		public int m_iGreenColdAEAbilityID = -1;
-		public int m_iGreenMagicAEAbilityID = -1;
-		public int m_iRaysOfDisintegrationAbilityID = -1;
-		public int m_iStormingTempestAbilityID = -1;
-		public int m_iProtoflameAbilityID = -1;
-		public int m_iHailStormAbilityID = -1;
-		public int m_iFusionAbilityID = -1;
-		public int m_iIceCometAbilityID = -1;
-		public int m_iBallOfFireAbilityID = -1;
-		public int m_iImmolationAbilityID = -1;
-		public int m_iSingleStunNukeAbilityID = -1;
-		public int m_iElementalDebuffAbilityID = -1;
-		public int m_iUnresistableDotAbilityID = -1;
-		public int m_iLightningBurstAbilityID = -1;
-		public int m_iSingleDeaggroAbilityID = -1;
+		public uint m_uiColdDamageShieldAbilityID = 0;
+		public uint m_uiFurnaceOfRoAbilityID = 0;
+		public uint m_uiBlueHeatAEAbilityID = 0;
+		public uint m_uiGreenColdAEAbilityID = 0;
+		public uint m_uiGreenMagicAEAbilityID = 0;
+		public uint m_uiRaysOfDisintegrationAbilityID = 0;
+		public uint m_uiStormingTempestAbilityID = 0;
+		public uint m_uiProtoflameAbilityID = 0;
+		public uint m_uiHailStormAbilityID = 0;
+		public uint m_uiFusionAbilityID = 0;
+		public uint m_uiIceCometAbilityID = 0;
+		public uint m_uiBallOfFireAbilityID = 0;
+		public uint m_uiImmolationAbilityID = 0;
+		public uint m_uiSingleStunNukeAbilityID = 0;
+		public uint m_uiElementalDebuffAbilityID = 0;
+		public uint m_uiUnresistableDotAbilityID = 0;
+		public uint m_uiLightningBurstAbilityID = 0;
+		public uint m_uiSingleDeaggroAbilityID = 0;
 
 		/************************************************************************************/
 		protected override void TransferINISettings(IniFile ThisFile)
@@ -59,36 +59,36 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iSTRINTBuffAbilityID = SelectHighestTieredAbilityID("Tyrant's Pact");
-			m_iElementalBuffAbilityID = SelectHighestTieredAbilityID("Fortify Elements");
-			m_iSnowFilledStepsAbilityID = SelectHighestAbilityID("Snow-filled Steps");
-			m_iMailOfFrostAbilityID = SelectHighestAbilityID("Mail of Frost");
-			m_iHateTransferAbilityID = SelectHighestTieredAbilityID("Converge");
-			m_iFlametongueAbilityID = SelectHighestTieredAbilityID("Ro's Blade");
+			m_uiSTRINTBuffAbilityID = SelectHighestTieredAbilityID("Tyrant's Pact");
+			m_uiElementalBuffAbilityID = SelectHighestTieredAbilityID("Fortify Elements");
+			m_uiSnowFilledStepsAbilityID = SelectHighestAbilityID("Snow-filled Steps");
+			m_uiMailOfFrostAbilityID = SelectHighestAbilityID("Mail of Frost");
+			m_uiHateTransferAbilityID = SelectHighestTieredAbilityID("Converge");
+			m_uiFlametongueAbilityID = SelectHighestTieredAbilityID("Ro's Blade");
 
-			m_iSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Intromission");
-			m_iGiftAbilityID = SelectHighestTieredAbilityID("Frigid Gift");
-			m_iIceshapeAbilityID = SelectHighestAbilityID("Iceshape");
-			m_iSurgeAbilityID = SelectHighestTieredAbilityID("Surge of Ro");
-			m_iFireshapeAbilityID = SelectHighestAbilityID("Fireshape");
-			m_iColdDamageShieldAbilityID = SelectHighestTieredAbilityID("Iceshield");
-			m_iFurnaceOfRoAbilityID = SelectHighestTieredAbilityID("Furnace of Ro");
-			m_iBlueHeatAEAbilityID = SelectHighestTieredAbilityID("Firestorm");
-			m_iGreenColdAEAbilityID = SelectHighestTieredAbilityID("Glacial Wind");
-			m_iGreenMagicAEAbilityID = SelectHighestTieredAbilityID("Storm of Lightning");
-			m_iRaysOfDisintegrationAbilityID = SelectHighestAbilityID("Rays of Disintegration");
-			m_iStormingTempestAbilityID = SelectHighestTieredAbilityID("Storming Tempest");
-			m_iProtoflameAbilityID = SelectHighestTieredAbilityID("Protoflame");
-			m_iHailStormAbilityID = SelectHighestAbilityID("Hail Storm");
-			m_iFusionAbilityID = SelectHighestTieredAbilityID("Fusion");
-			m_iIceCometAbilityID = SelectHighestTieredAbilityID("Ice Comet");
-			m_iBallOfFireAbilityID = SelectHighestTieredAbilityID("Ball of Fire");
-			m_iImmolationAbilityID = SelectHighestTieredAbilityID("Immolation");
-			m_iSingleStunNukeAbilityID = SelectHighestTieredAbilityID("Magma Chamber");
-			m_iElementalDebuffAbilityID = SelectHighestTieredAbilityID("Ice Spears");
-			m_iUnresistableDotAbilityID = SelectHighestTieredAbilityID("Incinerate");
-			m_iLightningBurstAbilityID = SelectHighestTieredAbilityID("Solar Flare");
-			m_iSingleDeaggroAbilityID = SelectHighestTieredAbilityID("Cease");
+			m_uiSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Intromission");
+			m_uiGiftAbilityID = SelectHighestTieredAbilityID("Frigid Gift");
+			m_uiIceshapeAbilityID = SelectHighestAbilityID("Iceshape");
+			m_uiSurgeAbilityID = SelectHighestTieredAbilityID("Surge of Ro");
+			m_uiFireshapeAbilityID = SelectHighestAbilityID("Fireshape");
+			m_uiColdDamageShieldAbilityID = SelectHighestTieredAbilityID("Iceshield");
+			m_uiFurnaceOfRoAbilityID = SelectHighestTieredAbilityID("Furnace of Ro");
+			m_uiBlueHeatAEAbilityID = SelectHighestTieredAbilityID("Firestorm");
+			m_uiGreenColdAEAbilityID = SelectHighestTieredAbilityID("Glacial Wind");
+			m_uiGreenMagicAEAbilityID = SelectHighestTieredAbilityID("Storm of Lightning");
+			m_uiRaysOfDisintegrationAbilityID = SelectHighestAbilityID("Rays of Disintegration");
+			m_uiStormingTempestAbilityID = SelectHighestTieredAbilityID("Storming Tempest");
+			m_uiProtoflameAbilityID = SelectHighestTieredAbilityID("Protoflame");
+			m_uiHailStormAbilityID = SelectHighestAbilityID("Hail Storm");
+			m_uiFusionAbilityID = SelectHighestTieredAbilityID("Fusion");
+			m_uiIceCometAbilityID = SelectHighestTieredAbilityID("Ice Comet");
+			m_uiBallOfFireAbilityID = SelectHighestTieredAbilityID("Ball of Fire");
+			m_uiImmolationAbilityID = SelectHighestTieredAbilityID("Immolation");
+			m_uiSingleStunNukeAbilityID = SelectHighestTieredAbilityID("Magma Chamber");
+			m_uiElementalDebuffAbilityID = SelectHighestTieredAbilityID("Ice Spears");
+			m_uiUnresistableDotAbilityID = SelectHighestTieredAbilityID("Incinerate");
+			m_uiLightningBurstAbilityID = SelectHighestTieredAbilityID("Solar Flare");
+			m_uiSingleDeaggroAbilityID = SelectHighestTieredAbilityID("Cease");
 
 			return;
 		}
@@ -119,31 +119,31 @@ namespace EQ2GlassCannon
 
 			if (m_bCheckBuffsNow)
 			{
-				if (CheckToggleBuff(m_iWardOfSagesAbilityID, true))
+				if (CheckToggleBuff(m_uiWardOfSagesAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iMagisShieldingAbilityID, true))
+				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iMailOfFrostAbilityID, true))
+				if (CheckToggleBuff(m_uiMailOfFrostAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iElementalBuffAbilityID, true))
+				if (CheckToggleBuff(m_uiElementalBuffAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iSTRINTBuffAbilityID, true))
+				if (CheckToggleBuff(m_uiSTRINTBuffAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iFlametongueAbilityID, m_astrFlametongueTargets))
+				if (CheckSingleTargetBuffs(m_uiFlametongueAbilityID, m_astrFlametongueTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iHateTransferAbilityID, m_strHateTransferTarget))
+				if (CheckSingleTargetBuffs(m_uiHateTransferAbilityID, m_strHateTransferTarget))
 					return true;
 
 				if (CheckRacialBuffs())
 					return true;
 
-				if (CheckToggleBuff(m_iSnowFilledStepsAbilityID, true))
+				if (CheckToggleBuff(m_uiSnowFilledStepsAbilityID, true))
 					return true;
 
 				StopCheckingBuffs();
@@ -162,33 +162,33 @@ namespace EQ2GlassCannon
 				if (MeActor.IsIdle)
 				{
 					/// Cast Furnace of Ro. This is a static pet, permanent location. Very weird beast.
-					if (m_bUseBlueAEs && !IsAbilityMaintained(m_iFurnaceOfRoAbilityID))
+					if (m_bUseBlueAEs && !IsAbilityMaintained(m_uiFurnaceOfRoAbilityID))
 					{
 						/// We're making a guesstimate that the pet's radius is 6 meters,
 						/// including margin space for any NPC's that may come into its path en route to the PC's.
-						if (m_OffensiveTargetActor.IsNamed || GetBlueOffensiveAbilityCompatibleTargetCount(m_iFurnaceOfRoAbilityID, 6.0) > 3)
+						if (m_OffensiveTargetActor.IsNamed || GetBlueOffensiveAbilityCompatibleTargetCount(m_uiFurnaceOfRoAbilityID, 6.0) > 3)
 						{
-							if (CastAbility(m_iFurnaceOfRoAbilityID))
+							if (CastAbility(m_uiFurnaceOfRoAbilityID))
 								return true;
 						}
 					}
 
 					/// FIRST BLOOD: Extreme AE opportunities should receive top priority,
 					/// and never subordinate to boilerplate cast orders.
-					if (CastGreenOffensiveAbility(m_iGreenColdAEAbilityID, 6))
+					if (CastGreenOffensiveAbility(m_uiGreenColdAEAbilityID, 6))
 						return true;
-					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 7))
+					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 7))
 						return true;
-					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 8))
+					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 8))
 						return true;
 
 					/// Deaggros.
 					if (m_bIHaveAggro)
 					{
-						if (CastAbility(m_iSingleDeaggroAbilityID))
+						if (CastAbility(m_uiSingleDeaggroAbilityID))
 							return true;
 
-						if (CastAbility(m_iGeneralGreenDeaggroAbilityID))
+						if (CastAbility(m_uiGeneralGreenDeaggroAbilityID))
 							return true;
 
 						if (UseDeaggroItems())
@@ -198,10 +198,10 @@ namespace EQ2GlassCannon
 					/// We attempt this in two places:
 					/// - Here at the beginning for the debuff, and
 					/// - Down the list for the DPS.
-					if (!IsAbilityMaintained(m_iElementalDebuffAbilityID) && CastAbility(m_iElementalDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiElementalDebuffAbilityID) && CastAbility(m_uiElementalDebuffAbilityID))
 						return true;
 
-					if (IsAbilityReady(m_iColdDamageShieldAbilityID))
+					if (IsAbilityReady(m_uiColdDamageShieldAbilityID))
 					{
 						if (string.IsNullOrEmpty(m_strIceShieldTarget))
 						{
@@ -209,13 +209,13 @@ namespace EQ2GlassCannon
 							Actor AggroWhore = m_OffensiveTargetActor.Target();
 							if (AggroWhore.IsValid && m_FriendDictionary.ContainsKey(AggroWhore.Name))
 							{
-								if (CastAbility(m_iColdDamageShieldAbilityID, AggroWhore.Name, true))
+								if (CastAbility(m_uiColdDamageShieldAbilityID, AggroWhore.Name, true))
 									return true;
 							}
 						}
 						else
 						{
-							if (CastAbility(m_iColdDamageShieldAbilityID, m_strIceShieldTarget, true))
+							if (CastAbility(m_uiColdDamageShieldAbilityID, m_strIceShieldTarget, true))
 								return true;
 						}
 					}
@@ -226,21 +226,21 @@ namespace EQ2GlassCannon
 					{
 						/// These temp buffs are sensitive to the damage type;
 						/// don't do shit while Iceshape or Gift is on the group from another player.
-						if (!IsBeneficialEffectPresent(m_iIceshapeAbilityID) && !IsBeneficialEffectPresent(m_iGiftAbilityID))
+						if (!IsBeneficialEffectPresent(m_uiIceshapeAbilityID) && !IsBeneficialEffectPresent(m_uiGiftAbilityID))
 						{
 							/// Iceshape and Fireshape are optional AA abilities but tightly woven into the use of Gift and Surge.
 							/// To keep this code concise, "nonexistant" is treated the same as "ready".
-							bool bIceshapeReady = (m_iIceshapeAbilityID == -1 || IsAbilityReady(m_iIceshapeAbilityID));
-							bool bFireshapeReady = (m_iFireshapeAbilityID == -1 || IsAbilityReady(m_iFireshapeAbilityID));
+							bool bIceshapeReady = (m_uiIceshapeAbilityID == -1 || IsAbilityReady(m_uiIceshapeAbilityID));
+							bool bFireshapeReady = (m_uiFireshapeAbilityID == -1 || IsAbilityReady(m_uiFireshapeAbilityID));
 
 							/// Consider using Iceshape/Gift if Fireshape/Surge aren't up.
 							/// Gift has the shorter duration so it gets cast last and its availability becomes the prerequisite.
-							if (!IsAbilityMaintained(m_iFireshapeAbilityID) && !IsAbilityMaintained(m_iSurgeAbilityID) && IsAbilityReady(m_iGiftAbilityID))
+							if (!IsAbilityMaintained(m_uiFireshapeAbilityID) && !IsAbilityMaintained(m_uiSurgeAbilityID) && IsAbilityReady(m_uiGiftAbilityID))
 							{
-								if (CastAbility(m_iIceshapeAbilityID))
+								if (CastAbility(m_uiIceshapeAbilityID))
 									return true;
 
-								if (CastAbility(m_iGiftAbilityID))
+								if (CastAbility(m_uiGiftAbilityID))
 								{
 									SpamSafeGroupSay(m_strGiftCallout);
 									return true;
@@ -249,12 +249,12 @@ namespace EQ2GlassCannon
 
 							/// Consider using Fireshape/Surge if Iceshape/Gift aren't up.
 							/// Fireshape has the shorter duration so it gets cast last and its availability becomes the prerequisite.
-							else if (!IsAbilityMaintained(m_iIceshapeAbilityID) && !IsAbilityMaintained(m_iGiftAbilityID) && bFireshapeReady)
+							else if (!IsAbilityMaintained(m_uiIceshapeAbilityID) && !IsAbilityMaintained(m_uiGiftAbilityID) && bFireshapeReady)
 							{
-								if (CastAbility(m_iSurgeAbilityID))
+								if (CastAbility(m_uiSurgeAbilityID))
 									return true;
 
-								if (CastAbility(m_iFireshapeAbilityID))
+								if (CastAbility(m_uiFireshapeAbilityID))
 									return true;
 							}
 						}
@@ -263,14 +263,14 @@ namespace EQ2GlassCannon
 					/// Cast Fusion. This deserves special consideration because it is a directional PBAE.
 					if (m_bUseBlueAEs)
 					{
-						CachedAbility FusionAbility = GetAbility(m_iFusionAbilityID, true);
+						CachedAbility FusionAbility = GetAbility(m_uiFusionAbilityID, true);
 						if (FusionAbility != null && fDistance <= FusionAbility.m_fEffectRadius)
 						{
 							/// Freehand Sorcery for Fusion.
-							if (CastAbility(m_iFreehandSorceryAbilityID, Me.Name, true))
+							if (CastAbility(m_uiFreehandSorceryAbilityID, Me.Name, true))
 								return true;
 
-							if (CastAbility(m_iFusionAbilityID))
+							if (CastAbility(m_uiFusionAbilityID))
 							{
 								/// Fusion is directional.
 								m_OffensiveTargetActor.DoFace();
@@ -280,81 +280,81 @@ namespace EQ2GlassCannon
 					}
 
 					/// AE time!!
-					if (CastGreenOffensiveAbility(m_iGreenColdAEAbilityID, 3))
+					if (CastGreenOffensiveAbility(m_uiGreenColdAEAbilityID, 3))
 						return true;
-					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 4))
+					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 4))
 						return true;
-					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 5))
-						return true;
-
-
-					if (CastAbility(m_iStormingTempestAbilityID))
+					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 5))
 						return true;
 
-					if (bDumbfiresAdvised && !IsAbilityMaintained(m_iProtoflameAbilityID) && CastAbility(m_iProtoflameAbilityID))
+
+					if (CastAbility(m_uiStormingTempestAbilityID))
+						return true;
+
+					if (bDumbfiresAdvised && !IsAbilityMaintained(m_uiProtoflameAbilityID) && CastAbility(m_uiProtoflameAbilityID))
 						return true;
 
 					/// AE time!!
-					if (CastGreenOffensiveAbility(m_iGreenColdAEAbilityID, 2))
+					if (CastGreenOffensiveAbility(m_uiGreenColdAEAbilityID, 2))
 						return true;
-					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 3))
+					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 3))
 						return true;
-					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 4))
+					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 4))
 						return true;
 
-					if (m_bUseBlueAEs && CastAbility(m_iHailStormAbilityID))
+					if (m_bUseBlueAEs && CastAbility(m_uiHailStormAbilityID))
 						return true;
 
 					/// Freehand Sorcery for Ice Comet.
-					if (IsAbilityReady(m_iIceCometAbilityID) && CastAbility(m_iFreehandSorceryAbilityID, Me.Name, true))
+					if (IsAbilityReady(m_uiIceCometAbilityID) && CastAbility(m_uiFreehandSorceryAbilityID, Me.Name, true))
 						return true;
 
-					if (CastAbility(m_iIceCometAbilityID))
+					if (CastAbility(m_uiIceCometAbilityID))
 						return true;
 				}
 
 				/// Uninterruptable; can be cast while running.
-				if (CastAbility(m_iBewildermentAbilityID))
+				if (CastAbility(m_uiBewildermentAbilityID))
 					return true;
-				if (CastAbility(m_iThunderclapAbilityID))
+				if (CastAbility(m_uiThunderclapAbilityID))
 					return true;
 
 				if (MeActor.IsIdle)
 				{
-					if (CastAbility(m_iRaysOfDisintegrationAbilityID))
+					if (CastAbility(m_uiRaysOfDisintegrationAbilityID))
 						return true;
 
-					if (CastAbility(m_iBallOfFireAbilityID))
+					if (CastAbility(m_uiBallOfFireAbilityID))
 						return true;
 
-					if (CastAbility(m_iImmolationAbilityID))
+					if (CastAbility(m_uiImmolationAbilityID))
 						return true;
 
-					if (CastAbility(m_iSingleStunNukeAbilityID))
+					if (CastAbility(m_uiSingleStunNukeAbilityID))
 						return true;
 
-					if (CastAbility(m_iIceFlameAbilityID))
+					if (CastAbility(m_uiIceFlameAbilityID))
 						return true;
 
-					if (CastAbility(m_iLoreAndLegendAbilityID))
+					if (CastAbility(m_uiLoreAndLegendAbilityID))
 						return true;
 
-					if (CastAbility(m_iElementalDebuffAbilityID))
+					if (CastAbility(m_uiElementalDebuffAbilityID))
 						return true;
 
-					if (CastAbility(m_iUnresistableDotAbilityID))
+					if (CastAbility(m_uiUnresistableDotAbilityID))
 						return true;
 
-					if (CastAbility(m_iLightningBurstAbilityID))
+					if (CastAbility(m_uiLightningBurstAbilityID))
 						return true;
 
 					if (UseOffensiveItems())
 						return true;
 
 					/// AE spells for when every single other thing is exhausted (very rare).
-					if (CastBlueOffensiveAbility(m_iBlueHeatAEAbilityID, 1))
+					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 1))
 						return true;
-					if (CastGreenOffensiveAbility(m_iGreenMagicAEAbilityID, 1))
+					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 1))
 						return true;
 				}
 			}

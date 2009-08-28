@@ -12,31 +12,26 @@ namespace EQ2GlassCannon
 		public bool m_bUsePowerFeed = true;
 		public double m_fPowerFeedThresholdRatio = 0.05;
 
-		public int m_iWardOfSagesAbilityID = -1;
-		public int m_iIceFlameAbilityID = -1;
-		public int m_iThunderclapAbilityID = -1;
-		public int m_iHateTransferAbilityID = -1;
-		public int m_iFreehandSorceryAbilityID = -1;
-		public int m_iAmbidexterousCastingAbilityID = -1;
-		public int m_iGeneralGreenDeaggroAbilityID = -1;
-		public int m_iSinglePowerFeedAbilityID = -1;
+		protected uint m_uiWardOfSagesAbilityID = 0;
+		protected uint m_uiIceFlameAbilityID = 0;
+		protected uint m_uiThunderclapAbilityID = 0;
+		protected uint m_uiHateTransferAbilityID = 0;
+		protected uint m_uiFreehandSorceryAbilityID = 0;
+		protected uint m_uiAmbidexterousCastingAbilityID = 0;
+		protected uint m_uiGeneralGreenDeaggroAbilityID = 0;
+		protected uint m_uiSinglePowerFeedAbilityID = 0;
 
 		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iWardOfSagesAbilityID = SelectHighestAbilityID("Ward of Sages");
-
-			m_iIceFlameAbilityID = SelectHighestAbilityID(
-				"Ice Flame",
-				"Glacialflame",
-				"Flames of Velious");
-
-			m_iThunderclapAbilityID = SelectHighestAbilityID("Thunderclap");
-			m_iFreehandSorceryAbilityID = SelectHighestAbilityID("Freehand Sorcery");
-			m_iAmbidexterousCastingAbilityID = SelectHighestAbilityID("Ambidexterous Casting");
-			m_iGeneralGreenDeaggroAbilityID = SelectHighestAbilityID("Concussive");
+			m_uiWardOfSagesAbilityID = SelectHighestAbilityID("Ward of Sages");
+			m_uiIceFlameAbilityID = SelectHighestTieredAbilityID("Flames of Velious");
+			m_uiThunderclapAbilityID = SelectHighestAbilityID("Thunderclap");
+			m_uiFreehandSorceryAbilityID = SelectHighestAbilityID("Freehand Sorcery");
+			m_uiAmbidexterousCastingAbilityID = SelectHighestAbilityID("Ambidexterous Casting");
+			m_uiGeneralGreenDeaggroAbilityID = SelectHighestAbilityID("Concussive");
 
 			return;
 		}
@@ -60,14 +55,14 @@ namespace EQ2GlassCannon
 			if (!m_bAutoAttack)
 				return false;
 
-			CachedAbility AmbidextrousCastingAbility = GetAbility(m_iAmbidexterousCastingAbilityID, true);
+			CachedAbility AmbidextrousCastingAbility = GetAbility(m_uiAmbidexterousCastingAbilityID, true);
 			if (AmbidextrousCastingAbility != null)
 			{
 				if (AmbidextrousCastingAbility.TotalCastTimeSpan > CastTimeRemaining)
 					return false;
 
 				/// Because we're not tracking the cast timer, this can be a bit spammy.
-				if (CastSimultaneousAbility(m_iAmbidexterousCastingAbilityID))
+				if (CastSimultaneousAbility(m_uiAmbidexterousCastingAbilityID))
 					return true;
 			}
 
@@ -80,7 +75,7 @@ namespace EQ2GlassCannon
 			if (!m_bUsePowerFeed || !MeActor.IsIdle)
 				return false;
 
-			if (!CanAffordAbilityCost(m_iSinglePowerFeedAbilityID))
+			if (!CanAffordAbilityCost(m_uiSinglePowerFeedAbilityID))
 				return false;
 
 			string strLowestPowerName = string.Empty;
@@ -105,7 +100,7 @@ namespace EQ2GlassCannon
 
 			if (!string.IsNullOrEmpty(strLowestPowerName))
 			{
-				if (CastAbility(m_iSinglePowerFeedAbilityID, strLowestPowerName, true))
+				if (CastAbility(m_uiSinglePowerFeedAbilityID, strLowestPowerName, true))
 					return true;
 			}
 

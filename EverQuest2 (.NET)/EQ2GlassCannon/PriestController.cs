@@ -19,16 +19,16 @@ namespace EQ2GlassCannon
 		public StanceType m_eShadowsHealStance = StanceType.Neither;
 		#endregion
 
-		public int m_iCureAbilityID = -1;
-		public int m_iCureCurseAbilityID = -1;
-		public int m_iGeneralGroupCureAbilityID = -1;
-		public int m_iGeneralSingleDeathSaveAbilityID = -1;
-		public int m_iGeneralNonCombatRezAbilityID = -1;
-		public int m_iGroupMitigationBuffAbilityID = -1;
-		public int m_iGroupWaterBreathingAbilityID = -1;
-		public int m_iSpiritOfTheWolfAbilityID = -1;
-		public int m_iShadowsOffensiveHealStance = -1;
-		public int m_iShadowsDefensiveHealStance = -1;
+		protected uint m_uiCureAbilityID = 0;
+		protected uint m_uiCureCurseAbilityID = 0;
+		protected uint m_uiGeneralGroupCureAbilityID = 0;
+		protected uint m_uiGeneralSingleDeathSaveAbilityID = 0;
+		protected uint m_uiGeneralNonCombatRezAbilityID = 0;
+		protected uint m_uiGroupMitigationBuffAbilityID = 0;
+		protected uint m_uiGroupWaterBreathingAbilityID = 0;
+		protected uint m_uiSpiritOfTheWolfAbilityID = 0;
+		protected uint m_uiShadowsOffensiveHealStance = 0;
+		protected uint m_uiShadowsDefensiveHealStance = 0;
 
 		/************************************************************************************/
 		protected override void TransferINISettings(IniFile ThisFile)
@@ -52,11 +52,11 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iCureAbilityID = SelectHighestAbilityID("Cure");
-			m_iCureCurseAbilityID = SelectHighestAbilityID("Cure Curse");
-			m_iGeneralNonCombatRezAbilityID = SelectHighestAbilityID("Revive");
-			m_iSpiritOfTheWolfAbilityID = SelectHighestAbilityID("Spirit of the Wolf");
-			m_iLoreAndLegendAbilityID = SelectHighestAbilityID("Master's Smite");
+			m_uiCureAbilityID = SelectHighestAbilityID("Cure");
+			m_uiCureCurseAbilityID = SelectHighestAbilityID("Cure Curse");
+			m_uiGeneralNonCombatRezAbilityID = SelectHighestAbilityID("Revive");
+			m_uiSpiritOfTheWolfAbilityID = SelectHighestAbilityID("Spirit of the Wolf");
+			m_uiLoreAndLegendAbilityID = SelectHighestAbilityID("Master's Smite");
 			return;
 		}
 
@@ -77,8 +77,8 @@ namespace EQ2GlassCannon
 			if (!m_bCastCures || Me.IsMoving)
 				return false;
 
-			bool bGroupCureAvailable = IsAbilityReady(m_iGeneralGroupCureAbilityID);
-			if (!IsAbilityReady(m_iCureAbilityID) && !bGroupCureAvailable)
+			bool bGroupCureAvailable = IsAbilityReady(m_uiGeneralGroupCureAbilityID);
+			if (!IsAbilityReady(m_uiCureAbilityID) && !bGroupCureAvailable)
 				return false;
 
 			string strBestSingleCureCandidate = string.Empty;
@@ -131,11 +131,11 @@ namespace EQ2GlassCannon
 				)
 				)
 			{
-				return CastAbility(m_iGeneralGroupCureAbilityID, Me.Name, true);
+				return CastAbility(m_uiGeneralGroupCureAbilityID, Me.Name, true);
 			}
 			else if (!string.IsNullOrEmpty(strBestSingleCureCandidate))
 			{
-				return CastAbility(m_iCureAbilityID, strBestSingleCureCandidate, true);
+				return CastAbility(m_uiCureAbilityID, strBestSingleCureCandidate, true);
 			}
 
 			if (m_bCastCureCurse)
@@ -172,12 +172,12 @@ namespace EQ2GlassCannon
 			if (m_bBuffGroupWaterBreathing)
 			{
 				/// Only turn it back on if we need to.
-				if ((MeActor.IsSwimming || !MeActor.InCombatMode) && CheckToggleBuff(m_iGroupWaterBreathingAbilityID, true))
+				if ((MeActor.IsSwimming || !MeActor.InCombatMode) && CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, true))
 					return true;
 			}
 			else
 			{
-				if (CheckToggleBuff(m_iGroupWaterBreathingAbilityID, false))
+				if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, false))
 					return true;
 			}
 
@@ -187,7 +187,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool CheckShadowsHealStanceBuffs()
 		{
-			return CheckStanceBuff(m_iShadowsOffensiveHealStance, m_iShadowsDefensiveHealStance, m_eShadowsHealStance);
+			return CheckStanceBuff(m_uiShadowsOffensiveHealStance, m_uiShadowsDefensiveHealStance, m_eShadowsHealStance);
 		}
 
 		/************************************************************************************/

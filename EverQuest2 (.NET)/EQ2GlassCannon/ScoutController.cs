@@ -11,9 +11,9 @@ namespace EQ2GlassCannon
 	{
 		public bool m_bDisarmChests = true;
 
-		public int m_iShroudAbilityID = -1;
-		public int m_iSingleDeaggroAbilityID = -1;
-		public int m_iEvasiveManeuversAbilityID = -1;
+		public uint m_uiShroudAbilityID = 0;
+		public uint m_uiSingleDeaggroAbilityID = 0;
+		public uint m_uiEvasiveManeuversAbilityID = 0;
 
 		/// <summary>
 		/// The int is the actor ID and the bool is whether or not we made fair attempt to disarm it.
@@ -29,11 +29,11 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iLoreAndLegendAbilityID = SelectHighestAbilityID("Sinister Strike");
-			m_iHOStarterAbiltyID = SelectHighestAbilityID("Lucky Break");
-			m_iShroudAbilityID = SelectHighestAbilityID("Shroud");
-			m_iSingleDeaggroAbilityID = SelectHighestTieredAbilityID("Evade");
-			m_iEvasiveManeuversAbilityID = SelectHighestAbilityID("Evasive Maneuvers");
+			m_uiLoreAndLegendAbilityID = SelectHighestAbilityID("Sinister Strike");
+			m_uiHOStarterAbiltyID = SelectHighestAbilityID("Lucky Break");
+			m_uiShroudAbilityID = SelectHighestAbilityID("Shroud");
+			m_uiSingleDeaggroAbilityID = SelectHighestTieredAbilityID("Evade");
+			m_uiEvasiveManeuversAbilityID = SelectHighestAbilityID("Evasive Maneuvers");
 
 			return;
 		}
@@ -83,7 +83,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool CastLoreAndLegendAbility()
 		{
-			return CastAbilityFromFlankingOrBehind(m_iLoreAndLegendAbilityID);
+			return CastAbilityFromFlankingOrBehind(m_uiLoreAndLegendAbilityID);
 		}
 
 		/************************************************************************************/

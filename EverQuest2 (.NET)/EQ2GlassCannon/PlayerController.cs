@@ -16,18 +16,18 @@ namespace EQ2GlassCannon
 	{
 		public const string STR_NO_KILL_NPC = "NoKill NPC";
 
-		public int m_iLoreAndLegendAbilityID = -1;
-		public int m_iHOStarterAbiltyID = -1;
-		public int m_iFeatherfallAbilityID = -1;
-		public int m_iHalfElfMitigationDebuffAbilityID = -1;
-		public int m_iFurySalveHealAbilityID = -1;
+		public uint m_uiLoreAndLegendAbilityID = 0;
+		public uint m_uiHOStarterAbiltyID = 0;
+		public uint m_uiFeatherfallAbilityID = 0;
+		public uint m_uiHalfElfMitigationDebuffAbilityID = 0;
+		public uint m_uiFurySalveHealAbilityID = 0;
 
-		public int m_iCollectingAbilityID = -1;
-		public int m_iGatheringAbilityID = -1;
-		public int m_iMiningAbilityID = -1;
-		public int m_iForestingAbilityID = -1;
-		public int m_iTrappingAbilityID = -1;
-		public int m_iFishingAbilityID = -1;
+		public uint m_uiCollectingAbilityID = 0;
+		public uint m_uiGatheringAbilityID = 0;
+		public uint m_uiMiningAbilityID = 0;
+		public uint m_uiForestingAbilityID = 0;
+		public uint m_uiTrappingAbilityID = 0;
+		public uint m_uiFishingAbilityID = 0;
 
 		/************************************************************************************/
 		public enum PositioningStance
@@ -108,16 +108,15 @@ namespace EQ2GlassCannon
 		public DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
 		public List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
 
-		public Dictionary<string, int> m_KnowledgeBookNameToIndexMap = new Dictionary<string, int>();
-		public Dictionary<int, string> m_KnowledgeBookIndexToNameMap = new Dictionary<int, string>();
-		public Dictionary<uint, int> m_KnowledgeBookIDToIndexMap = new Dictionary<uint, int>();
+		private Dictionary<string, uint> m_KnowledgeBookNameToIDMap = new Dictionary<string, uint>();
+		private Dictionary<uint, string> m_KnowledgeBookIDToNameMap = new Dictionary<uint, string>();
 		public Dictionary<string, GroupMember> m_GroupMemberDictionary = new Dictionary<string, GroupMember>();
 		public Dictionary<string, GroupMember> m_FriendDictionary = new Dictionary<string, GroupMember>();
 
 		/// <summary>
 		/// This associates all identical spells of a shared recast timer with the index of the highest level version of them.
 		/// </summary>
-		public Dictionary<string, int> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, int>();
+		public Dictionary<string, uint> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, uint>();
 
 		/// <summary>
 		/// This dictionary has only one entry per spell regardless of how many targets the spell is actually on,
@@ -153,9 +152,8 @@ namespace EQ2GlassCannon
 
 			while (Program.s_bContinueBot)
 			{
-				m_KnowledgeBookNameToIndexMap.Clear();
-				m_KnowledgeBookIndexToNameMap.Clear();
-				m_KnowledgeBookIDToIndexMap.Clear();
+				m_KnowledgeBookNameToIDMap.Clear();
+				m_KnowledgeBookIDToNameMap.Clear();
 
 				Frame.Wait(true);
 				try
@@ -168,33 +166,25 @@ namespace EQ2GlassCannon
 					{
 						m_iAbilitiesFound = 0;
 
-						for (int iIndex = 1; iIndex <= Me.NumAbilities; iIndex++)
+						foreach (Ability ThisAbility in EnumAbilities())
 						{
-							Ability ThisAbility = Me.Ability(iIndex);
-
 							/// An ability string of null means it isn't loaded from the server yet.
 							if (ThisAbility.IsValid && !string.IsNullOrEmpty(ThisAbility.Name))
 							{
 								m_iAbilitiesFound++;
 
-								if (m_KnowledgeBookNameToIndexMap.ContainsKey(ThisAbility.Name))
+								if (m_KnowledgeBookNameToIDMap.ContainsKey(ThisAbility.Name))
 								{
 									Program.Log(
-										"WARNING: Duplicate ability \"{0}\" found (index {1} & {2}). This could be problematic with maintained spells.",
+										"WARNING: Duplicate ability \"{0}\" found (ID {1} & {2}). This could be problematic with maintained spells.",
 										ThisAbility.Name,
-										iIndex,
-										m_KnowledgeBookNameToIndexMap[ThisAbility.Name]);
+										ThisAbility.ID,
+										m_KnowledgeBookNameToIDMap[ThisAbility.Name]);
 								}
 								else
-									m_KnowledgeBookNameToIndexMap.Add(ThisAbility.Name, iIndex);
+									m_KnowledgeBookNameToIDMap.Add(ThisAbility.Name, ThisAbility.ID);
 
-								if (m_KnowledgeBookIDToIndexMap.ContainsKey(ThisAbility.ID))
-								{
-								}
-								else
-									m_KnowledgeBookIDToIndexMap.Add(ThisAbility.ID, iIndex);
-
-								m_KnowledgeBookIndexToNameMap.Add(iIndex, ThisAbility.Name);
+								m_KnowledgeBookIDToNameMap.Add(ThisAbility.ID, ThisAbility.Name);
 							}
 						}
 
@@ -243,32 +233,23 @@ namespace EQ2GlassCannon
 			m_KnowledgeBookAbilityLineDictionary.Clear();
 
 			/// Racials.
-			m_iFeatherfallAbilityID = SelectHighestAbilityID(
+			m_uiFeatherfallAbilityID = SelectHighestAbilityID(
 				//"Mind over Matter", /// High Elves. Commented out until the devs reconcile this with the tradeskill ability of the same name.
 				"Glide", /// Fae.
 				"Falling Grace" /// Erudites.
 				);
-			m_iHalfElfMitigationDebuffAbilityID = SelectHighestAbilityID("Piercing Stab");
-			m_iFurySalveHealAbilityID = SelectHighestAbilityID("Salve");
+			m_uiHalfElfMitigationDebuffAbilityID = SelectHighestAbilityID("Piercing Stab");
+			m_uiFurySalveHealAbilityID = SelectHighestAbilityID("Salve");
 
 			/// Harvesting.
-			m_iCollectingAbilityID = SelectHighestAbilityID("Collecting");
-			m_iGatheringAbilityID = SelectHighestAbilityID("Gathering");
-			m_iMiningAbilityID = SelectHighestAbilityID("Mining");
-			m_iForestingAbilityID = SelectHighestAbilityID("Foresting");
-			m_iTrappingAbilityID = SelectHighestAbilityID("Trapping");
-			m_iFishingAbilityID = SelectHighestAbilityID("Fishing");
+			m_uiCollectingAbilityID = SelectHighestAbilityID("Collecting");
+			m_uiGatheringAbilityID = SelectHighestAbilityID("Gathering");
+			m_uiMiningAbilityID = SelectHighestAbilityID("Mining");
+			m_uiForestingAbilityID = SelectHighestAbilityID("Foresting");
+			m_uiTrappingAbilityID = SelectHighestAbilityID("Trapping");
+			m_uiFishingAbilityID = SelectHighestAbilityID("Fishing");
 
 			return;
-		}
-
-		/************************************************************************************/
-		protected int SelectAbilityID(uint uiAbilityID)
-		{
-			if (m_KnowledgeBookIDToIndexMap.ContainsKey(uiAbilityID))
-				return m_KnowledgeBookIDToIndexMap[uiAbilityID];
-			else
-				return -1;
 		}
 
 		/************************************************************************************/
@@ -277,17 +258,17 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="astrAbilityNames">List of every spell that shares the behavior and recast timer,
 		/// presorted by the caller from lowest level to highest.</param>
-		public int SelectHighestAbilityID(params string[] astrAbilityNames)
+		public uint SelectHighestAbilityID(params string[] astrAbilityNames)
 		{
-			int iBestSpellIndex = -1;
+			uint uiBestSpellID = 0;
 
 			/// Grab the highest level ability from this group.
 			for (int iIndex = astrAbilityNames.Length - 1; iIndex >= 0; iIndex--)
 			{
 				string strThisAbility = astrAbilityNames[iIndex];
-				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility))
+				if (m_KnowledgeBookNameToIDMap.ContainsKey(strThisAbility))
 				{
-					iBestSpellIndex = m_KnowledgeBookNameToIndexMap[strThisAbility];
+					uiBestSpellID = m_KnowledgeBookNameToIDMap[strThisAbility];
 					break;
 				}
 			}
@@ -297,11 +278,11 @@ namespace EQ2GlassCannon
 			for (int iIndex = 0; iIndex < astrAbilityNames.Length; iIndex++)
 			{
 				string strThisAbility = astrAbilityNames[iIndex];
-				if (m_KnowledgeBookNameToIndexMap.ContainsKey(strThisAbility) && !m_KnowledgeBookAbilityLineDictionary.ContainsKey(strThisAbility))
-					m_KnowledgeBookAbilityLineDictionary.Add(strThisAbility, iBestSpellIndex);
+				if (m_KnowledgeBookNameToIDMap.ContainsKey(strThisAbility) && !m_KnowledgeBookAbilityLineDictionary.ContainsKey(strThisAbility))
+					m_KnowledgeBookAbilityLineDictionary.Add(strThisAbility, uiBestSpellID);
 			}
 
-			return iBestSpellIndex;
+			return uiBestSpellID;
 		}
 
 		/************************************************************************************/
@@ -311,7 +292,7 @@ namespace EQ2GlassCannon
 		};
 
 		/************************************************************************************/
-		public int SelectHighestTieredAbilityID(string strBaseAbilityName)
+		public uint SelectHighestTieredAbilityID(string strBaseAbilityName)
 		{
 			List<string> astrAbilityNames = new List<string>(s_astrRomanNumeralSuffixes.Length);
 			for (int iIndex = 0; iIndex < s_astrRomanNumeralSuffixes.Length; iIndex++)
@@ -324,6 +305,15 @@ namespace EQ2GlassCannon
 			}
 
 			return SelectHighestAbilityID(astrAbilityNames.ToArray());
+		}
+
+		/************************************************************************************/
+		public uint SelectAbilityID(uint uiAbilityID)
+		{
+			if (m_KnowledgeBookIDToNameMap.ContainsKey(uiAbilityID))
+				return uiAbilityID;
+			else
+				return 0;
 		}
 
 		/************************************************************************************/
@@ -1426,7 +1416,6 @@ namespace EQ2GlassCannon
 				/// Turn it off just in case.
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
-					Program.Log("Turning off all autoattack.");
 					Program.RunCommand("/auto 0");
 					return true;
 				}
@@ -1435,7 +1424,6 @@ namespace EQ2GlassCannon
 				Actor PetActor = Me.Pet();
 				if (PetActor.IsValid && PetActor.InCombatMode)
 				{
-					Program.Log("Backing pet off.");
 					Program.RunCommand("/pet backoff");
 					return true;
 				}
@@ -1444,7 +1432,6 @@ namespace EQ2GlassCannon
 				Actor TargetActor = MeActor.Target();
 				if (TargetActor.IsValid && TargetActor.Type == "NPC")
 				{
-					Program.Log("Clearing target.");
 					Program.RunCommand("/target_none");
 					return true;
 				}
