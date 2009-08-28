@@ -7,15 +7,16 @@ namespace EQ2GlassCannon
 {
 	public class ShamanController : PriestController
 	{
-		public int m_iCoagulateAbilityID = -1;
-		public int m_iRitualOfAlacrityAbilityID = -1;
+		public uint m_uiCoagulateAbilityID = 0;
+		public uint m_uiRitualOfAlacrityAbilityID = 0;
 
+		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iCoagulateAbilityID = SelectHighestAbilityID("Coagulate");
-			m_iRitualOfAlacrityAbilityID = SelectHighestAbilityID("Ritual");
+			m_uiCoagulateAbilityID = SelectHighestAbilityID("Coagulate");
+			m_uiRitualOfAlacrityAbilityID = SelectHighestAbilityID("Ritual");
 			
 			return;
 		}

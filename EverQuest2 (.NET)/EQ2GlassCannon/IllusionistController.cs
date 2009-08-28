@@ -26,35 +26,35 @@ namespace EQ2GlassCannon
 
 
 		#region Ability ID's
-		public int m_iINTWISBuffAbilityID = -1;
-		public int m_iArcaneBuffAbilityID = -1;
-		public int m_iHasteBuffAbilityID = -1;
-		public int m_iDynamismAbilityID = -1;
-		public int m_iTimeCompressionAbilityID = -1;
-		public int m_iIllusoryArmAbilityID = -1;
+		protected uint m_uiINTWISBuffAbilityID = 0;
+		protected uint m_uiArcaneBuffAbilityID = 0;
+		protected uint m_uiHasteBuffAbilityID = 0;
+		protected uint m_uiDynamismAbilityID = 0;
+		protected uint m_uiTimeCompressionAbilityID = 0;
+		protected uint m_uiIllusoryArmAbilityID = 0;
 
-		public int m_iSpellshieldAbilityID = -1;
-		public int m_iPersonaePetAbilityID = -1;
-		public int m_iDestructiveRampageAbilityID = -1;
-		public int m_iIlluminateAbilityID = -1;
-		public int m_iSavanteAbilityID = -1;
-		public int m_iCastingSkillBoostAbilityID = -1;
-		public int m_iConstructAbilityID = -1;
-		public int m_iBeamAbilityID = -1;
-		public int m_iPrismaticAbilityID = -1;
-		public int m_iDazeNukeAbilityID = -1;
-		public int m_iStifleNukeAbilityID = -1;
-		public int m_iStunNukeAbilityID = -1;
-		public int m_iArcaneDebuffNukeAbilityID = -1;
-		public int m_iUnresistableNukeAbilityID = -1;
-		public int m_iMeleeDebuffAbilityID = -1;
-		public int m_iGreenShowerAbilityID = -1;
-		public int m_iStormAbilityID = -1;
-		public int m_iGreenStunAbilityID = -1;
+		protected uint m_uiSpellshieldAbilityID = 0;
+		protected uint m_uiPersonaePetAbilityID = 0;
+		protected uint m_uiDestructiveRampageAbilityID = 0;
+		protected uint m_uiIlluminateAbilityID = 0;
+		protected uint m_uiSavanteAbilityID = 0;
+		protected uint m_uiCastingSkillBoostAbilityID = 0;
+		protected uint m_uiConstructAbilityID = 0;
+		protected uint m_uiBeamAbilityID = 0;
+		protected uint m_uiPrismaticAbilityID = 0;
+		protected uint m_uiDazeNukeAbilityID = 0;
+		protected uint m_uiStifleNukeAbilityID = 0;
+		protected uint m_uiStunNukeAbilityID = 0;
+		protected uint m_uiArcaneDebuffNukeAbilityID = 0;
+		protected uint m_uiUnresistableNukeAbilityID = 0;
+		protected uint m_uiMeleeDebuffAbilityID = 0;
+		protected uint m_uiGreenShowerAbilityID = 0;
+		protected uint m_uiStormAbilityID = 0;
+		protected uint m_uiGreenStunAbilityID = 0;
 
-		public int m_iSingleNormalMezAbilityID = -1;
-		public int m_iSingleFastMezAbilityID = -1;
-		public int m_iGreenMezAbilityID = -1;
+		protected uint m_uiSingleNormalMezAbilityID = 0;
+		protected uint m_uiSingleFastMezAbilityID = 0;
+		protected uint m_uiGreenMezAbilityID = 0;
 		#endregion
 
 		/************************************************************************************/
@@ -83,34 +83,34 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iINTWISBuffAbilityID = SelectHighestTieredAbilityID("Rune of Thought");
-			m_iArcaneBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Genius");
-			m_iMainRegenBuffAbilityID = SelectHighestTieredAbilityID("Epiphany");
-			m_iHasteBuffAbilityID = SelectHighestTieredAbilityID("Rapidity");
-			m_iDynamismAbilityID = SelectHighestTieredAbilityID("Synergism");
-			m_iTimeCompressionAbilityID = SelectHighestAbilityID("Time Compression");
-			m_iIllusoryArmAbilityID = SelectHighestAbilityID("Illusory Arm");
-			m_iSpellshieldAbilityID = SelectHighestAbilityID("Spellshield");
-			m_iPersonaePetAbilityID = SelectHighestTieredAbilityID("Personae Reflection");
-			m_iDestructiveRampageAbilityID = SelectHighestAbilityID("Destructive Rampage");
-			m_iIlluminateAbilityID = SelectHighestAbilityID("Illuminate");
-			m_iSavanteAbilityID = SelectHighestAbilityID("Savante");
-			m_iCastingSkillBoostAbilityID = SelectHighestTieredAbilityID("Flash of Brilliance");
-			m_iConstructAbilityID = SelectHighestTieredAbilityID("Construct of Order");
-			m_iBeamAbilityID = SelectHighestTieredAbilityID("Ultraviolet Beam");
-			m_iPrismaticAbilityID = SelectHighestTieredAbilityID("Prismatic Chaos");
-			m_iDazeNukeAbilityID = SelectHighestTieredAbilityID("Aneurysm");
-			m_iStifleNukeAbilityID = SelectHighestTieredAbilityID("Speechless");
-			m_iStunNukeAbilityID = SelectHighestTieredAbilityID("Paranoia");
-			m_iArcaneDebuffNukeAbilityID = SelectHighestTieredAbilityID("Nightmare");
-			m_iUnresistableNukeAbilityID = SelectHighestTieredAbilityID("Brainburst");
-			m_iMeleeDebuffAbilityID = SelectHighestTieredAbilityID("Dismay");
-			m_iGreenShowerAbilityID = SelectHighestTieredAbilityID("Chromatic Shower");
-			m_iStormAbilityID = SelectHighestTieredAbilityID("Chromatic Storm");
-			m_iGreenStunAbilityID = SelectHighestTieredAbilityID("Bewilderment");
-			m_iSingleNormalMezAbilityID = SelectHighestTieredAbilityID("Entrance");
-			m_iSingleFastMezAbilityID = SelectHighestTieredAbilityID("Regalia");
-			m_iGreenMezAbilityID = SelectHighestTieredAbilityID("Phantasmal Awe");
+			m_uiINTWISBuffAbilityID = SelectHighestTieredAbilityID("Rune of Thought");
+			m_uiArcaneBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Genius");
+			m_uiMainRegenBuffAbilityID = SelectHighestTieredAbilityID("Epiphany");
+			m_uiHasteBuffAbilityID = SelectHighestTieredAbilityID("Rapidity");
+			m_uiDynamismAbilityID = SelectHighestTieredAbilityID("Synergism");
+			m_uiTimeCompressionAbilityID = SelectHighestAbilityID("Time Compression");
+			m_uiIllusoryArmAbilityID = SelectHighestAbilityID("Illusory Arm");
+			m_uiSpellshieldAbilityID = SelectHighestAbilityID("Spellshield");
+			m_uiPersonaePetAbilityID = SelectHighestTieredAbilityID("Personae Reflection");
+			m_uiDestructiveRampageAbilityID = SelectHighestAbilityID("Destructive Rampage");
+			m_uiIlluminateAbilityID = SelectHighestAbilityID("Illuminate");
+			m_uiSavanteAbilityID = SelectHighestAbilityID("Savante");
+			m_uiCastingSkillBoostAbilityID = SelectHighestTieredAbilityID("Flash of Brilliance");
+			m_uiConstructAbilityID = SelectHighestTieredAbilityID("Construct of Order");
+			m_uiBeamAbilityID = SelectHighestTieredAbilityID("Ultraviolet Beam");
+			m_uiPrismaticAbilityID = SelectHighestTieredAbilityID("Prismatic Chaos");
+			m_uiDazeNukeAbilityID = SelectHighestTieredAbilityID("Aneurysm");
+			m_uiStifleNukeAbilityID = SelectHighestTieredAbilityID("Speechless");
+			m_uiStunNukeAbilityID = SelectHighestTieredAbilityID("Paranoia");
+			m_uiArcaneDebuffNukeAbilityID = SelectHighestTieredAbilityID("Nightmare");
+			m_uiUnresistableNukeAbilityID = SelectHighestTieredAbilityID("Brainburst");
+			m_uiMeleeDebuffAbilityID = SelectHighestTieredAbilityID("Dismay");
+			m_uiGreenShowerAbilityID = SelectHighestTieredAbilityID("Chromatic Shower");
+			m_uiStormAbilityID = SelectHighestTieredAbilityID("Chromatic Storm");
+			m_uiGreenStunAbilityID = SelectHighestTieredAbilityID("Bewilderment");
+			m_uiSingleNormalMezAbilityID = SelectHighestTieredAbilityID("Entrance");
+			m_uiSingleFastMezAbilityID = SelectHighestTieredAbilityID("Regalia");
+			m_uiGreenMezAbilityID = SelectHighestTieredAbilityID("Phantasmal Awe");
 			return;
 		}
 
@@ -130,34 +130,34 @@ namespace EQ2GlassCannon
 
 			if (m_bCheckBuffsNow)
 			{
-				if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_iPersonaePetAbilityID, m_bUsePet))
+				if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiPersonaePetAbilityID, m_bUsePet))
 					return true;
 
-				if (CheckToggleBuff(m_iINTWISBuffAbilityID, m_bBuffINTWIS))
+				if (CheckToggleBuff(m_uiINTWISBuffAbilityID, m_bBuffINTWIS))
 					return true;
 
-				if (CheckToggleBuff(m_iArcaneBuffAbilityID, m_bBuffArcaneResistance))
+				if (CheckToggleBuff(m_uiArcaneBuffAbilityID, m_bBuffArcaneResistance))
 					return true;
 
-				if (CheckToggleBuff(m_iMainRegenBuffAbilityID, m_bBuffRegen))
+				if (CheckToggleBuff(m_uiMainRegenBuffAbilityID, m_bBuffRegen))
 					return true;
 
-				if (CheckToggleBuff(m_iMagisShieldingAbilityID, true))
+				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iDynamismAbilityID, m_astrDynamismTargets))
+				if (CheckSingleTargetBuffs(m_uiDynamismAbilityID, m_astrDynamismTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iHasteBuffAbilityID, m_astrHasteTargets))
+				if (CheckSingleTargetBuffs(m_uiHasteBuffAbilityID, m_astrHasteTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iTimeCompressionAbilityID, m_strTimeCompressionTarget))
+				if (CheckSingleTargetBuffs(m_uiTimeCompressionAbilityID, m_strTimeCompressionTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iIllusoryArmAbilityID, m_strIllusoryArmTarget))
+				if (CheckSingleTargetBuffs(m_uiIllusoryArmAbilityID, m_strIllusoryArmTarget))
 					return true;
 
-				if (MeActor.InCombatMode && CheckSingleTargetBuffs(m_iSpellshieldAbilityID, m_strSpellshieldTarget))
+				if (MeActor.InCombatMode && CheckSingleTargetBuffs(m_uiSpellshieldAbilityID, m_strSpellshieldTarget))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -174,12 +174,12 @@ namespace EQ2GlassCannon
 			/// Red illusionist mezzes can be cast while in motion.
 			if (m_bUseGreenAEs && MeActor.IsIdle) /// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
 			{
-				if (CastNextMez(m_iGreenMezAbilityID, m_iSingleFastMezAbilityID, m_iSingleNormalMezAbilityID))
+				if (CastNextMez(m_uiGreenMezAbilityID, m_uiSingleFastMezAbilityID, m_uiSingleNormalMezAbilityID))
 					return true;
 			}
 			else
 			{
-				if (CastNextMez(m_iSingleFastMezAbilityID, m_iSingleNormalMezAbilityID))
+				if (CastNextMez(m_uiSingleFastMezAbilityID, m_uiSingleNormalMezAbilityID))
 					return true;
 			}
 
@@ -199,18 +199,18 @@ namespace EQ2GlassCannon
 				if (MeActor.IsIdle)
 				{
 					/// This buffs PC cast speed and debuffs NPC cast speed. So it gets unique priority.
-					if (CastAbility(m_iChronosiphoningAbilityID))
+					if (CastAbility(m_uiChronosiphoningAbilityID))
 						return true;
 
 					if (bTempBuffsAdvised)
 					{
-						if (!IsBeneficialEffectPresent(m_iPeaceOfMindAbilityID) && CastAbilityOnSelf(m_iPeaceOfMindAbilityID))
+						if (!IsBeneficialEffectPresent(m_uiPeaceOfMindAbilityID) && CastAbilityOnSelf(m_uiPeaceOfMindAbilityID))
 						{
 							SpamSafeGroupSay(m_strPeaceOfMindCallout);
 							return true;
 						}
 
-						if (!IsBeneficialEffectPresent(m_iDestructiveRampageAbilityID) && CastAbilityOnSelf(m_iDestructiveRampageAbilityID))
+						if (!IsBeneficialEffectPresent(m_uiDestructiveRampageAbilityID) && CastAbilityOnSelf(m_uiDestructiveRampageAbilityID))
 						{
 							SpamSafeGroupSay(m_strDestructiveRampageCallout);
 							return true;
@@ -218,18 +218,18 @@ namespace EQ2GlassCannon
 
 						/// Illuminate and Flash of Brilliance are used by this bot to lower spell resist rates;
 						/// it's counterproductive almost all of the time to have them both up at once.
-						if (!IsBeneficialEffectPresent(m_iCastingSkillBoostAbilityID) && !IsBeneficialEffectPresent(m_iIlluminateAbilityID) && CastAbilityOnSelf(m_iIlluminateAbilityID))
+						if (!IsBeneficialEffectPresent(m_uiCastingSkillBoostAbilityID) && !IsBeneficialEffectPresent(m_uiIlluminateAbilityID) && CastAbilityOnSelf(m_uiIlluminateAbilityID))
 						{
 							SpamSafeGroupSay(m_strIlluminateCallout);
 							return true;
 						}
-						if (!IsBeneficialEffectPresent(m_iCastingSkillBoostAbilityID) && !IsBeneficialEffectPresent(m_iIlluminateAbilityID) && CastAbilityOnSelf(m_iCastingSkillBoostAbilityID))
+						if (!IsBeneficialEffectPresent(m_uiCastingSkillBoostAbilityID) && !IsBeneficialEffectPresent(m_uiIlluminateAbilityID) && CastAbilityOnSelf(m_uiCastingSkillBoostAbilityID))
 						{
 							SpamSafeGroupSay(m_strCastingSkillBoostCallout);
 							return true;
 						}
 
-						if (!IsBeneficialEffectPresent(m_iSavanteAbilityID) && CastAbilityOnSelf(m_iSavanteAbilityID))
+						if (!IsBeneficialEffectPresent(m_uiSavanteAbilityID) && CastAbilityOnSelf(m_uiSavanteAbilityID))
 						{
 							SpamSafeGroupSay(m_strSavanteCallout);
 							return true;
@@ -237,9 +237,9 @@ namespace EQ2GlassCannon
 					}
 
 					/// Extreme AE opportunities should receive top priority, and never subordinate to boilerplate cast orders.
-					if (CastGreenOffensiveAbility(m_iGreenShowerAbilityID, 3))
+					if (CastGreenOffensiveAbility(m_uiGreenShowerAbilityID, 3))
 						return true;
-					if (CastGreenOffensiveAbility(m_iStormAbilityID, 4))
+					if (CastGreenOffensiveAbility(m_uiStormAbilityID, 4))
 						return true;
 
 					if (m_bIHaveAggro)
@@ -248,57 +248,57 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
-					if (!IsAbilityMaintained(m_iPrismaticAbilityID) && CastAbility(m_iPrismaticAbilityID, m_strPrismaticTarget, true))
+					if (!IsAbilityMaintained(m_uiPrismaticAbilityID) && CastAbility(m_uiPrismaticAbilityID, m_strPrismaticTarget, true))
 						return true;
 
-					if (CastAbility(m_iBewildermentAbilityID))
+					if (CastAbility(m_uiBewildermentAbilityID))
 						return true;
 
-					if (CastAbility(m_iBeamAbilityID))
+					if (CastAbility(m_uiBeamAbilityID))
 						return true;
 
-					if (CastAbility(m_iLoreAndLegendAbilityID))
+					if (CastAbility(m_uiLoreAndLegendAbilityID))
 						return true;
 
 					/// We attempt this in two places:
 					/// - Here at the beginning for the debuff, and
 					/// - Down the list for the proc DPS.
-					if (!IsAbilityMaintained(m_iArcaneDebuffNukeAbilityID) && CastAbility(m_iArcaneDebuffNukeAbilityID))
+					if (!IsAbilityMaintained(m_uiArcaneDebuffNukeAbilityID) && CastAbility(m_uiArcaneDebuffNukeAbilityID))
 						return true;
-					if (!IsAbilityMaintained(m_iMeleeDebuffAbilityID) && CastAbility(m_iMeleeDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiMeleeDebuffAbilityID) && CastAbility(m_uiMeleeDebuffAbilityID))
 						return true;
-					if (!IsAbilityMaintained(m_iNullifyingStaffAbilityID) && CastAbility(m_iNullifyingStaffAbilityID))
+					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID) && CastAbility(m_uiNullifyingStaffAbilityID))
 						return true;
 
-					if (bDumbfiresAdvised && !IsAbilityMaintained(m_iConstructAbilityID) && CastAbility(m_iConstructAbilityID))
+					if (bDumbfiresAdvised && !IsAbilityMaintained(m_uiConstructAbilityID) && CastAbility(m_uiConstructAbilityID))
 						return true;
 
 					/// We let this expire for the termination nuke, Pinski supposedly thinks it does more dps that way. :/
-					if (!IsAbilityMaintained(m_iUnresistableNukeAbilityID) && CastAbility(m_iUnresistableNukeAbilityID))
+					if (!IsAbilityMaintained(m_uiUnresistableNukeAbilityID) && CastAbility(m_uiUnresistableNukeAbilityID))
 						return true;
 
-					if (CastGreenOffensiveAbility(m_iGreenShowerAbilityID, 1))
+					if (CastGreenOffensiveAbility(m_uiGreenShowerAbilityID, 1))
 						return true;
 
-					if (CastAbility(m_iDazeNukeAbilityID))
+					if (CastAbility(m_uiDazeNukeAbilityID))
 						return true;
 
-					if (CastAbility(m_iStifleNukeAbilityID))
+					if (CastAbility(m_uiStifleNukeAbilityID))
 						return true;
 
-					if (CastAbility(m_iArcaneDebuffNukeAbilityID))
+					if (CastAbility(m_uiArcaneDebuffNukeAbilityID))
 						return true;
 
-					if (CastAbility(m_iStunNukeAbilityID))
+					if (CastAbility(m_uiStunNukeAbilityID))
 						return true;
 
-					if (CastAbility(m_iMeleeDebuffAbilityID))
+					if (CastAbility(m_uiMeleeDebuffAbilityID))
 						return true;
 
 					if (UseOffensiveItems())
 						return true;
 
-					if (CastGreenOffensiveAbility(m_iStormAbilityID, 1))
+					if (CastGreenOffensiveAbility(m_uiStormAbilityID, 1))
 						return true;
 				}
 

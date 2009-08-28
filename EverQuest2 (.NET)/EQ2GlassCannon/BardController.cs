@@ -8,17 +8,17 @@ namespace EQ2GlassCannon
 	public class BardController : ScoutController
 	{
 		#region Ability ID's
-		public int m_iAllegroAbilityID = -1;
-		public int m_iDontKillTheMessengerAbilityID = -1;
-		public int m_iDexterousSonataAbilityID = -1;
-		public int m_iFortissimoAbilityID = -1;
-		public int m_iGroupRunSpeedBuffAbilityID = -1;
+		protected uint m_uiAllegroAbilityID = 0;
+		protected uint m_uiDontKillTheMessengerAbilityID = 0;
+		protected uint m_uiDexterousSonataAbilityID = 0;
+		protected uint m_uiFortissimoAbilityID = 0;
+		protected uint m_uiGroupRunSpeedBuffAbilityID = 0;
 
-		public int m_iGreenSTRAGIDebuffAbilityID = -1;
+		protected uint m_uiGreenSTRAGIDebuffAbilityID = 0;
 
-		public int m_iBumpAbilityID = -1;
-		public int m_iRhythmBladeAbilityID = -1;
-		public int m_iTurnstrikeAbilityID = -1;
+		protected uint m_uiBumpAbilityID = 0;
+		protected uint m_uiRhythmBladeAbilityID = 0;
+		protected uint m_uiTurnstrikeAbilityID = 0;
 		#endregion
 
 		/************************************************************************************/
@@ -33,15 +33,15 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iAllegroAbilityID = SelectHighestAbilityID("Allegro");
-			m_iDontKillTheMessengerAbilityID = SelectHighestAbilityID("Don't Kill the Messenger");
-			m_iDexterousSonataAbilityID = SelectHighestAbilityID("Dexterous Sonata");
-			m_iFortissimoAbilityID = SelectHighestAbilityID("Fortissimo");
-			m_iGroupRunSpeedBuffAbilityID = SelectHighestTieredAbilityID("Selo's Accelerando");
-			m_iGreenSTRAGIDebuffAbilityID = SelectHighestTieredAbilityID("Disheartening Descant");
-			m_iBumpAbilityID = SelectHighestAbilityID("Bump");
-			m_iRhythmBladeAbilityID = SelectHighestAbilityID("Rhythm Blade");
-			m_iTurnstrikeAbilityID = SelectHighestAbilityID("Turnstrike");
+			m_uiAllegroAbilityID = SelectHighestAbilityID("Allegro");
+			m_uiDontKillTheMessengerAbilityID = SelectHighestAbilityID("Don't Kill the Messenger");
+			m_uiDexterousSonataAbilityID = SelectHighestAbilityID("Dexterous Sonata");
+			m_uiFortissimoAbilityID = SelectHighestAbilityID("Fortissimo");
+			m_uiGroupRunSpeedBuffAbilityID = SelectHighestTieredAbilityID("Selo's Accelerando");
+			m_uiGreenSTRAGIDebuffAbilityID = SelectHighestTieredAbilityID("Disheartening Descant");
+			m_uiBumpAbilityID = SelectHighestAbilityID("Bump");
+			m_uiRhythmBladeAbilityID = SelectHighestAbilityID("Rhythm Blade");
+			m_uiTurnstrikeAbilityID = SelectHighestAbilityID("Turnstrike");
 
 			return;
 		}

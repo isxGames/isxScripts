@@ -51,43 +51,43 @@ namespace EQ2GlassCannon
 		#endregion
 
 		#region Ability ID's
-		public int m_iGroupCastingSkillBuffAbilityID = -1;
-		public int m_iGroupSpellProcBuffAbilityID = -1;
-		public int m_iGroupManaRegenBuffAbilityID = -1;
-		public int m_iGroupDefenseBuffAbilityID = -1;
-		public int m_iGroupHasteBuffAbilityID = -1;
-		public int m_iGroupDehateBuffAbilityID = -1;
-		public int m_iGroupSTRSTABuffAbilityID = -1;
-		public int m_iGroupReflectBuffAbilityID = -1;
-		public int m_iGroupHealthRegenBuffAbilityID = -1;
-		public int m_iRaidArcaneBuffAbilityID = -1;
-		public int m_iRaidElementalBuffAbilityID = -1;
-		public int m_iSelfAGIINTBuffAbilityID = -1;
-		public int m_iResonanceAbilityID = -1;
-		public int m_iHarmonizationAbilityID = -1;
-		public int m_iUpbeatTempoAbilityID = -1;
+		protected uint m_uiGroupCastingSkillBuffAbilityID = 0;
+		protected uint m_uiGroupSpellProcBuffAbilityID = 0;
+		protected uint m_uiGroupManaRegenBuffAbilityID = 0;
+		protected uint m_uiGroupDefenseBuffAbilityID = 0;
+		protected uint m_uiGroupHasteBuffAbilityID = 0;
+		protected uint m_uiGroupDehateBuffAbilityID = 0;
+		protected uint m_uiGroupSTRSTABuffAbilityID = 0;
+		protected uint m_uiGroupReflectBuffAbilityID = 0;
+		protected uint m_uiGroupHealthRegenBuffAbilityID = 0;
+		protected uint m_uiRaidArcaneBuffAbilityID = 0;
+		protected uint m_uiRaidElementalBuffAbilityID = 0;
+		protected uint m_uiSelfAGIINTBuffAbilityID = 0;
+		protected uint m_uiResonanceAbilityID = 0;
+		protected uint m_uiHarmonizationAbilityID = 0;
+		protected uint m_uiUpbeatTempoAbilityID = 0;
 
-		public int m_iMaestroAbilityID = -1;
-		public int m_iJestersCapAbilityID = -1;
+		protected uint m_uiMaestroAbilityID = 0;
+		protected uint m_uiJestersCapAbilityID = 0;
 
-		public int m_iCountersongDebuffAbilityID = -1;
-		public int m_iSingleMentalSnareDebuffAbilityID = -1;
-		public int m_iSingleDefenseDebuffAbilityID = -1;
-		public int m_iSingleResistDebuffAbilityID = -1;
-		public int m_iSingleINTDebuffAbilityID = -1;
-		public int m_iGreenResistDebuffAbilityID = -1;
-		public int m_iGreenSkillDebuffAbilityID = -1;
-		public int m_iGreenWISDebuffAbilityID = -1;
+		protected uint m_uiCountersongDebuffAbilityID = 0;
+		protected uint m_uiSingleMentalSnareDebuffAbilityID = 0;
+		protected uint m_uiSingleDefenseDebuffAbilityID = 0;
+		protected uint m_uiSingleResistDebuffAbilityID = 0;
+		protected uint m_uiSingleINTDebuffAbilityID = 0;
+		protected uint m_uiGreenResistDebuffAbilityID = 0;
+		protected uint m_uiGreenSkillDebuffAbilityID = 0;
+		protected uint m_uiGreenWISDebuffAbilityID = 0;
 
-		public int m_iSingleLongRangeNukeAbilityID = -1;
-		public int m_iSingleShortRangeNukeAbilityID = -1;
-		public int m_iSinglePowerSiphonNukeAbilityID = -1;
-		public int m_iSinglePowerDrainAttackAbilityID = -1;
-		public int m_iSingleMentalAttackPairAbilityID = -1;
-		public int m_iSingleMezAbilityID = -1;
-		public int m_iSingleRangedAttackAbilityID = -1;
-		public int m_iGreenInterruptNukeAbilityID = -1;
-		public int m_iGreenInstantKnockdownAbilityID = -1;
+		protected uint m_uiSingleLongRangeNukeAbilityID = 0;
+		protected uint m_uiSingleShortRangeNukeAbilityID = 0;
+		protected uint m_uiSinglePowerSiphonNukeAbilityID = 0;
+		protected uint m_uiSinglePowerDrainAttackAbilityID = 0;
+		protected uint m_uiSingleMentalAttackPairAbilityID = 0;
+		protected uint m_uiSingleMezAbilityID = 0;
+		protected uint m_uiSingleRangedAttackAbilityID = 0;
+		protected uint m_uiGreenInterruptNukeAbilityID = 0;
+		protected uint m_uiGreenInstantKnockdownAbilityID = 0;
 		#endregion
 
 		/************************************************************************************/
@@ -120,40 +120,40 @@ namespace EQ2GlassCannon
 		{
 			base.RefreshKnowledgeBook();
 
-			m_iGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Song of Magic");
-			m_iGroupSpellProcBuffAbilityID = SelectHighestTieredAbilityID("Aria of Magic");
-			m_iGroupManaRegenBuffAbilityID = SelectHighestTieredAbilityID("Bria's Inspiring Ballad");
-			m_iGroupDefenseBuffAbilityID = SelectHighestTieredAbilityID("Graceful Avoidance");
-			m_iGroupHasteBuffAbilityID = SelectHighestTieredAbilityID("Allegretto");
-			m_iGroupDehateBuffAbilityID = SelectHighestTieredAbilityID("Alin's Serene Serenade");
-			m_iGroupSTRSTABuffAbilityID = SelectHighestTieredAbilityID("Raxxyl's Rousing Tune");
-			m_iGroupReflectBuffAbilityID = SelectHighestAbilityID("Requiem of Reflection");
-			m_iGroupHealthRegenBuffAbilityID = SelectHighestTieredAbilityID("Rejuvenating Celebration");
-			m_iRaidArcaneBuffAbilityID = SelectHighestTieredAbilityID("Arcane Symphony");
-			m_iRaidElementalBuffAbilityID = SelectHighestTieredAbilityID("Elemental Concerto");
-			m_iSelfAGIINTBuffAbilityID = SelectHighestTieredAbilityID("Daelis' Dance of Blades");
-			m_iResonanceAbilityID = SelectHighestAbilityID("Resonance");
-			m_iHarmonizationAbilityID = SelectHighestAbilityID("Harmonization");
-			m_iUpbeatTempoAbilityID = SelectHighestAbilityID("Upbeat Tempo");
-			m_iMaestroAbilityID = SelectHighestTieredAbilityID("Perfection of the Maestro");
-			m_iJestersCapAbilityID = SelectHighestAbilityID("Jester's Cap");
-			m_iCountersongDebuffAbilityID = SelectHighestAbilityID("Countersong");
-			m_iSingleMentalSnareDebuffAbilityID = SelectHighestTieredAbilityID("Depressing Chant");
-			m_iSingleDefenseDebuffAbilityID = SelectHighestTieredAbilityID("Vexing Verses");
-			m_iSingleResistDebuffAbilityID = SelectHighestTieredAbilityID("Dancing Blade");
-			m_iSingleINTDebuffAbilityID = SelectHighestTieredAbilityID("Night Strike");
-			m_iGreenResistDebuffAbilityID = SelectHighestTieredAbilityID("Zander's Choral Rebuff");
-			m_iGreenSkillDebuffAbilityID = SelectHighestTieredAbilityID("Demoralizing Processional");
-			m_iGreenWISDebuffAbilityID = SelectHighestTieredAbilityID("Chaos Anthem");
-			m_iSingleLongRangeNukeAbilityID = SelectHighestTieredAbilityID("Perfect Shrill");
-			m_iSingleShortRangeNukeAbilityID = SelectHighestTieredAbilityID("Thunderous Overture");
-			m_iSinglePowerSiphonNukeAbilityID = SelectHighestTieredAbilityID("Tap Essence");
-			m_iSinglePowerDrainAttackAbilityID = SelectHighestTieredAbilityID("Sandra's Deafening Strike");
-			m_iSingleMentalAttackPairAbilityID = SelectHighestTieredAbilityID("Ceremonial Blade");
-			m_iSingleMezAbilityID = SelectHighestTieredAbilityID("Lullaby");
-			m_iSingleRangedAttackAbilityID = SelectHighestTieredAbilityID("Singing Shot");
-			m_iGreenInterruptNukeAbilityID = SelectHighestTieredAbilityID("Painful Lamentations");
-			m_iGreenInstantKnockdownAbilityID = SelectHighestTieredAbilityID("Breathtaking Bellow");
+			m_uiGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Song of Magic");
+			m_uiGroupSpellProcBuffAbilityID = SelectHighestTieredAbilityID("Aria of Magic");
+			m_uiGroupManaRegenBuffAbilityID = SelectHighestTieredAbilityID("Bria's Inspiring Ballad");
+			m_uiGroupDefenseBuffAbilityID = SelectHighestTieredAbilityID("Graceful Avoidance");
+			m_uiGroupHasteBuffAbilityID = SelectHighestTieredAbilityID("Allegretto");
+			m_uiGroupDehateBuffAbilityID = SelectHighestTieredAbilityID("Alin's Serene Serenade");
+			m_uiGroupSTRSTABuffAbilityID = SelectHighestTieredAbilityID("Raxxyl's Rousing Tune");
+			m_uiGroupReflectBuffAbilityID = SelectHighestAbilityID("Requiem of Reflection");
+			m_uiGroupHealthRegenBuffAbilityID = SelectHighestTieredAbilityID("Rejuvenating Celebration");
+			m_uiRaidArcaneBuffAbilityID = SelectHighestTieredAbilityID("Arcane Symphony");
+			m_uiRaidElementalBuffAbilityID = SelectHighestTieredAbilityID("Elemental Concerto");
+			m_uiSelfAGIINTBuffAbilityID = SelectHighestTieredAbilityID("Daelis' Dance of Blades");
+			m_uiResonanceAbilityID = SelectHighestAbilityID("Resonance");
+			m_uiHarmonizationAbilityID = SelectHighestAbilityID("Harmonization");
+			m_uiUpbeatTempoAbilityID = SelectHighestAbilityID("Upbeat Tempo");
+			m_uiMaestroAbilityID = SelectHighestTieredAbilityID("Perfection of the Maestro");
+			m_uiJestersCapAbilityID = SelectHighestAbilityID("Jester's Cap");
+			m_uiCountersongDebuffAbilityID = SelectHighestAbilityID("Countersong");
+			m_uiSingleMentalSnareDebuffAbilityID = SelectHighestTieredAbilityID("Depressing Chant");
+			m_uiSingleDefenseDebuffAbilityID = SelectHighestTieredAbilityID("Vexing Verses");
+			m_uiSingleResistDebuffAbilityID = SelectHighestTieredAbilityID("Dancing Blade");
+			m_uiSingleINTDebuffAbilityID = SelectHighestTieredAbilityID("Night Strike");
+			m_uiGreenResistDebuffAbilityID = SelectHighestTieredAbilityID("Zander's Choral Rebuff");
+			m_uiGreenSkillDebuffAbilityID = SelectHighestTieredAbilityID("Demoralizing Processional");
+			m_uiGreenWISDebuffAbilityID = SelectHighestTieredAbilityID("Chaos Anthem");
+			m_uiSingleLongRangeNukeAbilityID = SelectHighestTieredAbilityID("Perfect Shrill");
+			m_uiSingleShortRangeNukeAbilityID = SelectHighestTieredAbilityID("Thunderous Overture");
+			m_uiSinglePowerSiphonNukeAbilityID = SelectHighestTieredAbilityID("Tap Essence");
+			m_uiSinglePowerDrainAttackAbilityID = SelectHighestTieredAbilityID("Sandra's Deafening Strike");
+			m_uiSingleMentalAttackPairAbilityID = SelectHighestTieredAbilityID("Ceremonial Blade");
+			m_uiSingleMezAbilityID = SelectHighestTieredAbilityID("Lullaby");
+			m_uiSingleRangedAttackAbilityID = SelectHighestTieredAbilityID("Singing Shot");
+			m_uiGreenInterruptNukeAbilityID = SelectHighestTieredAbilityID("Painful Lamentations");
+			m_uiGreenInstantKnockdownAbilityID = SelectHighestTieredAbilityID("Breathtaking Bellow");
 
 			return;
 		}
@@ -179,73 +179,73 @@ namespace EQ2GlassCannon
 			if (m_bCheckBuffsNow && MeActor.IsStealthed && !MeActor.InCombatMode)
 			{
 				/// I'm sick and tired of Shroud lingering on after combat.
-				if (CancelMaintained(m_iShroudAbilityID, true))
+				if (CancelMaintained(m_uiShroudAbilityID, true))
 					return true;
 			}
 			else if (m_bCheckBuffsNow && !MeActor.IsStealthed)
 			{
 				/// Time is of the essence when rebuffing after a wipe!
-				if (!MeActor.InCombatMode && CheckToggleBuff(m_iGroupRunSpeedBuffAbilityID, true))
+				if (!MeActor.InCombatMode && CheckToggleBuff(m_uiGroupRunSpeedBuffAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupCastingSkillBuffAbilityID, m_bBuffCastingSkill))
+				if (CheckToggleBuff(m_uiGroupCastingSkillBuffAbilityID, m_bBuffCastingSkill))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupSpellProcBuffAbilityID, m_bBuffSpellProc))
+				if (CheckToggleBuff(m_uiGroupSpellProcBuffAbilityID, m_bBuffSpellProc))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupManaRegenBuffAbilityID, m_bBuffManaRegen))
+				if (CheckToggleBuff(m_uiGroupManaRegenBuffAbilityID, m_bBuffManaRegen))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupDefenseBuffAbilityID, m_bBuffDefense))
+				if (CheckToggleBuff(m_uiGroupDefenseBuffAbilityID, m_bBuffDefense))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupHasteBuffAbilityID, m_bBuffHaste))
+				if (CheckToggleBuff(m_uiGroupHasteBuffAbilityID, m_bBuffHaste))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupDehateBuffAbilityID, m_bBuffDehate))
+				if (CheckToggleBuff(m_uiGroupDehateBuffAbilityID, m_bBuffDehate))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
+				if (CheckToggleBuff(m_uiGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupReflectBuffAbilityID, m_bBuffReflect))
+				if (CheckToggleBuff(m_uiGroupReflectBuffAbilityID, m_bBuffReflect))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupHealthRegenBuffAbilityID, m_bBuffHealthRegen))
+				if (CheckToggleBuff(m_uiGroupHealthRegenBuffAbilityID, m_bBuffHealthRegen))
 					return true;
 
-				if (CheckToggleBuff(m_iRaidArcaneBuffAbilityID, m_bBuffArcaneResistance))
+				if (CheckToggleBuff(m_uiRaidArcaneBuffAbilityID, m_bBuffArcaneResistance))
 					return true;
 
-				if (CheckToggleBuff(m_iRaidElementalBuffAbilityID, m_bBuffElementalResistance))
+				if (CheckToggleBuff(m_uiRaidElementalBuffAbilityID, m_bBuffElementalResistance))
 					return true;
 
-				if (CheckToggleBuff(m_iSelfAGIINTBuffAbilityID, true))
+				if (CheckToggleBuff(m_uiSelfAGIINTBuffAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iResonanceAbilityID, true))
+				if (CheckToggleBuff(m_uiResonanceAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iHarmonizationAbilityID, true))
+				if (CheckToggleBuff(m_uiHarmonizationAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iUpbeatTempoAbilityID, m_strUpbeatTempoTarget))
+				if (CheckSingleTargetBuffs(m_uiUpbeatTempoAbilityID, m_strUpbeatTempoTarget))
 					return true;
 
-				if (CheckToggleBuff(m_iAllegroAbilityID, true))
+				if (CheckToggleBuff(m_uiAllegroAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iDontKillTheMessengerAbilityID, true))
+				if (CheckToggleBuff(m_uiDontKillTheMessengerAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iDexterousSonataAbilityID, true))
+				if (CheckToggleBuff(m_uiDexterousSonataAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iFortissimoAbilityID, true))
+				if (CheckToggleBuff(m_uiFortissimoAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupRunSpeedBuffAbilityID, true))
+				if (CheckToggleBuff(m_uiGroupRunSpeedBuffAbilityID, true))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -262,7 +262,7 @@ namespace EQ2GlassCannon
 				bool bTempBuffsAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90) || (m_OffensiveTargetActor.Health > 95);
 				int iEncounterSize = m_OffensiveTargetActor.EncounterSize;
 
-				if (CastNextMez(m_iSingleMezAbilityID))
+				if (CastNextMez(m_uiSingleMezAbilityID))
 					return true;
 
 				if (!EngageOffensiveTarget())
@@ -270,15 +270,15 @@ namespace EQ2GlassCannon
 
 				/// We put the stealth check so early on because it is so easily wasted by the wrong thing.
 				/// Troubadors only have one stealth attack.
-				if (MeActor.IsStealthed && CastAbility(m_iSingleINTDebuffAbilityID))
+				if (MeActor.IsStealthed && CastAbility(m_uiSingleINTDebuffAbilityID))
 					return true;
 
 				if (m_bIHaveAggro)
 				{
-					if (CastAbility(m_iEvasiveManeuversAbilityID))
+					if (CastAbility(m_uiEvasiveManeuversAbilityID))
 						return true;
 
-					if (CastAbility(m_iSingleDeaggroAbilityID))
+					if (CastAbility(m_uiSingleDeaggroAbilityID))
 						return true;
 
 					if (UseDeaggroItems())
@@ -290,7 +290,7 @@ namespace EQ2GlassCannon
 
 				if (bTempBuffsAdvised)
 				{
-					if (!IsBeneficialEffectPresent(m_iMaestroAbilityID) && CastAbility(m_iMaestroAbilityID))
+					if (!IsBeneficialEffectPresent(m_uiMaestroAbilityID) && CastAbility(m_uiMaestroAbilityID))
 					{
 						/// Right now we're just making a dumb assumption that the player has the VP mythical because that's the easy thing to do.
 						SpamSafeRaidSay(m_strMaestroCallout);
@@ -299,63 +299,63 @@ namespace EQ2GlassCannon
 				}
 
 				/// Instant cast interrupt/knockback.
-				if (m_bUseGreenAEs && IsBeneficialEffectPresent(m_iMaestroAbilityID))
+				if (m_bUseGreenAEs && IsBeneficialEffectPresent(m_uiMaestroAbilityID))
 				{
-					if (CastAbility(m_iGreenInstantKnockdownAbilityID))
+					if (CastAbility(m_uiGreenInstantKnockdownAbilityID))
 						return true;
 				}
 
 				/// AE interrupt nuke.
-				if (IsBeneficialEffectPresent(m_iMaestroAbilityID))
+				if (IsBeneficialEffectPresent(m_uiMaestroAbilityID))
 				{
-					if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
+					if (CastGreenOffensiveAbility(m_uiGreenInterruptNukeAbilityID, 2))
 						return true;
 				}
 
 				/// Offensive skill booster. Do this before combat arts; unlike spells, CA's can be lost on a miss.
-				if (CastAbility(m_iRhythmBladeAbilityID))
+				if (CastAbility(m_uiRhythmBladeAbilityID))
 					return true;
 
-				if (CastAbility(m_iSingleMentalSnareDebuffAbilityID))
+				if (CastAbility(m_uiSingleMentalSnareDebuffAbilityID))
 					return true;
 
-				if (CastAbility(m_iGreenResistDebuffAbilityID))
+				if (CastAbility(m_uiGreenResistDebuffAbilityID))
 					return true;
 
-				if (CastAbility(m_iGreenSkillDebuffAbilityID))
+				if (CastAbility(m_uiGreenSkillDebuffAbilityID))
 					return true;
 
-				if (CastAbility(m_iGreenWISDebuffAbilityID))
+				if (CastAbility(m_uiGreenWISDebuffAbilityID))
 					return true;
 
-				if (CastAbility(m_iGreenSTRAGIDebuffAbilityID))
+				if (CastAbility(m_uiGreenSTRAGIDebuffAbilityID))
 					return true;
 
 				if (CastLoreAndLegendAbility())
 					return true;
 
-				if (CastAbility(m_iSingleDefenseDebuffAbilityID))
+				if (CastAbility(m_uiSingleDefenseDebuffAbilityID))
 					return true;
 
-				if (CastAbility(m_iHalfElfMitigationDebuffAbilityID))
+				if (CastAbility(m_uiHalfElfMitigationDebuffAbilityID))
 					return true;
 
-				if (CastAbilityFromFlankingOrBehind(m_iSingleResistDebuffAbilityID))
+				if (CastAbilityFromFlankingOrBehind(m_uiSingleResistDebuffAbilityID))
 					return true;
 
 				/// We now cast stealth to allow the use of our INT debuff, Night Strike.
 				/// On the very next DoNextAction(), we'll see ourselves stealthed and execute the debuff.
 				/// It takes some luck though. We cast stealth but the server doesn't tell us we're stealthed yet,
 				/// so we use other spells and break the stealth on accident.
-				if (!IsAbilityMaintained(m_iSingleINTDebuffAbilityID))
+				if (!IsAbilityMaintained(m_uiSingleINTDebuffAbilityID))
 				{
-					CachedAbility DebuffAbility = GetAbility(m_iSingleINTDebuffAbilityID, true);
+					CachedAbility DebuffAbility = GetAbility(m_uiSingleINTDebuffAbilityID, true);
 					if (DebuffAbility != null && DebuffAbility.m_fTimeUntilReady == 0.0) /// IsReady will always be false if not stealthed.
 					{
-						if (CastAbility(m_iBumpAbilityID))
+						if (CastAbility(m_uiBumpAbilityID))
 							return true;
 
-						if (m_bAllowShroudForNightStrike && CastAbility(m_iShroudAbilityID))
+						if (m_bAllowShroudForNightStrike && CastAbility(m_uiShroudAbilityID))
 							return true;
 					}
 				}
@@ -372,43 +372,43 @@ namespace EQ2GlassCannon
 				Thunderous Overture = 907.3
 				*********************************/
 
-				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 3))
+				if (CastGreenOffensiveAbility(m_uiGreenInterruptNukeAbilityID, 3))
 					return true;
 
-				if (CastAbility(m_iEvasiveManeuversAbilityID))
+				if (CastAbility(m_uiEvasiveManeuversAbilityID))
 					return true;
 
-				if (CastAbility(m_iSingleMentalAttackPairAbilityID))
+				if (CastAbility(m_uiSingleMentalAttackPairAbilityID))
 					return true;
 
-				if (CastAbility(m_iSingleLongRangeNukeAbilityID))
+				if (CastAbility(m_uiSingleLongRangeNukeAbilityID))
 					return true;
 
 				/// AE avoid, though we use it as generic DPS.
-				if (CastAbility(m_iTurnstrikeAbilityID))
+				if (CastAbility(m_uiTurnstrikeAbilityID))
 					return true;
 
-				if (CastAbility(m_iSinglePowerDrainAttackAbilityID))
+				if (CastAbility(m_uiSinglePowerDrainAttackAbilityID))
 					return true;
 
-				if (CastAbility(m_iSinglePowerSiphonNukeAbilityID))
+				if (CastAbility(m_uiSinglePowerSiphonNukeAbilityID))
 					return true;
 
-				if (CastAbility(m_iSingleShortRangeNukeAbilityID))
+				if (CastAbility(m_uiSingleShortRangeNukeAbilityID))
 					return true;
 
 				/// Not sure where in cast order this goes yet.
-				if (Me.RangedAutoAttackOn && CastAbility(m_iSingleRangedAttackAbilityID))
+				if (Me.RangedAutoAttackOn && CastAbility(m_uiSingleRangedAttackAbilityID))
 					return true;
 
-				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 2))
+				if (CastGreenOffensiveAbility(m_uiGreenInterruptNukeAbilityID, 2))
 					return true;
 
 				if (UseOffensiveItems())
 					return true;
 
 				/// Nuke of last resort.
-				if (CastGreenOffensiveAbility(m_iGreenInterruptNukeAbilityID, 1))
+				if (CastGreenOffensiveAbility(m_uiGreenInterruptNukeAbilityID, 1))
 					return true;
 			}
 
@@ -439,7 +439,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool CastJestersCap()
 		{
-			if (!IsAbilityReady(m_iJestersCapAbilityID))
+			if (!IsAbilityReady(m_uiJestersCapAbilityID))
 				return false;
 
 			while (m_JestersCapQueue.Count > 0)
@@ -457,7 +457,7 @@ namespace EQ2GlassCannon
 					continue;
 				}
 
-				if (!CastAbility(m_iJestersCapAbilityID, ThisRequest.m_strName, true))
+				if (!CastAbility(m_uiJestersCapAbilityID, ThisRequest.m_strName, true))
 					continue;
 
 				SpamSafeRaidSay(m_strJestersCapCallout, ThisRequest.m_strName);

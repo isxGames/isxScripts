@@ -47,7 +47,7 @@ namespace EQ2GlassCannon
 		public double m_fStayInPlaceTolerance = 1.5;
 		public double m_fCustomAutoFollowMinimumRange = 10.0;
 		public int m_iCheckBuffsInterval = 500;
-		public bool m_bKillBotWhenCamping = true;
+		public bool m_bKillBotWhenCamping = false;
 		public bool m_bUseRanged = false;
 		public bool m_bUseGreenAEs = true;
 		public bool m_bUseBlueAEs = true;

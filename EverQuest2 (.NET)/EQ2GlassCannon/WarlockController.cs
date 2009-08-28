@@ -13,27 +13,27 @@ namespace EQ2GlassCannon
 		public List<string> m_astrShroudTargets = new List<string>();
 		public List<string> m_astrGraspTargets = new List<string>();
 
-		public int m_iGroupCastingSkillBuffAbilityID = -1;
-		public int m_iGroupNoxiousBuffAbilityID = -1;
-		public int m_iGiftAbilityID = -1;
-		public int m_iNetherealmAbilityID = -1;
-		public int m_iSingleDamageShieldBuffAbilityID = -1;
-		public int m_iSingleMeleeProcBuffAbilityID = -1;
-		public int m_iNullmailAbilityID = -1;
+		protected uint m_uiGroupCastingSkillBuffAbilityID = 0;
+		protected uint m_uiGroupNoxiousBuffAbilityID = 0;
+		protected uint m_uiGiftAbilityID = 0;
+		protected uint m_uiNetherealmAbilityID = 0;
+		protected uint m_uiSingleDamageShieldBuffAbilityID = 0;
+		protected uint m_uiSingleMeleeProcBuffAbilityID = 0;
+		protected uint m_uiNullmailAbilityID = 0;
 
-		public int m_iSingleSTRINTDebuffAbilityID = -1;
-		public int m_iSingleBasicNukeAbilityID = -1;
-		public int m_iSinglePrimaryPoisonNukeAbilityID = -1;
-		public int m_iSingleUnresistableDOTAbilityID = -1;
-		public int m_iSingleMediumNukeDOTAbilityID = -1;
-		public int m_iSingleColdStunNukeAbilityID = -1;
-		public int m_iGreenNoxiousDebuffAbilityID = -1;
-		public int m_iGreenPoisonStunNukeAbilityID = -1;
-		public int m_iGreenPoisonDOTAbilityID = -1;
-		public int m_iGreenDiseaseNukeAbilityID = -1;
-		public int m_iGreenDeaggroAbilityID = -1;
-		public int m_iBluePoisonAEAbilityID = -1;
-		public int m_iBlueMagicKnockbackAEAbilityID = -1;
+		protected uint m_uiSingleSTRINTDebuffAbilityID = 0;
+		protected uint m_uiSingleBasicNukeAbilityID = 0;
+		protected uint m_uiSinglePrimaryPoisonNukeAbilityID = 0;
+		protected uint m_uiSingleUnresistableDOTAbilityID = 0;
+		protected uint m_uiSingleMediumNukeDOTAbilityID = 0;
+		protected uint m_uiSingleColdStunNukeAbilityID = 0;
+		protected uint m_uiGreenNoxiousDebuffAbilityID = 0;
+		protected uint m_uiGreenPoisonStunNukeAbilityID = 0;
+		protected uint m_uiGreenPoisonDOTAbilityID = 0;
+		protected uint m_uiGreenDiseaseNukeAbilityID = 0;
+		protected uint m_uiGreenDeaggroAbilityID = 0;
+		protected uint m_uiBluePoisonAEAbilityID = 0;
+		protected uint m_uiBlueMagicKnockbackAEAbilityID = 0;
 
 		/************************************************************************************/
 		protected override void TransferINISettings(IniFile ThisFile)
@@ -51,29 +51,29 @@ namespace EQ2GlassCannon
 			base.RefreshKnowledgeBook();
 
 			/// Buffs.
-			m_iGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Dark Pact");
-			m_iGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Darkness");
-			m_iGiftAbilityID = SelectHighestTieredAbilityID("Gift of Bertoxxulous");
-			m_iNetherealmAbilityID = SelectHighestTieredAbilityID("Netherealm");
-			m_iSingleDamageShieldBuffAbilityID = SelectHighestTieredAbilityID("Shroud of Bertoxxulous");
-			m_iSingleMeleeProcBuffAbilityID = SelectHighestTieredAbilityID("Grasp of Bertoxxulous");
-			m_iNullmailAbilityID = SelectHighestAbilityID("Nullmail");
-			m_iHateTransferAbilityID = SelectHighestTieredAbilityID("Boon of the Damned");
+			m_uiGroupCastingSkillBuffAbilityID = SelectHighestTieredAbilityID("Dark Pact");
+			m_uiGroupNoxiousBuffAbilityID = SelectHighestTieredAbilityID("Aspect of Darkness");
+			m_uiGiftAbilityID = SelectHighestTieredAbilityID("Gift of Bertoxxulous");
+			m_uiNetherealmAbilityID = SelectHighestTieredAbilityID("Netherealm");
+			m_uiSingleDamageShieldBuffAbilityID = SelectHighestTieredAbilityID("Shroud of Bertoxxulous");
+			m_uiSingleMeleeProcBuffAbilityID = SelectHighestTieredAbilityID("Grasp of Bertoxxulous");
+			m_uiNullmailAbilityID = SelectHighestAbilityID("Nullmail");
+			m_uiHateTransferAbilityID = SelectHighestTieredAbilityID("Boon of the Damned");
 
-			m_iSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Trickle");
-			m_iSingleBasicNukeAbilityID = SelectHighestTieredAbilityID("Dissolve");
-			m_iSinglePrimaryPoisonNukeAbilityID = SelectHighestTieredAbilityID("Distortion");
-			m_iSingleUnresistableDOTAbilityID = SelectHighestTieredAbilityID("Poison");
-			m_iSingleMediumNukeDOTAbilityID = SelectHighestTieredAbilityID("Dark Pyre");
-			m_iSingleColdStunNukeAbilityID = SelectHighestTieredAbilityID("Encase");
-			m_iSingleSTRINTDebuffAbilityID = SelectHighestTieredAbilityID("Curse of Void");
-			m_iGreenNoxiousDebuffAbilityID = SelectHighestTieredAbilityID("Vacuum Field");
-			m_iGreenPoisonStunNukeAbilityID = SelectHighestTieredAbilityID("Dark Nebula");
-			m_iGreenPoisonDOTAbilityID = SelectHighestTieredAbilityID("Apocalypse");
-			m_iGreenDiseaseNukeAbilityID = SelectHighestTieredAbilityID("Absolution");
-			m_iGreenDeaggroAbilityID = SelectHighestTieredAbilityID("Nullify");
-			m_iBluePoisonAEAbilityID = SelectHighestTieredAbilityID("Cataclysm");
-			m_iBlueMagicKnockbackAEAbilityID = SelectHighestTieredAbilityID("Rift");
+			m_uiSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Trickle");
+			m_uiSingleBasicNukeAbilityID = SelectHighestTieredAbilityID("Dissolve");
+			m_uiSinglePrimaryPoisonNukeAbilityID = SelectHighestTieredAbilityID("Distortion");
+			m_uiSingleUnresistableDOTAbilityID = SelectHighestTieredAbilityID("Poison");
+			m_uiSingleMediumNukeDOTAbilityID = SelectHighestTieredAbilityID("Dark Pyre");
+			m_uiSingleColdStunNukeAbilityID = SelectHighestTieredAbilityID("Encase");
+			m_uiSingleSTRINTDebuffAbilityID = SelectHighestTieredAbilityID("Curse of Void");
+			m_uiGreenNoxiousDebuffAbilityID = SelectHighestTieredAbilityID("Vacuum Field");
+			m_uiGreenPoisonStunNukeAbilityID = SelectHighestTieredAbilityID("Dark Nebula");
+			m_uiGreenPoisonDOTAbilityID = SelectHighestTieredAbilityID("Apocalypse");
+			m_uiGreenDiseaseNukeAbilityID = SelectHighestTieredAbilityID("Absolution");
+			m_uiGreenDeaggroAbilityID = SelectHighestTieredAbilityID("Nullify");
+			m_uiBluePoisonAEAbilityID = SelectHighestTieredAbilityID("Cataclysm");
+			m_uiBlueMagicKnockbackAEAbilityID = SelectHighestTieredAbilityID("Rift");
 
 			return;
 		}
@@ -104,28 +104,28 @@ namespace EQ2GlassCannon
 
 			if (m_bCheckBuffsNow)
 			{
-				if (CheckToggleBuff(m_iWardOfSagesAbilityID, true))
+				if (CheckToggleBuff(m_uiWardOfSagesAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iMagisShieldingAbilityID, true))
+				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iNullmailAbilityID, true))
+				if (CheckToggleBuff(m_uiNullmailAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupCastingSkillBuffAbilityID, true))
+				if (CheckToggleBuff(m_uiGroupCastingSkillBuffAbilityID, true))
 					return true;
 
-				if (CheckToggleBuff(m_iGroupNoxiousBuffAbilityID, true))
+				if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iHateTransferAbilityID, m_strHateTransferTarget))
+				if (CheckSingleTargetBuffs(m_uiHateTransferAbilityID, m_strHateTransferTarget))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleDamageShieldBuffAbilityID, m_astrShroudTargets))
+				if (CheckSingleTargetBuffs(m_uiSingleDamageShieldBuffAbilityID, m_astrShroudTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_iSingleMeleeProcBuffAbilityID, m_astrGraspTargets))
+				if (CheckSingleTargetBuffs(m_uiSingleMeleeProcBuffAbilityID, m_astrGraspTargets))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -163,86 +163,85 @@ Keep acid running/don't over cas it.
 					/// Deaggros.
 					if (m_bIHaveAggro)
 					{
-						if (CastAbility(m_iGreenDeaggroAbilityID))
+						if (CastAbility(m_uiGreenDeaggroAbilityID))
 							return true;
 
-						if (CastAbility(m_iGeneralGreenDeaggroAbilityID))
+						if (CastAbility(m_uiGeneralGreenDeaggroAbilityID))
 							return true;
 					}
 
 					if (bTempBuffsAdvised)
 					{
-						if (CastAbilityOnSelf(m_iGiftAbilityID))
+						if (CastAbilityOnSelf(m_uiGiftAbilityID))
 							return true;
 
-						if (CastAbilityOnSelf(m_iNetherealmAbilityID))
+						if (CastAbilityOnSelf(m_uiNetherealmAbilityID))
 							return true;
 					}
 
 					/// Resistance debuff is ALWAYS first.
-					if (m_bUseGreenAEs && !IsAbilityMaintained(m_iGreenNoxiousDebuffAbilityID) && CastGreenOffensiveAbility(m_iGreenNoxiousDebuffAbilityID, 1))
+					if (m_bUseGreenAEs && !IsAbilityMaintained(m_uiGreenNoxiousDebuffAbilityID) && CastGreenOffensiveAbility(m_uiGreenNoxiousDebuffAbilityID, 1))
 						return true;
 
-					if (!IsAbilityMaintained(m_iSingleSTRINTDebuffAbilityID) && CastAbility(m_iSingleSTRINTDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleSTRINTDebuffAbilityID) && CastAbility(m_uiSingleSTRINTDebuffAbilityID))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 3))
+					if (CastBlueOffensiveAbility(m_uiBlueMagicKnockbackAEAbilityID, 3))
 						return true;
-					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 7))
-						return true;
-
-					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 4))
-						return true;
-					if (CastGreenOffensiveAbility(m_iGreenDiseaseNukeAbilityID, 5))
-						return true;
-					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 6))
+					if (CastBlueOffensiveAbility(m_uiBluePoisonAEAbilityID, 7))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBlueMagicKnockbackAEAbilityID, 2))
+					if (CastGreenOffensiveAbility(m_uiGreenPoisonDOTAbilityID, 4))
 						return true;
-					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 6))
+					if (CastGreenOffensiveAbility(m_uiGreenDiseaseNukeAbilityID, 5))
 						return true;
-
-					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 2))
-						return true;
-					if (CastGreenOffensiveAbility(m_iGreenDiseaseNukeAbilityID, 3))
-						return true;
-					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 4))
+					if (CastGreenOffensiveAbility(m_uiGreenPoisonStunNukeAbilityID, 6))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 3))
+					if (CastBlueOffensiveAbility(m_uiBlueMagicKnockbackAEAbilityID, 2))
+						return true;
+					if (CastBlueOffensiveAbility(m_uiBluePoisonAEAbilityID, 6))
 						return true;
 
-					if (CastAbility(m_iSinglePrimaryPoisonNukeAbilityID))
+					if (CastGreenOffensiveAbility(m_uiGreenPoisonDOTAbilityID, 2))
+						return true;
+					if (CastGreenOffensiveAbility(m_uiGreenDiseaseNukeAbilityID, 3))
+						return true;
+					if (CastGreenOffensiveAbility(m_uiGreenPoisonStunNukeAbilityID, 4))
 						return true;
 
-					if (CastAbility(m_iSingleMediumNukeDOTAbilityID))
+					if (CastBlueOffensiveAbility(m_uiBluePoisonAEAbilityID, 3))
 						return true;
 
-					if (CastAbility(m_iSingleColdStunNukeAbilityID))
+					if (CastAbility(m_uiSinglePrimaryPoisonNukeAbilityID))
 						return true;
 
-					if (CastAbility(m_iIceFlameAbilityID))
+					if (CastAbility(m_uiSingleMediumNukeDOTAbilityID))
 						return true;
 
-					if (CastAbility(m_iSingleBasicNukeAbilityID))
+					if (CastAbility(m_uiSingleColdStunNukeAbilityID))
 						return true;
 
-					if (CastAbility(m_iSingleUnresistableDOTAbilityID))
+					if (CastAbility(m_uiIceFlameAbilityID))
 						return true;
 
-					if (CastGreenOffensiveAbility(m_iGreenPoisonDOTAbilityID, 1))
+					if (CastAbility(m_uiSingleBasicNukeAbilityID))
 						return true;
-					if (CastGreenOffensiveAbility(m_iGreenDiseaseNukeAbilityID, 1))
+
+					if (CastAbility(m_uiSingleUnresistableDOTAbilityID))
 						return true;
-					if (CastGreenOffensiveAbility(m_iGreenPoisonStunNukeAbilityID, 1))
+
+					if (CastGreenOffensiveAbility(m_uiGreenPoisonDOTAbilityID, 1))
 						return true;
-					if (CastBlueOffensiveAbility(m_iBluePoisonAEAbilityID, 1))
+					if (CastGreenOffensiveAbility(m_uiGreenDiseaseNukeAbilityID, 1))
+						return true;
+					if (CastGreenOffensiveAbility(m_uiGreenPoisonStunNukeAbilityID, 1))
+						return true;
+					if (CastBlueOffensiveAbility(m_uiBluePoisonAEAbilityID, 1))
 						return true;
 				}
 			}
 
-			Program.Log("Nothing left to cast.");
 			return false;
 		}
 	}
