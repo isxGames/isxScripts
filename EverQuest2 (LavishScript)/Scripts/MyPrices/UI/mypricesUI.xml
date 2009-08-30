@@ -471,7 +471,7 @@
 							Script[myprices]:QueueCommand[call buy item place]
 						</OnLeftClick>
 					</Commandbutton>
-					<Text Name='Itemname'>
+					<Text Name='ItemName'>
 						<X>25</X>
 						<Y>415</Y>
 						<Width>44%</Width> 
@@ -685,10 +685,10 @@
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call pricefromstring]
+							Script[myprices]:QueueCommand[call SaveSell]
 						</OnLeftClick>
 						<AutoTooltip>
-							Update your Min Sale Price
+							Save Item Settings
 						</AutoTooltip>
 					</Commandbutton>
 					
@@ -1914,15 +1914,28 @@
 							Script[myprices]:QueueCommand[call buy item place]
 						</OnLeftClick>
 					</Commandbutton>
+					<Text Name='InventoryFilterText'>
+						<X>17</X>
+						<Y>15</Y>
+						<Width>60</Width>
+						<Height>20</Height>
+						<Text>Filter:</Text>
+					</Text>
+					<Textentry Name='InventoryFilter'>
+						<X>50</X>
+						<Y>15</Y>
+						<Width>200</Width>
+						<Height>20</Height>
+					</Textentry>
 					<Text name='InventoryNumber'>
-						<X>5%</X>
+						<X>4%</X>
 						<Y>20</Y>
-						<Width>10%</Width>
-						<Height>65%</Height>
+						<Width>10</Width>
+						<Height>20</Height>
 						<Text>0</Text>
 					</Text>
 					<Text Name='ErrorText'>
-						<X>5%</X>
+						<X>3%</X>
 						<Y>435</Y>
 						<Width>350</Width> 
 						<Height>15</Height>
