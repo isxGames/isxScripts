@@ -14,6 +14,40 @@ namespace EQ2GlassCannon
 	public partial class PlayerController
 	{
 		/************************************************************************************/
+		public string GetFirstExistingPartyMember(List<string> astrCandidates, bool bMustBeInGroup)
+		{
+			foreach (string strThisCandidate in astrCandidates)
+			{
+				if (bMustBeInGroup)
+				{
+					if (m_GroupMemberDictionary.ContainsKey(strThisCandidate))
+						return strThisCandidate;
+				}
+				else
+				{
+					if (m_FriendDictionary.ContainsKey(strThisCandidate))
+						return strThisCandidate;
+				}
+			}
+
+			return string.Empty;
+		}
+
+		/************************************************************************************/
+		public class ActorDistanceComparer : IComparer<Actor>
+		{
+			public int Compare(Actor x, Actor y)
+			{
+				if (x.Distance > y.Distance)
+					return 1;
+				else if (x.Distance < y.Distance)
+					return -1;
+				else
+					return 0;
+			}
+		}
+
+		/************************************************************************************/
 		/// <summary>
 		/// This finds planar distance without regard to altitude.
 		/// In EQ2, the Y coordinate is altitude/elevation.

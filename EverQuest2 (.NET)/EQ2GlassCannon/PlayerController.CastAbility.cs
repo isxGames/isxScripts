@@ -124,7 +124,8 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
-				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_strName);
+				Program.Log("Casting \"{0}\" ({1}) on {2}...", m_strName, m_uiID, strPlayerTarget);
+				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_uiID);
 				return true;
 			}
 		}
@@ -199,9 +200,19 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected void StartCastTimers(Item ThisItem)
 		{
-			DateTime StartTime = DateTime.Now;
-			m_LastCastStartTime = StartTime;
-			m_LastCastEndTime = StartTime + TimeSpan.FromSeconds(ThisItem.CastingTime + ThisItem.RecoveryTime);
+			try
+			{
+				DateTime StartTime = DateTime.Now;
+				DateTime EndTime = StartTime + TimeSpan.FromSeconds(ThisItem.CastingTime + ThisItem.RecoveryTime);
+
+				/// If no exception (Item.CastingTime or Item.RecoveryTime) has happened by this point, then continue.
+				m_LastCastStartTime = StartTime;
+				m_LastCastEndTime = EndTime;
+			}
+			catch
+			{
+				Program.Log("Exception thrown when referencing Item.CastingTime or Item.RecoveryTime.");
+			}
 			return;
 		}
 
@@ -234,7 +245,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected bool UseInventoryItem(string strItemName)
+		protected bool UseInventoryItem(string strItemName, bool bMustBeEquipped)
 		{
 			try
 			{
@@ -242,11 +253,24 @@ namespace EQ2GlassCannon
 					return false;
 
 				Item ThisItem = Me.Inventory("ExactName", strItemName);
-				if (!ThisItem.IsValid || !ThisItem.IsReady || !ThisItem.IsActivatable)
+				if (!ThisItem.IsValid || !ThisItem.IsReady || !ThisItem.IsActivatable || (bMustBeEquipped && !ThisItem.IsEquipped))
 					return false;
 
+				Actor MyTargetActor = MeActor.Target();
+				if (MyTargetActor.IsValid)
+				{
+					/// Test range.
+					double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
+					if (fDistance < ThisItem.MinRange || ThisItem.MinRange < fDistance)
+					{
+						Program.Log("Unable to use {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
+							ThisItem.Name, MyTargetActor.Name, ThisItem.MinRange, ThisItem.MaxRange, fDistance);
+						return false;
+					}
+				}
+
 				Program.Log("Attempting to use clicky item \"{0}\" ({1}) from inventory bags...", ThisItem.Name, ThisItem.LinkID);
-				//StartCastTimers(ThisItem); /// <-- Item.CastingTime and Item.RecoveryTime throw exceptions.
+				StartCastTimers(ThisItem);
 				Program.RunCommand("/use_itemvdl {0}", ThisItem.LinkID);
 				return true;
 			}
@@ -255,6 +279,12 @@ namespace EQ2GlassCannon
 				Program.Log("Exception thrown when attempting to use item \"{0}\".", strItemName);
 				return false;
 			}
+		}
+
+		/************************************************************************************/
+		protected bool UseInventoryItem(string strItemName)
+		{
+			return UseInventoryItem(strItemName, false);
 		}
 
 		/************************************************************************************/
@@ -304,8 +334,18 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public string GetFirstExistingBeneficialAbilityCandidate(uint uiAbilityID, List<string> astrCandidates)
+		{
+			CachedAbility ThisAbility = GetAbility(uiAbilityID, false);
+			if (ThisAbility == null)
+				return string.Empty;
+
+			return GetFirstExistingPartyMember(astrCandidates, !ThisAbility.m_bAllowRaid);
+		}
+
+		/************************************************************************************/
 		/// <summary>
-		/// Casts an action on an arbitrary PC target using the chat command.
+		/// Casts an action on an arbitrary player target.
 		/// Preferred for all beneficial casts.
 		/// </summary>
 		public bool CastAbility(uint uiAbilityID, string strPlayerTarget, bool bMustBeAlive)
@@ -347,6 +387,20 @@ namespace EQ2GlassCannon
 
 			StartCastTimers(ThisAbility);
 			return ThisAbility.Use(strPlayerTarget);
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Casts the ability on the first player it finds from the list who exists in the group or raid party.
+		/// Preferred for beneficial casts.
+		/// </summary>
+		public bool CastAbility(uint uiAbilityID, List<string> astrCandidates, bool bMustBeAlive)
+		{
+			string strPlayer = GetFirstExistingBeneficialAbilityCandidate(uiAbilityID, astrCandidates);
+			if (string.IsNullOrEmpty(strPlayer))
+				return false;
+
+			return CastAbility(uiAbilityID, strPlayer, bMustBeAlive);
 		}
 
 		/************************************************************************************/
@@ -770,8 +824,7 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			/// TODO: Skip each player who is dead!
-			/// Otherwise we'd never get out of this unless at least one person got dropped or buffed.
+			/// Now cast the buff on the next person that needs it.
 			foreach (string strThisTarget in NeedyTargetSet)
 			{
 				/// Check raid first; it's a superset of the group.
@@ -803,11 +856,26 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckSingleTargetBuffs(uint uiAbilityID, string strRecipient)
+		public bool CheckSingleTargetBuff(uint uiAbilityID, string strRecipient)
 		{
 			List<string> astrSingleTargetList = new List<string>();
 			astrSingleTargetList.Add(strRecipient);
 			return CheckSingleTargetBuffs(uiAbilityID, astrSingleTargetList);
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// This gets used for a buff that can only be on one person at a time.
+		/// It prioritizes the first player it finds in the candidates list.
+		/// This is extremely useful when you frequently alternate players that receive the buff.
+		/// </summary>
+		public bool CheckSingleTargetBuff(uint uiAbilityID, List<string> astrCandidates)
+		{
+			string strPlayer = GetFirstExistingBeneficialAbilityCandidate(uiAbilityID, astrCandidates);
+			if (string.IsNullOrEmpty(strPlayer))
+				return false;
+
+			return CheckSingleTargetBuff(uiAbilityID, strPlayer);
 		}
 
 		/************************************************************************************/
@@ -984,20 +1052,34 @@ namespace EQ2GlassCannon
 		{
 			if (MeActor.IsIdle)
 			{
-				if (UseInventoryItem("Behavioral Modificatinator Stereopticon"))
-					return true;
+				if (m_OffensiveTargetActor != null)
+				{
+					if (UseInventoryItem("Behavioral Modificatinator Stereopticon"))
+						return true;
+				}
 			}
 
 			return false;
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// This is a dumping ground for any last bag of tricks.
+		/// </summary>
+		/// <returns></returns>
 		public bool UseOffensiveItems()
 		{
 			if (MeActor.IsIdle)
 			{
-				if (UseInventoryItem("Brock's Thermal Shocker"))
-					return true;
+				if (m_OffensiveTargetActor != null)
+				{
+					if (UseInventoryItem("Brock's Thermal Shocker"))
+						return true;
+
+					/// Shard of Fear has a 30 minute recast, you wouldn't want to waste it on dumb shit.
+					if (m_OffensiveTargetActor.IsNamed && UseInventoryItem("Shard of Fear", true))
+						return true;
+				}
 			}
 
 			return false;

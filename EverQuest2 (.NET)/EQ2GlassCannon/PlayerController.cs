@@ -89,34 +89,37 @@ namespace EQ2GlassCannon
 		}
 
 		public bool m_bContinueBot = true;
-		public bool m_bCheckBuffsNow = true;
+		public Point3D m_ptMyLastLocation = new Point3D();
+
+		protected bool m_bCheckBuffsNow = true;
 		public bool m_bIHaveAggro = false;
 		public bool m_bClearGroupMaintained = false;
 		public bool m_bLastShadowTargetSamplingWasNearby = false;
 		public DateTime m_LastCheckBuffsTime = DateTime.Now;
 		public int m_iOffensiveTargetID = -1;
 		public Actor m_OffensiveTargetActor = null;
-		public Actor m_CommandingPlayerActor = null;
 		public int m_iAbilitiesFound = 0;
-		public PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
+		protected PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
 		public Point3D m_ptStayLocation = new Point3D();
 		public double m_fCurrentMovementTargetCoordinateTolerance = 0.0f;
+		protected string m_strPositionalCommandingPlayer = string.Empty;
+		protected string m_strCurrentMainTank = string.Empty;
 		public string m_strChatWatchTargetText = string.Empty;
 		public DateTime m_ChatWatchNextValidAlertTime = DateTime.Now;
 		public bool m_bSpawnWatchTargetAnnounced = false;
 		public string m_strSpawnWatchTarget = string.Empty;
 		public DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
-		public List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
+		protected List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
 
 		private Dictionary<string, uint> m_KnowledgeBookNameToIDMap = new Dictionary<string, uint>();
 		private Dictionary<uint, string> m_KnowledgeBookIDToNameMap = new Dictionary<uint, string>();
-		public Dictionary<string, GroupMember> m_GroupMemberDictionary = new Dictionary<string, GroupMember>();
-		public Dictionary<string, GroupMember> m_FriendDictionary = new Dictionary<string, GroupMember>();
+		protected Dictionary<string, GroupMember> m_GroupMemberDictionary = new Dictionary<string, GroupMember>();
+		protected Dictionary<string, GroupMember> m_FriendDictionary = new Dictionary<string, GroupMember>();
 
 		/// <summary>
 		/// This associates all identical spells of a shared recast timer with the index of the highest level version of them.
 		/// </summary>
-		public Dictionary<string, uint> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, uint>();
+		protected Dictionary<string, uint> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, uint>();
 
 		/// <summary>
 		/// This dictionary has only one entry per spell regardless of how many targets the spell is actually on,
@@ -356,16 +359,6 @@ namespace EQ2GlassCannon
 					m_FriendDictionary.Add(ThisPair.Key, ThisPair.Value);
 			}
 
-			/// Define the commanding player actor object.
-			if (m_FriendDictionary.ContainsKey(m_strCommandingPlayer))
-			{
-				m_CommandingPlayerActor = m_FriendDictionary[m_strCommandingPlayer].ToActor();
-				if (!m_CommandingPlayerActor.IsValid)
-					m_CommandingPlayerActor = null;
-			}
-			else
-				m_CommandingPlayerActor = null;
-
 			/// Build the maintained spell dictionary.
 			m_MaintainedNameToIndexMap.Clear();
 			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
@@ -393,6 +386,8 @@ namespace EQ2GlassCannon
 			m_AbilityCache.Clear();
 			m_AbilityCompatibleTargetCountCache.Clear();
 			m_VitalStatusCache.Clear();
+
+			m_strCurrentMainTank = GetFirstExistingPartyMember(m_astrMainTanks, false);
 
 			if (CheckPositioningStance())
 				return true;
@@ -436,8 +431,16 @@ namespace EQ2GlassCannon
 			/// Group invite window.
 			if (ThisWindow.Text.Contains("has invited you to join a group"))
 			{
-				/// Only accept group invites from the commanding player.
-				if (!string.IsNullOrEmpty(m_strCommandingPlayer) && ThisWindow.Text.StartsWith(m_strCommandingPlayer))
+				/// Only accept group invites from a commanding player.
+				bool bIssuedByCommandingPlayer = false;
+				foreach (string strThisPlayer in m_astrCommandingPlayers)
+					if (!string.IsNullOrEmpty(strThisPlayer) && ThisWindow.Text.StartsWith(strThisPlayer))
+					{
+						bIssuedByCommandingPlayer = true;
+						break;
+					}
+
+				if (bIssuedByCommandingPlayer)
 				{
 					Program.Log("Accepting invite from commanding player.");
 					//ThisWindow.DoChoice1();
@@ -504,7 +507,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual bool OnIncomingText(string strFrom, string strMessage)
+		public bool OnIncomingText(string strMessage)
 		{
 			string strTrimmedMessage = strMessage.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
@@ -518,6 +521,24 @@ namespace EQ2GlassCannon
 				Program.s_EmailQueueThread.PostEmailMessage(m_astrChatWatchToAddressList, "Chat text spotted!", strMessage);
 				m_ChatWatchNextValidAlertTime = DateTime.Now + TimeSpan.FromMinutes(m_fChatWatchAlertCooldownMinutes);
 				/// Don't return a value; allow processing to continue because there's no need to cockblock in this case.
+			}
+
+			/// NOTE: Place all exact-match checks in this table. C# will hash sort it for quickness.
+			switch (strMessage)
+			{
+				/// Look for cast abort strings.
+				case "Already casting...":
+				case "Can't see target":
+				case "Interrupted!":
+				case "No eligible target":
+				case "No targets in range":
+				case "Not an enemy":
+				case "Target is not alive":
+				case "Too far away":
+				{
+					m_LastCastEndTime = DateTime.Now;
+					return true;
+				}
 			}
 
 			if (m_bAutoHarvestInProgress)
@@ -540,16 +561,7 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			if (strMessage == "Interrupted!" ||
-				strMessage == "Target is not alive" ||
-				strMessage == "Can't see target" ||
-				strMessage == "Too far away")
-			{
-				m_LastCastEndTime = DateTime.Now;
-				return true;
-			}
-
-			/// TODO: Now parse out the details.
+			/// TODO: Now parse out the details and start the virtual chain.
 
 			return false;
 		}
@@ -580,17 +592,18 @@ namespace EQ2GlassCannon
 					Program.Log("Custom trigger command received (\"{0}\").", ThisTrigger.m_strSubstring);
 					foreach (string strThisCommand in ThisTrigger.m_astrCommands)
 					{
-						Program.RunCommand(strThisCommand, m_strCommandingPlayer);
+						Program.RunCommand(strThisCommand, m_astrCommandingPlayers);
 					}
 					return true;
 				}
 			}
 
 			/// This override only deals with commands after this point.
-			if (string.Compare(strFrom, m_strCommandingPlayer, true) != 0)
+			string strThisCommandingPlayer = string.Empty;
+			if (string.IsNullOrEmpty(strFrom) || !m_astrCommandingPlayers.Contains(strFrom))
 				return false;
 
-			Actor CommandingPlayerActor = Program.GetNonPetActor(m_strCommandingPlayer);
+			Actor CommandingPlayerActor = Program.GetNonPetActor(strFrom);
 
 			/// This is the assist call; direct the bot to begin combat.
 			if (strLowerCaseMessage.Contains(m_strAssistSubphrase))
@@ -649,6 +662,7 @@ namespace EQ2GlassCannon
 			else if (strLowerCaseMessage.Contains(m_strStayInPlaceSubphrase))
 			{
 				Program.Log("Stay In Place command (\"{0}\") received.", m_strStayInPlaceSubphrase);
+				m_strPositionalCommandingPlayer = strFrom;
 				ChangePositioningStance(PositioningStance.StayInPlace);
 			}
 
@@ -668,6 +682,7 @@ namespace EQ2GlassCannon
 			{
 				Program.Log("Custom Autofollow command (\"{0}\") received.", m_strCustomAutoFollowSubphrase);
 				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMinimumRange;
+				m_strPositionalCommandingPlayer = strFrom;
 				ChangePositioningStance(PositioningStance.CustomAutoFollow);
 			}
 
@@ -675,6 +690,7 @@ namespace EQ2GlassCannon
 			{
 				Program.Log("Shadow Me command (\"{0}\") received.", m_strShadowMeSubphrase);
 				m_fCurrentMovementTargetCoordinateTolerance = m_fStayInPlaceTolerance;
+				m_strPositionalCommandingPlayer = strFrom;
 				ChangePositioningStance(PositioningStance.CustomAutoFollow);
 			}
 
@@ -826,26 +842,29 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public class ActorDistanceComparer : IComparer<Actor>
-		{
-			public int Compare(Actor x, Actor y)
-			{
-				if (x.Distance > y.Distance)
-					return 1;
-				else if (x.Distance < y.Distance)
-					return -1;
-				else
-					return 0;
-			}
-		}
-
-		/************************************************************************************/
 		public virtual bool OnCustomSlashCommand(string strCommand, string[] astrParameters)
 		{
 			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
 
 			switch (strCommand)
 			{
+				/// Directly acquire an offensive target.
+				case "gc_attack":
+				{
+					Actor MyTargetActor = MeActor.Target();
+					if (MyTargetActor.IsValid)
+					{
+						/// Don't bother filtering. Just grab the ID, let the other code determine if it's a legit target.
+						m_iOffensiveTargetID = MyTargetActor.ID;
+						Program.Log("Offensive target set to \"{0}\" ({1}).", MyTargetActor.Name, m_iOffensiveTargetID);
+					}
+					else
+					{
+						Program.Log("Invalid target selected.");
+					}
+					break;
+				}
+
 				/// Arbitrarily change an INI setting on the fly.
 				case "gc_changesetting":
 				{
@@ -889,14 +908,29 @@ namespace EQ2GlassCannon
 						return true;
 					}
 
-					List<Actor> ActorList = new List<Actor>();
+					string strSearchString = strCondensedParameters.ToLower();
+					bool bNamedSearch = (strSearchString == "named");
 
+					List<Actor> ActorList = new List<Actor>();
 					int iValidActorCount = 0;
 					int iInvalidActorCount = 0;
+
 					foreach (Actor ThisActor in Program.EnumActors())
 					{
-						/// We manually check the name; for some reason the custom array won't budge and just returns everything.
-						if (ThisActor.IsValid && ThisActor.Name.ToLower().Contains(strCondensedParameters.ToLower()))
+						bool bAddThisActor = false;
+
+						if (ThisActor.IsValid)
+						{
+							if (bNamedSearch)
+							{
+								if (ThisActor.IsNamed)
+									bAddThisActor = true;
+							}
+							else if (ThisActor.Name.ToLower().Contains(strSearchString))
+								bAddThisActor = true;
+						}
+
+						if (bAddThisActor)
 						{
 							ActorList.Add(ThisActor);
 							iValidActorCount++;
@@ -907,7 +941,7 @@ namespace EQ2GlassCannon
 
 					if (ActorList.Count == 0)
 					{
-						Program.Log("Unable to find actor \"{0}\".", strCondensedParameters);
+						Program.Log("gc_findactor: Unable to find actor \"{0}\".", strCondensedParameters);
 						return true;
 					}
 
@@ -919,6 +953,7 @@ namespace EQ2GlassCannon
 					FlexStringBuilder SummaryBuilder = new FlexStringBuilder();
 					SummaryBuilder.AppendLine("gc_findactor: {0} actor(s) found ({1} invalid) using \"{2}\".", iValidActorCount, iInvalidActorCount, strCondensedParameters);
 
+					/// Now display the individual results.
 					for (int iIndex = 0; iIndex < ActorList.Count && iIndex < 5; iIndex++)
 					{
 						Actor ThisActor = ActorList[iIndex];
@@ -950,6 +985,7 @@ namespace EQ2GlassCannon
 						SummaryBuilder.AppendLine("Level(Effective): {0}({1})", ThisActor.Level, ThisActor.EffectiveLevel);
 						SummaryBuilder.AppendLine("Encounter Size: {0}", ThisActor.EncounterSize);
 						SummaryBuilder.AppendLine("IsLocked: {0}", ThisActor.IsLocked);
+						SummaryBuilder.AppendLine("IsNamed: {0}", ThisActor.IsNamed);
 						SummaryBuilder.AppendLine("Speed: {0}", ThisActor.Speed);
 					}
 
@@ -979,7 +1015,27 @@ namespace EQ2GlassCannon
 
 				case "gc_stance":
 				{
-					break;
+					if (astrParameters.Length < 1)
+					{
+						Program.Log("gc_stance failed: Missing stance parameter.");
+						return true;
+					}
+
+					string strStance = astrParameters[0].ToLower();
+					switch (strStance)
+					{
+						case "afk":
+							ChangePositioningStance(PositioningStance.DoNothing);
+							break;
+						case "neutral":
+							ChangePositioningStance(PositioningStance.NeutralPosition);
+							break;
+						case "dash":
+							ChangePositioningStance(PositioningStance.ForwardDash);
+							break;
+					}
+
+					return true;
 				}
 
 				case "gc_spawnwatch":
@@ -988,6 +1044,27 @@ namespace EQ2GlassCannon
 					m_strSpawnWatchTarget = strCondensedParameters.ToLower().Trim();
 					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
 					ChangePositioningStance(PositioningStance.SpawnWatch);
+					return true;
+				}
+
+				/// Test the text-to-speech synthesizer using the current settings.
+				case "gc_tts":
+				{
+					Program.SayText(strCondensedParameters);
+					return true;
+				}
+
+				case "gc_version":
+				{
+					Program.DisplayVersion();
+					return true;
+				}
+
+				/// Clear the offensive target.
+				case "gc_withdraw":
+				{
+					Program.Log("Offensive target withdrawn.");
+					WithdrawFromCombat();
 					return true;
 				}
 			}
@@ -1007,8 +1084,6 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public void ChangePositioningStance(PositioningStance eNewStance)
 		{
-			Actor CommandingPlayerActor = Program.GetNonPetActor(m_strCommandingPlayer);
-
 			/// Deactivate the existing stance.
 			if (m_ePositioningStance == PositioningStance.CustomAutoFollow ||
 				m_ePositioningStance == PositioningStance.StayInPlace ||
@@ -1027,6 +1102,7 @@ namespace EQ2GlassCannon
 			}
 			else if (eNewStance == PositioningStance.StayInPlace)
 			{
+				Actor CommandingPlayerActor = Program.GetNonPetActor(m_strPositionalCommandingPlayer);
 				if (CommandingPlayerActor != null)
 				{
 					m_ePositioningStance = PositioningStance.StayInPlace;
@@ -1037,12 +1113,9 @@ namespace EQ2GlassCannon
 			}
 			else if (eNewStance == PositioningStance.CustomAutoFollow)
 			{
-				if (CommandingPlayerActor != null)
-				{
-					m_ePositioningStance = PositioningStance.CustomAutoFollow;
-					m_bLastShadowTargetSamplingWasNearby = false;
-					CheckPositioningStance();
-				}
+				m_ePositioningStance = PositioningStance.CustomAutoFollow;
+				m_bLastShadowTargetSamplingWasNearby = false;
+				CheckPositioningStance();
 			}
 			else if (eNewStance == PositioningStance.ForwardDash)
 			{
@@ -1090,31 +1163,30 @@ namespace EQ2GlassCannon
 				if (MeActor.IsDead)
 					return false;
 
-				if (string.IsNullOrEmpty(m_strAutoFollowTarget))
-					return false;
-
-				/// Make sure the autofollow target is in our group.
-				if (!m_GroupMemberDictionary.ContainsKey(m_strAutoFollowTarget))
+				/// Make sure an autofollow target exists in our group.
+				string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, true);
+				if (string.IsNullOrEmpty(strAutoFollowTarget))
 				{
-					Program.Log("Can't autofollow on {0} (not found in group).", m_strAutoFollowTarget);
+					Program.Log("Can't autofollow (no configured targets found in group).");
 					return false;
 				}
 
-				Actor AutoFollowActor = m_GroupMemberDictionary[m_strAutoFollowTarget].ToActor();
+				/// If the player isn't in zone or is dead, we don't really need to see that in the log.
+				Actor AutoFollowActor = m_GroupMemberDictionary[strAutoFollowTarget].ToActor();
 				if (!AutoFollowActor.IsValid)
 				{
-					Program.Log("Can't autofollow on {0} (player actor is invalid).", m_strAutoFollowTarget);
+					//Program.Log("Can't autofollow on {0} (player actor is invalid).", m_strAutoFollowTarget);
 					return false;
 				}
 				else if (AutoFollowActor.IsDead)
 				{
-					Program.Log("Can't autofollow on {0} (player is dead).", m_strAutoFollowTarget);
+					//Program.Log("Can't autofollow on {0} (player is dead).", m_strAutoFollowTarget);
 					return false;
 				}
 
 				/// Reapply autofollow.
 				/// We won't make it an absolute requirement for Check Buffs completion.
-				if (MeActor.WhoFollowing != m_strAutoFollowTarget)
+				if (MeActor.WhoFollowing != strAutoFollowTarget)
 				{
 					/// If we're too far away, the client will put up an error message.
 					/// Therefore we have to filter out this failure condition.
@@ -1122,7 +1194,7 @@ namespace EQ2GlassCannon
 					{
 						if (AutoFollowActor.DoFace())
 						{
-							Program.RunCommand("/follow {0}", m_strAutoFollowTarget);
+							Program.RunCommand("/follow {0}", strAutoFollowTarget);
 							return true;
 						}
 					}
@@ -1156,9 +1228,15 @@ namespace EQ2GlassCannon
 				/// For shadowing, the coordinate is updated at every iteration.
 				if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 				{
-					/// This guy doesn't need to be in group/raid. He just needs to exist.
-					/// But we give preference to the guy in group/raid to prevent griefing.
-					Actor FollowActor = m_FriendDictionary.ContainsKey(m_strCommandingPlayer) ? m_FriendDictionary[m_strCommandingPlayer].ToActor() : new Actor(m_strCommandingPlayer);
+					/// Make sure an autofollow target exists in our party.
+					string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
+					if (string.IsNullOrEmpty(strAutoFollowTarget))
+					{
+						Program.ReleaseKey("W");
+						return false;
+					}
+
+					Actor FollowActor = m_FriendDictionary[strAutoFollowTarget].ToActor();
 					if (!FollowActor.IsValid)
 					{
 						Program.ReleaseKey("W");
@@ -1180,7 +1258,7 @@ namespace EQ2GlassCannon
 						bool bThisSamplingIsNearby = (fRange < 200.0f);
 						if (m_bLastShadowTargetSamplingWasNearby && !bThisSamplingIsNearby)
 						{
-							Program.RunCommand("/t {0} you ported too far away", m_strCommandingPlayer); /// TODO: Make this configurable.
+							//Program.RunCommand("/t {0} you ported too far away", m_astrCommandingPlayers); /// TODO: Make this configurable.
 							ChangePositioningStance(PositioningStance.NeutralPosition);
 							return true;
 						}
@@ -1209,7 +1287,17 @@ namespace EQ2GlassCannon
 				if (MeActor.IsDead)
 					return false;
 
-				Program.PressAndHoldKey("W");
+				if (GetActorDistance3D(MeActor, m_ptMyLastLocation) > 200.0f)
+				{
+					/// We probably ran through a port.
+					Program.Log("Large motion gap detected while dashing; it is assumed we got ported.");
+					ChangePositioningStance(PositioningStance.NeutralPosition);
+				}
+				else
+				{
+					Program.PressAndHoldKey("W");
+				}
+
 				return false;
 			}
 
@@ -1249,7 +1337,7 @@ namespace EQ2GlassCannon
 
 					try
 					{
-						Program.RunCommand(m_strSpawnWatchAlertCommand, m_strCommandingPlayer, m_strSpawnWatchTarget);
+						Program.RunCommand(m_strSpawnWatchAlertCommand, m_astrCommandingPlayers, m_strSpawnWatchTarget);
 					}
 					catch
 					{

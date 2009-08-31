@@ -13,9 +13,9 @@ namespace EQ2GlassCannon
 		public bool m_bBuffPhysicalMitigation = true;
 		public bool m_bBuffArcaneResistance = true;
 		public bool m_bBuffYaulp = false;
-		public string m_strManaCureTarget = null;
-		public string m_strStoneskinTarget = null;
-		public string m_strSTRWISTarget = null;
+		public List<string> m_astrManaCureTargets = new List<string>();
+		public List<string> m_astrStoneskinTargets = new List<string>();
+		public List<string> m_astrSTRWISTargets = new List<string>();
 		public List<string> m_astrMeleeSkillTargets = new List<string>();
 		public List<string> m_astrMeleeHealProcTargets = new List<string>();
 		#endregion
@@ -60,9 +60,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("Templar.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
 			ThisFile.TransferBool("Templar.BuffArcaneResistance", ref m_bBuffArcaneResistance);
 			ThisFile.TransferBool("Templar.BuffYaulp", ref m_bBuffYaulp);
-			ThisFile.TransferString("Templar.ManaCureTarget", ref m_strManaCureTarget);
-			ThisFile.TransferString("Templar.StoneskinTarget", ref m_strStoneskinTarget);
-			ThisFile.TransferString("Templar.STRWISTarget", ref m_strSTRWISTarget);
+			ThisFile.TransferStringList("Templar.ManaCureTargets", m_astrManaCureTargets);
+			ThisFile.TransferStringList("Templar.StoneskinTargets", m_astrStoneskinTargets);
+			ThisFile.TransferStringList("Templar.STRWISTargets", m_astrSTRWISTargets);
 			ThisFile.TransferStringList("Templar.MeleeSkillTargets", m_astrMeleeSkillTargets);
 			ThisFile.TransferStringList("Templar.MeleeHealProcTargets", m_astrMeleeHealProcTargets);
 			return;
@@ -198,7 +198,7 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiShieldAllyAbilityID, m_strShieldAllyTarget))
+				if (CheckSingleTargetBuff(m_uiShieldAllyAbilityID, m_strShieldAllyTargets))
 					return true;
 
 				if (CheckToggleBuff(m_uiGroupArcaneBuffAbilityID, m_bBuffArcaneResistance))
@@ -210,13 +210,13 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, m_bBuffGroupWaterBreathing))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiManaCureAbilityID, m_strManaCureTarget))
+				if (CheckSingleTargetBuff(m_uiManaCureAbilityID, m_astrManaCureTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiSingleSTRWISBuffAbilityID, m_strSTRWISTarget))
+				if (CheckSingleTargetBuff(m_uiSingleSTRWISBuffAbilityID, m_astrSTRWISTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiSingleStoneskinBuffAbilityID, m_strStoneskinTarget))
+				if (CheckSingleTargetBuff(m_uiSingleStoneskinBuffAbilityID, m_astrStoneskinTargets))
 					return true;
 
 				if (CheckSingleTargetBuffs(m_uiMeleeSkillBuffAbilityID, m_astrMeleeSkillTargets))
@@ -325,7 +325,7 @@ namespace EQ2GlassCannon
 				if (iTotalDeficientMembersBelowGroupHealTolerance > 1 && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 					return true;
 
-				if (MeActor.InCombatMode && CastAbility(m_uiSingleOneHitWardAbilityID, m_strMainTank, true))
+				if (MeActor.InCombatMode && CastAbility(m_uiSingleOneHitWardAbilityID, m_astrMainTanks, true))
 					return true;
 
 				if (!string.IsNullOrEmpty(strLowestHealthName))
@@ -338,7 +338,7 @@ namespace EQ2GlassCannon
 				}
 
 				/// This needs to be kept up on the MT.
-				if (MeActor.InCombatMode && CastAbility(m_uiSingleReactiveHealAbilityID, m_strMainTank, true))
+				if (MeActor.InCombatMode && CastAbility(m_uiSingleReactiveHealAbilityID, m_astrMainTanks, true))
 					return true;
 
 				if (MeActor.InCombatMode && !IsAbilityMaintained(m_uiGroupReactiveHealAbilityID) && CastAbility(m_uiGroupReactiveHealAbilityID, Me.Name, true))

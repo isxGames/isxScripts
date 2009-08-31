@@ -49,16 +49,16 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override bool OnIncomingText(string strFrom, string strChatText)
+		public override bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
 		{
-			if (base.OnIncomingText(strFrom, strChatText))
+			if (base.OnIncomingText(eChannel, strChannelName, strFrom, strMessage))
 				return true;
 
 			if (m_iLastChestDisarmAttempted != -1)
 			{
-				if (strChatText.StartsWith("You disarm the trap on") ||
-					strChatText.StartsWith("You failed to disarm the trap on") ||
-					strChatText.StartsWith("You trigger the trap on"))
+				if (strMessage.StartsWith("You disarm the trap on") ||
+					strMessage.StartsWith("You failed to disarm the trap on") ||
+					strMessage.StartsWith("You trigger the trap on"))
 				{
 					if (m_NearbyChestDictionary.ContainsKey(m_iLastChestDisarmAttempted))
 						m_NearbyChestDictionary[m_iLastChestDisarmAttempted] = true;

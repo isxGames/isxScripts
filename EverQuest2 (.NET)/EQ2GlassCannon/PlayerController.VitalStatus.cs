@@ -250,13 +250,13 @@ namespace EQ2GlassCannon
 		{
 			VitalStatus ThisStatus = null;
 
-			if (bIncludeMainTank && GetVitalStatus(m_strMainTank, ref ThisStatus))
+			if (bIncludeMainTank && GetVitalStatus(m_strCurrentMainTank, ref ThisStatus))
 				yield return ThisStatus;
 
 			foreach (string strThisMemberName in m_GroupMemberDictionary.Keys)
 			{
 				/// Omit everyone we already cycled through.
-				if (strThisMemberName != m_strMainTank)
+				if (strThisMemberName != m_strCurrentMainTank)
 				{
 					if (GetVitalStatus(strThisMemberName, ref ThisStatus))
 						yield return ThisStatus;

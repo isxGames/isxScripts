@@ -10,38 +10,38 @@ namespace EQ2GlassCannon
 {
 	public class WizardController : SorcererController
 	{
-		public List<string> m_astrFlametongueTargets = new List<string>();
-		public string m_strIceShieldTarget = string.Empty;
-		public string m_strGiftCallout = string.Empty;
+		protected List<string> m_astrFlametongueTargets = new List<string>();
+		protected string m_strIceShieldTarget = string.Empty;
+		protected string m_strGiftCallout = string.Empty;
 
-		public uint m_uiSTRINTBuffAbilityID = 0;
-		public uint m_uiElementalBuffAbilityID = 0;
-		public uint m_uiSnowFilledStepsAbilityID = 0;
-		public uint m_uiMailOfFrostAbilityID = 0;
-		public uint m_uiFlametongueAbilityID = 0;
-		public uint m_uiGiftAbilityID = 0;
-		public uint m_uiIceshapeAbilityID = 0;
-		public uint m_uiSurgeAbilityID = 0;
-		public uint m_uiFireshapeAbilityID = 0;
+		protected uint m_uiSTRINTBuffAbilityID = 0;
+		protected uint m_uiElementalBuffAbilityID = 0;
+		protected uint m_uiSnowFilledStepsAbilityID = 0;
+		protected uint m_uiMailOfFrostAbilityID = 0;
+		protected uint m_uiFlametongueAbilityID = 0;
+		protected uint m_uiGiftAbilityID = 0;
+		protected uint m_uiIceshapeAbilityID = 0;
+		protected uint m_uiSurgeAbilityID = 0;
+		protected uint m_uiFireshapeAbilityID = 0;
 
-		public uint m_uiColdDamageShieldAbilityID = 0;
-		public uint m_uiFurnaceOfRoAbilityID = 0;
-		public uint m_uiBlueHeatAEAbilityID = 0;
-		public uint m_uiGreenColdAEAbilityID = 0;
-		public uint m_uiGreenMagicAEAbilityID = 0;
-		public uint m_uiRaysOfDisintegrationAbilityID = 0;
-		public uint m_uiStormingTempestAbilityID = 0;
-		public uint m_uiProtoflameAbilityID = 0;
-		public uint m_uiHailStormAbilityID = 0;
-		public uint m_uiFusionAbilityID = 0;
-		public uint m_uiIceCometAbilityID = 0;
-		public uint m_uiBallOfFireAbilityID = 0;
-		public uint m_uiImmolationAbilityID = 0;
-		public uint m_uiSingleStunNukeAbilityID = 0;
-		public uint m_uiElementalDebuffAbilityID = 0;
-		public uint m_uiUnresistableDotAbilityID = 0;
-		public uint m_uiLightningBurstAbilityID = 0;
-		public uint m_uiSingleDeaggroAbilityID = 0;
+		protected uint m_uiColdDamageShieldAbilityID = 0;
+		protected uint m_uiFurnaceOfRoAbilityID = 0;
+		protected uint m_uiBlueHeatAEAbilityID = 0;
+		protected uint m_uiGreenColdAEAbilityID = 0;
+		protected uint m_uiGreenMagicAEAbilityID = 0;
+		protected uint m_uiRaysOfDisintegrationAbilityID = 0;
+		protected uint m_uiStormingTempestAbilityID = 0;
+		protected uint m_uiProtoflameAbilityID = 0;
+		protected uint m_uiHailStormAbilityID = 0;
+		protected uint m_uiFusionAbilityID = 0;
+		protected uint m_uiIceCometAbilityID = 0;
+		protected uint m_uiBallOfFireAbilityID = 0;
+		protected uint m_uiImmolationAbilityID = 0;
+		protected uint m_uiSingleStunNukeAbilityID = 0;
+		protected uint m_uiElementalDebuffAbilityID = 0;
+		protected uint m_uiUnresistableDotAbilityID = 0;
+		protected uint m_uiLightningBurstAbilityID = 0;
+		protected uint m_uiSingleDeaggroAbilityID = 0;
 
 		/************************************************************************************/
 		protected override void TransferINISettings(IniFile ThisFile)
@@ -137,7 +137,7 @@ namespace EQ2GlassCannon
 				if (CheckSingleTargetBuffs(m_uiFlametongueAbilityID, m_astrFlametongueTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiHateTransferAbilityID, m_strHateTransferTarget))
+				if (CheckSingleTargetBuff(m_uiHateTransferAbilityID, m_astrHateTransferTargets))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -230,8 +230,8 @@ namespace EQ2GlassCannon
 						{
 							/// Iceshape and Fireshape are optional AA abilities but tightly woven into the use of Gift and Surge.
 							/// To keep this code concise, "nonexistant" is treated the same as "ready".
-							bool bIceshapeReady = (m_uiIceshapeAbilityID == -1 || IsAbilityReady(m_uiIceshapeAbilityID));
-							bool bFireshapeReady = (m_uiFireshapeAbilityID == -1 || IsAbilityReady(m_uiFireshapeAbilityID));
+							bool bIceshapeReady = (m_uiIceshapeAbilityID == 0 || IsAbilityReady(m_uiIceshapeAbilityID));
+							bool bFireshapeReady = (m_uiFireshapeAbilityID == 0 || IsAbilityReady(m_uiFireshapeAbilityID));
 
 							/// Consider using Iceshape/Gift if Fireshape/Surge aren't up.
 							/// Gift has the shorter duration so it gets cast last and its availability becomes the prerequisite.

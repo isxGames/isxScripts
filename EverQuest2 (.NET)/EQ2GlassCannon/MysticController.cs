@@ -13,8 +13,8 @@ namespace EQ2GlassCannon
 		public bool m_bBuffNoxiousResistance = true;
 		public bool m_bBuffSTRSTA = true;
 		public List<string> m_astrHealthPoolTargets = new List<string>();
-		public string m_strAvatarTarget = string.Empty;
-		public string m_strAncestryTarget = string.Empty;
+		public List<string> m_astrAvatarTargets = new List<string>();
+		public List<string> m_astrAncestryTargets = new List<string>();
 		public string m_strRitualOfAlacrityTarget = string.Empty;
 		public string m_strSpiritDanceCallout = "CASTING SPIRIT DANCE ON << {0} >>";
 		#endregion
@@ -60,8 +60,8 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("Mystic.BuffNoxiousResistance", ref m_bBuffNoxiousResistance);
 			ThisFile.TransferBool("Mystic.BuffSTRSTA", ref m_bBuffSTRSTA);
 			ThisFile.TransferStringList("Mystic.HealthPoolTargets", m_astrHealthPoolTargets);
-			ThisFile.TransferString("Mystic.AvatarTarget", ref m_strAvatarTarget);
-			ThisFile.TransferString("Mystic.AncestryTarget", ref m_strAncestryTarget);
+			ThisFile.TransferStringList("Mystic.AvatarTargets", m_astrAvatarTargets);
+			ThisFile.TransferStringList("Mystic.AncestryTargets", m_astrAncestryTargets);
 			ThisFile.TransferString("Mystic.RitualOfAlacrityTarget", ref m_strRitualOfAlacrityTarget);
 			ThisFile.TransferString("Mystic.SpiritDanceCallout", ref m_strSpiritDanceCallout);
 			return;
@@ -199,10 +199,10 @@ namespace EQ2GlassCannon
 				if (CheckGroupWaterBreathingBuff())
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiSingleStatBuffAbilityID, m_strAvatarTarget))
+				if (CheckSingleTargetBuff(m_uiSingleStatBuffAbilityID, m_astrAvatarTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiSingleProcBuffAbilityID, m_strAncestryTarget))
+				if (CheckSingleTargetBuff(m_uiSingleProcBuffAbilityID, m_astrAncestryTargets))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -241,11 +241,11 @@ namespace EQ2GlassCannon
 
 					/// Emergency stun ward on the main tank.
 					VitalStatus MainTankVitalStatus = null;
-					if (GetVitalStatus(m_strMainTank, ref MainTankVitalStatus))
+					if (GetVitalStatus(m_astrMainTanks[0], ref MainTankVitalStatus))
 					{
 						if (MainTankVitalStatus.HealthRatio < 0.05)
 						{
-							if (CastAbility(m_uiSingleStunnedWardAbilityID, m_strMainTank, true))
+							if (CastAbility(m_uiSingleStunnedWardAbilityID, m_astrMainTanks, true))
 								return true;
 						}
 					}
