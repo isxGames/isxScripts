@@ -1592,7 +1592,7 @@ function SaveSell()
 	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemName].Text}]
 	if ${ItemName.Length} == 0
 	{
-		AddLog "Try Selecting something first!!" FFFF0000
+		call AddLog "Try Selecting something first!!" FFFF0000
 	}
 	else
 	{
