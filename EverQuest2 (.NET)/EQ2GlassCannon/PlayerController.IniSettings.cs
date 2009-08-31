@@ -24,9 +24,9 @@ namespace EQ2GlassCannon
 		public bool m_bWriteBackINI = true;
 		public string m_strCustomTellTriggerFile = string.Empty;
 		public string m_strReloadINISubphrase = "rebuff me pls";
-		public string m_strMainTank = string.Empty;
-		public string m_strAutoFollowTarget = string.Empty;
-		public string m_strCommandingPlayer = string.Empty;
+		public List<string> m_astrMainTanks = new List<string>();
+		public List<string> m_astrAutoFollowTargets = new List<string>();
+		public List<string> m_astrCommandingPlayers = new List<string>();
 		public string m_strCommandChannel = string.Empty;
 		public string m_strAssistSubphrase = "assist me";
 		public string m_strBotKillswitchSubphrase = "stop dps";
@@ -87,9 +87,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.WriteBackINI", ref m_bWriteBackINI);
 			ThisFile.TransferString("General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
 			ThisFile.TransferString("General.ReloadINISubphrase", ref m_strReloadINISubphrase);
-			ThisFile.TransferString("General.MainTank", ref m_strMainTank);
-			ThisFile.TransferString("General.AutoFollowTarget", ref m_strAutoFollowTarget);
-			ThisFile.TransferString("General.CommandingPlayer", ref m_strCommandingPlayer);
+			ThisFile.TransferStringList("General.MainTanks", m_astrMainTanks);
+			ThisFile.TransferStringList("General.AutoFollowTargets", m_astrAutoFollowTargets);
+			ThisFile.TransferStringList("General.CommandingPlayers", m_astrCommandingPlayers);
 			ThisFile.TransferString("General.CommandChannel", ref m_strCommandChannel);
 			ThisFile.TransferCaselessString("General.AssistSubphrase", ref m_strAssistSubphrase);
 			ThisFile.TransferCaselessString("General.BotKillswitchSubphrase", ref m_strBotKillswitchSubphrase);
@@ -233,8 +233,8 @@ namespace EQ2GlassCannon
 		public void ApplySettings()
 		{
 			/// Fallback option to prevent an unresponsive bot.
-			if (string.IsNullOrEmpty(m_strCommandingPlayer))
-				m_strCommandingPlayer = Me.Name;
+			if (m_astrCommandingPlayers.Count == 0)
+				m_astrCommandingPlayers.Add(Me.Name);
 
 			if (string.IsNullOrEmpty(m_strPhoneticCharacterName))
 				m_strPhoneticCharacterName = Me.Name;

@@ -8,7 +8,7 @@ namespace EQ2GlassCannon
 {
 	public class SorcererController : MageController
 	{
-		public string m_strHateTransferTarget = string.Empty;
+		public List<string> m_astrHateTransferTargets = new List<string>();
 		public bool m_bUsePowerFeed = true;
 		public double m_fPowerFeedThresholdRatio = 0.05;
 
@@ -41,7 +41,7 @@ namespace EQ2GlassCannon
 		{
 			base.TransferINISettings(ThisFile);
 
-			ThisFile.TransferString("Sorceror.HateTransferTarget", ref m_strHateTransferTarget);
+			ThisFile.TransferStringList("Sorceror.HateTransferTargets", m_astrHateTransferTargets);
 			ThisFile.TransferBool("Sorceror.UsePowerFeed", ref m_bUsePowerFeed);
 			ThisFile.TransferDouble("Sorceror.PowerFeedThresholdRatio", ref m_fPowerFeedThresholdRatio);
 

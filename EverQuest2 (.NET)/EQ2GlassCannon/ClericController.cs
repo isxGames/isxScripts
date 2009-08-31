@@ -7,7 +7,7 @@ namespace EQ2GlassCannon
 {
 	public class ClericController : PriestController
 	{
-		public string m_strShieldAllyTarget = string.Empty;
+		public List<string> m_strShieldAllyTargets = new List<string>();
 
 		public uint m_uiDivineRecoveryAbilityID = 0;
 		public uint m_uiSkullCrackAbilityID = 0; /// KoS AA, melee attack that debuffs offensive skills.
@@ -32,7 +32,7 @@ namespace EQ2GlassCannon
 		{
 			base.TransferINISettings(ThisFile);
 
-			ThisFile.TransferString("Cleric.ShieldAllyTarget", ref m_strShieldAllyTarget);
+			ThisFile.TransferStringList("Cleric.ShieldAllyTargets", m_strShieldAllyTargets);
 			return;
 		}
 	}

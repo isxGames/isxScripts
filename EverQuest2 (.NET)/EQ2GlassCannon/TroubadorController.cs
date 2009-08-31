@@ -44,7 +44,7 @@ namespace EQ2GlassCannon
 		public bool m_bBuffElementalResistance = false;
 		public bool m_bAllowShroudForNightStrike = false;
 		public string m_strMaestroCallout = "POTM INC (32 sec) - Spam your taunts and hostile spells NOW (guaranteed +800 mental dmg proc).";
-		public string m_strUpbeatTempoTarget = string.Empty;
+		public List<string> m_astrUpbeatTempoTargets = new List<string>();
 		public string m_strJestersCapRequestSubstring = "JC ME";
 		public string m_strJestersCapCallout = "JESTER'S CAP ON >> {0} <<";
 		public double m_fJestersCapRequestTimeoutMinutes = 1.0;
@@ -108,7 +108,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("Troubador.BuffElementalResistance", ref m_bBuffElementalResistance);
 			ThisFile.TransferBool("Troubador.AllowShroudForNightStrike", ref m_bAllowShroudForNightStrike);
 			ThisFile.TransferString("Troubador.MaestroCallout", ref m_strMaestroCallout);
-			ThisFile.TransferString("Troubador.UpbeatTempoTarget", ref m_strUpbeatTempoTarget);
+			ThisFile.TransferStringList("Troubador.UpbeatTempoTargets", m_astrUpbeatTempoTargets);
 			ThisFile.TransferCaselessString("Troubador.JestersCapRequestSubstring", ref m_strJestersCapRequestSubstring);
 			ThisFile.TransferString("Troubador.JestersCapCallout", ref m_strJestersCapCallout);
 			ThisFile.TransferDouble("Troubador.JestersCapRequestTimeoutMinutes", ref m_fJestersCapRequestTimeoutMinutes);
@@ -230,7 +230,7 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_uiHarmonizationAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiUpbeatTempoAbilityID, m_strUpbeatTempoTarget))
+				if (CheckSingleTargetBuff(m_uiUpbeatTempoAbilityID, m_astrUpbeatTempoTargets))
 					return true;
 
 				if (CheckToggleBuff(m_uiAllegroAbilityID, true))

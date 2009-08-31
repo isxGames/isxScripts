@@ -11,10 +11,10 @@ namespace EQ2GlassCannon
 		#region INI settings
 		public List<string> m_astrHasteTargets = new List<string>();
 		public List<string> m_astrDynamismTargets = new List<string>();
-		public string m_strPrismaticTarget = string.Empty;
-		public string m_strTimeCompressionTarget = string.Empty;
-		public string m_strIllusoryArmTarget = string.Empty;
-		public string m_strSpellshieldTarget = string.Empty;
+		public List<string> m_astrPrismaticTargets = new List<string>();
+		public List<string> m_astrTimeCompressionTargets = new List<string>();
+		public List<string> m_astrIllusoryArmTargets = new List<string>();
+		public List<string> m_astrSpellshieldTargets = new List<string>();
 		public bool m_bBuffArcaneResistance = false;
 		public bool m_bBuffINTWIS = false;
 		public string m_strPeaceOfMindCallout = "Peace of Mind INC (20 sec, damage proc on any offensive action)";
@@ -64,10 +64,10 @@ namespace EQ2GlassCannon
 
 			ThisFile.TransferStringList("Illusionist.HasteTargets", m_astrHasteTargets);
 			ThisFile.TransferStringList("Illusionist.DynamismTargets", m_astrDynamismTargets);
-			ThisFile.TransferString("Illusionist.PrismaticTarget", ref m_strPrismaticTarget);
-			ThisFile.TransferString("Illusionist.TimeCompressionTarget", ref m_strTimeCompressionTarget);
-			ThisFile.TransferString("Illusionist.IllusoryArmTarget", ref m_strIllusoryArmTarget);
-			ThisFile.TransferString("Illusionist.SpellshieldTarget", ref m_strSpellshieldTarget);
+			ThisFile.TransferStringList("Illusionist.PrismaticTargets", m_astrPrismaticTargets);
+			ThisFile.TransferStringList("Illusionist.TimeCompressionTargets", m_astrTimeCompressionTargets);
+			ThisFile.TransferStringList("Illusionist.IllusoryArmTargets", m_astrIllusoryArmTargets);
+			ThisFile.TransferStringList("Illusionist.SpellshieldTargets", m_astrSpellshieldTargets);
 			ThisFile.TransferBool("Illusionist.BuffArcaneResistance", ref m_bBuffArcaneResistance);
 			ThisFile.TransferBool("Illusionist.BuffIntWis", ref m_bBuffINTWIS);
 			ThisFile.TransferString("Illusionist.PeaceOfMindCallout", ref m_strPeaceOfMindCallout);
@@ -151,13 +151,13 @@ namespace EQ2GlassCannon
 				if (CheckSingleTargetBuffs(m_uiHasteBuffAbilityID, m_astrHasteTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiTimeCompressionAbilityID, m_strTimeCompressionTarget))
+				if (CheckSingleTargetBuff(m_uiTimeCompressionAbilityID, m_astrTimeCompressionTargets))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiIllusoryArmAbilityID, m_strIllusoryArmTarget))
+				if (CheckSingleTargetBuff(m_uiIllusoryArmAbilityID, m_astrIllusoryArmTargets))
 					return true;
 
-				if (MeActor.InCombatMode && CheckSingleTargetBuffs(m_uiSpellshieldAbilityID, m_strSpellshieldTarget))
+				if (MeActor.InCombatMode && CheckSingleTargetBuff(m_uiSpellshieldAbilityID, m_astrSpellshieldTargets))
 					return true;
 
 				if (CheckRacialBuffs())
@@ -190,7 +190,7 @@ namespace EQ2GlassCannon
 			if (m_OffensiveTargetActor != null && MeActor.IsIdle)
 			{
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
-				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
+				bool bDumbfiresAdvised = m_OffensiveTargetActor.IsNamed || (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 
 				if (CastHOStarter())
@@ -248,7 +248,12 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
-					if (!IsAbilityMaintained(m_uiPrismaticAbilityID) && CastAbility(m_uiPrismaticAbilityID, m_strPrismaticTarget, true))
+					if (bDumbfiresAdvised && !IsAbilityMaintained(m_uiConstructAbilityID) && CastAbility(m_uiConstructAbilityID))
+						return true;
+
+					/// TODO: This should be changed to behave more like a buff, to allow multiple recipients.
+					//if (!IsAbilityMaintained(m_uiPrismaticAbilityID) && CastAbility(m_uiPrismaticAbilityID, m_strPrismaticTargets, true))
+					if (!CheckSingleTargetBuffs(m_uiPrismaticAbilityID, m_astrPrismaticTargets))
 						return true;
 
 					if (CastAbility(m_uiBewildermentAbilityID))
@@ -268,9 +273,6 @@ namespace EQ2GlassCannon
 					if (!IsAbilityMaintained(m_uiMeleeDebuffAbilityID) && CastAbility(m_uiMeleeDebuffAbilityID))
 						return true;
 					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID) && CastAbility(m_uiNullifyingStaffAbilityID))
-						return true;
-
-					if (bDumbfiresAdvised && !IsAbilityMaintained(m_uiConstructAbilityID) && CastAbility(m_uiConstructAbilityID))
 						return true;
 
 					/// We let this expire for the termination nuke, Pinski supposedly thinks it does more dps that way. :/

@@ -146,16 +146,6 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void EvaluateHealSituation(
-			ref bool bBuffsAdvisable,
-			ref string strHealTarget,
-			ref bool bGroupHealNeeded,
-			ref string strRezTarget,
-			ref bool bGroupRezNeeded)
-		{
-		}
-
-		/************************************************************************************/
 		public bool CheckSpiritOfTheWolf()
 		{
 			/// This is a distracting spell when over 30 effects are maintained; the bot will never see it after it gets put up.

@@ -203,19 +203,33 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		private static void Main()
+		private static string s_strLinkerTimestamp = null;
+		public static void DisplayVersion()
 		{
-			try
-			{
-				Program.Log("Starting EQ2GlassCannon spellcaster bot...");
-				s_EmailQueueThread.Start();
+			Program.Log("EQ2GlassCannon Spellcaster Bot (Written 2009 by Eccentric)");
 
+			if (string.IsNullOrEmpty(s_strLinkerTimestamp))
+			{
 				Assembly ThisAssembly = Assembly.GetExecutingAssembly();
 				if (ThisAssembly != null)
 				{
 					DateTime LinkerTimestamp = RetrieveLinkerTimestamp(ThisAssembly.Location);
-					Program.Log("\"{0}\" built on {1} at {2}.", Path.GetFileName(ThisAssembly.Location), LinkerTimestamp.ToLongDateString(), LinkerTimestamp.ToLongTimeString());
+					s_strLinkerTimestamp = string.Format("\"{0}\" built on {1} at {2}.", Path.GetFileName(ThisAssembly.Location), LinkerTimestamp.ToLongDateString(), LinkerTimestamp.ToLongTimeString());
 				}
+			}
+
+			Program.Log(s_strLinkerTimestamp);
+			return;
+		}
+
+		/************************************************************************************/
+		private static void Main()
+		{
+			try
+			{
+				DisplayVersion();
+
+				s_EmailQueueThread.Start();
 
 				using (new FrameLock(true))
 				{
@@ -254,14 +268,19 @@ namespace EQ2GlassCannon
 					s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
 
 					Program.AddCommand(
+						"gc_attack",
 						"gc_changesetting",
+						"gc_debug",
 						"gc_exit",
 						"gc_findactor",
 						"gc_openini",
 						"gc_openoverridesini",
 						"gc_reloadsettings",
 						"gc_stance",
-						"gc_spawnwatch");
+						"gc_spawnwatch",
+						"gc_tts",
+						"gc_version",
+						"gc_withdraw");
 				}
 
 #if !DEBUG
@@ -448,7 +467,10 @@ namespace EQ2GlassCannon
 						/// Only if the knowledge book is intact can we safely assume that regular actions are OK.
 						/// DoNextAction() might set s_bRefreshKnowledgeBook to true.  This is fine.
 						if (!s_bRefreshKnowledgeBook)
+						{
 							s_Controller.DoNextAction();
+							s_Controller.m_ptMyLastLocation = new PlayerController.Point3D(MeActor);
+						}
 
 						/// Only check for camping or AFK every 5th frame.
 						if (s_Controller.m_bKillBotWhenCamping && (s_lFrameCount % 5) == 0 && (Me.IsCamping))
@@ -504,7 +526,7 @@ namespace EQ2GlassCannon
 					Process.GetCurrentProcess().Kill();
 
 				if (s_Controller != null)
-					Program.RunCommand("/t " + s_Controller.m_strCommandingPlayer + " oh shit lol");
+					Program.RunCommand("/t " + s_Controller.m_astrCommandingPlayers + " oh shit lol");
 			}
 
 			finally
@@ -594,8 +616,6 @@ namespace EQ2GlassCannon
 		/// <param name="e"></param>
 		private static void OnIncomingText_EventHandler(object sender, LSEventArgs e)
 		{
-			string strChatText = e.Args[0];
-
 			try
 			{
 				if (s_Controller != null)
@@ -603,7 +623,7 @@ namespace EQ2GlassCannon
 					using (new FrameLock(true))
 					{
 						UpdateGlobals();
-						s_Controller.OnIncomingText(string.Empty, strChatText);
+						s_Controller.OnIncomingText(e.Args[0]);
 					}
 				}
 			}
@@ -641,7 +661,10 @@ namespace EQ2GlassCannon
 					List<string> astrArgList = new List<string>(astrArgs);
 					astrArgList.RemoveAt(0);
 					using (new FrameLock(true))
-						s_Controller.OnCustomSlashCommand(astrArgs[0].ToLower(), astrArgList.ToArray());
+					{
+						if (UpdateGlobals())
+							s_Controller.OnCustomSlashCommand(astrArgs[0].ToLower(), astrArgList.ToArray());
+					}
 				}
 			}
 			catch (Exception e)

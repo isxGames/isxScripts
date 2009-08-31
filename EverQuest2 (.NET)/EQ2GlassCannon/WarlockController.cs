@@ -119,7 +119,7 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, true))
 					return true;
 
-				if (CheckSingleTargetBuffs(m_uiHateTransferAbilityID, m_strHateTransferTarget))
+				if (CheckSingleTargetBuff(m_uiHateTransferAbilityID, m_astrHateTransferTargets))
 					return true;
 
 				if (CheckSingleTargetBuffs(m_uiSingleDamageShieldBuffAbilityID, m_astrShroudTargets))
@@ -229,6 +229,9 @@ Keep acid running/don't over cas it.
 						return true;
 
 					if (CastAbility(m_uiSingleUnresistableDOTAbilityID))
+						return true;
+
+					if (UseOffensiveItems())
 						return true;
 
 					if (CastGreenOffensiveAbility(m_uiGreenPoisonDOTAbilityID, 1))
