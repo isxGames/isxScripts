@@ -1721,7 +1721,7 @@ function Saveitem(string Saveset)
 		xvar:Set[1]
 		do
 		{
-			Item:AddSetting[Box${xvar},${UIElement[${xvar}@${SaveSet}@GUITabs@MyPrices].Selection}
+			Item:AddSetting[Box${xvar},${UIElement[${xvar}@${Saveset}@GUITabs@MyPrices].Selection}]
 		}
 		while ${xvar:Inc} <= ${brokerslots}
 	}
@@ -2034,7 +2034,7 @@ function savecraftinfo(string UITab)
 	{
 		UIElement[ErrorText@${UITab}@GUITabs@MyPrices]:SetText[Try setting a valid Craft Stack size]
 	}
-	elseif ${Number} <= 0
+	elseif ${Number} < 0
 	{
 		UIElement[ErrorText@${UITab}GUITabs@MyPrices]:SetText[Try setting a valid Stock Limit]
 	}
