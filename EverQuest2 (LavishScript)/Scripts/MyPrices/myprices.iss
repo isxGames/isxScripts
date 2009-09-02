@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.14c :  released 31st August 2009
+; Version 0.14d :  released 2nd September 2009
 ;
 ; Declare Variables
 ;
@@ -102,6 +102,8 @@ variable bool Flagged
 variable bool NameOnly
 variable bool Attunable
 variable bool AutoTransmute
+variable bool Collectible
+variable bool NewCollection
 variable int StartLevel
 variable int EndLevel
 variable int Tier
@@ -153,9 +155,10 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
+	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 	
-	call AddLog "Version 0.14c :  released 31st August 2009" FF11FFCC
-	call echolog "Version 0.14c :  released 31st August 2009"
+	call AddLog "Version 0.14d :  released 2nd September 2009" FF11FFCC
+	call echolog "Version 0.14d :  released 2nd September 2009"
 	
 	call StartUp	
 
@@ -785,6 +788,7 @@ function buy(string tabname, string action)
 					if ${BuyNameIterator:First(exists)}
 					{
 						; Scan the subset to get all the settings
+						Collectible:Set[FALSE]
 						CraftItem:Set[FALSE]
 						Harvest:Set[FALSE]
 						Recipe:Set[NULL]
@@ -793,6 +797,7 @@ function buy(string tabname, string action)
 						BuyNameOnly:Set[FALSE]
 						MinSalePrice:Set[FALSE]
 						MaxSalePrice:Set[FALSE]
+						
 						do
 						{
 							Switch "${BuyNameIterator.Key}"
@@ -817,6 +822,9 @@ function buy(string tabname, string action)
 									break
 								Case CraftItem
 									CraftItem:Set[${BuyNameIterator.Value}]
+									break
+								Case Collectible
+									Collectible:Set[${BuyNameIterator.Value}]
 									break
 								Case Stack
 									CraftStack:Set[${BuyNameIterator.Value}]
@@ -983,7 +991,7 @@ function checktotals(string ItemName, int stacksize, int minlimit, string Recipe
 function BuyItems()
 {
 
-	call echolog "-> BuyItems ${ItemName} ${Money} ${Number} ${Flagged} ${NameOnly} ${Attunable} ${AutoTransmute} ${StartLevel} ${EndLevel} ${Tier}"
+	call echolog "-> BuyItems ${ItemName} ${Money} ${Number} ${Flagged} ${NameOnly} ${Attunable} ${AutoTransmute} ${Collectible} ${StartLevel} ${EndLevel} ${Tier}"
 
 	Declare CurrentPage int 1 local
 	Declare CurrentItem int 1 local
@@ -997,6 +1005,7 @@ function BuyItems()
 	Declare BoughtNumber int local
 	Declare MaxBuy int local
 	Declare CurrentQuantity int local
+	Declare InventoryNumber int local
 	Declare StackBuySize int local
 
 	Declare namesearch string local
@@ -1008,12 +1017,12 @@ function BuyItems()
 	if ${NameOnly}
 	{
 		call echolog "searchbrokerlist "${ItemName}" 0 0 0 ${Math.Calc[${Money} * 100]}"
-		call searchbrokerlist "${ItemName}" 0 0 0 ${Math.Calc[${Money} * 100]} FALSE
+		call searchbrokerlist "${ItemName}" 0 0 0 ${Math.Calc[${Money} * 100]} FALSE ${Collectible}
 	}
 	else
 	{
 		call echolog "<BuyItems> call searchbrokerlist "${ItemName}" ${StartLevel} ${EndLevel} ${Tier} ${Math.Calc[${Money} * 100]} ${Attunable}"
-		call searchbrokerlist "${ItemName}" ${StartLevel} ${EndLevel} ${Tier} ${Math.Calc[${Money} * 100]} ${Attunable}
+		call searchbrokerlist "${ItemName}" ${StartLevel} ${EndLevel} ${Tier} ${Math.Calc[${Money} * 100]} ${Attunable} ${Collectible}
 	}
 
 	Call echolog "<BuyItems> Call BrokerSearch ${ItemName}"
@@ -1064,11 +1073,15 @@ function BuyItems()
 
 						; if the broker entry being looked at shows more items than we want then buy what we want
 						
-						if ${BrokerNumber} > ${Number}
-							TryBuy:Set[${Number}]
+						if ${Collectible}
+							TryBuy:Set[1]
 						else
-							TryBuy:Set[${BrokerNumber}]
-						
+						{
+							if ${BrokerNumber} > ${Number}
+								TryBuy:Set[${Number}]
+							else
+								TryBuy:Set[${BrokerNumber}]
+						}
 						; check you can afford to buy the items
 						
 						call checkcash ${Money} ${TryBuy} ${Flagged}
@@ -1082,16 +1095,39 @@ function BuyItems()
 							; make sure you don't already have an item and it's lore
 							call checklore "${Vendor.Item[${CurrentItem}].Name}"
 								
-							; if the item is lore and you already have it then stop and move on
+							; if the item is lore or collectible and you already have it then stop and move on
 							if ${Return}
 							{
-								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE and you already have one
+								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE or Collectible Item and you already have one
 								Break
 							}
+							
+							if ${Collectible} 
+							{
+								Vendor.Item[${CurrentItem}]:Examine
+								wait 5
+								if ${NewCollection}
+								{
+									CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+									Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+									NewCollection:Set[FALSE]
+									
+									wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
 
-							Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+									break
+								}
+								else
+								{
+									break
+								}
+							}
+							else
+							{
+								CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+								wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+							}
 
-							wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${BrokerNumber}
 							wait 5
 
 							if ${AutoTransmute}
@@ -1106,7 +1142,7 @@ function BuyItems()
 
 							; if unable to buy the required stack due to stack limitations then change to buying singles
 							
-							if ${Vendor.Item[${CurrentItem}].Quantity} == ${BrokerNumber} && ${Vendor.Item[${CurrentItem}].Quantity} != 0
+							if ${Vendor.Item[${CurrentItem}].Quantity} == ${BrokerNumber} && ${Vendor.Item[${CurrentItem}].Quantity} != 0 && !${Collectible}
 							{
 								; make sure you don't already have an item and it's lore
 								call checklore "${Vendor.Item[${CurrentItem}].Name}"
@@ -1316,7 +1352,7 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 		if ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked}
 			call searchbrokerlist "${ItemName}" 0 0 0  ${cost}
 		else
-			call searchbrokerlist "${ItemName}" ${StartLevel} ${EndLevel} ${Tier} ${cost} ${UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices].Checked}
+			call searchbrokerlist "${ItemName}" ${StartLevel} ${EndLevel} ${Tier} ${cost} ${UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices].Checked} ${UIElement[Collectible@Buy@GUITabs@MyPrices].Checked}
 	}
 	else
 	{
@@ -1327,7 +1363,7 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 }
 
 
-function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tier, float cost, bool BuyAttuneOnly)
+function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tier, float cost, bool BuyAttuneOnly, bool Collectible)
 {
 
 	call echolog "-> searchbrokerlist ${ItemName} , ${StartLevel} , ${EndLevel} , ${Tier} , ${cost} ${BuyAttuneOnly}"
@@ -1337,21 +1373,25 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	Declare endsearch string local
 	Declare tiersearch string local
 	Declare costsearch string local
-	Declare attunesearch string local
+	Declare typesearch string local
+	Declare Collectable string local
 
 	if !${ItemName.Left[6].Equal[NoName]}
 		namesearch:Set[Name "${ItemName}"]
 
-	if ${StartLevel}>0
+	if ${StartLevel}>0  && !${Collectible}
 		startsearch:Set["MinLevel ${StartLevel}"]
 
-	if ${EndLevel}>0
+	if ${EndLevel}>0  && !${Collectible}
 		endsearch:Set["MaxLevel ${EndLevel}"]
 
 	if ${BuyAttuneOnly}
-		attunesearch:Set["-Type Attuneable"]
+		typesearch:Set["-Type Attuneable"]
+		
+	if ${Collectible}
+		typesearch:Set["-Type Collectable"]
 
-	if ${Tier}>0
+	if ${Tier}>0 && !${Collectible}
 	{
 		Switch "${Tier}"
 		{
@@ -1385,9 +1425,11 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	costsearch:Set["MaxPrice ${cost}"]
 
 	if ${namesearch.Length}>0
-		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${attunesearch} Sort ByPriceAsc
+		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
 	else
-		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${attunesearch} Sort ByPriceAsc
+	{
+		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
+	}
 	
 	call echolog "<- searchbrokerlist
 }	
@@ -1757,6 +1799,10 @@ function Saveitem(string Saveset)
 			Item:AddSetting[AutoTransmute,TRUE]
 		else
 			Item:AddSetting[AutoTransmute,FALSE]
+
+		if ${UIElement[Collectible@Buy@GUITabs@MyPrices].Checked}
+			Item:AddSetting[Collectible,TRUE]
+
 	}
 	elseif ${Saveset.Equal["BuyUpdate"]}
 	{
@@ -2077,6 +2123,18 @@ function ShowBuyPrices(int ItemID)
 	Declare Silver int local
 	Declare Copper int local
 	
+	; show all elements in tab
+	UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:Show
+	UIElement[Harvest@Buy@GUITabs@MyPrices]:Show
+	UIElement[Transmute@Buy@GUITabs@MyPrices]:Show
+	UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:Show
+	UIElement[Collection@Buy@GUITabs@MyPrices]:Show
+	UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Show
+	UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Show
+	UIElement[StartLevel@Buy@GUITabs@MyPrices]:Show
+	UIElement[EndLevel@Buy@GUITabs@MyPrices]:Show
+	UIElement[Tier@Buy@GUITabs@MyPrices]:Show
+
 	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[ItemList].Item[${ItemID}]}]
 
 	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
@@ -2111,18 +2169,50 @@ function ShowBuyPrices(int ItemID)
 		UIElement[Harvest@Buy@GUITabs@MyPrices]:UnsetChecked
 
 	if ${BuyItem.FindSetting[BuyAttuneOnly]}
+	{
 		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:SetChecked
+		UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
+		UIElement[Collectible@Buy@GUITabs@MyPrices]:Hide
+	}
 	else
+	{
 		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:UnsetChecked
+	}
 
 	if ${BuyItem.FindSetting[AutoTransmute]}
+	{
 		UIElement[Transmute@Buy@GUITabs@MyPrices]:SetChecked
+		UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
+		UIElement[Collectible@Buy@GUITabs@MyPrices]:Hide
+	}
 	else
 		UIElement[Transmute@Buy@GUITabs@MyPrices]:UnsetChecked
 
+	if ${BuyItem.FindSetting[Collectible]}
+	{
+		UIElement[Collectible@Buy@GUITabs@MyPrices]:SetChecked
+		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:UnsetChecked
+		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:UnsetChecked
+		UIElement[Transmute@Buy@GUITabs@MyPrices]:UnsetChecked
+		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:Hide
+		UIElement[Harvest@Buy@GUITabs@MyPrices]:Hide
+		UIElement[Transmute@Buy@GUITabs@MyPrices]:Hide
+		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:Hide
+		UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Hide
+		UIElement[StartLevel@Buy@GUITabs@MyPrices]:Hide
+		UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Hide
+		UIElement[EndLevel@Buy@GUITabs@MyPrices]:Hide
+		UIElement[Tier@Buy@GUITabs@MyPrices]:Hide
+	}
+	else
+	{
+		UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
+	}
+	
 	if ${BuyItem.FindSetting[BuyNameOnly]}
 	{
 		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:SetChecked
+		UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
 		UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Hide
 		UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Hide
 		UIElement[StartLevel@Buy@GUITabs@MyPrices]:Hide
@@ -2132,15 +2222,11 @@ function ShowBuyPrices(int ItemID)
 	else
 	{
 		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:UnsetChecked
-		UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Show
-		UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Show
-		UIElement[StartLevel@Buy@GUITabs@MyPrices]:Show
-		UIElement[EndLevel@Buy@GUITabs@MyPrices]:Show
-		UIElement[Tier@Buy@GUITabs@MyPrices]:Show
 		UIElement[StartLevel@Buy@GUITabs@MyPrices]:SetText[${StartLevel}]
 		UIElement[EndLevel@Buy@GUITabs@MyPrices]:SetText[${EndLevel}]
 		UIElement[Tier@Buy@GUITabs@MyPrices]:SetSelection[${Tier}]
 	}
+	
 	call echolog "<end> : ShowBuyPrices"
 }
 
@@ -2764,9 +2850,11 @@ function checklore(string ItemName)
 		{
 
 			; if an item in your inventory matches the name of the item
-			if ${Me.CustomInventory[${xvar}].Name.Equal[${ItemName}]} && ${Me.CustomInventory[${xvar}].Lore}
-				Return TRUE
-
+			if ${Me.CustomInventory[${xvar}].Name.Equal[${ItemName}]}
+			{
+				if ${Collectible} || ${Me.CustomInventory[${xvar}].Lore}
+					Return TRUE
+			}
 		}
 		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	}
@@ -2909,6 +2997,7 @@ atom atexit()
 	Event[EQ2_onInventoryUpdate]:DetachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
+	Event[EQ2_ExamineItemWindowAppeared]:DetachAtom[EQ2_ExamineItemWindowAppeared]
 
 	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
@@ -2932,4 +3021,14 @@ atom(script) EQ2_onIncomingText(string Text)
 		BadContainer:Set[TRUE]
 	}
 	return
+}
+
+atom EQ2_ExamineItemWindowAppeared(string ItemName, string WindowID)
+{
+	if ${ExamineItemWindow[${WindowID}].TextVector} == 1
+		NewCollection:Set[TRUE]
+	else
+		NewCollection:Set[FALSE]
+
+	EQ2Execute /close_top_window 
 }
