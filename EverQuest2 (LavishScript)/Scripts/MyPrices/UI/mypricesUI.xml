@@ -1223,16 +1223,6 @@
 						<Height>20</Height>
 						<Text>Name</Text>
 					</Text>
-					<checkbox Name='Harvest'>
-						<X>40</X>
-						<Y>325</Y>
-						<Width>100</Width>
-						<Height>20</Height>
-						<Text>Harvest</Text>
-						<AutoTooltip>
-							Item is a harvest item (200 per stack)
-						</AutoTooltip>
-					</checkbox>
 					<Text Name='BuyNumberText'>
 						<X>393</X>
 						<Y>340</Y>
@@ -1240,10 +1230,20 @@
 						<Height>20</Height>
 						<Text>Number</Text>
 					</Text>
+					<checkbox Name='Harvest'>
+						<X>20</X>
+						<Y>322</Y>
+						<Width>60</Width>
+						<Height>20</Height>
+						<Text>Harvest</Text>
+						<AutoTooltip>
+							Item is a harvest item (200 per stack)
+						</AutoTooltip>
+					</checkbox>
 					<checkbox Name='BuyNameOnly'>
-						<X>110</X>
-						<Y>325</Y>
-						<Width>100</Width>
+						<X>85</X>
+						<Y>322</Y>
+						<Width>80</Width>
 						<Height>20</Height>
 						<Text>Name Only</Text>
 						<OnLeftClick>
@@ -1269,24 +1269,85 @@
 						</AutoTooltip>
 					</checkbox>
 					<checkbox Name='BuyAttuneOnly'>
-						<X>195</X>
-						<Y>325</Y>
-						<Width>100</Width>
+						<X>170</X>
+						<Y>322</Y>
+						<Width>75</Width>
 						<Height>20</Height>
-						<Text>Attuneable Only</Text>
+						<Text>Attuneable</Text>
 						<AutoTooltip>
 							Atunnable Items only
 						</AutoTooltip>
+						<OnLeftClick>
+							if ${UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices].Checked}
+							{
+								UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
+								UIElement[Collectible@Buy@GUITabs@MyPrices]:Hide
+							}
+							else
+							{
+								UIElement[Collectible@Buy@GUITabs@MyPrices]:Show
+							}
+						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='Transmute'>
-						<X>315</X>
-						<Y>325</Y>
-						<Width>100</Width>
+						<X>250</X>
+						<Y>322</Y>
+						<Width>65</Width>
 						<Height>20</Height>
-						<Text>Auto Transmute</Text>
+						<Text>Auto-Mute</Text>
+						<OnLeftClick>
+							if ${UIElement[Transmute@Buy@GUITabs@MyPrices].Checked}
+							{
+								UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
+								UIElement[Collectible@Buy@GUITabs@MyPrices]:Hide
+							}
+							else
+							{
+								UIElement[Collectible@Buy@GUITabs@MyPrices]:Show
+							}
+						</OnLeftClick>
 						<AutoTooltip>
 							Transmute Items when bought
 						</AutoTooltip>
+					</checkbox>
+					<checkbox Name='Collectible'>
+						<X>330</X>
+						<Y>322</Y>
+						<Width>65</Width>
+						<Height>20</Height>
+						<Text>Collection</Text>
+						<AutoTooltip>
+							Needed Collection Items
+						</AutoTooltip>
+						<OnLeftClick>
+							if ${UIElement[Collectible@Buy@GUITabs@MyPrices].Checked}
+							{
+								UIElement[Transmute@Buy@GUITabs@MyPrices]:UnsetChecked
+								UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:Hide
+								UIElement[Harvest@Buy@GUITabs@MyPrices]:Hide
+								UIElement[Transmute@Buy@GUITabs@MyPrices]:Hide
+								UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:UnsetChecked
+								UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:Hide
+								UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Hide
+								UIElement[StartLevel@Buy@GUITabs@MyPrices]:Hide
+								UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Hide
+								UIElement[EndLevel@Buy@GUITabs@MyPrices]:Hide
+								UIElement[Tier@Buy@GUITabs@MyPrices]:Hide
+							}
+							else
+							{
+								UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:Show
+								UIElement[Transmute@Buy@GUITabs@MyPrices]:Show
+								UIElement[Harvest@Buy@GUITabs@MyPrices]:Show
+								UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:Show
+								UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Show
+								UIElement[StartLevel@Buy@GUITabs@MyPrices]:Show
+								UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Show
+								UIElement[EndLevel@Buy@GUITabs@MyPrices]:Show
+								UIElement[Tier@Buy@GUITabs@MyPrices]:Show
+							
+							}
+						</OnLeftClick>
 					</checkbox>
 					<Textentry Name='BuyName'>
 						<X>25</X>
