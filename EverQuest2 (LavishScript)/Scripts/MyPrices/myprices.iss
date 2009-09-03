@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.14d :  released 2nd September 2009
+; Version 0.14e :  released 3rd September 2009
 ;
 ; Declare Variables
 ;
@@ -89,6 +89,7 @@ variable settingsetref BuyItem
 variable settingsetref ItemList
 variable settingsetref Item
 variable settingsetref General
+variable settingsetref Rejected
 
 
 ; Global Variables used to save information in all functions/datafiles
@@ -157,8 +158,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 	
-	call AddLog "Version 0.14d :  released 2nd September 2009" FF11FFCC
-	call echolog "Version 0.14d :  released 2nd September 2009"
+	call AddLog "Version 0.14e :  released 3rd September 2009" FF11FFCC
+	call echolog "Version 0.14e :  released 3rd September 2009"
 	
 	call StartUp	
 
@@ -601,14 +602,14 @@ function addtotals(string ItemName, int itemnumber)
 	CraftList:Set[${LavishSettings[craft].FindSet[CraftItem]}]
 
 
-	if ${CraftList.FindSetting[${ItemName}](exists)}
+	if ${CraftList.FindSetting["${ItemName}"](exists)}
 	{
-		Totals:Set[${CraftList.FindSetting[${ItemName}]}]
-		CraftList:AddSetting[${ItemName},${Math.Calc[${Totals}+${itemnumber}]}]
+		Totals:Set[${CraftList.FindSetting["${ItemName}"]}]
+		CraftList:AddSetting["${ItemName}",${Math.Calc[${Totals}+${itemnumber}]}]
 	}
 	else
 	{
-		CraftList:AddSetting[${ItemName},${itemnumber}]
+		CraftList:AddSetting["${ItemName}",${itemnumber}]
 	}
 	call echolog "<end> : addtotals"
 }
@@ -966,8 +967,8 @@ function checktotals(string ItemName, int stacksize, int minlimit, string Recipe
 
 	CraftList:Set[${LavishSettings[craft].FindSet[CraftItem]}]
 
-	if ${CraftList.FindSetting[${ItemName}](exists)}
-		Totals:Set[${CraftList.FindSetting[${ItemName}]}]
+	if ${CraftList.FindSetting["${ItemName}"](exists)}
+		Totals:Set[${CraftList.FindSetting["${ItemName}"]}]
 	else
 		Totals:Set[0]
 	
@@ -1104,19 +1105,24 @@ function BuyItems()
 							
 							if ${Collectible} 
 							{
-								Vendor.Item[${CurrentItem}]:Examine
-								wait 5
-								if ${NewCollection}
-								{
-									CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
-									Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
-									NewCollection:Set[FALSE]
-									
-									wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
-								}
+								call Rejected "${Vendor.Item[${CurrentItem}].Name}"
+								if ${Return}
+										break
 								else
 								{
-									break
+									Vendor.Item[${CurrentItem}]:Examine
+									wait 5
+									if ${NewCollection}
+									{
+										CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+										Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+										NewCollection:Set[FALSE]
+										wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+									}
+									else
+									{
+										break
+									}
 								}
 							}
 							else
@@ -1331,7 +1337,7 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 	Declare cp int local
 	
 	; scan the broker for the item clicked on in the list
-	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${tabtype}].FindChild[ItemList].Item[${ItemID}]}]
+	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[${tabtype}].FindChild[ItemList].Item[${ItemID}]}"]
 
 	If ${tabtype.Equal["Buy"]}
 	{
@@ -1372,51 +1378,53 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	Declare tiersearch string local
 	Declare costsearch string local
 	Declare typesearch string local
-	Declare Collectable string local
 
 	if !${ItemName.Left[6].Equal[NoName]}
 		namesearch:Set[Name "${ItemName}"]
-
-	if ${StartLevel}>0  && !${Collectible}
-		startsearch:Set["MinLevel ${StartLevel}"]
-
-	if ${EndLevel}>0  && !${Collectible}
-		endsearch:Set["MaxLevel ${EndLevel}"]
-
-	if ${BuyAttuneOnly}
-		typesearch:Set["-Type Attuneable"]
 		
 	if ${Collectible}
 		typesearch:Set["-Type Collectable"]
-
-	if ${Tier}>0 && !${Collectible}
+	else
 	{
-		Switch "${Tier}"
+
+		if ${BuyAttuneOnly}
+			typesearch:Set["-Type Attuneable"]
+
+		if ${StartLevel}>0 
+			startsearch:Set["MinLevel ${StartLevel}"]
+
+		if ${EndLevel}>0
+			endsearch:Set["MaxLevel ${EndLevel}"]
+
+		if ${Tier}>0
 		{
-			Case 1
-				tiersearch:Set["MinTier Common MaxTier Mythical"]
-				break
-			Case 2
-				tiersearch:Set["MinTier Common MaxTier Common"]
-				break
-			Case 3
-				tiersearch:Set["MinTier Handcrafted MaxTier Handcrafted"]
-				break
-			Case 4
-				tiersearch:Set["MinTier Treasured MaxTier Treasured"]
-				break
-			Case 5
-				tiersearch:Set["MinTier Mastercrafted MaxTier Mastercrafted"]
-				break
-			Case 6
-				tiersearch:Set["MinTier Legendary MaxTier Legendary"]
-				break
-			Case 7
-				tiersearch:Set["MinTier Fabled MaxTier Fabled"]
-				break
-			Case 8
-				tiersearch:Set["MinTier Mythical MaxTier Mythical"]
-				break
+			Switch "${Tier}"
+			{
+				Case 1
+					tiersearch:Set["MinTier Common MaxTier Mythical"]
+					break
+				Case 2
+					tiersearch:Set["MinTier Common MaxTier Common"]
+					break
+				Case 3
+					tiersearch:Set["MinTier Handcrafted MaxTier Handcrafted"]
+					break
+				Case 4
+					tiersearch:Set["MinTier Treasured MaxTier Treasured"]
+					break
+				Case 5
+					tiersearch:Set["MinTier Mastercrafted MaxTier Mastercrafted"]
+					break
+				Case 6
+					tiersearch:Set["MinTier Legendary MaxTier Legendary"]
+					break
+				Case 7
+					tiersearch:Set["MinTier Fabled MaxTier Fabled"]
+					break
+				Case 8
+					tiersearch:Set["MinTier Mythical MaxTier Mythical"]
+					break
+			}
 		}
 	}
 
@@ -1494,7 +1502,7 @@ function checkitem(string checktype, string ItemName)
 	call echolog "-> checkitem : ${checktype} ${name}"
 	; keep a reference directly to the Item set.
 	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	Item:Set[${ItemList.FindSet[${ItemName}]}]
+	Item:Set[${ItemList.FindSet["${ItemName}"]}]
 
 	if ${Item.FindSetting[${checktype}](exists)}
 	{
@@ -1565,7 +1573,7 @@ function LoadList()
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem["${ItemName}"]
 
 					; if the item is flagged as a craft item then add the total number on the broker
-					if ${ItemList.FindSet[${ItemName}].FindSetting[CraftItem]}
+					if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
 					{
 						call SetColour Sell ${numitems} FFFFFF00
 					}
@@ -1629,7 +1637,7 @@ function SaveSell()
 	Declare Silver int local
 	Declare Copper float local
 
-	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemName].Text}]
+	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemName].Text}"]
 	if ${ItemName.Length} == 0
 	{
 		call AddLog "Try Selecting something first!!" FFFF0000
@@ -1700,9 +1708,9 @@ function Saveitem(string Saveset)
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
 
-	ItemList:AddSet[${ItemName}]
+	ItemList:AddSet["${ItemName}"]
 
-	Item:Set[${ItemList.FindSet[${ItemName}]}]
+	Item:Set[${ItemList.FindSet["${ItemName}"]}]
 	
 	if ${Saveset.Equal["Prices"]}
 	{
@@ -1742,11 +1750,11 @@ function Saveitem(string Saveset)
 
 		if ${Recipe.Length} == 0
 		{
-			Item:AddSetting[Recipe,${ItemName}]
+			Item:AddSetting[Recipe,"${ItemName}"]
 		}
 		else
 		{
-			Item:AddSetting[Recipe,${Recipe}]
+			Item:AddSetting[Recipe,"${Recipe}"]
 		}
 		
 		if ${Saveset.Equal["Inventory"]}
@@ -1768,7 +1776,7 @@ function Saveitem(string Saveset)
 	elseif ${Saveset.Equal["Buy"]}
 	{
 		; Clear all previous information
-		ItemList[${ItemName}]:Clear
+		ItemList["${ItemName}"]:Clear
 
 		Item:AddSetting[BuyNumber,${Number}]
 		Item:AddSetting[BuyPrice,${Money}]
@@ -1834,7 +1842,6 @@ function SetColour(string UITab, int position, string colour)
 function FillMinPrice(int ItemID)
 {
 	call echolog "-> FillMinPrice ${ItemID}"
-	Declare LBoxString string local
 	Declare Platina int local
 	Declare Gold int local
 	Declare Silver int local
@@ -1845,16 +1852,18 @@ function FillMinPrice(int ItemID)
 	; Put the values in the right boxes.
 
 	; Display the current price
-	LBoxString:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${ItemID}]}]
+	
+	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${ItemID}]}"]
+	
+	call FindItem ${itemprice[${ItemID}]} "${ItemName}"
 
-	call FindItem ${itemprice[${ItemID}]} "${LBoxString}"
 	j:Set[${Return}]
 
 	if ${j} != -1
 	{
-		ItemName:Set[${Me.Vending[${itemprice[${ItemID}]}].Consignment[${j}].Name}]
+		ItemName:Set["${Me.Vending[${itemprice[${ItemID}]}].Consignment[${j}].Name}"]
 
-		UIElement[ItemName@Sell@GUITabs@MyPrices]:SetText[${LBoxString}]
+		UIElement[ItemName@Sell@GUITabs@MyPrices]:SetText["${ItemName}"]
 
 		; Display your current Price for that Item
 
@@ -1881,9 +1890,9 @@ function FillMinPrice(int ItemID)
 		LavishSettings[myprices]:AddSet[Item]
 
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-		ItemList:AddSet[${ItemName}]
+		ItemList:AddSet["${ItemName}"]
 
-		Item:Set[${ItemList.FindSet[${LBoxString}]}]
+		Item:Set[${ItemList.FindSet["${ItemName}"]}]
 		Money:Set[${Item.FindSetting[Sell]}]
 
 		CraftItem:Set[${Item.FindSetting[CraftItem]}]
@@ -1980,9 +1989,10 @@ function FillMinPrice(int ItemID)
 		UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetText[${Copper}]
 
 		; Scan how many items there are and put in this box
-		if ${CraftList.FindSetting["${LBoxString}"](exists)}
+		
+		if ${CraftList.FindSetting["${ItemName}"](exists)}
 		{
-			UIElement[ItemNumber@Sell@GUITabs@MyPrices]:SetText[${CraftList.FindSetting["${LBoxString}"]} Units]
+			UIElement[ItemNumber@Sell@GUITabs@MyPrices]:SetText[${CraftList.FindSetting["${ItemName}"]} Units]
 		}
 		else
 		{
@@ -2001,9 +2011,9 @@ function CheckPriceSet(string minmax, string ItemName)
 	LavishSettings[myprices]:AddSet[Item]
 
 	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	ItemList:AddSet[${ItemName}]
+	ItemList:AddSet["${ItemName}"]
 
-	Item:Set[${ItemList.FindSet[${ItemName}]}]
+	Item:Set[${ItemList.FindSet["${ItemName}"]}]
 	call echolog "<- ${minmax} ${Item.FindSetting[minmax]}"
 	return ${Item.FindSetting[${minmax}]}
 }
@@ -2016,7 +2026,7 @@ function savebuyinfo()
 	Declare Silver int local
 	Declare Copper float local
 
-	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyName].Text}]
+	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyName].Text}"]
 	Number:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[BuyNumber].Text}]
 	Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinPlatPrice].Text}]
 	Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
@@ -2061,8 +2071,8 @@ function savecraftinfo(string UITab)
 {
 	call echolog "<start> : savecraftinfo"
 
-	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[CraftName].Text}]
-	Recipe:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[RecipeName].Text}]
+	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[CraftName].Text}"]
+	Recipe:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[RecipeName].Text}"]
 	; Stacksize
 	Money:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[${UITab}].FindChild[CraftStack].Text}]
 	; Min Stock Number
@@ -2096,7 +2106,7 @@ function deletebuyinfo(int ItemID)
 {
 	call echolog "-> deletebuyinfo ${ItemID}"
 
-	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Buyname].Text}]
+	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[Buyname].Text}"]
 
 	; find the item Sub-Set and remove it
 	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
@@ -2105,7 +2115,7 @@ function deletebuyinfo(int ItemID)
 	; save the new information
 	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
 	
-	UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Deleting ${ItemName}]
+	UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Deleting "${ItemName}"]
 
 	; re-scan and display the new buy list
 	call buy Buy init
@@ -2133,7 +2143,7 @@ function ShowBuyPrices(int ItemID)
 	UIElement[EndLevel@Buy@GUITabs@MyPrices]:Show
 	UIElement[Tier@Buy@GUITabs@MyPrices]:Show
 
-	ItemName:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[ItemList].Item[${ItemID}]}]
+	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[ItemList].Item[${ItemID}]}"]
 
 	BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
 
@@ -2154,7 +2164,7 @@ function ShowBuyPrices(int ItemID)
 	Money:Set[${Math.Calc[${Money}-${Silver}]}]
 	Copper:Set[${Math.Calc[${Money}*100]}]
 
-	UIElement[BuyName@Buy@GUITabs@MyPrices]:SetText[${ItemName}]
+	UIElement[BuyName@Buy@GUITabs@MyPrices]:SetText["${ItemName}"]
 	UIElement[BuyNumber@Buy@GUITabs@MyPrices]:SetText[${Number}]
 	UIElement[MinPlatPrice@Buy@GUITabs@MyPrices]:SetText[${Platina}]
 	UIElement[MinGoldPrice@Buy@GUITabs@MyPrices]:SetText[${Gold}]
@@ -2597,7 +2607,7 @@ function inventorylist()
 		{
 			if !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].NoTrade} && !${Me.CustomInventory[${xvar}].Heirloom} 
 			{
-				ItemName:Set[${Me.CustomInventory[${xvar}].Name}]
+				ItemName:Set["${Me.CustomInventory[${xvar}].Name}"]
 				if ${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text.Length} == 0 || ${ItemName.Find[${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text}]} != NULL
 				{
 					UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${ItemName}"]
@@ -2671,13 +2681,13 @@ function placeitems(string ItemName, int box, int numitems)
 		do
 		{
 			; if an item in your inventory matches the crafted item from your crafted item list
-			if ${Me.CustomInventory[${xvar}].Name.Equal[${ItemName}]} && !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
+			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
 			{
 				; check current used capacity
 				lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
 
 				; place the item into the consignment system , grouping it with similar items
-				Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment[${ItemName}].SerialNumber}]
+				Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
 
 				; make the script wait till the box total has changed (item was added)
 				; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
@@ -2688,13 +2698,13 @@ function placeitems(string ItemName, int box, int numitems)
 				if ${BadContainer}
 				{
 					; change the setting for that item so the container is marked as ignore
-					Item:Set[${ItemList.FindSet[${ItemName}]}]
+					Item:Set[${ItemList.FindSet["${ItemName}"]}]
 					Item:AddSetting[Box${box},3]
 					
 					; reset the bad Container Flag
 					BadContainer:Set[FALSE]
 					
-					echo Error in container ${box} settings for ${ItemName} , marking that container as bad
+					echo Error in container ${box} settings for "${ItemName}" , marking that container as bad
 					
 					; Get a new container number
 					call boxwithmostspace "${ItemName}"
@@ -2714,7 +2724,7 @@ function placeitems(string ItemName, int box, int numitems)
 						lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
 						
 						; place the item into the consignment system , grouping it with similar items
-						Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment[${ItemName}].SerialNumber}]
+						Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
 						
 						; make the script wait till the box total has changed (item was added)
 						; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
@@ -2817,7 +2827,7 @@ function GoTransmute(string ItemName)
 		do
 		{
 			; if an item in your inventory matches the name of the item
-			if ${Me.CustomInventory[${xvar}].Name.Equal[${ItemName}]} && !${Me.CustomInventory[${xvar}].Attuned}
+			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && !${Me.CustomInventory[${xvar}].Attuned}
 			{
 					Me.CustomInventory[${xvar}]:Transmute
 					wait 200 ${RewardWindow(exists)}
@@ -2972,6 +2982,19 @@ function StartUp()
 	{
 		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
 	}
+}
+
+function Rejected(string ItemName)
+{
+	LavishSettings:AddSet[Rejected]
+	Rejected:Set[${LavishSettings.FindSet[Rejected]}]
+
+	if !${Rejected.FindSetting["${ItemName}"](exists)}
+	{
+		Rejected:AddSetting["${ItemName}",TRUE]
+		Return FALSE
+	}
+	Return TRUE
 }
 
 atom(script) EQ2_onInventoryUpdate()
