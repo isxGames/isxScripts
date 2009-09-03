@@ -1113,8 +1113,6 @@ function BuyItems()
 									NewCollection:Set[FALSE]
 									
 									wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
-
-									break
 								}
 								else
 								{
@@ -2746,7 +2744,7 @@ function numinventoryitems(string ItemName, bool num)
 	
 	do
 	{
-		if ${Me.CustomInventory[${xvar}].Name.Equal[${ItemName}]} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
+		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
 		{
 
 			if ${num}
@@ -2838,6 +2836,7 @@ function checklore(string ItemName)
 	Declare numitems int local
 	Declare xvar int local 1
 
+	
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
 	call numinventoryitems "${ItemName}" FALSE
@@ -2848,9 +2847,8 @@ function checklore(string ItemName)
 	{
 		do
 		{
-
 			; if an item in your inventory matches the name of the item
-			if ${Me.CustomInventory[${xvar}].Name.Equal[${ItemName}]}
+			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
 			{
 				if ${Collectible} || ${Me.CustomInventory[${xvar}].Lore}
 					Return TRUE
