@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14f :  released 4th September 2009"
+variable string Version="Version 0.14g :  released 4th September 2009"
 ;
 ; Declare Variables
 ;
@@ -815,6 +815,9 @@ function buy(string tabname, string action)
 								Case BuyAttuneOnly
 									Attunable:Set[${BuyNameIterator.Value}]
 									break
+								Case MaxSpend
+									MaxMoney:Set[${BuyNameIterator.Value}]
+									break
 								Case Harvest
 									Flagged:Set[${BuyNameIterator.Value}]
 									break
@@ -1056,7 +1059,7 @@ function BuyItems()
 				BrokerPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
 
 				; if it's more than I want to pay then stop
-				if ${BrokerPrice} > ${Money}
+				if ${BrokerPrice} > ${Money} || ${BrokerPrice} > ${MaxMoney}
 				{
 					StopSearch:Set[TRUE]
 					break
@@ -1085,7 +1088,7 @@ function BuyItems()
 						}
 						; check you can afford to buy the items
 						
-						call checkcash ${Money} ${TryBuy} ${Flagged}
+						call checkcash ${BrokerPrice} ${MaxMoney} ${TryBuy} ${Flagged}
 						
 						; buy what you can afford
 						if ${Return} > 0
@@ -1193,6 +1196,10 @@ function BuyItems()
 							; check you have actually bought an item
 							call checkbought ${BrokerPrice} ${OldCash} ${MyCash}
 							BoughtNumber:Set[${Return}]
+							
+							; reduce the max coinage you will pay by the cost of the number items you have bought.
+							MaxMoney:Dec[${Math.Calc[${BoughtNumber}*${BrokerPrice}]}]
+							
 							; reduce the number left to buy
 							Number:Set[${Math.Calc[${Number}-${BoughtNumber}]}]
 							call StringFromPrice ${BrokerPrice}
@@ -1287,12 +1294,14 @@ function checkbought(float BrokerPrice, float OldCash, float NewCash)
 
 }
 
-; check to see if you have enough coin on your character to buy the number you want to,
-; if not then calculate how many you CAN buy with the coin you have.
+; check to see if you have enough coin on your character or if you have enough limit (Max Money you are willing to spend) left 
+; to buy the number you want to,
+; 
+; if not then calculate how many you CAN buy with the coin/limit you have.
 
-function checkcash(float Money, int Number, bool Harvest)
+function checkcash(float Money, float MaxMoney, int Number, bool Harvest)
 {
-	call echolog  "-> checkcash: BuyPrice : ${Money} Buy Number : ${Number} Harvest : ${Harvest}"
+	call echolog  "-> checkcash: BuyPrice : ${Money} MaxMoney : ${MaxMoney}  Buy Number : ${Number} Harvest : ${Harvest}"
 
 	Declare NewNumber int 0 local
 	Declare MyCash float local
@@ -1310,6 +1319,13 @@ function checkcash(float Money, int Number, bool Harvest)
 
 	if ${Number} > ${MaxNumber}
 		Number:Set[${MaxNumber}]
+
+	if ${Math.Calc[(${Money}*${Number})]} > ${MaxMoney}
+	{
+		NewNumber:Set[${Math.Calc[${MaxMoney}/${Money}]}]
+		call echolog "<- checkcash ${NewNumber}"
+		return ${NewNumber}
+	}
 
 	if ${Math.Calc[(${Money}*${Number})]} > ${MyCash}
 	{
@@ -1780,6 +1796,7 @@ function Saveitem(string Saveset)
 
 		Item:AddSetting[BuyNumber,${Number}]
 		Item:AddSetting[BuyPrice,${Money}]
+		Item:AddSetting[MaxSpend,${MaxMoney}]
 
 		if ${UIElement[Harvest@Buy@GUITabs@MyPrices].Checked}
 			Item:AddSetting[Harvest,TRUE]
@@ -1813,6 +1830,8 @@ function Saveitem(string Saveset)
 	elseif ${Saveset.Equal["BuyUpdate"]}
 	{
 		Item:AddSetting[BuyNumber,${Number}]
+		Item:AddSetting[MaxSpend,${MaxMoney}]
+		
 	}
 
 	LavishSettings[myprices]:Export[${EQ2.ServerName}_${XMLPath}${Me.Name}_MyPrices.XML]
@@ -2039,11 +2058,26 @@ function savebuyinfo()
 	if ${ItemName.Length} == 0 && !${UIElement[BuyNameOnly@Sell@GUITabs@MyPrices].Checked}
 		ItemName:Set["NoName S: ${StartLevel} E: ${EndLevel} T : ${Tier}"]
 
-	; calclulate the value in silver
+	; calclulate the values in silver
 	Platina:Set[${Math.Calc[${Platina}*10000]}]
 	Gold:Set[${Math.Calc[${Gold}*100]}]
 	Copper:Set[${Math.Calc[${Copper}/100]}]
 	Money:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+	
+	Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MaxPlatPrice].Text}]
+	Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MaxGoldPrice].Text}]
+	Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MaxSilverPrice].Text}]
+	Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MaxCopperPrice].Text}]
+
+	Platina:Set[${Math.Calc[${Platina}*10000]}]
+	Gold:Set[${Math.Calc[${Gold}*100]}]
+	Copper:Set[${Math.Calc[${Copper}/100]}]
+	MaxMoney:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+	
+	if ${MaxMoney} == 0
+	{
+		MaxMoney:Set[${Math.Calc[${Money}*${Number}]}]
+	}
 
 	; check information was entered in all boxes and save
 	if ${ItemName.Length} == 0
@@ -2151,11 +2185,16 @@ function ShowBuyPrices(int ItemID)
 
 	Number:Set[${BuyItem.FindSetting[BuyNumber]}]
 	Money:Set[${BuyItem.FindSetting[BuyPrice]}]
+	MaxMoney:Set[${BuyItem.FindSetting[MaxSpend]}]
+	
+	If ${MaxMoney} == 0
+		MaxMoney:Set[${Math.Calc[${Money}*${Number}]}]
 
 	StartLevel:Set[${BuyItem.FindSetting[StartLevel]}]
 	EndLevel:Set[${BuyItem.FindSetting[EndLevel]}]
 	Tier:Set[${BuyItem.FindSetting[Tier]}]
 
+	; Calculate and Display Max Price willing to spend for this item(s)
 	Platina:Set[${Math.Calc[${Money}/10000]}]
 	Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
 	Gold:Set[${Math.Calc[${Money}/100]}]
@@ -2170,6 +2209,21 @@ function ShowBuyPrices(int ItemID)
 	UIElement[MinGoldPrice@Buy@GUITabs@MyPrices]:SetText[${Gold}]
 	UIElement[MinSilverPrice@Buy@GUITabs@MyPrices]:SetText[${Silver}]
 	UIElement[MinCopperPrice@Buy@GUITabs@MyPrices]:SetText[${Copper}]
+
+	; Calculate and Display max Spend for this item(s)
+	Platina:Set[${Math.Calc[${MaxMoney}/10000]}]
+	MaxMoney:Set[${Math.Calc[${MaxMoney}-(${Platina}*10000)]}]
+	Gold:Set[${Math.Calc[${MaxMoney}/100]}]
+	MaxMoney:Set[${Math.Calc[${MaxMoney}-(${Gold}*100)]}]
+	Silver:Set[${MaxMoney}]
+	MaxMoney:Set[${Math.Calc[${MaxMoney}-${Silver}]}]
+	Copper:Set[${Math.Calc[${MaxMoney}*100]}]
+
+	UIElement[MaxPlatPrice@Buy@GUITabs@MyPrices]:SetText[${Platina}]
+	UIElement[MaxGoldPrice@Buy@GUITabs@MyPrices]:SetText[${Gold}]
+	UIElement[MaxSilverPrice@Buy@GUITabs@MyPrices]:SetText[${Silver}]
+	UIElement[MaxCopperPrice@Buy@GUITabs@MyPrices]:SetText[${Copper}]
+
 
 	if ${BuyItem.FindSetting[Harvest]}
 		UIElement[Harvest@Buy@GUITabs@MyPrices]:SetChecked
