@@ -437,9 +437,12 @@
 							Create recipe list for Craft.
 						</AutoTooltip>
 						<OnLeftClick>
-							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Making List**"]
-							Script[myprices]:QueueCommand[call LoadList]
-							Script[myprices]:QueueCommand[call checkstock]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Making List**"]
+								Script[myprices]:QueueCommand[call LoadList]
+								Script[myprices]:QueueCommand[call checkstock]
+							}
 						</OnLeftClick>
 					</Commandbutton>
 					<Commandbutton name='RunCraft'>
@@ -452,9 +455,12 @@
 							Run Craft _myprices and Exit script
 						</AutoTooltip>
 						<OnLeftClick>
-							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" Running Craft "]
-							craft ${Me.TSSubClass}-_myprices
-							Script[myprices].VariableScope.Exitmyprices:Set[TRUE]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" Running Craft "]
+								craft ${Me.TSSubClass}-_myprices
+								Script[myprices].VariableScope.Exitmyprices:Set[TRUE]
+							}
 						</OnLeftClick>
 					</Commandbutton>
 					<Commandbutton name='Place'>
@@ -467,8 +473,11 @@
 							Put your crafted items on the broker.
 						</AutoTooltip>
 						<OnLeftClick>
-							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Placing Items**"]
-							Script[myprices]:QueueCommand[call buy item place]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Placing Items**"]
+								Script[myprices]:QueueCommand[call buy item place]
+							}
 						</OnLeftClick>
 					</Commandbutton>
 					<Text Name='ItemName'>
@@ -685,7 +694,10 @@
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call SaveSell]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call SaveSell]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Save Item Settings
@@ -809,7 +821,10 @@
 							Rescan the Your Broker boxes
 						</AutoTooltip>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call LoadList]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call LoadList]
+							}
 						</OnLeftClick>
 					</Commandbutton>
  
@@ -854,9 +869,12 @@
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
-							Script[myprices].VariableScope.ClickID:Set[${ID}]
-							Script[myprices]:QueueCommand[call FillMinPrice ${ID}]
-							Script[myprices]:QueueCommand[call ClickBrokerSearch Sell ${ID}]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices].VariableScope.ClickID:Set[${ID}]
+								Script[myprices]:QueueCommand[call FillMinPrice ${ID}]
+								Script[myprices]:QueueCommand[call ClickBrokerSearch Sell ${ID}]
+							}
 						</OnSelect>
 					</listbox>
 					<checkbox Name='1'>
@@ -889,7 +907,7 @@
 								Script[myprices]:QueueCommand[call SaveSetting box1 FALSE]
 								Script[myprices].VariableScope.box[1]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='2'>
@@ -1211,9 +1229,11 @@
 							Script[myprices]:QueueCommand[call buy Buy Init]
 						</OnLoad>
 						<OnSelect>
-							Script[myprices]:QueueCommand[call ShowBuyPrices ${ID}]
-							Script[myprices]:QueueCommand[call ClickBrokerSearch Buy ${ID}]
-
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call ShowBuyPrices ${ID}]
+								Script[myprices]:QueueCommand[call ClickBrokerSearch Buy ${ID}]
+							}
 						</OnSelect>
 					</listbox>
 					<Text Name='BuyNameText'>
@@ -1448,9 +1468,73 @@
 						<Text>CP</Text>
 						<Color>FFDDBB00</Color>
 					</Text>
+					<Text Name='MaxText'>
+						<X>15</X>
+						<Y>470</Y>
+						<Width>100</Width> 
+						<Height>15</Height>
+						<Text>Maximum Spend</Text>
+					</Text>
+					<Textentry Name='MaxPlatPrice'>
+						<X>35</X>
+						<Y>490</Y>
+						<Width>50</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Text Name='MaxPlatPriceText'>
+						<X>90</X>
+						<Y>490</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>PP</Text>
+					</Text>
+					<Textentry Name='MaxGoldPrice'>
+						<X>115</X>
+						<Y>490</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MaxGoldPriceText'>
+						<X>150</X>
+						<Y>490</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>GP</Text>
+					</Text>
+					<Textentry Name='MaxSilverPrice'>
+						<X>175</X>
+						<Y>490</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MaxSilverPriceText'>
+						<X>210</X>
+						<Y>490</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>SP</Text>
+					</Text>
+					<Textentry Name='MaxCopperPrice'>
+						<X>235</X>
+						<Y>490</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Text Name='MaxCopperPriceText'>
+						<X>270</X>
+						<Y>490</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<Text>CP</Text>
+						<Color>FFDDBB00</Color>
+					</Text>
 					<Text Name='ErrorText'>
 						<X>24%</X>
-						<Y>500</Y>
+						<Y>510</Y>
 						<Width>350</Width> 
 						<Height>15</Height>
 					</Text>
@@ -1479,7 +1563,10 @@
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-						Script[myprices]:QueueCommand[call savebuyinfo]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call savebuyinfo]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Update/Add a new item
@@ -1492,7 +1579,10 @@
 						<Height>15</Height>
 						<Text>Delete</Text>
 						<OnLeftClick>
-						Script[myprices]:QueueCommand[call deletebuyinfo]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call deletebuyinfo]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Delete Selected Item
@@ -1511,9 +1601,12 @@
 							Script[myprices]:QueueCommand[call buy Craft Init]
 						</OnLoad>
 						<OnSelect>
-							UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[ ]
-							Script[myprices]:QueueCommand[call ShowCraftInfo Craft ${ID}]
-							Script[myprices]:QueueCommand[call ClickBrokerSearch Craft ${ID}]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								UIElement[ErrorText@Craft@GUITabs@MyPrices]:SetText[ ]
+								Script[myprices]:QueueCommand[call ShowCraftInfo Craft ${ID}]
+								Script[myprices]:QueueCommand[call ClickBrokerSearch Craft ${ID}]
+							}
 						</OnSelect>
 					</listbox>
 					<Commandbutton name='Rescan'> 
@@ -1523,7 +1616,10 @@
 						<Height>15</Height>
 						<Text>Rescan</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call buy Craft init]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call buy Craft init]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Rescan the list
@@ -1599,7 +1695,10 @@
 						<OnChange>
 							if ${UIElement[BoxNumber@Craft@GUITabs@MyPrices].Text.Length} > 0
 							{
-								Script[myprices]:QueueCommand[call CheckPrimary Craft ${UIElement[BoxNumber@Craft@GUITabs@MyPrices].Text} 2]
+								if ${Script[myprices].VariableScope.Pausemyprices}
+								{
+									Script[myprices]:QueueCommand[call CheckPrimary Craft ${UIElement[BoxNumber@Craft@GUITabs@MyPrices].Text} 2]
+								}
 							}
 						</OnChange>
 					</Textentry>
@@ -1610,8 +1709,11 @@
 						<Height>15</Height>
 						<Text>Unset</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call Unselectcraft Craft ${ID}]
-							Script[myprices]:QueueCommand[call buy Craft Init]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call Unselectcraft Craft ${ID}]
+								Script[myprices]:QueueCommand[call buy Craft Init]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Unselect as a Craftable Item
@@ -1768,7 +1870,10 @@
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call savecraftinfo craft]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call savecraftinfo craft]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Update an item
@@ -1788,10 +1893,13 @@
 						<SelectMultiple>0</SelectMultiple>
 						<Sort>None</Sort>
 						<OnSelect>
-							UIElement[ErrorText@Inventory@GUITabs@MyPrices]:SetText[ ]
-							UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[${ID}]
-							Script[myprices]:QueueCommand[call ShowCraftInfo Inventory ${ID}]
-							Script[myprices]:QueueCommand[call ClickBrokerSearch Inventory ${ID}]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								UIElement[ErrorText@Inventory@GUITabs@MyPrices]:SetText[ ]
+								UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[${ID}]
+								Script[myprices]:QueueCommand[call ShowCraftInfo Inventory ${ID}]
+								Script[myprices]:QueueCommand[call ClickBrokerSearch Inventory ${ID}]
+							}
 						</OnSelect>
 					</listbox>
 					<combobox Name='1'>
@@ -1971,8 +2079,11 @@
 							Put your crafted items on the broker.
 						</AutoTooltip>
 						<OnLeftClick>
-							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Placing Items**"]
-							Script[myprices]:QueueCommand[call buy item place]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Placing Items**"]
+								Script[myprices]:QueueCommand[call buy item place]
+							}
 						</OnLeftClick>
 					</Commandbutton>
 					<Text Name='InventoryFilterText'>
@@ -2076,8 +2187,11 @@
 						<Height>15</Height>
 						<Text>Unset</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call Unselectcraft Inventory ${ID}]
-							Script[myprices]:QueueCommand[call buy Craft Init]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call Unselectcraft Inventory ${ID}]
+								Script[myprices]:QueueCommand[call buy Craft Init]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Unselect as a Craftable Item
@@ -2090,8 +2204,11 @@
 						<Height>15</Height>
 						<Text>Save</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call savecraftinfo Inventory]
-							Script[myprices]:QueueCommand[call buy Craft Init]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call savecraftinfo Inventory]
+								Script[myprices]:QueueCommand[call buy Craft Init]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Update an item
@@ -2220,7 +2337,10 @@
 						<Height>15</Height>
 						<Text>Compress Sale List</Text>
 						<OnLeftClick>
-							Script[myprices]:QueueCommand[call buy Sell compact]
+							if ${Script[myprices].VariableScope.Pausemyprices}
+							{
+								Script[myprices]:QueueCommand[call buy Sell compact]
+							}
 						</OnLeftClick>
 						<AutoTooltip>
 							Remove un-needed entries in saved sales list
