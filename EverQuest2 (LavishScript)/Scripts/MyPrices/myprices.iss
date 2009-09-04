@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-; Version 0.14e :  released 3rd September 2009
+variable string Version="Version 0.14f :  released 4th September 2009"
 ;
 ; Declare Variables
 ;
@@ -158,8 +158,8 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 	
-	call AddLog "Version 0.14e :  released 3rd September 2009" FF11FFCC
-	call echolog "Version 0.14e :  released 3rd September 2009"
+	call AddLog "${Version}" FF11FFCC
+	call echolog "${Version}"
 	
 	call StartUp	
 
@@ -2415,10 +2415,12 @@ objectdef BrokerBot
 		myprices[ItemList]:Clear
 		myprices[BuyList]:Clear
 		LavishSettings[craft]:Clear
+		LavishSettings[Rejected]:Clear
 
 		;Load settings from that characters file
 		
 		LavishSettings[myprices]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
+		LavishSettings[Rejected]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_Collections.XML]
 
 		General:Set[${LavishSettings[myprices].FindSet[General]}]
 		Logging:Set[${General.FindSetting[Logging]}]
@@ -3021,10 +3023,12 @@ atom atexit()
 	Event[EQ2_ExamineItemWindowAppeared]:DetachAtom[EQ2_ExamineItemWindowAppeared]
 
 	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
+	LavishSettings[Rejected]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_Collections.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
 	LavishSettings[newcraft]:Clear
 	LavishSettings[myprices]:Clear
 	LavishSettings[craft]:Clear
+	LavishSettings[Rejected]:Clear
 }
 
 atom EQ2_onChoiceWindowAppeared()
