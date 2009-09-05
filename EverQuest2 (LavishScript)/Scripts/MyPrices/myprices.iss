@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14g :  released 4th September 2009"
+variable string Version="Version 0.14h :  released 5th September 2009"
 ;
 ; Declare Variables
 ;
@@ -103,6 +103,7 @@ variable bool Flagged
 variable bool NameOnly
 variable bool Attunable
 variable bool AutoTransmute
+variable bool ExamineOpen
 variable bool Collectible
 variable bool NewCollection
 variable int StartLevel
@@ -1018,6 +1019,7 @@ function BuyItems()
 	Declare tiersearch string local
 	Declare costsearch string local
 
+	Call CheckFocus
 	if ${NameOnly}
 	{
 		call echolog "searchbrokerlist "${ItemName}" 0 0 0 ${Math.Calc[${Money} * 100]}"
@@ -1041,9 +1043,10 @@ function BuyItems()
 		; Scan the broker list one by one buying the items until the end of the list is reached or all the Number wanted have been bought
 		do
 		{
+			Call CheckFocus
 			if ${InventorySlotsFree}<=0
 			{
-				Echo Out of Inventory Space!
+				UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Echo Out of Inventory Space!]
 				Break
 			}
 			
@@ -1068,6 +1071,7 @@ function BuyItems()
 				; if there are items available (sometimes broker number shows 0 available when someone beats you to it)
 				if ${BrokerNumber} >0
 				{
+					Call CheckFocus
 					do
 					{
 						BrokerNumber:Set[${Vendor.Broker[${CurrentItem}].Quantity}]
@@ -1096,6 +1100,8 @@ function BuyItems()
 							StackBuySize:Set[${Return}]
 							OldCash:Set[${MyCash}]
 
+							Call CheckFocus
+
 							; make sure you don't already have an item and it's lore
 							call checklore "${Vendor.Item[${CurrentItem}].Name}"
 								
@@ -1113,11 +1119,24 @@ function BuyItems()
 										break
 								else
 								{
+									Call CheckFocus
 									Vendor.Item[${CurrentItem}]:Examine
+
+									; Wait till the examine window is open
+									do
+									{
+										waitframe
+									}
+									while !${ExamineOpen}
+									
 									wait 5
+									
+									ExamineOpen:Set[FALSE]
+									
 									if ${NewCollection}
 									{
 										CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+										Call CheckFocus
 										Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
 										NewCollection:Set[FALSE]
 										wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
@@ -1131,6 +1150,7 @@ function BuyItems()
 							else
 							{
 								CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+								Call CheckFocus
 								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
 								wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
 							}
@@ -1165,7 +1185,7 @@ function BuyItems()
 								do
 								{
 									CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
-									
+									Call CheckFocus
 									Vendor.Item[${CurrentItem}]:Buy[1]  
 									wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
 									wait 5
@@ -2063,6 +2083,11 @@ function savebuyinfo()
 	Gold:Set[${Math.Calc[${Gold}*100]}]
 	Copper:Set[${Math.Calc[${Copper}/100]}]
 	Money:Set[${Math.Calc[${Platina}+${Gold}+${Silver}+${Copper}]}]
+
+	Platina:Set[0]
+	Gold:Set[0]
+	Silver:Set[0]
+	Copper:Set[0]
 	
 	Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MaxPlatPrice].Text}]
 	Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MaxGoldPrice].Text}]
@@ -3109,5 +3134,7 @@ atom EQ2_ExamineItemWindowAppeared(string ItemName, string WindowID)
 	else
 		NewCollection:Set[FALSE]
 
+	ExamineOpen:Set[TRUE]
+	
 	EQ2Execute /close_top_window 
 }
