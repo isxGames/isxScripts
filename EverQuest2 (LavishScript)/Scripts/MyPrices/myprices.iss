@@ -902,7 +902,8 @@ function buy(string tabname, string action)
 							; if the item is marked as a craft one then check if the Minimum broker total has been reached
 							if ${CraftItem}
 							{
-								call numinventoryitems "${BuyIterator.Key}" TRUE
+								; check for number of items not in NoSale Container
+								call numinventoryitems "${BuyIterator.Key}" TRUE FALSE
 								call addtotals "${BuyIterator.Key}" ${Return}
 
 								call checktotals "${BuyIterator.Key}" ${CraftStack} ${CraftMinTotal} "${Recipe}"
@@ -1046,7 +1047,7 @@ function BuyItems()
 			Call CheckFocus
 			if ${InventorySlotsFree}<=0
 			{
-				UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Echo Out of Inventory Space!]
+				UIElement[ErrorText@Buy@GUITabs@MyPrices]:SetText[Out of Inventory Space !]
 				Break
 			}
 			
@@ -2567,8 +2568,9 @@ function placeitem(string ItemName)
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
 	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
-	
-	call numinventoryitems "${ItemName}" FALSE
+
+	; check for number of items not in NoSale Container
+	call numinventoryitems "${ItemName}" FALSE FALSE
 	numitems:Set[${Return}]
 
 	; if there are items to be placed
@@ -2825,7 +2827,7 @@ function placeitems(string ItemName, int box, int numitems)
 	return ${numitems}
 }
 
-function numinventoryitems(string ItemName, bool num)
+function numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 {
 	
 	; returns the number of stacks/number of items in your inventory , num TRUE = total , FALSE = stacks
@@ -2835,13 +2837,15 @@ function numinventoryitems(string ItemName, bool num)
 	
 	do
 	{
-		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
+		if  !${Me.CustomInventory[${xvar}].InNoSaleContainer} || ${NoSaleContainer}
 		{
-
-			if ${num}
-				numitems:Inc[${Me.CustomInventory[${xvar}].Quantity}]
-			else
-				numitems:Inc
+			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
+			{
+				if ${num}
+					numitems:Inc[${Me.CustomInventory[${xvar}].Quantity}]
+				else
+					numitems:Inc
+			}
 		}
 	}
 	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
@@ -2899,7 +2903,8 @@ function GoTransmute(string ItemName)
 
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
-	call numinventoryitems "${ItemName}" FALSE
+	; check for number of items not in NoSale Container
+	call numinventoryitems "${ItemName}" FALSE FALSE
 	numitems:Set[${Return}]
 	
 	; if the item is in your bags
@@ -2930,7 +2935,8 @@ function checklore(string ItemName)
 	
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
-	call numinventoryitems "${ItemName}" FALSE
+	; check for number of items in all Inventory Containers
+	call numinventoryitems "${ItemName}" FALSE TRUE
 	numitems:Set[${Return}]
 	
 	; if the item is in your bags
@@ -3093,6 +3099,9 @@ function echolog(string logline)
 ; when the script exits , save all the settings and do some cleaning up
 atom atexit()
 {
+	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
+	LavishSettings[Rejected]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_Collections.XML]
+
 	if !${ISXEQ2.IsReady}
 		return
 
@@ -3101,8 +3110,6 @@ atom atexit()
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	Event[EQ2_ExamineItemWindowAppeared]:DetachAtom[EQ2_ExamineItemWindowAppeared]
 
-	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
-	LavishSettings[Rejected]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_Collections.XML]
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
 	LavishSettings[newcraft]:Clear
 	LavishSettings[myprices]:Clear
