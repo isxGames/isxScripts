@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using InnerSpaceAPI;
 using System.Threading;
+using InnerSpaceAPI;
 using EQ2.ISXEQ2;
 
 namespace EQ2GlassCannon
@@ -237,10 +237,10 @@ namespace EQ2GlassCannon
 							/// Gift has the shorter duration so it gets cast last and its availability becomes the prerequisite.
 							if (!IsAbilityMaintained(m_uiFireshapeAbilityID) && !IsAbilityMaintained(m_uiSurgeAbilityID) && IsAbilityReady(m_uiGiftAbilityID))
 							{
-								if (CastAbility(m_uiIceshapeAbilityID))
+								if (CastAbility(m_uiIceshapeAbilityID, Me.Name, true))
 									return true;
 
-								if (CastAbility(m_uiGiftAbilityID))
+								if (CastAbility(m_uiGiftAbilityID, Me.Name, true))
 								{
 									SpamSafeGroupSay(m_strGiftCallout);
 									return true;
@@ -251,10 +251,10 @@ namespace EQ2GlassCannon
 							/// Fireshape has the shorter duration so it gets cast last and its availability becomes the prerequisite.
 							else if (!IsAbilityMaintained(m_uiIceshapeAbilityID) && !IsAbilityMaintained(m_uiGiftAbilityID) && bFireshapeReady)
 							{
-								if (CastAbility(m_uiSurgeAbilityID))
+								if (CastAbility(m_uiSurgeAbilityID, Me.Name, true))
 									return true;
 
-								if (CastAbility(m_uiFireshapeAbilityID))
+								if (CastAbility(m_uiFireshapeAbilityID, Me.Name, true))
 									return true;
 							}
 						}
