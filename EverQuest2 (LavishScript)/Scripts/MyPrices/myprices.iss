@@ -2495,7 +2495,6 @@ objectdef BrokerBot
 		myprices[ItemList]:Clear
 		myprices[BuyList]:Clear
 		LavishSettings[craft]:Clear
-		LavishSettings[Rejected]:Clear
 
 		;Load settings from that characters file
 		
@@ -2831,15 +2830,16 @@ function numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 {
 	
 	; returns the number of stacks/number of items in your inventory , num TRUE = total , FALSE = stacks
+	; NoSaleContainer = look in inventory slots in a box/bag marked as items not for sale
 	
 	Declare xvar int local 1
 	Declare numitems int local 0
 	
 	do
 	{
-		if  !${Me.CustomInventory[${xvar}].InNoSaleContainer} || ${NoSaleContainer}
+		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
 		{
-			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
+			if  !${Me.CustomInventory[${xvar}].InNoSaleContainer} || ${NoSaleContainer}
 			{
 				if ${num}
 					numitems:Inc[${Me.CustomInventory[${xvar}].Quantity}]
@@ -2849,6 +2849,7 @@ function numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 		}
 	}
 	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
+
 	return ${numitems}
 }
 
