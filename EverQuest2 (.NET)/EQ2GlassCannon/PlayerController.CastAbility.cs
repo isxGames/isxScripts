@@ -14,11 +14,6 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
-		protected bool m_bAutoHarvestInProgress = false;
-		protected DateTime m_LastAutoHarvestAttemptTime = DateTime.FromBinary(0);
-		protected DateTime m_LastCastStartTime = DateTime.Now;
-		protected DateTime m_LastCastEndTime = DateTime.Now;
-
 		/************************************************************************************/
 		protected class CachedAbility
 		{
@@ -129,6 +124,46 @@ namespace EQ2GlassCannon
 				return true;
 			}
 		}
+
+		/************************************************************************************/
+		protected class MaintainedTargetIDKey : IComparable<MaintainedTargetIDKey>
+		{
+			private readonly string m_strMaintainedName = string.Empty;
+			private readonly int m_iTargetActorID = -1;
+
+			public MaintainedTargetIDKey(string strMaintainedName, int iActorID)
+			{
+				m_strMaintainedName = strMaintainedName;
+				m_iTargetActorID = iActorID;
+				return;
+			}
+
+			public int CompareTo(MaintainedTargetIDKey OtherKey)
+			{
+				int iCompareValue = 0;
+
+				iCompareValue = m_strMaintainedName.CompareTo(OtherKey.m_strMaintainedName);
+				if (iCompareValue != 0)
+					return iCompareValue;
+
+				return m_iTargetActorID.CompareTo(OtherKey.m_iTargetActorID);
+			}
+		}
+
+		/// <summary>
+		/// This dictionary has only one entry per spell regardless of how many targets the spell is actually on,
+		/// but allows immediate O(1) boolean detection of any maintained effect.
+		/// This is repopulated on every new frame.
+		/// </summary>
+		private Dictionary<string, int> m_MaintainedNameToIndexMap = new Dictionary<string, int>();
+
+		private SortedDictionary<MaintainedTargetIDKey, Maintained> m_MaintainedTargetNameDictionary = new SortedDictionary<MaintainedTargetIDKey, Maintained>();
+		private Dictionary<string, int> m_BeneficialEffectNameToIndexMap = new Dictionary<string, int>();
+
+		protected bool m_bAutoHarvestInProgress = false;
+		protected DateTime m_LastAutoHarvestAttemptTime = DateTime.FromBinary(0);
+		protected DateTime m_LastCastStartTime = DateTime.Now;
+		protected DateTime m_LastCastEndTime = DateTime.Now;
 
 		/************************************************************************************/
 		private Dictionary<uint, CachedAbility> m_AbilityCache = new Dictionary<uint, CachedAbility>();
@@ -245,7 +280,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected bool UseInventoryItem(string strItemName, bool bMustBeEquipped)
+		protected bool UseInventoryItem(string strItemName, bool bMustBeEquipped, bool bOffensiveItem)
 		{
 			try
 			{
@@ -256,16 +291,19 @@ namespace EQ2GlassCannon
 				if (!ThisItem.IsValid || !ThisItem.IsReady || !ThisItem.IsActivatable || (bMustBeEquipped && !ThisItem.IsEquipped))
 					return false;
 
-				Actor MyTargetActor = MeActor.Target();
-				if (MyTargetActor.IsValid)
+				if (bOffensiveItem)
 				{
-					/// Test range.
-					double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
-					if (fDistance < ThisItem.MinRange || ThisItem.MinRange < fDistance)
+					Actor MyTargetActor = MeActor.Target();
+					if (MyTargetActor.IsValid)
 					{
-						Program.Log("Unable to use {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
-							ThisItem.Name, MyTargetActor.Name, ThisItem.MinRange, ThisItem.MaxRange, fDistance);
-						return false;
+						/// Test range.
+						double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
+						if (fDistance < ThisItem.MinRange || ThisItem.MinRange < fDistance)
+						{
+							Program.Log("Unable to use {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
+								ThisItem.Name, MyTargetActor.Name, ThisItem.MinRange, ThisItem.MaxRange, fDistance);
+							return false;
+						}
 					}
 				}
 
@@ -284,7 +322,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool UseInventoryItem(string strItemName)
 		{
-			return UseInventoryItem(strItemName, false);
+			return UseInventoryItem(strItemName, false, false);
 		}
 
 		/************************************************************************************/
@@ -672,7 +710,7 @@ namespace EQ2GlassCannon
 				fHighestRangeAlreadyScanned = fThisAbilityRange;
 			}
 
-			Program.Log("No mez targets identified.");
+			//Program.Log("No mez targets identified.");
 			return false;
 		}
 
@@ -690,6 +728,20 @@ namespace EQ2GlassCannon
 				return true;
 
 			return false;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool IsAbilityMaintained(uint uiAbilityID, int iTargetActorID)
+		{
+			if (uiAbilityID == 0)
+				return false;
+
+			string strAbilityName = m_KnowledgeBookIDToNameMap[uiAbilityID];
+			MaintainedTargetIDKey NewKey = new MaintainedTargetIDKey(strAbilityName, iTargetActorID);
+			return m_MaintainedTargetNameDictionary.ContainsKey(NewKey);
 		}
 
 		/************************************************************************************/
@@ -788,8 +840,6 @@ namespace EQ2GlassCannon
 			if (CancelMaintained(uiAbilityID, false))
 				bAnyActionTaken = true;
 
-			string strAbilityName = m_KnowledgeBookIDToNameMap[uiAbilityID];
-
 			/// Start the list with everyone who *should* have the buff.
 			SetCollection<string> NeedyTargetSet = new SetCollection<string>();
 			foreach (string strThisTarget in astrRecipients)
@@ -800,7 +850,7 @@ namespace EQ2GlassCannon
 
 			foreach (Maintained ThisMaintained in EnumMaintained())
 			{
-				if (ThisMaintained.Name == strAbilityName)
+				if (ThisMaintained.Name == ThisAbility.m_strName)
 				{
 					/// Either from a mythical weapon or AA, this single-target buff might be converted to a group/raid buff,
 					/// which in current experience there will only be one of in the maintained list.
@@ -818,6 +868,7 @@ namespace EQ2GlassCannon
 					else
 					{
 						/// Also remove the buff from every player who should not have it.
+						Program.Log("Cancelling {0} from {1}...", ThisAbility.m_strName, ThisMaintained.Target().Name);
 						if (ThisMaintained.Cancel())
 							bAnyActionTaken = true;
 					}
@@ -832,7 +883,7 @@ namespace EQ2GlassCannon
 				{
 					if (!m_FriendDictionary.ContainsKey(strThisTarget))
 					{
-						Program.Log("{0} wasn't cast on {1} (not found in group or raid).", strAbilityName, strThisTarget);
+						Program.Log("{0} wasn't cast on {1} (not found in group or raid).", ThisAbility.m_strName, strThisTarget);
 						continue;
 					}
 				}
@@ -840,7 +891,7 @@ namespace EQ2GlassCannon
 				{
 					if (!m_GroupMemberDictionary.ContainsKey(strThisTarget))
 					{
-						Program.Log("{0} wasn't cast on {1} (not found in group).", strAbilityName, strThisTarget);
+						Program.Log("{0} wasn't cast on {1} (not found in group).", ThisAbility.m_strName, strThisTarget);
 						continue;
 					}
 				}
@@ -1040,7 +1091,7 @@ namespace EQ2GlassCannon
 
 			if (MyStatus.HealthRatio < 0.5)
 			{
-				if (UseInventoryItem("Innoruuk's Child"))
+				if (UseInventoryItem("Innoruuk's Child", false, false))
 					return true;
 			}
 
@@ -1054,7 +1105,7 @@ namespace EQ2GlassCannon
 			{
 				if (m_OffensiveTargetActor != null)
 				{
-					if (UseInventoryItem("Behavioral Modificatinator Stereopticon"))
+					if (UseInventoryItem("Behavioral Modificatinator Stereopticon", false, true))
 						return true;
 				}
 			}
@@ -1073,11 +1124,11 @@ namespace EQ2GlassCannon
 			{
 				if (m_OffensiveTargetActor != null)
 				{
-					if (UseInventoryItem("Brock's Thermal Shocker"))
+					if (UseInventoryItem("Brock's Thermal Shocker", false, true))
 						return true;
 
 					/// Shard of Fear has a 30 minute recast, you wouldn't want to waste it on dumb shit.
-					if (m_OffensiveTargetActor.IsNamed && UseInventoryItem("Shard of Fear", true))
+					if (m_OffensiveTargetActor.IsNamed && UseInventoryItem("Shard of Fear", true, true))
 						return true;
 				}
 			}

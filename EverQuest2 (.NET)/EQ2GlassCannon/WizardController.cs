@@ -151,7 +151,7 @@ namespace EQ2GlassCannon
 
 			if (bOffensiveTargetEngaged)
 			{
-				/// Find the distance to the mob.  Especially important for PBAE usage.
+				/// Find the distance to the mob. Especially important for PBAE usage.
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
 				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
@@ -198,25 +198,34 @@ namespace EQ2GlassCannon
 					/// We attempt this in two places:
 					/// - Here at the beginning for the debuff, and
 					/// - Down the list for the DPS.
-					if (!IsAbilityMaintained(m_uiElementalDebuffAbilityID) && CastAbility(m_uiElementalDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiElementalDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiElementalDebuffAbilityID))
 						return true;
 
 					if (IsAbilityReady(m_uiColdDamageShieldAbilityID))
 					{
+						string strTargetName = string.Empty;
+
 						if (string.IsNullOrEmpty(m_strIceShieldTarget))
 						{
-							/// Use Iceshield on whoever has aggro.
+							/// Select whoever has aggro.
 							Actor AggroWhore = m_OffensiveTargetActor.Target();
-							if (AggroWhore.IsValid && m_FriendDictionary.ContainsKey(AggroWhore.Name))
-							{
-								if (CastAbility(m_uiColdDamageShieldAbilityID, AggroWhore.Name, true))
-									return true;
-							}
+							if (AggroWhore.IsValid)
+								strTargetName = AggroWhore.Name;
 						}
 						else
+							strTargetName = m_strIceShieldTarget;
+
+						/// The downside of this check is that it omits pets.
+						int iTargetActorID = -1;
+						if (m_FriendDictionary.ContainsKey(strTargetName))
+							iTargetActorID = m_FriendDictionary[strTargetName].ToActor().ID;
+
+						/// Don't refresh it on someone who still has ticks left. The calculated dps goes way down.
+						if (iTargetActorID != -1 &&
+							!IsAbilityMaintained(m_uiColdDamageShieldAbilityID, iTargetActorID) &&
+							CastAbility(m_uiColdDamageShieldAbilityID, m_strIceShieldTarget, true))
 						{
-							if (CastAbility(m_uiColdDamageShieldAbilityID, m_strIceShieldTarget, true))
-								return true;
+							return true;
 						}
 					}
 
