@@ -252,8 +252,8 @@ namespace EQ2GlassCannon
 						return true;
 
 					/// TODO: This should be changed to behave more like a buff, to allow multiple recipients.
-					//if (!IsAbilityMaintained(m_uiPrismaticAbilityID) && CastAbility(m_uiPrismaticAbilityID, m_strPrismaticTargets, true))
-					if (!CheckSingleTargetBuffs(m_uiPrismaticAbilityID, m_astrPrismaticTargets))
+					if (!IsAbilityMaintained(m_uiPrismaticAbilityID) && CastAbility(m_uiPrismaticAbilityID, m_astrPrismaticTargets, true))
+					//if (!CheckSingleTargetBuffs(m_uiPrismaticAbilityID, m_astrPrismaticTargets))
 						return true;
 
 					if (CastAbility(m_uiBewildermentAbilityID))
@@ -268,15 +268,15 @@ namespace EQ2GlassCannon
 					/// We attempt this in two places:
 					/// - Here at the beginning for the debuff, and
 					/// - Down the list for the proc DPS.
-					if (!IsAbilityMaintained(m_uiArcaneDebuffNukeAbilityID) && CastAbility(m_uiArcaneDebuffNukeAbilityID))
+					if (!IsAbilityMaintained(m_uiArcaneDebuffNukeAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiArcaneDebuffNukeAbilityID))
 						return true;
-					if (!IsAbilityMaintained(m_uiMeleeDebuffAbilityID) && CastAbility(m_uiMeleeDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiMeleeDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiMeleeDebuffAbilityID))
 						return true;
-					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID) && CastAbility(m_uiNullifyingStaffAbilityID))
+					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiNullifyingStaffAbilityID))
 						return true;
 
 					/// We let this expire for the termination nuke, Pinski supposedly thinks it does more dps that way. :/
-					if (!IsAbilityMaintained(m_uiUnresistableNukeAbilityID) && CastAbility(m_uiUnresistableNukeAbilityID))
+					if (!IsAbilityMaintained(m_uiUnresistableNukeAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiUnresistableNukeAbilityID))
 						return true;
 
 					if (CastGreenOffensiveAbility(m_uiGreenShowerAbilityID, 1))
@@ -303,10 +303,8 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_uiStormAbilityID, 1))
 						return true;
 				}
-
 			}
 
-			Program.Log("Nothing left to cast!");
 			return false;
 		}
 	}
