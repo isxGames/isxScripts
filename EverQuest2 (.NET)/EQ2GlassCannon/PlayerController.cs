@@ -99,8 +99,7 @@ namespace EQ2GlassCannon
 		public int m_iOffensiveTargetID = -1;
 		public Actor m_OffensiveTargetActor = null;
 		public int m_iAbilitiesFound = 0;
-		protected PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
-		public Point3D m_ptStayLocation = new Point3D();
+		protected Point3D m_ptStayLocation = new Point3D();
 		public double m_fCurrentMovementTargetCoordinateTolerance = 0.0f;
 		protected string m_strPositionalCommandingPlayer = string.Empty;
 		protected string m_strCurrentMainTank = string.Empty;
@@ -111,6 +110,9 @@ namespace EQ2GlassCannon
 		public DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
 		protected List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
 
+		protected PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
+		public PositioningStance CurrentPositioningStance { get { return m_ePositioningStance; } }
+
 		private Dictionary<string, uint> m_KnowledgeBookNameToIDMap = new Dictionary<string, uint>();
 		private Dictionary<uint, string> m_KnowledgeBookIDToNameMap = new Dictionary<uint, string>();
 		protected Dictionary<string, GroupMember> m_GroupMemberDictionary = new Dictionary<string, GroupMember>();
@@ -120,15 +122,6 @@ namespace EQ2GlassCannon
 		/// This associates all identical spells of a shared recast timer with the index of the highest level version of them.
 		/// </summary>
 		protected Dictionary<string, uint> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, uint>();
-
-		/// <summary>
-		/// This dictionary has only one entry per spell regardless of how many targets the spell is actually on,
-		/// but allows immediate O(1) boolean detection of any maintained effect.
-		/// This is repopulated on every new frame.
-		/// </summary>
-		private Dictionary<string, int> m_MaintainedNameToIndexMap = new Dictionary<string, int>();
-
-		private Dictionary<string, int> m_BeneficialEffectNameToIndexMap = new Dictionary<string, int>();
 
 		/************************************************************************************/
 		public Character Me
@@ -361,9 +354,17 @@ namespace EQ2GlassCannon
 
 			/// Build the maintained spell dictionary.
 			m_MaintainedNameToIndexMap.Clear();
+			m_MaintainedTargetNameDictionary.Clear();
 			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
 			{
-				string strName = Me.Maintained(iIndex).Name;
+				Maintained ThisMaintained = Me.Maintained(iIndex);
+
+				MaintainedTargetIDKey NewKey = new MaintainedTargetIDKey(ThisMaintained.Name, ThisMaintained.Target().ID);
+				if (m_MaintainedTargetNameDictionary.ContainsKey(NewKey))
+					Program.Log("Duplicate {0} on target {1}.", ThisMaintained.Name, ThisMaintained.Target().Name);
+				m_MaintainedTargetNameDictionary.Add(NewKey, ThisMaintained);
+
+				string strName = ThisMaintained.Name;
 				if (strName != null)
 				{
 					if (!m_MaintainedNameToIndexMap.ContainsKey(strName))
@@ -503,12 +504,6 @@ namespace EQ2GlassCannon
 		/// <returns>true if the implementation took ownership of the text and further processing should cease.</returns>
 		public virtual bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
 		{
-			return false;
-		}
-
-		/************************************************************************************/
-		public bool OnIncomingText(string strMessage)
-		{
 			string strTrimmedMessage = strMessage.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
@@ -534,6 +529,7 @@ namespace EQ2GlassCannon
 				case "No targets in range":
 				case "Not an enemy":
 				case "Target is not alive":
+				case "Target too weak":
 				case "Too far away":
 				{
 					m_LastCastEndTime = DateTime.Now;
@@ -560,8 +556,6 @@ namespace EQ2GlassCannon
 					return true;
 				}
 			}
-
-			/// TODO: Now parse out the details and start the virtual chain.
 
 			return false;
 		}
@@ -733,7 +727,7 @@ namespace EQ2GlassCannon
 				if (CommandingPlayerActor != null)
 				{
 					Actor MenderTargetActor = CommandingPlayerActor.Target();
-					if (MenderTargetActor.IsValid && MenderTargetActor.Type == "NoKill NPC")
+					if (MenderTargetActor.IsValid && (MenderTargetActor.Type == "NoKill NPC" || MenderTargetActor.Type == "NPC")) /// Some menders can be killed.
 					{
 						Program.ApplyVerb(MenderTargetActor, "repair");
 						Program.RunCommand("/mender_repair_all");
@@ -923,7 +917,7 @@ namespace EQ2GlassCannon
 						{
 							if (bNamedSearch)
 							{
-								if (ThisActor.IsNamed)
+								if (ThisActor.IsNamed && !ThisActor.IsAPet)
 									bAddThisActor = true;
 							}
 							else if (ThisActor.Name.ToLower().Contains(strSearchString))
@@ -1032,6 +1026,10 @@ namespace EQ2GlassCannon
 							break;
 						case "dash":
 							ChangePositioningStance(PositioningStance.ForwardDash);
+							break;
+						case "stay":
+							m_strPositionalCommandingPlayer = Me.Name;
+							ChangePositioningStance(PositioningStance.StayInPlace);
 							break;
 					}
 
@@ -1194,7 +1192,7 @@ namespace EQ2GlassCannon
 					{
 						if (AutoFollowActor.DoFace())
 						{
-							Program.RunCommand("/follow {0}", strAutoFollowTarget);
+							Program.RunCommand(1, "/follow {0}", strAutoFollowTarget);
 							return true;
 						}
 					}
@@ -1221,7 +1219,7 @@ namespace EQ2GlassCannon
 				/// Firstly, no matter where we are, stop autofollowing.
 				if (!string.IsNullOrEmpty(MeActor.WhoFollowing))
 				{
-					Program.RunCommand("/stopfollow");
+					Program.RunCommand(1, "/stopfollow");
 					return true;
 				}
 
@@ -1270,13 +1268,12 @@ namespace EQ2GlassCannon
 						float fBearing = Me.HeadingTo(m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z);
 						if (Me.Face(fBearing))
 						{
-							Program.Log("Moving to stay position ({0:0.00}, {1:0.00}, {2:0.00}), {3:0.00} distance away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
+							Program.Log("Moving to stay position ({0:0.00}, {1:0.00}, {2:0.00}), {3:0.00} meters away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
 							Program.PressAndHoldKey("W");
 						}
 					}
 					else
 					{
-						//Program.Log("Settled at stay position, {0:0.00} distance away.", fRange);
 						Program.ReleaseKey("W");
 					}
 				}
@@ -1447,7 +1444,7 @@ namespace EQ2GlassCannon
 				{
 					Program.Log("Sending in pet for attack!");
 					Program.RunCommand("/pet attack");
-					return false;
+					///return false; // Don't return failure; often there is lag time with the fucking pet and it kills our dps to wait for it.
 				}
 			}
 
@@ -1465,6 +1462,8 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		public bool WithdrawCombatFromTarget(Actor TargetActor)
 		{
+			bool bActionTaken = false;
+
 			Actor MyTargetActor = MeActor.Target();
 			if (MyTargetActor.IsValid && MyTargetActor.ID == TargetActor.ID)
 			{
@@ -1472,12 +1471,12 @@ namespace EQ2GlassCannon
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
 					Program.RunCommand("/auto 0");
-					return true;
+					bActionTaken = true;
 				}
 
 				/// If an enemy is targetted, target nothing instead.
 				//Program.RunCommand("/target_none");
-				return true;
+				//return true;
 			}
 
 			Actor PetActor = Me.Pet();
@@ -1487,16 +1486,17 @@ namespace EQ2GlassCannon
 				if (PetTargetActor.IsValid && PetTargetActor.InCombatMode && PetTargetActor.ID == TargetActor.ID)
 				{
 					Program.RunCommand("/pet backoff");
-					return true;
+					bActionTaken = true;
 				}
 			}
 
-			return false;
+			return bActionTaken;
 		}
 
 		/************************************************************************************/
 		public bool WithdrawFromCombat()
 		{
+			bool bActionTaken = false;
 			m_iOffensiveTargetID = -1;
 
 			if (!MeActor.IsDead)
@@ -1505,7 +1505,7 @@ namespace EQ2GlassCannon
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
 					Program.RunCommand("/auto 0");
-					return true;
+					bActionTaken = true;
 				}
 
 				/// Pull the pet back just in case.
@@ -1513,7 +1513,7 @@ namespace EQ2GlassCannon
 				if (PetActor.IsValid && PetActor.InCombatMode)
 				{
 					Program.RunCommand("/pet backoff");
-					return true;
+					bActionTaken = true;
 				}
 
 				/// If an enemy is targetted, target nothing instead.
@@ -1521,11 +1521,11 @@ namespace EQ2GlassCannon
 				if (TargetActor.IsValid && TargetActor.Type == "NPC")
 				{
 					Program.RunCommand("/target_none");
-					return true;
+					bActionTaken = true;
 				}
 			}
 
-			return false;
+			return bActionTaken;
 		}
 
 		/************************************************************************************/
