@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14h :  released 5th September 2009"
+variable string Version="Version 0.14i :  released 10th September 2009"
 ;
 ; Declare Variables
 ;
