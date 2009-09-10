@@ -2321,7 +2321,7 @@
 				</Tab>
 				<Tab Name='Admin'>
 					<Text name='Errortext'>
-						<X>5%</X>
+						<X>5</X>
 						<Y>30</Y>
 						<Width>80%</Width>
 						<Height>20</Height>
@@ -2331,7 +2331,7 @@
 						</Font>
 					</Text>
 					<Commandbutton name='Compact'> 
-						<X>5%</X> 
+						<X>20</X> 
 						<Y>50</Y> 
 						<Width>100</Width> 
 						<Height>15</Height>
@@ -2346,6 +2346,235 @@
 							Remove un-needed entries in saved sales list
 						</AutoTooltip>
 					</Commandbutton>
+					<Text name='NFSText'>
+						<X>110</X>
+						<Y>69</Y>
+						<Width>80%</Width>
+						<Height>20</Height>
+						<Text>Inventory Items Not For sale</Text>
+					</Text>
+					<Text Name='Bag0'>
+						<X>15</X>
+						<Y>90</Y>
+						<Width>200</Width> 
+						<Height>15</Height>
+					</Text>
+					<checkbox Name='NoSale1'>
+						<X>175</X>
+						<Y>87</Y>
+						<Width>80</Width>
+						<Height>20</Height>
+						<OnLoad>
+							if ${Script[myprices].VariableScope.NoSale[1]}
+							{
+								UIElement[NoSale1@Admin@GUITabs@MyPrices]:SetChecked
+							}
+							else
+							{
+								UIElement[NoSale1@Admin@GUITabs@MyPrices]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[NoSale1@Admin@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale1 TRUE]
+								Script[myprices].VariableScope.NoSale[1]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale1 FALSE]
+								Script[myprices].VariableScope.NoSale[1]:Set[FALSE]
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Items in this container are no-sale
+						</AutoTooltip>
+					</checkbox>
+					<Text Name='Bag1'>
+						<X>15</X>
+						<Y>110</Y>
+						<Width>200</Width> 
+						<Height>15</Height>
+					</Text>
+					<checkbox Name='NoSale2'>
+						<X>175</X>
+						<Y>107</Y>
+						<Width>80</Width>
+						<Height>20</Height>
+						<OnLoad>
+							if ${Script[myprices].VariableScope.NoSale[2]}
+							{
+								UIElement[NoSale2@Admin@GUITabs@MyPrices]:SetChecked
+							}
+							else
+							{
+								UIElement[NoSale2@Admin@GUITabs@MyPrices]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[NoSale2@Admin@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale2 TRUE]
+								Script[myprices].VariableScope.NoSale[2]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale2 FALSE]
+								Script[myprices].VariableScope.NoSale[2]:Set[FALSE]
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Items in this container are no-sale
+						</AutoTooltip>
+					</checkbox>
+					<Text Name='Bag2'>
+						<X>15</X>
+						<Y>130</Y>
+						<Width>200</Width> 
+						<Height>15</Height>
+					</Text>
+					<checkbox Name='NoSale3'>
+						<X>175</X>
+						<Y>127</Y>
+						<Width>80</Width>
+						<Height>20</Height>
+						<OnLoad>
+							if ${Script[myprices].VariableScope.NoSale[3]}
+							{
+								UIElement[NoSale3@Admin@GUITabs@MyPrices]:SetChecked
+							}
+							else
+							{
+								UIElement[NoSale3@Admin@GUITabs@MyPrices]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[NoSale3@Admin@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale3 TRUE]
+								Script[myprices].VariableScope.NoSale[3]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale3 FALSE]
+								Script[myprices].VariableScope.NoSale[3]:Set[FALSE]
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Items in this container are no-sale
+						</AutoTooltip>
+					</checkbox>
+					<Text Name='Bag3'>
+						<X>15</X>
+						<Y>150</Y>
+						<Width>200</Width> 
+						<Height>15</Height>
+					</Text>
+					<checkbox Name='NoSale4'>
+						<X>175</X>
+						<Y>147</Y>
+						<Width>80</Width>
+						<Height>20</Height>
+						<OnLoad>
+							if ${Script[myprices].VariableScope.NoSale[4]}
+							{
+								UIElement[NoSale4@Admin@GUITabs@MyPrices]:SetChecked
+							}
+							else
+							{
+								UIElement[NoSale4@Admin@GUITabs@MyPrices]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[NoSale4@Admin@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale4 TRUE]
+								Script[myprices].VariableScope.NoSale[4]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale4 FALSE]
+								Script[myprices].VariableScope.NoSale[4]:Set[FALSE]
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Items in this container are no-sale
+						</AutoTooltip>
+					</checkbox>
+					<Text Name='Bag4'>
+						<X>15</X>
+						<Y>170</Y>
+						<Width>200</Width> 
+						<Height>15</Height>
+					</Text>
+					<checkbox Name='NoSale5'>
+						<X>175</X>
+						<Y>167</Y>
+						<Width>80</Width>
+						<Height>20</Height>
+						<OnLoad>
+							if ${Script[myprices].VariableScope.NoSale[5]}
+							{
+								UIElement[NoSale5@Admin@GUITabs@MyPrices]:SetChecked
+							}
+							else
+							{
+								UIElement[NoSale5@Admin@GUITabs@MyPrices]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[NoSale5@Admin@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale5 TRUE]
+								Script[myprices].VariableScope.NoSale[5]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale5 FALSE]
+								Script[myprices].VariableScope.NoSale[5]:Set[FALSE]
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Items in this container are no-sale
+						</AutoTooltip>
+					</checkbox>
+					<Text Name='Bag5'>
+						<X>15</X>
+						<Y>190</Y>
+						<Width>200</Width> 
+						<Height>15</Height>
+					</Text>
+					<checkbox Name='NoSale6'>
+						<X>175</X>
+						<Y>187</Y>
+						<Width>80</Width>
+						<Height>20</Height>
+						<OnLoad>
+							if ${Script[myprices].VariableScope.NoSale[6]}
+							{
+								UIElement[NoSale6@Admin@GUITabs@MyPrices]:SetChecked
+							}
+							else
+							{
+								UIElement[NoSale6@Admin@GUITabs@MyPrices]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[NoSale6@Admin@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale6 TRUE]
+								Script[myprices].VariableScope.NoSale[6]:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting NoSale6 FALSE]
+								Script[myprices].VariableScope.NoSale[6]:Set[FALSE]
+							}
+						</OnLeftClick>
+						<AutoTooltip>
+							Items in this container are no-sale
+						</AutoTooltip>
+					</checkbox>
 				</Tab>
 				<Tab Name='Log'>
 					<listbox Name='ItemList'>

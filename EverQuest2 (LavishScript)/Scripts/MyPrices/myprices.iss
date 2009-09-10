@@ -8,6 +8,7 @@ variable string Version="Version 0.14h :  released 5th September 2009"
 
 variable int brokerslots=8
 variable int brokerboxslots=1000
+variable int InventorySlots=6
 
 variable BrokerBot MyPrices
 
@@ -44,6 +45,10 @@ variable bool ItemsArePriced=FALSE
 variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
 variable bool box[8]
+
+; Arrays,  store bool and containerID - to scan inventory container/bag or not
+variable bool NoSale[6]
+variable int NoSaleID[6]
 
 variable string MyPriceS
 variable string MinBasePriceS
@@ -148,7 +153,7 @@ function main(string goscan, string goscan2)
 
 	MyPrices:loadsettings
 	; backup the current settings file on script load
-	
+
 	LavishSettings[myprices]:Export[${BackupPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
 	
 	MyPrices:LoadUI
@@ -2487,8 +2492,13 @@ objectdef BrokerBot
 		; Non saved set for item totals
 		LavishSettings:AddSet[craft]
 
+		; Set for collection items that are already collected
+		LavishSettings:AddSet[Rejected]
+
+		; Set for Items that are for sale
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
+		; Set for items that are to be bought through the buy tab
 		BuyList:Set[${LavishSettings[myprices].FindSet[Buy]}]
 
 		; make sure nothing from a previous run is in memory
@@ -2522,8 +2532,16 @@ objectdef BrokerBot
 			box[${i}]:Set[${General.FindSetting[box${i}]}]
 		}
 		while ${i:Inc} <= ${brokerslots}
-		Natural:Set[${General.FindSetting[Natural]}]
 		
+		i:Set[1]
+		do
+		{
+			NoSale[${i}]:Set[${General.FindSetting[NoSale${i}]}]
+		}
+		while ${i:Inc} <= ${InventorySlots}
+
+		Natural:Set[${General.FindSetting[Natural]}]
+
 		call echolog "Settings being used"
 		call echolog "-------------------"
 		call echolog "MatchLowPrice is ${MatchLowPrice}"
@@ -2685,7 +2703,9 @@ function inventorylist()
 	waitframe
 	do
 	{
-		if ${Me.CustomInventory[${xvar}].InInventory} && !${Me.CustomInventory[${xvar}].InNoSaleContainer} && !${Me.CustomInventory[${xvar}].IsInventoryContainer}
+		call InventoryContainer ${Me.CustomInventory[${xvar}].InContainerID}
+
+		if ${Me.CustomInventory[${xvar}].InInventory} && !${NoSale[${Return}]} && !${Me.CustomInventory[${xvar}].IsInventoryContainer}
 		{
 			if !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].NoTrade} && !${Me.CustomInventory[${xvar}].Heirloom} 
 			{
@@ -2762,62 +2782,68 @@ function placeitems(string ItemName, int box, int numitems)
 		call echolog "placing ${numitems} ${ItemName} in box ${box}"
 		do
 		{
+
 			; if an item in your inventory matches the crafted item from your crafted item list
-			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].InNoSaleContainer}
+			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
 			{
-				; check current used capacity
-				lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+				call InventoryContainer ${Me.CustomInventory[${xvar}].InContainerID}
 
-				; place the item into the consignment system , grouping it with similar items
-				Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
-
-				; make the script wait till the box total has changed (item was added)
-				; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
-
-				wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
-
-				; if the system reports that an item will not fit into the container chosen
-				if ${BadContainer}
+				if !${Me.CustomInventory[${xvar}].Attuned} && !${NoSale[${Return}]}
 				{
-					; change the setting for that item so the container is marked as ignore
-					Item:Set[${ItemList.FindSet["${ItemName}"]}]
-					Item:AddSetting[Box${box},3]
-					
-					; reset the bad Container Flag
-					BadContainer:Set[FALSE]
-					
-					echo Error in container ${box} settings for "${ItemName}" , marking that container as bad
-					
-					; Get a new container number
-					call boxwithmostspace "${ItemName}"
-					box:Set[${Return}]
-					
-					; if no container is available then stop placing that set of items
-					if ${box} == 0
+					; check current used capacity
+					lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+	
+					; place the item into the consignment system , grouping it with similar items
+					Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
+	
+					; make the script wait till the box total has changed (item was added)
+					; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
+	
+					wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+	
+					; if the system reports that an item will not fit into the container chosen
+					if ${BadContainer}
 					{
-						nospace:Set[TRUE]
-						break
+						; change the setting for that item so the container is marked as ignore
+						Item:Set[${ItemList.FindSet["${ItemName}"]}]
+						Item:AddSetting[Box${box},3]
+						
+						; reset the bad Container Flag
+						BadContainer:Set[FALSE]
+						
+						echo Error in container ${box} settings for "${ItemName}" , marking that container as bad
+						
+						; Get a new container number
+						call boxwithmostspace "${ItemName}"
+						box:Set[${Return}]
+						
+						; if no container is available then stop placing that set of items
+						if ${box} == 0
+						{
+							nospace:Set[TRUE]
+							break
+						}
+						else
+						{
+							; Otherwise try and place item in the new container
+							
+							; check current used capacity
+							lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+							
+							; place the item into the consignment system , grouping it with similar items
+							Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
+							
+							; make the script wait till the box total has changed (item was added)
+							; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
+							
+							wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+	
+						}
 					}
-					else
-					{
-						; Otherwise try and place item in the new container
-						
-						; check current used capacity
-						lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
-						
-						; place the item into the consignment system , grouping it with similar items
-						Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
-						
-						; make the script wait till the box total has changed (item was added)
-						; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
-						
-						wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
-
-					}
+					
+					space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+					numitems:Dec
 				}
-				
-				space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
-				numitems:Dec
 			}
 		}
 		while ${xvar:Inc}<=${Me.CustomInventoryArraySize} && ${space} > 0
@@ -2839,7 +2865,9 @@ function numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 	{
 		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
 		{
-			if  !${Me.CustomInventory[${xvar}].InNoSaleContainer} || ${NoSaleContainer}
+			call InventoryContainer ${Me.CustomInventory[${xvar}].InContainerID}
+
+			if  !${NoSale[${Return}]} || ${NoSaleContainer}
 			{
 				if ${num}
 					numitems:Inc[${Me.CustomInventory[${xvar}].Quantity}]
@@ -2991,6 +3019,7 @@ function StartUp()
 {
 	Declare tempstring string local
 	Declare i int local
+	Declare xvar int local
 	Declare space int local
 
 	tempstring:Set[${Actor[Guild,Guild World Market Broker]}]
@@ -3064,6 +3093,23 @@ function StartUp()
 	
 	UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:Hide
 
+
+	i:Set[1]
+	Me:CreateCustomInventoryArray[nonbankonly]
+
+	wait 5
+
+	do
+	{
+		if ${Me.CustomInventory[${i}].IsInventoryContainer}
+		{
+			UIElement[Bag${Me.CustomInventory[${i}].Slot}@Admin@GUITabs@MyPrices]:SetText["${Me.CustomInventory[${i}].Name}"]
+			xvar:Set[${Math.Calc[${Me.CustomInventory[${i}].Slot} + 1]}]
+			NoSaleID[${xvar}]:Set[${Me.CustomInventory[${i}].ContainerID}]
+		}
+	}
+	while ${i:Inc}<=${Me.CustomInventoryArraySize}
+
 	call LoadList
 
 	if ${ScanSellNonStop}
@@ -3074,7 +3120,6 @@ function StartUp()
 
 function Rejected(string ItemName)
 {
-	LavishSettings:AddSet[Rejected]
 	Rejected:Set[${LavishSettings.FindSet[Rejected]}]
 
 	if !${Rejected.FindSetting["${ItemName}"](exists)}
@@ -3083,6 +3128,20 @@ function Rejected(string ItemName)
 		Return FALSE
 	}
 	Return TRUE
+}
+
+function InventoryContainer(int ID)
+{
+	Declare xvar int local
+	xvar:Set[1]
+	
+	do
+	{
+		if ${ID} == ${NoSaleID[${xvar}]}
+		Return ${xvar}
+	}
+	while ${xvar:Inc} <= 6
+	Return -1
 }
 
 atom(script) EQ2_onInventoryUpdate()
@@ -3100,11 +3159,11 @@ function echolog(string logline)
 ; when the script exits , save all the settings and do some cleaning up
 atom atexit()
 {
-	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
-	LavishSettings[Rejected]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_Collections.XML]
-
 	if !${ISXEQ2.IsReady}
 		return
+
+	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
+	LavishSettings[Rejected]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_Collections.XML]
 
 	Event[EQ2_onInventoryUpdate]:DetachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
@@ -3112,6 +3171,7 @@ atom atexit()
 	Event[EQ2_ExamineItemWindowAppeared]:DetachAtom[EQ2_ExamineItemWindowAppeared]
 
 	ui -unload "${MyPricesUIPath}mypricesUI.xml"
+	
 	LavishSettings[newcraft]:Clear
 	LavishSettings[myprices]:Clear
 	LavishSettings[craft]:Clear
