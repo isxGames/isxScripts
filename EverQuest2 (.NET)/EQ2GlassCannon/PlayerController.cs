@@ -362,7 +362,8 @@ namespace EQ2GlassCannon
 				MaintainedTargetIDKey NewKey = new MaintainedTargetIDKey(ThisMaintained.Name, ThisMaintained.Target().ID);
 				if (m_MaintainedTargetNameDictionary.ContainsKey(NewKey))
 					Program.Log("Duplicate {0} on target {1}.", ThisMaintained.Name, ThisMaintained.Target().Name);
-				m_MaintainedTargetNameDictionary.Add(NewKey, ThisMaintained);
+				else
+					m_MaintainedTargetNameDictionary.Add(NewKey, ThisMaintained);
 
 				string strName = ThisMaintained.Name;
 				if (strName != null)
@@ -528,11 +529,19 @@ namespace EQ2GlassCannon
 				case "No eligible target":
 				case "No targets in range":
 				case "Not an enemy":
+				case "Not enough skill":
+				case "Target is immune":
 				case "Target is not alive":
 				case "Target too weak":
 				case "Too far away":
 				{
 					m_LastCastEndTime = DateTime.Now;
+
+					if (m_bAutoHarvestInProgress)
+					{
+						Program.Log("Harvesting attempt aborted.");
+						m_bAutoHarvestInProgress = false;
+					}
 					return true;
 				}
 			}
@@ -1019,17 +1028,24 @@ namespace EQ2GlassCannon
 					switch (strStance)
 					{
 						case "afk":
+							Program.Log("Now ignoring all non-stance commands.");
 							ChangePositioningStance(PositioningStance.DoNothing);
 							break;
 						case "neutral":
+							Program.Log("Positioning is now neutral.");
 							ChangePositioningStance(PositioningStance.NeutralPosition);
 							break;
 						case "dash":
+							Program.Log("Dashing forward.");
 							ChangePositioningStance(PositioningStance.ForwardDash);
 							break;
 						case "stay":
+							Program.Log("Staying in place.");
 							m_strPositionalCommandingPlayer = Me.Name;
 							ChangePositioningStance(PositioningStance.StayInPlace);
+							break;
+						default:
+							Program.Log("Stance not recognized.");
 							break;
 					}
 
@@ -1049,6 +1065,13 @@ namespace EQ2GlassCannon
 				case "gc_tts":
 				{
 					Program.SayText(strCondensedParameters);
+					return true;
+				}
+
+				case "gc_useitem":
+				{
+					/// TODO: This will be the bomb once completed.
+					/// If the item exists and is useable, we cancel spellcast and then use it immediately.
 					return true;
 				}
 
@@ -1174,6 +1197,11 @@ namespace EQ2GlassCannon
 				if (!AutoFollowActor.IsValid)
 				{
 					//Program.Log("Can't autofollow on {0} (player actor is invalid).", m_strAutoFollowTarget);
+					return false;
+				}
+				else if (AutoFollowActor.ID == MeActor.ID)
+				{
+					/// Can't follow yourself!
 					return false;
 				}
 				else if (AutoFollowActor.IsDead)

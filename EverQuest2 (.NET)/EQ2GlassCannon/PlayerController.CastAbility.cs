@@ -298,7 +298,7 @@ namespace EQ2GlassCannon
 					{
 						/// Test range.
 						double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
-						if (fDistance < ThisItem.MinRange || ThisItem.MinRange < fDistance)
+						if (fDistance < ThisItem.MinRange || ThisItem.MaxRange < fDistance)
 						{
 							Program.Log("Unable to use {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
 								ThisItem.Name, MyTargetActor.Name, ThisItem.MinRange, ThisItem.MaxRange, fDistance);
@@ -964,8 +964,25 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public bool AreDumbfiresAdvised()
+		{
+			if (m_OffensiveTargetActor == null)
+				return false;
+			else if (m_OffensiveTargetActor.IsNamed)
+				return true;
+			else if (m_OffensiveTargetActor.IsHeroic)
+				return (m_OffensiveTargetActor.Health > 90);
+			else if (m_OffensiveTargetActor.IsEpic)
+				return (m_OffensiveTargetActor.Health > 50);
+			else
+				return false;
+		}
+
+		/************************************************************************************/
 		public bool AreTempOffensiveBuffsAdvised()
 		{
+			/// TODO: We need a condition that checks how many mobs we have engaged.
+
 			if (m_OffensiveTargetActor == null)
 				return false;
 			else if (m_OffensiveTargetActor.IsNamed)

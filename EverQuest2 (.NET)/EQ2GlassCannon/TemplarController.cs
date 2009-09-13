@@ -318,8 +318,18 @@ namespace EQ2GlassCannon
 					if (bTempBuffsOrDumbfiresAdvised && !IsAbilityMaintained(m_uiHammerDumbfirePetAbilityID) && CastAbility(m_uiHammerDumbfirePetAbilityID))
 						return true;
 
-					if (!m_OffensiveTargetActor.IsEpic && !IsAbilityMaintained(m_uiSingleReactiveDeathHealAbilityID) && CastAbility(m_uiSingleReactiveDeathHealAbilityID))
-						return true;
+					if (!m_OffensiveTargetActor.IsEpic)
+					{
+						if (CastAbility(m_uiSingleStunAbilityID))
+							return true;
+
+						/// Don't waste this while the stun is active.
+						if (!IsAbilityMaintained(m_uiSingleStunAbilityID) && CastAbility(m_uiSingleDazeAbilityID))
+							return true;
+
+						if (!IsAbilityMaintained(m_uiSingleReactiveDeathHealAbilityID) && CastAbility(m_uiSingleReactiveDeathHealAbilityID))
+							return true;
+					}
 				}
 
 				if (iTotalDeficientMembersBelowGroupHealTolerance > 1 && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))

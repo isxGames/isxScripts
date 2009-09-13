@@ -267,16 +267,16 @@ namespace EQ2GlassCannon
 					if (!IsAbilityMaintained(m_uiGreenHasteDebuffAbilityID) && CastAbility(m_uiGreenHasteDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_uiSingleHasteDebuffAbilityID) && CastAbility(m_uiSingleHasteDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleHasteDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleHasteDebuffAbilityID))
 						return true;
 
 					if (!IsAbilityMaintained(m_uiGreenDPSDebuffAbilityID) && CastAbility(m_uiGreenDPSDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_uiSingleDPSDebuffAbilityID) && CastAbility(m_uiSingleDPSDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleDPSDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleDPSDebuffAbilityID))
 						return true;
 
-					if (!IsAbilityMaintained(m_uiSingleSTRSTADebuffAbilityID) && CastAbility(m_uiSingleSTRSTADebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleSTRSTADebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleSTRSTADebuffAbilityID))
 						return true;
 
 					bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
@@ -294,7 +294,7 @@ namespace EQ2GlassCannon
 				}
 
 				/// General dps requires 95% or higher. Sorry!
-				if (m_OffensiveTargetActor != null && (fLowestHealthRatio > 0.95f))
+				if (bOffensiveTargetEngaged && (fLowestHealthRatio > 0.95f))
 				{
 					if (CastAbility(m_uiSingleColdSnareAbilityID))
 						return true;
