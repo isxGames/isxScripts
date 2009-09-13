@@ -153,7 +153,7 @@ namespace EQ2GlassCannon
 			{
 				/// Find the distance to the mob. Especially important for PBAE usage.
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
-				bool bDumbfiresAdvised = (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
+				bool bDumbfiresAdvised = AreDumbfiresAdvised();
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 
 				if (CastHOStarter())
@@ -201,6 +201,7 @@ namespace EQ2GlassCannon
 					if (!IsAbilityMaintained(m_uiElementalDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiElementalDebuffAbilityID))
 						return true;
 
+					/// Cast Iceshield.
 					if (IsAbilityReady(m_uiColdDamageShieldAbilityID))
 					{
 						string strTargetName = string.Empty;
@@ -216,16 +217,16 @@ namespace EQ2GlassCannon
 							strTargetName = m_strIceShieldTarget;
 
 						/// The downside of this check is that it omits pets.
-						int iTargetActorID = -1;
 						if (m_FriendDictionary.ContainsKey(strTargetName))
-							iTargetActorID = m_FriendDictionary[strTargetName].ToActor().ID;
-
-						/// Don't refresh it on someone who still has ticks left. The calculated dps goes way down.
-						if (iTargetActorID != -1 &&
-							!IsAbilityMaintained(m_uiColdDamageShieldAbilityID, iTargetActorID) &&
-							CastAbility(m_uiColdDamageShieldAbilityID, m_strIceShieldTarget, true))
 						{
-							return true;
+							int iTargetActorID = m_FriendDictionary[strTargetName].ToActor().ID;
+
+							/// Don't refresh it on someone who still has ticks left. The calculated dps goes way down.
+							if (!IsAbilityMaintained(m_uiColdDamageShieldAbilityID, iTargetActorID) &&
+								CastAbility(m_uiColdDamageShieldAbilityID, strTargetName, true))
+							{
+								return true;
+							}
 						}
 					}
 
@@ -295,7 +296,6 @@ namespace EQ2GlassCannon
 						return true;
 					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 5))
 						return true;
-
 
 					if (CastAbility(m_uiStormingTempestAbilityID))
 						return true;

@@ -72,16 +72,10 @@ namespace EQ2GlassCannon
 				return false;
 			}
 
-			try
-			{
-				s_bIsZoning = s_EQ2.Zoning;
-			}
-			catch
-			{
-				/// This is an annoying quirk. It throws an exception only during zoning.
-				Log("Exception thrown when accessing EQ2.Zoning. Assuming the value to be \"true\".");
-				s_bIsZoning = true;
-			}
+			/// Zoning returns "FALSE" if not zoning, but an empty string when zoning.
+			/// It should be returning "TRUE" when zoning. Stupid.
+			string strZoning = s_EQ2.GetMember<string>("Zoning");
+			s_bIsZoning = (strZoning != "FALSE");
 
 			if (!s_bIsZoning)
 			{
@@ -397,20 +391,25 @@ namespace EQ2GlassCannon
 						}
 
 						/// Yay for lazy!
-						if (!string.IsNullOrEmpty(s_EQ2.PendingQuestName) && s_EQ2.PendingQuestName != "None")
+						if (s_Controller != null && !string.IsNullOrEmpty(s_EQ2.PendingQuestName) && s_EQ2.PendingQuestName != "None")
 						{
 							Log("Quest offered: \"{0}\".", s_EQ2.PendingQuestName);
 
-							/// Stolen from "EQ2Quest.iss". The question I have: isn't AcceptPendingQuest() redundant then?
-							EQ2UIPage QuestPage = s_Extension.EQ2UIPage("Popup", "RewardPack");
-							if (QuestPage.IsValid)
+							if (s_Controller.CurrentPositioningStance == PlayerController.PositioningStance.DoNothing)
+								Program.Log("Character is in do-nothing stance; ignoring offered quest.");
+							else
 							{
-								EQ2UIElement QuestAcceptButton = QuestPage.Child("button", "RewardPack.Accept");
-								if (QuestAcceptButton.IsValid)
+								/// Stolen from "EQ2Quest.iss". The question I have: isn't AcceptPendingQuest() redundant then?
+								EQ2UIPage QuestPage = s_Extension.EQ2UIPage("Popup", "RewardPack");
+								if (QuestPage.IsValid)
 								{
-									Log("Automatically accepting quest \"{0}\"...", s_EQ2.PendingQuestName);
-									s_EQ2.AcceptPendingQuest();
-									QuestAcceptButton.LeftClick();
+									EQ2UIElement QuestAcceptButton = QuestPage.Child("button", "RewardPack.Accept");
+									if (QuestAcceptButton.IsValid)
+									{
+										Log("Automatically accepting quest \"{0}\"...", s_EQ2.PendingQuestName);
+										s_EQ2.AcceptPendingQuest();
+										QuestAcceptButton.LeftClick();
+									}
 								}
 							}
 						}
@@ -522,11 +521,9 @@ namespace EQ2GlassCannon
 				OnUnhandledException(e);
 
 				/// Nothing will appear on the screen anyway because the whole thing is locked up.
+				/// TODO: Verify that this is needed.
 				if (LavishVMAPI.Frame.IsLocked)
 					Process.GetCurrentProcess().Kill();
-
-				if (s_Controller != null)
-					Program.RunCommand("/t " + s_Controller.m_astrCommandingPlayers + " oh shit lol");
 			}
 
 			finally
@@ -551,9 +548,10 @@ namespace EQ2GlassCannon
 					}
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
 				/// Do nothing. But at least the bot doesn't crash!
+				OnUnhandledException(ex);
 			}
 
 			return;
@@ -573,9 +571,10 @@ namespace EQ2GlassCannon
 					}
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
 				/// Do nothing. But at least the bot doesn't crash!
+				OnUnhandledException(ex);
 			}
 
 			return;
@@ -599,9 +598,10 @@ namespace EQ2GlassCannon
 					}
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
 				/// Do nothing. But at least the bot doesn't crash!
+				OnUnhandledException(ex);
 			}
 
 			return;
@@ -623,13 +623,14 @@ namespace EQ2GlassCannon
 					using (new FrameLock(true))
 					{
 						UpdateGlobals();
-						s_Controller.OnIncomingText(e.Args[0]);
+						s_Controller.OnIncomingText(PlayerController.ChatChannel.Unknown, string.Empty, string.Empty, e.Args[0]);
 					}
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
 				/// Do nothing. But at least the bot doesn't crash!
+				OnUnhandledException(ex);
 			}
 
 			return;
@@ -845,9 +846,12 @@ namespace EQ2GlassCannon
 			if (!s_PressedKeys.Contains(strIndexedKey))
 			{
 				Log("Pressing and holding keyboard key: {0}", strKey);
-				LavishScriptAPI.LavishScript.ExecuteCommand("press -hold " + strKey);
 				s_PressedKeys.Add(strIndexedKey);
 			}
+
+			/// Reapply the key even if it was applied before.
+			/// Sometimes with window focus changes, the press gets lost.
+			LavishScriptAPI.LavishScript.ExecuteCommand("press -hold " + strKey);
 			return;
 		}
 
@@ -873,6 +877,7 @@ namespace EQ2GlassCannon
 		{
 			foreach (string strThisKey in s_PressedKeys)
 			{
+				Log("Releasing keyboard key: {0}", strThisKey);
 				LavishScriptAPI.LavishScript.ExecuteCommand("press -release " + strThisKey);
 			}
 			s_PressedKeys.Clear();
@@ -884,7 +889,7 @@ namespace EQ2GlassCannon
 		{
 			foreach (string strCommand in astrCommandNames)
 			{
-				LavishScriptAPI.LavishScript.Commands.AddCommand(strCommand, OnLavishScriptCommand);
+				LavishScript.Commands.AddCommand(strCommand, OnLavishScriptCommand);
 			}
 			return;
 		}
