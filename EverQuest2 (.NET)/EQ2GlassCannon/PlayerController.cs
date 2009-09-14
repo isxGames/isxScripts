@@ -391,6 +391,10 @@ namespace EQ2GlassCannon
 
 			m_strCurrentMainTank = GetFirstExistingPartyMember(m_astrMainTanks, false);
 
+			/// NOTE: Bookkeeping is done at this point. Anything after is open game.
+
+			ClearOffensiveTargetIfWipe();
+
 			if (CheckPositioningStance())
 				return true;
 
@@ -842,255 +846,6 @@ namespace EQ2GlassCannon
 				ChangePositioningStance(PositioningStance.AutoFollow);
 
 			return;
-		}
-
-		/************************************************************************************/
-		public virtual bool OnCustomSlashCommand(string strCommand, string[] astrParameters)
-		{
-			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
-
-			switch (strCommand)
-			{
-				/// Directly acquire an offensive target.
-				case "gc_attack":
-				{
-					Actor MyTargetActor = MeActor.Target();
-					if (MyTargetActor.IsValid)
-					{
-						/// Don't bother filtering. Just grab the ID, let the other code determine if it's a legit target.
-						m_iOffensiveTargetID = MyTargetActor.ID;
-						Program.Log("Offensive target set to \"{0}\" ({1}).", MyTargetActor.Name, m_iOffensiveTargetID);
-					}
-					else
-					{
-						Program.Log("Invalid target selected.");
-					}
-					break;
-				}
-
-				/// Arbitrarily change an INI setting on the fly.
-				case "gc_changesetting":
-				{
-					string strKey = string.Empty;
-					string strValue = string.Empty;
-
-					int iEqualsPosition = strCondensedParameters.IndexOf(" ");
-					if (iEqualsPosition == -1)
-						strKey = strCondensedParameters;
-					else
-					{
-						strKey = strCondensedParameters.Substring(0, iEqualsPosition).TrimEnd();
-						strValue = strCondensedParameters.Substring(iEqualsPosition + 1).TrimStart();
-					}
-
-					if (!string.IsNullOrEmpty(strKey))
-					{
-						Program.Log("Changing setting \"{0}\" to new value \"{1}\"...", strKey, strValue);
-
-						IniFile FakeIniFile = new IniFile();
-						FakeIniFile.WriteString(strKey, strValue);
-						FakeIniFile.Mode = IniFile.TransferMode.Read;
-						TransferINISettings(FakeIniFile);
-						ApplySettings();
-					}
-					return true;
-				}
-
-				case "gc_exit":
-				{
-					Program.Log("Exit command received!");
-					Program.s_bContinueBot = false;
-					return true;
-				}
-
-				case "gc_findactor":
-				{
-					if (string.IsNullOrEmpty(strCondensedParameters))
-					{
-						Program.Log("gc_findactor failed: No actor name specified!");
-						return true;
-					}
-
-					string strSearchString = strCondensedParameters.ToLower();
-					bool bNamedSearch = (strSearchString == "named");
-
-					List<Actor> ActorList = new List<Actor>();
-					int iValidActorCount = 0;
-					int iInvalidActorCount = 0;
-
-					foreach (Actor ThisActor in Program.EnumActors())
-					{
-						bool bAddThisActor = false;
-
-						if (ThisActor.IsValid)
-						{
-							if (bNamedSearch)
-							{
-								if (ThisActor.IsNamed && !ThisActor.IsAPet)
-									bAddThisActor = true;
-							}
-							else if (ThisActor.Name.ToLower().Contains(strSearchString))
-								bAddThisActor = true;
-						}
-
-						if (bAddThisActor)
-						{
-							ActorList.Add(ThisActor);
-							iValidActorCount++;
-						}
-						else
-							iInvalidActorCount++;
-					}
-
-					if (ActorList.Count == 0)
-					{
-						Program.Log("gc_findactor: Unable to find actor \"{0}\".", strCondensedParameters);
-						return true;
-					}
-
-					ActorList.Sort(new ActorDistanceComparer());
-
-					/// Run the waypoint on the nearest actor.
-					Program.RunCommand("/waypoint {0}, {1}, {2}", ActorList[0].X, ActorList[0].Y, ActorList[0].Z);
-
-					FlexStringBuilder SummaryBuilder = new FlexStringBuilder();
-					SummaryBuilder.AppendLine("gc_findactor: {0} actor(s) found ({1} invalid) using \"{2}\".", iValidActorCount, iInvalidActorCount, strCondensedParameters);
-
-					/// Now display the individual results.
-					for (int iIndex = 0; iIndex < ActorList.Count && iIndex < 5; iIndex++)
-					{
-						Actor ThisActor = ActorList[iIndex];
-
-						SummaryBuilder.LinePrefix = "   ";
-						SummaryBuilder.AppendLine("{0}. \"{1}\" ({2}) found {3:0.00} meters away at ({4:0.00}, {5:0.00}, {6:0.00})",
-							iIndex + 1,
-							ThisActor.Name,
-							ThisActor.ID,
-							ThisActor.Distance,
-							ThisActor.X,
-							ThisActor.Y,
-							ThisActor.Z);
-						SummaryBuilder.LinePrefix = "      ";
-
-						string strFullName = ThisActor.Name;
-						if (!string.IsNullOrEmpty(ThisActor.LastName))
-							strFullName += " " + ThisActor.LastName;
-						if (!string.IsNullOrEmpty(ThisActor.SuffixTitle))
-							strFullName += " " + ThisActor.SuffixTitle;
-						if (!string.IsNullOrEmpty(ThisActor.Guild))
-							strFullName += " <" + ThisActor.Guild + ">";
-
-						SummaryBuilder.AppendLine("Full Name: {0}", strFullName);
-
-						SummaryBuilder.AppendLine("Type: {0}", ThisActor.Type);
-						SummaryBuilder.AppendLine("Class: {0}", ThisActor.Class);
-						SummaryBuilder.AppendLine("Race: {0}", ThisActor.Race);
-						SummaryBuilder.AppendLine("Level(Effective): {0}({1})", ThisActor.Level, ThisActor.EffectiveLevel);
-						SummaryBuilder.AppendLine("Encounter Size: {0}", ThisActor.EncounterSize);
-						SummaryBuilder.AppendLine("IsLocked: {0}", ThisActor.IsLocked);
-						SummaryBuilder.AppendLine("IsNamed: {0}", ThisActor.IsNamed);
-						SummaryBuilder.AppendLine("Speed: {0}", ThisActor.Speed);
-					}
-
-					Program.Log(SummaryBuilder.ToString());
-					return true;
-				}
-
-				case "gc_openini":
-				{
-					Program.SafeShellExecute(Program.s_strCurrentINIFilePath);
-					return true;
-				}
-
-				case "gc_openoverridesini":
-				{
-					Program.SafeShellExecute(Program.s_strSharedOverridesINIFilePath);
-					return true;
-				}
-
-				case "gc_reloadsettings":
-				{
-					ReadINISettings();
-					Program.ReleaseAllKeys(); /// If there's a bug, this will cure it. If not, no loss.
-					Program.s_bRefreshKnowledgeBook = true;
-					return true;
-				}
-
-				case "gc_stance":
-				{
-					if (astrParameters.Length < 1)
-					{
-						Program.Log("gc_stance failed: Missing stance parameter.");
-						return true;
-					}
-
-					string strStance = astrParameters[0].ToLower();
-					switch (strStance)
-					{
-						case "afk":
-							Program.Log("Now ignoring all non-stance commands.");
-							ChangePositioningStance(PositioningStance.DoNothing);
-							break;
-						case "neutral":
-							Program.Log("Positioning is now neutral.");
-							ChangePositioningStance(PositioningStance.NeutralPosition);
-							break;
-						case "dash":
-							Program.Log("Dashing forward.");
-							ChangePositioningStance(PositioningStance.ForwardDash);
-							break;
-						case "stay":
-							Program.Log("Staying in place.");
-							m_strPositionalCommandingPlayer = Me.Name;
-							ChangePositioningStance(PositioningStance.StayInPlace);
-							break;
-						default:
-							Program.Log("Stance not recognized.");
-							break;
-					}
-
-					return true;
-				}
-
-				case "gc_spawnwatch":
-				{
-					m_bSpawnWatchTargetAnnounced = false;
-					m_strSpawnWatchTarget = strCondensedParameters.ToLower().Trim();
-					Program.Log("Bot will now scan for actor \"{0}\".", m_strSpawnWatchTarget);
-					ChangePositioningStance(PositioningStance.SpawnWatch);
-					return true;
-				}
-
-				/// Test the text-to-speech synthesizer using the current settings.
-				case "gc_tts":
-				{
-					Program.SayText(strCondensedParameters);
-					return true;
-				}
-
-				case "gc_useitem":
-				{
-					/// TODO: This will be the bomb once completed.
-					/// If the item exists and is useable, we cancel spellcast and then use it immediately.
-					return true;
-				}
-
-				case "gc_version":
-				{
-					Program.DisplayVersion();
-					return true;
-				}
-
-				/// Clear the offensive target.
-				case "gc_withdraw":
-				{
-					Program.Log("Offensive target withdrawn.");
-					WithdrawFromCombat();
-					return true;
-				}
-			}
-
-			return false;
 		}
 
 		/************************************************************************************/
@@ -1557,11 +1312,10 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool GetOffensiveTargetActor()
+		/// <summary>
+		/// </summary>
+		public void ClearOffensiveTargetIfWipe()
 		{
-			if (m_iOffensiveTargetID == -1)
-				return false;
-
 			/// See if everyone is dead...
 			bool bEveryoneDead = true;
 			foreach (GroupMember ThisMember in m_FriendDictionary.Values)
@@ -1582,8 +1336,16 @@ namespace EQ2GlassCannon
 					Program.Log("Everyone is dead and the encounter is over; the bot will not re-engage on rez/revive.");
 					m_iOffensiveTargetID = -1;
 				}
-				return false;
 			}
+
+			return;
+		}
+
+		/************************************************************************************/
+		public bool GetOffensiveTargetActor()
+		{
+			if (m_iOffensiveTargetID == -1)
+				return false;
 
 			Actor OffensiveTargetActor = Program.GetActor(m_iOffensiveTargetID);
 
