@@ -87,6 +87,9 @@
     <Compile Include="PlayerController.CastAbility.cs">
       <DependentUpon>PlayerController.cs</DependentUpon>
     </Compile>
+    <Compile Include="PlayerController.CustomSlashCommands.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlayerController.Helper.cs">
       <DependentUpon>PlayerController.cs</DependentUpon>
     </Compile>
