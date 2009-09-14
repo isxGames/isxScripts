@@ -1,13 +1,13 @@
-﻿/* NOTE: The warlock implementation is nowhere near complete.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace EQ2GlassCannon
 {
+	/// <summary>
+	/// NOTE: The warlock implementation is not yet complete.
+	/// </summary>
 	public class WarlockController : SorcererController
 	{
 		public List<string> m_astrShroudTargets = new List<string>();
@@ -123,34 +123,26 @@ namespace EQ2GlassCannon
 			{
 				if (CheckToggleBuff(m_uiWardOfSagesAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiNullmailAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupCastingSkillBuffAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupProcBuffAbilityID, true))
 					return true;
-
 				if (CheckSingleTargetBuff(m_uiHateTransferAbilityID, m_astrHateTransferTargets))
 					return true;
-
 				if (CheckSingleTargetBuffs(m_uiSingleDamageShieldBuffAbilityID, m_astrShroudTargets))
 					return true;
-
 				if (CheckSingleTargetBuffs(m_uiSingleMeleeProcBuffAbilityID, m_astrGraspTargets))
 					return true;
-
 				if (CheckRacialBuffs())
 					return true;
-
+				if (CheckKingdomOfSkyPet())
+					return true;
 				StopCheckingBuffs();
 			}
 
@@ -186,8 +178,9 @@ Keep acid running/don't over cas it.
 					{
 						if (CastAbility(m_uiGreenDeaggroAbilityID))
 							return true;
-
 						if (CastAbility(m_uiGeneralGreenDeaggroAbilityID))
+							return true;
+						if (UseDeaggroItems())
 							return true;
 					}
 
@@ -195,7 +188,6 @@ Keep acid running/don't over cas it.
 					{
 						if (CastAbilityOnSelf(m_uiGiftAbilityID))
 							return true;
-
 						if (CastAbilityOnSelf(m_uiNetherealmAbilityID))
 							return true;
 					}
