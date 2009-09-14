@@ -121,38 +121,30 @@ namespace EQ2GlassCannon
 			{
 				if (CheckToggleBuff(m_uiWardOfSagesAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiMailOfFrostAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiElementalBuffAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiSTRINTBuffAbilityID, true))
 					return true;
-
 				if (CheckSingleTargetBuffs(m_uiFlametongueAbilityID, m_astrFlametongueTargets))
 					return true;
-
 				if (CheckSingleTargetBuff(m_uiHateTransferAbilityID, m_astrHateTransferTargets))
 					return true;
-
 				if (CheckRacialBuffs())
 					return true;
-
+				if (CheckKingdomOfSkyPet())
+					return true;
 				if (CheckToggleBuff(m_uiSnowFilledStepsAbilityID, true))
 					return true;
-
 				StopCheckingBuffs();
 			}
 
 			if (bOffensiveTargetEngaged)
 			{
 				/// Find the distance to the mob. Especially important for PBAE usage.
-				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
 				bool bDumbfiresAdvised = AreDumbfiresAdvised();
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 
@@ -161,8 +153,76 @@ namespace EQ2GlassCannon
 
 				if (MeActor.IsIdle)
 				{
+					/// Cast these temp buffs before other spells can separate them.
+					/// Iceshape and Gift always go together, and Fireshape and Surge always go together.
+					if (IsAbilityMaintained(m_uiIceshapeAbilityID))
+					{
+						if (CastAbility(m_uiGiftAbilityID, Me.Name, true))
+						{
+							SpamSafeGroupSay(m_strGiftCallout);
+							return true;
+						}
+					}
+					else if (IsAbilityMaintained(m_uiSurgeAbilityID))
+					{
+						if (CastAbility(m_uiFireshapeAbilityID, Me.Name, true))
+							return true;
+					}
+
+					if (bTempBuffsAdvised)
+					{
+						/// These temp buffs are sensitive to the damage type;
+						/// don't do shit while Iceshape or Gift is on the group from another player.
+						if (!IsBeneficialEffectPresent(m_uiIceshapeAbilityID) && !IsBeneficialEffectPresent(m_uiGiftAbilityID))
+						{
+							/// Iceshape and Fireshape are optional AA abilities but tightly woven into the use of Gift and Surge.
+							/// To keep this code concise, "nonexistant" is treated the same as "ready".
+							bool bIceshapeReady = (m_uiIceshapeAbilityID == 0 || IsAbilityReady(m_uiIceshapeAbilityID));
+							bool bFireshapeReady = (m_uiFireshapeAbilityID == 0 || IsAbilityReady(m_uiFireshapeAbilityID));
+
+							/// Consider using Iceshape/Gift if Fireshape/Surge aren't up.
+							/// Gift has the shorter duration so it gets cast last and its availability becomes the prerequisite.
+							if (!IsAbilityMaintained(m_uiFireshapeAbilityID) && !IsAbilityMaintained(m_uiSurgeAbilityID) && IsAbilityReady(m_uiGiftAbilityID))
+							{
+								if (CastAbility(m_uiIceshapeAbilityID, Me.Name, true))
+									return true;
+
+								/// Unnecessary (see above).
+								/*if (CastAbility(m_uiGiftAbilityID, Me.Name, true))
+								{
+									SpamSafeGroupSay(m_strGiftCallout);
+									return true;
+								}*/
+							}
+
+							/// Consider using Fireshape/Surge if Iceshape/Gift aren't up.
+							/// Fireshape has the shorter duration so it gets cast last and its availability becomes the prerequisite.
+							else if (!IsAbilityMaintained(m_uiIceshapeAbilityID) && !IsAbilityMaintained(m_uiGiftAbilityID) && bFireshapeReady)
+							{
+								if (CastAbility(m_uiSurgeAbilityID, Me.Name, true))
+									return true;
+
+								/// Unnecessary (see above).
+								/*if (CastAbility(m_uiFireshapeAbilityID, Me.Name, true))
+									return true;*/
+							}
+						}
+					}
+
+					/// Deaggros.
+					if (m_bIHaveAggro)
+					{
+						if (CastAbility(m_uiSingleDeaggroAbilityID))
+							return true;
+						if (CastAbility(m_uiGeneralGreenDeaggroAbilityID))
+							return true;
+						if (UseDeaggroItems())
+							return true;
+					}
+
 					/// Cast Furnace of Ro. This is a static pet, permanent location. Very weird beast.
-					if (m_bUseBlueAEs && !IsAbilityMaintained(m_uiFurnaceOfRoAbilityID))
+					/// You use it to debuff heat; thus it would be dumb to use it while all spells are cold based.
+					if (m_bUseBlueAEs && !IsAbilityMaintained(m_uiFurnaceOfRoAbilityID) && !IsBeneficialEffectPresent(m_uiIceshapeAbilityID))
 					{
 						/// We're making a guesstimate that the pet's radius is 6 meters,
 						/// including margin space for any NPC's that may come into its path en route to the PC's.
@@ -181,19 +241,6 @@ namespace EQ2GlassCannon
 						return true;
 					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 8))
 						return true;
-
-					/// Deaggros.
-					if (m_bIHaveAggro)
-					{
-						if (CastAbility(m_uiSingleDeaggroAbilityID))
-							return true;
-
-						if (CastAbility(m_uiGeneralGreenDeaggroAbilityID))
-							return true;
-
-						if (UseDeaggroItems())
-							return true;
-					}
 
 					/// We attempt this in two places:
 					/// - Here at the beginning for the debuff, and
@@ -230,64 +277,8 @@ namespace EQ2GlassCannon
 						}
 					}
 
-					/// Cast these temp buffs before other spells that can trigger them or separate them.
-					/// Iceshape and Gift always go together, and Fireshape and Surge always go together.
-					if (bTempBuffsAdvised)
-					{
-						/// These temp buffs are sensitive to the damage type;
-						/// don't do shit while Iceshape or Gift is on the group from another player.
-						if (!IsBeneficialEffectPresent(m_uiIceshapeAbilityID) && !IsBeneficialEffectPresent(m_uiGiftAbilityID))
-						{
-							/// Iceshape and Fireshape are optional AA abilities but tightly woven into the use of Gift and Surge.
-							/// To keep this code concise, "nonexistant" is treated the same as "ready".
-							bool bIceshapeReady = (m_uiIceshapeAbilityID == 0 || IsAbilityReady(m_uiIceshapeAbilityID));
-							bool bFireshapeReady = (m_uiFireshapeAbilityID == 0 || IsAbilityReady(m_uiFireshapeAbilityID));
-
-							/// Consider using Iceshape/Gift if Fireshape/Surge aren't up.
-							/// Gift has the shorter duration so it gets cast last and its availability becomes the prerequisite.
-							if (!IsAbilityMaintained(m_uiFireshapeAbilityID) && !IsAbilityMaintained(m_uiSurgeAbilityID) && IsAbilityReady(m_uiGiftAbilityID))
-							{
-								if (CastAbility(m_uiIceshapeAbilityID, Me.Name, true))
-									return true;
-
-								if (CastAbility(m_uiGiftAbilityID, Me.Name, true))
-								{
-									SpamSafeGroupSay(m_strGiftCallout);
-									return true;
-								}
-							}
-
-							/// Consider using Fireshape/Surge if Iceshape/Gift aren't up.
-							/// Fireshape has the shorter duration so it gets cast last and its availability becomes the prerequisite.
-							else if (!IsAbilityMaintained(m_uiIceshapeAbilityID) && !IsAbilityMaintained(m_uiGiftAbilityID) && bFireshapeReady)
-							{
-								if (CastAbility(m_uiSurgeAbilityID, Me.Name, true))
-									return true;
-
-								if (CastAbility(m_uiFireshapeAbilityID, Me.Name, true))
-									return true;
-							}
-						}
-					}
-
-					/// Cast Fusion. This deserves special consideration because it is a directional PBAE.
-					if (m_bUseBlueAEs)
-					{
-						CachedAbility FusionAbility = GetAbility(m_uiFusionAbilityID, true);
-						if (FusionAbility != null && fDistance <= FusionAbility.m_fEffectRadius)
-						{
-							/// Freehand Sorcery for Fusion.
-							if (CastAbility(m_uiFreehandSorceryAbilityID, Me.Name, true))
-								return true;
-
-							if (CastAbility(m_uiFusionAbilityID))
-							{
-								/// Fusion is directional.
-								m_OffensiveTargetActor.DoFace();
-								return true;
-							}
-						}
-					}
+					if (CastFusion())
+						return true;
 
 					/// AE time!!
 					if (CastGreenOffensiveAbility(m_uiGreenColdAEAbilityID, 3))
@@ -365,6 +356,34 @@ namespace EQ2GlassCannon
 						return true;
 					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 1))
 						return true;
+				}
+			}
+
+			return false;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// Casts Fusion. This spell deserves special consideration because it is a directional PBAE.
+		/// </summary>
+		/// <returns></returns>
+		bool CastFusion()
+		{
+			if (m_bUseBlueAEs && m_OffensiveTargetActor != null)
+			{
+				CachedAbility FusionAbility = GetAbility(m_uiFusionAbilityID, true);
+				if (FusionAbility != null && m_OffensiveTargetActor.Distance <= FusionAbility.m_fEffectRadius)
+				{
+					/// Freehand Sorcery for Fusion.
+					if (CastAbility(m_uiFreehandSorceryAbilityID, Me.Name, true))
+						return true;
+
+					if (CastAbility(m_uiFusionAbilityID))
+					{
+						/// Fusion is directional.
+						m_OffensiveTargetActor.DoFace();
+						return true;
+					}
 				}
 			}
 

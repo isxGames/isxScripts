@@ -8,9 +8,18 @@ namespace EQ2GlassCannon
 {
 	public class SorcererController : MageController
 	{
-		public List<string> m_astrHateTransferTargets = new List<string>();
-		public bool m_bUsePowerFeed = true;
-		public double m_fPowerFeedThresholdRatio = 0.05;
+		protected enum KingdomOfSkyPetType
+		{
+			None = 0,
+			AnimatedTome, /// 2.9% spell crit @80
+			Gargoyle, /// 4.0% less hate gain @80
+			Drake, /// 2.0% reuse haste @80
+		}
+
+		protected List<string> m_astrHateTransferTargets = new List<string>();
+		protected bool m_bUsePowerFeed = true;
+		protected double m_fPowerFeedThresholdRatio = 0.05;
+		protected KingdomOfSkyPetType m_eKingdomOfSkyPet = KingdomOfSkyPetType.AnimatedTome;
 
 		protected uint m_uiWardOfSagesAbilityID = 0;
 		protected uint m_uiIceFlameAbilityID = 0;
@@ -20,6 +29,9 @@ namespace EQ2GlassCannon
 		protected uint m_uiAmbidexterousCastingAbilityID = 0;
 		protected uint m_uiGeneralGreenDeaggroAbilityID = 0;
 		protected uint m_uiSinglePowerFeedAbilityID = 0;
+		protected uint m_uiSummonAnimatedTomeAbilityID = 0;
+		protected uint m_uiSummonGargoyleAbilityID = 0;
+		protected uint m_uiSummonDrakeAbilityID = 0;
 
 		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
@@ -32,7 +44,9 @@ namespace EQ2GlassCannon
 			m_uiFreehandSorceryAbilityID = SelectHighestAbilityID("Freehand Sorcery");
 			m_uiAmbidexterousCastingAbilityID = SelectHighestAbilityID("Ambidexterous Casting");
 			m_uiGeneralGreenDeaggroAbilityID = SelectHighestAbilityID("Concussive");
-
+			m_uiSummonAnimatedTomeAbilityID = SelectHighestAbilityID("Summon Animated Tome");
+			m_uiSummonGargoyleAbilityID = SelectHighestAbilityID("Summon Gargoyle");
+			m_uiSummonDrakeAbilityID = SelectHighestAbilityID("Summon Drake");
 			return;
 		}
 
@@ -44,8 +58,37 @@ namespace EQ2GlassCannon
 			ThisFile.TransferStringList("Sorceror.HateTransferTargets", m_astrHateTransferTargets);
 			ThisFile.TransferBool("Sorceror.UsePowerFeed", ref m_bUsePowerFeed);
 			ThisFile.TransferDouble("Sorceror.PowerFeedThresholdRatio", ref m_fPowerFeedThresholdRatio);
+			ThisFile.TransferEnum<KingdomOfSkyPetType>("Sorceror.KingdomOfSkyPet", ref m_eKingdomOfSkyPet);
 
 			return;
+		}
+
+		/************************************************************************************/
+		public bool CheckKingdomOfSkyPet()
+		{
+			/// Cancel the wrong pet.
+			if (m_eKingdomOfSkyPet != KingdomOfSkyPetType.AnimatedTome && CancelMaintained(m_uiSummonAnimatedTomeAbilityID, true))
+				return true;
+			if (m_eKingdomOfSkyPet != KingdomOfSkyPetType.Gargoyle && CancelMaintained(m_uiSummonGargoyleAbilityID, true))
+				return true;
+			if (m_eKingdomOfSkyPet != KingdomOfSkyPetType.Drake && CancelMaintained(m_uiSummonDrakeAbilityID, true))
+				return true;
+
+			/// Cast the correct pet.
+			if (!MeActor.InCombatMode || m_bSummonPetDuringCombat)
+			{
+				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.AnimatedTome && !IsAbilityMaintained(m_uiSummonAnimatedTomeAbilityID) && CastAbility(m_uiSummonAnimatedTomeAbilityID, Me.Name, true))
+					return true;
+				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.Gargoyle && !IsAbilityMaintained(m_uiSummonGargoyleAbilityID) && CastAbility(m_uiSummonGargoyleAbilityID, Me.Name, true))
+					return true;
+				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.Drake && !IsAbilityMaintained(m_uiSummonDrakeAbilityID) && CastAbility(m_uiSummonDrakeAbilityID, Me.Name, true))
+					return true;
+			}
+
+			/// TODO: Now hide the pet.
+			
+
+			return false;
 		}
 
 		/************************************************************************************/
