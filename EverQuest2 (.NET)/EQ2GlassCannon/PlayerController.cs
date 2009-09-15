@@ -16,18 +16,18 @@ namespace EQ2GlassCannon
 	{
 		public const string STR_NO_KILL_NPC = "NoKill NPC";
 
-		public uint m_uiLoreAndLegendAbilityID = 0;
-		public uint m_uiHOStarterAbiltyID = 0;
-		public uint m_uiFeatherfallAbilityID = 0;
-		public uint m_uiHalfElfMitigationDebuffAbilityID = 0;
-		public uint m_uiFurySalveHealAbilityID = 0;
+		protected uint m_uiLoreAndLegendAbilityID = 0;
+		protected uint m_uiHOStarterAbiltyID = 0;
+		protected uint m_uiFeatherfallAbilityID = 0;
+		protected uint m_uiHalfElfMitigationDebuffAbilityID = 0;
+		protected uint m_uiFurySalveHealAbilityID = 0;
 
-		public uint m_uiCollectingAbilityID = 0;
-		public uint m_uiGatheringAbilityID = 0;
-		public uint m_uiMiningAbilityID = 0;
-		public uint m_uiForestingAbilityID = 0;
-		public uint m_uiTrappingAbilityID = 0;
-		public uint m_uiFishingAbilityID = 0;
+		protected uint m_uiCollectingAbilityID = 0;
+		protected uint m_uiGatheringAbilityID = 0;
+		protected uint m_uiMiningAbilityID = 0;
+		protected uint m_uiForestingAbilityID = 0;
+		protected uint m_uiTrappingAbilityID = 0;
+		protected uint m_uiFishingAbilityID = 0;
 
 		/************************************************************************************/
 		public enum PositioningStance
@@ -46,7 +46,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public enum ChatChannel : int
 		{
-			Unknown = 0,
+			NonChat = 0,
 			Say,
 			Tell,
 			Named,
@@ -60,28 +60,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public class Point3D
-		{
-			public float X = 0.0f;
-			public float Y = 0.0f;
-			public float Z = 0.0f;
-
-			public Point3D()
-			{
-				return;
-			}
-
-			public Point3D(Actor SourceActor)
-			{
-				X = SourceActor.X;
-				Y = SourceActor.Y;
-				Z = SourceActor.Z;
-				return;
-			}
-		}
-
-		/************************************************************************************/
-		public class CustomTellTrigger
+		protected class CustomTellTrigger
 		{
 			public List<string> m_astrSourcePlayers = new List<string>();
 			public string m_strSubstring = string.Empty;
@@ -89,25 +68,26 @@ namespace EQ2GlassCannon
 		}
 
 		public bool m_bContinueBot = true;
-		public Point3D m_ptMyLastLocation = new Point3D();
-
-		protected bool m_bCheckBuffsNow = true;
-		public bool m_bIHaveAggro = false;
-		public bool m_bClearGroupMaintained = false;
-		public bool m_bLastShadowTargetSamplingWasNearby = false;
-		public DateTime m_LastCheckBuffsTime = DateTime.Now;
-		public int m_iOffensiveTargetID = -1;
-		public Actor m_OffensiveTargetActor = null;
 		public int m_iAbilitiesFound = 0;
+
+		protected Point3D m_ptMyLastLocation = new Point3D();
+		protected bool m_bCheckBuffsNow = true;
+		protected bool m_bIHaveAggro = false;
+		protected bool m_bClearGroupMaintained = false;
+		protected bool m_bLastShadowTargetSamplingWasNearby = false;
+		protected DateTime m_LastCheckBuffsTime = DateTime.Now;
+		protected int m_iOffensiveTargetID = -1;
+		protected int m_iLastOffensiveTargetID = -1;
+		protected Actor m_OffensiveTargetActor = null;
 		protected Point3D m_ptStayLocation = new Point3D();
-		public double m_fCurrentMovementTargetCoordinateTolerance = 0.0f;
+		protected double m_fCurrentMovementTargetCoordinateTolerance = 0.0f;
 		protected string m_strPositionalCommandingPlayer = string.Empty;
 		protected string m_strCurrentMainTank = string.Empty;
-		public string m_strChatWatchTargetText = string.Empty;
-		public DateTime m_ChatWatchNextValidAlertTime = DateTime.Now;
-		public bool m_bSpawnWatchTargetAnnounced = false;
-		public string m_strSpawnWatchTarget = string.Empty;
-		public DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
+		protected string m_strChatWatchTargetText = string.Empty;
+		protected DateTime m_ChatWatchNextValidAlertTime = DateTime.Now;
+		protected bool m_bSpawnWatchTargetAnnounced = false;
+		protected string m_strSpawnWatchTarget = string.Empty;
+		protected DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
 		protected List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
 
 		protected PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
@@ -124,7 +104,7 @@ namespace EQ2GlassCannon
 		protected Dictionary<string, uint> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, uint>();
 
 		/************************************************************************************/
-		public Character Me
+		protected Character Me
 		{
 			get
 			{
@@ -133,7 +113,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public Actor MeActor
+		protected Actor MeActor
 		{
 			get
 			{
@@ -254,7 +234,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="astrAbilityNames">List of every spell that shares the behavior and recast timer,
 		/// presorted by the caller from lowest level to highest.</param>
-		public uint SelectHighestAbilityID(params string[] astrAbilityNames)
+		protected uint SelectHighestAbilityID(params string[] astrAbilityNames)
 		{
 			uint uiBestSpellID = 0;
 
@@ -288,7 +268,7 @@ namespace EQ2GlassCannon
 		};
 
 		/************************************************************************************/
-		public uint SelectHighestTieredAbilityID(string strBaseAbilityName)
+		protected uint SelectHighestTieredAbilityID(string strBaseAbilityName)
 		{
 			List<string> astrAbilityNames = new List<string>(s_astrRomanNumeralSuffixes.Length);
 			for (int iIndex = 0; iIndex < s_astrRomanNumeralSuffixes.Length; iIndex++)
@@ -304,7 +284,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public uint SelectAbilityID(uint uiAbilityID)
+		protected uint SelectAbilityID(uint uiAbilityID)
 		{
 			if (m_KnowledgeBookIDToNameMap.ContainsKey(uiAbilityID))
 				return uiAbilityID;
@@ -319,8 +299,9 @@ namespace EQ2GlassCannon
 		/// <returns>true if an action was taken and no further processing should occur</returns>
 		public virtual bool DoNextAction()
 		{
-			/// We freshly reacquire this for every frame.
+			/// We freshly reacquire these for every frame.
 			m_OffensiveTargetActor = null;
+			m_bIHaveAggro = false;
 
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 				return true;
@@ -344,15 +325,7 @@ namespace EQ2GlassCannon
 			foreach (GroupMember ThisMember in EnumRaidMembers())
 				m_FriendDictionary.Add(ThisMember.Name, ThisMember);
 
-			/// If we're not in a raid, or for some weird reason the raid enum turned up blanks,
-			/// then just copy from the group list (cheating!).
-			if (m_FriendDictionary.Count == 0)
-			{
-				foreach (KeyValuePair<string, GroupMember> ThisPair in m_GroupMemberDictionary)
-					m_FriendDictionary.Add(ThisPair.Key, ThisPair.Value);
-			}
-
-			/// Build the maintained spell dictionary.
+			/// Build the maintained spell dictionaries.
 			m_MaintainedNameToIndexMap.Clear();
 			m_MaintainedTargetNameDictionary.Clear();
 			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
@@ -421,6 +394,14 @@ namespace EQ2GlassCannon
 				m_CastTimeRemaining = m_LastCastEndTime - CurrentDateTime;
 
 			return false;
+		}
+
+		/************************************************************************************/
+		public virtual void UpdateEndOfRoundStatistics()
+		{
+			m_ptMyLastLocation = new Point3D(MeActor);
+			m_iLastOffensiveTargetID = m_iOffensiveTargetID;
+			return;
 		}
 
 		/************************************************************************************/
@@ -834,7 +815,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual void OnZoning()
+		public virtual void OnZoningBegin()
 		{
 			return;
 		}
@@ -849,7 +830,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void StopCheckingBuffs()
+		protected void StopCheckingBuffs()
 		{
 			m_bCheckBuffsNow = false;
 			m_LastCheckBuffsTime = DateTime.Now;
@@ -858,7 +839,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void ChangePositioningStance(PositioningStance eNewStance)
+		protected void ChangePositioningStance(PositioningStance eNewStance)
 		{
 			/// Deactivate the existing stance.
 			if (m_ePositioningStance == PositioningStance.CustomAutoFollow ||
@@ -931,7 +912,7 @@ namespace EQ2GlassCannon
 		/// 
 		/// </summary>
 		/// <returns>true if an autofollow command was sent.</returns>
-		public bool CheckPositioningStance()
+		protected bool CheckPositioningStance()
 		{
 			/// Traditional client autofollow.
 			if (m_ePositioningStance == PositioningStance.AutoFollow)
@@ -1009,7 +990,7 @@ namespace EQ2GlassCannon
 				/// For shadowing, the coordinate is updated at every iteration.
 				if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 				{
-					/// Make sure an autofollow target exists in our party.
+					/// Make sure an autofollow target exists in our party and isn't ourself.
 					string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
 					if (string.IsNullOrEmpty(strAutoFollowTarget))
 					{
@@ -1018,7 +999,7 @@ namespace EQ2GlassCannon
 					}
 
 					Actor FollowActor = m_FriendDictionary[strAutoFollowTarget].ToActor();
-					if (!FollowActor.IsValid)
+					if (!FollowActor.IsValid || FollowActor.ID == MeActor.ID)
 					{
 						Program.ReleaseKey("W");
 						return false;
@@ -1040,12 +1021,14 @@ namespace EQ2GlassCannon
 						if (m_bLastShadowTargetSamplingWasNearby && !bThisSamplingIsNearby)
 						{
 							//Program.RunCommand("/t {0} you ported too far away", m_astrCommandingPlayers); /// TODO: Make this configurable.
+							Program.Log("Custom auto-follow target suddenly warped far away; reverting to neutral positioning.");
 							ChangePositioningStance(PositioningStance.NeutralPosition);
 							return true;
 						}
 						m_bLastShadowTargetSamplingWasNearby = bThisSamplingIsNearby;
 					}
 
+					/// Move the character.
 					if (fRange > m_fCurrentMovementTargetCoordinateTolerance)
 					{
 						float fBearing = Me.HeadingTo(m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z);
@@ -1170,11 +1153,38 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected bool GetOffensiveTargetActor()
+		{
+			if (m_iOffensiveTargetID == -1)
+				return false;
+
+			Actor OffensiveTargetActor = Program.GetActor(m_iOffensiveTargetID);
+
+			if (OffensiveTargetActor == null ||
+				!OffensiveTargetActor.IsValid ||
+				OffensiveTargetActor.IsDead ||
+				OffensiveTargetActor.IsLocked ||
+				OffensiveTargetActor.Type == "NoKill NPC")
+			{
+				if (OffensiveTargetActor == null)
+					Program.Log("Offensive target is null.");
+				else
+					Program.Log("Offensive target ({0}, {1}) is dead, locked, or invalid.", OffensiveTargetActor.Name, OffensiveTargetActor.ID);
+
+				WithdrawFromCombat();
+				return false;
+			}
+
+			m_OffensiveTargetActor = OffensiveTargetActor;
+			return true;
+		}
+
+		/************************************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns>true if the player was able to fully target and engage the designated opponent</returns>
-		public bool EngageOffensiveTarget()
+		protected bool EngageOffensiveTarget()
 		{
 			if (m_OffensiveTargetActor == null)
 				return false;
@@ -1190,11 +1200,17 @@ namespace EQ2GlassCannon
 				return false;
 			}
 
+			/// We can't determine threat until the mob is targetted.
+			m_bIHaveAggro = (Me.GetGameData("Target.Threat").Pecent >= m_fAggroPanicPercentage);
+			//Program.Log("Target.Threat: {0}", Me.GetGameData("Target.Threat").Pecent);
+			//Program.Log("Target.SecondaryThreat: {0}", Me.GetGameData("Target.SecondaryThreat").Pecent);
+			//Program.Log("ImpliedTarget.Threat: {0}", Me.GetGameData("Target.ImpliedTarget").Pecent);
+
 			/// If we're stealthed, then we can bail because targetting is all we need.
 			/// Otherwise the /auto commands will break stealth which we might need for some CA's.
 			if (MeActor.IsStealthed)
 			{
-				Program.Log("Player is stealthed; no action will be taken.");
+				Program.Log("Player is stealthed; auto-attack will not be toggled.");
 				return true;
 			}
 
@@ -1231,6 +1247,10 @@ namespace EQ2GlassCannon
 				}
 			}
 
+			/// Decide if I have aggro. In the future, use the ratio.
+			Actor AggroWhoreActor = m_OffensiveTargetActor.Target();
+			m_bIHaveAggro = AggroWhoreActor.IsValid && (AggroWhoreActor.ID == MeActor.ID);
+
 			return true;
 		}
 
@@ -1243,7 +1263,7 @@ namespace EQ2GlassCannon
 		/// same actor later).
 		/// </summary>
 		/// <returns></returns>
-		public bool WithdrawCombatFromTarget(Actor TargetActor)
+		protected bool WithdrawCombatFromTarget(Actor TargetActor)
 		{
 			bool bActionTaken = false;
 
@@ -1277,7 +1297,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool WithdrawFromCombat()
+		protected bool WithdrawFromCombat()
 		{
 			bool bActionTaken = false;
 			m_iOffensiveTargetID = -1;
@@ -1314,7 +1334,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		/// <summary>
 		/// </summary>
-		public void ClearOffensiveTargetIfWipe()
+		protected void ClearOffensiveTargetIfWipe()
 		{
 			/// See if everyone is dead...
 			bool bEveryoneDead = true;
@@ -1339,38 +1359,6 @@ namespace EQ2GlassCannon
 			}
 
 			return;
-		}
-
-		/************************************************************************************/
-		public bool GetOffensiveTargetActor()
-		{
-			if (m_iOffensiveTargetID == -1)
-				return false;
-
-			Actor OffensiveTargetActor = Program.GetActor(m_iOffensiveTargetID);
-
-			if (OffensiveTargetActor == null ||
-				!OffensiveTargetActor.IsValid ||
-				OffensiveTargetActor.IsDead ||
-				OffensiveTargetActor.IsLocked ||
-				OffensiveTargetActor.Type == "NoKill NPC")
-			{
-				if (OffensiveTargetActor == null)
-					Program.Log("Offensive target is null.");
-				else
-					Program.Log("Offensive target ({0}, {1}) is dead, locked, or invalid.", OffensiveTargetActor.Name, OffensiveTargetActor.ID);
-
-				WithdrawFromCombat();
-				return false;
-			}
-
-			m_OffensiveTargetActor = OffensiveTargetActor;
-
-			/// Decide if I have aggro. In the future, use the ratio.
-			Actor AggroWhoreActor = m_OffensiveTargetActor.Target();
-			m_bIHaveAggro = AggroWhoreActor.IsValid && (AggroWhoreActor.ID == MeActor.ID);
-
-			return true;
 		}
 	}
 }
