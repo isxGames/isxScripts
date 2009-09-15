@@ -14,7 +14,7 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
-		public enum StanceType
+		protected enum StanceType
 		{
 			Neither = 0,
 			Defensive = 1,
@@ -22,75 +22,76 @@ namespace EQ2GlassCannon
 		}
 
 		public bool m_bWriteBackINI = true;
-		public string m_strCustomTellTriggerFile = string.Empty;
-		public string m_strReloadINISubphrase = "rebuff me pls";
-		public List<string> m_astrMainTanks = new List<string>();
-		public List<string> m_astrAutoFollowTargets = new List<string>();
-		public List<string> m_astrCommandingPlayers = new List<string>();
-		public string m_strCommandChannel = string.Empty;
-		public string m_strAssistSubphrase = "assist me";
-		public string m_strBotKillswitchSubphrase = "stop dps";
-		public string m_strProcessKillswitchSubphrase = "beddy-bye!!";
-		public string m_strDoNothingSubphrase = "afk";
-		public string m_strNeutralPositionSubphrase = "neutral";
-		public string m_strAutoFollowSubphrase = "come";
-		public string m_strCustomAutoFollowSubphrase = "stay close";
-		public string m_strStayInPlaceSubphrase = "stay here";
-		public string m_strShadowMeSubphrase = "shadow me";
-		public string m_strForwardDashSubphrase = "charge";
-		public string m_strClearGroupMaintainedSubphrase = "redo group buffs";
-		public string m_strMentorSubphrase = "mentor";
-		public string m_strRepairSubphrase = "repair";
-		public string m_strArbitraryVerbCommandPrefix = "try this: \"";
-		public string m_strArbitraryVerbCommandSeparator = "\", \"";
-		public string m_strArbitraryVerbCommandSuffix = "\"";
-		public double m_fStayInPlaceTolerance = 1.5;
-		public double m_fCustomAutoFollowMinimumRange = 10.0;
-		public int m_iCheckBuffsInterval = 500;
-		public bool m_bKillBotWhenCamping = false;
-		public bool m_bUseRanged = false;
-		public bool m_bUseGreenAEs = true;
-		public bool m_bUseBlueAEs = true;
-		public bool m_bAutoAttack = true;
-		public bool m_bSyncAbilitiesWithAutoAttack = false; /// Not implemented yet.
-		public bool m_bCastCures = true;
-		public bool m_bPrioritizeCures = true;
-		public bool m_bCancelCastForCures = true;
-		public bool m_bCureUngroupedMainTank = true;
-		public bool m_bHealUngroupedMainTank = true;
-		public bool m_bCastFurySalveIfGranted = true;
-		public bool m_bSpamHeroicOpportunity = true;
-		public bool m_bMezAdds = false;
-		public bool m_bUseRacialBuffs = true;
-		public bool m_bUsePet = true;
-		public bool m_bSummonPetDuringCombat = false;
-		public bool m_bHarvestAutomatically = false;
 		public int m_iFrameSkip = 2;
-		public EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
+		public bool m_bKillBotWhenCamping = false;
+		protected string m_strCustomTellTriggerFile = string.Empty;
+		protected string m_strReloadINISubphrase = "rebuff me pls";
+		protected List<string> m_astrMainTanks = new List<string>();
+		protected List<string> m_astrAutoFollowTargets = new List<string>();
+		protected List<string> m_astrCommandingPlayers = new List<string>();
+		protected string m_strAssistSubphrase = "assist me";
+		protected string m_strBotKillswitchSubphrase = "stop dps";
+		protected string m_strProcessKillswitchSubphrase = "beddy-bye!!";
+		protected string m_strDoNothingSubphrase = "afk";
+		protected string m_strNeutralPositionSubphrase = "neutral";
+		protected string m_strAutoFollowSubphrase = "come";
+		protected string m_strCustomAutoFollowSubphrase = "stay close";
+		protected string m_strStayInPlaceSubphrase = "stay here";
+		protected string m_strShadowMeSubphrase = "shadow me";
+		protected string m_strForwardDashSubphrase = "charge";
+		protected string m_strClearGroupMaintainedSubphrase = "redo group buffs";
+		protected string m_strMentorSubphrase = "mentor";
+		protected string m_strRepairSubphrase = "repair";
+		protected string m_strArbitraryVerbCommandPrefix = "try this: \"";
+		protected string m_strArbitraryVerbCommandSeparator = "\", \"";
+		protected string m_strArbitraryVerbCommandSuffix = "\"";
+		protected double m_fStayInPlaceTolerance = 1.5;
+		protected double m_fCustomAutoFollowMinimumRange = 10.0;
+		protected int m_iCheckBuffsInterval = 500;
+		protected double m_fAggroPanicPercentage = 90.0;
+		protected bool m_bUseRanged = false;
+		protected bool m_bUseGreenAEs = true;
+		protected bool m_bUseBlueAEs = true;
+		protected bool m_bAutoAttack = true;
+		protected bool m_bSyncAbilitiesWithAutoAttack = false; /// Not implemented yet.
+		protected bool m_bCastCures = true;
+		protected bool m_bPrioritizeCures = true;
+		protected bool m_bCancelCastForCures = true;
+		protected bool m_bCureUngroupedMainTank = true;
+		protected bool m_bHealUngroupedMainTank = true;
+		protected bool m_bCastFurySalveIfGranted = true;
+		protected bool m_bSpamHeroicOpportunity = true;
+		protected bool m_bMezAdds = false;
+		protected bool m_bUseRacialBuffs = true;
+		protected bool m_bUsePet = true;
+		protected bool m_bSummonPetDuringCombat = false;
+		protected bool m_bHarvestAutomatically = false;
+		protected EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
 		public bool m_bUseVoiceSynthesizer = true;
-		public string m_strVoiceSynthesizerProfile = "Microsoft Anna";
-		public int m_iVoiceSynthesizerVolume = 100;
-		public string m_strPhoneticCharacterName = "";
-		public string m_strChatWatchSubphrase = "listen for";
-		public List<string> m_astrChatWatchToAddressList = new List<string>();
-		public double m_fChatWatchAlertCooldownMinutes = 5.0;
-		public string m_strSpawnWatchSubphrase = "watch for";
-		public List<string> m_astrSpawnWatchToAddressList = new List<string>();
-		public string m_strSpawnWatchAlertCommand = string.Empty;
-		public string m_strSpawnWatchAlertSpeech = "{0} has just appeared";
-		public string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
-		public double m_fSpawnWatchDespawnTimeoutMinutes = 6.0;
+		protected string m_strVoiceSynthesizerProfile = "Microsoft Anna";
+		protected int m_iVoiceSynthesizerVolume = 100;
+		protected string m_strPhoneticCharacterName = "";
+		protected string m_strChatWatchSubphrase = "listen for";
+		protected List<string> m_astrChatWatchToAddressList = new List<string>();
+		protected double m_fChatWatchAlertCooldownMinutes = 5.0;
+		protected string m_strSpawnWatchSubphrase = "watch for";
+		protected List<string> m_astrSpawnWatchToAddressList = new List<string>();
+		protected string m_strSpawnWatchAlertCommand = string.Empty;
+		protected string m_strSpawnWatchAlertSpeech = "{0} has just appeared";
+		protected string m_strSpawnWatchDespawnSubphrase = "wait for despawn";
+		protected double m_fSpawnWatchDespawnTimeoutMinutes = 6.0;
 
 		/************************************************************************************/
 		protected virtual void TransferINISettings(IniFile ThisFile)
 		{
 			ThisFile.TransferBool("General.WriteBackINI", ref m_bWriteBackINI);
+			ThisFile.TransferInteger("General.FrameSkip", ref m_iFrameSkip);
+			ThisFile.TransferBool("General.KillBotWhenCamping", ref m_bKillBotWhenCamping);
 			ThisFile.TransferString("General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
 			ThisFile.TransferString("General.ReloadINISubphrase", ref m_strReloadINISubphrase);
 			ThisFile.TransferStringList("General.MainTanks", m_astrMainTanks);
 			ThisFile.TransferStringList("General.AutoFollowTargets", m_astrAutoFollowTargets);
 			ThisFile.TransferStringList("General.CommandingPlayers", m_astrCommandingPlayers);
-			ThisFile.TransferString("General.CommandChannel", ref m_strCommandChannel);
 			ThisFile.TransferCaselessString("General.AssistSubphrase", ref m_strAssistSubphrase);
 			ThisFile.TransferCaselessString("General.BotKillswitchSubphrase", ref m_strBotKillswitchSubphrase);
 			ThisFile.TransferCaselessString("General.ProcessKillswitchSubphrase", ref m_strProcessKillswitchSubphrase);
@@ -108,7 +109,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("General.ArbitraryVerbCommandSeparator", ref m_strArbitraryVerbCommandSeparator);
 			ThisFile.TransferString("General.ArbitraryVerbCommandSuffix", ref m_strArbitraryVerbCommandSuffix);
 			ThisFile.TransferInteger("General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
-			ThisFile.TransferBool("General.KillBotWhenCamping", ref m_bKillBotWhenCamping);
+			ThisFile.TransferDouble("General.AggroPanicPercentage", ref m_fAggroPanicPercentage);
 			ThisFile.TransferBool("General.UseRanged", ref m_bUseRanged);
 			ThisFile.TransferBool("General.UseGreenAEs", ref m_bUseGreenAEs);
 			ThisFile.TransferBool("General.UseBlueAEs", ref m_bUseBlueAEs);
@@ -126,7 +127,6 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.UsePet", ref m_bUsePet);
 			ThisFile.TransferBool("General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
 			ThisFile.TransferBool("General.HarvestAutomatically", ref m_bHarvestAutomatically);
-			ThisFile.TransferInteger("General.FrameSkip", ref m_iFrameSkip);
 			ThisFile.TransferDouble("General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
 			ThisFile.TransferDouble("General.CustomAutoFollowMinimumRange", ref m_fCustomAutoFollowMinimumRange);
 
@@ -230,7 +230,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void ApplySettings()
+		protected void ApplySettings()
 		{
 			/// Fallback option to prevent an unresponsive bot.
 			if (m_astrCommandingPlayers.Count == 0)

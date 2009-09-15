@@ -14,7 +14,42 @@ namespace EQ2GlassCannon
 	public partial class PlayerController
 	{
 		/************************************************************************************/
-		public string GetFirstExistingPartyMember(List<string> astrCandidates, bool bMustBeInGroup)
+		public class Point3D
+		{
+			public float X = 0.0f;
+			public float Y = 0.0f;
+			public float Z = 0.0f;
+
+			public Point3D()
+			{
+				return;
+			}
+
+			public Point3D(Actor SourceActor)
+			{
+				X = SourceActor.X;
+				Y = SourceActor.Y;
+				Z = SourceActor.Z;
+				return;
+			}
+		}
+
+		/************************************************************************************/
+		protected class ActorDistanceComparer : IComparer<Actor>
+		{
+			public int Compare(Actor x, Actor y)
+			{
+				if (x.Distance > y.Distance)
+					return 1;
+				else if (x.Distance < y.Distance)
+					return -1;
+				else
+					return 0;
+			}
+		}
+
+		/************************************************************************************/
+		protected string GetFirstExistingPartyMember(List<string> astrCandidates, bool bMustBeInGroup)
 		{
 			foreach (string strThisCandidate in astrCandidates)
 			{
@@ -31,20 +66,6 @@ namespace EQ2GlassCannon
 			}
 
 			return string.Empty;
-		}
-
-		/************************************************************************************/
-		public class ActorDistanceComparer : IComparer<Actor>
-		{
-			public int Compare(Actor x, Actor y)
-			{
-				if (x.Distance > y.Distance)
-					return 1;
-				else if (x.Distance < y.Distance)
-					return -1;
-				else
-					return 0;
-			}
 		}
 
 		/************************************************************************************/
@@ -69,7 +90,7 @@ namespace EQ2GlassCannon
 		/// This finds planar distance without regard to altitude.
 		/// In EQ2, the Y coordinate is altitude/elevation.
 		/// </summary>
-		public static double GetActorDistance2D(Actor Actor1, Point3D ptReference)
+		protected static double GetActorDistance2D(Actor Actor1, Point3D ptReference)
 		{
 			/// http://en.wikipedia.org/wiki/Euclidean_distance
 			double A = Actor1.X - ptReference.X;
@@ -82,7 +103,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public static double GetActorDistance3D(Actor Actor1, Actor Actor2)
+		protected static double GetActorDistance3D(Actor Actor1, Actor Actor2)
 		{
 			/// http://en.wikipedia.org/wiki/Euclidean_distance
 			double A = Actor1.X - Actor2.X;
@@ -98,7 +119,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public static double GetActorDistance3D(Actor Actor1, Point3D ptReference)
+		protected static double GetActorDistance3D(Actor Actor1, Point3D ptReference)
 		{
 			/// http://en.wikipedia.org/wiki/Euclidean_distance
 			double A = Actor1.X - ptReference.X;
@@ -120,7 +141,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="FromActor"></param>
 		/// <returns></returns>
-		public static double GetHeadingFrom(Actor FromActor)
+		protected static double GetHeadingFrom(Actor FromActor)
 		{
 			//Reference table (TO,FROM)
 			//0,180
@@ -143,7 +164,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="FromActor"></param>
 		/// <returns></returns>
-		public double GetRelativeHeadingFrom(Actor FromActor)
+		protected static double GetRelativeHeadingFrom(Actor FromActor)
 		{
 			double fHeadingFrom = GetHeadingFrom(FromActor);
 			double fRelativeHeading = 360.0 - (double)FromActor.Heading + fHeadingFrom;
@@ -154,17 +175,17 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public IEnumerable<Maintained> EnumMaintained()
+		protected IEnumerable<Maintained> EnumMaintained()
 		{
 			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
 				yield return Me.Maintained(iIndex);
 		}
 
 		/************************************************************************************/
-		public IEnumerable<GroupMember> EnumGroupMembers()
+		protected IEnumerable<GroupMember> EnumGroupMembers()
 		{
 			/// Referring to group member #0 is shady but it's useful enough for us to continue doing it.
-			if (Me.Grouped)
+			if (Me.Grouped || Me.InRaid)
 			{
 				for (int iIndex = 0; iIndex <= 5; iIndex++)
 				{
@@ -178,7 +199,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public IEnumerable<GroupMember> EnumRaidMembers()
+		protected IEnumerable<GroupMember> EnumRaidMembers()
 		{
 			if (Me.InRaid)
 			{
@@ -190,17 +211,22 @@ namespace EQ2GlassCannon
 						yield return ThisMember;
 				}
 			}
+			else
+			{
+				foreach (GroupMember ThisMember in EnumGroupMembers())
+					yield return ThisMember;
+			}
 		}
 
 		/************************************************************************************/
-		public IEnumerable<Ability> EnumAbilities()
+		protected IEnumerable<Ability> EnumAbilities()
 		{
 			for (int iIndex = 1; iIndex <= Me.NumAbilities; iIndex++)
 				yield return Me.Ability(iIndex);
 		}
 
 		/************************************************************************************/
-		public void SpamSafeGroupSay(string strFormat, params object[] aobjParams)
+		protected void SpamSafeGroupSay(string strFormat, params object[] aobjParams)
 		{
 			if (!Me.Grouped)
 				return;
@@ -210,7 +236,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void SpamSafeRaidSay(string strFormat, params object[] aobjParams)
+		protected void SpamSafeRaidSay(string strFormat, params object[] aobjParams)
 		{
 			if (!Me.InRaid)
 			{
@@ -224,7 +250,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void SpamSafeTell(string strPlayerName, string strFormat, params object[] aobjParams)
+		protected void SpamSafeTell(string strPlayerName, string strFormat, params object[] aobjParams)
 		{
 			Program.RunCommand(5, "/t " + strPlayerName + " " + strFormat, aobjParams);
 			return;
