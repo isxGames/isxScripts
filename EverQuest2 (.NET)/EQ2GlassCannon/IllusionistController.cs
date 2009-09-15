@@ -236,17 +236,31 @@ namespace EQ2GlassCannon
 						}
 					}
 
-					/// Extreme AE opportunities should receive top priority, and never subordinate to boilerplate cast orders.
-					if (CastGreenOffensiveAbility(m_uiGreenShowerAbilityID, 3))
-						return true;
-					if (CastGreenOffensiveAbility(m_uiStormAbilityID, 4))
-						return true;
-
 					if (m_bIHaveAggro)
 					{
 						if (UseDeaggroItems())
 							return true;
 					}
+
+					if (CastGreenOffensiveAbility(m_uiGreenShowerAbilityID, 2))
+						return true;
+
+					/// Extreme AE opportunities should receive top priority, and never subordinate to boilerplate cast orders.
+					if (CastGreenOffensiveAbility(m_uiStormAbilityID, 4))
+						return true;
+
+					/// We attempt this in two places:
+					/// - Here at the beginning for the debuff, and
+					/// - Down the list for the proc DPS.
+					if (!IsAbilityMaintained(m_uiArcaneDebuffNukeAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiArcaneDebuffNukeAbilityID))
+						return true;
+					if (!IsAbilityMaintained(m_uiMeleeDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiMeleeDebuffAbilityID))
+						return true;
+					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiNullifyingStaffAbilityID))
+						return true;
+
+					if (CastGreenOffensiveAbility(m_uiGreenShowerAbilityID, 1))
+						return true;
 
 					if (bDumbfiresAdvised && !IsAbilityMaintained(m_uiConstructAbilityID) && CastAbility(m_uiConstructAbilityID))
 						return true;
@@ -265,21 +279,8 @@ namespace EQ2GlassCannon
 					if (CastAbility(m_uiLoreAndLegendAbilityID))
 						return true;
 
-					/// We attempt this in two places:
-					/// - Here at the beginning for the debuff, and
-					/// - Down the list for the proc DPS.
-					if (!IsAbilityMaintained(m_uiArcaneDebuffNukeAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiArcaneDebuffNukeAbilityID))
-						return true;
-					if (!IsAbilityMaintained(m_uiMeleeDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiMeleeDebuffAbilityID))
-						return true;
-					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiNullifyingStaffAbilityID))
-						return true;
-
 					/// We let this expire for the termination nuke, Pinski supposedly thinks it does more dps that way. :/
 					if (!IsAbilityMaintained(m_uiUnresistableNukeAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiUnresistableNukeAbilityID))
-						return true;
-
-					if (CastGreenOffensiveAbility(m_uiGreenShowerAbilityID, 1))
 						return true;
 
 					if (CastAbility(m_uiDazeNukeAbilityID))
