@@ -172,47 +172,54 @@ namespace EQ2GlassCannon
 			if (DoArbitraryRez())
 				return true;
 
-			/// Do buffs only if the vital situation isn't grim.
-			if (m_bCheckBuffsNow && (fLowestHealthRatio > 0.80f))
+			if (m_bCheckBuffsNow)
 			{
-				if (CheckShadowsHealStanceBuffs())
-					return true;
+				/// These buffs are critical.
+				if (fLowestHealthRatio > 0.75)
+				{
+					if (CheckShadowsHealStanceBuffs())
+						return true;
 
-				if (CheckToggleBuff(m_uiCoagulateAbilityID, true))
-					return true;
+					if (CheckToggleBuff(m_uiCoagulateAbilityID, true))
+						return true;
 
-				if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
-					return true;
+					if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
+						return true;
+				}
 
-				if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, m_bBuffNoxiousResistance))
-					return true;
+				/// Do buffs only if the vital situation isn't grim.
+				if (fLowestHealthRatio > 0.90)
+				{
+					if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, m_bBuffNoxiousResistance))
+						return true;
 
-				if (CheckToggleBuff(m_uiGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
-					return true;
+					if (CheckToggleBuff(m_uiGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
+						return true;
 
-				if (CheckSingleTargetBuffs(m_uiSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets))
-					return true;
+					if (CheckSingleTargetBuffs(m_uiSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets))
+						return true;
 
-				if (CheckToggleBuff(m_uiUrsineAbilityID, true))
-					return true;
+					if (CheckToggleBuff(m_uiUrsineAbilityID, true))
+						return true;
 
-				if (CheckGroupWaterBreathingBuff())
-					return true;
+					if (CheckGroupWaterBreathingBuff())
+						return true;
 
-				if (CheckSingleTargetBuff(m_uiSingleStatBuffAbilityID, m_astrAvatarTargets))
-					return true;
+					if (CheckSingleTargetBuff(m_uiSingleStatBuffAbilityID, m_astrAvatarTargets))
+						return true;
 
-				if (CheckSingleTargetBuff(m_uiSingleProcBuffAbilityID, m_astrAncestryTargets))
-					return true;
+					if (CheckSingleTargetBuff(m_uiSingleProcBuffAbilityID, m_astrAncestryTargets))
+						return true;
 
-				if (CheckRacialBuffs())
-					return true;
+					if (CheckRacialBuffs())
+						return true;
 
-				if (CheckSpiritOfTheWolf())
-					return true;
+					if (CheckSpiritOfTheWolf())
+						return true;
 
-				if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiSpiritCompanionAbilityID, m_bUsePet))
-					return true;
+					if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiSpiritCompanionAbilityID, m_bUsePet))
+						return true;
+				}
 
 				StopCheckingBuffs();
 			}
@@ -226,28 +233,30 @@ namespace EQ2GlassCannon
 					/// If Illusionist epic regen is up, do our fastest nuke to try and reap the benefit.
 					/// Ideally it would be a lowest-tier spell because we know this nuke doesn't do shit for dps considering the power it uses,
 					/// but we're not set up for that.
-					if ((fMyPowerRatio < 0.10) && IsIllusionistSoothingMindActive() && CastAbility(m_uiSingleFastShadowBaneNukeAbilityID))
+					if ((fMyPowerRatio < 0.05) && IsIllusionistSoothingMindActive() && CastAbility(m_uiSingleFastShadowBaneNukeAbilityID))
 						return true;
-				}
 
-				if (MeActor.InCombatMode)
-				{
-					/// Death save on the weakest party member.
-					if (fLowestHealthRatio < 0.10)
-					{
-						if (CastAbility(m_uiGeneralSingleDeathSaveAbilityID, strLowestHealthName, true))
-							return true;
-					}
-
-					/// Emergency stun ward on the main tank.
+					/// Emergency spells on the Main Tank.
 					VitalStatus MainTankVitalStatus = null;
-					if (GetVitalStatus(m_astrMainTanks[0], ref MainTankVitalStatus))
+					if (GetVitalStatus(m_strCurrentMainTank, ref MainTankVitalStatus))
 					{
-						if (MainTankVitalStatus.HealthRatio < 0.05)
+						/// Death save.
+						if (MainTankVitalStatus.HealthRatio < 0.20)
 						{
-							if (CastAbility(m_uiSingleStunnedWardAbilityID, m_astrMainTanks, true))
+							if (CastAbility(m_uiGeneralSingleDeathSaveAbilityID, m_strCurrentMainTank, true))
 								return true;
 						}
+
+						/// Stun ward.
+						if (MainTankVitalStatus.HealthRatio < 0.05)
+						{
+							if (CastAbility(m_uiSingleStunnedWardAbilityID, m_strCurrentMainTank, true))
+								return true;
+						}
+
+						/// Keep the single ward up.
+						if (!IsAbilityMaintained(m_uiSingleWardAbilityID, MainTankVitalStatus.m_Actor.ID) && CastAbility(m_uiSingleWardAbilityID, m_strCurrentMainTank, true))
+							return true;
 					}
 				}
 
@@ -303,6 +312,7 @@ namespace EQ2GlassCannon
 				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 40.0f) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 					return true;
 
+				/// Single heals and wards on the player hurting the most.
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
 					if (CastAbility(m_uiSingleWardAbilityID, strLowestHealthName, true))
@@ -315,11 +325,11 @@ namespace EQ2GlassCannon
 						return true;
 				}
 
-				/// Keep the group ward up.
-				if ((Me.IsHated || MeActor.InCombatMode) && !IsAbilityMaintained(m_uiGroupWardAbilityID) && CastAbility(m_uiGroupWardAbilityID, Me.Name, true))
+				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 20.0f) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
 					return true;
 
-				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 20.0f) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
+				/// Keep the group ward up.
+				if ((bOffensiveTargetEngaged || MeActor.InCombatMode) && !IsAbilityMaintained(m_uiGroupWardAbilityID) && CastAbility(m_uiGroupWardAbilityID, Me.Name, true))
 					return true;
 
 				if ((Me.IsHated || MeActor.InCombatMode) && CastAbility(m_uiDumbfireHealPetAbilityID, Me.Name, true))
