@@ -29,6 +29,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiSingleUnresistableDOTAbilityID = 0;
 		protected uint m_uiSingleMediumNukeDOTAbilityID = 0;
 		protected uint m_uiSingleColdStunNukeAbilityID = 0;
+		protected uint m_uiSinglePlaguebringerNukeAbilityID = 0;
 		protected uint m_uiGreenNoxiousDebuffAbilityID = 0;
 		protected uint m_uiGreenPoisonStunNukeAbilityID = 0;
 		protected uint m_uiGreenPoisonDOTAbilityID = 0;
@@ -74,6 +75,7 @@ namespace EQ2GlassCannon
 			m_uiSingleUnresistableDOTAbilityID = SelectHighestTieredAbilityID("Poison");
 			m_uiSingleMediumNukeDOTAbilityID = SelectHighestTieredAbilityID("Dark Pyre");
 			m_uiSingleColdStunNukeAbilityID = SelectHighestTieredAbilityID("Encase");
+			m_uiSinglePlaguebringerNukeAbilityID = SelectHighestAbilityID("Plaguebringer");
 			m_uiGreenNoxiousDebuffAbilityID = SelectHighestTieredAbilityID("Vacuum Field");
 			m_uiGreenPoisonStunNukeAbilityID = SelectHighestTieredAbilityID("Dark Nebula");
 			m_uiGreenPoisonDOTAbilityID = SelectHighestTieredAbilityID("Apocalypse");
@@ -240,10 +242,16 @@ Keep acid running/don't over cas it.
 					if (CastAbility(m_uiSingleDiseaseReactiveAbilityID))
 						return true;
 
+					if (CastAbility(m_uiSinglePlaguebringerNukeAbilityID))
+						return true;
+
 					if (bDumbfiresAdvised && CastAbility(m_uiNetherlordPetAbilityID))
 						return true;
 
 					if (CastAbility(m_uiBewildermentAbilityID))
+						return true;
+
+					if (CastAbility(m_uiThunderclapAbilityID))
 						return true;
 
 					if (CastAbility(m_uiDarkInfestationAbilityID))
