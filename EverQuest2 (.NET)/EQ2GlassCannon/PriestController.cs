@@ -9,14 +9,14 @@ namespace EQ2GlassCannon
 	public class PriestController : PlayerController
 	{
 		#region INI settings
-		public bool m_bCastCureCurse = true;
-		public bool m_bPrioritizeCureCurse = true;
-		public bool m_bCastDebuffs = true;
-		public bool m_bCastDamageSpells = true;
-		public string m_strSingleRezCallout = "REZZING << {0} >>";
-		public string m_strGroupRezCallout = "REZZING GROUP << {0} >>";
-		public bool m_bBuffGroupWaterBreathing = true;
-		public StanceType m_eShadowsHealStance = StanceType.Neither;
+		protected bool m_bCastCureCurse = true;
+		protected bool m_bPrioritizeCureCurse = true;
+		protected bool m_bCastDebuffs = true;
+		protected bool m_bCastDamageSpells = true;
+		protected string m_strSingleRezCallout = "REZZING << {0} >>";
+		protected string m_strGroupRezCallout = "REZZING GROUP << {0} >>";
+		protected bool m_bBuffGroupWaterBreathing = true;
+		protected StanceType m_eShadowsHealStance = StanceType.Neither;
 		#endregion
 
 		protected uint m_uiCureAbilityID = 0;

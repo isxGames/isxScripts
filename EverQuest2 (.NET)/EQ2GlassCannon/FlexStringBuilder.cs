@@ -11,13 +11,13 @@ namespace EQ2GlassCannon
 	{
 		protected int m_iFinalLength = 0;
 		protected Queue<string> m_StringQueue = new Queue<string>();
-		protected string m_strLinePrefix = string.Empty;
+		protected string m_strAppendedLinePrefix = string.Empty;
 
-		public string LinePrefix
+		public string AppendedLinePrefix
 		{
 			set
 			{
-				m_strLinePrefix = value;
+				m_strAppendedLinePrefix = value;
 				return;
 			}
 		}
@@ -30,13 +30,19 @@ namespace EQ2GlassCannon
 			return;
 		}
 
+		public void AppendBreak()
+		{
+			Append("\r\n");
+			return;
+		}
+
 		public void AppendLine(string strFormat, params object[] aobjArgs)
 		{
-			if (!string.IsNullOrEmpty(m_strLinePrefix))
-				Append(m_strLinePrefix);
+			if (!string.IsNullOrEmpty(m_strAppendedLinePrefix))
+				Append(m_strAppendedLinePrefix);
 
 			Append(strFormat, aobjArgs);
-			Append("\r\n");
+			AppendBreak();
 			return;
 		}
 

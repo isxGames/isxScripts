@@ -9,20 +9,20 @@ namespace EQ2GlassCannon
 	/************************************************************************************/
 	public class ScoutController : PlayerController
 	{
-		public bool m_bDisarmChests = true;
+		protected bool m_bDisarmChests = true;
 
-		public uint m_uiShroudAbilityID = 0;
-		public uint m_uiSingleDeaggroAbilityID = 0;
-		public uint m_uiEvasiveManeuversAbilityID = 0;
+		protected uint m_uiShroudAbilityID = 0;
+		protected uint m_uiSingleDeaggroAbilityID = 0;
+		protected uint m_uiEvasiveManeuversAbilityID = 0;
 
 		/// <summary>
 		/// The int is the actor ID and the bool is whether or not we made fair attempt to disarm it.
 		/// There is no actor test to whether or not a chest can be disarmed, so we have to cache our attempts.
 		/// </summary>
-		public Dictionary<int, bool> m_NearbyChestDictionary = new Dictionary<int, bool>();
+		protected Dictionary<int, bool> m_NearbyChestDictionary = new Dictionary<int, bool>();
 
-		public int m_iLastChestDisarmAttempted = -1;
-		public DateTime m_LastChestDisarmAttemptTime = DateTime.FromBinary(0);
+		protected int m_iLastChestDisarmAttempted = -1;
+		protected DateTime m_LastChestDisarmAttemptTime = DateTime.FromBinary(0);
 
 		/************************************************************************************/
 		public override void RefreshKnowledgeBook()
@@ -54,7 +54,7 @@ namespace EQ2GlassCannon
 			if (base.OnIncomingText(eChannel, strChannelName, strFrom, strMessage))
 				return true;
 
-			if (m_iLastChestDisarmAttempted != -1)
+			if (m_iLastChestDisarmAttempted != -1 && eChannel == ChatChannel.NonChat)
 			{
 				if (strMessage.StartsWith("You disarm the trap on") ||
 					strMessage.StartsWith("You failed to disarm the trap on") ||
@@ -72,9 +72,9 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void OnZoning()
+		public override void OnZoningBegin()
 		{
-			base.OnZoning();
+			base.OnZoningBegin();
 
 			m_NearbyChestDictionary.Clear();
 			return;
@@ -87,7 +87,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool DisarmChests()
+		protected bool DisarmChests()
 		{
 			/// No need to be doing this during combat.
 			if (!m_bDisarmChests || MeActor.InCombatMode)

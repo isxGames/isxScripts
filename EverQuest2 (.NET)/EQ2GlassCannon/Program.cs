@@ -47,12 +47,14 @@ namespace EQ2GlassCannon
 		private static string s_strNewWindowTitle = null;
 		private static SetCollection<string> s_PressedKeys = new SetCollection<string>();
 		private static Dictionary<string, DateTime> m_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
+		private static SetCollection<string> m_RegisteredCustomSlashCommands = new SetCollection<string>();
+		private readonly static LavishScriptAPI.Delegates.CommandTarget s_CustomSlashCommandDelegate = OnLavishScriptCommand;
 
 		/************************************************************************************/
 		/// <summary>
 		/// Make sure to call this every time you grab a frame lock.
 		/// I've had to compensate in far too many ways for exception bullshit that gets thrown on property access.
-		/// The wrapper is behaving pretty fucking sloppy and it vexes me.
+		/// Something beyond my control is behaving pretty fucking sloppy and it vexes me.
 		/// </summary>
 		public static bool UpdateGlobals()
 		{
@@ -261,7 +263,7 @@ namespace EQ2GlassCannon
 					s_eq2event.IncomingChatText += new EventHandler<LSEventArgs>(OnIncomingChatText_EventHandler);
 					s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
 
-					Program.AddCommand(
+					RegisterCustomSlashCommands(
 						"gc_attack",
 						"gc_changesetting",
 						"gc_debug",
@@ -355,8 +357,9 @@ namespace EQ2GlassCannon
 								bFirstZoningFrame = false;
 
 								ReleaseAllKeys();
+								m_RecentThrottledCommandIndex.Clear();
 								if (s_Controller != null)
-									s_Controller.OnZoning();
+									s_Controller.OnZoningBegin();
 
 								/// Tell the garbage collector to do a full collect. Now's as good a time as any!
 								Program.Log("Performing .NET garbage collection...");
@@ -468,7 +471,7 @@ namespace EQ2GlassCannon
 						if (!s_bRefreshKnowledgeBook)
 						{
 							s_Controller.DoNextAction();
-							s_Controller.m_ptMyLastLocation = new PlayerController.Point3D(MeActor);
+							s_Controller.UpdateEndOfRoundStatistics();
 						}
 
 						/// Only check for camping or AFK every 5th frame.
@@ -507,7 +510,7 @@ namespace EQ2GlassCannon
 				}
 
 				Log("Shutting down e-mail thread...");
-				s_EmailQueueThread.PostQuitMessageAndShutdownQueue(false);
+				s_EmailQueueThread.PostQuitMessageAndShutdownQueue(true);
 				if (s_EmailQueueThread.WaitForTermination(TimeSpan.FromSeconds(30.0)))
 					Log("E-mail thread terminated.");
 				else
@@ -623,7 +626,7 @@ namespace EQ2GlassCannon
 					using (new FrameLock(true))
 					{
 						UpdateGlobals();
-						s_Controller.OnIncomingText(PlayerController.ChatChannel.Unknown, string.Empty, string.Empty, e.Args[0]);
+						s_Controller.OnIncomingText(PlayerController.ChatChannel.NonChat, string.Empty, string.Empty, e.Args[0]);
 					}
 				}
 			}
@@ -656,7 +659,6 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-
 				if (s_Controller != null)
 				{
 					List<string> astrArgList = new List<string>(astrArgs);
@@ -885,11 +887,16 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public static void AddCommand(params string[] astrCommandNames)
+		public static void RegisterCustomSlashCommands(params string[] astrCommandNames)
 		{
 			foreach (string strCommand in astrCommandNames)
 			{
-				LavishScript.Commands.AddCommand(strCommand, OnLavishScriptCommand);
+				string strActualCommand = strCommand.Trim().ToLower();
+				if (!m_RegisteredCustomSlashCommands.Contains(strActualCommand))
+				{
+					m_RegisteredCustomSlashCommands.Add(strActualCommand);
+					LavishScript.Commands.AddCommand(strActualCommand, s_CustomSlashCommandDelegate);
+				}
 			}
 			return;
 		}
