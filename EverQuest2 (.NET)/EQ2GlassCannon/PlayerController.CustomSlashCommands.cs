@@ -43,13 +43,19 @@ namespace EQ2GlassCannon
 			ThisBuilder.AppendLine("Race: {0}", ThisActor.Race);
 			ThisBuilder.AppendLine("Level(Effective): {0}({1})", ThisActor.Level, ThisActor.EffectiveLevel);
 			ThisBuilder.AppendLine("Encounter Size: {0}", ThisActor.EncounterSize);
-			ThisBuilder.AppendLine("Speed: {0}", ThisActor.Speed);
+			ThisBuilder.AppendLine("Speed: {0}%", ThisActor.Speed);
 
 			List<string> astrFlags = new List<string>();
 			if (ThisActor.IsLinkdead)
 				astrFlags.Add("IsLinkdead");
-			if (ThisActor.InCombatMode)
-				astrFlags.Add("InCombatMode");
+
+			if (ThisActor.IsSolo)
+				astrFlags.Add("IsSolo");
+			else if (ThisActor.IsHeroic)
+				astrFlags.Add("IsHeroic");
+			else if (ThisActor.IsEpic)
+				astrFlags.Add("IsEpic");
+
 			if (ThisActor.IsMerchant)
 				astrFlags.Add("IsMerchant");
 			if (ThisActor.IsBanker)
@@ -67,31 +73,47 @@ namespace EQ2GlassCannon
 			if (ThisActor.IsLocked)
 				astrFlags.Add("IsLocked");
 			if (ThisActor.IsEncounterBroken)
-				astrFlags.Add("Is");
+				astrFlags.Add("IsEncounterBroken");
 			if (ThisActor.IsNamed)
 				astrFlags.Add("IsNamed");
 			if (ThisActor.IsAPet)
 				astrFlags.Add("IsAPet");
 			if (ThisActor.IsMyPet)
 				astrFlags.Add("IsMyPet");
-			if (ThisActor.IsSolo)
-				astrFlags.Add("IsSolo");
-			if (ThisActor.IsHeroic)
-				astrFlags.Add("IsHeroic");
-			if (ThisActor.IsEpic)
-				astrFlags.Add("IsEpic");
-			if (ThisActor.IsAggro)
-				astrFlags.Add("IsAggro");
 			if (ThisActor.IsChest)
 				astrFlags.Add("IsChest");
+
 			if (ThisActor.IsIdle)
 				astrFlags.Add("IsIdle");
+			else if (ThisActor.IsBackingUp)
+				astrFlags.Add("IsBackingUp");
+			else if (ThisActor.IsStrafingLeft)
+				astrFlags.Add("IsStrafingLeft");
+			else if (ThisActor.IsStrafingRight)
+				astrFlags.Add("IsStrafingRight");
+
+			if (ThisActor.InCombatMode)
+				astrFlags.Add("InCombatMode");
+			else if (ThisActor.IsCrouching)
+				astrFlags.Add("IsCrouching");
+			else if (ThisActor.IsSitting)
+				astrFlags.Add("IsSitting");
+
 			if (ThisActor.IsSprinting)
 				astrFlags.Add("IsSprinting");
-			if (ThisActor.IsWalking)
+			else if (ThisActor.IsWalking)
 				astrFlags.Add("IsWalking");
-			if (ThisActor.IsRunning)
+			else if (ThisActor.IsRunning)
 				astrFlags.Add("IsRunning");
+
+			if (ThisActor.OnCarpet)
+				astrFlags.Add("OnCarpet");
+			else if (ThisActor.OnHorse)
+				astrFlags.Add("OnHorse");
+			else if (ThisActor.OnGriffin)
+				astrFlags.Add("OnGriffin");
+			else if (ThisActor.OnGriffon)
+				astrFlags.Add("OnGriffon");
 
 			string strFlags = string.Join(", ", astrFlags.ToArray());
 			ThisBuilder.AppendLine("Flags: {0}", strFlags);
@@ -256,6 +278,11 @@ namespace EQ2GlassCannon
 							Program.Log("Now ignoring all non-stance commands.");
 							ChangePositioningStance(PositioningStance.DoNothing);
 							break;
+						case "normal":
+						case "follow":
+							Program.Log("Positioning is now regular auto-follow.");
+							ChangePositioningStance(PositioningStance.AutoFollow);
+							break;
 						case "neutral":
 							Program.Log("Positioning is now neutral.");
 							ChangePositioningStance(PositioningStance.NeutralPosition);
@@ -290,13 +317,6 @@ namespace EQ2GlassCannon
 				case "gc_tts":
 				{
 					Program.SayText(strCondensedParameters);
-					return true;
-				}
-
-				case "gc_useitem":
-				{
-					/// TODO: This will be the bomb once completed.
-					/// If the item exists and is useable, we cancel spellcast and then use it immediately.
 					return true;
 				}
 

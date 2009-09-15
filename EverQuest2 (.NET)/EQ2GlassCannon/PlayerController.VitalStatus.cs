@@ -216,7 +216,7 @@ namespace EQ2GlassCannon
 		private Dictionary<string, VitalStatus> m_VitalStatusCache = new Dictionary<string, VitalStatus>();
 
 		/************************************************************************************/
-		public bool GetVitalStatus(string strFriendName, ref VitalStatus ThisStatus)
+		protected bool GetVitalStatus(string strFriendName, ref VitalStatus ThisStatus)
 		{
 			try
 			{
@@ -246,7 +246,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public IEnumerable<VitalStatus> EnumVitalStatuses(bool bIncludeMainTank)
+		protected IEnumerable<VitalStatus> EnumVitalStatuses(bool bIncludeMainTank)
 		{
 			VitalStatus ThisStatus = null;
 

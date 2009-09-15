@@ -64,8 +64,11 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckKingdomOfSkyPet()
+		protected bool CheckKingdomOfSkyPet()
 		{
+			if (!MeActor.IsIdle)
+				return false;
+
 			/// Cancel the wrong pet.
 			if (m_eKingdomOfSkyPet != KingdomOfSkyPetType.AnimatedTome && CancelMaintained(m_uiSummonAnimatedTomeAbilityID, true))
 				return true;
@@ -85,8 +88,13 @@ namespace EQ2GlassCannon
 					return true;
 			}
 
-			/// TODO: Now hide the pet.
-			
+			/// Now hide the pet if it is visible.
+			/// When not visible, it doesn't even appear on the actor map.
+			/// This is non-essential; don't fuck with it during combat.
+			if (!MeActor.InCombatMode)
+			{
+				///TODO:
+			}
 
 			return false;
 		}
