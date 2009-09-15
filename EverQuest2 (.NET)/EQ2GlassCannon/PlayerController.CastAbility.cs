@@ -331,7 +331,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="iAbilityID"></param>
 		/// <returns>true if spell exists, is usable, AND can be afforded; false otherwise.</returns>
-		public bool CanAffordAbilityCost(uint uiAbilityID)
+		protected bool CanAffordAbilityCost(uint uiAbilityID)
 		{
 			CachedAbility ThisAbility = GetAbility(uiAbilityID, true);
 			if (ThisAbility == null)
@@ -372,7 +372,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public string GetFirstExistingBeneficialAbilityCandidate(uint uiAbilityID, List<string> astrCandidates)
+		protected string GetFirstExistingBeneficialAbilityCandidate(uint uiAbilityID, List<string> astrCandidates)
 		{
 			CachedAbility ThisAbility = GetAbility(uiAbilityID, false);
 			if (ThisAbility == null)
@@ -386,7 +386,7 @@ namespace EQ2GlassCannon
 		/// Casts an action on an arbitrary player target.
 		/// Preferred for all beneficial casts.
 		/// </summary>
-		public bool CastAbility(uint uiAbilityID, string strPlayerTarget, bool bMustBeAlive)
+		protected bool CastAbility(uint uiAbilityID, string strPlayerTarget, bool bMustBeAlive)
 		{
 			if (string.IsNullOrEmpty(strPlayerTarget))
 				return false;
@@ -432,7 +432,7 @@ namespace EQ2GlassCannon
 		/// Casts the ability on the first player it finds from the list who exists in the group or raid party.
 		/// Preferred for beneficial casts.
 		/// </summary>
-		public bool CastAbility(uint uiAbilityID, List<string> astrCandidates, bool bMustBeAlive)
+		protected bool CastAbility(uint uiAbilityID, List<string> astrCandidates, bool bMustBeAlive)
 		{
 			string strPlayer = GetFirstExistingBeneficialAbilityCandidate(uiAbilityID, astrCandidates);
 			if (string.IsNullOrEmpty(strPlayer))
@@ -442,7 +442,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CastAbilityOnSelf(uint uiAbilityID)
+		protected bool CastAbilityOnSelf(uint uiAbilityID)
 		{
 			return CastAbility(uiAbilityID, Me.Name, true);
 		}
@@ -453,7 +453,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="iAbilityID"></param>
 		/// <returns></returns>
-		public bool CastAbility(
+		protected bool CastAbility(
 			uint uiAbilityID,
 			double fVulnerableRelativeHeadingRangeStart,
 			double fVulnerableRelativeHeadingRangeEnd,
@@ -510,19 +510,19 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CastAbility(uint uiAbilityID)
+		protected bool CastAbility(uint uiAbilityID)
 		{
 			return CastAbility(uiAbilityID, 0.0, 360.0, true);
 		}
 
 		/************************************************************************************/
-		public bool CastSimultaneousAbility(uint uiAbilityID)
+		protected bool CastSimultaneousAbility(uint uiAbilityID)
 		{
 			return CastAbility(uiAbilityID, 0.0, 360.0, false);
 		}
 
 		/************************************************************************************/
-		public bool CastAbilityFromBehind(uint uiAbilityID)
+		protected bool CastAbilityFromBehind(uint uiAbilityID)
 		{
 			return CastAbility(uiAbilityID, 120.0, 240.0, true);
 		}
@@ -533,7 +533,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="iAbilityID"></param>
 		/// <returns></returns>
-		public bool CastAbilityFromFlankingOrBehind(uint uiAbilityID)
+		protected bool CastAbilityFromFlankingOrBehind(uint uiAbilityID)
 		{
 			return CastAbility(uiAbilityID, 60.0, 300.0, true);
 		}
@@ -572,7 +572,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CastBlueOffensiveAbility(uint uiAbilityID, int iMinimumVictimCheckCount)
+		protected bool CastBlueOffensiveAbility(uint uiAbilityID, int iMinimumVictimCheckCount)
 		{
 			if (!m_bUseBlueAEs)
 				return false;
@@ -598,7 +598,7 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// I don't know the exact range mechanics behind green AE's, so this is some fudge work.
 		/// </summary>
-		public bool CastGreenOffensiveAbility(uint uiAbilityID, int iMinimumVictimCheckCount)
+		protected bool CastGreenOffensiveAbility(uint uiAbilityID, int iMinimumVictimCheckCount)
 		{
 			if (!m_bUseGreenAEs || m_OffensiveTargetActor == null)
 				return false;
@@ -643,7 +643,7 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// Casts the HO starter if the wheel isn't up.
 		/// </summary>
-		public bool CastHOStarter()
+		protected bool CastHOStarter()
 		{
 			try
 			{
@@ -663,7 +663,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="aiMezAbilityIDs">A list of mez spells to choose from, in order of decreasing preference.</param>
 		/// <returns></returns>
-		public bool CastNextMez(params uint[] auiMezAbilityIDs)
+		protected bool CastNextMez(params uint[] auiMezAbilityIDs)
 		{
 			if (!m_bMezAdds)
 				return false;
@@ -718,7 +718,7 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool IsAbilityMaintained(uint uiAbilityID)
+		protected bool IsAbilityMaintained(uint uiAbilityID)
 		{
 			if (uiAbilityID == 0)
 				return false;
@@ -734,7 +734,25 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool IsAbilityMaintained(uint uiAbilityID, int iTargetActorID)
+		protected bool IsAbilityMaintained(uint uiAbilityID, double fMinimumRemainingDurationSeconds)
+		{
+			if (uiAbilityID == 0)
+				return false;
+
+			string strAbilityName = m_KnowledgeBookIDToNameMap[uiAbilityID];
+			if (!m_MaintainedNameToIndexMap.ContainsKey(strAbilityName))
+				return false;
+
+			int iIndex = m_MaintainedNameToIndexMap[strAbilityName];
+			Maintained ThisMaintained = Me.Maintained(iIndex);
+			return (ThisMaintained.Duration >= fMinimumRemainingDurationSeconds);
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		protected bool IsAbilityMaintained(uint uiAbilityID, int iTargetActorID)
 		{
 			if (uiAbilityID == 0)
 				return false;
@@ -748,7 +766,7 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool IsBeneficialEffectPresent(uint uiAbilityID)
+		protected bool IsBeneficialEffectPresent(uint uiAbilityID)
 		{
 			if (uiAbilityID == 0)
 				return false;
@@ -761,7 +779,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool IsBeneficialEffectPresent(string strName)
+		protected bool IsBeneficialEffectPresent(string strName)
 		{
 			return m_BeneficialEffectNameToIndexMap.ContainsKey(strName);
 		}
@@ -770,7 +788,7 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// Don't use this inside other PlayerController functions, there'd be too much dummy-check redundancy.
 		/// </summary>
-		public bool IsAbilityReady(uint uiAbilityID)
+		protected bool IsAbilityReady(uint uiAbilityID)
 		{
 			/// IsReady is false for available CA's that require stealth.
 			//return (ThisAbility.TimeUntilReady == 0.0);
@@ -785,7 +803,7 @@ namespace EQ2GlassCannon
 		/// <param name="iAbilityID"></param>
 		/// <param name="bAnyVersion">true if any version of the spell should be cancelled, false if only inferior ones should be cancelled</param>
 		/// <returns>true if a maintained spell was actually found and cancelled.</returns>
-		public bool CancelMaintained(uint uiAbilityID, bool bCancelAnyVersion)
+		protected bool CancelMaintained(uint uiAbilityID, bool bCancelAnyVersion)
 		{
 			if (uiAbilityID == 0)
 				return false;
@@ -819,7 +837,7 @@ namespace EQ2GlassCannon
 		/// <param name="iAbilityID"></param>
 		/// <param name="astrRecipients"></param>
 		/// <returns>true if a buff was cast or cancelled even one single time.</returns>
-		public bool CheckSingleTargetBuffs(uint uiAbilityID, List<string> astrRecipients)
+		protected bool CheckSingleTargetBuffs(uint uiAbilityID, List<string> astrRecipients)
 		{
 			CachedAbility ThisAbility = GetAbility(uiAbilityID, true);
 			if (ThisAbility == null)
@@ -907,7 +925,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckSingleTargetBuff(uint uiAbilityID, string strRecipient)
+		protected bool CheckSingleTargetBuff(uint uiAbilityID, string strRecipient)
 		{
 			List<string> astrSingleTargetList = new List<string>();
 			astrSingleTargetList.Add(strRecipient);
@@ -920,7 +938,7 @@ namespace EQ2GlassCannon
 		/// It prioritizes the first player it finds in the candidates list.
 		/// This is extremely useful when you frequently alternate players that receive the buff.
 		/// </summary>
-		public bool CheckSingleTargetBuff(uint uiAbilityID, List<string> astrCandidates)
+		protected bool CheckSingleTargetBuff(uint uiAbilityID, List<string> astrCandidates)
 		{
 			string strPlayer = GetFirstExistingBeneficialAbilityCandidate(uiAbilityID, astrCandidates);
 			if (string.IsNullOrEmpty(strPlayer))
@@ -930,7 +948,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckToggleBuff(uint uiAbilityID, bool bOn)
+		protected bool CheckToggleBuff(uint uiAbilityID, bool bOn)
 		{
 			if (uiAbilityID == 0)
 				return false;
@@ -946,17 +964,17 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckStanceBuff(uint uiOffensiveAbilityID, uint uiDefensiveAbilityID, StanceType eStance)
+		protected bool CheckStanceBuff(uint uiOffensiveAbilityID, uint uiDefensiveAbilityID, StanceType eStance)
 		{
+			/// Cancel the wrong stance.
 			if (eStance != StanceType.Offensive && CancelMaintained(uiOffensiveAbilityID, true))
 				return true;
-
 			if (eStance != StanceType.Defensive && CancelMaintained(uiDefensiveAbilityID, true))
 				return true;
 
+			/// Cast the right stance.
 			if (eStance == StanceType.Offensive && !IsAbilityMaintained(uiOffensiveAbilityID) && CastAbility(uiOffensiveAbilityID, Me.Name, true))
 				return true;
-
 			if (eStance == StanceType.Defensive && !IsAbilityMaintained(uiDefensiveAbilityID) && CastAbility(uiDefensiveAbilityID, Me.Name, true))
 				return true;
 
@@ -964,7 +982,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool AreDumbfiresAdvised()
+		protected bool AreDumbfiresAdvised()
 		{
 			if (m_OffensiveTargetActor == null)
 				return false;
@@ -979,7 +997,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool AreTempOffensiveBuffsAdvised()
+		protected bool AreTempOffensiveBuffsAdvised()
 		{
 			/// TODO: We need a condition that checks how many mobs we have engaged.
 
@@ -996,7 +1014,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckRacialBuffs()
+		protected bool CheckRacialBuffs()
 		{
 			if (!m_bUseRacialBuffs)
 				return false;
@@ -1015,7 +1033,7 @@ namespace EQ2GlassCannon
 		/// Otherwise we'd need a table of nodes and what harvest ability they require (fuck that).
 		/// </summary>
 		/// <returns></returns>
-		public bool AutoHarvestNearestNode()
+		protected bool AutoHarvestNearestNode()
 		{
 			if (!m_bHarvestAutomatically || Me.IsMoving || MeActor.InCombatMode || m_iOffensiveTargetID != -1)
 				return false;
@@ -1071,7 +1089,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CastFurySalveAbility()
+		protected bool CastFurySalveAbility()
 		{
 			if (!m_bCastFurySalveIfGranted || !CanAffordAbilityCost(m_uiFurySalveHealAbilityID))
 				return false;
@@ -1097,7 +1115,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool UseSpellGeneratedHealItem()
+		protected bool UseSpellGeneratedHealItem()
 		{
 			if (!MeActor.IsIdle || IsCasting)
 				return false;
@@ -1116,7 +1134,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool UseDeaggroItems()
+		protected bool UseDeaggroItems()
 		{
 			if (MeActor.IsIdle)
 			{
@@ -1135,7 +1153,7 @@ namespace EQ2GlassCannon
 		/// This is a dumping ground for any last bag of tricks.
 		/// </summary>
 		/// <returns></returns>
-		public bool UseOffensiveItems()
+		protected bool UseOffensiveItems()
 		{
 			if (MeActor.IsIdle)
 			{
