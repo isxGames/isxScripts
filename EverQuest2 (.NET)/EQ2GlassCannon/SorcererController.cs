@@ -93,7 +93,20 @@ namespace EQ2GlassCannon
 			/// This is non-essential; don't fuck with it during combat.
 			if (!MeActor.InCombatMode)
 			{
-				///TODO:
+				bool bPetFound = false;
+				string strGuildName = string.Format("{0}'s familiar", Me.Name);
+				foreach (Actor ThisActor in Program.EnumActors())
+				{
+					/// This is just a weird set of conditions that I have found to be the case with the AA pet.
+					if (ThisActor.Guild == strGuildName && ThisActor.IsAPet && ThisActor.IsIdle && ThisActor.InCombatMode)
+					{
+						bPetFound = true;
+						break;
+					}
+				}
+				
+				if (bPetFound)
+					Program.Log("/pet hide");
 			}
 
 			return false;
