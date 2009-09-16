@@ -556,11 +556,16 @@ function main(string goscan, string goscan2)
 		
 		; Script starts to scan for items to buy if flagged.
 		if ${BuyItems} && ${Pausemyprices} == FALSE
+			{
+			UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" ** Buying **"]
 			call buy Buy scan
+			}
 
 		if !${ScanSellNonStop}
+			{
 			UIElement[Start Scanning@Sell@GUITabs@MyPrices]:SetText[Start Scanning]
 			Pausemyprices:Set[TRUE]
+			}
 		
 		if ${runautoscan} || ${runplace}
 			{
@@ -1110,7 +1115,7 @@ function BuyItems()
 
 							; make sure you don't already have an item and it's lore
 							call checklore "${Vendor.Item[${CurrentItem}].Name}"
-								
+
 							; if the item is lore or collectible and you already have it then stop and move on
 							if ${Return}
 							{
@@ -1121,8 +1126,11 @@ function BuyItems()
 							if ${Collectible} 
 							{
 								call Rejected "${Vendor.Item[${CurrentItem}].Name}"
+								
 								if ${Return}
+								{
 										break
+								}
 								else
 								{
 									Call CheckFocus
@@ -2976,8 +2984,10 @@ function checklore(string ItemName)
 			; if an item in your inventory matches the name of the item
 			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
 			{
+				
 				if ${Collectible} || ${Me.CustomInventory[${xvar}].Lore}
 					Return TRUE
+					
 			}
 		}
 		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
