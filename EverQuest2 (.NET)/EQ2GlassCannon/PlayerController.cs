@@ -68,8 +68,8 @@ namespace EQ2GlassCannon
 		}
 
 		public bool m_bContinueBot = true;
-		public int m_iAbilitiesFound = 0;
 
+		protected int m_iLastAbilityCount = 0;
 		protected Point3D m_ptMyLastLocation = new Point3D();
 		protected bool m_bCheckBuffsNow = true;
 		protected bool m_bIHaveAggro = false;
@@ -140,14 +140,14 @@ namespace EQ2GlassCannon
 						Program.Log("NO abilities found!");
 					else
 					{
-						m_iAbilitiesFound = 0;
+						m_iLastAbilityCount = 0;
 
 						foreach (Ability ThisAbility in EnumAbilities())
 						{
 							/// An ability string of null means it isn't loaded from the server yet.
 							if (ThisAbility.IsValid && !string.IsNullOrEmpty(ThisAbility.Name))
 							{
-								m_iAbilitiesFound++;
+								m_iLastAbilityCount++;
 
 								if (m_KnowledgeBookNameToIDMap.ContainsKey(ThisAbility.Name))
 								{
@@ -164,8 +164,8 @@ namespace EQ2GlassCannon
 							}
 						}
 
-						if (m_iAbilitiesFound < Me.NumAbilities)
-							Program.Log("Found {0} names of {1} abilities so far.", m_iAbilitiesFound, Me.NumAbilities);
+						if (m_iLastAbilityCount < Me.NumAbilities)
+							Program.Log("Found {0} names of {1} abilities so far.", m_iLastAbilityCount, Me.NumAbilities);
 						else
 						{
 							Program.Log("All abilities found.");
@@ -290,6 +290,24 @@ namespace EQ2GlassCannon
 				return uiAbilityID;
 			else
 				return 0;
+		}
+
+		/************************************************************************************/
+		public bool AbilityCountChanged
+		{
+			get
+			{
+				try
+				{
+					return (Me.NumAbilities != m_iLastAbilityCount);
+				}
+				catch
+				{
+					/// This happens sometimes.
+					Program.Log("Exception thrown on Me.NumAbilities reference.");
+					return false;
+				}
+			}
 		}
 
 		/************************************************************************************/
@@ -669,7 +687,7 @@ namespace EQ2GlassCannon
 			else if (strLowerCaseMessage.Contains(m_strCustomAutoFollowSubphrase))
 			{
 				Program.Log("Custom Autofollow command (\"{0}\") received.", m_strCustomAutoFollowSubphrase);
-				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMinimumRange;
+				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMaximumRange;
 				m_strPositionalCommandingPlayer = strFrom;
 				ChangePositioningStance(PositioningStance.CustomAutoFollow);
 			}
@@ -809,7 +827,7 @@ namespace EQ2GlassCannon
 			}
 
 			else
-				Program.Log("No command detected in commanding player chat.");
+				Program.Log("A commanding player has spoken but no commands were found in the text.");
 
 			return false;
 		}
@@ -1176,6 +1194,7 @@ namespace EQ2GlassCannon
 			}
 
 			m_OffensiveTargetActor = OffensiveTargetActor;
+			m_bIHaveAggro = ((double)m_OffensiveTargetActor.ThreatToMe >= m_fAggroPanicPercentage);
 			return true;
 		}
 
@@ -1199,12 +1218,6 @@ namespace EQ2GlassCannon
 
 				return false;
 			}
-
-			/// We can't determine threat until the mob is targetted.
-			m_bIHaveAggro = (Me.GetGameData("Target.Threat").Pecent >= m_fAggroPanicPercentage);
-			//Program.Log("Target.Threat: {0}", Me.GetGameData("Target.Threat").Pecent);
-			//Program.Log("Target.SecondaryThreat: {0}", Me.GetGameData("Target.SecondaryThreat").Pecent);
-			//Program.Log("ImpliedTarget.Threat: {0}", Me.GetGameData("Target.ImpliedTarget").Pecent);
 
 			/// If we're stealthed, then we can bail because targetting is all we need.
 			/// Otherwise the /auto commands will break stealth which we might need for some CA's.
