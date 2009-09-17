@@ -279,7 +279,6 @@ namespace EQ2GlassCannon
 						"gc_withdraw");
 				}
 
-#if !DEBUG
 				double fTestTime = 2.0;
 
 				/// This giant code chunk was a huge necessity due to the completely random lag that happens
@@ -317,12 +316,15 @@ namespace EQ2GlassCannon
 				double fAverageTime = fTotalTimes / (double)iFramesElapsed;
 				double fBadFramePercentage = (double)iBadFrames / (double)iFramesElapsed * 100;
 				Log("Average time per object lookup was {0:0} ms, with {1:0.0}% of frames ({2} / {3}) lagging out.", fAverageTime, fBadFramePercentage, iBadFrames, iFramesElapsed);
+#if DEBUG
+				if (fAverageTime > 50)
+#else
 				if (fAverageTime > 2 || fBadFramePercentage > 10)
+#endif
 				{
 					Log("Aborting due to substantial ISXEQ2 lag. Please restart EQ2GlassCannon.");
 					return;
 				}
-#endif
 
 				/// Ensure that the INI path exists firstly.
 				string strAppDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -403,6 +405,7 @@ namespace EQ2GlassCannon
 							else
 							{
 								/// Stolen from "EQ2Quest.iss". The question I have: isn't AcceptPendingQuest() redundant then?
+								/// eq2ui_popup_rewardpack.xml
 								EQ2UIPage QuestPage = s_Extension.EQ2UIPage("Popup", "RewardPack");
 								if (QuestPage.IsValid)
 								{
@@ -463,7 +466,7 @@ namespace EQ2GlassCannon
 						/// If the size of the knowledge book changes, defer a resync.
 						/// NOTE: If the user equips or unequips an ability-changing item,
 						/// the ability table will be hosed but we'll have no way of knowing to force a refresh.
-						if (Me.NumAbilities != s_Controller.m_iAbilitiesFound)
+						if (s_Controller.AbilityCountChanged)
 							s_bRefreshKnowledgeBook = true;
 
 						/// Only if the knowledge book is intact can we safely assume that regular actions are OK.
