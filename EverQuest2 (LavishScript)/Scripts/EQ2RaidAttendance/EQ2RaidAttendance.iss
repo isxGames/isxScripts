@@ -25,7 +25,7 @@ variable(script) bool AltsAsMains
 ;;; This script takes "snapshots" of your raid and saves that information
 ;;; to an xml file called 'EQ2RaidAttendance.xml'.  At the same time, it 
 ;;; will produce detailed attendance statistics and spew them to the console
-;;; as well as to a text file entitled 'EQ2RaidAttendance.xml'.
+;;; as well as to a text file entitled 'EQ2RaidAttendance.txt'.
 ;;;
 ;;; Every time that you take a "snapshot" for a particular raid, it will
 ;;; retrieve the members saved for that raid and then add any new people 
