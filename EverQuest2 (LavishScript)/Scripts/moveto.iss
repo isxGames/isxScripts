@@ -79,8 +79,8 @@
 #define AUTORUN "num lock"
 #define MOVEFORWARD w
 #define MOVEBACKWARD s
-#define STRAFELEFT q
-#define STRAFERIGHT e
+#define STRAFELEFT ,
+#define STRAFERIGHT .
 #define TURNLEFT a
 #define TURNRIGHT d
 
@@ -92,8 +92,11 @@ variable int StrafeTime
 ; of the specified X Z loc
 ; (Y is the vertical axis in EQ2)
 ;
-function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, int StopOnAggro)
+variable int StopOnAggro
+
+function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, int lStopOnAggro)
 {
+	StopOnAggro:Set[${lStopOnAggro}]
 	variable float SavX=${Me.X}
 	variable float SavZ=${Me.Z}
 	variable int obstaclecount=0
@@ -221,7 +224,7 @@ function CheckMovingAggro()
 			;echo waiting 1 second in moveto
 			wait 10
 		}
-		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90 || ${Me.ToActor.InCombatMode}
+		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90 || ${Me.IsHated}
 
 		Echo Scanning Loot in moveto
 		EQ2:CreateCustomActorArray[byDist,15]
@@ -348,7 +351,7 @@ function StartRunning()
     variable int Count
     Count:Set[0]
 
-	if !${Me.IsMoving}
+	if !${Me.IsMoving} && !${Me.IsHated}
 	{
 		do
 		{
@@ -365,6 +368,6 @@ function StartRunning()
 			wait 2
 			Count:Inc[2]
 		}
-		while !${Me.IsMoving}
+		while !${Me.IsMoving} && !${Me.IsHated}
 	}
 }
