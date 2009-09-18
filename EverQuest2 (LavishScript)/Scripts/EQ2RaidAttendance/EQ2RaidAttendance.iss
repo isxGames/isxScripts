@@ -45,7 +45,9 @@ variable(script) bool AltsAsMains
 ;;; the console window:
 ;;;      > run EQ2RaidAttendance "Raid=Korsha [Overking Only]" Amadeus Pygar Valerian
 ;;; The script will run, call the raid "Korsha [Overking Only]" and count Amadeus 
-;;; Pygar and Valerian as being IN the raid.
+;;; Pygar and Valerian as being IN the raid.   (NOTE:  In this example you're MANUALLY
+;;; adding Amadeus, Pygar, and Valerian.  Anyone that is in your current raid will be 
+;;; added automatically.)
 ;;;
 ;;; NOTES: To take further snapshots it is not necessary to indicate the 'sitters' again
 ;;; (unless there are new 'sitters'.)  Once someone is counted as in the raid, they
@@ -71,7 +73,6 @@ variable(script) bool AltsAsMains
 ;;;      -AltsAsMains       (When used, the script will treat all characters as mains when creating statistics.)
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 function main(... Args)
 {	
 	variable settingsetref pMember
