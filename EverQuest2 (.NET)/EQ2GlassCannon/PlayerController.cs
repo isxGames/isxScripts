@@ -60,11 +60,21 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected class CustomTellTrigger
+		protected class CustomChatTrigger
 		{
 			public List<string> m_astrSourcePlayers = new List<string>();
 			public string m_strSubstring = string.Empty;
 			public List<string> m_astrCommands = new List<string>();
+			public bool Match(string strPlayerName, string strText)
+			{
+				if (!strText.ToLower().Contains(m_strSubstring))
+					return false;
+
+				if (m_astrSourcePlayers.Count == 0)
+					return true;
+
+				return m_astrSourcePlayers.Contains(strPlayerName.Trim().ToLower());
+			}
 		}
 
 		public bool m_bContinueBot = true;
@@ -88,7 +98,7 @@ namespace EQ2GlassCannon
 		protected bool m_bSpawnWatchTargetAnnounced = false;
 		protected string m_strSpawnWatchTarget = string.Empty;
 		protected DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
-		protected List<CustomTellTrigger> m_aCustomTellTriggerList = new List<CustomTellTrigger>();
+		protected List<CustomChatTrigger> m_aCustomChatTriggerList = new List<CustomChatTrigger>();
 
 		protected PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
 		public PositioningStance CurrentPositioningStance { get { return m_ePositioningStance; } }
@@ -526,7 +536,7 @@ namespace EQ2GlassCannon
 			switch (strMessage)
 			{
 				/// Look for cast abort strings.
-				case "Already casting...":
+				case "Already casting...": /// This one is in question because it isn't necessarily an abort if the same spell is being cast.
 				case "Can't see target":
 				case "Interrupted!":
 				case "No eligible target":
@@ -585,15 +595,11 @@ namespace EQ2GlassCannon
 			string strTrimmedMessage = strMessage.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
-			/// First check for a match against custom tell triggers.
+			/// Check for a match against custom tell triggers.
 			/// These can be authorized from any source.
-			foreach (CustomTellTrigger ThisTrigger in m_aCustomTellTriggerList)
+			foreach (CustomChatTrigger ThisTrigger in m_aCustomChatTriggerList)
 			{
-				if (
-					(ThisTrigger.m_astrSourcePlayers.Count == 0 || ThisTrigger.m_astrSourcePlayers.Contains(strFrom.ToLower()))
-					&&
-					strLowerCaseMessage.Contains(ThisTrigger.m_strSubstring)
-					)
+				if (ThisTrigger.Match(strFrom, strLowerCaseMessage))
 				{
 					Program.Log("Custom trigger command received (\"{0}\").", ThisTrigger.m_strSubstring);
 					foreach (string strThisCommand in ThisTrigger.m_astrCommands)
@@ -864,7 +870,7 @@ namespace EQ2GlassCannon
 				m_ePositioningStance == PositioningStance.StayInPlace ||
 				m_ePositioningStance == PositioningStance.ForwardDash)
 			{
-				Program.ReleaseKey("W");
+				Program.ReleaseKey(m_strForwardKey);
 			}
 
 			if (eNewStance == PositioningStance.DoNothing)
@@ -1012,14 +1018,14 @@ namespace EQ2GlassCannon
 					string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
 					if (string.IsNullOrEmpty(strAutoFollowTarget))
 					{
-						Program.ReleaseKey("W");
+						Program.ReleaseKey(m_strForwardKey);
 						return false;
 					}
 
 					Actor FollowActor = m_FriendDictionary[strAutoFollowTarget].ToActor();
 					if (!FollowActor.IsValid || FollowActor.ID == MeActor.ID)
 					{
-						Program.ReleaseKey("W");
+						Program.ReleaseKey(m_strForwardKey);
 						return false;
 					}
 
@@ -1039,8 +1045,8 @@ namespace EQ2GlassCannon
 						if (m_bLastShadowTargetSamplingWasNearby && !bThisSamplingIsNearby)
 						{
 							//Program.RunCommand("/t {0} you ported too far away", m_astrCommandingPlayers); /// TODO: Make this configurable.
-							Program.Log("Custom auto-follow target suddenly warped far away; reverting to neutral positioning.");
-							ChangePositioningStance(PositioningStance.NeutralPosition);
+							Program.Log("Custom auto-follow target suddenly warped far away; reverting to auto-follow.");
+							ChangePositioningStance(PositioningStance.AutoFollow);
 							return true;
 						}
 						m_bLastShadowTargetSamplingWasNearby = bThisSamplingIsNearby;
@@ -1053,12 +1059,12 @@ namespace EQ2GlassCannon
 						if (Me.Face(fBearing))
 						{
 							Program.Log("Moving to stay position ({0:0.00}, {1:0.00}, {2:0.00}), {3:0.00} meters away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
-							Program.PressAndHoldKey("W");
+							Program.PressAndHoldKey(m_strForwardKey);
 						}
 					}
 					else
 					{
-						Program.ReleaseKey("W");
+						Program.ReleaseKey(m_strForwardKey);
 					}
 				}
 			}
@@ -1076,7 +1082,7 @@ namespace EQ2GlassCannon
 				}
 				else
 				{
-					Program.PressAndHoldKey("W");
+					Program.PressAndHoldKey(m_strForwardKey);
 				}
 
 				return false;
@@ -1247,7 +1253,7 @@ namespace EQ2GlassCannon
 				return false;
 			}
 
-			/// Make sure the pet is on the right target before we return success.
+			/// Make sure the pet is on the right target.
 			Actor PetActor = Me.Pet();
 			if (Me.IsHated && PetActor.IsValid && PetActor.CanTurn)
 			{
@@ -1255,7 +1261,7 @@ namespace EQ2GlassCannon
 				if (!PetTargetActor.IsValid || (PetTargetActor.ID != m_OffensiveTargetActor.ID) || !PetActor.InCombatMode)
 				{
 					Program.Log("Sending in pet for attack!");
-					Program.RunCommand("/pet attack");
+					Program.RunCommand(1, "/pet attack");
 					///return false; // Don't return failure; often there is lag time with the fucking pet and it kills our dps to wait for it.
 				}
 			}
@@ -1349,24 +1355,25 @@ namespace EQ2GlassCannon
 		/// </summary>
 		protected void ClearOffensiveTargetIfWipe()
 		{
-			/// See if everyone is dead...
-			bool bEveryoneDead = true;
-			foreach (GroupMember ThisMember in m_FriendDictionary.Values)
+			if (m_iOffensiveTargetID != -1)
 			{
-				Actor ThisActor = ThisMember.ToActor();
-				if (ThisActor.IsValid && !ThisActor.IsDead) /// TODO: But are dead players also invalid by design?
+				/// See if everyone is dead...
+				bool bEveryoneDead = true;
+				foreach (GroupMember ThisMember in m_FriendDictionary.Values)
 				{
-					bEveryoneDead = false;
-					break;
+					Actor ThisActor = ThisMember.ToActor();
+					if (ThisActor.IsValid && !ThisActor.IsDead) /// TODO: But are dead players also invalid by design?
+					{
+						bEveryoneDead = false;
+						break;
+					}
 				}
-			}
 
-			/// If everyone in the party is dead, the fight is completely over.
-			if (bEveryoneDead)
-			{
-				if (m_iOffensiveTargetID != -1)
+				/// If everyone in the party is dead, the fight is completely over.
+				if (bEveryoneDead)
 				{
-					Program.Log("Everyone is dead and the encounter is over; the bot will not re-engage on rez/revive.");
+					/// FF6 reference. :)
+					Program.Log("Annihilated.");
 					m_iOffensiveTargetID = -1;
 				}
 			}
