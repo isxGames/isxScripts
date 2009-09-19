@@ -412,7 +412,7 @@ function PlaceCollection()
 
 function PlaceTradeskillBooks()
 {
-	ItemType:Set[Item]
+	ItemType:Set[Recipe Book]
 	NameFilter1:Set[Advanced]
 	NameFilter2:Set[Enigma]
 	NameFilter3:Set[Ancient]
@@ -478,7 +478,7 @@ function PlaceTradeskillBooks()
 
 function PlaceSpellBooks()
 {
-	ItemType:Set[Item]
+	ItemType:Set[Spell Scroll]
 	NameFilter1:Set[(Adept)]
 	NameFilter2:Set[(Master)]
 	NameFilter3:Set[(Expert)]
@@ -974,7 +974,7 @@ function AddToDepot()
 			Drop:Set[1]
 			SkipItem:Set[FALSE]
 			SlotFull:Set[FALSE]
-			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull}
+			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull} && !${Me.CustomInventory[${iter.Key}].IsFoodOrDrink}
 			{
 				if (${iter.Key.Length} <= 4)
 					break
