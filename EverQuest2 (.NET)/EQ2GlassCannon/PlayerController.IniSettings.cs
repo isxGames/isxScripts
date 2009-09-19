@@ -46,7 +46,7 @@ namespace EQ2GlassCannon
 		protected string m_strArbitraryVerbCommandSeparator = "\", \"";
 		protected string m_strArbitraryVerbCommandSuffix = "\"";
 		protected double m_fStayInPlaceTolerance = 1.5;
-		protected double m_fCustomAutoFollowMinimumRange = 10.0;
+		protected double m_fCustomAutoFollowMaximumRange = 10.0;
 		protected int m_iCheckBuffsInterval = 500;
 		protected double m_fAggroPanicPercentage = 90.0;
 		protected bool m_bUseRanged = false;
@@ -66,14 +66,27 @@ namespace EQ2GlassCannon
 		protected bool m_bUsePet = true;
 		protected bool m_bSummonPetDuringCombat = false;
 		protected bool m_bHarvestAutomatically = false;
+
+		protected string m_strForwardKey = "W";
+		protected string m_strBackwardKey = "S";
+		protected string m_strTurnLeftKey = "A";
+		protected string m_strTurnRightKey = "D";
+		protected string m_strStrafeLeftKey = "Q";
+		protected string m_strStrafeRightKey = "E";
+		protected string m_strJumpKey = "Space";
+		protected string m_strCancelKey = "Esc";
+
 		protected EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
+
 		public bool m_bUseVoiceSynthesizer = true;
 		protected string m_strVoiceSynthesizerProfile = "Microsoft Anna";
 		protected int m_iVoiceSynthesizerVolume = 100;
 		protected string m_strPhoneticCharacterName = "";
+
 		protected string m_strChatWatchSubphrase = "listen for";
 		protected List<string> m_astrChatWatchToAddressList = new List<string>();
 		protected double m_fChatWatchAlertCooldownMinutes = 5.0;
+
 		protected string m_strSpawnWatchSubphrase = "watch for";
 		protected List<string> m_astrSpawnWatchToAddressList = new List<string>();
 		protected string m_strSpawnWatchAlertCommand = string.Empty;
@@ -108,6 +121,8 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("General.ArbitraryVerbCommandPrefix", ref m_strArbitraryVerbCommandPrefix);
 			ThisFile.TransferString("General.ArbitraryVerbCommandSeparator", ref m_strArbitraryVerbCommandSeparator);
 			ThisFile.TransferString("General.ArbitraryVerbCommandSuffix", ref m_strArbitraryVerbCommandSuffix);
+			ThisFile.TransferDouble("General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
+			ThisFile.TransferDouble("General.CustomAutoFollowMaximumRange", ref m_fCustomAutoFollowMaximumRange);
 			ThisFile.TransferInteger("General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
 			ThisFile.TransferDouble("General.AggroPanicPercentage", ref m_fAggroPanicPercentage);
 			ThisFile.TransferBool("General.UseRanged", ref m_bUseRanged);
@@ -127,8 +142,15 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.UsePet", ref m_bUsePet);
 			ThisFile.TransferBool("General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
 			ThisFile.TransferBool("General.HarvestAutomatically", ref m_bHarvestAutomatically);
-			ThisFile.TransferDouble("General.StayInPlaceTolerance", ref m_fStayInPlaceTolerance);
-			ThisFile.TransferDouble("General.CustomAutoFollowMinimumRange", ref m_fCustomAutoFollowMinimumRange);
+
+			ThisFile.TransferString("Controls.ForwardKey", ref m_strForwardKey);
+			ThisFile.TransferString("Controls.BackwardKey", ref m_strBackwardKey);
+			ThisFile.TransferString("Controls.TurnLeftKey", ref m_strTurnLeftKey);
+			ThisFile.TransferString("Controls.TurnRightKey", ref m_strTurnRightKey);
+			ThisFile.TransferString("Controls.StrafeLeftKey", ref m_strStrafeLeftKey);
+			ThisFile.TransferString("Controls.StrafeRightKey", ref m_strStrafeRightKey);
+			ThisFile.TransferString("Controls.JumpKey", ref m_strJumpKey);
+			ThisFile.TransferString("Controls.CancelKey", ref m_strCancelKey);
 
 			/// E-mail account values.
 			ThisFile.TransferString("E-Mail.SMTPServer", ref m_EmailProfile.m_strServer);
@@ -173,11 +195,10 @@ namespace EQ2GlassCannon
 
 			ApplySettings();
 
-			m_aCustomTellTriggerList.Clear();
-
 			/// Load the custom tell trigger list.
 			try
 			{
+				m_aCustomChatTriggerList.Clear();
 				string strInputFile = Path.Combine(Program.s_strINIFolderPath, m_strCustomTellTriggerFile);
 
 				if (File.Exists(strInputFile))
@@ -186,7 +207,7 @@ namespace EQ2GlassCannon
 					{
 						while (ThisReader.ReadLine())
 						{
-							CustomTellTrigger NewTrigger = new CustomTellTrigger();
+							CustomChatTrigger NewTrigger = new CustomChatTrigger();
 
 							NewTrigger.m_astrSourcePlayers.AddRange(ThisReader.ReadNextValue().ToLower().Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
 							NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
@@ -203,7 +224,7 @@ namespace EQ2GlassCannon
 							}
 
 							if (!string.IsNullOrEmpty(NewTrigger.m_strSubstring) && (NewTrigger.m_astrCommands.Count > 0))
-								m_aCustomTellTriggerList.Add(NewTrigger);
+								m_aCustomChatTriggerList.Add(NewTrigger);
 						}
 					}
 				}
@@ -213,7 +234,7 @@ namespace EQ2GlassCannon
 			catch
 			{
 				Program.Log("Generic exception while parsing custom tell trigger file. List will be cleared and unused.");
-				m_aCustomTellTriggerList.Clear();
+				m_aCustomChatTriggerList.Clear();
 			}
 
 			return;
@@ -242,7 +263,7 @@ namespace EQ2GlassCannon
 			Program.ToggleSpeechSynthesizer(m_bUseVoiceSynthesizer, m_iVoiceSynthesizerVolume, m_strVoiceSynthesizerProfile);
 
 			if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
-				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMinimumRange;
+				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMaximumRange;
 
 			return;
 		}
