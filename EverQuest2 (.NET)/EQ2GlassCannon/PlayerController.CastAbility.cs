@@ -93,19 +93,6 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
-				/// There's no getting around this for now. I'd rather use /useability but there are name collisions.
-				/*
-				try
-				{
-					Program.Log("Casting \"{0}\" ({1})...", m_strName, m_uiID);
-					return m_OriginalAbility.Use();
-				}
-				catch
-				{
-					Program.Log("Exception thrown when attempting to cast \"{0}\" ({1}).", m_strName, m_uiID);
-					return false;
-				}*/
-
 				Program.Log("Casting \"{0}\" ({1})...", m_strName, m_uiID);
 				Program.RunCommand("/useability {0}", m_uiID);
 				return true;
@@ -412,7 +399,7 @@ namespace EQ2GlassCannon
 			if (bMustBeAlive && SpellTargetActor.IsDead)
 				return false;
 
-			double fDistance = GetActorDistance3D(MeActor, SpellTargetActor);
+			double fDistance = SpellTargetActor.Distance;
 			if (fDistance > ThisAbility.m_fRange)
 			{
 				Program.Log("Unable to cast {0} because {1} is out of range ({2} needed, {3:0.00} actual)",
@@ -450,9 +437,8 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		/// <summary>
 		/// Casts a general ability, on the player's current target if applicable.
+		/// The caller passes the start/end arc points in clockwise order.
 		/// </summary>
-		/// <param name="iAbilityID"></param>
-		/// <returns></returns>
 		protected bool CastAbility(
 			uint uiAbilityID,
 			double fVulnerableRelativeHeadingRangeStart,
@@ -494,7 +480,7 @@ namespace EQ2GlassCannon
 					}
 					if (!bSuccess)
 					{
-						Program.Log("Unable to cast {0} because you on the wrong attack heading ({2:0} to {3:0} degrees needed, {4:0.00} actual).",
+						Program.Log("Unable to cast {0} because you are on the wrong attack heading ({2:0} to {3:0} degrees needed, {4:0.00} actual).",
 							ThisAbility.m_strName, MyTargetActor.Name, fVulnerableRelativeHeadingRangeStart, fVulnerableRelativeHeadingRangeEnd, fRelativeHeadingFrom);
 						return false;
 					}
@@ -614,12 +600,13 @@ namespace EQ2GlassCannon
 				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
 			else
 			{
+				/// Actor.EncounterSize also includes dead members, so we have to manually find the ones who are still alive.
 				foreach (Actor ThisActor in Program.EnumActors("byDist", ThisAbility.m_fMaxRange.ToString(), "npc"))
 				{
 					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead && m_OffensiveTargetActor.IsInSameEncounter(ThisActor.ID))
 						iValidVictimCount++;
 
-					/// Save time. The only reason we enumerated is because EncounterSize also includes dead members.
+					/// Save time; we already enumerated everyone in the encounter.
 					if (iValidVictimCount >= m_OffensiveTargetActor.EncounterSize)
 						break;
 				}
@@ -685,9 +672,9 @@ namespace EQ2GlassCannon
 				foreach (Actor ThisActor in Program.EnumActors("byDist", fThisAbilityRange.ToString(), "npc"))
 				{
 					if (!ThisActor.IsDead &&
-						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly.
+						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly and has too many pitfalls.
 						ThisActor.CanTurn &&
-						(m_OffensiveTargetActor == null || ThisActor.ID != m_OffensiveTargetActor.ID) && /// It can't be our current burn mob.
+						(m_OffensiveTargetActor == null || (ThisActor.ID != m_OffensiveTargetActor.ID && (m_bMezMembersOfTargetEncounter || !ThisActor.IsInSameEncounter(m_OffensiveTargetActor.ID)))) && /// It can't be our current burn mob.
 						ThisActor.Type != "NoKill NPC" &&
 						ThisActor.Target().IsValid &&
 						ThisActor.Target().Type == "PC") /// It has to be targetting a player; an indicator of aggro.
@@ -703,7 +690,10 @@ namespace EQ2GlassCannon
 
 						/// Not generally our policy to do more than one server command in a frame but we make an exception here.
 						if (ThisActor.DoTarget() && CastAbility(uiThisAbilityID))
+						{
+							SpamSafeRaidSay(m_strMezCallout, ThisActor.Name);
 							return true;
+						}
 					}
 				}
 
