@@ -61,7 +61,9 @@ namespace EQ2GlassCannon
 		protected bool m_bHealUngroupedMainTank = true;
 		protected bool m_bCastFurySalveIfGranted = true;
 		protected bool m_bSpamHeroicOpportunity = true;
-		protected bool m_bMezAdds = false;
+		protected bool m_bMezAdds = true;
+		protected bool m_bMezMembersOfTargetEncounter = false;
+		protected string m_strMezCallout = "MEZZING << {0} >> YOU BREAK IT YOU TANK IT!";
 		protected bool m_bUseRacialBuffs = true;
 		protected bool m_bUsePet = true;
 		protected bool m_bSummonPetDuringCombat = false;
@@ -138,6 +140,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.CastFurySalveIfGranted", ref m_bCastFurySalveIfGranted);
 			ThisFile.TransferBool("General.SpamHeroicOpportunity", ref m_bSpamHeroicOpportunity);
 			ThisFile.TransferBool("General.MezAdds", ref m_bMezAdds);
+			ThisFile.TransferBool("General.MezMembersOfTargetEncounter", ref m_bMezMembersOfTargetEncounter);
 			ThisFile.TransferBool("General.UseRacialBuffs", ref m_bUseRacialBuffs);
 			ThisFile.TransferBool("General.UsePet", ref m_bUsePet);
 			ThisFile.TransferBool("General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);

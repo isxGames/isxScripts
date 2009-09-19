@@ -123,6 +123,20 @@ namespace EQ2GlassCannon
 			if (IsCasting)
 				return true;
 
+			GetOffensiveTargetActor();
+
+			/// Red illusionist mezzes can be cast while in motion.
+			if (m_bUseGreenAEs && MeActor.IsIdle) /// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
+			{
+				if (CastNextMez(m_uiGreenMezAbilityID, m_uiSingleFastMezAbilityID, m_uiSingleNormalMezAbilityID))
+					return true;
+			}
+			else
+			{
+				if (CastNextMez(m_uiSingleFastMezAbilityID, m_uiSingleNormalMezAbilityID))
+					return true;
+			}
+
 			if (AttemptCureArcane())
 				return true;
 			if (UseSpellGeneratedHealItem())
@@ -168,20 +182,6 @@ namespace EQ2GlassCannon
 
 			if (CheckManaFlow())
 				return true;
-
-			GetOffensiveTargetActor();
-
-			/// Red illusionist mezzes can be cast while in motion.
-			if (m_bUseGreenAEs && MeActor.IsIdle) /// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
-			{
-				if (CastNextMez(m_uiGreenMezAbilityID, m_uiSingleFastMezAbilityID, m_uiSingleNormalMezAbilityID))
-					return true;
-			}
-			else
-			{
-				if (CastNextMez(m_uiSingleFastMezAbilityID, m_uiSingleNormalMezAbilityID))
-					return true;
-			}
 
 			if (!EngageOffensiveTarget())
 				return false;
