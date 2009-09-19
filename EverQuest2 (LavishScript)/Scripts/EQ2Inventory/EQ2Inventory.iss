@@ -33,7 +33,6 @@ variable bool RunJunk=TRUE
 variable bool RunDestroy=TRUE
 variable bool SlotFull=FALSE
 variable bool SkipItem=FALSE
-variable bool DepotItemsPlaced=FALSE
 ;=================================
 ;Setting references
 ;=================================
@@ -261,7 +260,7 @@ function PlaceItems()
 	RunBroker:Set[TRUE]
 	wait 5
 	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
-	call AddLog "**Starting EQ2Broker v3 By Syliac**" FF00FF00
+	call AddLog "**Starting EQ2Broker v2 By Syliac**" FF00FF00
 	EQ2:CreateCustomActorArray[byDist,15]
 	if ${Actor[guild,Guild World Market Broker](exists)}
 	{
@@ -413,7 +412,7 @@ function PlaceCollection()
 
 function PlaceTradeskillBooks()
 {
-	ItemType:Set[Item]
+	ItemType:Set[Recipe Book]
 	NameFilter1:Set[Advanced]
 	NameFilter2:Set[Enigma]
 	NameFilter3:Set[Ancient]
@@ -479,7 +478,7 @@ function PlaceTradeskillBooks()
 
 function PlaceSpellBooks()
 {
-	ItemType:Set[Item]
+	ItemType:Set[Spell Scroll]
 	NameFilter1:Set[(Adept)]
 	NameFilter2:Set[(Master)]
 	NameFilter3:Set[(Expert)]
@@ -975,7 +974,7 @@ function AddToDepot()
 			Drop:Set[1]
 			SkipItem:Set[FALSE]
 			SlotFull:Set[FALSE]
-			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull}
+			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull} && !${Me.CustomInventory[${iter.Key}].IsFoodOrDrink}
 			{
 				if (${iter.Key.Length} <= 4)
 					break
@@ -1011,7 +1010,7 @@ function AddToDepot()
 			}
 		}
 		while ${iter:Next(exists)} && ${RunDepot}
-		DepotItemsPlaced:Set[TRUE]
+
 	}
 
 	if ${RunDepot}
