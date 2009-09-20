@@ -110,6 +110,11 @@ namespace EQ2GlassCannon
 				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_uiID);
 				return true;
 			}
+
+			public bool IsWithinRange(double fDistance)
+			{
+				return (m_fMinRange <= fDistance && fDistance <= m_fMaxRange);
+			}
 		}
 
 		/************************************************************************************/
@@ -454,7 +459,7 @@ namespace EQ2GlassCannon
 			{
 				/// Test range.
 				double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
-				if (fDistance < ThisAbility.m_fMinRange || ThisAbility.m_fMaxRange < fDistance)
+				if (!ThisAbility.IsWithinRange(fDistance))
 				{
 					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
 						ThisAbility.m_strName, MyTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
@@ -582,7 +587,6 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		/// <summary>
-		/// I don't know the exact range mechanics behind green AE's, so this is some fudge work.
 		/// </summary>
 		protected bool CastGreenOffensiveAbility(uint uiAbilityID, int iMinimumVictimCheckCount)
 		{
@@ -600,15 +604,30 @@ namespace EQ2GlassCannon
 				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
 			else
 			{
-				/// Actor.EncounterSize also includes dead members, so we have to manually find the ones who are still alive.
-				foreach (Actor ThisActor in Program.EnumActors("byDist", ThisAbility.m_fMaxRange.ToString(), "npc"))
+				double fDistance = GetActorDistance3D(MeActor, m_OffensiveTargetActor);
+				if (ThisAbility.IsWithinRange(fDistance))
 				{
-					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead && m_OffensiveTargetActor.IsInSameEncounter(ThisActor.ID))
-						iValidVictimCount++;
+					/// Actor.EncounterSize also includes dead members, so we have to manually find the ones who are still alive.
+					foreach (Actor ThisActor in Program.EnumActors("npc"))
+					{
+						double fThisDistance = GetActorDistance3D(m_OffensiveTargetActor, ThisActor);
+						if (fThisDistance < ThisAbility.m_fEffectRadius &&
+							ThisActor.Type != "NoKill NPC" &&
+							!ThisActor.IsDead &&
+							m_OffensiveTargetActor.IsInSameEncounter(ThisActor.ID))
+						{
+							iValidVictimCount++;
+						}
 
-					/// Save time; we already enumerated everyone in the encounter.
-					if (iValidVictimCount >= m_OffensiveTargetActor.EncounterSize)
-						break;
+						/// Save time; we already enumerated everyone in the encounter.
+						if (iValidVictimCount >= m_OffensiveTargetActor.EncounterSize)
+							break;
+					}
+				}
+				else
+				{
+					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
+						ThisAbility.m_strName, m_OffensiveTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
 				}
 
 				m_AbilityCompatibleTargetCountCache.Add(uiAbilityID, iValidVictimCount);
@@ -635,7 +654,7 @@ namespace EQ2GlassCannon
 			try
 			{
 				return false;
-				//return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !Program.EQ2.HOWindowActive && CastAbility(m_iHOStarterAbiltyID, Me.Name, true));
+				//return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !Program.EQ2.HOWindowActive && CastAbilityOnSelf(m_iHOStarterAbiltyID));
 			}
 			catch
 			{
@@ -674,7 +693,7 @@ namespace EQ2GlassCannon
 					if (!ThisActor.IsDead &&
 						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly and has too many pitfalls.
 						ThisActor.CanTurn &&
-						(m_OffensiveTargetActor == null || (ThisActor.ID != m_OffensiveTargetActor.ID && (m_bMezMembersOfTargetEncounter || !ThisActor.IsInSameEncounter(m_OffensiveTargetActor.ID)))) && /// It can't be our current burn mob.
+						(m_OffensiveTargetActor == null || (ThisActor.ID != m_OffensiveTargetActor.ID && (!ThisActor.IsInSameEncounter(m_OffensiveTargetActor.ID) || m_bMezMembersOfTargetEncounter))) && /// It can't be our current burn mob.
 						ThisActor.Type != "NoKill NPC" &&
 						ThisActor.Target().IsValid &&
 						ThisActor.Target().Type == "PC") /// It has to be targetting a player; an indicator of aggro.
@@ -947,7 +966,7 @@ namespace EQ2GlassCannon
 				return true;
 
 			/// Cast it explicitly on myself to remove ambiguity.
-			if (bOn && !IsAbilityMaintained(uiAbilityID) && CastAbility(uiAbilityID, Me.Name, true))
+			if (bOn && !IsAbilityMaintained(uiAbilityID) && CastAbilityOnSelf(uiAbilityID))
 				return true;
 
 			return false;
@@ -963,9 +982,9 @@ namespace EQ2GlassCannon
 				return true;
 
 			/// Cast the right stance.
-			if (eStance == StanceType.Offensive && !IsAbilityMaintained(uiOffensiveAbilityID) && CastAbility(uiOffensiveAbilityID, Me.Name, true))
+			if (eStance == StanceType.Offensive && !IsAbilityMaintained(uiOffensiveAbilityID) && CastAbilityOnSelf(uiOffensiveAbilityID))
 				return true;
-			if (eStance == StanceType.Defensive && !IsAbilityMaintained(uiDefensiveAbilityID) && CastAbility(uiDefensiveAbilityID, Me.Name, true))
+			if (eStance == StanceType.Defensive && !IsAbilityMaintained(uiDefensiveAbilityID) && CastAbilityOnSelf(uiDefensiveAbilityID))
 				return true;
 
 			return false;
