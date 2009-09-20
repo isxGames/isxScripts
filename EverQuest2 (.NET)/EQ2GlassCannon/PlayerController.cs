@@ -421,6 +421,9 @@ namespace EQ2GlassCannon
 			else
 				m_CastTimeRemaining = m_LastCastEndTime - CurrentDateTime;
 
+			if (MeActor.OnGriffin || MeActor.OnGriffon)
+				return true;
+
 			return false;
 		}
 
@@ -624,10 +627,28 @@ namespace EQ2GlassCannon
 					Program.Log("Commanding player not a valid combat assist!");
 				else
 				{
-					Actor OffensiveTargetActor = CommandingPlayerActor.Target();
+					SetCollection<int> TraversedActorIDSet = new SetCollection<int>();
+					Actor OffensiveTargetActor = null;
+
+					/// Nested assist targetting. Go through assist targets until either a recursive loop or a killable NPC is found.
+					/// This is more advanced than even the normal UI allows.
+					for (Actor ThisActor = CommandingPlayerActor.Target(); ThisActor.IsValid; ThisActor = ThisActor.Target())
+					{
+						if (ThisActor.Type == "NPC" || ThisActor.Type == "NamedNPC")
+						{
+							OffensiveTargetActor = ThisActor;
+							break;
+						}
+
+						/// Infinite recursion = FAIL
+						if (TraversedActorIDSet.Contains(ThisActor.ID))
+							break;
+
+						TraversedActorIDSet.Add(ThisActor.ID);
+					}
 
 					/// Successful target acquisition.
-					if (OffensiveTargetActor != null && OffensiveTargetActor.IsValid && (OffensiveTargetActor.Type == "NPC" || OffensiveTargetActor.Type == "NamedNPC"))
+					if (OffensiveTargetActor != null)
 					{
 						m_iOffensiveTargetID = OffensiveTargetActor.ID;
 						Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
@@ -643,7 +664,7 @@ namespace EQ2GlassCannon
 					}
 				}
 
-				/// An assist command promotes to neutral positioning.
+				/// An assist command promotes AFK into neutral positioning.
 				if (m_ePositioningStance == PositioningStance.DoNothing)
 					ChangePositioningStance(PositioningStance.NeutralPosition);
 
@@ -730,6 +751,7 @@ namespace EQ2GlassCannon
 			/// Mentor the specified group member.
 			else if (strLowerCaseMessage.Contains(m_strMentorSubphrase))
 			{
+				/// This is a very sloppy way of finding out who to mentor.
 				foreach (GroupMember ThisMember in EnumGroupMembers())
 				{
 					if (strLowerCaseMessage.Contains(ThisMember.Name.ToLower()) && ThisMember.ToActor().IsValid)
@@ -1034,7 +1056,7 @@ namespace EQ2GlassCannon
 
 				if (/*!MeActor.IsClimbing &&*/ MeActor.CanTurn)
 				{
-					double fRange = GetActorDistance2D(MeActor, m_ptStayLocation);
+					double fRange = GetActorDistance3D(MeActor, m_ptStayLocation);
 
 					/// If target suddenly ported from near to ridiculously far away, almost errantly, then call it off.
 					/// But if the target began the stance far away and is approaching near, then allow it to continue,
@@ -1095,6 +1117,7 @@ namespace EQ2GlassCannon
 
 			else if (m_ePositioningStance == PositioningStance.SpawnWatch)
 			{
+				/// Look for the actor.
 				Actor ActualFoundActor = null;
 				foreach (Actor ThisActor in Program.EnumActors())
 				{
@@ -1106,6 +1129,7 @@ namespace EQ2GlassCannon
 					}
 				}
 
+				/// Actor found!!!
 				if (ActualFoundActor != null)
 				{
 					/// This is awesomesauce right here.
