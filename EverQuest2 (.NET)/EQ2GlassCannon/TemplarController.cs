@@ -294,7 +294,7 @@ namespace EQ2GlassCannon
 				/// Do debuffs only if the vital situation isn't grim.
 				if (bOffensiveTargetEngaged && (fLowestHealthRatio > 0.90))
 				{
-					if (bTempBuffsOrDumbfiresAdvised && CastAbility(m_uiDivineRecoveryAbilityID, Me.Name, true))
+					if (bTempBuffsOrDumbfiresAdvised && CastAbilityOnSelf(m_uiDivineRecoveryAbilityID))
 						return true;
 
 					if (!IsAbilityMaintained(m_uiSingleMitigationDebuffAbilityID) && CastAbility(m_uiSingleMitigationDebuffAbilityID))
@@ -332,7 +332,7 @@ namespace EQ2GlassCannon
 					}
 				}
 
-				if (iTotalDeficientMembersBelowGroupHealTolerance > 1 && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembersBelowGroupHealTolerance > 1 && CastAbilityOnSelf(m_uiGroupHealingAbilityID))
 					return true;
 
 				if (MeActor.InCombatMode && CastAbility(m_uiSingleOneHitWardAbilityID, m_astrMainTanks, true))
@@ -351,7 +351,7 @@ namespace EQ2GlassCannon
 				if (MeActor.InCombatMode && CastAbility(m_uiSingleReactiveHealAbilityID, m_astrMainTanks, true))
 					return true;
 
-				if (MeActor.InCombatMode && !IsAbilityMaintained(m_uiGroupReactiveHealAbilityID) && CastAbility(m_uiGroupReactiveHealAbilityID, Me.Name, true))
+				if (MeActor.InCombatMode && !IsAbilityMaintained(m_uiGroupReactiveHealAbilityID) && CastAbilityOnSelf(m_uiGroupReactiveHealAbilityID))
 					return true;
 
 				if (!string.IsNullOrEmpty(strLowestHealthName))
@@ -360,7 +360,7 @@ namespace EQ2GlassCannon
 						return true;
 				}
 
-				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 30.0) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 30.0) && CastAbilityOnSelf(m_uiGroupHealingAbilityID))
 					return true;
 
 				/// (fill this spot with any other spells)
@@ -368,7 +368,7 @@ namespace EQ2GlassCannon
 				/// If anyone at all is missing health, do a group heal, because this is all that's left.
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					if (CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
+					if (CastAbilityOnSelf(m_uiGroupHealingAbilityID))
 						return true;
 				}
 

@@ -131,7 +131,7 @@ namespace EQ2GlassCannon
 				)
 				)
 			{
-				return CastAbility(m_uiGeneralGroupCureAbilityID, Me.Name, true);
+				return CastAbilityOnSelf(m_uiGeneralGroupCureAbilityID);
 			}
 			else if (!string.IsNullOrEmpty(strBestSingleCureCandidate))
 			{
@@ -153,7 +153,7 @@ namespace EQ2GlassCannon
 			return false;
 
 			/// We use a simple logic: if I'm not in combat and *I* don't have SOW, then I cast it on myself.
-			//return (m_iSpiritOfTheWolfAbilityID != -1) && !Me.IsHated && !IsBeneficialEffectPresent(m_iSpiritOfTheWolfAbilityID) && CastAbility(m_iSpiritOfTheWolfAbilityID, Me.Name, true);
+			//return (m_iSpiritOfTheWolfAbilityID != -1) && !Me.IsHated && !IsBeneficialEffectPresent(m_iSpiritOfTheWolfAbilityID) && CastAbilityOnSelf(m_iSpiritOfTheWolfAbilityID);
 		}
 
 		/************************************************************************************/

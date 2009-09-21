@@ -22,7 +22,7 @@ namespace EQ2GlassCannon
 		protected KingdomOfSkyPetType m_eKingdomOfSkyPet = KingdomOfSkyPetType.AnimatedTome;
 
 		protected uint m_uiWardOfSagesAbilityID = 0;
-		protected uint m_uiIceFlameAbilityID = 0;
+		protected uint m_uiFlamesOfVeliousAbilityID = 0;
 		protected uint m_uiThunderclapAbilityID = 0;
 		protected uint m_uiHateTransferAbilityID = 0;
 		protected uint m_uiFreehandSorceryAbilityID = 0;
@@ -39,7 +39,7 @@ namespace EQ2GlassCannon
 			base.RefreshKnowledgeBook();
 
 			m_uiWardOfSagesAbilityID = SelectHighestAbilityID("Ward of Sages");
-			m_uiIceFlameAbilityID = SelectHighestTieredAbilityID("Flames of Velious");
+			m_uiFlamesOfVeliousAbilityID = SelectHighestTieredAbilityID("Flames of Velious");
 			m_uiThunderclapAbilityID = SelectHighestAbilityID("Thunderclap");
 			m_uiFreehandSorceryAbilityID = SelectHighestAbilityID("Freehand Sorcery");
 			m_uiAmbidexterousCastingAbilityID = SelectHighestAbilityID("Ambidexterous Casting");
@@ -80,11 +80,11 @@ namespace EQ2GlassCannon
 			/// Cast the correct pet.
 			if (!MeActor.InCombatMode || m_bSummonPetDuringCombat)
 			{
-				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.AnimatedTome && !IsAbilityMaintained(m_uiSummonAnimatedTomeAbilityID) && CastAbility(m_uiSummonAnimatedTomeAbilityID, Me.Name, true))
+				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.AnimatedTome && !IsAbilityMaintained(m_uiSummonAnimatedTomeAbilityID) && CastAbilityOnSelf(m_uiSummonAnimatedTomeAbilityID))
 					return true;
-				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.Gargoyle && !IsAbilityMaintained(m_uiSummonGargoyleAbilityID) && CastAbility(m_uiSummonGargoyleAbilityID, Me.Name, true))
+				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.Gargoyle && !IsAbilityMaintained(m_uiSummonGargoyleAbilityID) && CastAbilityOnSelf(m_uiSummonGargoyleAbilityID))
 					return true;
-				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.Drake && !IsAbilityMaintained(m_uiSummonDrakeAbilityID) && CastAbility(m_uiSummonDrakeAbilityID, Me.Name, true))
+				if (m_eKingdomOfSkyPet == KingdomOfSkyPetType.Drake && !IsAbilityMaintained(m_uiSummonDrakeAbilityID) && CastAbilityOnSelf(m_uiSummonDrakeAbilityID))
 					return true;
 			}
 
@@ -106,7 +106,7 @@ namespace EQ2GlassCannon
 				}
 				
 				if (bPetFound)
-					Program.Log("/pet hide");
+					Program.RunCommand(1, "/pet hide");
 			}
 
 			return false;

@@ -187,70 +187,48 @@ namespace EQ2GlassCannon
 				/// Time is of the essence when rebuffing after a wipe!
 				if (!MeActor.InCombatMode && CheckToggleBuff(m_uiGroupRunSpeedBuffAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupCastingSkillBuffAbilityID, m_bBuffCastingSkill))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupSpellProcBuffAbilityID, m_bBuffSpellProc))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupManaRegenBuffAbilityID, m_bBuffManaRegen))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupDefenseBuffAbilityID, m_bBuffDefense))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupHasteBuffAbilityID, m_bBuffHaste))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupDehateBuffAbilityID, m_bBuffDehate))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupReflectBuffAbilityID, m_bBuffReflect))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupHealthRegenBuffAbilityID, m_bBuffHealthRegen))
 					return true;
-
 				if (CheckToggleBuff(m_uiRaidArcaneBuffAbilityID, m_bBuffArcaneResistance))
 					return true;
-
 				if (CheckToggleBuff(m_uiRaidElementalBuffAbilityID, m_bBuffElementalResistance))
 					return true;
-
 				if (CheckToggleBuff(m_uiSelfAGIINTBuffAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiResonanceAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiHarmonizationAbilityID, true))
 					return true;
-
 				if (CheckSingleTargetBuff(m_uiUpbeatTempoAbilityID, m_astrUpbeatTempoTargets))
 					return true;
-
 				if (CheckToggleBuff(m_uiAllegroAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiDontKillTheMessengerAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiDexterousSonataAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiFortissimoAbilityID, true))
 					return true;
-
 				if (CheckToggleBuff(m_uiGroupRunSpeedBuffAbilityID, true))
 					return true;
-
 				if (CheckRacialBuffs())
 					return true;
-
 				StopCheckingBuffs();
 			}
 

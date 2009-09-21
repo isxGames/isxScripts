@@ -18,6 +18,12 @@ namespace EQ2GlassCannon
 		protected void AppendActorInfo(FlexStringBuilder ThisBuilder, int iBulletNumber, Actor ThisActor)
 		{
 			ThisBuilder.AppendedLinePrefix = "   ";
+			if (!ThisActor.IsValid)
+			{
+				ThisBuilder.AppendLine("{0}. Actor not valid.", iBulletNumber);
+				return;
+			}
+
 			ThisBuilder.AppendLine("{0}. \"{1}\" ({2}) found {3:0.00} meters away at ({4:0.00}, {5:0.00}, {6:0.00})",
 				iBulletNumber,
 				ThisActor.Name,
@@ -169,6 +175,28 @@ namespace EQ2GlassCannon
 						TransferINISettings(FakeIniFile);
 						ApplySettings();
 					}
+					return true;
+				}
+
+				case "gc_debug":
+				{
+					if (astrParameters.Length == 0)
+					{
+						Program.Log("gc_debug: No option specified!");
+						return true;
+					}
+
+					switch (astrParameters[0])
+					{
+						case "whopet":
+							Program.Log("gc_debug whopet: Listing player's primary pet...");
+							FlexStringBuilder ThisBuilder = new FlexStringBuilder();
+							AppendActorInfo(ThisBuilder, 1, Me.Pet());
+							Program.Log("{0}", ThisBuilder.ToString());
+							return true;
+					}
+
+					Program.Log("gc_debug options: whopet");
 					return true;
 				}
 

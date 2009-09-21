@@ -93,8 +93,8 @@ namespace EQ2GlassCannon
 
 				try
 				{
-					/// A little thing I discovered while watching console spam.
-					/// EQ2 will prefix your character name if you are watching that video.
+					/// An amazing little thing I discovered while watching console spam.
+					/// EQ2 will prefix your character name if you are watching a flythrough zone intro video.
 					s_bIsFlythroughVideoPlaying = Me.Group(0).Name.StartsWith("Flythrough_");
 				}
 				catch
