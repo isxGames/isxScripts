@@ -83,6 +83,7 @@ namespace EQ2GlassCannon
 		protected Point3D m_ptMyLastLocation = new Point3D();
 		protected bool m_bCheckBuffsNow = true;
 		protected bool m_bIHaveAggro = false;
+		protected bool m_bIHaveBadPing = false;
 		protected bool m_bClearGroupMaintained = false;
 		protected bool m_bLastShadowTargetSamplingWasNearby = false;
 		protected DateTime m_LastCheckBuffsTime = DateTime.Now;
@@ -330,6 +331,12 @@ namespace EQ2GlassCannon
 			/// We freshly reacquire these for every frame.
 			m_OffensiveTargetActor = null;
 			m_bIHaveAggro = false;
+
+			/// Decide if our ping is too high to function properly.
+			/// If ping is given as an invalid value, then we consider that a bad ping as well.
+			string strPing = Me.GetGameData("General.Ping").Text;
+			int iThisPing = -1;
+			m_bIHaveBadPing = (!int.TryParse(strPing, out iThisPing) || (iThisPing >= m_iBadPingThreshold));
 
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 				return true;
@@ -643,17 +650,15 @@ namespace EQ2GlassCannon
 						/// Infinite recursion = FAIL
 						if (TraversedActorIDSet.Contains(ThisActor.ID))
 						{
-							Program.Log("Circular assist chain detected! Cannot engage an enemy.");
+							Program.Log("Circular player assist chain detected! No enemy was found.");
 							break;
 						}
-
-						TraversedActorIDSet.Add(ThisActor.ID);
+						else
+							TraversedActorIDSet.Add(ThisActor.ID);
 					}
 
 					if (OffensiveTargetActor == null)
 					{
-						//Program.Log("{0} provided an invalid offensive target ({1}, {2}, {3}).", CommandingPlayerActor.Name, OffensiveTargetActor.Name, OffensiveTargetActor.ID, OffensiveTargetActor.Type);
-
 						/// Combat is now cancelled.
 						/// Maybe the commanding player misclicked or clicked off intentionally, but it doesn't matter.
 						WithdrawFromCombat();
@@ -663,12 +668,12 @@ namespace EQ2GlassCannon
 						/// Successful target acquisition.
 						m_iOffensiveTargetID = OffensiveTargetActor.ID;
 						Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
+
+						/// An assist command promotes AFK into neutral positioning.
+						if (m_ePositioningStance == PositioningStance.DoNothing)
+							ChangePositioningStance(PositioningStance.NeutralPosition);
 					}
 				}
-
-				/// An assist command promotes AFK into neutral positioning.
-				if (m_ePositioningStance == PositioningStance.DoNothing)
-					ChangePositioningStance(PositioningStance.NeutralPosition);
 
 				return true;
 			}
@@ -897,9 +902,14 @@ namespace EQ2GlassCannon
 				Program.ReleaseKey(m_strForwardKey);
 			}
 
+			/// Activate the new stance.
 			if (eNewStance == PositioningStance.DoNothing)
 			{
 				m_ePositioningStance = PositioningStance.DoNothing;
+
+				/// If the player wants autofollow, he'll have to do it manually.
+				if (!string.IsNullOrEmpty(MeActor.WhoFollowing))
+					Program.RunCommand("/stopfollow");
 			}
 			else if (eNewStance == PositioningStance.NeutralPosition)
 			{
@@ -967,6 +977,13 @@ namespace EQ2GlassCannon
 			{
 				if (MeActor.IsDead)
 					return false;
+
+				/// Make sure we don't lag into a mob or off a fucking cliff.
+				if (m_bIHaveBadPing && m_bBreakAutoFollowOnBadPing)
+				{
+					Program.RunCommand("/stopfollow");
+					return false;
+				}
 
 				/// Make sure an autofollow target exists in our group.
 				string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, true);
@@ -1038,6 +1055,13 @@ namespace EQ2GlassCannon
 				/// For shadowing, the coordinate is updated at every iteration.
 				if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 				{
+					/// Make sure we don't lag into a mob or off a fucking cliff.
+					if (m_bIHaveBadPing && m_bBreakAutoFollowOnBadPing)
+					{
+						Program.ReleaseKey(m_strForwardKey);
+						return false;
+					}
+
 					/// Make sure an autofollow target exists in our party and isn't ourself.
 					string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
 					if (string.IsNullOrEmpty(strAutoFollowTarget))

@@ -49,6 +49,8 @@ namespace EQ2GlassCannon
 		protected double m_fCustomAutoFollowMaximumRange = 10.0;
 		protected int m_iCheckBuffsInterval = 500;
 		protected double m_fAggroPanicPercentage = 90.0;
+		protected int m_iBadPingThreshold = 600;
+		protected bool m_bBreakAutoFollowOnBadPing = true;
 		protected bool m_bUseRanged = false;
 		protected bool m_bUseGreenAEs = true;
 		protected bool m_bUseBlueAEs = true;
@@ -127,6 +129,8 @@ namespace EQ2GlassCannon
 			ThisFile.TransferDouble("General.CustomAutoFollowMaximumRange", ref m_fCustomAutoFollowMaximumRange);
 			ThisFile.TransferInteger("General.CheckBuffsInterval", ref m_iCheckBuffsInterval);
 			ThisFile.TransferDouble("General.AggroPanicPercentage", ref m_fAggroPanicPercentage);
+			ThisFile.TransferInteger("General.BadPingThreshold", ref m_iBadPingThreshold);
+			ThisFile.TransferBool("General.BreakAutoFollowOnBadPing", ref m_bBreakAutoFollowOnBadPing);
 			ThisFile.TransferBool("General.UseRanged", ref m_bUseRanged);
 			ThisFile.TransferBool("General.UseGreenAEs", ref m_bUseGreenAEs);
 			ThisFile.TransferBool("General.UseBlueAEs", ref m_bUseBlueAEs);
