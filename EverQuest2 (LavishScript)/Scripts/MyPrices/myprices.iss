@@ -1,13 +1,12 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14i :  released 10th September 2009"
+variable string Version="Version 0.14j :  released 21st September 2009"
 ;
 ; Declare Variables
 ;
 
 variable int brokerslots=8
-variable int brokerboxslots=1000
 variable int InventorySlots=6
 
 variable BrokerBot MyPrices
@@ -41,8 +40,6 @@ variable bool CraftListMade=FALSE
 variable bool CraftItemsPlaced=FALSE
 variable bool ItemsArePriced=FALSE
 
-; Array stores bool - Item scanned
-variable bool Scanned[1000]
 ; Array stores bool - to scan box or not
 variable bool box[8]
 
@@ -60,11 +57,6 @@ variable int i
 variable int j
 variable int Commission
 variable int IntMinBasePrice
-
-; Array - stores container number for each item in the Listbox
-variable int itemprice[1000]
-; Array - stores inventory location number for each item in your inventory
-variable int InventoryList[1000]
 
 variable int numitems
 variable int currentpos
@@ -247,9 +239,8 @@ function main(string goscan, string goscan2)
 				Call CheckFocus
 				ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}"]
 				; container number
-				i:Set[${itemprice[${currentpos}]}]
-
-
+				i:Set[${itemprice.Element[${currentpos}]}]
+				
 				; check where the container is being sold from to get the commission %
 
 				SellLoc:Set[${Me.Vending[${i}].Market}]
@@ -318,7 +309,6 @@ function main(string goscan, string goscan2)
 						broker Name "${ItemName}" Sort ByPriceAsc MaxLevel 999
 
 						; scan to make sure the item is listed and get lowest price , TRUE means exact name match only
-						Call echolog "<Main> Call BrokerSearch ${ItemName} TRUE"
 						Call BrokerSearch "${ItemName}" TRUE
 
 						; Broker search returns -1 if no items to compare were found
@@ -532,7 +522,7 @@ function main(string goscan, string goscan2)
 					call SetColour Sell ${currentpos} FFC43012
 				}
 				; Mark position in list as scanned
-				Scanned[${currentpos}]:Set[TRUE]
+				Scanned:Set[${currentpos},TRUE]
 				; Choose the next item in the list to be looked at
 				if ${Natural} && ${currentcount} < ${numitems}
 				{
@@ -625,28 +615,27 @@ function addtotals(string ItemName, int itemnumber)
 	call echolog "<end> : addtotals"
 }
 
-function FindItem(int i, string ItemName)
+function:int FindItem(int i, string ItemName)
 {
 	call echolog "-> FindItem ${i} ${ItemName}"
 	Call CheckFocus
 	Declare j int local
-	Declare Position int -1 local
 	Declare ConName string local
 
 	j:Set[1]
 	do
 	{
+
 		ConName:Set["${Me.Vending[${i}].Consignment[${j}]}"]
 		
 		if ${ConName.Equal["${ItemName}"]}
 		{
-			Position:Set[${j}]
-			Break
+			Return ${j}
 		}
 	}
 	while ${j:Inc} <= ${Me.Vending[${i}].NumItems}
-	call echolog "<- FindItem ${Position}"
-	Return ${Position}
+	call echolog "<- FindItem -1"
+	Return -1
 }
 
 
@@ -762,7 +751,7 @@ function buy(string tabname, string action)
 	variable iterator NameIterator
 	variable iterator BuyNameIterator
 
-	; Index each item under the Set [Item]
+	; Index each item under the Set defined by BuyList
 
 	BuyList:GetSetIterator[BuyIterator]
 
@@ -788,7 +777,7 @@ function buy(string tabname, string action)
 				;
 				; init = build up the list of items on the buy tab
 				; scan = check the broker list one by one - do buy and various workhorse routines
-				; clean = remove items from the data if they are not in the vendor boxes and aren't crafted
+				; clean = remove items from the data if they are not in the vendor boxes,aren't crafted or don't have a min/max price
 				; place =  place crafted flagged items on the broker
 				; compact = remove excess items from the datafile.
 
@@ -799,7 +788,6 @@ function buy(string tabname, string action)
 					; read the Settings in the Sub-Set
 					if ${BuyNameIterator:First(exists)}
 					{
-						; Scan the subset to get all the settings
 						Collectible:Set[FALSE]
 						CraftItem:Set[FALSE]
 						Harvest:Set[FALSE]
@@ -809,7 +797,7 @@ function buy(string tabname, string action)
 						BuyNameOnly:Set[FALSE]
 						MinSalePrice:Set[FALSE]
 						MaxSalePrice:Set[FALSE]
-						
+						; Scan the subset to get all the settings
 						do
 						{
 							Switch "${BuyNameIterator.Key}"
@@ -864,10 +852,6 @@ function buy(string tabname, string action)
 									break
 								Case MaxSalePrice
 									MaxSalePrice:Set[${BuyNameIterator.Value}]
-									break
-								Case Box
-									BuyName.FindSetting[${BuyNameIterator.Key}]:Remove
-									waitframe
 									break
 							}
 						}
@@ -1295,7 +1279,7 @@ function BuyItems()
 
 ; function to check you actually bought an item (stops false positives if someone beats you to it or someone removes an item before you can buy it)
 
-function checkbought(float BrokerPrice, float OldCash, float NewCash)
+function:int checkbought(float BrokerPrice, float OldCash, float NewCash)
 {
 	call echolog "-> checkbought Broker Price : ${BrokerPrice} My Old Cash : ${OldCash} My Current cash : ${NewCash}"
 	
@@ -1333,7 +1317,7 @@ function checkbought(float BrokerPrice, float OldCash, float NewCash)
 ; 
 ; if not then calculate how many you CAN buy with the coin/limit you have.
 
-function checkcash(float Money, float MaxMoney, int Number, bool Harvest)
+function:int checkcash(float Money, float MaxMoney, int Number, bool Harvest)
 {
 	call echolog  "-> checkcash: BuyPrice : ${Money} MaxMoney : ${MaxMoney}  Buy Number : ${Number} Harvest : ${Harvest}"
 
@@ -1398,10 +1382,7 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 		gp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinGoldPrice].Text}]
 		sp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinSilverPrice].Text}]
 		cp:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Buy].FindChild[MinCopperPrice].Text}]
-		cost:Set[${Math.Calc[${pp}*1000000]}]
-		cost:Set[${Math.Calc[${cost}+(${gp}*10000)]}]
-		cost:Set[${Math.Calc[${cost}+(${sp}*100)]}]
-		cost:Set[${Math.Calc[${cost}+${cp}]}]
+		cost:Set[${Math.Calc[(${pp}*1000000)+(${gp}*10000)+(${sp}*100)+${cp}]}]
 
 		if ${UIElement[BuyNameOnly@Buy@GUITabs@MyPrices].Checked}
 			call searchbrokerlist "${ItemName}" 0 0 0  ${cost}
@@ -1492,7 +1473,7 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 
 ; Search the broker for items , return the cheapest price found
 
-function BrokerSearch(string ItemName, bool NameOnly)
+function:float BrokerSearch(string ItemName, bool NameOnly)
 {
 	call echolog "-> BrokerSearch ${ItemName} ${NameOnly}"
 
@@ -1632,7 +1613,7 @@ function LoadList()
 					call addtotals "${ItemName}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
 					
 					; store the items box number
-					itemprice[${numitems}]:Set[${i}]
+					itemprice:Set[${numitems},${i}]
 					; check to see if it already has a minimum price set
 					call checkitem Sell "${ItemName}"
 					; If no value is returned then add the price to the settings file
@@ -1728,12 +1709,16 @@ function SaveSell()
 		MaxMoney:Set[${Return}]
 		
 		; Find where the Item is stored in the container
-		call FindItem ${itemprice[${ClickID}]} "${ItemName}"
+		
+		
+		call FindItem ${itemprice.Element[${ClickID}]} "${ItemName}"
+		
 		j:Set[${Return}]
+
 		; set the current price
 		if ${j} > -1
 		{
-			call SetItemPrice ${itemprice[${ClickID}]} ${j} ${MaxMoney}
+			call SetItemPrice ${itemprice.Element[${ClickID}]} ${j} ${MaxMoney}
 			call ClickBrokerSearch Sell ${ClickID}
 		}
 	}
@@ -1908,19 +1893,19 @@ function FillMinPrice(int ItemID)
 	
 	ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${ItemID}]}"]
 	
-	call FindItem ${itemprice[${ItemID}]} "${ItemName}"
+	call FindItem ${itemprice.Element[${ItemID}]} "${ItemName}"
 
 	j:Set[${Return}]
 
 	if ${j} != -1
 	{
-		ItemName:Set["${Me.Vending[${itemprice[${ItemID}]}].Consignment[${j}].Name}"]
+		ItemName:Set["${Me.Vending[${itemprice.Element[${ItemID}]}].Consignment[${j}].Name}"]
 
 		UIElement[ItemName@Sell@GUITabs@MyPrices]:SetText["${ItemName}"]
 
 		; Display your current Price for that Item
 
-		Money:Set[${Me.Vending[${itemprice[${ItemID}]}].Consignment[${j}].BasePrice}]
+		Money:Set[${Me.Vending[${itemprice.Element[${ItemID}]}].Consignment[${j}].BasePrice}]
 
 		Platina:Set[${Math.Calc[${Money}/10000]}]
 		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
@@ -2467,7 +2452,6 @@ function SetItemPrice(int i, int j, float price, bool UL)
 		j:Set[${Return}]
 		call echolog	"--------- Me.Vending[${i}].Consignment[${j}].BasePrice (${Me.Vending[${i}].Consignment[${j}]}) returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
 	}
-	return
 }
 
 objectdef BrokerBot
@@ -2485,6 +2469,14 @@ objectdef BrokerBot
 
 	method loadsettings()
 	{
+		; Set up 'arrays'
+		; Bool to check if broker item has been scanned
+		DeclareVariable Scanned collection:bool script
+		; Array - stores container number for each item in the Listbox
+		DeclareVariable itemprice collection:int script
+		; Array - stores inventory location number for each item in your inventory
+		DeclareVariable InventoryList collection:int script
+
 		; Read settings from The (character name).XML  setting file inside the XML sub-folder
 		;
 		LavishSettings:AddSet[myprices]
@@ -2594,14 +2586,13 @@ function placeitem(string ItemName)
 	
 	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
 
-	; check for number of items not in NoSale Container
+	; check for number of items not in a NoSale Container
 	call numinventoryitems "${ItemName}" FALSE FALSE
 	numitems:Set[${Return}]
 
 	; if there are items to be placed
 	if ${numitems} > 0
 	{
-		
 		box:Set[0]
 		do
 		{
@@ -2721,7 +2712,9 @@ function inventorylist()
 				if ${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text.Length} == 0 || ${ItemName.Find[${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text}]} != NULL
 				{
 					UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${ItemName}"]
-					InventoryList[${i:Inc}]:Set[${xvar}]
+
+					InventoryList:Set[${i:Inc},${xvar}]
+
 					if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
 					{
 						call SetColour Inventory ${i} FFFFFF00
@@ -2746,12 +2739,12 @@ function placeinventory(int box, int inventorynumber)
 
 	if ${space} > 0
 	{
-		if ${InventoryList[${inventorynumber}]} > -1
+		if ${InventoryList.Element[${inventorynumber}](exists)}
 		{
 			; check current used capacity
 			lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
 	
-			xvar:Set[${InventoryList[${inventorynumber}]}]
+			xvar:Set[${InventoryList.Element[${inventorynumber}]}]
 	
 			; place the item into the consignment system , grouping it with similar items
 			Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
@@ -2759,7 +2752,8 @@ function placeinventory(int box, int inventorynumber)
 	
 			UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[0]
 			call SetColour Inventory ${inventorynumber} 00000000
-			InventoryList[${inventorynumber}]:Set[-1]
+			
+			InventoryList:Erase[${inventorynumber}]
 	
 			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
 			
@@ -2776,7 +2770,7 @@ function placeinventory(int box, int inventorynumber)
 	}
 }
 
-function placeitems(string ItemName, int box, int numitems)
+function:int placeitems(string ItemName, int box, int numitems)
 {
 	call echolog "<start> placeitems ${ItemName} ${box} ${numitems}"
 	; attempts to place the items in the defined box
@@ -2860,7 +2854,7 @@ function placeitems(string ItemName, int box, int numitems)
 	return ${numitems}
 }
 
-function numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
+function:int numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 {
 	
 	; returns the number of stacks/number of items in your inventory , num TRUE = total , FALSE = stacks
@@ -2889,7 +2883,7 @@ function numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 	return ${numitems}
 }
 
-function boxwithmostspace(string ItemName)
+function:int boxwithmostspace(string ItemName)
 {
 	; returns the number of the vendor box with the most free space
 	Declare i int local 1
@@ -2915,20 +2909,20 @@ function resetscanned()
 	Declare lcount int local 1
 	do
 	{
-		Scanned[${lcount}]:Set[FALSE]
+		if ${Scanned.Element[${lcount}](exists)}
+			Scanned:Erase[${lcount}]
 	}
-	While ${lcount:Inc} <= ${brokerboxslots}
-
+	While ${Scanned.Element[${lcount:Inc}](exists)}
 }
 
-function ChooseNextItem(int numitems)
+function:int ChooseNextItem(int numitems)
 {
 	Declare rnumber int local
 	do
 	{
 		rnumber:Set[${Math.Calc[${Math.Rand[${numitems}]}+1]}]
 	}
-	While ${Scanned[${rnumber}]}
+	While ${Scanned.Element[${rnumber}](exists)}
 	return ${rnumber}
 }
 
@@ -2963,7 +2957,7 @@ function GoTransmute(string ItemName)
 }
 
 
-function checklore(string ItemName)
+function:bool checklore(string ItemName)
 {
 	
 	Declare numitems int local
@@ -3027,13 +3021,11 @@ function CheckPrimary(string UITab, int boxnum, int ID)
 
 function StartUp()
 {
-	Declare tempstring string local
 	Declare i int local
 	Declare xvar int local
 	Declare space int local
 
-	tempstring:Set[${Actor[Guild,Guild World Market Broker]}]
-	if !${tempstring.Equal[NULL]}
+	if ${Actor[guild,Guild World Market Broker](exists)}
 	{
 		Actor[Guild,Guild World Market Broker]:DoTarget
 		wait 10
@@ -3042,41 +3034,32 @@ function StartUp()
 		call echolog " * Scanning using Guild Hall Broker *"
 		echo " * Scanning using Guild Hall Broker *"
 	}
+	elseif ${Actor[Guild,broker](exists)}
+	{
+		Actor[Guild,broker]:DoTarget
+		wait 10
+		Actor[Guild,broker]:DoubleClick
+		wait 20
+		call echolog " * Scanning using Broker *"
+		echo " * Scanning using Broker *"
+	}
+	elseif ${Actor[name,a market bulletin board](exists)} && ${Actor[name,a market bulletin board].Distance} <= 11
+	{
+		Actor[name,a market bulletin board]:DoubleClick
+		wait 20
+		Actor[${Me}]:DoTarget
+		wait 20
+		call echolog " * Scanning using Room Board *"
+		echo " * Scanning using Room Board *"
+	}
 	else
 	{
-		tempstring:Set[${Actor[Guild,broker]}]
-		if !${tempstring.Equal[NULL]}
-		{
-			Actor[Guild,broker]:DoTarget
-			wait 10
-			Actor[Guild,broker]:DoubleClick
-			wait 20
-			call echolog " * Scanning using Broker *"
-			echo " * Scanning using Broker *"
-		}
-		else
-		{
-			tempstring:Set[${Actor[name,a market bulletin board]}]
-			if !${tempstring.Equal[NULL]} && ${Actor[name,a market bulletin board].Distance} <= 11
-			{
-				Actor[name,a market bulletin board]:DoubleClick
-				wait 20
-				Actor[${Me}]:DoTarget
-				wait 20
-				call echolog " * Scanning using Room Board *"
-				echo " * Scanning using Room Board *"
-			}
-			else
-				{
-				Actor[nokillnpc]:DoTarget
-				wait 10
-				Target:DoubleClick
-				wait 20
-				call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
-				echo " * Scanning using Nearest Non Agro NPC (Should be broker) *"
-
-				}
-		}
+		Actor[nokillnpc]:DoTarget
+		wait 10
+		Target:DoubleClick
+		wait 20
+		call echolog " * Scanning using Nearest Non Agro NPC (Should be broker) *"
+		echo " * Scanning using Nearest Non Agro NPC (Should be broker) *"
 	}
 	
 	i:Set[1]
@@ -3085,10 +3068,9 @@ function StartUp()
 		if (${Me.Vending[${i}](exists)})
 		{
 			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+
 			if ${space} == 0
-			{
 				UIElement[B${i}@Inventory@GUITabs@MyPrices]:Hide
-			}
 		}
 		else
 		{
@@ -3128,7 +3110,7 @@ function StartUp()
 	}
 }
 
-function Rejected(string ItemName)
+function:bool Rejected(string ItemName)
 {
 	Rejected:Set[${LavishSettings.FindSet[Rejected]}]
 
@@ -3140,7 +3122,7 @@ function Rejected(string ItemName)
 	Return TRUE
 }
 
-function InventoryContainer(int ID)
+function:int InventoryContainer(int ID)
 {
 	Declare xvar int local
 	xvar:Set[1]
