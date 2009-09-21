@@ -181,6 +181,7 @@ namespace EQ2GlassCannon
 				if (CastHOStarter())
 					return true;
 
+				/// Not all spells here need IsIdle, but a large enough amount do that I'm not gonna clutter the code for their sake.
 				if (MeActor.IsIdle)
 				{
 					/// Deaggros.
@@ -435,12 +436,11 @@ namespace EQ2GlassCannon
 							return true;
 						if (CastGreenOffensiveAbility(m_uiDarkNebulaAbilityID, 1))
 							return true;
-
-						/// TODO: Who knows where this fits in yet...
-						if (bDumbfiresAdvised && CastAbility(m_uiNetherlordPetAbilityID))
-							return true;
 					}
 
+					/// TODO: Who knows where this fits in yet...(and who cares?)
+					if (bDumbfiresAdvised && CastAbility(m_uiNetherlordPetAbilityID))
+						return true;
 					/// Desperation, lol.
 					if (UseOffensiveItems())
 						return true;

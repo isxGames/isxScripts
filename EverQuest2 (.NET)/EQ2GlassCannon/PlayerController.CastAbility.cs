@@ -540,7 +540,7 @@ namespace EQ2GlassCannon
 			int iValidVictimCount = 0;
 			if (m_AbilityCompatibleTargetCountCache.ContainsKey(uiAbilityID))
 				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
-			else
+			else if (!m_bUseBlueAEs)
 			{
 				foreach (Actor ThisActor in Program.EnumActors("byDist", fRadiusOverride.ToString(), "npc"))
 				{
@@ -721,6 +721,15 @@ namespace EQ2GlassCannon
 
 			//Program.Log("No mez targets identified.");
 			return false;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		protected bool IsAbilityMaintained(string strEffectName)
+		{
+			return m_MaintainedNameToIndexMap.ContainsKey(strEffectName);
 		}
 
 		/************************************************************************************/

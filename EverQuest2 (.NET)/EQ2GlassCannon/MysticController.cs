@@ -179,10 +179,8 @@ namespace EQ2GlassCannon
 				{
 					if (CheckShadowsHealStanceBuffs())
 						return true;
-
 					if (CheckToggleBuff(m_uiCoagulateAbilityID, true))
 						return true;
-
 					if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
 						return true;
 				}
@@ -192,31 +190,22 @@ namespace EQ2GlassCannon
 				{
 					if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, m_bBuffNoxiousResistance))
 						return true;
-
 					if (CheckToggleBuff(m_uiGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
 						return true;
-
 					if (CheckSingleTargetBuffs(m_uiSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets))
 						return true;
-
 					if (CheckToggleBuff(m_uiUrsineAbilityID, true))
 						return true;
-
 					if (CheckGroupWaterBreathingBuff())
 						return true;
-
 					if (CheckSingleTargetBuff(m_uiSingleStatBuffAbilityID, m_astrAvatarTargets))
 						return true;
-
 					if (CheckSingleTargetBuff(m_uiSingleProcBuffAbilityID, m_astrAncestryTargets))
 						return true;
-
 					if (CheckRacialBuffs())
 						return true;
-
 					if (CheckSpiritOfTheWolf())
 						return true;
-
 					if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiSpiritCompanionAbilityID, m_bUsePet))
 						return true;
 				}
@@ -297,7 +286,7 @@ namespace EQ2GlassCannon
 						if (!IsClericDivineRecoveryActive() && CastAbility(m_uiRitualOfAlacrityAbilityID, m_strRitualOfAlacrityTarget, true))
 							return true;
 
-						if (CastAbility(m_uiDumbfireWardPetAbilityID, Me.Name, true))
+						if (CastAbilityOnSelf(m_uiDumbfireWardPetAbilityID))
 							return true;
 					}
 				}
@@ -309,7 +298,7 @@ namespace EQ2GlassCannon
 						return true;
 				}
 
-				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 40.0f) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 40.0f) && CastAbilityOnSelf(m_uiGroupHealingAbilityID))
 					return true;
 
 				/// Single heals and wards on the player hurting the most.
@@ -325,30 +314,25 @@ namespace EQ2GlassCannon
 						return true;
 				}
 
-				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 20.0f) && CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
+				if (iTotalDeficientMembers > 1 && (fNetHealthGap > 20.0f) && CastAbilityOnSelf(m_uiGroupHealingAbilityID))
 					return true;
 
 				/// Keep the group ward up.
-				if ((bOffensiveTargetEngaged || MeActor.InCombatMode) && !IsAbilityMaintained(m_uiGroupWardAbilityID) && CastAbility(m_uiGroupWardAbilityID, Me.Name, true))
+				if ((bOffensiveTargetEngaged || MeActor.InCombatMode) && !IsAbilityMaintained(m_uiGroupWardAbilityID) && CastAbilityOnSelf(m_uiGroupWardAbilityID))
 					return true;
 
-				if ((Me.IsHated || MeActor.InCombatMode) && CastAbility(m_uiDumbfireHealPetAbilityID, Me.Name, true))
+				if ((Me.IsHated || MeActor.InCombatMode) && CastAbilityOnSelf(m_uiDumbfireHealPetAbilityID))
 					return true;
 
 				/// If anyone at all is missing health, do a group heal, because this is all that's left.
 				if (!string.IsNullOrEmpty(strLowestHealthName))
 				{
-					if (CastAbility(m_uiGroupHealingAbilityID, Me.Name, true))
+					if (CastAbilityOnSelf(m_uiGroupHealingAbilityID))
 						return true;
 				}
 
 				if (!m_bPrioritizeCures && AttemptCures())
 					return true;
-			}
-
-			if (bOffensiveTargetEngaged)
-			{
-				Program.Log("DEBUG: NEED MORE TO DO");
 			}
 
 			return false;

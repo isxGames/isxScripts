@@ -40,7 +40,7 @@ namespace EQ2GlassCannon
 
 			/// Do myself first, or this will be harder to coordinate for raiding.
 			if (Me.Arcane > 0)
-				return CastAbility(m_uiCureArcaneAbilityID, Me.Name, true);
+				return CastAbilityOnSelf(m_uiCureArcaneAbilityID);
 
 			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bCureUngroupedMainTank))
 			{

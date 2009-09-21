@@ -26,9 +26,9 @@ namespace EQ2GlassCannon
 
 		protected uint m_uiColdDamageShieldAbilityID = 0;
 		protected uint m_uiFurnaceOfRoAbilityID = 0;
-		protected uint m_uiBlueHeatAEAbilityID = 0;
+		protected uint m_uiFirestormAbilityID = 0;
 		protected uint m_uiGreenColdAEAbilityID = 0;
-		protected uint m_uiGreenMagicAEAbilityID = 0;
+		protected uint m_uiStormOfLightningAbilityID = 0;
 		protected uint m_uiRaysOfDisintegrationAbilityID = 0;
 		protected uint m_uiStormingTempestAbilityID = 0;
 		protected uint m_uiProtoflameAbilityID = 0;
@@ -37,9 +37,9 @@ namespace EQ2GlassCannon
 		protected uint m_uiIceCometAbilityID = 0;
 		protected uint m_uiBallOfFireAbilityID = 0;
 		protected uint m_uiImmolationAbilityID = 0;
-		protected uint m_uiSingleStunNukeAbilityID = 0;
+		protected uint m_uiMagmaChamberAbilityID = 0;
 		protected uint m_uiElementalDebuffAbilityID = 0;
-		protected uint m_uiUnresistableDotAbilityID = 0;
+		protected uint m_uiIncinerateAbilityID = 0;
 		protected uint m_uiLightningBurstAbilityID = 0;
 		protected uint m_uiSingleDeaggroAbilityID = 0;
 
@@ -73,9 +73,9 @@ namespace EQ2GlassCannon
 			m_uiFireshapeAbilityID = SelectHighestAbilityID("Fireshape");
 			m_uiColdDamageShieldAbilityID = SelectHighestTieredAbilityID("Iceshield");
 			m_uiFurnaceOfRoAbilityID = SelectHighestTieredAbilityID("Furnace of Ro");
-			m_uiBlueHeatAEAbilityID = SelectHighestTieredAbilityID("Firestorm");
+			m_uiFirestormAbilityID = SelectHighestTieredAbilityID("Firestorm");
 			m_uiGreenColdAEAbilityID = SelectHighestTieredAbilityID("Glacial Wind");
-			m_uiGreenMagicAEAbilityID = SelectHighestTieredAbilityID("Storm of Lightning");
+			m_uiStormOfLightningAbilityID = SelectHighestTieredAbilityID("Storm of Lightning");
 			m_uiRaysOfDisintegrationAbilityID = SelectHighestAbilityID("Rays of Disintegration");
 			m_uiStormingTempestAbilityID = SelectHighestTieredAbilityID("Storming Tempest");
 			m_uiProtoflameAbilityID = SelectHighestTieredAbilityID("Protoflame");
@@ -84,9 +84,9 @@ namespace EQ2GlassCannon
 			m_uiIceCometAbilityID = SelectHighestTieredAbilityID("Ice Comet");
 			m_uiBallOfFireAbilityID = SelectHighestTieredAbilityID("Ball of Fire");
 			m_uiImmolationAbilityID = SelectHighestTieredAbilityID("Immolation");
-			m_uiSingleStunNukeAbilityID = SelectHighestTieredAbilityID("Magma Chamber");
+			m_uiMagmaChamberAbilityID = SelectHighestTieredAbilityID("Magma Chamber");
 			m_uiElementalDebuffAbilityID = SelectHighestTieredAbilityID("Ice Spears");
-			m_uiUnresistableDotAbilityID = SelectHighestTieredAbilityID("Incinerate");
+			m_uiIncinerateAbilityID = SelectHighestTieredAbilityID("Incinerate");
 			m_uiLightningBurstAbilityID = SelectHighestTieredAbilityID("Solar Flare");
 			m_uiSingleDeaggroAbilityID = SelectHighestTieredAbilityID("Cease");
 
@@ -153,11 +153,11 @@ namespace EQ2GlassCannon
 
 				if (MeActor.IsIdle)
 				{
-					/// Cast these temp buffs before other spells can separate them.
+					/// Cast these temp buffs before other spells or conditions can separate them.
 					/// Iceshape and Gift always go together, and Fireshape and Surge always go together.
 					if (IsAbilityMaintained(m_uiIceshapeAbilityID))
 					{
-						if (CastAbility(m_uiGiftAbilityID, Me.Name, true))
+						if (CastAbilityOnSelf(m_uiGiftAbilityID))
 						{
 							SpamSafeGroupSay(m_strGiftCallout);
 							return true;
@@ -165,7 +165,7 @@ namespace EQ2GlassCannon
 					}
 					else if (IsAbilityMaintained(m_uiSurgeAbilityID))
 					{
-						if (CastAbility(m_uiFireshapeAbilityID, Me.Name, true))
+						if (CastAbilityOnSelf(m_uiFireshapeAbilityID))
 							return true;
 					}
 
@@ -184,11 +184,11 @@ namespace EQ2GlassCannon
 							/// Gift has the shorter duration so it gets cast last and its availability becomes the prerequisite.
 							if (!IsAbilityMaintained(m_uiFireshapeAbilityID) && !IsAbilityMaintained(m_uiSurgeAbilityID) && IsAbilityReady(m_uiGiftAbilityID))
 							{
-								if (CastAbility(m_uiIceshapeAbilityID, Me.Name, true))
+								if (CastAbilityOnSelf(m_uiIceshapeAbilityID))
 									return true;
 
 								/// Unnecessary (see above).
-								/*if (CastAbility(m_uiGiftAbilityID, Me.Name, true))
+								/*if (CastAbilityOnSelf(m_uiGiftAbilityID))
 								{
 									SpamSafeGroupSay(m_strGiftCallout);
 									return true;
@@ -199,11 +199,11 @@ namespace EQ2GlassCannon
 							/// Fireshape has the shorter duration so it gets cast last and its availability becomes the prerequisite.
 							else if (!IsAbilityMaintained(m_uiIceshapeAbilityID) && !IsAbilityMaintained(m_uiGiftAbilityID) && bFireshapeReady)
 							{
-								if (CastAbility(m_uiSurgeAbilityID, Me.Name, true))
+								if (CastAbilityOnSelf(m_uiSurgeAbilityID))
 									return true;
 
 								/// Unnecessary (see above).
-								/*if (CastAbility(m_uiFireshapeAbilityID, Me.Name, true))
+								/*if (CastAbilityonSelf(m_uiFireshapeAbilityID))
 									return true;*/
 							}
 						}
@@ -237,9 +237,9 @@ namespace EQ2GlassCannon
 					/// and never subordinate to boilerplate cast orders.
 					if (CastGreenOffensiveAbility(m_uiGreenColdAEAbilityID, 6))
 						return true;
-					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 7))
+					if (CastBlueOffensiveAbility(m_uiFirestormAbilityID, 7))
 						return true;
-					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 8))
+					if (CastGreenOffensiveAbility(m_uiStormOfLightningAbilityID, 8))
 						return true;
 
 					/// We attempt this in two places:
@@ -283,9 +283,9 @@ namespace EQ2GlassCannon
 					/// AE time!!
 					if (CastGreenOffensiveAbility(m_uiGreenColdAEAbilityID, 3))
 						return true;
-					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 4))
+					if (CastBlueOffensiveAbility(m_uiFirestormAbilityID, 4))
 						return true;
-					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 5))
+					if (CastGreenOffensiveAbility(m_uiStormOfLightningAbilityID, 5))
 						return true;
 
 					if (CastAbility(m_uiStormingTempestAbilityID))
@@ -297,16 +297,16 @@ namespace EQ2GlassCannon
 					/// AE time!!
 					if (CastGreenOffensiveAbility(m_uiGreenColdAEAbilityID, 2))
 						return true;
-					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 3))
+					if (CastBlueOffensiveAbility(m_uiFirestormAbilityID, 3))
 						return true;
-					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 4))
+					if (CastGreenOffensiveAbility(m_uiStormOfLightningAbilityID, 4))
 						return true;
 
 					if (m_bUseBlueAEs && CastAbility(m_uiHailStormAbilityID))
 						return true;
 
 					/// Freehand Sorcery for Ice Comet.
-					if (IsAbilityReady(m_uiIceCometAbilityID) && CastAbility(m_uiFreehandSorceryAbilityID, Me.Name, true))
+					if (IsAbilityReady(m_uiIceCometAbilityID) && CastAbilityOnSelf(m_uiFreehandSorceryAbilityID))
 						return true;
 
 					if (CastAbility(m_uiIceCometAbilityID))
@@ -323,38 +323,29 @@ namespace EQ2GlassCannon
 				{
 					if (CastAbility(m_uiRaysOfDisintegrationAbilityID))
 						return true;
-
 					if (CastAbility(m_uiBallOfFireAbilityID))
 						return true;
-
 					if (CastAbility(m_uiImmolationAbilityID))
 						return true;
-
-					if (CastAbility(m_uiSingleStunNukeAbilityID))
+					if (CastAbility(m_uiMagmaChamberAbilityID))
 						return true;
-
-					if (CastAbility(m_uiIceFlameAbilityID))
+					if (CastAbility(m_uiFlamesOfVeliousAbilityID))
 						return true;
-
 					if (CastAbility(m_uiLoreAndLegendAbilityID))
 						return true;
-
 					if (CastAbility(m_uiElementalDebuffAbilityID))
 						return true;
-
-					if (CastAbility(m_uiUnresistableDotAbilityID))
+					if (CastAbility(m_uiIncinerateAbilityID))
 						return true;
-
 					if (CastAbility(m_uiLightningBurstAbilityID))
 						return true;
-
 					if (UseOffensiveItems())
 						return true;
 
 					/// AE spells for when every single other thing is exhausted (very rare).
-					if (CastBlueOffensiveAbility(m_uiBlueHeatAEAbilityID, 1))
+					if (CastBlueOffensiveAbility(m_uiFirestormAbilityID, 1))
 						return true;
-					if (CastGreenOffensiveAbility(m_uiGreenMagicAEAbilityID, 1))
+					if (CastGreenOffensiveAbility(m_uiStormOfLightningAbilityID, 1))
 						return true;
 				}
 			}
@@ -375,7 +366,7 @@ namespace EQ2GlassCannon
 				if (FusionAbility != null && m_OffensiveTargetActor.Distance <= FusionAbility.m_fEffectRadius)
 				{
 					/// Freehand Sorcery for Fusion.
-					if (CastAbility(m_uiFreehandSorceryAbilityID, Me.Name, true))
+					if (CastAbilityOnSelf(m_uiFreehandSorceryAbilityID))
 						return true;
 
 					if (CastAbility(m_uiFusionAbilityID))

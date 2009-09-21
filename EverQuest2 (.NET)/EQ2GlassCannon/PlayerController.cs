@@ -642,25 +642,27 @@ namespace EQ2GlassCannon
 
 						/// Infinite recursion = FAIL
 						if (TraversedActorIDSet.Contains(ThisActor.ID))
+						{
+							Program.Log("Circular assist chain detected! Cannot engage an enemy.");
 							break;
+						}
 
 						TraversedActorIDSet.Add(ThisActor.ID);
 					}
 
-					/// Successful target acquisition.
-					if (OffensiveTargetActor != null)
+					if (OffensiveTargetActor == null)
 					{
-						m_iOffensiveTargetID = OffensiveTargetActor.ID;
-						Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
-					}
-					else
-					{
-						if (OffensiveTargetActor != null)
-							Program.Log("{0} provided an invalid offensive target ({1}, {2}, {3}).", CommandingPlayerActor.Name, OffensiveTargetActor.Name, OffensiveTargetActor.ID, OffensiveTargetActor.Type);
+						//Program.Log("{0} provided an invalid offensive target ({1}, {2}, {3}).", CommandingPlayerActor.Name, OffensiveTargetActor.Name, OffensiveTargetActor.ID, OffensiveTargetActor.Type);
 
 						/// Combat is now cancelled.
 						/// Maybe the commanding player misclicked or clicked off intentionally, but it doesn't matter.
 						WithdrawFromCombat();
+					}
+					else
+					{
+						/// Successful target acquisition.
+						m_iOffensiveTargetID = OffensiveTargetActor.ID;
+						Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
 					}
 				}
 
