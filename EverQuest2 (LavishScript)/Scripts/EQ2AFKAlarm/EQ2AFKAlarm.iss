@@ -179,7 +179,7 @@ variable eq2string EQ2String
 
 function PlaySound(string Filename=DefaultSound)  
 {  
-System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"] 
+System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},${Filename.String},0,"Math.Dec[22001]"] 
 } 
 
 
