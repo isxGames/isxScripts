@@ -328,18 +328,21 @@ namespace EQ2GlassCannon
 		/// <returns>true if an action was taken and no further processing should occur</returns>
 		public virtual bool DoNextAction()
 		{
+			if (m_ePositioningStance == PositioningStance.DoNothing)
+				return true;
+
 			/// We freshly reacquire these for every frame.
 			m_OffensiveTargetActor = null;
 			m_bIHaveAggro = false;
 
 			/// Decide if our ping is too high to function properly.
 			/// If ping is given as an invalid value, then we consider that a bad ping as well.
-			string strPing = Me.GetGameData("General.Ping").Text;
+			/// eq2ui_mainhud_connectionstats.xml
+			string strPing = Me.GetGameData("General.Ping").ShortLabel.Replace(",", string.Empty);
 			int iThisPing = -1;
 			m_bIHaveBadPing = (!int.TryParse(strPing, out iThisPing) || (iThisPing >= m_iBadPingThreshold));
-
-			if (m_ePositioningStance == PositioningStance.DoNothing)
-				return true;
+			if (m_bIHaveBadPing)
+				Program.Log("Bad ping detected ({0}ms).", iThisPing);
 
 			/// If we have been commanded to redo group buffs, then cancel one per frame.
 			if (m_bClearGroupMaintained)
@@ -981,7 +984,8 @@ namespace EQ2GlassCannon
 				/// Make sure we don't lag into a mob or off a fucking cliff.
 				if (m_bIHaveBadPing && m_bBreakAutoFollowOnBadPing)
 				{
-					Program.RunCommand("/stopfollow");
+					if (!string.IsNullOrEmpty(MeActor.WhoFollowing))
+						Program.RunCommand(1, "/stopfollow");
 					return false;
 				}
 
@@ -1062,7 +1066,7 @@ namespace EQ2GlassCannon
 						return false;
 					}
 
-					/// Make sure an autofollow target exists in our party and isn't ourself.
+					/// Make sure we have an autofollow target configured.
 					string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
 					if (string.IsNullOrEmpty(strAutoFollowTarget))
 					{
@@ -1070,6 +1074,7 @@ namespace EQ2GlassCannon
 						return false;
 					}
 
+					/// Make sure the autofollow target exists in our party and isn't ourself.
 					Actor FollowActor = m_FriendDictionary[strAutoFollowTarget].ToActor();
 					if (!FollowActor.IsValid || FollowActor.ID == MeActor.ID)
 					{
