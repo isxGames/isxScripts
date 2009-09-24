@@ -124,7 +124,8 @@ namespace EQ2GlassCannon
 				if (ThisActor.IsChest && !m_NearbyChestDictionary[ThisActor.ID])
 				{
 					Program.Log("Attempting to disarm \"{0}\" (ID:{1})...", ThisActor.Name, ThisActor.ID);
-					Program.ApplyVerb(ThisActor, "disarm");
+					//Program.ApplyVerb(ThisActor, "disarm");
+					ThisActor.DoubleClick();
 					m_LastChestDisarmAttemptTime = DateTime.Now;
 					m_iLastChestDisarmAttempted = ThisActor.ID;
 					return true;
