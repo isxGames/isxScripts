@@ -96,6 +96,9 @@
     <Compile Include="PlayerController.IniSettings.cs">
       <DependentUpon>PlayerController.cs</DependentUpon>
     </Compile>
+    <Compile Include="PlayerController.StaticGlobals.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlayerController.VitalStatus.cs">
       <DependentUpon>PlayerController.cs</DependentUpon>
     </Compile>
