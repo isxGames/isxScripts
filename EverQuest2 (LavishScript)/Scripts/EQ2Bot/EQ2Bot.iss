@@ -343,7 +343,7 @@ function main()
 		NoAtExit:Set[TRUE]
 		return
 	}
-	elseif ${EQ2.Zoning}
+	elseif (${EQ2.Zoning} != 0)
 	{
 		Debug:Echo["You cannot start EQ2Bot while zoning.  Wait until you have finished zoning, and then try again."]
 		NoAtExit:Set[TRUE]
@@ -441,14 +441,14 @@ function main()
 		;;;
 		;;;;;;;;;;;;;;;;;
 
-		if ${EQ2.Zoning}
+		if (${EQ2.Zoning} != 0)
 		{
 			KillTarget:Set[]
 			do
 			{
 				wait 5
 			}
-			while ${EQ2.Zoning}
+			while (${EQ2.Zoning} != 0)
 
 			wait 20
 			if ${AutoFollowingMA(exists)}
@@ -475,7 +475,7 @@ function main()
 				wait 2
 				call ProcessTriggers
 			}
-			while ${Me.ToActor.IsDead} || ${EQ2.Zoning}
+			while (${Me.ToActor.IsDead} || ${EQ2.Zoning} != 0)
 
 			wait 15
 			if ${AutoFollowingMA(exists)}
@@ -3926,7 +3926,7 @@ function IamDead(string Line)
 			{
 				waitframe
 			}
-			while ${EQ2.Zoning}
+			while (${EQ2.Zoning} != 0)
 			KillTarget:Set[]
 			wait 15
 			if ${AutoFollowingMA(exists)}
@@ -3966,7 +3966,7 @@ function IamDead(string Line)
 					{
 						waitframe
 					}
-					while ${EQ2.Zoning}
+					while (${EQ2.Zoning} != 0)
 					KillTarget:Set[]
 					wait 100
 					echo "reloading config"
@@ -4031,7 +4031,7 @@ function IamDead(string Line)
 			if ${Math.Calc64[${Time.Timestamp}-${deathtimer}]}>5000
 				Exit
 		}
-		while ${Me.ToActor.IsDead} || ${EQ2.Zoning}
+		while (${Me.ToActor.IsDead} || ${EQ2.Zoning} != 0)
 
 		wait 15
 		if ${AutoFollowingMA(exists)}
