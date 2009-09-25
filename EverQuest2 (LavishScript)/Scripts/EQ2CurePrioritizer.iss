@@ -18,6 +18,11 @@ variable string gCureName
 
 function main()
 {
+	if (!${ISXEQ2.IsReady})
+	{
+		messagebox -ok "ISXEQ2 is not loaded or not ready. ${Script.Name} aborting."
+		return
+	}
 	echo CurePrioritizer Running
 	echo Press F7 to quit
 
