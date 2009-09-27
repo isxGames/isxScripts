@@ -97,7 +97,15 @@
 		<Setting name="2 2">Infusive Weave</Setting>
 		<Setting name="1 2">Infusive Binding</Setting>
 	</Set>
-	<Set name="Geocraft">
+	<Set name="Geomancy">
+		<Setting Name="1 1">Fabricate</Setting>
+		<Setting Name="1 2">Mold</Setting>
+		<Setting Name="1 3">Infuse</Setting>
+		<Setting Name="2 1">Contrive</Setting>
+		<Setting Name="2 2">Shape</Setting>
+		<Setting Name="2 3">Permeate</Setting>
+	</Set>
+	<Set name="Geocraft"> <!-- Needed??? -->
 		<Setting Name="1 1">Fabricate</Setting>
 		<Setting Name="1 2">Mold</Setting>
 		<Setting Name="1 3">Infuse</Setting>
