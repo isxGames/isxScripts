@@ -238,6 +238,17 @@
 		<Setting Name="Minor Dull Luster">3</Setting>
 		<Setting Name="Major Dull Luster">3</Setting>
 	</Set>
+	<Set Name="Geomancy">
+		<Setting Name="Dense Material">1</Setting>
+		<Setting Name="Major Dense Material">1</Setting>
+		<Setting Name="Minor Dense Material">1</Setting>
+		<Setting Name="Rough Edges">2</Setting>
+		<Setting Name="Minor Rough Edges">2</Setting>
+		<Setting Name="Major Rough Edges">2</Setting>
+		<Setting Name="Dull Luster">3</Setting>
+		<Setting Name="Minor Dull Luster">3</Setting>
+		<Setting Name="Major Dull Luster">3</Setting>
+	</Set>
 	<Set Name="Weaving">
 		<Setting Name="Minor Rip">1</Setting>
 		<Setting Name="Ripped">1</Setting>
