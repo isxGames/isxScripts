@@ -48,7 +48,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -74,7 +74,7 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		public bool AttemptCures(bool bCanGroupTrauma, bool bCanGroupArcane, bool bCanGroupNoxious, bool bCanGroupElemental)
 		{
-			if (!m_bCastCures || Me.IsMoving)
+			if (!m_bCastCures || !MeActor.IsIdle)
 				return false;
 
 			bool bGroupCureAvailable = IsAbilityReady(m_uiGeneralGroupCureAbilityID);

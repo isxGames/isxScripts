@@ -77,7 +77,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -116,7 +116,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override bool DoNextAction()
+		protected override bool DoNextAction()
 		{
 			if (base.DoNextAction() || MeActor.IsDead)
 				return true;

@@ -150,6 +150,73 @@ namespace EQ2GlassCannon
 					break;
 				}
 
+				/// This is the assist call; direct the bot to begin combat.
+				case "gc_attackassist":
+				{
+					if (astrParameters.Length != 1)
+					{
+						Program.Log("gc_attackassist: Missing name of player to assist!");
+						return true;
+					}
+
+					Actor CommandingPlayerActor = GetNonPetActor(astrParameters[0]);
+					if (CommandingPlayerActor == null)
+					{
+						Program.Log("gc_attackassist: Commanding player not a valid combat assist!");
+						return true;
+					}
+
+					SetCollection<int> TraversedActorIDSet = new SetCollection<int>();
+					Actor OffensiveTargetActor = null;
+
+					/// Nested assist targetting. Go through assist targets until either a recursive loop or a killable NPC is found.
+					/// This is more advanced than even the normal UI allows.
+					for (Actor ThisActor = CommandingPlayerActor.Target(); ThisActor.IsValid; ThisActor = ThisActor.Target())
+					{
+						if (ThisActor.Type == "NPC" || ThisActor.Type == "NamedNPC")
+						{
+							OffensiveTargetActor = ThisActor;
+							break;
+						}
+
+						/// Infinite recursion = FAIL
+						if (TraversedActorIDSet.Contains(ThisActor.ID))
+						{
+							Program.Log("Circular player assist chain detected! No enemy was found.");
+							break;
+						}
+						else
+							TraversedActorIDSet.Add(ThisActor.ID);
+					}
+
+					if (OffensiveTargetActor == null)
+					{
+						/// Combat is now cancelled.
+						/// Maybe the commanding player misclicked or clicked off intentionally, but it doesn't matter.
+						WithdrawFromCombat();
+					}
+					else
+					{
+						/// Successful target acquisition.
+						m_iOffensiveTargetID = OffensiveTargetActor.ID;
+						Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
+
+						/// An assist command promotes AFK into neutral positioning.
+						if (m_ePositioningStance == PositioningStance.DoNothing)
+							ChangePositioningStance(PositioningStance.NeutralPosition);
+					}
+
+					return true;
+				}
+
+				/// Begin dropping all group buffs.
+				case "gc_cancelgroupbuffs":
+				{
+					Program.Log("Cancelling all maintained group effects...");
+					m_bClearGroupMaintained = true;
+					return true;
+				}
+
 				/// Arbitrarily change an INI setting on the fly.
 				case "gc_changesetting":
 				{
@@ -312,6 +379,16 @@ namespace EQ2GlassCannon
 							Program.Log("Now ignoring all non-stance commands.");
 							ChangePositioningStance(PositioningStance.DoNothing);
 							break;
+						case "customfollow":
+							m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMaximumRange;
+							m_strPositionalCommandingPlayer = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
+							ChangePositioningStance(PositioningStance.CustomAutoFollow);
+							break;
+						case "shadow":
+							m_fCurrentMovementTargetCoordinateTolerance = m_fStayInPlaceTolerance;
+							m_strPositionalCommandingPlayer = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
+							ChangePositioningStance(PositioningStance.CustomAutoFollow);
+							break;
 						case "normal":
 						case "follow":
 							Program.Log("Positioning is now regular auto-follow.");
@@ -326,8 +403,13 @@ namespace EQ2GlassCannon
 							ChangePositioningStance(PositioningStance.ForwardDash);
 							break;
 						case "stay":
-							Program.Log("Staying in place.");
-							m_strPositionalCommandingPlayer = Me.Name;
+							Program.Log("Locking position to where the commanding player is now standing.");
+							m_strPositionalCommandingPlayer = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
+							ChangePositioningStance(PositioningStance.StayInPlace);
+							break;
+						case "stayself":
+							Program.Log("Locking position to where you are now standing.");
+							m_strPositionalCommandingPlayer = Name;
 							ChangePositioningStance(PositioningStance.StayInPlace);
 							break;
 						default:

@@ -25,7 +25,7 @@ namespace EQ2GlassCannon
 		protected DateTime m_LastChestDisarmAttemptTime = DateTime.FromBinary(0);
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -49,7 +49,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
+		protected override bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
 		{
 			if (base.OnIncomingText(eChannel, strChannelName, strFrom, strMessage))
 				return true;
@@ -72,7 +72,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void OnZoningBegin()
+		protected override void OnZoningBegin()
 		{
 			base.OnZoningBegin();
 
@@ -116,7 +116,7 @@ namespace EQ2GlassCannon
 
 			/// Scan for chests in disarm range.
 			/// It's a pretty small radius, you almost have to run the scout right over the chest.
-			foreach (Actor ThisActor in Program.EnumActors("byDist", "3.5"))
+			foreach (Actor ThisActor in EnumActorsInRadius(3.5))
 			{
 				if (!m_NearbyChestDictionary.ContainsKey(ThisActor.ID))
 					m_NearbyChestDictionary.Add(ThisActor.ID, false);
@@ -124,7 +124,7 @@ namespace EQ2GlassCannon
 				if (ThisActor.IsChest && !m_NearbyChestDictionary[ThisActor.ID])
 				{
 					Program.Log("Attempting to disarm \"{0}\" (ID:{1})...", ThisActor.Name, ThisActor.ID);
-					//Program.ApplyVerb(ThisActor, "disarm");
+					//ApplyVerb(ThisActor, "disarm");
 					ThisActor.DoubleClick();
 					m_LastChestDisarmAttemptTime = DateTime.Now;
 					m_iLastChestDisarmAttempted = ThisActor.ID;

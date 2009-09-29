@@ -34,7 +34,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiSummonDrakeAbilityID = 0;
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -94,8 +94,8 @@ namespace EQ2GlassCannon
 			if (!MeActor.InCombatMode)
 			{
 				bool bPetFound = false;
-				string strGuildName = string.Format("{0}'s familiar", Me.Name);
-				foreach (Actor ThisActor in Program.EnumActors())
+				string strGuildName = string.Format("{0}'s familiar", Name);
+				foreach (Actor ThisActor in EnumActors())
 				{
 					/// This is just a weird set of conditions that I have found to be the case with the AA pet.
 					if (ThisActor.Guild == strGuildName && ThisActor.IsAPet && ThisActor.IsIdle && ThisActor.InCombatMode)
@@ -106,7 +106,7 @@ namespace EQ2GlassCannon
 				}
 				
 				if (bPetFound)
-					Program.RunCommand(1, "/pet hide");
+					RunCommand(1, "/pet hide");
 			}
 
 			return false;

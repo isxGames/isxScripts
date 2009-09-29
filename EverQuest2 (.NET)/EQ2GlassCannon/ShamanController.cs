@@ -7,11 +7,11 @@ namespace EQ2GlassCannon
 {
 	public class ShamanController : PriestController
 	{
-		public uint m_uiCoagulateAbilityID = 0;
-		public uint m_uiRitualOfAlacrityAbilityID = 0;
+		protected uint m_uiCoagulateAbilityID = 0;
+		protected uint m_uiRitualOfAlacrityAbilityID = 0;
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 

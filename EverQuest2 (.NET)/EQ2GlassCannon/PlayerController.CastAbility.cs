@@ -5,10 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Drawing;
-using EQ2.ISXEQ2;
-using InnerSpaceAPI;
-using LavishVMAPI;
 using System.IO;
+using EQ2.ISXEQ2;
 
 namespace EQ2GlassCannon
 {
@@ -94,7 +92,7 @@ namespace EQ2GlassCannon
 				}
 
 				Program.Log("Casting \"{0}\" ({1})...", m_strName, m_uiID);
-				Program.RunCommand("/useability {0}", m_uiID);
+				RunCommand("/useability {0}", m_uiID);
 				return true;
 			}
 
@@ -107,7 +105,7 @@ namespace EQ2GlassCannon
 				}
 
 				Program.Log("Casting \"{0}\" ({1}) on {2}...", m_strName, m_uiID, strPlayerTarget);
-				Program.RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_uiID);
+				RunCommand("/useabilityonplayer {0} {1}", strPlayerTarget, m_uiID);
 				return true;
 			}
 
@@ -247,7 +245,7 @@ namespace EQ2GlassCannon
 		protected void CancelCast()
 		{
 			m_LastCastEndTime = DateTime.Now;
-			Program.RunCommand("/cancel_spellcast");
+			RunCommand("/cancel_spellcast");
 			return;
 		}
 
@@ -301,7 +299,7 @@ namespace EQ2GlassCannon
 
 				Program.Log("Attempting to use clicky item \"{0}\" ({1}) from inventory bags...", ThisItem.Name, ThisItem.LinkID);
 				StartCastTimers(ThisItem);
-				Program.RunCommand("/use_itemvdl {0}", ThisItem.LinkID);
+				RunCommand("/use_itemvdl {0}", ThisItem.LinkID);
 				return true;
 			}
 			catch
@@ -390,10 +388,10 @@ namespace EQ2GlassCannon
 			Actor SpellTargetActor = null;
 			if (m_FriendDictionary.ContainsKey(strPlayerTarget))
 				SpellTargetActor = m_FriendDictionary[strPlayerTarget].ToActor();
-			else if (strPlayerTarget == Me.Name)
+			else if (strPlayerTarget == Name)
 				SpellTargetActor = MeActor;
 			else
-				SpellTargetActor = Program.GetActor(strPlayerTarget);
+				SpellTargetActor = GetActor(strPlayerTarget);
 
 			if (SpellTargetActor == null || !SpellTargetActor.IsValid)
 			{
@@ -436,7 +434,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool CastAbilityOnSelf(uint uiAbilityID)
 		{
-			return CastAbility(uiAbilityID, Me.Name, true);
+			return CastAbility(uiAbilityID, Name, true);
 		}
 
 		/************************************************************************************/
@@ -542,7 +540,7 @@ namespace EQ2GlassCannon
 				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
 			else if (!m_bUseBlueAEs)
 			{
-				foreach (Actor ThisActor in Program.EnumActors("byDist", fRadiusOverride.ToString(), "npc"))
+				foreach (Actor ThisActor in EnumActorsInRadius(fRadiusOverride))
 				{
 					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead)
 						iValidVictimCount++;
@@ -608,7 +606,7 @@ namespace EQ2GlassCannon
 				if (ThisAbility.IsWithinRange(fDistance))
 				{
 					/// Actor.EncounterSize also includes dead members, so we have to manually find the ones who are still alive.
-					foreach (Actor ThisActor in Program.EnumActors("npc"))
+					foreach (Actor ThisActor in EnumActors("npc"))
 					{
 						double fThisDistance = GetActorDistance3D(m_OffensiveTargetActor, ThisActor);
 						if (fThisDistance < ThisAbility.m_fEffectRadius &&
@@ -654,7 +652,7 @@ namespace EQ2GlassCannon
 			try
 			{
 				return false;
-				//return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !Program.EQ2.HOWindowActive && CastAbilityOnSelf(m_iHOStarterAbiltyID));
+				//return (m_bSpamHeroicOpportunity && (Me.IsHated && MeActor.InCombatMode) && !EQ2.HOWindowActive && CastAbilityOnSelf(m_iHOStarterAbiltyID));
 			}
 			catch
 			{
@@ -688,7 +686,7 @@ namespace EQ2GlassCannon
 				if (fThisAbilityRange < fHighestRangeAlreadyScanned)
 					continue;
 
-				foreach (Actor ThisActor in Program.EnumActors("byDist", fThisAbilityRange.ToString(), "npc"))
+				foreach (Actor ThisActor in EnumActorsInRadius(fThisAbilityRange))
 				{
 					if (!ThisActor.IsDead &&
 						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly and has too many pitfalls.
@@ -1073,7 +1071,7 @@ namespace EQ2GlassCannon
 			double fNearestHarvestableDistance = 0.0f;
 
 			/// Find the nearest harvestable. 5 meters seems to be the right range.
-			foreach (Actor ThisActor in Program.EnumActors("byDist", "5"))
+			foreach (Actor ThisActor in EnumActorsInRadius(5))
 			{
 				/// We have to be careful, this also includes shineys that may be locked due to leader loot.
 				if (ThisActor.Type != "Resource")
@@ -1139,7 +1137,7 @@ namespace EQ2GlassCannon
 				return false;
 
 			VitalStatus MyStatus = null;
-			if (!GetVitalStatus(Me.Name, ref MyStatus))
+			if (!GetVitalStatus(Name, ref MyStatus))
 				return false;
 
 			if (MyStatus.HealthRatio < 0.5)

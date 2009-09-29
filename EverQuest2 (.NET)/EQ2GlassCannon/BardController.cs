@@ -29,7 +29,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 

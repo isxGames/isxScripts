@@ -17,7 +17,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiBlueMeleeColdAEAbilityID = 0;
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -30,13 +30,13 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool AttemptCures()
+		protected bool AttemptCures()
 		{
 			return AttemptCures(true, false, false, true);
 		}
 
 		/************************************************************************************/
-		public override bool DoNextAction()
+		protected override bool DoNextAction()
 		{
 			if (base.DoNextAction() || MeActor.IsDead)
 				return true;

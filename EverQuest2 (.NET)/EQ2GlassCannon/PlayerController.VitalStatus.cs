@@ -20,7 +20,7 @@ namespace EQ2GlassCannon
 		/// vital information depending if it's the bot player or not.
 		/// This unites the two for clean logic.
 		/// </summary>
-		public class VitalStatus
+		protected class VitalStatus
 		{
 			[Flags]
 			public enum ClassType

@@ -14,7 +14,7 @@ namespace EQ2GlassCannon
 	public partial class PlayerController
 	{
 		/************************************************************************************/
-		public class Point3D
+		protected class Point3D
 		{
 			public float X = 0.0f;
 			public float Y = 0.0f;
@@ -39,9 +39,13 @@ namespace EQ2GlassCannon
 		{
 			public int Compare(Actor x, Actor y)
 			{
-				if (x.Distance > y.Distance)
+				/// I don't know if the property recalculates these per access, so I cache just in case.
+				float fDistanceX = x.Distance;
+				float fDistanceY = y.Distance;
+
+				if (fDistanceX > fDistanceY)
 					return 1;
-				else if (x.Distance < y.Distance)
+				else if (fDistanceX < fDistanceY)
 					return -1;
 				else
 					return 0;
@@ -73,7 +77,7 @@ namespace EQ2GlassCannon
 		/// This finds planar distance without regard to altitude.
 		/// In EQ2, the Y coordinate is altitude/elevation.
 		/// </summary>
-		public static double GetActorDistance2D(Actor Actor1, Actor Actor2)
+		protected static double GetActorDistance2D(Actor Actor1, Actor Actor2)
 		{
 			/// http://en.wikipedia.org/wiki/Euclidean_distance
 			double A = Actor1.X - Actor2.X;
@@ -175,84 +179,33 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected IEnumerable<Maintained> EnumMaintained()
+		protected static void SpamSafeGroupSay(string strFormat, params object[] aobjParams)
 		{
-			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
-				yield return Me.Maintained(iIndex);
-		}
-
-		/************************************************************************************/
-		protected IEnumerable<GroupMember> EnumGroupMembers()
-		{
-			/// Referring to group member #0 is shady but it's useful enough for us to continue doing it.
-			if (Me.Grouped || Me.InRaid)
-			{
-				for (int iIndex = 0; iIndex <= 5; iIndex++)
-				{
-					GroupMember ThisMember = Me.Group(iIndex);
-					if (ThisMember != null && !string.IsNullOrEmpty(ThisMember.Name))
-						yield return ThisMember;
-				}
-			}
-			else
-				yield return Me.Group(0);
-		}
-
-		/************************************************************************************/
-		protected IEnumerable<GroupMember> EnumRaidMembers()
-		{
-			if (Me.InRaid)
-			{
-				/// Documentation says to iterate through all 24 even if we have less than 24.
-				for (int iIndex = 1; iIndex <= 24; iIndex++)
-				{
-					GroupMember ThisMember = Me.Raid(iIndex, false);
-					if (ThisMember != null && !string.IsNullOrEmpty(ThisMember.Name))
-						yield return ThisMember;
-				}
-			}
-			else
-			{
-				foreach (GroupMember ThisMember in EnumGroupMembers())
-					yield return ThisMember;
-			}
-		}
-
-		/************************************************************************************/
-		protected IEnumerable<Ability> EnumAbilities()
-		{
-			for (int iIndex = 1; iIndex <= Me.NumAbilities; iIndex++)
-				yield return Me.Ability(iIndex);
-		}
-
-		/************************************************************************************/
-		protected void SpamSafeGroupSay(string strFormat, params object[] aobjParams)
-		{
-			if (!Me.Grouped)
+			if (!IsInGroup)
 				return;
 
-			Program.RunCommand(5, "/g " + strFormat, aobjParams);
+			RunCommand(5, "/g " + strFormat, aobjParams);
 			return;
 		}
 
 		/************************************************************************************/
-		protected void SpamSafeRaidSay(string strFormat, params object[] aobjParams)
+		protected static void SpamSafeRaidSay(string strFormat, params object[] aobjParams)
 		{
-			if (!Me.InRaid)
+			if (!IsInRaid)
 			{
-				if (Me.Grouped)
+				if (IsInGroup)
 					SpamSafeGroupSay(strFormat, aobjParams);
 				return;
 			}
 
-			Program.RunCommand(5, "/r " + strFormat, aobjParams);
+			RunCommand(5, "/r " + strFormat, aobjParams);
 			return;
 		}
 
 		/************************************************************************************/
-		protected void SpamSafeTell(string strPlayerName, string strFormat, params object[] aobjParams)
+		protected static void SpamSafeTell(string strPlayerName, string strFormat, params object[] aobjParams)
 		{
-			Program.RunCommand(5, "/t " + strPlayerName + " " + strFormat, aobjParams);
+			RunCommand(5, "/t " + strPlayerName + " " + strFormat, aobjParams);
 			return;
 		}
 	}

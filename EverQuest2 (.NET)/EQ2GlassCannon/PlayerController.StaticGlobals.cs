@@ -11,7 +11,9 @@ using System.Speech.Synthesis;
 
 namespace EQ2GlassCannon
 {
-	/// I find that a LOT of Character members throw exceptions.  I want to encapsulate them all in this file.
+	/// Basically the entire bot is run out of here, so that only a static PlayerController can access the values
+	/// in the dynamically allocated PlayerControllers, and vice versa.
+	/// Outside classes are not allowed to peek inside.
 	public partial class PlayerController
 	{
 		private static Extension s_Extension = null;
@@ -27,6 +29,9 @@ namespace EQ2GlassCannon
 		protected static Actor MeActor { get { return s_MeActor; } }
 
 		private static string s_strName = string.Empty;
+		/// <summary>
+		/// The current player's own name. Cached during UpdateStaticGlobals().
+		/// </summary>
 		protected static string Name { get { return s_strName; } }
 
 		private static int s_iAbilityCount = 0;
@@ -37,21 +42,6 @@ namespace EQ2GlassCannon
 
 		private static bool s_bIsInGroup = false;
 		protected static bool IsInGroup { get { return s_bIsInGroup; } }
-
-		protected static bool IsZoning
-		{
-			get
-			{
-				/// Zoning returns "FALSE" if not zoning, but an empty string when zoning.
-				/// It should be returning "TRUE" when zoning. Stupid.
-				/*string strZoning = s_EQ2.GetMember<string>("Zoning");
-				return (strZoning != "FALSE");*/
-
-				/// This is shitty thanks to the new bug where EQ2.Zoning always returns false, but what can I do?
-				/// It's like I'm always running in circles with this stupid fucking bullshit.
-				return string.IsNullOrEmpty(s_Extension.Zone().Name);
-			}
-		}
 
 		protected static string ServerName { get { return s_EQ2.ServerName; } }
 
@@ -73,6 +63,8 @@ namespace EQ2GlassCannon
 		protected static bool UpdateStaticGlobals()
 		{
 			/// These become invalid from frame to frame.
+			/// I find that a LOT of Character members throw exceptions.
+			/// I may need to cache them here the same way I cache abilities.
 			try
 			{
 				s_MeActor = s_Me.ToActor();
@@ -93,6 +85,8 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public static bool Initialize()
 		{
+			Program.Log("Waiting for ISXEQ2 to initialize...");
+
 			using (new FrameLock(true))
 			{
 				/// Just use this for debugging; otherwise it crashes the client when the bot terminates.
@@ -108,7 +102,6 @@ namespace EQ2GlassCannon
 				LavishScript.Events.AttachEventTarget(LavishScript.Events.RegisterEvent("OnFrame"), OnFrame_EventHandler);
 			}
 
-			Program.Log("Waiting for ISXEQ2 to initialize...");
 			while (true)
 			{
 				using (new FrameLock(true))
@@ -130,15 +123,19 @@ namespace EQ2GlassCannon
 
 				RegisterCustomSlashCommands(
 					"gc_attack",
+					"gc_attackassist",
+					"gc_cancelgroupbuffs",
 					"gc_changesetting",
 					"gc_debug",
 					"gc_exit",
+					"gc_exitprocess",
 					"gc_findactor",
 					"gc_openini",
 					"gc_openoverridesini",
 					"gc_reloadsettings",
 					"gc_stance",
 					"gc_spawnwatch",
+					"gc_target",
 					"gc_tts",
 					"gc_version",
 					"gc_withdraw");
@@ -216,7 +213,7 @@ namespace EQ2GlassCannon
 				try
 				{
 					/// Call the controller if we zone. During zoning, no game variables are assumed to be worth a damn.
-					if (IsZoning)
+					if (s_EQ2.GetMember<string>("Zoning") != "0")
 					{
 						if (bFirstZoningFrame)
 						{
@@ -296,6 +293,7 @@ namespace EQ2GlassCannon
 					/// If the subclass changes (startup, betrayal, etc), resync.
 					/// The null check on SubClass is because it comes up as null when reviving.
 					/// s_Controller is guaranteed to be non-null after this block (otherwise the program would have exited).
+					/// TODO: State variables contained in the prior controller will be lost. Maybe make them static?
 					if (!string.IsNullOrEmpty(Me.SubClass) && Me.SubClass != strLastClass)
 					{
 						Program.Log("New class found: \"{0}\"", Me.SubClass);
@@ -321,7 +319,7 @@ namespace EQ2GlassCannon
 						}
 
 						/// Build the name of the INI file.
-						string strFileName = string.Format("{0}.{1}.ini", ServerName, Me.Name);
+						string strFileName = string.Format("{0}.{1}.ini", ServerName, Name);
 						s_strCurrentINIFilePath = Path.Combine(Program.ConfigurationFolderPath, strFileName);
 
 						if (File.Exists(s_strCurrentINIFilePath))
@@ -329,7 +327,7 @@ namespace EQ2GlassCannon
 
 						s_Controller.WriteINISettings();
 
-						SetWindowText(string.Format("{0} ({1})", Me.Name, Me.SubClass));
+						SetWindowText(string.Format("{0} ({1})", Name, Me.SubClass));
 
 						ApplyGameSettings();
 					}
@@ -482,12 +480,69 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected static IEnumerable<Maintained> EnumMaintained()
+		{
+			for (int iIndex = 1; iIndex <= Me.CountMaintained; iIndex++)
+				yield return Me.Maintained(iIndex);
+		}
+
+		/************************************************************************************/
+		protected static IEnumerable<GroupMember> EnumGroupMembers()
+		{
+			/// Referring to group member #0 is shady but it's useful enough for us to continue doing it.
+			if (IsInGroup || IsInRaid)
+			{
+				for (int iIndex = 0; iIndex <= 5; iIndex++)
+				{
+					GroupMember ThisMember = Me.Group(iIndex);
+					if (ThisMember != null && !string.IsNullOrEmpty(ThisMember.Name))
+						yield return ThisMember;
+				}
+			}
+			else
+				yield return Me.Group(0);
+		}
+
+		/************************************************************************************/
+		protected static IEnumerable<GroupMember> EnumRaidMembers()
+		{
+			if (IsInRaid)
+			{
+				/// Documentation says to iterate through all 24 even if we have less than 24.
+				for (int iIndex = 1; iIndex <= 24; iIndex++)
+				{
+					GroupMember ThisMember = Me.Raid(iIndex, false);
+					if (ThisMember != null && !string.IsNullOrEmpty(ThisMember.Name))
+						yield return ThisMember;
+				}
+			}
+			else
+			{
+				foreach (GroupMember ThisMember in EnumGroupMembers())
+					yield return ThisMember;
+			}
+		}
+
+		/************************************************************************************/
+		protected static IEnumerable<Ability> EnumAbilities()
+		{
+			for (int iIndex = 1; iIndex <= AbilityCount; iIndex++)
+				yield return Me.Ability(iIndex);
+		}
+
+		/************************************************************************************/
 		protected static IEnumerable<Actor> EnumActors(params string[] astrParams)
 		{
 			s_EQ2.CreateCustomActorArray(astrParams);
 
 			for (int iIndex = 1; iIndex <= s_EQ2.CustomActorArraySize; iIndex++)
 				yield return s_Extension.CustomActor(iIndex);
+		}
+
+		/************************************************************************************/
+		protected static IEnumerable<Actor> EnumActorsInRadius(double fRadius)
+		{
+			return EnumActors("byDist", fRadius.ToString());
 		}
 
 		/************************************************************************************/

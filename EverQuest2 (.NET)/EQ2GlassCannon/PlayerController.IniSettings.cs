@@ -21,27 +21,16 @@ namespace EQ2GlassCannon
 			Offensive = 2,
 		}
 
-		public bool m_bWriteBackINI = true;
-		public int m_iFrameSkip = 2;
-		public bool m_bKillBotWhenCamping = false;
+		protected bool m_bWriteBackINI = true;
+		protected int m_iFrameSkip = 2;
+		protected bool m_bKillBotWhenCamping = false;
 		protected string m_strCustomTellTriggerFile = string.Empty;
-		protected string m_strReloadINISubphrase = "rebuff me pls";
 		protected List<string> m_astrMainTanks = new List<string>();
 		protected List<string> m_astrAutoFollowTargets = new List<string>();
 		protected List<string> m_astrCommandingPlayers = new List<string>();
-		protected string m_strAssistSubphrase = "assist me";
-		protected string m_strBotKillswitchSubphrase = "stop dps";
-		protected string m_strProcessKillswitchSubphrase = "beddy-bye!!";
-		protected string m_strDoNothingSubphrase = "afk";
-		protected string m_strNeutralPositionSubphrase = "neutral";
-		protected string m_strAutoFollowSubphrase = "come";
-		protected string m_strCustomAutoFollowSubphrase = "stay close";
-		protected string m_strStayInPlaceSubphrase = "stay here";
-		protected string m_strShadowMeSubphrase = "shadow me";
-		protected string m_strForwardDashSubphrase = "charge";
-		protected string m_strClearGroupMaintainedSubphrase = "redo group buffs";
 		protected string m_strMentorSubphrase = "mentor";
 		protected string m_strRepairSubphrase = "repair";
+		protected string m_strArbitraryVerbCommandRegex = @"try this:""(<actorid>\d+)"", ""(<verb>.+)"""; /// TODO: Implement this maybe?
 		protected string m_strArbitraryVerbCommandPrefix = "try this: \"";
 		protected string m_strArbitraryVerbCommandSeparator = "\", \"";
 		protected string m_strArbitraryVerbCommandSuffix = "\"";
@@ -82,7 +71,7 @@ namespace EQ2GlassCannon
 
 		protected EmailQueueThread.SMTPProfile m_EmailProfile = new EmailQueueThread.SMTPProfile();
 
-		public bool m_bUseVoiceSynthesizer = true;
+		protected bool m_bUseVoiceSynthesizer = true;
 		protected string m_strVoiceSynthesizerProfile = "Microsoft Anna";
 		protected int m_iVoiceSynthesizerVolume = 100;
 		protected string m_strPhoneticCharacterName = "";
@@ -105,21 +94,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferInteger("General.FrameSkip", ref m_iFrameSkip);
 			ThisFile.TransferBool("General.KillBotWhenCamping", ref m_bKillBotWhenCamping);
 			ThisFile.TransferString("General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
-			ThisFile.TransferString("General.ReloadINISubphrase", ref m_strReloadINISubphrase);
 			ThisFile.TransferStringList("General.MainTanks", m_astrMainTanks);
 			ThisFile.TransferStringList("General.AutoFollowTargets", m_astrAutoFollowTargets);
 			ThisFile.TransferStringList("General.CommandingPlayers", m_astrCommandingPlayers);
-			ThisFile.TransferCaselessString("General.AssistSubphrase", ref m_strAssistSubphrase);
-			ThisFile.TransferCaselessString("General.BotKillswitchSubphrase", ref m_strBotKillswitchSubphrase);
-			ThisFile.TransferCaselessString("General.ProcessKillswitchSubphrase", ref m_strProcessKillswitchSubphrase);
-			ThisFile.TransferCaselessString("General.DoNothingSubphrase", ref m_strDoNothingSubphrase);
-			ThisFile.TransferCaselessString("General.NeutralPositionSubphrase", ref m_strNeutralPositionSubphrase);
-			ThisFile.TransferCaselessString("General.AutoFollowSubphrase", ref m_strAutoFollowSubphrase);
-			ThisFile.TransferCaselessString("General.CustomAutoFollowSubphrase", ref m_strCustomAutoFollowSubphrase);
-			ThisFile.TransferCaselessString("General.StayInPlaceSubphrase", ref m_strStayInPlaceSubphrase);
-			ThisFile.TransferCaselessString("General.ShadowMeSubphrase", ref m_strShadowMeSubphrase);
-			ThisFile.TransferCaselessString("General.ForwardDashSubphrase", ref m_strForwardDashSubphrase);
-			ThisFile.TransferCaselessString("General.ClearGroupMaintainedSubphrase", ref m_strClearGroupMaintainedSubphrase);
 			ThisFile.TransferCaselessString("General.MentorSubphrase", ref m_strMentorSubphrase);
 			ThisFile.TransferCaselessString("General.RepairSubphrase", ref m_strRepairSubphrase);
 			ThisFile.TransferString("General.ArbitraryVerbCommandPrefix", ref m_strArbitraryVerbCommandPrefix);
@@ -189,14 +166,14 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void ReadINISettings()
+		protected void ReadINISettings()
 		{
-			IniFile NewFile = new IniFile(Program.s_strCurrentINIFilePath);
+			IniFile NewFile = new IniFile(s_strCurrentINIFilePath);
 			TransferINISettings(NewFile);
 
-			if (File.Exists(Program.s_strSharedOverridesINIFilePath))
+			if (File.Exists(s_strSharedOverridesINIFilePath))
 			{
-				IniFile OverridesFile = new IniFile(Program.s_strSharedOverridesINIFilePath);
+				IniFile OverridesFile = new IniFile(s_strSharedOverridesINIFilePath);
 				TransferINISettings(OverridesFile);
 			}
 
@@ -206,17 +183,27 @@ namespace EQ2GlassCannon
 			try
 			{
 				m_aCustomChatTriggerList.Clear();
-				string strInputFile = Path.Combine(Program.s_strINIFolderPath, m_strCustomTellTriggerFile);
+				string strInputFile = Path.Combine(Program.ConfigurationFolderPath, m_strCustomTellTriggerFile);
 
 				if (File.Exists(strInputFile))
 				{
 					using (CsvFileReader ThisReader = new CsvFileReader(strInputFile))
 					{
+						SetCollection<string> CommandingPlayerSet = new SetCollection<string>();
+						CommandingPlayerSet.Add(m_astrCommandingPlayers);
+
 						while (ThisReader.ReadLine())
 						{
 							CustomChatTrigger NewTrigger = new CustomChatTrigger();
 
-							NewTrigger.m_astrSourcePlayers.AddRange(ThisReader.ReadNextValue().ToLower().Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+							string strSourcePlayers = ThisReader.ReadNextValue().ToLower();
+
+							/// An exclamation point means all configured commanding players.
+							if (strSourcePlayers == "!")
+								NewTrigger.m_SourcePlayerSet = CommandingPlayerSet;
+							else
+								NewTrigger.m_SourcePlayerSet.Add(strSourcePlayers.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+
 							NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
 
 							/// Keep reading commands until there are no more.
@@ -248,12 +235,12 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void WriteINISettings()
+		protected void WriteINISettings()
 		{
 			IniFile NewFile = new IniFile();
 			TransferINISettings(NewFile);
 			if (m_bWriteBackINI)
-				NewFile.Save(Program.s_strCurrentINIFilePath);
+				NewFile.Save(s_strCurrentINIFilePath);
 			return;
 		}
 
@@ -262,12 +249,16 @@ namespace EQ2GlassCannon
 		{
 			/// Fallback option to prevent an unresponsive bot.
 			if (m_astrCommandingPlayers.Count == 0)
-				m_astrCommandingPlayers.Add(Me.Name);
+				m_astrCommandingPlayers.Add(Name);
 
 			if (string.IsNullOrEmpty(m_strPhoneticCharacterName))
-				m_strPhoneticCharacterName = Me.Name;
+				m_strPhoneticCharacterName = Name;
 
-			Program.ToggleSpeechSynthesizer(m_bUseVoiceSynthesizer, m_iVoiceSynthesizerVolume, m_strVoiceSynthesizerProfile);
+			/// Fix incompatible settings.
+			if (m_bCancelCastForCures && !m_bPrioritizeCures)
+				m_bPrioritizeCures = true;
+
+			ToggleSpeechSynthesizer(m_bUseVoiceSynthesizer, m_iVoiceSynthesizerVolume, m_strVoiceSynthesizerProfile);
 
 			if (m_ePositioningStance == PositioningStance.CustomAutoFollow)
 				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMaximumRange;

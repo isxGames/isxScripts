@@ -68,7 +68,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -114,13 +114,13 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool AttemptCures()
+		protected bool AttemptCures()
 		{
 			return AttemptCures(false, true, true, false);
 		}
 
 		/************************************************************************************/
-		public override bool DoNextAction()
+		protected override bool DoNextAction()
 		{
 			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
@@ -137,7 +137,10 @@ namespace EQ2GlassCannon
 			/// We don't attempt offensive action until after cures/heals are dealt with.
 			GetOffensiveTargetActor();
 
-			double fMyPowerRatio = (double)Me.Power / (double)Me.MaxPower;
+			VitalStatus MyStatus = null;
+			if (!GetVitalStatus(Name, ref MyStatus))
+				return true;
+			double fMyPowerRatio = MyStatus.PowerRatio;
 
 			string strLowestHealthName = string.Empty;
 			int iLowestHealthAmount = int.MaxValue;
