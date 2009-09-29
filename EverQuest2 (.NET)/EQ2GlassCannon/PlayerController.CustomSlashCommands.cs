@@ -127,12 +127,63 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected Actor GetNestedCombatAssistTarget(string strPlayerName)
+		{
+			Actor AssistedPlayerActor = GetPlayerActor(strPlayerName);
+			if (AssistedPlayerActor == null)
+			{
+				Program.Log("No player actor was found with the name {0}.", strPlayerName);
+				return null;
+			}
+
+			string strAssistDescription = string.Empty;
+			Actor FinalTargetActor = null;
+
+			SetCollection<int> TraversedActorIDSet = new SetCollection<int>();
+
+			/// Nested assist targetting. Go through assist targets until either a recursive loop or a killable NPC is found.
+			/// This is more advanced than even the normal UI allows.
+			for (Actor ThisActor = AssistedPlayerActor; ThisActor.IsValid; ThisActor = ThisActor.Target())
+			{
+				if (TraversedActorIDSet.Count > 0)
+					strAssistDescription += " --> ";
+				strAssistDescription += string.Format("{0} ({1})", ThisActor.Name, ThisActor.ID);
+
+				if (ThisActor.Type == "NPC" || ThisActor.Type == "NamedNPC")
+				{
+					FinalTargetActor = ThisActor;
+					break;
+				}
+
+				/// Infinite recursion = FAIL
+				if (TraversedActorIDSet.Contains(ThisActor.ID))
+				{
+					Program.Log("Circular player assist chain detected! No enemy was found.");
+					break;
+				}
+
+				TraversedActorIDSet.Add(ThisActor.ID);
+			}
+
+			Program.Log("Assist chain: {0}", strAssistDescription);
+			return FinalTargetActor;
+		}
+
+		/************************************************************************************/
 		protected virtual bool OnCustomSlashCommand(string strCommand, string[] astrParameters)
 		{
 			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
 
 			switch (strCommand)
 			{
+				case "gc_assist":
+				{
+					Actor OffensiveTargetActor = GetNestedCombatAssistTarget(astrParameters[0]);
+					if (OffensiveTargetActor != null)
+						OffensiveTargetActor.DoTarget();
+					return true;
+				}
+
 				/// Directly acquire an offensive target.
 				case "gc_attack":
 				{
@@ -147,10 +198,11 @@ namespace EQ2GlassCannon
 					{
 						Program.Log("Invalid target selected.");
 					}
-					break;
+					return true;
 				}
 
 				/// This is the assist call; direct the bot to begin combat.
+				/// Essentially combines gc_assist and gc_attack.
 				case "gc_attackassist":
 				{
 					if (astrParameters.Length != 1)
@@ -159,36 +211,7 @@ namespace EQ2GlassCannon
 						return true;
 					}
 
-					Actor CommandingPlayerActor = GetNonPetActor(astrParameters[0]);
-					if (CommandingPlayerActor == null)
-					{
-						Program.Log("gc_attackassist: Commanding player not a valid combat assist!");
-						return true;
-					}
-
-					SetCollection<int> TraversedActorIDSet = new SetCollection<int>();
-					Actor OffensiveTargetActor = null;
-
-					/// Nested assist targetting. Go through assist targets until either a recursive loop or a killable NPC is found.
-					/// This is more advanced than even the normal UI allows.
-					for (Actor ThisActor = CommandingPlayerActor.Target(); ThisActor.IsValid; ThisActor = ThisActor.Target())
-					{
-						if (ThisActor.Type == "NPC" || ThisActor.Type == "NamedNPC")
-						{
-							OffensiveTargetActor = ThisActor;
-							break;
-						}
-
-						/// Infinite recursion = FAIL
-						if (TraversedActorIDSet.Contains(ThisActor.ID))
-						{
-							Program.Log("Circular player assist chain detected! No enemy was found.");
-							break;
-						}
-						else
-							TraversedActorIDSet.Add(ThisActor.ID);
-					}
-
+					Actor OffensiveTargetActor = GetNestedCombatAssistTarget(astrParameters[0]);
 					if (OffensiveTargetActor == null)
 					{
 						/// Combat is now cancelled.
@@ -449,7 +472,8 @@ namespace EQ2GlassCannon
 							}
 					}
 
-					TargetActor.DoTarget();
+					if (TargetActor != null)
+						TargetActor.DoTarget();
 					return true;
 				}
 

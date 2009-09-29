@@ -122,6 +122,7 @@ namespace EQ2GlassCannon
 				s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
 
 				RegisterCustomSlashCommands(
+					"gc_assist",
 					"gc_attack",
 					"gc_attackassist",
 					"gc_cancelgroupbuffs",
@@ -153,10 +154,10 @@ namespace EQ2GlassCannon
 			/// inside the UpdateGlobals() function. A laggy launch will never free up and a free launch
 			/// will never get laggy.  Thus we veto laggy launches and tell the user to re-launch.
 			Program.Log("Testing the speed of root object lookup. Please wait {0:0.0} seconds...", fTestTime);
-			DateTime SlowFrameTestStartTime = DateTime.Now;
 			int iFramesElapsed = 0;
 			int iBadFrames = 0;
 			double fTotalTimes = 0.0;
+			DateTime SlowFrameTestStartTime = DateTime.Now;
 			while (DateTime.Now - SlowFrameTestStartTime < TimeSpan.FromSeconds(fTestTime))
 			{
 				iFramesElapsed++;
@@ -181,13 +182,14 @@ namespace EQ2GlassCannon
 					Frame.Unlock();
 				}
 			}
+			double fFramesPerSecond = (double)iFramesElapsed / (DateTime.Now - SlowFrameTestStartTime).TotalSeconds;
 			double fAverageTime = fTotalTimes / (double)iFramesElapsed;
 			double fBadFramePercentage = (double)iBadFrames / (double)iFramesElapsed * 100;
-			Program.Log("Average time per object lookup was {0:0} ms, with {1:0.0}% of frames ({2} / {3}) lagging out.", fAverageTime, fBadFramePercentage, iBadFrames, iFramesElapsed);
+			Program.Log("Average time per object lookup was {0:0} ms, with {1:0.0}% of frames ({2} / {3}) lagging out ({4:0.0} FPS).", fAverageTime, fBadFramePercentage, iBadFrames, iFramesElapsed, fFramesPerSecond);
 #if DEBUG
-			if (fAverageTime > 50)
+			if (fFramesPerSecond < 10)
 #else
-				if (fAverageTime > 2 || fBadFramePercentage > 10)
+			if (fAverageTime > 2 || fBadFramePercentage > 10)
 #endif
 			{
 				Program.Log("Aborting due to substantial ISXEQ2 lag. Please restart EQ2GlassCannon.");
@@ -436,11 +438,21 @@ namespace EQ2GlassCannon
 
 				using (new FrameLock(true))
 				{
-					if (UpdateStaticGlobals())
+					Program.Log("Executing: {0}", strFinalCommand);
+
+					/// Break the command up as if it were a custom one.
+					List<string> astrParameters = new List<string>(strFinalCommand.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries));
+					string strCustomCommand = astrParameters[0].Replace("/", "");
+					astrParameters.RemoveAt(0);
+
+					/// We have to manually process custom commands, EQ2Execute does not handle them.
+					if (m_RegisteredCustomSlashCommands.Contains(strCustomCommand))
 					{
-						Program.Log("Executing: {0}", strFinalCommand);
-						s_Extension.EQ2Execute(strFinalCommand);
+						if (s_Controller != null && UpdateStaticGlobals())
+							s_Controller.OnCustomSlashCommand(strCustomCommand, astrParameters.ToArray());
 					}
+					else
+						s_Extension.EQ2Execute(strFinalCommand);
 				}
 
 				m_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now + TimeSpan.FromSeconds(fBlockageSeconds));
@@ -563,6 +575,20 @@ namespace EQ2GlassCannon
 				PlayerActor = null;
 
 			return PlayerActor;
+		}
+
+		/************************************************************************************/
+		protected static Actor GetPlayerActor(string strName)
+		{
+			if (strName == Name)
+				return MeActor;
+
+			string strLowerCaseName = strName.ToLower();
+			foreach (Actor ThisActor in EnumActors())
+				if (ThisActor.Name.ToLower() == strLowerCaseName && ThisActor.Type == "PC")
+					return ThisActor;
+
+			return null;
 		}
 
 		/************************************************************************************/

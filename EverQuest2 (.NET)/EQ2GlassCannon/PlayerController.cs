@@ -73,7 +73,7 @@ namespace EQ2GlassCannon
 				if (m_SourcePlayerSet.Count == 0)
 					return true;
 
-				return m_SourcePlayerSet.Contains(strPlayerName.Trim().ToLower());
+				return m_SourcePlayerSet.Contains(strPlayerName);
 			}
 		}
 
@@ -614,8 +614,6 @@ namespace EQ2GlassCannon
 			if (string.IsNullOrEmpty(strFrom) || !m_astrCommandingPlayers.Contains(strFrom))
 				return false;
 
-			Actor CommandingPlayerActor = GetNonPetActor(strFrom);
-
 			/// Mentor the specified group member.
 			if (strLowerCaseMessage.Contains(m_strMentorSubphrase))
 			{
@@ -632,6 +630,7 @@ namespace EQ2GlassCannon
 
 			else if (strLowerCaseMessage.Contains(m_strRepairSubphrase))
 			{
+				Actor CommandingPlayerActor = GetPlayerActor(strFrom);
 				if (CommandingPlayerActor != null)
 				{
 					Actor MenderTargetActor = CommandingPlayerActor.Target();
@@ -674,6 +673,7 @@ namespace EQ2GlassCannon
 					if (ThisActor.Name != strActorName)
 						continue;
 
+					Actor CommandingPlayerActor = GetPlayerActor(strFrom);
 					double fThisDistance = GetActorDistance2D(CommandingPlayerActor, ThisActor);
 					if (fThisDistance < fNearestDistance)
 					{
@@ -778,7 +778,7 @@ namespace EQ2GlassCannon
 			}
 			else if (eNewStance == PositioningStance.StayInPlace)
 			{
-				Actor CommandingPlayerActor = GetNonPetActor(m_strPositionalCommandingPlayer);
+				Actor CommandingPlayerActor = GetPlayerActor(m_strPositionalCommandingPlayer);
 				if (CommandingPlayerActor != null)
 				{
 					m_ePositioningStance = PositioningStance.StayInPlace;
