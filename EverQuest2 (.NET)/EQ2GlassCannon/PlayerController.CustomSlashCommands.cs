@@ -127,7 +127,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual bool OnCustomSlashCommand(string strCommand, string[] astrParameters)
+		protected virtual bool OnCustomSlashCommand(string strCommand, string[] astrParameters)
 		{
 			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
 
@@ -203,7 +203,13 @@ namespace EQ2GlassCannon
 				case "gc_exit":
 				{
 					Program.Log("Exit command received!");
-					Program.s_bContinueBot = false;
+					s_bContinueBot = false;
+					return true;
+				}
+
+				case "gc_exitprocess":
+				{
+					Process.GetCurrentProcess().Kill();
 					return true;
 				}
 
@@ -222,7 +228,7 @@ namespace EQ2GlassCannon
 					int iValidActorCount = 0;
 					int iInvalidActorCount = 0;
 
-					foreach (Actor ThisActor in Program.EnumActors())
+					foreach (Actor ThisActor in EnumActors())
 					{
 						bool bAddThisActor = false;
 
@@ -255,7 +261,7 @@ namespace EQ2GlassCannon
 					ActorList.Sort(new ActorDistanceComparer());
 
 					/// Run the waypoint on the nearest actor.
-					Program.RunCommand("/waypoint {0}, {1}, {2}", ActorList[0].X, ActorList[0].Y, ActorList[0].Z);
+					RunCommand("/waypoint {0}, {1}, {2}", ActorList[0].X, ActorList[0].Y, ActorList[0].Z);
 
 					FlexStringBuilder SummaryBuilder = new FlexStringBuilder();
 					SummaryBuilder.AppendLine("gc_findactor: {0} actor(s) found ({1} invalid) using \"{2}\".", iValidActorCount, iInvalidActorCount, strCondensedParameters);
@@ -273,21 +279,21 @@ namespace EQ2GlassCannon
 
 				case "gc_openini":
 				{
-					Program.SafeShellExecute(Program.s_strCurrentINIFilePath);
+					Program.SafeShellExecute(s_strCurrentINIFilePath);
 					return true;
 				}
 
 				case "gc_openoverridesini":
 				{
-					Program.SafeShellExecute(Program.s_strSharedOverridesINIFilePath);
+					Program.SafeShellExecute(s_strSharedOverridesINIFilePath);
 					return true;
 				}
 
 				case "gc_reloadsettings":
 				{
 					ReadINISettings();
-					Program.ReleaseAllKeys(); /// If there's a bug, this will cure it. If not, no loss.
-					Program.s_bRefreshKnowledgeBook = true;
+					ReleaseAllKeys(); /// If there's a bug, this will cure it. If not, no loss.
+					s_bRefreshKnowledgeBook = true;
 					return true;
 				}
 
@@ -341,16 +347,41 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
+				/// A super-powerful direct targetter.
+				case "gc_target":
+				{
+					Actor TargetActor = null;
+					string strSearchString = strCondensedParameters.ToLower();
+
+					/// If they give an actual actor ID, then that's awesome.
+					int iActorID = -1;
+					if (int.TryParse(strSearchString, out iActorID))
+						TargetActor = GetActor(iActorID);
+					else
+					{
+						foreach (Actor ThisActor in EnumActors())
+							if (ThisActor.Name.ToLower().Contains(strSearchString))
+							{
+								TargetActor = ThisActor;
+								break;
+							}
+					}
+
+					TargetActor.DoTarget();
+					return true;
+				}
+
 				/// Test the text-to-speech synthesizer using the current settings.
 				case "gc_tts":
 				{
-					Program.SayText(strCondensedParameters);
+					SayText(strCondensedParameters);
 					return true;
 				}
 
 				case "gc_version":
 				{
 					Program.DisplayVersion();
+					Program.Log("ISXEQ2 Version: " + s_ISXEQ2.Version);
 					return true;
 				}
 
