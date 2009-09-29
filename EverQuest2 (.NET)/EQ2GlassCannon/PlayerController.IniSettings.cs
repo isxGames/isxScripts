@@ -197,14 +197,13 @@ namespace EQ2GlassCannon
 							CustomChatTrigger NewTrigger = new CustomChatTrigger();
 
 							string strSourcePlayers = ThisReader.ReadNextValue().ToLower();
+							NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
 
 							/// An exclamation point means all configured commanding players.
 							if (strSourcePlayers == "!")
 								NewTrigger.m_SourcePlayerSet = CommandingPlayerSet;
 							else
 								NewTrigger.m_SourcePlayerSet.Add(strSourcePlayers.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
-
-							NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
 
 							/// Keep reading commands until there are no more.
 							try
