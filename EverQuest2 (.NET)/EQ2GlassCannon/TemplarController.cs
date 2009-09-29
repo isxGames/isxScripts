@@ -69,7 +69,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -113,13 +113,13 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool AttemptCures()
+		protected bool AttemptCures()
 		{
 			return AttemptCures(true, true, false, false);
 		}
 
 		/************************************************************************************/
-		public override bool DoNextAction()
+		protected override bool DoNextAction()
 		{
 			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
@@ -139,7 +139,10 @@ namespace EQ2GlassCannon
 			if (CheckPositioningStance())
 				return true;
 
-			double fMyPowerRatio = (double)Me.Power / (double)Me.MaxPower;
+			VitalStatus MyStatus = null;
+			if (!GetVitalStatus(Name, ref MyStatus))
+				return true;
+			double fMyPowerRatio = MyStatus.PowerRatio;
 
 			/// We'll refer to this multiple times so we might as well alias the value.
 			bool bGroupRezAvailable = IsAbilityReady(m_uiGroupCombatRezAbilityID);

@@ -116,7 +116,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -159,7 +159,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override bool DoNextAction()
+		protected override bool DoNextAction()
 		{
 			if (base.DoNextAction() || MeActor.IsDead)
 				return true;
@@ -394,7 +394,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public override bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
+		protected override bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
 		{
 			if (base.OnIncomingChatText(iChannel, strFrom, strMessage))
 				return true;

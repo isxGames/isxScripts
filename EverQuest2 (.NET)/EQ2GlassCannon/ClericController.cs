@@ -7,15 +7,15 @@ namespace EQ2GlassCannon
 {
 	public class ClericController : PriestController
 	{
-		public List<string> m_strShieldAllyTargets = new List<string>();
+		protected List<string> m_strShieldAllyTargets = new List<string>();
 
-		public uint m_uiDivineRecoveryAbilityID = 0;
-		public uint m_uiSkullCrackAbilityID = 0; /// KoS AA, melee attack that debuffs offensive skills.
-		public uint m_uiShieldAllyAbilityID = 0;
-		public uint m_uiYaulpAbilityID = 0;
+		protected uint m_uiDivineRecoveryAbilityID = 0;
+		protected uint m_uiSkullCrackAbilityID = 0; /// KoS AA, melee attack that debuffs offensive skills.
+		protected uint m_uiShieldAllyAbilityID = 0;
+		protected uint m_uiYaulpAbilityID = 0;
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 

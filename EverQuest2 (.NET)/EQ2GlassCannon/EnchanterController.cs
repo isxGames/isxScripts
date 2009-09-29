@@ -8,9 +8,9 @@ namespace EQ2GlassCannon
 	public class EnchanterController : MageController
 	{
 		#region INI settings
-		public bool m_bBuffRegen = true;
-		public bool m_bUseManaFlow = true;
-		public double m_fManaFlowThresholdRatio = 0.9;
+		protected bool m_bBuffRegen = true;
+		protected bool m_bUseManaFlow = true;
+		protected double m_fManaFlowThresholdRatio = 0.9;
 		#endregion
 
 		protected uint m_uiMainRegenBuffAbilityID = 0;
@@ -23,7 +23,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiBlinkAbilityID = 0;
 
 		/************************************************************************************/
-		public override void RefreshKnowledgeBook()
+		protected override void RefreshKnowledgeBook()
 		{
 			base.RefreshKnowledgeBook();
 
@@ -51,14 +51,14 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckManaFlow()
+		protected bool CheckManaFlow()
 		{
 			if (!m_bUseManaFlow || !MeActor.IsIdle || !IsAbilityReady(m_uiManaFlowAbilityID))
 				return false;
 
 			/// Mana Flow requires 10%; make sure we have 15%.
-			double fMyPowerRatio = ((double)Me.Power / (double)Me.MaxPower);
-			if (fMyPowerRatio < 0.15f)
+			VitalStatus MyStatus = null;
+			if (GetVitalStatus(Name, ref MyStatus) && MyStatus.PowerRatio < 0.15f)
 				return false;
 
 			string strLowestPowerName = string.Empty;
@@ -70,7 +70,7 @@ namespace EQ2GlassCannon
 
 				if (ThisStatus.m_iCurrentPower < ThisStatus.m_iMaximumPower)
 				{
-					double fPowerRatio = (double)ThisStatus.m_iCurrentPower / (double)ThisStatus.m_iMaximumPower;
+					double fPowerRatio = ThisStatus.PowerRatio;
 
 					/// Select the most vulnerable member, not the biggest power gap.
 					if (fPowerRatio < m_fManaFlowThresholdRatio && ThisStatus.m_iCurrentPower < iLowestPowerAmount)

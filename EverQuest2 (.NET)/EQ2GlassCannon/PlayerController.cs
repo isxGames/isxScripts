@@ -14,7 +14,7 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
-		public const string STR_NO_KILL_NPC = "NoKill NPC";
+		protected const string STR_NO_KILL_NPC = "NoKill NPC";
 
 		protected uint m_uiLoreAndLegendAbilityID = 0;
 		protected uint m_uiHOStarterAbiltyID = 0;
@@ -30,7 +30,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiFishingAbilityID = 0;
 
 		/************************************************************************************/
-		public enum PositioningStance
+		protected enum PositioningStance
 		{
 			DoNothing = 0,
 			NeutralPosition,
@@ -44,7 +44,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public enum ChatChannel : int
+		protected enum ChatChannel : int
 		{
 			NonChat = 0,
 			Say,
@@ -62,7 +62,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected class CustomChatTrigger
 		{
-			public List<string> m_astrSourcePlayers = new List<string>();
+			public SetCollection<string> m_SourcePlayerSet = new SetCollection<string>();
 			public string m_strSubstring = string.Empty;
 			public List<string> m_astrCommands = new List<string>();
 			public bool Match(string strPlayerName, string strText)
@@ -70,14 +70,14 @@ namespace EQ2GlassCannon
 				if (!strText.ToLower().Contains(m_strSubstring))
 					return false;
 
-				if (m_astrSourcePlayers.Count == 0)
+				if (m_SourcePlayerSet.Count == 0)
 					return true;
 
-				return m_astrSourcePlayers.Contains(strPlayerName.Trim().ToLower());
+				return m_SourcePlayerSet.Contains(strPlayerName.Trim().ToLower());
 			}
 		}
 
-		public bool m_bContinueBot = true;
+		protected bool m_bContinueBot = true;
 
 		protected int m_iLastAbilityCount = 0;
 		protected Point3D m_ptMyLastLocation = new Point3D();
@@ -102,7 +102,6 @@ namespace EQ2GlassCannon
 		protected List<CustomChatTrigger> m_aCustomChatTriggerList = new List<CustomChatTrigger>();
 
 		protected PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
-		public PositioningStance CurrentPositioningStance { get { return m_ePositioningStance; } }
 
 		private Dictionary<string, uint> m_KnowledgeBookNameToIDMap = new Dictionary<string, uint>();
 		private Dictionary<uint, string> m_KnowledgeBookIDToNameMap = new Dictionary<uint, string>();
@@ -115,29 +114,11 @@ namespace EQ2GlassCannon
 		protected Dictionary<string, uint> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, uint>();
 
 		/************************************************************************************/
-		protected Character Me
-		{
-			get
-			{
-				return Program.Me;
-			}
-		}
-
-		/************************************************************************************/
-		protected Actor MeActor
-		{
-			get
-			{
-				return Program.MeActor;
-			}
-		}
-
-		/************************************************************************************/
-		public virtual void RefreshKnowledgeBook()
+		protected virtual void RefreshKnowledgeBook()
 		{
 			Program.Log("Referencing Knowledge Book...");
 
-			while (Program.s_bContinueBot)
+			while (s_bContinueBot)
 			{
 				m_KnowledgeBookNameToIDMap.Clear();
 				m_KnowledgeBookIDToNameMap.Clear();
@@ -145,9 +126,9 @@ namespace EQ2GlassCannon
 				Frame.Wait(true);
 				try
 				{
-					Program.UpdateGlobals();
+					UpdateStaticGlobals();
 
-					if (Me.NumAbilities == 0)
+					if (AbilityCount == 0)
 						Program.Log("NO abilities found!");
 					else
 					{
@@ -175,18 +156,18 @@ namespace EQ2GlassCannon
 							}
 						}
 
-						if (m_iLastAbilityCount < Me.NumAbilities)
-							Program.Log("Found {0} names of {1} abilities so far.", m_iLastAbilityCount, Me.NumAbilities);
+						if (m_iLastAbilityCount < AbilityCount)
+							Program.Log("Found {0} names of {1} abilities so far.", m_iLastAbilityCount, AbilityCount);
 						else
 						{
 							Program.Log("All abilities found.");
 #if DEBUG
 							/// Now dump it all to a file.
-							string strLogFileName = string.Format("{0}.{1} ability table debug dump.csv", Program.ServerName, Me.Name);
-							strLogFileName = Path.Combine(Program.s_strINIFolderPath, strLogFileName);
+							string strLogFileName = string.Format("{0}.{1} ability table debug dump.csv", ServerName, Name);
+							strLogFileName = Path.Combine(Program.ConfigurationFolderPath, strLogFileName);
 							using (CsvFileWriter OutputFile = new CsvFileWriter(strLogFileName, false))
 							{
-								for (int iIndex = 1; iIndex <= Me.NumAbilities; iIndex++)
+								for (int iIndex = 1; iIndex <= AbilityCount; iIndex++)
 								{
 									Ability ThisAbility = Me.Ability(iIndex);
 									OutputFile.WriteNextValue(iIndex);
@@ -210,10 +191,10 @@ namespace EQ2GlassCannon
 				}
 
 				/// This is black magic to force the client to reload the knowledge book.
-				Program.RunCommand("/showcombatartbook");
+				RunCommand("/showcombatartbook");
 				Program.Log("Waiting for abilities to load from the server...");
-				Program.FrameWait(TimeSpan.FromSeconds(3.0f));
-				Program.RunCommand("/toggleknowledge");
+				FrameWait(TimeSpan.FromSeconds(3.0f));
+				RunCommand("/toggleknowledge");
 			}
 
 			/// This must be done before any call to SelectHighestAbilityID().
@@ -304,20 +285,11 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool AbilityCountChanged
+		protected bool AbilityCountChanged
 		{
 			get
 			{
-				try
-				{
-					return (Me.NumAbilities != m_iLastAbilityCount);
-				}
-				catch
-				{
-					/// This happens sometimes.
-					Program.Log("Exception thrown on Me.NumAbilities reference.");
-					return false;
-				}
+				return (AbilityCount != m_iLastAbilityCount);
 			}
 		}
 
@@ -326,7 +298,7 @@ namespace EQ2GlassCannon
 		/// The base function caches certain lookup data.
 		/// </summary>
 		/// <returns>true if an action was taken and no further processing should occur</returns>
-		public virtual bool DoNextAction()
+		protected virtual bool DoNextAction()
 		{
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 				return true;
@@ -338,11 +310,23 @@ namespace EQ2GlassCannon
 			/// Decide if our ping is too high to function properly.
 			/// If ping is given as an invalid value, then we consider that a bad ping as well.
 			/// eq2ui_mainhud_connectionstats.xml
-			string strPing = Me.GetGameData("General.Ping").ShortLabel.Replace(",", string.Empty);
-			int iThisPing = -1;
-			m_bIHaveBadPing = (!int.TryParse(strPing, out iThisPing) || (iThisPing >= m_iBadPingThreshold));
-			if (m_bIHaveBadPing)
-				Program.Log("Bad ping detected ({0}ms).", iThisPing);
+			EQ2UIElement PingGameData = Me.GetGameData("General.Ping");
+			if (PingGameData.IsValid)
+			{
+				try
+				{
+					string strPing = PingGameData.ShortLabel.Replace(",", string.Empty);
+
+					int iThisPing = -1;
+					m_bIHaveBadPing = (!int.TryParse(strPing, out iThisPing) || (iThisPing >= m_iBadPingThreshold));
+					if (m_bIHaveBadPing)
+						Program.Log("Bad ping detected ({0}ms).", iThisPing);
+				}
+				catch
+				{
+					Program.Log("EXCEPTION THROWN.");
+				}
+			}
 
 			/// If we have been commanded to redo group buffs, then cancel one per frame.
 			if (m_bClearGroupMaintained)
@@ -438,7 +422,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual void UpdateEndOfRoundStatistics()
+		protected virtual void UpdateEndOfRoundStatistics()
 		{
 			m_ptMyLastLocation = new Point3D(MeActor);
 			m_iLastOffensiveTargetID = m_iOffensiveTargetID;
@@ -446,7 +430,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual bool OnChoiceWindowAppeared(ChoiceWindow ThisWindow)
+		protected virtual bool OnChoiceWindowAppeared(ChoiceWindow ThisWindow)
 		{
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 			{
@@ -472,13 +456,13 @@ namespace EQ2GlassCannon
 				{
 					Program.Log("Accepting invite from commanding player.");
 					//ThisWindow.DoChoice1();
-					Program.RunCommand("/acceptinvite");
+					RunCommand("/acceptinvite");
 				}
 				else
 				{
 					Program.Log("Declining invite from unauthorized player.");
 					//ThisWindow.DoChoice2();
-					Program.RunCommand("/declineinvite");
+					RunCommand("/declineinvite");
 				}
 
 				return true;
@@ -508,7 +492,7 @@ namespace EQ2GlassCannon
 		/// <summary>
 		/// This function is not yet complete.
 		/// </summary>
-		public virtual bool OnRewardWindowAppeared(RewardWindow ThisWindow)
+		protected virtual bool OnRewardWindowAppeared(RewardWindow ThisWindow)
 		{
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 			{
@@ -529,7 +513,7 @@ namespace EQ2GlassCannon
 		/// Everything will gravitate to this function eventually, after I learn how to use regular expressions.
 		/// </summary>
 		/// <returns>true if the implementation took ownership of the text and further processing should cease.</returns>
-		public virtual bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
+		protected virtual bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
 		{
 			string strTrimmedMessage = strMessage.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
@@ -603,10 +587,12 @@ namespace EQ2GlassCannon
 		/// <param name="strFrom"></param>
 		/// <param name="strMessage"></param>
 		/// <returns>true if handled by a base implementation, and if no further processing should be permitted.</returns>
-		public virtual bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
+		protected virtual bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
 		{
 			string strTrimmedMessage = strMessage.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
+
+			bool bIsCommand = m_astrCommandingPlayers.Contains(strFrom);
 
 			/// Check for a match against custom tell triggers.
 			/// These can be authorized from any source.
@@ -617,7 +603,7 @@ namespace EQ2GlassCannon
 					Program.Log("Custom trigger command received (\"{0}\").", ThisTrigger.m_strSubstring);
 					foreach (string strThisCommand in ThisTrigger.m_astrCommands)
 					{
-						Program.RunCommand(strThisCommand, m_astrCommandingPlayers);
+						RunCommand(strThisCommand, strFrom);
 					}
 					return true;
 				}
@@ -628,145 +614,17 @@ namespace EQ2GlassCannon
 			if (string.IsNullOrEmpty(strFrom) || !m_astrCommandingPlayers.Contains(strFrom))
 				return false;
 
-			Actor CommandingPlayerActor = Program.GetNonPetActor(strFrom);
-
-			/// This is the assist call; direct the bot to begin combat.
-			if (strLowerCaseMessage.Contains(m_strAssistSubphrase))
-			{
-				if (CommandingPlayerActor == null)
-					Program.Log("Commanding player not a valid combat assist!");
-				else
-				{
-					SetCollection<int> TraversedActorIDSet = new SetCollection<int>();
-					Actor OffensiveTargetActor = null;
-
-					/// Nested assist targetting. Go through assist targets until either a recursive loop or a killable NPC is found.
-					/// This is more advanced than even the normal UI allows.
-					for (Actor ThisActor = CommandingPlayerActor.Target(); ThisActor.IsValid; ThisActor = ThisActor.Target())
-					{
-						if (ThisActor.Type == "NPC" || ThisActor.Type == "NamedNPC")
-						{
-							OffensiveTargetActor = ThisActor;
-							break;
-						}
-
-						/// Infinite recursion = FAIL
-						if (TraversedActorIDSet.Contains(ThisActor.ID))
-						{
-							Program.Log("Circular player assist chain detected! No enemy was found.");
-							break;
-						}
-						else
-							TraversedActorIDSet.Add(ThisActor.ID);
-					}
-
-					if (OffensiveTargetActor == null)
-					{
-						/// Combat is now cancelled.
-						/// Maybe the commanding player misclicked or clicked off intentionally, but it doesn't matter.
-						WithdrawFromCombat();
-					}
-					else
-					{
-						/// Successful target acquisition.
-						m_iOffensiveTargetID = OffensiveTargetActor.ID;
-						Program.Log("New offensive target: {0}", OffensiveTargetActor.Name);
-
-						/// An assist command promotes AFK into neutral positioning.
-						if (m_ePositioningStance == PositioningStance.DoNothing)
-							ChangePositioningStance(PositioningStance.NeutralPosition);
-					}
-				}
-
-				return true;
-			}
-
-			/// Reload the INI file and knowledge book; the rest of the code will adjust on its own.
-			else if (strLowerCaseMessage.Contains(m_strReloadINISubphrase))
-			{
-				Program.Log("Reload INI command (\"{0}\") received.", m_strReloadINISubphrase);
-				ReadINISettings();
-				Program.ReleaseAllKeys(); /// If there's a bug, this will cure it. If not, no loss.
-				Program.s_bRefreshKnowledgeBook = true;
-			}
-
-			else if (strLowerCaseMessage.Contains(m_strDoNothingSubphrase))
-			{
-				Program.Log("Do Nothing command (\"{0}\") received.", m_strDoNothingSubphrase);
-				ChangePositioningStance(PositioningStance.DoNothing);
-			}
-
-			else if (strLowerCaseMessage.Contains(m_strNeutralPositionSubphrase))
-			{
-				Program.Log("Neutral Position command (\"{0}\") received.", m_strNeutralPositionSubphrase);
-				ChangePositioningStance(PositioningStance.NeutralPosition);
-			}
-
-			else if (strLowerCaseMessage.Contains(m_strStayInPlaceSubphrase))
-			{
-				Program.Log("Stay In Place command (\"{0}\") received.", m_strStayInPlaceSubphrase);
-				m_strPositionalCommandingPlayer = strFrom;
-				ChangePositioningStance(PositioningStance.StayInPlace);
-			}
-
-			else if (strLowerCaseMessage.Contains(m_strForwardDashSubphrase))
-			{
-				Program.Log("Forward Dash command (\"{0}\") received.", m_strForwardDashSubphrase);
-				ChangePositioningStance(PositioningStance.ForwardDash);
-			}
-
-			else if (strLowerCaseMessage.Contains(m_strAutoFollowSubphrase))
-			{
-				Program.Log("Autofollow command (\"{0}\") received.", m_strAutoFollowSubphrase);
-				ChangePositioningStance(PositioningStance.AutoFollow);
-			}
-
-			else if (strLowerCaseMessage.Contains(m_strCustomAutoFollowSubphrase))
-			{
-				Program.Log("Custom Autofollow command (\"{0}\") received.", m_strCustomAutoFollowSubphrase);
-				m_fCurrentMovementTargetCoordinateTolerance = m_fCustomAutoFollowMaximumRange;
-				m_strPositionalCommandingPlayer = strFrom;
-				ChangePositioningStance(PositioningStance.CustomAutoFollow);
-			}
-
-			else if (strLowerCaseMessage.Contains(m_strShadowMeSubphrase))
-			{
-				Program.Log("Shadow Me command (\"{0}\") received.", m_strShadowMeSubphrase);
-				m_fCurrentMovementTargetCoordinateTolerance = m_fStayInPlaceTolerance;
-				m_strPositionalCommandingPlayer = strFrom;
-				ChangePositioningStance(PositioningStance.CustomAutoFollow);
-			}
-
-			/// Bot killswitch.
-			else if (strLowerCaseMessage.Contains(m_strBotKillswitchSubphrase))
-			{
-				Program.Log("Bot killswitch command (\"{0}\") received.", m_strBotKillswitchSubphrase);
-				Program.s_bContinueBot = false;
-				return true;
-			}
-
-			/// Process killswitch.
-			else if (strLowerCaseMessage.Contains(m_strProcessKillswitchSubphrase))
-			{
-				Program.Log("Process killswitch command (\"{0}\") received.", m_strProcessKillswitchSubphrase);
-				Process.GetCurrentProcess().Kill();
-			}
-
-			/// Begin dropping all group buffs.
-			else if (strLowerCaseMessage.Contains(m_strClearGroupMaintainedSubphrase))
-			{
-				m_bClearGroupMaintained = true;
-			}
+			Actor CommandingPlayerActor = GetNonPetActor(strFrom);
 
 			/// Mentor the specified group member.
-			else if (strLowerCaseMessage.Contains(m_strMentorSubphrase))
+			if (strLowerCaseMessage.Contains(m_strMentorSubphrase))
 			{
 				/// This is a very sloppy way of finding out who to mentor.
 				foreach (GroupMember ThisMember in EnumGroupMembers())
 				{
 					if (strLowerCaseMessage.Contains(ThisMember.Name.ToLower()) && ThisMember.ToActor().IsValid)
 					{
-						Program.ApplyVerb(ThisMember.ToActor(), "mentor");
+						ApplyVerb(ThisMember.ToActor(), "mentor");
 						return true;
 					}
 				}
@@ -779,8 +637,8 @@ namespace EQ2GlassCannon
 					Actor MenderTargetActor = CommandingPlayerActor.Target();
 					if (MenderTargetActor.IsValid && (MenderTargetActor.Type == "NoKill NPC" || MenderTargetActor.Type == "NPC")) /// Some menders can be killed.
 					{
-						Program.ApplyVerb(MenderTargetActor, "repair");
-						Program.RunCommand("/mender_repair_all");
+						ApplyVerb(MenderTargetActor, "repair");
+						RunCommand("/mender_repair_all");
 						return true;
 					}
 				}
@@ -811,7 +669,7 @@ namespace EQ2GlassCannon
 				/// Grab the so-named actor nearest to the commander.
 				double fNearestDistance = 50.0;
 				Actor NearestActor = null;
-				foreach (Actor ThisActor in Program.EnumActors(strActorName))
+				foreach (Actor ThisActor in EnumActors(strActorName))
 				{
 					if (ThisActor.Name != strActorName)
 						continue;
@@ -831,7 +689,7 @@ namespace EQ2GlassCannon
 					return false;
 				}
 
-				Program.ApplyVerb(NearestActor, strVerb);
+				ApplyVerb(NearestActor, strVerb);
 				return true;
 			}
 
@@ -871,13 +729,13 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public virtual void OnZoningBegin()
+		protected virtual void OnZoningBegin()
 		{
 			return;
 		}
 
 		/************************************************************************************/
-		public virtual void OnZoningComplete()
+		protected virtual void OnZoningComplete()
 		{
 			if (m_ePositioningStance == PositioningStance.ForwardDash)
 				ChangePositioningStance(PositioningStance.AutoFollow);
@@ -902,7 +760,7 @@ namespace EQ2GlassCannon
 				m_ePositioningStance == PositioningStance.StayInPlace ||
 				m_ePositioningStance == PositioningStance.ForwardDash)
 			{
-				Program.ReleaseKey(m_strForwardKey);
+				ReleaseKey(m_strForwardKey);
 			}
 
 			/// Activate the new stance.
@@ -912,7 +770,7 @@ namespace EQ2GlassCannon
 
 				/// If the player wants autofollow, he'll have to do it manually.
 				if (!string.IsNullOrEmpty(MeActor.WhoFollowing))
-					Program.RunCommand("/stopfollow");
+					RunCommand("/stopfollow");
 			}
 			else if (eNewStance == PositioningStance.NeutralPosition)
 			{
@@ -920,7 +778,7 @@ namespace EQ2GlassCannon
 			}
 			else if (eNewStance == PositioningStance.StayInPlace)
 			{
-				Actor CommandingPlayerActor = Program.GetNonPetActor(m_strPositionalCommandingPlayer);
+				Actor CommandingPlayerActor = GetNonPetActor(m_strPositionalCommandingPlayer);
 				if (CommandingPlayerActor != null)
 				{
 					m_ePositioningStance = PositioningStance.StayInPlace;
@@ -985,7 +843,7 @@ namespace EQ2GlassCannon
 				if (m_bIHaveBadPing && m_bBreakAutoFollowOnBadPing)
 				{
 					if (!string.IsNullOrEmpty(MeActor.WhoFollowing))
-						Program.RunCommand(1, "/stopfollow");
+						RunCommand(1, "/stopfollow");
 					return false;
 				}
 
@@ -1025,7 +883,7 @@ namespace EQ2GlassCannon
 					{
 						if (AutoFollowActor.DoFace())
 						{
-							Program.RunCommand(1, "/follow {0}", strAutoFollowTarget);
+							RunCommand(1, "/follow {0}", strAutoFollowTarget);
 							return true;
 						}
 					}
@@ -1052,7 +910,7 @@ namespace EQ2GlassCannon
 				/// Firstly, no matter where we are, stop autofollowing.
 				if (!string.IsNullOrEmpty(MeActor.WhoFollowing))
 				{
-					Program.RunCommand(1, "/stopfollow");
+					RunCommand(1, "/stopfollow");
 					return true;
 				}
 
@@ -1062,7 +920,7 @@ namespace EQ2GlassCannon
 					/// Make sure we don't lag into a mob or off a fucking cliff.
 					if (m_bIHaveBadPing && m_bBreakAutoFollowOnBadPing)
 					{
-						Program.ReleaseKey(m_strForwardKey);
+						ReleaseKey(m_strForwardKey);
 						return false;
 					}
 
@@ -1070,7 +928,7 @@ namespace EQ2GlassCannon
 					string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
 					if (string.IsNullOrEmpty(strAutoFollowTarget))
 					{
-						Program.ReleaseKey(m_strForwardKey);
+						ReleaseKey(m_strForwardKey);
 						return false;
 					}
 
@@ -1078,7 +936,7 @@ namespace EQ2GlassCannon
 					Actor FollowActor = m_FriendDictionary[strAutoFollowTarget].ToActor();
 					if (!FollowActor.IsValid || FollowActor.ID == MeActor.ID)
 					{
-						Program.ReleaseKey(m_strForwardKey);
+						ReleaseKey(m_strForwardKey);
 						return false;
 					}
 
@@ -1097,7 +955,7 @@ namespace EQ2GlassCannon
 						bool bThisSamplingIsNearby = (fRange < 200.0f);
 						if (m_bLastShadowTargetSamplingWasNearby && !bThisSamplingIsNearby)
 						{
-							//Program.RunCommand("/t {0} you ported too far away", m_astrCommandingPlayers); /// TODO: Make this configurable.
+							//RunCommand("/t {0} you ported too far away", m_astrCommandingPlayers); /// TODO: Make this configurable.
 							Program.Log("Custom auto-follow target suddenly warped far away; reverting to auto-follow.");
 							ChangePositioningStance(PositioningStance.AutoFollow);
 							return true;
@@ -1112,12 +970,12 @@ namespace EQ2GlassCannon
 						if (Me.Face(fBearing))
 						{
 							Program.Log("Moving to stay position ({0:0.00}, {1:0.00}, {2:0.00}), {3:0.00} meters away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
-							Program.PressAndHoldKey(m_strForwardKey);
+							PressAndHoldKey(m_strForwardKey);
 						}
 					}
 					else
 					{
-						Program.ReleaseKey(m_strForwardKey);
+						ReleaseKey(m_strForwardKey);
 					}
 				}
 			}
@@ -1135,7 +993,7 @@ namespace EQ2GlassCannon
 				}
 				else
 				{
-					Program.PressAndHoldKey(m_strForwardKey);
+					PressAndHoldKey(m_strForwardKey);
 				}
 
 				return false;
@@ -1150,7 +1008,7 @@ namespace EQ2GlassCannon
 			{
 				/// Look for the actor.
 				Actor ActualFoundActor = null;
-				foreach (Actor ThisActor in Program.EnumActors())
+				foreach (Actor ThisActor in EnumActors())
 				{
 					string strThisActorName = ThisActor.Name.Trim().ToLower();
 					if (strThisActorName == m_strSpawnWatchTarget)
@@ -1165,21 +1023,21 @@ namespace EQ2GlassCannon
 				{
 					/// This is awesomesauce right here.
 					string strCoordinates = string.Format("{0:0.00}, {1:0.00}, {2:0.00}", ActualFoundActor.X, ActualFoundActor.Y, ActualFoundActor.Z);
-					Program.RunCommand("/waypoint {0}", strCoordinates);
+					RunCommand("/waypoint {0}", strCoordinates);
 					Program.Log("Spawn Watch target \"{0}\" found at ({1})! See map: a waypoint command was executed.", ActualFoundActor.Name, strCoordinates);
-					Program.SayText(m_strSpawnWatchAlertSpeech, ActualFoundActor.Name);
+					SayText(m_strSpawnWatchAlertSpeech, ActualFoundActor.Name);
 
 					if (m_astrSpawnWatchToAddressList.Count > 0)
 					{
 						Program.s_EmailQueueThread.PostEmailMessage(
 							m_astrSpawnWatchToAddressList,
-							"From " + Me.Name,
+							"From " + Name,
 							ActualFoundActor.Name + " just spawned!");
 					}
 
 					try
 					{
-						Program.RunCommand(m_strSpawnWatchAlertCommand, m_astrCommandingPlayers, m_strSpawnWatchTarget);
+						RunCommand(m_strSpawnWatchAlertCommand, m_astrCommandingPlayers, m_strSpawnWatchTarget);
 					}
 					catch
 					{
@@ -1194,7 +1052,7 @@ namespace EQ2GlassCannon
 
 			else if (m_ePositioningStance == PositioningStance.DespawnWatch)
 			{
-				foreach (Actor ThisActor in Program.EnumActors())
+				foreach (Actor ThisActor in EnumActors())
 				{
 					string strThisActorName = ThisActor.Name.Trim().ToLower();
 					if ((strThisActorName == m_strSpawnWatchTarget) && !ThisActor.IsDead)
@@ -1218,7 +1076,7 @@ namespace EQ2GlassCannon
 					{
 						Program.s_EmailQueueThread.PostEmailMessage(
 							m_astrSpawnWatchToAddressList,
-							"From " + Me.Name,
+							"From " + Name,
 							m_strSpawnWatchTarget + " just despawned!");
 					}
 
@@ -1237,7 +1095,7 @@ namespace EQ2GlassCannon
 			if (m_iOffensiveTargetID == -1)
 				return false;
 
-			Actor OffensiveTargetActor = Program.GetActor(m_iOffensiveTargetID);
+			Actor OffensiveTargetActor = GetActor(m_iOffensiveTargetID);
 
 			if (OffensiveTargetActor == null ||
 				!OffensiveTargetActor.IsValid ||
@@ -1297,13 +1155,13 @@ namespace EQ2GlassCannon
 			if (m_bUseRanged && (fDistance > 10.0) && !Me.RangedAutoAttackOn)
 			{
 				/// Turn on ranged auto-attack instead if there is too much distance to the target.
-				Program.RunCommand("/auto 2");
+				RunCommand("/auto 2");
 				m_OffensiveTargetActor.DoFace();
 				return false;
 			}
 			else if (m_bAutoAttack && !Me.AutoAttackOn)
 			{
-				Program.RunCommand("/auto 1");
+				RunCommand("/auto 1");
 				m_OffensiveTargetActor.DoFace();
 				return false;
 			}
@@ -1316,7 +1174,7 @@ namespace EQ2GlassCannon
 				if (!PetTargetActor.IsValid || (PetTargetActor.ID != m_OffensiveTargetActor.ID) || !PetActor.InCombatMode)
 				{
 					Program.Log("Sending in pet for attack!");
-					Program.RunCommand(1, "/pet attack");
+					RunCommand(1, "/pet attack");
 					///return false; // Don't return failure; often there is lag time with the fucking pet and it kills our dps to wait for it.
 				}
 			}
@@ -1347,12 +1205,12 @@ namespace EQ2GlassCannon
 				/// Turn it off just in case.
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
-					Program.RunCommand("/auto 0");
+					RunCommand("/auto 0");
 					bActionTaken = true;
 				}
 
 				/// If an enemy is targetted, target nothing instead.
-				//Program.RunCommand("/target_none");
+				//RunCommand("/target_none");
 				//return true;
 			}
 
@@ -1362,7 +1220,7 @@ namespace EQ2GlassCannon
 				Actor PetTargetActor = PetActor.Target();
 				if (PetTargetActor.IsValid && PetTargetActor.InCombatMode && PetTargetActor.ID == TargetActor.ID)
 				{
-					Program.RunCommand("/pet backoff");
+					RunCommand("/pet backoff");
 					bActionTaken = true;
 				}
 			}
@@ -1381,7 +1239,7 @@ namespace EQ2GlassCannon
 				/// Turn it off just in case.
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
-					Program.RunCommand("/auto 0");
+					RunCommand("/auto 0");
 					bActionTaken = true;
 				}
 
@@ -1389,7 +1247,7 @@ namespace EQ2GlassCannon
 				Actor PetActor = Me.Pet();
 				if (PetActor.IsValid && PetActor.InCombatMode)
 				{
-					Program.RunCommand("/pet backoff");
+					RunCommand("/pet backoff");
 					bActionTaken = true;
 				}
 
@@ -1397,7 +1255,7 @@ namespace EQ2GlassCannon
 				Actor TargetActor = MeActor.Target();
 				if (TargetActor.IsValid && TargetActor.Type == "NPC")
 				{
-					Program.RunCommand("/target_none");
+					RunCommand("/target_none");
 					bActionTaken = true;
 				}
 			}

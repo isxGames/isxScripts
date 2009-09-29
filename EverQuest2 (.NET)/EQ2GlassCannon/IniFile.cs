@@ -91,10 +91,6 @@ namespace EQ2GlassCannon
 					string strInput = InputFile.ReadLine();
 					strInput = strInput.Trim();
 
-#if DEBUG
-					//Log(strInput);
-#endif
-
 					if (strInput.StartsWith(";"))
 						continue;
 
@@ -112,7 +108,6 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			//Log("Done loading INI file.");
 			return true;
 		}
 
@@ -133,9 +128,6 @@ namespace EQ2GlassCannon
 				{
 					string strOutput = string.Format("{0}={1}", ThisItem.Key, ThisItem.Value);
 					OutputFile.WriteLine(strOutput);
-#if DEBUG
-					//Log(strOutput);
-#endif
 				}
 			}
 

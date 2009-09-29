@@ -31,9 +31,9 @@ namespace EQ2GlassCannon
 			return;
 		}
 
-		public void Add(params TYPE[] aNewValues)
+		public void Add(IEnumerable<TYPE> NewValueCollection)
 		{
-			foreach (TYPE ThisType in aNewValues)
+			foreach (TYPE ThisType in NewValueCollection)
 				Add(ThisType);
 			return;
 		}
