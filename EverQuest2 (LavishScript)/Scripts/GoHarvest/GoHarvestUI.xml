@@ -357,9 +357,41 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<checkbox Name='MaxDistance'>
+						<X>45%</X>
+						<Y>70</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Max Roam Dist</Text>
+						<AutoTooltip>
+							Don't Roam more than set distance from Start Point.
+						</AutoTooltip>
+						<OnLoad>
+							if ${Script[goharvest].VariableScope.MaxDistance}
+							{
+								UIElement[MaxDistance@Harvest@GUITabs@GoHarvest]:SetChecked
+							}
+							else
+							{
+								UIElement[MaxDistance@Harvest@GUITabs@GoHarvest]:UnsetChecked
+							}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[MaxDistance@Harvest@GUITabs@GoHarvest].Checked}
+							{
+								Script[goharvest].VariableScope.MaxDistance:Set[TRUE]
+								Echo Don't Roam Set Distance from start point
+							}
+							else
+							{
+								Script[goharvest].VariableScope.MaxDistance:Set[FALSE]
+								Echo No Limit on roaming distance
+							}
+						</OnLeftClick>
+					</checkbox>
 					<Commandbutton name='Avoid'> 
 						<X>45%</X> 
-						<Y>30%</Y> 
+						<Y>50%</Y> 
 						<Width>45%</Width> 
 						<Height>25</Height>
 						<Text>Mark Avoid</Text>
