@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQ2GlassCannon", "EQ2GlassCannon\EQ2GlassCannon.csproj", "{4806C353-21B5-4281-8655-9AD2F9791960}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQ2ParseEngine", "EQ2ParseEngine\EQ2ParseEngine.csproj", "{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTestConsole", "ParserTestConsole\ParserTestConsole.csproj", "{B2AC85E4-5E71-414C-AFA6-6818F7A3263D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4806C353-21B5-4281-8655-9AD2F9791960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4806C353-21B5-4281-8655-9AD2F9791960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4806C353-21B5-4281-8655-9AD2F9791960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4806C353-21B5-4281-8655-9AD2F9791960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2AC85E4-5E71-414C-AFA6-6818F7A3263D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2AC85E4-5E71-414C-AFA6-6818F7A3263D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2AC85E4-5E71-414C-AFA6-6818F7A3263D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2AC85E4-5E71-414C-AFA6-6818F7A3263D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
