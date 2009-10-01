@@ -17,12 +17,15 @@ variable bool HBlocked[2]=FALSE
 variable bool pauseharvest=TRUE
 variable bool StrictLos=TRUE
 variable bool Mapping=FALSE
+variable bool MaxDistance=FALSE
 
 variable GoHarvestBot GoHarvest
 variable int scan=150
 variable int HID
 variable bool BadNode=FALSE
 variable collection:string BadNodes
+variable float SX
+variable float SZ
 
 variable settingsetref harvest
 variable settingsetref harvesttype
@@ -68,6 +71,10 @@ function startharvest(int scan)
 	variable string actorname
 
 	variable int tempvar
+	
+	SX:Set[${Me.X}]
+	SZ:Set[${Me.Z}]
+	
 	While 1
 	{
 		if ${pauseharvest}
@@ -76,7 +83,15 @@ function startharvest(int scan)
 		}
 		if !${Me.InCombat}
 		{
-			EQ2:CreateCustomActorArray[byDist,${scan}]
+			if ${MaxDistance}
+			{
+				EQ2:CreateCustomActorArray[byDist,${Math.Calc[${scan}*2]}]
+			}
+			else
+			{
+				EQ2:CreateCustomActorArray[byDist,${scan}]
+			}
+		
 			harvestloop:Set[1]
 			harvestcount:Set[${EQ2.CustomActorArraySize}]
 			do
@@ -89,6 +104,13 @@ function startharvest(int scan)
 						tempvar:Set[1]
 						do
 						{
+							if ${MaxDistance} 
+							{
+								if ${Math.Distance[${CustomActor[${harvestloop}].X},${SX}]} > ${scan} || ${Math.Distance[${CustomActor[${harvestloop}].Z},${SZ}]} > ${scan}
+								{
+									break
+								}
+							}
 							if ${HarvestNode[${tempvar}]}
 							{
 								call checknodename ${tempvar} "${actorname}"
@@ -103,7 +125,14 @@ function startharvest(int scan)
 											call harvestnode
 											if !${Return.Equal["STUCK"]}
 											{
-												EQ2:CreateCustomActorArray[byDist,${scan}]
+												if ${MaxDistance}
+												{
+													EQ2:CreateCustomActorArray[byDist,${Math.Calc[${scan}*2]}]
+												}
+												else
+												{
+													EQ2:CreateCustomActorArray[byDist,${scan}]
+												}
 												waitframe
 												harvestloop:Set[1]
 												harvestcount:Set[${EQ2.CustomActorArraySize}]
