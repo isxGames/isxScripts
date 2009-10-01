@@ -5,15 +5,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 
-namespace EQ2Parser
+namespace EQ2ParseEngine
 {
 	public class EQ2LogTokenizer
 	{
 		public enum GameLanguageType : int
 		{
-			Common = 0,
+			Unknown = 0,
 			AyrDal,
 			ChaosTongue,
+			Common,
 			DeathsWhisper,
 			DiZokian,
 			Draconic,
@@ -50,6 +51,7 @@ namespace EQ2Parser
 		}
 
 		protected SharedStringCache m_SharedStringCache = new SharedStringCache();
+		protected CompiledRegexCache m_CompiledRegexCache = new CompiledRegexCache();
 
 		/************************************************************************************/
 		public EQ2LogTokenizer()
@@ -199,7 +201,7 @@ namespace EQ2Parser
 			internal ChannelType m_eChannelType = ChannelType.NonChat;
 			public ChannelType Channel { get { return m_eChannelType; } }
 
-			internal GameLanguageType m_eGameLanguage = GameLanguageType.Common;
+			internal GameLanguageType m_eGameLanguage = GameLanguageType.Unknown;
 			public GameLanguageType GameLanguage { get { return m_eGameLanguage; } }
 
 			internal int m_iSourceActorID = -1;
@@ -275,6 +277,7 @@ namespace EQ2Parser
 				PowerHeal,
 				PowerDrain,
 				FocusDamage,
+				FallingDamage,
 				CrushingDamage,
 				SlashingDamage,
 				PiercingDamage,
@@ -292,15 +295,16 @@ namespace EQ2Parser
 			{
 				Critical = 0x1,
 				Double = 0x2,
-				AOE = 0x100,
-				Missed = 0x4,
-				Resisted = 0x10,
-				Dodged = 0x8,
-				Parried = 0x20,
-				Deflected = 0x40,
-				Riposted = 0x80,
-				Reflected = 0x200,
-				Blocked = 0x400,
+				Flurry = 0x4,
+				AOEAutoAttack = 0x8,
+				Missed = 0x10,
+				Resisted = 0x20,
+				Dodged = 0x40,
+				Parried = 0x80,
+				Deflected = 0x100,
+				Riposted = 0x200,
+				Reflected = 0x400,
+				Blocked = 0x800,
 			}
 
 			internal int m_iQuantity = 0;
@@ -365,7 +369,7 @@ namespace EQ2Parser
 				return;
 			}
 
-			ThisMatch = Regex.Match(strPair, @"YOUR (?<ability>.+)");
+			ThisMatch = m_CompiledRegexCache.Match(strPair, @"YOUR (?<ability>.+)");
 			if (ThisMatch.Success)
 			{
 				strActor = m_strMyCharacterName;
@@ -373,7 +377,7 @@ namespace EQ2Parser
 				return;
 			}
 
-			ThisMatch = Regex.Match(strPair, @"(?<actor>.+?)'s? (?<ability>.+)");
+			ThisMatch = m_CompiledRegexCache.Match(strPair, @"(?<actor>.+?)'s? (?<ability>.+)");
 			if (ThisMatch.Success)
 			{
 				strActor = ThisMatch.Groups["actor"].Value;
@@ -408,8 +412,9 @@ namespace EQ2Parser
 		protected void AssignDamageType(string strLogName, ref ActionEventArgs.ActionType eActionType)
 		{
 			switch (strLogName)
-			{
+			{// case "struck":
 				case "focus": eActionType = ActionEventArgs.ActionType.FocusDamage; break;
+				case "falling": eActionType = ActionEventArgs.ActionType.FallingDamage; break;
 				case "crush":
 				case "crushes":
 				case "crushing": eActionType = ActionEventArgs.ActionType.CrushingDamage; break;
@@ -466,6 +471,52 @@ namespace EQ2Parser
 		}
 
 		/************************************************************************************/
+		protected void AssignGameLanguageType(string strLogName, ref GameLanguageType eLanguageType)
+		{
+			switch (strLogName)
+			{
+				case "Ayr'Dal": eLanguageType = GameLanguageType.AyrDal; break;
+				case "Chaos Tongue": eLanguageType = GameLanguageType.ChaosTongue; break;
+				case "Common": eLanguageType = GameLanguageType.Common; break;
+				case "Death's Whisper": eLanguageType = GameLanguageType.DeathsWhisper; break;
+				case "Di'Zokian": eLanguageType = GameLanguageType.DiZokian; break;
+				case "Draconic": eLanguageType = GameLanguageType.Draconic; break;
+				case "Druzaic": eLanguageType = GameLanguageType.Druzaic; break;
+				case "Dwarven": eLanguageType = GameLanguageType.Dwarven; break;
+				case "Erudian": eLanguageType = GameLanguageType.Erudian; break;
+				case "Faerlie": eLanguageType = GameLanguageType.Faerlie; break;
+				case "Fayefolk": eLanguageType = GameLanguageType.Fayefolk; break;
+				case "Feir'Dal": eLanguageType = GameLanguageType.FeirDal; break;
+				case "Gnollish": eLanguageType = GameLanguageType.Gnollish; break;
+				case "Gnomish": eLanguageType = GameLanguageType.Gnomish; break;
+				case "Goblish": eLanguageType = GameLanguageType.Goblish; break;
+				case "Gorwish": eLanguageType = GameLanguageType.Gorwish; break;
+				case "Guktan": eLanguageType = GameLanguageType.Guktan; break;
+				case "Halasian": eLanguageType = GameLanguageType.Halasian; break;
+				case "Kerran": eLanguageType = GameLanguageType.Kerran; break;
+				case "Koada'Dal": eLanguageType = GameLanguageType.KoadaDal; break;
+				case "Krombral": eLanguageType = GameLanguageType.Krombral; break;
+				case "Oggish": eLanguageType = GameLanguageType.Oggish; break;
+				case "Orcish": eLanguageType = GameLanguageType.Orcish; break;
+				case "Ratongan": eLanguageType = GameLanguageType.Ratongan; break;
+				case "Sathirian": eLanguageType = GameLanguageType.Sathirian; break;
+				case "Screechsong": eLanguageType = GameLanguageType.Screechsong; break;
+				case "Sebilisian": eLanguageType = GameLanguageType.Sebilisian; break;
+				case "Serilian": eLanguageType = GameLanguageType.Serilian; break;
+				case "Stout": eLanguageType = GameLanguageType.Stout; break;
+				case "Thexian": eLanguageType = GameLanguageType.Thexian; break;
+				case "Thullian": eLanguageType = GameLanguageType.Thullian; break;
+				case "Tik Tok": eLanguageType = GameLanguageType.TikTok; break;
+				case "Uruvanian": eLanguageType = GameLanguageType.Uruvanian; break;
+				case "Volant": eLanguageType = GameLanguageType.Volant; break;
+				case "Words of Shade": eLanguageType = GameLanguageType.WordsOfShade; break;
+				case "Ykeshan": eLanguageType = GameLanguageType.Ykeshan; break;
+				default: eLanguageType = m_eGameLanguage; break;
+			}
+			return;
+		}
+
+		/************************************************************************************/
 		protected void DispatchChatEvent(ChatEventArgs NewEvent)
 		{
 			if (ChatSent == null)
@@ -508,7 +559,7 @@ namespace EQ2Parser
 			/// That might not be a bad idea when the list gets long enough.
 			foreach (ICustomRegexTrigger ThisCustomRegex in m_aCustomNarrativeRegexTriggers)
 			{
-				ThisMatch = Regex.Match(strParseLine, ThisCustomRegex.Regex);
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, ThisCustomRegex.Regex);
 				if (ThisMatch.Success)
 					ThisCustomRegex.OnFound(Timestamp, strParseLine);
 			}
@@ -516,9 +567,9 @@ namespace EQ2Parser
 			/// Fish out any item links if a callback is registered.
 			if (ItemLinkFound != null)
 			{
-				/// \aPC 813717 Aleraku:Aleraku\/a says to the group, "\aITEM -1556439464 1176896923 -1268519431:Dragon's Marrow\/a"
-				/// \aPC 813717 Aleraku:Aleraku\/a says to the group, "\aITEM 1311278388 1184237822:Channeled Robe of Ethereal Energy\/a"
-				ThisMatchSet = Regex.Matches(strParseLine, @"\\aITEM (-?\d+) (-?\d+) ?(-?\d+)?:([^\\]*)\\/a");
+				/// \aPC 813717 Testplayer:Testplayer\/a says to the group, "\aITEM -1556439464 1176896923 -1268519431:Dragon's Marrow\/a"
+				/// \aPC 813717 Testplayer:Testplayer\/a says to the group, "\aITEM 1311278388 1184237822:Channeled Robe of Ethereal Energy\/a"
+				ThisMatchSet = m_CompiledRegexCache.Matches(strParseLine, @"\\aITEM (-?\d+) (-?\d+) ?(-?\d+)?:([^\\]*)\\/a");
 				foreach (Match ThisItemMatch in ThisMatchSet)
 				{
 					string strLink = ThisItemMatch.Value;
@@ -550,19 +601,19 @@ namespace EQ2Parser
 				/// YOU hit a deathless gazer for 340 crushing damage.
 				/// YOU critically hit The Carnovingian for 506 crushing damage.
 				/// YOU critically double attack a deathless gazer for 680 crushing damage.
-				/// Alaedraa critically hits roekillik excavation chief for 555 crushing damage.
-				/// Cavatina critically hits a fetidthorn wraith for 1559 slashing damage.
-				/// Cavatina critically double attacks The Carnovingian for 1559 slashing damage.
-				/// Aleraku's protoflame hits a deathless gazer for 326 heat damage.
-				/// Blytz critically aoe attacks a cinder wasp for 2900 piercing damage.
+				/// Testplayer critically hits roekillik excavation chief for 555 crushing damage.
+				/// Testplayer critically hits a fetidthorn wraith for 1559 slashing damage.
+				/// Testplayer critically double attacks The Carnovingian for 1559 slashing damage.
+				/// Testplayer's protoflame hits a deathless gazer for 326 heat damage.
+				/// Testplayer critically aoe attacks a cinder wasp for 2900 piercing damage.
 				/// YOUR Bewilderment hits a roekillik watcher for 2541 magic damage.
 				/// YOUR Dynamism critically hits a roekillik watcher for 1238 mental damage.
-				/// Alaedraa's Malefic Fury hits roekillik excavation chief for 148 mental damage.
-				/// Alaedraa's Flametongue critically hits roekillik excavation chief for 157 heat damage.
-				/// a Galebreaker maiden critically hits Spiritstorm for 4 slashing and 3 cold damage.
-				/// a Galebreaker maiden hits Alaedraa for 3 cold and 0 slashing damage.
-				/// a Skyshield maiden's Holy Circle hits Alaedraa for 3 cold and 0 divine damage.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)(?<attacktype>hit|double attack|aoe attack)s? (?<victim>.+) for (?<damagelist>.*) damage.$");
+				/// Testplayer's Malefic Fury hits roekillik excavation chief for 148 mental damage.
+				/// Testplayer's Flametongue critically hits roekillik excavation chief for 157 heat damage.
+				/// a Galebreaker maiden critically hits Testplayer for 4 slashing and 3 cold damage.
+				/// a Galebreaker maiden hits Testplayer for 3 cold and 0 slashing damage.
+				/// a Skyshield maiden's Holy Circle hits Testplayer for 3 cold and 0 divine damage.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)(?<attacktype>hits?|double attacks?|aoe attacks?|flurries|flurry) (?<victim>.+) for (?<damagelist>.*) damage.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -576,14 +627,19 @@ namespace EQ2Parser
 
 					switch (ThisMatch.Groups["attacktype"].Value)
 					{
-						case "hit": break;
-						case "double attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
-						case "aoe attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOE; break;
+						case "hit":
+						case "hits": break;
+						case "double attack":
+						case "double attacks": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
+						case "flurries":
+						case "flurry": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Flurry; break;
+						case "aoe attack":
+						case "aoe attacks": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack; break;
 					}
 
 					/// Parse the damage list (which may include multiple hits of varying damage types).
 					string strDamageList = ThisMatch.Groups["damagelist"].Value;
-					ThisMatchSet = Regex.Matches(strDamageList, @"(?<quantity>\d+) (?<damagetype>focus|crushing|slashing|piercing|heat|cold|magic|mental|divine|disease|poison)");
+					ThisMatchSet = m_CompiledRegexCache.Matches(strDamageList, @"(?<quantity>\d+) (?<damagetype>focus|crushing|slashing|piercing|heat|cold|magic|mental|divine|disease|poison)");
 					if (ThisMatchSet.Count > 0)
 					{
 						/// This for-loop is set up a little funky.
@@ -609,7 +665,10 @@ namespace EQ2Parser
 				}
 
 				/// Anonymous damage.
-				ThisMatch = Regex.Match(strParseLine, @"(?<victim>.+?) is hit for (?<quantity>\d+) (?<damagetype>focus|crushing|slashing|piercing|heat|cold|magic|mental|divine|disease|poison) damage.$");
+				/// Retarded?
+				/// a summoned spiderling is aoe attack for 166 crushing damage.
+				/// a summoned spiderling is aoe attack for 179 crushing damage.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<victim>.+?) is (?<attacktype>hit|aoe attack) for (?<quantity>\d+) (?<damagetype>focus|falling|crushing|slashing|piercing|heat|cold|magic|mental|divine|disease|poison) damage.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -618,20 +677,23 @@ namespace EQ2Parser
 					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
 					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 
+					if (ThisMatch.Groups["attacktype"].Value == "aoe attack")
+						NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack;
+
 					DispatchActionEvent(NewEvent);
 					return true;
 				}
 
 				/// Wards from the attacker's perspective.
-				/// a mechnamagica hunter-seeker double attacks Alaedraa but fails to inflict any damage.
-				/// an ashengaze basilisk hits Annakiss but fails to inflict any damage.
-				/// The Carnovingian hits Livanna but fails to inflict any damage.
+				/// a mechnamagica hunter-seeker double attacks Testplayer but fails to inflict any damage.
+				/// an ashengaze basilisk hits Testplayer but fails to inflict any damage.
+				/// The Carnovingian hits Testplayer but fails to inflict any damage.
 				/// YOUR Vampiric Requiem hits YOURSELF but fails to inflict any damage.
-				/// Annakiss' Vampiric Requiem hits Annakiss but fails to inflict any damage.
-				/// an undying warrior's Rupture hits Annakiss but fails to inflict any damage.
-				/// a deathless gazer's Eye of Fire hits Livanna but fails to inflict any damage.
-				/// a deathless gazer hits Livanna but fails to inflict any damage.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actor>.+?) (?<critically>critically |)(?<duplication>hit|double attack)s (?<victim>.+) but fails to inflict any damage.$");
+				/// Testwithendingess' Vampiric Requiem hits Testwithendingess but fails to inflict any damage.
+				/// an undying warrior's Rupture hits Testplayer but fails to inflict any damage.
+				/// a deathless gazer's Eye of Fire hits Testplayer but fails to inflict any damage.
+				/// a deathless gazer hits Testplayer but fails to inflict any damage.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actor>.+?) (?<critically>critically |)(?<duplication>hit|double attack)s (?<victim>.+) but fails to inflict any damage.$");
 				if (ThisMatch.Success)
 				{
 					string strSourceActorName = ThisMatch.Groups["actor"].Value;
@@ -642,11 +704,11 @@ namespace EQ2Parser
 				}
 
 				/// Invulnerability, though the source text doesn't give an accurate damage type.
-				/// Semmie's Sandra's Deafening Strike slashes Nax Sorast, but Nax Sorast is invulnerable.
-				/// Semmie's Seed of Fire slashes Avatar of Justice, but Avatar of Justice is invulnerable.
+				/// Testplayer's Sandra's Deafening Strike slashes Nax Sorast, but Nax Sorast is invulnerable.
+				/// Testplayer's Seed of Fire slashes Avatar of Justice, but Avatar of Justice is invulnerable.
 				/// YOUR Ice Spears slash Avatar of Justice, but Avatar of Justice is invulnerable.
 				/// YOUR Ball of Fire slash Avatar of Justice, but Avatar of Justice is invulnerable.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actorability>.+?) (?<damagetype>slash|slashes) (?<victim>.+), but \3 is invulnerable.$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<damagetype>slash|slashes) (?<victim>.+), but \3 is invulnerable.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -661,13 +723,14 @@ namespace EQ2Parser
 
 				/// Cures.
 				/// YOUR Cure Arcane relieves YOU of Chronosiphoning.
-				/// YOUR Cure relieves Spawn from Maibach.
+				/// YOUR Cure relieves Spawn from Testplayer.
 
 				/// Wards from the healer's perspective.
-				/// Cavatina's Arcane Symphony absorbs 98 points of damage from being done to YOU.
-				/// Spiritstorm's Runic Armor absorbs 362 points of damage from being done to Malivox.
-				/// Semmie's Arcane Symphony absorbs 264 points of damage from being done to Obsolete.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actorability>.+?) absorbs (?<quantity>\d+) points of damage from being done to (?<victim>.+).$");
+				/// Testplayer's Arcane Symphony absorbs 98 points of damage from being done to YOU.
+				/// Testplayer's Runic Armor absorbs 362 points of damage from being done to Testplayer.
+				/// Testplayer's Arcane Symphony absorbs 264 points of damage from being done to Testplayer.
+				/// Testplayer's Ward of Sages absorbs 1 point of damage from being done to Testplayer.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) absorbs (?<quantity>\d+) points? of damage from being done to (?<victim>.+).$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -682,11 +745,11 @@ namespace EQ2Parser
 				}
 
 				/// Heals from the healer's perspective.
-				/// Schim's Divine Prayer critically heals Tartaros for 306 hit points.
-				/// Gracefull's Greater Reflexive Restoration heals Isodali for 449 hit points.
-				/// Pantz's Mortal Lifetap heals Pantz for 802 hit points.
+				/// Testplayer's Divine Prayer critically heals Testplayer for 306 hit points.
+				/// Testplayer's Greater Reflexive Restoration heals Testplayer for 449 hit points.
+				/// Testplayer's Mortal Lifetap heals Testplayer for 802 hit points.
 				/// a void glider's Inquisition critically heals Bydekm for 1287 hit points.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)heals? (?<victim>.+) for (?<quantity>\d+) hit points.$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)heals? (?<victim>.+) for (?<quantity>\d+) hit points?.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -706,9 +769,9 @@ namespace EQ2Parser
 
 				/// Mana heal.
 				/// YOUR Soulsiphon refreshes YOU for 93 mana points.
-				/// Semmie's Power from Flesh critically refreshes Semmie for 99 mana points.
-				/// Semmie's Power from Flesh refreshes Semmie for 1 mana point.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)refreshes (?<victim>.+) for (?<quantity>\d+) mana points?.$");
+				/// Testplayer's Power from Flesh critically refreshes Testplayer for 99 mana points.
+				/// Testplayer's Power from Flesh refreshes Testplayer for 1 mana point.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)refreshes (?<victim>.+) for (?<quantity>\d+) mana points?.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -728,9 +791,13 @@ namespace EQ2Parser
 
 				/// Mana drain. Type of attack used to do the drain is meaningless.
 				/// YOUR Soulsiphon zaps Vin Moltor draining 331 points of power.
-				/// Gale Monarch E'yildir slashes Alaedraa draining 0 points of power.
-				/// Cavatina's Vexing Verses confounds a deathless gazer draining 42 points of power.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actorability>.+?) (crushes|pierces|slashes|burns|freezes|smites|zaps|confounds|diseases|poisons) (?<victim>.+) draining (?<quantity>\d+) points? of power.$");
+				/// Gale Monarch E'yildir slashes Testplayer draining 0 points of power.
+				/// Testplayer's Vexing Verses confounds a deathless gazer draining 42 points of power.
+				/// Testplayer is drained by Caustic Burns of 0 points of power.
+				/// Testplayer is drained by Revived Sickness of 8966 points of power.
+				/// Testplayer is drained by Revived Sickness of 9379 points of power.
+				/// Testplayer is drained by Void Flames of 1777 points of power.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (crushes|pierces|slashes|burns|freezes|smites|zaps|confounds|diseases|poisons) (?<victim>.+) draining (?<quantity>\d+) points? of power.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -746,7 +813,7 @@ namespace EQ2Parser
 
 				/// Your target's stoneskin absorbed 1,172 points of damage!
 				/// Your stoneskin absorbed 986 points of damage!
-				ThisMatch = Regex.Match(strParseLine, @"Your stoneskin absorbed (?<quantity>[\d,]+) points? of damage!$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"Your stoneskin absorbed (?<quantity>[\d,]+) points? of damage!$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -763,15 +830,15 @@ namespace EQ2Parser
 				}
 
 				/// Failed abilities.
-				/// Livanna tries to slash Yitzik the Hurler with Swift Attack, but Yitzik the Hurler deflects.
+				/// Testplayer tries to slash Yitzik the Hurler with Swift Attack, but Yitzik the Hurler deflects.
 				/// YOU try to crush a Fleshstripped bowman with Ambidexterous Casting, but miss.
-				/// Death Pulse tries to freeze Spiritstorm with Corpse Explosion, but Spiritstorm resists.
+				/// Death Pulse tries to freeze Testplayer with Corpse Explosion, but Testplayer resists.
 				/// Death Pulse tries to freeze YOU with Corpse Explosion, but YOU resist.
-				/// Anashti Sul tries to crush Salarionn, but Salarionn blocks the double attack.
-				/// Anashti Sul tries to crush Salarionn, but Salarionn blocks.
-				/// Anashti Sul tries to crush Salarionn, but Salarionn parries.
-				/// Anashti Sul tries to crush Salarionn, but Salarionn ripostes.
-				/// Anashti Sul tries to crush Demo, but Demo dodges.
+				/// Anashti Sul tries to crush Testplayer, but Testplayer blocks the double attack.
+				/// Anashti Sul tries to crush Testplayer, but Testplayer blocks.
+				/// Anashti Sul tries to crush Testplayer, but Testplayer parries.
+				/// Anashti Sul tries to crush Testplayer, but Testplayer ripostes.
+				/// Anashti Sul tries to crush Testplayer, but Testplayer dodges.
 				/// YOU try to crush a deathless gazer, but miss.
 				/// YOU try to crush a deathless gazer, but YOUR double attack misses.
 				/// YOU try to crush a deathless gazer, but a deathless gazer parries.
@@ -779,13 +846,17 @@ namespace EQ2Parser
 				/// YOU try to crush a cruor spirit, but a cruor spirit ripostes.
 				/// YOU try to crush Yitzik the Hurler, but Yitzik the Hurler deflects.
 				/// YOU try to crush Yitzik the Hurler, but Yitzik the Hurler deflects the double attack.
-				/// Cavatina tries to slash a deathless gazer, but their double attack misses.
-				ThisMatch = Regex.Match(strParseLine, @"(?<actor>.+?) (?:try|tries) to (?<damagetype>crush|pierce|slash|burn|freeze|smite|zap|confound|disease|poison) (?<victimability>.+?), but (?<response>.*).$");
+				/// Testplayer tries to slash a deathless gazer, but their double attack misses.
+				/// Testplayer's unswerving hammer tries to crush a ykeshan patrol, but misses.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actor>.+?) (?:try|tries) to (?<damagetype>crush|pierce|slash|burn|freeze|smite|zap|confound|disease|poison) (?<victimability>.+?), but (?<response>.*).$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
 
-					AssignActorName(ThisMatch.Groups["actor"].Value, ref NewEvent.m_strSource);
+					/// Looking for the apostrophe is important for fucking weird cases like dumbfire pets missing swings.
+					string strAbility = string.Empty;
+					SplitActorAbilityPair(ThisMatch.Groups["actor"].Value, ref NewEvent.m_strSource, ref strAbility);
+
 					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
 
 					/// A mammoth Regex check would delay everything after it.
@@ -793,30 +864,33 @@ namespace EQ2Parser
 					string strVictimAbility = ThisMatch.Groups["victimability"].Value;
 					string strResponse = ThisMatch.Groups["response"].Value;
 
-					/// This is similar to what Split* does.
+					/// This is similar to what SplitActorAbilityPair does.
 					if (strVictimAbility == "YOU")
 						NewEvent.m_strDestination = m_strMyCharacterName;
-					else if ((ThisMatch = Regex.Match(strVictimAbility, @"(?<victim>.+?) with (?<ability>.*|)")).Success)
+					else if ((ThisMatch = m_CompiledRegexCache.Match(strVictimAbility, @"(?<victim>.+?) with (?<ability>.*|)")).Success)
 					{
 						AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 						NewEvent.m_strAbilityName = ThisMatch.Groups["ability"].Value;
 					}
 					else
+					{
+						NewEvent.m_strAbilityName = strAbility;
 						NewEvent.m_strDestination = strVictimAbility;
+					}
 
-					ThisMatch = Regex.Match(strResponse, @"(.*?)(?<duplication1>|aoe attack|double attack|) ?(?<counteraction>blocks|block|misses|miss|parry|parries|dodges|dodge|resists|resist|ripostes|riposte|deflects|deflect|reflects|reflect)(?: the )?(?<duplication2>double attack|aoe attack|)$");
+					ThisMatch = m_CompiledRegexCache.Match(strResponse, @"(.*?)(?<duplication1>|aoe attack|double attack|) ?(?<counteraction>blocks|block|misses|miss|parry|parries|dodges|dodge|resists|resist|ripostes|riposte|deflects|deflect|reflects|reflect)(?: the )?(?<duplication2>double attack|aoe attack|)$");
 					if (ThisMatch.Success)
 					{
 						AssignAttributeType(ThisMatch.Groups["counteraction"].Value, ref NewEvent.m_eAttributes);
 
 						switch (ThisMatch.Groups["duplication1"].Value)
 						{
-							case "aoe attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOE; break;
+							case "aoe attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack; break;
 							case "double attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
 						}
 						switch (ThisMatch.Groups["duplication2"].Value)
 						{
-							case "aoe attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOE; break;
+							case "aoe attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack; break;
 							case "double attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
 						}
 
@@ -833,13 +907,13 @@ namespace EQ2Parser
 				/// Someone else says something in a general predefined chat channel.
 				/// \aNPC 30134 a roekillik watcher:a roekillik watcher\/a says, "Intruders!  Intruders!"
 				/// \aNPC 6943344 Port to Raid Area:Port to Raid Area\/a says to you, "I am ready to serve the guild.  How may I be of assistance?"
-				/// \aPC -1 Khoga:Khoga\/a says to the raid party, "how the hell did that happen"
-				/// \aPC 46147 Malivox:Malivox\/a says to the group, "assist me on << roekillik excavation chief >>"
-				/// \aPC 46147 Malivox:Malivox\/a says to the officers, "assist me on << roekillik excavation chief >>"
-				/// \aPC 46147 Malivox:Malivox\/a says out of character, "assist me on << roekillik excavation chief >>"
-				/// \aPC -1 Aleraku:Aleraku\/a tells you, "This had better work!!"
-				/// \aPC 813717 Aleraku:Aleraku\/a shouts, "testing"
-				ThisMatch = Regex.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts), ""(?<message>.*)""$");
+				/// \aPC -1 Testplayer:Testplayer\/a says to the raid party, "how the hell did that happen"
+				/// \aPC 46147 Testplayer:Testplayer\/a says to the group, "assist me on << roekillik excavation chief >>"
+				/// \aPC 46147 Testplayer:Testplayer\/a says to the officers, "assist me on << roekillik excavation chief >>"
+				/// \aPC 46147 Testplayer:Testplayer\/a says out of character, "assist me on << roekillik excavation chief >>"
+				/// \aPC -1 Testplayer:Testplayer\/a tells you, "This had better work!!"
+				/// \aPC 813717 Testplayer:Testplayer\/a shouts, "testing"
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts)(?: in |)(?<language>.*?|), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
@@ -847,6 +921,7 @@ namespace EQ2Parser
 					string strActorType = ThisMatch.Groups["actortype"].Value;
 					NewEvent.m_iSourceActorID = int.Parse(ThisMatch.Groups["actorid"].Value);
 					NewEvent.m_strSourceActorName = ThisMatch.Groups["actor"].Value;
+					AssignGameLanguageType(ThisMatch.Groups["language"].Value, ref NewEvent.m_eGameLanguage);
 
 					string strChannelType = ThisMatch.Groups["channel"].Value;
 					switch (strChannelType)
@@ -876,8 +951,8 @@ namespace EQ2Parser
 				}
 
 				/// A player tell to a public channel.
-				/// \aPC -1 Manro:Manro\/a tells Level_70-79 (8), "80 inq lf Kums"
-				ThisMatch = Regex.Match(strParseLine, @"\\aPC (?<actorid>-?\d+) (?<actor>.+):\2\\/a tells (?<destination>\S*) ?\(\d+\), ""(?<message>.*)""$");
+				/// \aPC -1 Testplayer:Testplayer\/a tells Level_70-79 (8), "80 inq lf Kums"
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\aPC (?<actorid>-?\d+) (?<actor>.+):\2\\/a tells (?<destination>\S*) ?\(\d+\), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
@@ -886,6 +961,7 @@ namespace EQ2Parser
 					NewEvent.m_strSourceActorName = ThisMatch.Groups["actor"].Value;
 					NewEvent.m_strDestinationName = ThisMatch.Groups["destination"].Value;
 					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
+					NewEvent.m_eGameLanguage = m_eGameLanguage;
 
 					if (NewEvent.m_strDestinationName == "you")
 					{
@@ -900,11 +976,13 @@ namespace EQ2Parser
 				}
 
 				/// You speak to a general predefined chat channel.
-				ThisMatch = Regex.Match(strParseLine, @"You (?<type>say to the guild|say to the raid party|say to the group|say to the officers|say out of character|say|shout), ""(?<message>.*)""$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You (?<type>say to the guild|say to the raid party|say to the group|say to the officers|say out of character|say|shout)(?: in |)(?<language>.*?|), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
 					NewEvent.m_strSourceActorName = m_strMyCharacterName;
+					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
+					AssignGameLanguageType(ThisMatch.Groups["language"].Value, ref NewEvent.m_eGameLanguage);
 
 					string strChannelType = ThisMatch.Groups["type"].Value;
 					switch (strChannelType)
@@ -918,8 +996,6 @@ namespace EQ2Parser
 						case "shout": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Shout; break;
 					}
 
-					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
-
 					DispatchChatEvent(NewEvent);
 					return true;
 				}
@@ -927,7 +1003,7 @@ namespace EQ2Parser
 				/// You send a tell to a player or speak in a public channel.
 				/// You tell Level_70-79 (8), "I wanna do an all-mage heroic group (1 healer) before this x-pack ends"
 				/// You tell Yosho, "it's all good"
-				ThisMatch = Regex.Match(strParseLine, @"You (?<type>tell|say to) (?<destination>\S*(?= \(\d+\))|\w*) ?(?<channelnumber>\((\d+)\))?, ""(?<message>.*)""$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You (?<type>tell|say to) (?<destination>\S*(?= \(\d+\))|\w*) ?(?<channelnumber>\((\d+)\))?, ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
@@ -973,7 +1049,7 @@ namespace EQ2Parser
 			/// Gives you:
 			/// 1253269431
 			/// You have joined 'Level_10-19' (2)
-			Match ThisMatch = Regex.Match(strParseLine, @"\((?<unixtime>\d+)\)\[.*?\] (?<line>.*)$");
+			Match ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\((?<unixtime>\d+)\)\[.*?\] (?<line>.*)$");
 			if (!ThisMatch.Success || ThisMatch.Groups.Count < 3)
 				return false;
 

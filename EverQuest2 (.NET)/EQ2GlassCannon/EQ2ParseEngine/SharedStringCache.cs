@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EQ2Parser
+namespace EQ2ParseEngine
 {
 	/// <summary>
 	/// The premise for this class is simple; in a volume parsing scenario,
