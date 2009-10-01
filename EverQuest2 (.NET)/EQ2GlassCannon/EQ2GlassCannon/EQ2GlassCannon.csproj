@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4806C353-21B5-4281-8655-9AD2F9791960}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EQ2GlassCannon</RootNamespace>
+    <AssemblyName>EQ2GlassCannon</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>EQ2GlassCannon.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ISXEQ2Wrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\InnerSpace\.NET Programs\ISXEQ2Wrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\InnerSpace\Lavish.InnerSpace.dll</HintPath>
+    </Reference>
+    <Reference Include="Lavish.LavishNav, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\InnerSpace\Lavish.LavishNav.dll</HintPath>
+    </Reference>
+    <Reference Include="Lavish.LavishVMRuntime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\InnerSpace\Lavish.LavishVMRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Speech">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BardController.cs" />
+    <Compile Include="ClericController.cs" />
+    <Compile Include="CsvStreams.cs" />
+    <Compile Include="DruidController.cs" />
+    <Compile Include="EmailQueueThread.cs" />
+    <Compile Include="EnchanterController.cs" />
+    <Compile Include="FlexStringBuilder.cs" />
+    <Compile Include="IllusionistController.cs" />
+    <Compile Include="IniFile.cs" />
+    <Compile Include="MageController.cs" />
+    <Compile Include="MessageThread.cs" />
+    <Compile Include="MysticController.cs" />
+    <Compile Include="PriestController.cs" />
+    <Compile Include="ScoutController.cs" />
+    <Compile Include="ShamanController.cs" />
+    <Compile Include="SorcererController.cs" />
+    <Compile Include="PlayerController.cs" />
+    <Compile Include="PlayerController.CastAbility.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerController.CustomSlashCommands.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerController.Helper.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerController.IniSettings.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerController.StaticGlobals.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerController.VitalStatus.cs">
+      <DependentUpon>PlayerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetCollection.cs" />
+    <Compile Include="TemplarController.cs" />
+    <Compile Include="TroubadorController.cs" />
+    <Compile Include="WardenController.cs" />
+    <Compile Include="WarlockController.cs" />
+    <Compile Include="WizardController.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>copy EQ2GlassCannon.exe "C:\Program Files (x86)\InnerSpace\.NET Programs"
+copy EQ2GlassCannon.exe "Z:\Program Files (x86)\InnerSpace\.NET Programs"</PostBuildEvent>
+  </PropertyGroup>
+</Project>
