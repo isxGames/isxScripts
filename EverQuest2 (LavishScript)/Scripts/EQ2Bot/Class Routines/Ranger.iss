@@ -89,53 +89,53 @@ function Buff_Init()
 function Combat_Init()
 {
 
-	Action[1]:Set[Bounty]
-	SpellRange[1,1]:Set[400]
+	Action[1]:Set[Trick_Shot]
+	SpellRange[1,1]:Set[253]
 
-	Action[2]:Set[Wounding_Arrow]
-	SpellRange[2,1]:Set[252]
+	Action[2]:Set[Storm_of_Arrows]
+	SpellRange[2,1]:Set[90]
 
-	Action[3]:Set[Mastery]
+	Action[3]:Set[Wounding_Arrow]
+	SpellRange[3,1]:Set[252]
 
-	Action[4]:Set[AA_Bladed_Opening]
-	SpellRange[4,1]:Set[399]
+	Action[4]:Set[Triple_Shot]
+	SpellRange[4,1]:Set[251]
+	
+	Action[5]:Set[Miracle_Shot]
+	SpellRange[5,1]:Set[254]
+	
+	Action[6]:Set[Double_Shot]
+	SpellRange[6,1]:Set[250]
 
-	Action[5]:Set[Pounce]
-	SpellRange[5,1]:Set[95]
+	Action[7]:Set[Leg_Shot]
+	SpellRange[7,1]:Set[259]
 
-	Action[6]:Set[Storm_of_Arrows]
-	SpellRange[6,1]:Set[90]
+	Action[8]:Set[AA_Placting_Strike]
+	SpellRange[8,1]:Set[394]
 
-	Action[7]:Set[AA_Spinning_Spear]
-	SpellRange[7,1]:Set[397]
+	Action[9]:Set[Mastery]
 
-	Action[8]:Set[Hidden_Shot]
-	SpellRange[8,1]:Set[260]
+	Action[10]:Set[AA_Bladed_Opening]
+	SpellRange[10,1]:Set[399]
 
-	Action[9]:Set[Triple_Shot]
-	SpellRange[9,1]:Set[251]
+	Action[11]:Set[Pounce]
+	SpellRange[11,1]:Set[95]
 
-	Action[10]:Set[Shadow_Leap]
-	SpellRange[10,1]:Set[135]
+	Action[12]:Set[AA_Spinning_Spear]
+	SpellRange[12,1]:Set[397]
+
+	Action[13]:Set[Shadow_Leap]
+	SpellRange[13,1]:Set[135]
 
 	Action[11]:Set[Back_Fire]
-	SpellRange[11,1]:Set[255]
+	SpellRange[14,1]:Set[255]
 
-	Action[12]:Set[Trick_Shot]
-	SpellRange[12,1]:Set[253]
-
-	Action[13]:Set[Miracle_Shot]
-	SpellRange[13,1]:Set[254]
-
-	Action[14]:Set[Ensnare]
-	MobHealth[14,1]:Set[5]
-	MobHealth[14,2]:Set[100]
-	Power[14,1]:Set[5]
-	Power[14,2]:Set[100]
-	SpellRange[14,1]:Set[235]
-
-	Action[15]:Set[Double_Shot]
-	SpellRange[15,1]:Set[250]
+	Action[15]:Set[Ensnare]
+	MobHealth[15,1]:Set[5]
+	MobHealth[15,2]:Set[100]
+	Power[15,1]:Set[5]
+	Power[15,2]:Set[100]
+	SpellRange[15,1]:Set[235]
 
 	Action[16]:Set[Bleeding_Cut]
 	SpellRange[16,1]:Set[70]
@@ -158,22 +158,12 @@ function Combat_Init()
 	Action[22]:Set[Strike]
 	SpellRange[22,1]:Set[150]
 
-	Action[23]:Set[Leg_Shot]
-	SpellRange[23,1]:Set[259]
-
-	Action[24]:Set[Trap]
-	MobHealth[24,1]:Set[5]
-	MobHealth[24,2]:Set[100]
-	Power[24,1]:Set[5]
-	Power[24,2]:Set[100]
-	SpellRange[24,1]:Set[50]
-
-	Action[25]:Set[AA_Placting_Strike]
-	SpellRange[25,1]:Set[394]
-
-
-
-
+	Action[23]:Set[Trap]
+	MobHealth[23,1]:Set[5]
+	MobHealth[23,2]:Set[100]
+	Power[23,1]:Set[5]
+	Power[23,2]:Set[100]
+	SpellRange[23,1]:Set[50]
 }
 
 function PostCombat_Init()
@@ -233,23 +223,32 @@ function Combat_Routine(int xAction)
 		EQ2Execute /stopfollow
 	}
 
-	call WeaponChange
+	if ${BowAttacksMode} || ${RangedAttackMode}
+	{
+		call CastSpellRange 185
+		call CastSpellRange 260
+	}
+
+	if !${Me.AutoAttackOn}
+	eq2execute /auto 2
 
 	if ${DoHOs}
-	{
 		objHeroicOp:DoHO
-	}
+
+
+
 	;Always keep Honed Reflexes Buffed
-	call CastSpellRange 158 0 0 0 0 0 0 1
+	call CastSpellRange 158
 
 	;Always keep Feral Instinct Buffed
-	call CastSpellRange 156 0 0 0 0 0 0 1
+	call CastSpellRange 156 
+
 
 	;Allways keep short combat buff up (take aim)
 	;if we are using bow attacks or ranged only
 	if ${BowAttacksMode} || ${RangedAttackMode}
 	{
-		call CastSpellRange 155 0 0 0 0 0 0 1
+		call CastSpellRange 155
 	}
 
 	switch ${Action[${xAction}]}
@@ -279,7 +278,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		case Mastery
-			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
+			if !${MainTank} && ${Target.Target.ID}!=${Me.ID} && !${RangedAttackMode}
 			{
 				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 				{
@@ -411,7 +410,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		Default
-			xAction:Set[40]
+			return CombatComplete
 			break
 		}
 }
