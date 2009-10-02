@@ -9,25 +9,21 @@ namespace EQ2GlassCannon
 	public class IllusionistController : EnchanterController
 	{
 		#region INI settings
-		public List<string> m_astrHasteTargets = new List<string>();
-		public List<string> m_astrDynamismTargets = new List<string>();
-		public List<string> m_astrPrismaticTargets = new List<string>();
-		public List<string> m_astrTimeCompressionTargets = new List<string>();
-		public List<string> m_astrIllusoryArmTargets = new List<string>();
-		public List<string> m_astrSpellshieldTargets = new List<string>();
-		public bool m_bBuffArcaneResistance = false;
-		public bool m_bBuffINTWIS = false;
-		public string m_strPeaceOfMindCallout = "Peace of Mind INC (20 sec, damage proc on any offensive action)";
-		public string m_strDestructiveRampageCallout = "Destructive Rampage INC (20 sec, 10% base damage boost to spells and CA's)";
-		public string m_strIlluminateCallout = "Illuminate INC (20 sec, 50% less resistability to all spells)";
-		public string m_strCastingSkillBoostCallout = "Flash INC (+int and +all casting skills)";
-		public string m_strSavanteCallout = "Savante INC (reduced power consumption)";
+		protected List<string> m_astrHasteTargets = new List<string>();
+		protected List<string> m_astrDynamismTargets = new List<string>();
+		protected List<string> m_astrPrismaticTargets = new List<string>();
+		protected List<string> m_astrTimeCompressionTargets = new List<string>();
+		protected List<string> m_astrIllusoryArmTargets = new List<string>();
+		protected List<string> m_astrSpellshieldTargets = new List<string>();
+		protected bool m_bBuffINTWIS = false;
+		protected string m_strDestructiveRampageCallout = "Destructive Rampage INC (20 sec, 10% base damage boost to spells and CA's)";
+		protected string m_strIlluminateCallout = "Illuminate INC (20 sec, 50% less resistability to all spells)";
+		protected string m_strCastingSkillBoostCallout = "Flash INC (+int and +all casting skills)";
+		protected string m_strSavanteCallout = "Savante INC (reduced power consumption)";
 		#endregion
-
 
 		#region Ability ID's
 		protected uint m_uiINTWISBuffAbilityID = 0;
-		protected uint m_uiArcaneBuffAbilityID = 0;
 		protected uint m_uiHasteBuffAbilityID = 0;
 		protected uint m_uiDynamismAbilityID = 0;
 		protected uint m_uiTimeCompressionAbilityID = 0;
@@ -68,9 +64,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferStringList("Illusionist.TimeCompressionTargets", m_astrTimeCompressionTargets);
 			ThisFile.TransferStringList("Illusionist.IllusoryArmTargets", m_astrIllusoryArmTargets);
 			ThisFile.TransferStringList("Illusionist.SpellshieldTargets", m_astrSpellshieldTargets);
-			ThisFile.TransferBool("Illusionist.BuffArcaneResistance", ref m_bBuffArcaneResistance);
 			ThisFile.TransferBool("Illusionist.BuffIntWis", ref m_bBuffINTWIS);
-			ThisFile.TransferString("Illusionist.PeaceOfMindCallout", ref m_strPeaceOfMindCallout);
 			ThisFile.TransferString("Illusionist.DestructiveRampageCallout", ref m_strDestructiveRampageCallout);
 			ThisFile.TransferString("Illusionist.IlluminateCallout", ref m_strIlluminateCallout);
 			ThisFile.TransferString("Illusionist.CastingSkillBoostCallout", ref m_strCastingSkillBoostCallout);
@@ -146,37 +140,26 @@ namespace EQ2GlassCannon
 			{
 				if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiPersonaePetAbilityID, m_bUsePet))
 					return true;
-
 				if (CheckToggleBuff(m_uiINTWISBuffAbilityID, m_bBuffINTWIS))
 					return true;
-
 				if (CheckToggleBuff(m_uiArcaneBuffAbilityID, m_bBuffArcaneResistance))
 					return true;
-
 				if (CheckToggleBuff(m_uiMainRegenBuffAbilityID, m_bBuffRegen))
 					return true;
-
 				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
-
 				if (CheckSingleTargetBuffs(m_uiDynamismAbilityID, m_astrDynamismTargets))
 					return true;
-
 				if (CheckSingleTargetBuffs(m_uiHasteBuffAbilityID, m_astrHasteTargets))
 					return true;
-
 				if (CheckSingleTargetBuff(m_uiTimeCompressionAbilityID, m_astrTimeCompressionTargets))
 					return true;
-
 				if (CheckSingleTargetBuff(m_uiIllusoryArmAbilityID, m_astrIllusoryArmTargets))
 					return true;
-
 				if (MeActor.InCombatMode && CheckSingleTargetBuff(m_uiSpellshieldAbilityID, m_astrSpellshieldTargets))
 					return true;
-
 				if (CheckRacialBuffs())
 					return true;
-
 				StopCheckingBuffs();
 			}
 
@@ -190,7 +173,7 @@ namespace EQ2GlassCannon
 			if (m_OffensiveTargetActor != null && MeActor.IsIdle)
 			{
 				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
-				bool bDumbfiresAdvised = m_OffensiveTargetActor.IsNamed || (m_OffensiveTargetActor.IsEpic && m_OffensiveTargetActor.Health > 25) || (m_OffensiveTargetActor.IsHeroic && m_OffensiveTargetActor.Health > 90);
+				bool bDumbfiresAdvised = AreDumbfiresAdvised();
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 
 				if (CastHOStarter())

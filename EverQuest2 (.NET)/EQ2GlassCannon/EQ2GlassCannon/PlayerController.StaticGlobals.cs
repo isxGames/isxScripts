@@ -304,6 +304,7 @@ namespace EQ2GlassCannon
 
 						switch (strLastClass.ToLower())
 						{
+							case "coercer": s_Controller = new CoercerController(); break;
 							case "illusionist": s_Controller = new IllusionistController(); break;
 							case "mystic": s_Controller = new MysticController(); break;
 							case "templar": s_Controller = new TemplarController(); break;
