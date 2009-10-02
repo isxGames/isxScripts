@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="BardController.cs" />
     <Compile Include="ClericController.cs" />
+    <Compile Include="CoercerController.cs" />
     <Compile Include="CsvStreams.cs" />
     <Compile Include="DruidController.cs" />
     <Compile Include="EmailQueueThread.cs" />
