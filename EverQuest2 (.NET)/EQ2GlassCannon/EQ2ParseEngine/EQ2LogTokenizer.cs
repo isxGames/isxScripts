@@ -271,6 +271,7 @@ namespace EQ2ParseEngine
 			public enum ActionType : int
 			{
 				Unknown = 0,
+				Cure,
 				Stoneskin,
 				Ward,
 				Heal,
@@ -318,6 +319,9 @@ namespace EQ2ParseEngine
 
 			internal string m_strAbilityName = string.Empty;
 			public string AbilityName { get { return m_strAbilityName; } }
+
+			internal string m_strSecondaryParameter = string.Empty;
+			public string SecondaryParameter { get { return m_strSecondaryParameter; } }
 
 			internal ActionType m_eActionType = ActionType.Unknown;
 			public ActionType Action { get { return m_eActionType; } }
@@ -378,6 +382,8 @@ namespace EQ2ParseEngine
 			}
 
 			ThisMatch = m_CompiledRegexCache.Match(strPair, @"(?<actor>.+?)'s? (?<ability>.+)");
+			if (!ThisMatch.Success)
+				ThisMatch = m_CompiledRegexCache.Match(strPair, @"(?<actor>YOUR) (?<ability>.+)");
 			if (ThisMatch.Success)
 			{
 				strActor = ThisMatch.Groups["actor"].Value;
@@ -396,7 +402,7 @@ namespace EQ2ParseEngine
 
 		/************************************************************************************/
 		/// <summary>
-		/// Conveniently translates "YOU" and "YOURSELF" to my character name, then assigning the variable.
+		/// Assigns the variable, but first conveniently translating "YOU" and "YOURSELF" to my character name if needed.
 		/// </summary>
 		/// <param name="strLogName"></param>
 		/// <param name="strFinalName"></param>
@@ -447,8 +453,22 @@ namespace EQ2ParseEngine
 		/************************************************************************************/
 		protected void AssignAttributeType(string strLogName, ref ActionEventArgs.AttributeFlags eAttributes)
 		{
+			if (strLogName.StartsWith("critically"))
+			{
+				eAttributes |= ActionEventArgs.AttributeFlags.Critical;
+				return;
+			}
+
 			switch (strLogName)
 			{
+				case "hit":
+				case "hits": break;
+				case "double attack":
+				case "double attacks": eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
+				case "flurries":
+				case "flurry": eAttributes |= ActionEventArgs.AttributeFlags.Flurry; break;
+				case "aoe attack":
+				case "aoe attacks": eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack; break;
 				case "blocks":
 				case "block": eAttributes |= ActionEventArgs.AttributeFlags.Blocked; break;
 				case "misses":
@@ -597,6 +617,24 @@ namespace EQ2ParseEngine
 			/// Action events are not even worth calling if no event callback is registered.
 			if (ActionOccurred != null)
 			{
+				/// Anonymous damage from ability.
+				/// This absolutely needs to be parsed BEFORE the next RegEx because the victim and ability are reversed.
+				/// a void savage is hit by Flameshield for 181 heat damage.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<victim>.+?) (?:is|are) (?<critically>critically |)hit by (?<ability>.*) for (?<quantity>\d+) (?<damagetype>focus|falling|crushing|slashing|piercing|heat|cold|magic|mental|divine|disease|poison) damage.$");
+				if (ThisMatch.Success)
+				{
+					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
+
+					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
+					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_strAbilityName = ThisMatch.Groups["ability"].Value;
+
+					DispatchActionEvent(NewEvent);
+					return true;
+				}
+
 				/// General offensive damage.
 				/// YOU hit a deathless gazer for 340 crushing damage.
 				/// YOU critically hit The Carnovingian for 506 crushing damage.
@@ -620,22 +658,8 @@ namespace EQ2ParseEngine
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-
-					bool bCritically = ThisMatch.Groups["critically"].Value.StartsWith("critically");
-					if (bCritically)
-						NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Critical;
-
-					switch (ThisMatch.Groups["attacktype"].Value)
-					{
-						case "hit":
-						case "hits": break;
-						case "double attack":
-						case "double attacks": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
-						case "flurries":
-						case "flurry": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Flurry; break;
-						case "aoe attack":
-						case "aoe attacks": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack; break;
-					}
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
+					AssignAttributeType(ThisMatch.Groups["attacktype"].Value, ref NewEvent.m_eAttributes);
 
 					/// Parse the damage list (which may include multiple hits of varying damage types).
 					string strDamageList = ThisMatch.Groups["damagelist"].Value;
@@ -664,11 +688,11 @@ namespace EQ2ParseEngine
 					return true;
 				}
 
-				/// Anonymous damage.
-				/// Retarded?
+				/// Anonymous damage from autoattack.
+				/// The dev formatting for this line type is exceptionally poorly done. Very lazy.
 				/// a summoned spiderling is aoe attack for 166 crushing damage.
-				/// a summoned spiderling is aoe attack for 179 crushing damage.
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<victim>.+?) is (?<attacktype>hit|aoe attack) for (?<quantity>\d+) (?<damagetype>focus|falling|crushing|slashing|piercing|heat|cold|magic|mental|divine|disease|poison) damage.$");
+				/// a summoned spiderling is critically double attack for 179 crushing damage.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<victim>.+?) (?:is|are) (?<critically>critically |)(?<attacktype>hit|aoe attack|double attack) for (?<quantity>\d+) (?<damagetype>focus|falling|crushing|slashing|piercing|heat|cold|magic|mental|divine|disease|poison) damage.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
@@ -676,9 +700,8 @@ namespace EQ2ParseEngine
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
 					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
-
-					if (ThisMatch.Groups["attacktype"].Value == "aoe attack")
-						NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack;
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
+					AssignAttributeType(ThisMatch.Groups["attacktype"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
 					return true;
@@ -693,13 +716,17 @@ namespace EQ2ParseEngine
 				/// an undying warrior's Rupture hits Testplayer but fails to inflict any damage.
 				/// a deathless gazer's Eye of Fire hits Testplayer but fails to inflict any damage.
 				/// a deathless gazer hits Testplayer but fails to inflict any damage.
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actor>.+?) (?<critically>critically |)(?<duplication>hit|double attack)s (?<victim>.+) but fails to inflict any damage.$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)(?<attacktype>hit|double attack)s (?<victim>.+) but fails to inflict any damage.$");
 				if (ThisMatch.Success)
 				{
-					string strSourceActorName = ThisMatch.Groups["actor"].Value;
-					string strDuplication = ThisMatch.Groups["duplication"].Value;
-					string strVictimName = ThisMatch.Groups["victim"].Value;
+					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
 
+					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
+					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
+					AssignAttributeType(ThisMatch.Groups["attacktype"].Value, ref NewEvent.m_eAttributes);
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
+
+					DispatchActionEvent(NewEvent);
 					return true;
 				}
 
@@ -724,6 +751,23 @@ namespace EQ2ParseEngine
 				/// Cures.
 				/// YOUR Cure Arcane relieves YOU of Chronosiphoning.
 				/// YOUR Cure relieves Spawn from Testplayer.
+				/// Testplayer's Purifying Persistence relieves Nether Mists from Testplayer2.
+				/// Testplayer's Ebbing Spirit relieves Nether Tide from YOU.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) relieves (?<badeffect>.+) from (?<victim>.+).$");
+				if (!ThisMatch.Success)
+					ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) relieves (?<victim>YOU) of (?<badeffect>.+).$");
+				if (ThisMatch.Success)
+				{
+					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
+					NewEvent.m_eActionType = ActionEventArgs.ActionType.Cure;
+
+					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
+					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
+					NewEvent.m_strSecondaryParameter = ThisMatch.Groups["badeffect"].Value;
+
+					DispatchActionEvent(NewEvent);
+					return true;
+				}
 
 				/// Wards from the healer's perspective.
 				/// Testplayer's Arcane Symphony absorbs 98 points of damage from being done to YOU.
@@ -758,10 +802,7 @@ namespace EQ2ParseEngine
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
-
-					bool bCritically = ThisMatch.Groups["critically"].Value.StartsWith("critically");
-					if (bCritically)
-						NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Critical;
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
 					return true;
@@ -780,10 +821,7 @@ namespace EQ2ParseEngine
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
-
-					bool bCritically = ThisMatch.Groups["critically"].Value.StartsWith("critically");
-					if (bCritically)
-						NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Critical;
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
 					return true;
@@ -878,17 +916,17 @@ namespace EQ2ParseEngine
 						NewEvent.m_strDestination = strVictimAbility;
 					}
 
-					ThisMatch = m_CompiledRegexCache.Match(strResponse, @"(.*?)(?<duplication1>|aoe attack|double attack|) ?(?<counteraction>blocks|block|misses|miss|parry|parries|dodges|dodge|resists|resist|ripostes|riposte|deflects|deflect|reflects|reflect)(?: the )?(?<duplication2>double attack|aoe attack|)$");
+					ThisMatch = m_CompiledRegexCache.Match(strResponse, @"(.*?)(?<attacktype1>|aoe attack|double attack|) ?(?<counteraction>blocks|block|misses|miss|parry|parries|dodges|dodge|resists|resist|ripostes|riposte|deflects|deflect|reflects|reflect)(?: the )?(?<attacktype2>double attack|aoe attack|)$");
 					if (ThisMatch.Success)
 					{
 						AssignAttributeType(ThisMatch.Groups["counteraction"].Value, ref NewEvent.m_eAttributes);
 
-						switch (ThisMatch.Groups["duplication1"].Value)
+						switch (ThisMatch.Groups["attacktype1"].Value)
 						{
 							case "aoe attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack; break;
 							case "double attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
 						}
-						switch (ThisMatch.Groups["duplication2"].Value)
+						switch (ThisMatch.Groups["attacktype2"].Value)
 						{
 							case "aoe attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.AOEAutoAttack; break;
 							case "double attack": NewEvent.m_eAttributes |= ActionEventArgs.AttributeFlags.Double; break;
