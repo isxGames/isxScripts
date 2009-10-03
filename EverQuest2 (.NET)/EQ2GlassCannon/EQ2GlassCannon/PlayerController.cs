@@ -90,6 +90,7 @@ namespace EQ2GlassCannon
 		protected int m_iOffensiveTargetID = -1;
 		protected int m_iLastOffensiveTargetID = -1;
 		protected Actor m_OffensiveTargetActor = null;
+		protected Dictionary<int, Actor> m_OffensiveTargetEncounterActorDictionary = new Dictionary<int, Actor>();
 		protected Point3D m_ptStayLocation = new Point3D();
 		protected double m_fCurrentMovementTargetCoordinateTolerance = 0.0f;
 		protected string m_strPositionalCommandingPlayer = string.Empty;
@@ -1092,28 +1093,98 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool GetOffensiveTargetActor()
 		{
+			/// Select a new target based on the last evaluated encounter.
 			if (m_iOffensiveTargetID == -1)
-				return false;
-
-			Actor OffensiveTargetActor = GetActor(m_iOffensiveTargetID);
-
-			if (OffensiveTargetActor == null ||
-				!OffensiveTargetActor.IsValid ||
-				OffensiveTargetActor.IsDead ||
-				OffensiveTargetActor.IsLocked ||
-				OffensiveTargetActor.Type == "NoKill NPC")
 			{
-				if (OffensiveTargetActor == null)
-					Program.Log("Offensive target is null.");
-				else
-					Program.Log("Offensive target ({0}, {1}) is dead, locked, or invalid.", OffensiveTargetActor.Name, OffensiveTargetActor.ID);
+				/// There are no alternative choices; we're SOL.
+				if (m_eNextEncounterKillType == NextEncounterKillType.None || m_OffensiveTargetEncounterActorDictionary.Count == 0)
+					return false;
 
+				Actor CandidateActor = null;
+
+				if (m_eNextEncounterKillType == NextEncounterKillType.AssistMainTank)
+				{
+					CandidateActor = GetNestedCombatAssistTarget(m_strCurrentMainTank);
+				}
+
+				/// Choose highest or lowest health.
+				else if (m_eNextEncounterKillType == NextEncounterKillType.HighestHealth ||
+					m_eNextEncounterKillType == NextEncounterKillType.LowestHealth)
+				{
+					int iHighestHealth = 0;
+					int iLowestHealth = 100;
+
+					/// Refresh the dictionary with current actor instances.
+					Dictionary<int, Actor> NewDictionary = new Dictionary<int, Actor>();
+					foreach (int iActorID in m_OffensiveTargetEncounterActorDictionary.Keys)
+					{
+						Actor ThisActor = GetActor(iActorID);
+						if (ThisActor != null && ThisActor.IsValid)
+							NewDictionary.Add(iActorID, ThisActor);
+					}
+					m_OffensiveTargetEncounterActorDictionary = NewDictionary;
+
+					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
+					{
+						if (m_eNextEncounterKillType == NextEncounterKillType.HighestHealth)
+						{
+							if (ThisActor.Health > iHighestHealth || CandidateActor == null)
+							{
+								iHighestHealth = ThisActor.Health;
+								CandidateActor = ThisActor;
+							}
+						}
+						else if (m_eNextEncounterKillType == NextEncounterKillType.LowestHealth)
+						{
+							if (ThisActor.Health > iLowestHealth || CandidateActor == null)
+							{
+								iLowestHealth = ThisActor.Health;
+								CandidateActor = ThisActor;
+							}
+						}
+					}
+				}
+
+				if (CandidateActor == null)
+				{
+					Program.Log("Primary target dead, no alternate chosen.");
+				}
+				else
+				{
+					Program.Log("Primary target dead, alternate target chosen: {0} ({1}).", CandidateActor.Name, CandidateActor.ID);
+					m_iOffensiveTargetID = CandidateActor.ID;
+				}
+			}
+
+			m_OffensiveTargetActor = null;
+			m_OffensiveTargetEncounterActorDictionary.Clear();
+
+			/// Figure out who is in the encounter, and grab the primary actor while we're at it.
+			foreach (Actor ThisActor in EnumActors())
+			{
+				if (ThisActor.IsValid &&
+					!ThisActor.IsDead &&
+					ThisActor.Type != "NoKill NPC" &&
+					!ThisActor.IsLocked)
+				{
+					if (ThisActor.ID == m_iOffensiveTargetID)
+						m_OffensiveTargetActor = ThisActor;
+
+					if (ThisActor.ID == m_iOffensiveTargetID || ThisActor.IsInSameEncounter(m_iOffensiveTargetID))
+						m_OffensiveTargetEncounterActorDictionary.Add(ThisActor.ID, ThisActor);
+				}
+			}
+
+			if (m_OffensiveTargetActor == null)
+			{
+				Program.Log("Offensive target no longer available for combat.");
 				WithdrawFromCombat();
 				return false;
 			}
-
-			m_OffensiveTargetActor = OffensiveTargetActor;
-			m_bIHaveAggro = ((double)m_OffensiveTargetActor.ThreatToMe >= m_fAggroPanicPercentage);
+			else
+			{
+				m_bIHaveAggro = ((double)m_OffensiveTargetActor.ThreatToMe >= m_fAggroPanicPercentage);
+			}
 			return true;
 		}
 
@@ -1155,13 +1226,13 @@ namespace EQ2GlassCannon
 			if (m_bUseRanged && (fDistance > 10.0) && !Me.RangedAutoAttackOn)
 			{
 				/// Turn on ranged auto-attack instead if there is too much distance to the target.
-				RunCommand("/auto 2");
+				RunCommand(1, "/auto 2");
 				m_OffensiveTargetActor.DoFace();
 				return false;
 			}
 			else if (m_bAutoAttack && !Me.AutoAttackOn)
 			{
-				RunCommand("/auto 1");
+				RunCommand(1, "/auto 1");
 				m_OffensiveTargetActor.DoFace();
 				return false;
 			}
@@ -1205,7 +1276,7 @@ namespace EQ2GlassCannon
 				/// Turn it off just in case.
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
-					RunCommand("/auto 0");
+					RunCommand(1, "/auto 0");
 					bActionTaken = true;
 				}
 
@@ -1220,7 +1291,7 @@ namespace EQ2GlassCannon
 				Actor PetTargetActor = PetActor.Target();
 				if (PetTargetActor.IsValid && PetTargetActor.InCombatMode && PetTargetActor.ID == TargetActor.ID)
 				{
-					RunCommand("/pet backoff");
+					RunCommand(1, "/pet backoff");
 					bActionTaken = true;
 				}
 			}
@@ -1239,7 +1310,7 @@ namespace EQ2GlassCannon
 				/// Turn it off just in case.
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
-					RunCommand("/auto 0");
+					RunCommand(1, "/auto 0");
 					bActionTaken = true;
 				}
 
@@ -1247,7 +1318,7 @@ namespace EQ2GlassCannon
 				Actor PetActor = Me.Pet();
 				if (PetActor.IsValid && PetActor.InCombatMode)
 				{
-					RunCommand("/pet backoff");
+					RunCommand(1, "/pet backoff");
 					bActionTaken = true;
 				}
 
@@ -1255,7 +1326,7 @@ namespace EQ2GlassCannon
 				Actor TargetActor = MeActor.Target();
 				if (TargetActor.IsValid && TargetActor.Type == "NPC")
 				{
-					RunCommand("/target_none");
+					RunCommand(1, "/target_none");
 					bActionTaken = true;
 				}
 			}

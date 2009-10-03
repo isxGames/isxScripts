@@ -211,6 +211,9 @@ namespace EQ2GlassCannon
 						return true;
 					}
 
+					/// Force a recalculation.
+					m_OffensiveTargetEncounterActorDictionary.Clear();
+
 					Actor OffensiveTargetActor = GetNestedCombatAssistTarget(astrParameters[0]);
 					if (OffensiveTargetActor == null)
 					{
