@@ -831,10 +831,6 @@ namespace EQ2ParseEngine
 				/// YOUR Soulsiphon zaps Vin Moltor draining 331 points of power.
 				/// Gale Monarch E'yildir slashes Testplayer draining 0 points of power.
 				/// Testplayer's Vexing Verses confounds a deathless gazer draining 42 points of power.
-				/// Testplayer is drained by Caustic Burns of 0 points of power.
-				/// Testplayer is drained by Revived Sickness of 8966 points of power.
-				/// Testplayer is drained by Revived Sickness of 9379 points of power.
-				/// Testplayer is drained by Void Flames of 1777 points of power.
 				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (crushes|pierces|slashes|burns|freezes|smites|zaps|confounds|diseases|poisons) (?<victim>.+) draining (?<quantity>\d+) points? of power.$");
 				if (ThisMatch.Success)
 				{
@@ -848,6 +844,28 @@ namespace EQ2ParseEngine
 					DispatchActionEvent(NewEvent);
 					return true;
 				}
+
+				/// Anonymous mana drain.
+				/// Testplayer is drained by Caustic Burns of 0 points of power.
+				/// Testplayer is drained by Revived Sickness of 8966 points of power.
+				/// Testplayer is drained by Revived Sickness of 9379 points of power.
+				/// Testplayer is drained by Void Flames of 1777 points of power.
+				/// Testplayer is drained by Binding Flames of Rage of 465 points of power.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<victim>.+?) (?:is|are) (?<critically>critically |)drained by (?<ability>.*) of (?<quantity>\d+) points? of power.$");
+				if (ThisMatch.Success)
+				{
+					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
+					NewEvent.m_eActionType = ActionEventArgs.ActionType.PowerDrain;
+
+					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_strAbilityName = ThisMatch.Groups["ability"].Value;
+
+					DispatchActionEvent(NewEvent);
+					return true;
+				}
+
 
 				/// Your target's stoneskin absorbed 1,172 points of damage!
 				/// Your stoneskin absorbed 986 points of damage!
