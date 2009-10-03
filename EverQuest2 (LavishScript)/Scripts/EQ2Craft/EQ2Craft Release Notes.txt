@@ -1,5 +1,10 @@
 Revision History ||
 ===================
+v8.93 - Fixed Writ Reward Window bug. No more "Automatically accepted OMGHAX Quest Rewards." when 
+        logging in or zoning! (Thanks HotShot)
+      - Really really fixed the Reset Thresholds button to actually set thresholds to the current
+        defaults.
+
 v8.92 - Bugfix release. Slightly increased delay between turning in and getting new writ. This
         will hopefully resolve some issues with craft randomly being unable to obtain a new writ
         quest.
