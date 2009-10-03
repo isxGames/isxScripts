@@ -172,7 +172,6 @@ namespace EQ2GlassCannon
 			/// Decide if the offensive target is still legitimate. If so, attempt to target it.
 			if (m_OffensiveTargetActor != null && MeActor.IsIdle)
 			{
-				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
 				bool bDumbfiresAdvised = AreDumbfiresAdvised();
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 

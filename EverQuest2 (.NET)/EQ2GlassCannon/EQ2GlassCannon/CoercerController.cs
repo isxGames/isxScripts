@@ -78,6 +78,7 @@ namespace EQ2GlassCannon
 			m_uiSingleHateTransferAbilityID = SelectHighestTieredAbilityID("Enraging Demeanor");
 			m_uiCoerciveHealingAbilityID = SelectHighestAbilityID("Coercive Healing");
 			m_uiGroupINTAGIBuffAbilityID = SelectHighestTieredAbilityID("Signet of Intellect");
+			m_uiMainRegenBuffAbilityID = SelectHighestTieredAbilityID("Breeze");
 			m_uiIntellectualRemedyAbilityID = SelectHighestAbilityID("Intellectual Remedy");
 
 			m_uiSingleMagicalDebuffAbilityID = SelectHighestTieredAbilityID("Obliterated Psyche");
@@ -112,10 +113,11 @@ namespace EQ2GlassCannon
 
 			GetOffensiveTargetActor();
 
-			if (MeActor.IsIdle) /// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
+			if (MeActor.IsIdle)
 			{
 				if (m_bUseGreenAEs)
 				{
+					/// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
 					if (CastNextMez(m_uiGreenMezAbilityID, m_uiSingleMezAbilityID))
 						return true;
 				}
@@ -160,7 +162,6 @@ namespace EQ2GlassCannon
 			/// Decide if the offensive target is still legitimate. If so, attempt to target it.
 			if (m_OffensiveTargetActor != null && MeActor.IsIdle)
 			{
-				double fDistance = GetActorDistance2D(MeActor, m_OffensiveTargetActor);
 				bool bDumbfiresAdvised = AreDumbfiresAdvised();
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
 
@@ -212,6 +213,8 @@ namespace EQ2GlassCannon
 					/// We attempt this in two places:
 					/// - Here at the beginning for the debuff, and
 					/// - Down the list for the proc DPS.
+					if (!IsAbilityMaintained(m_uiSingleMagicalDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleMagicalDebuffAbilityID))
+						return true;
 					if (!IsAbilityMaintained(m_uiSingleArcaneDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleArcaneDebuffAbilityID))
 						return true;
 					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiNullifyingStaffAbilityID))

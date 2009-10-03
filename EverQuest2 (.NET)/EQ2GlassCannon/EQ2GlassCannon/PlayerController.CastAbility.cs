@@ -542,7 +542,7 @@ namespace EQ2GlassCannon
 			{
 				foreach (Actor ThisActor in EnumActorsInRadius(fRadiusOverride))
 				{
-					if (ThisActor.Type != "NoKill NPC" && !ThisActor.IsDead)
+					if ((ThisActor.Type != "NoKill NPC") && !ThisActor.IsDead)
 						iValidVictimCount++;
 				}
 				m_AbilityCompatibleTargetCountCache.Add(uiAbilityID, iValidVictimCount);
@@ -605,8 +605,7 @@ namespace EQ2GlassCannon
 				double fDistance = GetActorDistance3D(MeActor, m_OffensiveTargetActor);
 				if (ThisAbility.IsWithinRange(fDistance))
 				{
-					/// Actor.EncounterSize also includes dead members, so we have to manually find the ones who are still alive.
-					foreach (Actor ThisActor in EnumActors("npc"))
+					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
 					{
 						double fThisDistance = GetActorDistance3D(m_OffensiveTargetActor, ThisActor);
 						if (fThisDistance < ThisAbility.m_fEffectRadius &&
