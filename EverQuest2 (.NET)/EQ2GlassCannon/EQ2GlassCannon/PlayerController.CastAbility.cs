@@ -538,12 +538,24 @@ namespace EQ2GlassCannon
 			int iValidVictimCount = 0;
 			if (m_AbilityCompatibleTargetCountCache.ContainsKey(uiAbilityID))
 				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
-			else if (!m_bUseBlueAEs)
+			else if (m_bUseBlueAEs)
 			{
 				foreach (Actor ThisActor in EnumActorsInRadius(fRadiusOverride))
 				{
-					if ((ThisActor.Type != "NoKill NPC") && !ThisActor.IsDead)
-						iValidVictimCount++;
+					if (ThisActor.IsDead)
+						continue;
+
+					string strActorType = ThisActor.Type;
+					if (strActorType != "NPC" && strActorType != STR_NAMED_NPC)
+						continue;
+
+					/// Total fudging here.  I'm basically trying to clip off upstairs and downstairs.
+					double fLowY = MeActor.Y - 5;
+					double fHighY = MeActor.Y + (fRadiusOverride / 2);
+					if (ThisActor.Y < fLowY || fHighY < ThisActor.Y)
+						continue;
+
+					iValidVictimCount++;
 				}
 				m_AbilityCompatibleTargetCountCache.Add(uiAbilityID, iValidVictimCount);
 			}

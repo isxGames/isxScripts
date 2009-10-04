@@ -15,6 +15,7 @@ namespace EQ2GlassCannon
 	public partial class PlayerController
 	{
 		protected const string STR_NO_KILL_NPC = "NoKill NPC";
+		protected const string STR_NAMED_NPC = "NamedNPC";
 
 		protected uint m_uiLoreAndLegendAbilityID = 0;
 		protected uint m_uiHOStarterAbiltyID = 0;
@@ -1124,6 +1125,7 @@ namespace EQ2GlassCannon
 					}
 					m_OffensiveTargetEncounterActorDictionary = NewDictionary;
 
+					/// Decide who in the encounter remains with the highest or lowest health.
 					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
 					{
 						if (m_eNextEncounterKillType == NextEncounterKillType.HighestHealth)
@@ -1164,7 +1166,7 @@ namespace EQ2GlassCannon
 			{
 				if (ThisActor.IsValid &&
 					!ThisActor.IsDead &&
-					ThisActor.Type != "NoKill NPC" &&
+					(ThisActor.Type == STR_NAMED_NPC || ThisActor.Type == "NPC") &&
 					!ThisActor.IsLocked)
 				{
 					if (ThisActor.ID == m_iOffensiveTargetID)
@@ -1346,7 +1348,7 @@ namespace EQ2GlassCannon
 				foreach (GroupMember ThisMember in m_FriendDictionary.Values)
 				{
 					Actor ThisActor = ThisMember.ToActor();
-					if (ThisActor.IsValid && !ThisActor.IsDead) /// TODO: But are dead players also invalid by design?
+					if (ThisActor.IsValid && !ThisActor.IsDead)
 					{
 						bEveryoneDead = false;
 						break;

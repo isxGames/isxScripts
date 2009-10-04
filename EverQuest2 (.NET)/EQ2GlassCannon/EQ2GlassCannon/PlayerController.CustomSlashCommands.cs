@@ -149,7 +149,7 @@ namespace EQ2GlassCannon
 					strAssistDescription += " --> ";
 				strAssistDescription += string.Format("{0} ({1})", ThisActor.Name, ThisActor.ID);
 
-				if (ThisActor.Type == "NPC" || ThisActor.Type == "NamedNPC")
+				if (ThisActor.Type == "NPC" || ThisActor.Type == STR_NAMED_NPC)
 				{
 					FinalTargetActor = ThisActor;
 					break;
