@@ -880,7 +880,11 @@ function buy(string tabname, string action)
 						elseif ${action.Equal["init"]} && ${tabname.Equal["Craft"]}
 						{
 							if ${CraftItem}
-								UIElement[ItemList@Craft@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
+							{
+								ItemName:Set["${BuyIterator.Key}"]
+								if ${UIElement[CraftFilter@Craft@GUITabs@MyPrices].Text.Length} == 0 || ${ItemName.Find[${UIElement[CraftFilter@Craft@GUITabs@MyPrices].Text}]} != NULL
+									UIElement[ItemList@Craft@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
+							}
 						}
 						elseif ${action.Equal["place"]}
 						{
