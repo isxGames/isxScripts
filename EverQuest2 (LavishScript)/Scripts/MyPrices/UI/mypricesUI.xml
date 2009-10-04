@@ -1631,6 +1631,19 @@
 						<Width>350</Width> 
 						<Height>15</Height>
 					</Text>
+					<Text Name='CraftFilterText'>
+						<X>17</X>
+						<Y>15</Y>
+						<Width>60</Width>
+						<Height>20</Height>
+						<Text>Filter:</Text>
+					</Text>
+					<Textentry Name='CraftFilter'>
+						<X>50</X>
+						<Y>15</Y>
+						<Width>200</Width>
+						<Height>20</Height>
+					</Textentry>
 					<Text Name='CraftName'>
 						<X>25</X>
 						<Y>455</Y>
