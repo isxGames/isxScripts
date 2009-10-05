@@ -6498,6 +6498,15 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
+	if ${ChoiceWindow.Text.Find[Heirloom]} && ${Me.ToActor.Health}>1
+	{
+		if ${NoTradeConfirm}
+			ChoiceWindow:DoChoice1
+		else
+			ChoiceWindow:DoChoice2
+		return
+	}
+
 	;ChoiceWindow:DoChoice2
 	return
 }
