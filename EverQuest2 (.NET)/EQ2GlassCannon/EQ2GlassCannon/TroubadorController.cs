@@ -10,13 +10,13 @@ namespace EQ2GlassCannon
 	{
 		public class PlayerRequest
 		{
-			public DateTime m_Timestamp = DateTime.Now;
+			public DateTime m_Timestamp = PlayerController.CurrentCycleTimestamp;
 
 			public TimeSpan Age
 			{
 				get
 				{
-					return DateTime.Now - m_Timestamp;
+					return PlayerController.CurrentCycleTimestamp - m_Timestamp;
 				}
 			}
 

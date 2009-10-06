@@ -216,7 +216,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected void StartCastTimers(CachedAbility ThisAbility)
 		{
-			DateTime StartTime = DateTime.Now;
+			DateTime StartTime = CurrentCycleTimestamp;
 			m_LastCastStartTime = StartTime;
 			m_LastCastEndTime = StartTime + TimeSpan.FromSeconds(ThisAbility.m_fCastTimeSeconds + ThisAbility.m_fRecoveryTimeSeconds);
 			return;
@@ -227,7 +227,7 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-				DateTime StartTime = DateTime.Now;
+				DateTime StartTime = CurrentCycleTimestamp;
 				DateTime EndTime = StartTime + TimeSpan.FromSeconds(ThisItem.CastingTime + ThisItem.RecoveryTime);
 
 				/// If no exception (Item.CastingTime or Item.RecoveryTime) has happened by this point, then continue.
@@ -244,7 +244,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected void CancelCast()
 		{
-			m_LastCastEndTime = DateTime.Now;
+			m_LastCastEndTime = CurrentCycleTimestamp;
 			RunCommand("/cancel_spellcast");
 			return;
 		}
@@ -265,7 +265,7 @@ namespace EQ2GlassCannon
 		{
 			get
 			{
-				return Me.CastingSpell || (DateTime.Now < m_LastCastEndTime);
+				return Me.CastingSpell || (CurrentCycleTimestamp < m_LastCastEndTime);
 			}
 		}
 
@@ -680,11 +680,15 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		protected bool CastNextMez(params uint[] auiMezAbilityIDs)
 		{
-			if (m_eMezMode == MezMode.None)
+			if (m_eMezMode == MezMode.Never)
 				return false;
 
 			else if (m_eMezMode == MezMode.OnlyWhenMainTankDead)
 			{
+				/// There's no main tank!
+				if (string.IsNullOrEmpty(m_strCurrentMainTank))
+					return false;
+
 				VitalStatus MainTankStatus = null;
 				if (GetVitalStatus(m_strCurrentMainTank, ref MainTankStatus) && !MainTankStatus.m_bIsDead)
 					return false;
@@ -1076,7 +1080,7 @@ namespace EQ2GlassCannon
 			/// The correct termination of an attempt is when OnIncomingText() receives a status string.
 			if (m_bAutoHarvestInProgress)
 			{
-				if ((DateTime.Now - m_LastAutoHarvestAttemptTime) < TimeSpan.FromSeconds(5))
+				if ((CurrentCycleTimestamp - m_LastAutoHarvestAttemptTime) < TimeSpan.FromSeconds(5))
 					return false;
 				else
 				{
@@ -1117,7 +1121,7 @@ namespace EQ2GlassCannon
 			NearestHarvestableNode.DoubleClick();
 
 			m_bAutoHarvestInProgress = true;
-			m_LastAutoHarvestAttemptTime = DateTime.Now;
+			m_LastAutoHarvestAttemptTime = CurrentCycleTimestamp;
 			Program.Log("Harvesting \"{1}\" from a distance of {2:0.00} meters...", NearestHarvestableNode.Type, NearestHarvestableNode.Name, fNearestHarvestableDistance);
 			return false;
 		}

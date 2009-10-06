@@ -14,6 +14,11 @@ namespace EQ2GlassCannon
 {
 	public partial class PlayerController
 	{
+		protected bool m_bTrackActor = false;
+		protected TimeSpan m_TrackActorInterval = TimeSpan.FromTicks(0);
+		protected DateTime m_NextTrackActorAttemptTime = DateTime.FromBinary(0);
+		protected string m_strTrackActorSubstring = string.Empty;
+
 		/************************************************************************************/
 		protected void AppendActorInfo(FlexStringBuilder ThisBuilder, int iBulletNumber, Actor ThisActor)
 		{
@@ -170,6 +175,67 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected void TrackNearestActors(int iActorCount, bool bDumpActorInfo, string strSearchSubstring)
+		{
+			bool bNamedSearch = (strSearchSubstring == "named");
+
+			List<Actor> ActorList = new List<Actor>();
+			int iValidActorCount = 0;
+			int iInvalidActorCount = 0;
+
+			foreach (Actor ThisActor in EnumActors())
+			{
+				bool bAddThisActor = false;
+
+				if (ThisActor.IsValid)
+				{
+					if (bNamedSearch)
+					{
+						if (ThisActor.IsNamed && !ThisActor.IsAPet)
+							bAddThisActor = true;
+					}
+					else if (ThisActor.Name.ToLower().Contains(strSearchSubstring))
+						bAddThisActor = true;
+				}
+
+				if (bAddThisActor)
+				{
+					ActorList.Add(ThisActor);
+					iValidActorCount++;
+				}
+				else
+					iInvalidActorCount++;
+			}
+
+			if (ActorList.Count == 0)
+			{
+				Program.Log("Unable to find actor \"{0}\".", strSearchSubstring);
+				return;
+			}
+
+			ActorList.Sort(new ActorDistanceComparer());
+
+			/// Run the waypoint on the nearest actor.
+			RunCommand("/waypoint {0}, {1}, {2}", ActorList[0].X, ActorList[0].Y, ActorList[0].Z);
+
+			if (bDumpActorInfo)
+			{
+				FlexStringBuilder SummaryBuilder = new FlexStringBuilder();
+				SummaryBuilder.AppendLine("{0} actor(s) found ({1} invalid) using \"{2}\".", iValidActorCount, iInvalidActorCount, strSearchSubstring);
+
+				/// Now display the individual results.
+				for (int iIndex = 0; iIndex < ActorList.Count && iIndex < 5; iIndex++)
+				{
+					Actor ThisActor = ActorList[iIndex];
+					AppendActorInfo(SummaryBuilder, iIndex + 1, ThisActor);
+				}
+
+				Program.Log(SummaryBuilder.ToString());
+			}
+			return;
+		}
+
+		/************************************************************************************/
 		protected virtual bool OnCustomSlashCommand(string strCommand, string[] astrParameters)
 		{
 			string strCondensedParameters = string.Join(" ", astrParameters).Trim();
@@ -315,58 +381,8 @@ namespace EQ2GlassCannon
 					}
 
 					string strSearchString = strCondensedParameters.ToLower();
-					bool bNamedSearch = (strSearchString == "named");
 
-					List<Actor> ActorList = new List<Actor>();
-					int iValidActorCount = 0;
-					int iInvalidActorCount = 0;
-
-					foreach (Actor ThisActor in EnumActors())
-					{
-						bool bAddThisActor = false;
-
-						if (ThisActor.IsValid)
-						{
-							if (bNamedSearch)
-							{
-								if (ThisActor.IsNamed && !ThisActor.IsAPet)
-									bAddThisActor = true;
-							}
-							else if (ThisActor.Name.ToLower().Contains(strSearchString))
-								bAddThisActor = true;
-						}
-
-						if (bAddThisActor)
-						{
-							ActorList.Add(ThisActor);
-							iValidActorCount++;
-						}
-						else
-							iInvalidActorCount++;
-					}
-
-					if (ActorList.Count == 0)
-					{
-						Program.Log("gc_findactor: Unable to find actor \"{0}\".", strCondensedParameters);
-						return true;
-					}
-
-					ActorList.Sort(new ActorDistanceComparer());
-
-					/// Run the waypoint on the nearest actor.
-					RunCommand("/waypoint {0}, {1}, {2}", ActorList[0].X, ActorList[0].Y, ActorList[0].Z);
-
-					FlexStringBuilder SummaryBuilder = new FlexStringBuilder();
-					SummaryBuilder.AppendLine("gc_findactor: {0} actor(s) found ({1} invalid) using \"{2}\".", iValidActorCount, iInvalidActorCount, strCondensedParameters);
-
-					/// Now display the individual results.
-					for (int iIndex = 0; iIndex < ActorList.Count && iIndex < 5; iIndex++)
-					{
-						Actor ThisActor = ActorList[iIndex];
-						AppendActorInfo(SummaryBuilder, iIndex + 1, ThisActor);
-					}
-
-					Program.Log(SummaryBuilder.ToString());
+					TrackNearestActors(5, true, strSearchString);
 					return true;
 				}
 
@@ -477,6 +493,53 @@ namespace EQ2GlassCannon
 
 					if (TargetActor != null)
 						TargetActor.DoTarget();
+					return true;
+				}
+
+				/// Update the waypoint at a regular interval with the nearest location of an actor search string.
+				case "gc_trackactor":
+				{
+					if (astrParameters.Length < 1)
+					{
+						Program.Log("gc_trackactor failed: Missing parameter.");
+						return true;
+					}
+
+					string strInterval = astrParameters[0].Trim().ToLower();
+					if (strInterval == "off")
+					{
+						Program.Log("Actor tracking mode disabled.");
+						m_bTrackActor = false;
+						return true;
+					}
+
+					double fIntervalSeconds = 0;
+					if (!double.TryParse(strInterval, out fIntervalSeconds) || fIntervalSeconds < 0.0)
+					{
+						Program.Log("gc_trackactor failed: Invalid interval parameter.");
+						return false;
+					}
+
+					List<string> astrRemainingParameters = new List<string>(astrParameters);
+					if (astrRemainingParameters.Count == 0)
+					{
+						Program.Log("gc_trackactor failed: No actor search string specified!");
+						return false;
+					}
+					astrRemainingParameters.RemoveAt(0);
+
+					string strRemainingCondensedParameters = string.Join(" ", astrRemainingParameters.ToArray()).Trim().ToLower();
+					if (string.IsNullOrEmpty(strRemainingCondensedParameters))
+					{
+						Program.Log("gc_trackactor failed: No actor search string specified!");
+						return false;
+					}
+
+					/// Now we turn the mode on.
+					m_TrackActorInterval = TimeSpan.FromSeconds(fIntervalSeconds);
+					m_NextTrackActorAttemptTime = CurrentCycleTimestamp;
+					m_strTrackActorSubstring = strRemainingCondensedParameters;
+					m_bTrackActor = true;
 					return true;
 				}
 
