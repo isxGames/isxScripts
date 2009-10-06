@@ -15,12 +15,20 @@ namespace EQ2GlassCannon
 	public partial class PlayerController
 	{
 		/************************************************************************************/
-		protected enum NextEncounterKillType : int
+		protected enum EncounterCompletionMode : int
 		{
 			None,
 			HighestHealth,
 			LowestHealth,
 			AssistMainTank,
+		}
+
+		/************************************************************************************/
+		protected enum MezMode : int
+		{
+			Never,
+			Always,
+			OnlyWhenMainTankDead,
 		}
 
 		/************************************************************************************/
@@ -62,8 +70,9 @@ namespace EQ2GlassCannon
 		protected bool m_bHealUngroupedMainTank = true;
 		protected bool m_bCastFurySalveIfGranted = true;
 		protected bool m_bSpamHeroicOpportunity = true;
-		protected NextEncounterKillType m_eNextEncounterKillType = NextEncounterKillType.HighestHealth;
+		protected EncounterCompletionMode m_eEncounterCompletionMode = EncounterCompletionMode.HighestHealth;
 		protected bool m_bMezAdds = true;
+		protected MezMode m_eMezMode = MezMode.OnlyWhenMainTankDead;
 		protected bool m_bMezMembersOfTargetEncounter = false;
 		protected string m_strMezCallout = "MEZZING << {0} >> YOU BREAK IT YOU TANK IT!";
 		protected bool m_bUseRacialBuffs = true;
@@ -131,8 +140,8 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.HealUngroupedMainTank", ref m_bHealUngroupedMainTank);
 			ThisFile.TransferBool("General.CastFurySalveIfGranted", ref m_bCastFurySalveIfGranted);
 			ThisFile.TransferBool("General.SpamHeroicOpportunity", ref m_bSpamHeroicOpportunity);
-			ThisFile.TransferEnum<NextEncounterKillType>("General.NextEncounterKillType", ref m_eNextEncounterKillType);
-			ThisFile.TransferBool("General.MezAdds", ref m_bMezAdds);
+			ThisFile.TransferEnum<EncounterCompletionMode>("General.EncounterCompletionMode", ref m_eEncounterCompletionMode);
+			ThisFile.TransferEnum<MezMode>("General.MezAdds", ref m_eMezMode);
 			ThisFile.TransferBool("General.MezMembersOfTargetEncounter", ref m_bMezMembersOfTargetEncounter);
 			ThisFile.TransferBool("General.UseRacialBuffs", ref m_bUseRacialBuffs);
 			ThisFile.TransferBool("General.UsePet", ref m_bUsePet);

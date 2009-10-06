@@ -222,7 +222,7 @@ namespace EQ2GlassCannon
 					}
 
 					/// This pet is PBAE and good in any context.
-					if (bDumbfiresAdvised && CastAbility(m_uiAcidStormPetAbilityID))
+					if (bDumbfiresAdvised && m_bUseBlueAEs && CastAbility(m_uiAcidStormPetAbilityID))
 						return true;
 
 					/// TODO: Find out EXACTLY where Acid needs to go in the cast order after getting 5 Shadows AAs.

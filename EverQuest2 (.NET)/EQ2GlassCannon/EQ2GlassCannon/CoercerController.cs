@@ -26,8 +26,10 @@ namespace EQ2GlassCannon
 		protected uint m_uiSingleHateTransferAbilityID = 0;
 		protected uint m_uiCoerciveHealingAbilityID = 0;
 		protected uint m_uiGroupINTAGIBuffAbilityID = 0;
+		protected uint m_uiGroupSecondaryManaRegenBuffAbilityID = 0;
 		protected uint m_uiIntellectualRemedyAbilityID = 0;
 
+		protected uint m_uiTashianaAbilityID = 0;
 		protected uint m_uiSingleMagicalDebuffAbilityID = 0;
 		protected uint m_uiSingleArcaneDebuffAbilityID = 0;
 		protected uint m_uiSingleINTDebuffAbilityID = 0;
@@ -46,6 +48,7 @@ namespace EQ2GlassCannon
 
 		protected uint m_uiSingleMezAbilityID = 0;
 		protected uint m_uiGreenMezAbilityID = 0;
+		protected uint m_uiGreenStunAbilityID = 0;
 		#endregion
 
 		/// <summary>
@@ -77,10 +80,12 @@ namespace EQ2GlassCannon
 			m_uiSingleDeaggroBuffAbilityID = SelectHighestTieredAbilityID("Peaceful Link");
 			m_uiSingleHateTransferAbilityID = SelectHighestTieredAbilityID("Enraging Demeanor");
 			m_uiCoerciveHealingAbilityID = SelectHighestAbilityID("Coercive Healing");
-			m_uiGroupINTAGIBuffAbilityID = SelectHighestTieredAbilityID("Signet of Intellect");
 			m_uiMainRegenBuffAbilityID = SelectHighestTieredAbilityID("Breeze");
+			m_uiGroupINTAGIBuffAbilityID = SelectHighestTieredAbilityID("Signet of Intellect");
+			m_uiGroupSecondaryManaRegenBuffAbilityID = SelectHighestTieredAbilityID("Mind's Eye");
 			m_uiIntellectualRemedyAbilityID = SelectHighestAbilityID("Intellectual Remedy");
 
+			m_uiTashianaAbilityID = SelectHighestAbilityID("Tashiana");
 			m_uiSingleMagicalDebuffAbilityID = SelectHighestTieredAbilityID("Obliterated Psyche");
 			m_uiSingleArcaneDebuffAbilityID = SelectHighestTieredAbilityID("Asylum");
 			m_uiSingleINTDebuffAbilityID = SelectHighestTieredAbilityID("Cannibalize Thoughts");
@@ -95,10 +100,11 @@ namespace EQ2GlassCannon
 			m_uiGreenDOTAbilityID = SelectHighestTieredAbilityID("Simple Minds");
 			m_uiGreenDazeNukeAbilityID = SelectHighestTieredAbilityID("Ego Shock");
 			m_uiGreenSpellReactiveAbilityID = SelectHighestTieredAbilityID("Spell Curse");
-			m_uiBlueStunNukeAbilityID = SelectHighestTieredAbilityID("Sonic Boom");
+			m_uiBlueStunNukeAbilityID = SelectHighestTieredAbilityID("Shock Wave");
 
 			m_uiSingleMezAbilityID = SelectHighestTieredAbilityID("Mesmerize");
 			m_uiGreenMezAbilityID = SelectHighestTieredAbilityID("Pure Awe");
+			m_uiGreenStunAbilityID = SelectHighestTieredAbilityID("Stupefy");
 			return;
 		}
 
@@ -137,6 +143,8 @@ namespace EQ2GlassCannon
 				if (CheckToggleBuff(m_uiArcaneBuffAbilityID, m_bBuffArcaneResistance))
 					return true;
 				if (CheckToggleBuff(m_uiMainRegenBuffAbilityID, m_bBuffRegen))
+					return true;
+				if (MeActor.IsIdle && CheckToggleBuff(m_uiGroupSecondaryManaRegenBuffAbilityID, m_bBuffRegen))
 					return true;
 				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
@@ -199,8 +207,34 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
+					/// Resist debuffs ALWAYS come first, I don't CARE what AE opportunities there are.
+					if (!IsAbilityMaintained(m_uiTashianaAbilityID, m_iOffensiveTargetID) &&
+						(m_OffensiveTargetActor.IsEpic || m_OffensiveTargetActor.IsNamed) &&
+						!m_OffensiveTargetActor.IsAPet &&
+						CastAbility(m_uiTashianaAbilityID))
+					{
+						return true;
+					}
+					if (!IsAbilityMaintained(m_uiSingleMagicalDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleMagicalDebuffAbilityID))
+						return true;
+
+					if (CastBlueOffensiveAbility(m_uiBlueStunNukeAbilityID, 3))
+						return true;
+
 					/// TODO: This should be changed to behave more like a buff, to allow multiple recipients.
 					if (!IsAbilityMaintained(m_uiDestructiveMindAbilityID) && CastAbility(m_uiDestructiveMindAbilityID, m_astrDestructiveMindTargets, true))
+						return true;
+
+					/// This is guesswork for now.
+					if (CastGreenOffensiveAbility(m_uiGreenStunAbilityID, 3))
+						return true;
+
+					/// We attempt this in two places:
+					/// - Here at the beginning for the debuff, and
+					/// - Down the list for the proc DPS.
+					if (!IsAbilityMaintained(m_uiSingleArcaneDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleArcaneDebuffAbilityID))
+						return true;
+					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiNullifyingStaffAbilityID))
 						return true;
 
 					if (CastGreenOffensiveAbility(m_uiGreenSpellReactiveAbilityID, 3))
@@ -210,17 +244,13 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_uiGreenDazeNukeAbilityID, 3))
 						return true;
 
-					/// We attempt this in two places:
-					/// - Here at the beginning for the debuff, and
-					/// - Down the list for the proc DPS.
-					if (!IsAbilityMaintained(m_uiSingleMagicalDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleMagicalDebuffAbilityID))
+					if (!IsAbilityMaintained(m_uiSingleINTDebuffAbilityID, m_iOffensiveTargetID) &&
+						(m_OffensiveTargetActor.IsEpic || m_OffensiveTargetActor.IsNamed) &&
+						!m_OffensiveTargetActor.IsAPet &&
+						CastAbility(m_uiSingleINTDebuffAbilityID))
+					{
 						return true;
-					if (!IsAbilityMaintained(m_uiSingleArcaneDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleArcaneDebuffAbilityID))
-						return true;
-					if (!IsAbilityMaintained(m_uiNullifyingStaffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiNullifyingStaffAbilityID))
-						return true;
-					if (!IsAbilityMaintained(m_uiSingleINTDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleINTDebuffAbilityID))
-						return true;
+					}
 
 					/// The reactives are even useful off of a single mob, thus no special processing.
 					if (CastAbility(m_uiGreenSpellReactiveAbilityID))
@@ -231,11 +261,11 @@ namespace EQ2GlassCannon
 
 					if (CastAbility(m_uiBewildermentAbilityID))
 						return true;
+					if (CastAbility(m_uiHostageAbilityID))
+						return true;
 					if (CastAbility(m_uiHemorrhageAbilityID))
 						return true;
 					if (CastAbility(m_uiLoreAndLegendAbilityID))
-						return true;
-					if (CastAbility(m_uiHostageAbilityID))
 						return true;
 					if (CastAbility(m_uiSingleStifleNukeAbilityID))
 						return true;
