@@ -302,6 +302,13 @@ namespace EQ2GlassCannon
 		/// <returns>true if an action was taken and no further processing should occur</returns>
 		protected virtual bool DoNextAction()
 		{
+			/// Single-target radar but without the radar screen.
+			if (m_bTrackActor && CurrentCycleTimestamp >= m_NextTrackActorAttemptTime)
+			{
+				TrackNearestActors(1, false, m_strTrackActorSubstring);
+				m_NextTrackActorAttemptTime = CurrentCycleTimestamp + m_TrackActorInterval;
+			}
+
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 				return true;
 
@@ -398,7 +405,7 @@ namespace EQ2GlassCannon
 			/// Decide whether now is a good time to check buffs.
 			if (!m_bCheckBuffsNow)
 			{
-				if (DateTime.Now > (m_LastCheckBuffsTime + TimeSpan.FromMilliseconds(m_iCheckBuffsInterval)))
+				if (CurrentCycleTimestamp > (m_LastCheckBuffsTime + TimeSpan.FromMilliseconds(m_iCheckBuffsInterval)))
 				{
 					Program.Log("Checking buffs now.");
 
@@ -411,7 +418,7 @@ namespace EQ2GlassCannon
 				return true;
 
 			/// Calculate how much time remains on the cast timer.
-			DateTime CurrentDateTime = DateTime.Now;
+			DateTime CurrentDateTime = CurrentCycleTimestamp;
 			if (CurrentDateTime > m_LastCastEndTime)
 				m_CastTimeRemaining = TimeSpan.FromTicks(0);
 			else
@@ -523,11 +530,11 @@ namespace EQ2GlassCannon
 			/// Chat Watch text is top priority.
 			if (m_ePositioningStance == PositioningStance.ChatWatch &&
 				strLowerCaseMessage.Contains(m_strChatWatchTargetText) &&
-				m_ChatWatchNextValidAlertTime < DateTime.Now)
+				m_ChatWatchNextValidAlertTime < CurrentCycleTimestamp)
 			{
 				Program.Log("Chat Watch text \"{0}\" found!", m_strChatWatchTargetText);
 				Program.s_EmailQueueThread.PostEmailMessage(m_astrChatWatchToAddressList, "Chat text spotted!", strMessage);
-				m_ChatWatchNextValidAlertTime = DateTime.Now + TimeSpan.FromMinutes(m_fChatWatchAlertCooldownMinutes);
+				m_ChatWatchNextValidAlertTime = CurrentCycleTimestamp + TimeSpan.FromMinutes(m_fChatWatchAlertCooldownMinutes);
 				/// Don't return a value; allow processing to continue because there's no need to cockblock in this case.
 			}
 
@@ -547,7 +554,7 @@ namespace EQ2GlassCannon
 				case "Target too weak":
 				case "Too far away":
 				{
-					m_LastCastEndTime = DateTime.Now;
+					m_LastCastEndTime = CurrentCycleTimestamp;
 
 					if (m_bAutoHarvestInProgress)
 					{
@@ -750,7 +757,7 @@ namespace EQ2GlassCannon
 		protected void StopCheckingBuffs()
 		{
 			m_bCheckBuffsNow = false;
-			m_LastCheckBuffsTime = DateTime.Now;
+			m_LastCheckBuffsTime = CurrentCycleTimestamp;
 			Program.Log("Finished checking buffs.");
 			return;
 		}
@@ -810,7 +817,7 @@ namespace EQ2GlassCannon
 			else if (eNewStance == PositioningStance.ChatWatch)
 			{
 				m_ePositioningStance = PositioningStance.ChatWatch;
-				m_ChatWatchNextValidAlertTime = DateTime.Now;
+				m_ChatWatchNextValidAlertTime = CurrentCycleTimestamp;
 			}
 
 			else if (eNewStance == PositioningStance.SpawnWatch)
@@ -823,7 +830,7 @@ namespace EQ2GlassCannon
 			{
 				m_ePositioningStance = PositioningStance.DespawnWatch;
 				m_bSpawnWatchTargetAnnounced = false;
-				m_SpawnWatchDespawnStartTime = DateTime.Now;
+				m_SpawnWatchDespawnStartTime = CurrentCycleTimestamp;
 			}
 
 			return;
@@ -1065,13 +1072,13 @@ namespace EQ2GlassCannon
 						Program.Log("Distance to {0}: {1:0.00}", ThisActor.Name, fDistance);
 #endif
 						/// Reset the clock every time we see a single living actor with the search name.
-						m_SpawnWatchDespawnStartTime = DateTime.Now;
+						m_SpawnWatchDespawnStartTime = CurrentCycleTimestamp;
 						return true;
 					}
 				}
 
 				/// Actor despawned!
-				if ((m_SpawnWatchDespawnStartTime + TimeSpan.FromMinutes(m_fSpawnWatchDespawnTimeoutMinutes)) < DateTime.Now)
+				if ((m_SpawnWatchDespawnStartTime + TimeSpan.FromMinutes(m_fSpawnWatchDespawnTimeoutMinutes)) < CurrentCycleTimestamp)
 				{
 					Program.Log("De-spawn Watch target \"{0}\" dead or no longer found after timeout!", m_strSpawnWatchTarget);
 

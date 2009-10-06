@@ -48,6 +48,13 @@ namespace EQ2GlassCannon
 		private static long s_lFrameCount = 0;
 		protected static long FrameCount { get { return s_lFrameCount; } }
 
+		private static DateTime s_CurrentCycleTimestamp = DateTime.Now;
+		/// <summary>
+		/// I want every time calculation inside a game cycle to use the same reference point for the current time.
+		/// Plus it is more efficient to only call DateTime.Now once per frame.
+		/// </summary>
+		protected static DateTime CurrentCycleTimestamp { get { return s_CurrentCycleTimestamp; } }
+
 		private static PlayerController s_Controller = null;
 		protected static bool s_bContinueBot = true;
 		protected static bool s_bRefreshKnowledgeBook = false;
@@ -137,6 +144,7 @@ namespace EQ2GlassCannon
 					"gc_stance",
 					"gc_spawnwatch",
 					"gc_target",
+					"gc_trackactor",
 					"gc_tts",
 					"gc_version",
 					"gc_withdraw");
@@ -211,6 +219,8 @@ namespace EQ2GlassCannon
 
 			do
 			{
+				s_CurrentCycleTimestamp = DateTime.Now;
+
 				Frame.Wait(true);
 				try
 				{
@@ -428,7 +438,7 @@ namespace EQ2GlassCannon
 				/// Throttle it only if the parameter says so.
 				if (fBlockageSeconds > 0.0 && m_RecentThrottledCommandIndex.ContainsKey(strFinalCommand))
 				{
-					if (DateTime.Now > m_RecentThrottledCommandIndex[strFinalCommand])
+					if (CurrentCycleTimestamp > m_RecentThrottledCommandIndex[strFinalCommand])
 						m_RecentThrottledCommandIndex.Remove(strFinalCommand);
 					else
 					{
@@ -456,7 +466,7 @@ namespace EQ2GlassCannon
 						s_Extension.EQ2Execute(strFinalCommand);
 				}
 
-				m_RecentThrottledCommandIndex.Add(strFinalCommand, DateTime.Now + TimeSpan.FromSeconds(fBlockageSeconds));
+				m_RecentThrottledCommandIndex.Add(strFinalCommand, CurrentCycleTimestamp + TimeSpan.FromSeconds(fBlockageSeconds));
 			}
 			catch
 			{

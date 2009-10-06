@@ -97,7 +97,7 @@ namespace EQ2GlassCannon
 			if (m_iLastChestDisarmAttempted != -1)
 			{
 				/// We need to wait a little longer.
-				if ((DateTime.Now - m_LastChestDisarmAttemptTime) < TimeSpan.FromSeconds(3))
+				if ((CurrentCycleTimestamp - m_LastChestDisarmAttemptTime) < TimeSpan.FromSeconds(3))
 				{
 					Program.Log("Waiting for the server to respond to last chest disarm attempt before attempting more.");
 					return false;
@@ -126,7 +126,7 @@ namespace EQ2GlassCannon
 					Program.Log("Attempting to disarm \"{0}\" (ID:{1})...", ThisActor.Name, ThisActor.ID);
 					//ApplyVerb(ThisActor, "disarm");
 					ThisActor.DoubleClick();
-					m_LastChestDisarmAttemptTime = DateTime.Now;
+					m_LastChestDisarmAttemptTime = CurrentCycleTimestamp;
 					m_iLastChestDisarmAttempted = ThisActor.ID;
 					return true;
 				}
