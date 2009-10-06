@@ -742,6 +742,7 @@ namespace EQ2GlassCannon
 			if (m_ePositioningStance == PositioningStance.ForwardDash)
 				ChangePositioningStance(PositioningStance.AutoFollow);
 
+			WithdrawFromCombat();
 			return;
 		}
 
@@ -1098,19 +1099,19 @@ namespace EQ2GlassCannon
 			if (m_iOffensiveTargetID == -1)
 			{
 				/// There are no alternative choices; we're SOL.
-				if (m_eNextEncounterKillType == NextEncounterKillType.None || m_OffensiveTargetEncounterActorDictionary.Count == 0)
+				if (m_eEncounterCompletionMode == EncounterCompletionMode.None || m_OffensiveTargetEncounterActorDictionary.Count == 0)
 					return false;
 
 				Actor CandidateActor = null;
 
-				if (m_eNextEncounterKillType == NextEncounterKillType.AssistMainTank)
+				if (m_eEncounterCompletionMode == EncounterCompletionMode.AssistMainTank)
 				{
 					CandidateActor = GetNestedCombatAssistTarget(m_strCurrentMainTank);
 				}
 
 				/// Choose highest or lowest health.
-				else if (m_eNextEncounterKillType == NextEncounterKillType.HighestHealth ||
-					m_eNextEncounterKillType == NextEncounterKillType.LowestHealth)
+				else if (m_eEncounterCompletionMode == EncounterCompletionMode.HighestHealth ||
+					m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth)
 				{
 					int iHighestHealth = 0;
 					int iLowestHealth = 100;
@@ -1128,7 +1129,7 @@ namespace EQ2GlassCannon
 					/// Decide who in the encounter remains with the highest or lowest health.
 					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
 					{
-						if (m_eNextEncounterKillType == NextEncounterKillType.HighestHealth)
+						if (m_eEncounterCompletionMode == EncounterCompletionMode.HighestHealth)
 						{
 							if (ThisActor.Health > iHighestHealth || CandidateActor == null)
 							{
@@ -1136,7 +1137,7 @@ namespace EQ2GlassCannon
 								CandidateActor = ThisActor;
 							}
 						}
-						else if (m_eNextEncounterKillType == NextEncounterKillType.LowestHealth)
+						else if (m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth)
 						{
 							if (ThisActor.Health > iLowestHealth || CandidateActor == null)
 							{

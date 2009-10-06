@@ -680,8 +680,15 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		protected bool CastNextMez(params uint[] auiMezAbilityIDs)
 		{
-			if (!m_bMezAdds)
+			if (m_eMezMode == MezMode.None)
 				return false;
+
+			else if (m_eMezMode == MezMode.OnlyWhenMainTankDead)
+			{
+				VitalStatus MainTankStatus = null;
+				if (GetVitalStatus(m_strCurrentMainTank, ref MainTankStatus) && !MainTankStatus.m_bIsDead)
+					return false;
+			}
 
 			float fHighestRangeAlreadyScanned = 0;
 
@@ -702,7 +709,7 @@ namespace EQ2GlassCannon
 					if (!ThisActor.IsDead &&
 						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly and has too many pitfalls.
 						ThisActor.CanTurn &&
-						(m_OffensiveTargetActor == null || (ThisActor.ID != m_OffensiveTargetActor.ID && (!ThisActor.IsInSameEncounter(m_OffensiveTargetActor.ID) || m_bMezMembersOfTargetEncounter))) && /// It can't be our current burn mob.
+						(m_OffensiveTargetActor == null || (ThisActor.ID != m_OffensiveTargetActor.ID && (!m_OffensiveTargetEncounterActorDictionary.ContainsKey(ThisActor.ID) || m_bMezMembersOfTargetEncounter))) && /// It can't be our current burn mob.
 						ThisActor.Type != "NoKill NPC" &&
 						ThisActor.Target().IsValid &&
 						ThisActor.Target().Type == "PC") /// It has to be targetting a player; an indicator of aggro.
