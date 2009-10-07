@@ -9,7 +9,6 @@ namespace EQ2GlassCannon
 	public class MysticController : ShamanController
 	{
 		#region INI settings
-		public bool m_bBuffPhysicalMitigation = true;
 		public bool m_bBuffNoxiousResistance = true;
 		public bool m_bBuffSTRSTA = true;
 		public List<string> m_astrHealthPoolTargets = new List<string>();
@@ -56,7 +55,6 @@ namespace EQ2GlassCannon
 		{
 			base.TransferINISettings(ThisFile);
 
-			ThisFile.TransferBool("Mystic.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
 			ThisFile.TransferBool("Mystic.BuffNoxiousResistance", ref m_bBuffNoxiousResistance);
 			ThisFile.TransferBool("Mystic.BuffSTRSTA", ref m_bBuffSTRSTA);
 			ThisFile.TransferStringList("Mystic.HealthPoolTargets", m_astrHealthPoolTargets);
@@ -152,11 +150,11 @@ namespace EQ2GlassCannon
 			/// First things first, we evaluate the heal situation.
 			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealUngroupedMainTank))
 			{
-				if (ThisStatus.m_iCurrentHealth < ThisStatus.m_iMaximumHealth)
+				double fHealthRatio = ThisStatus.HealthRatio;
+				if (fHealthRatio < m_fHealThresholdRatio)
 				{
 					iTotalDeficientMembers++;
 
-					double fHealthRatio = ThisStatus.HealthRatio;
 					if (fHealthRatio < fLowestHealthRatio)
 					{
 						strLowestHealthName = ThisStatus.m_strName;
@@ -191,6 +189,8 @@ namespace EQ2GlassCannon
 				/// Do buffs only if the vital situation isn't grim.
 				if (fLowestHealthRatio > 0.90)
 				{
+					if (CheckGroupWaterBreathingBuff())
+						return true;
 					if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, m_bBuffNoxiousResistance))
 						return true;
 					if (CheckToggleBuff(m_uiGroupSTRSTABuffAbilityID, m_bBuffSTRSTA))
@@ -198,8 +198,6 @@ namespace EQ2GlassCannon
 					if (CheckSingleTargetBuffs(m_uiSingleHealthPoolBuffAbilityID, m_astrHealthPoolTargets))
 						return true;
 					if (CheckToggleBuff(m_uiUrsineAbilityID, true))
-						return true;
-					if (CheckGroupWaterBreathingBuff())
 						return true;
 					if (CheckSingleTargetBuff(m_uiSingleStatBuffAbilityID, m_astrAvatarTargets))
 						return true;

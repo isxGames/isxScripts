@@ -16,7 +16,9 @@ namespace EQ2GlassCannon
 		protected string m_strSingleRezCallout = "REZZING << {0} >>";
 		protected string m_strGroupRezCallout = "REZZING GROUP << {0} >>";
 		protected bool m_bBuffGroupWaterBreathing = true;
+		protected bool m_bBuffPhysicalMitigation = true;
 		protected StanceType m_eShadowsHealStance = StanceType.Neither;
+		protected double m_fHealThresholdRatio = 0.95;
 		#endregion
 
 		protected uint m_uiCureAbilityID = 0;
@@ -42,7 +44,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("Priest.SingleRezCallout", ref m_strSingleRezCallout);
 			ThisFile.TransferString("Priest.GroupRezCallout", ref m_strGroupRezCallout);
 			ThisFile.TransferBool("Priest.BuffGroupWaterBreathing", ref m_bBuffGroupWaterBreathing);
+			ThisFile.TransferBool("Priest.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
 			ThisFile.TransferEnum<StanceType>("Priest.ShadowsHealStance", ref m_eShadowsHealStance);
+			ThisFile.TransferDouble("Priest.HealThresholdRatio", ref m_fHealThresholdRatio);
 
 			return;
 		}

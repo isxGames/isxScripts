@@ -10,7 +10,6 @@ namespace EQ2GlassCannon
 	public class TemplarController : ClericController
 	{
 		#region INI settings
-		public bool m_bBuffPhysicalMitigation = true;
 		public bool m_bBuffArcaneResistance = true;
 		public bool m_bBuffYaulp = false;
 		public List<string> m_astrManaCureTargets = new List<string>();
@@ -160,6 +159,7 @@ namespace EQ2GlassCannon
 			/// First things first, we evaluate the heal situation.
 			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bHealUngroupedMainTank))
 			{
+				double fHealthRatio = ThisStatus.HealthRatio;
 				if (ThisStatus.m_bIsDead)
 				{
 					iTotalDeadMembers++;
@@ -172,11 +172,10 @@ namespace EQ2GlassCannon
 						fNearestDeadDistance = fDistance;
 					}
 				}
-				else if (ThisStatus.m_iCurrentHealth < ThisStatus.m_iMaximumHealth)
+				else if (fHealthRatio < m_fHealThresholdRatio)
 				{
 					iTotalDeficientMembers++;
 
-					double fHealthRatio = (double)ThisStatus.m_iCurrentHealth / (double)ThisStatus.m_iMaximumHealth;
 					if (fHealthRatio < fLowestHealthRatio)
 					{
 						strLowestHealthName = ThisStatus.m_strName;
@@ -195,51 +194,36 @@ namespace EQ2GlassCannon
 			/// Do buffs only if the vital situation isn't grim.
 			if (m_bCheckBuffsNow && (fLowestHealthRatio > 0.80f))
 			{
-				if (CheckShadowsHealStanceBuffs())
-					return true;
-
-				if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
-					return true;
-
-				if (CheckSingleTargetBuff(m_uiShieldAllyAbilityID, m_strShieldAllyTargets))
-					return true;
-
-				if (CheckToggleBuff(m_uiGroupArcaneBuffAbilityID, m_bBuffArcaneResistance))
-					return true;
-
-				if (CheckToggleBuff(m_uiBlessingsAbilityID, true))
-					return true;
-
-				if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, m_bBuffGroupWaterBreathing))
-					return true;
-
-				if (CheckSingleTargetBuff(m_uiManaCureAbilityID, m_astrManaCureTargets))
-					return true;
-
-				if (CheckSingleTargetBuff(m_uiSingleSTRWISBuffAbilityID, m_astrSTRWISTargets))
-					return true;
-
-				if (CheckSingleTargetBuff(m_uiSingleStoneskinBuffAbilityID, m_astrStoneskinTargets))
-					return true;
-
-				if (CheckSingleTargetBuffs(m_uiMeleeSkillBuffAbilityID, m_astrMeleeSkillTargets))
-					return true;
-
-				if (CheckSingleTargetBuffs(m_uiMeleeHealProcBuffAbilityID, m_astrMeleeHealProcTargets))
-					return true;
-
-				if (CheckToggleBuff(m_uiYaulpAbilityID, m_bBuffYaulp))
-					return true;
-
 				if (CheckGroupWaterBreathingBuff())
 					return true;
-
+				if (CheckShadowsHealStanceBuffs())
+					return true;
+				if (CheckToggleBuff(m_uiGroupMitigationBuffAbilityID, m_bBuffPhysicalMitigation))
+					return true;
+				if (CheckSingleTargetBuff(m_uiShieldAllyAbilityID, m_strShieldAllyTargets))
+					return true;
+				if (CheckToggleBuff(m_uiGroupArcaneBuffAbilityID, m_bBuffArcaneResistance))
+					return true;
+				if (CheckToggleBuff(m_uiBlessingsAbilityID, true))
+					return true;
+				if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, m_bBuffGroupWaterBreathing))
+					return true;
+				if (CheckSingleTargetBuff(m_uiManaCureAbilityID, m_astrManaCureTargets))
+					return true;
+				if (CheckSingleTargetBuff(m_uiSingleSTRWISBuffAbilityID, m_astrSTRWISTargets))
+					return true;
+				if (CheckSingleTargetBuff(m_uiSingleStoneskinBuffAbilityID, m_astrStoneskinTargets))
+					return true;
+				if (CheckSingleTargetBuffs(m_uiMeleeSkillBuffAbilityID, m_astrMeleeSkillTargets))
+					return true;
+				if (CheckSingleTargetBuffs(m_uiMeleeHealProcBuffAbilityID, m_astrMeleeHealProcTargets))
+					return true;
+				if (CheckToggleBuff(m_uiYaulpAbilityID, m_bBuffYaulp))
+					return true;
 				if (CheckRacialBuffs())
 					return true;
-
 				if (CheckSpiritOfTheWolf())
 					return true;
-
 				StopCheckingBuffs();
 			}
 
