@@ -335,6 +335,7 @@ function Obstacle(int delay)
 ;Very Basic object to manage auto-run states
 function StopRunning()
 {
+	eq2execute /target_none
 	if ${Me.IsMoving}
 	{
 		do
