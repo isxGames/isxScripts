@@ -26,7 +26,7 @@
 
 variable int EncounterMatrix[20,20]
 variable int AggroMatrix[100]
-
+variable int TargetID
 objectdef mobcheck
 {
 	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
