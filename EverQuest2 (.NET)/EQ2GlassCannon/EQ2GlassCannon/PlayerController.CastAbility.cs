@@ -707,7 +707,7 @@ namespace EQ2GlassCannon
 				/// Avoid scanning subsets of a radius we already scanned in a prior iteration.
 				if (fThisAbilityRange < fHighestRangeAlreadyScanned)
 					continue;
-
+				 
 				foreach (Actor ThisActor in EnumActorsInRadius(fThisAbilityRange))
 				{
 					if (!ThisActor.IsDead &&
