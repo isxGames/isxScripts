@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using EQ2.ISXEQ2;
+using EQ2ParseEngine;
 
 namespace EQ2GlassCannon
 {
@@ -49,16 +50,16 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
+		protected override bool OnLogNarrative(EQ2LogTokenizer.ConsoleLogEventArgs NewArgs)
 		{
-			if (base.OnIncomingText(eChannel, strChannelName, strFrom, strMessage))
+			if (base.OnLogNarrative(NewArgs))
 				return true;
 
-			if (m_iLastChestDisarmAttempted != -1 && eChannel == ChatChannel.NonChat)
+			if (m_iLastChestDisarmAttempted != -1)
 			{
-				if (strMessage.StartsWith("You disarm the trap on") ||
-					strMessage.StartsWith("You failed to disarm the trap on") ||
-					strMessage.StartsWith("You trigger the trap on"))
+				if (NewArgs.OriginalLine.StartsWith("You disarm the trap on") ||
+					NewArgs.OriginalLine.StartsWith("You failed to disarm the trap on") ||
+					NewArgs.OriginalLine.StartsWith("You trigger the trap on"))
 				{
 					if (m_NearbyChestDictionary.ContainsKey(m_iLastChestDisarmAttempted))
 						m_NearbyChestDictionary[m_iLastChestDisarmAttempted] = true;

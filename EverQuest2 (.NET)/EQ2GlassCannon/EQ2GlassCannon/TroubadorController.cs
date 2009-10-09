@@ -394,20 +394,20 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
+		protected override bool OnLogChat(EQ2ParseEngine.EQ2LogTokenizer.ChatEventArgs NewArgs)
 		{
-			if (base.OnIncomingChatText(iChannel, strFrom, strMessage))
+			if (base.OnLogChat(NewArgs))
 				return true;
 
-			string strTrimmedMessage = strMessage.Trim();
+			string strTrimmedMessage = NewArgs.Message.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
 			/// All processing will be deferred to DoNextAction().
 			if (strLowerCaseMessage.Contains(m_strJestersCapRequestSubstring))
 			{
-				PlayerRequest NewRequest = new PlayerRequest(strFrom);
+				PlayerRequest NewRequest = new PlayerRequest(NewArgs.SourceActorName);
 				m_JestersCapQueue.Enqueue(NewRequest);
-				Program.Log("Jester's Cap request from {0}.", strFrom);
+				Program.Log("Jester's Cap request from {0}.", NewArgs.SourceActorName);
 				return true;
 			}
 

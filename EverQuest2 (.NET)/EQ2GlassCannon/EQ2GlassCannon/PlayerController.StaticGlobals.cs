@@ -8,6 +8,7 @@ using LavishScriptAPI;
 using System.Threading;
 using System.IO;
 using System.Speech.Synthesis;
+using EQ2ParseEngine;
 
 namespace EQ2GlassCannon
 {
@@ -51,15 +52,17 @@ namespace EQ2GlassCannon
 		private static DateTime s_CurrentCycleTimestamp = DateTime.Now;
 		/// <summary>
 		/// I want every time calculation inside a game cycle to use the same reference point for the current time.
-		/// Plus it is more efficient to only call DateTime.Now once per frame.
+		/// Plus it is more efficient to only call "DateTime.Now" once per frame.
 		/// </summary>
 		protected static DateTime CurrentCycleTimestamp { get { return s_CurrentCycleTimestamp; } }
 
+		private static ParseThread s_ParseThread = new ParseThread();
+		private static ThreadSafeQueue<EQ2LogTokenizer.ConsoleLogEventArgs> s_ChatEventQueue = new ThreadSafeQueue<EQ2LogTokenizer.ConsoleLogEventArgs>();
 		private static PlayerController s_Controller = null;
-		protected static bool s_bContinueBot = true;
-		protected static bool s_bRefreshKnowledgeBook = false;
-		protected static string s_strCurrentINIFilePath = string.Empty;
-		protected static string s_strSharedOverridesINIFilePath = string.Empty;
+		private static bool s_bContinueBot = true;
+		private static bool s_bRefreshKnowledgeBook = false;
+		private static string s_strCurrentINIFilePath = string.Empty;
+		private static string s_strSharedOverridesINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
 		private static SetCollection<string> s_PressedKeys = new SetCollection<string>();
 		private static Dictionary<string, DateTime> m_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
@@ -197,7 +200,7 @@ namespace EQ2GlassCannon
 #if DEBUG
 			if (fFramesPerSecond < 10)
 #else
-			if (fAverageTime > 2 || fBadFramePercentage > 10)
+			if (fAverageTime > 3 || fBadFramePercentage > 10)
 #endif
 			{
 				Program.Log("Aborting due to substantial ISXEQ2 lag. Please restart EQ2GlassCannon.");
@@ -210,6 +213,8 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public static void Run()
 		{
+			s_ParseThread.Start();
+
 			s_strSharedOverridesINIFilePath = Path.Combine(Program.ConfigurationFolderPath, "SharedOverrides.ini");
 			if (!File.Exists(s_strSharedOverridesINIFilePath))
 				File.Create(s_strSharedOverridesINIFilePath).Close();
@@ -355,6 +360,15 @@ namespace EQ2GlassCannon
 					/// DoNextAction() might set s_bRefreshKnowledgeBook to true.  This is fine.
 					if (!s_bRefreshKnowledgeBook)
 					{
+						EQ2LogTokenizer.ConsoleLogEventArgs NewArgs = null;
+						while (s_ChatEventQueue.Dequeue(ref NewArgs))
+						{
+							if (NewArgs is EQ2LogTokenizer.ChatEventArgs)
+								s_Controller.OnLogChat(NewArgs as EQ2LogTokenizer.ChatEventArgs);
+							else
+								s_Controller.OnLogNarrative(NewArgs);
+						}
+
 						s_Controller.DoNextAction();
 						s_Controller.UpdateEndOfRoundStatistics();
 					}
@@ -394,6 +408,23 @@ namespace EQ2GlassCannon
 				s_Controller.WriteINISettings();
 			}
 
+			Program.Log("Shutting down parser thread...");
+			s_ParseThread.PostQuitMessageAndShutdownQueue(true);
+			if (s_ParseThread.WaitForTermination(TimeSpan.FromSeconds(30.0)))
+				Program.Log("Parser thread terminated.");
+			else
+				Program.Log("Parser thread timed out.");
+			return;
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// This is meant to get called by the parse thread.
+		/// </summary>
+		/// <param name="NewEvent"></param>
+		public static void EnqueueLogEvent(EQ2LogTokenizer.ConsoleLogEventArgs NewEvent)
+		{
+			s_ChatEventQueue.Enqueue(NewEvent);
 			return;
 		}
 
@@ -760,7 +791,7 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		private static void OnIncomingChatText_EventHandler(object sender, LSEventArgs e)
-		{
+		{/*
 			try
 			{
 				int iChannel = int.Parse(e.Args[0]);
@@ -780,7 +811,7 @@ namespace EQ2GlassCannon
 			{
 				/// Do nothing. But at least the bot doesn't crash!
 				Program.OnUnhandledException(ex);
-			}
+			}*/
 
 			return;
 		}
@@ -796,14 +827,7 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-				if (s_Controller != null)
-				{
-					using (new FrameLock(true))
-					{
-						UpdateStaticGlobals();
-						s_Controller.OnIncomingText(PlayerController.ChatChannel.NonChat, string.Empty, string.Empty, e.Args[0]);
-					}
-				}
+				s_ParseThread.PostNewLogLineMessage(e.Args[0]);
 			}
 			catch (Exception ex)
 			{

@@ -9,6 +9,7 @@ using EQ2.ISXEQ2;
 using InnerSpaceAPI;
 using LavishVMAPI;
 using System.IO;
+using EQ2ParseEngine;
 
 namespace EQ2GlassCannon
 {
@@ -42,22 +43,6 @@ namespace EQ2GlassCannon
 			ChatWatch,
 			SpawnWatch,
 			DespawnWatch,
-		}
-
-		/************************************************************************************/
-		protected enum ChatChannel : int
-		{
-			NonChat = 0,
-			Say,
-			Tell,
-			Named,
-			Auction,
-			OutOfCharacter,
-			Shout,
-			Raid,
-			Group,
-			Guild,
-			Officer,
 		}
 
 		/************************************************************************************/
@@ -519,27 +504,14 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		/// <summary>
-		/// Everything will gravitate to this function eventually, after I learn how to use regular expressions.
+		/// Anything unhandled by the parse engine is assumed to be a narrative.
 		/// </summary>
-		/// <returns>true if the implementation took ownership of the text and further processing should cease.</returns>
-		protected virtual bool OnIncomingText(ChatChannel eChannel, string strChannelName, string strFrom, string strMessage)
+		/// <param name="NewArgs"></param>
+		/// <returns></returns>
+		protected virtual bool OnLogNarrative(EQ2LogTokenizer.ConsoleLogEventArgs NewArgs)
 		{
-			string strTrimmedMessage = strMessage.Trim();
-			string strLowerCaseMessage = strTrimmedMessage.ToLower();
-
-			/// Chat Watch text is top priority.
-			if (m_ePositioningStance == PositioningStance.ChatWatch &&
-				strLowerCaseMessage.Contains(m_strChatWatchTargetText) &&
-				m_ChatWatchNextValidAlertTime < CurrentCycleTimestamp)
-			{
-				Program.Log("Chat Watch text \"{0}\" found!", m_strChatWatchTargetText);
-				Program.s_EmailQueueThread.PostEmailMessage(m_astrChatWatchToAddressList, "Chat text spotted!", strMessage);
-				m_ChatWatchNextValidAlertTime = CurrentCycleTimestamp + TimeSpan.FromMinutes(m_fChatWatchAlertCooldownMinutes);
-				/// Don't return a value; allow processing to continue because there's no need to cockblock in this case.
-			}
-
 			/// NOTE: Place all exact-match checks in this table. C# will hash sort it for quickness.
-			switch (strMessage)
+			switch (NewArgs.OriginalLine)
 			{
 				/// Look for cast abort strings.
 				case "Already casting...": /// This one is in question because it isn't necessarily an abort if the same spell is being cast.
@@ -567,17 +539,17 @@ namespace EQ2GlassCannon
 
 			if (m_bAutoHarvestInProgress)
 			{
-				if (strMessage.StartsWith("You gather") ||
-					strMessage.StartsWith("You failed to gather anything from") ||
-					strMessage.StartsWith("You forest") ||
-					strMessage.StartsWith("You failed to forest anything from") ||
-					strMessage.StartsWith("You acquire") ||
-					strMessage.StartsWith("You failed to trap anything from") ||
-					strMessage.StartsWith("You fish") ||
-					strMessage.StartsWith("You failed to fish anything from") ||
-					strMessage.StartsWith("You mine") ||
-					strMessage.StartsWith("You failed to mine anything from") ||
-					strMessage.StartsWith("You do not have enough skill"))
+				if (NewArgs.OriginalLine.StartsWith("You gather") ||
+					NewArgs.OriginalLine.StartsWith("You failed to gather anything from") ||
+					NewArgs.OriginalLine.StartsWith("You forest") ||
+					NewArgs.OriginalLine.StartsWith("You failed to forest anything from") ||
+					NewArgs.OriginalLine.StartsWith("You acquire") ||
+					NewArgs.OriginalLine.StartsWith("You failed to trap anything from") ||
+					NewArgs.OriginalLine.StartsWith("You fish") ||
+					NewArgs.OriginalLine.StartsWith("You failed to fish anything from") ||
+					NewArgs.OriginalLine.StartsWith("You mine") ||
+					NewArgs.OriginalLine.StartsWith("You failed to mine anything from") ||
+					NewArgs.OriginalLine.StartsWith("You do not have enough skill"))
 				{
 					Program.Log("Harvesting attempt complete.");
 					m_bAutoHarvestInProgress = false;
@@ -589,30 +561,34 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="iChannel"></param>
-		/// <param name="strFrom"></param>
-		/// <param name="strMessage"></param>
-		/// <returns>true if handled by a base implementation, and if no further processing should be permitted.</returns>
-		protected virtual bool OnIncomingChatText(int iChannel, string strFrom, string strMessage)
+		protected virtual bool OnLogChat(EQ2LogTokenizer.ChatEventArgs NewArgs)
 		{
-			string strTrimmedMessage = strMessage.Trim();
+			string strTrimmedMessage = NewArgs.Message.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
 
-			bool bIsCommand = m_astrCommandingPlayers.Contains(strFrom);
+			/// Chat Watch text is top priority.
+			if (m_ePositioningStance == PositioningStance.ChatWatch &&
+				strLowerCaseMessage.Contains(m_strChatWatchTargetText) &&
+				m_ChatWatchNextValidAlertTime < CurrentCycleTimestamp)
+			{
+				Program.Log("Chat Watch text \"{0}\" found!", m_strChatWatchTargetText);
+				Program.s_EmailQueueThread.PostEmailMessage(m_astrChatWatchToAddressList, "Chat text spotted!", NewArgs.OriginalLine);
+				m_ChatWatchNextValidAlertTime = CurrentCycleTimestamp + TimeSpan.FromMinutes(m_fChatWatchAlertCooldownMinutes);
+				/// Don't return a value; allow processing to continue because there's no need to cockblock in this case.
+			}
+
+			bool bIsCommand = m_astrCommandingPlayers.Contains(NewArgs.SourceActorName);
 
 			/// Check for a match against custom tell triggers.
 			/// These can be authorized from any source.
 			foreach (CustomChatTrigger ThisTrigger in m_aCustomChatTriggerList)
 			{
-				if (ThisTrigger.Match(strFrom, strLowerCaseMessage))
+				if (ThisTrigger.Match(NewArgs.SourceActorName, strLowerCaseMessage))
 				{
 					Program.Log("Custom trigger command received (\"{0}\").", ThisTrigger.m_strSubstring);
 					foreach (string strThisCommand in ThisTrigger.m_astrCommands)
 					{
-						RunCommand(strThisCommand, strFrom);
+						RunCommand(strThisCommand, NewArgs.SourceActorName);
 					}
 					return true;
 				}
@@ -620,7 +596,7 @@ namespace EQ2GlassCannon
 
 			/// This override only deals with commands after this point.
 			string strThisCommandingPlayer = string.Empty;
-			if (string.IsNullOrEmpty(strFrom) || !m_astrCommandingPlayers.Contains(strFrom))
+			if (string.IsNullOrEmpty(NewArgs.SourceActorName) || !m_astrCommandingPlayers.Contains(NewArgs.SourceActorName))
 				return false;
 
 			/// Mentor the specified group member.
@@ -639,7 +615,7 @@ namespace EQ2GlassCannon
 
 			else if (strLowerCaseMessage.Contains(m_strRepairSubphrase))
 			{
-				Actor CommandingPlayerActor = GetPlayerActor(strFrom);
+				Actor CommandingPlayerActor = GetPlayerActor(NewArgs.SourceActorName);
 				if (CommandingPlayerActor != null)
 				{
 					Actor MenderTargetActor = CommandingPlayerActor.Target();
@@ -682,7 +658,7 @@ namespace EQ2GlassCannon
 					if (ThisActor.Name != strActorName)
 						continue;
 
-					Actor CommandingPlayerActor = GetPlayerActor(strFrom);
+					Actor CommandingPlayerActor = GetPlayerActor(NewArgs.SourceActorName);
 					double fThisDistance = GetActorDistance2D(CommandingPlayerActor, ThisActor);
 					if (fThisDistance < fNearestDistance)
 					{
