@@ -1847,7 +1847,6 @@
               </Tab>
               <!--2nd Level MainHealer Tab-->
               <Tab name='HealerMain'>
-	      <visible>0</visible>
                 <Frame name='HealerCFrm'>
                   <Height>100%</Height>
                   <Width>100%</Width>
