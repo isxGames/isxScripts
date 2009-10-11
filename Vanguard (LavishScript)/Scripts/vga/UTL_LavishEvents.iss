@@ -83,14 +83,12 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	{
 	if ${Text.Find[becomes FURIOUS]}
 		{
-		mobisfurious:Set[FALSE]
+		actionlog "Mob is Furious"
+		mobisfurious:Set[TRUE]
 		}
 	if ${Text.Find[no longer FURIOUS]}
 		{
-		mobisfurious:Set[FALSE]
-		}
-	if ${Text.Find[slain]}
-		{
+		actionlog "Mob Says Not Furious"
 		mobisfurious:Set[FALSE]
 		}
 	}	
@@ -246,27 +244,51 @@ function PopulateGroupMemberNames()
 	
 }
 
+function PopulateGroupMemberClassType()
+{
+	variable int i = 1
+	
+	do
+	{
+		if ${Group[${i}](exists)}
+		{
+		if ${Group[${i}].Class.Equal[Warrior]} || ${Group[${i}].Class.Equal[Paladin]} || ${Group[${i}].Class.Equal[Dread Knight]}
+			GrpMemberClassType[${i}]:Set[Tank]
+		if ${Group[${i}].Class.Equal[Blood Mage]} || ${Group[${i}].Class.Equal[Sorcerer]} || ${Group[${i}].Class.Equal[Necromancer]} || ${Group[${i}].Class.Equal[Psionicist]} || ${Group[${i}].Class.Equal[Druid]}
+			GrpMemberClassType[${i}]:Set[Squishy]
+		if ${Group[${i}].Class.Equal[Ranger]} || ${Group[${i}].Class.Equal[Rogue]} || ${Group[${i}].Class.Equal[Monk]} || ${Group[${i}].Class.Equal[Bard]} || ${Group[${i}].Class.Equal[Cleric]} || ${Group[${i}].Class.Equal[Disciple]} || ${Group[${i}].Class.Equal[Shaman]}
+			GrpMemberClassType[${i}]:Set[Medium]
+		}
+	}
+	while ${i:Inc} <= 24
+	
+}
 atom VG_onGroupMemberCountChange()
 {
 	call PopulateGroupMemberNames
+	call PopulateGroupMemberClassType
 }
 
 atom VG_onGroupDisbanded()
 {
 	call PopulateGroupMemberNames
+	call PopulateGroupMemberClassType
 }
 
 atom VG_onGroupFormed()
 {
 	call PopulateGroupMemberNames
+	call PopulateGroupMemberClassType
 }
 
 atom VG_onGroupBooted()
 {
 	call PopulateGroupMemberNames	
+	call PopulateGroupMemberClassType
 }
 
 atom VG_onGroupMemberBooted()
 {
-	call PopulateGroupMemberNames	
+	call PopulateGroupMemberNames
+	call PopulateGroupMemberClassType
 }

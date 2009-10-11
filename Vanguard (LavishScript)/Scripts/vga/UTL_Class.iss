@@ -37,6 +37,9 @@ function Class_PreCombat()
 		case Shaman
 			call Shaman_PreCombat
 			break
+		case Disciple
+			call Disciple_PreCombat
+			break
 		case Druid
 			call Druid_PreCombat
 			break
@@ -92,6 +95,9 @@ function Class_Opener()
 			break			
 		case Shaman
 			call Shaman_Opener
+			break
+		case Disciple
+			call Disciple_Opener
 			break
 		case Druid
 			call Druid_Opener
@@ -149,6 +155,9 @@ function Class_Combat()
 		case Shaman
 			call Shaman_Combat
 			break
+		case Disciple
+			call Disciple_Combat
+			break
 		case Druid
 			call Druid_Combat
 			break
@@ -204,6 +213,9 @@ function Class_PostCombat()
 			break			
 		case Shaman
 			call Shaman_PostCombat
+			break
+		case Disciple
+			call Disciple_PostCombat
 			break
 		case Druid
 			call Druid_PostCombat
@@ -261,6 +273,9 @@ function Class_Emergency()
 		case Shaman
 			call Shaman_Emergency
 			break
+		case Disciple
+			call Disciple_Emergency
+			break
 		case Druid
 			call Druid_Emergency
 			break
@@ -316,6 +331,9 @@ function Class_PostCasting()
 			break			
 		case Shaman
 			call Shaman_PostCasting
+			break
+		case Disciple
+			call Disciple_PostCasting
 			break
 		case Druid
 			call Druid_PostCasting
@@ -373,6 +391,9 @@ function Class_DownTime()
 			break			
 		case Shaman
 			call Shaman_DownTime
+			break
+		case Disciple
+			call Disciple_DownTime
 			break
 		case Druid
 			call Druid_DownTime

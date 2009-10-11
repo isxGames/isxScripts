@@ -118,6 +118,13 @@ I should Attack							|
 ;-------------------------------------------
 
 #include "${Script.CurrentDirectory}/Act_Healing.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_By_Type.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_Cleric.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_Disciple.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_Druid.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_Paladin.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_Ranger.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_Shaman.iss"
 #include "${Script.CurrentDirectory}/GUI_Healing.iss"
 #include "${Script.CurrentDirectory}/Act_Buff.iss"
 
@@ -232,6 +239,7 @@ function main()
 	call Necromancer_GUI
 	call Psionicist_GUI
 	call Sorcerer_GUI
+	call PopulateGroupMemberClassType
 	;***************edited by maras**************	
 	call SetupHOTTimer
 	;***************end edited by maras**************
@@ -291,7 +299,8 @@ function main()
 ;===================================================
 function downtimefunction()
 {
-	call Healcheck
+	if !${DoByPassVGAHeals}
+		call Healcheck
 	call Class_DownTime
 	call followpawn
 	call assistpawn
@@ -358,7 +367,8 @@ function PreCombatLoopFunction()
 	call LooseTarget
  	call CheckPosition
 	call EmergencyActions
-	call Healcheck
+	if !${DoByPassVGAHeals}
+		call Healcheck
 	return
 }
 
@@ -379,7 +389,7 @@ function EmergencyActions()
 	;-------------------------------------------
 	;*****Check If I Need to Instant Heal*******
 	;-------------------------------------------
-	if ${ClassRole.healer}
+	if ${ClassRole.healer} && !${DoByPassVGAHeals}
 		call checkinstantheal
 	;-------------------------------------------
 	;***Check If I Need to Turn off Attack******
@@ -418,8 +428,10 @@ function EmergencyActions()
 function PostCastingActions()
 {
 	UpdateTempBuffWatch
+
 	call EmergencyActions
-	call Healcheck
+	if !${DoByPassVGAHeals}
+		call Healcheck
 	call LooseTarget
 	call pushagrototank
 	call rescue
@@ -427,6 +439,7 @@ function PostCastingActions()
 	;-------------------------------------------
 	;********Check If I Can Critical************
 	;-------------------------------------------
+	call Class_PostCasting
 	call functAOECrits
 	call functBuffCrits
 	call functDotCrits
@@ -438,7 +451,7 @@ function PostCastingActions()
 	;-------------------------------------------
 	;****Check for Class Specific Post**********
 	;-------------------------------------------
-	call Class_PostCasting
+
 	
 	return
 }
