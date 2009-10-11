@@ -250,16 +250,30 @@ function executeability(string x_ability, string x_type, string CP)
 	switch ${x_type}
 	{
 		case Heal
+			echo "HEAL ${x_ability} ${Me.DTarget} ${Group[1].Name} ${Group[1].Health} , ${Group[2].Name} ${Group[2].Health} , ${Group[3].Name} ${Group[3].Health} , ${Group[4].Name} ${Group[4].Health} , ${Group[5].Name} ${Group[5].Health} , ${Group[6].Name} ${Group[6].Health}"  
 			DoIt:Set[TRUE]
 			break
-			
+
+		case MeleeHeal
+			echo "HEAL ${x_ability} ${Me.DTarget} ${Group[1].Name} ${Group[1].Health} , ${Group[2].Name} ${Group[2].Health} , ${Group[3].Name} ${Group[3].Health} , ${Group[4].Name} ${Group[4].Health} , ${Group[5].Name} ${Group[5].Health} , ${Group[6].Name} ${Group[6].Health}"  
+			call CheckFurious
+			if ${Return}
+				{
+				DoIt:Set[TRUE]
+				}
+			break	
+		
 		case attack		
 			call mobresist "${x_ability}"
 			if ${Return}
-			{
-				DoIt:Set[TRUE]
-          	}
-      		break
+				{
+				call CheckFurious
+				if ${Return}
+					{
+					DoIt:Set[TRUE]
+					}
+          			}
+      			break
 
 		case counter		
 			call mobresist "${x_ability}"
@@ -309,7 +323,11 @@ function executeability(string x_ability, string x_type, string CP)
 					actionlog "${x_ability} ${Me.DTarget}"
 					call MeCasting ${CP}
 					return
-					
+				case MeleeHeal
+					actionlog "${x_ability} ${Me.DTarget}"
+					call MeCasting ${CP}
+					return	
+				
 				case attack		
 					actionlog "${x_ability} ${Me.Target}"
 					call MeCasting ${CP}

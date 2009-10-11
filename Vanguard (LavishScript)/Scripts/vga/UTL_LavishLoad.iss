@@ -53,7 +53,8 @@ function loadxmls()
 	LavishSettings[VGA]:AddSet[Class]
 	LavishSettings[VGA]:AddSet[Rescue]
 	LavishSettings[VGA]:AddSet[ForceRescue]
-
+	LavishSettings[VGA]:AddSet[HealSequence]
+	LavishSettings[VGA]:AddSet[EmergencyHealSequence]
 
 	LavishSettings[VGA_Mobs]:AddSet[Ice]
 	LavishSettings[VGA_Mobs]:AddSet[Fire]
@@ -88,6 +89,7 @@ function LavishLoad()
 	NonCombatRes:Set[${HealerSR.FindSetting[NonCombatRes]}]
 	HotHeal:Set[${HealerSR.FindSetting[HotHeal]}]
 	InstantHeal:Set[${HealerSR.FindSetting[InstantHeal]}]
+	InstantHeal2:Set[${HealerSR.FindSetting[InstantHeal2]}]
 	SmallHeal:Set[${HealerSR.FindSetting[SmallHeal]}]
 	BigHeal:Set[${HealerSR.FindSetting[BigHeal]}]
 	InstantGroupHeal:Set[${HealerSR.FindSetting[InstantGroupHeal]}]
@@ -269,6 +271,20 @@ function LavishLoad()
   doRestoreSpecial:Set[${HealerSR.FindSetting[doRestoreSpecial]}]	
   RestoreSpecialint:Set[${HealerSR.FindSetting[RestoreSpecialint]}]	
   RestoreSpecial:Set[${HealerSR.FindSetting[RestoreSpecial]}]	
+DoByPassVGAHeals:Set[${HealerSR.FindSetting[DoByPassVGAHeals]}]	
+TankHealPct:Set[${HealerSR.FindSetting[TankHealPct,${TankHealPct}]}]
+TankEmerHealPct:Set[${HealerSR.FindSetting[TankEmerHealPct,${TankEmerHealPct}]}]
+MedHealPct:Set[${HealerSR.FindSetting[MedHealPct,${MedHealPct}]}]
+MedEmerHealPct:Set[${HealerSR.FindSetting[MedEmerHealPct,${MedEmerHealPct}]}]
+SquishyHealPct:Set[${HealerSR.FindSetting[SquishyHealPct,${SquishyHealPct}]}]
+SquishyEmerHealPct:Set[${HealerSR.FindSetting[SquishyEmerHealPct,${SquishyEmerHealPct}]}]
+kiss:Set[${HealerSR.FindSetting[kiss,${kiss}]}]
+HealCrit1:Set[${HealerSR.FindSetting[HealCrit1,${HealCrit1}]}]
+HealCrit2:Set[${HealerSR.FindSetting[HealCrit2,${HealCrit2}]}]
+InstantHotHeal1:Set[${HealerSR.FindSetting[InstantHotHeal1,${InstantHotHeal1}]}]
+InstantHotHeal2:Set[${HealerSR.FindSetting[InstantHotHeal2,${InstantHotHeal2}]}]
+TapSoloHeal:Set[${HealerSR.FindSetting[TapSoloHeal,${TapSoloHeal}]}]
+
 	;===================================================
 	;===                  Utility Load              ====
 	;===================================================
@@ -289,8 +305,8 @@ function LavishLoad()
 	doTrash:Set[${UtilitySR.FindSetting[doTrash]}]
 	Sell:Set[${LavishSettings[VGA_General].FindSet[Sell]}]
 	Trash:Set[${LavishSettings[VGA_General].FindSet[Trash]}]
-	DoChainsASAP:Set[${UtilitySR.FindSetting[DoChainsASAP,TRUE]}]
-	DoCountersASAP:Set[${UtilitySR.FindSetting[DoCountersASAP,TRUE]}]
+	DoChainsASAP:Set[${UtilitySR.FindSetting[FALSE,FALSE]}]
+	DoCountersASAP:Set[${UtilitySR.FindSetting[FALSE,FALSE]}]
 	Domount:Set[${UtilitySR.FindSetting[Domount,FALSE]}]
 	DoShiftingImage:Set[${UtilitySR.FindSetting[DoShiftingImage,FALSE]}]
 	ShiftingImage:Set[${UtilitySR.FindSetting[ShiftingImage,TRUE]}]

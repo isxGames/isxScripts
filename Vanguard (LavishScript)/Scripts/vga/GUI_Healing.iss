@@ -6,21 +6,23 @@ function PopulateHealLists()
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
 	
-		if ${Me.Ability[${i}].Type.Equal[Spell]}
-			{
 			UIElement[BuffCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[CombatResCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[NonCombatResCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[LazyBuffCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[ResStoneCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[hotsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[InstantHotHeal1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[InstantHotHeal2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[instantsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[instant2solohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[TapSoloHealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[smallsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[bigsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[instantgrouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[grouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[HealCrit1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[HealCrit2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[RestoreSpecialCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			}
+
 	}
 	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
 	{
@@ -85,6 +87,30 @@ function PopulateHealLists()
 			UIElement[instantsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[instant2solohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[instant2solohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${InstantHeal2}]}
+			UIElement[instant2solohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[InstantHotHeal1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[InstantHotHeal1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${InstantHotHeal1}]}
+			UIElement[InstantHotHeal1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[InstantHotHeal2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[InstantHotHeal2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${InstantHotHeal2}]}
+			UIElement[InstantHotHeal2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[TapSoloHealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[TapSoloHealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${TapSoloHeal}]}
+			UIElement[TapSoloHealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[smallsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
 	{
 		if ${UIElement[smallsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${SmallHeal}]}
@@ -97,10 +123,16 @@ function PopulateHealLists()
 			UIElement[bigsolohealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
-	while ${rCount:Inc} <= ${UIElement[instantgrouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	while ${rCount:Inc} <= ${UIElement[HealCrit1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
 	{
-		if ${UIElement[instantgrouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${InstantGroupHeal}]}
-			UIElement[instantgrouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+		if ${UIElement[HealCrit1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${HealCrit1}]} 
+			UIElement[HealCrit1Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
+	}
+	rCount:Set[0]
+	while ${rCount:Inc} <= ${UIElement[HealCrit2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}
+	{
+		if ${UIElement[HealCrit2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Item[${rCount}].Text.Equal[${HealCrit2}]} 
+			UIElement[HealCrit2Combo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[grouphealCombo@HealCFrm@Heal_Buff@HealerSubTab@HealerFrm@Healer@ABot@vga_gui].Items}

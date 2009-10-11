@@ -6,6 +6,41 @@ function ManualPause()
 		wait 1
 }
 ;********************************************
+function:bool CheckFurious()
+{
+	while ${mobisfurious}
+		{
+		if ${Me.TargetHealth} > 20
+			{
+			actionlog "Furious Down Health too High"
+			mobisfurious:Set[FALSE]
+			wait 10
+			return TRUE
+			}
+		if ${Me.Ability[Auto Attack].Toggled}
+			{
+			Me.Ability[Auto Attack]:Use
+			wait 10
+			}
+		if ${Me.TargetHealth} == 0 || ${Me.Target.Type.Equal[Corpse]} || !${Me.Target(exists)} || ${Me.Target.IsDead}
+			{
+			actionlog "Furious Down Mob is Dead/Missing"
+			mobisfurious:Set[FALSE]
+			wait 10
+			return TRUE
+			}	
+		if ${Me.IsCasting}
+			{
+			vgexecute /stopcasting
+			}
+		wait 10
+		if ${ClassRole.healer}
+			call Healcheck	
+		}
+	if !${mobisfurious}
+		return TRUE	
+}
+;********************************************
 function TurnOffAttackfunct()
 {
 	If ${doTurnOffAttack} 
@@ -34,33 +69,7 @@ function TurnOffAttackfunct()
 			Iterator:Next
 		}
 	}
-	if ${doFurious}
-	{
-	if ${mobisfurious}
-		{
-		if ${Me.IsCasting}
-			{
-			vgexecute /stopcasting
-			}
-		if ${Me.Ability[Auto Attack].Toggled}
-			{
-			Me.Ability[Auto Attack]:Use
-			}
-		wait 10	
-		if ${ClassRole.healer}
-			{
-			call Healcheck
-			}
-		wait 10
-		while ${Me.TargetBuff[Furious}](exists)}
-			{
-			wait 5
-			if ${ClassRole.healer}
-				call Healcheck
-			}		
-		}
-	}
-
+	call CheckFurious
 } 
 ;********************************************
 function counteringfunct()

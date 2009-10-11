@@ -20,13 +20,8 @@ function Repair()
 
   Merchant:Begin[Repair]
   wait 3
-		
-  do
-  {
-      Merchant.RepairItem[${i}]:Repair
-    wait 1
-  }
-  while (${i:Inc} <= ${Merchant.NumItemsForRepair})
+  Merchant:RepairAll
+  Merchant:End
   variable int finishmoney
   finishmoney:Inc[${Me.Copper}]
   finishmoney:Inc[${Math.Calc[${Me.Silver}*100]}]
@@ -70,10 +65,14 @@ function Sell()
 	Iterator:First
 	while ( ${Iterator.Key(exists)} )
 	{
-		if ${Me.Inventory[exactname,${Iterator.Key}](exists)}
-		{
-		Me.Inventory[exactname,${Iterator.Key}]:Sell[${Me.Inventory[ExactName,${Iterator.Value}].Quantity}]
-		}
+		if !${Me.Inventory[exactname,${Iterator.Key}].Type.Equal[No Trade]} || !${Me.Inventory[exactname,${Iterator.Key}].Type.Equal[No Rent]} || !${Me.Inventory[exactname,${Iterator.Key}].Type.Equal[No Sell]} || !${Me.Inventory[exactname,${Iterator.Key}].Type.Equal[Quest]}
+			{
+			while ${Me.Inventory[exactname,${Iterator.Key}](exists)}
+			{
+			echo Selling ${Iterator.Key}
+			Me.Inventory[exactname,${Iterator.Key}]:Sell[${Me.Inventory[ExactName,${Iterator.Value}].Quantity}]
+			}
+			}
 		Iterator:Next
 	}
       }

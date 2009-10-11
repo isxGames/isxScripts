@@ -9,6 +9,7 @@ function LavishSave()
 	HealerSR:AddSetting[NonCombatRes,${NonCombatRes}]
 	HealerSR:AddSetting[HotHeal,${HotHeal}]
 	HealerSR:AddSetting[InstantHeal,${InstantHeal}]
+	HealerSR:AddSetting[InstantHeal2,${InstantHeal2}]
 	HealerSR:AddSetting[SmallHeal,${SmallHeal}]
 	HealerSR:AddSetting[BigHeal,${BigHeal}]
 	HealerSR:AddSetting[InstantGroupHeal,${InstantGroupHeal}]
@@ -190,6 +191,21 @@ function LavishSave()
   HealerSR:AddSetting[RestoreSpecial,${RestoreSpecial}]	
   HealerSR:AddSetting[RestoreSpecialint,${RestoreSpecialint}]	
   HealerSR:AddSetting[doClickieForce,${doClickieForce}]	
+  HealerSR:AddSetting[DoByPassVGAHeals,${DoByPassVGAHeals}]	
+HealerSR:AddSetting[TankHealPct,${TankHealPct}]
+HealerSR:AddSetting[TankEmerHealPct,${TankEmerHealPct}]
+HealerSR:AddSetting[MedHealPct,${MedHealPct}]
+HealerSR:AddSetting[MedEmerHealPct,${MedEmerHealPct}]
+HealerSR:AddSetting[SquishyHealPct,${SquishyHealPct}]
+HealerSR:AddSetting[SquishyEmerHealPct,${SquishyEmerHealPct}]
+
+HealerSR:AddSetting[kiss,${kiss}]
+HealerSR:AddSetting[HealCrit1,${HealCrit1}]
+HealerSR:AddSetting[HealCrit2,${HealCrit2}]
+HealerSR:AddSetting[InstantHotHeal1,${InstantHotHeal1}]
+HealerSR:AddSetting[InstantHotHeal2,${InstantHotHeal2}]
+HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
+
 	;===================================================
 	;===                  Utility Save              ====
 	;===================================================

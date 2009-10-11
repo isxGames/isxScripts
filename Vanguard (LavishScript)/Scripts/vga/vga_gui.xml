@@ -622,7 +622,7 @@
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoChargeFollow' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
+                            <visible>0</visible>
                             <X>13</X>
                             <Y>275</Y>
                             <Width>15</Width>
@@ -800,7 +800,7 @@
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
+                            <visible>0</visible>
                             <X>13</X>
                             <Y>460</Y>
                             <Width>15</Width>
@@ -836,7 +836,7 @@
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
-                            <visible>4</visible>
+                            <visible>0</visible>
                             <X>13</X>
                             <Y>480</Y>
                             <Width>15</Width>
@@ -1650,10 +1650,208 @@
             <Width>99%</Width>
             <Tabs>
               <!--2nd Level MainHealer Tab-->
+              <Tab name='HealPct'>
+                <Frame name='HealPctCFrm'>
+                  <Height>100%</Height>
+                  <Width>100%</Width>
+                  <Texture></Texture>
+                  <Children>
+                    <Text Name="TankHealPcttxt" Template="VG.BoldText">
+                      <X>15</X>
+                      <Y>15</Y>
+                      <Width>150</Width>
+                      <Height>19</Height>
+                      <Text>Tank Heal Pct</Text>
+                    </Text>
+			<Text name='TankHealPctValue' Template='VG.BoldText'>
+				<X>150</X>
+				<Y>15</Y>
+				<Width>50</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VGA].Variable[TankHealPct]}]
+				</OnRender>
+			</Text>
+			<Slider name='TankHealPctSlider' Template='VG.Slider'>
+				<X>180</X>
+				<Y>13</Y>
+				<Width>200</Width>
+				<Height>20</Height>
+				<Range>100</Range>
+				<Alignment>Center</Alignment>
+				<OnLoad>
+					This:SetValue[${Script[VGA].Variable[TankHealPct]}]
+				</OnLoad>
+				<OnChange>
+					Script[VGA].Variable[TankHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[VGA]:QueueCommand[call LavishSave]
+				</OnChange>
+			</Slider>
+                    	<Text Name="TankEmerHealPcttxt" Template="VG.BoldText">
+                      		<X>15</X>
+                      		<Y>40</Y>
+                      		<Width>150</Width>
+                      		<Height>19</Height>
+                      		<Text>Tank Emergency Heal</Text>
+                   	 </Text>
+			<Text name='TankEmerHealPctValue' Template='VG.BoldText'>
+				<X>150</X>
+				<Y>40</Y>
+				<Width>50</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VGA].Variable[TankEmerHealPct]}]
+				</OnRender>
+			</Text>
+			<Slider name='TankEmerHealPctSlider' Template='VG.Slider'>
+				<X>180</X>
+				<Y>38</Y>
+				<Width>200</Width>
+				<Height>20</Height>
+				<Range>100</Range>
+				<Alignment>Center</Alignment>
+				<OnLoad>
+					This:SetValue[${Script[VGA].Variable[TankEmerHealPct]}]
+				</OnLoad>
+				<OnChange>
+					Script[VGA].Variable[TankEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[VGA]:QueueCommand[call LavishSave]
+				</OnChange>
+			</Slider>
+			<Text Name='MedHealPcttxt' Template="VG.BoldText">
+                      		<X>15</X>
+                      		<Y>75</Y>
+                      		<Width>150</Width>
+                      		<Height>19</Height>
+                      		<Text>Medium Heal Pct</Text>
+                   	 </Text>
+			<Text name='MedPctValue' Template='VG.BoldText'>
+				<X>150</X>
+				<Y>75</Y>
+				<Width>50</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VGA].Variable[MedHealPct]}]
+				</OnRender>
+			</Text>
+			<Slider name='MedPctSlider' Template='VG.Slider'>
+				<X>180</X>
+				<Y>72</Y>
+				<Width>200</Width>
+				<Height>20</Height>
+				<Range>100</Range>
+				<Alignment>Center</Alignment>
+				<OnLoad>
+					This:SetValue[${Script[VGA].Variable[MedHealPct]}]
+				</OnLoad>
+				<OnChange>
+					Script[VGA].Variable[MedHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[VGA]:QueueCommand[call LavishSave]
+				</OnChange>
+			</Slider>
+			<Text Name='MedEmerHealPcttxt' Template="VG.BoldText">
+                      		<X>15</X>
+                      		<Y>100</Y>
+                      		<Width>150</Width>
+                      		<Height>19</Height>
+                      		<Text>Medium Emerg. Heal</Text>
+                   	 </Text>
+			<Text name='MedEmerPctValue' Template='VG.BoldText'>
+				<X>150</X>
+				<Y>100</Y>
+				<Width>50</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VGA].Variable[MedEmerHealPct]}]
+				</OnRender>
+				</Text>
+			<Slider name='MedEmerPctSlider' Template='VG.Slider'>
+				<X>180</X>
+				<Y>97</Y>
+				<Width>200</Width>
+				<Height>20</Height>
+				<Range>100</Range>
+				<Alignment>Center</Alignment>
+				<OnLoad>
+					This:SetValue[${Script[VGA].Variable[MedEmerHealPct]}]
+				</OnLoad>
+				<OnChange>
+					Script[VGA].Variable[MedEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[VGA]:QueueCommand[call LavishSave]
+				</OnChange>
+			</Slider>
+			<Text Name='SquishyHealPcttxt' Template="VG.BoldText">
+                      		<X>15</X>
+                      		<Y>135</Y>
+                      		<Width>150</Width>
+                      		<Height>19</Height>
+                      		<Text>Squishy Heal Pct</Text>
+                   	 </Text>
+			<Text name='SquishyPctValue' Template='VG.BoldText'>
+				<X>150</X>
+				<Y>135</Y>
+				<Width>50</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VGA].Variable[SquishyHealPct]}]
+				</OnRender>
+			</Text>
+			<Slider name='SquishyPctSlider' Template='VG.Slider'>
+				<X>180</X>
+				<Y>132</Y>
+				<Width>200</Width>
+				<Height>20</Height>
+				<Range>100</Range>
+				<Alignment>Center</Alignment>
+				<OnLoad>
+					This:SetValue[${Script[VGA].Variable[SquishyHealPct]}]
+				</OnLoad>
+				<OnChange>
+					Script[VGA].Variable[SquishyHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[VGA]:QueueCommand[call LavishSave]
+				</OnChange>
+			</Slider>
+			<Text Name='SquishyEmerHealPcttxt' Template="VG.BoldText">
+                      		<X>15</X>
+                      		<Y>160</Y>
+                      		<Width>150</Width>
+                      		<Height>19</Height>
+                      		<Text>Squishy Emerg. Heal</Text>
+                   	 </Text>
+			<Text name='SquishyEmerPctValue' Template='VG.BoldText'>
+				<X>150</X>
+				<Y>160</Y>
+				<Width>50</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VGA].Variable[SquishyEmerHealPct]}]
+				</OnRender>
+				</Text>
+			<Slider name='SquishyEmerPctSlider' Template='VG.Slider'>
+				<X>180</X>
+				<Y>157</Y>
+				<Width>200</Width>
+				<Height>20</Height>
+				<Range>100</Range>
+				<Alignment>Center</Alignment>
+				<OnLoad>
+					This:SetValue[${Script[VGA].Variable[SquishyEmerHealPct]}]
+				</OnLoad>
+				<OnChange>
+					Script[VGA].Variable[SquishyEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[VGA]:QueueCommand[call LavishSave]
+				</OnChange>
+			</Slider>
+              	  </Children>
+                </Frame>
+              </Tab>
+              <!--2nd Level MainHealer Tab-->
               <Tab name='HealerMain'>
+	      <visible>0</visible>
                 <Frame name='HealerCFrm'>
                   <Height>100%</Height>
                   <Width>100%</Width>
+		  <visible>0</visible>
                   <Texture></Texture>
                   <Children>
                     <Text Name="grouptxt" Template="VG.BoldText">
@@ -5688,7 +5886,24 @@
                         StoneButton 24
                       </OnLeftClick>
                     </Button>
-
+                   <checkbox Name='DoByPassVGAHeals' Template='VG.BlueCheckbox'>
+                      <visible>4</visible>
+                      <X>13</X>
+                      <Y>530</Y>
+                      <Width>15</Width>
+                      <Height>20</Height>
+                      <Text>Bypass VGA Heal Script (use my Custom)</Text>
+                      <OnLoad>
+                        if ${Script[vga].VariableScope.DoByPassVGAHeals}
+                        {
+                        This:SetChecked
+                        }
+                      </OnLoad>
+                      <OnLeftClick>
+                        Script[vga].VariableScope.DoByPassVGAHeals:Set[${This.Checked}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnLeftClick>
+                    </checkbox>
 
                   </Children>
                 </Frame>
@@ -5700,39 +5915,18 @@
                   <Width>100%</Width>
                   <Texture></Texture>
                   <Children>
-                    <Text Name='txthotsoloheal' Template='VG.BoldText'>
-                      <X>13</X>
-                      <Y>13</Y>
-                      <Width>150</Width>
-                      <Height>19</Height>
-                      <Alignment>Left</Alignment>
-                      <Text>Single HOT Heal</Text>
-                    </Text>
-                    <ComboBox Name="hotsolohealCombo" Template="VG.ComboBox">
-                      <X>120</X>
-                      <Y>13</Y>
-                      <Width>190</Width>
-                      <Height>19</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.HotHeal:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
-                      </OnSelect>
-                    </ComboBox>
                     <Text Name='txtinstantsoloheal' Template='VG.BoldText'>
                       <X>13</X>
-                      <Y>33</Y>
+                      <Y>13</Y>
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
-                      <Text>Single Inst. Heal</Text>
+                      <Text>DivLgt|Pana|Lao|Glenia</Text>
                     </Text>
                     <ComboBox Name="instantsolohealCombo" Template="VG.ComboBox">
-                      <X>120</X>
-                      <Y>33</Y>
-                      <Width>190</Width>
+                      <X>200</X>
+                      <Y>13</Y>
+                      <Width>170</Width>
                       <Height>19</Height>
                       <OnLoad>
                         This:AddItem[NONE]
@@ -5742,18 +5936,102 @@
                         Script[VGA]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
-                    <Text Name='txtsmallsoloheal' Template='VG.BoldText'>
+                    <Text Name='txtinstant2soloheal' Template='VG.BoldText'>
+                      <X>13</X>
+                      <Y>33</Y>
+                      <Width>150</Width>
+                      <Height>19</Height>
+                      <Alignment>Left</Alignment>
+                      <Text>Intervention</Text>
+                    </Text>
+                    <ComboBox Name="instant2solohealCombo" Template="VG.ComboBox">
+                      <X>200</X>
+                      <Y>33</Y>
+                      <Width>170</Width>
+                      <Height>19</Height>
+                      <OnLoad>
+                        This:AddItem[NONE]
+                      </OnLoad>
+                      <OnSelect>
+                        Script[vga].VariableScope.InstantHeal2:Set[${This.SelectedItem.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnSelect>
+                    </ComboBox>
+                    <Text Name='txtInstantHotHeal1' Template='VG.BoldText'>
                       <X>13</X>
                       <Y>53</Y>
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
-                      <Text>Single Small Heal</Text>
+                      <Text>KissHevn|FlsMend</Text>
+                    </Text>
+                    <ComboBox Name="InstantHotHeal1Combo" Template="VG.ComboBox">
+                      <X>200</X>
+                      <Y>53</Y>
+                      <Width>170</Width>
+                      <Height>19</Height>
+                      <OnLoad>
+                        This:AddItem[NONE]
+                      </OnLoad>
+                      <OnSelect>
+                        Script[vga].VariableScope.InstantHotHeal1:Set[${This.SelectedItem.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnSelect>
+                    </ComboBox>
+                    <Text Name='txtInstantHotHeal2' Template='VG.BoldText'>
+                      <X>13</X>
+                      <Y>73</Y>
+                      <Width>150</Width>
+                      <Height>19</Height>
+                      <Alignment>Left</Alignment>
+                      <Text>Allev|AegsLf|Blom|TrSerk</Text>
+                    </Text>
+                    <ComboBox Name="InstantHotHeal2Combo" Template="VG.ComboBox">
+                      <X>200</X>
+                      <Y>73</Y>
+                      <Width>170</Width>
+                      <Height>19</Height>
+                      <OnLoad>
+                        This:AddItem[NONE]
+                      </OnLoad>
+                      <OnSelect>
+                        Script[vga].VariableScope.InstantHotHeal2:Set[${This.SelectedItem.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnSelect>
+                    </ComboBox>
+                    <Text Name='txtTapSoloHeal' Template='VG.BoldText'>
+                      <X>13</X>
+                      <Y>93</Y>
+                      <Width>150</Width>
+                      <Height>19</Height>
+                      <Alignment>Left</Alignment>
+                      <Text>BlsWind|EntwVein</Text>
+                    </Text>
+                    <ComboBox Name="TapSoloHealCombo" Template="VG.ComboBox">
+                      <X>200</X>
+                      <Y>93</Y>
+                      <Width>170</Width>
+                      <Height>19</Height>
+                      <OnLoad>
+                        This:AddItem[NONE]
+                      </OnLoad>
+                      <OnSelect>
+                        Script[vga].VariableScope.TapSoloHeal:Set[${This.SelectedItem.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnSelect>
+                    </ComboBox>
+                    <Text Name='txtsmallsoloheal' Template='VG.BoldText'>
+                      <X>13</X>
+                      <Y>113</Y>
+                      <Width>150</Width>
+                      <Height>19</Height>
+                      <Alignment>Left</Alignment>
+                      <Text>HealTch|Remedy|BrthRenew|InfHlth</Text>
                     </Text>
                     <ComboBox Name="smallsolohealCombo" Template="VG.ComboBox">
-                      <X>120</X>
-                      <Y>53</Y>
-                      <Width>190</Width>
+                      <X>200</X>
+                      <Y>113</Y>
+                      <Width>170</Width>
                       <Height>19</Height>
                       <OnLoad>
                         This:AddItem[NONE]
@@ -5765,16 +6043,16 @@
                     </ComboBox>
                     <Text Name='txtbigsoloheal' Template='VG.BoldText'>
                       <X>13</X>
-                      <Y>73</Y>
+                      <Y>133</Y>
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
-                      <Text>Single Big Heal</Text>
+                      <Text>Rejuv|Restor|AstrWnd|BldGift</Text>
                     </Text>
                     <ComboBox Name="bigsolohealCombo" Template="VG.ComboBox">
-                      <X>120</X>
-                      <Y>73</Y>
-                      <Width>190</Width>
+                      <X>200</X>
+                      <Y>133</Y>
+                      <Width>170</Width>
                       <Height>19</Height>
                       <OnLoad>
                         This:AddItem[NONE]
@@ -5784,39 +6062,60 @@
                         Script[VGA]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
-                    <Text Name='txtinstantgroupheal' Template='VG.BoldText'>
+                    <Text Name='txtHealCrit1' Template='VG.BoldText'>
                       <X>13</X>
-                      <Y>93</Y>
+                      <Y>153</Y>
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
-                      <Text>Group Inst. Heal</Text>
+                      <Text>LifeWard|ConcHand|BldTrib</Text>
                     </Text>
-                    <ComboBox Name="instantgrouphealCombo" Template="VG.ComboBox">
-                      <X>120</X>
-                      <Y>93</Y>
-                      <Width>190</Width>
+                    <ComboBox Name="HealCrit1Combo" Template="VG.ComboBox">
+                      <X>200</X>
+                      <Y>153</Y>
+                      <Width>170</Width>
                       <Height>19</Height>
                       <OnLoad>
                         This:AddItem[NONE]
                       </OnLoad>
                       <OnSelect>
-                        Script[vga].VariableScope.InstantGroupHeal:Set[${This.SelectedItem.Text}]
+                        Script[vga].VariableScope.HealCrit1:Set[${This.SelectedItem.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnSelect>
+                    </ComboBox>
+                    <Text Name='txtHealCrit2' Template='VG.BoldText'>
+                      <X>13</X>
+                      <Y>173</Y>
+                      <Width>150</Width>
+                      <Height>19</Height>
+                      <Alignment>Left</Alignment>
+                      <Text>Intercess|ConcPalm</Text>
+                    </Text>
+                    <ComboBox Name="HealCrit2Combo" Template="VG.ComboBox">
+                      <X>200</X>
+                      <Y>173</Y>
+                      <Width>170</Width>
+                      <Height>19</Height>
+                      <OnLoad>
+                        This:AddItem[NONE]
+                      </OnLoad>
+                      <OnSelect>
+                        Script[vga].VariableScope.HealCrit2:Set[${This.SelectedItem.Text}]
                         Script[VGA]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtgroupheal' Template='VG.BoldText'>
                       <X>13</X>
-                      <Y>113</Y>
+                      <Y>193</Y>
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
-                      <Text>Group Heal</Text>
+                      <Text>ShdHlth|AncGft|CelBrez|RecBurs</Text>
                     </Text>
                     <ComboBox Name="grouphealCombo" Template="VG.ComboBox">
-                      <X>120</X>
-                      <Y>113</Y>
-                      <Width>190</Width>
+                      <X>200</X>
+                      <Y>193</Y>
+                      <Width>170</Width>
                       <Height>19</Height>
                       <OnLoad>
                         This:AddItem[NONE]
@@ -5828,7 +6127,7 @@
                     </ComboBox>
                     <Text Name='LazyBuffText' Template='VG.BoldText'>
                       <X>15</X>
-                      <Y>143</Y>
+                      <Y>253</Y>
                       <Width>60</Width>
                       <Height>20</Height>
                       <Alignment>Left</Alignment>
@@ -5836,7 +6135,7 @@
                     </Text>
                     <ComboBox Name="LazyBuffCombo" Template="VG.ComboBox">
                       <X>130</X>
-                      <Y>143</Y>
+                      <Y>253</Y>
                       <Width>65%</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -5850,7 +6149,7 @@
                     </ComboBox>
                     <Text Name='BuffText' Template='VG.BoldText'>
                       <X>13</X>
-                      <Y>166</Y>
+                      <Y>276</Y>
                       <Width>50</Width>
                       <Height>20</Height>
                       <Alignment>Left</Alignment>
@@ -5858,7 +6157,7 @@
                     </Text>
                     <ComboBox Name="BuffCombo" Template="VG.ComboBox">
                       <X>130</X>
-                      <Y>166</Y>
+                      <Y>276</Y>
                       <Width>65%</Width>
                       <Height>20</Height>
                       <OnLoad>
@@ -5875,7 +6174,7 @@
                     </ComboBox>
                     <Listbox Name="BuffList" Template="VG.ListBox">
                       <X>13</X>
-                      <Y>189</Y>
+                      <Y>299</Y>
                       <Width>95%</Width>
                       <Height>94</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -5891,7 +6190,7 @@
                     </Listbox>
                     <Text Name='ResStoneText' Template='VG.BoldText'>
                       <X>15</X>
-                      <Y>285</Y>
+                      <Y>406</Y>
                       <Width>60</Width>
                       <Height>20</Height>
                       <Alignment>Left</Alignment>
@@ -5899,7 +6198,7 @@
                     </Text>
                     <ComboBox Name="ResStoneCombo" Template="VG.ComboBox">
                       <X>130</X>
-                      <Y>285</Y>
+                      <Y>406</Y>
                       <Width>65%</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -5913,7 +6212,7 @@
                     </ComboBox>
                     <Text Name='NonCombatResText' Template='VG.BoldText'>
                       <X>15</X>
-                      <Y>308</Y>
+                      <Y>426</Y>
                       <Width>100</Width>
                       <Height>20</Height>
                       <Alignment>Left</Alignment>
@@ -5921,7 +6220,7 @@
                     </Text>
                     <ComboBox Name="NonCombatResCombo" Template="VG.ComboBox">
                       <X>130</X>
-                      <Y>308</Y>
+                      <Y>426</Y>
                       <Width>65%</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -5935,7 +6234,7 @@
                     </ComboBox>
                     <Text Name='CombatResText' Template='VG.BoldText'>
                       <X>15</X>
-                      <Y>330</Y>
+                      <Y>447</Y>
                       <Width>100</Width>
                       <Height>20</Height>
                       <Alignment>Left</Alignment>
@@ -5943,7 +6242,7 @@
                     </Text>
                     <ComboBox Name="CombatResCombo" Template="VG.ComboBox">
                       <X>130</X>
-                      <Y>330</Y>
+                      <Y>447</Y>
                       <Width>65%</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -5958,7 +6257,7 @@
                     <checkbox Name='doCombatStance' Template='VG.BlueCheckbox'>
                       <visible>4</visible>
                       <X>15</X>
-                      <Y>350</Y>
+                      <Y>467</Y>
                       <Width>15</Width>
                       <Height>20</Height>
                       <Text>Combat Form</Text>
@@ -5975,7 +6274,7 @@
                     </checkbox>
                     <ComboBox Name="CombatStanceCombo" Template="VG.ComboBox">
                       <X>150</X>
-                      <Y>350</Y>
+                      <Y>467</Y>
                       <Width>60%</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -5990,7 +6289,7 @@
                     <checkbox Name='doNonCombatStance' Template='VG.BlueCheckbox'>
                       <visible>4</visible>
                       <X>15</X>
-                      <Y>370</Y>
+                      <Y>487</Y>
                       <Width>15</Width>
                       <Height>20</Height>
                       <Text>Non-Combat Form</Text>
@@ -6007,7 +6306,7 @@
                     </checkbox>
                     <ComboBox Name="NonCombatStanceCombo" Template="VG.ComboBox">
                       <X>150</X>
-                      <Y>370</Y>
+                      <Y>487</Y>
                       <Width>60%</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -6022,7 +6321,7 @@
                     <checkbox Name='doRestoreSpecial' Template='VG.BlueCheckbox'>
                       <visible>4</visible>
                       <X>15</X>
-                      <Y>390</Y>
+                      <Y>507</Y>
                       <Width>15</Width>
                       <Height>20</Height>
                       <Text>Restore Special Points below</Text>
@@ -6039,7 +6338,7 @@
                     </checkbox>
                     <Textentry Name='RestoreSpecialtxt' Template='VG.TextEntry'>
                       <X>193</X>
-                      <Y>390</Y>
+                      <Y>507</Y>
                       <Width>28</Width>
                       <Height>19</Height>
                       <Color>FFDDBB00</Color>
@@ -6058,7 +6357,7 @@
                     </Textentry>
                     <ComboBox Name="RestoreSpecialCombo" Template="VG.ComboBox">
                       <X>230</X>
-                      <Y>390</Y>
+                      <Y>507</Y>
                       <Width>155</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -6073,7 +6372,7 @@
                     <checkbox Name='DoShiftingImagechk' Template='VG.BlueCheckbox'>
                       <visible>4</visible>
                       <X>15</X>
-                      <Y>410</Y>
+                      <Y>527</Y>
                       <Width>15</Width>
                       <Height>20</Height>
                       <Text>ShiftImage Wand</Text>
@@ -6090,7 +6389,7 @@
                     </checkbox>
                     <ComboBox Name="ShiftingImageCombo" Template="VG.ComboBox">
                       <X>150</X>
-                      <Y>410</Y>
+                      <Y>527</Y>
                       <Width>60%</Width>
                       <Height>20</Height>
                       <AutoSort>TRUE</AutoSort>

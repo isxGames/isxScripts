@@ -57,10 +57,14 @@ variable settingsetref Rescue
 variable settingsetref ForceRescue
 variable settingsetref Interactions
 
+variable settingsetref HealSequence
+variable settingsetref EmergencyHealSequence
+
 ;===================================================
 ;===               Group Member Names, etc      ====
 ;===================================================
 variable(global) string GrpMemberNames[24]
+variable(global) string GrpMemberClassType[24]
 
 ;===================================================
 ;===               Heal Variables               ====
@@ -73,9 +77,19 @@ variable int bhpctgrp[24] = 75
 variable int hhpctgrp[24] = 85
 variable int ighpctgrp[24] = 40
 variable int ghpctgrp[24] = 70
+variable int TankHealPct = 70
+variable int TankEmerHealPct = 35
+variable int MedHealPct = 80
+variable int MedEmerHealPct = 50
+variable int SquishyHealPct = 80
+variable int SquishyEmerHealPct = 50
 
 variable string HotHeal
 variable string InstantHeal
+variable string InstantHeal2
+variable string InstantHotHeal1
+variable string InstantHotHeal2
+variable string TapSoloHeal
 variable string SmallHeal
 variable string BigHeal
 variable string InstantGroupHeal
@@ -96,6 +110,13 @@ variable string doClickieForce
 variable string RestoreSpecial
 variable bool doRestoreSpecial
 variable int RestoreSpecialint
+variable string kiss
+variable string HealCrit1
+variable string HealCrit2
+
+variable bool DoByPassVGAHeals
+variable int HOTReady[24]
+variable bool usedAbility
 
 ;===================================================
 ;===               Main VGA Variables           ====
@@ -160,7 +181,6 @@ variable bool DoAttackPositionLeft
 variable bool DoAttackPositionRight
 variable bool DoAttackPositionBack
 variable bool DoAttackPosition
-
 
 ;===================================================
 ;===             Main Combat Variables          ====
