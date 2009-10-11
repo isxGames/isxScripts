@@ -63,7 +63,11 @@ namespace EQ2ParseEngine
 		public string MyCharacterName
 		{
 			get { return m_strMyCharacterName; }
-			set { m_strMyCharacterName = value; }
+			set
+			{
+				m_strMyCharacterName = m_SharedStringCache.GetSharedReference(value);
+				return;
+			}
 		}
 
 		/************************************************************************************/
@@ -72,6 +76,18 @@ namespace EQ2ParseEngine
 		{
 			get { return m_eGameLanguage; }
 			set { m_eGameLanguage = value; }
+		}
+
+		/************************************************************************************/
+		private string m_strCurrentZone = string.Empty;
+		public string CurrentZone
+		{
+			get { return m_strCurrentZone; }
+			set
+			{
+				m_strCurrentZone = m_SharedStringCache.GetSharedReference(value);
+				return;
+			}
 		}
 
 		/************************************************************************************/
@@ -173,8 +189,8 @@ namespace EQ2ParseEngine
 			}
 		}
 
-		public delegate void LineNotRecognizedDelegate(object objSender, ConsoleLogEventArgs args);
-		public event LineNotRecognizedDelegate LineNotRecognized;
+		public delegate void LineNotRecognizedHandler(object objSender, ConsoleLogEventArgs args);
+		public event LineNotRecognizedHandler LineNotRecognized;
 
 		/************************************************************************************/
 		/// <summary>
@@ -262,8 +278,8 @@ namespace EQ2ParseEngine
 			}
 		}
 
-		public delegate void ChatEventDelegate(object objSender, ChatEventArgs args);
-		public event ChatEventDelegate ChatSent;
+		public delegate void ChatEventHandler(object objSender, ChatEventArgs args);
+		public event ChatEventHandler ChatSent;
 
 		/************************************************************************************/
 		public class ActionEventArgs : ConsoleLogEventArgs, ICloneable
@@ -351,8 +367,24 @@ namespace EQ2ParseEngine
 			}
 		}
 
-		public delegate void ActionEventDelegate(object objSender, ActionEventArgs args);
-		public event ActionEventDelegate ActionOccurred;
+		public delegate void ActionEventHandler(object objSender, ActionEventArgs args);
+		public event ActionEventHandler ActionOccurred;
+
+		/************************************************************************************/
+		public class ZoningInEventArgs : ConsoleLogEventArgs
+		{
+			internal string m_strNewZone = string.Empty;
+			public string NewZone { get { return m_strNewZone; } }
+
+			public ZoningInEventArgs(DateTime Timestamp, string strParseLine, string strNewZone):base(Timestamp, strParseLine)
+			{
+				m_strNewZone = strNewZone;
+				return;
+			}
+		}
+
+		public delegate void ZoningEventHandler(object objSender, ZoningInEventArgs args);
+		public event ZoningEventHandler ZoningIn;
 
 		/************************************************************************************/
 		public static DateTime UnixTimeToDateTime(long time_t)
@@ -415,9 +447,9 @@ namespace EQ2ParseEngine
 		}
 
 		/************************************************************************************/
-		protected void AssignDamageType(string strLogName, ref ActionEventArgs.ActionType eActionType)
+		protected void AssignDamageType(string strKeyword, ref ActionEventArgs.ActionType eActionType)
 		{
-			switch (strLogName)
+			switch (strKeyword)
 			{// case "struck":
 				case "focus": eActionType = ActionEventArgs.ActionType.FocusDamage; break;
 				case "falling": eActionType = ActionEventArgs.ActionType.FallingDamage; break;
@@ -1083,6 +1115,22 @@ namespace EQ2ParseEngine
 						NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell;
 
 					DispatchChatEvent(NewEvent);
+					return true;
+				}
+			}
+
+			/// Zoning.
+			if (ZoningIn != null)
+			{
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You have entered (?<zonename>.*).$");
+				if (ThisMatch.Success)
+				{
+					string strNewZone = ThisMatch.Groups["zonename"].Value;
+					if (strNewZone != m_strCurrentZone)
+					{
+						m_strCurrentZone = strNewZone;
+						ZoningIn(this, new ZoningInEventArgs(Timestamp, strParseLine, strNewZone));
+					}
 					return true;
 				}
 			}
