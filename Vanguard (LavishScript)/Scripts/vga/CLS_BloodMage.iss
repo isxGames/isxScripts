@@ -5,17 +5,17 @@ function BloodMage_DownTime()
 	call BM_CheckEnergy
 	variable bool DoSmallHeal = FALSE
 	variable bool OkToCastSpells
-	
+
 	if ${Me.Effect[translucence](exists)}
-		OkToCastSpells:Set[FALSE]
-	else 
-		OkToCastSpells:Set[TRUE]
-	
+	OkToCastSpells:Set[FALSE]
+	else
+	OkToCastSpells:Set[TRUE]
+
 	if (${Me.HealthPct} < 70 && ${Me.EnergyPct} > 70)
-		DoSmallHeal:Set[TRUE]
+	DoSmallHeal:Set[TRUE]
 	elseif 	(${Me.HealthPct} < 50 && ${Me.EnergyPct} > 50)
-		DoSmallHeal:Set[TRUE]
-		
+	DoSmallHeal:Set[TRUE]
+
 	if (${DoSmallHeal} && ${OkToCastSpells})
 	{
 		Me.ToPawn:Target
@@ -23,11 +23,21 @@ function BloodMage_DownTime()
 		call checkabilitytocast "${SmallHeal}"
 		if ${Return}
 		{
-			echo "BM_DownTime()-Debug:: Casting '${SmallHeal}'"
+			;echo "BM_DownTime()-Debug:: Casting '${SmallHeal}'"
 			call executeability "${SmallHeal}" "Heal" "Neither"
 			return
-		}	
-	}	
+		}
+	}
+
+	;-----------------------------------------
+	; Replenish our Blood Vials
+	;-----------------------------------------
+	if ${Me.Inventory[Vial of Blood].Quantity}<3 && ${Me.HealthPct}>90
+	{
+		;echo "BM_BloodVials()-Debug:: casting Siphon Blood"
+		call executeability "Siphon Blood" "NoCheck" "Neither"
+	}
+
 }
 ;********************************************
 function BloodMage_PreCombat()
@@ -42,6 +52,10 @@ function BloodMage_Opener()
 ;********************************************
 function BloodMage_Combat()
 {
+	;-----------------------------------------
+	; Need to convert health to mana
+	;-----------------------------------------
+	call BM_CheckEnergy
 
 }
 ;********************************************
@@ -64,14 +78,121 @@ function BM_PreHealRoutine()
 {
 	;; This function is called before the primary Healcheck() routine.   The primary Healcheck() routine will be called immediatley after
 	;; this.
-	
+
+/* ==================================================================================== */
+	;-------------------------------------------
+	;Set our variables
+	;-------------------------------------------
+	variable int gn
+	variable int low
+	variable int i
+
+
+	;-------------------------------------------
+	;Find lowest health
+	;-------------------------------------------
+	if ${Me.IsGrouped}
+	{
+		gn:Set[0]
+		low:Set[100]
+
+		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+		{
+			if ${Group[${i}].Distance}<25 && ${Group[${i}].Health}>0 && ${Group[${i}].Health}<${low}
+			{
+				gn:Set[${i}]
+				low:Set[${Group[${i}].Health}]
+			}
+		}
+	}
+
+	;-------------------------------------------
+	; Patch if we are solo
+	;-------------------------------------------
+	if !${Me.IsGrouped}
+	{
+		gn:Set[0]
+		low:Set[${Me.HealthPct}]
+	}
+
+	;-------------------------------------------
+	; Let main script heal the wounded, DTarget already set
+	;-------------------------------------------
+	if ${low}<90
+	{
+		if ${Me.HealthPct}<70 && !${Me.IsGrouped}
+		{
+			Pawn[me]:Target
+			call checkabilitytocast "${SmallHeal}"
+			if ${Return}
+			{
+
+				if ${doNonCombatStance} && !${Me.Effect[${NonCombatStance}](exists)}
+				{
+					Me.Form[${NonCombatStance}]:ChangeTo
+				}
+				echo "BM_PreHealRoutine()-Debug:: casting ${SmallHeal}"
+				call executeability "${SmallHeal}" "Heal" "Neither"
+				return
+			}
+		}
+
+		Pawn[id,${Group[${gn}].ID}]:Target
+		return CONTINUE
+	}
+
+	;-------------------------------------------
+	; Otherwise, LIFETAP lowest health
+	;-------------------------------------------
+	if (${Me.InCombat} || ${Me.ToPawn.CombatState} == 1)
+	{
+		if (${Me.Target(exists)} && ${Me.Target.CombatState} != 0 && !${Me.Target.IsDead})
+		{
+
+			;-------------------------------------------
+			; Change stance to COMBAT to do more damage!
+			;-------------------------------------------
+			if ${doCombatStance} && !${Me.Effect[${CombatStance}](exists)}
+			{
+				Me.Form[${CombatStance}]:ChangeTo
+			}
+
+			;-------------------------------------------
+			; Despoil will LIFETAP self
+			;-------------------------------------------
+			if ${Me.Ability[${BMSingleTargetLifeTap1}].IsReady} && (!${Me.IsGrouped} || ${Group[${gn}].Name.Equal[${Me.FName}]})
+			{
+				echo "BM_PreHealRoutine()-Debug:: Casting '${BMSingleTargetLifeTap1}'"
+				call executeability "${Me.Ability[${BMSingleTargetLifeTap1}].Name}" "Lifetap" "Neither"
+				if !${Group(exists)} && ${Me.HealthPct} > 50
+				return HEALSDONE
+				else
+				return CONTINUE
+			}
+			;-------------------------------------------
+			; Entwining Vein will LIFETAP whomever is your DTarget
+			;-------------------------------------------
+			elseif (${Me.Ability[${BMSingleTargetLifeTap2}].IsReady})
+			{
+				Pawn[id,${Group[${gn}].ID}]:Target
+				echo "BM_PreHealRoutine()-Debug:: Casting '${BMSingleTargetLifeTap2}'"
+				call executeability "${Me.Ability[${BMSingleTargetLifeTap2}].Name}" "Lifetap" "Neither"
+				if !${Group(exists)} && ${Me.HealthPct} > 50
+				return HEALSDONE
+				else
+				return CONTINUE
+			}
+		}
+	}
+	return CONTINUE
+/* ==================================================================================== */
 
 	;; Solo play
 	if !${Group(exists)}
 	{
 		if (${Me.HealthPct} >= 72)
-			return HEALSDONE
-			
+		return HEALSDONE
+
 		if (${Me.InCombat} || ${Me.ToPawn.CombatState} == 1)
 		{
 			if (${Me.Target(exists)} && ${Me.Target.CombatState} != 0 && !${Me.Target.IsDead})
@@ -81,23 +202,23 @@ function BM_PreHealRoutine()
 					echo "BM_PreHealRoutine()-Debug:: Casting '${BMSingleTargetLifeTap1}'"
 					call executeability "${Me.Ability[${BMSingleTargetLifeTap1}].Name}" "Lifetap" "Neither"
 					if !${Group(exists)} && ${Me.HealthPct} > 50
-						return HEALSDONE
+					return HEALSDONE
 					else
-						return CONTINUE
+					return CONTINUE
 				}
 				elseif (${Me.Ability[${BMSingleTargetLifeTap2}].IsReady})
 				{
 					echo "BM_PreHealRoutine()-Debug:: Casting '${BMSingleTargetLifeTap2}'"
 					call executeability "${Me.Ability[${BMSingleTargetLifeTap2}].Name}" "Lifetap" "Neither"
 					if !${Group(exists)} && ${Me.HealthPct} > 50
-						return HEALSDONE
+					return HEALSDONE
 					else
-						return CONTINUE
+					return CONTINUE
 				}
 			}
 		}
-	}	
-	
+	}
+
 	return CONTINUE
 }
 
@@ -105,11 +226,11 @@ function BM_CheckBloodUnion()
 {
 	variable int BloodUnion
 	BloodUnion:Set[${Me.BloodUnion}]
-	
+
 	;; For now...
 	if ${BloodUnion} < 3
-		return
-	
+	return
+
 
 	;; In Combat
 	if (${Me.InCombat} || ${Me.ToPawn.CombatState} != 0)
@@ -140,21 +261,21 @@ function BM_CheckBloodUnion()
 			}
 		}
 	}
-	
+
 	return
 }
 
 function BM_CheckEnergy()
 {
 	if ${Me.Effect[translucence](exists)}
-		return
-	
-	
+	return
+
+
 	if (${Me.EnergyPct} > 80)
-		return
+	return
 	if !${Me.Ability[${BMHealthToEnergySpell}].IsReady}
-		return	
-	
+	return
+
 	if ${Me.HealthPct} > 50
 	{
 		call executeability "${Me.Ability[${BMHealthToEnergySpell}].Name}" "utility" "Neither"
@@ -171,5 +292,5 @@ function BM_CheckEnergy()
 		call executeability "${Me.Ability[${BMHealthToEnergySpell}].Name}" "utility" "Neither"
 		return
 	}
-	
+
 }

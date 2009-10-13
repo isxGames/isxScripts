@@ -12,7 +12,7 @@ function LavishEventLoad()
 	Event[VG_onGroupMemberBooted]:AttachAtom[VG_onGroupMemberBooted]
 	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
 	Event[VG_onPawnSpawned]:AttachAtom[VG_onPawnSpawned]
-	
+
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }
 ;===================================================
@@ -20,85 +20,85 @@ function LavishEventLoad()
 ;===================================================
 atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
-  if ${DoReassistTank}
-    {
-      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
-      {
-        VGExecute /TargetNextNPC
-        
-      }
-    }
-    if ${DoKillLevitate}
-    {
-      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${KillingLevitate}]}
-      {
-	Me.Effect[Gift of Alcipus]:Remove
-	Me.Effect[Death March]:Remove
-	Me.Effect[Briel's Trill of the Clouds]:Remove
-	Me.Effect[Boon of Alcipus]:Remove
-      }
-    }
-    if ${DoStartFollow}
-    {
-      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]}
-      {
-                dofollowpawn:Set[TRUE]
-		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
-      }
-    }
-    if ${DoStopFollow}
-    {
-      if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]}
-      {
-                dofollowpawn:Set[FALSE]
-		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
-      }
-    }
-    if ${doAutoSell}
-    {
-      if ${ChannelNumber.Equal[0]} &&  ${Text.Find[You sell]}
-      {
-	variable string FindSell
-	FindSell:Set[${Text.Mid[9,${Math.Calc[${Text.Length}-9]}]}]
-	if ( ${FindSell.Length} > 1 )
+	if ${DoReassistTank}
 	{
-		LavishSettings[VGA_General].FindSet[Sell]:AddSetting[${FindSell}, ${FindSell}]
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
+		{
+			VGExecute /TargetNextNPC
 
-	}
-	else
-	{
-		return
-	}
-	variable iterator Iterator
-	Sell:GetSettingIterator[Iterator]
-	UIElement[SellList@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
-	while ( ${Iterator.Key(exists)} )
-	{
-		UIElement[SellList@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
-		Iterator:Next
-	}
-      }
-    }
-    if ${doFurious}
-	{
-	if ${Text.Find[becomes FURIOUS]}
-		{
-		actionlog "Mob is Furious"
-		mobisfurious:Set[TRUE]
 		}
-	if ${Text.Find[no longer FURIOUS]}
+	}
+	if ${DoKillLevitate}
+	{
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${KillingLevitate}]}
 		{
-		actionlog "Mob Says Not Furious"
-		mobisfurious:Set[FALSE]
+			Me.Effect[Gift of Alcipus]:Remove
+			Me.Effect[Death March]:Remove
+			Me.Effect[Briel's Trill of the Clouds]:Remove
+			Me.Effect[Boon of Alcipus]:Remove
 		}
-	}	
+	}
+	if ${DoStartFollow}
+	{
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]}
+		{
+			dofollowpawn:Set[TRUE]
+			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
+		}
+	}
+	if ${DoStopFollow}
+	{
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]}
+		{
+			dofollowpawn:Set[FALSE]
+			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
+		}
+	}
+	if ${doAutoSell}
+	{
+		if ${ChannelNumber.Equal[0]} &&  ${Text.Find[You sell]}
+		{
+			variable string FindSell
+			FindSell:Set[${Text.Mid[9,${Math.Calc[${Text.Length}-9]}]}]
+			if ( ${FindSell.Length} > 1 )
+			{
+				LavishSettings[VGA_General].FindSet[Sell]:AddSetting[${FindSell}, ${FindSell}]
+
+			}
+			else
+			{
+				return
+			}
+			variable iterator Iterator
+			Sell:GetSettingIterator[Iterator]
+			UIElement[SellList@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
+			while ( ${Iterator.Key(exists)} )
+			{
+				UIElement[SellList@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
+				Iterator:Next
+			}
+		}
+	}
+	if ${doFurious}
+	{
+		if ${Text.Find[becomes FURIOUS]}
+		{
+			actionlog "Mob is Furious"
+			mobisfurious:Set[TRUE]
+		}
+		if ${Text.Find[no longer FURIOUS]}
+		{
+			actionlog "Mob Says Not Furious"
+			mobisfurious:Set[FALSE]
+		}
+	}
 
 }
 atom VG_onPawnSpawned(string ChangeType, int64 PawnID, string PawnName)
 {
 	if ${DoRushTank}
 	{
-	call RushTank
+		call RushTank
 	}
 }
 atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
@@ -123,6 +123,50 @@ atom VG_onPawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 }
 atom VG_OnIncomingCombatText(string aText, int aType)
 {
+	;-----------------------------------------
+	; Automatically learn a mob resistance
+	;-----------------------------------------
+	if ${aType} == 28 && ${aText.Find[${Me.Target.Name}]} && ${aText.Find[heals]}
+	{
+		;echo "${aText.Token[2,">"].Token[1,"<"]} healed ${Me.Target.Name}"
+		if ${Me.Ability[${aText.Token[2,">"].Token[1,"<"]}].School.Find[Arcane]}
+		{
+			AddArcane "${Me.Target.Name}"
+			BuildArcane
+			Call LavishSave
+		}
+		if ${Me.Ability[${aText.Token[2,">"].Token[1,"<"]}].School.Find[Physical]}
+		{
+			AddPhysical "${Me.Target.Name}"
+			BuildPhysical
+			Call LavishSave
+		}
+		if ${Me.Ability[${aText.Token[2,">"].Token[1,"<"]}].School.Find[Spiritual]}
+		{
+			AddSpiritual "${Me.Target.Name}"
+			BuildSpiritual
+			Call LavishSave
+		}
+		if ${Me.Ability[${aText.Token[2,">"].Token[1,"<"]}].School.Find[Fire]}
+		{
+			AddFire "${Me.Target.Name}"
+			BuildFire
+			Call LavishSave
+		}
+		if ${Me.Ability[${aText.Token[2,">"].Token[1,"<"]}].School.Find[Ice]}
+		{
+			AddIce "${Me.Target.Name}"
+			BuildIce
+			Call LavishSave
+		}
+		if ${Me.Ability[${aText.Token[2,">"].Token[1,"<"]}].School.Find[Cold]}
+		{
+			AddIce "${Me.Target.Name}"
+			BuildIce
+			Call LavishSave
+		}
+	}
+
 	if ${doParser}
 	{
 		if ${aType} == 26 && !${aText.Find[damage to You]}
@@ -170,8 +214,8 @@ function TextSplitter(string aText)
 		{
 			ParseDamage:Set[${aText.Mid[${aText.Find[an additional <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
 		}
-		}
-			
+	}
+
 	if ${aText.Find[</color> deals]} || ${aText.Find[</color> hits]}
 	{
 		ParseAbility:Set[${aText.Token[2,">"].Token[1,"<"]}]
@@ -193,10 +237,10 @@ function TextSplitter(string aText)
 
 
 
-atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTimer) 
+atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTimer)
 {
 	;echo "VG_onCombatReaction(${aType},${iPawnID} (${Pawn[id,${iPawnID}].Name}),${iAbilityID} (${Me.Ability[id,${iAbilityID}].Name}),${fTimer})"
-	
+
 	if ${aType.Equal[Counter]}
 	{
 		CounterReactionReady:Set[TRUE]
@@ -211,7 +255,7 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 		ChainReactionTimer:Set[${Math.Calc64[${Time.Timestamp}+${fTimer}]}]
 		ChainReactionPawnID:Set[${iPawnID}]
 		ChainReactionAbilities:Insert[${iAbilityID}]
-		return		
+		return
 	}
 }
 
@@ -219,7 +263,7 @@ function PopulateGroupMemberNames()
 {
 	variable int i = 1
 	variable int j = 2
-	
+
 	;; Always make 'Me' first
 	GrpMemberNames[1]:Set[${Me.FName}]
 
@@ -241,27 +285,27 @@ function PopulateGroupMemberNames()
 		}
 	}
 	while ${i:Inc} <= 24
-	
+
 }
 
 function PopulateGroupMemberClassType()
 {
 	variable int i = 1
-	
+
 	do
 	{
 		if ${Group[${i}](exists)}
 		{
-		if ${Group[${i}].Class.Equal[Warrior]} || ${Group[${i}].Class.Equal[Paladin]} || ${Group[${i}].Class.Equal[Dread Knight]}
+			if ${Group[${i}].Class.Equal[Warrior]} || ${Group[${i}].Class.Equal[Paladin]} || ${Group[${i}].Class.Equal[Dread Knight]}
 			GrpMemberClassType[${i}]:Set[Tank]
-		if ${Group[${i}].Class.Equal[Blood Mage]} || ${Group[${i}].Class.Equal[Sorcerer]} || ${Group[${i}].Class.Equal[Necromancer]} || ${Group[${i}].Class.Equal[Psionicist]} || ${Group[${i}].Class.Equal[Druid]}
+			if ${Group[${i}].Class.Equal[Blood Mage]} || ${Group[${i}].Class.Equal[Sorcerer]} || ${Group[${i}].Class.Equal[Necromancer]} || ${Group[${i}].Class.Equal[Psionicist]} || ${Group[${i}].Class.Equal[Druid]}
 			GrpMemberClassType[${i}]:Set[Squishy]
-		if ${Group[${i}].Class.Equal[Ranger]} || ${Group[${i}].Class.Equal[Rogue]} || ${Group[${i}].Class.Equal[Monk]} || ${Group[${i}].Class.Equal[Bard]} || ${Group[${i}].Class.Equal[Cleric]} || ${Group[${i}].Class.Equal[Disciple]} || ${Group[${i}].Class.Equal[Shaman]}
+			if ${Group[${i}].Class.Equal[Ranger]} || ${Group[${i}].Class.Equal[Rogue]} || ${Group[${i}].Class.Equal[Monk]} || ${Group[${i}].Class.Equal[Bard]} || ${Group[${i}].Class.Equal[Cleric]} || ${Group[${i}].Class.Equal[Disciple]} || ${Group[${i}].Class.Equal[Shaman]}
 			GrpMemberClassType[${i}]:Set[Medium]
 		}
 	}
 	while ${i:Inc} <= 24
-	
+
 }
 atom VG_onGroupMemberCountChange()
 {
@@ -283,7 +327,7 @@ atom VG_onGroupFormed()
 
 atom VG_onGroupBooted()
 {
-	call PopulateGroupMemberNames	
+	call PopulateGroupMemberNames
 	call PopulateGroupMemberClassType
 }
 
@@ -292,3 +336,4 @@ atom VG_onGroupMemberBooted()
 	call PopulateGroupMemberNames
 	call PopulateGroupMemberClassType
 }
+

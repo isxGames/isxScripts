@@ -6444,7 +6444,7 @@
                       <Y>13</Y>
                       <Width>15</Width>
                       <Height>20</Height>
-                      <Text>Turn Off Attack</Text>
+                      <Text>Off Attack Mob Buff</Text>
                       <OnLoad>
                         if ${Script[vga].VariableScope.doTurnOffAttack}
                         {
@@ -6457,9 +6457,9 @@
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="TurnOffAttackEntry" Template="VG.TextEntry">
-                      <X>120</X>
+                      <X>150</X>
                       <Y>15</Y>
-                      <Width>195</Width>
+                      <Width>165</Width>
                       <Height>18</Height>
                       <Color>FFDDBB00</Color>
                     </Textentry>
@@ -6480,7 +6480,7 @@
                       <X>13</X>
                       <Y>36</Y>
                       <Width>95%</Width>
-                      <Height>80</Height>
+                      <Height>60</Height>
                       <AutoSort>TRUE</AutoSort>
                       <Sort>User</Sort>
                       <OnLoad>
@@ -6493,10 +6493,65 @@
                         Script[VGA]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
+                    <checkbox Name='doTurnOffDuringBuff' Template='VG.BlueCheckbox'>
+                      <visible>4</visible>
+                      <X>13</X>
+                      <Y>100</Y>
+                      <Width>15</Width>
+                      <Height>20</Height>
+                      <Text>Off Attack Effect on You</Text>
+                      <OnLoad>
+                        if ${Script[vga].VariableScope.doTurnOffDuringBuff}
+                        {
+                        This:SetChecked
+                        }
+                      </OnLoad>
+                      <OnLeftClick>
+                        Script[vga].VariableScope.doTurnOffDuringBuff:Set[${This.Checked}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnLeftClick>
+                    </checkbox>
+                    <Textentry Name="TurnOffDuringBuffEntry" Template="VG.TextEntry">
+                      <X>170</X>
+                      <Y>102</Y>
+                      <Width>145</Width>
+                      <Height>18</Height>
+                      <Color>FFDDBB00</Color>
+                    </Textentry>
+                    <CommandButton Name="TurnOffDuringBuffAddCmd" Template="VG.GreenCommandButton">
+                      <X>320</X>
+                      <Y>99</Y>
+                      <Width>50</Width>
+                      <Height>25</Height>
+                      <Text>Add</Text>
+                      <Alignment>Center</Alignment>
+                      <OnLeftClick>
+                        AddTurnOffDuringBuff "${UIElement[TurnOffDuringBuffEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Text}"
+                        BuildTurnOffDuringBuff
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnLeftClick>
+                    </CommandButton>
+                    <Listbox Name="TurnOffDuringBuffList" Template="VG.ListBox">
+                      <X>13</X>
+                      <Y>126</Y>
+                      <Width>95%</Width>
+                      <Height>60</Height>
+                      <AutoSort>TRUE</AutoSort>
+                      <Sort>User</Sort>
+                      <OnLoad>
+                        BuildTurnOffDuringBuff
+                      </OnLoad>
+                      <OnRightClick>
+                        RemoveTurnOffDuringBuff "${This.SelectedItem}"
+                        This.SelectedItem:Remove
+                        BuildTurnOffDuringBuff
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnRightClick>
+                    </Listbox>
                     <checkbox Name='doDispellchk' Template='VG.BlueCheckbox'>
                       <visible>4</visible>
                       <X>13</X>
-                      <Y>120</Y>
+                      <Y>190</Y>
                       <Width>15</Width>
                       <Height>20</Height>
                       <Text>Dispell Buffs</Text>
@@ -6513,14 +6568,14 @@
                     </checkbox>
                     <Textentry Name="DispellEntry" Template="VG.TextEntry">
                       <X>120</X>
-                      <Y>122</Y>
+                      <Y>192</Y>
                       <Width>195</Width>
                       <Height>18</Height>
                       <Color>FFDDBB00</Color>
                     </Textentry>
                     <CommandButton Name="DispellAddCmd" Template="VG.GreenCommandButton">
                       <X>320</X>
-                      <Y>119</Y>
+                      <Y>189</Y>
                       <Width>50</Width>
                       <Height>25</Height>
                       <Text>Add</Text>
@@ -6534,7 +6589,7 @@
                     </CommandButton>
                     <Listbox Name="DispellList" Template="VG.ListBox">
                       <X>13</X>
-                      <Y>166</Y>
+                      <Y>235</Y>
                       <Width>95%</Width>
                       <Height>60</Height>
                       <AutoSort>TRUE</AutoSort>
@@ -6552,7 +6607,7 @@
                     <checkbox Name='doStancePushchk' Template='VG.BlueCheckbox'>
                       <visible>4</visible>
                       <X>13</X>
-                      <Y>230</Y>
+                      <Y>297</Y>
                       <Width>15</Width>
                       <Height>20</Height>
                       <Text>Stance Push</Text>
@@ -6569,14 +6624,14 @@
                     </checkbox>
                     <Textentry Name="StancePushEntry" Template="VG.TextEntry">
                       <X>120</X>
-                      <Y>232</Y>
+                      <Y>299</Y>
                       <Width>195</Width>
                       <Height>18</Height>
                       <Color>FFDDBB00</Color>
                     </Textentry>
                     <CommandButton Name="StancePushAddCmd" Template="VG.GreenCommandButton">
                       <X>320</X>
-                      <Y>229</Y>
+                      <Y>297</Y>
                       <Width>50</Width>
                       <Height>25</Height>
                       <Text>Add</Text>
@@ -6590,9 +6645,9 @@
                     </CommandButton>
                     <Listbox Name="StancePushList" Template="VG.ListBox">
                       <X>13</X>
-                      <Y>276</Y>
+                      <Y>342</Y>
                       <Width>95%</Width>
-                      <Height>60</Height>
+                      <Height>40</Height>
                       <AutoSort>TRUE</AutoSort>
                       <Sort>User</Sort>
                       <OnLoad>
@@ -6608,7 +6663,7 @@
                     <checkbox Name='doClickieschk' Template='VG.BlueCheckbox'>
                       <visible>4</visible>
                       <X>13</X>
-                      <Y>340</Y>
+                      <Y>387</Y>
                       <Width>15</Width>
                       <Height>20</Height>
                       <Text>Clickies</Text>
@@ -6625,7 +6680,7 @@
                     </checkbox>
                     <ComboBox Name="ClickiesCombo" Template="VG.ComboBox">
                       <X>120</X>
-                      <Y>342</Y>
+                      <Y>389</Y>
                       <Width>265</Width>
                       <Height>20</Height>
                       <OnLoad>
@@ -6642,9 +6697,9 @@
                     </ComboBox>
                     <Listbox Name="ClickiesList" Template="VG.ListBox">
                       <X>13</X>
-                      <Y>366</Y>
+                      <Y>408</Y>
                       <Width>95%</Width>
-                      <Height>80</Height>
+                      <Height>37</Height>
                       <AutoSort>TRUE</AutoSort>
                       <Sort>User</Sort>
                       <OnLoad>
@@ -6715,7 +6770,7 @@
                     </Listbox>
                     <Text Name='txtDispellCombo' Template='VG.BoldText'>
                       <X>13</X>
-                      <Y>146</Y>
+                      <Y>214</Y>
                       <Width>110</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
@@ -6723,7 +6778,7 @@
                     </Text>
                     <ComboBox Name="DispellCombo" Template="VG.ComboBox">
                       <X>120</X>
-                      <Y>146</Y>
+                      <Y>212</Y>
                       <Width>265</Width>
                       <Height>19</Height>
                       <OnLoad>
@@ -6736,7 +6791,7 @@
                     </ComboBox>
                     <Text Name='txtPushStanceCombo' Template='VG.BoldText'>
                       <X>13</X>
-                      <Y>256</Y>
+                      <Y>320</Y>
                       <Width>100</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
@@ -6744,7 +6799,7 @@
                     </Text>
                     <ComboBox Name="PushStanceCombo" Template="VG.ComboBox">
                       <X>120</X>
-                      <Y>256</Y>
+                      <Y>320</Y>
                       <Width>265</Width>
                       <Height>19</Height>
                       <OnLoad>

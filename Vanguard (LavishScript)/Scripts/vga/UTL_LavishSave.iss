@@ -317,6 +317,7 @@ HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
 	SpellSR:AddSetting[doDispell,${doDispell}]
 	SpellSR:AddSetting[doStancePush,${doStancePush}]
 	SpellSR:AddSetting[doTurnOffAttack,${doTurnOffAttack}]
+	SpellSR:AddSetting[doTurnOffDuringBuff,${doTurnOffDuringBuff}]
 	SpellSR:AddSetting[doCounter,${doCounter}]
 	SpellSR:AddSetting[doFurious,${doFurious}]
 	;===================================================
