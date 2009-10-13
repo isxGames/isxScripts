@@ -39,11 +39,11 @@ function Healcheck()
 ;******************************Change forms/Stances***********************
 function changeformstance()
 {
-	if ${fight.IShouldAttack} && ${doCombatStance} && !${Me.Effect[{CombatStance}](exists)}
+	if ${fight.IShouldAttack} && ${doCombatStance} && !${Me.Effect[${CombatStance}](exists)}
 		{
 		Me.Form[${CombatStance}]:ChangeTo
 		}
-	if !${fight.IShouldAttack} && ${doNonCombatStance} && !${Me.Effect[{NonCombatStance}](exists)}
+	if !${fight.IShouldAttack} && ${doNonCombatStance} && !${Me.Effect[${NonCombatStance}](exists)}
 		{
 		Me.Form[${NonCombatStance}]:ChangeTo
 		}	

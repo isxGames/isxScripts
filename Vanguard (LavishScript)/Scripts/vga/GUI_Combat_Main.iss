@@ -72,6 +72,43 @@ atom(global) BuildTurnOffAttack()
 	}
 }  
 ;********************************************
+/* Add item to the TurnOffDuringBuff list */
+;********************************************
+atom(global) AddTurnOffDuringBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[VGA].FindSet[TurnOffDuringBuff]:AddSetting[${aName}, ${aName}]
+
+	}
+	else
+	{
+		return
+	}
+}
+atom(global) RemoveTurnOffDuringBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		TurnOffDuringBuff.FindSetting[${aName}]:Remove
+	}
+	else
+	{
+	}
+}
+
+atom(global) BuildTurnOffDuringBuff()
+{
+	variable iterator Iterator
+	TurnOffDuringBuff:GetSettingIterator[Iterator]
+	UIElement[TurnOffDuringBuffList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[TurnOffDuringBuffList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+}  
+;********************************************
 /* Add item to the Dispell list */
 ;********************************************
 atom(global) AddDispell(string aName)

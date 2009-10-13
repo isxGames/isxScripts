@@ -72,6 +72,37 @@ function TurnOffAttackfunct()
 	call CheckFurious
 } 
 ;********************************************
+function TurnOffDuringBuff()
+{
+	If ${doTurnOffDuringBuff} 
+	{
+		variable iterator Iterator
+		TurnOffDuringBuff:GetSettingIterator[Iterator]
+		while ( ${Iterator.Key(exists)} )
+		{
+			if ${Me.Effect[${Iterator.Key}](exists)}
+			{
+				if ${Me.IsCasting}
+				{
+					vgexecute /stopcasting
+				}
+				if ${Me.Ability[Auto Attack].Toggled}
+					Me.Ability[Auto Attack]:Use
+				if ${Me.Ability[{FD}](exists)}
+					Me.Ability[${FD}]:Use
+				while ${Me.Effect[${Iterator.Key}](exists)}
+				{
+					wait 5
+					if ${ClassRole.healer}
+						call Healcheck
+				}
+			}
+			Iterator:Next
+		}
+	}
+	call CheckFurious
+} 
+;********************************************
 function counteringfunct()
 {
 	If !${Me.TargetCasting.Equal[None]} && ${doCounter}

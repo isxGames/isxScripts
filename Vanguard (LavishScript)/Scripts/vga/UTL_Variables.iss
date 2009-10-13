@@ -56,6 +56,7 @@ variable settingsetref Class
 variable settingsetref Rescue
 variable settingsetref ForceRescue
 variable settingsetref Interactions
+variable settingsetref TurnOffDuringBuff
 
 variable settingsetref HealSequence
 variable settingsetref EmergencyHealSequence
@@ -193,6 +194,7 @@ variable bool doStancePush
 variable bool doClickies
 variable bool doCounter
 variable bool mobisfurious
+variable bool doTurnOffDuringBuff
 
 ;===================================================
 ;===               Critical Variables           ====

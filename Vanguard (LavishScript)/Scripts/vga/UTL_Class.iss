@@ -5,8 +5,8 @@ function Class_PreCombat()
 {
 	if ${DoClassPreCombat}
 	{
-	switch ${Me.Class}
-	{
+		switch ${Me.Class}
+		{
 		case Dread Knight
 			call DreadKnight_PreCombat
 			break
@@ -21,19 +21,19 @@ function Class_PreCombat()
 			break
 		case Monk
 			call Monk_PreCombat
-			break	
+			break
 		case Ranger
 			call Ranger_PreCombat
-			break	
+			break
 		case Rogue
 			call Rogue_PreCombat
-			break	
+			break
 		case Blood Mage
-			call BloodMagePreCombat
+			call BloodMage_PreCombat
 			break
 		case Cleric
 			call Cleric_PreCombat
-			break			
+			break
 		case Shaman
 			call Shaman_PreCombat
 			break
@@ -52,9 +52,9 @@ function Class_PreCombat()
 		case Sorcerer
 			call Sorcerer_PreCombat
 			break
+		}
 	}
-	}
-	
+
 	return
 }
 ;===================================================
@@ -64,8 +64,8 @@ function Class_Opener()
 {
 	if ${DoClassOpener}
 	{
-	switch ${Me.Class}
-	{
+		switch ${Me.Class}
+		{
 		case Dread Knight
 			call DreadKnight_Opener
 			break
@@ -80,19 +80,19 @@ function Class_Opener()
 			break
 		case Monk
 			call Monk_Opener
-			break	
+			break
 		case Ranger
 			call Ranger_Opener
-			break	
+			break
 		case Rogue
 			call Rogue_Opener
-			break	
+			break
 		case Blood Mage
-			call BloodMageOpener
+			call BloodMage_Opener
 			break
 		case Cleric
 			call Cleric_Opener
-			break			
+			break
 		case Shaman
 			call Shaman_Opener
 			break
@@ -111,7 +111,7 @@ function Class_Opener()
 		case Sorcerer
 			call Sorcerer_Opener
 			break
-	}
+		}
 	}
 
 	return
@@ -123,8 +123,8 @@ function Class_Combat()
 {
 	if ${DoClassCombat}
 	{
-	switch ${Me.Class}
-	{
+		switch ${Me.Class}
+		{
 		case Dread Knight
 			call DreadKnight_Combat
 			break
@@ -139,19 +139,19 @@ function Class_Combat()
 			break
 		case Monk
 			call Monk_Combat
-			break	
+			break
 		case Ranger
 			call Ranger_Combat
-			break	
+			break
 		case Rogue
 			call Rogue_Combat
-			break	
+			break
 		case Blood Mage
-			call BloodMageCombat
+			call BloodMage_Combat
 			break
 		case Cleric
 			call Cleric_Combat
-			break			
+			break
 		case Shaman
 			call Shaman_Combat
 			break
@@ -170,7 +170,7 @@ function Class_Combat()
 		case Sorcerer
 			call Sorcerer_Combat
 			break
-	}	
+		}
 	}
 
 	return
@@ -182,8 +182,8 @@ function Class_PostCombat()
 {
 	if ${DoClassPostCombat}
 	{
-	switch ${Me.Class}
-	{
+		switch ${Me.Class}
+		{
 		case Dread Knight
 			call DreadKnight_PostCombat
 			break
@@ -198,19 +198,19 @@ function Class_PostCombat()
 			break
 		case Monk
 			call Monk_PostCombat
-			break	
+			break
 		case Ranger
 			call Ranger_PostCombat
-			break	
+			break
 		case Rogue
 			call Rogue_PostCombat
-			break	
+			break
 		case Blood Mage
-			call BloodMagePostCombat
+			call BloodMage_PostCombat
 			break
 		case Cleric
 			call Cleric_PostCombat
-			break			
+			break
 		case Shaman
 			call Shaman_PostCombat
 			break
@@ -229,7 +229,7 @@ function Class_PostCombat()
 		case Sorcerer
 			call Sorcerer_PostCombat
 			break
-	}
+		}
 	}
 
 	return
@@ -241,8 +241,8 @@ function Class_Emergency()
 {
 	if ${DoClassEmergency}
 	{
-	switch ${Me.Class}
-	{
+		switch ${Me.Class}
+		{
 		case Dread Knight
 			call DreadKnight_Emergency
 			break
@@ -257,19 +257,19 @@ function Class_Emergency()
 			break
 		case Monk
 			call Monk_Emergency
-			break	
+			break
 		case Ranger
 			call Ranger_Emergency
-			break	
+			break
 		case Rogue
 			call Rogue_Emergency
-			break	
+			break
 		case Blood Mage
-			call BloodMageEmergency
+			call BloodMage_Emergency
 			break
 		case Cleric
 			call Cleric_Emergency
-			break			
+			break
 		case Shaman
 			call Shaman_Emergency
 			break
@@ -288,7 +288,7 @@ function Class_Emergency()
 		case Sorcerer
 			call Sorcerer_Emergency
 			break
-	}
+		}
 	}
 
 	return
@@ -300,8 +300,8 @@ function Class_PostCasting()
 {
 	if ${DoClassPostCasting}
 	{
-	switch ${Me.Class}
-	{
+		switch ${Me.Class}
+		{
 		case Dread Knight
 			call DreadKnight_PostCasting
 			break
@@ -316,19 +316,19 @@ function Class_PostCasting()
 			break
 		case Monk
 			call Monk_PostCasting
-			break	
+			break
 		case Ranger
 			call Ranger_PostCasting
-			break	
+			break
 		case Rogue
 			call Rogue_PostCasting
-			break	
+			break
 		case Blood Mage
-			call BloodMagePostCasting
+			call BloodMage_PostCasting
 			break
 		case Cleric
 			call Cleric_PostCasting
-			break			
+			break
 		case Shaman
 			call Shaman_PostCasting
 			break
@@ -347,7 +347,7 @@ function Class_PostCasting()
 		case Sorcerer
 			call Sorcerer_PostCasting
 			break
-	}
+		}
 	}
 
 	return
@@ -360,8 +360,8 @@ function Class_DownTime()
 
 	if ${DoClassDownTime}
 	{
-	switch ${Me.Class}
-	{
+		switch ${Me.Class}
+		{
 		case Dread Knight
 			call DreadKnight_DownTime
 			break
@@ -376,19 +376,19 @@ function Class_DownTime()
 			break
 		case Monk
 			call Monk_DownTime
-			break	
+			break
 		case Ranger
 			call Ranger_DownTime
-			break	
+			break
 		case Rogue
 			call Rogue_DownTime
-			break	
+			break
 		case Blood Mage
-			call BloodMageDownTime
+			call BloodMage_DownTime
 			break
 		case Cleric
 			call Cleric_DownTime
-			break			
+			break
 		case Shaman
 			call Shaman_DownTime
 			break
@@ -407,7 +407,8 @@ function Class_DownTime()
 		case Sorcerer
 			call Sorcerer_DownTime
 			break
-	}
+		}
 	}
 	return
 }
+
