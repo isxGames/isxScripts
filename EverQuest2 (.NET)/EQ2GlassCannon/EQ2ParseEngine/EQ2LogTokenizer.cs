@@ -205,6 +205,7 @@ namespace EQ2ParseEngine
 				NonPlayerSay,
 				PlayerTell,
 				NonPlayerTell,
+				SelfNonPlayerTell, /// A specialized form of NonPlayerTell used in the T8 coercer epic questline.
 				NamedChannel,
 				OutOfCharacter,
 				Shout,
@@ -1001,20 +1002,22 @@ namespace EQ2ParseEngine
 				/// \aPC 46147 Testplayer:Testplayer\/a says out of character, "assist me on << roekillik excavation chief >>"
 				/// \aPC -1 Testplayer:Testplayer\/a tells you, "This had better work!!"
 				/// \aPC 813717 Testplayer:Testplayer\/a shouts, "testing"
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts)(?: in |)(?<language>.*?|), ""(?<message>.*)""$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says? to you|thinks to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts)(?: in |)(?<language>.*?|), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
 
 					string strActorType = ThisMatch.Groups["actortype"].Value;
 					NewEvent.m_iSourceActorID = int.Parse(ThisMatch.Groups["actorid"].Value);
-					NewEvent.m_strSourceActorName = ThisMatch.Groups["actor"].Value;
+					AssignActorName(ThisMatch.Groups["actor"].Value, ref NewEvent.m_strSourceActorName);
 					AssignGameLanguageType(ThisMatch.Groups["language"].Value, ref NewEvent.m_eGameLanguage);
 
 					string strChannelType = ThisMatch.Groups["channel"].Value;
 					switch (strChannelType)
 					{
 						case "says to the guild": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Guild; break;
+						case "say to you":
+						case "thinks to you": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.SelfNonPlayerTell; break;
 						case "says to you": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell; break;
 						case "tells you": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerTell; break;
 						case "says to the raid party": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Raid; break;
