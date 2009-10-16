@@ -138,6 +138,7 @@ namespace EQ2GlassCannon
 					"gc_cancelgroupbuffs",
 					"gc_changesetting",
 					"gc_debug",
+					"gc_defaultverb",
 					"gc_exit",
 					"gc_exitprocess",
 					"gc_findactor",

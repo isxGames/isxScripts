@@ -210,6 +210,7 @@ namespace EQ2GlassCannon
 			if (ActorList.Count == 0)
 			{
 				Program.Log("Unable to find actor \"{0}\".", strSearchSubstring);
+				RunCommand("/waypoint_cancel");
 				return;
 			}
 
@@ -356,6 +357,40 @@ namespace EQ2GlassCannon
 					}
 
 					Program.Log("gc_debug options: whopet");
+					return true;
+				}
+
+				case "gc_defaultverb":
+				{
+					string strActorName = strCondensedParameters;
+
+					/// Grab the so-named actor nearest to the commander.
+					double fNearestDistance = 50.0;
+					Actor NearestActor = null;
+					foreach (Actor ThisActor in EnumActors(strActorName))
+					{
+						if (ThisActor.Name != strActorName)
+							continue;
+
+						double fThisDistance = ThisActor.Distance;
+						if (fThisDistance < fNearestDistance)
+						{
+							fNearestDistance = fThisDistance;
+							NearestActor = ThisActor;
+						}
+					}
+
+					/// No such actor found.
+					if (NearestActor == null)
+					{
+						Program.Log("gc_defaultverb: actor not found.");
+					}
+					else
+					{
+						Program.Log("gc_defaultverb: Attempting to apply default verb on actor \"{0}\" ({1}).", strActorName, NearestActor.ID);
+						NearestActor.DoubleClick();
+					}
+
 					return true;
 				}
 
