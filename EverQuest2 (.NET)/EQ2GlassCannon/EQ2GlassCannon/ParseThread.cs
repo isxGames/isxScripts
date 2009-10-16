@@ -10,6 +10,7 @@ namespace EQ2GlassCannon
 	{
 		EQ2LogTokenizer m_ParseEngine = new EQ2LogTokenizer();
 
+		/************************************************************************************/
 		protected class NewLogLineMessage : ThreadMessage
 		{
 			public DateTime m_Timestamp = DateTime.Now;
@@ -21,20 +22,44 @@ namespace EQ2GlassCannon
 			}
 		}
 
+		/************************************************************************************/
 		public void PostNewLogLineMessage(string strLogLine)
 		{
 			PostMessage(new NewLogLineMessage(strLogLine));
 			return;
 		}
 
+		/************************************************************************************/
+		protected class NewNameLanguageMessage : ThreadMessage
+		{
+			public string m_strCharacterName = string.Empty;
+			public EQ2LogTokenizer.GameLanguageType m_eLanguage = EQ2LogTokenizer.GameLanguageType.Unknown;
+			public NewNameLanguageMessage(string strCharacterName, EQ2LogTokenizer.GameLanguageType eNewLanguage)
+			{
+				m_strCharacterName = strCharacterName;
+				m_eLanguage = eNewLanguage;
+				return;
+			}
+		}
+
+		/************************************************************************************/
+		public void PostNewNameLanguageMessage(string strCharacterName, EQ2LogTokenizer.GameLanguageType eNewLanguage)
+		{
+			PostMessage(new NewNameLanguageMessage(strCharacterName, eNewLanguage));
+			return;
+		}
+
+		/************************************************************************************/
 		protected override int Run()
 		{
-			m_ParseEngine.ChatSent += new EQ2LogTokenizer.ChatEventDelegate(ParseEngine_ChatSent);
-			m_ParseEngine.LineNotRecognized += new EQ2LogTokenizer.LineNotRecognizedDelegate(ParseEngine_LineNotRecognized);
+			m_ParseEngine.ActionOccurred += new EQ2LogTokenizer.ActionEventHandler(ParseEngine_ActionOccurred);
+			m_ParseEngine.ChatSent += new EQ2LogTokenizer.ChatEventHandler(ParseEngine_ChatSent);
+			m_ParseEngine.LineNotRecognized += new EQ2LogTokenizer.LineNotRecognizedHandler(ParseEngine_LineNotRecognized);
 
 			return base.Run();
 		}
 
+		/************************************************************************************/
 		protected override void OnMessage(MessageThread.ThreadMessage NewMessage)
 		{
 			base.OnMessage(NewMessage);
@@ -45,16 +70,31 @@ namespace EQ2GlassCannon
 				m_ParseEngine.FeedLine(ThisMessage.m_Timestamp, ThisMessage.m_strLogLine);
 			}
 
+			else if (NewMessage is NewNameLanguageMessage)
+			{
+				NewNameLanguageMessage ThisMessage = (NewMessage as NewNameLanguageMessage);
+				m_ParseEngine.MyCharacterName = ThisMessage.m_strCharacterName;
+				m_ParseEngine.MyGameLanguage = ThisMessage.m_eLanguage;
+			}
+
 			return;
 		}
 
-		protected void ParseEngine_LineNotRecognized(object objSender, EQ2LogTokenizer.ConsoleLogEventArgs args)
+		/************************************************************************************/
+		protected void ParseEngine_ActionOccurred(object objSender, EQ2LogTokenizer.ActionEventArgs args)
+		{
+			return;
+		}
+
+		/************************************************************************************/
+		protected void ParseEngine_ChatSent(object objSender, EQ2LogTokenizer.ChatEventArgs args)
 		{
 			PlayerController.EnqueueLogEvent(args);
 			return;
 		}
 
-		protected void ParseEngine_ChatSent(object objSender, EQ2LogTokenizer.ChatEventArgs args)
+		/************************************************************************************/
+		protected void ParseEngine_LineNotRecognized(object objSender, EQ2LogTokenizer.ConsoleLogEventArgs args)
 		{
 			PlayerController.EnqueueLogEvent(args);
 			return;
