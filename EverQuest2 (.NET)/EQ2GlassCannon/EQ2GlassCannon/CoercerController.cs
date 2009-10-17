@@ -46,6 +46,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiGreenSpellReactiveAbilityID = 0;
 		protected uint m_uiBlueStunNukeAbilityID = 0;
 
+		protected uint m_uiSingleReactiveStunAbilityID = 0;
 		protected uint m_uiSingleMezAbilityID = 0;
 		protected uint m_uiGreenMezAbilityID = 0;
 		protected uint m_uiGreenStunAbilityID = 0;
@@ -102,6 +103,7 @@ namespace EQ2GlassCannon
 			m_uiGreenSpellReactiveAbilityID = SelectHighestTieredAbilityID("Spell Curse");
 			m_uiBlueStunNukeAbilityID = SelectHighestTieredAbilityID("Shock Wave");
 
+			m_uiSingleReactiveStunAbilityID = SelectHighestAbilityID("Mindbend");
 			m_uiSingleMezAbilityID = SelectHighestTieredAbilityID("Mesmerize");
 			m_uiGreenMezAbilityID = SelectHighestTieredAbilityID("Pure Awe");
 			m_uiGreenStunAbilityID = SelectHighestTieredAbilityID("Stupefy");
@@ -119,15 +121,16 @@ namespace EQ2GlassCannon
 
 			GetOffensiveTargetActor();
 
+			/// Mez time! But as a bonus we use stuns in the lineup too now.
 			if (MeActor.IsIdle)
 			{
 				if (m_bUseGreenAEs)
 				{
 					/// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
-					if (CastNextMez(m_uiGreenMezAbilityID, m_uiSingleMezAbilityID))
+					if (CastNextMez(m_uiGreenMezAbilityID, m_uiGreenStunAbilityID, m_uiSingleMezAbilityID, m_uiSingleStunNukeAbilityID, m_uiSingleReactiveStunAbilityID))
 						return true;
 				}
-				else if (CastNextMez(m_uiSingleMezAbilityID))
+				else if (CastNextMez(m_uiSingleMezAbilityID, m_uiSingleStunNukeAbilityID, m_uiSingleReactiveStunAbilityID))
 					return true;
 			}
 
