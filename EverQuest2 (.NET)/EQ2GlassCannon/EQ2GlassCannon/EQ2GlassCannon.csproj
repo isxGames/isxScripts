@@ -82,6 +82,7 @@
     <Compile Include="MessageThread.cs" />
     <Compile Include="MysticController.cs" />
     <Compile Include="ParseThread.cs" />
+    <Compile Include="PInvoke.cs" />
     <Compile Include="PriestController.cs" />
     <Compile Include="ScoutController.cs" />
     <Compile Include="ShamanController.cs" />
