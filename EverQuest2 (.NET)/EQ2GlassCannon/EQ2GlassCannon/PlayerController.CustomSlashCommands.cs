@@ -363,32 +363,43 @@ namespace EQ2GlassCannon
 				case "gc_defaultverb":
 				{
 					string strActorName = strCondensedParameters;
+					Actor IntendedTargetActor = null;
+
+					/// Grab the targetted actor.
+					if (string.IsNullOrEmpty(strActorName))
+					{
+						Actor CurrentTargetActor = MeActor.Target();
+						if (CurrentTargetActor.IsValid)
+							IntendedTargetActor = CurrentTargetActor;
+					}
 
 					/// Grab the so-named actor nearest to the commander.
-					double fNearestDistance = 50.0;
-					Actor NearestActor = null;
-					foreach (Actor ThisActor in EnumActors(strActorName))
+					else
 					{
-						if (ThisActor.Name != strActorName)
-							continue;
-
-						double fThisDistance = ThisActor.Distance;
-						if (fThisDistance < fNearestDistance)
+						double fNearestDistance = 50.0;
+						foreach (Actor ThisActor in EnumActors(strActorName))
 						{
-							fNearestDistance = fThisDistance;
-							NearestActor = ThisActor;
+							if (ThisActor.Name != strActorName)
+								continue;
+
+							double fThisDistance = ThisActor.Distance;
+							if (fThisDistance < fNearestDistance)
+							{
+								fNearestDistance = fThisDistance;
+								IntendedTargetActor = ThisActor;
+							}
 						}
 					}
 
 					/// No such actor found.
-					if (NearestActor == null)
+					if (IntendedTargetActor == null)
 					{
 						Program.Log("gc_defaultverb: actor not found.");
 					}
 					else
 					{
-						Program.Log("gc_defaultverb: Attempting to apply default verb on actor \"{0}\" ({1}).", strActorName, NearestActor.ID);
-						NearestActor.DoubleClick();
+						Program.Log("gc_defaultverb: Attempting to apply default verb on actor \"{0}\" ({1}).", strActorName, IntendedTargetActor.ID);
+						IntendedTargetActor.DoubleClick();
 					}
 
 					return true;
