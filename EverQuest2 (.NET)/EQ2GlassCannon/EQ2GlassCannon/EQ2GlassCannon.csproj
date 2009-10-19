@@ -71,18 +71,13 @@
     <Compile Include="BardController.cs" />
     <Compile Include="ClericController.cs" />
     <Compile Include="CoercerController.cs" />
-    <Compile Include="CsvStreams.cs" />
     <Compile Include="DruidController.cs" />
     <Compile Include="EmailQueueThread.cs" />
     <Compile Include="EnchanterController.cs" />
-    <Compile Include="FlexStringBuilder.cs" />
     <Compile Include="IllusionistController.cs" />
-    <Compile Include="IniFile.cs" />
     <Compile Include="MageController.cs" />
-    <Compile Include="MessageThread.cs" />
     <Compile Include="MysticController.cs" />
     <Compile Include="ParseThread.cs" />
-    <Compile Include="PInvoke.cs" />
     <Compile Include="PriestController.cs" />
     <Compile Include="ScoutController.cs" />
     <Compile Include="ShamanController.cs" />
@@ -108,9 +103,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetCollection.cs" />
     <Compile Include="TemplarController.cs" />
-    <Compile Include="ThreadSafeQueue.cs" />
     <Compile Include="TroubadorController.cs" />
     <Compile Include="WardenController.cs" />
     <Compile Include="WarlockController.cs" />
@@ -120,6 +113,10 @@
     <ProjectReference Include="..\EQ2ParseEngine\EQ2ParseEngine.csproj">
       <Project>{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}</Project>
       <Name>EQ2ParseEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EQ2SuiteLib\EQ2SuiteLib.csproj">
+      <Project>{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}</Project>
+      <Name>EQ2SuiteLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

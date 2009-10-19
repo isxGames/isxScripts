@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using EQ2.ISXEQ2;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {
@@ -16,6 +16,7 @@ namespace EQ2GlassCannon
 		protected string m_strSingleRezCallout = "REZZING << {0} >>";
 		protected string m_strGroupRezCallout = "REZZING GROUP << {0} >>";
 		protected bool m_bBuffGroupWaterBreathing = true;
+		protected List<string> m_astrSingleWaterBreathingTargets = new List<string>();
 		protected bool m_bBuffPhysicalMitigation = true;
 		protected StanceType m_eShadowsHealStance = StanceType.Neither;
 		protected double m_fHealThresholdRatio = 0.95;
@@ -28,6 +29,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiGeneralNonCombatRezAbilityID = 0;
 		protected uint m_uiGroupMitigationBuffAbilityID = 0;
 		protected uint m_uiGroupWaterBreathingAbilityID = 0;
+		protected uint m_uiSingleWaterBreathingAbilityID = 0;
 		protected uint m_uiSpiritOfTheWolfAbilityID = 0;
 		protected uint m_uiShadowsOffensiveHealStance = 0;
 		protected uint m_uiShadowsDefensiveHealStance = 0;
@@ -44,6 +46,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferString("Priest.SingleRezCallout", ref m_strSingleRezCallout);
 			ThisFile.TransferString("Priest.GroupRezCallout", ref m_strGroupRezCallout);
 			ThisFile.TransferBool("Priest.BuffGroupWaterBreathing", ref m_bBuffGroupWaterBreathing);
+			//ThisFile.TransferStringList("Priest.SingleWaterBreathingTargets", m_astrSingleWaterBreathingTargets);
 			ThisFile.TransferBool("Priest.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
 			ThisFile.TransferEnum<StanceType>("Priest.ShadowsHealStance", ref m_eShadowsHealStance);
 			ThisFile.TransferDouble("Priest.HealThresholdRatio", ref m_fHealThresholdRatio);
@@ -59,6 +62,7 @@ namespace EQ2GlassCannon
 			m_uiCureAbilityID = SelectHighestAbilityID("Cure");
 			m_uiCureCurseAbilityID = SelectHighestAbilityID("Cure Curse");
 			m_uiGeneralNonCombatRezAbilityID = SelectHighestAbilityID("Revive");
+			m_uiSingleWaterBreathingAbilityID = SelectHighestAbilityID("Enduring Breath");
 			m_uiSpiritOfTheWolfAbilityID = SelectHighestAbilityID("Spirit of the Wolf");
 			m_uiLoreAndLegendAbilityID = SelectHighestAbilityID("Master's Smite");
 			return;
@@ -161,17 +165,26 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public bool CheckGroupWaterBreathingBuff()
+		public bool CheckWaterBreathingBuffs()
 		{
-			if (m_bBuffGroupWaterBreathing)
+			/// Only spend time casting the buffs if we need to.
+			/// This is not time we want to take up during a big fight.
+			if (MeActor.IsSwimming || !MeActor.InCombatMode)
 			{
-				/// Only turn it back on if we need to.
-				if ((MeActor.IsSwimming || !MeActor.InCombatMode) && CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, true))
+				if (m_bBuffGroupWaterBreathing)
+				{
+					if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, true))
+						return true;
+				}
+
+				/// Blah. This won't work because Enduring Breath isn't a maintained spell.
+				/// Leave it blank in the configuration for now.
+				if (CheckSingleTargetBuffs(m_uiSingleWaterBreathingAbilityID, m_astrSingleWaterBreathingTargets))
 					return true;
 			}
 			else
 			{
-				if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, false))
+				if (CheckToggleBuff(m_uiGroupWaterBreathingAbilityID, m_bBuffGroupWaterBreathing))
 					return true;
 			}
 

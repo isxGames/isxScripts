@@ -10,6 +10,7 @@ using InnerSpaceAPI;
 using LavishVMAPI;
 using System.IO;
 using EQ2ParseEngine;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {
@@ -363,16 +364,21 @@ namespace EQ2GlassCannon
 			}
 
 			/// Build the beneficial effect dictionary.
-			m_BeneficialEffectNameToIndexMap.Clear();
-			for (int iIndex = 1; iIndex <= Me.CountEffects; iIndex++)
+			/// NOTE: Can't do it in current implementation. Me.Effect() does server lookup and major bandwidth saturation.
+			/*if (!Me.InitializingEffects)
 			{
-				string strName = Me.Effect(iIndex).Name;
-				if (strName != null)
+				m_BeneficialEffectNameToIndexMap.Clear();
+				for (int iIndex = 1; iIndex <= Me.CountEffects; iIndex++)
 				{
-					if (!m_BeneficialEffectNameToIndexMap.ContainsKey(strName))
-						m_BeneficialEffectNameToIndexMap.Add(strName, iIndex);
+					string strName = Me.Effect(iIndex).Name;
+					if (strName != null)
+					{
+						if (!m_BeneficialEffectNameToIndexMap.ContainsKey(strName))
+							m_BeneficialEffectNameToIndexMap.Add(strName, iIndex);
+					}
 				}
-			}
+				Me.InitializeEffects();
+			}*/
 
 			m_AbilityCache.Clear();
 			m_AbilityCompatibleTargetCountCache.Clear();
@@ -496,10 +502,35 @@ namespace EQ2GlassCannon
 
 			//Program.Log("Reward window appeared: \"{0}\".", ThisWindow.);
 
-			EQ2UIPage ThisPage = ThisWindow.ToEQ2UIPage;
 			Program.Log("Accepting reward...");
 			ThisWindow.Receive();
-			return false;
+			return true;
+		}
+
+		/************************************************************************************/
+		protected virtual bool OnLootWindowAppeared(LootWindow ThisWindow)
+		{
+			if (m_ePositioningStance == PositioningStance.DoNothing)
+			{
+				Program.Log("Character is in do-nothing stance; ignoring loot window.");
+				return false;
+			}
+
+			//ThisWindow.NumItems
+			switch (ThisWindow.Type)
+			{
+				case "Lottery":
+					break;
+				case "Free For All":
+					break;
+				case "Need Before Greed":
+					break;
+				case "Unknown":
+				default:
+					break;
+			}
+
+			return true;
 		}
 
 		/************************************************************************************/
@@ -575,6 +606,13 @@ namespace EQ2GlassCannon
 				Program.s_EmailQueueThread.PostEmailMessage(m_astrChatWatchToAddressList, "Chat text spotted!", NewArgs.OriginalLine);
 				m_ChatWatchNextValidAlertTime = CurrentCycleTimestamp + TimeSpan.FromMinutes(m_fChatWatchAlertCooldownMinutes);
 				/// Don't return a value; allow processing to continue because there's no need to cockblock in this case.
+			}
+
+			if (NewArgs.Channel == EQ2LogTokenizer.ChatEventArgs.ChannelType.NonPlayerTell ||
+				NewArgs.Channel == EQ2LogTokenizer.ChatEventArgs.ChannelType.NonPlayerSay ||
+				NewArgs.Channel == EQ2LogTokenizer.ChatEventArgs.ChannelType.SelfNonPlayerTell)
+			{
+				return false;
 			}
 
 			bool bIsCommand = m_astrCommandingPlayers.Contains(NewArgs.SourceActorName);
@@ -1078,7 +1116,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool GetOffensiveTargetActor()
 		{
-			/// Select a new target based on the last evaluated encounter.
+			/// If we have no target, then select a new target based on the last evaluated encounter.
 			if (m_iOffensiveTargetID == -1)
 			{
 				/// There are no alternative choices; we're SOL.
@@ -1099,7 +1137,7 @@ namespace EQ2GlassCannon
 					int iHighestHealth = 0;
 					int iLowestHealth = 100;
 
-					/// Refresh the dictionary with current actor instances.
+					/// Refresh the dictionary with updated actor instances.
 					Dictionary<int, Actor> NewDictionary = new Dictionary<int, Actor>();
 					foreach (int iActorID in m_OffensiveTargetEncounterActorDictionary.Keys)
 					{
@@ -1112,19 +1150,20 @@ namespace EQ2GlassCannon
 					/// Decide who in the encounter remains with the highest or lowest health.
 					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
 					{
+						int iThisActorHealth = ThisActor.Health; /// alias
 						if (m_eEncounterCompletionMode == EncounterCompletionMode.HighestHealth)
 						{
-							if (ThisActor.Health > iHighestHealth || CandidateActor == null)
+							if (iThisActorHealth > iHighestHealth || CandidateActor == null)
 							{
-								iHighestHealth = ThisActor.Health;
+								iHighestHealth = iThisActorHealth;
 								CandidateActor = ThisActor;
 							}
 						}
 						else if (m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth)
 						{
-							if (ThisActor.Health > iLowestHealth || CandidateActor == null)
+							if (iThisActorHealth > iLowestHealth || CandidateActor == null)
 							{
-								iLowestHealth = ThisActor.Health;
+								iLowestHealth = iThisActorHealth;
 								CandidateActor = ThisActor;
 							}
 						}

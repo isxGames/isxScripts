@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using EQ2.ISXEQ2;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {
@@ -712,9 +713,9 @@ namespace EQ2GlassCannon
 				{
 					if (!ThisActor.IsDead &&
 						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly and has too many pitfalls.
-						ThisActor.CanTurn &&
 						(m_OffensiveTargetActor == null || (ThisActor.ID != m_OffensiveTargetActor.ID && (!m_OffensiveTargetEncounterActorDictionary.ContainsKey(ThisActor.ID) || m_bMezMembersOfTargetEncounter))) && /// It can't be our current burn mob.
-						ThisActor.Type != "NoKill NPC" &&
+						(ThisActor.Type == STR_NAMED_NPC || ThisActor.Type == "NPC") &&
+						ThisActor.CanTurn &&
 						ThisActor.Target().IsValid &&
 						ThisActor.Target().Type == "PC") /// It has to be targetting a player; an indicator of aggro.
 					{
@@ -1026,8 +1027,6 @@ namespace EQ2GlassCannon
 				return false;
 			else if (m_OffensiveTargetActor.IsNamed)
 				return true;
-			else if (m_OffensiveTargetActor.IsHeroic)
-				return (m_OffensiveTargetActor.Health > 90);
 			else if (m_OffensiveTargetActor.IsEpic)
 				return (m_OffensiveTargetActor.Health > 50);
 			else

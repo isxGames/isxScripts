@@ -9,6 +9,7 @@ using System.Threading;
 using System.IO;
 using System.Speech.Synthesis;
 using EQ2ParseEngine;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {

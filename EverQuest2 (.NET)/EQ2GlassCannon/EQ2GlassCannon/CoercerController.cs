@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {
@@ -197,6 +198,7 @@ namespace EQ2GlassCannon
 							return true;
 						}
 
+						/// TODO: Save this boost for when the group is in dire straits.
 						if (!IsBeneficialEffectPresent(m_uiIntellectualRemedyAbilityID) && CastAbilityOnSelf(m_uiIntellectualRemedyAbilityID))
 						{
 							SpamSafeGroupSay(m_strIntellectualRemedyCallout);
@@ -221,15 +223,15 @@ namespace EQ2GlassCannon
 					if (!IsAbilityMaintained(m_uiSingleMagicalDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiSingleMagicalDebuffAbilityID))
 						return true;
 
-					if (CastBlueOffensiveAbility(m_uiBlueStunNukeAbilityID, 3))
-						return true;
-
 					/// TODO: This should be changed to behave more like a buff, to allow multiple recipients.
 					if (!IsAbilityMaintained(m_uiDestructiveMindAbilityID) && CastAbility(m_uiDestructiveMindAbilityID, m_astrDestructiveMindTargets, true))
 						return true;
 
 					/// This is guesswork for now.
-					if (CastGreenOffensiveAbility(m_uiGreenStunAbilityID, 3))
+					if (!m_OffensiveTargetActor.IsEpic && CastGreenOffensiveAbility(m_uiGreenStunAbilityID, 3))
+						return true;
+
+					if (CastBlueOffensiveAbility(m_uiBlueStunNukeAbilityID, 3))
 						return true;
 
 					/// We attempt this in two places:
