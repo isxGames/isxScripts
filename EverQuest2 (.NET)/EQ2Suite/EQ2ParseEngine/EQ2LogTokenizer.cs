@@ -10,47 +10,6 @@ namespace EQ2ParseEngine
 {
 	public class EQ2LogTokenizer
 	{
-		public enum GameLanguageType : int
-		{
-			Unknown = 0,
-			AyrDal,
-			ChaosTongue,
-			Common,
-			DeathsWhisper,
-			DiZokian,
-			Draconic,
-			Druzaic,
-			Dwarven,
-			Erudian,
-			Faerlie,
-			Fayefolk,
-			FeirDal,
-			Gnollish,
-			Gnomish,
-			Goblish,
-			Gorwish,
-			Guktan,
-			Halasian,
-			Kerran,
-			KoadaDal,
-			Krombral,
-			Oggish,
-			Orcish,
-			Ratongan,
-			Sathirian,
-			Screechsong,
-			Sebilisian,
-			Serilian,
-			Stout,
-			Thexian,
-			Thullian,
-			TikTok,
-			Uruvanian,
-			Volant,
-			WordsOfShade,
-			Ykeshan,
-		}
-
 		protected SharedStringCache m_SharedStringCache = new SharedStringCache();
 		protected CompiledRegexCache m_CompiledRegexCache = new CompiledRegexCache();
 
@@ -72,8 +31,8 @@ namespace EQ2ParseEngine
 		}
 
 		/************************************************************************************/
-		private GameLanguageType m_eGameLanguage = GameLanguageType.Common;
-		public GameLanguageType MyGameLanguage
+		private ChatEventArgs.GameLanguageType m_eGameLanguage = ChatEventArgs.GameLanguageType.Common;
+		public ChatEventArgs.GameLanguageType MyGameLanguage
 		{
 			get { return m_eGameLanguage; }
 			set { m_eGameLanguage = value; }
@@ -107,270 +66,17 @@ namespace EQ2ParseEngine
 			}
 		}
 
-		/************************************************************************************/
-		public class ItemLinkFoundEventArgs : EventArgs, IComparable<ItemLinkFoundEventArgs>
-		{
-			protected readonly string m_strFullLink = string.Empty;
-			public string FullLink { get { return m_strFullLink; } }
+		public delegate void ItemLinkFoundHandler(object objSender, ItemLinkFoundEventArgs args);
+		public event ItemLinkFoundHandler ItemLinkFound;
 
-			protected readonly int m_iParameter1 = 0;
-			public int Parameter1 { get { return m_iParameter1; } }
-
-			protected readonly int m_iParameter2 = 0;
-			public int Parameter2 { get { return m_iParameter2; } }
-
-			protected readonly int m_iParameter3 = 0;
-			public int Parameter3 { get { return m_iParameter3; } }
-
-			protected readonly string m_strItemName = string.Empty;
-			public string ItemName { get { return m_strItemName; } }
-
-			public ItemLinkFoundEventArgs(
-				string strFullLink,
-				int iParameter1,
-				int iParameter2,
-				int iParameter3,
-				string strItemName)
-			{
-				m_strFullLink = strFullLink;
-				m_iParameter1 = iParameter1;
-				m_iParameter2 = iParameter2;
-				m_iParameter3 = iParameter3;
-				m_strItemName = strItemName;
-				return;
-			}
-
-			/// <summary>
-			/// This is useful in case you want to keep a SortedDictionary of unique item links.
-			/// </summary>
-			public int CompareTo(ItemLinkFoundEventArgs OtherItem)
-			{
-				int iComparison = 0;
-
-				/// Parameter 1 is a quicker sort method but for human readability, the name is better.
-				iComparison = m_strItemName.CompareTo(OtherItem.m_strItemName);
-				if (iComparison != 0)
-					return iComparison;
-
-				iComparison = m_iParameter1.CompareTo(OtherItem.m_iParameter1);
-				if (iComparison != 0)
-					return iComparison;
-
-				iComparison = m_iParameter2.CompareTo(OtherItem.m_iParameter2);
-				if (iComparison != 0)
-					return iComparison;
-
-				iComparison = m_iParameter3.CompareTo(OtherItem.m_iParameter3);
-				if (iComparison != 0)
-					return iComparison;
-
-				return 0;
-			}
-		}
-
-		public delegate void ItemLinkFoundDelegate(object objSender, ItemLinkFoundEventArgs args);
-		public event ItemLinkFoundDelegate ItemLinkFound;
-
-		/************************************************************************************/
-		public class ConsoleLogEventArgs : EventArgs
-		{
-			protected readonly DateTime m_Timestamp = DateTime.FromBinary(0);
-			public DateTime Timestamp { get { return m_Timestamp; } }
-
-			protected readonly string m_strOriginalLine = string.Empty;
-			public string OriginalLine { get { return m_strOriginalLine; } }
-
-			public ConsoleLogEventArgs(
-				DateTime ThisTimestamp,
-				string strOriginalLine)
-			{
-				m_Timestamp = ThisTimestamp;
-				m_strOriginalLine = strOriginalLine;
-				return;
-			}
-		}
-
-		public delegate void LineNotRecognizedHandler(object objSender, ConsoleLogEventArgs args);
-		public event LineNotRecognizedHandler LineNotRecognized;
-
-		/************************************************************************************/
-		/// <summary>
-		/// This event depicts any communication text, like tells or says.
-		/// </summary>
-		public class ChatEventArgs : ConsoleLogEventArgs, ICloneable
-		{
-			public enum ChannelType : int
-			{
-				NonChat = 0,
-				PlayerSay,
-				NonPlayerSay,
-				PlayerTell,
-				NonPlayerTell,
-				SelfNonPlayerTell, /// A specialized form of NonPlayerTell used in the T8 coercer epic questline.
-				NamedChannel,
-				OutOfCharacter,
-				Shout,
-				Raid,
-				Group,
-				Guild,
-				Officer,
-			}
-
-			internal ChannelType m_eChannelType = ChannelType.NonChat;
-			public ChannelType Channel { get { return m_eChannelType; } }
-
-			internal GameLanguageType m_eGameLanguage = GameLanguageType.Unknown;
-			public GameLanguageType GameLanguage { get { return m_eGameLanguage; } }
-
-			internal int m_iSourceActorID = -1;
-			public int SourceActorID { get { return m_iSourceActorID; } }
-
-			internal string m_strSourceActorName = string.Empty;
-			public string SourceActorName { get { return m_strSourceActorName; } }
-
-			internal string m_strDestinationName = string.Empty;
-			/// <summary>
-			/// This can be either a player name or a channel name depending on the context.
-			/// </summary>
-			public string DestinationName { get { return m_strDestinationName; } }
-
-			internal string m_strMessage = string.Empty;
-			public string Message { get { return m_strMessage; } }
-
-			public ChatEventArgs(
-				DateTime Timestamp,
-				string strOriginalLine)
-				: base(Timestamp, strOriginalLine)
-			{
-				return;
-			}
-
-			public ChatEventArgs(
-				DateTime Timestamp,
-				string strOriginalLine,
-				ChannelType eChannelType,
-				int iSourceActorID,
-				string strSourceActorName,
-				string strDestinationName,
-				string strMessage):base(Timestamp, strOriginalLine)
-			{
-				m_eChannelType = eChannelType;
-				m_iSourceActorID = iSourceActorID;
-				m_strSourceActorName = strSourceActorName;
-				m_strDestinationName = strDestinationName;
-				m_strMessage = strMessage;
-				return;
-			}
-
-			public ChatEventArgs Copy()
-			{
-				ChatEventArgs NewArgs = new ChatEventArgs(m_Timestamp, m_strOriginalLine);
-				NewArgs.m_eChannelType = m_eChannelType;
-				NewArgs.m_eGameLanguage = m_eGameLanguage;
-				NewArgs.m_iSourceActorID = m_iSourceActorID;
-				NewArgs.m_strDestinationName = m_strDestinationName;
-				NewArgs.m_strMessage = m_strMessage;
-				NewArgs.m_strSourceActorName = m_strSourceActorName;
-				return NewArgs;
-			}
-
-			public object Clone()
-			{
-				return Copy();
-			}
-		}
+		public delegate void ActionEventHandler(object objSender, ActionEventArgs args);
+		public event ActionEventHandler ActionOccurred;
 
 		public delegate void ChatEventHandler(object objSender, ChatEventArgs args);
 		public event ChatEventHandler ChatSent;
 
-		/************************************************************************************/
-		public class ActionEventArgs : ConsoleLogEventArgs, ICloneable
-		{
-			public enum ActionType : int
-			{
-				Unknown = 0,
-				Cure,
-				Stoneskin,
-				Ward,
-				Heal,
-				PowerHeal,
-				PowerDrain,
-				FocusDamage,
-				FallingDamage,
-				CrushingDamage,
-				SlashingDamage,
-				PiercingDamage,
-				HeatDamage,
-				ColdDamage,
-				MagicDamage,
-				MentalDamage,
-				DivineDamage,
-				PoisonDamage,
-				DiseaseDamage,
-			}
-
-			[Flags]
-			public enum AttributeFlags : uint
-			{
-				Critical = 0x1,
-				Double = 0x2,
-				Flurry = 0x4,
-				AOEAutoAttack = 0x8,
-				Missed = 0x10,
-				Resisted = 0x20,
-				Dodged = 0x40,
-				Parried = 0x80,
-				Deflected = 0x100,
-				Riposted = 0x200,
-				Reflected = 0x400,
-				Blocked = 0x800,
-			}
-
-			internal int m_iQuantity = 0;
-			public int Quantity { get { return m_iQuantity; } }
-
-			internal string m_strSource = string.Empty;
-			public string Source { get { return m_strSource; } }
-
-			internal string m_strDestination = string.Empty;
-			public string Destination { get { return m_strDestination; } }
-
-			internal string m_strAbilityName = string.Empty;
-			public string AbilityName { get { return m_strAbilityName; } }
-
-			internal string m_strSecondaryParameter = string.Empty;
-			public string SecondaryParameter { get { return m_strSecondaryParameter; } }
-
-			internal ActionType m_eActionType = ActionType.Unknown;
-			public ActionType Action { get { return m_eActionType; } }
-
-			internal AttributeFlags m_eAttributes = 0;
-			public AttributeFlags Attributes { get { return m_eAttributes; } }
-
-			public ActionEventArgs(DateTime Timestamp, string strParseLine):base(Timestamp, strParseLine)
-			{
-			}
-
-			public ActionEventArgs Copy()
-			{
-				ActionEventArgs NewArgs = new ActionEventArgs(m_Timestamp, m_strOriginalLine);
-				NewArgs.m_eActionType = m_eActionType;
-				NewArgs.m_eAttributes = m_eAttributes;
-				NewArgs.m_iQuantity = m_iQuantity;
-				NewArgs.m_strAbilityName = m_strAbilityName;
-				NewArgs.m_strDestination = m_strDestination;
-				NewArgs.m_strSource = m_strSource;
-				return NewArgs;
-			}
-
-			public object Clone()
-			{
-				return Copy();
-			}
-		}
-
-		public delegate void ActionEventHandler(object objSender, ActionEventArgs args);
-		public event ActionEventHandler ActionOccurred;
+		public delegate void LineNotRecognizedHandler(object objSender, ConsoleLogEventArgs args);
+		public event LineNotRecognizedHandler LineNotRecognized;
 
 		/************************************************************************************/
 		public class ZoningInEventArgs : ConsoleLogEventArgs
@@ -525,48 +231,48 @@ namespace EQ2ParseEngine
 		}
 
 		/************************************************************************************/
-		protected void AssignGameLanguageType(string strLogName, ref GameLanguageType eLanguageType)
+		protected void AssignGameLanguageType(string strLogName, ref ChatEventArgs.GameLanguageType eLanguageType)
 		{
 			switch (strLogName)
 			{
-				case "Ayr'Dal": eLanguageType = GameLanguageType.AyrDal; break;
-				case "Chaos Tongue": eLanguageType = GameLanguageType.ChaosTongue; break;
-				case "Common": eLanguageType = GameLanguageType.Common; break;
-				case "Death's Whisper": eLanguageType = GameLanguageType.DeathsWhisper; break;
-				case "Di'Zokian": eLanguageType = GameLanguageType.DiZokian; break;
-				case "Draconic": eLanguageType = GameLanguageType.Draconic; break;
-				case "Druzaic": eLanguageType = GameLanguageType.Druzaic; break;
-				case "Dwarven": eLanguageType = GameLanguageType.Dwarven; break;
-				case "Erudian": eLanguageType = GameLanguageType.Erudian; break;
-				case "Faerlie": eLanguageType = GameLanguageType.Faerlie; break;
-				case "Fayefolk": eLanguageType = GameLanguageType.Fayefolk; break;
-				case "Feir'Dal": eLanguageType = GameLanguageType.FeirDal; break;
-				case "Gnollish": eLanguageType = GameLanguageType.Gnollish; break;
-				case "Gnomish": eLanguageType = GameLanguageType.Gnomish; break;
-				case "Goblish": eLanguageType = GameLanguageType.Goblish; break;
-				case "Gorwish": eLanguageType = GameLanguageType.Gorwish; break;
-				case "Guktan": eLanguageType = GameLanguageType.Guktan; break;
-				case "Halasian": eLanguageType = GameLanguageType.Halasian; break;
-				case "Kerran": eLanguageType = GameLanguageType.Kerran; break;
-				case "Koada'Dal": eLanguageType = GameLanguageType.KoadaDal; break;
-				case "Krombral": eLanguageType = GameLanguageType.Krombral; break;
-				case "Oggish": eLanguageType = GameLanguageType.Oggish; break;
-				case "Orcish": eLanguageType = GameLanguageType.Orcish; break;
-				case "Ratongan": eLanguageType = GameLanguageType.Ratongan; break;
-				case "Sathirian": eLanguageType = GameLanguageType.Sathirian; break;
-				case "Screechsong": eLanguageType = GameLanguageType.Screechsong; break;
-				case "Sebilisian": eLanguageType = GameLanguageType.Sebilisian; break;
-				case "Serilian": eLanguageType = GameLanguageType.Serilian; break;
-				case "Stout": eLanguageType = GameLanguageType.Stout; break;
-				case "Thexian": eLanguageType = GameLanguageType.Thexian; break;
-				case "Thullian": eLanguageType = GameLanguageType.Thullian; break;
-				case "Tik Tok": eLanguageType = GameLanguageType.TikTok; break;
-				case "Uruvanian": eLanguageType = GameLanguageType.Uruvanian; break;
-				case "Volant": eLanguageType = GameLanguageType.Volant; break;
-				case "Words of Shade": eLanguageType = GameLanguageType.WordsOfShade; break;
-				case "Ykeshan": eLanguageType = GameLanguageType.Ykeshan; break;
+				case "Ayr'Dal": eLanguageType = ChatEventArgs.GameLanguageType.AyrDal; break;
+				case "Chaos Tongue": eLanguageType = ChatEventArgs.GameLanguageType.ChaosTongue; break;
+				case "Common": eLanguageType = ChatEventArgs.GameLanguageType.Common; break;
+				case "Death's Whisper": eLanguageType = ChatEventArgs.GameLanguageType.DeathsWhisper; break;
+				case "Di'Zokian": eLanguageType = ChatEventArgs.GameLanguageType.DiZokian; break;
+				case "Draconic": eLanguageType = ChatEventArgs.GameLanguageType.Draconic; break;
+				case "Druzaic": eLanguageType = ChatEventArgs.GameLanguageType.Druzaic; break;
+				case "Dwarven": eLanguageType = ChatEventArgs.GameLanguageType.Dwarven; break;
+				case "Erudian": eLanguageType = ChatEventArgs.GameLanguageType.Erudian; break;
+				case "Faerlie": eLanguageType = ChatEventArgs.GameLanguageType.Faerlie; break;
+				case "Fayefolk": eLanguageType = ChatEventArgs.GameLanguageType.Fayefolk; break;
+				case "Feir'Dal": eLanguageType = ChatEventArgs.GameLanguageType.FeirDal; break;
+				case "Gnollish": eLanguageType = ChatEventArgs.GameLanguageType.Gnollish; break;
+				case "Gnomish": eLanguageType = ChatEventArgs.GameLanguageType.Gnomish; break;
+				case "Goblish": eLanguageType = ChatEventArgs.GameLanguageType.Goblish; break;
+				case "Gorwish": eLanguageType = ChatEventArgs.GameLanguageType.Gorwish; break;
+				case "Guktan": eLanguageType = ChatEventArgs.GameLanguageType.Guktan; break;
+				case "Halasian": eLanguageType = ChatEventArgs.GameLanguageType.Halasian; break;
+				case "Kerran": eLanguageType = ChatEventArgs.GameLanguageType.Kerran; break;
+				case "Koada'Dal": eLanguageType = ChatEventArgs.GameLanguageType.KoadaDal; break;
+				case "Krombral": eLanguageType = ChatEventArgs.GameLanguageType.Krombral; break;
+				case "Oggish": eLanguageType = ChatEventArgs.GameLanguageType.Oggish; break;
+				case "Orcish": eLanguageType = ChatEventArgs.GameLanguageType.Orcish; break;
+				case "Ratongan": eLanguageType = ChatEventArgs.GameLanguageType.Ratongan; break;
+				case "Sathirian": eLanguageType = ChatEventArgs.GameLanguageType.Sathirian; break;
+				case "Screechsong": eLanguageType = ChatEventArgs.GameLanguageType.Screechsong; break;
+				case "Sebilisian": eLanguageType = ChatEventArgs.GameLanguageType.Sebilisian; break;
+				case "Serilian": eLanguageType = ChatEventArgs.GameLanguageType.Serilian; break;
+				case "Stout": eLanguageType = ChatEventArgs.GameLanguageType.Stout; break;
+				case "Thexian": eLanguageType = ChatEventArgs.GameLanguageType.Thexian; break;
+				case "Thullian": eLanguageType = ChatEventArgs.GameLanguageType.Thullian; break;
+				case "Tik Tok": eLanguageType = ChatEventArgs.GameLanguageType.TikTok; break;
+				case "Uruvanian": eLanguageType = ChatEventArgs.GameLanguageType.Uruvanian; break;
+				case "Volant": eLanguageType = ChatEventArgs.GameLanguageType.Volant; break;
+				case "Words of Shade": eLanguageType = ChatEventArgs.GameLanguageType.WordsOfShade; break;
+				case "Ykeshan": eLanguageType = ChatEventArgs.GameLanguageType.Ykeshan; break;
 				case "": eLanguageType = m_eGameLanguage; break;
-				default: eLanguageType = GameLanguageType.Unknown; break;
+				default: eLanguageType = ChatEventArgs.GameLanguageType.Unknown; break;
 			}
 			return;
 		}
@@ -634,10 +340,7 @@ namespace EQ2ParseEngine
 					string strParameter3 = ThisItemMatch.Groups[3].Value;
 					string strName = ThisItemMatch.Groups[4].Value;
 
-					int iParameter1 = -1;
-					int iParameter2 = -1;
-					int iParameter3 = -1;
-
+					int iParameter1, iParameter2, iParameter3;
 					if (!int.TryParse(strParameter1, out iParameter1))
 						iParameter1 = 0;
 					if (!int.TryParse(strParameter2, out iParameter2))
