@@ -46,10 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompiledRegexCache.cs" />
     <Compile Include="EQ2LogTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SharedStringCache.cs" />
+    <Compile Include="ZoneCombatStatistics.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EQ2SuiteLib\EQ2SuiteLib.csproj">
+      <Project>{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}</Project>
+      <Name>EQ2SuiteLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

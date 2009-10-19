@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using EQ2SuiteLib;
 
 namespace EQ2ParseEngine
 {
@@ -441,7 +442,7 @@ namespace EQ2ParseEngine
 		/// <param name="strFinalName"></param>
 		protected void AssignActorName(string strLogName, ref string strFinalName)
 		{
-			if (strLogName == "YOU" || strLogName == "YOURSELF")
+			if (strLogName == "YOU" || strLogName == "you" || strLogName == "YOURSELF")
 				strFinalName = m_strMyCharacterName;
 			else
 				strFinalName = strLogName;
@@ -564,7 +565,8 @@ namespace EQ2ParseEngine
 				case "Volant": eLanguageType = GameLanguageType.Volant; break;
 				case "Words of Shade": eLanguageType = GameLanguageType.WordsOfShade; break;
 				case "Ykeshan": eLanguageType = GameLanguageType.Ykeshan; break;
-				default: eLanguageType = m_eGameLanguage; break;
+				case "": eLanguageType = m_eGameLanguage; break;
+				default: eLanguageType = GameLanguageType.Unknown; break;
 			}
 			return;
 		}
@@ -605,6 +607,7 @@ namespace EQ2ParseEngine
 		public bool FeedLine(DateTime Timestamp, string strParseLine)
 		{
 			Match ThisMatch = null;
+			Match ThisSubMatch = null;
 			MatchCollection ThisMatchSet = null;
 
 			/// Handle all custom triggers with top priority.
@@ -1011,17 +1014,33 @@ namespace EQ2ParseEngine
 					NewEvent.m_iSourceActorID = int.Parse(ThisMatch.Groups["actorid"].Value);
 					AssignActorName(ThisMatch.Groups["actor"].Value, ref NewEvent.m_strSourceActorName);
 					AssignGameLanguageType(ThisMatch.Groups["language"].Value, ref NewEvent.m_eGameLanguage);
+					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
 
 					string strChannelType = ThisMatch.Groups["channel"].Value;
 					switch (strChannelType)
 					{
-						case "says to the guild": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Guild; break;
-						case "say to you":
-						case "thinks to you": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.SelfNonPlayerTell; break;
-						case "says to you": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell; break;
-						case "tells you": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerTell; break;
+						case "say to you": /// As in: "You say to you"
+						case "thinks to you":
+						{
+							NewEvent.m_eChannelType = ChatEventArgs.ChannelType.SelfNonPlayerTell;
+							NewEvent.m_strDestinationName = m_strMyCharacterName;
+							break;
+						}
+						case "says to you":
+						{
+							NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell;
+							NewEvent.m_strDestinationName = m_strMyCharacterName;
+							break;
+						}
+						case "tells you":
+						{
+							NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerTell;
+							NewEvent.m_strDestinationName = m_strMyCharacterName;
+							break;
+						}
 						case "says to the raid party": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Raid; break;
 						case "says to the group": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Group; break;
+						case "says to the guild": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Guild; break;
 						case "says to the officers": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Officer; break;
 						case "says out of character": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.OutOfCharacter; break;
 						case "says":
@@ -1035,34 +1054,58 @@ namespace EQ2ParseEngine
 						case "shouts": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Shout; break;
 					}
 
+					DispatchChatEvent(NewEvent);
+					return true;
+				}
+
+				/// Somebody says something in a public channel. The channel number is absolutely useless information and gets discarded.
+				/// \aPC -1 Testplayer:Testplayer\/a tells Level_70-79 (8), "80 inq lf Kums"
+				/// You tell Level_70-79 (8), "I wanna do an all-mage heroic group (1 healer) before this x-pack ends"
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<source>You|\\aPC (?<actorid>-?\d+) (?<actor>.+):\3\\/a) tells? (?<destination>.*) \(\d+\), ""(?<message>.*)""$");
+				if (ThisMatch.Success)
+				{
+					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
+					NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NamedChannel;
+
+					NewEvent.m_strDestinationName = ThisMatch.Groups["destination"].Value;
 					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
+
+					string strSource = ThisMatch.Groups["source"].Value;
+					if (strSource == "You")
+					{
+						NewEvent.m_strSourceActorName = m_strMyCharacterName;
+					}
+					else
+					{
+						NewEvent.m_iSourceActorID = int.Parse(ThisMatch.Groups["actorid"].Value);
+						NewEvent.m_strSourceActorName = ThisMatch.Groups["actor"].Value;
+					}
 
 					DispatchChatEvent(NewEvent);
 					return true;
 				}
 
-				/// A player tell to a public channel.
-				/// \aPC -1 Testplayer:Testplayer\/a tells Level_70-79 (8), "80 inq lf Kums"
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\aPC (?<actorid>-?\d+) (?<actor>.+):\2\\/a tells (?<destination>\S*) ?\(\d+\), ""(?<message>.*)""$");
+				/// You send a tell.
+				/// You tell Yosho, "it's all good"
+				/// You say to Shard of Subjugation, "How did you gain sentience?"
+				/// You say to you, "Have you gained your strength?"
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You (?<type>tell|say to) (?<destination>.*), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
+					NewEvent.m_strSourceActorName = m_strMyCharacterName;
 
-					NewEvent.m_iSourceActorID = int.Parse(ThisMatch.Groups["actorid"].Value);
-					NewEvent.m_strSourceActorName = ThisMatch.Groups["actor"].Value;
-					NewEvent.m_strDestinationName = ThisMatch.Groups["destination"].Value;
+					string strTellType = ThisMatch.Groups["type"].Value;
+					AssignActorName(ThisMatch.Groups["destination"].Value, ref NewEvent.m_strDestinationName);
+					string strChannelNumber = ThisMatch.Groups["channelnumber"].Value;
 					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
-					NewEvent.m_eGameLanguage = m_eGameLanguage;
 
-					if (NewEvent.m_strDestinationName == "you")
-					{
+					if (strTellType == "tell")
 						NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerTell;
-						NewEvent.m_strDestinationName = m_strMyCharacterName;
-					}
 					else
-						NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NamedChannel;
+						NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell;
 
-					ChatSent(this, NewEvent);
+					DispatchChatEvent(NewEvent);
 					return true;
 				}
 
@@ -1086,36 +1129,6 @@ namespace EQ2ParseEngine
 						case "say": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerSay; break;
 						case "shout": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Shout; break;
 					}
-
-					DispatchChatEvent(NewEvent);
-					return true;
-				}
-
-				/// You send a tell to a player or speak in a public channel.
-				/// You tell Level_70-79 (8), "I wanna do an all-mage heroic group (1 healer) before this x-pack ends"
-				/// You tell Yosho, "it's all good"
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You (?<type>tell|say to) (?<destination>\S*(?= \(\d+\))|\w*) ?(?<channelnumber>\((\d+)\))?, ""(?<message>.*)""$");
-				if (ThisMatch.Success)
-				{
-					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
-					NewEvent.m_strSourceActorName = m_strMyCharacterName;
-
-					string strTellType = ThisMatch.Groups["type"].Value;
-					NewEvent.m_strDestinationName = ThisMatch.Groups["destination"].Value;
-					string strChannelNumber = ThisMatch.Groups["channelnumber"].Value;
-					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
-
-					if (strTellType == "tell")
-					{
-						/// If the channel number is present, then it's to a public channel.
-						int iChannelNumber = -1;
-						if (int.TryParse(strChannelNumber, out iChannelNumber))
-							NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NamedChannel;
-						else
-							NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerTell;
-					}
-					else
-						NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell;
 
 					DispatchChatEvent(NewEvent);
 					return true;
