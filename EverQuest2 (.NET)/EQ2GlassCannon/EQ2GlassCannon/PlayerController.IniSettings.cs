@@ -5,10 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Drawing;
-using EQ2.ISXEQ2;
-using InnerSpaceAPI;
-using LavishVMAPI;
 using System.IO;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {

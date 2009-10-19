@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using InnerSpaceAPI;
 using EQ2.ISXEQ2;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {

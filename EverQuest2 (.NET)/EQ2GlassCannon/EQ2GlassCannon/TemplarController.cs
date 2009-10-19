@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using InnerSpaceAPI;
-using System.Threading;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {
@@ -194,7 +193,7 @@ namespace EQ2GlassCannon
 			/// Do buffs only if the vital situation isn't grim.
 			if (m_bCheckBuffsNow && (fLowestHealthRatio > 0.80f))
 			{
-				if (CheckGroupWaterBreathingBuff())
+				if (CheckWaterBreathingBuffs())
 					return true;
 				if (CheckShadowsHealStanceBuffs())
 					return true;

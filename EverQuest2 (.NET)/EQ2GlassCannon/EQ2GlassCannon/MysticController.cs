@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using EQ2.ISXEQ2;
+using EQ2SuiteLib;
 
 namespace EQ2GlassCannon
 {
@@ -189,7 +189,7 @@ namespace EQ2GlassCannon
 				/// Do buffs only if the vital situation isn't grim.
 				if (fLowestHealthRatio > 0.90)
 				{
-					if (CheckGroupWaterBreathingBuff())
+					if (CheckWaterBreathingBuffs())
 						return true;
 					if (CheckToggleBuff(m_uiGroupNoxiousBuffAbilityID, m_bBuffNoxiousResistance))
 						return true;
