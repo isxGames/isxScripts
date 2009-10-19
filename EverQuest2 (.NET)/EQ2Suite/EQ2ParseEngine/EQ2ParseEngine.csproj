@@ -46,9 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionEventArgs.cs" />
+    <Compile Include="ChatEventArgs.cs" />
+    <Compile Include="ConsoleLogEventArgs.cs" />
+    <Compile Include="EncounterStatistics.cs" />
     <Compile Include="EQ2LogTokenizer.cs" />
+    <Compile Include="ItemLinkFoundEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZoneCombatStatistics.cs" />
+    <Compile Include="ZoneStatistics.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EQ2SuiteLib\EQ2SuiteLib.csproj">
