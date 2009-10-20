@@ -1322,11 +1322,13 @@
                 </Text>
                 <Textentry Name='Writ Count'>
                   <X>130</X>
-                  <Y>10</Y>
+                  <Y>100</Y>
                   <Width>35</Width>
                   <Height>20</Height>
                   <MaxLength>4</MaxLength>
                   <Color>FFDDBB00</Color>
+		  <Visible>0</Visible>
+<!--
                   <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]</OnLoad>
                   <OnChange>
                     LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${This.Text}]
@@ -1334,7 +1336,88 @@
                     LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
                   </OnChange>
                   <AutoTooltip>Number of writs to complete before stopping. Max: 5</AutoTooltip>
+-->
                 </Textentry>
+		<Text Name='NumWrits'>
+		  <X>130</X>
+                  <Y>15</Y>
+                  <Width>35</Width>
+                  <Height>20</Height>
+                  <Color>FFDDBB00</Color>
+		  <OnLoad>
+		    if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &lt;= 8.93
+		    {
+		      This:Hide
+		    }
+		    This:SetText[${Math.Calc[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]} * 2]}]
+		  </OnLoad>
+		  <OnRender>
+                    if ${Zone.ShortName.Find[guildhall]} &amp;&amp; ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &gt; 8.93
+		    {
+		      if !${This.Visible}
+		        This:Show
+		    }
+		    elseif ${This.Visible}
+		    {
+		      This:Hide
+		    }
+		  </OnRender>
+		  
+		</Text>
+		<Text Name='NumWritsOOG'>
+		  <X>130</X>
+                  <Y>15</Y>
+                  <Width>35</Width>
+                  <Height>20</Height>
+                  <Color>FFDDBB00</Color>
+                  <OnLoad>
+		    This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]
+		  </OnLoad>
+		  <OnRender>
+                    if !${Zone.ShortName.Find[guildhall]}
+		    {
+		      if !${This.Visible}
+		        This:Show
+		    }
+                    elseif ${This.Visible}
+		    {
+		      This:Hide
+		    }
+		
+		  </OnRender>
+		  
+		</Text>
+		<Slider Name='WritSlider'>
+		  <X>30</X>
+		  <Y>35</Y>
+		  <Width>120</Width>
+		  <Height>20</Height>
+		  <Range>9</Range>
+		  <OnLoad>
+		    This:SetValue[${Math.Calc[${This.Parent.FindChild[NumWrits].Text} - 1].Int}]
+		    This.Parent.FindChild[NumWritsOOG]:SetText[${Math.Calc[(${This.Value}/2)+1].Int}]
+		    if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &lt;= 8.93
+		    {
+		      This.Parent.FindChild[Writ Count]:SetText[${This.Parent.FindChild[NumWritsOOG].Text}]
+                    }
+		  </OnLoad>
+		  <OnChange>
+		    variable int ThisValue=${Math.Calc[${This.Value}+1].Int}
+		    This.Parent.FindChild[NumWrits]:SetText[${ThisValue}]
+		    This.Parent.FindChild[NumWritsOOG]:SetText[${Math.Calc[(${This.Value}/2)+1].Int}]
+		    if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &lt;= 8.93
+		    {
+		      This.Parent.FindChild[Writ Count]:SetText[${This.Parent.FindChild[NumWritsOOG].Text}]
+                    }
+                    LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${ThisValue}]
+                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]:Set[${ThisValue}]
+                    LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+
+		  </OnChange>
+		</Slider>
+
+		
+
                 <!-- <Text Name='Writ Qty Label'>
                   <Font Template='Tahoma'>
                     <Color>FFEBDEAA</Color>
@@ -1388,8 +1471,8 @@
                   <AutoTooltip>Conversation choice for writ selection, starting with 1 at the top.</AutoTooltip>
                 </Textentry>
                 <Commandbutton Name='Create Work Order'>
-                  <X>60</X>
-                  <Y>40</Y>
+                  <X>240</X>
+                  <Y>70</Y>
                   <Width>120</Width>
                   <Height>20</Height>
                   <Text>Create Work Orders</Text>
