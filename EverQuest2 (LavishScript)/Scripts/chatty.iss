@@ -36,7 +36,7 @@ function main()
 	while 1
 }
 
-function RandomMsg(string chatTarget, string randomKey, bit PrefixName, string Speaker)
+function RandomMsg(string chatTarget, string randomKey, int PrefixName, string Speaker)
 {
 	variable int keycount
 	variable int tempvar=1
@@ -47,10 +47,14 @@ function RandomMsg(string chatTarget, string randomKey, bit PrefixName, string S
 
 	if ${PrefixName}
 	{
+		echo chat with prefix
+		echo /${chatTarget} ${Speaker}
 		EQ2Execute /${chatTarget} ${Speaker}, ${SettingXML[${chatfile}].Set[${randomKey}].GetString[${Math.Rand[${keycount}]}]}
 	}
 	else
 	{
+		echo chat without prefix
+		echo /${chatTarget}
 		EQ2Execute /${chatTarget} ${SettingXML[${chatfile}].Set[${randomKey}].GetString[${Math.Rand[${keycount}]}]}
 	}
 }
@@ -109,12 +113,12 @@ function PCAchive(string line2, string player, string points)
 atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatTarget, string SpeakerIsNPC, string ChannelName)
 {
 	variable string chatDest
-
+	echo atom - ${ChatType}
 	if ${Speaker.NotEqual[${Me.Name}]}
 	{
 		switch ${ChatType}
 		{
-			case 28	;tell
+			case 28
 			case 18
 				;guild
 				if ${Message.Find[${myname}?]}
@@ -126,19 +130,23 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 				elseif ${Speaker.Equal[${respondSpeaker}]} && ${Math.Calc[${Time.Timestamp}-${respondTimer}]}<60
 				{
 					EQ2Execute /gu "hmm, if you say so"
-					respondSpeaker:Set[]
+					respondSpeaker:Set[]`
 				}
-				elseif ${Message.Left[6].Eqaul[Insult]} && ${Message.Token[2, ](exists)} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
+				elseif ${Message.Left[6].Equal[Insult]} && ${Message.Token[2," "](exists)} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
 				{
+					echo atom Insult
 					InsultTimer:Set[${Time.Timestamp}]
 					chatDest:Set[gu]
-					call RandomMsg ${chatDest} Insults 1 ${Message.Token[2, ]}
+					echo test ${chatDest} Insults 1 ${Message.Token[2," "]} ${Speaker}
+					call RandomMsg ${chatDest} Insults 1 ${Message.Token[2," "]} ${Speaker}
 				}
-				elseif ${Message.Left[Private Insult]} && ${Message.Token[3, ](exists)} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
+				elseif ${Message.Left[13].Equal[PrivateInsult]} && ${Message.Token[2," "](exists)}
 				{
+					
 					InsultTimer:Set[${Time.Timestamp}]
-					chatDest:Set[tell  ${Message.Token[3, ]}]
-					call RandomMsg ${chatDest} Insults 0
+					chatDest:Set["tell ${Message.Token[2," "]}"]
+					echo atom Private ${chatDest} Insults 0			
+					call RandomMsg "${chatDest}" Insults 0
 				}
 				elseif ${Message.Find[Chuck]}
 				{
@@ -146,7 +154,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 					{
 						ChuckTimer:Set[${Time.Timestamp}]
 						chatDest:Set[gu]
-						call RandomMsg ${chatDest} Chuckisms 0
+						call RandomMsg ${chatDest} Chuckisms 0 ${Speaker}
 					}
 					else
 					{
@@ -155,8 +163,8 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 					}
 				}
 				break
-			case 32 ;ooc
-			case 9 	;shout
+			case 32 
+			case 9 	
 				break
 			case 8
 				;say
@@ -167,6 +175,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 				}
 				break
 			case 34
+				break
 				;chat
 				if ${ChannelName.Find[60-69]} && ${Speaker.Find[${AssHat}]} && ${Math.Calc[${Time.Timestamp}-${InsultTimer}]}>60
 				{
@@ -174,8 +183,9 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 					chatDest:Set[say]
 					call RandomMsg ${chatDest} Insults 1 ${Speaker}
 				}
-			case 15	;group
-			case 16	;raid
+				break
+			case 15
+			case 16
 				if ${Math.Calc[${Time.Timestamp}-${ChuckTimer}]}>10
 				{
 					ChuckTimer:Set[${Time.Timestamp}]
@@ -187,6 +197,7 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 					chatDest:Set[say]
 					call RandomMsg ${chatDest} Insults 0 ${Speaker}
 				}
+				break
 			default
 				break
 		}
