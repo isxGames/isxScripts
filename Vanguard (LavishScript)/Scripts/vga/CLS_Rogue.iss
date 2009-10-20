@@ -196,27 +196,29 @@ function Rogue_Combat()
 			 	   return
 			     }
 			   }
-  call checkabilitytocast "${Shiv}"	
+  call checkabilitytocast "${shiv}"	
 			if ${Return}
 			{
-			call executeability "${Shiv}" "attack" "Both"
+			call executeability "${shiv}" "attack" "Both"
 			return
 			}
-	call checkabilitytocast "${Shank}"	
+	call checkabilitytocast "${shank}"	
 			if ${Return}
 			{
 			if ${Me.Ability[Quickblade].IsReady}
 			   {
 			   Me.Ability[Quickblade]:Use
-			   call executeability "${Shank}" "attack" "Both"
+			   call executeability "${shank}" "attack" "Both"
 			   return
 			   }
 			if ${Me.Ability[${keeneye}].IsReady}
 			   {
 			   Me.Ability[${keeneye}]:Use
-			   call executeability "${Shank}" "attack" "Both"
+			   call executeability "${shank}" "attack" "Both"
 			   return
 			   }
+			call executeability "${shank}" "attack" "Both"
+			return
 			}
 
   call checkabilitytocast "Eviscerate"	
