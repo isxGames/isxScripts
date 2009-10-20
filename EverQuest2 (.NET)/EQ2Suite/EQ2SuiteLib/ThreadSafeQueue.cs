@@ -14,7 +14,8 @@ namespace EQ2SuiteLib
 		}
 
 		protected object m_objLock = new object();
-		protected Node m_Head = null;
+		protected Node m_RemovalNode = null;
+		protected Node m_InsertionNode = null;
 		protected int m_iCount = 0;
 
 		public int Count
@@ -30,11 +31,15 @@ namespace EQ2SuiteLib
 		{
 			Node NewNode = new Node();
 			NewNode.m_Value = NewValue;
+			NewNode.m_Next = null;
 
 			lock (m_objLock)
 			{
-				NewNode.m_Next = m_Head;
-				m_Head = NewNode;
+				if (m_InsertionNode != null)
+					m_InsertionNode.m_Next = NewNode;
+				m_InsertionNode = NewNode;
+				if (m_RemovalNode == null)
+					m_RemovalNode = NewNode;
 				m_iCount++;
 			}
 			return;
@@ -44,14 +49,18 @@ namespace EQ2SuiteLib
 		{
 			lock (m_objLock)
 			{
-				if (m_iCount == 0)
+				if (m_RemovalNode != null)
+				{
+					ThisValue = m_RemovalNode.m_Value;
+					m_RemovalNode = m_RemovalNode.m_Next;
+					if (m_RemovalNode == null)
+						m_InsertionNode = null;
+					m_iCount--;
+					return true;
+				}
+				else
 					return false;
-
-				ThisValue = m_Head.m_Value;
-				m_Head = m_Head.m_Next;
-				m_iCount--;
 			}
-			return true;
 		}
 	}
 }
