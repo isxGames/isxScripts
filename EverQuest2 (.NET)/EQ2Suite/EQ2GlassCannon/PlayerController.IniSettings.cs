@@ -18,6 +18,7 @@ namespace EQ2GlassCannon
 			None,
 			HighestHealth,
 			LowestHealth,
+			HighHeroicLowEpic,
 			AssistMainTank,
 		}
 
@@ -68,7 +69,7 @@ namespace EQ2GlassCannon
 		protected bool m_bHealUngroupedMainTank = true;
 		protected bool m_bCastFurySalveIfGranted = true;
 		protected bool m_bSpamHeroicOpportunity = true;
-		protected EncounterCompletionMode m_eEncounterCompletionMode = EncounterCompletionMode.HighestHealth;
+		protected EncounterCompletionMode m_eEncounterCompletionMode = EncounterCompletionMode.HighHeroicLowEpic;
 		protected bool m_bMezAdds = true;
 		protected MezMode m_eMezMode = MezMode.OnlyWhenMainTankDead;
 		protected bool m_bMezMembersOfTargetEncounter = false;
@@ -232,13 +233,20 @@ namespace EQ2GlassCannon
 							}
 							catch (IndexOutOfRangeException)
 							{
-								/// This exception is harmless and expected.
+								/// This exception is harmless and expected (though cheesy).
 							}
 
 							if (!string.IsNullOrEmpty(NewTrigger.m_strSubstring) && (NewTrigger.m_astrCommands.Count > 0))
+							{
 								m_aCustomChatTriggerList.Add(NewTrigger);
+								Program.DebugLog("Chat Trigger Sources: \"{0}\", Substring: \"{1}\", Commands: \"{2}\"",
+									string.Join(", ", NewTrigger.m_SourcePlayerSet.ToArray()),
+									NewTrigger.m_strSubstring,
+									string.Join(", ", NewTrigger.m_astrCommands.ToArray()));
+							}
 						}
 					}
+					Program.DebugLog("{0} custom chat trigger(s) loaded.", m_aCustomChatTriggerList.Count);
 				}
 
 				Program.s_EmailQueueThread.PostNewProfileMessage(m_EmailProfile);
