@@ -539,7 +539,7 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="NewArgs"></param>
 		/// <returns></returns>
-		protected virtual bool OnLogNarrative(EQ2LogTokenizer.ConsoleLogEventArgs NewArgs)
+		protected virtual bool OnLogNarrative(ConsoleLogEventArgs NewArgs)
 		{
 			/// NOTE: Place all exact-match checks in this table. C# will hash sort it for quickness.
 			switch (NewArgs.OriginalLine)
@@ -592,7 +592,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected virtual bool OnLogChat(EQ2LogTokenizer.ChatEventArgs NewArgs)
+		protected virtual bool OnLogChat(ChatEventArgs NewArgs)
 		{
 			string strTrimmedMessage = NewArgs.Message.Trim();
 			string strLowerCaseMessage = strTrimmedMessage.ToLower();
@@ -608,9 +608,9 @@ namespace EQ2GlassCannon
 				/// Don't return a value; allow processing to continue because there's no need to cockblock in this case.
 			}
 
-			if (NewArgs.Channel == EQ2LogTokenizer.ChatEventArgs.ChannelType.NonPlayerTell ||
-				NewArgs.Channel == EQ2LogTokenizer.ChatEventArgs.ChannelType.NonPlayerSay ||
-				NewArgs.Channel == EQ2LogTokenizer.ChatEventArgs.ChannelType.SelfNonPlayerTell)
+			if (NewArgs.Channel == ChatEventArgs.ChannelType.NonPlayerTell ||
+				NewArgs.Channel == ChatEventArgs.ChannelType.NonPlayerSay ||
+				NewArgs.Channel == ChatEventArgs.ChannelType.SelfNonPlayerTell)
 			{
 				return false;
 			}
@@ -746,7 +746,7 @@ namespace EQ2GlassCannon
 			}
 
 			else
-				Program.Log("A commanding player has spoken but no commands were found in the text.");
+				Program.Log("A commanding player has spoken (\"{0}\") but no commands were found in the text.", NewArgs.Message);
 
 			return false;
 		}
@@ -1132,18 +1132,29 @@ namespace EQ2GlassCannon
 
 				/// Choose highest or lowest health.
 				else if (m_eEncounterCompletionMode == EncounterCompletionMode.HighestHealth ||
-					m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth)
+					m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth ||
+					m_eEncounterCompletionMode == EncounterCompletionMode.HighHeroicLowEpic)
 				{
+					/// The actual mode we use will undergo some translation.
+					EncounterCompletionMode eActualCompletionMode = m_eEncounterCompletionMode;
+
 					int iHighestHealth = 0;
 					int iLowestHealth = 100;
 
-					/// Refresh the dictionary with updated actor instances.
+					/// Refresh only the members inside the dictionary with updated actor instances (if they exist).
 					Dictionary<int, Actor> NewDictionary = new Dictionary<int, Actor>();
-					foreach (int iActorID in m_OffensiveTargetEncounterActorDictionary.Keys)
+					foreach (Actor ThisActor in EnumActorsFromIDCollection(m_OffensiveTargetEncounterActorDictionary.Keys))
 					{
-						Actor ThisActor = GetActor(iActorID);
-						if (ThisActor != null && ThisActor.IsValid)
-							NewDictionary.Add(iActorID, ThisActor);
+						NewDictionary.Add(ThisActor.ID, ThisActor);
+
+						/// Map a pseudomode to a specific mode depending on the context of the target encounter.
+						if (eActualCompletionMode == EncounterCompletionMode.HighHeroicLowEpic)
+						{
+							if (ThisActor.IsEpic)
+								eActualCompletionMode = EncounterCompletionMode.LowestHealth;
+							else
+								eActualCompletionMode = EncounterCompletionMode.HighestHealth;
+						}
 					}
 					m_OffensiveTargetEncounterActorDictionary = NewDictionary;
 
@@ -1151,7 +1162,7 @@ namespace EQ2GlassCannon
 					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
 					{
 						int iThisActorHealth = ThisActor.Health; /// alias
-						if (m_eEncounterCompletionMode == EncounterCompletionMode.HighestHealth)
+						if (eActualCompletionMode == EncounterCompletionMode.HighestHealth)
 						{
 							if (iThisActorHealth > iHighestHealth || CandidateActor == null)
 							{
@@ -1159,7 +1170,7 @@ namespace EQ2GlassCannon
 								CandidateActor = ThisActor;
 							}
 						}
-						else if (m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth)
+						else if (eActualCompletionMode == EncounterCompletionMode.LowestHealth)
 						{
 							if (iThisActorHealth > iLowestHealth || CandidateActor == null)
 							{
@@ -1184,7 +1195,7 @@ namespace EQ2GlassCannon
 			m_OffensiveTargetActor = null;
 			m_OffensiveTargetEncounterActorDictionary.Clear();
 
-			/// Figure out who is in the encounter, and grab the primary actor while we're at it.
+			/// Now refresh the encounter based on the entire actor map, and grab the primary actor while we're at it.
 			foreach (Actor ThisActor in EnumActors())
 			{
 				if (ThisActor.IsValid &&
