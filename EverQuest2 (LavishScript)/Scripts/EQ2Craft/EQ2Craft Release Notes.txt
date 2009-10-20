@@ -1,5 +1,11 @@
 Revision History ||
 ===================
+v8.94 - Added TTS announcements between writs, and after writ sessions are complete.
+      - Added congratulatory TTS announcements when gaining levels and auto-scribing new recipes.
+      - Updated Writ tab of UI to use a Slider for writ count.
+      - Maximum number of writs allowed in guild halls increased to 10. Non-guildhall writs still
+        limited to 5.
+
 v8.93 - Fixed Writ Reward Window bug. No more "Automatically accepted OMGHAX Quest Rewards." when 
         logging in or zoning! (Thanks HotShot)
       - Really really fixed the Reset Thresholds button to actually set thresholds to the current
