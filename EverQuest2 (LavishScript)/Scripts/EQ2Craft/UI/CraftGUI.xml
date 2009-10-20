@@ -1319,6 +1319,42 @@
                   <Height>20</Height>
                   <Text>Writ Count:</Text>
                   <AutoTooltip>Number of writs to complete before stopping. Max: 5</AutoTooltip>
+		  <OnLoad>
+		    declarevariable CG_Frame_Counter int global 0
+		  </OnLoad>
+		  <OnUnload>
+		    deletevariable CG_Frame_Counter
+		  </OnUnload>
+		  <OnRender>
+		    if ${CG_Frame_Counter} == 0
+		    {
+		    if ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &gt; 8.93
+		    {
+		      if ${Zone.ShortName.Find[guildhall]}
+		      {
+			if !${This.Parent.FindChild[NumWrits].Visible}
+			  This.Parent.FindChild[NumWrits]:Show
+			if ${This.Parent.FindChild[NumWritsOOG].Visible}
+			  This.Parent.FindChild[NumWritsOOG]:Hide
+		      }
+		      else
+		      {
+			if !${This.Parent.FindChild[NumWritsOOG].Visible}
+			  This.Parent.FindChild[NumWritsOOG]:Show
+			if ${This.Parent.FindChild[NumWrits].Visible}
+			  This.Parent.FindChild[NumWrits]:Hide
+		      }
+		    }
+		    else
+		    {
+			if !${This.Parent.FindChild[NumWritsOOG].Visible}
+			  This.Parent.FindChild[NumWritsOOG]:Show
+			if ${This.Parent.FindChild[NumWrits].Visible}
+			  This.Parent.FindChild[NumWrits]:Hide
+		    }
+		    }
+		    CG_Frame_Counter:Set[${Math.Calc[(${CG_Frame_Counter}+1)%10]}]
+		  </OnRender>
                 </Text>
                 <Textentry Name='Writ Count'>
                   <X>130</X>
@@ -1349,19 +1385,8 @@
 		    {
 		      This:Hide
 		    }
-		    This:SetText[${Math.Calc[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]} * 2]}]
+		    This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]
 		  </OnLoad>
-		  <OnRender>
-                    if ${Zone.ShortName.Find[guildhall]} &amp;&amp; ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &gt; 8.93
-		    {
-		      if !${This.Visible}
-		        This:Show
-		    }
-		    elseif ${This.Visible}
-		    {
-		      This:Hide
-		    }
-		  </OnRender>
 		  
 		</Text>
 		<Text Name='NumWritsOOG'>
@@ -1370,21 +1395,6 @@
                   <Width>35</Width>
                   <Height>20</Height>
                   <Color>FFDDBB00</Color>
-                  <OnLoad>
-		    This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]
-		  </OnLoad>
-		  <OnRender>
-                    if !${Zone.ShortName.Find[guildhall]} || ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &lt;= 8.93
-		    {
-		      if !${This.Visible}
-		        This:Show
-		    }
-                    elseif ${This.Visible}
-		    {
-		      This:Hide
-		    }
-		
-		  </OnRender>
 		  
 		</Text>
 		<Slider Name='WritSlider'>
