@@ -17,25 +17,39 @@ namespace EQ2SuiteLib
 			return m_SortedList.ContainsKey(ThisValue);
 		}
 
-		public void Add(TYPE NewValue)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="NewValue"></param>
+		/// <returns>true if the item was new in the collection</returns>
+		public bool Add(TYPE NewValue)
 		{
 			if (NewValue == null)
-				return;
+				return false;
 
 			/// We remove the threat of an exception for duplicate items.
 			/// There is no need for an exception, nor will there ever be duplicate items.
 			if (!m_SortedList.ContainsKey(NewValue))
 			{
 				m_SortedList.Add(NewValue, null);
+				return true;
 			}
-			return;
+			
+			return true;
 		}
 
-		public void Add(IEnumerable<TYPE> NewValueCollection)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="NewValueCollection"></param>
+		/// <returns>true if the item was new in the collection</returns>
+		public bool Add(IEnumerable<TYPE> NewValueCollection)
 		{
+			bool bNewLinkAdded = false;
 			foreach (TYPE ThisType in NewValueCollection)
-				Add(ThisType);
-			return;
+				if (Add(ThisType))
+					bNewLinkAdded = true;
+			return bNewLinkAdded;
 		}
 
 		public void Remove(TYPE OldValue)
@@ -68,6 +82,15 @@ namespace EQ2SuiteLib
 		{
 			m_SortedList.Keys.CopyTo((TYPE[])DestinationArray, iIndex);
 			return;
+		}
+
+		public TYPE[] ToArray()
+		{
+			TYPE[] NewArray = new TYPE[Count];
+			int iIndex = 0;
+			foreach (TYPE ThisItem in this)
+				NewArray[iIndex++] = ThisItem;
+			return NewArray;
 		}
 
 		public int Count
