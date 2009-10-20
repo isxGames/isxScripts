@@ -1374,7 +1374,7 @@
 		    This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[WritCount]}]
 		  </OnLoad>
 		  <OnRender>
-                    if !${Zone.ShortName.Find[guildhall]}
+                    if !${Zone.ShortName.Find[guildhall]} || ${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[CraftVersion]} &lt;= 8.93
 		    {
 		      if !${This.Visible}
 		        This:Show
