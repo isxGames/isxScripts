@@ -394,7 +394,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override bool OnLogChat(EQ2ParseEngine.EQ2LogTokenizer.ChatEventArgs NewArgs)
+		protected override bool OnLogChat(EQ2ParseEngine.ChatEventArgs NewArgs)
 		{
 			if (base.OnLogChat(NewArgs))
 				return true;
