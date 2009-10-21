@@ -367,7 +367,7 @@ namespace EQ2ParseEngine
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
-					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
 					NewEvent.m_strAbilityName = ThisMatch.Groups["ability"].Value;
 
 					DispatchActionEvent(NewEvent);
@@ -420,7 +420,7 @@ namespace EQ2ParseEngine
 
 							Match ThisItemMatch = ThisMatchSet[iIndex];
 							AssignDamageType(ThisItemMatch.Groups["damagetype"].Value, ref ThisEvent.m_eActionType);
-							ThisEvent.m_iQuantity = int.Parse(ThisItemMatch.Groups["quantity"].Value);
+							ThisEvent.m_uiQuantity = uint.Parse(ThisItemMatch.Groups["quantity"].Value);
 							DispatchActionEvent(ThisEvent);
 						}
 					}
@@ -438,7 +438,7 @@ namespace EQ2ParseEngine
 
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
-					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 					AssignAttributeType(ThisMatch.Groups["attacktype"].Value, ref NewEvent.m_eAttributes);
 
@@ -492,13 +492,18 @@ namespace EQ2ParseEngine
 				/// YOUR Cure relieves Spawn from Testplayer.
 				/// Testplayer's Purifying Persistence relieves Nether Mists from Testplayer2.
 				/// Testplayer's Ebbing Spirit relieves Nether Tide from YOU.
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) relieves (?<badeffect>.+) from (?<victim>.+).$");
+				/// Testplayer's Doom Judgement dispels Innoruuk's Caress from a Deathfist royal praetorian.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<type>relieves|dispels) (?<badeffect>.+) from (?<victim>.+).$");
 				if (!ThisMatch.Success)
-					ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) relieves (?<victim>YOU) of (?<badeffect>.+).$");
+					ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<type>relieves) (?<victim>YOU) of (?<badeffect>.+).$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
-					NewEvent.m_eActionType = ActionEventArgs.ActionType.Cure;
+
+					if (ThisMatch.Groups["type"].Value == "relieves")
+						NewEvent.m_eActionType = ActionEventArgs.ActionType.Cure;
+					else
+						NewEvent.m_eActionType = ActionEventArgs.ActionType.Dispel;
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
@@ -520,7 +525,7 @@ namespace EQ2ParseEngine
 					NewEvent.m_eActionType = ActionEventArgs.ActionType.Ward;
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
-					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 
 					DispatchActionEvent(NewEvent);
@@ -540,7 +545,7 @@ namespace EQ2ParseEngine
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
@@ -559,7 +564,7 @@ namespace EQ2ParseEngine
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
@@ -578,7 +583,7 @@ namespace EQ2ParseEngine
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
 
 					DispatchActionEvent(NewEvent);
 					return true;
@@ -598,7 +603,7 @@ namespace EQ2ParseEngine
 
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
-					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
 					NewEvent.m_strAbilityName = ThisMatch.Groups["ability"].Value;
 
 					DispatchActionEvent(NewEvent);
@@ -618,7 +623,7 @@ namespace EQ2ParseEngine
 
 					/// Remove the stupid commas. Dunno if I can have the regex do it for me.
 					string strQuantity = ThisMatch.Groups["quantity"].Value.Replace(",", "");
-					NewEvent.m_iQuantity = int.Parse(strQuantity);
+					NewEvent.m_uiQuantity = uint.Parse(strQuantity);
 
 					/// TODO: Not sure how I want to handle this yet.
 					return true;
@@ -708,7 +713,7 @@ namespace EQ2ParseEngine
 				/// \aPC 46147 Testplayer:Testplayer\/a says out of character, "assist me on << roekillik excavation chief >>"
 				/// \aPC -1 Testplayer:Testplayer\/a tells you, "This had better work!!"
 				/// \aPC 813717 Testplayer:Testplayer\/a shouts, "testing"
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says? to you|thinks to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts)(?: in |)(?<language>.*?|), ""(?<message>.*)""$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says? to you|thinks to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts)( in (?<language>.*?)|), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
@@ -769,7 +774,6 @@ namespace EQ2ParseEngine
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
 					NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NamedChannel;
-
 					NewEvent.m_strDestinationName = ThisMatch.Groups["destination"].Value;
 					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
 
@@ -788,32 +792,22 @@ namespace EQ2ParseEngine
 					return true;
 				}
 
-				/// You send a tell.
+				/// You send a PC tell.
 				/// You tell Yosho, "it's all good"
-				/// You say to Shard of Subjugation, "How did you gain sentience?"
-				/// You say to you, "Have you gained your strength?"
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You (?<type>tell|say to) (?<destination>.*), ""(?<message>.*)""$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You tell (?<destination>.*), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
 					NewEvent.m_strSourceActorName = m_strMyCharacterName;
-
-					string strTellType = ThisMatch.Groups["type"].Value;
 					AssignActorName(ThisMatch.Groups["destination"].Value, ref NewEvent.m_strDestinationName);
-					string strChannelNumber = ThisMatch.Groups["channelnumber"].Value;
 					NewEvent.m_strMessage = ThisMatch.Groups["message"].Value;
-
-					if (strTellType == "tell")
-						NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerTell;
-					else
-						NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell;
-
+					NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerTell;
 					DispatchChatEvent(NewEvent);
 					return true;
 				}
 
-				/// You speak to a general predefined chat channel.
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You (?<type>say to the guild|say to the raid party|say to the group|say to the officers|say out of character|say|shout)(?: in |)(?<language>.*?|), ""(?<message>.*)""$");
+				/// You speak to a general predefined chat channel or send a tell to an NPC.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"You (?<type>say to the guild|say to the raid party|say to the group|say to the officers|say out of character|say to (?<destination>.*?)|say|shout)( in (?<language>.*?)|), ""(?<message>.*)""$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
@@ -831,6 +825,18 @@ namespace EQ2ParseEngine
 						case "say out of character": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.OutOfCharacter; break;
 						case "say": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.PlayerSay; break;
 						case "shout": NewEvent.m_eChannelType = ChatEventArgs.ChannelType.Shout; break;
+						default: /// A.K.A. case "say to", the only one so far that can vary.
+						{
+							/// You send an NPC tell. This check needs to come after the predefined channel check above
+							/// because "say to" is a subphrase of "say to the group", etc.
+							/// We had to put the "say to" case in with the other "say to"s because otherwise there would be a mess of lookaheads.
+							/// This is very very sloppy but very little leeway to do otherwise.
+							/// You say to Shard of Subjugation, "How did you gain sentience?"
+							/// You say to you, "Have you gained your strength?"
+							AssignActorName(ThisMatch.Groups["destination"].Value, ref NewEvent.m_strDestinationName);
+							NewEvent.m_eChannelType = ChatEventArgs.ChannelType.NonPlayerTell;
+							break;
+						}
 					}
 
 					DispatchChatEvent(NewEvent);
