@@ -1340,6 +1340,7 @@ namespace EQ2GlassCannon
 		{
 			bool bActionTaken = false;
 			m_iOffensiveTargetID = -1;
+			m_OffensiveTargetEncounterActorDictionary.Clear();
 
 			if (!MeActor.IsDead)
 			{

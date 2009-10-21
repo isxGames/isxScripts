@@ -51,7 +51,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected override bool OnLogNarrative(EQ2LogTokenizer.ConsoleLogEventArgs NewArgs)
+		protected override bool OnLogNarrative(ConsoleLogEventArgs NewArgs)
 		{
 			if (base.OnLogNarrative(NewArgs))
 				return true;

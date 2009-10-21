@@ -34,8 +34,8 @@ namespace EQ2GlassCannon
 		protected class NewNameLanguageMessage : ThreadMessage
 		{
 			public string m_strCharacterName = string.Empty;
-			public EQ2LogTokenizer.GameLanguageType m_eLanguage = EQ2LogTokenizer.GameLanguageType.Unknown;
-			public NewNameLanguageMessage(string strCharacterName, EQ2LogTokenizer.GameLanguageType eNewLanguage)
+			public ChatEventArgs.GameLanguageType m_eLanguage = ChatEventArgs.GameLanguageType.Unknown;
+			public NewNameLanguageMessage(string strCharacterName, ChatEventArgs.GameLanguageType eNewLanguage)
 			{
 				m_strCharacterName = strCharacterName;
 				m_eLanguage = eNewLanguage;
@@ -44,7 +44,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		public void PostNewNameLanguageMessage(string strCharacterName, EQ2LogTokenizer.GameLanguageType eNewLanguage)
+		public void PostNewNameLanguageMessage(string strCharacterName, ChatEventArgs.GameLanguageType eNewLanguage)
 		{
 			PostMessage(new NewNameLanguageMessage(strCharacterName, eNewLanguage));
 			return;
@@ -82,20 +82,20 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected void ParseEngine_ActionOccurred(object objSender, EQ2LogTokenizer.ActionEventArgs args)
+		protected void ParseEngine_ActionOccurred(object objSender, ActionEventArgs args)
 		{
 			return;
 		}
 
 		/************************************************************************************/
-		protected void ParseEngine_ChatSent(object objSender, EQ2LogTokenizer.ChatEventArgs args)
+		protected void ParseEngine_ChatSent(object objSender, ChatEventArgs args)
 		{
 			PlayerController.EnqueueLogEvent(args);
 			return;
 		}
 
 		/************************************************************************************/
-		protected void ParseEngine_LineNotRecognized(object objSender, EQ2LogTokenizer.ConsoleLogEventArgs args)
+		protected void ParseEngine_LineNotRecognized(object objSender, ConsoleLogEventArgs args)
 		{
 			PlayerController.EnqueueLogEvent(args);
 			return;

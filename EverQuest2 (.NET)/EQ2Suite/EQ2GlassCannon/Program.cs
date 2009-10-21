@@ -105,6 +105,14 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		[Conditional("DEBUG")]
+		public static void DebugLog(string strFormat, params object[] aobjParams)
+		{
+			Log(strFormat, aobjParams);
+			return;
+		}
+
+		/************************************************************************************/
 		public static void Log(object objParam)
 		{
 			Program.Log("{0}", objParam);
