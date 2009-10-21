@@ -101,8 +101,6 @@ variable bool NameOnly
 variable bool Attunable
 variable bool AutoTransmute
 variable bool ExamineOpen
-variable bool Collectible
-variable bool NewCollection
 variable int StartLevel
 variable int EndLevel
 variable int Tier
@@ -1107,57 +1105,14 @@ function BuyItems()
 							; if the item is lore or collectible and you already have it then stop and move on
 							if ${Return}
 							{
-								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE or Collectible Item and you already have one
+								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE and you already have one
 								Break
 							}
 							
-							if ${Collectible} 
-							{
-								call Rejected "${Vendor.Item[${CurrentItem}].Name}"
-								
-								if ${Return}
-								{
-										break
-								}
-								else
-								{
-									Call CheckFocus
-									Vendor.Item[${CurrentItem}]:Examine
-
-									; Wait till the examine window is open
-									do
-									{
-										waitframe
-									}
-									while !${ExamineOpen}
-									
-									wait 5
-									
-									ExamineOpen:Set[FALSE]
-									
-									if ${NewCollection}
-									{
-										CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
-										Call CheckFocus
-										Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
-										NewCollection:Set[FALSE]
-										wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
-									}
-									else
-									{
-										break
-									}
-								}
-							}
-							else
-							{
-								CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
-								Call CheckFocus
-								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
-								wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
-							}
-
-							wait 5
+							CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+							Call CheckFocus
+							Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+							wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
 
 							if ${AutoTransmute}
 								Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
@@ -2198,7 +2153,6 @@ function ShowBuyPrices(int ItemID)
 	UIElement[Harvest@Buy@GUITabs@MyPrices]:Show
 	UIElement[Transmute@Buy@GUITabs@MyPrices]:Show
 	UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:Show
-	UIElement[Collection@Buy@GUITabs@MyPrices]:Show
 	UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Show
 	UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Show
 	UIElement[StartLevel@Buy@GUITabs@MyPrices]:Show
@@ -2261,8 +2215,6 @@ function ShowBuyPrices(int ItemID)
 	if ${BuyItem.FindSetting[BuyAttuneOnly]}
 	{
 		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:SetChecked
-		UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
-		UIElement[Collectible@Buy@GUITabs@MyPrices]:Hide
 	}
 	else
 	{
@@ -2272,15 +2224,12 @@ function ShowBuyPrices(int ItemID)
 	if ${BuyItem.FindSetting[AutoTransmute]}
 	{
 		UIElement[Transmute@Buy@GUITabs@MyPrices]:SetChecked
-		UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
-		UIElement[Collectible@Buy@GUITabs@MyPrices]:Hide
 	}
 	else
 		UIElement[Transmute@Buy@GUITabs@MyPrices]:UnsetChecked
 
 	if ${BuyItem.FindSetting[Collectible]}
 	{
-		UIElement[Collectible@Buy@GUITabs@MyPrices]:SetChecked
 		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:UnsetChecked
 		UIElement[BuyAttuneOnly@Buy@GUITabs@MyPrices]:UnsetChecked
 		UIElement[Transmute@Buy@GUITabs@MyPrices]:UnsetChecked
@@ -2302,7 +2251,6 @@ function ShowBuyPrices(int ItemID)
 	if ${BuyItem.FindSetting[BuyNameOnly]}
 	{
 		UIElement[BuyNameOnly@Buy@GUITabs@MyPrices]:SetChecked
-		UIElement[Collectible@Buy@GUITabs@MyPrices]:UnsetChecked
 		UIElement[StartLevelText@Buy@GUITabs@MyPrices]:Hide
 		UIElement[EndLevelText@Buy@GUITabs@MyPrices]:Hide
 		UIElement[StartLevel@Buy@GUITabs@MyPrices]:Hide
@@ -2496,9 +2444,6 @@ objectdef BrokerBot
 		; Non saved set for item totals
 		LavishSettings:AddSet[craft]
 
-		; Set for collection items that are already collected
-		LavishSettings:AddSet[Rejected]
-
 		; Set for Items that are for sale
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
@@ -2513,7 +2458,6 @@ objectdef BrokerBot
 		;Load settings from that characters file
 		
 		LavishSettings[myprices]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
-		LavishSettings[Rejected]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_Collections.XML]
 
 		General:Set[${LavishSettings[myprices].FindSet[General]}]
 		Logging:Set[${General.FindSetting[Logging]}]
@@ -2983,7 +2927,7 @@ function:bool checklore(string ItemName)
 			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
 			{
 				
-				if ${Collectible} || ${Me.CustomInventory[${xvar}].Lore}
+				if ${Me.CustomInventory[${xvar}].Lore}
 					Return TRUE
 					
 			}
@@ -3159,7 +3103,6 @@ atom atexit()
 		return
 
 	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
-	LavishSettings[Rejected]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_Collections.XML]
 
 	Event[EQ2_onInventoryUpdate]:DetachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
@@ -3189,16 +3132,4 @@ atom(script) EQ2_onIncomingText(string Text)
 		BadContainer:Set[TRUE]
 	}
 	return
-}
-
-atom EQ2_ExamineItemWindowAppeared(string ItemName, string WindowID)
-{
-	if ${ExamineItemWindow[${WindowID}].TextVector} == 1
-		NewCollection:Set[TRUE]
-	else
-		NewCollection:Set[FALSE]
-
-	ExamineOpen:Set[TRUE]
-	
-	EQ2Execute /close_top_window 
 }
