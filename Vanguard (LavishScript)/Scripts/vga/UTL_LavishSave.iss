@@ -252,8 +252,9 @@ HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
 	UtilitySR:AddSetting[DoAttackPositionBack,${DoAttackPositionBack}]
 	UtilitySR:AddSetting[DoAttackPosition,${DoAttackPosition}]
 
-
-
+	UtilitySR:AddSetting[DoAcceptRes,${DoAcceptRes}]
+	UtilitySR:AddSetting[DoAutoResCombat,${DoAutoResCombat}]
+	UtilitySR:AddSetting[DoAutoResNoCombat,${DoAutoResNoCombat}]
 
 	;===================================================
 	;===                  Spells Save               ====
@@ -391,7 +392,6 @@ HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
 	Interactions:AddSetting[KillingLevitate,${KillingLevitate}]
 	Interactions:AddSetting[DoReassistTank,${DoReassistTank}]
 	Interactions:AddSetting[ReassistingTank,${ReassistingTank}]
-
 
 	
 	switch ${Me.Class}

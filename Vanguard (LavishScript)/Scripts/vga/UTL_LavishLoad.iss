@@ -69,7 +69,7 @@ function loadxmls()
 	LavishSettings[VGA_General]:AddSet[Sell]	
 	LavishSettings[VGA_General]:AddSet[Trash]
 	LavishSettings[VGA_General]:AddSet[Interactions]	
-
+	LavishSettings[VGA_General]:AddSet[Friends]
 
 	LavishSettings[VGA]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
 	LavishSettings[VGA_Mobs]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
@@ -334,6 +334,11 @@ TapSoloHeal:Set[${HealerSR.FindSetting[TapSoloHeal,${TapSoloHeal}]}]
 	DoAttackPositionBack:Set[${UtilitySR.FindSetting[DoAttackPositionBack,${DoAttackPositionBack}]}]
 	DoAttackPosition:Set[${UtilitySR.FindSetting[DoAttackPosition,${DoAttackPosition}]}]
 
+	Friends:Set[${LavishSettings[VGA_General].FindSet[Friends]}]
+
+	DoAcceptRes:Set[${UtilitySR.FindSetting[DoAcceptRes,${DoAcceptRes}]}]
+	DoAutoResCombat:Set[${UtilitySR.FindSetting[DoAutoResCombat,${DoAutoResCombat}]}]
+	DoAutoResNoCombat:Set[${UtilitySR.FindSetting[DoAutoResNoCombat,${DoAutoResNoCombat}]}]
 
 	DoChargeFollow:Set[${UtilitySR.FindSetting[DoChargeFollow,${DoChargeFollow}]}]
 	;===================================================
