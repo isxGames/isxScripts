@@ -3,7 +3,6 @@ function Bard_DownTime()
 {
 	If !${fight.ShouldIAttack} && !${Me.Effect[${Me.FName}'s Bard Song - "${RunSong}"](exists)}
 		{
-		
 		Me.Inventory[${Drum}]:Equip			
 		wait 3			
 		Songs[${RunSong}]:Perform		

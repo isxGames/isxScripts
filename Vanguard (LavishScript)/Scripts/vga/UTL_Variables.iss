@@ -57,6 +57,7 @@ variable settingsetref Rescue
 variable settingsetref ForceRescue
 variable settingsetref Interactions
 variable settingsetref TurnOffDuringBuff
+variable settingsetref Friends
 
 variable settingsetref HealSequence
 variable settingsetref EmergencyHealSequence
@@ -182,6 +183,10 @@ variable bool DoAttackPositionLeft
 variable bool DoAttackPositionRight
 variable bool DoAttackPositionBack
 variable bool DoAttackPosition
+
+variable bool DoAcceptRes
+variable bool DoAutoResCombat
+variable bool DoAutoResNoCombat
 
 ;===================================================
 ;===             Main Combat Variables          ====

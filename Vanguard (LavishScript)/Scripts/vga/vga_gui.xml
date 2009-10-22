@@ -1485,7 +1485,7 @@
                   <OnLeftClick>
                     AddTrash "${UIElement[TrashEntry@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui].Text}"
                     BuildTrash
-                    UIElement[UIElement[MarketCombo@MarketCFrm@Market@VG@VGMarket]:ClearItems
+                    UIElement[UIElement[TrashEntry@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
                     Script[VGA]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </CommandButton>
@@ -9437,7 +9437,47 @@
                   <Height>100%</Height>
                   <Width>100%</Width>
                   <Texture></Texture>
-                  <Children></Children>
+                  <Children>
+                <Textentry Name="FriendsEntry" Template="VG.TextEntry">
+                  <X>13</X>
+                  <Y>13</Y>
+                  <Width>270</Width>
+                  <Height>20</Height>
+                  <Color>FFDDBB00</Color>
+                </Textentry>
+                <CommandButton Name="FriendsAddCmd" Template="VG.GreenCommandButton">
+                  <X>310</X>
+                  <Y>13</Y>
+                  <Width>50</Width>
+                  <Height>20</Height>
+                  <Text>Add</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddFriends "${UIElement[FriendsEntry@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui].Text}"
+                    BuildFriends
+                    UIElement[UIElement[FriendsEntry@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui]:ClearItems
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </CommandButton>
+                <Listbox Name="FriendsList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>36</Y>
+                  <Width>95%</Width>
+                  <Height>500</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildFriends
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveFriends "${This.SelectedItem}"
+                    This.SelectedItem:Remove
+                    BuildFriends
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+
+</Children>
                 </Frame>
               </Tab>
               <!--2nd Level Mechanics Tab-->
