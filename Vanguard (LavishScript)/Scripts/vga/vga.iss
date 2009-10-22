@@ -102,7 +102,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Act_GUI_Utility.iss"
 #include "${Script.CurrentDirectory}/Act_MoveToAttack.iss"
 #include "${Script.CurrentDirectory}/GUI_Friends.iss"
-
+#include "${Script.CurrentDirectory}/Act_Interactions.iss"
 ;-------------------------------------------
 ;************Main-Tab Scripts***************
 ;-------------------------------------------

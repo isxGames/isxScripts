@@ -639,6 +639,24 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+						  <checkbox Name='DoAcceptRes' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>13</X>
+                            <Y>295</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Accept Resses from Friends</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoAcceptRes}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoAcceptRes:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
                     	<Text Name='combattxt--' Template='VG.BoldText'>
                       	<X>13</X>
                       	<Y>380</Y>
