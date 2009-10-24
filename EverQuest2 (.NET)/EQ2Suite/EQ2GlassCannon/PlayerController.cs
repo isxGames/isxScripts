@@ -260,6 +260,20 @@ namespace EQ2GlassCannon
 				astrAbilityNames.Add(strFinalAbilityName);
 			}
 
+			/// Now check for overrides.
+			/// m_astrTieredAbilityOverrides
+			for (int iIndex = 0; iIndex < astrAbilityNames.Count; iIndex++)
+			{
+				int iOverrideLocation = m_astrTieredAbilityOverrides.IndexOf(astrAbilityNames[iIndex]);
+				if (iOverrideLocation != -1)
+				{
+					/// Bump this ability to the top of the priority list.
+					astrAbilityNames.RemoveAt(iIndex);
+					astrAbilityNames.Add(m_astrTieredAbilityOverrides[iOverrideLocation]);
+					break;
+				}
+			}
+
 			return SelectHighestAbilityID(astrAbilityNames.ToArray());
 		}
 
@@ -903,7 +917,7 @@ namespace EQ2GlassCannon
 				{
 					/// If we're too far away, the client will put up an error message.
 					/// Therefore we have to filter out this failure condition.
-					if (GetActorDistance3D(MeActor, AutoFollowActor) < 30)
+					if (GetActorDistance3D(MeActor, AutoFollowActor) < 50)
 					{
 						if (AutoFollowActor.DoFace())
 						{
