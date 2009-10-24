@@ -45,6 +45,7 @@ namespace EQ2GlassCannon
 		protected List<string> m_astrMainTanks = new List<string>();
 		protected List<string> m_astrAutoFollowTargets = new List<string>();
 		protected List<string> m_astrCommandingPlayers = new List<string>();
+		protected List<string> m_astrTieredAbilityOverrides = new List<string>();
 		protected string m_strMentorSubphrase = "mentor";
 		protected string m_strRepairSubphrase = "repair";
 		protected string m_strArbitraryVerbCommandRegex = @"try this:""(<actorid>\d+)"", ""(<verb>.+)"""; /// TODO: Implement this maybe?
@@ -116,6 +117,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferStringList("General.MainTanks", m_astrMainTanks);
 			ThisFile.TransferStringList("General.AutoFollowTargets", m_astrAutoFollowTargets);
 			ThisFile.TransferStringList("General.CommandingPlayers", m_astrCommandingPlayers);
+			ThisFile.TransferStringList("General.TieredAbilityOverrides", m_astrTieredAbilityOverrides);
 			ThisFile.TransferCaselessString("General.MentorSubphrase", ref m_strMentorSubphrase);
 			ThisFile.TransferCaselessString("General.RepairSubphrase", ref m_strRepairSubphrase);
 			ThisFile.TransferString("General.ArbitraryVerbCommandPrefix", ref m_strArbitraryVerbCommandPrefix);
