@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using EQ2.ISXEQ2;
 using EQ2SuiteLib;
+using System.Runtime.InteropServices;
 
 namespace EQ2GlassCannon
 {
@@ -353,9 +354,40 @@ namespace EQ2GlassCannon
 							AppendActorInfo(ThisBuilder, 1, Me.Pet());
 							Program.Log("{0}", ThisBuilder.ToString());
 							return true;
+						case "fullaffinities":
+							Program.Log("Attempting to remove all affinity constraints on the process...");
+							IntPtr hProcess = PInvoke.OpenProcess(PInvoke.ProcessAccess.SetInformation | PInvoke.ProcessAccess.QueryInformation, false, PInvoke.GetCurrentProcessId());
+							if (hProcess == PInvoke.INVALID_HANDLE_VALUE)
+							{
+								Program.Log("Unable to open process {0}.", PInvoke.GetCurrentProcessId());
+								return true;
+							}
+
+							UIntPtr uiProcessAffinityMask;
+							UIntPtr uiSystemProcessorMask;
+							PInvoke.GetProcessAffinityMask(hProcess, out uiProcessAffinityMask, out uiSystemProcessorMask);
+							Program.Log("Process {0} previous affinity mask: {1:X8}", PInvoke.GetCurrentProcessId(), uiProcessAffinityMask);
+
+							PInvoke.SetProcessAffinityMask(hProcess, uiSystemProcessorMask);
+							PInvoke.CloseHandle(hProcess);
+
+							Program.Log("Attempting to remove all affinity constraints on the process threads...");
+							foreach (PInvoke.THREADENTRY32 ThisThread in PInvoke.EnumProcessThreads(PInvoke.GetCurrentProcessId()))
+							{
+								IntPtr hThread = PInvoke.OpenThread(PInvoke.ThreadAccess.SET_INFORMATION | PInvoke.ThreadAccess.QUERY_INFORMATION, false, ThisThread.th32ThreadID);
+								if (hThread != IntPtr.Zero)
+								{
+									UIntPtr uiOldThreadAffinityMask = PInvoke.SetThreadAffinityMask(hThread, uiSystemProcessorMask);
+									Program.Log("Thread {0} previous affinity mask: {1:X8}", ThisThread.th32ThreadID, uiOldThreadAffinityMask);
+									PInvoke.CloseHandle(hThread);
+								}
+								else
+									Program.Log("Can't open thread {0}.", ThisThread.th32ThreadID);
+							}
+							return true;
 					}
 
-					Program.Log("gc_debug options: whopet");
+					Program.Log("gc_debug options: whopet clearaffinities");
 					return true;
 				}
 
