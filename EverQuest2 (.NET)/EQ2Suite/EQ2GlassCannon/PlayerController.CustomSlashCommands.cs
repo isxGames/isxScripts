@@ -178,6 +178,7 @@ namespace EQ2GlassCannon
 		protected void TrackNearestActors(int iActorCount, bool bDumpActorInfo, string strSearchSubstring)
 		{
 			bool bNamedSearch = (strSearchSubstring == "named");
+			bool bEmptyNameSearch = string.IsNullOrEmpty(strSearchSubstring.Trim());
 
 			List<Actor> ActorList = new List<Actor>();
 			int iValidActorCount = 0;
@@ -194,8 +195,17 @@ namespace EQ2GlassCannon
 						if (ThisActor.IsNamed && !ThisActor.IsAPet)
 							bAddThisActor = true;
 					}
-					else if (ThisActor.Name.ToLower().Contains(strSearchSubstring))
-						bAddThisActor = true;
+					else if (bEmptyNameSearch)
+					{
+						if (string.IsNullOrEmpty(ThisActor.Name.Trim()))
+							bAddThisActor = true;
+					}
+					else
+					{
+						string strActorName = ThisActor.Name.ToLower();
+						if (strActorName.Contains(strSearchSubstring))
+							bAddThisActor = true;
+					}
 				}
 
 				if (bAddThisActor)
@@ -451,12 +461,6 @@ namespace EQ2GlassCannon
 
 				case "gc_findactor":
 				{
-					if (string.IsNullOrEmpty(strCondensedParameters))
-					{
-						Program.Log("gc_findactor failed: No actor name specified!");
-						return true;
-					}
-
 					string strSearchString = strCondensedParameters.ToLower();
 
 					TrackNearestActors(5, true, strSearchString);
@@ -585,6 +589,7 @@ namespace EQ2GlassCannon
 					string strInterval = astrParameters[0].Trim().ToLower();
 					if (strInterval == "off")
 					{
+						RunCommand("/waypoint_cancel");
 						Program.Log("Actor tracking mode disabled.");
 						m_bTrackActor = false;
 						return true;
@@ -598,19 +603,10 @@ namespace EQ2GlassCannon
 					}
 
 					List<string> astrRemainingParameters = new List<string>(astrParameters);
-					if (astrRemainingParameters.Count == 0)
-					{
-						Program.Log("gc_trackactor failed: No actor search string specified!");
-						return false;
-					}
-					astrRemainingParameters.RemoveAt(0);
+					if (astrRemainingParameters.Count > 0)
+						astrRemainingParameters.RemoveAt(0);
 
 					string strRemainingCondensedParameters = string.Join(" ", astrRemainingParameters.ToArray()).Trim().ToLower();
-					if (string.IsNullOrEmpty(strRemainingCondensedParameters))
-					{
-						Program.Log("gc_trackactor failed: No actor search string specified!");
-						return false;
-					}
 
 					/// Now we turn the mode on.
 					m_TrackActorInterval = TimeSpan.FromSeconds(fIntervalSeconds);
