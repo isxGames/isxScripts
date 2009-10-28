@@ -278,6 +278,12 @@ namespace EQ2GlassCannon
 						return true;
 					if (CastAbility(m_uiBrainshockAbilityID))
 						return true;
+					if (CastBlueOffensiveAbility(m_uiBlueStunNukeAbilityID, 1))
+						return true;
+					if (CastGreenOffensiveAbility(m_uiGreenDOTAbilityID, 1))
+						return true;
+					if (CastGreenOffensiveAbility(m_uiGreenDazeNukeAbilityID, 1))
+						return true;
 
 					if (UseOffensiveItems())
 						return true;

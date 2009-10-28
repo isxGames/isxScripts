@@ -541,13 +541,9 @@ namespace EQ2GlassCannon
 				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
 			else if (m_bUseBlueAEs)
 			{
-				foreach (Actor ThisActor in EnumActorsInRadius(fRadiusOverride))
+				foreach (Actor ThisActor in m_KillableActorDictionary.Values)
 				{
-					if (ThisActor.IsDead)
-						continue;
-
-					string strActorType = ThisActor.Type;
-					if (strActorType != "NPC" && strActorType != STR_NAMED_NPC)
+					if (ThisActor.Distance > fRadiusOverride)
 						continue;
 
 					/// Total fudging here.  I'm basically trying to clip off upstairs and downstairs.
@@ -621,17 +617,8 @@ namespace EQ2GlassCannon
 					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
 					{
 						double fThisDistance = GetActorDistance3D(m_OffensiveTargetActor, ThisActor);
-						if (fThisDistance < ThisAbility.m_fEffectRadius &&
-							ThisActor.Type != "NoKill NPC" &&
-							!ThisActor.IsDead &&
-							m_OffensiveTargetActor.IsInSameEncounter(ThisActor.ID))
-						{
+						if (fThisDistance < ThisAbility.m_fEffectRadius)
 							iValidVictimCount++;
-						}
-
-						/// Save time; we already enumerated everyone in the encounter.
-						if (iValidVictimCount >= m_OffensiveTargetActor.EncounterSize)
-							break;
 					}
 				}
 				else
@@ -708,13 +695,11 @@ namespace EQ2GlassCannon
 				/// Avoid scanning subsets of a radius we already scanned in a prior iteration.
 				if (fThisAbilityRange < fHighestRangeAlreadyScanned)
 					continue;
-				 
-				foreach (Actor ThisActor in EnumActorsInRadius(fThisAbilityRange))
+
+				foreach (Actor ThisActor in m_KillableActorDictionary.Values)
 				{
-					if (!ThisActor.IsDead &&
-						!ThisActor.IsEpic && /// Mass-mezzing epics is just silly and has too many pitfalls.
+					if (!ThisActor.IsEpic && /// Mass-mezzing epics is just silly and has too many pitfalls.
 						(m_OffensiveTargetActor == null || (ThisActor.ID != m_OffensiveTargetActor.ID && (!m_OffensiveTargetEncounterActorDictionary.ContainsKey(ThisActor.ID) || m_bMezMembersOfTargetEncounter))) && /// It can't be our current burn mob.
-						(ThisActor.Type == STR_NAMED_NPC || ThisActor.Type == "NPC") &&
 						ThisActor.CanTurn &&
 						ThisActor.Target().IsValid &&
 						ThisActor.Target().Type == "PC") /// It has to be targetting a player; an indicator of aggro.
@@ -878,7 +863,7 @@ namespace EQ2GlassCannon
 		/// <returns>true if a buff was cast or cancelled even one single time.</returns>
 		protected bool CheckSingleTargetBuffs(uint uiAbilityID, List<string> astrRecipients)
 		{
-			CachedAbility ThisAbility = GetAbility(uiAbilityID, true);
+			CachedAbility ThisAbility = GetAbility(uiAbilityID, false);
 			if (ThisAbility == null)
 				return false;
 
@@ -905,6 +890,7 @@ namespace EQ2GlassCannon
 					NeedyTargetSet.Add(strThisTarget);
 			}
 
+			/// Find out who needs the buff, and remove the buff from people who shouldn't have it.
 			foreach (Maintained ThisMaintained in EnumMaintained())
 			{
 				if (ThisMaintained.Name == ThisAbility.m_strName)

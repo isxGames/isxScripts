@@ -365,30 +365,31 @@ namespace EQ2GlassCannon
 							Program.Log("{0}", ThisBuilder.ToString());
 							return true;
 						case "fullaffinities":
-							Program.Log("Attempting to remove all affinity constraints on the process...");
-							IntPtr hProcess = PInvoke.OpenProcess(PInvoke.ProcessAccess.SetInformation | PInvoke.ProcessAccess.QueryInformation, false, PInvoke.GetCurrentProcessId());
+							Program.Log("Attempting to remove all affinity constraints on the process and its threads...");
+							uint uiCurrentProcessID = PInvoke.GetCurrentProcessId();
+							IntPtr hProcess = PInvoke.OpenProcess(PInvoke.ProcessAccess.SetInformation | PInvoke.ProcessAccess.QueryInformation, false, uiCurrentProcessID);
 							if (hProcess == PInvoke.INVALID_HANDLE_VALUE)
 							{
-								Program.Log("Unable to open process {0}.", PInvoke.GetCurrentProcessId());
+								Program.Log("Unable to open process {0}.", uiCurrentProcessID);
 								return true;
 							}
 
 							UIntPtr uiProcessAffinityMask;
 							UIntPtr uiSystemProcessorMask;
 							PInvoke.GetProcessAffinityMask(hProcess, out uiProcessAffinityMask, out uiSystemProcessorMask);
-							Program.Log("Process {0} previous affinity mask: {1:X8}", PInvoke.GetCurrentProcessId(), uiProcessAffinityMask);
+							Program.Log("Process {0} previous affinity mask: 0x{1:X8}", uiCurrentProcessID, uiProcessAffinityMask);
 
 							PInvoke.SetProcessAffinityMask(hProcess, uiSystemProcessorMask);
 							PInvoke.CloseHandle(hProcess);
 
 							Program.Log("Attempting to remove all affinity constraints on the process threads...");
-							foreach (PInvoke.THREADENTRY32 ThisThread in PInvoke.EnumProcessThreads(PInvoke.GetCurrentProcessId()))
+							foreach (PInvoke.THREADENTRY32 ThisThread in PInvoke.EnumProcessThreads(uiCurrentProcessID))
 							{
-								IntPtr hThread = PInvoke.OpenThread(PInvoke.ThreadAccess.SET_INFORMATION | PInvoke.ThreadAccess.QUERY_INFORMATION, false, ThisThread.th32ThreadID);
+								IntPtr hThread = PInvoke.OpenThread(PInvoke.ThreadAccess.SetInformation | PInvoke.ThreadAccess.QueryInformation, false, ThisThread.th32ThreadID);
 								if (hThread != IntPtr.Zero)
 								{
 									UIntPtr uiOldThreadAffinityMask = PInvoke.SetThreadAffinityMask(hThread, uiSystemProcessorMask);
-									Program.Log("Thread {0} previous affinity mask: {1:X8}", ThisThread.th32ThreadID, uiOldThreadAffinityMask);
+									Program.Log("Thread {0} previous affinity mask: 0x{1:X8}", ThisThread.th32ThreadID, uiOldThreadAffinityMask);
 									PInvoke.CloseHandle(hThread);
 								}
 								else
@@ -397,7 +398,7 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
-					Program.Log("gc_debug options: whopet clearaffinities");
+					Program.Log("gc_debug options: whopet fullaffinities");
 					return true;
 				}
 
