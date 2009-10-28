@@ -202,7 +202,7 @@ namespace EQ2GlassCannon
 #if DEBUG
 			if (fFramesPerSecond < 10)
 #else
-			if (fAverageTime > 3 || fBadFramePercentage > 10)
+			if (fAverageTime > 2 || fBadFramePercentage > 10)
 #endif
 			{
 				Program.Log("Aborting due to substantial ISXEQ2 lag. Please restart EQ2GlassCannon.");
@@ -497,7 +497,9 @@ namespace EQ2GlassCannon
 
 					/// Break the command up as if it were a custom one.
 					List<string> astrParameters = new List<string>(strFinalCommandLine.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries));
-					string strCommand = astrParameters[0].Replace("/", "");
+					string strCommand = astrParameters[0];
+					if (strCommand[0] == '/')
+						strCommand = strCommand.Substring(1);
 					astrParameters.RemoveAt(0);
 
 					/// We have to manually process custom commands, EQ2Execute does not handle them.
@@ -603,7 +605,11 @@ namespace EQ2GlassCannon
 			s_EQ2.CreateCustomActorArray(astrParams);
 
 			for (int iIndex = 1; iIndex <= s_EQ2.CustomActorArraySize; iIndex++)
-				yield return s_Extension.CustomActor(iIndex);
+			{
+				Actor ThisActor = s_Extension.CustomActor(iIndex);
+				if (ThisActor.IsValid)
+					yield return ThisActor;
+			}
 		}
 
 		/************************************************************************************/
@@ -613,12 +619,12 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected static IEnumerable<Actor> EnumActorsFromIDCollection(ICollection<int> ThisCollection)
+		protected static IEnumerable<Actor> EnumValidActorsFromIDCollection(ICollection<int> ThisCollection)
 		{
 			foreach (int iActorID in ThisCollection)
 			{
 				Actor ThisActor = GetActor(iActorID);
-				if (ThisActor != null && ThisActor.IsValid)
+				if (ThisActor != null)
 					yield return ThisActor;
 			}
 		}
@@ -662,13 +668,15 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-				return s_Extension.Actor(iActorID);
+				Actor ThisActor = s_Extension.Actor(iActorID);
+				if (ThisActor.IsValid)
+					return ThisActor;
 			}
 			catch
 			{
 				Program.Log("Exception thrown when looking up actor {0}.", iActorID);
-				return null;
 			}
+			return null;
 		}
 
 		/************************************************************************************/
@@ -676,13 +684,15 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-				return s_Extension.Actor(strActorID);
+				Actor ThisActor = s_Extension.Actor(strActorID);
+				if (ThisActor.IsValid)
+					return ThisActor;
 			}
 			catch
 			{
 				Program.Log("Exception thrown when looking up actor {0}.", strActorID);
-				return null;
 			}
+			return null;
 		}
 
 		/************************************************************************************/

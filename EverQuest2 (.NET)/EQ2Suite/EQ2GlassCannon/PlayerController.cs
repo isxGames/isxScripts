@@ -101,6 +101,11 @@ namespace EQ2GlassCannon
 		/// </summary>
 		protected Dictionary<string, uint> m_KnowledgeBookAbilityLineDictionary = new Dictionary<string, uint>();
 
+		/// <summary>
+		/// Generally only used for combat. Prevents us from having to enumerate multiple times.
+		/// </summary>
+		protected Dictionary<int, Actor> m_KillableActorDictionary = new Dictionary<int, Actor>();
+
 		/************************************************************************************/
 		protected virtual void RefreshKnowledgeBook()
 		{
@@ -261,7 +266,6 @@ namespace EQ2GlassCannon
 			}
 
 			/// Now check for overrides.
-			/// m_astrTieredAbilityOverrides
 			for (int iIndex = 0; iIndex < astrAbilityNames.Count; iIndex++)
 			{
 				int iOverrideLocation = m_astrTieredAbilityOverrides.IndexOf(astrAbilityNames[iIndex]);
@@ -571,13 +575,9 @@ namespace EQ2GlassCannon
 				case "Target too weak":
 				case "Too far away":
 				{
+					Program.Log("Cast or harvesting attempt aborted.");
 					m_LastCastEndTime = CurrentCycleTimestamp;
-
-					if (m_bAutoHarvestInProgress)
-					{
-						Program.Log("Harvesting attempt aborted.");
-						m_bAutoHarvestInProgress = false;
-					}
+					m_bAutoHarvestInProgress = false;
 					return true;
 				}
 			}
@@ -1130,111 +1130,126 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool GetOffensiveTargetActor()
 		{
-			/// If we have no target, then select a new target based on the last evaluated encounter.
+			/// An offensive target ID of -1 is never compatible with our decision-making;
+			/// it means the bot has no intention to do combat.
 			if (m_iOffensiveTargetID == -1)
 			{
-				/// There are no alternative choices; we're SOL.
-				if (m_eEncounterCompletionMode == EncounterCompletionMode.None || m_OffensiveTargetEncounterActorDictionary.Count == 0)
+				WithdrawFromCombat();
+				return false;
+			}
+
+			Actor CandidateActor = GetActor(m_iOffensiveTargetID);
+			bool bSelectNewTarget = false;
+
+			/// If the mob disappeared, find another one on record.
+			if (CandidateActor == null)
+			{
+				/// Grab the first valid actor in the existing list.
+				foreach (Actor ThisActor in EnumValidActorsFromIDCollection(m_OffensiveTargetEncounterActorDictionary.Keys))
+				{
+					CandidateActor = ThisActor;
+					break;
+				}
+
+				/// If all actors in the encounter disappeared, it's over.
+				if (CandidateActor == null)
+				{
+					Program.Log("Encounter ended; all actors disappeared.");
+					WithdrawFromCombat();
 					return false;
+				}
 
-				Actor CandidateActor = null;
+				bSelectNewTarget = true;
+			}
+			else if (CandidateActor.IsDead)
+				bSelectNewTarget = true;
 
-				if (m_eEncounterCompletionMode == EncounterCompletionMode.AssistMainTank)
+			if (bSelectNewTarget)
+			{
+				/// There are no alternative choices; we're SOL.
+				/// NOTE: Don't put a Log() with this if-statement or there'll be spam.
+				if (m_eEncounterCompletionMode == EncounterCompletionMode.None)
+				{
+					Program.Log("Forbidden to find new target; now waiting for next assist call from commander.");
+					WithdrawFromCombat();
+					return false;
+				}
+				else if (m_eEncounterCompletionMode == EncounterCompletionMode.AssistMainTank)
 				{
 					CandidateActor = GetNestedCombatAssistTarget(m_strCurrentMainTank);
 				}
-
-				/// Choose highest or lowest health.
-				else if (m_eEncounterCompletionMode == EncounterCompletionMode.HighestHealth ||
-					m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth ||
-					m_eEncounterCompletionMode == EncounterCompletionMode.HighHeroicLowEpic)
-				{
-					/// The actual mode we use will undergo some translation.
-					EncounterCompletionMode eActualCompletionMode = m_eEncounterCompletionMode;
-
-					int iHighestHealth = 0;
-					int iLowestHealth = 100;
-
-					/// Refresh only the members inside the dictionary with updated actor instances (if they exist).
-					Dictionary<int, Actor> NewDictionary = new Dictionary<int, Actor>();
-					foreach (Actor ThisActor in EnumActorsFromIDCollection(m_OffensiveTargetEncounterActorDictionary.Keys))
-					{
-						NewDictionary.Add(ThisActor.ID, ThisActor);
-
-						/// Map a pseudomode to a specific mode depending on the context of the target encounter.
-						if (eActualCompletionMode == EncounterCompletionMode.HighHeroicLowEpic)
-						{
-							if (ThisActor.IsEpic)
-								eActualCompletionMode = EncounterCompletionMode.LowestHealth;
-							else
-								eActualCompletionMode = EncounterCompletionMode.HighestHealth;
-						}
-					}
-					m_OffensiveTargetEncounterActorDictionary = NewDictionary;
-
-					/// Decide who in the encounter remains with the highest or lowest health.
-					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
-					{
-						int iThisActorHealth = ThisActor.Health; /// alias
-						if (eActualCompletionMode == EncounterCompletionMode.HighestHealth)
-						{
-							if (iThisActorHealth > iHighestHealth || CandidateActor == null)
-							{
-								iHighestHealth = iThisActorHealth;
-								CandidateActor = ThisActor;
-							}
-						}
-						else if (eActualCompletionMode == EncounterCompletionMode.LowestHealth)
-						{
-							if (iThisActorHealth > iLowestHealth || CandidateActor == null)
-							{
-								iLowestHealth = iThisActorHealth;
-								CandidateActor = ThisActor;
-							}
-						}
-					}
-				}
-
-				if (CandidateActor == null)
-				{
-					Program.Log("Primary target dead, no alternate chosen.");
-				}
-				else
-				{
-					Program.Log("Primary target dead, alternate target chosen: {0} ({1}).", CandidateActor.Name, CandidateActor.ID);
-					m_iOffensiveTargetID = CandidateActor.ID;
-				}
 			}
 
-			m_OffensiveTargetActor = null;
+			/// Evaluate the battlefield and refresh the encounter based on the entire actor map.
+			m_KillableActorDictionary.Clear();
 			m_OffensiveTargetEncounterActorDictionary.Clear();
-
-			/// Now refresh the encounter based on the entire actor map, and grab the primary actor while we're at it.
 			foreach (Actor ThisActor in EnumActors())
 			{
-				if (ThisActor.IsValid &&
-					!ThisActor.IsDead &&
+				/// Only examine actors that we can attack.
+				if (!ThisActor.IsDead &&
 					(ThisActor.Type == STR_NAMED_NPC || ThisActor.Type == "NPC") &&
 					!ThisActor.IsLocked)
 				{
-					if (ThisActor.ID == m_iOffensiveTargetID)
-						m_OffensiveTargetActor = ThisActor;
+					m_KillableActorDictionary.Add(ThisActor.ID, ThisActor);
 
-					if (ThisActor.ID == m_iOffensiveTargetID || ThisActor.IsInSameEncounter(m_iOffensiveTargetID))
+					if (ThisActor.ID == CandidateActor.ID || ThisActor.IsInSameEncounter(CandidateActor.ID))
 						m_OffensiveTargetEncounterActorDictionary.Add(ThisActor.ID, ThisActor);
 				}
 			}
 
-			if (m_OffensiveTargetActor == null)
+			if (m_OffensiveTargetEncounterActorDictionary.Count == 0)
 			{
-				Program.Log("Offensive target no longer available for combat.");
+				Program.Log("No killable mobs remaining in the encounter.");
 				WithdrawFromCombat();
 				return false;
 			}
-			else
+
+			/// Now find a new actor if needed.
+			if (bSelectNewTarget &&
+				(m_eEncounterCompletionMode == EncounterCompletionMode.HighestHealth ||
+					m_eEncounterCompletionMode == EncounterCompletionMode.LowestHealth ||
+					m_eEncounterCompletionMode == EncounterCompletionMode.HighHeroicLowEpic))
 			{
-				m_bIHaveAggro = ((double)m_OffensiveTargetActor.ThreatToMe >= m_fAggroPanicPercentage);
+				Program.Log("Finding next encounter candidate...");
+
+				/// The actual mode we use will undergo some translation.
+				EncounterCompletionMode eActualCompletionMode = m_eEncounterCompletionMode;
+
+				/// Map a pseudomode to a specific mode depending on the context of the target encounter.
+				if (eActualCompletionMode == EncounterCompletionMode.HighHeroicLowEpic)
+				{
+					foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
+					{
+						if (ThisActor.IsEpic)
+						{
+							eActualCompletionMode = EncounterCompletionMode.LowestHealth;
+							break;
+						}
+					}
+					if (eActualCompletionMode != EncounterCompletionMode.LowestHealth)
+						eActualCompletionMode = EncounterCompletionMode.HighestHealth;
+				}
+
+				/// Decide who in the encounter remains with the highest or lowest health.
+				CandidateActor = null;
+				foreach (Actor ThisActor in m_OffensiveTargetEncounterActorDictionary.Values)
+				{
+					/// If health is tied, use the highest ID to make sure all bots decide on the same target.
+					if (CandidateActor == null ||
+						(eActualCompletionMode == EncounterCompletionMode.HighestHealth && ThisActor.Health > CandidateActor.Health) ||
+						(eActualCompletionMode == EncounterCompletionMode.LowestHealth && ThisActor.Health < CandidateActor.Health) ||
+						(ThisActor.Health == CandidateActor.Health && ThisActor.ID > CandidateActor.ID))
+					{
+						CandidateActor = ThisActor;
+					}
+				}
+
+				Program.Log("New target automatically chosen: {0} ({1}).", CandidateActor.Name, CandidateActor.ID);
 			}
+
+			m_OffensiveTargetActor = CandidateActor;
+			m_iOffensiveTargetID = CandidateActor.ID;
+			m_bIHaveAggro = ((double)m_OffensiveTargetActor.ThreatToMe >= m_fAggroPanicPercentage);
 			return true;
 		}
 

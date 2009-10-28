@@ -257,7 +257,7 @@ namespace EQ2GlassCannon
 						{
 							/// Select whoever has aggro.
 							Actor AggroWhore = m_OffensiveTargetActor.Target();
-							if (AggroWhore.IsValid)
+							if (AggroWhore.IsValid && AggroWhore.Type == "PC")
 								strTargetName = AggroWhore.Name;
 						}
 						else
@@ -358,7 +358,7 @@ namespace EQ2GlassCannon
 		/// Casts Fusion. This spell deserves special consideration because it is a directional PBAE.
 		/// </summary>
 		/// <returns></returns>
-		bool CastFusion()
+		protected bool CastFusion()
 		{
 			if (m_bUseBlueAEs && m_OffensiveTargetActor != null)
 			{
