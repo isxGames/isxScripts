@@ -10,6 +10,7 @@ using System.IO;
 using System.Speech.Synthesis;
 using EQ2ParseEngine;
 using EQ2SuiteLib;
+using System.Diagnostics;
 
 namespace EQ2GlassCannon
 {
@@ -387,11 +388,21 @@ namespace EQ2GlassCannon
 						s_Controller.UpdateEndOfRoundStatistics();
 					}
 
-					/// Only check for camping or AFK every 5th frame.
-					if (s_Controller.m_bKillBotWhenCamping && (s_lFrameCount % 5) == 0 && (Me.IsCamping))
+					/// Do certain checks only every 5th frame.
+					if ((s_lFrameCount % 5) == 0)
 					{
-						Program.Log("Camping detected; aborting bot!");
-						s_bContinueBot = false;
+						Process CurrentProcess = Process.GetCurrentProcess();
+						if ((ulong)CurrentProcess.VirtualMemorySize64 > s_Controller.m_ulVirtualAllocationProcessTerminationThreshold)
+						{
+							/// GAME OVER.
+							CurrentProcess.Kill();
+						}
+
+						if (s_Controller.m_bKillBotWhenCamping && Me.IsCamping)
+						{
+							Program.Log("Camping detected; aborting bot!");
+							s_bContinueBot = false;
+						}
 					}
 				}
 				finally

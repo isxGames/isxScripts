@@ -41,6 +41,7 @@ namespace EQ2GlassCannon
 		protected bool m_bWriteBackINI = true;
 		protected int m_iFrameSkip = 2;
 		protected bool m_bKillBotWhenCamping = false;
+		protected ulong m_ulVirtualAllocationProcessTerminationThreshold = 3000000000;
 		protected string m_strCustomTellTriggerFile = string.Empty;
 		protected List<string> m_astrMainTanks = new List<string>();
 		protected List<string> m_astrAutoFollowTargets = new List<string>();
@@ -113,6 +114,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.WriteBackINI", ref m_bWriteBackINI);
 			ThisFile.TransferInteger("General.FrameSkip", ref m_iFrameSkip);
 			ThisFile.TransferBool("General.KillBotWhenCamping", ref m_bKillBotWhenCamping);
+			ThisFile.TransferULong("General.VirtualAllocationProcessTerminationThreshold", ref m_ulVirtualAllocationProcessTerminationThreshold);
 			ThisFile.TransferString("General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
 			ThisFile.TransferStringList("General.MainTanks", m_astrMainTanks);
 			ThisFile.TransferStringList("General.AutoFollowTargets", m_astrAutoFollowTargets);
