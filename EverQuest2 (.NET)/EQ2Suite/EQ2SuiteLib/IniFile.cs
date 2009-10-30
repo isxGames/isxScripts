@@ -280,6 +280,24 @@ namespace EQ2SuiteLib
 		}
 
 		/************************************************************************************/
+		public void TransferULong(string strKey, ref ulong ulValue)
+		{
+			if (m_eTransferMode == TransferMode.Read)
+			{
+				string strValue = string.Empty;
+				if (ReadString(strKey, ref strValue))
+				{
+					ulong ulTemp;
+					if (ulong.TryParse(strValue, out ulTemp))
+						ulValue = ulTemp;
+				}
+			}
+			else
+				WriteString(strKey, ulValue.ToString());
+			return;
+		}
+
+		/************************************************************************************/
 		public void TransferFloat(string strKey, ref float fValue)
 		{
 			if (m_eTransferMode == TransferMode.Read)
