@@ -187,7 +187,7 @@ variable bool DoAttackPosition
 variable bool DoAcceptRes
 variable bool DoAutoResCombat
 variable bool DoAutoResNoCombat
-
+variable bool IsFollowing
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================

@@ -20,6 +20,8 @@ function LavishEventLoad()
 ;===================================================
 atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
+	if ${ChannelNumber.Equal[42]} && ${Text.Find[Your auto-follow target has moved too far away]}
+		IsFollowing:Set[FALSE]
 	if ${DoReassistTank}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
@@ -44,6 +46,11 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		{
 			dofollowpawn:Set[TRUE]
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
+			if !${IsFollowing}
+				{
+				VGExecute /follow ${followpawn}
+				IsFollowing:Set[TRUE]
+				}
 		}
 	}
 	if ${DoStopFollow}
@@ -52,6 +59,13 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		{
 			dofollowpawn:Set[FALSE]
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
+			if ${IsFollowing}
+				{
+				VG:ExecBinding[movebackward]	
+				wait 1
+				VG:ExecBinding[movebackward,release]
+				IsFollowing:Set[FALSE]
+				}
 		}
 	}
 	if ${doAutoSell}
