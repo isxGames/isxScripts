@@ -7,6 +7,7 @@ function MoveToTarget()
 			{
 			actionlog "Moving to Melee"
 			call movetoobject ${Me.Target.ID} 4 1
+			IsFollowing:Set[FALSE]
 			}
 		if ${Me.Target.Distance} < 5 && ${DoAttackPosition} && ${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
@@ -19,6 +20,7 @@ function MoveToTarget()
 				face ${Me.Target.X} ${Me.Target.Y}
 				VG:ExecBinding[movebackward]	
 				wait 1
+				IsFollowing:Set[FALSE]				
 				}
 			VG:ExecBinding[movebackward,release]
 			}
@@ -87,6 +89,7 @@ function SlideR(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]	
 			}
 		VG:ExecBinding[straferight,release]
 		}
@@ -98,6 +101,7 @@ function SlideR(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]
 			}
 		VG:ExecBinding[straferight,release]
 		}
@@ -109,6 +113,7 @@ function SlideR(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]
 			}
 		VG:ExecBinding[straferight,release]
 		}
@@ -120,6 +125,7 @@ function SlideR(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]
 			}
 		VG:ExecBinding[straferight,release]
 		}
@@ -138,6 +144,7 @@ function SlideL(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]
 			}
 		VG:ExecBinding[strafeleft,release]
 		}
@@ -149,6 +156,7 @@ function SlideL(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]
 			}
 		VG:ExecBinding[strafeleft,release]
 		}
@@ -160,6 +168,7 @@ function SlideL(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]
 			}
 		VG:ExecBinding[strafeleft,release]
 		}
@@ -171,6 +180,7 @@ function SlideL(string SlideTo)
 			wait 1
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
+			IsFollowing:Set[FALSE]
 			}
 		VG:ExecBinding[strafeleft,release]
 		}

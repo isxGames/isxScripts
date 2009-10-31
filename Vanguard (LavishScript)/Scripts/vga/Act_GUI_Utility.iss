@@ -58,11 +58,14 @@ function RushTank()
 				Me.Ability[Smoke Trick]:Use
 				wait 3
 				if ${Pawn[${iCount}].Distance} < 10
+					{
 					call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+					IsFollowing:Set[FALSE]
+					}
 				return	
 				}
 			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
-
+			IsFollowing:Set[FALSE]	
 			}
 		}	
 		while ${iCount:Inc} <= ${VG.PawnCount}
@@ -84,6 +87,7 @@ function Harvest()
 	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<10 && ${Me.Target.Distance}>5 && ${Me.ToPawn.CombatState}==0"
 		{
 		call movetoobject ${Me.Target.ID} 4 0
+		IsFollowing:Set[FALSE]
 		VGExecute /autoattack
 		wait 10
 		}	
@@ -118,7 +122,11 @@ function lootit()
 
 					Pawn[${iCount}]:Target
 					wait 5
-					call movetoobject ${Me.Target.ID} 4 0
+					if ${Pawn[${iCount}].Distance} > 5
+						{
+						call movetoobject ${Me.Target.ID} 4 0
+						IsFollowing:Set[FALSE]
+						}
 					if ${DoLootOnly}
 						{
 						Loot:BeginLooting
@@ -130,7 +138,7 @@ function lootit()
 					if !${DoLootOnly}
 						VGExecute /Lootall
 					waitframe
-					VGExecute "/cleartargets"call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+					VGExecute "/cleartargets"	
 				}
 			}	
 			while ${iCount:Inc} <= ${VG.PawnCount}
@@ -488,6 +496,7 @@ function DoFollowInCombat()
 		{
 			face ${Me.Target.X} ${Me.Target.Y}
 			call movetoobject ${Me.Target.ID} ${followpawndist} 0
+			IsFollowing:Set[FALSE]
 		}
 		if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
@@ -495,8 +504,8 @@ function DoFollowInCombat()
 		}
 		if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 25
 		{
-			face ${Pawn[exactname,${assistpawn}].X} ${Pawn[exactname,${assistpawn}].Y}
-			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+			VGExecute /Follow ${followpawn}
+			IsFollowing:Set[TRUE]
 		}
 	}
 	return
@@ -534,9 +543,21 @@ function followpawn()
 {
 	if ${dofollowpawn}
 	{
-		if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50)
+		if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${IsFollowing}
 		{
-			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+			VGExecute /follow ${followpawn}
+			IsFollowing:Set[TRUE]
+		}
+		;if ${Pawn[exactname,${followpawn}].Distance} > 20 && ${Pawn[exactname,${followpawn}].Distance} < 50 && ${IsFollowing} && !${Me.IsMoving}
+		;{
+		;	VGExecute /follow ${followpawn}
+		;	IsFollowing:Set[TRUE]	
+		;}
+		if ${Pawn[exactname,${followpawn}].Distance} > 50 && !${Pawn[${Me}].IsMoving}
+		{
+			call movetoobject ${Pawn[${followpawn}].ID} 20 0
+			VGExecute /follow ${followpawn}
+			IsFollowing:Set[TRUE]	
 		}
 	}
 	return

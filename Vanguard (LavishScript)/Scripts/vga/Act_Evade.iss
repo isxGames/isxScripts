@@ -9,6 +9,7 @@ function checkFD()
 			if !${Me.Ability[${FD}].IsReady}
 				wait 1
 			call executeability "${FD}" "evade" "Post"
+			IsFollowing:Set[FALSE]
 			while ${Me.HealthPct} < ${FDPct}
 				wait 20
 		}	
@@ -72,7 +73,10 @@ function rescue()
 			;echo "Rescue ${doRescue} Mob on ${Me.TargetOfTarget} I should fight ${fight.ShouldIAttack} "
 			VGExecute "/assistoffensive"
 			if ${Me.DTarget.Distance} > 4
+				{
 				call movetoobject ${Me.DTarget.ID} 4 0
+				IsFollowing:Set[FALSE]
+				}
 			face ${Me.Target.X} ${Me.Target.Y}
 			waitframe
 			;echo "My DTarget is ${Me.DTarget}"

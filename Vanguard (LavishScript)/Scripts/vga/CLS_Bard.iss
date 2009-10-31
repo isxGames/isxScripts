@@ -3,6 +3,8 @@ function Bard_DownTime()
 {
 	If !${fight.ShouldIAttack} && !${Me.Effect[${Me.FName}'s Bard Song - "${RunSong}"](exists)}
 		{
+		Me.Inventory[${PrimaryWeapon}]:Unequip
+		Me.Inventory[${SecondaryWeapon}]:Unequip
 		Me.Inventory[${Drum}]:Equip			
 		wait 3			
 		Songs[${RunSong}]:Perform		
@@ -18,6 +20,9 @@ function Bard_Opener()
 {
 	If ${fight.ShouldIAttack} && !${Me.Effect[${Me.FName}'s Bard Song - "${FightSong}"](exists)}
 		{
+			Me.Inventory[${PrimaryWeapon}]:Unequip
+			Me.Inventory[${SecondaryWeapon}]:Unequip
+			Me.Inventory[${Drum}]:Unequip
      	 		If !${Me.Inventory[${PrimaryWeapon}].CurrentEquipSlot.Equal[Primary Hand]}
        				{
         			Me.Inventory[${PrimaryWeapon}]:Equip[Primary Hand]
