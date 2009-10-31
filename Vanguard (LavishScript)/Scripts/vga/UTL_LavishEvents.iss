@@ -22,6 +22,8 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
 	if ${ChannelNumber.Equal[42]} && ${Text.Find[Your auto-follow target has moved too far away]}
 		IsFollowing:Set[FALSE]
+	if ${ChannelNumber.Equal[42]} && ${Text.Find[You have lost your auto-follow target]}
+		IsFollowing:Set[FALSE]
 	if ${DoReassistTank}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
@@ -48,6 +50,7 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
 			if !${IsFollowing}
 				{
+				Pawn[${followpawn}]:Target
 				VGExecute /follow ${followpawn}
 				IsFollowing:Set[TRUE]
 				}

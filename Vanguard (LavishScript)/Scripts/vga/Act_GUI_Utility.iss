@@ -545,6 +545,8 @@ function followpawn()
 	{
 		if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${IsFollowing}
 		{
+			Pawn[${followpawn}]:Target
+			wait 1
 			VGExecute /follow ${followpawn}
 			IsFollowing:Set[TRUE]
 		}
@@ -553,9 +555,11 @@ function followpawn()
 		;	VGExecute /follow ${followpawn}
 		;	IsFollowing:Set[TRUE]	
 		;}
-		if ${Pawn[exactname,${followpawn}].Distance} > 50 && !${Pawn[${Me}].IsMoving}
+		if ${Pawn[exactname,${followpawn}].Distance} > 40 && !${Pawn[${Me}].IsMoving}
 		{
 			call movetoobject ${Pawn[${followpawn}].ID} 20 0
+			wait 1
+			Pawn[${followpawn}]:Target
 			VGExecute /follow ${followpawn}
 			IsFollowing:Set[TRUE]	
 		}
