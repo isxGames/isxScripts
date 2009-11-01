@@ -12,6 +12,7 @@ namespace EQ2ParseEngine
 		{
 			Unknown = 0,
 			Cure,
+			Dispel,
 			Stoneskin,
 			Ward,
 			Heal,
@@ -48,8 +49,8 @@ namespace EQ2ParseEngine
 			Blocked = 0x800,
 		}
 
-		internal int m_iQuantity = 0;
-		public int Quantity { get { return m_iQuantity; } }
+		internal uint m_uiQuantity = 0;
+		public uint Quantity { get { return m_uiQuantity; } }
 
 		internal string m_strSource = string.Empty;
 		public string Source { get { return m_strSource; } }
@@ -69,6 +70,23 @@ namespace EQ2ParseEngine
 		internal AttributeFlags m_eAttributes = 0;
 		public AttributeFlags Attributes { get { return m_eAttributes; } }
 
+		internal const AttributeFlags FAILED_ATTRIBUTES =
+			AttributeFlags.Blocked |
+			AttributeFlags.Deflected |
+			AttributeFlags.Dodged |
+			AttributeFlags.Missed |
+			AttributeFlags.Resisted |
+			AttributeFlags.Riposted |
+			AttributeFlags.Reflected;
+
+		public bool FailedAttempt
+		{
+			get
+			{
+				return ((m_eAttributes & FAILED_ATTRIBUTES) != 0);
+			}
+		}
+
 		public ActionEventArgs(DateTime Timestamp, string strParseLine)
 			: base(Timestamp, strParseLine)
 		{
@@ -79,7 +97,7 @@ namespace EQ2ParseEngine
 			ActionEventArgs NewArgs = new ActionEventArgs(m_Timestamp, m_strOriginalLine);
 			NewArgs.m_eActionType = m_eActionType;
 			NewArgs.m_eAttributes = m_eAttributes;
-			NewArgs.m_iQuantity = m_iQuantity;
+			NewArgs.m_uiQuantity = m_uiQuantity;
 			NewArgs.m_strAbilityName = m_strAbilityName;
 			NewArgs.m_strDestination = m_strDestination;
 			NewArgs.m_strSource = m_strSource;
