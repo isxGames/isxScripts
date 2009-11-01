@@ -175,10 +175,25 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		private enum TrackType
+		{
+			None = 0,
+			Normal,
+			Named,
+			EmptyName,
+			Resource,
+		}
+
+		/************************************************************************************/
 		protected void TrackNearestActors(int iActorCount, bool bDumpActorInfo, string strSearchSubstring)
 		{
-			bool bNamedSearch = (strSearchSubstring == "named");
-			bool bEmptyNameSearch = string.IsNullOrEmpty(strSearchSubstring.Trim());
+			TrackType eTrackType = TrackType.None;
+			if (strSearchSubstring == "named")
+				eTrackType = TrackType.Named;
+			else if (strSearchSubstring == "resource")
+				eTrackType = TrackType.Named;
+			else if (string.IsNullOrEmpty(strSearchSubstring.Trim()))
+				eTrackType = TrackType.EmptyName;
 
 			List<Actor> ActorList = new List<Actor>();
 			int iValidActorCount = 0;
@@ -188,23 +203,32 @@ namespace EQ2GlassCannon
 			{
 				bool bAddThisActor = false;
 
-				if (ThisActor.IsValid)
+				switch (eTrackType)
 				{
-					if (bNamedSearch)
+					case TrackType.Named:
 					{
 						if (ThisActor.IsNamed && !ThisActor.IsAPet)
 							bAddThisActor = true;
+						break;
 					}
-					else if (bEmptyNameSearch)
+					case TrackType.EmptyName:
 					{
 						if (string.IsNullOrEmpty(ThisActor.Name.Trim()))
 							bAddThisActor = true;
+						break;
 					}
-					else
+					case TrackType.Resource:
+					{
+						if (ThisActor.Type == "Resource")
+							bAddThisActor = true;
+						break;
+					}
+					default:
 					{
 						string strActorName = ThisActor.Name.ToLower();
 						if (strActorName.Contains(strSearchSubstring))
 							bAddThisActor = true;
+						break;
 					}
 				}
 
@@ -396,9 +420,16 @@ namespace EQ2GlassCannon
 									Program.Log("Can't open thread {0}.", ThisThread.th32ThreadID);
 							}
 							return true;
+						case "memstat":
+							Process CurrentProcess = Process.GetCurrentProcess();
+							Program.Log("Virtual Allocation: {0}", CustomFormatter.FormatByteCount(CurrentProcess.VirtualMemorySize64, "0.00"));
+							Program.Log("Working Set: {0}", CustomFormatter.FormatByteCount(CurrentProcess.WorkingSet64, "0.00"));
+							Program.Log(".NET Heap Allocation: {0}", CustomFormatter.FormatByteCount(GC.GetTotalMemory(false), "0.00"));
+							Program.Log("Threads: {0}", CurrentProcess.Threads.Count);
+							return true;
 					}
 
-					Program.Log("gc_debug options: whopet fullaffinities");
+					Program.Log("gc_debug options: whopet fullaffinities memstat");
 					return true;
 				}
 
