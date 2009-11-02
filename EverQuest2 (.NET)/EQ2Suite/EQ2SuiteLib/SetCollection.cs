@@ -5,10 +5,31 @@ using System.Text;
 
 namespace EQ2SuiteLib
 {
+	/************************************************************************************/
 	public class SetCollection<TYPE> : ICollection, IEnumerable, ICloneable
 	{
 		private SortedList<TYPE, object> m_SortedList = new SortedList<TYPE, object>();
 
+		/************************************************************************************/
+		public string ToString(string strSeparator)
+		{
+			List<string> astrList = new List<string>(Count);
+
+			foreach (TYPE ThisItem in this)
+			{
+				astrList.Add(ThisItem.ToString());
+			}
+
+			return string.Join(strSeparator, astrList.ToArray());
+		}
+
+		/************************************************************************************/
+		public override string ToString()
+		{
+			return ToString(", ");
+		}
+
+		/************************************************************************************/
 		public bool Contains(TYPE ThisValue)
 		{
 			if (ThisValue == null)
@@ -17,6 +38,7 @@ namespace EQ2SuiteLib
 			return m_SortedList.ContainsKey(ThisValue);
 		}
 
+		/************************************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
@@ -38,6 +60,7 @@ namespace EQ2SuiteLib
 			return true;
 		}
 
+		/************************************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
@@ -52,6 +75,7 @@ namespace EQ2SuiteLib
 			return bNewLinkAdded;
 		}
 
+		/************************************************************************************/
 		public void Remove(TYPE OldValue)
 		{
 			/// We remove the threat of an exception for nonexistent items.
@@ -62,12 +86,14 @@ namespace EQ2SuiteLib
 			return;
 		}
 
+		/************************************************************************************/
 		public void Clear()
 		{
 			m_SortedList.Clear();
 			return;
 		}
 
+		/************************************************************************************/
 		/// <summary>
 		/// </summary>
 		public TYPE this[int iIndex]
@@ -78,12 +104,14 @@ namespace EQ2SuiteLib
 			}
 		}
 
+		/************************************************************************************/
 		void ICollection.CopyTo(Array DestinationArray, int iIndex)
 		{
 			m_SortedList.Keys.CopyTo((TYPE[])DestinationArray, iIndex);
 			return;
 		}
 
+		/************************************************************************************/
 		public TYPE[] ToArray()
 		{
 			TYPE[] NewArray = new TYPE[Count];
@@ -93,6 +121,7 @@ namespace EQ2SuiteLib
 			return NewArray;
 		}
 
+		/************************************************************************************/
 		public int Count
 		{
 			get
@@ -101,6 +130,7 @@ namespace EQ2SuiteLib
 			}
 		}
 
+		/************************************************************************************/
 		public bool IsEmpty
 		{
 			get
@@ -109,6 +139,7 @@ namespace EQ2SuiteLib
 			}
 		}
 
+		/************************************************************************************/
 		public bool IsSynchronized
 		{
 			get
@@ -118,6 +149,8 @@ namespace EQ2SuiteLib
 				//return m_Dictionary.IsSyn  
 			}
 		}
+
+		/************************************************************************************/
 		public object SyncRoot
 		{
 			get
@@ -127,16 +160,19 @@ namespace EQ2SuiteLib
 			}
 		}
 
+		/************************************************************************************/
 		public IEnumerator GetEnumerator()
 		{
 			return m_SortedList.Keys.GetEnumerator();
 		}
 
+		/************************************************************************************/
 		public object Clone()
 		{
 			return Copy();
 		}
 
+		/************************************************************************************/
 		public SetCollection<TYPE> Copy()
 		{
 			throw new NotImplementedException("TekSetCollection<>.Copy() not yet implemented");
