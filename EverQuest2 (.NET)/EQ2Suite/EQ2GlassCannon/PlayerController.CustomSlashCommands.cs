@@ -20,118 +20,6 @@ namespace EQ2GlassCannon
 		protected string m_strTrackActorSubstring = string.Empty;
 
 		/************************************************************************************/
-		protected void AppendActorInfo(FlexStringBuilder ThisBuilder, int iBulletNumber, Actor ThisActor)
-		{
-			ThisBuilder.AppendedLinePrefix = "   ";
-			if (!ThisActor.IsValid)
-			{
-				ThisBuilder.AppendLine("{0}. Actor not valid.", iBulletNumber);
-				return;
-			}
-
-			ThisBuilder.AppendLine("{0}. \"{1}\" ({2}) found {3:0.00} meters away at ({4:0.00}, {5:0.00}, {6:0.00})",
-				iBulletNumber,
-				ThisActor.Name,
-				ThisActor.ID,
-				ThisActor.Distance,
-				ThisActor.X,
-				ThisActor.Y,
-				ThisActor.Z);
-			ThisBuilder.AppendedLinePrefix = "      ";
-
-			string strFullName = ThisActor.Name;
-			if (!string.IsNullOrEmpty(ThisActor.LastName))
-				strFullName += " " + ThisActor.LastName;
-			if (!string.IsNullOrEmpty(ThisActor.SuffixTitle))
-				strFullName += " " + ThisActor.SuffixTitle;
-			if (!string.IsNullOrEmpty(ThisActor.Guild))
-				strFullName += " <" + ThisActor.Guild + ">";
-
-			ThisBuilder.AppendLine("Full Name: {0}", strFullName);
-
-			ThisBuilder.AppendLine("Type: {0}", ThisActor.Type);
-			ThisBuilder.AppendLine("Class: {0}", ThisActor.Class);
-			ThisBuilder.AppendLine("Race: {0}", ThisActor.Race);
-			ThisBuilder.AppendLine("Level(Effective): {0}({1})", ThisActor.Level, ThisActor.EffectiveLevel);
-			ThisBuilder.AppendLine("Encounter Size: {0}", ThisActor.EncounterSize);
-			ThisBuilder.AppendLine("Speed: {0}%", ThisActor.Speed);
-
-			List<string> astrFlags = new List<string>();
-			if (ThisActor.IsLinkdead)
-				astrFlags.Add("IsLinkdead");
-
-			if (ThisActor.IsSolo)
-				astrFlags.Add("IsSolo");
-			else if (ThisActor.IsHeroic)
-				astrFlags.Add("IsHeroic");
-			else if (ThisActor.IsEpic)
-				astrFlags.Add("IsEpic");
-
-			if (ThisActor.IsMerchant)
-				astrFlags.Add("IsMerchant");
-			if (ThisActor.IsBanker)
-				astrFlags.Add("IsBanker");
-			if (ThisActor.IsInvis)
-				astrFlags.Add("IsInvis");
-			if (ThisActor.IsStealthed)
-				astrFlags.Add("IsStealthed");
-			if (ThisActor.IsDead)
-				astrFlags.Add("IsDead");
-			if (ThisActor.IsFD)
-				astrFlags.Add("IsFD");
-			if (ThisActor.IsAggro)
-				astrFlags.Add("IsAggro");
-			if (ThisActor.IsLocked)
-				astrFlags.Add("IsLocked");
-			if (ThisActor.IsEncounterBroken)
-				astrFlags.Add("IsEncounterBroken");
-			if (ThisActor.IsNamed)
-				astrFlags.Add("IsNamed");
-			if (ThisActor.IsAPet)
-				astrFlags.Add("IsAPet");
-			if (ThisActor.IsMyPet)
-				astrFlags.Add("IsMyPet");
-			if (ThisActor.IsChest)
-				astrFlags.Add("IsChest");
-
-			if (ThisActor.IsIdle)
-				astrFlags.Add("IsIdle");
-			else if (ThisActor.IsBackingUp)
-				astrFlags.Add("IsBackingUp");
-			else if (ThisActor.IsStrafingLeft)
-				astrFlags.Add("IsStrafingLeft");
-			else if (ThisActor.IsStrafingRight)
-				astrFlags.Add("IsStrafingRight");
-
-			if (ThisActor.InCombatMode)
-				astrFlags.Add("InCombatMode");
-			else if (ThisActor.IsCrouching)
-				astrFlags.Add("IsCrouching");
-			else if (ThisActor.IsSitting)
-				astrFlags.Add("IsSitting");
-
-			if (ThisActor.IsSprinting)
-				astrFlags.Add("IsSprinting");
-			else if (ThisActor.IsWalking)
-				astrFlags.Add("IsWalking");
-			else if (ThisActor.IsRunning)
-				astrFlags.Add("IsRunning");
-
-			if (ThisActor.OnCarpet)
-				astrFlags.Add("OnCarpet");
-			else if (ThisActor.OnHorse)
-				astrFlags.Add("OnHorse");
-			else if (ThisActor.OnGriffin)
-				astrFlags.Add("OnGriffin");
-			else if (ThisActor.OnGriffon)
-				astrFlags.Add("OnGriffon");
-
-			string strFlags = string.Join(", ", astrFlags.ToArray());
-			ThisBuilder.AppendLine("Flags: {0}", strFlags);
-			return;
-		}
-
-		/************************************************************************************/
 		protected Actor GetNestedCombatAssistTarget(string strPlayerName)
 		{
 			Actor AssistedPlayerActor = GetPlayerActor(strPlayerName);
@@ -191,7 +79,7 @@ namespace EQ2GlassCannon
 			if (strSearchSubstring == "named")
 				eTrackType = TrackType.Named;
 			else if (strSearchSubstring == "resource")
-				eTrackType = TrackType.Named;
+				eTrackType = TrackType.Resource;
 			else if (string.IsNullOrEmpty(strSearchSubstring.Trim()))
 				eTrackType = TrackType.EmptyName;
 
