@@ -18,6 +18,7 @@ namespace EQ2GlassCannon
 	{
 		protected const string STR_NO_KILL_NPC = "NoKill NPC";
 		protected const string STR_NAMED_NPC = "NamedNPC";
+		protected const string STR_FREE_FOR_ALL = "Free For All";
 
 		protected uint m_uiLoreAndLegendAbilityID = 0;
 		protected uint m_uiHOStarterAbiltyID = 0;
@@ -423,7 +424,7 @@ namespace EQ2GlassCannon
 				}
 			}
 
-			if (AutoHarvestNearestNode())
+			if (AutoHarvestNearestNode() || AutoLootNearestCorpseOrChest())
 				return true;
 
 			/// Calculate how much time remains on the cast timer.
@@ -534,8 +535,46 @@ namespace EQ2GlassCannon
 				return false;
 			}
 
-			//ThisWindow.NumItems
-			switch (ThisWindow.Type)
+			FlexStringBuilder NewBuilder = new FlexStringBuilder();
+			NewBuilder.AppendLine("Loot window appeared (\"{0}\").", ThisWindow.Type);
+			for (int iIndex = 1; iIndex <= ThisWindow.NumItems; iIndex++)
+			{
+				Item ThisItem = ThisWindow.Item(iIndex);
+				AppendItemInfo(NewBuilder, iIndex, ThisItem);
+			}
+			Program.Log(NewBuilder.ToString());
+
+			if (ThisWindow.Type == STR_FREE_FOR_ALL)
+			{
+				SetCollection<int> LootedItemSet = new SetCollection<int>();
+
+				/// Items that we know we are intended to loot.
+				/// Maybe consider making this an external file list.
+				/// Ideally we'd use the item link ID but that seems to be, yep, throwing fucking exceptions.
+				for (int iIndex = 1; iIndex <= ThisWindow.NumItems; iIndex++)
+				{
+					Item ThisItem = ThisWindow.Item(iIndex);
+					if (ThisItem.NoTrade && ThisItem.Name == "Void Shard")
+						LootedItemSet.Add(iIndex);
+				}
+
+				if (m_bLootTradeablesAutomatically)
+				{
+					for (int iIndex = 1; iIndex <= ThisWindow.NumItems; iIndex++)
+					{
+						Item ThisItem = ThisWindow.Item(iIndex);
+
+						if (!ThisItem.Heirloom && !ThisItem.NoTrade)
+							LootedItemSet.Add(iIndex);
+					}
+				}
+
+				Program.Log("Looting items: {0}...", LootedItemSet);
+				foreach (int iIndex in LootedItemSet)
+					ThisWindow.LootItem(iIndex, true);
+			}
+
+			/*switch (ThisWindow.Type)
 			{
 				case "Lottery":
 					break;
@@ -546,7 +585,7 @@ namespace EQ2GlassCannon
 				case "Unknown":
 				default:
 					break;
-			}
+			}*/
 
 			return true;
 		}
@@ -889,7 +928,7 @@ namespace EQ2GlassCannon
 				string strAutoFollowTarget = GetFirstExistingPartyMember(m_astrAutoFollowTargets, true);
 				if (string.IsNullOrEmpty(strAutoFollowTarget))
 				{
-					Program.Log("Can't autofollow (no configured targets found in group).");
+					//Program.Log("Can't autofollow (no configured targets found in group).");
 					return false;
 				}
 
@@ -1167,7 +1206,6 @@ namespace EQ2GlassCannon
 			if (bSelectNewTarget)
 			{
 				/// There are no alternative choices; we're SOL.
-				/// NOTE: Don't put a Log() with this if-statement or there'll be spam.
 				if (m_eEncounterCompletionMode == EncounterCompletionMode.None)
 				{
 					Program.Log("Forbidden to find new target; now waiting for next assist call from commander.");
@@ -1304,7 +1342,7 @@ namespace EQ2GlassCannon
 
 			/// Make sure the pet is on the right target.
 			Actor PetActor = Me.Pet();
-			if (Me.IsHated && PetActor.IsValid && PetActor.CanTurn)
+			if (PetActor.IsValid && PetActor.CanTurn)
 			{
 				Actor PetTargetActor = PetActor.Target();
 				if (!PetTargetActor.IsValid || (PetTargetActor.ID != m_OffensiveTargetActor.ID) || !PetActor.InCombatMode)
@@ -1368,15 +1406,21 @@ namespace EQ2GlassCannon
 		protected bool WithdrawFromCombat()
 		{
 			bool bActionTaken = false;
-			m_iOffensiveTargetID = -1;
-			m_OffensiveTargetEncounterActorDictionary.Clear();
 
 			if (!MeActor.IsDead)
 			{
-				/// Turn it off just in case.
+				/// Cancel a cast only if we can reasonably assume it's done in the context of a combat assist.
+				if (m_iOffensiveTargetID != -1 && IsCasting)
+				{
+					CancelCast();
+					bActionTaken = true;
+				}
+
+				/// Turn it off. Clearing the target is a backup measure.
 				if (Me.AutoAttackOn || Me.RangedAutoAttackOn)
 				{
 					RunCommand(1, "/auto 0");
+					RunCommand(1, "/target_none");
 					bActionTaken = true;
 				}
 
@@ -1389,14 +1433,16 @@ namespace EQ2GlassCannon
 				}
 
 				/// If an enemy is targetted, target nothing instead.
-				Actor TargetActor = MeActor.Target();
-				if (TargetActor.IsValid && TargetActor.Type == "NPC")
+				/*Actor TargetActor = MeActor.Target();
+				if (TargetActor.IsValid && (TargetActor.Type == "NPC" || TargetActor.Type == STR_NAMED_NPC))
 				{
 					RunCommand(1, "/target_none");
 					bActionTaken = true;
-				}
+				}*/
 			}
 
+			m_iOffensiveTargetID = -1;
+			m_OffensiveTargetEncounterActorDictionary.Clear();
 			return bActionTaken;
 		}
 
@@ -1424,7 +1470,7 @@ namespace EQ2GlassCannon
 				{
 					/// FF6 reference. :)
 					Program.Log("Annihilated.");
-					m_iOffensiveTargetID = -1;
+					WithdrawFromCombat();
 				}
 			}
 

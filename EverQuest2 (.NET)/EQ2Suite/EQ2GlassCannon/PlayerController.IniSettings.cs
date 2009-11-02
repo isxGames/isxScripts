@@ -80,6 +80,7 @@ namespace EQ2GlassCannon
 		protected bool m_bUsePet = true;
 		protected bool m_bSummonPetDuringCombat = false;
 		protected bool m_bHarvestAutomatically = false;
+		protected bool m_bLootTradeablesAutomatically = false;
 
 		protected string m_strForwardKey = "W";
 		protected string m_strBackwardKey = "S";
@@ -150,6 +151,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.UsePet", ref m_bUsePet);
 			ThisFile.TransferBool("General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
 			ThisFile.TransferBool("General.HarvestAutomatically", ref m_bHarvestAutomatically);
+			ThisFile.TransferBool("General.LootTradeablesAutomatically", ref m_bLootTradeablesAutomatically);
 
 			ThisFile.TransferString("Controls.ForwardKey", ref m_strForwardKey);
 			ThisFile.TransferString("Controls.BackwardKey", ref m_strBackwardKey);

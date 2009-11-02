@@ -668,7 +668,7 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		protected bool CastNextMez(params uint[] auiMezAbilityIDs)
 		{
-			if (m_eMezMode == MezMode.Never)
+			if (m_eMezMode == MezMode.Never || auiMezAbilityIDs.Length == 0)
 				return false;
 
 			else if (m_eMezMode == MezMode.OnlyWhenMainTankDead)
@@ -1108,7 +1108,26 @@ namespace EQ2GlassCannon
 			m_bAutoHarvestInProgress = true;
 			m_LastAutoHarvestAttemptTime = CurrentCycleTimestamp;
 			Program.Log("Harvesting \"{1}\" from a distance of {2:0.00} meters...", NearestHarvestableNode.Type, NearestHarvestableNode.Name, fNearestHarvestableDistance);
-			return false;
+			return true;
+		}
+
+		/************************************************************************************/
+		protected bool AutoLootNearestCorpseOrChest()
+		{
+			/// Don't loot another corpse if a loot window is up.
+			if (!m_bLootTradeablesAutomatically || s_Extension.LootWindow().IsValid)
+				return false;
+
+			/// Find the nearest actor. 12 meters seems to be the right range, so I'll do 10.
+			foreach (Actor ThisActor in EnumActorsInRadius(12))
+			{
+				if (ThisActor.IsDead && ThisActor.Distance <= 12)
+					ApplyVerb(ThisActor, "loot");
+				else if (ThisActor.IsChest && ThisActor.Distance <= 5)
+					ApplyVerb(ThisActor, "open");
+			}
+
+			return true;
 		}
 
 		/************************************************************************************/

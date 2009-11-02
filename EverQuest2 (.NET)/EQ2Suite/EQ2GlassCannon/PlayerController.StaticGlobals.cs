@@ -130,7 +130,7 @@ namespace EQ2GlassCannon
 				s_eq2event = new EQ2Event();
 				s_eq2event.ChoiceWindowAppeared += new EventHandler<LSEventArgs>(OnChoiceWindowAppeared_EventHandler);
 				s_eq2event.RewardWindowAppeared += new EventHandler<LSEventArgs>(OnRewardWindowAppeared_EventHandler);
-				LavishScript.Events.AttachEventTarget(LavishScript.Events.RegisterEvent("EQ2_onLootWindowAppeared"), OnLootWindowAppeared_EventHandler); /// Not implemented in wrapper yet.
+				s_eq2event.LootWindowAppeared += new EventHandler<LSEventArgs>(OnLootWindowAppeared_EventHandler);
 				s_eq2event.IncomingText += new EventHandler<LSEventArgs>(OnIncomingText_EventHandler);
 
 				RegisterCustomSlashCommands(
@@ -547,7 +547,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected static void ApplyVerb(int iActorID, string strVerb)
 		{
-			RunCommand(5, "/apply_verb {0} {1}", iActorID, strVerb);
+			RunCommand(3, "/apply_verb {0} {1}", iActorID, strVerb);
 			return;
 		}
 
