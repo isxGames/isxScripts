@@ -126,6 +126,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Act_Healing_Paladin.iss"
 #include "${Script.CurrentDirectory}/Act_Healing_Ranger.iss"
 #include "${Script.CurrentDirectory}/Act_Healing_Shaman.iss"
+#include "${Script.CurrentDirectory}/Act_Healing_BloodMage.iss"
 #include "${Script.CurrentDirectory}/GUI_Healing.iss"
 #include "${Script.CurrentDirectory}/Act_Buff.iss"
 
