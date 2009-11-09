@@ -155,18 +155,18 @@ function:bool Harvesting(int Distance)
 	;-------------------------------------------
 	; As long as we don't have an encounter, manually leftclick certain locations for rare harvests
 	;-------------------------------------------
-	if ${Me.Encounter}==0
+	if ${GV[bool,bHarvesting]} && ${GV[bool,IsHarvestingDone]}
 	{
-		if ${GV[bool,bHarvesting]} && ${GV[bool,IsHarvestingDone]}
-		{
-			VGExecute /endharvesting
-			;Mouse:SetPosition[800,645]
-			;wait 30
-			;Mouse:LeftClick
-			;wait 5
-			;Mouse:ReleaseLeft
-			;wait 5
-		}
+		VGExecute /endharvesting
+		VGExecute /showwindow Harvesting
+		Mouse:SetPosition[975,829]
+		Mouse:LeftClick
+		wait 1
+		Mouse:SetPosition[976,828]
+		Mouse:LeftClick
+		wait 1
+		Mouse:ReleaseLeft
+		wait 5
 	}
 
 	;-------------------------------------------

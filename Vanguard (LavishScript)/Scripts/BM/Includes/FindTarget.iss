@@ -24,6 +24,7 @@ External Routines that must be in your program: None
 
 /* This variable is used to keep you from scanning the same mob twice */
 variable collection:int64 TargetBlackList
+variable bool doClearTargets=FALSE
 
 ;===================================================
 ;===          FindTarget Routine                ====
@@ -70,11 +71,11 @@ function FindTarget(string TargetType, int Distance, int ConCheck, int MinLevel,
 			if ${TargetBlackList.Element[${Pawn[${i}].ID}](exists)} || !${Pawn[${i}].HaveLineOfSightTo}
 				continue
 
-
 			;-------------------------------------------
 			; Time saver check - no need to look for beyond our range
 			;-------------------------------------------
-			if (${Pawn[${i}].Distance.Int}>${Distance}
+			;if (${Pawn[${i}].Distance.Int}>${Distance}
+			if ${Pawn[${i}].Distance.Int}>${Distance}
 				break
 
 			;-------------------------------------------
@@ -123,5 +124,11 @@ function FindTarget(string TargetType, int Distance, int ConCheck, int MinLevel,
 			break
 		}
 	}
-
+	;; Clear our collections every 5 min
+	if ${doClearTargets}
+	{
+		TargetBlackList:Clear
+		TimedCommand 300 Script[BM].Variable[doClearTargets]:Set[TRUE]
+		doClearTargets:Set[FALSE]
+	}
 }

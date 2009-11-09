@@ -272,8 +272,25 @@ function IsCasting()
 				Status:Set[GLOBAL COOLDOWN]
 
 			;; Show we are Harvesting
-			if ${GV[bool,bHarvesting]}
+			if ${GV[bool,bHarvesting]} && !${GV[bool,IsHarvestingDone]}
 				Status:Set[HARVESTING]
+
+			;; Close that pesky window (gotta move it to where the cursor is)
+			if ${GV[bool,bHarvesting]} && ${GV[bool,IsHarvestingDone]}
+			{
+				VGExecute /endharvesting
+				VGExecute /showwindow Harvesting
+				Mouse:SetPosition[975,829]
+				Mouse:LeftClick
+				wait 1
+				Mouse:SetPosition[978,832]
+				Mouse:LeftClick
+				wait 1
+				Mouse:ReleaseLeft
+				wait 5
+				VGExecute /hidewindow Harvesting
+				echo "[${Time}][BM] --> Closed that pesky Harvesting window"
+			}
 
 			;; Show target is casting what
 			While !${Me.TargetCasting.Equal[None]} && (${Me.Ability[Dissolve].TriggeredCountdown}>0 || ${Me.Ability[${Metamorphism}].TriggeredCountdown}>0)

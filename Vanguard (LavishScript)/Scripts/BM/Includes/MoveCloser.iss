@@ -39,10 +39,10 @@ function:bool MoveCloser(float X, float Y, int Distance)
 	Distance:Set[300]
 
 	;-------------------------------------------
-	; Set our bailout timer to 1.5 sec "yah, kinda short timer"
+	; Set our bailout timer to 2 sec "yah, kinda short timer"
 	;-------------------------------------------
 	variable int bailOut
-	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(1500)]}]
+	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(2000)]}]
 
 	;-------------------------------------------
 	; Move if we are over our distance "looks natural if we move and turn at the same time"
