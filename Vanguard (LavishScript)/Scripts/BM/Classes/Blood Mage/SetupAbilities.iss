@@ -26,7 +26,8 @@ variable bool CritNow = TRUE
 variable bool doSymbiotes = TRUE
 variable bool doDisEnchant = TRUE
 variable bool doHOT = FALSE
-variable string Version = "1.5"
+variable bool doHotTimer = TRUE
+variable string Version = "1.6"
 
 ;===================================================
 ;===   Called at Startup to set ability names   ====
@@ -192,9 +193,9 @@ function SetupAbilities()
 ;===================================================
 function GetHighestAbility(string AbilityName)
 {
-	declare L int local 20
+	declare L int local 8
 	declare ABILITY string local ${AbilityName}
-	declare AbilityLevels[20] string local
+	declare AbilityLevels[8] string local
 
 	AbilityLevels[1]:Set[I]
 	AbilityLevels[2]:Set[II]
@@ -204,18 +205,18 @@ function GetHighestAbility(string AbilityName)
 	AbilityLevels[6]:Set[VI]
 	AbilityLevels[7]:Set[VII]
 	AbilityLevels[8]:Set[VIII]
-	AbilityLevels[9]:Set[IX]
-	AbilityLevels[10]:Set[X]
-	AbilityLevels[11]:Set[XI]
-	AbilityLevels[12]:Set[XII]
-	AbilityLevels[13]:Set[XIII]
-	AbilityLevels[14]:Set[XIV]
-	AbilityLevels[15]:Set[XV]
-	AbilityLevels[16]:Set[XVI]
-	AbilityLevels[17]:Set[XVII]
-	AbilityLevels[18]:Set[XVIII]
-	AbilityLevels[19]:Set[XIX]
-	AbilityLevels[20]:Set[XX]
+	;AbilityLevels[9]:Set[IX]
+	;AbilityLevels[10]:Set[X]
+	;AbilityLevels[11]:Set[XI]
+	;AbilityLevels[12]:Set[XII]
+	;AbilityLevels[13]:Set[XIII]
+	;AbilityLevels[14]:Set[XIV]
+	;AbilityLevels[15]:Set[XV]
+	;AbilityLevels[16]:Set[XVI]
+	;AbilityLevels[17]:Set[XVII]
+	;AbilityLevels[18]:Set[XVIII]
+	;AbilityLevels[19]:Set[XIX]
+	;AbilityLevels[20]:Set[XX]
 
 	;-------------------------------------------
 	; Return if Ability already exists

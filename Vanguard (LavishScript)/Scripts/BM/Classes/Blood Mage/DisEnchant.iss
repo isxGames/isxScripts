@@ -36,25 +36,41 @@ function:bool DisEnchant()
 		; Check for FURIOUS and remove any Enchantments
 		for ( i:Set[1] ; ${i}<=${Me.TargetBuff} ; i:Inc )
 		{
-			TEST2:Set[${Me.TargetBuff[${i}]}]
-			;echo "Target is buffed with [${Me.TargetBuff[${i}].Name}]"
-
 			;; Check next buff if not Greater Enchantment
-			if !${Me.TargetBuff[${i}].Name.Find[Enchantment]} 
+			if !${Me.TargetBuff[${i}].Name.Find[Enchant]} 
 				continue
-				
-			;; Wait till ability is ready
-			while !${Me.Ability[${StripEnchantment}].IsReady}
-				wait 1
+
+			;; Save this to check later on
+			TEST2:Set[${Me.TargetBuff[${i}]}]
+
+			wait 15 ${Me.Ability["${StripEnchantment}"].IsReady}
 			
 			;; Use the Ability
 			call UseAbility "${StripEnchantment}"
-			;Me.Ability[${StripEnchantment}]:Use
 			wait 5 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
 
-			;; Wait till ability is ready
-			while !${Me.Ability[${StripEnchantment}].IsReady}
-				wait 1
+			;; Wait till Enchantment is gone
+			wait 20 !${Me.TargetBuff[${TEST2}](exists)}
+
+			;; Check to see if we failed to remove the enchantment
+			if ${Me.TargetBuff[${TEST2}](exists)}
+			{
+				;; Try again
+				wait 15 ${Me.Ability["${StripEnchantment}"].IsReady}
+				call UseAbility "${StripEnchantment}"
+				wait 5 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
+
+				;; Wait till Enchantment is gone
+				wait 20 !${Me.TargetBuff[${TEST2}](exists)}
+
+				;; Check one more time 
+				if ${Me.TargetBuff[${TEST2}](exists)}
+				{
+					if ${doEcho}
+						echo "[${Time}][VG:BM] --> DisEnchant:  FAILED to Disenchant: ${TEST2}"
+					DisEnchanted:Set[FALSE]
+				}
+			}
 
 			;; Check to see if we successfully removed the enchantment
 			if !${Me.TargetBuff[${TEST2}](exists)}
@@ -65,22 +81,11 @@ function:bool DisEnchant()
 				DisEnchanted:Set[TRUE]
 				return TRUE
 			}
-					
-			;; Check to see if we failed to remove the enchantment
-			if ${Me.TargetBuff[${TEST2}](exists)}
-			{
-				if ${doEcho}
-					echo "[${Time}][VG:BM] --> DisEnchant:  FAILED to Disenchant: ${TEST2}"
-				DisEnchanted:Set[FALSE]
-				continue
-			}
 		}
 	}
 	;; Update our variable
 	LastTargetBuff:Set[${Me.TargetBuff}]
 	return FALSE
-
-	
 	
 	;-------------------------------------------
 	; No need to cure anything if we already are curing

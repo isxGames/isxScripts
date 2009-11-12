@@ -51,33 +51,29 @@ function NotInCombat()
 		return
 		
 	;-------------------------------------------
-	; Let's assist Tank if Tank is in combat
+	; Let's assist Tank if Tank is in combat or we have an Encounter
 	;-------------------------------------------
-	if ${Pawn[${Tank}].CombatState}>0 && ${Pawn[${Tank}].Distance}<25
+	if ${Me.Encounter}>0 || ${Pawn[${Tank}].CombatState}>0
 	{
-		if !${Me.Target(exists)}
+		if ${Pawn[${Tank}].CombatState}>0 && ${Pawn[${Tank}].Distance}<25
 		{
-			VGExecute /cleartargets
-			wait 5
+			VGExecute /assist "${Tank}"
+			wait 10 ${Me.Target(exists)}
 		}
-		VGExecute /assist "${Tank}"
-		call AttackTarget
+		if !${Me.Target(exists)} && ${Me.Encounter}>0
+		{
+			Me.Encounter[1].ToPawn:Target
+			wait 10 ${Me.Target(exists)}
+		}
+		if ${Me.Target(exists)}
+		{
+			if !${Me.IsGrouped}
+				call AttackTarget
+			if ${Me.IsGrouped} && ${Me.TargetHealth}<${StartAttack}
+				call AttackTarget
+		}
 	}
 
-	;-------------------------------------------
-	; Let's assist Tank if we have an Encounter
-	;-------------------------------------------
-	if !${Me.IsGrouped} && ${Me.Encounter}>0
-	{
-		if !${Me.Target(exists)}
-		{
-			VGExecute /cleartargets
-			wait 5
-		}
-		VGExecute /assist "${Tank}"
-		call AttackTarget
-	}
-	
 	;-------------------------------------------
 	; Find lowest member's health 
 	;-------------------------------------------

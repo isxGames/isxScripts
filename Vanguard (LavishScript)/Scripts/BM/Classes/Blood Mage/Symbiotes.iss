@@ -78,7 +78,7 @@ function SymbioteRequest()
 					TimedCommand 25 VGExecute "/tell ${PCName2} :)"
 			
 				if ${doEcho}
-					echo "[${Time}][VG:BM] -->  Symbiotes: Successfully casted ${Symbiote2} on ${PCName2}"
+					echo "[${Time}][VG:BM] --> Symbiotes: Successfully casted ${Symbiote2} on ${PCName2}"
 			}
 		}
 	}
