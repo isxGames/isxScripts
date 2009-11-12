@@ -30,7 +30,7 @@ variable int tank
 variable string Tank
 variable int64 TankID
 variable int StartAttack = 99
-variable int AttackHealRatio = 60
+variable int AttackHealRatio = 65
 variable bool FURIOUS = FALSE
 variable bool doForm = TRUE
 
@@ -80,6 +80,7 @@ variable int FR3 = 5
 
 /* DEFINES */
 #define ALARM	"${Script.CurrentDirectory}/Sounds/ping.wav"
+#define WARNING	"${Script.CurrentDirectory}/Sounds/warning.wav"
 
 /* MAIN ROUTINE */
 function main()
@@ -125,7 +126,8 @@ function main()
 	; Start Events
 	;-------------------------------------------
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
-
+	Event[VG_OnIncomingCombatText]:AttachAtom[IncomingCombatTextEvent]
+	
 	;-------------------------------------------
 	; Loop this while we are paused
 	;-------------------------------------------
@@ -322,9 +324,10 @@ function IsCasting()
 /* USE ABILITY */
 function:bool UseAbility(string ABILITY, string FORM)
 {
-	;; Make sure we aren't casting anything
-	;call IsCasting
-
+	;; if remaining time till ready is less than 2 sec then wait
+	if ${Me.Ability[${ABILITY}].TimeRemaining}>0 && ${Me.Ability[${ABILITY}].TimeRemaining}<2 
+		wait 20 ${Me.Ability[${ABILITY}].TimeRemaining}==0
+	
 	;; Check if ability is ready or exists
 	if !${Me.Ability[${ABILITY}].IsReady} || !${Me.Ability[${ABILITY}](exists)}
 		return FALSE
@@ -338,14 +341,14 @@ function:bool UseAbility(string ABILITY, string FORM)
 		return FALSE
 
 	;; Check if we got enough BloodUinion
-	if ${Me.Ability[${ABILITY}].SpecialPointsCost} > ${Me.Stat[Adventuring,SpecialPoints]}
+	if ${Me.Ability[${ABILITY}].BloodUnionRequired} > ${Me.BloodUnion}
 		return FALSE
 
 	;; Check if mob is immune
 	call MobImmune "${ABILITY}"
 	if ${Return}
 		return FALSE
-	
+
 	;; Lets change form
 	if ${doForm} && !${FORM.Equal[""]} && ${Me.Form[${FORM}](exists)} && !${Me.CurrentForm.Name.Equal[${FORM}]}
 	{
@@ -365,7 +368,7 @@ function:bool UseAbility(string ABILITY, string FORM)
 		TimedCommand 26 Script[BM].Variable[doForm]:Set[TRUE]
 		doForm:Set[FALSE]
 	}
-	
+
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
 		;; Update our status display
@@ -487,6 +490,7 @@ function atexit()
 {
 	;; Remove any events
 	Event[VG_OnIncomingText]:DetachAtom[ChatEvent]
+	Event[VG_OnIncomingCombatText]:DetachAtom[IncomingCombatTextEvent]
 	
 	;; Any Class Specific shutdowns
 	call ShutDown

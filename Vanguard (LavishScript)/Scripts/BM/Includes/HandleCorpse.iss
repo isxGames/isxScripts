@@ -10,9 +10,9 @@ more to be added in future
 function HandleCorpse()
 {
 	call Loot
-	call HarvestIt ${HarvestRange}
 	call ClearTarget
 	call NewTarget
+	call HarvestIt ${HarvestRange}
 }
 
 function Loot()
@@ -63,12 +63,18 @@ function NewTarget()
 	;; Change targets if there are any encounters
 	if !${Me.Target(exists)} && ${Me.Encounter}>0
 	{
-		if !${Me.IsGrouped}
+		if ${Pawn[${Tank}].CombatState}>0 && ${Pawn[${Tank}].Distance}<25
+		{
+			VGExecute /assist "${Tank}"
+			wait 10 ${Me.Target(exists)}
+		}
+		if !${Me.Target(exists)} && ${Me.Encounter}>0
 		{
 			Me.Encounter[1].ToPawn:Target
 			wait 10 ${Me.Target(exists)}
-			if ${doEcho} && ${Me.Target(exists)}
-				echo "[${Time}][VG:BM] --> NewTarget: ${Me.Target.Name}"
 		}
+	
+		if ${doEcho} && ${Me.Target(exists)}
+			echo "[${Time}][VG:BM] --> NewTarget: ${Me.Target.Name}"
 	}
 }

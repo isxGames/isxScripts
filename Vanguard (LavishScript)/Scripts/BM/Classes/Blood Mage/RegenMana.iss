@@ -1,7 +1,13 @@
 /* REGEN MANA */
 function:bool RegenMana()
 {
-	if ${Me.HealthPct}>${AttackHealRatio} && ${Me.EnergyPct}<85
+	if ${Me.InCombat} && ${low}>${AttackHealRatio} && ${Me.EnergyPct}<80
+	{
+		call UseAbility "${MentalTransmutation}"
+		if ${Return}
+			return TRUE
+	}
+	if !${Me.InCombat} && ${low}>${AttackHealRatio} && ${Me.EnergyPct}<90
 	{
 		call UseAbility "${MentalTransmutation}"
 		if ${Return}

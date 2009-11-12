@@ -24,7 +24,6 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 			VGExecute /cleartargets
 	}
 
-	
 	;; Check if target is no longer FURIOUS
 	if ${Text.Find[is no longer FURIOUS]} && ${ChannelNumber}==7
 	{
@@ -58,29 +57,22 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 				TimedCommand ${DELAY} VGExecute "/group <Red=>FURIOUS<Yellow=> -- STOP ATTACKS!"
 		}
 	}
-
-	/*======== Everything below this line is stuff I use for my Blood Mage ========*/
-	;; FROZEN
-	if (${Text.Find["Ice Compression"]} && ${Text.Find["hits you"]})
-	{
-		echo "Ice Compression hit me! Channel=${ChannelNumber}"
-		VGExecute "/raid <Red=>I AM FROZEN - G1"  
-		call PlaySound ALARM
-	}
-
-	;; STONED
-	if (${Text.Find["Stone Encasement"]} && ${Text.Find["hits you"]})
-	{
-		echo "I got STONED! Channel=${ChannelNumber}"
-		VGExecute "/raid <Red=>I AM STONED - G1"  
-		call PlaySound ALARM
-	}
 	
 	;; Ping us on tells or anything with our name in it
 	if ${Text.Find[From ]} && ${ChannelNumber}==15
 	{
 		call PlaySound ALARM
 	}
+
+	;; Ping us on tells or anything with our name in it
+	if ${Text.Find[You have received a ready check.]}
+	{
+		echo "[${Time}][BM] --> ChatEvent:  Received a Ready Check."
+		call PlaySound WARNING
+	}
+
+	
+	/*======== Everything below this line is stuff I use for my Blood Mage ========*/
 
 	;; Check for any Symbiote Requests
 	if ${ChannelNumber}==8 || ${ChannelNumber}==11 || ${ChannelNumber}==15
@@ -134,4 +126,24 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 		}
 
 	}
+}
+/* MUST HAVE - CHATEVENT USED TO MONITOR MESSAGES*/
+atom(script) IncomingCombatTextEvent(string Text)
+{
+	;; FROZEN
+	if (${Text.Find["Ice Compression"]} && ${Text.Find["hits you"]})
+	{
+		echo "Ice Compression hit me!"
+		VGExecute "/raid <Red=>I AM FROZEN - G1"  
+		call PlaySound WARNING
+	}
+
+	;; STONED
+	if (${Text.Find["Stone Encasement"]} && ${Text.Find["hits you"]})
+	{
+		echo "I got STONED!"
+		VGExecute "/raid <Red=>I AM STONED - G1"  
+		call PlaySound WARNING
+	}
+	/*======== Everything below this line is stuff I use for my Blood Mage ========*/
 }
