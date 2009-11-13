@@ -202,13 +202,10 @@ function ConsolidateResources()
 			if ${doEcho}
 				echo "[${Time}][VG:BM] --> Consolidate: Consolidating ${Me.Inventory[${i}]}"
 			Me.Inventory[${i}]:StartConvert
-			wait waitframe
-			Mouse:SetPosition[638,436]
-			wait 3
-			Mouse:LeftClick
-			wait 3
-			Mouse:ReleaseLeft
-			wait 3
+			waitframe
+			VG:ConvertItem
+			waitframe
+			i:Set[1]
 		}
 	}
 }

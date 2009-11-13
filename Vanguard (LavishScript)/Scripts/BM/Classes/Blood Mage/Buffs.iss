@@ -31,14 +31,20 @@ function:bool Buffs()
 		}
 		call UseAbility "Construct's Augmentation"
 		if ${Return}
+		{
+			wait 20
 			return  TRUE
+		}
 		return FALSE
 	}
 	
 	;; This is a must which is not part of the AllInOneBuff
 	call UseAbility "${SeraksMantle}"
 	if ${Return}
+	{
+		wait 20
 		return TRUE	
+	}
 
 	;; AllInOneBuff does not stack with Construct and overrides all previous buffs
 	;; -- cast it or return if already have
@@ -52,7 +58,10 @@ function:bool Buffs()
 			waitframe
 			call UseAbility "Favor of the Life Giver"
 			if ${Return}
+			{
+				wait 20
 				return  TRUE
+			}
 		}
 		return FALSE
 	}

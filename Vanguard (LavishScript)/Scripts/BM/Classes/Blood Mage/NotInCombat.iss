@@ -30,7 +30,12 @@ function NotInCombat()
 	}
 
 	;-------------------------------------------
-	; Routine if Poisoned or Diseased
+	; Routine to update our display of any immunities
+	;-------------------------------------------
+	call FindGroupMembers
+
+	;-------------------------------------------
+	; Routine if Poisoned or Diseased - will not aggro mob
 	;-------------------------------------------
 	call DisEnchant
 	if ${Return}

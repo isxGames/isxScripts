@@ -53,13 +53,6 @@ function InCombat()
 	}
 
 	;-------------------------------------------
-	; Routine to DisEnchant Enchantments and set FURIOUS flag
-	;-------------------------------------------
-	call DisEnchant
-	if ${Return}
-		return
-
-	;-------------------------------------------
 	; Make sure we are targeting our tank's target
 	;-------------------------------------------
 	if  ${Me.IsGrouped} && ${Me.Encounter}>0
@@ -73,9 +66,16 @@ function InCombat()
 		return
 		
 	;-------------------------------------------
+	; Routine to DisEnchant Enchantments and set FURIOUS flag
+	;-------------------------------------------
+	call DisEnchant
+	if ${Return}
+		return
+
+	;-------------------------------------------
 	; Let tank get aggro before attacking
 	;-------------------------------------------
-	if ${Me.IsGrouped} && ${Me.TargetHealth}>${StartAttack}
+	if ${Me.IsGrouped} && ${Me.TargetHealth}>${StartAttack} 
 		return
 
 	;-------------------------------------------
@@ -105,19 +105,27 @@ function:bool Furious()
 		VGExecute /assistoffensive
 
 		;; Put 1st HOT
-		if !${Me.DTarget.Name.Find[${Me.FName}]}
+		if ${Me.BloodUnion}>2 && ${Me.Ability[${FleshMendersRitual}].IsReady} && !${Me.DTarget.Name.Find[${Me.FName}]}
 		{
+			wait 3
 			call UseAbility "${FleshMendersRitual}" "Sanguine Focus"
 			if ${Return}
+			{
+				if ${doEcho}
+					echo "[${Time}][VG:BM] --> 1st HOT: ${Me.DTarget.Name}"
 				return TRUE
+			}
 		}
 
 		;; Put 2nd HOT on Target's target
 		if ${doHotTimer}
 		{
+			wait 3
 			call UseAbility "${TransfusionOfSerak}" "Sanguine Focus"
 			if ${Return}
 			{
+				if ${doEcho}
+					echo "[${Time}][VG:BM] --> 2nd HOT: ${Me.DTarget.Name}"
 				TimedCommand 150 Script[BM].Variable[doHotTimer]:Set[TRUE]
 				doHotTimer:Set[FALSE]
 				return TRUE
@@ -125,7 +133,7 @@ function:bool Furious()
 		}
 
 		;; Use Entwining Vein - Its the one ability that doesn't kill you during FURIOUS
-		if ${FURIOUS}
+		if ${FURIOUS} && ${Me.Target.Distance}<25
 		{
 			VGExecute /assistoffensive
 			call UseAbility "${EntwiningVein}" "Focus of Gelenia"
@@ -172,7 +180,7 @@ function AttackTarget()
 	;-------------------------------------------
 	;Return if target is FURIOUS or not valid target - don't want to get killed!
 	;-------------------------------------------
-	if ${FURIOUS} || !${Me.Target.HaveLineOfSightTo} || !${Me.Target(exists)} || !${Me.Target.IsAttackable}
+	if ${FURIOUS} || !${Me.Target.HaveLineOfSightTo} || !${Me.Target(exists)} || !${Me.Target.IsAttackable} || ${Me.Target.Distance}>25
 		return
 		
 	;-------------------------------------------
@@ -185,7 +193,7 @@ function AttackTarget()
 	;-------------------------------------------
 	; Final Blow at 30% OF Target's Health
 	;-------------------------------------------
-	if ${Me.TargetHealth}<30
+	if ${Me.TargetHealth}<40
 	{
 		call UseAbility "${ScarletRitual}" "Focus of Gelenia"
 		if ${Return}

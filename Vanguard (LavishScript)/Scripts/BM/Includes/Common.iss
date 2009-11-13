@@ -5,7 +5,6 @@
 ===============================================
 ===============================================
  */
-
  
 /*
 FindLowestHealth v1.1
@@ -23,6 +22,9 @@ low = Health Percent (lowest member's health including your own)
 ;; Variables used 
 variable int gn
 variable int low
+
+;; toggle this if you want to heal only members in your group
+variable bool GroupHeal = FALSE 
 
 function FindLowestHealth()
 {
@@ -52,7 +54,7 @@ function FindLowestHealth()
 		{
 			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
 			{
-				if ${Group[${i}].Name.Find[${GH1}]} || ${Group[${i}].Name.Find[${GH2}]} || ${Group[${i}].Name.Find[${GH3}]} || ${Group[${i}].Name.Find[${GH4}]} || ${Group[${i}].Name.Find[${GH5}]} || ${Group[${i}].Name.Find[${GH6}]} || ${Group[${i}].Name.Find[${GH7}]} || ${Group[${i}].Name.Find[${GH8}]} || ${Group[${i}].Name.Find[${Tank}]}
+				if ${GroupMemberList.Element["${Group[${i}].Name}"](exists)}
 				{
 					if ${Group[${i}].Distance}<26 && ${Group[${i}].Health}>0 && ${Group[${i}].Health}<${low}
 					{
@@ -93,10 +95,10 @@ function FindLowestHealth()
 		VGExecute /assistoffensive
 	}
 	
-	if ${gn}>0
-	{
-		echo "[${Time}][VG:BM] --> FindLowestHealth:  gn=${gn}, name=${Group[${gn}].Name}, low=${low}, MyHealth=${Me.HealthPct} -- Final Result"
-	}
+	;if ${gn}>0
+	;{
+	;	echo "[${Time}][VG:BM] --> FindLowestHealth:  gn=${gn}, name=${Group[${gn}].Name}, low=${low}, MyHealth=${Me.HealthPct} -- Final Result"
+	;}
 	;elseif ${gn}==0
 	;	echo "[${Time}][VG:BM] --> gn=${gn}, everyone's health is above 90% -- Final Result"
 }

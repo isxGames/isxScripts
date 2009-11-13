@@ -65,7 +65,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 	}
 
 	;; Ping us on tells or anything with our name in it
-	if ${Text.Find[You have received a ready check.]}
+	if ${Text.Find[You have received a ready check]}
 	{
 		echo "[${Time}][BM] --> ChatEvent:  Received a Ready Check."
 		call PlaySound WARNING
