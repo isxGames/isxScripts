@@ -312,7 +312,7 @@ function executeability(string x_ability, string x_type, string CP)
 			break
 			
 		default
-			DoIt:Set[FALSE]
+			DoIt:Set[TRUE]
 			break
 	}
 
