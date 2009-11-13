@@ -258,12 +258,12 @@ function executeability(string x_ability, string x_type, string CP)
 	switch ${x_type}
 	{
 		case Heal
-			echo "HEAL ${x_ability} ${Me.DTarget} ${Group[1].Name} ${Group[1].Health} , ${Group[2].Name} ${Group[2].Health} , ${Group[3].Name} ${Group[3].Health} , ${Group[4].Name} ${Group[4].Health} , ${Group[5].Name} ${Group[5].Health} , ${Group[6].Name} ${Group[6].Health}"  
+			;echo "HEAL ${x_ability} ${Me.DTarget} ${Group[1].Name} ${Group[1].Health} , ${Group[2].Name} ${Group[2].Health} , ${Group[3].Name} ${Group[3].Health} , ${Group[4].Name} ${Group[4].Health} , ${Group[5].Name} ${Group[5].Health} , ${Group[6].Name} ${Group[6].Health}"  
 			DoIt:Set[TRUE]
 			break
 
 		case MeleeHeal
-			echo "HEAL ${x_ability} ${Me.DTarget} ${Group[1].Name} ${Group[1].Health} , ${Group[2].Name} ${Group[2].Health} , ${Group[3].Name} ${Group[3].Health} , ${Group[4].Name} ${Group[4].Health} , ${Group[5].Name} ${Group[5].Health} , ${Group[6].Name} ${Group[6].Health}"  
+			;echo "HEAL ${x_ability} ${Me.DTarget} ${Group[1].Name} ${Group[1].Health} , ${Group[2].Name} ${Group[2].Health} , ${Group[3].Name} ${Group[3].Health} , ${Group[4].Name} ${Group[4].Health} , ${Group[5].Name} ${Group[5].Health} , ${Group[6].Name} ${Group[6].Health}"  
 			call CheckFurious
 			if ${Return}
 				{
@@ -664,6 +664,11 @@ atom actionlog(string aText)
 	{
 		UIElement[DebugList@LogsCFrm@Logs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${aText}]
 	}
+}
+atom Grplog(string aText) 
+{
+	UIElement[GroupMemberList@HealPctCFrm@HealPct@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:AddItem[${aText}]
+
 }
 atom debuglog(string aText) 
 {

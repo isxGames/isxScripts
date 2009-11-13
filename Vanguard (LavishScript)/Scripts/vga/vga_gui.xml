@@ -1860,6 +1860,36 @@
 					Script[VGA]:QueueCommand[call LavishSave]
 				</OnChange>
 			</Slider>
+                          <Button Name="Set Group Members" Template="VG.RedButton">
+                            <X>15</X>
+                            <Y>190</Y>
+                            <Width>90%</Width>
+                            <Height>19</Height>
+                            <Text>Find My Group Members in this Raid</Text>
+                            <Alignment>Center</Alignment>
+                            <OnLeftClick>
+                              Script[VGA]:QueueCommand[call SetGroupMembers]
+                            </OnLeftClick>
+                          </Button>
+                	<Text Name='txtGroupRaidList' Template='VG.BoldText'>
+                 		 <X>13</X>
+                 		 <Y>215</Y>
+                  		<Width>45%</Width>
+                  		<Height>20</Height>
+                 		 <Alignment>Left</Alignment>
+                  		<Text>Your Group Members</Text>
+                		</Text>
+                	<Listbox Name="GroupMemberList" Template="VG.ListBox">
+                		 <X>13</X>
+                 		 <Y>235</Y>
+                 		 <Width>95%</Width>
+                 		 <Height>140</Height>
+                 		 <Sort>None</Sort>
+                 		 <OnLoad>
+                 		 </OnLoad>
+                		 <OnRightClick>
+                 		 </OnRightClick>
+               		</Listbox>
               	  </Children>
                 </Frame>
               </Tab>
