@@ -67,6 +67,8 @@ variable settingsetref EmergencyHealSequence
 ;===================================================
 variable(global) string GrpMemberNames[24]
 variable(global) string GrpMemberClassType[24]
+variable(global) int RaidGroup[6]
+variable int RaidGroupCount
 
 ;===================================================
 ;===               Heal Variables               ====

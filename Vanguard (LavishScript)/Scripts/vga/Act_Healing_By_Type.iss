@@ -1,3 +1,15 @@
+function:bool checkgroupstats(int groupint)
+{
+	variable int gi
+
+	for (gi:Set[1] ; ${gi}<=6 ; gi:Inc)
+		{
+		if ${RaidGroup[${gi}]} == ${groupint}
+			{
+			return TRUE
+			}
+		}
+}
 function checkinstantheal()
 {
 	variable int EmergencyInjuries
@@ -15,13 +27,55 @@ function checkinstantheal()
 	L:Set[1]
 
 
-	if ${Me.IsGrouped} && ${Group.Count} < 7
+	if ${Me.IsGrouped}
 	{
+		if ${Group.Count} > 6
+		{
+			;-------------------------------------------
+			; Let's figure out who and how many has the lowest health In Your Raid Group
+			;-------------------------------------------
+			for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
+			{
+				call checkgroupstats ${L}
+				if ${Return}			
+					{
+					if ${GrpMemberClassType[${L}].Equal[Tank]} && ${Group[${L}].Health}<${TankEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+						{
+						EmergencyInjuries:Inc
+						if ${Group[${L}].Health} < ${ELO}
+							{
+							EmergencyHurt:Set[${L}]
+							ELO:Set[${Group[${L}].Health}]
+							}
+						}
+					if ${GrpMemberClassType[${L}].Equal[Medium]} && ${Group[${L}].Health}<${MedEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+						{
+						EmergencyInjuries:Inc
+						if ${Group[${L}].Health} < ${ELO}
+							{
+							EmergencyHurt:Set[${L}]
+							ELO:Set[${Group[${L}].Health}]
+							}
+						}
+					if ${GrpMemberClassType[${L}].Equal[Squishy]} && ${Group[${L}].Health}<${SquishyEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+						{
+						EmergencyInjuries:Inc
+						if ${Group[${L}].Health} < ${ELO}
+							{
+							EmergencyHurt:Set[${L}]
+							ELO:Set[${Group[${L}].Health}]
+							}
+						}
+					}
+			}
+		}
+		if ${Group.Count} < 7
+		{			
 		;-------------------------------------------
 		; Let's figure out who and how many has the lowest health
 		;-------------------------------------------
 		for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
-		{
+			{
 			if ${GrpMemberClassType[${L}].Equal[Tank]} && ${Group[${L}].Health}<${TankEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
 				{
 				EmergencyInjuries:Inc
@@ -49,7 +103,7 @@ function checkinstantheal()
 					ELO:Set[${Group[${L}].Health}]
 					}
 				}
-
+			}
 		}
 		if ${EmergencyInjuries} > 0
 			{
@@ -90,13 +144,82 @@ function:bool CheckGroupDamage()
 	L:Set[1]
 
 
-	if ${Me.IsGrouped} && ${Group.Count} < 7
+	if ${Me.IsGrouped}
 	{
+		if ${Group.Count} > 6
+		{
 		;-------------------------------------------
 		; Let's figure out who and how many has the lowest health
 		;-------------------------------------------
 		for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
+			{
+			call checkgroupstats ${L}
+			if ${Return}			
+				{
+				if ${GrpMemberClassType[${L}].Equal[Tank]} && ${Group[${L}].Health}<${TankEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+					{
+					EmergencyInjuries:Inc
+					if ${Group[${L}].Health} < ${ELO}
+						{
+						EmergencyHurt:Set[${L}]
+						ELO:Set[${Group[${L}].Health}]
+						}
+					}
+				if ${GrpMemberClassType[${L}].Equal[Medium]} && ${Group[${L}].Health}<${MedEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+					{
+					EmergencyInjuries:Inc
+					if ${Group[${L}].Health} < ${ELO}
+						{
+						EmergencyHurt:Set[${L}]
+						ELO:Set[${Group[${L}].Health}]
+						}
+					}
+				if ${GrpMemberClassType[${L}].Equal[Squishy]} && ${Group[${L}].Health}<${SquishyEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+					{
+					EmergencyInjuries:Inc
+					if ${Group[${L}].Health} < ${ELO}
+						{
+						EmergencyHurt:Set[${L}]
+						ELO:Set[${Group[${L}].Health}]
+						}
+					}
+				if ${GrpMemberClassType[${L}].Equal[Tank]} && ${Group[${L}].Health}<${TankHealPct} && ${Group[${L}].Health}>${TankEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+					{
+					Injuries:Inc
+					if ${Group[${L}].Health} < ${HLO}
+						{
+						Hurt:Set[${L}]
+						HLO:Set[${Group[${L}].Health}]
+						}
+					}
+				if ${GrpMemberClassType[${L}].Equal[Medium]} && ${Group[${L}].Health}<${MedHealPct} && ${Group[${L}].Health}>${MedEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+					{
+					Injuries:Inc
+					if ${Group[${L}].Health} < ${HLO}
+						{
+						Hurt:Set[${L}]
+						HLO:Set[${Group[${L}].Health}]
+						}
+					}
+				if ${GrpMemberClassType[${L}].Equal[Squishy]} && ${Group[${L}].Health}<${SquishyHealPct} && ${Group[${L}].Health}>${SquishyEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+					{
+					Injuries:Inc
+					if ${Group[${L}].Health} < ${HLO}
+						{
+						Hurt:Set[${L}]
+						HLO:Set[${Group[${L}].Health}]
+						}
+					}
+				}
+			}
+		}
+		if ${Group.Count} < 7
 		{
+		;-------------------------------------------
+		; Let's figure out who and how many has the lowest health
+		;-------------------------------------------
+		for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
+			{
 			if ${GrpMemberClassType[${L}].Equal[Tank]} && ${Group[${L}].Health}<${TankEmerHealPct} && ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
 				{
 				EmergencyInjuries:Inc
@@ -151,6 +274,7 @@ function:bool CheckGroupDamage()
 					HLO:Set[${Group[${L}].Health}]
 					}
 				}
+			}
 		}
 		if ${EmergencyInjuries} == 0 && ${Injuries} == 0
 			return TRUE
@@ -214,13 +338,36 @@ function:int FindLowestHealth()
 	L:Set[1]
 
 
-	if ${Me.IsGrouped} && ${Group.Count} < 7
+	if ${Me.IsGrouped}
 	{
+		if ${Group.Count} > 6
+		{
 		;-------------------------------------------
 		; Let's figure out who and how many has the lowest health
 		;-------------------------------------------
 		for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
+			{
+			call checkgroupstats ${L}
+			if ${Return}			
+				{
+				if ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+					{
+					if ${Group[${L}].Health} < ${ELO}
+						{
+						EmergencyHurt:Set[${L}]
+						ELO:Set[${Group[${L}].Health}]
+						}
+					}
+				}
+			}
+		}
+		if ${Group.Count} < 7
 		{
+		;-------------------------------------------
+		; Let's figure out who and how many has the lowest health
+		;-------------------------------------------
+		for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
+			{
 			if ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
 				{
 				if ${Group[${L}].Health} < ${ELO}
@@ -229,6 +376,7 @@ function:int FindLowestHealth()
 					ELO:Set[${Group[${L}].Health}]
 					}
 				}
+			}
 		}
 		Pawn[ID,${Group[${L}].ID}]:Target
 			

@@ -162,7 +162,6 @@ objectdef GroupStatus
 		else
 			return FALSe
 	}
-	
 }
 
 variable GroupStatus GroupStatus
