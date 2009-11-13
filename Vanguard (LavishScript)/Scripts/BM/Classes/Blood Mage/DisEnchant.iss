@@ -15,7 +15,7 @@ variable bool DisEnchanted = TRUE
 function:bool DisEnchant()
 {
 	;; Return if we are not DisEnchanting
-	if !${doDisEnchant} || !${Me.Ability[${StripEnchantment}](exists)}
+	if !${doDisEnchant} || !${Me.Ability[${StripEnchantment}](exists)} || ${Me.Target.Distance}>25
 		return
 
 	;; Set our variables

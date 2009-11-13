@@ -73,7 +73,6 @@ function NewTarget()
 			Me.Encounter[1].ToPawn:Target
 			wait 10 ${Me.Target(exists)}
 		}
-	
 		if ${doEcho} && ${Me.Target(exists)}
 			echo "[${Time}][VG:BM] --> NewTarget: ${Me.Target.Name}"
 	}

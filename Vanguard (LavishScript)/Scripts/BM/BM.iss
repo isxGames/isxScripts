@@ -13,24 +13,13 @@ During FURIOUS, put HOTs on the target's offensive target
 Has a Status display that shows what's going on.
 */
 
-/* Heal only the following named people */
-variable bool GroupHeal = FALSE
-variable string GH1 = "${Me.FName}"
-variable string GH2 = "xxyyzz"
-variable string GH3 = "xxyyzz"
-variable string GH4 = "xxyyzz"
-variable string GH5 = "xxyyzz"
-variable string GH6 = "xxyyzz"
-variable string GH7 = "xxyyzz"
-variable string GH8 = "xxyyzz"
-
 /* VARIABLES */
 variable int i
 variable int tank
 variable string Tank
 variable int64 TankID
 variable int StartAttack = 99
-variable int AttackHealRatio = 65
+variable int AttackHealRatio = 75
 variable bool FURIOUS = FALSE
 variable bool doForm = TRUE
 
@@ -75,6 +64,7 @@ variable int FR3 = 5
 #include ./BM/Includes/HandleCorpse.iss
 #include ./BM/Includes/HarvestIt.iss
 #include ./BM/Includes/FindTarget.iss
+#include ./BM/Includes/FindGroupMembers.iss
 #include ./BM/Classes/Blood Mage/SetupAbilities.iss
 
 
@@ -127,7 +117,8 @@ function main()
 	;-------------------------------------------
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
 	Event[VG_OnIncomingCombatText]:AttachAtom[IncomingCombatTextEvent]
-	
+	Event[VG_onGroupMemberCountChange]:AttachAtom[OnGroupMemberCountChange]
+
 	;-------------------------------------------
 	; Loop this while we are paused
 	;-------------------------------------------
@@ -398,6 +389,16 @@ function HandleQueuedCommands()
 			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 23
 			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 				wait 1
+			call UseAbility "${Despoil}" "Focus of Gelenia"
+			call IsCasting
+			call UseAbility "${Despoil}" "Focus of Gelenia"
+			call IsCasting
+			call UseAbility "${Despoil}" "Focus of Gelenia"
+			call IsCasting
+			call UseAbility "${BurstingCyst}" "Focus of Gelenia"
+			call IsCasting
+			call UseAbility "${ScarletRitual}" "Focus of Gelenia"
+			call IsCasting
 			ExecuteQueued
 		}
 	}
@@ -471,6 +472,13 @@ function Paused()
 		call Immunities
 		wait 5
 		waitframe
+		if !${Me.CurrentForm.Name.Equal[Sanguine Focus]} && ${Me.HealthPct}<50
+		{
+			if ${doEcho}
+				echo "[${Time}][VG:BM] --> Form: Sanguine Focus"
+			Me.Form[Sanguine Focus]:ChangeTo
+				wait 25
+		}
 	}
 	
 	;; Change our status to "Waiting"
@@ -491,6 +499,7 @@ function atexit()
 	;; Remove any events
 	Event[VG_OnIncomingText]:DetachAtom[ChatEvent]
 	Event[VG_OnIncomingCombatText]:DetachAtom[IncomingCombatTextEvent]
+	Event[VG_onGroupMemberCountChange]:DetachAtom[OnGroupMemberCountChange]
 	
 	;; Any Class Specific shutdowns
 	call ShutDown

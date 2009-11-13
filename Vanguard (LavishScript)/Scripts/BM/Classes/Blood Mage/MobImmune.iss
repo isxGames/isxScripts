@@ -29,7 +29,9 @@ function:bool MobImmune(string ABILITY)
 		{
 			return TRUE
 		}
-		if ${Me.Target.Name.Find[Electric Elemental]}
+		if ${Me.Target.Name.Find[Energized Marauder]}
+			return TRUE
+		if ${Me.Target.Name.Find[Energized Resonator]}
 			return TRUE
 		if ${Me.Target.Name.Find[Energized Elemental]}
 			return TRUE
@@ -65,6 +67,10 @@ function:bool MobImmune(string ABILITY)
 		{
 			return TRUE
 		}
+		if ${Me.Target.Name.Find[Earthen Marauder]}
+			return TRUE
+		if ${Me.Target.Name.Find[Earthen Resonator]}
+			return TRUE
 		if ${Me.Target.Name.Equal[SUMMONER RINIPIN]}
 			return TRUE
 		if ${Me.Target.Name.Equal[Cartheon Devourer]}

@@ -796,6 +796,7 @@
 					}
 					Script[BM].Variable[Tank]:Set[${Me.DTarget.Name}]
 					Script[BM].Variable[TankID]:Set[${Me.DTarget.ID}]
+					Script[BM].Variable[doCheckForMembers]:Set[TRUE]
 				</OnLeftClick>
 			</commandbutton>
 			<Commandbutton Name="Quit Button" Template="VG.GreyCommandButton">
