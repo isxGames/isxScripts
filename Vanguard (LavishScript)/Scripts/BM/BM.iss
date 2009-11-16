@@ -1,5 +1,5 @@
 /*
-BM - Blood Mage v1.5
+BM - Blood Mage v1.6
 by:  Zandros, 4 July 2009
 
 Description:
@@ -19,7 +19,7 @@ variable int tank
 variable string Tank
 variable int64 TankID
 variable int StartAttack = 99
-variable int AttackHealRatio = 75
+variable int AttackHealRatio = 60
 variable bool FURIOUS = FALSE
 variable bool doForm = TRUE
 
@@ -36,7 +36,7 @@ variable bool AttackNow = TRUE
 variable string Status = "Setup Abilities"
 variable string Immunity = None
 ;; Echos and Debug Info
-variable bool doEcho = TRUE
+variable bool doEcho = FALSE
 variable bool doEchoTIME = FALSE
 variable bool EchoFurious = FALSE
 ;; AutoFollow bools
@@ -238,21 +238,21 @@ function FunctionTimer(string FUNCTION)
 /* ISCASTING */
 function IsCasting()
 {
-	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]}
+	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]} || ${Pawn[me].IsMounted}
 	{
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]}
+		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]} || ${Pawn[me].IsMounted}
 		{
 			;; Show Abilities are not ready
 			if !${Me.Ability["Torch"].IsReady}
 			{	
-				if !${Me.IsCasting} && ${Status.Equal[Waiting]}
+				if !${Me.IsCasting} && (${Status.Equal[Waiting]} || ${Status.Equal[Mounted - No Script Casting]})
 					Status:Set[ABILITIES NOT READY]
 			}
 
 			;; Show we are casting an Ability
 			if ${Me.IsCasting}
 			{
-				if ${Status.Equal[Waiting]} || ${Status.Equal[ABILITIES NOT READY]}
+				if ${Status.Equal[Waiting]} || ${Status.Equal[ABILITIES NOT READY]} || ${Pawn[me].IsMounted}
 					Status:Set[${Me.Casting}]
 				if ${doFace} && ${Me.InCombat} && ${Me.Target(exists)}
 					call faceloc ${Me.Target.X} ${Me.Target.Y} 55
@@ -284,21 +284,11 @@ function IsCasting()
 				VGExecute /hidewindow Harvesting
 				echo "[${Time}][BM] --> Closed that pesky Harvesting window"
 			}
-
-			;; Show target is casting what
-			While !${Me.TargetCasting.Equal[None]} && (${Me.Ability[Dissolve].TriggeredCountdown}>0 || ${Me.Ability[${Metamorphism}].TriggeredCountdown}>0)
+			if ${Pawn[me].IsMounted} && !${Me.IsCasting} && ${Me.Ability["Torch"].IsReady}
 			{
-				if ${Me.Ability[${Dissolve}].TriggeredCountdown}>0
-				{
-					call UseAbility "${Dissolve}"
-				}
-
-				if ${Me.Ability[${Metamorphism}].TriggeredCountdown}>0
-				{
-					call UseAbility "${Metamorphism}"
-				}
-
-				Status:Set[TARGET IS CASTING]
+				Status:Set[Mounted - No Script Casting]
+				if ${Me.InCombat}
+					return
 			}
 		}
 		
@@ -311,13 +301,12 @@ function IsCasting()
 			
 	}
 }
-
 /* USE ABILITY */
 function:bool UseAbility(string ABILITY, string FORM)
 {
 	;; if remaining time till ready is less than 2 sec then wait
-	if ${Me.Ability[${ABILITY}].TimeRemaining}>0 && ${Me.Ability[${ABILITY}].TimeRemaining}<2 
-		wait 20 ${Me.Ability[${ABILITY}].TimeRemaining}==0
+	;if ${Me.Ability[${ABILITY}].TimeRemaining}>0 && ${Me.Ability[${ABILITY}].TimeRemaining}<2 
+	;	wait 20 ${Me.Ability[${ABILITY}].TimeRemaining}==0
 	
 	;; Check if ability is ready or exists
 	if !${Me.Ability[${ABILITY}].IsReady} || !${Me.Ability[${ABILITY}](exists)}
@@ -339,6 +328,23 @@ function:bool UseAbility(string ABILITY, string FORM)
 	call MobImmune "${ABILITY}"
 	if ${Return}
 		return FALSE
+
+	;; Wait to ensure its ready to cast that Counter
+	if (${Me.Ability[${ABILITY}].IsCounter} || ${Me.Ability[${ABILITY}].IsChain}) && ${Me.Ability[${ABILITY}].TimeRemaining}<3 
+	{
+		;echo Before Chain=${Me.Ability[${ABILITY}].IsChain}, Counter=${Me.Ability[${ABILITY}].IsCounter}, Ready=${Me.Ability[${ABILITY}].IsReady}, TimeRemaining=${Me.Ability[${ABILITY}].TimeRemaining}, TriggeredCountdown=${Me.Ability[${ABILITY}].TriggeredCountdown}, Type=${Me.Ability[${ABILITY}].Type}, Ability=${Me.Ability[${ABILITY}]}
+		
+		while ${Me.Ability[${ABILITY}].IsCounter} && ${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}>0 && ${Me.Ability[${ABILITY}].TriggeredCountdown}
+			wait 1
+		
+		;; hey, let's wait and chain these together
+		while ${Me.Ability[${ABILITY}].IsChain} && !${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}>0 
+			wait 1
+			
+		;echo After  Chain=${Me.Ability[${ABILITY}].IsChain}, Counter=${Me.Ability[${ABILITY}].IsCounter}, Ready=${Me.Ability[${ABILITY}].IsReady}, TimeRemaining=${Me.Ability[${ABILITY}].TimeRemaining}, TriggeredCountdown=${Me.Ability[${ABILITY}].TriggeredCountdown}, Type=${Me.Ability[${ABILITY}].Type}, Ability=${Me.Ability[${ABILITY}]}
+	}
+		
+	;echo Chain=${Me.Ability[${ABILITY}].IsChain}, Counter=${Me.Ability[${ABILITY}].IsCounter}, Ready=${Me.Ability[${ABILITY}].IsReady}, TimeRemaining=${Me.Ability[${ABILITY}].TimeRemaining}, TriggeredCountdown=${Me.Ability[${ABILITY}].TriggeredCountdown}, Type=${Me.Ability[${ABILITY}].Type}, Ability=${Me.Ability[${ABILITY}]}
 
 	;; Lets change form
 	if ${doForm} && !${FORM.Equal[""]} && ${Me.Form[${FORM}](exists)} && !${Me.CurrentForm.Name.Equal[${FORM}]}
@@ -373,7 +379,7 @@ function:bool UseAbility(string ABILITY, string FORM)
 		wait 10 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
 		if ${doFace} && ${Me.Target(exists)} 
 			call faceloc ${Me.Target.X} ${Me.Target.Y} 55
-		;call IsCasting
+		call IsCasting
 		return TRUE
 	}
 	return FALSE
@@ -385,20 +391,14 @@ function HandleQueuedCommands()
 	{
 		if ${Me.Target(exists)}
 		{
-			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 23
-			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 23
+			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 20
+			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 20
 			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 				wait 1
 			call UseAbility "${Despoil}" "Focus of Gelenia"
-			call IsCasting
 			call UseAbility "${Despoil}" "Focus of Gelenia"
-			call IsCasting
-			call UseAbility "${Despoil}" "Focus of Gelenia"
-			call IsCasting
-			call UseAbility "${BurstingCyst}" "Focus of Gelenia"
-			call IsCasting
+			call UseAbility "${UnionOfBlood}" "Focus of Gelenia"
 			call UseAbility "${ScarletRitual}" "Focus of Gelenia"
-			call IsCasting
 			ExecuteQueued
 		}
 	}
@@ -485,6 +485,7 @@ function Paused()
 	Status:Set[Waiting]
 
 	echo "[${Time}][VG:BM] --> Resumed"
+	FlushQueued
 }
 
 /* Play a Sound File */

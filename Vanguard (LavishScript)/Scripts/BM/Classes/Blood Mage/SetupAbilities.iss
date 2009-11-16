@@ -22,6 +22,7 @@ in your own scripts by including them here.
 #include ./BM/Classes/Blood Mage/DisEnchant.iss
 
 /* VARIABLES */
+variable bool doLifeTap = TRUE
 variable bool CritNow = TRUE
 variable bool doSymbiotes = TRUE
 variable bool doDisEnchant = TRUE

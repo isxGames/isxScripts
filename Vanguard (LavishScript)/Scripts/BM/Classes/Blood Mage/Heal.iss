@@ -24,22 +24,21 @@ function:bool HealDTarget()
 	;-------------------------------------------
 	; #3 - HEAL SELF - If we go down then we can't heal
 	;-------------------------------------------
-	if ${Me.HealthPct}<${AttackHealRatio} && ${Me.Ability[${InfuseHealth}].IsReady}
+	if ${Me.HealthPct}<${AttackHealRatio} && ${Me.Ability[${InfuseHealth}].IsReady} && ${Me.Ability[${Despoil}].IsReady}
 	{
+		;; Use our LifeTap 1st
+		if ${Me.HealthPct}>50
+		{
+			call UseAbility "${Despoil}" "Focus of Gelenia"
+			if ${Return}
+				return TRUE
+		}
+		
+		;; Otherwise, bust out the heal
 		Pawn[me]:Target
 		call UseAbility "${InfuseHealth}" "Sanguine Focus"
-		;-------------------------------------------
-		; STOP CASTING SELF HEAL IF YOU ARE ALREADY HEALED
-		;-------------------------------------------
 		if ${Return}
-		{
-			while ${Me.IsCasting}
-			{
-				if ${Me.HealthPct}>90
-					VGExecute /stopcasting
-			}
 			return TRUE
-		}
 	}
 
 	;-------------------------------------------
@@ -60,18 +59,8 @@ function:bool HealDTarget()
 	{
 		Pawn[id,${Group[${gn}].ID}]:Target
 		call UseAbility "${BloodGift}" "Sanguine Focus"
-		;-------------------------------------------
-		; STOP CASTING BIG HEAL IF THEY ALREADY ARE HEALED
-		;-------------------------------------------
 		if ${Return}
-		{
-			while ${Me.IsCasting}
-			{
-				if ${Group[${gn}].Health}>90
-					VGExecute /stopcasting
-			}
 			return TRUE
-		}
 	}
 	return FALSE
 }

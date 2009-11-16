@@ -18,14 +18,27 @@ function InCombat()
 		return
 
 	;-------------------------------------------
+	; Establish Blood Feast - Get 10% of damage from allies returned back to me as health
+	;-------------------------------------------
+	if ${Me.Ability[Blood Feast](exists)} && !${Me.Effect[Blood Feast](exists)}
+	{
+		waitframe
+		wait 10 ${Me.Ability[Blood Feast].IsReady}
+		call UseAbility "Blood Feast"
+		if ${Return}
+			wait 10 ${Me.Effect[Blood Feast](exists)}
+	}
+
+	;-------------------------------------------
 	; Establish Ritual of Awakening - +20% spell haste
 	;-------------------------------------------
-	;; Ability:BloodUnionRequired is not reporting correctly for any Ritual of...
-	if ${Me.BloodUnion}>1
+	if ${Me.BloodUnion}>1 && ${Me.Ability[Ritual of Awakening](exists)} && !${Me.Effect[Ritual of Awakening](exists)}
 	{
+		waitframe
+		wait 10 ${Me.Ability[Ritual of Awakening].IsReady}
 		call UseAbility "Ritual of Awakening"
 		if ${Return}
-			return
+			wait 10 ${Me.Effect[Ritual of Awakening](exists)}
 	}
 
 	;-------------------------------------------
@@ -43,11 +56,17 @@ function InCombat()
 	}
 
 	;-------------------------------------------
-	; Regenerate our mana
+	; Things we want to do if everyone is in safe zone
 	;-------------------------------------------
 	if ${low}>${AttackHealRatio}
 	{
+		;; Routine to Regen our mana
 		call RegenMana
+		if ${Return}
+			return
+
+		;; Routine to DisEnchant Enchantments and set FURIOUS flag
+		call DisEnchant
 		if ${Return}
 			return
 	}
@@ -65,19 +84,25 @@ function InCombat()
 	if ${Return}
 		return
 		
+
 	;-------------------------------------------
-	; Routine to DisEnchant Enchantments and set FURIOUS flag
+	; Check #1 - Return if we are not in combat
 	;-------------------------------------------
-	call DisEnchant
-	if ${Return}
+	if !${Me.InCombat} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]}
 		return
 
 	;-------------------------------------------
-	; Let tank get aggro before attacking
+	; Check #2 - Return to allow tank to gain aggro
 	;-------------------------------------------
 	if ${Me.IsGrouped} && ${Me.TargetHealth}>${StartAttack} 
 		return
-
+		
+	;-------------------------------------------
+	; Check #3 - Return if target is not attackable
+	;-------------------------------------------
+	if !${Me.Target(exists)} || !${Me.Target.HaveLineOfSightTo} || !${Me.Target.IsAttackable} || ${Me.Target.Distance}>25
+		return
+		
 	;-------------------------------------------
 	; Let's Attack the target, lifetap will work outside healing range
 	;-------------------------------------------
@@ -199,6 +224,42 @@ function AttackTarget()
 		if ${Return}
 			return
 	}
+
+/*
+ * -----------------------------------------------
+ * Lets do our LIFETAPS
+ * -----------------------------------------------
+ */
+ 	;-------------------------------------------
+	; Execute this once every 2 seconds allows our DOTs to get loaded
+	;-------------------------------------------
+	if ${doLifeTap}
+	{
+		;-------------------------------------------
+		; If DTarget is me, use Despoil
+		;-------------------------------------------
+		if !${Me.IsGrouped} || ${Group[${gn}].Name.Equal[${Me.FName}]} || !${Me.Ability[${EntwiningVein}](exists)}
+		{
+			call UseAbility "${Despoil}" "Focus of Gelenia"
+			if ${Return}
+			{
+				SetLiFeTap
+				return
+			}
+		}
+	
+		;-------------------------------------------
+		; If DTarget is someone else, use Entwining Vein on the lowest health
+		;-------------------------------------------
+		if ${Me.DTargetHealth}>90
+			vgexecute /assistoffensive
+		call UseAbility "${EntwiningVein}" "Focus of Gelenia"
+		if ${Return}
+		{
+			SetLiFeTap
+			return
+		}
+	}
 	
 /*
  * -----------------------------------------------
@@ -210,11 +271,11 @@ function AttackTarget()
 	;-------------------------------------------
 	if ${doDots}
 	{
-		call UseAbility "${UnionOfBlood}" "Focus of Gelenia"
+		call UseAbility "${BloodLettingRitual}" "Focus of Gelenia"
 		if ${Return}
 			return
 
-		call UseAbility "${BloodLettingRitual}" "Focus of Gelenia"
+		call UseAbility "${UnionOfBlood}" "Focus of Gelenia"
 		if ${Return}
 			return
 
@@ -226,28 +287,28 @@ function AttackTarget()
 		if ${Return}
 			return
 	}
-/*
- * -----------------------------------------------
- * Lets do our LIFETAPS
- * -----------------------------------------------
- */
-  	;-------------------------------------------
-	; If DTarget is me, use Despoil
-	;-------------------------------------------
-	if !${Me.IsGrouped} || ${Group[${gn}].Name.Equal[${Me.FName}]} || !${Me.Ability[${EntwiningVein}](exists)}
-	{
-		call UseAbility "${Despoil}" "Focus of Gelenia"
-		if ${Return}
-			return
-	}
-	
-	;-------------------------------------------
-	; If DTarget is someone else, use Entwining Vein on the lowest health
-	;-------------------------------------------
-	if ${Me.DTargetHealth}>90
-		vgexecute /assistoffensive
-	call UseAbility "${EntwiningVein}" "Focus of Gelenia"
 }
+
+;; Calculate LifeTap
+atom SetLiFeTap() 
+{
+	variable float y
+	if ${doLifeTap}
+	{
+		y:Set[${Me.Ability[${Despoil}].CastTime}*10]
+	
+		;; Add 2 seconds if we are casting Dots
+		if ${doDots}
+			y:Inc[30]
+		;; Add 1/2 second if we are not casting any Dots
+		if !${doDots}
+			y:Inc[5]
+
+		doLifeTap:Set[FALSE]
+		TimedCommand ${y.Int} Script[BM].Variable[doLifeTap]:Set[TRUE]
+	}
+}
+		
 
 /* CRITS - CHAINS & COUNTERS */
 function:bool Crits()
