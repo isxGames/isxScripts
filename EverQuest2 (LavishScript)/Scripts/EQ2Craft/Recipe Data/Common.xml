@@ -109,6 +109,7 @@
 		<Setting Name="Mahogany Lumber">mahogany</Setting>
 		<Setting Name="hidebound pelt">Hidebound Leather</Setting>
 		<Setting Name="Mantrap">mantrap</Setting>
+		<Setting Name="(Expert)">(Expert)</Setting>
 	</Set>
   <Set Name="Wholesalers">
     <Setting Name="Wholesaler"></Setting>
