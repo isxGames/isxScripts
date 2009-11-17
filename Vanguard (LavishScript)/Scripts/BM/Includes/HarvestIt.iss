@@ -29,7 +29,16 @@ variable int HarvestRange = 10
 function:bool HarvestIt(int Distance)
 {
 	;-------------------------------------------
-	; return if we do not want to harvest
+	; If we are harvesting then finish harvesting it
+	;-------------------------------------------
+	if ${GV[bool,bHarvesting]}
+	{
+		call Harvesting ${Distance} 7
+		return ${Return}
+	}
+		
+	;-------------------------------------------
+	; Find something to harvest
 	;-------------------------------------------
 	if !${GV[bool,bHarvesting]}
 	{
@@ -50,9 +59,9 @@ function:bool HarvestIt(int Distance)
 			call Harvesting ${Distance}
 			return ${Return}
 		}
-			
-		return FALSE
 	}
+	
+	return FALSE
 }
 
 function:bool Harvesting(int Distance)
@@ -145,11 +154,6 @@ function:bool Harvesting(int Distance)
 	if ${GV[bool,bHarvesting]}
 	{
 		VGExecute /endharvesting
-		;Mouse:SetPosition[973,411]
-		;wait 2
-		;Mouse:LeftClick
-		;wait 2
-		;Mouse:ReleaseLeft
 	}
 
 	;-------------------------------------------
@@ -167,18 +171,14 @@ function:bool Harvesting(int Distance)
 		wait 1
 		Mouse:ReleaseLeft
 		wait 5
+		if ${doEcho}
+			echo "[${Time}][BM] --> Closed that pesky Harvesting window"
 	}
 
 	;-------------------------------------------
-	; Time to loot the corpse!
+	; Time to loot wait for corpse to change to remains
 	;-------------------------------------------
-	call Loot
-
-	;-------------------------------------------
-	; Let's clear our targets
-	;-------------------------------------------
-	;VGExecute /cleartargets
-	;wait 5
+	wait 15 ${Me.Target.Name.Find[remains]} 
 
 	;-------------------------------------------
 	; Consolidate our looted resources
