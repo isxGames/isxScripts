@@ -238,76 +238,40 @@ function FunctionTimer(string FUNCTION)
 /* ISCASTING */
 function IsCasting()
 {
-	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]} || ${Pawn[me].IsMounted}
+	while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting} || ${Pawn[me].IsMounted}
 	{
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]} || ${Pawn[me].IsMounted}
+		;; Show ability if casting
+		if ${Me.IsCasting}
 		{
-			;; Show Abilities are not ready
-			if !${Me.Ability["Torch"].IsReady}
-			{	
-				if !${Me.IsCasting} && (${Status.Equal[Waiting]} || ${Status.Equal[Mounted - No Script Casting]})
-					Status:Set[ABILITIES NOT READY]
-			}
-
-			;; Show we are casting an Ability
-			if ${Me.IsCasting}
-			{
-				if ${Status.Equal[Waiting]} || ${Status.Equal[ABILITIES NOT READY]} || ${Pawn[me].IsMounted}
-					Status:Set[${Me.Casting}]
-				if ${doFace} && ${Me.InCombat} && ${Me.Target(exists)}
-					call faceloc ${Me.Target.X} ${Me.Target.Y} 55
-				if ${doMoveCloser} && ${Me.InCombat}
-					call MoveCloser ${Pawn[${Tank}].X} ${Pawn[${Tank}].Y} 8
-			}
-
-			;; Show we are in Global Cooldown
-			if ${VG.InGlobalRecovery}>0 && !${Me.IsCasting}
-				Status:Set[GLOBAL COOLDOWN]
-
-			;; Show we are Harvesting
-			if ${GV[bool,bHarvesting]} && !${GV[bool,IsHarvestingDone]}
-				Status:Set[HARVESTING]
-
-			;; Close that pesky window (gotta move it to where the cursor is)
-			if ${GV[bool,bHarvesting]} && ${GV[bool,IsHarvestingDone]}
-			{
-				VGExecute /endharvesting
-				VGExecute /showwindow Harvesting
-				Mouse:SetPosition[975,829]
-				Mouse:LeftClick
-				wait 1
-				Mouse:SetPosition[978,832]
-				Mouse:LeftClick
-				wait 1
-				Mouse:ReleaseLeft
-				wait 5
-				VGExecute /hidewindow Harvesting
-				echo "[${Time}][BM] --> Closed that pesky Harvesting window"
-			}
-			if ${Pawn[me].IsMounted} && !${Me.IsCasting} && ${Me.Ability["Torch"].IsReady}
-			{
-				Status:Set[Mounted - No Script Casting]
-				if ${Me.InCombat}
-					return
-			}
+			Status:Set[${Me.Casting}]
+			if ${doFace} && ${Me.InCombat} && ${Me.Target(exists)}
+				call faceloc ${Me.Target.X} ${Me.Target.Y} 55
 		}
 		
-		;; Wait 1/10th of a second does wonders 
-		waitframe
+		;; Show if we are mounted
+		if ${Pawn[me].IsMounted} && !${Me.IsCasting}
+		{
+			if ${Me.Ability["Torch"].IsReady}
+				Status:Set[Mounted - No Script Casting]
+			if ${Me.InCombat} || ${isPaused}
+				return
+		}
 		
-		;; Update our Status to show we are Waiting 
-		if !${isPaused}
-			Status:Set[Waiting]
-			
+		;; Show if ability is not ready
+		if !${Me.Ability["Torch"].IsReady} && (${Status.Equal[Mounted - No Script Casting]} || ${Status.Equal[Waiting]}
+			Status:Set[ABILITIES NOT READY]
+ 		wait 1
+		FlushQueued
 	}
+	
+	;; Update our Status to show we are Waiting 
+	if !${isPaused}
+		Status:Set[Waiting]
 }
+
 /* USE ABILITY */
 function:bool UseAbility(string ABILITY, string FORM)
 {
-	;; if remaining time till ready is less than 2 sec then wait
-	;if ${Me.Ability[${ABILITY}].TimeRemaining}>0 && ${Me.Ability[${ABILITY}].TimeRemaining}<2 
-	;	wait 20 ${Me.Ability[${ABILITY}].TimeRemaining}==0
-	
 	;; Check if ability is ready or exists
 	if !${Me.Ability[${ABILITY}].IsReady} || !${Me.Ability[${ABILITY}](exists)}
 		return FALSE
@@ -338,8 +302,8 @@ function:bool UseAbility(string ABILITY, string FORM)
 			wait 1
 		
 		;; hey, let's wait and chain these together
-		while ${Me.Ability[${ABILITY}].IsChain} && !${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}>0 
-			wait 1
+		while ${Me.Ability[${ABILITY}].IsChain} && ${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}>0 
+			VGExecute /reactionautocounter
 			
 		;echo After  Chain=${Me.Ability[${ABILITY}].IsChain}, Counter=${Me.Ability[${ABILITY}].IsCounter}, Ready=${Me.Ability[${ABILITY}].IsReady}, TimeRemaining=${Me.Ability[${ABILITY}].TimeRemaining}, TriggeredCountdown=${Me.Ability[${ABILITY}].TriggeredCountdown}, Type=${Me.Ability[${ABILITY}].Type}, Ability=${Me.Ability[${ABILITY}]}
 	}
@@ -357,7 +321,7 @@ function:bool UseAbility(string ABILITY, string FORM)
 	}
 
 	;; If form doesn't exist then change to default
-	if ${doForm} && !${FORM.Equal[""]} && !${Me.Form[${FORM}](exists)} && !${Me.CurrentForm.Name.Equal[Unfocused]}
+	if ${doForm} && ${Me.Class.Equal[Blood Mage]} && !${FORM.Equal[""]} && !${Me.Form[${FORM}](exists)} && !${Me.CurrentForm.Name.Equal[Unfocused]}
 	{
 		if ${doEcho}
 			echo "[${Time}][VG:BM] --> Form: Unfocused"
@@ -368,7 +332,7 @@ function:bool UseAbility(string ABILITY, string FORM)
 
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
-		;; Update our status display
+		;; Update our status display - fixes the problem with instant abilities not showing up
 		Status:Set[${ABILITY}]
 
 		;; Echo our Ability
@@ -376,14 +340,12 @@ function:bool UseAbility(string ABILITY, string FORM)
 			echo "[${Time}][VG:BM] --> UseAbility: ${ABILITY}"
 
 		Me.Ability[${ABILITY}]:Use
-		wait 10 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
-		if ${doFace} && ${Me.Target(exists)} 
-			call faceloc ${Me.Target.X} ${Me.Target.Y} 55
-		call IsCasting
+		wait 3
 		return TRUE
 	}
 	return FALSE
 }
+
 
 function HandleQueuedCommands()
 {

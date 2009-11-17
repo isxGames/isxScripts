@@ -71,6 +71,8 @@ function FindGroupMembers()
 ;; Find and place group member into the collection variable
 function CheckGroupMember(int GN)
 {
+	variable string PCName
+
 	if ${GN}<7
 	{
 		VGExecute /cleartargets
@@ -83,15 +85,15 @@ function CheckGroupMember(int GN)
 			echo "[${Time}][VG:BM] --> FindGroupMembers: Group Member[${GN}]= ${Me.DTarget.Name}"
 		if ${doEcho} && ${GN}>=7
 			echo "[${Time}][VG:BM] --> FindGroupMembers: Tank= ${Me.DTarget.Name}"
-		
-		GroupMemberList:Set["${Me.DTarget.Name}", ${Me.DTarget.ID}]
+
+		GroupMemberList:Set["${Me.DTarget.Name.Token[1," "]}", ${Me.DTarget.ID}]
 	}
 	if !${Me.DTarget(exists)}
 	{
 		if ${doEcho} && ${GN}<7
 			echo "[${Time}][VG:BM] --> FindGroupMembers: Group Member[${GN}]= does not exist"
 		if ${doEcho} && ${GN}>=7
-			echo "[${Time}][VG:BM] --> FindGroupMembers: Tank [${Tank]= does not exist"
+			echo "[${Time}][VG:BM] --> FindGroupMembers: Tank [${Tank}]= does not exist"
 	}
 }
 

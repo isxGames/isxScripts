@@ -9,10 +9,10 @@ more to be added in future
 /* HANDLECORPSE */
 function HandleCorpse()
 {
+	call HarvestIt ${HarvestRange}
 	call Loot
 	call ClearTarget
 	call NewTarget
-	call HarvestIt ${HarvestRange}
 }
 
 function Loot()
@@ -20,6 +20,10 @@ function Loot()
 	;; Quick, loot the target
 	if ${doLoot} && !${Me.IsGrouped} && ${Me.Target(exists)} && ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.Distance}<6
 	{
+		wait 5 ${GV[bool,bHarvesting]}
+		if  ${GV[bool,bHarvesting]}
+			return
+	
 		if ${doEcho}
 			echo "[${Time}][VG:BM] --> Loot: ${Me.Target.Name}"
 		VGExecute /loot
@@ -34,7 +38,7 @@ function Loot()
 			Loot:EndLooting
 			wait 5
 		}
-		VGExecute /hidewindow harvesting
+		;VGExecute /hidewindow harvesting
 		VGExecute /hidewindow bonus yield
 		VGExecute /hidewindow depletion bonus yield 
 		wait 5 !${Me.Target(exists)}
@@ -47,7 +51,7 @@ function ClearTarget()
 	;; Clear our target if its a corpse
 	if ${Me.Target(exists)} && ${Me.Target.Type.Equal[Corpse]}
 	{
-		waitframe
+		wait 7 ${GV[bool,bHarvesting]}
 		if !${GV[bool,bHarvesting]}
 		{
 			if ${doEcho} && ${Me.Target(exists)}
