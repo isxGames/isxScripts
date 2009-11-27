@@ -509,6 +509,17 @@ function DoFollowInCombat()
 		}
 	}
 	return
+	if !${DoFollowInCombat} && ${fight.ShouldIAttack}
+	{
+		if ${IsFollowing}
+		{
+			Pawn[${followpawn}]:Target
+			wait 1
+			VGExecute /follow ${followpawn}
+			IsFollowing:Set[FALSE]
+		}
+	}
+	return
 
 }
 ;********************************************
@@ -541,7 +552,7 @@ function TooClose()
 ;********************************************     
 function followpawn()
 {
-	if ${dofollowpawn}
+	if ${dofollowpawn} && !${fight.ShouldIAttack}
 	{
 		if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${IsFollowing}
 		{

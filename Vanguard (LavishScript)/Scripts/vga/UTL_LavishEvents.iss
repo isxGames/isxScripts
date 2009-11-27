@@ -64,9 +64,7 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
 			if ${IsFollowing}
 				{
-				VG:ExecBinding[movebackward]	
-				wait 1
-				VG:ExecBinding[movebackward,release]
+				VGExecute /follow ${followpawn}
 				IsFollowing:Set[FALSE]
 				}
 		}
