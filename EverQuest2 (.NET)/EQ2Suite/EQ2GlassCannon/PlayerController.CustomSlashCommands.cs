@@ -366,6 +366,18 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
+				case "gc_distance":
+				{
+					Actor MyTargetActor = MeActor.Target();
+					if (MyTargetActor.IsValid)
+					{
+						string strOutput = string.Format("Distance to target \"{0}\" ({1}): {2} meter(s).", MyTargetActor.Name, MyTargetActor.ID, MyTargetActor.Distance);
+						RunCommand("/announce {0}", strOutput);
+						Program.Log(strOutput);
+					}
+					return true;
+				}
+
 				case "gc_exit":
 				{
 					Program.Log("Exit command received!");

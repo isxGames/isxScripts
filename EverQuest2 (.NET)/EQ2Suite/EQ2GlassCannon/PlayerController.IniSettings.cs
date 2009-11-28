@@ -41,7 +41,7 @@ namespace EQ2GlassCannon
 		protected bool m_bWriteBackINI = true;
 		protected int m_iFrameSkip = 2;
 		protected bool m_bKillBotWhenCamping = false;
-		protected ulong m_ulVirtualAllocationProcessTerminationThreshold = 3000000000;
+		protected ulong m_ulVirtualAllocationProcessTerminationThreshold = 3500000000;
 		protected string m_strCustomTellTriggerFile = string.Empty;
 		protected List<string> m_astrMainTanks = new List<string>();
 		protected List<string> m_astrAutoFollowTargets = new List<string>();
@@ -80,7 +80,9 @@ namespace EQ2GlassCannon
 		protected bool m_bUsePet = true;
 		protected bool m_bSummonPetDuringCombat = false;
 		protected bool m_bHarvestAutomatically = false;
-		protected bool m_bLootTradeablesAutomatically = false;
+		protected bool m_bLootAutomatically = false;
+		protected bool m_bLootFFATradeablesAutomatically = false;
+		protected bool m_bLootNBGGreedAutomatically = false;
 
 		protected string m_strForwardKey = "W";
 		protected string m_strBackwardKey = "S";
@@ -151,7 +153,9 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.UsePet", ref m_bUsePet);
 			ThisFile.TransferBool("General.RecastPetDuringCombat", ref m_bSummonPetDuringCombat);
 			ThisFile.TransferBool("General.HarvestAutomatically", ref m_bHarvestAutomatically);
-			ThisFile.TransferBool("General.LootTradeablesAutomatically", ref m_bLootTradeablesAutomatically);
+			ThisFile.TransferBool("General.LootAutomatically", ref m_bLootAutomatically);
+			ThisFile.TransferBool("General.LootFFATradeablesAutomatically", ref m_bLootFFATradeablesAutomatically);
+			ThisFile.TransferBool("General.LootNBGGreedAutomatically", ref m_bLootNBGGreedAutomatically);
 
 			ThisFile.TransferString("Controls.ForwardKey", ref m_strForwardKey);
 			ThisFile.TransferString("Controls.BackwardKey", ref m_strBackwardKey);
@@ -246,9 +250,9 @@ namespace EQ2GlassCannon
 							{
 								m_aCustomChatTriggerList.Add(NewTrigger);
 								Program.DebugLog("Chat Trigger Sources: \"{0}\", Substring: \"{1}\", Commands: \"{2}\"",
-									string.Join(", ", NewTrigger.m_SourcePlayerSet.ToArray()),
+									NewTrigger.m_SourcePlayerSet,
 									NewTrigger.m_strSubstring,
-									string.Join(", ", NewTrigger.m_astrCommands.ToArray()));
+									NewTrigger.m_astrCommands);
 							}
 						}
 					}

@@ -332,13 +332,14 @@ namespace EQ2GlassCannon
 				return;
 			}
 
-			ThisBuilder.AppendLine("{0}. \"{1}\")",
+			ThisBuilder.AppendLine("{0}. \"{1}\"",
 				iBulletNumber,
 				ThisItem.Name);
 			ThisBuilder.AppendedLinePrefix = "      ";
 
 			ThisBuilder.AppendLine("Tier: {0}", ThisItem.Tier);
 			ThisBuilder.AppendLine("Description: {0}", ThisItem.Description);
+			ThisBuilder.AppendLine("Level: {0}", ThisItem.Level);
 			//ThisBuilder.AppendLine("Link ID: {0}", ThisItem.LinkID);
 
 			List<string> astrFlags = new List<string>();
@@ -355,6 +356,10 @@ namespace EQ2GlassCannon
 				astrFlags.Add("NoValue");
 			if (ThisItem.NoZone)
 				astrFlags.Add("NoZone");
+			if (ThisItem.Attuneable)
+				astrFlags.Add("Attunable");
+			if (ThisItem.Attuned)
+				astrFlags.Add("Attuned");
 
 			string strFlags = string.Join(", ", astrFlags.ToArray());
 			ThisBuilder.AppendLine("Flags: {0}", strFlags);

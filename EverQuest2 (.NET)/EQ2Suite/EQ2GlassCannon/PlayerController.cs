@@ -19,6 +19,7 @@ namespace EQ2GlassCannon
 		protected const string STR_NO_KILL_NPC = "NoKill NPC";
 		protected const string STR_NAMED_NPC = "NamedNPC";
 		protected const string STR_FREE_FOR_ALL = "Free For All";
+		protected const string STR_NEED_BEFORE_GREED = "Need Before Greed";
 
 		protected uint m_uiLoreAndLegendAbilityID = 0;
 		protected uint m_uiHOStarterAbiltyID = 0;
@@ -350,6 +351,8 @@ namespace EQ2GlassCannon
 					if (ThisMaintained.Type == "Group")
 						return ThisMaintained.Cancel();
 				}
+
+				Program.Log("All maintained group effects cancelled.");
 				m_bClearGroupMaintained = false;
 			}
 
@@ -527,7 +530,7 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected virtual bool OnLootWindowAppeared(LootWindow ThisWindow)
+		protected virtual bool OnLootWindowAppeared(string strID, LootWindow ThisWindow)
 		{
 			if (m_ePositioningStance == PositioningStance.DoNothing)
 			{
@@ -554,11 +557,11 @@ namespace EQ2GlassCannon
 				for (int iIndex = 1; iIndex <= ThisWindow.NumItems; iIndex++)
 				{
 					Item ThisItem = ThisWindow.Item(iIndex);
-					if (ThisItem.NoTrade && ThisItem.Name == "Void Shard")
+					if (ThisItem.Heirloom && ThisItem.Name == "Void Shard")
 						LootedItemSet.Add(iIndex);
 				}
 
-				if (m_bLootTradeablesAutomatically)
+				if (m_bLootFFATradeablesAutomatically)
 				{
 					for (int iIndex = 1; iIndex <= ThisWindow.NumItems; iIndex++)
 					{
@@ -569,9 +572,14 @@ namespace EQ2GlassCannon
 					}
 				}
 
-				Program.Log("Looting items: {0}...", LootedItemSet);
+				Program.Log("Looting items: ({0})...", LootedItemSet);
 				foreach (int iIndex in LootedItemSet)
 					ThisWindow.LootItem(iIndex, true);
+			}
+
+			else if (ThisWindow.Type == STR_NEED_BEFORE_GREED)
+			{
+				//ThisWindow.Items(3);
 			}
 
 			/*switch (ThisWindow.Type)
