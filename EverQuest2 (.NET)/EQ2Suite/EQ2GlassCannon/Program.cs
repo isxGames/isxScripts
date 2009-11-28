@@ -123,7 +123,7 @@ namespace EQ2GlassCannon
 		private static string s_strLinkerTimestamp = null;
 		public static void DisplayVersion()
 		{
-			Program.Log("EQ2GlassCannon Spellcaster Bot (Written 2009 by Eccentric)");
+			Program.Log("EQ2GlassCannon Spellcaster Bot (Written 2008-2010 by Eccentric)");
 
 			if (string.IsNullOrEmpty(s_strLinkerTimestamp))
 			{

@@ -153,6 +153,7 @@ namespace EQ2GlassCannon
 
 		protected bool m_bAutoHarvestInProgress = false;
 		protected DateTime m_LastAutoHarvestAttemptTime = DateTime.FromBinary(0);
+		protected DateTime m_NextAutoLootAttemptTime = DateTime.Now;
 		protected DateTime m_LastCastStartTime = DateTime.Now;
 		protected DateTime m_LastCastEndTime = DateTime.Now;
 
@@ -1058,7 +1059,7 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		protected bool AutoHarvestNearestNode()
 		{
-			if (!m_bHarvestAutomatically || Me.IsMoving || MeActor.InCombatMode || m_iOffensiveTargetID != -1)
+			if (!m_bHarvestAutomatically || MeActor.IsDead || Me.IsMoving || MeActor.InCombatMode || m_iOffensiveTargetID != -1)
 				return false;
 
 			/// Try to disqualify the attempt in progress if it timed out.
@@ -1114,20 +1115,28 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool AutoLootNearestCorpseOrChest()
 		{
-			/// Don't loot another corpse if a loot window is up.
-			if (!m_bLootTradeablesAutomatically || s_Extension.LootWindow().IsValid)
+			/// Don't loot another actor if a loot window is up.
+			if (!m_bLootAutomatically || MeActor.IsDead || s_Extension.LootWindow().IsValid || CurrentCycleTimestamp < m_NextAutoLootAttemptTime)
 				return false;
 
 			/// Find the nearest actor. 12 meters seems to be the right range, so I'll do 10.
+			bool bActionAttempted = false;
 			foreach (Actor ThisActor in EnumActorsInRadius(12))
 			{
 				if (ThisActor.IsDead && ThisActor.Distance <= 12)
+				{
 					ApplyVerb(ThisActor, "loot");
+					bActionAttempted = true;
+				}
 				else if (ThisActor.IsChest && ThisActor.Distance <= 5)
+				{
 					ApplyVerb(ThisActor, "open");
+					bActionAttempted = true;
+				}
 			}
 
-			return true;
+			m_NextAutoLootAttemptTime = CurrentCycleTimestamp + TimeSpan.FromSeconds(0.5);
+			return bActionAttempted;
 		}
 
 		/************************************************************************************/

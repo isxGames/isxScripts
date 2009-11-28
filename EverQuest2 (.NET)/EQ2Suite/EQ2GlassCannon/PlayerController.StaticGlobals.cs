@@ -67,9 +67,10 @@ namespace EQ2GlassCannon
 		private static string s_strSharedOverridesINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
 		private static SetCollection<string> s_PressedKeys = new SetCollection<string>();
-		private static Dictionary<string, DateTime> m_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
-		private static SetCollection<string> m_RegisteredCustomSlashCommands = new SetCollection<string>();
+		private static Dictionary<string, DateTime> s_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
+		private static SetCollection<string> s_RegisteredCustomSlashCommands = new SetCollection<string>();
 		private readonly static LavishScriptAPI.Delegates.CommandTarget s_CustomSlashCommandDelegate = OnLavishScriptCommand;
+		private static string s_strLastLootWindowID = string.Empty;
 
 		/************************************************************************************/
 		protected static bool UpdateStaticGlobals()
@@ -141,6 +142,7 @@ namespace EQ2GlassCannon
 					"gc_changesetting",
 					"gc_debug",
 					"gc_defaultverb",
+					"gc_distance",
 					"gc_exit",
 					"gc_exitprocess",
 					"gc_findactor",
@@ -225,10 +227,18 @@ namespace EQ2GlassCannon
 			string strPreviousSubClass = string.Empty;
 			string strPreviousName = string.Empty;
 			bool bFirstZoningFrame = true;
+			bool bRunGarbageCollector = false;
 
 			do
 			{
 				s_CurrentCycleTimestamp = DateTime.Now;
+
+				/// Run this outside of the frame lock.
+				if (bRunGarbageCollector)
+				{
+					Program.RunGarbageCollector();
+					bRunGarbageCollector = false;
+				}
 
 				Frame.Wait(true);
 				try
@@ -244,11 +254,11 @@ namespace EQ2GlassCannon
 							bFirstZoningFrame = false;
 
 							ReleaseAllKeys();
-							m_RecentThrottledCommandIndex.Clear();
+							s_RecentThrottledCommandIndex.Clear();
 							if (s_Controller != null)
 								s_Controller.OnZoningBegin();
 
-							Program.RunGarbageCollector();
+							bRunGarbageCollector = true;
 						}
 						continue;
 					}
@@ -394,6 +404,7 @@ namespace EQ2GlassCannon
 						Process CurrentProcess = Process.GetCurrentProcess();
 						if ((ulong)CurrentProcess.VirtualMemorySize64 > s_Controller.m_ulVirtualAllocationProcessTerminationThreshold)
 						{
+							RunCommand("/g oh shit!");
 							/// GAME OVER.
 							CurrentProcess.Kill();
 						}
@@ -491,10 +502,10 @@ namespace EQ2GlassCannon
 					strFinalCommandLine += string.Format(strCommandLineFormat, aobjParams);
 
 				/// Throttle it only if the parameter says so.
-				if (fBlockageSeconds > 0.0 && m_RecentThrottledCommandIndex.ContainsKey(strFinalCommandLine))
+				if (fBlockageSeconds > 0.0 && s_RecentThrottledCommandIndex.ContainsKey(strFinalCommandLine))
 				{
-					if (CurrentCycleTimestamp > m_RecentThrottledCommandIndex[strFinalCommandLine])
-						m_RecentThrottledCommandIndex.Remove(strFinalCommandLine);
+					if (CurrentCycleTimestamp > s_RecentThrottledCommandIndex[strFinalCommandLine])
+						s_RecentThrottledCommandIndex.Remove(strFinalCommandLine);
 					else
 					{
 						Program.Log("Throttled command blocked: {0}", strFinalCommandLine);
@@ -514,7 +525,7 @@ namespace EQ2GlassCannon
 					astrParameters.RemoveAt(0);
 
 					/// We have to manually process custom commands, EQ2Execute does not handle them.
-					if (m_RegisteredCustomSlashCommands.Contains(strCommand))
+					if (s_RegisteredCustomSlashCommands.Contains(strCommand))
 					{
 						if (s_Controller != null && UpdateStaticGlobals())
 							s_Controller.OnCustomSlashCommand(strCommand, astrParameters.ToArray());
@@ -523,7 +534,7 @@ namespace EQ2GlassCannon
 						s_Extension.EQ2Execute(strFinalCommandLine);
 				}
 
-				m_RecentThrottledCommandIndex.Add(strFinalCommandLine, CurrentCycleTimestamp + TimeSpan.FromSeconds(fBlockageSeconds));
+				s_RecentThrottledCommandIndex.Add(strFinalCommandLine, CurrentCycleTimestamp + TimeSpan.FromSeconds(fBlockageSeconds));
 			}
 			catch
 			{
@@ -547,7 +558,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected static void ApplyVerb(int iActorID, string strVerb)
 		{
-			RunCommand(3, "/apply_verb {0} {1}", iActorID, strVerb);
+			RunCommand(5, "/apply_verb {0} {1}", iActorID, strVerb);
 			return;
 		}
 
@@ -779,9 +790,9 @@ namespace EQ2GlassCannon
 			foreach (string strCommand in astrCommandNames)
 			{
 				string strActualCommand = strCommand.Trim().ToLower();
-				if (!m_RegisteredCustomSlashCommands.Contains(strActualCommand))
+				if (!s_RegisteredCustomSlashCommands.Contains(strActualCommand))
 				{
-					m_RegisteredCustomSlashCommands.Add(strActualCommand);
+					s_RegisteredCustomSlashCommands.Add(strActualCommand);
 					LavishScript.Commands.AddCommand(strActualCommand, s_CustomSlashCommandDelegate);
 				}
 			}
@@ -844,7 +855,15 @@ namespace EQ2GlassCannon
 					using (new FrameLock(true))
 					{
 						UpdateStaticGlobals();
-						s_Controller.OnLootWindowAppeared(s_Extension.LootWindow());
+
+						LootWindow ThisWindow = s_Extension.LootWindow();
+						if (s_strLastLootWindowID == e.Args[0])
+							Program.Log("Blocking duplicate event for this loot window ({0}).", s_strLastLootWindowID);
+						else
+						{
+							s_strLastLootWindowID = e.Args[0];
+							s_Controller.OnLootWindowAppeared(s_strLastLootWindowID, ThisWindow);
+						}
 					}
 				}
 			}
