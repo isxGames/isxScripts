@@ -1,7 +1,7 @@
 function PauseScript()
 {
-	while (${doPause} || ${Me.ToPawn.IsDead} || ${Me.HealthPct} == 0)
-	{
+	if (${doPause} || ${Me.ToPawn.IsDead} || ${Me.HealthPct} == 0)
+		{
 		waitframe
 		VG:ExecBinding[straferight,release]
 		VG:ExecBinding[strafeleft,release]
@@ -9,7 +9,12 @@ function PauseScript()
 		VG:ExecBinding[turnright,release]
 		VG:ExecBinding[moveforward,release]
 		VG:ExecBinding[movebackward,release]
-	}
+		}
+	while (${doPause} || ${Me.ToPawn.IsDead} || ${Me.HealthPct} == 0)
+		{
+		wait 10
+
+		}
 }
 ;********************************************
 function groupup()
@@ -538,7 +543,7 @@ function TooClose()
 	if ${Me.Target(exists)} && ${Me.Target.Distance} < 1
 	{
 		VG:ExecBinding[movebackward]
-		wait 2
+		wait 1
 		VG:ExecBinding[movebackward,release]
 		return
 	}

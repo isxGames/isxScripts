@@ -6,8 +6,10 @@ function MoveToTarget()
 		if ${Me.Target.Distance} > 4
 			{
 			actionlog "Moving to Melee"
+			Me:Sprint[50]
 			call movetoobject ${Me.Target.ID} 4 1
 			IsFollowing:Set[FALSE]
+			Me:Sprint
 			}
 		if ${Me.Target.Distance} < 5 && ${DoAttackPosition} && ${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
@@ -15,15 +17,7 @@ function MoveToTarget()
 			}
 		if ${Me.Target.Distance} < 1
 			{
-			while ${Me.Target.Distance} < 1
-				{
-				face ${Me.Target.X} ${Me.Target.Y}
-				VG:ExecBinding[movebackward]	
-				wait 1
-				IsFollowing:Set[FALSE]				
-				}
-			VG:ExecBinding[movebackward,release]
-			VG:ExecBinding[movebackward,release]
+			call TooClose
 			}
 	}
 	return
