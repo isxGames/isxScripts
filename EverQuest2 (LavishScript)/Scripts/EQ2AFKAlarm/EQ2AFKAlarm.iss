@@ -93,8 +93,8 @@ function main(string argv)
 	declare SoundfileNotify	string	script	"${Script.CurrentDirectory}/Sounds/intercom.wav"
 	declare SoundfilePhaser string script "${Script.CurrentDirectory}/Sounds/PHASER.wav"
 
-	declare DefaultSound	string	script	SoundFileDing
-	declare DefaultLoudSound string script SoundfilePhaser
+	declare DefaultSound	string	script	${SoundFileDing}
+	declare DefaultLoudSound string script ${SoundfilePhaser}
 
 	; declare Triggers
 
@@ -177,9 +177,12 @@ objectdef eq2string
 }
 variable eq2string EQ2String
 
-function PlaySound(string Filename=DefaultSound)  
+function PlaySound(string Filename)  
 {  
-System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},${Filename.String},0,"Math.Dec[22001]"] 
+	;System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},${Filename.String},0,"Math.Dec[22001]"] 
+	if !${Filename.Length}
+		Filename:Set[${DefaultSound}]
+	playsound ${Filename}
 } 
 
 
