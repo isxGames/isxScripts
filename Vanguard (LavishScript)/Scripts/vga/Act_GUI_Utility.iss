@@ -111,8 +111,9 @@ function lootit()
 	;; if there are no corpses around...then why bother.
 	if !${Pawn[Corpse](exists)}
 		return
-	
-	if (${DoLoot} && ${Group.Count} < 7)
+	if ${DoLoot} && !${DoRaidLoot} && ${Group.Count} > 6
+		return
+	if ${DoLoot}
 	{
 		if (!${Me.InCombat} || ${Me.Encounter} == 0)
 		{

@@ -481,7 +481,7 @@
                             <Y>135</Y>
                             <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Loot Corpses (Loot all unless checked below)</Text>
+                            <Text>Loot Corpses (Loot all default)</Text>
                             <OnLoad>
                               if ${Script[vga].VariableScope.DoLoot}
                               {
@@ -491,6 +491,23 @@
                             <OnLeftClick>
                               Script[vga].VariableScope.DoLoot:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+                          <checkbox Name='DoRaidLoot' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>203</X>
+                            <Y>135</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Raid Loot (DANGER)</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoRaidLoot}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoRaidLoot:Set[${This.Checked}]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoLootOnly' Template='VG.BlueCheckbox'>

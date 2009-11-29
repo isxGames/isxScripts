@@ -169,6 +169,7 @@ variable bool doAutoSell
 variable bool doHarvest
 variable bool DoLootOnly
 variable string LootOnly
+variable bool DoRaidLoot
 
 variable bool DoClassDownTime
 variable bool DoClassPreCombat
