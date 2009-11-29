@@ -462,6 +462,10 @@ function PostCastingActions()
 ;********************************************
 atom atexit()
 {
+	VG:ExecBinding[straferight,release]
+	VG:ExecBinding[strafeleft,release]
+	VG:ExecBinding[turnleft,release]
+	VG:ExecBinding[turnright,release]
 	VG:ExecBinding[moveforward,release]
 	VG:ExecBinding[movebackward,release]
 	call LavishSave
