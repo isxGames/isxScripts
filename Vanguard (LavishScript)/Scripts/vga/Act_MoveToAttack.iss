@@ -23,6 +23,7 @@ function MoveToTarget()
 				IsFollowing:Set[FALSE]				
 				}
 			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[movebackward,release]
 			}
 	}
 	return

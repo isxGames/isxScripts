@@ -10,6 +10,10 @@ function:bool CheckFurious()
 {
 	while ${mobisfurious}
 		{
+		if ${Me.HavePet} || ${Me.HaveMinion}
+			{
+			VGExecute "/pet backoff"
+			}
 		if ${Me.TargetHealth} > 20
 			{
 			actionlog "Furious Down Health too High"
@@ -51,20 +55,28 @@ function TurnOffAttackfunct()
 		{
 			if ${Me.TargetBuff[${Iterator.Key}](exists)}
 			{
+				if ${Me.HavePet} || ${Me.HaveMinion}
+					{
+					VGExecute "/pet backoff"
+					}
 				if ${Me.IsCasting}
-				{
+					{
 					vgexecute /stopcasting
-				}
+					}
 				if ${Me.Ability[Auto Attack].Toggled}
 					Me.Ability[Auto Attack]:Use
 				if ${Me.Ability[{FD}](exists)}
 					Me.Ability[${FD}]:Use
 				while ${Me.TargetBuff[${Iterator.Key}](exists)}
-				{
+					{
+					if ${Me.HavePet} || ${Me.HaveMinion}
+						{
+						VGExecute "/pet backoff"
+						}
 					wait 5
 					if ${ClassRole.healer}
 						call Healcheck
-				}
+					}
 			}
 			Iterator:Next
 		}
@@ -92,6 +104,10 @@ function TurnOffDuringBuff()
 					Me.Ability[${FD}]:Use
 				while ${Me.Effect[${Iterator.Key}](exists)}
 				{
+					if ${Me.HavePet}
+						{
+						VGExecute "/pet backoff"
+						}
 					wait 5
 					if ${ClassRole.healer}
 						call Healcheck
