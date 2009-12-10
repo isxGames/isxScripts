@@ -49,7 +49,9 @@ namespace EQ2SuiteLib
 		{
 			lock (m_objLock)
 			{
-				if (m_RemovalNode != null)
+				if (m_RemovalNode == null)
+					return false;
+				else
 				{
 					ThisValue = m_RemovalNode.m_Value;
 					m_RemovalNode = m_RemovalNode.m_Next;
@@ -58,8 +60,6 @@ namespace EQ2SuiteLib
 					m_iCount--;
 					return true;
 				}
-				else
-					return false;
 			}
 		}
 	}
