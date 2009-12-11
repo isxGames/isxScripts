@@ -317,7 +317,7 @@ namespace EQ2GlassCannon
 							return true;
 					}
 
-					Program.Log("gc_debug options: whopet fullaffinities memstat");
+					Program.Log("Usage: gc_debug (whopet|fullaffinities|memstat)");
 					return true;
 				}
 

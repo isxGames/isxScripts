@@ -79,6 +79,11 @@
     <Compile Include="MysticController.cs" />
     <Compile Include="ParseThread.cs" />
     <Compile Include="PriestController.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ScoutController.cs" />
     <Compile Include="ShamanController.cs" />
     <Compile Include="SorcererController.cs" />
@@ -118,6 +123,15 @@
       <Project>{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}</Project>
       <Name>EQ2SuiteLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DefaultCustomTriggers.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
