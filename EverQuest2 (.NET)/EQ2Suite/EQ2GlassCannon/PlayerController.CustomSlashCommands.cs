@@ -462,6 +462,24 @@ namespace EQ2GlassCannon
 							m_strPositionalCommandingPlayer = GetFirstExistingPartyMember(m_astrAutoFollowTargets, false);
 							ChangePositioningStance(PositioningStance.StayInPlace);
 							break;
+						case "stayat":
+							if (astrParameters.Length >= 4)
+							{
+								Point3D NewSpot = new Point3D();
+								if (double.TryParse(astrParameters[1], out NewSpot.X) &&
+									double.TryParse(astrParameters[2], out NewSpot.Y) &&
+									double.TryParse(astrParameters[3], out NewSpot.Z))
+								{
+									m_strPositionalCommandingPlayer = string.Empty;
+									m_ptStayLocation = NewSpot;
+									ChangePositioningStance(PositioningStance.StayInPlace);
+								}
+								else
+									Program.Log("Bad coordinate input format.");
+							}
+							else
+								Program.Log("You need 3 values to form a 3-D coordinate, but you specified {0}.", astrParameters.Length - 1);
+							break;
 						case "stayself":
 							Program.Log("Locking position to where you are now standing.");
 							m_strPositionalCommandingPlayer = Name;
