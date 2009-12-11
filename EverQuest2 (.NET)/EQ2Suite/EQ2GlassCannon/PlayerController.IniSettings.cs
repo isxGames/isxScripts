@@ -42,7 +42,7 @@ namespace EQ2GlassCannon
 		protected int m_iFrameSkip = 2;
 		protected bool m_bKillBotWhenCamping = false;
 		protected ulong m_ulVirtualAllocationProcessTerminationThreshold = 3500000000;
-		protected string m_strCustomTellTriggerFile = string.Empty;
+		protected string m_strCustomTellTriggerFile = Program.STR_DEFAULT_CUSTOM_TRIGGERS_FILE_PATH;
 		protected List<string> m_astrMainTanks = new List<string>();
 		protected List<string> m_astrAutoFollowTargets = new List<string>();
 		protected List<string> m_astrCommandingPlayers = new List<string>();

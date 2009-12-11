@@ -1123,15 +1123,18 @@ namespace EQ2GlassCannon
 			bool bActionAttempted = false;
 			foreach (Actor ThisActor in EnumActorsInRadius(12))
 			{
-				if (ThisActor.IsDead && ThisActor.Distance <= 12)
+				if (ThisActor.Type != "PC")
 				{
-					ApplyVerb(ThisActor, "loot");
-					bActionAttempted = true;
-				}
-				else if (ThisActor.IsChest && ThisActor.Distance <= 5)
-				{
-					ApplyVerb(ThisActor, "open");
-					bActionAttempted = true;
+					if (ThisActor.IsDead && ThisActor.Distance <= 12)
+					{
+						ApplyVerb(ThisActor, "loot");
+						bActionAttempted = true;
+					}
+					else if (ThisActor.IsChest && ThisActor.Distance <= 5)
+					{
+						ApplyVerb(ThisActor, "open");
+						bActionAttempted = true;
+					}
 				}
 			}
 
