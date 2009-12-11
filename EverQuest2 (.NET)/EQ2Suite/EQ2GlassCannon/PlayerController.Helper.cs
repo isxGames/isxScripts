@@ -17,9 +17,9 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected class Point3D
 		{
-			public float X = 0.0f;
-			public float Y = 0.0f;
-			public float Z = 0.0f;
+			public double X = 0.0f;
+			public double Y = 0.0f;
+			public double Z = 0.0f;
 
 			public Point3D()
 			{

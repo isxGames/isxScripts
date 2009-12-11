@@ -863,14 +863,17 @@ namespace EQ2GlassCannon
 			}
 			else if (eNewStance == PositioningStance.StayInPlace)
 			{
-				Actor CommandingPlayerActor = GetPlayerActor(m_strPositionalCommandingPlayer);
-				if (CommandingPlayerActor != null)
+				/// If a player is specified, we grab the location from it.
+				/// Otherwise we assume the location was pre-set.
+				if (!string.IsNullOrEmpty(m_strPositionalCommandingPlayer))
 				{
-					m_ePositioningStance = PositioningStance.StayInPlace;
-					m_ptStayLocation = new Point3D(CommandingPlayerActor);
-					m_fCurrentMovementTargetCoordinateTolerance = m_fStayInPlaceTolerance;
-					CheckPositioningStance();
+					Actor CommandingPlayerActor = GetPlayerActor(m_strPositionalCommandingPlayer);
+					if (CommandingPlayerActor != null)
+						m_ptStayLocation = new Point3D(CommandingPlayerActor);
 				}
+				m_ePositioningStance = PositioningStance.StayInPlace;
+				m_fCurrentMovementTargetCoordinateTolerance = m_fStayInPlaceTolerance;
+				CheckPositioningStance();
 			}
 			else if (eNewStance == PositioningStance.CustomAutoFollow)
 			{
@@ -1051,7 +1054,7 @@ namespace EQ2GlassCannon
 					/// Move the character.
 					if (fRange > m_fCurrentMovementTargetCoordinateTolerance)
 					{
-						float fBearing = Me.HeadingTo(m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z);
+						float fBearing = Me.HeadingTo((float)m_ptStayLocation.X, (float)m_ptStayLocation.Y, (float)m_ptStayLocation.Z);
 						if (Me.Face(fBearing))
 						{
 							Program.Log("Moving to stay position ({0:0.00}, {1:0.00}, {2:0.00}), {3:0.00} meters away...", m_ptStayLocation.X, m_ptStayLocation.Y, m_ptStayLocation.Z, fRange);
