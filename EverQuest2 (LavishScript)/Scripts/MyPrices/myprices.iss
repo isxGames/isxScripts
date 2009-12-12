@@ -34,6 +34,8 @@ variable bool runautoscan
 variable bool runplace
 variable bool ItemNotStack
 variable bool BadContainer=FALSE
+variable bool HighLatency
+variable bool NewItemsOnly
 
 ; Bool variables used to integrate with eq2inventory script
 variable bool CraftListMade=FALSE
@@ -273,7 +275,7 @@ function main(string goscan, string goscan2)
 						ItemUnlisted:Set[TRUE]
 					}
 					
-					if !${ItemUnlisted} || ${SetUnlistedPrices}
+					if (${ItemUnlisted} && ${SetUnlistedPrices}) ||  !${SetUnlistedPrices}
 					{
 						; Calclulate the price someone would pay with commission
 						MyBasePrice:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
@@ -305,6 +307,9 @@ function main(string goscan, string goscan2)
 						MaxPriceSet:Set[${Return}]
 
 						broker Name "${ItemName}" Sort ByPriceAsc MaxLevel 999
+
+						if ${HighLatency}
+							wait 30
 
 						; scan to make sure the item is listed and get lowest price , TRUE means exact name match only
 						Call BrokerSearch "${ItemName}" TRUE
@@ -1351,6 +1356,10 @@ function ClickBrokerSearch(string tabtype, int ItemID)
 	else
 	{
 		broker Name "${ItemName}" Sort ByPriceAsc MaxLevel 999
+
+		if ${HighLatency}
+			wait 30
+
 	}
 	call echolog "<end> : ClickBrokerSearch"
 
@@ -1421,10 +1430,20 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	costsearch:Set["MaxPrice ${cost}"]
 
 	if ${namesearch.Length}>0
+	{
 		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
+
+		if ${HighLatency}
+			wait 30
+
+	}
 	else
 	{
 		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
+
+		if ${HighLatency}
+			wait 30
+			
 	}
 	
 	call echolog "<- searchbrokerlist
@@ -1456,6 +1475,13 @@ function:float BrokerSearch(string ItemName, bool NameOnly)
 		do
 		{
 			Vendor:GotoSearchPage[${CurrentPage}]
+			
+			do
+			{
+				waitframe
+			}
+			while ${Vendor.CurrentSearchPage} != ${CurrentPage}
+			
 			CurrentItem:Set[1]
 			do
 			{
@@ -2489,6 +2515,8 @@ objectdef BrokerBot
 		while ${i:Inc} <= ${InventorySlots}
 
 		Natural:Set[${General.FindSetting[Natural]}]
+		HighLatency:Set[${General.FindSetting[HighLatency]}]
+		NewItemsOnly:Set[${General.FindSetting[NewItemsOnly]}]
 
 		call echolog "Settings being used"
 		call echolog "-------------------"
