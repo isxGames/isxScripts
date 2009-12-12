@@ -148,9 +148,9 @@
 						<Y>110</Y>
 						<Width>20%</Width>
 						<Height>20</Height>
-						<Text>Set Prices for Unlisted items</Text>
+						<Text>Set Unlisted items ONLY</Text>
 						<AutoTooltip>
-							Match prices of Unlisted items and mark them for sale.
+							Match prices of Unlisted items ONLY and mark them for sale.
 						</AutoTooltip>
 						<OnLoad>
 						if ${Script[myprices].VariableScope.SetUnlistedPrices}
@@ -367,48 +367,6 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<Text Name='Normal'>
-						<X>5%</X>
-						<Y>255</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Black : Not Changed</Text>
-					</Text>
-					<Text Name='Red'>
-						<X>5%</X>
-						<Y>270</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Red : Unable to match</Text>
-					</Text>
-					<Text Name='Blue'>
-						<X>5%</X>
-						<Y>285</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Blue : New Item Listed</Text>
-					</Text>
-					<Text Name='Orange'>
-						<X>5%</X>
-						<Y>300</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Orange : Item Sold</Text>
-					</Text>
-					<Text Name='Yellow'>
-						<X>5%</X>
-						<Y>315</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Yellow : Craft Flagged</Text>
-					</Text>
-					<Text Name='Purple'>
-						<X>5%</X>
-						<Y>330</Y>
-						<Width>30%</Width> 
-						<Height>15</Height>
-						<Text>Purple : Unpriced</Text>
-					</Text>
 					<Text Name='PauseTimerText'>
 						<X>25</X>
 						<Y>350</Y>
@@ -827,8 +785,7 @@
 							}
 						</OnLeftClick>
 					</Commandbutton>
- 
-					<checkbox Name='SellItems'>
+ 					<checkbox Name='SellItems'>
 						<X>45%</X>
 						<Y>1%</Y>
 						<Width>20%</Width>
@@ -857,6 +814,39 @@
 							{
 								Script[myprices]:QueueCommand[call SaveSetting SellItems FALSE]
 								Script[myprices].VariableScope.SellItems:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+
+					<checkbox Name='HighLatency'>
+						<X>60%</X>
+						<Y>1%</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>High Latency</Text>
+						<AutoTooltip>
+							Add pauses to high latency connections.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.HighLatency}
+						{
+							UIElement[HighLatency@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[HighLatency@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[HighLatency@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting HighLatency TRUE]
+								Script[myprices].VariableScope.HighLatency:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting HighLatency FALSE]
+								Script[myprices].VariableScope.HighLatency:Set[FALSE]
 							}
 						</OnLeftClick>
 					</checkbox>
@@ -2527,6 +2517,55 @@
 							Items in this container are no-sale
 						</AutoTooltip>
 					</checkbox>
+					<Text Name='ColourText'>
+						<X>5%</X>
+						<Y>240</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Sale Screen Colours</Text>
+					</Text>
+					<Text Name='Normal'>
+						<X>5%</X>
+						<Y>255</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Black : Not Changed</Text>
+					</Text>
+					<Text Name='Red'>
+						<X>5%</X>
+						<Y>270</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Red : Unable to match</Text>
+					</Text>
+					<Text Name='Blue'>
+						<X>5%</X>
+						<Y>285</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Blue : New Item Listed</Text>
+					</Text>
+					<Text Name='Orange'>
+						<X>5%</X>
+						<Y>300</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Orange : Item Sold</Text>
+					</Text>
+					<Text Name='Yellow'>
+						<X>5%</X>
+						<Y>315</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Yellow : Craft Flagged</Text>
+					</Text>
+					<Text Name='Purple'>
+						<X>5%</X>
+						<Y>330</Y>
+						<Width>30%</Width> 
+						<Height>15</Height>
+						<Text>Purple : Unpriced</Text>
+					</Text>
 				</Tab>
 				<Tab Name='Log'>
 					<listbox Name='ItemList'>
