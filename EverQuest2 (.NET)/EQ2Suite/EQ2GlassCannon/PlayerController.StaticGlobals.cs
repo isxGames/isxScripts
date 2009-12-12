@@ -67,7 +67,7 @@ namespace EQ2GlassCannon
 		private static string s_strSharedOverridesINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
 		private static SetCollection<string> s_PressedKeys = new SetCollection<string>();
-		private static Dictionary<string, DateTime> s_RecentThrottledCommandIndex = new Dictionary<string, DateTime>();
+		private static Dictionary<string, DateTime> s_RecentThrottledCommandCache = new Dictionary<string, DateTime>();
 		private static SetCollection<string> s_RegisteredCustomSlashCommands = new SetCollection<string>();
 		private readonly static LavishScriptAPI.Delegates.CommandTarget s_CustomSlashCommandDelegate = OnLavishScriptCommand;
 		private static string s_strLastLootWindowID = string.Empty;
@@ -254,7 +254,7 @@ namespace EQ2GlassCannon
 							bFirstZoningFrame = false;
 
 							ReleaseAllKeys();
-							s_RecentThrottledCommandIndex.Clear();
+							s_RecentThrottledCommandCache.Clear();
 							if (s_Controller != null)
 								s_Controller.OnZoningBegin();
 
@@ -502,15 +502,23 @@ namespace EQ2GlassCannon
 					strFinalCommandLine += string.Format(strCommandLineFormat, aobjParams);
 
 				/// Throttle it only if the parameter says so.
-				if (fBlockageSeconds > 0.0 && s_RecentThrottledCommandIndex.ContainsKey(strFinalCommandLine))
+				/// The only time a command gets removed from the cache is during zoning.
+				if (fBlockageSeconds > 0.0)
 				{
-					if (CurrentCycleTimestamp > s_RecentThrottledCommandIndex[strFinalCommandLine])
-						s_RecentThrottledCommandIndex.Remove(strFinalCommandLine);
-					else
+					DateTime ExpirationTime = DateTime.FromBinary(0);
+					if (s_RecentThrottledCommandCache.TryGetValue(strFinalCommandLine, out ExpirationTime))
 					{
-						Program.Log("Throttled command blocked: {0}", strFinalCommandLine);
-						return;
+						/// Overwrite an old entry.
+						if (CurrentCycleTimestamp > ExpirationTime)
+							s_RecentThrottledCommandCache[strFinalCommandLine] = CurrentCycleTimestamp + TimeSpan.FromSeconds(fBlockageSeconds);
+						else
+						{
+							Program.Log("Throttled command blocked: {0}", strFinalCommandLine);
+							return;
+						}
 					}
+					else
+						s_RecentThrottledCommandCache.Add(strFinalCommandLine, CurrentCycleTimestamp + TimeSpan.FromSeconds(fBlockageSeconds));
 				}
 
 				using (new FrameLock(true))
@@ -533,8 +541,6 @@ namespace EQ2GlassCannon
 					else
 						s_Extension.EQ2Execute(strFinalCommandLine);
 				}
-
-				s_RecentThrottledCommandIndex.Add(strFinalCommandLine, CurrentCycleTimestamp + TimeSpan.FromSeconds(fBlockageSeconds));
 			}
 			catch
 			{
