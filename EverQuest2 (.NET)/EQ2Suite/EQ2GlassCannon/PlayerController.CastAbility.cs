@@ -927,7 +927,7 @@ namespace EQ2GlassCannon
 				{
 					if (!m_FriendDictionary.ContainsKey(strThisTarget))
 					{
-						Program.Log("{0} wasn't cast on {1} (not found in group or raid).", ThisAbility.m_strName, strThisTarget);
+						Program.DebugLog("{0} wasn't cast on {1} (not found in group or raid).", ThisAbility.m_strName, strThisTarget);
 						continue;
 					}
 				}
@@ -935,7 +935,7 @@ namespace EQ2GlassCannon
 				{
 					if (!m_GroupMemberDictionary.ContainsKey(strThisTarget))
 					{
-						Program.Log("{0} wasn't cast on {1} (not found in group).", ThisAbility.m_strName, strThisTarget);
+						Program.DebugLog("{0} wasn't cast on {1} (not found in group).", ThisAbility.m_strName, strThisTarget);
 						continue;
 					}
 				}
