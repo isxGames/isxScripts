@@ -404,8 +404,9 @@ namespace EQ2GlassCannon
 						Process CurrentProcess = Process.GetCurrentProcess();
 						if ((ulong)CurrentProcess.VirtualMemorySize64 > s_Controller.m_ulVirtualAllocationProcessTerminationThreshold)
 						{
-							RunCommand("/g oh shit!");
 							/// GAME OVER.
+							using (StreamWriter OutputFile = Program.OpenCrashLog())
+								OutputFile.WriteLine("Process terminating immediately: current virtual allocation is {0}.", CustomFormatter.FormatByteCount(CurrentProcess.VirtualMemorySize64, "0.00"));
 							CurrentProcess.Kill();
 						}
 
