@@ -17,6 +17,8 @@ namespace EQ2GlassCannon
 		private static string s_strConfigurationFolderPath = string.Empty;
 		public static string ConfigurationFolderPath { get { return s_strConfigurationFolderPath; } }
 
+		private static string s_strCrashLogPath = string.Empty;
+
 		/************************************************************************************/
 		private static void Main()
 		{
@@ -34,6 +36,8 @@ namespace EQ2GlassCannon
 					s_strConfigurationFolderPath = DataFolderInfo.FullName;
 				else
 					s_strConfigurationFolderPath = Directory.GetCurrentDirectory(); // ehhhh not the best option but w/e...
+
+				s_strCrashLogPath = Path.Combine(s_strConfigurationFolderPath, "CrashLog.txt");
 
 				/// Transfer a default copy of the custom settings file if none exists.
 				string strDefaultCustomTriggersFilePath = Path.Combine(s_strConfigurationFolderPath, STR_DEFAULT_CUSTOM_TRIGGERS_FILE_PATH);
@@ -191,6 +195,16 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		public static StreamWriter OpenCrashLog()
+		{
+			StreamWriter OutputFile = new StreamWriter(s_strCrashLogPath, true);
+			OutputFile.WriteLine("-----------------------------");
+			DateTime NowTime = DateTime.Now;
+			OutputFile.WriteLine(NowTime.ToLongDateString() + " " + NowTime.ToLongTimeString());
+			return OutputFile;
+		}
+
+		/************************************************************************************/
 		public static void OnUnhandledException(Exception e)
 		{
 			try
@@ -201,11 +215,8 @@ namespace EQ2GlassCannon
 				ExceptionText.AppendLine(e.StackTrace.ToString());
 				string strExceptionText = ExceptionText.ToString();
 
-				using (StreamWriter OutputFile = new StreamWriter(Path.Combine(s_strConfigurationFolderPath, "ExceptionLog.txt"), true))
-				{
-					OutputFile.WriteLine("-----------------------------");
+				using (StreamWriter OutputFile = OpenCrashLog())
 					OutputFile.WriteLine(strExceptionText);
-				}
 
 				Program.Log(strExceptionText); /// TODO: Extract and display the LINE that threw the exception!!!
 			}
