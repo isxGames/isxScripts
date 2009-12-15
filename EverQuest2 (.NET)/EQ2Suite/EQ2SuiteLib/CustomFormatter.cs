@@ -7,15 +7,15 @@ namespace EQ2SuiteLib
 {
 	public static class CustomFormatter
 	{
+		public const ulong KB = 1024;
+		public const ulong MB = KB * KB;
+		public const ulong GB = MB * KB;
+		public const ulong TB = GB * KB;
+		public const ulong PB = TB * KB;
+		public const ulong EB = PB * KB;
+
 		public static string FormatByteCount(ulong ulByteCount, string strNumericFormat)
 		{
-			const ulong KB = 1024;
-			const ulong MB = KB * KB;
-			const ulong GB = MB * KB;
-			const ulong TB = GB * KB;
-			const ulong PB = TB * KB;
-			const ulong EB = PB * KB;
-
 			/// If there's a more elegant algorithm, I haven't thought of it yet.
 			if (ulByteCount > EB)
 				return ((double)ulByteCount / (double)EB).ToString(strNumericFormat) + " EB";
