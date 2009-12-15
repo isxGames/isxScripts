@@ -31,6 +31,7 @@ namespace EQ2GlassCannon
 		protected uint m_uiGroupWaterBreathingAbilityID = 0;
 		protected uint m_uiSingleWaterBreathingAbilityID = 0;
 		protected uint m_uiSpiritOfTheWolfAbilityID = 0;
+		protected uint m_uiRaidNonCombatRezAbilityID = 0;
 		protected uint m_uiShadowsOffensiveHealStance = 0;
 		protected uint m_uiShadowsDefensiveHealStance = 0;
 
@@ -65,6 +66,7 @@ namespace EQ2GlassCannon
 			m_uiSingleWaterBreathingAbilityID = SelectHighestAbilityID("Enduring Breath");
 			m_uiSpiritOfTheWolfAbilityID = SelectHighestAbilityID("Spirit of the Wolf");
 			m_uiLoreAndLegendAbilityID = SelectHighestAbilityID("Master's Smite");
+			m_uiRaidNonCombatRezAbilityID = SelectHighestAbilityID("Supplication of the Fallen");
 			return;
 		}
 
