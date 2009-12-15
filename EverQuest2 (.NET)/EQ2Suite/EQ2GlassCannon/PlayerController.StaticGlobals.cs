@@ -401,8 +401,11 @@ namespace EQ2GlassCannon
 					/// Do certain checks only every 5th frame.
 					if ((s_lFrameCount % 5) == 0)
 					{
+						/// Supposedly Process.VirtualMemorySize64 can return negative values because of casting bugs.
 						Process CurrentProcess = Process.GetCurrentProcess();
-						if ((ulong)CurrentProcess.VirtualMemorySize64 > s_Controller.m_ulVirtualAllocationProcessTerminationThreshold)
+						long lActualVirtualAllocation = CurrentProcess.VirtualMemorySize64;
+						if (lActualVirtualAllocation > (long)s_Controller.m_ulVirtualAllocationProcessTerminationThreshold &&
+							lActualVirtualAllocation < (long)(4 * CustomFormatter.GB)) /// This check is to prevent impossible values from causing crashes.
 						{
 							/// GAME OVER.
 							using (StreamWriter OutputFile = Program.OpenCrashLog())
