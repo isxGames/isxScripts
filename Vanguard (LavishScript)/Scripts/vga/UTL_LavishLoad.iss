@@ -337,6 +337,7 @@ TapSoloHeal:Set[${HealerSR.FindSetting[TapSoloHeal,${TapSoloHeal}]}]
 	Friends:Set[${LavishSettings[VGA_General].FindSet[Friends]}]
 
 	DoAcceptRes:Set[${UtilitySR.FindSetting[DoAcceptRes,${DoAcceptRes}]}]
+	Speed:Set[${UtilitySR.FindSetting[Speed,${Speed}]}]
 	DoAutoResCombat:Set[${UtilitySR.FindSetting[DoAutoResCombat,${DoAutoResCombat}]}]
 	DoAutoResNoCombat:Set[${UtilitySR.FindSetting[DoAutoResNoCombat,${DoAutoResNoCombat}]}]
 

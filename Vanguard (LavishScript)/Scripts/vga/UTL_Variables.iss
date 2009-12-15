@@ -102,6 +102,7 @@ variable string LazyBuff
 variable string ResStone
 variable string CombatRes
 variable string NonCombatRes
+variable int Speed
 
 variable bool healrefresh = TRUE
 
