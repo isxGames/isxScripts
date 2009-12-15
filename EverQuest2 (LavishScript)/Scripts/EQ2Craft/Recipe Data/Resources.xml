@@ -171,6 +171,7 @@
 		<Setting Name="Raw Lead">Lead Cluster</Setting>
 		<Setting Name="Raw Lead Cluster">Lead Cluster</Setting>
 		<Setting Name="Raw Leaded Loam">Leaded Loam</Setting>
+		<Setting Name="Lion Meat">Lion Meat</Setting>
 		<Setting Name="Raw Lion Meat">Lion Meat</Setting>
 		<Setting Name="Luminous Material">Luminous Material</Setting>
 		<Setting Name="Luminous Materials">Luminous Material</Setting>
@@ -193,6 +194,7 @@
 		<Setting Name="Raw Owlbear Meat">Owlbear Meat</Setting>
 		<Setting Name="Raw Palladium">Palladium Cluster</Setting>
 		<Setting Name="Raw Pearl">Rough Pearl</Setting>
+		<Setting Name="Pig Meat">Pig Meat</Setting>
 		<Setting Name="Raw Pig Meat">Pig Meat</Setting>
 		<Setting Name="Raw Prickly Pear">Prickly Pear</Setting>
 		<Setting Name="Raw Pu-erh Tea Leaf">Pu-erh Tea Leaf</Setting>
