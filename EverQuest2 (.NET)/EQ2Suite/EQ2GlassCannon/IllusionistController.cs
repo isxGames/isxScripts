@@ -120,7 +120,7 @@ namespace EQ2GlassCannon
 			GetOffensiveTargetActor();
 
 			/// Red illusionist mezzes can be cast while in motion.
-			if (m_bUseGreenAEs && MeActor.IsIdle) /// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
+			if (m_bUseGreenAEs && IsIdle) /// Should also have encounter size check (2 or greater) but that'll have to wait for now (based on mez range).
 			{
 				if (CastNextMez(m_uiGreenMezAbilityID, m_uiSingleFastMezAbilityID, m_uiSingleNormalMezAbilityID))
 					return true;
@@ -138,7 +138,7 @@ namespace EQ2GlassCannon
 
 			if (m_bCheckBuffsNow)
 			{
-				if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiPersonaePetAbilityID, m_bUsePet))
+				if (IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiPersonaePetAbilityID, m_bUsePet))
 					return true;
 				if (CheckToggleBuff(m_uiINTWISBuffAbilityID, m_bBuffINTWIS))
 					return true;
@@ -170,7 +170,7 @@ namespace EQ2GlassCannon
 				return false;
 
 			/// Decide if the offensive target is still legitimate. If so, attempt to target it.
-			if (m_OffensiveTargetActor != null && MeActor.IsIdle)
+			if (m_OffensiveTargetActor != null && IsIdle)
 			{
 				bool bDumbfiresAdvised = AreDumbfiresAdvised();
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
@@ -178,7 +178,7 @@ namespace EQ2GlassCannon
 				if (CastHOStarter())
 					return true;
 
-				if (MeActor.IsIdle)
+				if (IsIdle)
 				{
 					/// This buffs PC cast speed and debuffs NPC cast speed. So it gets unique priority.
 					if (CastAbility(m_uiChronosiphoningAbilityID))

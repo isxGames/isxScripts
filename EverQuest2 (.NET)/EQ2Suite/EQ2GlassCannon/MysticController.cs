@@ -207,7 +207,7 @@ namespace EQ2GlassCannon
 						return true;
 					if (CheckSpiritOfTheWolf())
 						return true;
-					if (MeActor.IsIdle && (!Me.IsHated || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiSpiritCompanionAbilityID, m_bUsePet))
+					if (IsIdle && (!IsInCombat || m_bSummonPetDuringCombat) && CheckToggleBuff(m_uiSpiritCompanionAbilityID, m_bUsePet))
 						return true;
 				}
 
@@ -216,7 +216,7 @@ namespace EQ2GlassCannon
 
 			bool bOffensiveTargetEngaged = EngageOffensiveTarget();
 
-			if (MeActor.IsIdle)
+			if (IsIdle)
 			{
 				if (bOffensiveTargetEngaged)
 				{
@@ -319,10 +319,10 @@ namespace EQ2GlassCannon
 					return true;
 
 				/// Keep the group ward up.
-				if ((bOffensiveTargetEngaged || MeActor.InCombatMode) && !IsAbilityMaintained(m_uiGroupWardAbilityID) && CastAbilityOnSelf(m_uiGroupWardAbilityID))
+				if ((bOffensiveTargetEngaged || IsInCombat) && !IsAbilityMaintained(m_uiGroupWardAbilityID) && CastAbilityOnSelf(m_uiGroupWardAbilityID))
 					return true;
 
-				if ((Me.IsHated || MeActor.InCombatMode) && CastAbilityOnSelf(m_uiDumbfireHealPetAbilityID))
+				if (IsInCombat && CastAbilityOnSelf(m_uiDumbfireHealPetAbilityID))
 					return true;
 
 				/// If anyone at all is missing health, do a group heal, because this is all that's left.
@@ -342,7 +342,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool DoArbitraryRez()
 		{
-			if (!MeActor.IsIdle)
+			if (!IsIdle)
 				return false;
 
 			int iTotalDeadMembers = 0;
@@ -356,7 +356,7 @@ namespace EQ2GlassCannon
 					iTotalDeadMembers++;
 
 					/// Establish the nearest dead player.
-					double fDistance = GetActorDistance3D(MeActor, ThisStatus.m_Actor);
+					double fDistance = ThisStatus.m_Actor.Distance;
 					if (fDistance < fNearestDeadDistance)
 					{
 						strNearestDeadName = ThisStatus.m_strName;
@@ -368,6 +368,9 @@ namespace EQ2GlassCannon
 			/// Attempt to rez.
 			if (iTotalDeadMembers > 0)
 			{
+				if (CastNonCombatRaidRez(strNearestDeadName))
+					return true;
+
 				/// NOTE: Group rez risky if MT is getting rezzed and is outside of group.
 				if (iTotalDeadMembers > 1)
 				{
@@ -388,7 +391,7 @@ namespace EQ2GlassCannon
 					/// Single rez. It's all we can do.
 					if (CastAbility(m_uiSingleWardedCombatRezAbilityID, strNearestDeadName, false) ||
 						CastAbility(m_uiSingleNormalCombatRezAbilityID, strNearestDeadName, false) ||
-						(!Me.IsHated && CastAbility(m_uiGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
+						(!IsInCombat && CastAbility(m_uiGeneralNonCombatRezAbilityID, strNearestDeadName, false)))
 					{
 						SpamSafeRaidSay(m_strSingleRezCallout, strNearestDeadName);
 						return true;

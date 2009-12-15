@@ -67,7 +67,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool CheckKingdomOfSkyPet()
 		{
-			if (!MeActor.IsIdle)
+			if (!IsIdle)
 				return false;
 
 			/// Cancel the wrong pet.
@@ -137,7 +137,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		public bool CastEmergencyPowerFeed()
 		{
-			if (!m_bUsePowerFeed || !MeActor.IsIdle)
+			if (!m_bUsePowerFeed || !IsIdle)
 				return false;
 
 			if (!CanAffordAbilityCost(m_uiSinglePowerFeedAbilityID))

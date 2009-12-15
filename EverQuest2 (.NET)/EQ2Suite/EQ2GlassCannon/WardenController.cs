@@ -59,7 +59,7 @@ namespace EQ2GlassCannon
 				if (CastBlueOffensiveAbility(m_uiBlueMeleeColdAEAbilityID, 4))
 					return true;
 
-				if (MeActor.IsIdle)
+				if (IsIdle)
 				{
 					if (CastAbility(m_uiSingleElementalDebuffMeleeAbilityID) || CastAbility(m_uiSingleElementalDebuffSpellAbilityID))
 						return true;

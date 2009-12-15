@@ -245,6 +245,7 @@ namespace EQ2GlassCannon
 			ThisBuilder.AppendLine("Race: {0}", ThisActor.Race);
 			ThisBuilder.AppendLine("Level(Effective): {0}({1})", ThisActor.Level, ThisActor.EffectiveLevel);
 			ThisBuilder.AppendLine("Encounter Size: {0}", ThisActor.EncounterSize);
+			ThisBuilder.AppendLine("Collision Radius: {0}", ThisActor.CollisionRadius);
 			ThisBuilder.AppendLine("Speed: {0}%", ThisActor.Speed);
 
 			List<string> astrFlags = new List<string>();

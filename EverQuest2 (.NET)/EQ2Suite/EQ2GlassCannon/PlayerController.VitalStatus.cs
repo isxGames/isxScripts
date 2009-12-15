@@ -220,20 +220,22 @@ namespace EQ2GlassCannon
 		{
 			try
 			{
-				if (m_VitalStatusCache.ContainsKey(strFriendName))
-					ThisStatus = m_VitalStatusCache[strFriendName];
-				else if (strFriendName == Me.Name)
+				if (!m_VitalStatusCache.TryGetValue(strFriendName, out ThisStatus))
 				{
-					ThisStatus = new VitalStatus(Me);
-					m_VitalStatusCache.Add(strFriendName, ThisStatus);
+					GroupMember TempGroupMember = null;
+					if (strFriendName == Me.Name)
+					{
+						ThisStatus = new VitalStatus(Me);
+						m_VitalStatusCache.Add(strFriendName, ThisStatus);
+					}
+					else if (m_FriendDictionary.TryGetValue(strFriendName, out TempGroupMember))
+					{
+						ThisStatus = new VitalStatus(TempGroupMember);
+						m_VitalStatusCache.Add(strFriendName, ThisStatus);
+					}
+					else
+						return false;
 				}
-				else if (m_FriendDictionary.ContainsKey(strFriendName))
-				{
-					ThisStatus = new VitalStatus(m_FriendDictionary[strFriendName]);
-					m_VitalStatusCache.Add(strFriendName, ThisStatus);
-				}
-				else
-					return false;
 
 				if (ThisStatus.m_bIsValid)
 					return true;

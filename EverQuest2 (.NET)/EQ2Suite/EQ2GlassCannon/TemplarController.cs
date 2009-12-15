@@ -228,7 +228,7 @@ namespace EQ2GlassCannon
 
 			bool bOffensiveTargetEngaged = EngageOffensiveTarget();
 
-			if (MeActor.IsIdle)
+			if (IsIdle)
 			{
 				if (m_OffensiveTargetActor != null)
 				{

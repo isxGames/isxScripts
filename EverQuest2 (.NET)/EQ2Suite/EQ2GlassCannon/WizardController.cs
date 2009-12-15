@@ -151,7 +151,7 @@ namespace EQ2GlassCannon
 				if (CastHOStarter())
 					return true;
 
-				if (MeActor.IsIdle)
+				if (IsIdle)
 				{
 					/// Cast these temp buffs before other spells or conditions can separate them.
 					/// Iceshape and Gift always go together, and Fireshape and Surge always go together.
@@ -319,7 +319,7 @@ namespace EQ2GlassCannon
 				if (CastAbility(m_uiThunderclapAbilityID))
 					return true;
 
-				if (MeActor.IsIdle)
+				if (IsIdle)
 				{
 					if (CastAbility(m_uiRaysOfDisintegrationAbilityID))
 						return true;
