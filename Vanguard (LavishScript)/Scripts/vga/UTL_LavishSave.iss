@@ -255,7 +255,7 @@ HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
 	UtilitySR:AddSetting[DoAcceptRes,${DoAcceptRes}]
 	UtilitySR:AddSetting[DoAutoResCombat,${DoAutoResCombat}]
 	UtilitySR:AddSetting[DoAutoResNoCombat,${DoAutoResNoCombat}]
-
+	UtilitySR:AddSetting[Speed,${Speed}]
 	;===================================================
 	;===                  Spells Save               ====
 	;===================================================

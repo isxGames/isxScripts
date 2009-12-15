@@ -212,7 +212,7 @@
                             <X>10</X>
                             <Y>75</Y>
                             <Width>150</Width>
-                            <Height>19</Height>
+                            <Height>20</Height>
                             <Text>Repair/Sell</Text>
                             <Alignment>Center</Alignment>
                             <OnLeftClick>
@@ -220,6 +220,34 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </Button>
+               		 <Textentry Name="SpeedEntry" Template="VG.TextEntry">
+                  	<X>10</X>
+                  	<Y>95</Y>
+                  	<Width>28</Width>
+                  	<Height>20</Height>
+                  	<Color>FFDDBB00</Color>
+                            <OnLoad>
+                              This:SetText[${Script[vga].VariableScope.Speed}]
+                            </OnLoad>
+                            <OnChange>
+                              if ${This.Text.Length} > 0
+                              {
+                              Script[vga].VariableScope.Speed:Set[${Math.Calc[${This.Text}].Int}]
+                              Script[vga]:QueueCommand[call LavishSave]
+                              }
+                            </OnChange>
+                	</Textentry>
+                <CommandButton Name="SpeedCmd" Template="VG.GreenCommandButton">
+                  <X>40</X>
+                  <Y>95</Y>
+                  <Width>120</Width>
+                  <Height>20</Height>
+                  <Text>Sprint</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+			Me:Sprint[${Script[vga].VariableScope.Speed}]
+                  </OnLeftClick>
+                </CommandButton>
                           <checkbox Name='doassistcheck' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>180</X>
