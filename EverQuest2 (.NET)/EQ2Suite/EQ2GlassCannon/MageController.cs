@@ -33,7 +33,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool AttemptCureArcane()
 		{
-			if (!m_bCastCures || !MeActor.IsIdle)
+			if (!m_bCastCures || !IsIdle)
 				return false;
 
 			/// Do myself first, or this will be harder to coordinate for raiding.

@@ -183,7 +183,7 @@ namespace EQ2GlassCannon
 					return true;
 
 				/// Not all spells here need IsIdle, but a large enough amount do that I'm not gonna clutter the code for their sake.
-				if (MeActor.IsIdle)
+				if (IsIdle)
 				{
 					/// Deaggros.
 					if (m_bIHaveAggro)

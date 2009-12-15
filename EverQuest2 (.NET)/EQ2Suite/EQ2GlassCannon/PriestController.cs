@@ -15,6 +15,7 @@ namespace EQ2GlassCannon
 		protected bool m_bCastDamageSpells = true;
 		protected string m_strSingleRezCallout = "REZZING << {0} >>";
 		protected string m_strGroupRezCallout = "REZZING GROUP << {0} >>";
+		protected string m_strRaidRezCallout = "REZZING RAID << {0} >>";
 		protected bool m_bBuffGroupWaterBreathing = true;
 		protected List<string> m_astrSingleWaterBreathingTargets = new List<string>();
 		protected bool m_bBuffPhysicalMitigation = true;
@@ -46,6 +47,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("Priest.CastDamageSpells", ref m_bCastDamageSpells);
 			ThisFile.TransferString("Priest.SingleRezCallout", ref m_strSingleRezCallout);
 			ThisFile.TransferString("Priest.GroupRezCallout", ref m_strGroupRezCallout);
+			ThisFile.TransferString("Priest.RaidRezCallout", ref m_strRaidRezCallout);
 			ThisFile.TransferBool("Priest.BuffGroupWaterBreathing", ref m_bBuffGroupWaterBreathing);
 			//ThisFile.TransferStringList("Priest.SingleWaterBreathingTargets", m_astrSingleWaterBreathingTargets);
 			ThisFile.TransferBool("Priest.BuffPhysicalMitigation", ref m_bBuffPhysicalMitigation);
@@ -72,6 +74,45 @@ namespace EQ2GlassCannon
 
 		/************************************************************************************/
 		/// <summary>
+		/// This class is used to decide cure priority.
+		/// An excellent cure candidate could potentially be out of range,
+		/// so we needed this more comprehensive ranking solution.
+		/// </summary>
+		protected class SingleCureEvaluationKey : IComparable<SingleCureEvaluationKey>
+		{
+			public readonly int m_iPotentialCurseCures = 0;
+			public readonly int m_iPotentialCures = 0;
+
+			public SingleCureEvaluationKey(
+				int iPotentialCurseCures,
+				int iPotentialCures)
+			{
+				m_iPotentialCurseCures = iPotentialCurseCures;
+				m_iPotentialCures = iPotentialCures;
+				return;
+			}
+
+			/// <summary>
+			/// We try to have higher priority cures go to the beginning of the list instead of the end.
+			/// </summary>
+			public int CompareTo(SingleCureEvaluationKey OtherEvaluation)
+			{
+				int iComparison = -1;
+
+				iComparison = m_iPotentialCurseCures.CompareTo(OtherEvaluation.m_iPotentialCurseCures);
+				if (iComparison != 0)
+					return -iComparison;
+
+				iComparison = m_iPotentialCures.CompareTo(OtherEvaluation.m_iPotentialCures);
+				if (iComparison != 0)
+					return -iComparison;
+
+				return 0;
+			}
+		}
+
+		/************************************************************************************/
+		/// <summary>
 		/// General purpose cure function for priests.
 		/// Evaluates detrimental effects, decides whether single cure or group cure is more appropriate,
 		/// and then executes it.
@@ -84,15 +125,16 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		public bool AttemptCures(bool bCanGroupTrauma, bool bCanGroupArcane, bool bCanGroupNoxious, bool bCanGroupElemental)
 		{
-			if (!m_bCastCures || !MeActor.IsIdle)
+			if ((!m_bCastCures && !m_bCastCureCurse) || !IsIdle)
 				return false;
 
-			bool bGroupCureAvailable = IsAbilityReady(m_uiGeneralGroupCureAbilityID);
-			if (!IsAbilityReady(m_uiCureAbilityID) && !bGroupCureAvailable)
+			bool bTrySingleCure = m_bCastCures && IsAbilityReady(m_uiCureAbilityID);
+			bool bTryGroupCure = m_bCastCures && IsAbilityReady(m_uiGeneralGroupCureAbilityID);
+			bool bTryCureCurse = m_bCastCureCurse && IsAbilityReady(m_uiCureCurseAbilityID);
+			if (!bTrySingleCure && !bTryGroupCure && !bTryCureCurse)
 				return false;
 
-			string strBestSingleCureCandidate = string.Empty;
-			int iMostPotentialCuresAtOnce = 0;
+			SortedDictionary<SingleCureEvaluationKey, string> CurePriorityList = new SortedDictionary<SingleCureEvaluationKey, string>();
 			int iTotalTraumaBearers = 0;
 			int iTotalArcaneBearers = 0;
 			int iTotalNoxiousBearers = 0;
@@ -127,12 +169,11 @@ namespace EQ2GlassCannon
 					iPotentialCuresAtOnce++;
 				}
 
-				if (iPotentialCuresAtOnce > iMostPotentialCuresAtOnce && string.IsNullOrEmpty(strBestSingleCureCandidate))
-					strBestSingleCureCandidate = ThisStatus.m_strName;
+				CurePriorityList.Add(new SingleCureEvaluationKey(ThisStatus.m_iCursed, iPotentialCuresAtOnce), ThisStatus.m_Actor.Name);
 			}
 
 			/// There's no strict rule on when to cast a group cure; we just fudge it here.
-			if (bGroupCureAvailable &&
+			if (bTryGroupCure &&
 				(
 				(bCanGroupTrauma && iTotalTraumaBearers >= 3) ||
 				(bCanGroupArcane && iTotalArcaneBearers >= 3) ||
@@ -143,13 +184,18 @@ namespace EQ2GlassCannon
 			{
 				return CastAbilityOnSelf(m_uiGeneralGroupCureAbilityID);
 			}
-			else if (!string.IsNullOrEmpty(strBestSingleCureCandidate))
-			{
-				return CastAbility(m_uiCureAbilityID, strBestSingleCureCandidate, true);
-			}
 
-			if (m_bCastCureCurse)
+			else if (CurePriorityList.Count > 0)
 			{
+				/// Go down the list until we find someone we can cure, who is within range.
+				foreach (KeyValuePair<SingleCureEvaluationKey, string> ThisPair in CurePriorityList)
+				{
+					if (bTryCureCurse && (ThisPair.Key.m_iPotentialCurseCures > 0) && CastAbility(m_uiCureCurseAbilityID, ThisPair.Value, true))
+						return true;
+
+					if (bTrySingleCure && (ThisPair.Key.m_iPotentialCures > 0) && CastAbility(m_uiCureAbilityID, ThisPair.Value, true))
+						return true;
+				}
 			}
 
 			return false;
@@ -171,7 +217,7 @@ namespace EQ2GlassCannon
 		{
 			/// Only spend time casting the buffs if we need to.
 			/// This is not time we want to take up during a big fight.
-			if (MeActor.IsSwimming || !MeActor.InCombatMode)
+			if (MeActor.IsSwimming || !IsInCombat)
 			{
 				if (m_bBuffGroupWaterBreathing)
 				{
@@ -197,6 +243,19 @@ namespace EQ2GlassCannon
 		public bool CheckShadowsHealStanceBuffs()
 		{
 			return CheckStanceBuff(m_uiShadowsOffensiveHealStance, m_uiShadowsDefensiveHealStance, m_eShadowsHealStance);
+		}
+
+		/************************************************************************************/
+		protected bool CastNonCombatRaidRez(string strNearestDeadName)
+		{
+			if (!IsIdle)
+				return false;
+
+			if (!CastAbility(m_uiRaidNonCombatRezAbilityID, strNearestDeadName, false))
+				return false;
+
+			SpamSafeRaidSay(m_strRaidRezCallout, strNearestDeadName);
+			return true;
 		}
 
 		/************************************************************************************/

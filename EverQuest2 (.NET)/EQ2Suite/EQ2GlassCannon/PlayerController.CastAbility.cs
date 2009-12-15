@@ -267,7 +267,7 @@ namespace EQ2GlassCannon
 		{
 			get
 			{
-				return Me.CastingSpell || (CurrentCycleTimestamp < m_LastCastEndTime);
+				return s_bIsCastingAbility || (CurrentCycleTimestamp < m_LastCastEndTime);
 			}
 		}
 
@@ -388,8 +388,9 @@ namespace EQ2GlassCannon
 				return false;
 
 			Actor SpellTargetActor = null;
-			if (m_FriendDictionary.ContainsKey(strPlayerTarget))
-				SpellTargetActor = m_FriendDictionary[strPlayerTarget].ToActor();
+			GroupMember TempGroupMember = null;
+			if (m_FriendDictionary.TryGetValue(strPlayerTarget, out TempGroupMember))
+				SpellTargetActor = TempGroupMember.ToActor();
 			else if (strPlayerTarget == Name)
 				SpellTargetActor = MeActor;
 			else
@@ -397,7 +398,7 @@ namespace EQ2GlassCannon
 
 			if (SpellTargetActor == null || !SpellTargetActor.IsValid)
 			{
-				Program.Log("Target actor {0} not valid for CastAbility().", strPlayerTarget);
+				Program.Log("Target actor {0} not valid to receive \"{1}\".", strPlayerTarget, ThisAbility.m_strName);
 				return false;
 			}
 
@@ -407,7 +408,7 @@ namespace EQ2GlassCannon
 			double fDistance = SpellTargetActor.Distance;
 			if (fDistance > ThisAbility.m_fRange)
 			{
-				Program.Log("Unable to cast {0} because {1} is out of range ({2} needed, {3:0.00} actual)",
+				Program.Log("Unable to cast \"{0}\" because {1} is out of range ({2} needed, {3:0.00} actual)",
 					ThisAbility.m_strName, SpellTargetActor.Name, ThisAbility.m_fRange, fDistance);
 				return false;
 			}
@@ -461,7 +462,7 @@ namespace EQ2GlassCannon
 				double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
 				if (!ThisAbility.IsWithinRange(fDistance))
 				{
-					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
+					Program.Log("Unable to cast \"{0}\" because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
 						ThisAbility.m_strName, MyTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
 					return false;
 				}
@@ -485,7 +486,7 @@ namespace EQ2GlassCannon
 					}
 					if (!bSuccess)
 					{
-						Program.Log("Unable to cast {0} because you are on the wrong attack heading ({2:0} to {3:0} degrees needed, {4:0.00} actual).",
+						Program.Log("Unable to cast \"{0}\" because you are on the wrong attack heading ({2:0} to {3:0} degrees needed, {4:0.00} actual).",
 							ThisAbility.m_strName, MyTargetActor.Name, fVulnerableRelativeHeadingRangeStart, fVulnerableRelativeHeadingRangeEnd, fRelativeHeadingFrom);
 						return false;
 					}
@@ -538,9 +539,7 @@ namespace EQ2GlassCannon
 		protected int GetBlueOffensiveAbilityCompatibleTargetCount(uint uiAbilityID, double fRadiusOverride)
 		{
 			int iValidVictimCount = 0;
-			if (m_AbilityCompatibleTargetCountCache.ContainsKey(uiAbilityID))
-				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
-			else if (m_bUseBlueAEs)
+			if (!m_AbilityCompatibleTargetCountCache.TryGetValue(uiAbilityID, out iValidVictimCount) && m_bUseBlueAEs)
 			{
 				foreach (Actor ThisActor in m_KillableActorDictionary.Values)
 				{
@@ -588,7 +587,7 @@ namespace EQ2GlassCannon
 			if (!CanAffordAbilityCost(uiAbilityID))
 				return false;
 
-			Program.Log("{0} approved against {1} possible PBAE target(s) within {2:0}m radius.", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fEffectRadius);
+			Program.Log("\"{0}\" approved against {1} possible PBAE target(s) within {2:0}m radius.", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fEffectRadius);
 			StartCastTimers(ThisAbility);
 			return ThisAbility.Use();
 		}
@@ -608,9 +607,7 @@ namespace EQ2GlassCannon
 				return false;
 
 			int iValidVictimCount = 0;
-			if (m_AbilityCompatibleTargetCountCache.ContainsKey(uiAbilityID))
-				iValidVictimCount = m_AbilityCompatibleTargetCountCache[uiAbilityID];
-			else
+			if (!m_AbilityCompatibleTargetCountCache.TryGetValue(uiAbilityID, out iValidVictimCount))
 			{
 				double fDistance = GetActorDistance3D(MeActor, m_OffensiveTargetActor);
 				if (ThisAbility.IsWithinRange(fDistance))
@@ -624,7 +621,7 @@ namespace EQ2GlassCannon
 				}
 				else
 				{
-					Program.Log("Unable to cast {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
+					Program.Log("Unable to cast \"{0}\" because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
 						ThisAbility.m_strName, m_OffensiveTargetActor.Name, ThisAbility.m_fMinRange, ThisAbility.m_fMaxRange, fDistance);
 				}
 
@@ -638,7 +635,7 @@ namespace EQ2GlassCannon
 			if (!CanAffordAbilityCost(uiAbilityID))
 				return false;
 
-			Program.Log("{0} approved against {1} possible encounter target(s) within {2:0}m radius.", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fMaxRange);
+			Program.Log("\"{0}\" approved against {1} possible encounter target(s) within {2:0}m radius.", ThisAbility.m_strName, iValidVictimCount, ThisAbility.m_fMaxRange);
 			StartCastTimers(ThisAbility);
 			return ThisAbility.Use();
 		}
@@ -765,10 +762,11 @@ namespace EQ2GlassCannon
 				return false;
 
 			string strAbilityName = m_KnowledgeBookIDToNameMap[uiAbilityID];
-			if (!m_MaintainedNameToIndexMap.ContainsKey(strAbilityName))
+
+			int iIndex = -1;
+			if (!m_MaintainedNameToIndexMap.TryGetValue(strAbilityName, out iIndex))
 				return false;
 
-			int iIndex = m_MaintainedNameToIndexMap[strAbilityName];
 			Maintained ThisMaintained = Me.Maintained(iIndex);
 			return (ThisMaintained.Duration >= fMinimumRemainingDurationSeconds);
 		}
@@ -834,7 +832,7 @@ namespace EQ2GlassCannon
 				return false;
 
 			/// This is the name that SHOULD appear in the maintained list.
-			string strAbilityName = m_KnowledgeBookIDToNameMap[uiAbilityID];
+			string strBestAbilityName = m_KnowledgeBookIDToNameMap[uiAbilityID];
 
 			int iCancelCount = 0;
 
@@ -842,11 +840,13 @@ namespace EQ2GlassCannon
 			{
 				string strMaintainedName = ThisMaintained.Name;
 
-				if (m_KnowledgeBookAbilityLineDictionary.ContainsKey(strMaintainedName) && m_KnowledgeBookAbilityLineDictionary[strMaintainedName] == uiAbilityID)
+				uint uiBestAbilityID = 0;
+				if (m_KnowledgeBookAbilityLineDictionary.TryGetValue(strMaintainedName, out uiBestAbilityID) && uiBestAbilityID == uiAbilityID)
 				{
-					if (bCancelAnyVersion || strAbilityName != strMaintainedName)
+					/// We have to distinguish via name because maintained spells don't give us the original ability ID.
+					if (bCancelAnyVersion || strBestAbilityName != strMaintainedName)
 					{
-						Program.Log("Cancelling {0} from {1}...", strMaintainedName, ThisMaintained.Target().Name);
+						Program.Log("Cancelling \"{0}\" from {1}...", strMaintainedName, ThisMaintained.Target().Name);
 						ThisMaintained.Cancel();
 						iCancelCount++;
 					}
@@ -907,12 +907,13 @@ namespace EQ2GlassCannon
 					string strTargetName = ThisMaintained.Target().Name;
 
 					/// Remove from the list everyone who *has* the buff already.
-					if (NeedyTargetSet.Contains(strTargetName))
+					if (NeedyTargetSet.Contains(strTargetName) && !string.IsNullOrEmpty(strTargetName))
 						NeedyTargetSet.Remove(strTargetName);
 					else
 					{
-						/// Also remove the buff from every player who should not have it.
-						Program.Log("Cancelling {0} from {1}...", ThisAbility.m_strName, ThisMaintained.Target().Name);
+						/// Remove the buff from every player who should not have it,
+						/// and also from targets whose names are no longer known (i.e. empty string).
+						Program.Log("Cancelling \"{0}\" from {1}...", ThisAbility.m_strName, string.IsNullOrEmpty(strTargetName) ? "(unknown target)" : strTargetName);
 						if (ThisMaintained.Cancel())
 							bAnyActionTaken = true;
 					}
@@ -1085,7 +1086,7 @@ namespace EQ2GlassCannon
 				if (ThisActor.Type != "Resource")
 					continue;
 
-				double fDistance = GetActorDistance3D(MeActor, ThisActor);
+				double fDistance = ThisActor.Distance;
 				if (NearestHarvestableNode == null || fDistance < fNearestHarvestableDistance)
 				{
 					NearestHarvestableNode = ThisActor;
@@ -1171,7 +1172,7 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected bool UseSpellGeneratedHealItem()
 		{
-			if (!MeActor.IsIdle || IsCasting)
+			if (!IsIdle || IsCasting)
 				return false;
 
 			VitalStatus MyStatus = null;
@@ -1184,13 +1185,19 @@ namespace EQ2GlassCannon
 					return true;
 			}
 
+			if (MyStatus.PowerRatio < 0.5)
+			{
+				if (UseInventoryItem("Manastone", false, false))
+					return true;
+			}
+
 			return false;
 		}
 
 		/************************************************************************************/
 		protected bool UseDeaggroItems()
 		{
-			if (MeActor.IsIdle)
+			if (IsIdle)
 			{
 				if (m_OffensiveTargetActor != null)
 				{
@@ -1209,7 +1216,7 @@ namespace EQ2GlassCannon
 		/// <returns></returns>
 		protected bool UseOffensiveItems()
 		{
-			if (MeActor.IsIdle)
+			if (IsIdle)
 			{
 				if (m_OffensiveTargetActor != null)
 				{

@@ -123,7 +123,7 @@ namespace EQ2GlassCannon
 			GetOffensiveTargetActor();
 
 			/// Mez time! But as a bonus we use stuns in the lineup too now.
-			if (MeActor.IsIdle)
+			if (IsIdle)
 			{
 				if (m_bUseGreenAEs)
 				{
@@ -148,7 +148,7 @@ namespace EQ2GlassCannon
 					return true;
 				if (CheckToggleBuff(m_uiMainRegenBuffAbilityID, m_bBuffRegen))
 					return true;
-				if (MeActor.IsIdle && CheckToggleBuff(m_uiGroupSecondaryManaRegenBuffAbilityID, m_bBuffRegen))
+				if (IsIdle && CheckToggleBuff(m_uiGroupSecondaryManaRegenBuffAbilityID, m_bBuffRegen))
 					return true;
 				if (CheckToggleBuff(m_uiMagisShieldingAbilityID, true))
 					return true;
@@ -172,7 +172,7 @@ namespace EQ2GlassCannon
 				return false;
 
 			/// Decide if the offensive target is still legitimate. If so, attempt to target it.
-			if (m_OffensiveTargetActor != null && MeActor.IsIdle)
+			if (m_OffensiveTargetActor != null && IsIdle)
 			{
 				bool bDumbfiresAdvised = AreDumbfiresAdvised();
 				bool bTempBuffsAdvised = AreTempOffensiveBuffsAdvised();
@@ -180,7 +180,7 @@ namespace EQ2GlassCannon
 				if (CastHOStarter())
 					return true;
 
-				if (MeActor.IsIdle)
+				if (IsIdle)
 				{
 					/// This buffs PC cast speed and debuffs NPC cast speed. So it gets unique priority.
 					if (CastAbility(m_uiChronosiphoningAbilityID))

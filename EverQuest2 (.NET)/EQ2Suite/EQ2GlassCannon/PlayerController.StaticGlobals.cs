@@ -40,6 +40,14 @@ namespace EQ2GlassCannon
 		private static int s_iAbilityCount = 0;
 		protected static int AbilityCount { get { return s_iAbilityCount; } }
 
+		private static bool s_bIsIdle = false;
+		protected static bool IsIdle { get { return s_bIsIdle; } }
+
+		private static bool s_bIsCastingAbility = false;
+
+		private static bool s_bIsInCombat = false;
+		protected static bool IsInCombat { get { return s_bIsInCombat; } }
+
 		private static bool s_bIsInRaid = false;
 		protected static bool IsInRaid { get { return s_bIsInRaid; } }
 
@@ -83,6 +91,9 @@ namespace EQ2GlassCannon
 				s_MeActor = s_Me.ToActor();
 				s_strName = Me.Name;
 				s_iAbilityCount = Me.NumAbilities;
+				s_bIsIdle = IsIdle;
+				s_bIsCastingAbility = Me.CastingSpell;
+				s_bIsInCombat = (Me.IsHated || MeActor.InCombatMode);
 				s_bIsInRaid = Me.InRaid;
 				s_bIsInGroup = Me.Grouped;
 			}
@@ -405,7 +416,7 @@ namespace EQ2GlassCannon
 						Process CurrentProcess = Process.GetCurrentProcess();
 						long lActualVirtualAllocation = CurrentProcess.VirtualMemorySize64;
 						if (lActualVirtualAllocation > (long)s_Controller.m_ulVirtualAllocationProcessTerminationThreshold &&
-							lActualVirtualAllocation < (long)(4 * CustomFormatter.GB)) /// This check is to prevent impossible values from causing crashes.
+							lActualVirtualAllocation < (long)(4 * CustomFormatter.GB)) /// This check	is to prevent impossible values from causing crashes.
 						{
 							/// GAME OVER.
 							using (StreamWriter OutputFile = Program.OpenCrashLog())
