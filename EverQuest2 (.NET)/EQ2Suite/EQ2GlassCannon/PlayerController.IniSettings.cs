@@ -43,6 +43,7 @@ namespace EQ2GlassCannon
 		protected bool m_bKillBotWhenCamping = false;
 		protected ulong m_ulVirtualAllocationProcessTerminationThreshold = 3500000000;
 		protected string m_strCustomTellTriggerFile = Program.STR_DEFAULT_CUSTOM_TRIGGERS_FILE_PATH;
+		protected string m_strCustomRegenItemFile = Program.STR_DEFAULT_CUSTOM_TRIGGERS_FILE_PATH;
 		protected List<string> m_astrMainTanks = new List<string>();
 		protected List<string> m_astrAutoFollowTargets = new List<string>();
 		protected List<string> m_astrCommandingPlayers = new List<string>();
@@ -119,6 +120,7 @@ namespace EQ2GlassCannon
 			ThisFile.TransferBool("General.KillBotWhenCamping", ref m_bKillBotWhenCamping);
 			ThisFile.TransferULong("General.VirtualAllocationProcessTerminationThreshold", ref m_ulVirtualAllocationProcessTerminationThreshold);
 			ThisFile.TransferString("General.CustomTellTriggerFile", ref m_strCustomTellTriggerFile);
+			ThisFile.TransferString("General.CustomRegenItemFile", ref m_strCustomRegenItemFile);
 			ThisFile.TransferStringList("General.MainTanks", m_astrMainTanks);
 			ThisFile.TransferStringList("General.AutoFollowTargets", m_astrAutoFollowTargets);
 			ThisFile.TransferStringList("General.CommandingPlayers", m_astrCommandingPlayers);
@@ -264,6 +266,38 @@ namespace EQ2GlassCannon
 			catch
 			{
 				Program.Log("Generic exception while parsing custom tell trigger file. List will be cleared and unused.");
+				m_aCustomChatTriggerList.Clear();
+			}
+
+			/// Load the custom regen item list.
+			try
+			{
+				m_aCustomChatTriggerList.Clear();
+				string strInputFile = Path.Combine(Program.ConfigurationFolderPath, m_strCustomRegenItemFile);
+
+				if (File.Exists(strInputFile))
+				{
+					using (CsvFileReader ThisReader = new CsvFileReader(strInputFile))
+					{
+						while (ThisReader.ReadLine())
+						{
+							CustomRegenItem NewItem = new CustomRegenItem();
+							NewItem.m_strName = ThisReader.ReadNextValue();
+							NewItem.m_bMustBeEquipped = bool.Parse(ThisReader.ReadNextValue());
+							NewItem.m_bEnemyTargettable = bool.Parse(ThisReader.ReadNextValue());
+							NewItem.m_bFriendTargettable = bool.Parse(ThisReader.ReadNextValue());
+							NewItem.m_fMinimumHealthRatioRequired = double.Parse(ThisReader.ReadNextValue());
+							NewItem.m_fMaximumHealthRatioRequired = double.Parse(ThisReader.ReadNextValue());
+							NewItem.m_fMinimumPowerRatioRequired = double.Parse(ThisReader.ReadNextValue());
+							NewItem.m_fMaximumPowerRatioRequired = double.Parse(ThisReader.ReadNextValue());
+						}
+					}
+					Program.DebugLog("{0} custom regen item(s) loaded.", m_aCustomChatTriggerList.Count);
+				}
+			}
+			catch
+			{
+				Program.Log("Generic exception while parsing custom regen item file. List will be cleared and unused.");
 				m_aCustomChatTriggerList.Clear();
 			}
 

@@ -11,6 +11,7 @@ namespace EQ2GlassCannon
 	public static class Program
 	{
 		public const string STR_DEFAULT_CUSTOM_TRIGGERS_FILE_PATH = "DefaultCustomTriggers.csv";
+		public const string STR_DEFAULT_CUSTOM_REGEN_ITEMS_FILE_PATH = "DefaultRegenItems.csv";
 
 		public static EmailQueueThread s_EmailQueueThread = new EmailQueueThread();
 
@@ -49,7 +50,21 @@ namespace EQ2GlassCannon
 					}
 					catch
 					{
-						Program.Log("Unable to write default custom trigger file.");
+						Program.Log("Unable to write default custom triggers file.");
+					}
+				}
+
+				/// Transfer a default copy of the custom regen items file if none exists.
+				string strDefaultRegenItemsFilePath = Path.Combine(s_strConfigurationFolderPath, STR_DEFAULT_CUSTOM_REGEN_ITEMS_FILE_PATH);
+				if (!File.Exists(strDefaultRegenItemsFilePath))
+				{
+					try
+					{
+						File.WriteAllText(strDefaultRegenItemsFilePath, Resources.CustomRegenItemsTextFile, Encoding.UTF8);
+					}
+					catch
+					{
+						Program.Log("Unable to write default custom regen items file.");
 					}
 				}
 

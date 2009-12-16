@@ -66,6 +66,31 @@ namespace EQ2GlassCannon
 			}
 		}
 
+		/************************************************************************************/
+		protected class CustomRegenItem
+		{
+			public string m_strName = string.Empty;
+			public bool m_bMustBeEquipped = false;
+			public bool m_bEnemyTargettable = false;
+			public bool m_bFriendTargettable = false;
+			public double m_fMinimumHealthRatioRequired = 0;
+			public double m_fMaximumHealthRatioRequired = 1;
+			public double m_fMinimumPowerRatioRequired = 0;
+			public double m_fMaximumPowerRatioRequired = 1;
+			public bool ShouldUse(VitalStatus ThisStatus)
+			{
+				double fHealthRatio = ThisStatus.HealthRatio;
+				if (fHealthRatio < m_fMinimumHealthRatioRequired || m_fMaximumHealthRatioRequired < fHealthRatio)
+					return false;
+
+				double fPowerRatio = ThisStatus.PowerRatio;
+				if (fPowerRatio < m_fMinimumPowerRatioRequired || m_fMaximumPowerRatioRequired < fPowerRatio)
+					return false;
+
+				return true;
+			}
+		}
+
 		protected bool m_bContinueBot = true;
 
 		protected int m_iLastAbilityCount = 0;
@@ -90,6 +115,7 @@ namespace EQ2GlassCannon
 		protected string m_strSpawnWatchTarget = string.Empty;
 		protected DateTime m_SpawnWatchDespawnStartTime = DateTime.Now;
 		protected List<CustomChatTrigger> m_aCustomChatTriggerList = new List<CustomChatTrigger>();
+		protected List<CustomRegenItem> m_aCustomRegenItemList = new List<CustomRegenItem>();
 
 		protected PositioningStance m_ePositioningStance = PositioningStance.AutoFollow;
 

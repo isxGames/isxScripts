@@ -61,6 +61,24 @@ namespace EQ2GlassCannon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;Innoruuk&apos;s Child&quot;,false,false,false,0,0.8,0,1
+        ///&quot;Crystallized Essence (Master)&quot;,false,false,false,0,0.8,0,1
+        ///&quot;Crystallized Essence (Expert)&quot;,false,false,false,0,0.8,0,1
+        ///&quot;Crystal Gift&quot;,false,false,false,0.5,1,0,0.8
+        ///&quot;Overflowing Vessel of Fyr&apos;Un&quot;,true,false,false,0.5,1,0,0.8
+        ///&quot;Manastone&quot;,false,false,false,0.5,1,0,0.8
+        ///&quot;Shard of Essence (Master)&quot;,false,false,false,0.5,1,0,0.8
+        ///&quot;Shard of Essence (Expert)&quot;,false,false,false,0.5,1,0,0.8
+        ///&quot;Dark Heart (Master)&quot;,false,false,false,0.5,1,0,0.8
+        ///&quot;Dark Heart (Expert)&quot; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CustomRegenItemsTextFile {
+            get {
+                return ResourceManager.GetString("CustomRegenItemsTextFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;!&quot;, &quot;assist me&quot;, &quot;/gc_attackassist {0}&quot;
         ///&quot;!&quot;, &quot;come&quot;, &quot;/gc_stance follow&quot;
         ///&quot;!&quot;, &quot;stay close&quot;, &quot;/gc_stance customfollow&quot;

@@ -1179,32 +1179,9 @@ namespace EQ2GlassCannon
 			if (!GetVitalStatus(Name, ref MyStatus))
 				return false;
 
-			if (MyStatus.HealthRatio < 0.5)
+			foreach (CustomRegenItem ThisItem in m_aCustomRegenItemList)
 			{
-				if (UseInventoryItem("Innoruuk's Child", false, false))
-					return true;
-				if (UseInventoryItem("Crystallized Essence (Master)", false, false))
-					return true;
-				if (UseInventoryItem("Crystallized Essence (Expert)", false, false))
-					return true;
-			}
-
-			if (MyStatus.PowerRatio < 0.5 && MyStatus.HealthRatio > 0.5)
-			{
-				// some arbitary values here for now. ideally would check health requirement better. low levels would die! mentored would die!
-				if (UseInventoryItem("Crystal Gift", false, false)) // the item \aITEM 556103334 952973265:[Crystal Gift]\/a generates these usually very fast
-					return true;
-				if (UseInventoryItem("Overflowing Vessel of Fyr'Un", true, false))
-					return true;
-				if (UseInventoryItem("Manastone", false, false)) // manastone recycles slow, use it as soon as poss each time
-					return true;
-				if (UseInventoryItem("Shard of Essence (Master)", false, false)) // conj
-					return true;
-				if (UseInventoryItem("Shard of Essence (Expert)", false, false))
-					return true;
-				if (UseInventoryItem("Dark Heart (Master)", false, false)) //  necro.
-					return true;
-				if (UseInventoryItem("Dark Heart (Expert)", false, false))
+				if (ThisItem.ShouldUse(MyStatus) && UseInventoryItem(ThisItem.m_strName, ThisItem.m_bMustBeEquipped, ThisItem.m_bEnemyTargettable))
 					return true;
 			}
 
