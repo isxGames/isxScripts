@@ -13,6 +13,7 @@ namespace EQ2ParseEngine
 			Unknown = 0,
 			Cure,
 			Dispel,
+			Threat,
 			Stoneskin,
 			Ward,
 			Heal,
@@ -49,8 +50,8 @@ namespace EQ2ParseEngine
 			Blocked = 0x800,
 		}
 
-		internal uint m_uiQuantity = 0;
-		public uint Quantity { get { return m_uiQuantity; } }
+		internal int m_iQuantity = 0;
+		public int Quantity { get { return m_iQuantity; } }
 
 		internal string m_strSource = string.Empty;
 		public string Source { get { return m_strSource; } }
@@ -97,7 +98,7 @@ namespace EQ2ParseEngine
 			ActionEventArgs NewArgs = new ActionEventArgs(m_Timestamp, m_strOriginalLine);
 			NewArgs.m_eActionType = m_eActionType;
 			NewArgs.m_eAttributes = m_eAttributes;
-			NewArgs.m_uiQuantity = m_uiQuantity;
+			NewArgs.m_iQuantity = m_iQuantity;
 			NewArgs.m_strAbilityName = m_strAbilityName;
 			NewArgs.m_strDestination = m_strDestination;
 			NewArgs.m_strSource = m_strSource;
