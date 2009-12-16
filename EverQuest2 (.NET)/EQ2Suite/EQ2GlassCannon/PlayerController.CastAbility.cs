@@ -272,34 +272,57 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
-		protected bool UseInventoryItem(string strItemName, bool bMustBeEquipped, bool bOffensiveItem)
+		protected bool UseInventoryItem(
+			string strItemName,
+			bool bMustBeEquipped,
+			bool bMustNotBeEquipped,
+			bool bMustTargetEnemy,
+			bool bMustTargetFriend)
 		{
 			try
 			{
 				if (IsCasting)
 					return false;
 
-				Item ThisItem = Me.Inventory("ExactName", strItemName);
-				if (!ThisItem.IsValid || !ThisItem.IsReady || !ThisItem.IsActivatable || (bMustBeEquipped && !ThisItem.IsEquipped))
+				Item ThisItem = null;
+
+				if (bMustBeEquipped)
+					ThisItem = Me.Equipment("ExactName", strItemName);
+				else if (bMustNotBeEquipped)
+					ThisItem = Me.Inventory("ExactName", strItemName);
+				else
+				{
+					ThisItem = Me.Inventory("ExactName", strItemName);
+					if (!ThisItem.IsValid)
+						ThisItem = Me.Equipment("ExactName", strItemName);
+				}
+
+				if (!ThisItem.IsValid || !ThisItem.IsReady || !ThisItem.IsActivatable)
 					return false;
 
-				if (bOffensiveItem)
+				if (bMustTargetEnemy || bMustTargetFriend)
 				{
-					Actor MyTargetActor = MeActor.Target();
-					if (MyTargetActor.IsValid)
+					Actor TargetActor = MeActor.Target();
+					if (!TargetActor.IsValid)
+						return false;
+
+					string strType = TargetActor.Type;
+					if (bMustTargetEnemy && !(strType == "NPC" || strType == STR_NAMED_NPC))
+						return false;
+					if (bMustTargetFriend && !(strType == "PC" || strType == "Pet" || strType == "MyPet"))
+						return false;
+
+					/// Test range.
+					double fDistance = TargetActor.Distance;
+					if (fDistance < ThisItem.MinRange || ThisItem.MaxRange < fDistance)
 					{
-						/// Test range.
-						double fDistance = GetActorDistance3D(MeActor, MyTargetActor);
-						if (fDistance < ThisItem.MinRange || ThisItem.MaxRange < fDistance)
-						{
-							Program.Log("Unable to use {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
-								ThisItem.Name, MyTargetActor.Name, ThisItem.MinRange, ThisItem.MaxRange, fDistance);
-							return false;
-						}
+						Program.Log("Unable to use {0} because {1} is out of range ({2}-{3} needed, {4:0.00} actual)",
+							ThisItem.Name, TargetActor.Name, ThisItem.MinRange, ThisItem.MaxRange, fDistance);
+						return false;
 					}
 				}
 
-				Program.Log("Attempting to use clicky item \"{0}\" ({1}) from inventory bags...", ThisItem.Name, ThisItem.LinkID);
+				Program.Log("Attempting to use clicky item \"{0}\" ({1})...", ThisItem.Name, ThisItem.LinkID);
 				StartCastTimers(ThisItem);
 				RunCommand("/use_itemvdl {0}", ThisItem.LinkID);
 				return true;
@@ -312,9 +335,20 @@ namespace EQ2GlassCannon
 		}
 
 		/************************************************************************************/
+		protected bool UseInventoryItem(CustomRegenItem ThisItem)
+		{
+			return UseInventoryItem(
+				ThisItem.m_strName,
+				ThisItem.m_bMustBeEquipped,
+				ThisItem.m_bMustNotBeEquipped,
+				ThisItem.m_bMustTargetEnemy,
+				ThisItem.m_bMustTargetFriend);
+		}
+
+		/************************************************************************************/
 		protected bool UseInventoryItem(string strItemName)
 		{
-			return UseInventoryItem(strItemName, false, false);
+			return UseInventoryItem(strItemName, false, false, false, false);
 		}
 
 		/************************************************************************************/
@@ -1181,7 +1215,7 @@ namespace EQ2GlassCannon
 
 			foreach (CustomRegenItem ThisItem in m_aCustomRegenItemList)
 			{
-				if (ThisItem.ShouldUse(MyStatus) && UseInventoryItem(ThisItem.m_strName, ThisItem.m_bMustBeEquipped, ThisItem.m_bEnemyTargettable))
+				if (!ThisItem.ShouldUse(MyStatus) && UseInventoryItem(ThisItem))
 					return true;
 			}
 
@@ -1195,7 +1229,7 @@ namespace EQ2GlassCannon
 			{
 				if (m_OffensiveTargetActor != null)
 				{
-					if (UseInventoryItem("Behavioral Modificatinator Stereopticon", false, true))
+					if (UseInventoryItem("Behavioral Modificatinator Stereopticon", false, false, true, false))
 						return true;
 				}
 			}
@@ -1214,11 +1248,11 @@ namespace EQ2GlassCannon
 			{
 				if (m_OffensiveTargetActor != null)
 				{
-					if (UseInventoryItem("Brock's Thermal Shocker", false, true))
+					if (UseInventoryItem("Brock's Thermal Shocker", false, false, true, false))
 						return true;
 
 					/// Shard of Fear has a 30 minute recast, you wouldn't want to waste it on dumb shit.
-					if (m_OffensiveTargetActor.IsNamed && UseInventoryItem("Shard of Fear", true, true))
+					if (m_OffensiveTargetActor.IsNamed && UseInventoryItem("Shard of Fear", true, false, true, false))
 						return true;
 				}
 			}

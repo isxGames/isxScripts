@@ -71,12 +71,34 @@ namespace EQ2GlassCannon
 		{
 			public string m_strName = string.Empty;
 			public bool m_bMustBeEquipped = false;
-			public bool m_bEnemyTargettable = false;
-			public bool m_bFriendTargettable = false;
+			public bool m_bMustNotBeEquipped = false;
+			public bool m_bMustTargetEnemy = false;
+			public bool m_bMustTargetFriend = false;
 			public double m_fMinimumHealthRatioRequired = 0;
 			public double m_fMaximumHealthRatioRequired = 1;
 			public double m_fMinimumPowerRatioRequired = 0;
 			public double m_fMaximumPowerRatioRequired = 1;
+
+			public bool IsValid()
+			{
+				if (string.IsNullOrEmpty(m_strName))
+					return false;
+
+				if (m_bMustBeEquipped && m_bMustNotBeEquipped)
+					return false;
+
+				if (m_bMustTargetEnemy && m_bMustTargetFriend)
+					return false;
+
+				if (m_fMinimumHealthRatioRequired > m_fMaximumHealthRatioRequired)
+					return false;
+
+				if (m_fMinimumPowerRatioRequired > m_fMaximumPowerRatioRequired)
+					return false;
+
+				return true;
+			}
+
 			public bool ShouldUse(VitalStatus ThisStatus)
 			{
 				double fHealthRatio = ThisStatus.HealthRatio;
@@ -91,8 +113,8 @@ namespace EQ2GlassCannon
 			}
 		}
 
+		/************************************************************************************/
 		protected bool m_bContinueBot = true;
-
 		protected int m_iLastAbilityCount = 0;
 		protected Point3D m_ptMyLastLocation = new Point3D();
 		protected bool m_bCheckBuffsNow = true;

@@ -42,8 +42,8 @@ namespace EQ2GlassCannon
 		protected int m_iFrameSkip = 2;
 		protected bool m_bKillBotWhenCamping = false;
 		protected ulong m_ulVirtualAllocationProcessTerminationThreshold = 3500000000;
-		protected string m_strCustomTellTriggerFile = Program.STR_DEFAULT_CUSTOM_TRIGGERS_FILE_PATH;
-		protected string m_strCustomRegenItemFile = Program.STR_DEFAULT_CUSTOM_TRIGGERS_FILE_PATH;
+		protected string m_strCustomTellTriggerFile = "CustomTriggers.csv";
+		protected string m_strCustomRegenItemFile = "CustomRegenItems.csv";
 		protected List<string> m_astrMainTanks = new List<string>();
 		protected List<string> m_astrAutoFollowTargets = new List<string>();
 		protected List<string> m_astrCommandingPlayers = new List<string>();
@@ -217,50 +217,49 @@ namespace EQ2GlassCannon
 				m_aCustomChatTriggerList.Clear();
 				string strInputFile = Path.Combine(Program.ConfigurationFolderPath, m_strCustomTellTriggerFile);
 
-				if (File.Exists(strInputFile))
+				if (!File.Exists(strInputFile))
+					File.WriteAllText(strInputFile, Resources.CustomTriggersTextFile, Encoding.UTF8);
+
+				using (CsvFileReader ThisReader = new CsvFileReader(strInputFile))
 				{
-					using (CsvFileReader ThisReader = new CsvFileReader(strInputFile))
+					SetCollection<string> CommandingPlayerSet = new SetCollection<string>();
+					CommandingPlayerSet.Add(m_astrCommandingPlayers);
+
+					while (ThisReader.ReadLine())
 					{
-						SetCollection<string> CommandingPlayerSet = new SetCollection<string>();
-						CommandingPlayerSet.Add(m_astrCommandingPlayers);
+						CustomChatTrigger NewTrigger = new CustomChatTrigger();
 
-						while (ThisReader.ReadLine())
+						string strSourcePlayers = ThisReader.ReadNextValue().ToLower();
+						NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
+
+						/// An exclamation point means all configured commanding players.
+						if (strSourcePlayers == "!")
+							NewTrigger.m_SourcePlayerSet = CommandingPlayerSet;
+						else
+							NewTrigger.m_SourcePlayerSet.Add(strSourcePlayers.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+
+						/// Keep reading commands until there are no more.
+						try
 						{
-							CustomChatTrigger NewTrigger = new CustomChatTrigger();
+							while (true)
+								NewTrigger.m_astrCommands.Add(ThisReader.ReadNextValue());
+						}
+						catch (IndexOutOfRangeException)
+						{
+							/// This exception is harmless and expected (though cheesy).
+						}
 
-							string strSourcePlayers = ThisReader.ReadNextValue().ToLower();
-							NewTrigger.m_strSubstring = ThisReader.ReadNextValue().Trim().ToLower();
-
-							/// An exclamation point means all configured commanding players.
-							if (strSourcePlayers == "!")
-								NewTrigger.m_SourcePlayerSet = CommandingPlayerSet;
-							else
-								NewTrigger.m_SourcePlayerSet.Add(strSourcePlayers.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
-
-							/// Keep reading commands until there are no more.
-							try
-							{
-								while (true)
-									NewTrigger.m_astrCommands.Add(ThisReader.ReadNextValue());
-							}
-							catch (IndexOutOfRangeException)
-							{
-								/// This exception is harmless and expected (though cheesy).
-							}
-
-							if (!string.IsNullOrEmpty(NewTrigger.m_strSubstring) && (NewTrigger.m_astrCommands.Count > 0))
-							{
-								m_aCustomChatTriggerList.Add(NewTrigger);
-								Program.DebugLog("Chat Trigger Sources: \"{0}\", Substring: \"{1}\", Commands: \"{2}\"",
-									NewTrigger.m_SourcePlayerSet,
-									NewTrigger.m_strSubstring,
-									NewTrigger.m_astrCommands);
-							}
+						if (!string.IsNullOrEmpty(NewTrigger.m_strSubstring) && (NewTrigger.m_astrCommands.Count > 0))
+						{
+							m_aCustomChatTriggerList.Add(NewTrigger);
+							Program.DebugLog("Chat Trigger Sources: \"{0}\", Substring: \"{1}\", Commands: \"{2}\"",
+								NewTrigger.m_SourcePlayerSet,
+								NewTrigger.m_strSubstring,
+								NewTrigger.m_astrCommands);
 						}
 					}
-					Program.DebugLog("{0} custom chat trigger(s) loaded.", m_aCustomChatTriggerList.Count);
 				}
-
+				Program.DebugLog("{0} custom chat trigger(s) loaded.", m_aCustomChatTriggerList.Count);
 				Program.s_EmailQueueThread.PostNewProfileMessage(m_EmailProfile);
 			}
 			catch
@@ -275,25 +274,29 @@ namespace EQ2GlassCannon
 				m_aCustomChatTriggerList.Clear();
 				string strInputFile = Path.Combine(Program.ConfigurationFolderPath, m_strCustomRegenItemFile);
 
-				if (File.Exists(strInputFile))
+				if (!File.Exists(strInputFile))
+					File.WriteAllText(strInputFile, Resources.CustomRegenItemsTextFile, Encoding.UTF8);
+
+				using (CsvFileReader ThisReader = new CsvFileReader(strInputFile))
 				{
-					using (CsvFileReader ThisReader = new CsvFileReader(strInputFile))
+					while (ThisReader.ReadLine())
 					{
-						while (ThisReader.ReadLine())
-						{
-							CustomRegenItem NewItem = new CustomRegenItem();
-							NewItem.m_strName = ThisReader.ReadNextValue();
-							NewItem.m_bMustBeEquipped = bool.Parse(ThisReader.ReadNextValue());
-							NewItem.m_bEnemyTargettable = bool.Parse(ThisReader.ReadNextValue());
-							NewItem.m_bFriendTargettable = bool.Parse(ThisReader.ReadNextValue());
-							NewItem.m_fMinimumHealthRatioRequired = double.Parse(ThisReader.ReadNextValue());
-							NewItem.m_fMaximumHealthRatioRequired = double.Parse(ThisReader.ReadNextValue());
-							NewItem.m_fMinimumPowerRatioRequired = double.Parse(ThisReader.ReadNextValue());
-							NewItem.m_fMaximumPowerRatioRequired = double.Parse(ThisReader.ReadNextValue());
-						}
+						CustomRegenItem NewItem = new CustomRegenItem();
+						NewItem.m_strName = ThisReader.ReadNextValue();
+						NewItem.m_bMustBeEquipped = bool.Parse(ThisReader.ReadNextValue());
+						NewItem.m_bMustNotBeEquipped = bool.Parse(ThisReader.ReadNextValue());
+						NewItem.m_bMustTargetEnemy = bool.Parse(ThisReader.ReadNextValue());
+						NewItem.m_bMustTargetFriend = bool.Parse(ThisReader.ReadNextValue());
+						NewItem.m_fMinimumHealthRatioRequired = double.Parse(ThisReader.ReadNextValue());
+						NewItem.m_fMaximumHealthRatioRequired = double.Parse(ThisReader.ReadNextValue());
+						NewItem.m_fMinimumPowerRatioRequired = double.Parse(ThisReader.ReadNextValue());
+						NewItem.m_fMaximumPowerRatioRequired = double.Parse(ThisReader.ReadNextValue());
+
+						if (NewItem.IsValid())
+							m_aCustomRegenItemList.Add(NewItem);
 					}
-					Program.DebugLog("{0} custom regen item(s) loaded.", m_aCustomChatTriggerList.Count);
 				}
+				Program.DebugLog("{0} custom regen item(s) loaded.", m_aCustomChatTriggerList.Count);
 			}
 			catch
 			{
