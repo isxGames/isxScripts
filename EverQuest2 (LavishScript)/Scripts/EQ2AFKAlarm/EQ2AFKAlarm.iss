@@ -182,7 +182,7 @@ function PlaySound(string Filename)
 	;System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},${Filename.String},0,"Math.Dec[22001]"] 
 	if !${Filename.Length}
 		Filename:Set[${DefaultSound}]
-	playsound ${Filename}
+	playsound "${Filename}"
 } 
 
 
