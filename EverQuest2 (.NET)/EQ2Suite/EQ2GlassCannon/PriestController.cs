@@ -82,13 +82,16 @@ namespace EQ2GlassCannon
 		{
 			public readonly int m_iPotentialCurseCures = 0;
 			public readonly int m_iPotentialCures = 0;
+			public readonly int m_iActorID = -1;
 
 			public SingleCureEvaluationKey(
 				int iPotentialCurseCures,
-				int iPotentialCures)
+				int iPotentialCures,
+				int iActorID)
 			{
 				m_iPotentialCurseCures = iPotentialCurseCures;
 				m_iPotentialCures = iPotentialCures;
+				m_iActorID = iActorID;
 				return;
 			}
 
@@ -104,6 +107,11 @@ namespace EQ2GlassCannon
 					return -iComparison;
 
 				iComparison = m_iPotentialCures.CompareTo(OtherEvaluation.m_iPotentialCures);
+				if (iComparison != 0)
+					return -iComparison;
+
+				/// Actor ID is just a magic number used to prevent duplicate keys.
+				iComparison = m_iActorID.CompareTo(OtherEvaluation.m_iActorID);
 				if (iComparison != 0)
 					return -iComparison;
 
@@ -169,7 +177,15 @@ namespace EQ2GlassCannon
 					iPotentialCuresAtOnce++;
 				}
 
-				CurePriorityList.Add(new SingleCureEvaluationKey(ThisStatus.m_iCursed, iPotentialCuresAtOnce), ThisStatus.m_Actor.Name);
+				if (ThisStatus.m_iCursed > 0 || iPotentialCuresAtOnce > 0)
+				{
+					SingleCureEvaluationKey NewKey =
+						new SingleCureEvaluationKey(
+							ThisStatus.m_iCursed,
+							iPotentialCuresAtOnce,
+							ThisStatus.m_Actor.ID);
+					CurePriorityList.Add(NewKey, ThisStatus.m_Actor.Name);
+				}
 			}
 
 			/// There's no strict rule on when to cast a group cure; we just fudge it here.

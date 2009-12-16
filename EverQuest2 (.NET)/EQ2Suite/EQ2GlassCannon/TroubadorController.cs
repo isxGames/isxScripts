@@ -169,7 +169,7 @@ namespace EQ2GlassCannon
 				return true;
 			}
 
-			if (UseSpellGeneratedHealItem())
+			if (UseRegenItem())
 				return true;
 			if (DisarmChests())
 				return true;

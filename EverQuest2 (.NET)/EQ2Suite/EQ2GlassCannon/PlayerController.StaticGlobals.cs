@@ -91,7 +91,7 @@ namespace EQ2GlassCannon
 				s_MeActor = s_Me.ToActor();
 				s_strName = Me.Name;
 				s_iAbilityCount = Me.NumAbilities;
-				s_bIsIdle = IsIdle;
+				s_bIsIdle = MeActor.IsIdle;
 				s_bIsCastingAbility = Me.CastingSpell;
 				s_bIsInCombat = (Me.IsHated || MeActor.InCombatMode);
 				s_bIsInRaid = Me.InRaid;
