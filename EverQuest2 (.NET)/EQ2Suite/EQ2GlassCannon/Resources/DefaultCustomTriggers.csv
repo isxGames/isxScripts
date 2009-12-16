@@ -12,7 +12,7 @@
 "!", "redo group buffs", "/gc_cancelgroupbuffs"
 "!", "sanctuary", "/cancel_spellcast", "/usea Sanctuary"
 "!", "bladedance", "/cancel_spellcast", "/usea Bladedance"
-"!", "call out to qeynos", "/usea Call of Qeynos"
+"!", "call out to city", "/usea Call of Qeynos", "/usea Call of the Overlord"
 "!", "call out", "/usea Call to Guild Hall"
 "!", "evac", "/cancel_spellcast", "/usea Escape", "/usea Depart"
 "!", "invis us", "/usea Illusory Mask"

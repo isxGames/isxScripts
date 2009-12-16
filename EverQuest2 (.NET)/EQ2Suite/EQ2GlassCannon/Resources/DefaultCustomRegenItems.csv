@@ -1,10 +1,39 @@
-﻿"Innoruuk's Child",false,false,false,0,0.8,0,1
-"Crystallized Essence (Master)",false,false,false,0,0.8,0,1
-"Crystallized Essence (Expert)",false,false,false,0,0.8,0,1
+﻿"Innoruuk's Child",false,false,false,0,0.5,0,1
+"Crystallized Essence (Master)",false,false,false,0,0.5,0,1
+"Crystallized Essence (Expert)",false,false,false,0,0.5,0,1
+"Essence of Health",false,false,false,0,0.5,0,1
+"Apprentice's Essence of Health",false,false,false,0,0.5,0,1
+"Translucent Wave of Health",false,false,false,0,0.5,0,1
+"Greater Essence of Health",false,false,false,0,0.5,0,1
+"Journeyman's Essence of Health",false,false,false,0,0.5,0,1
+"Superb Essence of Health",false,false,false,0,0.5,0,1
+"Workman's Essence of Health",false,false,false,0,0.5,0,1
+"Superior Essence of Health",false,false,false,0,0.5,0,1
+"Remarkable Essence of Health",false,false,false,0,0.5,0,1
+"Master's Essence of Health",false,false,false,0,0.5,0,1
+"Exceptional Essence of Health",false,false,false,0,0.5,0,1
+"Grandmaster's Essence of Health",false,false,false,0,0.5,0,1
+"Dedicated Essence of Health",false,false,false,0,0.5,0,1
+"Expert's Essence of Health",false,false,false,0,0.5,0,1
 "Crystal Gift",false,false,false,0.5,1,0,0.8
 "Overflowing Vessel of Fyr'Un",true,false,false,0.5,1,0,0.8
+"Vessel of Fyr'Un",true,false,false,0.5,1,0,0.8
+"Honor of Pantrilla",true,false,false,0.5,1,0,0.8
 "Manastone",false,false,false,0.5,1,0,0.8
 "Shard of Essence (Master)",false,false,false,0.5,1,0,0.8
 "Shard of Essence (Expert)",false,false,false,0.5,1,0,0.8
 "Dark Heart (Master)",false,false,false,0.5,1,0,0.8
 "Dark Heart (Expert)",false,false,false,0.5,1,0,0.8
+"Essence of Power",false,false,false,0,1,0,0.5
+"Apprentice's Essence of Power",false,false,false,0,1,0,0.5
+"Greater Essence of Power",false,false,false,0,1,0,0.5
+"Journeyman's Essence of Power",false,false,false,0,1,0,0.5
+"Superb Essence of Power",false,false,false,0,1,0,0.5
+"Workman's Essence of Power",false,false,false,0,1,0,0.5
+"Superior Essence of Power",false,false,false,0,1,0,0.5
+"Remarkable Essence of Power",false,false,false,0,1,0,0.5
+"Master's Essence of Power",false,false,false,0,1,0,0.5
+"Exceptional Essence of Power",false,false,false,0,1,0,0.5
+"Grandmaster's Essence of Power",false,false,false,0,1,0,0.5
+"Dedicated Essence of Power",false,false,false,0,1,0,0.5
+"Expert's Essence of Power",false,false,false,0,1,0,0.5
