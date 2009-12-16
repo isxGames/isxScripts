@@ -367,7 +367,7 @@ namespace EQ2ParseEngine
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
-					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 					NewEvent.m_strAbilityName = ThisMatch.Groups["ability"].Value;
 
 					DispatchActionEvent(NewEvent);
@@ -420,7 +420,7 @@ namespace EQ2ParseEngine
 
 							Match ThisItemMatch = ThisMatchSet[iIndex];
 							AssignDamageType(ThisItemMatch.Groups["damagetype"].Value, ref ThisEvent.m_eActionType);
-							ThisEvent.m_uiQuantity = uint.Parse(ThisItemMatch.Groups["quantity"].Value);
+							ThisEvent.m_iQuantity = int.Parse(ThisItemMatch.Groups["quantity"].Value);
 							DispatchActionEvent(ThisEvent);
 						}
 					}
@@ -438,9 +438,31 @@ namespace EQ2ParseEngine
 
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					AssignDamageType(ThisMatch.Groups["damagetype"].Value, ref NewEvent.m_eActionType);
-					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 					AssignAttributeType(ThisMatch.Groups["attacktype"].Value, ref NewEvent.m_eAttributes);
+
+					DispatchActionEvent(NewEvent);
+					return true;
+				}
+
+				/// Threat adjustment.
+				/// TODO: Parse other players too.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)(?<scaling>increases|reduces) (?:YOUR) hate with (?<victim>.+) by (?<quantity>\d+) threat.");
+				if (ThisMatch.Success)
+				{
+					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
+					NewEvent.m_eActionType = ActionEventArgs.ActionType.Threat;
+
+					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
+					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
+
+					int iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
+					string strScaling = ThisMatch.Groups["scaling"].Value;
+					if (strScaling == "increases")
+						NewEvent.m_iQuantity = iQuantity;
+					else
+						NewEvent.m_iQuantity = -iQuantity;
 
 					DispatchActionEvent(NewEvent);
 					return true;
@@ -525,7 +547,7 @@ namespace EQ2ParseEngine
 					NewEvent.m_eActionType = ActionEventArgs.ActionType.Ward;
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
-					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 
 					DispatchActionEvent(NewEvent);
@@ -545,7 +567,7 @@ namespace EQ2ParseEngine
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
@@ -564,7 +586,7 @@ namespace EQ2ParseEngine
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
@@ -583,7 +605,7 @@ namespace EQ2ParseEngine
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 
 					DispatchActionEvent(NewEvent);
 					return true;
@@ -603,7 +625,7 @@ namespace EQ2ParseEngine
 
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
-					NewEvent.m_uiQuantity = uint.Parse(ThisMatch.Groups["quantity"].Value);
+					NewEvent.m_iQuantity = int.Parse(ThisMatch.Groups["quantity"].Value);
 					NewEvent.m_strAbilityName = ThisMatch.Groups["ability"].Value;
 
 					DispatchActionEvent(NewEvent);
@@ -623,7 +645,7 @@ namespace EQ2ParseEngine
 
 					/// Remove the stupid commas. Dunno if I can have the regex do it for me.
 					string strQuantity = ThisMatch.Groups["quantity"].Value.Replace(",", "");
-					NewEvent.m_uiQuantity = uint.Parse(strQuantity);
+					NewEvent.m_iQuantity = int.Parse(strQuantity);
 
 					/// TODO: Not sure how I want to handle this yet.
 					return true;

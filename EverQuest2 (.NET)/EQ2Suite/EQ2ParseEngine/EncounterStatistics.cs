@@ -9,9 +9,9 @@ namespace EQ2ParseEngine
 	public class EncounterAbilityStatistics
 	{
 		protected string m_strAbilityName = string.Empty;
-		protected uint m_uiTotalQuantity = 0;
-		protected uint? m_uiMinimumQuantity = null;
-		protected uint? m_uiMaximumQuantity = null;
+		protected int m_iTotalQuantity = 0;
+		protected int? m_iMinimumQuantity = null;
+		protected int? m_iMaximumQuantity = null;
 		protected double m_fAverageQuantity = 0;
 		protected ActionEventArgs.ActionType m_eActionType = ActionEventArgs.ActionType.Unknown;
 		protected uint m_uiTotalSuccesses = 0;
@@ -28,15 +28,15 @@ namespace EQ2ParseEngine
 
 			if (!NewEvent.FailedAttempt)
 			{
-				if (m_uiMinimumQuantity == null || NewEvent.Quantity < m_uiMinimumQuantity)
-					m_uiMinimumQuantity = NewEvent.Quantity;
-				if (m_uiMaximumQuantity == null || NewEvent.Quantity > m_uiMaximumQuantity)
-					m_uiMaximumQuantity = NewEvent.Quantity;
+				if (m_iMinimumQuantity == null || NewEvent.Quantity < m_iMinimumQuantity)
+					m_iMinimumQuantity = NewEvent.Quantity;
+				if (m_iMaximumQuantity == null || NewEvent.Quantity > m_iMaximumQuantity)
+					m_iMaximumQuantity = NewEvent.Quantity;
 				if ((NewEvent.Attributes & ActionEventArgs.AttributeFlags.Critical) != 0)
 					m_uiTotalCriticalSuccesses++;
 				m_uiTotalSuccesses++;
-				m_uiTotalQuantity += NewEvent.Quantity;
-				m_fAverageQuantity = (double)m_uiTotalQuantity / (double)m_uiTotalSuccesses;
+				m_iTotalQuantity += NewEvent.Quantity;
+				m_fAverageQuantity = (double)m_iTotalQuantity / (double)m_uiTotalSuccesses;
 			}
 
 			return;
