@@ -104,16 +104,16 @@ namespace EQ2GlassCannon
 
 				iComparison = m_iPotentialCurseCures.CompareTo(OtherEvaluation.m_iPotentialCurseCures);
 				if (iComparison != 0)
-					return -iComparison;
+					return iComparison;
 
 				iComparison = m_iPotentialCures.CompareTo(OtherEvaluation.m_iPotentialCures);
 				if (iComparison != 0)
-					return -iComparison;
+					return iComparison;
 
 				/// Actor ID is just a magic number used to prevent duplicate keys.
 				iComparison = m_iActorID.CompareTo(OtherEvaluation.m_iActorID);
 				if (iComparison != 0)
-					return -iComparison;
+					return iComparison;
 
 				return 0;
 			}
@@ -143,39 +143,36 @@ namespace EQ2GlassCannon
 				return false;
 
 			SortedDictionary<SingleCureEvaluationKey, string> CurePriorityList = new SortedDictionary<SingleCureEvaluationKey, string>();
-			int iTotalTraumaBearers = 0;
-			int iTotalArcaneBearers = 0;
-			int iTotalNoxiousBearers = 0;
-			int iTotalElementalBearers = 0;
+			int iGroupCureCandidateCount = 0;
 
 			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bCureUngroupedMainTank))
 			{
-				/// Example: If a group-wide effect is in place,
-				/// and then a horrible single-target effect is placed on,
-				/// the best cure candidate will have 2 effects as opposed to 1 like everyone else.
-				/// This works on Wuoshi for instance.
 				int iPotentialCuresAtOnce = 0;
+				bool bGroupCurable = bTryGroupCure;
 
 				if (ThisStatus.m_iTrauma > 0)
 				{
-					iTotalTraumaBearers++;
+					bGroupCurable = (bGroupCurable && bCanGroupTrauma);
 					iPotentialCuresAtOnce++;
 				}
 				if (ThisStatus.m_iArcane > 0)
 				{
-					iTotalArcaneBearers++;
+					bGroupCurable = (bGroupCurable && bCanGroupArcane);
 					iPotentialCuresAtOnce++;
 				}
 				if (ThisStatus.m_iNoxious > 0)
 				{
-					iTotalNoxiousBearers++;
+					bGroupCurable = (bGroupCurable && bCanGroupNoxious);
 					iPotentialCuresAtOnce++;
 				}
 				if (ThisStatus.m_iElemental > 0)
 				{
-					iTotalElementalBearers++;
+					bGroupCurable = (bGroupCurable && bCanGroupElemental);
 					iPotentialCuresAtOnce++;
 				}
+
+				if (bGroupCurable)
+					iGroupCureCandidateCount++;
 
 				if (ThisStatus.m_iCursed > 0 || iPotentialCuresAtOnce > 0)
 				{
@@ -189,17 +186,8 @@ namespace EQ2GlassCannon
 			}
 
 			/// There's no strict rule on when to cast a group cure; we just fudge it here.
-			if (bTryGroupCure &&
-				(
-				(bCanGroupTrauma && iTotalTraumaBearers >= 3) ||
-				(bCanGroupArcane && iTotalArcaneBearers >= 3) ||
-				(bCanGroupNoxious && iTotalNoxiousBearers >= 3) ||
-				(bCanGroupElemental && iTotalElementalBearers >= 3)
-				)
-				)
-			{
+			if (bTryGroupCure && iGroupCureCandidateCount >= 3)
 				return CastAbilityOnSelf(m_uiGeneralGroupCureAbilityID);
-			}
 
 			else if (CurePriorityList.Count > 0)
 			{
