@@ -133,7 +133,7 @@ namespace EQ2GlassCannon
 
 			if (AttemptCureArcane())
 				return true;
-			if (UseSpellGeneratedHealItem())
+			if (UseRegenItem())
 				return true;
 
 			if (m_bCheckBuffsNow)
