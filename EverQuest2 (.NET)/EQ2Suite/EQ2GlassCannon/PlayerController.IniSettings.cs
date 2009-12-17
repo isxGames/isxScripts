@@ -255,10 +255,11 @@ namespace EQ2GlassCannon
 							Program.DebugLog("Chat Trigger Sources: \"{0}\", Substring: \"{1}\", Commands: \"{2}\"",
 								NewTrigger.m_SourcePlayerSet,
 								NewTrigger.m_strSubstring,
-								NewTrigger.m_astrCommands);
+								string.Join("\", \"", NewTrigger.m_astrCommands.ToArray()));
 						}
 					}
 				}
+
 				Program.DebugLog("{0} custom chat trigger(s) loaded.", m_aCustomChatTriggerList.Count);
 				Program.s_EmailQueueThread.PostNewProfileMessage(m_EmailProfile);
 			}
@@ -271,7 +272,7 @@ namespace EQ2GlassCannon
 			/// Load the custom regen item list.
 			try
 			{
-				m_aCustomChatTriggerList.Clear();
+				m_aCustomRegenItemList.Clear();
 				string strInputFile = Path.Combine(Program.ConfigurationFolderPath, m_strCustomRegenItemFile);
 
 				if (!File.Exists(strInputFile))
@@ -296,7 +297,8 @@ namespace EQ2GlassCannon
 							m_aCustomRegenItemList.Add(NewItem);
 					}
 				}
-				Program.DebugLog("{0} custom regen item(s) loaded.", m_aCustomChatTriggerList.Count);
+
+				Program.DebugLog("{0} custom regen item(s) loaded.", m_aCustomRegenItemList.Count);
 			}
 			catch
 			{
