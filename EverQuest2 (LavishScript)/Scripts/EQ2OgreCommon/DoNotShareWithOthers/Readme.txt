@@ -1,0 +1,1 @@
+Rename "Blank.EQ2Chars.inc" to "EQ2Chars.inc"
