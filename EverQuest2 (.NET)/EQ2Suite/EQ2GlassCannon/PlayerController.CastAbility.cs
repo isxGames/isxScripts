@@ -1215,7 +1215,7 @@ namespace EQ2GlassCannon
 
 			foreach (CustomRegenItem ThisItem in m_aCustomRegenItemList)
 			{
-				if (!ThisItem.ShouldUse(MyStatus) && UseInventoryItem(ThisItem))
+				if (ThisItem.ShouldUse(MyStatus) && UseInventoryItem(ThisItem))
 					return true;
 			}
 
