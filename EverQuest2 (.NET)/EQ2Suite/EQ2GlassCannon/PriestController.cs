@@ -148,26 +148,26 @@ namespace EQ2GlassCannon
 			foreach (VitalStatus ThisStatus in EnumVitalStatuses(m_bCureUngroupedMainTank))
 			{
 				int iPotentialCuresAtOnce = 0;
-				bool bGroupCurable = bTryGroupCure;
+				bool bGroupCurable = false;
 
 				if (ThisStatus.m_iTrauma > 0)
 				{
-					bGroupCurable = (bGroupCurable && bCanGroupTrauma);
+					bGroupCurable = (bGroupCurable || bCanGroupTrauma);
 					iPotentialCuresAtOnce++;
 				}
 				if (ThisStatus.m_iArcane > 0)
 				{
-					bGroupCurable = (bGroupCurable && bCanGroupArcane);
+					bGroupCurable = (bGroupCurable || bCanGroupArcane);
 					iPotentialCuresAtOnce++;
 				}
 				if (ThisStatus.m_iNoxious > 0)
 				{
-					bGroupCurable = (bGroupCurable && bCanGroupNoxious);
+					bGroupCurable = (bGroupCurable || bCanGroupNoxious);
 					iPotentialCuresAtOnce++;
 				}
 				if (ThisStatus.m_iElemental > 0)
 				{
-					bGroupCurable = (bGroupCurable && bCanGroupElemental);
+					bGroupCurable = (bGroupCurable || bCanGroupElemental);
 					iPotentialCuresAtOnce++;
 				}
 
