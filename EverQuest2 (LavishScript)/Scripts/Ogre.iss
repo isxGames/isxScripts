@@ -63,17 +63,17 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 	}
 	elseif ${LoginModifer.Equal[hire]} || ${LoginModifer.Equal[hireling]}
 	{
-		runscript eq2ogrecommon/ogrehireling/eq2ogrehireling "${CharToLogin}" "${Arg3}"
+		runscript eq2ogrecommon/ogrehireling/eq2ogrehireling ${CharToLogin} ${Arg3}
 		return
 	}
 	elseif ${LoginModifer.Equal[hireg]} || ${LoginModifer.Equal[hirelinggroup]}
 	{
-		runscript eq2ogrecommon/ogrehireling/eq2ogrehirelingGroup "${CharToLogin}" "${Arg3}"
+		runscript eq2ogrecommon/ogrehireling/eq2ogrehirelingGroup ${CharToLogin} ${Arg3}
 		return
 	}
 	elseif ${LoginModifer.Equal[depot]}
 	{
-		runscript eq2ogrecommon/EQ2OgreDepot "${CharToLogin}"
+		runscript eq2ogrecommon/EQ2OgreDepot ${CharToLogin}
 		return
 	}
 	elseif ${LoginModifer.Equal[end]}
