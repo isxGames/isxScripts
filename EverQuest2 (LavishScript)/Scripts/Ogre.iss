@@ -1,23 +1,24 @@
 function main(string LoginModifer, string CharToLogin, string Arg3)
 {
 	
-	if ${LoginModifer.Equal[?]} || ${LoginModifer.Equal[help]}
+	if ${LoginModifer.Equal[?]} || ${LoginModifer.Equal[help]} || ${LoginModifer.Length}<=0
 	{
+		echo **NOTE** Updated the list. Anything with a *P* means it is publically available on the SVN. The rest don't work.
 		echo ****Commands and Arguments***
 		echo All commands are run "run Ogre <command> <Args>"
 		echo Run Ogre -- Loads the bot
 		echo Run Ogre toonname -- Loads the toon and loads Ogrebot
-		echo Run Ogre login toonname -- Runs a seperate login script that loads the toon but does NOT load the bot
+		echo *P* Run Ogre login toonname -- Runs a seperate login script that loads the toon but does NOT load the bot
 		echo Run Ogre up | uplink -- Loads the uplink
 		echo Run Ogre Spell | SpellExport -- Runs the spellexport
 		echo Run Ogre Move <string location> | Movement <string location> -- Runs movement script with the arg of location using lavishnav
 		echo Run Ogre Broker | B -- Runs the broker pricing bot
-		echo Run Ogre Tell -- Loads the Uplink tell window. Note: This is built into Ogrebot already. This Command is a standalone version.
-		echo Run Ogre Map | Mapper -- Runs the LavishNav mapper. Remember to SAVE before you zone!
-		echo Run Ogre Hire <tier> | Hireling <tier> -- Runs the hireling script for Guild Hunter/Gatherer/Miner - Default tier is 8
-		echo Run Ogre HireG <tier> | HirelingGroup <tier> -- Runs the script for using multiple hirelings - Default tier is 8
-		echo Run Ogre Depot -- Runs the Depot script
-		echo Run Ogre End <Loadcommand> -- Any script that doesn't have an interface can be ended the same way it is run.
+		echo *P* Run Ogre Tell -- Loads the Uplink tell window. Note: This is built into Ogrebot already. This Command is a standalone version.
+		echo Run Ogre Map | Mapper -- Runs the LavishNav mapper.
+		echo *P* Run Ogre Hire <tier> | Hireling <tier> -- Runs the hireling script for Guild Hunter/Gatherer/Miner - Default tier is 8
+		echo *P* Run Ogre HireG <tier> | HirelingGroup <tier> -- Runs the script for using multiple hirelings - Default tier is 8
+		echo *P* Run Ogre Depot -- Runs the Depot script
+		echo *P* Run Ogre End <Loadcommand> -- Any script that doesn't have an interface can be ended the same way it is run.
 		echo                         -- Example: "Run Ogre hire" runs the hireling, "run Ogre end hire" ends the hireling script
 		return
 	}
