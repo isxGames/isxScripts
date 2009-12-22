@@ -541,7 +541,7 @@ function Combat_Routine(int xAction)
 	if ${DoTMode}
 	{
 		;-------- Netherbeast
-		if ${pricast}<3 && ${Me.Ability[${SpellType[324]}].IsReady} && !${Me.Maintained[${SpellType[324]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+		if ${pricast}<3 && ${Me.Ability[${SpellType[324]}].IsReady} && !${Me.Maintained[${SpellType[324]}](exists)} && ${Mob.CheckActor[${KillTarget}]} && ${PetMode}
 		{
 			call CastSpellRange 324 0 0 0 ${KillTarget}
 			pricast:Inc

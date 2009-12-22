@@ -805,7 +805,7 @@ function Post_Combat_Routine(int xAction)
 			{
 				if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead}
 				{
-					call CastSpellRange 500 ${Me.Group[${tempgrp}].ID}
+					call CastSpellRange 500 0 0 0 ${Me.Group[${tempgrp}].ID}
 					call CastSpellRange 300 303 0 0 ${Me.Group[${tempgrp}].ID} 1
 					wait 5
 				}
