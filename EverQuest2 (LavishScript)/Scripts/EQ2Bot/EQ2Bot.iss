@@ -3141,39 +3141,13 @@ function Pull(string npcclass)
 				;Debug:Echo["Checking LOS/Collision"]
 				if ${Target.CheckCollision}
 				{
-					if (!${Me.TargetLOS})
+					if !${Me.TargetLOS} && ${Target.CheckCollision}
 					{
-						;; try strafing a bit to see if can get no collision/LOS
-						press -hold ${backward}
-						wait 4
-						press -release ${backward}
-						waitframe
-						press -hold ${strafeleft}
-						wait 10
-						press -release ${strafeleft}
-						waitframe
-						if !${Me.TargetLOS} && ${Target.CheckCollision}
-						{
-							press -hold ${straferight}
-							wait 20
-							press -release ${straferight}
-							waitframe
-							if !${Me.TargetLOS} && ${Target.CheckCollision}
-							{
-								press -hold ${strafeleft}
-								wait 10
-								press -release ${strafeleft}
-								waitframe
-								if !${Me.TargetLOS} && ${Target.CheckCollision}
-								{
-									Debug:Echo["Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"]
-									TempDoNotPullList:Set[${Target.ID},${Target.Name}]
+						Debug:Echo["Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"]
+						TempDoNotPullList:Set[${Target.ID},${Target.Name}]
 
-									Debug:Echo["TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."]
-									continue
-								}
-							}
-						}
+						Debug:Echo["TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."]
+						continue
 					}
 				}
 			}
