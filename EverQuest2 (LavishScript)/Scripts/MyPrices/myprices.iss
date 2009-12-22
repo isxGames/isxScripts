@@ -1590,10 +1590,8 @@ function LoadList()
 
 					; if the item is flagged as a craft item then add the total number on the broker
 					if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
-					{
 						call SetColour Sell ${numitems} FFFFFF00
-					}
-					
+
 					; keep a total of how many items there are
 					call addtotals "${ItemName}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
 					
@@ -2691,10 +2689,14 @@ function inventorylist()
 
 					InventoryList:Set[${i:Inc},${xvar}]
 
+					; Is item a craft item?
 					if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
-					{
 						call SetColour Inventory ${i} FFFFFF00
-					}
+
+					; is item a collectible ?
+					if ${Me.CustomInventory[${xvar}].IsCollectible}
+						call SetColour Inventory ${i} CCFF3300
+
 				}
 			}
 		}
