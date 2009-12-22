@@ -79,6 +79,12 @@ variable float MinBasePrice=0
 variable float ItemPrice=0
 variable float MyPrice=0
 
+; stats variables
+
+variable float Profit=0
+variable float Cost=0
+variable float ProfitChange=0
+
 ; Index pointers for Lavishsettings
 variable settingsetref CraftList
 variable settingsetref CraftItemList
@@ -1566,6 +1572,8 @@ function LoadList()
 	
 	; scan boxes and add items into the list	
 	numitems:Set[0]
+	Profit:Set[0]
+	Cost:Set[0]
 	do
 	{
 		
@@ -1587,6 +1595,9 @@ function LoadList()
 					
 					; add the item name onto the sell tab list
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem["${ItemName}"]
+					
+					Cost:Inc[${Math.Calc[${Me.Vending[${i}].Consignment[${j}].Value} * ${Me.Vending[${i}].Consignment[${j}].Quantity}]}]
+					Profit:Inc[${Math.Calc[${Me.Vending[${i}].Consignment[${j}].BasePrice} * ${Me.Vending[${i}].Consignment[${j}].Quantity}]}]
 
 					; if the item is flagged as a craft item then add the total number on the broker
 					if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
@@ -1619,6 +1630,11 @@ function LoadList()
 		}
 	}
 	while ${i:Inc} <= ${brokerslots}
+
+	ProfitChange:Set[${Math.Calc[${Profit}-${Cost}]}]
+	Call StringFromPrice ${ProfitChange}
+	call AddLog "Potential Profit on Broker Items is ${Return}"
+
 	call echolog "<end> : Loadlist"
 }
 
