@@ -129,6 +129,8 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Act_Healing_BloodMage.iss"
 #include "${Script.CurrentDirectory}/GUI_Healing.iss"
 #include "${Script.CurrentDirectory}/Act_Buff.iss"
+#include "${Script.CurrentDirectory}/Act_Ressurect.iss"
+
 
 ;-------------------------------------------
 ;**********Combat-Tab Scripts***************
@@ -304,6 +306,7 @@ function downtimefunction()
 	if !${DoByPassVGAHeals}
 		call Healcheck
 	call Class_DownTime
+	call ResUp
 	call followpawn
 	call assistpawn
 	call BuffUp
@@ -438,11 +441,13 @@ function PostCastingActions()
 	call LooseTarget
 	call pushagrototank
 	call rescue
-
+	;-------------------------------------------
+	;****Check for Class Specific Post**********
+	;-------------------------------------------
+	call Class_PostCasting
 	;-------------------------------------------
 	;********Check If I Can Critical************
 	;-------------------------------------------
-	call Class_PostCasting
 	call functAOECrits
 	call functBuffCrits
 	call functDotCrits
@@ -451,9 +456,7 @@ function PostCastingActions()
 	;****Check If I Need to use my Counter******
 	;-------------------------------------------
 	call functCounterAttacks
-	;-------------------------------------------
-	;****Check for Class Specific Post**********
-	;-------------------------------------------
+	call ResUp
 
 	
 	return

@@ -286,6 +286,12 @@ InstantHotHeal1:Set[${HealerSR.FindSetting[InstantHotHeal1,${InstantHotHeal1}]}]
 InstantHotHeal2:Set[${HealerSR.FindSetting[InstantHotHeal2,${InstantHotHeal2}]}]
 TapSoloHeal:Set[${HealerSR.FindSetting[TapSoloHeal,${TapSoloHeal}]}]
 
+DoResInCombat:Set[${HealerSR.FindSetting[DoResInCombat,${DoResInCombat}]}]
+DoResNotInCombat:Set[${HealerSR.FindSetting[DoResNotInCombat,${DoResNotInCombat}]}]
+DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
+
+
+
 	;===================================================
 	;===                  Utility Load              ====
 	;===================================================
