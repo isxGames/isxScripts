@@ -684,7 +684,7 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
-						  <checkbox Name='DoAcceptRes' Template='VG.BlueCheckbox'>
+			<checkbox Name='DoAcceptRes' Template='VG.BlueCheckbox'>
                             <visible>1</visible>
                             <X>13</X>
                             <Y>295</Y>
@@ -699,6 +699,60 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAcceptRes:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='DoResInCombat' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>13</X>
+                            <Y>315</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Res InCombat</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoResInCombat}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoResInCombat:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='DoResNotInCombat' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>163</X>
+                            <Y>315</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Res Not-InCombat</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoResNotInCombat}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoResNotInCombat:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='DoResRaid' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>303</X>
+                            <Y>315</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Res InRaid</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoResRaid}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoResRaid:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>

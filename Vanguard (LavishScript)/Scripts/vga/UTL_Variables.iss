@@ -122,6 +122,9 @@ variable string HealCrit2
 variable bool DoByPassVGAHeals
 variable int HOTReady[24]
 variable bool usedAbility
+variable bool DoResInCombat
+variable bool DoResNotInCombat
+variable bool DoResRaid
 
 ;===================================================
 ;===               Main VGA Variables           ====

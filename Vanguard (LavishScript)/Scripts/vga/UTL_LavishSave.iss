@@ -206,6 +206,10 @@ HealerSR:AddSetting[InstantHotHeal1,${InstantHotHeal1}]
 HealerSR:AddSetting[InstantHotHeal2,${InstantHotHeal2}]
 HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
 
+HealerSR:AddSetting[DoResInCombat,${DoResInCombat}]
+HealerSR:AddSetting[DoResNotInCombat,${DoResNotInCombat}]
+HealerSR:AddSetting[DoResRaid,${DoResRaid}]
+
 	;===================================================
 	;===                  Utility Save              ====
 	;===================================================
