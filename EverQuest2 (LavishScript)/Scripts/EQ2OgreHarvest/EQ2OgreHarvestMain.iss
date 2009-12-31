@@ -1,9 +1,13 @@
-;Version BETA 1.005a
+;Version BETA 1.005b
 
 /**
 To-do
 Make pause actually pause everything
 When scripts ending - ensure movement is stopped
+
+Version 1.005b - Updated by Kannkor
+Imbues will no longer count as imbues AND rares - Only imbues. (Blame the dwarfs, always trying to scam the system, when really they are Ogre food).
+
 
 Version 1.005(a) - Updated by Kannkor
 Updated precision for harvesting.. Should fix the standing beside a node not doing anything.
@@ -464,12 +468,7 @@ objectdef HarvestStatsObject
 	method Update(string TypeToUpdate, int HowMany, string ResourceType, string ActualResource)
 	{
 		variable string VarMod=""
-		if ${ResourceType.Equal[Rare]}
-		{
-			VarMod:Set[Rare]
-			RaresCollected:Inc[${HowMany}]
-			UIElement[${EQ2OgreHarvestStatsRaresCollectedID}]:SetText[${RaresCollected}]
-		}
+
 		if ${ResourceType.Length}<=0 || ${ResourceType.Equal[NULL]}
 			echo Resource: ${ActualResource} returning ${ResourceType} (NULL). This resource has to be added to EQ2OgreCommon/EQ2OgreDepotResourceInformation.xml. Counting it as a "Raw" in the mean time.
 
@@ -477,6 +476,12 @@ objectdef HarvestStatsObject
 		{
 			VarMod:Set[""]
 			TypeToUpdate:Set[Imbues]
+		}
+		elseif ${ResourceType.Equal[Rare]}
+		{
+			VarMod:Set[Rare]
+			RaresCollected:Inc[${HowMany}]
+			UIElement[${EQ2OgreHarvestStatsRaresCollectedID}]:SetText[${RaresCollected}]
 		}
 
 		${VarMod}${TypeToUpdate}Collected:Inc[${HowMany}]
