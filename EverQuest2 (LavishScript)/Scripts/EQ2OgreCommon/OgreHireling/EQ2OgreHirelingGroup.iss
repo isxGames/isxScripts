@@ -1,10 +1,10 @@
-;Version 1.00
+;Version 1.01
 ;This script cycles through the character names in the list below and runs the hireling script on them once.
 ;***NOTE*** This requires files included with Ogrecommon.
 ;Created by Kannkor (HotShot)
 ;Usage: edit the below with your toonnames
 ; *  run ogre hireg <tier>
-; To end * run ogre end hirg
+; To end * run ogre end hireg
 
 
 variable string HirelingCharInfo[10]
@@ -82,7 +82,7 @@ function ToonToLogin(string ToonName)
 		runscript ogre login ${ToonName}
 		wait 100
 		;Above is just to save CPU cycles
-		wait 500 ${Me.Name.Equal[${ToonName}]}
+		wait 5000 ${Me.Name.Equal[${ToonName}]}
 		;Below: Make sure we have FPS incase the "loading" is taking a while
 		wait 100 ${Display.FPS}>1
 		;Short 2 second wait before clicking happens
