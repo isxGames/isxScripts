@@ -47,7 +47,7 @@ function ChangeDefaults()
 {
 	declarevariable Nav waypointNavigator script
 	Nav.DistanceToMoveBackToPath:Set[9999]
-	Nav.Precision:Set[3]
+	Nav.Precision:Set[2.8]
 }
 
 objectdef ModifiedConditionsObject
