@@ -59,6 +59,7 @@ namespace EQ2GlassCannon
 				if (!strText.ToLower().Contains(m_strSubstring))
 					return false;
 
+				/// This means anyone can do the trigger.
 				if (m_SourcePlayerSet.Count == 0)
 					return true;
 
@@ -110,6 +111,27 @@ namespace EQ2GlassCannon
 					return false;
 
 				return true;
+			}
+		}
+
+		/************************************************************************************/
+		public class PlayerRequest
+		{
+			public DateTime m_Timestamp = PlayerController.CurrentCycleTimestamp;
+
+			public TimeSpan Age
+			{
+				get
+				{
+					return (PlayerController.CurrentCycleTimestamp - m_Timestamp);
+				}
+			}
+
+			public string m_strName = string.Empty;
+			public PlayerRequest(string strName)
+			{
+				m_strName = strName;
+				return;
 			}
 		}
 
@@ -855,7 +877,7 @@ namespace EQ2GlassCannon
 			}
 
 			else
-				Program.Log("A commanding player has spoken (\"{0}\") but no commands were found in the text.", NewArgs.Message);
+				Program.Log("A commanding player ({0}) has spoken (\"{1}\") but no commands were found in the text.", NewArgs.SourceActorName, NewArgs.Message);
 
 			return false;
 		}
