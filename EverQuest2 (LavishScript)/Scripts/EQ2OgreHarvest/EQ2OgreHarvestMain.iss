@@ -1,14 +1,17 @@
-;Version BETA 1.004
+;Version BETA 1.005a
 
 /**
 To-do
 Make pause actually pause everything
 When scripts ending - ensure movement is stopped
 
+Version 1.005(a) - Updated by Kannkor
+Updated precision for harvesting.. Should fix the standing beside a node not doing anything.
+
 Version 1.004 - Updated by Kannkor
 Rare total count now updates when you get them, rather than only when switching between windows forcing an update all.
 Collecting ! and ? should be fixed.. for real this time.. A side effect for now is you will get closer to all nodes. Feedback this if it is creating a problem. (Including ping-ponging)
-! and ? counts do not work.
+! and ? counts were combined and should now work.
 
 Version 1.003 - Updated by Kannkor
 Fixed Tier 1 Dens not reporting correctly
@@ -37,7 +40,7 @@ variable(global) float EQ2OgreHarvestCheckResourceX
 variable(global) float EQ2OgreHarvestCheckResourceY
 variable(global) float EQ2OgreHarvestCheckResourceZ
 ;Number below MUST be higher than precision for movement.. 
-variable float EQ2OgreHarvestResourceDistance=3
+variable float EQ2OgreHarvestResourceDistance=3.8
 variable bool EQ2OgreHarvestLoopDone=FALSE
 variable int EQ2OgreHarvestPathItem=1
 variable(global) bool EQ2OgreHarvestAllowPathing=FALSE
@@ -127,7 +130,8 @@ function main()
 		{
 			if ${EQ2OgreHarvestMovementTypeAllowed.Equal[NONE]} && !${Me.IsMoving}
 			{
-				echo ${Time} Not movement allowed and we're not moving.. must mean we stopped too far away. Resetting node.
+				echo ${Time} No movement allowed and we're not moving.. must mean we stopped too far away. Resetting node.
+				echo ${Time} Beta note: If you see this once, ignore it. If you are seeing this often please report this. Please note a few things. Your zone, where is the node compared to you? Above you, below you, in a tree, on a rock, on the same level. What is the node?
 				CurrentResourceID:Set[0]
 			}
 			wait 5

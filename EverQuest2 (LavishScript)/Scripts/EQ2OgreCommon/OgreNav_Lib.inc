@@ -358,9 +358,9 @@ objectdef waypointNavigator
 	variable lnavregionref StartPoint
 	variable lnavregionref EndPoint
 	variable bool TargetRequired=FALSE
-	variable int Precision=3
-	variable int OffMapPrecision=3
-	variable int DistanceToMoveBackToPath=50
+	variable float Precision=3
+	variable float OffMapPrecision=3
+	variable float DistanceToMoveBackToPath=50
 	variable bool ForceStopped=FALSE
 	variable bool OgreNavPaused=FALSE
 	variable string OgreNavStatus
