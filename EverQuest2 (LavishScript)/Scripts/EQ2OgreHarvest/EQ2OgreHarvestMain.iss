@@ -1,28 +1,11 @@
-;Version BETA 1.005b
+;Version BETA 1.005d
 
 /**
 To-do
 Make pause actually pause everything
 When scripts ending - ensure movement is stopped
 
-Version 1.005b - Updated by Kannkor
-Imbues will no longer count as imbues AND rares - Only imbues. (Blame the dwarfs, always trying to scam the system, when really they are Ogre food).
 
-
-Version 1.005(a) - Updated by Kannkor
-Updated precision for harvesting.. Should fix the standing beside a node not doing anything.
-
-Version 1.004 - Updated by Kannkor
-Rare total count now updates when you get them, rather than only when switching between windows forcing an update all.
-Collecting ! and ? should be fixed.. for real this time.. A side effect for now is you will get closer to all nodes. Feedback this if it is creating a problem. (Including ping-ponging)
-! and ? counts were combined and should now work.
-
-Version 1.003 - Updated by Kannkor
-Fixed Tier 1 Dens not reporting correctly
-Added an option to play a sound on exit
-Removed Skill-up only option (did nothing)
-Made it so ? and ! can now be harvested
-**NOTE: FFA loot must be used for harvesting ! and ?. If you are running a combat bot also, disable the looting of it.
 **/
 
 ;********Do not change the values below - Especially the time limit********
@@ -502,6 +485,7 @@ objectdef HarvestStatsObject
 		UIElement[${EQ2OgreHarvestStatsFishCollectedID}]:SetText[${FishCollected}]
 		UIElement[${EQ2OgreHarvestStatsQCollectedID}]:SetText[${QCollected}]
 		UIElement[${EQ2OgreHarvestStatsECollectedID}]:SetText[${ECollected}]
+		UIElement[${EQ2OgreHarvestStatsCollectiblesCollectedID}]:SetText[${CollectiblesCollected}]
 		;Rares
 		UIElement[${EQ2OgreHarvestStatsRareOreCollectedID}]:SetText[${RareOreCollected}]
 		UIElement[${EQ2OgreHarvestStatsRareGemCollectedID}]:SetText[${RareGemCollected}]
@@ -515,7 +499,7 @@ objectdef HarvestStatsObject
 		;Rares total
 		UIElement[${EQ2OgreHarvestStatsRaresCollectedID}]:SetText[${RaresCollected}]
 		;Total it up
-		TotalCollected:Set[${Math.Calc[${OreCollected}+${GemCollected}+${WoodCollected}+${RootCollected}+${DenCollected}+${ShrubCollected}+${FishCollected}+${QCollected}+${ECollected}+${RareOreCollected}+${RareGemCollected}+${RareWoodCollected}+${RareRootCollected}+${RareDenCollected}+${RareShrubCollected}+${RareFishCollected}+${ImbuesCollected}]}]
+		TotalCollected:Set[${Math.Calc[${OreCollected}+${GemCollected}+${WoodCollected}+${RootCollected}+${DenCollected}+${ShrubCollected}+${FishCollected}+${QCollected}+${ECollected}+${RareOreCollected}+${RareGemCollected}+${RareWoodCollected}+${RareRootCollected}+${RareDenCollected}+${RareShrubCollected}+${RareFishCollected}+${ImbuesCollected}+${CollectiblesCollected}]}]
 		UIElement[${EQ2OgreHarvestStatsTotalCollectedID}]:SetText[${TotalCollected}]
 		This:TimeUpdate
 	}
