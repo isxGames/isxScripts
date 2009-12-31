@@ -71,6 +71,7 @@
     <Compile Include="BardController.cs" />
     <Compile Include="ClericController.cs" />
     <Compile Include="CoercerController.cs" />
+    <Compile Include="DirgeController.cs" />
     <Compile Include="DruidController.cs" />
     <Compile Include="EmailQueueThread.cs" />
     <Compile Include="EnchanterController.cs" />

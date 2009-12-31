@@ -355,7 +355,9 @@ namespace EQ2GlassCannon
 						switch (strPreviousSubClass.ToLower())
 						{
 							case "coercer": s_Controller = new CoercerController(); break;
+							case "dirge": s_Controller = new DirgeController(); break;
 							case "illusionist": s_Controller = new IllusionistController(); break;
+							//case "inquisitor": s_Controller = new InquisitorController(); break;
 							case "mystic": s_Controller = new MysticController(); break;
 							case "templar": s_Controller = new TemplarController(); break;
 							case "troubador": s_Controller = new TroubadorController(); break;
@@ -502,10 +504,10 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="fBlockageSeconds">The number of seconds to wait before allowing any other copy of the same command to run. If 0, then there will be no throttling.</param>
 		/// <param name="strCommand"></param>
-		protected static void RunCommand(double fBlockageSeconds, string strCommandLineFormat, params object[] aobjParams)
+		protected static bool RunCommand(double fBlockageSeconds, string strCommandLineFormat, params object[] aobjParams)
 		{
 			if (string.IsNullOrEmpty(strCommandLineFormat))
-				return;
+				return false;
 
 			try
 			{
@@ -529,7 +531,7 @@ namespace EQ2GlassCannon
 						else
 						{
 							Program.Log("Throttled command blocked: {0}", strFinalCommandLine);
-							return;
+							return false;
 						}
 					}
 					else
@@ -551,17 +553,20 @@ namespace EQ2GlassCannon
 					if (s_RegisteredCustomSlashCommands.Contains(strCommand))
 					{
 						if (s_Controller != null && UpdateStaticGlobals())
-							s_Controller.OnCustomSlashCommand(strCommand, astrParameters.ToArray());
+							return s_Controller.OnCustomSlashCommand(strCommand, astrParameters.ToArray());
 					}
 					else
+					{
 						s_Extension.EQ2Execute(strFinalCommandLine);
+						return true;
+					}
 				}
 			}
 			catch
 			{
 			}
 
-			return;
+			return true;
 		}
 
 		/************************************************************************************/
@@ -570,25 +575,22 @@ namespace EQ2GlassCannon
 		/// </summary>
 		/// <param name="strCommand"></param>
 		/// <param name="aobjParams"></param>
-		protected static void RunCommand(string strCommand, params object[] aobjParams)
+		protected static bool RunCommand(string strCommand, params object[] aobjParams)
 		{
-			RunCommand(0, strCommand, aobjParams);
-			return;
+			return RunCommand(0, strCommand, aobjParams);
 		}
 
 		/************************************************************************************/
-		protected static void ApplyVerb(int iActorID, string strVerb)
+		protected static bool ApplyVerb(int iActorID, string strVerb)
 		{
-			RunCommand(5, "/apply_verb {0} {1}", iActorID, strVerb);
-			return;
+			return RunCommand(5, "/apply_verb {0} {1}", iActorID, strVerb);
 		}
 
 		/************************************************************************************/
-		protected static void ApplyVerb(Actor ThisActor, string strVerb)
+		protected static bool ApplyVerb(Actor ThisActor, string strVerb)
 		{
 			Program.Log("Applying verb \"{0}\" on actor \"{1}\" (ID: \"{2}\").", strVerb, ThisActor.Name, ThisActor.ID);
-			ApplyVerb(ThisActor.ID, strVerb);
-			return;
+			return ApplyVerb(ThisActor.ID, strVerb);
 		}
 
 		/************************************************************************************/

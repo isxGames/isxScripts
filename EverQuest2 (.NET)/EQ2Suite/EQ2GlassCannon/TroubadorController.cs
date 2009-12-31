@@ -8,26 +8,6 @@ namespace EQ2GlassCannon
 {
 	public class TroubadorController : BardController
 	{
-		public class PlayerRequest
-		{
-			public DateTime m_Timestamp = PlayerController.CurrentCycleTimestamp;
-
-			public TimeSpan Age
-			{
-				get
-				{
-					return PlayerController.CurrentCycleTimestamp - m_Timestamp;
-				}
-			}
-
-			public string m_strName = string.Empty;
-			public PlayerRequest(string strName)
-			{
-				m_strName = strName;
-				return;
-			}
-		}
-
 		public Queue<PlayerRequest> m_JestersCapQueue = new Queue<PlayerRequest>();
 
 		#region INI settings

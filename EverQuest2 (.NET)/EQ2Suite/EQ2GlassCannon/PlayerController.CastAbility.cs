@@ -1162,13 +1162,13 @@ namespace EQ2GlassCannon
 				{
 					if (ThisActor.IsDead && ThisActor.Distance <= 12)
 					{
-						ApplyVerb(ThisActor, "loot");
-						bActionAttempted = true;
+						if (ApplyVerb(ThisActor, "loot"))
+							bActionAttempted = true;
 					}
 					else if (ThisActor.IsChest && ThisActor.Distance <= 5)
 					{
-						ApplyVerb(ThisActor, "open");
-						bActionAttempted = true;
+						if (ApplyVerb(ThisActor, "open"))
+							bActionAttempted = true;
 					}
 				}
 			}
