@@ -3116,6 +3116,10 @@ function refreshbags()
 
 		if !${bcheck.Equal[NULL]}
 			Return TRUE
+			
+		Me:CreateCustomInventoryArray[nonbankonly]
+		waitframe
+
 	}
 	while ${rbxvar:Inc} <= 10
 
@@ -3133,7 +3137,7 @@ function placeshinies()
 
 	if ${Return}
 	{
-		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Collections"]
+		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
 		Me:CreateCustomInventoryArray[nonbankonly]
 		waitframe
 
