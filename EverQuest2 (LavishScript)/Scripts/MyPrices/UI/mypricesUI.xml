@@ -367,6 +367,38 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<checkbox Name='Shinies'>
+						<X>5%</X>
+						<Y>250</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Place Collectibles</Text>
+						<AutoTooltip>
+							Place Already Collected Collectibles.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.Shinies}
+						{
+							UIElement[Shinies@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[Shinies@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[Shinies@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting Shinies TRUE]
+								Script[myprices].VariableScope.Shinies:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting Shinies FALSE]
+								Script[myprices].VariableScope.Shinies:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
 					<Text Name='PauseTimerText'>
 						<X>25</X>
 						<Y>350</Y>
@@ -434,7 +466,7 @@
 							if ${Script[myprices].VariableScope.Pausemyprices}
 							{
 								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Placing Items**"]
-								Script[myprices]:QueueCommand[call buy item place]
+								Script[myprices]:QueueCommand[call placeshinies]
 							}
 						</OnLeftClick>
 					</Commandbutton>

@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14j :  released 21st September 2009"
+variable string Version="Version 0.14k :  released 4th January 2010"
 ;
 ; Declare Variables
 ;
@@ -36,6 +36,7 @@ variable bool ItemNotStack
 variable bool BadContainer=FALSE
 variable bool HighLatency
 variable bool NewItemsOnly
+variable bool Shinies
 
 ; Bool variables used to integrate with eq2inventory script
 variable bool CraftListMade=FALSE
@@ -121,6 +122,8 @@ variable int Box5
 variable int Box6
 variable int Box7
 variable int Box8
+variable bool Collectible
+variable bool NewCollection
 
 
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
@@ -895,15 +898,6 @@ function buy(string tabname, string action)
 									UIElement[ItemList@Craft@GUITabs@MyPrices]:AddItem["${BuyIterator.Key}"]
 							}
 						}
-						elseif ${action.Equal["place"]}
-						{
-							; place any items marked  as crafted on the broker
-							 if ${CraftItem}
-							 {
-								Call CheckFocus
-								call placeitem "${BuyIterator.Key}"
-							 }
-						}
 						elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
 						{
 							; if the item is marked as a craft one then check if the Minimum broker total has been reached
@@ -1090,7 +1084,9 @@ function BuyItems()
 						; if the broker entry being looked at shows more items than we want then buy what we want
 						
 						if ${Collectible}
+						{
 							TryBuy:Set[1]
+						}
 						else
 						{
 							if ${BrokerNumber} > ${Number}
@@ -1116,15 +1112,55 @@ function BuyItems()
 							; if the item is lore or collectible and you already have it then stop and move on
 							if ${Return}
 							{
-								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE and you already have one
+								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE/collectible and you already have one
 								Break
 							}
 							
-							CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
-							Call CheckFocus
-							Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
-							wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+							if ${Collectible} 
+							{
+								call Rejected "${Vendor.Item[${CurrentItem}].Name}"
+								
+								if !${Return}
+								{
+									Call CheckFocus
+									Vendor.Item[${CurrentItem}]:Examine
 
+									; Wait till the examine window is open
+									do
+									{
+										waitframe
+									}
+									while !${ExamineOpen}
+									
+									wait 5
+									
+									ExamineOpen:Set[FALSE]
+									
+									if ${NewCollection}
+									{
+										CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+										Call CheckFocus
+										Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+										NewCollection:Set[FALSE]
+										wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+									}
+									else
+									{
+										break
+									}
+								}
+								else
+								{
+									break
+								}
+							}
+							else
+							{
+								CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
+								Call CheckFocus
+								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+								wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+							}
 							if ${AutoTransmute}
 								Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
 							
@@ -2484,6 +2520,9 @@ objectdef BrokerBot
 		; Non saved set for item totals
 		LavishSettings:AddSet[craft]
 
+		; Set for collection items that are already collected
+		LavishSettings:AddSet[Rejected]
+
 		; Set for Items that are for sale
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
@@ -2494,10 +2533,12 @@ objectdef BrokerBot
 		myprices[ItemList]:Clear
 		myprices[BuyList]:Clear
 		LavishSettings[craft]:Clear
-
+		LavishSettings[Rejected]:Clear
+		
 		;Load settings from that characters file
 		
 		LavishSettings[myprices]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
+		LavishSettings[Rejected]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_Collections.XML]
 
 		General:Set[${LavishSettings[myprices].FindSet[General]}]
 		Logging:Set[${General.FindSetting[Logging]}]
@@ -2513,6 +2554,7 @@ objectdef BrokerBot
 		Craft:Set[${General.FindSetting[Craft]}]
 		MatchActual:Set[${General.FindSetting[ActualPrice]}]
 		TakeCoin:Set[${General.FindSetting[TakeCoin]}]
+		Shinies:Set[${General.FindSetting[Shinies]}]
 		
 		i:Set[1]
 		do
@@ -2662,10 +2704,7 @@ function inventorylist()
 	Declare i int local 0
 	Declare space int local 0
 	
-	eq2execute /togglebags
-	wait 10
-	eq2execute /togglebags
-	wait 10
+	call refreshbags
 
 	do
 	{
@@ -2726,7 +2765,8 @@ function placeinventory(int box, int inventorynumber)
 {
 	Declare xvar int local 1
 	Declare space int local
-	Declare lasttotal int local
+	Declare itemcount int local
+	Declare loopcount int local 1
 
 	space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
 
@@ -2736,13 +2776,23 @@ function placeinventory(int box, int inventorynumber)
 		if ${InventoryList.Element[${inventorynumber}](exists)}
 		{
 			; check current used capacity
-			lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+					
+			itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
 	
 			xvar:Set[${InventoryList.Element[${inventorynumber}]}]
 	
 			; place the item into the consignment system , grouping it with similar items
 			Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
-			wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
+
+			loopcount:Set[1]
+			do
+			{
+				if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
+				Break
+
+				wait 10
+			}
+			while ${loopcount:Inc} <= 10
 	
 			UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:SetText[0]
 			call SetColour Inventory ${inventorynumber} 00000000
@@ -2771,6 +2821,8 @@ function:int placeitems(string ItemName, int box, int numitems)
 	Declare xvar int local 1
 	Declare lasttotal int local
 	Declare space int local
+	Declare loopcount int local 1
+	Declare itemcount int local
 	
 	if ${numitems} >0
 	{
@@ -2790,13 +2842,25 @@ function:int placeitems(string ItemName, int box, int numitems)
 					lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
 	
 					; place the item into the consignment system , grouping it with similar items
+					
+					itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
+					
 					Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
 	
-					; make the script wait till the box total has changed (item was added)
+					; make the script wait till the inventory total has changed (item was added)
 					; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
-	
-					wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
-	
+					
+					loopcount:Set[1]
+					do
+					{
+						if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
+							Break
+
+						wait 10
+
+					}
+					while ${loopcount:Inc} <= 10
+
 					; if the system reports that an item will not fit into the container chosen
 					if ${BadContainer}
 					{
@@ -2823,17 +2887,26 @@ function:int placeitems(string ItemName, int box, int numitems)
 						{
 							; Otherwise try and place item in the new container
 							
-							; check current used capacity
-							lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+							itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
 							
 							; place the item into the consignment system , grouping it with similar items
 							Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
 							
-							; make the script wait till the box total has changed (item was added)
+							; make the script wait till the inventory total has changed (item was added)
 							; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
-							
-							wait 100 ${Me.Vending[${box}].UsedCapacity} != ${lasttotal}
-	
+
+					
+							loopcount:Set[1]
+							do
+							{
+								if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
+									Break
+
+								wait 10
+
+							}
+							while ${loopcount:Inc} <= 10
+
 						}
 					}
 					
@@ -2859,7 +2932,7 @@ function:int numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 	
 	do
 	{
-		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
+		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && ${Me.CustomInventory[${xvar}].InInventory}
 		{
 			call InventoryContainer ${Me.CustomInventory[${xvar}].InContainerID}
 
@@ -2973,7 +3046,7 @@ function:bool checklore(string ItemName)
 			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
 			{
 				
-				if ${Me.CustomInventory[${xvar}].Lore}
+				if ${Collectible} || ${Me.CustomInventory[${xvar}].Lore}
 					Return TRUE
 					
 			}
@@ -3011,6 +3084,109 @@ function CheckPrimary(string UITab, int boxnum, int ID)
 			while ${xvar:Inc} <= ${brokerslots}
 		}
 	}
+}
+
+function refreshbags()
+{
+	Declare xvar int local 1
+	Declare rbxvar int local 1
+	Declare bcheck string local
+	Me:CreateCustomInventoryArray[nonbankonly]
+	waitframe
+
+	do
+	{
+		if ${Me.CustomInventory[${xvar}].InInventory}
+			Break
+	}
+	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
+
+	; nothing recognised as in bags so return FALSE
+	if ${xvar} == ${Me.CustomInventoryArraySize}
+		Return FALSE
+		
+	do
+	{
+		bcheck:Set[${Me.CustomInventory[${xvar}].IsCollectible}]
+
+		eq2execute /togglebags
+		wait 10
+		eq2execute /togglebags
+		wait 10
+
+		if !${bcheck.Equal[NULL]}
+			Return TRUE
+	}
+	while ${rbxvar:Inc} <= 10
+
+	Echo Unable to read inventory data
+	Return FALSE
+}
+
+function placeshinies()
+{
+	call echolog "<start> placeshinies"
+	
+	Declare PSxvar int local 1
+
+	call refreshbags
+
+	if ${Return}
+	{
+		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Collections"]
+		Me:CreateCustomInventoryArray[nonbankonly]
+		waitframe
+
+		do
+		{
+			call InventoryContainer ${Me.CustomInventory[${PSxvar}].InContainerID}
+
+			if ${Me.CustomInventory[${PSxvar}].InInventory} && !${NoSale[${Return}]} && !${Me.CustomInventory[${PSxvar}].IsInventoryContainer}
+			{
+				if !${Me.CustomInventory[${PSxvar}].Attuned} && !${Me.CustomInventory[${PSxvar}].NoTrade} && !${Me.CustomInventory[${PSxvar}].Heirloom} 
+				{
+					; is item a collectible ?
+					if ${Me.CustomInventory[${PSxvar}].IsCollectible} && ${Shinies}
+					{
+						Me.CustomInventory[${PSxvar}]:Examine
+	
+						; Wait till the examine window is open
+						do
+						{
+							waitframe
+						}
+						while !${ExamineOpen}
+								
+						wait 5
+						ExamineOpen:Set[FALSE]
+	
+						if !${NewCollection}
+						{
+							NewCollection:Set[FALSE]
+							call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+	
+							PSxvar:Set[1]
+							Me:CreateCustomInventoryArray[nonbankonly]
+							waitframe
+						}
+					}
+					elseif ${ItemList.FindSet["${Me.CustomInventory[${PSxvar}].Name}"].FindSetting[CraftItem]}
+					{
+						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+						PSxvar:Set[1]
+						Me:CreateCustomInventoryArray[nonbankonly]
+						waitframe
+					}
+				}
+			}
+		}
+		while ${PSxvar:Inc}<=${Me.CustomInventoryArraySize}
+	}
+	else
+	{
+		Echo Error Reading inventory Contents - Skipping Placing items
+	}
+	call echolog "<end> placeshinies"
 }
 
 function StartUp()
@@ -3149,6 +3325,7 @@ atom atexit()
 		return
 
 	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
+	LavishSettings[Rejected]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_Collections.XML]
 
 	Event[EQ2_onInventoryUpdate]:DetachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
@@ -3178,4 +3355,16 @@ atom(script) EQ2_onIncomingText(string Text)
 		BadContainer:Set[TRUE]
 	}
 	return
+}
+
+atom EQ2_ExamineItemWindowAppeared(string ItemName, string WindowID)
+{
+	if ${ExamineItemWindow[${WindowID}].TextVector} == 1
+		NewCollection:Set[TRUE]
+	else
+		NewCollection:Set[FALSE]
+
+	ExamineOpen:Set[TRUE]
+	
+	EQ2Execute /close_top_window 
 }
