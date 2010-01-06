@@ -6,9 +6,11 @@ function loadxmls()
 	LavishSettings[VGA]:Clear
 	LavishSettings[VGA_Mobs]:Clear
 	LavishSettings[VGA_General]:Clear
+	LavishSettings[VGA_Quests]:Clear
 	LavishSettings:AddSet[VGA]
 	LavishSettings:AddSet[VGA_Mobs]
 	LavishSettings:AddSet[VGA_General]
+	LavishSettings:AddSet[VGA_Quests]
 
 	LavishSettings[VGA]:AddSet[Healers]
 	LavishSettings[VGA]:AddSet[Utility]
@@ -71,9 +73,13 @@ function loadxmls()
 	LavishSettings[VGA_General]:AddSet[Interactions]	
 	LavishSettings[VGA_General]:AddSet[Friends]
 
+	LavishSettings[VGA_Quests]:AddSet[QuestNPCs]
+	LavishSettings[VGA_Quests]:AddSet[Quests]
+
 	LavishSettings[VGA]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
 	LavishSettings[VGA_Mobs]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
 	LavishSettings[VGA_General]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_General.xml]
+	LavishSettings[VGA_Quests]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Quests.xml]
 
 	call LavishLoad
 }
@@ -574,5 +580,10 @@ DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
 			BMBloodUnionSingleTargetHOT:Set[${Class.FindSetting[BMBloodUnionSingleTargetHOT,${BMBloodUnionSingleTargetHOT}]}]
 			break
 	}
+	;===================================================
+	;===                 Quests   Load              ====
+	;===================================================
 	
+	QuestNPCs:Set[${LavishSettings[VGA_Quests].FindSet[QuestNPCs]}]
+	Quests:Set[${LavishSettings[VGA_Quests].FindSet[Quests]}]
 }

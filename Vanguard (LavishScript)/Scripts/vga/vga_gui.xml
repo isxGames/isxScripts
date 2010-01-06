@@ -1626,6 +1626,110 @@
               </Children>
             </Frame>
           </Tab>
+             <!--2nd Level Quests Tab-->
+              <Tab name='Quests'>
+                <Frame name='QuestsCFrm'>
+                  <Height>100%</Height>
+                  <Width>100%</Width>
+                  <Texture></Texture>
+                  <Children>
+               <Text Name='txtQuestTarget' Template='VG.BoldText'>
+                  <X>145</X>
+                  <Y>13</Y>
+                  <Width>95%</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Your Target</Text>
+                  <OnLoad>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnLoad>
+                  <OnRender>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnRender>
+                </Text>
+                <Button Name="QuestNPCButton" Template="VG.GreenButton">
+                  <X>13</X>
+                  <Y>13</Y>
+                  <Width>120</Width>
+                  <Height>20</Height>
+                  <Text>Add Quest NPC</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddQuestNPCs "${Me.Target}"
+                    BuildQuestNPCs
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Listbox Name="QuestNPCsList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>36</Y>
+                  <Width>95%</Width>
+                  <Height>200</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildQuestNPCs
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveQuestNPCs "${This.SelectedItem}"
+                    This.SelectedItem:Remove
+                    BuildQuestNPCs
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                  <OnLeftClick>
+                    Script[VGA]:QueueCommand[call FindQuestList "${This.SelectedItem}"] 
+		    BuildQuests "${UIElement[QuestNPCsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Listbox>
+               <Text Name='txtQuestLis' Template='VG.BoldText'>
+                  <X>260</X>
+                  <Y>250</Y>
+                  <Width>95%</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Select NPCs Quests</Text>
+                </Text>
+              <ComboBox Name="cmbQuestList" Template="VG.ComboBox">
+                <X>13</X>
+                <Y>250</Y>
+                <Width>240</Width>
+                <Height>20</Height>
+                <OnLoad>
+                  This:AddItem[NONE]
+                </OnLoad>
+                <OnSelect>
+		  AddQuests "${UIElement[QuestNPCsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}" "${This.SelectedItem}"
+                  Script[VGA]:QueueCommand[call LavishSave]
+		  BuildQuests "${Me.Target}"
+                </OnSelect>
+              </ComboBox>
+                <Listbox Name="QuestsList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>360</Y>
+                  <Width>95%</Width>
+                  <Height>200</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildQuests "${UIElement[QuestNPCsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveQuests "${This.SelectedItem}"
+                    This.SelectedItem:Remove
+                    BuildQuests "${UIElement[QuestNPCsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+		  </Children>
+                </Frame>
+              </Tab>
           <!--2nd Level MainLogs Tab-->
           <Tab name='Logs'>
             <Frame name='LogsCFrm'>

@@ -137,7 +137,7 @@ function lootit()
 					if ${Pawn[${iCount}].Distance} > 5
 						{
 						call movetoobject ${Me.Target.ID} 4 0
-						IsFollowing:Set[FALSE]
+						;IsFollowing:Set[FALSE]
 						}
 					if ${DoLootOnly}
 						{

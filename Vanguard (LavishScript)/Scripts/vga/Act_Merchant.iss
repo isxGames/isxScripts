@@ -1,8 +1,20 @@
 function merchant()
 {
-  call Trash
-  call Repair
-  call Sell
+  if ${Me.Target.Type.Equal[Merchant]}
+	{
+  	call Trash
+  	call Repair
+  	call Sell
+	}
+  if ${Me.Target.Name.Equal[Essence of Replenishment]}
+	{
+  	call Sell
+	}
+  if ${Me.Target.HasQuestFlag}	
+	{
+	call GetQuests
+	call TurnInQuests
+	}
 }
  
 function Repair()
@@ -93,4 +105,52 @@ function Sell()
   finishcopper:Set[${diff}]
   echo Items sold for ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c
   Merchant:End        
+}
+function GetQuests()
+{
+			variable int iCount
+			iCount:Set[1]
+			; Cycle through all the Pawns and find Quest Flag Mobs
+			do
+			{
+				if ${Pawn[${iCount}].HasQuestFlag} && ${Pawn[${iCount}].Distance} < 15 
+				{
+					Pawn[${iCount}]:Target
+					wait 5
+					variable iterator Iterator
+					Quests:GetSettingIterator[Iterator]
+					while ( ${Iterator.Key(exists)} )
+						{
+						if ${LavishSettings[VGA_Quests].FindSet[Quests].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal["${Me.Target}"]}
+							{
+							if ${Pawn[${iCount}].Distance} > 5
+								call movetoobject ${Me.Target.ID} 4 0
+							if ${Dialog[General].ResponseCount}==0
+								{
+								VGExecute /hail
+								Echo Bringing up Dialog
+								wait 5
+								}
+							if !${Journal[Quest,${Iterator.Value}](exists)}	
+								{
+								Echo dont have ${Iterator.Value}  Getting ${Iterator.Key}
+								Dialog[General,${Iterator.Key}]:Select
+								wait 5
+								Journal[Quest].CurrentDisplayed:Accept
+								wait 3
+								}
+							}
+						Iterator:Next
+						}
+					if ${Dialog[General].ResponseCount} >0
+						{
+						; Place Holder for Closing Dialog
+						}
+				}
+			}
+			while ${iCount:Inc} <= ${VG.PawnCount}
+	
+}
+function TurnInQuests()
+{
 }

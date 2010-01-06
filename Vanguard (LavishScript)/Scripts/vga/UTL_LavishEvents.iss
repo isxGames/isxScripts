@@ -48,12 +48,12 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		{
 			dofollowpawn:Set[TRUE]
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
-			if !${IsFollowing}
-				{
-				Pawn[${followpawn}]:Target
-				VGExecute /follow ${followpawn}
-				IsFollowing:Set[TRUE]
-				}
+			;if !${IsFollowing}
+			;	{
+			;	Pawn[${followpawn}]:Target
+			;	VGExecute /follow ${followpawn}
+			;	IsFollowing:Set[TRUE]
+			;	}
 		}
 	}
 	if ${DoStopFollow}
@@ -62,11 +62,11 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		{
 			dofollowpawn:Set[FALSE]
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
-			if ${IsFollowing}
-				{
-				VGExecute /follow ${followpawn}
-				IsFollowing:Set[FALSE]
-				}
+			;if ${IsFollowing}
+			;	{
+			;	VGExecute /follow ${followpawn}
+			;	IsFollowing:Set[FALSE]
+			;	}
 		}
 	}
 	if ${doAutoSell}
