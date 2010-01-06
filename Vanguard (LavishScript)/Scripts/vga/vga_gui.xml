@@ -213,7 +213,7 @@
                             <Y>75</Y>
                             <Width>150</Width>
                             <Height>20</Height>
-                            <Text>Repair/Sell</Text>
+                            <Text>Repair/Sell/Quest</Text>
                             <Alignment>Center</Alignment>
                             <OnLeftClick>
                               Script[VGA]:QueueCommand[call merchant]
