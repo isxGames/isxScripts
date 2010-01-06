@@ -113,6 +113,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/GUI_Trash.iss"
 #include "${Script.CurrentDirectory}/Act_Mob.iss"
 #include "${Script.CurrentDirectory}/GUI_Mobs.iss"
+#include "${Script.CurrentDirectory}/GUI_Quests.iss"
 
 ;-------------------------------------------
 ;**********Healer-Tab Scripts***************

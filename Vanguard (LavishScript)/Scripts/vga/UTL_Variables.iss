@@ -58,6 +58,8 @@ variable settingsetref ForceRescue
 variable settingsetref Interactions
 variable settingsetref TurnOffDuringBuff
 variable settingsetref Friends
+variable settingsetref QuestNPCs
+variable settingsetref Quests
 
 variable settingsetref HealSequence
 variable settingsetref EmergencyHealSequence

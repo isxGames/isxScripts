@@ -421,6 +421,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	LavishSettings[VGA]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
 	LavishSettings[VGA_Mobs]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
 	LavishSettings[VGA_General]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_General.xml]
+	LavishSettings[VGA_Quests]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Quests.xml]
 	LavishSettings[Interactions]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/Interact.xml]
 
 }
