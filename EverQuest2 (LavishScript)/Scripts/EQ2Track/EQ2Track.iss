@@ -41,6 +41,122 @@
 ;-------------------------------------
 
 
+objectdef _TrackInterface
+{
+	method ChangeFilters()
+	{
+		filtersChanged:Set[TRUE]
+	}
+	method ChangeSort()
+	{
+		SortChanged:Set[TRUE]
+	}
+	method AddFilter()
+	{
+		if ${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItems}
+		{
+			do
+			{
+				if ${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItems} > 1
+					UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItem[1]:Remove
+			}
+			while ${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItems} > 1
+			UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItem[1]:SetText[${UIElement[EQ2 Track].FindUsableChild[FilterEditing,textentry].Text}]
+		}
+		else
+		{
+			if ${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].Items} != 20
+				UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox]:AddItem[${UIElement[EQ2 Track].FindUsableChild[FilterEditing,textentry].Text}]
+		}
+		This:ChangeFilters
+	}
+	method DelFilter()
+	{
+		if ${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItems}
+		{
+			do
+			{
+				UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItem[1]:Remove
+			}
+			while ${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].SelectedItems}
+		}
+		This:ChangeFilters
+	}
+	method ClearFilters()
+	{
+		UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox]:ClearItems
+		This:ChangeFilters
+	}
+	method SaveList()
+	{
+		variable string SetName
+		variable int Counter=0
+		SetName:Set[${UIElement[EQ2 Track].FindUsableChild[TrackListName,textentry].Text}]
+		if ${SetName.Length}
+		{ /* Create set to store list */
+			LavishSettings:AddSet[TrackList]
+			LavishSettings[TrackList]:AddSet[${SetName}]
+			while ${Counter:Inc}<=${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].Items}
+			{
+				LavishSettings[TrackList].FindSet[${SetName}]:AddSetting[${Counter},${UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox].Item[${Counter}].Text}]
+			}
+			LavishSettings[TrackList].FindSet[${SetName}]:Export[${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/${SetName}.xml]
+			LavishSettings[TrackList]:Remove
+		}
+		This:UpdateListCombo
+	}
+	method UpdateListCombo()
+	{
+		variable filelist ListFiles
+		variable int Count=0
+		UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox]:ClearItems
+		ListFiles:GetFiles[${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/\*.xml]
+		while ${Count:Inc}<=${ListFiles.Files}
+		{
+			UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox]:AddItem[${ListFiles.File[${Count}].Filename.Left[-4]}]
+		}
+		if ${UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].Items}
+		{
+			UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox]:Sort:SelectItem[1]
+		}
+	}
+	method LoadList()
+	{
+		variable string SetName
+		variable int Counter=0
+		variable iterator iter
+		SetName:Set[${UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].SelectedItem.Text}]
+		UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox]:ClearItems
+		if ${SetName.Length}
+		{
+			LavishSettings:AddSet[TrackList]
+			LavishSettings[TrackList]:AddSet[${SetName}]
+			LavishSettings[TrackList].FindSet[${SetName}]:Import[${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/${SetName}.xml]
+			LavishSettings[TrackList].FindSet[${SetName}]:GetSettingIterator[iter]
+			
+			if ${iter:First(exists)}
+			{
+				do
+				{
+					UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox]:AddItem[${iter.Value}]
+				}
+				while ${iter:Next(exists)}
+			}
+			LavishSettings[TrackList]:Remove
+		}
+		This:ChangeFilters
+	}
+	method DeleteList()
+	{
+		variable string SetName
+		SetName:Set[${UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].SelectedItem.Text}]
+		if ${SetName.Length}
+		{
+			rm "${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/${SetName}.xml"
+			This:UpdateListCombo
+		}
+	}
+}
 
 function zoneWait()
 {
@@ -49,6 +165,8 @@ function zoneWait()
 		UIElement[TrackItems@EQ2 Track]:ClearItems
 		do
 		{
+			if !${UIElement[EQ2 Track].Visible} /* Element hidden, i.e. close button pressed. */
+				Script:End
 			waitframe
 		}
 		while ${EQ2.Zoning}
@@ -111,6 +229,7 @@ variable TrackHelper Tracker
 
 function main()
 {
+	declarevariable TrackInterface _TrackInterface global
 	LavishSettings:AddSet[EQ2Track]
 	LavishSettings[EQ2Track]:AddSet[Users]
 	LavishSettings[EQ2Track].FindSet[Users]:AddSet[${Me.Name}]
@@ -173,7 +292,10 @@ function main()
 		if ${QueuedCommands}
 			ExecuteQueued
 		waitframe
-		
+
+		if !${UIElement[EQ2 Track].Visible} /* Element hidden, i.e. close button pressed. */
+			Script:End
+
 		call zoneWait
 		if ${filtersChanged}
 		{
@@ -353,6 +475,7 @@ atom(script) RemoveActorByID(int ID)
 	}
 	while ${tcount}>0
 }
+
 
 
 function atexit()
