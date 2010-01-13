@@ -1,13 +1,21 @@
 
-;-----------------------------------------------------------------------------------------------
-; EQ2Track.iss Version 2.1 Updated: 09/07/08 by Valerian
-;-----------------------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+; EQ2Track.iss Version 3.0 Updated: 01/12/10 by Valerian
+;------------------------------------------------------------------------------
 ; EQ2 Track originally created by Equidis
 ; Rewritten by Valerian
-;-----------------------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
 
 ; ** Additional credits to Karye & Blazer: Some of the UI & Elements & Coding
 ; used were taken from previous version of EQ2BotCommand **
+
+/* -------------------------------------------------------------------------
+   01/12/10 v3.0 
+      - Updated to allow saving and loading of filter lists.
+      - Added "Clr" button to filter controls to clear current filters.
+      - Cleaned up Script<->UI interface.
+   ------------------------------------------------------------------------- */
+
 
 	variable bool filtersChanged
 	variable bool SortChanged
