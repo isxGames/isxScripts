@@ -2,7 +2,27 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="EQ2 Parse Browser" Height="300" Width="300">
-    <Grid>
-        
-    </Grid>
+	<DockPanel LastChildFill="True">
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Name="FileMenuItem" Header="File">
+				<MenuItem Name="FileExitMenuItem" Header="Exit"></MenuItem>
+			</MenuItem>
+			<MenuItem Name="ToolsMenuItem" Header="Tools"></MenuItem>
+			<MenuItem Name="WindowMenuItem" Header="Window"></MenuItem>
+			<MenuItem Name="HelpMenuItem" Header="Help">
+				<MenuItem Name="HelpAboutMenuItem" Header="About" Click="HelpAboutMenuItem_Click"></MenuItem>
+			</MenuItem>
+		</Menu>
+		<ToolBar DockPanel.Dock="Top">
+			<Button Content="Dummy Toolbar Button"></Button>
+		</ToolBar>
+		<StatusBar DockPanel.Dock="Bottom">
+			<StatusBarItem Name="StatusBarStatisticsPane" Content="(insert stats here)"></StatusBarItem>
+		</StatusBar>
+		<TabControl>
+			<TabItem Header="Dummy Tab Item 1"></TabItem>
+			<TabItem Header="Dummy Tab Item 2"></TabItem>
+		</TabControl>
+		
+	</DockPanel>
 </Window>
