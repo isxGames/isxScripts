@@ -116,7 +116,7 @@ namespace EQ2SuiteLib
 				return false;
 			}
 
-			return (null != m_strCurrentLine);
+			return !string.IsNullOrEmpty(m_strCurrentLine);
 		}
 
 		/**********************************************************************************/
