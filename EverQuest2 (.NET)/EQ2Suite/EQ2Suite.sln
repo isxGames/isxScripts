@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTestConsole", "Parser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQ2ParseBrowser", "EQ2ParseBrowser\EQ2ParseBrowser.csproj", "{FCCAC2DC-6DF8-45C3-AF31-7C07F6B0B035}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQ2SuiteLib", "EQ2SuiteLib\EQ2SuiteLib.csproj", "{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{FCCAC2DC-6DF8-45C3-AF31-7C07F6B0B035}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCCAC2DC-6DF8-45C3-AF31-7C07F6B0B035}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCCAC2DC-6DF8-45C3-AF31-7C07F6B0B035}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
