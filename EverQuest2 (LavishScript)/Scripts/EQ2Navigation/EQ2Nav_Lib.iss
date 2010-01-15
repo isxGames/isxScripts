@@ -339,9 +339,9 @@ objectdef EQ2Nav
 		;;;
 		;; Sigh... press does not hold down the button long enough to register with EQ2 ..and we cannot "hold" the key with atomic functions...sooo
 		;;;
+		;; Cutting this down to three presses from five, may help accuracy of end point in some instances.
+		;;;
 		This:Debug["StopRunning()"]
-		press "${This.MOVEBACKWARD}"
-		press "${This.MOVEBACKWARD}"
 		press "${This.MOVEBACKWARD}"
 		press "${This.MOVEBACKWARD}"
 		press "${This.MOVEBACKWARD}"
