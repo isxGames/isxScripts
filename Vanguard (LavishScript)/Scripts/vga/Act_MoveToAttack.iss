@@ -1,9 +1,8 @@
 ;********************************************
 function MoveToTarget()
 {
-	if ${doMoveToTarget}
-	{
-		if ${Me.Target.Distance} > 4
+
+		if ${Me.Target.Distance} > 4 && ${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
 			actionlog "Moving to Melee"
 			Me:Sprint[50]
@@ -19,24 +18,34 @@ function MoveToTarget()
 			{
 			call TooClose
 			}
-	}
 	return
 }
 
 ;********************************************
 function CheckAttackPosition()
 {
-		if ${DoAttackPositionFront}
+
+		if ${DoAttackPositionLeft} && ${DoAttackPositionRight} && ${DoAttackPositionBack}
 			{
-			echo Move front ${AttackPosition.TargetAngle}
 			if ${AttackPosition.TargetAngle} < 45
-				call SlideL Front
-			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}		
-				call SlideL Front
-			if ${AttackPosition.TargetAngle} > 135
 				return
+			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}
+				return
+			if ${AttackPosition.TargetAngle} > 135
+				call SlideR Left
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}	
-				call SlideR Front
+				return
+			}
+		if ${DoAttackPositionLeft} && ${DoAttackPositionRight}
+			{
+			if ${AttackPosition.TargetAngle} < 45
+				call SlideL Left
+			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}
+				return
+			if ${AttackPosition.TargetAngle} > 135
+				call SlideR Left
+			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}	
+				return
 			}
 		if ${DoAttackPositionLeft}
 			{
@@ -70,6 +79,18 @@ function CheckAttackPosition()
 				call SlideL Back
 			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}
 				call SlideL Back
+			}
+		if ${DoAttackPositionFront}
+			{
+			echo Move front ${AttackPosition.TargetAngle}
+			if ${AttackPosition.TargetAngle} < 45
+				call SlideL Front
+			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Left]}		
+				call SlideL Front
+			if ${AttackPosition.TargetAngle} > 135
+				return
+			if ${AttackPosition.TargetAngle} > 45 && ${AttackPosition.TargetAngle} < 135 && ${AttackPosition.TargetSide.Equal[Right]}	
+				call SlideR Front
 			}
 }
 ;********************************************

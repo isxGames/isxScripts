@@ -1,8 +1,7 @@
 ;*************************************************************
 function ResUp()
 {
-	if ${DoResInCombat} || ${DoResNotInCombat}
-	{
+
 	if ${Me.InCombat} && ${DoResInCombat} && ${Group.Count} < 7
 		{
 		call CombatRes
@@ -19,12 +18,8 @@ function ResUp()
 		{
 		call NonCombatRes
 		}
-	}
 		
 }
-
-;*************************************************************
-
 ;*************************************************************
 function CombatRes()
 {
@@ -39,6 +34,7 @@ function CombatRes()
 			if ${Return}
 				{
 				call executeability "${CombatRes}" "Heal" "Both"
+				GroupNeedsBuffs:Set[TRUE]
 				}
 			}
 
@@ -58,6 +54,7 @@ function NonCombatRes()
 			if ${Return}
 				{
 				call executeability "${NonCombatRes}" "Heal" "Both"
+				GroupNeedsBuffs:Set[TRUE]
 				}
 			}
 

@@ -2,7 +2,7 @@ objectdef ClassRole
 {
 	member:bool healer()
 		{
-		if (${MyClass.Equal[Blood Mage]} || ${MyClass.Equal[Cleric]} || ${MyClass.Equal[Disciple]} || ${MyClass.Equal[Shaman]} || ${MyClass.Equal[Paladin]})
+		if (${MyClass.Equal[Blood Mage]} || ${MyClass.Equal[Cleric]} || ${MyClass.Equal[Disciple]} || ${MyClass.Equal[Shaman]} || ${MyClass.Equal[Paladin]}|| ${MyClass.Equal[Druid]})
 		return TRUE
 		}
 	member:bool tank()
@@ -42,7 +42,7 @@ objectdef ClassRole
 		}
 	member:bool stancepusher()
 		{
-		if (${MyClass.Equal[monk]} || ${MyClass.Equal[disciple]})
+		if (${MyClass.Equal[Monk]} || ${MyClass.Equal[Disciple]} || ${MyClass.Equal[Ranger]})
 		return TRUE
 		}
 }
@@ -138,9 +138,7 @@ objectdef GroupStatus
 		do
 		{
 		If ${Group[${icnt}].ToPawn.IsDead} 
-			{
 			return FALSE
-			}
 		} 
 		while ${icnt:Inc} <= ${Group.Count}
 		return TRUE
@@ -148,19 +146,13 @@ objectdef GroupStatus
 	member:bool AOEBuffClose()
 	{
 		variable int icnt = 1
-		variable int grpcnt = 0
 		do
 		{
-		If ${Group[${icnt}].ToPawn.Distance} < 19
-			{
-			grpcnt:Inc
-			}
+		If ${Group[${icnt}].ToPawn.Distance} > 19
+			return FALSE
 		} 
 		while ${icnt:Inc} <= ${Group.Count}
-		if ${grpcnt} == ${Group.Count}
-			return TRUE 
-		else
-			return FALSe
+		return TRUE
 	}
 }
 

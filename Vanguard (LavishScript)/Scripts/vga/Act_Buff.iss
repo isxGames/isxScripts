@@ -31,9 +31,9 @@ function solobuff()
 			if ${Me.Ability[${LazyBuff}](exists)}
 			{
 				debuglog "Buffing with Lazy ${anIter.Key}"
-				Pawn[Me]:Target
+				Pawn[${Me}]:Target
 				call checkabilitytocast "${LazyBuff}"	
-				if ${Return} && ${Me.Ability[${LazyBuff}].IsReady}
+				if ${Return} 
 				{
 					call executeability "${LazyBuff}" "buff" "Neither"
 				}
@@ -41,9 +41,9 @@ function solobuff()
 			if !${Me.Ability[${LazyBuff}](exists)}
 			{
 				debuglog "Buffing with ${anIter.Key}"
-				Pawn[Me]:Target
+				Pawn[${Me}]:Target
 				call checkabilitytocast "${anIter.Key}"	
-				if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
+				if ${Return} 
 				{
 					debuglog "Ready to Buff ${anIter.Key}"
 					call executeability "${anIter.Key}" "buff" "Neither"
@@ -58,7 +58,6 @@ function solobuff()
 
 function groupbuff()
 {
- 	wait 10
 	variable iterator anIter
 
 	Buff:GetSettingIterator[anIter]
@@ -80,7 +79,7 @@ function groupbuff()
 			{
 				Me.ToPawn:Target
 				call checkabilitytocast "${LazyBuff}"	
-				if ${Return} && ${Me.Ability[${LazyBuff}].IsReady}
+				if ${Return} 
 				{
 					call executeability "${LazyBuff}" "buff" "Neither"
 				}
@@ -89,37 +88,22 @@ function groupbuff()
 			{
 				Me.ToPawn:Target
 				call checkabilitytocast "${anIter.Key}"	
-				if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
+				if ${Return} 
 				{
 					call executeability "${anIter.Key}" "buff" "Neither"
 				}
 			}
+
 		}
 		anIter:Next
 	}
 	GroupNeedsBuffs:Set[FALSE]
+
 	return
 }
 
-function BuffButton(int aGroupNumber)
+function BuffButton()
 {
-	;; 1 is always "Me"
-	;; Otherwise, convert number to name based on what we are using in the UI
-
-	variable string GroupMemberName
-	
-	if (${aGroupNumber} == 1)
-		GroupMemberName:Set[${Me.FName}]
-	else
-		GroupMemberName:Set[${GrpMemberNames[${aGroupNumber}]}]
-	
-	if !${Group[${GroupMemberName}](exists)}
-	{
-		debuglog "BuffButton(${aGroupNumber}) - Group Member doesn't seem to exist..."
-		return
-	}
-	
-	Group[${GroupMemberName}].ToPawn:Target
 	variable iterator anIter
 
 	Buff:GetSettingIterator[anIter]
@@ -127,44 +111,41 @@ function BuffButton(int aGroupNumber)
 
 	while ( ${anIter.Key(exists)} )
 	{
-		if ${Me.Ability[${LazyBuff}](exists)}
-		{
-			call checkabilitytocast "${LazyBuff}"	
-			if ${Return} && ${Me.Ability[${LazyBuff}].IsReady}
+			if ${Me.Ability[${LazyBuff}](exists)}
 			{
-				call executeability "${LazyBuff}" "buff" "Neither"
+				Me.ToPawn:Target
+				call checkabilitytocast "${LazyBuff}"	
+				if ${Return} 
+				{
+					call executeability "${LazyBuff}" "buff" "Neither"
+					GroupNeedsBuffs:Set[FALSE]
+				}
 			}
-		}
-		if !${Me.Ability[${LazyBuff}](exists)}
-		{
-			call checkabilitytocast "${anIter.Key}"	
-			if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
+			if !${Me.Ability[${LazyBuff}](exists)}
 			{
-				call executeability "${anIter.Key}" "buff" "Neither"
+				Me.ToPawn:Target
+				call checkabilitytocast "${anIter.Key}"	
+				if ${Return} 
+				{
+					call executeability "${anIter.Key}" "buff" "Neither"
+					GroupNeedsBuffs:Set[FALSE]
+				}
 			}
-		}
-		anIter:Next
+	anIter:Next
 	}
+	return
 }
-atom(global) StoneButton(int aGroupNumber)
+function StoneButton()
 {
-	;; 1 is always "Me"
-	;; Otherwise, convert number to name based on what we are using in the UI
-
-	variable string GroupMemberName
-	
-	if (${aGroupNumber} == 1)
-		GroupMemberName:Set[${Me.FName}]
-	else
-		GroupMemberName:Set[${GrpMemberNames[${aGroupNumber}]}]
-	
-	if !${Group[${GroupMemberName}](exists)}
-	{
-		debuglog "BuffButton(${aGroupNumber}) - Group Member doesn't seem to exist..."
-		return
-	}
-	
-	
-	Group[${GroupMemberName}].ToPawn:Target
-	Me.Ability[${ResStone}]:Use
+	variable int L
+	for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
+		{
+		Group[${L}].ToPawn:Target
+		wait 3
+		call checkabilitytocast "${ResStone}"	
+		if ${Return} && !${Me.DTarget.Name.Equal[${Me}]}
+			{
+			call executeability "${ResStone}" "buff" "Neither"
+			}
+		}
 }

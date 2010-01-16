@@ -176,6 +176,7 @@ variable bool doHarvest
 variable bool DoLootOnly
 variable string LootOnly
 variable bool DoRaidLoot
+variable int LootDelay
 
 variable bool DoClassDownTime
 variable bool DoClassPreCombat
@@ -349,6 +350,12 @@ variable bool DoKillLevitate
 variable string KillingLevitate
 variable bool DoReassistTank
 variable string ReassistingTank
+variable bool DoPause
+variable string Pausetxt
+variable bool DoResume
+variable string Resumetxt
+variable bool DoBuffage
+variable string Buffagetxt
 variable bool doRequestBuffs[4] 
 variable string RequestBuff[4]
 variable string RequestBuffPlayer[4]

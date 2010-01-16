@@ -80,6 +80,20 @@ function EmergencyHeal_Disciple(int64 GN, int64 EN, int64 IN)
 			   return
 			   }
 			}
+	         if ${GrpMemberClassType[${GN}].Equal[Tank]} && (${mobisfurious} || !${Me.InCombat})
+			{
+		  	call checkabilitytocast "${InstantHeal}"
+			   if ${Return}
+			   {
+			   call executeability "${InstantHeal}" "Heal" "Neither"
+			   }
+      			call checkabilitytocast "${BigHeal}"
+			   if ${Return}
+			   {
+			   call executeability "${BigHeal}" "Heal" "Neither"
+			   return
+			   }
+			}
 		  if ${GrpMemberClassType[${GN}].Equal[Squishy]}
 		    {  			
          if ${Me.Ability[${HealCrit1}].TriggeredCountdown} > 0 && ${Me.Ability[${HealCrit1}].IsReady} && ${fight.ShouldIAttack}

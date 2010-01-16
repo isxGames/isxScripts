@@ -3,8 +3,6 @@
 ;===================================================
 function Class_PreCombat()
 {
-	if ${DoClassPreCombat}
-	{
 		switch ${Me.Class}
 		{
 		case Dread Knight
@@ -53,7 +51,6 @@ function Class_PreCombat()
 			call Sorcerer_PreCombat
 			break
 		}
-	}
 
 	return
 }
@@ -62,8 +59,6 @@ function Class_PreCombat()
 ;===================================================
 function Class_Opener()
 {
-	if ${DoClassOpener}
-	{
 		switch ${Me.Class}
 		{
 		case Dread Knight
@@ -112,7 +107,6 @@ function Class_Opener()
 			call Sorcerer_Opener
 			break
 		}
-	}
 
 	return
 }
@@ -121,8 +115,6 @@ function Class_Opener()
 ;===================================================
 function Class_Combat()
 {
-	if ${DoClassCombat}
-	{
 		switch ${Me.Class}
 		{
 		case Dread Knight
@@ -171,8 +163,6 @@ function Class_Combat()
 			call Sorcerer_Combat
 			break
 		}
-	}
-
 	return
 }
 ;===================================================
@@ -180,8 +170,6 @@ function Class_Combat()
 ;===================================================
 function Class_PostCombat()
 {
-	if ${DoClassPostCombat}
-	{
 		switch ${Me.Class}
 		{
 		case Dread Knight
@@ -230,7 +218,6 @@ function Class_PostCombat()
 			call Sorcerer_PostCombat
 			break
 		}
-	}
 
 	return
 }
@@ -239,8 +226,7 @@ function Class_PostCombat()
 ;===================================================
 function Class_Emergency()
 {
-	if ${DoClassEmergency}
-	{
+
 		switch ${Me.Class}
 		{
 		case Dread Knight
@@ -289,7 +275,6 @@ function Class_Emergency()
 			call Sorcerer_Emergency
 			break
 		}
-	}
 
 	return
 }
@@ -298,8 +283,6 @@ function Class_Emergency()
 ;===================================================
 function Class_PostCasting()
 {
-	if ${DoClassPostCasting}
-	{
 		switch ${Me.Class}
 		{
 		case Dread Knight
@@ -348,7 +331,6 @@ function Class_PostCasting()
 			call Sorcerer_PostCasting
 			break
 		}
-	}
 
 	return
 }
@@ -357,9 +339,6 @@ function Class_PostCasting()
 ;===================================================
 function Class_DownTime()
 {
-
-	if ${DoClassDownTime}
-	{
 		switch ${Me.Class}
 		{
 		case Dread Knight
@@ -408,7 +387,6 @@ function Class_DownTime()
 			call Sorcerer_DownTime
 			break
 		}
-	}
 	return
 }
 
