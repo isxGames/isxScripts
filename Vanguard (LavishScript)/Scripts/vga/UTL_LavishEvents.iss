@@ -27,10 +27,7 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	if ${DoReassistTank}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
-		{
-			VGExecute /TargetNextNPC
-
-		}
+			VGExecute /TargetNe
 	}
 	if ${DoKillLevitate}
 	{
@@ -42,6 +39,21 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 			Me.Effect[Boon of Alcipus]:Remove
 		}
 	}
+	if ${DoBuffage}
+	{
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${Buffagetxt}]}
+			Script[VGA]:QueueCommand[call BuffButton]
+	}
+	if ${DoPause}
+	{
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${Pausetxt}]}
+			doPause:Set[TRUE]
+	}
+	if ${DoResume}
+	{
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${Resumetxt}]}
+			doPause:Set[FALSE]
+	}		
 	if ${DoStartFollow}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]}
@@ -285,35 +297,6 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 	}
 }
 
-function PopulateGroupMemberNames()
-{
-	variable int i = 1
-	variable int j = 2
-
-	;; Always make 'Me' first
-	GrpMemberNames[1]:Set[${Me.FName}]
-
-	do
-	{
-		if ${Group[${i}](exists)}
-		{
-			if !${Group[${i}].Name.Equal[${Me.FName}]}
-			{
-				GrpMemberNames[${j}]:Set[${Group[${i}].Name}]
-				;echo "VGA-Debug: PopulateGroupMemberNames() - ${i}. ${GrpMemberNames[${j}]}"
-				j:Inc
-			}
-		}
-		else
-		{
-			GrpMemberNames[${j}]:Set[Empty]
-			j:Inc
-		}
-	}
-	while ${i:Inc} <= 24
-
-}
-
 function PopulateGroupMemberClassType()
 {
 	variable int i = 1
@@ -335,31 +318,28 @@ function PopulateGroupMemberClassType()
 }
 atom VG_onGroupMemberCountChange()
 {
-	call PopulateGroupMemberNames
+	
 	call PopulateGroupMemberClassType
+	GroupNeedsBuffs:Set[TRUE]
 }
 
 atom VG_onGroupDisbanded()
 {
-	call PopulateGroupMemberNames
 	call PopulateGroupMemberClassType
 }
 
 atom VG_onGroupFormed()
 {
-	call PopulateGroupMemberNames
 	call PopulateGroupMemberClassType
 }
 
 atom VG_onGroupBooted()
 {
-	call PopulateGroupMemberNames
 	call PopulateGroupMemberClassType
 }
 
 atom VG_onGroupMemberBooted()
 {
-	call PopulateGroupMemberNames
 	call PopulateGroupMemberClassType
 }
 

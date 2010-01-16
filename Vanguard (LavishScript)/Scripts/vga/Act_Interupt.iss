@@ -33,10 +33,6 @@ function:bool CheckFurious()
 			wait 10
 			return TRUE
 			}	
-		if ${Me.IsCasting}
-			{
-			vgexecute /stopcasting
-			}
 		wait 10
 		if ${ClassRole.healer}
 			call Healcheck	
@@ -58,10 +54,6 @@ function TurnOffAttackfunct()
 				if ${Me.HavePet} || ${Me.HaveMinion}
 					{
 					VGExecute "/pet backoff"
-					}
-				if ${Me.IsCasting}
-					{
-					vgexecute /stopcasting
 					}
 				if ${Me.Ability[Auto Attack].Toggled}
 					Me.Ability[Auto Attack]:Use

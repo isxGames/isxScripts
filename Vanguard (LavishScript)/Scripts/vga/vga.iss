@@ -227,7 +227,6 @@ function main()
 	call PopulateAbilitiesLists
 	call PopulateBuffLists
 	call PopulateSellLists
-	call PopulateGroupMemberNames
 	call PopulateTriggersLists
 	call DreadKnight_GUI
 	call Warrior_GUI
@@ -306,19 +305,30 @@ function downtimefunction()
 {
 	if !${DoByPassVGAHeals}
 		call Healcheck
-	call Class_DownTime
-	call ResUp
-	call followpawn
-	call assistpawn
+	if ${DoClassDownTime}
+		call Class_DownTime
+	if ${DoResNotInCombat}
+		call ResUp
+	if ${dofollowpawn}
+		call followpawn
+	if ${doassistpawn} 
+		call assistpawn
 	call BuffUp
-	call lootit
-	call changeformstance
-	call restorespecialpoints
+	if ${DoLoot}
+		call lootit
+	if ${doNonCombatStance}
+		call changeformstance
+	if ${doRestoreSpecial}
+		call restorespecialpoints
 	call ToggleOffCombatBuffSpells
-	call ShiftingImage
-	call groupup
-	call Trash
-	call Harvest
+	if ${DoShiftingImage}
+		call ShiftingImage
+	if ${DoAutoAcceptGroupInvite}
+		call groupup
+    	if ${doTrash} 
+		call Trash
+    	if ${doHarvest}
+		call Harvest
 	return
 }
 
@@ -331,7 +341,8 @@ function combatfunction()
 	;**********Fighting PreLoopCall*************
 	;-------------------------------------------
 	call PreCombatLoopFunction
-	call Class_PreCombat
+	if ${DoClassPreCombat}
+		call Class_PreCombat
 	call SendInPets
 
 	;-------------------------------------------
@@ -341,11 +352,13 @@ function combatfunction()
 	  {
 		call changeformstance
 		call OpeningSpellSequence
-		call Class_Opener
-		}
+		if ${DoClassOpener}
+			call Class_Opener
+	   }
 	elseif !${newattack}
 	{
-		call Class_Combat
+		if ${DoClassCombat}
+			call Class_Combat
 		call KillingBlowAbility
     		call DotSpells
 		call DotMelee
@@ -361,7 +374,8 @@ function combatfunction()
 	;**********Fighting PostLoopCall************
 	;-------------------------------------------
 	call PostCombatLoopFunction
-	call Class_PostCombat	
+	if ${DoClassPostCombat}
+		call Class_PostCombat	
 
 	return
 }
@@ -370,7 +384,8 @@ function combatfunction()
 ;===================================================
 function PreCombatLoopFunction()
 {
-	call LooseTarget
+	if ${DoLooseTarget} 
+		call LooseTarget
  	call CheckPosition
 	call EmergencyActions
 	if !${DoByPassVGAHeals}
@@ -402,7 +417,6 @@ function EmergencyActions()
 	;-------------------------------------------
 	call TurnOffAttackfunct
 	call TurnOffDuringBuff
-	call RushTank
 	;-------------------------------------------
 	;*******Check If I Need to Evade************
 	;-------------------------------------------
@@ -425,7 +439,8 @@ function EmergencyActions()
 	;-------------------------------------------
 	call StancePushfunct
 	call clickiesfunct
-	call Class_Emergency
+	if ${DoClassEmergency}
+		call Class_Emergency
 	return
 }
 
@@ -445,7 +460,8 @@ function PostCastingActions()
 	;-------------------------------------------
 	;****Check for Class Specific Post**********
 	;-------------------------------------------
-	call Class_PostCasting
+	if ${DoClassPostCasting}
+		call Class_PostCasting
 	;-------------------------------------------
 	;********Check If I Can Critical************
 	;-------------------------------------------
@@ -457,7 +473,8 @@ function PostCastingActions()
 	;****Check If I Need to use my Counter******
 	;-------------------------------------------
 	call functCounterAttacks
-	call ResUp
+	if ${DoResInCombat}
+		call ResUp
 
 	
 	return

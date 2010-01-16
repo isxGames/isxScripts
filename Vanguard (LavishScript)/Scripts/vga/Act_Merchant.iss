@@ -8,7 +8,7 @@ function merchant()
 	}
   if ${Me.Target.Name.Equal[Essence of Replenishment]}
 	{
-  	call Sell
+  	call Repair
 	}
   if ${Me.Target.HasQuestFlag}	
 	{

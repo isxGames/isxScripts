@@ -13,101 +13,57 @@ function PauseScript()
 	while (${doPause} || ${Me.ToPawn.IsDead} || ${Me.HealthPct} == 0)
 		{
 		wait 10
-
 		}
 }
 ;********************************************
 function groupup()
 {
 	if ${Me.GroupInvitePending}
-	{
-	vgexecute /groupacceptinvite
-	}
+		{
+		vgexecute /groupacceptinvite
+		}
 
 } 
 ;********************************************
 function Trash()
 {
-
-    if ${doTrash} && !${Me.InCombat}
-     {
-	   variable iterator Iterator
-	   Trash:GetSettingIterator[Iterator]
-	   Iterator:First
+	variable iterator Iterator
+	Trash:GetSettingIterator[Iterator]
+	Iterator:First
 	     while ( ${Iterator.Key(exists)} )
-	     {
-        if ${Me.Inventory[ExactName,${Iterator.Key}](exists)}
-              {
-             Me.Inventory[ExactName,${Iterator.Key}]:Delete[ExactName,${Iterator.Key}.Quantity]
-              }
-        Iterator:Next
-	     }
-      }
+	      {
+        	if ${Me.Inventory[ExactName,${Iterator.Key}](exists)}
+              		Me.Inventory[ExactName,${Iterator.Key}]:Delete[ExactName,${Iterator.Key}.Quantity]
+       	     Iterator:Next
+	      }
+
 
 }
-;********************************************
-function RushTank()
-{
-	if ${DoRushTank}
-	{
-	if !${Pawn[Poison Cloud](exists)}
-		return
-
-	variable int iCount
-	iCount:Set[1]
-	; Cycle through all the Pawns if there is a poison cloud
-		do
-		{
-		if ${Pawn[${iCount}].Name.Equal[Poison Cloud]} && ${Pawn[${iCount}].Distance} < 10
-			{
-			if ${Me.IsCasting}
-				{
-				vgexecute /stopcasting
-				}
-			if ${Me.Class.Equal[Rogue]}
-				{
-				Me.Ability[Smoke Trick]:Use
-				wait 3
-				if ${Pawn[${iCount}].Distance} < 10
-					{
-					call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
-					IsFollowing:Set[FALSE]
-					}
-				return	
-				}
-			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
-			IsFollowing:Set[FALSE]	
-			}
-		}	
-		while ${iCount:Inc} <= ${VG.PawnCount}
-	}
-	return
-	
-}
-
 ;********************************************
 function Harvest()
 {
-    if ${doHarvest}
-	{
-	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<5 && ${Me.ToPawn.CombatState}==0"
+	variable string leftofname
+	leftofname:Set[${Me.Target.Name.Left[6]}]
+	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<5 && ${Me.ToPawn.CombatState}==0 && !${leftofname.Equal[remain]}"
 		{
 		VGExecute /autoattack
 		wait 10
 		}
-	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<10 && ${Me.Target.Distance}>5 && ${Me.ToPawn.CombatState}==0"
+	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<10 && ${Me.Target.Distance}>5 && ${Me.ToPawn.CombatState}==0 && !${leftofname.Equal[remain]}"
 		{
 		call movetoobject ${Me.Target.ID} 4 0
 		IsFollowing:Set[FALSE]
 		VGExecute /autoattack
 		wait 10
 		}	
-	if ${Me.Ability[Auto Attack].Toggled}
+	while ${GV[bool,bHarvesting]}
+		wait 5
+	if !${GV[bool,bHarvesting]} && ${Me.Ability[Auto Attack].Toggled}
 		{
 		VGExecute /autoattack
 		wait 10
-		}
-	}		
+		VGExecute "/cleartargets"
+		}	
 }
 
 ;********************************************
@@ -116,11 +72,9 @@ function lootit()
 	;; if there are no corpses around...then why bother.
 	if !${Pawn[Corpse](exists)}
 		return
-	if ${DoLoot} && !${DoRaidLoot} && ${Group.Count} > 6
+	if !${DoRaidLoot} && ${Group.Count} > 6
 		return
-	if ${DoLoot}
-	{
-		if (!${Me.InCombat} || ${Me.Encounter} == 0)
+	if (!${Me.InCombat} || ${Me.Encounter} == 0)
 		{
 			variable int iCount
 			iCount:Set[1]
@@ -133,7 +87,7 @@ function lootit()
 					call Trash
 
 					Pawn[${iCount}]:Target
-					wait 5
+					wait ${LootDelay}
 					if ${Pawn[${iCount}].Distance} > 5
 						{
 						call movetoobject ${Me.Target.ID} 4 0
@@ -155,29 +109,22 @@ function lootit()
 			}	
 			while ${iCount:Inc} <= ${VG.PawnCount}
 		}
-	}
 }
 ;********************************************
 function restorespecialpoints()
 {
-	if ${doRestoreSpecial}
-	{
     if ${Me.Stat[Adventuring,Virtue Points](exists)} && ${Me.Stat[Adventuring,Virtue Points]} < ${RestoreSpecialint} && ${Me.Ability[${RestoreSpecial}].IsReady}
           	call executeability "${RestoreSpecial}" "heal" "neither"
     if ${Me.Stat[Adventuring,Phenomena Points](exists)} && ${Me.Stat[Adventuring,Phenomena Points]} < ${RestoreSpecialint} && ${Me.Ability[${RestoreSpecial}].IsReady}
           	call executeability "${RestoreSpecial}" "heal" "neither"
     if ${Me.Stat[Adventuring,Special Points](exists)} && ${Me.Stat[Adventuring,Special Points]} < ${RestoreSpecialint} && ${Me.Ability[${RestoreSpecial}].IsReady}
           	call executeability "${RestoreSpecial}" "heal" "neither"
-	}
 }
 ;********************************************
 function ShiftingImage()
 {
-	if ${DoShiftingImage}
-	{
 		if !${Me.Effect[${ShiftingImage}](exists)} && ${Me.Inventory[Wand of Shifting Images].IsReady}
 			Me.Inventory[Wand of Shifting Images]:Use
-	}
 }
 ;********************************************
 function shouldimount()
@@ -454,12 +401,17 @@ atom(script) NeedBuffs()
 ;********************************************
 function CheckPosition()
 {
-	call RushTank
-	call assistpawn
-	call DoFollowInCombat
-	call facemob
-	call MoveToTarget
-	call targettank
+	if ${doassistpawn} 
+		call assistpawn
+	if ${DoFollowInCombat}
+		call DoFollowInCombat
+	if ${doFaceTarget}
+		call facemob
+	if !${Me.Target.Name.Equal[${tankpawn}]}
+		call targettank
+	if ${doMoveToTarget}
+		call MoveToTarget
+	return
 }
 ;********************************************
 function targettank()
@@ -473,73 +425,66 @@ function targettank()
 ;********************************************
 function assistpawn()
 {
-	if ${doassistpawn} 
-	{
-		if (${Pawn[exactname,${assistpawn}](exists)} && ${Pawn[exactname,${assistpawn}].CombatState} != 0 && ${Pawn[exactname,${assistpawn}].Distance} < 50)
+	if (${Pawn[exactname,${assistpawn}](exists)} && ${Pawn[exactname,${assistpawn}].Distance} < 50)
 		{
-			call LooseTarget
-			VGExecute /assist ${assistpawn}
+			if !${Me.InCombat}
+				VGExecute /assist ${assistpawn}
+			if ${Me.InCombat}
+				{
+				if ${DoLooseTarget} 
+					{
+					call LooseTarget
+					VGExecute /assist ${assistpawn}
+					}
+				}
 		}
-	}
 	return
 }
 ;********************************************
 function LooseTarget()
 {
-	if ${DoLooseTarget} 
-	{
-		if ${Me.Target(exists)} && ${Me.TargetHealth} < 2 && !${Me.Target.IsDead}
+	if ${Me.Target(exists)} && ${Me.TargetHealth} < 2 && !${Me.Target.IsDead}
 		{
 			AssistEncounter:Set[${Me.Target.ID}]
 			VGExecute /cleartarget
 			while ${Me.Encounter.ID[${AssistEncounter}](exists)} && !${Me.Target(exists)}
 				wait 1
 		}
-	}
 	return
 }
 ;********************************************
 function DoFollowInCombat()
 {
-	if ${DoFollowInCombat}
-	{
-		call assistpawn
-		if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 7 && ${Pawn[exactname,${followpawn}].Distance} < 5
+	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 7 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-			face ${Me.Target.X} ${Me.Target.Y}
-			call movetoobject ${Me.Target.ID} ${followpawndist} 0
+		face ${Me.Target.X} ${Me.Target.Y}
+		call movetoobject ${Me.Target.ID} ${followpawndist} 0
 		}
-		if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
+	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-			face ${Me.Target.X} ${Me.Target.Y}
+		face ${Me.Target.X} ${Me.Target.Y}
 		}
-		if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 25
+	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 25
 		{
-			face ${Pawn[exactname,${assistpawn}].X} ${Pawn[exactname,${assistpawn}].Y}
-			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+		face ${Pawn[exactname,${assistpawn}].X} ${Pawn[exactname,${assistpawn}].Y}
+		call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
 		}
-	}
 	return
 
 }
 ;********************************************
 function facemob()
 {
-	if ${doFaceTarget}
-	{
-		call assistpawn
-		if ${Me.Target.ID(exists)}
-		{
-			face ${Me.Target.X} ${Me.Target.Y}
-		}
-	}
+	if ${Me.Target.ID(exists)}
+		face ${Me.Target.X} ${Me.Target.Y}
 	return
 
 }
 ;********************************************     
 function TooClose()
 {
-	call facemob
+	if ${doFaceTarget}
+		call facemob
 	if ${Me.Target(exists)} && ${Me.Target.Distance} < 1
 	{
 		VG:ExecBinding[movebackward]
@@ -552,13 +497,8 @@ function TooClose()
 ;********************************************     
 function followpawn()
 {
-	if ${dofollowpawn}
-	{
-		if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50)
-		{
-			call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
-		}
-	}
+	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50)
+		call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
 	return
 }
 

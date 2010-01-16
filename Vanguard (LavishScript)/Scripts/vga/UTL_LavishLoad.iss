@@ -330,7 +330,8 @@ DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
 	doAutoSell:Set[${UtilitySR.FindSetting[doAutoSell,${doAutoSell}]}]
 	doHarvest:Set[${UtilitySR.FindSetting[doHarvest,${doHarvest}]}]
 	DoLootOnly:Set[${UtilitySR.FindSetting[DoLootOnly,${DoLootOnly}]}]
-	LootOnly:Set[${UtilitySR.FindSetting[LootOnly,${LootOnly}]}]	
+	LootOnly:Set[${UtilitySR.FindSetting[LootOnly,${LootOnly}]}]
+	LootDelay:Set[${UtilitySR.FindSetting[LootDelay,${LootDelay}]}]	
 
 	DoClassDownTime:Set[${UtilitySR.FindSetting[DoClassDownTime,${DoClassDownTime}]}]
 	DoClassPreCombat:Set[${UtilitySR.FindSetting[DoClassPreCombat,${DoClassPreCombat}]}]	
@@ -559,7 +560,12 @@ DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
 	KillingLevitate:Set[${Interactions.FindSetting[KillingLevitate,${KillingLevitate}]}]
 	DoReassistTank:Set[${Interactions.FindSetting[DoReassistTank,${DoReassistTank}]}]
 	ReassistingTank:Set[${Interactions.FindSetting[ReassistingTank,${ReassistingTank}]}]
-
+	DoPause:Set[${Interactions.FindSetting[DoPause,${DoPause}]}]
+	Pausetxt:Set[${Interactions.FindSetting[Pausetxt,${Pausetxt}]}]
+	DoBuffage:Set[${Interactions.FindSetting[DoBuffage,${DoBuffage}]}]
+	Buffagetxt:Set[${Interactions.FindSetting[Buffagetxt,${Buffagetxt}]}]
+	DoResume:Set[${Interactions.FindSetting[DoResume,${DoResume}]}]
+	Resumetxt:Set[${Interactions.FindSetting[Resumetxt,${Resumetxt}]}]
 	
 	Class:Set[${LavishSettings[VGA].FindSet[Class]}]
 	switch ${Me.Class}

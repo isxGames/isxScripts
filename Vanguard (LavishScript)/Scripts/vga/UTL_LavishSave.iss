@@ -240,6 +240,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	UtilitySR:AddSetting[doHarvest,${doHarvest}]
 	UtilitySR:AddSetting[DoLootOnly,${DoLootOnly}]
 	UtilitySR:AddSetting[LootOnly,${LootOnly}]
+	UtilitySR:AddSetting[LootDelay,${LootDelay}]
 
 	UtilitySR:AddSetting[DoClassDownTime,${DoClassDownTime}]
 	UtilitySR:AddSetting[DoClassPreCombat,${DoClassPreCombat}]
@@ -396,6 +397,12 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	Interactions:AddSetting[KillingLevitate,${KillingLevitate}]
 	Interactions:AddSetting[DoReassistTank,${DoReassistTank}]
 	Interactions:AddSetting[ReassistingTank,${ReassistingTank}]
+	Interactions:AddSetting[DoPause,${DoPause}]
+	Interactions:AddSetting[Pausetxt,${Pausetxt}]
+	Interactions:AddSetting[DoResume,${DoResume}]
+	Interactions:AddSetting[Resumetxt,${Resumetxt}]
+	Interactions:AddSetting[DoBuffage,${DoBuffage}]
+	Interactions:AddSetting[Buffagetxt,${Buffagetxt}]
 
 	
 	switch ${Me.Class}
