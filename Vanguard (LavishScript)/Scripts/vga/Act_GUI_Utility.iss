@@ -436,6 +436,7 @@ function assistpawn()
 					call LooseTarget
 					VGExecute /assist ${assistpawn}
 					}
+				VGExecute /assist ${assistpawn}
 				}
 		}
 	return
