@@ -2,6 +2,10 @@ function merchant()
 {
   if ${Me.Target.Type.Equal[Merchant]}
 	{
+	If ${Me.Target.Name.Equal[Grebthar the Hammer]} && ${DoPopCrates}
+		{
+		call CrateCrush
+		}
   	call Trash
   	call Repair
   	call Sell
@@ -15,8 +19,34 @@ function merchant()
 	call GetQuests
 	call TurnInQuests
 	}
+  
 }
- 
+function CrateCrush()
+{
+		If ${Me.Inventory[Supply Crate](exists)} || ${Me.Inventory[Storage Crate](exists)}
+			{
+			If ${Merchant.NumItemsForSale} < 1
+				{
+				Merchant:Begin[BuySell]
+				wait 5
+				}
+			while ${Me.Inventory[Supply Crate](exists)}
+				{
+				Merchant.ForSaleItem["Crate Crusher 3000"]:Buy
+				wait 3
+			        Me.Inventory[Supply Crate]:Use
+				wait 3
+				}
+			while ${Me.Inventory[Storage Crate](exists)}
+				{
+				Merchant.ForSaleItem["Crate Crusher 3000"]:Buy
+				wait 3
+			        Me.Inventory[Storage Crate]:Use
+				wait 3
+				}
+			Merchant:End[BuySell]
+			}
+}
 function Repair()
 {
   variable int i = 1

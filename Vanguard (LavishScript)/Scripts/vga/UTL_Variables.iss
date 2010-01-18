@@ -193,6 +193,7 @@ variable bool DoAttackPositionLeft
 variable bool DoAttackPositionRight
 variable bool DoAttackPositionBack
 variable bool DoAttackPosition
+variable bool DoPopCrates
 
 variable bool DoAcceptRes
 variable bool DoAutoResCombat

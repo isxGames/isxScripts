@@ -346,6 +346,7 @@ DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
 	DoAttackPositionRight:Set[${UtilitySR.FindSetting[DoAttackPositionRight,${DoAttackPositionRight}]}]
 	DoAttackPositionBack:Set[${UtilitySR.FindSetting[DoAttackPositionBack,${DoAttackPositionBack}]}]
 	DoAttackPosition:Set[${UtilitySR.FindSetting[DoAttackPosition,${DoAttackPosition}]}]
+	DoPopCrates:Set[${UtilitySR.FindSetting[DoPopCrates,${DoPopCrates}]}]
 
 	Friends:Set[${LavishSettings[VGA_General].FindSet[Friends]}]
 

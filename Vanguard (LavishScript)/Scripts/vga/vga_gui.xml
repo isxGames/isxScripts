@@ -1496,7 +1496,7 @@
                   <Y>33</Y>
                   <Width>15</Width>
                   <Height>20</Height>
-                  <Text>Auto Add to Sell List when you Manually Sell</Text>
+                  <Text>Auto Add to Sell List</Text>
                   <OnLoad>
                     if ${Script[vga].VariableScope.doAutoSell}
                     {
@@ -1505,6 +1505,24 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.doAutoSell:Set[${This.Checked}]
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </checkbox>
+                <checkbox Name='DoPopCrates' Template='VG.BlueCheckbox'>
+                  <visible>4</visible>
+                  <X>203</X>
+                  <Y>33</Y>
+                  <Width>15</Width>
+                  <Height>20</Height>
+                  <Text>Auto Open SoD Crates</Text>
+                  <OnLoad>
+                    if ${Script[vga].VariableScope.DoPopCrates}
+                    {
+                    This:SetChecked
+                    }
+                  </OnLoad>
+                  <OnLeftClick>
+                    Script[vga].VariableScope.DoPopCrates:Set[${This.Checked}]
                     Script[VGA]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>

@@ -256,6 +256,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	UtilitySR:AddSetting[DoAttackPositionRight,${DoAttackPositionRight}]
 	UtilitySR:AddSetting[DoAttackPositionBack,${DoAttackPositionBack}]
 	UtilitySR:AddSetting[DoAttackPosition,${DoAttackPosition}]
+	UtilitySR:AddSetting[DoPopCrates,${DoPopCrates}]
 
 	UtilitySR:AddSetting[DoAcceptRes,${DoAcceptRes}]
 	UtilitySR:AddSetting[DoAutoResCombat,${DoAutoResCombat}]
