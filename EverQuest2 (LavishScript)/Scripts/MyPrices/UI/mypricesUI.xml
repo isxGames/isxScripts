@@ -20,15 +20,15 @@
 	  </TitleBar>
 	  <Children>
 		<Tabcontrol Name='GUITabs'>
-		  <X>1%</X>
-		  <Y>1%</Y>
-		  <Height>98%</Height>
-		  <Width>98%</Width>
-		  <Tabs>
-			<Tab Name='Sell'>
-			  <Text name='ConfigSell Text'>
-				<X>5%</X>
-				<Y>10</Y>
+		 	<X>1%</X>
+			<Y>1%</Y>
+			<Height>98%</Height>
+		 	<Width>98%</Width>
+		 	<Tabs>
+				<Tab Name='Sell'>
+			  		<Text name='ConfigSell Text'>
+					<X>5%</X>
+					<Y>10</Y>
 						<Width>80%</Width>
 						<Height>20</Height>
 						<Alignment>Left</Alignment>
@@ -472,214 +472,208 @@
 					</Commandbutton>
 					<Text Name='ItemName'>
 						<X>25</X>
-						<Y>415</Y>
+						<Y>435</Y>
 						<Width>44%</Width> 
 						<Height>15</Height>
 					</Text>
 					<Text Name='ItemNumber'>
 						<X>300</X>
-						<Y>415</Y>
+						<Y>435</Y>
 						<Width>44%</Width> 
 						<Height>15</Height>
 					</Text>
 					<Text Name='Label1'>
 						<X>25</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>80</Width> 
 						<Height>15</Height>
 						<Text>Current Price</Text>
 					</Text>
 					<Textentry Name='PlatPrice'>
 						<X>125</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Text Name='PlatPriceText'>
 						<X>180</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
 					</Text>
 					<Textentry Name='GoldPrice'>
 						<X>205</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='GoldPriceText'>
 						<X>240</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
 					</Text>
 					<Textentry Name='SilverPrice'>
 						<X>265</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='SilverPriceText'>
 						<X>300</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
 					</Text>
 					<Textentry Name='CopperPrice'>
 						<X>325</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='CopperPriceText'>
 						<X>360</X>
-						<Y>430</Y>
+						<Y>450</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
 					</Text>
-
 					<Text Name='Label2'>
 						<X>25</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Minimum Price</Text>
 					</Text>
-
 					<Textentry Name='MinPlatPrice'>
 						<X>125</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Text Name='MinPlatPriceText'>
 						<X>180</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
 					</Text>
 					<Textentry Name='MinGoldPrice'>
 						<X>205</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MinGoldPriceText'>
 						<X>240</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
 					</Text>
 					<Textentry Name='MinSilverPrice'>
 						<X>265</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MinSilverPriceText'>
 						<X>300</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
 					</Text>
 					<Textentry Name='MinCopperPrice'>
 						<X>325</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MinCopperPriceText'>
 						<X>360</X>
-						<Y>450</Y>
+						<Y>470</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
 					</Text>
-
-
 					<Text Name='Label3'>
 						<X>25</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>30%</Width> 
 						<Height>15</Height>
 						<Text>Maximum Price</Text>
 					</Text>
-
 					<Textentry Name='MaxPlatPrice'>
 						<X>125</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>50</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
 					<Text Name='MaxPlatPriceText'>
 						<X>180</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>PP</Text>
 					</Text>
 					<Textentry Name='MaxGoldPrice'>
 						<X>205</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MaxGoldPriceText'>
 						<X>240</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>GP</Text>
 					</Text>
 					<Textentry Name='MaxSilverPrice'>
 						<X>265</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MaxSilverPriceText'>
 						<X>300</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>SP</Text>
 					</Text>
 					<Textentry Name='MaxCopperPrice'>
 						<X>325</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Text Name='MaxCopperPriceText'>
 						<X>360</X>
-						<Y>470</Y>
+						<Y>490</Y>
 						<Width>20</Width> 
 						<Height>15</Height>
 						<Text>CP</Text>
 					</Text>
-
 					<Commandbutton name='UpdatePrice'> 
 						<X>400</X> 
-						<Y>450</Y> 
+						<Y>470</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>
@@ -705,6 +699,37 @@
 						</AutoTooltip>
 					</checkbox>
 
+					<checkbox Name='LowerNumber'>
+						<X>130</X>
+						<Y>415</Y>
+						<Width>20</Width>
+						<Height>20</Height>
+						<Text>Cheaper Items</Text>
+						<AutoTooltip>
+							Only Match Price if there are (XX) items lower priced.
+						</AutoTooltip>
+						<OnLoad>
+							UIElement[LowerItemNumber@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+						</OnLoad>						
+						<OnLeftClick>
+							if ${UIElement[LowerNumber@Sell@GUITabs@MyPrices].Checked}
+							{
+								UIElement[LowerItemNumber@Sell@GUITabs@MyPrices]:SetAlpha[1]
+							}
+							else
+							{
+								UIElement[LowerItemNumber@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<Textentry Name='LowerItemNumber'>
+						<X>235</X>
+						<Y>417</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+
 					<checkbox Name='MinPrice'>
 						<X>325</X>
 						<Y>395</Y>
@@ -728,27 +753,27 @@
 						<OnLeftClick>
 							if ${UIElement[MinPrice@Sell@GUITabs@MyPrices].Checked}
 							{
-							UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MinPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MinGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MinSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MinCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[label2@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MinCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[label2@Sell@GUITabs@MyPrices]:SetAlpha[1]
 							}
 							else
 							{
-							UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MinPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MinGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MinSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MinCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[label2@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MinCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[label2@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
 							}
 						</OnLeftClick>
 					</checkbox>
@@ -776,27 +801,27 @@
 						<OnLeftClick>
 							if ${UIElement[MaxPrice@Sell@GUITabs@MyPrices].Checked}
 							{
-							UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
-							UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[1]
+								UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[1]
 							}
 							else
 							{
-							UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
-							UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxGoldPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxSilverPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxCopperPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxPlatPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxGoldPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxSilverPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[MaxCopperPriceText@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+								UIElement[label3@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
 							}
 						</OnLeftClick>
 					</checkbox>
@@ -962,7 +987,7 @@
 								Script[myprices]:QueueCommand[call SaveSetting box2 FALSE]
 								Script[myprices].VariableScope.box[2]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='3'>
@@ -995,7 +1020,7 @@
 								Script[myprices]:QueueCommand[call SaveSetting box3 FALSE]
 								Script[myprices].VariableScope.box[3]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='4'>
@@ -1028,7 +1053,7 @@
 								Script[myprices]:QueueCommand[call SaveSetting box4 FALSE]
 								Script[myprices].VariableScope.box[4]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='5'>
@@ -1061,7 +1086,7 @@
 								Script[myprices]:QueueCommand[call SaveSetting box5 FALSE]
 								Script[myprices].VariableScope.box[5]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='6'>
@@ -1094,7 +1119,7 @@
 								Script[myprices]:QueueCommand[call SaveSetting box6 FALSE]
 								Script[myprices].VariableScope.box[6]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='7'>
@@ -1127,7 +1152,7 @@
 								Script[myprices]:QueueCommand[call SaveSetting box7 FALSE]
 								Script[myprices].VariableScope.box[7]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<checkbox Name='8'>
@@ -1160,12 +1185,12 @@
 								Script[myprices]:QueueCommand[call SaveSetting box6 FALSE]
 								Script[myprices].VariableScope.box[8]:Set[FALSE]
 							}
-								Script[myprices]:QueueCommand[call LoadList]
+							Script[myprices]:QueueCommand[call LoadList]
 						</OnLeftClick>
 					</checkbox>
 					<Commandbutton name='Start Scanning'> 
 						<X>20%</X> 
-						<Y>92%</Y> 
+						<Y>95%</Y> 
 						<Width>25%</Width> 
 						<Height>25</Height>
 						<Text>Start Scanning</Text>
@@ -1189,7 +1214,7 @@
 					</Commandbutton>
 					<Commandbutton name='Exit MyPrices'> 
 						<X>60%</X> 
-						<Y>92%</Y> 
+						<Y>95%</Y> 
 						<Width>25%</Width> 
 						<Height>25</Height>
 						<Text>Stop and Quit</Text>

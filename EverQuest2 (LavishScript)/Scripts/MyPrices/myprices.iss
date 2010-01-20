@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14k :  released 4th January 2010"
+variable string Version="Version 0.14l :  released 20th January 2010"
 ;
 ; Declare Variables
 ;
@@ -124,6 +124,8 @@ variable int Box7
 variable int Box8
 variable bool Collectible
 variable bool NewCollection
+variable bool LowerNumber
+variable int LowerItemNumber
 
 
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
@@ -308,12 +310,11 @@ function main(string goscan, string goscan2)
 						}
 						call SetColour Sell ${currentpos} FF0B0301
 						
-						; check to see if the items minimum price should be used or not
-						Call CheckPriceSet MinSalePrice "${ItemName}"
-						MinPriceSet:Set[${Return}]
+						; check to see if the items minimum/maximum price should be used or not
 						
-						Call CheckPriceSet  MaxSalePrice "${ItemName}"
-						MaxPriceSet:Set[${Return}]
+						MinPriceSet:Set[${ItemList.FindSet["${ItemName}"].FindSetting[MinSalePrice]}]
+						
+						MaxPriceSet:Set[${ItemList.FindSet["${ItemName}"].FindSetting[MaxSalePrice]}]
 
 						broker Name "${ItemName}" Sort ByPriceAsc MaxLevel 999
 
@@ -412,12 +413,29 @@ function main(string goscan, string goscan2)
 										call StringFromPrice ${MinBasePrice}
 										call AddLog "${ItemName} :  Price to match is ${Return}" FF00FF00
 
+										; if you have told the script to match lower prices
 										If ${MatchLowPrice}
 										{
-											call SetColour Sell ${currentpos} FF00FF00
-											Call echolog "<Main> (Match Price change)"
-											call SetItemPrice ${i} ${j} ${MinBasePrice}
-											Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+											; if you've set a minimum item count with lower prices before price matching
+											if ${ItemList.FindSet["${ItemName}"].FindSetting[LowerNumber]}
+											{
+												call checkitemcount "${ItemName}" ${MyBasePrice}
+												; if there are MORE than the set number at a lower price then change yours to match.
+												if ${Return}
+												{
+													call SetColour Sell ${currentpos} FF00FF00
+													Call echolog "<Main> (Match Price change)"
+													call SetItemPrice ${i} ${j} ${MinBasePrice}
+													Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+												}
+											}
+											else
+											{
+												call SetColour Sell ${currentpos} FF00FF00
+												Call echolog "<Main> (Match Price change)"
+												call SetItemPrice ${i} ${j} ${MinBasePrice}
+												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+											}
 										}
 									}
 								}
@@ -602,6 +620,52 @@ function main(string goscan, string goscan2)
 		}
 	}
 	While ${Exitmyprices} == FALSE
+}
+
+function checkitemcount(string ItemName, float MyPrice)
+{
+	call echolog "-> checkitemcount ${ItemName} ${MyPrice}
+
+	Declare CurrentItem int local=1
+	Declare CurrentPage int local=1
+	Declare ItemLimit int local
+	Declare ItemCount int local=0
+	Declare TempMinPrice float local
+	
+	ItemLimit:Set[${ItemList.FindSet["${ItemName}"].FindSetting[LowerItemNumber]}]
+	CurrentPage:Set[1]
+	do
+	{
+		CurrentItem:Set[1]
+		do
+		{
+			; if checkbox set to ignore broker fee when matching prices
+			if ${MatchActual}
+			{
+				TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].BasePrice}]
+			}
+			else
+			{
+				TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+			}
+
+			
+			if ${TempMinPrice} > ${MyPrice} || ${ItemCount} >= ${ItemLimit}
+				break
+				
+			if ${ItemName.Equal["${Vendor.Item[${CurrentItem}].Name}"]}
+				ItemCount:Inc[${Vendor.Item[${CurrentItem}].Quantity}]
+		}
+		while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale}
+	}
+	while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages}
+
+	If ${ItemCount} >= ${ItemLimit}
+		Return TRUE
+	Else
+		Return FALSE
+		
+	call echolog "<- checkitemcount
 }
 
 function addtotals(string ItemName, int itemnumber)
@@ -1730,6 +1794,8 @@ function SaveSell()
 		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
 		MaxMoney:Set[${Return}]
 
+		LowerItemNumber:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[LowerItemNumber].Text}]
+
 		; Save the new value in your settings file
 		call Saveitem Sell
 
@@ -1744,7 +1810,6 @@ function SaveSell()
 		MaxMoney:Set[${Return}]
 		
 		; Find where the Item is stored in the container
-		
 		
 		call FindItem ${itemprice.Element[${ClickID}]} "${ItemName}"
 		
@@ -1810,6 +1875,16 @@ function Saveitem(string Saveset)
 			Item:AddSetting[CraftItem,TRUE]
 		else
 			Item:AddSetting[CraftItem,FALSE]
+		
+		if ${UIElement[LowerNumber@Sell@GUITabs@MyPrices].Checked}
+		{
+			Item:AddSetting[LowerNumber,TRUE]
+			Item:AddSetting[LowerItemNumber,${LowerItemNumber}]
+		}
+		else
+		{
+			Item:AddSetting[LowerNumber,FALSE]
+		}
 
 	}
 	elseif ${Saveset.Equal["Craft"]} || ${Saveset.Equal["Inventory"]}
@@ -1975,6 +2050,18 @@ function FillMinPrice(int ItemID)
 		else
 			UIElement[CraftItem@Sell@GUITabs@MyPrices]:UnsetChecked
 
+		if !${Item.FindSetting[LowerNumber]}
+		{
+			UIElement[LowerItemNumber@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
+			UIElement[LowerNumber@Sell@GUITabs@MyPrices]:UnsetChecked
+		}
+		else
+		{
+			UIElement[LowerItemNumber@Sell@GUITabs@MyPrices]:SetAlpha[1]
+			UIElement[LowerItemNumber@Sell@GUITabs@MyPrices]:SetText[${Item.FindSetting[LowerItemNumber]}]
+			UIElement[LowerNumber@Sell@GUITabs@MyPrices]:SetChecked
+		}
+
 		if !${Item.FindSetting[MinSalePrice]}
 		{
 			UIElement[MinPlatPrice@Sell@GUITabs@MyPrices]:SetAlpha[0.1]
@@ -2074,21 +2161,6 @@ function FillMinPrice(int ItemID)
 	}
 
 	call echolog "<end> : FillMinPrice"
-}
-
-function CheckPriceSet(string minmax, string ItemName)
-{
-	call echolog "-> ${minmax} ${ItemName}"
-	LavishSettings:AddSet[myprices]
-	LavishSettings[myprices]:AddSet[General]
-	LavishSettings[myprices]:AddSet[Item]
-
-	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
-	ItemList:AddSet["${ItemName}"]
-
-	Item:Set[${ItemList.FindSet["${ItemName}"]}]
-	call echolog "<- ${minmax} ${Item.FindSetting[minmax]}"
-	return ${Item.FindSetting[${minmax}]}
 }
 
 function savebuyinfo()
