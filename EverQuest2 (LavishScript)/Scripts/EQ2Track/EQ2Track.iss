@@ -1,6 +1,6 @@
 
 ;------------------------------------------------------------------------------
-; EQ2Track.iss Version 3.0 Updated: 01/12/10 by Valerian
+; EQ2Track.iss Version 3.1 Updated: 01/22/10 by Valerian
 ;------------------------------------------------------------------------------
 ; EQ2 Track originally created by Equidis
 ; Rewritten by Valerian
@@ -14,6 +14,8 @@
       - Updated to allow saving and loading of filter lists.
       - Added "Clr" button to filter controls to clear current filters.
       - Cleaned up Script<->UI interface.
+   01/22/10 v3.1
+      - Added ability to specify saved filter list on command line.
    ------------------------------------------------------------------------- */
 
 
@@ -133,7 +135,12 @@ objectdef _TrackInterface
 		variable string SetName
 		variable int Counter=0
 		variable iterator iter
-		SetName:Set[${UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].SelectedItem.Text}]
+		This:LoadListByName[${UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].SelectedItem.Text}]
+	}
+	method LoadListByName(string SetName)
+	{
+		variable int Counter=0
+		variable iterator iter
 		UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox]:ClearItems
 		if ${SetName.Length}
 		{
@@ -235,7 +242,7 @@ objectdef TrackHelper
 }
 variable TrackHelper Tracker
 
-function main()
+function main(... Args)
 {
 	declarevariable TrackInterface _TrackInterface global
 	LavishSettings:AddSet[EQ2Track]
@@ -246,6 +253,11 @@ function main()
 	User:Import["${Script.CurrentDirectory}/Character Config/${Me.Name}_Settings.xml"]
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
 	ui -reload -skin eq2 "${Script.CurrentDirectory}/UI/EQ2Track.xml"
+
+	if ${Args.Used}
+	{
+		TrackInterface:LoadListByName[${Args.Expand}]
+	}
 
 /*	variable bool TrackAggro
 	;variable string ReverseFilter[20]
