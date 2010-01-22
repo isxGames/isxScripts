@@ -784,7 +784,7 @@ function checkstock()
 
 	call buy Craft scan
 
-	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" ** Finished **"]
+	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Making List**"]
 
 	CraftListMade:Set[TRUE]
 
@@ -964,6 +964,7 @@ function buy(string tabname, string action)
 						}
 						elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
 						{
+							UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" **Writing List**"]
 							; if the item is marked as a craft one then check if the Minimum broker total has been reached
 							if ${CraftItem}
 							{
