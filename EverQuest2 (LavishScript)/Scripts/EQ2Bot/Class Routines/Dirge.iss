@@ -431,22 +431,20 @@ function Combat_Routine(int xAction)
 	; Do check for Power Building Items
 	; if available use them if not, request them
 	if ${ShardMode}
-		call Shard 60
+		call Shard 10
 
 	
 	; Must be a level 80 to have Gravitas so 
 	; check the level first.
-	
 	if ${Me.Level}==80 
-	{
 		call DoGravitas
-	}
+
 
 	; Check if anyone needs the Dirge Heal and if anyone needs rezzed
 	; of so use it.
 	call CheckHeals
 	; Use the common heal items, like potions, signets, etc.
-	call CommonHeals 70
+	call CommonHeals 40
 
 	; If we are specced for MagNote and it is check in the UI
 	; cast magnetic note
@@ -464,10 +462,12 @@ function Combat_Routine(int xAction)
 
 	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].MaxRange}]}
 	{
-		if ${BowAttacksMode}
+		if ${BowAttacksMode} && ${Me.Equipment[Ranged].SubType.Equal[Bow]} && ${Me.Equipment[Ammo].NextSlotOpen}
 		{
 			; Jael's Dreadful Deprivation
-			eq2execute /useability ${SpellType[250]}
+			if ${Me.Ability[${SpellType[250]}].IsReady}
+				eq2execute /useability ${SpellType[250]}
+			
 			eq2execute /auto 2
 		}
 		
@@ -477,14 +477,22 @@ function Combat_Routine(int xAction)
 			eq2execute /useability ${SpellType[62]}
 			
 			; Thuri's Doleful Thrust
-			; ** REMOVED APPEARED REDUNDANT ** call CheckPosition 1 0 ${KillTarget} 151 1
-			if (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-				call CastSpellRange 151 0 1 1 ${KillTarget} 0 0 1 0
+			call CheckPosition 1 0 ${KillTarget} 151 1
+			if (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn}) && ${Me.Ability[${SpellType[151]}].IsReady}
+			{
+				eq2execute /useability ${SpellType[151]}
+				wait 1
+				while ${Me.CastingSpell}
+				{
+					waitframe
+				}
+			}
 		}
+	
 	}
 
 	; Turn on Melee Autoattack if we are not in forced to use Ranged Attacks, and Autoattack is not already on.
-	if !${RangedAttackOnlyMode} && !${Me.AutoAttackOn} && ${Actor[${KillTarget}].Distance}<=${Position.GetMeleeMaxRange[${KillTarget}]}
+	if !${RangedAttackOnlyMode} && ((${Actor[${KillTarget}].Distance}<=${Position.GetMeleeMaxRange[${KillTarget}]} && !${Me.AutoAttackOn}) || (${Me.RangedAutoAttackOn} && ${Actor[${KillTarget}].Distance}<=${Position.GetMeleeMaxRange[${KillTarget}]}))
 		eq2execute /auto 1
 	
 	; This section fires only when JoustMode is enabled.
@@ -537,10 +545,10 @@ function Combat_Routine(int xAction)
 
 		do
 		{
-			;echo ${ISXEQ2.InitializingActorEffects}
-			
+			echo ISXEQ2.InitializingActorEffects
+			waitframe
 		}
-		while !${ISXEQ2.InitializingActorEffects}==FALSE
+		while ${ISXEQ2.InitializingActorEffects}
 
 		;don't CoB if CoB is up
 		if !${Me.Effect[beneficial,${SpellType[155]}](exists)} && (${Actor[${KillTarget}].Health}>=10 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
@@ -551,7 +559,6 @@ function Combat_Routine(int xAction)
 				eq2execute /g ${CacophonyAnnounceText}
 			}
 			call CastSpellRange 155 0 0 0 ${KillTarget} 0 0 1 0 1 0
-			;wait 20
 		}
 	}
 
@@ -899,24 +906,14 @@ function Post_Combat_Routine(int xAction)
 function Have_Aggro(int agroid)
 {
 
-	if ${agroid}==${KillTarget}
-	{
-		;Evasive
-		if ${Me.Ability[${SpellType[405]}].IsReady}
-		{
-			call CastSpellRange 405 0 0 0 ${agroid} 0 0 1
-		}
-		elseif ${Me.Ability[${SpellType[405]}].IsReady}
-		{
-			;evade
-			call CastSpellRange 180 0 0 0 ${agroid} 0 0 1
-		}
-		elseif ${Me.Ability[${SpellType[352]}].IsReady} && !${Actor[${agroid}].IsEpic}
-		{
-			;fear it off since its an add
-			call CastSpellRange 352 0 0 0 ${agroid} 0 0 1
-		}
-	}
+	;Evasive
+	if ${Me.Ability[${SpellType[405]}].IsReady}
+		call CastSpellRange 405 0 0 0 ${agroid} 0 0 1
+	elseif ${Me.Ability[${SpellType[405]}].IsReady}
+		call CastSpellRange 180 0 0 0 ${agroid} 0 0 1
+	elseif ${Me.Ability[${SpellType[352]}].IsReady} && !${Actor[${agroid}].IsEpic} && ${agroid}!=${KillTarget}
+		call CastSpellRange 352 0 0 0 ${agroid} 0 0 1
+
 }
 
 function Lost_Aggro()
@@ -951,7 +948,7 @@ function CheckHeals()
 	do
 	{
 		;oration of sacrifice heal
-		if !${MainTank} && ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<40 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && ${Me.Group[${temphl}].ToActor.Distance}<=20
+		if !${MainTank} && ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<70 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && ${Me.Group[${temphl}].ToActor.Distance}<=20
 		{
 			EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
 			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1 0 2 0
@@ -964,7 +961,7 @@ function CheckHeals()
 	{
 		if ${Me.Group[${tempgrp}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 		{
-			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 1 0
+			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID}
 			;short wait for accept
 			wait 50
 		}
@@ -977,7 +974,11 @@ function CheckHeals()
 		do
 		{
 			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<35
-				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID} 1 0 0 0 1 0
+			{
+				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID}
+				;short wait for accept
+				wait 50
+			}
 		}
 		while ${tempraid:Inc}<=24 && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 	}
@@ -1004,10 +1005,8 @@ function DoMagneticNote()
 		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
 		{
 
-			if (${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID})
-				continue
-
-			if ${Mob.Target[${CustomActor[${tcount}].ID}]}
+			
+			if (${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID})  && (${CustomActor[${tcount}].Target.ID}!=${Actor[${MainTankPC}].ID})
 			{
 				call CastSpellRange 383 0 0 0 ${Actor[${MainTankPC}].ID} 0 0 0 0 1 0
 				return
@@ -1053,7 +1052,7 @@ function DoGravitas()
 	if ${BuffGravitasTimers.Used} > 0 
 	{
 		; Loop through all the Keys and process ONLY SHAMANS.
-		if ${BuffGravitasTimers.FirstKey(exists)}
+		if ${BuffGravitasTimers.FirstKey(exists)} && ${Me.Ability[${SpellType[156]}].IsReady}
 		{
 		  do
 		  {
@@ -1081,7 +1080,7 @@ function DoGravitas()
 	 	}
 	 	
 	 	; Loop through all the Keys and process ONLY CLERICS.
-		if ${BuffGravitasTimers.FirstKey(exists)}
+		if ${BuffGravitasTimers.FirstKey(exists)} && ${Me.Ability[${SpellType[156]}].IsReady}
 		{
 		  do
 		  {
@@ -1109,7 +1108,7 @@ function DoGravitas()
 	 	}
 	 	
 	 	; Loop through all the Keys and process ONLY DRUIDS.
-		if ${BuffGravitasTimers.FirstKey(exists)}
+		if ${BuffGravitasTimers.FirstKey(exists)} && ${Me.Ability[${SpellType[156]}].IsReady}
 		{
 		  do
 		  {
@@ -1137,7 +1136,7 @@ function DoGravitas()
 	 	}
 	 	
 	 	; Loop through all the Keys and process only those that are not Shamans, Clerics or Druids.
-		if ${BuffGravitasTimers.FirstKey(exists)}
+		if ${BuffGravitasTimers.FirstKey(exists)} && ${Me.Ability[${SpellType[156]}].IsReady}
 		{
 		  do
 		  {
