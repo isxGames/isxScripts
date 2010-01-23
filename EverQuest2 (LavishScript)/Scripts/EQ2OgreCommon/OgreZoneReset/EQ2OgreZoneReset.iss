@@ -1,4 +1,4 @@
-;************Verison 1.00
+;************Verison 1.01
 ;****Written by Kannkor (Hotshot)
 ;
 
@@ -26,7 +26,7 @@ function ToggleZoneReuse()
 {
 	variable index:string TempIndex1
 	EQ2:GetPersisentZones[TempIndex1]
-	if !${TempIndex1(exists)}
+	if !${TempIndex1[1](exists)}
 	{
 		EQ2Execute /togglezonereuse
 		wait 5
