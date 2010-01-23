@@ -11,7 +11,7 @@ function main(string ExecuteCommand, string Param)
 		elseif ${ExecuteCommand.Equal[relay]}
 			relay all runscript "\${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreZoneReset/EQ2OgreZoneResetController" ToggleZoneReuse Nothing
 
-		wait 3
+		wait 5
 		while ${EQ2OgreCounter:Inc} < 10 && ${EQ2OgreSuccessfulCounter} < ${UIElement[${LstBoxOgreZoneResetResetZoneListID}].Items}
 		{
 			if ${UIElement[${LstBoxOgreZoneResetResetZoneListID}].Item[${EQ2OgreCounter}](exists)}
@@ -24,7 +24,7 @@ function main(string ExecuteCommand, string Param)
 					relay all runscript "\${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreZoneReset/EQ2OgreZoneResetController" ResetLocal "${UIElement[${LstBoxOgreZoneResetResetZoneListID}].Item[${EQ2OgreCounter}]}"
 				else
 					echo Missing where to route the command too. Please use the UI file to reset zones. If you are getting this in error, please post on the forums or contact Kannkor. Error message: EQ2OgreZoneResetXMLCall
-				wait 3
+				wait 5
 			}
 		}
 	}
