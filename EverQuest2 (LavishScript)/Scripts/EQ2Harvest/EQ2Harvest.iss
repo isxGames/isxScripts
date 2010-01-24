@@ -15,7 +15,7 @@
 ; defined when you run the script.
 
 #ifndef _moveto_
-	#include "${LavishScript.HomeDirectory}/Scripts/moveto.iss"
+	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/moveto.iss"
 #endif
 
 #ifndef _PATHERGUI_
@@ -251,32 +251,34 @@ function PathingRoutine()
 
 			CurrentAction:Set[Moving through Nav Points...]
 
+
 			if ${UseSprint} && ${Me.ToActor.Power} > 80
 			{
 				EQ2Execute /useability Sprint
 			}
 
+			;echo "DEBUG:: calling moveto ${WPX} ${WPZ} ${DistancePrecision} 1 3 1"
 			call moveto ${WPX} ${WPZ} ${DistancePrecision} 1 3 1
+			;echo "DEBUG:: moveto returned '${Return}'"
 			; Check to see if we are stuck getting to the node
 			if ${Return.Equal[STUCK]}
 			{
 				call StuckState
 				continue
 			}		    
-		    
 
-            NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
-            if (${NodeID} > 0)
-            {
-                Harvesting:Set[TRUE]
-    			do
-    			{
-    				call CheckAggro
-    				call CheckTimer
-    
-    				call CheckAggro
+			NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
+      if (${NodeID} > 0)
+      {
+     		Harvesting:Set[TRUE]
+				do
+				{
+					call CheckAggro
+					call CheckTimer
+	    
+					call CheckAggro
 					CurrentAction:Set[Found Node: ${Actor[${NodeID}].Name}]
-
+	
 					if !${Harvest.PCDetected}
 					{
 						if ${UseSprint} && ${Me.ToActor.Power} > 80
@@ -287,8 +289,8 @@ function PathingRoutine()
 						if (${Actor[${NodeID}].Name.Equal[?]} || ${Actor[${NodeID}].Name.Equal[!]})
 						    call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} ${DistancePrecision} 0 3 1
 						else
-    						call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} ${DistancePrecision} 0 3 1
-
+	  						call moveto ${Actor[${NodeID}].X} ${Actor[${NodeID}].Z} ${DistancePrecision} 0 3 1
+	
 						; Check to see if we are stuck getting to the node
 						if ${Return.Equal[STUCK]}
 						{
@@ -297,22 +299,22 @@ function PathingRoutine()
 							call StuckState
 							continue
 						}
-
+	
 						while ${Me.IsMoving}
 						{
 							waitframe
 						}
 						; even with the above it still jumps the gun every so often...lag?
 						wait 1
-
+	
 						if ${UseSprint}
 						{
 							Me.Maintained[Sprint]:Cancel
 						}
-
+	
 						call Harvest
 						harvested:Set[TRUE]
-
+	
 						if !${IntruderAction} && ${IntruderStatus}==1 && ${IntruderDetect}
 						{
 							isintruder:Set[TRUE]
@@ -322,23 +324,23 @@ function PathingRoutine()
 								call CheckTimer
 							}
 							while ${isintruder}
-
+	
 							if ${Me.ToActor.IsAFK}
 							{
 								EQ2Execute /afk
 								wait 10
 							}
 						}
-    				}
-    				NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
-    				if (${NodeID} == 0)
-    				{
-    				    break
-    				    Harvesting:Set[FALSE]
-    				}
-    			}
-    			while ${Harvesting}
-		    }
+					}
+					NodeID:Set[${Harvest.Node[${WPX},${WPY},${WPZ}]}]
+					if (${NodeID} == 0)
+					{
+					    break
+					    Harvesting:Set[FALSE]
+					}
+				}
+				while ${Harvesting}
+			}
 		    
 			if ${harvested}
 			{
@@ -369,6 +371,7 @@ function PathingRoutine()
 				}
 				PathIndex:Set[0]
 			}
+			
 		}
 		while ${PathIndex:Inc}<=${NavPath.Points}
 	}
