@@ -81,7 +81,7 @@
 ;===================================================
 #includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Common/MovementKeys.iss
 #ifndef _MOVE_KEYS_
-varaible string autorun="num lock"
+variable string autorun="num lock"
 variable string forward=w
 variable string backward=s
 variable string strafeleft=q
