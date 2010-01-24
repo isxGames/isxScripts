@@ -464,12 +464,12 @@
                             </OnLeftClick>
                           </checkbox>
                         <Textentry Name='LootDelay' Template='VG.TextEntry'>
-                            <visible>0</visible>
+                            <visible>4</visible>
                             <X>120</X>
                             <Y>135</Y>
                             <Width>26</Width>
                             <Height>19</Height>
-                            <Text>Delay</Text>
+
                             <Color>FFDDBB00</Color>
                             <SelectionColor>FF000000</SelectionColor>
                             <Border>0</Border>
@@ -484,6 +484,14 @@
                               }
                             </OnChange>
                           </Textentry>
+                    	<Text Name='delaytxt' Template='VG.BoldText'>
+                      	<X>158</X>
+                      	<Y>137</Y>
+                      	<Width>95%</Width>
+                      	<Height>20</Height>
+                      	<Alignment>Left</Alignment>
+                      	<Text>Delay</Text>
+                    	</Text>
                           <checkbox Name='DoRaidLoot' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>203</X>
@@ -547,13 +555,13 @@
                             <Height>20</Height>
                             <Text>Auto Mount</Text>
                             <OnLoad>
-                              if ${Script[vga].VariableScope.Domount}
+                              if ${Script[vga].VariableScope.DoMount}
                               {
                               This:SetChecked
                               }
                             </OnLoad>
                             <OnLeftClick>
-                              Script[vga].VariableScope.Domount:Set[${This.Checked}]
+                              Script[vga].VariableScope.DoMount:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
