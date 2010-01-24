@@ -14,6 +14,7 @@ function:bool CheckFurious()
 			{
 			VGExecute "/pet backoff"
 			}
+		call CheckPosition
 		if ${Me.TargetHealth} > 20
 			{
 			actionlog "Furious Down Health too High"
@@ -55,6 +56,7 @@ function TurnOffAttackfunct()
 					{
 					VGExecute "/pet backoff"
 					}
+
 				if ${Me.Ability[Auto Attack].Toggled}
 					Me.Ability[Auto Attack]:Use
 				if ${Me.Ability[{FD}](exists)}
@@ -65,6 +67,7 @@ function TurnOffAttackfunct()
 						{
 						VGExecute "/pet backoff"
 						}
+				        call CheckPosition
 					wait 5
 					if ${ClassRole.healer}
 						call Healcheck
@@ -90,6 +93,7 @@ function TurnOffDuringBuff()
 				{
 					vgexecute /stopcasting
 				}
+
 				if ${Me.Ability[Auto Attack].Toggled}
 					Me.Ability[Auto Attack]:Use
 				if ${Me.Ability[{FD}](exists)}
@@ -100,6 +104,7 @@ function TurnOffDuringBuff()
 						{
 						VGExecute "/pet backoff"
 						}
+					call CheckPosition
 					wait 5
 					if ${ClassRole.healer}
 						call Healcheck

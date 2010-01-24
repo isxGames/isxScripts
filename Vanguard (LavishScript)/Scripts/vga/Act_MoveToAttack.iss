@@ -1,7 +1,8 @@
 ;********************************************
 function MoveToTarget()
 {
-
+	if ${doMoveToTarget}
+		{
 		if ${Me.Target.Distance} > 4 && ${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
 			actionlog "Moving to Melee"
@@ -18,6 +19,7 @@ function MoveToTarget()
 			{
 			call TooClose
 			}
+		}
 	return
 }
 

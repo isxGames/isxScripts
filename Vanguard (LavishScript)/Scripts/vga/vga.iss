@@ -409,6 +409,7 @@ function PostCombatLoopFunction()
 function EmergencyActions()
 {
 	call PauseScript
+	call CheckPosition
 	;-------------------------------------------
 	;*****Check If I Need to Instant Heal*******
 	;-------------------------------------------
