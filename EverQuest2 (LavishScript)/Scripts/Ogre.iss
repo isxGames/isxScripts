@@ -38,6 +38,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		echo *P* Run Ogre Hire <tier> | Hireling <tier> -- Runs the hireling script for Guild Hunter/Gatherer/Miner - Default tier is 8
 		echo *P* Run Ogre HireG <tier> | HirelingGroup <tier> -- Runs the script for using multiple hirelings - Default tier is 8
 		echo *P* Run Ogre Depot -- Runs the Depot script
+		echo *P* Run Ogre Harvest -- Runs EQ2OgreHarvest
 		echo *P* Run Ogre Reset | Zone -- Loads the Zone reset UI
 		echo *P* Run Ogre Transmute -- Loads the Transmute UI
 		echo *P* Run Ogre End <Loadcommand> -- Any script that doesn't have an interface can be ended the same way it is run.
@@ -47,6 +48,11 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 	elseif ${LoginModifer.Equal[transmute]}
 	{
 		runscript eq2Ogrecommon/ogretransmute/eq2ogretransmuteshell
+		return
+	}
+	elseif ${LoginModifer.Equal[harvest]}
+	{
+		runscript eq2Ogreharvest/eq2ogreharvest
 		return
 	}
 	elseif ${LoginModifer.Equal[Reset]} || ${LoginModifer.Equal[Zone]}
