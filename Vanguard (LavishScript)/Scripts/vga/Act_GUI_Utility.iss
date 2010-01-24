@@ -129,9 +129,9 @@ function ShiftingImage()
 ;********************************************
 function shouldimount()
 {
-	if ${doMount} && !${Pawn[${Me}].IsMounted} && ${Pawn[${followpawn}].IsMounted} && !${Me.InCombat}
+	if ${DoMount} && !${Pawn[${Me}].IsMounted} && ${Pawn[${followpawn}].IsMounted} && !${Me.InCombat}
 	{
-	Me.Inventory[${Me.Inventory[CurrentEquipSlot,Mount]}]:Use
+	Me.Inventory[${Me.Inventory[CurrentEquipSlot,Flying Mount]}]:Use
 	call MeCasting Neither
 	wait 3
 	}

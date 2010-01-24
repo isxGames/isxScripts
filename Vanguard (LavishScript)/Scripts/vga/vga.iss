@@ -309,6 +309,8 @@ function downtimefunction()
 		call Class_DownTime
 	if ${DoResNotInCombat}
 		call ResUp
+	if ${DoMount}
+		call shouldimount
 	if ${dofollowpawn}
 		call followpawn
 	if ${doassistpawn} 
