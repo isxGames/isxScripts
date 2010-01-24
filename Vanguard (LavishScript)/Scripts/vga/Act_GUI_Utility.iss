@@ -529,6 +529,7 @@ function MeCasting(string CP)
 		}
 		elseif ${CP.Equal[Neither]} || ${CP.Equal[Post]}
 		{
+			call CheckPosition
 		}
 		
 		waitframe
@@ -536,7 +537,8 @@ function MeCasting(string CP)
 
 	while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
 	{
-		waitframe
+		wait 2
+		call CheckPosition
 	}
 
 

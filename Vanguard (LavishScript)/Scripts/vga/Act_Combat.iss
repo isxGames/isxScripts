@@ -59,7 +59,7 @@ function OpeningSpellSequence()
 	debuglog "Running Opening Spell Sequence"
 	if ${newattack} && ${doOpeningSeqSpell}
 	{
-		call CheckPosition
+		
 		cleardebug
 		actionlog "Attacking ${Me.Target} (Spells)"
 		OpeningSpellSequence:GetSettingIterator[Iterator]
@@ -73,8 +73,6 @@ function OpeningSpellSequence()
 			}
 			if !${fight.ShouldIAttack} 
 				return
-				
-			call CheckPosition
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return}
 			{
@@ -119,8 +117,6 @@ function CombatSpellSequence()
 	debuglog "Running Combat Spell Sequence"
 	if !${newattack} && ${doCombatSeqSpell}
 	{
-
-		call CheckPosition
 		CombatSpellSequence:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
@@ -133,7 +129,7 @@ function CombatSpellSequence()
 			if !${fight.ShouldIAttack} 
 				return
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return}
 			{
@@ -166,7 +162,7 @@ function AOESpell()
 			if !${fight.ShouldIAttack} 
 				return
 			
-			call CheckPosition
+
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return}
 			{
@@ -189,7 +185,6 @@ function DebuffSpells()
 	{
 		if !${newattack} && ${fight.ShouldIAttack}
 		{
-			call CheckPosition
 			DebuffSpell:GetSettingIterator[Iterator]
 			Iterator:First
 			while ( ${Iterator.Key(exists)} )
@@ -201,8 +196,6 @@ function DebuffSpells()
 				}
 				if !${fight.ShouldIAttack} 
 					return
-				
-				call CheckPosition
 				call checkabilitytocast "${Iterator.Value}"	
 				if ${Return} && !${Me.TargetDebuff[${Iterator.Value}](exists)}
 				{
@@ -226,7 +219,7 @@ function DotSpells()
 	{
 		if !${newattack} && ${fight.ShouldIAttack} 
 		{
-			call CheckPosition
+			
 			DotSpell:GetSettingIterator[Iterator]
 			Iterator:First
 			while ( ${Iterator.Key(exists)} )
@@ -239,7 +232,7 @@ function DotSpells()
 				if !${fight.ShouldIAttack} 
 					return			
 				
-				call CheckPosition
+				
 				debuglog "Checking ${Iterator.Value}"
 				call checkabilitytocast "${Iterator.Value}"	
 				if ${Return} && !${Me.Effect[${Iterator.Value}](exists)}
@@ -281,7 +274,7 @@ function OpeningMeleeSequence()
 	debuglog "Running Opening Melee Sequence"
 	if ${newattack} && ${doOpeningSeqMelee} && ${fight.ShouldIAttack} 
 	{
-		call CheckPosition
+		
 		cleardebug
 		actionlog "Attacking ${Me.Target} (Melee)"
 		call MoveToTarget
@@ -297,7 +290,7 @@ function OpeningMeleeSequence()
 			if !${fight.ShouldIAttack} 
 				return
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return}
 			{
@@ -319,7 +312,7 @@ function CombatMeleeSequence()
 	debuglog "Running Combat Melee Sequence"
 	if !${newattack} && ${doCombatSeqMelee} && ${fight.ShouldIAttack}
 	{
-		call CheckPosition
+		
 		CombatMeleeSequence:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
@@ -332,7 +325,7 @@ function CombatMeleeSequence()
 			if !${fight.ShouldIAttack} 
 				return
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return}
 			{
@@ -352,7 +345,7 @@ function AOEMelee()
 	debuglog "Running AOEMelee"
 	if !${newattack} && ${doAOEMelee} && ${fight.ShouldIAttack} && (${Me.Encounter} > 1)
 	{
-		call CheckPosition
+		
 		AOEMelee:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
@@ -365,7 +358,7 @@ function AOEMelee()
 			if !${fight.ShouldIAttack} 
 				return			
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${Iterator.Value}"	
 			if ${Return}
 			{
@@ -388,7 +381,7 @@ function DebuffMelee()
 	{
 		if !${newattack} && ${fight.ShouldIAttack} 
 		{
-			call CheckPosition
+			
 			DebuffMelee:GetSettingIterator[Iterator]
 			Iterator:First
 			while ( ${Iterator.Key(exists)} )
@@ -401,7 +394,7 @@ function DebuffMelee()
 				if !${fight.ShouldIAttack} 
 					return			
 				
-				call CheckPosition
+				
 				call checkabilitytocast "${Iterator.Value}"	
 				if ${Return} && !${Me.TargetDebuff[${Iterator.Value}](exists)}
 				{
@@ -425,7 +418,7 @@ function DotMelee()
 	{
 		if !${newattack} && ${fight.ShouldIAttack} 
 		{
-			call CheckPosition
+			
 			DotMelee:GetSettingIterator[Iterator]
 			Iterator:First
 			while ( ${Iterator.Key(exists)} )
@@ -438,7 +431,7 @@ function DotMelee()
 				if !${fight.ShouldIAttack} 
 					return				
 				
-				call CheckPosition
+				
 				debuglog "Checking ${Iterator.Value}"
 				call checkabilitytocast "${Iterator.Value}"	
 				if ${Return} && !${Me.Effect[${Iterator.Value}](exists)}

@@ -6,7 +6,7 @@ function functAOECrits()
 	debuglog "Running AOE Crits"
 	if ${doAOECrits} && ${fight.ShouldIAttack}
 	{
-		call CheckPosition
+		
 		AOECrits:GetSettingIterator[anIter]
 		anIter:First
 	
@@ -20,7 +20,7 @@ function functAOECrits()
 			if !${fight.ShouldIAttack} 
 				return
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${anIter.Value}"
 			if ${Return}
 			{
@@ -40,7 +40,7 @@ function functBuffCrits()
 	debuglog "Running Buff Crits"
 	if ${doBuffCrits} && ${fight.ShouldIAttack}
 	{
-		call CheckPosition
+		
 		BuffCrits:GetSettingIterator[anIter]
 		anIter:First
 
@@ -54,7 +54,7 @@ function functBuffCrits()
 			if !${fight.ShouldIAttack} 
 				return
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${anIter.Value}"
 			if ${Return} && !${Me.Effect[${anIter.Value}](exists)}
 			{
@@ -73,7 +73,7 @@ function functDotCrits()
 	debuglog "Running Dot Crits"
 	if ${doDotCrits} && ${fight.ShouldIAttack}
 	{
-		call CheckPosition
+		
 		DotCrits:GetSettingIterator[anIter]
 		anIter:First
 	
@@ -87,7 +87,7 @@ function functDotCrits()
 			if !${fight.ShouldIAttack} 
 				return
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${anIter.Value}"
 			if ${Return} && !${Me.TargetDebuff[${anIter.Value}](exists)}
 			{
@@ -108,13 +108,13 @@ function functCounterAttacks()
 	debuglog "Running Counter Attacks"
 	if ${doCounterAttack} && ${fight.ShouldIAttack}
 	{
-		call CheckPosition
+		
 		CounterAttack:GetSettingIterator[anIter]
 		anIter:First
 
 		while ( ${anIter.Key(exists)} )
 		{
-			call CheckPosition
+			
 			call checkabilitytocast "${anIter.Value}"
 			if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} 
 			{
@@ -146,7 +146,7 @@ function functCombatCrits()
 	debuglog "Running Combat Crits"
 	if ${doCombatCrits} && ${fight.ShouldIAttack}
 	{
-		call CheckPosition
+		
 		CombatCrits:GetSettingIterator[anIter]
 		anIter:First
 
@@ -160,7 +160,7 @@ function functCombatCrits()
 			if !${fight.ShouldIAttack} 
 				return			
 			
-			call CheckPosition
+			
 			call checkabilitytocast "${anIter.Value}"
 			if ${Return}
 			{
