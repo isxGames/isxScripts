@@ -1180,14 +1180,12 @@ atom atexit()
 
 	SettingXML[${ConfigFile}]:Unload
 	SettingXML[${HarvestFile}]:Unload
+	call StopRunning
 
-    press -release MOVEFORWARD
-    press -release MOVEBACKWARD
-    press -release STRAFELEFT
-    press -release STRAFERIGHT
-    press -release TURNLEFT
-    press -release TURNRIGHT                        	
-	
+  press -release ${forward}
+  press -release ${backward}
+  press -release ${strafeleft}
+  press -release ${straferight}
 	
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[EQ2_onLootWindowAppeared]
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
