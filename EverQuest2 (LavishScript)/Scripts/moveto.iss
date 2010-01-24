@@ -1,3 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;
+;;;;;; This file is being left here for backwards compatability with old scripts.  However, all scripts should be changed to use
+;;;;;; the version of moveto.iss that is located in /EQ2Common.  (i.e., something like #include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/moveto.iss")
+;;;;;;
+;;;;;; This file will not be updated any longer.  All future versions of moveto.iss will be found in /EQ2Common.  All developers with SVN access should modify
+;;;;;; THAT file.
+;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 ;-----------------------------------------------------------------------------------------------
 ; moveto.iss Version 2.1.05  Updated: 05/11/07
 ;
