@@ -36,11 +36,11 @@
 ;	   Excluding this paramater will default the value to 3.
 ;	 * For the first attempt, it will turn 90 degrees to try and avoid an obstacle instead of
 ;	   moving back.
-; v1.7 - * Added an optional paramater which can disable the MOVEFORWARD control. This will allow
+; v1.7 - * Added an optional paramater which can disable the ${forward} control. This will allow
 ;	   the main script to control the movement instead.
 ;	 * Modified the way the function handles getting stuck. If you get stuck a 2nd or 3rd time,
 ;	   it will move back and strafe with a longer wait time.
-; v1.6 - * Modified the MOVEFORWARD key to use 'num lock' instead. You may need to change that
+; v1.6 - * Modified the ${forward} key to use 'num lock' instead. You may need to change that
 ;	   to your auto run key.
 ;	   Unless you are strafing, or moving back (aka stuck) you will be able to type in chat
 ;	   while your char is moving.
@@ -76,13 +76,20 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/MobCheck.iss"
 #endif
 
-#define AUTORUN "num lock"
-#define MOVEFORWARD w
-#define MOVEBACKWARD s
-#define STRAFELEFT ,
-#define STRAFERIGHT .
-#define TURNLEFT a
-#define TURNRIGHT d
+;===================================================
+;===        Keyboard Configuration              ====
+;===================================================
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/EQ2Common/MovementKeys.iss
+#ifndef _MOVE_KEYS_
+varaible string autorun="num lock"
+variable string forward=w
+variable string backward=s
+variable string strafeleft=q
+variable string straferight=e
+variable string turnleft=a
+variable string turnright=d
+#endif /* _MOVE_KEYS_ */
+
 
 variable int BackupTime
 variable int StrafeTime
@@ -253,11 +260,11 @@ function Obstacle(int delay)
 	if ${delay}>0
 	{
 		;backup a little
-        press -release MOVEFORWARD
+        press -release ${forward}
         wait 1
-		press -hold MOVEBACKWARD
+		press -hold ${backward}
 		wait ${Math.Calc64[${BackupTime}*${delay}]}
-        press -release MOVEBACKWARD
+        press -release ${backward}
 
 		if ${delay}==1 || ${delay}==3 || ${delay}==5
 		{
@@ -265,20 +272,20 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-                press -hold STRAFELEFT
+                press -hold ${strafeleft}
 				call StartRunning
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFELEFT
+                press -release ${strafeleft}
 				call StopRunning
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-                press -hold STRAFERIGHT
+                press -hold ${straferight}
 				call StartRunning
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFERIGHT
+                press -release ${straferight}
 				call StopRunning
 				wait 2
 			}
@@ -289,21 +296,21 @@ function Obstacle(int delay)
 			if "${Math.Rand[10]}>5"
 			{
 			    call CheckMovingAggro
-                press -hold STRAFELEFT
+                press -hold ${strafeleft}
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFELEFT
+                press -release ${strafeleft}
 				wait 2
 			}
 			else
 			{
 			    call CheckMovingAggro
-                press -hold STRAFERIGHT
+                press -hold ${straferight}
 				wait ${Math.Calc64[${StrafeTime}*${delay}]}
-                press -release STRAFERIGHT
+                press -release ${straferight}
 				wait 2
 			}
 		}
-		;Start moving forward again
+		;Start moving ${forward} again
 		call StartRunning
 		wait ${Math.Calc64[${BackupTime}*${delay}+5]}
 	}
@@ -340,7 +347,7 @@ function StopRunning()
 	{
 		do
 		{
-    	    press AUTORUN
+    	    press "${autorun}"
 			wait 5
 		}
 		while ${Me.IsMoving}
@@ -359,13 +366,13 @@ function StartRunning()
 		    if ${Count} > 20
 		    {
 		        ;; we must be stuck....
-		        press MOVEBACKWARD
-		        press -hold MOVEBACKWARD
+		        press ${backward}
+		        press -hold ${backward}
 		        wait 5
-		        press -release MOVEBACKWARD
+		        press -release ${backward}
 		        Count:Set[0]
 		    }
-    	    press AUTORUN
+    	    press "${autorun}"
 			wait 2
 			Count:Inc[2]
 		}
