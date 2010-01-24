@@ -34,6 +34,9 @@ objectdef mobcheck
 	{
 		variable int tempvar
 
+		if !${Actor[${actorid}].Target(exists)}
+			return FALSE
+
 		if ${Me.GroupCount}>1
 		{
 			; Check if mob is aggro on group or pet
