@@ -233,6 +233,7 @@
 <Setting Name="Trip Roots" Type="Root" MinSkill="250" MaxSkill="350" Tier="7">Trip Roots</Setting>
 <Setting Name="Tangled Nest" Type="Den" MinSkill="250" MaxSkill="350" Tier="7">Tangled Nest</Setting>
 <Setting Name="Withered Shrubbery" Type="Shrub" MinSkill="250" MaxSkill="350" Tier="7">Withered Shrubbery</Setting>
+<Setting Name="Breeze Leaf Foliage" Type="Shrub" MinSkill="250" MaxSkill="350" Tier="7">Breeze Leaf Foliage</Setting>
 <Setting Name="School of Flying Fish" Type="Fish" MinSkill="250" MaxSkill="350" Tier="7">School of Flying Fish</Setting>
 
 <!-- exp03_rgn_loping_plains -->
