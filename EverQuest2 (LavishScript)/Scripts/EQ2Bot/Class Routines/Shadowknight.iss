@@ -514,8 +514,8 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-    declare BuffTarget string local
-    declare NumNPCs int local
+  declare BuffTarget string local
+  declare NumNPCs int local
 	declare spellsused int local
 	declare TankToTargetDistance float local
 	spellsused:Set[0]
@@ -563,6 +563,10 @@ function Combat_Routine(int xAction)
 	        call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
 	    }
 	}
+	
+	;Essence Siphon
+	if ${Me.Ability[${SpellType[503]}].IsReady}
+		call CastSpellRange 503 0 0 0 ${KillTarget}	
 
 	if ${Me.ToActor.Health}<25 && ${Me.Ability[${SpellType[502]}].IsReady}
 		call CastSpellRange 502
