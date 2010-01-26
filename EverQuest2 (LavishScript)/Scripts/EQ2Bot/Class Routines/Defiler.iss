@@ -457,11 +457,11 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 
-		if ${Me.Ability[${SpellType[382]}].IsReady} && !${Me.Maintained[${SpellType[382]}](exists)} && ${spellsused}<2
-		{
-			call CastSpellRange 382 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
+		;if ${Me.Ability[${SpellType[382]}].IsReady} && !${Me.Maintained[${SpellType[382]}](exists)} && ${spellsused}<2
+		;{
+		;	call CastSpellRange 382 0 0 0 ${KillTarget}
+		;	spellsused:Inc
+		;}
 
 		if ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${spellsused}<2
 		{
@@ -732,7 +732,9 @@ function CheckCures()
 	declare Affcnt int local 0
 	declare CureTarget string local
 	
-	
+	if !${CureMode}
+		return
+		
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
@@ -783,7 +785,14 @@ function CheckCures()
 
 		;Use group cure if more than 3 afflictions will be removed
 		if ${grpcure}>3
+		{
 			call CastSpellRange 220 0 0 0 ${KillTarget} 0 0 0 0 1 0
+			wait 5
+			while ${Me.CastingSpell}
+			{
+				waitframe
+			}
+		}
 	}
 
 	;Cure Ourselves first
@@ -804,6 +813,10 @@ function CheckCures()
 		;epicmode is set in eq2botextras, we will cure only one person per call unless in epic mode.
 		if !${EpicMode}
 			break
+
+		;Cure Ourselves first
+	  if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
+			call CureMe
 
 		;break if we need heals
 		call CheckGroupHealth 30
