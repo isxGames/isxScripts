@@ -1741,6 +1741,128 @@
 		  </Children>
                 </Frame>
               </Tab>
+             <!--2nd Level Diplo Tab-->
+              <Tab name='Diplo'>
+                <Frame name='DiploCFrm'>
+                  <Height>100%</Height>
+                  <Width>100%</Width>
+                  <Texture></Texture>
+                  <Children>
+		<checkbox Name='DoDiplo' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>13</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Diplo</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoDiplo}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoDiplo:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+               <Text Name='txtDiploTarget' Template='VG.BoldText'>
+                  <X>235</X>
+                  <Y>13</Y>
+                  <Width>95%</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Your Target</Text>
+                  <OnLoad>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnLoad>
+                  <OnRender>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnRender>
+                </Text>
+                <Button Name="DiploNPCButton" Template="VG.GreenButton">
+                  <X>105</X>
+                  <Y>13</Y>
+                  <Width>120</Width>
+                  <Height>20</Height>
+                  <Text>Add Diplo NPC</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddDiploNPCs "${Me.Target}"
+                    BuildDiploNPCs
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Listbox Name="DiploNPCsList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>36</Y>
+                  <Width>95%</Width>
+                  <Height>200</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildDiploNPCs
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveDiploNPCs "${This.SelectedItem}"
+                    This.SelectedItem:Remove
+                    BuildDiploNPCs
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                  <OnLeftClick>
+                    Script[VGA]:QueueCommand[call FindDiploList "${This.SelectedItem}"] 
+		    BuildDiplo "${UIElement[DiploNPCsList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Listbox>
+               <Text Name='txtDiploLis' Template='VG.BoldText'>
+                  <X>260</X>
+                  <Y>250</Y>
+                  <Width>95%</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Select NPCs Diplo</Text>
+                </Text>
+              <ComboBox Name="cmbDiploList" Template="VG.ComboBox">
+                <X>13</X>
+                <Y>250</Y>
+                <Width>240</Width>
+                <Height>20</Height>
+                <OnLoad>
+                  This:AddItem[NONE]
+                </OnLoad>
+                <OnSelect>
+		  AddDiplo "${UIElement[DiploNPCsList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}" "${This.SelectedItem}"
+                  Script[VGA]:QueueCommand[call LavishSave]
+		  BuildDiplo "${Me.Target}"
+                </OnSelect>
+              </ComboBox>
+                <Listbox Name="DiploList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>360</Y>
+                  <Width>95%</Width>
+                  <Height>200</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildDiplo "${UIElement[DiploNPCsList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveDiplo "${Me.Target} ${This.SelectedItem}"
+                    This.SelectedItem:Remove
+                    BuildDiplo "${UIElement[DiploNPCsList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
+                    Script[VGA]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+		  </Children>
+                </Frame>
+              </Tab>
           <!--2nd Level MainLogs Tab-->
           <Tab name='Logs'>
             <Frame name='LogsCFrm'>
