@@ -7,10 +7,12 @@ function loadxmls()
 	LavishSettings[VGA_Mobs]:Clear
 	LavishSettings[VGA_General]:Clear
 	LavishSettings[VGA_Quests]:Clear
+	LavishSettings[VGA_Diplo]:Clear
 	LavishSettings:AddSet[VGA]
 	LavishSettings:AddSet[VGA_Mobs]
 	LavishSettings:AddSet[VGA_General]
 	LavishSettings:AddSet[VGA_Quests]
+	LavishSettings:AddSet[VGA_Diplo]
 
 	LavishSettings[VGA]:AddSet[Healers]
 	LavishSettings[VGA]:AddSet[Utility]
@@ -76,10 +78,14 @@ function loadxmls()
 	LavishSettings[VGA_Quests]:AddSet[QuestNPCs]
 	LavishSettings[VGA_Quests]:AddSet[Quests]
 
+	LavishSettings[VGA_Diplo]:AddSet[DiploNPCs]
+	LavishSettings[VGA_Diplo]:AddSet[Diplo]
+
 	LavishSettings[VGA]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
 	LavishSettings[VGA_Mobs]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
 	LavishSettings[VGA_General]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_General.xml]
 	LavishSettings[VGA_Quests]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Quests.xml]
+	LavishSettings[VGA_Diplo]:Import[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Diplo.xml]
 
 	call LavishLoad
 }
@@ -347,6 +353,7 @@ DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
 	DoAttackPositionBack:Set[${UtilitySR.FindSetting[DoAttackPositionBack,${DoAttackPositionBack}]}]
 	DoAttackPosition:Set[${UtilitySR.FindSetting[DoAttackPosition,${DoAttackPosition}]}]
 	DoPopCrates:Set[${UtilitySR.FindSetting[DoPopCrates,${DoPopCrates}]}]
+	DoDiplo:Set[${UtilitySR.FindSetting[DoDiplo,${DoDiplo}]}]
 
 	Friends:Set[${LavishSettings[VGA_General].FindSet[Friends]}]
 
@@ -593,4 +600,10 @@ DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
 	
 	QuestNPCs:Set[${LavishSettings[VGA_Quests].FindSet[QuestNPCs]}]
 	Quests:Set[${LavishSettings[VGA_Quests].FindSet[Quests]}]
+	;===================================================
+	;===                 Diplo   Load               ====
+	;===================================================
+	
+	DiploNPCs:Set[${LavishSettings[VGA_Diplo].FindSet[DiploNPCs]}]
+	Diplo:Set[${LavishSettings[VGA_Diplo].FindSet[Diplo]}]
 }

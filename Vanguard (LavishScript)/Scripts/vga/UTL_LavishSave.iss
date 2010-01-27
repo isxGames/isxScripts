@@ -262,6 +262,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	UtilitySR:AddSetting[DoAutoResCombat,${DoAutoResCombat}]
 	UtilitySR:AddSetting[DoAutoResNoCombat,${DoAutoResNoCombat}]
 	UtilitySR:AddSetting[Speed,${Speed}]
+	UtilitySR:AddSetting[DoDiplo,${DoDiplo}]
 	;===================================================
 	;===                  Spells Save               ====
 	;===================================================
@@ -430,6 +431,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	LavishSettings[VGA_Mobs]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
 	LavishSettings[VGA_General]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_General.xml]
 	LavishSettings[VGA_Quests]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Quests.xml]
+	LavishSettings[VGA_Diplo]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Diplo.xml]
 	LavishSettings[Interactions]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/Interact.xml]
 
 }

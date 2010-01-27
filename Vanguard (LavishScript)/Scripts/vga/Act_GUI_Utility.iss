@@ -407,8 +407,6 @@ function CheckPosition()
 		call DoFollowInCombat
 	if ${doFaceTarget}
 		call facemob
-	if !${Me.Target.Name.Equal[${tankpawn}]}
-		call targettank
 	if ${doMoveToTarget}
 		call MoveToTarget
 	return
@@ -459,7 +457,7 @@ function DoFollowInCombat()
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 7 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
 		face ${Me.Target.X} ${Me.Target.Y}
-		call movetoobject ${Me.Target.ID} ${followpawndist} 0
+		call movetoobject ${Me.Target.ID} 5 0
 		}
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{

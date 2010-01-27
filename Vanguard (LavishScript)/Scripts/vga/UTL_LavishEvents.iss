@@ -12,6 +12,7 @@ function LavishEventLoad()
 	Event[VG_onGroupMemberBooted]:AttachAtom[VG_onGroupMemberBooted]
 	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
 	Event[VG_onPawnSpawned]:AttachAtom[VG_onPawnSpawned]
+        Event[VG_OnParlayOppTurnEnd]:AttachAtom[OnParlayOppTurnEnd]
 
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }

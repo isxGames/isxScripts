@@ -114,6 +114,8 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Act_Mob.iss"
 #include "${Script.CurrentDirectory}/GUI_Mobs.iss"
 #include "${Script.CurrentDirectory}/GUI_Quests.iss"
+#include "${Script.CurrentDirectory}/Act_Diplo.iss"
+#include "${Script.CurrentDirectory}/GUI_Diplo.iss"
 
 ;-------------------------------------------
 ;**********Healer-Tab Scripts***************
@@ -311,6 +313,8 @@ function downtimefunction()
 		call ResUp
 	if ${DoMount}
 		call shouldimount
+	if ${DoDiplo}
+		call AssistDiplo
 	if ${dofollowpawn}
 		call followpawn
 	if ${doassistpawn} 
@@ -359,6 +363,8 @@ function combatfunction()
 	   }
 	elseif !${newattack}
 	{
+		if !${Me.Target.Name.Equal[${tankpawn}]}
+			call targettank
 		if ${DoClassCombat}
 			call Class_Combat
 		call KillingBlowAbility
@@ -503,6 +509,7 @@ atom atexit()
 	Event[VG_onGroupFormed]:DetachAtom[VG_onGroupFormed]
 	Event[VG_onGroupBooted]:DetachAtom[VG_onGroupBooted]
 	Event[VG_onGroupMemberBooted]:DetachAtom[VG_onGroupMemberBooted]
+        Event[VG_OnParlayOppTurnEnd]:DetachAtom[OnParlayOppTurnEnd]
 	ui -unload "${Script.CurrentDirectory}/vga_gui.xml"
 	endscript vga
 }

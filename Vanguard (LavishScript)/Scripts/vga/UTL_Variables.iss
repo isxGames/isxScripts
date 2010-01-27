@@ -60,6 +60,8 @@ variable settingsetref TurnOffDuringBuff
 variable settingsetref Friends
 variable settingsetref QuestNPCs
 variable settingsetref Quests
+variable settingsetref DiploNPCs
+variable settingsetref Diplo
 
 variable settingsetref HealSequence
 variable settingsetref EmergencyHealSequence
@@ -177,6 +179,8 @@ variable bool DoLootOnly
 variable string LootOnly
 variable bool DoRaidLoot
 variable int LootDelay
+variable bool DoDiplo = TRUE
+variable bool OurTurn = TRUE
 
 variable bool DoClassDownTime
 variable bool DoClassPreCombat
