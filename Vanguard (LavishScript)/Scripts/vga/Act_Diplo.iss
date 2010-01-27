@@ -1,6 +1,6 @@
 function AssistDiplo()
 {
-	if ${Me.Target(exists)} && !${Me.Target.Type.Equal[AggroNPC]} && !${VG.IsInParlay}
+	if ${Me.Target(exists)} && ${Me.Target.Distance} < 10 && !${Me.Target.Type.Equal[AggroNPC]} && !${VG.IsInParlay}
 	{
 	call CheckPosition
 	variable iterator Iterator
@@ -34,6 +34,7 @@ function AssistDiplo()
              						Parlay:Continue
                 					Loot:LootAll
 							OurTurn:Set[TRUE]
+							VGExecute /ClearTargets
             						}
 						}
 					wait 3
