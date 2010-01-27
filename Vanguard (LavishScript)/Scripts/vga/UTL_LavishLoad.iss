@@ -354,7 +354,10 @@ DoResRaid:Set[${HealerSR.FindSetting[DoResRaid,${DoResRaid}]}]
 	DoAttackPosition:Set[${UtilitySR.FindSetting[DoAttackPosition,${DoAttackPosition}]}]
 	DoPopCrates:Set[${UtilitySR.FindSetting[DoPopCrates,${DoPopCrates}]}]
 	DoDiplo:Set[${UtilitySR.FindSetting[DoDiplo,${DoDiplo}]}]
-
+	DiploToggle:Set[${UtilitySR.FindSetting[DiploToggle,${DiploToggle}]}]
+	LootToggle:Set[${UtilitySR.FindSetting[LootToggle,${LootToggle}]}]
+	DoDiploToggle:Set[${UtilitySR.FindSetting[DoDiploToggle,${DoDiploToggle}]}]
+	DoLootToggle:Set[${UtilitySR.FindSetting[DoLootToggle,${DoLootToggle}]}]
 	Friends:Set[${LavishSettings[VGA_General].FindSet[Friends]}]
 
 	DoAcceptRes:Set[${UtilitySR.FindSetting[DoAcceptRes,${DoAcceptRes}]}]
