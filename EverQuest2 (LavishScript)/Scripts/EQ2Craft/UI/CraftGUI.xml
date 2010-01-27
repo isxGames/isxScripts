@@ -1487,8 +1487,15 @@
                   <Height>20</Height>
                   <Text>Create Work Orders</Text>
                   <OnLeftClick>
-                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StartWO]:Set[TRUE]
-                    UIElement[CraftLite@Titlebar@Craft Selection]:Hide
+                    if ${ICraft.Version} >= 8.95
+                    {
+                      ICraft:StartWO
+                    }
+                    else
+                    {
+                      Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StartWO]:Set[TRUE]
+                      UIElement[CraftLite@Titlebar@Craft Selection]:Hide
+                    }
                   </OnLeftClick>
                 </Commandbutton>
                 <Commandbutton Name='Create Rush Order'>
@@ -1498,8 +1505,15 @@
                   <Height>20</Height>
                   <Text>Create Rush Orders</Text>
                   <OnLeftClick>
-                    Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StartRO]:Set[TRUE]
-                    UIElement[CraftLite@Titlebar@Craft Selection]:Hide
+                    if ${ICraft.Version} >= 8.95
+                    {
+                      ICraft:StartRO
+                    }
+                    else
+                    {
+                      Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StartRO]:Set[TRUE]
+                      UIElement[CraftLite@Titlebar@Craft Selection]:Hide
+                    }
                   </OnLeftClick>
                 </Commandbutton>
               </Tab>
