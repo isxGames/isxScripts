@@ -1,14 +1,15 @@
 function AssistDiplo()
 {
-	if !${Me.Target.Type.Equal[AggroNPC]} && !${VG.IsInParlay}
+	if ${Me.Target(exists)} && !${Me.Target.Type.Equal[AggroNPC]} && !${VG.IsInParlay}
 	{
 	call CheckPosition
 	variable iterator Iterator
 	Diplo:GetSettingIterator[Iterator]
 	while ( ${Iterator.Key(exists)} )
 		{
-		if ${LavishSettings[VGA_Diplo].FindSet[Diplo].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal["${Me.Target}"]}
+		if ${LavishSettings[VGA_Diplo].FindSet[Diplo].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal[${Me.Target}]}
 			{
+			echo ${LavishSettings[VGA_Diplo].FindSet[Diplo].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal[${Me.Target}]} ${Iterator.Key} ${Me.Target}
 			if ${Dialog[Civic Diplomacy].ResponseCount}==0
 				{
 				VGExecute /hail
