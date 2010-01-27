@@ -181,6 +181,10 @@ variable bool DoRaidLoot
 variable int LootDelay
 variable bool DoDiplo = TRUE
 variable bool OurTurn = TRUE
+variable string LootToggle
+variable string DiploToggle
+variable bool DoDiploToggle
+variable bool DoLootToggle
 
 variable bool DoClassDownTime
 variable bool DoClassPreCombat

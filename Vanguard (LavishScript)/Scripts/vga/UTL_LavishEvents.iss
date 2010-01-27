@@ -25,6 +25,32 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		IsFollowing:Set[FALSE]
 	if ${ChannelNumber.Equal[42]} && ${Text.Find[You have lost your auto-follow target]}
 		IsFollowing:Set[FALSE]
+	if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${LootToggle}]}
+		{
+		If ${DoLoot}
+			{
+			DoLoot:Set[FALSE]
+			UIElement[DoLoot@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
+			}
+		Elseif !${DoLoot}
+			{
+			DoLoot:Set[TRUE]
+			UIElement[DoLoot@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
+			}
+		}
+	if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${DiploToggle}]}
+		{
+		If ${DoDiplo}
+			{
+			DoDiplo:Set[FALSE]
+			UIElement[DoDiplo@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
+			}
+		Elseif !${DoDiplo}
+			{
+			DoDiplo:Set[TRUE]
+			UIElement[DoDiplo@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
+			}
+		}
 	if ${DoReassistTank}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}

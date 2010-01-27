@@ -263,6 +263,10 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	UtilitySR:AddSetting[DoAutoResNoCombat,${DoAutoResNoCombat}]
 	UtilitySR:AddSetting[Speed,${Speed}]
 	UtilitySR:AddSetting[DoDiplo,${DoDiplo}]
+	UtilitySR:AddSetting[DiploToggle,${DiploToggle}]
+	UtilitySR:AddSetting[LootToggle,${LootToggle}]
+	UtilitySR:AddSetting[DoDiploToggle,${DoDiploToggle}]
+	UtilitySR:AddSetting[DoLootToggle,${DoLootToggle}]
 	;===================================================
 	;===                  Spells Save               ====
 	;===================================================

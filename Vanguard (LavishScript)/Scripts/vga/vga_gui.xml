@@ -6085,6 +6085,80 @@
                         }
                       </OnChange>
                     </Textentry>
+                   <checkbox Name='DoLootToggle' Template='VG.BlueCheckbox'>
+                      <visible>4</visible>
+                      <X>10</X>
+                      <Y>150</Y>
+                      <Width>15</Width>
+                      <Height>20</Height>
+                      <Text>Loot Toggle</Text>
+                      <OnLoad>
+                        if ${Script[vga].VariableScope.DoLootToggle}
+                        {
+                        This:SetChecked
+                        }
+                      </OnLoad>
+                      <OnLeftClick>
+                        Script[vga].VariableScope.DoLootToggle:Set[${This.Checked}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnLeftClick>
+                    </checkbox>
+                    <Textentry Name='LootToggletxt' Template='VG.TextEntry'>
+                      <X>140</X>
+                      <Y>150</Y>
+                      <Width>232</Width>
+                      <Height>19</Height>
+                      <Color>FFDDBB00</Color>
+                      <SelectionColor>FF000000</SelectionColor>
+                      <Border>0</Border>
+                      <OnLoad>
+                        This:SetText[${Script[vga].VariableScope.LootToggle}]
+                      </OnLoad>
+                      <OnChange>
+                        if ${This.Text.Length} > 0
+                        {
+                        Script[vga].VariableScope.LootToggle:Set[${This.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                        }
+                      </OnChange>
+                    </Textentry>
+                   <checkbox Name='DoDiploToggle' Template='VG.BlueCheckbox'>
+                      <visible>4</visible>
+                      <X>10</X>
+                      <Y>170</Y>
+                      <Width>15</Width>
+                      <Height>20</Height>
+                      <Text>Diplo Toggle</Text>
+                      <OnLoad>
+                        if ${Script[vga].VariableScope.DoDiploToggle}
+                        {
+                        This:SetChecked
+                        }
+                      </OnLoad>
+                      <OnLeftClick>
+                        Script[vga].VariableScope.DoDiploToggle:Set[${This.Checked}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnLeftClick>
+                    </checkbox>
+                    <Textentry Name='DiploToggletxt' Template='VG.TextEntry'>
+                      <X>140</X>
+                      <Y>170</Y>
+                      <Width>232</Width>
+                      <Height>19</Height>
+                      <Color>FFDDBB00</Color>
+                      <SelectionColor>FF000000</SelectionColor>
+                      <Border>0</Border>
+                      <OnLoad>
+                        This:SetText[${Script[vga].VariableScope.DiploToggle}]
+                      </OnLoad>
+                      <OnChange>
+                        if ${This.Text.Length} > 0
+                        {
+                        Script[vga].VariableScope.DiploToggle:Set[${This.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                        }
+                      </OnChange>
+                    </Textentry>
 		  </Children>
                 </Frame>
               </Tab>
