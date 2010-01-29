@@ -1,5 +1,15 @@
 Revision History ||
 ===================
+v8.96 - Adjusted commandline arguments relating to verbosity. Default verbosity is now for error
+        messages only, displayed in the console window.
+        * Changed -verbose option to -chat option (see below)
+        * Added -v, -vv, -q, -chat options:
+          -v     Verbose mode. Will echo to console/chat window. This used to be the default.
+          -vv    Extra verbose mode. Implies -debug. Echos everything possible.
+          -q     Quiet mode. Not even error messages will display.
+          -chat  Sends all non-debug output to the EQ2 chat window. This replaces the old option
+                 for -verbose.
+
 v8.94 - Added TTS announcements between writs, and after writ sessions are complete.
       - Added congratulatory TTS announcements when gaining levels and auto-scribing new recipes.
       - Updated Writ tab of UI to use a Slider for writ count.
