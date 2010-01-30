@@ -34,7 +34,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20090622
+	declare ClassFileVersion int script 20100130
 	;;;;
 
 	declare PBAoEMode bool script FALSE
@@ -147,6 +147,9 @@ function Buff_Init()
 
    PreAction[13]:Set[AuraOfLeadershipAABuff]
    PreSpellRange[13,1]:Set[341]
+   
+   PreAction[14]:Set[Trample]
+   PreSpellRange[14,1]:Set[342]
 }
 
 function Combat_Init()
@@ -494,7 +497,18 @@ function Buff_Routine(int xAction)
 				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			    }
 			}
-		    break
+		  break
+		  
+		case Trample
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[Trample](exists)}
+			    {
+				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+			    }
+			}
+		  break
 
 		case Bloodletter
 		    if ${Me.Level} < 80

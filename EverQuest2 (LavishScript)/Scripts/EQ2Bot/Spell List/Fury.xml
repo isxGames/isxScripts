@@ -37,6 +37,7 @@
 		<Setting name="10,399">Pact of Nature</Setting>
 		<Setting name="10,380">Supplication of the Fallen</Setting>
 		<Setting name="10,379">Wrath of Nature</Setting>
+		<Setting name="10,384">Casting Expertise</Setting>
 		<Setting name="11,313">Favor of the Phoenix</Setting>
 		<Setting name="11,70">Tempest II</Setting>
 		<Setting name="12,7">Regrowth</Setting>
@@ -62,13 +63,7 @@
 		<Setting name="23,60">Thunderbolt</Setting>
 		<Setting name="24,40">Thornskin III</Setting>
 		<Setting name="25,70">Tempest III</Setting>
-		<Setting name="25,505">Circle of Kunzar Jungle</Setting>
-		<Setting name="25,507">Circle of Steamfont</Setting>
-		<Setting name="25,503">Circle of Commonlands</Setting>
-		<Setting name="25,501">Circle of Antonica</Setting>
-		<Setting name="25,506">Circle of Kylong Plains</Setting>
-		<Setting name="25,504">Circle of Greater Faydark</Setting>
-		<Setting name="25,502">Circle of Butcherblock</Setting>
+		<Setting name="25,501">Circle of Growth</Setting>
 		<Setting name="26,38">Primal Fury</Setting>
 		<Setting name="26,7">Regrowth III</Setting>
 		<Setting name="27,180">Brambles II</Setting>
