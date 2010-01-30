@@ -63,7 +63,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20081013
+	declare ClassFileVersion int script 20100130
 	;;;;
 
 	declare OffenseMode bool script
@@ -233,6 +233,9 @@ function Buff_Init()
 	PreSpellRange[14,1]:Set[399]
 
 	PreAction[15]:Set[BuffMythical]
+	
+	PreAction[16]:Set[BuffCastingExpertise]
+	PreSpellRange[16,1]:Set[384]
 }
 
 function Combat_Init()
@@ -308,9 +311,6 @@ function Combat_Init()
 	
 	Action[15]:Set[RootSpells]
 	SpellRange[15,1]:Set[306]
-	
-	
-
 }
 
 function PostCombat_Init()
@@ -346,7 +346,7 @@ function Buff_Routine(int xAction)
 	if ${ShardMode}
 		call Shard
 
-    if ${xAction}== 1 || ${xAction} == 10
+  if ${xAction}== 1 || ${xAction} == 10
 	{
 		call CheckHeals
 		if ${CureMode}
@@ -356,7 +356,7 @@ function Buff_Routine(int xAction)
 	if ${Me.ToActor.Power}>85
 		call CheckHOTs
 
-    call CheckSKFD
+  call CheckSKFD
 
 	switch ${PreAction[${xAction}]}
 	{
@@ -365,10 +365,10 @@ function Buff_Routine(int xAction)
 			break
 
 		case BuffThorns
-			if ${MainTank} || (${BuffThorns} && ${Actor[exactname,${MainTankPC}](exists)})
+			if ${MainTank} || (${BuffThorns} && ${Actor[${MainTankID}](exists)})
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[PC,ExactName,${MainTankPC}].ID}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankID}].ID}
 			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -587,6 +587,7 @@ function Buff_Routine(int xAction)
 			elseif ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
+			
 		case BuffSavagery
 			BuffTarget:Set[${UIElement[cbBuffSavageryGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
@@ -597,8 +598,8 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
-
 			break
+			
 		case BuffPactOfNature
 			if !${Me.Ability[Pact of Nature](exists)}
 				break
@@ -612,11 +613,18 @@ function Buff_Routine(int xAction)
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
-
 			break
+			
+		case BuffCastingExpertise
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
+			}
+			break
+			
 		Default
 			return Buff Complete
-			break
 	}
 	call ProcessTriggers
 }
@@ -628,7 +636,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
 
-	call CheckMTNearDeath
+	call CheckEmergencyHeals
 
 
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
@@ -678,115 +686,17 @@ function Combat_Routine(int xAction)
 		DoCallCheckPosition:Set[FALSE]
 	}
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;; IF "Cast Offensive Spells" is NOT checked
-    ;;;;;
-    if !${OffenseMode}
-    {
-        CurrentAction:Set[OffenseMode: OFF]
-
-        if ${EpicMode} || ${RaidHealMode}
-        {
-            call CheckCures
-        	call CheckHeals
-        }
-        else
-        {
-        	call CheckHeals
-
-        	if ${CureMode}
-        		call CheckCures
-    	}
-
-        call CheckSKFD
-        call RefreshPower
-        if ${ShardMode}
-		    call Shard
-
-
-    	;maintain debuffs
-    	DebuffCnt:Set[0]
-    	if (${DebuffMode})
-    	{
-    		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
-    		{
-    			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
-    			{
-    				call _CastSpellRange 50 0 0 0 ${KillTarget}
-    				DebuffCnt:Inc
-    			}
-    			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && ${DebuffCnt}<1
-    			{
-    				call _CastSpellRange 51 0 0 0 ${KillTarget}
-    				DebuffCnt:Inc
-    			}
-    			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
-    			{
-    				call _CastSpellRange 52 0 0 0 ${KillTarget}
-    				DebuffCnt:Inc
-    			}
-    		}
-    		elseif ${Actor[${KillTarget}].IsHeroic}
-    		{
-				;; Fast-casting encounter debuff that should be used always
-				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
-				{
-					call _CastSpellRange 52 0 0 0 ${KillTarget}
-					DebuffCnt:Inc
-				}
-			}
-    	}
-
-    	;if we cast a debuff, check heals again before continue
-    	if (${DebuffCnt} > 0)
-    	{
-            if ${EpicMode} || ${RaidHealMode}
-            {
-                call CheckCures
-            	call CheckHOTs
-            }
-            else
-            {
-            	call CheckHOTs
-
-            	if ${CureMode}
-            		call CheckCures
-        	}
-    	}
-
-    	if (${StartHO})
-    	{
-    		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
-    			call _CastSpellRange 304
-    	}
-
-    	;;
-    	;;;; FEAST
-    	;;
-		if !${Target.IsEpic}
-		{
-			call CheckCondition Power ${Power[${FeastAction},1]} ${Power[${FeastAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call _CastSpellRange ${SpellRange[${FeastAction},1]} 0 0 0 ${KillTarget}
-			}
-		}
-		CurrentAction:Set[OffenseMode: OFF]
-        return CombatComplete
-    }
-    ;;;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0
-	    return CombatComplete
-
-	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
-
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; IF "Cast Offensive Spells" is NOT checked
+  ;;;;;
+  if !${OffenseMode}
+  {
+    CurrentAction:Set[OffenseMode: OFF]
 
     if ${EpicMode} || ${RaidHealMode}
     {
         call CheckCures
-    	call CheckHeals
+    		call CheckHeals
     }
     else
     {
@@ -794,6 +704,114 @@ function Combat_Routine(int xAction)
 
     	if ${CureMode}
     		call CheckCures
+		}
+
+    call CheckSKFD
+    call RefreshPower
+    if ${ShardMode}
+   		call Shard
+
+  	;maintain debuffs
+  	DebuffCnt:Set[0]
+  	if (${DebuffMode})
+  	{
+  		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
+  		{
+  			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
+  			{
+  				call _CastSpellRange 50 0 0 0 ${KillTarget}
+  				DebuffCnt:Inc
+  			}
+  			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && ${DebuffCnt}<1
+  			{
+  				call _CastSpellRange 51 0 0 0 ${KillTarget}
+  				DebuffCnt:Inc
+  			}
+  			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+  			{
+  				call _CastSpellRange 52 0 0 0 ${KillTarget}
+  				DebuffCnt:Inc
+  			}
+  		}
+  		elseif ${Actor[${KillTarget}].IsHeroic}
+  		{
+				;; Fast-casting encounter debuff that should be used always
+				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+				{
+					call _CastSpellRange 52 0 0 0 ${KillTarget}
+					DebuffCnt:Inc
+				}
+			}
+  	}
+
+  	;if we cast a debuff, check heals again before continue
+  	if (${DebuffCnt} > 0)
+  	{
+      if ${EpicMode} || ${RaidHealMode}
+      {
+       	call CheckCures
+      	call CheckHOTs
+      }
+      else
+      {
+      	call CheckHOTs
+
+      	if ${CureMode}
+      		call CheckCures
+  		}
+  	}
+
+  	if (${StartHO})
+  	{
+  		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
+  			call _CastSpellRange 304
+  	}
+
+  	;;
+  	;;;; FEAST
+  	;;
+		if !${Actor[${KillTarget}].IsEpic}
+		{
+			if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} <= 15)
+			{
+				call CheckCondition Power ${Power[${FeastAction},1]} ${Power[${FeastAction},2]}
+				if ${Return.Equal[OK]}
+				{
+					call _CastSpellRange ${SpellRange[${FeastAction},1]} 0 0 0 ${KillTarget}
+				}
+			}
+		}
+		
+		if ${DoHOs}
+		{
+			call CheckGroupHealth 60
+			if ${Return}
+				objHeroicOp:DoHO
+		}
+		
+		CurrentAction:Set[OffenseMode: OFF]
+    return CombatComplete
+  }
+  ;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<=0
+    return CombatComplete
+
+	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
+
+
+  if ${EpicMode} || ${RaidHealMode}
+  {
+  	call CheckCures
+  	call CheckHeals
+  }
+  else
+  {
+  	call CheckHeals
+
+  	if ${CureMode}
+  		call CheckCures
 	}
 
 	call RefreshPower
@@ -838,13 +856,23 @@ function Combat_Routine(int xAction)
 			}
 		}
 	}
-	elseif ${Actor[${KillTarget}].IsHeroic}
+	elseif (${Actor[${KillTarget}].IsHeroic} || ${Actor[${KillTarget}].IsEpic})
 	{
-		;; Fast-casting encounter debuff that should be used always
-		if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+		switch ${Actor[${KillTarget}].ConColor}
 		{
-			call _CastSpellRange 52 0 0 0 ${KillTarget}
-			DebuffCnt:Inc
+			case Yellow
+			case Orange
+			case Red
+				;; encounter debuff
+				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+				{
+					call _CastSpellRange 52 0 0 0 ${KillTarget}
+					DebuffCnt:Inc
+				}
+				break
+			
+			default
+				break
 		}
 	}
 
@@ -907,7 +935,7 @@ function Combat_Routine(int xAction)
 			if ${Me.Ability[${SpellType[385]}].IsReady}
 			{
 				;Debug:Echo["Energy Vortex -- Ability (${Me.Ability[${SpellType[385]}]})' is ready...check"]
-				switch ${Target.ConColor}
+				switch ${Actor[${KillTarget}].ConColor}
 				{
 					case Red
 					case Orange
@@ -935,23 +963,11 @@ function Combat_Routine(int xAction)
 	;Debug:Echo["Combat_Routine() -- Action: ${Action[${xAction}]} (xAction: ${xAction})"]
 	;Debug:Echo["Combat_Routine() -- MainAssist: ${MainAssist}"]
 
-	if !${OffenseMode}
-	{
-    	if ${DoHOs}
-    	{
-			call CheckGroupHealth 60
-			if ${Return}
-				objHeroicOp:DoHO
-    	}
-	    return CombatComplete
-    }
-
-
 	switch ${Action[${xAction}]}
 	{
 		case Nuke
-		    if ${UseFastOffensiveSpellsOnly}
-		        break
+	    ;if ${UseFastOffensiveSpellsOnly}
+	    ;    break
 			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
@@ -964,8 +980,8 @@ function Combat_Routine(int xAction)
 			break
 
 		case AANuke
-		    if !${UseWrathOfNature}
-		        break
+	    if !${UseWrathOfNature}
+	        break
 			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 			if ${Return.Equal[OK]}
 			{
@@ -1100,41 +1116,42 @@ function Combat_Routine(int xAction)
 
 		case Snare
 		case Feast
-			if !${Target.IsEpic}
+			if !${Actor[${KillTarget}].IsEpic}
 			{
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-				if ${Return.Equal[OK]}
+				if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} <= 15)
+				{
+					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
+					if ${Return.Equal[OK]}
 					{
 						call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 					}
+				}
 			}
 			break
 
 		case Mastery
-		    if ${UseFastOffensiveSpellsOnly}
-		    {
-			    break
-			   }
-	
-				if (${InvalidMasteryTargets.Element[${Target.ID}](exists)})
-				{
-					break
-				}
+	    if ${UseFastOffensiveSpellsOnly}
+	    {
+		    break
+		   }
 
-				call CheckForMez "Fury Mastery"
-				if ${Return.Equal[FALSE]}
-				{
-					if ${Me.Ability[${SpellType[xAction]}].IsReady}
-					{
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-				}
-				else
-				{
-					call ReacquireTargetFromMA
-				}
-
+			if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
 				break
+
+			call CheckForMez "Fury Mastery"
+			if ${Return.Equal[FALSE]}
+			{
+				if ${Me.Ability[${SpellType[xAction]}].IsReady}
+				{
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				}
+			}
+			else
+			{
+				call ReacquireTargetFromMA
+			}
+
+			break
 				
 		case RootSpells
 			if ${UseRootSpells}
@@ -1164,7 +1181,6 @@ function Combat_Routine(int xAction)
 			
 		default
 			return CombatComplete
-			break
 	}
 
 
@@ -1320,7 +1336,6 @@ function CheckHeals()
 	declare lowest int local 0
 	declare raidlowest int local 1
 	declare PetToHeal int local 0
-	;declare MainTankID int local 0
 	declare MainTankInGroup bool local 0
 	declare MainTankExists bool local 1
 	declare lowestset bool local FALSE
@@ -1331,11 +1346,6 @@ function CheckHeals()
 	declare cGroupMemberClass string local 0
 	declare cGroupMemberIsDead bool local FALSE
 
-	;if ${Me.Name.Equal[${MainTankPC}]} || ${MainTank}
-	;	MainTankID:Set[${Me.ID}]
-	;else
-	;	MainTankID:Set[${Actor[pc,ExactName,${MainTankPC}].ID}]
-	
 		; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
@@ -1374,7 +1384,7 @@ function CheckHeals()
 
     if !${Actor[${MainTankID}](exists)}
     {
-		echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+				echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
         MainTankExists:Set[FALSE]
     }
     else
@@ -1403,7 +1413,7 @@ function CheckHeals()
   	    }
 
   	    ;Check My health after MT
-        if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<50
+        if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<65
 	        call HealMe
     }
     else
@@ -1425,8 +1435,11 @@ function CheckHeals()
     		    if ${Me.Group[${temphl}].ToActor.Health} < 60 && !${Me.Group[${temphl}].ToActor.IsDead}
     		    {
     		    	if ${Me.Ability[${SpellType[2]}].IsReady}
-						call CastSpellRange 2 0 0 0 ${cGroupMemberID}
-				}
+    		    	{
+								call CastSpellRange 2 0 0 0 ${cGroupMemberID}
+								continue
+							}
+						}
 
     		    ;;;;;;;;
     		    ;; Set variables now:
@@ -1442,9 +1455,9 @@ function CheckHeals()
     			{
     				if (${cGroupMemberHealth}<${lGroupMemberHealth} || !${lowestset}) && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[1]}].Range}
     				{
-    			        lowestset:Set[TRUE]
-    					lowest:Set[${temphl}]
-    					;Debug:Echo["CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"]
+    			      lowestset:Set[TRUE]
+    						lowest:Set[${temphl}]
+    						;Debug:Echo["CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"]
     				}
     			}
 
@@ -1479,32 +1492,35 @@ function CheckHeals()
 	;now lets heal individual groupmembers if needed
 	if ${lowestset}
 	{
-	    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest at ${Me.Group[${lowest}].ToActor.Health}"]
+	  ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest at ${Me.Group[${lowest}].ToActor.Health}"]
 		call UseCrystallizedSpirit 60
 
-		if ${Me.Group[${lowest}].ToActor.Health}<60 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
+		if (${Me.Group[${lowest}].ToActor(exists)} && !${Me.Group[${lowest}].ToActor.IsDead})
 		{
-		    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
-		    if ${Me.Ability[${SpellType[2]}].IsReady}
-				call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
-		}
-
-		if ${Me.Group[${lowest}].ToActor.Health}<75 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[7]}].Range}
-		{
-			if ${Me.Ability[${SpellType[7]}].IsReady}
+			if ${Me.Group[${lowest}].ToActor.Health}<65 && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
 			{
-			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
-				call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ID}
+			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+			    if ${Me.Ability[${SpellType[2]}].IsReady}
+						call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
 			}
-			elseif ${Me.Ability[${SpellType[1]}].IsReady}
+	
+			if ${Me.Group[${lowest}].ToActor.Health}<75 && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[7]}].Range}
 			{
-			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
-				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
-			}
-			elseif ${Me.Ability[${SpellType[4]}].IsReady}
-			{
-			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
-				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
+				if ${Me.Ability[${SpellType[7]}].IsReady}
+				{
+				  ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+					call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ID}
+				}
+				elseif ${Me.Ability[${SpellType[1]}].IsReady}
+				{
+				  ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+					call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
+				}
+				elseif ${Me.Ability[${SpellType[4]}].IsReady}
+				{
+				  ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+					call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
+				}
 			}
 		}
 	}
@@ -1580,7 +1596,7 @@ function HealMe()
 	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
 		Me.Inventory[Crystallized Spirit]:Use
 
-	if ${Me.ToActor.Health}<25
+	if ${Me.ToActor.Health}<40
 	{
 		if ${haveaggro}
 			call EmergencyHeal ${Me.ID}
@@ -1593,13 +1609,13 @@ function HealMe()
 		}
 	}
 
-	if ${Me.ToActor.Health}<40
+	if ${Me.ToActor.Health}<55
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
 			call CastSpellRange 1 0 0 0 ${Me.ID}
 	}
 
-	if ${Me.ToActor.Health}<65
+	if ${Me.ToActor.Health}<80
 	{
 		if !${EpicMode} || (${haveaggro} && ${Me.ToActor.InCombatMode})
 		{
@@ -1614,30 +1630,36 @@ function HealMe()
 	}
 }
 
-function HealMT(int MainTankID, int MTInMyGroup)
+;function HealMT(int MainTankID, int MTInMyGroup)
+function HealMT(int NotUsed, int MTInMyGroup)
 {
+	if (!${Actor[${MainTankID}](exists)})
+		return
+		
+	if (!${Actor[${MainTankID}].IsDead})
+		return
 	
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+	if ${Actor[${MainTankID}].Health}<45
 		call EmergencyHeal ${MainTankID} ${MTInMyGroup}
 
 	;Frey Check
-	if ${Actor[${MainTankID}].Health}<50 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[2]}].Range}
+	if ${Actor[${MainTankID}].Health}<55 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[2]}].Range}
 	{
 		if ${Me.Ability[${SpellType[2]}].IsReady}
 			call CastSpellRange 2 0 0 0 ${MainTankID}
 	}
 
-	if ${Actor[${MainTankID}].Health}<60 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
+	if ${Actor[${MainTankID}].Health}<65 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
 			call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
-	if ${Actor[${MainTankID}].Health}<70 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[4]}].Range}
+	if ${Actor[${MainTankID}].Health}<75 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[4]}].Range}
 	{
 		if ${Me.Ability[${SpellType[4]}].IsReady}
 			call CastSpellRange 4 0 0 0 ${MainTankID}
@@ -1645,7 +1667,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 
 	;MAINTANK HEALS
 	; Use regens first, then Patch Heals
-	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
+	if ${Actor[${MainTankID}].Health}<90
 	{
 		if ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.Maintained[${SpellType[7]}].Target.ID} != ${MainTankID} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[7]}].Range}
 			call CastSpellRange 7 0 0 0 ${MainTankID}
@@ -1657,8 +1679,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 }
 
 function GroupHeal()
-{
-	
+{	
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
@@ -1736,17 +1757,15 @@ function CureMe()
 }
 
 function CheckCures(int InCombat=1)
-
-
 {
-    if ${InCombat}
+  if ${InCombat}
+  {
+    if !${EpicMode}
     {
-        if !${EpicMode}
-        {
-            if !${CureMode} && ${Me.ToActor.InCombatMode}
-                return
-        }
+        if !${CureMode} && ${Me.ToActor.InCombatMode}
+            return
     }
+  }
 
 	if ${DoCallCheckPosition}
 	{
@@ -1880,9 +1899,9 @@ function CheckCures(int InCombat=1)
 			break
 
 		;Check MT health and heal him if needed
-		if ${Actor[pc,ExactName,${MainTankPC}].Health}<50
+		if ${Actor[${MainTankID}].Health}<50
 		{
-			if ${Actor[pc,ExactName,${MainTankPC}].ID}==${Me.ID}
+			if ${MainTankID}==${Me.ID}
 				call HealMe
 			else
 				call HealMT
@@ -1944,10 +1963,8 @@ function CheckHOTs()
 	declare tempvar int local 1
 	declare hot1 int local 0
 	declare grphot int local 0
-	declare MainTankID int local 0
 	hot1:Set[0]
 	grphot:Set[0]
-	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
 
 
 	if (${Me.InCombat} || ${Actor[${MainTankID}].InCombatMode})
@@ -2056,16 +2073,21 @@ function CheckHOTs()
 	}
 }
 
-function CheckMTNearDeath()
+function CheckEmergencyHeals()
 {
-	declare MainTankID int local 0
-	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
-
-	if (${Actor[${MainTankID}].Health} <= 25)
+	if (${Actor[${MainTankID}].Health} <= 40)
 	{
-		if (${Me.Ability[${SpellType[316]}].IsReady} && ${Me.ID}==${MainTankID})
-			call CastSpellRange 316 0 0 0 ${MainTankID}
-	}
+		call EmergencyHeal ${MainTankID}
+		; Hibernate
+		if ${Actor[${KillTarget}].IsEpic}
+		{
+			if ${Me.ToActor.Power} > 55 && !${Me.Maintained[${SpellType[11]}](exists)}
+				call CastSpellRange 11
+		}
+	}		
+		
+	if (${Me.ToActor.Health} <= 50)
+		call HealMe
 }
 
 function Lost_Aggro()
@@ -2078,12 +2100,9 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	variable int MainTankID
-	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
-
-  	if (${Actor[${MainTankID}](exists)} && ${CombatRez})
-  	{
-    	if (${Actor[${MainTankID}].IsDead})
+	if (${Actor[${MainTankID}](exists)} && ${CombatRez})
+	{
+  	if (${Actor[${MainTankID}].IsDead})
 			call CastSpellRange 300 303 1 0 ${MainTankID} 1
 	}
 }
@@ -2107,9 +2126,6 @@ function CheckSKFD()
 {
     if !${Me.ToActor.IsFD}
         return
-
-	variable int MainTankID
-	MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
 
     if !${Actor[${MainTankID}](exists)}
         return
