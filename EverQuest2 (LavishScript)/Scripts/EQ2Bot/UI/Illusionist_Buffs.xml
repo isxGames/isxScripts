@@ -357,8 +357,8 @@
 		<Text></Text>
 		<AutoTooltip>Refresh</AutoTooltip>
 		<OnLeftClick>
-		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffTimeWarp@${This.Parent.FullName},BuffTimeWarp,0,0,0,1]
-		  if (${Me.Group} == 1 || !${Me.Ability[time warp](exists)})
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffTimeWarp@${This.Parent.FullName},BuffTimeWarp,1,0,0,1]
+		  if (!${Me.Ability[time warp](exists)})
 				UIElement[lbBuffTimeWarp@${This.Parent.FullName}]:AddItem[Not Applicable]
 		</OnLeftClick>
 	</Commandbutton>	
@@ -380,8 +380,8 @@
 		<Sort>Text</Sort>
 		<Items></items>
 		<OnLoad>
-			Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTimeWarp,0,0,0,1]
-			if (${Me.Group} == 1 || !${Me.Ability[time warp](exists)})
+			Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTimeWarp,1,0,0,1]
+			if (!${Me.Ability[time warp](exists)})
 				This:AddItem[Not Applicable]
 		</OnLoad>
 		<OnSelect>

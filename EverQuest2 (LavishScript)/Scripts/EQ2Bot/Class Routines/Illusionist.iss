@@ -985,11 +985,19 @@ function Combat_Routine(int xAction)
 		}			
 	}
 	else
-	{
+	{		
 		if ${Actor[${KillTarget}].Health} > 75
 			DoShortTermBuffs:Set[TRUE]
 		else
 			DoShortTermBuffs:Set[FALSE]
+			
+		if (${HaveAbility_TimeWarp} && ${Me.Group} == 1)
+		{
+			if ${Me.Ability[time warp].IsReady}
+			{
+				call DoTheTimeWarp
+			}
+		}			
 	}
 	;echo "TEST: FightingEpicMob: ${FightingEpicMob} -- FightingHeroicMob: ${FightingHeroicMob} -- DoShortTermBuffs: ${DoShortTermBuffs}"
 	;;
@@ -2438,6 +2446,11 @@ function PostDeathRoutine()
 
 function DoTheTimeWarp()
 {
+	declare BuffTarget string local
+	declare ActorID uint local
+	declare Counter uint local
+	
+	ActorID:Set[0]
 	Counter:Set[1]
 	;iterate through the to be buffed Selected Items and buff them
 	if ${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
@@ -2445,23 +2458,28 @@ function DoTheTimeWarp()
 		do
 		{
 			BuffTarget:Set[${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-			if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+			ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+			if (${ActorID} <= 0)
+				continue
+			switch ${Actor[${ActorID}].Type}
 			{
-				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
-				if ${Actor[${ActorID}].Type.Equal[PC]}
-				{
-					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+				case PC
+					if (!${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+						break
+				case Me
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[Time Warp].Range} || !${NoAutoMovement})
 					{
-						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[Time Warp].Range} || !${NoAutoMovement})
+						if (${TimeWarpTarget} != ${ActorID})
 						{
-							if (${TimeWarpTarget} != ${ActorID})
-							{
-								call CastSpellRange "Time Warp" 0 0 0 ${ActorID} 0 0 1 0 0
-								TimeWarpTarget:Set[${ActorID}]
-							}
+							call CastSpellRange 504 0 0 0 ${ActorID} 0 0 1 0 0
+							TimeWarpTarget:Set[${ActorID}]
+							ActorID:Set[0]
 						}
 					}
-				}
+					break
+				
+				default
+					break
 			}
 		}
 		while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
