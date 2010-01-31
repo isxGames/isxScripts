@@ -184,5 +184,35 @@
 		<Setting name="80,211">Cure Curse</Setting>
 		<Setting name="80,10">Untamed Regeneration VI</Setting>
 		<Setting name="80,316">Feral Tenacity IV</Setting>
+		<Setting name="81,35">Spirit of the Bat IV</Setting>
+		<Setting name="81,312">Feast V</Setting>
+		<Setting name="81,4">Nature\'s Salve IX</Setting>
+		<Setting name="82,2">Back into the Fray III</Setting>
+		<Setting name="82,20">Master of the Hunt VI</Setting>
+		<Setting name="82,36">Lucidity VII</Setting>
+		<Setting name="82,51">Death Swarm VIII</Setting>
+		<Setting name="83,21">Forest Spirit VI</Setting>
+		<Setting name="83,1">Nature\'s Elixir VIII</Setting>
+		<Setting name="84,90">Starnova V</Setting>
+		<Setting name="84,23">Armor of Nature VII</Setting>
+		<Setting name="84,95">Ring of Fire III</Setting>
+		<Setting name="85,52">Maddening Swarm IV</Setting>
+		<Setting name="85,157">Fae Fire V</Setting>
+		<Setting name="86,50">Intimidation VII</Setting>
+		<Setting name="86,306">Karana\'s Hold VII</Setting>
+		<Setting name="86,25">Peerless Predator VI</Setting>
+		<Setting name="86,11">Hibernation III</Setting>
+		<Setting name="87,40">Thornskin VIII</Setting>
+		<Setting name="87,60">Thunderbolt VI</Setting>
+		<Setting name="88,7">Regrowth VIII</Setting>
+		<Setting name="88,96">Call of Storms III</Setting>
+		<Setting name="88,70">Tempest VIII</Setting>
+		<Setting name="89,15">Autumn\'s Kiss VII</Setting>
+		<Setting name="89,180">Brambles VII</Setting>
+		<Setting name="89,38">Primal Fury VI</Setting>
+		<Setting name="90,97">Ball Lightning II</Setting>
+		<Setting name="90,360">Porcupine IV</Setting>
+		<Setting name="90,10">Untamed Regeneration VII</Setting>
+		<Setting name="90,316">Feral Tenacity V</Setting>		
 	</Set>
 </InnerSpaceSettings>
