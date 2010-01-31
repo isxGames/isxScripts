@@ -2503,6 +2503,9 @@ function PostDeathRoutine()
 
 function DoTheTimeWarp()
 {
+	; Note:  This needs to be updated to have a timeout for resetting "TimeWarpTarget" after a certain length of time.
+	;        As of right now I'm not 100% sure how long one must wait before casting it on the same person again.  (3 minutes?)
+	
 	declare BuffTarget string local
 	declare ActorID uint local
 	declare Counter uint local
