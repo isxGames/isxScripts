@@ -426,9 +426,14 @@
 		<Text></Text>
 		<AutoTooltip>Refresh</AutoTooltip>
 		<OnLeftClick>
-		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffTimeWarp@${This.Parent.FullName},BuffTimeWarp,1,0,0,1]
-		  if (!${Me.Ability[time warp](exists)})
-				UIElement[lbBuffTimeWarp@${This.Parent.FullName}]:AddItem["N/A"]
+			UIElement[lbBuffTimeWarp@${This.Parent.FullName}]:ClearItems
+			if (!${Me.Ability[time warp](exists)})
+		  {
+				UIElement[lbBuffTimeWarp@${This.Parent.FullName}]:AddItem["N/A"]			
+				UIElement[lbBuffTimeWarp@${This.Parent.FullName}].ItemByValue["N/A"]:Select
+			}	
+			else
+				 Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffTimeWarp@${This.Parent.FullName},BuffTimeWarp,1,0,0,1]
 		</OnLeftClick>
 	</Commandbutton>	
 	<Text Name='lblBuffTimeWarp'>
@@ -449,9 +454,13 @@
 		<Sort>Text</Sort>
 		<Items></items>
 		<OnLoad>
-			Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTimeWarp,1,0,0,1]
 			if (!${Me.Ability[time warp](exists)})
-				This:AddItem["N/A"]
+		  {
+				This:AddItem["N/A"]			
+				This.ItemByValue["N/A"]:Select
+			}	
+			else		
+				Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTimeWarp,1,0,0,1]	
 		</OnLoad>
 		<OnSelect>
 			declare tmpvar int
