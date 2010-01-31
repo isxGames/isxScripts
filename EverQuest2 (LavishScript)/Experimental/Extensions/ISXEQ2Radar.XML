@@ -197,12 +197,28 @@ Radar Testing
 		<OnLoad>
 			declarevar rwActiveRadar int global 1
 			addatom -global "atom rwUpdateFilters(string radarname)\n{\ndeclare rwCount int local 1\nUIElement[filterlist@filters@tab@radarconfig]:ClearSelection:ClearItems\nwhile \${rwCount}&lt;=\${Radar[\${radarname}].NumCustomFilters}\n{\nUIElement[filterlist@filters@tab@radarconfig]:AddItem[\${Radar[\${radarname}].CustomFilter[\${rwCount}]}]\nrwCount:Inc\n}\n}\n"
-			declarevar rwZoomLevel int global 30
-		</OnLoad>
+      declarevar rwZoomLevel int global 30
+      LavishSettings:AddSet[Radar Window]
+      LavishSettings[Radar Window]:Clear
+      LavishSettings[Radar Window]:Import[extensions/ISXEQ2RadarWindow.Settings.xml]
+      if !${LavishSettings[Radar Window].FindSetting[Radar Zoom](exists)}
+      {
+      LavishSettings:AddSet[Temp Radar]
+      LavishSettings[Temp Radar]:AddSet[radar1]:AddSet[Radar]:Import[extensions/isxeq2radarsettings.xml]
+      LavishSettings[Temp Radar].FindSet[Radar]:AddSetting[Radar Zoom,${LavishSettings[Temp Radar].FindSet[radar1].FindSetting[RadarSize,150]}]
+      LavishSettings[Temp Radar].FindSet[Radar]:Export[extensions/ISXEQ2RadarWindow.Settings.xml]
+      LavishSettings[Temp Radar].FindSet[Radar]:Remove
+      LavishSettings[Temp Radar]:Export[extensions/isxeq2radarsettings.xml]
+      LavishSettings[Temp Radar]:Remove
+      LavishSettings[Radar Window]:Clear
+      LavishSettings[Radar Window]:Import[Extensions/ISXEQ2RadarWindow.Settings.xml]
+      }
+    </OnLoad>
 		<OnUnload>
 			deletevar rwActiveRadar
 			deleteatom -global rwUpdateFilters
 			deletevar rwZoomLevel
+      LavishSettings[Radar Window]:Remove
 		</OnUnload>
 		<X>0</X>
 		<Y>0</Y>
@@ -259,23 +275,28 @@ Radar Testing
 						<Y>25</Y>
 						<Width>85</Width>
 						<Height>18</Height>
-						<OnLeftClick>
+            <Range>300</Range>
+            <OnLoad>
+              This:SetValue[${LavishSettings[Radar Window].FindSetting[Radar Zoom,150]}]
+            </OnLoad>
+<!--						<OnLeftClick>
 							rwZoomLevel:Set[${UIElement[ZoomSlider@Buttonframe@Radar Window].Value}]
 							Radar[radar1]:SetSize[${rwZoomLevel}]
 							Radar[radar2]:SetSize[${rwZoomLevel}]
 							Radar[radar3]:SetSize[${rwZoomLevel}]
 							Radar[radar4]:SetSize[${rwZoomLevel}]
-						</OnLeftClick>
-						<OnMouseMove>
-							if ${rwZoomLevel}!=${UIElement[ZoomSlider@Buttonframe@Radar Window].Value}
+						</OnLeftClick> -->
+            <OnChange>
+							if ${rwZoomLevel}!=${This.Value}
 							{
-								rwZoomLevel:Set[${UIElement[ZoomSlider@Buttonframe@Radar Window].Value}]
+								rwZoomLevel:Set[${This.Value}]
 								Radar[radar1]:SetSize[${rwZoomLevel}]
 								Radar[radar2]:SetSize[${rwZoomLevel}]
 								Radar[radar3]:SetSize[${rwZoomLevel}]
 								Radar[radar4]:SetSize[${rwZoomLevel}]
+                LavishSettings[Radar Window]:AddSetting[Radar Zoom,${rwZoomLevel}]:Export[Extensions/ISXEQ2RadarWindow.Settings.xml]
 							}
-						</OnMouseMove>
+						</OnChange>
 					</Slider>
 					<Text Name="zoomminus">
 						<X>137</X>
@@ -298,9 +319,18 @@ Radar Testing
 						<Height>18</Height>
 						<Range>99</Range>
 						<OnChange>
-							UIElement[Client@Radar Window]:SetAlpha[${Math.Calc[${This.Value} / 100 + 0.01]}]
-						</OnChange>
-						<OnLoad>This:SetValue[${Math.Calc[${UIElement[Client@Radar Window].Alpha} * 100]}]</OnLoad>
+              UIElement[Client@Radar Window]:SetAlpha[${Math.Calc[${This.Value} / 100 + 0.01]}]
+              LavishSettings[Radar Window]:AddSetting[Background Alpha,${This.Value}]
+              if !${This.MouseOver}
+              LavishSettings[Radar Window]:Export[Extensions/ISXEQ2RadarWindow.Settings.xml]
+            </OnChange>
+						<OnLoad>
+              This:SetValue[${LavishSettings[Radar Window].FindSetting[Background Alpha,99]}]
+              UIElement[Client@Radar Window]:SetAlpha[${Math.Calc[${This.Value} / 100 + 0.01]}]
+            </OnLoad>
+            <OnLeftClick>
+              LavishSettings[Radar Window]:Export[Extensions/ISXEQ2RadarWindow.Settings]
+            </OnLeftClick>
 					</Slider>
 					<Text Name='zoom value' Template='EQ2.text'>
 						<X>80%</X>
@@ -469,12 +499,6 @@ Radar Testing
 	<Window Name='RadarConfig'>
 		<OnLoad>
 			timedcommand 1 "rwUpdateFilters radar${rwActiveRadar}"
-			timedcommand 1 UIElement[ZoomSlider@Buttonframe@Radar Window]:SetRange[300]
-			timedcommand 1 UIElement[ZoomSlider@Buttonframe@Radar Window]:SetValue[${Radar[radar1].Size}]
-			timedcommand 1 Radar[radar1]:SetSize[${UIElement[ZoomSlider@Buttonframe@Radar Window].Value}]
-			timedcommand 1 Radar[radar2]:SetSize[${UIElement[ZoomSlider@Buttonframe@Radar Window].Value}]
-			timedcommand 1 Radar[radar3]:SetSize[${UIElement[ZoomSlider@Buttonframe@Radar Window].Value}]
-			timedcommand 1 Radar[radar4]:SetSize[${UIElement[ZoomSlider@Buttonframe@Radar Window].Value}]
 		</OnLoad>
 		<X>0</X>
 		<Y>0</Y>
@@ -888,17 +912,18 @@ Radar Testing
 							<Font Template="Black Font" />
 							<Text>Autohide Buttons/Slider</Text>
 							<OnLoad>
-								if ${SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar].GetString[AutoHideButtons,FALSE]}
+								if ${LavishSettings[Radar Window].FindSetting[AutoHideButtons,FALSE]}
 								{
 									This:SetChecked
 									timedcommand 3 UIElement[Buttonframe@Radar Window]:SetFadeDelay[1]
 								}
 							</OnLoad>
 							<OnLeftClick>
-								UIElement[Buttonframe@Radar Window]:SetFadeDelay[${If[${This.Checked},1,0]}]
-								UIElement[Buttonframe@Radar Window]:ResetFade
-								SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar]:Set[AutoHideButtons,${This.Checked}]:Save
-							</OnLeftClick>
+                UIElement[Buttonframe@Radar Window]:SetFadeDelay[${If[${This.Checked},1,0]}]
+                UIElement[Buttonframe@Radar Window]:ResetFade
+                LavishSettings[Radar Window]:AddSetting[AutoHideButtons,${This.Checked}]
+                LavishSettings[Radar Window]:Export[extensions/ISXEQ2RadarWindow.Settings.xml]
+              </OnLeftClick>
 						</Checkbox>
 						<Checkbox name='AutoHideTitle'>
 						  <Alpha>10</Alpha>
@@ -910,17 +935,18 @@ Radar Testing
 							<Font Template="Black Font" />
 							<Text>Autohide Window Title</Text>
 							<OnLoad>
-								if ${SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar].GetString[AutoHideTitlebar,FALSE]}
+								if ${LavishSettings[Radar Window].FindSetting[AutoHideTitlebar,FALSE]}
 								{
 									This:SetChecked
 									timedcommand 3 UIElement[TitleBar@Radar Window]:SetFadeDelay[1]
 								}
 							</OnLoad>
 							<OnLeftClick>
-								UIElement[TitleBar@Radar Window]:SetFadeDelay[${If[${This.Checked},1,0]}]
-								UIElement[TitleBar@Radar Window]:ResetFade
-								SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar]:Set[AutoHideTitlebar,${This.Checked}]:Save
-							</OnLeftClick>
+                UIElement[TitleBar@Radar Window]:SetFadeDelay[${If[${This.Checked},1,0]}]
+                UIElement[TitleBar@Radar Window]:ResetFade
+                LavishSettings[Radar Window]:AddSetting[AutoHideTitlebar,${This.Checked}]
+                LavishSettings[Radar Window]:Export[extensions/ISXEQ2RadarWindow.Settings.xml]
+              </OnLeftClick>
 						</Checkbox>
 						<Checkbox name='HideBorder'>
 						  <Alpha>10</Alpha>
@@ -932,16 +958,17 @@ Radar Testing
 							<Font Template="Black Font" />
 							<Text>Hide Border</Text>
 							<OnLoad>
-								if ${SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar].GetString[HideBorder,FALSE]}
+								if ${LavishSettings[Radar Window].FindSetting[HideBorder,FALSE]}
 								{
 									This:SetChecked
 									UIElement[Radar Window]:SetBorder[0]
 								}
 							</OnLoad>
 							<OnLeftClick>
-								UIElement[Radar Window]:SetBorder[${If[${This.Checked},0,3]}]
-								SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar]:Set[HideBorder,${This.Checked}]:Save
-							</OnLeftClick>
+                UIElement[Radar Window]:SetBorder[${If[${This.Checked},0,3]}]
+                LavishSettings[Radar Window]:AddSetting[HideBorder,${This.Checked}]
+                LavishSettings[Radar Window]:Export[extensions/ISXEQ2RadarWindow.Settings.xml]
+              </OnLeftClick>
 						</Checkbox>
 						<Checkbox name='HideSlider'>
 						  <Alpha>10</Alpha>
@@ -953,7 +980,7 @@ Radar Testing
 							<Font Template="Black Font" />
 							<Text>Hide Slider</Text>
 							<OnLoad>
-								if ${SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar].GetString[HideSlider,FALSE]}
+								if ${LavishSettings[Radar Window].FindSetting[HideSlider,FALSE]}
 								{
 									This:SetChecked
 									UIElement[zoom@Buttonframe@Radar Window]:Hide
@@ -965,7 +992,7 @@ Radar Testing
 								UIElement[zoom@Buttonframe@Radar Window]:ToggleVisible
 								UIElement[ZoomSlider@Buttonframe@Radar Window]:ToggleVisible
 								UIElement[zoomminus@Buttonframe@Radar Window]:ToggleVisible
-								SettingXML[Extensions/isxeq2radarsettings.xml].Set[Radar]:Set[HideSlider,${This.Checked}]:Save
+								LavishSettings[Radar Window]:AddSetting[HideSlider,${This.Checked}]
 							</OnLeftClick>
 						</Checkbox>
 					</Tab>
